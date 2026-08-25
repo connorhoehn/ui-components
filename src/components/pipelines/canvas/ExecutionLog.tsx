@@ -203,15 +203,21 @@ export default function ExecutionLog({
         >
           <span aria-hidden="true">🎯</span>
           <span>Node: {label}</span>
-          <button
-            type="button"
-            className="w-4 h-4 border-none bg-transparent text-info-fg cursor-pointer text-sm font-inherit leading-none p-0 inline-flex items-center justify-center"
-            onClick={() => onClearFilter?.()}
-            aria-label="Clear node filter"
-            data-testid="execution-log-filter-chip-clear"
-          >
-            {'×'}
-          </button>
+          {/* `filterByNodeId` is caller-owned, so only the caller can clear
+              it. Without `onClearFilter` the × was a live control that left
+              the log filtered — the user's only reading being that the
+              filter is stuck. */}
+          {onClearFilter && (
+            <button
+              type="button"
+              className="w-4 h-4 border-none bg-transparent text-info-fg cursor-pointer text-sm font-inherit leading-none p-0 inline-flex items-center justify-center"
+              onClick={() => onClearFilter()}
+              aria-label="Clear node filter"
+              data-testid="execution-log-filter-chip-clear"
+            >
+              {'×'}
+            </button>
+          )}
         </span>
       </div>
     );

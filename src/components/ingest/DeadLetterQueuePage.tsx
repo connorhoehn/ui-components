@@ -7,6 +7,7 @@
 //   • Replay — re-enqueue the entry (POST /api/ingest/dlq/:id/replay).
 //   • Drop   — purge without replay   (DELETE /api/ingest/dlq/:id).
 
+import { useState } from 'react';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
 import { useIngestDLQ } from '../../hooks/useIngestDLQ';
@@ -23,6 +24,20 @@ function formatAge(ms: number): string {
 
 export default function DeadLetterQueuePage() {
   const { entries, loading, error, replay, drop } = useIngestDLQ();
+  // `replay` / `drop` REJECT on a non-2xx response. Both call sites were
+  // `void replay(...)`, so a failed replay produced an unhandled promise
+  // rejection and nothing else: the row stayed in the queue, no message
+  // appeared, and the operator could not tell a failed replay from one that
+  // succeeded but hadn't refreshed yet. `error` above only ever carries a
+  // *load* failure — the action path never reached it.
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const runAction = (promise: Promise<void>): void => {
+    setActionError(null);
+    void promise.catch((err: unknown) => {
+      setActionError(err instanceof Error ? err.message : String(err));
+    });
+  };
 
   return (
     <div data-testid="ingest-dlq-page" className="p-6 flex flex-col gap-3">
@@ -36,6 +51,28 @@ export default function DeadLetterQueuePage() {
       {error ? (
         <div data-testid="ingest-dlq-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
           {error}
+        </div>
+      ) : null}
+
+      {/* Action-failure banner. Kept separate from the load error above so a
+          rejected Replay never claims the queue failed to load — the list
+          below it is correct and stays visible. */}
+      {actionError ? (
+        <div
+          data-testid="ingest-dlq-action-error"
+          role="alert"
+          className="px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-3"
+        >
+          <span className="text-[13px] font-medium">
+            That entry was not updated: {actionError}
+          </span>
+          <button
+            type="button"
+            onClick={() => setActionError(null)}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
+          >
+            Dismiss
+          </button>
         </div>
       ) : null}
 
@@ -58,8 +95,8 @@ export default function DeadLetterQueuePage() {
             <DLQRow
               key={e.id}
               entry={e}
-              onReplay={() => void replay(e.id)}
-              onDrop={() => void drop(e.id)}
+              onReplay={() => runAction(replay(e.id))}
+              onDrop={() => runAction(drop(e.id))}
             />
           ))}
         </div>

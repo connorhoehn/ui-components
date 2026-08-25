@@ -63,7 +63,14 @@ export function EntityTable<T extends Record<string, unknown>>({
     [columns],
   );
 
-  if (!loading && data.length === 0) {
+  // `data` is typed as a required array, but every caller feeds it a fetch
+  // result — `data={resp?.users}` while the request is in flight, or an API
+  // that answers `{}` instead of `{users: []}`, both hand us `undefined`. The
+  // `.length` below then threw and blanked the list page, three lines away
+  // from the empty state that is the correct thing to show.
+  const rows: T[] = Array.isArray(data) ? data : [];
+
+  if (!loading && rows.length === 0) {
     return (
       <Card className="flex flex-col items-center justify-center min-h-[220px] p-8">
         <span className="text-[42px] mb-3">{emptyIcon}</span>
@@ -75,7 +82,7 @@ export function EntityTable<T extends Record<string, unknown>>({
   return (
     <Card>
       <DataTable<T>
-        data={data}
+        data={rows}
         columns={dtColumns}
         keyField={(row) => String(row[keyField])}
         onRowClick={onRowClick}

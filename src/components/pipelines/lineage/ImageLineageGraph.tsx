@@ -554,8 +554,40 @@ export function ImageLineageGraph({
     [visibleEntries, visibleIds, ancestors],
   );
 
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
-  const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+  // `useNodesState` / `useEdgesState` are `useState` with a change reducer
+  // bolted on: the argument is an INITIAL value, read once. Both setters used
+  // to be discarded (`const [nodes, , onNodesChange]`), so nothing after the
+  // first render ever reached the canvas:
+  //
+  //  - "Show all" flipped `showAll`, recomputed `visibleEntries` and cleared
+  //    the banner, and left the same windowed 100 nodes on screen.
+  //  - A host feeding `entries` from the async `useImageLineage` mounted with
+  //    `entries === []`; by the time the fetch resolved the initial value was
+  //    long gone, so the canvas stayed permanently blank — with working zoom
+  //    controls over the emptiness, which is why it read as a layout bug.
+  //  - Selecting a node never re-tinted its ancestry.
+  //
+  // xyflow keeps `fitViewQueued` pending until nodes are initialised, so the
+  // late `setNodes` below is what finally triggers the `fitView`.
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  useEffect(() => {
+    setNodes((prev) => {
+      // Carry over any position the user dragged a node to. Without this,
+      // merely selecting a node (which rebuilds `initialNodes` to re-tint the
+      // ancestry) would snap the whole graph back to the computed layout.
+      const dragged = new Map(prev.map((n) => [n.id, n.position]));
+      return initialNodes.map((n) => {
+        const pos = dragged.get(n.id);
+        return pos ? { ...n, position: pos } : n;
+      });
+    });
+  }, [initialNodes, setNodes]);
+
+  useEffect(() => {
+    setEdges(initialEdges);
+  }, [initialEdges, setEdges]);
 
   const handleNodeClick = useCallback(
     (_: React.MouseEvent, node: RFNode) => {

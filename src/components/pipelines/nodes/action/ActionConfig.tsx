@@ -87,7 +87,13 @@ const IDEMPOTENCY_MODES = [
 
 export default function ActionConfig({ data, onChange }: ActionConfigProps) {
   const uid = useId();
-  const fieldDefs = SUBTYPE_FIELD_DEFS[data.actionType];
+  // `data.actionType` is a stored union value read back off a pipeline
+  // definition. An action subtype this build doesn't know made `fieldDefs.map`
+  // throw, and with no boundary in the pipelines domain that blanks the whole
+  // editor route the moment you select the node. Degrade to "no subtype-
+  // specific fields" so the generic retry/error config below still renders and
+  // the node stays editable.
+  const fieldDefs = SUBTYPE_FIELD_DEFS[data.actionType] ?? [];
   const config = data.config ?? {};
   const retryCount = typeof config.retryCount === 'number' ? config.retryCount : 3;
 

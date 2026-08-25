@@ -38,6 +38,11 @@ const KIND_NOUN: Record<PermissionKind, string> = {
   screen: 'Screen sharing',
 };
 
+// The browser's own PermissionState union includes 'prompt', which this
+// component's narrower union does not — so a perfectly ordinary permission
+// query could index these maps to `undefined` and then CALL it, throwing
+// during render. Falling back to the 'unavailable' copy keeps the card (and
+// its retry affordance) on screen instead of taking the surface down.
 const STATE_TITLE: Record<PermissionState, (k: PermissionKind) => string> = {
   denied:      (k) => `${KIND_NOUN[k]} access blocked`,
   blocked:     (k) => `${KIND_NOUN[k]} is in use`,
@@ -111,10 +116,10 @@ export default function PermissionDeniedCard({
         {icon ?? <DefaultIcon kind={kind} />}
       </div>
       <div className="text-base font-semibold text-text-primary">
-        {STATE_TITLE[state](kind)}
+        {(STATE_TITLE[state] ?? STATE_TITLE.unavailable)(kind)}
       </div>
       <p className="text-xs text-text-secondary">
-        {message ?? STATE_BODY[state](kind)}
+        {message ?? (STATE_BODY[state] ?? STATE_BODY.unavailable)(kind)}
       </p>
       {onRetry && (
         <Button variant="ghost" size="sm" onClick={onRetry}>{retryLabel}</Button>

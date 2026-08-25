@@ -57,10 +57,14 @@ export function NodeCard({
   return (
     <Card
       className={cn(
-        'relative w-40 cursor-pointer transition-shadow duration-200 border-2',
+        // `onClick` is optional — the pointer cursor and hover lift only
+        // mean something when the caller wired one.
+        'relative w-40 transition-shadow duration-200 border-2',
+        onClick && 'cursor-pointer',
         borderClass,
         selected && 'shadow-[0_0_0_3px_rgba(99,102,241,0.25)]',
-        !selected && 'shadow-sm hover:shadow-md',
+        !selected && 'shadow-sm',
+        !selected && onClick && 'hover:shadow-md',
         className,
       )}
       onClick={onClick}

@@ -45,14 +45,27 @@ export function useAlertToasts(): void {
   useEffect(() => {
     if (!dashboard) return;
 
+    // `ClusterDashboard` is set verbatim from `res.json()` — the observability
+    // context does no validation — and this hook runs from `AppLayout`, the app
+    // SHELL. Both of the reads below therefore had catastrophic reach: a
+    // dashboard payload without `alerts` (`for…of undefined`) or an alert with
+    // a severity outside the four-value union (`cfg.type` on undefined) threw
+    // out of the commit phase and, with no boundary above AppLayout, unmounted
+    // the entire application — on every route, including routes that have
+    // nothing to do with observability, and again on every poll.
+    const alerts = Array.isArray(dashboard.alerts) ? dashboard.alerts : [];
+
     const currentKeys = new Set<string>();
-    for (const alert of dashboard.alerts) {
+    for (const alert of alerts) {
+      if (!alert) continue;
       const key = alertKey(alert.severity, alert.message);
       currentKeys.add(key);
 
       if (seenAlertsRef.current.has(key)) continue;
 
-      const cfg = SEVERITY_CONFIG[alert.severity];
+      // An unknown severity still toasts — as an error, which is the safe way
+      // to be wrong about something the cluster considered worth alerting on.
+      const cfg = SEVERITY_CONFIG[alert.severity] ?? SEVERITY_CONFIG.error;
       const opts: ToastOptions = {
         type: cfg.type,
         durationMs: cfg.durationMs,

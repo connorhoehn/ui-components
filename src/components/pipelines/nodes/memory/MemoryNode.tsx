@@ -3,7 +3,7 @@ import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import { categoryFor } from '../categories';
 import { portCls } from '../shared/ports';
 import type { MemoryNodeData } from '../../../../types/pipeline';
-import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
+import { useRetryFromStepIfWired, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type MemData = MemoryNodeData & {
   _state?: NodeExecutionState;
@@ -17,7 +17,7 @@ export default function MemoryNode({ id, data, selected }: NodeProps<MemFlowNode
   const liveStep = useLatestStepForNode(id);
   const liveState = liveStep?.status === 'cancelled' ? 'failed' : (liveStep?.status as NodeExecutionState | undefined);
   const state: NodeExecutionState = data._state ?? liveState ?? 'idle';
-  const retryFromStep = useRetryFromStep();
+  const retryFromStep = useRetryFromStepIfWired();
 
   const subtitle = `${data.mode} ${data.scope}`;
   const body = data.namespace ? `ns: ${data.namespace}` : 'No namespace';
@@ -30,7 +30,7 @@ export default function MemoryNode({ id, data, selected }: NodeProps<MemFlowNode
       category={categoryFor('memory')}
       body={<span className="text-[11px]">{body}</span>}
       selected={selected}
-      onRetry={state === 'failed' && liveStep ? () => retryFromStep(id) : undefined}
+      onRetry={state === 'failed' && liveStep && retryFromStep ? () => retryFromStep(id) : undefined}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >

@@ -103,19 +103,38 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
   const userMissing   = !data.userPromptTemplate?.trim();
 
   const resolveModels = useModelOptionsResolver();
+  // `data.provider` is typed as the three-value `LLMProvider` union, but the
+  // type is erased at runtime and the node's data comes off a stored pipeline
+  // definition (localStorage or the host API) that an older — or newer — build
+  // wrote. A provider this build doesn't know made `DEFAULT_MODELS_BY_PROVIDER
+  // [provider]` undefined and `.map` on it threw, taking the whole config panel
+  // (and with it the editor's inspector) down.
   const modelsFor = (provider: LLMProvider) =>
     resolveModels(
       `llm:${provider}`,
-      DEFAULT_MODELS_BY_PROVIDER[provider].map((value) => ({ value })),
+      (DEFAULT_MODELS_BY_PROVIDER[provider] ?? []).map((value) => ({ value })),
     );
-  const modelOptions = modelsFor(data.provider);
+  const resolvedModelOptions = modelsFor(data.provider);
+  // Show the stored model even when it isn't in the resolved list. A <select>
+  // whose `value` matches no <option> renders the FIRST option instead, so the
+  // panel would quietly claim a model the node is not configured with.
+  const modelOptions =
+    data.model && !resolvedModelOptions.some((m) => m.value === data.model)
+      ? [{ value: data.model }, ...resolvedModelOptions]
+      : resolvedModelOptions;
+  // Same reasoning for the provider select itself.
+  const providerOptions = PROVIDER_OPTIONS.some((p) => p.value === data.provider)
+    ? PROVIDER_OPTIONS
+    : [...PROVIDER_OPTIONS, { value: String(data.provider ?? ''), label: `${String(data.provider ?? '')} (unrecognised)` }];
 
   // Switching provider resets the model to the provider's first option if
   // the current model isn't valid for the new provider.
   const setProvider = (provider: LLMProvider) => {
     // Read the NEW provider's list from the host, falling back to the default.
     const models = modelsFor(provider).map((m) => m.value);
-    const model = models.includes(data.model) ? data.model : models[0];
+    // `models[0]` is undefined for an unknown provider — keep the current model
+    // rather than blanking the node's configuration.
+    const model = models.includes(data.model) ? data.model : (models[0] ?? data.model);
     onChange({ provider, model });
   };
 
@@ -133,7 +152,7 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
             aria-describedby={describedById}
             value={data.provider}
             onChange={(e) => setProvider(e.target.value as LLMProvider)}
-            options={PROVIDER_OPTIONS}
+            options={providerOptions}
           />
         )}
       />

@@ -193,7 +193,10 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
   // /likes requests per post (2N for an N-post feed) and two independent
   // likeCount states for the same post — the socket incremented both but an
   // optimistic toggle only moved one, so the two copies drifted apart.
-  const { isLiked, likeCount, whoLiked, toggle, reactWithEmoji } = useLikes({
+  // `error` was dropped. A failed like rolls the optimistic count back, so the
+  // heart filled and un-filled with no explanation — indistinguishable from a
+  // rendering glitch — and a failed emoji reaction did nothing at all.
+  const { isLiked, likeCount, whoLiked, toggle, reactWithEmoji, error: likeError } = useLikes({
     idToken,
     roomId,
     postId: post.postId,
@@ -204,6 +207,33 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  // `void onEdit(...); setEditMode(false)` dismissed the editor synchronously,
+  // before the request had even been sent. A rejected save therefore repainted
+  // the card with the old server text and said nothing — the user's revision
+  // was silently discarded. Same for delete: the post simply stayed put.
+  const handleEditSave = async () => {
+    setActionError(null);
+    try {
+      await onEdit(post.postId, editContent);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to save post');
+      return;
+    }
+    setEditMode(false);
+  };
+
+  const handleDelete = async () => {
+    setActionError(null);
+    try {
+      await onDelete(post.postId);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to delete post');
+      return;
+    }
+    setShowConfirmDelete(false);
+  };
 
   useEffect(() => {
     if (post._fadeIn) {
@@ -239,7 +269,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
           />
           <div className="flex gap-2">
             <button
-              onClick={() => { void onEdit(post.postId, editContent); setEditMode(false); }}
+              onClick={() => { void handleEditSave(); }}
               disabled={!editContent.trim()}
               className={cn(
                 'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
@@ -300,7 +330,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
               Cancel
             </button>
             <button
-              onClick={() => { void onDelete(post.postId); setShowConfirmDelete(false); }}
+              onClick={() => { void handleDelete(); }}
               className="text-xs text-white bg-danger border-none rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]"
             >
               Delete
@@ -308,6 +338,12 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
           </div>
         )}
       </div>
+
+      {(actionError ?? likeError) && (
+        <div role="alert" data-testid="post-action-error" className="text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
+          {actionError ?? likeError}
+        </div>
+      )}
 
       {/* Inline CommentThread */}
       {showComments && (
@@ -350,6 +386,16 @@ export function PostFeed({ idToken, roomId, onMessage }: PostFeedProps) {
         >
           {loading ? 'Loading…' : 'Load more'}
         </button>
+      )}
+      {/* A `loadMore` (or mutation) failure with posts already on screen used to
+          be invisible: `error` was only rendered in the posts.length === 0
+          branch below, so "Load more" flipped back from "Loading…" with
+          nothing added and nothing said — reading as "that was the last
+          page". */}
+      {error && posts.length > 0 && (
+        <div role="alert" data-testid="post-feed-error" className="text-danger text-[13px] mb-3 font-[system-ui,-apple-system,sans-serif]">
+          {error}
+        </div>
       )}
       {loading && posts.length === 0 ? (
         <div className="flex items-center gap-2 p-4 justify-center text-text-secondary">

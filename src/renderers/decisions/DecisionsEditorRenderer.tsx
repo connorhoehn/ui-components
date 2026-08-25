@@ -5,6 +5,7 @@ import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
 import TiptapEditor from '../../components/doc-editor/TiptapEditor';
 import { postApproval, mapStatusToDecision } from './approvalSync';
+import { sectionItems } from '../sectionItems';
 
 const DECISION_META: Record<string, { label: string; icon: string; color: string; bg: string }> = {
   pending:  { label: 'Open',    icon: '○', color: 'var(--color-warning-fg)', bg: 'var(--color-warning-bg)' },
@@ -101,6 +102,7 @@ export default function DecisionsEditorRenderer({
   onRemoveItem,
   onUpdateCursorInfo,
 }: SectionRendererProps) {
+  const items = sectionItems(section);
   // See the matching comment in ChecklistEditorRenderer: focus the new row only
   // once the list has really grown, so an absent or async `onAddItem` cannot
   // leave a stale focus intent that steals the caret on an unrelated render.
@@ -108,12 +110,12 @@ export default function DecisionsEditorRenderer({
 
   const handleAdd = () => {
     if (!onAddItem) return;
-    pendingAddCountRef.current = section.items.length;
+    pendingAddCountRef.current = items.length;
     onAddItem({ text: '', status: 'pending', assignee: '', ackedBy: '', ackedAt: '', priority: 'medium', notes: '' });
   };
 
   const pendingCount = pendingAddCountRef.current;
-  const awaitingFocus = pendingCount !== null && section.items.length > pendingCount;
+  const awaitingFocus = pendingCount !== null && items.length > pendingCount;
 
   return (
     <div>
@@ -130,13 +132,13 @@ export default function DecisionsEditorRenderer({
         />
       )}
 
-      {section.items.length === 0 && !editable && (
+      {items.length === 0 && !editable && (
         <div className="text-text-tertiary italic text-[13px] py-1">No decisions yet.</div>
       )}
 
       <div>
-        {section.items.map((item, idx) => {
-          const isLast = idx === section.items.length - 1;
+        {items.map((item, idx) => {
+          const isLast = idx === items.length - 1;
           const shouldFocus = awaitingFocus && isLast;
           return (
             <DecisionRow

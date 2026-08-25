@@ -55,12 +55,35 @@ function useAnchor(triggerRef: ReactionPickerPopoverProps['triggerRef'], open: b
       setCoords(null);
       return;
     }
-    const rect = triggerRef.current.getBoundingClientRect();
-    // Position above the trigger with a small gap.
-    setCoords({
-      top: Math.max(8, rect.top + window.scrollY - 12),
-      left: rect.left + window.scrollX,
-    });
+    const measure = () => {
+      const el = triggerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      // VIEWPORT coordinates, paired with `position: fixed` below.
+      //
+      // This used to add `window.scrollY` / `window.scrollX` to build
+      // DOCUMENT-space coordinates, then apply them with `position: absolute`
+      // — which resolves against the nearest positioned ancestor, and the one
+      // shipped caller (`ReactionsBar`) wraps the picker in a
+      // `relative inline-flex` div. So the popover was offset by that
+      // wrapper's own page position AND by the scroll offset: on a feed
+      // scrolled a few screens down, clicking "add reaction" put the picker
+      // hundreds of pixels below the message it belonged to, usually outside
+      // the viewport entirely.
+      setCoords({
+        top: Math.max(8, rect.top - 12),
+        left: rect.left,
+      });
+    };
+    measure();
+    // `fixed` does not scroll with the page, so re-measure while open rather
+    // than letting the picker drift away from its trigger.
+    window.addEventListener('scroll', measure, true);
+    window.addEventListener('resize', measure);
+    return () => {
+      window.removeEventListener('scroll', measure, true);
+      window.removeEventListener('resize', measure);
+    };
   }, [open, triggerRef]);
   return coords;
 }
@@ -115,7 +138,7 @@ export function ReactionPickerPopover({
 
   const positionStyle = useMemo<CSSProperties>(() => {
     if (anchor) {
-      return { position: 'absolute', top: anchor.top, left: anchor.left, transform: 'translateY(-100%)' };
+      return { position: 'fixed', top: anchor.top, left: anchor.left, transform: 'translateY(-100%)' };
     }
     return { position: 'absolute' };
   }, [anchor]);

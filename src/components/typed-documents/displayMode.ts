@@ -21,13 +21,23 @@ const DEFAULT_VISIBILITY: Record<ApiDisplayMode, boolean> = {
 };
 
 export function isFieldVisibleInMode(field: ApiDocumentTypeField, mode: ApiDisplayMode): boolean {
-  const dm: ApiFieldDisplayModes | undefined = field.displayModes;
-  if (!dm || dm[mode] === undefined) return DEFAULT_VISIBILITY[mode];
+  const dm: ApiFieldDisplayModes | undefined = field?.displayModes;
+  // Both of these are public exports, so `mode` is host-supplied. An unknown
+  // mode made `DEFAULT_VISIBILITY[mode]` undefined — falsy — so every field was
+  // filtered out and `visibleFieldsForMode` returned `[]` with nothing to
+  // signal it: a host passing `mode="card"` saw every document render as an
+  // empty card and no error anywhere. Default to visible, so an unrecognised
+  // mode over-shows rather than silently hiding the document's contents.
+  const fallback = DEFAULT_VISIBILITY[mode] ?? true;
+  if (!dm || dm[mode] === undefined) return fallback;
   return dm[mode] === true;
 }
 
 export function visibleFieldsForMode(type: ApiDocumentType, mode: ApiDisplayMode): ApiDocumentTypeField[] {
-  return type.fields.filter((f) => isFieldVisibleInMode(f, mode));
+  // `fields` is typed required but arrives from `GET /api/document-types`,
+  // where a summary projection or a type mid-creation can omit it.
+  const fields = Array.isArray(type?.fields) ? type.fields : [];
+  return fields.filter((f) => f != null && isFieldVisibleInMode(f, mode));
 }
 
 export const ALL_DISPLAY_MODES: ApiDisplayMode[] = ['full', 'teaser', 'list'];

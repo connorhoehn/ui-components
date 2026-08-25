@@ -39,16 +39,24 @@ export function ContextStepList({
           <div
             key={snapshot.stepId || idx}
             className={cn(
-              'px-2.5 py-1.5 text-[11px] font-mono cursor-pointer border-b border-border overflow-hidden text-ellipsis whitespace-nowrap',
+              'px-2.5 py-1.5 text-[11px] font-mono border-b border-border overflow-hidden text-ellipsis whitespace-nowrap',
+              // `onStepSelect` is optional; without it the row selects
+              // nothing, so it must not take a tab stop or claim to be a
+              // button. The list is still readable as a step index.
+              onStepSelect && 'cursor-pointer',
               active
                 ? 'text-text-primary bg-surface-inset font-semibold'
                 : 'text-text-tertiary font-normal',
             )}
-            onClick={() => onStepSelect?.(snapshot.stepId)}
-            role="button"
-            tabIndex={0}
+            onClick={onStepSelect ? () => onStepSelect(snapshot.stepId) : undefined}
+            role={onStepSelect ? 'button' : undefined}
+            tabIndex={onStepSelect ? 0 : undefined}
             // Space must preventDefault or it also scrolls the step list.
-            onKeyDown={onActivationKey(() => onStepSelect?.(snapshot.stepId))}
+            onKeyDown={
+              onStepSelect
+                ? onActivationKey(() => onStepSelect(snapshot.stepId))
+                : undefined
+            }
             title={snapshot.stepId}
           >
             {snapshot.newKeys.length > 0 && (

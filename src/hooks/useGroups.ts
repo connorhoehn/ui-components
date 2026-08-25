@@ -1,9 +1,9 @@
 // frontend/src/hooks/useGroups.ts
 //
-// Groups hook — create/delete/join/leave groups and manage members.
+// Groups hook — list, create/delete/join/leave groups and manage members.
 // All requests use Authorization: Bearer idToken against VITE_SOCIAL_API_URL.
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -33,6 +33,24 @@ export interface UseGroupsOptions {
 
 export interface UseGroupsReturn {
   groups: GroupItem[];
+  /**
+   * Re-run `GET /api/groups`. Called once on mount (and on every `idToken`
+   * change); exposed so a failed load can be retried without a remount.
+   */
+  refresh: () => Promise<void>;
+  /**
+   * `false` until the first `GET /api/groups` has settled. Distinguishes
+   * "the server says you have no groups" from "we have not asked yet" —
+   * without it an empty `groups` array renders the same "No groups yet"
+   * empty state in both cases.
+   */
+  loaded: boolean;
+  /**
+   * Failure of the list load specifically. Kept separate from `error`, which
+   * is whatever the last create/join/invite/… attempt reported: a refused
+   * invite must not blank out a list that loaded perfectly well.
+   */
+  loadError: string | null;
   createGroup: (name: string, description?: string, visibility?: 'public' | 'private') => Promise<void>;
   deleteGroup: (groupId: string) => Promise<void>;
   joinGroup: (groupId: string) => Promise<void>;
@@ -52,8 +70,13 @@ export interface UseGroupsReturn {
 export function useGroups({ idToken }: UseGroupsOptions): UseGroupsReturn {
   const [groups, setGroups] = useState<GroupItem[]>([]);
   const [members, setMembers] = useState<MemberItem[]>([]);
-  const [loading, setLoading] = useState(false);
+  // Starts true whenever there is a token, because a fetch is guaranteed to be
+  // issued by the mount effect below. Starting at `false` would paint one
+  // frame of "No groups yet" before the request had even been made.
+  const [loading, setLoading] = useState(() => Boolean(idToken));
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const baseUrl = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 
@@ -61,6 +84,63 @@ export function useGroups({ idToken }: UseGroupsOptions): UseGroupsReturn {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${idToken}`,
   }), [idToken]);
+
+  // ---- Hydrate: GET /api/groups --------------------------------------------
+  //
+  // This hook used to expose no list loader at all, so `groups` only ever held
+  // what the current session had created. Nothing hydrated it, no host could
+  // hydrate it, and GroupPanel's "No groups yet" empty state was therefore a
+  // lie for every user who already had groups on the server.
+  //
+  // Two DIFFERENT concerns, deliberately not one shared boolean. `mountedRef`
+  // answers "is this hook still mounted" and is shared across effect runs —
+  // correct, because a re-run means we are still mounted. `requestIdRef`
+  // answers "is this response still the one we want", and that question cannot
+  // be answered by a flag each effect run resets: under StrictMode, and on
+  // every `idToken` refresh, the cleanup marks the in-flight request cancelled
+  // and the next run immediately un-cancels it, so whichever response landed
+  // last won regardless of which was issued last. A monotonic id cannot be
+  // resurrected — each call claims the next one and only the current holder
+  // may write.
+  const mountedRef = useRef(true);
+  const requestIdRef = useRef(0);
+
+  const refresh = useCallback(async (): Promise<void> => {
+    if (!idToken) return;
+    const token = ++requestIdRef.current;
+    const current = () => mountedRef.current && token === requestIdRef.current;
+    setLoading(true);
+    setError(null);
+    setLoadError(null);
+    try {
+      const res = await fetch(`${baseUrl}/api/groups`, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
+      if (!res.ok) throw new Error(`Failed to load groups (${res.status})`);
+      const data = await res.json() as { groups?: GroupItem[] };
+      if (current()) setGroups(data.groups ?? []);
+    } catch (err) {
+      if (current()) {
+        setError((err as Error).message);
+        setLoadError((err as Error).message);
+      }
+    } finally {
+      if (current()) {
+        setLoading(false);
+        setLoaded(true);
+      }
+    }
+  }, [idToken, baseUrl]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    void refresh();
+    return () => {
+      mountedRef.current = false;
+      // Retire whatever is in flight so a superseded run can never write.
+      requestIdRef.current += 1;
+    };
+  }, [refresh]);
 
   // ---- createGroup ---------------------------------------------------------
 
@@ -204,6 +284,9 @@ export function useGroups({ idToken }: UseGroupsOptions): UseGroupsReturn {
 
   return {
     groups,
+    refresh,
+    loaded,
+    loadError,
     createGroup,
     deleteGroup,
     joinGroup,

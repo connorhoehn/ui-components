@@ -1,6 +1,7 @@
 import { cn } from '../../lib/cn';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
+import { sectionItems } from '../sectionItems';
 
 const STATUS_META: Record<string, { label: string; icon: string; color: string; bg: string }> = {
   pending:  { label: 'Open',    icon: '○', color: 'var(--color-warning-fg)', bg: 'var(--color-warning-bg)' },
@@ -47,7 +48,7 @@ function StatusGroup({ label, color, items }: { label: string; color: string; it
 }
 
 export default function DecisionsReaderRenderer({ section, onNavigateToEditor }: SectionRendererProps) {
-  const items = section.items;
+  const items = sectionItems(section);
 
   if (items.length === 0) {
     return (
@@ -57,9 +58,16 @@ export default function DecisionsReaderRenderer({ section, onNavigateToEditor }:
     );
   }
 
-  const open    = items.filter(i => i.status === 'pending');
+  // Exhaustive by construction. These used to be three positive filters, so a
+  // decision whose status was none of the four known values matched no group
+  // and vanished from the list with nothing to say it had been dropped — and
+  // if EVERY decision had an unrecognised status the reader rendered an empty
+  // <div> that looked like a styling glitch rather than missing data. This is
+  // the same defect that was already fixed in the sibling TasksReaderRenderer;
+  // anything not explicitly decided/vetoed is treated as open.
   const decided = items.filter(i => i.status === 'acked' || i.status === 'done');
   const vetoed  = items.filter(i => i.status === 'rejected');
+  const open    = items.filter(i => !decided.includes(i) && !vetoed.includes(i));
 
   return (
     <div>

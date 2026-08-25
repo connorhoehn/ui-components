@@ -123,6 +123,7 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [roomName, setRoomName] = useState('');
+  const [roomError, setRoomError] = useState<string | null>(null);
 
   const isOwner = group.ownerId === currentUserId;
   const groupRooms = rooms.filter(r => r.groupId === groupId);
@@ -142,10 +143,19 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
     setShowInvite(false);
   };
 
+  // Awaited with no `catch`: a rejected create surfaced as an unhandled
+  // promise rejection and nothing else — the form sat there with the typed
+  // name, indistinguishable from a click that never landed.
   const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!roomName.trim()) return;
-    await createGroupRoom(groupId, roomName.trim());
+    setRoomError(null);
+    try {
+      await createGroupRoom(groupId, roomName.trim());
+    } catch (err) {
+      setRoomError(err instanceof Error ? err.message : 'Failed to create room');
+      return;
+    }
     setRoomName('');
     setShowCreateRoom(false);
   };
@@ -228,17 +238,32 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
           </button>
         </form>
       )}
+      {showCreateRoom && roomError && (
+        <div role="alert" data-testid="compact-group-room-error" className="text-danger text-[11px] mb-1.5">
+          {roomError}
+        </div>
+      )}
 
-      {groupRooms.map(room => (
-        <button
-          key={room.roomId}
-          onClick={() => onRoomSelect?.(room)}
-          className="flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1 cursor-pointer bg-transparent text-text-primary text-[13px] text-left font-[inherit]"
-        >
-          <span className="text-text-tertiary text-xs">#</span>
-          <span className="overflow-hidden text-ellipsis whitespace-nowrap">{room.name}</span>
-        </button>
-      ))}
+      {/* The room name is worth listing either way, but `onRoomSelect` is
+          optional and nothing else opens a room from here — as a <button>
+          each row was a focus stop that swallowed the click. */}
+      {groupRooms.map(room => {
+        const Row = onRoomSelect ? 'button' : 'div';
+        return (
+          <Row
+            key={room.roomId}
+            type={onRoomSelect ? 'button' : undefined}
+            onClick={onRoomSelect ? () => onRoomSelect(room) : undefined}
+            className={cn(
+              'flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1 bg-transparent text-text-primary text-[13px] text-left font-[inherit]',
+              onRoomSelect && 'cursor-pointer',
+            )}
+          >
+            <span className="text-text-tertiary text-xs">#</span>
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap">{room.name}</span>
+          </Row>
+        );
+      })}
     </div>
   );
 }
@@ -428,12 +453,21 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
 }) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [roomName, setRoomName] = useState('');
+  const [roomError, setRoomError] = useState<string | null>(null);
   const groupRooms = rooms.filter(r => r.groupId === groupId);
 
+  // Same fire-and-forget shape the compact detail panel had — see the note
+  // there. A failed create left no trace on screen.
   const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!roomName.trim()) return;
-    await createGroupRoom(groupId, roomName.trim());
+    setRoomError(null);
+    try {
+      await createGroupRoom(groupId, roomName.trim());
+    } catch (err) {
+      setRoomError(err instanceof Error ? err.message : 'Failed to create room');
+      return;
+    }
     setRoomName('');
     setShowCreateForm(false);
   };
@@ -443,7 +477,7 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
       <h3 className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-2">GROUP ROOMS</h3>
       {(selectedGroupRole === 'owner' || selectedGroupRole === 'admin') && (
         showCreateForm ? (
-          <form onSubmit={handleCreateRoom} className="mb-2 p-3 bg-surface-panel rounded-lg border border-border">
+          <form onSubmit={(e) => { void handleCreateRoom(e); }} className="mb-2 p-3 bg-surface-panel rounded-lg border border-border">
             <div className="flex gap-2">
               <Input className="flex-1" value={roomName} onChange={e => setRoomName(e.target.value.slice(0, 50))} placeholder="Room name" maxLength={50} required />
               <button type="submit" disabled={!roomName.trim() || loading} className={cn(
@@ -454,6 +488,9 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
               </button>
               <button type="button" onClick={() => setShowCreateForm(false)} className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]">Cancel</button>
             </div>
+            {roomError && (
+              <div role="alert" data-testid="group-room-error" className="text-danger text-[13px] mt-1.5">{roomError}</div>
+            )}
           </form>
         ) : (
           <button onClick={() => setShowCreateForm(true)} className="w-full h-9 mb-2 bg-primary text-white border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]">Create Room</button>
@@ -465,17 +502,27 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
         groupRooms.map(room => (
           <div
             key={room.roomId}
-            role="button"
-            tabIndex={0}
-            aria-label={`Open room ${room.name}`}
-            className="flex items-center h-12 border-b border-surface-hover cursor-pointer pr-2"
-            onClick={() => onRoomSelect?.(room)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onRoomSelect?.(room);
-              }
-            }}
+            // Same optional-handler shape as the compact list: without
+            // `onRoomSelect` this announced itself as "Open room X", took a
+            // tab stop, and opened nothing.
+            role={onRoomSelect ? 'button' : undefined}
+            tabIndex={onRoomSelect ? 0 : undefined}
+            aria-label={onRoomSelect ? `Open room ${room.name}` : undefined}
+            className={cn(
+              'flex items-center h-12 border-b border-surface-hover pr-2',
+              onRoomSelect && 'cursor-pointer',
+            )}
+            onClick={onRoomSelect ? () => onRoomSelect(room) : undefined}
+            onKeyDown={
+              onRoomSelect
+                ? (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onRoomSelect(room);
+                    }
+                  }
+                : undefined
+            }
           >
             <div className="flex-1 text-base text-text-primary">{room.name}</div>
             <span className="bg-info-bg text-info text-xs px-2 py-0.5 rounded">group</span>
@@ -499,7 +546,13 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
     loadMembers,
     members,
     loading,
+    loaded,
+    loadError,
+    refresh,
   } = useGroups({ idToken });
+
+  // "No groups yet" is only true once the server has actually answered.
+  const listPending = !loaded && !loadError;
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
@@ -542,8 +595,20 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
           />
         )}
         <div>
-          {loading && groups.length === 0 ? (
-            <div className="p-2 text-text-tertiary text-xs text-center">Loading…</div>
+          {listPending && groups.length === 0 ? (
+            <div role="status" className="p-2 text-text-tertiary text-xs text-center">Loading…</div>
+          ) : loadError && groups.length === 0 ? (
+            <div role="alert" data-testid="compact-groups-load-error" className="px-2 py-3 text-danger-fg text-xs">
+              <div>Couldn&rsquo;t load groups.</div>
+              <div className="text-text-tertiary mt-0.5">{loadError}</div>
+              <button
+                type="button"
+                onClick={() => { void refresh(); }}
+                className="mt-1 text-[11px] text-primary bg-transparent border-none cursor-pointer p-0 font-[inherit]"
+              >
+                Retry
+              </button>
+            </div>
           ) : groups.length === 0 ? (
             <div className="px-2 py-3 text-text-tertiary text-xs">No groups yet</div>
           ) : (
@@ -585,7 +650,26 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
       <h2 className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3">Groups</h2>
 
       <div className="max-h-80 overflow-y-auto mb-3">
-        {groups.length === 0 ? (
+        {/* `useGroups` returns a load error and this panel used to drop it, so
+            a failed load rendered as "No groups yet — Create a group or join a
+            public one": an outage told to the user as a fact about their own
+            memberships. There was no `loading` branch either, so that same
+            copy flashed during every normal fetch. */}
+        {listPending && groups.length === 0 ? (
+          <div role="status" className="py-4 text-center text-sm text-text-tertiary">Loading groups…</div>
+        ) : loadError && groups.length === 0 ? (
+          <div role="alert" data-testid="groups-load-error" className="py-4 text-center">
+            <div className="text-sm font-semibold text-danger-fg mb-1">Couldn&rsquo;t load groups</div>
+            <div className="text-sm text-text-tertiary mb-2">{loadError}</div>
+            <button
+              type="button"
+              onClick={() => { void refresh(); }}
+              className="text-sm text-primary bg-transparent border border-border rounded-lg px-3 py-1 cursor-pointer font-[system-ui,-apple-system,sans-serif]"
+            >
+              Retry
+            </button>
+          </div>
+        ) : groups.length === 0 ? (
           <div className="py-4 text-center">
             <div className="text-sm font-semibold text-text-primary mb-1">No groups yet</div>
             <div className="text-sm text-text-tertiary">Create a group or join a public one.</div>

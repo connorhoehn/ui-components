@@ -107,10 +107,16 @@ export function useSocialProfile({ idToken }: UseSocialProfileOptions): UseSocia
       setProfile(updated);
     } catch (err) {
       setError((err as Error).message);
+      // Rethrow, like `useFriends.follow`/`unfollow` already do. Resolving on
+      // failure made a rejected save indistinguishable from an accepted one to
+      // the caller: `SocialPanel`'s editor awaited this, saw no error, closed
+      // the form and re-rendered the SERVER's unchanged profile — so the user
+      // read their old bio back as if it were the one they had just written.
+      throw err;
     } finally {
       setLoading(false);
     }
-  }, [idToken, baseUrl, authHeaders]);  
+  }, [idToken, baseUrl, authHeaders]);
 
   // ---- viewProfile ---------------------------------------------------------
 

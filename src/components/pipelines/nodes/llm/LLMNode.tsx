@@ -11,7 +11,7 @@ import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import { categoryFor } from '../categories';
 import { portCls } from '../shared/ports';
 import type { LLMNodeData } from '../../../../types/pipeline';
-import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
+import { useRetryFromStepIfWired, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 interface LLMResponseInfo {
   response: string;
@@ -116,8 +116,8 @@ export default function LLMNode(props: NodeProps<LLMFlowNode>) {
     (liveLlm.tokensOut ?? 0) > 0;
 
   // §17.6 retry-from-here — see TriggerNode for the rationale.
-  const retry = useRetryFromStep();
-  const onRetry = state === 'failed' ? () => retry(id) : undefined;
+  const retry = useRetryFromStepIfWired();
+  const onRetry = state === 'failed' && retry ? () => retry(id) : undefined;
 
   const body = (
     <span className="italic">

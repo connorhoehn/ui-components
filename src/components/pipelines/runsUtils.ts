@@ -77,6 +77,12 @@ export function filterRuns(runs: PipelineRun[], c: RunFilterCriteria): PipelineR
   return runs.filter((r) => {
     if (c.statuses.size > 0 && !c.statuses.has(r.status as StatusKey)) return false;
     if (c.triggerKinds.size > 0) {
+      // `triggeredBy` is copied straight off a `pipeline.run.started` websocket
+      // event and is absent whenever that event omitted it — AllRunsPage and
+      // useContextSnapshots both already read it with `?.`. Unguarded here, it
+      // blanked the runs list the instant a trigger-kind filter chip was
+      // clicked. A run with no trigger info matches no explicit kind filter.
+      if (!r.triggeredBy) return false;
       const kind = triggerTypeToKind(r.triggeredBy.triggerType);
       if (!c.triggerKinds.has(kind)) return false;
     }
@@ -85,8 +91,8 @@ export function filterRuns(runs: PipelineRun[], c: RunFilterCriteria): PipelineR
       if (Number.isFinite(t) && t < cutoff) return false;
     }
     if (q.length > 0) {
-      const idMatch = r.id.toLowerCase().includes(q);
-      const pidMatch = r.pipelineId.toLowerCase().includes(q);
+      const idMatch = String(r.id ?? '').toLowerCase().includes(q);
+      const pidMatch = String(r.pipelineId ?? '').toLowerCase().includes(q);
       if (!idMatch && !pidMatch) return false;
     }
     return true;

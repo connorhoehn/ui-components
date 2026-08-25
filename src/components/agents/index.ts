@@ -9,6 +9,10 @@ export { AgentInvokePage } from './AgentInvokePage';
 
 // Context
 export { AgentsProvider, useAgentsContext } from './context/AgentsContext';
+// Additive: the provider now honours `baseUrl` and reports where `agents` /
+// `metrics` came from. Mirrors AgentRegistrySource / AgentMetricsSource below,
+// plus `'provided'` for host-supplied props.
+export type { AgentsSource } from './context/AgentsContext';
 
 // Hooks
 export { useAgUiStream } from './hooks/useAgUiStream';

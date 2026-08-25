@@ -43,6 +43,31 @@ function mockFetch(body: unknown, ok = true, status = ok ? 200 : 500) {
   return mock;
 }
 
+type FetchCall = [string, RequestInit | undefined];
+
+// The hook now issues a `GET /api/groups` hydrate on mount, and the suite runs
+// under StrictMode, so how many calls precede the one under test is not fixed.
+// Select calls by (url, method) instead of by index.
+function callsMatching(
+  mock: ReturnType<typeof mockFetch>,
+  urlPart: string,
+  method = 'GET',
+): FetchCall[] {
+  return (mock.mock.calls as FetchCall[]).filter(
+    ([url, init]) => url.includes(urlPart) && (init?.method ?? 'GET') === method,
+  );
+}
+
+function oneCall(
+  mock: ReturnType<typeof mockFetch>,
+  urlPart: string,
+  method = 'GET',
+): FetchCall {
+  const matches = callsMatching(mock, urlPart, method);
+  expect(matches.length).toBeGreaterThan(0);
+  return matches[0];
+}
+
 // ---------------------------------------------------------------------------
 // createGroup
 // ---------------------------------------------------------------------------
@@ -69,10 +94,10 @@ describe('createGroup', () => {
       await result.current.createGroup('Team Alpha', 'desc', 'private');
     });
 
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [url, init] = oneCall(fetchMock, '/api/groups', 'POST');
     expect(url).toContain('/api/groups');
-    expect(init.method).toBe('POST');
-    expect(JSON.parse(init.body as string)).toEqual({
+    expect(init!.method).toBe('POST');
+    expect(JSON.parse(init!.body as string)).toEqual({
       name: 'Team Alpha',
       description: 'desc',
       visibility: 'private',
@@ -114,9 +139,9 @@ describe('deleteGroup', () => {
     await act(async () => { await result.current.deleteGroup('g1'); });
 
     expect(result.current.groups).toHaveLength(0);
-    const deleteCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const deleteCall = oneCall(fetchMock, '/api/groups/g1', 'DELETE');
     expect(deleteCall[0]).toContain('/api/groups/g1');
-    expect(deleteCall[1].method).toBe('DELETE');
+    expect(deleteCall[1]!.method).toBe('DELETE');
   });
 
   it('sets error on failure (does not re-throw)', async () => {
@@ -139,9 +164,9 @@ describe('joinGroup', () => {
 
     await act(async () => { await result.current.joinGroup('g1'); });
 
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [url, init] = oneCall(fetchMock, '/api/groups/g1/join', 'POST');
     expect(url).toContain('/api/groups/g1/join');
-    expect(init.method).toBe('POST');
+    expect(init!.method).toBe('POST');
     expect(result.current.error).toBeNull();
   });
 
@@ -163,9 +188,9 @@ describe('leaveGroup', () => {
     fetchMock.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) } as unknown as Response);
     await act(async () => { await result.current.leaveGroup('g1'); });
 
-    const leaveCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const leaveCall = oneCall(fetchMock, '/api/groups/g1/leave', 'DELETE');
     expect(leaveCall[0]).toContain('/api/groups/g1/leave');
-    expect(leaveCall[1].method).toBe('DELETE');
+    expect(leaveCall[1]!.method).toBe('DELETE');
     expect(result.current.groups).toHaveLength(0);
   });
 });
@@ -181,9 +206,9 @@ describe('inviteUser', () => {
 
     await act(async () => { await result.current.inviteUser('g1', 'u2'); });
 
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [url, init] = oneCall(fetchMock, '/api/groups/g1/invite', 'POST');
     expect(url).toContain('/api/groups/g1/invite');
-    expect(JSON.parse(init.body as string)).toEqual({ userId: 'u2' });
+    expect(JSON.parse(init!.body as string)).toEqual({ userId: 'u2' });
   });
 });
 
@@ -194,9 +219,9 @@ describe('acceptInvite', () => {
 
     await act(async () => { await result.current.acceptInvite('g1', true); });
 
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [url, init] = oneCall(fetchMock, '/api/groups/g1/accept', 'POST');
     expect(url).toContain('/api/groups/g1/accept');
-    expect(JSON.parse(init.body as string)).toEqual({ accept: true });
+    expect(JSON.parse(init!.body as string)).toEqual({ accept: true });
   });
 });
 
@@ -231,5 +256,97 @@ describe('loadMembers', () => {
 
     await act(async () => { await result.current.loadMembers('g1'); });
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Hydrate on mount
+//
+// REGRESSION: the hook exposed no list loader at all, so `groups` only ever
+// held what the current session had created and no host could hydrate it.
+// GroupPanel's "No groups yet" was therefore shown to every user who already
+// had groups on the server.
+// ---------------------------------------------------------------------------
+
+describe('hydrate on mount', () => {
+  it('GETs /api/groups on mount and populates the list', async () => {
+    const fetchMock = mockFetch({ groups: [GROUP] });
+    const { result } = renderHook(() => useGroups({ idToken: TOKEN }));
+
+    await act(async () => { await Promise.resolve(); });
+
+    expect(callsMatching(fetchMock, '/api/groups', 'GET').length).toBeGreaterThan(0);
+    const [url, init] = oneCall(fetchMock, '/api/groups', 'GET');
+    expect(url).toBe(`${BASE}/api/groups`);
+    expect((init?.headers as Record<string, string>).Authorization).toBe(`Bearer ${TOKEN}`);
+    expect(result.current.groups).toHaveLength(1);
+    expect(result.current.groups[0].groupId).toBe('g1');
+    expect(result.current.loaded).toBe(true);
+    expect(result.current.loadError).toBeNull();
+  });
+
+  it('does not hydrate without an idToken', async () => {
+    const fetchMock = mockFetch({ groups: [GROUP] });
+    const { result } = renderHook(() => useGroups({ idToken: null }));
+
+    await act(async () => { await Promise.resolve(); });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(result.current.loaded).toBe(false);
+    expect(result.current.loading).toBe(false);
+  });
+
+  it('reports a failed hydrate through loadError, not just error', async () => {
+    mockFetch({}, false, 500);
+    const { result } = renderHook(() => useGroups({ idToken: TOKEN }));
+
+    await act(async () => { await Promise.resolve(); });
+
+    expect(result.current.loadError).toMatch(/500/);
+    expect(result.current.groups).toHaveLength(0);
+    expect(result.current.loaded).toBe(true);
+  });
+
+  it('refresh() re-issues the GET and replaces the list', async () => {
+    const fetchMock = mockFetch({ groups: [] });
+    const { result } = renderHook(() => useGroups({ idToken: TOKEN }));
+    await act(async () => { await Promise.resolve(); });
+    expect(result.current.groups).toHaveLength(0);
+
+    const before = callsMatching(fetchMock, '/api/groups', 'GET').length;
+    fetchMock.mockResolvedValueOnce({
+      ok: true, status: 200, json: () => Promise.resolve({ groups: [GROUP] }),
+    } as unknown as Response);
+    await act(async () => { await result.current.refresh(); });
+
+    // Delta, not an absolute count — StrictMode double-mounts.
+    expect(callsMatching(fetchMock, '/api/groups', 'GET').length).toBe(before + 1);
+    expect(result.current.groups).toHaveLength(1);
+  });
+
+  it('a superseded hydrate can never overwrite a newer one', async () => {
+    // Monotonic-request-id guard, NOT a shared boolean each effect run resets.
+    // The stale response resolves LAST but was issued FIRST, so it must lose.
+    let releaseStale: (() => void) | null = null;
+    const stale = new Promise<void>((r) => { releaseStale = r; });
+
+    const fetchMock = vi.fn()
+      .mockImplementationOnce(async () => {
+        await stale;
+        return { ok: true, status: 200, json: () => Promise.resolve({ groups: [GROUP] }) } as unknown as Response;
+      })
+      .mockResolvedValue({
+        ok: true, status: 200,
+        json: () => Promise.resolve({ groups: [{ ...GROUP, groupId: 'g2', name: 'Fresh' }] }),
+      } as unknown as Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { result } = renderHook(() => useGroups({ idToken: TOKEN }));
+    // Let the second (StrictMode remount) hydrate land first.
+    await act(async () => { await Promise.resolve(); });
+    // Now let the first, superseded one resolve.
+    await act(async () => { releaseStale?.(); await Promise.resolve(); });
+
+    expect(result.current.groups.map((g) => g.groupId)).toEqual(['g2']);
   });
 });

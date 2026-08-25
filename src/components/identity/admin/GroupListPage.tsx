@@ -77,15 +77,23 @@ export function GroupListPage({
       {
         key: 'permissions',
         header: 'Permissions',
-        render: (item) => (
-          <div className="flex flex-wrap gap-1">
-            {item.permissions.length === 0
-              ? <span className="text-text-tertiary text-xs">None</span>
-              : item.permissions.map((p) => (
-                  <Chip key={p} tone="info" size="xs">{p}</Chip>
-                ))}
-          </div>
-        ),
+        render: (item) => {
+          // The empty-array case was handled; the *absent* case wasn't, and a
+          // server that omits empty arrays (the common wire shape for a group
+          // with no permissions yet) is what actually arrives. This render runs
+          // inside DataTable's row map, so one such group blanked the whole
+          // groups table rather than one cell.
+          const permissions = Array.isArray(item.permissions) ? item.permissions : [];
+          return (
+            <div className="flex flex-wrap gap-1">
+              {permissions.length === 0
+                ? <span className="text-text-tertiary text-xs">None</span>
+                : permissions.map((p) => (
+                    <Chip key={p} tone="info" size="xs">{p}</Chip>
+                  ))}
+            </div>
+          );
+        },
       },
     ],
     [],

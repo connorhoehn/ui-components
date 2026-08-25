@@ -562,8 +562,30 @@ export declare interface CustomFieldType {
      * Derived from primitiveType at creation time.
      */
     baseType: string;
+    /**
+     * Per-view-mode visibility + renderer choice from step 2 of the wizard.
+     * Optional for backward-compat with records persisted before it existed;
+     * absent means "visible everywhere, base type's default renderer".
+     */
+    display?: Partial<Record<ViewMode, CustomFieldTypeDisplay>>;
     createdAt: string;
     updatedAt: string;
+}
+
+/**
+ * Step 2 ("Display") of the Data Types wizard, for one view mode.
+ *
+ * ADDITIVE, optional. Before this existed, `FieldTypesPage.handleSave` sent
+ * only `{name, icon, description, primitiveType, baseType}` — the Visible
+ * checkboxes and the renderer pickers had nowhere to be written, so every
+ * step-2 choice was discarded the moment the user pressed Save and reopening
+ * the type for edit showed all three modes visible with the default renderer.
+ */
+export declare interface CustomFieldTypeDisplay {
+    /** Does this field appear at all in this view mode? */
+    visible: boolean;
+    /** Chosen renderer key, e.g. `'rich-text:reader'`. Absent = the base type's first. */
+    renderer?: string;
 }
 
 export declare interface DiagnosticsInfo {

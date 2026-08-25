@@ -1641,6 +1641,25 @@ export declare interface PipelineEditorServices {
      * their defaults, so a host can override one without restating the rest.
      */
     modelOptions?: Record<string, readonly ModelOption[]>;
+    /**
+     * Whether this deployment has an inbound webhook relay that actually starts
+     * runs — and where its public origin is.
+     *
+     * ADDITIVE and **defaults to disabled**, which is the honest default: the
+     * library ships the trigger UI, not the relay. The `/hooks/pipeline/:path`
+     * route on the reference backend logs the delivery and answers 202; the
+     * bridge that would forward it onto the pipeline event source is not wired,
+     * so `useWebhookTriggers` is a dormant subscriber and a correctly-signed
+     * POST runs nothing. The editor nonetheless rendered an invokable-looking
+     * URL, a Copy button, and a reveal/copy pair for the signing secret —
+     * everything an integrator needs to build against an endpoint that is
+     * silently inert, and to blame their own HMAC when nothing happens.
+     *
+     * Declare `{ enabled: true }` once your host forwards those deliveries; the
+     * panel then offers the URL and secret as before. Until then it says the
+     * endpoint is not active and withholds the copy affordances.
+     */
+    webhookRelay?: WebhookRelayStatus;
 }
 
 export declare function PipelineEditorServicesProvider({ services, children, }: {
@@ -2774,7 +2793,9 @@ export declare function usePipelineRuns(): PipelineRunsValue;
  *
  * Graceful when no `PipelineRunsProvider` is in scope — returns a no-op so
  * standalone visual renders (storybook, isolated unit tests) don't throw just
- * for asking for the retry handler.
+ * for asking for the retry handler. **Callers that render a control from this
+ * must use `useRetryFromStepIfWired` instead**, or they will render a live
+ * button backed by the no-op.
  *
  * Host seam: when a `PipelineNodeRuntimeProvider` is mounted AND its value
  * supplies `retryFromStep`, that handler wins over the bundled one (wrapped
@@ -2820,6 +2841,17 @@ export declare interface UseVisionResultsOptions {
     /** When set, only records for this runId are kept. */
     runId?: string;
 }
+
+/**
+ * The host's inbound-webhook declaration.
+ *
+ * Reads the context directly rather than through `usePipelineEditorServices()`,
+ * which throws with no provider: a config panel has to stay renderable in a
+ * test, a story, or a standalone settings view. "No host" resolves to
+ * `{ enabled: false }` — never claim an endpoint is live because nobody said
+ * otherwise.
+ */
+export declare function useWebhookRelay(): WebhookRelayStatus;
 
 export declare function VariationConfig({ data, onChange, nodeId }: VariationConfigProps): JSX.Element;
 
@@ -3120,6 +3152,17 @@ declare type WatermarkFlowNode = Node_2<WatermarkData, 'image:watermark'>;
 declare type WatermarkGravity = 'northwest' | 'north' | 'northeast' | 'west' | 'center' | 'east' | 'southwest' | 'south' | 'southeast';
 
 export declare function WatermarkNode(props: NodeProps<WatermarkFlowNode>): JSX.Element;
+
+/** Host declaration of inbound webhook delivery. See `webhookRelay`. */
+export declare interface WebhookRelayStatus {
+    /** True ONLY when a delivery to the webhook path actually triggers a run. */
+    enabled: boolean;
+    /**
+     * Public origin the webhook URL is built from, e.g. `https://api.example.com`.
+     * Falls back to `VITE_SOCIAL_API_URL`, then to the local dev port.
+     */
+    publicUrlBase?: string;
+}
 
 declare type WildcardEvent = {
     eventType: string;

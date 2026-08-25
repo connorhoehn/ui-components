@@ -138,7 +138,10 @@ interface LayerRowProps {
 }
 
 function LayerRow({ layer, index, onUpdate, onRemove }: LayerRowProps) {
-  const range = LAYER_RANGE[layer.kind];
+  // A stored `image:adjust-layer` node can carry a layer kind from a newer
+  // build; `range.min` then threw and blanked the editor. The neighbouring
+  // KIND_LABELS lookup already degrades to a harmless label, so match it.
+  const range = LAYER_RANGE[layer.kind] ?? { min: 0, max: 100, step: 1 };
   const value = getLayerValue(layer);
 
   const handleKindChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

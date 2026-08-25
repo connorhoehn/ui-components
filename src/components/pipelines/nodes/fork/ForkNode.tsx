@@ -10,7 +10,7 @@ import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import { categoryFor } from '../categories';
 import { portCls } from '../shared/ports';
 import type { ForkNodeData } from '../../../../types/pipeline';
-import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
+import { useRetryFromStepIfWired, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type ForkData = ForkNodeData & {
   _state?: NodeExecutionState;
@@ -29,8 +29,8 @@ export default function ForkNode(props: NodeProps<ForkFlowNode>) {
   const state: NodeExecutionState = replayState ?? liveState ?? data._state ?? 'idle';
 
   // §17.6 retry-from-here — see TriggerNode for the rationale.
-  const retry = useRetryFromStep();
-  const onRetry = state === 'failed' ? () => retry(id) : undefined;
+  const retry = useRetryFromStepIfWired();
+  const onRetry = state === 'failed' && retry ? () => retry(id) : undefined;
 
   const count = Math.max(2, Math.min(8, data.branchCount ?? 2));
   const labels: string[] = Array.from({ length: count }, (_, i) => {

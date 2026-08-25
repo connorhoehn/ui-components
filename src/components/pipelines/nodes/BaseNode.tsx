@@ -135,7 +135,15 @@ export default function BaseNode(props: BaseNodeProps) {
   const isExecutable = useIsNodeTypeExecutable();
   const isPreview = props.nodeType ? !isExecutable(props.nodeType) : false;
   const { icon, subtitle, state, body, footer, selected, onRetry, hasBreakpoint, pausedAtBreakpoint, ariaLabel, category, children } = props;
-  const tokens = STATE_TOKENS[state];
+  // `state` is a 7-value union that every one of the ~37 node components feeds
+  // from a live `pipeline.step.*` websocket status or a `_state` read out of a
+  // stored definition — both cast, neither validated. A status this build does
+  // not have ('queued', 'retrying', 'timeout') made `tokens.card` throw from
+  // inside React Flow's node render, which takes the CANVAS down and with it
+  // the whole editor route. The line below already guards the category map;
+  // the state map did not. Unknown states fall back to idle styling — the node
+  // still draws, and `state` is still what the runtime said it was.
+  const tokens = STATE_TOKENS[state] ?? STATE_TOKENS.idle;
   const catTokens = category ? CATEGORY_TOKENS[category] : undefined;
   const reduceMotion = usePrefersReducedMotion();
   const [retryHover, setRetryHover] = useState(false);

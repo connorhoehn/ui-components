@@ -181,7 +181,12 @@ export function HangoutRoomsSection({
                 }
               />
             ))}
-            {overflow > 0 && (
+            {/* This row exists only to be clicked — there is nothing else to
+                read in it. `onBrowseAll` is optional, and the room rows above
+                already pass `undefined` rather than a dead handler when
+                `onJoinRoom` is missing, so gate this the same way instead of
+                rendering a "Browse all" affordance that goes nowhere. */}
+            {overflow > 0 && onBrowseAll && (
               <SidebarRow
                 data-testid="hangout-rooms-browse-all"
                 label={

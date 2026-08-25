@@ -5,6 +5,7 @@
 // positioned by start time and sized by duration.
 
 import type { StepExecution, PipelineRun } from '../../../types/pipeline';
+import { cn } from '../../../lib/cn';
 import { formatDuration } from '../utils/formatTime';
 
 export interface ExecutionTimelineProps {
@@ -132,7 +133,13 @@ export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelin
           return (
             <div
               key={nodeId}
-              className="absolute rounded-[3px] cursor-pointer transition-opacity duration-150"
+              // `onNodeClick` is optional: the bar still shows its span and
+              // its hover tooltip without one, but the pointer cursor
+              // promised a drill-in that never happened.
+              className={cn(
+                'absolute rounded-[3px] transition-opacity duration-150',
+                onNodeClick && 'cursor-pointer',
+              )}
               style={{
                 left: `${leftPercent}%`,
                 top: track * (nodeBarHeight + nodeBarGap),

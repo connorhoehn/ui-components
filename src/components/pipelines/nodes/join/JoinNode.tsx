@@ -13,7 +13,7 @@ import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import { categoryFor } from '../categories';
 import { portCls } from '../shared/ports';
 import type { JoinNodeData } from '../../../../types/pipeline';
-import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
+import { useRetryFromStepIfWired, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type JoinData = JoinNodeData & {
   _state?: NodeExecutionState;
@@ -46,8 +46,8 @@ export default function JoinNode(props: NodeProps<JoinFlowNode>) {
   const state: NodeExecutionState = replayState ?? liveState ?? data._state ?? 'idle';
 
   // §17.6 retry-from-here — see TriggerNode for the rationale.
-  const retry = useRetryFromStep();
-  const onRetry = state === 'failed' ? () => retry(id) : undefined;
+  const retry = useRetryFromStepIfWired();
+  const onRetry = state === 'failed' && retry ? () => retry(id) : undefined;
 
   // Count incoming connections. Always render at least 2 handles so the
   // node has a visible join-point even when unconnected; grow beyond the

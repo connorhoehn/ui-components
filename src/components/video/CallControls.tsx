@@ -194,14 +194,22 @@ export function CallControls({
         className="flex items-center justify-center gap-2 px-3 pb-3"
         data-testid="call-controls"
       >
-        <ControlButton
-          icon={isMuted ? icons.micOff : icons.mic}
-          label={isMuted ? 'Unmute' : 'Mute'}
-          active={isMuted}
-          onClick={onToggleMute}
-          testId="mute-button"
-        />
-        {mode === 'video' && (
+        {/* Every handler on this bar is optional and `ControlButton` has no
+            fallback behaviour, so an unwired control renders a live,
+            enabled icon button that swallows the click — the mic glyph
+            never changes and the user reads it as broken. The
+            switch-to-video and add-people controls next to these were
+            already gated on their handlers; these four were not. */}
+        {onToggleMute && (
+          <ControlButton
+            icon={isMuted ? icons.micOff : icons.mic}
+            label={isMuted ? 'Unmute' : 'Mute'}
+            active={isMuted}
+            onClick={onToggleMute}
+            testId="mute-button"
+          />
+        )}
+        {mode === 'video' && onToggleCamera && (
           <ControlButton
             icon={isCameraOn ? icons.camera : icons.cameraOff}
             label={isCameraOn ? 'Turn off camera' : 'Turn on camera'}
@@ -218,13 +226,15 @@ export function CallControls({
             testId="upgrade-to-video-button"
           />
         )}
-        <ControlButton
-          icon={icons.screenShare}
-          label={isScreenSharing ? 'Stop sharing' : 'Share screen'}
-          active={isScreenSharing}
-          onClick={onToggleScreenShare}
-          testId="screenshare-button"
-        />
+        {onToggleScreenShare && (
+          <ControlButton
+            icon={icons.screenShare}
+            label={isScreenSharing ? 'Stop sharing' : 'Share screen'}
+            active={isScreenSharing}
+            onClick={onToggleScreenShare}
+            testId="screenshare-button"
+          />
+        )}
         {(onAddParticipant || onOpenAddParticipant) && (
           <ControlButton
             icon={icons.userPlus}
@@ -238,13 +248,15 @@ export function CallControls({
             testId="add-participant-button"
           />
         )}
-        <ControlButton
-          icon={icons.phoneEnd}
-          label="End call"
-          danger
-          onClick={onEndCall}
-          testId="hangup-button"
-        />
+        {onEndCall && (
+          <ControlButton
+            icon={icons.phoneEnd}
+            label="End call"
+            danger
+            onClick={onEndCall}
+            testId="hangup-button"
+          />
+        )}
       </div>
 
       {showPicker && onAddParticipant && !onOpenAddParticipant && (

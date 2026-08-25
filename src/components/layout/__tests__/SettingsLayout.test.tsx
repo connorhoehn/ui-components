@@ -75,10 +75,21 @@ describe('SettingsLayout', () => {
   });
 
   it('renders the save bar when dirty', () => {
-    render(<SettingsLayout title="Account" sections={sections} dirty />);
+    render(<SettingsLayout title="Account" sections={sections} dirty onSave={() => undefined} />);
     expect(screen.getByTestId('settings-layout-save-bar')).toBeInTheDocument();
     expect(screen.getByText('You have unsaved changes.')).toBeInTheDocument();
     expect(screen.getByTestId('settings-layout-save')).toBeInTheDocument();
+  });
+
+  // INVERTED: this case used to render `dirty` with NO `onSave` and assert the
+  // Save button was present, pinning a button that swallowed every click and
+  // left the bar reading "You have unsaved changes" forever. `onSave` is
+  // optional and nothing in the layout can persist anything without it, so the
+  // button must not render — same rule the sibling Cancel already followed.
+  it('omits the save button when no onSave handler is wired', () => {
+    render(<SettingsLayout title="Account" sections={sections} dirty />);
+    expect(screen.getByTestId('settings-layout-save-bar')).toBeInTheDocument();
+    expect(screen.queryByTestId('settings-layout-save')).toBeNull();
   });
 
   it('fires onSave and onCancel handlers', () => {
@@ -100,7 +111,7 @@ describe('SettingsLayout', () => {
   });
 
   it('shows a saving state on the save button', () => {
-    render(<SettingsLayout title="Account" sections={sections} dirty saving />);
+    render(<SettingsLayout title="Account" sections={sections} dirty saving onSave={() => undefined} />);
     const btn = screen.getByTestId('settings-layout-save');
     expect(btn).toHaveTextContent('Saving…');
     expect((btn as HTMLButtonElement).disabled).toBe(true);
@@ -114,6 +125,7 @@ describe('SettingsLayout', () => {
         dirty
         saveLabel="Apply"
         cancelLabel="Discard"
+        onSave={() => undefined}
         onCancel={() => undefined}
       />,
     );

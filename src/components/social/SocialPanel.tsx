@@ -188,6 +188,7 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl ?? '');
   const [visibility, setVisibility] = useState<Visibility>(user.visibility);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const uid = useId();
 
   // Reset the form when a DIFFERENT user is shown — keyed on `user.id`, not
@@ -209,11 +210,19 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
     // identity is the bug this replaced.
   }, [user.id]);
 
+  // The form closes ONLY on a save the server accepted. It used to close in a
+  // `try`/`finally` with no `catch`, and `updateProfile` swallowed its own
+  // rejection, so a 500 read exactly like a success: the editor dismissed, the
+  // card repainted from the unchanged server profile, and the edit was gone
+  // with nothing on screen to say so.
   const handleSave = async () => {
     setSaving(true);
+    setSaveError(null);
     try {
       await onSave({ displayName, bio, avatarUrl: avatarUrl || undefined, visibility });
       setEditing(false);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to save profile');
     } finally {
       setSaving(false);
     }
@@ -297,6 +306,11 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
             Discard Changes
           </button>
         </div>
+        {saveError && (
+          <div role="alert" data-testid="profile-save-error" className="text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
+            {saveError}
+          </div>
+        )}
       </div>
     );
   }
@@ -455,7 +469,11 @@ function SocialGraphPanel({ followers, following, friends, followStates, onFollo
 // ---------------------------------------------------------------------------
 
 export function SocialPanel({ idToken, onMessage }: { idToken: string | null; onMessage: OnMessageFn }) {
-  const { profile, loading: profileLoading, updateProfile } = useSocialProfile({ idToken });
+  // `error` here covers the PROFILE fetch. Dropping it meant a failed load
+  // rendered as an entirely blank card below the "Social Profile" heading —
+  // no spinner, no message, no retry — because the render falls through to
+  // `null` when there is no profile.
+  const { profile, loading: profileLoading, error: profileError, updateProfile } = useSocialProfile({ idToken });
   // `error` was previously dropped on the floor, so a failed social-graph load
   // rendered as empty Followers/Following/Friends tabs with nothing to explain
   // them. Surface it in the banner this panel already has.
@@ -521,9 +539,9 @@ export function SocialPanel({ idToken, onMessage }: { idToken: string | null; on
           />
         </>
       ) : null}
-      {(formError ?? graphError) && (
+      {(formError ?? profileError ?? graphError) && (
         <div role="alert" data-testid="social-panel-error" className="text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
-          {formError ?? graphError}
+          {formError ?? profileError ?? graphError}
         </div>
       )}
     </div>

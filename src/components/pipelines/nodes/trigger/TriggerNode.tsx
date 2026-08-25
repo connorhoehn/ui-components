@@ -9,7 +9,7 @@ import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import { categoryFor } from '../categories';
 import { portCls } from '../shared/ports';
 import type { TriggerNodeData } from '../../../../types/pipeline';
-import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
+import { useRetryFromStepIfWired, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 // Some runs tag data with an ephemeral `_state` — use it if present.
 // The `& Record<string, unknown>` intersection satisfies @xyflow/react's
@@ -52,8 +52,8 @@ export default function TriggerNode(props: NodeProps<TriggerFlowNode>) {
   // §17.6 — when this node is in `failed`, wire the BaseNode retry pill to
   // PipelineRunsContext.retryFromStep. The pill itself only renders inside
   // BaseNode when both conditions hold (state === 'failed' && onRetry).
-  const retry = useRetryFromStep();
-  const onRetry = state === 'failed' ? () => retry(id) : undefined;
+  const retry = useRetryFromStepIfWired();
+  const onRetry = state === 'failed' && retry ? () => retry(id) : undefined;
 
   const ariaLabel = `Trigger node, ${subtitleFor(data)}, state: ${state}`;
 

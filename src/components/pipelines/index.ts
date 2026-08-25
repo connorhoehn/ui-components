@@ -186,10 +186,15 @@ export {
   PipelineEditorServicesProvider,
   useImageUrl,
   usePipelineEditorServices,
+  // Additive: inbound webhook delivery is a HOST property. Undeclared means
+  // "not wired", and the trigger panel says so rather than handing out a URL
+  // and a signing secret for an endpoint that answers 202 and runs nothing.
+  useWebhookRelay,
 } from './services';
 export type {
   UploadedImage as PipelineUploadedImage,
   PipelineEditorServices,
+  WebhookRelayStatus,
 } from './services';
 
 // Upstream-context derivation — what `{{context.*}}` paths and image refs are

@@ -447,14 +447,28 @@ export function CollapsibleSidebar({
                   )}
                 </div>
               )}
+              {/* The row still lists the pipeline when `onOpenPipeline` is
+                  absent — it carries a name and a status worth reading — but
+                  it must stop presenting as a button. Unguarded it was a
+                  keyboard tab stop announced as a button, with a pointer
+                  cursor and hover highlight, that swallowed both Enter and
+                  click. The "+ New" and "See all pipelines" affordances in
+                  this same section are already gated on their handler. */}
               {visiblePipelines.map(p => (
                 <div
                   key={p.id}
-                  onClick={() => onOpenPipeline?.(p.id)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={onActivationKey(() => onOpenPipeline?.(p.id))}
-                  className="flex items-center justify-between px-1 py-1 rounded cursor-pointer text-xs text-text-primary font-sans gap-1.5 min-w-0 hover:bg-surface-hover"
+                  onClick={onOpenPipeline ? () => onOpenPipeline(p.id) : undefined}
+                  role={onOpenPipeline ? 'button' : undefined}
+                  tabIndex={onOpenPipeline ? 0 : undefined}
+                  onKeyDown={
+                    onOpenPipeline
+                      ? onActivationKey(() => onOpenPipeline(p.id))
+                      : undefined
+                  }
+                  className={cn(
+                    'flex items-center justify-between px-1 py-1 rounded text-xs text-text-primary font-sans gap-1.5 min-w-0',
+                    onOpenPipeline && 'cursor-pointer hover:bg-surface-hover',
+                  )}
                 >
                   <span aria-hidden="true" className="shrink-0 text-xs w-4 text-center">
                     {p.icon ?? '\u{1F500}'}

@@ -6,6 +6,7 @@
 
 import { useState, useCallback } from 'react';
 import type { CustomFieldType } from '../types/fieldType';
+import type { ViewMode } from '../types/document';
 import { CUSTOM_FIELD_TYPE_STORAGE_KEY, isValidCustomFieldType } from '../types/fieldType';
 import { registerFieldType, getFieldType } from '../renderers/registry';
 
@@ -37,6 +38,31 @@ function persistCustomFieldTypes(types: CustomFieldType[]): void {
 // Registry integration
 // ---------------------------------------------------------------------------
 
+/**
+ * Narrow the base type's renderer manifest by the display config the user
+ * chose in step 2 of the Data Types wizard.
+ *
+ * `rendererKeys` is what config UIs offer — `DocumentTypeWizard`'s per-mode
+ * renderer picker reads exactly this, and renders "Default renderer" when a
+ * mode's list is empty. Copying the base type's manifest verbatim (what this
+ * used to do) meant a data type marked hidden-in-Read, or pinned to one
+ * renderer, still advertised the full set everywhere.
+ */
+function resolveRendererKeys(
+  ft: CustomFieldType,
+  baseKeys: Partial<Record<ViewMode, string[]>>,
+): Partial<Record<ViewMode, string[]>> {
+  if (!ft.display) return baseKeys;
+  const out: Partial<Record<ViewMode, string[]>> = {};
+  for (const [mode, keys] of Object.entries(baseKeys) as [ViewMode, string[]][]) {
+    const cfg = ft.display[mode];
+    // Explicitly hidden: offer nothing for this mode.
+    if (cfg && !cfg.visible) continue;
+    out[mode] = cfg?.renderer && keys.includes(cfg.renderer) ? [cfg.renderer] : keys;
+  }
+  return out;
+}
+
 /** Register a single user-defined field type with the renderer registry. */
 export function registerCustomFieldType(ft: CustomFieldType): void {
   const baseDef = getFieldType(ft.baseType);
@@ -46,7 +72,7 @@ export function registerCustomFieldType(ft: CustomFieldType): void {
     icon: ft.icon,
     description: ft.description,
     rendererType: ft.baseType,
-    rendererKeys: baseDef?.rendererKeys ?? {},
+    rendererKeys: resolveRendererKeys(ft, baseDef?.rendererKeys ?? {}),
     rendererLabels: baseDef?.rendererLabels ?? {},
   });
 }

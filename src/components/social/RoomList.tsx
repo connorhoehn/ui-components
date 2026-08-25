@@ -103,9 +103,12 @@ interface DMRoomButtonProps {
   onCreateDM: (peerId: string) => Promise<void>;
   loading: boolean;
   friends: PublicProfile[];
+  /** Set when the follow-graph fetch failed — `friends` is empty because we
+   *  don't know, not because the user has none. */
+  friendsError?: string | null;
 }
 
-function DMRoomButton({ onCreateDM, loading, friends }: DMRoomButtonProps) {
+function DMRoomButton({ onCreateDM, loading, friends, friendsError }: DMRoomButtonProps) {
   const [peerId, setPeerId] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -143,10 +146,23 @@ function DMRoomButton({ onCreateDM, loading, friends }: DMRoomButtonProps) {
         disabled={friends.length === 0}
         className="mb-1.5"
         options={[
-          { value: '', label: friends.length === 0 ? 'No mutual friends yet' : 'Select a friend…' },
+          {
+            value: '',
+            // An outage used to render as "No mutual friends yet" — a
+            // statement about the user's social graph that the app had no
+            // basis for. Say what actually happened instead.
+            label: friendsError
+              ? "Couldn't load your friends"
+              : friends.length === 0 ? 'No mutual friends yet' : 'Select a friend…',
+          },
           ...friends.map(f => ({ value: f.userId, label: f.displayName })),
         ]}
       />
+      {friendsError && friends.length === 0 && (
+        <div role="alert" data-testid="dm-friends-error" className="text-danger text-[11px] mb-1.5">
+          {friendsError}
+        </div>
+      )}
       <div className="flex gap-1.5">
         <button
           type="submit"
@@ -278,7 +294,11 @@ function RoomsErrorState({ message, onRetry, compact }: RoomsErrorStateProps) {
 // ---------------------------------------------------------------------------
 
 export function RoomList({ idToken, rooms, createRoom, createDM, loading, error, onRetry, onRoomSelect, activeRoomId, compact }: RoomListProps) {
-  const { friends } = useFriends({ idToken });
+  // `error` was dropped here. `useFriends` returns `friends: []` on a failed
+  // load, so an auth expiry or a 500 rendered as "No mutual friends yet" in
+  // the DM picker — the app asserting a fact about the user's social graph
+  // that it had never successfully read.
+  const { friends, error: friendsError } = useFriends({ idToken });
 
   const [showCreateForm, setShowCreateForm] = useState(false);
 
@@ -304,7 +324,7 @@ export function RoomList({ idToken, rooms, createRoom, createDM, loading, error,
             loading={loading}
           />
         )}
-        <DMRoomButton onCreateDM={createDM} loading={loading} friends={friends} />
+        <DMRoomButton onCreateDM={createDM} loading={loading} friends={friends} friendsError={friendsError} />
         <div>
           {loading && rooms.length === 0 ? (
             <div className="p-2 text-text-tertiary text-xs text-center">Loading…</div>
@@ -343,7 +363,7 @@ export function RoomList({ idToken, rooms, createRoom, createDM, loading, error,
           loading={loading}
         />
       )}
-      <DMRoomButton onCreateDM={createDM} loading={loading} friends={friends} />
+      <DMRoomButton onCreateDM={createDM} loading={loading} friends={friends} friendsError={friendsError} />
       <div className="max-h-80 overflow-y-auto">
         {loading && rooms.length === 0 ? (
           <div className="flex items-center gap-2 p-4 justify-center text-text-secondary">

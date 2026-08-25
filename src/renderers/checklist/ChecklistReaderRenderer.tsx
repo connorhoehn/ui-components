@@ -2,6 +2,7 @@ import { cn } from '../../lib/cn';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
 import TiptapEditor from '../../components/doc-editor/TiptapEditor';
+import { sectionItems } from '../sectionItems';
 
 export default function ChecklistReaderRenderer({
   section,
@@ -11,7 +12,7 @@ export default function ChecklistReaderRenderer({
   onUpdateItem,
   onNavigateToEditor,
 }: SectionRendererProps) {
-  const items = section.items;
+  const items = sectionItems(section);
   const total = items.length;
   const doneCount = items.filter(i => i.status === 'done').length;
   const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;

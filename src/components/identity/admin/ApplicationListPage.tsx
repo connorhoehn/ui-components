@@ -84,16 +84,27 @@ export function ApplicationListPage({
       {
         key: 'redirectUris',
         header: 'Redirect URIs',
-        render: (item) => (
-          <div className="flex flex-wrap gap-1">
-            {item.redirectUris.slice(0, 2).map((uri) => (
-              <Chip key={uri} tone="neutral" size="xs">{uri}</Chip>
-            ))}
-            {item.redirectUris.length > 2 && (
-              <Chip tone="neutral" size="xs">+{item.redirectUris.length - 2} more</Chip>
-            )}
-          </div>
-        ),
+        render: (item) => {
+          // `redirectUris` is typed required, but a client_credentials-only
+          // application legitimately has none and OIDC registration responses
+          // routinely omit empty arrays. This render runs inside DataTable's
+          // row map, so `undefined.slice` took the ENTIRE applications table
+          // down — all the well-formed rows with it — and left a white page.
+          const uris = Array.isArray(item.redirectUris) ? item.redirectUris : [];
+          return (
+            <div className="flex flex-wrap gap-1">
+              {uris.length === 0 && (
+                <span className="text-text-tertiary text-xs">None</span>
+              )}
+              {uris.slice(0, 2).map((uri) => (
+                <Chip key={uri} tone="neutral" size="xs">{uri}</Chip>
+              ))}
+              {uris.length > 2 && (
+                <Chip tone="neutral" size="xs">+{uris.length - 2} more</Chip>
+              )}
+            </div>
+          );
+        },
       },
     ],
     [],

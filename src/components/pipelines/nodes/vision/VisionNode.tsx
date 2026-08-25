@@ -10,7 +10,7 @@ import { categoryFor } from '../categories';
 import { portCls } from '../shared/ports';
 import { cn } from '../../../../lib/cn';
 import type { ImageVisionAnalyzeNodeData } from '../../../../types/pipeline';
-import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
+import { useRetryFromStepIfWired, useLatestStepForNode } from '../../context/PipelineRunsContext';
 import { useImageUrl } from '../../services';
 import { ImageLightbox } from '../../../shared/ImageLightbox';
 
@@ -188,12 +188,12 @@ export default function VisionNode(props: NodeProps<VisionFlowNode>) {
   const replayState = data._state && data._state !== 'idle' ? data._state : undefined;
   const state: NodeExecutionState = replayState ?? liveState ?? data._state ?? 'idle';
 
-  const retry = useRetryFromStep();
+  const retry = useRetryFromStepIfWired();
   // Hoisted out of the ternary so the identity is stable across renders —
   // an inline `() => retry(id)` was a fresh function every render and, via
   // `footerInfo`, defeated the `memo()` on VisionResponseFooter outright.
-  const doRetry = useCallback(() => retry(id), [retry, id]);
-  const onRetry = state === 'failed' ? doRetry : undefined;
+  const doRetry = useCallback(() => retry?.(id), [retry, id]);
+  const onRetry = state === 'failed' && retry ? doRetry : undefined;
 
   const body = (
     <span className="italic text-text-secondary text-[13px]">

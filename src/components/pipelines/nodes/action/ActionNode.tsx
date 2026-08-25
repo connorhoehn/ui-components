@@ -9,7 +9,7 @@ import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import { categoryFor } from '../categories';
 import { portCls } from '../shared/ports';
 import type { ActionNodeData } from '../../../../types/pipeline';
-import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
+import { useRetryFromStepIfWired, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type ActionData = ActionNodeData & {
   _state?: NodeExecutionState;
@@ -55,8 +55,8 @@ export default function ActionNode(props: NodeProps<ActionFlowNode>) {
   const state: NodeExecutionState = replayState ?? liveState ?? data._state ?? 'idle';
 
   // §17.6 retry-from-here — see TriggerNode for the rationale.
-  const retry = useRetryFromStep();
-  const onRetry = state === 'failed' ? () => retry(id) : undefined;
+  const retry = useRetryFromStepIfWired();
+  const onRetry = state === 'failed' && retry ? () => retry(id) : undefined;
 
   return (
     <BaseNode

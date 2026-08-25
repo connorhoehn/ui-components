@@ -991,20 +991,29 @@ export function usePipelineRuns(): PipelineRunsValue {
   return ctx;
 }
 
+/** Stable identity so `useRetryFromStep`'s memo doesn't churn per render. */
+const NOOP_RETRY = async (): Promise<void> => {};
+
 /**
- * Ergonomic shortcut: returns just the `retryFromStep` callback so per-node
- * components don't have to destructure the whole runs value. See §17.6.
+ * Like `useRetryFromStep`, but returns `undefined` when nothing can actually
+ * perform a retry — no `PipelineRunsProvider` and no host seam that supplies
+ * `retryFromStep`.
  *
- * Graceful when no `PipelineRunsProvider` is in scope — returns a no-op so
- * standalone visual renders (storybook, isolated unit tests) don't throw just
- * for asking for the retry handler.
+ * This is what the node components use. `useRetryFromStep` below always hands
+ * back a callable, and its no-op fallback silently defeated BaseNode's
+ * `typeof onRetry === 'function'` guard: a node in the failed state rendered
+ * its Retry pill, the click resolved into the void, and the node stayed
+ * failed with no run started and no error shown. That is reachable in normal
+ * use — `state` also comes from `data._state`, so replay/host-driven canvases
+ * hit it without any provider at all, as does a `PipelineNodeRuntimeProvider`
+ * mounted without `retryFromStep`.
  *
- * Host seam: when a `PipelineNodeRuntimeProvider` is mounted AND its value
- * supplies `retryFromStep`, that handler wins over the bundled one (wrapped
- * so callers always get a Promise back). A mounted seam WITHOUT a
- * `retryFromStep` falls through to the bundled handler / no-op as before.
+ * Deliberately NOT re-exported from `src/components/pipelines/index.ts`: the
+ * frozen public surface keeps `useRetryFromStep` with its existing signature.
  */
-export function useRetryFromStep(): (nodeId: string) => Promise<void> {
+export function useRetryFromStepIfWired():
+  | ((nodeId: string) => Promise<void>)
+  | undefined {
   const host = usePipelineNodeRuntime();
   const ctx = useContext(PipelineRunsContext);
   const hostRetry = host?.retryFromStep;
@@ -1015,8 +1024,27 @@ export function useRetryFromStep(): (nodeId: string) => Promise<void> {
         await hostRetry(nodeId);
       };
     }
-    return bundledRetry ?? (async () => {});
+    return bundledRetry ?? undefined;
   }, [hostRetry, bundledRetry]);
+}
+
+/**
+ * Ergonomic shortcut: returns just the `retryFromStep` callback so per-node
+ * components don't have to destructure the whole runs value. See §17.6.
+ *
+ * Graceful when no `PipelineRunsProvider` is in scope — returns a no-op so
+ * standalone visual renders (storybook, isolated unit tests) don't throw just
+ * for asking for the retry handler. **Callers that render a control from this
+ * must use `useRetryFromStepIfWired` instead**, or they will render a live
+ * button backed by the no-op.
+ *
+ * Host seam: when a `PipelineNodeRuntimeProvider` is mounted AND its value
+ * supplies `retryFromStep`, that handler wins over the bundled one (wrapped
+ * so callers always get a Promise back). A mounted seam WITHOUT a
+ * `retryFromStep` falls through to the bundled handler / no-op as before.
+ */
+export function useRetryFromStep(): (nodeId: string) => Promise<void> {
+  return useRetryFromStepIfWired() ?? NOOP_RETRY;
 }
 
 /**

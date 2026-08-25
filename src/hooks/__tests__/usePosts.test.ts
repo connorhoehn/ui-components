@@ -262,7 +262,13 @@ describe('editPost', () => {
       ok: false, status: 403, json: () => Promise.resolve({}),
     } as unknown as Response));
 
-    await act(async () => { await result.current.editPost('p1', 'x'); });
+    // INVERTED (was: `await result.current.editPost(...)` with no rejection
+    // expected). This mutation used to resolve on failure, which is exactly
+    // what made a rejected write look like an accepted one to every caller.
+    // It now rejects *and* sets `error`; both are asserted.
+    await act(async () => {
+      await expect(result.current.editPost('p1', 'x')).rejects.toThrow(/403/);
+    });
 
     expect(result.current.error).toMatch(/403/);
     expect(result.current.posts[0].content).toBe('Hello');
@@ -299,7 +305,13 @@ describe('deletePost', () => {
       ok: false, status: 404, json: () => Promise.resolve({}),
     } as unknown as Response));
 
-    await act(async () => { await result.current.deletePost('p1'); });
+    // INVERTED (was: `await result.current.deletePost(...)` with no rejection
+    // expected). This mutation used to resolve on failure, which is exactly
+    // what made a rejected write look like an accepted one to every caller.
+    // It now rejects *and* sets `error`; both are asserted.
+    await act(async () => {
+      await expect(result.current.deletePost('p1')).rejects.toThrow(/404/);
+    });
 
     expect(result.current.error).toMatch(/404/);
     expect(result.current.posts).toHaveLength(1);

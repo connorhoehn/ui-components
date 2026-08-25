@@ -87,13 +87,19 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
       {hasConflict && (
         <div className="flex items-center justify-between px-3 py-2 mb-2 bg-warning-bg border border-warning-border rounded text-[0.8rem] text-warning-fg">
           <span>Edits merged — your changes are preserved</span>
-          <button
-            onClick={onDismissConflict}
-            aria-label="Dismiss conflict indicator"
-            className="bg-transparent border-none cursor-pointer text-base text-warning-fg pl-3 leading-none"
-          >
-            x
-          </button>
+          {/* `hasConflict` is owned by the caller, so dismissing is only
+              possible when the caller wired `onDismissConflict`. Rendered
+              unguarded, the × was a live control that left the banner
+              sitting there — the one thing a dismiss button must not do. */}
+          {onDismissConflict && (
+            <button
+              onClick={onDismissConflict}
+              aria-label="Dismiss conflict indicator"
+              className="bg-transparent border-none cursor-pointer text-base text-warning-fg pl-3 leading-none"
+            >
+              x
+            </button>
+          )}
         </div>
       )}
 

@@ -32,6 +32,8 @@ describe('CallWidget — state composition', () => {
         mode="audio"
         participants={[]}
         callerName="Alice"
+        onAnswer={() => undefined}
+        onDecline={() => undefined}
       />,
     );
     expect(screen.getByTestId('call-widget')).toHaveAttribute('data-call-state', 'ringing');
@@ -71,6 +73,7 @@ describe('CallWidget — state composition', () => {
         mode="video"
         participants={[p('alice', 'Alice')]}
         localParticipant={p('me', 'Me')}
+        onToggleCamera={() => undefined}
       />,
     );
     expect(screen.getByTestId('call-controls')).toBeInTheDocument();

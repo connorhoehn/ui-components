@@ -253,6 +253,11 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
       setPosts((prev) => prev.map((p) => (p.postId === postId ? updated : p)));
     } catch (err) {
       setError((err as Error).message);
+      // Rethrow, like `createPost` above. Resolving on failure is what let
+      // `PostCard` close its editor unconditionally: the card snapped back to
+      // the SERVER's old text with no message anywhere, so a rejected edit and
+      // an accepted one looked identical and the typed revision was gone.
+      throw err;
     } finally {
       setMutating(false);
     }
@@ -273,6 +278,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
       setPosts((prev) => prev.filter((p) => p.postId !== postId));
     } catch (err) {
       setError((err as Error).message);
+      throw err;
     } finally {
       setMutating(false);
     }

@@ -165,7 +165,17 @@ export function LogStream({
             </div>
           ) : (
             lines.map((line) => {
+              // `line.level` is typed as a four-value union, but log lines come
+              // from a host API or a gateway socket and the type is erased at
+              // runtime — a server that emits `trace`/`fatal`/`WARN` used to
+              // make `LEVEL_LABEL[level]` undefined and `.toLowerCase()` throw,
+              // which unmounted the entire stream (every line, not just the bad
+              // one). Unknown levels now render *as themselves* in the neutral
+              // colour rather than disappearing.
               const level = line.level ?? 'info';
+              const rawLevel = String(level);
+              const levelLabel = LEVEL_LABEL[level] ?? rawLevel.toUpperCase();
+              const levelColor = LEVEL_COLOR[level] ?? LEVEL_COLOR.info;
               return (
                 <div
                   key={line.id}
@@ -183,11 +193,11 @@ export function LogStream({
                     <span
                       className={cn(
                         'shrink-0 font-semibold uppercase text-[10px] w-[44px]',
-                        LEVEL_COLOR[level],
+                        levelColor,
                       )}
-                      aria-label={`level ${LEVEL_LABEL[level].toLowerCase()}`}
+                      aria-label={`level ${rawLevel.toLowerCase()}`}
                     >
-                      {LEVEL_LABEL[level]}
+                      {levelLabel}
                     </span>
                   )}
                   {showSource && line.source && (

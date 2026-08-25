@@ -89,16 +89,23 @@ export interface PipelineRow extends PipelineIndexEntry {
 // ---------------------------------------------------------------------------
 
 function toRow(def: PipelineDefinition, fallbackIcon?: string): PipelineRow {
+  // `def` is the raw JSON.parse of a localStorage entry or a host-API record —
+  // a pipeline stored by an older build has no reason to carry every field.
+  // `nodeCount`/`icon`/`tags` below already default; `name`/`updatedAt`/
+  // `createdAt` did not, and they feed `.localeCompare` / `.toLowerCase` in
+  // the visibleRows memo. Since the DEFAULT sort is on `updatedAt`, one such
+  // stored pipeline blanked the domain's entry page on mount, with no route
+  // left to reach any of the others.
   return {
     id: def.id,
-    name: def.name,
+    name: def.name ?? '',
     status: def.status || 'draft',
-    updatedAt: def.updatedAt,
+    updatedAt: def.updatedAt ?? '',
     version: def.version,
     publishedVersion: def.publishedVersion,
     nodeCount: (def.nodes ?? []).length,
     triggerBinding: def.triggerBinding,
-    createdAt: def.createdAt,
+    createdAt: def.createdAt ?? '',
     icon: def.icon ?? fallbackIcon ?? '🔀',
     tags: def.tags ?? [],
   };

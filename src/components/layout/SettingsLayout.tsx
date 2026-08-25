@@ -217,19 +217,28 @@ export function SettingsLayout({
                 {cancelLabel}
               </button>
             )}
-            <button
-              type="button"
-              onClick={onSave}
-              data-testid={`${testId}-save`}
-              disabled={saving}
-              className={cn(
-                'px-3 py-1.5 text-[12px] font-semibold rounded-md',
-                'bg-[var(--color-primary,#6366f1)] text-white border-none',
-                saving ? 'opacity-70 cursor-progress' : 'cursor-pointer hover:opacity-90',
-              )}
-            >
-              {saving ? 'Saving…' : saveLabel}
-            </button>
+            {/* Guarded on `onSave` for the same reason Cancel is guarded on
+                `onCancel` right above: both handlers are optional, so an
+                unguarded Save renders a live, enabled primary button that
+                swallows the click and leaves the bar reading "You have
+                unsaved changes" forever. Nothing else in this component can
+                persist anything — if the caller wired no handler there is no
+                save to offer. */}
+            {onSave && (
+              <button
+                type="button"
+                onClick={onSave}
+                data-testid={`${testId}-save`}
+                disabled={saving}
+                className={cn(
+                  'px-3 py-1.5 text-[12px] font-semibold rounded-md',
+                  'bg-[var(--color-primary,#6366f1)] text-white border-none',
+                  saving ? 'opacity-70 cursor-progress' : 'cursor-pointer hover:opacity-90',
+                )}
+              >
+                {saving ? 'Saving…' : saveLabel}
+              </button>
+            )}
           </div>
         </div>
       )}

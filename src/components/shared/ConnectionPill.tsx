@@ -39,8 +39,12 @@ export function ConnectionPill({
   className,
   'data-testid': testId = 'connection-pill',
 }: ConnectionPillProps) {
-  const cfg = STATE_CONFIG[state];
-  const label = labels?.[state] ?? cfg.label;
+  // This renders in the app shell header, so an unrecognised socket state
+  // took the entire top bar down — precisely when the user most needed to see
+  // the connection state. Fall back to showing the raw value rather than
+  // hiding it: "closing" is more useful than a blank header.
+  const cfg = STATE_CONFIG[state] as (typeof STATE_CONFIG)[keyof typeof STATE_CONFIG] | undefined;
+  const label = labels?.[state] ?? cfg?.label ?? String(state);
   const showLabel = withLabel && !compact;
 
   return (
@@ -52,9 +56,9 @@ export function ConnectionPill({
       data-state={state}
       className={cn('inline-flex items-center gap-1.5 font-mono', className)}
     >
-      <span aria-hidden="true" className={cfg.colorClass}>⬤</span>
+      <span aria-hidden="true" className={cfg?.colorClass}>⬤</span>
       {showLabel && (
-        <span className={cn(cfg.colorClass, 'font-semibold')}>{label}</span>
+        <span className={cn(cfg?.colorClass, 'font-semibold')}>{label}</span>
       )}
     </span>
   );

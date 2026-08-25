@@ -41,7 +41,10 @@ export interface SocialTabContentProps {
 
 function CollapsibleSection({ title, count, unreadTotal, defaultOpen = true, children }: {
   title: string;
-  count: number;
+  /** Item count shown on the right of the header. Omit when the section's
+   *  contents are owned by a child component and this shell cannot count
+   *  them — rendering a made-up number is worse than rendering none. */
+  count?: number;
   unreadTotal?: number;
   defaultOpen?: boolean;
   children: React.ReactNode;
@@ -70,7 +73,9 @@ function CollapsibleSection({ title, count, unreadTotal, defaultOpen = true, chi
             {unreadTotal > 99 ? '99+' : unreadTotal}
           </span>
         )}
-        <span className="text-[11px] text-text-secondary">{count}</span>
+        {count !== undefined && (
+          <span className="text-[11px] text-text-secondary">{count}</span>
+        )}
       </button>
       {open && children}
     </div>
@@ -95,7 +100,11 @@ function SidebarRoomRow({ room, isActive, unread, onClick }: {
         isActive
           ? 'bg-primary/15 text-primary font-semibold'
           : unread > 0
-            ? 'bg-transparent text-surface-hover font-semibold'
+            // `text-surface-hover` is a SURFACE token: this painted the label
+            // of every unread room in the sidebar's own background colour, so
+            // the rooms with something new in them were the only unreadable
+            // rows in the list.
+            ? 'bg-transparent text-text-primary font-semibold'
             : 'bg-transparent text-text-tertiary font-normal',
       )}
     >
@@ -300,7 +309,11 @@ export default function SocialTabContent({
           </CollapsibleSection>
 
           {/* Groups section */}
-          <CollapsibleSection title="Groups" count={0} defaultOpen={false}>
+          {/* No `count`: this shell has no groups data — `GroupPanel` owns its
+              own `useGroups`. It used to pass a hard-coded 0, so the Groups
+              header read "0" no matter how many groups were listed directly
+              underneath it. */}
+          <CollapsibleSection title="Groups" defaultOpen={false}>
             <GroupPanel
               idToken={idToken}
               rooms={rooms}

@@ -6,6 +6,7 @@
 import { useRef } from 'react';
 import type { SectionRendererProps } from '../types';
 import TaskList from '../../components/doc-editor/TaskList';
+import { sectionItems } from '../sectionItems';
 
 export default function TasksEditorRenderer({
   section,
@@ -14,6 +15,7 @@ export default function TasksEditorRenderer({
   onUpdateItem,
   onRemoveItem,
 }: SectionRendererProps) {
+  const items = sectionItems(section);
   const focusLastItemRef = useRef(false);
 
   const handleAddItem = () => {
@@ -31,9 +33,9 @@ export default function TasksEditorRenderer({
 
   return (
     <div className="py-1">
-      {section.items.length > 0 || editable ? (
+      {items.length > 0 || editable ? (
         <TaskList
-          items={section.items}
+          items={items}
           editable={editable}
           onUpdateItem={(id, patch) => onUpdateItem?.(id, patch)}
           onRemoveItem={(id) => onRemoveItem?.(id)}
@@ -41,7 +43,7 @@ export default function TasksEditorRenderer({
         />
       ) : null}
 
-      {section.items.length === 0 && !editable && (
+      {items.length === 0 && !editable && (
         <p className="text-text-tertiary text-[13px] italic my-2">
           No items yet.
         </p>

@@ -139,7 +139,13 @@ describe('updateProfile', () => {
       ok: false, status: 422, json: () => Promise.resolve({}),
     } as unknown as Response));
 
-    await act(async () => { await result.current.updateProfile({ displayName: 'x' }); });
+    // INVERTED (was: `await result.current.updateProfile(...)` with no rejection
+    // expected). This mutation used to resolve on failure, which is exactly
+    // what made a rejected write look like an accepted one to every caller.
+    // It now rejects *and* sets `error`; both are asserted.
+    await act(async () => {
+      await expect(result.current.updateProfile({ displayName: 'x' })).rejects.toThrow(/422/);
+    });
 
     expect(result.current.error).toMatch(/422/);
   });

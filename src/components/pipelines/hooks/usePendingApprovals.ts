@@ -377,8 +377,13 @@ export function usePendingApprovalsState(): PendingApprovalsState {
   // -------------------------------------------------------------------------
 
   const approvals = useMemo<PendingApproval[]>(() => {
+    // The legacy array form of this hook feeds AppLayout's sub-nav badge count,
+    // so this sort runs inside the APP SHELL. `requestedAt` is copied verbatim
+    // from the approvals API (every sibling field on the same object gets a
+    // `??` default), and one row without it threw here and unmounted the entire
+    // application — on every route.
     return Object.values(approvalsMap).sort((a, b) =>
-      b.requestedAt.localeCompare(a.requestedAt),
+      String(b.requestedAt ?? '').localeCompare(String(a.requestedAt ?? '')),
     );
   }, [approvalsMap]);
 

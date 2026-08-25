@@ -17,7 +17,8 @@ import { Input } from '../forms/Input';
 import { Textarea } from '../forms/Textarea';
 import { Select } from '../forms/Select';
 import { Checkbox } from '../forms/Checkbox';
-import type { CustomFieldType } from '../../types/fieldType';
+import type { CustomFieldType, CustomFieldTypeDisplay } from '../../types/fieldType';
+import type { ViewMode } from '../../types/document';
 
 // ---------------------------------------------------------------------------
 // Primitive storage types — Drupal-style field type catalogue
@@ -234,11 +235,11 @@ function Step1({
 // Step 2 — Display (visibility + formatter per view mode)
 // ---------------------------------------------------------------------------
 
-const VIEW_MODES = [
+const VIEW_MODES: ReadonlyArray<{ key: ViewMode; label: string }> = [
   { key: 'editor', label: 'Editor' },
   { key: 'ack',    label: 'Review' },
   { key: 'reader', label: 'Read'   },
-] as const;
+];
 
 // Minimal renderer key catalogue for each view mode, keyed by rendererBase
 const RENDERER_KEYS: Record<string, Record<string, string[]>> = {
@@ -253,6 +254,18 @@ const RENDERER_KEYS: Record<string, Record<string, string[]>> = {
     reader: ['checklist:reader'],
   },
 };
+
+/**
+ * The renderer actually in force for a view mode: the user's pick while it is
+ * still one of the options the selected primitive type offers, otherwise the
+ * first option. The clamp matters because the user can go Back from step 2,
+ * change the field type, and return — a `rich-text:reader` pick must not
+ * survive onto a `checklist` field.
+ */
+function effectiveRenderer(chosen: string | undefined, options: string[]): string | undefined {
+  if (options.length === 0) return undefined;
+  return chosen && options.includes(chosen) ? chosen : options[0];
+}
 
 const RENDERER_LABELS: Record<string, string> = {
   'rich-text:editor': 'Rich Text Editor',
@@ -328,7 +341,7 @@ function Step2({
                 {isVisible && options.length > 0 && (
                   <Select
                     aria-label={`${m.label} renderer`}
-                    value={formatters[m.key] ?? options[0]}
+                    value={effectiveRenderer(formatters[m.key], options) ?? ''}
                     onChange={e => setFormatters({ ...formatters, [m.key]: e.target.value })}
                     options={options.map(key => ({ value: key, label: RENDERER_LABELS[key] ?? key }))}
                   />
@@ -365,13 +378,32 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
   const prim = PRIMITIVE_STORAGE_TYPES.find(p => p.id === primitiveType);
   const rendererKeys = prim?.rendererBase ? RENDERER_KEYS[prim.rendererBase] ?? {} : {};
 
-  const [formatters, setFormatters] = useState<Record<string, string>>(() => ({
-    editor: (rendererKeys['editor'] ?? [])[0] ?? '',
-    ack:    (rendererKeys['ack']    ?? [])[0] ?? '',
-    reader: (rendererKeys['reader'] ?? [])[0] ?? '',
-  }));
-  const [visibility, setVisibility] = useState<Record<string, boolean>>({
-    editor: true, ack: true, reader: true,
+  // Seeded from what was SAVED, not from the primitive type's defaults.
+  //
+  // The old initialiser computed `rendererKeys[mode][0] ?? ''` — but a lazy
+  // useState initialiser runs exactly once, on mount, and in create mode
+  // `primitiveType` is still `''` at that point. So `prim` was undefined,
+  // every entry was `''`, and because `''` is not nullish, step 2's
+  // `formatters[m.key] ?? options[0]` fallback never fired: the renderer
+  // dropdowns rendered with a value matching no option, i.e. blank.
+  //
+  // Store only keys we actually have. "Unset" is `undefined`, so the fallback
+  // in `effectiveRenderer` works, and it is recomputed against the CURRENT
+  // primitive type on every render rather than frozen at mount.
+  const [formatters, setFormatters] = useState<Record<string, string>>(() => {
+    const seeded: Record<string, string> = {};
+    for (const m of VIEW_MODES) {
+      const saved = initial?.display?.[m.key]?.renderer;
+      if (saved) seeded[m.key] = saved;
+    }
+    return seeded;
+  });
+  const [visibility, setVisibility] = useState<Record<string, boolean>>(() => {
+    const seeded: Record<string, boolean> = {};
+    for (const m of VIEW_MODES) {
+      seeded[m.key] = initial?.display?.[m.key]?.visible ?? true;
+    }
+    return seeded;
   });
 
   const canNext = !!primitiveType && !!prim?.rendererBase;
@@ -385,12 +417,28 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
 
   const handleSave = () => {
     const baseType = prim?.rendererBase ?? 'rich-text';
+
+    // Step 2 used to go nowhere: the payload carried name/icon/description/
+    // primitiveType/baseType and nothing else, so the Visible checkboxes and
+    // the renderer pickers were discarded on every save.
+    const display: Partial<Record<ViewMode, CustomFieldTypeDisplay>> = {};
+    for (const m of VIEW_MODES) {
+      const visible = visibility[m.key] ?? true;
+      // Resolve against the primitive type selected NOW, so what is persisted
+      // is what step 2 was actually showing.
+      const renderer = visible
+        ? effectiveRenderer(formatters[m.key], rendererKeys[m.key] ?? [])
+        : undefined;
+      display[m.key] = renderer ? { visible, renderer } : { visible };
+    }
+
     onSave({
       name: name.trim(),
       icon: '',
       description: description.trim(),
       primitiveType,
       baseType,
+      display,
     });
   };
 

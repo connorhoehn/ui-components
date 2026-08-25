@@ -13,6 +13,7 @@ import DefaultRenderer from '../../renderers/default/DefaultRenderer';
 import type { CommentThread } from '../../types/document';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
+import { ErrorBoundary } from '../misc/ErrorBoundary';
 
 export interface SectionBlockProps {
   section: Section;
@@ -231,24 +232,35 @@ export default function SectionBlock({
 
       {!collapsed && (
         <div className={cn('p-3.5')}>
-          <Renderer
-            section={section}
-            viewMode="editor"
-            editable={editable}
-            fragment={fragment}
-            ydoc={ydoc}
-            provider={provider}
-            user={user}
-            onUpdateSection={onUpdateSection}
-            onAddItem={onAddItem}
-            onUpdateItem={onUpdateItem}
-            onRemoveItem={onRemoveItem}
-            participants={participants}
-            onUpdateCursorInfo={onUpdateCursorInfo}
-            comments={comments}
-            commentCount={commentCount}
-            onOpenComments={onOpenComments}
-          />
+          {/*
+            Section renderers are handed data straight off the CRDT / the host
+            API, so a single malformed item (an unknown status, a missing
+            `items` array, a null entry) can make one renderer throw. Without a
+            boundary here that throw unmounts SectionList and the *whole
+            document* goes blank — every other, well-formed section is lost with
+            it. Scoping the boundary to this one section keeps the damage to the
+            row that actually has bad data.
+          */}
+          <ErrorBoundary name={`section:${section.id}`}>
+            <Renderer
+              section={section}
+              viewMode="editor"
+              editable={editable}
+              fragment={fragment}
+              ydoc={ydoc}
+              provider={provider}
+              user={user}
+              onUpdateSection={onUpdateSection}
+              onAddItem={onAddItem}
+              onUpdateItem={onUpdateItem}
+              onRemoveItem={onRemoveItem}
+              participants={participants}
+              onUpdateCursorInfo={onUpdateCursorInfo}
+              comments={comments}
+              commentCount={commentCount}
+              onOpenComments={onOpenComments}
+            />
+          </ErrorBoundary>
         </div>
       )}
     </div>

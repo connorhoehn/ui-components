@@ -148,6 +148,14 @@ declare interface AgentsContextValue {
     refreshAgents: () => void;
     getAgent: (id: string) => AgentDefinition | undefined;
     getMetrics: (agentId: string) => AgentMetrics | undefined;
+    /** Provenance of `agents`. `'fixture'` means synthetic sample data. */
+    agentsSource: AgentsSource;
+    /** Provenance of `metrics`. `'fixture'` means synthetic sample data. */
+    metricsSource: AgentsSource;
+    /** True while a `baseUrl` fetch is in flight. */
+    isLoading: boolean;
+    /** Last fetch failure. Non-null with a `'fixture'` source means the live data is unavailable. */
+    error: string | null;
 }
 
 export declare function AgentsDashboardPage({ onAgentClick, className }: AgentsDashboardPageProps): JSX.Element;
@@ -166,14 +174,43 @@ declare interface AgentsLayoutProps {
     baseUrl?: string;
 }
 
-export declare function AgentsProvider({ children, agents: initialAgents, metrics: initialMetrics, baseUrl: _baseUrl, }: AgentsProviderProps): JSX.Element;
+export declare function AgentsProvider({ children, agents: initialAgents, metrics: initialMetrics, baseUrl, }: AgentsProviderProps): JSX.Element;
 
 declare interface AgentsProviderProps {
     children: ReactNode;
     agents?: AgentDefinition[];
     metrics?: AgentMetrics[];
+    /**
+     * Base URL of the agent registry. When set, the provider fetches
+     * `GET {baseUrl}/agents` and `GET {baseUrl}/agents/metrics` on mount —
+     * matching the endpoints `useAgentRegistry` / `useAgentMetrics` already
+     * call — and flips the matching `*Source` to `'remote'`.
+     *
+     * Ignored for whichever of `agents` / `metrics` was passed as a prop:
+     * an explicit host-supplied array always wins over a fetch.
+     */
     baseUrl?: string;
 }
+
+/**
+ * Where the provider's `agents` / `metrics` actually came from.
+ *
+ * Same discriminator `useAgentRegistry` exposes as `AgentRegistrySource` and
+ * `useAgentMetrics` as `AgentMetricsSource`, with one extra member those hooks
+ * don't need: the provider also accepts `agents` / `metrics` PROPS, which are
+ * real host data and must not be labelled `'fixture'`.
+ *
+ * - `'provided'` — the host passed the array in as a prop.
+ * - `'remote'`   — fetched from `baseUrl`.
+ * - `'fixture'`  — synthetic sample data from `agentsFixture`. Shown when no
+ *                  `baseUrl` is configured, before the first fetch settles,
+ *                  and when a fetch fails. **Surface this in the UI.** Before
+ *                  v2.90 the provider accepted `baseUrl` and discarded it, so
+ *                  `AgentsDashboardPage` rendered invented invocation counts
+ *                  and health badges that were indistinguishable from a live
+ *                  fleet.
+ */
+export declare type AgentsSource = 'fixture' | 'remote' | 'provided';
 
 export declare type AgentStatus = 'healthy' | 'degraded' | 'offline' | 'deploying';
 

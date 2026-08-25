@@ -2808,7 +2808,11 @@ function Ae(e) {
 	return t < 0 ? "just now" : t < 6e4 ? `${Math.floor(t / 1e3)}s ago` : t < 36e5 ? `${Math.floor(t / 6e4)}m ago` : t < 864e5 ? `${Math.floor(t / 36e5)}h ago` : `${Math.floor(t / 864e5)}d ago`;
 }
 function je() {
-	let { entries: e, loading: t, error: r, replay: i, drop: a } = n();
+	let { entries: e, loading: t, error: r, replay: i, drop: a } = n(), [o, s] = w(null), c = (e) => {
+		s(null), e.catch((e) => {
+			s(e instanceof Error ? e.message : String(e));
+		});
+	};
 	return /* @__PURE__ */ D("div", {
 		"data-testid": "ingest-dlq-page",
 		className: "p-6 flex flex-col gap-3",
@@ -2828,6 +2832,20 @@ function je() {
 				className: "px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3",
 				children: r
 			}) : null,
+			o ? /* @__PURE__ */ D("div", {
+				"data-testid": "ingest-dlq-action-error",
+				role: "alert",
+				className: "px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-3",
+				children: [/* @__PURE__ */ D("span", {
+					className: "text-[13px] font-medium",
+					children: ["That entry was not updated: ", o]
+				}), /* @__PURE__ */ E("button", {
+					type: "button",
+					onClick: () => s(null),
+					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]",
+					children: "Dismiss"
+				})]
+			}) : null,
 			t && e.length === 0 ? /* @__PURE__ */ D("div", {
 				className: "flex flex-col gap-3",
 				children: [
@@ -2845,8 +2863,8 @@ function je() {
 				className: "flex flex-col gap-3",
 				children: e.map((e) => /* @__PURE__ */ E(Me, {
 					entry: e,
-					onReplay: () => void i(e.id),
-					onDrop: () => void a(e.id)
+					onReplay: () => c(i(e.id)),
+					onDrop: () => c(a(e.id))
 				}, e.id))
 			})
 		]
@@ -2896,7 +2914,11 @@ function Me({ entry: e, onReplay: t, onDrop: n }) {
 //#endregion
 //#region src/components/ingest/DocTypeProposalsPage.tsx
 function Ne() {
-	let { proposals: e, loading: t, error: n, promote: r, reject: i } = u();
+	let { proposals: e, loading: t, error: n, promote: r, reject: i } = u(), [a, o] = w(null), s = (e) => {
+		o(null), e.catch((e) => {
+			o(e instanceof Error ? e.message : String(e));
+		});
+	};
 	return /* @__PURE__ */ D("div", {
 		"data-testid": "doctype-proposals-page",
 		className: "p-6 flex flex-col gap-3",
@@ -2916,6 +2938,20 @@ function Ne() {
 				className: "px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3",
 				children: ["Couldn't load DocType proposals: ", n]
 			}) : null,
+			a ? /* @__PURE__ */ D("div", {
+				"data-testid": "proposals-action-error",
+				role: "alert",
+				className: "px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-3",
+				children: [/* @__PURE__ */ D("span", {
+					className: "text-[13px] font-medium",
+					children: ["That proposal was not updated: ", a]
+				}), /* @__PURE__ */ E("button", {
+					type: "button",
+					onClick: () => o(null),
+					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]",
+					children: "Dismiss"
+				})]
+			}) : null,
 			t && e.length === 0 ? /* @__PURE__ */ D("div", {
 				className: "flex flex-col gap-3",
 				children: [/* @__PURE__ */ E(h, { height: 120 }), /* @__PURE__ */ E(h, { height: 120 })]
@@ -2929,8 +2965,8 @@ function Ne() {
 				className: "flex flex-col gap-3",
 				children: e.map((e) => /* @__PURE__ */ E(Pe, {
 					proposal: e,
-					onPromote: () => void r(e.proposalId),
-					onReject: () => void i(e.proposalId)
+					onPromote: () => s(r(e.proposalId)),
+					onReject: () => s(i(e.proposalId))
 				}, e.proposalId))
 			})
 		]

@@ -2,6 +2,7 @@
 //
 // Operator promotion queue for auto-discovered DocType proposals.
 
+import { useState } from 'react';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
 import { useDocTypeProposals } from '../../hooks/useDocTypeProposals';
@@ -9,6 +10,20 @@ import type { DocTypeProposalRow } from '../../hooks/useDocTypeProposals';
 
 export default function DocTypeProposalsPage() {
   const { proposals, loading, error, promote, reject } = useDocTypeProposals();
+  // `promote` / `reject` REJECT on a non-2xx response. Both call sites were
+  // `void promote(...)`, so a failed decision produced an unhandled promise
+  // rejection and nothing else: the row stayed in the list, no message
+  // appeared, and the operator's only reading was that Promote is broken —
+  // or, worse, that the promotion had silently gone through. Same shape and
+  // same treatment as MappingReviewPage.
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const runAction = (promise: Promise<void>): void => {
+    setActionError(null);
+    void promise.catch((err: unknown) => {
+      setActionError(err instanceof Error ? err.message : String(err));
+    });
+  };
 
   return (
     <div data-testid="doctype-proposals-page" className="p-6 flex flex-col gap-3">
@@ -23,6 +38,28 @@ export default function DocTypeProposalsPage() {
       {error ? (
         <div data-testid="proposals-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
           Couldn't load DocType proposals: {error}
+        </div>
+      ) : null}
+
+      {/* Action-failure banner. Kept separate from the load error above so a
+          rejected Promote never claims the queue failed to load — the list
+          below it is correct and stays visible. */}
+      {actionError ? (
+        <div
+          data-testid="proposals-action-error"
+          role="alert"
+          className="px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-3"
+        >
+          <span className="text-[13px] font-medium">
+            That proposal was not updated: {actionError}
+          </span>
+          <button
+            type="button"
+            onClick={() => setActionError(null)}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
+          >
+            Dismiss
+          </button>
         </div>
       ) : null}
 
@@ -44,8 +81,8 @@ export default function DocTypeProposalsPage() {
             <ProposalRow
               key={p.proposalId}
               proposal={p}
-              onPromote={() => void promote(p.proposalId)}
-              onReject={() => void reject(p.proposalId)}
+              onPromote={() => runAction(promote(p.proposalId))}
+              onReject={() => runAction(reject(p.proposalId))}
             />
           ))}
         </div>

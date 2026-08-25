@@ -118,21 +118,29 @@ export function useChat(options: UseChatOptions): UseChatReturn {
     // Join the channel
     sendMessage({ service: 'chat', action: 'join', channel: currentChannel });
 
-    // Note: messages are cleared in the cleanup function of the previous
-    // effect iteration, so no need to clear here.
-
-    // Cleanup: leave channel when channel changes or unmounts
+    // Cleanup: leave channel when channel changes, disconnects, or unmounts.
     return () => {
       sendMessageRef.current({
         service: 'chat',
         action: 'leave',
         channel: currentChannel,
       });
-      // Clear messages on channel exit
-      setMessages([]);
     };
   }, [currentChannel, connectionState]); // eslint-disable-line react-hooks/exhaustive-deps
   // sendMessage intentionally excluded — we use sendMessageRef for stable access.
+
+  // Clearing belongs to the CHANNEL, not to the connection.
+  //
+  // `setMessages([])` used to live in the cleanup above, whose deps include
+  // `connectionState` — so it also ran on every disconnect. A two-second
+  // network blip therefore wiped the entire transcript and `ChatPanel` fell
+  // back to "Chat (0) / No messages yet", telling the user the channel was
+  // empty until the server got around to replaying history. The messages are
+  // still true while the socket is down; only a channel switch invalidates
+  // them.
+  useEffect(() => {
+    setMessages([]);
+  }, [currentChannel]);
 
   // ---- send() ---------------------------------------------------------------
   // Stable callback — accesses current channel and sendMessage via refs

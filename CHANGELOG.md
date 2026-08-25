@@ -8,6 +8,68 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.97.0] — 2026-08-24
+
+Four audits were cut short by a session limit before any of them committed.
+This is the salvaged work, re-verified — see the note at the end, which
+matters more than the list.
+
+### Fixed — controls that looked live and were not
+
+- **A failed pipeline node showed a Retry pill that did nothing.** `BaseNode`
+  guards on `typeof onRetry === 'function'`, and `useRetryFromStep` — a frozen
+  export — returns a resolving **no-op** when no `PipelineRunsProvider` is in
+  scope, deliberately, so isolated renders don't throw. A no-op is still a
+  function, so the guard passed and the pill rendered. Clicking it did nothing,
+  silently, forever. New `useRetryFromStepIfWired` returns `undefined` when
+  nothing is wired; it is **not** re-exported from the barrel, so the frozen
+  surface is unchanged.
+- `AgentsProvider` accepted a `baseUrl` and ignored it, serving fixtures with
+  no discriminator — an operator read invented agent health as their fleet's.
+  The dashboard now says so plainly.
+- `useGroups` never fetched on mount, so `GroupPanel` always read "No groups
+  yet". It now hydrates, with a monotonic request id (**not** a shared boolean
+  ref — that pattern has caused three separate bugs here), and distinguishes a
+  failed load from a failed mutation: a rejected "create group" must not blank
+  a list that loaded perfectly well.
+
+### Fixed — crashes on data the component didn't expect
+
+A library's props cross a trust boundary. The types are erased at runtime, and
+these all took down more than themselves:
+
+- `DataTable` threw on `data`/`columns` being `undefined` — a host mid-fetch
+  destroyed the page, not just the table. Now renders its empty state.
+- `StatusPill` threw on a run state outside its union. It is the
+  most-instantiated status component in the library and almost always sits in
+  a table cell, so one unrecognised job state took the whole table down. It now
+  degrades its **styling** and keeps the real value in the label and
+  `data-state` — an unknown status stays legible and reportable.
+- `ConnectionPill` threw on an unrecognised socket state, taking down the app
+  shell header exactly when the user most needed to see the connection state.
+- `Avatar` threw on `name: null` — a user who never set a display name. Passing
+  `initials` did not rescue it, because `nameToColor(name)` runs first.
+- `PermissionDeniedCard` threw on the browser's own `PermissionState` of
+  `'prompt'`, which its narrower union omits — it indexed a copy map to
+  `undefined` and then **called** it.
+- `LineChart` threw on `{label, data: null}`, which a metrics API returns
+  routinely for a series with no samples in the window. It merges during the
+  *parent's* render, so the throw blanked the whole dashboard row.
+
+### Note — how this was verified
+
+Two of the four agents died **before** their revert-and-verify pass, so their
+fixes arrived unproven. That matters more than any single fix here:
+
+- The 14 crash tests are self-verifying — they were written before the
+  implementations and observed failing against unfixed source, then passing.
+- Reverting `useGroups` fails 5 tests. Confirmed.
+- **Reverting the retry-pill fix failed nothing at all.** The behaviour had no
+  test; neutering `useRetryFromStepIfWired` back into a no-op left the suite
+  green. A test now pins it, and was confirmed to fail against the neutered
+  version before being kept. This is exactly the hole the revert step exists
+  to find, and it only surfaced because the step was run.
+
 ## [2.96.0] — 2026-08-24
 
 Six parallel efforts. **~60 bugs.** Tests 4,749 → 4,883.

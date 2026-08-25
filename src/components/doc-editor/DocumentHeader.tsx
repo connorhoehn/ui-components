@@ -153,14 +153,21 @@ export default function DocumentHeader({
         </div>
         <div className={cn('flex items-center gap-2')}>
 
-          {/* My Items — always visible */}
-          <button
-            type="button"
-            className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-text-primary cursor-pointer font-[inherit] relative')}
-            onClick={onToggleMyItems}
-          >
-            My Items{myItemCount ? ` (${myItemCount})` : ''}
-          </button>
+          {/* My Items — visible when the host wired the panel. It used to say
+              "always visible" and render unguarded, but `onToggleMyItems` is
+              optional and nothing else opens that panel, so without it the
+              button (and its item count) was pure decoration: clicking it did
+              nothing at all. The Call button beside it was already gated on
+              `onToggleVideoCall` for exactly this reason. */}
+          {onToggleMyItems && (
+            <button
+              type="button"
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-text-primary cursor-pointer font-[inherit] relative')}
+              onClick={onToggleMyItems}
+            >
+              My Items{myItemCount ? ` (${myItemCount})` : ''}
+            </button>
+          )}
 
           {/* Call button — always visible when available */}
           {onToggleVideoCall && (
@@ -176,24 +183,30 @@ export default function DocumentHeader({
             </button>
           )}
 
-          {/* Finalize / Unlock */}
-          {meta.status === 'final' ? (
-            <button
-              type="button"
-              className={cn('py-1.5 px-3 text-[13px] font-medium border border-success-border rounded-md bg-success-bg text-success-fg cursor-pointer font-[inherit] relative')}
-              onClick={onUnlock}
-            >
-              Unlock
-            </button>
-          ) : (
-            <button
-              type="button"
-              className={cn('py-1.5 px-3 text-[13px] font-medium border border-success-border rounded-md bg-success-bg text-success-fg cursor-pointer font-[inherit] relative')}
-              onClick={onFinalize}
-            >
-              Finalize
-            </button>
-          )}
+          {/* Finalize / Unlock — the status transition lives entirely with the
+              host (`onFinalize` / `onUnlock` are both optional and neither has
+              a local fallback). Rendered unguarded, a caller that wired
+              neither got a live "Finalize" button whose click left the doc in
+              draft with no message. */}
+          {meta.status === 'final'
+            ? onUnlock && (
+              <button
+                type="button"
+                className={cn('py-1.5 px-3 text-[13px] font-medium border border-success-border rounded-md bg-success-bg text-success-fg cursor-pointer font-[inherit] relative')}
+                onClick={onUnlock}
+              >
+                Unlock
+              </button>
+            )
+            : onFinalize && (
+              <button
+                type="button"
+                className={cn('py-1.5 px-3 text-[13px] font-medium border border-success-border rounded-md bg-success-bg text-success-fg cursor-pointer font-[inherit] relative')}
+                onClick={onFinalize}
+              >
+                Finalize
+              </button>
+            )}
 
           {/* More — secondary actions + export */}
           <div className={cn('relative')}>

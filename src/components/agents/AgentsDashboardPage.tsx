@@ -1,4 +1,5 @@
 import { cn } from '../../lib/cn';
+import Banner from '../shared/Banner';
 import { useAgentsContext } from './context/AgentsContext';
 import { AgentCard } from './components/AgentCard';
 import { GuardrailBadge } from './components/GuardrailBadge';
@@ -9,7 +10,14 @@ interface AgentsDashboardPageProps {
 }
 
 export function AgentsDashboardPage({ onAgentClick, className }: AgentsDashboardPageProps) {
-  const { agents, metrics } = useAgentsContext();
+  const { agents, metrics, agentsSource, metricsSource, error } = useAgentsContext();
+
+  // Every number below is derived from `agents` / `metrics`. When either is
+  // still the built-in fixture, this page renders a plausible fleet — "Healthy:
+  // 4", "Invocations (24h): 22,290" — in exactly the type it uses for live
+  // data. Say so, rather than letting an operator read sample data as their
+  // own deployment.
+  const usingFixtures = agentsSource === 'fixture' || metricsSource === 'fixture';
 
   const healthy = agents.filter((a) => a.status === 'healthy').length;
   const degraded = agents.filter((a) => a.status === 'degraded').length;
@@ -23,6 +31,14 @@ export function AgentsDashboardPage({ onAgentClick, className }: AgentsDashboard
 
   return (
     <div className={cn('space-y-6', className)}>
+      {usingFixtures && (
+        <Banner variant="warning" title="Sample data" data-testid="agents-fixture-banner">
+          {error
+            ? `The agent registry could not be reached (${error}). The figures below are built-in sample data, not your fleet.`
+            : 'No agent registry is configured, so the figures below are built-in sample data, not your fleet.'}
+        </Banner>
+      )}
+
       {/* Summary stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <StatCard label="Total Agents" value={agents.length} />

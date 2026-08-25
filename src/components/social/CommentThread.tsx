@@ -57,16 +57,27 @@ interface ReplyFormProps {
 
 function ReplyForm({ onSubmit, placeholder = 'Write a reply…', loading }: ReplyFormProps) {
   const [content, setContent] = useState('');
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Fire-and-forget + unconditional `setContent('')`: the box emptied whether
+  // the comment was accepted or rejected, so a failed post read as a
+  // successful one and the user's text was unrecoverable. Keep it on failure.
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
-    void onSubmit(content.trim());
+    const text = content.trim();
+    if (!text) return;
+    setSubmitError(null);
+    try {
+      await onSubmit(text);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Failed to post comment');
+      return;
+    }
     setContent('');
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
+    <form onSubmit={(e) => { void handleSubmit(e); }} className="flex flex-wrap gap-2 mt-2">
       <Input
         value={content}
         onChange={e => setContent(e.target.value)}
@@ -85,6 +96,11 @@ function ReplyForm({ onSubmit, placeholder = 'Write a reply…', loading }: Repl
       >
         Comment
       </button>
+      {submitError && (
+        <div role="alert" data-testid="comment-submit-error" className="basis-full text-danger text-[13px]">
+          {submitError}
+        </div>
+      )}
     </form>
   );
 }
@@ -161,7 +177,7 @@ function CommentItemView({ comment, currentUserId, loading, onDelete, onReply }:
                   Cancel
                 </button>
                 <button
-                  onClick={() => { void onDelete(comment.commentId); setShowConfirmDelete(false); }}
+                  onClick={() => { void onDelete(comment.commentId).then(() => setShowConfirmDelete(false), () => undefined); }}
                   className="text-xs text-white bg-danger border-none rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]"
                 >
                   Delete
@@ -248,6 +264,13 @@ export function CommentThread({ idToken, roomId, postId, onMessage }: CommentThr
             onReply={handleReply}
           />
         ))
+      )}
+      {/* Only the empty-thread branch above rendered `error`, so a failed
+          DELETE on a thread that still had comments left no trace at all. */}
+      {error && comments.length > 0 && (
+        <div role="alert" data-testid="comment-thread-error" className="text-sm text-danger-fg py-1">
+          {error}
+        </div>
       )}
       <ReplyForm
         onSubmit={(content) => createComment(content)}

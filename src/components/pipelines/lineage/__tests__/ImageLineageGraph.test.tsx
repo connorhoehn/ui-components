@@ -17,7 +17,24 @@ import type { ImageLineageEntry } from '../useImageLineage';
 
 const rfPropsCapture: { last: Record<string, unknown> | null } = { last: null };
 
-vi.mock('@xyflow/react', () => ({
+// INVERTED (was: `useNodesState: (initial) => [initial, vi.fn(), vi.fn()]`).
+// That stub returned the freshly-computed `initialNodes` on EVERY render, so
+// the mock silently supplied the syncing the component was missing — the whole
+// suite passed against a canvas that in a browser rendered a frozen first
+// snapshot (or, for an async `entries` source, nothing at all, forever). The
+// real hook is `useState` + a change reducer, so the stub is now `useState`
+// too: read once, and only what the setter writes thereafter.
+vi.mock('@xyflow/react', async () => {
+  const { useState } = await import('react');
+  return {
+  useNodesState: (initial: unknown[]) => {
+    const [items, setItems] = useState(initial);
+    return [items, setItems, vi.fn()];
+  },
+  useEdgesState: (initial: unknown[]) => {
+    const [items, setItems] = useState(initial);
+    return [items, setItems, vi.fn()];
+  },
   ReactFlow: (props: {
     nodes: Array<{ id: string; data: Record<string, unknown> }>;
     onNodeClick?: (e: React.MouseEvent, node: { id: string }) => void;
@@ -31,6 +48,8 @@ vi.mock('@xyflow/react', () => ({
           <div
             key={n.id}
             data-testid={`rf-node-${n.id}`}
+            data-node-selected={String(n.data.selected)}
+            data-node-highlighted={String(n.data.highlighted)}
             onClick={(e) => onNodeClick?.(e, { id: n.id })}
           />
         ))}
@@ -41,9 +60,8 @@ vi.mock('@xyflow/react', () => ({
   Controls: () => <div data-testid="rf-controls" />,
   Handle: ({ id }: { id: string }) => <div data-testid={`handle-${id}`} />,
   Position: { Left: 'left', Right: 'right', Top: 'top', Bottom: 'bottom' },
-  useNodesState: (initial: unknown[]) => [initial, vi.fn(), vi.fn()],
-  useEdgesState: (initial: unknown[]) => [initial, vi.fn(), vi.fn()],
-}));
+  };
+});
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -335,6 +353,108 @@ describe('ImageLineageGraph', () => {
     const expanded = screen.getAllByTestId(/^rf-node-img-/);
     expect(expanded).toHaveLength(150);
     expect(screen.queryByTestId('lineage-graph-clip-banner')).not.toBeInTheDocument();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// REGRESSION: the `useNodesState` / `useEdgesState` setters were discarded, so
+// the canvas only ever showed the node set computed on the very first render.
+// ---------------------------------------------------------------------------
+
+describe('ImageLineageGraph — canvas tracks its inputs', () => {
+  it('renders entries that arrive after mount (async useImageLineage)', () => {
+    // The host's own hook resolves a fetch: first render has [], the real
+    // entries land on a later one. This mounted a canvas that stayed blank
+    // forever, with working zoom controls over the emptiness.
+    const { rerender } = render(
+      <Wrapper>
+        <ImageLineageGraph entries={[]} />
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('lineage-graph-empty')).toBeInTheDocument();
+
+    rerender(
+      <Wrapper>
+        <ImageLineageGraph entries={fourEntries} />
+      </Wrapper>,
+    );
+
+    expect(screen.queryByTestId('lineage-graph-empty')).not.toBeInTheDocument();
+    expect(screen.getAllByTestId(/^rf-node-img-/)).toHaveLength(4);
+    expect(screen.getByTestId('rf-node-img-source')).toBeInTheDocument();
+  });
+
+  it('picks up entries appended after mount', () => {
+    const { rerender } = render(
+      <Wrapper>
+        <ImageLineageGraph entries={[sourceEntry]} />
+      </Wrapper>,
+    );
+    expect(screen.getAllByTestId(/^rf-node-img-/)).toHaveLength(1);
+
+    rerender(
+      <Wrapper>
+        <ImageLineageGraph entries={fourEntries} />
+      </Wrapper>,
+    );
+    expect(screen.getAllByTestId(/^rf-node-img-/)).toHaveLength(4);
+  });
+
+  it('"Show all" actually adds the clipped nodes, not just clears the banner', () => {
+    render(
+      <Wrapper>
+        <ImageLineageGraph entries={makeEntries(150)} />
+      </Wrapper>,
+    );
+    const before = screen.getAllByTestId(/^rf-node-img-/).length;
+    expect(before).toBe(100);
+
+    act(() => {
+      fireEvent.click(screen.getByTestId('lineage-graph-show-all'));
+    });
+
+    // Delta on the node set — the banner disappearing proved nothing before.
+    expect(screen.getAllByTestId(/^rf-node-img-/).length).toBe(before + 50);
+    expect(screen.getByTestId('rf-node-img-0')).toBeInTheDocument();
+  });
+
+  it('re-tints the ancestry when selectedImageId changes', () => {
+    const { rerender } = render(
+      <Wrapper>
+        <ImageLineageGraph entries={fourEntries} />
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('rf-node-img-crop-1')).toHaveAttribute('data-node-selected', 'false');
+
+    rerender(
+      <Wrapper>
+        <ImageLineageGraph entries={fourEntries} selectedImageId="img-crop-1" />
+      </Wrapper>,
+    );
+
+    expect(screen.getByTestId('rf-node-img-crop-1')).toHaveAttribute('data-node-selected', 'true');
+    // The parent is an ancestor of the selection, so it highlights too.
+    expect(screen.getByTestId('rf-node-img-source')).toHaveAttribute('data-node-highlighted', 'true');
+    expect(screen.getByTestId('rf-node-img-crop-2')).toHaveAttribute('data-node-highlighted', 'false');
+  });
+
+  it('feeds the same node set to the edge list', () => {
+    const { rerender } = render(
+      <Wrapper>
+        <ImageLineageGraph entries={[]} />
+      </Wrapper>,
+    );
+    rerender(
+      <Wrapper>
+        <ImageLineageGraph entries={fourEntries} />
+      </Wrapper>,
+    );
+    const edges = (rfPropsCapture.last?.edges ?? []) as Array<{ id: string }>;
+    expect(edges.map((e) => e.id)).toEqual([
+      'img-source->img-crop-1',
+      'img-source->img-crop-2',
+      'img-source->img-crop-3',
+    ]);
   });
 });
 

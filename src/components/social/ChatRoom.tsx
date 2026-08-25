@@ -189,6 +189,16 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
           <div className="flex-1 flex items-center justify-center text-text-tertiary text-[13px]">
             Loading messages…
           </div>
+        ) : error && chronological.length === 0 ? (
+          /* A failed history load used to render the empty state — the room
+             announced "No messages yet / Be the first to say something!"
+             whenever the posts API was down, which is a claim about the
+             room's contents that nothing had verified. */
+          <div role="alert" className="flex-1 flex flex-col items-center justify-center gap-1.5 px-6 text-center">
+            <span className="text-[28px]">⚠️</span>
+            <span className="text-sm font-semibold text-danger-fg">Couldn&rsquo;t load messages</span>
+            <span className="text-[13px] text-text-tertiary">{error}</span>
+          </div>
         ) : chronological.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-text-tertiary gap-1.5">
             <span className="text-[28px]">💬</span>

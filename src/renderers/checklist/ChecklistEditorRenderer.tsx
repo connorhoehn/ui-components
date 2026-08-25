@@ -4,6 +4,7 @@ import { useEventCallback } from '../../hooks/useEventCallback';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
 import TiptapEditor from '../../components/doc-editor/TiptapEditor';
+import { sectionItems } from '../sectionItems';
 
 interface RowProps {
   item: TaskItem;
@@ -76,6 +77,7 @@ export default function ChecklistEditorRenderer({
   onRemoveItem,
   onUpdateCursorInfo,
 }: SectionRendererProps) {
+  const items = sectionItems(section);
   // Item count recorded when "+ Add item" was pressed, or null when no add is
   // outstanding. Focus moves to the last row only once the list has actually
   // grown past that count.
@@ -92,15 +94,15 @@ export default function ChecklistEditorRenderer({
 
   const handleAdd = () => {
     if (!onAddItem) return;
-    pendingAddCountRef.current = section.items.length;
+    pendingAddCountRef.current = items.length;
     onAddItem({ text: '', status: 'pending', assignee: '', ackedBy: '', ackedAt: '', priority: 'medium', notes: '' });
   };
 
   const pendingCount = pendingAddCountRef.current;
-  const awaitingFocus = pendingCount !== null && section.items.length > pendingCount;
+  const awaitingFocus = pendingCount !== null && items.length > pendingCount;
 
-  const total = section.items.length;
-  const doneCount = section.items.filter(i => i.status === 'done').length;
+  const total = items.length;
+  const doneCount = items.filter(i => i.status === 'done').length;
 
   return (
     <div>
@@ -124,8 +126,8 @@ export default function ChecklistEditorRenderer({
       )}
 
       <div>
-        {section.items.map((item, idx) => {
-          const isLast = idx === section.items.length - 1;
+        {items.map((item, idx) => {
+          const isLast = idx === items.length - 1;
           const shouldFocus = awaitingFocus && isLast;
           return (
             <ChecklistRow

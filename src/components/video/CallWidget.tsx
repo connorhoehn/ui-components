@@ -200,23 +200,31 @@ function RingingView({
         </p>
         <p className="text-white/50 text-xs m-0 mt-1">is calling...</p>
       </div>
+      {/* Both handlers are optional on CallWidgetProps and neither has a
+          fallback: an unguarded Answer/Decline renders a live green/red
+          call button that swallows the click while the widget keeps
+          ringing. Render each only when the host wired it. */}
       <div className="flex gap-4">
-        <button
-          type="button"
-          onClick={onDecline}
-          className="w-11 h-11 rounded-full bg-danger text-white border-none cursor-pointer flex items-center justify-center hover:bg-danger transition-colors"
-          aria-label="Decline call"
-        >
-          {icons.phoneEnd}
-        </button>
-        <button
-          type="button"
-          onClick={onAnswer}
-          className="w-11 h-11 rounded-full bg-success text-white border-none cursor-pointer flex items-center justify-center hover:bg-success transition-colors"
-          aria-label="Answer call"
-        >
-          {icons.phoneAnswer}
-        </button>
+        {onDecline && (
+          <button
+            type="button"
+            onClick={onDecline}
+            className="w-11 h-11 rounded-full bg-danger text-white border-none cursor-pointer flex items-center justify-center hover:bg-danger transition-colors"
+            aria-label="Decline call"
+          >
+            {icons.phoneEnd}
+          </button>
+        )}
+        {onAnswer && (
+          <button
+            type="button"
+            onClick={onAnswer}
+            className="w-11 h-11 rounded-full bg-success text-white border-none cursor-pointer flex items-center justify-center hover:bg-success transition-colors"
+            aria-label="Answer call"
+          >
+            {icons.phoneAnswer}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -432,7 +440,7 @@ function MinimizedPill({
 
       {/* Quick actions */}
       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-        {state === 'active' && (
+        {state === 'active' && onToggleMute && (
           <button
             type="button"
             onClick={onToggleMute}
@@ -459,17 +467,22 @@ function MinimizedPill({
             </svg>
           </button>
         )}
-        <button
-          type="button"
-          onClick={onEndCall}
-          className="w-6 h-6 rounded-full bg-danger text-white flex items-center justify-center border-none cursor-pointer hover:bg-danger transition-colors"
-          aria-label="End call"
-        >
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" />
-            <line x1="22" y1="2" x2="2" y2="22" />
-          </svg>
-        </button>
+        {/* Same optional-handler shape as the mute button above, which is
+            already gated: without `onEndCall` this rendered a red hang-up
+            button on the collapsed bar that did nothing. */}
+        {onEndCall && (
+          <button
+            type="button"
+            onClick={onEndCall}
+            className="w-6 h-6 rounded-full bg-danger text-white flex items-center justify-center border-none cursor-pointer hover:bg-danger transition-colors"
+            aria-label="End call"
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" />
+              <line x1="22" y1="2" x2="2" y2="22" />
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   );

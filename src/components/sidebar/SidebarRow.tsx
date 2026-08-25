@@ -110,11 +110,20 @@ export function SidebarRow({
     [disabled, onContextMenu],
   );
 
+  // A row with no `onClick`, no `href` and no `onContextMenu` has nothing to
+  // activate, so it must not advertise itself as a button. It used to render
+  // `role="button" tabIndex={0}` with the pointer cursor and hover highlight
+  // regardless, which put a keyboard stop on a row that swallowed both Enter
+  // and click — the "Browse all" row in HangoutRoomsSection is the case that
+  // surfaced it. Kebab-only rows stay non-interactive at this level: the
+  // kebab is its own button and stops propagation.
+  const interactive = !!onClick || !!href || !!onContextMenu;
+
   const baseClass = cn(
     'group relative flex items-center gap-2 w-full',
     'px-2 py-1.5 rounded-md text-sm leading-tight select-none',
     'transition-colors duration-100',
-    !disabled && 'cursor-pointer hover:bg-surface-hover',
+    !disabled && interactive && 'cursor-pointer hover:bg-surface-hover',
     active && !disabled && 'bg-info-bg text-info-fg hover:bg-info-bg',
     !active && !disabled && 'text-text-primary',
     disabled && 'opacity-50 cursor-not-allowed text-neutral',
@@ -178,9 +187,9 @@ export function SidebarRow({
   return (
     <div
       ref={rowRef as React.RefObject<HTMLDivElement>}
-      role="button"
-      tabIndex={disabled ? -1 : 0}
-      aria-pressed={active}
+      role={interactive ? 'button' : undefined}
+      tabIndex={interactive ? (disabled ? -1 : 0) : undefined}
+      aria-pressed={interactive ? active : undefined}
       aria-disabled={disabled || undefined}
       aria-label={ariaLabel}
       data-testid={testId}

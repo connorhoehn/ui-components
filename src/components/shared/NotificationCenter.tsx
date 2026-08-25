@@ -121,17 +121,26 @@ export function NotificationCenter({
             body={tab === 'unread' ? 'No unread notifications.' : 'Notifications will appear here.'}
           />
         ) : (
-          displayed.map(item => (
-            <button
+          displayed.map(item => {
+            // `onItemClick` is optional and nothing else consumes a row click
+            // — not even mark-as-read. Rendered unconditionally as a
+            // <button>, every notification was a focus stop announced as a
+            // button, lit up on hover and did nothing at all when activated.
+            // A read-only feed is a legitimate configuration; it just must
+            // not dress its rows as controls.
+            const Row = onItemClick ? 'button' : 'div';
+            return (
+            <Row
               key={item.id}
-              type="button"
-              onClick={() => onItemClick?.(item)}
+              type={onItemClick ? 'button' : undefined}
+              onClick={onItemClick ? () => onItemClick(item) : undefined}
               className={cn(
                 'flex items-start gap-3 px-4 py-3 text-left border-none',
-                'transition-colors duration-100 cursor-pointer font-[inherit] w-full',
+                'transition-colors duration-100 font-[inherit] w-full',
+                onItemClick && 'cursor-pointer',
                 item.read
-                  ? 'bg-transparent hover:bg-[var(--color-surface-hover)]'
-                  : 'bg-[rgba(59,130,246,0.05)] hover:bg-[rgba(59,130,246,0.1)]',
+                  ? cn('bg-transparent', onItemClick && 'hover:bg-[var(--color-surface-hover)]')
+                  : cn('bg-[rgba(59,130,246,0.05)]', onItemClick && 'hover:bg-[rgba(59,130,246,0.1)]'),
               )}
             >
               {item.icon && (
@@ -169,8 +178,9 @@ export function NotificationCenter({
                   </p>
                 )}
               </div>
-            </button>
-          ))
+            </Row>
+            );
+          })
         )}
       </div>
     </div>

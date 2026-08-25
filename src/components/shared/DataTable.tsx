@@ -110,8 +110,8 @@ function alignClass(a?: 'left' | 'right' | 'center'): string | undefined {
 }
 
 export function DataTable<T>({
-  data,
-  columns,
+  data: dataProp,
+  columns: columnsProp,
   keyField,
   onRowClick,
   rowActions,
@@ -125,6 +125,14 @@ export function DataTable<T>({
   className,
   'data-testid': testId,
 }: DataTableProps<T>) {
+  // A library's props cross a trust boundary: the types are erased at runtime,
+  // and a host that hands us `undefined` (an in-flight fetch, a response shape
+  // that changed) used to take down the whole page with a TypeError from
+  // `data.filter`, not just this table. Normalising here means a missing prop
+  // renders the empty state — which is what the caller almost certainly meant
+  // — while the surrounding chrome survives.
+  const data = Array.isArray(dataProp) ? dataProp : [];
+  const columns = Array.isArray(columnsProp) ? columnsProp : [];
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [query, setQuery] = useState('');

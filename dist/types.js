@@ -1,5 +1,5 @@
 import { t as e } from "./registry-DbX3MVAA.js";
-import { n as t, t as n } from "./fieldType-Be2vqdKv.js";
+import { n as t, t as n } from "./fieldType-CGXsQUaC.js";
 //#region src/types/documentType.ts
 var r = [
 	"📄",

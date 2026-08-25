@@ -33,6 +33,16 @@ export interface UseLikesReturn {
   error: string | null;
 }
 
+/** `sub` claim out of a JWT id token, or null if it isn't decodable. */
+function currentUserId(idToken: string | null): string | null {
+  if (!idToken) return null;
+  try {
+    return (JSON.parse(atob(idToken.split('.')[1])) as { sub?: string }).sub ?? null;
+  } catch {
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------
@@ -61,12 +71,32 @@ export function useLikes({ idToken, roomId, postId, commentId, onMessage }: UseL
   // ---- On mount: fetch like count (post likes only) -----------------------
 
   useEffect(() => {
-    if (!idToken || !roomId || !postId) return;
+    // Reset before fetching. `usePosts` and `useComments` both learned this;
+    // this hook was the outlier that kept the previous post's numbers. Pointing
+    // a mounted <LikeButton> at a new `postId` left post A's count and
+    // "Liked by …" list rendered under post B until B's response landed — and
+    // permanently if B's request failed.
+    setLikeCount(0);
+    setWhoLiked([]);
+    setIsLiked(false);
+    setError(null);
+
+    if (!idToken || !roomId || !postId) {
+      setLoading(false);
+      return;
+    }
     // Skip GET for comment likes — no who-liked endpoint for comments
-    if (commentId) return;
+    if (commentId) {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
-    setError(null);
+
+    // Per-run cancellation flag, declared inside the effect body — see the
+    // matching note in `usePosts`. A shared ref reset at the top of each run
+    // would resurrect the previous run's cancellation.
+    let cancelled = false;
 
     fetch(`${baseUrl}/api/rooms/${roomId}/posts/${postId}/likes`, {
       headers: { Authorization: `Bearer ${idToken}` },
@@ -76,16 +106,30 @@ export function useLikes({ idToken, roomId, postId, commentId, onMessage }: UseL
         return res.json() as Promise<{ count: number; users: PublicProfile[] }>;
       })
       .then((data) => {
+        if (cancelled) return;
+        const users = data.users ?? [];
         setLikeCount(data.count ?? 0);
-        setWhoLiked(data.users ?? []);
-        setIsLiked(false); // server does not return current user's like status
+        setWhoLiked(users);
+        // Derive the viewer's own like from the who-liked list the server
+        // already sends. This used to be hard-coded `false`, so every reload
+        // showed an unfilled heart on posts you had liked — and clicking it
+        // sent a fresh POST /likes and bumped the count again, as if you had
+        // liked the same post twice.
+        const me = currentUserId(idToken);
+        setIsLiked(me !== null && users.some((u) => u.userId === me));
       })
       .catch((err: Error) => {
+        if (cancelled) return;
         setError(err.message);
       })
       .finally(() => {
+        if (cancelled) return;
         setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [idToken, roomId, postId, commentId, baseUrl]);
 
   // ---- WS handler: social:like --------------------------------------------

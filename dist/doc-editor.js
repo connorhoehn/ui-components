@@ -2,8 +2,8 @@ import { g as e, t } from "./useWebSocket-BKfGpImp.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./activationKey-CjbL3LUv.js";
 import { t as i } from "./Textarea-C3t5PCLv.js";
-import { a, i as o, n as s, o as c, r as l } from "./renderers-D1zoXGuw.js";
-import { C as u, D as d, E as f, O as p, S as m, T as h, _ as g, a as _, b as v, c as y, d as b, f as x, g as S, h as C, i as w, k as T, l as E, m as D, o as O, p as k, r as A, s as ee, t as te, u as ne, v as re, w as ie, x as ae, y as j } from "./DocumentEditorPage-CV9XFTmt.js";
+import { a, i as o, n as s, r as c, s as l } from "./renderers-gcrXj29P.js";
+import { C as u, D as d, E as f, O as p, S as m, T as h, _ as g, a as _, b as v, c as y, d as b, f as x, g as S, h as C, i as w, k as T, l as E, m as D, o as O, p as k, r as A, s as ee, t as te, u as ne, v as re, w as ie, x as ae, y as j } from "./DocumentEditorPage-C7_dbMOQ.js";
 import { useCallback as M, useEffect as N, useMemo as P, useRef as F, useState as I } from "react";
 import { Fragment as L, jsx as R, jsxs as z } from "react/jsx-runtime";
 //#region src/components/doc-editor/DocumentListPage.tsx
@@ -104,7 +104,7 @@ function U({ users: e, onClickUser: t }) {
 		})]
 	});
 }
-function W({ documents: e, presence: t, onOpenDocument: i, onCreateDocument: a, onDeleteDocument: o, onJumpToUser: s, hideHeader: l }) {
+function W({ documents: e, presence: t, onOpenDocument: i, onCreateDocument: a, onDeleteDocument: o, onJumpToUser: s, hideHeader: c }) {
 	let [u, d] = I(!1), [f, p] = I(null), [m, h] = I(null), [g, _] = I(1), v = Math.max(1, Math.ceil(e.length / 10)), y = Math.min(g, v), b = P(() => {
 		let t = (y - 1) * 10;
 		return e.slice(t, t + 10);
@@ -114,7 +114,7 @@ function W({ documents: e, presence: t, onOpenDocument: i, onCreateDocument: a, 
 	return /* @__PURE__ */ z("div", {
 		className: n("px-4"),
 		children: [
-			!l && /* @__PURE__ */ z("div", {
+			!c && /* @__PURE__ */ z("div", {
 				className: n("flex items-center justify-between mb-5"),
 				children: [/* @__PURE__ */ R("h1", {
 					className: n("m-0 text-[22px] font-bold text-text-primary"),
@@ -237,7 +237,7 @@ function W({ documents: e, presence: t, onOpenDocument: i, onCreateDocument: a, 
 					})
 				]
 			}),
-			/* @__PURE__ */ R(c, {
+			/* @__PURE__ */ R(l, {
 				open: u,
 				onClose: () => d(!1),
 				onCreate: a
@@ -795,4 +795,4 @@ function ge({ events: e, participants: t }) {
 	});
 }
 //#endregion
-export { $ as AckMode, E as ActionItemsCard, ge as ActivityFeed, ae as AttachmentsPanel, Z as ChunkViewer, ee as DiffViewer, te as DocumentEditorPage, f as DocumentHeader, W as DocumentListPage, a as EditorToolbar, x as ExecutiveSummaryCard, h as FollowModeBar, k as HeaderBanner, ne as KeyDecisionsCard, v as MentionDropdown, _ as MyMentionsPanel, c as NewDocumentModal, d as ParticipantAvatars, y as ReaderMode, C as ReviewMode, q as ReviewProgress, Y as ReviewableItem, u as SectionBlock, S as SectionComments, m as SectionList, b as SectionSummariesCard, se as StandaloneTiptap, A as TableOfContents, l as TaskItemRow, s as TaskList, o as TiptapEditor, O as VersionHistoryPanel, ie as VideoCallPanel, w as VideoHistoryPanel, g as countAllComments, D as generateSummaryBullets, re as getInitials, j as relativeTime, T as useDocumentActions, p as useSidebarPanels };
+export { $ as AckMode, E as ActionItemsCard, ge as ActivityFeed, ae as AttachmentsPanel, Z as ChunkViewer, ee as DiffViewer, te as DocumentEditorPage, f as DocumentHeader, W as DocumentListPage, a as EditorToolbar, x as ExecutiveSummaryCard, h as FollowModeBar, k as HeaderBanner, ne as KeyDecisionsCard, v as MentionDropdown, _ as MyMentionsPanel, l as NewDocumentModal, d as ParticipantAvatars, y as ReaderMode, C as ReviewMode, q as ReviewProgress, Y as ReviewableItem, u as SectionBlock, S as SectionComments, m as SectionList, b as SectionSummariesCard, se as StandaloneTiptap, A as TableOfContents, c as TaskItemRow, s as TaskList, o as TiptapEditor, O as VersionHistoryPanel, ie as VideoCallPanel, w as VideoHistoryPanel, g as countAllComments, D as generateSummaryBullets, re as getInitials, j as relativeTime, T as useDocumentActions, p as useSidebarPanels };

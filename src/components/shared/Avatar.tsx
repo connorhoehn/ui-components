@@ -13,17 +13,23 @@ const AVATAR_PALETTE = [
 ];
 
 export function nameToColor(name: string): string {
+  // These two are public exports AND run on every Avatar render, and callers
+  // pass a payload field straight through — a user who never set a display
+  // name arrives as `name: null`. Supplying `initials` did not rescue it,
+  // because this runs first. Coerce rather than throw: an avatar with a
+  // fallback glyph beats an activity feed that renders nothing at all.
+  const safe = typeof name === 'string' ? name : '';
   // djb2 hash
   let hash = 5381;
-  for (let i = 0; i < name.length; i++) {
-    hash = (hash * 33) ^ name.charCodeAt(i);
+  for (let i = 0; i < safe.length; i++) {
+    hash = (hash * 33) ^ safe.charCodeAt(i);
   }
   const index = Math.abs(hash) % AVATAR_PALETTE.length;
   return AVATAR_PALETTE[index];
 }
 
 export function nameToInitials(name: string): string {
-  const trimmed = name.trim();
+  const trimmed = (typeof name === 'string' ? name : '').trim();
   if (!trimmed) return '?';
   const parts = trimmed.split(/\s+/);
   if (parts.length >= 2) {

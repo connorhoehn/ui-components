@@ -238,8 +238,30 @@ declare interface CustomFieldType {
      * Derived from primitiveType at creation time.
      */
     baseType: string;
+    /**
+     * Per-view-mode visibility + renderer choice from step 2 of the wizard.
+     * Optional for backward-compat with records persisted before it existed;
+     * absent means "visible everywhere, base type's default renderer".
+     */
+    display?: Partial<Record<ViewMode, CustomFieldTypeDisplay>>;
     createdAt: string;
     updatedAt: string;
+}
+
+/**
+ * Step 2 ("Display") of the Data Types wizard, for one view mode.
+ *
+ * ADDITIVE, optional. Before this existed, `FieldTypesPage.handleSave` sent
+ * only `{name, icon, description, primitiveType, baseType}` — the Visible
+ * checkboxes and the renderer pickers had nowhere to be written, so every
+ * step-2 choice was discarded the moment the user pressed Save and reopening
+ * the type for edit showed all three modes visible with the default renderer.
+ */
+declare interface CustomFieldTypeDisplay {
+    /** Does this field appear at all in this view mode? */
+    visible: boolean;
+    /** Chosen renderer key, e.g. `'rich-text:reader'`. Absent = the base type's first. */
+    renderer?: string;
 }
 
 declare interface DiagnosticsInfo {
@@ -1365,6 +1387,24 @@ declare interface UseActivityBusReturn {
 
  declare interface UseGroupsReturn {
      groups: GroupItem[];
+     /**
+      * Re-run `GET /api/groups`. Called once on mount (and on every `idToken`
+      * change); exposed so a failed load can be retried without a remount.
+      */
+     refresh: () => Promise<void>;
+     /**
+      * `false` until the first `GET /api/groups` has settled. Distinguishes
+      * "the server says you have no groups" from "we have not asked yet" —
+      * without it an empty `groups` array renders the same "No groups yet"
+      * empty state in both cases.
+      */
+     loaded: boolean;
+     /**
+      * Failure of the list load specifically. Kept separate from `error`, which
+      * is whatever the last create/join/invite/… attempt reported: a refused
+      * invite must not blank out a list that loaded perfectly well.
+      */
+     loadError: string | null;
      createGroup: (name: string, description?: string, visibility?: 'public' | 'private') => Promise<void>;
      deleteGroup: (groupId: string) => Promise<void>;
      joinGroup: (groupId: string) => Promise<void>;

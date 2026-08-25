@@ -9,6 +9,7 @@ import { cn } from '../../lib/cn';
 import { isBeforeToday, parseIsoDateLocal } from '../../lib/dateOnly';
 import type { TaskItem } from '../../types/document';
 import type { SectionRendererProps } from '../types';
+import { sectionItems } from '../sectionItems';
 
 const STATUS_META: Record<string, { label: string; color: string; bg: string }> = {
   pending: { label: 'Pending', color: 'var(--color-warning-fg)', bg: 'var(--color-warning-bg)' },
@@ -186,7 +187,7 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
 }
 
 export default function TasksReaderRenderer({ section, onUpdateItem, onNavigateToEditor }: SectionRendererProps) {
-  const items = section.items;
+  const items = sectionItems(section);
 
   if (items.length === 0) {
     return (

@@ -3,7 +3,7 @@ import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import { categoryFor } from '../categories';
 import { portCls } from '../shared/ports';
 import type { AgentNodeData } from '../../../../types/pipeline';
-import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
+import { useRetryFromStepIfWired, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type AgentData = AgentNodeData & {
   _state?: NodeExecutionState;
@@ -17,7 +17,7 @@ export default function AgentNode({ id, data, selected }: NodeProps<AgentFlowNod
   const liveStep = useLatestStepForNode(id);
   const liveState = liveStep?.status === 'cancelled' ? 'failed' : (liveStep?.status as NodeExecutionState | undefined);
   const state: NodeExecutionState = data._state ?? liveState ?? 'idle';
-  const retryFromStep = useRetryFromStep();
+  const retryFromStep = useRetryFromStepIfWired();
 
   // The canvas face has one job beyond identifying the node: make the
   // default-deny tool allowlist impossible to miss. An agent with no tools
@@ -43,7 +43,7 @@ export default function AgentNode({ id, data, selected }: NodeProps<AgentFlowNod
         </span>
       }
       selected={selected}
-      onRetry={state === 'failed' && liveStep ? () => retryFromStep(id) : undefined}
+      onRetry={state === 'failed' && liveStep && retryFromStep ? () => retryFromStep(id) : undefined}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >

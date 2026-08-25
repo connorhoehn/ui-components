@@ -6,6 +6,11 @@
 //   document.*  → document type dropdown (from localStorage `ws_document_types_v1`)
 //   schedule    → cron input + placeholder "Next fires" preview
 //   webhook     → path input + read-only full-URL preview
+//
+// Webhook delivery is a HOST property, declared through the services seam as
+// `webhookRelay: { enabled }`. Undeclared means not wired, and this panel then
+// says so instead of offering a copyable URL and signing secret for an
+// endpoint that answers 202 and starts nothing.
 
 import { useContext, useId, useMemo, useState } from 'react';
 import type { TriggerNodeData, TriggerType } from '../../../../types/pipeline';
@@ -14,7 +19,9 @@ import { Input } from '../../../forms/Input';
 import { Select } from '../../../forms/Select';
 import { parseCron, nextFires } from '../../cron/cronUtils';
 import { useToast } from '../../../shared/ToastProvider';
+import Banner from '../../../shared/Banner';
 import { PipelineEditorContext } from '../../context/PipelineEditorContext';
+import { useWebhookRelay } from '../../services';
 
 // Webhook path constraint — must mirror the regex enforced by the social-api
 // route at /hooks/pipeline/:path. Out of sync = users see a green URL the
@@ -22,7 +29,7 @@ import { PipelineEditorContext } from '../../context/PipelineEditorContext';
 const WEBHOOK_PATH_RE = /^[a-zA-Z0-9_-]{1,64}$/;
 
 // Public webhook host — defaulted to the local social-api so dev environments
-// without VITE_SOCIAL_API_URL still produce an invokable preview URL.
+// without VITE_SOCIAL_API_URL still produce a preview URL.
 // Port 13001 matches Tiltfile HOST_PORT_SOCIAL_API.
 const SOCIAL_API_URL =
   (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ??
@@ -69,6 +76,9 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
   const editor = useContext(PipelineEditorContext);
   const webhookSecret = editor?.definition?.triggerBinding?.webhookSecret;
   const [secretRevealed, setSecretRevealed] = useState(false);
+  const webhookRelay = useWebhookRelay();
+  const relayActive = webhookRelay.enabled;
+  const webhookOrigin = webhookRelay.publicUrlBase ?? SOCIAL_API_URL;
   const isDoc = data.triggerType.startsWith('document.');
   const docTypes = useMemo(() => (isDoc ? readDocTypes() : []), [isDoc]);
 

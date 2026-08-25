@@ -499,7 +499,13 @@ describe('CollapsibleSidebar — section toggle', () => {
   });
 
   it('keeps the chevron and section emoji out of the accessible name', () => {
-    const props = { ...baseProps(), pipelines: [makePipeline({ id: 'p1', name: 'ETL' })] };
+    // `onOpenPipeline` is now required for the row to BE a button — see the
+    // inverted case below.
+    const props = {
+      ...baseProps(),
+      pipelines: [makePipeline({ id: 'p1', name: 'ETL' })],
+      onOpenPipeline: vi.fn(),
+    };
     render(<CollapsibleSidebar {...props} />);
     // "▸" and the section emoji are decoration and must not be announced; the
     // name is the label plus its count chip. (No space between them: the chip
@@ -509,6 +515,21 @@ describe('CollapsibleSidebar — section toggle', () => {
     // Same for the decorative glyph on a pipeline row — the row announces its
     // name and status, not "shuffle emoji".
     expect(screen.getByRole('button', { name: 'ETLdraft' })).toBeInTheDocument();
+  });
+
+  // INVERTED from the case above, which used to render pipelines with NO
+  // `onOpenPipeline` and still assert the row was a button. `onOpenPipeline`
+  // is optional and nothing else opens a pipeline from the sidebar, so an
+  // unwired row was a tab stop announced as a button that swallowed both
+  // click and Enter. The "+ New" / "See all pipelines" affordances in the
+  // same section were already gated on their handler.
+  it('does not present a pipeline row as a button without onOpenPipeline', () => {
+    const props = { ...baseProps(), pipelines: [makePipeline({ id: 'p1', name: 'ETL' })] };
+    render(<CollapsibleSidebar {...props} />);
+    // The pipeline is still listed…
+    expect(screen.getAllByText('ETL').length).toBeGreaterThan(0);
+    // …but it is not a control.
+    expect(screen.queryByRole('button', { name: 'ETLdraft' })).toBeNull();
   });
 });
 

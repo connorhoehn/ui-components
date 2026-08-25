@@ -7,6 +7,7 @@ import { useRef } from 'react';
 import type { SectionRendererProps } from '../types';
 import TiptapEditor from '../../components/doc-editor/TiptapEditor';
 import TaskList from '../../components/doc-editor/TaskList';
+import { sectionItems } from '../sectionItems';
 
 export default function DefaultRenderer({
   section,
@@ -20,6 +21,7 @@ export default function DefaultRenderer({
   onRemoveItem,
   onUpdateCursorInfo,
 }: SectionRendererProps) {
+  const items = sectionItems(section);
   const focusLastItemRef = useRef(false);
 
   const handleAddItem = () => {
@@ -41,9 +43,9 @@ export default function DefaultRenderer({
           onUpdateCursorInfo={onUpdateCursorInfo}
         />
       )}
-      {(section.items.length > 0 || editable) && (
+      {(items.length > 0 || editable) && (
         <TaskList
-          items={section.items}
+          items={items}
           editable={editable}
           onUpdateItem={(id, patch) => onUpdateItem?.(id, patch)}
           onRemoveItem={(id) => onRemoveItem?.(id)}

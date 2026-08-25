@@ -97,8 +97,11 @@ function mergeSeriesData(series: LineSeries[]): Array<Record<string, number | st
   const xMap = new Map<number | string, Record<string, number | string>>();
   const xOrder: Array<number | string> = [];
 
-  series.forEach((s) => {
-    s.data.forEach((point) => {
+  // A metrics API returning `{label: 'p99', data: null}` for a series with no
+  // samples in the window is routine, and this runs during the PARENT's
+  // render — so the throw blanked the whole dashboard row, not just the chart.
+  (Array.isArray(series) ? series : []).forEach((s) => {
+    (Array.isArray(s?.data) ? s.data : []).forEach((point) => {
       let row = xMap.get(point.x);
       if (!row) {
         row = { x: point.x };
@@ -174,7 +177,7 @@ export function LineChart({
           wrapperStyle={LEGEND_WRAPPER_STYLE}
           iconSize={8}
         />
-        {series.map((s, i) => (
+        {(Array.isArray(series) ? series : []).map((s, i) => (
           <Line
             key={s.label}
             type="monotone"
@@ -231,7 +234,7 @@ export function StackedAreaChart({
           wrapperStyle={LEGEND_WRAPPER_STYLE}
           iconSize={8}
         />
-        {series.map((s, i) => {
+        {(Array.isArray(series) ? series : []).map((s, i) => {
           const color = seriesColor(s, i);
           return (
             <Area

@@ -19,6 +19,12 @@ const mockLatestStep = vi.fn(() => null);
 vi.mock('../../../context/PipelineRunsContext', () => ({
   useLatestStepForNode: () => mockLatestStep(),
   useRetryFromStep: () => async () => {},
+  // The node renders its Retry control from this one, not from
+  // useRetryFromStep: the latter returns a resolving no-op when nothing is
+  // wired, which is indistinguishable from a real handler and so produced a
+  // live-looking Retry pill that did nothing. `undefined` here means "not
+  // wired", which is what the node's `typeof === 'function'` guard needs.
+  useRetryFromStepIfWired: () => undefined,
 }));
 
 const stubServices: PipelineEditorServices = {

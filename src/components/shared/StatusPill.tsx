@@ -88,7 +88,12 @@ export function StatusPill({
   className,
   'data-testid': testId,
 }: StatusPillProps) {
-  const tokens = STATE_TOKENS[state];
+  // A run state that arrived from a server the UI wasn't built against gives
+  // `undefined` here, and the property reads below then threw — taking down
+  // the whole table this pill sits in, not just the one cell. Degrade the
+  // STYLING, never the value: `data-state` and the label keep the real state,
+  // so an unrecognised status is still legible and still reportable.
+  const tokens = STATE_TOKENS[state] ?? STATE_TOKENS.neutral ?? Object.values(STATE_TOKENS)[0];
   const isPending = state === 'pending';
 
   return (

@@ -78,8 +78,22 @@ describe('CallControls', () => {
   });
 
   it('renders the muted glyph + label when isMuted is true', () => {
-    render(<CallControls mode="audio" isMuted />);
+    render(<CallControls mode="audio" isMuted onToggleMute={() => undefined} />);
     expect(screen.getByLabelText('Unmute')).toBeInTheDocument();
+  });
+
+  // INVERTED: the case above used to render with NO `onToggleMute` and still
+  // assert the mute control was there. Every handler on this bar is optional
+  // and `ControlButton` has no fallback, so an unwired control was an enabled
+  // icon button that swallowed the click — the mic glyph never flipped and
+  // the user read the call as broken. The switch-to-video and add-people
+  // controls beside them were already gated on their handlers.
+  it('omits mute / camera / screen-share / hangup when their handlers are absent', () => {
+    render(<CallControls mode="video" />);
+    expect(screen.queryByTestId('mute-button')).toBeNull();
+    expect(screen.queryByTestId('camera-button')).toBeNull();
+    expect(screen.queryByTestId('screenshare-button')).toBeNull();
+    expect(screen.queryByTestId('hangup-button')).toBeNull();
   });
 
   it('omits the add-participant button when no handler is provided', () => {

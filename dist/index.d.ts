@@ -1926,14 +1926,36 @@ export declare interface CustomFieldType {
      * Derived from primitiveType at creation time.
      */
     baseType: string;
+    /**
+     * Per-view-mode visibility + renderer choice from step 2 of the wizard.
+     * Optional for backward-compat with records persisted before it existed;
+     * absent means "visible everywhere, base type's default renderer".
+     */
+    display?: Partial<Record<ViewMode, CustomFieldTypeDisplay>>;
     createdAt: string;
     updatedAt: string;
+}
+
+/**
+ * Step 2 ("Display") of the Data Types wizard, for one view mode.
+ *
+ * ADDITIVE, optional. Before this existed, `FieldTypesPage.handleSave` sent
+ * only `{name, icon, description, primitiveType, baseType}` — the Visible
+ * checkboxes and the renderer pickers had nowhere to be written, so every
+ * step-2 choice was discarded the moment the user pressed Save and reopening
+ * the type for edit showed all three modes visible with the default renderer.
+ */
+export declare interface CustomFieldTypeDisplay {
+    /** Does this field appear at all in this view mode? */
+    visible: boolean;
+    /** Chosen renderer key, e.g. `'rich-text:reader'`. Absent = the base type's first. */
+    renderer?: string;
 }
 
 /** Dark theme preset — proper dark UI design, not simply inverted. */
 export declare const darkTheme: ThemeTokens;
 
-export declare function DataTable<T>({ data, columns, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -4856,6 +4878,25 @@ export declare interface PipelineEditorServices {
      * their defaults, so a host can override one without restating the rest.
      */
     modelOptions?: Record<string, readonly ModelOption[]>;
+    /**
+     * Whether this deployment has an inbound webhook relay that actually starts
+     * runs — and where its public origin is.
+     *
+     * ADDITIVE and **defaults to disabled**, which is the honest default: the
+     * library ships the trigger UI, not the relay. The `/hooks/pipeline/:path`
+     * route on the reference backend logs the delivery and answers 202; the
+     * bridge that would forward it onto the pipeline event source is not wired,
+     * so `useWebhookTriggers` is a dormant subscriber and a correctly-signed
+     * POST runs nothing. The editor nonetheless rendered an invokable-looking
+     * URL, a Copy button, and a reveal/copy pair for the signing secret —
+     * everything an integrator needs to build against an endpoint that is
+     * silently inert, and to blame their own HMAC when nothing happens.
+     *
+     * Declare `{ enabled: true }` once your host forwards those deliveries; the
+     * panel then offers the URL and secret as before. Until then it says the
+     * endpoint is not active and withholds the copy affordances.
+     */
+    webhookRelay?: WebhookRelayStatus;
 }
 
 export declare function PipelineEditorServicesProvider({ services, children, }: {
@@ -8127,6 +8168,24 @@ declare interface UseActivityBusReturn {
 
  declare interface UseGroupsReturn {
      groups: GroupItem[];
+     /**
+      * Re-run `GET /api/groups`. Called once on mount (and on every `idToken`
+      * change); exposed so a failed load can be retried without a remount.
+      */
+     refresh: () => Promise<void>;
+     /**
+      * `false` until the first `GET /api/groups` has settled. Distinguishes
+      * "the server says you have no groups" from "we have not asked yet" —
+      * without it an empty `groups` array renders the same "No groups yet"
+      * empty state in both cases.
+      */
+     loaded: boolean;
+     /**
+      * Failure of the list load specifically. Kept separate from `error`, which
+      * is whatever the last create/join/invite/… attempt reported: a refused
+      * invite must not blank out a list that loaded perfectly well.
+      */
+     loadError: string | null;
      createGroup: (name: string, description?: string, visibility?: 'public' | 'private') => Promise<void>;
      deleteGroup: (groupId: string) => Promise<void>;
      joinGroup: (groupId: string) => Promise<void>;
@@ -9111,6 +9170,17 @@ declare interface UseActivityBusReturn {
   export declare type ViewMode = 'editor' | 'ack' | 'reader';
 
   export declare type WatermarkGravity = 'northwest' | 'north' | 'northeast' | 'west' | 'center' | 'east' | 'southwest' | 'south' | 'southeast';
+
+  /** Host declaration of inbound webhook delivery. See `webhookRelay`. */
+  declare interface WebhookRelayStatus {
+      /** True ONLY when a delivery to the webhook path actually triggers a run. */
+      enabled: boolean;
+      /**
+       * Public origin the webhook URL is built from, e.g. `https://api.example.com`.
+       * Falls back to `VITE_SOCIAL_API_URL`, then to the local dev port.
+       */
+      publicUrlBase?: string;
+  }
 
   export declare interface WebSocketContextValue {
       connectionState: ConnectionState;

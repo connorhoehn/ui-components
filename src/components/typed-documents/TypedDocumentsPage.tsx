@@ -43,6 +43,15 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
   } | null>(null);
   const [importFilename, setImportFilename] = useState<string | null>(null);
 
+  // The bulk-import response is `await res.json()` behind a cast, and omitting
+  // `errors` on the happy path (`{"imported": 42, "failed": 0}`) is the single
+  // most natural thing for a backend to do. `importResult` is state on THIS
+  // page, so `importResult.errors.length` threw in the page root's render,
+  // outside the try that wraps the fetch: the import succeeded server-side and
+  // the entire Typed Documents page — sidebar, form and document list — went
+  // white. A reload restored it, so it read as a random one-off.
+  const importResultErrors = importResult?.errors ?? [];
+
   // Fetch the list of document types from the backend.
   useEffect(() => {
     if (!idToken) return;
@@ -120,9 +129,10 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
   // original 1000-row file. Prepends an Error column carrying the per-row
   // reason; preserves the original header order for round-tripping.
   const handleDownloadFailedRows = () => {
-    if (!importResult || importResult.errors.length === 0) return;
-    const columns = importResult.columns ?? [];
-    const rowsWithRaw = importResult.errors.filter((e) => e.rawRow);
+    const errors = importResult?.errors ?? [];
+    if (errors.length === 0) return;
+    const columns = importResult?.columns ?? [];
+    const rowsWithRaw = errors.filter((e) => e.rawRow);
     if (columns.length === 0 || rowsWithRaw.length === 0) return;
     const escape = (cell: string): string =>
       /[",\n\r]/.test(cell) ? `"${cell.replace(/"/g, '""')}"` : cell;
@@ -155,7 +165,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
   const referencedTypeIds = useMemo<string[]>(() => {
     if (!selectedType) return [];
     const ids = new Set<string>();
-    for (const f of selectedType.fields) {
+    for (const f of selectedType.fields ?? []) {
       if (f.fieldType === 'reference' && f.referenceTypeId) ids.add(f.referenceTypeId);
     }
     return Array.from(ids);
@@ -249,7 +259,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
               <span className={cn('text-lg')}>{t.icon}</span>
               <span className={cn('flex-1 text-text-primary')}>{t.name}</span>
               <span className={cn('text-[11px] text-text-tertiary')}>
-                {t.fields.length} field{t.fields.length !== 1 ? 's' : ''}
+                {(t.fields ?? []).length} field{(t.fields ?? []).length !== 1 ? 's' : ''}
               </span>
             </button>
           ))}
@@ -333,13 +343,13 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                   <div className={cn('text-xs text-text-primary')}>
                     {importResult.imported} imported, {importResult.failed} failed
                   </div>
-                  {importResult.errors.length > 0 && (
+                  {importResultErrors.length > 0 && (
                     <details className={cn('mt-2 text-xs')}>
                       <summary className={cn('cursor-pointer font-semibold text-danger-fg')}>
-                        {importResult.errors.length} error{importResult.errors.length !== 1 ? 's' : ''}
+                        {importResultErrors.length} error{importResultErrors.length !== 1 ? 's' : ''}
                       </summary>
                       <ul className={cn('mt-1.5 m-0 pl-5 max-h-[150px] overflow-y-auto')}>
-                        {importResult.errors.map((err, i) => (
+                        {importResultErrors.map((err, i) => (
                           <li key={i} className={cn('mt-1')}>
                             <span className={cn('font-semibold')}>Row {err.row}:</span> {err.reason}
                           </li>
@@ -348,7 +358,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                     </details>
                   )}
                   <div className={cn('mt-2 flex gap-2')}>
-                    {importResult.errors.length > 0 && importResult.errors.some((e) => e.rawRow) && (
+                    {importResultErrors.length > 0 && importResultErrors.some((e) => e.rawRow) && (
                       <button
                         data-testid="download-failed-rows"
                         onClick={handleDownloadFailedRows}
@@ -389,7 +399,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                     </div>
                     <div className={cn('flex flex-col gap-1')}>
                       {visibleFieldsForMode(selectedType, displayMode).map((f) => {
-                        const v = doc.values[f.fieldId];
+                        const v = (doc.values ?? {})[f.fieldId];
                         if (v === undefined) return null;
                         let display: string;
                         if (Array.isArray(v)) {

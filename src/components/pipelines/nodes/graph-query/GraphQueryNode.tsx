@@ -3,7 +3,7 @@ import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import { categoryFor } from '../categories';
 import { portCls } from '../shared/ports';
 import type { GraphQueryNodeData } from '../../../../types/pipeline';
-import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
+import { useRetryFromStepIfWired, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type GraphData = GraphQueryNodeData & {
   _state?: NodeExecutionState;
@@ -17,7 +17,7 @@ export default function GraphQueryNode({ id, data, selected }: NodeProps<GraphFl
   const liveStep = useLatestStepForNode(id);
   const liveState = liveStep?.status === 'cancelled' ? 'failed' : (liveStep?.status as NodeExecutionState | undefined);
   const state: NodeExecutionState = data._state ?? liveState ?? 'idle';
-  const retryFromStep = useRetryFromStep();
+  const retryFromStep = useRetryFromStepIfWired();
 
   const subtitle = data.graphId || 'Not configured';
   const preview = data.query.length > 40 ? `${data.query.slice(0, 37)}...` : data.query;
@@ -30,7 +30,7 @@ export default function GraphQueryNode({ id, data, selected }: NodeProps<GraphFl
       category={categoryFor('graph-query')}
       body={<span className="text-[11px] font-mono">{preview}</span>}
       selected={selected}
-      onRetry={state === 'failed' && liveStep ? () => retryFromStep(id) : undefined}
+      onRetry={state === 'failed' && liveStep && retryFromStep ? () => retryFromStep(id) : undefined}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >

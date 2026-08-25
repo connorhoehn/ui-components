@@ -1,0 +1,21 @@
+//#region src/types/fieldType.ts
+var e = [
+	"editor",
+	"ack",
+	"reader"
+];
+function t(t) {
+	return typeof t != "object" || !t || Array.isArray(t) ? !1 : Object.entries(t).every(([t, n]) => {
+		if (!e.includes(t) || typeof n != "object" || !n) return !1;
+		let r = n;
+		return typeof r.visible == "boolean" ? r.renderer === void 0 || typeof r.renderer == "string" : !1;
+	});
+}
+var n = "ws_field_types_v1";
+function r(e) {
+	if (typeof e != "object" || !e) return !1;
+	let n = e;
+	return typeof n.id == "string" && n.id.length > 0 && typeof n.name == "string" && n.name.length > 0 && typeof n.icon == "string" && typeof n.description == "string" && typeof n.baseType == "string" && n.baseType.length > 0 && typeof n.createdAt == "string" && typeof n.updatedAt == "string" && (n.display === void 0 || t(n.display));
+}
+//#endregion
+export { r as n, n as t };

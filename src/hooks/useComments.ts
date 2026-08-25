@@ -189,6 +189,11 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
       );
     } catch (err) {
       setError((err as Error).message);
+      // Rethrow so the composer can tell the two outcomes apart. `ReplyForm`
+      // cleared its input the instant it fired this, and a rejected post left
+      // no comment and (with any existing comments on screen) no error either
+      // — the typed reply just evaporated.
+      throw err;
     } finally {
       setSubmitting(false);
     }
@@ -211,6 +216,7 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
       setComments((prev) => prev.filter((c) => c.commentId !== commentId));
     } catch (err) {
       setError((err as Error).message);
+      throw err;
     }
   }, [idToken, roomId, postId, baseUrl]);
 

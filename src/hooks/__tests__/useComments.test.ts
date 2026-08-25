@@ -229,7 +229,13 @@ describe('createComment', () => {
     vi.stubGlobal('fetch', vi.fn()
       .mockResolvedValueOnce({ ok: false, status: 403, json: () => Promise.resolve({}) } as unknown as Response));
 
-    await act(async () => { await result.current.createComment('fail'); });
+    // INVERTED (was: `await result.current.createComment(...)` with no rejection
+    // expected). This mutation used to resolve on failure, which is exactly
+    // what made a rejected write look like an accepted one to every caller.
+    // It now rejects *and* sets `error`; both are asserted.
+    await act(async () => {
+      await expect(result.current.createComment('fail')).rejects.toThrow(/403/);
+    });
 
     expect(result.current.error).toMatch(/403/);
   });
@@ -274,7 +280,13 @@ describe('deleteComment', () => {
     vi.stubGlobal('fetch', vi.fn()
       .mockResolvedValueOnce({ ok: false, status: 404, json: () => Promise.resolve({}) } as unknown as Response));
 
-    await act(async () => { await result.current.deleteComment('c1'); });
+    // INVERTED (was: `await result.current.deleteComment(...)` with no rejection
+    // expected). This mutation used to resolve on failure, which is exactly
+    // what made a rejected write look like an accepted one to every caller.
+    // It now rejects *and* sets `error`; both are asserted.
+    await act(async () => {
+      await expect(result.current.deleteComment('c1')).rejects.toThrow(/404/);
+    });
 
     expect(result.current.error).toMatch(/404/);
     expect(result.current.comments).toHaveLength(1);
