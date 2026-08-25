@@ -124,7 +124,11 @@ function EdgePath({ edge, fromStatus, toStatus }: {
 
 const NODE_BORDER_CLASSES: Record<NodeStatus, string> = {
   idle: 'border-border shadow-sm',
-  running: 'border-warning shadow-[0_0_12px_rgba(245,158,11,0.4)]',
+  // The glow is the warning tone at 40%. It was spelled rgba(245,158,11,0.4)
+  // — amber-500 written out by hand — so overriding --color-warning re-toned
+  // the border and left the glow behind it the old colour. Tailwind's
+  // shadow-<color>/<alpha> form reads the token, so both move together.
+  running: 'border-warning shadow-[0_0_12px] shadow-warning/40',
   completed: 'border-success shadow-sm',
   failed: 'border-danger shadow-sm',
 };
