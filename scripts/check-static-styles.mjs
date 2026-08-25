@@ -59,6 +59,17 @@ try {
 }
 
 /** Blank out string/template-literal/comment content, preserving line count. */
+/** Does the quote opened at `start` close before the line ends? */
+function closesOnSameLine(src, start) {
+  const q = src[start];
+  for (let j = start + 1; j < src.length; j++) {
+    if (src[j] === '\\') { j++; continue; }
+    if (src[j] === '\n') return false;
+    if (src[j] === q) return true;
+  }
+  return false;
+}
+
 function stripStrings(src) {
   let out = '';
   let i = 0;
@@ -66,6 +77,26 @@ function stripStrings(src) {
     const c = src[i];
     if (c === '`' || c === '"' || c === "'") {
       const q = c;
+      // A ' or " that never closes on the same line is almost certainly NOT a
+      // JS string here — it is an apostrophe in JSX prose. Treating it as a
+      // string opener swallows everything up to the next one, which can be
+      // dozens of lines away, and that span silently drops out of the check.
+      //
+      // This is not hypothetical: `demo/src/pages/InstallationPage.tsx` says
+      // "your project's .npmrc" on line 27, and the next ' is inside a code
+      // sample on line 74. All three `style={codeBlockStyle}` references in
+      // between were invisible to this guard, so the file passed while
+      // hand-rolling exactly what the guard exists to forbid.
+      //
+      // Multi-line strings in this codebase use backticks, so backticks keep
+      // spanning lines. Getting this wrong in the other direction is safe: a
+      // string mistaken for code produces a false POSITIVE, which fails loudly
+      // and gets looked at, rather than a hole nobody can see.
+      if (q !== '`' && !closesOnSameLine(src, i)) {
+        out += c;
+        i++;
+        continue;
+      }
       out += q;
       i++;
       while (i < src.length) {

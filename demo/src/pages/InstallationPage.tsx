@@ -1,15 +1,4 @@
-const codeBlockStyle: React.CSSProperties = {
-  background: '#1e293b',
-  color: 'var(--color-border)',
-  padding: '16px 20px',
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace',
-  overflowX: 'auto',
-  lineHeight: 1.6,
-  marginBottom: 24,
-};
-
+import { CodeBlock } from '@connorhoehnslalom/ui-components/shared';
 export default function InstallationPage() {
   return (
     <div>
@@ -26,17 +15,24 @@ export default function InstallationPage() {
       <p className="text-[14px] text-text-secondary mb-3">
         Add to your project's <code className="bg-surface-hover py-[2px] px-[6px] rounded text-[13px]">.npmrc</code>:
       </p>
-      <pre style={codeBlockStyle}>
-{`@connorhoehn:registry=https://npm.pkg.github.com
+      <CodeBlock
+        className="mb-6"
+        language="text"
+        theme="dark"
+        code={`@connorhoehnslalom:registry=https://npm.pkg.github.com
+@connorhoehn:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}`}
-      </pre>
+      />
 
       <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         2. Install the package
       </h2>
-      <pre style={codeBlockStyle}>
-{`npm install @connorhoehnslalom/ui-components`}
-      </pre>
+      <CodeBlock
+        className="mb-6"
+        language="bash"
+        theme="dark"
+        code={`npm install @connorhoehnslalom/ui-components`}
+      />
 
       <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         3. Peer dependencies
@@ -68,12 +64,15 @@ export default function InstallationPage() {
       <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         4. Verify installation
       </h2>
-      <pre style={codeBlockStyle}>
-{`import { Button } from '@connorhoehnslalom/ui-components';
+      <CodeBlock
+        className="mb-6"
+        language="tsx"
+        theme="dark"
+        code={`import { Button } from '@connorhoehnslalom/ui-components';
 
 // If this compiles, you're good to go!
 console.log(Button);`}
-      </pre>
+      />
     </div>
   );
 }
