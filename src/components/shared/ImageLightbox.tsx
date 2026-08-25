@@ -17,6 +17,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
 import { trapTabKey } from '../../lib/focusTrap';
+import { useOverlayLayer } from '../../lib/overlayStack';
 
 export interface ImageLightboxImage {
   src: string;
@@ -55,6 +56,9 @@ export function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageL
   }, [openIndex]);
 
   const isOpen = openIndex !== null && images.length > 0;
+  // Escape/Tab/arrows belong to the top layer only. Without this the arrow
+  // keys keep paging this lightbox while a dialog sits on top of it.
+  const isTopLayer = useOverlayLayer(isOpen);
   const rawIndex = onNavigate ? openIndex : (fallbackIndex ?? openIndex);
   // Clamp defensively — a stale index past the end shouldn't blank the overlay.
   const index = rawIndex === null ? 0 : Math.min(Math.max(rawIndex, 0), images.length - 1);
@@ -86,6 +90,7 @@ export function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageL
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
+      if (!isTopLayer()) return;
       if (e.key === 'Tab') {
         // Without this, Tab off the last nav button lands on whatever is
         // behind the (still fully opaque) overlay — invisible focus.
@@ -105,7 +110,7 @@ export function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageL
     return () => window.removeEventListener('keydown', onKey);
     // `navigate` closes over index/images; re-bind when they change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, index, images.length, onClose, onNavigate]);
+  }, [isOpen, index, images.length, onClose, onNavigate, isTopLayer]);
 
   if (!isOpen) return null;
 

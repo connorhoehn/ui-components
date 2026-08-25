@@ -4,8 +4,10 @@
 // Shows the status timeline, the mapping decision, and operator actions.
 
 import type { CSSProperties } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Chip from '../shared/Chip';
+import { focusInitialElement, restoreFocus, trapTabKey } from '../../lib/focusTrap';
+import { useOverlayLayer } from '../../lib/overlayStack';
 import type { ChipTone } from '../shared/Chip';
 import { cn } from '../../lib/cn';
 import { useIdentityContext } from '../../contexts/IdentityContext';
@@ -91,13 +93,40 @@ export default function IngestItemDrawer({ item, sourceName, onClose, onRetry, o
   const [remapError, setRemapError] = useState<string | null>(null);
   const { events: progressEvents } = useIngestProgress();
 
-  // Esc to close
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  const isTopLayer = useOverlayLayer(item !== null);
+
+  // Esc to close, plus the Tab trap this drawer was missing. It declares
+  // `aria-modal="true"`, which tells a screen reader the rest of the page is
+  // inert — but Tab used to walk straight out of the panel into the ingest
+  // table behind it, so the user ended up editing a page they can't see.
   useEffect(() => {
     if (!item) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (!isTopLayer()) return;
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      trapTabKey(e, panelRef.current);
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [item, onClose]);
+  }, [item, onClose, isTopLayer]);
+
+  // Move focus into the panel on open and hand it back to the table row that
+  // opened it on close; previously focus never entered and was lost entirely.
+  useEffect(() => {
+    if (!item) return;
+    previouslyFocusedRef.current =
+      (typeof document !== 'undefined' ? document.activeElement : null) as HTMLElement | null;
+    focusInitialElement(panelRef.current);
+    return () => {
+      restoreFocus(previouslyFocusedRef.current);
+      previouslyFocusedRef.current = null;
+    };
+  }, [item]);
 
   const stepTimestamps = useMemo(() => {
     if (!item) return new Map<string, string>();
@@ -170,6 +199,7 @@ export default function IngestItemDrawer({ item, sourceName, onClose, onRetry, o
       data-testid="ingest-item-drawer-scrim"
     >
       <div
+        ref={panelRef}
         className="w-[min(560px,100vw)] h-full bg-surface shadow-[-12px_0_32px_rgba(0,0,0,0.12)] overflow-y-auto font-[inherit] flex flex-col"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
@@ -356,7 +386,9 @@ export default function IngestItemDrawer({ item, sourceName, onClose, onRetry, o
 
           {/* Inline remap error */}
           {remapError && (
-            <div className="bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-md p-2.5 text-xs font-mono whitespace-pre-wrap break-words">
+            // role="alert" — the re-map button fires an async request and the
+            // only sign it failed is this banner appearing.
+            <div role="alert" className="bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-md p-2.5 text-xs font-mono whitespace-pre-wrap break-words">
               Re-map failed: {remapError}
             </div>
           )}

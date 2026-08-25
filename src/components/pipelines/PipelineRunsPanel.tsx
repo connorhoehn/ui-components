@@ -301,13 +301,13 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
 
         {/* Run list */}
         {loading && runs.length === 0 && (
-          <div className="p-6 text-center text-[13px] text-text-tertiary">
+          <div role="status" className="p-6 text-center text-[13px] text-text-tertiary">
             Loading runs...
           </div>
         )}
 
         {error && (
-          <div className="p-4 text-center text-xs text-state-failed">
+          <div role="alert" className="p-4 text-center text-xs text-state-failed">
             {error}
             <button
               type="button"

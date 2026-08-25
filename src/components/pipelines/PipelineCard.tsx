@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { useDismissableLayer } from '../../lib/focusTrap';
 import { useClickOutside } from './hooks/useClickOutside';
 import type { TriggerBinding } from '../../types/pipeline';
 import Chip from '../shared/Chip';
@@ -35,6 +36,10 @@ export default function PipelineCard({
   const [hovered, setHovered] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   useClickOutside(menuRef, () => setMenuOpen(false), menuOpen);
+  // The ⋯ menu had outside-click dismissal only: Escape did nothing, so a
+  // keyboard user who opened it had no way to back out, and closing it left
+  // focus stranded rather than back on the ⋯ trigger.
+  useDismissableLayer(menuOpen, useCallback(() => setMenuOpen(false), []));
 
   const isPublished = row.status === 'published';
   const isArchived = row.status === 'archived';

@@ -36,7 +36,7 @@ export default function DocTypeProposalsPage() {
       </div>
 
       {error ? (
-        <div data-testid="proposals-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
+        <div role="alert" data-testid="proposals-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
           Couldn't load DocType proposals: {error}
         </div>
       ) : null}

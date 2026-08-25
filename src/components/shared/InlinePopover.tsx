@@ -27,6 +27,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
+import { useOverlayLayer } from '../../lib/overlayStack';
 
 export type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
 
@@ -120,6 +121,9 @@ export function InlinePopover({
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<CSSProperties | null>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  // Escape/Tab belong to the top layer only. See lib/overlayStack.ts for why
+  // the `e.stopPropagation()` below cannot achieve this on its own.
+  const isTopLayer = useOverlayLayer(open);
 
   // Recompute anchored position whenever the popover opens, or when
   // the viewport scrolls / resizes while it's open.
@@ -183,11 +187,13 @@ export function InlinePopover({
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        if (!isTopLayer()) return;
         e.stopPropagation();
         onClose();
         return;
       }
       if (e.key !== 'Tab') return;
+      if (!isTopLayer()) return;
       const panel = panelRef.current;
       if (!panel) return;
       const focusables = getFocusable(panel);
@@ -213,7 +219,7 @@ export function InlinePopover({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+  }, [open, onClose, isTopLayer]);
 
   // Outside-click dismiss. The trigger itself is excluded so the parent
   // can implement a "click trigger to toggle" pattern without flicker.

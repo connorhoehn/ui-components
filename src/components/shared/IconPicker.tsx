@@ -11,11 +11,13 @@
 //   • mousedown anywhere outside the popover / trigger
 
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { useDismissableLayer } from '../../lib/focusTrap';
 
 // ---------------------------------------------------------------------------
 // Curated default set — 48 emojis covering flow, tools, comms, docs, data,
@@ -105,6 +107,12 @@ export default function IconPicker({
     return () => window.removeEventListener('mousedown', onDown);
   }, [open]);
 
+  // Escape used to be handled ONLY by the custom-emoji text input's onKeyDown,
+  // so pressing it anywhere on the ~96-cell emoji grid did nothing — the only
+  // way out was to Tab to the end of the grid. Closing also never returned
+  // focus to the trigger.
+  useDismissableLayer(open, useCallback(() => setOpen(false), []));
+
   const handlePick = (emoji: string) => {
     onChange(emoji);
     setOpen(false);
@@ -133,7 +141,9 @@ export default function IconPicker({
       </button>
 
       {open ? (
-        <div ref={popoverRef} className="absolute top-full left-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] p-2.5 z-30 min-w-[272px]" data-testid="icon-picker-popover">
+        // The trigger advertises `aria-haspopup="dialog"`, so this panel has
+        // to actually be one — it had no role and no name at all.
+        <div ref={popoverRef} role="dialog" aria-label="Choose an icon" className="absolute top-full left-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] p-2.5 z-30 min-w-[272px]" data-testid="icon-picker-popover">
           <div className="grid grid-cols-[repeat(8,28px)] gap-1">
             {icons.map((emoji, idx) => (
               <IconCell

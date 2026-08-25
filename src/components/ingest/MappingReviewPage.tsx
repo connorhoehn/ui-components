@@ -46,7 +46,7 @@ export default function MappingReviewPage() {
       </div>
 
       {error ? (
-        <div data-testid="mapping-review-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
+        <div role="alert" data-testid="mapping-review-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
           Couldn't load review queue: {error}
         </div>
       ) : null}

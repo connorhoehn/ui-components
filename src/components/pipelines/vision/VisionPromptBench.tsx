@@ -470,6 +470,7 @@ export default function VisionPromptBench({
       {/* Error */}
       {error && (
         <div
+          role="alert"
           className="text-[12px] text-danger-fg bg-danger-bg border border-danger-border rounded px-3 py-2"
           data-testid="bench-error"
         >

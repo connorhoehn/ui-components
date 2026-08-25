@@ -107,7 +107,7 @@ export default function IngestAuditPage() {
       </div>
 
       {error ? (
-        <div data-testid="audit-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
+        <div role="alert" data-testid="audit-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
           Couldn't load audit log: {error}
         </div>
       ) : null}

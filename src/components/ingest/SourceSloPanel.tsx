@@ -73,7 +73,7 @@ export default function SourceSloPanel({ sourceId }: Props) {
         />
       </div>
       {error ? (
-        <div data-testid="slo-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg text-xs">
+        <div role="alert" data-testid="slo-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg text-xs">
           Couldn't load source metrics: {error}
         </div>
       ) : null}

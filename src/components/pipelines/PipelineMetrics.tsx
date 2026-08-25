@@ -328,7 +328,7 @@ export default function PipelineMetrics() {
         </span>
         <div className="ml-auto flex items-center gap-2">
           {error && (
-            <span className="text-[11px] text-danger-fg">
+            <span role="alert" className="text-[11px] text-danger-fg">
               Fetch error: {error}
             </span>
           )}

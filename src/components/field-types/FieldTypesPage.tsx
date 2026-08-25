@@ -8,9 +8,9 @@
 // State machine: idle → create → idle  |  idle → edit → idle
 // Delete flows through a confirmation modal.
 
-import { useId, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
+import Modal from '../shared/Modal';
 import { onActivationKey } from '../../lib/activationKey';
 import { useCustomFieldTypes } from '../../hooks/useCustomFieldTypes';
 import { Input } from '../forms/Input';
@@ -54,24 +54,24 @@ const COMING_SOON = PRIMITIVE_STORAGE_TYPES.filter(p => p.rendererBase === null)
 // Delete confirmation modal
 // ---------------------------------------------------------------------------
 
+// Built on the shared `Modal` rather than a hand-rolled portal. The
+// hand-rolled version had no `role="dialog"`, no accessible name, no Escape
+// handler, no focus trap and never moved focus — a destructive confirmation
+// that a keyboard user could neither reach nor back out of, while Tab kept
+// walking the type list behind the scrim. `Modal` supplies all of it; the
+// testids are preserved so callers and tests keep working.
 function DeleteModal({ name, onConfirm, onCancel }: {
   name: string; onConfirm: () => void; onCancel: () => void;
 }) {
-  return createPortal(
-    <div
-      data-testid="delete-modal"
-      className="fixed inset-0 bg-black/45 flex items-center justify-center z-[10000]"
-      onClick={onCancel}
-    >
-      <div
-        className="bg-white rounded-[10px] py-7 px-8 max-w-[400px] w-[90vw] shadow-[0_8px_32px_rgba(0,0,0,0.18)]"
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="text-[17px] font-bold text-text-primary mb-2">Delete data type?</div>
-        <p className="text-[13px] text-neutral mb-5">
-          <strong>{name}</strong> will be removed. Document types that reference it will keep their existing sections, but this type won't appear in the picker for new sections.
-        </p>
-        <div className="flex justify-end gap-2">
+  return (
+    <Modal
+      open
+      onClose={onCancel}
+      title="Delete data type?"
+      maxWidth={400}
+      backdropTestId="delete-modal"
+      footer={
+        <>
           <button
             data-testid="cancel-delete"
             onClick={onCancel}
@@ -82,10 +82,13 @@ function DeleteModal({ name, onConfirm, onCancel }: {
             onClick={onConfirm}
             className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-danger-fg border border-danger-border"
           >Delete</button>
-        </div>
-      </div>
-    </div>,
-    document.body,
+        </>
+      }
+    >
+      <p className="text-[13px] text-neutral m-0">
+        <strong>{name}</strong> will be removed. Document types that reference it will keep their existing sections, but this type won't appear in the picker for new sections.
+      </p>
+    </Modal>
   );
 }
 
@@ -442,10 +445,34 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
     });
   };
 
+  // Advancing the wizard unmounts the button that was just activated ("Next →"
+  // becomes "Save"), so focus fell back to <body>: nothing was announced and
+  // the user had to Tab from the top of the page to reach the new step's
+  // fields. Move focus onto the step region instead, which is labelled
+  // "Step n of 2" so a screen reader says where it landed. Skipped on first
+  // mount — the wizard appearing is the caller's focus event, not ours.
+  const stepRegionRef = useRef<HTMLDivElement | null>(null);
+  const firstStepRenderRef = useRef(true);
+  useEffect(() => {
+    if (firstStepRenderRef.current) {
+      firstStepRenderRef.current = false;
+      return;
+    }
+    stepRegionRef.current?.focus();
+  }, [step]);
+
   return (
     <div>
       <StepIndicator step={step} />
 
+      <div
+        ref={stepRegionRef}
+        tabIndex={-1}
+        role="group"
+        aria-label={`Step ${step} of 2`}
+        data-testid="wizard-step-region"
+        className="outline-none"
+      >
       {step === 1 && (
         <Step1
           name={name} setName={v => { setName(v); if (v.trim()) setNameError(''); }}
@@ -463,6 +490,7 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
           visibility={visibility} setVisibility={setVisibility}
         />
       )}
+      </div>
 
       <div className="flex justify-between items-center pt-5 mt-5 border-t border-border">
         <button
@@ -659,6 +687,10 @@ export default function FieldTypesPage() {
           <div
             key={saveMessage.key}
             data-testid="save-banner"
+            // Saving tears down the form, so this banner is the ONLY signal
+            // the save landed. role="status" (polite) rather than "alert" —
+            // it is a confirmation, not an interruption.
+            role="status"
             className="py-2 px-3.5 border-t border-success-border bg-success-bg text-xs text-success-fg font-medium"
           >
             ✓ {saveMessage.text}

@@ -173,7 +173,10 @@ export function StreamingChatPanel({
 
       {/* Error banner */}
       {error && (
-        <div className="px-4 py-2 bg-danger-bg border-t border-danger-border text-xs text-danger-fg">
+        // The user is sitting waiting for a streamed reply; when the stream
+        // fails this banner is the only thing that changes, and without
+        // role="alert" a screen-reader user just hears nothing forever.
+        <div role="alert" className="px-4 py-2 bg-danger-bg border-t border-danger-border text-xs text-danger-fg">
           {error}
         </div>
       )}

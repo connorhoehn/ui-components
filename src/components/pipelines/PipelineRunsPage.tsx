@@ -258,7 +258,7 @@ export default function PipelineRunsPage() {
               Use persisted input snapshot
             </label>
             {retryError && (
-              <div data-testid="retry-modal-error" className="px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg">{retryError}</div>
+              <div role="alert" data-testid="retry-modal-error" className="px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg">{retryError}</div>
             )}
           </div>
         )}

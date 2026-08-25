@@ -6,6 +6,7 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
+import { useOverlayLayer } from '../../lib/overlayStack';
 
 export interface ModalProps {
   open: boolean;
@@ -86,6 +87,9 @@ function Modal({
   // restore it when the modal closes. Lives in a ref so the unmount-cleanup
   // closure reads the latest value.
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  // Escape must only reach the top layer. Two modals open at once (or a
+  // command palette summoned over one) otherwise both close on one keystroke.
+  const isTopLayer = useOverlayLayer(open);
 
   // ── Open/close lifecycle: capture+restore focus, autofocus on open ─────
   useEffect(() => {
@@ -133,10 +137,14 @@ function Modal({
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        if (isTopLayer()) onClose();
         return;
       }
       if (e.key !== 'Tab') return;
+      // A lower layer must not run its trap: its card does not contain the
+      // focused element (the layer above portals elsewhere), so it would
+      // "rescue" focus out of the overlay the user is actually looking at.
+      if (!isTopLayer()) return;
       const card = cardRef.current;
       if (!card) return;
       const focusables = getFocusableElements(card);
@@ -165,7 +173,7 @@ function Modal({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+  }, [open, onClose, isTopLayer]);
 
   if (!open) return null;
 
