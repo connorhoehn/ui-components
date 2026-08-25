@@ -121,3 +121,10 @@ export type {
 
 export { WrappedHangoutRoomsList } from './WrappedHangoutRoomsList';
 export type { WrappedHangoutRoomsListProps } from './WrappedHangoutRoomsList';
+
+export { WrappedMediaEffectsTray } from './WrappedMediaEffectsTray';
+export type {
+  WrappedMediaEffectsTrayProps,
+  RMMediaEffectsControllerSource,
+  RMBackgroundMode,
+} from './WrappedMediaEffectsTray';

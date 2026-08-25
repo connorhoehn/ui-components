@@ -1589,6 +1589,7 @@ function Q({ messages: t, isStreaming: r, streamingText: i = "", activeToolCalls
 				]
 			}),
 			u && /* @__PURE__ */ d("div", {
+				role: "alert",
 				className: "px-4 py-2 bg-danger-bg border-t border-danger-border text-xs text-danger-fg",
 				children: u
 			}),

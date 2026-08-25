@@ -391,4 +391,104 @@ function S({ show: e, label: t = "Reconnecting…" }) {
 	}) : null;
 }
 //#endregion
-export { _ as a, m as c, c as d, v as i, d as l, x as n, g as o, y as r, p as s, S as t, f as u };
+//#region src/components/video/MediaEffectsTray.tsx
+function C({ label: t, active: n, disabled: r, compact: i, onClick: a, thumbUrl: c, "data-testid": l }) {
+	return /* @__PURE__ */ s("button", {
+		type: "button",
+		onClick: a,
+		disabled: r,
+		"aria-pressed": n,
+		title: t,
+		"data-testid": l,
+		className: e("inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap shrink-0", "transition-colors duration-150", i ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm", n ? "bg-primary text-white" : "bg-white/10 text-text-inverse hover:bg-white/20", r && "opacity-40 cursor-not-allowed", !r && "cursor-pointer"),
+		children: [c && /* @__PURE__ */ o("span", {
+			"aria-hidden": !0,
+			className: e("rounded-full bg-cover bg-center shrink-0 border border-white/20", i ? "h-4 w-4" : "h-5 w-5"),
+			style: { backgroundImage: `url(${c})` }
+		}), t]
+	});
+}
+function w({ label: t, compact: n, children: r }) {
+	return /* @__PURE__ */ s("section", {
+		className: e("flex flex-col", n ? "gap-1.5" : "gap-2"),
+		children: [/* @__PURE__ */ o("h3", {
+			className: "text-[11px] font-semibold uppercase tracking-wide text-white/60",
+			children: t
+		}), /* @__PURE__ */ o("div", {
+			className: "flex items-center gap-2 overflow-x-auto pb-1",
+			children: r
+		})]
+	});
+}
+function T({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, backgroundMode: a, activeBackgroundUrl: c, onSelectBackground: l, faceSprites: u, activeFaceSpriteId: d, onSelectFaceSprite: f, disabled: p = !1, compact: m = !1, className: h, "data-testid": g }) {
+	return /* @__PURE__ */ s("div", {
+		"data-testid": g,
+		className: e("flex flex-col rounded-xl bg-surface-inverse text-text-inverse border border-white/10", m ? "gap-3 p-3" : "gap-4 p-4", h),
+		children: [
+			/* @__PURE__ */ o(w, {
+				label: "Filters",
+				compact: m,
+				children: t.map((e) => /* @__PURE__ */ o(C, {
+					label: e.label,
+					active: e.id === n,
+					disabled: p,
+					compact: m,
+					onClick: () => r(e.id),
+					"data-testid": `effects-filter-${e.id}`
+				}, e.id))
+			}),
+			/* @__PURE__ */ s(w, {
+				label: "Background",
+				compact: m,
+				children: [
+					/* @__PURE__ */ o(C, {
+						label: "None",
+						active: a === "none",
+						disabled: p,
+						compact: m,
+						onClick: () => l("none", null),
+						"data-testid": "effects-bg-none"
+					}),
+					/* @__PURE__ */ o(C, {
+						label: "Blur",
+						active: a === "blur",
+						disabled: p,
+						compact: m,
+						onClick: () => l("blur", null),
+						"data-testid": "effects-bg-blur"
+					}),
+					i.map((e) => /* @__PURE__ */ o(C, {
+						label: e.label,
+						active: a === "image" && c === e.url,
+						disabled: p,
+						compact: m,
+						onClick: () => l("image", e.url),
+						thumbUrl: e.url,
+						"data-testid": `effects-bg-${e.id}`
+					}, e.id))
+				]
+			}),
+			/* @__PURE__ */ s(w, {
+				label: "Face FX",
+				compact: m,
+				children: [/* @__PURE__ */ o(C, {
+					label: "None",
+					active: d === null,
+					disabled: p,
+					compact: m,
+					onClick: () => f(null),
+					"data-testid": "effects-face-none"
+				}), u.map((e) => /* @__PURE__ */ o(C, {
+					label: e.label,
+					active: e.id === d,
+					disabled: p,
+					compact: m,
+					onClick: () => f(e.id),
+					"data-testid": `effects-face-${e.id}`
+				}, e.id))]
+			})
+		]
+	});
+}
+//#endregion
+export { v as a, p as c, f as d, c as f, y as i, m as l, S as n, _ as o, x as r, g as s, T as t, d as u };

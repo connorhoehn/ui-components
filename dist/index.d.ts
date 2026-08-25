@@ -1,16 +1,20 @@
 import { AnchorHTMLAttributes } from 'react';
 import { Awareness } from 'y-protocols/awareness';
 import { ButtonHTMLAttributes } from 'react';
+import { Component } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { ElementType } from 'react';
+import { ErrorInfo } from 'react';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import { InputHTMLAttributes } from 'react';
 import { JSX } from 'react';
+import { JSXElementConstructor } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { MutableRefObject } from 'react';
 import { Observable } from 'lib0/observable';
+import { ReactElement } from 'react';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
 import { Ref } from 'react';
@@ -2464,6 +2468,25 @@ declare interface EphemeralReaction {
     x: number;
     y: number;
     timestamp: string;
+}
+
+export declare class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+    constructor(props: ErrorBoundaryProps);
+    static getDerivedStateFromError(error: Error): ErrorBoundaryState;
+    componentDidCatch(error: Error, info: ErrorInfo): void;
+    handleRetry: () => void;
+    render(): string | number | bigint | boolean | JSX.Element | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined;
+}
+
+declare interface ErrorBoundaryProps {
+    /** Identifier for which boundary caught the error (logged to console). */
+    name: string;
+    children: ReactNode;
+}
+
+declare interface ErrorBoundaryState {
+    hasError: boolean;
+    error: Error | null;
 }
 
 export declare type ErrorCategory = 'NetworkError' | 'TimeoutError' | 'ValidationError' | 'LLMError' | 'RegistryConflict' | 'UnknownError';

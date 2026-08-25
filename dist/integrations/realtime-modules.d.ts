@@ -209,6 +209,41 @@ export declare interface HangoutRoomsSectionProps {
     }) => React.ReactNode;
 }
 
+declare interface MediaEffectsBackgroundOption {
+    id: string;
+    label: string;
+    /** Thumbnail + replacement image URL, rendered as the chip's preview. */
+    url: string;
+}
+
+declare interface MediaEffectsFilterOption {
+    id: string;
+    label: string;
+}
+
+declare interface MediaEffectsTrayProps {
+    filters: MediaEffectsFilterOption[];
+    /** 'none' = no filter active. */
+    activeFilterId: string;
+    onSelectFilter: (id: string) => void;
+    backgrounds: MediaEffectsBackgroundOption[];
+    backgroundMode: 'none' | 'blur' | 'image';
+    /** Only meaningful when backgroundMode === 'image'. */
+    activeBackgroundUrl: string | null;
+    /** ('none', null) | ('blur', null) | ('image', url) */
+    onSelectBackground: (mode: 'none' | 'blur' | 'image', url: string | null) => void;
+    faceSprites: MediaEffectsFilterOption[];
+    /** null = no sprite active. */
+    activeFaceSpriteId: string | null;
+    onSelectFaceSprite: (id: string | null) => void;
+    /** Dims every chip and blocks clicks — e.g. while the engine loads. */
+    disabled?: boolean;
+    /** Compact = tighter paddings for popover placement. */
+    compact?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare class NetworkErrorBoundary extends Component<NetworkErrorBoundaryProps, NetworkErrorBoundaryState> {
     state: NetworkErrorBoundaryState;
     static getDerivedStateFromError(error: Error): NetworkErrorBoundaryState;
@@ -383,6 +418,8 @@ export declare interface RMActivityEvent {
     displayName: string;
 }
 
+export declare type RMBackgroundMode = 'none' | 'blur' | 'image';
+
 /** Mirror of realtime-modules/src/client/useCapability.ts CapabilityHookResult */
 export declare interface RMCapabilityHookResult {
     capability: {
@@ -461,6 +498,35 @@ export declare interface RMJoinRoomResult {
     sessionId: string;
     token: string;
     participantId: string;
+}
+
+/**
+ * Minimum shape needed from useMediaEffects()'s MediaEffectsController.
+ * Registry entries may carry extra fields (cssFilter, render fns) — the
+ * tray only reads id/label/url.
+ */
+export declare interface RMMediaEffectsControllerSource {
+    filterId: string;
+    backgroundMode: RMBackgroundMode;
+    backgroundImageUrl: string | null;
+    faceSpriteId: string | null;
+    filters: Array<{
+        id: string;
+        label: string;
+    }>;
+    backgrounds: Array<{
+        id: string;
+        label: string;
+        url: string;
+    }>;
+    faceSprites: Array<{
+        id: string;
+        label: string;
+    }>;
+    setFilter(id: string): void;
+    setBackgroundMode(mode: RMBackgroundMode): void;
+    setBackgroundImageUrl(url: string | null): void;
+    setFaceSpriteId(id: string | null): void;
 }
 
 /** Mirror of realtime-modules/src/client/useNotifications.ts NotificationHookEntry */
@@ -810,6 +876,13 @@ export declare interface WrappedLVSHangoutLayoutProps {
     showLocalAsTile?: boolean;
     className?: string;
     'data-testid'?: string;
+}
+
+export declare function WrappedMediaEffectsTray({ controller, ...rest }: WrappedMediaEffectsTrayProps): JSX.Element;
+
+export declare interface WrappedMediaEffectsTrayProps extends Pick<MediaEffectsTrayProps, 'disabled' | 'compact' | 'className' | 'data-testid'> {
+    /** Return value of useMediaEffects() from realtime-modules. */
+    controller: RMMediaEffectsControllerSource;
 }
 
 export declare function WrappedNotificationCenter({ notifications, onItemClick, ...rest }: WrappedNotificationCenterProps): JSX.Element;
