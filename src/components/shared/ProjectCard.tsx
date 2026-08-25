@@ -4,7 +4,7 @@
 // header, an embedded ActivityFeed ticker, and a footer with AvatarGroup +
 // presence dot. Entirely data-prop driven — no domain types.
 
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ElementType } from 'react';
 import { AvatarGroup } from './Avatar';
 import type { ActivityFeedItem } from './ActivityFeed';
 import { ActivityFeed } from './ActivityFeed';
@@ -131,9 +131,15 @@ export function ProjectCard({
   // Stagger: 8 offsets × 525 ms spread across one rotation cycle.
   const staggerMs = (cardIndex % 8) * 525;
 
+  // `onClick` is optional, and the card rendered as a <button> regardless: a
+  // focusable tab stop with `cursor: pointer` that a screen reader announces
+  // as a button and that swallows every click. A wall of read-only project
+  // cards became a wall of dead tab stops. Drop to a plain <div> when the
+  // caller wired nothing — the same shape StatCard and ThumbnailCard use.
+  const Tag: ElementType = onClick ? 'button' : 'div';
   return (
-    <button
-      type="button"
+    <Tag
+      type={onClick ? 'button' : undefined}
       onClick={onClick}
       className={className}
       style={{
@@ -142,7 +148,7 @@ export function ProjectCard({
         borderTop: `3px solid ${colors.accent}`,
         borderRadius: 10,
         padding: '14px 16px 12px',
-        cursor: 'pointer',
+        cursor: onClick ? 'pointer' : 'default',
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
@@ -248,7 +254,7 @@ export function ProjectCard({
           </div>
         )}
       </div>
-    </button>
+    </Tag>
   );
 }
 

@@ -94,7 +94,7 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
     !WEBHOOK_PATH_RE.test(webhookPathRaw);
   const webhookFullUrl =
     data.triggerType === 'webhook' && WEBHOOK_PATH_RE.test(webhookPathRaw)
-      ? `${SOCIAL_API_URL}/hooks/pipeline/${webhookPathRaw}`
+      ? `${webhookOrigin}/hooks/pipeline/${webhookPathRaw}`
       : null;
 
   const onCopyWebhookUrl = () => {
@@ -253,7 +253,25 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
             )}
           />
 
+          {/* Relay not declared → say so, and withhold every affordance that
+              would have an integrator build against a dead endpoint. The path
+              itself stays editable: it is real saved configuration and starts
+              working the moment the host declares a relay. */}
+          {!relayActive && (
+            <Banner
+              variant="warning"
+              title="Endpoint not active."
+              data-testid="webhook-relay-inactive"
+            >
+              This deployment has not declared an inbound webhook relay, so a
+              POST to this path is accepted and starts no run. The path is
+              still saved with the pipeline; the delivery URL and signing
+              secret appear once the host wires the relay.
+            </Banner>
+          )}
+
           {/* Full URL preview / copy button */}
+          {relayActive && (
           <div className="p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-secondary font-mono break-all flex items-center gap-2">
             {webhookFullUrl ? (
               <>
@@ -275,8 +293,10 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
               </span>
             )}
           </div>
+          )}
 
           {/* Webhook signing secret */}
+          {relayActive && (
           <div>
             <label className="text-xs font-semibold text-text-secondary">Signing secret</label>
             <div className="mt-1 p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-secondary font-mono break-all flex items-center gap-2">
@@ -312,6 +332,7 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
               {' '}<code>X-Pipeline-Signature-256: sha256=&lt;hex&gt;</code>.
             </div>
           </div>
+          )}
         </div>
       )}
     </NodeConfigShell>

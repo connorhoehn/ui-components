@@ -129,3 +129,47 @@ describe('DocTypeProposalsPage', () => {
     expect(reject).toHaveBeenCalledWith('p-target');
   });
 });
+
+// `promote` / `reject` reject on a non-2xx response, and both call sites were
+// a bare `void promote(...)`: the rejection went nowhere, the proposal stayed
+// in the list, and the operator's only reading was that Promote is broken —
+// or, worse, that it had silently gone through.
+describe('DocTypeProposalsPage — a refused decision says so', () => {
+  const renderWithFailing = (key: 'promote' | 'reject', err: unknown) => {
+    useDocTypeProposalsMock.mockReturnValue(
+      makeHook({
+        proposals: [makeProposal({ proposalId: 'p-target' })],
+        [key]: vi.fn().mockRejectedValue(err),
+      }),
+    );
+    render(<DocTypeProposalsPage />);
+    fireEvent.click(screen.getByTestId(`proposal-${key}-p-target`));
+  };
+
+  it('surfaces a rejected promote in its own banner', async () => {
+    renderWithFailing('promote', new Error('HTTP 409'));
+    const banner = await screen.findByTestId('proposals-action-error');
+    expect(banner).toHaveTextContent('HTTP 409');
+    expect(banner).toHaveAttribute('role', 'alert');
+    // Not the load-error channel — the list rendered fine.
+    expect(screen.queryByTestId('proposals-error')).toBeNull();
+    expect(screen.getByTestId('proposal-row-p-target')).toBeInTheDocument();
+  });
+
+  it('surfaces a rejected reject too, and dismisses on request', async () => {
+    renderWithFailing('reject', new Error('HTTP 503'));
+    expect(await screen.findByTestId('proposals-action-error')).toHaveTextContent('HTTP 503');
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+    expect(screen.queryByTestId('proposals-action-error')).toBeNull();
+  });
+
+  it('shows no banner when the decision resolves', async () => {
+    useDocTypeProposalsMock.mockReturnValue(
+      makeHook({ proposals: [makeProposal({ proposalId: 'p-target' })] }),
+    );
+    render(<DocTypeProposalsPage />);
+    fireEvent.click(screen.getByTestId('proposal-promote-p-target'));
+    await Promise.resolve();
+    expect(screen.queryByTestId('proposals-action-error')).toBeNull();
+  });
+});

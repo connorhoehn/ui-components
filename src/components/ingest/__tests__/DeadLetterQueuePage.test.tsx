@@ -95,3 +95,45 @@ describe('DeadLetterQueuePage', () => {
     expect(drop).toHaveBeenCalledWith('env-target');
   });
 });
+
+// `replay` / `drop` reject on a non-2xx response, and both call sites were a
+// bare `void replay(...)`: the rejection went nowhere, the row stayed in the
+// queue, and nothing on screen changed. A refused replay looked exactly like
+// an accepted one that hadn't refreshed yet.
+describe('DeadLetterQueuePage — a refused action says so', () => {
+  const renderWithFailing = (key: 'replay' | 'drop', err: unknown) => {
+    useIngestDLQMock.mockReturnValue(
+      makeHook({
+        entries: [makeEntry({ id: 'env-target' })],
+        [key]: vi.fn().mockRejectedValue(err),
+      }),
+    );
+    render(<DeadLetterQueuePage />);
+    fireEvent.click(screen.getByTestId(`dlq-${key}-env-target`));
+  };
+
+  it('surfaces a rejected replay in its own banner', async () => {
+    renderWithFailing('replay', new Error('HTTP 409'));
+    const banner = await screen.findByTestId('ingest-dlq-action-error');
+    expect(banner).toHaveTextContent('HTTP 409');
+    expect(banner).toHaveAttribute('role', 'alert');
+    // It must not claim the queue failed to LOAD — the list is fine.
+    expect(screen.queryByTestId('ingest-dlq-error')).toBeNull();
+    expect(screen.getByTestId('dlq-row-env-target')).toBeInTheDocument();
+  });
+
+  it('surfaces a rejected drop too, and dismisses on request', async () => {
+    renderWithFailing('drop', new Error('HTTP 503'));
+    expect(await screen.findByTestId('ingest-dlq-action-error')).toHaveTextContent('HTTP 503');
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+    expect(screen.queryByTestId('ingest-dlq-action-error')).toBeNull();
+  });
+
+  it('shows no banner when the action resolves', async () => {
+    useIngestDLQMock.mockReturnValue(makeHook({ entries: [makeEntry({ id: 'env-target' })] }));
+    render(<DeadLetterQueuePage />);
+    fireEvent.click(screen.getByTestId('dlq-replay-env-target'));
+    await Promise.resolve();
+    expect(screen.queryByTestId('ingest-dlq-action-error')).toBeNull();
+  });
+});

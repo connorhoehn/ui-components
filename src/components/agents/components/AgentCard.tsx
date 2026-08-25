@@ -1,3 +1,4 @@
+import type { ElementType } from 'react';
 import { cn } from '../../../lib/cn';
 import type { AgentDefinition, AgentMetrics } from '../../../types/agents';
 
@@ -23,9 +24,15 @@ const STATUS_DOT: Record<string, string> = {
 };
 
 export function AgentCard({ agent, metrics, selected, onClick }: AgentCardProps) {
+  // `onClick` is optional, but the card rendered as a <button> either way: a
+  // focusable tab stop with a pointer cursor and a hover lift, announced to a
+  // screen reader as a button, that swallowed every click. In a 20-agent grid
+  // that is 20 dead tab stops. Same treatment as StatCard / ThumbnailCard /
+  // KPICard, which all drop to a plain element when nothing is wired.
+  const Tag: ElementType = onClick ? 'button' : 'div';
   return (
-    <button
-      type="button"
+    <Tag
+      type={onClick ? 'button' : undefined}
       className={cn(
         // `flex flex-col`, not `block`: in the dashboard grid the card
         // stretches to the tallest card in its row, and Chrome vertically
@@ -33,10 +40,11 @@ export function AgentCard({ agent, metrics, selected, onClick }: AgentCardProps)
         // which `display: block` does not prevent. As a div this content sat
         // at the top; as a block button the shorter cards' contents drifted to
         // the middle of the frame. Flex column pins it back to the top.
-        'flex flex-col w-full text-left font-[inherit] border rounded-lg cursor-pointer transition-all hover:shadow-sm overflow-hidden',
+        'flex flex-col w-full text-left font-[inherit] border rounded-lg transition-all overflow-hidden',
+        onClick && 'cursor-pointer hover:shadow-sm',
         selected
           ? 'border-info bg-info-bg/50 shadow-sm'
-          : 'border-border bg-white hover:border-border-emphasis',
+          : cn('border-border bg-white', onClick && 'hover:border-border-emphasis'),
       )}
       onClick={onClick}
     >
@@ -112,6 +120,6 @@ export function AgentCard({ agent, metrics, selected, onClick }: AgentCardProps)
           </div>
         )}
       </div>
-    </button>
+    </Tag>
   );
 }
