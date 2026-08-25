@@ -94,7 +94,7 @@ export function CallSettingsDialog({
       maxWidth={768}
       rawChildren
       backdropTestId="call-settings-backdrop"
-      cardClassName="max-w-3xl bg-surface-inverse text-text-inverse border border-white/10 p-0 overflow-hidden"
+      cardClassName="max-w-4xl bg-surface-inverse text-text-inverse border border-white/10 p-0 overflow-hidden"
     >
       <div
         data-testid="call-settings-dialog"
@@ -121,7 +121,10 @@ export function CallSettingsDialog({
             className={cn(
               'relative shrink-0 overflow-hidden bg-video-stage',
               // ~16:9 floor; on desktop the pane takes just over half the card.
-              'aspect-video w-full sm:aspect-auto sm:min-h-[280px] sm:w-[52%]',
+              // Wrapping chip sections need the width more than the
+              // preview does — 44% keeps the preview generous while every
+              // effect option fits without clipping.
+              'aspect-video w-full sm:aspect-auto sm:min-h-[320px] sm:w-[44%]',
             )}
           >
             {previewStream ? (
@@ -180,7 +183,7 @@ export function CallSettingsDialog({
             <div
               role="tabpanel"
               data-testid="call-settings-panel"
-              className="min-h-0 flex-1 overflow-y-auto p-3 sm:max-h-[420px]"
+              className="min-h-0 flex-1 overflow-y-auto p-4 sm:max-h-[460px]"
             >
               {activeTab === 'effects' ? effectsContent : null}
               {activeTab === 'people' ? peopleContent : null}

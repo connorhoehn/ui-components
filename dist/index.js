@@ -41,51 +41,47 @@ import { n as Sr, r as Cr, t as wr } from "./EventStreamContext-CLzG8O5_.js";
 import { B as Tr, E as Er, J as Dr, N as Or, Q as kr, S as Ar, Y as jr, Z as Mr, _ as Nr, at as Pr, b as Fr, d as Ir, f as Lr, g as Rr, h as zr, it as Br, j as Vr, l as Hr, m as Ur, n as Wr, p as Gr, s as Kr, t as qr, u as Jr, v as Yr, w as Xr, x as Zr, y as Qr } from "./services-DrJviHEM.js";
 import { n as $r, t as ei } from "./ObservabilityContext-DpoDrm3T.js";
 import { t as ti } from "./Select-Z0TLUVeL.js";
-import { A as ni, B as ri, C as ii, D as ai, E as oi, F as si, H as ci, I as li, L as ui, M as di, N as fi, O as pi, P as mi, R as hi, S as gi, T as _i, U as vi, V as yi, _ as bi, a as xi, b as Si, c as Ci, d as wi, f as Ti, g as Ei, h as Di, i as Oi, j as ki, k as Ai, l as ji, m as Mi, n as Ni, o as Pi, p as Fi, r as Ii, s as Li, t as Ri, u as zi, v as Bi, w as Vi, x as Hi, y as Ui, z as Wi } from "./video-Cv-4TEPm.js";
-import { a as Gi, c as Ki, d as qi, f as Ji, i as Yi, l as Xi, n as Zi, o as Qi, r as $i, s as ea, t as ta, u as na } from "./MediaEffectsTray-50zbnevT.js";
+import { A as ni, B as ri, C as ii, D as ai, E as oi, F as si, H as ci, I as li, L as ui, M as di, N as fi, O as pi, P as mi, R as hi, S as gi, T as _i, U as vi, V as yi, _ as bi, a as xi, b as Si, c as Ci, d as wi, f as Ti, g as Ei, h as Di, i as Oi, j as ki, k as Ai, l as ji, m as Mi, n as Ni, o as Pi, p as Fi, r as Ii, s as Li, t as Ri, u as zi, v as Bi, w as Vi, x as Hi, y as Ui, z as Wi } from "./video-DLW6Ju4M.js";
+import { a as Gi, c as Ki, d as qi, f as Ji, i as Yi, l as Xi, n as Zi, o as Qi, r as $i, s as ea, t as ta, u as na } from "./MediaEffectsTray-DKZI2XmM.js";
 import { A as ra, C as ia, D as aa, E as oa, O as sa, S as ca, T as la, _ as ua, a as da, b as fa, c as pa, d as ma, f as ha, g as ga, h as _a, i as va, k as ya, l as ba, m as xa, n as Sa, o as Ca, p as wa, r as Ta, s as Ea, t as Da, u as Oa, v as ka, w as Aa, x as ja, y as Ma } from "./identity-eUI7EbEP.js";
 import { t as Na } from "./Checkbox-DsS7fIUO.js";
 import { Suspense as Pa, createContext as Fa, forwardRef as Ia, lazy as La, useCallback as W, useContext as Ra, useEffect as G, useId as za, useMemo as K, useRef as q, useState as J } from "react";
 import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
 import { Outlet as Ba, useLocation as Va, useNavigate as Ha } from "react-router";
 //#region src/components/hangout/InviteCandidateList.tsx
-function Ua({ candidates: e, onInvite: t, loading: n = !1, resetKey: r, children: i, className: a, "data-testid": o }) {
-	let [s, c] = J(() => /* @__PURE__ */ new Set());
+function Ua({ candidates: e, onInvite: t, loading: n = !1, resetKey: r, children: i, tone: a = "light", className: o, "data-testid": s }) {
+	let c = a === "dark", [l, u] = J(() => /* @__PURE__ */ new Set());
 	G(() => {
-		c(/* @__PURE__ */ new Set());
+		u(/* @__PURE__ */ new Set());
 	}, [r]);
-	let l = K(() => e.filter((e) => !e.alreadyInCall), [e]), u = (e) => {
-		c((t) => {
+	let d = K(() => e.filter((e) => !e.alreadyInCall), [e]), f = (e) => {
+		u((t) => {
 			let n = new Set(t);
 			return n.has(e) ? n.delete(e) : n.add(e), n;
 		});
-	}, d = s.size, f = /* @__PURE__ */ X(Y, { children: e.length === 0 ? /* @__PURE__ */ X("p", {
-		className: "text-[13px] text-text-secondary m-0",
+	}, p = l.size, m = /* @__PURE__ */ X(Y, { children: e.length === 0 ? /* @__PURE__ */ X("p", {
+		className: B("m-0 text-[13px]", c ? "text-white/60" : "text-text-secondary"),
 		"data-testid": "invite-to-call-empty",
 		children: "Nobody else is online right now."
-	}) : l.length === 0 ? /* @__PURE__ */ X("p", {
-		className: "text-[13px] text-text-secondary m-0",
+	}) : d.length === 0 ? /* @__PURE__ */ X("p", {
+		className: B("m-0 text-[13px]", c ? "text-white/60" : "text-text-secondary"),
 		"data-testid": "invite-to-call-everyone-here",
 		children: "Everyone who's online is already on this call."
 	}) : /* @__PURE__ */ X("ul", {
 		className: "flex flex-col gap-1 m-0 p-0 list-none max-h-[280px] overflow-y-auto",
 		"aria-label": "People you can invite",
 		children: e.map((e) => {
-			let t = !!e.alreadyInCall || n, r = s.has(e.userId);
+			let t = !!e.alreadyInCall || n, r = l.has(e.userId);
 			return /* @__PURE__ */ X("li", { children: /* @__PURE__ */ Z("button", {
 				type: "button",
 				disabled: t,
 				"aria-pressed": r,
-				onClick: () => u(e.userId),
+				onClick: () => f(e.userId),
 				"data-testid": "invite-candidate",
 				"data-user-id": e.userId,
 				"data-selected": r ? "true" : "false",
 				"data-already-in-call": e.alreadyInCall ? "true" : "false",
-				className: [
-					"flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left",
-					t ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-surface-hover",
-					r ? "bg-surface-hover" : ""
-				].join(" "),
+				className: B("flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left", t ? "opacity-50 cursor-not-allowed" : B("cursor-pointer", c ? "hover:bg-white/10" : "hover:bg-surface-hover"), r && (c ? "bg-white/10" : "bg-surface-hover")),
 				children: [
 					e.avatarUrl ? /* @__PURE__ */ X("img", {
 						src: e.avatarUrl,
@@ -96,43 +92,43 @@ function Ua({ candidates: e, onInvite: t, loading: n = !1, resetKey: r, children
 						size: 24
 					}),
 					/* @__PURE__ */ X("span", {
-						className: "flex-1 truncate text-[13px] text-text-primary",
+						className: B("flex-1 truncate text-[13px]", c ? "text-white" : "text-text-primary"),
 						children: e.name
 					}),
 					e.alreadyInCall ? /* @__PURE__ */ X("span", {
-						className: "text-[11px] text-neutral",
+						className: B("text-[11px]", c ? "text-white/50" : "text-neutral"),
 						children: "In call"
 					}) : e.pending ? /* @__PURE__ */ X("span", {
-						className: "text-[11px] text-neutral",
+						className: B("text-[11px]", c ? "text-white/50" : "text-neutral"),
 						children: "Ringing…"
 					}) : /* @__PURE__ */ X("span", {
 						"aria-hidden": "true",
-						className: ["grid h-4 w-4 place-items-center rounded border text-[10px]", r ? "border-transparent bg-primary text-white" : "border-border text-transparent"].join(" "),
+						className: B("grid h-4 w-4 place-items-center rounded border text-[10px]", r ? "border-transparent bg-primary text-white" : B("text-transparent", c ? "border-white/30" : "border-border")),
 						children: "✓"
 					})
 				]
 			}) }, e.userId);
 		})
-	}) }), p = /* @__PURE__ */ X(V, {
+	}) }), h = /* @__PURE__ */ X(V, {
 		variant: "primary",
 		size: "md",
 		onClick: () => {
-			t([...s]);
+			t([...l]);
 		},
-		disabled: n || d === 0,
+		disabled: n || p === 0,
 		"data-autofocus": !0,
 		"data-testid": "invite-to-call-confirm",
-		children: n ? "Inviting…" : d === 0 ? "Invite" : `Invite ${d} ${d === 1 ? "person" : "people"}`
+		children: n ? "Inviting…" : p === 0 ? "Invite" : `Invite ${p} ${p === 1 ? "person" : "people"}`
 	});
 	return i ? /* @__PURE__ */ X(Y, { children: i({
-		list: f,
-		confirm: p
+		list: m,
+		confirm: h
 	}) }) : /* @__PURE__ */ Z("div", {
-		className: B("flex flex-col gap-3", a),
-		"data-testid": o,
-		children: [f, /* @__PURE__ */ X("div", {
+		className: B("flex flex-col gap-3", o),
+		"data-testid": s,
+		children: [m, /* @__PURE__ */ X("div", {
 			className: "flex justify-end",
-			children: p
+			children: h
 		})]
 	});
 }

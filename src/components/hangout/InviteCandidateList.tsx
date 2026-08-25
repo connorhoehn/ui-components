@@ -67,6 +67,11 @@ export interface InviteCandidateListProps {
      *  them (InviteToCallDialog puts the confirm in its modal footer).
      *  Omit for the default stacked layout. */
     children?: (parts: InviteCandidateListParts) => ReactNode;
+    /** Surface the list renders on. 'light' (default) uses the theme
+     *  tokens the invite modal always used; 'dark' swaps to white/alpha
+     *  classes for dark call chrome (CallSettingsDialog's People tab) —
+     *  without it the names render dark-on-dark and disappear. */
+    tone?: 'light' | 'dark';
     /** Applied to the default stacked layout's root only. */
     className?: string;
     'data-testid'?: string;
@@ -78,9 +83,11 @@ export function InviteCandidateList({
     loading = false,
     resetKey,
     children,
+    tone = 'light',
     className,
     'data-testid': testId,
 }: InviteCandidateListProps) {
+    const dark = tone === 'dark';
     const [selected, setSelected] = useState<Set<string>>(() => new Set());
 
     // Reset the selection whenever the host surface says so (e.g. each
@@ -109,14 +116,14 @@ export function InviteCandidateList({
         <>
             {candidates.length === 0 ? (
                 <p
-                    className="text-[13px] text-text-secondary m-0"
+                    className={cn('m-0 text-[13px]', dark ? 'text-white/60' : 'text-text-secondary')}
                     data-testid="invite-to-call-empty"
                 >
                     Nobody else is online right now.
                 </p>
             ) : invitable.length === 0 ? (
                 <p
-                    className="text-[13px] text-text-secondary m-0"
+                    className={cn('m-0 text-[13px]', dark ? 'text-white/60' : 'text-text-secondary')}
                     data-testid="invite-to-call-everyone-here"
                 >
                     Everyone who&apos;s online is already on this call.
@@ -140,13 +147,13 @@ export function InviteCandidateList({
                                     data-user-id={c.userId}
                                     data-selected={isSelected ? 'true' : 'false'}
                                     data-already-in-call={c.alreadyInCall ? 'true' : 'false'}
-                                    className={[
+                                    className={cn(
                                         'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left',
                                         disabled
                                             ? 'opacity-50 cursor-not-allowed'
-                                            : 'cursor-pointer hover:bg-surface-hover',
-                                        isSelected ? 'bg-surface-hover' : '',
-                                    ].join(' ')}
+                                            : cn('cursor-pointer', dark ? 'hover:bg-white/10' : 'hover:bg-surface-hover'),
+                                        isSelected && (dark ? 'bg-white/10' : 'bg-surface-hover'),
+                                    )}
                                 >
                                     {c.avatarUrl ? (
                                         <img
@@ -157,22 +164,22 @@ export function InviteCandidateList({
                                     ) : (
                                         <Avatar name={c.name} size={24} />
                                     )}
-                                    <span className="flex-1 truncate text-[13px] text-text-primary">
+                                    <span className={cn('flex-1 truncate text-[13px]', dark ? 'text-white' : 'text-text-primary')}>
                                         {c.name}
                                     </span>
                                     {c.alreadyInCall ? (
-                                        <span className="text-[11px] text-neutral">In call</span>
+                                        <span className={cn('text-[11px]', dark ? 'text-white/50' : 'text-neutral')}>In call</span>
                                     ) : c.pending ? (
-                                        <span className="text-[11px] text-neutral">Ringing…</span>
+                                        <span className={cn('text-[11px]', dark ? 'text-white/50' : 'text-neutral')}>Ringing…</span>
                                     ) : (
                                         <span
                                             aria-hidden="true"
-                                            className={[
+                                            className={cn(
                                                 'grid h-4 w-4 place-items-center rounded border text-[10px]',
                                                 isSelected
                                                     ? 'border-transparent bg-primary text-white'
-                                                    : 'border-border text-transparent',
-                                            ].join(' ')}
+                                                    : cn('text-transparent', dark ? 'border-white/30' : 'border-border'),
+                                            )}
                                         >
                                             ✓
                                         </span>

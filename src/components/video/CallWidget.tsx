@@ -56,10 +56,11 @@ export interface CallWidgetProps {
   onToggleScreenShare?: () => void;
   onUpgradeToVideo?: () => void;
   onAddParticipant?: (participantId: string) => void;
-  /** Slot rendered alongside the control row — the collapsed-widget
-   *  counterpart to MediaControlsBar's `extras`. Lets a consumer add one
-   *  action (invite, captions, settings) without forking the chrome, so
-   *  the docked and expanded widgets can offer the SAME affordance. */
+  /** Slot rendered IN the control row (between add-participant and End)
+   *  — the collapsed-widget counterpart to MediaControlsBar's `extras`.
+   *  Lets a consumer add one action (effects, captions, settings)
+   *  without forking the chrome, so the docked and expanded widgets can
+   *  offer the SAME affordance in the same place. */
   controlsExtras?: ReactNode;
   /** Consumer-owned "add people" flow — see CallControls. Renders the
    *  add-participant button inline with the other controls (which is
@@ -355,10 +356,9 @@ function ActiveCallContent({
         </span>
       </div>
 
-      {/* Controls */}
-      {controlsExtras ? (
-        <div className="flex items-center justify-center pb-1">{controlsExtras}</div>
-      ) : null}
+      {/* Controls — extras render IN the row (CallControls `extras`),
+          never in their own floating strip: an orphaned single button
+          above the row read as a layout bug (operator, 2026-08-25). */}
       <CallControls
         mode={mode}
         isMuted={isMuted}
@@ -373,6 +373,7 @@ function ActiveCallContent({
         availableParticipants={availableParticipants}
         onOpenAddParticipant={onOpenAddParticipant}
         currentParticipantIds={participants.map((p) => p.id)}
+        extras={controlsExtras}
       />
     </div>
   );

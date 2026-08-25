@@ -985,7 +985,7 @@ export declare type ButtonSize = 'sm' | 'md' | 'lg';
 
 export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
 
-export declare function CallControls({ mode, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, className, }: CallControlsProps): JSX.Element;
+export declare function CallControls({ mode, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, extras, className, }: CallControlsProps): JSX.Element;
 
 export declare type CallControlsMode = 'audio' | 'video';
 
@@ -1015,6 +1015,11 @@ export declare interface CallControlsProps {
      *  the presence roster, say) and just want the button in the row,
      *  looking like every other control. */
     onOpenAddParticipant?: () => void;
+    /** Slot rendered IN the control row, between add-participant and the
+     *  End button — camera effects, captions, raise-hand. Same contract
+     *  as MediaControlsBar's `extras`: extra controls belong in the row,
+     *  not floating in their own strip above it. */
+    extras?: ReactNode;
     className?: string;
 }
 
@@ -1203,10 +1208,11 @@ export declare interface CallWidgetProps {
     onToggleScreenShare?: () => void;
     onUpgradeToVideo?: () => void;
     onAddParticipant?: (participantId: string) => void;
-    /** Slot rendered alongside the control row — the collapsed-widget
-     *  counterpart to MediaControlsBar's `extras`. Lets a consumer add one
-     *  action (invite, captions, settings) without forking the chrome, so
-     *  the docked and expanded widgets can offer the SAME affordance. */
+    /** Slot rendered IN the control row (between add-participant and End)
+     *  — the collapsed-widget counterpart to MediaControlsBar's `extras`.
+     *  Lets a consumer add one action (effects, captions, settings)
+     *  without forking the chrome, so the docked and expanded widgets can
+     *  offer the SAME affordance in the same place. */
     controlsExtras?: ReactNode;
     /** Consumer-owned "add people" flow — see CallControls. Renders the
      *  add-participant button inline with the other controls (which is
@@ -3750,7 +3756,7 @@ export declare interface InviteCandidate {
     pending?: boolean;
 }
 
-export declare function InviteCandidateList({ candidates, onInvite, loading, resetKey, children, className, 'data-testid': testId, }: InviteCandidateListProps): JSX.Element;
+export declare function InviteCandidateList({ candidates, onInvite, loading, resetKey, children, tone, className, 'data-testid': testId, }: InviteCandidateListProps): JSX.Element;
 
 /** The two extracted blocks handed to the `children` render prop. */
 export declare interface InviteCandidateListParts {
@@ -3776,6 +3782,11 @@ export declare interface InviteCandidateListProps {
      *  them (InviteToCallDialog puts the confirm in its modal footer).
      *  Omit for the default stacked layout. */
     children?: (parts: InviteCandidateListParts) => ReactNode;
+    /** Surface the list renders on. 'light' (default) uses the theme
+     *  tokens the invite modal always used; 'dark' swaps to white/alpha
+     *  classes for dark call chrome (CallSettingsDialog's People tab) —
+     *  without it the names render dark-on-dark and disappear. */
+    tone?: 'light' | 'dark';
     /** Applied to the default stacked layout's root only. */
     className?: string;
     'data-testid'?: string;

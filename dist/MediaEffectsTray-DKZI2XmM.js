@@ -415,7 +415,7 @@ function w({ label: t, compact: n, children: r }) {
 			className: "text-[11px] font-semibold uppercase tracking-wide text-white/60",
 			children: t
 		}), /* @__PURE__ */ o("div", {
-			className: "flex items-center gap-2 overflow-x-auto pb-1",
+			className: e("flex gap-2", n ? "items-center overflow-x-auto pb-1" : "flex-wrap"),
 			children: r
 		})]
 	});
@@ -423,7 +423,7 @@ function w({ label: t, compact: n, children: r }) {
 function T({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, backgroundMode: a, activeBackgroundUrl: c, onSelectBackground: l, faceSprites: u, activeFaceSpriteId: d, onSelectFaceSprite: f, disabled: p = !1, compact: m = !1, className: h, "data-testid": g }) {
 	return /* @__PURE__ */ s("div", {
 		"data-testid": g,
-		className: e("flex flex-col rounded-xl bg-surface-inverse text-text-inverse border border-white/10", m ? "gap-3 p-3" : "gap-4 p-4", h),
+		className: e("flex flex-col text-text-inverse", m ? "gap-3 rounded-xl border border-white/10 bg-surface-inverse p-3" : "gap-4", h),
 		children: [
 			/* @__PURE__ */ o(w, {
 				label: "Filters",

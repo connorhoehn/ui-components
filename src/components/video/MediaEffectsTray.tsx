@@ -137,9 +137,16 @@ function TraySection({
       <h3 className="text-[11px] font-semibold uppercase tracking-wide text-white/60">
         {label}
       </h3>
-      {/* Chip rows scroll horizontally rather than wrapping so the tray
-          keeps a stable height in popovers. */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      {/* Compact (popover) keeps a stable height via horizontal scroll;
+          the full-size tray WRAPS so every option is visible at once —
+          clipped chips with no scroll affordance read as missing
+          features (operator feedback 2026-08-25). */}
+      <div
+        className={cn(
+          'flex gap-2',
+          compact ? 'items-center overflow-x-auto pb-1' : 'flex-wrap',
+        )}
+      >
         {children}
       </div>
     </section>
@@ -166,8 +173,13 @@ export function MediaEffectsTray({
     <div
       data-testid={testId}
       className={cn(
-        'flex flex-col rounded-xl bg-surface-inverse text-text-inverse border border-white/10',
-        compact ? 'gap-3 p-3' : 'gap-4 p-4',
+        'flex flex-col text-text-inverse',
+        // Panel chrome only in compact/popover placement — full-size
+        // renders flat so a dark host surface (CallSettingsDialog)
+        // doesn't show a card-within-a-card inset.
+        compact
+          ? 'gap-3 rounded-xl border border-white/10 bg-surface-inverse p-3'
+          : 'gap-4',
         className,
       )}
     >

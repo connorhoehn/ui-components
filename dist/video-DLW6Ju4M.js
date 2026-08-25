@@ -9,7 +9,7 @@ import { n as c, r as l, t as u } from "./focusTrap-CmWJlptm.js";
 import { t as d } from "./Avatar-OiMcrjPJ.js";
 import { t as f } from "./activationKey-CjbL3LUv.js";
 import { t as p } from "./Select-Z0TLUVeL.js";
-import { f as m, i as h } from "./MediaEffectsTray-50zbnevT.js";
+import { f as m, i as h } from "./MediaEffectsTray-DKZI2XmM.js";
 import { useCallback as g, useEffect as _, useImperativeHandle as v, useLayoutEffect as y, useMemo as b, useRef as x, useState as S } from "react";
 import { Fragment as C, jsx as w, jsxs as T } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -709,10 +709,10 @@ function W({ icon: t, label: n, active: r = !1, danger: i = !1, onClick: a, disa
 		children: t
 	});
 }
-function ce({ mode: t, isMuted: n = !1, isCameraOn: r = !0, isScreenSharing: i = !1, onToggleMute: a, onToggleCamera: o, onToggleScreenShare: s, onUpgradeToVideo: c, onEndCall: l, onAddParticipant: u, availableParticipants: d, currentParticipantIds: f, onOpenAddParticipant: p, className: m }) {
-	let [h, g] = S(!1), _ = new Set(f ?? []), v = (d ?? []).filter((e) => !_.has(e.id));
+function ce({ mode: t, isMuted: n = !1, isCameraOn: r = !0, isScreenSharing: i = !1, onToggleMute: a, onToggleCamera: o, onToggleScreenShare: s, onUpgradeToVideo: c, onEndCall: l, onAddParticipant: u, availableParticipants: d, currentParticipantIds: f, onOpenAddParticipant: p, extras: m, className: h }) {
+	let [g, _] = S(!1), v = new Set(f ?? []), y = (d ?? []).filter((e) => !v.has(e.id));
 	return /* @__PURE__ */ T("div", {
-		className: e("flex flex-col", m),
+		className: e("flex flex-col", h),
 		children: [/* @__PURE__ */ T("div", {
 			className: "flex items-center justify-center gap-2 px-3 pb-3",
 			"data-testid": "call-controls",
@@ -747,10 +747,11 @@ function ce({ mode: t, isMuted: n = !1, isCameraOn: r = !0, isScreenSharing: i =
 				(u || p) && /* @__PURE__ */ w(W, {
 					icon: U.userPlus,
 					label: "Add people to this call",
-					active: h,
-					onClick: p || (() => g((e) => !e)),
+					active: g,
+					onClick: p || (() => _((e) => !e)),
 					testId: "add-participant-button"
 				}),
+				m,
 				l && /* @__PURE__ */ w(W, {
 					icon: U.phoneEnd,
 					label: "End call",
@@ -759,7 +760,7 @@ function ce({ mode: t, isMuted: n = !1, isCameraOn: r = !0, isScreenSharing: i =
 					testId: "hangup-button"
 				})
 			]
-		}), h && u && !p && /* @__PURE__ */ T("div", {
+		}), g && u && !p && /* @__PURE__ */ T("div", {
 			className: "border-t border-white/5 bg-surface-inverse/80",
 			"data-testid": "add-participant-picker",
 			children: [/* @__PURE__ */ T("div", {
@@ -769,21 +770,21 @@ function ce({ mode: t, isMuted: n = !1, isCameraOn: r = !0, isScreenSharing: i =
 					children: "Add to call"
 				}), /* @__PURE__ */ w("button", {
 					type: "button",
-					onClick: () => g(!1),
+					onClick: () => _(!1),
 					className: "text-white/40 hover:text-white/80 text-xs border-none bg-transparent cursor-pointer",
 					"aria-label": "Close add-participant picker",
 					children: "✕"
 				})]
-			}), v.length === 0 ? /* @__PURE__ */ w("div", {
+			}), y.length === 0 ? /* @__PURE__ */ w("div", {
 				className: "px-3 pb-2.5 text-xs text-white/40 text-center",
 				children: "Everyone is already in the call"
 			}) : /* @__PURE__ */ w("div", {
 				className: "max-h-[120px] overflow-y-auto pb-1",
-				children: v.map((e) => /* @__PURE__ */ T("button", {
+				children: y.map((e) => /* @__PURE__ */ T("button", {
 					type: "button",
 					className: "w-full flex items-center gap-2.5 px-3 py-1.5 border-none bg-transparent text-left cursor-pointer hover:bg-white/10 transition-colors",
 					onClick: () => {
-						u(e.id), v.length <= 1 && g(!1);
+						u(e.id), y.length <= 1 && _(!1);
 					},
 					children: [
 						/* @__PURE__ */ w(H, {
@@ -1076,10 +1077,6 @@ function me({ mode: e, participants: t, localParticipant: n, duration: r, isMute
 					children: [t.length + 1, " in call"]
 				})]
 			}),
-			m ? /* @__PURE__ */ w("div", {
-				className: "flex items-center justify-center pb-1",
-				children: m
-			}) : null,
 			/* @__PURE__ */ w(ce, {
 				mode: e,
 				isMuted: i,
@@ -1093,7 +1090,8 @@ function me({ mode: e, participants: t, localParticipant: n, duration: r, isMute
 				onAddParticipant: d,
 				availableParticipants: f,
 				onOpenAddParticipant: p,
-				currentParticipantIds: t.map((e) => e.id)
+				currentParticipantIds: t.map((e) => e.id),
+				extras: m
 			})
 		]
 	});
@@ -3401,7 +3399,7 @@ function Lt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 		maxWidth: 768,
 		rawChildren: !0,
 		backdropTestId: "call-settings-backdrop",
-		cardClassName: "max-w-3xl bg-surface-inverse text-text-inverse border border-white/10 p-0 overflow-hidden",
+		cardClassName: "max-w-4xl bg-surface-inverse text-text-inverse border border-white/10 p-0 overflow-hidden",
 		children: /* @__PURE__ */ T("div", {
 			"data-testid": "call-settings-dialog",
 			className: e("flex flex-col", l),
@@ -3422,7 +3420,7 @@ function Lt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 				className: "flex flex-col sm:flex-row sm:items-stretch",
 				children: [/* @__PURE__ */ w("div", {
 					"data-testid": "call-settings-preview",
-					className: e("relative shrink-0 overflow-hidden bg-video-stage", "aspect-video w-full sm:aspect-auto sm:min-h-[280px] sm:w-[52%]"),
+					className: e("relative shrink-0 overflow-hidden bg-video-stage", "aspect-video w-full sm:aspect-auto sm:min-h-[320px] sm:w-[44%]"),
 					children: r ? /* @__PURE__ */ T(C, { children: [/* @__PURE__ */ w(h, {
 						stream: r,
 						muted: !0,
@@ -3458,7 +3456,7 @@ function Lt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 					}), /* @__PURE__ */ T("div", {
 						role: "tabpanel",
 						"data-testid": "call-settings-panel",
-						className: "min-h-0 flex-1 overflow-y-auto p-3 sm:max-h-[420px]",
+						className: "min-h-0 flex-1 overflow-y-auto p-4 sm:max-h-[460px]",
 						children: [p === "effects" ? o : null, p === "people" ? s : null]
 					})]
 				})]

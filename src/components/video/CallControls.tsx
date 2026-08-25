@@ -49,6 +49,11 @@ export interface CallControlsProps {
    *  the presence roster, say) and just want the button in the row,
    *  looking like every other control. */
   onOpenAddParticipant?: () => void;
+  /** Slot rendered IN the control row, between add-participant and the
+   *  End button — camera effects, captions, raise-hand. Same contract
+   *  as MediaControlsBar's `extras`: extra controls belong in the row,
+   *  not floating in their own strip above it. */
+  extras?: ReactNode;
   className?: string;
 }
 
@@ -181,6 +186,7 @@ export function CallControls({
   availableParticipants,
   currentParticipantIds,
   onOpenAddParticipant,
+  extras,
   className,
 }: CallControlsProps) {
   const [showPicker, setShowPicker] = useState(false);
@@ -248,6 +254,7 @@ export function CallControls({
             testId="add-participant-button"
           />
         )}
+        {extras}
         {onEndCall && (
           <ControlButton
             icon={icons.phoneEnd}
