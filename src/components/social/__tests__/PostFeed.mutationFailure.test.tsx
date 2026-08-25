@@ -52,6 +52,7 @@ function makePosts(over: Partial<UsePostsReturn> = {}): UsePostsReturn {
     loading: false,
     mutating: false,
     error: null,
+    loadError: null,
     hasMore: false,
     loadMore: vi.fn().mockResolvedValue(undefined),
     ...over,

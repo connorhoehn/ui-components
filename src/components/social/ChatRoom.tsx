@@ -127,7 +127,7 @@ function MessageBubble({ post, isOwn, showSender }: MessageBubbleProps) {
 // ---------------------------------------------------------------------------
 
 export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps) {
-  const { posts, createPost, loading, hasMore, loadMore, error } = usePosts({ idToken, roomId, onMessage });
+  const { posts, createPost, loading, hasMore, loadMore, error, loadError } = usePosts({ idToken, roomId, onMessage });
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
@@ -137,10 +137,19 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
   // Chronological order (oldest -> top, newest -> bottom)
   const chronological = [...posts].reverse();
 
-  // Scroll to bottom whenever messages change
+  // Jump to the newest message when the newest message CHANGES — not whenever
+  // the count changes.
+  //
+  // `posts` is newest-first, so `loadMore` appends older messages to the tail
+  // and leaves `posts[0]` alone. Keyed on `posts.length`, "Load earlier" grew
+  // the array and yanked the viewport straight back to the bottom, so the
+  // history you had just asked for scrolled past before you could read a line
+  // of it — the button looked like it did nothing.
+  const newestId = posts[0]?.postId;
   useEffect(() => {
+    if (!newestId) return;
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [posts.length]);
+  }, [newestId]);
 
   const handleSend = async () => {
     if (!message.trim() || sending) return;
@@ -189,15 +198,19 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
           <div className="flex-1 flex items-center justify-center text-text-tertiary text-[13px]">
             Loading messages…
           </div>
-        ) : error && chronological.length === 0 ? (
+        ) : loadError && chronological.length === 0 ? (
           /* A failed history load used to render the empty state — the room
              announced "No messages yet / Be the first to say something!"
              whenever the posts API was down, which is a claim about the
-             room's contents that nothing had verified. */
+             room's contents that nothing had verified.
+             `loadError`, not `error`: `error` is also set by `createPost`, so
+             a refused FIRST message in an empty room replaced the empty state
+             with "Couldn't load messages" while the banner below said the
+             truth. */
           <div role="alert" className="flex-1 flex flex-col items-center justify-center gap-1.5 px-6 text-center">
             <span className="text-[28px]">⚠️</span>
             <span className="text-sm font-semibold text-danger-fg">Couldn&rsquo;t load messages</span>
-            <span className="text-[13px] text-text-tertiary">{error}</span>
+            <span className="text-[13px] text-text-tertiary">{loadError}</span>
           </div>
         ) : chronological.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-text-tertiary gap-1.5">
@@ -221,7 +234,7 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
 
       {/* Error banners */}
       {(error || sendError) && (
-        <div className="px-4 py-1.5 bg-danger-bg border-t border-danger-border text-xs text-danger">
+        <div className="px-4 py-1.5 bg-danger-bg border-t border-danger-border text-xs text-danger-fg">
           {sendError ?? error}
         </div>
       )}

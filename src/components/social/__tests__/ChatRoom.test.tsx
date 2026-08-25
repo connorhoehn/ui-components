@@ -38,6 +38,7 @@ function makePosts(over: Partial<UsePostsReturn> = {}): UsePostsReturn {
     loading: false,
     mutating: false,
     error: null,
+    loadError: null,
     hasMore: false,
     loadMore: vi.fn().mockResolvedValue(undefined),
     ...over,
@@ -65,7 +66,9 @@ beforeEach(() => {
 
 describe('ChatRoom body states', () => {
   it('does not claim the room is empty when the history load failed', () => {
-    renderRoom(makePosts({ error: 'Failed to load posts (503)' }));
+    // `loadError`, not `error` — `error` is also set by a failed send, and the
+    // full-pane "Couldn't load messages" state must not be reachable from one.
+    renderRoom(makePosts({ error: 'Failed to load posts (503)', loadError: 'Failed to load posts (503)' }));
 
     expect(screen.queryByText('No messages yet')).toBeNull();
     expect(screen.queryByText('Be the first to say something!')).toBeNull();

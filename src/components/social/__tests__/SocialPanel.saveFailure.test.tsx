@@ -54,6 +54,7 @@ function makeFriends(over: Partial<UseFriendsReturn> = {}): UseFriendsReturn {
     unfollow: vi.fn().mockResolvedValue(undefined),
     loading: false,
     error: null,
+    loadError: null,
     ...over,
   };
 }

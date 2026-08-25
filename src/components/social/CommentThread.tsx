@@ -97,7 +97,7 @@ function ReplyForm({ onSubmit, placeholder = 'Write a reply…', loading }: Repl
         Comment
       </button>
       {submitError && (
-        <div role="alert" data-testid="comment-submit-error" className="basis-full text-danger text-[13px]">
+        <div role="alert" data-testid="comment-submit-error" className="basis-full text-danger-fg text-[13px]">
           {submitError}
         </div>
       )}

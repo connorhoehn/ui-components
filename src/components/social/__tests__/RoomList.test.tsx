@@ -29,6 +29,7 @@ function makeFriends(friends: PublicProfile[] = []): UseFriendsReturn {
     unfollow: vi.fn().mockResolvedValue(undefined),
     loading: false,
     error: null,
+    loadError: null,
   };
 }
 

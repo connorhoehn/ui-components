@@ -87,7 +87,7 @@ function CreateRoomForm({ onCreate, onDiscard, loading }: CreateRoomFormProps) {
         </button>
       </div>
       {formError && (
-        <div className="text-danger text-[11px] mt-1">
+        <div className="text-danger-fg text-[11px] mt-1">
           {formError}
         </div>
       )}
@@ -159,7 +159,7 @@ function DMRoomButton({ onCreateDM, loading, friends, friendsError }: DMRoomButt
         ]}
       />
       {friendsError && friends.length === 0 && (
-        <div role="alert" data-testid="dm-friends-error" className="text-danger text-[11px] mb-1.5">
+        <div role="alert" data-testid="dm-friends-error" className="text-danger-fg text-[11px] mb-1.5">
           {friendsError}
         </div>
       )}
@@ -183,7 +183,7 @@ function DMRoomButton({ onCreateDM, loading, friends, friendsError }: DMRoomButt
         </button>
       </div>
       {formError && (
-        <div className="text-danger text-[11px] mt-1">
+        <div className="text-danger-fg text-[11px] mt-1">
           {formError}
         </div>
       )}
@@ -298,7 +298,10 @@ export function RoomList({ idToken, rooms, createRoom, createDM, loading, error,
   // load, so an auth expiry or a 500 rendered as "No mutual friends yet" in
   // the DM picker — the app asserting a fact about the user's social graph
   // that it had never successfully read.
-  const { friends, error: friendsError } = useFriends({ idToken });
+  // `loadError`, not `error`: only a failed LOAD means `friends` is empty
+  // because we never read it. (`error` also carries follow/unfollow failures,
+  // which say nothing about whether the list is trustworthy.)
+  const { friends, loadError: friendsError } = useFriends({ idToken });
 
   const [showCreateForm, setShowCreateForm] = useState(false);
 

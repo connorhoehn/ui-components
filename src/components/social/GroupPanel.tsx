@@ -97,7 +97,7 @@ function CompactCreateGroupForm({ onCreate, onDiscard, loading }: {
         </button>
       </div>
       {formError && (
-        <div className="text-danger text-[11px] mt-1">{formError}</div>
+        <div className="text-danger-fg text-[11px] mt-1">{formError}</div>
       )}
     </form>
   );
@@ -192,7 +192,7 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
         </form>
       )}
       {showInvite && inviteError && (
-        <div role="alert" data-testid="compact-invite-error" className="text-danger text-[11px] mb-1.5">
+        <div role="alert" data-testid="compact-invite-error" className="text-danger-fg text-[11px] mb-1.5">
           {inviteError}
         </div>
       )}
@@ -239,7 +239,7 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
         </form>
       )}
       {showCreateRoom && roomError && (
-        <div role="alert" data-testid="compact-group-room-error" className="text-danger text-[11px] mb-1.5">
+        <div role="alert" data-testid="compact-group-room-error" className="text-danger-fg text-[11px] mb-1.5">
           {roomError}
         </div>
       )}
@@ -336,7 +336,7 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
           Cancel
         </button>
       </div>
-      {formError && <div id={`${uid}-form-error`} role="alert" className="text-danger text-[13px] mt-1.5">{formError}</div>}
+      {formError && <div id={`${uid}-form-error`} role="alert" className="text-danger-fg text-[13px] mt-1.5">{formError}</div>}
     </form>
   );
 }
@@ -381,7 +381,7 @@ function GroupCard({ group, currentUserId, isSelected, onSelect, onDelete }: {
               <button onClick={() => { void onDelete(group.groupId); setConfirmDeleteId(null); }} className="text-xs text-white bg-danger border-none rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]">Delete</button>
             </div>
           ) : (
-            <button onClick={() => setConfirmDeleteId(group.groupId)} className="text-xs text-danger bg-transparent border-none cursor-pointer px-2 py-1 font-[system-ui,-apple-system,sans-serif]" aria-label={`Delete group ${group.name}`}>Delete</button>
+            <button onClick={() => setConfirmDeleteId(group.groupId)} className="text-xs text-danger-fg bg-transparent border-none cursor-pointer px-2 py-1 font-[system-ui,-apple-system,sans-serif]" aria-label={`Delete group ${group.name}`}>Delete</button>
           )}
         </div>
       )}
@@ -418,7 +418,7 @@ function InviteForm({ groupId, onInvite }: { groupId: string; onInvite: (groupId
         )}>Invite</button>
       </form>
       {error && (
-        <div role="alert" data-testid="invite-error" className="text-danger text-xs mt-1">{error}</div>
+        <div role="alert" data-testid="invite-error" className="text-danger-fg text-xs mt-1">{error}</div>
       )}
     </>
   );
@@ -489,7 +489,7 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
               <button type="button" onClick={() => setShowCreateForm(false)} className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]">Cancel</button>
             </div>
             {roomError && (
-              <div role="alert" data-testid="group-room-error" className="text-danger text-[13px] mt-1.5">{roomError}</div>
+              <div role="alert" data-testid="group-room-error" className="text-danger-fg text-[13px] mt-1.5">{roomError}</div>
             )}
           </form>
         ) : (

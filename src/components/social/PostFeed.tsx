@@ -108,7 +108,7 @@ function CreatePostForm({ onCreate, loading }: CreatePostFormProps) {
         </button>
       </div>
       {formError && (
-        <div className="text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
+        <div className="text-danger-fg text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
           {formError}
         </div>
       )}
@@ -340,7 +340,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
       </div>
 
       {(actionError ?? likeError) && (
-        <div role="alert" data-testid="post-action-error" className="text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
+        <div role="alert" data-testid="post-action-error" className="text-danger-fg text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
           {actionError ?? likeError}
         </div>
       )}
@@ -363,7 +363,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
 // ---------------------------------------------------------------------------
 
 export function PostFeed({ idToken, roomId, onMessage }: PostFeedProps) {
-  const { posts, createPost, editPost, deletePost, loading, mutating, error, hasMore, loadMore } =
+  const { posts, createPost, editPost, deletePost, loading, mutating, error, loadError, hasMore, loadMore } =
     usePosts({ idToken, roomId, onMessage });
 
   const currentUserId = decodeUserId(idToken);
@@ -393,7 +393,7 @@ export function PostFeed({ idToken, roomId, onMessage }: PostFeedProps) {
           nothing added and nothing said — reading as "that was the last
           page". */}
       {error && posts.length > 0 && (
-        <div role="alert" data-testid="post-feed-error" className="text-danger text-[13px] mb-3 font-[system-ui,-apple-system,sans-serif]">
+        <div role="alert" data-testid="post-feed-error" className="text-danger-fg text-[13px] mb-3 font-[system-ui,-apple-system,sans-serif]">
           {error}
         </div>
       )}
@@ -402,15 +402,18 @@ export function PostFeed({ idToken, roomId, onMessage }: PostFeedProps) {
           <span className="inline-block w-4 h-4 border-2 border-border border-t-primary rounded-full animate-spin" />
           Loading...
         </div>
-      ) : error && posts.length === 0 ? (
+      ) : loadError && posts.length === 0 ? (
         /* A failed load used to render as the empty state — the room looked
            genuinely empty ("Be the first to post in this room") whenever the
-           posts API was down, so nobody knew to retry. */
+           posts API was down, so nobody knew to retry.
+           `loadError`, not `error`: `error` is also set by createPost, so a
+           refused FIRST post in an empty room blamed the read for a write
+           that had already reported itself in the composer. */
         <div role="alert" className="py-6 text-center">
           <div className="text-sm font-semibold text-danger-fg mb-1">
             Couldn&rsquo;t load posts
           </div>
-          <div className="text-sm text-text-tertiary">{error}</div>
+          <div className="text-sm text-text-tertiary">{loadError}</div>
         </div>
       ) : posts.length === 0 ? (
         <div className="py-6 text-center">
