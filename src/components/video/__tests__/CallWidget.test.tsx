@@ -43,6 +43,31 @@ describe('CallWidget — state composition', () => {
     expect(screen.getByLabelText('Decline call')).toBeInTheDocument();
   });
 
+  // `onAnswer` / `onDecline` are optional on CallWidgetProps and neither has a
+  // fallback inside the widget. Rendered unguarded, a host that wired only one
+  // of them showed a live green Answer (or red Decline) button that swallowed
+  // the click while the widget went on ringing.
+  it('ringing: omits Answer when no onAnswer is wired, keeping Decline', () => {
+    render(
+      <CallWidget
+        state="ringing"
+        mode="audio"
+        participants={[]}
+        onDecline={() => undefined}
+      />,
+    );
+    expect(screen.queryByLabelText('Answer call')).toBeNull();
+    expect(screen.getByLabelText('Decline call')).toBeInTheDocument();
+  });
+
+  it('ringing: omits both call buttons when neither handler is wired', () => {
+    render(<CallWidget state="ringing" mode="audio" participants={[]} />);
+    // The ringing view itself still renders — the caller name is the point.
+    expect(screen.getByTestId('call-ringing-view')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Answer call')).toBeNull();
+    expect(screen.queryByLabelText('Decline call')).toBeNull();
+  });
+
   it('connecting: renders the spinner view', () => {
     render(<CallWidget state="connecting" mode="video" participants={[]} />);
     expect(screen.getByTestId('call-connecting-view')).toBeInTheDocument();
@@ -108,6 +133,12 @@ describe('CallWidget — state composition', () => {
     expect(screen.queryByTestId('call-stats-overlay')).toBeNull();
   });
 
+  // INVERTED: this case used to render `minimized` with NO `onMinimize` and
+  // assert the "Expand call widget" affordance was present — pinning a
+  // role="button" pill that answered neither click nor Enter, with the user
+  // stuck in the minimized state. The affordance now depends on the handler,
+  // so the case wires one; the "pill instead of expanded content" half of the
+  // assertion is what it was always about and is unchanged.
   it('minimized: renders the pill instead of expanded content', () => {
     render(
       <CallWidget
@@ -116,6 +147,7 @@ describe('CallWidget — state composition', () => {
         participants={[p('alice', 'Alice')]}
         minimized
         duration={65}
+        onMinimize={vi.fn()}
       />,
     );
     // The expanded controls bar is hidden when minimized.
@@ -273,5 +305,47 @@ describe('CallWidget — minimized pill keyboard activation', () => {
     const onExpand = vi.fn();
     fireEvent.keyDown(renderPill(onExpand), { key: 'Enter' });
     expect(onExpand).toHaveBeenCalledTimes(1);
+  });
+});
+
+// `onMinimize` is optional and `minimized` is a controlled prop, so a host
+// could drive the widget into the pill without wiring the way back out. The
+// pill still claimed `role="button" aria-label="Expand call widget"` with a
+// pointer cursor and answered neither click nor Enter — the user was pinned to
+// a control that says it restores the call and does not. The minimize button
+// in the expanded chrome was already gated on exactly this handler.
+describe('CallWidget — the minimized pill only claims to expand when it can', () => {
+  const renderPill = (props: Record<string, unknown> = {}) =>
+    render(
+      <CallWidget
+        state="active"
+        mode="video"
+        participants={[p('bob', 'Bob')]}
+        minimized
+        {...props}
+      />,
+    );
+
+  it('is not a button with no onMinimize wired', () => {
+    renderPill();
+    expect(screen.queryByRole('button', { name: 'Expand call widget' })).toBeNull();
+    // The pill itself still renders — the call is still visibly in progress.
+    expect(screen.getByTestId('call-widget')).toBeInTheDocument();
+  });
+
+  it('drops the pointer cursor with no onMinimize wired', () => {
+    const { container } = renderPill();
+    const pointered = container.querySelectorAll('.cursor-pointer');
+    for (const el of pointered) {
+      expect(el.getAttribute('aria-label')).not.toBe('Expand call widget');
+    }
+  });
+
+  it('is the labelled button again once onMinimize is wired', () => {
+    const onMinimize = vi.fn();
+    renderPill({ onMinimize });
+    const pill = screen.getByRole('button', { name: 'Expand call widget' });
+    fireEvent.click(pill);
+    expect(onMinimize).toHaveBeenCalledTimes(1);
   });
 });

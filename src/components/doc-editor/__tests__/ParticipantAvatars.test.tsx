@@ -84,7 +84,7 @@ describe('ParticipantAvatars', () => {
   it('hover shows tooltip with displayName + mode + Follow button when onFollowUser is provided', () => {
     const p = mk({ displayName: 'Alice Anderson', mode: 'editor' });
     render(<ParticipantAvatars participants={[p]} onFollowUser={vi.fn()} />);
-    fireEvent.mouseEnter(screen.getByText('AA').closest('.cursor-pointer')!);
+    fireEvent.mouseEnter(screen.getByTestId('participant-avatar-static'));
     expect(screen.getByText('Alice Anderson')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Follow' })).toBeInTheDocument();
   });
@@ -92,7 +92,7 @@ describe('ParticipantAvatars', () => {
   it('tooltip hides after the 150ms leave delay', () => {
     const p = mk();
     render(<ParticipantAvatars participants={[p]} />);
-    const item = screen.getByText('AA').closest('.cursor-pointer')!;
+    const item = screen.getByTestId('participant-avatar-static');
     fireEvent.mouseEnter(item);
     expect(screen.getByText('Alice Anderson')).toBeInTheDocument();
     fireEvent.mouseLeave(item);
@@ -105,7 +105,8 @@ describe('ParticipantAvatars', () => {
     const onFollow = vi.fn();
     const p = mk();
     render(<ParticipantAvatars participants={[p]} onJumpToUser={onJump} onFollowUser={onFollow} />);
-    fireEvent.mouseEnter(screen.getByText('AA').closest('.cursor-pointer')!);
+    // onJumpToUser IS wired here, so the avatar is the "Jump to" button.
+    fireEvent.mouseEnter(screen.getByRole('button', { name: /^Jump to/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Follow' }));
     expect(onFollow).toHaveBeenCalledWith(expect.objectContaining({ userId: 'u1' }));
     expect(onJump).not.toHaveBeenCalled();
@@ -121,7 +122,7 @@ describe('ParticipantAvatars', () => {
       />,
     );
     expect(screen.getByText('following')).toBeInTheDocument();
-    fireEvent.mouseEnter(screen.getByText('AA').closest('.cursor-pointer')!);
+    fireEvent.mouseEnter(screen.getByTestId('participant-avatar-static'));
     expect(screen.getByRole('button', { name: 'Stop following' })).toBeInTheDocument();
   });
 
@@ -130,7 +131,7 @@ describe('ParticipantAvatars', () => {
     const fourMinAgo = new Date('2026-06-07T11:56:00Z').getTime();
     const p = mk({ idle: true, mode: 'editor', lastSeen: fourMinAgo });
     render(<ParticipantAvatars participants={[p]} />);
-    fireEvent.mouseEnter(screen.getByText('AA').closest('.cursor-pointer')!);
+    fireEvent.mouseEnter(screen.getByTestId('participant-avatar-static'));
     // tooltip body line should read "away, 4m"
     expect(screen.getAllByText(/away, 4m/).length).toBeGreaterThan(0);
   });
@@ -170,7 +171,9 @@ describe('ParticipantAvatars — keyboard reachability', () => {
 
     expect(screen.queryByRole('button', { name: 'Follow' })).not.toBeInTheDocument();
 
-    fireEvent.focus(screen.getByRole('button', { name: 'Jump to Alice Anderson' }));
+    // No onJumpToUser here, so the avatar is the static trigger — still
+    // focusable, because focus is what opens the tooltip.
+    fireEvent.focus(screen.getByTestId('participant-avatar-static'));
 
     expect(screen.getByRole('button', { name: 'Follow' })).toBeInTheDocument();
   });
@@ -184,7 +187,7 @@ describe('ParticipantAvatars — keyboard reachability', () => {
       />,
     );
 
-    fireEvent.focus(screen.getByRole('button', { name: 'Jump to Alice Anderson' }));
+    fireEvent.focus(screen.getByTestId('participant-avatar-static'));
     const follow = screen.getByRole('button', { name: 'Follow' });
     expect(follow.tagName).toBe('BUTTON');
 
@@ -200,7 +203,7 @@ describe('ParticipantAvatars — keyboard reachability', () => {
       />,
     );
 
-    const jump = screen.getByRole('button', { name: 'Jump to Alice Anderson' });
+    const jump = screen.getByTestId('participant-avatar-static');
     fireEvent.focus(jump);
     const follow = screen.getByRole('button', { name: 'Follow' });
 
@@ -211,5 +214,37 @@ describe('ParticipantAvatars — keyboard reachability', () => {
     act(() => { vi.advanceTimersByTime(300); });
 
     expect(screen.getByRole('button', { name: 'Follow' })).toBeInTheDocument();
+  });
+});
+
+// The Follow action inside the tooltip has always been gated on
+// `onFollowUser`; the avatar itself was not gated on `onJumpToUser`. A host
+// that wired neither still got one focusable control per participant,
+// announced as "Jump to Alice Anderson", whose click and Enter did nothing.
+describe('ParticipantAvatars — the avatar only claims to jump when it can', () => {
+  it('is not a button, and not labelled "Jump to", with no onJumpToUser', () => {
+    render(<ParticipantAvatars participants={[mk({ displayName: 'Alice Anderson' })]} />);
+    expect(screen.queryByRole('button', { name: 'Jump to Alice Anderson' })).toBeNull();
+    expect(screen.getByTestId('participant-avatar-static').tagName).not.toBe('BUTTON');
+  });
+
+  it('stays focusable so the tooltip is still keyboard-reachable', () => {
+    render(<ParticipantAvatars participants={[mk({ displayName: 'Alice Anderson' })]} />);
+    const trigger = screen.getByTestId('participant-avatar-static');
+    expect(trigger).toHaveAttribute('tabindex', '0');
+    fireEvent.focus(trigger);
+    // The tooltip's own copy — the display name appears in it.
+    expect(screen.getAllByText('Alice Anderson').length).toBeGreaterThan(0);
+  });
+
+  it('becomes the labelled button again as soon as a handler is wired', () => {
+    render(
+      <ParticipantAvatars
+        participants={[mk({ displayName: 'Alice Anderson' })]}
+        onJumpToUser={vi.fn()}
+      />,
+    );
+    expect(screen.queryByTestId('participant-avatar-static')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Jump to Alice Anderson' })).toBeInTheDocument();
   });
 });

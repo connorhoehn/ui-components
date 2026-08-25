@@ -4,6 +4,7 @@
 // section indicators, and tooltips.
 
 import { useState, useRef, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import type { Participant } from '../../types/document';
 import { cn } from '../../lib/cn';
 
@@ -72,6 +73,45 @@ function modeBadgeColor(mode: Participant['mode']): { bg: string; text: string }
 
 /* ---- component ---------------------------------------------------------- */
 
+/**
+ * The avatar surface: a real <button> labelled "Jump to X" when the host wired
+ * a jump handler, and a focusable but non-actionable element when it did not.
+ * Either way it takes focus, which is what reveals the tooltip.
+ */
+function ParticipantAvatarTrigger({
+  onJump,
+  label,
+  children,
+}: {
+  onJump?: () => void;
+  label: string;
+  children: ReactNode;
+}) {
+  if (onJump) {
+    return (
+      <button
+        type="button"
+        onClick={onJump}
+        aria-label={`Jump to ${label}`}
+        className={cn('relative inline-block bg-transparent border-none p-0 m-0 cursor-pointer font-[inherit]')}
+      >
+        {children}
+      </button>
+    );
+  }
+  return (
+    <span
+      tabIndex={0}
+      role="img"
+      aria-label={label}
+      className={cn('relative inline-block')}
+      data-testid="participant-avatar-static"
+    >
+      {children}
+    </span>
+  );
+}
+
 function AvatarItem({
   participant,
   sectionTitle,
@@ -127,12 +167,19 @@ function AvatarItem({
     >
       {/* Avatar circle with gradient + online dot. A real <button>: this was a
           click handler on the wrapping div, so jumping to a participant was
-          mouse-only. */}
-      <button
-        type="button"
-        onClick={() => onJumpToUser?.(participant)}
-        aria-label={`Jump to ${participant.displayName}`}
-        className={cn('relative inline-block bg-transparent border-none p-0 m-0 cursor-pointer font-[inherit]')}
+          mouse-only.
+
+          Only a button when `onJumpToUser` is wired, though. The Follow action
+          inside the tooltip is already gated on `onFollowUser` a few lines
+          down; this one was not, so a host that wired neither still got a
+          focusable control per participant, announced as "Jump to Alice",
+          whose click and Enter did nothing. It stays focusable as a plain
+          element because focus is what opens the tooltip — losing that would
+          make the tooltip mouse-only again, which is the bug the button was
+          introduced to fix. */}
+      <ParticipantAvatarTrigger
+        onJump={onJumpToUser ? () => onJumpToUser(participant) : undefined}
+        label={participant.displayName}
       >
         <div
           className={cn('w-8 h-8 rounded-full text-white flex items-center justify-center text-xs font-semibold transition-[transform,box-shadow] duration-200 ease-in-out', hovered ? 'scale-110' : 'scale-100')}
@@ -148,7 +195,7 @@ function AvatarItem({
         <div
           className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white', participant.idle ? 'bg-warning' : 'bg-success [animation:presencePulse_2s_infinite]')}
         />
-      </button>
+      </ParticipantAvatarTrigger>
 
       {/* Tooltip. Rendered *after* the avatar so Tab reaches Follow straight
           after the avatar; it is absolutely positioned, so this is DOM order

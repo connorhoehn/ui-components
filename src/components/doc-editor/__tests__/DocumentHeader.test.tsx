@@ -139,6 +139,21 @@ describe('DocumentHeader — secondary actions', () => {
     fireEvent.click(screen.getByRole('button', { name: label }));
     expect(handler).toHaveBeenCalled();
   });
+  // The status transition lives entirely with the host: `onFinalize` and
+  // `onUnlock` are both optional and neither has a local fallback. Rendered
+  // unguarded, a caller that wired neither got a live "Finalize" whose click
+  // left the document in draft with no message at all.
+  it.each<['draft' | 'final', 'Finalize' | 'Unlock']>([
+    ['draft', 'Finalize'],
+    ['final', 'Unlock'],
+  ])('status %s omits the %s button when the host wired no handler', (status, label) => {
+    setup({ meta: meta({ status }), onFinalize: undefined, onUnlock: undefined });
+    expect(screen.queryByRole('button', { name: label })).toBeNull();
+  });
+  it('omits My Items when onToggleMyItems is not wired', () => {
+    setup({ onToggleMyItems: undefined });
+    expect(screen.queryByRole('button', { name: /My Items/ })).toBeNull();
+  });
 });
 describe('DocumentHeader — More menu', () => {
   const openMenu = () => fireEvent.click(screen.getByRole('button', { name: '⋯' }));

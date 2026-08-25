@@ -402,15 +402,22 @@ function MinimizedPill({
   onExpand?: () => void;
 }) {
   return (
+    // `onExpand` is optional, and the whole pill was `role="button"
+    // tabIndex={0} aria-label="Expand call widget"` with a pointer cursor
+    // regardless. A host that drives `minimized` but wired no `onMinimize` —
+    // the minimize button a few lines up is already gated on exactly that
+    // handler — left the user pinned to a pill that announces itself as the
+    // way back to the call and answers neither click nor Enter. Only claim to
+    // be a button when there is something behind it.
     <div
-      className="flex items-center gap-2 px-3 py-2 cursor-pointer select-none"
+      className={cn('flex items-center gap-2 px-3 py-2 select-none', onExpand && 'cursor-pointer')}
       onClick={onExpand}
-      role="button"
-      tabIndex={0}
-      aria-label="Expand call widget"
+      role={onExpand ? 'button' : undefined}
+      tabIndex={onExpand ? 0 : undefined}
+      aria-label={onExpand ? 'Expand call widget' : undefined}
       // Enter *and* Space: this handled Enter only, so Space on the collapsed
       // widget scrolled the page instead of expanding the call.
-      onKeyDown={onActivationKey(() => onExpand?.())}
+      onKeyDown={onExpand ? onActivationKey(onExpand) : undefined}
     >
       {/* Active indicator */}
       <span

@@ -47,4 +47,23 @@ describe('ProjectCard', () => {
     render(<ProjectCard name="P" activityLabel="active 2m ago" />);
     expect(screen.getByText('active 2m ago')).toBeInTheDocument();
   });
+
+  // `onClick` is optional, and the card rendered as a <button> with
+  // `cursor: pointer` regardless: a focusable tab stop announced as a button
+  // that swallowed every click. A grid of read-only project cards was a grid
+  // of dead tab stops.
+  it('is not a button, and not pointer-cursored, with no onClick', () => {
+    const { container } = render(<ProjectCard name="P" />);
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.tagName).toBe('DIV');
+    expect(screen.queryByRole('button')).toBeNull();
+    expect(root.style.cursor).toBe('default');
+  });
+
+  it('is a real button with a pointer cursor once onClick is wired', () => {
+    const { container } = render(<ProjectCard name="P" onClick={vi.fn()} />);
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.tagName).toBe('BUTTON');
+    expect(root.style.cursor).toBe('pointer');
+  });
 });
