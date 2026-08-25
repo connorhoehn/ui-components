@@ -26,12 +26,24 @@ const priorityColors: Record<TaskItem['priority'], string> = {
   high: 'var(--color-danger)',
 };
 
+// A `TaskItem` reaches this row from the CRDT section payload or the host's
+// document API — `src/renderers/sectionItems.ts` documents the same boundary
+// for `section.items`. `status`/`priority` are compile-time unions only, so an
+// item written by another build ('deferred', 'urgent') gave `undefined` here
+// and `sc.bg` below threw, blanking the whole item list. Both now fall back to
+// neutral styling while the row still renders its real status/priority text.
+const UNKNOWN_STATUS_COLORS = {
+  bg: 'var(--color-surface-hover)',
+  text: 'var(--color-text-secondary)',
+} as const;
+
 export default function ReviewableItem({ item, onAck, onReject }: ReviewableItemProps) {
   const [showNotes, setShowNotes] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [transition, setTransition] = useState<'none' | 'ack' | 'reject'>('none');
   const prevStatus = useRef(item.status);
-  const sc = statusColors[item.status];
+  const sc = statusColors[item.status] ?? UNKNOWN_STATUS_COLORS;
+  const priorityColor = priorityColors[item.priority] ?? 'var(--color-neutral)';
 
   // Ack/reject are deferred 150ms so the pulse animation can play. Two things
   // fall out of that delay: the buttons stay live during the window, so a
@@ -101,7 +113,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
         </span>
         <span
           className={cn('inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full ml-2 bg-transparent')}
-          style={{ color: priorityColors[item.priority], border: `1px solid ${priorityColors[item.priority]}` }}
+          style={{ color: priorityColor, border: `1px solid ${priorityColor}` }}
         >
           {item.priority}
         </span>

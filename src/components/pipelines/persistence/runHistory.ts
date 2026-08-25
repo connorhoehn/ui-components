@@ -50,6 +50,38 @@ function safeWrite(key: string, value: string): void {
 // ---------------------------------------------------------------------------
 
 /**
+ * Bring one stored entry up to the shape the run pages assume.
+ *
+ * The module header promises callers don't have to defend themselves, but that
+ * only ever covered a corrupt *blob* — a JSON-parseable array of malformed
+ * ENTRIES went straight through the `as PipelineRun[]` cast below. Two fields
+ * are load-bearing and were routinely absent, because this store is written by
+ * whatever build the user last ran and read by this one:
+ *
+ *  - `steps` — `PipelineRunsPage`, `AllRunsPage`, `PipelineRunDiff`,
+ *    `PipelineRunComparePage` and `useRunCost` all call `Object.values(r.steps)`
+ *    or `Object.keys(r.steps)` inside a render memo. `Object.values(undefined)`
+ *    is a TypeError, so ONE such stored run blanked the whole runs page —
+ *    filter bar, header and the 49 good runs included.
+ *  - `startedAt` — every list sorts on `a.startedAt.localeCompare(b.startedAt)`.
+ *    Same blast radius, from the sort comparator instead of the memo. (This is
+ *    the bug `PipelinesPage.toRow` already fixed for pipeline *definitions*.)
+ *
+ * A run that is not an object at all is dropped — there is nothing to show —
+ * but a run merely missing fields is kept and rendered with what it has.
+ */
+export function normalizeRun(raw: unknown): PipelineRun | null {
+  if (typeof raw !== 'object' || raw === null) return null;
+  const r = raw as Partial<PipelineRun>;
+  if (typeof r.id !== 'string') return null;
+  return {
+    ...(r as PipelineRun),
+    steps: typeof r.steps === 'object' && r.steps !== null ? r.steps : {},
+    startedAt: typeof r.startedAt === 'string' ? r.startedAt : '',
+  };
+}
+
+/**
  * Return all persisted runs for a pipeline, newest first. Corrupt or missing
  * entries yield an empty array.
  */
@@ -59,7 +91,9 @@ export function listRuns(pipelineId: string): PipelineRun[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed as PipelineRun[];
+    return parsed
+      .map(normalizeRun)
+      .filter((r): r is PipelineRun => r !== null);
   } catch {
     return [];
   }
@@ -79,8 +113,10 @@ export function getRun(pipelineId: string, runId: string): PipelineRun | null {
  * entries. Safe to call repeatedly for the same runId — later writes win.
  */
 export function appendRun(pipelineId: string, run: PipelineRun): void {
-  const existing = listRuns(pipelineId).filter((r) => r.id !== run.id);
-  const next = [run, ...existing]
+  const safe = normalizeRun(run);
+  if (!safe) return;
+  const existing = listRuns(pipelineId).filter((r) => r.id !== safe.id);
+  const next = [safe, ...existing]
     .sort((a, b) => b.startedAt.localeCompare(a.startedAt))
     .slice(0, MAX_RUNS_PER_PIPELINE);
   safeWrite(keyFor(pipelineId), JSON.stringify(next));

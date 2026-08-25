@@ -45,11 +45,36 @@ const typeBadgeColors: Record<Section['type'], { bg: string; text: string }> = {
   custom: { bg: 'var(--color-primary-bg)', text: '#3730a3' },
 };
 
-const statusConfig: Record<SectionReview['status'], { label: string; color: string; bg: string; icon: string }> = {
+interface StatusStyle { label: string; color: string; bg: string; icon: string }
+
+const statusConfig: Record<SectionReview['status'], StatusStyle> = {
   approved: { label: 'Approved', color: 'var(--color-success-fg)', bg: '#dcfce7', icon: '✓' },
   reviewed: { label: 'Reviewed', color: 'var(--color-text-primary)', bg: 'var(--color-surface-hover)', icon: '—' },
   changes_requested: { label: 'Changes Requested', color: 'var(--color-warning-fg)', bg: 'var(--color-warning-bg)', icon: '!' },
 };
+
+/**
+ * `SectionReview['status']` is a compile-time union, but reviews arrive from
+ * the Yjs `sectionReviews` map (`useCollaborativeDoc` casts whatever a peer
+ * wrote) or from the host's reviews API — a peer on a build that knows a
+ * fourth status writes it and this one reads it back. Every `statusConfig[…]`
+ * below is a property read, so an unmapped status threw a TypeError inside
+ * `sections.map`, blanking the ENTIRE review view: every other section, the
+ * progress bar and the comment threads went with it.
+ *
+ * Unknown statuses render AS themselves — the raw string, in neutral tokens —
+ * rather than disappearing or being relabelled as one of the three known ones.
+ */
+function statusStyle(status: SectionReview['status']): StatusStyle {
+  return (
+    statusConfig[status] ?? {
+      label: String(status ?? 'Unknown'),
+      color: 'var(--color-text-secondary)',
+      bg: 'var(--color-surface-hover)',
+      icon: '•',
+    }
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -134,7 +159,7 @@ export default function ReviewMode({
               className={cn('bg-white border border-border rounded-lg p-5')}
               style={{
                 borderLeft: myReview
-                  ? `3px solid ${statusConfig[myReview.status].color}`
+                  ? `3px solid ${statusStyle(myReview.status).color}`
                   : '3px solid #d1d5db',
               }}
               onMouseEnter={() => onSectionFocus?.(section.id)}
@@ -267,10 +292,10 @@ export default function ReviewMode({
                       data-testid={`section-${section.id}-status`}
                       data-status={myReview.status}
                       className={cn('inline-flex items-center gap-1 text-[13px] font-semibold py-1 px-2.5 rounded-md')}
-                      style={{ background: statusConfig[myReview.status].bg, color: statusConfig[myReview.status].color }}
+                      style={{ background: statusStyle(myReview.status).bg, color: statusStyle(myReview.status).color }}
                     >
-                      <span className={cn('text-sm')}>{statusConfig[myReview.status].icon}</span>
-                      {statusConfig[myReview.status].label}
+                      <span className={cn('text-sm')}>{statusStyle(myReview.status).icon}</span>
+                      {statusStyle(myReview.status).label}
                     </span>
                     <span className={cn('text-xs text-text-secondary')}>
                       by you &middot; {new Date(myReview.timestamp).toLocaleString(undefined, {
@@ -291,12 +316,16 @@ export default function ReviewMode({
                 {otherReviews.length > 0 && (
                   <div className={cn('flex gap-1 ml-auto items-center')}>
                     {otherReviews.map((r) => {
-                      const cfg = statusConfig[r.status];
-                      const initials = r.displayName.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2);
+                      const cfg = statusStyle(r.status);
+                      // Same trust boundary as the status above: a peer who
+                      // never set a display name writes `displayName: null`,
+                      // and `.split` on that threw from inside this map.
+                      const displayName = typeof r.displayName === 'string' && r.displayName ? r.displayName : '?';
+                      const initials = displayName.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2);
                       return (
                         <div
                           key={r.userId}
-                          title={`${r.displayName}: ${cfg.label}`}
+                          title={`${displayName}: ${cfg.label}`}
                           className={cn('w-[26px] h-[26px] rounded-full flex items-center justify-center text-[10px] font-bold')}
                           style={{ background: cfg.bg, color: cfg.color, border: `2px solid ${cfg.color}` }}
                         >
