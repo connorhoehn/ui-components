@@ -7,6 +7,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { cn } from '../../../lib/cn';
+import { focusInitialElement, useDismissableLayer } from '../../../lib/focusTrap';
 import type { ErrorCategory, PipelineRunError } from '../../../types/pipeline';
 
 // ---------------------------------------------------------------------------
@@ -51,6 +52,7 @@ function categoryLabel(cat: ErrorCategory): string {
 // ---------------------------------------------------------------------------
 
 export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: ErrorOverlayProps) {
+  const panelRef = useRef<HTMLDivElement | null>(null);
   const [stackOpen, setStackOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -88,12 +90,22 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
     onRetry?.();
   }, [onRetry]);
 
+  // This announces itself as a dialog but focus never entered it and there
+  // was no Escape handler, so the only way out was to hunt for the × with a
+  // mouse. Move focus in on open, restore it to the node on close, and let
+  // Escape dismiss.
+  useDismissableLayer(true, onDismiss);
+  useEffect(() => {
+    focusInitialElement(panelRef.current);
+  }, []);
+
   // Position the overlay near the anchor with a slight offset
   const top = Math.min(anchor.y + 8, window.innerHeight - 440);
   const left = Math.min(anchor.x + 12, window.innerWidth - 360);
 
   return (
     <div
+      ref={panelRef}
       className="fixed z-[100] bg-white border border-border rounded-[10px] shadow-[0_12px_32px_rgba(15,23,42,0.18),0_2px_6px_rgba(15,23,42,0.08)] p-0 w-[340px] max-h-[420px] overflow-y-auto font-inherit text-text-primary"
       style={{ top: Math.max(8, top), left: Math.max(8, left) }}
       data-testid="error-overlay"

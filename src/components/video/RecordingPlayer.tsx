@@ -188,12 +188,16 @@ export function RecordingPlayer({
       />
 
       {isLoading && !error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-sm">
+        // role="status" (polite) for progress, role="alert" (assertive) for
+        // the failure. Both arrive from async work — the dynamic hls.js
+        // import and the HLS/`<video>` error callbacks — so neither was
+        // announced at all before.
+        <div role="status" className="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-sm">
           Loading…
         </div>
       )}
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/70 text-white text-sm px-4 text-center">
+        <div role="alert" className="absolute inset-0 flex items-center justify-center bg-black/70 text-white text-sm px-4 text-center">
           {error}
         </div>
       )}

@@ -309,14 +309,14 @@ export default function DLQInspector() {
 
       {/* Error state */}
       {error && (
-        <div className="py-2.5 px-3.5 mb-4 bg-danger-bg border border-danger-border rounded-md text-[13px] text-danger-fg">
+        <div role="alert" className="py-2.5 px-3.5 mb-4 bg-danger-bg border border-danger-border rounded-md text-[13px] text-danger-fg">
           {error}
         </div>
       )}
 
       {/* Loading state */}
       {loading && entries.length === 0 && (
-        <div className="text-center py-12 px-6 text-text-tertiary text-sm">
+        <div role="status" className="text-center py-12 px-6 text-text-tertiary text-sm">
           Loading DLQ entries...
         </div>
       )}

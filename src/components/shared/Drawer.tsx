@@ -11,6 +11,7 @@ import React, { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
 import { focusInitialElement, restoreFocus, trapTabKey } from '../../lib/focusTrap';
+import { useOverlayLayer } from '../../lib/overlayStack';
 
 export interface DrawerProps {
   open: boolean;
@@ -46,6 +47,9 @@ function Drawer({
   // users resume from the trigger instead of the top of the document.
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const headingId = useId();
+  // Only the top layer consumes Escape — a dialog or palette opened over the
+  // drawer must not take the drawer down with it.
+  const isTopLayer = useOverlayLayer(open);
 
   // Escape-to-close plus the Tab/Shift+Tab focus trap. Without the trap, Tab
   // from the last control walks into the page BEHIND the drawer, which is the
@@ -54,14 +58,15 @@ function Drawer({
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        if (isTopLayer()) onClose();
         return;
       }
+      if (!isTopLayer()) return;
       trapTabKey(e, panelRef.current);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+  }, [open, onClose, isTopLayer]);
 
   // Move focus into the panel when it opens; restore it on close.
   useEffect(() => {

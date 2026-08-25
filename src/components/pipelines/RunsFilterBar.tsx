@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { useDismissableLayer } from '../../lib/focusTrap';
 import { useClickOutside } from './hooks/useClickOutside';
 import { cn } from '../../lib/cn';
 import { handleRovingKeyDown } from '../../lib/rovingFocus';
@@ -52,6 +53,9 @@ function FilterDropdown<T extends string>({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, () => setOpen(false), open);
+  // Outside-click was the only way out: Escape did nothing and dismissing
+  // left focus at the top of the document instead of on the facet button.
+  useDismissableLayer(open, useCallback(() => setOpen(false), []));
 
   const summary =
     selected.size === 0
@@ -66,6 +70,11 @@ function FilterDropdown<T extends string>({
         type="button"
         onClick={() => setOpen(!open)}
         data-testid={`${testIdPrefix}-dropdown`}
+        // Without these the facet list opening is completely silent — the
+        // trigger's siblings (PipelineCard, PipelineRunReplayPage) already
+        // announce theirs.
+        aria-haspopup="true"
+        aria-expanded={open}
         className={cn(
           'flex items-center gap-1.5 px-2.5 py-[5px] text-xs font-medium rounded cursor-pointer font-[inherit] whitespace-nowrap bg-surface text-text-secondary border',
           selected.size > 0 ? 'border-primary' : 'border-border',

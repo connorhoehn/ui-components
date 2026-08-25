@@ -486,7 +486,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
               Use persisted input snapshot
             </label>
             {retryError && (
-              <div data-testid="retry-modal-error" className="py-2 px-3 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg">
+              <div role="alert" data-testid="retry-modal-error" className="py-2 px-3 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg">
                 {retryError}
               </div>
             )}

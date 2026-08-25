@@ -11,6 +11,8 @@ import { createPortal } from 'react-dom';
 import type { PipelineEventMap } from '../../../types/pipeline';
 import { useEventStream } from '../context/EventStreamContext';
 import { cn } from '../../../lib/cn';
+import { focusInitialElement, restoreFocus, trapTabKey } from '../../../lib/focusTrap';
+import { useOverlayLayer } from '../../../lib/overlayStack';
 import LogRow from './LogRow';
 import type { LogRowData } from './LogRow';
 import LogFilterBar from './LogFilterBar';
@@ -112,14 +114,36 @@ export default function ExecutionLog({
     el.scrollTop = el.scrollHeight;
   }, [rows.length, expanded, fullscreen, pinned]);
 
-  // Close fullscreen on Escape
+  // Close fullscreen on Escape, and trap Tab inside it. The overlay is a
+  // full-viewport scrim, but focus stayed on the "fullscreen" toggle behind
+  // it and Tab kept cycling the hidden canvas underneath — the user was
+  // driving controls they could no longer see.
+  const fullscreenPanelRef = useRef<HTMLDivElement | null>(null);
+  const preFullscreenFocusRef = useRef<HTMLElement | null>(null);
+  const isTopLayer = useOverlayLayer(fullscreen);
   useEffect(() => {
     if (!fullscreen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setFullscreen(false);
+      if (!isTopLayer()) return;
+      if (e.key === 'Escape') {
+        setFullscreen(false);
+        return;
+      }
+      trapTabKey(e, fullscreenPanelRef.current);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
+  }, [fullscreen, isTopLayer]);
+
+  useEffect(() => {
+    if (!fullscreen) return;
+    preFullscreenFocusRef.current =
+      (typeof document !== 'undefined' ? document.activeElement : null) as HTMLElement | null;
+    focusInitialElement(fullscreenPanelRef.current);
+    return () => {
+      restoreFocus(preFullscreenFocusRef.current);
+      preFullscreenFocusRef.current = null;
+    };
   }, [fullscreen]);
 
   const onScroll = useCallback(() => {
@@ -253,6 +277,10 @@ export default function ExecutionLog({
             }}
           >
             <div
+              ref={fullscreenPanelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Execution log, fullscreen"
               className="w-[90vw] h-[90vh] bg-white rounded-[10px] shadow-2xl flex flex-col overflow-hidden font-inherit"
               onMouseDown={(e) => e.stopPropagation()}
             >

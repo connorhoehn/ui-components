@@ -18,6 +18,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { focusInitialElement, restoreFocus, trapTabKey } from '../../lib/focusTrap';
+import { useOverlayLayer } from '../../lib/overlayStack';
 
 export interface VideoPlayerSource {
   /** Direct media URL (mp4 / webm / etc) served with Range support. */
@@ -83,8 +84,11 @@ export function VideoPlayerModal({
   // Escape closes; Tab/Shift+Tab cycle inside the card. This component
   // declares `aria-modal="true"`, so letting Tab reach the page behind it
   // would contradict what it tells assistive tech.
+  // Mount is "open" for this component, so the layer is always registered.
+  const isTopLayer = useOverlayLayer(true);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (!isTopLayer()) return;
       if (e.key === 'Escape') {
         onClose();
         return;
@@ -93,7 +97,7 @@ export function VideoPlayerModal({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, [onClose, isTopLayer]);
 
   // The modal mounts/unmounts with its open state (no `open` prop), so mount
   // is "open": capture focus on the way in, hand it back on the way out.

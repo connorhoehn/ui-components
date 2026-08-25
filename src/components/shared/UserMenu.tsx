@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Avatar } from './Avatar';
 import { cn } from '../../lib/cn';
+import { useDismissableLayer } from '../../lib/focusTrap';
 
 export interface UserMenuItem {
   label: string;
@@ -48,15 +49,11 @@ export function UserMenu({ user, items, className, 'data-testid': testId }: User
     return () => document.removeEventListener('mousedown', handler);
   }, [open, close]);
 
-  // Close on Escape
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
-    };
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
-  }, [open, close]);
+  // Escape-to-close AND focus restore. The hand-rolled Escape handler this
+  // replaces closed the menu but left focus on <body>, so a keyboard user who
+  // backed out of the menu resumed from the top of the document instead of
+  // from the avatar trigger they opened it with.
+  useDismissableLayer(open, close);
 
   return (
     <div
