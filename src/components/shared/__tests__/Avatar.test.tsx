@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Avatar, nameToInitials, nameToColor } from '../Avatar';
 
 describe('Avatar', () => {
@@ -13,6 +13,28 @@ describe('Avatar', () => {
     const img = screen.getByAltText('Alice') as HTMLImageElement;
     expect(img.tagName).toBe('IMG');
     expect(img.src).toBe('https://example.com/a.png');
+  });
+
+  it('falls back to initials when the image fails to load', () => {
+    render(<Avatar name="Alice Smith" src="https://example.com/broken.png" />);
+    const img = screen.getByAltText('Alice Smith');
+    expect(screen.queryByText('AS')).toBeNull();
+
+    fireEvent.error(img);
+    expect(screen.getByText('AS')).toBeInTheDocument();
+    expect(screen.queryByAltText('Alice Smith')).toBeNull();
+  });
+
+  it('retries the image when src changes after a failure', () => {
+    const { rerender } = render(
+      <Avatar name="Alice Smith" src="https://example.com/broken.png" />,
+    );
+    fireEvent.error(screen.getByAltText('Alice Smith'));
+    expect(screen.getByText('AS')).toBeInTheDocument();
+
+    rerender(<Avatar name="Alice Smith" src="https://example.com/fresh.png" />);
+    expect(screen.getByAltText('Alice Smith')).toBeInTheDocument();
+    expect(screen.queryByText('AS')).toBeNull();
   });
 
   it('falls back to initials for empty names', () => {

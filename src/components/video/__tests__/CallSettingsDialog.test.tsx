@@ -20,6 +20,7 @@ const stubStream = { getTracks: () => [] } as unknown as MediaStream;
 const slots = {
   effectsContent: <div data-testid="fake-effects">effects body</div>,
   peopleContent: <div data-testid="fake-people">people body</div>,
+  chatContent: <div data-testid="fake-chat">chat body</div>,
 };
 
 describe('CallSettingsDialog', () => {
@@ -43,6 +44,38 @@ describe('CallSettingsDialog', () => {
     expect(screen.queryByTestId('fake-effects')).toBeNull();
     expect(screen.getByTestId('call-settings-tab-people')).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByTestId('call-settings-tab-effects')).toHaveAttribute('aria-selected', 'false');
+  });
+
+  it('renders a chat tab when chatContent is passed and switches to it', () => {
+    render(
+      <CallSettingsDialog open onClose={onClose} previewStream={null} {...slots} />,
+    );
+    expect(screen.queryByTestId('fake-chat')).toBeNull();
+    fireEvent.click(screen.getByTestId('call-settings-tab-chat'));
+    expect(screen.getByTestId('fake-chat')).toBeInTheDocument();
+    expect(screen.queryByTestId('fake-effects')).toBeNull();
+    expect(screen.getByTestId('call-settings-tab-chat')).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('hides the chat tab when chatContent is missing', () => {
+    render(
+      <CallSettingsDialog
+        open
+        onClose={onClose}
+        previewStream={null}
+        effectsContent={slots.effectsContent}
+        peopleContent={slots.peopleContent}
+      />,
+    );
+    expect(screen.queryByTestId('call-settings-tab-chat')).toBeNull();
+  });
+
+  it('honors initialTab="chat"', () => {
+    render(
+      <CallSettingsDialog open onClose={onClose} previewStream={null} initialTab="chat" {...slots} />,
+    );
+    expect(screen.getByTestId('fake-chat')).toBeInTheDocument();
+    expect(screen.queryByTestId('fake-effects')).toBeNull();
   });
 
   it('honors initialTab="people"', () => {

@@ -1,5 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { t } from "./Avatar-OiMcrjPJ.js";
+import { t } from "./Avatar-BzicCOft.js";
 import { useEffect as n, useMemo as r, useRef as i, useState as a } from "react";
 import { jsx as o, jsxs as s } from "react/jsx-runtime";
 //#region src/components/video/ParticipantTile.tsx

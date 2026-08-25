@@ -86,7 +86,7 @@ export declare interface CallParticipantStripProps {
     style?: CSSProperties;
 }
 
-export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, effectsContent, peopleContent, title, className, }: CallSettingsDialogProps): JSX.Element;
+export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, effectsContent, peopleContent, chatContent, title, className, }: CallSettingsDialogProps): JSX.Element;
 
 export declare interface CallSettingsDialogProps {
     open: boolean;
@@ -104,12 +104,31 @@ export declare interface CallSettingsDialogProps {
     /** "People" tab body — e.g. an <InviteCandidateList/> wired to the
      *  consumer's roster + invite call. Omit to hide the tab. */
     peopleContent?: ReactNode;
+    /** "Chat" tab body — e.g. a chat panel wired to the call's channel.
+     *  Omit to hide the tab. */
+    chatContent?: ReactNode;
     /** Dialog heading. Defaults to "Call settings". */
     title?: string;
     className?: string;
 }
 
-export declare type CallSettingsTab = 'effects' | 'people';
+export declare type CallSettingsTab = 'effects' | 'people' | 'chat';
+
+export declare function CallSidePanel({ open, onClose, title, children, widthClassName, className, 'data-testid': testId, }: CallSidePanelProps): JSX.Element | null;
+
+export declare interface CallSidePanelProps {
+    open: boolean;
+    /** The header ✕ fires this. The consumer owns the open/closed state. */
+    onClose: () => void;
+    /** Header text, e.g. "Chat". */
+    title: string;
+    /** Panel body — rendered inside a `min-h-0 flex-1 overflow-y-auto` slot. */
+    children: ReactNode;
+    /** Width utility for the panel column. Defaults to `w-80`. */
+    widthClassName?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /**
  * Slack-Huddles-style "someone started a hangout" banner. Lightweight,

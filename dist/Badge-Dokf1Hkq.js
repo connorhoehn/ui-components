@@ -2,7 +2,7 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { i as t, o as n } from "./tones-DRPja4Vj.js";
 import { t as r } from "./EmptyState-CUHf5NYN.js";
 import { t as i } from "./StatusDot-Bgx2zxgC.js";
-import { t as a } from "./Avatar-OiMcrjPJ.js";
+import { t as a } from "./Avatar-BzicCOft.js";
 import { useEffect as o, useRef as s, useState as c } from "react";
 import { Fragment as l, jsx as u, jsxs as d } from "react/jsx-runtime";
 //#region src/components/shared/ConnectionPill.tsx

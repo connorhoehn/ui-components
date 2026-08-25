@@ -7,8 +7,8 @@ import { t as m } from "./overlayStack-BFH9XXvN.js";
 import { t as h } from "./EmptyState-CUHf5NYN.js";
 import { n as g, r as _, t as v } from "./focusTrap-CmWJlptm.js";
 import { t as y } from "./SkeletonCard-CGe8XFPB.js";
-import { t as b } from "./activationKey-CjbL3LUv.js";
-import { t as x } from "./Input-DcK2h-jK.js";
+import { t as b } from "./Input-DcK2h-jK.js";
+import { t as x } from "./activationKey-CjbL3LUv.js";
 import { t as S } from "./Select-Z0TLUVeL.js";
 import { useCallback as C, useEffect as w, useId as T, useMemo as E, useRef as D, useState as O } from "react";
 import { Fragment as k, jsx as A, jsxs as j } from "react/jsx-runtime";
@@ -492,7 +492,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 			priority: t.length > 0 ? Math.max(...t.map((e) => e.priority)) + 1 : 1
 		}, r = [...t, e];
 		n(r), o(r.length - 1), h(e);
-	}, [t, n]), b = C((e) => {
+	}, [t, n]), x = C((e) => {
 		n(t.filter((t, n) => n !== e)), a === e ? (o(null), h(null)) : a !== null && a > e && o(a - 1);
 	}, [
 		t,
@@ -617,7 +617,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 								children: [
 									/* @__PURE__ */ A("td", {
 										className: "px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle",
-										children: /* @__PURE__ */ A(x, {
+										children: /* @__PURE__ */ A(b, {
 											"aria-label": "Priority",
 											size: "sm",
 											className: "w-[50px]",
@@ -662,7 +662,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 														label: e
 													}))
 												}),
-												/* @__PURE__ */ A(x, {
+												/* @__PURE__ */ A(b, {
 													"aria-label": "Match value",
 													size: "sm",
 													className: "min-w-[100px]",
@@ -678,7 +678,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 									}),
 									/* @__PURE__ */ A("td", {
 										className: "px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle",
-										children: /* @__PURE__ */ A(x, {
+										children: /* @__PURE__ */ A(b, {
 											"aria-label": "Target Type ID",
 											size: "sm",
 											className: "min-w-[80px]",
@@ -692,7 +692,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 									}),
 									/* @__PURE__ */ A("td", {
 										className: "px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle",
-										children: /* @__PURE__ */ A(x, {
+										children: /* @__PURE__ */ A(b, {
 											"aria-label": "Pipeline",
 											size: "sm",
 											className: "min-w-[80px]",
@@ -780,7 +780,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 											}),
 											/* @__PURE__ */ A("button", {
 												className: "px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
-												onClick: () => b(n),
+												onClick: () => x(n),
 												children: "Delete"
 											})
 										]
@@ -802,7 +802,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 			}),
 			/* @__PURE__ */ j("div", {
 				className: "flex gap-2 items-center mt-1",
-				children: [/* @__PURE__ */ A(x, {
+				children: [/* @__PURE__ */ A(b, {
 					"aria-label": "Enter a file path to preview mapping",
 					className: "flex-1",
 					value: s,
@@ -1058,7 +1058,7 @@ function fe(e) {
 	}) : [];
 }
 function pe() {
-	let { id: t } = N(), n = M(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = O(null), [l, u] = O(!0), [m, h] = O(null), [g, _] = O(!1), v = T(), [b, E] = O(!1), [D, P] = O(!1), [F, I] = O({}), [L, R] = O([]), [z, B] = O(""), [V, ee] = O(""), [H, U] = O({}), [W, te] = O(!1), G = C(() => {
+	let { id: t } = N(), n = M(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = O(null), [l, u] = O(!0), [m, h] = O(null), [g, _] = O(!1), v = T(), [x, E] = O(!1), [D, P] = O(!1), [F, I] = O({}), [L, R] = O([]), [z, B] = O(""), [V, ee] = O(""), [H, U] = O({}), [W, te] = O(!1), G = C(() => {
 		let e = { "Content-Type": "application/json" };
 		return r && (e.Authorization = `Bearer ${r}`), e;
 	}, [r]), K = C(async (e) => {
@@ -1287,7 +1287,7 @@ function pe() {
 						htmlFor: `${v}-cfg-${e}`,
 						className: "text-xs font-semibold text-text-tertiary min-w-[140px]",
 						children: e
-					}), /* @__PURE__ */ A(x, {
+					}), /* @__PURE__ */ A(b, {
 						id: `${v}-cfg-${e}`,
 						className: "flex-1",
 						value: typeof t == "string" ? t : JSON.stringify(t),
@@ -1333,11 +1333,11 @@ function pe() {
 						className: "text-sm font-semibold text-text-primary",
 						children: "Sync History"
 					}), /* @__PURE__ */ A("button", {
-						className: f("px-3.5 py-1.5 text-[13px] font-medium rounded-md cursor-pointer font-[inherit]", b || o.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-primary bg-info-bg text-primary"),
-						disabled: b || o.status === "paused",
+						className: f("px-3.5 py-1.5 text-[13px] font-medium rounded-md cursor-pointer font-[inherit]", x || o.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-primary bg-info-bg text-primary"),
+						disabled: x || o.status === "paused",
 						onClick: () => void Y(),
 						"data-testid": "sync-now-btn",
-						children: b ? "Syncing..." : "Sync Now"
+						children: x ? "Syncing..." : "Sync Now"
 					})]
 				}), o.lastSyncAt ? /* @__PURE__ */ j(k, { children: [/* @__PURE__ */ j("div", {
 					className: "text-xs text-text-tertiary mb-2.5",
@@ -1438,7 +1438,7 @@ function pe() {
 									value: "__custom__",
 									label: "Custom…"
 								}]
-							}), /* @__PURE__ */ A(x, {
+							}), /* @__PURE__ */ A(b, {
 								mono: !0,
 								"aria-label": "Cron expression",
 								className: "flex-1",
@@ -2007,7 +2007,7 @@ function Te() {
 	let [e, n] = O(null), [r, i] = O(null), [a, o] = O(null), { sources: s } = t(), { items: l, loading: u, error: d, refresh: f, retryItem: m, skipItem: g, actionError: _, clearActionError: v } = c({
 		sourceId: e,
 		status: r
-	}), x = a ? l.find((e) => e.itemId === a.itemId) ?? a : null, w = E(() => {
+	}), b = a ? l.find((e) => e.itemId === a.itemId) ?? a : null, w = E(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of s) e.set(t.sourceId, t.name);
 		return e;
@@ -2152,7 +2152,7 @@ function Te() {
 					}) }), /* @__PURE__ */ A("tbody", { children: l.map((e) => /* @__PURE__ */ j("tr", {
 						className: "border-b border-border cursor-pointer hover:bg-surface-hover",
 						onClick: () => o(e),
-						onKeyDown: b(() => o(e)),
+						onKeyDown: x(() => o(e)),
 						role: "button",
 						tabIndex: 0,
 						"aria-label": `Open details for ${e.sourcePath}`,
@@ -2221,8 +2221,8 @@ function Te() {
 				})
 			}),
 			/* @__PURE__ */ A(be, {
-				item: x,
-				sourceName: x ? w.get(x.sourceId) : void 0,
+				item: b,
+				sourceName: b ? w.get(b.sourceId) : void 0,
 				onClose: () => o(null),
 				onRetry: T,
 				onSkip: D
@@ -2359,7 +2359,7 @@ function Oe() {
 						className: "text-[11px] text-text-tertiary mr-1",
 						children: "Actor"
 					}),
-					/* @__PURE__ */ A(x, {
+					/* @__PURE__ */ A(b, {
 						id: `${l}-actor`,
 						"data-testid": "audit-actor",
 						className: "w-auto min-w-[140px]",
@@ -2372,7 +2372,7 @@ function Oe() {
 						className: "text-[11px] text-text-tertiary mr-1",
 						children: "Target"
 					}),
-					/* @__PURE__ */ A(x, {
+					/* @__PURE__ */ A(b, {
 						id: `${l}-target`,
 						"data-testid": "audit-target-id",
 						className: "w-auto min-w-[140px]",
@@ -2492,7 +2492,7 @@ function Ae(e) {
 	}
 }
 function je() {
-	let { conflicts: e, loading: n, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: u } = l(), { sources: d } = t(), [m, g] = O(null), [_, v] = O("platform"), [b, S] = O({}), [C, T] = O(""), [D, k] = O(!1), M = E(() => {
+	let { conflicts: e, loading: n, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: u } = l(), { sources: d } = t(), [m, g] = O(null), [_, v] = O("platform"), [x, S] = O({}), [C, T] = O(""), [D, k] = O(!1), M = E(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of d) e.set(t.sourceId, t.name);
 		return e;
@@ -2510,7 +2510,7 @@ function je() {
 			try {
 				let e = {
 					pick: _,
-					...Object.keys(b).length > 0 ? { fieldChoices: b } : {},
+					...Object.keys(x).length > 0 ? { fieldChoices: x } : {},
 					...C.trim() ? { note: C.trim() } : {}
 				};
 				await o(P.conflictId, e);
@@ -2706,7 +2706,7 @@ function je() {
 						P.fields.map((e) => /* @__PURE__ */ A(Me, {
 							field: e,
 							globalPick: _,
-							fieldChoice: b[e.field],
+							fieldChoice: x[e.field],
 							onPick: (t) => S((n) => ({
 								...n,
 								[e.field]: t
@@ -2719,7 +2719,7 @@ function je() {
 						/* @__PURE__ */ j("div", {
 							className: "flex gap-2 justify-end border-t border-border pt-3.5 flex-wrap",
 							children: [
-								/* @__PURE__ */ A(x, {
+								/* @__PURE__ */ A(b, {
 									"aria-label": "Optional note (logged in audit trail)",
 									className: "min-w-[240px] flex-1",
 									placeholder: "Optional note (logged in audit trail)",

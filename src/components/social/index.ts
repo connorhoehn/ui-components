@@ -13,6 +13,13 @@ export { CommentThread } from './CommentThread';
 export { PresencePanel } from './PresencePanel';
 export { ActivityPanel } from './ActivityPanel';
 
+export { ConversationList } from './ConversationList';
+export type {
+    ConversationListProps,
+    ConversationItem,
+    ConversationPeer,
+} from './ConversationList';
+
 export { ReactionsBar } from './ReactionsBar';
 export type { ReactionsBarProps, ReactionSummary } from './ReactionsBar';
 

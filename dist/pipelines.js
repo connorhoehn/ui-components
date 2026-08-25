@@ -14,8 +14,8 @@ import { t as C } from "./ConfirmDialog-B7XD8cR0.js";
 import { t as w } from "./EmptyState-CUHf5NYN.js";
 import { i as T, t as E } from "./focusTrap-CmWJlptm.js";
 import { t as D } from "./SkeletonCard-CGe8XFPB.js";
-import { t as O } from "./activationKey-CjbL3LUv.js";
-import { t as k } from "./Input-DcK2h-jK.js";
+import { t as O } from "./Input-DcK2h-jK.js";
+import { t as k } from "./activationKey-CjbL3LUv.js";
 import { t as A } from "./Textarea-C3t5PCLv.js";
 import { n as j, r as M, t as ee } from "./EventStreamContext-CLzG8O5_.js";
 import { A as te, B as ne, C as re, D as ie, E as ae, F as oe, G as se, H as ce, I as N, J as le, K as ue, L as de, M as fe, O as pe, P as me, Q as he, R as ge, T as P, U as _e, V as ve, W as ye, X as be, Y as xe, Z as Se, _ as Ce, a as we, at as Te, b as Ee, c as De, d as Oe, et as ke, f as Ae, h as je, i as Me, it as Ne, k as Pe, l as Fe, m as Ie, n as Le, nt as Re, o as ze, p as F, q as Be, r as Ve, rt as He, s as Ue, t as We, tt as Ge, u as Ke, v as qe, w as Je, x as Ye, y as Xe, z as Ze } from "./services-DrJviHEM.js";
@@ -5323,7 +5323,7 @@ function Vi({ runId: e, visible: t }) {
 				onClick: () => d(e.stepId),
 				role: "button",
 				tabIndex: 0,
-				onKeyDown: O(() => d(e.stepId)),
+				onKeyDown: k(() => d(e.stepId)),
 				children: [
 					/* @__PURE__ */ H("span", {
 						className: "text-[10px]",
@@ -5986,7 +5986,7 @@ function Xi({ data: e, depth: t = 0, highlightKeys: n, keyName: i, isHighlighted
 			onClick: () => s((e) => !e),
 			role: "button",
 			tabIndex: 0,
-			onKeyDown: O(() => s((e) => !e)),
+			onKeyDown: k(() => s((e) => !e)),
 			children: o ? "▶" : "▼"
 		}),
 		/* @__PURE__ */ H("span", {
@@ -6033,7 +6033,7 @@ function Xi({ data: e, depth: t = 0, highlightKeys: n, keyName: i, isHighlighted
 				onClick: () => s((e) => !e),
 				role: "button",
 				tabIndex: 0,
-				onKeyDown: O(() => s((e) => !e)),
+				onKeyDown: k(() => s((e) => !e)),
 				children: o ? "▶" : "▼"
 			}),
 			/* @__PURE__ */ H("span", {
@@ -6097,7 +6097,7 @@ function Zi({ snapshots: e, activeStepId: t, fallbackActiveStepId: n, onStepSele
 				onClick: i ? () => i(e.stepId) : void 0,
 				role: i ? "button" : void 0,
 				tabIndex: i ? 0 : void 0,
-				onKeyDown: i ? O(() => i(e.stepId)) : void 0,
+				onKeyDown: i ? k(() => i(e.stepId)) : void 0,
 				title: e.stepId,
 				children: [
 					e.newKeys.length > 0 && /* @__PURE__ */ H("span", {
@@ -7148,7 +7148,7 @@ function xa({ value: e, onChange: t, nodeId: n, label: r = "Source image path", 
 		label: r,
 		help: i,
 		controlId: s,
-		render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(k, {
+		render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(O, {
 			id: r,
 			"aria-describedby": n,
 			size: "sm",
@@ -7371,7 +7371,7 @@ function Na({ data: e, onChange: t }) {
 			error: m ? "Cron expression is required." : T ? "Invalid cron expression — supports *, */N, N,M, A-B, exact values." : void 0,
 			help: !m && !T ? "5-field cron: minute hour day month weekday." : void 0,
 			controlId: `${r}-schedule`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(k, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(O, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -7398,7 +7398,7 @@ function Na({ data: e, onChange: t }) {
 					error: h ? "Webhook path is required." : _ ? "Path must be alphanumeric (plus _, -)" : void 0,
 					help: !h && !_ ? "Alphanumeric, _, or - (max 64 chars). No leading slash." : void 0,
 					controlId: `${r}-webhook-path`,
-					render: ({ controlId: e, describedById: n }) => /* @__PURE__ */ H(k, {
+					render: ({ controlId: e, describedById: n }) => /* @__PURE__ */ H(O, {
 						size: "sm",
 						mono: !0,
 						spellCheck: !1,
@@ -7918,7 +7918,7 @@ function Ja({ data: e, onChange: t }) {
 			label: "Output key (optional)",
 			help: `If set, writes to context.${e.outputKey || "outputKey"}. Otherwise merges into root context.`,
 			controlId: `${n}-output-key`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -7963,7 +7963,7 @@ function Xa({ data: e, onChange: t }) {
 		label: "Label (optional — shown on node face)",
 		help: "A short name so this branch is easy to spot.",
 		controlId: `${n}-label`,
-		render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+		render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 			size: "sm",
 			id: n,
 			"aria-describedby": r,
@@ -8168,7 +8168,7 @@ function to({ data: e, onChange: t }) {
 							placeholder: e.placeholder,
 							value: a,
 							onChange: (t) => s(e.key, t.target.value)
-						}) : /* @__PURE__ */ H(k, {
+						}) : /* @__PURE__ */ H(O, {
 							size: "sm",
 							id: t,
 							"aria-describedby": r,
@@ -8303,7 +8303,7 @@ function ao({ data: e, onChange: t }) {
 						t,
 						":"
 					]
-				}), /* @__PURE__ */ H(k, {
+				}), /* @__PURE__ */ H(O, {
 					size: "sm",
 					value: e,
 					onChange: (e) => o(t, e.target.value),
@@ -8827,7 +8827,7 @@ function Oo({ data: e, onChange: t }) {
 			label: "Item alias",
 			help: "Optional, default 'item'. Key written to $.scatter.<alias> for each arm.",
 			controlId: `${n}-item-alias`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -8954,7 +8954,7 @@ function Ao({ data: e, onChange: t, nodeId: n }) {
 			label: "Background colour",
 			help: i ? "Hex colour used to fill letterbox padding." : "Only applies when fit is contain or fill.",
 			controlId: "resize-background",
-			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ H(k, {
+			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ H(O, {
 				id: r,
 				"aria-describedby": n,
 				size: "sm",
@@ -9050,7 +9050,7 @@ function Po({ op: e, index: t, onUpdate: n, onRemove: r }) {
 				children: [/* @__PURE__ */ H("span", {
 					className: "text-[11px] text-text-tertiary min-w-[60px]",
 					children: "Background"
-				}), /* @__PURE__ */ H(k, {
+				}), /* @__PURE__ */ H(O, {
 					size: "sm",
 					mono: !0,
 					spellCheck: !1,
@@ -9206,7 +9206,7 @@ function Bo({ data: e, onChange: t, nodeId: n }) {
 			label: "Source image path",
 			help: "Optional. Defaults to the image produced upstream.",
 			controlId: "sharpen-source-image-path",
-			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(k, {
+			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(O, {
 				id: i,
 				"aria-describedby": n,
 				size: "sm",
@@ -9305,7 +9305,7 @@ function Ho({ data: e, onChange: t, nodeId: n }) {
 			error: r ? "Overlay image ID is required." : void 0,
 			help: "The imageId of the watermark image already stored in the blob store.",
 			controlId: "watermark-overlay-image-id",
-			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ H(k, {
+			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ H(O, {
 				id: i,
 				"aria-describedby": n,
 				size: "sm",
@@ -9808,7 +9808,7 @@ function is({ data: e, onChange: t, currentNodeId: n }) {
 			label: "Bounding-box path",
 			help: "Optional. JSONPath to a bbox object { x, y, width, height } in pixels. Overrides the manual crop region below when present at run time.",
 			controlId: "crop-bbox-path",
-			render: ({ describedById: n, controlId: r, labelId: i }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(k, {
+			render: ({ describedById: n, controlId: r, labelId: i }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(O, {
 				id: r,
 				"aria-describedby": n,
 				size: "sm",
@@ -10018,7 +10018,7 @@ function cs({ value: e, onChange: t, uploadImage: n, getImageUrl: i, maxSize: a 
 			!s && /* @__PURE__ */ U("div", {
 				className: "flex items-center gap-2",
 				"data-testid": u ? `${u}-url-row` : void 0,
-				children: [/* @__PURE__ */ H(k, {
+				children: [/* @__PURE__ */ H(O, {
 					type: "url",
 					placeholder: "https://example.com/image.jpg",
 					value: g,
@@ -10564,7 +10564,7 @@ function Ps({ data: e, onChange: t, nodeId: n }) {
 			error: v,
 			help: "JSONPath into context. The value must be a string imageId, or an object with one.",
 			controlId: `${r}-image-ref-path`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(k, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(O, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -11181,7 +11181,7 @@ function Zs({ data: e, onChange: t, nodeId: n }) {
 			label: "Mask image path",
 			help: "Optional. White pixels are the edit region, black is preserved. Omit for outpainting.",
 			controlId: "edit-prompt-mask-path",
-			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(k, {
+			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(O, {
 				id: r,
 				"aria-describedby": n,
 				size: "sm",
@@ -12260,7 +12260,7 @@ function $s({ data: e, onChange: t }) {
 				})
 			]
 		}),
-		/* @__PURE__ */ H(k, {
+		/* @__PURE__ */ H(O, {
 			id: "image-source-image-id",
 			type: "text",
 			size: "sm",
@@ -12288,7 +12288,7 @@ function $s({ data: e, onChange: t }) {
 				})
 			]
 		}),
-		/* @__PURE__ */ H(k, {
+		/* @__PURE__ */ H(O, {
 			id: "image-source-output-key",
 			type: "text",
 			size: "sm",
@@ -12332,7 +12332,7 @@ function tc({ data: e, onChange: t, nodeId: n }) {
 				})
 			]
 		}),
-		/* @__PURE__ */ H(k, {
+		/* @__PURE__ */ H(O, {
 			id: "save-source-image-path",
 			type: "text",
 			size: "sm",
@@ -12369,7 +12369,7 @@ function tc({ data: e, onChange: t, nodeId: n }) {
 				})
 			]
 		}),
-		/* @__PURE__ */ H(k, {
+		/* @__PURE__ */ H(O, {
 			id: "save-filename-template",
 			type: "text",
 			size: "sm",
@@ -12478,7 +12478,7 @@ function ic({ data: e, onChange: t, nodeId: n }) {
 			error: s ? "Namespace is required." : void 0,
 			help: s ? void 0 : "Groups related records. Reads only see their own namespace.",
 			controlId: `${r}-namespace`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -12495,7 +12495,7 @@ function ic({ data: e, onChange: t, nodeId: n }) {
 			error: c ? "Key expression is required." : void 0,
 			help: c ? void 0 : "Identifies the record. Supports {{ context.* }} substitution.",
 			controlId: `${r}-key-expression`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -12524,7 +12524,7 @@ function ic({ data: e, onChange: t, nodeId: n }) {
 			error: l ? "Value field is required for a write." : void 0,
 			help: l ? void 0 : "Context path whose value is persisted.",
 			controlId: `${r}-value-field`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -12538,7 +12538,7 @@ function ic({ data: e, onChange: t, nodeId: n }) {
 			label: "Output key",
 			help: "Where retrieved records land in context. Defaults to this step's output.",
 			controlId: `${r}-output-key`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -12565,7 +12565,7 @@ function oc({ data: e, onChange: t, nodeId: n }) {
 				error: s ? "Knowledge base ID is required." : void 0,
 				help: s ? void 0 : o.help("knowledgeBaseId", "The knowledge base to retrieve from."),
 				controlId: `${r}-kb-id`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 					size: "sm",
 					mono: !0,
 					spellCheck: !1,
@@ -12650,7 +12650,7 @@ function oc({ data: e, onChange: t, nodeId: n }) {
 				label: "Output key",
 				help: "Where retrieved passages land in context. Defaults to this step's output.",
 				controlId: `${r}-output-key`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 					size: "sm",
 					mono: !0,
 					spellCheck: !1,
@@ -12704,7 +12704,7 @@ function uc({ data: e, onChange: t, nodeId: n }) {
 				error: s ? "Graph ID is required." : void 0,
 				help: s ? void 0 : o.help("graphId", "The graph to query."),
 				controlId: `${r}-graph-id`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 					size: "sm",
 					mono: !0,
 					spellCheck: !1,
@@ -12751,7 +12751,7 @@ function uc({ data: e, onChange: t, nodeId: n }) {
 						d.map(([e, t], n) => /* @__PURE__ */ U("div", {
 							className: "flex items-center gap-2",
 							children: [
-								/* @__PURE__ */ H(k, {
+								/* @__PURE__ */ H(O, {
 									size: "sm",
 									mono: !0,
 									spellCheck: !1,
@@ -12761,7 +12761,7 @@ function uc({ data: e, onChange: t, nodeId: n }) {
 									placeholder: "userId",
 									"aria-label": `Parameter ${n + 1} name`
 								}),
-								/* @__PURE__ */ H(k, {
+								/* @__PURE__ */ H(O, {
 									size: "sm",
 									mono: !0,
 									spellCheck: !1,
@@ -12845,7 +12845,7 @@ function uc({ data: e, onChange: t, nodeId: n }) {
 					label: "Output key",
 					help: "Where rows land in context. Defaults to this step's output.",
 					controlId: `${r}-output-key`,
-					render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(k, {
+					render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ H(O, {
 						size: "sm",
 						mono: !0,
 						spellCheck: !1,
@@ -14700,7 +14700,7 @@ function Jc({ pipelineId: e, onClose: t }) {
 								tabIndex: 0,
 								"aria-label": f ? `Toggle run ${e.id.slice(0, 8)} for comparison` : `Open run ${e.id.slice(0, 8)}`,
 								onClick: () => b(e.id),
-								onKeyDown: O(() => b(e.id)),
+								onKeyDown: k(() => b(e.id)),
 								className: r("cursor-pointer border-b border-border px-4 py-2.5 transition-colors duration-100 hover:bg-surface-hover", i && "bg-info-bg"),
 								children: [
 									/* @__PURE__ */ U("div", {
@@ -15303,7 +15303,7 @@ function al({ search: e, onSearchChange: t, statusFilter: n, statusExplicit: i, 
 					children: "All"
 				})]
 			}),
-			/* @__PURE__ */ H(k, {
+			/* @__PURE__ */ H(O, {
 				"data-testid": "pipeline-search",
 				type: "search",
 				size: "sm",
@@ -15492,7 +15492,7 @@ function sl({ count: e, onClear: t, onExport: n, onExportAsJSON: a, onPublish: o
 					"data-testid": "bulk-add-tag-popover",
 					onClick: (e) => e.stopPropagation(),
 					className: r("absolute top-full left-0 mt-1.5", "bg-white border border-border rounded-lg", "shadow-lg min-w-[220px] p-2.5 z-10", "flex flex-col gap-2"),
-					children: [/* @__PURE__ */ H(k, {
+					children: [/* @__PURE__ */ H(O, {
 						ref: x,
 						size: "sm",
 						"data-testid": "bulk-add-tag-input",
@@ -17534,7 +17534,7 @@ function Fl({ open: t, onClose: n, onCreated: r, onSelect: i }) {
 				className: "text-[13px] text-text-secondary mb-3",
 				children: "Pick a template to spawn a new pipeline with prebuilt nodes and edges."
 			}),
-			/* @__PURE__ */ H(k, {
+			/* @__PURE__ */ H(O, {
 				ref: c,
 				type: "search",
 				"data-testid": "templates-search",
@@ -17637,7 +17637,7 @@ function Ul({ open: e, onClose: t, onCreate: n }) {
 		children: [/* @__PURE__ */ H("label", {
 			className: "block text-[13px] font-semibold text-text-secondary mb-1.5",
 			children: "Name"
-		}), /* @__PURE__ */ H(k, {
+		}), /* @__PURE__ */ H(O, {
 			ref: o,
 			"data-testid": "new-pipeline-name",
 			value: i,
@@ -18356,7 +18356,7 @@ function mu({ query: e, statuses: t, triggerKinds: n, range: i, onQueryChange: a
 	return /* @__PURE__ */ U("div", {
 		className: "flex items-center gap-2 px-3 py-2 bg-surface-inset border border-border rounded-md",
 		children: [
-			/* @__PURE__ */ H(k, {
+			/* @__PURE__ */ H(O, {
 				id: "runs-search",
 				type: "search",
 				size: "sm",
@@ -19704,7 +19704,7 @@ function Yu({ pipelineId: e, runId: t, onStepClick: n }) {
 						className: "text-border",
 						children: "|"
 					}),
-					/* @__PURE__ */ H(k, {
+					/* @__PURE__ */ H(O, {
 						size: "sm",
 						value: d,
 						onChange: (e) => f(e.target.value),
@@ -19770,7 +19770,7 @@ function Yu({ pipelineId: e, runId: t, onStepClick: n }) {
 							"aria-expanded": e.trace ? t : void 0,
 							className: "grid grid-cols-[14px_auto_auto_1fr] items-baseline gap-2.5 py-1.5 text-xs border-b border-surface-inset cursor-pointer",
 							onClick: () => S(e),
-							onKeyDown: O(() => S(e)),
+							onKeyDown: k(() => S(e)),
 							"data-testid": "executor-log-row",
 							"data-action": e.action,
 							"data-audit-id": e.auditId,
@@ -21635,7 +21635,7 @@ function Rd() {
 						tabIndex: 0,
 						"aria-label": `Open run ${t.id.slice(0, 11)} of ${t.pipelineName}`,
 						onClick: () => e(`/pipelines/${t.pipelineId}/runs/${t.id}`),
-						onKeyDown: O(() => e(`/pipelines/${t.pipelineId}/runs/${t.id}`)),
+						onKeyDown: k(() => e(`/pipelines/${t.pipelineId}/runs/${t.id}`)),
 						className: "border-b border-border cursor-pointer hover:bg-surface-hover",
 						children: [
 							/* @__PURE__ */ H("td", {

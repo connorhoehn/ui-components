@@ -5,8 +5,8 @@ import { a as r, d as i, f as a, i as o, l as s, n as c, o as l, r as u, u as d 
 import { t as f } from "./useDocumentTypes-C-AMWgYq.js";
 import { t as p } from "./cn-DhjIN-s0.js";
 import { t as m } from "./useEventCallback-Cwx9QVSi.js";
-import { t as h } from "./activationKey-CjbL3LUv.js";
-import { t as g } from "./Input-DcK2h-jK.js";
+import { t as h } from "./Input-DcK2h-jK.js";
+import { t as g } from "./activationKey-CjbL3LUv.js";
 import { t as _ } from "./Textarea-C3t5PCLv.js";
 import { i as v, o as y, t as b } from "./renderers-CLNxGWls.js";
 import { t as x } from "./useHangoutEmbed-ChkoGDC_.js";
@@ -874,7 +874,7 @@ var V = {
 		label: "Read"
 	}
 ];
-function U({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: i, onExport: a, onToggleHistory: o, onToggleVideoCall: s, onToggleVideoHistory: c, isCallActive: l, onClearDocument: u, onJumpToUser: d, sections: f, onToggleMyItems: m, myItemCount: h, commentCount: _, onBack: v, onFollowUser: y, followingUserId: b, onFinalize: x, onUnlock: S, pastCallsCount: C }) {
+function U({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: i, onExport: a, onToggleHistory: o, onToggleVideoCall: s, onToggleVideoHistory: c, isCallActive: l, onClearDocument: u, onJumpToUser: d, sections: f, onToggleMyItems: m, myItemCount: g, commentCount: _, onBack: v, onFollowUser: y, followingUserId: b, onFinalize: x, onUnlock: S, pastCallsCount: C }) {
 	let [w, T] = k(!1), E = V[e.status] ?? V.draft;
 	return /* @__PURE__ */ M("header", {
 		className: p("flex flex-col py-2 px-4 bg-white border-b border-border shrink-0 gap-1.5 sticky top-[53px] z-[34]"),
@@ -888,7 +888,7 @@ function U({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: i
 						className: p("bg-transparent border-none text-info-fg cursor-pointer text-[13px] p-0 flex items-center gap-1 font-[inherit]"),
 						children: "← Documents"
 					}),
-					/* @__PURE__ */ j(g, {
+					/* @__PURE__ */ j(h, {
 						"aria-label": "Document title",
 						className: p("w-auto h-auto min-w-[180px] text-base font-semibold border-transparent bg-transparent py-1 px-2"),
 						value: e.title,
@@ -957,7 +957,7 @@ function U({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: i
 						type: "button",
 						className: p("py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-text-primary cursor-pointer font-[inherit] relative"),
 						onClick: m,
-						children: ["My Items", h ? ` (${h})` : ""]
+						children: ["My Items", g ? ` (${g})` : ""]
 					}),
 					s && /* @__PURE__ */ j("button", {
 						type: "button",
@@ -1419,7 +1419,7 @@ function Pe(e, t) {
 	let n = e.replace("#", ""), r = parseInt(n, 16), i = Math.max(0, (r >> 16 & 255) * (1 - t)), a = Math.max(0, (r >> 8 & 255) * (1 - t)), o = Math.max(0, (r & 255) * (1 - t));
 	return `rgb(${Math.round(i)}, ${Math.round(a)}, ${Math.round(o)})`;
 }
-function Fe({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: o, onUpdateSection: s, onAddItem: c, onUpdateItem: l, onRemoveItem: u, participants: d, onFocus: f, isFocused: m, comments: h, onUpdateCursorInfo: _, commentCount: v = 0, onOpenComments: x, commentPresence: S }) {
+function Fe({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: o, onUpdateSection: s, onAddItem: c, onUpdateItem: l, onRemoveItem: u, participants: d, onFocus: f, isFocused: m, comments: g, onUpdateCursorInfo: _, commentCount: v = 0, onOpenComments: x, commentPresence: S }) {
 	let [C, w] = k(e.collapsed), T = () => {
 		let e = !C;
 		w(e), s({ collapsed: e });
@@ -1483,7 +1483,7 @@ function Fe({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 							children: /* @__PURE__ */ j("polyline", { points: "6 9 12 15 18 9" })
 						})
 					}),
-					/* @__PURE__ */ j(g, {
+					/* @__PURE__ */ j(h, {
 						value: e.title,
 						onChange: (e) => s({ title: e.target.value }),
 						readOnly: !o,
@@ -1515,7 +1515,7 @@ function Fe({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 						onRemoveItem: u,
 						participants: d,
 						onUpdateCursorInfo: _,
-						comments: h,
+						comments: g,
 						commentCount: v,
 						onOpenComments: x
 					})
@@ -1603,14 +1603,14 @@ function ze({ onAdd: e, onCancel: t }) {
 	return /* @__PURE__ */ M("div", {
 		className: p("flex gap-2 items-start flex-wrap"),
 		children: [
-			/* @__PURE__ */ j(g, {
+			/* @__PURE__ */ j(h, {
 				autoFocus: !0,
 				placeholder: "File name",
 				value: n,
 				onChange: (e) => r(e.target.value),
 				className: p("flex-1 min-w-[120px]")
 			}),
-			/* @__PURE__ */ j(g, {
+			/* @__PURE__ */ j(h, {
 				placeholder: "URL or path",
 				value: i,
 				onChange: (e) => a(e.target.value),
@@ -1642,7 +1642,7 @@ function Be({ onAdd: e, onCancel: t }) {
 	return /* @__PURE__ */ M("div", {
 		className: p("flex gap-2 items-center flex-wrap"),
 		children: [
-			/* @__PURE__ */ j(g, {
+			/* @__PURE__ */ j(h, {
 				autoFocus: !0,
 				placeholder: "Document name",
 				value: n,
@@ -1895,8 +1895,8 @@ function Ye(e, t, n) {
 	};
 }
 function Xe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread: i, onUnresolveThread: a }) {
-	let [o, s] = k(!1), [c, l] = k(""), [u, d] = k(!1), f = O(null), m = O(null), [g, v] = k(X), [y, b] = k(!1), x = t === 0 && !!e.resolved, S = Math.min(t, 5), C = () => {
-		if (g.active) return;
+	let [o, s] = k(!1), [c, l] = k(""), [u, d] = k(!1), f = O(null), m = O(null), [h, v] = k(X), [y, b] = k(!1), x = t === 0 && !!e.resolved, S = Math.min(t, 5), C = () => {
+		if (h.active) return;
 		let t = c.trim();
 		t && (n(e.id, t), l(""), s(!1), v(X));
 	}, T = (e) => {
@@ -1905,13 +1905,13 @@ function Xe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 		let n = Je(t, e.target.selectionStart ?? t.length, f.current);
 		v(n);
 	}, E = w((e) => {
-		let { newValue: t, newCursor: n } = Ye(c, g, e);
+		let { newValue: t, newCursor: n } = Ye(c, h, e);
 		l(t), v(X), requestAnimationFrame(() => {
 			let e = f.current;
 			e && (e.focus(), e.setSelectionRange(n, n));
 		});
-	}, [c, g]), D = (e) => {
-		g.active && m.current && m.current.handleKeyDown(e) || (e.key === "Enter" && !e.shiftKey && (e.preventDefault(), C()), e.key === "Escape" && s(!1));
+	}, [c, h]), D = (e) => {
+		h.active && m.current && m.current.handleKeyDown(e) || (e.key === "Enter" && !e.shiftKey && (e.preventDefault(), C()), e.key === "Escape" && s(!1));
 	}, A = u ? e.color : t === 0 ? "var(--color-border)" : "var(--color-border-emphasis)";
 	return x && !y ? /* @__PURE__ */ j("div", {
 		className: p(S > 0 ? "ml-5" : "ml-0"),
@@ -1921,7 +1921,7 @@ function Xe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 			"aria-expanded": !1,
 			className: p("bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between"),
 			onClick: () => b(!0),
-			onKeyDown: h(() => b(!0)),
+			onKeyDown: g(() => b(!0)),
 			children: [/* @__PURE__ */ M("div", {
 				className: p("flex items-center gap-1.5"),
 				children: [
@@ -1960,7 +1960,7 @@ function Xe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 				"aria-expanded": !0,
 				className: p("bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between"),
 				onClick: () => b(!1),
-				onKeyDown: h(() => b(!1)),
+				onKeyDown: g(() => b(!1)),
 				children: [/* @__PURE__ */ M("div", {
 					className: p("flex items-center gap-1.5"),
 					children: [
@@ -2046,11 +2046,11 @@ function Xe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 								placeholder: "Write a reply... (type @ to mention)",
 								rows: 2,
 								className: p("resize-y min-h-12")
-							}), g.active && /* @__PURE__ */ j(We, {
+							}), h.active && /* @__PURE__ */ j(We, {
 								ref: m,
-								query: g.query,
+								query: h.query,
 								users: r,
-								position: g.position,
+								position: h.position,
 								onSelect: E,
 								onDismiss: () => v(X)
 							})]
@@ -3591,7 +3591,7 @@ function jt(e) {
 	return `${a} month${a === 1 ? "" : "s"} ago`;
 }
 function Mt({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPreview: i, onClearPreview: a, onClose: o, onSaveVersion: s, onCompare: c, onClearCompare: l, compareSections: u, compareTimestamp: d, currentSections: f, onRestore: m }) {
-	let g = () => {
+	let h = () => {
 		a(), l(), o();
 	}, _ = () => {
 		let e = window.prompt("Enter a name for this version:");
@@ -3604,7 +3604,7 @@ function Mt({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPrevie
 		children: [
 			/* @__PURE__ */ j(Ce, {
 				title: "Version History",
-				onClose: g,
+				onClose: h,
 				actions: /* @__PURE__ */ j(G, {
 					size: "sm",
 					onClick: _,
@@ -3627,7 +3627,7 @@ function Mt({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPrevie
 						tabIndex: 0,
 						className: p("flex items-center justify-between py-2.5 px-4 cursor-pointer text-[13px] text-text-primary", n === e.timestamp ? "bg-info-bg border-l-[3px] border-l-info" : "bg-transparent border-l-[3px] border-l-transparent"),
 						onClick: () => i(e.timestamp),
-						onKeyDown: h(() => i(e.timestamp)),
+						onKeyDown: g(() => i(e.timestamp)),
 						children: [/* @__PURE__ */ M("div", {
 							className: p("flex-1 min-w-0"),
 							children: [
@@ -3705,7 +3705,7 @@ function Ft({ item: e, onClick: t, onDismiss: n }) {
 		tabIndex: 0,
 		className: p("flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-border-subtle items-start hover:bg-surface-inset"),
 		onClick: t,
-		onKeyDown: h(t),
+		onKeyDown: g(t),
 		children: [
 			/* @__PURE__ */ j("div", {
 				className: p("w-7 h-7 rounded-full text-white text-[11px] font-semibold flex items-center justify-center shrink-0"),
@@ -3766,7 +3766,7 @@ function It({ item: e, onClick: t, onDismiss: n }) {
 		tabIndex: 0,
 		className: p("flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-border-subtle items-start hover:bg-surface-inset"),
 		onClick: t,
-		onKeyDown: h(t),
+		onKeyDown: g(t),
 		children: [
 			/* @__PURE__ */ j("div", {
 				className: p("w-2 h-2 rounded-full shrink-0 mt-1"),

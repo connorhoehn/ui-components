@@ -25,7 +25,7 @@ import { cn } from '../../lib/cn';
 import Modal from '../shared/Modal';
 import { StreamVideo } from './StreamVideo';
 
-export type CallSettingsTab = 'effects' | 'people';
+export type CallSettingsTab = 'effects' | 'people' | 'chat';
 
 export interface CallSettingsDialogProps {
   open: boolean;
@@ -46,6 +46,9 @@ export interface CallSettingsDialogProps {
   /** "People" tab body — e.g. an <InviteCandidateList/> wired to the
    *  consumer's roster + invite call. Omit to hide the tab. */
   peopleContent?: ReactNode;
+  /** "Chat" tab body — e.g. a chat panel wired to the call's channel.
+   *  Omit to hide the tab. */
+  chatContent?: ReactNode;
 
   /** Dialog heading. Defaults to "Call settings". */
   title?: string;
@@ -55,6 +58,7 @@ export interface CallSettingsDialogProps {
 const TAB_LABELS: Record<CallSettingsTab, string> = {
   effects: 'Effects',
   people: 'People',
+  chat: 'Chat',
 };
 
 export function CallSettingsDialog({
@@ -64,6 +68,7 @@ export function CallSettingsDialog({
   initialTab = 'effects',
   effectsContent,
   peopleContent,
+  chatContent,
   title = 'Call settings',
   className,
 }: CallSettingsDialogProps) {
@@ -71,6 +76,7 @@ export function CallSettingsDialog({
   const available: CallSettingsTab[] = [
     ...(effectsContent != null ? (['effects'] as const) : []),
     ...(peopleContent != null ? (['people'] as const) : []),
+    ...(chatContent != null ? (['chat'] as const) : []),
   ];
 
   const [tab, setTab] = useState<CallSettingsTab>(initialTab);
@@ -187,6 +193,7 @@ export function CallSettingsDialog({
             >
               {activeTab === 'effects' ? effectsContent : null}
               {activeTab === 'people' ? peopleContent : null}
+              {activeTab === 'chat' ? chatContent : null}
             </div>
           </div>
         </div>

@@ -6,10 +6,10 @@ import { t as i } from "./overlayStack-BFH9XXvN.js";
 import { t as a } from "./Modal-BcTT8crX.js";
 import { n as o, t as s } from "./PermissionDeniedCard-5FQ6reO7.js";
 import { n as c, r as l, t as u } from "./focusTrap-CmWJlptm.js";
-import { t as d } from "./Avatar-OiMcrjPJ.js";
+import { t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./activationKey-CjbL3LUv.js";
 import { t as p } from "./Select-Z0TLUVeL.js";
-import { f as m, i as h } from "./MediaEffectsTray-DKZI2XmM.js";
+import { f as m, i as h } from "./MediaEffectsTray-DjQfomQI.js";
 import { useCallback as g, useEffect as _, useImperativeHandle as v, useLayoutEffect as y, useMemo as b, useRef as x, useState as S } from "react";
 import { Fragment as C, jsx as w, jsxs as T } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -3384,30 +3384,35 @@ function Ft({ audioOn: t, videoOn: n, screenSharing: r = !1, onToggleAudio: i, o
 //#region src/components/video/CallSettingsDialog.tsx
 var It = {
 	effects: "Effects",
-	people: "People"
+	people: "People",
+	chat: "Chat"
 };
-function Lt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", effectsContent: o, peopleContent: s, title: c = "Call settings", className: l }) {
-	let u = [...o == null ? [] : ["effects"], ...s == null ? [] : ["people"]], [d, f] = S(i);
+function Lt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", effectsContent: o, peopleContent: s, chatContent: c, title: l = "Call settings", className: u }) {
+	let d = [
+		...o == null ? [] : ["effects"],
+		...s == null ? [] : ["people"],
+		...c == null ? [] : ["chat"]
+	], [f, p] = S(i);
 	_(() => {
-		t && f(i);
+		t && p(i);
 	}, [t, i]);
-	let p = u.includes(d) ? d : u[0] ?? null;
+	let m = d.includes(f) ? f : d[0] ?? null;
 	return /* @__PURE__ */ w(a, {
 		open: t,
 		onClose: n,
-		ariaLabel: c,
+		ariaLabel: l,
 		maxWidth: 768,
 		rawChildren: !0,
 		backdropTestId: "call-settings-backdrop",
 		cardClassName: "max-w-4xl bg-surface-inverse text-text-inverse border border-white/10 p-0 overflow-hidden",
 		children: /* @__PURE__ */ T("div", {
 			"data-testid": "call-settings-dialog",
-			className: e("flex flex-col", l),
+			className: e("flex flex-col", u),
 			children: [/* @__PURE__ */ T("header", {
 				className: "flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3",
 				children: [/* @__PURE__ */ w("h2", {
 					className: "m-0 text-sm font-semibold text-text-inverse",
-					children: c
+					children: l
 				}), /* @__PURE__ */ w("button", {
 					type: "button",
 					"aria-label": "Close",
@@ -3440,24 +3445,28 @@ function Lt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 					})
 				}), /* @__PURE__ */ T("div", {
 					className: "flex min-w-0 flex-1 flex-col",
-					children: [u.length > 0 && /* @__PURE__ */ w("div", {
+					children: [d.length > 0 && /* @__PURE__ */ w("div", {
 						role: "tablist",
 						"aria-label": "Call settings sections",
 						className: "flex items-center gap-1 border-b border-white/10 px-3 pt-2",
-						children: u.map((t) => /* @__PURE__ */ w("button", {
+						children: d.map((t) => /* @__PURE__ */ w("button", {
 							type: "button",
 							role: "tab",
-							"aria-selected": t === p,
-							onClick: () => f(t),
+							"aria-selected": t === m,
+							onClick: () => p(t),
 							"data-testid": `call-settings-tab-${t}`,
-							className: e("cursor-pointer rounded-t-md border-b-2 px-3 py-1.5 text-[13px] font-medium transition-colors", t === p ? "border-primary text-text-inverse" : "border-transparent text-white/60 hover:bg-white/5 hover:text-white/90"),
+							className: e("cursor-pointer rounded-t-md border-b-2 px-3 py-1.5 text-[13px] font-medium transition-colors", t === m ? "border-primary text-text-inverse" : "border-transparent text-white/60 hover:bg-white/5 hover:text-white/90"),
 							children: It[t]
 						}, t))
 					}), /* @__PURE__ */ T("div", {
 						role: "tabpanel",
 						"data-testid": "call-settings-panel",
 						className: "min-h-0 flex-1 overflow-y-auto p-4 sm:max-h-[460px]",
-						children: [p === "effects" ? o : null, p === "people" ? s : null]
+						children: [
+							m === "effects" ? o : null,
+							m === "people" ? s : null,
+							m === "chat" ? c : null
+						]
 					})]
 				})]
 			})]
@@ -3465,4 +3474,30 @@ function Lt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 	});
 }
 //#endregion
-export { ye as A, I as B, Ie as C, ke as D, Me as E, ie as F, A as H, re as I, R as L, G as M, ce as N, Oe as O, se as P, ee as R, Re as S, Ne as T, D as U, M as V, st as _, ht as a, Ue as b, xt as c, Ct as d, St as f, ut as g, Q as h, Dt as i, ve as j, we as k, yt as l, vt as m, Ft as n, gt as o, _t as p, Mt as r, wt as s, Lt as t, bt as u, ot as v, Pe as w, Ve as x, Qe as y, L as z };
+//#region src/components/video/CallSidePanel.tsx
+function Rt({ open: t, onClose: n, title: r, children: i, widthClassName: a = "w-80", className: o, "data-testid": s = "call-side-panel" }) {
+	return t ? /* @__PURE__ */ T("aside", {
+		"data-testid": s,
+		"aria-label": r,
+		className: e("flex h-full min-h-0 shrink-0 flex-col overflow-hidden", "border-l border-white/10 bg-surface-inverse text-text-inverse", a, o),
+		children: [/* @__PURE__ */ T("header", {
+			className: "flex shrink-0 items-center justify-between gap-3 border-b border-white/10 px-4 py-3",
+			children: [/* @__PURE__ */ w("h2", {
+				className: "m-0 truncate text-sm font-semibold text-text-inverse",
+				children: r
+			}), /* @__PURE__ */ w("button", {
+				type: "button",
+				"aria-label": "Close",
+				onClick: n,
+				"data-testid": "call-side-panel-close",
+				className: "grid h-7 w-7 shrink-0 cursor-pointer place-items-center rounded text-lg leading-none text-white/70 hover:bg-white/10 hover:text-white",
+				children: "×"
+			})]
+		}), /* @__PURE__ */ w("div", {
+			className: "min-h-0 flex-1 overflow-y-auto",
+			children: i
+		})]
+	}) : null;
+}
+//#endregion
+export { we as A, L as B, Re as C, Me as D, Ne as E, se as F, M as H, ie as I, re as L, ve as M, G as N, ke as O, ce as P, R, Ve as S, Pe as T, A as U, I as V, D as W, ut as _, Dt as a, Qe as b, wt as c, bt as d, Ct as f, Q as g, vt as h, Mt as i, ye as j, Oe as k, xt as l, _t as m, Lt as n, ht as o, St as p, Ft as r, gt as s, Rt as t, yt as u, st as v, Ie as w, Ue as x, ot as y, ee as z };

@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
 
 const AVATAR_PALETTE = [
@@ -73,6 +73,11 @@ export function Avatar({
 }: AvatarProps) {
   const bg = color || nameToColor(name);
   const initials = initialsProp ?? nameToInitials(name);
+  // A broken image URL (404, expired signed URL, offline) used to render as
+  // the browser's broken-image glyph forever. Track WHICH src failed so a
+  // rerender with a fresh URL gets another chance at the image.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const showImage = !!src && src !== failedSrc;
   return (
     <div
       title={title ?? name}
@@ -89,12 +94,13 @@ export function Avatar({
         ...style,
       }}
     >
-      {src ? (
+      {showImage ? (
         <img
           src={src}
           alt={name}
           width={size}
           height={size}
+          onError={() => setFailedSrc(src ?? null)}
           className="w-full h-full object-cover"
         />
       ) : (

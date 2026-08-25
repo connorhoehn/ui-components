@@ -145,6 +145,9 @@ export type {
   CallSettingsTab,
 } from './CallSettingsDialog';
 
+export { CallSidePanel } from './CallSidePanel';
+export type { CallSidePanelProps } from './CallSidePanel';
+
 export { default as MediaEffectsTray } from './MediaEffectsTray';
 export type {
   MediaEffectsTrayProps,

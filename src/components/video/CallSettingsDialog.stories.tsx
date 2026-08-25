@@ -157,6 +157,31 @@ export const PeopleTab: Story = {
   },
 };
 
+/** Chat tab first — a fake in-call chat body in the new chat slot. */
+export const ChatTab: Story = {
+  render: (args) => {
+    const stream = useFakePreviewStream();
+    return (
+      <CallSettingsDialog
+        {...args}
+        previewStream={stream}
+        initialTab="chat"
+        effectsContent={<FakeEffectsTray />}
+        peopleContent={<FakePeopleList />}
+        chatContent={
+          <ul className="m-0 flex list-none flex-col gap-2 p-0">
+            {['Can everyone see my screen?', 'Yep, looks good.', 'One sec, grabbing the link…'].map((line, i) => (
+              <li key={i} className="rounded-lg bg-white/10 px-3 py-2 text-[13px] text-white">
+                {line}
+              </li>
+            ))}
+          </ul>
+        }
+      />
+    );
+  },
+};
+
 /** No stream — the "Camera off" empty state fills the preview pane. */
 export const EmptyPreview: Story = {
   render: (args) => (

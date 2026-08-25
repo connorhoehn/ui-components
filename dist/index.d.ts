@@ -1074,7 +1074,7 @@ export declare interface CallPresenceIndicatorProps {
     maxVisible?: number;
 }
 
-export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, effectsContent, peopleContent, title, className, }: CallSettingsDialogProps): JSX.Element;
+export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, effectsContent, peopleContent, chatContent, title, className, }: CallSettingsDialogProps): JSX.Element;
 
 export declare interface CallSettingsDialogProps {
     open: boolean;
@@ -1092,12 +1092,31 @@ export declare interface CallSettingsDialogProps {
     /** "People" tab body — e.g. an <InviteCandidateList/> wired to the
      *  consumer's roster + invite call. Omit to hide the tab. */
     peopleContent?: ReactNode;
+    /** "Chat" tab body — e.g. a chat panel wired to the call's channel.
+     *  Omit to hide the tab. */
+    chatContent?: ReactNode;
     /** Dialog heading. Defaults to "Call settings". */
     title?: string;
     className?: string;
 }
 
-export declare type CallSettingsTab = 'effects' | 'people';
+export declare type CallSettingsTab = 'effects' | 'people' | 'chat';
+
+export declare function CallSidePanel({ open, onClose, title, children, widthClassName, className, 'data-testid': testId, }: CallSidePanelProps): JSX.Element | null;
+
+export declare interface CallSidePanelProps {
+    open: boolean;
+    /** The header ✕ fires this. The consumer owns the open/closed state. */
+    onClose: () => void;
+    /** Header text, e.g. "Chat". */
+    title: string;
+    /** Panel body — rendered inside a `min-h-0 flex-1 overflow-y-auto` slot. */
+    children: ReactNode;
+    /** Width utility for the panel column. Defaults to `w-80`. */
+    widthClassName?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /**
  * Slack-Huddles-style "someone started a hangout" banner. Lightweight,
@@ -1884,6 +1903,42 @@ export declare interface ContextPatchJsonPatch {
 export declare interface ContextPatchMerge {
     mode: 'merge';
     values: Record<string, unknown>;
+}
+
+export declare interface ConversationItem {
+    /** Chat channel id — handed back verbatim by `onSelect`. */
+    channel: string;
+    /** 1 peer for a 1:1 conversation, N for groups. */
+    peers: ConversationPeer[];
+    lastMessagePreview?: string;
+    /** ISO timestamp of the last message. Rendered as HH:MM. */
+    lastMessageAt?: string;
+    unreadCount?: number;
+}
+
+export declare function ConversationList({ items, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+
+export declare interface ConversationListProps {
+    items: ConversationItem[];
+    /** Channel of the conversation currently open — its row highlights. */
+    activeChannel?: string | null;
+    onSelect: (channel: string) => void;
+    /** Renders a "+ New chat" affordance above the rows when set. */
+    onNewChat?: () => void;
+    /** Empty-state text. Defaults to "No conversations yet". */
+    emptyLabel?: string;
+    tone?: 'light' | 'dark';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ConversationPeer {
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+    color?: string;
+    /** Presence: true → online dot, false → offline dot, undefined → no dot. */
+    online?: boolean;
 }
 
 export declare interface CreateClientInput {
@@ -3754,15 +3809,25 @@ export declare interface InviteCandidate {
     alreadyInCall?: boolean;
     /** True when they have been rung but have not answered yet. */
     pending?: boolean;
+    /** Presence: true → online dot, false → offline dot, undefined → no
+     *  dot. Also drives which section a row lands in under `grouped`. */
+    online?: boolean;
+    /** Shown on offline rows when present, e.g. "Last seen 2h ago".
+     *  Pre-formatted by the caller — this component never touches
+     *  Date.now(). */
+    lastSeenLabel?: string;
+    /** Avatar brand color override (falls back to the name hash). */
+    color?: string;
 }
 
-export declare function InviteCandidateList({ candidates, onInvite, loading, resetKey, children, tone, className, 'data-testid': testId, }: InviteCandidateListProps): JSX.Element;
+export declare function InviteCandidateList({ candidates, onInvite, loading, resetKey, children, tone, searchable, grouped, selectMode, onPick, className, 'data-testid': testId, }: InviteCandidateListProps): JSX.Element;
 
 /** The two extracted blocks handed to the `children` render prop. */
 export declare interface InviteCandidateListParts {
     /** Empty states + the selectable candidate rows. */
     list: ReactNode;
-    /** The "Invite N people" confirm button (testid `invite-to-call-confirm`). */
+    /** The "Invite N people" confirm button (testid `invite-to-call-confirm`).
+     *  null when `selectMode='single'` — there is nothing to confirm. */
     confirm: ReactNode;
 }
 
@@ -3787,6 +3852,20 @@ export declare interface InviteCandidateListProps {
      *  classes for dark call chrome (CallSettingsDialog's People tab) —
      *  without it the names render dark-on-dark and disappear. */
     tone?: 'light' | 'dark';
+    /** Renders a filter input (testid `people-search`) that narrows the
+     *  rows by name or userId, case-insensitive. */
+    searchable?: boolean;
+    /** Renders "Online" then "Offline" section headers. Rows with
+     *  `online: true` land under Online; everything else (including rows
+     *  without presence data) lands under Offline. Offline rows show
+     *  `lastSeenLabel` when present and are STILL selectable. */
+    grouped?: boolean;
+    /** 'multi' (default) keeps the checkbox + confirm flow. 'single'
+     *  drops checkboxes and confirm — clicking a row fires `onPick`
+     *  immediately. */
+    selectMode?: 'multi' | 'single';
+    /** Row click handler for `selectMode='single'`. */
+    onPick?: (userId: string) => void;
     /** Applied to the default stacked layout's root only. */
     className?: string;
     'data-testid'?: string;

@@ -3,6 +3,14 @@
 // other surfaces (CallSettingsDialog's People tab, side panels) without
 // dragging the modal shell along.
 //
+// v2 grew it into a general presence-aware people picker: an optional
+// filter input (`searchable`), Online/Offline section grouping
+// (`grouped`, driven by the new `online` field), and a single-select
+// mode (`selectMode='single'`) where clicking a row fires `onPick`
+// immediately — the shape a "start a DM with someone" surface needs.
+// Every pre-v2 default (multi-select checkboxes + confirm, testids,
+// empty-state copy) is preserved verbatim.
+//
 // Purely presentational. The consumer owns the invite wire call: it
 // passes the candidate list (typically the presence roster minus the
 // people already in the call), and receives the selected user ids on
@@ -14,7 +22,7 @@
 // component exposes a render-prop (`children`) that receives the two
 // blocks and decides where each goes. Without `children` it renders the
 // default stacked layout (list, then a right-aligned confirm), which is
-// what embedded surfaces want.
+// what embedded surfaces want. In single-select mode `confirm` is null.
 //
 // Every data-testid (`invite-candidate`, `invite-to-call-confirm`,
 // `invite-to-call-empty`, `invite-to-call-everyone-here`) is preserved
@@ -24,7 +32,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 import { Avatar } from '../shared/Avatar';
+import { PresenceDot } from '../shared/PresenceDot';
 import { Button } from '../ui/Button';
 
 /** A person who can be invited. Thin on purpose so callers can map a
@@ -41,13 +51,23 @@ export interface InviteCandidate {
     alreadyInCall?: boolean;
     /** True when they have been rung but have not answered yet. */
     pending?: boolean;
+    /** Presence: true → online dot, false → offline dot, undefined → no
+     *  dot. Also drives which section a row lands in under `grouped`. */
+    online?: boolean;
+    /** Shown on offline rows when present, e.g. "Last seen 2h ago".
+     *  Pre-formatted by the caller — this component never touches
+     *  Date.now(). */
+    lastSeenLabel?: string;
+    /** Avatar brand color override (falls back to the name hash). */
+    color?: string;
 }
 
 /** The two extracted blocks handed to the `children` render prop. */
 export interface InviteCandidateListParts {
     /** Empty states + the selectable candidate rows. */
     list: ReactNode;
-    /** The "Invite N people" confirm button (testid `invite-to-call-confirm`). */
+    /** The "Invite N people" confirm button (testid `invite-to-call-confirm`).
+     *  null when `selectMode='single'` — there is nothing to confirm. */
     confirm: ReactNode;
 }
 
@@ -72,6 +92,20 @@ export interface InviteCandidateListProps {
      *  classes for dark call chrome (CallSettingsDialog's People tab) —
      *  without it the names render dark-on-dark and disappear. */
     tone?: 'light' | 'dark';
+    /** Renders a filter input (testid `people-search`) that narrows the
+     *  rows by name or userId, case-insensitive. */
+    searchable?: boolean;
+    /** Renders "Online" then "Offline" section headers. Rows with
+     *  `online: true` land under Online; everything else (including rows
+     *  without presence data) lands under Offline. Offline rows show
+     *  `lastSeenLabel` when present and are STILL selectable. */
+    grouped?: boolean;
+    /** 'multi' (default) keeps the checkbox + confirm flow. 'single'
+     *  drops checkboxes and confirm — clicking a row fires `onPick`
+     *  immediately. */
+    selectMode?: 'multi' | 'single';
+    /** Row click handler for `selectMode='single'`. */
+    onPick?: (userId: string) => void;
     /** Applied to the default stacked layout's root only. */
     className?: string;
     'data-testid'?: string;
@@ -84,22 +118,41 @@ export function InviteCandidateList({
     resetKey,
     children,
     tone = 'light',
+    searchable = false,
+    grouped = false,
+    selectMode = 'multi',
+    onPick,
     className,
     'data-testid': testId,
 }: InviteCandidateListProps) {
     const dark = tone === 'dark';
+    const single = selectMode === 'single';
     const [selected, setSelected] = useState<Set<string>>(() => new Set());
+    const [query, setQuery] = useState('');
 
     // Reset the selection whenever the host surface says so (e.g. each
     // time its dialog opens).
     useEffect(() => {
         setSelected(new Set());
+        setQuery('');
     }, [resetKey]);
 
     const invitable = useMemo(
         () => candidates.filter((c) => !c.alreadyInCall),
         [candidates],
     );
+
+    // Search narrows what renders; it never touches the selection, so a
+    // person picked before typing stays picked while filtered out.
+    const visible = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        if (!searchable || !q) return candidates;
+        return candidates.filter(
+            (c) =>
+                c.name.toLowerCase().includes(q) ||
+                c.userId.toLowerCase().includes(q),
+        );
+    }, [candidates, searchable, query]);
 
     const toggle = (userId: string) => {
         setSelected((prev) => {
@@ -112,14 +165,121 @@ export function InviteCandidateList({
 
     const count = selected.size;
 
+    const renderRow = (c: InviteCandidate) => {
+        const disabled = !!c.alreadyInCall || loading;
+        const isSelected = !single && selected.has(c.userId);
+        return (
+            <li key={c.userId}>
+                <button
+                    type="button"
+                    disabled={disabled}
+                    aria-pressed={single ? undefined : isSelected}
+                    onClick={() => {
+                        if (single) onPick?.(c.userId);
+                        else toggle(c.userId);
+                    }}
+                    data-testid="invite-candidate"
+                    data-user-id={c.userId}
+                    data-selected={isSelected ? 'true' : 'false'}
+                    data-already-in-call={c.alreadyInCall ? 'true' : 'false'}
+                    className={cn(
+                        'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left',
+                        disabled
+                            ? 'opacity-50 cursor-not-allowed'
+                            : cn('cursor-pointer', dark ? 'hover:bg-white/10' : 'hover:bg-surface-hover'),
+                        isSelected && (dark ? 'bg-white/10' : 'bg-surface-hover'),
+                    )}
+                >
+                    <span className="relative inline-flex shrink-0">
+                        <Avatar name={c.name} src={c.avatarUrl} color={c.color} size={24} />
+                        {c.online !== undefined && (
+                            <PresenceDot
+                                state={c.online ? 'online' : 'offline'}
+                                pulse={false}
+                                size="xs"
+                                className={cn(
+                                    'absolute -bottom-0.5 -right-0.5 rounded-full ring-2',
+                                    dark ? 'ring-surface-inverse' : 'ring-surface',
+                                )}
+                            />
+                        )}
+                    </span>
+                    <span className={cn('flex-1 truncate text-[13px]', dark ? 'text-white' : 'text-text-primary')}>
+                        {c.name}
+                    </span>
+                    {c.online === false && c.lastSeenLabel && (
+                        <span
+                            data-testid="invite-candidate-last-seen"
+                            className={cn('shrink-0 text-[11px]', dark ? 'text-white/50' : 'text-neutral')}
+                        >
+                            {c.lastSeenLabel}
+                        </span>
+                    )}
+                    {c.alreadyInCall ? (
+                        <span className={cn('text-[11px]', dark ? 'text-white/50' : 'text-neutral')}>In call</span>
+                    ) : c.pending ? (
+                        <span className={cn('text-[11px]', dark ? 'text-white/50' : 'text-neutral')}>Ringing…</span>
+                    ) : single ? null : (
+                        <span
+                            aria-hidden="true"
+                            className={cn(
+                                'grid h-4 w-4 place-items-center rounded border text-[10px]',
+                                isSelected
+                                    ? 'border-transparent bg-primary text-white'
+                                    : cn('text-transparent', dark ? 'border-white/30' : 'border-border'),
+                            )}
+                        >
+                            ✓
+                        </span>
+                    )}
+                </button>
+            </li>
+        );
+    };
+
+    const sectionHeader = (label: string, id: string) => (
+        <li
+            key={`section-${id}`}
+            data-testid={`people-group-${id}`}
+            aria-hidden="true"
+            className={cn(
+                'px-2 pb-0.5 pt-2 text-[11px] font-semibold uppercase tracking-wide first:pt-0',
+                dark ? 'text-white/40' : 'text-text-tertiary',
+            )}
+        >
+            {label}
+        </li>
+    );
+
+    const onlineRows = grouped ? visible.filter((c) => c.online === true) : [];
+    const offlineRows = grouped ? visible.filter((c) => c.online !== true) : [];
+
     const list = (
         <>
+            {searchable && (
+                <Input
+                    type="search"
+                    size="sm"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search people"
+                    aria-label="Search people"
+                    data-testid="people-search"
+                    className={cn(
+                        'mb-1',
+                        dark &&
+                            'border-white/20 bg-white/10 text-white placeholder:text-white/40 focus:border-white/40 focus:bg-white/10 focus:ring-white/20',
+                    )}
+                />
+            )}
             {candidates.length === 0 ? (
                 <p
                     className={cn('m-0 text-[13px]', dark ? 'text-white/60' : 'text-text-secondary')}
                     data-testid="invite-to-call-empty"
                 >
-                    Nobody else is online right now.
+                    {/* Grouped pickers list offline people too, so "nobody is
+                        online" would be the wrong claim for their empty list. */}
+                    {grouped ? 'No one to show yet.' : 'Nobody else is online right now.'}
                 </p>
             ) : invitable.length === 0 ? (
                 <p
@@ -128,72 +288,34 @@ export function InviteCandidateList({
                 >
                     Everyone who&apos;s online is already on this call.
                 </p>
+            ) : visible.length === 0 ? (
+                <p
+                    className={cn('m-0 text-[13px]', dark ? 'text-white/60' : 'text-text-secondary')}
+                    data-testid="people-search-empty"
+                >
+                    No one matches &ldquo;{query.trim()}&rdquo;.
+                </p>
             ) : (
                 <ul
                     className="flex flex-col gap-1 m-0 p-0 list-none max-h-[280px] overflow-y-auto"
                     aria-label="People you can invite"
                 >
-                    {candidates.map((c) => {
-                        const disabled = !!c.alreadyInCall || loading;
-                        const isSelected = selected.has(c.userId);
-                        return (
-                            <li key={c.userId}>
-                                <button
-                                    type="button"
-                                    disabled={disabled}
-                                    aria-pressed={isSelected}
-                                    onClick={() => toggle(c.userId)}
-                                    data-testid="invite-candidate"
-                                    data-user-id={c.userId}
-                                    data-selected={isSelected ? 'true' : 'false'}
-                                    data-already-in-call={c.alreadyInCall ? 'true' : 'false'}
-                                    className={cn(
-                                        'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left',
-                                        disabled
-                                            ? 'opacity-50 cursor-not-allowed'
-                                            : cn('cursor-pointer', dark ? 'hover:bg-white/10' : 'hover:bg-surface-hover'),
-                                        isSelected && (dark ? 'bg-white/10' : 'bg-surface-hover'),
-                                    )}
-                                >
-                                    {c.avatarUrl ? (
-                                        <img
-                                            src={c.avatarUrl}
-                                            alt=""
-                                            className="h-6 w-6 rounded-full object-cover"
-                                        />
-                                    ) : (
-                                        <Avatar name={c.name} size={24} />
-                                    )}
-                                    <span className={cn('flex-1 truncate text-[13px]', dark ? 'text-white' : 'text-text-primary')}>
-                                        {c.name}
-                                    </span>
-                                    {c.alreadyInCall ? (
-                                        <span className={cn('text-[11px]', dark ? 'text-white/50' : 'text-neutral')}>In call</span>
-                                    ) : c.pending ? (
-                                        <span className={cn('text-[11px]', dark ? 'text-white/50' : 'text-neutral')}>Ringing…</span>
-                                    ) : (
-                                        <span
-                                            aria-hidden="true"
-                                            className={cn(
-                                                'grid h-4 w-4 place-items-center rounded border text-[10px]',
-                                                isSelected
-                                                    ? 'border-transparent bg-primary text-white'
-                                                    : cn('text-transparent', dark ? 'border-white/30' : 'border-border'),
-                                            )}
-                                        >
-                                            ✓
-                                        </span>
-                                    )}
-                                </button>
-                            </li>
-                        );
-                    })}
+                    {grouped ? (
+                        <>
+                            {onlineRows.length > 0 && sectionHeader('Online', 'online')}
+                            {onlineRows.map(renderRow)}
+                            {offlineRows.length > 0 && sectionHeader('Offline', 'offline')}
+                            {offlineRows.map(renderRow)}
+                        </>
+                    ) : (
+                        visible.map(renderRow)
+                    )}
                 </ul>
             )}
         </>
     );
 
-    const confirm = (
+    const confirm = single ? null : (
         <Button
             variant="primary"
             size="md"
@@ -215,7 +337,7 @@ export function InviteCandidateList({
     return (
         <div className={cn('flex flex-col gap-3', className)} data-testid={testId}>
             {list}
-            <div className="flex justify-end">{confirm}</div>
+            {confirm && <div className="flex justify-end">{confirm}</div>}
         </div>
     );
 }
