@@ -5579,6 +5579,15 @@ export declare interface PipelineWireEvent<K extends keyof PipelineEventMap = ke
  */
 export declare type PipelineWireEventType = keyof PipelineEventMap | 'pipeline.run.resume-from-step';
 
+export declare function PlaybackReactionsLayer({ reactions, currentTimeMs, className, }: PlaybackReactionsLayerProps): JSX.Element;
+
+export declare interface PlaybackReactionsLayerProps {
+    reactions: TimedReaction[];
+    /** Current playhead position in ms (player timeupdate). */
+    currentTimeMs: number;
+    className?: string;
+}
+
 export declare type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
 
 export declare interface PolicyNodeData {
@@ -7675,6 +7684,14 @@ export declare interface ThumbnailCardProps {
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;
+}
+
+export declare interface TimedReaction {
+    id: string;
+    emoji: string;
+    /** Milliseconds from the start of the recording. */
+    offsetMs: number;
+    displayName?: string;
 }
 
 export declare function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }: ToastProps): JSX.Element;

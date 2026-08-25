@@ -753,6 +753,15 @@ export declare interface PiPButtonProps {
     title?: string;
 }
 
+export declare function PlaybackReactionsLayer({ reactions, currentTimeMs, className, }: PlaybackReactionsLayerProps): JSX.Element;
+
+export declare interface PlaybackReactionsLayerProps {
+    reactions: TimedReaction[];
+    /** Current playhead position in ms (player timeupdate). */
+    currentTimeMs: number;
+    className?: string;
+}
+
 export declare type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
 
 declare interface PreJoinLocalIdentity {
@@ -1053,6 +1062,14 @@ export declare interface SummaryPanelProps {
     pendingMessage?: string;
     idleState?: ReactNode;
     className?: string;
+}
+
+export declare interface TimedReaction {
+    id: string;
+    emoji: string;
+    /** Milliseconds from the start of the recording. */
+    offsetMs: number;
+    displayName?: string;
 }
 
 export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, now: nowProp, className, }: TranscriptOverlayProps): JSX.Element | null;

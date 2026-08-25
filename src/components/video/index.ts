@@ -26,6 +26,12 @@ export type {
   Reaction,
 } from './ReactionOverlay';
 
+export { PlaybackReactionsLayer } from './PlaybackReactionsLayer';
+export type {
+  PlaybackReactionsLayerProps,
+  TimedReaction,
+} from './PlaybackReactionsLayer';
+
 export { StatusStrip } from './StatusStrip';
 export type { StatusStripProps } from './StatusStrip';
 
