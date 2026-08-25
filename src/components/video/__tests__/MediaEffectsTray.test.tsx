@@ -57,6 +57,13 @@ describe('MediaEffectsTray', () => {
     expect(onSelectFilter).toHaveBeenCalledWith('warm');
   });
 
+  it('clicking the ACTIVE filter chip toggles it off (fires "none")', () => {
+    const onSelectFilter = vi.fn();
+    render(<MediaEffectsTray {...baseProps({ onSelectFilter, activeFilterId: 'warm' })} />);
+    fireEvent.click(screen.getByTestId('effects-filter-warm'));
+    expect(onSelectFilter).toHaveBeenCalledWith('none');
+  });
+
   it('marks the active filter via aria-pressed', () => {
     render(<MediaEffectsTray {...baseProps({ activeFilterId: 'mono' })} />);
     expect(screen.getByTestId('effects-filter-mono')).toHaveAttribute('aria-pressed', 'true');
@@ -93,6 +100,31 @@ describe('MediaEffectsTray', () => {
     render(<MediaEffectsTray {...baseProps({ onSelectBackground })} />);
     fireEvent.click(screen.getByTestId('effects-bg-forest'));
     expect(onSelectBackground).toHaveBeenCalledWith('image', BACKGROUNDS[1].url);
+  });
+
+  it("clicking the ACTIVE Blur chip toggles it off (fires ('none', null))", () => {
+    const onSelectBackground = vi.fn();
+    render(<MediaEffectsTray {...baseProps({ onSelectBackground, backgroundMode: 'blur' })} />);
+    fireEvent.click(screen.getByTestId('effects-bg-blur'));
+    expect(onSelectBackground).toHaveBeenCalledWith('none', null);
+  });
+
+  it("clicking the ACTIVE image chip toggles it off (fires ('none', null))", () => {
+    const onSelectBackground = vi.fn();
+    render(
+      <MediaEffectsTray
+        {...baseProps({
+          onSelectBackground,
+          backgroundMode: 'image',
+          activeBackgroundUrl: BACKGROUNDS[0].url,
+        })}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('effects-bg-beach'));
+    expect(onSelectBackground).toHaveBeenCalledWith('none', null);
+    // The OTHER image chip still selects normally.
+    fireEvent.click(screen.getByTestId('effects-bg-forest'));
+    expect(onSelectBackground).toHaveBeenLastCalledWith('image', BACKGROUNDS[1].url);
   });
 
   it('reflects backgroundMode via aria-pressed on None / Blur', () => {
@@ -138,6 +170,17 @@ describe('MediaEffectsTray', () => {
     fireEvent.click(screen.getByTestId('effects-face-crown'));
     expect(onSelectFaceSprite).toHaveBeenCalledWith('crown');
     fireEvent.click(screen.getByTestId('effects-face-none'));
+    expect(onSelectFaceSprite).toHaveBeenCalledWith(null);
+  });
+
+  it('clicking the ACTIVE face-sprite chip toggles it off (fires null)', () => {
+    const onSelectFaceSprite = vi.fn();
+    render(
+      <MediaEffectsTray
+        {...baseProps({ onSelectFaceSprite, activeFaceSpriteId: 'crown' })}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('effects-face-crown'));
     expect(onSelectFaceSprite).toHaveBeenCalledWith(null);
   });
 

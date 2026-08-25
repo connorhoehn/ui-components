@@ -428,14 +428,17 @@ function T({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 			/* @__PURE__ */ o(w, {
 				label: "Filters",
 				compact: m,
-				children: t.map((e) => /* @__PURE__ */ o(C, {
-					label: e.label,
-					active: e.id === n,
-					disabled: p,
-					compact: m,
-					onClick: () => r(e.id),
-					"data-testid": `effects-filter-${e.id}`
-				}, e.id))
+				children: t.map((e) => {
+					let t = e.id === n;
+					return /* @__PURE__ */ o(C, {
+						label: e.label,
+						active: t,
+						disabled: p,
+						compact: m,
+						onClick: () => r(t ? "none" : e.id),
+						"data-testid": `effects-filter-${e.id}`
+					}, e.id);
+				})
 			}),
 			/* @__PURE__ */ s(w, {
 				label: "Background",
@@ -454,18 +457,21 @@ function T({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 						active: a === "blur",
 						disabled: p,
 						compact: m,
-						onClick: () => l("blur", null),
+						onClick: () => l(a === "blur" ? "none" : "blur", null),
 						"data-testid": "effects-bg-blur"
 					}),
-					i.map((e) => /* @__PURE__ */ o(C, {
-						label: e.label,
-						active: a === "image" && c === e.url,
-						disabled: p,
-						compact: m,
-						onClick: () => l("image", e.url),
-						thumbUrl: e.url,
-						"data-testid": `effects-bg-${e.id}`
-					}, e.id))
+					i.map((e) => {
+						let t = a === "image" && c === e.url;
+						return /* @__PURE__ */ o(C, {
+							label: e.label,
+							active: t,
+							disabled: p,
+							compact: m,
+							onClick: () => t ? l("none", null) : l("image", e.url),
+							thumbUrl: e.url,
+							"data-testid": `effects-bg-${e.id}`
+						}, e.id);
+					})
 				]
 			}),
 			/* @__PURE__ */ s(w, {
@@ -478,14 +484,17 @@ function T({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 					compact: m,
 					onClick: () => f(null),
 					"data-testid": "effects-face-none"
-				}), u.map((e) => /* @__PURE__ */ o(C, {
-					label: e.label,
-					active: e.id === d,
-					disabled: p,
-					compact: m,
-					onClick: () => f(e.id),
-					"data-testid": `effects-face-${e.id}`
-				}, e.id))]
+				}), u.map((e) => {
+					let t = e.id === d;
+					return /* @__PURE__ */ o(C, {
+						label: e.label,
+						active: t,
+						disabled: p,
+						compact: m,
+						onClick: () => f(t ? null : e.id),
+						"data-testid": `effects-face-${e.id}`
+					}, e.id);
+				})]
 			})
 		]
 	});

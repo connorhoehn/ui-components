@@ -81,6 +81,31 @@ export declare interface CallParticipantStripProps {
     style?: CSSProperties;
 }
 
+export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, effectsContent, peopleContent, title, className, }: CallSettingsDialogProps): JSX.Element;
+
+export declare interface CallSettingsDialogProps {
+    open: boolean;
+    /** Backdrop click, Escape and the ✕ button all fire this. */
+    onClose: () => void;
+    /** Live self-preview stream — rendered muted, mirrored, autoplaying.
+     *  Pass null for the "Camera off" empty state. */
+    previewStream: MediaStream | null;
+    /** Tab shown each time the dialog opens. Ignored (falls back to the
+     *  first available tab) when that tab's slot is missing. */
+    initialTab?: CallSettingsTab;
+    /** "Effects" tab body — e.g. a <MediaEffectsTray/> wired to the
+     *  consumer's effects engine. Omit to hide the tab. */
+    effectsContent?: ReactNode;
+    /** "People" tab body — e.g. an <InviteCandidateList/> wired to the
+     *  consumer's roster + invite call. Omit to hide the tab. */
+    peopleContent?: ReactNode;
+    /** Dialog heading. Defaults to "Call settings". */
+    title?: string;
+    className?: string;
+}
+
+export declare type CallSettingsTab = 'effects' | 'people';
+
 /**
  * Slack-Huddles-style "someone started a hangout" banner. Lightweight,
  * inline (not modal), low-friction: click "Join" to enter the call,

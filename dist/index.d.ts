@@ -1069,6 +1069,31 @@ export declare interface CallPresenceIndicatorProps {
     maxVisible?: number;
 }
 
+export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, effectsContent, peopleContent, title, className, }: CallSettingsDialogProps): JSX.Element;
+
+export declare interface CallSettingsDialogProps {
+    open: boolean;
+    /** Backdrop click, Escape and the ✕ button all fire this. */
+    onClose: () => void;
+    /** Live self-preview stream — rendered muted, mirrored, autoplaying.
+     *  Pass null for the "Camera off" empty state. */
+    previewStream: MediaStream | null;
+    /** Tab shown each time the dialog opens. Ignored (falls back to the
+     *  first available tab) when that tab's slot is missing. */
+    initialTab?: CallSettingsTab;
+    /** "Effects" tab body — e.g. a <MediaEffectsTray/> wired to the
+     *  consumer's effects engine. Omit to hide the tab. */
+    effectsContent?: ReactNode;
+    /** "People" tab body — e.g. an <InviteCandidateList/> wired to the
+     *  consumer's roster + invite call. Omit to hide the tab. */
+    peopleContent?: ReactNode;
+    /** Dialog heading. Defaults to "Call settings". */
+    title?: string;
+    className?: string;
+}
+
+export declare type CallSettingsTab = 'effects' | 'people';
+
 /**
  * Slack-Huddles-style "someone started a hangout" banner. Lightweight,
  * inline (not modal), low-friction: click "Join" to enter the call,
@@ -3725,6 +3750,37 @@ export declare interface InviteCandidate {
     pending?: boolean;
 }
 
+export declare function InviteCandidateList({ candidates, onInvite, loading, resetKey, children, className, 'data-testid': testId, }: InviteCandidateListProps): JSX.Element;
+
+/** The two extracted blocks handed to the `children` render prop. */
+export declare interface InviteCandidateListParts {
+    /** Empty states + the selectable candidate rows. */
+    list: ReactNode;
+    /** The "Invite N people" confirm button (testid `invite-to-call-confirm`). */
+    confirm: ReactNode;
+}
+
+export declare interface InviteCandidateListProps {
+    /** Everyone invitable, including people already on the call (they
+     *  render disabled). */
+    candidates: InviteCandidate[];
+    /** Confirm handler — receives every selected userId. May be async;
+     *  the caller flips `loading` while the invites are in flight. */
+    onInvite: (userIds: string[]) => void | Promise<void>;
+    loading?: boolean;
+    /** Selection clears whenever this value changes — dialogs pass their
+     *  `open` flag so a previous invite's choices never leak into the
+     *  next one. */
+    resetKey?: unknown;
+    /** Custom layout: receives the list and confirm blocks and places
+     *  them (InviteToCallDialog puts the confirm in its modal footer).
+     *  Omit for the default stacked layout. */
+    children?: (parts: InviteCandidateListParts) => ReactNode;
+    /** Applied to the default stacked layout's root only. */
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function InviteToCallDialog({ open, onClose, onInvite, candidates, lobbyLabel, loading, shareLink, }: InviteToCallDialogProps): JSX.Element;
 
 export declare interface InviteToCallDialogProps {
@@ -4389,7 +4445,7 @@ export declare function MicIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare function MicOffIcon({ size, ...rest }: IconProps): JSX.Element;
 
-export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
+export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
 
 export declare interface ModalProps {
     open: boolean;
@@ -4421,6 +4477,13 @@ export declare interface ModalProps {
      * default 12px-radius, 28px/24px-padded, shadowed white card.
      */
     cardStyle?: React.CSSProperties;
+    /**
+     * Tailwind classes merged onto the card AFTER the defaults (cn/tw-merge,
+     * so e.g. `bg-surface-inverse p-0` beats the default `bg-white px-6 py-7`).
+     * Lets dark-chrome dialogs (CallSettingsDialog) restyle the card without
+     * reaching for inline styles.
+     */
+    cardClassName?: string;
     /**
      * Optional z-index for the backdrop. Defaults to 10000.
      */

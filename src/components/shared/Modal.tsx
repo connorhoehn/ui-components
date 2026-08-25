@@ -39,6 +39,13 @@ export interface ModalProps {
    */
   cardStyle?: React.CSSProperties;
   /**
+   * Tailwind classes merged onto the card AFTER the defaults (cn/tw-merge,
+   * so e.g. `bg-surface-inverse p-0` beats the default `bg-white px-6 py-7`).
+   * Lets dark-chrome dialogs (CallSettingsDialog) restyle the card without
+   * reaching for inline styles.
+   */
+  cardClassName?: string;
+  /**
    * Optional z-index for the backdrop. Defaults to 10000.
    */
   zIndex?: number;
@@ -79,8 +86,8 @@ function getFocusableElements(root: HTMLElement): HTMLElement[] {
 
 function Modal({
   open, onClose, title, ariaLabel, maxWidth = 380, children, footer,
-  backdropTestId = 'modal-backdrop', backdropStyle, cardStyle, zIndex = 10000,
-  rawChildren = false,
+  backdropTestId = 'modal-backdrop', backdropStyle, cardStyle, cardClassName,
+  zIndex = 10000, rawChildren = false,
 }: ModalProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
   // Captures the element that had focus before the modal opened, so we can
@@ -197,6 +204,7 @@ function Modal({
         aria-label={title ?? ariaLabel}
         className={cn(
           'bg-white rounded-xl px-6 py-7 w-[90%] shadow-lg font-[inherit]',
+          cardClassName,
         )}
         style={{ maxWidth, ...cardStyle }}
         onClick={e => e.stopPropagation()}

@@ -17,6 +17,12 @@
 //                  ('blur', null) or ('image', url).
 //   faceSprites  — a built-in "None" chip (null = off) then one chip per
 //                  sprite; sprite labels already carry their emoji.
+//
+// Toggle-off: clicking the chip that is ALREADY active deselects it —
+// the tray reports the section's off value ('none' filter, ('none',
+// null) background, null sprite) instead of re-reporting the selection.
+// The explicit "None" chips stay for discoverability; toggle-off is the
+// shortcut for "turn this thing off that I just turned on".
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
@@ -166,17 +172,21 @@ export function MediaEffectsTray({
       )}
     >
       <TraySection label="Filters" compact={compact}>
-        {filters.map((f) => (
-          <EffectChip
-            key={f.id}
-            label={f.label}
-            active={f.id === activeFilterId}
-            disabled={disabled}
-            compact={compact}
-            onClick={() => onSelectFilter(f.id)}
-            data-testid={`effects-filter-${f.id}`}
-          />
-        ))}
+        {filters.map((f) => {
+          const active = f.id === activeFilterId;
+          return (
+            <EffectChip
+              key={f.id}
+              label={f.label}
+              active={active}
+              disabled={disabled}
+              compact={compact}
+              // Clicking the active chip toggles the filter back off.
+              onClick={() => onSelectFilter(active ? 'none' : f.id)}
+              data-testid={`effects-filter-${f.id}`}
+            />
+          );
+        })}
       </TraySection>
 
       <TraySection label="Background" compact={compact}>
@@ -193,21 +203,34 @@ export function MediaEffectsTray({
           active={backgroundMode === 'blur'}
           disabled={disabled}
           compact={compact}
-          onClick={() => onSelectBackground('blur', null)}
+          // Clicking Blur while blurred toggles the background back off.
+          onClick={() =>
+            backgroundMode === 'blur'
+              ? onSelectBackground('none', null)
+              : onSelectBackground('blur', null)
+          }
           data-testid="effects-bg-blur"
         />
-        {backgrounds.map((b) => (
-          <EffectChip
-            key={b.id}
-            label={b.label}
-            active={backgroundMode === 'image' && activeBackgroundUrl === b.url}
-            disabled={disabled}
-            compact={compact}
-            onClick={() => onSelectBackground('image', b.url)}
-            thumbUrl={b.url}
-            data-testid={`effects-bg-${b.id}`}
-          />
-        ))}
+        {backgrounds.map((b) => {
+          const active = backgroundMode === 'image' && activeBackgroundUrl === b.url;
+          return (
+            <EffectChip
+              key={b.id}
+              label={b.label}
+              active={active}
+              disabled={disabled}
+              compact={compact}
+              // Clicking the active image toggles the background back off.
+              onClick={() =>
+                active
+                  ? onSelectBackground('none', null)
+                  : onSelectBackground('image', b.url)
+              }
+              thumbUrl={b.url}
+              data-testid={`effects-bg-${b.id}`}
+            />
+          );
+        })}
       </TraySection>
 
       <TraySection label="Face FX" compact={compact}>
@@ -219,17 +242,21 @@ export function MediaEffectsTray({
           onClick={() => onSelectFaceSprite(null)}
           data-testid="effects-face-none"
         />
-        {faceSprites.map((s) => (
-          <EffectChip
-            key={s.id}
-            label={s.label}
-            active={s.id === activeFaceSpriteId}
-            disabled={disabled}
-            compact={compact}
-            onClick={() => onSelectFaceSprite(s.id)}
-            data-testid={`effects-face-${s.id}`}
-          />
-        ))}
+        {faceSprites.map((s) => {
+          const active = s.id === activeFaceSpriteId;
+          return (
+            <EffectChip
+              key={s.id}
+              label={s.label}
+              active={active}
+              disabled={disabled}
+              compact={compact}
+              // Clicking the active sprite toggles it back off.
+              onClick={() => onSelectFaceSprite(active ? null : s.id)}
+              data-testid={`effects-face-${s.id}`}
+            />
+          );
+        })}
       </TraySection>
     </div>
   );

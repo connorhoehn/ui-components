@@ -139,6 +139,12 @@ export type {
 export { default as MediaControlsBar } from './MediaControlsBar';
 export type { MediaControlsBarProps } from './MediaControlsBar';
 
+export { CallSettingsDialog } from './CallSettingsDialog';
+export type {
+  CallSettingsDialogProps,
+  CallSettingsTab,
+} from './CallSettingsDialog';
+
 export { default as MediaEffectsTray } from './MediaEffectsTray';
 export type {
   MediaEffectsTrayProps,

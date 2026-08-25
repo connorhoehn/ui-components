@@ -1021,7 +1021,7 @@ export declare interface MessageBubbleProps {
     className?: string;
 }
 
-export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
+export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
 
 export declare interface ModalProps {
     open: boolean;
@@ -1053,6 +1053,13 @@ export declare interface ModalProps {
      * default 12px-radius, 28px/24px-padded, shadowed white card.
      */
     cardStyle?: React.CSSProperties;
+    /**
+     * Tailwind classes merged onto the card AFTER the defaults (cn/tw-merge,
+     * so e.g. `bg-surface-inverse p-0` beats the default `bg-white px-6 py-7`).
+     * Lets dark-chrome dialogs (CallSettingsDialog) restyle the card without
+     * reaching for inline styles.
+     */
+    cardClassName?: string;
     /**
      * Optional z-index for the backdrop. Defaults to 10000.
      */

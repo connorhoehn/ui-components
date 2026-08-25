@@ -4,10 +4,14 @@
 // call `status` query).
 
 export { InviteToCallDialog } from './InviteToCallDialog';
+export type { InviteToCallDialogProps } from './InviteToCallDialog';
+
+export { InviteCandidateList } from './InviteCandidateList';
 export type {
-    InviteToCallDialogProps,
+    InviteCandidateListProps,
+    InviteCandidateListParts,
     InviteCandidate,
-} from './InviteToCallDialog';
+} from './InviteCandidateList';
 
 export { CallPresenceIndicator } from './CallPresenceIndicator';
 export type { CallPresenceIndicatorProps } from './CallPresenceIndicator';

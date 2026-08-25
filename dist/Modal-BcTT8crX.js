@@ -16,13 +16,13 @@ var s = [
 function c(e) {
 	return Array.from(e.querySelectorAll(s)).filter((e) => e.getAttribute("aria-hidden") !== "true" && e.style.display !== "none" && e.style.visibility !== "hidden");
 }
-function l({ open: s, onClose: l, title: u, ariaLabel: d, maxWidth: f = 380, children: p, footer: m, backdropTestId: h = "modal-backdrop", backdropStyle: g, cardStyle: _, zIndex: v = 1e4, rawChildren: y = !1 }) {
-	let b = r(null), x = r(null), S = t(s);
+function l({ open: s, onClose: l, title: u, ariaLabel: d, maxWidth: f = 380, children: p, footer: m, backdropTestId: h = "modal-backdrop", backdropStyle: g, cardStyle: _, cardClassName: v, zIndex: y = 1e4, rawChildren: b = !1 }) {
+	let x = r(null), S = r(null), C = t(s);
 	return n(() => {
 		if (!s) return;
 		let e = typeof document < "u" ? document.activeElement : null;
-		x.current = e;
-		let t = b.current;
+		S.current = e;
+		let t = x.current;
 		if (t) {
 			let e = t.querySelector("[data-autofocus]");
 			if (e) e.focus();
@@ -32,18 +32,18 @@ function l({ open: s, onClose: l, title: u, ariaLabel: d, maxWidth: f = 380, chi
 			}
 		}
 		return () => {
-			let e = x.current;
-			e && typeof e.focus == "function" && document.contains(e) && e.focus(), x.current = null;
+			let e = S.current;
+			e && typeof e.focus == "function" && document.contains(e) && e.focus(), S.current = null;
 		};
 	}, [s]), n(() => {
 		if (!s) return;
 		let e = (e) => {
 			if (e.key === "Escape") {
-				S() && l();
+				C() && l();
 				return;
 			}
-			if (e.key !== "Tab" || !S()) return;
-			let t = b.current;
+			if (e.key !== "Tab" || !C()) return;
+			let t = x.current;
 			if (!t) return;
 			let n = c(t);
 			if (n.length === 0) {
@@ -61,21 +61,21 @@ function l({ open: s, onClose: l, title: u, ariaLabel: d, maxWidth: f = 380, chi
 	}, [
 		s,
 		l,
-		S
+		C
 	]), s ? o(/* @__PURE__ */ i("div", {
 		"data-testid": h,
 		className: e("fixed inset-0 flex items-center justify-center bg-black/45"),
 		style: {
-			zIndex: v,
+			zIndex: y,
 			...g
 		},
 		onClick: l,
 		children: /* @__PURE__ */ a("div", {
-			ref: b,
+			ref: x,
 			role: "dialog",
 			"aria-modal": "true",
 			"aria-label": u ?? d,
-			className: e("bg-white rounded-xl px-6 py-7 w-[90%] shadow-lg font-[inherit]"),
+			className: e("bg-white rounded-xl px-6 py-7 w-[90%] shadow-lg font-[inherit]", v),
 			style: {
 				maxWidth: f,
 				..._
@@ -86,7 +86,7 @@ function l({ open: s, onClose: l, title: u, ariaLabel: d, maxWidth: f = 380, chi
 					className: "text-base font-semibold text-text-primary mb-2.5",
 					children: u
 				}),
-				y ? p : /* @__PURE__ */ i("div", {
+				b ? p : /* @__PURE__ */ i("div", {
 					className: "text-[13px] text-text-secondary",
 					children: p
 				}),
