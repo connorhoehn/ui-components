@@ -61,7 +61,7 @@ function makeOnMessage() {
 }
 
 function renderTab(rooms: RoomItem[], onMessage: never) {
-  render(
+  return render(
     <SocialTabContent
       userId="alice"
       displayName="Ada Lovelace"
@@ -114,5 +114,39 @@ describe('SocialTabContent unread rooms', () => {
     expect(row.className).toMatch(/text-text-primary/);
     // ...and the unread badge itself renders.
     expect(row).toHaveTextContent('1');
+  });
+});
+
+// A third wrong answer, this one only visible in dark mode: the surfaces
+// branched on `useColorScheme()`, which returns the context DEFAULT ('light')
+// for any host that stamps `data-theme` itself instead of mounting our
+// <ColorSchemeProvider> — the realtime-examples app does exactly that, so the
+// whole social panel stayed white inside a fully dark shell. And the dark arm
+// it *would* have taken painted the chat background with
+// `var(--color-text-primary)`, which inverts the moment a real dark palette
+// defines that token as a light colour (v2.105.0 does).
+//
+// Both are structural: assert the surfaces read tokens, so they follow
+// whatever [data-theme] scope they land in with no provider required.
+describe('SocialTabContent surfaces', () => {
+  it('paints from theme tokens, never from a color-scheme branch', () => {
+    const { onMessage } = makeOnMessage();
+    const { container } = renderTab([room()], onMessage);
+
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.style.background).toBe('var(--color-surface)');
+    expect(root.style.border).toContain('var(--color-border)');
+
+    // The sidebar is a distinct token, not a literal hex.
+    const sidebar = root.firstElementChild as HTMLElement;
+    expect(sidebar.style.background).toBe('var(--color-surface-panel)');
+
+    // Nothing in the tree may use the TEXT token as a background — that is
+    // the inversion trap this test exists to keep shut.
+    const painted = [root, sidebar, ...Array.from(root.querySelectorAll<HTMLElement>('[style]'))];
+    for (const el of painted) {
+      expect(el.style.background).not.toContain('--color-text-');
+      expect(el.style.backgroundColor).not.toContain('--color-text-');
+    }
   });
 });

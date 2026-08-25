@@ -7,7 +7,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import type { RoomItem } from '../../hooks/useRooms';
 import type { ActivityEvent } from '../../hooks/useActivityBus';
 import type { GatewayMessage } from '../../types/gateway';
-import { useColorScheme } from '../../contexts/ThemeContext';
 import { cn } from '../../lib/cn';
 
 import { RoomList } from './RoomList';
@@ -142,8 +141,6 @@ export default function SocialTabContent({
   activeRoomId,
   onMessage,
 }: SocialTabContentProps) {
-  const { theme } = useColorScheme();
-  const isDark = theme === 'dark';
 
   // ---- Sidebar collapse ----
   const [chatSidebarOpen, setChatSidebarOpen] = useState(true);
@@ -193,11 +190,24 @@ export default function SocialTabContent({
   const channelUnreadTotal = channels.reduce((s, r) => s + (unreadCounts[r.roomId] ?? 0), 0);
   const dmUnreadTotal = dms.reduce((s, r) => s + (unreadCounts[r.roomId] ?? 0), 0);
 
-  const sidebarBg = isDark ? '#1e1f2e' : 'var(--color-surface-panel)';
-  const sidebarBorder = isDark ? 'rgba(255,255,255,0.06)' : 'var(--color-border)';
-  const sidebarTextPrimary = isDark ? '#fff' : 'var(--color-text-primary)';
-  const sidebarTextSecondary = isDark ? 'var(--color-text-tertiary)' : 'var(--color-neutral)';
-  const chatBg = isDark ? 'var(--color-text-primary)' : '#fff';
+  // Surfaces are TOKEN-driven, not branched on the React theme context.
+  //
+  // The old branch had two failure modes. (1) It read `useColorScheme()`,
+  // which returns the context DEFAULT ('light') for any host that stamps
+  // `data-theme` itself without mounting our <ColorSchemeProvider> — so the
+  // panel rendered white inside a dark app. (2) Its dark arm used
+  // `var(--color-text-primary)` as a BACKGROUND, which only ever "worked"
+  // because that token was dark in the light palette; with a real dark
+  // palette (v2.105.0) the same token is light, so the surface inverted.
+  //
+  // Reading the tokens directly fixes both: they resolve light or dark from
+  // whichever `[data-theme]` scope the component is rendered in, with no
+  // provider requirement and no possible inversion.
+  const sidebarBg = 'var(--color-surface-panel)';
+  const sidebarBorder = 'var(--color-border)';
+  const sidebarTextPrimary = 'var(--color-text-primary)';
+  const sidebarTextSecondary = 'var(--color-text-secondary)';
+  const chatBg = 'var(--color-surface)';
 
   return (
     <div
