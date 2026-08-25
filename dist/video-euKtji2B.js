@@ -3002,6 +3002,12 @@ function Ct({ size: e = 20, ...t }) {
 	});
 }
 function wt({ size: e = 20, ...t }) {
+	return /* @__PURE__ */ w("svg", {
+		...$(e, t),
+		children: /* @__PURE__ */ w("path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" })
+	});
+}
+function Tt({ size: e = 20, ...t }) {
 	return /* @__PURE__ */ T("svg", {
 		...$(e, t),
 		children: [
@@ -3025,21 +3031,21 @@ function wt({ size: e = 20, ...t }) {
 }
 //#endregion
 //#region src/components/video/HangoutPreJoinShell.tsx
-function Tt(e, t, n) {
+function Et(e, t, n) {
 	if (n) return "Checking room…";
 	if (!t || t === "empty") return "You'll be the first one in this room";
 	let r = e?.length ?? 0;
 	return t === "ready" ? r === 1 ? "1 person is in this call" : `${r} people are in this call` : r === 1 ? "1 person is joining (connecting…)" : `${r} people are joining (connecting…)`;
 }
-function Et(e) {
+function Dt(e) {
 	return e === "denied" ? "denied" : e === "blocked" ? "blocked" : e === "no-device" ? "no-device" : e === "unavailable" ? "unavailable" : null;
 }
-function Dt({ channelName: t, localIdentity: r, previewStream: i, permission: a, permissionMessage: c, audioEnabled: l, videoEnabled: u, onToggleAudio: f, onToggleVideo: p, onRetryPermission: m, participants: h, readyState: g, readyLoading: v = !1, effectsSlot: y, onJoin: b, onCancel: S, joinLabel: C, joinDisabled: E, subtitleOverride: D, className: O, "data-testid": k }) {
+function Ot({ channelName: t, localIdentity: r, previewStream: i, permission: a, permissionMessage: c, audioEnabled: l, videoEnabled: u, onToggleAudio: f, onToggleVideo: p, onRetryPermission: m, participants: h, readyState: g, readyLoading: v = !1, effectsSlot: y, onJoin: b, onCancel: S, joinLabel: C, joinDisabled: E, subtitleOverride: D, className: O, "data-testid": k }) {
 	let A = x(null);
 	_(() => {
 		A.current && i && (A.current.srcObject = i);
 	}, [i]);
-	let j = a === "granted", M = Et(a), N = E ?? !j, P = C ?? (N && !j ? "Allow camera to join" : "Join now"), F = D ?? Tt(h, g, v);
+	let j = a === "granted", M = Dt(a), N = E ?? !j, P = C ?? (N && !j ? "Allow camera to join" : "Join now"), F = D ?? Et(h, g, v);
 	return /* @__PURE__ */ T("div", {
 		"data-testid": k,
 		className: e("flex flex-col h-full min-h-0 bg-surface-panel text-text-primary", O),
@@ -3157,7 +3163,7 @@ function Dt({ channelName: t, localIdentity: r, previewStream: i, permission: a,
 							className: "text-sm text-neutral mb-6",
 							children: F
 						}),
-						/* @__PURE__ */ w(Ot, {
+						/* @__PURE__ */ w(kt, {
 							participants: h,
 							loading: v
 						}),
@@ -3189,7 +3195,7 @@ function Dt({ channelName: t, localIdentity: r, previewStream: i, permission: a,
 		})]
 	});
 }
-function Ot({ participants: e, loading: t }) {
+function kt({ participants: e, loading: t }) {
 	return t ? /* @__PURE__ */ T("div", {
 		className: "flex items-center gap-2 text-xs text-neutral",
 		children: [/* @__PURE__ */ w(o, { size: "sm" }), " Checking room…"]
@@ -3236,14 +3242,14 @@ function Ot({ participants: e, loading: t }) {
 }
 //#endregion
 //#region src/components/video/HangoutRoomHeader.tsx
-var kt = {
+var At = {
 	idle: "neutral",
 	joining: "warning",
 	joined: "success",
 	reconnecting: "warning",
 	ended: "neutral",
 	failed: "danger"
-}, At = {
+}, jt = {
 	idle: "Idle",
 	joining: "Joining…",
 	joined: "Live",
@@ -3251,7 +3257,7 @@ var kt = {
 	ended: "Ended",
 	failed: "Failed"
 };
-function jt() {
+function Mt() {
 	return /* @__PURE__ */ T("svg", {
 		width: "10",
 		height: "10",
@@ -3269,7 +3275,7 @@ function jt() {
 		}), /* @__PURE__ */ w("polyline", { points: "12 7 12 12 15 14" })]
 	});
 }
-function Mt({ channelName: t, subtitle: n, recording: i, elapsedLabel: a, phase: o, actions: s, className: c, "data-testid": l }) {
+function Nt({ channelName: t, subtitle: n, recording: i, elapsedLabel: a, phase: o, actions: s, className: c, "data-testid": l }) {
 	return /* @__PURE__ */ T("header", {
 		"data-testid": l,
 		className: e("flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-white", c),
@@ -3294,7 +3300,7 @@ function Mt({ channelName: t, subtitle: n, recording: i, elapsedLabel: a, phase:
 					a && /* @__PURE__ */ w(r, {
 						tone: "neutral",
 						size: "xs",
-						icon: /* @__PURE__ */ w(jt, {}),
+						icon: /* @__PURE__ */ w(Mt, {}),
 						title: "Time since you joined this room",
 						"data-testid": "hangout-room-header-elapsed",
 						children: /* @__PURE__ */ w("span", {
@@ -3307,27 +3313,27 @@ function Mt({ channelName: t, subtitle: n, recording: i, elapsedLabel: a, phase:
 		}), (o || s) && /* @__PURE__ */ T("div", {
 			className: "flex items-center gap-3 shrink-0",
 			children: [o && /* @__PURE__ */ w(r, {
-				tone: kt[o],
+				tone: At[o],
 				size: "sm",
 				dot: o === "reconnecting" ? "pulse" : "static",
 				"data-testid": "hangout-room-header-phase",
-				children: At[o]
+				children: jt[o]
 			}), s]
 		})]
 	});
 }
 //#endregion
 //#region src/components/video/MediaControlsBar.tsx
-var Nt = {
+var Pt = {
 	sm: "h-9 w-9",
 	md: "h-11 w-11",
 	lg: "h-14 w-14"
-}, Pt = {
+}, Ft = {
 	sm: 16,
 	md: 20,
 	lg: 24
 };
-function Ft({ audioOn: t, videoOn: n, screenSharing: r = !1, onToggleAudio: i, onToggleVideo: a, onToggleScreenShare: o, onLeave: s, audioDisabled: c, videoDisabled: l, screenShareDisabled: u, extras: d, leaveLabel: f = "Leave call", size: p = "md", className: m, "data-testid": h }) {
+function It({ audioOn: t, videoOn: n, screenSharing: r = !1, onToggleAudio: i, onToggleVideo: a, onToggleScreenShare: o, onLeave: s, audioDisabled: c, videoDisabled: l, screenShareDisabled: u, extras: d, leaveLabel: f = "Leave call", size: p = "md", className: m, "data-testid": h }) {
 	let g = p === "lg" ? 22 : p === "sm" ? 16 : 18;
 	return /* @__PURE__ */ T("div", {
 		"data-testid": h,
@@ -3374,20 +3380,20 @@ function Ft({ audioOn: t, videoOn: n, screenSharing: r = !1, onToggleAudio: i, o
 				"aria-label": f,
 				title: f,
 				"data-testid": "media-controls-leave",
-				className: e("rounded-full grid place-items-center transition-colors duration-150", Nt[p], "bg-danger text-white hover:bg-danger cursor-pointer"),
-				children: /* @__PURE__ */ w(xt, { size: Pt[p] })
+				className: e("rounded-full grid place-items-center transition-colors duration-150", Pt[p], "bg-danger text-white hover:bg-danger cursor-pointer"),
+				children: /* @__PURE__ */ w(xt, { size: Ft[p] })
 			})
 		]
 	});
 }
 //#endregion
 //#region src/components/video/CallSettingsDialog.tsx
-var It = {
+var Lt = {
 	effects: "Effects",
 	people: "People",
 	chat: "Chat"
 };
-function Lt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", effectsContent: o, peopleContent: s, chatContent: c, title: l = "Call settings", className: u }) {
+function Rt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", effectsContent: o, peopleContent: s, chatContent: c, title: l = "Call settings", className: u }) {
 	let d = [
 		...o == null ? [] : ["effects"],
 		...s == null ? [] : ["people"],
@@ -3456,7 +3462,7 @@ function Lt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 							onClick: () => p(t),
 							"data-testid": `call-settings-tab-${t}`,
 							className: e("cursor-pointer rounded-t-md border-b-2 px-3 py-1.5 text-[13px] font-medium transition-colors", t === m ? "border-primary text-text-inverse" : "border-transparent text-white/60 hover:bg-white/5 hover:text-white/90"),
-							children: It[t]
+							children: Lt[t]
 						}, t))
 					}), /* @__PURE__ */ T("div", {
 						role: "tabpanel",
@@ -3475,7 +3481,7 @@ function Lt({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 }
 //#endregion
 //#region src/components/video/CallSidePanel.tsx
-function Rt({ open: t, onClose: n, title: r, children: i, widthClassName: a = "w-80", className: o, "data-testid": s = "call-side-panel" }) {
+function zt({ open: t, onClose: n, title: r, children: i, widthClassName: a = "w-80", className: o, "data-testid": s = "call-side-panel" }) {
 	return t ? /* @__PURE__ */ T("aside", {
 		"data-testid": s,
 		"aria-label": r,
@@ -3500,4 +3506,4 @@ function Rt({ open: t, onClose: n, title: r, children: i, widthClassName: a = "w
 	}) : null;
 }
 //#endregion
-export { we as A, L as B, Re as C, Me as D, Ne as E, se as F, M as H, ie as I, re as L, ve as M, G as N, ke as O, ce as P, R, Ve as S, Pe as T, A as U, I as V, D as W, ut as _, Dt as a, Qe as b, wt as c, bt as d, Ct as f, Q as g, vt as h, Mt as i, ye as j, Oe as k, xt as l, _t as m, Lt as n, ht as o, St as p, Ft as r, gt as s, Rt as t, yt as u, st as v, Ie as w, Ue as x, ot as y, ee as z };
+export { Oe as A, ee as B, Ve as C, Ne as D, Pe as E, ce as F, D as G, I as H, se as I, ie as L, ye as M, ve as N, Me as O, G as P, re as R, Ue as S, Ie as T, M as U, L as V, A as W, Q as _, Ot as a, ot as b, gt as c, yt as d, bt as f, vt as g, _t as h, Nt as i, we as j, ke as k, Tt as l, St as m, Rt as n, wt as o, Ct as p, It as r, ht as s, zt as t, xt as u, ut as v, Re as w, Qe as x, st as y, R as z };

@@ -163,6 +163,7 @@ export {
   ScreenShareIcon,
   ScreenShareOffIcon,
   PhoneOffIcon,
+  ChatBubbleIcon,
   SparklesIcon,
   MoreHorizontalIcon,
   UserPlusIcon,

@@ -1369,6 +1369,11 @@ export declare interface ChannelHeaderProps {
     className?: string;
 }
 
+/** Chat bubble glyph — the in-call chat affordance. Pair with
+ *  CircularIconToggle in a controls `extras` slot to open a chat side
+ *  panel (CallSidePanel) or the settings dialog's Chat tab. */
+export declare function ChatBubbleIcon({ size, ...rest }: IconProps): JSX.Element;
+
 /**
  * Chat input with send button. Stateless — value/onChange controlled by parent.
  *

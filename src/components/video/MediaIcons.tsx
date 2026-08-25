@@ -133,6 +133,17 @@ export function SparklesIcon({ size = 20, ...rest }: IconProps) {
   );
 }
 
+/** Chat bubble glyph — the in-call chat affordance. Pair with
+ *  CircularIconToggle in a controls `extras` slot to open a chat side
+ *  panel (CallSidePanel) or the settings dialog's Chat tab. */
+export function ChatBubbleIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
 export function MoreHorizontalIcon({ size = 20, ...rest }: IconProps) {
   return (
     <svg {...base(size, rest)}>
