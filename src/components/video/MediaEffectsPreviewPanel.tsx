@@ -190,7 +190,15 @@ export function MediaEffectsPreviewPanel({
         onSelectFaceSprite={guard(onSelectFaceSprite)}
       />
 
-      <footer className="flex shrink-0 items-center justify-end gap-3 border-t border-white/10 pt-3">
+      {/* PINNED. Apply/Cancel used to scroll away below a 16:9 preview plus
+          three effect trays — in the settings dialog they landed outside the
+          card entirely, so the whole catalogue was unreachable, and in a
+          narrow dock column they sit below the fold. Sticking the footer to
+          the bottom of the scroll region keeps the only two actions that
+          matter permanently in reach, which is what Teams does. `bg-surface-
+          inverse` is opaque so scrolling content passes behind it, not
+          through it. */}
+      <footer className="sticky bottom-0 z-10 -mx-1 mt-auto flex shrink-0 items-center justify-end gap-3 border-t border-white/10 bg-surface-inverse px-1 pb-1 pt-3">
         <span
           data-testid="media-effects-preview-status"
           className="mr-auto text-[12px] text-white/60"

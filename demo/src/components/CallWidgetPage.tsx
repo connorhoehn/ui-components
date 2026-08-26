@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { PageHeader, ExampleBlock } from '../shared';
-import { CallWidget } from '@/components/video';
+import { CallWidget, CallSettingsDialog, MediaEffectsPreviewPanel } from '@/components/video';
 import type { CallSidePanelTab, CallWidgetState, CallMode, CallWidgetParticipant } from '@/components/video';
 import { ChatPanel } from '@/components/social';
 import type { ChatMessage } from '@/hooks/useChat';
@@ -197,6 +197,89 @@ function DockedDemo() {
   );
 }
 
+
+// ---------------------------------------------------------------------------
+// Call settings — effects preview
+//
+// This dialog had NO rendering harness, which is how it shipped with its
+// Apply/Cancel footer laid out below the card AND below the viewport: the
+// entire effects catalogue was unreachable in the running app while every
+// unit test passed. `tests/e2e/call-settings-effects.spec.ts` measures the
+// footer against the card and the viewport so it cannot regress silently.
+// ---------------------------------------------------------------------------
+
+const DEMO_FILTERS = [
+  { id: 'none', label: 'None' }, { id: 'bw', label: 'B&W' },
+  { id: 'sepia', label: 'Sepia' }, { id: 'warm', label: 'Warm' },
+  { id: 'cool', label: 'Cool' }, { id: 'vintage', label: 'Vintage' },
+  { id: 'noir', label: 'Noir' }, { id: 'contrast', label: 'High Contrast' },
+  { id: 'beauty', label: 'Beauty' },
+];
+const DEMO_BACKGROUNDS = [
+  { id: 'dusk', label: 'Dusk', url: '' },
+  { id: 'ocean', label: 'Ocean', url: '' },
+  { id: 'forest', label: 'Forest', url: '' },
+  { id: 'slate', label: 'Slate', url: '' },
+];
+const DEMO_SPRITES = [
+  { id: 'none', label: 'None' }, { id: 'dog', label: 'Dog Ears', emoji: '\u{1F436}' },
+  { id: 'shades', label: 'Sunglasses', emoji: '\u{1F576}' },
+  { id: 'disguise', label: 'Disguise', emoji: '\u{1F978}' },
+  { id: 'party', label: 'Party', emoji: '\u{1F389}' },
+  { id: 'crown', label: 'Crown', emoji: '\u{1F451}' },
+];
+
+function EffectsDialogExample() {
+  const [open, setOpen] = useState(false);
+  const [filterId, setFilterId] = useState('none');
+  const [bg, setBg] = useState('none');
+  const [sprite, setSprite] = useState<string | null>(null);
+  const dirty = filterId !== 'none' || bg !== 'none' || sprite !== null;
+
+  const reset = () => { setFilterId('none'); setBg('none'); setSprite(null); };
+
+  return (
+    <div className="p-4">
+      <button
+        type="button"
+        data-testid="open-effects-dialog"
+        onClick={() => setOpen(true)}
+        className="rounded-md bg-primary px-3 py-1.5 text-sm text-white"
+      >
+        Open call settings (effects)
+      </button>
+      <CallSettingsDialog
+        open={open}
+        onClose={() => { setOpen(false); reset(); }}
+        title="Call settings — demo"
+        initialTab="effects"
+        showPreview={false}
+        previewStream={null}
+        effectsContent={
+          <MediaEffectsPreviewPanel
+            previewActive
+            previewStream={null}
+            isDirty={dirty}
+            onApply={() => setOpen(false)}
+            onCancel={() => { setOpen(false); reset(); }}
+            filters={DEMO_FILTERS}
+            activeFilterId={filterId}
+            onSelectFilter={setFilterId}
+            backgrounds={DEMO_BACKGROUNDS}
+            backgroundMode={bg === 'none' ? 'none' : bg === 'blur' ? 'blur' : 'image'}
+            activeBackgroundUrl={null}
+            onSelectBackground={(mode: string) => setBg(mode)}
+            faceSprites={DEMO_SPRITES}
+            activeFaceSpriteId={sprite}
+            onSelectFaceSprite={setSprite}
+          />
+        }
+        peopleContent={<div className="p-2 text-sm text-white/70">People tab.</div>}
+      />
+    </div>
+  );
+}
+
 export default function CallWidgetPage() {
   return (
     <div>
@@ -205,6 +288,21 @@ export default function CallWidgetPage() {
         description="Floating, draggable audio/video call widget with incoming calls, active call controls (mute, camera, screen share, add participants), minimized pill view, participant picker, and upgrade from audio to video. Designed for embedding in any app — position it in a corner and drag it anywhere."
         importPath="import { CallWidget } from '@connorhoehnslalom/ui-components/video'"
       />
+
+      <ExampleBlock
+        id="call-settings-effects"
+        title="Call settings — effects preview"
+        description="The effects surface inside the settings dialog. Its footer must stay inside the card and inside the viewport."
+        code={`<CallSettingsDialog
+  open={open}
+  onClose={close}
+  initialTab="effects"
+  showPreview={false}
+  effectsContent={<MediaEffectsPreviewPanel … />}
+/>`}
+      >
+        <EffectsDialogExample />
+      </ExampleBlock>
 
       <ExampleBlock
         id="call-widget-live"

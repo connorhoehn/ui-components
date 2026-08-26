@@ -560,7 +560,7 @@ function D({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCance
 				onSelectFaceSprite: w(_)
 			}),
 			/* @__PURE__ */ s("footer", {
-				className: "flex shrink-0 items-center justify-end gap-3 border-t border-white/10 pt-3",
+				className: "sticky bottom-0 z-10 -mx-1 mt-auto flex shrink-0 items-center justify-end gap-3 border-t border-white/10 bg-surface-inverse px-1 pb-1 pt-3",
 				children: [
 					/* @__PURE__ */ o("span", {
 						"data-testid": "media-effects-preview-status",

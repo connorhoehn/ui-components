@@ -9,7 +9,7 @@ import { n as c, r as l, t as u } from "./focusTrap-CmWJlptm.js";
 import { a as d, t as f } from "./Avatar-Yxs_9Jio.js";
 import { t as p } from "./activationKey-CjbL3LUv.js";
 import { t as m } from "./Select-Z0TLUVeL.js";
-import { m as h, o as g } from "./MediaEffectsPreviewPanel-D28NzUDu.js";
+import { m as h, o as g } from "./MediaEffectsPreviewPanel-DDFKW_eq.js";
 import { useCallback as _, useEffect as v, useImperativeHandle as y, useLayoutEffect as b, useMemo as x, useRef as S, useState as C } from "react";
 import { Fragment as w, jsx as T, jsxs as E } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
