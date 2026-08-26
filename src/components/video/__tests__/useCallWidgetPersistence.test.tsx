@@ -5,7 +5,7 @@ import {
 } from '../useCallWidgetPersistence';
 
 const defaults: PersistedWidgetState = {
-  mode: 'docked',
+  mode: 'window',
   x: 0,
   y: 0,
   width: 640,
@@ -66,7 +66,8 @@ describe('hydrate from valid stored state', () => {
     );
 
     expect(result.current.state).toEqual({
-      mode: 'docked',
+      // Stored as the legacy 'docked' spelling; hydrated as canonical.
+      mode: 'window',
       x: 100,
       y: 200,
       width: 800,
@@ -105,9 +106,9 @@ describe('version mismatch in stored state', () => {
   });
 });
 
-// ── 6. fullscreen mode in storage → coerced to docked ─────────────────────
+// ── 6. fullscreen mode in storage → coerced ───────────────────────────────
 describe('fullscreen mode coercion', () => {
-  it('coerces fullscreen → docked on hydrate', () => {
+  it('coerces fullscreen → mini on hydrate', () => {
     localStorage.setItem(
       TEST_KEY,
       JSON.stringify({ v: 1, mode: 'fullscreen', x: 0, y: 0, width: 1920, height: 1080 }),
@@ -117,7 +118,8 @@ describe('fullscreen mode coercion', () => {
       useCallWidgetPersistence({ persistKey: TEST_KEY, defaults }),
     );
 
-    // Hook coerces any non-'docked' stored mode (including 'fullscreen') to 'mini'.
+    // Hook coerces any stored mode that isn't 'docked'/'window'
+    // (including 'fullscreen') to 'mini'.
     expect(result.current.state.mode).toBe('mini');
   });
 });

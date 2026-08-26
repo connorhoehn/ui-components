@@ -97,9 +97,9 @@ export function TranscriptPanel({
 
   if (status === 'idle') {
     return (
-      <section className={cn('rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4', className)}>
-        <header className="text-sm font-medium text-[var(--color-text-secondary)] mb-2">{title}</header>
-        <div className="text-sm text-[var(--color-text-tertiary,#737373)]">
+      <section className={cn('rounded-lg border border-border bg-surface p-4', className)}>
+        <header className="text-sm font-medium text-text-secondary mb-2">{title}</header>
+        <div className="text-sm text-text-tertiary">
           {idleState ?? 'Transcription was not enabled for this recording.'}
         </div>
       </section>
@@ -108,15 +108,15 @@ export function TranscriptPanel({
 
   if (status === 'pending' || status === 'processing') {
     return (
-      <section className={cn('rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4', className)}>
-        <header className="text-sm font-medium text-[var(--color-text-secondary)] mb-2 flex items-center gap-2">
+      <section className={cn('rounded-lg border border-border bg-surface p-4', className)}>
+        <header className="text-sm font-medium text-text-secondary mb-2 flex items-center gap-2">
           <span>{title}</span>
           <span className="inline-block h-2 w-2 rounded-full bg-warning animate-pulse" aria-hidden="true" />
-          <span className="text-xs font-normal text-[var(--color-text-tertiary,#737373)]">
+          <span className="text-xs font-normal text-text-tertiary">
             {status === 'pending' ? 'queued' : 'processing'}
           </span>
         </header>
-        <div className="text-sm text-[var(--color-text-secondary)]">
+        <div className="text-sm text-text-secondary">
           {pendingMessage ?? (
             status === 'pending'
               ? 'Transcription is queued. This usually starts within a few seconds.'
@@ -129,11 +129,11 @@ export function TranscriptPanel({
 
   if (status === 'failed') {
     return (
-      <section className={cn('rounded-lg border border-[var(--color-border-danger,#7f1d1d)] bg-[var(--color-surface)] p-4', className)}>
-        <header className="text-sm font-medium text-[var(--color-danger,#dc2626)] mb-2">
+      <section className={cn('rounded-lg border border-danger-border bg-surface p-4', className)}>
+        <header className="text-sm font-medium text-danger mb-2">
           {title} — failed
         </header>
-        <div className="text-sm text-[var(--color-text-secondary)]">
+        <div className="text-sm text-text-secondary">
           {errorMessage ?? 'Transcript generation failed. Reach out to support if this persists.'}
         </div>
       </section>
@@ -143,9 +143,9 @@ export function TranscriptPanel({
   // status === 'ready'
   if (!segments || segments.length === 0) {
     return (
-      <section className={cn('rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4', className)}>
-        <header className="text-sm font-medium text-[var(--color-text-secondary)] mb-2">{title}</header>
-        <div className="text-sm text-[var(--color-text-tertiary,#737373)]">
+      <section className={cn('rounded-lg border border-border bg-surface p-4', className)}>
+        <header className="text-sm font-medium text-text-secondary mb-2">{title}</header>
+        <div className="text-sm text-text-tertiary">
           No audible speech was captured in this recording.
         </div>
       </section>
@@ -153,10 +153,10 @@ export function TranscriptPanel({
   }
 
   return (
-    <section className={cn('rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col', className)}>
-      <header className="text-sm font-medium text-[var(--color-text-secondary)] px-4 py-3 border-b border-[var(--color-border)]">
+    <section className={cn('rounded-lg border border-border bg-surface flex flex-col', className)}>
+      <header className="text-sm font-medium text-text-secondary px-4 py-3 border-b border-border">
         {title}
-        <span className="ml-2 text-xs font-normal text-[var(--color-text-tertiary,#737373)]">
+        <span className="ml-2 text-xs font-normal text-text-tertiary">
           {segments.length} segments
         </span>
       </header>
@@ -172,8 +172,8 @@ export function TranscriptPanel({
               className={cn(
                 'rounded-md px-3 py-2 transition-colors',
                 isActive
-                  ? 'bg-[var(--color-surface-active,rgba(255,255,255,0.06))] ring-1 ring-[var(--color-border-focus,#3b82f6)]'
-                  : 'hover:bg-[var(--color-surface-hover,rgba(255,255,255,0.03))]',
+                  ? 'bg-surface-emphasis ring-1 ring-primary'
+                  : 'hover:bg-surface-hover',
                 seekable && 'cursor-pointer',
               )}
               onClick={seekable ? () => onSeek!(seg.startMs) : undefined}
@@ -189,11 +189,11 @@ export function TranscriptPanel({
                 >
                   {seg.speakerLabel}
                 </span>
-                <span className="text-xs font-mono text-[var(--color-text-tertiary,#737373)]">
+                <span className="text-xs font-mono text-text-tertiary">
                   {formatTimestamp(seg.startMs)}
                 </span>
               </div>
-              <p className="text-sm text-[var(--color-text-primary)] leading-relaxed">
+              <p className="text-sm text-text-primary leading-relaxed">
                 {seg.text}
               </p>
             </div>

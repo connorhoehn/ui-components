@@ -6,6 +6,8 @@ import { ReactNode } from 'react';
 import { Ref } from 'react';
 import { SVGProps } from 'react';
 
+export declare type AnyCallWidgetMode = CallWidgetMode | LegacyCallWidgetMode;
+
 export declare function AutoplayGate({ chipLabel, chipClassName, wrapperClassName, onPlayStateChange, ...streamProps }: AutoplayGateProps): JSX.Element;
 
 export declare interface AutoplayGateProps extends StreamVideoProps {
@@ -211,9 +213,10 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
-export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, displayMode, minimized: minimizedProp, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
 
-export declare type CallWidgetMode = PersistedWidgetMode | 'fullscreen';
+/** Canonical display mode for any call surface. */
+export declare type CallWidgetMode = 'mini' | 'window' | 'fullscreen';
 
 export declare interface CallWidgetParticipant extends CallStripParticipant {
     videoStream?: MediaStream | null;
@@ -251,6 +254,30 @@ export declare interface CallWidgetProps {
     availableParticipants?: CallWidgetParticipant[];
     onMinimize?: () => void;
     onExpand?: () => void;
+    /**
+     * Canonical display mode for the widget chrome.
+     *
+     *   'mini'        collapsed pill (what `minimized` used to mean)
+     *   'window'      the normal 320px widget
+     *   'fullscreen'  same chrome as 'window'; <CallWidget> has no
+     *                 viewport-filling stage of its own, so this renders
+     *                 the full chrome and stamps `data-call-widget-mode`
+     *                 for a host that supplies the stage.
+     *
+     * NOTE the prop is `displayMode`, not `mode`: `mode` on this component
+     * has always meant the CALL mode ('audio' | 'video'), an orthogonal
+     * axis, and renaming it would be the breaking change this API exists
+     * to avoid. <ExpandableCallWidget> — which has no such collision —
+     * spells the same vocabulary `defaultMode`/`setMode`.
+     *
+     * Wins over `minimized` when both are supplied (dev-only warn).
+     */
+    displayMode?: CallWidgetMode;
+    /**
+     * @deprecated Use `displayMode`. Maps as
+     * `minimized === true → 'mini'`, `minimized === false → 'window'`.
+     * Still fully supported; `displayMode` takes precedence if both are set.
+     */
     minimized?: boolean;
     position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
     /** When true, uses absolute positioning within a relative parent instead of fixed to viewport */
@@ -327,11 +354,13 @@ export declare type CircularIconToggleSize = 'sm' | 'md' | 'lg';
 
 export declare type CircularIconToggleTone = 'neutral' | 'danger';
 
-export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode, onModeChange, persistKey, apiRef, defaultCorner, expandable, zIndex, className, }: ExpandableCallWidgetProps): JSX.Element;
+export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, onModeChange, persistKey, apiRef, defaultCorner, expandable, zIndex, className, }: ExpandableCallWidgetProps): JSX.Element;
 
 export declare interface ExpandableCallWidgetHandle {
+    /** Always canonical — 'window', never 'docked'. */
     mode: CallWidgetMode;
-    setMode: (m: CallWidgetMode) => void;
+    /** Accepts either dialect; normalizes to canonical. */
+    setMode: (m: AnyCallWidgetMode) => void;
 }
 
 export declare interface ExpandableCallWidgetProps {
@@ -347,13 +376,19 @@ export declare interface ExpandableCallWidgetProps {
     /** Body — typically `<HangoutLayout fillParent participants={…}/>`. */
     children: ReactNode;
     /** Optional controls strip rendered below the body. Stays inside the
-     *  widget chrome in mini mode (compact); spans full width in docked
+     *  widget chrome in mini mode (compact); spans full width in window
      *  and fullscreen modes. */
     controls?: ReactNode;
     /** Initial mode. Persisted modes override this once `persistKey` is
-     *  set and storage has a prior value. Default: 'mini'. */
-    defaultMode?: PersistedWidgetMode;
-    /** Fires after every settled mode change (programmatic or via UI). */
+     *  set and storage has a prior value. Default: 'mini'.
+     *
+     *  The pre-2.106 spelling `'docked'` is accepted and normalized to
+     *  `'window'`.
+     *  @see CallWidgetMode */
+    defaultMode?: PersistedWidgetMode | 'docked';
+    /** Fires after every settled mode change (programmatic or via UI).
+     *  Emits the CANONICAL vocabulary — 'window' where builds before
+     *  2.106 emitted 'docked'. */
     onModeChange?: (mode: CallWidgetMode) => void;
     /** localStorage key for `{mode,x,y,width,height}`. Omit to opt out
      *  (state lives only in memory). */
@@ -577,6 +612,12 @@ export declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'childr
     size?: number;
 }
 
+/**
+ * @deprecated Pre-2.106 spelling. 'docked' is now 'window'; everything
+ * that accepts a mode still takes this union, but emits {@link CallWidgetMode}.
+ */
+export declare type LegacyCallWidgetMode = 'mini' | 'docked' | 'fullscreen';
+
 export declare function MediaControlsBar({ audioOn, videoOn, screenSharing, onToggleAudio, onToggleVideo, onToggleScreenShare, onLeave, audioDisabled, videoDisabled, screenShareDisabled, extras, leaveLabel, size, className, 'data-testid': testId, }: MediaControlsBarProps): JSX.Element;
 
 export declare interface MediaControlsBarProps {
@@ -643,6 +684,17 @@ export declare interface MediaEffectsTrayProps {
 export declare function MicIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare function MicOffIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/**
+ * Map the legacy `minimized` boolean onto the canonical vocabulary.
+ *
+ *   minimized === true   → 'mini'
+ *   minimized === false  → 'window'
+ *
+ * There is no legacy boolean for 'fullscreen' — <CallWidget> never had
+ * one, which is exactly why the new prop exists.
+ */
+export declare function modeFromMinimized(minimized: boolean): CallWidgetMode;
 
 export declare function MoreHorizontalIcon({ size, ...rest }: IconProps): JSX.Element;
 
@@ -735,7 +787,14 @@ declare interface ParticipantWithStreams {
     streams: MediaStream[];
 }
 
-export declare type PersistedWidgetMode = 'mini' | 'docked';
+/**
+ * Modes that survive a reload. Canonical vocabulary ('window', not the
+ * pre-2.106 'docked') — see ./callWidgetMode. The value written to
+ * localStorage keeps the LEGACY spelling so a rollback to an older build
+ * still reads back the window state it wrote; the translation happens at
+ * the storage boundary only.
+ */
+export declare type PersistedWidgetMode = 'mini' | 'window';
 
 export declare interface PersistedWidgetState {
     mode: PersistedWidgetMode;
@@ -1074,6 +1133,12 @@ export declare interface TimedReaction {
     offsetMs: number;
     displayName?: string;
 }
+
+/** Normalize either dialect to the canonical vocabulary. */
+export declare function toCanonicalMode(mode: AnyCallWidgetMode): CallWidgetMode;
+
+/** Canonical → the pre-2.106 spelling, for back-compat surfaces. */
+export declare function toLegacyMode(mode: CallWidgetMode): LegacyCallWidgetMode;
 
 export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, now: nowProp, className, }: TranscriptOverlayProps): JSX.Element | null;
 

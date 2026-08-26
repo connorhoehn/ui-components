@@ -7,7 +7,14 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export type PersistedWidgetMode = 'mini' | 'docked';
+/**
+ * Modes that survive a reload. Canonical vocabulary ('window', not the
+ * pre-2.106 'docked') — see ./callWidgetMode. The value written to
+ * localStorage keeps the LEGACY spelling so a rollback to an older build
+ * still reads back the window state it wrote; the translation happens at
+ * the storage boundary only.
+ */
+export type PersistedWidgetMode = 'mini' | 'window';
 
 export interface PersistedWidgetState {
   mode: PersistedWidgetMode;
@@ -29,8 +36,10 @@ export interface UseCallWidgetPersistenceOptions {
 
 const STORAGE_VERSION = 1;
 
-interface Stored extends PersistedWidgetState {
+interface Stored extends Omit<PersistedWidgetState, 'mode'> {
   v: number;
+  /** Legacy spelling on the wire — 'docked', not 'window'. */
+  mode: 'mini' | 'docked' | 'window';
 }
 
 export function useCallWidgetPersistence({
@@ -48,10 +57,13 @@ export function useCallWidgetPersistence({
       if (!raw) return defaults;
       const parsed = JSON.parse(raw) as Stored;
       if (!parsed || parsed.v !== STORAGE_VERSION) return defaults;
-      // Coerce fullscreen → docked on hydrate (browsers refuse
+      // Coerce fullscreen → window on hydrate (browsers refuse
       // auto-fullscreen without a user gesture, so persisting it
-      // would just produce a half-broken state on reload).
-      const mode: PersistedWidgetMode = parsed.mode === 'docked' ? 'docked' : 'mini';
+      // would just produce a half-broken state on reload). Both the
+      // legacy 'docked' and the canonical 'window' spellings are
+      // accepted so state written by either build survives.
+      const mode: PersistedWidgetMode =
+        parsed.mode === 'docked' || parsed.mode === 'window' ? 'window' : 'mini';
       return {
         mode,
         x: numberOr(parsed.x, defaults.x),
@@ -98,7 +110,12 @@ export function useCallWidgetPersistence({
 
   const write = useCallback((key: string, value: PersistedWidgetState) => {
     try {
-      const stored: Stored = { v: STORAGE_VERSION, ...value };
+      const stored: Stored = {
+        v: STORAGE_VERSION,
+        ...value,
+        // Legacy spelling on the wire — see PersistedWidgetMode.
+        mode: value.mode === 'window' ? 'docked' : value.mode,
+      };
       window.localStorage.setItem(key, JSON.stringify(stored));
       persistedRef.current = { key, value };
     } catch { /* quota / private mode — ignore */ }

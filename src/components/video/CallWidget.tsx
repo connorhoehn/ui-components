@@ -25,6 +25,12 @@ import { CallAvatar, type CallStripParticipant } from './CallParticipantStrip';
 import { CallParticipantStrip } from './CallParticipantStrip';
 import { CallControls } from './CallControls';
 import { CallStatsOverlay, type CallStatsOverlayStats } from './CallStatsOverlay';
+import {
+  modeFromMinimized,
+  toLegacyMode,
+  warnModeConflictOnce,
+  type CallWidgetMode,
+} from './callWidgetMode';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -71,6 +77,30 @@ export interface CallWidgetProps {
   onMinimize?: () => void;
   onExpand?: () => void;
 
+  /**
+   * Canonical display mode for the widget chrome.
+   *
+   *   'mini'        collapsed pill (what `minimized` used to mean)
+   *   'window'      the normal 320px widget
+   *   'fullscreen'  same chrome as 'window'; <CallWidget> has no
+   *                 viewport-filling stage of its own, so this renders
+   *                 the full chrome and stamps `data-call-widget-mode`
+   *                 for a host that supplies the stage.
+   *
+   * NOTE the prop is `displayMode`, not `mode`: `mode` on this component
+   * has always meant the CALL mode ('audio' | 'video'), an orthogonal
+   * axis, and renaming it would be the breaking change this API exists
+   * to avoid. <ExpandableCallWidget> — which has no such collision —
+   * spells the same vocabulary `defaultMode`/`setMode`.
+   *
+   * Wins over `minimized` when both are supplied (dev-only warn).
+   */
+  displayMode?: CallWidgetMode;
+  /**
+   * @deprecated Use `displayMode`. Maps as
+   * `minimized === true → 'mini'`, `minimized === false → 'window'`.
+   * Still fully supported; `displayMode` takes precedence if both are set.
+   */
   minimized?: boolean;
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
   /** When true, uses absolute positioning within a relative parent instead of fixed to viewport */
@@ -722,7 +752,8 @@ export function CallWidget({
   onExpand,
   layoutComponent,
   callStats,
-  minimized = false,
+  displayMode,
+  minimized: minimizedProp,
   position = 'bottom-right',
   contained = false,
   draggable = true,
@@ -730,6 +761,18 @@ export function CallWidget({
   style,
   dataAttrs,
 }: CallWidgetProps) {
+  // ONE vocabulary from here down. `displayMode` wins over the legacy
+  // boolean; the boolean maps `true → 'mini'`, `false → 'window'`, and its
+  // historical default (false) is the same 'window' the new prop defaults
+  // to — so a caller that passes neither, only the boolean, or only
+  // `displayMode` all land on identical chrome.
+  if (displayMode !== undefined && minimizedProp !== undefined) {
+    warnModeConflictOnce('CallWidget', 'minimized');
+  }
+  const resolvedMode: CallWidgetMode =
+    displayMode ?? modeFromMinimized(minimizedProp ?? false);
+  const minimized = resolvedMode === 'mini';
+
   const { offset, handleMouseDown, resetOffset, snapToCorner, isDragging, isAnimating, hasMoved, widgetRef } = useDrag(draggable);
   // Filter undefined values so `data-x="undefined"` never leaks.
   const extraDataAttrs: Record<string, string | number> = {};
@@ -761,6 +804,8 @@ export function CallWidget({
         ref={widgetRef}
         data-testid="call-widget"
         data-call-state={state}
+        data-call-widget-mode={resolvedMode}
+        data-call-widget-mode-legacy={toLegacyMode(resolvedMode)}
         className={cn(
           contained ? 'absolute z-50' : 'fixed z-[9999]',
           positionClasses,

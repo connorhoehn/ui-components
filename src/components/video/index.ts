@@ -106,8 +106,18 @@ export { ExpandableCallWidget } from './ExpandableCallWidget';
 export type {
   ExpandableCallWidgetProps,
   ExpandableCallWidgetHandle,
-  CallWidgetMode,
 } from './ExpandableCallWidget';
+// Canonical display-mode vocabulary shared by every call surface.
+export {
+  toCanonicalMode,
+  toLegacyMode,
+  modeFromMinimized,
+} from './callWidgetMode';
+export type {
+  CallWidgetMode,
+  LegacyCallWidgetMode,
+  AnyCallWidgetMode,
+} from './callWidgetMode';
 export { useCallWidgetPersistence } from './useCallWidgetPersistence';
 export type {
   PersistedWidgetState,

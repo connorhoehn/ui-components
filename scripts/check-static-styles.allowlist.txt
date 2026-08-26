@@ -70,6 +70,7 @@ src/components/social/PresencePanel.tsx
 src/components/social/SocialTabContent.tsx
 src/components/ui/Panel.tsx
 src/components/video/CallStartedBanner.tsx
+src/components/shared/FloatingPanel.tsx           # drag/snap position + focus-to-front z-index from state
 src/components/video/CallWidget.tsx
 src/components/video/ParticipantTile.tsx
 src/components/video/ReactionOverlay.tsx

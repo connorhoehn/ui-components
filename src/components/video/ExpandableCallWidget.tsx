@@ -3,8 +3,13 @@
 // stage. Modes:
 //
 //   - 'mini'       320×180 corner-snapped floating tile (Slack-huddle UX)
-//   - 'docked'     resizable+draggable mid window (Teams-pop-out UX)
+//   - 'window'     resizable+draggable mid window (Teams-pop-out UX)
 //   - 'fullscreen' viewport-filling stage using the browser Fullscreen API
+//
+// 'window' was called 'docked' before 2.106. Every entry point still
+// accepts the old spelling (see ./callWidgetMode) — only the values this
+// component EMITS moved to the canonical vocabulary, and the root keeps a
+// `data-call-widget-mode-legacy` attribute for selectors that predate it.
 //
 // The widget renders a SINGLE root container whose className/style
 // morphs with mode. The `children` subtree (typically a
@@ -34,12 +39,20 @@ import {
   useCallWidgetPersistence,
   type PersistedWidgetMode,
 } from './useCallWidgetPersistence';
+import {
+  toCanonicalMode,
+  toLegacyMode,
+  type AnyCallWidgetMode,
+  type CallWidgetMode,
+} from './callWidgetMode';
 
-export type CallWidgetMode = PersistedWidgetMode | 'fullscreen';
+export type { CallWidgetMode, LegacyCallWidgetMode } from './callWidgetMode';
 
 export interface ExpandableCallWidgetHandle {
+  /** Always canonical — 'window', never 'docked'. */
   mode: CallWidgetMode;
-  setMode: (m: CallWidgetMode) => void;
+  /** Accepts either dialect; normalizes to canonical. */
+  setMode: (m: AnyCallWidgetMode) => void;
 }
 
 export interface ExpandableCallWidgetProps {
@@ -55,13 +68,19 @@ export interface ExpandableCallWidgetProps {
   /** Body — typically `<HangoutLayout fillParent participants={…}/>`. */
   children: ReactNode;
   /** Optional controls strip rendered below the body. Stays inside the
-   *  widget chrome in mini mode (compact); spans full width in docked
+   *  widget chrome in mini mode (compact); spans full width in window
    *  and fullscreen modes. */
   controls?: ReactNode;
   /** Initial mode. Persisted modes override this once `persistKey` is
-   *  set and storage has a prior value. Default: 'mini'. */
-  defaultMode?: PersistedWidgetMode;
-  /** Fires after every settled mode change (programmatic or via UI). */
+   *  set and storage has a prior value. Default: 'mini'.
+   *
+   *  The pre-2.106 spelling `'docked'` is accepted and normalized to
+   *  `'window'`.
+   *  @see CallWidgetMode */
+  defaultMode?: PersistedWidgetMode | 'docked';
+  /** Fires after every settled mode change (programmatic or via UI).
+   *  Emits the CANONICAL vocabulary — 'window' where builds before
+   *  2.106 emitted 'docked'. */
   onModeChange?: (mode: CallWidgetMode) => void;
   /** localStorage key for `{mode,x,y,width,height}`. Omit to opt out
    *  (state lives only in memory). */
@@ -81,12 +100,12 @@ export interface ExpandableCallWidgetProps {
 
 const MINI_WIDTH = 320;
 const MINI_HEIGHT = 200;
-const DOCKED_MIN_WIDTH = 640;
-const DOCKED_MIN_HEIGHT = 400;
-const DOCKED_MAX_WIDTH = 1440;
-const DOCKED_MAX_HEIGHT = 900;
-const DOCKED_DEFAULT_WIDTH = 960;
-const DOCKED_DEFAULT_HEIGHT = 600;
+const WINDOW_MIN_WIDTH = 640;
+const WINDOW_MIN_HEIGHT = 400;
+const WINDOW_MAX_WIDTH = 1440;
+const WINDOW_MAX_HEIGHT = 900;
+const WINDOW_DEFAULT_WIDTH = 960;
+const WINDOW_DEFAULT_HEIGHT = 600;
 const VIEWPORT_MARGIN = 8;
 
 export function ExpandableCallWidget({
@@ -95,7 +114,7 @@ export function ExpandableCallWidget({
   durationSeconds,
   children,
   controls,
-  defaultMode = 'mini',
+  defaultMode: defaultModeProp = 'mini',
   onModeChange,
   persistKey,
   apiRef,
@@ -104,14 +123,19 @@ export function ExpandableCallWidget({
   zIndex = 9999,
   className,
 }: ExpandableCallWidgetProps) {
+  // Accept the legacy 'docked' spelling at the door; everything below
+  // this line speaks canonical.
+  const defaultMode: PersistedWidgetMode =
+    defaultModeProp === 'docked' ? 'window' : defaultModeProp;
+
   // Resolve initial position from defaultMode + defaultCorner — mini
-  // mode snaps to a corner, docked mode centers on the viewport
-  // (using the docked default dimensions, not the mini ones — otherwise
-  // a docked widget initialized with mini-mode coords would render
+  // mode snaps to a corner, window mode centers on the viewport
+  // (using the window default dimensions, not the mini ones — otherwise
+  // a window-mode widget initialized with mini-mode coords would render
   // partially off-screen on first mount).
   const initialPos = useMemo(() => {
-    if (defaultMode === 'docked') {
-      return centerPosition(DOCKED_DEFAULT_WIDTH, DOCKED_DEFAULT_HEIGHT);
+    if (defaultMode === 'window') {
+      return centerPosition(WINDOW_DEFAULT_WIDTH, WINDOW_DEFAULT_HEIGHT);
     }
     return cornerPosition(defaultCorner);
   }, [defaultMode, defaultCorner]);
@@ -122,13 +146,13 @@ export function ExpandableCallWidget({
       mode: defaultMode,
       x: initialPos.x,
       y: initialPos.y,
-      width: DOCKED_DEFAULT_WIDTH,
-      height: DOCKED_DEFAULT_HEIGHT,
+      width: WINDOW_DEFAULT_WIDTH,
+      height: WINDOW_DEFAULT_HEIGHT,
     },
   });
 
   // Fullscreen is not persisted — it's a transient runtime state on
-  // top of the persisted mini/docked mode.
+  // top of the persisted mini/window mode.
   const [fsActive, setFsActive] = useState(false);
   const effectiveMode: CallWidgetMode = fsActive ? 'fullscreen' : state.mode;
 
@@ -137,7 +161,7 @@ export function ExpandableCallWidget({
   // requestFullscreen on the widget root (NOT documentElement) so the
   // rest of the app remains addressable on exit. Distinguish
   // programmatic exit from Esc / browser-chrome exit via a ref —
-  // browser-chrome exit returns to docked (Slack convention).
+  // browser-chrome exit returns to window (Slack convention).
   const programmaticExitRef = useRef(false);
   useEffect(() => {
     const onChange = () => {
@@ -145,10 +169,10 @@ export function ExpandableCallWidget({
       const inFs = fsEl === rootRef.current;
       if (!inFs && fsActive) {
         // User-driven exit (Esc / chrome). If they were programmatic,
-        // honor the requested target; otherwise default to docked.
+        // honor the requested target; otherwise default to window.
         setFsActive(false);
         if (!programmaticExitRef.current) {
-          setState({ mode: 'docked' });
+          setState({ mode: 'window' });
         }
         programmaticExitRef.current = false;
       }
@@ -190,7 +214,8 @@ export function ExpandableCallWidget({
     void exitFs?.().catch(() => { /* */ });
   }, []);
 
-  const setMode = useCallback((next: CallWidgetMode) => {
+  const setMode = useCallback((requested: AnyCallWidgetMode) => {
+    const next = toCanonicalMode(requested);
     if (next === effectiveMode) return;
     if (next === 'fullscreen') {
       enterFullscreen();
@@ -198,23 +223,23 @@ export function ExpandableCallWidget({
     }
     if (effectiveMode === 'fullscreen') {
       exitFullscreen();
-      // The fullscreenchange handler will set state.mode to 'docked'
+      // The fullscreenchange handler will set state.mode to 'window'
       // unless the caller's target was explicit; honor explicit target.
       setState({ mode: next });
       return;
     }
     // Crossing a mode boundary where the widget size changes — re-pick
     // a position appropriate to the new size, otherwise we render
-    // partially off-screen (mini → docked: 320 corner-snap coords don't
+    // partially off-screen (mini → window: 320 corner-snap coords don't
     // work for a 960-wide widget). Re-clamp against viewport even if
     // the user has dragged the mini widget; the swap is rare enough
     // that resetting position is fine UX.
-    if (next === 'docked' && effectiveMode === 'mini') {
+    if (next === 'window' && effectiveMode === 'mini') {
       const c = centerPosition(state.width, state.height);
       setState({ mode: next, x: c.x, y: c.y });
       return;
     }
-    if (next === 'mini' && effectiveMode === 'docked') {
+    if (next === 'mini' && effectiveMode === 'window') {
       const c = cornerPosition(defaultCorner);
       setState({ mode: next, x: c.x, y: c.y });
       return;
@@ -228,10 +253,10 @@ export function ExpandableCallWidget({
 
   useImperativeHandle(apiRef, () => ({ mode: effectiveMode, setMode }), [effectiveMode, setMode]);
 
-  // ---- Drag handling (docked mode only — mini snaps to a corner) ----
+  // ---- Drag handling (window mode only — mini snaps to a corner) ----
   const dragStateRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
   const onHeaderPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (effectiveMode !== 'docked') return;
+    if (effectiveMode !== 'window') return;
     // Skip drag setup when the pointer landed on (or inside) a button —
     // capturing the pointer on the header steals all events from
     // descendants, so the buttons would never fire their onClick.
@@ -258,10 +283,10 @@ export function ExpandableCallWidget({
     dragStateRef.current = null;
   }, []);
 
-  // ---- Resize handling (docked mode only, bottom-right corner grip) ----
+  // ---- Resize handling (window mode only, bottom-right corner grip) ----
   const resizeStateRef = useRef<{ startX: number; startY: number; origW: number; origH: number } | null>(null);
   const onResizePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (effectiveMode !== 'docked') return;
+    if (effectiveMode !== 'window') return;
     e.stopPropagation();
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     resizeStateRef.current = {
@@ -276,8 +301,8 @@ export function ExpandableCallWidget({
     if (!resize) return;
     const dw = e.clientX - resize.startX;
     const dh = e.clientY - resize.startY;
-    const w = clamp(resize.origW + dw, DOCKED_MIN_WIDTH, Math.min(DOCKED_MAX_WIDTH, window.innerWidth - VIEWPORT_MARGIN * 2));
-    const h = clamp(resize.origH + dh, DOCKED_MIN_HEIGHT, Math.min(DOCKED_MAX_HEIGHT, window.innerHeight - VIEWPORT_MARGIN * 2));
+    const w = clamp(resize.origW + dw, WINDOW_MIN_WIDTH, Math.min(WINDOW_MAX_WIDTH, window.innerWidth - VIEWPORT_MARGIN * 2));
+    const h = clamp(resize.origH + dh, WINDOW_MIN_HEIGHT, Math.min(WINDOW_MAX_HEIGHT, window.innerHeight - VIEWPORT_MARGIN * 2));
     setState({ width: w, height: h });
   }, [setState]);
   const onResizePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -285,10 +310,10 @@ export function ExpandableCallWidget({
     resizeStateRef.current = null;
   }, []);
 
-  // ---- Re-clamp on window resize (docked mode) so persisted positions
+  // ---- Re-clamp on viewport resize (window mode) so persisted positions
   // outside a now-smaller viewport snap back in. ----
   useLayoutEffect(() => {
-    if (effectiveMode !== 'docked') return;
+    if (effectiveMode !== 'window') return;
     const onResize = () => {
       const nx = clampPos(state.x, state.width, window.innerWidth);
       const ny = clampPos(state.y, state.height, window.innerHeight);
@@ -306,7 +331,7 @@ export function ExpandableCallWidget({
         zIndex,
       };
     }
-    if (effectiveMode === 'docked') {
+    if (effectiveMode === 'window') {
       return {
         position: 'fixed',
         left: state.x, top: state.y,
@@ -326,7 +351,10 @@ export function ExpandableCallWidget({
   return (
     <div
       ref={rootRef}
+      // `data-call-widget-mode` is canonical; `-legacy` is the back-compat
+      // hook for selectors written against the pre-2.106 'docked' spelling.
       data-call-widget-mode={effectiveMode}
+      data-call-widget-mode-legacy={toLegacyMode(effectiveMode)}
       style={rootStyle}
       className={cn(
         'flex flex-col bg-surface-inverse text-white shadow-2xl overflow-hidden border border-white/10',
@@ -337,7 +365,7 @@ export function ExpandableCallWidget({
       <div
         className={cn(
           'flex items-center justify-between gap-2 px-3 h-8 min-h-8 border-b border-white/5 select-none',
-          effectiveMode === 'docked' ? 'cursor-grab active:cursor-grabbing' : '',
+          effectiveMode === 'window' ? 'cursor-grab active:cursor-grabbing' : '',
         )}
         onPointerDown={onHeaderPointerDown}
         onPointerMove={onHeaderPointerMove}
@@ -369,17 +397,17 @@ export function ExpandableCallWidget({
               <CornerIcon />
             </ModeButton>
             <ModeButton
-              active={effectiveMode === 'docked'}
+              active={effectiveMode === 'window'}
               label="Window"
-              onClick={() => setMode('docked')}
-              testId="call-widget-mode-docked"
+              onClick={() => setMode('window')}
+              testId="call-widget-mode-window"
             >
               <WindowIcon />
             </ModeButton>
             <ModeButton
               active={effectiveMode === 'fullscreen'}
               label="Fullscreen"
-              onClick={() => setMode(effectiveMode === 'fullscreen' ? 'docked' : 'fullscreen')}
+              onClick={() => setMode(effectiveMode === 'fullscreen' ? 'window' : 'fullscreen')}
               testId="call-widget-mode-fullscreen"
             >
               <ExpandIcon />
@@ -398,7 +426,7 @@ export function ExpandableCallWidget({
         </div>
       )}
 
-      {effectiveMode === 'docked' && (
+      {effectiveMode === 'window' && (
         <div
           className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
           onPointerDown={onResizePointerDown}

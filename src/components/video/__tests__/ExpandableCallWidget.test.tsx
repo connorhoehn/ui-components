@@ -43,7 +43,7 @@ describe('ExpandableCallWidget — 10 cases', () => {
   // -------------------------------------------------------------------------
   // 2. Mode buttons toggle modes
   // -------------------------------------------------------------------------
-  it('2. docked button flips mode to docked; mini button reverses it', async () => {
+  it('2. window button flips mode to window; mini button reverses it', async () => {
     render(
       <ExpandableCallWidget title="Test Call">
         <div />
@@ -57,9 +57,9 @@ describe('ExpandableCallWidget — 10 cases', () => {
     expect(root).toHaveAttribute('data-call-widget-mode', 'mini');
 
     await act(async () => {
-      fireEvent.click(screen.getByTestId('call-widget-mode-docked'));
+      fireEvent.click(screen.getByTestId('call-widget-mode-window'));
     });
-    expect(root).toHaveAttribute('data-call-widget-mode', 'docked');
+    expect(root).toHaveAttribute('data-call-widget-mode', 'window');
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('call-widget-mode-mini'));
@@ -88,9 +88,9 @@ describe('ExpandableCallWidget — 10 cases', () => {
   });
 
   // -------------------------------------------------------------------------
-  // 4. fullscreenchange with fullscreenElement=null returns to docked
+  // 4. fullscreenchange with fullscreenElement=null returns to window
   // -------------------------------------------------------------------------
-  it('4. fullscreenchange with fullscreenElement=null returns mode to docked', async () => {
+  it('4. fullscreenchange with fullscreenElement=null returns mode to window', async () => {
     const requestFs = vi.fn(() => Promise.resolve());
     Element.prototype.requestFullscreen = requestFs;
 
@@ -121,14 +121,14 @@ describe('ExpandableCallWidget — 10 cases', () => {
     });
 
     // After browser-driven exit (fullscreenElement=null, not rootRef.current),
-    // the handler sets fsActive=false and mode='docked'.
-    expect(root).toHaveAttribute('data-call-widget-mode', 'docked');
+    // the handler sets fsActive=false and mode='window'.
+    expect(root).toHaveAttribute('data-call-widget-mode', 'window');
   });
 
   // -------------------------------------------------------------------------
   // 5. onModeChange fires for each transition
   // -------------------------------------------------------------------------
-  it('5. onModeChange fires for mini → docked → mini transitions', async () => {
+  it('5. onModeChange fires for mini → window → mini transitions', async () => {
     const onModeChange = vi.fn();
 
     render(
@@ -141,9 +141,9 @@ describe('ExpandableCallWidget — 10 cases', () => {
     const callsAfterMount = onModeChange.mock.calls.length;
 
     await act(async () => {
-      fireEvent.click(screen.getByTestId('call-widget-mode-docked'));
+      fireEvent.click(screen.getByTestId('call-widget-mode-window'));
     });
-    expect(onModeChange).toHaveBeenCalledWith('docked');
+    expect(onModeChange).toHaveBeenCalledWith('window');
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('call-widget-mode-mini'));
@@ -157,7 +157,7 @@ describe('ExpandableCallWidget — 10 cases', () => {
   // -------------------------------------------------------------------------
   // 6. Persistence roundtrip via persistKey
   // -------------------------------------------------------------------------
-  it('6. persistKey roundtrip: docked persists and is restored on remount', async () => {
+  it('6. persistKey roundtrip: window mode persists and is restored on remount', async () => {
     vi.useFakeTimers();
 
     const { unmount } = render(
@@ -167,7 +167,7 @@ describe('ExpandableCallWidget — 10 cases', () => {
     );
 
     await act(async () => {
-      fireEvent.click(screen.getByTestId('call-widget-mode-docked'));
+      fireEvent.click(screen.getByTestId('call-widget-mode-window'));
     });
 
     // Flush the 200ms debounce so localStorage is written.
@@ -189,7 +189,7 @@ describe('ExpandableCallWidget — 10 cases', () => {
       .getByTestId('call-widget-mode-mini')
       .closest('[data-call-widget-mode]') as HTMLElement;
 
-    expect(root).toHaveAttribute('data-call-widget-mode', 'docked');
+    expect(root).toHaveAttribute('data-call-widget-mode', 'window');
 
     localStorage.removeItem('test-widget');
   });
@@ -208,7 +208,7 @@ describe('ExpandableCallWidget — 10 cases', () => {
     );
 
     await act(async () => {
-      fireEvent.click(screen.getByTestId('call-widget-mode-docked'));
+      fireEvent.click(screen.getByTestId('call-widget-mode-window'));
     });
 
     await act(async () => {
@@ -225,7 +225,7 @@ describe('ExpandableCallWidget — 10 cases', () => {
   // -------------------------------------------------------------------------
   it('8. drag on resize handle updates widget width/height in style', async () => {
     render(
-      <ExpandableCallWidget title="Test Call" defaultMode="docked">
+      <ExpandableCallWidget title="Test Call" defaultMode="window">
         <div />
       </ExpandableCallWidget>,
     );
@@ -255,7 +255,7 @@ describe('ExpandableCallWidget — 10 cases', () => {
   // -------------------------------------------------------------------------
   // 9. apiRef setMode imperative API
   // -------------------------------------------------------------------------
-  it('9. apiRef.current.setMode("docked") flips data attr', async () => {
+  it('9. apiRef.current.setMode("window") flips data attr', async () => {
     const ref = createRef<ExpandableCallWidgetHandle>();
 
     render(
@@ -271,10 +271,10 @@ describe('ExpandableCallWidget — 10 cases', () => {
     expect(root).toHaveAttribute('data-call-widget-mode', 'mini');
 
     await act(async () => {
-      ref.current!.setMode('docked');
+      ref.current!.setMode('window');
     });
 
-    expect(root).toHaveAttribute('data-call-widget-mode', 'docked');
+    expect(root).toHaveAttribute('data-call-widget-mode', 'window');
   });
 
   // -------------------------------------------------------------------------
@@ -282,7 +282,7 @@ describe('ExpandableCallWidget — 10 cases', () => {
   // -------------------------------------------------------------------------
   it('10. pointerdown on mode button inside header does NOT change widget position', async () => {
     render(
-      <ExpandableCallWidget title="Test Call" defaultMode="docked">
+      <ExpandableCallWidget title="Test Call" defaultMode="window">
         <div />
       </ExpandableCallWidget>,
     );
@@ -294,21 +294,21 @@ describe('ExpandableCallWidget — 10 cases', () => {
     const originalLeft = root.style.left;
     const originalTop = root.style.top;
 
-    const dockedBtn = screen.getByTestId('call-widget-mode-docked');
+    const windowBtn = screen.getByTestId('call-widget-mode-window');
 
-    // Pointerdown directly on the docked mode button (which is a <button>
+    // Pointerdown directly on the window mode button (which is a <button>
     // inside the header) — should NOT initiate a drag.
     await act(async () => {
-      fireEvent.pointerDown(dockedBtn, { clientX: 50, clientY: 50, pointerId: 1 });
+      fireEvent.pointerDown(windowBtn, { clientX: 50, clientY: 50, pointerId: 1 });
     });
 
     // Simulate pointer move that would move the widget if drag started.
     await act(async () => {
-      fireEvent.pointerMove(dockedBtn, { clientX: 300, clientY: 300, pointerId: 1 });
+      fireEvent.pointerMove(windowBtn, { clientX: 300, clientY: 300, pointerId: 1 });
     });
 
     await act(async () => {
-      fireEvent.pointerUp(dockedBtn, { clientX: 300, clientY: 300, pointerId: 1 });
+      fireEvent.pointerUp(windowBtn, { clientX: 300, clientY: 300, pointerId: 1 });
     });
 
     // Position must not have changed — drag was skipped for button targets.
