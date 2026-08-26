@@ -86,7 +86,9 @@ export function CallStartedBanner({
       data-caller-name={callerName}
       className={cn(
         'flex items-center gap-3 px-3 py-2 rounded-lg shadow-lg',
-        'bg-surface-inverse text-white border border-white/10',
+        // Call chrome, not an inverse panel: dark in both themes so the
+        // white label/actions stay legible. See --color-call-chrome.
+        'bg-call-chrome text-white border border-call-chrome-border',
         className,
       )}
       style={style}

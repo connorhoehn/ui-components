@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { PageHeader, ExampleBlock } from '../shared';
-import { CallWidget, CallSettingsDialog, MediaEffectsPreviewPanel } from '@/components/video';
+import {
+  CallWidget,
+  CallControls,
+  CallSettingsDialog,
+  ExpandableCallWidget,
+  MediaEffectsPreviewPanel,
+} from '@/components/video';
 import type { CallSidePanelTab, CallWidgetState, CallMode, CallWidgetParticipant } from '@/components/video';
 import { ChatPanel } from '@/components/social';
 import type { ChatMessage } from '@/hooks/useChat';
@@ -199,6 +205,80 @@ function DockedDemo() {
 
 
 // ---------------------------------------------------------------------------
+// Expanded ("window") chrome
+//
+// <ExpandableCallWidget> had NO rendering harness anywhere, which is how
+// its title bar shipped painted with a theme-FLIPPING token: under
+// `data-theme="dark"` the bar went white behind its white Mini/Window/
+// Fullscreen buttons, hiding the only way back to the docked chrome. The
+// widget positions itself `fixed`, so it is mounted on demand rather than
+// inline — the button below is the harness, and
+// tests/e2e/call-chrome-contrast.spec.ts drives it in both themes.
+// ---------------------------------------------------------------------------
+
+function ExpandedChromeExample() {
+  const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState<string | null>('chat');
+  const [muted, setMuted] = useState(false);
+
+  const tabs: CallSidePanelTab[] = [
+    { id: 'chat', label: 'Chat', content: <ChatPanel tone="dark" messages={DOCK_MESSAGES} onSend={() => {}} /> },
+    {
+      id: 'people',
+      label: 'People',
+      content: (
+        <ul className="m-0 flex list-none flex-col gap-1 p-3 text-[13px] text-white">
+          {mockParticipants.map((p) => (
+            <li key={p.id} className="rounded px-2 py-1.5 hover:bg-white/10">{p.displayName}</li>
+          ))}
+        </ul>
+      ),
+    },
+  ];
+
+  return (
+    <div className="p-4">
+      <button
+        type="button"
+        data-testid="open-expanded-chrome"
+        onClick={() => setOpen((v) => !v)}
+        className="rounded-md bg-primary px-3 py-1.5 text-sm text-white"
+      >
+        {open ? 'Close the expanded chrome' : 'Open the expanded (window) chrome'}
+      </button>
+      {open && (
+        <ExpandableCallWidget
+          title="Design review"
+          subtitle="3 in call"
+          durationSeconds={87}
+          defaultMode="window"
+          sidePanelTabs={tabs}
+          activeSidePanelTab={tab}
+          onSidePanelTabChange={setTab}
+          controls={
+            <CallControls
+              mode="video"
+              isMuted={muted}
+              isCameraOn={false}
+              onToggleMute={() => setMuted((m) => !m)}
+              onToggleCamera={() => {}}
+              onToggleScreenShare={() => {}}
+              onOpenAddParticipant={() => {}}
+              onEndCall={() => setOpen(false)}
+            />
+          }
+        >
+          <div className="grid h-full w-full place-items-center bg-video-stage text-sm text-white/50">
+            stage
+          </div>
+        </ExpandableCallWidget>
+      )}
+    </div>
+  );
+}
+
+
+// ---------------------------------------------------------------------------
 // Call settings — effects preview
 //
 // This dialog had NO rendering harness, which is how it shipped with its
@@ -358,6 +438,26 @@ export default function CallWidgetPage() {
       </ExampleBlock>
 
       <ExampleBlock
+        id="call-widget-expanded"
+        title="Expanded (window) chrome"
+        description="The pop-out call window: draggable title bar with Mini / Window / Fullscreen mode buttons, a stage, the same dock on the right and a control strip below. Mounted on demand because it positions itself fixed to the viewport."
+        code={`<ExpandableCallWidget
+  title="Design review"
+  subtitle="3 in call"
+  durationSeconds={87}
+  defaultMode="window"
+  sidePanelTabs={tabs}
+  activeSidePanelTab={tab}
+  onSidePanelTabChange={setTab}
+  controls={<CallControls … />}
+>
+  <HangoutLayout fillParent participants={participants} />
+</ExpandableCallWidget>`}
+      >
+        <ExpandedChromeExample />
+      </ExampleBlock>
+
+      <ExampleBlock
         id="call-widget-ringing"
         title="Ringing State"
         description="Incoming call notification with answer/decline buttons. Shows caller info with animated indicator."
@@ -371,7 +471,7 @@ export default function CallWidgetPage() {
   onDecline={() => dismiss()}
 />`}
       >
-        <div className="relative min-h-[240px] bg-surface-inverse rounded-lg">
+        <div className="relative min-h-[240px] bg-call-chrome rounded-lg">
           <CallWidget
             state="ringing"
             mode="audio"
@@ -402,7 +502,7 @@ export default function CallWidgetPage() {
   onEndCall={() => endCall()}
 />`}
       >
-        <div className="relative min-h-[80px] bg-surface-inverse rounded-lg flex items-center justify-center">
+        <div className="relative min-h-[80px] bg-call-chrome rounded-lg flex items-center justify-center">
           <CallWidget
             state="active"
             mode="audio"

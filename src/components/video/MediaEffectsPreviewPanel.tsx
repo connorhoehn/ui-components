@@ -132,7 +132,7 @@ export function MediaEffectsPreviewPanel({
       data-preview-active={previewActive ? 'true' : 'false'}
       data-preview-dirty={isDirty ? 'true' : 'false'}
       aria-label={title}
-      className={cn('flex flex-col gap-3 text-text-inverse', className)}
+      className={cn('flex flex-col gap-3 text-white', className)}
     >
       {/* ── The point of the feature: a LARGE private self-view. ─────── */}
       <div
@@ -198,7 +198,7 @@ export function MediaEffectsPreviewPanel({
           matter permanently in reach, which is what Teams does. `bg-surface-
           inverse` is opaque so scrolling content passes behind it, not
           through it. */}
-      <footer className="sticky bottom-0 z-10 -mx-1 mt-auto flex shrink-0 items-center justify-end gap-3 border-t border-white/10 bg-surface-inverse px-1 pb-1 pt-3">
+      <footer className="sticky bottom-0 z-10 -mx-1 mt-auto flex shrink-0 items-center justify-end gap-3 border-t border-call-chrome-border bg-call-chrome px-1 pb-1 pt-3">
         <span
           data-testid="media-effects-preview-status"
           className="mr-auto text-[12px] text-white/60"
@@ -221,7 +221,7 @@ export function MediaEffectsPreviewPanel({
           className={cn(
             'rounded-lg border-none px-4 py-1.5 text-[13px] font-semibold transition-colors',
             canApply
-              ? 'cursor-pointer bg-primary text-white hover:bg-primary-hover'
+              ? 'cursor-pointer bg-call-chrome-accent text-white hover:bg-call-chrome-accent-hover'
               : 'cursor-not-allowed bg-white/10 text-white/40',
           )}
         >

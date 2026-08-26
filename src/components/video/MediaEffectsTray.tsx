@@ -101,8 +101,8 @@ function EffectChip({
         'transition-colors duration-150',
         compact ? 'px-2.5 py-1 text-xs' : 'px-3 py-1.5 text-sm',
         active
-          ? 'bg-primary text-white'
-          : 'bg-white/10 text-text-inverse hover:bg-white/20',
+          ? 'bg-call-chrome-accent text-white'
+          : 'bg-white/10 text-white hover:bg-white/20',
         disabled && 'opacity-40 cursor-not-allowed',
         !disabled && 'cursor-pointer',
       )}
@@ -173,12 +173,12 @@ export function MediaEffectsTray({
     <div
       data-testid={testId}
       className={cn(
-        'flex flex-col text-text-inverse',
+        'flex flex-col text-white',
         // Panel chrome only in compact/popover placement — full-size
         // renders flat so a dark host surface (CallSettingsDialog)
         // doesn't show a card-within-a-card inset.
         compact
-          ? 'gap-3 rounded-xl border border-white/10 bg-surface-inverse p-3'
+          ? 'gap-3 rounded-xl border border-call-chrome-border bg-call-chrome p-3'
           : 'gap-4',
         className,
       )}

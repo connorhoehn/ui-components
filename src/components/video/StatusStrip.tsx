@@ -55,7 +55,9 @@ export function StatusStrip({ phase, bitrateBps, viewerCount, duration, classNam
   const label = phase === 'playing' ? 'LIVE' : phase.toUpperCase();
 
   return (
-    <div className={cn('inline-flex items-center gap-4 px-4 py-2 bg-surface-inverse rounded-md text-xs text-code-text font-mono', className)} style={style}>
+    // `bg-call-chrome` (theme-invariant) — the strip's text is the light
+    // --color-code-text, so a flipping surface hid it in dark mode.
+    <div className={cn('inline-flex items-center gap-4 px-4 py-2 bg-call-chrome rounded-md text-xs text-code-text font-mono', className)} style={style}>
       <span className={cn('flex items-center gap-1')}>
         <span className={cn('w-[7px] h-[7px] rounded-full', phaseDotClasses[phase] ?? 'bg-surface-emphasis')} />
         <span className={cn('font-semibold', phaseTextClasses[phase] ?? 'text-text-tertiary')}>{label}</span>

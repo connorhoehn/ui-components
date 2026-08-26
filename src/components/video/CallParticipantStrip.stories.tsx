@@ -17,7 +17,7 @@ const meta = {
   parameters: { layout: 'centered' },
   decorators: [
     (Story) => (
-      <div className="w-80 rounded-lg bg-surface-inverse">
+      <div className="w-80 rounded-lg bg-call-chrome">
         <Story />
       </div>
     ),

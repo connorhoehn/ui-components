@@ -398,7 +398,7 @@ function ActiveCallContent({
           {localParticipant?.videoStream && showVideo ? (
             <VideoTile stream={localParticipant.videoStream} muted />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-surface-inverse">
+            <div className="w-full h-full flex items-center justify-center bg-video-stage">
               {localParticipant && <CallAvatar participant={localParticipant} size={48} />}
             </div>
           )}
@@ -409,7 +409,7 @@ function ActiveCallContent({
            * tile disappeared entirely, which read as "the peer left" even
            * when they were still in the call with audio only. */}
           {participants.length > 0 && (
-            <div className="absolute top-2 right-2 w-20 aspect-video rounded overflow-hidden border border-white/20 bg-surface-inverse">
+            <div className="absolute top-2 right-2 w-20 aspect-video rounded overflow-hidden border border-white/20 bg-video-tile">
               {participants[0].videoStream ? (
                 <VideoTile stream={participants[0].videoStream} />
               ) : (
@@ -968,7 +968,11 @@ export function CallWidget({
       >
         <div
           className={cn(
-            'bg-surface-inverse rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/10 overflow-hidden backdrop-blur-sm',
+            // `bg-call-chrome`, not `bg-surface-inverse`: the call card is
+            // dark in BOTH themes (its children are all white-on-dark), and
+            // the inverse token correctly flips to near-white under
+            // [data-theme="dark"], which turned the whole widget invisible.
+            'bg-call-chrome rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-call-chrome-border overflow-hidden backdrop-blur-sm',
             // Opening the dock WIDENS the card rather than splitting it:
             // the stage has no width to give up (see `sidePanelTabs`), and
             // the stage column ALSO grows (CALL_STAGE_DOCKED_WIDTH) so the
@@ -988,7 +992,7 @@ export function CallWidget({
             >
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-success" />
-                <span className="text-white/80 text-xs font-medium">
+                <span className="text-white/80 text-xs font-medium" data-testid="call-widget-title">
                   {mode === 'video' ? 'Video Call' : 'Audio Call'}
                 </span>
               </div>

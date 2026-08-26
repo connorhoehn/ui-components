@@ -8,7 +8,7 @@ import { t as c } from "../Avatar-Yxs_9Jio.js";
 import { a as l, i as u, n as d, r as f, t as p } from "../Badge-BhPMrMAB.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
 import { n as _, t as v } from "../PresencePanel-BZETxM2o.js";
-import { a as y, i as b, l as x, o as S, r as C, t as ee } from "../MediaEffectsPreviewPanel-DDFKW_eq.js";
+import { a as y, i as b, l as x, o as S, r as C, t as ee } from "../MediaEffectsPreviewPanel-Alkfwgwk.js";
 import { Component as te, useEffect as w, useMemo as T, useRef as E, useState as D } from "react";
 import { Fragment as O, jsx as k, jsxs as A } from "react/jsx-runtime";
 import { useRoomOccupancy as ne } from "@connorhoehn/realtime-modules/client/hangout-rooms";

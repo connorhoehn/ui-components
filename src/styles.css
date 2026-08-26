@@ -130,6 +130,46 @@
   --color-video-stage: #0f0f0f;
   --color-video-tile: #1a1a2e;
 
+  /* Call-chrome surfaces — the docked/expanded call card, its side panel,
+     control bar, pre-join shell, settings dialog, roster, status strip and
+     effects panels.
+     ┌──────────────────────────────────────────────────────────────────┐
+     │ THEME-INVARIANT BY DESIGN. Deliberately NOT overridden in the    │
+     │ [data-theme="dark"] block below — call chrome is dark in BOTH    │
+     │ themes, the way Meet, Zoom and Teams all render it. Video is      │
+     │ watched against a dark frame regardless of the host app's theme,  │
+     │ and the chrome's children (`text-white`, `text-white/60`,          │
+     │ `bg-white/10`, `border-white/10`) are all white-on-dark.          │
+     │                                                                   │
+     │ So call chrome must NEVER be painted with a FLIPPING token.       │
+     │ It used to use `bg-surface-inverse`, which is only accidentally   │
+     │ dark in light mode: in dark mode that token correctly flips to    │
+     │ #f8fafc, and the whole widget became white-on-white — the title,  │
+     │ timer, tab labels, chat body and every control icon invisible.    │
+     │ `surface-inverse` is for surfaces that genuinely mean "inverse of │
+     │ the CURRENT theme" (tooltips, code blocks, inverse panels); it is │
+     │ working as intended and must keep flipping.                       │
+     │                                                                   │
+     │ Values match what `--color-surface-inverse` resolved to in LIGHT  │
+     │ mode, so adopting these tokens is a visual no-op in light and a   │
+     │ fix in dark. Raised planes inside the chrome are white-alpha       │
+     │ overlays (`bg-white/10`, `bg-white/15`), which composite over the  │
+     │ invariant base and therefore need no token of their own.           │
+     └──────────────────────────────────────────────────────────────────┘ */
+  --color-call-chrome: #0f172a;
+  /* Accent for chrome affordances that sit ON the invariant surface — the
+     open-destination dock pill, the active effect chip, the settings tab
+     underline, Apply. `--color-primary` cannot serve here: it LIGHTENS in
+     dark mode (#646cff → #8b91ff) because it normally sits on a light
+     page, which drops white-on-primary to 2.77:1 — under the 3:1 WCAG
+     1.4.11 floor — inside chrome that never lightened with it. */
+  --color-call-chrome-accent: #646cff;
+  --color-call-chrome-accent-hover: #4f55ff;
+  /* Hairline between chrome regions — the alpha white the chrome already
+     used inline, so it stays invisible against a light page behind the
+     card's outer edge exactly as before. */
+  --color-call-chrome-border: rgba(255, 255, 255, 0.1);
+
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
@@ -154,8 +194,9 @@
  *
  * Values mirror the darkTheme preset in src/theme/presets.ts (single source
  * of truth direction: this block follows presets.ts). Deliberate omissions:
- * --color-code-* (Catppuccin Mocha, already a dark family) and
- * --color-video-* (near-black stage surfaces) are theme-invariant.
+ * --color-code-* (Catppuccin Mocha, already a dark family),
+ * --color-video-* (near-black stage surfaces) and --color-call-chrome-*
+ * (the always-dark call card — see its comment above) are theme-invariant.
  */
 [data-theme="dark"] {
   color-scheme: dark;

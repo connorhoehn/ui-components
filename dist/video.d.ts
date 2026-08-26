@@ -472,7 +472,7 @@ export declare type CircularIconToggleSize = 'sm' | 'md' | 'lg';
 
 export declare type CircularIconToggleTone = 'neutral' | 'danger';
 
-export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, onModeChange, persistKey, apiRef, defaultCorner, expandable, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, zIndex, className, }: ExpandableCallWidgetProps): JSX.Element;
+export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, onModeChange, persistKey, apiRef, defaultCorner, expandable, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, zIndex, className, 'data-testid': rootTestId, }: ExpandableCallWidgetProps): JSX.Element;
 
 export declare interface ExpandableCallWidgetHandle {
     /** Always canonical — 'window', never 'docked'. */
@@ -546,6 +546,10 @@ export declare interface ExpandableCallWidgetProps {
     zIndex?: number;
     /** Class on the root. */
     className?: string;
+    /** Root testid. Defaults to 'expandable-call-widget' so tests (and the
+     *  demo harness) can scope to THIS widget — `data-call-widget-mode` is
+     *  also stamped by <CallWidget>, so it is not a unique handle. */
+    'data-testid'?: string;
 }
 
 export declare function gridCols(count: number): number;

@@ -125,6 +125,10 @@ export interface ExpandableCallWidgetProps {
   zIndex?: number;
   /** Class on the root. */
   className?: string;
+  /** Root testid. Defaults to 'expandable-call-widget' so tests (and the
+   *  demo harness) can scope to THIS widget — `data-call-widget-mode` is
+   *  also stamped by <CallWidget>, so it is not a unique handle. */
+  'data-testid'?: string;
 }
 
 const MINI_WIDTH = 320;
@@ -154,6 +158,7 @@ export function ExpandableCallWidget({
   onSidePanelTabChange,
   zIndex = 9999,
   className,
+  'data-testid': rootTestId = 'expandable-call-widget',
 }: ExpandableCallWidgetProps) {
   // Accept the legacy 'docked' spelling at the door; everything below
   // this line speaks canonical.
@@ -392,12 +397,17 @@ export function ExpandableCallWidget({
       ref={rootRef}
       // `data-call-widget-mode` is canonical; `-legacy` is the back-compat
       // hook for selectors written against the pre-2.106 'docked' spelling.
+      data-testid={rootTestId}
       data-call-widget-mode={effectiveMode}
       data-call-widget-mode-legacy={toLegacyMode(effectiveMode)}
       data-call-side-panel-open={dockOpen ? 'true' : 'false'}
       style={rootStyle}
       className={cn(
-        'flex flex-col bg-surface-inverse text-white shadow-2xl overflow-hidden border border-white/10',
+        // Theme-invariant call chrome — see --color-call-chrome in
+        // styles.css. `bg-surface-inverse` here painted the window title
+        // bar white under [data-theme="dark"], hiding the Mini/Window/
+        // Fullscreen buttons that are the only way back to the dock.
+        'flex flex-col bg-call-chrome text-white shadow-2xl overflow-hidden border border-call-chrome-border',
         effectiveMode === 'fullscreen' ? 'rounded-none' : 'rounded-lg',
         className,
       )}
@@ -414,7 +424,7 @@ export function ExpandableCallWidget({
       >
         <div className="min-w-0 flex items-center gap-2 text-xs text-white/80">
           <span className="w-2 h-2 rounded-full bg-success" aria-hidden />
-          <span className="truncate font-medium">{title}</span>
+          <span className="truncate font-medium" data-testid="call-widget-window-title">{title}</span>
           {subtitle && <span className="truncate text-white/50">{subtitle}</span>}
           {durationSeconds !== undefined && (
             <span

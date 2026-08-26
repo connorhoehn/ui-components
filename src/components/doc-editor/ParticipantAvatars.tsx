@@ -202,7 +202,10 @@ function AvatarItem({
           only and does not move anything on screen. */}
       {hovered && (
         <div
-          className={cn('absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-surface-inverse text-white py-2 px-3 rounded-md text-xs whitespace-nowrap z-[100] pointer-events-auto shadow-[0_4px_12px_rgba(0,0,0,0.15)] leading-snug')}
+          // A genuine inverse surface (a tooltip), so it KEEPS the flipping
+          // `bg-surface-inverse` — but its label must flip with it.
+          // `text-white` was white-on-#f8fafc under [data-theme="dark"].
+          className={cn('absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-surface-inverse text-text-inverse py-2 px-3 rounded-md text-xs whitespace-nowrap z-[100] pointer-events-auto shadow-[0_4px_12px_rgba(0,0,0,0.15)] leading-snug')}
           onMouseEnter={showTooltip}
           onMouseLeave={hideTooltip}
         >

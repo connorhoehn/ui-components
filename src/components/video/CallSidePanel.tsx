@@ -176,7 +176,7 @@ export function CallSidePanelToggles({
             className={cn(
               'relative grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors duration-150',
               active
-                ? 'bg-primary text-white'
+                ? 'bg-call-chrome-accent text-white'
                 : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white',
               isDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
             )}
@@ -279,9 +279,15 @@ export function CallSidePanel({
       data-call-side-panel-tab={tabbed ? active.id : undefined}
       aria-label={active.label}
       className={cn(
-        'flex min-h-0 flex-col overflow-hidden bg-surface-inverse text-text-inverse',
+        // Theme-invariant call chrome (see --color-call-chrome in
+        // styles.css). Both halves of the old pair flipped in dark mode:
+        // `bg-surface-inverse` went near-white AND `text-text-inverse`
+        // went near-black, so the dock painted dark-on-white while its
+        // siblings (text-white/60 tabs, the ✕, the chat body) stayed
+        // white — the panel was half-invisible either way.
+        'flex min-h-0 flex-col overflow-hidden bg-call-chrome text-white',
         placement === 'docked'
-          ? ['h-full shrink-0 border-l border-white/10', widthClassName]
+          ? ['h-full shrink-0 border-l border-call-chrome-border', widthClassName]
           : 'absolute inset-0 z-20',
         className,
       )}
@@ -289,7 +295,7 @@ export function CallSidePanel({
       {/* The dock's ONE header. `py-3 px-4` plus a body that drew its own
           card left a dead strip above the first row of content; this row
           is deliberately tight. */}
-      <header className="flex shrink-0 items-center justify-between gap-2 border-b border-white/10 px-2 py-2">
+      <header className="flex shrink-0 items-center justify-between gap-2 border-b border-call-chrome-border px-2 py-2">
         {showTabRail ? (
           <div
             role="tablist"
@@ -310,7 +316,7 @@ export function CallSidePanel({
                   className={cn(
                     'shrink-0 rounded-full px-3 py-1 text-[13px] font-medium transition-colors',
                     isActive
-                      ? 'bg-white/15 text-text-inverse'
+                      ? 'bg-white/15 text-white'
                       : 'text-white/60 hover:bg-white/10 hover:text-white/90',
                     tab.disabled === true ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
                   )}
@@ -321,7 +327,7 @@ export function CallSidePanel({
             })}
           </div>
         ) : (
-          <h2 className="m-0 truncate text-sm font-semibold text-text-inverse">{active.label}</h2>
+          <h2 className="m-0 truncate text-sm font-semibold text-white">{active.label}</h2>
         )}
         <button
           type="button"

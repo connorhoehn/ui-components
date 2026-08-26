@@ -782,7 +782,7 @@ function B({ participant: e, sectionTitle: t, onJumpToUser: n, onFollowUser: r, 
 				}), /* @__PURE__ */ j("div", { className: p("absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white", e.idle ? "bg-warning" : "bg-success [animation:presencePulse_2s_infinite]") })]
 			}),
 			a && /* @__PURE__ */ M("div", {
-				className: p("absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-surface-inverse text-white py-2 px-3 rounded-md text-xs whitespace-nowrap z-[100] pointer-events-auto shadow-[0_4px_12px_rgba(0,0,0,0.15)] leading-snug"),
+				className: p("absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-surface-inverse text-text-inverse py-2 px-3 rounded-md text-xs whitespace-nowrap z-[100] pointer-events-auto shadow-[0_4px_12px_rgba(0,0,0,0.15)] leading-snug"),
 				onMouseEnter: l,
 				onMouseLeave: u,
 				children: [
@@ -1133,7 +1133,7 @@ function De({ participant: e, isSpeaking: t }) {
 		let t = n.current, r = e.streams[0] ?? null;
 		t && r && t.srcObject !== r && (t.srcObject = r);
 	}, [e.streams]), /* @__PURE__ */ M("div", {
-		className: p("relative bg-surface-inverse rounded-lg overflow-hidden transition-shadow duration-300", t ? "video-tile-speaking" : "video-tile-idle"),
+		className: p("relative bg-video-tile rounded-lg overflow-hidden transition-shadow duration-300", t ? "video-tile-speaking" : "video-tile-idle"),
 		children: [
 			/* @__PURE__ */ j("video", {
 				ref: n,
@@ -1307,7 +1307,7 @@ function q({ documentId: e, userId: t, idToken: n, meta: r, updateMeta: i, sendM
 	}, [f, d]);
 	let C = r?.activeCallSessionId;
 	return /* @__PURE__ */ M("div", {
-		className: p("bg-surface-inverse border border-code-raised rounded-xl overflow-hidden"),
+		className: p("bg-call-chrome border border-code-raised rounded-xl overflow-hidden"),
 		children: [/* @__PURE__ */ M("div", {
 			className: p("flex items-center justify-between px-2 py-1 border-b border-code-raised shrink-0"),
 			children: [/* @__PURE__ */ j("span", {

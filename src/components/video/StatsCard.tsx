@@ -29,10 +29,14 @@ function formatBitrate(bps: number): string {
   return `${bps} bps`;
 }
 
+// Surfaces use `bg-call-chrome` (theme-invariant, see styles.css) rather
+// than `bg-surface-inverse`: this card overlays the call stage and its
+// values are painted in the light `--color-code-text`, so a surface that
+// flipped to near-white in dark mode erased them.
 export function StatsCard({ metrics, className, style }: StatsCardProps) {
   if (!metrics) {
     return (
-      <div className={cn('p-3 bg-surface-inverse rounded-lg text-text-tertiary text-xs', className)} style={style}>
+      <div className={cn('p-3 bg-call-chrome rounded-lg text-text-tertiary text-xs', className)} style={style}>
         No stream data
       </div>
     );
@@ -49,7 +53,7 @@ export function StatsCard({ metrics, className, style }: StatsCardProps) {
   }
 
   return (
-    <div className={cn('p-3 bg-surface-inverse rounded-lg text-xs text-code-text', className)} style={style}>
+    <div className={cn('p-3 bg-call-chrome rounded-lg text-xs text-code-text', className)} style={style}>
       {rows.map(([label, value]) => (
         <div key={label} className={cn('flex justify-between py-[3px]')}>
           <span className={cn('text-text-tertiary')}>{label}</span>

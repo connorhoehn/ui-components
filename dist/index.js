@@ -40,10 +40,10 @@ import { o as dr, s as fr } from "./renderers-CvqDWPkj.js";
 import { n as pr, r as mr, t as hr } from "./EventStreamContext-CLzG8O5_.js";
 import { B as gr, E as _r, J as vr, N as yr, Q as br, S as xr, Y as Sr, Z as Cr, _ as wr, at as Tr, b as Er, d as Dr, f as Or, g as kr, h as Ar, it as jr, j as Mr, l as Nr, m as Pr, n as Fr, p as Ir, s as Lr, t as Rr, u as zr, v as Br, w as Vr, x as Hr, y as Ur } from "./services-DrJviHEM.js";
 import { n as Wr, t as Gr } from "./ObservabilityContext-DpoDrm3T.js";
-import { a as Kr, c as qr, d as Jr, f as Yr, i as Xr, l as Zr, n as Qr, o as $r, p as ei, r as ti, s as ni, t as ri, u as ii } from "./social-CNrDUYQM.js";
+import { a as Kr, c as qr, d as Jr, f as Yr, i as Xr, l as Zr, n as Qr, o as $r, p as ei, r as ti, s as ni, t as ri, u as ii } from "./social-B-MMXs88.js";
 import { t as ai } from "./Select-Z0TLUVeL.js";
-import { $ as oi, A as si, B as ci, C as li, D as ui, E as di, F as fi, G as pi, H as mi, I as hi, J as gi, K as _i, L as vi, M as yi, N as bi, O as xi, P as Si, Q as Ci, R as wi, S as Ti, T as Ei, U as Di, V as Oi, W as ki, X as Ai, Y as ji, Z as Mi, _ as Ni, a as Pi, at as Fi, b as Ii, c as Li, d as Ri, et as zi, f as Bi, g as Vi, h as Hi, i as Ui, it as Wi, j as Gi, k as Ki, l as qi, m as Ji, n as Yi, nt as Xi, o as Zi, ot as Qi, p as $i, q as ea, r as ta, rt as na, s as ra, t as ia, tt as aa, u as oa, v as sa, w as ca, x as la, y as ua, z as da } from "./video-BCtqcMP6.js";
-import { a as fa, c as pa, d as ma, f as ha, i as ga, l as _a, m as va, n as ya, o as ba, p as xa, r as Sa, s as Ca, t as wa, u as Ta } from "./MediaEffectsPreviewPanel-DDFKW_eq.js";
+import { $ as oi, A as si, B as ci, C as li, D as ui, E as di, F as fi, G as pi, H as mi, I as hi, J as gi, K as _i, L as vi, M as yi, N as bi, O as xi, P as Si, Q as Ci, R as wi, S as Ti, T as Ei, U as Di, V as Oi, W as ki, X as Ai, Y as ji, Z as Mi, _ as Ni, a as Pi, at as Fi, b as Ii, c as Li, d as Ri, et as zi, f as Bi, g as Vi, h as Hi, i as Ui, it as Wi, j as Gi, k as Ki, l as qi, m as Ji, n as Yi, nt as Xi, o as Zi, ot as Qi, p as $i, q as ea, r as ta, rt as na, s as ra, t as ia, tt as aa, u as oa, v as sa, w as ca, x as la, y as ua, z as da } from "./video-DfIV9SOD.js";
+import { a as fa, c as pa, d as ma, f as ha, i as ga, l as _a, m as va, n as ya, o as ba, p as xa, r as Sa, s as Ca, t as wa, u as Ta } from "./MediaEffectsPreviewPanel-Alkfwgwk.js";
 import { A as Ea, C as Da, D as Oa, E as ka, O as Aa, S as ja, T as Ma, _ as Na, a as Pa, b as Fa, c as Ia, d as La, f as Ra, g as za, h as Ba, i as Va, k as Ha, l as Ua, m as Wa, n as Ga, o as Ka, p as qa, r as Ja, s as Ya, t as Xa, u as Za, v as Qa, w as $a, x as eo, y as to } from "./identity-BH2To_KZ.js";
 import { t as no } from "./Checkbox-DsS7fIUO.js";
 import { Suspense as ro, createContext as io, forwardRef as ao, lazy as oo, useCallback as W, useContext as so, useEffect as G, useId as co, useLayoutEffect as lo, useMemo as K, useRef as q, useState as J } from "react";
@@ -127,7 +127,7 @@ function vo({ candidates: e, onInvite: t, loading: n = !1, resetKey: r, children
 						state: e.online ? "online" : "offline",
 						pulse: !1,
 						size: "xs",
-						className: H("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", f ? "ring-surface-inverse" : "ring-surface")
+						className: H("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", f ? "ring-call-chrome" : "ring-surface")
 					})]
 				}),
 				/* @__PURE__ */ X("span", {
@@ -1268,7 +1268,7 @@ function Zo() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Qo = oo(() => import("./DocumentEditorPage-BLOvPnix.js").then((e) => e.n));
+var Qo = oo(() => import("./DocumentEditorPage-D53V2QvI.js").then((e) => e.n));
 function $o({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

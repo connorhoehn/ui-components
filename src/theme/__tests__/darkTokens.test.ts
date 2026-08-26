@@ -71,8 +71,15 @@ describe('dark token block — source contract (src/styles.css)', () => {
   });
 
   it('covers EVERY @theme color token except the theme-invariant families', () => {
+    // Three families are theme-invariant ON PURPOSE and must stay out of
+    // the dark block: --color-code-* (Catppuccin Mocha), --color-video-*
+    // (near-black stage) and --color-call-chrome-* (the call card, which
+    // is dark in both themes the way Meet/Zoom/Teams render it — see the
+    // comment beside the tokens in styles.css).
     const invariant = (name: string) =>
-      name.startsWith('--color-code-') || name.startsWith('--color-video-');
+      name.startsWith('--color-code-') ||
+      name.startsWith('--color-video-') ||
+      name.startsWith('--color-call-chrome');
     const light = [...tokenNames(themeBody)].filter((n) => !invariant(n));
     const dark = tokenNames(darkBody);
     const missing = light.filter((n) => !dark.has(n));
@@ -81,6 +88,19 @@ describe('dark token block — source contract (src/styles.css)', () => {
     const lightSet = tokenNames(themeBody);
     const extra = [...dark].filter((n) => !lightSet.has(n));
     expect(extra).toEqual([]);
+  });
+
+  it('leaves the call-chrome family OUT of the dark block, on purpose', () => {
+    // The regression this guards: call chrome painted with a flipping
+    // token (`bg-surface-inverse`) went white in dark mode while its
+    // children stayed white — an unusable, fully invisible call widget.
+    // If someone "completes" the dark palette by adding these here, the
+    // bug comes straight back.
+    expect(tokenValue(themeBody, '--color-call-chrome')).toBe('#0f172a');
+    expect(tokenValue(themeBody, '--color-call-chrome-border')).toBe('rgba(255, 255, 255, 0.1)');
+    for (const name of tokenNames(darkBody)) {
+      expect(name.startsWith('--color-call-chrome')).toBe(false);
+    }
   });
 
   it('does not touch the light values in @theme', () => {

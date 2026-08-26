@@ -400,7 +400,7 @@ function C({ label: t, active: n, disabled: r, compact: i, onClick: a, thumbUrl:
 		"aria-pressed": n,
 		title: t,
 		"data-testid": l,
-		className: e("inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap shrink-0", "transition-colors duration-150", i ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm", n ? "bg-primary text-white" : "bg-white/10 text-text-inverse hover:bg-white/20", r && "opacity-40 cursor-not-allowed", !r && "cursor-pointer"),
+		className: e("inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap shrink-0", "transition-colors duration-150", i ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm", n ? "bg-call-chrome-accent text-white" : "bg-white/10 text-white hover:bg-white/20", r && "opacity-40 cursor-not-allowed", !r && "cursor-pointer"),
 		children: [c && /* @__PURE__ */ o("span", {
 			"aria-hidden": !0,
 			className: e("rounded-full bg-cover bg-center shrink-0 border border-white/20", i ? "h-4 w-4" : "h-5 w-5"),
@@ -423,7 +423,7 @@ function w({ label: t, compact: n, children: r }) {
 function T({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, backgroundMode: a, activeBackgroundUrl: c, onSelectBackground: l, faceSprites: u, activeFaceSpriteId: d, onSelectFaceSprite: f, disabled: p = !1, compact: m = !1, className: h, "data-testid": g }) {
 	return /* @__PURE__ */ s("div", {
 		"data-testid": g,
-		className: e("flex flex-col text-text-inverse", m ? "gap-3 rounded-xl border border-white/10 bg-surface-inverse p-3" : "gap-4", h),
+		className: e("flex flex-col text-white", m ? "gap-3 rounded-xl border border-call-chrome-border bg-call-chrome p-3" : "gap-4", h),
 		children: [
 			/* @__PURE__ */ o(w, {
 				label: "Filters",
@@ -513,7 +513,7 @@ function D({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCance
 		"data-preview-active": t ? "true" : "false",
 		"data-preview-dirty": r ? "true" : "false",
 		"aria-label": b,
-		className: e("flex flex-col gap-3 text-text-inverse", S),
+		className: e("flex flex-col gap-3 text-white", S),
 		children: [
 			/* @__PURE__ */ s("div", {
 				"data-testid": "media-effects-preview-stage",
@@ -560,7 +560,7 @@ function D({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCance
 				onSelectFaceSprite: w(_)
 			}),
 			/* @__PURE__ */ s("footer", {
-				className: "sticky bottom-0 z-10 -mx-1 mt-auto flex shrink-0 items-center justify-end gap-3 border-t border-white/10 bg-surface-inverse px-1 pb-1 pt-3",
+				className: "sticky bottom-0 z-10 -mx-1 mt-auto flex shrink-0 items-center justify-end gap-3 border-t border-call-chrome-border bg-call-chrome px-1 pb-1 pt-3",
 				children: [
 					/* @__PURE__ */ o("span", {
 						"data-testid": "media-effects-preview-status",
@@ -579,7 +579,7 @@ function D({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCance
 						onClick: i,
 						disabled: !D,
 						"data-testid": "media-effects-preview-apply",
-						className: e("rounded-lg border-none px-4 py-1.5 text-[13px] font-semibold transition-colors", D ? "cursor-pointer bg-primary text-white hover:bg-primary-hover" : "cursor-not-allowed bg-white/10 text-white/40"),
+						className: e("rounded-lg border-none px-4 py-1.5 text-[13px] font-semibold transition-colors", D ? "cursor-pointer bg-call-chrome-accent text-white hover:bg-call-chrome-accent-hover" : "cursor-not-allowed bg-white/10 text-white/40"),
 						children: x
 					})
 				]

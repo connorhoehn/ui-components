@@ -106,7 +106,7 @@ export const ControlBarTrigger: Story = {
     return (
       <Stage>
         <ReactionOverlay reactions={reactions} />
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-2 rounded-full bg-surface-inverse/90 border border-white/10">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-2 rounded-full bg-call-chrome/90 border border-call-chrome-border">
           <ReactionPickerButton
             onReact={(emoji) =>
               setReactions((prev) => [

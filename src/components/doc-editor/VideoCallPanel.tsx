@@ -47,7 +47,7 @@ function ParticipantTile({ participant, isSpeaking }: { participant: HangoutPart
 
   return (
     <div
-      className={cn('relative bg-surface-inverse rounded-lg overflow-hidden transition-shadow duration-300', isSpeaking ? 'video-tile-speaking' : 'video-tile-idle')}
+      className={cn('relative bg-video-tile rounded-lg overflow-hidden transition-shadow duration-300', isSpeaking ? 'video-tile-speaking' : 'video-tile-idle')}
     >
       <video
         ref={videoRef}
@@ -272,7 +272,7 @@ export default function VideoCallPanel({
   const activeCallSessionId = meta?.activeCallSessionId;
 
   return (
-    <div className={cn('bg-surface-inverse border border-code-raised rounded-xl overflow-hidden')}>
+    <div className={cn('bg-call-chrome border border-code-raised rounded-xl overflow-hidden')}>
       {/* Header */}
       <div className={cn('flex items-center justify-between px-2 py-1 border-b border-code-raised shrink-0')}>
         <span className={cn('text-[11px] font-semibold text-text-tertiary m-0')}>Video</span>

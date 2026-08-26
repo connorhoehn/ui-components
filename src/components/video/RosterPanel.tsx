@@ -58,7 +58,10 @@ export function RosterPanel({
       className={cn(
         'flex flex-col w-64 shrink-0',
         dark
-          ? 'bg-surface-inverse border-l border-white/10'
+          // tone="dark" is call chrome (all its text is white/alpha), so it
+          // takes the theme-invariant token — `bg-surface-inverse` flipped
+          // to near-white under [data-theme="dark"]. See --color-call-chrome.
+          ? 'bg-call-chrome border-l border-call-chrome-border'
           : 'bg-[var(--color-surface)] border-l border-[var(--color-border)]',
         className,
       )}

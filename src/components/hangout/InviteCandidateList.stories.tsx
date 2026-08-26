@@ -64,7 +64,7 @@ export const SinglePick: Story = {
 /** Dark call chrome (the CallSettingsDialog People-tab surface). */
 export const DarkTone: Story = {
   render: (args) => (
-    <div className="max-w-sm rounded-lg bg-surface-inverse p-3">
+    <div className="max-w-sm rounded-lg bg-call-chrome p-3">
       <InviteCandidateList {...args} tone="dark" searchable grouped />
     </div>
   ),

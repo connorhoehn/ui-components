@@ -221,7 +221,10 @@ export default function HangoutPreJoinShell({
                 // initials when avatarSrc is absent.
                 <div
                   data-testid="prejoin-identity-tile"
-                  className="absolute inset-0 grid place-items-center bg-surface-inverse/95"
+                  // A video-stage placeholder, not an inverse panel: it
+                  // covers the camera preview, so it stays near-black in
+                  // both themes like the `bg-black` frame beneath it.
+                  className="absolute inset-0 grid place-items-center bg-video-stage/95"
                 >
                   <div className="flex flex-col items-center gap-3 px-6 text-center">
                     <Avatar
@@ -233,14 +236,17 @@ export default function HangoutPreJoinShell({
                       <span className="text-white text-base font-medium truncate max-w-[16rem]">
                         {localIdentity.displayName}
                       </span>
-                      <span className="text-text-disabled text-xs">Camera off</span>
+                      {/* Always over the near-black preview, so white/alpha
+                          rather than `text-text-disabled` — that token flips
+                          to #475569 in dark mode and vanishes here. */}
+                      <span className="text-white/60 text-xs">Camera off</span>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div
                   data-testid="prejoin-camera-off-fallback"
-                  className="absolute inset-0 grid place-items-center text-text-disabled text-sm"
+                  className="absolute inset-0 grid place-items-center text-white/60 text-sm"
                 >
                   Camera off
                 </div>

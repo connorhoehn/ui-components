@@ -268,7 +268,7 @@ export function CallControls({
 
       {showPicker && onAddParticipant && !onOpenAddParticipant && (
         <div
-          className="border-t border-white/5 bg-surface-inverse/80"
+          className="border-t border-white/5 bg-call-chrome/80"
           data-testid="add-participant-picker"
         >
           <div className="flex items-center justify-between px-3 py-1.5">

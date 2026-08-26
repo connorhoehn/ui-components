@@ -126,7 +126,7 @@ export function ReactionPicker({ onReact, emojis = DEFAULT_EMOJIS, className, st
       className={cn(
         // Inverse-surface tokens (the way MediaEffectsTray styles itself):
         // the picker always sits over dark call chrome.
-        'flex gap-1 px-2 py-1.5 rounded-[20px] bg-surface-inverse/90 border border-white/10',
+        'flex gap-1 px-2 py-1.5 rounded-[20px] bg-call-chrome/90 border border-call-chrome-border',
         className,
       )}
       style={style}

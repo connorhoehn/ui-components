@@ -74,7 +74,7 @@ export const DarkTone: Story = {
   render: (args) => {
     const [active, setActive] = useState<string | null>('group:launch');
     return (
-      <div className="max-w-xs rounded-lg bg-surface-inverse p-2">
+      <div className="max-w-xs rounded-lg bg-call-chrome p-2">
         <ConversationList
           {...args}
           tone="dark"

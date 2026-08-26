@@ -199,7 +199,7 @@ export function InviteCandidateList({
                                 size="xs"
                                 className={cn(
                                     'absolute -bottom-0.5 -right-0.5 rounded-full ring-2',
-                                    dark ? 'ring-surface-inverse' : 'ring-surface',
+                                    dark ? 'ring-call-chrome' : 'ring-surface',
                                 )}
                             />
                         )}

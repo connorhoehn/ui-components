@@ -111,14 +111,15 @@ export function CallSettingsDialog({
       maxWidth={768}
       rawChildren
       backdropTestId="call-settings-backdrop"
-      cardClassName="max-w-4xl bg-surface-inverse text-text-inverse border border-white/10 p-0 overflow-hidden"
+      // Theme-invariant call chrome — see --color-call-chrome in styles.css.
+      cardClassName="max-w-4xl bg-call-chrome text-white border border-call-chrome-border p-0 overflow-hidden"
     >
       <div
         data-testid="call-settings-dialog"
         className={cn('flex flex-col', className)}
       >
-        <header className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-          <h2 className="m-0 text-sm font-semibold text-text-inverse">{title}</h2>
+        <header className="flex items-center justify-between gap-3 border-b border-call-chrome-border px-4 py-3">
+          <h2 className="m-0 text-sm font-semibold text-white">{title}</h2>
           <button
             type="button"
             aria-label="Close"
@@ -177,7 +178,7 @@ export function CallSettingsDialog({
               <div
                 role="tablist"
                 aria-label="Call settings sections"
-                className="flex items-center gap-1 border-b border-white/10 px-3 pt-2"
+                className="flex items-center gap-1 border-b border-call-chrome-border px-3 pt-2"
               >
                 {available.map((t) => (
                   <button
@@ -190,7 +191,7 @@ export function CallSettingsDialog({
                     className={cn(
                       'cursor-pointer rounded-t-md border-b-2 px-3 py-1.5 text-[13px] font-medium transition-colors',
                       t === activeTab
-                        ? 'border-primary text-text-inverse'
+                        ? 'border-call-chrome-accent text-white'
                         : 'border-transparent text-white/60 hover:bg-white/5 hover:text-white/90',
                     )}
                   >

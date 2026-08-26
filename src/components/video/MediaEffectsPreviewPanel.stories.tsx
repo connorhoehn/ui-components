@@ -66,7 +66,7 @@ function Harness({ previewActive = true }: { previewActive?: boolean }) {
   const s = useFakePreviewSession(previewActive);
   const shown = s.draft ?? s.live;
   return (
-    <div className="max-w-xl rounded-2xl bg-surface-inverse p-4">
+    <div className="max-w-xl rounded-2xl bg-call-chrome p-4">
       <MediaEffectsPreviewPanel
         previewActive={s.draft !== null}
         previewStream={null}

@@ -2498,7 +2498,7 @@ function ke({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 							}), a.online !== void 0 && /* @__PURE__ */ T(u, {
 								state: a.online ? "online" : "offline",
 								pulse: !1,
-								className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", p ? "ring-surface-inverse" : "ring-surface")
+								className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", p ? "ring-call-chrome" : "ring-surface")
 							})]
 						}) : null,
 						/* @__PURE__ */ E("span", {
