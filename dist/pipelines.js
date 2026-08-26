@@ -1,26 +1,26 @@
 import { n as e } from "./IdentityContext-CQM1qwH6.js";
 import "./WebSocketContext-DUvjGLFq.js";
-import { a as t, n } from "./ToastProvider-DPq8u2eM.js";
+import { a as t, n } from "./ToastProvider-BKjV21G4.js";
 import { t as r } from "./cn-DhjIN-s0.js";
 import { t as i } from "./useEventCallback-Cwx9QVSi.js";
-import { a, i as o, l as s, n as c, o as l, r as u, s as d, t as f, u as p } from "./StatusPill-TPH7zgAw.js";
+import { a, i as o, l as s, n as c, o as l, r as u, s as d, t as f, u as p } from "./StatusPill-CLcnxWgo.js";
 import { t as m } from "./Button-CTpms90-.js";
 import { n as h, r as g, t as _ } from "./FileUploadDrop-CpLUJEjW.js";
 import { t as v } from "./Banner-BLOg1hC_.js";
 import { n as y, t as b } from "./Chart-DUoOhhMu.js";
 import { t as x } from "./Chip-2lIuHwy5.js";
-import { t as S } from "./Modal-DOOwy3wr.js";
-import { t as C } from "./ConfirmDialog-BdFza4S6.js";
+import { t as S } from "./Modal-CyoyiNKN.js";
+import { t as C } from "./ConfirmDialog-Cd8NZEXi.js";
 import { t as w } from "./EmptyState-CUHf5NYN.js";
 import { i as T, t as E } from "./focusTrap-CmWJlptm.js";
 import { t as D } from "./SkeletonCard-CGe8XFPB.js";
-import { t as O } from "./Input-DcK2h-jK.js";
+import { t as O } from "./Input-DLknWXri.js";
 import { t as k } from "./activationKey-CjbL3LUv.js";
-import { t as A } from "./Textarea-C3t5PCLv.js";
+import { t as A } from "./Textarea-Dz4doxTv.js";
 import { n as j, r as M, t as ee } from "./EventStreamContext-CLzG8O5_.js";
-import { A as te, B as ne, C as re, D as ie, E as ae, F as oe, G as se, H as ce, I as N, J as le, K as ue, L as de, M as fe, O as pe, P as me, Q as he, R as ge, T as P, U as _e, V as ve, W as ye, X as be, Y as xe, Z as Se, _ as Ce, a as we, at as Te, b as Ee, c as De, d as Oe, et as ke, f as Ae, h as je, i as Me, it as Ne, k as Pe, l as Fe, m as Ie, n as Le, nt as Re, o as ze, p as F, q as Be, r as Ve, rt as He, s as Ue, t as We, tt as Ge, u as Ke, v as qe, w as Je, x as Ye, y as Xe, z as Ze } from "./services-DrJviHEM.js";
+import { A as te, B as ne, C as re, D as ie, E as ae, F as oe, G as se, H as ce, I as N, J as le, K as ue, L as de, M as fe, O as pe, P as me, Q as he, R as ge, T as P, U as _e, V as ve, W as ye, X as be, Y as xe, Z as Se, _ as Ce, a as we, at as Te, b as Ee, c as De, d as Oe, et as ke, f as Ae, h as je, i as Me, it as Ne, k as Pe, l as Fe, m as Ie, n as Le, nt as Re, o as ze, p as F, q as Be, r as Ve, rt as He, s as Ue, t as We, tt as Ge, u as Ke, v as qe, w as Je, x as Ye, y as Xe, z as Ze } from "./services-CzebqIKX.js";
 import { t as Qe } from "./rovingFocus-Bj5Y6kwY.js";
-import { t as $e } from "./Select-Z0TLUVeL.js";
+import { t as $e } from "./Select-CqVokE2v.js";
 import { t as et } from "./Checkbox-DsS7fIUO.js";
 /* empty css               */
 import tt, { createContext as nt, memo as rt, useCallback as I, useContext as it, useEffect as L, useId as at, useMemo as R, useRef as z, useState as B } from "react";
@@ -126,7 +126,7 @@ function Ot(e) {
 //#region src/components/pipelines/nodes/BaseNode.tsx
 var kt = {
 	idle: {
-		card: "border border-border-field bg-white",
+		card: "border border-border-field bg-surface",
 		dot: "bg-state-idle"
 	},
 	pending: {
@@ -2486,12 +2486,12 @@ function Jn({ id: e, sourceX: n, sourceY: i, targetX: a, targetY: o, sourcePosit
 			})
 		}) : null,
 		f.label ? /* @__PURE__ */ H(pt, { children: /* @__PURE__ */ H("div", {
-			className: r("absolute pointer-events-auto px-2 py-0.5 rounded-full text-[10px] font-semibold leading-[1.4]", "bg-white text-text-secondary border border-border font-[inherit] whitespace-nowrap", "shadow-[0_1px_2px_rgba(15,23,42,0.06)]"),
+			className: r("absolute pointer-events-auto px-2 py-0.5 rounded-full text-[10px] font-semibold leading-[1.4]", "bg-surface text-text-secondary border border-border font-[inherit] whitespace-nowrap", "shadow-[0_1px_2px_rgba(15,23,42,0.06)]"),
 			style: { transform: `translate(-50%, -50%) translate(${n + 28}px, ${i}px)` },
 			children: f.label
 		}) }) : null,
 		T ? /* @__PURE__ */ H(pt, { children: /* @__PURE__ */ H("div", {
-			className: r("absolute pointer-events-none px-1.5 py-px rounded-full text-[9px] font-semibold leading-[1.4]", "bg-white text-text-secondary border border-border font-[inherit] whitespace-nowrap", "shadow-[0_1px_2px_rgba(15,23,42,0.06)]"),
+			className: r("absolute pointer-events-none px-1.5 py-px rounded-full text-[9px] font-semibold leading-[1.4]", "bg-surface text-text-secondary border border-border font-[inherit] whitespace-nowrap", "shadow-[0_1px_2px_rgba(15,23,42,0.06)]"),
 			style: { transform: `translate(-50%, -50%) translate(${h}px, ${g}px)` },
 			children: `×${w}`
 		}) }) : null
@@ -2630,7 +2630,7 @@ function er({ anchor: e, flowPosition: t, disabledTypes: n = [], onClose: i, onI
 	};
 	return /* @__PURE__ */ U("div", {
 		ref: u,
-		className: "fixed w-[260px] bg-white border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] z-50 flex flex-col overflow-hidden font-inherit",
+		className: "fixed w-[260px] bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] z-50 flex flex-col overflow-hidden font-inherit",
 		style: {
 			top: e.y,
 			left: e.x
@@ -2860,7 +2860,7 @@ function ir({ nodeMenu: e, breakpoints: t, showBreakpointOption: n, onFilterLog:
 			itemSelector: "[role=\"menuitem\"]",
 			orientation: "vertical"
 		}),
-		className: "fixed bg-white border border-border rounded-md shadow-[0_8px_20px_rgba(15,23,42,0.16)] min-w-[220px] z-50 p-1 font-inherit",
+		className: "fixed bg-surface border border-border rounded-md shadow-[0_8px_20px_rgba(15,23,42,0.16)] min-w-[220px] z-50 p-1 font-inherit",
 		style: {
 			top: e.y,
 			left: e.x
@@ -3379,7 +3379,7 @@ function Sr({ disabledTypes: e = [] }) {
 		}, e.type);
 	}, O = b.length > 0 && !t && i.size === 0, k = 0;
 	return /* @__PURE__ */ U("div", {
-		className: "w-[220px] shrink-0 h-full border-r border-border bg-white flex flex-col",
+		className: "w-[220px] shrink-0 h-full border-r border-border bg-surface flex flex-col",
 		"data-testid": "node-palette",
 		children: [
 			/* @__PURE__ */ U("div", {
@@ -3400,7 +3400,7 @@ function Sr({ disabledTypes: e = [] }) {
 						title: d ? "Switch to card view" : "Switch to compact view",
 						"data-testid": "palette-compact-toggle",
 						"aria-pressed": d,
-						className: r("shrink-0 w-7 h-7 flex items-center justify-center rounded border text-[11px] transition-colors", d ? "bg-info border-info text-white" : "bg-white border-border-emphasis text-neutral hover:bg-surface-panel"),
+						className: r("shrink-0 w-7 h-7 flex items-center justify-center rounded border text-[11px] transition-colors", d ? "bg-info border-info text-white" : "bg-surface border-border-emphasis text-neutral hover:bg-surface-panel"),
 						children: d ? /* @__PURE__ */ U("svg", {
 							width: "14",
 							height: "14",
@@ -3668,7 +3668,7 @@ function Ar({ definition: e, setPositions: t, fitView: n }) {
 	}, [i]), /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("button", {
 		type: "button",
 		onClick: i,
-		className: "absolute top-3 right-[50px] z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-border rounded-md shadow-sm text-text-secondary cursor-pointer p-0 font-inherit text-sm leading-none",
+		className: "absolute top-3 right-[50px] z-[5] w-8 h-8 inline-flex items-center justify-center bg-surface border border-border rounded-md shadow-sm text-text-secondary cursor-pointer p-0 font-inherit text-sm leading-none",
 		title: "Auto-arrange (Shift+A)",
 		"aria-label": "Auto-arrange",
 		"data-testid": "auto-arrange-btn",
@@ -3688,7 +3688,7 @@ function Ar({ definition: e, setPositions: t, fitView: n }) {
 	}), /* @__PURE__ */ H("button", {
 		type: "button",
 		onClick: r,
-		className: "absolute top-3 right-3 z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-border rounded-md shadow-sm text-text-secondary cursor-pointer p-0 font-inherit text-sm leading-none",
+		className: "absolute top-3 right-3 z-[5] w-8 h-8 inline-flex items-center justify-center bg-surface border border-border rounded-md shadow-sm text-text-secondary cursor-pointer p-0 font-inherit text-sm leading-none",
 		title: "Fit view",
 		"aria-label": "Fit view",
 		children: /* @__PURE__ */ H("svg", {
@@ -4043,13 +4043,13 @@ function zr({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 						showZoom: !0,
 						showFitView: !0,
 						showInteractive: !0,
-						className: "!bg-white !border !border-border !rounded-md !shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
+						className: "!bg-surface !border !border-border !rounded-md !shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
 					}) : null,
 					O ? /* @__PURE__ */ H(mt, {
 						position: "bottom-right",
 						pannable: !0,
 						zoomable: !0,
-						className: "!bg-white !border !border-border !rounded-md !w-[180px] !h-[120px]",
+						className: "!bg-surface !border !border-border !rounded-md !w-[180px] !h-[120px]",
 						maskColor: "rgba(15, 23, 42, 0.04)",
 						nodeColor: Se,
 						nodeStrokeColor: "#e2e8f0"
@@ -4162,7 +4162,7 @@ function Ur({ error: e, anchor: t, onDismiss: n, onRetry: r }) {
 	let m = Math.min(t.y + 8, window.innerHeight - 440), h = Math.min(t.x + 12, window.innerWidth - 360);
 	return /* @__PURE__ */ U("div", {
 		ref: i,
-		className: "fixed z-[100] bg-white border border-border rounded-[10px] shadow-[0_12px_32px_rgba(15,23,42,0.18),0_2px_6px_rgba(15,23,42,0.08)] p-0 w-[340px] max-h-[420px] overflow-y-auto font-inherit text-text-primary",
+		className: "fixed z-[100] bg-surface border border-border rounded-[10px] shadow-[0_12px_32px_rgba(15,23,42,0.18),0_2px_6px_rgba(15,23,42,0.08)] p-0 w-[340px] max-h-[420px] overflow-y-auto font-inherit text-text-primary",
 		style: {
 			top: Math.max(8, m),
 			left: Math.max(8, h)
@@ -7842,14 +7842,14 @@ function Ga({ data: e, onChange: t, nodeId: n }) {
 					className: "text-[11px] font-semibold text-text-secondary mb-1",
 					children: "Resolved system prompt"
 				}), /* @__PURE__ */ H("pre", {
-					className: "text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-white p-2 rounded-md border border-border max-h-[120px] overflow-auto",
+					className: "text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-surface p-2 rounded-md border border-border max-h-[120px] overflow-auto",
 					children: Wa(e.systemPrompt || "(empty)", c)
 				})] }),
 				/* @__PURE__ */ U("div", { children: [/* @__PURE__ */ H("div", {
 					className: "text-[11px] font-semibold text-text-secondary mb-1",
 					children: "Resolved user prompt"
 				}), /* @__PURE__ */ H("pre", {
-					className: "text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-white p-2 rounded-md border border-border max-h-[200px] overflow-auto",
+					className: "text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-surface p-2 rounded-md border border-border max-h-[200px] overflow-auto",
 					children: Wa(e.userPromptTemplate || "(empty)", c)
 				})] }),
 				/* @__PURE__ */ H("div", {
@@ -8772,7 +8772,7 @@ function Eo({ value: e, onChange: t, upstreamKind: n, upstreamSchema: r }) {
 				] })]
 			}),
 			/* @__PURE__ */ H("div", {
-				className: "flex flex-col gap-px border border-border rounded-md bg-white max-h-48 overflow-y-auto",
+				className: "flex flex-col gap-px border border-border rounded-md bg-surface max-h-48 overflow-y-auto",
 				"data-testid": "scatter-path-tree",
 				role: "group",
 				"aria-label": "Available output paths",
@@ -14110,7 +14110,7 @@ function Pc({ selectedIds: e }) {
 	};
 	return /* @__PURE__ */ H("div", {
 		ref: d,
-		className: "flex flex-col flex-1 min-h-0 bg-white",
+		className: "flex flex-col flex-1 min-h-0 bg-surface",
 		"data-testid": "config-panel",
 		children: h ? /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ U("div", {
 			className: "h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-border shrink-0",
@@ -15287,7 +15287,7 @@ var rl = {
 }, il = ["draft", "published"];
 function al({ search: e, onSearchChange: t, statusFilter: n, statusExplicit: i, onToggleStatusKey: a, triggerFilter: o, onTriggerFilterChange: s, sortKey: c, onSortKeyChange: l, allVisibleSelected: u, someVisibleSelected: d, onHeaderToggleAll: f }) {
 	return /* @__PURE__ */ U("div", {
-		className: r("min-h-[40px] shrink-0 flex items-center gap-3 px-6", "border-b border-border bg-white"),
+		className: r("min-h-[40px] shrink-0 flex items-center gap-3 px-6", "border-b border-border bg-surface"),
 		children: [
 			/* @__PURE__ */ U("label", {
 				className: "flex items-center gap-1.5 cursor-pointer",
@@ -15333,7 +15333,7 @@ function al({ search: e, onSearchChange: t, statusFilter: n, statusExplicit: i, 
 						onKeyDown: (t) => {
 							(t.key === "Enter" || t.key === " ") && (t.preventDefault(), a(e));
 						},
-						className: r("px-3 py-1.5 text-xs font-medium rounded cursor-pointer font-inherit", t ? "border border-primary bg-primary text-white" : "border border-border bg-white text-text-secondary"),
+						className: r("px-3 py-1.5 text-xs font-medium rounded cursor-pointer font-inherit", t ? "border border-primary bg-primary text-white" : "border border-border bg-surface text-text-secondary"),
 						children: rl[e]
 					}, e);
 				})
@@ -15399,7 +15399,7 @@ function al({ search: e, onSearchChange: t, statusFilter: n, statusExplicit: i, 
 }
 //#endregion
 //#region src/components/pipelines/PipelinesBulkActionBar.tsx
-var ol = r("px-2.5 py-[5px] text-xs font-semibold", "bg-white text-text-secondary", "border border-border-field rounded-md", "cursor-pointer font-inherit");
+var ol = r("px-2.5 py-[5px] text-xs font-semibold", "bg-surface text-text-secondary", "border border-border-field rounded-md", "cursor-pointer font-inherit");
 function sl({ count: e, onClear: t, onExport: n, onExportAsJSON: a, onPublish: o, onArchive: s, onAddTag: c, onRemoveTag: l, onDelete: u, onDeleteWithConfirm: d, addTagOpen: f, removeTagOpen: p, onSubmitAddTag: m, onSubmitRemoveTag: h, onCloseAddTag: g, onCloseRemoveTag: _, unionTags: v }) {
 	let [y, b] = B(""), x = z(null), S = z(null), C = z(null);
 	L(() => {
@@ -15491,7 +15491,7 @@ function sl({ count: e, onClear: t, onExport: n, onExportAsJSON: a, onPublish: o
 					ref: S,
 					"data-testid": "bulk-add-tag-popover",
 					onClick: (e) => e.stopPropagation(),
-					className: r("absolute top-full left-0 mt-1.5", "bg-white border border-border rounded-lg", "shadow-lg min-w-[220px] p-2.5 z-10", "flex flex-col gap-2"),
+					className: r("absolute top-full left-0 mt-1.5", "bg-surface border border-border rounded-lg", "shadow-lg min-w-[220px] p-2.5 z-10", "flex flex-col gap-2"),
 					children: [/* @__PURE__ */ H(O, {
 						ref: x,
 						size: "sm",
@@ -15526,7 +15526,7 @@ function sl({ count: e, onClear: t, onExport: n, onExportAsJSON: a, onPublish: o
 					ref: C,
 					"data-testid": "bulk-remove-tag-popover",
 					onClick: (e) => e.stopPropagation(),
-					className: r("absolute top-full left-0 mt-1.5", "bg-white border border-border rounded-lg", "shadow-lg min-w-[220px] max-w-[320px] p-2.5 z-10", "flex flex-col gap-2"),
+					className: r("absolute top-full left-0 mt-1.5", "bg-surface border border-border rounded-lg", "shadow-lg min-w-[220px] max-w-[320px] p-2.5 z-10", "flex flex-col gap-2"),
 					children: [/* @__PURE__ */ H("div", {
 						className: "text-xs text-text-secondary",
 						children: "Click a tag to remove it from all selected:"
@@ -17875,7 +17875,7 @@ function Wl() {
 		className: "flex flex-col h-full overflow-hidden bg-surface-inset font-inherit",
 		children: [
 			/* @__PURE__ */ U("div", {
-				className: r("h-14 shrink-0 flex items-center justify-between px-6", "border-b border-border bg-white", "sticky top-0 z-[2]"),
+				className: r("h-14 shrink-0 flex items-center justify-between px-6", "border-b border-border bg-surface", "sticky top-0 z-[2]"),
 				children: [/* @__PURE__ */ H("div", {
 					className: "text-lg font-bold text-text-primary",
 					children: "Pipelines"
@@ -17885,13 +17885,13 @@ function Wl() {
 						/* @__PURE__ */ H("button", {
 							"data-testid": "metrics-btn",
 							onClick: () => t("/pipelines/metrics"),
-							className: r("px-4 py-[7px] text-[13px] font-semibold", "bg-white text-text-secondary", "border border-border-field rounded-[7px]", "cursor-pointer font-inherit"),
+							className: r("px-4 py-[7px] text-[13px] font-semibold", "bg-surface text-text-secondary", "border border-border-field rounded-[7px]", "cursor-pointer font-inherit"),
 							children: "Metrics"
 						}),
 						/* @__PURE__ */ H("button", {
 							"data-testid": "templates-btn",
 							onClick: () => O(!0),
-							className: r("px-4 py-[7px] text-[13px] font-semibold", "bg-white text-text-secondary", "border border-border-field rounded-[7px]", "cursor-pointer font-inherit"),
+							className: r("px-4 py-[7px] text-[13px] font-semibold", "bg-surface text-text-secondary", "border border-border-field rounded-[7px]", "cursor-pointer font-inherit"),
 							children: "Templates"
 						}),
 						/* @__PURE__ */ H("button", {
@@ -18337,7 +18337,7 @@ function pu({ label: e, options: t, selected: n, onToggle: i, labels: a, testIdP
 				})
 			]
 		}), s && /* @__PURE__ */ H("div", {
-			className: "absolute top-full left-0 mt-1 bg-white border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] py-1",
+			className: "absolute top-full left-0 mt-1 bg-surface border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] py-1",
 			children: t.map((e) => /* @__PURE__ */ U("label", {
 				"data-testid": `${o}-${e}`,
 				className: "flex items-center gap-2 px-3 py-1.5 text-xs cursor-pointer text-text-primary hover:bg-surface-hover",
@@ -19866,7 +19866,7 @@ function Zu({ pipelineId: e, runId: t }) {
 	let n = st(), i = de(), a = ae(), { definition: o } = i, [s, c] = B(null), [l, u] = B(null), [d, f] = B(0), p = I(() => f((e) => e + 1), []);
 	L(() => {
 		let n = !1;
-		return u(null), import("./services-DrJviHEM.js").then((e) => e.$).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
+		return u(null), import("./services-CzebqIKX.js").then((e) => e.$).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
 			!n && e && c(e);
 		})).catch((e) => {
 			n || u(e instanceof Error ? e.message : String(e));
@@ -22436,7 +22436,7 @@ function af() {
 				}), /* @__PURE__ */ H("button", {
 					"data-testid": "approvals-retry",
 					onClick: i,
-					className: "px-3.5 py-1.5 text-[13px] font-medium bg-white text-danger-fg border border-danger rounded-md cursor-pointer font-[inherit]",
+					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger rounded-md cursor-pointer font-[inherit]",
 					children: "Retry"
 				})]
 			}) : null, n && g === 0 ? /* @__PURE__ */ U("div", {

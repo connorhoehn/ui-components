@@ -1,6 +1,6 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Banner-BLOg1hC_.js";
-import { t as n } from "./Input-DcK2h-jK.js";
+import { t as n } from "./Input-DLknWXri.js";
 /* empty css               */
 import { createContext as r, useCallback as i, useContext as a, useEffect as o, useMemo as s, useRef as c, useState as l } from "react";
 import { Fragment as u, jsx as d, jsxs as f } from "react/jsx-runtime";
@@ -343,7 +343,7 @@ var E = {
 function O({ agent: t, metrics: n, selected: r, onClick: i }) {
 	return /* @__PURE__ */ f(i ? "button" : "div", {
 		type: i ? "button" : void 0,
-		className: e("flex flex-col w-full text-left font-[inherit] border rounded-lg transition-all overflow-hidden", i && "cursor-pointer hover:shadow-sm", r ? "border-info bg-info-bg/50 shadow-sm" : e("border-border bg-white", i && "hover:border-border-emphasis")),
+		className: e("flex flex-col w-full text-left font-[inherit] border rounded-lg transition-all overflow-hidden", i && "cursor-pointer hover:shadow-sm", r ? "border-info bg-info-bg/50 shadow-sm" : e("border-border bg-surface", i && "hover:border-border-emphasis")),
 		onClick: i,
 		children: [/* @__PURE__ */ d("div", {
 			className: e("flex items-center justify-end px-3 py-1.5", t.status === "healthy" && "bg-success-bg", t.status === "degraded" && "bg-warning-bg", t.status === "offline" && "bg-danger-bg", t.status === "deploying" && "bg-info-bg"),
@@ -525,7 +525,7 @@ function A({ onAgentClick: n, className: r }) {
 }
 function j({ label: t, value: n, color: r }) {
 	return /* @__PURE__ */ f("div", {
-		className: "border border-border rounded-lg p-3 bg-white",
+		className: "border border-border rounded-lg p-3 bg-surface",
 		children: [/* @__PURE__ */ d("div", {
 			className: "text-[10px] uppercase text-text-tertiary mb-1",
 			children: t
@@ -610,7 +610,7 @@ function F(e, t) {
 function I({ trace: t, className: n, title: r, legendKinds: i }) {
 	let [a, o] = l(null), s = F(t.spans, t.rootSpanId), c = new Date(t.startedAt).getTime();
 	return /* @__PURE__ */ f("div", {
-		className: e("border border-border rounded-lg overflow-hidden bg-white", n),
+		className: e("border border-border rounded-lg overflow-hidden bg-surface", n),
 		children: [
 			/* @__PURE__ */ f("div", {
 				className: "flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel",
@@ -862,7 +862,7 @@ function ee({ status: t }) {
 }
 function z({ title: e, children: t }) {
 	return /* @__PURE__ */ f("div", {
-		className: "border border-border rounded-lg p-4 bg-white",
+		className: "border border-border rounded-lg p-4 bg-surface",
 		children: [/* @__PURE__ */ d("h4", {
 			className: "text-xs font-medium text-neutral uppercase mb-3",
 			children: e
@@ -1495,7 +1495,7 @@ function Q({ messages: t, isStreaming: r, streamingText: i = "", activeToolCalls
 		!e || r || (p(e), v(""));
 	}
 	return /* @__PURE__ */ f("div", {
-		className: e("flex flex-col border border-border rounded-lg bg-white overflow-hidden", g),
+		className: e("flex flex-col border border-border rounded-lg bg-surface overflow-hidden", g),
 		children: [
 			/* @__PURE__ */ f("div", {
 				className: "px-4 py-3 border-b border-border flex items-center justify-between",
@@ -1627,7 +1627,7 @@ function le({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
 	return /* @__PURE__ */ f("div", {
 		className: e("flex h-full min-h-[500px]", r),
 		children: [/* @__PURE__ */ f("div", {
-			className: "w-[240px] border-r border-border bg-white flex flex-col overflow-hidden",
+			className: "w-[240px] border-r border-border bg-surface flex flex-col overflow-hidden",
 			children: [
 				/* @__PURE__ */ d("div", {
 					className: "py-3 px-4 border-b border-border font-semibold text-[13px] text-neutral uppercase tracking-[0.05em]",
@@ -1904,13 +1904,13 @@ function me({ agents: t, metricsById: r, filters: i = pe, selectedId: a = null, 
 				children: [/* @__PURE__ */ d("button", {
 					type: "button",
 					onClick: () => g(null),
-					className: e("rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors", h === null ? "border-surface-inverse bg-surface-inverse text-text-inverse" : "border-border-emphasis bg-white text-text-secondary hover:bg-surface-panel"),
+					className: e("rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors", h === null ? "border-surface-inverse bg-surface-inverse text-text-inverse" : "border-border-emphasis bg-surface text-text-secondary hover:bg-surface-panel"),
 					children: "All"
 				}), i.map((t) => /* @__PURE__ */ d("button", {
 					type: "button",
 					onClick: () => g(h === t ? null : t),
 					"aria-pressed": h === t,
-					className: e("rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize transition-colors", h === t ? "border-surface-inverse bg-surface-inverse text-text-inverse" : "border-border-emphasis bg-white text-text-secondary hover:bg-surface-panel"),
+					className: e("rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize transition-colors", h === t ? "border-surface-inverse bg-surface-inverse text-text-inverse" : "border-border-emphasis bg-surface text-text-secondary hover:bg-surface-panel"),
 					children: t
 				}, t))]
 			})]
@@ -1954,7 +1954,7 @@ function _e({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, e
 		children: t.map((t) => {
 			let a = n === t.threadId, o = he(t.messages), s = ge(t.messages);
 			return /* @__PURE__ */ f("li", {
-				className: e("group flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors", a ? "border-info bg-info-bg/60" : "border-border bg-white hover:border-border-emphasis hover:bg-surface-panel"),
+				className: e("group flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors", a ? "border-info bg-info-bg/60" : "border-border bg-surface hover:border-border-emphasis hover:bg-surface-panel"),
 				children: [/* @__PURE__ */ f("button", {
 					type: "button",
 					onClick: r ? () => r(t) : void 0,
@@ -1994,7 +1994,7 @@ function _e({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, e
 function ve({ decisions: t, className: n, maxItems: r = 50 }) {
 	let i = t.slice(0, r);
 	return /* @__PURE__ */ f("div", {
-		className: e("border border-border rounded-lg overflow-hidden bg-white", n),
+		className: e("border border-border rounded-lg overflow-hidden bg-surface", n),
 		children: [/* @__PURE__ */ f("div", {
 			className: "flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel",
 			children: [/* @__PURE__ */ d("span", {
@@ -2072,7 +2072,7 @@ function ye(e) {
 function be({ entries: t, className: r, onDelete: i }) {
 	let [a, o] = l("all"), [s, c] = l(""), u = t.filter((e) => !(a !== "all" && e.scope !== a || s && !e.key.toLowerCase().includes(s.toLowerCase()) && !e.value.toLowerCase().includes(s.toLowerCase()))), p = t.filter((e) => e.scope === "session").length, m = t.filter((e) => e.scope === "long-term").length;
 	return /* @__PURE__ */ f("div", {
-		className: e("border border-border rounded-lg overflow-hidden bg-white", r),
+		className: e("border border-border rounded-lg overflow-hidden bg-surface", r),
 		children: [
 			/* @__PURE__ */ f("div", {
 				className: "flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel",

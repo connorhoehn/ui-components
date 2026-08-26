@@ -7,9 +7,9 @@ import { t as m } from "./overlayStack-BFH9XXvN.js";
 import { t as h } from "./EmptyState-CUHf5NYN.js";
 import { n as g, r as _, t as v } from "./focusTrap-CmWJlptm.js";
 import { t as y } from "./SkeletonCard-CGe8XFPB.js";
-import { t as b } from "./Input-DcK2h-jK.js";
+import { t as b } from "./Input-DLknWXri.js";
 import { t as x } from "./activationKey-CjbL3LUv.js";
-import { t as S } from "./Select-Z0TLUVeL.js";
+import { t as S } from "./Select-CqVokE2v.js";
 import { useCallback as C, useEffect as w, useId as T, useMemo as E, useRef as D, useState as O } from "react";
 import { Fragment as k, jsx as A, jsxs as j } from "react/jsx-runtime";
 import { useNavigate as M, useParams as N } from "react-router";
@@ -115,7 +115,7 @@ function H() {
 					onClick: () => {
 						a(), u();
 					},
-					className: "px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
+					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Retry"
 				})]
 			}),
@@ -332,7 +332,7 @@ function K() {
 					children: "Failed to load sources."
 				}), /* @__PURE__ */ A("button", {
 					onClick: () => void a(),
-					className: "px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
+					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Retry"
 				})]
 			}),
@@ -1207,7 +1207,7 @@ function pe() {
 				children: ["Failed to load source: ", m]
 			}), /* @__PURE__ */ A("button", {
 				onClick: () => void K(),
-				className: "px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
+				className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 				children: "Retry"
 			})]
 		})]
@@ -1272,7 +1272,7 @@ function pe() {
 					children: m
 				}), /* @__PURE__ */ A("button", {
 					onClick: () => h(null),
-					className: "px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
+					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Dismiss"
 				})]
 			}),
@@ -2092,7 +2092,7 @@ function Te() {
 					children: "Failed to load ingest items."
 				}), /* @__PURE__ */ A("button", {
 					onClick: () => void f(),
-					className: "px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
+					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Retry"
 				})]
 			}),

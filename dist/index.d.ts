@@ -4936,7 +4936,7 @@ export declare interface ModalProps {
     cardStyle?: React.CSSProperties;
     /**
      * Tailwind classes merged onto the card AFTER the defaults (cn/tw-merge,
-     * so e.g. `bg-surface-inverse p-0` beats the default `bg-white px-6 py-7`).
+     * so e.g. `bg-surface-inverse p-0` beats the default `bg-surface px-6 py-7`).
      * Lets dark-chrome dialogs (CallSettingsDialog) restyle the card without
      * reaching for inline styles.
      */

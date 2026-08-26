@@ -1,9 +1,9 @@
-import { g as e, t } from "./useWebSocket-zc3LuaC-.js";
+import { g as e, t } from "./useWebSocket-BKfGpImp.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./activationKey-CjbL3LUv.js";
-import { t as i } from "./Textarea-C3t5PCLv.js";
-import { a, i as o, n as s, r as c, s as l } from "./renderers-B7u4Q0hg.js";
-import { C as u, D as d, E as f, O as p, S as m, T as h, _ as g, a as _, b as v, c as y, d as b, f as x, g as S, h as C, i as w, k as T, l as E, m as D, o as O, p as k, r as A, s as j, t as M, u as ee, v as te, w as ne, x as re, y as ie } from "./DocumentEditorPage-BtGnNhcb.js";
+import { t as i } from "./Textarea-Dz4doxTv.js";
+import { a, i as o, n as s, r as c, s as l } from "./renderers-Bv6kD5ZU.js";
+import { C as u, D as d, E as f, O as p, S as m, T as h, _ as g, a as _, b as v, c as y, d as b, f as x, g as S, h as C, i as w, k as T, l as E, m as D, o as O, p as k, r as A, s as j, t as M, u as ee, v as te, w as ne, x as re, y as ie } from "./DocumentEditorPage-UQC139Uj.js";
 import { useCallback as N, useEffect as P, useMemo as F, useRef as I, useState as L } from "react";
 import { Fragment as R, jsx as z, jsxs as B } from "react/jsx-runtime";
 //#region src/components/doc-editor/DocumentListPage.tsx
@@ -93,7 +93,7 @@ function G({ users: e, onClickUser: t }) {
 						style: { background: o }
 					}),
 					/* @__PURE__ */ z("div", {
-						className: n("absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white border border-border flex items-center justify-center text-[8px] leading-none"),
+						className: n("absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-surface border border-border flex items-center justify-center text-[8px] leading-none"),
 						children: i.icon
 					})
 				]
@@ -150,7 +150,7 @@ function K({ documents: e, presence: t, onOpenDocument: i, onCreateDocument: a, 
 						onBlur: (t) => {
 							t.currentTarget.contains(t.relatedTarget) || h((t) => t === e.id ? null : t);
 						},
-						className: n("flex items-center gap-4 px-4 py-3.5 bg-white border border-border rounded-lg cursor-pointer relative transition-shadow duration-150", o ? "shadow-[0_4px_12px_rgba(0,0,0,0.08)]" : ""),
+						className: n("flex items-center gap-4 px-4 py-3.5 bg-surface border border-border rounded-lg cursor-pointer relative transition-shadow duration-150", o ? "shadow-[0_4px_12px_rgba(0,0,0,0.08)]" : ""),
 						children: [
 							/* @__PURE__ */ z("span", {
 								className: n("text-2xl shrink-0"),
@@ -215,7 +215,7 @@ function K({ documents: e, presence: t, onOpenDocument: i, onCreateDocument: a, 
 						"data-testid": "pagination-prev",
 						disabled: y <= 1,
 						onClick: () => _((e) => Math.max(1, e - 1)),
-						className: n("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md", y <= 1 ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"),
+						className: n("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md", y <= 1 ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-surface text-text-secondary cursor-pointer"),
 						children: "Previous"
 					}),
 					/* @__PURE__ */ B("span", {
@@ -232,7 +232,7 @@ function K({ documents: e, presence: t, onOpenDocument: i, onCreateDocument: a, 
 						"data-testid": "pagination-next",
 						disabled: y >= v,
 						onClick: () => _((e) => Math.min(v, e + 1)),
-						className: n("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md", y >= v ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"),
+						className: n("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md", y >= v ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-surface text-text-secondary cursor-pointer"),
 						children: "Next"
 					})
 				]
@@ -381,7 +381,7 @@ function X({ item: e, onAck: t, onReject: r }) {
 		}
 	};
 	return /* @__PURE__ */ B("div", {
-		className: n("bg-white border border-border rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out", l === "ack" ? "animate-[ackPulse_0.6s_ease-out] border-success bg-success-bg" : l === "reject" ? "animate-[rejectPulse_0.6s_ease-out] border-danger bg-danger-bg" : ""),
+		className: n("bg-surface border border-border rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out", l === "ack" ? "animate-[ackPulse_0.6s_ease-out] border-success bg-success-bg" : l === "reject" ? "animate-[rejectPulse_0.6s_ease-out] border-danger bg-danger-bg" : ""),
 		children: [
 			/* @__PURE__ */ B("div", {
 				className: n("flex items-center mb-1.5"),
@@ -537,7 +537,7 @@ var Z = {
 function Q({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, provider: s, comments: c, onAddComment: l, onResolveThread: u, onUnresolveThread: d, participants: f }) {
 	let p = Z[e.type] ?? Z.custom, m = e.items.filter((e) => e.status !== "pending").length;
 	return /* @__PURE__ */ B("div", {
-		className: n("bg-white border border-border rounded-lg p-5 mb-4"),
+		className: n("bg-surface border border-border rounded-lg p-5 mb-4"),
 		children: [
 			/* @__PURE__ */ z("h2", {
 				className: n("text-xl font-bold m-0 mb-1 text-text-primary"),
@@ -654,7 +654,7 @@ function de({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 			children: [
 				/* @__PURE__ */ z("button", {
 					type: "button",
-					className: n("px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]", h === 0 ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-white text-text-primary cursor-pointer"),
+					className: n("px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]", h === 0 ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-surface text-text-primary cursor-pointer"),
 					onClick: b,
 					disabled: h === 0,
 					children: "Previous"
@@ -673,7 +673,7 @@ function de({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 				}),
 				/* @__PURE__ */ z("button", {
 					type: "button",
-					className: n("px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]", h === _ - 1 ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-white text-text-primary cursor-pointer"),
+					className: n("px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]", h === _ - 1 ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-surface text-text-primary cursor-pointer"),
 					onClick: x,
 					disabled: h === _ - 1,
 					children: "Next"
@@ -748,7 +748,7 @@ function _e({ events: e, participants: t }) {
 				className: n("font-semibold"),
 				children: "Active:"
 			}), t.map((e) => /* @__PURE__ */ B("span", {
-				className: n("inline-flex items-center gap-1 bg-white border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-text-primary"),
+				className: n("inline-flex items-center gap-1 bg-surface border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-text-primary"),
 				children: [
 					/* @__PURE__ */ z("span", {
 						className: n("w-2 h-2 rounded-full shrink-0"),
