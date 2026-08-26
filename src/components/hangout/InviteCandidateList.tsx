@@ -51,6 +51,17 @@ export interface InviteCandidate {
     alreadyInCall?: boolean;
     /** True when they have been rung but have not answered yet. */
     pending?: boolean;
+    /** Non-selectable for a reason that is NOT "already on this call" —
+     *  e.g. an offline person a ring would never reach. Renders the same
+     *  dimmed, non-clickable row without claiming "In call". Pair it with
+     *  `statusLabel` so the row says WHY. */
+    disabled?: boolean;
+    /** Free-text right-hand annotation, e.g. "On a call" / "Offline".
+     *  Purely informational — it does NOT affect selectability, so a
+     *  caller can mark someone busy while still allowing a knock/join.
+     *  `alreadyInCall` and `pending` keep their own fixed labels and win
+     *  over this one. */
+    statusLabel?: string;
     /** Presence: true → online dot, false → offline dot, undefined → no
      *  dot. Also drives which section a row lands in under `grouped`. */
     online?: boolean;
@@ -106,6 +117,12 @@ export interface InviteCandidateListProps {
     selectMode?: 'multi' | 'single';
     /** Row click handler for `selectMode='single'`. */
     onPick?: (userId: string) => void;
+    /** Verb on the confirm button. Defaults to "Invite" (so every existing
+     *  host keeps "Invite 2 people"); a call picker passes "Call". The
+     *  zero-selection state renders the bare verb. */
+    confirmLabel?: string;
+    /** Text while `loading`. Defaults to "Inviting…". */
+    confirmLoadingLabel?: string;
     /** Applied to the default stacked layout's root only. */
     className?: string;
     'data-testid'?: string;
@@ -122,6 +139,8 @@ export function InviteCandidateList({
     grouped = false,
     selectMode = 'multi',
     onPick,
+    confirmLabel = 'Invite',
+    confirmLoadingLabel = 'Inviting…',
     className,
     'data-testid': testId,
 }: InviteCandidateListProps) {
@@ -166,7 +185,7 @@ export function InviteCandidateList({
     const count = selected.size;
 
     const renderRow = (c: InviteCandidate) => {
-        const disabled = !!c.alreadyInCall || loading;
+        const disabled = !!c.alreadyInCall || !!c.disabled || loading;
         const isSelected = !single && selected.has(c.userId);
         return (
             <li key={c.userId}>
@@ -182,6 +201,7 @@ export function InviteCandidateList({
                     data-user-id={c.userId}
                     data-selected={isSelected ? 'true' : 'false'}
                     data-already-in-call={c.alreadyInCall ? 'true' : 'false'}
+                    data-disabled={disabled ? 'true' : 'false'}
                     className={cn(
                         'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left',
                         disabled
@@ -215,11 +235,22 @@ export function InviteCandidateList({
                             {c.lastSeenLabel}
                         </span>
                     )}
+                    {/* Informational annotation. Sits alongside the checkbox
+                        rather than replacing it — a person can be busy AND
+                        still selectable (you knock to join their call). */}
+                    {c.statusLabel && !c.alreadyInCall && !c.pending && (
+                        <span
+                            data-testid="invite-candidate-status"
+                            className={cn('shrink-0 text-[11px]', dark ? 'text-white/50' : 'text-neutral')}
+                        >
+                            {c.statusLabel}
+                        </span>
+                    )}
                     {c.alreadyInCall ? (
                         <span className={cn('text-[11px]', dark ? 'text-white/50' : 'text-neutral')}>In call</span>
                     ) : c.pending ? (
                         <span className={cn('text-[11px]', dark ? 'text-white/50' : 'text-neutral')}>Ringing…</span>
-                    ) : single ? null : (
+                    ) : single || c.disabled ? null : (
                         <span
                             aria-hidden="true"
                             className={cn(
@@ -328,10 +359,10 @@ export function InviteCandidateList({
             data-testid="invite-to-call-confirm"
         >
             {loading
-                ? 'Inviting…'
+                ? confirmLoadingLabel
                 : count === 0
-                    ? 'Invite'
-                    : `Invite ${count} ${count === 1 ? 'person' : 'people'}`}
+                    ? confirmLabel
+                    : `${confirmLabel} ${count} ${count === 1 ? 'person' : 'people'}`}
         </Button>
     );
 

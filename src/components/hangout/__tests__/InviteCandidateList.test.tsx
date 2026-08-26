@@ -156,6 +156,47 @@ describe('InviteCandidateList', () => {
     expect(onPick).toHaveBeenCalledTimes(1);
   });
 
+  it('disabled candidates are non-selectable and say WHY, without claiming "In call"', () => {
+    const onPick = vi.fn();
+    render(
+      <InviteCandidateList
+        candidates={[
+          { userId: 'u-dana', name: 'Dana Reed', online: false, disabled: true, statusLabel: 'Offline' },
+          { userId: 'u-eve', name: 'Eve Stone', online: true, statusLabel: 'On a call' },
+        ]}
+        onInvite={onInvite}
+        selectMode="single"
+        onPick={onPick}
+      />,
+    );
+    const rows = screen.getAllByTestId('invite-candidate');
+    const dana = rows.find((r) => r.getAttribute('data-user-id') === 'u-dana')!;
+    expect(dana).toBeDisabled();
+    expect(dana).toHaveAttribute('data-disabled', 'true');
+    expect(dana).toHaveAttribute('data-already-in-call', 'false');
+    expect(dana).toHaveTextContent('Offline');
+    expect(dana).not.toHaveTextContent('In call');
+    fireEvent.click(dana);
+    expect(onPick).not.toHaveBeenCalled();
+
+    // statusLabel is informational only — a busy-but-online person stays pickable.
+    const eve = rows.find((r) => r.getAttribute('data-user-id') === 'u-eve')!;
+    expect(eve).not.toBeDisabled();
+    expect(eve).toHaveTextContent('On a call');
+    fireEvent.click(eve);
+    expect(onPick).toHaveBeenCalledWith('u-eve');
+  });
+
+  it('confirmLabel re-verbs the confirm button', () => {
+    render(
+      <InviteCandidateList candidates={candidates} onInvite={onInvite} confirmLabel="Call" />,
+    );
+    const confirm = screen.getByTestId('invite-to-call-confirm');
+    expect(confirm).toHaveTextContent('Call');
+    fireEvent.click(screen.getAllByTestId('invite-candidate')[0]);
+    expect(confirm).toHaveTextContent('Call 1 person');
+  });
+
   it('render-prop children place the list and confirm blocks', () => {
     render(
       <InviteCandidateList candidates={candidates} onInvite={onInvite}>
