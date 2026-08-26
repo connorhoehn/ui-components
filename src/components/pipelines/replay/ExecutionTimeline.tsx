@@ -159,7 +159,7 @@ export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelin
             >
               <div
                 data-tooltip
-                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-surface-inverse text-white text-[11px] rounded-sm whitespace-nowrap pointer-events-none z-10 shadow-md hidden"
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-surface-inverse text-text-inverse text-[11px] rounded-sm whitespace-nowrap pointer-events-none z-10 shadow-md hidden"
               >
                 {nodeId} &bull; {step.status} &bull; {formatDuration(duration)}
               </div>

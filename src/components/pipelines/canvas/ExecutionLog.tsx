@@ -306,7 +306,7 @@ export default function ExecutionLog({
                 {!pinned ? (
                   <button
                     type="button"
-                    className="absolute bottom-2.5 right-3.5 px-3 py-1.5 text-[11px] font-semibold bg-surface-inverse text-white border-none rounded-full cursor-pointer font-inherit shadow-lg z-[2]"
+                    className="absolute bottom-2.5 right-3.5 px-3 py-1.5 text-[11px] font-semibold bg-surface-inverse text-text-inverse border-none rounded-full cursor-pointer font-inherit shadow-lg z-[2]"
                     onClick={jumpToLatest}
                   >
                     Jump to latest
@@ -347,7 +347,7 @@ export default function ExecutionLog({
             {!pinned ? (
               <button
                 type="button"
-                className="absolute bottom-2.5 right-3.5 px-3 py-1.5 text-[11px] font-semibold bg-surface-inverse text-white border-none rounded-full cursor-pointer font-inherit shadow-lg z-[2]"
+                className="absolute bottom-2.5 right-3.5 px-3 py-1.5 text-[11px] font-semibold bg-surface-inverse text-text-inverse border-none rounded-full cursor-pointer font-inherit shadow-lg z-[2]"
                 onClick={jumpToLatest}
               >
                 Jump to latest

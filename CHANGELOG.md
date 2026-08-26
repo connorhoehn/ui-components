@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.111.1] — 2026-08-26
+
+### Fixed
+- Dark mode: four components paired `bg-surface-inverse` with a hardcoded
+  `text-white`, so their labels were white-on-near-white once
+  `--color-surface-inverse` flips to `#f8fafc`. They now use
+  `text-text-inverse`, which flips with the surface.
+  Only `AgentDirectory` is exported; the three pipelines components
+  (`StepTimeline`, `ExecutionLog`, `ExecutionTimeline`) are internal, so
+  the consumer-visible part of this release is the AgentDirectory chips.
+
 ## [2.108.0] — 2026-08-25
 
 Follow-up to the 2.107 dock: it worked, but the composition still read as

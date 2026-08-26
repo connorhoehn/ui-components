@@ -62,7 +62,7 @@ export function AgentDirectory({
             className={cn(
               'rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors',
               activeStatus === null
-                ? 'border-surface-inverse bg-surface-inverse text-white'
+                ? 'border-surface-inverse bg-surface-inverse text-text-inverse'
                 : 'border-border-emphasis bg-white text-text-secondary hover:bg-surface-panel',
             )}
           >
@@ -77,7 +77,7 @@ export function AgentDirectory({
               className={cn(
                 'rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize transition-colors',
                 activeStatus === status
-                  ? 'border-surface-inverse bg-surface-inverse text-white'
+                  ? 'border-surface-inverse bg-surface-inverse text-text-inverse'
                   : 'border-border-emphasis bg-white text-text-secondary hover:bg-surface-panel',
               )}
             >

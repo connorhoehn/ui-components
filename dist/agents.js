@@ -1904,13 +1904,13 @@ function me({ agents: t, metricsById: r, filters: i = pe, selectedId: a = null, 
 				children: [/* @__PURE__ */ d("button", {
 					type: "button",
 					onClick: () => g(null),
-					className: e("rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors", h === null ? "border-surface-inverse bg-surface-inverse text-white" : "border-border-emphasis bg-white text-text-secondary hover:bg-surface-panel"),
+					className: e("rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors", h === null ? "border-surface-inverse bg-surface-inverse text-text-inverse" : "border-border-emphasis bg-white text-text-secondary hover:bg-surface-panel"),
 					children: "All"
 				}), i.map((t) => /* @__PURE__ */ d("button", {
 					type: "button",
 					onClick: () => g(h === t ? null : t),
 					"aria-pressed": h === t,
-					className: e("rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize transition-colors", h === t ? "border-surface-inverse bg-surface-inverse text-white" : "border-border-emphasis bg-white text-text-secondary hover:bg-surface-panel"),
+					className: e("rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize transition-colors", h === t ? "border-surface-inverse bg-surface-inverse text-text-inverse" : "border-border-emphasis bg-white text-text-secondary hover:bg-surface-panel"),
 					children: t
 				}, t))]
 			})]
