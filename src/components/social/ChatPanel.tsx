@@ -9,6 +9,7 @@ import type { ChatMessage } from '../../hooks/useChat';
 import { MessageRow } from './MessageRow';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
+import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
 
 // ---------------------------------------------------------------------------
@@ -27,6 +28,23 @@ export interface ChatPanelProps {
    *  the message text renders dark-on-dark and disappears. Mirrors
    *  InviteCandidateList's tone seam. */
   tone?: 'light' | 'dark';
+  /** Render the panel's own "Chat (n)" heading.
+   *
+   *  Default: TRUE standalone — every consumer in this repo (the DMs
+   *  page's <SocialPanel>, <PanelsView>, <WrappedChatPanel>, the hook
+   *  demos) drops the panel into a plain container and relies on it to
+   *  name itself. Default FALSE inside a panel dock, which already names
+   *  the region with its tab bar — that is where "Chat" appeared twice,
+   *  ~40px apart. Pass it explicitly to override either way. */
+  showHeader?: boolean;
+  /** Fill the parent's height — the message list becomes the flexible
+   *  region and the composer sits on the bottom edge — instead of sizing
+   *  to a 200px-tall list inside a bordered card.
+   *
+   *  Default: FALSE standalone (the card is what the DMs page and the
+   *  demos expect), TRUE inside a dock, whose column has a definite
+   *  height that the body must match or leave a dead band behind. */
+  fill?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -46,8 +64,22 @@ function formatTypingBanner(users: string[]): string {
 // Component
 // ---------------------------------------------------------------------------
 
-export function ChatPanel({ messages, onSend, disabled = false, onTyping, typingUsers = [], tone = 'light' }: ChatPanelProps) {
+export function ChatPanel({
+  messages,
+  onSend,
+  disabled = false,
+  onTyping,
+  typingUsers = [],
+  tone = 'light',
+  showHeader,
+  fill,
+}: ChatPanelProps) {
   const dark = tone === 'dark';
+  // A surrounding dock already draws the header and hands down a definite
+  // height; explicit props still win. See DockedPanelContext.
+  const dock = useDockedPanel();
+  const headerVisible = showHeader ?? !(dock?.hasHeader ?? false);
+  const fills = fill ?? (dock?.fillsHeight ?? false);
   const [inputValue, setInputValue] = useState('');
   const listRef = useRef<HTMLDivElement>(null);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -90,23 +122,38 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
   }
 
   return (
-    <div className={cn('border rounded p-3 mt-4 font-mono', dark ? 'border-white/10 bg-white/5' : 'border-border')}>
+    <div
+      data-testid="chat-panel"
+      className={cn(
+        'font-mono',
+        // Filling a dock: no card of its own (the dock IS the card) and no
+        // top margin — that margin plus the card's padding was the empty
+        // strip between the dock's tab bar and the first message.
+        fills
+          ? 'flex h-full min-h-0 flex-col px-3 pb-3 pt-2'
+          : cn('border rounded p-3 mt-4', dark ? 'border-white/10 bg-white/5' : 'border-border'),
+      )}
+    >
       {/* Header */}
-      <div className={cn('text-[0.8rem] font-bold mb-2', dark ? 'text-white/90' : 'text-text-primary')}>
-        Chat ({messages.length})
-      </div>
+      {headerVisible && (
+        <div className={cn('text-[0.8rem] font-bold mb-2 shrink-0', dark ? 'text-white/90' : 'text-text-primary')}>
+          Chat ({messages.length})
+        </div>
+      )}
 
       {/* Typing banner */}
       {typingUsers.length > 0 && (
-        <div className={cn('text-[0.7rem] italic mb-1', dark ? 'text-white/50' : 'text-text-tertiary')}>
+        <div className={cn('text-[0.7rem] italic mb-1 shrink-0', dark ? 'text-white/50' : 'text-text-tertiary')}>
           {formatTypingBanner(typingUsers)}
         </div>
       )}
 
-      {/* Message list */}
+      {/* Message list — the flexible region when filling, so the composer
+          stays on the bottom edge and the slack goes to the messages. */}
       <div
         ref={listRef}
-        className="max-h-[200px] overflow-y-auto mb-2"
+        data-testid="chat-panel-messages"
+        className={cn('overflow-y-auto mb-2', fills ? 'min-h-0 flex-1' : 'max-h-[200px]')}
       >
         {messages.length === 0 ? (
           <div className={cn('text-xs', dark ? 'text-white/40' : 'text-text-tertiary')}>
@@ -130,7 +177,7 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
       </div>
 
       {/* Input row */}
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-row gap-2 shrink-0">
         <Input
           size="sm"
           mono

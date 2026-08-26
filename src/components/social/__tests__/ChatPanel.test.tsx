@@ -18,6 +18,27 @@ describe('ChatPanel', () => {
     expect(screen.getByText('Chat (1)')).toBeInTheDocument();
   });
 
+  it('showHeader={false} drops the heading but keeps the panel', () => {
+    render(<ChatPanel showHeader={false} messages={[msg({ clientId: 'a', content: 'hi' })]} onSend={vi.fn()} />);
+    expect(screen.queryByText('Chat (1)')).toBeNull();
+    expect(screen.getByText('hi')).toBeInTheDocument();
+  });
+
+  it('fill swaps the 200px-capped list for a flexible one inside a full-height column', () => {
+    const { rerender } = render(<ChatPanel messages={[]} onSend={vi.fn()} />);
+    expect(screen.getByTestId('chat-panel-messages').className).toContain('max-h-[200px]');
+    expect(screen.getByTestId('chat-panel').className).toContain('mt-4');
+
+    rerender(<ChatPanel fill messages={[]} onSend={vi.fn()} />);
+    expect(screen.getByTestId('chat-panel-messages').className).toContain('flex-1');
+    expect(screen.getByTestId('chat-panel-messages').className).not.toContain('max-h-[200px]');
+    const root = screen.getByTestId('chat-panel');
+    expect(root.className).toContain('h-full');
+    // No card of its own, and no top margin to stack under a dock header.
+    expect(root.className).not.toContain('mt-4');
+    expect(root.className).not.toContain('border');
+  });
+
   it('renders empty-state copy when there are no messages', () => {
     render(<ChatPanel messages={[]} onSend={vi.fn()} />);
     expect(screen.getByText('No messages yet')).toBeInTheDocument();

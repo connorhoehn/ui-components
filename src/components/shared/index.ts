@@ -63,6 +63,10 @@ export * from './Toast';
 export * from './ToastProvider';
 export { default as UserPicker } from './UserPicker';
 export * from './UserPicker';
+// Panel docks (e.g. <CallSidePanel>) announce themselves to their body
+// through this, so a body can drop its own header and fill the column.
+export { DockedPanelProvider, useDockedPanel } from './DockedPanelContext';
+export type { DockedPanelContextValue, DockedPanelProviderProps } from './DockedPanelContext';
 
 // ── New primitives (2025-05) ──
 export { default as StatCard } from './StatCard';

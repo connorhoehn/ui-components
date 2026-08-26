@@ -19,6 +19,15 @@ export declare interface AutoplayGateProps extends StreamVideoProps {
     wrapperClassName?: string;
 }
 
+/** Card width with the dock closed. */
+export declare const CALL_CARD_WIDTH = "w-[380px]";
+
+/** The single height both columns take when the dock is open. */
+export declare const CALL_DOCK_ROW_HEIGHT = "h-[480px]";
+
+/** Video-column width with the dock open — it GROWS, it is not pinned. */
+export declare const CALL_STAGE_DOCKED_WIDTH = "w-[480px]";
+
 export declare function CallControls({ mode, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, extras, className, }: CallControlsProps): JSX.Element;
 
 export declare type CallControlsMode = 'audio' | 'video';
@@ -388,10 +397,14 @@ export declare interface CallWidgetProps {
      * own transformed root it travels with the widget when dragged.
      *
      * Per-mode behaviour:
-     *   'window' / 'fullscreen'  the card WIDENS (320px stage +
-     *                            `sidePanelWidthClassName`) — the stage has
-     *                            no slack to give up, so Meet's split
-     *                            becomes a grow here.
+     *   'window' / 'fullscreen'  the card WIDENS — the stage has no slack to
+     *                            give up, so Meet's split becomes a grow
+     *                            here: the stage column itself goes to
+     *                            `CALL_STAGE_DOCKED_WIDTH` and the dock is
+     *                            added beside it. Both columns take one
+     *                            height (`CALL_DOCK_ROW_HEIGHT`), the stage
+     *                            and the panel body absorbing the slack, so
+     *                            the card has no dead bands in it.
      *   'mini'                   the collapsed pill has no video stage to
      *                            dock beside; the dock and its toggles are
      *                            not rendered. Expand to reach chat, which

@@ -48,6 +48,7 @@
 import type { ReactNode } from 'react';
 
 import { cn } from '../../lib/cn';
+import { DockedPanelProvider } from '../shared/DockedPanelContext';
 import { CaptionsIcon, ChatBubbleIcon, UsersIcon } from './MediaIcons';
 import type { CallWidgetMode } from './callWidgetMode';
 
@@ -285,7 +286,10 @@ export function CallSidePanel({
         className,
       )}
     >
-      <header className="flex shrink-0 items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+      {/* The dock's ONE header. `py-3 px-4` plus a body that drew its own
+          card left a dead strip above the first row of content; this row
+          is deliberately tight. */}
+      <header className="flex shrink-0 items-center justify-between gap-2 border-b border-white/10 px-2 py-2">
         {showTabRail ? (
           <div
             role="tablist"
@@ -334,7 +338,12 @@ export function CallSidePanel({
         data-testid={tabbed ? callSidePanelBodyTestId(active) : undefined}
         className="min-h-0 flex-1 overflow-y-auto"
       >
-        {active.content}
+        {/* The dock owns the header and the height; bodies that know about
+            <DockedPanelContext> (e.g. <ChatPanel>) drop their own heading
+            and stretch to the column instead of stopping short. */}
+        <DockedPanelProvider hasHeader fillsHeight>
+          {active.content}
+        </DockedPanelProvider>
       </div>
     </aside>
   );

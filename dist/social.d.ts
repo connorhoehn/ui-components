@@ -32,7 +32,7 @@ declare interface ChatMessage {
     avatarUrl?: string;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone, showHeader, fill, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -46,6 +46,23 @@ export declare interface ChatPanelProps {
      *  the message text renders dark-on-dark and disappears. Mirrors
      *  InviteCandidateList's tone seam. */
     tone?: 'light' | 'dark';
+    /** Render the panel's own "Chat (n)" heading.
+     *
+     *  Default: TRUE standalone — every consumer in this repo (the DMs
+     *  page's <SocialPanel>, <PanelsView>, <WrappedChatPanel>, the hook
+     *  demos) drops the panel into a plain container and relies on it to
+     *  name itself. Default FALSE inside a panel dock, which already names
+     *  the region with its tab bar — that is where "Chat" appeared twice,
+     *  ~40px apart. Pass it explicitly to override either way. */
+    showHeader?: boolean;
+    /** Fill the parent's height — the message list becomes the flexible
+     *  region and the composer sits on the bottom edge — instead of sizing
+     *  to a 200px-tall list inside a bordered card.
+     *
+     *  Default: FALSE standalone (the card is what the DMs page and the
+     *  demos expect), TRUE inside a dock, whose column has a definite
+     *  height that the body must match or leave a dead band behind. */
+    fill?: boolean;
 }
 
 export declare function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps): JSX.Element;

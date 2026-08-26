@@ -987,6 +987,15 @@ export declare type ButtonSize = 'sm' | 'md' | 'lg';
 
 export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
 
+/** Card width with the dock closed. */
+export declare const CALL_CARD_WIDTH = "w-[380px]";
+
+/** The single height both columns take when the dock is open. */
+export declare const CALL_DOCK_ROW_HEIGHT = "h-[480px]";
+
+/** Video-column width with the dock open — it GROWS, it is not pinned. */
+export declare const CALL_STAGE_DOCKED_WIDTH = "w-[480px]";
+
 export declare function CallControls({ mode, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, extras, className, }: CallControlsProps): JSX.Element;
 
 export declare type CallControlsMode = 'audio' | 'video';
@@ -1378,10 +1387,14 @@ export declare interface CallWidgetProps {
      * own transformed root it travels with the widget when dragged.
      *
      * Per-mode behaviour:
-     *   'window' / 'fullscreen'  the card WIDENS (320px stage +
-     *                            `sidePanelWidthClassName`) — the stage has
-     *                            no slack to give up, so Meet's split
-     *                            becomes a grow here.
+     *   'window' / 'fullscreen'  the card WIDENS — the stage has no slack to
+     *                            give up, so Meet's split becomes a grow
+     *                            here: the stage column itself goes to
+     *                            `CALL_STAGE_DOCKED_WIDTH` and the dock is
+     *                            added beside it. Both columns take one
+     *                            height (`CALL_DOCK_ROW_HEIGHT`), the stage
+     *                            and the panel body absorbing the slack, so
+     *                            the card has no dead bands in it.
      *   'mini'                   the collapsed pill has no video stage to
      *                            dock beside; the dock and its toggles are
      *                            not rendered. Expand to reach chat, which
@@ -1564,7 +1577,7 @@ export declare interface ChatMessage {
     avatarUrl?: string;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone, showHeader, fill, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -1578,6 +1591,23 @@ export declare interface ChatPanelProps {
      *  the message text renders dark-on-dark and disappears. Mirrors
      *  InviteCandidateList's tone seam. */
     tone?: 'light' | 'dark';
+    /** Render the panel's own "Chat (n)" heading.
+     *
+     *  Default: TRUE standalone — every consumer in this repo (the DMs
+     *  page's <SocialPanel>, <PanelsView>, <WrappedChatPanel>, the hook
+     *  demos) drops the panel into a plain container and relies on it to
+     *  name itself. Default FALSE inside a panel dock, which already names
+     *  the region with its tab bar — that is where "Chat" appeared twice,
+     *  ~40px apart. Pass it explicitly to override either way. */
+    showHeader?: boolean;
+    /** Fill the parent's height — the message list becomes the flexible
+     *  region and the composer sits on the bottom edge — instead of sizing
+     *  to a 200px-tall list inside a bordered card.
+     *
+     *  Default: FALSE standalone (the card is what the DMs page and the
+     *  demos expect), TRUE inside a dock, whose column has a definite
+     *  height that the body must match or leave a dead band behind. */
+    fill?: boolean;
 }
 
 export declare function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps): JSX.Element;
@@ -2324,6 +2354,22 @@ export declare interface DLQPurgeResponse {
 export declare interface DLQRedriveResponse {
     redriven: string[];
     notFound: string[];
+}
+
+export declare interface DockedPanelContextValue {
+    /** The dock's own header already names the region — bodies should not
+     *  repeat it. */
+    hasHeader: boolean;
+    /** The dock gives its body a definite height; bodies should fill it and
+     *  let their own scrollable region absorb the slack. */
+    fillsHeight: boolean;
+}
+
+/** Wraps a dock's body slot. Docks render this; consumers rarely do. */
+export declare function DockedPanelProvider({ hasHeader, fillsHeight, children, }: DockedPanelProviderProps): JSX.Element;
+
+export declare interface DockedPanelProviderProps extends Partial<DockedPanelContextValue> {
+    children: ReactNode;
 }
 
 export declare function DocsShell({ topNav, sidebar, rightRail, children, fullBleed, preContent, className, style, scrollResetKey, }: DocsShellProps): JSX.Element;
@@ -8609,6 +8655,12 @@ declare interface UseActivityBusReturn {
      updateType: (id: string, patch: Partial<Omit<CustomFieldType, 'id' | 'createdAt'>>) => void;
      deleteType: (id: string) => void;
  }
+
+ /**
+  * Read the surrounding dock, if any. `null` means "standalone" — the body
+  * owns its own header and sizing.
+  */
+ export declare function useDockedPanel(): DockedPanelContextValue | null;
 
  export declare function useDocTypeProposals(): UseDocTypeProposalsResult;
 

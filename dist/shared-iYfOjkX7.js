@@ -17,10 +17,10 @@ import { n as u } from "./PermissionDeniedCard-5FQ6reO7.js";
 import { n as d, t as f } from "./CardHeader-MBY5yyXT.js";
 import { i as p, n as m, r as h, t as g } from "./focusTrap-CmWJlptm.js";
 import "./SkeletonCard-CGe8XFPB.js";
-import { t as _ } from "./StatusDot-Bgx2zxgC.js";
-import { t as v } from "./PresenceDot-3gBZGPvX.js";
-import { n as y, t as b } from "./Avatar-BzicCOft.js";
-import { n as x } from "./Badge-Dokf1Hkq.js";
+import { n as _, t as v } from "./Avatar-Yxs_9Jio.js";
+import { t as y } from "./StatusDot-Bgx2zxgC.js";
+import { t as b } from "./PresenceDot-3gBZGPvX.js";
+import { n as x } from "./Badge-BhPMrMAB.js";
 import { createContext as S, useCallback as C, useContext as w, useEffect as T, useId as E, useLayoutEffect as ee, useMemo as D, useRef as O, useState as k } from "react";
 import { Fragment as A, jsx as j, jsxs as M } from "react/jsx-runtime";
 import { Command as N } from "cmdk";
@@ -961,7 +961,7 @@ function Ae({ name: t, label: n, avatarSize: r = 20, avatarColor: i, presence: a
 		className: e("inline-flex items-center gap-1.5 rounded-full px-1.5 py-0.5 text-[12px] text-text-primary", o && "hover:bg-surface-hover cursor-pointer transition-colors", !o && "cursor-default", s),
 		style: c,
 		children: [
-			/* @__PURE__ */ j(b, {
+			/* @__PURE__ */ j(v, {
 				name: t,
 				size: r,
 				color: i
@@ -970,7 +970,7 @@ function Ae({ name: t, label: n, avatarSize: r = 20, avatarColor: i, presence: a
 				className: "font-medium leading-none",
 				children: n ?? t
 			}),
-			a && /* @__PURE__ */ j(v, {
+			a && /* @__PURE__ */ j(b, {
 				state: a,
 				size: "xs"
 			})
@@ -1783,12 +1783,12 @@ function ct({ name: t, memberCount: n, description: r, actions: i, avatarUrl: a,
 					src: a,
 					alt: t,
 					className: "w-9 h-9 rounded-full object-cover"
-				}) : /* @__PURE__ */ j(b, {
+				}) : /* @__PURE__ */ j(v, {
 					name: t,
 					size: 36
 				}), o !== void 0 && /* @__PURE__ */ j("span", {
 					className: "absolute -bottom-0.5 -right-0.5",
-					children: /* @__PURE__ */ j(_, {
+					children: /* @__PURE__ */ j(y, {
 						color: o ? "var(--color-success)" : "var(--color-text-tertiary)",
 						size: "sm",
 						"aria-label": o ? "Online" : "Offline"
@@ -1849,7 +1849,7 @@ function lt({ user: t, items: n, className: r, "data-testid": i }) {
 					src: t.avatarUrl,
 					alt: t.name,
 					className: "w-8 h-8 rounded-full object-cover"
-				}) : /* @__PURE__ */ j(b, {
+				}) : /* @__PURE__ */ j(v, {
 					name: t.name,
 					size: 32
 				}),
@@ -2133,7 +2133,7 @@ function gt({ name: e, id: t, status: n, statusColors: r, contributorNames: i = 
 						gap: 8,
 						minWidth: 0
 					},
-					children: [i.length > 0 ? /* @__PURE__ */ j(y, {
+					children: [i.length > 0 ? /* @__PURE__ */ j(_, {
 						names: i,
 						maxVisible: 5,
 						size: 24

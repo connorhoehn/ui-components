@@ -539,6 +539,22 @@ export declare interface DataTableProps<T> {
 
 export declare const DEFAULT_PIPELINE_ICONS: string[];
 
+export declare interface DockedPanelContextValue {
+    /** The dock's own header already names the region — bodies should not
+     *  repeat it. */
+    hasHeader: boolean;
+    /** The dock gives its body a definite height; bodies should fill it and
+     *  let their own scrollable region absorb the slack. */
+    fillsHeight: boolean;
+}
+
+/** Wraps a dock's body slot. Docks render this; consumers rarely do. */
+export declare function DockedPanelProvider({ hasHeader, fillsHeight, children, }: DockedPanelProviderProps): JSX.Element;
+
+export declare interface DockedPanelProviderProps extends Partial<DockedPanelContextValue> {
+    children: ReactNode;
+}
+
 export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, 'aria-label': ariaLabel, 'data-testid': testId, }: DrawerProps): default_2.ReactPortal | null;
 
 export declare interface DrawerProps {
@@ -2000,6 +2016,12 @@ export declare interface TypingIndicatorProps {
 }
 
 export declare function useCommandPalette(): CommandPaletteController;
+
+/**
+ * Read the surrounding dock, if any. `null` means "standalone" — the body
+ * owns its own header and sizing.
+ */
+export declare function useDockedPanel(): DockedPanelContextValue | null;
 
 export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, 'data-testid': testId, }: UserChipProps): JSX.Element;
 

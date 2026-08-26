@@ -38,6 +38,32 @@ import {
 } from './callWidgetMode';
 
 // ---------------------------------------------------------------------------
+// Dimensions
+// ---------------------------------------------------------------------------
+//
+// Sized for a floating widget, not a stage: the whole card has to sit in a
+// corner of a 1280×800 laptop screen (the smallest we support) with its
+// 16px margin and still leave the app behind it usable. Numbers:
+//
+//   closed          380px wide — the old 320 made the self-view postage-
+//                   stamp sized once anything else was in the row.
+//   dock open       480px stage + the dock's own width (320 by default)
+//                   → 800px, and 480px tall → 517px with the title bar.
+//                   832×549 including margins: fits 1280×800 with room to
+//                   spare, and reads as a widget rather than a takeover.
+//                   The big layout belongs to <ExpandableCallWidget>.
+//
+// Exported so a host (and the tests) can assert the contract rather than
+// re-deriving these strings.
+
+/** Card width with the dock closed. */
+export const CALL_CARD_WIDTH = 'w-[380px]';
+/** Video-column width with the dock open — it GROWS, it is not pinned. */
+export const CALL_STAGE_DOCKED_WIDTH = 'w-[480px]';
+/** The single height both columns take when the dock is open. */
+export const CALL_DOCK_ROW_HEIGHT = 'h-[480px]';
+
+// ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
@@ -138,10 +164,14 @@ export interface CallWidgetProps {
    * own transformed root it travels with the widget when dragged.
    *
    * Per-mode behaviour:
-   *   'window' / 'fullscreen'  the card WIDENS (320px stage +
-   *                            `sidePanelWidthClassName`) — the stage has
-   *                            no slack to give up, so Meet's split
-   *                            becomes a grow here.
+   *   'window' / 'fullscreen'  the card WIDENS — the stage has no slack to
+   *                            give up, so Meet's split becomes a grow
+   *                            here: the stage column itself goes to
+   *                            `CALL_STAGE_DOCKED_WIDTH` and the dock is
+   *                            added beside it. Both columns take one
+   *                            height (`CALL_DOCK_ROW_HEIGHT`), the stage
+   *                            and the panel body absorbing the slack, so
+   *                            the card has no dead bands in it.
    *   'mini'                   the collapsed pill has no video stage to
    *                            dock beside; the dock and its toggles are
    *                            not rendered. Expand to reach chat, which
@@ -299,6 +329,7 @@ function RingingView({
 
 function ActiveCallContent({
   mode,
+  fillHeight = false,
   participants,
   localParticipant,
   duration,
@@ -336,22 +367,34 @@ function ActiveCallContent({
   | 'onEndCall'
   | 'layoutComponent'
   | 'callStats'
->) {
+> & {
+  /** Stretch to the parent's height: the video stage becomes the flexible
+   *  region and the duration line + control row sit on the bottom edge.
+   *  Set when the side-panel dock is open — the dock column has a definite
+   *  height, and a stage that keeps its intrinsic 16:9 height leaves a dead
+   *  band under the controls beside a full-height chat. */
+  fillHeight?: boolean;
+}) {
   const showVideo = mode === 'video' && isCameraOn;
 
   return (
-    <div className="flex flex-col">
+    <div className={cn('flex flex-col', fillHeight && 'h-full min-h-0')}>
       {/* Video area — caller-provided layout takes precedence over the
        * default single-PiP layout. Wrap in the same mx-3/mt-3 container so
        * external layouts don't have to know the widget's outer padding. */}
       {mode === 'video' && layoutComponent && (
-        <div className="mx-3 mt-3 rounded-lg overflow-hidden relative">
+        <div className={cn('mx-3 mt-3 rounded-lg overflow-hidden relative', fillHeight && 'min-h-0 flex-1')}>
           {layoutComponent}
           <CallStatsOverlay stats={callStats} position="bottom-left" />
         </div>
       )}
       {mode === 'video' && !layoutComponent && (
-        <div className="relative bg-black aspect-video rounded-lg overflow-hidden mx-3 mt-3">
+        <div
+          className={cn(
+            'relative bg-black rounded-lg overflow-hidden mx-3 mt-3',
+            fillHeight ? 'min-h-0 flex-1' : 'aspect-video',
+          )}
+        >
           {localParticipant?.videoStream && showVideo ? (
             <VideoTile stream={localParticipant.videoStream} muted />
           ) : (
@@ -394,16 +437,18 @@ function ActiveCallContent({
 
       {/* Audio-only participant display */}
       {mode === 'audio' && (
-        <CallParticipantStrip
-          participants={participants}
-          localFallback={localParticipant}
-          maxVisible={4}
-          avatarSize={36}
-        />
+        <div className={cn(fillHeight && 'flex min-h-0 flex-1 items-center justify-center')}>
+          <CallParticipantStrip
+            participants={participants}
+            localFallback={localParticipant}
+            maxVisible={4}
+            avatarSize={36}
+          />
+        </div>
       )}
 
       {/* Duration & status */}
-      <div className="text-center py-1.5">
+      <div className="text-center py-1.5 shrink-0">
         {duration !== undefined && (
           <span
             className="text-white/60 text-xs font-mono"
@@ -422,6 +467,7 @@ function ActiveCallContent({
           never in their own floating strip: an orphaned single button
           above the row read as a layout bug (operator, 2026-08-25). */}
       <CallControls
+        className={fillHeight ? 'shrink-0' : undefined}
         mode={mode}
         isMuted={isMuted}
         isCameraOn={isCameraOn}
@@ -863,6 +909,7 @@ export function CallWidget({
       {state === 'active' && (
         <ActiveCallContent
           mode={mode}
+          fillHeight={dockOpen}
           participants={participants}
           localParticipant={localParticipant}
           duration={duration}
@@ -923,8 +970,10 @@ export function CallWidget({
           className={cn(
             'bg-surface-inverse rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/10 overflow-hidden backdrop-blur-sm',
             // Opening the dock WIDENS the card rather than splitting it:
-            // the 320px stage has no width to give up (see `sidePanelTabs`).
-            minimized ? 'w-[260px]' : dockOpen ? 'w-auto' : 'w-[320px]',
+            // the stage has no width to give up (see `sidePanelTabs`), and
+            // the stage column ALSO grows (CALL_STAGE_DOCKED_WIDTH) so the
+            // self-view is not squeezed by the panel beside it.
+            minimized ? 'w-[260px]' : dockOpen ? 'w-auto' : CALL_CARD_WIDTH,
           )}
           data-call-side-panel-open={dockOpen ? 'true' : 'false'}
         >
@@ -1003,16 +1052,29 @@ export function CallWidget({
           {/* Expanded content — plus, when a destination is open, the
               docked side panel as its flex sibling. Both live INSIDE the
               transformed widget root, so dragging moves them together. */}
+          {/* ONE height for both columns. The row is the only element with
+              a height; the stage column and the dock both take `h-full` of
+              it and distribute their own slack internally (stage grows /
+              message list grows). Before this, the panel's content set the
+              row height and the stage column's content stopped short —
+              leaving a dead dark band under the controls. */}
           {!minimized && (dockOpen ? (
-            <div className="flex min-h-0 items-stretch">
-              <div className="w-[320px] shrink-0">{expandedBody}</div>
+            <div
+              className={cn('flex min-h-0 items-stretch', CALL_DOCK_ROW_HEIGHT)}
+              data-testid="call-widget-dock-row"
+            >
+              <div
+                className={cn('flex h-full min-h-0 flex-col shrink-0', CALL_STAGE_DOCKED_WIDTH)}
+                data-testid="call-widget-stage-column"
+              >
+                {expandedBody}
+              </div>
               <CallSidePanel
                 mode={resolvedMode}
                 tabs={dockTabs}
                 activeTab={activeSidePanelTab}
                 onTabChange={onSidePanelTabChange}
                 widthClassName={sidePanelWidthClassName}
-                className="max-h-[420px]"
               />
             </div>
           ) : (

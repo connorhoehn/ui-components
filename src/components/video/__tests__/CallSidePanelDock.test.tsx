@@ -5,7 +5,13 @@
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { CallSidePanel, CallSidePanelToggles, callSidePanelPlacement } from '../CallSidePanel';
 import type { CallSidePanelTab } from '../CallSidePanel';
-import { CallWidget } from '../CallWidget';
+import { ChatPanel } from '../../social/ChatPanel';
+import {
+  CallWidget,
+  CALL_CARD_WIDTH,
+  CALL_DOCK_ROW_HEIGHT,
+  CALL_STAGE_DOCKED_WIDTH,
+} from '../CallWidget';
 import { ExpandableCallWidget } from '../ExpandableCallWidget';
 
 function tabs(): CallSidePanelTab[] {
@@ -173,19 +179,22 @@ describe('CallWidget dock wiring', () => {
     expect(root).toContainElement(within(root).getByTestId('call-side-panel'));
   });
 
-  it('WIDENS rather than splitting — the 320px stage keeps its width', () => {
+  it('WIDENS rather than splitting — and the stage column GROWS with it', () => {
     const { rerender } = render(
       <CallWidget {...widgetBase} sidePanelTabs={tabs()} activeSidePanelTab={null} />,
     );
     const card = () => screen.getByTestId('call-widget').firstElementChild as HTMLElement;
-    expect(card().className).toContain('w-[320px]');
+    expect(card().className).toContain(CALL_CARD_WIDTH);
     expect(card()).toHaveAttribute('data-call-side-panel-open', 'false');
 
     rerender(<CallWidget {...widgetBase} sidePanelTabs={tabs()} activeSidePanelTab="chat" />);
     expect(card().className).toContain('w-auto');
     expect(card()).toHaveAttribute('data-call-side-panel-open', 'true');
-    // Stage column still 320px wide beside the panel.
-    expect(card().querySelector('.w-\\[320px\\]')).not.toBeNull();
+    // The stage is not squeezed by the panel beside it: it takes the wider
+    // docked width, not the closed-card width.
+    const stage = screen.getByTestId('call-widget-stage-column');
+    expect(stage.className).toContain(CALL_STAGE_DOCKED_WIDTH);
+    expect(stage.className).not.toContain(CALL_CARD_WIDTH);
   });
 
   it('mini has no stage to dock beside — no panel, no toggles', () => {
@@ -218,7 +227,155 @@ describe('CallWidget dock wiring', () => {
     expect(screen.queryByTestId('call-side-panel-toggles')).toBeNull();
     expect(
       (screen.getByTestId('call-widget').firstElementChild as HTMLElement).className,
-    ).toContain('w-[320px]');
+    ).toContain(CALL_CARD_WIDTH);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Height matching — the 2.108 complaint.
+//
+// The video column used to stop at its intrinsic height (stage + duration +
+// controls) while the panel column ran on to its own content height, leaving
+// a dead dark band under the controls. jsdom computes no layout, so these
+// assert the structure that makes the heights equal: ONE height on the row,
+// both columns taking all of it, and each column's slack absorbed inside
+// itself.
+// ---------------------------------------------------------------------------
+
+describe('docked columns are height-matched', () => {
+  function renderDocked(mode: 'video' | 'audio' = 'video') {
+    render(
+      <CallWidget
+        {...widgetBase}
+        mode={mode}
+        sidePanelTabs={tabs()}
+        activeSidePanelTab="chat"
+        onSidePanelTabChange={() => {}}
+      />,
+    );
+    const row = screen.getByTestId('call-widget-dock-row');
+    return {
+      row,
+      stage: screen.getByTestId('call-widget-stage-column'),
+      panel: screen.getByTestId('call-side-panel'),
+    };
+  }
+
+  it('one height lives on the row and both columns take all of it', () => {
+    const { row, stage, panel } = renderDocked();
+
+    expect(row.className).toContain(CALL_DOCK_ROW_HEIGHT);
+    expect(row.className).toContain('items-stretch');
+
+    // Same flex row → same box height, and neither column opts out of it.
+    expect(stage.parentElement).toBe(row);
+    expect(panel.parentElement).toBe(row);
+    expect(stage.className).toContain('h-full');
+    expect(panel.className).toContain('h-full');
+
+    // Nothing may cap a column below the row: a max-height on the panel is
+    // exactly what used to desynchronise the two.
+    for (const col of [stage, panel]) {
+      expect(col.className).not.toMatch(/\bmax-h-/);
+      expect(col.className).not.toMatch(/\bh-\[(?!full)/);
+    }
+  });
+
+  it('the stage column fills its height — the slack goes to the video, not under the controls', () => {
+    const { stage } = renderDocked();
+
+    // The content root stretches...
+    const content = stage.firstElementChild as HTMLElement;
+    expect(content.className).toContain('h-full');
+    // ...and the flexible region is the video stage, so the duration line
+    // and the control row end up on the column's bottom edge.
+    const grower = stage.querySelector('.flex-1');
+    expect(grower).not.toBeNull();
+    expect((grower as HTMLElement).className).toContain('bg-black');
+  });
+
+  it('audio mode fills too — the avatar strip takes the slack', () => {
+    const { stage } = renderDocked('audio');
+    const grower = stage.querySelector('.flex-1') as HTMLElement;
+    expect(grower).not.toBeNull();
+    expect(grower.className).toContain('items-center');
+  });
+
+  it('the panel body is the flexible region on its side', () => {
+    const { panel } = renderDocked();
+    const body = screen.getByTestId('call-chat-panel');
+    expect(panel).toContainElement(body);
+    expect(body.className).toContain('flex-1');
+    expect(body.className).toContain('min-h-0');
+  });
+
+  it('with the dock CLOSED nothing is force-stretched (the card sizes to content)', () => {
+    render(<CallWidget {...widgetBase} sidePanelTabs={tabs()} activeSidePanelTab={null} />);
+    expect(screen.queryByTestId('call-widget-dock-row')).toBeNull();
+    expect(screen.queryByTestId('call-widget-stage-column')).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// One header per region.
+// ---------------------------------------------------------------------------
+
+describe('the docked composition has exactly ONE header', () => {
+  const messages = [
+    { clientId: 'alice', content: 'hi', timestamp: '2026-08-25T10:00:00.000Z', displayName: 'Alice' },
+  ];
+
+  function chatDock() {
+    return [
+      {
+        id: 'chat',
+        label: 'Chat',
+        content: <ChatPanel tone="dark" messages={messages} onSend={() => {}} />,
+      },
+      { id: 'people', label: 'People', content: <div>people</div> },
+    ];
+  }
+
+  it('the dock tab bar names the region; the chat body does not repeat it', () => {
+    render(
+      <CallWidget
+        {...widgetBase}
+        sidePanelTabs={chatDock()}
+        activeSidePanelTab="chat"
+        onSidePanelTabChange={() => {}}
+      />,
+    );
+
+    // The tab is the header.
+    expect(screen.getByTestId('call-side-panel-tab-chat')).toHaveTextContent('Chat');
+    // And it is the ONLY thing in the widget that says "Chat".
+    const chatLabels = screen
+      .getAllByText(/^\s*Chat\b/)
+      .filter((el) => el.children.length === 0);
+    expect(chatLabels).toHaveLength(1);
+    expect(screen.queryByText(/^Chat \(\d+\)$/)).toBeNull();
+  });
+
+  it('standalone — outside any dock — the chat panel keeps its own header', () => {
+    render(<ChatPanel messages={messages} onSend={() => {}} />);
+    expect(screen.getByText('Chat (1)')).toBeInTheDocument();
+  });
+
+  it('the opt-out is a prop, so a host can put the header back inside the dock', () => {
+    render(
+      <CallSidePanel
+        tabs={[
+          {
+            id: 'chat',
+            label: 'Chat',
+            content: <ChatPanel showHeader tone="dark" messages={messages} onSend={() => {}} />,
+          },
+        ]}
+        activeTab="chat"
+        onTabChange={() => {}}
+      />,
+    );
+    expect(screen.getByText('Chat (1)')).toBeInTheDocument();
   });
 });
 

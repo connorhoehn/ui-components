@@ -1,10 +1,10 @@
 import { a as e, i as t, n, o as r, r as i, t as a } from "./useSocialProfile-5S1qyvsv.js";
 import { n as o } from "./ToastProvider-DPq8u2eM.js";
 import { t as s } from "./cn-DhjIN-s0.js";
-import { t as c } from "./PresenceDot-3gBZGPvX.js";
-import { n as l, t as u } from "./Avatar-BzicCOft.js";
+import { n as c, t as l } from "./Avatar-Yxs_9Jio.js";
+import { t as u } from "./PresenceDot-3gBZGPvX.js";
 import { t as d } from "./Input-DcK2h-jK.js";
-import { i as f, r as p } from "./PresencePanel-D_-C0sP7.js";
+import { i as f, r as p } from "./PresencePanel-CwQxe833.js";
 import { t as m } from "./Textarea-C3t5PCLv.js";
 import { t as h } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as g } from "./Select-Z0TLUVeL.js";
@@ -2480,7 +2480,7 @@ function ke({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 					"aria-current": r ? "true" : void 0,
 					className: s("flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left", p ? "hover:bg-white/10" : "hover:bg-surface-hover", r && (p ? "bg-white/10" : "bg-surface-hover")),
 					children: [
-						i ? /* @__PURE__ */ T(l, {
+						i ? /* @__PURE__ */ T(c, {
 							size: 28,
 							maxVisible: 2,
 							items: e.peers.map((e) => ({
@@ -2490,12 +2490,12 @@ function ke({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 							}))
 						}) : a ? /* @__PURE__ */ E("span", {
 							className: "relative inline-flex shrink-0",
-							children: [/* @__PURE__ */ T(u, {
+							children: [/* @__PURE__ */ T(l, {
 								name: a.displayName,
 								color: a.color,
 								src: a.avatarUrl,
 								size: 28
-							}), a.online !== void 0 && /* @__PURE__ */ T(c, {
+							}), a.online !== void 0 && /* @__PURE__ */ T(u, {
 								state: a.online ? "online" : "offline",
 								pulse: !1,
 								className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", p ? "ring-surface-inverse" : "ring-surface")

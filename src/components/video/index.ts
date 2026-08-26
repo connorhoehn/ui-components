@@ -39,6 +39,13 @@ export { ViewerCount } from './ViewerCount';
 export type { ViewerCountProps } from './ViewerCount';
 
 export { CallWidget } from './CallWidget';
+// Card/column dimensions the widget sizes itself with — exported so a host
+// can reserve space (or assert the contract) without re-deriving them.
+export {
+  CALL_CARD_WIDTH,
+  CALL_STAGE_DOCKED_WIDTH,
+  CALL_DOCK_ROW_HEIGHT,
+} from './CallWidget';
 export type { CallWidgetProps, CallWidgetParticipant, CallWidgetState, CallMode } from './CallWidget';
 
 export { CallControls } from './CallControls';

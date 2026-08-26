@@ -8,6 +8,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.108.0] — 2026-08-25
+
+Follow-up to the 2.107 dock: it worked, but the composition still read as
+broken. Three layout bugs and a size bump. Tests 5,315 → 5,325.
+
+### Fixed — the docked call card no longer has a dead band in it
+
+The video column stopped at its intrinsic height (stage + duration +
+controls) while the panel column ran on to its own content height, so with
+Chat open the card showed a large empty dark region to the LEFT of the
+lower half of the chat. Both columns now take **one** height —
+`CALL_DOCK_ROW_HEIGHT` on the row they share — and each absorbs its own
+slack internally: the video stage grows (so the self-view gets bigger, not
+the void under the controls), and on the panel side the message list is
+the flexible region, with the composer on the bottom edge.
+
+### Fixed — one header per region
+
+The dock's tab bar already says "Chat"; `ChatPanel` said "Chat (20)" again
+~40px below it. `ChatPanel` gained `showHeader` and `fill`, and
+`CallSidePanel` now announces itself through the new
+`DockedPanelContext` — so a panel body **inside a dock** drops its own
+heading and stretches to the column, while the same component used
+standalone (the DMs page, `PanelsView`, `WrappedChatPanel`, the hook
+demos) is byte-for-byte unchanged. Both props override the context in
+either direction.
+
+The empty strip between the tab bar and the first message went with it:
+that was the dock header's `py-3` stacked on the chat card's own
+`mt-4` + border + padding.
+
+### Changed — the widget is bigger
+
+It was a 320px card with a 320px dock bolted to it. Now:
+
+| | before | after |
+| --- | --- | --- |
+| card, dock closed | 320px | **380px** (`CALL_CARD_WIDTH`) |
+| video column, dock open | 320px (pinned) | **480px** (`CALL_STAGE_DOCKED_WIDTH`) |
+| card, dock open | 640 × 393 | **800 × 515** |
+
+Still a floating widget, not a takeover: 832 × 549 including its margin
+fits a 1280 × 800 laptop screen with room to spare. The viewport-filling
+layout stays `ExpandableCallWidget`'s job.
+
+### Notes for consumers
+
+Nothing to pass — a `<ChatPanel>` handed to `sidePanelTabs[].content`
+adapts on its own. Hosts that hand-rolled the opt-out (a wrapper that
+strips the header, a fixed-height chat body) should drop it. The
+dimension constants are exported from `/video` for hosts that reserve
+space, and `useDockedPanel()` from `/shared` for bodies that want the same
+adaptation.
+
 ## [2.107.0] — 2026-08-25
 
 Two product complaints, both real gaps. Tests 5,271 → 5,315.

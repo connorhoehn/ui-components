@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { PageHeader, ExampleBlock } from '../shared';
 import { CallWidget } from '@/components/video';
-import type { CallWidgetState, CallMode, CallWidgetParticipant } from '@/components/video';
+import type { CallSidePanelTab, CallWidgetState, CallMode, CallWidgetParticipant } from '@/components/video';
+import { ChatPanel } from '@/components/social';
+import type { ChatMessage } from '@/hooks/useChat';
 
 const mockParticipants: CallWidgetParticipant[] = [
   { id: '1', displayName: 'Sarah Chen', isSpeaking: false, isMuted: false },
@@ -111,6 +113,90 @@ function LiveDemo() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Docked side panel — chat/people/captions attached to the call card.
+// Deliberately STATIC (no timers, no simulation) so the composition can be
+// measured: the video column and the panel column must end at the same y.
+// ---------------------------------------------------------------------------
+
+const DOCK_SENDERS = ['Sarah Chen', 'Marcus Johnson', 'Alex Rivera', 'You'];
+const DOCK_LINES = [
+  'Can everyone see my screen?',
+  'Yep, looks good.',
+  'One sec, grabbing the link…',
+  'Pushed the fix to the branch.',
+  'Nice — I’ll review after standup.',
+];
+
+const DOCK_MESSAGES: ChatMessage[] = Array.from({ length: 20 }, (_, i) => ({
+  id: `m${i}`,
+  clientId: `c${i % 4}`,
+  displayName: DOCK_SENDERS[i % 4],
+  content: DOCK_LINES[i % DOCK_LINES.length],
+  timestamp: new Date(1750000000000 + i * 60_000).toISOString(),
+}));
+
+function DockedDemo() {
+  const [activeTab, setActiveTab] = useState<string | null>('chat');
+  const [isMuted, setIsMuted] = useState(false);
+
+  const tabs: CallSidePanelTab[] = [
+    {
+      id: 'chat',
+      label: 'Chat',
+      badgeCount: 3,
+      // Note: no `showHeader`/`fill` props here — inside the dock the chat
+      // panel picks those up from the dock itself.
+      content: <ChatPanel tone="dark" messages={DOCK_MESSAGES} onSend={() => {}} />,
+    },
+    {
+      id: 'people',
+      label: 'People',
+      content: (
+        <ul className="m-0 flex list-none flex-col gap-1 p-3 text-[13px] text-white">
+          {['Sarah Chen', 'Marcus Johnson', 'Alex Rivera', 'You'].map((n) => (
+            <li key={n} className="rounded px-2 py-1.5 hover:bg-white/10">{n}</li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      id: 'captions',
+      label: 'Captions',
+      content: (
+        <div className="flex flex-col gap-2 p-3 text-[13px] leading-snug text-white/80">
+          <p className="m-0"><b className="text-white">Sarah:</b> can everyone hear me?</p>
+          <p className="m-0"><b className="text-white">Marcus:</b> loud and clear.</p>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="relative min-h-[620px]" data-testid="call-widget-dock-demo">
+      <CallWidget
+        state="active"
+        mode="video"
+        participants={mockParticipants.slice(0, 1)}
+        localParticipant={mockLocal}
+        duration={15}
+        isMuted={isMuted}
+        isCameraOn={false}
+        contained
+        draggable={false}
+        position="bottom-right"
+        sidePanelTabs={tabs}
+        activeSidePanelTab={activeTab}
+        onSidePanelTabChange={setActiveTab}
+        onToggleMute={() => setIsMuted((m) => !m)}
+        onToggleCamera={() => {}}
+        onToggleScreenShare={() => {}}
+        onEndCall={() => {}}
+      />
+    </div>
+  );
+}
+
 export default function CallWidgetPage() {
   return (
     <div>
@@ -147,6 +233,30 @@ export default function CallWidgetPage() {
         background="#0f172a"
       >
         <LiveDemo />
+      </ExampleBlock>
+
+      <ExampleBlock
+        id="call-widget-dock"
+        title="Docked Side Panel"
+        description="Chat, People and Captions dock to the right edge of the call card — one region, three mutually-exclusive destinations, driven by the toggles in the control row. The card widens; the video column and the panel stay height-matched, and the panel's message list absorbs the slack."
+        code={`<CallWidget
+  state="active"
+  mode="video"
+  participants={participants}
+  localParticipant={localUser}
+  duration={elapsed}
+  sidePanelTabs={[
+    { id: 'chat', label: 'Chat', badgeCount: 3,
+      content: <ChatPanel tone="dark" messages={messages} onSend={send} /> },
+    { id: 'people', label: 'People', content: <PeopleList /> },
+    { id: 'captions', label: 'Captions', content: <Captions /> },
+  ]}
+  activeSidePanelTab={activeTab}
+  onSidePanelTabChange={setActiveTab}
+/>`}
+        background="#0f172a"
+      >
+        <DockedDemo />
       </ExampleBlock>
 
       <ExampleBlock
