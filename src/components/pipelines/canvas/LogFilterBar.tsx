@@ -81,7 +81,7 @@ export default function LogFilterBar({
           {FILTER_LABEL[filter]} {'▾'}
         </button>
         {filterOpen ? (
-          <div className="absolute right-0 bottom-full mb-1 bg-white border border-border rounded-md shadow-lg z-[3] min-w-[140px]">
+          <div className="absolute right-0 bottom-full mb-1 bg-surface border border-border rounded-md shadow-lg z-[3] min-w-[140px]">
             {(Object.keys(FILTER_LABEL) as LogFilter[]).map((key) => (
               <button
                 type="button"

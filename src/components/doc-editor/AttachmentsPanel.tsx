@@ -239,14 +239,14 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
             <button
               type="button"
               onClick={() => setAddMode('file')}
-              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-text-primary')}
+              className={cn('text-xs px-2.5 py-1 font-semibold bg-surface border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-text-primary')}
             >
               + File
             </button>
             <button
               type="button"
               onClick={() => setAddMode('document')}
-              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-text-primary')}
+              className={cn('text-xs px-2.5 py-1 font-semibold bg-surface border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-text-primary')}
             >
               + Document
             </button>

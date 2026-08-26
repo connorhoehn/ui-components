@@ -92,7 +92,7 @@ function TocCard({ sections }: { sections: Section[] }) {
   return (
     <aside
       data-testid="reader-toc"
-      className={cn('sticky top-4 self-start bg-white border border-border rounded-lg p-4 mb-3')}
+      className={cn('sticky top-4 self-start bg-surface border border-border rounded-lg p-4 mb-3')}
     >
       <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Contents</h3>
       <nav>
@@ -127,7 +127,7 @@ function ProgressCard({
   const color = progressColor(pct);
 
   return (
-    <div className={cn('bg-white border border-border rounded-lg p-4 mb-3')}>
+    <div className={cn('bg-surface border border-border rounded-lg p-4 mb-3')}>
       <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Progress</h3>
       <div className={cn('flex items-baseline gap-1 mb-2')}>
         <span className={cn('text-[28px] font-bold leading-none')} style={{ color }}>
@@ -165,7 +165,7 @@ function ContributorsCard({ participants, meta }: { participants: Participant[];
   }
 
   return (
-    <div className={cn('bg-white border border-border rounded-lg p-4 mb-3')}>
+    <div className={cn('bg-surface border border-border rounded-lg p-4 mb-3')}>
       <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Contributors</h3>
       {/* Bubble row */}
       <div className={cn('flex flex-wrap gap-1.5 mb-3')}>
@@ -228,7 +228,7 @@ function DocumentStatsCard({
     : 0;
 
   return (
-    <div className={cn('bg-white border border-border rounded-lg p-4 mb-3')}>
+    <div className={cn('bg-surface border border-border rounded-lg p-4 mb-3')}>
       <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Document Info</h3>
       <div className={cn('flex justify-between py-1 text-[13px] text-text-primary border-b border-border-subtle')}>
         <span className={cn('text-neutral')}>Sections</span>

@@ -149,7 +149,7 @@ export function ExecutiveSummaryCard({
   const hasFragment = fragment && ydoc;
   const hasContent = contentText && contentText.trim().length > 0;
   return (
-    <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
+    <div className={cn('bg-surface border border-border rounded-lg p-4 mb-4')}>
       <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Executive Summary</h2>
       {hasFragment ? (
         <div className={cn(

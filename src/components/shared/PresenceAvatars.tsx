@@ -170,7 +170,7 @@ export function PresenceAvatars({
             )}
             {modeInfo && (
               <span
-                className="absolute flex items-center justify-center rounded-full bg-white border border-border select-none"
+                className="absolute flex items-center justify-center rounded-full bg-surface border border-border select-none"
                 style={{
                   top: -border,
                   right: -border,

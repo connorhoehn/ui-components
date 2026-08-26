@@ -71,7 +71,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           'w-full rounded-md border bg-surface-panel font-inherit text-text-primary',
           'outline-none transition-colors duration-150',
           'placeholder:text-text-tertiary',
-          'focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40',
+          'focus:bg-surface focus:border-info focus:ring-1 focus:ring-info/40',
           'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover',
           invalid
             ? 'border-danger focus:border-danger focus:ring-danger/40'
@@ -90,7 +90,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       className={cn(
         'relative flex w-full items-center rounded-md border bg-surface-panel',
         'transition-colors duration-150',
-        'focus-within:bg-white focus-within:border-info focus-within:ring-1 focus-within:ring-info/40',
+        'focus-within:bg-surface focus-within:border-info focus-within:ring-1 focus-within:ring-info/40',
         invalid
           ? 'border-danger focus-within:border-danger focus-within:ring-danger/40'
           : 'border-border-emphasis',

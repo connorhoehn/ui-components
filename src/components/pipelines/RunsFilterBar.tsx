@@ -94,7 +94,7 @@ function FilterDropdown<T extends string>({
       </button>
       {open && (
         <div
-          className="absolute top-full left-0 mt-1 bg-white border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] py-1"
+          className="absolute top-full left-0 mt-1 bg-surface border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] py-1"
         >
           {options.map((opt) => (
             <label

@@ -143,8 +143,12 @@ export function ProjectCard({
       onClick={onClick}
       className={className}
       style={{
-        background: '#fff',
-        border: '1.5px solid #e5e7eb',
+        // Theme tokens, not literals: a hardcoded #fff card keeps a white
+        // face under [data-theme="dark"] while its text follows the theme
+        // and goes near-white on it. Fallbacks are the light values, so
+        // this is a no-op wherever the tokens are absent.
+        background: 'var(--color-surface, #fff)',
+        border: '1.5px solid var(--color-border, #e5e7eb)',
         borderTop: `3px solid ${colors.accent}`,
         borderRadius: 10,
         padding: '14px 16px 12px',
@@ -188,7 +192,7 @@ export function ProjectCard({
               margin: '0 0 3px',
               fontSize: 13.5,
               fontWeight: 700,
-              color: '#111827',
+              color: 'var(--color-text-primary, #111827)',
               lineHeight: 1.35,
             }}
           >
@@ -220,7 +224,7 @@ export function ProjectCard({
           alignItems: 'center',
           justifyContent: 'space-between',
           paddingTop: 8,
-          borderTop: '1px solid #f3f4f6',
+          borderTop: '1px solid var(--color-border-subtle, #f3f4f6)',
           gap: 8,
         }}
       >

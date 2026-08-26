@@ -238,7 +238,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
             'inline-flex items-center justify-center h-6 rounded-xl font-semibold text-[11px] cursor-pointer leading-snug whitespace-nowrap',
             item.assignee
               ? 'px-2 bg-primary-bg text-primary-fg border-none min-w-0'
-              : 'w-6 px-0 bg-white text-text-tertiary border border-dashed border-border-emphasis',
+              : 'w-6 px-0 bg-surface text-text-tertiary border border-dashed border-border-emphasis',
           )}
         >
           {item.assignee ? (
@@ -257,7 +257,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         </button>
 
         {pickerOpen && (
-          <div className={cn('absolute top-full left-0 mt-1 min-w-[180px] max-h-[200px] overflow-y-auto bg-white border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] z-[1000] py-1')}>
+          <div className={cn('absolute top-full left-0 mt-1 min-w-[180px] max-h-[200px] overflow-y-auto bg-surface border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] z-[1000] py-1')}>
             <div className={cn('px-2 py-1')}>
               <Input
                 ref={inputRef}

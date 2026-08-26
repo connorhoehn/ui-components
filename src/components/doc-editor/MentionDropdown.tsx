@@ -96,7 +96,7 @@ export const MentionDropdown = forwardRef<MentionDropdownHandle, MentionDropdown
       <div
         ref={listRef}
         role="listbox"
-        className={cn('fixed z-[1000] bg-white border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] max-h-60 overflow-y-auto min-w-[200px]')}
+        className={cn('fixed z-[1000] bg-surface border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] max-h-60 overflow-y-auto min-w-[200px]')}
         style={{ top: position.top, left: position.left }}
       >
         {filtered.length === 0 ? (

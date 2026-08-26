@@ -155,7 +155,7 @@ export function MfaSetupPage({
 
   return (
     <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[480px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="MFA setup">
+      <div className="w-full max-w-[480px] bg-surface rounded-xl shadow-md p-8" role="main" aria-label="MFA setup">
         <h1 className="text-xl font-bold text-text-primary mb-2 mt-0 text-center">
           Set Up Multi-Factor Authentication
         </h1>

@@ -38,7 +38,7 @@ export interface PipelinesBulkActionBarProps {
 
 const pillBtn = cn(
   'px-2.5 py-[5px] text-xs font-semibold',
-  'bg-white text-text-secondary',
+  'bg-surface text-text-secondary',
   'border border-border-field rounded-md',
   'cursor-pointer font-inherit',
 );
@@ -170,7 +170,7 @@ export default function PipelinesBulkActionBar({
             onClick={(e) => e.stopPropagation()}
             className={cn(
               'absolute top-full left-0 mt-1.5',
-              'bg-white border border-border rounded-lg',
+              'bg-surface border border-border rounded-lg',
               'shadow-lg min-w-[220px] p-2.5 z-10',
               'flex flex-col gap-2',
             )}
@@ -238,7 +238,7 @@ export default function PipelinesBulkActionBar({
             onClick={(e) => e.stopPropagation()}
             className={cn(
               'absolute top-full left-0 mt-1.5',
-              'bg-white border border-border rounded-lg',
+              'bg-surface border border-border rounded-lg',
               'shadow-lg min-w-[220px] max-w-[320px] p-2.5 z-10',
               'flex flex-col gap-2',
             )}

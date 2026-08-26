@@ -55,7 +55,7 @@ export function ConsentPage({
   return (
     <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
       <div
-        className="w-full max-w-[440px] bg-white rounded-xl shadow-md overflow-hidden"
+        className="w-full max-w-[440px] bg-surface rounded-xl shadow-md overflow-hidden"
         role="main"
         aria-label="Authorization consent"
       >

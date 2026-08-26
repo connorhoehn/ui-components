@@ -156,7 +156,7 @@ export default function ReviewMode({
               key={section.id}
               id={`section-${section.id}`}
               data-testid={`review-section-${section.id}`}
-              className={cn('bg-white border border-border rounded-lg p-5')}
+              className={cn('bg-surface border border-border rounded-lg p-5')}
               style={{
                 borderLeft: myReview
                   ? `3px solid ${statusStyle(myReview.status).color}`

@@ -172,7 +172,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
       <div className="flex justify-end mt-[18px]">
         <button
           onClick={onClose}
-          className="py-1.5 px-3.5 text-[13px] font-semibold border border-border rounded-md bg-white text-text-primary cursor-pointer font-[inherit]"
+          className="py-1.5 px-3.5 text-[13px] font-semibold border border-border rounded-md bg-surface text-text-primary cursor-pointer font-[inherit]"
         >
           Close
         </button>

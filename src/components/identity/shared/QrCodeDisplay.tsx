@@ -11,6 +11,10 @@ export interface QrCodeDisplayProps {
 
 export function QrCodeDisplay({ value, size = 200, label }: QrCodeDisplayProps) {
   return (
+    // `bg-white` is DELIBERATE here and must not be swept to `bg-surface`:
+    // the white padding is the QR code's quiet zone. Phone scanners expect
+    // dark-on-light modules, so a dark card back would break scanning even
+    // though it would look more at home in dark mode.
     <figure className="flex flex-col items-center gap-2 m-0 p-4 border border-border rounded-md bg-white">
       <img
         src={value}

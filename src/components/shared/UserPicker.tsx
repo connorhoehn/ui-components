@@ -236,7 +236,7 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
         />
         {open && !atMax && filtered.length > 0 && (
           <div
-            className="absolute top-full left-0 right-0 bg-white border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.08)] mt-1 max-h-[200px] overflow-y-auto z-10"
+            className="absolute top-full left-0 right-0 bg-surface border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.08)] mt-1 max-h-[200px] overflow-y-auto z-10"
             onMouseDown={e => {
               // Prevent input blur from dismissing before click fires.
               e.preventDefault();

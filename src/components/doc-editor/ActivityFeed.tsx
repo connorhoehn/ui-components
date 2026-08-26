@@ -126,7 +126,7 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
             <div className={cn('flex items-center gap-1.5 px-3 py-1.5 border-b border-border text-[11px] text-neutral flex-wrap')}>
               <span className={cn('font-semibold')}>Active:</span>
               {participants.map(p => (
-                <span key={p.clientId} className={cn('inline-flex items-center gap-1 bg-white border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-text-primary')}>
+                <span key={p.clientId} className={cn('inline-flex items-center gap-1 bg-surface border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-text-primary')}>
                   <span className={cn('w-2 h-2 rounded-full shrink-0')} style={{ background: p.color }} />
                   {p.displayName} ({modeLabel(p.mode)})
                 </span>

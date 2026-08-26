@@ -684,7 +684,7 @@ export default function PipelinesPage() {
       <div
         className={cn(
           'h-14 shrink-0 flex items-center justify-between px-6',
-          'border-b border-border bg-white',
+          'border-b border-border bg-surface',
           'sticky top-0 z-[2]',
         )}
       >
@@ -695,7 +695,7 @@ export default function PipelinesPage() {
             onClick={() => navigate('/pipelines/metrics')}
             className={cn(
               'px-4 py-[7px] text-[13px] font-semibold',
-              'bg-white text-text-secondary',
+              'bg-surface text-text-secondary',
               'border border-border-field rounded-[7px]',
               'cursor-pointer font-inherit',
             )}
@@ -707,7 +707,7 @@ export default function PipelinesPage() {
             onClick={() => setTemplatesModalOpen(true)}
             className={cn(
               'px-4 py-[7px] text-[13px] font-semibold',
-              'bg-white text-text-secondary',
+              'bg-surface text-text-secondary',
               'border border-border-field rounded-[7px]',
               'cursor-pointer font-inherit',
             )}

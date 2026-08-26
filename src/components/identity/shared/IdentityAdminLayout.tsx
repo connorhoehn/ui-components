@@ -97,7 +97,7 @@ export function IdentityAdminLayout({
     <div className="flex min-h-screen bg-surface-panel font-[inherit]">
       <aside
         className={cn(
-          'bg-white border-r border-border flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden',
+          'bg-surface border-r border-border flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden',
           sidebarOpen ? 'w-60' : 'w-0 border-r-0'
         )}
       >
@@ -117,7 +117,7 @@ export function IdentityAdminLayout({
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="flex items-center justify-between px-4 py-2 bg-white border-b border-border">
+        <header className="flex items-center justify-between px-4 py-2 bg-surface border-b border-border">
           <Button
             variant="ghost"
             size="sm"

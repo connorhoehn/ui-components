@@ -152,7 +152,7 @@ export default function SectionBlock({
     <div
       id={`section-${section.id}`}
       data-testid={`section-block-${section.id}`}
-      className={cn('border border-border rounded-lg mb-4 bg-white relative transition-[border-left,box-shadow] duration-300 ease-in-out')}
+      className={cn('border border-border rounded-lg mb-4 bg-surface relative transition-[border-left,box-shadow] duration-300 ease-in-out')}
       style={{
         borderLeft: hasPresence ? `3px solid ${presenceBorderColor}` : '1px solid #e2e8f0',
         boxShadow: isFocused ? '0 0 0 2px rgba(59, 130, 246, 0.3)' : 'none',
@@ -169,7 +169,7 @@ export default function SectionBlock({
           onMouseLeave={() => setCommentHovered(false)}
           className={cn(
             'absolute top-1/2 -right-[52px] -translate-y-1/2 w-10 h-10 rounded-full border border-border flex items-center justify-center text-xl leading-none p-0 z-[1] shadow-sm cursor-pointer transition-[opacity,background] duration-150 ease-in-out',
-            commentHovered ? 'bg-surface-hover opacity-90' : 'bg-white opacity-40',
+            commentHovered ? 'bg-surface-hover opacity-90' : 'bg-surface opacity-40',
           )}
           title="Open comments"
         >

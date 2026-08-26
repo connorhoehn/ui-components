@@ -44,7 +44,7 @@ export function AgentCard({ agent, metrics, selected, onClick }: AgentCardProps)
         onClick && 'cursor-pointer hover:shadow-sm',
         selected
           ? 'border-info bg-info-bg/50 shadow-sm'
-          : cn('border-border bg-white', onClick && 'hover:border-border-emphasis'),
+          : cn('border-border bg-surface', onClick && 'hover:border-border-emphasis'),
       )}
       onClick={onClick}
     >

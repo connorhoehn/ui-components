@@ -131,7 +131,7 @@ function StatusBadge({ status }: { status: string }) {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border border-border rounded-lg p-4 bg-white">
+    <div className="border border-border rounded-lg p-4 bg-surface">
       <h4 className="text-xs font-medium text-neutral uppercase mb-3">{title}</h4>
       {children}
     </div>

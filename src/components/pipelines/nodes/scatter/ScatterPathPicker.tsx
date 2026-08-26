@@ -275,7 +275,7 @@ export function ScatterPathPicker({
           buttons, so the honest shape is a labelled group whose members
           expose their selected state. */}
       <div
-        className="flex flex-col gap-px border border-border rounded-md bg-white max-h-48 overflow-y-auto"
+        className="flex flex-col gap-px border border-border rounded-md bg-surface max-h-48 overflow-y-auto"
         data-testid="scatter-path-tree"
         role="group"
         aria-label="Available output paths"

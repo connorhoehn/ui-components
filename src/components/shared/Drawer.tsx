@@ -98,7 +98,7 @@ function Drawer({
         aria-labelledby={title ? headingId : undefined}
         aria-label={title ? undefined : ariaLabel}
         className={cn(
-          'absolute right-0 top-0 h-full bg-white shadow-xl flex flex-col',
+          'absolute right-0 top-0 h-full bg-surface shadow-xl flex flex-col',
           'transition-transform duration-200',
           open ? 'translate-x-0' : 'translate-x-full',
         )}

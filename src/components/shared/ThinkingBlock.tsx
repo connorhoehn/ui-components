@@ -51,7 +51,7 @@ export function ThinkingBlock({
         <span className="text-[11px] font-semibold uppercase tracking-wide">{label}</span>
         {streaming && !content && <ThinkingDots size="sm" />}
       </summary>
-      <div className="px-3 py-2 text-xs text-[var(--color-text-secondary)] italic border-t border-[var(--color-border)] bg-white whitespace-pre-wrap leading-relaxed">
+      <div className="px-3 py-2 text-xs text-[var(--color-text-secondary)] italic border-t border-[var(--color-border)] bg-surface whitespace-pre-wrap leading-relaxed">
         {content || <ThinkingDots />}
       </div>
     </details>

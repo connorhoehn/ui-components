@@ -40,7 +40,7 @@ export interface ModalProps {
   cardStyle?: React.CSSProperties;
   /**
    * Tailwind classes merged onto the card AFTER the defaults (cn/tw-merge,
-   * so e.g. `bg-surface-inverse p-0` beats the default `bg-white px-6 py-7`).
+   * so e.g. `bg-surface-inverse p-0` beats the default `bg-surface px-6 py-7`).
    * Lets dark-chrome dialogs (CallSettingsDialog) restyle the card without
    * reaching for inline styles.
    */
@@ -205,7 +205,7 @@ function Modal({
         className={cn(
           // max-h + scroll: a tall card (e.g. a long people picker) otherwise
           // grows past the viewport with no way to reach its own bottom.
-          'bg-white rounded-xl px-6 py-7 w-[90%] max-h-[90vh] overflow-y-auto shadow-lg font-[inherit]',
+          'bg-surface rounded-xl px-6 py-7 w-[90%] max-h-[90vh] overflow-y-auto shadow-lg font-[inherit]',
           cardClassName,
         )}
         style={{ maxWidth, ...cardStyle }}

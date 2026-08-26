@@ -196,7 +196,7 @@ export default function IngestDashboard() {
           <span className="text-[13px] font-medium">Failed to load ingest data.</span>
           <button
             onClick={handleRetry}
-            className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
           >
             Retry
           </button>

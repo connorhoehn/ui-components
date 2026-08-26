@@ -102,7 +102,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
     : '';
 
   return (
-    <div className={cn('bg-white border border-border rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out', transitionClass)}>
+    <div className={cn('bg-surface border border-border rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out', transitionClass)}>
       <div className={cn('flex items-center mb-1.5')}>
         <span className={cn('text-sm font-medium flex-1 text-text-primary')}>{item.text}</span>
         <span

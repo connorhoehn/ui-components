@@ -410,7 +410,7 @@ export default function PendingApprovalsPage() {
         {error ? (
           <div data-testid="approvals-error" role="alert" className="px-4 py-3 bg-danger-bg border border-danger text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-4">
             <span className="text-[13px] font-medium">Couldn't load pending approvals. Try again.</span>
-            <button data-testid="approvals-retry" onClick={retry} className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-danger-fg border border-danger rounded-md cursor-pointer font-[inherit]">Retry</button>
+            <button data-testid="approvals-retry" onClick={retry} className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger rounded-md cursor-pointer font-[inherit]">Retry</button>
           </div>
         ) : null}
 

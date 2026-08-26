@@ -92,7 +92,7 @@ export function EventPayloadEditor({
           onChange={(e) => onEventTypeChange(e.target.value as EventKey)}
           className={cn(
             'w-full py-[7px] px-2 text-[13px] rounded-md',
-            'border border-border-emphasis bg-white font-[inherit]',
+            'border border-border-emphasis bg-surface font-[inherit]',
           )}
         >
           {eventOptions}

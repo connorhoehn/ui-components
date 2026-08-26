@@ -96,7 +96,7 @@ export function MfaDashboardPage({
 
   return (
     <div className="min-h-full flex items-start justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[600px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="MFA device management">
+      <div className="w-full max-w-[600px] bg-surface rounded-xl shadow-md p-8" role="main" aria-label="MFA device management">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div className="flex flex-col gap-1">
             <h1 className="text-xl font-bold text-text-primary m-0">MFA Devices</h1>
@@ -141,7 +141,7 @@ export function MfaDashboardPage({
         {!loading && devices.length > 0 && (
           <div className="flex flex-col gap-3" role="list" aria-label="MFA devices">
             {devices.map(device => (
-              <div key={device.deviceId} className="p-5 border border-border rounded-lg bg-white" role="listitem">
+              <div key={device.deviceId} className="p-5 border border-border rounded-lg bg-surface" role="listitem">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2.5">
                     {renaming === device.deviceId ? (

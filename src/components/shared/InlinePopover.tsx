@@ -248,7 +248,13 @@ export function InlinePopover({
       data-testid={testId}
       data-placement={placement}
       className={cn(
-        'min-w-[160px] rounded-lg border border-border bg-white',
+        // `bg-surface`, NOT `bg-white`. This panel is PORTALLED to
+        // document.body and its text is `text-text-primary`, which flips to
+        // near-white under [data-theme="dark"]. A literal white background
+        // does not flip, so the whole menu became #f1f5f9-on-#ffffff —
+        // 1.10:1, invisible. `--color-surface` is #ffffff in light, so
+        // adopting the token is a no-op there and a fix in dark.
+        'min-w-[160px] rounded-lg border border-border bg-surface',
         'shadow-lg p-1 text-sm text-text-primary',
         className,
       )}

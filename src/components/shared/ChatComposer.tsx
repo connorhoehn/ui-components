@@ -80,7 +80,7 @@ export function ChatComposer({
   };
 
   const fieldBase = cn(
-    'flex-1 px-3 py-2 text-sm rounded-lg border border-[var(--color-border-field,#d1d5db)] bg-white text-[var(--color-text-primary)]',
+    'flex-1 px-3 py-2 text-sm rounded-lg border border-[var(--color-border-field,#d1d5db)] bg-surface text-[var(--color-text-primary)]',
     'placeholder:text-[var(--color-text-tertiary)]',
     'focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent',
     'resize-none',

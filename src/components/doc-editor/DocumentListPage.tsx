@@ -138,7 +138,7 @@ function PresenceAvatars({
               className={cn('absolute -bottom-px -right-px w-2.5 h-2.5 rounded-full border-2 border-white')}
               style={{ background: statusColor }}
             />
-            <div className={cn('absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white border border-border flex items-center justify-center text-[8px] leading-none')}>
+            <div className={cn('absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-surface border border-border flex items-center justify-center text-[8px] leading-none')}>
               {modeInfo.icon}
             </div>
           </button>
@@ -249,7 +249,7 @@ export default function DocumentListPage({
                   setFocusedCard((prev) => (prev === doc.id ? null : prev));
                 }}
                 className={cn(
-                  'flex items-center gap-4 px-4 py-3.5 bg-white border border-border rounded-lg cursor-pointer relative transition-shadow duration-150',
+                  'flex items-center gap-4 px-4 py-3.5 bg-surface border border-border rounded-lg cursor-pointer relative transition-shadow duration-150',
                   isHovered ? 'shadow-[0_4px_12px_rgba(0,0,0,0.08)]' : '',
                 )}
               >
@@ -326,7 +326,7 @@ export default function DocumentListPage({
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md',
-              safeCurrentPage <= 1 ? 'bg-surface-hover text-text-tertiary cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
+              safeCurrentPage <= 1 ? 'bg-surface-hover text-text-tertiary cursor-not-allowed' : 'bg-surface text-text-secondary cursor-pointer',
             )}
           >
             Previous
@@ -343,7 +343,7 @@ export default function DocumentListPage({
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md',
-              safeCurrentPage >= totalPages ? 'bg-surface-hover text-text-tertiary cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
+              safeCurrentPage >= totalPages ? 'bg-surface-hover text-text-tertiary cursor-not-allowed' : 'bg-surface text-text-secondary cursor-pointer',
             )}
           >
             Next

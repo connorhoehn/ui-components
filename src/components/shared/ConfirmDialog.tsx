@@ -41,7 +41,7 @@ export default function ConfirmDialog({
             onClick={onCancel}
             className={cn(
               'px-4 py-[7px] text-[13px] font-[inherit]',
-              'border border-border bg-white text-text-secondary',
+              'border border-border bg-surface text-text-secondary',
               'rounded-md cursor-pointer hover:bg-surface-panel',
             )}
           >

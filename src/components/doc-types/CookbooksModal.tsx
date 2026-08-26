@@ -38,7 +38,7 @@ function CookbookCard({ cookbook, onPick }: CookbookCardProps) {
   return (
     <div
       data-testid={`cookbook-card-${cookbook.id}`}
-      className="flex flex-col gap-2 w-[220px] min-h-[200px] p-3.5 bg-white border border-border rounded-[10px] font-inherit"
+      className="flex flex-col gap-2 w-[220px] min-h-[200px] p-3.5 bg-surface border border-border rounded-[10px] font-inherit"
     >
       <div className="flex items-center gap-2.5">
         <span className="text-2xl" aria-hidden>{cookbook.icon}</span>

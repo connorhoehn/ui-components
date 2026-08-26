@@ -28,7 +28,14 @@ export const Panel: React.FC<PanelProps> = ({
     <div
       className={cn(
         'fixed right-0 top-0 h-full z-[60] flex flex-col shadow-[-4px_0_12px_rgba(0,0,0,0.08)]',
-        variant === 'dark' ? 'bg-surface-inverse' : 'bg-surface'
+        // `variant="dark"` means "this panel is permanently dark chrome",
+        // not "inverse of the current theme" — its children below are
+        // hardcoded `text-white` / `border-white/10`. `bg-surface-inverse`
+        // FLIPS to #f8fafc under [data-theme="dark"], which turned this
+        // panel white-on-white. `--color-call-chrome` is the theme-invariant
+        // family for exactly this (see src/styles.css); it resolves to the
+        // same #0f172a `surface-inverse` gave in light, so light is a no-op.
+        variant === 'dark' ? 'bg-call-chrome' : 'bg-surface'
       )}
       style={{ width, ...style }}
     >

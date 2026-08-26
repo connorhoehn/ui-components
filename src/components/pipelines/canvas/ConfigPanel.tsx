@@ -483,7 +483,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
   };
 
   return (
-    <div ref={panelRef} className="flex flex-col flex-1 min-h-0 bg-white" data-testid="config-panel">
+    <div ref={panelRef} className="flex flex-col flex-1 min-h-0 bg-surface" data-testid="config-panel">
       {isMulti ? (
         // ---------------------------------------------------------------
         // Multi-select pane

@@ -439,7 +439,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
                   type="button"
                   data-testid="sim-history-refire"
                   onClick={() => handleRefire(entry)}
-                  className="text-[11px] py-[3px] px-2 bg-white border border-border-emphasis rounded cursor-pointer font-[inherit] text-text-primary"
+                  className="text-[11px] py-[3px] px-2 bg-surface border border-border-emphasis rounded cursor-pointer font-[inherit] text-text-primary"
                 >
                   ↻ re-fire
                 </button>

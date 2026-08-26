@@ -28,7 +28,7 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
   return (
     <div className={cn('flex h-full min-h-[500px]', className)}>
       {/* Left panel — agent selector & info */}
-      <div className="w-[240px] border-r border-border bg-white flex flex-col overflow-hidden">
+      <div className="w-[240px] border-r border-border bg-surface flex flex-col overflow-hidden">
         {/* Header */}
         <div className="py-3 px-4 border-b border-border font-semibold text-[13px] text-neutral uppercase tracking-[0.05em]">
           Agents

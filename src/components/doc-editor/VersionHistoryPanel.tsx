@@ -170,7 +170,7 @@ export default function VersionHistoryPanel({
                   'px-2 py-[3px] text-[11px] font-medium border rounded-[4px] cursor-pointer font-[inherit] whitespace-nowrap',
                   compareTimestamp === v.timestamp
                     ? 'bg-info-bg border-info text-info-fg'
-                    : 'bg-white border-border text-text-secondary',
+                    : 'bg-surface border-border text-text-secondary',
                 )}
                 onClick={(e) => handleCompare(e, v.timestamp)}
               >

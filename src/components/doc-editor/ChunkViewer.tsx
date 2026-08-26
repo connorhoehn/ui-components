@@ -38,7 +38,7 @@ export default function ChunkViewer({ section, onAckItem, onRejectItem, fragment
   const reviewed = section.items.filter((i) => i.status !== 'pending').length;
 
   return (
-    <div className={cn('bg-white border border-border rounded-lg p-5 mb-4')}>
+    <div className={cn('bg-surface border border-border rounded-lg p-5 mb-4')}>
       <h2 className={cn('text-xl font-bold m-0 mb-1 text-text-primary')}>{section.title}</h2>
       <span
         className={cn('inline-block text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-3')}

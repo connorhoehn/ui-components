@@ -95,7 +95,7 @@ export function HangoutRoomHeader({
     <header
       data-testid={testId}
       className={cn(
-        'flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-white',
+        'flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-surface',
         className,
       )}
     >

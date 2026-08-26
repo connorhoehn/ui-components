@@ -168,7 +168,7 @@ export function CodeBlock({
             'absolute top-2 right-2 text-[11px] px-2 py-1 rounded border transition-opacity',
             isDark
               ? 'bg-surface-inverse text-text-inverse border-border-emphasis hover:bg-neutral'
-              : 'bg-white text-text-primary border-border-emphasis hover:bg-surface-hover',
+              : 'bg-surface text-text-primary border-border-emphasis hover:bg-surface-hover',
           )}
           data-copied={copied ? 'true' : 'false'}
         >

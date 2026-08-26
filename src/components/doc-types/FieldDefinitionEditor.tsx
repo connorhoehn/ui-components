@@ -76,7 +76,7 @@ export function FieldDefinitionEditor({
         size="sm"
         value={field.name}
         onChange={e => onRename(e.target.value)}
-        className="flex-1 min-w-0 bg-transparent border-transparent focus:border-accent-border focus:bg-white"
+        className="flex-1 min-w-0 bg-transparent border-transparent focus:border-accent-border focus:bg-surface"
       />
 
       {/* Type select */}

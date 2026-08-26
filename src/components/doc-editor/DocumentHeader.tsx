@@ -74,7 +74,7 @@ export default function DocumentHeader({
   const sc = STATUS_BADGE_COLORS[meta.status] ?? STATUS_BADGE_COLORS.draft;
 
   return (
-    <header className={cn('flex flex-col py-2 px-4 bg-white border-b border-border shrink-0 gap-1.5 sticky top-[53px] z-[34]')}>
+    <header className={cn('flex flex-col py-2 px-4 bg-surface border-b border-border shrink-0 gap-1.5 sticky top-[53px] z-[34]')}>
       {/* Row 1: breadcrumb + title + status + participants */}
       <div className={cn('flex items-center justify-between')}>
         <div className={cn('flex items-center gap-2.5')}>
@@ -143,7 +143,7 @@ export default function DocumentHeader({
               data-testid={`mode-btn-${m}`}
               className={cn(
                 'py-1.5 px-3.5 text-[13px] font-semibold border border-border-field rounded-md cursor-pointer font-[inherit]',
-                mode === m ? 'bg-info text-white' : 'bg-white text-text-primary',
+                mode === m ? 'bg-info text-white' : 'bg-surface text-text-primary',
               )}
               onClick={() => onModeChange(m)}
             >
@@ -162,7 +162,7 @@ export default function DocumentHeader({
           {onToggleMyItems && (
             <button
               type="button"
-              className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-text-primary cursor-pointer font-[inherit] relative')}
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-surface text-text-primary cursor-pointer font-[inherit] relative')}
               onClick={onToggleMyItems}
             >
               My Items{myItemCount ? ` (${myItemCount})` : ''}
@@ -175,7 +175,7 @@ export default function DocumentHeader({
               type="button"
               className={cn(
                 'py-1.5 px-3 text-[13px] font-medium border rounded-md cursor-pointer font-[inherit] relative',
-                isCallActive ? 'bg-success-bg text-success-fg border-success-border' : 'bg-white text-text-primary border-border-field',
+                isCallActive ? 'bg-success-bg text-success-fg border-success-border' : 'bg-surface text-text-primary border-border-field',
               )}
               onClick={onToggleVideoCall}
             >
@@ -212,14 +212,14 @@ export default function DocumentHeader({
           <div className={cn('relative')}>
             <button
               type="button"
-              className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-text-primary cursor-pointer font-[inherit] relative tracking-wider')}
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-surface text-text-primary cursor-pointer font-[inherit] relative tracking-wider')}
               onClick={() => setShowMore((v) => !v)}
               title="More actions"
             >
               ⋯
             </button>
             {showMore && (
-              <div className={cn('absolute top-full right-0 mt-1 bg-white border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] overflow-hidden')}>
+              <div className={cn('absolute top-full right-0 mt-1 bg-surface border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] overflow-hidden')}>
                 <button
                   type="button"
                   className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover')}

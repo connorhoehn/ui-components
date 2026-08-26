@@ -395,6 +395,9 @@ export function BBoxAuthoringCanvas({
         type="button"
         aria-label={`Resize ${corner}`}
         className={cn(
+          // `bg-white` is DELIBERATE: resize handles sit on ARBITRARY image
+          // pixels, not on a themed surface. They need a fixed light fill so
+          // they stay findable over any photo, in either theme.
           'absolute h-3 w-3 rounded-sm border border-primary bg-white shadow',
           cornerCls[corner],
         )}

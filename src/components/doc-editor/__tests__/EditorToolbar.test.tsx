@@ -59,6 +59,10 @@ describe('EditorToolbar', () => {
     render(<EditorToolbar editor={editor} />);
     expect(screen.getByText('B').className).toMatch(/bg-info/);
     // Italic is not active, so it stays in the white bucket.
-    expect(screen.getByText('I').className).toMatch(/bg-white/);
+    // `bg-surface`, not `bg-white`: the inactive toolbar button follows the
+    // theme. `--color-surface` is #ffffff in light, so this is the same
+    // pixel there and a dark button under [data-theme="dark"] instead of a
+    // white chiclet with near-white text on it.
+    expect(screen.getByText('I').className).toMatch(/bg-surface\b/);
   });
 });

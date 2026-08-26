@@ -321,6 +321,8 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
             'relative w-11 h-6 rounded-xl border-none cursor-pointer p-0 shrink-0 transition-colors duration-200',
             visibility === 'private' ? 'bg-primary' : 'bg-state-idle',
           )}>
+          {/* `bg-white` is DELIBERATE — see Switch.tsx: the knob rides a
+              coloured track, so it must stay light in both themes. */}
           <span className={cn('absolute top-[3px] w-[18px] h-[18px] rounded-full bg-white shadow-sm transition-[left] duration-200', visibility === 'private' ? 'left-[23px]' : 'left-[3px]')} />
         </button>
         <span className="text-xs text-text-tertiary">{visibility === 'public' ? 'Visible to everyone' : 'Invite only'}</span>

@@ -120,7 +120,7 @@ export function TraceTimeline({ trace, className, title, legendKinds }: TraceTim
   const traceStart = new Date(trace.startedAt).getTime();
 
   return (
-    <div className={cn('border border-border rounded-lg overflow-hidden bg-white', className)}>
+    <div className={cn('border border-border rounded-lg overflow-hidden bg-surface', className)}>
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel">
         <div className="flex items-center gap-2">

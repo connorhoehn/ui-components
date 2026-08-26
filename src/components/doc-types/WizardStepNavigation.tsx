@@ -78,7 +78,7 @@ export function WizardStepNavigation({
             type="button"
             onClick={onExportSchema}
             title="Download JSON Schema"
-            className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-text-primary border border-border-field"
+            className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-text-primary border border-border-field"
           >
             Export Schema
           </button>
@@ -89,7 +89,7 @@ export function WizardStepNavigation({
           <button
             type="button"
             onClick={onBack}
-            className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-text-primary border border-border-field"
+            className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-text-primary border border-border-field"
           >
             ← Back
           </button>

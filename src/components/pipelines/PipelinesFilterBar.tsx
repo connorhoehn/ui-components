@@ -65,7 +65,7 @@ export default function PipelinesFilterBar({
     <div
       className={cn(
         'min-h-[40px] shrink-0 flex items-center gap-3 px-6',
-        'border-b border-border bg-white',
+        'border-b border-border bg-surface',
       )}
     >
       {/* Select-all checkbox */}
@@ -129,7 +129,7 @@ export default function PipelinesFilterBar({
                 'px-3 py-1.5 text-xs font-medium rounded cursor-pointer font-inherit',
                 active
                   ? 'border border-primary bg-primary text-white'
-                  : 'border border-border bg-white text-text-secondary',
+                  : 'border border-border bg-surface text-text-secondary',
               )}
             >
               {STATUS_LABEL[s]}

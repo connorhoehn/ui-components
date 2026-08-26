@@ -109,7 +109,7 @@ export default function AckMode({ sections, onAckItem, onRejectItem, participant
           type="button"
           className={cn(
             'px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]',
-            pageIndex === 0 ? 'bg-surface-inset text-text-tertiary cursor-default' : 'bg-white text-text-primary cursor-pointer',
+            pageIndex === 0 ? 'bg-surface-inset text-text-tertiary cursor-default' : 'bg-surface text-text-primary cursor-pointer',
           )}
           onClick={prev}
           disabled={pageIndex === 0}
@@ -123,7 +123,7 @@ export default function AckMode({ sections, onAckItem, onRejectItem, participant
           type="button"
           className={cn(
             'px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]',
-            pageIndex === totalPages - 1 ? 'bg-surface-inset text-text-tertiary cursor-default' : 'bg-white text-text-primary cursor-pointer',
+            pageIndex === totalPages - 1 ? 'bg-surface-inset text-text-tertiary cursor-default' : 'bg-surface text-text-primary cursor-pointer',
           )}
           onClick={next}
           disabled={pageIndex === totalPages - 1}

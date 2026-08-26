@@ -54,7 +54,7 @@ function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }:
       // Use the role that already means what we want instead.
       role={urgent ? 'alert' : 'status'}
       className={cn(
-        'bg-white border border-border border-l-[3px] rounded-lg',
+        'bg-surface border border-border border-l-[3px] rounded-lg',
         'px-4 py-3 flex items-center justify-between gap-3',
         'font-[system-ui,-apple-system,sans-serif] shadow-md',
         'min-w-[260px] max-w-[360px]',

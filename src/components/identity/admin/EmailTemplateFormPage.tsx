@@ -125,7 +125,7 @@ export function EmailTemplateFormPage({
           />
           {showPreview && (
             <div
-              className="border border-border rounded-sm p-4 bg-white min-h-[200px] mt-2"
+              className="border border-border rounded-sm p-4 bg-surface min-h-[200px] mt-2"
               dangerouslySetInnerHTML={{ __html: htmlBody }}
             />
           )}

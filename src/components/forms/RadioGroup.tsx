@@ -78,8 +78,8 @@ export function RadioGroup<T extends string = string>({
                 className={cn(
                   'block w-4 h-4 rounded-full border-2 transition-colors duration-150',
                   isChecked
-                    ? 'border-info bg-white'
-                    : 'border-border-emphasis bg-white',
+                    ? 'border-info bg-surface'
+                    : 'border-border-emphasis bg-surface',
                   !disabled && !isChecked && 'peer-hover:border-info',
                   'peer-focus-visible:ring-2 peer-focus-visible:ring-info/40 peer-focus-visible:ring-offset-1',
                 )}

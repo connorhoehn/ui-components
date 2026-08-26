@@ -170,7 +170,13 @@ describe('FloatingPanel', () => {
 
   it('defaults to dark call-chrome styling and honors tone="light"', () => {
     const first = renderPanel();
-    expect((screen.getByTestId('floating-panel') as HTMLElement).className).toContain('bg-surface-inverse');
+    // `bg-call-chrome`, NOT `bg-surface-inverse`. This assertion used to
+    // pin the bug in place: surface-inverse FLIPS with the theme, so under
+    // [data-theme="dark"] it resolved to #f8fafc and this permanently-dark
+    // panel — whose children are all `text-white/80` — went white-on-white.
+    // The invariant token resolves to the same #0f172a surface-inverse gave
+    // in light mode, so the rendered result is unchanged there.
+    expect((screen.getByTestId('floating-panel') as HTMLElement).className).toContain('bg-call-chrome');
     first.unmount();
 
     renderPanel({ tone: 'light' });

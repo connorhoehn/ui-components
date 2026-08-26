@@ -70,6 +70,9 @@ export default function Switch({
     >
       <span
         className={cn(
+          // `bg-white` is DELIBERATE: the knob rides an accent/grey TRACK,
+          // not the page, so it must contrast with the track in both themes.
+          // `bg-surface` would go #1e293b in dark and vanish into the track.
           'inline-block rounded-full bg-white shadow transform transition-transform',
           KNOB_SIZES[size],
           checked ? KNOB_TRANSLATE[size] : 'translate-x-0.5',

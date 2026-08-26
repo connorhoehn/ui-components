@@ -130,7 +130,7 @@ export default function SectionComments({
       {expanded && (
         <div className={cn('mt-2 border border-border rounded-lg bg-surface-panel overflow-hidden animate-[sectionCommentsSlideDown_0.2s_ease-out]')}>
           {/* New comment input at top */}
-          <div className={cn('flex items-start gap-1.5 px-3 py-2.5 border-b border-border bg-white')}>
+          <div className={cn('flex items-start gap-1.5 px-3 py-2.5 border-b border-border bg-surface')}>
             <div className={cn('flex-1 relative')}>
               <Textarea
                 ref={inputRef}

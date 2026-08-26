@@ -24,7 +24,7 @@ const INACTIVE_CLASSES =
   'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]';
 
 const ACTIVE_CLASSES =
-  'bg-white shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]';
+  'bg-surface shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]';
 
 export function SegmentedControl({
   options,

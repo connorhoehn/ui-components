@@ -136,7 +136,7 @@ export function LoginPage({
 
   return (
     <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[440px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="Authentication">
+      <div className="w-full max-w-[440px] bg-surface rounded-xl shadow-md p-8" role="main" aria-label="Authentication">
         <header className="flex flex-col items-center gap-3 mb-6">
           {logoUrl && <img src={logoUrl} alt="" className="w-14 h-14 object-contain rounded-md" />}
           {clientName && <h1 className="text-xl font-bold text-text-primary m-0">{clientName}</h1>}

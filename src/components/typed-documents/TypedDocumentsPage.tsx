@@ -302,7 +302,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                   </label>
                   <label
                     className={cn(
-                      'font-[inherit] text-xs font-semibold px-3 py-[5px] rounded-[5px] bg-white text-primary border border-primary',
+                      'font-[inherit] text-xs font-semibold px-3 py-[5px] rounded-[5px] bg-surface text-primary border border-primary',
                       importing ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
                     )}
                   >
@@ -362,7 +362,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                       <button
                         data-testid="download-failed-rows"
                         onClick={handleDownloadFailedRows}
-                        className={cn('text-[11px] px-2 py-[3px] rounded bg-white border border-danger text-danger-fg cursor-pointer font-[inherit] font-semibold')}
+                        className={cn('text-[11px] px-2 py-[3px] rounded bg-surface border border-danger text-danger-fg cursor-pointer font-[inherit] font-semibold')}
                       >
                         Download failed rows
                       </button>
@@ -392,7 +392,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                   <li
                     key={doc.documentId}
                     data-testid={`document-${doc.documentId}`}
-                    className={cn('border border-border rounded-lg p-3 bg-white')}
+                    className={cn('border border-border rounded-lg p-3 bg-surface')}
                   >
                     <div className={cn('text-[11px] text-text-tertiary mb-1.5')}>
                       {doc.createdAt} · by {doc.createdBy}

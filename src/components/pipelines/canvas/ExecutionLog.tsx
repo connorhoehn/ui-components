@@ -281,7 +281,7 @@ export default function ExecutionLog({
               role="dialog"
               aria-modal="true"
               aria-label="Execution log, fullscreen"
-              className="w-[90vw] h-[90vh] bg-white rounded-[10px] shadow-2xl flex flex-col overflow-hidden font-inherit"
+              className="w-[90vw] h-[90vh] bg-surface rounded-[10px] shadow-2xl flex flex-col overflow-hidden font-inherit"
               onMouseDown={(e) => e.stopPropagation()}
             >
               <LogFilterBar
@@ -299,7 +299,7 @@ export default function ExecutionLog({
               {renderFilterChip()}
               <div
                 ref={fullscreen ? listRef : undefined}
-                className="flex-1 overflow-y-auto bg-white relative"
+                className="flex-1 overflow-y-auto bg-surface relative"
                 onScroll={onScroll}
               >
                 {renderRows()}
@@ -323,7 +323,7 @@ export default function ExecutionLog({
     <>
       <div
         className={cn(
-          'shrink-0 transition-[height] duration-[160ms] ease-[cubic-bezier(0.4,0,0.2,1)] border-t border-border bg-white flex flex-col font-inherit',
+          'shrink-0 transition-[height] duration-[160ms] ease-[cubic-bezier(0.4,0,0.2,1)] border-t border-border bg-surface flex flex-col font-inherit',
           expanded && !fullscreen ? 'h-60' : 'h-10',
         )}
         data-testid="execution-log"
@@ -342,7 +342,7 @@ export default function ExecutionLog({
         />
         {!fullscreen && expanded ? renderFilterChip() : null}
         {expanded && !fullscreen ? (
-          <div ref={listRef} className="flex-1 overflow-y-auto bg-white relative" onScroll={onScroll}>
+          <div ref={listRef} className="flex-1 overflow-y-auto bg-surface relative" onScroll={onScroll}>
             {renderRows()}
             {!pinned ? (
               <button

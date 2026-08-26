@@ -63,7 +63,7 @@ export function ConversationHistory({
               'group flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors',
               isActive
                 ? 'border-info bg-info-bg/60'
-                : 'border-border bg-white hover:border-border-emphasis hover:bg-surface-panel',
+                : 'border-border bg-surface hover:border-border-emphasis hover:bg-surface-panel',
             )}
           >
             <button

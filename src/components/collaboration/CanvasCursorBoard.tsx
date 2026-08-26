@@ -186,7 +186,7 @@ export function CanvasCursorBoard({
                 'text-xs px-2.5 py-1 border rounded cursor-pointer',
                 tool === t
                   ? 'bg-info text-white border-info'
-                  : 'bg-white text-text-primary border-border-emphasis'
+                  : 'bg-surface text-text-primary border-border-emphasis'
               )}
             >
               {toolLabels[t]}

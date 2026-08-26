@@ -89,7 +89,7 @@ function SessionCard({ session, isActive }: { session: VideoSession; isActive?: 
   return (
     <div className={cn(
       'rounded-lg p-3 mb-2',
-      isActive ? 'border border-success bg-[rgba(16,185,129,0.04)]' : 'border border-border bg-white',
+      isActive ? 'border border-success bg-[rgba(16,185,129,0.04)]' : 'border border-border bg-surface',
     )}>
       {/* Top row: time + duration */}
       <div className={cn('flex justify-between items-center mb-1')}>

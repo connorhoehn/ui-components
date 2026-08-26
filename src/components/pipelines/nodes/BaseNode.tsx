@@ -87,7 +87,7 @@ interface StateTokens {
 }
 
 const STATE_TOKENS: Record<NodeExecutionState, StateTokens> = {
-  idle:      { card: 'border border-border-field bg-white',                    dot: 'bg-state-idle' },
+  idle:      { card: 'border border-border-field bg-surface',                    dot: 'bg-state-idle' },
   pending:   { card: 'border border-dashed border-info-border bg-info-bg',  dot: 'bg-state-pending' },
   running:   { card: 'border-2 border-info bg-info-bg',              dot: 'bg-info' },
   awaiting:  { card: 'border-2 border-warning bg-warning-bg',              dot: 'bg-warning' },

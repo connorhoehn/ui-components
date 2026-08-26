@@ -174,7 +174,7 @@ export function CodeInput({
               'rounded-md outline-none transition-[border-color,box-shadow] duration-150',
               'border-2',
               error ? 'border-danger' : 'border-border',
-              disabled ? 'bg-surface-panel cursor-not-allowed' : 'bg-white cursor-text',
+              disabled ? 'bg-surface-panel cursor-not-allowed' : 'bg-surface cursor-text',
               'text-text-primary',
               'focus:border-info focus:ring-2 focus:ring-info/20'
             )}

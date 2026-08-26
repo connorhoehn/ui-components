@@ -141,7 +141,7 @@ export default function TagEditor({
         />
         {showPopover ? (
           <div
-            className="absolute top-full mt-1 bg-white border border-border rounded-md shadow-lg p-1.5 flex flex-wrap gap-1 max-w-xs z-30"
+            className="absolute top-full mt-1 bg-surface border border-border rounded-md shadow-lg p-1.5 flex flex-wrap gap-1 max-w-xs z-30"
             data-testid="tag-suggestions"
           >
             {shownSuggestions.map((s) => (

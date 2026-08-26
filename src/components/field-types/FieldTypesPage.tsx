@@ -75,12 +75,12 @@ function DeleteModal({ name, onConfirm, onCancel }: {
           <button
             data-testid="cancel-delete"
             onClick={onCancel}
-            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-text-primary border border-border-field"
+            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-text-primary border border-border-field"
           >Cancel</button>
           <button
             data-testid="confirm-delete"
             onClick={onConfirm}
-            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-danger-fg border border-danger-border"
+            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-danger-fg border border-danger-border"
           >Delete</button>
         </>
       }
@@ -503,7 +503,7 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-text-primary border border-border-field"
+              className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-text-primary border border-border-field"
             >← Back</button>
           )}
           {step === 1 ? (

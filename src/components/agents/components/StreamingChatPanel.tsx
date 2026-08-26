@@ -63,7 +63,7 @@ export function StreamingChatPanel({
   }
 
   return (
-    <div className={cn('flex flex-col border border-border rounded-lg bg-white overflow-hidden', className)}>
+    <div className={cn('flex flex-col border border-border rounded-lg bg-surface overflow-hidden', className)}>
       {/* Header */}
       <div className="px-4 py-3 border-b border-border flex items-center justify-between">
         <span className="font-semibold text-sm text-text-primary">Agent Chat</span>

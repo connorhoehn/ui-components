@@ -28,7 +28,7 @@ export function Card({
   return (
     <div
       className={cn(
-        'border border-border rounded-lg bg-white overflow-hidden',
+        'border border-border rounded-lg bg-surface overflow-hidden',
         paddingClasses[padding],
         className,
       )}

@@ -58,7 +58,7 @@ export default function CanvasContextMenu({
       onKeyDown={(e) =>
         handleRovingKeyDown(e, { itemSelector: '[role="menuitem"]', orientation: 'vertical' })
       }
-      className="fixed bg-white border border-border rounded-md shadow-[0_8px_20px_rgba(15,23,42,0.16)] min-w-[220px] z-50 p-1 font-inherit"
+      className="fixed bg-surface border border-border rounded-md shadow-[0_8px_20px_rgba(15,23,42,0.16)] min-w-[220px] z-50 p-1 font-inherit"
       style={{ top: nodeMenu.y, left: nodeMenu.x }}
     >
       <button

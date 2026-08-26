@@ -10,7 +10,11 @@ describe('Panel', () => {
   it('applies dark variant class', () => {
     render(<Panel variant="dark">Dark panel</Panel>);
     const panel = screen.getByText('Dark panel').closest('div');
-    expect(panel?.className).toContain('bg-surface-inverse');
+    // See FloatingPanel.test.tsx: `variant="dark"` means permanently-dark
+    // chrome (its header renders `text-white`), so it must take the
+    // theme-INVARIANT token. `bg-surface-inverse` flipped to #f8fafc under
+    // [data-theme="dark"] and took the title with it.
+    expect(panel?.className).toContain('bg-call-chrome');
   });
 });
 

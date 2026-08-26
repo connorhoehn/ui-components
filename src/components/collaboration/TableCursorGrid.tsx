@@ -85,7 +85,7 @@ export function TableCursorGrid({ cursors, localCursor, onCellClick }: TableCurs
                   <td
                     key={colIndex}
                     onClick={() => onCellClick(rowIndex, colIndex)}
-                    className="relative p-2 min-w-[80px] h-[30px] border border-border cursor-pointer bg-white"
+                    className="relative p-2 min-w-[80px] h-[30px] border border-border cursor-pointer bg-surface"
                   >
                     {/* Local cursor cell highlight */}
                     {localCursorKey === key && (

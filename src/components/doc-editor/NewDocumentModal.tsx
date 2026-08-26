@@ -146,7 +146,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                         onClick={() => setSelectedId(t.id)}
                         className={cn(
                           'flex items-center gap-2.5 min-h-[72px] px-3.5 py-2.5 rounded-lg cursor-pointer text-left relative font-[inherit] transition-[background,border-color] duration-[120ms]',
-                          isSelected ? 'bg-info-bg border-2 border-info' : 'bg-white border-2 border-border hover:bg-surface-panel',
+                          isSelected ? 'bg-info-bg border-2 border-info' : 'bg-surface border-2 border-border hover:bg-surface-panel',
                         )}
                       >
                         <span className={cn('text-2xl shrink-0')}>{t.icon}</span>
@@ -221,11 +221,11 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
 
         {/* Footer */}
         {types.length > 0 && (
-          <div className={cn('flex justify-end gap-2 px-6 py-4 border-t border-border bg-white shrink-0')}>
+          <div className={cn('flex justify-end gap-2 px-6 py-4 border-t border-border bg-surface shrink-0')}>
             <button
               data-testid="new-doc-cancel"
               onClick={onClose}
-              className={cn('px-4 py-2 text-sm font-medium border border-border rounded-lg bg-white text-text-secondary cursor-pointer font-[inherit]')}
+              className={cn('px-4 py-2 text-sm font-medium border border-border rounded-lg bg-surface text-text-secondary cursor-pointer font-[inherit]')}
             >
               Cancel
             </button>

@@ -105,7 +105,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           'w-full rounded-md border bg-surface-panel font-inherit text-text-primary',
           'outline-none transition-colors duration-150 px-2.5 py-1.5 text-[13px] leading-5',
           'placeholder:text-text-tertiary',
-          'focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40',
+          'focus:bg-surface focus:border-info focus:ring-1 focus:ring-info/40',
           'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover',
           !autoResize && 'resize-y',
           autoResize && 'resize-none overflow-hidden',

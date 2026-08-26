@@ -304,7 +304,7 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
             <div className="text-[11px] font-semibold text-text-secondary mb-1">
               Resolved system prompt
             </div>
-            <pre className="text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-white p-2 rounded-md border border-border max-h-[120px] overflow-auto">
+            <pre className="text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-surface p-2 rounded-md border border-border max-h-[120px] overflow-auto">
               {resolveTemplate(data.systemPrompt || '(empty)', kinds)}
             </pre>
           </div>
@@ -312,7 +312,7 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
             <div className="text-[11px] font-semibold text-text-secondary mb-1">
               Resolved user prompt
             </div>
-            <pre className="text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-white p-2 rounded-md border border-border max-h-[200px] overflow-auto">
+            <pre className="text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-surface p-2 rounded-md border border-border max-h-[200px] overflow-auto">
               {resolveTemplate(data.userPromptTemplate || '(empty)', kinds)}
             </pre>
           </div>

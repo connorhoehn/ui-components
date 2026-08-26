@@ -134,7 +134,7 @@ function SortablePage({
       data-testid={`wizard-page-${page.id}`}
     >
       <div className={cn(
-        'bg-white border rounded-[10px] p-4 mb-3',
+        'bg-surface border rounded-[10px] p-4 mb-3',
         isActive ? 'bg-accent-bg border-accent-border' : 'border-border',
       )}>
         <div className="flex items-center gap-2 mb-2.5">
@@ -448,7 +448,7 @@ function Step2Fields({
 
         {isSinglePage ? (
           fields.length === 0 ? (
-            <div className="bg-white border border-dashed border-border rounded-[10px] text-center py-8 px-4 text-text-tertiary text-[13px]">
+            <div className="bg-surface border border-dashed border-border rounded-[10px] text-center py-8 px-4 text-text-tertiary text-[13px]">
               <div className="text-[28px] mb-2">📋</div>
               No sections yet — pick a section type →
             </div>
@@ -525,7 +525,7 @@ function Step2Fields({
               data-testid={`add-field-${fieldDef.type}`}
               type="button"
               onClick={() => addField(fieldDef.type)}
-              className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg w-full bg-white border border-border cursor-pointer text-left font-inherit transition-colors hover:border-accent-border hover:bg-accent-bg"
+              className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg w-full bg-surface border border-border cursor-pointer text-left font-inherit transition-colors hover:border-accent-border hover:bg-accent-bg"
             >
               <span className="text-xl shrink-0">{fieldDef.icon}</span>
               <div>
@@ -623,7 +623,7 @@ function Step3ViewModes({ fields, setFields }: {
 
   if (fields.length === 0) {
     return (
-      <div className="bg-white border border-border rounded-[10px] text-center py-10 px-4 text-text-tertiary">
+      <div className="bg-surface border border-border rounded-[10px] text-center py-10 px-4 text-text-tertiary">
         No fields defined — go back to Step 2 and add some fields first.
       </div>
     );
@@ -651,7 +651,7 @@ function Step3ViewModes({ fields, setFields }: {
           {fields.map((f, i) => {
             const def = getFieldType(f.sectionType);
             return (
-              <tr key={f.id} className={cn('border-b border-border-subtle', i % 2 === 0 ? 'bg-white' : 'bg-surface-inset')}>
+              <tr key={f.id} className={cn('border-b border-border-subtle', i % 2 === 0 ? 'bg-surface' : 'bg-surface-inset')}>
                 <td className="p-[10px_12px] align-middle">
                   <div className="flex items-center gap-[7px]">
                     <span>{def?.icon}</span>

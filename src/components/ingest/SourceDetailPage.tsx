@@ -286,7 +286,7 @@ export default function SourceDetailPage() {
           <span className="text-[13px] font-medium">Failed to load source: {error}</span>
           <button
             onClick={() => void fetchSource()}
-            className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
           >
             Retry
           </button>
@@ -353,7 +353,7 @@ export default function SourceDetailPage() {
           <span className="text-[13px] font-medium">{error}</span>
           <button
             onClick={() => setError(null)}
-            className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
           >
             Dismiss
           </button>

@@ -49,7 +49,7 @@ function DeleteConfirmModal({
         <button
           data-testid="cancel-delete"
           onClick={onCancel}
-          className="py-[7px] px-[18px] text-[13px] font-semibold bg-white border border-border-field rounded-[7px] cursor-pointer font-inherit"
+          className="py-[7px] px-[18px] text-[13px] font-semibold bg-surface border border-border-field rounded-[7px] cursor-pointer font-inherit"
         >
           Cancel
         </button>
@@ -233,7 +233,7 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
             <button
               data-testid="cookbooks-btn"
               onClick={() => setCookbooksOpen(true)}
-              className="py-[5px] px-3 text-xs font-semibold bg-white text-primary border border-primary rounded-md cursor-pointer font-inherit"
+              className="py-[5px] px-3 text-xs font-semibold bg-surface text-primary border border-primary rounded-md cursor-pointer font-inherit"
             >
               Cookbooks
             </button>

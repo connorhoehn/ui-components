@@ -591,7 +591,7 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
             showZoom
             showFitView
             showInteractive
-            className="!bg-white !border !border-border !rounded-md !shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
+            className="!bg-surface !border !border-border !rounded-md !shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
           />
         ) : null}
         {showMiniMap ? (
@@ -599,7 +599,7 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
             position="bottom-right"
             pannable
             zoomable
-            className="!bg-white !border !border-border !rounded-md !w-[180px] !h-[120px]"
+            className="!bg-surface !border !border-border !rounded-md !w-[180px] !h-[120px]"
             maskColor="rgba(15, 23, 42, 0.04)"
             nodeColor={miniMapNodeColor}
             nodeStrokeColor="#e2e8f0"

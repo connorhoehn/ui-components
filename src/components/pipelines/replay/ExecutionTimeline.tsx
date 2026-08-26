@@ -100,7 +100,7 @@ function assignTracks(steps: Record<string, StepExecution>): Record<string, numb
 export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelineProps) {
   if (!run.steps || Object.keys(run.steps).length === 0) {
     return (
-      <div className="w-full h-[120px] bg-white border-t border-b border-border relative px-6 py-4 overflow-x-auto overflow-y-hidden flex items-center justify-center">
+      <div className="w-full h-[120px] bg-surface border-t border-b border-border relative px-6 py-4 overflow-x-auto overflow-y-hidden flex items-center justify-center">
         <span className="text-text-tertiary text-xs">No execution data available</span>
       </div>
     );
@@ -111,7 +111,7 @@ export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelin
   const tracks = assignTracks(run.steps);
 
   return (
-    <div className="w-full h-[120px] bg-white border-t border-b border-border relative px-6 py-4 overflow-x-auto overflow-y-hidden">
+    <div className="w-full h-[120px] bg-surface border-t border-b border-border relative px-6 py-4 overflow-x-auto overflow-y-hidden">
       <div className="text-[11px] text-neutral mb-2">
         Execution Timeline &bull; Total Duration: {formatDuration(totalDuration)}
       </div>

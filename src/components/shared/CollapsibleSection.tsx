@@ -113,7 +113,7 @@ function CollapsibleSection({
         </div>
       </button>
       {open && (
-        <div id={bodyId} ref={bodyRef} className="border-t border-[var(--color-border)] bg-white">
+        <div id={bodyId} ref={bodyRef} className="border-t border-[var(--color-border)] bg-surface">
           {children}
         </div>
       )}

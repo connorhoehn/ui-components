@@ -106,7 +106,7 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
   return (
     <div
       ref={panelRef}
-      className="fixed z-[100] bg-white border border-border rounded-[10px] shadow-[0_12px_32px_rgba(15,23,42,0.18),0_2px_6px_rgba(15,23,42,0.08)] p-0 w-[340px] max-h-[420px] overflow-y-auto font-inherit text-text-primary"
+      className="fixed z-[100] bg-surface border border-border rounded-[10px] shadow-[0_12px_32px_rgba(15,23,42,0.18),0_2px_6px_rgba(15,23,42,0.08)] p-0 w-[340px] max-h-[420px] overflow-y-auto font-inherit text-text-primary"
       style={{ top: Math.max(8, top), left: Math.max(8, left) }}
       data-testid="error-overlay"
       role="dialog"

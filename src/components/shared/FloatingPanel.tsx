@@ -472,7 +472,11 @@ export function FloatingPanel({
           zIndexClassName,
           isSnapping && 'transition-[left,top] duration-150 ease-out',
           dark
-            ? 'bg-surface-inverse border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
+            // Theme-INVARIANT chrome: every child below is `text-white/80`,
+            // `border-white/5`, `bg-white/5`. `bg-surface-inverse` flips to
+            // #f8fafc in dark mode and took the whole panel white-on-white.
+            // See the --color-call-chrome comment in src/styles.css.
+            ? 'bg-call-chrome border-call-chrome-border shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
             : 'bg-surface-panel border-border shadow-lg',
           className,
         )}

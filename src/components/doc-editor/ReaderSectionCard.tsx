@@ -118,7 +118,7 @@ function ItemRow({
 
   return (
     <div
-      className={cn('flex items-center gap-2 py-[5px] px-2 mb-1 rounded-r', variant === 'pending' ? 'bg-warning-bg' : 'bg-white')}
+      className={cn('flex items-center gap-2 py-[5px] px-2 mb-1 rounded-r', variant === 'pending' ? 'bg-warning-bg' : 'bg-surface')}
       style={{ borderLeft: `3px solid ${borderColor}` }}
     >
       <span className={cn('text-[13px] flex-1')}>
@@ -158,7 +158,7 @@ export function KeyDecisionsCard({ sections }: { sections: Section[] }) {
   const items = decisionSections.flatMap((s) => s.items);
 
   return (
-    <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
+    <div className={cn('bg-surface border border-border rounded-lg p-4 mb-4')}>
       <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Key Decisions</h2>
       {items.length === 0 ? (
         <div className={cn('text-[13px] text-text-tertiary italic')}>
@@ -189,7 +189,7 @@ export function ActionItemsCard({ allItems }: { allItems: TaskItem[] }) {
   const { pending, completed, rejected } = groupItems(allItems);
 
   return (
-    <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
+    <div className={cn('bg-surface border border-border rounded-lg p-4 mb-4')}>
       <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Action Items</h2>
 
       {allItems.length === 0 ? (
@@ -277,7 +277,7 @@ export function SectionSummariesCard({
   };
 
   return (
-    <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
+    <div className={cn('bg-surface border border-border rounded-lg p-4 mb-4')}>
       <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Section Summaries</h2>
       {sections.length === 0 ? (
         <div className={cn('text-[13px] text-text-tertiary italic')}>

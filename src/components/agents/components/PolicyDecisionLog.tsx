@@ -21,7 +21,7 @@ export function PolicyDecisionLog({ decisions, className, maxItems = 50 }: Polic
   const visible = decisions.slice(0, maxItems);
 
   return (
-    <div className={cn('border border-border rounded-lg overflow-hidden bg-white', className)}>
+    <div className={cn('border border-border rounded-lg overflow-hidden bg-surface', className)}>
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel">
         <span className="text-xs font-medium text-text-primary">Policy Decisions</span>
         <span className="text-[10px] text-text-tertiary">{decisions.length} total</span>

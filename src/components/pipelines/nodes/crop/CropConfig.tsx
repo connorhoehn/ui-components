@@ -47,7 +47,7 @@ const CROP_REGION_LABEL = 'crop';
 /** Shared by the visible field label and the section group's accessible name. */
 const CROP_REGION_FIELD_LABEL = 'Crop region';
 
-  'mt-1 w-full text-[12px] font-mono rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
+  'mt-1 w-full text-[12px] font-mono rounded border border-border bg-surface px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 // ---------------------------------------------------------------------------

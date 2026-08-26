@@ -147,7 +147,7 @@ export default function QuickInsertPopover({
   return (
     <div
       ref={popoverRef}
-      className="fixed w-[260px] bg-white border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] z-50 flex flex-col overflow-hidden font-inherit"
+      className="fixed w-[260px] bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] z-50 flex flex-col overflow-hidden font-inherit"
       style={{ top: anchor.y, left: anchor.x }}
       role="dialog"
       aria-label="Quick insert node"

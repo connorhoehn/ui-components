@@ -518,7 +518,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
 
   return (
     <div
-      className="w-[220px] shrink-0 h-full border-r border-border bg-white flex flex-col"
+      className="w-[220px] shrink-0 h-full border-r border-border bg-surface flex flex-col"
       data-testid="node-palette"
     >
       {/* Header */}
@@ -544,7 +544,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
               'shrink-0 w-7 h-7 flex items-center justify-center rounded border text-[11px] transition-colors',
               compact
                 ? 'bg-info border-info text-white'
-                : 'bg-white border-border-emphasis text-neutral hover:bg-surface-panel',
+                : 'bg-surface border-border-emphasis text-neutral hover:bg-surface-panel',
             )}
           >
             {compact ? (

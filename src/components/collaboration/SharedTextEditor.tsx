@@ -111,7 +111,7 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
         onInput={flush}
         className={cn(
           'min-h-[180px] border border-border-emphasis rounded px-3 py-2 text-[0.9rem] font-[inherit] leading-relaxed outline-none overflow-y-auto text-text-primary',
-          disabled ? 'bg-surface-panel' : 'bg-white'
+          disabled ? 'bg-surface-panel' : 'bg-surface'
         )}
       />
       {disabled && (

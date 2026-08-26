@@ -113,7 +113,7 @@ export default function EditorSidebarManager({
       {showTOC && !commentSidebarOpen && sections.length > 1 && mode === 'editor' && (
         <div className={cn(
           'fixed bottom-4 right-4 w-40 max-h-[280px] overflow-y-auto',
-          'bg-white border border-border rounded-[10px] px-3 py-2.5',
+          'bg-surface border border-border rounded-[10px] px-3 py-2.5',
           'shadow-[0_4px_16px_rgba(0,0,0,0.08)] z-30'
         )}>
           <TableOfContents

@@ -190,7 +190,7 @@ export default function HangoutPreJoinShell({
         className,
       )}
     >
-      <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-white">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface">
         <div className="min-w-0 flex-1">
           <h1 className="text-lg font-semibold truncate">{channelName}</h1>
           <p className="text-xs text-neutral mt-0.5">{peopleLabel}</p>
