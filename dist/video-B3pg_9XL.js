@@ -1,11 +1,11 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./useEventCallback-Cwx9QVSi.js";
 import { t as n } from "./Button-CTpms90-.js";
-import { t as r } from "./Chip-2lIuHwy5.js";
-import { t as i } from "./overlayStack-BFH9XXvN.js";
-import { t as a } from "./Modal-CyoyiNKN.js";
+import { t as r } from "./overlayStack-8srL4FsO.js";
+import { t as i } from "./Chip-Cie-j-4o.js";
+import { t as a } from "./Modal-DfKwlGxh.js";
 import { n as o, t as s } from "./PermissionDeniedCard-5FQ6reO7.js";
-import { n as c, r as l, t as u } from "./focusTrap-CmWJlptm.js";
+import { n as c, r as l, t as u } from "./focusTrap-CPpSEdvJ.js";
 import { a as d, t as f } from "./Avatar-Yxs_9Jio.js";
 import { t as p } from "./activationKey-CjbL3LUv.js";
 import { t as m } from "./Select-CqVokE2v.js";
@@ -97,8 +97,8 @@ function k() {
 function A(e) {
 	return e < 1024 ? `${e} B` : e < 1048576 ? `${(e / 1024).toFixed(1)} KB` : e < 1073741824 ? `${(e / 1048576).toFixed(1)} MB` : `${(e / 1073741824).toFixed(2)} GB`;
 }
-function j({ onClose: t, sources: n, title: r, subtitle: a, autoPlay: o = !0, muted: s = !1, hideDownload: d = !1, header: f, footer: p, className: m }) {
-	let h = x(() => n.filter((e) => !!e.url), [n]), [g, _] = C(0), y = h[g], b = S(null), w = S(null), D = i(!0);
+function j({ onClose: t, sources: n, title: i, subtitle: a, autoPlay: o = !0, muted: s = !1, hideDownload: d = !1, header: f, footer: p, className: m }) {
+	let h = x(() => n.filter((e) => !!e.url), [n]), [g, _] = C(0), y = h[g], b = S(null), w = S(null), D = r(!0);
 	return v(() => {
 		let e = (e) => {
 			if (D()) {
@@ -115,7 +115,7 @@ function j({ onClose: t, sources: n, title: r, subtitle: a, autoPlay: o = !0, mu
 	}), []), /* @__PURE__ */ T("div", {
 		role: "dialog",
 		"aria-modal": "true",
-		"aria-label": r || "Video player",
+		"aria-label": i || "Video player",
 		onClick: t,
 		className: e("fixed inset-0 z-50 grid place-items-center p-4", "bg-black/80 backdrop-blur-sm"),
 		children: /* @__PURE__ */ E("div", {
@@ -123,13 +123,13 @@ function j({ onClose: t, sources: n, title: r, subtitle: a, autoPlay: o = !0, mu
 			onClick: (e) => e.stopPropagation(),
 			className: e("w-full max-w-4xl flex flex-col rounded-xl overflow-hidden shadow-2xl", "bg-[var(--color-surface)] text-[var(--color-text-primary)]", m),
 			children: [
-				(r || a || f) && /* @__PURE__ */ E("header", {
+				(i || a || f) && /* @__PURE__ */ E("header", {
 					className: "flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--color-border)]",
 					children: [/* @__PURE__ */ E("div", {
 						className: "min-w-0 flex-1",
-						children: [r && /* @__PURE__ */ T("h2", {
+						children: [i && /* @__PURE__ */ T("h2", {
 							className: "text-sm font-semibold truncate",
-							children: r
+							children: i
 						}), a && /* @__PURE__ */ T("p", {
 							className: "text-xs text-[var(--color-text-secondary)] truncate",
 							children: a
@@ -3569,7 +3569,7 @@ function on({ participants: e, loading: t }) {
 							className: "font-mono text-xs truncate",
 							children: t
 						}),
-						/* @__PURE__ */ T(r, {
+						/* @__PURE__ */ T(i, {
 							size: "xs",
 							tone: e.ready ? "success" : "warning",
 							dot: e.ready ? "static" : "pulse",
@@ -3625,7 +3625,7 @@ function ln() {
 		}), /* @__PURE__ */ T("polyline", { points: "12 7 12 12 15 14" })]
 	});
 }
-function un({ channelName: t, subtitle: n, recording: i, elapsedLabel: a, phase: o, actions: s, className: c, "data-testid": l }) {
+function un({ channelName: t, subtitle: n, recording: r, elapsedLabel: a, phase: o, actions: s, className: c, "data-testid": l }) {
 	return /* @__PURE__ */ E("header", {
 		"data-testid": l,
 		className: e("flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-surface", c),
@@ -3634,20 +3634,20 @@ function un({ channelName: t, subtitle: n, recording: i, elapsedLabel: a, phase:
 			children: [/* @__PURE__ */ T("h1", {
 				className: "text-lg font-semibold truncate text-text-primary",
 				children: t
-			}), (n || i?.armed || a) && /* @__PURE__ */ E("div", {
+			}), (n || r?.armed || a) && /* @__PURE__ */ E("div", {
 				className: "text-xs text-neutral mt-0.5 flex items-center gap-2 flex-wrap",
 				children: [
 					n && /* @__PURE__ */ T("span", { children: n }),
-					i?.armed && /* @__PURE__ */ T(r, {
-						tone: i.active ? "danger" : "neutral",
+					r?.armed && /* @__PURE__ */ T(i, {
+						tone: r.active ? "danger" : "neutral",
 						size: "xs",
 						uppercase: !0,
-						dot: i.active ? "pulse" : "static",
-						title: i.active ? "Recording — saved to /recordings when the call ends" : "Recording armed — will start when someone joins",
+						dot: r.active ? "pulse" : "static",
+						title: r.active ? "Recording — saved to /recordings when the call ends" : "Recording armed — will start when someone joins",
 						"data-testid": "hangout-room-header-recording",
 						children: "Rec"
 					}),
-					a && /* @__PURE__ */ T(r, {
+					a && /* @__PURE__ */ T(i, {
 						tone: "neutral",
 						size: "xs",
 						icon: /* @__PURE__ */ T(ln, {}),
@@ -3662,7 +3662,7 @@ function un({ channelName: t, subtitle: n, recording: i, elapsedLabel: a, phase:
 			})]
 		}), (o || s) && /* @__PURE__ */ E("div", {
 			className: "flex items-center gap-3 shrink-0",
-			children: [o && /* @__PURE__ */ T(r, {
+			children: [o && /* @__PURE__ */ T(i, {
 				tone: sn[o],
 				size: "sm",
 				dot: o === "reconnecting" ? "pulse" : "static",

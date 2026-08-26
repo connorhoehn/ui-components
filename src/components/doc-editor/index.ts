@@ -38,3 +38,20 @@ export { useSidebarPanels } from './useSidebarPanels';
 export { getInitials, relativeTime, countAllComments } from './CommentThread';
 export { KeyDecisionsCard, ActionItemsCard, SectionSummariesCard } from './ReaderSectionCard';
 export { generateSummaryBullets, HeaderBanner, ExecutiveSummaryCard } from './ReaderSummary';
+
+// ── Contextual task creator: utterance -> work item -> proposal -> acceptance ──
+export { ProposalCard } from './ProposalCard';
+export type {
+  ProposalCardProps,
+  ProposalCardStatus,
+  ProposalApplyOutcome,
+  ProposalConfidence,
+  ProposalAttachState,
+  ProposalKind,
+} from './ProposalCard';
+export { WorkItemInbox } from './WorkItemInbox';
+export type {
+  WorkItemInboxProps,
+  WorkItemInboxEntry,
+  WorkItemCandidate,
+} from './WorkItemInbox';

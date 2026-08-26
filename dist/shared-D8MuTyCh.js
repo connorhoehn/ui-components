@@ -1,26 +1,25 @@
 import "./ToastProvider-BKjV21G4.js";
 import { t as e } from "./cn-DhjIN-s0.js";
-import "./StatusPill-CLcnxWgo.js";
+import "./StatusPill-ARatNSbA.js";
 import "./Button-CTpms90-.js";
 import { t } from "./Card-DWAlG4MZ.js";
 import "./FormField-qzkrC8vN.js";
 import "./FileUploadDrop-CpLUJEjW.js";
 import "./Banner-BLOg1hC_.js";
 import "./Chart-DUoOhhMu.js";
-import { c as n, n as r, r as i, s as a } from "./tones-DRPja4Vj.js";
-import { t as o } from "./Chip-2lIuHwy5.js";
-import { t as s } from "./overlayStack-BFH9XXvN.js";
-import { t as c } from "./Modal-CyoyiNKN.js";
-import "./ConfirmDialog-Cd8NZEXi.js";
+import { c as n, i as r, l as i, r as a, t as o } from "./overlayStack-8srL4FsO.js";
+import { t as s } from "./Chip-Cie-j-4o.js";
+import { t as c } from "./Modal-DfKwlGxh.js";
+import "./ConfirmDialog-eoAHfRBO.js";
 import { t as l } from "./EmptyState-CUHf5NYN.js";
 import { n as u } from "./PermissionDeniedCard-5FQ6reO7.js";
 import { n as d, t as f } from "./CardHeader-MBY5yyXT.js";
-import { i as p, n as m, r as h, t as g } from "./focusTrap-CmWJlptm.js";
+import { i as p, n as m, r as h, t as g } from "./focusTrap-CPpSEdvJ.js";
 import "./SkeletonCard-CGe8XFPB.js";
 import { n as _, t as v } from "./Avatar-Yxs_9Jio.js";
 import { t as y } from "./StatusDot-Bgx2zxgC.js";
 import { t as b } from "./PresenceDot-3gBZGPvX.js";
-import { n as x } from "./Badge-Ck-Odxap.js";
+import { n as x } from "./Badge-BnWjBwgm.js";
 import { createContext as S, useCallback as C, useContext as w, useEffect as T, useId as E, useLayoutEffect as ee, useMemo as D, useRef as O, useState as k } from "react";
 import { Fragment as A, jsx as j, jsxs as M } from "react/jsx-runtime";
 import { Command as N } from "cmdk";
@@ -1023,8 +1022,8 @@ function Fe({ label: t, id: n, href: r, mono: i = !1, className: a, labelClassNa
 }
 //#endregion
 //#region src/components/shared/Drawer.tsx
-function Ie({ open: t, onClose: n, title: r, subtitle: i, width: a = 460, children: o, footer: c, "aria-label": l, "data-testid": u }) {
-	let d = O(null), f = O(null), p = E(), _ = s(t);
+function Ie({ open: t, onClose: n, title: r, subtitle: i, width: a = 460, children: s, footer: c, "aria-label": l, "data-testid": u }) {
+	let d = O(null), f = O(null), p = E(), _ = o(t);
 	return T(() => {
 		if (!t) return;
 		let e = (e) => {
@@ -1092,7 +1091,7 @@ function Ie({ open: t, onClose: n, title: r, subtitle: i, width: a = 460, childr
 				}),
 				/* @__PURE__ */ j("div", {
 					className: "flex-1 overflow-y-auto p-5",
-					children: o
+					children: s
 				}),
 				c && /* @__PURE__ */ j("div", {
 					className: "flex-shrink-0 border-t border-[var(--color-border)] p-4 bg-[var(--color-surface-inset,#f8fafc)]",
@@ -1448,7 +1447,7 @@ function qe({ lines: n, follow: r = !0, showTimestamp: i = !0, showLevel: a = !0
 var Je = qe;
 //#endregion
 //#region src/components/shared/ThumbnailCard.tsx
-function Ye({ title: t, description: n, category: r, categoryTone: i = "neutral", thumbnail: a, icon: s = "🧩", thumbnailHeight: c = 160, href: l, onClick: u, badge: d, meta: f, className: p, style: m, "data-testid": h = "thumbnail-card" }) {
+function Ye({ title: t, description: n, category: r, categoryTone: i = "neutral", thumbnail: a, icon: o = "🧩", thumbnailHeight: c = 160, href: l, onClick: u, badge: d, meta: f, className: p, style: m, "data-testid": h = "thumbnail-card" }) {
 	let g = e("group block w-full text-left bg-[var(--color-surface,#fff)]", "rounded-xl border border-[var(--color-border)] overflow-hidden", "transition-[box-shadow,transform] duration-150", (l || u) && "cursor-pointer hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-0.5", p), _ = /* @__PURE__ */ M(A, { children: [/* @__PURE__ */ M("div", {
 		"data-testid": `${h}-thumb`,
 		className: e("relative flex items-center justify-center", "bg-gradient-to-br from-[var(--color-primary-bg,#eef2ff)] to-[var(--color-surface,#ffffff)]", "border-b border-[var(--color-border)]"),
@@ -1460,7 +1459,7 @@ function Ye({ title: t, description: n, category: r, categoryTone: i = "neutral"
 		}) : /* @__PURE__ */ j("span", {
 			className: "text-5xl opacity-50",
 			"aria-hidden": !0,
-			children: s
+			children: o
 		}), d && /* @__PURE__ */ j("span", {
 			"data-testid": `${h}-badge`,
 			className: "absolute top-2 right-2",
@@ -1471,7 +1470,7 @@ function Ye({ title: t, description: n, category: r, categoryTone: i = "neutral"
 		children: [
 			/* @__PURE__ */ M("div", {
 				className: "flex items-center gap-2 mb-1.5",
-				children: [r && /* @__PURE__ */ j(o, {
+				children: [r && /* @__PURE__ */ j(s, {
 					tone: i,
 					size: "xs",
 					"data-testid": `${h}-category`,
@@ -1551,13 +1550,13 @@ function $e({ layers: t, orientation: o = "vertical", connector: s = "arrow", cl
 		className: e("flex", d ? "flex-col items-stretch" : "flex-row items-stretch flex-wrap", c),
 		style: l,
 		children: t.map((c, l) => {
-			let u = n(c.tone ?? "neutral");
+			let u = i(c.tone ?? "neutral");
 			return /* @__PURE__ */ M("div", {
 				className: e("flex", "flex-col"),
 				children: [/* @__PURE__ */ M("div", {
 					"data-testid": "stack-diagram-layer",
 					"data-tone": u,
-					className: e("rounded-md border px-3 py-2", r[u], i[u], !d && "min-w-[140px]"),
+					className: e("rounded-md border px-3 py-2", a[u], r[u], !d && "min-w-[140px]"),
 					children: [/* @__PURE__ */ M("div", {
 						className: "flex items-center gap-2",
 						children: [
@@ -1567,7 +1566,7 @@ function $e({ layers: t, orientation: o = "vertical", connector: s = "arrow", cl
 								children: c.icon
 							}),
 							/* @__PURE__ */ j("span", {
-								className: e("text-[12px] font-semibold", a[u]),
+								className: e("text-[12px] font-semibold", n[u]),
 								children: c.label
 							}),
 							c.meta != null && /* @__PURE__ */ j("span", {
@@ -2394,8 +2393,8 @@ function Et(e, t, n) {
 		left: e.left
 	};
 }
-function Dt({ trigger: t, open: n, onClose: r, placement: i = "bottom-start", offset: a = 6, className: o, zIndex: c = 9500, "data-testid": l = "inline-popover", "aria-label": u, "aria-labelledby": d, children: f }) {
-	let p = O(null), [m, h] = k(null), g = O(null), _ = s(n), v = C(() => {
+function Dt({ trigger: t, open: n, onClose: r, placement: i = "bottom-start", offset: a = 6, className: s, zIndex: c = 9500, "data-testid": l = "inline-popover", "aria-label": u, "aria-labelledby": d, children: f }) {
+	let p = O(null), [m, h] = k(null), g = O(null), _ = o(n), v = C(() => {
 		let e = t.current;
 		if (!e) return;
 		let n = e.getBoundingClientRect();
@@ -2475,7 +2474,7 @@ function Dt({ trigger: t, open: n, onClose: r, placement: i = "bottom-start", of
 		"aria-labelledby": d,
 		"data-testid": l,
 		"data-placement": i,
-		className: e("min-w-[160px] rounded-lg border border-border bg-surface", "shadow-lg p-1 text-sm text-text-primary", o),
+		className: e("min-w-[160px] rounded-lg border border-border bg-surface", "shadow-lg p-1 text-sm text-text-primary", s),
 		style: {
 			...m,
 			zIndex: c

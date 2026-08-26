@@ -354,6 +354,71 @@ declare interface PresenceInfo {
     idle?: boolean;
 }
 
+/** What the host reports back after trying to apply. */
+export declare interface ProposalApplyOutcome {
+    ok: boolean;
+    /** Shown verbatim when `ok` is false. Say what happened, not "error". */
+    message?: string;
+    /** Set when the refusal was specifically a compare-and-set mismatch. */
+    stale?: {
+        expected: unknown;
+        actual: unknown;
+    };
+}
+
+/** Where the item currently sits relative to the document. */
+export declare type ProposalAttachState = 'attached' | 'author_only' | 'inbox' | 'healed';
+
+export declare function ProposalCard({ utterance, kind, status, confidence, attachState, targetLabel, targetReason, before, after, edits, rationale, draftError, onAccept, onReject, onRedraft, onReattach, onConfirmAttachment, className, 'data-testid': testId, }: ProposalCardProps): JSX.Element;
+
+export declare interface ProposalCardProps {
+    /** Verbatim remark that raised this. Never paraphrase it. */
+    utterance: string;
+    /** `field` changes a title/scalar; `prose` stages suggestion marks. */
+    kind: ProposalKind;
+    status: ProposalCardStatus;
+    confidence: ProposalConfidence;
+    attachState?: ProposalAttachState;
+    /** Human-readable target, e.g. "Document title" or "Overview". */
+    targetLabel?: string;
+    /** Why the capture path chose that target. Shown on the provenance line. */
+    targetReason?: string;
+    /** For `field`: the two values, so the change is legible without the doc. */
+    before?: string;
+    after?: string;
+    /** For `prose`: one row per edit. */
+    edits?: Array<{
+        before: string;
+        after: string;
+    }>;
+    /** The model's one-line justification. */
+    rationale?: string;
+    /** Set when drafting itself failed. Rendered instead of the diff. */
+    draftError?: string;
+    /**
+     * Apply the change. MUST perform the mutation and report what happened —
+     * returning `{ ok: true }` without changing the document is the exact bug this
+     * component is shaped to prevent.
+     */
+    onAccept: () => Promise<ProposalApplyOutcome> | ProposalApplyOutcome;
+    onReject: (reason: string) => void;
+    /** Ask for a fresh draft against the document's current values. */
+    onRedraft?: () => void;
+    /** Move the item to a different section. Omitted when there is nowhere to go. */
+    onReattach?: () => void;
+    /** Confirm an `author_only` attachment, publishing it to collaborators. */
+    onConfirmAttachment?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type ProposalCardStatus = 'none' | 'drafting' | 'ready' | 'applied' | 'rejected' | 'failed';
+
+/** How much the capture path trusted its own choice of target. */
+export declare type ProposalConfidence = 'high' | 'medium' | 'low';
+
+export declare type ProposalKind = 'field' | 'prose';
+
 export declare function ReaderMode({ sections, participants, meta, commentCounts, sectionContentTexts, comments, getSectionFragment, ydoc, provider, }: ReaderModeProps): JSX.Element;
 
 declare interface ReaderModeProps {
@@ -807,5 +872,40 @@ declare interface VideoSessionParticipant {
 }
 
 declare type ViewMode = 'editor' | 'ack' | 'reader';
+
+export declare interface WorkItemCandidate {
+    sectionId: string;
+    sectionTitle?: string;
+    /** Ordering only. Never rendered as a number. */
+    score: number;
+    reason: string;
+}
+
+export declare function WorkItemInbox({ entries, sections, onAttach, onDismiss, className, 'data-testid': testId, }: WorkItemInboxProps): JSX.Element;
+
+export declare interface WorkItemInboxEntry {
+    itemId: string;
+    /** Verbatim remark. */
+    utterance: string;
+    /** Why the capture path declined to place it. Shown so it is never a mystery. */
+    reason?: string;
+    /** True when the speaker's screen moved mid-utterance. */
+    contextSplit?: boolean;
+    capturedAt?: string;
+    candidates?: WorkItemCandidate[];
+}
+
+export declare interface WorkItemInboxProps {
+    entries: WorkItemInboxEntry[];
+    /** All sections, so a user can file an item somewhere no candidate names. */
+    sections: Array<{
+        id: string;
+        title: string;
+    }>;
+    onAttach: (itemId: string, sectionId: string) => void;
+    onDismiss: (itemId: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export { }

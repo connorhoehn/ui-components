@@ -1,5 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { a as t, c as n, i as r, o as i } from "./tones-DRPja4Vj.js";
+import { a as t, l as n, o as r, s as i } from "./overlayStack-8srL4FsO.js";
 import { jsx as a, jsxs as o } from "react/jsx-runtime";
 //#region src/components/shared/Chip.tsx
 var s = {
@@ -10,7 +10,7 @@ var s = {
 	xs: "h-1 w-1"
 };
 function l({ tone: l = "neutral", size: u = "sm", solid: d = !1, mono: f = !1, dot: p, uppercase: m = !1, icon: h, children: g, title: _, className: v, style: y, "data-testid": b, "aria-label": x }) {
-	let S = n(l), C = d ? t[S] : r[S], w = !!(p || h);
+	let S = n(l), C = d ? r[S] : t[S], w = !!(p || h);
 	return /* @__PURE__ */ o("span", {
 		"data-testid": b,
 		"aria-label": x,

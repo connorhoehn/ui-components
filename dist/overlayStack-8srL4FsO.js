@@ -1,5 +1,6 @@
+import { useCallback as e, useEffect as t, useRef as n } from "react";
 //#region src/components/shared/tones.ts
-var e = [
+var r = [
 	"neutral",
 	"success",
 	"warning",
@@ -8,10 +9,10 @@ var e = [
 	"caution",
 	"accent"
 ];
-function t(e) {
+function i(e) {
 	return e === "purple" ? "accent" : e;
 }
-var n = {
+var a = {
 	neutral: "bg-neutral-bg text-neutral-fg",
 	success: "bg-success-bg text-success-fg",
 	warning: "bg-warning-bg text-warning-fg",
@@ -19,7 +20,7 @@ var n = {
 	info: "bg-info-bg text-info-fg",
 	caution: "bg-caution-bg text-caution-fg",
 	accent: "bg-accent-bg text-accent-fg"
-}, r = {
+}, o = {
 	neutral: "bg-neutral text-white",
 	success: "bg-success text-white",
 	warning: "bg-warning text-white",
@@ -27,7 +28,7 @@ var n = {
 	info: "bg-info text-white",
 	caution: "bg-caution text-white",
 	accent: "bg-accent text-white"
-}, i = {
+}, s = {
 	neutral: "bg-neutral",
 	success: "bg-success",
 	warning: "bg-warning",
@@ -35,7 +36,7 @@ var n = {
 	info: "bg-info",
 	caution: "bg-caution",
 	accent: "bg-accent"
-}, a = {
+}, c = {
 	neutral: "border-neutral-border",
 	success: "border-success-border",
 	warning: "border-warning-border",
@@ -43,7 +44,7 @@ var n = {
 	info: "border-info-border",
 	caution: "border-caution-border",
 	accent: "border-accent-border"
-}, o = {
+}, l = {
 	neutral: "text-neutral-fg",
 	success: "text-success-fg",
 	warning: "text-warning-fg",
@@ -51,7 +52,7 @@ var n = {
 	info: "text-info-fg",
 	caution: "text-caution-fg",
 	accent: "text-accent-fg"
-}, s = {
+}, u = {
 	neutral: "bg-neutral-bg",
 	success: "bg-success-bg",
 	warning: "bg-warning-bg",
@@ -60,8 +61,28 @@ var n = {
 	caution: "bg-caution-bg",
 	accent: "bg-accent-bg"
 };
-function c(e) {
-	return `var(--color-${t(e)})`;
+function d(e) {
+	return `var(--color-${i(e)})`;
 }
 //#endregion
-export { r as a, t as c, n as i, c as l, s as n, i as o, a as r, o as s, e as t };
+//#region src/lib/overlayStack.ts
+var f = [];
+function p(e) {
+	f = f.filter((t) => t !== e), f.push(e);
+}
+function m(e) {
+	f = f.filter((t) => t !== e);
+}
+function h(e) {
+	return f.length === 0 || !f.includes(e) || f[f.length - 1] === e;
+}
+function g(r) {
+	let i = n(null);
+	i.current === null && (i.current = Symbol("overlay-layer"));
+	let a = i.current;
+	return t(() => {
+		if (r) return p(a), () => m(a);
+	}, [r, a]), e(() => h(a), [a]);
+}
+//#endregion
+export { a, l as c, c as i, i as l, r as n, o, u as r, s, g as t, d as u };

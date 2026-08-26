@@ -2,10 +2,10 @@ import { n as e } from "./IdentityContext-CQM1qwH6.js";
 import { a as t, c as n, i as r, l as i, n as a, o, r as s, s as c, t as l, u } from "./useSyncConflicts-y7kUJko3.js";
 import { n as d } from "./useDocumentTypes-C-AMWgYq.js";
 import { t as f } from "./cn-DhjIN-s0.js";
-import { t as p } from "./Chip-2lIuHwy5.js";
-import { t as m } from "./overlayStack-BFH9XXvN.js";
+import { t as p } from "./overlayStack-8srL4FsO.js";
+import { t as m } from "./Chip-Cie-j-4o.js";
 import { t as h } from "./EmptyState-CUHf5NYN.js";
-import { n as g, r as _, t as v } from "./focusTrap-CmWJlptm.js";
+import { n as g, r as _, t as v } from "./focusTrap-CPpSEdvJ.js";
 import { t as y } from "./SkeletonCard-CGe8XFPB.js";
 import { t as b } from "./Input-DLknWXri.js";
 import { t as x } from "./activationKey-CjbL3LUv.js";
@@ -27,7 +27,7 @@ function V(e) {
 }
 var ee = 50;
 function H() {
-	let e = M(), { sources: n, loading: r, error: i, refresh: a } = t(), { items: o, loading: s, error: l, refresh: u } = c(), d = r || s, m = i || l, g = E(() => {
+	let e = M(), { sources: n, loading: r, error: i, refresh: a } = t(), { items: o, loading: s, error: l, refresh: u } = c(), d = r || s, p = i || l, g = E(() => {
 		let e = n.filter((e) => e.status === "active").length, t = n.filter((e) => e.status === "paused").length, r = n.filter((e) => e.status === "error").length, i = o.filter((e) => e.status !== "done" && e.status !== "failed").length, a = o.filter((e) => e.status === "done" && B(e.updatedAt)).length, s = o.filter((e) => e.status === "failed").length;
 		return {
 			total: n.length,
@@ -105,7 +105,7 @@ function H() {
 					})]
 				})]
 			}),
-			m && /* @__PURE__ */ j("div", {
+			p && /* @__PURE__ */ j("div", {
 				className: "px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4",
 				role: "alert",
 				children: [/* @__PURE__ */ A("span", {
@@ -228,7 +228,7 @@ function H() {
 							title: e.sourcePath,
 							children: e.sourcePath
 						}),
-						/* @__PURE__ */ A(p, {
+						/* @__PURE__ */ A(m, {
 							tone: "success",
 							size: "xs",
 							children: "done"
@@ -276,7 +276,7 @@ function G(e) {
 	return t < 6e4 ? "just now" : t < 36e5 ? `${Math.floor(t / 6e4)}m ago` : t < 864e5 ? `${Math.floor(t / 36e5)}h ago` : t < 2592e5 ? `${Math.floor(t / 864e5)}d ago` : new Date(e).toLocaleDateString();
 }
 function K() {
-	let e = M(), { sources: n, loading: r, error: i, refresh: a, deleteSource: o, triggerSync: s, actionError: c, clearActionError: l } = t(), [u, d] = O(() => /* @__PURE__ */ new Set()), m = C(async (e) => {
+	let e = M(), { sources: n, loading: r, error: i, refresh: a, deleteSource: o, triggerSync: s, actionError: c, clearActionError: l } = t(), [u, d] = O(() => /* @__PURE__ */ new Set()), p = C(async (e) => {
 		d((t) => new Set(t).add(e));
 		let t = await s(e);
 		d((t) => {
@@ -402,7 +402,7 @@ function K() {
 							}),
 							/* @__PURE__ */ A("td", {
 								className: "p-2",
-								children: /* @__PURE__ */ A(p, {
+								children: /* @__PURE__ */ A(m, {
 									tone: te(t.type),
 									size: "xs",
 									children: W(t.type)
@@ -410,7 +410,7 @@ function K() {
 							}),
 							/* @__PURE__ */ A("td", {
 								className: "p-2",
-								children: /* @__PURE__ */ A(p, {
+								children: /* @__PURE__ */ A(m, {
 									tone: U(t.status),
 									size: "sm",
 									children: t.status
@@ -439,7 +439,7 @@ function K() {
 									children: [/* @__PURE__ */ A("button", {
 										className: f("px-2.5 py-1 text-[11px] font-medium rounded-[5px] cursor-pointer font-[inherit]", u.has(t.sourceId) || t.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-border bg-surface text-text-secondary"),
 										disabled: u.has(t.sourceId) || t.status === "paused",
-										onClick: () => void m(t.sourceId),
+										onClick: () => void p(t.sourceId),
 										"data-testid": `sync-${t.sourceId}`,
 										children: u.has(t.sourceId) ? "Syncing..." : "Sync Now"
 									}), /* @__PURE__ */ A("button", {
@@ -1058,7 +1058,7 @@ function fe(e) {
 	}) : [];
 }
 function pe() {
-	let { id: t } = N(), n = M(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = O(null), [l, u] = O(!0), [m, h] = O(null), [g, _] = O(!1), v = T(), [x, E] = O(!1), [D, P] = O(!1), [F, I] = O({}), [L, R] = O([]), [z, B] = O(""), [V, ee] = O(""), [H, U] = O({}), [W, te] = O(!1), G = C(() => {
+	let { id: t } = N(), n = M(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = O(null), [l, u] = O(!0), [p, h] = O(null), [g, _] = O(!1), v = T(), [x, E] = O(!1), [D, P] = O(!1), [F, I] = O({}), [L, R] = O([]), [z, B] = O(""), [V, ee] = O(""), [H, U] = O({}), [W, te] = O(!1), G = C(() => {
 		let e = { "Content-Type": "application/json" };
 		return r && (e.Authorization = `Bearer ${r}`), e;
 	}, [r]), K = C(async (e) => {
@@ -1189,7 +1189,7 @@ function pe() {
 			/* @__PURE__ */ A(y, { height: 200 }),
 			/* @__PURE__ */ A(y, { height: 100 })
 		]
-	}) : m && !o ? /* @__PURE__ */ j("div", {
+	}) : p && !o ? /* @__PURE__ */ j("div", {
 		"data-testid": "source-detail-page",
 		className: "p-6 flex flex-col gap-3",
 		children: [/* @__PURE__ */ A("div", {
@@ -1204,7 +1204,7 @@ function pe() {
 			role: "alert",
 			children: [/* @__PURE__ */ j("span", {
 				className: "text-[13px] font-medium",
-				children: ["Failed to load source: ", m]
+				children: ["Failed to load source: ", p]
 			}), /* @__PURE__ */ A("button", {
 				onClick: () => void K(),
 				className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
@@ -1235,12 +1235,12 @@ function pe() {
 							className: "m-0 text-[22px] font-bold text-text-primary",
 							children: o.name
 						}),
-						/* @__PURE__ */ A(p, {
+						/* @__PURE__ */ A(m, {
 							tone: le(o.type),
 							size: "sm",
 							children: ce(o.type)
 						}),
-						/* @__PURE__ */ A(p, {
+						/* @__PURE__ */ A(m, {
 							tone: se(o.status),
 							size: "sm",
 							children: o.status
@@ -1264,12 +1264,12 @@ function pe() {
 					})
 				})]
 			}),
-			m && /* @__PURE__ */ j("div", {
+			p && /* @__PURE__ */ j("div", {
 				className: "px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3",
 				role: "alert",
 				children: [/* @__PURE__ */ A("span", {
 					className: "text-[13px] font-medium",
-					children: m
+					children: p
 				}), /* @__PURE__ */ A("button", {
 					onClick: () => h(null),
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
@@ -1584,7 +1584,7 @@ function pe() {
 							children: "Status"
 						}), /* @__PURE__ */ j("span", {
 							className: "flex items-center gap-2.5",
-							children: [/* @__PURE__ */ A(p, {
+							children: [/* @__PURE__ */ A(m, {
 								tone: se(o.status),
 								size: "sm",
 								children: o.status
@@ -1646,7 +1646,7 @@ function Q(e) {
 	return t < 6e4 ? "just now" : t < 36e5 ? `${Math.floor(t / 6e4)}m ago` : t < 864e5 ? `${Math.floor(t / 36e5)}h ago` : `${Math.floor(t / 864e5)}d ago`;
 }
 function be({ item: t, sourceName: n, onClose: r, onRetry: i, onSkip: a }) {
-	let { idToken: s } = e(), [c, l] = O(null), [u, d] = O(null), { events: h } = o(), y = D(null), b = D(null), x = m(t !== null);
+	let { idToken: s } = e(), [c, l] = O(null), [u, d] = O(null), { events: h } = o(), y = D(null), b = D(null), x = p(t !== null);
 	w(() => {
 		if (!t) return;
 		let e = (e) => {
@@ -1749,7 +1749,7 @@ function be({ item: t, sourceName: n, onClose: r, onRetry: i, onSkip: a }) {
 								/* @__PURE__ */ j("div", {
 									className: "flex gap-2 items-center mt-1",
 									children: [
-										/* @__PURE__ */ A(p, {
+										/* @__PURE__ */ A(m, {
 											tone: ge(t.status),
 											size: "sm",
 											children: t.status
@@ -1836,7 +1836,7 @@ function be({ item: t, sourceName: n, onClose: r, onRetry: i, onSkip: a }) {
 								children: "Mapping decision"
 							}), t.mappingMethod ? /* @__PURE__ */ j(k, { children: [/* @__PURE__ */ j("div", {
 								className: "flex items-center gap-2",
-								children: [/* @__PURE__ */ A(p, {
+								children: [/* @__PURE__ */ A(m, {
 									tone: _e(t.mappingMethod),
 									size: "sm",
 									children: t.mappingMethod
@@ -2004,14 +2004,14 @@ function we(e, t = 50) {
 	return e.length <= t ? e : "..." + e.slice(e.length - t + 3);
 }
 function Te() {
-	let [e, n] = O(null), [r, i] = O(null), [a, o] = O(null), { sources: s } = t(), { items: l, loading: u, error: d, refresh: f, retryItem: m, skipItem: g, actionError: _, clearActionError: v } = c({
+	let [e, n] = O(null), [r, i] = O(null), [a, o] = O(null), { sources: s } = t(), { items: l, loading: u, error: d, refresh: f, retryItem: p, skipItem: g, actionError: _, clearActionError: v } = c({
 		sourceId: e,
 		status: r
 	}), b = a ? l.find((e) => e.itemId === a.itemId) ?? a : null, w = E(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of s) e.set(t.sourceId, t.name);
 		return e;
-	}, [s]), T = C(async (e) => m(e), [m]), D = C(async (e) => g(e), [g]);
+	}, [s]), T = C(async (e) => p(e), [p]), D = C(async (e) => g(e), [g]);
 	return u && l.length === 0 ? /* @__PURE__ */ j("div", {
 		"data-testid": "ingest-items-page",
 		className: "p-6 flex flex-col gap-3",
@@ -2169,7 +2169,7 @@ function Te() {
 							}),
 							/* @__PURE__ */ A("td", {
 								className: "p-2",
-								children: /* @__PURE__ */ A(p, {
+								children: /* @__PURE__ */ A(m, {
 									tone: Se(e.status),
 									size: "sm",
 									children: e.status
@@ -2181,7 +2181,7 @@ function Te() {
 							}),
 							/* @__PURE__ */ A("td", {
 								className: "p-2",
-								children: e.mappingMethod ? /* @__PURE__ */ A(p, {
+								children: e.mappingMethod ? /* @__PURE__ */ A(m, {
 									tone: Ce(e.mappingMethod),
 									size: "xs",
 									children: e.mappingMethod
@@ -2492,18 +2492,18 @@ function Ae(e) {
 	}
 }
 function je() {
-	let { conflicts: e, loading: n, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: u } = l(), { sources: d } = t(), [m, g] = O(null), [_, v] = O("platform"), [x, S] = O({}), [C, T] = O(""), [D, k] = O(!1), M = E(() => {
+	let { conflicts: e, loading: n, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: u } = l(), { sources: d } = t(), [p, g] = O(null), [_, v] = O("platform"), [x, S] = O({}), [C, T] = O(""), [D, k] = O(!1), M = E(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of d) e.set(t.sourceId, t.name);
 		return e;
 	}, [d]), N = E(() => e.filter((e) => e.status === "pending"), [e]);
 	w(() => {
-		m && N.some((e) => e.conflictId === m) || g(N[0]?.conflictId ?? null);
-	}, [N, m]);
-	let P = E(() => N.find((e) => e.conflictId === m) ?? null, [N, m]);
+		p && N.some((e) => e.conflictId === p) || g(N[0]?.conflictId ?? null);
+	}, [N, p]);
+	let P = E(() => N.find((e) => e.conflictId === p) ?? null, [N, p]);
 	w(() => {
 		v("platform"), S({}), T("");
-	}, [m]);
+	}, [p]);
 	let F = async () => {
 		if (P) {
 			k(!0);
@@ -2615,7 +2615,7 @@ function je() {
 							")"
 						]
 					}), N.map((e) => {
-						let t = e.conflictId === m;
+						let t = e.conflictId === p;
 						return /* @__PURE__ */ j("button", {
 							type: "button",
 							"aria-pressed": t,
@@ -2628,7 +2628,7 @@ function je() {
 							}), /* @__PURE__ */ j("div", {
 								className: "flex gap-1.5 items-center flex-wrap text-[11px] text-text-tertiary",
 								children: [
-									/* @__PURE__ */ j(p, {
+									/* @__PURE__ */ j(m, {
 										tone: "warning",
 										size: "xs",
 										children: [
@@ -2658,12 +2658,12 @@ function je() {
 								/* @__PURE__ */ j("div", {
 									className: "mt-1.5 flex gap-2 items-center flex-wrap",
 									children: [
-										/* @__PURE__ */ A(p, {
+										/* @__PURE__ */ A(m, {
 											tone: "info",
 											size: "xs",
 											children: M.get(P.sourceId) ?? P.sourceId
 										}),
-										P.documentTypeId && /* @__PURE__ */ A(p, {
+										P.documentTypeId && /* @__PURE__ */ A(m, {
 											tone: "purple",
 											size: "xs",
 											children: P.documentTypeId

@@ -3,7 +3,7 @@ import { c as n, s as r } from "./useWebSocket-BKfGpImp.js";
 import { t as i } from "./useDocumentTypes-C-AMWgYq.js";
 import { t as a } from "./cn-DhjIN-s0.js";
 import { t as o } from "./useEventCallback-Cwx9QVSi.js";
-import { t as s } from "./Modal-CyoyiNKN.js";
+import { t as s } from "./Modal-DfKwlGxh.js";
 import { t as c } from "./Input-DLknWXri.js";
 import { t as l } from "./Textarea-Dz4doxTv.js";
 import { t as u } from "./Select-CqVokE2v.js";
