@@ -28,7 +28,8 @@ export const lightTheme: ThemeTokens = {
   // Text
   textPrimary: '#0f172a',
   textSecondary: '#475569',
-  textMuted: '#94a3b8',
+  // 4.6:1 on the #f8fafc background; the old #94a3b8 was 2.45:1 (AA fail).
+  textMuted: '#64748b',
   textInverse: '#ffffff',
 
   // Surfaces

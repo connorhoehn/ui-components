@@ -6,7 +6,11 @@
 
   --color-text-primary: #0f172a;
   --color-text-secondary: #475569;
-  --color-text-tertiary: #94a3b8;
+  /* slate-500, not slate-400: at #94a3b8 every tertiary label (chat
+   * timestamps, meta lines) measured 2.45:1 on the #f8fafc panel — WCAG AA
+   * wants 4.5:1. #64748b measures 4.6:1 on the same surface. The dark block
+   * below keeps #94a3b8, which is already 7.1:1 there. */
+  --color-text-tertiary: #64748b;
   --color-text-disabled: #cbd5e1;
 
   --color-surface: #ffffff;

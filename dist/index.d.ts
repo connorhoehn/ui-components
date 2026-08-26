@@ -1577,7 +1577,7 @@ export declare interface ChatMessage {
     avatarUrl?: string;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone, showHeader, fill, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -1608,6 +1608,17 @@ export declare interface ChatPanelProps {
      *  demos expect), TRUE inside a dock, whose column has a definite
      *  height that the body must match or leave a dead band behind. */
     fill?: boolean;
+    /** Called when the reader asks for older messages. When present (and
+     *  `hasMore` is not false) a "Load earlier messages" button renders
+     *  above the first message. The panel preserves the reader's scroll
+     *  position across the prepend — growing the list must not yank the
+     *  viewport, which is the same bug class as the auto-scroll below. */
+    onLoadMore?: () => void;
+    /** Whether older messages exist. Defaults to true when `onLoadMore` is
+     *  given; pass false once the whole history is loaded to retire the button. */
+    hasMore?: boolean;
+    /** Show the load-more button in a pending state. */
+    loadingMore?: boolean;
 }
 
 export declare function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps): JSX.Element;
@@ -2934,6 +2945,13 @@ export declare interface FileUploadDropProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/**
+ * Height the region should take: everything from its own top edge down to
+ * the bottom of the window, minus `bottomGap`, never below `minHeight`.
+ * Exported for testing — the arithmetic is the whole component.
+ */
+export declare function fillHeight(offsetTop: number, viewportHeight: number, bottomGap: number, minHeight: number): number;
 
 export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, 'data-testid': dataTestId, }: FilterChipProps): JSX.Element;
 
@@ -9854,6 +9872,18 @@ declare interface UseActivityBusReturn {
   }
 
   export declare type ViewMode = 'editor' | 'ack' | 'reader';
+
+  export declare function ViewportFillRegion({ bottomGap, minHeight, className, children, 'data-testid': testId, }: ViewportFillRegionProps): JSX.Element;
+
+  export declare interface ViewportFillRegionProps {
+      /** Space to leave between the region's bottom edge and the window bottom. */
+      bottomGap?: number;
+      /** Floor for the computed height, so the region never collapses. */
+      minHeight?: number;
+      className?: string;
+      children: React.ReactNode;
+      'data-testid'?: string;
+  }
 
   export declare type WatermarkGravity = 'northwest' | 'north' | 'northeast' | 'west' | 'center' | 'east' | 'southwest' | 'south' | 'southeast';
 

@@ -1,5 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { t } from "./Modal-BcTT8crX.js";
+import { t } from "./Modal-DOOwy3wr.js";
 import { Fragment as n, jsx as r, jsxs as i } from "react/jsx-runtime";
 //#region src/components/shared/ConfirmDialog.tsx
 var a = {

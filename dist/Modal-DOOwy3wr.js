@@ -75,7 +75,7 @@ function l({ open: s, onClose: l, title: u, ariaLabel: d, maxWidth: f = 380, chi
 			role: "dialog",
 			"aria-modal": "true",
 			"aria-label": u ?? d,
-			className: e("bg-white rounded-xl px-6 py-7 w-[90%] shadow-lg font-[inherit]", v),
+			className: e("bg-white rounded-xl px-6 py-7 w-[90%] max-h-[90vh] overflow-y-auto shadow-lg font-[inherit]", v),
 			style: {
 				maxWidth: f,
 				..._

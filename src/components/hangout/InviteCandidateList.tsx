@@ -297,7 +297,10 @@ export function InviteCandidateList({
                 </p>
             ) : (
                 <ul
-                    className="flex flex-col gap-1 m-0 p-0 list-none max-h-[280px] overflow-y-auto"
+                    /* A flat 280px showed ~6 of 9 candidates with no visible
+                       scrollbar (macOS overlay scrollbars), so the rest read as
+                       missing. Grow with the viewport and keep the track drawn. */
+                    className="flex flex-col gap-1 m-0 p-0 list-none max-h-[min(55vh,480px)] overflow-y-auto overscroll-contain [scrollbar-width:thin] [scrollbar-gutter:stable]"
                     aria-label="People you can invite"
                 >
                     {grouped ? (

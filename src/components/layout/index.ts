@@ -20,3 +20,5 @@ export type {
 } from './DocsSidebar';
 export { DocsTopNav } from './DocsTopNav';
 export type { DocsTopNavProps } from './DocsTopNav';
+export { ViewportFillRegion, fillHeight } from './ViewportFillRegion';
+export type { ViewportFillRegionProps } from './ViewportFillRegion';

@@ -3,7 +3,7 @@ import { t } from "./useEventCallback-Cwx9QVSi.js";
 import { t as n } from "./Button-CTpms90-.js";
 import { t as r } from "./Chip-2lIuHwy5.js";
 import { t as i } from "./overlayStack-BFH9XXvN.js";
-import { t as a } from "./Modal-BcTT8crX.js";
+import { t as a } from "./Modal-DOOwy3wr.js";
 import { n as o, t as s } from "./PermissionDeniedCard-5FQ6reO7.js";
 import { n as c, r as l, t as u } from "./focusTrap-CmWJlptm.js";
 import { a as d, t as f } from "./Avatar-Yxs_9Jio.js";

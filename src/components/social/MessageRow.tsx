@@ -61,40 +61,58 @@ export function MessageRow({
 }: MessageRowProps) {
   const dark = tone === 'dark';
   const time = formatChatTime(timestamp);
+  // One layout for every row: a meta line (author + time) above a
+  // full-width body. The old single wrapping line put author, body and
+  // time in one `flex-wrap` run, so a short message rendered inline and a
+  // long one spilled onto three lines — its timestamp landing directly
+  // under the PREVIOUS message's text, where it read as that message's.
+  const metaVisible = !hideAuthor || !!time;
   return (
     <div
       data-testid="message-row"
       data-mine={mine ? 'true' : 'false'}
-      className={cn('flex items-start gap-1.5 py-0.5', className)}
+      className={cn('flex items-start gap-2 py-1', className)}
     >
       <div className="w-5 shrink-0 mt-0.5">
         {!hideAvatar && <Avatar name={author} src={avatarUrl} size={20} />}
       </div>
-      <div className="flex items-baseline gap-1.5 grow flex-wrap min-w-0">
-        {!hideAuthor && (
-          <span
-            data-testid="message-row-author"
-            className={cn('text-[0.7rem] shrink-0', dark ? 'text-white/70' : 'text-text-secondary')}
-          >
-            {author}
-          </span>
+      <div className="flex grow flex-col min-w-0">
+        {metaVisible && (
+          <div className="flex items-baseline gap-2 min-w-0">
+            {!hideAuthor && (
+              <span
+                data-testid="message-row-author"
+                className={cn(
+                  'text-xs font-semibold truncate',
+                  dark ? 'text-white/70' : 'text-text-secondary',
+                )}
+              >
+                {author}
+              </span>
+            )}
+            {time && (
+              <span
+                data-testid="message-row-time"
+                className={cn('text-xs shrink-0', dark ? 'text-white/40' : 'text-text-tertiary')}
+              >
+                {time}
+              </span>
+            )}
+          </div>
         )}
+        {/* `break-words` + `min-w-0` are what stop a 400-char unbroken
+            token from stretching the row (and the whole thread) sideways. */}
         <span
           data-testid="message-row-content"
-          className={cn('text-[0.8rem] grow', dark ? 'text-white/90' : 'text-text-primary')}
+          className={cn(
+            'text-sm min-w-0 break-words whitespace-pre-wrap',
+            dark ? 'text-white/90' : 'text-text-primary',
+          )}
         >
           {content}
         </span>
-        {time && (
-          <span
-            data-testid="message-row-time"
-            className={cn('text-[0.65rem] shrink-0', dark ? 'text-white/40' : 'text-text-tertiary')}
-          >
-            {time}
-          </span>
-        )}
         {footer && (
-          <div data-testid="message-row-footer" className="basis-full mt-1">
+          <div data-testid="message-row-footer" className="mt-1">
             {footer}
           </div>
         )}
