@@ -26,6 +26,11 @@ import { CallParticipantStrip } from './CallParticipantStrip';
 import { CallControls } from './CallControls';
 import { CallStatsOverlay, type CallStatsOverlayStats } from './CallStatsOverlay';
 import {
+  CallSidePanel,
+  CallSidePanelToggles,
+  type CallSidePanelTab,
+} from './CallSidePanel';
+import {
   modeFromMinimized,
   toLegacyMode,
   warnModeConflictOnce,
@@ -123,6 +128,33 @@ export interface CallWidgetProps {
   callStats?: CallStatsOverlayStats;
   className?: string;
   style?: CSSProperties;
+  /**
+   * Destinations for the docked side panel (chat / people / captions).
+   *
+   * Supplying this gives the widget a side-panel REGION that is part of
+   * the widget — not a detached floating window. The toggle buttons are
+   * rendered automatically into the control row (ahead of
+   * `controlsExtras`), and because the panel lives inside the widget's
+   * own transformed root it travels with the widget when dragged.
+   *
+   * Per-mode behaviour:
+   *   'window' / 'fullscreen'  the card WIDENS (320px stage +
+   *                            `sidePanelWidthClassName`) — the stage has
+   *                            no slack to give up, so Meet's split
+   *                            becomes a grow here.
+   *   'mini'                   the collapsed pill has no video stage to
+   *                            dock beside; the dock and its toggles are
+   *                            not rendered. Expand to reach chat, which
+   *                            is what Meet's PiP and Slack's huddle bar
+   *                            both do.
+   */
+  sidePanelTabs?: CallSidePanelTab[];
+  /** The single open destination, or null when the dock is closed. */
+  activeSidePanelTab?: string | null;
+  /** Fires with the next id, or null when the dock should close. */
+  onSidePanelTabChange?: (id: string | null) => void;
+  /** Width utility for the docked column. Defaults to `w-80`. */
+  sidePanelWidthClassName?: string;
   /** Arbitrary `data-*` attributes to spread onto the root element.
    *  Lets callers (e.g. HangoutOverlay) attach e2e-friendly testids and
    *  lobby/callId metadata without an extra wrapper div that would
@@ -754,6 +786,10 @@ export function CallWidget({
   callStats,
   displayMode,
   minimized: minimizedProp,
+  sidePanelTabs,
+  activeSidePanelTab = null,
+  onSidePanelTabChange,
+  sidePanelWidthClassName = 'w-80',
   position = 'bottom-right',
   contained = false,
   draggable = true,
@@ -772,6 +808,13 @@ export function CallWidget({
   const resolvedMode: CallWidgetMode =
     displayMode ?? modeFromMinimized(minimizedProp ?? false);
   const minimized = resolvedMode === 'mini';
+
+  // The dock is only meaningful once there is a video/audio stage to sit
+  // beside: not while ringing/connecting, and never in 'mini' (the pill
+  // has no stage — see the `sidePanelTabs` prop doc).
+  const dockTabs = sidePanelTabs ?? [];
+  const dockAvailable = dockTabs.length > 0 && !minimized && state === 'active';
+  const dockOpen = dockAvailable && dockTabs.some((t) => t.id === activeSidePanelTab);
 
   const { offset, handleMouseDown, resetOffset, snapToCorner, isDragging, isAnimating, hasMoved, widgetRef } = useDrag(draggable);
   // Filter undefined values so `data-x="undefined"` never leaks.
@@ -797,6 +840,64 @@ export function CallWidget({
 
   if (state === 'idle' || state === 'ended') return null;
 
+  const expandedBody = (
+    <>
+      {state === 'ringing' && (
+        <RingingView
+          callerName={callerName}
+          onAnswer={onAnswer}
+          onDecline={onDecline}
+        />
+      )}
+
+      {state === 'connecting' && (
+        <div
+          className="flex flex-col items-center gap-3 py-6 px-4"
+          data-testid="call-connecting-view"
+        >
+          <div className="w-10 h-10 rounded-full border-2 border-white/20 border-t-white/80 animate-spin" />
+          <span className="text-white/60 text-xs">Connecting...</span>
+        </div>
+      )}
+
+      {state === 'active' && (
+        <ActiveCallContent
+          mode={mode}
+          participants={participants}
+          localParticipant={localParticipant}
+          duration={duration}
+          isMuted={isMuted}
+          isCameraOn={isCameraOn}
+          isScreenSharing={isScreenSharing}
+          onToggleMute={onToggleMute}
+          onToggleCamera={onToggleCamera}
+          onToggleScreenShare={onToggleScreenShare}
+          onUpgradeToVideo={onUpgradeToVideo}
+          onAddParticipant={onAddParticipant}
+          availableParticipants={availableParticipants}
+          onOpenAddParticipant={onOpenAddParticipant}
+          controlsExtras={
+            dockAvailable ? (
+              <>
+                <CallSidePanelToggles
+                  tabs={dockTabs}
+                  activeTab={activeSidePanelTab}
+                  onTabChange={onSidePanelTabChange}
+                />
+                {controlsExtras}
+              </>
+            ) : (
+              controlsExtras
+            )
+          }
+          onEndCall={onEndCall}
+          layoutComponent={layoutComponent}
+          callStats={callStats}
+        />
+      )}
+    </>
+  );
+
   return (
     <>
       {isDragging && <SnapZones onSnap={snapToCorner} contained={contained} />}
@@ -821,8 +922,11 @@ export function CallWidget({
         <div
           className={cn(
             'bg-surface-inverse rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/10 overflow-hidden backdrop-blur-sm',
-            minimized ? 'w-[260px]' : 'w-[320px]',
+            // Opening the dock WIDENS the card rather than splitting it:
+            // the 320px stage has no width to give up (see `sidePanelTabs`).
+            minimized ? 'w-[260px]' : dockOpen ? 'w-auto' : 'w-[320px]',
           )}
+          data-call-side-panel-open={dockOpen ? 'true' : 'false'}
         >
           {/* Header / drag handle */}
           {!minimized && (
@@ -896,51 +1000,24 @@ export function CallWidget({
             </div>
           )}
 
-          {/* Expanded content */}
-          {!minimized && (
-            <>
-              {state === 'ringing' && (
-                <RingingView
-                  callerName={callerName}
-                  onAnswer={onAnswer}
-                  onDecline={onDecline}
-                />
-              )}
-
-              {state === 'connecting' && (
-                <div
-                  className="flex flex-col items-center gap-3 py-6 px-4"
-                  data-testid="call-connecting-view"
-                >
-                  <div className="w-10 h-10 rounded-full border-2 border-white/20 border-t-white/80 animate-spin" />
-                  <span className="text-white/60 text-xs">Connecting...</span>
-                </div>
-              )}
-
-              {state === 'active' && (
-                <ActiveCallContent
-                  mode={mode}
-                  participants={participants}
-                  localParticipant={localParticipant}
-                  duration={duration}
-                  isMuted={isMuted}
-                  isCameraOn={isCameraOn}
-                  isScreenSharing={isScreenSharing}
-                  onToggleMute={onToggleMute}
-                  onToggleCamera={onToggleCamera}
-                  onToggleScreenShare={onToggleScreenShare}
-                  onUpgradeToVideo={onUpgradeToVideo}
-                  onAddParticipant={onAddParticipant}
-                  availableParticipants={availableParticipants}
-                  onOpenAddParticipant={onOpenAddParticipant}
-                  controlsExtras={controlsExtras}
-                  onEndCall={onEndCall}
-                  layoutComponent={layoutComponent}
-                  callStats={callStats}
-                />
-              )}
-            </>
-          )}
+          {/* Expanded content — plus, when a destination is open, the
+              docked side panel as its flex sibling. Both live INSIDE the
+              transformed widget root, so dragging moves them together. */}
+          {!minimized && (dockOpen ? (
+            <div className="flex min-h-0 items-stretch">
+              <div className="w-[320px] shrink-0">{expandedBody}</div>
+              <CallSidePanel
+                mode={resolvedMode}
+                tabs={dockTabs}
+                activeTab={activeSidePanelTab}
+                onTabChange={onSidePanelTabChange}
+                widthClassName={sidePanelWidthClassName}
+                className="max-h-[420px]"
+              />
+            </div>
+          ) : (
+            expandedBody
+          ))}
         </div>
       </div>
     </>

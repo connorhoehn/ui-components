@@ -221,6 +221,35 @@ declare interface MediaEffectsFilterOption {
     label: string;
 }
 
+declare interface MediaEffectsPreviewPanelProps extends Pick<MediaEffectsTrayProps, 'filters' | 'activeFilterId' | 'onSelectFilter' | 'backgrounds' | 'backgroundMode' | 'activeBackgroundUrl' | 'onSelectBackground' | 'faceSprites' | 'activeFaceSpriteId' | 'onSelectFaceSprite'> {
+    /**
+     * True while a preview session is open — i.e. the controller has a
+     * non-null `draft` and its setters write that draft instead of the
+     * live pipeline. When false the panel renders read-only and NO
+     * selection callback fires, so nothing can reach peers.
+     */
+    previewActive: boolean;
+    /**
+     * The draft self-view (built from the controller's `previewTrack`).
+     * Never published. Pass null for the camera-off / warming-up state.
+     */
+    previewStream: MediaStream | null;
+    /** Draft differs from live. Gates Apply. */
+    isDirty: boolean;
+    /** Commit the draft — the only thing that changes what peers see. */
+    onApply: () => void;
+    /** Discard the draft and dismiss. Live stays untouched. */
+    onCancel: () => void;
+    /** Extra dimming on top of `previewActive`, e.g. while the engine warms. */
+    disabled?: boolean;
+    /** Panel heading. Defaults to "Video effects" (Teams' wording). */
+    title?: string;
+    /** Label for the commit button. Defaults to "Apply". */
+    applyLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 declare interface MediaEffectsTrayProps {
     filters: MediaEffectsFilterOption[];
     /** 'none' = no filter active. */
@@ -527,6 +556,33 @@ export declare interface RMMediaEffectsControllerSource {
     setBackgroundMode(mode: RMBackgroundMode): void;
     setBackgroundImageUrl(url: string | null): void;
     setFaceSpriteId(id: string | null): void;
+}
+
+/**
+ * useMediaEffects()'s controller plus the preview-session surface added
+ * for the audition-before-publish flow.
+ */
+export declare interface RMMediaEffectsPreviewControllerSource extends RMMediaEffectsControllerSource {
+    /** Non-null only during a preview session. */
+    draft: RMMediaEffectsSettings | null;
+    /** Draft differs from live. */
+    isDirty: boolean;
+    /** The draft self-view. NEVER published. */
+    previewTrack: MediaStreamTrack | null;
+    /** Snapshot live → draft; the setters now write the draft. */
+    beginPreview(): void;
+    /** Commit the draft to live — the only thing peers ever see. */
+    applyPreview(): void;
+    /** Discard the draft; live untouched. */
+    cancelPreview(): void;
+}
+
+/** The four values a preview session snapshots and commits. */
+export declare interface RMMediaEffectsSettings {
+    filterId: string;
+    backgroundMode: RMBackgroundMode;
+    backgroundImageUrl: string | null;
+    faceSpriteId: string | null;
 }
 
 /** Mirror of realtime-modules/src/client/useNotifications.ts NotificationHookEntry */
@@ -878,6 +934,19 @@ export declare interface WrappedLVSHangoutLayoutProps {
     showLocalAsTile?: boolean;
     className?: string;
     'data-testid'?: string;
+}
+
+export declare function WrappedMediaEffectsPreviewPanel({ open, controller, onClose, onApplied, ...rest }: WrappedMediaEffectsPreviewPanelProps): JSX.Element | null;
+
+export declare interface WrappedMediaEffectsPreviewPanelProps extends Pick<MediaEffectsPreviewPanelProps, 'disabled' | 'title' | 'applyLabel' | 'className' | 'data-testid'> {
+    /** Mounts the surface and opens a preview session. */
+    open: boolean;
+    /** Return value of useMediaEffects() from realtime-modules. */
+    controller: RMMediaEffectsPreviewControllerSource;
+    /** Host closes its dialog/panel here. Fired after Apply AND Cancel. */
+    onClose: () => void;
+    /** Extra hook fired only on Apply (e.g. a "Effects updated" toast). */
+    onApplied?: () => void;
 }
 
 export declare function WrappedMediaEffectsTray({ controller, ...rest }: WrappedMediaEffectsTrayProps): JSX.Element;

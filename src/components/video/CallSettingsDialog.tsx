@@ -50,6 +50,16 @@ export interface CallSettingsDialogProps {
    *  Omit to hide the tab. */
   chatContent?: ReactNode;
 
+  /**
+   * Show the small live self-preview on the left. Default true.
+   *
+   * Pass false when the tab body brings its own (larger) preview — which
+   * is exactly what <MediaEffectsPreviewPanel> does. Two self-views side
+   * by side, one live and one draft, is the confusing arrangement the
+   * preview-before-publish work exists to remove.
+   */
+  showPreview?: boolean;
+
   /** Dialog heading. Defaults to "Call settings". */
   title?: string;
   className?: string;
@@ -69,6 +79,7 @@ export function CallSettingsDialog({
   effectsContent,
   peopleContent,
   chatContent,
+  showPreview = true,
   title = 'Call settings',
   className,
 }: CallSettingsDialogProps) {
@@ -122,6 +133,7 @@ export function CallSettingsDialog({
         {/* Split body: preview | tabs. Stacks vertically under 640px. */}
         <div className="flex flex-col sm:flex-row sm:items-stretch">
           {/* ── Left: live self-preview ─────────────────────────────── */}
+          {showPreview && (
           <div
             data-testid="call-settings-preview"
             className={cn(
@@ -157,6 +169,7 @@ export function CallSettingsDialog({
               </div>
             )}
           </div>
+          )}
 
           {/* ── Right: tab rail + slot content ──────────────────────── */}
           <div className="flex min-w-0 flex-1 flex-col">

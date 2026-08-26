@@ -45,6 +45,11 @@ import {
   type AnyCallWidgetMode,
   type CallWidgetMode,
 } from './callWidgetMode';
+import {
+  CallSidePanel,
+  CallSidePanelToggles,
+  type CallSidePanelTab,
+} from './CallSidePanel';
 
 export type { CallWidgetMode, LegacyCallWidgetMode } from './callWidgetMode';
 
@@ -92,6 +97,30 @@ export interface ExpandableCallWidgetProps {
   defaultCorner?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
   /** Hide the expand affordances (useful for read-only viewers). */
   expandable?: boolean;
+  /**
+   * Destinations for the docked side panel (chat / people / captions).
+   *
+   * The panel is part of the widget, not a sibling floating window: it
+   * renders inside the same positioned root, so it moves, resizes and
+   * closes with the call. Its toggle buttons are appended to the controls
+   * strip automatically — the host positions nothing.
+   *
+   * Per-mode behaviour (see ./CallSidePanel for the full rationale):
+   *   'window' / 'fullscreen'  SPLIT — the stage keeps `flex-1` and the
+   *                            dock takes a right-edge column (w-80, or
+   *                            w-96 in fullscreen). This is the Google
+   *                            Meet / Zoom / Teams layout.
+   *   'mini'                   OVERLAY — a full-bleed sheet on top of the
+   *                            320px stage. Splitting a mini widget would
+   *                            leave the video ~0px wide; Meet and Teams
+   *                            both switch to a covering sheet at this
+   *                            size instead.
+   */
+  sidePanelTabs?: CallSidePanelTab[];
+  /** The single open destination, or null when the dock is closed. */
+  activeSidePanelTab?: string | null;
+  /** Fires with the next id, or null when the dock should close. */
+  onSidePanelTabChange?: (id: string | null) => void;
   /** z-index for the floating modes. Default 9999. */
   zIndex?: number;
   /** Class on the root. */
@@ -120,6 +149,9 @@ export function ExpandableCallWidget({
   apiRef,
   defaultCorner = 'bottom-right',
   expandable = true,
+  sidePanelTabs,
+  activeSidePanelTab = null,
+  onSidePanelTabChange,
   zIndex = 9999,
   className,
 }: ExpandableCallWidgetProps) {
@@ -157,6 +189,13 @@ export function ExpandableCallWidget({
   const effectiveMode: CallWidgetMode = fsActive ? 'fullscreen' : state.mode;
 
   const rootRef = useRef<HTMLDivElement | null>(null);
+
+  // Side-panel dock. Unlike <CallWidget>, mini here still has a real
+  // 320×200 stage, so the dock is available in every mode — it just
+  // renders as an overlay sheet instead of a column (see CallSidePanel).
+  const dockTabs = sidePanelTabs ?? [];
+  const dockAvailable = dockTabs.length > 0;
+  const dockOpen = dockAvailable && dockTabs.some((t) => t.id === activeSidePanelTab);
 
   // requestFullscreen on the widget root (NOT documentElement) so the
   // rest of the app remains addressable on exit. Distinguish
@@ -355,6 +394,7 @@ export function ExpandableCallWidget({
       // hook for selectors written against the pre-2.106 'docked' spelling.
       data-call-widget-mode={effectiveMode}
       data-call-widget-mode-legacy={toLegacyMode(effectiveMode)}
+      data-call-side-panel-open={dockOpen ? 'true' : 'false'}
       style={rootStyle}
       className={cn(
         'flex flex-col bg-surface-inverse text-white shadow-2xl overflow-hidden border border-white/10',
@@ -416,13 +456,33 @@ export function ExpandableCallWidget({
         )}
       </div>
 
-      <div className="relative flex-1 min-h-0 bg-black">
-        {children}
+      <div className={cn('relative flex-1 min-h-0 bg-black', dockOpen && 'flex items-stretch')}>
+        {dockOpen ? <div className="relative min-w-0 flex-1">{children}</div> : children}
+        {dockOpen && (
+          <CallSidePanel
+            mode={effectiveMode}
+            tabs={dockTabs}
+            activeTab={activeSidePanelTab}
+            onTabChange={onSidePanelTabChange}
+            widthClassName={effectiveMode === 'fullscreen' ? 'w-96' : 'w-80'}
+          />
+        )}
       </div>
 
-      {controls && (
+      {(controls || dockAvailable) && (
         <div className="border-t border-white/5 px-2 py-2 bg-video-tile">
-          {controls}
+          {dockAvailable ? (
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">{controls}</div>
+              <CallSidePanelToggles
+                tabs={dockTabs}
+                activeTab={activeSidePanelTab}
+                onTabChange={onSidePanelTabChange}
+              />
+            </div>
+          ) : (
+            controls
+          )}
         </div>
       )}
 

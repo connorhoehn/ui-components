@@ -500,4 +500,92 @@ function T({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 	});
 }
 //#endregion
-export { v as a, p as c, f as d, c as f, y as i, m as l, S as n, _ as o, x as r, g as s, T as t, d as u };
+//#region src/components/video/MediaEffectsPreviewPanel.tsx
+function E(e, t) {
+	return (...n) => {
+		e && t(...n);
+	};
+}
+function D({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCancel: a, filters: c, activeFilterId: l, onSelectFilter: u, backgrounds: d, backgroundMode: f, activeBackgroundUrl: p, onSelectBackground: m, faceSprites: h, activeFaceSpriteId: g, onSelectFaceSprite: _, disabled: v = !1, title: b = "Video effects", applyLabel: x = "Apply", className: S, "data-testid": C = "media-effects-preview-panel" }) {
+	let w = (e) => E(t, e), D = t && r && !v;
+	return /* @__PURE__ */ s("section", {
+		"data-testid": C,
+		"data-preview-active": t ? "true" : "false",
+		"data-preview-dirty": r ? "true" : "false",
+		"aria-label": b,
+		className: e("flex flex-col gap-3 text-text-inverse", S),
+		children: [
+			/* @__PURE__ */ s("div", {
+				"data-testid": "media-effects-preview-stage",
+				className: "relative aspect-video w-full shrink-0 overflow-hidden rounded-xl bg-video-stage",
+				children: [n ? /* @__PURE__ */ o("div", {
+					"data-testid": "media-effects-preview-video",
+					className: "h-full w-full",
+					children: /* @__PURE__ */ o(y, {
+						stream: n,
+						muted: !0,
+						className: "h-full w-full scale-x-[-1] object-cover"
+					})
+				}) : /* @__PURE__ */ s("div", {
+					"data-testid": "media-effects-preview-empty",
+					className: "flex h-full w-full flex-col items-center justify-center gap-1 text-sm text-white/50",
+					children: [/* @__PURE__ */ o("span", {
+						"aria-hidden": !0,
+						className: "text-2xl",
+						children: "📷"
+					}), t ? "Starting preview…" : "Camera off"]
+				}), /* @__PURE__ */ o("span", {
+					"data-testid": "media-effects-preview-badge",
+					className: "absolute left-2 top-2 rounded-full bg-black/70 px-2 py-0.5 text-[11px] font-semibold text-white",
+					children: "Preview — only you"
+				})]
+			}),
+			/* @__PURE__ */ o("p", {
+				"data-testid": "media-effects-preview-notice",
+				className: "m-0 rounded-lg bg-white/10 px-3 py-2 text-[12px] leading-snug text-white/80",
+				children: t ? `This preview is private. Nobody else in the call can see these effects until you choose ${x}.` : "Preview is not running, so these controls are read-only. Nothing here is shared with the call."
+			}),
+			/* @__PURE__ */ o(T, {
+				"data-testid": "media-effects-preview-tray",
+				disabled: v || !t,
+				filters: c,
+				activeFilterId: l,
+				onSelectFilter: w(u),
+				backgrounds: d,
+				backgroundMode: f,
+				activeBackgroundUrl: p,
+				onSelectBackground: w(m),
+				faceSprites: h,
+				activeFaceSpriteId: g,
+				onSelectFaceSprite: w(_)
+			}),
+			/* @__PURE__ */ s("footer", {
+				className: "flex shrink-0 items-center justify-end gap-3 border-t border-white/10 pt-3",
+				children: [
+					/* @__PURE__ */ o("span", {
+						"data-testid": "media-effects-preview-status",
+						className: "mr-auto text-[12px] text-white/60",
+						children: r ? "Not shared yet" : "Nothing to apply"
+					}),
+					/* @__PURE__ */ o("button", {
+						type: "button",
+						onClick: a,
+						"data-testid": "media-effects-preview-cancel",
+						className: "cursor-pointer rounded-lg border border-white/20 bg-transparent px-3 py-1.5 text-[13px] font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white",
+						children: "Cancel"
+					}),
+					/* @__PURE__ */ o("button", {
+						type: "button",
+						onClick: i,
+						disabled: !D,
+						"data-testid": "media-effects-preview-apply",
+						className: e("rounded-lg border-none px-4 py-1.5 text-[13px] font-semibold transition-colors", D ? "cursor-pointer bg-primary text-white hover:bg-primary-hover" : "cursor-not-allowed bg-white/10 text-white/40"),
+						children: x
+					})
+				]
+			})
+		]
+	});
+}
+//#endregion
+export { x as a, _ as c, m as d, d as f, S as i, g as l, c as m, E as n, y as o, f as p, T as r, v as s, D as t, p as u };

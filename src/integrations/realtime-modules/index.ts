@@ -128,3 +128,11 @@ export type {
   RMMediaEffectsControllerSource,
   RMBackgroundMode,
 } from './WrappedMediaEffectsTray';
+
+// ── Preview-before-publish effects (2026-08) ──
+export { WrappedMediaEffectsPreviewPanel } from './WrappedMediaEffectsPreviewPanel';
+export type {
+  WrappedMediaEffectsPreviewPanelProps,
+  RMMediaEffectsPreviewControllerSource,
+  RMMediaEffectsSettings,
+} from './WrappedMediaEffectsPreviewPanel';

@@ -171,8 +171,22 @@ export type {
   CallSettingsTab,
 } from './CallSettingsDialog';
 
-export { CallSidePanel } from './CallSidePanel';
-export type { CallSidePanelProps } from './CallSidePanel';
+export {
+  CallSidePanel,
+  CallSidePanelToggles,
+  callSidePanelPlacement,
+  callSidePanelToggleTestId,
+  callSidePanelBodyTestId,
+} from './CallSidePanel';
+export type {
+  CallSidePanelProps,
+  CallSidePanelTab,
+  CallSidePanelTogglesProps,
+  CallSidePanelPlacement,
+} from './CallSidePanel';
+
+export { MediaEffectsPreviewPanel, guardedSelection } from './MediaEffectsPreviewPanel';
+export type { MediaEffectsPreviewPanelProps } from './MediaEffectsPreviewPanel';
 
 export { default as MediaEffectsTray } from './MediaEffectsTray';
 export type {
@@ -194,5 +208,6 @@ export {
   SparklesIcon,
   MoreHorizontalIcon,
   UserPlusIcon,
+  UsersIcon,
 } from './MediaIcons';
 export type { IconProps } from './MediaIcons';

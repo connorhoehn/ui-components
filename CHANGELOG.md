@@ -8,6 +8,69 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.107.0] — 2026-08-25
+
+Two product complaints, both real gaps. Tests 5,271 → 5,315.
+
+### Added — the in-call side panel is now DOCKED to the call
+
+In-call chat used to render in a free-floating `FloatingPanel` that drifted
+anywhere on screen, visually unrelated to the call window it belonged to.
+Google Meet, Zoom and Teams all attach chat/people/captions to the right
+edge of the call surface so the two move, resize and close together;
+Slack huddles do the same.
+
+`CallSidePanel` is now that dock. It grew a tabbed API — `tabs`,
+`activeTab`, `onTabChange`, `mode` — holding **one** open destination at a
+time (Chat / People / Captions are mutually exclusive in every product
+that does this well). `CallSidePanelToggles` renders the control-bar
+buttons that pick which. The pre-2.107 single-panel props (`open`,
+`onClose`, `title`, `children`) still work unchanged as a one-tab dock.
+
+Placement follows the widget's canonical display mode:
+
+| mode | placement | why |
+| --- | --- | --- |
+| `window` | docked right column (`w-80`) | Meet / Zoom / Teams |
+| `fullscreen` | docked right column (`w-96`) | same, more room |
+| `mini` | full-bleed overlay sheet | 320px cannot be split; Meet and Teams both cover the stage at this size |
+
+Both call widgets wire it for you — pass `sidePanelTabs` +
+`activeSidePanelTab` and the toggles appear in the control row, the panel
+appears in the dock, and because both live inside the widget's own
+transformed root, **the panel travels with the widget when dragged**.
+`<CallWidget>` *widens* (its 320px stage has no width to give up) and
+suppresses the dock in `mini`, where the collapsed pill has no stage;
+`<ExpandableCallWidget>` *splits* (the stage keeps `flex-1`).
+
+### Added — audition camera effects privately before publishing them
+
+The Effects tab applied every click LIVE: clicking "Sunglasses" instantly
+broadcast sunglasses to everyone in the meeting. New
+`MediaEffectsPreviewPanel` follows the Microsoft Teams "Video effects"
+model — a large self-view fed by a draft-only `previewTrack`, an in-words
+privacy line ("Nobody else in the call can see these effects until you
+choose Apply"), the same filter/background/face-FX trays writing the
+draft, and an explicit **Apply** that stays disabled until the draft
+differs from live. Applying is the only thing peers ever see.
+
+`WrappedMediaEffectsPreviewPanel`
+(`/integrations/realtime-modules`) owns the session lifecycle against the
+realtime-modules controller contract: `beginPreview()` on open,
+`applyPreview()` on Apply, `cancelPreview()` on dismiss, close **and
+unmount** — so abandoning the surface can never publish.
+
+Two safety properties are enforced in code and bite-verified in tests:
+selection callbacks are wrapped in `guardedSelection()` and refuse to run
+outside a preview session, and Apply is inert unless `isDirty`.
+
+### Changed
+
+- `CallSettingsDialog` gained `showPreview` (default `true`). Pass `false`
+  when the tab body brings its own larger preview.
+- New `UsersIcon` in `MediaIcons` — a roster glyph distinct from
+  `UserPlusIcon` ("invite someone" vs "show who is here").
+
 ## [2.98.0] — 2026-08-25
 
 Four hunts. Tests 4,978 → 5,102.

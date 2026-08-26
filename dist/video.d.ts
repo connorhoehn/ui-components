@@ -88,7 +88,7 @@ export declare interface CallParticipantStripProps {
     style?: CSSProperties;
 }
 
-export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, effectsContent, peopleContent, chatContent, title, className, }: CallSettingsDialogProps): JSX.Element;
+export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, effectsContent, peopleContent, chatContent, showPreview, title, className, }: CallSettingsDialogProps): JSX.Element;
 
 export declare interface CallSettingsDialogProps {
     open: boolean;
@@ -109,6 +109,15 @@ export declare interface CallSettingsDialogProps {
     /** "Chat" tab body — e.g. a chat panel wired to the call's channel.
      *  Omit to hide the tab. */
     chatContent?: ReactNode;
+    /**
+     * Show the small live self-preview on the left. Default true.
+     *
+     * Pass false when the tab body brings its own (larger) preview — which
+     * is exactly what <MediaEffectsPreviewPanel> does. Two self-views side
+     * by side, one live and one draft, is the confusing arrangement the
+     * preview-before-publish work exists to remove.
+     */
+    showPreview?: boolean;
     /** Dialog heading. Defaults to "Call settings". */
     title?: string;
     className?: string;
@@ -116,21 +125,90 @@ export declare interface CallSettingsDialogProps {
 
 export declare type CallSettingsTab = 'effects' | 'people' | 'chat';
 
-export declare function CallSidePanel({ open, onClose, title, children, widthClassName, className, 'data-testid': testId, }: CallSidePanelProps): JSX.Element | null;
+export declare function CallSidePanel({ tabs, activeTab, onTabChange, mode, open, onClose, title, children, widthClassName, className, 'data-testid': testId, }: CallSidePanelProps): JSX.Element | null;
+
+export declare function callSidePanelBodyTestId(tab: CallSidePanelTab): string;
+
+/** How the dock rendered itself for the host widget's display mode. */
+export declare type CallSidePanelPlacement = 'docked' | 'overlay';
+
+/**
+ * Which placement the dock takes for a given widget display mode.
+ *
+ * 'mini' is the only mode that cannot afford a column: at 320px a docked
+ * panel would leave the video ~0px wide, so the dock covers the stage
+ * instead (Meet/Teams narrow-window behaviour).
+ */
+export declare function callSidePanelPlacement(mode: CallWidgetMode): CallSidePanelPlacement;
 
 export declare interface CallSidePanelProps {
-    open: boolean;
-    /** The header ✕ fires this. The consumer owns the open/closed state. */
-    onClose: () => void;
-    /** Header text, e.g. "Chat". */
-    title: string;
-    /** Panel body — rendered inside a `min-h-0 flex-1 overflow-y-auto` slot. */
-    children: ReactNode;
-    /** Width utility for the panel column. Defaults to `w-80`. */
+    /** Destinations available in the dock. Supplying this switches the
+     *  component to the tabbed API; `open`/`title`/`children` are ignored. */
+    tabs?: CallSidePanelTab[];
+    /** The single open destination, or null when the dock is closed. */
+    activeTab?: string | null;
+    /** Fires with the next id, or null when the dock should close. */
+    onTabChange?: (id: string | null) => void;
+    /** Host widget's display mode — decides docked vs overlay placement.
+     *  Defaults to 'window' (docked). */
+    mode?: CallWidgetMode;
+    /** @deprecated Use `tabs` + `activeTab`. Kept working as a one-tab dock. */
+    open?: boolean;
+    /** The header ✕ fires this. The consumer owns the open/closed state.
+     *  In the tabbed API this fires alongside `onTabChange(null)`. */
+    onClose?: () => void;
+    /** @deprecated Use `tabs`. Header text, e.g. "Chat". */
+    title?: string;
+    /** @deprecated Use `tabs`. Panel body. */
+    children?: ReactNode;
+    /** Width utility for the docked column. Defaults to `w-80`. Ignored in
+     *  'overlay' placement, which is always full-bleed. */
     widthClassName?: string;
     className?: string;
     'data-testid'?: string;
 }
+
+export declare interface CallSidePanelTab {
+    /** Stable id. 'chat' | 'people' | 'captions' get canonical testids and
+     *  default icons; any other id works and falls back to derived ones. */
+    id: string;
+    /** Header text and toggle-button accessible name, e.g. "Chat". */
+    label: string;
+    /** Panel body — rendered inside a `min-h-0 flex-1 overflow-y-auto` slot. */
+    content: ReactNode;
+    /** Toggle-button glyph. Defaults by id for the three well-known tabs. */
+    icon?: ReactNode;
+    /** Unread/attention count rendered as a badge on the toggle button. */
+    badgeCount?: number;
+    /** Disable just this destination (e.g. captions still warming up). */
+    disabled?: boolean;
+    /** Override the derived toggle-button testid. */
+    toggleTestId?: string;
+    /** Override the derived tab-body testid. */
+    panelTestId?: string;
+}
+
+/**
+ * Icon toggles for the dock's destinations. Rendered automatically by
+ * <CallWidget> and <ExpandableCallWidget> into their control rows when
+ * `sidePanelTabs` is supplied — a consumer never positions these by hand.
+ * Exported for hosts that build their own control bar.
+ */
+export declare function CallSidePanelToggles({ tabs, activeTab, onTabChange, disabled, className, 'data-testid': testId, }: CallSidePanelTogglesProps): JSX.Element | null;
+
+export declare interface CallSidePanelTogglesProps {
+    tabs: CallSidePanelTab[];
+    /** Currently open destination, or null/undefined when the dock is closed. */
+    activeTab?: string | null;
+    /** Fires with the next destination id, or null when the active button
+     *  is clicked again (click-to-close, like Meet's chat button). */
+    onTabChange?: (id: string | null) => void;
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function callSidePanelToggleTestId(tab: CallSidePanelTab): string;
 
 /**
  * Slack-Huddles-style "someone started a hangout" banner. Lightweight,
@@ -213,7 +291,7 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
-export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, displayMode, minimized: minimizedProp, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, displayMode, minimized: minimizedProp, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, sidePanelWidthClassName, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
 
 /** Canonical display mode for any call surface. */
 export declare type CallWidgetMode = 'mini' | 'window' | 'fullscreen';
@@ -300,6 +378,33 @@ export declare interface CallWidgetProps {
     callStats?: CallStatsOverlayStats;
     className?: string;
     style?: CSSProperties;
+    /**
+     * Destinations for the docked side panel (chat / people / captions).
+     *
+     * Supplying this gives the widget a side-panel REGION that is part of
+     * the widget — not a detached floating window. The toggle buttons are
+     * rendered automatically into the control row (ahead of
+     * `controlsExtras`), and because the panel lives inside the widget's
+     * own transformed root it travels with the widget when dragged.
+     *
+     * Per-mode behaviour:
+     *   'window' / 'fullscreen'  the card WIDENS (320px stage +
+     *                            `sidePanelWidthClassName`) — the stage has
+     *                            no slack to give up, so Meet's split
+     *                            becomes a grow here.
+     *   'mini'                   the collapsed pill has no video stage to
+     *                            dock beside; the dock and its toggles are
+     *                            not rendered. Expand to reach chat, which
+     *                            is what Meet's PiP and Slack's huddle bar
+     *                            both do.
+     */
+    sidePanelTabs?: CallSidePanelTab[];
+    /** The single open destination, or null when the dock is closed. */
+    activeSidePanelTab?: string | null;
+    /** Fires with the next id, or null when the dock should close. */
+    onSidePanelTabChange?: (id: string | null) => void;
+    /** Width utility for the docked column. Defaults to `w-80`. */
+    sidePanelWidthClassName?: string;
     /** Arbitrary `data-*` attributes to spread onto the root element.
      *  Lets callers (e.g. HangoutOverlay) attach e2e-friendly testids and
      *  lobby/callId metadata without an extra wrapper div that would
@@ -354,7 +459,7 @@ export declare type CircularIconToggleSize = 'sm' | 'md' | 'lg';
 
 export declare type CircularIconToggleTone = 'neutral' | 'danger';
 
-export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, onModeChange, persistKey, apiRef, defaultCorner, expandable, zIndex, className, }: ExpandableCallWidgetProps): JSX.Element;
+export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, onModeChange, persistKey, apiRef, defaultCorner, expandable, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, zIndex, className, }: ExpandableCallWidgetProps): JSX.Element;
 
 export declare interface ExpandableCallWidgetHandle {
     /** Always canonical — 'window', never 'docked'. */
@@ -400,6 +505,30 @@ export declare interface ExpandableCallWidgetProps {
     defaultCorner?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
     /** Hide the expand affordances (useful for read-only viewers). */
     expandable?: boolean;
+    /**
+     * Destinations for the docked side panel (chat / people / captions).
+     *
+     * The panel is part of the widget, not a sibling floating window: it
+     * renders inside the same positioned root, so it moves, resizes and
+     * closes with the call. Its toggle buttons are appended to the controls
+     * strip automatically — the host positions nothing.
+     *
+     * Per-mode behaviour (see ./CallSidePanel for the full rationale):
+     *   'window' / 'fullscreen'  SPLIT — the stage keeps `flex-1` and the
+     *                            dock takes a right-edge column (w-80, or
+     *                            w-96 in fullscreen). This is the Google
+     *                            Meet / Zoom / Teams layout.
+     *   'mini'                   OVERLAY — a full-bleed sheet on top of the
+     *                            320px stage. Splitting a mini widget would
+     *                            leave the video ~0px wide; Meet and Teams
+     *                            both switch to a covering sheet at this
+     *                            size instead.
+     */
+    sidePanelTabs?: CallSidePanelTab[];
+    /** The single open destination, or null when the dock is closed. */
+    activeSidePanelTab?: string | null;
+    /** Fires with the next id, or null when the dock should close. */
+    onSidePanelTabChange?: (id: string | null) => void;
     /** z-index for the floating modes. Default 9999. */
     zIndex?: number;
     /** Class on the root. */
@@ -407,6 +536,18 @@ export declare interface ExpandableCallWidgetProps {
 }
 
 export declare function gridCols(count: number): number;
+
+/**
+ * The safety gate, hoisted out of the component so it can be asserted on
+ * directly. Every selection handler in this panel is wrapped in it.
+ *
+ * Outside a preview session the wrapped callback is a no-op — a click
+ * cannot reach the controller, and therefore cannot reach peers. The
+ * `disabled` attribute on the chips is the SECOND layer, not this one;
+ * disabling is a rendering detail a refactor can drop, whereas this
+ * refuses to run.
+ */
+export declare function guardedSelection<A extends unknown[]>(previewActive: boolean, fn: (...args: A) => void): (...args: A) => void;
 
 export declare function HangoutGrid({ participants, localParticipant, activeSpeakerId, onParticipantClick, fillParent, pipWidth, className, style, }: HangoutGridProps): JSX.Element;
 
@@ -654,6 +795,37 @@ export declare interface MediaEffectsBackgroundOption {
 export declare interface MediaEffectsFilterOption {
     id: string;
     label: string;
+}
+
+export declare function MediaEffectsPreviewPanel({ previewActive, previewStream, isDirty, onApply, onCancel, filters, activeFilterId, onSelectFilter, backgrounds, backgroundMode, activeBackgroundUrl, onSelectBackground, faceSprites, activeFaceSpriteId, onSelectFaceSprite, disabled, title, applyLabel, className, 'data-testid': testId, }: MediaEffectsPreviewPanelProps): JSX.Element;
+
+export declare interface MediaEffectsPreviewPanelProps extends Pick<MediaEffectsTrayProps, 'filters' | 'activeFilterId' | 'onSelectFilter' | 'backgrounds' | 'backgroundMode' | 'activeBackgroundUrl' | 'onSelectBackground' | 'faceSprites' | 'activeFaceSpriteId' | 'onSelectFaceSprite'> {
+    /**
+     * True while a preview session is open — i.e. the controller has a
+     * non-null `draft` and its setters write that draft instead of the
+     * live pipeline. When false the panel renders read-only and NO
+     * selection callback fires, so nothing can reach peers.
+     */
+    previewActive: boolean;
+    /**
+     * The draft self-view (built from the controller's `previewTrack`).
+     * Never published. Pass null for the camera-off / warming-up state.
+     */
+    previewStream: MediaStream | null;
+    /** Draft differs from live. Gates Apply. */
+    isDirty: boolean;
+    /** Commit the draft — the only thing that changes what peers see. */
+    onApply: () => void;
+    /** Discard the draft and dismiss. Live stays untouched. */
+    onCancel: () => void;
+    /** Extra dimming on top of `previewActive`, e.g. while the engine warms. */
+    disabled?: boolean;
+    /** Panel heading. Defaults to "Video effects" (Teams' wording). */
+    title?: string;
+    /** Label for the commit button. Defaults to "Apply". */
+    applyLabel?: string;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function MediaEffectsTray({ filters, activeFilterId, onSelectFilter, backgrounds, backgroundMode, activeBackgroundUrl, onSelectBackground, faceSprites, activeFaceSpriteId, onSelectFaceSprite, disabled, compact, className, 'data-testid': testId, }: MediaEffectsTrayProps): JSX.Element;
@@ -1244,6 +1416,11 @@ declare interface UseMuteWhileTalkingOptions {
  *  icon map so the docked and expanded call chromes can both render the
  *  same "add people" affordance. */
 export declare function UserPlusIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/** Roster glyph (two people, no "+") — the People destination in the
+ *  call side-panel dock. Distinct from UserPlusIcon, which means "invite
+ *  someone new" rather than "show who is here". */
+export declare function UsersIcon({ size, ...rest }: IconProps): JSX.Element;
 
 /**
  * Debounce activeSpeakerId so the spotlight slot only swaps after the new
