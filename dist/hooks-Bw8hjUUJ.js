@@ -1,7 +1,7 @@
 import { a as e, t } from "./registry-DbX3MVAA.js";
 import { n, t as r } from "./fieldType-CGXsQUaC.js";
 import { n as i } from "./IdentityContext-CQM1qwH6.js";
-import "./useWebSocket-BKfGpImp.js";
+import "./useWebSocket-zc3LuaC-.js";
 import "./useSocialProfile-5S1qyvsv.js";
 import "./useSyncConflicts-y7kUJko3.js";
 import "./useDocumentTypes-C-AMWgYq.js";
