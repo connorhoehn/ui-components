@@ -36,6 +36,8 @@ export interface UseComputeFleetOptions {
   computers?: Computer[];
   /** Sample data when there is no client-visible fleet at all. */
   fixtures?: Computer[];
+  /** Talk to the backend at all. False reports an empty fleet and fetches nothing. */
+  enabled?: boolean;
   /**
    * Re-POST mirrored boxes when the server reports an empty fleet.
    *
@@ -63,6 +65,7 @@ export function useComputeFleet({
   pollIntervalMs = 5_000,
   computers: provided,
   fixtures,
+  enabled = true,
   readopt = true,
 }: UseComputeFleetOptions): UseComputeFleetResult {
   const [computers, setComputers] = useState<Computer[]>(
@@ -82,7 +85,7 @@ export function useComputeFleet({
   const settledRef = useRef(false);
 
   const refresh = useCallback(async () => {
-    if (provided) return;
+    if (provided || !enabled) return;
     const requestId = ++requestIdRef.current;
     const isCurrent = () => requestIdRef.current === requestId;
 
@@ -120,12 +123,16 @@ export function useComputeFleet({
         setIsLoading(false);
       }
     }
-  }, [client, provided, readopt]);
+  }, [client, provided, readopt, enabled]);
 
   useEffect(() => {
     if (provided) {
       setComputers(provided);
       setSource('provided');
+      setIsLoading(false);
+      return;
+    }
+    if (!enabled) {
       setIsLoading(false);
       return;
     }
@@ -136,7 +143,7 @@ export function useComputeFleet({
       clearInterval(interval);
       requestIdRef.current += 1;
     };
-  }, [refresh, pollIntervalMs, provided]);
+  }, [refresh, pollIntervalMs, provided, enabled]);
 
   // Mutations write through the server and then re-read, rather than patching
   // local state: the server assigns ids and statuses, and a locally-invented

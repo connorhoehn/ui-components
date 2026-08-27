@@ -17,8 +17,8 @@ answer is stale before you finish reading it.
 
 Computer Lab is for the other shape of work: ad-hoc, keyboard-driven, not a queue
 of predefined tasks. Six boxes open, four of them being read, typing at
-whichever one has stopped. Split panes, a leader key, one pane focused, and a
-status line under every pane answering the questions you ask about a box you
+whichever one has stopped. Split panes, one focused, plain keyboard chords, and
+a status line under every pane answering the questions you ask about a box you
 are *not* looking at.
 
 The one thing tmux does not have to invent is **broadcast** — one instruction
@@ -57,27 +57,39 @@ disagree about whether a box exists.
 
 ## Keys
 
-Every command is the leader (**⌃B** by default, `leaderKey` to change it) then
-one key — tmux's default, and for tmux's reason: ⌃A is readline's
-beginning-of-line, and taking it from every shell in the lab is a bad trade.
+Plain chords, no prefix — a leader is only worth learning if you already know
+tmux, so it is opt-in rather than the default. `keymap` overrides any binding.
 
-| Key | Does |
-|-----|------|
-| `\|` `%` | split right |
-| `-` `"` | split down |
-| `←↑↓→` / `hjkl` | move focus |
-| `o` | next pane (`⇧` for previous) |
-| `z` | zoom the focused pane |
-| `x` | close the focused pane |
-| `e` | toggle the pane between agent and terminal |
-| `c` | new window |
-| `n` / `p` | next / previous window |
-| `1`–`9` | jump to a window |
-| `w` `/` | fuzzy jump to a computer or pane |
-| `s` | toggle broadcast to all panes |
-| `:` | focus the command line |
-| `?` | key reference |
-| `d` | leave the computer lab |
+**⌘T, ⌘N and ⌘W are unavailable at any price**: the browser keeps those for its
+own tabs and windows and never forwards them to a page. The defaults are chosen
+from what actually reaches us.
+
+| Chord | Does | With a leader |
+|-------|------|---------------|
+| `⌘⇧←` `⌘⇧→` `⌘⇧↑` `⌘⇧↓` | move focus between panes | `h` `l` `k` `j` |
+| `⌘⏎` | new pane beside this one | `\|` |
+| `⌘⇧⏎` | new pane below this one | `-` |
+| `⌘⌫` | close the focused pane | `x` |
+| `⌘⇧F` | zoom the focused pane | `z` |
+| `⌘⇧E` | next pane kind (shell, tail, …) | `e` |
+| `⌘K` | fuzzy jump to a computer or pane | `w` |
+| `⌘⇧L` | jump to the prompt bar | `:` |
+| `⌘⇧B` | broadcast the prompt to every pane | `s` |
+| `⌘/` | show these shortcuts | `?` |
+| `esc` | leave the lab | `d` |
+
+### The optional leader
+
+A tmux-style prefix is genuinely good *once you know tmux*: one modifier
+instead of three, no collision with anything the browser or the shell wants,
+and it scales past the number of free chords. It is only bad as a default,
+because nothing about it is guessable.
+
+So both models exist and neither is privileged. Pass `leader={TMUX_LEADER}`
+(or your own `LeaderConfig`) and the right-hand column above becomes live
+*alongside* the chords — turning it on takes nothing away. The shortcut sheet
+is generated from the live keymap, so it always shows what the keys actually
+do rather than what a hand-written table once claimed.
 
 Directional movement is computed from pane **geometry**, not tree structure —
 "the pane to my right" is often a cousin several levels up, and a sibling-only
@@ -136,13 +148,13 @@ longer knows falls back to the first kind rather than rendering a blank pane.
 
 | Export | Description |
 |--------|-------------|
-| `ComputerLab` | The multiplexer: rail, windows, split panes, broadcast, leader key |
+| `ComputerLab` | The multiplexer: rail, windows, split panes, broadcast, keyboard |
 | `LabRail` | The two-section fleet rail (`computers` over `agents`) |
 | `LabChooser` | Fuzzy jump across on-screen panes and the rest of the fleet |
 | `PaneTreeView` | Renders a `PaneNode` tree with draggable, keyboard-nudgeable dividers |
 | `PaneStatusLine` | Per-pane status line: model, cost, turns, expiry meter, mode |
 | `ShellTerminal` | xterm.js over a presigned WebSocket, speaking the runtime shell protocol |
-| `AgentPane` | Streaming agent view with its own instruction composer |
+| `TailPane` | Read-only stream of what is running on a box. Costs no shell slot |
 
 ### Provider and client
 
@@ -164,6 +176,24 @@ Two things about that interface are worth knowing before you implement it:
   allowlisted commands with no shell metacharacters — which means
   `WORKSPACE_FIND_COMMAND` and `WORKSPACE_GIT_COMMAND` both require `'full'`,
   and a deployment can disable full mode entirely. Handle the 400.
+
+### Mounting the provider in an app shell
+
+`ComputeProvider` polls the fleet on a timer. A deployment is very likely to
+gate the whole compute API on one capability — the reference backend gates
+every route on `ManageDevbox` — so a provider mounted high in an app shell
+generates a 403 every few seconds for every user who lacks it, plus one status
+call per mount. That is invisible in development, where you are always
+authorized, and obvious in production.
+
+Pass `enabled` to close it:
+
+```tsx
+<ComputeProvider enabled={canManage} canManage={canManage} …>
+```
+
+Disabled, it fetches nothing and reports an empty fleet, so the surface still
+mounts and renders its own empty state rather than throwing.
 
 ### Storage
 

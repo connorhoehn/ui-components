@@ -67,6 +67,21 @@ export interface ComputeProviderProps {
   pollIntervalMs?: number;
   /** Default false is deliberate: never render mutating controls on a guess. */
   canManage?: boolean;
+  /**
+   * Whether to talk to the backend at all. Default true.
+   *
+   * Set false for a viewer who cannot reach the API. A deployment is very
+   * likely to gate the whole compute router on one capability — the reference
+   * one gates every route on `ManageDevbox` — and a provider mounted high in
+   * an app shell polls on a timer for *every* user on *every* page. Without
+   * this, that is a 403 every few seconds per unauthorized user, plus one
+   * status call per mount, and it is invisible in development because the
+   * developer is always authorized.
+   *
+   * Disabled, the provider fetches nothing and reports an empty fleet, so the
+   * surface can still mount and render its own empty state.
+   */
+  enabled?: boolean;
   /** Full model catalogue; intersected with the runtime's allowlist. */
   models?: ComputeModel[];
   /**
@@ -87,6 +102,7 @@ export function ComputeProvider({
   useFixtures = true,
   pollIntervalMs = 5_000,
   canManage = false,
+  enabled = true,
   models: providedModels,
   paneKinds = DEFAULT_PANE_KINDS,
   onNotify,
@@ -101,7 +117,9 @@ export function ComputeProvider({
 
   const fleet = useComputeFleet({
     client,
-    pollIntervalMs,
+    // Zero disables the poll loop and the initial read alike.
+    pollIntervalMs: enabled ? pollIntervalMs : 0,
+    enabled,
     ...(providedComputers ? { computers: providedComputers } : {}),
     ...(useFixtures ? { fixtures: fixtureComputers } : {}),
   });
@@ -112,6 +130,11 @@ export function ComputeProvider({
   const [runtimeError, setRuntimeError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!enabled) {
+      setRuntime(null);
+      setRuntimeError(null);
+      return;
+    }
     let cancelled = false;
     client
       .getStatus()
@@ -132,7 +155,7 @@ export function ComputeProvider({
     return () => {
       cancelled = true;
     };
-  }, [client, useFixtures]);
+  }, [client, useFixtures, enabled]);
 
   // Tabs restored from a previous session can point at boxes that no longer
   // exist. The dock cannot know that — it deliberately holds no fleet — so
