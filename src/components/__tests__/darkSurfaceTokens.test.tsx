@@ -111,6 +111,39 @@ describe('dark-surface token hygiene', () => {
     }
   });
 
+  it('(d) no themed ink is painted on the theme-invariant paper surface', () => {
+    // Paper (--color-paper) is white in BOTH themes on purpose — a document
+    // body reads as paper the way Docs, Word and Confluence render it, whatever
+    // the app chrome is doing. See the box comment beside the family in
+    // styles.css and the pin in theme/__tests__/darkTokens.test.ts.
+    //
+    // The consequence is the rule this test enforces: a FIXED surface may only
+    // carry FIXED ink. `--color-text-primary` flips to #f1f5f9 in dark mode,
+    // so `bg-paper text-text-primary` renders near-white prose on white paper
+    // — invisible, and invisible in a way that leaves the page structurally
+    // "rendered", so a screenshot check still passes. That is the third
+    // permutation of a bug this repo has already shipped twice (a white panel
+    // under flipping ink, and a flipping surface under hardcoded white ink).
+    //
+    // Use --color-paper-ink / -muted / -subtle on paper. Chrome AROUND the
+    // document keeps using --color-text-* and keeps going dark.
+    const INK = /\btext-text-[a-z]|text-\[var\(--color-text/;
+    const offenders: string[] = [];
+    for (const file of sourceFiles(join(SRC, 'components'))) {
+      const src = readFileSync(file, 'utf8');
+      if (!/\bbg-paper\b/.test(src)) continue;
+      // Scan each className expression on its own, so a file that legitimately
+      // renders BOTH paper and themed chrome is not flagged for the chrome.
+      for (const m of src.matchAll(/className\s*=\s*[{"]([\s\S]{0,600}?)[}"]/g)) {
+        const expr = m[1] ?? '';
+        if (/\bbg-paper\b/.test(expr) && INK.test(expr)) {
+          offenders.push(`${relative(process.cwd(), file)}: ${expr.slice(0, 120)}`);
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
   it('TranscriptPanel and SummaryPanel are off the burndown list entirely', () => {
     for (const file of ['src/components/video/TranscriptPanel.tsx', 'src/components/video/SummaryPanel.tsx']) {
       expect(readFileSync(join(process.cwd(), file), 'utf8')).not.toMatch(/var\(--color-/);

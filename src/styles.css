@@ -170,6 +170,41 @@
      card's outer edge exactly as before. */
   --color-call-chrome-border: rgba(255, 255, 255, 0.1);
 
+  /* Paper — the authored prose surface of a document, and ONLY that.
+     ┌──────────────────────────────────────────────────────────────────┐
+     │ THEME-INVARIANT BY DESIGN, the mirror image of call chrome.      │
+     │ Deliberately NOT overridden in the [data-theme="dark"] block —   │
+     │ a document body is white in BOTH themes, the way Docs, Word and  │
+     │ Confluence all render it. Operator's call: "the doc body will    │
+     │ always be white. the whole page doesn't have to be night mode."  │
+     │                                                                   │
+     │ THE INK SHIPS WITH THE SURFACE, and that is the whole point.     │
+     │ A fixed white background carrying THEMED text is the same bug in │
+     │ a third permutation: --color-text-primary flips to #f1f5f9 in    │
+     │ dark and vanishes on the fixed white. We have now shipped the    │
+     │ other two permutations — a white panel under flipping ink (the   │
+     │ app menu, 1.10:1) and a flipping surface under hardcoded white   │
+     │ ink (the call widget). So paper carries its OWN invariant ink,   │
+     │ and --color-text-* must NEVER be used on it.                     │
+     │                                                                   │
+     │ Values are the light palette's, so adopting these tokens is a    │
+     │ no-op in light mode and a fix in dark.                            │
+     │                                                                   │
+     │ SCOPE: the prose surface only. The chrome AROUND the document —  │
+     │ header strip, toolbar, action-item rows, outline panel, floating │
+     │ comment buttons — stays THEMED and goes dark. This does not      │
+     │ generalise to any other white surface: the documents list, the   │
+     │ previews page and the rest are correctly dark and must stay so.  │
+     └──────────────────────────────────────────────────────────────────┘ */
+  --color-paper: #ffffff;
+  --color-paper-ink: #0f172a;
+  --color-paper-ink-muted: #475569;
+  /* Faintest ink, for placeholders and de-emphasised metadata ON paper. */
+  --color-paper-ink-subtle: #94a3b8;
+  --color-paper-border: #e2e8f0;
+  /* Selection/hover wash inside the prose surface. */
+  --color-paper-hover: #f1f5f9;
+
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
@@ -195,8 +230,9 @@
  * Values mirror the darkTheme preset in src/theme/presets.ts (single source
  * of truth direction: this block follows presets.ts). Deliberate omissions:
  * --color-code-* (Catppuccin Mocha, already a dark family),
- * --color-video-* (near-black stage surfaces) and --color-call-chrome-*
- * (the always-dark call card — see its comment above) are theme-invariant.
+ * --color-video-* (near-black stage surfaces), --color-call-chrome-*
+ * (the always-dark call card) and --color-paper-* (the always-white document
+ * body, ink included) — see their comments above — are theme-invariant.
  */
 [data-theme="dark"] {
   color-scheme: dark;

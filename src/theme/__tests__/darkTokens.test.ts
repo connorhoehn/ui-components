@@ -71,15 +71,23 @@ describe('dark token block — source contract (src/styles.css)', () => {
   });
 
   it('covers EVERY @theme color token except the theme-invariant families', () => {
-    // Three families are theme-invariant ON PURPOSE and must stay out of
+    // Four families are theme-invariant ON PURPOSE and must stay out of
     // the dark block: --color-code-* (Catppuccin Mocha), --color-video-*
-    // (near-black stage) and --color-call-chrome-* (the call card, which
-    // is dark in both themes the way Meet/Zoom/Teams render it — see the
-    // comment beside the tokens in styles.css).
+    // (near-black stage), --color-call-chrome-* (the call card, which
+    // is dark in both themes the way Meet/Zoom/Teams render it) and
+    // --color-paper-* (the document prose surface, which is WHITE in both
+    // themes the way Docs, Word and Confluence render it). See the comment
+    // beside each family in styles.css.
+    //
+    // Paper is the mirror image of call chrome, and it carries its own ink
+    // for the same reason chrome does: a fixed surface under a FLIPPING ink
+    // token is invisible in one of the two themes. That is why the family
+    // is six tokens and not one.
     const invariant = (name: string) =>
       name.startsWith('--color-code-') ||
       name.startsWith('--color-video-') ||
-      name.startsWith('--color-call-chrome');
+      name.startsWith('--color-call-chrome') ||
+      name.startsWith('--color-paper');
     const light = [...tokenNames(themeBody)].filter((n) => !invariant(n));
     const dark = tokenNames(darkBody);
     const missing = light.filter((n) => !dark.has(n));
@@ -100,6 +108,38 @@ describe('dark token block — source contract (src/styles.css)', () => {
     expect(tokenValue(themeBody, '--color-call-chrome-border')).toBe('rgba(255, 255, 255, 0.1)');
     for (const name of tokenNames(darkBody)) {
       expect(name.startsWith('--color-call-chrome')).toBe(false);
+    }
+  });
+
+  it('leaves the paper family OUT of the dark block, and pairs it with its own ink', () => {
+    // Operator's call: "the doc body will always be white. the whole page
+    // doesn't have to be night mode." Docs, Word and Confluence all render an
+    // authored page as white paper regardless of app chrome, and this is the
+    // token family that makes that a decision rather than an accident.
+    //
+    // The regression this guards is the SECOND half, and it is the one this
+    // codebase has now shipped three times in three permutations: a fixed
+    // surface paired with a token that flips. If someone "completes" the dark
+    // palette by adding --color-paper here, the body goes dark and the
+    // hardcoded ink on it disappears; if someone paints paper with
+    // --color-text-primary instead of --color-paper-ink, the ink goes near
+    // white in dark mode and the prose disappears on a page that stayed
+    // white. Both directions are invisible text on a rendered page, which is
+    // also the failure that makes every screenshot probe vacuously pass.
+    expect(tokenValue(themeBody, '--color-paper')).toBe('#ffffff');
+    expect(tokenValue(themeBody, '--color-paper-ink')).toBe('#0f172a');
+    for (const name of tokenNames(darkBody)) {
+      expect(name.startsWith('--color-paper')).toBe(false);
+    }
+
+    // Every paper surface token must have an ink partner defined in the same
+    // block. A surface without ink is exactly how the three shipped bugs
+    // started.
+    for (const surface of ['--color-paper', '--color-paper-hover']) {
+      expect(tokenValue(themeBody, surface)).toBeTruthy();
+    }
+    for (const ink of ['--color-paper-ink', '--color-paper-ink-muted', '--color-paper-ink-subtle']) {
+      expect(tokenValue(themeBody, ink)).toBeTruthy();
     }
   });
 
