@@ -18,6 +18,7 @@ import type {
 } from './types';
 
 import type { ChatMessage as UIChatMessage } from '../../hooks/useChat';
+import type { ChatAttachment as UIChatAttachment } from '../../components/social/ChatAttachment';
 import type { PresenceUser as UIPresenceUser } from '../../components/shared/PresenceAvatars';
 import type { EphemeralReaction as UIEphemeralReaction } from '../../hooks/useReactions';
 import type { ActivityFeedItem } from '../../components/shared/ActivityFeed';
@@ -33,6 +34,17 @@ import type { NotificationItem as UINotificationItem } from '../../components/sh
 // ---------------------------------------------------------------------------
 
 export function adaptChatMessage(msg: RMChatMessage): UIChatMessage {
+  // Attachments ride in `metadata` because that is the field the chat wire
+  // format already carries verbatim — which means a file shared today is
+  // ordered, persisted and replayed by the exact same path as the text
+  // around it, with no second stream to merge and no history migration.
+  const raw = msg.metadata?.attachments;
+  const attachments = Array.isArray(raw)
+    ? (raw.filter(
+        (a): a is UIChatAttachment =>
+          !!a && typeof a === 'object' && typeof (a as UIChatAttachment).url === 'string',
+      ))
+    : undefined;
   return {
     id: msg.id,
     clientId: msg.clientId,
@@ -40,6 +52,7 @@ export function adaptChatMessage(msg: RMChatMessage): UIChatMessage {
     timestamp: msg.timestamp,
     displayName: (msg.metadata?.displayName as string | undefined) ?? undefined,
     avatarUrl: (msg.metadata?.avatarUrl as string | undefined) ?? undefined,
+    ...(attachments && attachments.length > 0 ? { attachments } : {}),
   };
 }
 
