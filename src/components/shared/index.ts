@@ -157,7 +157,7 @@ export type { NotificationCenterProps, NotificationItem } from './NotificationCe
 export { UserMenu } from './UserMenu';
 export type { UserMenuProps, UserMenuUser, UserMenuItem } from './UserMenu';
 export { Breadcrumbs } from './Breadcrumbs';
-export type { BreadcrumbsProps, BreadcrumbItem } from './Breadcrumbs';
+export type { BreadcrumbsProps, BreadcrumbItem, BreadcrumbOverflow } from './Breadcrumbs';
 
 // ── Project-management components (2025-05) ──
 export { ActivityFeed } from './ActivityFeed';
@@ -166,6 +166,29 @@ export { ProjectCard } from './ProjectCard';
 export type { ProjectCardProps, StatusColors } from './ProjectCard';
 export { SubNavLayout, activeNavItemStyle } from './SubNavLayout';
 export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
+
+// ── Deep application layout (2026-08) ──
+// SubNavLayout tops out at two rails; NavRailStack takes an array, so a route
+// that gains a nesting level adds an entry instead of a component.
+export { NavRail, NavRailStack } from './NavRail';
+export type {
+  NavRailProps,
+  NavRailItem,
+  NavRailSpec,
+  NavRailStackProps,
+  NavRailMatch,
+  NavRailTone,
+} from './NavRail';
+export { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarLabel } from './Toolbar';
+export type {
+  ToolbarProps,
+  ToolbarGroupProps,
+  ToolbarSeparatorProps,
+  ToolbarLabelProps,
+  ToolbarTone,
+} from './Toolbar';
+export { WorkArea } from './WorkArea';
+export type { WorkAreaProps, WorkAreaTone } from './WorkArea';
 
 // ── Sidebar primitives (2026-05) ──
 // Re-exported here as well as `src/index.ts` so apps importing from the

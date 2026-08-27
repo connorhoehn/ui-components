@@ -74,6 +74,12 @@ export const navigationTree: NavigationTree = [
       { id: 'wf-compute', label: 'Compute', items: [
         { id: 'compute-lab', label: 'Computer Lab', path: '/workflows/compute/lab' },
       ]},
+      { id: 'wf-layouts', label: 'Application Layout', items: [
+        { id: 'layout-shallow', label: 'Shallow (one rail)', path: '/workflows/layouts/shallow' },
+        { id: 'layout-section', label: 'Section (two rails)', path: '/workflows/layouts/section' },
+        { id: 'layout-deep', label: 'Deep (three rails)', path: '/workflows/layouts/deep' },
+        { id: 'layout-terminal', label: 'Code tone', path: '/workflows/layouts/terminal' },
+      ]},
       { id: 'wf-documents', label: 'Documents', items: [
         { id: 'document-workspace', label: 'Document Workspace', path: '/workflows/document-workspace' },
       ]},

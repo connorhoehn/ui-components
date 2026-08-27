@@ -1,10 +1,29 @@
 // Breadcrumbs — accessible breadcrumb navigation.
 //
-// Supports truncation of middle items when maxItems is set.
-// Items can be links (href), click-handlers, or plain text.
+// Items can be links (href), click-handlers, or plain text. A plain-text item
+// in the MIDDLE of the trail is deliberate, not an oversight: grouping levels
+// ("Build", "Operate") are context, not destinations, and linking them to a
+// page that does not exist is worse than leaving them inert.
+//
+// Two behaviours exist for a trail that outgrows its row:
+//
+//   overflow="ellipsis" (default) — the middle collapses to a dead "…".
+//     Fine when the hidden levels are scenery.
+//   overflow="menu" — the middle collapses to a button that opens the hidden
+//     crumbs as a list. Six levels deep, the levels you skipped are exactly
+//     where you want to jump back to, and a dead "…" makes you use the back
+//     button four times to get there.
+//
+// The menu is built on `InlinePopover` rather than `DropdownMenu` on purpose.
+// DropdownMenu's items are `role="menuitem"` buttons; routing a breadcrumb
+// through one costs you the anchor — no middle-click to a new tab, no
+// copy-link, no status-bar target preview. Those are the affordances that make
+// a breadcrumb a breadcrumb, so the popover holds real `<a>` elements and the
+// caller's `onClick` interception (router `navigate`) still works unchanged.
 
-import type { ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { InlinePopover } from './InlinePopover';
 
 export interface BreadcrumbItem {
   label: string;
@@ -12,25 +31,55 @@ export interface BreadcrumbItem {
   onClick?: (e: React.MouseEvent) => void;
 }
 
+export type BreadcrumbOverflow = 'ellipsis' | 'menu';
+
 export interface BreadcrumbsProps {
   items: BreadcrumbItem[];
   /** Custom separator rendered between items (default: "/") */
   separator?: ReactNode;
   /**
    * When set, truncate the middle of the list to fit this many visible items.
-   * The first and last are always shown; middle items collapse to "…".
+   * The first and last are always shown; middle items collapse per `overflow`.
    */
   maxItems?: number;
+  /**
+   * How the collapsed middle behaves. `ellipsis` (default) is inert text;
+   * `menu` opens the hidden crumbs as a list of real links.
+   */
+  overflow?: BreadcrumbOverflow;
+  /**
+   * Render nothing below this many crumbs. A two-level trail usually repeats
+   * what the nav rail already highlights, so shells that show breadcrumbs on
+   * every route can set `minItems={3}` and let shallow pages keep the row.
+   */
+  minItems?: number;
   className?: string;
   'data-testid'?: string;
 }
 
-function BreadcrumbLink({ item, isLast }: { item: BreadcrumbItem; isLast: boolean }) {
+function BreadcrumbLink({
+  item,
+  isLast,
+  block = false,
+  afterActivate,
+}: {
+  item: BreadcrumbItem;
+  isLast: boolean;
+  /** Full-width row styling for the overflow menu's stacked list. */
+  block?: boolean;
+  /** Runs after the caller's own handler — the overflow menu closes here. */
+  afterActivate?: () => void;
+}) {
+  const activate = (e: React.MouseEvent) => {
+    item.onClick?.(e);
+    afterActivate?.();
+  };
   const baseClass = cn(
     'text-sm leading-snug transition-colors duration-100',
     isLast
       ? 'text-[var(--color-text-primary)] font-medium cursor-default'
       : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] font-normal',
+    block && 'block w-full px-3 py-1.5 rounded-sm hover:bg-[var(--color-surface-hover)]',
   );
 
   if (isLast || (!item.href && !item.onClick)) {
@@ -43,7 +92,7 @@ function BreadcrumbLink({ item, isLast }: { item: BreadcrumbItem; isLast: boolea
 
   if (item.href) {
     return (
-      <a href={item.href} onClick={item.onClick} className={cn(baseClass, 'no-underline')}>
+      <a href={item.href} onClick={activate} className={cn(baseClass, 'no-underline')}>
         {item.label}
       </a>
     );
@@ -52,8 +101,12 @@ function BreadcrumbLink({ item, isLast }: { item: BreadcrumbItem; isLast: boolea
   return (
     <button
       type="button"
-      onClick={item.onClick}
-      className={cn(baseClass, 'border-none bg-transparent cursor-pointer font-[inherit] p-0')}
+      onClick={activate}
+      className={cn(
+        baseClass,
+        'border-none bg-transparent cursor-pointer font-[inherit] p-0',
+        block && 'text-left px-3 py-1.5',
+      )}
     >
       {item.label}
     </button>
@@ -68,17 +121,72 @@ function buildVisible(items: BreadcrumbItem[], maxItems: number): Array<Breadcru
   return [...head, null, ...tail]; // null = ellipsis sentinel
 }
 
+/** The crumbs `buildVisible` dropped, in trail order. */
+function hiddenItems(items: BreadcrumbItem[], maxItems: number): BreadcrumbItem[] {
+  const tailCount = maxItems - 2 > 0 ? maxItems - 2 : 1;
+  return items.slice(1, items.length - tailCount);
+}
+
+function OverflowMenu({ items }: { items: BreadcrumbItem[] }) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  return (
+    <>
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-label="Show hidden breadcrumbs"
+        aria-expanded={open}
+        aria-haspopup="true"
+        onClick={() => setOpen((v) => !v)}
+        className="text-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] border-none bg-transparent cursor-pointer px-1 py-0 rounded-sm leading-snug"
+      >
+        &hellip;
+      </button>
+      <InlinePopover
+        trigger={triggerRef}
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-label="Hidden breadcrumbs"
+        data-testid="breadcrumb-overflow"
+        className="min-w-[160px] py-1"
+      >
+        {/* Selecting a crumb navigates away, so the popover has no reason to
+            linger — and if the caller cancels the navigation, it re-opens from
+            the same trigger. */}
+        <ol className="list-none m-0 p-0">
+          {items.map((item, idx) => (
+            <li key={`${item.label}-${idx}`}>
+              <BreadcrumbLink
+                item={item}
+                isLast={false}
+                block
+                afterActivate={() => setOpen(false)}
+              />
+            </li>
+          ))}
+        </ol>
+      </InlinePopover>
+    </>
+  );
+}
+
 export function Breadcrumbs({
   items,
   separator = '/',
   maxItems,
+  overflow = 'ellipsis',
+  minItems,
   className,
   'data-testid': testId,
 }: BreadcrumbsProps) {
   if (items.length === 0) return null;
+  if (minItems != null && items.length < minItems) return null;
 
   const visible: Array<BreadcrumbItem | null> =
     maxItems != null ? buildVisible(items, maxItems) : items;
+  const hidden = maxItems != null ? hiddenItems(items, maxItems) : [];
 
   return (
     <nav aria-label="Breadcrumb" data-testid={testId} className={cn('flex items-center', className)}>
@@ -90,13 +198,17 @@ export function Breadcrumbs({
           return (
             <li key={idx} className="flex items-center gap-1">
               {isEllipsis ? (
-                <span
-                  className="text-sm text-[var(--color-text-tertiary)] select-none"
-                  aria-label="More items"
-                  title="Some items are hidden"
-                >
-                  &hellip;
-                </span>
+                overflow === 'menu' && hidden.length > 0 ? (
+                  <OverflowMenu items={hidden} />
+                ) : (
+                  <span
+                    className="text-sm text-[var(--color-text-tertiary)] select-none"
+                    aria-label="More items"
+                    title="Some items are hidden"
+                  >
+                    &hellip;
+                  </span>
+                )
               ) : (
                 <BreadcrumbLink item={item} isLast={isLast} />
               )}

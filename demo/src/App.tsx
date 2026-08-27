@@ -65,6 +65,12 @@ const AgentDetail = lazy(() => import('./demos/agents/DetailDemo'));
 // Compute demos (lazy)
 const ComputerLabDemo = lazy(() => import('./demos/compute/ComputerLabDemo'));
 
+// Application-layout demos (lazy)
+const ShallowLayoutDemo = lazy(() => import('./demos/layouts/ShallowLayoutDemo'));
+const SectionLayoutDemo = lazy(() => import('./demos/layouts/SectionLayoutDemo'));
+const DeepLayoutDemo = lazy(() => import('./demos/layouts/DeepLayoutDemo'));
+const TerminalLayoutDemo = lazy(() => import('./demos/layouts/TerminalLayoutDemo'));
+
 // Identity demos (lazy)
 const IdentityLoginDemo = lazy(() => import('./demos/identity/auth/LoginDemo'));
 const IdentityConsentDemo = lazy(() => import('./demos/identity/auth/ConsentDemo'));
@@ -146,6 +152,11 @@ export default function App() {
           <Route path="agents/detail" element={<S><AgentDetail /></S>} />
           {/* Compute */}
           <Route path="compute/lab" element={<S><ComputerLabDemo /></S>} />
+          {/* Application layout — increasing nav depth */}
+          <Route path="layouts/shallow" element={<S><ShallowLayoutDemo /></S>} />
+          <Route path="layouts/section" element={<S><SectionLayoutDemo /></S>} />
+          <Route path="layouts/deep" element={<S><DeepLayoutDemo /></S>} />
+          <Route path="layouts/terminal" element={<S><TerminalLayoutDemo /></S>} />
           {/* Documents */}
           <Route path="document-workspace" element={<S><DocumentWorkspace /></S>} />
           <Route path="collaboration" element={<S><Collaboration /></S>} />

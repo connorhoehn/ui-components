@@ -150,6 +150,40 @@ export const entries: CatalogEntry[] = [
     path: '/workflows/compute/lab',
   },
 
+  // Application-layout demos
+  {
+    id: 'layout-shallow',
+    title: 'Shallow Layout',
+    description: 'One vertical rail and a content column — the depth at which a breadcrumb trail would only repeat the rail.',
+    category: 'Application Layout',
+    type: 'demo',
+    path: '/workflows/layouts/shallow',
+  },
+  {
+    id: 'layout-section',
+    title: 'Section Layout',
+    description: 'Global rail + section rail + toolbar. Prefix matching keeps the outer rail lit; the inner rail matches exactly.',
+    category: 'Application Layout',
+    type: 'demo',
+    path: '/workflows/layouts/section',
+  },
+  {
+    id: 'layout-deep',
+    title: 'Deep Layout',
+    description: 'Three nav levels, a six-crumb trail that collapses its middle into a menu, a toolbar and a status row.',
+    category: 'Application Layout',
+    type: 'demo',
+    path: '/workflows/layouts/deep',
+  },
+  {
+    id: 'layout-terminal',
+    title: 'Layout in Code Tone',
+    description: 'The same rails, toolbar and work area painted in the permanently-dark terminal palette via SurfaceTone.',
+    category: 'Application Layout',
+    type: 'demo',
+    path: '/workflows/layouts/terminal',
+  },
+
   // Agents demos
   {
     id: 'agents-dashboard',
