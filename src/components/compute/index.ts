@@ -28,13 +28,15 @@ export type { PaneStatusLineProps } from './components/PaneStatusLine';
 // Panes
 export { ShellTerminal } from './components/ShellTerminal';
 export type { ShellTerminalProps, ShellTerminalHandle } from './components/ShellTerminal';
-export { AgentPane } from './components/AgentPane';
-export type { AgentPaneProps, AgentPaneHandle } from './components/AgentPane';
+export { TailPane } from './components/TailPane';
+export type { TailPaneProps } from './components/TailPane';
 
 // Hooks
 export { useComputeFleet } from './hooks/useComputeFleet';
 export type { UseComputeFleetOptions, UseComputeFleetResult } from './hooks/useComputeFleet';
 export { useComputeTask, summarizeTool } from './hooks/useComputeTask';
+export { useComputeTail } from './hooks/useComputeTail';
+export type { UseComputeTailOptions, UseComputeTailResult } from './hooks/useComputeTail';
 export type { UseComputeTaskOptions, UseComputeTaskResult, TaskStep, TaskStepKind } from './hooks/useComputeTask';
 export { useLabLayout } from './hooks/useLabLayout';
 export type { UseLabLayoutResult, LabWindow } from './hooks/useLabLayout';
@@ -58,7 +60,7 @@ export type { KeyBinding, LabCommand, LeaderConfig } from './lib/keymap';
 // alongside the built-ins to add a kind of your own.
 export { resolveKind, nextKind, quotaUsage } from './lib/paneKinds';
 export type { PaneKind, PaneKindContext, PaneKindRegistry, PaneInput, PaneQuota } from './lib/paneKinds';
-export { DEFAULT_PANE_KINDS, AGENT_PANE_KIND, SHELL_PANE_KIND } from './components/defaultPaneKinds';
+export { DEFAULT_PANE_KINDS, SHELL_PANE_KIND, TAIL_PANE_KIND } from './components/defaultPaneKinds';
 
 // Dock store
 export {
@@ -95,6 +97,8 @@ export type { StatusMeta } from './lib/status';
 export {
   fixtureComputers, fixtureRuntimeStatus, fixtureModels, fixtureWorkspace,
 } from './fixtures/computeFixture';
+export { installMockShellSocket, mockShellUrl, MOCK_SHELL_SCHEME } from './fixtures/mockShell';
+export type { MockShellOptions } from './fixtures/mockShell';
 
 // Types
 export type {

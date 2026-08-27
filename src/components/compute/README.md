@@ -91,14 +91,17 @@ What a pane can be is open. Two kinds ship by default:
 
 | Kind | Cost | Use |
 |------|------|-----|
-| `agent` | free — an SSE stream | the default; watch and instruct many boxes |
-| `shell` | **one PTY slot of eight** | when you need a real terminal |
+| `shell` | **one PTY slot of eight** | the default — a real terminal, which is the point |
+| `tail` | free — an SSE stream | watch a run, including one started elsewhere |
 
-A runtime allows ten concurrent shells; `MAX_SHELLS` stops at eight. A window
-of eight terminal panes would spend the entire quota just to *watch*, so agent
-panes are the default and the top bar meters the shell budget. Asking for a
-ninth is refused with a sentence rather than failing later as an opaque
-WebSocket close code.
+A runtime allows ten concurrent shells; `MAX_SHELLS` stops at eight, and the
+top bar meters the budget. Asking for a ninth is refused with a sentence
+rather than failing later as an opaque WebSocket close code.
+
+There is deliberately **no third thing that takes typed input**. An earlier
+version had a pane with its own prompt box, which taught you that Enter means
+newline and rebuilt a shell badly; input belongs in a terminal, and the tail
+pane is read-only precisely so the distinction stays honest.
 
 **Register your own.** A host with a run timeline, a workspace tree, a diff or
 a metrics strip adds it as a first-class kind — same toggle order, same quota
@@ -201,8 +204,8 @@ persistent terminal dock that survives navigation.
 
 `@xterm/xterm` and `@xterm/addon-fit` are **optional** peers. They are needed
 only by `ShellTerminal` (and so by any `shell` pane). Everything else — the
-lab with agent panes, the rail, the chooser, the pane tree — works without
-them installed.
+lab with tail panes, the rail, the chooser, the pane tree — works without them
+installed.
 
 ---
 

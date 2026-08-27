@@ -10,8 +10,13 @@
 // stream tool calls, boxes flip to `running` while they work and settle with a
 // cost, and the idle deadline ticks down — so the status lines and the meters
 // have something true to show without an account, a runtime or a network.
+//
+// Terminal panes are covered by `mockShell`, which stands in for the PTY at
+// the WebSocket layer rather than at the client: the pane opens a real socket,
+// speaks the real frame format and runs a real xterm. Only the box answering
+// is invented.
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ComputeProvider,
   ComputerLab,
@@ -22,6 +27,7 @@ import {
   type Computer,
   type StreamEvent,
 } from '../../../../src/components/compute';
+import { installMockShellSocket, mockShellUrl } from './mockShell';
 
 /** Tool calls the fake agent walks through, in order, one per beat. */
 const SCRIPT: Array<[string, Record<string, unknown>]> = [
@@ -111,12 +117,10 @@ function createDemoClient(): ComputeClient {
       onEvent({ type: 'stdout', text: `$ ${body.command}\n(demo client — nothing really ran)\n` });
     },
 
-    // There is no runtime to attach to, so terminal panes fail visibly in
-    // their own strip rather than rendering an empty black rectangle. That
-    // degradation is worth seeing; press ⌃B e to try it.
-    getShellUrl: async () => {
-      throw new Error('no runtime in the demo — agent panes work, terminals do not');
-    },
+    // A `mock-shell:` URL, which the installed socket simulates instead of
+    // dialling. The terminal is a real xterm speaking the real frame format;
+    // only the box on the other end is invented.
+    getShellUrl: async (sessionId, shellId) => mockShellUrl(sessionId, shellId),
 
     tail: (id: string) => ({ url: `/demo/${id}/tail`, withCredentials: true, headers: {} }),
   };
@@ -128,6 +132,10 @@ export default function ComputerLabDemo() {
   const client = useMemo(createDemoClient, []);
   const [open, setOpen] = useState(false);
   const [log, setLog] = useState<string[]>([]);
+
+  // Scoped to this page: the global WebSocket goes back the moment you
+  // navigate away, so the collaboration and video demos keep their real one.
+  useEffect(() => installMockShellSocket(), []);
 
   return (
     <ComputeProvider
@@ -182,13 +190,30 @@ export default function ComputerLabDemo() {
         <div className="flex flex-col gap-2">
           <h2 className="text-[13px] font-semibold text-text-primary m-0">Pane kinds are a registry</h2>
           <p className="text-[13px] text-text-secondary leading-relaxed m-0">
-            Two ship by default. Agent panes are SSE streams and free to keep open;
-            terminal panes hold a real PTY against the runtime&apos;s limit of ten, so
-            agent is the default and the meter in the top bar is that budget. A host
-            registers its own kinds alongside these — a run timeline, a workspace tree, a
-            diff — and they get the same toggle order, quota accounting and broadcast
-            plumbing. In this demo the agent panes stream a scripted run; terminals have
-            nothing to attach to and say so.
+            Two ship by default. A <b>shell</b> pane is a real terminal and is what a
+            new pane opens as, because running commands is the point of the surface.
+            It holds one of the runtime&apos;s ten shell slots, which is the meter in the
+            top bar. A <b>tail</b> pane is read-only and free — it streams whatever is
+            running on the box, including runs nobody in this browser started, which is
+            the one thing a terminal cannot do. A host registers its own kinds alongside
+            these — a run timeline, a workspace tree, a diff — and they get the same
+            toggle order, quota accounting and broadcast plumbing. The terminals here are
+            live: they attach to a simulated devbox rather than a real runtime, and
+            everything above the wire is real.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <h2 className="text-[13px] font-semibold text-text-primary m-0">Try the terminal</h2>
+          <p className="text-[13px] text-text-secondary leading-relaxed m-0">
+            Open the lab and type into a pane. There is no runtime behind it — a mock
+            WebSocket answers the shell protocol — but the terminal itself is real: it
+            echoes, it takes backspace, and it understands{' '}
+            <code className="font-mono text-[12px]">help</code>,{' '}
+            <code className="font-mono text-[12px]">ls</code>,{' '}
+            <code className="font-mono text-[12px]">cat README.md</code>,{' '}
+            <code className="font-mono text-[12px]">git status</code> and{' '}
+            <code className="font-mono text-[12px]">claude &quot;fix the handler&quot;</code>.
           </p>
         </div>
 

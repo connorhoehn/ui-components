@@ -156,13 +156,12 @@ describe('ComputerLab', () => {
   it('meters the shell budget, so the quota cannot surprise you', async () => {
     renderLab();
     await summary(/1 pane$/);
-    // Agent panes are free, so the meter starts empty even with a pane open.
-    expect(screen.getByLabelText(/shells: 0%, 0 of 8 open/)).toBeTruthy();
+    // A new pane is a terminal, so it costs a slot the moment it opens —
+    // that is the number the meter exists to make visible.
+    expect(screen.getByLabelText(/1 of 8 open/)).toBeTruthy();
+    // Switching it to the read-only tail hands the slot back.
     cmdShift('e');
-    // Switching that pane to a terminal spends one of the eight slots.
-    await waitFor(() =>
-      expect(screen.getByLabelText(/1 of 8 open/)).toBeTruthy(),
-    );
+    await waitFor(() => expect(screen.getByLabelText(/0 of 8 open/)).toBeTruthy());
   });
 
   it('supports an optional tmux leader alongside the direct chords', async () => {
@@ -220,14 +219,13 @@ describe('ComputerLab', () => {
   it('cycles a pane through every registered kind', async () => {
     renderLab();
     await summary();
-    // Built-ins are [agent, shell], so `e` goes agent -> pty -> agent. The
-    // label is queried as a button because the same word also appears in the
-    // pane's status line.
-    expect(await screen.findByRole('button', { name: 'agent' })).toBeTruthy();
+    // Built-ins are [shell, tail], so the cycle is shell -> tail -> shell.
+    // Queried as a button because the label also appears in the status line.
+    expect(await screen.findByRole('button', { name: 'shell' })).toBeTruthy();
     cmdShift('e');
-    expect(await screen.findByRole('button', { name: 'pty' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'tail' })).toBeTruthy();
     cmdShift('e');
-    expect(await screen.findByRole('button', { name: 'agent' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'shell' })).toBeTruthy();
   });
 
   it('offers a way out when there is no fleet at all', async () => {
