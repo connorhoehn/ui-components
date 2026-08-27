@@ -1,12 +1,12 @@
-import { g as e, t } from "./useWebSocket-BKfGpImp.js";
+import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Button-CTpms90-.js";
-import { t as i } from "./Chip-Cie-j-4o.js";
+import { t as i } from "./Chip-2lIuHwy5.js";
 import { t as a } from "./EmptyState-CUHf5NYN.js";
 import { t as o } from "./activationKey-CjbL3LUv.js";
 import { t as s } from "./Textarea-Dz4doxTv.js";
-import { a as c, i as l, n as u, r as d, s as f } from "./renderers-Byb_DBra.js";
-import { C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as x, c as S, d as C, f as w, g as T, h as E, i as D, k as O, l as k, m as A, o as j, p as M, r as N, s as P, t as ee, u as te, v as ne, w as re, x as ie, y as ae } from "./DocumentEditorPage-GSZME090.js";
+import { a as c, i as l, n as u, r as d, s as f } from "./renderers-B_eAbgzE.js";
+import { C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as x, c as S, d as C, f as w, g as T, h as E, i as D, k as O, l as k, m as A, o as j, p as M, r as N, s as P, t as ee, u as te, v as ne, w as re, x as ie, y as ae } from "./DocumentEditorPage-q4A8WbzC.js";
 import { useCallback as F, useEffect as I, useMemo as L, useRef as R, useState as z } from "react";
 import { Fragment as B, jsx as V, jsxs as H } from "react/jsx-runtime";
 //#region src/components/doc-editor/DocumentListPage.tsx

@@ -555,6 +555,35 @@ export declare interface DockedPanelProviderProps extends Partial<DockedPanelCon
     children: ReactNode;
 }
 
+export declare function DotMeter({ label, value, segments, showPercent, note, warnAbove, tone, className, 'data-testid': testId, }: DotMeterProps): JSX.Element;
+
+export declare interface DotMeterProps {
+    /** Row label, e.g. `current` / `weekly`. Omit for a bare meter. */
+    label?: string;
+    /** 0–1. Values outside the range are clamped rather than overflowing. */
+    value: number;
+    /** Number of dots. Ten is the default because it reads as a percentage. */
+    segments?: number;
+    /** Show the value as a percentage after the dots. Default true. */
+    showPercent?: boolean;
+    /**
+     * Trailing note, conventionally the reset time (`⟳ Sun 10:00pm`). This is
+     * the field that makes a quota meter actionable — "89% used" is alarming
+     * until you know it resets in nine minutes.
+     */
+    note?: string;
+    /**
+     * Fraction above which the meter reads as spent. Default 0.85. Below it the
+     * meter is neutral: a half-used budget is not a warning.
+     */
+    warnAbove?: number;
+    tone?: DotMeterTone;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type DotMeterTone = 'code' | 'surface';
+
 export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, 'aria-label': ariaLabel, 'data-testid': testId, }: DrawerProps): default_2.ReactPortal | null;
 
 export declare interface DrawerProps {
@@ -1861,6 +1890,34 @@ export declare interface ThumbnailCardProps {
     style?: CSSProperties;
     'data-testid'?: string;
 }
+
+export declare function TitledFrame({ title, titleAction, active, tone, children, onActivate, className, bodyClassName, style, 'data-testid': testId, }: TitledFrameProps): JSX.Element;
+
+export declare interface TitledFrameProps {
+    /** Text sitting in the top border. Keep it short — it is a label, not a line. */
+    title: ReactNode;
+    /** Right-aligned content in the top border, e.g. a close control. */
+    titleAction?: ReactNode;
+    /** Draw the focused border. In a pane grid, exactly one should be true. */
+    active?: boolean;
+    /**
+     * Terminal chrome (`code`, the default) or the app's own surface tokens.
+     * `code` is the right choice whenever the frame contains a terminal — a
+     * pane that themes with the page but holds a fixed-palette PTY reads as
+     * two different applications.
+     */
+    tone?: TitledFrameTone;
+    children: ReactNode;
+    /** Fires on mousedown anywhere in the frame — how a pane claims focus. */
+    onActivate?: () => void;
+    className?: string;
+    /** Class for the content region, e.g. padding or `overflow-auto`. */
+    bodyClassName?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare type TitledFrameTone = 'code' | 'surface';
 
 export declare function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }: ToastProps): JSX.Element;
 

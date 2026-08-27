@@ -105,6 +105,31 @@ declare type CallState = 'idle' | 'creating' | 'joining' | 'active' | 'error';
 
 declare type CanvasTool = 'brush' | 'pen' | 'eraser' | 'select';
 
+declare interface ChatAttachment {
+    /** Correlation id shared with the sender's in-flight transfer. */
+    id: string;
+    /** Original filename. User content — never used as a path, never trusted. */
+    name: string;
+    /** Byte length of the stored object. */
+    size: number;
+    /** Declared MIME type. Advisory: used to pick a layout, never to trust. */
+    contentType: string;
+    /**
+     * Authenticated download URL. Because the download route requires a bearer
+     * token, an `<img src>` pointed straight at this will 401 — a resolved
+     * object URL should be handed in as `src` by the integration layer.
+     */
+    url: string;
+    /** Intrinsic dimensions when known, so the row reserves space before load. */
+    width?: number;
+    height?: number;
+    /**
+     * Tiny inline data-URI placeholder captured by the sender before upload.
+     * Lets a recipient see what the image IS while the bytes are still moving.
+     */
+    preview?: string;
+}
+
 export declare interface ChatMessage {
     id?: string;
     clientId: string;
@@ -112,6 +137,19 @@ export declare interface ChatMessage {
     timestamp: string;
     displayName?: string;
     avatarUrl?: string;
+    /**
+     * Files shared alongside (or instead of) the text.
+     *
+     * An attachment rides ON a message rather than being its own message kind
+     * so that ordering is free: the file lands exactly where the sender put it
+     * in the conversation, interleaved correctly with the text around it. A
+     * separate "file event" stream would have to be merged back against the
+     * message stream at render time, and the merge would be wrong at exactly
+     * the moment it matters — when someone is typing while a file uploads.
+     *
+     * `content` may be empty when a message is nothing but attachments.
+     */
+    attachments?: ChatAttachment[];
 }
 
 /** A flat comment as stored in Y.js. */

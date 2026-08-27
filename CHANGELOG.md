@@ -6,6 +6,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.116.0 — 2026-08-26
+
+### Added — collaborative diagramming (`./diagram` subpath)
+
+- **`CollaborativeExcalidraw`** — an Excalidraw canvas that absorbs its own
+  setup. Two modes, mirroring `StandaloneTiptap`: **bootstrap**
+  (`gatewayUrl` / `diagramId` / `authToken` — the component builds the socket,
+  the Y.Doc and the provider) and **hosted** (`ydoc` / `awareness` — it binds
+  into a document the caller already owns). Callers never hand-wire a provider
+  stack.
+- **`DiagramBlockRenderer` + `registerDiagramBlock()`** — the same component as
+  a BLOCK on a page. The existing `SectionRendererProps` contract already
+  supplies the page's `ydoc`, `provider`, `section.id`, `editable` and `user`,
+  so hosting a diagram as a macro needs no new host interface. `section.id`
+  namespaces the Y.Doc root type and the awareness pointers, so several
+  diagrams on one page share one document and one socket without colliding.
+  Registration is an explicit call, never an import side effect.
+- **`useResolvedTheme`** — reads the live `[data-theme]` attribute off the DOM.
+  Excalidraw renders to a canvas and takes an explicit `theme` prop, so this is
+  one of the few components that must actually know the theme. It still does
+  not call `useColorScheme()`: the app stamps `data-theme` without mounting
+  `ColorSchemeProvider`, so that hook would report 'light' forever and the
+  canvas would float light on a dark page.
+
+### Bundle
+
+`@excalidraw/excalidraw` (~1.9MB) is an **optional peer** and is externalised.
+It is imported by exactly one module, which sits behind a `React.lazy`
+boundary — `dist/diagram.js` is 3.6KB and the lazy chunk 2.4KB. Its stylesheet
+is externalised too, so it does not weld ~100KB of editor CSS into the
+always-loaded `ui-components.css`.
+
+
 ## [Unreleased]
 
 ## [2.115.0] — 2026-08-26

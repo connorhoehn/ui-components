@@ -27,6 +27,7 @@ export default defineConfig({
         ingest: resolve(import.meta.dirname, 'src/components/ingest/index.ts'),
         observability: resolve(import.meta.dirname, 'src/components/observability/index.ts'),
         'doc-editor': resolve(import.meta.dirname, 'src/components/doc-editor/index.ts'),
+        diagram: resolve(import.meta.dirname, 'src/components/diagram/index.ts'),
         social: resolve(import.meta.dirname, 'src/components/social/index.ts'),
         hooks: resolve(import.meta.dirname, 'src/hooks/index.ts'),
         types: resolve(import.meta.dirname, 'src/types/index.ts'),
@@ -72,6 +73,13 @@ export default defineConfig({
         // hls.js is dynamic-imported by RecordingPlayer; the consumer
         // app installs it. Externalized to keep this lib bundle lean.
         'hls.js',
+        // Excalidraw is ~1.9MB and an OPTIONAL peer. It is imported by exactly
+        // one module (ExcalidrawCanvas), which sits behind a React.lazy
+        // boundary, so an app that never renders a diagram never fetches it.
+        // Its stylesheet is externalized alongside for the same reason —
+        // cssCodeSplit is false here, so bundling it would weld ~100KB of
+        // editor CSS into the always-loaded ui-components.css.
+        '@excalidraw/excalidraw', '@excalidraw/excalidraw/index.css',
         // realtime-modules is a peer dep. The hangout-rooms composites
         // import its hooks at runtime; keeping the package external
         // avoids bundling its CJS dist (which Rollup can't tree-shake)

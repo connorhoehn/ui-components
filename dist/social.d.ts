@@ -23,6 +23,66 @@ declare interface ActivityPanelProps {
     connectionState: ConnectionState;
 }
 
+export declare function AttachmentBubble({ attachment, src, onOpen, className }: AttachmentBubbleProps): JSX.Element;
+
+export declare interface AttachmentBubbleProps {
+    attachment: ChatAttachment;
+    /**
+     * Resolved, directly-renderable source for an image (typically an object
+     * URL produced by an authenticated fetch). Falls back to `attachment.preview`
+     * so the recipient sees the placeholder rather than a broken image while
+     * the full-size fetch is in flight.
+     */
+    src?: string;
+    /** Invoked when the viewer activates the attachment (open / download). */
+    onOpen?: (attachment: ChatAttachment) => void;
+    className?: string;
+}
+
+export declare interface ChatAttachment {
+    /** Correlation id shared with the sender's in-flight transfer. */
+    id: string;
+    /** Original filename. User content — never used as a path, never trusted. */
+    name: string;
+    /** Byte length of the stored object. */
+    size: number;
+    /** Declared MIME type. Advisory: used to pick a layout, never to trust. */
+    contentType: string;
+    /**
+     * Authenticated download URL. Because the download route requires a bearer
+     * token, an `<img src>` pointed straight at this will 401 — a resolved
+     * object URL should be handed in as `src` by the integration layer.
+     */
+    url: string;
+    /** Intrinsic dimensions when known, so the row reserves space before load. */
+    width?: number;
+    height?: number;
+    /**
+     * Tiny inline data-URI placeholder captured by the sender before upload.
+     * Lets a recipient see what the image IS while the bytes are still moving.
+     */
+    preview?: string;
+}
+
+export declare function ChatDropZone({ children, onFiles, accept, maxSize, onError, disabled, label, className, }: ChatDropZoneProps): JSX.Element;
+
+export declare interface ChatDropZoneProps {
+    children: ReactNode;
+    /** Receives the dropped files after validation. */
+    onFiles: (files: File[]) => void;
+    /** Comma-separated MIME patterns, e.g. "image/*,.pdf". Omit to accept all. */
+    accept?: string;
+    /** Per-file byte cap. Rejected files are reported via `onError`. */
+    maxSize?: number;
+    /** Called with a human-readable reason when a drop is rejected. */
+    onError?: (message: string) => void;
+    /** Suppresses the drop affordance entirely (e.g. while disconnected). */
+    disabled?: boolean;
+    /** Overlay copy. Defaults to a generic prompt. */
+    label?: string;
+    className?: string;
+}
+
 declare interface ChatMessage {
     id?: string;
     clientId: string;
@@ -30,9 +90,22 @@ declare interface ChatMessage {
     timestamp: string;
     displayName?: string;
     avatarUrl?: string;
+    /**
+     * Files shared alongside (or instead of) the text.
+     *
+     * An attachment rides ON a message rather than being its own message kind
+     * so that ordering is free: the file lands exactly where the sender put it
+     * in the conversation, interleaved correctly with the text around it. A
+     * separate "file event" stream would have to be merged back against the
+     * message stream at render time, and the merge would be wrong at exactly
+     * the moment it matters — when someone is typing while a file uploads.
+     *
+     * `content` may be empty when a message is nothing but attachments.
+     */
+    attachments?: ChatAttachment[];
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -74,6 +147,49 @@ export declare interface ChatPanelProps {
     hasMore?: boolean;
     /** Show the load-more button in a pending state. */
     loadingMore?: boolean;
+    /**
+     * Receives files the user dropped on the thread, pasted into the composer,
+     * or picked with the paperclip. When absent, every attachment affordance is
+     * suppressed — a panel wired to a transport with no upload service must not
+     * advertise one.
+     */
+    onSendFiles?: (files: File[]) => void;
+    /**
+     * Transfers currently in flight IN THIS CHANNEL — including other people's.
+     *
+     * This is the prop that makes the feature feel live rather than
+     * transactional. Rendering only your own uploads here would leave every
+     * other participant staring at an unchanged thread until a file appears
+     * fully-formed out of nowhere.
+     */
+    transfers?: ChatTransfer[];
+    /** Identifies the viewer so their own transfers get the cancel affordance. */
+    currentActor?: string;
+    onCancelTransfer?: (transferId: string) => void;
+    /**
+     * Resolves an attachment to a directly-renderable image source. The download
+     * route is bearer-authenticated, so an `<img src>` pointed at the raw URL
+     * 401s; the integration layer fetches with credentials and hands back an
+     * object URL. Attachments with no resolved src fall back to their inline
+     * preview.
+     */
+    attachmentSrc?: (attachment: ChatAttachment) => string | undefined;
+    /** Invoked when the viewer opens/downloads an attachment. */
+    onOpenAttachment?: (attachment: ChatAttachment) => void;
+    /** MIME/extension filter for drops and the picker. Defaults to everything. */
+    acceptFiles?: string;
+    /** Per-file byte cap enforced before the transfer starts. */
+    maxFileSize?: number;
+    /** Reports a rejected drop/paste so the host can surface it. */
+    onFileError?: (message: string) => void;
+    /**
+     * Emoji offered by the composer picker. Defaults to the library's full
+     * searchable set — deliberately NOT a short service-side catalog. A fixed
+     * server-blessed list is right for reactions that get aggregated and
+     * persisted; it is wrong for typing, where an emoji is just a character and
+     * an unavailable one reads as a missing feature.
+     */
+    emojis?: readonly string[];
 }
 
 export declare function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps): JSX.Element;
@@ -83,6 +199,19 @@ declare interface ChatRoomProps {
     roomId: string;
     roomName: string;
     onMessage: OnMessageFn_3;
+}
+
+export declare interface ChatTransfer {
+    transferId: string;
+    /** Who is sending. Rendered so a recipient knows whose file this is. */
+    actor: string;
+    name: string;
+    size: number;
+    transferred: number;
+    phase: TransferPhase;
+    contentType?: string;
+    preview?: string;
+    error?: string;
 }
 
 /**
@@ -142,6 +271,8 @@ export declare interface ConversationPeer {
 
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
+export declare function formatBytes(bytes: number): string;
+
 /** Formats an ISO timestamp string to HH:MM local time. */
 export declare function formatChatTime(isoString: string): string;
 
@@ -180,6 +311,10 @@ declare interface GroupPanelProps {
     roomsLoading: boolean;
     compact?: boolean;
 }
+
+export declare function isImageAttachment(a: {
+    contentType?: string;
+}): boolean;
 
 export declare function MessageGroup({ author, avatarUrl, mine, messages, className, }: MessageGroupProps): JSX.Element | null;
 
@@ -383,5 +518,21 @@ declare interface SocialTabContentProps {
     activityEvents: ActivityEvent[];
     onMessage: OnMessageFn_2;
 }
+
+export declare function TransferBubble({ transfer, mine, onCancel, className }: TransferBubbleProps): JSX.Element;
+
+export declare interface TransferBubbleProps {
+    transfer: ChatTransfer;
+    /**
+     * True when the viewer is the sender. Only the sender gets a cancel
+     * affordance — a recipient cancelling someone else's upload is not a
+     * feature, and offering the button implies a permission that does not exist.
+     */
+    mine?: boolean;
+    onCancel?: (transferId: string) => void;
+    className?: string;
+}
+
+export declare type TransferPhase = 'started' | 'transferring' | 'verifying' | 'complete' | 'failed' | 'cancelled';
 
 export { }
