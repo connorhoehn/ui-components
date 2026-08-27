@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { render, screen, within, fireEvent, act, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ComputeProvider } from '../context/ComputeContext';
@@ -226,6 +227,56 @@ describe('ComputerLab', () => {
     expect(await screen.findByRole('button', { name: 'tail' })).toBeTruthy();
     cmdShift('e');
     expect(await screen.findByRole('button', { name: 'shell' })).toBeTruthy();
+  });
+
+  it('moves the keyboard into the pane it just focused', async () => {
+    // The border moving without the cursor following meant every keyboard
+    // move had to be finished with a mouse click, which is the one thing
+    // moving by keyboard exists to avoid.
+    const focused: string[] = [];
+    const kindFor = (id: string): PaneKind => ({
+      id,
+      label: id,
+      render: ({ computer, registerPane }) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          registerPane({ focus: () => focused.push(`${id}:${computer.label}`) });
+          return () => registerPane(null);
+        }, [registerPane, computer.label]);
+        return <div>{computer.label}</div>;
+      },
+    });
+
+    render(
+      <ComputeProvider client={stubClient()} canManage useFixtures={false} pollIntervalMs={0}
+        paneKinds={[kindFor('probe')]}>
+        <ComputerLab open onClose={() => {}} />
+      </ComputeProvider>,
+    );
+    await summary(/1 pane$/);
+    await waitFor(() => expect(focused.length).toBeGreaterThan(0));
+
+    focused.length = 0;
+    cmd('Enter');
+    await summary(/2 panes$/);
+    // Splitting focuses the pane it just made — you split in order to use it.
+    await waitFor(() => expect(focused.length).toBeGreaterThan(0));
+
+    focused.length = 0;
+    cmdShift('ArrowLeft');
+    // And moving focus back moves the keyboard back with it.
+    await waitFor(() => expect(focused.length).toBeGreaterThan(0));
+  });
+
+  it('does not steal the keyboard from an open dialog', async () => {
+    // The chooser is a text field; yanking focus into a pane behind it would
+    // make it impossible to type in.
+    renderLab();
+    await summary(/1 pane$/);
+    cmd('k');
+    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer or pane' });
+    const field = within(dialog).getByLabelText('Filter computers and panes');
+    await waitFor(() => expect(document.activeElement).toBe(field));
   });
 
   it('offers a way out when there is no fleet at all', async () => {

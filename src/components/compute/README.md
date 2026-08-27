@@ -137,6 +137,25 @@ pane. A kind declaring `quota: 'shell'` is metered and refused like the
 built-in terminal. `inputSuffix` is how broadcast reaches it correctly — a PTY
 needs the trailing newline, an agent prompt must not have one.
 
+A kind publishes a `PaneHandle` through `registerPane`, in an effect, and
+withdraws it on cleanup:
+
+```tsx
+render: ({ computer, registerPane }) => {
+  const ref = useRef<MyPaneHandle>(null);
+  useEffect(() => {
+    registerPane({ send: (t) => ref.current?.type(t) ?? false, focus: () => ref.current?.focus() });
+    return () => registerPane(null);
+  }, [registerPane]);
+  return <MyPane ref={ref} computer={computer} />;
+}
+```
+
+Both fields are optional. `send` makes the pane a broadcast target; a
+read-only pane omits it. **`focus` is what moves the keyboard when the active
+pane changes** — without it the border repaints and the cursor stays put, so
+every keyboard move has to be finished with a mouse click.
+
 Kind ids are persisted in the saved layout; an id the current registry no
 longer knows falls back to the first kind rather than rendering a blank pane.
 

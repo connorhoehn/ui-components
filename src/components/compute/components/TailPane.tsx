@@ -10,12 +10,13 @@
 // started: a cron bot, the job dispatcher, another operator. It costs no
 // shell slot, so you can keep six of them open and watch the fleet.
 
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { cn } from '../../../lib/cn';
 import Chip from '../../shared/Chip';
 import { useCompute } from '../context/ComputeContext';
 import { useComputeTail } from '../hooks/useComputeTail';
 import type { TaskStep } from '../hooks/useComputeTask';
+import type { PaneKindContext } from '../lib/paneKinds';
 import type { Computer } from '../types';
 
 const STEP_TONE: Record<TaskStep['kind'], string> = {
@@ -36,14 +37,25 @@ const STEP_GLYPH: Record<TaskStep['kind'], string> = {
 
 export interface TailPaneProps {
   computer: Computer;
+  /** Publish a handle so the lab can put the keyboard here. */
+  registerPane?: PaneKindContext['registerPane'];
   className?: string;
 }
 
-export function TailPane({ computer, className }: TailPaneProps) {
+export function TailPane({ computer, registerPane, className }: TailPaneProps) {
   const { client } = useCompute();
   const tail = useComputeTail({ client, boxId: computer.id });
   const logRef = useRef<HTMLDivElement>(null);
   const pinnedRef = useRef(true);
+
+  // No input to give the keyboard to, but the scroll region is still a real
+  // focus target: focused, it takes arrow keys and Page Up. Without this,
+  // moving to a tail pane would leave focus wherever it was.
+  useEffect(() => {
+    if (!registerPane) return;
+    registerPane({ focus: () => logRef.current?.focus() });
+    return () => registerPane(null);
+  }, [registerPane]);
 
   // Follow the tail only while already at the bottom. Yanking the view down
   // while someone is reading further up is the single most annoying thing a
@@ -74,7 +86,10 @@ export function TailPane({ computer, className }: TailPaneProps) {
           const el = e.currentTarget;
           pinnedRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 32;
         }}
-        className="flex-1 min-h-0 overflow-y-auto px-2 py-1.5 font-mono text-[11px] leading-[1.5] flex flex-col gap-0.5"
+        tabIndex={0}
+        role="log"
+        aria-label={`Activity on ${computer.label}`}
+        className="flex-1 min-h-0 overflow-y-auto px-2 py-1.5 font-mono text-[11px] leading-[1.5] flex flex-col gap-0.5 outline-none focus-visible:ring-1 focus-visible:ring-code-blue focus-visible:ring-inset"
       >
         {tail.error && <div className="text-code-red">{tail.error}</div>}
 

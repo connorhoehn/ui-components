@@ -59,7 +59,7 @@ export type { KeyBinding, LabCommand, LeaderConfig } from './lib/keymap';
 // Pane kinds — the open registry that decides what a pane can be. Register
 // alongside the built-ins to add a kind of your own.
 export { resolveKind, nextKind, quotaUsage } from './lib/paneKinds';
-export type { PaneKind, PaneKindContext, PaneKindRegistry, PaneInput, PaneQuota } from './lib/paneKinds';
+export type { PaneKind, PaneKindContext, PaneKindRegistry, PaneHandle, PaneInput, PaneQuota } from './lib/paneKinds';
 export { DEFAULT_PANE_KINDS, SHELL_PANE_KIND, TAIL_PANE_KIND } from './components/defaultPaneKinds';
 
 // Dock store

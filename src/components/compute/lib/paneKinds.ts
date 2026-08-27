@@ -26,17 +26,46 @@ import type { Computer } from '../types';
  */
 export type PaneInput = (text: string) => boolean;
 
+/**
+ * What a pane exposes back to the lab.
+ *
+ * One extensible object rather than a second `registerFocus` channel: pane
+ * kinds will need more of these over time (refit, clear, scroll-to-end), and
+ * a new parallel registration per capability does not scale. Every field is
+ * optional — a read-only pane has no `send`, and a pane with nothing focusable
+ * has no `focus`.
+ */
+export interface PaneHandle {
+  /**
+   * Deliver text as if the operator had typed it. Used by broadcast.
+   *
+   * Returns false when the pane cannot currently accept input — a terminal
+   * whose socket is not open, an agent already running. The caller counts
+   * refusals so "sent to 3 of 5 panes" is true rather than hopeful.
+   */
+  send?: PaneInput;
+  /**
+   * Put the keyboard in this pane.
+   *
+   * Without this, moving pane focus repaints the border and leaves the cursor
+   * where it was, so every keyboard move had to be finished with a mouse
+   * click — which defeats the point of moving by keyboard at all.
+   */
+  focus?: () => void;
+}
+
 export interface PaneKindContext {
   computer: Computer;
   /** Stable pane id. Doubles as the shell id, so a reload reattaches. */
   paneId: string;
   active: boolean;
   /**
-   * Publish (or withdraw, with null) this pane's input sink. Call it in an
-   * effect; withdraw on cleanup, or broadcast will keep a handle to a pane
-   * that has been unmounted or changed kind.
+   * Publish (or withdraw, with null) this pane's handle. Call it in an effect
+   * and withdraw on cleanup, or the lab keeps a handle to a pane that has
+   * been unmounted or changed kind — and a stale one delivers a prompt to a
+   * terminal.
    */
-  registerInput: (input: PaneInput | null) => void;
+  registerPane: (handle: PaneHandle | null) => void;
   /** Tell the surface something finished, so the fleet can be re-read. */
   onSettled: () => void;
 }

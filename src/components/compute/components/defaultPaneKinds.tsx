@@ -43,17 +43,20 @@ export const TAIL_PANE_KIND: PaneKind = {
   label: 'tail',
   description: 'Watch what is running here, including runs started elsewhere. Costs no shell slot.',
   statusMode: 'read-only',
-  render: ({ computer }) => <TailPane computer={computer} />,
+  render: ({ computer, registerPane }) => <TailPane computer={computer} registerPane={registerPane} />,
 };
 
 export const DEFAULT_PANE_KINDS: readonly PaneKind[] = [SHELL_PANE_KIND, TAIL_PANE_KIND];
 
-function ShellPaneKind({ computer, paneId, registerInput }: PaneKindContext) {
+function ShellPaneKind({ computer, paneId, registerPane }: PaneKindContext) {
   const ref = useRef<ShellTerminalHandle>(null);
   useEffect(() => {
-    registerInput((text) => ref.current?.send(text) ?? false);
-    return () => registerInput(null);
-  }, [registerInput]);
+    registerPane({
+      send: (text) => ref.current?.send(text) ?? false,
+      focus: () => ref.current?.focus(),
+    });
+    return () => registerPane(null);
+  }, [registerPane]);
   return (
     <ShellTerminal
       ref={ref}

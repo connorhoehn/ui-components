@@ -26,7 +26,7 @@ import { useCompute } from '../context/ComputeContext';
 import { useLabLayout } from '../hooks/useLabLayout';
 import { COMPUTE_STATUS, statusOf } from '../lib/status';
 import { MAX_SHELLS } from '../lib/dockStore';
-import { nextKind, quotaUsage, resolveKind, type PaneInput, type PaneKind, type PaneKindRegistry } from '../lib/paneKinds';
+import { nextKind, quotaUsage, resolveKind, type PaneHandle, type PaneKind, type PaneKindRegistry } from '../lib/paneKinds';
 import {
   DEFAULT_KEYMAP, groupBindings, isLeaderKey, labelFor, matchBinding, matchLeaderBinding,
   type KeyBinding, type LabCommand, type LeaderConfig,
@@ -79,7 +79,7 @@ export function ComputerLab({
   const [showChooser, setShowChooser] = useState(false);
   const [leaderArmed, setLeaderArmed] = useState(false);
 
-  const inputsRef = useRef(new Map<string, { send: PaneInput; kind: PaneKind }>());
+  const panesRef = useRef(new Map<string, { handle: PaneHandle; kind: PaneKind }>());
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -111,9 +111,9 @@ export function ComputerLab({
     reconcile(computerIds);
   }, [open, computerIds, reconcile]);
 
-  const registerInput = useCallback((paneId: string, kind: PaneKind, send: PaneInput | null) => {
-    if (send) inputsRef.current.set(paneId, { send, kind });
-    else inputsRef.current.delete(paneId);
+  const registerPane = useCallback((paneId: string, kind: PaneKind, handle: PaneHandle | null) => {
+    if (handle) panesRef.current.set(paneId, { handle, kind });
+    else panesRef.current.delete(paneId);
   }, []);
 
   /** Panes broadcast reaches. Everything in the window, or just the focused one. */
@@ -124,12 +124,12 @@ export function ComputerLab({
     if (!text || targets.length === 0) return;
     let delivered = 0;
     for (const pane of targets) {
-      const entry = inputsRef.current.get(pane.id);
-      if (!entry) continue;
+      const entry = panesRef.current.get(pane.id);
+      if (!entry?.handle.send) continue;
       // Whether the text needs a trailing newline is a property of the kind
       // (a PTY does, an agent prompt must not), so it is declared there
       // rather than branched on here.
-      if (entry.send(`${text}${entry.kind.inputSuffix ?? ''}`)) delivered += 1;
+      if (entry.handle.send(`${text}${entry.kind.inputSuffix ?? ''}`)) delivered += 1;
     }
     if (delivered === 0) {
       notify({ tone: 'error', title: 'Nothing received that', detail: 'No pane was ready to accept input.' });
@@ -198,6 +198,23 @@ export function ComputerLab({
   // Capture phase, because xterm swallows nearly everything once a terminal
   // has focus. Without capture, the multiplexer becomes unreachable from
   // inside its own panes — which is every pane, most of the time.
+  // Move the keyboard with the border.
+  //
+  // Repainting the active border without moving DOM focus meant every
+  // keyboard move had to be finished with a mouse click — the one thing
+  // moving by keyboard exists to avoid. Deferred a frame because the pane may
+  // have only just mounted (a split, or a kind switch) and cannot take focus
+  // until it has.
+  useEffect(() => {
+    if (!open || !layout.activePaneId) return;
+    // A dialog owns the keyboard while it is up; stealing it back would make
+    // the chooser impossible to type in.
+    if (showChooser || showHelp) return;
+    const paneId = layout.activePaneId;
+    const frame = requestAnimationFrame(() => panesRef.current.get(paneId)?.handle.focus?.());
+    return () => cancelAnimationFrame(frame);
+  }, [open, layout.activePaneId, layout.zoomedPaneId, showChooser, showHelp]);
+
   const run = useCallback(
     (command: LabCommand) => {
       const moves: Partial<Record<LabCommand, Direction>> = {
@@ -419,7 +436,7 @@ export function ComputerLab({
                       layout.focusPane(pane.id);
                       switchKind(pane.id, pane.kindId, nextKind(paneKinds, pane.kindId));
                     }}
-                    onRegisterInput={registerInput}
+                    onRegisterPane={registerPane}
                     onSettled={() => void refresh()}
                   />
                 );
@@ -532,24 +549,24 @@ interface LabPaneProps {
   onFocus: () => void;
   onClose: () => void;
   onToggleKind: () => void;
-  onRegisterInput: (paneId: string, kind: PaneKind, send: PaneInput | null) => void;
+  onRegisterPane: (paneId: string, kind: PaneKind, handle: PaneHandle | null) => void;
   onSettled: () => void;
 }
 
 function LabPane({
   pane, computer, active, broadcasting, zoomed, idleWindowMs, kinds,
-  onFocus, onClose, onToggleKind, onRegisterInput, onSettled,
+  onFocus, onClose, onToggleKind, onRegisterPane, onSettled,
 }: LabPaneProps) {
   const kind = resolveKind(kinds, pane.kindId);
 
   // Bound to the kind so a pane that changes kind republishes: the sinks take
   // input differently (a PTY wants a line, an agent wants a prompt), and a
   // stale one would deliver a prompt to a terminal.
-  const registerInput = useCallback(
-    (send: PaneInput | null) => {
-      if (kind) onRegisterInput(pane.id, kind, send);
+  const registerPane = useCallback(
+    (handle: PaneHandle | null) => {
+      if (kind) onRegisterPane(pane.id, kind, handle);
     },
-    [onRegisterInput, pane.id, kind],
+    [onRegisterPane, pane.id, kind],
   );
 
   if (!computer || !kind) {
@@ -600,7 +617,7 @@ function LabPane({
       }
     >
       <div className="flex-1 min-h-0">
-        {kind.render({ computer, paneId: pane.id, active, registerInput, onSettled })}
+        {kind.render({ computer, paneId: pane.id, active, registerPane, onSettled })}
       </div>
 
       <PaneStatusLine
