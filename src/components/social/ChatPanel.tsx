@@ -4,13 +4,16 @@
 // with an input field and Send button. Displays message author as
 // displayName when available, falling back to the first 8 chars of clientId.
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type ClipboardEvent } from 'react';
 import type { ChatMessage } from '../../hooks/useChat';
 import { MessageRow } from './MessageRow';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
 import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
+import { AttachmentBubble, TransferBubble, type ChatAttachment, type ChatTransfer } from './ChatAttachment';
+import { ChatDropZone } from './ChatDropZone';
+import { ReactionPickerPopover, DEFAULT_PICKER_EMOJIS } from './ReactionPickerPopover';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -56,6 +59,51 @@ export interface ChatPanelProps {
   hasMore?: boolean;
   /** Show the load-more button in a pending state. */
   loadingMore?: boolean;
+
+  // ── Attachments ───────────────────────────────────────────────────────
+  /**
+   * Receives files the user dropped on the thread, pasted into the composer,
+   * or picked with the paperclip. When absent, every attachment affordance is
+   * suppressed — a panel wired to a transport with no upload service must not
+   * advertise one.
+   */
+  onSendFiles?: (files: File[]) => void;
+  /**
+   * Transfers currently in flight IN THIS CHANNEL — including other people's.
+   *
+   * This is the prop that makes the feature feel live rather than
+   * transactional. Rendering only your own uploads here would leave every
+   * other participant staring at an unchanged thread until a file appears
+   * fully-formed out of nowhere.
+   */
+  transfers?: ChatTransfer[];
+  /** Identifies the viewer so their own transfers get the cancel affordance. */
+  currentActor?: string;
+  onCancelTransfer?: (transferId: string) => void;
+  /**
+   * Resolves an attachment to a directly-renderable image source. The download
+   * route is bearer-authenticated, so an `<img src>` pointed at the raw URL
+   * 401s; the integration layer fetches with credentials and hands back an
+   * object URL. Attachments with no resolved src fall back to their inline
+   * preview.
+   */
+  attachmentSrc?: (attachment: ChatAttachment) => string | undefined;
+  /** Invoked when the viewer opens/downloads an attachment. */
+  onOpenAttachment?: (attachment: ChatAttachment) => void;
+  /** MIME/extension filter for drops and the picker. Defaults to everything. */
+  acceptFiles?: string;
+  /** Per-file byte cap enforced before the transfer starts. */
+  maxFileSize?: number;
+  /** Reports a rejected drop/paste so the host can surface it. */
+  onFileError?: (message: string) => void;
+  /**
+   * Emoji offered by the composer picker. Defaults to the library's full
+   * searchable set — deliberately NOT a short service-side catalog. A fixed
+   * server-blessed list is right for reactions that get aggregated and
+   * persisted; it is wrong for typing, where an emoji is just a character and
+   * an unavailable one reads as a missing feature.
+   */
+  emojis?: readonly string[];
 }
 
 /** How close to the bottom (px) still counts as "reading the live edge".
@@ -99,6 +147,16 @@ export function ChatPanel({
   onLoadMore,
   hasMore,
   loadingMore = false,
+  onSendFiles,
+  transfers = [],
+  currentActor,
+  onCancelTransfer,
+  attachmentSrc,
+  onOpenAttachment,
+  acceptFiles,
+  maxFileSize,
+  onFileError,
+  emojis = DEFAULT_PICKER_EMOJIS,
 }: ChatPanelProps) {
   const dark = tone === 'dark';
   // A surrounding dock already draws the header and hands down a definite
@@ -110,6 +168,10 @@ export function ChatPanel({
   const listRef = useRef<HTMLDivElement>(null);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const canLoadMore = !!onLoadMore && hasMore !== false;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const emojiTriggerRef = useRef<HTMLButtonElement>(null);
+  const [emojiOpen, setEmojiOpen] = useState(false);
+  const attachmentsEnabled = !!onSendFiles && !disabled;
 
   // ── Scroll ownership ────────────────────────────────────────────────
   // The old effect slammed scrollTop to scrollHeight on EVERY length
@@ -119,6 +181,10 @@ export function ChatPanel({
   const [unreadBelow, setUnreadBelow] = useState(0);
   const pinnedRef = useRef(true);
   const prevCountRef = useRef(messages.length);
+  // An arriving transfer grows the list exactly like an arriving message, so
+  // it participates in the same scroll-ownership rule: follow the live edge
+  // if the reader is already there, never yank them if they are not.
+  const rowCount = messages.length + transfers.length;
   // Set while a load-more prepend is in flight so the growth is restored
   // to the reader's position instead of being read as new traffic.
   const prependRef = useRef<{ scrollHeight: number; scrollTop: number } | null>(null);
@@ -142,8 +208,8 @@ export function ChatPanel({
   useEffect(() => {
     const el = listRef.current;
     const prev = prevCountRef.current;
-    const grew = messages.length - prev;
-    prevCountRef.current = messages.length;
+    const grew = rowCount - prev;
+    prevCountRef.current = rowCount;
     if (!el) return;
 
     // Older messages prepended — hold the reader's line steady.
@@ -160,7 +226,9 @@ export function ChatPanel({
     } else if (grew > 0) {
       setUnreadBelow((n) => n + grew);
     }
-  }, [messages.length]);
+    // A progress tick re-renders without changing rowCount, which is exactly
+    // right: the bar animates in place and the reader is left alone.
+  }, [rowCount]);
 
   function handleLoadMore() {
     const el = listRef.current;
@@ -189,6 +257,33 @@ export function ChatPanel({
     setInputValue('');
   }
 
+  function handleFiles(files: File[]) {
+    if (!attachmentsEnabled || files.length === 0) return;
+    // Sharing a file is, like sending, an explicit "take me to the live edge"
+    // gesture — the sender must see their own transfer appear.
+    pinnedRef.current = true;
+    onSendFiles?.(files);
+  }
+
+  /** Pasting a screenshot is the fastest way to share one; don't make the
+   *  user save it to disk first just so they can drag it back in. */
+  function handlePaste(e: ClipboardEvent<HTMLInputElement>) {
+    if (!attachmentsEnabled) return;
+    const items = Array.from(e.clipboardData?.items ?? []);
+    const files = items
+      .filter((i) => i.kind === 'file')
+      .map((i) => i.getAsFile())
+      .filter((f): f is File => f !== null);
+    if (files.length === 0) return;
+    e.preventDefault();
+    handleFiles(files);
+  }
+
+  function insertEmoji(emoji: string) {
+    setInputValue((v) => v + emoji);
+    setEmojiOpen(false);
+  }
+
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!disabled) {
       // Broadcast typing; reset 2s idle timer.
@@ -201,7 +296,7 @@ export function ChatPanel({
     }
   }
 
-  return (
+  const panel = (
     <div
       data-testid="chat-panel"
       className={cn(
@@ -265,11 +360,32 @@ export function ChatPanel({
           ) : (
             messages.map((message, index) => {
               const author = message.displayName ?? message.clientId.slice(0, 8);
+              const files = message.attachments ?? [];
+              // Attachments render INSIDE the row's content slot rather than as
+              // sibling rows, so a caption and its image stay one message —
+              // they share an author, a timestamp, and a position in the
+              // ordering, and splitting them lets the two drift apart.
+              const body =
+                files.length === 0 ? (
+                  message.content
+                ) : (
+                  <>
+                    {message.content && <span>{message.content}</span>}
+                    {files.map((file) => (
+                      <AttachmentBubble
+                        key={file.id}
+                        attachment={file}
+                        src={attachmentSrc?.(file)}
+                        onOpen={onOpenAttachment}
+                      />
+                    ))}
+                  </>
+                );
               return (
                 <MessageRow
-                  key={index}
+                  key={message.id ?? index}
                   author={author}
-                  content={message.content}
+                  content={body}
                   timestamp={message.timestamp}
                   avatarUrl={message.avatarUrl}
                   tone={tone}
@@ -277,6 +393,26 @@ export function ChatPanel({
               );
             })
           )}
+
+          {/* In-flight transfers sit at the live edge, below every settled
+              message. They are not messages yet — the message is written when
+              the bytes land — but they occupy the place the message will take,
+              so the thread does not visibly reflow when it arrives. */}
+          {transfers.map((transfer) => (
+            <MessageRow
+              key={transfer.transferId}
+              author={transfer.actor}
+              timestamp=""
+              tone={tone}
+              content={
+                <TransferBubble
+                  transfer={transfer}
+                  mine={!!currentActor && transfer.actor === currentActor}
+                  onCancel={onCancelTransfer}
+                />
+              }
+            />
+          ))}
         </div>
         {unreadBelow > 0 && (
           <button
@@ -294,12 +430,79 @@ export function ChatPanel({
       </div>
 
       {/* Input row */}
-      <div className="flex flex-row gap-2 shrink-0">
+      <div className="flex flex-row items-center gap-2 shrink-0">
+        {onSendFiles && (
+          <>
+            <button
+              type="button"
+              data-testid="chat-panel-attach"
+              aria-label="Attach a file"
+              title="Attach a file"
+              disabled={!attachmentsEnabled}
+              onClick={() => fileInputRef.current?.click()}
+              className={cn(
+                'shrink-0 rounded p-1.5 disabled:opacity-40',
+                dark
+                  ? 'text-white/60 hover:bg-white/10'
+                  : 'text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-hover)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]',
+              )}
+            >
+              <PaperclipGlyph />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept={acceptFiles}
+              aria-hidden="true"
+              tabIndex={-1}
+              className="hidden"
+              onChange={(e) => {
+                const picked = Array.from(e.target.files ?? []);
+                const tooBig = maxFileSize ? picked.filter((f) => f.size > maxFileSize) : [];
+                if (tooBig.length > 0) {
+                  onFileError?.(`Skipped ${tooBig.length} file(s) over the size limit.`);
+                }
+                handleFiles(picked.filter((f) => !tooBig.includes(f)));
+                // Reset so picking the same file twice still fires.
+                e.target.value = '';
+              }}
+            />
+          </>
+        )}
+
+        <button
+          ref={emojiTriggerRef}
+          type="button"
+          data-testid="chat-panel-emoji"
+          aria-label="Insert emoji"
+          aria-expanded={emojiOpen}
+          title="Insert emoji"
+          disabled={disabled}
+          onClick={() => setEmojiOpen((o) => !o)}
+          className={cn(
+            'shrink-0 rounded p-1.5 text-base leading-none disabled:opacity-40',
+            dark ? 'hover:bg-white/10' : 'hover:bg-[var(--color-surface-hover)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]',
+          )}
+        >
+          <span aria-hidden="true">🙂</span>
+        </button>
+        <ReactionPickerPopover
+          open={emojiOpen}
+          onSelect={insertEmoji}
+          onClose={() => setEmojiOpen(false)}
+          triggerRef={emojiTriggerRef}
+          emojis={emojis}
+        />
+
         <Input
           size="sm"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
           disabled={disabled}
           placeholder={disabled ? 'Not connected' : 'Type a message...'}
           className={cn(
@@ -319,5 +522,36 @@ export function ChatPanel({
         </Button>
       </div>
     </div>
+  );
+
+  // A panel with no upload transport is not a drop target — advertising one
+  // would promise a capability the host cannot deliver.
+  if (!onSendFiles) return panel;
+
+  return (
+    <ChatDropZone
+      onFiles={handleFiles}
+      accept={acceptFiles}
+      maxSize={maxFileSize}
+      onError={onFileError}
+      disabled={disabled}
+      className={fills ? 'flex h-full min-h-0 flex-col' : undefined}
+    >
+      {panel}
+    </ChatDropZone>
+  );
+}
+
+function PaperclipGlyph() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
