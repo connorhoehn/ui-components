@@ -26,3 +26,15 @@ export type { ReactionsBarProps, ReactionSummary } from './ReactionsBar';
 
 export { ReactionPickerPopover, DEFAULT_PICKER_EMOJIS } from './ReactionPickerPopover';
 export type { ReactionPickerPopoverProps } from './ReactionPickerPopover';
+
+export { AttachmentBubble, TransferBubble, isImageAttachment, formatBytes } from './ChatAttachment';
+export type {
+    AttachmentBubbleProps,
+    ChatAttachment,
+    ChatTransfer,
+    TransferBubbleProps,
+    TransferPhase,
+} from './ChatAttachment';
+
+export { ChatDropZone } from './ChatDropZone';
+export type { ChatDropZoneProps } from './ChatDropZone';
