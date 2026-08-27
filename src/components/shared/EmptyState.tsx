@@ -21,6 +21,41 @@
 
 import { useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import type { SurfaceTone } from './tones';
+
+/** @see SurfaceTone — which colour family the empty state paints in. */
+export type EmptyStateTone = SurfaceTone;
+
+const TONE = {
+  surface: {
+    container: 'text-text-tertiary',
+    title: 'text-neutral',
+    description: 'text-text-tertiary',
+    cta: 'bg-primary text-white',
+    actionPrimary: 'bg-primary text-white border border-transparent hover:bg-primary/90',
+    actionSecondary:
+      'bg-transparent text-text-primary border border-border-emphasis hover:bg-surface-panel',
+    code: 'bg-surface-inverse text-text-inverse',
+    copy: 'border border-border-emphasis hover:bg-surface-inverse',
+    copyIdle: 'text-text-inverse',
+    copyDone: 'text-success-fg border-success/50',
+  },
+  code: {
+    container: 'text-code-muted',
+    title: 'text-code-text',
+    description: 'text-code-muted',
+    cta: 'bg-code-blue text-code-bg',
+    actionPrimary: 'bg-code-blue text-code-bg border border-transparent hover:bg-code-blue/90',
+    actionSecondary:
+      'bg-transparent text-code-text border border-code-border hover:bg-code-surface',
+    code: 'bg-code-bg text-code-text',
+    copy: 'border border-code-border hover:bg-code-surface',
+    copyIdle: 'text-code-subtle',
+    copyDone: 'text-code-green border-code-green/50',
+  },
+} as const;
+
+type Palette = (typeof TONE)[EmptyStateTone];
 
 export interface EmptyStateAction {
   /** Visible label on the action button or link. */
@@ -75,19 +110,35 @@ export interface EmptyStateProps {
    * Optional testid for the action button (defaults to "empty-state-action").
    */
   actionTestId?: string;
+  /**
+   * Colour family. `surface` (default) follows the host theme; `code` paints
+   * in the permanently-dark terminal palette.
+   */
+  tone?: EmptyStateTone;
+  /**
+   * Class for the container. Until now EmptyState took no class at all, so a
+   * caller could not even change its padding — which is why every dark or
+   * cramped surface hand-rolled its own placeholder instead. For a region too
+   * small for the 220px block, reach for `InlinePlaceholder`.
+   */
+  className?: string;
 }
 
 function EmptyState({
   icon, title, body, description, actionLabel, onAction, action, actions,
   testId = 'empty-state', actionTestId = 'empty-state-action',
+  tone = 'surface', className,
 }: EmptyStateProps) {
   const resolvedDescription = description ?? body;
+  const palette: Palette = TONE[tone] ?? TONE.surface;
   return (
     <div
       data-testid={testId}
       className={cn(
         'flex flex-col items-center justify-center min-h-[220px]',
-        'text-text-tertiary gap-2 p-8 font-[inherit]',
+        'gap-2 p-8 font-[inherit]',
+        palette.container,
+        className,
       )}
     >
       {icon && (
@@ -95,14 +146,14 @@ function EmptyState({
           ? <div className="text-[52px] mb-2">{icon}</div>
           : <div className="mb-2">{icon}</div>
       )}
-      <div className="text-[17px] font-semibold text-neutral">{title}</div>
+      <div className={cn('text-[17px] font-semibold', palette.title)}>{title}</div>
       {resolvedDescription && (
-        <div className="text-[13px] text-center max-w-[340px] text-text-tertiary leading-normal">
+        <div className={cn('text-[13px] text-center max-w-[340px] leading-normal', palette.description)}>
           {resolvedDescription}
         </div>
       )}
       {actions && actions.length > 0
-        ? <GuidedActionList actions={actions} />
+        ? <GuidedActionList actions={actions} palette={palette} />
         : action
           ? <div className="mt-2.5">{action}</div>
           : actionLabel && onAction && (
@@ -111,7 +162,8 @@ function EmptyState({
                 onClick={onAction}
                 className={cn(
                   'mt-2.5 px-[22px] py-[9px] text-sm font-semibold',
-                  'bg-primary text-white border-none rounded-lg cursor-pointer font-[inherit]',
+                  'border-none rounded-lg cursor-pointer font-[inherit]',
+                  palette.cta,
                 )}
               >
                 {actionLabel}
@@ -121,7 +173,7 @@ function EmptyState({
   );
 }
 
-function GuidedActionList({ actions }: { actions: EmptyStateAction[] }) {
+function GuidedActionList({ actions, palette }: { actions: EmptyStateAction[]; palette: Palette }) {
   return (
     <ul
       data-testid="empty-state-actions"
@@ -132,8 +184,9 @@ function GuidedActionList({ actions }: { actions: EmptyStateAction[] }) {
           <GuidedAction
             action={a}
             defaultVariant={i === 0 ? 'primary' : 'secondary'}
+            palette={palette}
           />
-          {a.code && <CopyableCode code={a.code} />}
+          {a.code && <CopyableCode code={a.code} palette={palette} />}
         </li>
       ))}
     </ul>
@@ -143,18 +196,18 @@ function GuidedActionList({ actions }: { actions: EmptyStateAction[] }) {
 function GuidedAction({
   action,
   defaultVariant,
+  palette,
 }: {
   action: EmptyStateAction;
   defaultVariant: 'primary' | 'secondary';
+  palette: Palette;
 }) {
   const variant = action.variant ?? defaultVariant;
   const className = cn(
     'inline-flex items-center justify-center self-stretch',
     'px-[18px] py-[8px] text-sm font-semibold rounded-lg cursor-pointer',
     'transition-colors font-[inherit]',
-    variant === 'primary'
-      ? 'bg-primary text-white border border-transparent hover:bg-primary/90'
-      : 'bg-transparent text-text-primary border border-border-emphasis hover:bg-surface-panel',
+    variant === 'primary' ? palette.actionPrimary : palette.actionSecondary,
   );
 
   if (action.href) {
@@ -190,7 +243,7 @@ function GuidedAction({
   );
 }
 
-function CopyableCode({ code }: { code: string }) {
+function CopyableCode({ code, palette }: { code: string; palette: Palette }) {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -209,7 +262,8 @@ function CopyableCode({ code }: { code: string }) {
       data-testid="empty-state-action-code"
       className={cn(
         'relative flex items-start gap-2 rounded-md',
-        'bg-surface-inverse text-text-inverse text-[12px] font-mono leading-snug',
+        'text-[12px] font-mono leading-snug',
+        palette.code,
         'px-3 py-2',
       )}
     >
@@ -223,8 +277,9 @@ function CopyableCode({ code }: { code: string }) {
         data-testid="empty-state-action-code-copy"
         className={cn(
           'shrink-0 self-start text-[11px] font-semibold px-2 py-1 rounded',
-          'border border-border-emphasis hover:bg-surface-inverse cursor-pointer',
-          copied ? 'text-success-fg border-success/50' : 'text-text-inverse',
+          palette.copy,
+          'cursor-pointer',
+          copied ? palette.copyDone : palette.copyIdle,
         )}
       >
         {copied ? 'Copied' : 'Copy'}

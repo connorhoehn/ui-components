@@ -4,13 +4,22 @@
 
 import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import type { SurfaceTone } from '../shared/tones';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
 export type ButtonSize = 'sm' | 'md' | 'lg';
+/** @see SurfaceTone — which colour family the button paints in. */
+export type ButtonTone = SurfaceTone;
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  /**
+   * Colour family. `surface` (default) follows the host theme; `code` paints
+   * in the permanently-dark terminal palette. Every bare `<button>` in a
+   * terminal or log surface is there because this prop did not exist.
+   */
+  tone?: ButtonTone;
   fullWidth?: boolean;
   children: ReactNode;
 }
@@ -27,6 +36,21 @@ const variantClasses: Record<ButtonVariant, string> = {
   'danger-solid': 'bg-danger text-white border-none hover:bg-danger/90',
 };
 
+// The code family's accents are pastels, so solid fills take `code-bg` text
+// rather than white — white on Catppuccin blue is unreadable.
+const codeVariantClasses: Record<ButtonVariant, string> = {
+  primary: 'bg-code-blue text-code-bg border-none hover:bg-code-blue/90',
+  secondary: 'bg-code-surface text-code-text border border-code-border hover:bg-code-raised',
+  ghost: 'bg-transparent text-code-text border border-code-border hover:bg-code-surface',
+  danger: 'bg-transparent text-code-red border border-code-red/40 hover:bg-code-surface',
+  'danger-solid': 'bg-code-red text-code-bg border-none hover:bg-code-red/90',
+};
+
+const TONE: Record<ButtonTone, Record<ButtonVariant, string>> = {
+  surface: variantClasses,
+  code: codeVariantClasses,
+};
+
 const sizeClasses: Record<ButtonSize, string> = {
   sm: 'px-2.5 py-1 text-xs',
   md: 'px-4 py-2 text-sm',
@@ -36,6 +60,7 @@ const sizeClasses: Record<ButtonSize, string> = {
 export function Button({
   variant = 'primary',
   size = 'md',
+  tone = 'surface',
   disabled = false,
   fullWidth = false,
   children,
@@ -49,7 +74,7 @@ export function Button({
       disabled={disabled}
       className={cn(
         'font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
-        variantClasses[variant],
+        (TONE[tone] ?? variantClasses)[variant],
         sizeClasses[size],
         disabled && 'opacity-50 cursor-not-allowed',
         !disabled && 'cursor-pointer',

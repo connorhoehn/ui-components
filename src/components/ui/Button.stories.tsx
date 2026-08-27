@@ -57,3 +57,19 @@ export const FullWidth: Story = {
   args: { variant: 'primary', children: 'Full width', fullWidth: true },
   parameters: { layout: 'padded' },
 };
+
+/** The `code` family, for buttons on a terminal / log / debugger surface.
+ *  Every bare `<button className="…">` in those files is there because this
+ *  prop did not exist. */
+export const CodeTone: Story = {
+  args: { variant: 'primary', tone: 'code', children: 'run' },
+  render: () => (
+    <div className="flex flex-wrap items-center gap-2 bg-code-bg p-4 rounded">
+      <Button tone="code" variant="primary" size="sm">run</Button>
+      <Button tone="code" variant="secondary" size="sm">detach</Button>
+      <Button tone="code" variant="ghost" size="sm">+ new pane</Button>
+      <Button tone="code" variant="danger" size="sm">kill</Button>
+      <Button tone="code" variant="danger-solid" size="sm">destroy</Button>
+    </div>
+  ),
+};

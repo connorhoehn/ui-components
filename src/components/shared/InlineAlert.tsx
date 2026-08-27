@@ -6,11 +6,24 @@
 
 import React from 'react';
 import { cn } from '../../lib/cn';
+import type { SurfaceTone } from './tones';
 
 export type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
 
+/**
+ * `tone` already names the severity here, so the surface-family axis is
+ * `palette` — same split as Chip. See `SurfaceTone` in tones.ts.
+ */
+export type InlineAlertPalette = SurfaceTone;
+
 export interface InlineAlertProps {
   tone: InlineAlertTone;
+  /**
+   * Colour family. `surface` (default) follows the host theme; `code` paints
+   * in the permanently-dark terminal palette, for alerts inside a log console
+   * or debugger panel.
+   */
+  palette?: InlineAlertPalette;
   children: React.ReactNode;
   onDismiss?: () => void;
   className?: string;
@@ -27,14 +40,28 @@ const TONE_CLASSES: Record<InlineAlertTone, string> = {
     'bg-[var(--color-warning-bg,#fffbeb)] border-[var(--color-warning,#f59e0b)] text-[var(--color-warning,#f59e0b)]',
 };
 
-function InlineAlert({ tone, children, onDismiss, className }: InlineAlertProps) {
+// One panel background for all four severities: the accent border and the
+// text carry the severity, which is how a terminal signals it too.
+const CODE_TONE_CLASSES: Record<InlineAlertTone, string> = {
+  error: 'bg-code-surface border-code-red text-code-red',
+  success: 'bg-code-surface border-code-green text-code-green',
+  info: 'bg-code-surface border-code-blue text-code-blue',
+  warning: 'bg-code-surface border-code-peach text-code-peach',
+};
+
+const PALETTE: Record<InlineAlertPalette, Record<InlineAlertTone, string>> = {
+  surface: TONE_CLASSES,
+  code: CODE_TONE_CLASSES,
+};
+
+function InlineAlert({ tone, palette = 'surface', children, onDismiss, className }: InlineAlertProps) {
   return (
     <div
       role={tone === 'error' || tone === 'warning' ? 'alert' : 'status'}
       aria-live={tone === 'error' || tone === 'warning' ? 'assertive' : 'polite'}
       className={cn(
         'flex items-start gap-2 px-3 py-2 rounded-md border-l-[3px] text-sm',
-        TONE_CLASSES[tone],
+        (PALETTE[palette] ?? TONE_CLASSES)[tone],
         className,
       )}
     >

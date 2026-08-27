@@ -26,3 +26,18 @@ export const Warning: Story = {
 export const InfoDismissible: Story = {
   args: { tone: 'info', children: 'A newer schema version is available.', onDismiss: () => {} },
 };
+
+/** `palette="code"` for an alert inside a log console or debugger panel. One
+ *  panel background across all four severities — the accent border and the
+ *  text carry the severity, the way a terminal signals it. */
+export const CodePalette: Story = {
+  args: { tone: 'error', palette: 'code', children: 'stream closed: EPIPE' },
+  render: () => (
+    <div className="flex flex-col gap-2 bg-code-bg p-4 rounded">
+      <InlineAlert palette="code" tone="error">stream closed: EPIPE</InlineAlert>
+      <InlineAlert palette="code" tone="warning">buffer truncated at 10k lines.</InlineAlert>
+      <InlineAlert palette="code" tone="success">attached to pty/3.</InlineAlert>
+      <InlineAlert palette="code" tone="info">read-only — the run has finished.</InlineAlert>
+    </div>
+  ),
+};

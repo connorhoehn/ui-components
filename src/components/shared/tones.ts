@@ -109,3 +109,77 @@ export const TONE_BG: Record<Tone, string> = {
 export function toneVar(tone: ToneOrAlias): string {
   return `var(--color-${toneKey(tone)})`;
 }
+
+// ---------------------------------------------------------------------------
+// Surface families
+//
+// The scale above is SEMANTIC (what the thing means). This axis is which
+// colour FAMILY the primitive paints in, and the two are independent: a
+// success chip exists in both.
+//
+// The library ships two families. `surface` is the app's own tokens, which
+// flip with the host's light/dark theme. `code` is the permanently-dark
+// Catppuccin family (--color-code-*) that terminals, log consoles and the
+// pipeline debugger render in — those surfaces cannot follow the theme,
+// because a PTY's own escape codes do not.
+//
+// Every primitive that hardcoded the app family got a `surface | code` prop
+// defaulting to `surface`, so dropping a SearchInput or a Chip into a
+// terminal pane no longer renders a light box in a black hole. Without it the
+// "everything is backed by a primitive" rule is unsatisfiable in those
+// surfaces and people hand-roll a <button> instead.
+// ---------------------------------------------------------------------------
+
+/** Which colour family a primitive paints in. See the block comment above. */
+export type SurfaceTone = 'surface' | 'code';
+
+/**
+ * `TONE_SOFT` in the code family. One background for all tones — the code
+ * palette carries meaning in the foreground, the way syntax highlighting
+ * does; tinted backgrounds behind text this dark read as noise.
+ */
+export const CODE_TONE_SOFT: Record<Tone, string> = {
+  neutral: 'bg-code-surface text-code-subtle',
+  success: 'bg-code-surface text-code-green',
+  warning: 'bg-code-surface text-code-peach',
+  danger: 'bg-code-surface text-code-red',
+  info: 'bg-code-surface text-code-blue',
+  caution: 'bg-code-surface text-code-yellow',
+  accent: 'bg-code-surface text-code-mauve',
+};
+
+/**
+ * `TONE_SOLID` in the code family. Text is `code-bg` rather than white:
+ * these accents are pastels, and white on a pastel fails contrast.
+ */
+export const CODE_TONE_SOLID: Record<Tone, string> = {
+  neutral: 'bg-code-raised text-code-text',
+  success: 'bg-code-green text-code-bg',
+  warning: 'bg-code-peach text-code-bg',
+  danger: 'bg-code-red text-code-bg',
+  info: 'bg-code-blue text-code-bg',
+  caution: 'bg-code-yellow text-code-bg',
+  accent: 'bg-code-mauve text-code-bg',
+};
+
+/** `TONE_SOLID_BG` in the code family — swatches, dots, legend keys. */
+export const CODE_TONE_SOLID_BG: Record<Tone, string> = {
+  neutral: 'bg-code-subtle',
+  success: 'bg-code-green',
+  warning: 'bg-code-peach',
+  danger: 'bg-code-red',
+  info: 'bg-code-blue',
+  caution: 'bg-code-yellow',
+  accent: 'bg-code-mauve',
+};
+
+/** `TONE_TEXT` in the code family — labels and icons on an untinted surface. */
+export const CODE_TONE_TEXT: Record<Tone, string> = {
+  neutral: 'text-code-subtle',
+  success: 'text-code-green',
+  warning: 'text-code-peach',
+  danger: 'text-code-red',
+  info: 'text-code-blue',
+  caution: 'text-code-yellow',
+  accent: 'text-code-mauve',
+};

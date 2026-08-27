@@ -172,6 +172,8 @@ export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
 // shared subpath can find them in one place.
 export { Badge } from './Badge';
 export type { BadgeProps, BadgeVariant, BadgeColor } from './Badge';
+export { default as InlinePlaceholder } from './InlinePlaceholder';
+export type { InlinePlaceholderProps, InlinePlaceholderTone } from './InlinePlaceholder';
 export { InlinePopover } from './InlinePopover';
 export type { InlinePopoverProps, InlinePopoverPlacement } from './InlinePopover';
 export { FloatingPanel, FLOATING_PANEL_ANCHORS, resolveAnchorPosition } from './FloatingPanel';
@@ -196,5 +198,9 @@ export {
   TONE_BG,
   toneKey,
   toneVar,
+  CODE_TONE_SOFT,
+  CODE_TONE_SOLID,
+  CODE_TONE_SOLID_BG,
+  CODE_TONE_TEXT,
 } from './tones';
-export type { Tone, ToneOrAlias } from './tones';
+export type { Tone, ToneOrAlias, SurfaceTone } from './tones';

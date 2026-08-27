@@ -2,15 +2,32 @@ import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
 import {
+  CODE_TONE_SOFT,
+  CODE_TONE_SOLID,
+  CODE_TONE_SOLID_BG,
   TONE_SOFT,
   TONE_SOLID,
   TONE_SOLID_BG,
   toneKey,
+  type SurfaceTone,
   type ToneOrAlias,
 } from './tones';
 
 /** @see Tone — the library-wide semantic tone scale. */
 export type ChipTone = ToneOrAlias;
+
+/**
+ * `tone` was already spoken for by the semantic scale, so the surface-family
+ * axis is `palette` here. Same idea as `TitledFrame`'s `tone`, different word
+ * only because renaming the seven-year-old `tone` prop would break every one
+ * of Chip's several hundred call sites.
+ */
+export type ChipPalette = SurfaceTone;
+
+const PALETTE = {
+  surface: { soft: TONE_SOFT, solid: TONE_SOLID, swatch: TONE_SOLID_BG },
+  code: { soft: CODE_TONE_SOFT, solid: CODE_TONE_SOLID, swatch: CODE_TONE_SOLID_BG },
+} as const;
 
 const SIZE_CLASSES: Record<'sm' | 'xs', string> = {
   sm: 'px-2 py-0.5 text-[11px]',
@@ -24,6 +41,12 @@ const DOT_SIZE: Record<'sm' | 'xs', string> = {
 
 export interface ChipProps {
   tone?: ChipTone;
+  /**
+   * Colour family. `surface` (default) follows the host theme; `code` paints
+   * in the permanently-dark terminal palette, for chips inside a log console,
+   * debugger or terminal pane.
+   */
+  palette?: ChipPalette;
   size?: 'sm' | 'xs';
   /** Solid fill (dark bg + white text) instead of soft tint. */
   solid?: boolean;
@@ -47,6 +70,7 @@ export interface ChipProps {
 
 export default function Chip({
   tone = 'neutral',
+  palette = 'surface',
   size = 'sm',
   solid = false,
   mono = false,
@@ -61,7 +85,8 @@ export default function Chip({
   'aria-label': ariaLabel,
 }: ChipProps) {
   const key = toneKey(tone);
-  const paletteClasses = solid ? TONE_SOLID[key] : TONE_SOFT[key];
+  const family = PALETTE[palette] ?? PALETTE.surface;
+  const paletteClasses = solid ? family.solid[key] : family.soft[key];
   const hasAdornment = !!(dot || icon);
   return (
     <span
@@ -85,7 +110,7 @@ export default function Chip({
           className={cn(
             'relative inline-block rounded-full shrink-0',
             DOT_SIZE[size],
-            TONE_SOLID_BG[key],
+            family.swatch[key],
           )}
         >
           {dot === 'pulse' && (
@@ -93,7 +118,7 @@ export default function Chip({
               aria-hidden
               className={cn(
                 'absolute inset-0 rounded-full animate-ping opacity-70',
-                TONE_SOLID_BG[key],
+                family.swatch[key],
               )}
             />
           )}

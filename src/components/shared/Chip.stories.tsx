@@ -35,3 +35,20 @@ export const MonoCount: Story = {
   name: 'Mono (count chip)',
   args: { tone: 'purple', mono: true, children: '0x1F' },
 };
+
+/** `palette="code"` renders in the permanently-dark terminal family, for
+ *  chips inside a log console or terminal pane. The semantic `tone` still
+ *  picks the accent — the two axes are independent. It is spelled `palette`
+ *  rather than `tone` here only because `tone` was already taken. */
+export const CodePalette: Story = {
+  args: { palette: 'code', children: 'running' },
+  render: () => (
+    <div className="flex flex-wrap items-center gap-2 bg-code-bg p-4 rounded">
+      <Chip palette="code">idle</Chip>
+      <Chip palette="code" tone="success" dot="pulse">running</Chip>
+      <Chip palette="code" tone="danger">exit 1</Chip>
+      <Chip palette="code" tone="info" mono>3.2s</Chip>
+      <Chip palette="code" tone="warning" solid uppercase>stale</Chip>
+    </div>
+  ),
+};

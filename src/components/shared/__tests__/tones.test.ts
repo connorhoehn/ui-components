@@ -21,6 +21,10 @@ import {
   TONE_BORDER,
   TONE_TEXT,
   TONE_BG,
+  CODE_TONE_SOFT,
+  CODE_TONE_SOLID,
+  CODE_TONE_SOLID_BG,
+  CODE_TONE_TEXT,
   toneKey,
   toneVar,
 } from '../tones';
@@ -77,6 +81,10 @@ describe('tone scale', () => {
     for (const tone of TONES) {
       for (const [name, map] of Object.entries({
         TONE_SOFT, TONE_SOLID, TONE_SOLID_BG, TONE_BORDER, TONE_TEXT, TONE_BG,
+        // The code family is a parallel scale, not a subset: a chip in a
+        // terminal pane still has to express all seven tones, so a hole here
+        // renders an unstyled chip rather than falling back.
+        CODE_TONE_SOFT, CODE_TONE_SOLID, CODE_TONE_SOLID_BG, CODE_TONE_TEXT,
       })) {
         expect(
           (map as Record<string, string>)[tone],
@@ -90,6 +98,7 @@ describe('tone scale', () => {
     const offenders: string[] = [];
     for (const map of [
       TONE_SOFT, TONE_SOLID, TONE_SOLID_BG, TONE_BORDER, TONE_TEXT, TONE_BG,
+      CODE_TONE_SOFT, CODE_TONE_SOLID, CODE_TONE_SOLID_BG, CODE_TONE_TEXT,
     ]) {
       for (const [tone, classes] of Object.entries(map)) {
         const hits = classes.match(PALETTE_RE);

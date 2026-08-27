@@ -48,3 +48,19 @@ export const AllStates: Story = {
     </div>
   ),
 };
+
+/** `tone="code"` for the pill in terminal / debugger chrome. A wrapper
+ *  `className` could not do this: the colours live on the dot and label,
+ *  which the caller never sees. */
+export const CodeTone: Story = {
+  args: { state: 'connected', tone: 'code' },
+  render: () => (
+    <div className="flex flex-col gap-3 bg-code-bg p-4 rounded">
+      <ConnectionPill tone="code" state="idle" />
+      <ConnectionPill tone="code" state="connecting" />
+      <ConnectionPill tone="code" state="connected" />
+      <ConnectionPill tone="code" state="reconnecting" />
+      <ConnectionPill tone="code" state="disconnected" />
+    </div>
+  ),
+};

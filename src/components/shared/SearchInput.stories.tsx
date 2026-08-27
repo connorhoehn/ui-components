@@ -23,3 +23,25 @@ export const Interactive: Story = {
 export const Empty: Story = {
   args: { value: '', onChange: () => {}, placeholder: 'Search runs…', 'aria-label': 'Search runs' },
 };
+
+/** `tone="code"` reaches the `<input>` itself. `className` only ever landed
+ *  on the wrapper, so before this prop a SearchInput dropped into a dark
+ *  panel stayed a white box no matter what the caller passed. */
+export const CodeTone: Story = {
+  args: { value: '', onChange: () => {}, tone: 'code', 'aria-label': 'Filter computers' },
+  render: () => {
+    const [value, setValue] = useState('kube');
+    return (
+      <div className="bg-code-bg p-4 rounded w-72">
+        <SearchInput
+          tone="code"
+          value={value}
+          onChange={setValue}
+          placeholder="filter computers…"
+          aria-label="Filter computers"
+          className="w-full"
+        />
+      </div>
+    );
+  },
+};

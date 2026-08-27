@@ -7,9 +7,21 @@
 
 import type { ConnectionState } from '../../types/gateway';
 import { cn } from '../../lib/cn';
+import type { SurfaceTone } from './tones';
+
+/** @see SurfaceTone — which colour family the pill paints in. */
+export type ConnectionPillTone = SurfaceTone;
 
 export interface ConnectionPillProps {
   state: ConnectionState;
+  /**
+   * Colour family. `surface` (default) follows the host theme; `code` paints
+   * in the permanently-dark terminal palette.
+   *
+   * A wrapper `className` cannot substitute: the label and dot colours come
+   * from the per-state map below, on children the caller never sees.
+   */
+  tone?: ConnectionPillTone;
   /** Dot-only rendering — no label text. Default false. */
   compact?: boolean;
   /** Render the text label next to the dot. Default true. Set false for dot-only. */
@@ -31,8 +43,18 @@ const STATE_CONFIG: Record<
   disconnected: { label: 'Disconnected',  colorClass: 'text-danger-fg' },
 };
 
+/** Colour only — the labels are the same words in either family. */
+const CODE_STATE_COLORS: Record<ConnectionState, string> = {
+  idle:         'text-code-muted',
+  connecting:   'text-code-peach',
+  connected:    'text-code-green',
+  reconnecting: 'text-code-peach',
+  disconnected: 'text-code-red',
+};
+
 export function ConnectionPill({
   state,
+  tone = 'surface',
   compact = false,
   withLabel = true,
   labels,
@@ -46,6 +68,9 @@ export function ConnectionPill({
   const cfg = STATE_CONFIG[state] as (typeof STATE_CONFIG)[keyof typeof STATE_CONFIG] | undefined;
   const label = labels?.[state] ?? cfg?.label ?? String(state);
   const showLabel = withLabel && !compact;
+  // Same fallback reasoning as `cfg`: an unknown state renders uncoloured
+  // rather than throwing on an undefined lookup.
+  const colorClass = tone === 'code' ? CODE_STATE_COLORS[state] : cfg?.colorClass;
 
   return (
     <span
@@ -56,9 +81,9 @@ export function ConnectionPill({
       data-state={state}
       className={cn('inline-flex items-center gap-1.5 font-mono', className)}
     >
-      <span aria-hidden="true" className={cfg?.colorClass}>⬤</span>
+      <span aria-hidden="true" className={colorClass}>⬤</span>
       {showLabel && (
-        <span className={cn(cfg?.colorClass, 'font-semibold')}>{label}</span>
+        <span className={cn(colorClass, 'font-semibold')}>{label}</span>
       )}
     </span>
   );

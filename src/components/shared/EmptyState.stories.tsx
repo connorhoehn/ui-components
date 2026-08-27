@@ -79,3 +79,27 @@ export const WithGuidedActions: Story = {
     ],
   },
 };
+
+/** `tone="code"` for the empty state of a terminal or debugger surface.
+ *  Note the 220px min-height: if the region is smaller than that — a rail
+ *  section, a filtered list, a quarter-window pane — reach for
+ *  `InlinePlaceholder` instead of shrinking this. */
+export const CodeTone: Story = {
+  name: 'Code tone (terminal surfaces)',
+  args: {
+    tone: 'code',
+    icon: '🖥',
+    title: 'No computers to lab',
+    description:
+      'Computer Lab multiplexes a fleet. Provision at least one computer and it will open in a pane.',
+    className: 'bg-code-bg rounded',
+    actions: [
+      {
+        label: '+ new computer',
+        onClick: () => {},
+        variant: 'primary',
+        code: 'lab provision --kind devbox',
+      },
+    ],
+  },
+};
