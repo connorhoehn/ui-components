@@ -33,6 +33,7 @@ export default defineConfig({
         shared: resolve(import.meta.dirname, 'src/components/shared/index.ts'),
         identity: resolve(import.meta.dirname, 'src/components/identity/index.ts'),
         agents: resolve(import.meta.dirname, 'src/components/agents/index.ts'),
+        compute: resolve(import.meta.dirname, 'src/components/compute/index.ts'),
         video: resolve(import.meta.dirname, 'src/video.ts'),
         'video-ivs': resolve(import.meta.dirname, 'src/video-ivs.ts'),
         'integrations/realtime-modules': resolve(import.meta.dirname, 'src/integrations/realtime-modules/index.ts'),
@@ -55,6 +56,9 @@ export default defineConfig({
         // silently inlined into dist/pipelines.js. Declared + externalised now.
         'ajv',
         'yjs', 'y-prosemirror', 'y-protocols',
+        // xterm paints to a canvas and owns global listeners; two copies in
+        // one page fight over both. Peer + external, never bundled.
+        '@xterm/xterm', '@xterm/addon-fit', '@xterm/xterm/css/xterm.css',
         '@xyflow/react', 'reactflow', '@tiptap/react', '@tiptap/starter-kit',
         '@tiptap/extension-collaboration',
         '@tiptap/extension-mention', '@tiptap/extension-placeholder',

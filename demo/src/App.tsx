@@ -62,6 +62,9 @@ const AgentFlow = lazy(() => import('./demos/agents/FlowDemo'));
 const AgentInvoke = lazy(() => import('./demos/agents/InvokeDemo'));
 const AgentDetail = lazy(() => import('./demos/agents/DetailDemo'));
 
+// Compute demos (lazy)
+const ComputerLabDemo = lazy(() => import('./demos/compute/ComputerLabDemo'));
+
 // Identity demos (lazy)
 const IdentityLoginDemo = lazy(() => import('./demos/identity/auth/LoginDemo'));
 const IdentityConsentDemo = lazy(() => import('./demos/identity/auth/ConsentDemo'));
@@ -141,6 +144,8 @@ export default function App() {
           <Route path="agents/flow" element={<S><AgentFlow /></S>} />
           <Route path="agents/invoke" element={<S><AgentInvoke /></S>} />
           <Route path="agents/detail" element={<S><AgentDetail /></S>} />
+          {/* Compute */}
+          <Route path="compute/lab" element={<S><ComputerLabDemo /></S>} />
           {/* Documents */}
           <Route path="document-workspace" element={<S><DocumentWorkspace /></S>} />
           <Route path="collaboration" element={<S><Collaboration /></S>} />

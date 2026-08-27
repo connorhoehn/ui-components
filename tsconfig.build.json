@@ -6,5 +6,9 @@
     "declaration": true,
     "declarationDir": "./dist"
   },
-  "exclude": ["**/*.test.*", "**/__tests__/**", "demo/**"]
+  "exclude": [
+    "**/*.test.*",
+    "**/__tests__/**",
+    "demo/**"
+  ]
 }

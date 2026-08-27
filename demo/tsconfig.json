@@ -7,13 +7,26 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["vitest/globals"],
+    "types": [
+      "vitest/globals"
+    ],
     "paths": {
-      "@connorhoehnslalom/ui-components/*": ["../src/components/*/index.ts"],
-      "@connorhoehnslalom/ui-components": ["../src/index.ts"],
-      "@/*": ["../src/*"],
-      "@schemas/*": ["../schemas/*"]
+      "@connorhoehnslalom/ui-components/*": [
+        "../src/components/*/index.ts"
+      ],
+      "@connorhoehnslalom/ui-components": [
+        "../src/index.ts"
+      ],
+      "@/*": [
+        "../src/*"
+      ],
+      "@schemas/*": [
+        "../schemas/*"
+      ]
     }
   },
-  "include": ["src", "../src"]
+  "include": [
+    "src",
+    "../src"
+  ]
 }

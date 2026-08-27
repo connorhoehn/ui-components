@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.114.0",
+  "version": "2.115.0",
   "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
@@ -75,6 +75,11 @@
       "import": "./dist/agents.js",
       "require": "./dist/agents.cjs"
     },
+    "./compute": {
+      "types": "./dist/compute.d.ts",
+      "import": "./dist/compute.js",
+      "require": "./dist/compute.cjs"
+    },
     "./video": {
       "types": "./dist/video.d.ts",
       "import": "./dist/video.js",
@@ -136,6 +141,8 @@
     "@tiptap/react": "^3.0.0",
     "@tiptap/starter-kit": "^3.22.3",
     "@tiptap/y-tiptap": "^3.0.3",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/xterm": "^6.0.0",
     "@xyflow/react": "^12.0.0",
     "amazon-cognito-identity-js": "^6.3.15",
     "amazon-ivs-web-broadcast": "^1.38.1",
@@ -171,6 +178,12 @@
       "optional": true
     },
     "@tiptap/y-tiptap": {
+      "optional": true
+    },
+    "@xterm/addon-fit": {
+      "optional": true
+    },
+    "@xterm/xterm": {
       "optional": true
     },
     "@xyflow/react": {
@@ -215,6 +228,8 @@
     "@tiptap/starter-kit": "^3.22.3",
     "@tiptap/y-tiptap": "^3.0.3",
     "@vitejs/plugin-react": "^6.1.0",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/xterm": "^6.0.0",
     "@xyflow/react": "^12.10.2",
     "amazon-cognito-identity-js": "^6.3.20",
     "amazon-ivs-web-broadcast": "^1.38.1",

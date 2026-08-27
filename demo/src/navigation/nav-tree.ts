@@ -71,6 +71,9 @@ export const navigationTree: NavigationTree = [
         { id: 'agent-invoke', label: 'Agent Invoke', path: '/workflows/agents/invoke' },
         { id: 'agent-detail', label: 'Agent Detail', path: '/workflows/agents/detail' },
       ]},
+      { id: 'wf-compute', label: 'Compute', items: [
+        { id: 'compute-lab', label: 'Computer Lab', path: '/workflows/compute/lab' },
+      ]},
       { id: 'wf-documents', label: 'Documents', items: [
         { id: 'document-workspace', label: 'Document Workspace', path: '/workflows/document-workspace' },
       ]},

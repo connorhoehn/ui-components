@@ -140,6 +140,16 @@ export const entries: CatalogEntry[] = [
     path: '/workflows/wrapped-components',
   },
 
+  // Compute demos
+  {
+    id: 'compute-lab',
+    title: 'Computer Lab',
+    description: 'Terminal multiplexer over a fleet of microVM developer boxes — split panes, leader key, broadcast',
+    category: 'Compute',
+    type: 'demo',
+    path: '/workflows/compute/lab',
+  },
+
   // Agents demos
   {
     id: 'agents-dashboard',

@@ -58,6 +58,17 @@ const BASELINE = {
   'shared/TagEditor.tsx': 1,
   'shared/UserPicker.tsx': 1,
   'shared/IconPicker.tsx': 1,
+
+  // ---- compute/: terminal chrome. These three are command lines, not form
+  // fields — they live inside a code-toned pane and take ⏎ as "execute". A
+  // forms/ Textarea brings a rounded app-surface box with an emphasis border,
+  // which is exactly the affordance a multiplexer's command line must not
+  // have: it would read as a field to fill in rather than a prompt to type at.
+  // Same justification as SearchInput's query field and a composer's message
+  // field, directly above.
+  'compute/components/ComputerLab.tsx': 1,   // broadcast command line
+  'compute/components/LabChooser.tsx': 1,    // fuzzy-jump query
+  'compute/components/AgentPane.tsx': 1,     // per-pane instruction prompt
   'shared/ChatComposer.tsx': 2, // input or textarea depending on `multiline`
   'shared/CodeEditor.tsx': 1, // the editor surface itself
   'shared/DataTable.tsx': 1, // built-in search field

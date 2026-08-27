@@ -15,6 +15,13 @@ export default defineConfig({
       // import-analysis tries to resolve dynamic-import targets even with
       // `/* @vite-ignore */`, so point it at a stub for tests.
       'hls.js': resolve(import.meta.dirname, 'src/test-stubs/hls.js-stub.ts'),
+      // Same story for the @xterm/* peers, which `ShellTerminal` imports
+      // statically and `HerdMode` pulls in transitively — without these
+      // aliases every compute render test fails at module resolution rather
+      // than on anything it meant to assert.
+      '@xterm/xterm': resolve(import.meta.dirname, 'src/test-stubs/xterm-stub.ts'),
+      '@xterm/addon-fit': resolve(import.meta.dirname, 'src/test-stubs/xterm-stub.ts'),
+      '@xterm/xterm/css/xterm.css': resolve(import.meta.dirname, 'src/test-stubs/empty.css'),
       // The realtime-modules /client/hangout-rooms subpath has not been
       // shipped yet (see CLAUDE.md "Known issues"). The HangoutRoomRow /
       // HangoutRoomsSection / WrappedHangoutRoomsList integration code

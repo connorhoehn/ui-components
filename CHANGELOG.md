@@ -8,6 +8,73 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.115.0] — 2026-08-26
+
+New subpath: `@connorhoehnslalom/ui-components/compute` — microVM developer
+boxes, and a tmux-shaped multiplexer for working across a fleet of them.
+Tests 5,416 → 5,442.
+
+### Added — `/compute`, and the Computer Lab in particular
+
+A *computer* is one agent-runtime session: its own microVM with a persistent
+workspace. One at a time it is a page; several at a time it is a multiplexer.
+
+`ComputerLab` is that multiplexer, and it exists for a shape of work the
+single-box view cannot express: ad-hoc and keyboard-driven, not a queue of
+predefined tasks — several boxes open, most of them being read, typing at
+whichever one has stopped. Windows hold a tree of split panes, a leader key
+(**⌃B**, tmux's default and for tmux's reason) drives the layout, and every
+pane carries a status line answering the questions you ask about a box you are
+*not* looking at: model, last cost, turns, and how long before it stops.
+
+The one thing tmux does not have to invent is **broadcast** — one instruction
+to every pane at once. `synchronize-panes` for shells is the same idea as
+sending a prompt to five agents, and it is the reason to be in this mode.
+
+**Pane kinds are a registry, not an enumeration.** Two ship by default: agent
+panes are SSE streams and free to keep open; terminal panes hold a real PTY
+against the runtime's limit of ten (`MAX_SHELLS` stops at eight). A host
+registers its own — a run timeline, a workspace tree, a diff — and it gets the
+same toggle order, quota accounting and broadcast plumbing, with `quota` and
+`inputSuffix` declared on the kind rather than branched on in the component. A
+kind id the current registry no longer knows falls back rather than rendering a
+blank pane.
+
+Also exported: `LabRail`, `LabChooser` (subsequence jump across on-screen panes
+and the rest of the fleet), `PaneTreeView`, `PaneStatusLine`, `ShellTerminal`,
+`AgentPane`, the `ComputeProvider`/`ComputeClient` seam, the `useComputeFleet` /
+`useComputeTask` / `useLabLayout` hooks, and the pure pane-tree, pane-kind,
+shell-protocol, workspace-tree, storage and dock-store modules.
+
+Directional pane movement (`neighborPane`) is computed from pane **geometry**,
+not tree structure. "The pane to my right" is frequently a cousin several
+levels up, and a sibling-only implementation silently gets that wrong; the tree
+is laid out into rectangles first and the question is then asked of those.
+
+`COMPUTE_STORAGE_KEYS` / `clearComputeStorage()` enumerate and clear every
+`localStorage` key the module owns, so a host clearing state on a tenant switch
+cannot silently drift when a key is renamed here.
+
+### Added — two `shared/` primitives
+
+- **`TitledFrame`** — a bordered box whose title interrupts the top border,
+  the tmux pane convention. It exists because a stack of panes needs each one
+  labelled without spending a row of height per pane; sitting the title *in*
+  the border costs nothing. `active` draws the focused border.
+- **`DotMeter`** — a discrete meter drawn as filled and hollow dots. A
+  continuous bar reads as "roughly half"; ten dots read as "five of ten",
+  which is what a budget or a quota actually is. Carries a `note` slot for the
+  reset time, the field that makes a quota actionable at all.
+
+### Changed
+
+- `@xterm/xterm` and `@xterm/addon-fit` are new **optional** peer dependencies,
+  needed only by `ShellTerminal` and so by any `shell` pane. Everything else in
+  `/compute` works without them installed. They are externalised from the
+  build, held as devDependencies here so the repo typechecks against the real
+  declarations, and stubbed for Vitest (`src/test-stubs/xterm-stub.ts`) —
+  xterm paints to a canvas and does nothing useful under jsdom.
+
 ## [2.111.1] — 2026-08-26
 
 ### Fixed

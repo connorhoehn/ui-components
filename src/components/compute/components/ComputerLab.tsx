@@ -1,0 +1,706 @@
+// Computer Lab — a terminal multiplexer over the whole fleet.
+//
+// The premise is that the interesting work is not one agent doing one task
+// well; it is a person with six boxes open, reading four of them, and typing
+// at whichever one has stopped. The single-computer page cannot express that:
+// it shows one box at a time, so "what is everything doing" costs a
+// navigation per box and the answer is stale before you finish.
+//
+// The layout borrows from tmux — a tree of split panes, one focused, each
+// labelled in its own border — but the *keys* deliberately do not. A leader
+// chord is worth learning if you live in tmux; here it is a tax, because
+// every command costs two keystrokes and none of them are guessable. The
+// bindings are ordinary Mac chords (see `keymap.ts`), fully overridable, and
+// ⌘/ lists them.
+//
+// The one addition tmux does not have to make is broadcast: `synchronize-panes`
+// for shells is the same idea as sending one instruction to five agents, and
+// it is the reason to be here at all.
+
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { cn } from '../../../lib/cn';
+import { StatusDot } from '../../shared/StatusDot';
+import { TitledFrame } from '../../shared/TitledFrame';
+import { DotMeter } from '../../shared/DotMeter';
+import { useCompute } from '../context/ComputeContext';
+import { useLabLayout } from '../hooks/useLabLayout';
+import { COMPUTE_STATUS, statusOf } from '../lib/status';
+import { MAX_SHELLS } from '../lib/dockStore';
+import { nextKind, quotaUsage, resolveKind, type PaneInput, type PaneKind, type PaneKindRegistry } from '../lib/paneKinds';
+import {
+  DEFAULT_KEYMAP, groupBindings, isLeaderKey, labelFor, matchBinding, matchLeaderBinding,
+  type KeyBinding, type LabCommand, type LeaderConfig,
+} from '../lib/keymap';
+import type { Direction, PaneLeaf } from '../lib/paneTree';
+import { LabRail } from './LabRail';
+import { LabChooser } from './LabChooser';
+import { PaneTreeView } from './PaneTreeView';
+import { PaneStatusLine, DEFAULT_IDLE_WINDOW_MS } from './PaneStatusLine';
+import type { Computer } from '../types';
+
+export interface ComputerLabProps {
+  open: boolean;
+  onClose: () => void;
+  /**
+   * Keyboard bindings. Defaults to `DEFAULT_KEYMAP` — plain Mac chords, chosen
+   * from the ones a browser actually forwards to the page. Pass your own to
+   * rebind; nothing in the component hardcodes a chord.
+   */
+  keymap?: readonly KeyBinding[];
+  /**
+   * Optional tmux-style prefix key. Off by default.
+   *
+   * When set, every binding that carries a `leaderKey` *also* answers to
+   * `leader → key`, on top of its direct chord. Both models work at once, so
+   * turning this on takes nothing away — pass `TMUX_LEADER` to try it.
+   */
+  leader?: LeaderConfig | null;
+  /** Denominator for the per-pane expiry meters. */
+  idleWindowMs?: number;
+  className?: string;
+}
+
+export function ComputerLab({
+  open,
+  onClose,
+  keymap = DEFAULT_KEYMAP,
+  leader = null,
+  idleWindowMs = DEFAULT_IDLE_WINDOW_MS,
+  className,
+}: ComputerLabProps) {
+  const { computers, canManage, create, models, notify, refresh, paneKinds } = useCompute();
+  const defaultKindId = paneKinds[0]?.id ?? 'agent';
+  const layout = useLabLayout();
+
+  const [broadcast, setBroadcast] = useState(false);
+  const [broadcastText, setBroadcastText] = useState('');
+  const [showAllActivity, setShowAllActivity] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [showChooser, setShowChooser] = useState(false);
+  const [leaderArmed, setLeaderArmed] = useState(false);
+
+  const inputsRef = useRef(new Map<string, { send: PaneInput; kind: PaneKind }>());
+  const composerRef = useRef<HTMLTextAreaElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  const byId = useMemo(() => new Map(computers.map((c) => [c.id, c])), [computers]);
+  const activePane = layout.panes.find((p) => p.id === layout.activePaneId) ?? layout.panes[0] ?? null;
+  const activeComputer = activePane ? (byId.get(activePane.computerId) ?? null) : null;
+
+  // Shells are the scarce resource: each holds a real PTY against the
+  // runtime's quota. Which kinds cost one is declared by the kind itself, so
+  // a host-registered kind is metered without this file knowing about it.
+  const shellPanes = quotaUsage(paneKinds, layout.panes.map((p) => p.kindId), 'shell');
+
+  // Seed once the fleet is actually known. Keyed on `open` alone this fired
+  // before the first fetch resolved, seeded with null, and never ran again —
+  // so the lab opened permanently empty next to a full rail.
+  const hasWindows = layout.windows.length > 0;
+  const firstComputerId = computers[0]?.id ?? null;
+  useEffect(() => {
+    if (!open || hasWindows || !firstComputerId) return;
+    layout.ensureSeeded(firstComputerId, defaultKindId);
+  }, [open, hasWindows, firstComputerId, defaultKindId, layout.ensureSeeded]);
+
+  // `layout` is rebuilt every render, so depending on the object itself would
+  // reconcile -> setState -> re-render forever. The callback is stable.
+  const reconcile = layout.reconcile;
+  const computerIds = useMemo(() => computers.map((c) => c.id), [computers]);
+  useEffect(() => {
+    if (!open || computerIds.length === 0) return;
+    reconcile(computerIds);
+  }, [open, computerIds, reconcile]);
+
+  const registerInput = useCallback((paneId: string, kind: PaneKind, send: PaneInput | null) => {
+    if (send) inputsRef.current.set(paneId, { send, kind });
+    else inputsRef.current.delete(paneId);
+  }, []);
+
+  /** Panes broadcast reaches. Everything in the window, or just the focused one. */
+  const targets = broadcast ? layout.panes : activePane ? [activePane] : [];
+
+  const sendBroadcast = useCallback(() => {
+    const text = broadcastText.trim();
+    if (!text || targets.length === 0) return;
+    let delivered = 0;
+    for (const pane of targets) {
+      const entry = inputsRef.current.get(pane.id);
+      if (!entry) continue;
+      // Whether the text needs a trailing newline is a property of the kind
+      // (a PTY does, an agent prompt must not), so it is declared there
+      // rather than branched on here.
+      if (entry.send(`${text}${entry.kind.inputSuffix ?? ''}`)) delivered += 1;
+    }
+    if (delivered === 0) {
+      notify({ tone: 'error', title: 'Nothing received that', detail: 'No pane was ready to accept input.' });
+      return;
+    }
+    setBroadcastText('');
+    if (delivered < targets.length) {
+      notify({
+        tone: 'info',
+        title: `Sent to ${delivered} of ${targets.length} panes`,
+        detail: 'The rest were not connected.',
+      });
+    }
+  }, [broadcastText, targets, notify]);
+
+  const splitWith = useCallback(
+    (direction: 'row' | 'column') => {
+      const computerId = activePane?.computerId ?? computers[0]?.id;
+      if (!computerId) return;
+      layout.split(direction, computerId, activePane?.kindId ?? defaultKindId);
+    },
+    [activePane, computers, layout, defaultKindId],
+  );
+
+  /** Switch a pane to a kind, refusing if that kind's quota is spent. */
+  const switchKind = useCallback(
+    (paneId: string, currentKindId: string, target: PaneKind | null) => {
+      if (!target || target.id === currentKindId) return;
+      const current = resolveKind(paneKinds, currentKindId);
+      const takesSlot = target.quota === 'shell' && current?.quota !== 'shell';
+      if (takesSlot && shellPanes >= MAX_SHELLS) {
+        notify({
+          tone: 'error',
+          title: 'No shell slots left',
+          detail: `${MAX_SHELLS} open terminals is the limit here. Close one, or use a pane kind that costs nothing.`,
+        });
+        return;
+      }
+      layout.setPaneKind(paneId, target.id);
+    },
+    [layout, paneKinds, shellPanes, notify],
+  );
+
+  /** ⌃B e — advance the focused pane to the next registered kind. */
+  const cycleActiveKind = useCallback(() => {
+    if (!activePane) return;
+    switchKind(activePane.id, activePane.kindId, nextKind(paneKinds, activePane.kindId));
+  }, [activePane, paneKinds, switchKind]);
+
+  const provision = useCallback(() => {
+    void create()
+      .then((box) => {
+        layout.newWindow(box.id, defaultKindId);
+        notify({ tone: 'success', title: `${box.label} ready`, detail: 'microVM session live · workspace persists' });
+      })
+      .catch((err: unknown) => {
+        notify({
+          tone: 'error',
+          title: 'Provisioning failed',
+          detail: err instanceof Error ? err.message : undefined,
+        });
+      });
+  }, [create, layout, notify, defaultKindId]);
+
+  // ── Keyboard ───────────────────────────────────────────────────────────
+  // Capture phase, because xterm swallows nearly everything once a terminal
+  // has focus. Without capture, the multiplexer becomes unreachable from
+  // inside its own panes — which is every pane, most of the time.
+  const run = useCallback(
+    (command: LabCommand) => {
+      const moves: Partial<Record<LabCommand, Direction>> = {
+        'focus-left': 'left', 'focus-right': 'right', 'focus-up': 'up', 'focus-down': 'down',
+      };
+      const direction = moves[command];
+      if (direction) { layout.move(direction); return; }
+
+      switch (command) {
+        case 'split-right': splitWith('row'); return;
+        case 'split-down': splitWith('column'); return;
+        case 'close-pane': layout.closeActivePane(); return;
+        case 'zoom-pane': layout.toggleZoom(); return;
+        case 'next-kind': cycleActiveKind(); return;
+        case 'jump': setShowChooser(true); return;
+        case 'focus-composer': composerRef.current?.focus(); return;
+        case 'toggle-broadcast': setBroadcast((v) => !v); return;
+        case 'help': setShowHelp((v) => !v); return;
+        case 'exit': onClose(); return;
+      }
+    },
+    [layout, splitWith, cycleActiveKind, onClose],
+  );
+
+  // Capture phase, because xterm swallows nearly everything once a terminal
+  // has focus. Without it the lab is unreachable from inside its own panes —
+  // which is every pane, most of the time.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      // An armed leader owns the next keystroke outright — nothing may reach
+      // a pane, or the letter is typed into a shell as well as being a
+      // command.
+      if (leaderArmed) {
+        event.preventDefault();
+        event.stopPropagation();
+        setLeaderArmed(false);
+        const viaLeader = matchLeaderBinding(keymap, event);
+        if (viaLeader) run(viaLeader);
+        return;
+      }
+
+      if (isLeaderKey(leader, event)) {
+        event.preventDefault();
+        event.stopPropagation();
+        setLeaderArmed(true);
+        return;
+      }
+
+      const command = matchBinding(keymap, event);
+      if (!command) return;
+
+      // Escape is the exception: inside a terminal it belongs to whatever is
+      // running there, and in the prompt bar it should dismiss the bar. Only
+      // from the lab's own chrome does it mean "leave".
+      if (command === 'exit') {
+        const target = event.target as HTMLElement | null;
+        if (target?.closest?.('.xterm')) return;
+        if (target === composerRef.current) { composerRef.current?.blur(); event.preventDefault(); return; }
+        if (showChooser || showHelp) { setShowChooser(false); setShowHelp(false); event.preventDefault(); return; }
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      run(command);
+    };
+    globalThis.addEventListener('keydown', onKey, true);
+    return () => globalThis.removeEventListener('keydown', onKey, true);
+  }, [open, keymap, leader, leaderArmed, run, showChooser, showHelp]);
+
+  // An armed leader that never receives its second key must disarm itself, or
+  // the next ordinary keystroke silently becomes a command.
+  useEffect(() => {
+    if (!leaderArmed) return;
+    const timer = setTimeout(() => setLeaderArmed(false), leader?.timeoutMs ?? 3_000);
+    return () => clearTimeout(timer);
+  }, [leaderArmed, leader?.timeoutMs]);
+
+  if (!open) return null;
+
+  const chord = (command: LabCommand) => labelFor(keymap, command);
+
+  return (
+    <div
+      ref={rootRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Computer Lab"
+      className={cn('fixed inset-0 z-[150] flex flex-col bg-code-bg text-code-text', className)}
+    >
+      {/* ── Top bar: identity, window tabs, budget, exit ── */}
+      <div className="flex items-center gap-3 px-3 h-10 shrink-0 border-b border-code-border bg-code-panel">
+        <span className="text-[11px] font-mono font-semibold tracking-wide text-code-mauve select-none">LAB</span>
+        <span data-testid="lab-summary" className="text-[10px] font-mono text-code-muted tabular-nums">
+          {computers.length} {computers.length === 1 ? 'computer' : 'computers'} · {layout.panes.length} {layout.panes.length === 1 ? 'pane' : 'panes'}
+        </span>
+
+        <div className="flex items-center gap-1 ml-2">
+          {layout.windows.map((window, index) => {
+            const isActive = window.id === layout.activeWindow?.id;
+            return (
+              <button
+                key={window.id}
+                type="button"
+                onClick={() => layout.selectWindow(window.id)}
+                title={`Window ${index + 1}`}
+                aria-current={isActive ? 'true' : undefined}
+                className={cn(
+                  'px-2 py-0.5 rounded-sm text-[11px] font-mono cursor-pointer border-none transition-colors',
+                  isActive ? 'bg-code-blue text-code-bg font-semibold' : 'bg-code-surface text-code-muted hover:text-code-text',
+                )}
+              >
+                {window.name ?? index + 1}
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            onClick={() => activePane && layout.newWindow(activePane.computerId, defaultKindId)}
+            disabled={!activePane}
+            title="New window"
+            aria-label="New window"
+            className="px-1.5 py-0.5 text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text disabled:text-code-raised disabled:cursor-not-allowed"
+          >
+            +
+          </button>
+        </div>
+
+        <span className="flex-1" />
+
+        {/* The quota that actually bites. Agent panes are free; terminals are not. */}
+        <DotMeter
+          label="shells"
+          value={shellPanes / MAX_SHELLS}
+          segments={MAX_SHELLS}
+          showPercent={false}
+          note={`${shellPanes} of ${MAX_SHELLS} open`}
+          warnAbove={0.74}
+          className="hidden md:flex"
+        />
+
+        {leaderArmed && leader && (
+          <span
+            data-testid="leader-armed"
+            className="px-2 py-0.5 rounded-sm text-[10px] font-mono font-semibold bg-code-peach text-code-bg animate-pulse"
+          >
+            {leader.label} …
+          </span>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setShowHelp((v) => !v)}
+          aria-pressed={showHelp}
+          title={`Shortcuts${chord('help') ? ` · ${chord('help')}` : ''}`}
+          className="text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text"
+        >
+          ?
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          title={`Leave the lab${chord('exit') ? ` · ${chord('exit')}` : ''}`}
+          className="text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-red"
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* ── Body: rail + panes ── */}
+      <div className="flex flex-1 min-h-0">
+        <LabRail
+          className="w-[210px] shrink-0"
+          computers={computers}
+          activeComputerId={activeComputer?.id ?? null}
+          openComputerIds={layout.openComputerIds}
+          showAllActivity={showAllActivity}
+          onToggleShowAll={() => setShowAllActivity((v) => !v)}
+          canManage={canManage}
+          models={models}
+          onCreate={provision}
+          onOpenMenu={() => setShowHelp((v) => !v)}
+          onSelect={(computer) => {
+            // Retarget the focused pane rather than opening another one: the
+            // rail is navigation, and a rail that spawns a pane per click
+            // fills the window in six clicks.
+            if (activePane) layout.setPaneComputer(activePane.id, computer.id);
+          }}
+          onOpenInPane={(computer) => layout.split('row', computer.id, activePane?.kindId ?? defaultKindId)}
+        />
+
+        <div className="flex-1 min-w-0 min-h-0 p-2">
+          {layout.activeWindow && activePane ? (
+            <PaneTreeView
+              className="flex-1 h-full"
+              node={layout.activeWindow.root}
+              activePaneId={layout.activePaneId}
+              zoomedPaneId={layout.zoomedPaneId}
+              onRatioChange={layout.resize}
+              renderLeaf={(pane) => {
+                const computer = byId.get(pane.computerId);
+                const isActive = pane.id === layout.activePaneId;
+                return (
+                  <LabPane
+                    key={pane.id}
+                    pane={pane}
+                    computer={computer ?? null}
+                    active={isActive}
+                    broadcasting={broadcast}
+                    idleWindowMs={idleWindowMs}
+                    zoomed={layout.zoomedPaneId === pane.id}
+                    onFocus={() => layout.focusPane(pane.id)}
+                    onClose={() => {
+                      layout.focusPane(pane.id);
+                      layout.closeActivePane();
+                    }}
+                    kinds={paneKinds}
+                    onToggleKind={() => {
+                      layout.focusPane(pane.id);
+                      switchKind(pane.id, pane.kindId, nextKind(paneKinds, pane.kindId));
+                    }}
+                    onRegisterInput={registerInput}
+                    onSettled={() => void refresh()}
+                  />
+                );
+              }}
+            />
+          ) : (
+            <div className="h-full flex flex-col items-center justify-center gap-3 text-center">
+              <div className="text-[13px] font-mono text-code-subtle">No computers to lab</div>
+              <div className="text-[11px] font-mono text-code-muted max-w-sm">
+                Computer Lab multiplexes a fleet. Provision at least one computer and it will open in a pane.
+              </div>
+              {canManage && (
+                <button
+                  type="button"
+                  onClick={provision}
+                  className="text-[11px] font-mono text-code-green border border-code-border rounded px-3 py-1 bg-transparent cursor-pointer hover:bg-code-surface"
+                >
+                  + new computer
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Command line: broadcast. The reason to be in this mode. ── */}
+      <div
+        className={cn(
+          'flex items-center gap-2 px-3 py-1.5 shrink-0 border-t font-mono',
+          broadcast ? 'border-code-peach bg-code-peach/10' : 'border-code-border bg-code-panel',
+        )}
+      >
+        <button
+          type="button"
+          onClick={() => setBroadcast((v) => !v)}
+          aria-pressed={broadcast}
+          title={`Send the prompt to every pane${chord('toggle-broadcast') ? ` · ${chord('toggle-broadcast')}` : ''}`}
+          className={cn(
+            'text-[10px] px-1.5 py-0.5 rounded-sm cursor-pointer border transition-colors shrink-0',
+            broadcast
+              ? 'border-code-peach text-code-peach font-semibold'
+              : 'border-code-border text-code-muted bg-transparent hover:text-code-text',
+          )}
+        >
+          {broadcast ? '▶▶ all panes' : '▶ focused pane'}
+        </button>
+
+        <span className="text-[10px] text-code-muted tabular-nums shrink-0 hidden sm:inline">
+          {targets.length} {targets.length === 1 ? 'target' : 'targets'}
+        </span>
+
+        <textarea
+          ref={composerRef}
+          rows={1}
+          value={broadcastText}
+          onChange={(e) => setBroadcastText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              sendBroadcast();
+            }
+            if (e.key === 'Escape') e.currentTarget.blur();
+          }}
+          placeholder={
+            broadcast
+              ? `instruction for all ${targets.length} panes — ⏎ to send`
+              : `instruction for ${activeComputer?.label ?? 'the focused pane'} — ⏎ to send`
+          }
+          aria-label="Broadcast instruction"
+          className="flex-1 min-w-0 resize-none bg-transparent border-none outline-none text-[12px] leading-6 text-code-text placeholder:text-code-raised"
+        />
+
+        <button
+          type="button"
+          onClick={sendBroadcast}
+          disabled={!broadcastText.trim() || targets.length === 0}
+          className="shrink-0 text-[11px] px-2 py-0.5 rounded-sm border border-code-border text-code-green bg-transparent cursor-pointer hover:bg-code-surface disabled:text-code-raised disabled:cursor-not-allowed"
+        >
+          send
+        </button>
+      </div>
+
+      <LabChooser
+        open={showChooser}
+        onClose={() => setShowChooser(false)}
+        computers={computers}
+        panes={layout.panes}
+        onJumpToPane={layout.focusPane}
+        onRetarget={(computer) => {
+          if (activePane) layout.setPaneComputer(activePane.id, computer.id);
+        }}
+        onOpenInSplit={(computer) => layout.split('row', computer.id, activePane?.kindId ?? defaultKindId)}
+      />
+
+      {showHelp && <ShortcutSheet keymap={keymap} leader={leader} onClose={() => setShowHelp(false)} />}
+    </div>
+  );
+}
+
+// ── One pane ────────────────────────────────────────────────────────────────
+
+interface LabPaneProps {
+  pane: PaneLeaf;
+  computer: Computer | null;
+  active: boolean;
+  broadcasting: boolean;
+  zoomed: boolean;
+  idleWindowMs: number;
+  kinds: PaneKindRegistry;
+  onFocus: () => void;
+  onClose: () => void;
+  onToggleKind: () => void;
+  onRegisterInput: (paneId: string, kind: PaneKind, send: PaneInput | null) => void;
+  onSettled: () => void;
+}
+
+function LabPane({
+  pane, computer, active, broadcasting, zoomed, idleWindowMs, kinds,
+  onFocus, onClose, onToggleKind, onRegisterInput, onSettled,
+}: LabPaneProps) {
+  const kind = resolveKind(kinds, pane.kindId);
+
+  // Bound to the kind so a pane that changes kind republishes: the sinks take
+  // input differently (a PTY wants a line, an agent wants a prompt), and a
+  // stale one would deliver a prompt to a terminal.
+  const registerInput = useCallback(
+    (send: PaneInput | null) => {
+      if (kind) onRegisterInput(pane.id, kind, send);
+    },
+    [onRegisterInput, pane.id, kind],
+  );
+
+  if (!computer || !kind) {
+    return (
+      <TitledFrame title="unbound" active={active} className="flex-1 min-w-0" onActivate={onFocus}>
+        <div className="h-full flex items-center justify-center text-[11px] font-mono text-code-raised">
+          {computer ? 'no pane kind registered' : 'this computer is gone'}
+        </div>
+      </TitledFrame>
+    );
+  }
+
+  const status = statusOf(computer);
+  const meta = COMPUTE_STATUS[status];
+
+  return (
+    <TitledFrame
+      active={active}
+      onActivate={onFocus}
+      className="flex-1 min-w-0"
+      bodyClassName="flex flex-col min-h-0"
+      title={
+        <span className="inline-flex items-center gap-1.5">
+          <StatusDot size="xs" color={meta.color} pulse={meta.pulse} aria-label={meta.label} />
+          {computer.label}
+          {zoomed && <span className="text-code-peach" title="Zoomed">⤢</span>}
+        </span>
+      }
+      titleAction={
+        <span className="inline-flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={onToggleKind}
+            title={nextKind(kinds, pane.kindId)?.description ?? 'Switch pane kind'}
+            className="text-[9px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text"
+          >
+            {kind.label}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={`Close pane ${computer.label}`}
+            className="text-[10px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-red leading-none"
+          >
+            ×
+          </button>
+        </span>
+      }
+    >
+      <div className="flex-1 min-h-0">
+        {kind.render({ computer, paneId: pane.id, active, registerInput, onSettled })}
+      </div>
+
+      <PaneStatusLine
+        computer={computer}
+        idleWindowMs={idleWindowMs}
+        broadcasting={broadcasting}
+        mode={kind.statusMode ?? kind.label}
+      />
+    </TitledFrame>
+  );
+}
+
+// ── Key reference ───────────────────────────────────────────────────────────
+
+/**
+ * The shortcut sheet, generated from the keymap.
+ *
+ * Rendering the live bindings rather than a hand-written table means a
+ * rebinding host gets a correct sheet for free, and the sheet can never drift
+ * from what the keys actually do — which is the usual fate of documented
+ * shortcuts.
+ */
+function ShortcutSheet({
+  keymap,
+  leader,
+  onClose,
+}: {
+  keymap: readonly KeyBinding[];
+  leader: LeaderConfig | null;
+  onClose: () => void;
+}) {
+  const GROUP_LABEL: Record<KeyBinding['group'], string> = {
+    panes: 'Panes',
+    navigate: 'Getting around',
+    lab: 'The lab',
+  };
+
+  return (
+    <div
+      role="dialog"
+      aria-label="Keyboard shortcuts"
+      className="absolute inset-0 z-10 flex items-center justify-center bg-code-bg/80"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-[560px] max-w-[92vw] max-h-[80vh] overflow-y-auto rounded-lg border border-code-border bg-code-panel p-5"
+      >
+        <div className="flex items-baseline gap-2 mb-4">
+          <span className="text-[13px] font-semibold text-code-text">Keyboard shortcuts</span>
+          {leader && (
+            <span className="text-[10px] font-mono text-code-muted">
+              {leader.label} prefix is on
+            </span>
+          )}
+          <span className="flex-1" />
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text"
+          >
+            esc
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {groupBindings(keymap).map(({ group, bindings }) => (
+            <div key={group}>
+              <div className="text-[10px] uppercase tracking-wide text-code-mauve mb-1.5">
+                {GROUP_LABEL[group]}
+              </div>
+              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 m-0">
+                {bindings.map((binding) => (
+                  <Fragment key={`${binding.command}-${binding.label}`}>
+                    <dt className="m-0 font-mono text-[11px] text-code-green whitespace-nowrap">
+                      {binding.label}
+                      {/* Both models are live at once when a leader is set, so
+                          the sheet shows both rather than picking one. */}
+                      {leader && binding.leaderKey && (
+                        <span className="text-code-muted">
+                          {' or '}
+                          {leader.label} {binding.leaderKey}
+                        </span>
+                      )}
+                    </dt>
+                    <dd className="m-0 text-[11px] text-code-subtle">{binding.description}</dd>
+                  </Fragment>
+                ))}
+              </dl>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 pt-3 border-t border-code-border text-[10px] text-code-muted leading-relaxed">
+          ⌘T, ⌘N and ⌘W are not available — the browser keeps those for its own tabs
+          and windows, and never forwards them to a page. Agent panes stream over SSE
+          and are free to keep open; terminal panes hold a real shell against the
+          runtime&apos;s limit of {MAX_SHELLS}, which is the meter in the top bar.
+        </div>
+      </div>
+    </div>
+  );
+}

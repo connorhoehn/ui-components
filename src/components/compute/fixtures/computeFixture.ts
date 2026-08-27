@@ -1,0 +1,111 @@
+// Sample fleet for stories, demos and tests.
+//
+// Deliberately not plausible-looking production data: the labels say
+// `demo-` so a screenshot can never be mistaken for a real fleet, and every
+// surface that renders these is expected to say `source === 'fixture'`.
+
+import type { Computer, ComputeModel, ComputeRuntimeStatus, WorkspaceSnapshot } from '../types';
+
+/** Sessions must be ≥33 chars, so the fixtures are too — short ids hide bugs. */
+const session = (seed: string) => `demo-session-${seed}-0000000000000000`.slice(0, 40);
+
+export const fixtureComputers: Computer[] = [
+  {
+    id: 'demo-1',
+    label: 'demo-alpha',
+    sessionId: session('alpha'),
+    createdAt: '2026-08-26T14:02:00.000Z',
+    status: 'running',
+    currentTask: 'Scaffold the FastAPI service and commit it',
+    lastActivityAt: '2026-08-26T14:31:00.000Z',
+    stopsInMs: 41 * 60_000,
+  },
+  {
+    id: 'demo-2',
+    label: 'demo-bravo',
+    sessionId: session('bravo'),
+    createdAt: '2026-08-26T13:10:00.000Z',
+    status: 'waiting',
+    currentTask: 'Which migration tool should this use?',
+    lastActivityAt: '2026-08-26T14:20:00.000Z',
+    stopsInMs: 4 * 60_000,
+    lastResult: { subtype: 'success', turns: 11, durationMs: 214_000, costUsd: 0.0431 },
+  },
+  {
+    id: 'demo-3',
+    label: 'demo-charlie',
+    sessionId: session('charlie'),
+    createdAt: '2026-08-26T09:44:00.000Z',
+    status: 'idle',
+    lastActivityAt: '2026-08-26T12:02:00.000Z',
+    stopsInMs: 52 * 60_000,
+    lastResult: { subtype: 'success', turns: 4, durationMs: 61_000, costUsd: 0.0072 },
+  },
+  {
+    id: 'demo-4',
+    label: 'demo-delta',
+    sessionId: session('delta'),
+    createdAt: '2026-08-25T18:20:00.000Z',
+    status: 'stopped',
+  },
+];
+
+export const fixtureRuntimeStatus: ComputeRuntimeStatus = {
+  deployed: true,
+  runtimeName: 'demo-devbox',
+  runtimeArn: null,
+  commandAllowlist: ['ls', 'cat', 'git', 'find', 'grep'],
+  fullExecEnabled: true,
+  perTaskModel: true,
+  defaultModel: 'us.anthropic.claude-haiku-4-5-20251001-v1:0',
+  allowedModels: [
+    'us.anthropic.claude-haiku-4-5-20251001-v1:0',
+    'us.anthropic.claude-sonnet-5',
+    'us.anthropic.claude-opus-4-8',
+  ],
+};
+
+/**
+ * Models the reference container accepts.
+ *
+ * These are Bedrock inference-profile ids, not first-party model names: the
+ * box runs the agent with `CLAUDE_CODE_USE_BEDROCK=1`, so `--model` goes
+ * straight to Bedrock. The ids must match the runtime's allowlist exactly —
+ * anything off it falls back to the default *silently*, so a mismatch is
+ * invisible: you pick the expensive model and quietly get the cheap one.
+ */
+export const fixtureModels: ComputeModel[] = [
+  {
+    id: 'us.anthropic.claude-haiku-4-5-20251001-v1:0',
+    label: 'Haiku',
+    hint: 'default · cheapest · fine for most tasks',
+  },
+  { id: 'us.anthropic.claude-sonnet-5', label: 'Sonnet', hint: 'harder multi-step work' },
+  { id: 'us.anthropic.claude-opus-4-8', label: 'Opus', hint: 'the expensive one — reach for it deliberately' },
+];
+
+export const fixtureWorkspace: WorkspaceSnapshot = {
+  truncated: false,
+  git: ['a1b2c3d scaffold service', 'e4f5a6b add tests', ' M src/main.py'],
+  tree: [
+    {
+      name: 'src',
+      path: 'src',
+      kind: 'dir',
+      children: [
+        { name: 'main.py', path: 'src/main.py', kind: 'file', children: [] },
+        { name: 'models.py', path: 'src/models.py', kind: 'file', children: [] },
+      ],
+    },
+    {
+      name: 'tests',
+      path: 'tests',
+      kind: 'dir',
+      children: [{ name: 'test_main.py', path: 'tests/test_main.py', kind: 'file', children: [] }],
+    },
+    { name: '.git', path: '.git', kind: 'dir', pruned: true, children: [] },
+    { name: 'node_modules', path: 'node_modules', kind: 'dir', pruned: true, children: [] },
+    { name: 'README.md', path: 'README.md', kind: 'file', children: [] },
+    { name: 'pyproject.toml', path: 'pyproject.toml', kind: 'file', children: [] },
+  ],
+};
