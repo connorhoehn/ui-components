@@ -64,19 +64,33 @@ The one thing tmux does not have to invent is **broadcast** — one instruction
 to every pane at once. `synchronize-panes` for shells is the same idea as
 sending a prompt to five agents, and it is the reason to be in this mode.
 
-**Pane kinds are a registry, not an enumeration.** Two ship by default: agent
-panes are SSE streams and free to keep open; terminal panes hold a real PTY
-against the runtime's limit of ten (`MAX_SHELLS` stops at eight). A host
-registers its own — a run timeline, a workspace tree, a diff — and it gets the
-same toggle order, quota accounting and broadcast plumbing, with `quota` and
-`inputSuffix` declared on the kind rather than branched on in the component. A
-kind id the current registry no longer knows falls back rather than rendering a
-blank pane.
+**Pane kinds are a registry, not an enumeration.** Two ship by default. A
+`shell` pane is a real terminal and is what a new pane opens as, because
+running commands is the point of the surface; it holds one of the runtime's
+ten shell slots (`MAX_SHELLS` stops at eight), which is what the top bar
+meters. A `tail` pane is read-only and free — an SSE stream of whatever is
+running on the box, including runs nobody in this browser started — which is
+the one thing a terminal cannot do. A host registers its own kind — a run
+timeline, a workspace tree, a diff — and it gets the same toggle order, quota
+accounting and broadcast plumbing, with `quota` and `inputSuffix` declared on
+the kind rather than branched on in the component. A kind id the current
+registry no longer knows falls back rather than rendering a blank pane.
+
+There is deliberately no third thing that takes typed input. An earlier draft
+had a pane with its own prompt box, which taught you that Enter means newline
+and rebuilt a shell badly; input belongs in a terminal, and the tail pane
+being read-only is what keeps that honest.
+
+`fixtures/mockShell.ts` speaks the shell protocol back at `ShellTerminal` and
+simulates a devbox behind it, so the demo and the Storybook story have live
+terminals with no runtime at all. It installs by swapping `globalThis.WebSocket`
+for a subclass that claims only `mock-shell:` URLs and delegates everything
+else.
 
 Also exported: `LabRail`, `LabChooser` (subsequence jump across on-screen panes
 and the rest of the fleet), `PaneTreeView`, `PaneStatusLine`, `ShellTerminal`,
 `AgentPane`, the `ComputeProvider`/`ComputeClient` seam, the `useComputeFleet` /
-`useComputeTask` / `useLabLayout` hooks, and the pure pane-tree, pane-kind,
+`useComputeTask` / `useComputeTail` / `useLabLayout` hooks, and the pure pane-tree, pane-kind,
 shell-protocol, workspace-tree, storage and dock-store modules.
 
 Directional pane movement (`neighborPane`) is computed from pane **geometry**,
