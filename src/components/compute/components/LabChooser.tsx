@@ -16,11 +16,14 @@ import { StatusDot } from '../../shared/StatusDot';
 import Chip from '../../shared/Chip';
 import { COMPUTE_STATUS, statusOf } from '../lib/status';
 import type { PaneLeaf } from '../lib/paneTree';
+import { ProjectSummary } from './ProjectSummary';
+import type { ProjectRollup } from '../hooks/useComputeProjects';
 import type { Computer } from '../types';
 
 export type ChooserRow =
   | { kind: 'pane'; id: string; pane: PaneLeaf; computer: Computer }
-  | { kind: 'computer'; id: string; computer: Computer };
+  | { kind: 'computer'; id: string; computer: Computer }
+  | { kind: 'project'; id: string; project: ProjectRollup };
 
 export interface LabChooserProps {
   open: boolean;
@@ -33,6 +36,13 @@ export interface LabChooserProps {
   onRetarget: (computer: Computer) => void;
   /** Open in a new split — the "watch both" move. Bound to ⇧⏎. */
   onOpenInSplit: (computer: Computer) => void;
+  /**
+   * Projects, so the chooser answers "take me to that project's computers"
+   * and not only "take me to that box". Omit where there are none.
+   */
+  projects?: readonly ProjectRollup[];
+  /** Focus a project's first computer, or offer to make one if it has none. */
+  onSelectProject?: (project: ProjectRollup) => void;
 }
 
 /**
@@ -64,6 +74,7 @@ export function fuzzyScore(text: string, query: string): number | null {
 
 export function LabChooser({
   open, onClose, computers, panes, onJumpToPane, onRetarget, onOpenInSplit,
+  projects = [], onSelectProject,
 }: LabChooserProps) {
   const [query, setQuery] = useState('');
   const [highlight, setHighlight] = useState(0);
@@ -93,9 +104,28 @@ export function LabChooser({
       computerRows.push({ row: { kind: 'computer', id: `box:${computer.id}`, computer }, score });
     }
 
+    // Projects last, and only when searching: unprompted they would push the
+    // panes — the cheap answer — below the fold. Searching by name is exactly
+    // when you want them, which is the "find the project" case.
+    const projectRows: Array<{ row: ChooserRow; score: number }> = [];
+    // Only once there is a query. An empty query matches everything (score 0),
+    // so without this gate every project is listed unprompted and pushes the
+    // panes — the cheap answer — below the fold.
+    if (onSelectProject && query.trim()) {
+      for (const project of projects) {
+        const score = fuzzyScore(project.name, query);
+        if (score == null) continue;
+        projectRows.push({ row: { kind: 'project', id: `proj:${project.id}`, project }, score });
+      }
+    }
+
     const byScore = (a: { score: number }, b: { score: number }) => a.score - b.score;
-    return [...paneRows.sort(byScore), ...computerRows.sort(byScore)].map((r) => r.row);
-  }, [panes, computers, byId, query]);
+    return [
+      ...paneRows.sort(byScore),
+      ...computerRows.sort(byScore),
+      ...projectRows.sort(byScore),
+    ].map((r) => r.row);
+  }, [panes, computers, byId, query, projects, onSelectProject]);
 
   useEffect(() => {
     if (open) {
@@ -121,7 +151,8 @@ export function LabChooser({
 
   const commit = (row: ChooserRow | undefined, split: boolean) => {
     if (!row) return;
-    if (row.kind === 'pane') onJumpToPane(row.pane.id);
+    if (row.kind === 'project') onSelectProject?.(row.project);
+    else if (row.kind === 'pane') onJumpToPane(row.pane.id);
     else if (split) onOpenInSplit(row.computer);
     else onRetarget(row.computer);
     onClose();
@@ -135,7 +166,7 @@ export function LabChooser({
       <div
         onClick={(e) => e.stopPropagation()}
         role="dialog"
-        aria-label="Jump to a computer or pane"
+        aria-label="Jump to a computer, pane or project"
         className="w-[480px] max-w-[92vw] rounded-lg border border-code-border bg-code-panel overflow-hidden font-mono shadow-2xl"
       >
         <div className="flex items-center gap-2 px-3 py-2 border-b border-code-border">
@@ -164,8 +195,8 @@ export function LabChooser({
                 onClose();
               }
             }}
-            placeholder="jump to a computer or pane…"
-            aria-label="Filter computers and panes"
+            placeholder="jump to a computer, pane or project…"
+            aria-label="Filter computers, panes and projects"
             className="flex-1 min-w-0 bg-transparent border-none outline-none text-[12px] text-code-text placeholder:text-code-raised"
           />
           <span className="text-[10px] text-code-raised shrink-0 hidden sm:inline">⏎ jump · ⇧⏎ split</span>
@@ -176,9 +207,35 @@ export function LabChooser({
             <div className="px-3 py-4 text-[11px] text-code-raised">nothing matches “{query}”</div>
           ) : (
             rows.map((row, index) => {
+              const selected = index === highlight;
+
+              if (row.kind === 'project') {
+                return (
+                  <div
+                    key={row.id}
+                    role="option"
+                    aria-selected={selected}
+                    data-highlighted={selected}
+                    onMouseEnter={() => setHighlight(index)}
+                    onClick={() => commit(row, false)}
+                    className={cn(
+                      'flex flex-col gap-0.5 px-3 py-1.5 cursor-pointer border-l-2',
+                      selected ? 'bg-code-surface border-code-mauve' : 'bg-transparent border-transparent',
+                    )}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Chip size="xs" mono tone="accent" className="shrink-0">project</Chip>
+                      <span className={cn('text-[12px] truncate', selected ? 'text-code-text' : 'text-code-subtle')}>
+                        {row.project.name}
+                      </span>
+                    </div>
+                    <ProjectSummary project={row.project} showMeter={false} className="pl-1" />
+                  </div>
+                );
+              }
+
               const status = statusOf(row.computer);
               const meta = COMPUTE_STATUS[status];
-              const selected = index === highlight;
               return (
                 <div
                   key={row.id}

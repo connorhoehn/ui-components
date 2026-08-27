@@ -3,7 +3,7 @@ import { render, screen, within, fireEvent, act, waitFor } from '@testing-librar
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ComputeProvider } from '../context/ComputeContext';
 import { ComputerLab } from '../components/ComputerLab';
-import { fixtureComputers, fixtureRuntimeStatus } from '../fixtures/computeFixture';
+import { fixtureComputers, fixtureProjects, fixtureRuntimeStatus } from '../fixtures/computeFixture';
 import { DEFAULT_PANE_KINDS } from '../components/defaultPaneKinds';
 import { DEFAULT_KEYMAP, TMUX_LEADER } from '../lib/keymap';
 import type { PaneKind } from '../lib/paneKinds';
@@ -13,7 +13,7 @@ function stubClient(overrides: Partial<ComputeClient> = {}): ComputeClient {
   return {
     getStatus: async () => fixtureRuntimeStatus,
     listComputers: async () => fixtureComputers,
-    createComputer: async (label) => ({ ...fixtureComputers[0]!, id: 'new', label: label ?? 'new' }),
+    createComputer: async (input) => ({ ...fixtureComputers[0]!, id: 'new', label: input?.label ?? 'new' }),
     adoptComputer: async () => {},
     renameComputer: async () => {},
     removeComputer: async () => {},
@@ -134,7 +134,7 @@ describe('ComputerLab', () => {
     renderLab();
     await summary();
     cmd('k');
-    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer or pane' });
+    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer, pane or project' });
     const options = within(dialog).getAllByRole('option');
     expect(within(options[0]!).getByText(/on screen/)).toBeTruthy();
     // Every other box in the fleet is offered as somewhere to go.
@@ -145,8 +145,8 @@ describe('ComputerLab', () => {
     renderLab();
     await summary();
     cmd('k');
-    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer or pane' });
-    fireEvent.change(within(dialog).getByLabelText('Filter computers and panes'), {
+    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer, pane or project' });
+    fireEvent.change(within(dialog).getByLabelText('Filter computers, panes and projects'), {
       target: { value: 'chrl' },
     });
     const options = within(dialog).getAllByRole('option');
@@ -274,9 +274,33 @@ describe('ComputerLab', () => {
     renderLab();
     await summary(/1 pane$/);
     cmd('k');
-    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer or pane' });
-    const field = within(dialog).getByLabelText('Filter computers and panes');
+    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer, pane or project' });
+    const field = within(dialog).getByLabelText('Filter computers, panes and projects');
     await waitFor(() => expect(document.activeElement).toBe(field));
+  });
+
+  it('finds projects in the chooser, but only once you search', async () => {
+    render(
+      <ComputeProvider client={stubClient()} canManage useFixtures={false} pollIntervalMs={0}
+        computers={fixtureComputers} projects={fixtureProjects}>
+        <ComputerLab open onClose={() => {}} />
+      </ComputeProvider>,
+    );
+    await summary();
+    cmd('k');
+    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer, pane or project' });
+
+    // Unprompted, projects stay out of the way — they would push the panes,
+    // which are the cheap answer, below the fold.
+    expect(within(dialog).queryByText('Auth migration')).toBeNull();
+
+    fireEvent.change(within(dialog).getByLabelText('Filter computers, panes and projects'), {
+      target: { value: 'auth' },
+    });
+    expect(await within(dialog).findByText('Auth migration')).toBeTruthy();
+    // And it carries the cost centre with it, which is the point of jumping
+    // to a project rather than to a box.
+    expect(within(dialog).getByText(/412/)).toBeTruthy();
   });
 
   it('offers a way out when there is no fleet at all', async () => {

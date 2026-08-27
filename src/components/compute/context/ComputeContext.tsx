@@ -6,13 +6,14 @@
 // exists or whether you are allowed to stop it.
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { createComputeClient, type ComputeClient, type ComputeClientOptions } from '../lib/computeClient';
+import { createComputeClient, type ComputeClient, type ComputeClientOptions, type CreateComputerInput } from '../lib/computeClient';
 import { useComputeFleet } from '../hooks/useComputeFleet';
+import { rollUpProjects, useComputeProjects, type ProjectRollup } from '../hooks/useComputeProjects';
 import { reconcileDock } from '../lib/dockStore';
 import { fixtureComputers, fixtureModels, fixtureRuntimeStatus } from '../fixtures/computeFixture';
 import { DEFAULT_PANE_KINDS } from '../components/defaultPaneKinds';
 import type { PaneKindRegistry } from '../lib/paneKinds';
-import type { Computer, ComputeModel, ComputeRuntimeStatus, ComputeSource } from '../types';
+import type { Computer, ComputeModel, ComputeProject, ComputeRuntimeStatus, ComputeSource } from '../types';
 
 export interface ComputeNotice {
   tone: 'success' | 'error' | 'info';
@@ -32,6 +33,15 @@ export interface ComputeContextValue {
   /** Models offered in the composer, already filtered by the runtime allowlist. */
   models: ComputeModel[];
   /**
+   * Projects a computer can be charged to, joined to the live fleet.
+   *
+   * Empty when the deployment has no notion of projects — surfaces should
+   * fall back to grouping by computer rather than rendering an empty rail.
+   */
+  projects: ProjectRollup[];
+  /** True when projects are unavailable here, as opposed to merely none existing. */
+  projectsAbsent: boolean;
+  /**
    * Whether the operator may mutate anything — provision, stop, remove, run.
    * The reference deployment gates these on a `ManageDevbox` capability;
    * read-only viewers still get the whole surface, minus the buttons.
@@ -43,7 +53,7 @@ export interface ComputeContextValue {
    */
   paneKinds: PaneKindRegistry;
   refresh: () => Promise<void>;
-  create: (label?: string) => Promise<Computer>;
+  create: (input?: CreateComputerInput) => Promise<Computer>;
   rename: (id: string, label: string) => Promise<void>;
   remove: (id: string) => Promise<void>;
   stop: (sessionId: string) => Promise<void>;
@@ -84,6 +94,8 @@ export interface ComputeProviderProps {
   enabled?: boolean;
   /** Full model catalogue; intersected with the runtime's allowlist. */
   models?: ComputeModel[];
+  /** Host-supplied projects. Wins over the client's `listProjects`. */
+  projects?: ComputeProject[];
   /**
    * Replace or extend the pane kinds. Defaults to the built-in agent and
    * terminal panes; pass `[...DEFAULT_PANE_KINDS, myKind]` to add one, or an
@@ -104,6 +116,7 @@ export function ComputeProvider({
   canManage = false,
   enabled = true,
   models: providedModels,
+  projects: providedProjects,
   paneKinds = DEFAULT_PANE_KINDS,
   onNotify,
 }: ComputeProviderProps) {
@@ -123,6 +136,20 @@ export function ComputeProvider({
     ...(providedComputers ? { computers: providedComputers } : {}),
     ...(useFixtures ? { fixtures: fixtureComputers } : {}),
   });
+
+  const projectSource = useComputeProjects({
+    client,
+    enabled,
+    ...(providedProjects ? { projects: providedProjects } : {}),
+  });
+
+  // Joined here rather than in the hook so the fleet and the projects stay
+  // independently refreshable — the fleet polls every few seconds, budgets
+  // every minute, and re-reading one should never force the other.
+  const projects = useMemo(
+    () => rollUpProjects(projectSource.projects, fleet.computers),
+    [projectSource.projects, fleet.computers],
+  );
 
   const [runtime, setRuntime] = useState<ComputeRuntimeStatus | null>(
     useFixtures && !providedClient ? null : null,
@@ -185,6 +212,8 @@ export function ComputeProvider({
       runtime,
       runtimeError,
       models,
+      projects,
+      projectsAbsent: projectSource.absent,
       canManage,
       paneKinds,
       refresh: fleet.refresh,
@@ -194,7 +223,7 @@ export function ComputeProvider({
       stop: fleet.stop,
       notify: onNotify ?? (() => {}),
     }),
-    [client, fleet, runtime, runtimeError, models, canManage, paneKinds, onNotify],
+    [client, fleet, runtime, runtimeError, models, projects, projectSource.absent, canManage, paneKinds, onNotify],
   );
 
   return <ComputeContext.Provider value={value}>{children}</ComputeContext.Provider>;

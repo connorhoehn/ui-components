@@ -6,7 +6,13 @@
 // without forking a component. `createComputeClient` is the reference
 // implementation against the AgentCore devbox routes.
 
-import type { Computer, ComputeRuntimeStatus } from '../types';
+import type { Computer, ComputeProject, ComputeRuntimeStatus } from '../types';
+
+export interface CreateComputerInput {
+  label?: string;
+  /** Project to charge this computer to. */
+  projectId?: string;
+}
 
 /** A decoded SSE frame. Frames that are not JSON are dropped, not thrown. */
 export type StreamEvent = Record<string, unknown>;
@@ -16,8 +22,22 @@ export interface ComputeClient {
   getStatus(signal?: AbortSignal): Promise<ComputeRuntimeStatus>;
   /** The whole fleet, server-owned. */
   listComputers(signal?: AbortSignal): Promise<Computer[]>;
-  /** Mint a new session (microVM + workspace). */
-  createComputer(label?: string): Promise<Computer>;
+  /**
+   * Mint a new session (microVM + workspace).
+   *
+   * Takes an object rather than a bare label because `projectId` is the field
+   * that matters: a computer created without one is an anonymous charge
+   * against the account, which is exactly what cost-centre tracking exists to
+   * avoid.
+   */
+  createComputer(input?: CreateComputerInput): Promise<Computer>;
+  /**
+   * Projects a computer can be charged to, with their budgets.
+   *
+   * Optional: a deployment with no notion of projects simply omits it, and the
+   * surface groups by computer as before rather than showing an empty rail.
+   */
+  listProjects?(signal?: AbortSignal): Promise<ComputeProject[]>;
   /** Re-adopt a session the server has forgotten but the client still knows. */
   adoptComputer(input: { sessionId: string; label: string; createdAt: string }): Promise<void>;
   renameComputer(id: string, label: string): Promise<void>;
@@ -214,8 +234,18 @@ export function createComputeClient(options: ComputeClientOptions = {}): Compute
       return boxes;
     },
 
-    createComputer: (label) =>
-      json<Computer>('/boxes', { method: 'POST', body: JSON.stringify(label ? { label } : {}) }),
+    createComputer: (input) =>
+      json<Computer>('/boxes', { method: 'POST', body: JSON.stringify(input ?? {}) }),
+
+    listProjects: async (signal) => {
+      // Tolerates both a bare array and an envelope, because which one a
+      // backend returns is a coin flip and this is not worth a config knob.
+      const body = await json<ComputeProject[] | { projects: ComputeProject[] }>(
+        '/projects',
+        signal ? { signal } : {},
+      );
+      return Array.isArray(body) ? body : body.projects;
+    },
 
     adoptComputer: (input) =>
       send('/boxes', { method: 'POST', body: JSON.stringify(input) }),

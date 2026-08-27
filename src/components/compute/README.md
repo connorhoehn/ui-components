@@ -214,6 +214,41 @@ Pass `enabled` to close it:
 Disabled, it fetches nothing and reports an empty fleet, so the surface still
 mounts and renders its own empty state rather than throwing.
 
+### Projects as cost centres
+
+A computer created without a project is an anonymous charge against the
+account, which is what cost-centre tracking exists to avoid. So
+`createComputer` takes `{ label?, projectId? }`, and a client may implement
+`listProjects()`:
+
+```tsx
+<ComputeProvider projects={projects} …>   // or let the client fetch them
+```
+
+`useCompute().projects` returns `ProjectRollup[]` — each project joined to its
+live boxes, with `activeCount`, `soonestExpiryMs`, `liveSpendUsd` and
+`liveTokens`. `ProjectSummary` renders that as one line: spend against budget,
+tokens, bots, how many boxes are running, and when the first one reaps itself.
+
+Three deliberate choices:
+
+- **The budget lives on the project, not the box.** Computers are provisioned
+  and reaped constantly; a budget that died with the box would be useless.
+- **Dollars and tokens sit side by side** because they answer different
+  questions. Dollars are the budget. Tokens are what runs out inside a single
+  long run, and a project can be well under budget while a box is about to hit
+  a ceiling.
+- **Unassigned boxes get their own bucket** rather than being hidden. A box
+  with no cost centre still costs money, and hiding it is how a fleet grows an
+  untracked tail.
+
+`maintenanceUsd` is the recurring floor an allocation must clear before any new
+work fits inside it. The meter notes it as a share, because "90% spent" reads
+very differently when most of it is upkeep nobody chose this month.
+
+`listProjects` is optional. A deployment without it gets `projectsAbsent`, and
+surfaces should group by computer rather than render an empty rail.
+
 ### Storage
 
 `COMPUTE_STORAGE_KEYS` enumerates every `localStorage` key this module owns,

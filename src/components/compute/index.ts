@@ -11,7 +11,7 @@ export type { ComputeContextValue, ComputeProviderProps, ComputeNotice } from '.
 
 // Client
 export { createComputeClient } from './lib/computeClient';
-export type { ComputeClient, ComputeClientOptions, StreamEvent } from './lib/computeClient';
+export type { ComputeClient, ComputeClientOptions, CreateComputerInput, StreamEvent } from './lib/computeClient';
 
 // Computer Lab
 export { ComputerLab } from './components/ComputerLab';
@@ -23,6 +23,8 @@ export type { LabChooserProps, ChooserRow } from './components/LabChooser';
 export { PaneTreeView } from './components/PaneTreeView';
 export type { PaneTreeViewProps } from './components/PaneTreeView';
 export { PaneStatusLine, shortModelName, DEFAULT_IDLE_WINDOW_MS } from './components/PaneStatusLine';
+export { ProjectSummary } from './components/ProjectSummary';
+export type { ProjectSummaryProps } from './components/ProjectSummary';
 export type { PaneStatusLineProps } from './components/PaneStatusLine';
 
 // Panes
@@ -36,6 +38,13 @@ export { useComputeFleet } from './hooks/useComputeFleet';
 export type { UseComputeFleetOptions, UseComputeFleetResult } from './hooks/useComputeFleet';
 export { useComputeTask, summarizeTool } from './hooks/useComputeTask';
 export { useComputeTail } from './hooks/useComputeTail';
+export {
+  useComputeProjects, useProjectRollups, rollUpProjects, formatTokens,
+  UNASSIGNED_PROJECT_ID,
+} from './hooks/useComputeProjects';
+export type {
+  UseComputeProjectsOptions, UseComputeProjectsResult, ProjectRollup,
+} from './hooks/useComputeProjects';
 export type { UseComputeTailOptions, UseComputeTailResult } from './hooks/useComputeTail';
 export type { UseComputeTaskOptions, UseComputeTaskResult, TaskStep, TaskStepKind } from './hooks/useComputeTask';
 export { useLabLayout } from './hooks/useLabLayout';
@@ -102,6 +111,6 @@ export type { MockShellOptions } from './fixtures/mockShell';
 
 // Types
 export type {
-  Computer, ComputeStatus, ComputeRunResult, ComputeRuntimeStatus, ComputeModel,
+  Computer, ComputeStatus, ComputeRunResult, ComputeRuntimeStatus, ComputeModel, ComputeProject,
   ComputeSource, ShellStatus, WorkspaceNode, WorkspaceSnapshot,
 } from './types';

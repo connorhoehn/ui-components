@@ -50,14 +50,20 @@ export interface Computer {
   currentTask?: string;
   lastResult?: ComputeRunResult;
   /**
-   * What this box is working on — the repository or initiative its workspace
-   * was bootstrapped with, e.g. `Project A` or `acme/api`.
+   * The project this box is charged to.
    *
-   * The single most useful field on a pane you are not looking at. A fleet of
-   * boxes named `computer-1..6` is unreadable; the same fleet labelled by what
-   * each one is checked out against is a dashboard.
+   * This is what makes a computer a cost centre rather than an anonymous
+   * charge against the account. It is also the single most useful field on a
+   * pane you are not looking at: a fleet named `computer-1..6` is unreadable,
+   * and the same fleet grouped by what each one is working on is a dashboard.
    */
+  projectId?: string;
+  /** Display name for `projectId`, denormalised so a row renders without a join. */
   project?: string;
+  /** Dollars charged to this box so far, across every run on it. */
+  spendUsd?: number;
+  /** Tokens consumed by this box so far. Tracked apart from dollars — see `ComputeProject`. */
+  tokensUsed?: number;
   /** Absolute path the workspace was cloned into, when the host knows it. */
   workspace?: string;
   /**
@@ -90,6 +96,39 @@ export interface ComputeRuntimeStatus {
   allowedModels?: string[];
   /** Absolute path of the persistent workspace, e.g. `/mnt/workspace`. */
   workspace?: string;
+}
+
+/**
+ * A project a computer can be charged to.
+ *
+ * Budgets live here rather than on the box because a project outlives any
+ * individual computer: boxes are provisioned, reaped on idle and re-created
+ * constantly, and a budget that died with the box would be useless. The
+ * numbers are all optional because a host may know some and not others —
+ * render what you have and say nothing about the rest, rather than showing a
+ * confident zero.
+ */
+export interface ComputeProject {
+  id: string;
+  name: string;
+  /** Allocated for the current period. */
+  budgetUsd?: number;
+  /** Spent against `budgetUsd` so far this period. */
+  spentUsd?: number;
+  /**
+   * Recurring cost of simply keeping this project's automation running — the
+   * floor an allocation has to clear before any new work fits inside it. Shown
+   * against the budget because "60% spent" means something very different when
+   * half of it is a floor nobody chose this month.
+   */
+  maintenanceUsd?: number;
+  /** Tokens consumed this period, and the ceiling if the host enforces one. */
+  tokensUsed?: number;
+  tokenBudget?: number;
+  /** Automations attached to this project. */
+  botCount?: number;
+  /** ISO date the budget period resets, for the meter's note. */
+  periodResetsAt?: string;
 }
 
 /** A model the box will accept for an agent task. */

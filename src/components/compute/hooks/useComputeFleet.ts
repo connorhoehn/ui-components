@@ -8,7 +8,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FLEET_STORAGE_KEY } from '../lib/storage';
-import type { ComputeClient } from '../lib/computeClient';
+import type { ComputeClient, CreateComputerInput } from '../lib/computeClient';
 import type { Computer, ComputeSource } from '../types';
 
 function readMirror(): Computer[] {
@@ -54,7 +54,7 @@ export interface UseComputeFleetResult {
   isLoading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
-  create: (label?: string) => Promise<Computer>;
+  create: (input?: CreateComputerInput) => Promise<Computer>;
   rename: (id: string, label: string) => Promise<void>;
   remove: (id: string) => Promise<void>;
   stop: (sessionId: string) => Promise<void>;
@@ -149,8 +149,8 @@ export function useComputeFleet({
   // local state: the server assigns ids and statuses, and a locally-invented
   // row that the next poll contradicts is worse than a half-second wait.
   const create = useCallback(
-    async (label?: string) => {
-      const box = await client.createComputer(label);
+    async (input?: CreateComputerInput) => {
+      const box = await client.createComputer(input);
       writeMirror([...readMirror().filter((b) => b.id !== box.id), box]);
       await refresh();
       return box;

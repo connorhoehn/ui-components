@@ -68,7 +68,7 @@ export function ComputerLab({
   idleWindowMs = DEFAULT_IDLE_WINDOW_MS,
   className,
 }: ComputerLabProps) {
-  const { computers, canManage, create, models, notify, refresh, paneKinds } = useCompute();
+  const { computers, canManage, create, models, notify, refresh, paneKinds, projects } = useCompute();
   const defaultKindId = paneKinds[0]?.id ?? 'agent';
   const layout = useLabLayout();
 
@@ -179,8 +179,8 @@ export function ComputerLab({
     switchKind(activePane.id, activePane.kindId, nextKind(paneKinds, activePane.kindId));
   }, [activePane, paneKinds, switchKind]);
 
-  const provision = useCallback(() => {
-    void create()
+  const provision = useCallback((projectId?: string) => {
+    void create(projectId ? { projectId } : undefined)
       .then((box) => {
         layout.newWindow(box.id, defaultKindId);
         notify({ tone: 'success', title: `${box.label} ready`, detail: 'microVM session live · workspace persists' });
@@ -395,7 +395,7 @@ export function ComputerLab({
           onToggleShowAll={() => setShowAllActivity((v) => !v)}
           canManage={canManage}
           models={models}
-          onCreate={provision}
+          onCreate={() => provision()}
           onOpenMenu={() => setShowHelp((v) => !v)}
           onSelect={(computer) => {
             // Retarget the focused pane rather than opening another one: the
@@ -451,7 +451,7 @@ export function ComputerLab({
               {canManage && (
                 <button
                   type="button"
-                  onClick={provision}
+                  onClick={() => provision()}
                   className="text-[11px] font-mono text-code-green border border-code-border rounded px-3 py-1 bg-transparent cursor-pointer hover:bg-code-surface"
                 >
                   + new computer
@@ -529,6 +529,27 @@ export function ComputerLab({
           if (activePane) layout.setPaneComputer(activePane.id, computer.id);
         }}
         onOpenInSplit={(computer) => layout.split('row', computer.id, activePane?.kindId ?? defaultKindId)}
+        projects={projects}
+        onSelectProject={(project) => {
+          // A project with computers means "show me one of them". A project
+          // with none means the thing you actually wanted was to start one
+          // there — charged to it, which is the whole point of picking a
+          // project rather than a box.
+          const first = project.computers[0];
+          if (first) {
+            if (activePane) layout.setPaneComputer(activePane.id, first.id);
+            return;
+          }
+          if (!canManage) {
+            notify({
+              tone: 'info',
+              title: `${project.name} has no computers`,
+              detail: 'You do not have permission to start one.',
+            });
+            return;
+          }
+          provision(project.id);
+        }}
       />
 
       {showHelp && <ShortcutSheet keymap={keymap} leader={leader} onClose={() => setShowHelp(false)} />}
