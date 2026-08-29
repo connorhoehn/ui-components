@@ -22,10 +22,6 @@ export declare type ChooserRow = {
     kind: 'computer';
     id: string;
     computer: Computer;
-} | {
-    kind: 'project';
-    id: string;
-    project: ProjectRollup;
 };
 
 /** Clear everything this module persists. For a tenant or account switch. */
@@ -67,22 +63,8 @@ export declare interface ComputeClient {
     getStatus(signal?: AbortSignal): Promise<ComputeRuntimeStatus>;
     /** The whole fleet, server-owned. */
     listComputers(signal?: AbortSignal): Promise<Computer[]>;
-    /**
-     * Mint a new session (microVM + workspace).
-     *
-     * Takes an object rather than a bare label because `projectId` is the field
-     * that matters: a computer created without one is an anonymous charge
-     * against the account, which is exactly what cost-centre tracking exists to
-     * avoid.
-     */
-    createComputer(input?: CreateComputerInput): Promise<Computer>;
-    /**
-     * Projects a computer can be charged to, with their budgets.
-     *
-     * Optional: a deployment with no notion of projects simply omits it, and the
-     * surface groups by computer as before rather than showing an empty rail.
-     */
-    listProjects?(signal?: AbortSignal): Promise<ComputeProject[]>;
+    /** Mint a new session (microVM + workspace). */
+    createComputer(label?: string): Promise<Computer>;
     /** Re-adopt a session the server has forgotten but the client still knows. */
     adoptComputer(input: {
         sessionId: string;
@@ -161,15 +143,6 @@ export declare interface ComputeContextValue {
     /** Models offered in the composer, already filtered by the runtime allowlist. */
     models: ComputeModel[];
     /**
-     * Projects a computer can be charged to, joined to the live fleet.
-     *
-     * Empty when the deployment has no notion of projects — surfaces should
-     * fall back to grouping by computer rather than rendering an empty rail.
-     */
-    projects: ProjectRollup[];
-    /** True when projects are unavailable here, as opposed to merely none existing. */
-    projectsAbsent: boolean;
-    /**
      * Whether the operator may mutate anything — provision, stop, remove, run.
      * The reference deployment gates these on a `ManageDevbox` capability;
      * read-only viewers still get the whole surface, minus the buttons.
@@ -181,7 +154,7 @@ export declare interface ComputeContextValue {
      */
     paneKinds: PaneKindRegistry;
     refresh: () => Promise<void>;
-    create: (input?: CreateComputerInput) => Promise<Computer>;
+    create: (label?: string) => Promise<Computer>;
     rename: (id: string, label: string) => Promise<void>;
     remove: (id: string) => Promise<void>;
     stop: (sessionId: string) => Promise<void>;
@@ -203,40 +176,7 @@ export declare interface ComputeNotice {
     detail?: string;
 }
 
-/**
- * A project a computer can be charged to.
- *
- * Budgets live here rather than on the box because a project outlives any
- * individual computer: boxes are provisioned, reaped on idle and re-created
- * constantly, and a budget that died with the box would be useless. The
- * numbers are all optional because a host may know some and not others —
- * render what you have and say nothing about the rest, rather than showing a
- * confident zero.
- */
-export declare interface ComputeProject {
-    id: string;
-    name: string;
-    /** Allocated for the current period. */
-    budgetUsd?: number;
-    /** Spent against `budgetUsd` so far this period. */
-    spentUsd?: number;
-    /**
-     * Recurring cost of simply keeping this project's automation running — the
-     * floor an allocation has to clear before any new work fits inside it. Shown
-     * against the budget because "60% spent" means something very different when
-     * half of it is a floor nobody chose this month.
-     */
-    maintenanceUsd?: number;
-    /** Tokens consumed this period, and the ceiling if the host enforces one. */
-    tokensUsed?: number;
-    tokenBudget?: number;
-    /** Automations attached to this project. */
-    botCount?: number;
-    /** ISO date the budget period resets, for the meter's note. */
-    periodResetsAt?: string;
-}
-
-export declare function ComputeProvider({ children, client: providedClient, clientOptions, computers: providedComputers, useFixtures, pollIntervalMs, canManage, enabled, models: providedModels, projects: providedProjects, paneKinds, onNotify, }: ComputeProviderProps): JSX.Element;
+export declare function ComputeProvider({ children, client: providedClient, clientOptions, computers: providedComputers, useFixtures, pollIntervalMs, canManage, enabled, models: providedModels, paneKinds, onNotify, }: ComputeProviderProps): JSX.Element;
 
 export declare interface ComputeProviderProps {
     children: ReactNode;
@@ -269,8 +209,6 @@ export declare interface ComputeProviderProps {
     enabled?: boolean;
     /** Full model catalogue; intersected with the runtime's allowlist. */
     models?: ComputeModel[];
-    /** Host-supplied projects. Wins over the client's `listProjects`. */
-    projects?: ComputeProject[];
     /**
      * Replace or extend the pane kinds. Defaults to the built-in agent and
      * terminal panes; pass `[...DEFAULT_PANE_KINDS, myKind]` to add one, or an
@@ -309,20 +247,14 @@ export declare interface Computer {
     currentTask?: string;
     lastResult?: ComputeRunResult;
     /**
-     * The project this box is charged to.
+     * What this box is working on — the repository or initiative its workspace
+     * was bootstrapped with, e.g. `Project A` or `acme/api`.
      *
-     * This is what makes a computer a cost centre rather than an anonymous
-     * charge against the account. It is also the single most useful field on a
-     * pane you are not looking at: a fleet named `computer-1..6` is unreadable,
-     * and the same fleet grouped by what each one is working on is a dashboard.
+     * The single most useful field on a pane you are not looking at. A fleet of
+     * boxes named `computer-1..6` is unreadable; the same fleet labelled by what
+     * each one is checked out against is a dashboard.
      */
-    projectId?: string;
-    /** Display name for `projectId`, denormalised so a row renders without a join. */
     project?: string;
-    /** Dollars charged to this box so far, across every run on it. */
-    spendUsd?: number;
-    /** Tokens consumed by this box so far. Tracked apart from dollars — see `ComputeProject`. */
-    tokensUsed?: number;
     /** Absolute path the workspace was cloned into, when the host knows it. */
     workspace?: string;
     /**
@@ -413,12 +345,6 @@ export declare function countDescendants(node: WorkspaceNode): number;
 export declare function countPanes(node: PaneNode): number;
 
 export declare function createComputeClient(options?: ComputeClientOptions): ComputeClient;
-
-export declare interface CreateComputerInput {
-    label?: string;
-    /** Project to charge this computer to. */
-    projectId?: string;
-}
 
 /** Cycle docked → grid → stack → floating, so one key reaches every layout. */
 export declare function cycleLayout(): void;
@@ -566,9 +492,6 @@ export declare const FLEET_STORAGE_KEY = "ui-components.computeFleet.v1";
 
 export declare function focusShell(id: string): void;
 
-/** `84.2k`, `1.3M` — a token count is scale, not an exact figure. */
-export declare function formatTokens(tokens: number): string;
-
 /**
  * Subsequence match, the thing every fuzzy finder actually does.
  *
@@ -626,7 +549,7 @@ export declare interface KeyBinding {
 /** Lab windows and their pane trees. */
 export declare const LAB_LAYOUT_STORAGE_KEY = "ui-components.computerLab.v1";
 
-export declare function LabChooser({ open, onClose, computers, panes, onJumpToPane, onRetarget, onOpenInSplit, projects, onSelectProject, }: LabChooserProps): JSX.Element | null;
+export declare function LabChooser({ open, onClose, computers, panes, onJumpToPane, onRetarget, onOpenInSplit, }: LabChooserProps): JSX.Element | null;
 
 export declare interface LabChooserProps {
     open: boolean;
@@ -639,13 +562,6 @@ export declare interface LabChooserProps {
     onRetarget: (computer: Computer) => void;
     /** Open in a new split — the "watch both" move. Bound to ⇧⏎. */
     onOpenInSplit: (computer: Computer) => void;
-    /**
-     * Projects, so the chooser answers "take me to that project's computers"
-     * and not only "take me to that box". Omit where there are none.
-     */
-    projects?: readonly ProjectRollup[];
-    /** Focus a project's first computer, or offer to make one if it has none. */
-    onSelectProject?: (project: ProjectRollup) => void;
 }
 
 export declare type LabCommand = 'focus-left' | 'focus-right' | 'focus-up' | 'focus-down' | 'split-right' | 'split-down' | 'close-pane' | 'zoom-pane' | 'next-kind' | 'jump' | 'toggle-broadcast' | 'focus-composer' | 'help' | 'exit';
@@ -954,34 +870,6 @@ export declare interface PaneTreeViewProps {
     className?: string;
 }
 
-/** A project with the live fleet folded in. */
-export declare interface ProjectRollup extends ComputeProject {
-    computers: Computer[];
-    /** Boxes currently doing something — running, or waiting on an answer. */
-    activeCount: number;
-    /**
-     * Milliseconds until the first of this project's boxes is reaped, or null
-     * when none of them report a deadline. The roll-up matters because "two
-     * computers, both gone within the hour" is a thing you want to see without
-     * opening either one.
-     */
-    soonestExpiryMs: number | null;
-    /** Dollars charged to this project's live boxes, where the host reports it. */
-    liveSpendUsd: number;
-    /** Tokens consumed by this project's live boxes. */
-    liveTokens: number;
-}
-
-export declare function ProjectSummary({ project, showMeter, className, 'data-testid': testId, }: ProjectSummaryProps): JSX.Element;
-
-export declare interface ProjectSummaryProps {
-    project: ProjectRollup;
-    /** Render the budget meter. Off in tight spaces like a rail row. */
-    showMeter?: boolean;
-    className?: string;
-    'data-testid'?: string;
-}
-
 /** How many panes in a window consume a given quota. */
 export declare function quotaUsage(registry: PaneKindRegistry, paneKindIds: readonly string[], quota: PaneQuota): number;
 
@@ -1008,14 +896,6 @@ export declare function reportShellStatus(id: string, status: ShellStatus, sawOu
 
 /** Look up a kind, falling back to the first registered one. */
 export declare function resolveKind(registry: PaneKindRegistry, id: string): PaneKind | null;
-
-/**
- * Join projects to the fleet.
- *
- * Separate from the hook so a surface that already has both can roll them up
- * without another subscription, and so the join is testable on plain data.
- */
-export declare function rollUpProjects(projects: readonly ComputeProject[], computers: readonly Computer[]): ProjectRollup[];
 
 export declare function selectShellByIndex(index: number): void;
 
@@ -1208,9 +1088,6 @@ declare type Tone = (typeof TONES)[number];
 
 declare const TONES: readonly ["neutral", "success", "warning", "danger", "info", "caution", "accent"];
 
-/** Boxes with no project are still real; they get a bucket rather than vanishing. */
-export declare const UNASSIGNED_PROJECT_ID = "__unassigned__";
-
 export declare function updateLeaf(root: PaneNode, paneId: string, patch: Partial<Omit<PaneLeaf, 'kind' | 'id'>>): PaneNode;
 
 export declare function useCompute(): ComputeContextValue;
@@ -1243,7 +1120,7 @@ export declare interface UseComputeFleetResult {
     isLoading: boolean;
     error: string | null;
     refresh: () => Promise<void>;
-    create: (input?: CreateComputerInput) => Promise<Computer>;
+    create: (label?: string) => Promise<Computer>;
     rename: (id: string, label: string) => Promise<void>;
     remove: (id: string) => Promise<void>;
     stop: (sessionId: string) => Promise<void>;
@@ -1251,28 +1128,6 @@ export declare interface UseComputeFleetResult {
 
 /** Non-throwing variant, for components that are optional inside the surface. */
 export declare function useComputeOptional(): ComputeContextValue | null;
-
-export declare function useComputeProjects({ client, projects: provided, pollIntervalMs, enabled, }: UseComputeProjectsOptions): UseComputeProjectsResult;
-
-export declare interface UseComputeProjectsOptions {
-    client: ComputeClient;
-    /** Host-supplied projects. Wins over the client. */
-    projects?: ComputeProject[];
-    /** Budgets move slowly; polling them at fleet cadence is waste. Default 60s. */
-    pollIntervalMs?: number;
-    enabled?: boolean;
-}
-
-export declare interface UseComputeProjectsResult {
-    projects: ComputeProject[];
-    /** Projects joined to the fleet, plus a synthetic bucket for unassigned boxes. */
-    rollups: ProjectRollup[];
-    /** True when the deployment has no projects at all — group by computer instead. */
-    absent: boolean;
-    isLoading: boolean;
-    error: string | null;
-    refresh: () => Promise<void>;
-}
 
 export declare function useComputeTail({ client, boxId, maxSteps, enabled, }: UseComputeTailOptions): UseComputeTailResult;
 
@@ -1351,9 +1206,6 @@ export declare interface UseLabLayoutResult {
     /** Drop panes bound to computers that no longer exist. */
     reconcile: (liveComputerIds: readonly string[]) => void;
 }
-
-/** Convenience: the rollup for one project id. */
-export declare function useProjectRollups(projects: readonly ComputeProject[], computers: readonly Computer[]): ProjectRollup[];
 
 /**
  * Flatten to the rows currently visible, so the tree can be a single
