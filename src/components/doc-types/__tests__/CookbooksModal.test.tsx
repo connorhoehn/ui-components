@@ -1,14 +1,25 @@
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import CookbooksModal from '../CookbooksModal';
 import type { DocumentType } from '../../../types/documentType';
+import type { SaveOutcome } from '../../../hooks/useDocumentTypes';
 
-function makeCreateType() {
-  return vi.fn((data: Omit<DocumentType, 'id' | 'createdAt' | 'updatedAt'>) => ({
+function makeType(data: Omit<DocumentType, 'id' | 'createdAt' | 'updatedAt'>): DocumentType {
+  return {
     ...data,
     id: 'new-type-id',
     createdAt: new Date(0).toISOString(),
     updatedAt: new Date(0).toISOString(),
-  }) as DocumentType);
+  } as DocumentType;
+}
+
+/** createType is async and fallible — see SaveOutcome. Default: server accepted. */
+function makeCreateType(outcome?: (t: DocumentType) => SaveOutcome) {
+  return vi.fn(
+    async (data: Omit<DocumentType, 'id' | 'createdAt' | 'updatedAt'>): Promise<SaveOutcome> => {
+      const type = makeType(data);
+      return outcome ? outcome(type) : { status: 'synced', type };
+    },
+  );
 }
 
 describe('CookbooksModal', () => {
@@ -40,7 +51,7 @@ describe('CookbooksModal', () => {
     expect(screen.getByTestId('cookbooks-empty')).toBeInTheDocument();
   });
 
-  it('invokes createType + onCreated and closes when a cookbook is installed', () => {
+  it('invokes createType + onCreated and closes when a cookbook is installed', async () => {
     const createType = makeCreateType();
     const onCreated = vi.fn();
     const onClose = vi.fn();
@@ -54,8 +65,53 @@ describe('CookbooksModal', () => {
     );
     fireEvent.click(screen.getByTestId('cookbook-use-meeting-notes'));
     expect(createType).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(onCreated).toHaveBeenCalledWith('new-type-id'));
     expect(onClose).toHaveBeenCalledTimes(1);
-    expect(onCreated).toHaveBeenCalledWith('new-type-id');
+  });
+
+  // The reason this modal had to change: createType became async AND fallible.
+  // A `rejected` outcome means the server saved NOTHING, so announcing a
+  // created type would name one that does not exist.
+  it('does NOT close or report creation when the server rejects', async () => {
+    const createType = makeCreateType(() => ({ status: 'rejected', error: 'name already taken' }));
+    const onCreated = vi.fn();
+    const onClose = vi.fn();
+    render(
+      <CookbooksModal open onClose={onClose} onCreated={onCreated} createType={createType} />,
+    );
+    fireEvent.click(screen.getByTestId('cookbook-use-meeting-notes'));
+
+    const err = await screen.findByTestId('cookbooks-save-error');
+    expect(err).toHaveTextContent('name already taken');
+    expect(onCreated).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  // 'offline' DID persist locally, so the type exists for this user and the
+  // caller should still proceed to the wizard.
+  it('treats an offline save as created', async () => {
+    const createType = makeCreateType((type) => ({ status: 'offline', type, error: 'unreachable' }));
+    const onCreated = vi.fn();
+    const onClose = vi.fn();
+    render(
+      <CookbooksModal open onClose={onClose} onCreated={onCreated} createType={createType} />,
+    );
+    fireEvent.click(screen.getByTestId('cookbook-use-meeting-notes'));
+    await waitFor(() => expect(onCreated).toHaveBeenCalledWith('new-type-id'));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('surfaces a thrown error instead of closing', async () => {
+    const createType = vi.fn(async () => { throw new Error('boom'); });
+    const onCreated = vi.fn();
+    const onClose = vi.fn();
+    render(
+      <CookbooksModal open onClose={onClose} onCreated={onCreated} createType={createType} />,
+    );
+    fireEvent.click(screen.getByTestId('cookbook-use-meeting-notes'));
+    expect(await screen.findByTestId('cookbooks-save-error')).toHaveTextContent('boom');
+    expect(onCreated).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
 

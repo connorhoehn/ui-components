@@ -634,6 +634,15 @@ declare interface DocumentType_2 {
     pages?: DocumentTypePage[];
     /** Phase 51 / hub#66 — page-level configuration. Only meaningful when pages.length > 1. */
     pageConfig?: DocumentTypePageConfig;
+    /**
+     * Remote-first (2026-08): the server row this type is stored under.
+     * Stamped on every server hydration and successful create. Its ABSENCE is
+     * what marks a type as genuinely local (pre-remote-era or created offline)
+     * and therefore eligible for the one-time upload migration — without it, a
+     * cache entry of a server-DELETED type is indistinguishable from a local
+     * type and gets resurrected onto the server forever.
+     */
+    serverTypeId?: string;
     createdAt: string;
     updatedAt: string;
 }

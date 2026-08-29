@@ -302,6 +302,16 @@ declare interface CustomFieldTypeDisplay {
     renderer?: string;
 }
 
+declare type DeleteOutcome = {
+    status: 'synced';
+} | {
+    status: 'offline';
+    error: string;
+} | {
+    status: 'rejected';
+    error: string;
+};
+
 declare interface DiagnosticsInfo {
     node: Record<string, unknown>;
     cluster: Record<string, unknown>;
@@ -393,6 +403,15 @@ declare interface DocumentType_2 {
     pages?: DocumentTypePage[];
     /** Phase 51 / hub#66 — page-level configuration. Only meaningful when pages.length > 1. */
     pageConfig?: DocumentTypePageConfig;
+    /**
+     * Remote-first (2026-08): the server row this type is stored under.
+     * Stamped on every server hydration and successful create. Its ABSENCE is
+     * what marks a type as genuinely local (pre-remote-era or created offline)
+     * and therefore eligible for the one-time upload migration — without it, a
+     * cache entry of a server-DELETED type is indistinguishable from a local
+     * type and gets resurrected onto the server forever.
+     */
+    serverTypeId?: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -837,6 +856,22 @@ declare interface RoomMemberItem {
     joinedAt: string;
 }
 
+declare type SaveOutcome = {
+    status: 'synced';
+    type: DocumentType_2;
+}
+/** Server unreachable / 5xx — saved to the local cache, NOT on the server. */
+| {
+    status: 'offline';
+    type: DocumentType_2;
+    error: string;
+}
+/** Server rejected the payload (4xx) — NOTHING was saved. */
+| {
+    status: 'rejected';
+    error: string;
+};
+
 declare interface Section {
     id: string;
     type: 'summary' | 'tasks' | 'decisions' | 'notes' | 'custom';
@@ -933,8 +968,6 @@ declare interface SyncConflict {
 
 declare type SyncConflictStatus = 'pending' | 'resolved' | 'discarded';
 
-declare type SyncOp = 'create' | 'update' | 'delete';
-
 declare interface SyncStats {
     /** Total files the adapter saw on the source. */
     filesFound: number;
@@ -948,17 +981,6 @@ declare interface SyncStats {
     errors: number;
     /** Sync duration in ms. */
     durationMs: number;
-}
-
-declare interface SyncStatus {
-    /** Operation that triggered the most recent sync. */
-    op: SyncOp;
-    /** Whether the server round-trip succeeded. */
-    ok: boolean;
-    /** Increases on every recorded sync so UI keys can react. */
-    key: number;
-    /** Optional error message for failed syncs. */
-    error?: string;
 }
 
 declare interface TaskAssignment {
@@ -1000,6 +1022,9 @@ declare interface TypedDocument {
 }
 
 declare type TypedDocumentValue = string | string[] | number | number[] | boolean;
+
+/** Where the currently rendered list came from. */
+declare type TypesSource = 'loading' | 'remote' | 'cache';
 
 declare interface UpdateClientInput {
     clientName?: string;
@@ -1385,18 +1410,24 @@ declare interface UseActivityBusReturn {
  export declare function useDocumentTypes(options?: UseDocumentTypesOptions): UseDocumentTypesReturn;
 
  declare interface UseDocumentTypesOptions {
-     /** Cognito ID token. When present, saves dual-write to the server. */
+     /** Cognito ID token. Attached to every server call when present. */
      idToken?: string | null;
  }
 
  declare interface UseDocumentTypesReturn {
      types: DocumentType_2[];
-     createType: (data: Omit<DocumentType_2, 'id' | 'createdAt' | 'updatedAt'>) => DocumentType_2;
-     updateType: (id: string, patch: Partial<Omit<DocumentType_2, 'id' | 'createdAt'>>) => void;
-     deleteType: (id: string) => void;
+     /** True while the initial server fetch (or a refresh) is in flight. */
+     loading: boolean;
+     /** 'remote' = list reflects the server; 'cache' = offline fallback. */
+     source: TypesSource;
+     /** Last fetch error (when source === 'cache'), else null. */
+     error: string | null;
+     /** Re-fetch from the server. */
+     refresh: () => Promise<void>;
+     createType: (data: Omit<DocumentType_2, 'id' | 'createdAt' | 'updatedAt'>) => Promise<SaveOutcome>;
+     updateType: (id: string, patch: Partial<Omit<DocumentType_2, 'id' | 'createdAt'>>) => Promise<SaveOutcome>;
+     deleteType: (id: string) => Promise<DeleteOutcome>;
      getType: (id: string) => DocumentType_2 | undefined;
-     /** Most recent server-sync outcome. null until the first sync attempt. */
-     lastSync: SyncStatus | null;
  }
 
  export declare function useEventCallback<A extends any[], R>(fn: ((...args: A) => R) | undefined): (...args: A) => R | undefined;

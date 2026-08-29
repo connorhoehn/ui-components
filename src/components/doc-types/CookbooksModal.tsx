@@ -17,12 +17,20 @@ import {
   type DocumentTypeCookbook,
 } from './cookbooks';
 import type { DocumentType } from '../../types/documentType';
+import type { SaveOutcome } from '../../hooks/useDocumentTypes';
 
 interface CookbooksModalProps {
   open: boolean;
   onClose: () => void;
   onCreated: (typeId: string) => void;
-  createType: (data: Omit<DocumentType, 'id' | 'createdAt' | 'updatedAt'>) => DocumentType;
+  /**
+   * Persists the picked cookbook. Async and fallible: `rejected` means the
+   * server refused the payload and NOTHING was saved, so the modal must not
+   * report success. `offline` did save locally, so it counts as created.
+   */
+  createType: (
+    data: Omit<DocumentType, 'id' | 'createdAt' | 'updatedAt'>,
+  ) => Promise<SaveOutcome>;
 }
 
 // ---------------------------------------------------------------------------
@@ -85,6 +93,8 @@ export default function CookbooksModal({
 }: CookbooksModalProps) {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<CookbookCategory | 'All'>('All');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -115,11 +125,27 @@ export default function CookbooksModal({
     return results;
   }, [search, activeCategory]);
 
-  const handlePick = (cookbook: DocumentTypeCookbook) => {
-    const data = cookbook.build();
-    const created = createType(data);
-    onClose();
-    onCreated(created.id);
+  const handlePick = async (cookbook: DocumentTypeCookbook) => {
+    if (saving) return; // a second click while in flight would create a duplicate
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const outcome = await createType(cookbook.build());
+      if (outcome.status === 'rejected') {
+        // Nothing was saved. Staying open with the reason beats closing and
+        // announcing a type that does not exist.
+        setSaveError(outcome.error);
+        return;
+      }
+      // 'offline' persisted to the local cache, so the type really does exist
+      // for this user and the caller should proceed to the wizard.
+      onClose();
+      onCreated(outcome.type.id);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -190,6 +216,16 @@ export default function CookbooksModal({
         onKeyDown={handleSearchKeyDown}
         className="mb-3.5"
       />
+
+      {saveError && (
+        <div
+          data-testid="cookbooks-save-error"
+          role="alert"
+          className="mb-3 rounded border border-danger-border bg-danger-bg px-3 py-2 text-[13px] text-danger-fg"
+        >
+          Couldn’t create that type: {saveError}
+        </div>
+      )}
 
       {filtered.length === 0 ? (
         <div

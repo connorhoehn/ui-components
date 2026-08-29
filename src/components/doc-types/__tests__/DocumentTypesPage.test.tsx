@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentType } from '../../../types/documentType';
 
@@ -96,9 +96,20 @@ function makeType(id: string, name: string): DocumentType {
 beforeEach(() => {
   mocks.hookReturn.types = [];
   mocks.hookReturn.lastSync = null;
-  mocks.hookReturn.createType.mockReset();
-  mocks.hookReturn.updateType.mockReset();
-  mocks.hookReturn.deleteType.mockReset();
+  // These three are async and return a discriminated outcome the page reads
+  // `.status` off. A bare mockReset() resolves undefined, which throws inside
+  // the page's own promise and shows up only as an unhandled rejection — so
+  // reset AND restore a default 'synced' outcome. Tests that care about
+  // offline/rejected override it locally.
+  mocks.hookReturn.createType.mockReset().mockResolvedValue({
+    status: 'synced',
+    type: makeType('t-new', 'New Type'),
+  });
+  mocks.hookReturn.updateType.mockReset().mockResolvedValue({
+    status: 'synced',
+    type: makeType('t1', 'Updated Type'),
+  });
+  mocks.hookReturn.deleteType.mockReset().mockResolvedValue({ status: 'synced' });
   mocks.hookReturn.getType.mockReset();
 });
 
@@ -150,31 +161,46 @@ describe('DocumentTypesPage — list + mode switching', () => {
 });
 
 describe('DocumentTypesPage — save banner', () => {
-  it('flashes a create banner and applies the synced suffix when lastSync updates', () => {
-    const { rerender } = render(<DocumentTypesPage />);
+  // The banner is now derived from the awaited outcome, not from a later
+  // `lastSync` render. That is deliberate: the old two-phase version claimed
+  // success first and appended "— synced"/"— offline" AFTER the fact, so it
+  // announced a save it did not yet know had happened.
+  it('states the create outcome once, in the same banner', async () => {
+    render(<DocumentTypesPage />);
     fireEvent.click(screen.getByTestId('create-type-btn'));
     fireEvent.click(screen.getByTestId('wizard-save'));
     expect(mocks.hookReturn.createType).toHaveBeenCalledTimes(1);
-    const banner = screen.getByTestId('save-message');
+    const banner = await screen.findByTestId('save-message');
     expect(banner.textContent).toContain('"Saved type" created');
-    expect(banner.textContent).not.toContain('synced');
-
-    mocks.hookReturn.lastSync = { op: 'create', ok: true, key: 1 };
-    rerender(<DocumentTypesPage />);
-    expect(screen.getByTestId('save-message').textContent).toContain('synced');
+    expect(banner.textContent).toContain('synced');
   });
 
-  it('updates an existing type via the wizard and surfaces the offline suffix', () => {
+  it('reports a rejected create as NOT saved and keeps the wizard open', async () => {
+    mocks.hookReturn.createType.mockResolvedValue({ status: 'rejected', error: 'duplicate name' });
+    render(<DocumentTypesPage />);
+    fireEvent.click(screen.getByTestId('create-type-btn'));
+    fireEvent.click(screen.getByTestId('wizard-save'));
+    const banner = await screen.findByTestId('save-message');
+    expect(banner.textContent).toContain('NOT saved');
+    expect(banner.textContent).toContain('duplicate name');
+    // Nothing was persisted, so the user's work must still be on screen.
+    expect(screen.getByTestId('wizard-mock')).toBeInTheDocument();
+  });
+
+  it('surfaces the offline suffix when the update only saved locally', async () => {
     mocks.hookReturn.types = [makeType('t1', 'Briefs')];
-    const { rerender } = render(<DocumentTypesPage />);
+    mocks.hookReturn.updateType.mockResolvedValue({
+      status: 'offline',
+      type: makeType('t1', 'Renamed type'),
+      error: 'server unreachable',
+    });
+    render(<DocumentTypesPage />);
     fireEvent.click(screen.getByTestId('edit-type-t1'));
     fireEvent.click(screen.getByTestId('wizard-save'));
     expect(mocks.hookReturn.updateType).toHaveBeenCalledWith('t1', expect.any(Object));
-    expect(screen.getByTestId('save-message').textContent).toContain('"Renamed type" updated');
-
-    mocks.hookReturn.lastSync = { op: 'update', ok: false, key: 2 };
-    rerender(<DocumentTypesPage />);
-    expect(screen.getByTestId('save-message').textContent).toContain('offline');
+    const banner = await screen.findByTestId('save-message');
+    expect(banner.textContent).toContain('updated');
+    expect(banner.textContent).toContain('offline');
   });
 });
 
@@ -189,7 +215,7 @@ describe('DocumentTypesPage — delete flow', () => {
     expect(mocks.hookReturn.deleteType).not.toHaveBeenCalled();
   });
 
-  it('confirm deletes via the hook and resets to idle when the active type was being edited', () => {
+  it('confirm deletes via the hook and resets to idle when the active type was being edited', async () => {
     mocks.hookReturn.types = [makeType('t1', 'Briefs')];
     render(<DocumentTypesPage />);
     fireEvent.click(screen.getByTestId('edit-type-t1'));
@@ -198,7 +224,8 @@ describe('DocumentTypesPage — delete flow', () => {
     fireEvent.click(screen.getByTestId('delete-type-t1'));
     fireEvent.click(screen.getByTestId('confirm-delete'));
     expect(mocks.hookReturn.deleteType).toHaveBeenCalledWith('t1');
-    expect(screen.queryByTestId('wizard-mock')).toBeNull();
+    // Reset-to-idle happens after the delete resolves.
+    await waitFor(() => expect(screen.queryByTestId('wizard-mock')).toBeNull());
     expect(screen.getByText('Select a type to edit')).toBeInTheDocument();
   });
 });

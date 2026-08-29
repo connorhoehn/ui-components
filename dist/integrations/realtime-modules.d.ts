@@ -132,8 +132,29 @@ declare interface ChatMessage {
     attachments?: ChatAttachment[];
 }
 
+declare interface ChatTransfer {
+    transferId: string;
+    /** Who is sending. Rendered so a recipient knows whose file this is. */
+    actor: string;
+    name: string;
+    size: number;
+    transferred: number;
+    phase: TransferPhase;
+    contentType?: string;
+    preview?: string;
+    error?: string;
+}
+
 declare interface ConnectionPillProps {
     state: ConnectionState;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette.
+     *
+     * A wrapper `className` cannot substitute: the label and dot colours come
+     * from the per-state map below, on children the caller never sees.
+     */
+    tone?: ConnectionPillTone;
     /** Dot-only rendering — no label text. Default false. */
     compact?: boolean;
     /** Render the text label next to the dot. Default true. Set false for dot-only. */
@@ -143,6 +164,9 @@ declare interface ConnectionPillProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** @see SurfaceTone — which colour family the pill paints in. */
+declare type ConnectionPillTone = SurfaceTone;
 
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -718,6 +742,19 @@ export declare interface RMUseFileUploadReturn {
     removeCompleted(): void;
 }
 
+/**
+ * The shape of `useFileUpload(channel)` from realtime-modules, restated
+ * structurally so this package keeps zero runtime dependency on it (the same
+ * convention the other Wrapped* components follow).
+ */
+declare interface RMUseFileUploadReturn_2 {
+    transfers: ChatTransfer[];
+    upload: (file: File, opts?: {
+        metadata?: Record<string, unknown>;
+    }) => Promise<unknown>;
+    cancelTransfer: (transferId: string) => void;
+}
+
 export declare interface RMUseHangoutRoomsReturn {
     rooms: RMRoom[];
     isLoading: boolean;
@@ -773,6 +810,11 @@ declare type RoomsIndexSubscriber_2 = NonNullable<HangoutRoomsSectionProps['occu
  *  server-side slug generation closely enough for a preview UI. */
 export declare function slugifyRoomName(input: string): string;
 
+/** Which colour family a primitive paints in. See the block comment above. */
+declare type SurfaceTone = 'surface' | 'code';
+
+declare type TransferPhase = 'started' | 'transferring' | 'verifying' | 'complete' | 'failed' | 'cancelled';
+
 export declare function WrappedActivityPanel({ activity, visibleCount, rotateMs, staggerMs, kindColors, className, }: WrappedActivityPanelProps): JSX.Element;
 
 export declare interface WrappedActivityPanelProps {
@@ -786,19 +828,40 @@ export declare interface WrappedActivityPanelProps {
     className?: string;
 }
 
-export declare function WrappedChatPanel({ chat, presence, disabled, typingUsers: typingUsersOverride, tone, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, presence, upload, currentActor, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
     chat: RMUseChatReturn;
     /** Optional presence hook return — used to derive typingUsers */
     presence?: RMUsePresenceReturn;
+    /**
+     * Return value of useFileUpload(channel). Supplying it enables drag-drop,
+     * paste and the paperclip, and renders every in-flight transfer in the
+     * channel — including other participants'. Omit it and the panel shows no
+     * attachment affordances at all.
+     */
+    upload?: RMUseFileUploadReturn_2;
+    /** Identifies the viewer so their own transfers get a cancel button. */
+    currentActor?: string;
+    /**
+     * Resolves an attachment to a renderable image src. The gateway's download
+     * route is bearer-authenticated, so an `<img>` pointed at the raw URL 401s;
+     * the host supplies an object URL (see useAttachmentSrc).
+     */
+    attachmentSrc?: (attachment: ChatAttachment) => string | undefined;
+    onOpenAttachment?: (attachment: ChatAttachment) => void;
+    acceptFiles?: string;
+    maxFileSize?: number;
+    onFileError?: (message: string) => void;
     /** Forwarded to ChatPanel */
     disabled?: boolean;
     /** Override typing banner (supersedes presence-derived list) */
     typingUsers?: string[];
     /** Forwarded to ChatPanel — 'dark' for call chrome surfaces. */
     tone?: 'light' | 'dark';
+    /** Forwarded to ChatPanel — fill the parent's height. */
+    fill?: boolean;
     /**
      * Opt-in: wrap the rendered ChatPanel in a NetworkErrorBoundary +
      * ReconnectingShim using the supplied connection state and retry

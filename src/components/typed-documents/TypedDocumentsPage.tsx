@@ -20,13 +20,24 @@ import {
 
 interface Props {
   idToken: string | null;
+  /**
+   * Origin the document-type and typed-document endpoints live behind.
+   *
+   * Defaults to the build's env, but a host that names its API something
+   * other than `VITE_SOCIAL_API_URL` had no way to say so and every request
+   * went to the page's own origin — which is why one host kept a forked copy
+   * of this whole page just to change one string.
+   */
+  baseUrl?: string;
 }
 
-function getBaseUrl(): string {
-  return (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
+function envBaseUrl(): string {
+  const env = (import.meta.env ?? {}) as Record<string, string | undefined>;
+  return env.VITE_SOCIAL_API_URL ?? env.VITE_PLATFORM_API_URL ?? '';
 }
 
-export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
+export function TypedDocumentsPage({ idToken, baseUrl }: Props): JSX.Element {
+  const getBaseUrl = (): string => baseUrl ?? envBaseUrl();
   const [types, setTypes] = useState<ApiDocumentType[]>([]);
   const [typesLoading, setTypesLoading] = useState(true);
   const [typesError, setTypesError] = useState<string | null>(null);
@@ -42,6 +53,11 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
     errors: Array<{ row: number; reason: string; rawRow?: Record<string, string> }>;
   } | null>(null);
   const [importFilename, setImportFilename] = useState<string | null>(null);
+  // A failed upload used to be an `alert()`: modal, unstyled, unreadable by
+  // the test suite, gone the moment it was dismissed, and it took the reason
+  // ("CSV exceeds 5MB limit") with it. It reports in place now, next to the
+  // control that started it, and survives long enough to be acted on.
+  const [importError, setImportError] = useState<string | null>(null);
 
   // The bulk-import response is `await res.json()` behind a cast, and omitting
   // `errors` on the happy path (`{"imported": 42, "failed": 0}`) is the single
@@ -94,6 +110,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
     if (!idToken || !selectedTypeId) return;
     setImporting(true);
     setImportResult(null);
+    setImportError(null);
     setImportFilename(file.name);
     try {
       const formData = new FormData();
@@ -118,7 +135,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
         refresh();
       }
     } catch (e) {
-      alert(`Import failed: ${(e as Error).message}`);
+      setImportError((e as Error).message);
     } finally {
       setImporting(false);
     }
@@ -324,6 +341,28 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                   </label>
                 </div>
               </div>
+              {importError && (
+                <div
+                  data-testid="import-error"
+                  role="alert"
+                  className={cn('mb-3 p-3 rounded-lg bg-danger-bg border border-danger-border')}
+                >
+                  <div className={cn('text-[13px] font-semibold text-danger-fg mb-1.5')}>
+                    Import failed
+                  </div>
+                  <div className={cn('text-xs text-text-primary')}>
+                    {importError}
+                  </div>
+                  <div className={cn('mt-2')}>
+                    <button
+                      onClick={() => setImportError(null)}
+                      className={cn('text-[11px] px-2 py-[3px] rounded bg-transparent border border-border-emphasis cursor-pointer font-[inherit]')}
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+              )}
               {importResult && (
                 <div
                   data-testid="import-result"

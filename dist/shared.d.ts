@@ -1,3 +1,4 @@
+import { AnchorHTMLAttributes } from 'react';
 import { ButtonHTMLAttributes } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
@@ -143,7 +144,9 @@ export declare interface BreadcrumbItem {
     onClick?: (e: React.MouseEvent) => void;
 }
 
-export declare function Breadcrumbs({ items, separator, maxItems, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
+export declare type BreadcrumbOverflow = 'ellipsis' | 'menu';
+
+export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
 
 export declare interface BreadcrumbsProps {
     items: BreadcrumbItem[];
@@ -151,23 +154,43 @@ export declare interface BreadcrumbsProps {
     separator?: ReactNode;
     /**
      * When set, truncate the middle of the list to fit this many visible items.
-     * The first and last are always shown; middle items collapse to "…".
+     * The first and last are always shown; middle items collapse per `overflow`.
      */
     maxItems?: number;
+    /**
+     * How the collapsed middle behaves. `ellipsis` (default) is inert text;
+     * `menu` opens the hidden crumbs as a list of real links.
+     */
+    overflow?: BreadcrumbOverflow;
+    /**
+     * Render nothing below this many crumbs. A two-level trail usually repeats
+     * what the nav rail already highlights, so shells that show breadcrumbs on
+     * every route can set `minItems={3}` and let shallow pages keep the row.
+     */
+    minItems?: number;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare function Button({ variant, size, disabled, fullWidth, children, type, className, ...rest }: ButtonProps): JSX.Element;
+export declare function Button({ variant, size, tone, disabled, fullWidth, children, type, className, ...rest }: ButtonProps): JSX.Element;
 
 export declare interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
     variant?: ButtonVariant;
     size?: ButtonSize;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette. Every bare `<button>` in a
+     * terminal or log surface is there because this prop did not exist.
+     */
+    tone?: ButtonTone;
     fullWidth?: boolean;
     children: ReactNode;
 }
 
 export declare type ButtonSize = 'sm' | 'md' | 'lg';
+
+/** @see SurfaceTone — which colour family the button paints in. */
+export declare type ButtonTone = SurfaceTone;
 
 export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
 
@@ -298,10 +321,24 @@ export declare interface ChatComposerProps {
     submitAriaLabel?: string;
 }
 
-export declare function Chip({ tone, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
+export declare function Chip({ tone, palette, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
+
+/**
+ * `tone` was already spoken for by the semantic scale, so the surface-family
+ * axis is `palette` here. Same idea as `TitledFrame`'s `tone`, different word
+ * only because renaming the seven-year-old `tone` prop would break every one
+ * of Chip's several hundred call sites.
+ */
+export declare type ChipPalette = SurfaceTone;
 
 export declare interface ChipProps {
     tone?: ChipTone;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette, for chips inside a log console,
+     * debugger or terminal pane.
+     */
+    palette?: ChipPalette;
     size?: 'sm' | 'xs';
     /** Solid fill (dark bg + white text) instead of soft tint. */
     solid?: boolean;
@@ -325,6 +362,25 @@ export declare interface ChipProps {
 
 /** @see Tone — the library-wide semantic tone scale. */
 export declare type ChipTone = ToneOrAlias;
+
+/**
+ * `TONE_SOFT` in the code family. One background for all tones — the code
+ * palette carries meaning in the foreground, the way syntax highlighting
+ * does; tinted backgrounds behind text this dark read as noise.
+ */
+export declare const CODE_TONE_SOFT: Record<Tone, string>;
+
+/**
+ * `TONE_SOLID` in the code family. Text is `code-bg` rather than white:
+ * these accents are pastels, and white on a pastel fails contrast.
+ */
+export declare const CODE_TONE_SOLID: Record<Tone, string>;
+
+/** `TONE_SOLID_BG` in the code family — swatches, dots, legend keys. */
+export declare const CODE_TONE_SOLID_BG: Record<Tone, string>;
+
+/** `TONE_TEXT` in the code family — labels and icons on an untinted surface. */
+export declare const CODE_TONE_TEXT: Record<Tone, string>;
 
 export declare function CodeBlock({ code, language, theme, copyButton, showLineNumbers, className, style, 'data-testid': testId, ariaLabel, }: CodeBlockProps): JSX.Element;
 
@@ -468,10 +524,18 @@ export declare interface ConfirmDialogProps {
     children?: React.ReactNode;
 }
 
-export declare function ConnectionPill({ state, compact, withLabel, labels, className, 'data-testid': testId, }: ConnectionPillProps): JSX.Element;
+export declare function ConnectionPill({ state, tone, compact, withLabel, labels, className, 'data-testid': testId, }: ConnectionPillProps): JSX.Element;
 
 export declare interface ConnectionPillProps {
     state: ConnectionState;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette.
+     *
+     * A wrapper `className` cannot substitute: the label and dot colours come
+     * from the per-state map below, on children the caller never sees.
+     */
+    tone?: ConnectionPillTone;
     /** Dot-only rendering — no label text. Default false. */
     compact?: boolean;
     /** Render the text label next to the dot. Default true. Set false for dot-only. */
@@ -481,6 +545,9 @@ export declare interface ConnectionPillProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** @see SurfaceTone — which colour family the pill paints in. */
+export declare type ConnectionPillTone = SurfaceTone;
 
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -647,7 +714,7 @@ export declare interface DropdownMenuSection {
     items: DropdownMenuItem[];
 }
 
-export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, }: EmptyStateProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateAction {
     /** Visible label on the action button or link. */
@@ -702,7 +769,22 @@ export declare interface EmptyStateProps {
      * Optional testid for the action button (defaults to "empty-state-action").
      */
     actionTestId?: string;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette.
+     */
+    tone?: EmptyStateTone;
+    /**
+     * Class for the container. Until now EmptyState took no class at all, so a
+     * caller could not even change its padding — which is why every dark or
+     * cramped surface hand-rolled its own placeholder instead. For a region too
+     * small for the 220px block, reach for `InlinePlaceholder`.
+     */
+    className?: string;
 }
+
+/** @see SurfaceTone — which colour family the empty state paints in. */
+export declare type EmptyStateTone = SurfaceTone;
 
 export declare function EntityCell({ label, id, href, mono, className, labelClassName, }: EntityCellProps): JSX.Element;
 
@@ -911,15 +993,26 @@ export declare function getEventCategory(type: string): 'lifecycle' | 'step' | '
  */
 export declare function getEventGlyph(type: string): EventGlyph;
 
-export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, size, className, ...rest }: IconButtonProps): JSX.Element;
+export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, tone, size, className, ...rest }: IconButtonProps): JSX.Element;
 
 export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
     'aria-label': string;
     icon?: ReactNode;
     children?: ReactNode;
-    variant?: 'ghost' | 'primary' | 'danger';
+    variant?: IconButtonVariant;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette — the close/split/kill controls
+     * that live in terminal pane chrome.
+     */
+    tone?: IconButtonTone;
     size?: 'sm' | 'md' | 'lg';
 }
+
+/** @see SurfaceTone — which colour family the button paints in. */
+export declare type IconButtonTone = SurfaceTone;
+
+export declare type IconButtonVariant = 'ghost' | 'primary' | 'danger';
 
 export declare function IconPicker({ value, onChange, curated, }: IconPickerProps): JSX.Element;
 
@@ -950,16 +1043,57 @@ export declare interface ImageLightboxProps {
     onNavigate?: (index: number) => void;
 }
 
-export declare function InlineAlert({ tone, children, onDismiss, className }: InlineAlertProps): default_2.JSX.Element;
+export declare function InlineAlert({ tone, palette, children, onDismiss, className }: InlineAlertProps): default_2.JSX.Element;
+
+/**
+ * `tone` already names the severity here, so the surface-family axis is
+ * `palette` — same split as Chip. See `SurfaceTone` in tones.ts.
+ */
+export declare type InlineAlertPalette = SurfaceTone;
 
 export declare interface InlineAlertProps {
     tone: InlineAlertTone;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette, for alerts inside a log console
+     * or debugger panel.
+     */
+    palette?: InlineAlertPalette;
     children: default_2.ReactNode;
     onDismiss?: () => void;
     className?: string;
 }
 
 export declare type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
+
+export declare function InlinePlaceholder({ children, action, size, align, tone, className, 'data-testid': testId, }: InlinePlaceholderProps): JSX.Element;
+
+export declare interface InlinePlaceholderProps {
+    /** The message. One short line — "nothing here", "no runs yet". */
+    children: ReactNode;
+    /**
+     * Optional control beside the message, e.g. a `<Button size="sm">` that
+     * creates the missing thing. Sits after the text, not below it.
+     */
+    action?: ReactNode;
+    /**
+     * `xs` (default) is the list/rail scale; `sm` is for a pane-sized region
+     * where the line is the only thing on screen.
+     */
+    size?: 'xs' | 'sm';
+    /**
+     * `start` (default) reads as a list row, which is what a rail section or a
+     * filtered result list wants. `center` is for a region the placeholder owns
+     * outright — an empty pane.
+     */
+    align?: 'start' | 'center';
+    tone?: InlinePlaceholderTone;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** @see SurfaceTone — which colour family the placeholder paints in. */
+export declare type InlinePlaceholderTone = SurfaceTone;
 
 export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, children, }: InlinePopoverProps): ReactPortal | null;
 
@@ -1161,6 +1295,100 @@ export declare interface ModalProps {
 export declare function nameToColor(name: string): string;
 
 export declare function nameToInitials(name: string): string;
+
+export declare function NavRail({ title, items, activeHref, match, titleAction, header, footer, width, storageKey, renderLink, tone, 'aria-label': ariaLabel, className, 'data-testid': testId, }: NavRailProps): JSX.Element;
+
+export declare interface NavRailItem {
+    /** Target path. Also the React key unless `id` is given. */
+    to?: string;
+    /** Renders as a button instead of a link. For in-page verbs (Halt, Reset). */
+    onClick?: () => void;
+    /** Required when an item has neither `to` nor a unique label. */
+    id?: string;
+    label: ReactNode;
+    /** Small right-aligned count — queue depth, unread, failures. */
+    badge?: ReactNode;
+    /** One dim line under the label. Say what the page is FOR, not what it is. */
+    hint?: string;
+    /** Leading glyph. */
+    icon?: ReactNode;
+    /** Section heading. Items sharing a group render under one collapsible head. */
+    group?: string;
+    disabled?: boolean;
+}
+
+/** How `activeHref` is matched against an item's `to`. */
+export declare type NavRailMatch = 'exact' | 'prefix';
+
+export declare interface NavRailProps {
+    /** Rail heading. Omit for a rail that needs no name (a single leaf list). */
+    title?: ReactNode;
+    items: NavRailItem[];
+    /** Current path. An item lights when it matches per `match`. */
+    activeHref?: string;
+    /**
+     * `prefix` (default) keeps a rail lit while you are anywhere beneath it —
+     * what an outer rail wants. `exact` is for the innermost rail, where two
+     * items share a prefix and both would otherwise light.
+     */
+    match?: NavRailMatch;
+    /** Element beside the title — a help "?" or a count. */
+    titleAction?: ReactNode;
+    /** Content above the items — a [+ New] button, a filter. */
+    header?: ReactNode;
+    /** Content pinned below the items — a status line, a collapse toggle. */
+    footer?: ReactNode;
+    /**
+     * Discrete widths, not a pixel number: a `style={{ width }}` here is an
+     * inline style on every rail in the app, and three sizes have covered every
+     * rail we have shipped. Use `className` for the genuine exception.
+     */
+    width?: 'narrow' | 'default' | 'wide';
+    /**
+     * Persist per-group collapsed state under this key. Omit and groups still
+     * collapse — they just forget on reload. Rails at different depths MUST use
+     * different keys or they share collapse state.
+     */
+    storageKey?: string;
+    /** Render links with a router's Link/NavLink. Defaults to a plain `<a>`. */
+    renderLink?: (item: NavRailItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    tone?: NavRailTone;
+    /** Names the nav landmark. Falls back to the title, then 'Navigation'. */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** One level of the stack. `id` keys the rail and seeds its storage key. */
+export declare interface NavRailSpec extends Omit<NavRailProps, 'storageKey'> {
+    id: string;
+}
+
+export declare function NavRailStack({ rails, activeHref, renderLink, tone, storageKey, children, className, 'data-testid': testId, }: NavRailStackProps): JSX.Element;
+
+export declare interface NavRailStackProps {
+    /**
+     * Outermost rail first. An empty array renders content full-bleed, which is
+     * the right answer for a leaf page that wants the width back — a rail with
+     * nothing in it is a dead 200px column, not a smaller rail.
+     */
+    rails: NavRailSpec[];
+    /** Applied to every rail that does not set its own. */
+    activeHref?: string;
+    /** Applied to every rail that does not set its own. */
+    renderLink?: NavRailProps['renderLink'];
+    /** Applied to every rail that does not set its own. */
+    tone?: NavRailTone;
+    /** Prefix for each rail's group-collapse persistence, suffixed by rail id. */
+    storageKey?: string;
+    /** The content region beside the rails. Usually a `WorkArea` or an Outlet. */
+    children?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** @see SurfaceTone — which colour family the rail paints in. */
+export declare type NavRailTone = SurfaceTone;
 
 export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
 
@@ -1420,7 +1648,7 @@ export declare interface ScoreBarGaugeProps {
     className?: string;
 }
 
-export declare function SearchInput({ value, onChange, placeholder, onClear, className, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): default_2.JSX.Element;
+export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): default_2.JSX.Element;
 
 export declare interface SearchInputProps {
     value: string;
@@ -1428,11 +1656,26 @@ export declare interface SearchInputProps {
     placeholder?: string;
     /** Called after the value is cleared via the clear button. */
     onClear?: () => void;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette.
+     *
+     * This prop exists because `className` lands on the WRAPPER — the input is
+     * a child, so no caller-supplied class could ever reach the field itself,
+     * and a SearchInput dropped into a dark panel stayed a white box.
+     */
+    tone?: SearchInputTone;
+    /** Class for the wrapper. Sizing and positioning; not the field's colours. */
     className?: string;
+    /** Class for the `<input>` itself — the one `className` cannot reach. */
+    inputClassName?: string;
     style?: default_2.CSSProperties;
     autoFocus?: boolean;
     'aria-label'?: string;
 }
+
+/** @see SurfaceTone — which colour family the field paints in. */
+export declare type SearchInputTone = SurfaceTone;
 
 export declare function SegmentedControl({ options, value, onChange, size, className, }: SegmentedControlProps): JSX.Element;
 
@@ -1703,6 +1946,9 @@ export declare interface SubNavLayoutProps {
      */
     children?: ReactNode;
 }
+
+/** Which colour family a primitive paints in. See the block comment above. */
+export declare type SurfaceTone = 'surface' | 'code';
 
 /**
  * Accessible on/off toggle. Renders as a `role="switch"` button so screen
@@ -1984,6 +2230,68 @@ export declare const TONES: readonly ["neutral", "success", "warning", "danger",
  */
 export declare function toneVar(tone: ToneOrAlias): string;
 
+export declare function Toolbar({ children, end, tone, size, sticky, bordered, className, 'aria-label': ariaLabel, 'data-testid': testId, }: ToolbarProps): JSX.Element;
+
+export declare function ToolbarGroup({ children, divided, tone, className, 'aria-label': ariaLabel, }: ToolbarGroupProps): JSX.Element;
+
+export declare interface ToolbarGroupProps {
+    children: ReactNode;
+    /**
+     * Draw a divider before the group. Cheaper than asking every caller to
+     * interleave `<ToolbarSeparator>` by hand, and it cannot end up orphaned at
+     * the start of a row when the group before it renders conditionally.
+     */
+    divided?: boolean;
+    tone?: ToolbarTone;
+    className?: string;
+    /** Names the group for screen readers, e.g. "Zoom". */
+    'aria-label'?: string;
+}
+
+/** Muted, non-interactive text in the row — "12 selected", "us-east-1". */
+export declare function ToolbarLabel({ children, tone, className }: ToolbarLabelProps): JSX.Element;
+
+export declare interface ToolbarLabelProps {
+    children: ReactNode;
+    tone?: ToolbarTone;
+    className?: string;
+}
+
+export declare interface ToolbarProps {
+    /** Start-aligned content. Wrap related controls in `<ToolbarGroup>`. */
+    children?: ReactNode;
+    /** Right-aligned content — the low-frequency verbs (refresh, overflow ⋯). */
+    end?: ReactNode;
+    tone?: ToolbarTone;
+    /** `sm` (default) is the shell scale; `md` is for a toolbar that owns a pane. */
+    size?: 'sm' | 'md';
+    /**
+     * Stick to the top of the scroll container. Off by default: a toolbar
+     * inside `WorkArea` is already outside the scrolling region, and stacking
+     * two sticky layers is how you get a row that hovers over its own header.
+     */
+    sticky?: boolean;
+    /** Bottom hairline separating the row from content. Default true. */
+    bordered?: boolean;
+    className?: string;
+    /**
+     * Names the toolbar for screen readers. Default 'Toolbar' — override it
+     * whenever a page shows more than one ("Canvas actions", "Run filters").
+     */
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
+export declare function ToolbarSeparator({ tone, className }: ToolbarSeparatorProps): JSX.Element;
+
+export declare interface ToolbarSeparatorProps {
+    tone?: ToolbarTone;
+    className?: string;
+}
+
+/** @see SurfaceTone — which colour family the toolbar paints in. */
+export declare type ToolbarTone = SurfaceTone;
+
 export declare interface ToolCall {
     id: string;
     name: string;
@@ -2152,5 +2460,28 @@ export declare function useToast(): ToastContextValue;
  * notification is simply skipped rather than crashing the subtree.
  */
 export declare function useToastOptional(): ToastContextValue | null;
+
+export declare function WorkArea({ breadcrumbs, toolbar, children, status, padded, tone, className, bodyClassName, 'data-testid': testId, }: WorkAreaProps): JSX.Element;
+
+export declare interface WorkAreaProps {
+    /** The trail row. Usually a `<Breadcrumbs>`; renders nothing when omitted. */
+    breadcrumbs?: ReactNode;
+    /** The action row. Usually a `<Toolbar>`. Sits below the trail. */
+    toolbar?: ReactNode;
+    /** Scrolling page content. */
+    children: ReactNode;
+    /** Pinned bottom row — counts, freshness, a connection pill. */
+    status?: ReactNode;
+    /** Comfortable padding around `children`. Off for canvases and nested rails. */
+    padded?: boolean;
+    tone?: WorkAreaTone;
+    className?: string;
+    /** Applied to the scrolling body, not the column. */
+    bodyClassName?: string;
+    'data-testid'?: string;
+}
+
+/** @see SurfaceTone — which colour family the work area paints in. */
+export declare type WorkAreaTone = SurfaceTone;
 
 export { }

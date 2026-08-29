@@ -6,7 +6,7 @@
 // State machine: idle → create → idle  |  idle → edit → idle
 // Delete flows through a confirmation modal.
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { cn } from '../../lib/cn';
 import { DocumentTypeWizard } from './DocumentTypeWizard';
 import { useDocumentTypes } from '../../hooks/useDocumentTypes';
@@ -135,22 +135,17 @@ function TypeListItem({
 // ---------------------------------------------------------------------------
 
 export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
-  const { types, createType, updateType, deleteType, lastSync } = useDocumentTypes({ idToken });
+  const { types, source, error, createType, updateType, deleteType } = useDocumentTypes({ idToken });
 
   const [mode, setMode] = useState<Mode>('idle');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [cookbooksOpen, setCookbooksOpen] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{ text: string; key: number; syncSuffix?: string } | null>(null);
-
-  useEffect(() => {
-    if (!lastSync || !saveMessage) return;
-    if (saveMessage.syncSuffix !== undefined) return;
-    if (lastSync.op === 'delete') return;
-    const suffix = lastSync.ok ? ' — synced' : ' — offline';
-    setSaveMessage((prev) => prev ? { ...prev, syncSuffix: suffix } : prev);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastSync?.key]);
+  // tone drives the banner styling: success, offline (amber) or failure (red).
+  // The old `syncSuffix` effect appended "— synced"/"— offline" AFTER the fact
+  // to a banner that had already claimed success; with a write-through hook the
+  // outcome is known before anything is said, so it is said once, correctly.
+  const [saveMessage, setSaveMessage] = useState<{ text: string; key: number; tone: 'success' | 'offline' | 'error' } | null>(null);
 
   const editingType = editingId ? types.find(t => t.id === editingId) : undefined;
 
@@ -170,14 +165,29 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
     setSaveMessage(null);
   };
 
-  const handleSave = (data: Omit<DocumentType, 'id' | 'createdAt' | 'updatedAt'>) => {
-    if (mode === 'edit' && editingId) {
-      updateType(editingId, data);
-      setSaveMessage({ text: `"${data.name}" updated`, key: Date.now() });
-    } else {
-      createType(data);
-      setSaveMessage({ text: `"${data.name}" created`, key: Date.now() });
+  // Write-through: server first. A rejected save (server 4xx) keeps the
+  // wizard OPEN with a red banner — nothing was saved, and pretending
+  // otherwise is exactly the lie that used to lose people's types.
+  const handleSave = async (data: Omit<DocumentType, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const verb = mode === 'edit' && editingId ? 'updated' : 'created';
+    const outcome = mode === 'edit' && editingId
+      ? await updateType(editingId, data)
+      : await createType(data);
+
+    if (outcome.status === 'rejected') {
+      setSaveMessage({
+        text: `"${data.name}" NOT saved — server rejected it (${outcome.error})`,
+        key: Date.now(),
+        tone: 'error',
+      });
+      return; // keep the wizard open; the user's work is not persisted anywhere
     }
+
+    setSaveMessage(
+      outcome.status === 'synced'
+        ? { text: `"${data.name}" ${verb} — synced`, key: Date.now(), tone: 'success' }
+        : { text: `"${data.name}" ${verb} — offline (saved locally, server unreachable)`, key: Date.now(), tone: 'offline' },
+    );
     setMode('idle');
     setEditingId(null);
   };
@@ -191,9 +201,19 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
     setConfirmDeleteId(id);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!confirmDeleteId) return;
-    deleteType(confirmDeleteId);
+    const doomed = types.find(t => t.id === confirmDeleteId);
+    const outcome = await deleteType(confirmDeleteId);
+    if (outcome.status === 'rejected') {
+      setSaveMessage({
+        text: `"${doomed?.name ?? confirmDeleteId}" NOT deleted — server rejected it (${outcome.error})`,
+        key: Date.now(),
+        tone: 'error',
+      });
+      setConfirmDeleteId(null);
+      return;
+    }
     if (editingId === confirmDeleteId) {
       setMode('idle');
       setEditingId(null);
@@ -272,14 +292,29 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
           )}
         </div>
 
+        {/* Offline notice — the list above is the cached copy, not the server's */}
+        {source === 'cache' && (
+          <div
+            data-testid="types-offline-notice"
+            className="py-2 px-3.5 border-t border-warning-border bg-warning-bg text-xs text-warning-fg font-medium"
+          >
+            ⚠ Offline — showing cached types ({error ?? 'server unreachable'})
+          </div>
+        )}
+
         {/* Save feedback banner */}
         {saveMessage && (
           <div
             key={saveMessage.key}
             data-testid="save-message"
-            className="py-2 px-3.5 border-t border-success-border bg-success-bg text-xs text-success-fg font-medium"
+            className={cn(
+              'py-2 px-3.5 border-t text-xs font-medium',
+              saveMessage.tone === 'success' && 'border-success-border bg-success-bg text-success-fg',
+              saveMessage.tone === 'offline' && 'border-warning-border bg-warning-bg text-warning-fg',
+              saveMessage.tone === 'error' && 'border-danger-border bg-danger-bg text-danger-fg',
+            )}
           >
-            ✓ {saveMessage.text}{saveMessage.syncSuffix ?? ''}
+            {saveMessage.tone === 'error' ? '✗' : '✓'} {saveMessage.text}
           </div>
         )}
       </div>
