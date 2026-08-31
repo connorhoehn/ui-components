@@ -24,6 +24,7 @@ import { useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import Chip from '../shared/Chip';
+import { Input } from '../forms/Input';
 
 /** How much the capture path trusted its own choice of target. */
 export type ProposalConfidence = 'high' | 'medium' | 'low';
@@ -322,11 +323,11 @@ export function ProposalCard({
           <label className="text-[11px] text-text-tertiary" htmlFor={`${testId}-reason`}>
             Why? (optional — helps the next draft)
           </label>
-          <input
+          <Input
             id={`${testId}-reason`}
+            size="sm"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            className="rounded border border-border bg-surface-inset px-2 py-1 text-xs text-text-primary"
             data-testid={`${testId}-reason`}
           />
           <div className="flex gap-2">

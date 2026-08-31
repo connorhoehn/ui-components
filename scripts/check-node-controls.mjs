@@ -74,6 +74,13 @@ const BASELINE = {
   'shared/DataTable.tsx': 1, // built-in search field
   'shared/FileUploadDrop.tsx': 1, // invisible file input behind the drop zone
 
+  // ---- social/
+  // Hidden <input type="file"> driven by the composer's paperclip button —
+  // aria-hidden, tabIndex={-1}, `className="hidden"`. Same shape as
+  // FileUploadDrop's, directly above: a file picker has no stylable
+  // surface, so the affordance is the button and the input is plumbing.
+  'social/ChatPanel.tsx': 1,
+
   // ---- identity/
   'identity/shared/CodeInput.tsx': 1, // OTP digit boxes — the primitive itself
   'identity/auth/LoginPage.tsx': 1, // <input type="hidden"> — not a control

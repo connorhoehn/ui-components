@@ -115,3 +115,4 @@ demo/src/demos/ingest-dashboard/IngestActivityLog.tsx  # per-entry accent color 
 demo/src/demos/node-editor-live/index.tsx        # node x/y positions and computed SVG canvas size
 demo/src/demos/observability-shell/index.tsx     # bar heights from live metric values
 src/components/compute/components/PaneTreeView.tsx  # split ratio -> flex-basis percentage; the pane geometry IS the state
+src/components/social/ChatAttachment.tsx  # upload progress bar width — a percentage of transferred bytes

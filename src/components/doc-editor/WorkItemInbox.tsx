@@ -19,6 +19,7 @@ import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import Chip from '../shared/Chip';
 import EmptyState from '../shared/EmptyState';
+import { Select } from '../forms/Select';
 
 export interface WorkItemCandidate {
   sectionId: string;
@@ -120,19 +121,16 @@ function EntryRow({
           <span className="text-[11px] uppercase tracking-wide text-text-tertiary">
             Or file it under
           </span>
-          <select
+          <Select
+            size="sm"
             defaultValue=""
+            placeholder="Choose a section…"
+            options={rest.map((s) => ({ value: s.id, label: s.title || s.id }))}
             onChange={(e) => {
               if (e.target.value) onAttach(entry.itemId, e.target.value);
             }}
-            className="rounded border border-border bg-surface-inset px-2 py-1 text-xs text-text-primary"
             data-testid={`${testId}-select`}
-          >
-            <option value="">Choose a section…</option>
-            {rest.map((s) => (
-              <option key={s.id} value={s.id}>{s.title || s.id}</option>
-            ))}
-          </select>
+          />
         </label>
       )}
 
