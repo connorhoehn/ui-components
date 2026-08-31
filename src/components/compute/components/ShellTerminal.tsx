@@ -35,6 +35,22 @@ import type { ShellStatus } from '../types';
 
 type Phase = 'idle' | 'connecting' | 'live' | 'detached' | 'closed' | 'error';
 
+/**
+ * Close a socket without letting it call back.
+ *
+ * A closing socket can still dispatch frames that were already in its queue,
+ * so dropping the handlers first is what stops output arriving for a terminal
+ * that has moved on — or, on unmount, been disposed.
+ */
+function detachSocket(ws: WebSocket | null): void {
+  if (!ws) return;
+  ws.onopen = null;
+  ws.onmessage = null;
+  ws.onclose = null;
+  ws.onerror = null;
+  ws.close();
+}
+
 export interface ShellTerminalHandle {
   /** Type into the PTY as if the operator had. Used by broadcast input. */
   send: (text: string) => boolean;
@@ -162,6 +178,21 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
       return;
     }
     if (disposedRef.current) return;
+
+    // Whatever socket was here before must go before a new one opens.
+    // `connect()` is reachable from four places — the header button, the
+    // autoConnect effect, the imperative handle and the reconnect ladder —
+    // and it awaits a URL mint in the middle, so two calls can be in flight
+    // at once. Overwriting `wsRef` without this left the first socket OPEN
+    // and unreferenced: still writing its output into the terminal the
+    // second one now owns, and still holding one of the ten shell slots the
+    // runtime allows, for as long as the pane lived.
+    //
+    // Detach the handlers before closing. `onclose` would otherwise run the
+    // reconnect ladder for a socket we are deliberately discarding, which
+    // would immediately race the connect that replaced it.
+    detachSocket(wsRef.current);
+    wsRef.current = null;
 
     const ws = new WebSocket(url);
     ws.binaryType = 'arraybuffer';
@@ -322,8 +353,10 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
       onData.dispose();
       onResize.dispose();
       // Closing the socket detaches; deliberately no 0xff, so the shell
-      // survives for the next attach.
-      wsRef.current?.close();
+      // survives for the next attach. Handlers come off first — `term` is
+      // about to be disposed and a queued frame would write into it.
+      detachSocket(wsRef.current);
+      wsRef.current = null;
       term.dispose();
       termRef.current = null;
     };
@@ -416,9 +449,13 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
             <button
               type="button"
               onClick={() => void connect()}
-              className="text-[10px] px-2 py-0.5 rounded border border-code-border text-code-green hover:bg-code-panel cursor-pointer bg-transparent"
+              // Armed only when there is nothing in flight. The strip below
+              // already hides itself while connecting; this header did not,
+              // so the button stayed clickable through the URL mint.
+              disabled={phase === 'connecting'}
+              className="text-[10px] px-2 py-0.5 rounded border border-code-border text-code-green hover:bg-code-panel cursor-pointer bg-transparent disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {phase === 'detached' || phase === 'closed' ? 'reattach' : 'connect'}
+              {phase === 'connecting' ? 'connecting' : phase === 'detached' || phase === 'closed' ? 'reattach' : 'connect'}
             </button>
           )}
         </div>

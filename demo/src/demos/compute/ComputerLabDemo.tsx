@@ -59,11 +59,16 @@ function createDemoClient(): ComputeClient {
       return fleet;
     },
 
-    createComputer: async (label) => {
+    // `createComputer` takes an input object, not a bare label — the runtime
+    // needs a project to charge the box to. Carry `projectId` through even
+    // though this demo has no project rail: a fixture that drops a field is
+    // how the surface stops matching the client it is standing in for.
+    createComputer: async (input) => {
       minted += 1;
       const box: Computer = {
         id: `demo-new-${minted}`,
-        label: label ?? `demo-new-${minted}`,
+        label: input?.label ?? `demo-new-${minted}`,
+        projectId: input?.projectId,
         // Sessions are ≥33 chars for real; the fixtures match so short-id
         // bugs cannot hide behind demo data.
         sessionId: `demo-session-new-${minted}-000000000000000000`.slice(0, 40),

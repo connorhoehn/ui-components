@@ -6,6 +6,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.117.1] — 2026-08-31
+
+### Fixed — `/compute`
+
+- **`ShellTerminal` owned more than one socket.** `connect()` is reachable
+  from four places — the header button, the `autoConnect` effect, the
+  imperative handle and the reconnect ladder — and it awaits a URL mint in
+  the middle, so two calls overlap easily. The second simply overwrote
+  `wsRef`: the first socket stayed OPEN and unreferenced, still writing its
+  output into the terminal the second one now owned, and still holding one of
+  the ten shell slots the runtime allows, for as long as the pane lived. A
+  connect now closes any previous socket first, with its handlers detached so
+  the discarded socket's `onclose` cannot re-enter the reconnect ladder.
+- **Frames could reach a disposed terminal.** Unmount closed the socket but
+  left `onmessage` attached, and a closing socket still dispatches whatever
+  was already queued — into a terminal `dispose()` had just torn down. The
+  unmount path now goes through the same handler-detaching teardown.
+- **The header `connect` button stayed armed while connecting.** The
+  chrome-less strip already hid itself during a mint; the header did not, so
+  every extra click across the await opened another socket. It now disables
+  and reads `connecting`.
+
+### Fixed — demo
+
+- `ComputerLabDemo`'s fixture client still took `createComputer(label: string)`
+  after 089e51a widened the real client to `createComputer(input?:
+  CreateComputerInput)` for project cost centres. `npm run lint` had been red
+  on main since; the fixture now takes the input object and carries
+  `projectId` through.
+
+### Internal
+
+- `ShellTerminal` gains its first test file (5 tests) — socket ownership
+  across overlapping connects, discarded-socket silence, no reconnect from a
+  deliberate replacement, and unmount teardown. Tests 5,570 → 5,575.
+
+---
+
 ## 2.116.0 — 2026-08-26
 
 ### Added — collaborative diagramming (`./diagram` subpath)
