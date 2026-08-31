@@ -47,6 +47,22 @@ export interface TiptapEditorProps {
   /** Merge-safe awareness updater for cursor display info (name + color).
    *  When provided, replaces the direct setLocalStateField write. */
   onUpdateCursorInfo?: (name: string, color: string) => void;
+  /**
+   * Extra Tiptap extensions appended to the built-in set.
+   *
+   * The canvas needs this: its macros (`action-item`, `decision`, `field`) are
+   * real ProseMirror nodes with node views, so without registering them the
+   * schema has no `macro` node and every macro in the document degrades to
+   * plain text — silently, and on the next save that lossy text is what gets
+   * written back. Appended rather than replacing, so a caller cannot
+   * accidentally drop Collaboration and turn a shared document into a local
+   * one.
+   *
+   * Pass a STABLE array (module const or useMemo). The editor is rebuilt when
+   * this identity changes, and a fresh array literal every render remounts the
+   * editor on every keystroke.
+   */
+  extensions?: readonly unknown[];
 }
 
 // ---------------------------------------------------------------------------
@@ -205,6 +221,7 @@ export default function TiptapEditor({
   placeholder: placeholderText = 'Start typing...',
   sectionId,
   onUpdateCursorInfo,
+  extensions: extraExtensions,
 }: TiptapEditorProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const extensions = useMemo(() => [
@@ -213,8 +230,11 @@ export default function TiptapEditor({
     TaskItem.configure({ nested: true }),
     Placeholder.configure({ placeholder: placeholderText }),
     Collaboration.configure({ document: ydoc, fragment }),
+    // Appended last so a caller's extension can override a built-in's keymap
+    // without being able to remove Collaboration.
+    ...((extraExtensions ?? []) as any[]),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  ], [ydoc, fragment]);
+  ], [ydoc, fragment, extraExtensions]);
 
   const editor = useEditor({
     extensions,

@@ -1,5 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { c as t, u as n } from "./tones-C9hh8KQ3.js";
+import { d as t, l as n } from "./Chip-YhQI5B9P.js";
 import { t as r } from "./EmptyState-ClmWoqCb.js";
 import { t as i } from "./Avatar-Yxs_9Jio.js";
 import { t as a } from "./StatusDot-Bgx2zxgC.js";
@@ -372,19 +372,19 @@ function D(e) {
 }
 function O({ variant: r, value: i, color: a = "accent", "aria-label": o, className: s, "data-testid": c }) {
 	if (r === "count") {
-		let n = D(i);
+		let t = D(i);
 		return /* @__PURE__ */ u("span", {
 			"data-testid": c,
-			"aria-label": o ?? `${n} items`,
-			className: e("inline-flex items-center justify-center min-w-[18px] h-[18px]", "px-1.5 rounded-full text-[10px] font-semibold leading-none select-none", t[E[a]], s),
-			children: n
+			"aria-label": o ?? `${t} items`,
+			className: e("inline-flex items-center justify-center min-w-[18px] h-[18px]", "px-1.5 rounded-full text-[10px] font-semibold leading-none select-none", n[E[a]], s),
+			children: t
 		});
 	}
 	return r === "dot" ? /* @__PURE__ */ u("span", {
 		"data-testid": c,
 		"aria-label": o,
 		role: o ? "img" : void 0,
-		className: e("inline-block w-2 h-2 rounded-full shrink-0", n[E[a]], s)
+		className: e("inline-block w-2 h-2 rounded-full shrink-0", t[E[a]], s)
 	}) : /* @__PURE__ */ d("span", {
 		"data-testid": c,
 		"aria-label": o,
@@ -392,10 +392,10 @@ function O({ variant: r, value: i, color: a = "accent", "aria-label": o, classNa
 		className: e("relative inline-flex w-2.5 h-2.5 shrink-0", s),
 		children: [/* @__PURE__ */ u("span", {
 			"aria-hidden": "true",
-			className: e("absolute inset-0 rounded-full animate-ping", e(n[E[a]], "opacity-60"))
+			className: e("absolute inset-0 rounded-full animate-ping", e(t[E[a]], "opacity-60"))
 		}), /* @__PURE__ */ u("span", {
 			"aria-hidden": "true",
-			className: e("relative inline-block w-2.5 h-2.5 rounded-full", n[E[a]])
+			className: e("relative inline-block w-2.5 h-2.5 rounded-full", t[E[a]])
 		})]
 	});
 }

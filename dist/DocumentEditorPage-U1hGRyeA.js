@@ -8,7 +8,8 @@ import { t as m } from "./useEventCallback-Cwx9QVSi.js";
 import { t as h } from "./Input-DLknWXri.js";
 import { t as g } from "./activationKey-CjbL3LUv.js";
 import { t as _ } from "./Textarea-Dz4doxTv.js";
-import { i as v, o as y, t as b } from "./renderers-CzmtsIME.js";
+import { i as v, t as y } from "./renderers-BjFa5hDF.js";
+import { t as b } from "./TiptapEditor-BQYsBaf7.js";
 import { t as x } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as S } from "./useActiveSpeaker-Dc9r75EE.js";
 import { forwardRef as C, useCallback as w, useEffect as T, useImperativeHandle as E, useMemo as D, useRef as O, useState as k } from "react";
@@ -1419,11 +1420,11 @@ function Pe(e, t) {
 	let n = e.replace("#", ""), r = parseInt(n, 16), i = Math.max(0, (r >> 16 & 255) * (1 - t)), a = Math.max(0, (r >> 8 & 255) * (1 - t)), o = Math.max(0, (r & 255) * (1 - t));
 	return `rgb(${Math.round(i)}, ${Math.round(a)}, ${Math.round(o)})`;
 }
-function Fe({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: o, onUpdateSection: s, onAddItem: c, onUpdateItem: l, onRemoveItem: u, participants: d, onFocus: f, isFocused: m, comments: g, onUpdateCursorInfo: _, commentCount: v = 0, onOpenComments: x, commentPresence: S }) {
+function Fe({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: o, onUpdateSection: s, onAddItem: c, onUpdateItem: l, onRemoveItem: u, participants: d, onFocus: f, isFocused: m, comments: g, onUpdateCursorInfo: _, commentCount: b = 0, onOpenComments: x, commentPresence: S }) {
 	let [C, w] = k(e.collapsed), T = () => {
 		let e = !C;
 		w(e), s({ collapsed: e });
-	}, E = t(e.sectionType ?? e.type, "editor") ?? b, D = d && d.length > 0, O = D ? d[0].color || "#3b82f6" : "transparent", [A, ee] = k(!1);
+	}, E = t(e.sectionType ?? e.type, "editor") ?? y, D = d && d.length > 0, O = D ? d[0].color || "#3b82f6" : "transparent", [A, ee] = k(!1);
 	return /* @__PURE__ */ M("div", {
 		id: `section-${e.id}`,
 		"data-testid": `section-block-${e.id}`,
@@ -1449,9 +1450,9 @@ function Fe({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 						className: p("pointer-events-none"),
 						children: "💬"
 					}),
-					v > 0 && /* @__PURE__ */ j("span", {
+					b > 0 && /* @__PURE__ */ j("span", {
 						className: p("absolute -top-1 -right-1 min-w-[16px] h-4 rounded-lg bg-info text-white text-[10px] font-bold flex items-center justify-center px-1 leading-none"),
-						children: v
+						children: b
 					}),
 					S && S.length > 0 && /* @__PURE__ */ j("span", {
 						className: p("absolute -left-1 top-1/2 -translate-y-1/2 flex flex-col gap-0.5"),
@@ -1499,7 +1500,7 @@ function Fe({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 			}),
 			!C && /* @__PURE__ */ j("div", {
 				className: p("p-3.5"),
-				children: /* @__PURE__ */ j(y, {
+				children: /* @__PURE__ */ j(v, {
 					name: `section:${e.id}`,
 					children: /* @__PURE__ */ j(E, {
 						section: e,
@@ -1516,7 +1517,7 @@ function Fe({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 						participants: d,
 						onUpdateCursorInfo: _,
 						comments: g,
-						commentCount: v,
+						commentCount: b,
 						onOpenComments: x
 					})
 				})
@@ -2237,7 +2238,7 @@ function et({ sections: e, participants: t, userId: n, getSectionFragment: r, yd
 		};
 		t.statuses.push(e.status), _.set(e.userId, t);
 	}
-	let y = e.length > 0 ? Math.round(g / e.length * 100) : 0;
+	let v = e.length > 0 ? Math.round(g / e.length * 100) : 0;
 	return e.length === 0 ? /* @__PURE__ */ j("div", {
 		className: p("text-center p-12 text-text-secondary text-[15px]"),
 		children: "No sections to review."
@@ -2260,25 +2261,25 @@ function et({ sections: e, participants: t, userId: n, getSectionFragment: r, yd
 						]
 					}), /* @__PURE__ */ M("span", {
 						"data-testid": "review-progress-pct",
-						children: [y, "%"]
+						children: [v, "%"]
 					})]
 				}), /* @__PURE__ */ j("div", {
 					className: p("h-2 bg-surface-emphasis rounded overflow-hidden"),
 					children: /* @__PURE__ */ j("div", {
 						className: p("h-full rounded transition-[width] duration-300 ease-in-out", g === e.length ? "bg-success" : "bg-info"),
-						style: { width: `${y}%` }
+						style: { width: `${v}%` }
 					})
 				})]
 			}),
 			/* @__PURE__ */ j("div", {
 				className: p("flex flex-col gap-6"),
 				children: e.map((e) => {
-					let g = r(e.id), _ = Qe[e.type] ?? Qe.custom, y = o[e.id] ?? [], b = y.find((e) => e.userId === n), x = y.filter((e) => e.userId !== n), S = t.filter((t) => t.currentSectionId === e.id), C = m[e.id] ?? !1;
+					let g = r(e.id), _ = Qe[e.type] ?? Qe.custom, v = o[e.id] ?? [], y = v.find((e) => e.userId === n), x = v.filter((e) => e.userId !== n), S = t.filter((t) => t.currentSectionId === e.id), C = m[e.id] ?? !1;
 					return /* @__PURE__ */ M("div", {
 						id: `section-${e.id}`,
 						"data-testid": `review-section-${e.id}`,
 						className: p("bg-surface border border-border rounded-lg p-5"),
-						style: { borderLeft: b ? `3px solid ${Z(b.status).color}` : "3px solid #d1d5db" },
+						style: { borderLeft: y ? `3px solid ${Z(y.status).color}` : "3px solid #d1d5db" },
 						onMouseEnter: () => f?.(e.id),
 						children: [
 							/* @__PURE__ */ M("div", {
@@ -2297,7 +2298,7 @@ function et({ sections: e, participants: t, userId: n, getSectionFragment: r, yd
 							}),
 							g && /* @__PURE__ */ j("div", {
 								className: p(e.items.length > 0 ? "mb-4" : "mb-2"),
-								children: /* @__PURE__ */ j(v, {
+								children: /* @__PURE__ */ j(b, {
 									fragment: g,
 									ydoc: i,
 									provider: a,
@@ -2353,7 +2354,7 @@ function et({ sections: e, participants: t, userId: n, getSectionFragment: r, yd
 							/* @__PURE__ */ M("div", {
 								className: p("flex items-center gap-2 pt-2.5 pb-1 border-t border-border-subtle flex-wrap"),
 								children: [
-									!b || C ? /* @__PURE__ */ M(A, { children: [
+									!y || C ? /* @__PURE__ */ M(A, { children: [
 										/* @__PURE__ */ j(tt, {
 											testid: `section-${e.id}-review-reviewed`,
 											label: "Mark Reviewed",
@@ -2405,20 +2406,20 @@ function et({ sections: e, participants: t, userId: n, getSectionFragment: r, yd
 									] }) : /* @__PURE__ */ M(A, { children: [
 										/* @__PURE__ */ M("span", {
 											"data-testid": `section-${e.id}-status`,
-											"data-status": b.status,
+											"data-status": y.status,
 											className: p("inline-flex items-center gap-1 text-[13px] font-semibold py-1 px-2.5 rounded-md"),
 											style: {
-												background: Z(b.status).bg,
-												color: Z(b.status).color
+												background: Z(y.status).bg,
+												color: Z(y.status).color
 											},
 											children: [/* @__PURE__ */ j("span", {
 												className: p("text-sm"),
-												children: Z(b.status).icon
-											}), Z(b.status).label]
+												children: Z(y.status).icon
+											}), Z(y.status).label]
 										}),
 										/* @__PURE__ */ M("span", {
 											className: p("text-xs text-text-secondary"),
-											children: ["by you · ", new Date(b.timestamp).toLocaleString(void 0, {
+											children: ["by you · ", new Date(y.timestamp).toLocaleString(void 0, {
 												month: "short",
 												day: "numeric",
 												hour: "2-digit",
@@ -2631,7 +2632,7 @@ function st({ bullets: e, contentText: t, fragment: n, ydoc: r, provider: i }) {
 			}),
 			a ? /* @__PURE__ */ j("div", {
 				className: p("py-1 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-accent", e.length > 0 ? "mb-3" : ""),
-				children: /* @__PURE__ */ j(v, {
+				children: /* @__PURE__ */ j(b, {
 					fragment: n,
 					ydoc: r,
 					provider: i ?? null,
@@ -2843,7 +2844,7 @@ function mt({ sections: e, commentCounts: t, sectionContentTexts: n, comments: r
 		}) : /* @__PURE__ */ j("div", {
 			className: p("flex flex-col gap-0.5"),
 			children: e.map((e) => {
-				let c = e.items.filter((e) => e.status === "acked" || e.status === "done").length, d = e.items.length, f = t?.[e.id] ?? 0, m = n?.[e.id] ?? "", h = r?.[e.id] ?? [], g = !!s[e.id], _ = m.trim().length > 0, y = u[e.type] ?? u.custom;
+				let c = e.items.filter((e) => e.status === "acked" || e.status === "done").length, d = e.items.length, f = t?.[e.id] ?? 0, m = n?.[e.id] ?? "", h = r?.[e.id] ?? [], g = !!s[e.id], _ = m.trim().length > 0, v = u[e.type] ?? u.custom;
 				return /* @__PURE__ */ M("div", {
 					id: `section-${e.id}`,
 					"data-testid": `reader-section-${e.id}`,
@@ -2862,8 +2863,8 @@ function mt({ sections: e, commentCounts: t, sectionContentTexts: n, comments: r
 							/* @__PURE__ */ j("span", {
 								className: p("text-[10px] font-semibold px-2 py-px rounded-full capitalize shrink-0"),
 								style: {
-									background: y.bg,
-									color: y.text
+									background: v.bg,
+									color: v.text
 								},
 								children: e.type
 							}),
@@ -2892,7 +2893,7 @@ function mt({ sections: e, commentCounts: t, sectionContentTexts: n, comments: r
 								let t = i?.(e.id);
 								return t && a ? /* @__PURE__ */ j("div", {
 									className: p("py-1 px-2.5 bg-surface-panel rounded border-l-2 border-l-border-emphasis", e.items.length > 0 ? "mb-2" : ""),
-									children: /* @__PURE__ */ j(v, {
+									children: /* @__PURE__ */ j(b, {
 										fragment: t,
 										ydoc: a,
 										provider: o ?? null,

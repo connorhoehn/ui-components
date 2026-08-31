@@ -1,7 +1,7 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./useEventCallback-Cwx9QVSi.js";
 import { t as n } from "./Button-wU9TwJvB.js";
-import { t as r } from "./Chip-BpO6au4e.js";
+import { t as r } from "./Chip-YhQI5B9P.js";
 import { t as i } from "./overlayStack-BFH9XXvN.js";
 import { t as a } from "./Modal-CyoyiNKN.js";
 import { n as o, t as s } from "./PermissionDeniedCard-B9cc5d5O.js";

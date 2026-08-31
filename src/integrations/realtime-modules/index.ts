@@ -136,3 +136,9 @@ export type {
   RMMediaEffectsPreviewControllerSource,
   RMMediaEffectsSettings,
 } from './WrappedMediaEffectsPreviewPanel';
+
+export { default as WrappedCanvasDocument } from './WrappedCanvasDocument';
+export type {
+  WrappedCanvasDocumentProps,
+  RMUseCanvasDocumentReturn,
+} from './WrappedCanvasDocument';

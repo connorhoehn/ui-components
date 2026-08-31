@@ -1,3 +1,4 @@
+import { Awareness } from 'y-protocols/awareness';
 import { Component } from 'react';
 import { ErrorInfo } from 'react';
 import { HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
@@ -5,6 +6,8 @@ import { JSX } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { ReactNode } from 'react';
 import { RoomsIndexSubscriber } from '@connorhoehn/realtime-modules/client/hangout-rooms';
+import { XmlFragment } from 'yjs';
+import * as Y from 'yjs';
 
 declare interface ActivityFeedItem {
     id: string;
@@ -71,6 +74,47 @@ export declare function adaptReactions(reactions: RMReaction[]): EphemeralReacti
  * as a one-line opt-in for the standard connection-resiliency UI.
  */
 export declare function applyNetworkShim(node: ReactNode, opts: NetworkShimOptions | undefined): ReactNode;
+
+declare interface CanvasDocumentViewProps {
+    /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
+    isCanvas: boolean;
+    /** The page body. Required when `isCanvas`; ignored otherwise. */
+    body: XmlFragment | null;
+    ydoc: Y.Doc;
+    provider: Parameters<typeof TiptapEditor>[0]['provider'];
+    user: {
+        name: string;
+        color: string;
+    };
+    editable?: boolean;
+    /**
+     * Canvas extensions (macro node views, heading anchors). Without these the
+     * schema has no `macro` node and macros degrade to plain text, so this is
+     * required rather than optional — a caller that forgets loses data on the
+     * next save.
+     */
+    extensions: readonly unknown[];
+    /**
+     * Converts a legacy sectioned document into a canvas. Resolves to the
+     * refusal reason on failure, or null on success.
+     */
+    onConvert?: () => Promise<string | null>;
+    /** Forms that could not be represented, from the last conversion. */
+    unsupported?: readonly CanvasUnsupportedForm[];
+    /** Rendered above the page — title, participants, actions. */
+    header?: ReactNode;
+    'data-testid'?: string;
+}
+
+/**
+ * A form the ProseMirror schema could not express, surfaced rather than
+ * dropped. Mirrors `UnsupportedForm` in realtime-modules structurally so this
+ * package keeps zero runtime dependency on it.
+ */
+declare interface CanvasUnsupportedForm {
+    kind: string;
+    reason?: string;
+}
 
 export declare function CapabilityBoundary({ capability, loading, fallback, children, }: CapabilityBoundaryProps): JSX.Element;
 
@@ -143,6 +187,11 @@ declare interface ChatTransfer {
     contentType?: string;
     preview?: string;
     error?: string;
+}
+
+/** Minimal provider shape needed by awareness. */
+declare interface CollaborationProvider {
+    awareness: Awareness;
 }
 
 declare interface ConnectionPillProps {
@@ -727,6 +776,34 @@ export declare interface RMUseActivityReturn {
     loadHistory: (limit?: number) => void;
 }
 
+/**
+ * `useCanvasDocument(ydoc)`'s return, restated structurally so this package
+ * keeps zero runtime dependency on realtime-modules — the same convention the
+ * other Wrapped* components follow.
+ */
+export declare interface RMUseCanvasDocumentReturn {
+    isCanvas: boolean;
+    schemaVersion: number;
+    body: Y.XmlFragment | null;
+    exportMarkdown: () => string;
+    materialize: (schema: {
+        nodes: unknown;
+        marks: unknown;
+    }, model: unknown) => {
+        ok: boolean;
+        reason?: string;
+        unsupported: CanvasUnsupportedForm[];
+    };
+    importMarkdown: (schema: {
+        nodes: unknown;
+        marks: unknown;
+    }, markdown: string) => {
+        ok: boolean;
+        reason?: string;
+        unsupported: CanvasUnsupportedForm[];
+    };
+}
+
 export declare interface RMUseChatReturn {
     messages: RMChatMessage[];
     sendMessage: (text: string) => void;
@@ -813,6 +890,41 @@ export declare function slugifyRoomName(input: string): string;
 /** Which colour family a primitive paints in. See the block comment above. */
 declare type SurfaceTone = 'surface' | 'code';
 
+declare function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, extensions: extraExtensions, }: TiptapEditorProps): JSX.Element;
+
+declare interface TiptapEditorProps {
+    fragment: XmlFragment;
+    ydoc: Y.Doc;
+    provider: CollaborationProvider | null;
+    user: {
+        name: string;
+        color: string;
+    };
+    editable?: boolean;
+    placeholder?: string;
+    /** Section ID — used to filter cursor overlay to only show cursors in this section */
+    sectionId?: string;
+    /** Merge-safe awareness updater for cursor display info (name + color).
+     *  When provided, replaces the direct setLocalStateField write. */
+    onUpdateCursorInfo?: (name: string, color: string) => void;
+    /**
+     * Extra Tiptap extensions appended to the built-in set.
+     *
+     * The canvas needs this: its macros (`action-item`, `decision`, `field`) are
+     * real ProseMirror nodes with node views, so without registering them the
+     * schema has no `macro` node and every macro in the document degrades to
+     * plain text — silently, and on the next save that lossy text is what gets
+     * written back. Appended rather than replacing, so a caller cannot
+     * accidentally drop Collaboration and turn a shared document into a local
+     * one.
+     *
+     * Pass a STABLE array (module const or useMemo). The editor is rebuilt when
+     * this identity changes, and a fresh array literal every render remounts the
+     * editor on every keystroke.
+     */
+    extensions?: readonly unknown[];
+}
+
 declare type TransferPhase = 'started' | 'transferring' | 'verifying' | 'complete' | 'failed' | 'cancelled';
 
 export declare function WrappedActivityPanel({ activity, visibleCount, rotateMs, staggerMs, kindColors, className, }: WrappedActivityPanelProps): JSX.Element;
@@ -826,6 +938,30 @@ export declare interface WrappedActivityPanelProps {
     staggerMs?: ActivityFeedProps['staggerMs'];
     kindColors?: ActivityFeedProps['kindColors'];
     className?: string;
+}
+
+export declare function WrappedCanvasDocument({ canvas, schema, legacyModel, ...viewProps }: WrappedCanvasDocumentProps): JSX.Element;
+
+export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentViewProps, 'isCanvas' | 'body' | 'onConvert' | 'unsupported'> {
+    /** Return value of useCanvasDocument(ydoc) from realtime-modules. */
+    canvas: RMUseCanvasDocumentReturn;
+    /**
+     * The live editor's ProseMirror schema, needed to build the canvas body.
+     *
+     * Deliberately supplied by the caller rather than constructed here: a second
+     * schema means a second copy of prosemirror-model in the module graph, which
+     * breaks `instanceof` across the boundary. See the note on `PmSchemaLike` in
+     * useCanvasDocument.
+     */
+    schema: {
+        nodes: unknown;
+        marks: unknown;
+    } | null;
+    /**
+     * The legacy document to convert, as a `DocModel`. When omitted, conversion
+     * starts from an empty page.
+     */
+    legacyModel?: unknown;
 }
 
 export declare function WrappedChatPanel({ chat, presence, upload, currentActor, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;

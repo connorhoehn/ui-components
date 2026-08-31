@@ -55,3 +55,9 @@ export type {
   WorkItemInboxEntry,
   WorkItemCandidate,
 } from './WorkItemInbox';
+
+export { default as CanvasDocumentView } from './CanvasDocumentView';
+export type {
+  CanvasDocumentViewProps,
+  CanvasUnsupportedForm,
+} from './CanvasDocumentView';

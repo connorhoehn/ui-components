@@ -2,7 +2,7 @@ import { n as e } from "./IdentityContext-CQM1qwH6.js";
 import { a as t, c as n, i as r, l as i, n as a, o, r as s, s as c, t as l, u } from "./useSyncConflicts-y7kUJko3.js";
 import { n as d } from "./useDocumentTypes-tyAjMJgn.js";
 import { t as f } from "./cn-DhjIN-s0.js";
-import { t as p } from "./Chip-BpO6au4e.js";
+import { t as p } from "./Chip-YhQI5B9P.js";
 import { t as m } from "./overlayStack-BFH9XXvN.js";
 import { t as h } from "./EmptyState-ClmWoqCb.js";
 import { n as g, r as _, t as v } from "./focusTrap-CmWJlptm.js";

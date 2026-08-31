@@ -3,6 +3,7 @@ import { default as default_2 } from 'react';
 import { Editor } from '@tiptap/react';
 import { JSX } from 'react';
 import { MutableRefObject } from 'react';
+import { ReactNode } from 'react';
 import { XmlFragment } from 'yjs';
 import * as Y from 'yjs';
 
@@ -53,6 +54,49 @@ export declare function AttachmentsPanel({ documentId, editable }: AttachmentsPa
 declare interface AttachmentsPanelProps {
     documentId: string;
     editable: boolean;
+}
+
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, unsupported, header, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+
+export declare interface CanvasDocumentViewProps {
+    /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
+    isCanvas: boolean;
+    /** The page body. Required when `isCanvas`; ignored otherwise. */
+    body: XmlFragment | null;
+    ydoc: Y.Doc;
+    provider: Parameters<typeof TiptapEditor>[0]['provider'];
+    user: {
+        name: string;
+        color: string;
+    };
+    editable?: boolean;
+    /**
+     * Canvas extensions (macro node views, heading anchors). Without these the
+     * schema has no `macro` node and macros degrade to plain text, so this is
+     * required rather than optional — a caller that forgets loses data on the
+     * next save.
+     */
+    extensions: readonly unknown[];
+    /**
+     * Converts a legacy sectioned document into a canvas. Resolves to the
+     * refusal reason on failure, or null on success.
+     */
+    onConvert?: () => Promise<string | null>;
+    /** Forms that could not be represented, from the last conversion. */
+    unsupported?: readonly CanvasUnsupportedForm[];
+    /** Rendered above the page — title, participants, actions. */
+    header?: ReactNode;
+    'data-testid'?: string;
+}
+
+/**
+ * A form the ProseMirror schema could not express, surfaced rather than
+ * dropped. Mirrors `UnsupportedForm` in realtime-modules structurally so this
+ * package keeps zero runtime dependency on it.
+ */
+export declare interface CanvasUnsupportedForm {
+    kind: string;
+    reason?: string;
 }
 
 export declare function ChunkViewer({ section, onAckItem, onRejectItem, fragment, ydoc, provider, comments, onAddComment, onResolveThread, onUnresolveThread, participants }: ChunkViewerProps): JSX.Element;
@@ -722,7 +766,7 @@ declare interface TaskListProps {
     focusLastItem?: MutableRefObject<boolean>;
 }
 
-export declare function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, }: TiptapEditorProps): JSX.Element;
+export declare function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, extensions: extraExtensions, }: TiptapEditorProps): JSX.Element;
 
 declare interface TiptapEditorProps {
     fragment: XmlFragment;
@@ -739,6 +783,22 @@ declare interface TiptapEditorProps {
     /** Merge-safe awareness updater for cursor display info (name + color).
      *  When provided, replaces the direct setLocalStateField write. */
     onUpdateCursorInfo?: (name: string, color: string) => void;
+    /**
+     * Extra Tiptap extensions appended to the built-in set.
+     *
+     * The canvas needs this: its macros (`action-item`, `decision`, `field`) are
+     * real ProseMirror nodes with node views, so without registering them the
+     * schema has no `macro` node and every macro in the document degrades to
+     * plain text — silently, and on the next save that lossy text is what gets
+     * written back. Appended rather than replacing, so a caller cannot
+     * accidentally drop Collaboration and turn a shared document into a local
+     * one.
+     *
+     * Pass a STABLE array (module const or useMemo). The editor is rebuilt when
+     * this identity changes, and a fresh array literal every render remounts the
+     * editor on every keystroke.
+     */
+    extensions?: readonly unknown[];
 }
 
 export declare function useDocumentActions({ documentId, userId, ws, updateMeta, addSection, exportJSON, getSectionFragment, comments, }: UseDocumentActionsArgs): {
