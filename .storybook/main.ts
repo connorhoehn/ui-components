@@ -13,7 +13,13 @@ import { rmSrc as rmSrcFrom } from '../scripts/resolve-realtime-modules.mjs';
 // produced an opaque UNLOADABLE_DEPENDENCY there. See the helper for detail.
 const rmSrc = rmSrcFrom(import.meta.dirname);
 
+// Every subpath a story imports must be listed. These are PREFIX aliases, so
+// an unlisted subpath does not fall back to node resolution — it matches the
+// bare entry and becomes `<rmSrc>/index.ts/adapters/tiptap`, which fails as an
+// unresolved import rather than as a missing alias. Add the entry when you add
+// the import.
 const realtimeModulesAliases = {
+  '@connorhoehn/realtime-modules/adapters/tiptap': rmSrc('adapters/tiptap/index.ts'),
   '@connorhoehn/realtime-modules/client/video': rmSrc('client/video/index.ts'),
   '@connorhoehn/realtime-modules/client/hangout-rooms': rmSrc(
     'client/hangout-rooms/index.ts',
@@ -56,6 +62,26 @@ const config: StorybookConfig = {
           ...((config.resolve?.alias as Record<string, string>) ?? {}),
           ...realtimeModulesAliases,
         },
+        // The aliases above point at realtime-modules' TS SOURCE, which lives
+        // in a sibling checkout with its own node_modules. Without deduping,
+        // its imports resolve a SECOND copy of React (and of the Tiptap/Yjs
+        // singletons), and the second copy has a null hook dispatcher — the
+        // story dies with "Cannot read properties of null (reading 'useRef')"
+        // inside @tiptap/react, which reads like a Tiptap bug and is not one.
+        //
+        // Yjs and prosemirror-model matter for the same reason in a different
+        // way: two copies break `instanceof` across the boundary, which is the
+        // failure the app's optimizeDeps.exclude entries already guard against.
+        dedupe: [
+          ...((config.resolve?.dedupe as string[]) ?? []),
+          'react',
+          'react-dom',
+          'yjs',
+          'y-protocols',
+          '@tiptap/react',
+          '@tiptap/core',
+          '@tiptap/pm',
+        ],
       },
       build: {
         ...config.build,
