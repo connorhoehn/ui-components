@@ -82,6 +82,8 @@ export { default as ExpertCard } from './ExpertCard';
 export type { ExpertCardProps, ExpertSkillMatch, ExpertEvidenceItem } from './ExpertCard';
 export { default as ConsultCard } from './ConsultCard';
 export type { ConsultCardProps } from './ConsultCard';
+export { default as DiffViewer, parseUnifiedDiff } from './DiffViewer';
+export type { DiffViewerProps, DiffAnnotation, DiffFile, DiffLine } from './DiffViewer';
 export * from './StatCard';
 export { default as KPIGrid } from './KPIGrid';
 export * from './KPIGrid';
