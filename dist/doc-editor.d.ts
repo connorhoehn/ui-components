@@ -167,6 +167,42 @@ export declare interface CanvasUnsupportedForm {
     reason?: string;
 }
 
+/** Who is asking for the change. */
+declare interface ChangeAuthor {
+    name: string;
+    /**
+     * `agent` renders the machine label. This is not decoration: an unreviewed
+     * machine edit and a colleague's edit carry very different weight, and the
+     * only thing separating them on screen is this.
+     */
+    kind?: 'human' | 'agent';
+    avatarUrl?: string;
+}
+
+/**
+ * How the review itself is going, independent of what it concluded.
+ *
+ * Separate from `ChangeReviewVerdict` because "we have not asked yet", "we are
+ * asking" and "asking failed" are three different things to a reviewer, and
+ * none of them is a verdict. Folding them into an optional verdict field would
+ * make the absent case ambiguous.
+ */
+declare type ChangeReviewStatus = 'idle' | 'pending' | 'failed';
+
+declare interface ChangeReviewVerdict {
+    verdict: ChangeVerdict;
+    /** One line, always shown beside the chip. */
+    headline: string;
+    /** Expandable detail. Absent when the model gave none — render nothing, not "no reasoning". */
+    reasoning?: string;
+    producedAt: string;
+    /** The change revision this verdict was computed against. */
+    forRevision: string;
+}
+
+/** An agent's judgement on a single proposed change. */
+declare type ChangeVerdict = 'pass' | 'concern' | 'fail';
+
 export declare function ChunkViewer({ section, onAckItem, onRejectItem, fragment, ydoc, provider, comments, onAddComment, onResolveThread, onUnresolveThread, participants }: ChunkViewerProps): JSX.Element;
 
 declare interface ChunkViewerProps {
@@ -655,7 +691,7 @@ export declare interface ProposalApplyOutcome {
 /** Where the item currently sits relative to the document. */
 export declare type ProposalAttachState = 'attached' | 'author_only' | 'inbox' | 'healed';
 
-export declare function ProposalCard({ utterance, kind, status, confidence, attachState, targetLabel, targetReason, before, after, edits, rationale, draftError, onAccept, onReject, onRedraft, onReattach, onConfirmAttachment, className, 'data-testid': testId, }: ProposalCardProps): JSX.Element;
+export declare function ProposalCard({ utterance, kind, status, confidence, attachState, targetLabel, targetReason, before, after, edits, rationale, draftError, author, category, path, locationHint, verdict, verdictStatus, verdictError, revision, onRereview, onAccept, onReject, onRedraft, onReattach, onConfirmAttachment, className, 'data-testid': testId, }: ProposalCardProps): JSX.Element;
 
 export declare interface ProposalCardProps {
     /** Verbatim remark that raised this. Never paraphrase it. */
@@ -681,6 +717,40 @@ export declare interface ProposalCardProps {
     rationale?: string;
     /** Set when drafting itself failed. Rendered instead of the diff. */
     draftError?: string;
+    /**
+     * Who ASKED for this change — the person whose remark raised it.
+     *
+     * Distinct from who drafted it: the draft is always the model's, which is
+     * what the permanent "AI proposal" chip says. Omit when the requester is not
+     * known. Never synthesise one; an invented author on a change nobody can
+     * trace is worse than an honest blank.
+     */
+    author?: ChangeAuthor;
+    /**
+     * What kind of change this is, in the reviewer's words — "Document title",
+     * "Body text". Defaults to a label derived from `kind`.
+     */
+    category?: string;
+    /**
+     * Where in the document this lands, outermost first. Rendered diff-hunk
+     * style. Defaults to `targetLabel` when that is all the host knows.
+     */
+    path?: readonly string[];
+    /** Position within the target, e.g. `paragraph 3`. */
+    locationHint?: string;
+    /** The agent's verdict on this change. */
+    verdict?: ChangeReviewVerdict | undefined;
+    /** How the review itself is going. */
+    verdictStatus?: ChangeReviewStatus | undefined;
+    /** Why the review failed, when `verdictStatus` is `failed`. */
+    verdictError?: string | undefined;
+    /**
+     * The proposal's CURRENT revision. Pass it, or a verdict computed against an
+     * earlier draft renders as though it still applies to this one.
+     */
+    revision?: string | undefined;
+    /** Ask for a fresh verdict against the current revision. */
+    onRereview?: () => void;
     /**
      * Apply the change. MUST perform the mutation and report what happened —
      * returning `{ ok: true }` without changing the document is the exact bug this

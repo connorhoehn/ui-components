@@ -1,11 +1,20 @@
-// The whole point of this page is the object it hands to `resolveConflict`:
-// a `pick` that always exists, a `fieldChoices` map that must be OMITTED
-// rather than sent empty (an empty map and no map mean different things to
-// the write-back engine), and a trimmed note that must disappear entirely
-// when the operator typed only whitespace. The other load-bearing rule is
-// that "Auto-merged" can only be chosen when the engine actually produced a
-// merge — picking a merge that doesn't exist would resolve the conflict to
-// undefined.
+// ConflictsPage, on the change-review pattern.
+//
+// The load-bearing rules are unchanged from the master-detail version this
+// replaces, and they are what most of this file still guards:
+//
+//   * the object handed to `resolveConflict` always carries a `pick`,
+//   * `fieldChoices` is never sent EMPTY (an empty map and no map mean
+//     different things to the write-back engine),
+//   * a whitespace-only note disappears entirely rather than being sent,
+//   * "Auto-merged" can only be chosen on a field that actually has a merge —
+//     picking one that does not exist would resolve the conflict to undefined,
+//   * a failed action is reported as a failed ACTION, never as a failed load.
+//
+// What changed is the shape of the surface, so the interaction tests moved with
+// it: there is no left rail and no selected conflict any more. Every pending
+// conflict renders its own document-headed queue, which is the point — the
+// operator sees WHICH DOCUMENT is about to change without clicking anything.
 
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -32,6 +41,7 @@ function conflict(over: Partial<SyncConflict> = {}): SyncConflict {
     conflictId: 'c1',
     sourceId: 's1',
     documentId: 'd1',
+    documentTitle: 'Acme MSA',
     documentTypeId: null,
     sourceRef: 'drive:abc',
     summary: 'Title changed on both sides',
@@ -71,36 +81,118 @@ beforeEach(() => {
   useIngestSourcesMock.mockReset();
 });
 
-describe('ConflictsPage queue', () => {
-  it('shows only pending conflicts and counts the rest as resolved', () => {
+describe('ConflictsPage — document-first framing', () => {
+  // The regression this page existed to demonstrate: the heading named the
+  // SYSTEM ("Sync Conflicts") and the document appeared only as a value inside
+  // a diff cell, so you had to read the diff to learn what you were looking at.
+  it('heads each queue with the DOCUMENT name, not the queue name', () => {
+    renderPage({ conflicts: [conflict({ documentTitle: 'Acme MSA' })] });
+    expect(screen.getByTestId('change-review-list-title')).toHaveTextContent('Acme MSA');
+  });
+
+  it('states the change count next to the document', () => {
+    renderPage({ conflicts: [conflict({ fields: [field('title'), field('body.intro')] })] });
+    expect(screen.getByTestId('change-review-list-count')).toHaveTextContent('2 changes');
+  });
+
+  it('singularises a one-change queue', () => {
+    renderPage();
+    expect(screen.getByTestId('change-review-list-count')).toHaveTextContent('1 change to review');
+  });
+
+  it('falls back to the documentId when the connector gave no title', () => {
+    renderPage({ conflicts: [conflict({ documentId: 'doc-42', documentTitle: undefined }) ] });
+    expect(screen.getByTestId('change-review-list-title')).toHaveTextContent('doc-42');
+  });
+
+  it('gives every pending conflict its own document-headed queue', () => {
     renderPage({
       conflicts: [
-        conflict({ conflictId: 'c1', summary: 'still pending' }),
-        conflict({ conflictId: 'c2', summary: 'already handled', status: 'resolved' }),
+        conflict({ conflictId: 'c1', documentTitle: 'Acme MSA' }),
+        conflict({ conflictId: 'c2', documentTitle: 'Q2 Report' }),
       ],
     });
-    expect(screen.getByTestId('conflict-row-c1')).toBeInTheDocument();
-    expect(screen.queryByTestId('conflict-row-c2')).toBeNull();
-    expect(screen.getByText(/1 pending/)).toHaveTextContent('1 resolved');
+    const titles = screen.getAllByTestId('change-review-list-title').map((n) => n.textContent);
+    expect(titles).toEqual(['Acme MSA', 'Q2 Report']);
+  });
+});
+
+describe('ConflictsPage — the change itself', () => {
+  it('leads each card with a human category rather than the machine path', () => {
+    renderPage({ conflicts: [conflict({ fields: [field('body.summary')] })] });
+    expect(screen.getByTestId('conflict-field-body.summary-category')).toHaveTextContent('Summary');
+  });
+
+  it('keeps the machine path available as the location hint', () => {
+    renderPage({ conflicts: [conflict({ fields: [field('body.summary')] })] });
+    expect(screen.getByTestId('conflict-field-body.summary-location')).toHaveTextContent('body.summary');
+  });
+
+  it('renders a document-relative location when the connector supplies one', () => {
+    renderPage({
+      conflicts: [conflict({ fields: [field('body.summary', { path: ['Body', 'Summary'] })] })],
+    });
+    const loc = screen.getByTestId('conflict-field-body.summary-location');
+    expect(loc).toHaveTextContent('Body');
+    expect(loc).toHaveTextContent('Summary');
+  });
+
+  it('shows the change on ONE axis: this copy → incoming', () => {
+    renderPage({
+      conflicts: [conflict({ fields: [field('title', {
+        platformValue: 'Acme MSA 2026',
+        sourceValue: 'Acme MSA (2026, signed)',
+      })] })],
+    });
+    const card = screen.getByTestId('conflict-field-title');
+    expect(within(card).getByTestId('conflict-field-title-diff-before-0'))
+      .toHaveTextContent('Acme MSA 2026');
+    expect(within(card).getByTestId('conflict-field-title-diff-after-0'))
+      .toHaveTextContent('Acme MSA (2026, signed)');
+  });
+
+  it('names the editor when the connector knows one', () => {
+    renderPage({ conflicts: [conflict({ fields: [field('title', { changedBy: 'Dana Whitfield' })] })] });
+    expect(screen.getByTestId('conflict-field-title-author')).toHaveTextContent('Dana Whitfield');
+  });
+
+  // An S3 write carries no editor. The wrong fix is to credit the change to
+  // the source system — a provenance is not a person.
+  it('says "Unattributed" rather than crediting the source system', () => {
+    renderPage(
+      { conflicts: [conflict({ sourceId: 's-42', fields: [field('attachment.sha256')] })] },
+      [{ sourceId: 's-42', name: 'Contracts (Google Drive)' } as IngestSource],
+    );
+    const author = screen.getByTestId('conflict-field-attachment.sha256-author');
+    expect(author).toHaveTextContent('Unattributed');
+    expect(author).not.toHaveTextContent('Google Drive');
+  });
+
+  // No verdict producer exists for sync conflicts, so this surface must show
+  // the absent state honestly — not a blank where a verdict would go.
+  it('shows the not-reviewed verdict state rather than nothing', () => {
+    renderPage();
+    expect(screen.getByTestId('conflict-field-title-verdict')).toHaveAttribute(
+      'data-verdict-state', 'absent',
+    );
+  });
+});
+
+describe('ConflictsPage queue', () => {
+  it('shows only pending conflicts', () => {
+    renderPage({
+      conflicts: [
+        conflict({ conflictId: 'c1', documentTitle: 'still pending' }),
+        conflict({ conflictId: 'c2', documentTitle: 'already handled', status: 'resolved' }),
+      ],
+    });
+    expect(screen.getByText('still pending')).toBeInTheDocument();
+    expect(screen.queryByText('already handled')).toBeNull();
   });
 
   it('renders the empty state when everything pending has been cleared', () => {
     renderPage({ conflicts: [conflict({ status: 'discarded' })] });
     expect(screen.getByText('No pending conflicts')).toBeInTheDocument();
-    expect(screen.queryByTestId('conflict-detail')).toBeNull();
-  });
-
-  it('auto-selects the first pending conflict so the detail pane is never blank', () => {
-    renderPage({ conflicts: [conflict({ conflictId: 'c1', summary: 'first one' }), conflict({ conflictId: 'c2' })] });
-    expect(within(screen.getByTestId('conflict-detail')).getByText('first one')).toBeInTheDocument();
-  });
-
-  it('selecting another conflict swaps the detail pane', () => {
-    renderPage({
-      conflicts: [conflict({ conflictId: 'c1' }), conflict({ conflictId: 'c2', summary: 'the second one' })],
-    });
-    fireEvent.click(screen.getByTestId('conflict-row-c2'));
-    expect(within(screen.getByTestId('conflict-detail')).getByText('the second one')).toBeInTheDocument();
   });
 
   it('prefers a resolved source name over the raw sourceId', () => {
@@ -108,7 +200,7 @@ describe('ConflictsPage queue', () => {
       { conflicts: [conflict({ sourceId: 's-42' })] },
       [{ sourceId: 's-42', name: 'Team Drive' } as IngestSource],
     );
-    expect(within(screen.getByTestId('conflict-detail')).getByText('Team Drive')).toBeInTheDocument();
+    expect(screen.getByText(/Team Drive/)).toBeInTheDocument();
   });
 });
 
@@ -130,138 +222,118 @@ describe('ConflictsPage banners', () => {
 });
 
 describe('ConflictsPage resolution payload', () => {
-  it('defaults to the platform side and omits the optional keys entirely', async () => {
+  it('always carries a pick, and a per-field map that is never empty', async () => {
     const hook = renderPage();
-    fireEvent.click(screen.getByTestId('conflict-resolve'));
-    await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c1', { pick: 'platform' }));
+    fireEvent.click(screen.getByTestId('conflict-resolve-c1'));
+    await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c1', {
+      pick: 'source',
+      fieldChoices: { title: 'source' },
+    }));
+    const sent = (hook.resolveConflict as ReturnType<typeof vi.fn>).mock.calls[0]![1];
+    expect(Object.keys(sent.fieldChoices ?? {}).length).toBeGreaterThan(0);
   });
 
-  it('carries the whole-conflict pick when the operator switches sides', async () => {
-    const hook = renderPage();
-    fireEvent.click(screen.getByTestId('global-pick-source'));
-    fireEvent.click(screen.getByTestId('conflict-resolve'));
-    await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c1', { pick: 'source' }));
-  });
-
-  it('includes only the fields the operator actually overrode', async () => {
+  it('records a per-field override without disturbing the others', async () => {
     const hook = renderPage({
       conflicts: [conflict({ fields: [field('title'), field('body')] })],
     });
-    fireEvent.click(screen.getByTestId('field-pick-body-source'));
-    fireEvent.click(screen.getByTestId('conflict-resolve'));
+    fireEvent.click(screen.getByTestId('field-pick-body-platform'));
+    fireEvent.click(screen.getByTestId('conflict-resolve-c1'));
     await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c1', {
-      pick: 'platform',
-      fieldChoices: { body: 'source' },
+      pick: 'source',
+      fieldChoices: { title: 'source', body: 'platform' },
     }));
-  });
-
-  it('clearing an override removes the key rather than pinning the global pick', async () => {
-    const hook = renderPage();
-    fireEvent.click(screen.getByTestId('field-pick-title-source'));
-    fireEvent.click(screen.getByTestId('field-clear-title'));
-    fireEvent.click(screen.getByTestId('conflict-resolve'));
-    await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c1', { pick: 'platform' }));
   });
 
   it('trims the note, and drops a whitespace-only one', async () => {
     const hook = renderPage();
-    fireEvent.change(screen.getByTestId('conflict-note'), { target: { value: '   ' } });
-    fireEvent.click(screen.getByTestId('conflict-resolve'));
-    await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c1', { pick: 'platform' }));
+    fireEvent.change(screen.getByTestId('conflict-note-c1'), { target: { value: '   ' } });
+    fireEvent.click(screen.getByTestId('conflict-resolve-c1'));
+    await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c1', {
+      pick: 'source',
+      fieldChoices: { title: 'source' },
+    }));
 
-    fireEvent.change(screen.getByTestId('conflict-note'), { target: { value: '  source wins  ' } });
-    fireEvent.click(screen.getByTestId('conflict-resolve'));
+    fireEvent.change(screen.getByTestId('conflict-note-c1'), { target: { value: '  source wins  ' } });
+    fireEvent.click(screen.getByTestId('conflict-resolve-c1'));
     await waitFor(() => expect(hook.resolveConflict).toHaveBeenLastCalledWith('c1', {
-      pick: 'platform',
+      pick: 'source',
+      fieldChoices: { title: 'source' },
       note: 'source wins',
     }));
   });
 
   it('discard bypasses the resolution payload entirely', async () => {
     const hook = renderPage();
-    fireEvent.click(screen.getByTestId('conflict-discard'));
+    fireEvent.click(screen.getByTestId('conflict-discard-c1'));
     await waitFor(() => expect(hook.discardConflict).toHaveBeenCalledWith('c1'));
     expect(hook.resolveConflict).not.toHaveBeenCalled();
+  });
+
+  // Each document commits on its own. Resolving one must not sweep the other.
+  it('resolves only the document whose button was pressed', async () => {
+    const hook = renderPage({
+      conflicts: [conflict({ conflictId: 'c1' }), conflict({ conflictId: 'c2' })],
+    });
+    fireEvent.click(screen.getByTestId('conflict-resolve-c2'));
+    await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledTimes(1));
+    expect(hook.resolveConflict).toHaveBeenCalledWith('c2', expect.anything());
+  });
+
+  // Per-field choices are keyed by conflict, so two documents that both have a
+  // `title` field cannot bleed into one another.
+  it('keeps per-field choices isolated between documents', async () => {
+    const hook = renderPage({
+      conflicts: [conflict({ conflictId: 'c1' }), conflict({ conflictId: 'c2' })],
+    });
+    const [firstTitlePick] = screen.getAllByTestId('field-pick-title-platform');
+    fireEvent.click(firstTitlePick!);
+    fireEvent.click(screen.getByTestId('conflict-resolve-c2'));
+    await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c2', {
+      pick: 'source',
+      fieldChoices: { title: 'source' },
+    }));
   });
 });
 
 describe('ConflictsPage merged-side guard', () => {
-  it('disables the global Auto-merged pick when no field has a merge proposal', () => {
-    renderPage();
-    expect(screen.getByTestId('global-pick-merged')).toBeDisabled();
-  });
-
-  it('enables it as soon as any single field carries a mergedValue', () => {
-    renderPage({ conflicts: [conflict({ fields: [field('title'), field('body', { mergedValue: 'merged body' })] })] });
-    expect(screen.getByTestId('global-pick-merged')).not.toBeDisabled();
-  });
-
-  it('keeps the per-field Merged pick disabled on fields with no merge of their own', () => {
+  it('keeps the Merged pick disabled on a field with no merge of its own', () => {
     renderPage({ conflicts: [conflict({ fields: [field('title'), field('body', { mergedValue: 'merged body' })] })] });
     expect(screen.getByTestId('field-pick-title-merged')).toBeDisabled();
     expect(screen.getByTestId('field-pick-body-merged')).not.toBeDisabled();
   });
-});
 
-describe('ConflictsPage per-conflict state isolation', () => {
-  it('switching conflicts resets the pick, the overrides and the note', async () => {
-    const hook = renderPage({
-      conflicts: [conflict({ conflictId: 'c1' }), conflict({ conflictId: 'c2' })],
-    });
-    fireEvent.click(screen.getByTestId('global-pick-source'));
-    fireEvent.click(screen.getByTestId('field-pick-title-source'));
-    fireEvent.change(screen.getByTestId('conflict-note'), { target: { value: 'leftover' } });
-
-    fireEvent.click(screen.getByTestId('conflict-row-c2'));
-    fireEvent.click(screen.getByTestId('conflict-resolve'));
-    await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c2', { pick: 'platform' }));
+  it('never sends a merged pick for a field that has no merge', async () => {
+    const hook = renderPage();
+    fireEvent.click(screen.getByTestId('field-pick-title-merged'));
+    fireEvent.click(screen.getByTestId('conflict-resolve-c1'));
+    await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c1', {
+      pick: 'source',
+      fieldChoices: { title: 'source' },
+    }));
   });
 });
 
-// REGRESSION (keyboard a11y): the left-rail conflict rows were bare
-// `<div onClick>` — not focusable, not exposed as buttons, and with no key
-// handler — so a keyboard-only operator could never pick which conflict to
-// inspect or resolve. The whole queue was mouse-only. They are real
-// `<button type="button">` now, so the browser supplies focus plus Enter and
-// Space activation, and assistive tech announces them as buttons.
-describe('ConflictsPage queue — keyboard selection', () => {
-  it('exposes each conflict row as a button named after the conflict', () => {
-    renderPage({ conflicts: [conflict({ conflictId: 'c1', summary: 'first one' })] });
-    expect(screen.getByRole('button', { name: /first one/ })).toBe(
-      screen.getByTestId('conflict-row-c1'),
-    );
+// The resolution controls must stay reachable without a mouse. They are real
+// `<button type="button">` with `aria-pressed`, so the browser supplies focus
+// plus Enter/Space and assistive tech announces the current choice.
+describe('ConflictsPage — keyboard reachable resolution', () => {
+  it('exposes each field choice as a focusable button', () => {
+    renderPage();
+    const pick = screen.getByTestId('field-pick-title-platform');
+    expect(pick.tagName).toBe('BUTTON');
+    expect(pick).toHaveAttribute('type', 'button');
+    pick.focus();
+    expect(document.activeElement).toBe(pick);
   });
 
-  it('puts every conflict row in the tab order', () => {
-    renderPage({
-      conflicts: [conflict({ conflictId: 'c1' }), conflict({ conflictId: 'c2', summary: 'the second one' })],
-    });
-    const row = screen.getByTestId('conflict-row-c2');
-    expect(row.tagName).toBe('BUTTON');
-    expect(row).toHaveAttribute('type', 'button');
-    row.focus();
-    expect(document.activeElement).toBe(row);
-  });
-
-  it('activating a focused row swaps the detail pane', () => {
-    renderPage({
-      conflicts: [conflict({ conflictId: 'c1' }), conflict({ conflictId: 'c2', summary: 'the second one' })],
-    });
-    const row = screen.getByRole('button', { name: /the second one/ });
-    row.focus();
-    // jsdom does not run the browser's Enter->click default action, so click
-    // stands in for it; the focusability assertion above is what proves the
-    // key press can reach this row at all.
-    fireEvent.click(row);
-    expect(within(screen.getByTestId('conflict-detail')).getByText('the second one')).toBeInTheDocument();
-  });
-
-  it('marks the active row with aria-pressed so SR users hear the selection', () => {
-    renderPage({
-      conflicts: [conflict({ conflictId: 'c1', summary: 'first one' }), conflict({ conflictId: 'c2', summary: 'the second one' })],
-    });
-    expect(screen.getByTestId('conflict-row-c1')).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByTestId('conflict-row-c2')).toHaveAttribute('aria-pressed', 'false');
+  it('announces the active choice with aria-pressed', () => {
+    renderPage();
+    expect(screen.getByTestId('field-pick-title-source')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('field-pick-title-platform')).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(screen.getByTestId('field-pick-title-platform'));
+    expect(screen.getByTestId('field-pick-title-platform')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('field-pick-title-source')).toHaveAttribute('aria-pressed', 'false');
   });
 });
 
@@ -282,12 +354,12 @@ describe('ConflictsPage action failures', () => {
   it('keeps the conflict queue on screen while an action error is showing', () => {
     renderPage({
       actionError: 'HTTP 500',
-      conflicts: [conflict({ conflictId: 'c1', summary: 'still needs a call' })],
+      conflicts: [conflict({ conflictId: 'c1', documentTitle: 'still needs a call' })],
     });
 
-    expect(screen.getByTestId('conflicts-list')).toBeInTheDocument();
-    expect(screen.getByTestId('conflict-row-c1')).toBeInTheDocument();
-    expect(screen.getByTestId('conflict-detail')).toBeInTheDocument();
+    expect(screen.getByTestId('conflicts-action-error')).toBeInTheDocument();
+    expect(screen.getByTestId('change-review-list-title')).toHaveTextContent('still needs a call');
+    expect(screen.getByTestId('conflict-field-title')).toBeInTheDocument();
   });
 
   it('Dismiss clears the action error through the hook', () => {

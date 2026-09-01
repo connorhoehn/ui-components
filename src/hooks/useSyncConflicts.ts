@@ -33,18 +33,24 @@ function buildMockConflicts(): SyncConflict[] {
       conflictId: 'cfl-001',
       sourceId: 'src-gdrive-team',
       documentId: 'doc-policy-acceptable-use',
+      documentTitle: 'Acceptable Use Policy',
       documentTypeId: 'doctype-policy',
       sourceRef: 'drive:1A2B3C4D5E6F',
       summary: 'Title and body changed remotely while platform edit was pending',
       fields: [
         {
           field: 'title',
+          // Drive revisions carry an editor, so this one is attributable.
+          changedBy: 'Dana Whitfield',
+          path: ['Header'],
           sourceValue: 'Acceptable Use Policy (revised May 2026)',
           platformValue: 'Acceptable Use Policy — DRAFT',
           mergedValue: 'Acceptable Use Policy (revised May 2026) — DRAFT',
         },
         {
           field: 'body.intro',
+          changedBy: 'Dana Whitfield',
+          path: ['Body', 'Introduction'],
           sourceValue: 'This policy supersedes the 2025 version and applies to all employees, contractors, and partners.',
           platformValue: 'This policy applies to all staff and contractors. Reviewed quarterly.',
         },
@@ -58,12 +64,18 @@ function buildMockConflicts(): SyncConflict[] {
       conflictId: 'cfl-003',
       sourceId: 'src-s3-reports',
       documentId: 'doc-fin-0002',
+      documentTitle: 'Q2 Financial Overview',
       documentTypeId: 'doctype-financial-report',
       sourceRef: 's3://acme-quarterly-reports/2026/Q2/financial-overview.pdf',
       summary: 'Source replaced PDF; platform comments pending',
       fields: [
         {
+          // Deliberately NO `changedBy`: an S3 object write carries no editor
+          // identity, and this is the common case. The card renders
+          // "Unattributed" rather than crediting the source system as if it
+          // were a person.
           field: 'attachment.sha256',
+          path: ['Attachments'],
           sourceValue: 'sha256:c1a2b3...new',
           platformValue: 'sha256:9f8e7d...old',
         },

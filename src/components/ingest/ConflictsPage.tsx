@@ -1,6 +1,31 @@
-// frontend/src/components/ingest/ConflictsPage.tsx
+// src/components/ingest/ConflictsPage.tsx
 //
-// Operator queue for write-back conflicts.
+// Operator queue for write-back conflicts, on the shared change-review pattern.
+//
+// ORPHAN WARNING — READ BEFORE INVESTING HERE
+//
+// This page has NO consumers. Nothing outside `ingest/index.ts` imports it, and
+// the ingest backend it targets (`/api/sync/conflicts`) was deleted from
+// platform-api when ingest scope was cut, so `useSyncConflicts` always falls
+// through to its mock fixture. It is refitted onto `ChangeReviewList` /
+// `ChangeReviewCard` so the review pattern is consistent across the library,
+// NOT because it is reachable. Do not build a backend for it on the strength of
+// this file existing.
+//
+// WHAT CHANGED, AND WHY
+//
+// The previous version led with the SYSTEM ("Sync Conflicts") and buried the
+// document — the document's name appeared on screen only as a value inside a
+// diff cell, so you had to read the diff to learn what you were looking at.
+// Now each document heads its own queue: "Acme MSA — 2 changes".
+//
+// The other inversion was the merge model. SOURCE / AUTO-MERGED / PLATFORM with
+// a radio per column is `git mergetool`: a RESOLUTION ui doing a REVIEW ui's
+// job. Reviewing is a one-axis question — what does this change do to the
+// document — so the primary surface is now before → after, where "before" is
+// what the document says today and "after" is what the incoming edit proposes.
+// Three-way picking still exists, because a genuine conflict sometimes needs
+// it, but it is folded away per field instead of being the first thing read.
 
 import { useEffect, useMemo, useState } from 'react';
 import { useSyncConflicts } from '../../hooks/useSyncConflicts';
@@ -8,8 +33,11 @@ import { useIngestSources } from '../../hooks/useIngestSources';
 import Chip from '../shared/Chip';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
-import { cn } from '../../lib/cn';
+import { Button } from '../ui/Button';
 import { Input } from '../forms/Input';
+import { cn } from '../../lib/cn';
+import ChangeReviewList from '../change-review/ChangeReviewList';
+import ChangeReviewCard from '../change-review/ChangeReviewCard';
 import type { ConflictField, ConflictSide, SyncConflict, ConflictResolution } from '../../types/ingest';
 
 // ---------------------------------------------------------------------------
@@ -25,9 +53,34 @@ function relativeTime(iso: string): string {
 }
 
 function formatValue(v: unknown): string {
-  if (v === null || v === undefined) return '—';
+  if (v === null || v === undefined) return '';
   if (typeof v === 'string') return v;
   try { return JSON.stringify(v, null, 2); } catch { return String(v); }
+}
+
+/**
+ * A field path in the reviewer's words.
+ *
+ * `body.summary` is a machine key. The reviewer is looking for "Summary" — so
+ * the last segment, de-cased, becomes the category, and the FULL path stays
+ * visible as the location hint. Nothing is hidden; it is just no longer the
+ * only thing on offer.
+ */
+function categoryFor(field: string): string {
+  const last = field.split('.').pop() ?? field;
+  const spaced = last
+    .replace(/[_-]+/g, ' ')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .trim();
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+/** Document-relative breadcrumb, from the connector when it knows one. */
+function pathFor(field: ConflictField): string[] {
+  if (field.path && field.path.length > 0) return field.path;
+  const segments = field.field.split('.');
+  // Drop the trailing segment — it is the category, already the card's heading.
+  return segments.slice(0, -1).map(categoryFor);
 }
 
 // ---------------------------------------------------------------------------
@@ -40,11 +93,9 @@ export default function ConflictsPage() {
     actionError, clearActionError,
   } = useSyncConflicts();
   const { sources } = useIngestSources();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [globalPick, setGlobalPick] = useState<ConflictSide>('platform');
   const [fieldChoices, setFieldChoices] = useState<Record<string, ConflictSide>>({});
-  const [note, setNote] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState<string | null>(null);
 
   const sourceNameMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -55,55 +106,58 @@ export default function ConflictsPage() {
   // Pending conflicts only — resolved/discarded fall off the queue.
   const pending = useMemo(() => conflicts.filter((c) => c.status === 'pending'), [conflicts]);
 
-  // Auto-select the first pending conflict on load / after refresh.
+  // Drop choices for conflicts that have left the queue, so a stale pick can
+  // never be submitted against a conflict the operator is no longer looking at.
   useEffect(() => {
-    if (selectedId && pending.some((c) => c.conflictId === selectedId)) return;
-    setSelectedId(pending[0]?.conflictId ?? null);
-  }, [pending, selectedId]);
+    const live = new Set(pending.map((c) => c.conflictId));
+    setFieldChoices((prev) => {
+      const next: Record<string, ConflictSide> = {};
+      for (const [key, side] of Object.entries(prev)) {
+        if (live.has(key.split('::')[0] ?? '')) next[key] = side;
+      }
+      return next;
+    });
+  }, [pending]);
 
-  const selected = useMemo(
-    () => pending.find((c) => c.conflictId === selectedId) ?? null,
-    [pending, selectedId],
-  );
+  const choiceFor = (conflictId: string, field: string): ConflictSide =>
+    fieldChoices[`${conflictId}::${field}`] ?? 'source';
 
-  // Reset per-conflict state when switching conflicts.
-  useEffect(() => {
-    setGlobalPick('platform');
-    setFieldChoices({});
-    setNote('');
-  }, [selectedId]);
+  const setChoice = (conflictId: string, field: string, side: ConflictSide) =>
+    setFieldChoices((prev) => ({ ...prev, [`${conflictId}::${field}`]: side }));
 
-  const handleResolve = async () => {
-    if (!selected) return;
-    setSubmitting(true);
+  const handleResolve = async (conflict: SyncConflict) => {
+    setSubmitting(conflict.conflictId);
     try {
+      const perField: Record<string, ConflictSide> = {};
+      for (const f of conflict.fields) {
+        perField[f.field] = choiceFor(conflict.conflictId, f.field);
+      }
+      const note = (notes[conflict.conflictId] ?? '').trim();
       const resolution: ConflictResolution = {
-        pick: globalPick,
-        ...(Object.keys(fieldChoices).length > 0 ? { fieldChoices } : {}),
-        ...(note.trim() ? { note: note.trim() } : {}),
+        // `pick` is the whole-conflict fallback the API requires; the per-field
+        // map is what the operator actually chose, so it always wins.
+        pick: 'source',
+        fieldChoices: perField,
+        ...(note ? { note } : {}),
       };
-      await resolveConflict(selected.conflictId, resolution);
+      await resolveConflict(conflict.conflictId, resolution);
     } finally {
-      setSubmitting(false);
+      setSubmitting(null);
     }
   };
 
-  const handleDiscard = async () => {
-    if (!selected) return;
-    setSubmitting(true);
+  const handleDiscard = async (conflictId: string) => {
+    setSubmitting(conflictId);
     try {
-      await discardConflict(selected.conflictId);
+      await discardConflict(conflictId);
     } finally {
-      setSubmitting(false);
+      setSubmitting(null);
     }
   };
 
   if (loading && conflicts.length === 0) {
     return (
-      <div data-testid="conflicts-page" className="p-6 flex flex-col gap-3">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="m-0 text-[22px] font-bold text-text-primary">Sync Conflicts</h2>
-        </div>
+      <div data-testid="conflicts-page" className="flex flex-col gap-3 p-6">
         <SkeletonCard height={48} />
         <SkeletonCard height={200} />
       </div>
@@ -111,35 +165,34 @@ export default function ConflictsPage() {
   }
 
   return (
-    <div data-testid="conflicts-page" className="p-6 flex flex-col gap-3">
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <h2 className="m-0 text-[22px] font-bold text-text-primary">Sync Conflicts</h2>
-          <span className="text-[13px] text-text-tertiary">
-            {pending.length} pending{pending.length !== 1 ? '' : ''} &bull; {conflicts.length - pending.length} resolved
-          </span>
-        </div>
-        <button
-          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]"
-          onClick={() => void refresh()}
-          data-testid="conflicts-refresh"
-        >
+    <div data-testid="conflicts-page" className="flex flex-col gap-6 p-6">
+      {/* The page's own identity is deliberately small and secondary. The
+          documents below are the headings; this is just the breadcrumb that
+          says which queue you are in. */}
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-xs uppercase tracking-wide text-text-tertiary">
+          Incoming changes · {pending.length} document{pending.length === 1 ? '' : 's'} waiting
+        </span>
+        <Button size="sm" variant="ghost" onClick={() => void refresh()} data-testid="conflicts-refresh">
           Refresh
-        </button>
+        </Button>
       </div>
 
       {usingMock && (
         <div
-          className="px-3.5 py-2.5 bg-warning-bg border border-[var(--color-state-awaiting)] text-warning-fg rounded-lg text-xs mb-3"
+          className="rounded-lg border border-warning-border bg-warning-bg px-3.5 py-2.5 text-xs text-warning-fg"
           data-testid="conflicts-mock-banner"
         >
-          Showing mock conflicts &mdash; backend endpoint <code>/api/sync/conflicts</code> not implemented yet.
+          Showing mock conflicts — backend endpoint <code>/api/sync/conflicts</code> not implemented.
         </div>
       )}
 
       {error && !usingMock && (
-        <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-3" role="alert">
-          <span className="text-[13px]">Failed to load conflicts: {error}</span>
+        <div
+          className="rounded-lg border border-danger-border bg-danger-bg px-4 py-3 text-[13px] text-danger-fg"
+          role="alert"
+        >
+          Failed to load conflicts: {error}
         </div>
       )}
 
@@ -150,17 +203,12 @@ export default function ConflictsPage() {
         <div
           data-testid="conflicts-action-error"
           role="alert"
-          className="px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-3"
+          className="flex items-center justify-between gap-3 rounded-lg border border-danger-border bg-danger-bg px-4 py-3"
         >
-          <span className="text-[13px] font-medium">
+          <span className="text-[13px] font-medium text-danger-fg">
             That conflict was not updated: {actionError}
           </span>
-          <button
-            onClick={clearActionError}
-            className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
-          >
-            Dismiss
-          </button>
+          <Button size="sm" variant="ghost" onClick={clearActionError}>Dismiss</Button>
         </div>
       )}
 
@@ -171,243 +219,167 @@ export default function ConflictsPage() {
           body="Write-back conflicts that need operator intervention will appear here."
         />
       ) : (
-        <div className="grid grid-cols-[320px_1fr] gap-4 items-start">
-          {/* Left rail — conflict list */}
-          <div className="bg-surface border border-border rounded-[10px] overflow-hidden" data-testid="conflicts-list">
-            <div className="px-3.5 py-2.5 border-b border-border text-xs font-semibold text-text-tertiary uppercase tracking-wide bg-surface-panel">
-              Pending ({pending.length})
-            </div>
-            {pending.map((c) => {
-              const isActive = c.conflictId === selectedId;
-              return (
-                <button
-                  key={c.conflictId}
-                  type="button"
-                  aria-pressed={isActive}
-                  className={cn(
-                    'px-3.5 py-2.5 border-b border-border cursor-pointer flex flex-col gap-1',
-                    'text-left w-full bg-transparent border-x-0 border-t-0 font-[inherit]',
-                    isActive && 'bg-primary-bg',
-                  )}
-                  onClick={() => setSelectedId(c.conflictId)}
-                  data-testid={`conflict-row-${c.conflictId}`}
-                >
-                  <div className="text-[13px] font-semibold text-text-primary leading-tight line-clamp-2">
-                    {c.summary}
-                  </div>
-                  <div className="flex gap-1.5 items-center flex-wrap text-[11px] text-text-tertiary">
-                    <Chip tone="warning" size="xs">{c.fields.length} field{c.fields.length !== 1 ? 's' : ''}</Chip>
-                    <span>{sourceNameMap.get(c.sourceId) ?? c.sourceId.slice(0, 10)}</span>
-                    <span>&bull;</span>
-                    <span>{relativeTime(c.detectedAt)}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Main pane — diff view */}
-          {selected && (
-            <div className="bg-surface border border-border rounded-[10px] p-4.5 flex flex-col gap-4" data-testid="conflict-detail">
-              <div className="flex items-start justify-between gap-3 flex-wrap">
-                <div>
-                  <h3 className="m-0 text-base font-bold text-text-primary">{selected.summary}</h3>
-                  <div className="mt-1.5 flex gap-2 items-center flex-wrap">
-                    <Chip tone="info" size="xs">{sourceNameMap.get(selected.sourceId) ?? selected.sourceId}</Chip>
-                    {selected.documentTypeId && (
-                      <Chip tone="purple" size="xs">{selected.documentTypeId}</Chip>
-                    )}
-                    <span className="text-[11px] text-text-tertiary">
-                      Detected {relativeTime(selected.detectedAt)}
-                    </span>
-                  </div>
-                  <div className="text-xs text-text-tertiary font-mono break-all mt-1.5">{selected.sourceRef}</div>
-                </div>
-                <div className="text-[11px] text-text-tertiary text-right">
-                  <div>Source edited: {relativeTime(selected.sourceUpdatedAt)}</div>
-                  <div>Platform edited: {relativeTime(selected.platformUpdatedAt)}</div>
-                </div>
+        pending.map((conflict) => (
+          <ChangeReviewList
+            key={conflict.conflictId}
+            // The DOCUMENT is the heading. Falls back to the id only when the
+            // connector gave us no name — never to the source system's name.
+            documentTitle={conflict.documentTitle ?? conflict.documentId}
+            changeCount={conflict.fields.length}
+            documentMeta={
+              <>
+                {sourceNameMap.get(conflict.sourceId) ?? conflict.sourceId} · detected{' '}
+                {relativeTime(conflict.detectedAt)}
+              </>
+            }
+            notices={
+              <div className="flex flex-wrap items-center gap-1.5">
+                <Chip tone="warning" size="xs" uppercase>Sync conflict</Chip>
+                <span className="text-[11px] text-text-tertiary">
+                  {conflict.summary} · source edited {relativeTime(conflict.sourceUpdatedAt)}, this
+                  copy edited {relativeTime(conflict.platformUpdatedAt)}
+                </span>
               </div>
-
-              {/* Whole-conflict pick */}
-              <div className="flex gap-2 p-2.5 bg-surface-inset border border-border rounded-lg items-center flex-wrap">
-                <span className="text-xs font-semibold text-text-secondary mr-1">Apply to all fields:</span>
-                {(['source', 'merged', 'platform'] as const).map((side) => {
-                  const enabled = side !== 'merged' || selected.fields.some((f) => f.mergedValue !== undefined);
-                  return (
-                    <button
-                      key={side}
-                      className={cn(
-                        'px-3 py-1 text-xs font-medium font-[inherit] border rounded-md cursor-pointer',
-                        globalPick === side
-                          ? 'bg-primary text-white border-primary'
-                          : 'bg-surface text-text-secondary border-border',
-                        !enabled && 'opacity-40 cursor-not-allowed',
-                      )}
-                      onClick={() => enabled && setGlobalPick(side)}
-                      disabled={!enabled}
-                      data-testid={`global-pick-${side}`}
-                    >
-                      {side === 'source' ? 'Source side' : side === 'platform' ? 'Platform side' : 'Auto-merged'}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Per-field diffs */}
-              {selected.fields.map((f) => (
-                <FieldDiff
-                  key={f.field}
-                  field={f}
-                  globalPick={globalPick}
-                  fieldChoice={fieldChoices[f.field]}
-                  onPick={(side) => setFieldChoices((prev) => ({ ...prev, [f.field]: side }))}
-                  onClear={() => setFieldChoices((prev) => {
-                    const next = { ...prev };
-                    delete next[f.field];
-                    return next;
-                  })}
-                />
-              ))}
-
-              {/* Note + actions */}
-              <div className="flex gap-2 justify-end border-t border-border pt-3.5 flex-wrap">
-                {/* Placeholder-only naming — gone as soon as the note is
-                    typed, which is the whole point of the field. */}
+            }
+            footer={
+              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border pt-3">
                 <Input
                   aria-label="Optional note (logged in audit trail)"
                   className="min-w-[240px] flex-1"
                   placeholder="Optional note (logged in audit trail)"
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  data-testid="conflict-note"
+                  value={notes[conflict.conflictId] ?? ''}
+                  onChange={(e) =>
+                    setNotes((prev) => ({ ...prev, [conflict.conflictId]: e.target.value }))
+                  }
+                  data-testid={`conflict-note-${conflict.conflictId}`}
                 />
-                <button
-                  className={cn(
-                    'px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)]',
-                    submitting && 'opacity-50 cursor-not-allowed',
-                  )}
-                  onClick={() => void handleDiscard()}
-                  disabled={submitting}
-                  data-testid="conflict-discard"
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  disabled={submitting === conflict.conflictId}
+                  onClick={() => void handleDiscard(conflict.conflictId)}
+                  data-testid={`conflict-discard-${conflict.conflictId}`}
                 >
                   Discard
-                </button>
-                <button
-                  className={cn(
-                    'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]',
-                    submitting && 'opacity-50 cursor-not-allowed',
-                  )}
-                  onClick={() => void handleResolve()}
-                  disabled={submitting}
-                  data-testid="conflict-resolve"
+                </Button>
+                <Button
+                  size="sm"
+                  variant="primary"
+                  disabled={submitting === conflict.conflictId}
+                  onClick={() => void handleResolve(conflict)}
+                  data-testid={`conflict-resolve-${conflict.conflictId}`}
                 >
-                  {submitting ? 'Resolving…' : 'Resolve'}
-                </button>
+                  {submitting === conflict.conflictId ? 'Applying…' : 'Apply to document'}
+                </Button>
               </div>
-            </div>
-          )}
-        </div>
+            }
+          >
+            {conflict.fields.map((field) => {
+              const side = choiceFor(conflict.conflictId, field.field);
+              return (
+                <ChangeReviewCard
+                  key={field.field}
+                  data-testid={`conflict-field-${field.field}`}
+                  category={categoryFor(field.field)}
+                  // Honest about attribution: most connectors cannot name an
+                  // editor, and the source system is not a person.
+                  {...(field.changedBy ? { author: { name: field.changedBy } } : {})}
+                  path={pathFor(field)}
+                  locationHint={field.field}
+                  // One axis: what the document says now → what the incoming
+                  // edit proposes. The three-way pick is below, folded away.
+                  pairs={[{
+                    before: formatValue(field.platformValue),
+                    after: formatValue(field.sourceValue),
+                  }]}
+                  beforeLabel="This copy"
+                  afterLabel="Incoming"
+                  badges={
+                    <Chip
+                      tone={side === 'source' ? 'success' : side === 'merged' ? 'info' : 'neutral'}
+                      size="xs"
+                      data-testid={`conflict-choice-${field.field}`}
+                    >
+                      {side === 'source'
+                        ? 'Taking incoming'
+                        : side === 'merged'
+                          ? 'Taking merged'
+                          : 'Keeping this copy'}
+                    </Chip>
+                  }
+                  actions={
+                    <FieldChoice
+                      field={field}
+                      side={side}
+                      onPick={(next) => setChoice(conflict.conflictId, field.field, next)}
+                    />
+                  }
+                />
+              );
+            })}
+
+          </ChangeReviewList>
+        ))
       )}
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// FieldDiff — the dual/triple-pane row for a single conflicted field.
+// FieldChoice — three-way pick, demoted to an inline control.
 // ---------------------------------------------------------------------------
 
-function FieldDiff({
+/**
+ * The merge picker, kept but moved.
+ *
+ * It used to be the primary reading surface: three columns of raw values with a
+ * radio row under each. That is the right shape for RESOLVING and the wrong one
+ * for REVIEWING, and this queue is read far more often than it is resolved. So
+ * the diff above answers "what does this do", and this answers "and if I want
+ * something other than the incoming value" — which is the rarer question.
+ */
+function FieldChoice({
   field,
-  globalPick,
-  fieldChoice,
+  side,
   onPick,
-  onClear,
 }: {
   field: ConflictField;
-  globalPick: ConflictSide;
-  fieldChoice: ConflictSide | undefined;
+  side: ConflictSide;
   onPick: (side: ConflictSide) => void;
-  onClear: () => void;
 }) {
-  const effective = fieldChoice ?? globalPick;
   const hasMerge = field.mergedValue !== undefined;
+  const options: Array<{ value: ConflictSide; label: string; enabled: boolean }> = [
+    { value: 'source', label: 'Take incoming', enabled: true },
+    { value: 'merged', label: 'Take merged', enabled: hasMerge },
+    { value: 'platform', label: 'Keep this copy', enabled: true },
+  ];
 
   return (
-    <div className="border border-border rounded-lg overflow-hidden" data-testid={`field-diff-${field.field}`}>
-      <div className="px-3 py-2 bg-surface-panel border-b border-border flex items-center justify-between gap-2 flex-wrap">
-        <span className="font-mono text-xs text-text-primary font-semibold">{field.field}</span>
-        {fieldChoice && (
-          <button
-            onClick={onClear}
-            className="text-[10px] px-2.5 py-0.5 rounded-full cursor-pointer border border-border bg-surface text-text-secondary font-[inherit] font-medium"
-            data-testid={`field-clear-${field.field}`}
-          >
-            Clear override
-          </button>
-        )}
-      </div>
-      <div className="grid grid-cols-3">
-        <DiffCell
-          label="Source side"
-          value={field.sourceValue}
-          selected={effective === 'source'}
-        />
-        <DiffCell
-          label={hasMerge ? 'Auto-merged' : 'Auto-merged (none)'}
-          value={hasMerge ? field.mergedValue : '—'}
-          selected={hasMerge && effective === 'merged'}
-          dim={!hasMerge}
-        />
-        <DiffCell
-          label="Platform side"
-          value={field.platformValue}
-          selected={effective === 'platform'}
-          last
-        />
-      </div>
-      <div className="flex gap-1.5 px-2.5 py-1.5 border-t border-border bg-surface-inset">
-        <span className="text-[11px] text-text-tertiary mr-1">Pick for this field:</span>
-        {(['source', 'merged', 'platform'] as const).map((side) => {
-          const enabled = side !== 'merged' || hasMerge;
-          const isActive = effective === side;
-          return (
-            <button
-              key={side}
-              className={cn(
-                'text-[11px] px-2.5 py-0.5 rounded-full cursor-pointer border font-[inherit] font-medium',
-                isActive
-                  ? 'bg-[var(--color-state-completed)] text-white border-[var(--color-state-completed)]'
-                  : 'bg-surface text-text-secondary border-border',
-                !enabled && 'opacity-40 cursor-not-allowed',
-              )}
-              onClick={() => enabled && onPick(side)}
-              disabled={!enabled}
-              data-testid={`field-pick-${field.field}-${side}`}
-            >
-              {side === 'source' ? 'Source' : side === 'platform' ? 'Platform' : 'Merged'}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function DiffCell({
-  label, value, selected, last, dim,
-}: { label: string; value: unknown; selected: boolean; last?: boolean; dim?: boolean }) {
-  return (
-    <div
-      className={cn(
-        'p-3 text-xs text-text-secondary font-mono whitespace-pre-wrap break-words min-h-[60px] bg-surface',
-        !last && 'border-r border-border',
-        selected && 'bg-success-bg border-[var(--color-state-completed)]',
-        dim && 'opacity-55',
+    <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label={`Resolution for ${field.field}`}>
+      {options.map((opt) => (
+        <button
+          key={opt.value}
+          type="button"
+          aria-pressed={side === opt.value}
+          disabled={!opt.enabled}
+          onClick={() => opt.enabled && onPick(opt.value)}
+          className={cn(
+            'cursor-pointer rounded-full border px-2.5 py-0.5 font-[inherit] text-[11px] font-medium',
+            side === opt.value
+              ? 'border-primary bg-primary text-white'
+              : 'border-border bg-surface text-text-secondary hover:border-border-emphasis',
+            !opt.enabled && 'cursor-not-allowed opacity-40',
+          )}
+          data-testid={`field-pick-${field.field}-${opt.value}`}
+        >
+          {opt.label}
+        </button>
+      ))}
+      {hasMerge && side === 'merged' && (
+        <span className="font-mono text-[11px] text-text-tertiary">
+          → {formatValue(field.mergedValue)}
+        </span>
       )}
-    >
-      <div className="text-[10px] font-bold text-text-tertiary uppercase tracking-wide mb-1.5 font-sans">{label}</div>
-      <div>{formatValue(value)}</div>
     </div>
   );
 }

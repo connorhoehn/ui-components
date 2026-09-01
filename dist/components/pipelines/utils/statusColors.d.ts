@@ -1,0 +1,9 @@
+import type { RunStatus } from '../../../types/pipeline';
+import type { ErrorCategory } from '../../../types/pipeline';
+import type { ChipTone } from '../../shared/Chip';
+export declare function statusChipVariant(status: RunStatus): {
+    label: string;
+    tone: ChipTone;
+};
+export declare function errorCategoryTone(cat: ErrorCategory): ChipTone;
+//# sourceMappingURL=statusColors.d.ts.map

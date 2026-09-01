@@ -63,18 +63,27 @@ const conflicts: SyncConflict[] = [
     conflictId: 'cf-1',
     sourceId: 'src-drive',
     documentId: 'doc-441',
+    // The document's NAME. Without it the page could only show `doc-441`, and
+    // the reviewer had to read a diff cell to learn which document they were
+    // being asked to change.
+    documentTitle: 'Acme MSA',
     documentTypeId: 'dt-contract',
     sourceRef: 'drive:1AbCdEfGh',
     summary: 'title and body changed remotely while an editor had the doc open',
     fields: [
       {
         field: 'title',
+        // Drive revisions carry an editor, so this change is attributable.
+        changedBy: 'Dana Whitfield',
+        path: ['Header'],
         sourceValue: 'Acme MSA (2026, signed)',
         platformValue: 'Acme MSA 2026',
         mergedValue: 'Acme MSA (2026, signed)',
       },
       {
         field: 'body.summary',
+        changedBy: 'Dana Whitfield',
+        path: ['Body', 'Summary'],
         sourceValue: 'Signed 2026-08-02 by both parties.',
         platformValue: 'Awaiting counter-signature.',
       },
@@ -88,10 +97,19 @@ const conflicts: SyncConflict[] = [
     conflictId: 'cf-2',
     sourceId: 'src-drive',
     documentId: 'doc-512',
+    documentTitle: 'Acme Invoice #4471',
     documentTypeId: 'dt-invoice',
     sourceRef: 'drive:9ZyXwVu',
     summary: 'total amount differs',
-    fields: [{ field: 'totalAmount', sourceValue: 18_400, platformValue: 18_040 }],
+    fields: [{
+      // Deliberately NO `changedBy` — plenty of connectors cannot name an
+      // editor, and the card must say "Unattributed" rather than credit the
+      // source system as if it were a person.
+      field: 'totalAmount',
+      path: ['Summary'],
+      sourceValue: 18_400,
+      platformValue: 18_040,
+    }],
     status: 'pending',
     platformUpdatedAt: earlier,
     sourceUpdatedAt: now,
@@ -101,6 +119,7 @@ const conflicts: SyncConflict[] = [
     conflictId: 'cf-3',
     sourceId: 'src-drive',
     documentId: 'doc-118',
+    documentTitle: 'Support Addendum',
     documentTypeId: 'dt-contract',
     sourceRef: 'drive:5QrStUv',
     summary: 'owner reassigned remotely',
@@ -133,6 +152,19 @@ export const Loaded: Story = {
     <MockApi routes={{ '/api/sync/conflicts': { conflicts }, '/api/ingest/sources': { sources } }}>
       <Frame>
         <ConflictsPage />
+      </Frame>
+    </MockApi>
+  ),
+};
+
+/** The same queue under the dark palette — token pairs must hold in both. */
+export const LoadedDark: Story = {
+  render: () => (
+    <MockApi routes={{ '/api/sync/conflicts': { conflicts }, '/api/ingest/sources': { sources } }}>
+      <Frame>
+        <div data-theme="dark" className="min-h-screen bg-surface-panel">
+          <ConflictsPage />
+        </div>
       </Frame>
     </MockApi>
   ),

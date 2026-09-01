@@ -24,7 +24,16 @@ import { useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import Chip from '../shared/Chip';
+import { Avatar } from '../shared/Avatar';
 import { Input } from '../forms/Input';
+import ChangeDiff from '../change-review/ChangeDiff';
+import ChangeLocation from '../change-review/ChangeLocation';
+import VerdictChip from '../change-review/VerdictChip';
+import type {
+  ChangeAuthor,
+  ChangeReviewStatus,
+  ChangeReviewVerdict,
+} from '../change-review';
 
 /** How much the capture path trusted its own choice of target. */
 export type ProposalConfidence = 'high' | 'medium' | 'low';
@@ -72,6 +81,47 @@ export interface ProposalCardProps {
   rationale?: string;
   /** Set when drafting itself failed. Rendered instead of the diff. */
   draftError?: string;
+
+  // ── Change-review additions ───────────────────────────────────────────────
+  //
+  // All optional. A host that passes none of them gets exactly the card it got
+  // before; the surfaces that know these facts show them.
+
+  /**
+   * Who ASKED for this change — the person whose remark raised it.
+   *
+   * Distinct from who drafted it: the draft is always the model's, which is
+   * what the permanent "AI proposal" chip says. Omit when the requester is not
+   * known. Never synthesise one; an invented author on a change nobody can
+   * trace is worse than an honest blank.
+   */
+  author?: ChangeAuthor;
+  /**
+   * What kind of change this is, in the reviewer's words — "Document title",
+   * "Body text". Defaults to a label derived from `kind`.
+   */
+  category?: string;
+  /**
+   * Where in the document this lands, outermost first. Rendered diff-hunk
+   * style. Defaults to `targetLabel` when that is all the host knows.
+   */
+  path?: readonly string[];
+  /** Position within the target, e.g. `paragraph 3`. */
+  locationHint?: string;
+
+  /** The agent's verdict on this change. */
+  verdict?: ChangeReviewVerdict | undefined;
+  /** How the review itself is going. */
+  verdictStatus?: ChangeReviewStatus | undefined;
+  /** Why the review failed, when `verdictStatus` is `failed`. */
+  verdictError?: string | undefined;
+  /**
+   * The proposal's CURRENT revision. Pass it, or a verdict computed against an
+   * earlier draft renders as though it still applies to this one.
+   */
+  revision?: string | undefined;
+  /** Ask for a fresh verdict against the current revision. */
+  onRereview?: () => void;
   /**
    * Apply the change. MUST perform the mutation and report what happened —
    * returning `{ ok: true }` without changing the document is the exact bug this
@@ -110,32 +160,11 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-/**
- * Before/after pair.
- *
- * Deliberately two labelled blocks rather than inline red/green strikethrough:
- * the red/green convention alone fails for anyone who cannot distinguish them,
- * and these values are frequently one-word titles where an inline diff has
- * nothing to show. The tone tints are reinforcement, never the only signal.
- */
-function DiffPair({ before, after }: { before: string; after: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="rounded border border-danger-border bg-danger-bg px-2 py-1">
-        <div className="text-[10px] uppercase tracking-wide text-danger-fg/70">Now</div>
-        <div className="text-xs text-danger-fg break-words line-through decoration-danger-fg/40">
-          {before || <span className="italic opacity-60 no-underline">(empty)</span>}
-        </div>
-      </div>
-      <div className="rounded border border-success-border bg-success-bg px-2 py-1">
-        <div className="text-[10px] uppercase tracking-wide text-success-fg/70">Proposed</div>
-        <div className="text-xs text-success-fg break-words">
-          {after || <span className="italic opacity-60">(removed)</span>}
-        </div>
-      </div>
-    </div>
-  );
-}
+/** Fallback category when the host does not supply a richer one. */
+const KIND_CATEGORY: Record<ProposalKind, string> = {
+  field: 'Field change',
+  prose: 'Body text',
+};
 
 export function ProposalCard({
   utterance,
@@ -150,6 +179,15 @@ export function ProposalCard({
   edits,
   rationale,
   draftError,
+  author,
+  category,
+  path,
+  locationHint,
+  verdict,
+  verdictStatus = 'idle',
+  verdictError,
+  revision,
+  onRereview,
   onAccept,
   onReject,
   onRedraft,
@@ -199,12 +237,37 @@ export function ProposalCard({
         className,
       )}
     >
-      <div className="flex flex-wrap items-center gap-1.5">
+      {/* Category and requester lead the card: what kind of change, and who is
+          asking. Those two decide whether this one is worth reading, and a
+          queue is that question over and over. */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span
+          className="text-sm font-semibold leading-tight text-text-primary"
+          data-testid={`${testId}-category`}
+        >
+          {category ?? KIND_CATEGORY[kind]}
+        </span>
+        {author && (
+          <span
+            className="flex min-w-0 items-center gap-1.5"
+            data-testid={`${testId}-requester`}
+          >
+            <Avatar
+              name={author.name}
+              size={18}
+              {...(author.avatarUrl ? { src: author.avatarUrl } : {})}
+            />
+            <span className="truncate text-xs text-text-secondary">{author.name}</span>
+          </span>
+        )}
+        <span className="flex-1" />
         {/*
           The author label is load-bearing, not decoration. Unreviewed marks are
           visible to every collaborator the moment they exist — unlike Gemini,
           which keeps its own private until approved — so the only thing
-          separating "a proposal" from "an agreed edit" is this label.
+          separating "a proposal" from "an agreed edit" is this label. It stays
+          even when `author` names the requester: a human ASKED, but a model
+          WROTE, and the reviewer needs both facts.
         */}
         <Chip tone="info" size="sm" uppercase data-testid={`${testId}-author`}>
           AI proposal
@@ -232,8 +295,16 @@ export function ProposalCard({
         “{utterance}”
       </blockquote>
 
+      {/* WHERE this lands. Replaces the old "Target:" row — same fact, but in
+          the diff-hunk shape a reviewer already knows how to read. Falls back
+          to `targetLabel` when the host knows no structured path. */}
+      <ChangeLocation
+        path={path ?? (targetLabel ? [targetLabel] : [])}
+        {...(locationHint ? { hint: locationHint } : {})}
+        data-testid={`${testId}-location`}
+      />
+
       <div className="flex flex-col gap-1">
-        {targetLabel && <Row label="Target">{targetLabel}</Row>}
         {targetReason && <Row label="Why">{targetReason}</Row>}
         {rationale && <Row label="Rationale">{rationale}</Row>}
       </div>
@@ -254,11 +325,20 @@ export function ProposalCard({
       )}
 
       {status !== 'drafting' && !draftError && pairs.length > 0 && (
-        <div className="flex flex-col gap-2" data-testid={`${testId}-diff`}>
-          {pairs.map((pair, i) => (
-            <DiffPair key={i} before={pair.before} after={pair.after} />
-          ))}
-        </div>
+        <ChangeDiff pairs={pairs} data-testid={`${testId}-diff`} />
+      )}
+
+      {/* The agent's verdict, with its reasoning folded away. Rendered even
+          when there is none: a queue where "no chip" silently means "nobody
+          looked" trains reviewers to read absence as approval. */}
+      {status !== 'drafting' && (
+        <VerdictChip
+          verdict={verdict}
+          status={verdictStatus}
+          error={verdictError}
+          revision={revision}
+          data-testid={`${testId}-verdict`}
+        />
       )}
 
       {outcome && !outcome.ok && (
@@ -301,6 +381,12 @@ export function ProposalCard({
             <Button size="sm" variant="ghost" disabled={busy} onClick={onRedraft}
               data-testid={`${testId}-redraft`}>
               Re-draft
+            </Button>
+          )}
+          {onRereview && (
+            <Button size="sm" variant="ghost" disabled={busy} onClick={onRereview}
+              data-testid={`${testId}-rereview`}>
+              Re-run review
             </Button>
           )}
           {onReattach && (

@@ -476,6 +476,24 @@ export declare interface ConflictField {
     platformValue: unknown;
     /** Optional auto-merge proposal (if the engine produced one). */
     mergedValue?: unknown;
+    /**
+     * Who made the source-side edit, when the connector can tell us.
+     *
+     * Additive and optional because most connectors CANNOT tell us: a Drive
+     * revision carries an editor, an S3 object generally does not. Absent means
+     * "unattributed", and the review UI says exactly that rather than crediting
+     * the change to the source system — "Contracts (Google Drive)" is where the
+     * change came from, not who made it, and showing a system where a person
+     * belongs is what made this queue unreadable.
+     */
+    changedBy?: string;
+    /**
+     * Human-readable location of this field in the document, outermost first —
+     * e.g. `['Payment terms']`. The `field` path above is a machine key; this is
+     * where a reader would look on the page. Optional: connectors that only know
+     * the field path omit it, and the UI falls back to showing the path.
+     */
+    path?: string[];
 }
 
 export declare interface ConflictResolution {
@@ -1886,6 +1904,15 @@ export declare interface SyncConflict {
     conflictId: string;
     sourceId: string;
     documentId: string;
+    /**
+     * The document's human name.
+     *
+     * Additive and optional. The review surface leads with the DOCUMENT, and
+     * until now the only document identity in this payload was `documentId` — so
+     * the page could not name the thing it was asking the operator to change.
+     * Absent falls back to `documentId`.
+     */
+    documentTitle?: string;
     documentTypeId: string | null;
     /** Stable identity in the source system (e.g. Drive file id). */
     sourceRef: string;
