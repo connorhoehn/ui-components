@@ -30,10 +30,20 @@ const storyClient: ComputeClient = {
   tail: (boxId) => ({ url: mockTailUrl(boxId), withCredentials: false, headers: {} }),
 };
 
-/** Uninstalls on unmount so switching stories does not leave a mock global behind. */
+/**
+ * Installs the shell + tail simulators, uninstalling on unmount.
+ *
+ * Installed in a `useState` initializer, NOT an effect: child effects run
+ * before parent effects, so a story that mounts a tail pane pre-seeded (see
+ * WatchingABot) would open its EventSource against the NATIVE constructor a
+ * beat before an effect-time install patched it — two panes stuck on
+ * "not connected" with a working simulator arriving just too late. Both
+ * installers are refcounted, so the render-time install is safe under strict
+ * mode's double-invoke; the effect below exists only for the uninstall.
+ */
 function WithMockShell({ children }: { children: ReactNode }) {
-  useEffect(() => installMockShellSocket(), []);
-  useEffect(() => installMockTailSource(), []);
+  const [uninstalls] = useState(() => [installMockShellSocket(), installMockTailSource()]);
+  useEffect(() => () => { for (const u of uninstalls) u(); }, [uninstalls]);
   return <>{children}</>;
 }
 
