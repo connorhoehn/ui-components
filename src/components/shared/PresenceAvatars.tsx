@@ -15,6 +15,7 @@
 // All four are optional and additive — consumers that don't pass them
 // see the original behaviour unchanged.
 
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Avatar } from './Avatar';
 import { StatusDot } from './StatusDot';
 import { cn } from '../../lib/cn';
@@ -50,6 +51,12 @@ export interface PresenceUser {
   /** Optional editing mode — renders a small mode badge on the
    *  upper-right of the avatar (pencil / check / eye). */
   mode?: PresenceMode;
+  /** One status line for the hover card — "editing", "away · 3m". Free text
+   *  because the library does not know the host's vocabulary. */
+  detail?: string;
+  /** Where in the surface the user is — a section title, a pane name.
+   *  Rendered under the detail line on the hover card. */
+  location?: string;
 }
 
 export interface PresenceAvatarsProps {
@@ -65,6 +72,18 @@ export interface PresenceAvatarsProps {
    *  accessibility; when omitted, items render as `<div>` (back-compat
    *  with consumers that just want a static row). */
   onUserClick?: (id: string) => void;
+  /**
+   * Enables follow mode: each avatar grows a hover/focus card (name, detail,
+   * location) with a Follow action. Click stays `onUserClick` — jump once —
+   * and follow is the card's explicit verb, because a bubble that follows on
+   * bare click turns every glance into a mode change.
+   *
+   * The card replaces the native `title` tooltip when set; two tooltips
+   * fighting over one hover is worse than either.
+   */
+  onFollowUser?: (id: string) => void;
+  /** The user currently being followed, so their card offers Stop instead. */
+  followingUserId?: string | null;
   className?: string;
 }
 
@@ -92,12 +111,77 @@ function dimColor(color: string | undefined): string | undefined {
   return color; // non-hex — caller's responsibility
 }
 
+/**
+ * The hover/focus card behind an avatar when follow mode is on.
+ *
+ * A separate component because it owns hover state with a leave grace: the
+ * card sits below the avatar with a gap, and a tooltip that vanishes the
+ * moment the pointer crosses that gap has an unreachable button in it.
+ */
+function AvatarWithCard({ user, isFollowing, onFollow, children }: {
+  user: PresenceUser;
+  isFollowing: boolean;
+  onFollow: (id: string) => void;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const show = () => {
+    if (hideTimer.current) { clearTimeout(hideTimer.current); hideTimer.current = null; }
+    setOpen(true);
+  };
+  const hide = () => { hideTimer.current = setTimeout(() => setOpen(false), 150); };
+  useEffect(() => () => { if (hideTimer.current) clearTimeout(hideTimer.current); }, []);
+
+  return (
+    <span
+      className="relative inline-flex"
+      onMouseEnter={show}
+      onMouseLeave={hide}
+      onFocus={show}
+      onBlur={hide}
+      onKeyDown={(e) => { if (e.key === 'Escape') setOpen(false); }}
+    >
+      {children}
+      {open && (
+        <div
+          role="tooltip"
+          data-testid="presence-card"
+          onMouseEnter={show}
+          onMouseLeave={hide}
+          className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 z-50 min-w-[140px] rounded-md border border-border bg-surface shadow-lg px-2.5 py-2 text-left"
+        >
+          <div className="text-[12px] font-semibold text-text-primary whitespace-nowrap">{user.name}</div>
+          {user.detail && (
+            <div className="text-[11px] text-text-tertiary whitespace-nowrap">{user.detail}</div>
+          )}
+          {user.location && (
+            <div className="text-[11px] text-text-tertiary whitespace-nowrap mt-0.5">§ {user.location}</div>
+          )}
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onFollow(user.id); }}
+            className={cn(
+              'mt-1.5 text-[11px] font-semibold bg-transparent border-0 p-0 cursor-pointer',
+              isFollowing ? 'text-warning' : 'text-info',
+            )}
+          >
+            {isFollowing ? 'Stop following' : 'Follow'}
+          </button>
+        </div>
+      )}
+    </span>
+  );
+}
+
 export function PresenceAvatars({
   users,
   maxVisible = 5,
   size = 28,
   onMoreClick,
   onUserClick,
+  onFollowUser,
+  followingUserId = null,
   className,
 }: PresenceAvatarsProps) {
   const visible = users.slice(0, maxVisible);
@@ -195,8 +279,24 @@ export function PresenceAvatars({
         const sharedStyle: React.CSSProperties = {
           marginLeft: index > 0 ? overlap : 0,
         };
+        // The follow card replaces the native title — two tooltips fighting
+        // over one hover is worse than either. The card is a SIBLING of the
+        // avatar button, never a child: a follow <button> inside the avatar
+        // <button> is invalid HTML and unreachable by keyboard.
+        const wrap = (node: ReactNode) =>
+          onFollowUser ? (
+            <AvatarWithCard
+              key={user.id}
+              user={user}
+              isFollowing={followingUserId === user.id}
+              onFollow={onFollowUser}
+            >
+              {node}
+            </AvatarWithCard>
+          ) : node;
+
         if (onUserClick) {
-          return (
+          return wrap(
             <button
               key={user.id}
               type="button"
@@ -206,26 +306,26 @@ export function PresenceAvatars({
                 onUserClick(user.id);
               }}
               className="relative shrink-0 p-0 bg-transparent border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-info rounded-full"
-              title={title}
+              {...(onFollowUser ? {} : { title })}
               aria-label={title}
               {...dataAttrs}
               style={sharedStyle}
             >
               {inner}
-            </button>
+            </button>,
           );
         }
-        return (
+        return wrap(
           <div
             key={user.id}
             role="listitem"
             className="relative shrink-0"
-            title={title}
+            {...(onFollowUser ? {} : { title })}
             {...dataAttrs}
             style={sharedStyle}
           >
             {inner}
-          </div>
+          </div>,
         );
       })}
 

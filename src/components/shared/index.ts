@@ -70,6 +70,8 @@ export type { DockedPanelContextValue, DockedPanelProviderProps } from './Docked
 
 // ── New primitives (2025-05) ──
 export { default as StatCard } from './StatCard';
+export { default as FollowBanner } from './FollowBanner';
+export type { FollowBannerProps } from './FollowBanner';
 export { default as SuggestionCard } from './SuggestionCard';
 export { default as TaskComposer } from './TaskComposer';
 export type { TaskComposerProps, ComposerSuggestion } from './TaskComposer';

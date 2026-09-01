@@ -4,6 +4,7 @@ import * as Y from 'yjs';
 import { Awareness } from 'y-protocols/awareness';
 import CanvasDocumentView, { type CanvasUnsupportedForm } from './CanvasDocumentView';
 import PresenceAvatars from '../shared/PresenceAvatars';
+import FollowBanner from '../shared/FollowBanner';
 import CommentThreadNode from './CommentThread';
 import type { CommentThread } from '../../types/document';
 
@@ -174,6 +175,18 @@ export const WithPresenceAndComments: Story = {
     const { ydoc, provider, body } = useFixture();
     const onEditorReady = useSeed(SAMPLE_HTML, body);
     const [focused, setFocused] = useState<string | null>(null);
+    // Follow mode: hover a bubble for the card (name, what they are doing,
+    // where), Follow locks onto them, and any local interaction — or Stop —
+    // unlocks. In an app the lock scrolls the canvas to the followed cursor
+    // via awareness; the story owns the state so the interaction itself is
+    // reviewable without a second client.
+    const [followingId, setFollowingId] = useState<string | null>(null);
+    const CAST = [
+      { id: 'u1', name: 'Ada Lovelace', color: '#8b5cf6', online: true, mode: 'editor' as const, detail: 'editing', location: 'Rollout plan' },
+      { id: 'u2', name: 'Grace Hopper', color: '#2563eb', online: true, mode: 'reviewer' as const, detail: 'reviewing', location: 'Recovery window' },
+      { id: 'u3', name: 'Alan Turing', color: '#16a34a', online: false, detail: 'away · 12m' },
+    ];
+    const following = CAST.find((u) => u.id === followingId) ?? null;
 
     // The REAL thread component, not a hand-rolled card: replies, resolve,
     // @-mentions and relative timestamps all come for free, and the gutter
@@ -207,14 +220,19 @@ export const WithPresenceAndComments: Story = {
         ydoc={ydoc}
         provider={provider}
         onEditorReady={onEditorReady as never}
+        header={
+          <FollowBanner
+            name={following?.name ?? null}
+            onStop={() => setFollowingId(null)}
+          />
+        }
         toolbarActions={
           <PresenceAvatars
-            users={[
-              { id: 'u1', name: 'Ada Lovelace', color: '#8b5cf6', online: true },
-              { id: 'u2', name: 'Grace Hopper', color: '#2563eb', online: true },
-              { id: 'u3', name: 'Alan Turing', color: '#16a34a', online: false },
-            ]}
+            users={CAST}
             size={24}
+            onUserClick={() => {}}
+            onFollowUser={(id) => setFollowingId((cur) => (cur === id ? null : id))}
+            followingUserId={followingId}
           />
         }
         gutterItems={[
