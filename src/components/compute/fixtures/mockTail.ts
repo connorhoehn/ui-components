@@ -169,7 +169,12 @@ class MockTailSource {
     let at = 0;
     this.schedule(0, () => {
       this.readyState = 1;
-      this.emit('open', new Event('open'));
+      const event = new Event('open');
+      // Both notification channels, like the real thing: the consumer hook
+      // uses the `onopen` property, and only firing addEventListener left the
+      // pane streaming happily under a "not connected" chip.
+      this.onopen?.(event);
+      this.emit('open', event);
     });
     for (const frame of script.frames) {
       at += frame.afterMs;
