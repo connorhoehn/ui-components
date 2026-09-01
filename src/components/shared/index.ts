@@ -245,6 +245,10 @@ export { MetaLine } from './MetaLine';
 export type { MetaLineProps, MetaLineSize, MetaLineTone } from './MetaLine';
 export { BoardColumn } from './BoardColumn';
 export type { BoardColumnProps } from './BoardColumn';
+export { FormRow } from './FormRow';
+export type { FormRowProps } from './FormRow';
+export { DetailHeader } from './DetailHeader';
+export type { DetailHeaderProps } from './DetailHeader';
 
 // ── Form primitives, reachable from the `/shared` subpath ──
 //
