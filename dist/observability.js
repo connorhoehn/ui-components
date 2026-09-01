@@ -6,8 +6,8 @@ import { t as o } from "./Chip-YhQI5B9P.js";
 import { t as s } from "./Modal-CyoyiNKN.js";
 import { t as c } from "./EmptyState-ClmWoqCb.js";
 import { n as l, r as u, t as d } from "./CardHeader-MBY5yyXT.js";
-import { t as f } from "./StatusDot-Bgx2zxgC.js";
-import { t as p } from "./Input-DLknWXri.js";
+import { t as f } from "./Input-DLknWXri.js";
+import { t as p } from "./StatusDot-Bgx2zxgC.js";
 import { t as m } from "./activationKey-CjbL3LUv.js";
 import { n as h } from "./EventStreamContext-CLzG8O5_.js";
 import { n as g, r as _ } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1404,10 +1404,10 @@ var Ke = {
 	timeRange: "1h"
 };
 function qe() {
-	let [e, n] = T([]), [r, i] = T(null), [a, o] = T(!1), [s, c] = T(Ke), [l, u] = T(!1), d = S(), f = w(a);
-	f.current = a;
+	let [e, n] = T([]), [r, i] = T(null), [a, o] = T(!1), [s, c] = T(Ke), [l, u] = T(!1), d = S(), p = w(a);
+	p.current = a;
 	let m = w(0), g = b((e) => {
-		if (f.current) return;
+		if (p.current) return;
 		let t = e, r = t?.eventType ?? "unknown", i = t?.payload ?? t;
 		m.current += 1;
 		let a = Date.now(), o = {
@@ -1547,7 +1547,7 @@ function qe() {
 								htmlFor: `${d}-runs`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Runs"
-							}), /* @__PURE__ */ D(p, {
+							}), /* @__PURE__ */ D(f, {
 								id: `${d}-runs`,
 								"data-testid": "events-filter-runs",
 								placeholder: "runId (comma-separated)",
@@ -1565,7 +1565,7 @@ function qe() {
 								htmlFor: `${d}-pipelines`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Pipelines"
-							}), /* @__PURE__ */ D(p, {
+							}), /* @__PURE__ */ D(f, {
 								id: `${d}-pipelines`,
 								"data-testid": "events-filter-pipelines",
 								placeholder: "pipelineId (comma-separated)",
@@ -1678,7 +1678,7 @@ var $e = [
 	{ id: "node-2" }
 ];
 function et(e) {
-	let { onInjectLatency: n = (e) => Q({ injectedLatencyMs: Math.max(0, e) }), onInjectPartition: r = (e) => Q({ paused: e.length > 0 }), onDropMessages: i = (e) => Q({ injectedFailureRate: Math.min(1, Math.max(0, e / 100)) }), onKillAll: a = () => Q({ paused: !0 }), onReset: o = () => Ze(), availableNodes: c = $e } = e, [l, u] = T("0"), [d, f] = T("0"), [m, h] = T([]), [g, _] = T(!1), v = S(), [b, w] = T(() => Xe());
+	let { onInjectLatency: n = (e) => Q({ injectedLatencyMs: Math.max(0, e) }), onInjectPartition: r = (e) => Q({ paused: e.length > 0 }), onDropMessages: i = (e) => Q({ injectedFailureRate: Math.min(1, Math.max(0, e / 100)) }), onKillAll: a = () => Q({ paused: !0 }), onReset: o = () => Ze(), availableNodes: c = $e } = e, [l, u] = T("0"), [d, p] = T("0"), [m, h] = T([]), [g, _] = T(!1), v = S(), [b, w] = T(() => Xe());
 	x(() => Qe((e) => w(e)), []);
 	let k = (e) => {
 		h((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
@@ -1768,7 +1768,7 @@ function et(e) {
 					}),
 					/* @__PURE__ */ O("div", {
 						className: "flex gap-1.5",
-						children: [/* @__PURE__ */ D(p, {
+						children: [/* @__PURE__ */ D(f, {
 							"data-testid": "chaos-latency-input",
 							type: "number",
 							min: 0,
@@ -1827,13 +1827,13 @@ function et(e) {
 					}),
 					/* @__PURE__ */ O("div", {
 						className: "flex gap-1.5",
-						children: [/* @__PURE__ */ D(p, {
+						children: [/* @__PURE__ */ D(f, {
 							"data-testid": "chaos-drop-input",
 							type: "number",
 							min: 0,
 							max: 100,
 							value: d,
-							onChange: (e) => f(e.target.value),
+							onChange: (e) => p(e.target.value),
 							className: "flex-1 min-w-[60px]",
 							"aria-label": "Drop percent"
 						}), /* @__PURE__ */ D("span", {
@@ -2092,7 +2092,7 @@ function ct({ severity: e, title: n, description: r, timestamp: i, resolved: a =
 		children: [/* @__PURE__ */ O("div", {
 			className: "flex items-center gap-1.5",
 			children: [
-				/* @__PURE__ */ D(f, {
+				/* @__PURE__ */ D(p, {
 					size: "xs",
 					color: a ? "var(--color-text-tertiary)" : at[e],
 					"aria-label": a ? "Resolved" : e
@@ -2185,7 +2185,7 @@ function mt({ status: e, label: n, reason: r, dense: i = !1, className: a, style
 		style: o,
 		children: [/* @__PURE__ */ O("div", {
 			className: "flex items-center gap-1.5",
-			children: [/* @__PURE__ */ D(f, {
+			children: [/* @__PURE__ */ D(p, {
 				size: "xs",
 				color: ft[e],
 				"aria-label": e

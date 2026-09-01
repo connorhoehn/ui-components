@@ -28,6 +28,9 @@ export declare type ChooserRow = {
     project: ProjectRollup;
 };
 
+/** Which palette a lab surface paints in. */
+declare type ChromeTone = 'code' | 'app';
+
 /** Clear everything this module persists. For a tenant or account switch. */
 export declare function clearComputeStorage(): void;
 
@@ -422,8 +425,10 @@ export declare interface ComputerLabProps {
      * applied to the chrome containers rather than the root precisely so it does
      * not inherit into them. Defaults to `app` for an inline lab and `code` for
      * an overlay, which is what each is usually for.
+     *
+     * @see `../lib/chromeTokens` for the map itself and where it may be applied.
      */
-    chrome?: 'code' | 'app';
+    chrome?: ChromeTone;
     className?: string;
 }
 
@@ -708,7 +713,7 @@ export declare interface KeyBinding {
 /** Lab windows and their pane trees. */
 export declare const LAB_LAYOUT_STORAGE_KEY = "ui-components.computerLab.v1";
 
-export declare function LabChooser({ open, onClose, computers, panes, onJumpToPane, onRetarget, onOpenInSplit, projects, onSelectProject, }: LabChooserProps): JSX.Element | null;
+export declare function LabChooser({ open, onClose, computers, panes, onJumpToPane, onRetarget, onOpenInSplit, projects, onSelectProject, chrome: chromeTone, }: LabChooserProps): JSX.Element | null;
 
 export declare interface LabChooserProps {
     open: boolean;
@@ -728,9 +733,18 @@ export declare interface LabChooserProps {
     projects?: readonly ProjectRollup[];
     /** Focus a project's first computer, or offer to make one if it has none. */
     onSelectProject?: (project: ProjectRollup) => void;
+    /**
+     * Which palette the chooser card paints in. `code` (default) keeps the
+     * terminal family; `app` re-points it at the host's tokens, the way the
+     * lab's own chrome does — see `../lib/chromeTokens`.
+     *
+     * The scrim is NOT affected either way. It covers the panes as well as the
+     * chrome, and a light film over a terminal dims nothing.
+     */
+    chrome?: ChromeTone;
 }
 
-export declare type LabCommand = 'focus-left' | 'focus-right' | 'focus-up' | 'focus-down' | 'split-right' | 'split-down' | 'close-pane' | 'zoom-pane' | 'next-kind' | 'jump' | 'toggle-broadcast' | 'focus-composer' | 'help' | 'exit';
+export declare type LabCommand = 'focus-left' | 'focus-right' | 'focus-up' | 'focus-down' | 'split-right' | 'split-down' | 'close-pane' | 'zoom-pane' | 'next-kind' | 'jump' | 'toggle-broadcast' | 'focus-composer' | 'focus-rail' | 'help' | 'exit';
 
 /** Look up a chord's display label, for a button's tooltip. */
 export declare function labelFor(keymap: readonly KeyBinding[], command: LabCommand): string | null;
@@ -1318,10 +1332,16 @@ export declare interface TaskStep {
     text: string;
     /** Tool name, for `kind: 'tool'`. */
     tool?: string;
+    /** `job` only: the dispatcher's job kind (e.g. `devbox:task`) — the banner's subtitle. */
+    jobKind?: string;
+    /** `job_end` only: whether the job closed clean. Drives the closing tone. */
+    jobOk?: boolean;
+    /** `result` only: the structured tally, so the view renders cost chips instead of re-parsing `text`. */
+    result?: ComputeRunResult;
     at: number;
 }
 
-export declare type TaskStepKind = 'text' | 'tool' | 'result' | 'error' | 'meta';
+export declare type TaskStepKind = 'text' | 'tool' | 'result' | 'error' | 'meta' | 'job' | 'job_end';
 
 /** tmux's prefix, for a host that wants to switch leader mode on. */
 export declare const TMUX_LEADER: LeaderConfig;

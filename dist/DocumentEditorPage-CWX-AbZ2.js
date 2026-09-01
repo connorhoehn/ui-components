@@ -6,8 +6,8 @@ import { t as f } from "./useDocumentTypes-tyAjMJgn.js";
 import { t as p } from "./cn-DhjIN-s0.js";
 import { t as m } from "./useEventCallback-Cwx9QVSi.js";
 import { t as h } from "./Input-DLknWXri.js";
-import { t as g } from "./activationKey-CjbL3LUv.js";
-import { t as _ } from "./Textarea-Dz4doxTv.js";
+import { t as g } from "./Textarea-Dz4doxTv.js";
+import { t as _ } from "./activationKey-CjbL3LUv.js";
 import { i as v, t as y } from "./renderers-DIrGz3QL.js";
 import { t as b } from "./TiptapEditor-CnjifOQz.js";
 import { t as x } from "./useHangoutEmbed-ChkoGDC_.js";
@@ -1922,7 +1922,7 @@ function Xe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 			"aria-expanded": !1,
 			className: p("bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between"),
 			onClick: () => b(!0),
-			onKeyDown: g(() => b(!0)),
+			onKeyDown: _(() => b(!0)),
 			children: [/* @__PURE__ */ M("div", {
 				className: p("flex items-center gap-1.5"),
 				children: [
@@ -1961,7 +1961,7 @@ function Xe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 				"aria-expanded": !0,
 				className: p("bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between"),
 				onClick: () => b(!1),
-				onKeyDown: g(() => b(!1)),
+				onKeyDown: _(() => b(!1)),
 				children: [/* @__PURE__ */ M("div", {
 					className: p("flex items-center gap-1.5"),
 					children: [
@@ -2039,7 +2039,7 @@ function Xe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 						className: p("pl-[30px] mt-2 overflow-hidden animate-[sectionCommentsSlideDown_0.2s_ease-out]"),
 						children: [/* @__PURE__ */ M("div", {
 							className: p("relative"),
-							children: [/* @__PURE__ */ j(_, {
+							children: [/* @__PURE__ */ j(g, {
 								ref: f,
 								value: c,
 								onChange: T,
@@ -2086,7 +2086,7 @@ function Xe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 //#endregion
 //#region src/components/doc-editor/SectionComments.tsx
 function Ze({ comments: e, onAddComment: t, participants: n = [], onResolveThread: i, onUnresolveThread: a }) {
-	let [o, s] = k(!0), [c, l] = k(""), u = O(null), d = O(null), [f, m] = k(X), h = r(n), g = Ke(e), [v, y] = k(!0), b = [...e].sort((e, t) => {
+	let [o, s] = k(!0), [c, l] = k(""), u = O(null), d = O(null), [f, m] = k(X), h = r(n), _ = Ke(e), [v, y] = k(!0), b = [...e].sort((e, t) => {
 		if (e.resolved && !t.resolved) return 1;
 		if (!e.resolved && t.resolved) return -1;
 		let n = new Date(e.timestamp).getTime(), r = new Date(t.timestamp).getTime();
@@ -2116,11 +2116,11 @@ function Ze({ comments: e, onAddComment: t, participants: n = [], onResolveThrea
 		onClick: () => {
 			s((e) => !e), o || setTimeout(() => u.current?.focus(), 100);
 		},
-		className: p("inline-flex items-center gap-1 mt-2.5 px-2.5 py-1 text-xs font-medium border border-border rounded-md cursor-pointer font-[inherit]", g > 0 ? "bg-info-bg text-info-fg" : "bg-transparent text-neutral"),
+		className: p("inline-flex items-center gap-1 mt-2.5 px-2.5 py-1 text-xs font-medium border border-border rounded-md cursor-pointer font-[inherit]", _ > 0 ? "bg-info-bg text-info-fg" : "bg-transparent text-neutral"),
 		children: [
 			o ? "▼" : "▶",
 			" Comments",
-			g > 0 ? ` (${g})` : ""
+			_ > 0 ? ` (${_})` : ""
 		]
 	}), o && /* @__PURE__ */ M("div", {
 		className: p("mt-2 border border-border rounded-lg bg-surface-panel overflow-hidden animate-[sectionCommentsSlideDown_0.2s_ease-out]"),
@@ -2129,7 +2129,7 @@ function Ze({ comments: e, onAddComment: t, participants: n = [], onResolveThrea
 				className: p("flex items-start gap-1.5 px-3 py-2.5 border-b border-border bg-surface"),
 				children: [/* @__PURE__ */ M("div", {
 					className: p("flex-1 relative"),
-					children: [/* @__PURE__ */ j(_, {
+					children: [/* @__PURE__ */ j(g, {
 						ref: u,
 						value: c,
 						onChange: S,
@@ -3594,7 +3594,7 @@ function jt(e) {
 function Mt({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPreview: i, onClearPreview: a, onClose: o, onSaveVersion: s, onCompare: c, onClearCompare: l, compareSections: u, compareTimestamp: d, currentSections: f, onRestore: m }) {
 	let h = () => {
 		a(), l(), o();
-	}, _ = () => {
+	}, g = () => {
 		let e = window.prompt("Enter a name for this version:");
 		e && e.trim() && s(e.trim());
 	}, v = (e, t) => {
@@ -3608,7 +3608,7 @@ function Mt({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPrevie
 				onClose: h,
 				actions: /* @__PURE__ */ j(G, {
 					size: "sm",
-					onClick: _,
+					onClick: g,
 					children: "Save Version"
 				})
 			}),
@@ -3628,7 +3628,7 @@ function Mt({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPrevie
 						tabIndex: 0,
 						className: p("flex items-center justify-between py-2.5 px-4 cursor-pointer text-[13px] text-text-primary", n === e.timestamp ? "bg-info-bg border-l-[3px] border-l-info" : "bg-transparent border-l-[3px] border-l-transparent"),
 						onClick: () => i(e.timestamp),
-						onKeyDown: g(() => i(e.timestamp)),
+						onKeyDown: _(() => i(e.timestamp)),
 						children: [/* @__PURE__ */ M("div", {
 							className: p("flex-1 min-w-0"),
 							children: [
@@ -3706,7 +3706,7 @@ function Ft({ item: e, onClick: t, onDismiss: n }) {
 		tabIndex: 0,
 		className: p("flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-border-subtle items-start hover:bg-surface-inset"),
 		onClick: t,
-		onKeyDown: g(t),
+		onKeyDown: _(t),
 		children: [
 			/* @__PURE__ */ j("div", {
 				className: p("w-7 h-7 rounded-full text-white text-[11px] font-semibold flex items-center justify-center shrink-0"),
@@ -3767,7 +3767,7 @@ function It({ item: e, onClick: t, onDismiss: n }) {
 		tabIndex: 0,
 		className: p("flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-border-subtle items-start hover:bg-surface-inset"),
 		onClick: t,
-		onKeyDown: g(t),
+		onKeyDown: _(t),
 		children: [
 			/* @__PURE__ */ j("div", {
 				className: p("w-2 h-2 rounded-full shrink-0 mt-1"),

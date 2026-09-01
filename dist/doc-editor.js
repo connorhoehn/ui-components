@@ -4,12 +4,12 @@ import { t as r } from "./Button-wU9TwJvB.js";
 import { t as i } from "./Chip-YhQI5B9P.js";
 import { t as a } from "./EmptyState-ClmWoqCb.js";
 import { t as o } from "./Input-DLknWXri.js";
-import { t as s } from "./activationKey-CjbL3LUv.js";
-import { t as c } from "./Textarea-Dz4doxTv.js";
+import { t as s } from "./Textarea-Dz4doxTv.js";
+import { t as c } from "./activationKey-CjbL3LUv.js";
 import { a as l, n as u, r as d } from "./renderers-DIrGz3QL.js";
 import { t as f } from "./Select-CqVokE2v.js";
 import { n as p, t as m } from "./TiptapEditor-CnjifOQz.js";
-import { A as h, C as g, D as _, E as v, O as y, S as b, T as x, _ as S, a as C, b as w, c as T, d as E, f as D, g as O, h as k, i as A, k as j, l as M, m as N, o as P, p as F, r as ee, s as te, t as ne, u as re, v as ie, w as ae, x as oe, y as se } from "./DocumentEditorPage-B78AbMmc.js";
+import { A as h, C as g, D as _, E as v, O as y, S as b, T as x, _ as S, a as C, b as w, c as T, d as E, f as D, g as O, h as k, i as A, k as j, l as M, m as N, o as P, p as F, r as ee, s as te, t as ne, u as re, v as ie, w as ae, x as oe, y as se } from "./DocumentEditorPage-CWX-AbZ2.js";
 import { i as ce, n as le, r as ue, t as de } from "./CanvasDocumentView-CWKa5yyu.js";
 import { useCallback as I, useEffect as L, useMemo as R, useRef as z, useState as B } from "react";
 import { Fragment as V, jsx as H, jsxs as U } from "react/jsx-runtime";
@@ -111,7 +111,7 @@ function me({ users: e, onClickUser: t }) {
 		})]
 	});
 }
-function he({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i, onDeleteDocument: a, onJumpToUser: o, hideHeader: c }) {
+function he({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i, onDeleteDocument: a, onJumpToUser: o, hideHeader: s }) {
 	let [u, d] = B(!1), [f, p] = B(null), [m, h] = B(null), [g, _] = B(1), v = Math.max(1, Math.ceil(e.length / 10)), y = Math.min(g, v), b = R(() => {
 		let t = (y - 1) * 10;
 		return e.slice(t, t + 10);
@@ -121,7 +121,7 @@ function he({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 	return /* @__PURE__ */ U("div", {
 		className: n("px-4"),
 		children: [
-			!c && /* @__PURE__ */ U("div", {
+			!s && /* @__PURE__ */ U("div", {
 				className: n("flex items-center justify-between mb-5"),
 				children: [/* @__PURE__ */ H("h1", {
 					className: n("m-0 text-[22px] font-bold text-text-primary"),
@@ -143,14 +143,14 @@ function he({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 			}) : /* @__PURE__ */ H("div", {
 				className: n("flex flex-col gap-3"),
 				children: b.map((e) => {
-					let i = t[e.id] ?? [], a = f === e.id, c = a || m === e.id;
+					let i = t[e.id] ?? [], a = f === e.id, s = a || m === e.id;
 					return /* @__PURE__ */ U("div", {
 						"data-testid": `document-card-${e.id}`,
 						role: "button",
 						tabIndex: 0,
 						"aria-label": `Open ${e.title}`,
 						onClick: () => r(e.id),
-						onKeyDown: s(() => r(e.id)),
+						onKeyDown: c(() => r(e.id)),
 						onMouseEnter: () => p(e.id),
 						onMouseLeave: () => p(null),
 						onFocus: () => h(e.id),
@@ -201,7 +201,7 @@ function he({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 									onClickUser: (t) => o(e.id, t)
 								})
 							}),
-							c && /* @__PURE__ */ H("button", {
+							s && /* @__PURE__ */ H("button", {
 								type: "button",
 								onClick: (t) => x(t, e.id, e.title),
 								onKeyDown: (e) => e.stopPropagation(),
@@ -366,7 +366,7 @@ var ye = {
 	text: "var(--color-text-secondary)"
 };
 function Y({ item: e, onAck: t, onReject: r }) {
-	let [i, a] = B(!1), [o, s] = B(""), [l, u] = B("none"), d = z(e.status), f = ye[e.status] ?? xe, p = be[e.priority] ?? "var(--color-neutral)", [m, h] = B(!1), g = z(null);
+	let [i, a] = B(!1), [o, c] = B(""), [l, u] = B("none"), d = z(e.status), f = ye[e.status] ?? xe, p = be[e.priority] ?? "var(--color-neutral)", [m, h] = B(!1), g = z(null);
 	L(() => () => {
 		g.current && clearTimeout(g.current);
 	}, []), L(() => {
@@ -374,7 +374,7 @@ function Y({ item: e, onAck: t, onReject: r }) {
 	}, [e.status]);
 	let _ = () => {
 		m || (h(!0), u("ack"), g.current = setTimeout(() => {
-			g.current = null, t(o || void 0), s(""), a(!1), h(!1);
+			g.current = null, t(o || void 0), c(""), a(!1), h(!1);
 		}, 150));
 	}, v = () => {
 		if (!m) {
@@ -383,7 +383,7 @@ function Y({ item: e, onAck: t, onReject: r }) {
 				return;
 			}
 			h(!0), u("reject"), g.current = setTimeout(() => {
-				g.current = null, r(o), s(""), a(!1), h(!1);
+				g.current = null, r(o), c(""), a(!1), h(!1);
 			}, 150);
 		}
 	};
@@ -474,11 +474,11 @@ function Y({ item: e, onAck: t, onReject: r }) {
 				]
 			}), i && /* @__PURE__ */ U("div", {
 				className: n("mt-2"),
-				children: [/* @__PURE__ */ H(c, {
+				children: [/* @__PURE__ */ H(s, {
 					value: o,
-					onChange: (e) => s(e.target.value),
+					onChange: (e) => c(e.target.value),
 					onKeyDown: (e) => {
-						e.key === "Enter" && !e.shiftKey && (e.preventDefault(), o.trim() && _()), e.key === "Escape" && (a(!1), s(""));
+						e.key === "Enter" && !e.shiftKey && (e.preventDefault(), o.trim() && _()), e.key === "Escape" && (a(!1), c(""));
 					},
 					placeholder: "Add notes or rejection reason... (Enter to submit, Esc to cancel)",
 					autoFocus: !0,
@@ -506,7 +506,7 @@ function Y({ item: e, onAck: t, onReject: r }) {
 							type: "button",
 							className: n("px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field"),
 							onClick: () => {
-								a(!1), s("");
+								a(!1), c("");
 							},
 							tabIndex: 0,
 							children: "Cancel"
