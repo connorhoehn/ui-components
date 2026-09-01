@@ -2,6 +2,7 @@ import { Awareness } from 'y-protocols/awareness';
 import { default as default_2 } from 'react';
 import { DragEvent as DragEvent_2 } from 'react';
 import { Editor } from '@tiptap/react';
+import { Editor as Editor_2 } from '@tiptap/core';
 import { JSX } from 'react';
 import { MutableRefObject } from 'react';
 import { ReactNode } from 'react';
@@ -158,6 +159,9 @@ declare interface ChunkViewerProps {
     onUnresolveThread?: (commentId: string) => void;
     participants?: Participant[];
 }
+
+/** Find the awareness clientID whose `user` payload matches. Null when absent. */
+export declare function clientIdForUser(awareness: Awareness, match: (user: Record<string, unknown>) => boolean): number | null;
 
 /** Minimal provider shape needed by awareness. */
 declare interface CollaborationProvider {
@@ -1065,6 +1069,24 @@ declare interface UseDocumentActionsArgs {
     } | null;
     getSectionFragment: (sectionId: string) => XmlFragment | null;
     comments: Record<string, CommentThread[]>;
+}
+
+export declare function useFollowCursor({ editor, provider, followClientId, onLost }: UseFollowCursorOptions): void;
+
+export declare interface UseFollowCursorOptions {
+    editor: Editor_2 | null;
+    /** Anything carrying the doc's awareness — the same shape TiptapEditor takes. */
+    provider: {
+        awareness: Awareness;
+    } | null | undefined;
+    /** Awareness clientID to track. Null disables — the hook is always mounted. */
+    followClientId: number | null;
+    /**
+     * Fired when the followed client disappears from awareness (closed the tab,
+     * lost the connection). The host should clear its follow state — a lock on
+     * a ghost scrolls nowhere and the banner would name someone who left.
+     */
+    onLost?: () => void;
 }
 
 export declare function useSidebarPanels(options?: UseSidebarPanelsOptions): UseSidebarPanelsReturn;
