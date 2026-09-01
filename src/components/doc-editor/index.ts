@@ -64,3 +64,6 @@ export type {
 
 export { default as DocumentToolbar } from './DocumentToolbar';
 export type { DocumentToolbarProps } from './DocumentToolbar';
+
+export { default as DocumentGutter, stackOffsets } from './DocumentGutter';
+export type { DocumentGutterProps, GutterItem } from './DocumentGutter';

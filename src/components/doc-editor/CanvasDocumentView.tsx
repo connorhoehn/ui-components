@@ -27,6 +27,7 @@ import type { XmlFragment } from 'yjs';
 import type * as Y from 'yjs';
 import TiptapEditor from './TiptapEditor';
 import DocumentToolbar from './DocumentToolbar';
+import DocumentGutter, { type GutterItem } from './DocumentGutter';
 import Banner from '../shared/Banner';
 import EmptyState from '../shared/EmptyState';
 import { Button } from '../ui/Button';
@@ -68,6 +69,20 @@ export interface CanvasDocumentViewProps {
   /** Rendered above the page — title, participants, actions. */
   header?: ReactNode;
   /**
+   * Rendered at the right end of the toolbar — presence avatars, share, and
+   * anything belonging to the document rather than to formatting.
+   */
+  toolbarActions?: ReactNode;
+  /**
+   * Comment threads for the margin. Each carries the offset it wants and the
+   * gutter resolves collisions between them.
+   *
+   * Omitted entirely when empty rather than rendered as a blank column, so a
+   * document with no discussion keeps the full width for its text.
+   */
+  gutterItems?: readonly GutterItem[];
+  onFocusGutterItem?: (id: string) => void;
+  /**
    * Hands the live editor out once it exists (null while initialising).
    *
    * Not a convenience: `materialize()` needs the LIVE editor's ProseMirror
@@ -90,6 +105,9 @@ export default function CanvasDocumentView({
   onConvert,
   unsupported = [],
   header,
+  toolbarActions,
+  gutterItems,
+  onFocusGutterItem,
   onEditorReady,
   'data-testid': testId = 'canvas-document',
 }: CanvasDocumentViewProps) {
@@ -161,11 +179,13 @@ export default function CanvasDocumentView({
               className="sticky top-0 z-10 border-b border-border bg-surface-panel"
             >
               <div className="mx-auto max-w-[816px] px-2">
-                <DocumentToolbar editor={editor} />
+                <DocumentToolbar editor={editor} actions={toolbarActions} />
               </div>
             </div>
           )}
-          <div className="py-8">
+          {/* Page and gutter share a row, so a thread sits BESIDE the text it
+              refers to rather than under the document. */}
+          <div className="flex justify-center gap-6 py-8 px-6">
           <div
             // The sheet. 816px is 8.5in at 96dpi and 1056px is 11in, so the
             // page has the proportions of the thing it is imitating; 96px
@@ -178,7 +198,7 @@ export default function CanvasDocumentView({
             // paper in dark mode, which still "renders" and so survives a
             // screenshot check; darkSurfaceTokens (d) fails the build for it.
             data-testid={`${testId}-paper`}
-            className="doc-page mx-auto w-full max-w-[816px] min-h-[1056px] bg-paper px-[96px] py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]"
+            className="doc-page w-full max-w-[816px] min-h-[1056px] bg-paper px-[96px] py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]"
           >
             <TiptapEditor
               fragment={body}
@@ -194,6 +214,13 @@ export default function CanvasDocumentView({
               onEditorReady={(e) => { setEditor(e); onEditorReady?.(e); }}
             />
             </div>
+            {gutterItems && gutterItems.length > 0 && (
+              <DocumentGutter
+                items={gutterItems}
+                onFocusItem={onFocusGutterItem}
+                data-testid={`${testId}-gutter`}
+              />
+            )}
           </div>
         </div>
       ) : (

@@ -85,14 +85,59 @@ export interface ComputerLabProps {
    * inline variant drops both.
    */
   variant?: 'overlay' | 'inline';
+  /**
+   * Which palette the lab's *chrome* uses — top bar, rail, command line.
+   *
+   * `code` is the terminal family (Catppuccin, permanently dark). Right for an
+   * overlay, which is a place you enter and where the whole viewport is the
+   * lab.
+   *
+   * `app` re-points the same tokens at the host's surface/border/text, so the
+   * chrome takes the host's theme and flips with it. Without this the lab is a
+   * dark slab dropped into a light page — it reads as an embedded widget
+   * rather than part of the app, which is exactly the "feels like an iframe"
+   * complaint.
+   *
+   * Panes are NOT affected either way: a terminal is dark, and the remap is
+   * applied to the chrome containers rather than the root precisely so it does
+   * not inherit into them. Defaults to `app` for an inline lab and `code` for
+   * an overlay, which is what each is usually for.
+   */
+  chrome?: 'code' | 'app';
   className?: string;
 }
+
+/**
+ * Re-point the code family at the host's app tokens.
+ *
+ * Only the structural tokens — backgrounds, borders, text. The accents
+ * (green/red/peach/blue) stay put: they carry meaning (a running pane, an
+ * expiring session, a broadcast armed) and they read on both themes, so
+ * translating them would cost the meaning and buy nothing.
+ */
+const APP_CHROME_VARS = {
+  '--color-code-bg': 'var(--color-surface)',
+  '--color-code-panel': 'var(--color-surface-panel)',
+  '--color-code-surface': 'var(--color-surface-hover)',
+  '--color-code-border': 'var(--color-border)',
+  // The text ramp, darkest to faintest. `raised` is a mid-grey in the dark
+  // family that doubles as a dim foreground, and it is used almost entirely as
+  // one here — placeholders, separators, "nothing here", counts. Mapping it to
+  // a background token (surface-emphasis) was the first attempt and made half
+  // the rail invisible on white: #e2e8f0 text on #ffffff is not text.
+  '--color-code-text': 'var(--color-text-primary)',
+  '--color-code-subtle': 'var(--color-text-secondary)',
+  '--color-code-muted': 'var(--color-text-secondary)',
+  '--color-code-comment': 'var(--color-text-tertiary)',
+  '--color-code-raised': 'var(--color-text-tertiary)',
+} as React.CSSProperties;
 
 export function ComputerLab({
   open,
   onClose,
   focusComputerId = null,
   variant = 'overlay',
+  chrome: chromeTone = variant === 'inline' ? 'app' : 'code',
   keymap = DEFAULT_KEYMAP,
   leader = null,
   idleWindowMs = DEFAULT_IDLE_WINDOW_MS,
@@ -353,6 +398,7 @@ export function ComputerLab({
   if (!open) return null;
 
   const chord = (command: LabCommand) => labelFor(keymap, command);
+  const chromeVars = chromeTone === 'app' ? APP_CHROME_VARS : undefined;
 
   return (
     <div
@@ -362,13 +408,20 @@ export function ComputerLab({
         : { role: 'region' as const })}
       aria-label="Computer Lab"
       className={cn(
-        'flex flex-col bg-code-bg text-code-text',
+        'flex flex-col',
+        // The root takes a real class rather than the variable remap, because
+        // custom properties inherit: setting them here would repaint the panes
+        // too, and a light terminal is not a terminal.
+        chromeTone === 'app' ? 'bg-surface text-text-primary' : 'bg-code-bg text-code-text',
         variant === 'overlay' ? 'fixed inset-0 z-[150]' : 'h-full min-h-0 w-full',
         className,
       )}
     >
       {/* ── Top bar: identity, window tabs, budget, exit ── */}
-      <div className="flex items-center gap-3 px-3 h-10 shrink-0 border-b border-code-border bg-code-panel">
+      <div
+        style={chromeVars}
+        className="flex items-center gap-3 px-3 h-10 shrink-0 border-b border-code-border bg-code-panel"
+      >
         <span className="text-[11px] font-mono font-semibold tracking-wide text-code-mauve select-none">LAB</span>
         <span data-testid="lab-summary" className="text-[10px] font-mono text-code-muted tabular-nums">
           {computers.length} {computers.length === 1 ? 'computer' : 'computers'} · {layout.panes.length} {layout.panes.length === 1 ? 'pane' : 'panes'}
@@ -453,6 +506,9 @@ export function ComputerLab({
 
       {/* ── Body: rail + panes ── */}
       <div className="flex flex-1 min-h-0">
+        {/* `contents` so the remap reaches the rail without adding a box to
+            the flex row — custom properties inherit through it. */}
+        <div style={chromeVars} className="contents">
         <LabRail
           className="w-[210px] shrink-0"
           computers={computers}
@@ -472,6 +528,7 @@ export function ComputerLab({
           }}
           onOpenInPane={(computer) => layout.split('row', computer.id, activePane?.kindId ?? defaultKindId)}
         />
+        </div>
 
         <div className="flex-1 min-w-0 min-h-0 p-2">
           {layout.activeWindow && activePane ? (
@@ -531,6 +588,7 @@ export function ComputerLab({
 
       {/* ── Command line: broadcast. The reason to be in this mode. ── */}
       <div
+        style={chromeVars}
         className={cn(
           'flex items-center gap-2 px-3 py-1.5 shrink-0 border-t font-mono',
           broadcast ? 'border-code-peach bg-code-peach/10' : 'border-code-border bg-code-panel',

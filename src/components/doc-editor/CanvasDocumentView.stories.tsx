@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import * as Y from 'yjs';
 import { Awareness } from 'y-protocols/awareness';
 import CanvasDocumentView, { type CanvasUnsupportedForm } from './CanvasDocumentView';
+import PresenceAvatars from '../shared/PresenceAvatars';
 
 // The macro node views come from the REAL adapter, so these stories show what
 // the editor actually renders rather than a mock of it. `distributed-core` is
@@ -135,6 +136,58 @@ export const ConversionRefused: Story = {
         ydoc={ydoc}
         provider={provider}
         onConvert={async () => 'the body already has content — refusing to materialise twice'}
+      />
+    );
+  },
+};
+
+/**
+ * The collaborative page: presence avatars in the toolbar, comment threads in
+ * the margin beside the text they refer to.
+ *
+ * The offsets here are hard-coded. Turning a comment's anchor into a pixel
+ * offset needs the live ProseMirror view, so this story shows the LAYOUT and
+ * the collision stacking — c1 and c2 are deliberately 30px apart to make the
+ * push-down visible — not the anchoring, which is the next piece of work.
+ */
+export const WithPresenceAndComments: Story = {
+  args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
+  render: (args) => {
+    const { ydoc, provider, body } = useFixture();
+    const onEditorReady = useSeed(SAMPLE_HTML);
+    const [focused, setFocused] = useState<string | null>(null);
+
+    const thread = (who: string, text: string) => (
+      <div className="text-xs">
+        <div className="font-semibold text-text-primary">{who}</div>
+        <div className="mt-0.5 text-text-secondary">{text}</div>
+      </div>
+    );
+
+    return (
+      <CanvasDocumentView
+        {...args}
+        isCanvas
+        body={body}
+        ydoc={ydoc}
+        provider={provider}
+        onEditorReady={onEditorReady as never}
+        toolbarActions={
+          <PresenceAvatars
+            users={[
+              { id: 'u1', name: 'Ada Lovelace', color: '#8b5cf6', online: true },
+              { id: 'u2', name: 'Grace Hopper', color: '#2563eb', online: true },
+              { id: 'u3', name: 'Alan Turing', color: '#16a34a', online: false },
+            ]}
+            size={24}
+          />
+        }
+        gutterItems={[
+          { id: 'c1', top: 40, active: focused === 'c1', content: thread('Ada Lovelace', 'Do we have the p95 for the recovery window too?') },
+          { id: 'c2', top: 70, active: focused === 'c2', content: thread('Grace Hopper', 'Jitter alone will not fix the synchronised TTL.') },
+          { id: 'c3', top: 380, active: focused === 'c3', content: thread('Alan Turing', 'Resolved — added to the ops runbook.') },
+        ]}
+        onFocusGutterItem={setFocused}
       />
     );
   },

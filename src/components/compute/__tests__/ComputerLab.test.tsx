@@ -406,3 +406,56 @@ describe('variant', () => {
     expect(onClose).toHaveBeenCalled();
   });
 });
+
+// ─── Chrome palette ──────────────────────────────────────────────────────────
+//
+// The lab's chrome has to be able to live in someone else's app. Forcing the
+// terminal palette on a light host makes it read as an embedded widget rather
+// than part of the page — the "feels like an iframe" problem this addresses.
+
+describe('chrome', () => {
+  const root = () => screen.getByRole('region', { name: 'Computer Lab' });
+
+  it('inline defaults to the host palette', async () => {
+    renderLab({ variant: 'inline' });
+    await summary();
+    expect(root().className).toContain('bg-surface');
+    expect(root().className).not.toContain('bg-code-bg');
+  });
+
+  it('overlay defaults to the terminal palette', async () => {
+    renderLab();
+    await summary();
+    const dialog = screen.getByRole('dialog', { name: 'Computer Lab' });
+    expect(dialog.className).toContain('bg-code-bg');
+  });
+
+  it('the tone is overridable in both directions', async () => {
+    const { unmount } = renderLab({ variant: 'inline', chrome: 'code' });
+    await summary();
+    expect(root().className).toContain('bg-code-bg');
+    unmount();
+
+    renderLab({ variant: 'inline', chrome: 'app' });
+    await summary();
+    expect(root().className).toContain('bg-surface');
+  });
+
+  it('does NOT remap the code palette on the root, so panes stay dark', async () => {
+    // The remap is applied to the chrome containers rather than the root
+    // precisely because custom properties inherit. On the root it would repaint
+    // the terminals too, and a light terminal is not a terminal.
+    renderLab({ variant: 'inline' });
+    await summary();
+    expect(root().style.getPropertyValue('--color-code-bg')).toBe('');
+  });
+
+  it('remaps the palette on the chrome containers', async () => {
+    renderLab({ variant: 'inline' });
+    await summary();
+    const remapped = [...root().querySelectorAll<HTMLElement>('[style*="--color-code-bg"]')];
+    // Top bar, rail, command line.
+    expect(remapped.length).toBeGreaterThanOrEqual(3);
+    expect(remapped[0]!.style.getPropertyValue('--color-code-bg')).toBe('var(--color-surface)');
+  });
+});
