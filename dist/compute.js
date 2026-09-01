@@ -2124,13 +2124,13 @@ var Tt = {
 	idle: 3,
 	stopped: 4
 };
-function Et({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a, onOpenInPane: o, onCreate: s, onOpenMenu: c, showAllActivity: l, onToggleShowAll: u, canManage: d = !1, models: f = [], className: p }) {
-	let m = new Set(i), h = n.filter((e) => {
+function Et({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a, onOpenInPane: o, onWatch: s, onCreate: c, onOpenMenu: l, showAllActivity: u, onToggleShowAll: d, canManage: f = !1, models: p = [], className: m }) {
+	let h = new Set(i), g = n.filter((e) => {
 		let t = J(e);
 		return t === "running" || t === "waiting" || t === "error";
-	}), g = [...l ? n : h].sort((e, t) => (Tt[J(e)] ?? 9) - (Tt[J(t)] ?? 9));
+	}), _ = [...u ? n : g].sort((e, t) => (Tt[J(e)] ?? 9) - (Tt[J(t)] ?? 9));
 	return /* @__PURE__ */ b("div", {
-		className: e("flex flex-col h-full min-h-0 bg-code-panel border-r border-code-border", p),
+		className: e("flex flex-col h-full min-h-0 bg-code-panel border-r border-code-border", m),
 		children: [
 			/* @__PURE__ */ y(Dt, {
 				title: "computers",
@@ -2139,15 +2139,15 @@ function Et({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 				activeId: r,
 				onSelect: a,
 				onOpenInPane: o ?? null,
-				open: m,
+				open: h,
 				renderSub: null
 			}),
 			/* @__PURE__ */ b("div", {
 				className: "flex items-center px-3 py-1.5 border-y border-code-border shrink-0",
 				children: [
-					d && s ? /* @__PURE__ */ y("button", {
+					f && c ? /* @__PURE__ */ y("button", {
 						type: "button",
-						onClick: s,
+						onClick: c,
 						className: "text-[11px] font-mono text-code-green bg-transparent border-none cursor-pointer p-0 hover:underline",
 						children: "new"
 					}) : /* @__PURE__ */ y("span", {
@@ -2157,7 +2157,7 @@ function Et({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 					/* @__PURE__ */ y("span", { className: "flex-1" }),
 					/* @__PURE__ */ y("button", {
 						type: "button",
-						onClick: c,
+						onClick: l,
 						className: "text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer p-0 hover:text-code-text",
 						children: "menu"
 					})
@@ -2165,22 +2165,23 @@ function Et({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 			}),
 			/* @__PURE__ */ y(Dt, {
 				title: "agents",
-				count: h.length,
-				rows: g,
+				count: g.length,
+				rows: _,
 				activeId: r,
 				onSelect: a,
 				onOpenInPane: o ?? null,
-				open: m,
+				open: h,
 				action: /* @__PURE__ */ y("button", {
 					type: "button",
-					onClick: u,
-					"aria-pressed": l,
-					title: l ? "Show only boxes doing something" : "Show every box",
-					className: e("text-[11px] font-mono bg-transparent border-none cursor-pointer p-0", l ? "text-code-blue" : "text-code-muted hover:text-code-text"),
+					onClick: d,
+					"aria-pressed": u,
+					title: u ? "Show only boxes doing something" : "Show every box",
+					className: e("text-[11px] font-mono bg-transparent border-none cursor-pointer p-0", u ? "text-code-blue" : "text-code-muted hover:text-code-text"),
 					children: "all"
 				}),
+				onWatch: s ?? null,
 				renderSub: (e) => {
-					let n = J(e), r = e.lastResult ? St(null, f) : null;
+					let n = J(e), r = e.lastResult ? St(null, p) : null;
 					return /* @__PURE__ */ b("span", {
 						className: "flex items-center gap-1 truncate",
 						children: [
@@ -2214,15 +2215,15 @@ function Et({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 		]
 	});
 }
-function Dt({ title: t, count: n, rows: r, activeId: i, open: o, onSelect: s, onOpenInPane: c, action: u, renderSub: d }) {
-	let f = h(null), p = l((e) => {
+function Dt({ title: t, count: n, rows: r, activeId: i, open: o, onSelect: s, onOpenInPane: c, action: u, renderSub: d, onWatch: f = null }) {
+	let p = h(null), m = l((e) => {
 		if (![
 			"ArrowDown",
 			"ArrowUp",
 			"Home",
 			"End"
 		].includes(e.key)) return;
-		let t = Array.from(f.current?.querySelectorAll("[data-rail-row]") ?? []);
+		let t = Array.from(p.current?.querySelectorAll("[data-rail-row]") ?? []);
 		if (t.length === 0) return;
 		let n = t.findIndex((e) => e === document.activeElement);
 		e.preventDefault(), t[e.key === "Home" ? 0 : e.key === "End" ? t.length - 1 : n < 0 ? 0 : (n + (e.key === "ArrowDown" ? 1 : -1) + t.length) % t.length]?.focus();
@@ -2247,53 +2248,65 @@ function Dt({ title: t, count: n, rows: r, activeId: i, open: o, onSelect: s, on
 			className: "px-3 pb-3 text-[11px] font-mono text-code-raised",
 			children: "nothing here"
 		}) : /* @__PURE__ */ y("div", {
-			ref: f,
+			ref: p,
 			role: "listbox",
 			"aria-label": t,
-			onKeyDown: p,
+			onKeyDown: m,
 			className: "flex-1 min-h-0 overflow-y-auto pb-1",
 			children: r.map((t) => {
 				let n = we[J(t)], r = t.id === i;
-				return /* @__PURE__ */ b("button", {
-					"data-rail-row": !0,
-					type: "button",
-					role: "option",
-					"aria-selected": r,
-					tabIndex: r ? 0 : -1,
-					title: `${n.label} — ${n.help}`,
-					onClick: () => s(t),
-					onAuxClick: (e) => {
-						e.button === 1 && c && (e.preventDefault(), c(t));
-					},
-					onKeyDown: (e) => {
-						e.key === "Enter" && (e.metaKey || e.ctrlKey) && c && (e.preventDefault(), c(t));
-					},
-					className: e("w-full text-left flex items-start gap-2 px-3 py-1.5 border-l-2 cursor-pointer bg-transparent transition-colors", "focus:outline-none focus-visible:ring-1 focus-visible:ring-code-blue focus-visible:ring-inset", r ? "border-code-blue bg-code-surface" : "border-transparent hover:bg-code-surface/60"),
-					children: [
-						/* @__PURE__ */ y(a, {
-							size: "xs",
-							color: n.color,
-							pulse: n.pulse,
-							className: "mt-[5px]",
-							"aria-label": n.label
-						}),
-						/* @__PURE__ */ b("span", {
-							className: "min-w-0 flex-1",
-							children: [/* @__PURE__ */ y("span", {
-								className: e("block text-[12px] font-mono truncate", r ? "text-code-text" : "text-code-subtle"),
-								children: t.label
-							}), d && /* @__PURE__ */ y("span", {
-								className: "block text-[10px] font-mono truncate",
-								children: d(t)
-							})]
-						}),
-						o.has(t.id) && /* @__PURE__ */ y("span", {
-							"aria-label": "open in a pane",
-							title: "Open in a pane",
-							className: "mt-[3px] text-[9px] font-mono text-code-blue shrink-0",
-							children: "▣"
-						})
-					]
+				return /* @__PURE__ */ b("div", {
+					role: "presentation",
+					className: e("group relative flex items-stretch", r ? "bg-code-surface" : "hover:bg-code-surface/60"),
+					children: [/* @__PURE__ */ b("button", {
+						"data-rail-row": !0,
+						type: "button",
+						role: "option",
+						"aria-selected": r,
+						tabIndex: r ? 0 : -1,
+						title: `${n.label} — ${n.help}`,
+						onClick: () => s(t),
+						onAuxClick: (e) => {
+							e.button === 1 && c && (e.preventDefault(), c(t));
+						},
+						onKeyDown: (e) => {
+							e.key === "Enter" && (e.metaKey || e.ctrlKey) && c && (e.preventDefault(), c(t));
+						},
+						className: e("min-w-0 flex-1 text-left flex items-start gap-2 px-3 py-1.5 border-l-2 cursor-pointer bg-transparent transition-colors", "focus:outline-none focus-visible:ring-1 focus-visible:ring-code-blue focus-visible:ring-inset", r ? "border-code-blue" : "border-transparent"),
+						children: [
+							/* @__PURE__ */ y(a, {
+								size: "xs",
+								color: n.color,
+								pulse: n.pulse,
+								className: "mt-[5px]",
+								"aria-label": n.label
+							}),
+							/* @__PURE__ */ b("span", {
+								className: "min-w-0 flex-1",
+								children: [/* @__PURE__ */ y("span", {
+									className: e("block text-[12px] font-mono truncate", r ? "text-code-text" : "text-code-subtle"),
+									children: t.label
+								}), d && /* @__PURE__ */ y("span", {
+									className: "block text-[10px] font-mono truncate",
+									children: d(t)
+								})]
+							}),
+							o.has(t.id) && /* @__PURE__ */ y("span", {
+								"aria-label": "open in a pane",
+								title: "Open in a pane",
+								className: "mt-[3px] text-[9px] font-mono text-code-blue shrink-0",
+								children: "▣"
+							})
+						]
+					}), f && /* @__PURE__ */ y("button", {
+						type: "button",
+						tabIndex: -1,
+						onClick: () => f(t),
+						"aria-label": `Watch ${t.label}`,
+						title: `Watch ${t.label} — read-only, costs no shell`,
+						className: e("px-2 text-[10px] font-mono cursor-pointer bg-transparent border-none shrink-0", "text-code-muted hover:text-code-blue", "opacity-0 group-hover:opacity-100 focus-visible:opacity-100"),
+						children: "tail"
+					})]
 				}, t.id);
 			})
 		})]
@@ -3014,7 +3027,20 @@ function It({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 						onSelect: (e) => {
 							H && D.setPaneComputer(H.id, e.id);
 						},
-						onOpenInPane: (e) => D.split("row", e.id, H?.kindId ?? E)
+						onOpenInPane: (e) => D.split("row", e.id, H?.kindId ?? E),
+						onWatch: (e) => {
+							let t = w.find((e) => e.id === "tail");
+							if (!t) {
+								H && D.setPaneComputer(H.id, e.id);
+								return;
+							}
+							let n = D.panes.find((n) => n.computerId === e.id && n.kindId === t.id);
+							if (n) {
+								D.focusPane(n.id);
+								return;
+							}
+							D.split("row", e.id, t.id);
+						}
 					})
 				}), /* @__PURE__ */ y("div", {
 					className: "flex-1 min-w-0 min-h-0 p-2",
@@ -3873,11 +3899,11 @@ var ln = class extends EventTarget {
 function un(e) {
 	return ArrayBuffer.isView(e) ? new Uint8Array(e.buffer, e.byteOffset, e.byteLength) : e instanceof ArrayBuffer ? new Uint8Array(e) : null;
 }
-var $ = null;
-function dn(e = {}) {
+var dn = null;
+function fn(e = {}) {
 	let t = e.scheme ?? "mock-shell:", n = globalThis.WebSocket;
 	if (typeof n != "function") return () => {};
-	if ($) $.count += 1;
+	if (dn) dn.count += 1;
 	else {
 		class e extends n {
 			constructor(e, n) {
@@ -3886,15 +3912,271 @@ function dn(e = {}) {
 				super(e, n);
 			}
 		}
-		globalThis.WebSocket = e, $ = {
+		globalThis.WebSocket = e, dn = {
 			native: n,
 			count: 1
 		};
 	}
 	let r = !1;
 	return () => {
-		r || !$ || (r = !0, --$.count, !($.count > 0) && (globalThis.WebSocket = $.native, $ = null, rn.clear()));
+		r || !dn || (r = !0, --dn.count, !(dn.count > 0) && (globalThis.WebSocket = dn.native, dn = null, rn.clear()));
 	};
 }
 //#endregion
-export { we as COMPUTE_STATUS, O as COMPUTE_STORAGE_KEYS, Ut as ComputeDock, We as ComputeProvider, It as ComputerLab, xt as DEFAULT_IDLE_WINDOW_MS, ht as DEFAULT_KEYMAP, Ve as DEFAULT_PANE_KINDS, Oe as DETACH_BYTE, T as DOCK_STORAGE_KEY, E as FLEET_STORAGE_KEY, ke as HEARTBEAT_MS, D as LAB_LAYOUT_STORAGE_KEY, jt as LabChooser, Et as LabRail, De as MAX_FRAME_BYTES, Je as MAX_RATIO, Ae as MAX_RETRIES, R as MAX_SHELLS, qe as MIN_RATIO, Zt as MOCK_SHELL_SCHEME, wt as PaneStatusLine, Mt as PaneTreeView, kt as ProjectSummary, Y as SHELL_CHANNEL, ze as SHELL_PANE_KIND, Te as SHELL_STATUS, Re as ShellTerminal, Be as TAIL_PANE_KIND, mt as TMUX_LEADER, Ce as TailPane, N as UNASSIGNED_PROJECT_ID, Kt as WORKSPACE_ENTRY_CAP, Wt as WORKSPACE_FIND_COMMAND, Gt as WORKSPACE_GIT_COMMAND, qt as buildWorkspaceTree, k as clearComputeStorage, Ne as closeAdvice, $e as closePane, ie as closeShell, Yt as countDescendants, Ze as countPanes, w as createComputeClient, de as cycleLayout, it as cyclePane, oe as cycleShell, at as enclosingSplit, je as encodeFrame, Me as encodeResize, Pe as exhaustedAdvice, Fe as exitCodeOf, Ee as expiryPressure, Xe as findLeaf, me as fixtureComputers, ge as fixtureModels, he as fixtureRuntimeStatus, _e as fixtureWorkspace, G as focusShell, I as formatTokens, At as fuzzyScore, U as getDock, yt as groupBindings, dn as installMockShellSocket, gt as isLeaderKey, bt as labelFor, nt as layoutRects, X as listLeaves, Ye as makeLeaf, vt as matchBinding, _t as matchLeaderBinding, an as mockShellUrl, rt as neighborPane, ft as nextKind, W as openShell, pt as quotaUsage, ot as ratioOf, re as reconcileDock, ae as reportShellStatus, dt as resolveKind, F as rollUpProjects, se as selectShellByIndex, le as setDockVisible, fe as setGeometry, ce as setMode, et as setRatio, St as shortModelName, K as showsAllPanes, Qe as splitPane, J as statusOf, ne as subscribeDock, q as summarizeTool, ue as toggleFloating, tt as updateLeaf, Ge as useCompute, M as useComputeFleet, Ke as useComputeOptional, P as useComputeProjects, be as useComputeTail, ve as useComputeTask, ut as useLabLayout, L as useProjectRollups, Xt as visibleRows };
+//#region src/components/compute/fixtures/mockTail.ts
+var pn = "mock-tail:", mn = (e) => ({
+	type: "assistant",
+	message: { content: [{
+		type: "text",
+		text: e
+	}] }
+}), hn = (e, t) => ({
+	type: "assistant",
+	message: { content: [{
+		type: "tool_use",
+		name: e,
+		input: t
+	}] }
+}), gn = [
+	{
+		id: "nightly-dependency-audit",
+		label: "nightly-dependency-audit",
+		frames: [
+			{
+				afterMs: 400,
+				data: {
+					type: "job_started",
+					title: "nightly-dependency-audit",
+					kind: "devbox:task"
+				}
+			},
+			{
+				afterMs: 200,
+				data: {
+					type: "task_started",
+					prompt: "Audit dependencies for advisories and open a change request for anything critical."
+				}
+			},
+			{
+				afterMs: 900,
+				data: mn("Reading the lockfile and resolving the dependency graph.")
+			},
+			{
+				afterMs: 1300,
+				data: hn("Bash", { command: "npm audit --json" })
+			},
+			{
+				afterMs: 2100,
+				data: mn("3 advisories: 1 high, 2 moderate. Checking whether the high one is reachable.")
+			},
+			{
+				afterMs: 1700,
+				data: hn("Grep", { pattern: "serialize-javascript" })
+			},
+			{
+				afterMs: 2400,
+				data: mn("Reachable from the report renderer only. Bumping it and pinning the transitive.")
+			},
+			{
+				afterMs: 1400,
+				data: hn("Edit", { file: "package.json" })
+			},
+			{
+				afterMs: 2200,
+				data: {
+					type: "result",
+					subtype: "success",
+					num_turns: 6,
+					duration_ms: 12800,
+					total_cost_usd: .0412,
+					result: "Bumped serialize-javascript to 6.0.2; the two moderates are dev-only and left alone."
+				}
+			},
+			{
+				afterMs: 300,
+				data: { type: "devbox_end" }
+			}
+		]
+	},
+	{
+		id: "flaky-test-triage",
+		label: "flaky-test-triage",
+		frames: [
+			{
+				afterMs: 400,
+				data: {
+					type: "job_started",
+					title: "flaky-test-triage",
+					kind: "devbox:task"
+				}
+			},
+			{
+				afterMs: 200,
+				data: {
+					type: "task_started",
+					prompt: "Find tests that failed intermittently this week and say why."
+				}
+			},
+			{
+				afterMs: 800,
+				data: mn("Pulling the last 40 CI runs.")
+			},
+			{
+				afterMs: 1500,
+				data: hn("Bash", { command: "gh run list --limit 40" })
+			},
+			{
+				afterMs: 2300,
+				data: mn("Two suites flap: session-epoch and the canary rollup. Both look time-dependent.")
+			},
+			{
+				afterMs: 1900,
+				data: hn("Read", { file: "src/lib/__tests__/session-epoch.test.ts" })
+			},
+			{
+				afterMs: 2600,
+				data: {
+					type: "result",
+					subtype: "success",
+					num_turns: 5,
+					duration_ms: 11200,
+					total_cost_usd: .0298,
+					result: "Both flakes are clock-boundary, not ordering. Want me to pin the clock in the fixtures?"
+				}
+			},
+			{
+				afterMs: 300,
+				data: { type: "devbox_end" }
+			}
+		]
+	},
+	{
+		id: "schema-drift-check",
+		label: "schema-drift-check",
+		frames: [
+			{
+				afterMs: 400,
+				data: {
+					type: "job_started",
+					title: "schema-drift-check",
+					kind: "devbox:task"
+				}
+			},
+			{
+				afterMs: 200,
+				data: {
+					type: "task_started",
+					prompt: "Compare the deployed schema against schema/*.sql and report drift."
+				}
+			},
+			{
+				afterMs: 900,
+				data: mn("Dumping the live schema.")
+			},
+			{
+				afterMs: 1600,
+				data: hn("Bash", { command: "psql -c \"\\d+ public.*\"" })
+			},
+			{
+				afterMs: 2400,
+				data: mn("One table differs: environments has a column the checked-in DDL does not.")
+			},
+			{
+				afterMs: 2e3,
+				data: {
+					type: "devbox_error",
+					error: "connection reset while reading pg_catalog — the cluster scaled down mid-query"
+				}
+			}
+		]
+	}
+];
+function _n(e, t) {
+	return `${pn}//${e}${t ? `?script=${encodeURIComponent(t)}` : ""}`;
+}
+function vn(e) {
+	let t = /script=([^&]+)/.exec(e)?.[1];
+	if (t) {
+		let e = gn.find((e) => e.id === decodeURIComponent(t));
+		if (e) return e;
+	}
+	let n = e.slice(10).replace(/^\/+/, "").split("?")[0] ?? "", r = 0;
+	for (let e of n) r = r * 31 + e.charCodeAt(0) >>> 0;
+	return gn[r % gn.length];
+}
+var yn = class {
+	static CONNECTING = 0;
+	static OPEN = 1;
+	static CLOSED = 2;
+	url;
+	withCredentials;
+	readyState = 0;
+	onmessage = null;
+	onerror = null;
+	onopen = null;
+	listeners = /* @__PURE__ */ new Map();
+	timers = [];
+	closed = !1;
+	constructor(e, t) {
+		this.url = e, this.withCredentials = !!t?.withCredentials;
+		let n = vn(e), r = 0;
+		this.schedule(0, () => {
+			this.readyState = 1, this.emit("open", new Event("open"));
+		});
+		for (let e of n.frames) r += e.afterMs, this.schedule(r, () => this.deliver(e.data));
+	}
+	schedule(e, t) {
+		this.timers.push(setTimeout(() => {
+			this.closed || t();
+		}, e));
+	}
+	deliver(e) {
+		let t = new MessageEvent("message", { data: JSON.stringify({
+			...e,
+			ts: (/* @__PURE__ */ new Date()).toISOString()
+		}) });
+		this.onmessage?.(t), this.emit("message", t);
+	}
+	emit(e, t) {
+		for (let n of this.listeners.get(e) ?? []) try {
+			n(t);
+		} catch {}
+	}
+	addEventListener(e, t) {
+		let n = this.listeners.get(e) ?? /* @__PURE__ */ new Set();
+		n.add(t), this.listeners.set(e, n);
+	}
+	removeEventListener(e, t) {
+		this.listeners.get(e)?.delete(t);
+	}
+	close() {
+		this.closed = !0, this.readyState = 2;
+		for (let e of this.timers) clearTimeout(e);
+		this.timers = [];
+	}
+}, $ = null;
+function bn(e = {}) {
+	let t = e.scheme ?? "mock-tail:", n = globalThis.EventSource;
+	if ($) $.count += 1;
+	else {
+		$ = {
+			native: n,
+			count: 1
+		};
+		let e = function(e, r) {
+			if (typeof e == "string" && e.startsWith(t)) return new yn(e, r);
+			if (typeof n != "function") throw TypeError("EventSource is not available in this environment");
+			return new n(e, r);
+		};
+		Object.assign(e, {
+			CONNECTING: 0,
+			OPEN: 1,
+			CLOSED: 2
+		}), globalThis.EventSource = e;
+	}
+	return () => {
+		$ && (--$.count, !($.count > 0) && ($.native ? globalThis.EventSource = $.native : delete globalThis.EventSource, $ = null));
+	};
+}
+//#endregion
+export { we as COMPUTE_STATUS, O as COMPUTE_STORAGE_KEYS, Ut as ComputeDock, We as ComputeProvider, It as ComputerLab, xt as DEFAULT_IDLE_WINDOW_MS, ht as DEFAULT_KEYMAP, Ve as DEFAULT_PANE_KINDS, Oe as DETACH_BYTE, T as DOCK_STORAGE_KEY, E as FLEET_STORAGE_KEY, ke as HEARTBEAT_MS, D as LAB_LAYOUT_STORAGE_KEY, jt as LabChooser, Et as LabRail, De as MAX_FRAME_BYTES, Je as MAX_RATIO, Ae as MAX_RETRIES, R as MAX_SHELLS, qe as MIN_RATIO, Zt as MOCK_SHELL_SCHEME, pn as MOCK_TAIL_SCHEME, gn as MOCK_TAIL_SCRIPTS, wt as PaneStatusLine, Mt as PaneTreeView, kt as ProjectSummary, Y as SHELL_CHANNEL, ze as SHELL_PANE_KIND, Te as SHELL_STATUS, Re as ShellTerminal, Be as TAIL_PANE_KIND, mt as TMUX_LEADER, Ce as TailPane, N as UNASSIGNED_PROJECT_ID, Kt as WORKSPACE_ENTRY_CAP, Wt as WORKSPACE_FIND_COMMAND, Gt as WORKSPACE_GIT_COMMAND, qt as buildWorkspaceTree, k as clearComputeStorage, Ne as closeAdvice, $e as closePane, ie as closeShell, Yt as countDescendants, Ze as countPanes, w as createComputeClient, de as cycleLayout, it as cyclePane, oe as cycleShell, at as enclosingSplit, je as encodeFrame, Me as encodeResize, Pe as exhaustedAdvice, Fe as exitCodeOf, Ee as expiryPressure, Xe as findLeaf, me as fixtureComputers, ge as fixtureModels, he as fixtureRuntimeStatus, _e as fixtureWorkspace, G as focusShell, I as formatTokens, At as fuzzyScore, U as getDock, yt as groupBindings, fn as installMockShellSocket, bn as installMockTailSource, gt as isLeaderKey, bt as labelFor, nt as layoutRects, X as listLeaves, Ye as makeLeaf, vt as matchBinding, _t as matchLeaderBinding, an as mockShellUrl, _n as mockTailUrl, rt as neighborPane, ft as nextKind, W as openShell, pt as quotaUsage, ot as ratioOf, re as reconcileDock, ae as reportShellStatus, dt as resolveKind, F as rollUpProjects, se as selectShellByIndex, le as setDockVisible, fe as setGeometry, ce as setMode, et as setRatio, St as shortModelName, K as showsAllPanes, Qe as splitPane, J as statusOf, ne as subscribeDock, q as summarizeTool, ue as toggleFloating, tt as updateLeaf, Ge as useCompute, M as useComputeFleet, Ke as useComputeOptional, P as useComputeProjects, be as useComputeTail, ve as useComputeTask, ut as useLabLayout, L as useProjectRollups, Xt as visibleRows };

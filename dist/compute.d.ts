@@ -635,6 +635,12 @@ export declare function focusShell(id: string): void;
 /** `84.2k`, `1.3M` — a token count is scale, not an exact figure. */
 export declare function formatTokens(tokens: number): string;
 
+/** One scripted frame. `afterMs` is relative to the previous frame. */
+declare interface Frame {
+    afterMs: number;
+    data: Record<string, unknown>;
+}
+
 /**
  * Subsequence match, the thing every fuzzy finder actually does.
  *
@@ -663,6 +669,16 @@ export declare const HEARTBEAT_MS = 30000;
  * page, which is a far worse bug than a dead terminal.
  */
 export declare function installMockShellSocket(options?: MockShellOptions): () => void;
+
+/**
+ * Route `mock-tail:` URLs to the simulator and leave every other URL alone.
+ *
+ * Returns the uninstall, refcounted so nested consumers do not fight. Call it
+ * on unmount: a story that swaps the global EventSource and never puts it back
+ * breaks every other live surface on the page, which is a worse bug than an
+ * empty pane.
+ */
+export declare function installMockTailSource(options?: MockTailOptions): () => void;
 
 /** Does this keystroke arm the leader? */
 export declare function isLeaderKey(leader: LeaderConfig | null | undefined, event: KeyboardEvent): boolean;
@@ -719,7 +735,7 @@ export declare type LabCommand = 'focus-left' | 'focus-right' | 'focus-up' | 'fo
 /** Look up a chord's display label, for a button's tooltip. */
 export declare function labelFor(keymap: readonly KeyBinding[], command: LabCommand): string | null;
 
-export declare function LabRail({ computers, activeComputerId, openComputerIds, onSelect, onOpenInPane, onCreate, onOpenMenu, showAllActivity, onToggleShowAll, canManage, models, className, }: LabRailProps): JSX.Element;
+export declare function LabRail({ computers, activeComputerId, openComputerIds, onSelect, onOpenInPane, onWatch, onCreate, onOpenMenu, showAllActivity, onToggleShowAll, canManage, models, className, }: LabRailProps): JSX.Element;
 
 export declare interface LabRailProps {
     computers: Computer[];
@@ -730,6 +746,17 @@ export declare interface LabRailProps {
     onSelect: (computer: Computer) => void;
     /** Open this computer in a new pane rather than retargeting the current one. */
     onOpenInPane?: (computer: Computer) => void;
+    /**
+     * Watch this computer read-only — offered on the activity rows only.
+     *
+     * Selecting an activity row retargets a pane the way selecting a computer
+     * does, which lands you in a shell. That is the wrong verb for this list:
+     * the boxes here are ones something ELSE is driving (a cron bot, the job
+     * dispatcher, another operator), and the question is what it is doing, not
+     * what you want to type at it. Watching costs no shell slot, so you can
+     * keep several open.
+     */
+    onWatch?: (computer: Computer) => void;
     onCreate?: () => void;
     onOpenMenu?: () => void;
     /** Show every box in the activity list, not just the active ones. */
@@ -811,6 +838,11 @@ export declare const MIN_RATIO = 0.1;
 /** URLs with this scheme are simulated; everything else is dialled for real. */
 export declare const MOCK_SHELL_SCHEME = "mock-shell:";
 
+/** URLs beginning with this are answered by the simulator. */
+export declare const MOCK_TAIL_SCHEME = "mock-tail:";
+
+export declare const MOCK_TAIL_SCRIPTS: MockTailScript[];
+
 export declare interface MockShellOptions {
     /** URL prefix routed to the simulator. Default `mock-shell:`. */
     scheme?: string;
@@ -828,6 +860,25 @@ export declare function mockShellUrl(sessionId: string, shellId?: string): {
     url: string;
     shellId: string;
 };
+
+export declare interface MockTailOptions {
+    /** URL prefix routed to the simulator. Default `mock-tail:`. */
+    scheme?: string;
+}
+
+/**
+ * A run with a shape worth watching: it starts, thinks, uses tools, and lands
+ * somewhere — including one that ends by asking a question, because `waiting`
+ * is a real status the rail sorts to the top and it needs to be reachable.
+ */
+export declare interface MockTailScript {
+    id: string;
+    label: string;
+    frames: Frame[];
+}
+
+/** The URL a mock client should hand back from `tail(boxId)`. */
+export declare function mockTailUrl(boxId: string, scriptId?: string): string;
 
 /**
  * The pane in a given direction, tmux's `select-pane -L/-R/-U/-D`.
