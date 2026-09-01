@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo, useState } from 'react';
 import * as Y from 'yjs';
-import { Awareness } from 'y-protocols/awareness';
+import { Awareness, encodeAwarenessUpdate, applyAwarenessUpdate } from 'y-protocols/awareness';
+import { ySyncPluginKey, absolutePositionToRelativePosition } from '@tiptap/y-tiptap';
+import useFollowCursor from './useFollowCursor';
 import CanvasDocumentView, { type CanvasUnsupportedForm } from './CanvasDocumentView';
 import PresenceAvatars from '../shared/PresenceAvatars';
 import FollowBanner from '../shared/FollowBanner';
@@ -81,6 +83,68 @@ function useSeed(html: string, body: Y.XmlFragment) {
     editor.commands.setContent(html);
   }, [editor, html, body]);
   return setEditor as (e: unknown) => void;
+}
+
+/**
+ * A remote participant, simulated.
+ *
+ * A second Awareness on the same Y.Doc gets its own clientID — exactly what a
+ * second browser would hold — and its updates are applied to the story's
+ * awareness the way a provider would relay them. The editor's own caret
+ * overlay then renders Ada's caret with no special casing, and follow mode has
+ * something real to track: her cursor hops to a new block every few seconds.
+ *
+ * Positions are computed through the live editor's y-sync binding
+ * (absolute → relative), the same mapping the overlay uses in the other
+ * direction, so the fixture speaks the wire's own vocabulary.
+ */
+function useSimulatedPeer(
+  awareness: Awareness | undefined,
+  ydoc: Y.Doc,
+  editor: { view?: { state: unknown } } | null,
+  user: { name: string; color: string },
+) {
+  const [clientId, setClientId] = useState<number | null>(null);
+  useEffect(() => {
+    if (!awareness || !editor?.view) return;
+    const remote = new Awareness(ydoc);
+    remote.setLocalStateField('user', user);
+    setClientId(remote.clientID);
+
+    const relay = () => {
+      applyAwarenessUpdate(awareness, encodeAwarenessUpdate(remote, [remote.clientID]), 'peer-sim');
+    };
+
+    let step = 0;
+    const move = () => {
+      const view = (editor as { view: { state: never } }).view;
+      const ystate = ySyncPluginKey.getState(view.state);
+      if (!ystate?.type || !ystate?.binding?.mapping) return;
+      const docSize = (view.state as { doc: { content: { size: number } } }).doc.content.size;
+      if (docSize < 4) return;
+      // Walk a fixed circuit of the document so the movement is legible —
+      // random hops read as a glitch, a patrol reads as a person.
+      const stops = [0.12, 0.38, 0.62, 0.88];
+      const pos = Math.max(1, Math.floor(docSize * stops[step % stops.length]!));
+      step += 1;
+      const rel = absolutePositionToRelativePosition(pos, ystate.type, ystate.binding.mapping);
+      if (!rel) return;
+      const json = Y.relativePositionToJSON(rel);
+      remote.setLocalStateField('cursor', { anchor: json, head: json });
+      relay();
+    };
+
+    relay();
+    const timer = setInterval(move, 2500);
+    move();
+    return () => {
+      clearInterval(timer);
+      remote.destroy();
+      setClientId(null);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [awareness, ydoc, editor]);
+  return clientId;
 }
 
 const SAMPLE_HTML = `
@@ -173,16 +237,30 @@ export const WithPresenceAndComments: Story = {
   args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
   render: (args) => {
     const { ydoc, provider, body } = useFixture();
-    const onEditorReady = useSeed(SAMPLE_HTML, body);
+    const seed = useSeed(SAMPLE_HTML, body);
+    const [editor, setEditor] = useState<Parameters<typeof useFollowCursor>[0]['editor']>(null);
+    const onEditorReady = (e: unknown) => { seed(e); setEditor(e as never); };
     const [focused, setFocused] = useState<string | null>(null);
     // Host-owned, because the component is controlled — see GutterHidden.
     const [gutterVisible, setGutterVisible] = useState(true);
-    // Follow mode: hover a bubble for the card (name, what they are doing,
-    // where), Follow locks onto them, and any local interaction — or Stop —
-    // unlocks. In an app the lock scrolls the canvas to the followed cursor
-    // via awareness; the story owns the state so the interaction itself is
-    // reviewable without a second client.
+    // Follow mode, tracked for real: Ada is a simulated second client whose
+    // caret patrols the document (the editor's own overlay draws it), and
+    // Follow keeps the viewport on her through useFollowCursor — the same
+    // awareness → y-sync resolution a deployment uses. Stop, or any local
+    // interaction, unlocks.
     const [followingId, setFollowingId] = useState<string | null>(null);
+    const adaClientId = useSimulatedPeer(
+      (provider as { awareness?: Awareness } | null)?.awareness,
+      ydoc,
+      editor as never,
+      { name: 'Ada Lovelace', color: '#8b5cf6' },
+    );
+    useFollowCursor({
+      editor,
+      provider: provider as never,
+      followClientId: followingId === 'u1' ? adaClientId : null,
+      onLost: () => setFollowingId(null),
+    });
     const CAST = [
       { id: 'u1', name: 'Ada Lovelace', color: '#8b5cf6', online: true, mode: 'editor' as const, detail: 'editing', location: 'Rollout plan' },
       { id: 'u2', name: 'Grace Hopper', color: '#2563eb', online: true, mode: 'reviewer' as const, detail: 'reviewing', location: 'Recovery window' },

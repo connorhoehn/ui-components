@@ -5,6 +5,8 @@ export { default as DocumentHeader } from './DocumentHeader';
 export type { DocumentHeaderCallVariant } from './DocumentHeader';
 export { default as EditorToolbar } from './EditorToolbar';
 export { default as TiptapEditor } from './TiptapEditor';
+export { default as useFollowCursor, clientIdForUser } from './useFollowCursor';
+export type { UseFollowCursorOptions } from './useFollowCursor';
 export { default as StandaloneTiptap } from './StandaloneTiptap';
 export type {
   StandaloneTiptapProps,
