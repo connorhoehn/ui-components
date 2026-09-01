@@ -63,12 +63,22 @@ const BASE = {
  * prosemirror-model in the graph. Story-only — real documents arrive through
  * the CRDT already populated.
  */
-function useSeed(html: string) {
-  const [editor, setEditor] = useState<{ commands: { setContent: (h: string) => void }; isEmpty: boolean } | null>(null);
+function useSeed(html: string, body: Y.XmlFragment) {
+  const [editor, setEditor] = useState<{ commands: { setContent: (h: string) => void } } | null>(null);
   useEffect(() => {
-    if (!editor || !editor.isEmpty) return;
+    if (!editor) return;
+    // Guard on the CRDT, NOT on `editor.isEmpty`.
+    //
+    // The Y.Doc is shared (useMemo) while React's StrictMode mounts the story
+    // twice, so two editor instances exist over one document. The second one
+    // can still report `isEmpty: true` before it has synced, seed the same
+    // HTML again, and leave the page with every block duplicated — the
+    // trailing code block being the visible tail of it.
+    //
+    // The fragment's length is the one fact both editors agree on.
+    if (body.length > 0) return;
     editor.commands.setContent(html);
-  }, [editor, html]);
+  }, [editor, html, body]);
   return setEditor as (e: unknown) => void;
 }
 
@@ -93,7 +103,7 @@ export const Canvas: Story = {
   args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
   render: (args) => {
     const { ydoc, provider, body } = useFixture();
-    const onEditorReady = useSeed(SAMPLE_HTML);
+    const onEditorReady = useSeed(SAMPLE_HTML, body);
     return (
       <CanvasDocumentView
         {...args}
@@ -162,7 +172,7 @@ export const WithPresenceAndComments: Story = {
   args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
   render: (args) => {
     const { ydoc, provider, body } = useFixture();
-    const onEditorReady = useSeed(SAMPLE_HTML);
+    const onEditorReady = useSeed(SAMPLE_HTML, body);
     const [focused, setFocused] = useState<string | null>(null);
 
     // The REAL thread component, not a hand-rolled card: replies, resolve,

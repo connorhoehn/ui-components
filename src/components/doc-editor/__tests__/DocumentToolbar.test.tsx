@@ -46,6 +46,9 @@ function makeEditor(active: Record<string, unknown> = {}, optional: string[] = [
   const editor = {
     commands,
     chain: () => chain,
+    // The link popover reads the current href to prefill itself when editing
+    // an existing link.
+    getAttributes: (name: string) => (name === 'link' ? { href: state['linkHref'] ?? '' } : {}),
     isActive: (name: string, attrs?: Record<string, unknown>) => {
       const key = attrs ? `${name}:${JSON.stringify(attrs)}` : name;
       return Boolean(state[key]);

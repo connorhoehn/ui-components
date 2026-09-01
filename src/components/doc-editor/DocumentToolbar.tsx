@@ -20,10 +20,11 @@
 // replacement for them — which is why every entry names its markdown
 // equivalent in the tooltip.
 
-import { useCallback, type ReactNode } from 'react';
+import { useCallback, useRef, useState, type ReactNode } from 'react';
 import { useEditorState, type Editor } from '@tiptap/react';
 import { cn } from '../../lib/cn';
 import { Select } from '../forms/Select';
+import LinkPopover from './LinkPopover';
 
 export interface DocumentToolbarProps {
   editor: Editor | null;
@@ -152,6 +153,9 @@ export default function DocumentToolbar({
     },
   });
 
+  const linkAnchor = useRef<HTMLSpanElement>(null);
+  const [linkOpen, setLinkOpen] = useState(false);
+
   const setBlock = useCallback((value: string) => {
     if (!editor) return;
     const chain = editor.chain().focus();
@@ -263,27 +267,25 @@ export default function DocumentToolbar({
       )}
 
       <Divider />
-      <ToolButton
-        btn={{
-          key: 'link', label: '🔗', hint: 'Link  [text](url)',
-          run: (e) => {
-            // Toggling off is unconditional; adding one needs a target, and
-            // prompting is the caller's job in a real app. Reusing the current
-            // href as the default makes editing an existing link possible
-            // rather than only replacing it.
-            if (e.isActive('link')) { e.chain().focus().unsetLink().run(); return; }
-            const prev = (e.getAttributes('link')?.['href'] as string | undefined) ?? '';
-            const url = typeof window === 'undefined' ? null : window.prompt('Link URL', prev);
-            if (url === null) return;            // cancelled — change nothing
-            if (url === '') { e.chain().focus().unsetLink().run(); return; }
-            e.chain().focus().setLink({ href: url }).run();
-          },
-          active: (e) => e.isActive('link'),
-        }}
-        editor={editor}
-        active={state?.flags['link'] ?? false}
-        testId={`${testId}-link`}
-      />
+      <span ref={linkAnchor} className="inline-flex">
+        <ToolButton
+          btn={{
+            key: 'link', label: '🔗', hint: 'Link  [text](url)',
+            // Opening a panel, not prompting. Toggling OFF is immediate
+            // because it needs no input; adding or editing needs a URL, and a
+            // native prompt for that was a browser-chrome modal that blocked
+            // the page and could not be themed or validated.
+            run: (e) => {
+              if (e.isActive('link')) { e.chain().focus().unsetLink().run(); return; }
+              setLinkOpen(true);
+            },
+            active: (e) => e.isActive('link'),
+          }}
+          editor={editor}
+          active={state?.flags['link'] ?? false}
+          testId={`${testId}-link`}
+        />
+      </span>
       <ToolButton
         btn={{
           key: 'hr', label: '—', hint: 'Divider  ---',
@@ -296,6 +298,18 @@ export default function DocumentToolbar({
       />
 
       {actions && <span className="ml-auto flex items-center gap-1">{actions}</span>}
+
+      <LinkPopover
+        trigger={linkAnchor}
+        open={linkOpen}
+        onClose={() => setLinkOpen(false)}
+        initialHref={(editor.getAttributes('link')?.['href'] as string | undefined) ?? ''}
+        onSubmit={(href) => { editor.chain().focus().setLink({ href }).run(); }}
+        {...(editor.isActive('link')
+          ? { onRemove: () => { editor.chain().focus().unsetLink().run(); } }
+          : {})}
+        data-testid={`${testId}-link-popover`}
+      />
     </div>
   );
 }
