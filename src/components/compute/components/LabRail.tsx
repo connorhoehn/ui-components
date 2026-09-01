@@ -36,6 +36,17 @@ export interface LabRailProps {
   onSelect: (computer: Computer) => void;
   /** Open this computer in a new pane rather than retargeting the current one. */
   onOpenInPane?: (computer: Computer) => void;
+  /**
+   * Watch this computer read-only — offered on the activity rows only.
+   *
+   * Selecting an activity row retargets a pane the way selecting a computer
+   * does, which lands you in a shell. That is the wrong verb for this list:
+   * the boxes here are ones something ELSE is driving (a cron bot, the job
+   * dispatcher, another operator), and the question is what it is doing, not
+   * what you want to type at it. Watching costs no shell slot, so you can
+   * keep several open.
+   */
+  onWatch?: (computer: Computer) => void;
   onCreate?: () => void;
   onOpenMenu?: () => void;
   /** Show every box in the activity list, not just the active ones. */
@@ -52,6 +63,7 @@ export function LabRail({
   openComputerIds,
   onSelect,
   onOpenInPane,
+  onWatch,
   onCreate,
   onOpenMenu,
   showAllActivity,
@@ -129,6 +141,7 @@ export function LabRail({
             all
           </button>
         }
+        onWatch={onWatch ?? null}
         renderSub={(computer) => {
           const status = statusOf(computer);
           const model = computer.lastResult ? shortModelName(null, models) : null;
@@ -167,10 +180,13 @@ interface RailSectionProps {
   onOpenInPane: ((computer: Computer) => void) | null;
   action?: React.ReactNode;
   renderSub: ((computer: Computer) => React.ReactNode) | null;
+  /** Per-row read-only watch. Null on lists where watching is not the verb. */
+  onWatch?: ((computer: Computer) => void) | null;
 }
 
 function RailSection({
   title, count, rows, activeId, open, onSelect, onOpenInPane, action, renderSub,
+  onWatch = null,
 }: RailSectionProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -215,8 +231,20 @@ function RailSection({
             const meta = COMPUTE_STATUS[status];
             const isActive = computer.id === activeId;
             return (
-              <button
+              // Wrapper so the watch control is a SIBLING of the row button,
+              // not nested inside it — nesting interactive elements is invalid
+              // and leaves the inner one unreachable by keyboard.
+              // `presentation` keeps it out of the a11y tree so the option
+              // still reads as a child of the listbox.
+              <div
                 key={computer.id}
+                role="presentation"
+                className={cn(
+                  'group relative flex items-stretch',
+                  isActive ? 'bg-code-surface' : 'hover:bg-code-surface/60',
+                )}
+              >
+              <button
                 data-rail-row
                 type="button"
                 role="option"
@@ -240,11 +268,9 @@ function RailSection({
                   }
                 }}
                 className={cn(
-                  'w-full text-left flex items-start gap-2 px-3 py-1.5 border-l-2 cursor-pointer bg-transparent transition-colors',
+                  'min-w-0 flex-1 text-left flex items-start gap-2 px-3 py-1.5 border-l-2 cursor-pointer bg-transparent transition-colors',
                   'focus:outline-none focus-visible:ring-1 focus-visible:ring-code-blue focus-visible:ring-inset',
-                  isActive
-                    ? 'border-code-blue bg-code-surface'
-                    : 'border-transparent hover:bg-code-surface/60',
+                  isActive ? 'border-code-blue' : 'border-transparent',
                 )}
               >
                 <StatusDot
@@ -277,6 +303,23 @@ function RailSection({
                   </span>
                 )}
               </button>
+              {onWatch && (
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => onWatch(computer)}
+                  aria-label={`Watch ${computer.label}`}
+                  title={`Watch ${computer.label} — read-only, costs no shell`}
+                  className={cn(
+                    'px-2 text-[10px] font-mono cursor-pointer bg-transparent border-none shrink-0',
+                    'text-code-muted hover:text-code-blue',
+                    'opacity-0 group-hover:opacity-100 focus-visible:opacity-100',
+                  )}
+                >
+                  tail
+                </button>
+              )}
+              </div>
             );
           })}
         </div>

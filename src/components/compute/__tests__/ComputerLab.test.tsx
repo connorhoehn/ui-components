@@ -459,3 +459,51 @@ describe('chrome', () => {
     expect(remapped[0]!.style.getPropertyValue('--color-code-bg')).toBe('var(--color-surface)');
   });
 });
+
+// ─── Watching a bot ──────────────────────────────────────────────────────────
+//
+// The scenario: a cron bot or the dispatcher picks up an idle computer and
+// runs a task on it, and an SME wants to SEE that rather than drive it. The
+// activity list is where that shows up, and the verb there is watch.
+
+describe('watching from the activity list', () => {
+  const busy = () => fixtureComputers.find((c) => c.status === 'running') ?? fixtureComputers[0]!;
+
+  it('opens a tail pane, not another shell', async () => {
+    renderLab();
+    await summary(/1 pane$/);
+
+    fireEvent.click(await screen.findByLabelText(`Watch ${busy().label}`));
+    await summary(/2 panes$/);
+
+    // A tail costs no shell against the runtime's quota of ten, which is the
+    // whole reason watching is a different pane kind rather than a second
+    // terminal.
+    expect(screen.getByTestId('lab-summary').textContent).toMatch(/2 panes/);
+  });
+
+  it('reuses a tail already pointed at that computer', async () => {
+    renderLab();
+    await summary(/1 pane$/);
+    const watch = await screen.findByLabelText(`Watch ${busy().label}`);
+
+    fireEvent.click(watch);
+    await summary(/2 panes$/);
+    fireEvent.click(watch);
+
+    // Clicking twice means "show me", not "show me twice".
+    await summary(/2 panes$/);
+  });
+
+  it('offers watch only on the activity list, not the computers list', async () => {
+    renderLab();
+    await summary();
+    // One control per activity row — the computers list above is where you go
+    // to work in a box, and its click already retargets a terminal.
+    const watches = screen.getAllByLabelText(/^Watch /);
+    const running = fixtureComputers.filter(
+      (c) => c.status === 'running' || c.status === 'waiting' || c.status === 'error',
+    );
+    expect(watches).toHaveLength(running.length);
+  });
+});

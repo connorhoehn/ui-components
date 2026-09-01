@@ -527,6 +527,25 @@ export function ComputerLab({
             if (activePane) layout.setPaneComputer(activePane.id, computer.id);
           }}
           onOpenInPane={(computer) => layout.split('row', computer.id, activePane?.kindId ?? defaultKindId)}
+          // Watching opens a TAIL pane, not another shell. The activity list is
+          // boxes something else is driving, so the question is what it is
+          // doing — and a tail costs no shell against the runtime's quota, so
+          // several can stay open while you work in a terminal elsewhere.
+          //
+          // Reuses a tail already pointed at that computer rather than stacking
+          // duplicates: clicking twice should mean "show me", not "show me
+          // twice". Falls back to retargeting when the registry has no tail
+          // kind, so a host that replaced the registry degrades to the old
+          // behaviour instead of doing nothing.
+          onWatch={(computer) => {
+            const tailKind = paneKinds.find((k) => k.id === 'tail');
+            if (!tailKind) { if (activePane) layout.setPaneComputer(activePane.id, computer.id); return; }
+            const existing = layout.panes.find(
+              (p) => p.computerId === computer.id && p.kindId === tailKind.id,
+            );
+            if (existing) { layout.focusPane(existing.id); return; }
+            layout.split('row', computer.id, tailKind.id);
+          }}
         />
         </div>
 

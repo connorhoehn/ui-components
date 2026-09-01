@@ -109,6 +109,10 @@ export {
   fixtureComputers, fixtureRuntimeStatus, fixtureModels, fixtureWorkspace,
 } from './fixtures/computeFixture';
 export { installMockShellSocket, mockShellUrl, MOCK_SHELL_SCHEME } from './fixtures/mockShell';
+export {
+  installMockTailSource, mockTailUrl, MOCK_TAIL_SCHEME, MOCK_TAIL_SCRIPTS,
+} from './fixtures/mockTail';
+export type { MockTailOptions, MockTailScript } from './fixtures/mockTail';
 export type { MockShellOptions } from './fixtures/mockShell';
 
 // Types
