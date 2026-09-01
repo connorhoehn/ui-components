@@ -503,10 +503,16 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
       )}
 
       {/* With the header hidden the container still needs the connection
-          state, so it surfaces as a thin strip rather than disappearing. */}
+          state, so it surfaces as a thin strip rather than disappearing.
+
+          This strip is the FIRST thing a lab pane shows — before the PTY
+          attaches there is nothing else in the frame — and it was drawn in
+          `code-muted`, which is 3:1 on the terminal surface. That is a fine
+          weight for a label sitting beside output and the wrong one for the
+          only line on screen. */}
       {!chrome && phase !== 'live' && (
         <div className="px-3 py-1 text-[10px] border-b border-code-border flex items-center gap-2 shrink-0">
-          <span className={phase === 'error' ? 'text-code-red' : 'text-code-muted'}>
+          <span className={phase === 'error' ? 'text-code-red' : 'text-code-subtle'}>
             {phase}
             {note ? ` · ${note}` : ''}
           </span>

@@ -9,6 +9,17 @@
 // The expiry meter is the one that earns its place. `stops in 4m` is a number
 // with no scale; a meter you can see draining says the same thing at a
 // glance, and says it while your eyes are on a different pane.
+//
+// PALETTE: this line is PANE-side, and stays on the code family even when the
+// lab's chrome has taken the host's theme. It was the one component in the
+// surface that could plausibly have gone either way, so the reasoning is worth
+// recording. It is read with your eyes on the canvas an inch above it, not on
+// the chrome; its colours mean things against a dark ground (peach = context
+// nearly spent, blue = which project this box is charged to); and flipping it
+// would put a light bar between the terminal and the frame's bottom edge —
+// a second colour change inside one pane, where there is currently none. The
+// boundary the whole lab uses is the frame border, and this sits inside it.
+// See `../lib/chromeTokens` for where the remap is applied.
 
 import { cn } from '../../../lib/cn';
 import DotMeter from '../../shared/DotMeter';
