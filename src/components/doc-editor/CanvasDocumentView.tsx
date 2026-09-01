@@ -67,6 +67,30 @@ export interface CanvasDocumentViewProps {
   onConvert?: () => Promise<string | null>;
   /** Forms that could not be represented, from the last conversion. */
   unsupported?: readonly CanvasUnsupportedForm[];
+  /**
+   * The (still empty) canvas body, so the conversion has a live schema to run
+   * against.
+   *
+   * ## Why this prop has to exist
+   *
+   * `onConvert` ultimately calls `materialize(schema, model)`, and that schema
+   * must be the LIVE editor's — building a second one puts a second
+   * prosemirror-model in the graph. But before conversion there IS no editor:
+   * this component only mounted one inside the `isCanvas` branch, so
+   * `onEditorReady` never fired, the host's schema stayed null, and
+   * `WrappedCanvasDocument` refused every conversion with "the editor is still
+   * loading — try again in a moment" — permanently, because it never would.
+   *
+   * Given the fragment, the convert prompt mounts a read-only, hidden editor
+   * beside itself whose only job is to exist, so the schema is real and the
+   * button works. Read-only is load-bearing: the fragment is the one
+   * `materialize` writes into, and it REFUSES a non-empty body, so an editor a
+   * user could type into would break conversion by being used.
+   *
+   * Omit it and the prompt behaves as before — the host is then responsible
+   * for supplying `schema` some other way.
+   */
+  schemaProbe?: XmlFragment | null;
   /** Rendered above the page — title, participants, actions. */
   header?: ReactNode;
   /**
@@ -122,6 +146,7 @@ export default function CanvasDocumentView({
   extensions,
   onConvert,
   unsupported = [],
+  schemaProbe,
   header,
   toolbarActions,
   gutterItems,
@@ -267,18 +292,48 @@ export default function CanvasDocumentView({
           </div>
         </div>
       ) : (
-        <EmptyState
-          testId={`${testId}-convert-prompt`}
-          title="This document still uses sections"
-          description="Convert it to a single page to edit it as one continuous document. Your existing sections become headings; nothing is deleted."
-          action={
-            onConvert ? (
-              <Button onClick={handleConvert} disabled={converting} data-testid={`${testId}-convert`}>
-                {converting ? 'Converting…' : 'Convert to page'}
-              </Button>
-            ) : undefined
-          }
-        />
+        <>
+          <EmptyState
+            testId={`${testId}-convert-prompt`}
+            title="This document still uses sections"
+            description="Convert it to a single page to edit it as one continuous document. Your existing sections become headings; nothing is deleted."
+            action={
+              onConvert ? (
+                <Button onClick={handleConvert} disabled={converting} data-testid={`${testId}-convert`}>
+                  {converting ? 'Converting…' : 'Convert to page'}
+                </Button>
+              ) : undefined
+            }
+          />
+          {/* The schema probe — see `schemaProbe`. `hidden` rather than a
+              utility class so it does not depend on the consuming app having
+              this package's stylesheet; the UA rule alone takes it out of the
+              layout, and ProseMirror builds its schema perfectly well in a
+              display:none subtree.
+
+              Deliberately NOT fed into this component's own `editor` state:
+              that state exists for the toolbar, which the prompt has no use
+              for, and holding it would leave a DESTROYED editor in state for
+              one render after the conversion flips the branch. Only the host
+              is told, and only so it can hand the schema back. */}
+          {onConvert && schemaProbe && (
+            <div hidden aria-hidden="true" data-testid={`${testId}-schema-probe`}>
+              <TiptapEditor
+                fragment={schemaProbe}
+                ydoc={ydoc}
+                // No provider: a probe must not publish presence or a caret
+                // into a document nobody is looking at through it.
+                provider={null}
+                user={user}
+                editable={false}
+                extensions={extensions}
+                chrome="none"
+                hideToolbar
+                onEditorReady={(e) => onEditorReady?.(e)}
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -103,6 +103,30 @@ declare interface CanvasDocumentViewProps {
     onConvert?: () => Promise<string | null>;
     /** Forms that could not be represented, from the last conversion. */
     unsupported?: readonly CanvasUnsupportedForm[];
+    /**
+     * The (still empty) canvas body, so the conversion has a live schema to run
+     * against.
+     *
+     * ## Why this prop has to exist
+     *
+     * `onConvert` ultimately calls `materialize(schema, model)`, and that schema
+     * must be the LIVE editor's — building a second one puts a second
+     * prosemirror-model in the graph. But before conversion there IS no editor:
+     * this component only mounted one inside the `isCanvas` branch, so
+     * `onEditorReady` never fired, the host's schema stayed null, and
+     * `WrappedCanvasDocument` refused every conversion with "the editor is still
+     * loading — try again in a moment" — permanently, because it never would.
+     *
+     * Given the fragment, the convert prompt mounts a read-only, hidden editor
+     * beside itself whose only job is to exist, so the schema is real and the
+     * button works. Read-only is load-bearing: the fragment is the one
+     * `materialize` writes into, and it REFUSES a non-empty body, so an editor a
+     * user could type into would break conversion by being used.
+     *
+     * Omit it and the prompt behaves as before — the host is then responsible
+     * for supplying `schema` some other way.
+     */
+    schemaProbe?: XmlFragment | null;
     /** Rendered above the page — title, participants, actions. */
     header?: ReactNode;
     /**
