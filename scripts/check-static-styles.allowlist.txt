@@ -116,3 +116,4 @@ demo/src/demos/node-editor-live/index.tsx        # node x/y positions and comput
 demo/src/demos/observability-shell/index.tsx     # bar heights from live metric values
 src/components/compute/components/PaneTreeView.tsx  # split ratio -> flex-basis percentage; the pane geometry IS the state
 src/components/social/ChatAttachment.tsx  # upload progress bar width — a percentage of transferred bytes
+src/components/compute/components/ComputeDock.tsx  # status colour from SHELL_STATUS, pane visibility, and the user-dragged dock height

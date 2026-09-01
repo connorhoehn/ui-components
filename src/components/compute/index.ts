@@ -28,6 +28,8 @@ export type { ProjectSummaryProps } from './components/ProjectSummary';
 export type { PaneStatusLineProps } from './components/PaneStatusLine';
 
 // Panes
+export { ComputeDock } from './components/ComputeDock';
+export type { ComputeDockProps } from './components/ComputeDock';
 export { ShellTerminal } from './components/ShellTerminal';
 export type { ShellTerminalProps, ShellTerminalHandle } from './components/ShellTerminal';
 export { TailPane } from './components/TailPane';
