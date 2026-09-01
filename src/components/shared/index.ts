@@ -6,6 +6,7 @@ export * from '../ui/Table';
 export * from '../ui/PageSection';
 export * from '../ui/IconButton';
 export * from '../ui/Stack';
+export * from '../ui/SelectableCard';
 
 export { default as Banner } from './Banner';
 export * from './Banner';
@@ -239,9 +240,11 @@ export {
 } from './tones';
 export type { Tone, ToneOrAlias, SurfaceTone } from './tones';
 
-// ── Metadata line (2026-09) ──
+// ── Metadata line + board lane (2026-09) ──
 export { MetaLine } from './MetaLine';
 export type { MetaLineProps, MetaLineSize, MetaLineTone } from './MetaLine';
+export { BoardColumn } from './BoardColumn';
+export type { BoardColumnProps } from './BoardColumn';
 
 // ── Form primitives, reachable from the `/shared` subpath ──
 //

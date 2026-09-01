@@ -961,6 +961,27 @@ export declare interface BBox {
     height: number;
 }
 
+export declare function BoardColumn({ label, count, children, emptyLabel, action, className, 'data-testid': testId, }: BoardColumnProps): JSX.Element;
+
+export declare interface BoardColumnProps {
+    /** The lane's name — "In progress", "Blocked". */
+    label: ReactNode;
+    /**
+     * Count shown at the end of the header. Pass it explicitly rather than
+     * counting children: a lane that paginates or virtualises still knows its
+     * real total.
+     */
+    count?: number;
+    /** Cards in the lane. When absent, `emptyLabel` is shown instead. */
+    children?: ReactNode;
+    /** Shown when the lane holds nothing. Default "Nothing here". */
+    emptyLabel?: string;
+    /** Right-aligned control in the header, e.g. a per-lane "add" button. */
+    action?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare const borderRadius: {
     readonly sm: string;
     readonly md: string;
@@ -7573,6 +7594,20 @@ export declare interface SegmentOption {
 }
 
 export declare const Select: ForwardRefExoticComponent<SelectProps & RefAttributes<HTMLSelectElement>>;
+
+export declare function SelectableCard({ children, selected, onSelect, padding, disabled, className, ...rest }: SelectableCardProps): JSX.Element;
+
+export declare type SelectableCardPadding = 'sm' | 'md' | 'lg';
+
+export declare interface SelectableCardProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect' | 'children' | 'type'> {
+    children?: ReactNode;
+    /** Draws the selected chrome and sets `aria-pressed`. */
+    selected?: boolean;
+    /** Fired on click. Named `onSelect` so callers read as pickers, not buttons. */
+    onSelect?: () => void;
+    /** Default `sm` (12px) — these sit in dense grids, unlike Card's 24px `md`. */
+    padding?: SelectableCardPadding;
+}
 
 export declare interface SelectOption {
     value: string;
