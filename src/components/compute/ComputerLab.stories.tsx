@@ -1,15 +1,13 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Avatar } from '../shared/Avatar';
-import { Breadcrumbs } from '../shared/Breadcrumbs';
-import Chip from '../shared/Chip';
 import { NavRail } from '../shared/NavRail';
-import PageHeader from '../shared/PageHeader';
 import { ComputeProvider } from './context/ComputeContext';
 import { ComputerLab } from './components/ComputerLab';
 import { fixtureComputers, fixtureModels, fixtureRuntimeStatus } from './fixtures/computeFixture';
 import { installMockShellSocket, mockShellUrl } from './fixtures/mockShell';
 import { installMockTailSource, mockTailUrl } from './fixtures/mockTail';
+import { LAB_LAYOUT_STORAGE_KEY } from './lib/storage';
 import type { ComputeClient } from './lib/computeClient';
 
 /**
@@ -40,6 +38,48 @@ function WithMockShell({ children }: { children: ReactNode }) {
 }
 
 /**
+ * Pin the persisted pane layout before the lab mounts.
+ *
+ * The lab restores its layout from localStorage — right for an app, wrong for
+ * a story: whatever splits the LAST viewer left behind became the story, so
+ * "Watching a bot" could open on five shell panes somebody built weeks ago.
+ * A story is a fixture; it owns its starting state. `useState` initializer
+ * rather than an effect because it must run before the lab's own first read.
+ */
+function FreshLayout({ seed, children }: { seed?: object; children: ReactNode }) {
+  useState(() => {
+    try {
+      if (seed) globalThis.localStorage?.setItem(LAB_LAYOUT_STORAGE_KEY, JSON.stringify(seed));
+      else globalThis.localStorage?.removeItem(LAB_LAYOUT_STORAGE_KEY);
+    } catch { /* private mode — the lab just seeds its default */ }
+    return true;
+  });
+  return <>{children}</>;
+}
+
+/**
+ * Two read-only tails, side by side, before a single click.
+ *
+ * The scenario is "something ELSE is driving these boxes and I want to see
+ * what" — so the story must open ON the watching, not on shells with the tail
+ * control hidden behind a hover. demo-1 is mid-run and demo-2 ended on a
+ * question; each streams its own scripted run from the tail simulator.
+ */
+const WATCHING_SEED = {
+  windows: [{
+    id: 'w-watch',
+    root: {
+      kind: 'split', id: 'watch-split', direction: 'row', ratio: 0.5,
+      a: { kind: 'leaf', id: 'watch-a', computerId: 'demo-1', kindId: 'tail' },
+      b: { kind: 'leaf', id: 'watch-b', computerId: 'demo-2', kindId: 'tail' },
+    },
+  }],
+  activeWindowId: 'w-watch',
+  activePaneId: 'watch-a',
+  zoomedPaneId: null,
+};
+
+/**
  * Driven by fixtures, so there is no backend and no AWS. Layout, rail,
  * splits, zoom, the fuzzy jump, the status lines and the broadcast bar are all
  * live; terminal panes attach to a simulated devbox and really take typing,
@@ -50,17 +90,21 @@ const meta = {
   component: ComputerLab,
   parameters: { layout: 'fullscreen' },
   decorators: [
-    (Story) => (
+    (Story, context) => (
       <WithMockShell>
-        <ComputeProvider
-          client={storyClient}
-          computers={fixtureComputers}
-          models={fixtureModels}
-          canManage
-          pollIntervalMs={0}
-        >
-          <Story />
-        </ComputeProvider>
+        {/* Layout seed rides story parameters so one decorator owns the
+            localStorage write and no story can forget to reset it. */}
+        <FreshLayout seed={context.parameters['labLayout'] as object | undefined}>
+          <ComputeProvider
+            client={storyClient}
+            computers={fixtureComputers}
+            models={fixtureModels}
+            canManage
+            pollIntervalMs={0}
+          >
+            <Story />
+          </ComputeProvider>
+        </FreshLayout>
       </WithMockShell>
     ),
   ],
@@ -129,97 +173,48 @@ export const ReadOnly: Story = {
  */
 export const WatchingABot: Story = {
   args: { open: true, onClose: () => {} },
+  parameters: { labLayout: WATCHING_SEED },
 };
 
 // ── The acceptance test for the inline lab ───────────────────────────────────
 
-/** Enough of an app to judge the lab against. Nothing here is exported. */
+/** A neutral host — generic labels, dead links. The library has no app. */
 const HOST_NAV = [
-  { to: '/iq/overview', label: 'Overview', hint: 'Fleet and spend' },
-  { to: '/iq/initiatives', label: 'Initiatives', badge: '14' },
-  { to: '/iq/work', label: 'Work queue', badge: '7' },
-  { to: '/iq/compute', label: 'Computers', hint: 'microVM boxes' },
-  { to: '/iq/sprints', label: 'Sprints' },
-  { to: '/iq/observability', label: 'Observability', group: 'Operate' },
-  { to: '/iq/evaluations', label: 'Evaluations', group: 'Operate' },
+  { to: '#overview', label: 'Overview' },
+  { to: '#projects', label: 'Projects' },
+  { to: '#computers', label: 'Computers' },
+  { to: '#settings', label: 'Settings' },
 ];
 
 /**
- * The lab as a PAGE in somebody else's light application.
+ * The lab as a page in somebody else's light application.
  *
- * Every other story here renders the lab alone on a fullscreen canvas, which
- * is the one condition under which the surface cannot fail: with nothing to be
- * compared against, a dark slab looks intentional. The complaint this story
- * exists to catch — "it always feels a bit like an iframe and doesn't natively
- * fit in" — is only visible next to a host, so the host is drawn here from the
- * library's own primitives (`PageHeader`, `NavRail`, `Breadcrumbs`, `Chip`,
- * `Avatar`) rather than hand-rolled, and the lab is given the container a real
- * route would give it.
+ * Alone on a fullscreen canvas a dark surface cannot fail — with nothing to
+ * compare against, it just looks intentional. The complaint this story exists
+ * to catch ("feels like an iframe, doesn't natively fit in") only shows next
+ * to a host, so a minimal one is sketched from shared primitives: a header, a
+ * nav rail, a content column. The host is deliberately anonymous — the
+ * library serves many apps and must not carry any one of them in its stories.
  *
- * What to look at, in the order the eye finds it:
- *
- *  - **The rail seam.** The host's `NavRail` and the lab's own rail are
- *    adjacent light columns. They should read as two panels of one app, not as
- *    a page and a thing embedded in it.
- *  - **The top bar.** LAB, the window tabs and the shell meter sit on the
- *    host's panel colour, one row below the host's own header. The selected
- *    window tab is the app's `info` fill, not Catppuccin's pastel blue on
- *    near-white.
- *  - **The panes.** Still dark, deliberately, and that is the point: the frame
- *    border is the theme boundary. Title row, canvas and status line are all
- *    on the terminal palette; nothing inside a pane changes colour halfway
- *    down. A pane should read the way a code block reads in a light document.
- *  - **The command line.** Click into it — the top rule lights. Arm broadcast
- *    (**⌥⌘B**) and the whole row goes orange. `send` is a filled control, not
- *    a pastel word.
- *  - **The dialogs.** **⌘K** for the jump list and **⌘/** for the shortcut
- *    sheet: both take the host's theme, over a scrim that stays dark because it
- *    is dimming the terminals as well as the chrome.
- *
- * Force dark mode from the toolbar and the same rules should hold with every
- * surface flipped, panes included — they are the only thing that does not move.
+ * Judge one thing: the lab's chrome should read as panels of THIS page, with
+ * only the panes staying dark — the frame border is the theme boundary, and a
+ * pane should sit in a light page the way a code block sits in a document.
+ * Flip dark mode in the toolbar and the same rule should hold reversed.
  */
 export const InlineInLightApp: Story = {
   args: { open: true, onClose: () => {}, variant: 'inline' },
   parameters: { layout: 'fullscreen' },
   render: (args) => (
     <div className="h-screen flex flex-col bg-surface text-text-primary">
-      <header className="h-14 shrink-0 flex items-center gap-4 px-4 border-b border-border bg-surface-panel">
-        <span className="text-[15px] font-semibold tracking-tight">OrgIQ</span>
-        <Breadcrumbs
-          items={[
-            { label: 'Operate', href: '#' },
-            { label: 'Computers', href: '#' },
-            { label: 'Lab' },
-          ]}
-        />
+      <header className="h-12 shrink-0 flex items-center gap-4 px-4 border-b border-border bg-surface-panel">
+        <span className="text-[14px] font-semibold tracking-tight">Console</span>
         <span className="flex-1" />
-        <Chip size="xs" tone="success">us-east-1</Chip>
-        <Avatar name="Connor Hoehn" size={26} />
+        <Avatar name="A Person" size={24} />
       </header>
-
       <div className="flex flex-1 min-h-0">
-        <NavRail
-          title="Operate"
-          items={HOST_NAV}
-          activeHref="/iq/compute"
-          width="narrow"
-          className="shrink-0"
-        />
-
-        {/* A content column, not a full-bleed canvas. The lab has to hold up
-            with the page's own padding around it and a header above it —
-            which is where the height budget gets tight, and why the inline
-            variant runs a denser top bar and gutter than the overlay. */}
-        <main className="flex-1 min-w-0 min-h-0 flex flex-col gap-3 p-4">
-          <PageHeader
-            title="Computer Lab"
-            description="Six boxes, one keyboard. Broadcast reaches every pane in the window."
-            badge={<Chip size="xs" tone="info">preview</Chip>}
-          />
-          <div className="flex-1 min-h-0">
-            <ComputerLab {...args} />
-          </div>
+        <NavRail items={HOST_NAV} activeHref="#computers" width="narrow" className="shrink-0" />
+        <main className="flex-1 min-w-0 min-h-0 p-4">
+          <ComputerLab {...args} />
         </main>
       </div>
     </div>
