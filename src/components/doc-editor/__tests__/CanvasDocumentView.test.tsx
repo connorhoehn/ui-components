@@ -21,7 +21,15 @@ vi.mock('../TiptapEditor', () => ({
   }) => {
     // Hands out a stand-in editor so the page's own toolbar renders, which is
     // the thing under test — the real editor is exercised elsewhere.
-    useEffect(() => { onEditorReady?.({ stub: true }); }, [onEditorReady]);
+    //
+    // Fires ONCE, and the empty dep array is load-bearing. CanvasDocumentView
+    // passes an inline arrow, so `[onEditorReady]` changes identity on every
+    // render: calling back would setEditor -> re-render -> new arrow -> call
+    // back again, forever. That spun this file for 900s+ while every other
+    // suite finished in about a second. The real TiptapEditor depends on
+    // `[editor]`, so only the stub had the loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => { onEditorReady?.({ stub: true }); }, []);
     return (
       <div
         data-testid="tiptap-stub"
