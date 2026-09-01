@@ -567,6 +567,30 @@ export declare type ConnectionPillTone = SurfaceTone;
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
+export declare function ConsultCard({ question, context, origin, askedAt, status, answer, answeredBy, onAnswer, answerPlaceholder, busy, footer, className, 'data-testid': testId, }: ConsultCardProps): JSX.Element;
+
+export declare interface ConsultCardProps {
+    /** The agent's question. */
+    question: string;
+    /** What the agent was doing when it asked. */
+    context?: string;
+    /** Where it came from — repo, box, session. Rendered as quiet chips. */
+    origin?: readonly string[];
+    /** ISO timestamp or preformatted "asked 4m ago" string. */
+    askedAt?: string;
+    status: 'pending' | 'answered' | 'expired' | 'withdrawn';
+    answer?: string;
+    answeredBy?: string;
+    /** Submit an answer. Only rendered while status is 'pending'. */
+    onAnswer?: (answer: string) => void;
+    answerPlaceholder?: string;
+    busy?: boolean;
+    /** Extra footer content, e.g. a link to the session. */
+    footer?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
