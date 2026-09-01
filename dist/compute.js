@@ -2398,7 +2398,7 @@ function jt({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 	let h = new Set(i), g = n.filter((e) => {
 		let t = J(e);
 		return t === "running" || t === "waiting" || t === "error";
-	}), _ = [...u ? n : g].sort((e, t) => (At[J(e)] ?? 9) - (At[J(t)] ?? 9)), x = qe(), S = x?.projects ?? [], C = x?.projectsAbsent ?? !0, w = S.filter((e) => e.id !== N), T = S.find((e) => e.id === N), E = !C && w.length > 0 ? [...w.map((e) => ({
+	}), _ = [...u ? n : g].sort((e, t) => (At[J(e)] ?? 9) - (At[J(t)] ?? 9)), x = qe(), S = x?.projects ?? [], C = x?.projectsAbsent ?? !0, w = S.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0), T = S.find((e) => e.id === N), E = !C && w.length > 0 ? [...w.map((e) => ({
 		id: e.id,
 		computers: e.computers,
 		heading: /* @__PURE__ */ b("div", {
