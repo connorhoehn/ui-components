@@ -67,3 +67,9 @@ export type { DocumentToolbarProps } from './DocumentToolbar';
 
 export { default as DocumentGutter, stackOffsets } from './DocumentGutter';
 export type { DocumentGutterProps, GutterItem } from './DocumentGutter';
+
+// The single-thread renderer, for hosting one thread in a gutter card.
+// SectionComments is the whole panel (header + composer + list); this is the
+// piece a margin card actually wants.
+export { default as CommentThreadNode } from './CommentThread';
+export type { CommentThreadNodeProps } from './CommentThread';

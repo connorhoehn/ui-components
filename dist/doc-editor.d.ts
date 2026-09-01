@@ -163,6 +163,17 @@ declare interface CommentThread extends CommentData {
     replies: CommentThread[];
 }
 
+export declare function CommentThreadNode({ comment, depth, onReply, mentionUsers, onResolveThread, onUnresolveThread, }: CommentThreadNodeProps): JSX.Element;
+
+export declare interface CommentThreadNodeProps {
+    comment: CommentThread;
+    depth: number;
+    onReply: (parentId: string, text: string) => void;
+    mentionUsers: MentionUser[];
+    onResolveThread?: (commentId: string) => void;
+    onUnresolveThread?: (commentId: string) => void;
+}
+
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
@@ -746,7 +757,13 @@ declare interface SnapshotSection {
 export declare function stackOffsets(items: readonly {
     id: string;
     top: number;
-}[], estimatedHeight: number, gap: number): Map<string, number>;
+}[], 
+/**
+ * Per-card height. A flat number is a fallback for the first paint only —
+ * real thread cards differ by hundreds of pixels once replies exist, and a
+ * single estimate makes tall cards overlap the one below.
+ */
+height: number | ((id: string) => number), gap: number): Map<string, number>;
 
 export declare function StandaloneTiptap(props: StandaloneTiptapProps): JSX.Element;
 

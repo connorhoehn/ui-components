@@ -5,7 +5,7 @@ import { createPortal as l } from "react-dom";
 //#region src/components/shared/TitledFrame.tsx
 var u = {
 	code: {
-		frame: "bg-code-bg",
+		frame: "bg-terminal-bg",
 		idle: "border-code-border",
 		active: "border-code-blue",
 		title: "text-code-subtle",
@@ -27,12 +27,12 @@ function d({ title: t, titleAction: n, active: r = !1, tone: i = "code", childre
 		style: p,
 		className: e("relative flex flex-col min-h-0 rounded border transition-colors", h.frame, r ? h.active : h.idle, d),
 		children: [/* @__PURE__ */ c("div", {
-			className: "absolute -top-2 left-2 right-2 flex items-center gap-1 pointer-events-none",
+			className: "absolute -top-2 left-2 right-2 h-4 flex items-center gap-1 pointer-events-none",
 			children: [/* @__PURE__ */ s("span", {
 				className: e("px-1.5 text-[10px] font-mono leading-none truncate max-w-[60%]", h.frame, r ? h.titleActive : h.title),
 				children: t
 			}), n != null && /* @__PURE__ */ c(o, { children: [/* @__PURE__ */ s("span", { className: "flex-1" }), /* @__PURE__ */ s("span", {
-				className: e("px-1 pointer-events-auto", h.frame),
+				className: e("px-1 h-full flex items-center pointer-events-auto", h.frame),
 				children: n
 			})] })]
 		}), /* @__PURE__ */ s("div", {

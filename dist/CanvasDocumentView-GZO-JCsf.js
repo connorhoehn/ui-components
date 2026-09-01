@@ -5,11 +5,11 @@ import { t as r } from "./Chip-YhQI5B9P.js";
 import { t as i } from "./EmptyState-ClmWoqCb.js";
 import { t as a } from "./Select-CqVokE2v.js";
 import { t as o } from "./TiptapEditor-CnjifOQz.js";
-import { useCallback as s, useMemo as c, useState as l } from "react";
-import { jsx as u, jsxs as d } from "react/jsx-runtime";
-import { useEditorState as f } from "@tiptap/react";
+import { useCallback as s, useLayoutEffect as c, useMemo as l, useRef as u, useState as d } from "react";
+import { jsx as f, jsxs as p } from "react/jsx-runtime";
+import { useEditorState as m } from "@tiptap/react";
 //#region src/components/doc-editor/DocumentToolbar.tsx
-var p = [
+var h = [
 	{
 		value: "paragraph",
 		label: "Normal text"
@@ -35,10 +35,10 @@ var p = [
 		label: "Code block"
 	}
 ];
-function m(e) {
+function g(e) {
 	return e.isActive("heading", { level: 1 }) ? "heading1" : e.isActive("heading", { level: 2 }) ? "heading2" : e.isActive("heading", { level: 3 }) ? "heading3" : e.isActive("blockquote") ? "blockquote" : e.isActive("codeBlock") ? "codeBlock" : "paragraph";
 }
-var h = [
+var _ = [
 	{
 		key: "bold",
 		label: "B",
@@ -84,7 +84,7 @@ var h = [
 		},
 		active: (e) => e.isActive("code")
 	}
-], g = [
+], v = [
 	{
 		key: "bulletList",
 		label: "•",
@@ -113,8 +113,8 @@ var h = [
 		active: (e) => e.isActive("taskList")
 	}
 ];
-function _({ btn: t, editor: n, testId: r, active: i }) {
-	return /* @__PURE__ */ u("button", {
+function y({ btn: t, editor: n, testId: r, active: i }) {
+	return /* @__PURE__ */ f("button", {
 		type: "button",
 		"data-testid": r,
 		title: t.hint,
@@ -127,21 +127,21 @@ function _({ btn: t, editor: n, testId: r, active: i }) {
 		children: t.label
 	});
 }
-function v() {
-	return /* @__PURE__ */ u("span", {
+function b() {
+	return /* @__PURE__ */ f("span", {
 		"aria-hidden": !0,
 		className: "mx-1 h-5 w-px self-center bg-border"
 	});
 }
-function y({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
-	let r = f({
+function x({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
+	let r = m({
 		editor: e,
 		selector: ({ editor: e }) => {
 			if (!e) return null;
 			let t = {};
-			for (let n of [...h, ...g]) t[n.key] = n.active(e);
+			for (let n of [..._, ...v]) t[n.key] = n.active(e);
 			return t.link = e.isActive("link"), {
-				block: m(e),
+				block: g(e),
 				flags: t
 			};
 		}
@@ -167,13 +167,13 @@ function y({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 			default: n.setParagraph().run();
 		}
 	}, [e]);
-	return e ? /* @__PURE__ */ d("div", {
+	return e ? /* @__PURE__ */ p("div", {
 		"data-testid": n,
 		role: "toolbar",
 		"aria-label": "Document formatting",
 		className: "flex flex-wrap items-center gap-0.5 px-2 py-1.5",
 		children: [
-			/* @__PURE__ */ u(_, {
+			/* @__PURE__ */ f(y, {
 				btn: {
 					key: "undo",
 					label: "↶",
@@ -187,7 +187,7 @@ function y({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 				active: !1,
 				testId: `${n}-undo`
 			}),
-			/* @__PURE__ */ u(_, {
+			/* @__PURE__ */ f(y, {
 				btn: {
 					key: "redo",
 					label: "↷",
@@ -201,32 +201,32 @@ function y({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 				active: !1,
 				testId: `${n}-redo`
 			}),
-			/* @__PURE__ */ u(v, {}),
-			/* @__PURE__ */ u(a, {
+			/* @__PURE__ */ f(b, {}),
+			/* @__PURE__ */ f(a, {
 				size: "sm",
 				"data-testid": `${n}-block`,
 				"aria-label": "Text style",
 				value: r?.block ?? "paragraph",
-				options: p,
+				options: h,
 				onChange: (e) => i(e.target.value),
 				className: "w-[140px]"
 			}),
-			/* @__PURE__ */ u(v, {}),
-			h.map((t) => /* @__PURE__ */ u(_, {
+			/* @__PURE__ */ f(b, {}),
+			_.map((t) => /* @__PURE__ */ f(y, {
 				btn: t,
 				editor: e,
 				active: r?.flags[t.key] ?? !1,
 				testId: `${n}-${t.key}`
 			}, t.key)),
-			/* @__PURE__ */ u(v, {}),
-			g.map((t) => /* @__PURE__ */ u(_, {
+			/* @__PURE__ */ f(b, {}),
+			v.map((t) => /* @__PURE__ */ f(y, {
 				btn: t,
 				editor: e,
 				active: r?.flags[t.key] ?? !1,
 				testId: `${n}-${t.key}`
 			}, t.key)),
-			/* @__PURE__ */ u(v, {}),
-			/* @__PURE__ */ u(_, {
+			/* @__PURE__ */ f(b, {}),
+			/* @__PURE__ */ f(y, {
 				btn: {
 					key: "link",
 					label: "🔗",
@@ -251,7 +251,7 @@ function y({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 				active: r?.flags.link ?? !1,
 				testId: `${n}-link`
 			}),
-			/* @__PURE__ */ u(_, {
+			/* @__PURE__ */ f(y, {
 				btn: {
 					key: "hr",
 					label: "—",
@@ -265,7 +265,7 @@ function y({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 				active: !1,
 				testId: `${n}-hr`
 			}),
-			t && /* @__PURE__ */ u("span", {
+			t && /* @__PURE__ */ f("span", {
 				className: "ml-auto flex items-center gap-1",
 				children: t
 			})
@@ -274,38 +274,63 @@ function y({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 }
 //#endregion
 //#region src/components/doc-editor/DocumentGutter.tsx
-function b(e, t, n) {
-	let r = [...e].sort((e, t) => e.top - t.top), i = /* @__PURE__ */ new Map(), a = -Infinity;
-	for (let e of r) {
-		let r = Math.max(e.top, a);
-		i.set(e.id, r), a = r + t + n;
+function S(e, t, n) {
+	let r = typeof t == "function" ? t : () => t, i = [...e].sort((e, t) => e.top - t.top), a = /* @__PURE__ */ new Map(), o = -Infinity;
+	for (let e of i) {
+		let t = Math.max(e.top, o);
+		a.set(e.id, t), o = t + r(e.id) + n;
 	}
-	return i;
+	return a;
 }
-function x({ items: t, gap: n = 12, estimatedHeight: r = 120, onFocusItem: i, emptyLabel: a = "No comments yet", "data-testid": o = "document-gutter" }) {
-	let s = c(() => b(t, r, n), [
+function C({ items: t, gap: n = 12, estimatedHeight: r = 120, onFocusItem: i, emptyLabel: a = "No comments yet", "data-testid": o = "document-gutter" }) {
+	let [s, p] = d({}), m = u(/* @__PURE__ */ new Map());
+	c(() => {
+		let e = () => {
+			p((e) => {
+				let t = !1, n = { ...e };
+				for (let [r, i] of m.current) {
+					let a = i.offsetHeight;
+					a > 0 && Math.abs((e[r] ?? 0) - a) > 1 && (n[r] = a, t = !0);
+				}
+				return t ? n : e;
+			});
+		};
+		if (e(), typeof ResizeObserver > "u") return;
+		let t = new ResizeObserver(e);
+		for (let [, e] of m.current) t.observe(e);
+		return () => t.disconnect();
+	}, [t]);
+	let h = l(() => S(t, (e) => s[e] ?? r, n), [
 		t,
+		s,
 		r,
 		n
-	]), l = c(() => {
+	]), g = l(() => {
 		let e = 0;
-		for (let [, t] of s) e = Math.max(e, t + r);
+		for (let [t, n] of h) e = Math.max(e, n + (s[t] ?? r));
 		return e;
-	}, [s, r]);
-	return t.length === 0 ? /* @__PURE__ */ u("div", {
+	}, [
+		h,
+		s,
+		r
+	]);
+	return t.length === 0 ? /* @__PURE__ */ f("div", {
 		"data-testid": `${o}-empty`,
 		className: "px-3 py-4 text-xs text-text-tertiary",
 		children: a
-	}) : /* @__PURE__ */ u("div", {
+	}) : /* @__PURE__ */ f("div", {
 		"data-testid": o,
 		className: "relative w-[280px] shrink-0",
-		style: { height: l },
-		children: t.map((t) => /* @__PURE__ */ u("div", {
+		style: { height: g },
+		children: t.map((t) => /* @__PURE__ */ f("div", {
 			"data-testid": `${o}-item-${t.id}`,
 			"data-active": String(!!t.active),
+			ref: (e) => {
+				e ? m.current.set(t.id, e) : m.current.delete(t.id);
+			},
 			className: "absolute left-0 right-0",
-			style: { top: s.get(t.id) ?? t.top },
-			children: /* @__PURE__ */ u("div", {
+			style: { top: h.get(t.id) ?? t.top },
+			children: /* @__PURE__ */ f("div", {
 				role: i ? "button" : void 0,
 				tabIndex: i ? 0 : void 0,
 				onClick: i ? () => i(t.id) : void 0,
@@ -320,75 +345,75 @@ function x({ items: t, gap: n = 12, estimatedHeight: r = 120, onFocusItem: i, em
 }
 //#endregion
 //#region src/components/doc-editor/CanvasDocumentView.tsx
-function S({ isCanvas: e, body: a, ydoc: s, provider: c, user: f, editable: p = !0, extensions: m, onConvert: h, unsupported: g = [], header: _, toolbarActions: v, gutterItems: b, onFocusGutterItem: S, onEditorReady: C, "data-testid": w = "canvas-document" }) {
-	let [T, E] = l(!1), [D, O] = l(null), [k, A] = l(null);
-	return /* @__PURE__ */ d("div", {
+function w({ isCanvas: e, body: a, ydoc: s, provider: c, user: l, editable: u = !0, extensions: m, onConvert: h, unsupported: g = [], header: _, toolbarActions: v, gutterItems: y, onFocusGutterItem: b, onEditorReady: S, "data-testid": w = "canvas-document" }) {
+	let [T, E] = d(!1), [D, O] = d(null), [k, A] = d(null);
+	return /* @__PURE__ */ p("div", {
 		"data-testid": w,
 		className: "flex flex-col gap-3",
 		children: [
 			_,
-			g.length > 0 && /* @__PURE__ */ u(n, {
+			g.length > 0 && /* @__PURE__ */ f(n, {
 				variant: "warning",
 				title: "Some content could not be represented",
 				"data-testid": `${w}-unsupported`,
-				children: /* @__PURE__ */ d("span", {
+				children: /* @__PURE__ */ p("span", {
 					className: "flex flex-wrap items-center gap-1.5",
-					children: [g.map((e, t) => /* @__PURE__ */ u(r, {
+					children: [g.map((e, t) => /* @__PURE__ */ f(r, {
 						tone: "warning",
 						size: "xs",
 						children: e.kind
-					}, `${e.kind}-${t}`)), /* @__PURE__ */ u("span", { children: "— kept on the page as text so nothing was lost." })]
+					}, `${e.kind}-${t}`)), /* @__PURE__ */ f("span", { children: "— kept on the page as text so nothing was lost." })]
 				})
 			}),
-			D && /* @__PURE__ */ u(n, {
+			D && /* @__PURE__ */ f(n, {
 				variant: "error",
 				title: "Could not convert",
 				"data-testid": `${w}-convert-error`,
 				children: D
 			}),
-			e && a ? /* @__PURE__ */ d("div", {
+			e && a ? /* @__PURE__ */ p("div", {
 				"data-testid": `${w}-workspace`,
 				className: "rounded-lg bg-surface-inset overflow-y-auto",
-				children: [p && k && /* @__PURE__ */ u("div", {
+				children: [u && k && /* @__PURE__ */ f("div", {
 					"data-testid": `${w}-toolbar`,
 					className: "sticky top-0 z-10 border-b border-border bg-surface-panel",
-					children: /* @__PURE__ */ u("div", {
+					children: /* @__PURE__ */ f("div", {
 						className: "mx-auto max-w-[816px] px-2",
-						children: /* @__PURE__ */ u(y, {
+						children: /* @__PURE__ */ f(x, {
 							editor: k,
 							actions: v
 						})
 					})
-				}), /* @__PURE__ */ d("div", {
+				}), /* @__PURE__ */ p("div", {
 					className: "flex justify-center gap-6 py-8 px-6",
-					children: [/* @__PURE__ */ u("div", {
+					children: [/* @__PURE__ */ f("div", {
 						"data-testid": `${w}-paper`,
 						className: "doc-page w-full max-w-[816px] min-h-[1056px] bg-paper px-[96px] py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]",
-						children: /* @__PURE__ */ u(o, {
+						children: /* @__PURE__ */ f(o, {
 							fragment: a,
 							ydoc: s,
 							provider: c,
-							user: f,
-							editable: p,
+							user: l,
+							editable: u,
 							extensions: m,
 							placeholder: "Start writing…",
 							chrome: "none",
 							hideToolbar: !0,
 							onEditorReady: (e) => {
-								A(e), C?.(e);
+								A(e), S?.(e);
 							}
 						})
-					}), b && b.length > 0 && /* @__PURE__ */ u(x, {
-						items: b,
-						onFocusItem: S,
+					}), y && y.length > 0 && /* @__PURE__ */ f(C, {
+						items: y,
+						onFocusItem: b,
 						"data-testid": `${w}-gutter`
 					})]
 				})]
-			}) : /* @__PURE__ */ u(i, {
+			}) : /* @__PURE__ */ f(i, {
 				testId: `${w}-convert-prompt`,
 				title: "This document still uses sections",
 				description: "Convert it to a single page to edit it as one continuous document. Your existing sections become headings; nothing is deleted.",
-				action: h ? /* @__PURE__ */ u(t, {
+				action: h ? /* @__PURE__ */ f(t, {
 					onClick: async () => {
 						if (!(!h || T)) {
 							E(!0), O(null);
@@ -411,4 +436,4 @@ function S({ isCanvas: e, body: a, ydoc: s, provider: c, user: f, editable: p = 
 	});
 }
 //#endregion
-export { y as i, x as n, b as r, S as t };
+export { x as i, C as n, S as r, w as t };

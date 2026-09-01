@@ -53,6 +53,31 @@ describe('stackOffsets', () => {
   it('handles an empty set', () => {
     expect(stackOffsets([], 100, 10).size).toBe(0);
   });
+
+  // A flat estimate is wrong the moment threads differ: a card with two
+  // replies is several times taller than one without, and spacing everything
+  // by one guess leaves the tall card overlapping its neighbour. That was
+  // visible the instant the gutter rendered real CommentThreadNodes.
+  it('spaces by each card\'s own height, not one estimate', () => {
+    const tall = { a: 300, b: 50 };
+    const out = stackOffsets(
+      [{ id: 'a', top: 0 }, { id: 'b', top: 10 }],
+      (id) => tall[id as 'a' | 'b'],
+      10,
+    );
+    // `b` clears `a`'s ACTUAL 300px, not a 120px default.
+    expect(out.get('b')).toBe(310);
+  });
+
+  it('falls back to the estimate for a card not yet measured', () => {
+    const measured: Record<string, number> = { a: 200 };
+    const out = stackOffsets(
+      [{ id: 'a', top: 0 }, { id: 'b', top: 5 }],
+      (id) => measured[id] ?? 100,
+      10,
+    );
+    expect(out.get('b')).toBe(210);
+  });
 });
 
 describe('DocumentGutter', () => {

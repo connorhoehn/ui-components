@@ -24,7 +24,7 @@
 // not orphan it. `CommentData` has no anchor field yet, which is the gap
 // between this component and a persisted gutter.
 
-import { useMemo, type ReactNode } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
 /** A thread plus where it wants to sit, in pixels from the page top. */
@@ -59,9 +59,15 @@ export interface DocumentGutterProps {
  */
 export function stackOffsets(
   items: readonly { id: string; top: number }[],
-  estimatedHeight: number,
+  /**
+   * Per-card height. A flat number is a fallback for the first paint only —
+   * real thread cards differ by hundreds of pixels once replies exist, and a
+   * single estimate makes tall cards overlap the one below.
+   */
+  height: number | ((id: string) => number),
   gap: number,
 ): Map<string, number> {
+  const heightOf = typeof height === 'function' ? height : () => height;
   const sorted = [...items].sort((a, b) => a.top - b.top);
   const out = new Map<string, number>();
   let cursor = -Infinity;
@@ -71,7 +77,7 @@ export function stackOffsets(
     // because it reads as belonging to the paragraph above.
     const top = Math.max(item.top, cursor);
     out.set(item.id, top);
-    cursor = top + estimatedHeight + gap;
+    cursor = top + heightOf(item.id) + gap;
   }
   return out;
 }
@@ -84,18 +90,47 @@ export default function DocumentGutter({
   emptyLabel = 'No comments yet',
   'data-testid': testId = 'document-gutter',
 }: DocumentGutterProps) {
+  // Measured card heights, keyed by id. `estimatedHeight` is only the value
+  // used on the very first paint, before anything has been measured — a real
+  // thread card with two replies is several times taller than one without, so
+  // stacking on a single estimate leaves tall cards overlapping their
+  // neighbour. Observed rather than measured once, because a card grows when
+  // a reply is posted or its text wraps differently.
+  const [heights, setHeights] = useState<Record<string, number>>({});
+  const nodes = useRef(new Map<string, HTMLDivElement>());
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      setHeights((prev) => {
+        let changed = false;
+        const next = { ...prev };
+        for (const [id, el] of nodes.current) {
+          const h = el.offsetHeight;
+          // Sub-pixel churn would loop: only a real change counts.
+          if (h > 0 && Math.abs((prev[id] ?? 0) - h) > 1) { next[id] = h; changed = true; }
+        }
+        return changed ? next : prev;
+      });
+    };
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(measure);
+    for (const [, el] of nodes.current) ro.observe(el);
+    return () => ro.disconnect();
+  }, [items]);
+
   const offsets = useMemo(
-    () => stackOffsets(items, estimatedHeight, gap),
-    [items, estimatedHeight, gap],
+    () => stackOffsets(items, (id) => heights[id] ?? estimatedHeight, gap),
+    [items, heights, estimatedHeight, gap],
   );
 
-  // The tallest card's bottom edge — otherwise the absolutely-positioned
-  // cards have no container height and the last one is clipped.
+  // The lowest card's bottom edge — otherwise the absolutely-positioned cards
+  // have no container height and the last one is clipped.
   const height = useMemo(() => {
     let max = 0;
-    for (const [, top] of offsets) max = Math.max(max, top + estimatedHeight);
+    for (const [id, top] of offsets) max = Math.max(max, top + (heights[id] ?? estimatedHeight));
     return max;
-  }, [offsets, estimatedHeight]);
+  }, [offsets, heights, estimatedHeight]);
 
   if (items.length === 0) {
     return (
@@ -114,6 +149,10 @@ export default function DocumentGutter({
           data-active={String(Boolean(item.active))}
           // Absolute, because the card's position is a function of its anchor
           // rather than of document order.
+          ref={(el) => {
+            if (el) nodes.current.set(item.id, el);
+            else nodes.current.delete(item.id);
+          }}
           className="absolute left-0 right-0"
           style={{ top: offsets.get(item.id) ?? item.top }}
         >

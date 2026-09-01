@@ -1164,6 +1164,13 @@ export declare interface ShellTerminalProps {
     autoConnect?: boolean;
     /** `sawOutput` is true when bytes arriving triggered the call. */
     onStatus?: (status: ShellStatus, sawOutput?: boolean) => void;
+    /**
+     * Background for this terminal, overriding `--color-terminal-bg`.
+     *
+     * Any CSS colour. Set it for the one pane that should look different; to
+     * restyle every terminal in an app, re-point the token instead.
+     */
+    background?: string;
     className?: string;
 }
 

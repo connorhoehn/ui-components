@@ -4,6 +4,8 @@ import * as Y from 'yjs';
 import { Awareness } from 'y-protocols/awareness';
 import CanvasDocumentView, { type CanvasUnsupportedForm } from './CanvasDocumentView';
 import PresenceAvatars from '../shared/PresenceAvatars';
+import CommentThreadNode from './CommentThread';
+import type { CommentThread } from '../../types/document';
 
 // The macro node views come from the REAL adapter, so these stories show what
 // the editor actually renders rather than a mock of it. `distributed-core` is
@@ -157,11 +159,28 @@ export const WithPresenceAndComments: Story = {
     const onEditorReady = useSeed(SAMPLE_HTML);
     const [focused, setFocused] = useState<string | null>(null);
 
-    const thread = (who: string, text: string) => (
-      <div className="text-xs">
-        <div className="font-semibold text-text-primary">{who}</div>
-        <div className="mt-0.5 text-text-secondary">{text}</div>
-      </div>
+    // The REAL thread component, not a hand-rolled card: replies, resolve,
+    // @-mentions and relative timestamps all come for free, and the gutter
+    // stays a positioning concern rather than growing its own comment UI.
+    const thread = (id: string, who: string, color: string, text: string, replies: CommentThread[] = []) => (
+      <CommentThreadNode
+        comment={{
+          id,
+          text,
+          userId: id,
+          displayName: who,
+          color,
+          timestamp: new Date(Date.parse('2026-09-01T09:00:00Z')).toISOString(),
+          parentCommentId: null,
+          replies,
+        }}
+        depth={0}
+        onReply={() => {}}
+        mentionUsers={[
+          { id: 'u1', name: 'Ada Lovelace' },
+          { id: 'u2', name: 'Grace Hopper' },
+        ] as never}
+      />
     );
 
     return (
@@ -183,9 +202,11 @@ export const WithPresenceAndComments: Story = {
           />
         }
         gutterItems={[
-          { id: 'c1', top: 40, active: focused === 'c1', content: thread('Ada Lovelace', 'Do we have the p95 for the recovery window too?') },
-          { id: 'c2', top: 70, active: focused === 'c2', content: thread('Grace Hopper', 'Jitter alone will not fix the synchronised TTL.') },
-          { id: 'c3', top: 380, active: focused === 'c3', content: thread('Alan Turing', 'Resolved — added to the ops runbook.') },
+          { id: 'c1', top: 40, active: focused === 'c1', content: thread('c1', 'Ada Lovelace', '#8b5cf6', 'Do we have the p95 for the recovery window too?', [
+            { id: 'c1r1', text: 'Adding it now — 3.2s, same window.', userId: 'u2', displayName: 'Grace Hopper', color: '#2563eb', timestamp: new Date(Date.parse('2026-09-01T09:05:00Z')).toISOString(), parentCommentId: 'c1', replies: [] },
+          ]) },
+          { id: 'c2', top: 70, active: focused === 'c2', content: thread('c2', 'Grace Hopper', '#2563eb', 'Jitter alone will not fix the synchronised TTL.') },
+          { id: 'c3', top: 380, active: focused === 'c3', content: thread('c3', 'Alan Turing', '#16a34a', 'Resolved — added to the ops runbook.') },
         ]}
         onFocusGutterItem={setFocused}
       />
