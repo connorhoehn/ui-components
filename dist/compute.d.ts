@@ -356,7 +356,7 @@ export declare interface Computer {
     activeModel?: string;
 }
 
-export declare function ComputerLab({ open, onClose, focusComputerId, keymap, leader, idleWindowMs, className, }: ComputerLabProps): JSX.Element | null;
+export declare function ComputerLab({ open, onClose, focusComputerId, variant, keymap, leader, idleWindowMs, className, }: ComputerLabProps): JSX.Element | null;
 
 export declare interface ComputerLabProps {
     open: boolean;
@@ -391,6 +391,20 @@ export declare interface ComputerLabProps {
      * finding out is a worse answer than doing nothing.
      */
     focusComputerId?: string | null;
+    /**
+     * How the lab occupies the page.
+     *
+     * `overlay` (default) covers the viewport — the lab as a mode you enter,
+     * which is right when it is summoned over whatever you were doing.
+     *
+     * `inline` fills its container instead, so a host that routes to the lab as
+     * a *page* keeps its own nav and header around it. The difference is not
+     * only cosmetic: an overlay is `role="dialog" aria-modal`, which tells a
+     * screen reader the rest of the page is inert. That is a lie when the lab is
+     * the page's content and the app's navigation is still right there, so the
+     * inline variant drops both.
+     */
+    variant?: 'overlay' | 'inline';
     className?: string;
 }
 
