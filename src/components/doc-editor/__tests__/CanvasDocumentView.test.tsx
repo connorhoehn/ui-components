@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { useEffect } from 'react';
 import * as Y from 'yjs';
 import CanvasDocumentView from '../CanvasDocumentView';
 
@@ -7,9 +8,33 @@ import CanvasDocumentView from '../CanvasDocumentView';
 // testing — the STATE MACHINE around it is. Stubbed so a failure here always
 // means the page logic broke, never that the editor did.
 vi.mock('../TiptapEditor', () => ({
-  default: ({ extensions }: { extensions?: readonly unknown[] }) => (
-    <div data-testid="tiptap-stub" data-extension-count={String(extensions?.length ?? 0)} />
-  ),
+  default: ({
+    extensions,
+    chrome,
+    hideToolbar,
+    onEditorReady,
+  }: {
+    extensions?: readonly unknown[];
+    chrome?: string;
+    hideToolbar?: boolean;
+    onEditorReady?: (e: unknown) => void;
+  }) => {
+    // Hands out a stand-in editor so the page's own toolbar renders, which is
+    // the thing under test — the real editor is exercised elsewhere.
+    useEffect(() => { onEditorReady?.({ stub: true }); }, [onEditorReady]);
+    return (
+      <div
+        data-testid="tiptap-stub"
+        data-extension-count={String(extensions?.length ?? 0)}
+        data-chrome={chrome ?? 'card'}
+        data-hide-toolbar={String(Boolean(hideToolbar))}
+      />
+    );
+  },
+}));
+
+vi.mock('../DocumentToolbar', () => ({
+  default: () => <div data-testid="toolbar-stub" />,
 }));
 
 function makeDoc() {
@@ -60,6 +85,49 @@ describe('CanvasDocumentView — a document that is already a canvas', () => {
     // dark mode — see darkSurfaceTokens (d).
     expect(paper.className).toContain('text-paper-ink');
     expect(paper.className).not.toMatch(/\btext-text-/);
+  });
+
+  // What makes it read as a document rather than a text field: a bounded
+  // sheet floating on a recessed workspace, not a full-bleed white box.
+  it('floats a bounded sheet on a workspace', () => {
+    renderView();
+    const workspace = screen.getByTestId('canvas-document-workspace');
+    const paper = screen.getByTestId('canvas-document-paper');
+    expect(workspace).toContainElement(paper);
+    expect(workspace.className).toContain('bg-surface-inset');
+    expect(paper.className).toMatch(/max-w-\[816px\]/); // 8.5in at 96dpi
+    expect(paper.className).toMatch(/shadow-/);
+  });
+
+  // The document typography lives under `.doc-page`. Without the class the
+  // base .ProseMirror rules apply: 13px and no heading scale, i.e. a form
+  // field. The class IS the styling, so its absence is a silent regression.
+  it('scopes document typography to the sheet', () => {
+    renderView();
+    expect(screen.getByTestId('canvas-document-paper').className).toContain('doc-page');
+  });
+
+  // Chrome, not paper: the toolbar is themed and goes dark; the sheet does
+  // not. It must therefore live OUTSIDE the paper element.
+  it('renders the toolbar outside the sheet', () => {
+    renderView();
+    const toolbar = screen.getByTestId('canvas-document-toolbar');
+    const paper = screen.getByTestId('canvas-document-paper');
+    expect(paper).not.toContainElement(toolbar);
+    expect(screen.getByTestId('canvas-document-workspace')).toContainElement(toolbar);
+    expect(toolbar.className).toContain('sticky');
+  });
+
+  it('runs the editor bare and suppresses its built-in toolbar', () => {
+    renderView();
+    const stub = screen.getByTestId('tiptap-stub');
+    expect(stub).toHaveAttribute('data-chrome', 'none');
+    expect(stub).toHaveAttribute('data-hide-toolbar', 'true');
+  });
+
+  it('does not render a toolbar in read-only mode', () => {
+    renderView({ editable: false });
+    expect(screen.queryByTestId('canvas-document-toolbar')).toBeNull();
   });
 });
 

@@ -26,6 +26,7 @@ import { useState, type ReactNode } from 'react';
 import type { XmlFragment } from 'yjs';
 import type * as Y from 'yjs';
 import TiptapEditor from './TiptapEditor';
+import DocumentToolbar from './DocumentToolbar';
 import Banner from '../shared/Banner';
 import EmptyState from '../shared/EmptyState';
 import { Button } from '../ui/Button';
@@ -66,6 +67,15 @@ export interface CanvasDocumentViewProps {
   unsupported?: readonly CanvasUnsupportedForm[];
   /** Rendered above the page — title, participants, actions. */
   header?: ReactNode;
+  /**
+   * Hands the live editor out once it exists (null while initialising).
+   *
+   * Not a convenience: `materialize()` needs the LIVE editor's ProseMirror
+   * schema, and building a second one puts a second prosemirror-model in the
+   * graph — the `instanceof` break the app's optimizeDeps.exclude entries
+   * already exist to prevent. This is how a caller gets the real one.
+   */
+  onEditorReady?: (editor: Parameters<typeof DocumentToolbar>[0]['editor'] | null) => void;
   'data-testid'?: string;
 }
 
@@ -80,10 +90,14 @@ export default function CanvasDocumentView({
   onConvert,
   unsupported = [],
   header,
+  onEditorReady,
   'data-testid': testId = 'canvas-document',
 }: CanvasDocumentViewProps) {
   const [converting, setConverting] = useState(false);
   const [convertError, setConvertError] = useState<string | null>(null);
+  // Held so the toolbar can render in the chrome ABOVE the sheet rather than
+  // inside the page margins. Null until the editor finishes initialising.
+  const [editor, setEditor] = useState<Parameters<typeof DocumentToolbar>[0]['editor'] | null>(null);
 
   const handleConvert = async () => {
     if (!onConvert || converting) return; // a second click races the first
@@ -130,24 +144,57 @@ export default function CanvasDocumentView({
       )}
 
       {isCanvas && body ? (
+        // The workspace: a recessed grey field the page floats on. This is
+        // what reads as "a document" rather than "a text field" — without a
+        // surrounding surface, a white box on a white app is just a widget.
         <div
-          // The paper. Invariant white with PAIRED invariant ink and border —
-          // a document body does not follow the theme, only the chrome around
-          // it does. `text-text-primary` here would render near-white prose on
-          // white paper in dark mode, which still "renders" and so survives a
-          // screenshot check; darkSurfaceTokens (d) fails the build for it.
-          data-testid={`${testId}-paper`}
-          className="rounded-lg border border-paper-border bg-paper px-10 py-8 text-paper-ink shadow-sm"
+          data-testid={`${testId}-workspace`}
+          className="rounded-lg bg-surface-inset overflow-y-auto"
         >
-          <TiptapEditor
-            fragment={body}
-            ydoc={ydoc}
-            provider={provider}
-            user={user}
-            editable={editable}
-            extensions={extensions}
-            placeholder="Start writing…"
-          />
+          {/* Chrome, not paper: the toolbar is themed and goes dark, while the
+              sheet below it stays white. Sticky so it survives scrolling a
+              long document, which is the only reason a document toolbar is
+              useful at all. */}
+          {editable && editor && (
+            <div
+              data-testid={`${testId}-toolbar`}
+              className="sticky top-0 z-10 border-b border-border bg-surface-panel"
+            >
+              <div className="mx-auto max-w-[816px] px-2">
+                <DocumentToolbar editor={editor} />
+              </div>
+            </div>
+          )}
+          <div className="py-8">
+          <div
+            // The sheet. 816px is 8.5in at 96dpi and 1056px is 11in, so the
+            // page has the proportions of the thing it is imitating; 96px
+            // padding is a 1in margin. min-h, not h: the page grows with the
+            // content instead of clipping at one sheet.
+            //
+            // Invariant white with PAIRED invariant ink — a document body does
+            // not follow the theme, only the chrome around it does.
+            // `text-text-primary` here would render near-white prose on white
+            // paper in dark mode, which still "renders" and so survives a
+            // screenshot check; darkSurfaceTokens (d) fails the build for it.
+            data-testid={`${testId}-paper`}
+            className="doc-page mx-auto w-full max-w-[816px] min-h-[1056px] bg-paper px-[96px] py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]"
+          >
+            <TiptapEditor
+              fragment={body}
+              ydoc={ydoc}
+              provider={provider}
+              user={user}
+              editable={editable}
+              extensions={extensions}
+              placeholder="Start writing…"
+              // The page owns the surface: no widget border, no imposed ink.
+              chrome="none"
+              hideToolbar
+              onEditorReady={(e) => { setEditor(e); onEditorReady?.(e); }}
+            />
+            </div>
+          </div>
         </div>
       ) : (
         <EmptyState

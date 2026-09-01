@@ -63,6 +63,24 @@ export interface TiptapEditorProps {
    * editor on every keystroke.
    */
   extensions?: readonly unknown[];
+  /**
+   * `'card'` (default) keeps the bordered widget with its own padding and
+   * themed ink — every existing caller. `'none'` strips both so the editor
+   * can sit directly on a document page the caller owns.
+   */
+  chrome?: 'card' | 'none';
+  /** Suppresses the built-in toolbar, for a page that renders its own. */
+  hideToolbar?: boolean;
+  /**
+   * Hands the live editor out so a caller can render toolbars or menus
+   * OUTSIDE the editor's own box. Called with null while the editor is
+   * initialising, so a consumer must handle that rather than assume.
+   *
+   * A document page needs this: its toolbar belongs in the chrome above the
+   * sheet, not inside the page margins, and the editor instance is the only
+   * way to drive it.
+   */
+  onEditorReady?: (editor: ReturnType<typeof useEditor>) => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -222,6 +240,9 @@ export default function TiptapEditor({
   sectionId,
   onUpdateCursorInfo,
   extensions: extraExtensions,
+  chrome = 'card',
+  hideToolbar = false,
+  onEditorReady,
 }: TiptapEditorProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const extensions = useMemo(() => [
@@ -357,10 +378,31 @@ export default function TiptapEditor({
     };
   }, [provider, updateCursors]);
 
+  // `chrome: 'none'` is what makes a document page possible. The default card
+  // wraps the editor in a border and paints `text-text-primary` — a THEMED
+  // ink. On a document that is wrong twice over: it draws a widget outline in
+  // the middle of a page, and on invariant white paper the themed ink goes
+  // near-white in dark mode. The caller owns the surface in document mode, so
+  // colour is inherited rather than imposed.
+  const bare = chrome === 'none';
+
+  // Depends on the editor identity, not on onEditorReady's: a caller passing
+  // an inline arrow would otherwise re-fire this on every render.
+  useEffect(() => {
+    onEditorReady?.(editor);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor]);
+
   return (
-    <div className={cn(editable ? 'border border-border rounded-lg overflow-hidden relative' : 'relative')}>
-      {editable && <EditorToolbar editor={editor} />}
-      <div ref={setEditorArea} className={cn('px-4 py-3 text-sm leading-relaxed text-text-primary relative')}>
+    <div className={cn(!bare && editable ? 'border border-border rounded-lg overflow-hidden relative' : 'relative')}>
+      {editable && !hideToolbar && <EditorToolbar editor={editor} />}
+      <div
+        ref={setEditorArea}
+        className={cn(
+          'relative',
+          bare ? 'leading-relaxed' : 'px-4 py-3 text-sm leading-relaxed text-text-primary',
+        )}
+      >
         <EditorContent editor={editor} />
         {/* Custom cursor overlay */}
         <CursorOverlay cursors={remoteCursors} editorView={editor?.view} containerEl={editorArea} />

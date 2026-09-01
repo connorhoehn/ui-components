@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import * as Y from 'yjs';
 import { Awareness } from 'y-protocols/awareness';
 import CanvasDocumentView, { type CanvasUnsupportedForm } from './CanvasDocumentView';
@@ -45,12 +45,56 @@ const BASE = {
   extensions: EXTENSIONS,
 } as const;
 
+/**
+ * Seeds the page once the editor exists.
+ *
+ * Via the editor rather than by writing the Y.XmlFragment directly: with
+ * Collaboration bound, the editor IS the writer, and building a second
+ * ProseMirror schema here to serialise into the CRDT would put a second
+ * prosemirror-model in the graph. Story-only — real documents arrive through
+ * the CRDT already populated.
+ */
+function useSeed(html: string) {
+  const [editor, setEditor] = useState<{ commands: { setContent: (h: string) => void }; isEmpty: boolean } | null>(null);
+  useEffect(() => {
+    if (!editor || !editor.isEmpty) return;
+    editor.commands.setContent(html);
+  }, [editor, html]);
+  return setEditor as (e: unknown) => void;
+}
+
+const SAMPLE_HTML = `
+<h1>Incident Report: cache stampede</h1>
+<p>The cache expired for <strong>every</strong> key at once, and the origin took the full read volume for ~90 seconds. Read latency went from 40ms to 3.2s at p95, and the error rate peaked at 11%.</p>
+<h2>What happened</h2>
+<p>A deploy rewrote every entry with an identical TTL. Twenty-four hours later they all expired inside the same second, and every miss went straight to origin.</p>
+<blockquote><p>The origin was never the bottleneck. The synchronised expiry was.</p></blockquote>
+<h2>Action items</h2>
+<ul data-type="taskList">
+  <li data-type="taskItem" data-checked="false"><label><input type="checkbox"><span></span></label><div><p>Add jitter to the cache TTL</p></div></li>
+  <li data-type="taskItem" data-checked="true"><label><input type="checkbox" checked><span></span></label><div><p>Page the on-call earlier</p></div></li>
+</ul>
+<h2>Follow-up</h2>
+<p>Owner: <em>alice@example.dev</em> — review at the next ops sync.</p>
+<pre><code>cache.set(key, value, ttl + jitter(0, 300))</code></pre>
+`;
+
 /** A document that is already a canvas — the whole page as one editor. */
 export const Canvas: Story = {
   args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
   render: (args) => {
     const { ydoc, provider, body } = useFixture();
-    return <CanvasDocumentView {...args} isCanvas body={body} ydoc={ydoc} provider={provider} />;
+    const onEditorReady = useSeed(SAMPLE_HTML);
+    return (
+      <CanvasDocumentView
+        {...args}
+        isCanvas
+        body={body}
+        ydoc={ydoc}
+        provider={provider}
+        onEditorReady={onEditorReady as never}
+      />
+    );
   },
 };
 

@@ -61,3 +61,6 @@ export type {
   CanvasDocumentViewProps,
   CanvasUnsupportedForm,
 } from './CanvasDocumentView';
+
+export { default as DocumentToolbar } from './DocumentToolbar';
+export type { DocumentToolbarProps } from './DocumentToolbar';

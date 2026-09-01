@@ -562,6 +562,98 @@
   border-radius: 2px;
 }
 
+/* ---------------------------------------------------------------------------
+   Document typography — scoped to the canvas page (.doc-page), never global.
+
+   The base .ProseMirror rules above are a COMPACT WIDGET: 13px, 0.5em between
+   paragraphs, and no heading scale at all, so an <h1> renders at the browser
+   default and a document reads like a form field. That is correct for the
+   inline section editors, which is why these rules are scoped rather than
+   applied to .ProseMirror generally.
+
+   Sizes are the ones a word processor uses: ~16px body at 1.6, headings on a
+   real scale, and space BEFORE a heading roughly double the space after, which
+   is what makes sections read as sections rather than as evenly spaced lines.
+
+   Colour is inherited, never set. The page owns the ink (--color-paper-ink),
+   and painting it here would reintroduce exactly the themed-ink-on-fixed-paper
+   bug the token block above exists to prevent.
+   --------------------------------------------------------------------------- */
+.doc-page .ProseMirror {
+  font-size: 16px;
+  line-height: 1.65;
+  min-height: 0;
+  /* A document wraps like prose. `pre-wrap` from the widget rules would
+     preserve every run of spaces the user's paste happened to carry. */
+  white-space: normal;
+}
+
+/* Plain block margins, NOT a `> * + *` sibling rule. That rule looks tidier
+   but loses: `.doc-page .ProseMirror p` is two classes plus an element, while
+   `.doc-page .ProseMirror > * + *` is two classes plus a universal, so the
+   paragraph rule is MORE specific and its `margin: 0` wins wherever the two
+   meet — no reordering fixes it. The visible symptom was no gap between a
+   heading and the paragraph beneath it, so the page read as one dense block.
+
+   Space BELOW each block, space ABOVE each heading: the heading's larger top
+   margin is what groups it with the text it introduces rather than with the
+   paragraph it follows. */
+.doc-page .ProseMirror p { margin: 0 0 0.9em; }
+
+.doc-page .ProseMirror h1,
+.doc-page .ProseMirror h2,
+.doc-page .ProseMirror h3 {
+  font-weight: 600;
+  line-height: 1.25;
+}
+.doc-page .ProseMirror h1 { font-size: 2rem;   margin: 1.6em 0 0.45em; }
+.doc-page .ProseMirror h2 { font-size: 1.5rem; margin: 1.5em 0 0.4em; }
+.doc-page .ProseMirror h3 { font-size: 1.2rem; margin: 1.4em 0 0.35em; }
+/* The title of a document should not be shoved down the page. */
+.doc-page .ProseMirror > h1:first-child,
+.doc-page .ProseMirror > h2:first-child,
+.doc-page .ProseMirror > h3:first-child { margin-top: 0; }
+
+.doc-page .ProseMirror ul,
+.doc-page .ProseMirror ol { margin: 0 0 0.9em; padding-left: 1.6em; }
+.doc-page .ProseMirror li { margin: 0.25em 0; }
+/* A paragraph inside a list item is layout, not a block break. */
+.doc-page .ProseMirror li > p { margin: 0; }
+
+.doc-page .ProseMirror blockquote {
+  margin: 0 0 0.9em;
+  border-left: 3px solid var(--color-paper-border);
+  padding-left: 1em;
+  color: var(--color-paper-ink-muted);
+}
+
+.doc-page .ProseMirror pre {
+  margin: 0 0 0.9em;
+  background: var(--color-paper-hover);
+  border-radius: var(--radius-md);
+  padding: 0.75em 1em;
+  font-size: 0.875em;
+  overflow-x: auto;
+}
+
+/* No trailing gap under the last block — otherwise the bottom margin reads as
+   an uneven page margin. */
+.doc-page .ProseMirror > *:last-child { margin-bottom: 0; }
+.doc-page .ProseMirror code { font-size: 0.9em; }
+
+.doc-page .ProseMirror hr {
+  border: none;
+  border-top: 1px solid var(--color-paper-border);
+  margin: 2em 0;
+}
+
+/* Task lists lose their bullet — the checkbox IS the marker. */
+.doc-page .ProseMirror ul[data-type='taskList'] { list-style: none; padding-left: 0; }
+.doc-page .ProseMirror ul[data-type='taskList'] li { display: flex; gap: 0.6em; }
+.doc-page .ProseMirror ul[data-type='taskList'] li > label { margin-top: 0.15em; }
+
+.doc-page .ProseMirror .is-empty::before { color: var(--color-paper-ink-subtle); }
+
 /* react-flow controls theme overrides (PipelineCanvas) */
 .react-flow__controls button {
   background: transparent;
