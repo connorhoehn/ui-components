@@ -8,6 +8,21 @@ import ParticipantAvatars from './ParticipantAvatars';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
 
+/**
+ * How the call button presents itself.
+ *
+ * A boolean could only say "in a call" or "not", so the state that matters
+ * most — a call is RUNNING in this document and you have not joined it — had
+ * to render as a plain "Call", visually identical to no call existing at all.
+ * Hosts worked around it by suppressing this button and rendering their own
+ * beneath the header, which is a duplicated control waiting to drift.
+ *
+ * - `idle`      — nothing running; the button starts a call.
+ * - `available` — a call is running that you are not in; the button joins it.
+ * - `active`    — you are in the call; the button toggles its surface.
+ */
+export type DocumentHeaderCallVariant = 'idle' | 'available' | 'active';
+
 interface DocumentHeaderProps {
   meta: DocumentMeta;
   mode: ViewMode;
@@ -19,6 +34,16 @@ interface DocumentHeaderProps {
   onToggleVideoCall?: () => void;
   onToggleVideoHistory?: () => void;
   isCallActive?: boolean;
+  /**
+   * Overrides the call button's presentation. Omit and it is derived from
+   * `isCallActive`, so callers written before this prop existed are unchanged.
+   */
+  callVariant?: DocumentHeaderCallVariant;
+  /**
+   * Overrides the call button's text — the room name in "Join standup", say.
+   * Omit for the variant's default wording.
+   */
+  callLabel?: string;
   onClearDocument: () => void;
   onJumpToUser?: (participant: Participant) => void;
   sections?: { id: string; title: string }[];
@@ -39,6 +64,21 @@ const STATUS_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
   final: { bg: 'var(--color-success-bg)', text: 'var(--color-success-fg)' },
 };
 
+const CALL_VARIANT_LABELS: Record<DocumentHeaderCallVariant, string> = {
+  idle: 'Call',
+  available: 'Join Call',
+  active: 'In Call',
+};
+
+// Header chrome, so these are the themed chrome tokens — never paper. `available`
+// borrows the info tone deliberately: an offered call has to read as live and
+// joinable, and the neutral surface it used to share with `idle` read as dead.
+const CALL_VARIANT_CLASSES: Record<DocumentHeaderCallVariant, string> = {
+  idle: 'bg-surface text-text-primary border-border-field',
+  available: 'bg-info-bg text-info-fg border-info-border',
+  active: 'bg-success-bg text-success-fg border-success-border',
+};
+
 const modeLabels: { mode: ViewMode; label: string }[] = [
   { mode: 'editor', label: 'Editor' },
   { mode: 'ack', label: 'Review' },
@@ -56,6 +96,8 @@ export default function DocumentHeader({
   onToggleVideoCall,
   onToggleVideoHistory,
   isCallActive,
+  callVariant,
+  callLabel,
   onClearDocument,
   onJumpToUser,
   sections,
@@ -72,6 +114,11 @@ export default function DocumentHeader({
   const [showMore, setShowMore] = useState(false);
 
   const sc = STATUS_BADGE_COLORS[meta.status] ?? STATUS_BADGE_COLORS.draft;
+
+  // `isCallActive` is the pre-variant contract and stays authoritative when no
+  // variant is given, so nothing an existing caller renders moves.
+  const resolvedCallVariant: DocumentHeaderCallVariant =
+    callVariant ?? (isCallActive ? 'active' : 'idle');
 
   return (
     <header className={cn('flex flex-col py-2 px-4 bg-surface border-b border-border shrink-0 gap-1.5 sticky top-[53px] z-[34]')}>
@@ -169,17 +216,21 @@ export default function DocumentHeader({
             </button>
           )}
 
-          {/* Call button — always visible when available */}
+          {/* Call button — always visible when available. `aria-pressed` carries
+              the in-call state to screen readers; the tone alone would leave it
+              invisible to anyone not seeing colour. */}
           {onToggleVideoCall && (
             <button
               type="button"
+              aria-pressed={resolvedCallVariant === 'active'}
+              data-call-variant={resolvedCallVariant}
               className={cn(
                 'py-1.5 px-3 text-[13px] font-medium border rounded-md cursor-pointer font-[inherit] relative',
-                isCallActive ? 'bg-success-bg text-success-fg border-success-border' : 'bg-surface text-text-primary border-border-field',
+                CALL_VARIANT_CLASSES[resolvedCallVariant],
               )}
               onClick={onToggleVideoCall}
             >
-              {isCallActive ? 'In Call' : 'Call'}
+              {callLabel ?? CALL_VARIANT_LABELS[resolvedCallVariant]}
             </button>
           )}
 

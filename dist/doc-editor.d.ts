@@ -1,5 +1,6 @@
 import { Awareness } from 'y-protocols/awareness';
 import { default as default_2 } from 'react';
+import { DragEvent as DragEvent_2 } from 'react';
 import { Editor } from '@tiptap/react';
 import { JSX } from 'react';
 import { MutableRefObject } from 'react';
@@ -224,7 +225,22 @@ export declare interface DocumentGutterProps {
     'data-testid'?: string;
 }
 
-export declare function DocumentHeader({ meta, mode, onModeChange, participants, onUpdateMeta, onExport, onToggleHistory, onToggleVideoCall, onToggleVideoHistory, isCallActive, onClearDocument, onJumpToUser, sections, onToggleMyItems, myItemCount, commentCount, onBack, onFollowUser, followingUserId, onFinalize, onUnlock, pastCallsCount, }: DocumentHeaderProps): JSX.Element;
+export declare function DocumentHeader({ meta, mode, onModeChange, participants, onUpdateMeta, onExport, onToggleHistory, onToggleVideoCall, onToggleVideoHistory, isCallActive, callVariant, callLabel, onClearDocument, onJumpToUser, sections, onToggleMyItems, myItemCount, commentCount, onBack, onFollowUser, followingUserId, onFinalize, onUnlock, pastCallsCount, }: DocumentHeaderProps): JSX.Element;
+
+/**
+ * How the call button presents itself.
+ *
+ * A boolean could only say "in a call" or "not", so the state that matters
+ * most — a call is RUNNING in this document and you have not joined it — had
+ * to render as a plain "Call", visually identical to no call existing at all.
+ * Hosts worked around it by suppressing this button and rendering their own
+ * beneath the header, which is a duplicated control waiting to drift.
+ *
+ * - `idle`      — nothing running; the button starts a call.
+ * - `available` — a call is running that you are not in; the button joins it.
+ * - `active`    — you are in the call; the button toggles its surface.
+ */
+export declare type DocumentHeaderCallVariant = 'idle' | 'available' | 'active';
 
 declare interface DocumentHeaderProps {
     meta: DocumentMeta;
@@ -237,6 +253,16 @@ declare interface DocumentHeaderProps {
     onToggleVideoCall?: () => void;
     onToggleVideoHistory?: () => void;
     isCallActive?: boolean;
+    /**
+     * Overrides the call button's presentation. Omit and it is derived from
+     * `isCallActive`, so callers written before this prop existed are unchanged.
+     */
+    callVariant?: DocumentHeaderCallVariant;
+    /**
+     * Overrides the call button's text — the room name in "Join standup", say.
+     * Omit for the variant's default wording.
+     */
+    callLabel?: string;
     onClearDocument: () => void;
     onJumpToUser?: (participant: Participant) => void;
     sections?: {
@@ -1005,6 +1031,35 @@ declare interface VideoCallPanelProps {
     isDocked?: boolean;
     onUndock?: () => void;
     onCallEnd?: () => void;
+}
+
+export declare function VideoDockSlot({ docked, canAccept, label, hint, undockLabel, onRequestUndock, onDragOver, onDragLeave, onDrop, className, children, 'data-testid': testId, }: VideoDockSlotProps): JSX.Element | null;
+
+export declare interface VideoDockSlotProps {
+    /** True when the caller has portaled the live widget into `children`. */
+    docked: boolean;
+    /**
+     * True when a call exists and could be moved here. Gates BOTH the dashed
+     * affordance and the drag-over feedback: a slot that cannot take the video
+     * must not light up under a drag and promise otherwise.
+     */
+    canAccept: boolean;
+    /** Names the region for screen readers and labels the dashed prompt. */
+    label?: string;
+    /** Prompt text inside the empty affordance. */
+    hint?: string;
+    /** Accessible name for the undock control. */
+    undockLabel?: string;
+    /** Fires when the undock / pop-out control is used. Omit to hide it. */
+    onRequestUndock?: () => void;
+    /** Called after the internal drag-over state updates, with the raw event. */
+    onDragOver?: (e: DragEvent_2<HTMLDivElement>) => void;
+    onDragLeave?: (e: DragEvent_2<HTMLDivElement>) => void;
+    /** Called on drop. The payload is the caller's — this component reads none of it. */
+    onDrop?: (e: DragEvent_2<HTMLDivElement>) => void;
+    className?: string;
+    children?: ReactNode;
+    'data-testid'?: string;
 }
 
 export declare function VideoHistoryPanel({ sessions, loading, onFetch, onClose }: VideoHistoryPanelProps): JSX.Element;

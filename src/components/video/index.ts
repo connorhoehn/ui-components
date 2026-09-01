@@ -46,10 +46,14 @@ export {
   CALL_STAGE_DOCKED_WIDTH,
   CALL_DOCK_ROW_HEIGHT,
 } from './CallWidget';
-export type { CallWidgetProps, CallWidgetParticipant, CallWidgetState, CallMode } from './CallWidget';
+// The dock drag contract. A host that wants to receive the widget has to read
+// the SAME dataTransfer key and payload shape the widget writes, so both sides
+// belong on the public surface — otherwise the receiver retypes it and drifts.
+export { CALL_DOCK_DRAG_TYPE } from './CallWidget';
+export type { CallWidgetProps, CallWidgetParticipant, CallWidgetState, CallMode, CallDockTarget, CallDockDragPayload } from './CallWidget';
 
 export { CallControls } from './CallControls';
-export type { CallControlsProps, CallControlsMode } from './CallControls';
+export type { CallControlsProps, CallControlsMode, CallControlsDensity } from './CallControls';
 
 export { CallParticipantStrip } from './CallParticipantStrip';
 export type {

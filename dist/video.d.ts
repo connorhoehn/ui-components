@@ -22,18 +22,47 @@ export declare interface AutoplayGateProps extends StreamVideoProps {
 /** Card width with the dock closed. */
 export declare const CALL_CARD_WIDTH = "w-[380px]";
 
+/**
+ * dataTransfer key the widget stamps on a dock drag.
+ *
+ * A custom type rather than `text/plain` on purpose, in both directions: an
+ * ordinary text drop target (a comment box, a rich-text editor) must not
+ * mistake a dragged call for pasted text, and a dock slot must be able to
+ * accept-or-reject during `dragover` — where the only thing a browser
+ * exposes is `dataTransfer.types`, never the payload itself.
+ */
+export declare const CALL_DOCK_DRAG_TYPE = "application/x-call-dock";
+
 /** The single height both columns take when the dock is open. */
 export declare const CALL_DOCK_ROW_HEIGHT = "h-[480px]";
 
 /** Video-column width with the dock open — it GROWS, it is not pinned. */
 export declare const CALL_STAGE_DOCKED_WIDTH = "w-[480px]";
 
-export declare function CallControls({ mode, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, extras, className, }: CallControlsProps): JSX.Element;
+export declare function CallControls({ mode, density, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, extras, className, }: CallControlsProps): JSX.Element;
+
+/**
+ * How much of the control set the surface has room for.
+ *
+ *   'full'     every wired control sits in the row (default — unchanged).
+ *   'compact'  only the controls needed to STAY in the call stay in the
+ *              row (mute, camera, end) plus the caller's `extras`; the
+ *              rest move into the "More" menu.
+ *
+ * A 320px widget docked beside a document was rendering the same nine-icon
+ * row as a fullscreen stage, which is what made it read as "duplicated and
+ * way off". Compact thins the row without REMOVING anything: a control the
+ * caller wired but the user cannot reach is a regression, not a
+ * simplification, so everything demoted is still one click away.
+ */
+export declare type CallControlsDensity = 'full' | 'compact';
 
 export declare type CallControlsMode = 'audio' | 'video';
 
 export declare interface CallControlsProps {
     mode: CallControlsMode;
+    /** Row density. Defaults to 'full' — see {@link CallControlsDensity}. */
+    density?: CallControlsDensity;
     isMuted?: boolean;
     isCameraOn?: boolean;
     isScreenSharing?: boolean;
@@ -64,6 +93,20 @@ export declare interface CallControlsProps {
      *  not floating in their own strip above it. */
     extras?: ReactNode;
     className?: string;
+}
+
+/** JSON written under {@link CALL_DOCK_DRAG_TYPE}. */
+export declare interface CallDockDragPayload {
+    /** The call being moved, when the host stamped `data-call-id` via `dataAttrs`. */
+    callId?: string;
+    /** Slot the widget is leaving, or null when it was floating free. */
+    fromDockId: string | null;
+}
+
+/** A place in the page that can hold the call. */
+export declare interface CallDockTarget {
+    id: string;
+    label: string;
 }
 
 export declare function CallingStatusPill({ show, label }: CallingStatusPillProps): JSX.Element | null;
@@ -300,7 +343,7 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
-export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, displayMode, minimized: minimizedProp, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, sidePanelWidthClassName, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, displayMode, minimized: minimizedProp, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, sidePanelWidthClassName, dockTargets, activeDockId, onDockTo, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
 
 /** Canonical display mode for any call surface. */
 export declare type CallWidgetMode = 'mini' | 'window' | 'fullscreen';
@@ -418,6 +461,25 @@ export declare interface CallWidgetProps {
     onSidePanelTabChange?: (id: string | null) => void;
     /** Width utility for the docked column. Defaults to `w-80`. */
     sidePanelWidthClassName?: string;
+    /**
+     * Places in the page the call can be moved INTO (see "Page docking"
+     * above). Supplying a non-empty list turns on the dock affordances: a
+     * drag grip in the header, and a "Move to…" menu beside the window
+     * controls.
+     *
+     * Absent or empty → the widget is exactly the floating card it has
+     * always been. Nothing about the free-drag changes.
+     */
+    dockTargets?: CallDockTarget[];
+    /**
+     * The slot currently holding the call, or null while it floats. When
+     * set, the widget stops free-dragging: it is part of the page's layout
+     * now, and an offset transform would shove it back out of the slot it
+     * was just dropped into. Pop out to get the floating card back.
+     */
+    activeDockId?: string | null;
+    /** Fires with the destination slot id, or null to pop back out. */
+    onDockTo?: (id: string | null) => void;
     /** Arbitrary `data-*` attributes to spread onto the root element.
      *  Lets callers (e.g. HangoutOverlay) attach e2e-friendly testids and
      *  lobby/callId metadata without an extra wrapper div that would

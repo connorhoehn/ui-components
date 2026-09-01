@@ -70,6 +70,40 @@ export const CALL_DOCK_ROW_HEIGHT = 'h-[480px]';
 export type CallWidgetState = 'idle' | 'ringing' | 'connecting' | 'active' | 'ended';
 export type CallMode = 'audio' | 'video';
 
+// ---------------------------------------------------------------------------
+// Page docking ("contextual video")
+// ---------------------------------------------------------------------------
+//
+// The widget can be handed OVER to the page: dropped into a gutter slot so
+// the call is embedded in the document being discussed instead of hovering
+// above it. This file owns only the SOURCE half of that gesture; the slot
+// that accepts the drop lives with the document chrome.
+
+/**
+ * dataTransfer key the widget stamps on a dock drag.
+ *
+ * A custom type rather than `text/plain` on purpose, in both directions: an
+ * ordinary text drop target (a comment box, a rich-text editor) must not
+ * mistake a dragged call for pasted text, and a dock slot must be able to
+ * accept-or-reject during `dragover` — where the only thing a browser
+ * exposes is `dataTransfer.types`, never the payload itself.
+ */
+export const CALL_DOCK_DRAG_TYPE = 'application/x-call-dock';
+
+/** A place in the page that can hold the call. */
+export interface CallDockTarget {
+  id: string;
+  label: string;
+}
+
+/** JSON written under {@link CALL_DOCK_DRAG_TYPE}. */
+export interface CallDockDragPayload {
+  /** The call being moved, when the host stamped `data-call-id` via `dataAttrs`. */
+  callId?: string;
+  /** Slot the widget is leaving, or null when it was floating free. */
+  fromDockId: string | null;
+}
+
 export interface CallWidgetParticipant extends CallStripParticipant {
   videoStream?: MediaStream | null;
 }
@@ -185,6 +219,25 @@ export interface CallWidgetProps {
   onSidePanelTabChange?: (id: string | null) => void;
   /** Width utility for the docked column. Defaults to `w-80`. */
   sidePanelWidthClassName?: string;
+  /**
+   * Places in the page the call can be moved INTO (see "Page docking"
+   * above). Supplying a non-empty list turns on the dock affordances: a
+   * drag grip in the header, and a "Move to…" menu beside the window
+   * controls.
+   *
+   * Absent or empty → the widget is exactly the floating card it has
+   * always been. Nothing about the free-drag changes.
+   */
+  dockTargets?: CallDockTarget[];
+  /**
+   * The slot currently holding the call, or null while it floats. When
+   * set, the widget stops free-dragging: it is part of the page's layout
+   * now, and an offset transform would shove it back out of the slot it
+   * was just dropped into. Pop out to get the floating card back.
+   */
+  activeDockId?: string | null;
+  /** Fires with the destination slot id, or null to pop back out. */
+  onDockTo?: (id: string | null) => void;
   /** Arbitrary `data-*` attributes to spread onto the root element.
    *  Lets callers (e.g. HangoutOverlay) attach e2e-friendly testids and
    *  lobby/callId metadata without an extra wrapper div that would
@@ -263,6 +316,25 @@ const icons = {
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="1 4 1 10 7 10" />
       <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+    </svg>
+  ),
+  // Grip dots — the universal "pick this up" affordance, so the dock drag
+  // reads as a drag rather than as decoration in the title bar.
+  grip: (
+    <svg width="10" height="12" viewBox="0 0 10 16" fill="currentColor" aria-hidden>
+      <circle cx="3" cy="3" r="1.3" />
+      <circle cx="7" cy="3" r="1.3" />
+      <circle cx="3" cy="8" r="1.3" />
+      <circle cx="7" cy="8" r="1.3" />
+      <circle cx="3" cy="13" r="1.3" />
+      <circle cx="7" cy="13" r="1.3" />
+    </svg>
+  ),
+  // A card sliding into a column — "move this into the page".
+  dockTo: (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <line x1="15" y1="4" x2="15" y2="20" />
     </svg>
   ),
 };
@@ -836,6 +908,9 @@ export function CallWidget({
   activeSidePanelTab = null,
   onSidePanelTabChange,
   sidePanelWidthClassName = 'w-80',
+  dockTargets,
+  activeDockId = null,
+  onDockTo,
   position = 'bottom-right',
   contained = false,
   draggable = true,
@@ -862,7 +937,42 @@ export function CallWidget({
   const dockAvailable = dockTabs.length > 0 && !minimized && state === 'active';
   const dockOpen = dockAvailable && dockTabs.some((t) => t.id === activeSidePanelTab);
 
-  const { offset, handleMouseDown, resetOffset, snapToCorner, isDragging, isAnimating, hasMoved, widgetRef } = useDrag(draggable);
+  // PAGE docking — distinct from the side-panel dock above, which is a
+  // region INSIDE the widget. This one hands the whole widget to the page.
+  // Opt-in: with no `dockTargets` every branch below is dead and the widget
+  // is the floating card it has always been.
+  const pageDockTargets = dockTargets ?? [];
+  const pageDockAvailable = pageDockTargets.length > 0;
+  const pageDocked = pageDockAvailable && activeDockId != null;
+  // Docked, the PAGE owns where the widget sits. Free-drag would fight the
+  // slot it was just dropped into, so it is off until the call pops out.
+  const freeDragEnabled = draggable && !pageDocked;
+  const [pageDockMenuOpen, setPageDockMenuOpen] = useState(false);
+
+  // The call this widget is showing, when the host stamped one. `dataAttrs`
+  // is already where hosts put lobby/call metadata, so the drop side gets an
+  // identity without a second prop that could disagree with it.
+  const rawCallId = dataAttrs?.['data-call-id'];
+  const dockCallId = rawCallId == null || rawCallId === '' ? undefined : String(rawCallId);
+
+  const handleDockDragStart = useCallback(
+    (e: React.DragEvent<HTMLElement>) => {
+      // jsdom (and a synthetic dispatch) can hand us an event with no
+      // dataTransfer at all; a dock drag that cannot carry its payload is
+      // better dropped than thrown.
+      const dt = e.dataTransfer;
+      if (!dt) return;
+      const payload: CallDockDragPayload = {
+        callId: dockCallId,
+        fromDockId: activeDockId ?? null,
+      };
+      dt.setData(CALL_DOCK_DRAG_TYPE, JSON.stringify(payload));
+      dt.effectAllowed = 'move';
+    },
+    [dockCallId, activeDockId],
+  );
+
+  const { offset, handleMouseDown, resetOffset, snapToCorner, isDragging, isAnimating, hasMoved, widgetRef } = useDrag(freeDragEnabled);
   // Filter undefined values so `data-x="undefined"` never leaks.
   const extraDataAttrs: Record<string, string | number> = {};
   if (dataAttrs) {
@@ -954,13 +1064,19 @@ export function CallWidget({
         data-call-state={state}
         data-call-widget-mode={resolvedMode}
         data-call-widget-mode-legacy={toLegacyMode(resolvedMode)}
+        data-call-dock-id={pageDocked ? (activeDockId as string) : undefined}
         className={cn(
-          contained ? 'absolute z-50' : 'fixed z-[9999]',
-          positionClasses,
+          // Docked, the widget is a block in the page's flow — it must not
+          // keep floating over the document from a viewport corner.
+          pageDocked
+            ? 'relative'
+            : [contained ? 'absolute z-50' : 'fixed z-[9999]', positionClasses],
           className,
         )}
         style={{
-          transform: `translate(${offset.x}px, ${offset.y}px)`,
+          // Same reason the free-drag is disabled while docked: a leftover
+          // offset would push the widget straight back out of its slot.
+          transform: pageDocked ? undefined : `translate(${offset.x}px, ${offset.y}px)`,
           transition: isAnimating ? 'transform 0.2s ease-out' : undefined,
           ...style,
         }}
@@ -985,18 +1101,123 @@ export function CallWidget({
           {!minimized && (
             <div
               className={cn(
-                'flex items-center justify-between px-3 py-2 border-b border-white/5',
-                draggable && 'cursor-grab active:cursor-grabbing',
+                'relative flex items-center justify-between px-3 py-2 border-b border-white/5',
+                freeDragEnabled && 'cursor-grab active:cursor-grabbing',
               )}
               onMouseDown={handleMouseDown}
+              // Once docked the free-drag is off, so the whole header can be
+              // the HTML5 drag source (slot → slot). While floating it cannot:
+              // the free-drag's `preventDefault()` on mousedown is exactly what
+              // stops a native drag from starting on the same element, so the
+              // grip below carries that gesture instead.
+              draggable={pageDocked || undefined}
+              // Listens for the grip's dragstart too — it bubbles here.
+              onDragStart={pageDockAvailable ? handleDockDragStart : undefined}
+              data-call-dock-source={pageDockAvailable ? 'true' : undefined}
             >
               <div className="flex items-center gap-2">
+                {/* Mouse-only affordance, duplicated by the "Move to…" menu
+                    on the other side of the header — drag-and-drop alone
+                    would strand keyboard users on a primary control. */}
+                {pageDockAvailable && (
+                  <span
+                    draggable
+                    // Free-drag and the dock drag cannot share one gesture;
+                    // keep the mousedown off the header's drag handler.
+                    onMouseDown={(e) => e.stopPropagation()}
+                    // No onDragStart of its own — the event bubbles to the
+                    // header, which is the single place the payload is written.
+                    className="flex h-4 w-3 shrink-0 cursor-grab items-center justify-center text-white/30 hover:text-white/70 active:cursor-grabbing transition-colors"
+                    title="Drag the call into the page"
+                    data-testid="call-dock-drag-handle"
+                    aria-hidden
+                  >
+                    {icons.grip}
+                  </span>
+                )}
                 <span className="w-2 h-2 rounded-full bg-success" />
                 <span className="text-white/80 text-xs font-medium" data-testid="call-widget-title">
                   {mode === 'video' ? 'Video Call' : 'Audio Call'}
                 </span>
               </div>
               <div className="flex items-center gap-1">
+                {pageDockAvailable && (
+                  <div className="relative">
+                    <button
+                      type="button"
+                      // Without this the click's mousedown starts a free-drag
+                      // and the menu opens mid-gesture.
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={() => setPageDockMenuOpen((open) => !open)}
+                      className={cn(
+                        'w-5 h-5 flex items-center justify-center border-none bg-transparent cursor-pointer rounded transition-colors',
+                        pageDockMenuOpen ? 'text-white' : 'text-white/40 hover:text-white/80',
+                      )}
+                      aria-haspopup="menu"
+                      aria-expanded={pageDockMenuOpen}
+                      aria-label="Move call to"
+                      title="Move call to…"
+                      data-testid="call-dock-menu-button"
+                    >
+                      {icons.dockTo}
+                    </button>
+                    {pageDockMenuOpen && (
+                      <div
+                        role="menu"
+                        aria-label="Move call to"
+                        data-testid="call-dock-menu"
+                        // Theme-invariant chrome tokens, not surface-*: this
+                        // panel sits ON the call card and its labels are
+                        // white-on-dark. See --color-call-chrome in styles.css.
+                        className="absolute right-0 top-6 z-10 min-w-[170px] overflow-hidden rounded-lg border border-call-chrome-border bg-call-chrome py-1 shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Escape') setPageDockMenuOpen(false);
+                        }}
+                      >
+                        {pageDockTargets.map((target) => {
+                          const current = target.id === activeDockId;
+                          return (
+                            <button
+                              key={target.id}
+                              type="button"
+                              role="menuitem"
+                              aria-current={current || undefined}
+                              className="flex w-full items-center gap-2 border-none bg-transparent px-3 py-1.5 text-left text-xs text-white/80 cursor-pointer hover:bg-white/10 transition-colors"
+                              onClick={() => {
+                                setPageDockMenuOpen(false);
+                                onDockTo?.(target.id);
+                              }}
+                            >
+                              <span className="truncate">{target.label}</span>
+                              {current && (
+                                <span className="ml-auto text-call-chrome-accent" aria-hidden>
+                                  ●
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                        {/* Only an escape route once there is something to
+                            escape from — a floating call is already popped out. */}
+                        {pageDocked && (
+                          <button
+                            type="button"
+                            role="menuitem"
+                            className="mt-1 flex w-full items-center border-t border-call-chrome-border bg-transparent px-3 pb-1 pt-2 text-left text-xs text-white/80 cursor-pointer hover:bg-white/10 transition-colors"
+                            data-testid="call-dock-pop-out"
+                            onClick={() => {
+                              setPageDockMenuOpen(false);
+                              onDockTo?.(null);
+                            }}
+                          >
+                            Pop out
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
                 {hasMoved && (
                   <button
                     type="button"
@@ -1037,7 +1258,7 @@ export function CallWidget({
           {/* Minimized pill with drag handle */}
           {minimized && (
             <div
-              className={cn(draggable && 'cursor-grab active:cursor-grabbing')}
+              className={cn(freeDragEnabled && 'cursor-grab active:cursor-grabbing')}
               onMouseDown={handleMouseDown}
             >
               <MinimizedPill

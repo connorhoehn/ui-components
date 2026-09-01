@@ -1,15 +1,16 @@
 import { t as e } from "../cn-DhjIN-s0.js";
 import { t } from "../Button-wU9TwJvB.js";
-import { n, r, t as i } from "../FileUploadDrop-3sNADO7X.js";
-import { t as a } from "../Modal-CyoyiNKN.js";
-import { t as o } from "../EmptyState-ClmWoqCb.js";
-import { t as s } from "../SkeletonCard-CGe8XFPB.js";
+import { t as n } from "../IconButton-C3DMtvSx.js";
+import { t as r } from "../Modal-CyoyiNKN.js";
+import { t as i } from "../EmptyState-ClmWoqCb.js";
+import { t as a } from "../SkeletonCard-CGe8XFPB.js";
+import { n as o, t as s } from "../FileUploadDrop-DMLKYoZL.js";
 import { t as c } from "../Avatar-Yxs_9Jio.js";
 import { a as l, i as u, n as d, r as f, t as p } from "../Badge-DlFForlC.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
 import { n as _, t as v } from "../PresencePanel-BYowFHnl.js";
 import { a as y, i as b, l as x, o as S, r as C, t as ee } from "../MediaEffectsPreviewPanel-Alkfwgwk.js";
-import { t as te } from "../CanvasDocumentView-BX1xOriI.js";
+import { t as te } from "../CanvasDocumentView-C35wa4y-.js";
 import { Component as ne, useCallback as re, useEffect as w, useMemo as T, useRef as E, useState as D } from "react";
 import { Fragment as O, jsx as k, jsxs as A } from "react/jsx-runtime";
 import { useRoomOccupancy as ie } from "@connorhoehn/realtime-modules/client/hangout-rooms";
@@ -166,14 +167,14 @@ var G = class extends ne {
 	render() {
 		let { error: e } = this.state;
 		if (e == null) return this.props.children;
-		let { fallback: t, title: n = "Something went wrong", description: r, retryLabel: i = "Retry" } = this.props;
+		let { fallback: t, title: n = "Something went wrong", description: r, retryLabel: a = "Retry" } = this.props;
 		return t ? t(e, this.reset) : /* @__PURE__ */ k("div", {
 			"data-testid": "network-error-boundary-fallback",
-			children: /* @__PURE__ */ k(o, {
+			children: /* @__PURE__ */ k(i, {
 				icon: "⚠️",
 				title: n,
 				description: r ?? e.message,
-				actionLabel: i,
+				actionLabel: a,
 				onAction: this.reset
 			})
 		});
@@ -181,17 +182,17 @@ var G = class extends ne {
 };
 //#endregion
 //#region src/integrations/realtime-modules/ReconnectingShim.tsx
-function K({ connectionState: t, children: n, onRetry: r, reconnectingLabel: i, disconnectedTitle: a = "Disconnected", disconnectedDescription: c = "The connection to the server was lost. Check your network and try again.", retryLabel: l = "Try again", connectingPlaceholder: u, disconnectedFallback: d, className: f }) {
+function K({ connectionState: t, children: n, onRetry: r, reconnectingLabel: o, disconnectedTitle: s = "Disconnected", disconnectedDescription: c = "The connection to the server was lost. Check your network and try again.", retryLabel: l = "Try again", connectingPlaceholder: u, disconnectedFallback: d, className: f }) {
 	return t === "connecting" ? /* @__PURE__ */ k("div", {
 		"data-testid": "reconnecting-shim-connecting",
 		className: f,
-		children: u ?? /* @__PURE__ */ k(s, { height: 120 })
+		children: u ?? /* @__PURE__ */ k(a, { height: 120 })
 	}) : t === "disconnected" ? /* @__PURE__ */ k("div", {
 		"data-testid": "reconnecting-shim-disconnected",
 		className: f,
-		children: d ?? /* @__PURE__ */ k(o, {
+		children: d ?? /* @__PURE__ */ k(i, {
 			icon: "📡",
-			title: a,
+			title: s,
 			description: c,
 			actionLabel: r ? l : void 0,
 			onAction: r
@@ -204,7 +205,7 @@ function K({ connectionState: t, children: n, onRetry: r, reconnectingLabel: i, 
 			children: n
 		}), /* @__PURE__ */ k(b, {
 			show: !0,
-			label: i
+			label: o
 		})]
 	}) : /* @__PURE__ */ k("div", {
 		"data-testid": "reconnecting-shim-connected",
@@ -307,7 +308,7 @@ function he({ reactions: e, ttlMs: t = 2500 }) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedFileUploadDrop.tsx
-function ge({ fileUpload: e, accept: t, maxSize: n, multiple: r, disabled: a, label: o, className: s, uploadMetadata: c, onError: l }) {
+function ge({ fileUpload: e, accept: t, maxSize: n, multiple: r, disabled: i, label: a, className: o, uploadMetadata: c, onError: l }) {
 	let u = B(e.uploads);
 	function d(t) {
 		for (let n of t) e.upload(n, c ? { metadata: c } : void 0).catch((e) => {
@@ -315,13 +316,13 @@ function ge({ fileUpload: e, accept: t, maxSize: n, multiple: r, disabled: a, la
 			l?.(t);
 		});
 	}
-	return /* @__PURE__ */ A("div", { children: [/* @__PURE__ */ k(i, {
+	return /* @__PURE__ */ A("div", { children: [/* @__PURE__ */ k(s, {
 		accept: t,
 		maxSize: n,
 		multiple: r,
-		disabled: a,
-		label: o,
-		className: s,
+		disabled: i,
+		label: a,
+		className: o,
 		onFiles: d,
 		onError: l
 	}), u.length > 0 && /* @__PURE__ */ k(_e, {
@@ -481,7 +482,7 @@ function Ce(e) {
 	let t = e.trim();
 	return t.length === 0 ? "Name is required." : t.length < Y ? `Name must be at least ${Y} characters.` : t.length > X ? `Name must be at most ${X} characters.` : null;
 }
-function Q({ open: e, onClose: r, onCreate: i, onCreated: o, defaultVisibility: s }) {
+function Q({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility: s }) {
 	let [c, l] = D(""), [u, d] = D(""), [f, p] = D(!1), [m, h] = D(!1), [g, _] = D(!1), [v, y] = D(null);
 	w(() => {
 		e && (l(""), d(""), p(!1), h(!1), _(!1), y(null));
@@ -500,15 +501,15 @@ function Q({ open: e, onClose: r, onCreate: i, onCreated: o, defaultVisibility: 
 						recordingEnabled: m
 					}
 				});
-				o?.(e), r();
+				a?.(e), n();
 			} catch (e) {
 				y(e instanceof Error ? e.message : "Failed to create room."), _(!1);
 			}
 		}
 	}
-	return /* @__PURE__ */ k(a, {
+	return /* @__PURE__ */ k(r, {
 		open: e,
-		onClose: g ? () => {} : r,
+		onClose: g ? () => {} : n,
 		title: "New room",
 		maxWidth: 440,
 		rawChildren: !0,
@@ -581,7 +582,7 @@ function Q({ open: e, onClose: r, onCreate: i, onCreated: o, defaultVisibility: 
 								className: "text-[11px] text-text-tertiary",
 								children: "Skip video tracks — voice-only room."
 							})]
-						}), /* @__PURE__ */ k(n, {
+						}), /* @__PURE__ */ k(o, {
 							checked: f,
 							onChange: p,
 							disabled: g,
@@ -599,7 +600,7 @@ function Q({ open: e, onClose: r, onCreate: i, onCreated: o, defaultVisibility: 
 								className: "text-[11px] text-text-tertiary",
 								children: "Allow server-side recording of sessions."
 							})]
-						}), /* @__PURE__ */ k(n, {
+						}), /* @__PURE__ */ k(o, {
 							checked: m,
 							onChange: h,
 							disabled: g,
@@ -619,7 +620,7 @@ function Q({ open: e, onClose: r, onCreate: i, onCreated: o, defaultVisibility: 
 					children: [/* @__PURE__ */ k(t, {
 						type: "button",
 						variant: "ghost",
-						onClick: r,
+						onClick: n,
 						disabled: g,
 						children: "Cancel"
 					}), /* @__PURE__ */ k(t, {
@@ -636,12 +637,12 @@ function Q({ open: e, onClose: r, onCreate: i, onCreated: o, defaultVisibility: 
 }
 //#endregion
 //#region src/integrations/realtime-modules/HangoutRoomsSection.tsx
-function $({ rooms: e, occupancyFor: n, occupancyAdapter: i, participantId: a, onJoinRoom: s, onContextMenu: c, onBrowseAll: l, maxVisible: u = 10, title: d = "Rooms", storageKey: f, renderCreateDialog: p }) {
+function $({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, onJoinRoom: s, onContextMenu: c, onBrowseAll: l, maxVisible: u = 10, title: d = "Rooms", storageKey: f, renderCreateDialog: p }) {
 	let [g, _] = D(!1), v = () => _(!0), y = () => _(!1), b = T(() => e.rooms.filter((e) => e.state === "active"), [e.rooms]), x = T(() => b.slice(0, u), [b, u]), S = b.length - x.length;
 	return /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ A(h, {
 		title: d,
 		storageKey: f,
-		actions: /* @__PURE__ */ k(r, {
+		actions: /* @__PURE__ */ k(n, {
 			"aria-label": "New room",
 			size: "sm",
 			onClick: v,
@@ -680,7 +681,7 @@ function $({ rooms: e, occupancyFor: n, occupancyAdapter: i, participantId: a, o
 					children: "Retry"
 				})]
 			}),
-			!e.isLoading && !e.error && b.length === 0 && /* @__PURE__ */ k(o, {
+			!e.isLoading && !e.error && b.length === 0 && /* @__PURE__ */ k(i, {
 				testId: "hangout-rooms-empty",
 				title: "No rooms yet",
 				description: "Create one to start an ongoing hangout.",
@@ -696,9 +697,9 @@ function $({ rooms: e, occupancyFor: n, occupancyAdapter: i, participantId: a, o
 				children: [x.map((e) => /* @__PURE__ */ k(J, {
 					slug: e.slug,
 					name: e.name,
-					participantId: a,
-					subscribeRoomsIndex: i,
-					occupancy: i ? null : n?.(e.slug) ?? null,
+					participantId: o,
+					subscribeRoomsIndex: a,
+					occupancy: a ? null : r?.(e.slug) ?? null,
 					onClick: s ? () => s(e) : void 0,
 					onContextMenu: c ? (t) => c(e, t) : void 0
 				}, e.slug)), S > 0 && l && /* @__PURE__ */ k(m, {

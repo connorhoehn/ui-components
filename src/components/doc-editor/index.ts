@@ -2,6 +2,7 @@ export { default as DocumentEditorPage } from './DocumentEditorPage';
 export { default as DocumentListPage } from './DocumentListPage';
 export { default as NewDocumentModal } from './NewDocumentModal';
 export { default as DocumentHeader } from './DocumentHeader';
+export type { DocumentHeaderCallVariant } from './DocumentHeader';
 export { default as EditorToolbar } from './EditorToolbar';
 export { default as TiptapEditor } from './TiptapEditor';
 export { default as StandaloneTiptap } from './StandaloneTiptap';
@@ -67,6 +68,12 @@ export type { DocumentToolbarProps } from './DocumentToolbar';
 
 export { default as DocumentGutter, stackOffsets } from './DocumentGutter';
 export type { DocumentGutterProps, GutterItem } from './DocumentGutter';
+
+// Where a call's video lands inside a document — the drop target half of the
+// dock. Was reachable only by deep import, which put hosts one refactor away
+// from a broken path.
+export { default as VideoDockSlot } from './VideoDockSlot';
+export type { VideoDockSlotProps } from './VideoDockSlot';
 
 // The single-thread renderer, for hosting one thread in a gutter card.
 // SectionComments is the whole panel (header + composer + list); this is the

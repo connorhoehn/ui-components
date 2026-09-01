@@ -10,7 +10,13 @@
 // handlers; this component just renders the right glyph for the state
 // it was told it's in.
 
-import { useState, type ReactNode } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react';
 import { cn } from '../../lib/cn';
 import { CallAvatar, type CallStripParticipant } from './CallParticipantStrip';
 
@@ -20,8 +26,26 @@ import { CallAvatar, type CallStripParticipant } from './CallParticipantStrip';
 
 export type CallControlsMode = 'audio' | 'video';
 
+/**
+ * How much of the control set the surface has room for.
+ *
+ *   'full'     every wired control sits in the row (default — unchanged).
+ *   'compact'  only the controls needed to STAY in the call stay in the
+ *              row (mute, camera, end) plus the caller's `extras`; the
+ *              rest move into the "More" menu.
+ *
+ * A 320px widget docked beside a document was rendering the same nine-icon
+ * row as a fullscreen stage, which is what made it read as "duplicated and
+ * way off". Compact thins the row without REMOVING anything: a control the
+ * caller wired but the user cannot reach is a regression, not a
+ * simplification, so everything demoted is still one click away.
+ */
+export type CallControlsDensity = 'full' | 'compact';
+
 export interface CallControlsProps {
   mode: CallControlsMode;
+  /** Row density. Defaults to 'full' — see {@link CallControlsDensity}. */
+  density?: CallControlsDensity;
   isMuted?: boolean;
   isCameraOn?: boolean;
   isScreenSharing?: boolean;
@@ -122,6 +146,13 @@ const icons = {
       <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
     </svg>
   ),
+  more: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="5" cy="12" r="1" />
+      <circle cx="12" cy="12" r="1" />
+      <circle cx="19" cy="12" r="1" />
+    </svg>
+  ),
 };
 
 // ---------------------------------------------------------------------------
@@ -136,6 +167,9 @@ interface ControlButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   testId?: string;
+  /** Set only by the overflow trigger, so it announces its menu. */
+  expanded?: boolean;
+  buttonRef?: React.Ref<HTMLButtonElement>;
 }
 
 function ControlButton({
@@ -146,12 +180,17 @@ function ControlButton({
   onClick,
   disabled = false,
   testId,
+  expanded,
+  buttonRef,
 }: ControlButtonProps) {
   return (
     <button
+      ref={buttonRef}
       type="button"
       title={label}
       aria-label={label}
+      aria-haspopup={expanded === undefined ? undefined : 'menu'}
+      aria-expanded={expanded}
       disabled={disabled}
       onClick={onClick}
       data-testid={testId}
@@ -169,11 +208,138 @@ function ControlButton({
 }
 
 // ---------------------------------------------------------------------------
+// Overflow menu (internal)
+// ---------------------------------------------------------------------------
+
+/**
+ * One wired control, described rather than rendered — so the same gate
+ * ("no handler ⇒ no entry") decides both whether the control exists AT ALL
+ * and which side of the density split it lands on. Building the row from
+ * these specs is what keeps the unwired-handler rule from having to be
+ * repeated once per density.
+ */
+interface ControlSpec {
+  key: string;
+  icon: ReactNode;
+  label: string;
+  active?: boolean;
+  onClick: () => void;
+  testId: string;
+}
+
+/**
+ * "More" menu for the controls compact density demotes.
+ *
+ * Hand-rolled rather than reusing shared/DropdownMenu because that menu
+ * paints itself with the FLIPPING surface/text tokens. Call chrome is
+ * theme-invariant (see --color-call-chrome in styles.css): a themed panel
+ * hanging off the always-dark card is the same class of bug the chrome
+ * tokens exist to prevent, so this panel uses the chrome tokens and the
+ * white-alpha overlays its siblings already use.
+ *
+ * Menu items keep the demoted control's `data-testid`, so a caller (or a
+ * test) that reached a control inline still reaches the same node here.
+ */
+function OverflowMenu({ controls }: { controls: ControlSpec[] }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  // Dismiss on outside press. Without it the panel survives a click on the
+  // video stage behind it, which in a 320px widget covers the call.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
+
+  // Escape returns focus to the trigger; arrows walk the items. Tab already
+  // works (every item is a real button) — this is the keyboard affordance a
+  // role="menu" promises on top of that.
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape') {
+      setOpen(false);
+      triggerRef.current?.focus();
+      return;
+    }
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
+    const items = Array.from(
+      rootRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [],
+    );
+    if (items.length === 0) return;
+    e.preventDefault();
+    const current = items.indexOf(document.activeElement as HTMLElement);
+    let next: number;
+    if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = items.length - 1;
+    else if (e.key === 'ArrowDown') next = current < 0 ? 0 : (current + 1) % items.length;
+    else next = current <= 0 ? items.length - 1 : current - 1;
+    items[next].focus();
+  };
+
+  return (
+    <div className="relative inline-flex" ref={rootRef} onKeyDown={onKeyDown}>
+      <ControlButton
+        icon={icons.more}
+        label="More call controls"
+        active={open}
+        expanded={open}
+        buttonRef={triggerRef}
+        onClick={() => setOpen((v) => !v)}
+        testId="call-controls-more-button"
+      />
+      {open && (
+        <div
+          role="menu"
+          aria-label="More call controls"
+          data-testid="call-controls-overflow"
+          className="absolute bottom-full right-0 z-10 mb-2 min-w-[176px] overflow-hidden rounded-lg border border-call-chrome-border bg-call-chrome py-1 shadow-lg"
+        >
+          {controls.map((c) => (
+            <button
+              key={c.key}
+              type="button"
+              role="menuitem"
+              data-testid={c.testId}
+              aria-label={c.label}
+              onClick={() => {
+                c.onClick();
+                setOpen(false);
+              }}
+              className={cn(
+                'flex w-full cursor-pointer items-center gap-2.5 border-none px-3 py-2 text-left text-xs transition-colors',
+                c.active
+                  ? 'bg-white/15 text-white'
+                  : 'bg-transparent text-white/80 hover:bg-white/10 hover:text-white',
+              )}
+            >
+              <span className="shrink-0" aria-hidden="true">{c.icon}</span>
+              {c.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // CallControls
 // ---------------------------------------------------------------------------
 
+/**
+ * What survives in the row at compact density: the controls a user needs to
+ * stay IN the call. End-call is inline too, but it is rendered separately
+ * (after `extras`) so its position never moves.
+ */
+const COMPACT_INLINE_KEYS = new Set(['mute', 'camera']);
+
 export function CallControls({
   mode,
+  density = 'full',
   isMuted = false,
   isCameraOn = true,
   isScreenSharing = false,
@@ -194,66 +360,91 @@ export function CallControls({
   const currentSet = new Set(currentParticipantIds ?? []);
   const addable = (availableParticipants ?? []).filter((p) => !currentSet.has(p.id));
 
+  // Every handler on this bar is optional and `ControlButton` has no
+  // fallback behaviour, so an unwired control would render a live, enabled
+  // icon button that swallows the click — the mic glyph never changes and
+  // the user reads it as broken. Gating here (rather than at each render
+  // site) means a control that is absent is absent at BOTH densities: it
+  // never becomes a dead entry in the overflow menu either.
+  const controls: ControlSpec[] = [];
+  if (onToggleMute) {
+    controls.push({
+      key: 'mute',
+      icon: isMuted ? icons.micOff : icons.mic,
+      label: isMuted ? 'Unmute' : 'Mute',
+      active: isMuted,
+      onClick: onToggleMute,
+      testId: 'mute-button',
+    });
+  }
+  if (mode === 'video' && onToggleCamera) {
+    controls.push({
+      key: 'camera',
+      icon: isCameraOn ? icons.camera : icons.cameraOff,
+      label: isCameraOn ? 'Turn off camera' : 'Turn on camera',
+      active: !isCameraOn,
+      onClick: onToggleCamera,
+      testId: 'camera-button',
+    });
+  }
+  if (mode === 'audio' && onUpgradeToVideo) {
+    controls.push({
+      key: 'upgrade',
+      icon: icons.videoUpgrade,
+      label: 'Switch to video',
+      onClick: onUpgradeToVideo,
+      testId: 'upgrade-to-video-button',
+    });
+  }
+  if (onToggleScreenShare) {
+    controls.push({
+      key: 'screenshare',
+      icon: icons.screenShare,
+      label: isScreenSharing ? 'Stop sharing' : 'Share screen',
+      active: isScreenSharing,
+      onClick: onToggleScreenShare,
+      testId: 'screenshare-button',
+    });
+  }
+  if (onAddParticipant || onOpenAddParticipant) {
+    controls.push({
+      key: 'add-participant',
+      icon: icons.userPlus,
+      label: 'Add people to this call',
+      active: showPicker,
+      onClick: onOpenAddParticipant ?? (() => setShowPicker((v) => !v)),
+      testId: 'add-participant-button',
+    });
+  }
+
+  const compact = density === 'compact';
+  const inlineControls = compact
+    ? controls.filter((c) => COMPACT_INLINE_KEYS.has(c.key))
+    : controls;
+  const overflowControls = compact
+    ? controls.filter((c) => !COMPACT_INLINE_KEYS.has(c.key))
+    : [];
+
   return (
     <div className={cn('flex flex-col', className)}>
       <div
         className="flex items-center justify-center gap-2 px-3 pb-3"
         data-testid="call-controls"
       >
-        {/* Every handler on this bar is optional and `ControlButton` has no
-            fallback behaviour, so an unwired control renders a live,
-            enabled icon button that swallows the click — the mic glyph
-            never changes and the user reads it as broken. The
-            switch-to-video and add-people controls next to these were
-            already gated on their handlers; these four were not. */}
-        {onToggleMute && (
+        {inlineControls.map((c) => (
           <ControlButton
-            icon={isMuted ? icons.micOff : icons.mic}
-            label={isMuted ? 'Unmute' : 'Mute'}
-            active={isMuted}
-            onClick={onToggleMute}
-            testId="mute-button"
+            key={c.key}
+            icon={c.icon}
+            label={c.label}
+            active={c.active}
+            onClick={c.onClick}
+            testId={c.testId}
           />
-        )}
-        {mode === 'video' && onToggleCamera && (
-          <ControlButton
-            icon={isCameraOn ? icons.camera : icons.cameraOff}
-            label={isCameraOn ? 'Turn off camera' : 'Turn on camera'}
-            active={!isCameraOn}
-            onClick={onToggleCamera}
-            testId="camera-button"
-          />
-        )}
-        {mode === 'audio' && onUpgradeToVideo && (
-          <ControlButton
-            icon={icons.videoUpgrade}
-            label="Switch to video"
-            onClick={onUpgradeToVideo}
-            testId="upgrade-to-video-button"
-          />
-        )}
-        {onToggleScreenShare && (
-          <ControlButton
-            icon={icons.screenShare}
-            label={isScreenSharing ? 'Stop sharing' : 'Share screen'}
-            active={isScreenSharing}
-            onClick={onToggleScreenShare}
-            testId="screenshare-button"
-          />
-        )}
-        {(onAddParticipant || onOpenAddParticipant) && (
-          <ControlButton
-            icon={icons.userPlus}
-            label="Add people to this call"
-            active={showPicker}
-            onClick={
-              onOpenAddParticipant
-                ? onOpenAddParticipant
-                : () => setShowPicker((v) => !v)
-            }
-            testId="add-participant-button"
-          />
-        )}
+        ))}
+        {/* Sits where the demoted controls used to, so the row's shape is
+            recognisable between densities — and BEFORE `extras`, which the
+            caller passed explicitly and therefore chose to keep inline. */}
+        {overflowControls.length > 0 && <OverflowMenu controls={overflowControls} />}
         {extras}
         {onEndCall && (
           <ControlButton
