@@ -70,6 +70,10 @@ export type { DockedPanelContextValue, DockedPanelProviderProps } from './Docked
 
 // ── New primitives (2025-05) ──
 export { default as StatCard } from './StatCard';
+export { default as SuggestionCard } from './SuggestionCard';
+export { default as TaskComposer } from './TaskComposer';
+export type { TaskComposerProps, ComposerSuggestion } from './TaskComposer';
+export type { SuggestionCardProps } from './SuggestionCard';
 export * from './StatCard';
 export { default as KPIGrid } from './KPIGrid';
 export * from './KPIGrid';
