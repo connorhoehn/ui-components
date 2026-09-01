@@ -124,6 +124,15 @@
   --color-code-peach: #fab387;
   --color-code-mauve: #cba6f7;
 
+  /* The surface a PTY paints on. Its own token, not `code-bg`, because the two
+     answer different questions: `code-bg` is the darkest step of the code
+     family and is right behind chrome, while a terminal sitting next to light
+     app chrome reads as a hole punched in the page when it is near-black.
+     Defaults to the family's mid surface — dark enough to be a terminal,
+     grey enough to sit in a page. Re-point it to restyle every terminal at
+     once, or pass `background` to one ShellTerminal. */
+  --color-terminal-bg: #1e1e2e;
+
   /* Video stage surfaces — the near-black letterbox behind video tiles and
      the dark tile placeholder. Previously three slightly-different ad hoc
      darks (#0f0f0f, #1a1a2e, #0a1020). */

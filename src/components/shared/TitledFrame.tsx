@@ -44,7 +44,10 @@ export interface TitledFrameProps {
 
 const TONE = {
   code: {
-    frame: 'bg-code-bg',
+    // The terminal surface, not `code-bg`. This tone exists for frames that
+    // hold a PTY, and the frame shows through the 8px strip above the canvas —
+    // a different dark there is a visible seam along the top of every pane.
+    frame: 'bg-terminal-bg',
     idle: 'border-code-border',
     active: 'border-code-blue',
     title: 'text-code-subtle',
@@ -84,10 +87,16 @@ export function TitledFrame({
         className,
       )}
     >
-      {/* Straddles the top border. `-top-2` lifts it half its own height so
-          the border runs through its middle; the frame background behind the
-          padding is what punches the gap in the line. */}
-      <div className="absolute -top-2 left-2 right-2 flex items-center gap-1 pointer-events-none">
+      {/* Straddles the top border. `-top-2` lifts it by 8px, so the row must be
+          16px tall for the border to run through its middle — hence the fixed
+          `h-4` rather than letting content set the height.
+          
+          Without it, a `titleAction` taller than the title (a button with
+          padding, say) grows the row, the offset no longer centres anything,
+          and the action's background juts above the frame as a dark tab
+          hanging off the top-right corner. The frame background behind the
+          horizontal padding is what punches the gap in the border line. */}
+      <div className="absolute -top-2 left-2 right-2 h-4 flex items-center gap-1 pointer-events-none">
         <span
           className={cn(
             'px-1.5 text-[10px] font-mono leading-none truncate max-w-[60%]',
@@ -100,7 +109,11 @@ export function TitledFrame({
         {titleAction != null && (
           <>
             <span className="flex-1" />
-            <span className={cn('px-1 pointer-events-auto', palette.frame)}>{titleAction}</span>
+              {/* `h-full` + centring keeps the action inside the 16px band even
+                when the host passes something with its own padding. */}
+            <span className={cn('px-1 h-full flex items-center pointer-events-auto', palette.frame)}>
+              {titleAction}
+            </span>
           </>
         )}
       </div>

@@ -71,8 +71,11 @@ describe('dark token block — source contract (src/styles.css)', () => {
   });
 
   it('covers EVERY @theme color token except the theme-invariant families', () => {
-    // Four families are theme-invariant ON PURPOSE and must stay out of
-    // the dark block: --color-code-* (Catppuccin Mocha), --color-video-*
+    // Five families are theme-invariant ON PURPOSE and must stay out of
+    // the dark block: --color-code-* (Catppuccin Mocha), --color-terminal-bg
+    // (the surface a PTY paints on — a terminal that turned white in light
+    // mode would be a terminal nobody could read, and xterm's own palette
+    // does not flip), --color-video-*
     // (near-black stage), --color-call-chrome-* (the call card, which
     // is dark in both themes the way Meet/Zoom/Teams render it) and
     // --color-paper-* (the document prose surface, which is WHITE in both
@@ -85,6 +88,7 @@ describe('dark token block — source contract (src/styles.css)', () => {
     // is six tokens and not one.
     const invariant = (name: string) =>
       name.startsWith('--color-code-') ||
+      name.startsWith('--color-terminal-') ||
       name.startsWith('--color-video-') ||
       name.startsWith('--color-call-chrome') ||
       name.startsWith('--color-paper');

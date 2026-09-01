@@ -19,9 +19,12 @@ export default defineConfig({
       // statically and `HerdMode` pulls in transitively — without these
       // aliases every compute render test fails at module resolution rather
       // than on anything it meant to assert.
+      // ORDER MATTERS: vite alias keys match as prefixes, so the stylesheet
+      // entry has to come before the package entry or '@xterm/xterm' rewrites
+      // it to '<stub>.ts/css/xterm.css' and resolution fails.
+      '@xterm/xterm/css/xterm.css': resolve(import.meta.dirname, 'src/test-stubs/empty.css'),
       '@xterm/xterm': resolve(import.meta.dirname, 'src/test-stubs/xterm-stub.ts'),
       '@xterm/addon-fit': resolve(import.meta.dirname, 'src/test-stubs/xterm-stub.ts'),
-      '@xterm/xterm/css/xterm.css': resolve(import.meta.dirname, 'src/test-stubs/empty.css'),
       // The realtime-modules /client/hangout-rooms subpath has not been
       // shipped yet (see CLAUDE.md "Known issues"). The HangoutRoomRow /
       // HangoutRoomsSection / WrappedHangoutRoomsList integration code

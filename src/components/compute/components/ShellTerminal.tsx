@@ -15,6 +15,20 @@ import {
 } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
+// xterm's own stylesheet, imported HERE rather than left to the host.
+//
+// Without it xterm still runs — it just renders wrong, and wrong in ways that
+// read as "this component is broken" rather than "a stylesheet is missing":
+// the helper textarea it keeps for IME input becomes a visible box with a
+// browser focus ring and a resize grabber, row positioning drifts, and the
+// output is unpadded. Every one of those is invisible in a Storybook that
+// imports the CSS at the preview level and appears the moment a real app
+// mounts the component.
+//
+// vite.config externalises this specifier alongside the package, so the
+// consumer's bundler resolves and injects it — the same arrangement
+// Excalidraw's stylesheet uses.
+import '@xterm/xterm/css/xterm.css';
 import { cn } from '../../../lib/cn';
 import { useCompute } from '../context/ComputeContext';
 import { SHELL_STATUS } from '../lib/status';
@@ -82,6 +96,13 @@ export interface ShellTerminalProps {
   autoConnect?: boolean;
   /** `sawOutput` is true when bytes arriving triggered the call. */
   onStatus?: (status: ShellStatus, sawOutput?: boolean) => void;
+  /**
+   * Background for this terminal, overriding `--color-terminal-bg`.
+   *
+   * Any CSS colour. Set it for the one pane that should look different; to
+   * restyle every terminal in an app, re-point the token instead.
+   */
+  background?: string;
   className?: string;
 }
 
@@ -93,18 +114,34 @@ export interface ShellTerminalProps {
  * the application instead of being a fixed dark rectangle sitting in a light
  * page.
  */
-function themePalette(): Record<string, string> {
+/**
+ * The PTY's colours, read from tokens so a host can restyle every terminal at
+ * once by re-pointing them.
+ *
+ * The background comes from `--color-terminal-bg`, not `--color-code-bg`. The
+ * two answer different questions: `code-bg` is the darkest step of the code
+ * family and belongs behind chrome, and a near-black rectangle beside light app
+ * chrome reads as a hole punched in the page rather than a terminal. The
+ * terminal token defaults to the family's mid surface — dark enough to be a
+ * terminal, grey enough to sit in a page.
+ *
+ * `override` is the per-instance escape hatch, for the one pane that needs to
+ * look different from the rest.
+ */
+function themePalette(override?: string): Record<string, string> {
   const fallback = {
-    background: '#11111b',
+    background: '#1e1e2e',
     foreground: '#cdd6f4',
     cursor: '#a6e3a1',
     selectionBackground: '#45475a',
   };
-  if (typeof globalThis.getComputedStyle !== 'function' || typeof document === 'undefined') return fallback;
+  if (typeof globalThis.getComputedStyle !== 'function' || typeof document === 'undefined') {
+    return override ? { ...fallback, background: override } : fallback;
+  }
   const style = globalThis.getComputedStyle(document.documentElement);
   const token = (name: string, or: string) => style.getPropertyValue(name).trim() || or;
   return {
-    background: token('--color-code-bg', fallback.background),
+    background: override ?? token('--color-terminal-bg', fallback.background),
     foreground: token('--color-code-text', fallback.foreground),
     cursor: token('--color-code-green', fallback.cursor),
     selectionBackground: token('--color-code-raised', fallback.selectionBackground),
@@ -123,6 +160,7 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
     fillHeight = false,
     autoConnect = false,
     onStatus,
+    background,
     className,
   },
   ref,
@@ -296,7 +334,7 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
       cursorBlink: true,
       fontSize: 12.5,
       fontFamily: '"Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace',
-      theme: themePalette(),
+      theme: themePalette(background),
       scrollback: 5_000,
     });
     const fit = new FitAddon();
@@ -403,8 +441,11 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
 
   return (
     <div
+      // Matches the canvas, or a strip of a different dark shows around it.
+      style={background ? { background } : undefined}
       className={cn(
-        'flex flex-col bg-code-bg',
+        'flex flex-col',
+        background ? '' : 'bg-terminal-bg',
         fillHeight ? 'h-full min-h-0' : 'rounded-lg overflow-hidden border border-code-border',
         className,
       )}

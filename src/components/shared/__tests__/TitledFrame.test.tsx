@@ -51,3 +51,23 @@ describe('TitledFrame', () => {
     expect(frame.className).toContain('border-primary');
   });
 });
+
+describe('title band geometry', () => {
+  it('pins the band to the border line so a tall action cannot escape it', () => {
+    // The band is lifted 8px (`-top-2`), so it has to be 16px tall for the
+    // border to run through its middle. Letting content set the height is what
+    // produced a dark tab hanging off the pane's top-right corner: a
+    // titleAction with its own padding grew the row past the offset.
+    const { container } = render(
+      <TitledFrame
+        title="computer-1"
+        titleAction={<button type="button" className="px-3 py-2 text-lg">shell ×</button>}
+      >
+        <div>body</div>
+      </TitledFrame>,
+    );
+    const band = container.querySelector('.absolute')!;
+    expect(band.className).toContain('h-4');
+    expect(band.className).toContain('-top-2');
+  });
+});
