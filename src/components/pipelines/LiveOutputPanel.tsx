@@ -17,6 +17,7 @@ import { useEventStream } from './context/EventStreamContext';
 import type { WildcardEvent } from './context/EventStreamContext';
 import { cn } from '../../lib/cn';
 import { onActivationKey } from '../../lib/activationKey';
+import { CODE_TONE_TEXT } from '../shared/tones';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -248,7 +249,7 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
               <div
                 className={cn(
                   'flex items-center gap-2 py-1.5 cursor-pointer select-none text-[11px] font-semibold border-b border-code-border mb-1.5',
-                  step.active ? 'text-code-blue' : 'text-code-subtle',
+                  step.active ? CODE_TONE_TEXT.info : CODE_TONE_TEXT.neutral,
                 )}
                 onClick={() => toggleCollapse(step.stepId)}
                 role="button"
@@ -261,7 +262,7 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
                 </span>
                 <span>{step.stepId}</span>
                 {step.active && (
-                  <span className="text-code-green text-[10px]">streaming</span>
+                  <span className={cn(CODE_TONE_TEXT.success, 'text-[10px]')}>streaming</span>
                 )}
               </div>
 
@@ -277,7 +278,7 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
                     </div>
                   )}
                   {step.summary && (
-                    <div className="text-[11px] text-code-green font-semibold pt-1 pb-2 border-b border-code-border mb-2">
+                    <div className={cn(CODE_TONE_TEXT.success, 'text-[11px] font-semibold pt-1 pb-2 border-b border-code-border mb-2')}>
                       {'✓'} {step.summary}
                     </div>
                   )}

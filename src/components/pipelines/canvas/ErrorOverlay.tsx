@@ -30,7 +30,7 @@ const CATEGORY_COLORS: Record<ErrorCategory, { bg: string; fg: string }> = {
   LLMError:         { bg: 'var(--color-danger-bg)', fg: 'var(--color-danger)' },
   TimeoutError:     { bg: 'var(--color-caution-bg)', fg: 'var(--color-caution)' },
   NetworkError:     { bg: 'var(--color-warning-bg)', fg: 'var(--color-warning)' },
-  ValidationError:  { bg: '#fefce8', fg: 'var(--color-warning)' },
+  ValidationError:  { bg: 'var(--color-warning-bg)', fg: 'var(--color-warning)' },
   RegistryConflict: { bg: 'var(--color-accent-bg)', fg: 'var(--color-accent)' },
   UnknownError:     { bg: 'var(--color-surface-hover)', fg: 'var(--color-text-secondary)' },
 };

@@ -361,7 +361,7 @@ export default function PipelineMetrics() {
         <StatCard
           label="Runs Completed"
           value={formatNumber(m.runsCompleted)}
-          valueColor="#16a34a"
+          valueColor="var(--color-success)"
           testId="metric-runs-completed"
         />
         <StatCard
