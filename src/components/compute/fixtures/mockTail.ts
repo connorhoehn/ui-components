@@ -65,6 +65,9 @@ const AUDIT: MockTailScript = {
     { afterMs: 1400, data: uses('Edit', { file: 'package.json' }) },
     { afterMs: 2200, data: { type: 'result', subtype: 'success', num_turns: 6, duration_ms: 12800, total_cost_usd: 0.0412, result: 'Bumped serialize-javascript to 6.0.2; the two moderates are dev-only and left alone.' } },
     { afterMs: 300, data: { type: 'devbox_end' } },
+    // The dispatcher's own close, after the container's — distinct events,
+    // and this is the one that closes the `job_started` banner's arc.
+    { afterMs: 200, data: { type: 'job_finished', ok: true } },
   ],
 };
 
@@ -82,6 +85,7 @@ const TRIAGE: MockTailScript = {
     // `idle` — the status the activity list sorts to the top.
     { afterMs: 2600, data: { type: 'result', subtype: 'success', num_turns: 5, duration_ms: 11200, total_cost_usd: 0.0298, result: 'Both flakes are clock-boundary, not ordering. Want me to pin the clock in the fixtures?' } },
     { afterMs: 300, data: { type: 'devbox_end' } },
+    { afterMs: 200, data: { type: 'job_finished', ok: true } },
   ],
 };
 
@@ -96,6 +100,9 @@ const DRIFT: MockTailScript = {
     { afterMs: 2400, data: says('One table differs: environments has a column the checked-in DDL does not.') },
     // A run that fails, so the error path is reviewable too.
     { afterMs: 2000, data: { type: 'devbox_error', error: 'connection reset while reading pg_catalog — the cluster scaled down mid-query' } },
+    // The dispatcher's own failed close — `ok: false` is the only field it
+    // carries, so the banner's tone is the entire signal.
+    { afterMs: 200, data: { type: 'job_finished', ok: false } },
   ],
 };
 

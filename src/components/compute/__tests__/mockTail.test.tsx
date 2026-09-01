@@ -78,15 +78,29 @@ describe('installMockTailSource', () => {
 
   it('covers success, a question, and a failure', () => {
     // Each is a distinct status in the rail: idle, waiting, error. A fixture
-    // that only shows the happy path cannot review the other two.
-    const endings = MOCK_TAIL_SCRIPTS.map(
-      (s) => s.frames[s.frames.length - 1]!.data['type'],
+    // that only shows the happy path cannot review the other two. Checked as
+    // "appears somewhere in the script" rather than "is the last frame" —
+    // every script now closes with the dispatcher's own `job_finished`,
+    // which sits after the container's terminal event, not in place of it.
+    const containerEndings = MOCK_TAIL_SCRIPTS.map(
+      (s) => s.frames.find((f) => f.data['type'] === 'devbox_end' || f.data['type'] === 'devbox_error')?.data['type'],
     );
-    expect(endings).toContain('devbox_end');
-    expect(endings).toContain('devbox_error');
+    expect(containerEndings).toContain('devbox_end');
+    expect(containerEndings).toContain('devbox_error');
     const asksAQuestion = MOCK_TAIL_SCRIPTS.some((s) =>
       s.frames.some((f) => String(f.data['result'] ?? '').trimEnd().endsWith('?')));
     expect(asksAQuestion).toBe(true);
+  });
+
+  it('closes every run with the dispatcher\'s own job_finished, ok matching the container outcome', () => {
+    // job_finished is the frame `job_started`'s banner arc closes on; a
+    // script missing it would silently leave the tail's job banner dangling.
+    for (const script of MOCK_TAIL_SCRIPTS) {
+      const last = script.frames[script.frames.length - 1]!.data;
+      expect(last['type']).toBe('job_finished');
+      const failed = script.frames.some((f) => f.data['type'] === 'devbox_error');
+      expect(last['ok']).toBe(!failed);
+    }
   });
 
   it('restores the global on uninstall', () => {
@@ -128,5 +142,69 @@ describe('TailPane driven by the simulator', () => {
       .toBeInTheDocument();
     expect(await screen.findByText(/Reading the lockfile/, {}, { timeout: 4000 }))
       .toBeInTheDocument();
+  }, 15_000);
+
+  it('renders job_started as a banner naming the title and kind, closed by job_finished', async () => {
+    render(
+      <ComputeProvider client={client} computers={fixtureComputers} pollIntervalMs={0}>
+        <TailPane computer={fixtureComputers[0]!} />
+      </ComputeProvider>,
+    );
+
+    // The banner is a distinct element (data-testid), not just coloured
+    // text in the normal row path — that is what makes it read as the start
+    // of an arc rather than one more step. Both the title (which run) and
+    // the kind (what dispatched it) have to be visible, not just the title.
+    const banner = await screen.findByTestId('tail-banner-job', {}, { timeout: 4000 });
+    expect(banner).toHaveTextContent('nightly-dependency-audit');
+    expect(banner).toHaveTextContent('devbox:task');
+
+    // job_finished closes the arc the banner opened, as its own banner. The
+    // AUDIT script ends clean, so `data-ok` is true, not the failed tone.
+    const close = await screen.findByTestId('tail-banner-job-end', {}, { timeout: 15_000 });
+    expect(close).toHaveTextContent('job finished');
+    expect(close).toHaveAttribute('data-ok', 'true');
+  }, 20_000);
+
+  it('renders the result step as cost chips — turns, duration, total_cost_usd', async () => {
+    render(
+      <ComputeProvider client={client} computers={fixtureComputers} pollIntervalMs={0}>
+        <TailPane computer={fixtureComputers[0]!} />
+      </ComputeProvider>,
+    );
+
+    // AUDIT's result frame: num_turns 6, duration_ms 12800, total_cost_usd
+    // 0.0412. Asserted as the rendered chip text inside the dedicated
+    // chip row, not by re-parsing a sentence — that is the whole point of
+    // carrying `step.result` structured instead of only a formatted string.
+    const chips = await screen.findByTestId('tail-result-chips', {}, { timeout: 15_000 });
+    expect(chips).toHaveTextContent('6 turns');
+    expect(chips).toHaveTextContent('13s');
+    expect(chips).toHaveTextContent('$0.0412');
+  }, 20_000);
+
+  it('renders devbox_error as a loud banner, and closes with a FAILED job_finished', async () => {
+    const failingClient = {
+      ...client,
+      tail: (boxId: string) => ({ url: mockTailUrl(boxId, 'schema-drift-check'), withCredentials: false, headers: {} }),
+    } as ComputeClient;
+
+    render(
+      <ComputeProvider client={failingClient} computers={fixtureComputers} pollIntervalMs={0}>
+        <TailPane computer={fixtureComputers[0]!} />
+      </ComputeProvider>,
+    );
+
+    // devbox_error renders through the loud-banner path (its own
+    // data-testid), not the plain coloured-text row every other kind uses —
+    // that distinction is the entire point of requirement 3. Closed by the
+    // dispatcher's FAILED job_finished, which only DRIFT (the failing
+    // script) produces.
+    const errorBanner = await screen.findByTestId('tail-banner-error', {}, { timeout: 10_000 });
+    expect(errorBanner).toHaveTextContent(/connection reset while reading pg_catalog/);
+
+    const close = await screen.findByTestId('tail-banner-job-end', {}, { timeout: 10_000 });
+    expect(close).toHaveTextContent('job failed');
+    expect(close).toHaveAttribute('data-ok', 'false');
   }, 15_000);
 });
