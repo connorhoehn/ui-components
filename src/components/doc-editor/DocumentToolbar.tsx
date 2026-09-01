@@ -61,10 +61,27 @@ interface MarkButton {
   active: (e: Editor) => boolean;
 }
 
+/**
+ * True when the editor actually has a command — i.e. the extension providing
+ * it is registered.
+ *
+ * Highlight and text-align do not ship with StarterKit, and adding them as
+ * dependencies HERE would push two packages onto every consumer of this
+ * library for two buttons most pages do not want. So they are detected
+ * instead: register `@tiptap/extension-highlight` or
+ * `@tiptap/extension-text-align` in the `extensions` you pass to the canvas
+ * and the controls appear; leave them out and they do not.
+ *
+ * The alternative — always rendering them — is the thing worth avoiding: a
+ * button that silently does nothing is worse than a missing one, because the
+ * user cannot tell the difference between "unsupported" and "broken".
+ */
+function has(editor: Editor, command: string): boolean {
+  return typeof (editor.commands as unknown as Record<string, unknown>)[command] === 'function';
+}
+
 // Underline and Link need no extra dependency — StarterKit v3 already bundles
-// both. Highlight, text-align and image do NOT ship with it, so the three
-// controls Liveblocks shows for those are deliberately absent rather than
-// stubbed: a button that does nothing is worse than a missing one.
+// both.
 const MARKS: MarkButton[] = [
   { key: 'bold', label: 'B', hint: 'Bold  **text**', run: (e) => { e.chain().focus().toggleBold().run(); }, active: (e) => e.isActive('bold') },
   { key: 'italic', label: 'I', hint: 'Italic  *text*', run: (e) => { e.chain().focus().toggleItalic().run(); }, active: (e) => e.isActive('italic') },
@@ -127,6 +144,10 @@ export default function DocumentToolbar({
       const flags: Record<string, boolean> = {};
       for (const b of [...MARKS, ...LISTS]) flags[b.key] = b.active(e);
       flags['link'] = e.isActive('link');
+      // Optional extensions — isActive on an unregistered mark is simply
+      // false, so this is safe whether or not they are present.
+      flags['highlight'] = e.isActive('highlight');
+      for (const a of ['left', 'center', 'right']) flags[`align-${a}`] = e.isActive({ textAlign: a });
       return { block: currentBlock(e), flags };
     },
   });
@@ -200,6 +221,46 @@ export default function DocumentToolbar({
       {LISTS.map((b) => (
         <ToolButton key={b.key} btn={b} editor={editor} active={state?.flags[b.key] ?? false} testId={`${testId}-${b.key}`} />
       ))}
+
+      {has(editor, 'toggleHighlight') && (
+        <>
+          <Divider />
+          <ToolButton
+            btn={{
+              key: 'highlight', label: '🖍', hint: 'Highlight',
+              run: (e) => { (e.chain().focus() as never as Record<string, () => { run: () => void }>)['toggleHighlight']!().run(); },
+              active: (e) => e.isActive('highlight'),
+            }}
+            editor={editor}
+            active={state?.flags['highlight'] ?? false}
+            testId={`${testId}-highlight`}
+          />
+        </>
+      )}
+
+      {has(editor, 'setTextAlign') && (
+        <>
+          <Divider />
+          {(['left', 'center', 'right'] as const).map((align) => (
+            <ToolButton
+              key={align}
+              btn={{
+                key: `align-${align}`,
+                label: align === 'left' ? '⯇' : align === 'center' ? '≡' : '⯈',
+                hint: `Align ${align}`,
+                run: (e) => {
+                  const chain = e.chain().focus() as never as Record<string, (a: string) => { run: () => void }>;
+                  chain['setTextAlign']!(align).run();
+                },
+                active: (e) => e.isActive({ textAlign: align }),
+              }}
+              editor={editor}
+              active={state?.flags[`align-${align}`] ?? false}
+              testId={`${testId}-align-${align}`}
+            />
+          ))}
+        </>
+      )}
 
       <Divider />
       <ToolButton

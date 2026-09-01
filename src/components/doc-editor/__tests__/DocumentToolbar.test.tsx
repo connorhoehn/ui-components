@@ -9,7 +9,12 @@ import DocumentToolbar from '../DocumentToolbar';
  * file is testing WHICH command each control issues, and a real editor would
  * make a wrong-command bug look like a rendering bug.
  */
-function makeEditor(active: Record<string, unknown> = {}) {
+/**
+ * @param optional command names to expose, simulating extra extensions being
+ *   registered (highlight, text-align). Absent by default, which is the
+ *   StarterKit-only baseline.
+ */
+function makeEditor(active: Record<string, unknown> = {}, optional: string[] = []) {
   const calls: string[] = [];
   const chain: Record<string, unknown> = {};
   for (const m of [
@@ -23,6 +28,9 @@ function makeEditor(active: Record<string, unknown> = {}) {
     calls.push(attrs ? `setNode:${name}:${JSON.stringify(attrs)}` : `setNode:${name}`);
     return chain;
   };
+  for (const m of optional) {
+    chain[m] = (...args: unknown[]) => { calls.push(args.length ? `${m}:${JSON.stringify(args)}` : m); return chain; };
+  }
   chain['run'] = () => { calls.push('run'); return true; };
 
   // `useEditorState` subscribes via on/off, so the stand-in has to emit —
@@ -31,7 +39,12 @@ function makeEditor(active: Record<string, unknown> = {}) {
   const listeners = new Set<() => void>();
   const state: Record<string, unknown> = { ...active };
 
+  // `commands` is what the toolbar feature-detects against.
+  const commands: Record<string, unknown> = {};
+  for (const m of optional) commands[m] = () => true;
+
   const editor = {
+    commands,
     chain: () => chain,
     isActive: (name: string, attrs?: Record<string, unknown>) => {
       const key = attrs ? `${name}:${JSON.stringify(attrs)}` : name;
@@ -168,6 +181,34 @@ describe('DocumentToolbar', () => {
 
     await act(async () => { moveCursor({ 'heading:{"level":3}': true }); });
     expect(screen.getByTestId('document-toolbar-block')).toHaveValue('heading3');
+  });
+
+  // Highlight and text-align are not in StarterKit. Rather than adding two
+  // dependencies to the library for buttons most pages do not want, the
+  // toolbar detects them — so a consumer that registers the extension gets
+  // the control, and one that does not never sees a dead button.
+  it('hides highlight and align when those extensions are absent', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} />);
+    expect(screen.queryByTestId('document-toolbar-highlight')).toBeNull();
+    expect(screen.queryByTestId('document-toolbar-align-left')).toBeNull();
+  });
+
+  it('shows highlight once its extension is registered', () => {
+    const { editor, calls } = makeEditor({}, ['toggleHighlight']);
+    render(<DocumentToolbar editor={editor} />);
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-highlight'));
+    expect(calls).toContain('toggleHighlight');
+  });
+
+  it('shows the align group once text-align is registered', () => {
+    const { editor, calls } = makeEditor({}, ['setTextAlign']);
+    render(<DocumentToolbar editor={editor} />);
+    for (const a of ['left', 'center', 'right']) {
+      expect(screen.getByTestId(`document-toolbar-align-${a}`)).toBeInTheDocument();
+    }
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-align-center'));
+    expect(calls.join('|')).toContain('setTextAlign:["center"]');
   });
 
   it('renders caller actions at the end of the bar', () => {

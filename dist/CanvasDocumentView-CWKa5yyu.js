@@ -6,10 +6,10 @@ import { t as i } from "./EmptyState-ClmWoqCb.js";
 import { t as a } from "./Select-CqVokE2v.js";
 import { t as o } from "./TiptapEditor-CnjifOQz.js";
 import { useCallback as s, useLayoutEffect as c, useMemo as l, useRef as u, useState as d } from "react";
-import { jsx as f, jsxs as p } from "react/jsx-runtime";
-import { useEditorState as m } from "@tiptap/react";
+import { Fragment as f, jsx as p, jsxs as m } from "react/jsx-runtime";
+import { useEditorState as h } from "@tiptap/react";
 //#region src/components/doc-editor/DocumentToolbar.tsx
-var h = [
+var g = [
 	{
 		value: "paragraph",
 		label: "Normal text"
@@ -35,10 +35,13 @@ var h = [
 		label: "Code block"
 	}
 ];
-function g(e) {
+function _(e) {
 	return e.isActive("heading", { level: 1 }) ? "heading1" : e.isActive("heading", { level: 2 }) ? "heading2" : e.isActive("heading", { level: 3 }) ? "heading3" : e.isActive("blockquote") ? "blockquote" : e.isActive("codeBlock") ? "codeBlock" : "paragraph";
 }
-var _ = [
+function v(e, t) {
+	return typeof e.commands[t] == "function";
+}
+var y = [
 	{
 		key: "bold",
 		label: "B",
@@ -84,7 +87,7 @@ var _ = [
 		},
 		active: (e) => e.isActive("code")
 	}
-], v = [
+], b = [
 	{
 		key: "bulletList",
 		label: "•",
@@ -113,8 +116,8 @@ var _ = [
 		active: (e) => e.isActive("taskList")
 	}
 ];
-function y({ btn: t, editor: n, testId: r, active: i }) {
-	return /* @__PURE__ */ f("button", {
+function x({ btn: t, editor: n, testId: r, active: i }) {
+	return /* @__PURE__ */ p("button", {
 		type: "button",
 		"data-testid": r,
 		title: t.hint,
@@ -127,21 +130,27 @@ function y({ btn: t, editor: n, testId: r, active: i }) {
 		children: t.label
 	});
 }
-function b() {
-	return /* @__PURE__ */ f("span", {
+function S() {
+	return /* @__PURE__ */ p("span", {
 		"aria-hidden": !0,
 		className: "mx-1 h-5 w-px self-center bg-border"
 	});
 }
-function x({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
-	let r = m({
+function C({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
+	let r = h({
 		editor: e,
 		selector: ({ editor: e }) => {
 			if (!e) return null;
 			let t = {};
-			for (let n of [..._, ...v]) t[n.key] = n.active(e);
-			return t.link = e.isActive("link"), {
-				block: g(e),
+			for (let n of [...y, ...b]) t[n.key] = n.active(e);
+			t.link = e.isActive("link"), t.highlight = e.isActive("highlight");
+			for (let n of [
+				"left",
+				"center",
+				"right"
+			]) t[`align-${n}`] = e.isActive({ textAlign: n });
+			return {
+				block: _(e),
 				flags: t
 			};
 		}
@@ -167,13 +176,13 @@ function x({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 			default: n.setParagraph().run();
 		}
 	}, [e]);
-	return e ? /* @__PURE__ */ p("div", {
+	return e ? /* @__PURE__ */ m("div", {
 		"data-testid": n,
 		role: "toolbar",
 		"aria-label": "Document formatting",
 		className: "flex flex-wrap items-center gap-0.5 px-2 py-1.5",
 		children: [
-			/* @__PURE__ */ f(y, {
+			/* @__PURE__ */ p(x, {
 				btn: {
 					key: "undo",
 					label: "↶",
@@ -187,7 +196,7 @@ function x({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 				active: !1,
 				testId: `${n}-undo`
 			}),
-			/* @__PURE__ */ f(y, {
+			/* @__PURE__ */ p(x, {
 				btn: {
 					key: "redo",
 					label: "↷",
@@ -201,32 +210,64 @@ function x({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 				active: !1,
 				testId: `${n}-redo`
 			}),
-			/* @__PURE__ */ f(b, {}),
-			/* @__PURE__ */ f(a, {
+			/* @__PURE__ */ p(S, {}),
+			/* @__PURE__ */ p(a, {
 				size: "sm",
 				"data-testid": `${n}-block`,
 				"aria-label": "Text style",
 				value: r?.block ?? "paragraph",
-				options: h,
+				options: g,
 				onChange: (e) => i(e.target.value),
 				className: "w-[140px]"
 			}),
-			/* @__PURE__ */ f(b, {}),
-			_.map((t) => /* @__PURE__ */ f(y, {
+			/* @__PURE__ */ p(S, {}),
+			y.map((t) => /* @__PURE__ */ p(x, {
 				btn: t,
 				editor: e,
 				active: r?.flags[t.key] ?? !1,
 				testId: `${n}-${t.key}`
 			}, t.key)),
-			/* @__PURE__ */ f(b, {}),
-			v.map((t) => /* @__PURE__ */ f(y, {
+			/* @__PURE__ */ p(S, {}),
+			b.map((t) => /* @__PURE__ */ p(x, {
 				btn: t,
 				editor: e,
 				active: r?.flags[t.key] ?? !1,
 				testId: `${n}-${t.key}`
 			}, t.key)),
-			/* @__PURE__ */ f(b, {}),
-			/* @__PURE__ */ f(y, {
+			v(e, "toggleHighlight") && /* @__PURE__ */ m(f, { children: [/* @__PURE__ */ p(S, {}), /* @__PURE__ */ p(x, {
+				btn: {
+					key: "highlight",
+					label: "🖍",
+					hint: "Highlight",
+					run: (e) => {
+						e.chain().focus().toggleHighlight().run();
+					},
+					active: (e) => e.isActive("highlight")
+				},
+				editor: e,
+				active: r?.flags.highlight ?? !1,
+				testId: `${n}-highlight`
+			})] }),
+			v(e, "setTextAlign") && /* @__PURE__ */ m(f, { children: [/* @__PURE__ */ p(S, {}), [
+				"left",
+				"center",
+				"right"
+			].map((t) => /* @__PURE__ */ p(x, {
+				btn: {
+					key: `align-${t}`,
+					label: t === "left" ? "⯇" : t === "center" ? "≡" : "⯈",
+					hint: `Align ${t}`,
+					run: (e) => {
+						e.chain().focus().setTextAlign(t).run();
+					},
+					active: (e) => e.isActive({ textAlign: t })
+				},
+				editor: e,
+				active: r?.flags[`align-${t}`] ?? !1,
+				testId: `${n}-align-${t}`
+			}, t))] }),
+			/* @__PURE__ */ p(S, {}),
+			/* @__PURE__ */ p(x, {
 				btn: {
 					key: "link",
 					label: "🔗",
@@ -251,7 +292,7 @@ function x({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 				active: r?.flags.link ?? !1,
 				testId: `${n}-link`
 			}),
-			/* @__PURE__ */ f(y, {
+			/* @__PURE__ */ p(x, {
 				btn: {
 					key: "hr",
 					label: "—",
@@ -265,7 +306,7 @@ function x({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 				active: !1,
 				testId: `${n}-hr`
 			}),
-			t && /* @__PURE__ */ f("span", {
+			t && /* @__PURE__ */ p("span", {
 				className: "ml-auto flex items-center gap-1",
 				children: t
 			})
@@ -274,7 +315,7 @@ function x({ editor: e, actions: t, "data-testid": n = "document-toolbar" }) {
 }
 //#endregion
 //#region src/components/doc-editor/DocumentGutter.tsx
-function S(e, t, n) {
+function w(e, t, n) {
 	let r = typeof t == "function" ? t : () => t, i = [...e].sort((e, t) => e.top - t.top), a = /* @__PURE__ */ new Map(), o = -Infinity;
 	for (let e of i) {
 		let t = Math.max(e.top, o);
@@ -282,11 +323,11 @@ function S(e, t, n) {
 	}
 	return a;
 }
-function C({ items: t, gap: n = 12, estimatedHeight: r = 120, onFocusItem: i, emptyLabel: a = "No comments yet", "data-testid": o = "document-gutter" }) {
-	let [s, p] = d({}), m = u(/* @__PURE__ */ new Map());
+function T({ items: t, gap: n = 12, estimatedHeight: r = 120, onFocusItem: i, emptyLabel: a = "No comments yet", "data-testid": o = "document-gutter" }) {
+	let [s, f] = d({}), m = u(/* @__PURE__ */ new Map());
 	c(() => {
 		let e = () => {
-			p((e) => {
+			f((e) => {
 				let t = !1, n = { ...e };
 				for (let [r, i] of m.current) {
 					let a = i.offsetHeight;
@@ -300,7 +341,7 @@ function C({ items: t, gap: n = 12, estimatedHeight: r = 120, onFocusItem: i, em
 		for (let [, e] of m.current) t.observe(e);
 		return () => t.disconnect();
 	}, [t]);
-	let h = l(() => S(t, (e) => s[e] ?? r, n), [
+	let h = l(() => w(t, (e) => s[e] ?? r, n), [
 		t,
 		s,
 		r,
@@ -314,15 +355,15 @@ function C({ items: t, gap: n = 12, estimatedHeight: r = 120, onFocusItem: i, em
 		s,
 		r
 	]);
-	return t.length === 0 ? /* @__PURE__ */ f("div", {
+	return t.length === 0 ? /* @__PURE__ */ p("div", {
 		"data-testid": `${o}-empty`,
 		className: "px-3 py-4 text-xs text-text-tertiary",
 		children: a
-	}) : /* @__PURE__ */ f("div", {
+	}) : /* @__PURE__ */ p("div", {
 		"data-testid": o,
 		className: "relative w-[280px] shrink-0",
 		style: { height: g },
-		children: t.map((t) => /* @__PURE__ */ f("div", {
+		children: t.map((t) => /* @__PURE__ */ p("div", {
 			"data-testid": `${o}-item-${t.id}`,
 			"data-active": String(!!t.active),
 			ref: (e) => {
@@ -330,7 +371,7 @@ function C({ items: t, gap: n = 12, estimatedHeight: r = 120, onFocusItem: i, em
 			},
 			className: "absolute left-0 right-0",
 			style: { top: h.get(t.id) ?? t.top },
-			children: /* @__PURE__ */ f("div", {
+			children: /* @__PURE__ */ p("div", {
 				role: i ? "button" : void 0,
 				tabIndex: i ? 0 : void 0,
 				onClick: i ? () => i(t.id) : void 0,
@@ -345,77 +386,77 @@ function C({ items: t, gap: n = 12, estimatedHeight: r = 120, onFocusItem: i, em
 }
 //#endregion
 //#region src/components/doc-editor/CanvasDocumentView.tsx
-function w({ isCanvas: e, body: a, ydoc: s, provider: c, user: l, editable: u = !0, extensions: m, onConvert: h, unsupported: g = [], header: _, toolbarActions: v, gutterItems: y, onFocusGutterItem: b, onEditorReady: S, "data-testid": w = "canvas-document" }) {
-	let [T, E] = d(!1), [D, O] = d(null), [k, A] = d(null);
-	return /* @__PURE__ */ p("div", {
-		"data-testid": w,
+function E({ isCanvas: e, body: a, ydoc: s, provider: c, user: l, editable: u = !0, extensions: f, onConvert: h, unsupported: g = [], header: _, toolbarActions: v, gutterItems: y, onFocusGutterItem: b, onEditorReady: x, "data-testid": S = "canvas-document" }) {
+	let [w, E] = d(!1), [D, O] = d(null), [k, A] = d(null);
+	return /* @__PURE__ */ m("div", {
+		"data-testid": S,
 		className: "flex flex-col gap-3",
 		children: [
 			_,
-			g.length > 0 && /* @__PURE__ */ f(n, {
+			g.length > 0 && /* @__PURE__ */ p(n, {
 				variant: "warning",
 				title: "Some content could not be represented",
-				"data-testid": `${w}-unsupported`,
-				children: /* @__PURE__ */ p("span", {
+				"data-testid": `${S}-unsupported`,
+				children: /* @__PURE__ */ m("span", {
 					className: "flex flex-wrap items-center gap-1.5",
-					children: [g.map((e, t) => /* @__PURE__ */ f(r, {
+					children: [g.map((e, t) => /* @__PURE__ */ p(r, {
 						tone: "warning",
 						size: "xs",
 						children: e.kind
-					}, `${e.kind}-${t}`)), /* @__PURE__ */ f("span", { children: "— kept on the page as text so nothing was lost." })]
+					}, `${e.kind}-${t}`)), /* @__PURE__ */ p("span", { children: "— kept on the page as text so nothing was lost." })]
 				})
 			}),
-			D && /* @__PURE__ */ f(n, {
+			D && /* @__PURE__ */ p(n, {
 				variant: "error",
 				title: "Could not convert",
-				"data-testid": `${w}-convert-error`,
+				"data-testid": `${S}-convert-error`,
 				children: D
 			}),
-			e && a ? /* @__PURE__ */ p("div", {
-				"data-testid": `${w}-workspace`,
+			e && a ? /* @__PURE__ */ m("div", {
+				"data-testid": `${S}-workspace`,
 				className: "rounded-lg bg-surface-inset overflow-y-auto",
-				children: [u && k && /* @__PURE__ */ f("div", {
-					"data-testid": `${w}-toolbar`,
+				children: [u && k && /* @__PURE__ */ p("div", {
+					"data-testid": `${S}-toolbar`,
 					className: "sticky top-0 z-10 border-b border-border bg-surface-panel",
-					children: /* @__PURE__ */ f("div", {
+					children: /* @__PURE__ */ p("div", {
 						className: "mx-auto max-w-[816px] px-2",
-						children: /* @__PURE__ */ f(x, {
+						children: /* @__PURE__ */ p(C, {
 							editor: k,
 							actions: v
 						})
 					})
-				}), /* @__PURE__ */ p("div", {
+				}), /* @__PURE__ */ m("div", {
 					className: "flex justify-center gap-6 py-8 px-6",
-					children: [/* @__PURE__ */ f("div", {
-						"data-testid": `${w}-paper`,
+					children: [/* @__PURE__ */ p("div", {
+						"data-testid": `${S}-paper`,
 						className: "doc-page w-full max-w-[816px] min-h-[1056px] bg-paper px-[96px] py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]",
-						children: /* @__PURE__ */ f(o, {
+						children: /* @__PURE__ */ p(o, {
 							fragment: a,
 							ydoc: s,
 							provider: c,
 							user: l,
 							editable: u,
-							extensions: m,
+							extensions: f,
 							placeholder: "Start writing…",
 							chrome: "none",
 							hideToolbar: !0,
 							onEditorReady: (e) => {
-								A(e), S?.(e);
+								A(e), x?.(e);
 							}
 						})
-					}), y && y.length > 0 && /* @__PURE__ */ f(C, {
+					}), y && y.length > 0 && /* @__PURE__ */ p(T, {
 						items: y,
 						onFocusItem: b,
-						"data-testid": `${w}-gutter`
+						"data-testid": `${S}-gutter`
 					})]
 				})]
-			}) : /* @__PURE__ */ f(i, {
-				testId: `${w}-convert-prompt`,
+			}) : /* @__PURE__ */ p(i, {
+				testId: `${S}-convert-prompt`,
 				title: "This document still uses sections",
 				description: "Convert it to a single page to edit it as one continuous document. Your existing sections become headings; nothing is deleted.",
-				action: h ? /* @__PURE__ */ f(t, {
+				action: h ? /* @__PURE__ */ p(t, {
 					onClick: async () => {
-						if (!(!h || T)) {
+						if (!(!h || w)) {
 							E(!0), O(null);
 							try {
 								let e = await h();
@@ -427,13 +468,13 @@ function w({ isCanvas: e, body: a, ydoc: s, provider: c, user: l, editable: u = 
 							}
 						}
 					},
-					disabled: T,
-					"data-testid": `${w}-convert`,
-					children: T ? "Converting…" : "Convert to page"
+					disabled: w,
+					"data-testid": `${S}-convert`,
+					children: w ? "Converting…" : "Convert to page"
 				}) : void 0
 			})
 		]
 	});
 }
 //#endregion
-export { x as i, C as n, S as r, w as t };
+export { C as i, T as n, w as r, E as t };
