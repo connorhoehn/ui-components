@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { render, screen, within, fireEvent, act, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ComputeProvider } from '../context/ComputeContext';
@@ -458,6 +458,86 @@ describe('chrome', () => {
     expect(remapped.length).toBeGreaterThanOrEqual(3);
     expect(remapped[0]!.style.getPropertyValue('--color-code-bg')).toBe('var(--color-surface)');
   });
+
+  it('does NOT remap the field the panes sit on', async () => {
+    // The stronger form of the root invariant above, and the one that actually
+    // protects the terminals now that the field carries a background of its
+    // own. A pane's ancestors inside the lab are: root -> body row -> field.
+    // None of the three may carry the remap, or every `text-code-*` inside a
+    // pane — the status line, the frame title, the connecting strip — flips to
+    // app tokens and the pane reads as two half-themed halves.
+    renderLab({ variant: 'inline' });
+    await summary();
+    // Every pane frame paints `bg-terminal-bg` (TitledFrame's code tone).
+    // waitFor, not a bare read: summary() proves the fleet arrived, but the
+    // first pane's frame mounts a beat later — asserting synchronously here
+    // failed roughly one run in three.
+    await waitFor(() =>
+      expect(root().querySelectorAll('.bg-terminal-bg').length).toBeGreaterThan(0));
+    const panes = [...root().querySelectorAll<HTMLElement>('.bg-terminal-bg')];
+    for (const pane of panes) {
+      for (let node: HTMLElement | null = pane; node; node = node.parentElement) {
+        expect(node.style.getPropertyValue('--color-code-bg')).toBe('');
+        if (node === root()) break;
+      }
+    }
+  });
+
+  it('remaps the accents too, because in the chrome they are affordances', async () => {
+    // The first pass left the accents alone on the reasoning that they carry
+    // meaning. That holds inside a pane and does not hold in the chrome:
+    // nothing up here reports a computer's state through them (the dots read
+    // COMPUTE_STATUS.color, the chips take a design-system tone, both already
+    // theme-aware). What they colour is `send`, `new`, the armed-broadcast
+    // border and the selected window tab — and Catppuccin's pastels land under
+    // 2:1 on light chrome. See lib/chromeTokens.
+    renderLab({ variant: 'inline' });
+    await summary();
+    const bar = root().querySelector<HTMLElement>('[style*="--color-code-bg"]')!;
+    expect(bar.style.getPropertyValue('--color-code-green')).toBe('var(--color-success)');
+    expect(bar.style.getPropertyValue('--color-code-peach')).toBe('var(--color-caution)');
+    expect(bar.style.getPropertyValue('--color-code-blue')).toBe('var(--color-info)');
+  });
+
+  it('gives an inline lab a containing block, so its dialogs land inside it', async () => {
+    // Both dialogs are `absolute inset-0`. An overlay root is `fixed` and so
+    // already a containing block; an inline root was not, so the chooser and
+    // the shortcut sheet resolved against whatever ancestor of the HOST
+    // happened to be positioned — in a real page, over the app's own nav.
+    renderLab({ variant: 'inline' });
+    await summary();
+    expect(root().className).toContain('relative');
+  });
+
+  it('themes the chooser card with the host, but never its scrim', async () => {
+    renderLab({ variant: 'inline' });
+    await summary();
+    cmd('k');
+    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer, pane or project' });
+    expect(dialog.style.getPropertyValue('--color-code-panel')).toBe('var(--color-surface-panel)');
+    // The scrim covers the panes as well as the chrome. Remapped, it would be
+    // a light film over a terminal, which dims nothing.
+    const scrim = dialog.parentElement!;
+    expect(scrim.style.getPropertyValue('--color-code-bg')).toBe('');
+    expect(scrim.className).toContain('bg-code-bg/70');
+  });
+
+  it('leaves the chooser on the terminal palette for an overlay lab', async () => {
+    renderLab({ variant: 'overlay' });
+    await summary();
+    cmd('k');
+    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer, pane or project' });
+    expect(dialog.style.getPropertyValue('--color-code-panel')).toBe('');
+  });
+
+  it('themes the shortcut sheet card with the host', async () => {
+    renderLab({ variant: 'inline' });
+    await summary();
+    cmd('/');
+    const sheet = await screen.findByRole('dialog', { name: 'Keyboard shortcuts' });
+    const card = within(sheet).getByText('Keyboard shortcuts').closest('[style]') as HTMLElement;
+    expect(card.style.getPropertyValue('--color-code-panel')).toBe('var(--color-surface-panel)');
+  });
 });
 
 // ─── Watching a bot ──────────────────────────────────────────────────────────
@@ -505,5 +585,87 @@ describe('watching from the activity list', () => {
       (c) => c.status === 'running' || c.status === 'waiting' || c.status === 'error',
     );
     expect(watches).toHaveLength(running.length);
+  });
+});
+
+// ─── Rail focus ──────────────────────────────────────────────────────────────
+//
+// ⌘⇧U cycles the three focus regions: panes → computers list → agents list →
+// panes. One key rather than a chord per list, because "get me to the rail"
+// is one question and a second press is cheaper to learn than a second chord.
+
+describe('focus-rail', () => {
+  // The probe must move REAL focus, not only record the call — the Esc
+  // layering reads document.activeElement, and a probe that records without
+  // focusing leaves the rail active, which makes the second Esc re-enter the
+  // "return to panes" branch forever.
+  const paneProbe = (focused: string[]): PaneKind => ({
+    id: 'probe',
+    label: 'probe',
+    render: ({ computer, registerPane }) => {
+      /* eslint-disable react-hooks/rules-of-hooks */
+      const ref = useRef<HTMLDivElement>(null);
+      useEffect(() => {
+        registerPane({ focus: () => { focused.push(computer.label); ref.current?.focus(); } });
+        return () => registerPane(null);
+      }, [registerPane, computer.label]);
+      /* eslint-enable react-hooks/rules-of-hooks */
+      return <div ref={ref} tabIndex={-1}>{computer.label}</div>;
+    },
+  });
+
+  function renderWithProbe(focused: string[], onClose: () => void = () => {}) {
+    return render(
+      <ComputeProvider client={stubClient()} canManage useFixtures={false} pollIntervalMs={0}
+        paneKinds={[paneProbe(focused)]}>
+        <ComputerLab open onClose={onClose} />
+      </ComputeProvider>,
+    );
+  }
+
+  const activeRailRow = () => {
+    const el = document.activeElement as HTMLElement | null;
+    return el?.hasAttribute('data-rail-row') ? el : null;
+  };
+  const listboxOf = (el: HTMLElement | null) =>
+    el?.closest('[role="listbox"]')?.getAttribute('aria-label') ?? null;
+
+  it('cycles panes → computers → agents → panes', async () => {
+    const focused: string[] = [];
+    renderWithProbe(focused);
+    await summary(/1 pane$/);
+
+    cmdShift('u');
+    expect(listboxOf(activeRailRow())).toBe('computers');
+
+    cmdShift('u');
+    // The fixture fleet has running/waiting boxes, so the agents list is
+    // non-empty and the second press lands there.
+    expect(listboxOf(activeRailRow())).toBe('agents');
+
+    focused.length = 0;
+    cmdShift('u');
+    // Third press hands the keyboard back to the pane, not to the void.
+    await waitFor(() => expect(focused.length).toBeGreaterThan(0));
+  });
+
+  it('Esc from the rail returns to the panes without closing the lab', async () => {
+    const focused: string[] = [];
+    const onClose = vi.fn();
+    renderWithProbe(focused, onClose);
+    await summary(/1 pane$/);
+
+    cmdShift('u');
+    expect(activeRailRow()).not.toBeNull();
+
+    focused.length = 0;
+    press('Escape');
+    // Leaving the rail and leaving the lab are different sizes of "get me
+    // out" — Esc does the smaller one first.
+    await waitFor(() => expect(focused.length).toBeGreaterThan(0));
+    expect(onClose).not.toHaveBeenCalled();
+
+    press('Escape');
+    expect(onClose).toHaveBeenCalled();
   });
 });

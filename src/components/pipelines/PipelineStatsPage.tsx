@@ -492,7 +492,7 @@ export default function PipelineStatsPage() {
                   xKey="label"
                   yKey="cost"
                   height={200}
-                  color="#646cff"
+                  color="var(--color-primary)"
                   yFormat={formatUsdAxis}
                 />
               )}

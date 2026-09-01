@@ -36,10 +36,34 @@ export interface UseComputeTailResult {
  * Reduce one raw frame to zero or more renderable steps.
  *
  * Shared vocabulary with `useComputeTask` — the tail sees everything the task
- * stream does, plus `task_started`, which only ever appears here.
+ * stream does, plus `task_started`, `job_started` and `job_finished`, which
+ * only ever appear here (a run driven from this browser doesn't need a
+ * dispatcher to announce its own start or end to itself).
  */
 function reduceFrame(event: StreamEvent): { steps: Omit<TaskStep, 'at'>[]; result?: ComputeRunResult; running?: boolean; error?: string } {
   const type = event['type'];
+
+  // The dispatcher's own frame, wrapping the box from OUTSIDE the CLI
+  // stream — it is what answers "why did this box suddenly start working"
+  // for a run nobody in this browser dispatched. Rendered as a banner, not a
+  // plain row, so it reads as the start of an arc rather than one more step.
+  if (type === 'job_started') {
+    const title = String(event['title'] ?? 'job started');
+    const jobKind = event['kind'];
+    return {
+      steps: [{ kind: 'job', text: title, jobKind: typeof jobKind === 'string' && jobKind ? jobKind : undefined }],
+      running: true,
+    };
+  }
+
+  // Closes the arc `job_started` opened. Distinct from `devbox_end` /
+  // `devbox_error`, which are the CONTAINER's terminal signal — this is the
+  // dispatcher's, and can arrive after either (or after neither, on a
+  // timeout). `ok` is absent-safe: only an explicit `false` reads as failed.
+  if (type === 'job_finished') {
+    const ok = event['ok'] !== false;
+    return { steps: [{ kind: 'job_end', text: ok ? 'job finished' : 'job failed', jobOk: ok }], running: false };
+  }
 
   if (type === 'task_started') {
     return { steps: [{ kind: 'meta', text: String(event['prompt'] ?? 'run started') }], running: true };
@@ -101,7 +125,11 @@ function reduceFrame(event: StreamEvent): { steps: Omit<TaskStep, 'at'>[]; resul
       costUsd: Number(event['total_cost_usd'] ?? 0),
     };
     return {
-      steps: [{ kind: 'result', text: `${result.turns} turns · ${(result.durationMs / 1000).toFixed(0)}s · $${result.costUsd.toFixed(4)}` }],
+      steps: [{
+        kind: 'result',
+        text: `${result.turns} turns · ${(result.durationMs / 1000).toFixed(0)}s · $${result.costUsd.toFixed(4)}`,
+        result,
+      }],
       result,
       running: false,
     };

@@ -1,7 +1,7 @@
 {
   "name": "@connorhoehnslalom/ui-components",
   "version": "2.118.0",
-  "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
+  "description": "React component library for real-time collaborative applications \u2014 chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
     "components",
@@ -253,6 +253,7 @@
     "lib0": "^0.2.117",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-is": "^19.0.0",
     "react-router": "^8.3.0",
     "recharts": "^3.8.1",
     "storybook": "^10.4.0",

@@ -45,6 +45,7 @@ export type LabCommand =
   | 'jump'
   | 'toggle-broadcast'
   | 'focus-composer'
+  | 'focus-rail'
   | 'help'
   | 'exit';
 
@@ -114,6 +115,12 @@ export const DEFAULT_KEYMAP: readonly KeyBinding[] = [
 
   { command: 'jump', leaderKey: 'w', key: 'k', meta: true, label: '⌘K', description: 'Jump to a computer or pane by name', group: 'navigate' },
   { command: 'focus-composer', leaderKey: ':', key: 'l', meta: true, shift: true, label: '⌘⇧L', description: 'Jump to the prompt bar', group: 'navigate' },
+  // One key, three stops: panes → the computers list → the agents list →
+  // panes. A cycle instead of a chord per list because the question it
+  // answers — "get me to the rail" — is one question, and the second press is
+  // cheaper to learn than a second chord. ⌘⇧U is unclaimed by Chrome
+  // (view-source is ⌘⌥U); leader `r` for rail.
+  { command: 'focus-rail', leaderKey: 'r', key: 'u', meta: true, shift: true, label: '⌘⇧U', description: 'Focus the rail — again for the agents list, again back to the panes', group: 'navigate' },
 
   { command: 'toggle-broadcast', leaderKey: 's', key: 'b', meta: true, shift: true, label: '⌘⇧B', description: 'Send the prompt bar to every pane at once', group: 'lab' },
   { command: 'help', leaderKey: '?', key: '/', meta: true, label: '⌘/', description: 'Show these shortcuts', group: 'lab' },

@@ -10,13 +10,26 @@ import { useCallback, useRef, useState } from 'react';
 import type { ComputeClient, StreamEvent } from '../lib/computeClient';
 import type { ComputeRunResult } from '../types';
 
-export type TaskStepKind = 'text' | 'tool' | 'result' | 'error' | 'meta';
+// `job` / `job_end` exist for the tail, not a self-driven run: they are the
+// dispatcher's own frames, wrapping a box's invocation from OUTSIDE the CLI
+// stream (`job_started` before `task_started`, `job_finished` after
+// `devbox_end`/`devbox_error`). A run you started yourself never needs "why
+// did this start" — you already know — so `useComputeTask`'s own reducer
+// does not emit these; they exist on the shared union because `useComputeTail`
+// (which watches runs nobody in this browser started) does.
+export type TaskStepKind = 'text' | 'tool' | 'result' | 'error' | 'meta' | 'job' | 'job_end';
 
 export interface TaskStep {
   kind: TaskStepKind;
   text: string;
   /** Tool name, for `kind: 'tool'`. */
   tool?: string;
+  /** `job` only: the dispatcher's job kind (e.g. `devbox:task`) — the banner's subtitle. */
+  jobKind?: string;
+  /** `job_end` only: whether the job closed clean. Drives the closing tone. */
+  jobOk?: boolean;
+  /** `result` only: the structured tally, so the view renders cost chips instead of re-parsing `text`. */
+  result?: ComputeRunResult;
   at: number;
 }
 
@@ -205,6 +218,7 @@ export function useComputeTask({
               push({
                 kind: 'result',
                 text: `${tally.turns} turns · ${(tally.durationMs / 1000).toFixed(0)}s · $${tally.costUsd.toFixed(4)}`,
+                result: tally,
               });
             }
           },

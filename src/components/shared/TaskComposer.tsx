@@ -169,6 +169,9 @@ export function TaskComposer({
       )}
 
       <div className="px-3.5 pt-2 pb-2 flex flex-col gap-2">
+        {/* forms/ composites, not raw controls — the node-controls gate is
+            right that a library composer hand-rolling its own inputs is the
+            library arguing with itself. */}
         <label className="sr-only" htmlFor={titleId}>{titlePlaceholder}</label>
         <Input
           id={titleId}
