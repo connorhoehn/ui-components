@@ -1276,27 +1276,42 @@ function Ie(e) {
 function Le(e) {
 	e && (e.onopen = null, e.onmessage = null, e.onclose = null, e.onerror = null, e.close());
 }
-function Re(e) {
-	let t = {
+function Re(e, t) {
+	let n = {
 		background: "#1e1e2e",
 		foreground: "#cdd6f4",
 		cursor: "#a6e3a1",
 		selectionBackground: "#45475a"
 	};
 	if (typeof globalThis.getComputedStyle != "function" || typeof document > "u") return e ? {
-		...t,
+		...n,
 		background: e
-	} : t;
-	let n = globalThis.getComputedStyle(document.documentElement), r = (e, t) => n.getPropertyValue(e).trim() || t;
+	} : n;
+	let r = globalThis.getComputedStyle(t ?? document.documentElement), i = (e, t) => r.getPropertyValue(e).trim() || t;
 	return {
-		background: e ?? r("--color-terminal-bg", t.background),
-		foreground: r("--color-code-text", t.foreground),
-		cursor: r("--color-code-green", t.cursor),
-		selectionBackground: r("--color-code-raised", t.selectionBackground)
+		background: e ?? i("--color-terminal-bg", n.background),
+		foreground: i("--color-terminal-fg", n.foreground),
+		cursor: i("--color-terminal-cursor", n.cursor),
+		selectionBackground: i("--color-terminal-selection", n.selectionBackground)
 	};
 }
 var ze = c(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, height: o = 460, chrome: s = !0, fillHeight: c = !1, autoConnect: u = !1, onStatus: p, background: m, className: _ }, C) {
-	let { client: w } = Ke(), T = h(null), E = h(null), D = h(null), O = h(null), k = h(n), A = h(a);
+	let { client: w } = Ke(), T = h(null);
+	d(() => {
+		let e = () => E.current, t = () => {
+			let t = e();
+			t && (t.options.theme = Re(m, T.current));
+		}, n = typeof MutationObserver == "function" ? new MutationObserver(t) : null;
+		n?.observe(document.documentElement, {
+			attributes: !0,
+			attributeFilter: ["data-theme", "class"]
+		});
+		let r = typeof globalThis.matchMedia == "function" ? globalThis.matchMedia("(prefers-color-scheme: dark)") : null;
+		return r?.addEventListener?.("change", t), () => {
+			n?.disconnect(), r?.removeEventListener?.("change", t);
+		};
+	}, [m]);
+	let E = h(null), D = h(null), O = h(null), k = h(n), A = h(a);
 	A.current = a;
 	let j = h(p);
 	j.current = p;
@@ -1368,7 +1383,7 @@ var ze = c(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 			cursorBlink: !0,
 			fontSize: 12.5,
 			fontFamily: "\"Fira Code\", ui-monospace, SFMono-Regular, Menlo, monospace",
-			theme: Re(m),
+			theme: Re(m, T.current),
 			scrollback: 5e3
 		}), t = new S();
 		e.loadAddon(t), e.open(T.current), t.fit(), E.current = e, D.current = t;
@@ -2901,7 +2916,7 @@ function Lt({ node: t, activePaneId: n, renderLeaf: r, onRatioChange: i }) {
 }
 //#endregion
 //#region src/components/compute/components/ComputerLab.tsx
-function Rt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "overlay", chrome: o = a === "inline" ? "app" : "code", keymap: s = gt, leader: c = null, idleWindowMs: u = wt, className: f }) {
+function Rt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "overlay", chrome: o = "app", keymap: s = gt, leader: c = null, idleWindowMs: u = wt, className: f }) {
 	let { computers: p, canManage: _, create: v, models: x, notify: S, refresh: C, paneKinds: w, projects: T } = Ke(), E = w[0]?.id ?? "agent", D = dt(), [O, k] = g(!1), [A, j] = g(""), [M, N] = g(!1), [P, F] = g(!1), [I, L] = g(!1), [R, z] = g(!1), B = h(/* @__PURE__ */ new Map()), V = h(null), H = h(null), ee = h(null), U = m(() => new Map(p.map((e) => [e.id, e])), [p]), W = D.panes.find((e) => e.id === D.activePaneId) ?? D.panes[0] ?? null, te = W ? U.get(W.computerId) ?? null : null, ne = mt(w, D.panes.map((e) => e.kindId), "shell"), re = D.windows.length > 0, G = i && U.has(i) ? i : null, K = G ?? p[0]?.id ?? null;
 	d(() => {
 		!t || re || !K || D.ensureSeeded(K, E);
@@ -3153,10 +3168,10 @@ function Rt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 			"aria-modal": !0
 		} : { role: "region" },
 		"aria-label": "Computer Lab",
+		style: ye,
 		className: e("flex flex-col", be ? "bg-surface text-text-primary" : "bg-code-bg text-code-text", a === "overlay" ? "fixed inset-0 z-[150]" : e("relative h-full min-h-0 w-full", be && "rounded-lg border border-border overflow-hidden"), f),
 		children: [
 			/* @__PURE__ */ b("div", {
-				style: ye,
 				className: e("flex items-center gap-3 px-3 shrink-0 border-b border-code-border bg-code-panel", xe ? "h-9" : "h-10"),
 				children: [
 					/* @__PURE__ */ y("span", {
@@ -3235,7 +3250,6 @@ function Rt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 				className: "flex flex-1 min-h-0",
 				children: [/* @__PURE__ */ y("div", {
 					ref: H,
-					style: ye,
 					className: "contents",
 					children: /* @__PURE__ */ y(jt, {
 						className: "w-[210px] shrink-0",
@@ -3296,7 +3310,6 @@ function Rt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 							}, e.id);
 						}
 					}) : /* @__PURE__ */ b("div", {
-						style: ye,
 						className: "h-full flex flex-col items-center justify-center gap-3 text-center",
 						children: [
 							/* @__PURE__ */ y("div", {
@@ -3318,7 +3331,6 @@ function Rt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 				})]
 			}),
 			/* @__PURE__ */ b("div", {
-				style: ye,
 				className: e("flex items-center gap-2 px-3 shrink-0 border-t font-mono transition-colors", xe ? "py-1" : "py-1.5", O ? "border-code-peach bg-code-peach/10" : "border-code-border bg-code-panel focus-within:border-code-blue"),
 				children: [
 					/* @__PURE__ */ y("button", {
@@ -3471,7 +3483,7 @@ function zt({ pane: e, computer: t, active: r, broadcasting: i, zoomed: o, idleW
 		})]
 	});
 }
-function Bt({ keymap: e, leader: t, chrome: n = "code", onClose: r }) {
+function Bt({ keymap: e, leader: t, chrome: n = "app", onClose: r }) {
 	let i = {
 		panes: "Panes",
 		navigate: "Getting around",
@@ -3623,6 +3635,7 @@ function Gt({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 		!t || o.length === 0 || ne(o);
 	}, [t, o]), r.mode === "hidden" || r.shells.length === 0) return null;
 	let s = de(r.mode), c = /* @__PURE__ */ b("div", {
+		style: St,
 		className: "flex flex-col h-full min-h-0",
 		children: [/* @__PURE__ */ b("div", {
 			className: "flex items-center gap-1 px-1.5 py-1 border-b shrink-0 overflow-x-auto bg-terminal-bg border-code-border",
@@ -3715,7 +3728,10 @@ function Gt({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 	return /* @__PURE__ */ y("div", {
 		"data-testid": "compute-dock",
 		className: `${l} z-[120] flex flex-col bg-terminal-bg border-code-border ${n}`,
-		style: r.mode === "stack" ? void 0 : { height: r.geometry.dockHeight },
+		style: r.mode === "stack" ? St : {
+			...St,
+			height: r.geometry.dockHeight
+		},
 		children: c
 	});
 }
