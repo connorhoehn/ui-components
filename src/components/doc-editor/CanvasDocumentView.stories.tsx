@@ -15,6 +15,7 @@ import type { CommentThread } from '../../types/document';
 import {
   MacroNode,
   HeadingAnchor,
+  MarkdownClipboard,
 } from '@connorhoehn/realtime-modules/adapters/tiptap';
 
 const meta = {
@@ -28,8 +29,13 @@ type Story = StoryObj<typeof meta>;
 
 const USER = { name: 'Ada Lovelace', color: '#8b5cf6' };
 
-/** Registered so the schema has a `macro` node — without it macros are text. */
-const EXTENSIONS = [MacroNode, HeadingAnchor];
+/**
+ * MacroNode is what gives the schema a `macro` node — without it every macro
+ * degrades to plain text. MarkdownClipboard is what makes the page actually
+ * exchange markdown: paste a markdown file in, copy a heading out AS a
+ * heading, instead of flat text either way.
+ */
+const EXTENSIONS = [MacroNode, HeadingAnchor, MarkdownClipboard];
 
 function useFixture() {
   return useMemo(() => {
