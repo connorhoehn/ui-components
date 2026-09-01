@@ -17,6 +17,8 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
+import { Input } from '../forms/Input';
+import { Textarea } from '../forms/Textarea';
 import { SuggestionCard } from './SuggestionCard';
 import type { Tone } from './tones';
 
@@ -168,16 +170,15 @@ export function TaskComposer({
 
       <div className="px-3.5 pt-2 pb-2 flex flex-col gap-2">
         <label className="sr-only" htmlFor={titleId}>{titlePlaceholder}</label>
-        <input
+        <Input
           id={titleId}
           value={draftTitle}
           onChange={(e) => setDraftTitle(e.target.value)}
           placeholder={titlePlaceholder}
           disabled={busy}
-          className="w-full text-[13px] bg-transparent text-text-primary border border-border rounded-md px-3 py-2 outline-none focus:border-border-emphasis disabled:opacity-60"
         />
         <label className="sr-only" htmlFor={promptId}>{promptPlaceholder}</label>
-        <textarea
+        <Textarea
           id={promptId}
           value={draftPrompt}
           onChange={(e) => setDraftPrompt(e.target.value)}
@@ -190,7 +191,6 @@ export function TaskComposer({
           onKeyDown={(e) => {
             if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); submit(); }
           }}
-          className="w-full text-[13px] bg-transparent text-text-primary border border-border rounded-md px-3 py-2 outline-none resize-y focus:border-border-emphasis disabled:opacity-60"
         />
       </div>
 
