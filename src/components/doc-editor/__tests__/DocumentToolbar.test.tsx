@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, act } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import DocumentToolbar from '../DocumentToolbar';
 
@@ -25,14 +25,30 @@ function makeEditor(active: Record<string, unknown> = {}) {
   };
   chain['run'] = () => { calls.push('run'); return true; };
 
+  // `useEditorState` subscribes via on/off, so the stand-in has to emit —
+  // otherwise the toolbar can never observe the cursor moving, which is the
+  // exact bug these tests exist to prevent.
+  const listeners = new Set<() => void>();
+  const state: Record<string, unknown> = { ...active };
+
   const editor = {
     chain: () => chain,
     isActive: (name: string, attrs?: Record<string, unknown>) => {
       const key = attrs ? `${name}:${JSON.stringify(attrs)}` : name;
-      return Boolean(active[key]);
+      return Boolean(state[key]);
     },
+    on: (_evt: string, cb: () => void) => { listeners.add(cb); return editor; },
+    off: (_evt: string, cb: () => void) => { listeners.delete(cb); return editor; },
   };
-  return { editor: editor as never, calls };
+
+  /** Moves the cursor: swap what is active, then fire a transaction. */
+  const moveCursor = (next: Record<string, unknown>) => {
+    for (const k of Object.keys(state)) delete state[k];
+    Object.assign(state, next);
+    for (const cb of listeners) cb();
+  };
+
+  return { editor: editor as never, calls, moveCursor };
 }
 
 afterEach(cleanup);
@@ -127,6 +143,31 @@ describe('DocumentToolbar', () => {
     expect(calls).toEqual([]);
     fireEvent.mouseDown(screen.getByTestId('document-toolbar-bold'));
     expect(calls).toContain('toggleBold');
+  });
+
+  // The regression this file exists for. Reading editor.isActive() inline
+  // during render LOOKS correct and never updates: nothing re-renders when the
+  // selection moves, so B stayed dark after the caret entered bold text and
+  // the block dropdown never followed the cursor. The toolbar must subscribe.
+  it('tracks the cursor — marks update when the selection moves', async () => {
+    const { editor, moveCursor } = makeEditor();
+    render(<DocumentToolbar editor={editor} />);
+    expect(screen.getByTestId('document-toolbar-bold')).toHaveAttribute('aria-pressed', 'false');
+
+    await act(async () => { moveCursor({ bold: true }); });
+    expect(screen.getByTestId('document-toolbar-bold')).toHaveAttribute('aria-pressed', 'true');
+
+    await act(async () => { moveCursor({}); });
+    expect(screen.getByTestId('document-toolbar-bold')).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('tracks the cursor — the block select follows the caret', async () => {
+    const { editor, moveCursor } = makeEditor();
+    render(<DocumentToolbar editor={editor} />);
+    expect(screen.getByTestId('document-toolbar-block')).toHaveValue('paragraph');
+
+    await act(async () => { moveCursor({ 'heading:{"level":3}': true }); });
+    expect(screen.getByTestId('document-toolbar-block')).toHaveValue('heading3');
   });
 
   it('renders caller actions at the end of the bar', () => {

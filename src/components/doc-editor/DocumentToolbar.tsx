@@ -21,7 +21,7 @@
 // equivalent in the tooltip.
 
 import { useCallback, type ReactNode } from 'react';
-import type { Editor } from '@tiptap/react';
+import { useEditorState, type Editor } from '@tiptap/react';
 import { cn } from '../../lib/cn';
 import { Select } from '../forms/Select';
 
@@ -80,9 +80,8 @@ const LISTS: MarkButton[] = [
 ];
 
 function ToolButton({
-  btn, editor, testId,
-}: { btn: MarkButton; editor: Editor; testId: string }) {
-  const active = btn.active(editor);
+  btn, editor, testId, active,
+}: { btn: MarkButton; editor: Editor; testId: string; active: boolean }) {
   return (
     <button
       type="button"
@@ -111,6 +110,27 @@ export default function DocumentToolbar({
   actions,
   'data-testid': testId = 'document-toolbar',
 }: DocumentToolbarProps) {
+  // Subscribes to the editor so the controls track the CURSOR, not just the
+  // last render. Reading `editor.isActive()` inline during render looks like
+  // it works and does not: nothing re-renders when the selection moves, so B
+  // never lit up on entering bold text and the block dropdown never followed
+  // the caret.
+  //
+  // `useEditorState` rather than a plain `editor.on('transaction')` re-render
+  // because it shallow-compares this slice: a transaction that does not change
+  // any of these flags — which is most of them, every keystroke inside one
+  // paragraph — re-renders nothing.
+  const state = useEditorState({
+    editor,
+    selector: ({ editor: e }) => {
+      if (!e) return null;
+      const flags: Record<string, boolean> = {};
+      for (const b of [...MARKS, ...LISTS]) flags[b.key] = b.active(e);
+      flags['link'] = e.isActive('link');
+      return { block: currentBlock(e), flags };
+    },
+  });
+
   const setBlock = useCallback((value: string) => {
     if (!editor) return;
     const chain = editor.chain().focus();
@@ -147,6 +167,7 @@ export default function DocumentToolbar({
           run: (e) => { e.chain().focus().undo().run(); }, active: () => false,
         }}
         editor={editor}
+        active={false}
         testId={`${testId}-undo`}
       />
       <ToolButton
@@ -155,6 +176,7 @@ export default function DocumentToolbar({
           run: (e) => { e.chain().focus().redo().run(); }, active: () => false,
         }}
         editor={editor}
+        active={false}
         testId={`${testId}-redo`}
       />
       <Divider />
@@ -163,7 +185,7 @@ export default function DocumentToolbar({
         size="sm"
         data-testid={`${testId}-block`}
         aria-label="Text style"
-        value={currentBlock(editor)}
+        value={state?.block ?? 'paragraph'}
         options={BLOCK_OPTIONS}
         onChange={(e) => setBlock(e.target.value)}
         className="w-[140px]"
@@ -171,12 +193,12 @@ export default function DocumentToolbar({
 
       <Divider />
       {MARKS.map((b) => (
-        <ToolButton key={b.key} btn={b} editor={editor} testId={`${testId}-${b.key}`} />
+        <ToolButton key={b.key} btn={b} editor={editor} active={state?.flags[b.key] ?? false} testId={`${testId}-${b.key}`} />
       ))}
 
       <Divider />
       {LISTS.map((b) => (
-        <ToolButton key={b.key} btn={b} editor={editor} testId={`${testId}-${b.key}`} />
+        <ToolButton key={b.key} btn={b} editor={editor} active={state?.flags[b.key] ?? false} testId={`${testId}-${b.key}`} />
       ))}
 
       <Divider />
@@ -198,6 +220,7 @@ export default function DocumentToolbar({
           active: (e) => e.isActive('link'),
         }}
         editor={editor}
+        active={state?.flags['link'] ?? false}
         testId={`${testId}-link`}
       />
       <ToolButton
@@ -207,6 +230,7 @@ export default function DocumentToolbar({
           active: () => false,
         }}
         editor={editor}
+        active={false}
         testId={`${testId}-hr`}
       />
 
