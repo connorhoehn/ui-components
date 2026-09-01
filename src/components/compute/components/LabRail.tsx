@@ -94,7 +94,16 @@ export function LabRail({
   const computeCtx = useComputeOptional();
   const projectRollups = computeCtx?.projects ?? [];
   const projectsAbsent = computeCtx?.projectsAbsent ?? true;
-  const namedProjects = projectRollups.filter((p) => p.id !== UNASSIGNED_PROJECT_ID);
+  // Only projects that HAVE a computer get a heading. The first cut showed
+  // every named project so budgets stayed visible, and with fourteen
+  // initiatives and two computers the fleet drowned under a budget report —
+  // twelve headings with nothing under them. The rail is a fleet list; a
+  // group earns its heading by containing a computer, and the budget survey
+  // lives on the budgets surface. The chooser still finds every project,
+  // with or without boxes.
+  const namedProjects = projectRollups.filter(
+    (p) => p.id !== UNASSIGNED_PROJECT_ID && p.computers.length > 0,
+  );
   const unassignedProject = projectRollups.find((p) => p.id === UNASSIGNED_PROJECT_ID);
   // Grouping only earns its keep once there is something to group by. A
   // deployment with projects defined but every box unassigned still shows

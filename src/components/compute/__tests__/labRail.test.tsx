@@ -73,9 +73,11 @@ describe('LabRail project grouping', () => {
     expect(within(list).getByText('Auth migration')).toBeInTheDocument();
     expect(within(list).getByText('$412.55', { exact: false })).toBeInTheDocument();
     expect(within(list).getByText('Search relevance')).toBeInTheDocument();
-    // A project with no live computers still gets a heading — its budget is
-    // still worth seeing even with nothing running against it right now.
-    expect(within(list).getByText('Platform upkeep')).toBeInTheDocument();
+    // A project with no live computers gets NO heading. The first cut showed
+    // them all so budgets stayed visible, and fourteen initiatives over two
+    // computers buried the fleet under a budget report — that survey lives on
+    // the budgets surface, and the chooser still finds every project.
+    expect(within(list).queryByText('Platform upkeep')).toBeNull();
 
     // The unassigned bucket is plain text, with no ProjectSummary underneath
     // fabricating a budget line for boxes that were never allocated one.
@@ -87,12 +89,10 @@ describe('LabRail project grouping', () => {
     const text = list.textContent ?? '';
     const authIdx = text.indexOf('Auth migration');
     const searchIdx = text.indexOf('Search relevance');
-    const platformIdx = text.indexOf('Platform upkeep');
     const unassignedIdx = text.indexOf('unassigned');
     expect(authIdx).toBeGreaterThanOrEqual(0);
     expect(authIdx).toBeLessThan(searchIdx);
-    expect(searchIdx).toBeLessThan(platformIdx);
-    expect(platformIdx).toBeLessThan(unassignedIdx);
+    expect(searchIdx).toBeLessThan(unassignedIdx);
 
     // Every computer is still there — grouping never hides a row.
     const rows = within(list).getAllByRole('option');
