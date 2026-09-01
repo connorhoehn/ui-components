@@ -1,4 +1,4 @@
-import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
+import { n as e, t } from "./useWebSocket-16eHDqT5.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Button-wU9TwJvB.js";
 import { t as i } from "./Chip-YhQI5B9P.js";
@@ -6,10 +6,10 @@ import { t as a } from "./EmptyState-ClmWoqCb.js";
 import { t as o } from "./Input-DLknWXri.js";
 import { t as s } from "./activationKey-CjbL3LUv.js";
 import { t as c } from "./Textarea-Dz4doxTv.js";
-import { a as l, n as u, r as d } from "./renderers-Cn2YUME8.js";
+import { a as l, n as u, r as d } from "./renderers-DIrGz3QL.js";
 import { t as f } from "./Select-CqVokE2v.js";
 import { n as p, t as m } from "./TiptapEditor-CnjifOQz.js";
-import { C as h, D as g, E as _, O as v, S as y, T as b, _ as x, a as S, b as C, c as w, d as T, f as E, g as D, h as O, i as k, k as A, l as j, m as M, o as N, p as P, r as F, s as ee, t as te, u as ne, v as re, w as ie, x as ae, y as oe } from "./DocumentEditorPage-BbXlZEi_.js";
+import { C as h, D as g, E as _, O as v, S as y, T as b, _ as x, a as S, b as C, c as w, d as T, f as E, g as D, h as O, i as k, k as A, l as j, m as M, o as N, p as P, r as F, s as ee, t as te, u as ne, v as re, w as ie, x as ae, y as oe } from "./DocumentEditorPage-DNoUlpmZ.js";
 import { i as se, n as ce, r as le, t as ue } from "./CanvasDocumentView-DextcOKU.js";
 import { useCallback as I, useEffect as L, useMemo as R, useRef as z, useState as B } from "react";
 import { Fragment as V, jsx as H, jsxs as U } from "react/jsx-runtime";

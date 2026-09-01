@@ -17,7 +17,7 @@ import { n as d, t as f } from "./CardHeader-MBY5yyXT.js";
 import { i as p, n as m, r as h, t as g } from "./focusTrap-CmWJlptm.js";
 import "./SkeletonCard-CGe8XFPB.js";
 import { n as _, t as v } from "./Avatar-Yxs_9Jio.js";
-import "./FloatingPanel-BB18Yf73.js";
+import "./FloatingPanel-CNQWLXV-.js";
 import { t as y } from "./StatusDot-Bgx2zxgC.js";
 import { t as b } from "./PresenceDot-3gBZGPvX.js";
 import { n as x } from "./Badge-DlFForlC.js";
