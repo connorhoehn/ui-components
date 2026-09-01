@@ -2169,6 +2169,21 @@ declare interface CommentThreadProps {
     onMessage: OnMessageFn;
 }
 
+export declare interface ComposerSuggestion {
+    id: string;
+    /** Why this is being offered — shown above the title on the card. */
+    reason: string;
+    title: string;
+    /** Fills the prompt field when chosen. */
+    prompt: string;
+    /** Fills the title field. Defaults to the suggestion's own title. */
+    fillTitle?: string;
+    label?: string;
+    tone?: Tone;
+    meta?: ReactNode;
+    context?: string;
+}
+
 export declare interface ConditionNodeData {
     type: 'condition';
     /** JSONPath or boolean expression evaluated over context. */
@@ -8073,6 +8088,33 @@ export declare interface SubNavLayoutProps {
     children?: ReactNode;
 }
 
+export declare function SuggestionCard({ reason, title, label, tone, meta, context, onSelect, actionLabel, disabled, className, 'data-testid': testId, }: SuggestionCardProps): JSX.Element;
+
+export declare interface SuggestionCardProps {
+    /** Why this is being suggested. Shown above the title — see the note above. */
+    reason: string;
+    /** The thing itself. */
+    title: string;
+    /**
+     * Short category shown as a pill beside the reason, e.g. "blocked".
+     * Omit where every suggestion on screen is the same kind.
+     */
+    label?: string;
+    /** Tone for the label pill. Defaults to neutral. */
+    tone?: Tone;
+    /** What acting costs — estimates, owner, target. Kept to one line. */
+    meta?: ReactNode;
+    /** Where it points, e.g. an initiative. Rendered as a quiet trailing note. */
+    context?: string;
+    /** Primary action. The whole card is the hit target. */
+    onSelect: () => void;
+    /** Verb for the action, shown on hover/focus. Default "Use this". */
+    actionLabel?: string;
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function SummaryPanel({ status, markdown, renderMarkdown, title, errorMessage, pendingMessage, idleState, className, }: SummaryPanelProps): JSX.Element;
 
 export declare interface SummaryPanelProps {
@@ -8255,6 +8297,41 @@ declare interface TaskAssignment {
     taskText: string;
     status: string;
     priority: string;
+}
+
+export declare function TaskComposer({ title, description, titlePlaceholder, promptPlaceholder, suggestions, suggestionsTitle, suggestionsLoading, suggestionsEmpty, onSubmit, onChooseSuggestion, submitLabel, hint, busy, className, 'data-testid': testId, }: TaskComposerProps): JSX.Element;
+
+export declare interface TaskComposerProps {
+    /** Section heading, e.g. "Queue a job". */
+    title: string;
+    /** One line under the heading saying what happens on submit. */
+    description?: string;
+    titlePlaceholder?: string;
+    promptPlaceholder?: string;
+    /** Offered above the fields. Empty or omitted renders no strip at all. */
+    suggestions?: readonly ComposerSuggestion[];
+    /** Heading for the strip. */
+    suggestionsTitle?: string;
+    /** Shown in place of the strip while suggestions are still being fetched. */
+    suggestionsLoading?: boolean;
+    /**
+     * Shown when there are no suggestions AND loading is done. Omit to render
+     * nothing — an empty state for an optional nicety is itself noise.
+     */
+    suggestionsEmpty?: ReactNode;
+    onSubmit: (task: {
+        title: string;
+        prompt: string;
+        suggestionId?: string;
+    }) => void;
+    /** Fires when a suggestion is chosen, before the fields are filled. */
+    onChooseSuggestion?: (suggestion: ComposerSuggestion) => void;
+    submitLabel?: string;
+    /** Quiet note beside the submit button, e.g. where it will run. */
+    hint?: ReactNode;
+    busy?: boolean;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare interface TaskItem {
