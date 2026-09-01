@@ -174,7 +174,10 @@ export function ComputeDock({ hotkeys = true, reconcile = true, className = '' }
       {/* Tab strip. Not a <button> wrapping a <button>: nesting interactive
           elements is invalid HTML and leaves the inner control unreachable by
           keyboard, so close is a sibling of select, not a child. */}
-      <div className="flex items-center gap-1 px-1.5 py-1 border-b shrink-0 overflow-x-auto bg-code-bg border-code-border">
+      {/* bg-terminal-bg, not bg-code-bg: ShellPane below mounts ShellTerminal
+          with chrome={false}, so this strip's background is the only thing
+          that shows through around the xterm canvas and must match it. */}
+      <div className="flex items-center gap-1 px-1.5 py-1 border-b shrink-0 overflow-x-auto bg-terminal-bg border-code-border">
         {dock.shells.map((s, i) => {
           const active = s.id === dock.activeId;
           return (
@@ -320,7 +323,9 @@ export function ComputeDock({ hotkeys = true, reconcile = true, className = '' }
   return (
     <div
       data-testid="compute-dock"
-      className={`${shell} z-[120] flex flex-col bg-code-bg border-code-border ${className}`}
+      // bg-terminal-bg: this is the dock's own frame around the docked
+      // ShellTerminal (chrome={false}) — same seam rule as the tab strip above.
+      className={`${shell} z-[120] flex flex-col bg-terminal-bg border-code-border ${className}`}
       // Height alone stays inline: it is a persisted, user-dragged pixel value,
       // which is exactly the case the Tailwind heuristic exempts.
       style={dock.mode === 'stack' ? undefined : { height: dock.geometry.dockHeight }}

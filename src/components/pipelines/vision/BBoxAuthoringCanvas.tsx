@@ -428,8 +428,11 @@ export function BBoxAuthoringCanvas({
           top: pos.top,
           width: pos.width,
           height: pos.height,
-          border: '2px solid #6366f1',
-          background: 'rgba(99,102,241,0.1)',
+          // var(--color-primary), not a fixed indigo: the corner handles and
+          // label pill below are already `border-primary`/`bg-primary`, so a
+          // hardcoded hex here drifted out of sync with them in dark mode.
+          border: '2px solid var(--color-primary)',
+          background: 'color-mix(in srgb, var(--color-primary) 10%, transparent)',
           borderRadius: 2,
           boxSizing: 'border-box',
         }}
@@ -489,8 +492,8 @@ export function BBoxAuthoringCanvas({
           top: pos.top,
           width: pos.width,
           height: pos.height,
-          border: '2px dashed #6366f1',
-          background: 'rgba(99,102,241,0.08)',
+          border: '2px dashed var(--color-primary)',
+          background: 'color-mix(in srgb, var(--color-primary) 8%, transparent)',
           borderRadius: 2,
           boxSizing: 'border-box',
           opacity: 0.8,

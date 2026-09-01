@@ -13,6 +13,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { PipelineRun, StepAttempt } from '../../types/pipeline';
 import { cn } from '../../lib/cn';
+import Chip from '../shared/Chip';
+import { CODE_TONE_SOFT } from '../shared/tones';
 import {
   ContextJsonTree,
   ContextStepList,
@@ -76,20 +78,18 @@ function AttemptCard({ attempt, label }: { attempt: StepAttempt; label: string }
     <div className="bg-code-bg rounded-md border border-code-border p-2.5 overflow-auto">
       <div className="text-[11px] font-bold text-code-text mb-2">{label}</div>
       <div className="flex gap-1.5 mb-1.5 items-center">
-        <span className={cn(
-          'text-[10px] font-semibold px-1.5 py-px rounded-sm',
-          succeeded
-            ? 'bg-[rgba(166,227,161,0.15)] text-code-green'
-            : 'bg-[rgba(243,139,168,0.15)] text-code-red',
-        )}>
+        <Chip palette="code" tone={succeeded ? 'success' : 'danger'} size="xs">
           {succeeded ? 'OK' : 'FAIL'}
-        </span>
+        </Chip>
         {attempt.durationMs != null && (
           <span className="text-[10px] text-code-muted">{attempt.durationMs}ms</span>
         )}
       </div>
       {attempt.error && (
-        <div className="text-[11px] text-code-red font-mono mb-1.5 px-2 py-1.5 bg-code-red/10 rounded whitespace-pre-wrap break-words">
+        <div className={cn(
+          'text-[11px] font-mono mb-1.5 px-2 py-1.5 rounded whitespace-pre-wrap break-words',
+          CODE_TONE_SOFT.danger,
+        )}>
           {attempt.error}
         </div>
       )}
@@ -420,12 +420,9 @@ export default function ContextInspector({
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {activeSnapshot.newKeys.map((key) => (
-                      <span
-                        key={key}
-                        className="px-1.5 py-0.5 bg-[rgba(166,227,161,0.15)] text-code-green rounded-sm text-[11px] font-semibold font-mono"
-                      >
+                      <Chip key={key} palette="code" tone="success" size="sm" mono>
                         {key}
-                      </span>
+                      </Chip>
                     ))}
                   </div>
                 </div>
@@ -500,7 +497,11 @@ export default function ContextInspector({
                 {activeSnapshot.stepExecution.error && (
                   <div>
                     <div className="text-[11px] text-code-red font-semibold mb-1">Error</div>
-                    <div className="px-3 py-2.5 bg-code-red/10 border border-code-red rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto">
+                    {/* Code-surface bg, not a tinted danger-bg: the nested
+                        label below is code-red, a pastel tuned for the dark
+                        code palette, and reads poorly on a light surface
+                        tint. Matches CODE_TONE_SOFT.danger's flat-bg rule. */}
+                    <div className="px-3 py-2.5 bg-code-surface border border-code-red rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto">
                       <div className="text-code-red font-semibold mb-1">
                         {activeSnapshot.stepExecution.error}
                       </div>
@@ -517,14 +518,9 @@ export default function ContextInspector({
                     {activeSnapshot.stepExecution.approvals.map((approval, idx) => (
                       <div key={idx} className="px-3 py-2.5 bg-surface-inset border border-border rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto mb-2">
                         <div className="flex gap-2 mb-1">
-                          <span className={cn(
-                            'px-1.5 py-0.5 rounded-sm text-[10px] font-semibold',
-                            approval.decision === 'approve'
-                              ? 'bg-[rgba(166,227,161,0.15)] text-code-green'
-                              : 'bg-[rgba(243,139,168,0.15)] text-code-red',
-                          )}>
+                          <Chip palette="code" tone={approval.decision === 'approve' ? 'success' : 'danger'} size="xs">
                             {approval.decision.toUpperCase()}
-                          </span>
+                          </Chip>
                           <span className="text-[11px] text-code-text">{approval.userId}</span>
                         </div>
                         {approval.comment && (

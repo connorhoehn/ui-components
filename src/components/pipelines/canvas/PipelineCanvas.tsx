@@ -582,8 +582,8 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
           variant={BackgroundVariant.Dots}
           gap={16}
           size={1}
-          color="#e2e8f0"
-          bgColor="#fafbfc"
+          color="var(--color-border)"
+          bgColor="var(--color-surface-inset)"
         />
         {showControls ? (
           <Controls
@@ -602,7 +602,7 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
             className="!bg-surface !border !border-border !rounded-md !w-[180px] !h-[120px]"
             maskColor="rgba(15, 23, 42, 0.04)"
             nodeColor={miniMapNodeColor}
-            nodeStrokeColor="#e2e8f0"
+            nodeStrokeColor="var(--color-border)"
           />
         ) : null}
       </ReactFlow>

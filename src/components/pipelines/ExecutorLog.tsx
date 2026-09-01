@@ -53,7 +53,7 @@ export interface ExecutorLogProps {
 // ---------------------------------------------------------------------------
 
 const COLOR_BLUE = 'var(--color-info)';
-const COLOR_YELLOW = '#eab308';
+const COLOR_YELLOW = 'var(--color-warning)';
 const COLOR_ORANGE = 'var(--color-caution)';
 const COLOR_GRAY = 'var(--color-neutral)';
 const COLOR_RED = 'var(--color-danger)';

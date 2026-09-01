@@ -42,6 +42,16 @@ function valueClasses(t: ValueType): string {
   return cn('text-xs', colorMap[t]);
 }
 
+// Inline highlight wash for a new/changed value or key: a low-opacity
+// code-green tint layered OVER the existing syntax-highlighted text. This is
+// deliberately NOT routed through CODE_TONE_SOFT (shared/tones.ts) — that map
+// gives every tone one flat bg-code-surface, which is right for a badge but
+// would erase this highlight rather than add one, since the surrounding tree
+// is already sitting on bg-code-surface. Kept as a single literal here
+// (rather than repeated inline) so the two opacities stay intentional.
+const HIGHLIGHT_VALUE_BG = 'bg-[rgba(166,227,161,0.08)] rounded-sm px-0.5';
+const HIGHLIGHT_KEY_BG = 'text-code-green font-bold bg-[rgba(166,227,161,0.1)] rounded-sm px-0.5';
+
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -63,7 +73,7 @@ export function ContextJsonTree({
 
   if (data === null) {
     return (
-      <span className={cn(valueClasses('null'), highlighted && 'bg-[rgba(166,227,161,0.08)] rounded-sm px-0.5')}>
+      <span className={cn(valueClasses('null'), highlighted && HIGHLIGHT_VALUE_BG)}>
         null
       </span>
     );
@@ -71,7 +81,7 @@ export function ContextJsonTree({
 
   if (data === undefined) {
     return (
-      <span className={cn(valueClasses('null'), highlighted && 'bg-[rgba(166,227,161,0.08)] rounded-sm px-0.5')}>
+      <span className={cn(valueClasses('null'), highlighted && HIGHLIGHT_VALUE_BG)}>
         undefined
       </span>
     );
@@ -79,7 +89,7 @@ export function ContextJsonTree({
 
   if (typeof data === 'boolean') {
     return (
-      <span className={cn(valueClasses('boolean'), highlighted && 'bg-[rgba(166,227,161,0.08)] rounded-sm px-0.5')}>
+      <span className={cn(valueClasses('boolean'), highlighted && HIGHLIGHT_VALUE_BG)}>
         {String(data)}
       </span>
     );
@@ -87,7 +97,7 @@ export function ContextJsonTree({
 
   if (typeof data === 'number') {
     return (
-      <span className={cn(valueClasses('number'), highlighted && 'bg-[rgba(166,227,161,0.08)] rounded-sm px-0.5')}>
+      <span className={cn(valueClasses('number'), highlighted && HIGHLIGHT_VALUE_BG)}>
         {String(data)}
       </span>
     );
@@ -96,7 +106,7 @@ export function ContextJsonTree({
   if (typeof data === 'string') {
     const display = data.length > 120 ? data.slice(0, 120) + '...' : data;
     return (
-      <span className={cn(valueClasses('string'), highlighted && 'bg-[rgba(166,227,161,0.08)] rounded-sm px-0.5')}>
+      <span className={cn(valueClasses('string'), highlighted && HIGHLIGHT_VALUE_BG)}>
         &quot;{display}&quot;
       </span>
     );
@@ -165,7 +175,7 @@ export function ContextJsonTree({
                 <div key={key} className="leading-relaxed whitespace-nowrap">
                   <span className={cn(
                     'text-xs font-medium text-code-blue',
-                    keyHighlighted && 'text-code-green font-bold bg-[rgba(166,227,161,0.1)] rounded-sm px-0.5',
+                    keyHighlighted && HIGHLIGHT_KEY_BG,
                   )}>
                     {key}
                   </span>
