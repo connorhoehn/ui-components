@@ -107,7 +107,13 @@ function useSimulatedPeer(
   const [clientId, setClientId] = useState<number | null>(null);
   useEffect(() => {
     if (!awareness || !editor?.view) return;
-    const remote = new Awareness(ydoc);
+    // The remote awareness gets its OWN Y.Doc for identity only. `new
+    // Awareness(ydoc)` inherits ydoc.clientID, so a "peer" built on the
+    // shared doc is the SAME client as the local editor — the caret overlay
+    // (correctly) skips it as self and nothing renders. The cursor payload is
+    // unaffected: relative positions are computed against the shared doc and
+    // interpreted by the receiver, so only the identity needs to be distinct.
+    const remote = new Awareness(new Y.Doc());
     remote.setLocalStateField('user', user);
     setClientId(remote.clientID);
 
