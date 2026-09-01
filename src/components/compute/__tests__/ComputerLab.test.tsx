@@ -308,3 +308,51 @@ describe('ComputerLab', () => {
     expect(await screen.findByText('No computers to lab')).toBeTruthy();
   });
 });
+
+// ─── Deep links ──────────────────────────────────────────────────────────────
+//
+// `focusComputerId` is how a link elsewhere in an app ("an agent is working
+// this item — open its computer") lands somewhere useful. The behaviour worth
+// pinning is that it places you once rather than pinning you there.
+//
+// Asserted through the composer placeholder, which already names the focused
+// computer — a real thing a user reads, rather than a test id added to prove
+// this one point.
+
+describe('focusComputerId', () => {
+  const placeholder = async () =>
+    (await screen.findByPlaceholderText(/instruction for/)).getAttribute('placeholder') ?? '';
+
+  it('seeds the first pane with the linked computer, not the first in the fleet', async () => {
+    renderLab({ focusComputerId: fixtureComputers[2]!.id });
+    await summary();
+    await waitFor(async () =>
+      expect(await placeholder()).toContain(fixtureComputers[2]!.label));
+  });
+
+  it('ignores an id the fleet does not have, rather than blanking the pane', async () => {
+    // Usually means the fleet has not loaded yet. Clearing the pane on the way
+    // to finding out is a worse answer than doing nothing.
+    renderLab({ focusComputerId: 'not-a-computer' });
+    await summary();
+    await waitFor(async () =>
+      expect(await placeholder()).toContain(fixtureComputers[0]!.label));
+  });
+
+  it('does not drag focus back after you move away from it', async () => {
+    renderLab({ focusComputerId: fixtureComputers[1]!.id });
+    await summary();
+    await waitFor(async () =>
+      expect(await placeholder()).toContain(fixtureComputers[1]!.label));
+
+    // A split moves focus to the new pane and re-renders with the same prop
+    // still set. A link that reasserted itself would yank focus back here, and
+    // would keep doing it for as long as the URL stayed put.
+    cmd('Enter');
+    await summary(/2 panes$/);
+    const after = await placeholder();
+
+    // Give the effect every chance to fire again.
+    await waitFor(async () => expect(await placeholder()).toBe(after));
+  });
+});

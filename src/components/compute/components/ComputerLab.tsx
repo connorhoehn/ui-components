@@ -57,12 +57,27 @@ export interface ComputerLabProps {
   leader?: LeaderConfig | null;
   /** Denominator for the per-pane expiry meters. */
   idleWindowMs?: number;
+  /**
+   * Open with this computer in focus — a deep link's landing spot.
+   *
+   * Applied ONCE per distinct value, not held: it places you and then gets out
+   * of the way, so moving to another pane afterwards is not undone on the next
+   * render. If the computer already has a pane in the active window that pane
+   * is focused; otherwise the focused pane is retargeted to it, which keeps a
+   * deliberate split from being torn down by a link.
+   *
+   * An id that is not in the fleet is ignored rather than cleared: it usually
+   * means the fleet has not loaded yet, and blanking the pane on the way to
+   * finding out is a worse answer than doing nothing.
+   */
+  focusComputerId?: string | null;
   className?: string;
 }
 
 export function ComputerLab({
   open,
   onClose,
+  focusComputerId = null,
   keymap = DEFAULT_KEYMAP,
   leader = null,
   idleWindowMs = DEFAULT_IDLE_WINDOW_MS,
@@ -95,12 +110,37 @@ export function ComputerLab({
   // Seed once the fleet is actually known. Keyed on `open` alone this fired
   // before the first fetch resolved, seeded with null, and never ran again —
   // so the lab opened permanently empty next to a full rail.
+  //
+  // A deep link's computer wins the seed, so arriving from one does not open
+  // on somebody else's box and then jump.
   const hasWindows = layout.windows.length > 0;
-  const firstComputerId = computers[0]?.id ?? null;
+  const linked = focusComputerId && byId.has(focusComputerId) ? focusComputerId : null;
+  const firstComputerId = linked ?? computers[0]?.id ?? null;
   useEffect(() => {
     if (!open || hasWindows || !firstComputerId) return;
     layout.ensureSeeded(firstComputerId, defaultKindId);
   }, [open, hasWindows, firstComputerId, defaultKindId, layout.ensureSeeded]);
+
+  // Land a deep link. Fires per distinct id — following one link, moving away,
+  // then following the same link again re-lands you, which is what a link
+  // should do; a render in between does not.
+  const landedRef = useRef<string | null>(null);
+  const { focusPane, setPaneComputer, panes: layoutPanes, activePaneId } = layout;
+  useEffect(() => {
+    if (!open || !linked) return;
+    if (landedRef.current === linked) return;
+    const existing = layoutPanes.find((p) => p.computerId === linked);
+    if (existing) focusPane(existing.id);
+    else if (activePaneId) setPaneComputer(activePaneId, linked);
+    else return;   // nothing to land in yet — try again once a pane exists
+    landedRef.current = linked;
+  }, [open, linked, layoutPanes, activePaneId, focusPane, setPaneComputer]);
+
+  // Closing the lab forgets where a link put you, so reopening from the same
+  // link lands again rather than silently doing nothing.
+  useEffect(() => {
+    if (!open) landedRef.current = null;
+  }, [open]);
 
   // `layout` is rebuilt every render, so depending on the object itself would
   // reconcile -> setState -> re-render forever. The callback is stable.
