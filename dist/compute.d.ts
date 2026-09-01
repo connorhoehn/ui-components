@@ -356,7 +356,7 @@ export declare interface Computer {
     activeModel?: string;
 }
 
-export declare function ComputerLab({ open, onClose, focusComputerId, variant, keymap, leader, idleWindowMs, className, }: ComputerLabProps): JSX.Element | null;
+export declare function ComputerLab({ open, onClose, focusComputerId, variant, chrome: chromeTone, keymap, leader, idleWindowMs, className, }: ComputerLabProps): JSX.Element | null;
 
 export declare interface ComputerLabProps {
     open: boolean;
@@ -405,6 +405,25 @@ export declare interface ComputerLabProps {
      * inline variant drops both.
      */
     variant?: 'overlay' | 'inline';
+    /**
+     * Which palette the lab's *chrome* uses — top bar, rail, command line.
+     *
+     * `code` is the terminal family (Catppuccin, permanently dark). Right for an
+     * overlay, which is a place you enter and where the whole viewport is the
+     * lab.
+     *
+     * `app` re-points the same tokens at the host's surface/border/text, so the
+     * chrome takes the host's theme and flips with it. Without this the lab is a
+     * dark slab dropped into a light page — it reads as an embedded widget
+     * rather than part of the app, which is exactly the "feels like an iframe"
+     * complaint.
+     *
+     * Panes are NOT affected either way: a terminal is dark, and the remap is
+     * applied to the chrome containers rather than the root precisely so it does
+     * not inherit into them. Defaults to `app` for an inline lab and `code` for
+     * an overlay, which is what each is usually for.
+     */
+    chrome?: 'code' | 'app';
     className?: string;
 }
 

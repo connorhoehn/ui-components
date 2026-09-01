@@ -1,5 +1,5 @@
 import { a as e, o as t } from "./registry-DbX3MVAA.js";
-import { n, t as r } from "./useWebSocket-16eHDqT5.js";
+import { n, t as r } from "./useWebSocket-CGc0yRhM.js";
 import { t as i } from "./cn-DhjIN-s0.js";
 import { t as a } from "./useResolvedTheme-C-Qskt8V.js";
 import { Suspense as o, lazy as s, useCallback as c, useMemo as l, useRef as u } from "react";

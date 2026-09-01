@@ -57,7 +57,7 @@ declare interface AttachmentsPanelProps {
     editable: boolean;
 }
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, unsupported, header, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, unsupported, header, toolbarActions, gutterItems, onFocusGutterItem, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -87,6 +87,20 @@ export declare interface CanvasDocumentViewProps {
     unsupported?: readonly CanvasUnsupportedForm[];
     /** Rendered above the page — title, participants, actions. */
     header?: ReactNode;
+    /**
+     * Rendered at the right end of the toolbar — presence avatars, share, and
+     * anything belonging to the document rather than to formatting.
+     */
+    toolbarActions?: ReactNode;
+    /**
+     * Comment threads for the margin. Each carries the offset it wants and the
+     * gutter resolves collisions between them.
+     *
+     * Omitted entirely when empty rather than rendered as a blank column, so a
+     * document with no discussion keeps the full width for its text.
+     */
+    gutterItems?: readonly GutterItem[];
+    onFocusGutterItem?: (id: string) => void;
     /**
      * Hands the live editor out once it exists (null while initialising).
      *
@@ -184,6 +198,19 @@ declare interface DocumentEditorPageProps {
     onDockVideo?: () => void;
     /** Undock the video panel from the left sidebar */
     onUndockVideo?: () => void;
+}
+
+export declare function DocumentGutter({ items, gap, estimatedHeight, onFocusItem, emptyLabel, 'data-testid': testId, }: DocumentGutterProps): JSX.Element;
+
+export declare interface DocumentGutterProps {
+    items: readonly GutterItem[];
+    /** Minimum vertical gap between two cards. */
+    gap?: number;
+    /** Approximate rendered height of a card, used for collision spacing. */
+    estimatedHeight?: number;
+    onFocusItem?: (id: string) => void;
+    emptyLabel?: string;
+    'data-testid'?: string;
 }
 
 export declare function DocumentHeader({ meta, mode, onModeChange, participants, onUpdateMeta, onExport, onToggleHistory, onToggleVideoCall, onToggleVideoHistory, isCallActive, onClearDocument, onJumpToUser, sections, onToggleMyItems, myItemCount, commentCount, onBack, onFollowUser, followingUserId, onFinalize, onUnlock, pastCallsCount, }: DocumentHeaderProps): JSX.Element;
@@ -312,6 +339,17 @@ declare interface GatewayMessage {
 export declare function generateSummaryBullets(allItems: TaskItem[], sections: Section[]): string[];
 
 export declare function getInitials(name: string): string;
+
+/** A thread plus where it wants to sit, in pixels from the page top. */
+export declare interface GutterItem {
+    id: string;
+    /** Desired vertical offset. Ties and near-ties are resolved by stacking. */
+    top: number;
+    /** True when the anchor is inside the current selection or hovered. */
+    active?: boolean;
+    /** Rendered inside the card — usually a CommentThread. */
+    content: ReactNode;
+}
 
 export declare function HeaderBanner({ meta, participantCount, }: {
     meta: DocumentMeta;
@@ -696,6 +734,19 @@ declare interface SnapshotSection {
         priority: string;
     }>;
 }
+
+/**
+ * Pushes overlapping cards down so each keeps `gap` clearance.
+ *
+ * Sorted first: input order is whatever the comment API returned, and
+ * resolving collisions in that order would let an early thread anchored far
+ * down the page push everything above it. Exported because the stacking rule
+ * is the part worth testing directly.
+ */
+export declare function stackOffsets(items: readonly {
+    id: string;
+    top: number;
+}[], estimatedHeight: number, gap: number): Map<string, number>;
 
 export declare function StandaloneTiptap(props: StandaloneTiptapProps): JSX.Element;
 
