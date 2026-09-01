@@ -3,8 +3,8 @@ import { n as o } from "./ToastProvider-BKjV21G4.js";
 import { t as s } from "./cn-DhjIN-s0.js";
 import { t as c } from "./Input-DLknWXri.js";
 import { t as l } from "./Textarea-Dz4doxTv.js";
-import { t as u } from "./PresenceDot-3gBZGPvX.js";
-import { n as d, t as f } from "./Avatar-BzicCOft.js";
+import { n as u, t as d } from "./Avatar-BzicCOft.js";
+import { t as f } from "./PresenceDot-3gBZGPvX.js";
 import { d as p, i as m, r as h, u as g } from "./PresencePanel-TLZ43ZF1.js";
 import { t as _ } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as v } from "./Select-CqVokE2v.js";
@@ -2479,7 +2479,7 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 					"aria-current": r ? "true" : void 0,
 					className: s("flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left", l ? "hover:bg-white/10" : "hover:bg-surface-hover", r && (l ? "bg-white/10" : "bg-surface-hover")),
 					children: [
-						i ? /* @__PURE__ */ T(d, {
+						i ? /* @__PURE__ */ T(u, {
 							size: 28,
 							maxVisible: 2,
 							items: e.peers.map((e) => ({
@@ -2489,12 +2489,12 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 							}))
 						}) : a ? /* @__PURE__ */ E("span", {
 							className: "relative inline-flex shrink-0",
-							children: [/* @__PURE__ */ T(f, {
+							children: [/* @__PURE__ */ T(d, {
 								name: a.displayName,
 								color: a.color,
 								src: a.avatarUrl,
 								size: 28
-							}), a.online !== void 0 && /* @__PURE__ */ T(u, {
+							}), a.online !== void 0 && /* @__PURE__ */ T(f, {
 								state: a.online ? "online" : "offline",
 								pulse: !1,
 								className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", l ? "ring-call-chrome" : "ring-surface")

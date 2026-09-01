@@ -1,8 +1,8 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { d as t, l as n } from "./Chip-YhQI5B9P.js";
 import { t as r } from "./EmptyState-ClmWoqCb.js";
-import { t as i } from "./StatusDot-Bgx2zxgC.js";
-import { t as a } from "./Avatar-BzicCOft.js";
+import { t as i } from "./Avatar-BzicCOft.js";
+import { t as a } from "./StatusDot-Bgx2zxgC.js";
 import { useEffect as o, useRef as s, useState as c } from "react";
 import { Fragment as l, jsx as u, jsxs as d } from "react/jsx-runtime";
 //#region src/components/shared/ConnectionPill.tsx
@@ -149,7 +149,7 @@ function y({ users: t, maxVisible: n = 5, size: r = 28, onMoreClick: o, onUserCl
 						border: `${x}px solid white`,
 						opacity: m
 					}
-				}) : /* @__PURE__ */ u(a, {
+				}) : /* @__PURE__ */ u(i, {
 					name: e.name,
 					size: r,
 					color: p,
@@ -160,7 +160,7 @@ function y({ users: t, maxVisible: n = 5, size: r = 28, onMoreClick: o, onUserCl
 				}),
 				n && /* @__PURE__ */ u("span", {
 					className: "absolute -bottom-0.5 -right-0.5",
-					children: /* @__PURE__ */ u(i, {
+					children: /* @__PURE__ */ u(a, {
 						color: n,
 						size: "xs",
 						"aria-label": o ? `${e.name} away` : e.online === !1 ? `${e.name} offline` : `${e.name} online`
@@ -345,7 +345,7 @@ function T({ item: e, opacity: t, dotColor: n }) {
 				className: "w-[5px] h-[5px] rounded-full shrink-0",
 				style: { background: n }
 			}),
-			/* @__PURE__ */ u(a, {
+			/* @__PURE__ */ u(i, {
 				name: e.actor,
 				size: 17
 			}),

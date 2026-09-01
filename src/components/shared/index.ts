@@ -76,6 +76,8 @@ export { default as SuggestionCard } from './SuggestionCard';
 export { default as TaskComposer } from './TaskComposer';
 export type { TaskComposerProps, ComposerSuggestion } from './TaskComposer';
 export type { SuggestionCardProps } from './SuggestionCard';
+export { default as ExpertCard } from './ExpertCard';
+export type { ExpertCardProps, ExpertSkillMatch, ExpertEvidenceItem } from './ExpertCard';
 export * from './StatCard';
 export { default as KPIGrid } from './KPIGrid';
 export * from './KPIGrid';
