@@ -2,7 +2,6 @@ import { Awareness } from 'y-protocols/awareness';
 import { default as default_2 } from 'react';
 import { DragEvent as DragEvent_2 } from 'react';
 import { Editor } from '@tiptap/react';
-import { Editor as Editor_2 } from '@tiptap/core';
 import { JSX } from 'react';
 import { MutableRefObject } from 'react';
 import { ReactNode } from 'react';
@@ -1074,7 +1073,7 @@ declare interface UseDocumentActionsArgs {
 export declare function useFollowCursor({ editor, provider, followClientId, onLost }: UseFollowCursorOptions): void;
 
 export declare interface UseFollowCursorOptions {
-    editor: Editor_2 | null;
+    editor: Editor | null;
     /** Anything carrying the doc's awareness — the same shape TiptapEditor takes. */
     provider: {
         awareness: Awareness;

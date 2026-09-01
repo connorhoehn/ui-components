@@ -18,7 +18,10 @@
 // common case of matching on the user payload.
 
 import { useEffect } from 'react';
-import type { Editor } from '@tiptap/core';
+// Editor comes from @tiptap/react, not @tiptap/core: react is the package
+// this library DECLARES, and the packaging contract rejects shipped .d.ts
+// files whose type imports a consumer cannot resolve (TS2307).
+import type { Editor } from '@tiptap/react';
 import * as Y from 'yjs';
 import type { Awareness } from 'y-protocols/awareness';
 import { ySyncPluginKey, relativePositionToAbsolutePosition } from '@tiptap/y-tiptap';
