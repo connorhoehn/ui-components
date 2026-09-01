@@ -106,6 +106,20 @@ declare interface CanvasDocumentViewProps {
     /** Rendered above the page — title, participants, actions. */
     header?: ReactNode;
     /**
+     * Rendered at the right end of the toolbar — presence avatars, share, and
+     * anything belonging to the document rather than to formatting.
+     */
+    toolbarActions?: ReactNode;
+    /**
+     * Comment threads for the margin. Each carries the offset it wants and the
+     * gutter resolves collisions between them.
+     *
+     * Omitted entirely when empty rather than rendered as a blank column, so a
+     * document with no discussion keeps the full width for its text.
+     */
+    gutterItems?: readonly GutterItem[];
+    onFocusGutterItem?: (id: string) => void;
+    /**
      * Hands the live editor out once it exists (null while initialising).
      *
      * Not a convenience: `materialize()` needs the LIVE editor's ProseMirror
@@ -256,6 +270,17 @@ export declare interface FileUploadSummary {
     status: RMFileUploadState['status'];
     downloadUrl?: string;
     error?: string;
+}
+
+/** A thread plus where it wants to sit, in pixels from the page top. */
+declare interface GutterItem {
+    id: string;
+    /** Desired vertical offset. Ties and near-ties are resolved by stacking. */
+    top: number;
+    /** True when the anchor is inside the current selection or hovered. */
+    active?: boolean;
+    /** Rendered inside the card — usually a CommentThread. */
+    content: ReactNode;
 }
 
 declare interface HangoutLayoutParticipant {
