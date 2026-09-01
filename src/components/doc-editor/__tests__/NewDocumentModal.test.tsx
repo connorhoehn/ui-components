@@ -110,6 +110,7 @@ describe('NewDocumentModal', () => {
       description: undefined,
       icon: '📝',
       documentTypeId: 'mn',
+      shape: 'page',
     });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -159,9 +160,49 @@ describe('NewDocumentModal', () => {
     const twoFields = mkType({ id: 'two', name: 'TwoSec', fields: [mkField('f1'), mkField('f2')] });
     loadTypes.mockReturnValue([oneField, twoFields]);
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    // The count is only true for a sectioned document — a page starts blank.
+    fireEvent.click(screen.getByTestId('doc-shape-sections'));
     expect(screen.getByTestId('type-option-one').textContent).toContain('1 section');
     expect(screen.getByTestId('type-option-one').textContent).not.toContain('1 sections');
     expect(screen.getByTestId('type-option-two').textContent).toContain('2 sections');
+  });
+});
+
+// ── Document shape ──────────────────────────────────────────────────────
+describe('NewDocumentModal — page vs sections', () => {
+  it('preselects Page', () => {
+    loadTypes.mockReturnValue([mkType()]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    expect(screen.getByTestId('doc-shape-page')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('doc-shape-sections')).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('describes both shapes in words, never as a schema version', () => {
+    loadTypes.mockReturnValue([mkType()]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    expect(screen.getByTestId('doc-shape-page').textContent).toContain('One continuous document');
+    expect(screen.getByTestId('doc-shape-sections').textContent).toContain('section forms');
+    expect(screen.getByRole('dialog').textContent).not.toMatch(/schemaVersion/i);
+  });
+
+  it('reports the chosen shape on create', () => {
+    const onCreate = vi.fn();
+    loadTypes.mockReturnValue([mkType()]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+    fireEvent.click(screen.getByTestId('doc-shape-sections'));
+    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notepad' } });
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+    expect(onCreate).toHaveBeenCalledWith(expect.objectContaining({ shape: 'sections' }));
+  });
+
+  it('resets to Page each time the modal opens', () => {
+    loadTypes.mockReturnValue([mkType()]);
+    const { rerender } = render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('doc-shape-sections'));
+    expect(screen.getByTestId('doc-shape-sections')).toHaveAttribute('aria-pressed', 'true');
+    rerender(<NewDocumentModal open={false} onClose={vi.fn()} onCreate={vi.fn()} />);
+    rerender(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    expect(screen.getByTestId('doc-shape-page')).toHaveAttribute('aria-pressed', 'true');
   });
 });
 

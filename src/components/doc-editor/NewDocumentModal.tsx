@@ -1,6 +1,25 @@
 // frontend/src/components/doc-editor/NewDocumentModal.tsx
 //
 // Modal for creating a new document.
+//
+// ## Why there is a shape question here
+//
+// There are two authoring surfaces, and both are wanted. A `page` is one
+// continuous document — the Google-Docs/Confluence shape, and the one the
+// canvas editor renders. `sections` is the older shape: an ordered list of
+// section forms, which is what makes the product usable as a todo creator or a
+// notepad. Neither is being phased out.
+//
+// The question is asked at CREATION because that is the only moment it is
+// cheap. Afterwards, changing shape means migrating real content, which is a
+// separate, reviewable operation (see the bulk migration surface in the app).
+//
+// `page` is preselected: it is the norm for new work. `sections` stays one
+// click away, on purpose.
+//
+// The word `schemaVersion` deliberately does not appear in the UI. It is the
+// implementation of the choice, not the choice — a person picking here is
+// choosing between a continuous page and a set of section forms.
 
 import { useState, useEffect, useId, useRef } from 'react';
 import { loadTypes } from '../../hooks/useDocumentTypes';
@@ -9,16 +28,57 @@ import Modal from '../shared/Modal';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
 import { Textarea } from '../forms/Textarea';
+import { SelectableCard } from '../ui/SelectableCard';
+import Chip from '../shared/Chip';
 
 // ---------------------------------------------------------------------------
 // Props
 // ---------------------------------------------------------------------------
 
+/**
+ * Which authoring surface a new document opens in.
+ *
+ * `page` becomes `meta.schemaVersion = 2` on the document's CRDT — the one
+ * gate the editor branches on. Doing that translation is the host's job, not
+ * this modal's; the modal only reports which shape the person chose.
+ */
+export type DocumentShape = 'page' | 'sections';
+
 export interface NewDocumentModalProps {
   open: boolean;
   onClose: () => void;
-  onCreate: (meta: { title: string; type: string; description?: string; icon: string; documentTypeId: string }) => void;
+  onCreate: (meta: {
+    title: string;
+    type: string;
+    description?: string;
+    icon: string;
+    documentTypeId: string;
+    shape: DocumentShape;
+  }) => void;
 }
+
+/** The two shapes, with the words a person picking between them needs. */
+const SHAPES: ReadonlyArray<{
+  id: DocumentShape;
+  icon: string;
+  name: string;
+  description: string;
+}> = [
+  {
+    id: 'page',
+    icon: '📄',
+    name: 'Page',
+    description:
+      'One continuous document. Headings, paragraphs, lists and tables flow down a single sheet — like Google Docs or Confluence.',
+  },
+  {
+    id: 'sections',
+    icon: '🗂️',
+    name: 'Sections',
+    description:
+      'A structured set of section forms — task lists, decisions and notes, each in its own box. Better as a todo creator or a notepad.',
+  },
+];
 
 // ---------------------------------------------------------------------------
 // Component
@@ -29,11 +89,14 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  // Canvas preselected — see the file header.
+  const [shape, setShape] = useState<DocumentShape>('page');
   const titleRef = useRef<HTMLInputElement>(null);
   // Ids that tie each visible label to the control it names. Before these,
   // the association was purely visual: focusing the title field announced
   // only its placeholder.
   const uid = useId();
+  const shapeGroupLabelId = `${uid}-shape-label`;
   const typeGroupLabelId = `${uid}-type-label`;
   const titleFieldId = `${uid}-title`;
   const descriptionFieldId = `${uid}-description`;
@@ -45,6 +108,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     setSelectedId(loaded[0]?.id ?? null);
     setTitle('');
     setDescription('');
+    setShape('page');
     // Cleared on close: an uncancelled focus lands on a hidden input and
     // steals focus back from whatever the user moved to.
     const t = setTimeout(() => titleRef.current?.focus(), 50);
@@ -64,6 +128,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
       description: description.trim() || undefined,
       icon: selected.icon,
       documentTypeId: selected.id,
+      shape,
     });
     onClose();
   };
@@ -120,6 +185,51 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
             </div>
           ) : (
             <>
+              {/* Shape picker — the first and biggest decision, so it comes
+                  first. SelectableCard rather than a hand-rolled pressed
+                  button: it carries the selected chrome, aria-pressed and the
+                  focus ring that every hand-rolled picker in this repo lost. */}
+              <div className={cn('mb-5')}>
+                <div
+                  id={shapeGroupLabelId}
+                  className={cn('block text-[13px] font-semibold text-text-secondary mb-2')}
+                >
+                  How is this document written?
+                </div>
+                <div
+                  role="group"
+                  aria-labelledby={shapeGroupLabelId}
+                  className={cn('grid grid-cols-2 gap-2')}
+                >
+                  {SHAPES.map((s) => (
+                    <SelectableCard
+                      key={s.id}
+                      padding="md"
+                      selected={shape === s.id}
+                      onSelect={() => setShape(s.id)}
+                      data-testid={`doc-shape-${s.id}`}
+                    >
+                      <div className={cn('flex items-center gap-2')}>
+                        <span className={cn('text-xl shrink-0')} aria-hidden="true">
+                          {s.icon}
+                        </span>
+                        <span className={cn('text-sm font-semibold text-text-primary')}>
+                          {s.name}
+                        </span>
+                        {s.id === 'page' && (
+                          <Chip tone="info" size="xs">
+                            Default
+                          </Chip>
+                        )}
+                      </div>
+                      <div className={cn('mt-1 text-[11px] leading-snug text-neutral')}>
+                        {s.description}
+                      </div>
+                    </SelectableCard>
+                  ))}
+                </div>
+              </div>
+
               {/* Type picker */}
               <div className={cn('mb-5')}>
                 <div
@@ -159,8 +269,15 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                               {t.description}
                             </div>
                           )}
+                          {/* A page does not get the type's sections created
+                              for it — it starts as a blank sheet — so the
+                              section count would be a promise this flow does
+                              not keep. The type still sets the icon, the type
+                              name and anything keyed off it downstream. */}
                           <div className={cn('text-[11px] text-text-tertiary mt-0.5')}>
-                            {t.fields.length} section{t.fields.length !== 1 ? 's' : ''}
+                            {shape === 'sections'
+                              ? `${t.fields.length} section${t.fields.length !== 1 ? 's' : ''}`
+                              : 'Sets the icon and type'}
                           </div>
                         </div>
                         {isSelected && (

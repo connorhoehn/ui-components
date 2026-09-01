@@ -444,6 +444,15 @@ declare interface DocumentMeta {
     activeCallSessionId?: string;
 }
 
+/**
+ * Which authoring surface a new document opens in.
+ *
+ * `page` becomes `meta.schemaVersion = 2` on the document's CRDT — the one
+ * gate the editor branches on. Doing that translation is the host's job, not
+ * this modal's; the modal only reports which shape the person chose.
+ */
+export declare type DocumentShape = 'page' | 'sections';
+
 export declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 export declare interface DocumentToolbarProps {
@@ -586,7 +595,7 @@ declare interface MyMentionsPanelProps {
 
 export declare function NewDocumentModal({ open, onClose, onCreate }: NewDocumentModalProps): JSX.Element | null;
 
-declare interface NewDocumentModalProps {
+export declare interface NewDocumentModalProps {
     open: boolean;
     onClose: () => void;
     onCreate: (meta: {
@@ -595,6 +604,7 @@ declare interface NewDocumentModalProps {
         description?: string;
         icon: string;
         documentTypeId: string;
+        shape: DocumentShape;
     }) => void;
 }
 

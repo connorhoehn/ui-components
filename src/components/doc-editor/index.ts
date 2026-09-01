@@ -1,6 +1,7 @@
 export { default as DocumentEditorPage } from './DocumentEditorPage';
 export { default as DocumentListPage } from './DocumentListPage';
 export { default as NewDocumentModal } from './NewDocumentModal';
+export type { NewDocumentModalProps, DocumentShape } from './NewDocumentModal';
 export { default as DocumentHeader } from './DocumentHeader';
 export type { DocumentHeaderCallVariant } from './DocumentHeader';
 export { default as EditorToolbar } from './EditorToolbar';
