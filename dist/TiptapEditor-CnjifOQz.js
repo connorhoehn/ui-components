@@ -206,8 +206,8 @@ function S({ cursors: e, editorView: t, containerEl: n }) {
 		}, e.clientId);
 	}) }) : null;
 }
-function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, placeholder: T = "Start typing...", sectionId: E, onUpdateCursorInfo: D, extensions: O }) {
-	let k = r(() => [
+function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, placeholder: T = "Start typing...", sectionId: E, onUpdateCursorInfo: D, extensions: O, chrome: k = "card", hideToolbar: A = !1, onEditorReady: j }) {
+	let M = r(() => [
 		d.configure({ history: !1 }),
 		f,
 		p.configure({ nested: !0 }),
@@ -221,10 +221,10 @@ function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, place
 		y,
 		a,
 		O
-	]), A = u({
-		extensions: k,
+	]), N = u({
+		extensions: M,
 		editable: w
-	}, [k]), [j, M] = i([]), [N, P] = i(null);
+	}, [M]), [P, F] = i([]), [I, L] = i(null);
 	n(() => {
 		if (D) D(C.name, C.color);
 		else if (x?.awareness) {
@@ -240,14 +240,14 @@ function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, place
 		C,
 		D
 	]);
-	let F = t(() => {
-		if (!x?.awareness || !A?.view) return;
+	let R = t(() => {
+		if (!x?.awareness || !N?.view) return;
 		let e = x.awareness.getStates(), t = x.awareness.clientID, n = [];
 		e.forEach((e, r) => {
 			if (r === t) return;
 			let i = e.user;
 			if (!(!i || !e.cursor) && !(E && e.cursor.sectionId !== E)) try {
-				let t = v.getState(A.view.state);
+				let t = v.getState(N.view.state);
 				if (!t?.type || !t?.binding?.mapping) return;
 				let a = _(t.doc, t.type, c.createRelativePositionFromJSON(e.cursor.anchor), t.binding.mapping), o = _(t.doc, t.type, c.createRelativePositionFromJSON(e.cursor.head), t.binding.mapping);
 				n.push({
@@ -258,19 +258,19 @@ function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, place
 					head: o
 				});
 			} catch {}
-		}), M(n);
+		}), F(n);
 	}, [
 		x,
-		A,
+		N,
 		E
 	]);
-	return n(() => {
-		if (!A?.view || !x?.awareness) return;
+	n(() => {
+		if (!N?.view || !x?.awareness) return;
 		let e = () => {
 			try {
-				let e = v.getState(A.view.state);
+				let e = v.getState(N.view.state);
 				if (!e?.type || !e?.binding?.mapping) return;
-				let { anchor: t, head: n } = A.view.state.selection, r = g(t, e.type, e.binding.mapping), i = g(n, e.type, e.binding.mapping);
+				let { anchor: t, head: n } = N.view.state.selection, r = g(t, e.type, e.binding.mapping), i = g(n, e.type, e.binding.mapping);
 				x.awareness.setLocalStateField("cursor", {
 					anchor: r,
 					head: i,
@@ -278,28 +278,32 @@ function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, place
 				});
 			} catch {}
 		};
-		return A.on("selectionUpdate", e), e(), () => {
-			A.off("selectionUpdate", e), x.awareness.setLocalStateField("cursor", null);
+		return N.on("selectionUpdate", e), e(), () => {
+			N.off("selectionUpdate", e), x.awareness.setLocalStateField("cursor", null);
 		};
 	}, [
-		A,
+		N,
 		x,
 		E
 	]), n(() => {
 		if (!x?.awareness) return;
-		let e = () => F();
+		let e = () => R();
 		return x.awareness.on("change", e), () => {
 			x.awareness.off("change", e);
 		};
-	}, [x, F]), /* @__PURE__ */ s("div", {
-		className: e(w ? "border border-border rounded-lg overflow-hidden relative" : "relative"),
-		children: [w && /* @__PURE__ */ o(b, { editor: A }), /* @__PURE__ */ s("div", {
-			ref: P,
-			className: e("px-4 py-3 text-sm leading-relaxed text-text-primary relative"),
-			children: [/* @__PURE__ */ o(l, { editor: A }), /* @__PURE__ */ o(S, {
-				cursors: j,
-				editorView: A?.view,
-				containerEl: N
+	}, [x, R]);
+	let z = k === "none";
+	return n(() => {
+		j?.(N);
+	}, [N]), /* @__PURE__ */ s("div", {
+		className: e(!z && w ? "border border-border rounded-lg overflow-hidden relative" : "relative"),
+		children: [w && !A && /* @__PURE__ */ o(b, { editor: N }), /* @__PURE__ */ s("div", {
+			ref: L,
+			className: e("relative", z ? "leading-relaxed" : "px-4 py-3 text-sm leading-relaxed text-text-primary"),
+			children: [/* @__PURE__ */ o(l, { editor: N }), /* @__PURE__ */ o(S, {
+				cursors: P,
+				editorView: N?.view,
+				containerEl: I
 			})]
 		})]
 	});

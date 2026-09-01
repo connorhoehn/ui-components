@@ -4,6 +4,7 @@ import { Editor } from '@tiptap/react';
 import { JSX } from 'react';
 import { MutableRefObject } from 'react';
 import { ReactNode } from 'react';
+import { useEditor } from '@tiptap/react';
 import { XmlFragment } from 'yjs';
 import * as Y from 'yjs';
 
@@ -56,7 +57,7 @@ declare interface AttachmentsPanelProps {
     editable: boolean;
 }
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, unsupported, header, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, unsupported, header, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -86,6 +87,15 @@ export declare interface CanvasDocumentViewProps {
     unsupported?: readonly CanvasUnsupportedForm[];
     /** Rendered above the page — title, participants, actions. */
     header?: ReactNode;
+    /**
+     * Hands the live editor out once it exists (null while initialising).
+     *
+     * Not a convenience: `materialize()` needs the LIVE editor's ProseMirror
+     * schema, and building a second one puts a second prosemirror-model in the
+     * graph — the `instanceof` break the app's optimizeDeps.exclude entries
+     * already exist to prevent. This is how a caller gets the real one.
+     */
+    onEditorReady?: (editor: Parameters<typeof DocumentToolbar>[0]['editor'] | null) => void;
     'data-testid'?: string;
 }
 
@@ -248,6 +258,15 @@ declare interface DocumentMeta {
     documentType?: string;
     updatedAt?: string;
     activeCallSessionId?: string;
+}
+
+export declare function DocumentToolbar({ editor, actions, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+
+export declare interface DocumentToolbarProps {
+    editor: Editor | null;
+    /** Rendered at the end of the bar — insert-macro menus, share, etc. */
+    actions?: ReactNode;
+    'data-testid'?: string;
 }
 
 export declare function EditorToolbar({ editor }: EditorToolbarProps): JSX.Element | null;
@@ -766,7 +785,7 @@ declare interface TaskListProps {
     focusLastItem?: MutableRefObject<boolean>;
 }
 
-export declare function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, extensions: extraExtensions, }: TiptapEditorProps): JSX.Element;
+export declare function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, extensions: extraExtensions, chrome, hideToolbar, onEditorReady, }: TiptapEditorProps): JSX.Element;
 
 declare interface TiptapEditorProps {
     fragment: XmlFragment;
@@ -799,6 +818,24 @@ declare interface TiptapEditorProps {
      * editor on every keystroke.
      */
     extensions?: readonly unknown[];
+    /**
+     * `'card'` (default) keeps the bordered widget with its own padding and
+     * themed ink — every existing caller. `'none'` strips both so the editor
+     * can sit directly on a document page the caller owns.
+     */
+    chrome?: 'card' | 'none';
+    /** Suppresses the built-in toolbar, for a page that renders its own. */
+    hideToolbar?: boolean;
+    /**
+     * Hands the live editor out so a caller can render toolbars or menus
+     * OUTSIDE the editor's own box. Called with null while the editor is
+     * initialising, so a consumer must handle that rather than assume.
+     *
+     * A document page needs this: its toolbar belongs in the chrome above the
+     * sheet, not inside the page margins, and the editor instance is the only
+     * way to drive it.
+     */
+    onEditorReady?: (editor: ReturnType<typeof useEditor>) => void;
 }
 
 export declare function useDocumentActions({ documentId, userId, ws, updateMeta, addSection, exportJSON, getSectionFragment, comments, }: UseDocumentActionsArgs): {

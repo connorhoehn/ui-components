@@ -1,11 +1,13 @@
 import { Awareness } from 'y-protocols/awareness';
 import { Component } from 'react';
+import { Editor } from '@tiptap/react';
 import { ErrorInfo } from 'react';
 import { HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
 import { JSX } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { ReactNode } from 'react';
 import { RoomsIndexSubscriber } from '@connorhoehn/realtime-modules/client/hangout-rooms';
+import { useEditor } from '@tiptap/react';
 import { XmlFragment } from 'yjs';
 import * as Y from 'yjs';
 
@@ -103,6 +105,15 @@ declare interface CanvasDocumentViewProps {
     unsupported?: readonly CanvasUnsupportedForm[];
     /** Rendered above the page — title, participants, actions. */
     header?: ReactNode;
+    /**
+     * Hands the live editor out once it exists (null while initialising).
+     *
+     * Not a convenience: `materialize()` needs the LIVE editor's ProseMirror
+     * schema, and building a second one puts a second prosemirror-model in the
+     * graph — the `instanceof` break the app's optimizeDeps.exclude entries
+     * already exist to prevent. This is how a caller gets the real one.
+     */
+    onEditorReady?: (editor: Parameters<typeof DocumentToolbar>[0]['editor'] | null) => void;
     'data-testid'?: string;
 }
 
@@ -219,6 +230,15 @@ declare type ConnectionPillTone = SurfaceTone;
 
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+declare function DocumentToolbar({ editor, actions, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+
+declare interface DocumentToolbarProps {
+    editor: Editor | null;
+    /** Rendered at the end of the bar — insert-macro menus, share, etc. */
+    actions?: ReactNode;
+    'data-testid'?: string;
+}
 
 declare interface EphemeralReaction {
     id: string;
@@ -890,7 +910,7 @@ export declare function slugifyRoomName(input: string): string;
 /** Which colour family a primitive paints in. See the block comment above. */
 declare type SurfaceTone = 'surface' | 'code';
 
-declare function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, extensions: extraExtensions, }: TiptapEditorProps): JSX.Element;
+declare function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, extensions: extraExtensions, chrome, hideToolbar, onEditorReady, }: TiptapEditorProps): JSX.Element;
 
 declare interface TiptapEditorProps {
     fragment: XmlFragment;
@@ -923,6 +943,24 @@ declare interface TiptapEditorProps {
      * editor on every keystroke.
      */
     extensions?: readonly unknown[];
+    /**
+     * `'card'` (default) keeps the bordered widget with its own padding and
+     * themed ink — every existing caller. `'none'` strips both so the editor
+     * can sit directly on a document page the caller owns.
+     */
+    chrome?: 'card' | 'none';
+    /** Suppresses the built-in toolbar, for a page that renders its own. */
+    hideToolbar?: boolean;
+    /**
+     * Hands the live editor out so a caller can render toolbars or menus
+     * OUTSIDE the editor's own box. Called with null while the editor is
+     * initialising, so a consumer must handle that rather than assume.
+     *
+     * A document page needs this: its toolbar belongs in the chrome above the
+     * sheet, not inside the page margins, and the editor instance is the only
+     * way to drive it.
+     */
+    onEditorReady?: (editor: ReturnType<typeof useEditor>) => void;
 }
 
 declare type TransferPhase = 'started' | 'transferring' | 'verifying' | 'complete' | 'failed' | 'cancelled';

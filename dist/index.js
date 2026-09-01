@@ -37,7 +37,7 @@ import { t as gr } from "./Input-DLknWXri.js";
 import { a as _r, c as vr, d as yr, f as br, i as xr, l as Sr, n as Cr, o as wr, p as Tr, r as Er, s as Dr, t as Or, u as kr } from "./PresencePanel-BYowFHnl.js";
 import { t as Ar } from "./activationKey-CjbL3LUv.js";
 import { t as jr } from "./Textarea-Dz4doxTv.js";
-import { a as Mr, i as Nr } from "./renderers-CahRMum8.js";
+import { a as Mr, i as Nr } from "./renderers-DIrGz3QL.js";
 import { n as Pr, r as Fr, t as Ir } from "./EventStreamContext-CLzG8O5_.js";
 import { B as Lr, E as Rr, J as zr, N as Br, Q as Vr, S as Hr, Y as Ur, Z as Wr, _ as Gr, at as Kr, b as qr, d as Jr, f as Yr, g as Xr, h as Zr, it as Qr, j as $r, l as ei, m as ti, n as ni, p as ri, s as ii, t as ai, u as oi, v as si, w as ci, x as li, y as ui } from "./services-CzebqIKX.js";
 import { n as di, t as fi } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1275,7 +1275,7 @@ function gs() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var _s = Eo(() => import("./DocumentEditorPage-DlSAkhAf.js").then((e) => e.n));
+var _s = Eo(() => import("./DocumentEditorPage-DNoUlpmZ.js").then((e) => e.n));
 function vs({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

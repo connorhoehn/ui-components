@@ -356,7 +356,7 @@ export declare interface Computer {
     activeModel?: string;
 }
 
-export declare function ComputerLab({ open, onClose, keymap, leader, idleWindowMs, className, }: ComputerLabProps): JSX.Element | null;
+export declare function ComputerLab({ open, onClose, focusComputerId, keymap, leader, idleWindowMs, className, }: ComputerLabProps): JSX.Element | null;
 
 export declare interface ComputerLabProps {
     open: boolean;
@@ -377,6 +377,20 @@ export declare interface ComputerLabProps {
     leader?: LeaderConfig | null;
     /** Denominator for the per-pane expiry meters. */
     idleWindowMs?: number;
+    /**
+     * Open with this computer in focus — a deep link's landing spot.
+     *
+     * Applied ONCE per distinct value, not held: it places you and then gets out
+     * of the way, so moving to another pane afterwards is not undone on the next
+     * render. If the computer already has a pane in the active window that pane
+     * is focused; otherwise the focused pane is retargeted to it, which keeps a
+     * deliberate split from being torn down by a link.
+     *
+     * An id that is not in the fleet is ignored rather than cleared: it usually
+     * means the fleet has not loaded yet, and blanking the pane on the way to
+     * finding out is a worse answer than doing nothing.
+     */
+    focusComputerId?: string | null;
     className?: string;
 }
 
