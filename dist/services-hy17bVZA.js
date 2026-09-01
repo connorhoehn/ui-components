@@ -2132,105 +2132,7 @@ var at = {
 			})
 		]
 	});
-}), st = l(function({ value: e, onChange: t, onClear: n, min: r, max: i, step: o, unit: s, placeholder: c, invalid: l = !1, disabled: d = !1, size: f = "md", id: p, name: m, required: h, "aria-label": g, "aria-labelledby": _, "aria-describedby": y, "aria-invalid": b, "aria-required": x, "data-testid": S }, C) {
-	let w = u((e) => {
-		let t = e;
-		return r !== void 0 && t < r && (t = r), i !== void 0 && t > i && (t = i), t;
-	}, [r, i]), T = u((e) => {
-		let r = e.target.value;
-		if (r === "" && n) {
-			n();
-			return;
-		}
-		let i = parseFloat(r);
-		Number.isNaN(i) || t(i);
-	}, [t, n]), E = u((e) => {
-		let n = parseFloat(e.target.value);
-		if (!Number.isNaN(n)) {
-			let e = w(n);
-			e !== n && t(e);
-		}
-	}, [w, t]);
-	return /* @__PURE__ */ v(a, {
-		ref: C,
-		type: "number",
-		size: f,
-		value: e ?? "",
-		min: r,
-		max: i,
-		step: o,
-		placeholder: c,
-		invalid: l,
-		disabled: d,
-		suffix: s ? /* @__PURE__ */ v("span", {
-			className: "text-text-tertiary font-sans text-[12px] select-none",
-			children: s
-		}) : void 0,
-		id: p,
-		name: m,
-		required: h,
-		"aria-label": g,
-		"aria-labelledby": _,
-		"aria-describedby": y,
-		"aria-invalid": b,
-		"aria-required": x,
-		"data-testid": S,
-		onChange: T,
-		onBlur: E
-	});
-});
-//#endregion
-//#region src/components/forms/RadioGroup.tsx
-function ct({ name: e, value: t, onChange: n, options: r, disabled: a = !1, orientation: o = "vertical", "data-testid": s }) {
-	let c = p();
-	return /* @__PURE__ */ v("div", {
-		role: "radiogroup",
-		"data-testid": s,
-		className: i("flex", o === "vertical" ? "flex-col gap-2" : "flex-row flex-wrap gap-x-4 gap-y-2"),
-		children: r.map((r, o) => {
-			let s = `${c}-${o}`, l = r.value === t;
-			return /* @__PURE__ */ y("label", {
-				htmlFor: s,
-				className: i("flex items-start gap-2.5 cursor-pointer select-none", a && "opacity-50 cursor-not-allowed"),
-				children: [/* @__PURE__ */ y("span", {
-					className: "relative flex shrink-0 mt-0.5",
-					children: [
-						/* @__PURE__ */ v("input", {
-							id: s,
-							type: "radio",
-							name: e,
-							value: r.value,
-							checked: l,
-							disabled: a,
-							onChange: () => n(r.value),
-							className: "sr-only peer"
-						}),
-						/* @__PURE__ */ v("span", {
-							"aria-hidden": "true",
-							className: i("block w-4 h-4 rounded-full border-2 transition-colors duration-150", l ? "border-info bg-surface" : "border-border-emphasis bg-surface", !a && !l && "peer-hover:border-info", "peer-focus-visible:ring-2 peer-focus-visible:ring-info/40 peer-focus-visible:ring-offset-1")
-						}),
-						l && /* @__PURE__ */ v("span", {
-							"aria-hidden": "true",
-							className: "absolute inset-0 m-auto block w-2 h-2 rounded-full bg-info"
-						})
-					]
-				}), /* @__PURE__ */ y("span", {
-					className: "flex flex-col",
-					children: [/* @__PURE__ */ v("span", {
-						className: i("text-[13px] leading-5 font-medium", a ? "text-text-tertiary" : "text-text-primary"),
-						children: r.label
-					}), r.description && /* @__PURE__ */ v("span", {
-						className: i("text-[11px] leading-4 mt-0.5", a ? "text-text-disabled" : "text-neutral"),
-						children: r.description
-					})]
-				})]
-			}, r.value);
-		})
-	});
-}
-//#endregion
-//#region src/components/forms/Slider.tsx
-var lt = l(function({ value: e, onChange: t, min: n = 0, max: r = 100, step: a = 1, "aria-label": o, readout: s = !0, disabled: c = !1, className: l, "data-testid": u }, d) {
+}), st = l(function({ value: e, onChange: t, min: n = 0, max: r = 100, step: a = 1, "aria-label": o, readout: s = !0, disabled: c = !1, className: l, "data-testid": u }, d) {
 	let f = p(), m = typeof s == "function" ? s(e) : String(e);
 	return /* @__PURE__ */ y("div", {
 		className: i("flex items-center gap-2", l),
@@ -2253,16 +2155,16 @@ var lt = l(function({ value: e, onChange: t, min: n = 0, max: r = 100, step: a =
 			children: m
 		})]
 	});
-}), ut = {
+}), ct = {
 	sm: "w-16",
 	md: "w-32",
 	lg: "w-48"
-}, dt = {
+}, lt = {
 	square: "aspect-square",
 	video: "aspect-video",
 	auto: ""
 };
-function ft() {
+function ut() {
 	return /* @__PURE__ */ y("svg", {
 		xmlns: "http://www.w3.org/2000/svg",
 		viewBox: "0 0 24 24",
@@ -2291,11 +2193,11 @@ function ft() {
 		]
 	});
 }
-function pt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded: a = !1, fallback: o, loading: s = "lazy", className: c, "data-testid": l }) {
+function dt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded: a = !1, fallback: o, loading: s = "lazy", className: c, "data-testid": l }) {
 	let [u, d] = g("loading");
 	return /* @__PURE__ */ y("div", {
 		"data-testid": l,
-		className: i("relative overflow-hidden bg-surface-hover", ut[n], r !== "auto" && dt[r], a ? "rounded-full" : "rounded-md", c),
+		className: i("relative overflow-hidden bg-surface-hover", ct[n], r !== "auto" && lt[r], a ? "rounded-full" : "rounded-md", c),
 		children: [
 			u === "loading" && /* @__PURE__ */ v("div", {
 				"aria-hidden": "true",
@@ -2303,7 +2205,7 @@ function pt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded
 			}),
 			u === "error" && /* @__PURE__ */ v("div", {
 				className: "absolute inset-0 flex items-center justify-center bg-surface-hover",
-				children: o ?? /* @__PURE__ */ v(ft, {})
+				children: o ?? /* @__PURE__ */ v(ut, {})
 			}),
 			/* @__PURE__ */ v("img", {
 				src: e,
@@ -2318,10 +2220,10 @@ function pt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded
 }
 //#endregion
 //#region src/components/image/GenerativeImagePreview.tsx
-function mt(e) {
+function ft(e) {
 	return e < 60 ? `${e}s` : `${Math.floor(e / 60)}m ${e % 60}s`;
 }
-function ht({ startedAt: e }) {
+function pt({ startedAt: e }) {
 	let [t, n] = g(() => Math.max(0, Math.floor((Date.now() - e) / 1e3)));
 	return f(() => {
 		let t = () => n(Math.max(0, Math.floor((Date.now() - e) / 1e3)));
@@ -2331,10 +2233,10 @@ function ht({ startedAt: e }) {
 	}, [e]), /* @__PURE__ */ v("span", {
 		"data-testid": "generative-image-preview-elapsed",
 		className: "absolute bottom-1 right-1 rounded bg-black/60 px-1.5 py-0.5 font-mono text-[10px] leading-none text-white/90",
-		children: mt(t)
+		children: ft(t)
 	});
 }
-function gt({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
+function mt({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
 	let s = r(), c = h(e), [l, u] = g(!1);
 	return c.current !== e && (c.current = e, e === "done" && !s && u(!0)), f(() => {
 		if (!l) return;
@@ -2359,7 +2261,7 @@ function gt({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
 				className: i("absolute inset-0 flex items-center justify-center", "text-[11px] font-medium tracking-wide text-neutral select-none"),
 				children: "✦ synthesizing"
 			}),
-			a !== void 0 && /* @__PURE__ */ v(ht, { startedAt: a })
+			a !== void 0 && /* @__PURE__ */ v(pt, { startedAt: a })
 		] }) : t ? /* @__PURE__ */ v("img", {
 			src: t,
 			alt: n,
@@ -2374,23 +2276,23 @@ function gt({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
 //#endregion
 //#region src/components/pipelines/services/PipelineEditorServicesContext.tsx
 var $ = c(null);
-function _t({ services: e, children: t }) {
+function ht({ services: e, children: t }) {
 	return /* @__PURE__ */ v($.Provider, {
 		value: e,
 		children: t
 	});
 }
-function vt() {
+function gt() {
 	let e = d($);
 	if (!e) throw Error("useImageUrl must be called inside <PipelineEditorServicesProvider>. The host editor (e.g. wsg PipelineEditorPage) is responsible for mounting it with its own getImageUrl implementation.");
 	return e.getImageUrl;
 }
-function yt() {
+function _t() {
 	let e = d($);
 	if (!e) throw Error("usePipelineEditorServices must be called inside <PipelineEditorServicesProvider>.");
 	return e;
 }
-function bt(e) {
+function vt(e) {
 	let t = d($)?.nodeVocabulary?.[e];
 	return m(() => ({
 		label: (e, n) => t?.labels?.[e] ?? n,
@@ -2398,22 +2300,22 @@ function bt(e) {
 		placeholder: (e, n) => t?.placeholders?.[e] ?? n
 	}), [t]);
 }
-function xt(e, t) {
+function yt(e, t) {
 	let n = d($)?.modelOptions?.[e];
 	return m(() => n ?? t, [n, t]);
 }
-function St() {
+function bt() {
 	let e = d($)?.modelOptions;
 	return m(() => (t, n) => e?.[t] ?? n, [e]);
 }
-function Ct() {
+function xt() {
 	let e = d($)?.webhookRelay;
 	return m(() => ({
 		enabled: e?.enabled ?? !1,
 		publicUrlBase: e?.publicUrlBase
 	}), [e?.enabled, e?.publicUrlBase]);
 }
-function wt() {
+function St() {
 	let e = d($)?.executableNodeTypes;
 	return m(() => {
 		if (!e) return () => !0;
@@ -2422,4 +2324,4 @@ function wt() {
 	}, [e]);
 }
 //#endregion
-export { M as $, Pe as A, pe as B, Je as C, Ge as D, He as E, X as F, K as G, _e as H, Se as I, H as J, ie as K, Ce as L, Ae as M, De as N, We as O, we as P, N as Q, ve as R, Ye as S, Ke as T, he as U, me as V, re as W, W as X, U as Y, P as Z, tt as _, St as a, x as at, $e as b, Ct as c, lt as d, A as et, ct as f, it as g, rt as h, xt as i, b as it, je as j, Ne as k, gt as l, ot as m, vt as n, k as nt, bt as o, st as p, ae as q, wt as r, O as rt, yt as s, _t as t, j as tt, pt as u, Ze as v, Be as w, et as x, Xe as y, ge as z };
+export { j as $, Ae as A, _e as B, Ke as C, Ne as D, We as E, Ce as F, ae as G, re as H, ve as I, W as J, H as K, ge as L, we as M, X as N, Pe as O, Se as P, A as Q, pe as R, Be as S, Ge as T, K as U, he as V, ie as W, N as X, P as Y, M as Z, Xe as _, bt as a, Ye as b, xt as c, st as d, k as et, ot as f, Ze as g, tt as h, yt as i, De as j, je as k, mt as l, it as m, gt as n, b as nt, vt as o, rt as p, U as q, St as r, x as rt, _t as s, ht as t, O as tt, dt as u, $e as v, He as w, Je as x, et as y, me as z };

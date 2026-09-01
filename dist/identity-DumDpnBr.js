@@ -10,9 +10,9 @@ import { t as g } from "./ConfirmDialog-Cd8NZEXi.js";
 import { t as _ } from "./EmptyState-ClmWoqCb.js";
 import { t as v } from "./Input-DLknWXri.js";
 import { t as y } from "./Textarea-Dz4doxTv.js";
-import { t as b } from "./rovingFocus-Bj5Y6kwY.js";
-import { t as x } from "./Select-CqVokE2v.js";
-import { t as S } from "./Checkbox-DsS7fIUO.js";
+import { t as b } from "./Select-CqVokE2v.js";
+import { t as x } from "./Checkbox-DsS7fIUO.js";
+import { t as S } from "./rovingFocus-Bj5Y6kwY.js";
 import { useCallback as C, useEffect as w, useId as T, useMemo as E, useRef as D, useState as O } from "react";
 import { Fragment as k, jsx as A, jsxs as j } from "react/jsx-runtime";
 //#region src/components/identity/admin/AdminDashboardPage.tsx
@@ -254,7 +254,7 @@ function F({ label: e, name: t, type: n = "text", value: r, onChange: i, error: 
 			children: [
 				/* @__PURE__ */ j("label", {
 					className: "flex items-center gap-2 cursor-pointer",
-					children: [/* @__PURE__ */ A(S, {
+					children: [/* @__PURE__ */ A(x, {
 						name: t,
 						checked: !!r,
 						onChange: i,
@@ -300,7 +300,7 @@ function F({ label: e, name: t, type: n = "text", value: r, onChange: i, error: 
 			rows: 5,
 			invalid: !!a,
 			className: "resize-y min-h-[100px]"
-		}) : n === "select" ? /* @__PURE__ */ A(x, {
+		}) : n === "select" ? /* @__PURE__ */ A(b, {
 			...i,
 			name: t,
 			value: String(r),
@@ -862,13 +862,13 @@ function H({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteG
 //#endregion
 //#region src/components/identity/admin/GroupFormPage.tsx
 function U({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, onAddMember: s, onRemoveMember: c, onCancel: l, error: d }) {
-	let [f, m] = O(e?.groupName ?? ""), [h, g] = O(e?.description ?? ""), [_, y] = O(e?.permissions ?? []), [b, S] = O(""), [w, E] = O(""), [D, k] = O(!1), M = T(), N = C((e) => {
+	let [f, m] = O(e?.groupName ?? ""), [h, g] = O(e?.description ?? ""), [_, y] = O(e?.permissions ?? []), [x, S] = O(""), [w, E] = O(""), [D, k] = O(!1), M = T(), N = C((e) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
-			let t = b.trim();
+			let t = x.trim();
 			t && !_.includes(t) && y((e) => [...e, t]), S("");
 		}
-	}, [b, _]), P = C((e) => {
+	}, [x, _]), P = C((e) => {
 		y((t) => t.filter((t) => t !== e));
 	}, []), I = C(async () => {
 		w && s && (await s(w), E(""));
@@ -939,7 +939,7 @@ function U({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 						/* @__PURE__ */ A(v, {
 							"aria-labelledby": `${M}-permissions`,
 							placeholder: "Type a permission and press Enter",
-							value: b,
+							value: x,
 							onChange: (e) => S(e.target.value),
 							onKeyDown: N
 						})
@@ -967,7 +967,7 @@ function U({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 						}, e.userId)),
 						a && a.length > 0 && s && /* @__PURE__ */ j("div", {
 							className: "flex gap-2 mt-2",
-							children: [/* @__PURE__ */ A(x, {
+							children: [/* @__PURE__ */ A(b, {
 								"aria-label": "Add member",
 								className: "flex-1",
 								value: w,
@@ -1169,10 +1169,10 @@ var K = [
 	"id_token"
 ];
 function ee({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, error: s }) {
-	let [c, l] = O(e?.clientName ?? ""), [d, f] = O(e?.poolId ?? ""), [m, h] = O(e?.redirectUris ?? [""]), [g, _] = O(e?.postLogoutRedirectUris ?? []), [v, y] = O(e?.grantTypes ?? ["authorization_code"]), [b, x] = O(e?.responseTypes ?? ["code"]), [w, T] = O(e?.scope ?? "openid profile email"), [E, D] = O(!1), k = C((e) => {
+	let [c, l] = O(e?.clientName ?? ""), [d, f] = O(e?.poolId ?? ""), [m, h] = O(e?.redirectUris ?? [""]), [g, _] = O(e?.postLogoutRedirectUris ?? []), [v, y] = O(e?.grantTypes ?? ["authorization_code"]), [b, S] = O(e?.responseTypes ?? ["code"]), [w, T] = O(e?.scope ?? "openid profile email"), [E, D] = O(!1), k = C((e) => {
 		y((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
 	}, []), M = C((e) => {
-		x((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
+		S((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
 	}, []), N = C(async (e) => {
 		e.preventDefault(), D(!0);
 		try {
@@ -1249,7 +1249,7 @@ function ee({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, err
 						className: "flex flex-col gap-2 mb-4",
 						children: K.map((e) => /* @__PURE__ */ j("label", {
 							className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
-							children: [/* @__PURE__ */ A(S, {
+							children: [/* @__PURE__ */ A(x, {
 								checked: v.includes(e),
 								onChange: () => k(e)
 							}), e]
@@ -1262,7 +1262,7 @@ function ee({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, err
 						className: "flex flex-col gap-2 mb-4",
 						children: q.map((e) => /* @__PURE__ */ j("label", {
 							className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
-							children: [/* @__PURE__ */ A(S, {
+							children: [/* @__PURE__ */ A(x, {
 								checked: b.includes(e),
 								onChange: () => M(e)
 							}), e]
@@ -1310,7 +1310,7 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 		d((e) => [...e, ""]);
 	}, []), b = C((e) => {
 		d((t) => t.filter((t, n) => n !== e));
-	}, []), x = C((e, t) => {
+	}, []), S = C((e, t) => {
 		d((n) => n.map((n, r) => r === e ? t : n));
 	}, []), w = C(async (t) => {
 		t.preventDefault(), g(!0);
@@ -1370,7 +1370,7 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 								"aria-label": `Redirect URI ${t + 1}`,
 								className: "flex-1",
 								value: e,
-								onChange: (e) => x(t, e.target.value),
+								onChange: (e) => S(t, e.target.value),
 								placeholder: "https://app.example.com/callback"
 							}), l.length > 1 && /* @__PURE__ */ A(n, {
 								variant: "danger",
@@ -1394,7 +1394,7 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 						className: "flex flex-col gap-2 mb-4",
 						children: J.map((e) => /* @__PURE__ */ j("label", {
 							className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
-							children: [/* @__PURE__ */ A(S, {
+							children: [/* @__PURE__ */ A(x, {
 								checked: f.includes(e),
 								onChange: () => _(e)
 							}), e]
@@ -1813,7 +1813,7 @@ function ne({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
 			i && i.length > 0 && l && /* @__PURE__ */ A(Z, {
 				label: "Filter by pool",
 				layout: "inline",
-				children: (e) => /* @__PURE__ */ A(x, {
+				children: (e) => /* @__PURE__ */ A(b, {
 					...e,
 					className: "w-64",
 					value: s,
@@ -1848,7 +1848,7 @@ var re = [
 	"template"
 ];
 function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, totalRecords: s }) {
-	let [c, l] = O(""), [d, f] = O(""), [p, m] = O(""), [h, g] = O(""), [_, y] = O("50"), [b, S] = O(""), [w, T] = O(""), [D, k] = O(null), [M, P] = O(!1), F = C(async () => {
+	let [c, l] = O(""), [d, f] = O(""), [p, m] = O(""), [h, g] = O(""), [_, y] = O("50"), [x, S] = O(""), [w, T] = O(""), [D, k] = O(null), [M, P] = O(!1), F = C(async () => {
 		await t({
 			entityType: c || void 0,
 			entityId: d || void 0,
@@ -1864,17 +1864,17 @@ function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 		_,
 		t
 	]), I = C(async () => {
-		if (!(!b || !w)) {
+		if (!(!x || !w)) {
 			P(!0);
 			try {
-				let e = await a(b, new Date(w).getTime());
+				let e = await a(x, new Date(w).getTime());
 				k(e);
 			} finally {
 				P(!1);
 			}
 		}
 	}, [
-		b,
+		x,
 		w,
 		a
 	]), L = E(() => [
@@ -1922,7 +1922,7 @@ function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 					children: [
 						/* @__PURE__ */ A(Z, {
 							label: "Entity Type",
-							children: (e) => /* @__PURE__ */ A(x, {
+							children: (e) => /* @__PURE__ */ A(b, {
 								...e,
 								className: "w-40",
 								value: c,
@@ -2013,7 +2013,7 @@ function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 								children: (e) => /* @__PURE__ */ A(v, {
 									...e,
 									className: "w-44",
-									value: b,
+									value: x,
 									onChange: (e) => S(e.target.value),
 									placeholder: "entity-id"
 								})
@@ -2032,7 +2032,7 @@ function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 								variant: "primary",
 								size: "lg",
 								onClick: I,
-								disabled: M || !b || !w,
+								disabled: M || !x || !w,
 								children: M ? "Replaying..." : "Replay"
 							})
 						]
@@ -2238,9 +2238,9 @@ function se({ rates: e }) {
 	}), /* @__PURE__ */ A(a, { children: typeof t == "object" ? JSON.stringify(t) : String(t) })] }, e)) })] });
 }
 function ce({ diagnostics: e, rates: c, dlq: f, onRedrive: h, onPurge: g, onRefresh: _, loading: v }) {
-	let [y, b] = O(!1), x = D(null), T = t(_);
-	w(() => (y ? x.current = setInterval(T, 1e4) : x.current &&= (clearInterval(x.current), null), () => {
-		x.current && clearInterval(x.current);
+	let [y, b] = O(!1), S = D(null), T = t(_);
+	w(() => (y ? S.current = setInterval(T, 1e4) : S.current &&= (clearInterval(S.current), null), () => {
+		S.current && clearInterval(S.current);
 	}), [y, T]);
 	let [E, k] = O(null), [M, N] = O(null), P = C(async (e, t, n) => {
 		N(e), k(null);
@@ -2268,7 +2268,7 @@ function ce({ diagnostics: e, rates: c, dlq: f, onRedrive: h, onPurge: g, onRefr
 			className: "flex items-center gap-3",
 			children: [/* @__PURE__ */ j("label", {
 				className: "flex items-center gap-1.5 text-sm text-neutral cursor-pointer",
-				children: [/* @__PURE__ */ A(S, {
+				children: [/* @__PURE__ */ A(x, {
 					checked: y,
 					onChange: b,
 					className: "rounded"
@@ -2380,17 +2380,17 @@ function ce({ diagnostics: e, rates: c, dlq: f, onRedrive: h, onPurge: g, onRefr
 //#endregion
 //#region src/components/identity/auth/LoginPage.tsx
 function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = null, onLogin: s, onRegister: c, onForgotPassword: l, registrationEnabled: u = !0, forgotPasswordEnabled: d = !0, defaultTab: f = "signin" }) {
-	let [m, h] = O(() => f === "register" && !u || f === "forgot" && !d ? "signin" : f), [g, _] = O(!1), [v, y] = O(null), [x, S] = O(""), [w, T] = O(""), [E, D] = O(""), [M, N] = O(""), [P, I] = O(""), [L, R] = O(""), [z, B] = O(""), [V, H] = O(!1), [U, W] = O(""), [G, K] = O(!1), q = o || v, ee = C(async (e) => {
+	let [m, h] = O(() => f === "register" && !u || f === "forgot" && !d ? "signin" : f), [g, _] = O(!1), [v, y] = O(null), [b, x] = O(""), [w, T] = O(""), [E, D] = O(""), [M, N] = O(""), [P, I] = O(""), [L, R] = O(""), [z, B] = O(""), [V, H] = O(!1), [U, W] = O(""), [G, K] = O(!1), q = o || v, ee = C(async (e) => {
 		e.preventDefault(), y(null), _(!0);
 		try {
-			await s(x, w);
+			await s(b, w);
 		} catch (e) {
 			y(e instanceof Error ? e.message : "Login failed");
 		} finally {
 			_(!1);
 		}
 	}, [
-		x,
+		b,
 		w,
 		s
 	]), J = C(async (e) => {
@@ -2454,7 +2454,7 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 					className: "flex border-b border-border mb-6",
 					role: "tablist",
 					"aria-label": "Authentication method",
-					onKeyDown: b,
+					onKeyDown: S,
 					children: [
 						/* @__PURE__ */ A(n, {
 							variant: "ghost",
@@ -2508,8 +2508,8 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							label: "Email",
 							name: "login-email",
 							type: "email",
-							value: x,
-							onChange: (e) => S(String(e)),
+							value: b,
+							onChange: (e) => x(String(e)),
 							required: !0,
 							placeholder: "you@example.com",
 							disabled: g
@@ -3678,7 +3678,7 @@ function Ee({ children: e, poolId: t, poolName: r, activeSection: i, onNavigate:
 			/* @__PURE__ */ A("div", {
 				role: "tablist",
 				"aria-label": "Pool sections",
-				onKeyDown: b,
+				onKeyDown: S,
 				className: "flex border-b-2 border-border",
 				children: we.map((e) => /* @__PURE__ */ A(Te, {
 					label: e.label,

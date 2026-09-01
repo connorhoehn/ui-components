@@ -5,9 +5,9 @@ import { t as c } from "./Input-DLknWXri.js";
 import { t as l } from "./Textarea-Dz4doxTv.js";
 import { n as u, t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./PresenceDot-3gBZGPvX.js";
-import { d as p, i as m, r as h, u as g } from "./PresencePanel-TLZ43ZF1.js";
-import { t as _ } from "./rovingFocus-Bj5Y6kwY.js";
-import { t as v } from "./Select-CqVokE2v.js";
+import { t as p } from "./Select-CqVokE2v.js";
+import { d as m, i as h, r as g, u as _ } from "./PresencePanel-TLZ43ZF1.js";
+import { t as v } from "./rovingFocus-Bj5Y6kwY.js";
 import { useCallback as y, useEffect as b, useId as x, useRef as S, useState as C } from "react";
 import { Fragment as w, jsx as T, jsxs as E } from "react/jsx-runtime";
 //#region src/components/social/SocialPanel.tsx
@@ -96,12 +96,12 @@ function A({ targetUser: e, followState: t, compact: n = !1, onFollowChange: r }
 	});
 }
 function j({ user: e, isOwnProfile: t, onSave: n }) {
-	let [r, i] = C(!1), [a, o] = C(e.displayName), [u, d] = C(e.bio), [f, p] = C(e.avatarUrl ?? ""), [m, h] = C(e.visibility), [g, v] = C(!1), [y, S] = C(null), w = x();
+	let [r, i] = C(!1), [a, o] = C(e.displayName), [u, d] = C(e.bio), [f, p] = C(e.avatarUrl ?? ""), [m, h] = C(e.visibility), [g, _] = C(!1), [y, S] = C(null), w = x();
 	b(() => {
 		o(e.displayName), d(e.bio), p(e.avatarUrl ?? ""), h(e.visibility);
 	}, [e.id]);
 	let D = async () => {
-		v(!0), S(null);
+		_(!0), S(null);
 		try {
 			await n({
 				displayName: a,
@@ -112,7 +112,7 @@ function j({ user: e, isOwnProfile: t, onSave: n }) {
 		} catch (e) {
 			S(e instanceof Error ? e.message : "Failed to save profile");
 		} finally {
-			v(!1);
+			_(!1);
 		}
 	};
 	return r ? /* @__PURE__ */ E("div", { children: [
@@ -164,7 +164,7 @@ function j({ user: e, isOwnProfile: t, onSave: n }) {
 			children: /* @__PURE__ */ T("div", {
 				role: "radiogroup",
 				"aria-label": "Profile visibility",
-				onKeyDown: (e) => _(e, { itemSelector: "[role=\"radio\"]" }),
+				onKeyDown: (e) => v(e, { itemSelector: "[role=\"radio\"]" }),
 				className: "flex gap-2",
 				children: ["public", "private"].map((e) => /* @__PURE__ */ T("button", {
 					type: "button",
@@ -281,7 +281,7 @@ function M({ followers: e, following: t, friends: n, followStates: r, onFollowCh
 		children: [/* @__PURE__ */ T("div", {
 			role: "tablist",
 			"aria-label": "Connections",
-			onKeyDown: _,
+			onKeyDown: v,
 			className: "flex border-b border-border mb-3",
 			children: u.map((e) => /* @__PURE__ */ T("button", {
 				type: "button",
@@ -470,7 +470,7 @@ function F({ onCreateDM: e, loading: t, friends: n, friendsError: r }) {
 		},
 		className: "my-1 mb-2 p-2 bg-surface-panel rounded-md border border-border",
 		children: [
-			/* @__PURE__ */ T(v, {
+			/* @__PURE__ */ T(p, {
 				size: "sm",
 				value: i,
 				onChange: (e) => a(e.target.value),
@@ -1736,7 +1736,7 @@ function ce({ author: e, avatarUrl: t, mine: n = !1, messages: r, className: i }
 		"data-author": e,
 		"data-row-count": r.length,
 		className: s("flex flex-col", i),
-		children: r.map((r, i) => /* @__PURE__ */ T(g, {
+		children: r.map((r, i) => /* @__PURE__ */ T(_, {
 			author: e,
 			content: r.content,
 			timestamp: r.timestamp,
@@ -2469,7 +2469,7 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 			className: "m-0 flex min-h-0 list-none flex-col gap-0.5 overflow-y-auto p-0",
 			"aria-label": "Conversations",
 			children: e.map((e) => {
-				let r = e.channel === t, i = e.peers.length > 1, a = e.peers[0], o = e.peers.map((e) => e.displayName).join(", "), c = e.lastMessageAt ? p(e.lastMessageAt) : "", m = e.unreadCount ?? 0;
+				let r = e.channel === t, i = e.peers.length > 1, a = e.peers[0], o = e.peers.map((e) => e.displayName).join(", "), c = e.lastMessageAt ? m(e.lastMessageAt) : "", p = e.unreadCount ?? 0;
 				return /* @__PURE__ */ T("li", { children: /* @__PURE__ */ E("button", {
 					type: "button",
 					onClick: () => n(e.channel),
@@ -2505,7 +2505,7 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 							children: [/* @__PURE__ */ E("span", {
 								className: "flex items-baseline gap-2",
 								children: [/* @__PURE__ */ T("span", {
-									className: s("min-w-0 flex-1 truncate text-[13px]", m > 0 ? "font-semibold" : "font-medium", l ? "text-white" : "text-text-primary"),
+									className: s("min-w-0 flex-1 truncate text-[13px]", p > 0 ? "font-semibold" : "font-medium", l ? "text-white" : "text-text-primary"),
 									children: o
 								}), c && /* @__PURE__ */ T("span", {
 									className: s("shrink-0 text-[11px] tabular-nums", l ? "text-white/50" : "text-text-tertiary"),
@@ -2518,10 +2518,10 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 								children: e.lastMessagePreview
 							})]
 						}),
-						m > 0 && /* @__PURE__ */ T("span", {
+						p > 0 && /* @__PURE__ */ T("span", {
 							"data-testid": "conversation-unread",
 							className: "grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold leading-none text-white",
-							children: m > 99 ? "99+" : m
+							children: p > 99 ? "99+" : p
 						})
 					]
 				}) }, e.channel);
@@ -2531,20 +2531,20 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 }
 //#endregion
 //#region src/components/social/ReactionsBar.tsx
-function De({ reactions: e, onReact: t, disabled: n = !1, pickerEmojis: r = h, addTriggerLabel: i, hideAddTrigger: a = !1, className: o }) {
+function De({ reactions: e, onReact: t, disabled: n = !1, pickerEmojis: r = g, addTriggerLabel: i, hideAddTrigger: a = !1, className: o }) {
 	let [c, l] = C(!1), u = S(null), d = (e) => {
 		n || t(e);
 	}, f = (e) => {
 		t(e);
-	}, p = [], g = /* @__PURE__ */ new Map();
-	for (let t of e) if (g.has(t.emoji)) {
-		let e = g.get(t.emoji), n = p[e];
+	}, p = [], m = /* @__PURE__ */ new Map();
+	for (let t of e) if (m.has(t.emoji)) {
+		let e = m.get(t.emoji), n = p[e];
 		p[e] = {
 			emoji: t.emoji,
 			count: n.count + t.count,
 			mine: n.mine || t.mine
 		};
-	} else g.set(t.emoji, p.length), p.push({ ...t });
+	} else m.set(t.emoji, p.length), p.push({ ...t });
 	return /* @__PURE__ */ E("div", {
 		"data-testid": "reactions-bar",
 		className: s("relative inline-flex flex-wrap items-center gap-1", o),
@@ -2584,7 +2584,7 @@ function De({ reactions: e, onReact: t, disabled: n = !1, pickerEmojis: r = h, a
 					children: "Add reaction"
 				})]
 			}),
-			/* @__PURE__ */ T(m, {
+			/* @__PURE__ */ T(h, {
 				open: c,
 				onSelect: f,
 				onClose: () => l(!1),

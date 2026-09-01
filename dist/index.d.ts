@@ -4464,6 +4464,13 @@ export declare type IngestSourceType = 'local' | 's3' | 'google-drive' | 'webhoo
  */
 export declare function injectThemeVars(tokens: ThemeTokens): string;
 
+/**
+ * Horizontal flex row with a scale gap. Wraps by default — an un-wrapping row
+ * of chips is how a toolbar overflows its container on a narrow window, and
+ * every consumer that hand-rolled this wrote `flexWrap: 'wrap'` anyway.
+ */
+export declare function Inline({ children, gap, align, justify, wrap, as: As, className, ...rest }: StackProps): JSX.Element;
+
 export declare function InlineAlert({ tone, palette, children, onDismiss, className }: InlineAlertProps): default_2.JSX.Element;
 
 /**
@@ -5222,6 +5229,24 @@ export declare interface MessageRowProps {
     tone?: 'light' | 'dark';
     className?: string;
 }
+
+export declare function MetaLine({ items, separator, size, tone, className, 'data-testid': testId, }: MetaLineProps): JSX.Element | null;
+
+export declare interface MetaLineProps {
+    /** The pieces, in order. Falsy entries are dropped with their separator. */
+    items: ReactNode[];
+    /** Separator woven between surviving items. Default `·`. */
+    separator?: ReactNode;
+    /** `xs` (11px, the default) is the card/list scale; `sm` (12px) is body meta. */
+    size?: MetaLineSize;
+    tone?: MetaLineTone;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type MetaLineSize = 'xs' | 'sm';
+
+export declare type MetaLineTone = 'tertiary' | 'secondary';
 
 export declare function MfaDashboardPage({ devices, userEmail, mfaEnabled, onAddDevice, onRenameDevice, onRemoveDevice, loading, }: MfaDashboardPageProps): JSX.Element;
 
@@ -7877,6 +7902,11 @@ export declare interface SpinnerProps {
 
 export declare type SpinnerSize = 'sm' | 'md' | 'lg';
 
+/** Vertical flex column with a scale gap. */
+export declare function Stack({ children, gap, align, justify, wrap, as: As, className, ...rest }: StackProps): JSX.Element;
+
+export declare type StackAlign = 'start' | 'center' | 'end' | 'baseline' | 'stretch';
+
 export declare function StackDiagram({ layers, orientation, connector, className, style, 'data-testid': testId, }: StackDiagramProps): JSX.Element;
 
 export declare type StackDiagramConnector = 'arrow' | 'line' | 'none';
@@ -7899,6 +7929,11 @@ export declare function StackedAreaChart({ series, height, }: {
     height?: number;
 }): JSX.Element;
 
+/** Spacing scale. Matches Tailwind's 4px base: xs=6, sm=8, md=12, lg=16, xl=24. */
+export declare type StackGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+export declare type StackJustify = 'start' | 'center' | 'end' | 'between';
+
 export declare interface StackLayerSpec {
     id: string;
     label: ReactNode;
@@ -7908,6 +7943,20 @@ export declare interface StackLayerSpec {
     tone?: ChipTone;
     /** Optional right-aligned meta slot (badge, version chip). */
     meta?: ReactNode;
+}
+
+export declare interface StackProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+    children?: ReactNode;
+    /** Space between children. Default `md` (12px). */
+    gap?: StackGap;
+    /** Cross-axis alignment (`align-items`). */
+    align?: StackAlign;
+    /** Main-axis distribution (`justify-content`). */
+    justify?: StackJustify;
+    /** Allow children to wrap onto more lines. Default false for Stack, true for Inline. */
+    wrap?: boolean;
+    /** Render as something other than a `<div>` — `ul`, `section`, `label`, … */
+    as?: ElementType;
 }
 
 export declare function StatCard({ label, value, accent, danger, hint, delta, sparklineData, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;

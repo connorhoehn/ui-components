@@ -3,13 +3,18 @@ import { ButtonHTMLAttributes } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { ElementType } from 'react';
+import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
+import { InputHTMLAttributes } from 'react';
 import { JSX } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
+import { RefAttributes } from 'react';
 import { RefObject } from 'react';
+import { SelectHTMLAttributes } from 'react';
 import { TdHTMLAttributes } from 'react';
+import { TextareaHTMLAttributes } from 'react';
 import { ThHTMLAttributes } from 'react';
 
 export declare const activeNavItemStyle: CSSProperties;
@@ -319,6 +324,44 @@ export declare interface ChatComposerProps {
      * this is ignored, so the spoken name can never contradict what is on screen.
      */
     submitAriaLabel?: string;
+}
+
+export declare const Checkbox: ForwardRefExoticComponent<CheckboxProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface CheckboxProps {
+    id?: string;
+    /** Form field name, for label association and form submission. */
+    name?: string;
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+    /**
+     * Mixed state — "some but not all selected". Rendered natively (the dash),
+     * exposed to AT via aria-checked="mixed". Clicking a mixed checkbox
+     * reports `true`, matching the native select-all convention.
+     */
+    indeterminate?: boolean;
+    disabled?: boolean;
+    /** Accessible name. Required when no visible <label> wraps this. */
+    'aria-label'?: string;
+    /**
+     * Id of the element naming this checkbox. Prefer this over `aria-label` when
+     * a visible label exists but cannot wrap the control (e.g. a generated form
+     * that renders the label above a row of widgets) — a hand-written
+     * `aria-label` is a copy that drifts from the words on screen.
+     */
+    'aria-labelledby'?: string;
+    /** Id(s) of the help / error text describing this checkbox. */
+    'aria-describedby'?: string;
+    /**
+     * Click pass-through. Row-selection checkboxes live inside clickable
+     * rows/cards and need `e.stopPropagation()` so ticking the box doesn't
+     * also open the row.
+     */
+    onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
+    /** Key pass-through, for shift-range selection handling. */
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function Chip({ tone, palette, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
@@ -1146,6 +1189,13 @@ export declare interface ImageLightboxProps {
     onNavigate?: (index: number) => void;
 }
 
+/**
+ * Horizontal flex row with a scale gap. Wraps by default — an un-wrapping row
+ * of chips is how a toolbar overflows its container on a narrow window, and
+ * every consumer that hand-rolled this wrote `flexWrap: 'wrap'` anyway.
+ */
+export declare function Inline({ children, gap, align, justify, wrap, as: As, className, ...rest }: StackProps): JSX.Element;
+
 export declare function InlineAlert({ tone, palette, children, onDismiss, className }: InlineAlertProps): default_2.JSX.Element;
 
 /**
@@ -1229,6 +1279,26 @@ export declare interface InlinePopoverProps {
     'aria-labelledby'?: string;
     children: ReactNode;
 }
+
+export declare const Input: ForwardRefExoticComponent<InputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'prefix'> {
+    type?: InputType;
+    size?: InputSize;
+    /** Node rendered inside the left edge of the input (icon, currency symbol, etc.) */
+    prefix?: ReactNode;
+    /** Node rendered inside the right edge of the input (unit, clear button, etc.) */
+    suffix?: ReactNode;
+    /** When true, applies a danger-colored border. */
+    invalid?: boolean;
+    /** When true, renders the input value in a monospace font (e.g. JSONPath, code). */
+    mono?: boolean;
+    'data-testid'?: string;
+}
+
+export declare type InputSize = 'sm' | 'md';
+
+export declare type InputType = 'text' | 'number' | 'url' | 'password' | 'email' | 'search' | 'date' | 'datetime-local' | 'time';
 
 export declare function KPIGrid({ children, columns, dense, className, style, 'data-testid': testId, }: KPIGridProps): JSX.Element;
 
@@ -1343,6 +1413,24 @@ export declare interface MessageBubbleProps {
     renderMarkdown?: (content: string) => ReactNode;
     className?: string;
 }
+
+export declare function MetaLine({ items, separator, size, tone, className, 'data-testid': testId, }: MetaLineProps): JSX.Element | null;
+
+export declare interface MetaLineProps {
+    /** The pieces, in order. Falsy entries are dropped with their separator. */
+    items: ReactNode[];
+    /** Separator woven between surviving items. Default `·`. */
+    separator?: ReactNode;
+    /** `xs` (11px, the default) is the card/list scale; `sm` (12px) is body meta. */
+    size?: MetaLineSize;
+    tone?: MetaLineTone;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type MetaLineSize = 'xs' | 'sm';
+
+export declare type MetaLineTone = 'tertiary' | 'secondary';
 
 export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
 
@@ -1514,6 +1602,54 @@ export declare interface NotificationItem {
     icon?: string;
     /** Optional grouping / category label */
     category?: string;
+}
+
+export declare const NumberInput: ForwardRefExoticComponent<NumberInputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface NumberInputProps {
+    /**
+     * `undefined` renders an empty field, for a genuinely optional numeric
+     * setting. Distinguishing "unset" from 0 matters: 0 is a real value for a
+     * seed, a threshold or an offset.
+     */
+    value: number | undefined;
+    onChange: (value: number) => void;
+    /**
+     * Called when the field is emptied. Supplying it is what makes the field
+     * clearable — without it, deleting the text leaves the previous value in
+     * place, because a half-typed "-" or "" cannot be parsed to a number.
+     *
+     * Kept separate from `onChange` so widening that callback's parameter to
+     * `number | undefined` doesn't break every existing caller.
+     */
+    onClear?: () => void;
+    min?: number;
+    max?: number;
+    step?: number;
+    /** Rendered as a right-edge suffix: 'px' | '°' | '%' | … */
+    unit?: string;
+    placeholder?: string;
+    invalid?: boolean;
+    disabled?: boolean;
+    size?: 'sm' | 'md';
+    /**
+     * Id of the rendered `<input>`, so an external `<label htmlFor>` can point
+     * at it. Without this the prop was silently dropped and the label named
+     * nothing.
+     */
+    id?: string;
+    /** Form field name, for label association and form submission. */
+    name?: string;
+    /** Accessible name. Required when no visible `<label>` is wired up. */
+    'aria-label'?: string;
+    /** Id of the element that labels this control. */
+    'aria-labelledby'?: string;
+    /** Id(s) of hint / error text describing this control. */
+    'aria-describedby'?: string;
+    'aria-invalid'?: boolean;
+    'aria-required'?: boolean;
+    required?: boolean;
+    'data-testid'?: string;
 }
 
 export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): default_2.JSX.Element;
@@ -1733,6 +1869,27 @@ export declare interface QuickPromptGridProps {
     className?: string;
 }
 
+export declare function RadioGroup<T extends string = string>({ name, value, onChange, options, disabled, orientation, 'data-testid': testId, }: RadioGroupProps<T>): JSX.Element;
+
+export declare interface RadioGroupProps<T extends string = string> {
+    /** Used as the HTML radio group name and as a stable ID base for labels. */
+    name: string;
+    value: T;
+    onChange: (value: T) => void;
+    options: RadioOption<T>[];
+    disabled?: boolean;
+    /** @default 'vertical' */
+    orientation?: 'vertical' | 'horizontal';
+    'data-testid'?: string;
+}
+
+export declare interface RadioOption<T extends string = string> {
+    value: T;
+    label: string;
+    /** Short caption rendered below the label in muted text. */
+    description?: string;
+}
+
 /** Top-left corner a panel of `width`×`height` occupies at `anchor`. */
 export declare function resolveAnchorPosition(anchor: FloatingPanelAnchor, width: number, height: number): {
     x: number;
@@ -1814,6 +1971,33 @@ export declare interface SegmentOption {
     icon?: ReactNode;
 }
 
+export declare const Select: ForwardRefExoticComponent<SelectProps & RefAttributes<HTMLSelectElement>>;
+
+export declare interface SelectOption {
+    value: string;
+    label: string;
+    disabled?: boolean;
+}
+
+export declare interface SelectOptionGroup {
+    label: string;
+    options: SelectOption[];
+}
+
+export declare interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+    options: SelectOption[];
+    /** Optional labelled option groups, rendered after the flat `options`. */
+    groups?: SelectOptionGroup[];
+    /** Shown as a disabled placeholder option when no value is selected. */
+    placeholder?: string;
+    size?: SelectSize;
+    /** When true, applies a danger-colored border. */
+    invalid?: boolean;
+    'data-testid'?: string;
+}
+
+export declare type SelectSize = 'sm' | 'md';
+
 export declare function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps): JSX.Element;
 
 export declare interface ShortcutsHelpProps {
@@ -1857,6 +2041,11 @@ export declare interface SpinnerProps {
 
 export declare type SpinnerSize = 'sm' | 'md' | 'lg';
 
+/** Vertical flex column with a scale gap. */
+export declare function Stack({ children, gap, align, justify, wrap, as: As, className, ...rest }: StackProps): JSX.Element;
+
+export declare type StackAlign = 'start' | 'center' | 'end' | 'baseline' | 'stretch';
+
 export declare function StackDiagram({ layers, orientation, connector, className, style, 'data-testid': testId, }: StackDiagramProps): JSX.Element;
 
 export declare type StackDiagramConnector = 'arrow' | 'line' | 'none';
@@ -1879,6 +2068,11 @@ export declare function StackedAreaChart({ series, height, }: {
     height?: number;
 }): JSX.Element;
 
+/** Spacing scale. Matches Tailwind's 4px base: xs=6, sm=8, md=12, lg=16, xl=24. */
+export declare type StackGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+export declare type StackJustify = 'start' | 'center' | 'end' | 'between';
+
 export declare interface StackLayerSpec {
     id: string;
     label: ReactNode;
@@ -1888,6 +2082,20 @@ export declare interface StackLayerSpec {
     tone?: ChipTone;
     /** Optional right-aligned meta slot (badge, version chip). */
     meta?: ReactNode;
+}
+
+export declare interface StackProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+    children?: ReactNode;
+    /** Space between children. Default `md` (12px). */
+    gap?: StackGap;
+    /** Cross-axis alignment (`align-items`). */
+    align?: StackAlign;
+    /** Main-axis distribution (`justify-content`). */
+    justify?: StackJustify;
+    /** Allow children to wrap onto more lines. Default false for Stack, true for Inline. */
+    wrap?: boolean;
+    /** Render as something other than a `<div>` — `ul`, `section`, `label`, … */
+    as?: ElementType;
 }
 
 export declare function StatCard({ label, value, accent, danger, hint, delta, sparklineData, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
@@ -2253,6 +2461,22 @@ export declare interface TaskComposerProps {
 
 /** Alias kept for clarity in contexts where "terminal log" reads better. */
 export declare const TerminalLog: typeof LogStream;
+
+export declare const Textarea: ForwardRefExoticComponent<TextareaProps & RefAttributes<HTMLTextAreaElement>>;
+
+export declare interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'rows'> {
+    /** Fixed row count. Mutually exclusive with autoResize. */
+    rows?: number;
+    /** Minimum visible rows (used with autoResize). Default: 2. */
+    minRows?: number;
+    /** Maximum rows before the box scrolls (used with autoResize). */
+    maxRows?: number;
+    /** Grow to fit content automatically. Default: false. */
+    autoResize?: boolean;
+    /** When true, applies a danger-colored border. */
+    invalid?: boolean;
+    'data-testid'?: string;
+}
 
 /**
  * A collapsible `<details>` block for showing chain-of-thought reasoning.

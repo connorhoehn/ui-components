@@ -8,11 +8,11 @@ import { t as c } from "./EmptyState-ClmWoqCb.js";
 import { n as l, r as u, t as d } from "./CardHeader-MBY5yyXT.js";
 import { t as f } from "./Input-DLknWXri.js";
 import { t as p } from "./StatusDot-Bgx2zxgC.js";
-import { t as m } from "./activationKey-CjbL3LUv.js";
-import { n as h } from "./EventStreamContext-CLzG8O5_.js";
-import { n as g, r as _ } from "./ObservabilityContext-DpoDrm3T.js";
-import { t as v } from "./Select-CqVokE2v.js";
-import { t as y } from "./Checkbox-DsS7fIUO.js";
+import { t as m } from "./Select-CqVokE2v.js";
+import { t as h } from "./Checkbox-DsS7fIUO.js";
+import { t as g } from "./activationKey-CjbL3LUv.js";
+import { n as _ } from "./EventStreamContext-CLzG8O5_.js";
+import { n as v, r as y } from "./ObservabilityContext-DpoDrm3T.js";
 import { useCallback as b, useEffect as x, useId as S, useMemo as C, useRef as w, useState as T } from "react";
 import { Fragment as E, jsx as D, jsxs as O } from "react/jsx-runtime";
 import { Outlet as k, useNavigate as A } from "react-router";
@@ -23,7 +23,7 @@ function j() {
 //#endregion
 //#region src/components/observability/hooks/useDashboard.ts
 function M() {
-	return g().dashboard;
+	return v().dashboard;
 }
 //#endregion
 //#region src/components/observability/hooks/usePipelineMetrics.ts
@@ -244,7 +244,7 @@ function ce({ node: e, selected: n, onClick: r, onKill: i }) {
 	return /* @__PURE__ */ O("div", {
 		"data-testid": "node-grid-tile",
 		onClick: r,
-		onKeyDown: r ? m(r) : void 0,
+		onKeyDown: r ? g(r) : void 0,
 		role: r ? "button" : void 0,
 		tabIndex: r ? 0 : void 0,
 		"aria-pressed": r ? !!n : void 0,
@@ -614,7 +614,7 @@ function Se({ events: e, onViewAll: t }) {
 	});
 }
 function Ce({ activeRuns: e } = {}) {
-	let n = A(), r = w(null), { live: i, setLive: a, recentEvents: o, activeRunsCount: s, isLiveData: c, unauthorized: l } = g(), u = M() ?? _, { metrics: d, source: f } = I(), p = u?.overview ?? {}, m = C(() => ve(u), [u]), h = d?.runsStarted ?? H, v = [], y = s > 0 ? s : d?.runsActive ?? H, b = d?.runsAwaitingApproval ?? H, x = d?.runsFailed ?? H, S = _e(d?.avgFirstTokenLatencyMs ?? null), T = Array.isArray(u?.alerts) ? u.alerts : [], E = () => {
+	let n = A(), r = w(null), { live: i, setLive: a, recentEvents: o, activeRunsCount: s, isLiveData: c, unauthorized: l } = v(), u = M() ?? y, { metrics: d, source: f } = I(), p = u?.overview ?? {}, m = C(() => ve(u), [u]), h = d?.runsStarted ?? H, g = [], _ = s > 0 ? s : d?.runsActive ?? H, b = d?.runsAwaitingApproval ?? H, x = d?.runsFailed ?? H, S = _e(d?.avgFirstTokenLatencyMs ?? null), T = Array.isArray(u?.alerts) ? u.alerts : [], E = () => {
 		r.current?.scrollIntoView({
 			behavior: "smooth",
 			block: "start"
@@ -650,8 +650,8 @@ function Ce({ activeRuns: e } = {}) {
 			}),
 			/* @__PURE__ */ D(R, {
 				runsToday: h,
-				runsSparkline: v,
-				activeNow: y,
+				runsSparkline: g,
+				activeNow: _,
 				pendingApprovals: b,
 				failed24h: x,
 				avgFirstTokenLatency: S,
@@ -714,7 +714,7 @@ function Ce({ activeRuns: e } = {}) {
 //#endregion
 //#region src/components/observability/hooks/useMetricsHistory.ts
 function we(e = 60) {
-	let { dashboard: t } = g(), [n, r] = T([]);
+	let { dashboard: t } = v(), [n, r] = T([]);
 	return x(() => {
 		t && r((n) => [...n, t].slice(-e));
 	}, [t, e]), n;
@@ -832,12 +832,12 @@ var W = [
 		label: "60s"
 	}
 ];
-function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, onResetZoom: l, onExportCsv: u, timeRange: d, onTimeRangeChange: f, refreshInterval: p, onRefreshIntervalChange: m }) {
-	let h = d !== void 0 && f !== void 0, g = p !== void 0 && m !== void 0, _ = h ? W.find((e) => e.value === d)?.label ?? "" : void 0, y = (e) => e == null;
+function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, onResetZoom: l, onExportCsv: u, timeRange: d, onTimeRangeChange: f, refreshInterval: p, onRefreshIntervalChange: h }) {
+	let g = d !== void 0 && f !== void 0, _ = p !== void 0 && h !== void 0, v = g ? W.find((e) => e.value === d)?.label ?? "" : void 0, y = (e) => e == null;
 	return /* @__PURE__ */ O(E, { children: [/* @__PURE__ */ O("div", {
 		className: "flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel",
 		children: [
-			h && /* @__PURE__ */ D(v, {
+			g && /* @__PURE__ */ D(m, {
 				"data-testid": "metrics-time-range",
 				"aria-label": "Time range",
 				value: d,
@@ -848,11 +848,11 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 					label: e.label
 				}))
 			}),
-			g && /* @__PURE__ */ D(v, {
+			_ && /* @__PURE__ */ D(m, {
 				"data-testid": "metrics-refresh-interval",
 				"aria-label": "Refresh interval",
 				value: p,
-				onChange: (e) => m(e.target.value),
+				onChange: (e) => h(e.target.value),
 				className: "w-auto min-w-[100px]",
 				options: Oe.map((e) => ({
 					value: e.value,
@@ -891,7 +891,7 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 		children: [
 			/* @__PURE__ */ D(U, {
 				title: "Runs per minute",
-				timeRange: _,
+				timeRange: v,
 				sample: y(n?.runsPerMinute),
 				children: /* @__PURE__ */ D(i, {
 					series: n?.runsPerMinute ?? e.runsPerMinute,
@@ -900,7 +900,7 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ D(U, {
 				title: "Step duration (p50/p95/p99)",
-				timeRange: _,
+				timeRange: v,
 				sample: !0,
 				children: /* @__PURE__ */ D(r, {
 					series: e.stepDuration,
@@ -910,7 +910,7 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ D(U, {
 				title: "LLM tokens",
-				timeRange: _,
+				timeRange: v,
 				sample: y(n?.llmTokens),
 				children: /* @__PURE__ */ D(r, {
 					series: n?.llmTokens ?? e.llmTokens,
@@ -919,7 +919,7 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ D(U, {
 				title: "LLM cost",
-				timeRange: _,
+				timeRange: v,
 				sample: y(n?.llmCost),
 				children: /* @__PURE__ */ D(r, {
 					series: n?.llmCost ?? e.llmCost,
@@ -929,7 +929,7 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ D(U, {
 				title: "Cluster CPU",
-				timeRange: _,
+				timeRange: v,
 				sample: !0,
 				children: /* @__PURE__ */ D(r, {
 					series: e.clusterCpu,
@@ -939,7 +939,7 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ D(U, {
 				title: "Cluster memory",
-				timeRange: _,
+				timeRange: v,
 				sample: !0,
 				children: /* @__PURE__ */ D(r, {
 					series: e.clusterMemory,
@@ -949,7 +949,7 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ D(U, {
 				title: "Event rate",
-				timeRange: _,
+				timeRange: v,
 				sample: !0,
 				children: /* @__PURE__ */ D(r, {
 					series: e.eventRate,
@@ -958,7 +958,7 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ D(U, {
 				title: "Active runs over time",
-				timeRange: _,
+				timeRange: v,
 				sample: y(n?.activeRuns),
 				children: /* @__PURE__ */ D(r, {
 					series: n?.activeRuns ?? e.activeRuns,
@@ -967,7 +967,7 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ D(U, {
 				title: "Failure rate by type",
-				timeRange: _,
+				timeRange: v,
 				sample: !0,
 				children: /* @__PURE__ */ D(a, {
 					data: e.failureRate,
@@ -979,7 +979,7 @@ function G({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ D(U, {
 				title: "Approval latency",
-				timeRange: _,
+				timeRange: v,
 				sample: !0,
 				children: /* @__PURE__ */ D(r, {
 					series: e.approvalLatency,
@@ -1406,12 +1406,12 @@ var Ke = {
 function qe() {
 	let [e, n] = T([]), [r, i] = T(null), [a, o] = T(!1), [s, c] = T(Ke), [l, u] = T(!1), d = S(), p = w(a);
 	p.current = a;
-	let m = w(0), g = b((e) => {
+	let g = w(0), v = b((e) => {
 		if (p.current) return;
 		let t = e, r = t?.eventType ?? "unknown", i = t?.payload ?? t;
-		m.current += 1;
+		g.current += 1;
 		let a = Date.now(), o = {
-			id: `ev-${a}-${m.current}`,
+			id: `ev-${a}-${g.current}`,
 			timestamp: Ge(new Date(a)),
 			receivedAt: a,
 			type: r,
@@ -1424,8 +1424,8 @@ function qe() {
 			return t.length > Y ? t.slice(t.length - Y) : t;
 		});
 	}, []);
-	h("*", g);
-	let _ = C(() => {
+	_("*", v);
+	let y = C(() => {
 		let t = s.runIds.split(",").map((e) => e.trim()).filter(Boolean), n = s.pipelineIds.split(",").map((e) => e.trim()).filter(Boolean), r = s.groups.has("All"), i = Date.now() - ze[s.timeRange];
 		return e.filter((e) => {
 			if (typeof e.receivedAt == "number" && e.receivedAt < i) return !1;
@@ -1445,7 +1445,7 @@ function qe() {
 			let a = e.payload?.nodeId;
 			return !(a && !s.nodes.has(a));
 		});
-	}, [e, s]), x = C(() => _.find((e) => e.id === r) ?? null, [_, r]), k = (e) => {
+	}, [e, s]), x = C(() => y.find((e) => e.id === r) ?? null, [y, r]), k = (e) => {
 		c((t) => {
 			let n = new Set(t.groups);
 			return n.has(e) ? n.delete(e) : n.add(e), {
@@ -1482,7 +1482,7 @@ function qe() {
 					className: t("px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer font-[inherit]", a ? "bg-surface-hover text-text-secondary border border-border" : "bg-state-completed text-white border border-state-completed"),
 					children: a ? "■ Paused" : "● Live"
 				}),
-				/* @__PURE__ */ D(v, {
+				/* @__PURE__ */ D(m, {
 					"data-testid": "events-time-range",
 					"aria-label": "Time range",
 					value: s.timeRange,
@@ -1499,7 +1499,7 @@ function qe() {
 				/* @__PURE__ */ O("div", {
 					className: "ml-auto text-xs text-text-tertiary",
 					children: [
-						_.length,
+						y.length,
 						" / ",
 						e.length,
 						" event",
@@ -1535,7 +1535,7 @@ function qe() {
 								children: "Event type"
 							}), Le.map((e) => /* @__PURE__ */ O("label", {
 								className: "flex items-center gap-1.5 text-xs",
-								children: [/* @__PURE__ */ D(y, {
+								children: [/* @__PURE__ */ D(h, {
 									checked: s.groups.has(e),
 									onChange: () => k(e)
 								}), e]
@@ -1587,7 +1587,7 @@ function qe() {
 								children: "Nodes"
 							}), Be.map((e) => /* @__PURE__ */ O("label", {
 								className: "flex items-center gap-1.5 text-xs",
-								children: [/* @__PURE__ */ D(y, {
+								children: [/* @__PURE__ */ D(h, {
 									checked: s.nodes.has(e),
 									onChange: () => A(e)
 								}), e]
@@ -1603,7 +1603,7 @@ function qe() {
 								children: "Severity"
 							}), Ve.map((e) => /* @__PURE__ */ O("label", {
 								className: "flex items-center gap-1.5 text-xs",
-								children: [/* @__PURE__ */ D(y, {
+								children: [/* @__PURE__ */ D(h, {
 									checked: s.severities.has(e),
 									onChange: () => j(e)
 								}), e]
@@ -1623,7 +1623,7 @@ function qe() {
 				/* @__PURE__ */ D("section", {
 					className: "flex-1 min-w-0 flex flex-col",
 					children: /* @__PURE__ */ D(Pe, {
-						events: _,
+						events: y,
 						selectedId: r,
 						onSelect: i,
 						live: !a
@@ -1678,10 +1678,10 @@ var $e = [
 	{ id: "node-2" }
 ];
 function et(e) {
-	let { onInjectLatency: n = (e) => Q({ injectedLatencyMs: Math.max(0, e) }), onInjectPartition: r = (e) => Q({ paused: e.length > 0 }), onDropMessages: i = (e) => Q({ injectedFailureRate: Math.min(1, Math.max(0, e / 100)) }), onKillAll: a = () => Q({ paused: !0 }), onReset: o = () => Ze(), availableNodes: c = $e } = e, [l, u] = T("0"), [d, p] = T("0"), [m, h] = T([]), [g, _] = T(!1), v = S(), [b, w] = T(() => Xe());
+	let { onInjectLatency: n = (e) => Q({ injectedLatencyMs: Math.max(0, e) }), onInjectPartition: r = (e) => Q({ paused: e.length > 0 }), onDropMessages: i = (e) => Q({ injectedFailureRate: Math.min(1, Math.max(0, e / 100)) }), onKillAll: a = () => Q({ paused: !0 }), onReset: o = () => Ze(), availableNodes: c = $e } = e, [l, u] = T("0"), [d, p] = T("0"), [m, g] = T([]), [_, v] = T(!1), y = S(), [b, w] = T(() => Xe());
 	x(() => Qe((e) => w(e)), []);
 	let k = (e) => {
-		h((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
+		g((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
 	}, A = () => {
 		let e = Number.parseInt(l, 10);
 		Number.isFinite(e) && n(e);
@@ -1691,7 +1691,7 @@ function et(e) {
 	}, M = () => {
 		r(m);
 	}, ee = () => {
-		a(), _(!1);
+		a(), v(!1);
 	}, N = () => {
 		Q({ paused: !b.paused });
 	}, P = C(() => c, [c]), F = b.injectedLatencyMs > 0 || b.injectedFailureRate > 0 || b.paused;
@@ -1791,11 +1791,11 @@ function et(e) {
 			}),
 			/* @__PURE__ */ O("div", {
 				role: "group",
-				"aria-labelledby": `${v}-partition`,
+				"aria-labelledby": `${y}-partition`,
 				className: "flex flex-col gap-1.5 pb-3 mb-3 border-b border-border",
 				children: [
 					/* @__PURE__ */ D("div", {
-						id: `${v}-partition`,
+						id: `${y}-partition`,
 						className: "text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px]",
 						children: "Partition nodes"
 					}),
@@ -1803,7 +1803,7 @@ function et(e) {
 						className: "flex flex-col gap-1",
 						children: P.map((e) => /* @__PURE__ */ O("label", {
 							className: "flex items-center gap-1.5 text-xs text-text-primary cursor-pointer",
-							children: [/* @__PURE__ */ D(y, {
+							children: [/* @__PURE__ */ D(h, {
 								checked: m.includes(e.id),
 								onChange: () => k(e.id)
 							}), e.label ?? e.id]
@@ -1853,7 +1853,7 @@ function et(e) {
 				className: "flex flex-col gap-2",
 				children: [/* @__PURE__ */ D("button", {
 					"data-testid": "chaos-kill-all",
-					onClick: () => _(!0),
+					onClick: () => v(!0),
 					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]",
 					children: "Kill all"
 				}), /* @__PURE__ */ D("button", {
@@ -1864,12 +1864,12 @@ function et(e) {
 				})]
 			}),
 			/* @__PURE__ */ D(s, {
-				open: g,
-				onClose: () => _(!1),
+				open: _,
+				onClose: () => v(!1),
 				title: "Kill all nodes?",
 				footer: /* @__PURE__ */ O(E, { children: [/* @__PURE__ */ D("button", {
 					"data-testid": "chaos-kill-cancel",
-					onClick: () => _(!1),
+					onClick: () => v(!1),
 					className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0",
 					children: "Cancel"
 				}), /* @__PURE__ */ D("button", {
@@ -1928,7 +1928,7 @@ function tt() {
 	];
 }
 function nt() {
-	let e = _?.regions ?? {}, t = [];
+	let e = y?.regions ?? {}, t = [];
 	for (let n of Object.keys(e)) {
 		let r = e[n];
 		if (r?.nodes && Array.isArray(r.nodes)) for (let e of r.nodes) t.push({

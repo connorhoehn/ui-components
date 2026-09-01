@@ -8,8 +8,8 @@ import { t as h } from "./EmptyState-ClmWoqCb.js";
 import { n as g, r as _, t as v } from "./focusTrap-CmWJlptm.js";
 import { t as y } from "./SkeletonCard-CGe8XFPB.js";
 import { t as b } from "./Input-DLknWXri.js";
-import { t as x } from "./activationKey-CjbL3LUv.js";
-import { t as S } from "./Select-CqVokE2v.js";
+import { t as x } from "./Select-CqVokE2v.js";
+import { t as S } from "./activationKey-CjbL3LUv.js";
 import { useCallback as C, useEffect as w, useId as T, useMemo as E, useRef as D, useState as O } from "react";
 import { Fragment as k, jsx as A, jsxs as j } from "react/jsx-runtime";
 import { useNavigate as M, useParams as N } from "react-router";
@@ -492,7 +492,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 			priority: t.length > 0 ? Math.max(...t.map((e) => e.priority)) + 1 : 1
 		}, r = [...t, e];
 		n(r), o(r.length - 1), h(e);
-	}, [t, n]), x = C((e) => {
+	}, [t, n]), S = C((e) => {
 		n(t.filter((t, n) => n !== e)), a === e ? (o(null), h(null)) : a !== null && a > e && o(a - 1);
 	}, [
 		t,
@@ -634,7 +634,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 										children: /* @__PURE__ */ j("div", {
 											className: "flex gap-1 items-center flex-wrap",
 											children: [
-												/* @__PURE__ */ A(S, {
+												/* @__PURE__ */ A(x, {
 													"aria-label": "Match field",
 													size: "sm",
 													className: "w-auto min-w-[90px]",
@@ -648,7 +648,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 														label: e
 													}))
 												}),
-												/* @__PURE__ */ A(S, {
+												/* @__PURE__ */ A(x, {
 													"aria-label": "Match operator",
 													size: "sm",
 													className: "w-auto min-w-[90px]",
@@ -780,7 +780,7 @@ function q({ rules: t, onChange: n, readOnly: r = !1 }) {
 											}),
 											/* @__PURE__ */ A("button", {
 												className: "px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
-												onClick: () => x(n),
+												onClick: () => S(n),
 												children: "Delete"
 											})
 										]
@@ -892,7 +892,7 @@ function ae({ sourceId: e }) {
 						t,
 						")"
 					]
-				}), /* @__PURE__ */ A(S, {
+				}), /* @__PURE__ */ A(x, {
 					"data-testid": "slo-window-picker",
 					"aria-label": "Window",
 					className: "w-auto min-w-[100px]",
@@ -1058,7 +1058,7 @@ function fe(e) {
 	}) : [];
 }
 function pe() {
-	let { id: t } = N(), n = M(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = O(null), [l, u] = O(!0), [m, h] = O(null), [g, _] = O(!1), v = T(), [x, E] = O(!1), [D, P] = O(!1), [F, I] = O({}), [L, R] = O([]), [z, B] = O(""), [V, ee] = O(""), [H, U] = O({}), [W, te] = O(!1), G = C(() => {
+	let { id: t } = N(), n = M(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = O(null), [l, u] = O(!0), [m, h] = O(null), [g, _] = O(!1), v = T(), [S, E] = O(!1), [D, P] = O(!1), [F, I] = O({}), [L, R] = O([]), [z, B] = O(""), [V, ee] = O(""), [H, U] = O({}), [W, te] = O(!1), G = C(() => {
 		let e = { "Content-Type": "application/json" };
 		return r && (e.Authorization = `Bearer ${r}`), e;
 	}, [r]), K = C(async (e) => {
@@ -1333,11 +1333,11 @@ function pe() {
 						className: "text-sm font-semibold text-text-primary",
 						children: "Sync History"
 					}), /* @__PURE__ */ A("button", {
-						className: f("px-3.5 py-1.5 text-[13px] font-medium rounded-md cursor-pointer font-[inherit]", x || o.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-primary bg-info-bg text-primary"),
-						disabled: x || o.status === "paused",
+						className: f("px-3.5 py-1.5 text-[13px] font-medium rounded-md cursor-pointer font-[inherit]", S || o.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-primary bg-info-bg text-primary"),
+						disabled: S || o.status === "paused",
 						onClick: () => void Y(),
 						"data-testid": "sync-now-btn",
-						children: x ? "Syncing..." : "Sync Now"
+						children: S ? "Syncing..." : "Sync Now"
 					})]
 				}), o.lastSyncAt ? /* @__PURE__ */ j(k, { children: [/* @__PURE__ */ j("div", {
 					className: "text-xs text-text-tertiary mb-2.5",
@@ -1423,7 +1423,7 @@ function pe() {
 							role: "group",
 							"aria-labelledby": `${v}-schedule-label`,
 							className: "flex gap-2 flex-1 flex-wrap",
-							children: [/* @__PURE__ */ A(S, {
+							children: [/* @__PURE__ */ A(x, {
 								"aria-label": "Schedule preset",
 								className: "w-auto min-w-[160px]",
 								value: oe.some((e) => e.cron === z) ? z : "__custom__",
@@ -1455,7 +1455,7 @@ function pe() {
 							htmlFor: `${v}-default-pipeline`,
 							className: "text-xs font-semibold text-text-tertiary min-w-[140px]",
 							children: "Default Pipeline"
-						}), /* @__PURE__ */ A(S, {
+						}), /* @__PURE__ */ A(x, {
 							id: `${v}-default-pipeline`,
 							className: "flex-1",
 							value: V,
@@ -1508,7 +1508,7 @@ function pe() {
 											className: "flex-[0_0_160px] text-[13px]",
 											children: a.find((t) => t.id === e)?.name ?? e
 										}),
-										/* @__PURE__ */ A(S, {
+										/* @__PURE__ */ A(x, {
 											"aria-label": `Pipeline for ${a.find((t) => t.id === e)?.name ?? e}`,
 											"data-testid": `overrides-pipeline-${e}`,
 											className: "flex-1",
@@ -1533,7 +1533,7 @@ function pe() {
 											children: "Remove"
 										})
 									]
-								}, e)), /* @__PURE__ */ A(S, {
+								}, e)), /* @__PURE__ */ A(x, {
 									"aria-label": "Add override for type",
 									"data-testid": "overrides-add-type",
 									className: "w-auto self-start",
@@ -2048,7 +2048,7 @@ function Te() {
 			/* @__PURE__ */ j("div", {
 				className: "flex gap-2.5 items-center mb-3 flex-wrap",
 				children: [
-					/* @__PURE__ */ A(S, {
+					/* @__PURE__ */ A(x, {
 						"aria-label": "Filter by source",
 						className: "w-auto",
 						value: e ?? "",
@@ -2062,7 +2062,7 @@ function Te() {
 							label: e.name
 						}))]
 					}),
-					/* @__PURE__ */ A(S, {
+					/* @__PURE__ */ A(x, {
 						"aria-label": "Filter by status",
 						className: "w-auto",
 						value: r ?? "",
@@ -2152,7 +2152,7 @@ function Te() {
 					}) }), /* @__PURE__ */ A("tbody", { children: l.map((e) => /* @__PURE__ */ j("tr", {
 						className: "border-b border-border cursor-pointer hover:bg-surface-hover",
 						onClick: () => o(e),
-						onKeyDown: x(() => o(e)),
+						onKeyDown: S(() => o(e)),
 						role: "button",
 						tabIndex: 0,
 						"aria-label": `Open details for ${e.sourcePath}`,
@@ -2327,7 +2327,7 @@ function Oe() {
 						className: "text-[11px] text-text-tertiary mr-1",
 						children: "Time"
 					}),
-					/* @__PURE__ */ A(S, {
+					/* @__PURE__ */ A(x, {
 						id: `${l}-time`,
 						"data-testid": "audit-time-range",
 						className: "w-auto min-w-[140px]",
@@ -2343,7 +2343,7 @@ function Oe() {
 						className: "text-[11px] text-text-tertiary mr-1",
 						children: "Event"
 					}),
-					/* @__PURE__ */ A(S, {
+					/* @__PURE__ */ A(x, {
 						id: `${l}-event`,
 						"data-testid": "audit-event-type",
 						className: "w-auto min-w-[140px]",
@@ -3167,7 +3167,7 @@ function Be({ item: e, docTypes: t, remapTypeId: n, onPickRemapType: r, onAccept
 						title: e.documentTypeId ? "Commit the suggested type" : "No suggestion to accept",
 						children: "Accept suggestion"
 					}),
-					/* @__PURE__ */ A(S, {
+					/* @__PURE__ */ A(x, {
 						"aria-label": `Re-map ${e.sourcePath ?? e.itemId} to document type`,
 						"data-testid": `review-remap-picker-${e.itemId}`,
 						className: "w-auto min-w-[200px]",
@@ -3420,7 +3420,7 @@ function Ke() {
 					}), /* @__PURE__ */ j("div", {
 						className: "flex items-center gap-2 flex-wrap",
 						children: [
-							/* @__PURE__ */ A(S, {
+							/* @__PURE__ */ A(x, {
 								"data-testid": "event-source-filter",
 								"aria-label": "Filter by source",
 								className: "w-auto min-w-[140px]",
@@ -3434,7 +3434,7 @@ function Ke() {
 									label: e.slice(0, 12)
 								}))]
 							}),
-							/* @__PURE__ */ A(S, {
+							/* @__PURE__ */ A(x, {
 								"data-testid": "event-type-filter",
 								"aria-label": "Filter by event type",
 								className: "w-auto min-w-[110px]",

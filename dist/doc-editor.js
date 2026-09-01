@@ -1,4 +1,4 @@
-import { n as e, t } from "./useWebSocket-16eHDqT5.js";
+import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Button-wU9TwJvB.js";
 import { t as i } from "./IconButton-C3DMtvSx.js";
@@ -8,11 +8,11 @@ import { t as s } from "./Input-DLknWXri.js";
 import { t as c } from "./Textarea-Dz4doxTv.js";
 import { t as l } from "./Avatar-BzicCOft.js";
 import { t as u } from "./InlinePopover-DFdI8hw1.js";
-import { t as d } from "./activationKey-CjbL3LUv.js";
-import { a as f, n as p, r as m } from "./renderers-DIrGz3QL.js";
-import { t as h } from "./Select-CqVokE2v.js";
+import { t as d } from "./Select-CqVokE2v.js";
+import { t as f } from "./activationKey-CjbL3LUv.js";
+import { a as p, n as m, r as h } from "./renderers-Cn2YUME8.js";
 import { n as g, t as _ } from "./TiptapEditor-CnjifOQz.js";
-import { A as v, C as y, D as b, E as x, O as S, S as C, T as w, _ as T, a as E, b as D, c as O, d as k, f as A, g as j, h as M, i as N, k as P, l as F, m as ee, o as te, p as ne, r as re, s as ie, t as ae, u as oe, v as se, w as ce, x as le, y as ue } from "./DocumentEditorPage-CDLqQ0lx.js";
+import { A as v, C as y, D as b, E as x, O as S, S as C, T as w, _ as T, a as E, b as D, c as O, d as k, f as A, g as j, h as M, i as N, k as P, l as F, m as ee, o as te, p as ne, r as re, s as ie, t as ae, u as oe, v as se, w as ce, x as le, y as ue } from "./DocumentEditorPage-ipRJZIMb.js";
 import { i as de, n as fe, r as pe, t as me } from "./CanvasDocumentView-Cv3Ztb5j.js";
 import { useCallback as I, useEffect as L, useImperativeHandle as he, useMemo as R, useRef as z, useState as B } from "react";
 import { Fragment as V, jsx as H, jsxs as U } from "react/jsx-runtime";
@@ -117,7 +117,7 @@ function xe({ users: e, onClickUser: t }) {
 	});
 }
 function Se({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i, onDeleteDocument: a, onJumpToUser: o, hideHeader: s }) {
-	let [c, l] = B(!1), [u, p] = B(null), [m, h] = B(null), [g, _] = B(1), v = Math.max(1, Math.ceil(e.length / 10)), y = Math.min(g, v), b = R(() => {
+	let [c, l] = B(!1), [u, d] = B(null), [m, h] = B(null), [g, _] = B(1), v = Math.max(1, Math.ceil(e.length / 10)), y = Math.min(g, v), b = R(() => {
 		let t = (y - 1) * 10;
 		return e.slice(t, t + 10);
 	}, [e, y]), x = I((e, t, n) => {
@@ -155,9 +155,9 @@ function Se({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 						tabIndex: 0,
 						"aria-label": `Open ${e.title}`,
 						onClick: () => r(e.id),
-						onKeyDown: d(() => r(e.id)),
-						onMouseEnter: () => p(e.id),
-						onMouseLeave: () => p(null),
+						onKeyDown: f(() => r(e.id)),
+						onMouseEnter: () => d(e.id),
+						onMouseLeave: () => d(null),
 						onFocus: () => h(e.id),
 						onBlur: (t) => {
 							t.currentTarget.contains(t.relatedTarget) || h((t) => t === e.id ? null : t);
@@ -249,7 +249,7 @@ function Se({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 					})
 				]
 			}),
-			/* @__PURE__ */ H(f, {
+			/* @__PURE__ */ H(p, {
 				open: c,
 				onClose: () => l(!1),
 				onCreate: i
@@ -1170,7 +1170,7 @@ function Ue({ entry: e, sections: t, onAttach: i, onDismiss: o, testId: s }) {
 				children: [/* @__PURE__ */ H("span", {
 					className: "text-[11px] uppercase tracking-wide text-text-tertiary",
 					children: "Or file it under"
-				}), /* @__PURE__ */ H(h, {
+				}), /* @__PURE__ */ H(d, {
 					size: "sm",
 					defaultValue: "",
 					placeholder: "Choose a section…",
@@ -1433,4 +1433,4 @@ function Xe({ docked: e, canAccept: t, label: r = "Video dock", hint: a = "Drop 
 	});
 }
 //#endregion
-export { Me as AckMode, F as ActionItemsCard, Re as ActivityFeed, C as AttachmentsPanel, me as CanvasDocumentView, X as ChunkViewer, Je as CommentGhostPopover, T as CommentThreadNode, ie as DiffViewer, ae as DocumentEditorPage, fe as DocumentGutter, b as DocumentHeader, Se as DocumentListPage, de as DocumentToolbar, g as EditorToolbar, A as ExecutiveSummaryCard, x as FollowModeBar, ne as HeaderBanner, oe as KeyDecisionsCard, le as MentionDropdown, E as MyMentionsPanel, f as NewDocumentModal, S as ParticipantAvatars, He as ProposalCard, O as ReaderMode, M as ReviewMode, q as ReviewProgress, J as ReviewableItem, ce as SectionBlock, j as SectionComments, y as SectionList, k as SectionSummariesCard, Ee as StandaloneTiptap, re as TableOfContents, m as TaskItemRow, p as TaskList, _ as TiptapEditor, te as VersionHistoryPanel, w as VideoCallPanel, Xe as VideoDockSlot, N as VideoHistoryPanel, We as WorkItemInbox, Ce as clientIdForUser, se as countAllComments, ee as generateSummaryBullets, ue as getInitials, D as relativeTime, qe as replyLabel, pe as stackOffsets, v as useDocumentActions, we as useFollowCursor, P as useSidebarPanels };
+export { Me as AckMode, F as ActionItemsCard, Re as ActivityFeed, C as AttachmentsPanel, me as CanvasDocumentView, X as ChunkViewer, Je as CommentGhostPopover, T as CommentThreadNode, ie as DiffViewer, ae as DocumentEditorPage, fe as DocumentGutter, b as DocumentHeader, Se as DocumentListPage, de as DocumentToolbar, g as EditorToolbar, A as ExecutiveSummaryCard, x as FollowModeBar, ne as HeaderBanner, oe as KeyDecisionsCard, le as MentionDropdown, E as MyMentionsPanel, p as NewDocumentModal, S as ParticipantAvatars, He as ProposalCard, O as ReaderMode, M as ReviewMode, q as ReviewProgress, J as ReviewableItem, ce as SectionBlock, j as SectionComments, y as SectionList, k as SectionSummariesCard, Ee as StandaloneTiptap, re as TableOfContents, h as TaskItemRow, m as TaskList, _ as TiptapEditor, te as VersionHistoryPanel, w as VideoCallPanel, Xe as VideoDockSlot, N as VideoHistoryPanel, We as WorkItemInbox, Ce as clientIdForUser, se as countAllComments, ee as generateSummaryBullets, ue as getInitials, D as relativeTime, qe as replyLabel, pe as stackOffsets, v as useDocumentActions, we as useFollowCursor, P as useSidebarPanels };

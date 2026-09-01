@@ -5,6 +5,7 @@ export * from '../ui/Card';
 export * from '../ui/Table';
 export * from '../ui/PageSection';
 export * from '../ui/IconButton';
+export * from '../ui/Stack';
 
 export { default as Banner } from './Banner';
 export * from './Banner';
@@ -237,3 +238,31 @@ export {
   CODE_TONE_TEXT,
 } from './tones';
 export type { Tone, ToneOrAlias, SurfaceTone } from './tones';
+
+// ── Metadata line (2026-09) ──
+export { MetaLine } from './MetaLine';
+export type { MetaLineProps, MetaLineSize, MetaLineTone } from './MetaLine';
+
+// ── Form primitives, reachable from the `/shared` subpath ──
+//
+// These have existed in `components/forms` for a long time but were exported
+// ONLY from the root entry. Every app page in the aws-agentcore portal imports
+// from `@connorhoehnslalom/ui-components/shared` (140 import sites vs 0 on the
+// root), so from those pages the library appeared to have no text input, no
+// select and no checkbox — and each page hand-rolled a `const inputStyle:
+// CSSProperties` instead. The controls were never missing; the door was.
+//
+// Re-exported, not moved: the root entry keeps its explicit exports, which
+// take precedence over this star re-export, so nothing existing changes.
+export { Input } from '../forms/Input';
+export type { InputProps, InputSize, InputType } from '../forms/Input';
+export { Select } from '../forms/Select';
+export type { SelectProps, SelectSize, SelectOption, SelectOptionGroup } from '../forms/Select';
+export { Textarea } from '../forms/Textarea';
+export type { TextareaProps } from '../forms/Textarea';
+export { NumberInput } from '../forms/NumberInput';
+export type { NumberInputProps } from '../forms/NumberInput';
+export { Checkbox } from '../forms/Checkbox';
+export type { CheckboxProps } from '../forms/Checkbox';
+export { RadioGroup } from '../forms/RadioGroup';
+export type { RadioGroupProps, RadioOption } from '../forms/RadioGroup';

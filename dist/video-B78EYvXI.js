@@ -8,8 +8,8 @@ import { n as o, t as s } from "./PermissionDeniedCard-B9cc5d5O.js";
 import { n as c, r as l, t as u } from "./focusTrap-CmWJlptm.js";
 import { t as d } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as f } from "./Avatar-BzicCOft.js";
-import { t as p } from "./activationKey-CjbL3LUv.js";
-import { t as m } from "./Select-CqVokE2v.js";
+import { t as p } from "./Select-CqVokE2v.js";
+import { t as m } from "./activationKey-CjbL3LUv.js";
 import { m as h, o as g } from "./MediaEffectsPreviewPanel-DhMdqGuZ.js";
 import { useCallback as _, useEffect as v, useImperativeHandle as y, useLayoutEffect as b, useMemo as x, useRef as S, useState as C } from "react";
 import { Fragment as w, jsx as T, jsxs as E } from "react/jsx-runtime";
@@ -1787,7 +1787,7 @@ function $e({ state: t, mode: n, duration: r, isMuted: i, callerName: a, onToggl
 		role: c ? "button" : void 0,
 		tabIndex: c ? 0 : void 0,
 		"aria-label": c ? "Expand call widget" : void 0,
-		onKeyDown: c ? p(c) : void 0,
+		onKeyDown: c ? m(c) : void 0,
 		children: [
 			/* @__PURE__ */ T("span", { className: e("w-2 h-2 rounded-full shrink-0", t === "active" ? "bg-success animate-pulse" : "bg-warning animate-pulse") }),
 			/* @__PURE__ */ T("div", {
@@ -2322,7 +2322,7 @@ function st(e) {
 function ct({ playlistUrl: t, poster: n, autoPlay: r = !1, muted: i = !1, onLoadedMetadata: a, onTimeUpdate: o, onError: s, hideDownload: c = !1, className: l }) {
 	let u = S(null), d = S(null), f = S(s);
 	f.current = s;
-	let [p, h] = C(!1), [g, _] = C(0), [y, b] = C(0), [w, D] = C(1), [O, k] = C(1), [A, j] = C(!1), [M, N] = C(null);
+	let [m, h] = C(!1), [g, _] = C(0), [y, b] = C(0), [w, D] = C(1), [O, k] = C(1), [A, j] = C(!1), [M, N] = C(null);
 	v(() => {
 		let e = u.current;
 		if (!e || !t) return;
@@ -2445,8 +2445,8 @@ function ct({ playlistUrl: t, poster: n, autoPlay: r = !1, muted: i = !1, onLoad
 							type: "button",
 							onClick: P,
 							className: "w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center",
-							"aria-label": p ? "Pause" : "Play",
-							children: p ? /* @__PURE__ */ E("svg", {
+							"aria-label": m ? "Pause" : "Play",
+							children: m ? /* @__PURE__ */ E("svg", {
 								width: "14",
 								height: "14",
 								viewBox: "0 0 14 14",
@@ -2486,7 +2486,7 @@ function ct({ playlistUrl: t, poster: n, autoPlay: r = !1, muted: i = !1, onLoad
 								"aria-label": "Volume"
 							})]
 						}),
-						/* @__PURE__ */ T(m, {
+						/* @__PURE__ */ T(p, {
 							size: "sm",
 							value: String(O),
 							onChange: L,
@@ -2764,7 +2764,7 @@ function gt({ status: t, segments: n, currentTimeMs: r, onSeek: i, title: a = "T
 					"data-seg-index": n,
 					className: e("rounded-md px-3 py-2 transition-colors", r ? "bg-surface-emphasis ring-1 ring-primary" : "hover:bg-surface-hover", o && "cursor-pointer"),
 					onClick: o ? () => i(t.startMs) : void 0,
-					onKeyDown: o ? p(() => i(t.startMs)) : void 0,
+					onKeyDown: o ? m(() => i(t.startMs)) : void 0,
 					role: o ? "button" : void 0,
 					tabIndex: o ? 0 : void 0,
 					"aria-label": o ? `Seek to ${mt(t.startMs)} — ${t.speakerLabel}` : void 0,
