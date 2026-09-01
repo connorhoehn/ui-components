@@ -1,8 +1,8 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { d as t, l as n } from "./Chip-YhQI5B9P.js";
 import { t as r } from "./EmptyState-ClmWoqCb.js";
-import { t as i } from "./Avatar-Yxs_9Jio.js";
-import { t as a } from "./StatusDot-Bgx2zxgC.js";
+import { t as i } from "./StatusDot-Bgx2zxgC.js";
+import { t as a } from "./Avatar-BzicCOft.js";
 import { useEffect as o, useRef as s, useState as c } from "react";
 import { Fragment as l, jsx as u, jsxs as d } from "react/jsx-runtime";
 //#region src/components/shared/ConnectionPill.tsx
@@ -75,22 +75,70 @@ function g(e) {
 function _(e) {
 	if (e) return /^#[0-9a-fA-F]{6}$/.test(e) ? `${e}99` : (/^#[0-9a-fA-F]{8}$/.test(e), e);
 }
-function v({ users: t, maxVisible: n = 5, size: r = 28, onMoreClick: o, onUserClick: s, className: c }) {
-	let f = t.slice(0, n), p = t.length - f.length, m = -(r * .3), v = Math.max(1, Math.round(r * .07)), y = Math.max(10, Math.round(r * .42));
+function v({ user: t, isFollowing: n, onFollow: r, children: i }) {
+	let [a, l] = c(!1), f = s(null), p = () => {
+		f.current &&= (clearTimeout(f.current), null), l(!0);
+	}, m = () => {
+		f.current = setTimeout(() => l(!1), 150);
+	};
+	return o(() => () => {
+		f.current && clearTimeout(f.current);
+	}, []), /* @__PURE__ */ d("span", {
+		className: "relative inline-flex",
+		onMouseEnter: p,
+		onMouseLeave: m,
+		onFocus: p,
+		onBlur: m,
+		onKeyDown: (e) => {
+			e.key === "Escape" && l(!1);
+		},
+		children: [i, a && /* @__PURE__ */ d("div", {
+			role: "tooltip",
+			"data-testid": "presence-card",
+			onMouseEnter: p,
+			onMouseLeave: m,
+			className: "absolute top-full left-1/2 -translate-x-1/2 mt-1.5 z-50 min-w-[140px] rounded-md border border-border bg-surface shadow-lg px-2.5 py-2 text-left",
+			children: [
+				/* @__PURE__ */ u("div", {
+					className: "text-[12px] font-semibold text-text-primary whitespace-nowrap",
+					children: t.name
+				}),
+				t.detail && /* @__PURE__ */ u("div", {
+					className: "text-[11px] text-text-tertiary whitespace-nowrap",
+					children: t.detail
+				}),
+				t.location && /* @__PURE__ */ d("div", {
+					className: "text-[11px] text-text-tertiary whitespace-nowrap mt-0.5",
+					children: ["§ ", t.location]
+				}),
+				/* @__PURE__ */ u("button", {
+					type: "button",
+					onClick: (e) => {
+						e.stopPropagation(), r(t.id);
+					},
+					className: e("mt-1.5 text-[11px] font-semibold bg-transparent border-0 p-0 cursor-pointer", n ? "text-warning" : "text-info"),
+					children: n ? "Stop following" : "Follow"
+				})
+			]
+		})]
+	});
+}
+function y({ users: t, maxVisible: n = 5, size: r = 28, onMoreClick: o, onUserClick: s, onFollowUser: c, followingUserId: f = null, className: p }) {
+	let m = t.slice(0, n), y = t.length - m.length, b = -(r * .3), x = Math.max(1, Math.round(r * .07)), S = Math.max(10, Math.round(r * .42));
 	return /* @__PURE__ */ d("div", {
-		className: e("inline-flex items-center", c),
+		className: e("inline-flex items-center", p),
 		role: "list",
 		"aria-label": "Online users",
-		children: [f.map((e, t) => {
-			let n = g(e), o = e.idle === !0, c = o ? _(e.color) : e.color, f = o && !e.color ? .6 : void 0, p = e.mode ? h[e.mode] : null, b = [e.name];
-			o ? b.push("Away") : p && b.push(p.label);
-			let x = b.join(" — "), S = {
+		children: [m.map((e, t) => {
+			let n = g(e), o = e.idle === !0, p = o ? _(e.color) : e.color, m = o && !e.color ? .6 : void 0, y = e.mode ? h[e.mode] : null, C = [e.name];
+			o ? C.push("Away") : y && C.push(y.label);
+			let w = C.join(" — "), T = {
 				"data-testid": "presence-avatar",
 				"data-presence-user": e.name,
 				"data-presence-user-id": e.id,
 				...o ? { "data-presence-idle": "true" } : {},
 				...e.mode ? { "data-presence-mode": e.mode } : {}
-			}, C = /* @__PURE__ */ d(l, { children: [
+			}, E = /* @__PURE__ */ d(l, { children: [
 				e.avatarUrl ? /* @__PURE__ */ u("img", {
 					src: e.avatarUrl,
 					alt: e.name,
@@ -98,88 +146,93 @@ function v({ users: t, maxVisible: n = 5, size: r = 28, onMoreClick: o, onUserCl
 					style: {
 						width: r,
 						height: r,
-						border: `${v}px solid white`,
-						opacity: f
+						border: `${x}px solid white`,
+						opacity: m
 					}
-				}) : /* @__PURE__ */ u(i, {
+				}) : /* @__PURE__ */ u(a, {
 					name: e.name,
 					size: r,
-					color: c,
+					color: p,
 					style: {
-						border: `${v}px solid white`,
-						opacity: f
+						border: `${x}px solid white`,
+						opacity: m
 					}
 				}),
 				n && /* @__PURE__ */ u("span", {
 					className: "absolute -bottom-0.5 -right-0.5",
-					children: /* @__PURE__ */ u(a, {
+					children: /* @__PURE__ */ u(i, {
 						color: n,
 						size: "xs",
 						"aria-label": o ? `${e.name} away` : e.online === !1 ? `${e.name} offline` : `${e.name} online`
 					})
 				}),
-				p && /* @__PURE__ */ u("span", {
+				y && /* @__PURE__ */ u("span", {
 					className: "absolute flex items-center justify-center rounded-full bg-surface border border-border select-none",
 					style: {
-						top: -v,
-						right: -v,
-						width: y,
-						height: y,
-						fontSize: y * .6,
+						top: -x,
+						right: -x,
+						width: S,
+						height: S,
+						fontSize: S * .6,
 						lineHeight: 1
 					},
 					"data-testid": "presence-mode-badge",
-					"aria-label": p.label,
-					children: p.glyph
+					"aria-label": y.label,
+					children: y.glyph
 				})
-			] }), w = { marginLeft: t > 0 ? m : 0 };
-			return s ? /* @__PURE__ */ u("button", {
+			] }), D = { marginLeft: t > 0 ? b : 0 };
+			return ((t) => c ? /* @__PURE__ */ u(v, {
+				user: e,
+				isFollowing: f === e.id,
+				onFollow: c,
+				children: t
+			}, e.id) : t)(s ? /* @__PURE__ */ u("button", {
 				type: "button",
 				role: "listitem",
 				onClick: (t) => {
 					t.stopPropagation(), s(e.id);
 				},
 				className: "relative shrink-0 p-0 bg-transparent border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-info rounded-full",
-				title: x,
-				"aria-label": x,
-				...S,
-				style: w,
-				children: C
+				...c ? {} : { title: w },
+				"aria-label": w,
+				...T,
+				style: D,
+				children: E
 			}, e.id) : /* @__PURE__ */ u("div", {
 				role: "listitem",
 				className: "relative shrink-0",
-				title: x,
-				...S,
-				style: w,
-				children: C
-			}, e.id);
-		}), p > 0 && /* @__PURE__ */ d("button", {
+				...c ? {} : { title: w },
+				...T,
+				style: D,
+				children: E
+			}, e.id));
+		}), y > 0 && /* @__PURE__ */ d("button", {
 			type: "button",
 			onClick: o,
 			disabled: !o,
-			"aria-label": `${p} more users`,
+			"aria-label": `${y} more users`,
 			className: e("inline-flex items-center justify-center rounded-full shrink-0", "font-semibold select-none bg-surface-emphasis text-text-secondary", o && "cursor-pointer hover:bg-surface-emphasis", !o && "cursor-default", "border-white"),
 			style: {
 				width: r,
 				height: r,
 				fontSize: r * .34,
-				marginLeft: m,
-				border: `${v}px solid white`
+				marginLeft: b,
+				border: `${x}px solid white`
 			},
-			children: ["+", p]
+			children: ["+", y]
 		})]
 	});
 }
 //#endregion
 //#region src/components/shared/NotificationCenter.tsx
-function y(e) {
+function b(e) {
 	if (e == null) return null;
 	let t = new Date(e);
 	if (isNaN(t.getTime())) return null;
 	let n = Date.now() - t.getTime();
 	return n < 6e4 ? "just now" : n < 36e5 ? `${Math.floor(n / 6e4)}m ago` : n < 864e5 ? `${Math.floor(n / 36e5)}h ago` : `${Math.floor(n / 864e5)}d ago`;
 }
-function b({ items: t, onItemClick: n, onMarkAllRead: i, onClearAll: a, className: o, "data-testid": s }) {
+function x({ items: t, onItemClick: n, onMarkAllRead: i, onClearAll: a, className: o, "data-testid": s }) {
 	let [l, f] = c("unread"), p = t.filter((e) => !e.read), m = l === "unread" ? p : t, h = p.length > 0, g = (t) => e("px-3 py-1.5 text-sm border-none rounded-md cursor-pointer font-[inherit] transition-colors duration-100", t ? "bg-primary-bg text-text-primary font-semibold" : "bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]");
 	return /* @__PURE__ */ d("div", {
 		"data-testid": s,
@@ -255,7 +308,7 @@ function b({ items: t, onItemClick: n, onMarkAllRead: i, onClearAll: a, classNam
 							}),
 							t.timestamp != null && /* @__PURE__ */ u("p", {
 								className: "text-[11px] text-[var(--color-text-tertiary)] mt-1 font-mono",
-								children: y(t.timestamp)
+								children: b(t.timestamp)
 							})
 						]
 					})]
@@ -266,23 +319,23 @@ function b({ items: t, onItemClick: n, onMarkAllRead: i, onClearAll: a, classNam
 }
 //#endregion
 //#region src/components/shared/ActivityFeed.tsx
-var x = {
+var S = {
 	task: "var(--color-success)",
 	pr: "var(--color-primary)",
 	decision: "var(--color-warning)",
 	comment: "var(--color-text-tertiary)",
 	status: "var(--color-info)"
 };
-function S(e) {
+function C(e) {
 	let t = e.trim().split(/\s+/), n = t[0] ?? "", r = t[1]?.[0] ?? "";
 	return r ? `${n} ${r}.` : n;
 }
-var C = [
+var w = [
 	1,
 	.5,
 	.18
 ];
-function w({ item: e, opacity: t, dotColor: n }) {
+function T({ item: e, opacity: t, dotColor: n }) {
 	let r = e.subject.length > 30 ? e.subject.slice(0, 28) + "…" : e.subject;
 	return /* @__PURE__ */ d("div", {
 		className: "uc-activity-row flex items-center gap-1.5 py-[3.5px] overflow-hidden min-w-0 transition-[opacity] duration-[380ms] ease-in-out",
@@ -292,13 +345,13 @@ function w({ item: e, opacity: t, dotColor: n }) {
 				className: "w-[5px] h-[5px] rounded-full shrink-0",
 				style: { background: n }
 			}),
-			/* @__PURE__ */ u(i, {
+			/* @__PURE__ */ u(a, {
 				name: e.actor,
 				size: 17
 			}),
 			/* @__PURE__ */ u("span", {
 				className: "text-[11px] text-text-primary font-medium shrink-0",
-				children: S(e.actor)
+				children: C(e.actor)
 			}),
 			/* @__PURE__ */ u("span", {
 				className: "text-[11px] text-text-tertiary shrink-0",
@@ -320,9 +373,9 @@ function w({ item: e, opacity: t, dotColor: n }) {
 		]
 	});
 }
-function T({ items: t, visibleCount: n = 3, rotateMs: r = 4200, staggerMs: i = 0, kindColors: a, className: l }) {
+function E({ items: t, visibleCount: n = 3, rotateMs: r = 4200, staggerMs: i = 0, kindColors: a, className: l }) {
 	let d = {
-		...x,
+		...S,
 		...a
 	}, [f, p] = c(() => t.slice(0, n)), m = s(n);
 	return o(() => {
@@ -352,31 +405,31 @@ function T({ items: t, visibleCount: n = 3, rotateMs: r = 4200, staggerMs: i = 0
 		})
 	}) : /* @__PURE__ */ u("div", {
 		className: e("flex-1 flex flex-col overflow-hidden", l),
-		children: f.map((e, t) => /* @__PURE__ */ u(w, {
+		children: f.map((e, t) => /* @__PURE__ */ u(T, {
 			item: e,
-			opacity: C[t] ?? .1,
+			opacity: w[t] ?? .1,
 			dotColor: d[e.kind ?? ""] ?? "var(--color-text-tertiary)"
 		}, e.id))
 	});
 }
 //#endregion
 //#region src/components/shared/Badge.tsx
-var E = {
+var D = {
 	accent: "info",
 	success: "success",
 	danger: "danger",
 	muted: "neutral"
 };
-function D(e) {
+function O(e) {
 	return e == null || e <= 0 ? "0" : e > 99 ? "99+" : String(Math.trunc(e));
 }
-function O({ variant: r, value: i, color: a = "accent", "aria-label": o, className: s, "data-testid": c }) {
+function k({ variant: r, value: i, color: a = "accent", "aria-label": o, className: s, "data-testid": c }) {
 	if (r === "count") {
-		let t = D(i);
+		let t = O(i);
 		return /* @__PURE__ */ u("span", {
 			"data-testid": c,
 			"aria-label": o ?? `${t} items`,
-			className: e("inline-flex items-center justify-center min-w-[18px] h-[18px]", "px-1.5 rounded-full text-[10px] font-semibold leading-none select-none", n[E[a]], s),
+			className: e("inline-flex items-center justify-center min-w-[18px] h-[18px]", "px-1.5 rounded-full text-[10px] font-semibold leading-none select-none", n[D[a]], s),
 			children: t
 		});
 	}
@@ -384,7 +437,7 @@ function O({ variant: r, value: i, color: a = "accent", "aria-label": o, classNa
 		"data-testid": c,
 		"aria-label": o,
 		role: o ? "img" : void 0,
-		className: e("inline-block w-2 h-2 rounded-full shrink-0", t[E[a]], s)
+		className: e("inline-block w-2 h-2 rounded-full shrink-0", t[D[a]], s)
 	}) : /* @__PURE__ */ d("span", {
 		"data-testid": c,
 		"aria-label": o,
@@ -392,12 +445,12 @@ function O({ variant: r, value: i, color: a = "accent", "aria-label": o, classNa
 		className: e("relative inline-flex w-2.5 h-2.5 shrink-0", s),
 		children: [/* @__PURE__ */ u("span", {
 			"aria-hidden": "true",
-			className: e("absolute inset-0 rounded-full animate-ping", e(t[E[a]], "opacity-60"))
+			className: e("absolute inset-0 rounded-full animate-ping", e(t[D[a]], "opacity-60"))
 		}), /* @__PURE__ */ u("span", {
 			"aria-hidden": "true",
-			className: e("relative inline-block w-2.5 h-2.5 rounded-full", t[E[a]])
+			className: e("relative inline-block w-2.5 h-2.5 rounded-full", t[D[a]])
 		})]
 	});
 }
 //#endregion
-export { m as a, v as i, T as n, b as r, O as t };
+export { m as a, y as i, E as n, x as r, k as t };

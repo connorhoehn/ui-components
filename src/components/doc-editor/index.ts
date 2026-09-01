@@ -69,6 +69,16 @@ export type { DocumentToolbarProps } from './DocumentToolbar';
 export { default as DocumentGutter, stackOffsets } from './DocumentGutter';
 export type { DocumentGutterProps, GutterItem } from './DocumentGutter';
 
+// The gutter's counterpart for when the gutter is NOT there: the in-prose
+// marks stay visible and open a card, so a hidden margin hides the threads
+// without hiding the fact that a discussion happened.
+export { default as CommentGhostPopover, replyLabel } from './CommentGhostPopover';
+export type {
+  CommentGhostPopoverProps,
+  CommentGhostPopoverHandle,
+  CommentGhostThread,
+} from './CommentGhostPopover';
+
 // Where a call's video lands inside a document — the drop target half of the
 // dock. Was reachable only by deep import, which put hosts one refactor away
 // from a broken path.

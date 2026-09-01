@@ -41,8 +41,28 @@ vi.mock('../TiptapEditor', () => ({
   },
 }));
 
+// Reflects the gutter props back as attributes. The toggle's own rendering
+// (count badge, aria-pressed, the zero-comment case) is DocumentToolbar's
+// contract and is tested there against the real component; what this file
+// owns is whether the page hands it the right numbers.
 vi.mock('../DocumentToolbar', () => ({
-  default: () => <div data-testid="toolbar-stub" />,
+  default: ({
+    actions, commentCount, gutterVisible, onToggleGutter,
+  }: {
+    actions?: React.ReactNode;
+    commentCount?: number;
+    gutterVisible?: boolean;
+    onToggleGutter?: () => void;
+  }) => (
+    <div
+      data-testid="toolbar-stub"
+      data-comment-count={String(commentCount ?? 0)}
+      data-gutter-visible={String(gutterVisible)}
+      data-has-toggle={String(Boolean(onToggleGutter))}
+    >
+      {actions}
+    </div>
+  ),
 }));
 
 function makeDoc() {
@@ -189,6 +209,70 @@ describe('CanvasDocumentView — a legacy sectioned document', () => {
     expect(onConvert).toHaveBeenCalledTimes(1);
     release(null);
     await waitFor(() => expect(btn).not.toBeDisabled());
+  });
+});
+
+describe('CanvasDocumentView — the comment gutter', () => {
+  const ITEMS = [
+    { id: 'c1', top: 20, content: <p>first</p> },
+    { id: 'c2', top: 90, content: <p>second</p> },
+    { id: 'c3', top: 300, content: <p>third</p> },
+  ];
+
+  it('shows the gutter by default when there are threads', () => {
+    renderView({ gutterItems: ITEMS });
+    expect(screen.getByTestId('canvas-document-gutter')).toBeInTheDocument();
+  });
+
+  it('unmounts the gutter when the host turns it off', () => {
+    renderView({ gutterItems: ITEMS, gutterVisible: false });
+    expect(screen.queryByTestId('canvas-document-gutter')).toBeNull();
+  });
+
+  // The point of hiding it. With the column gone the row must not keep
+  // reserving space for it, or the sheet stays shoved left of centre with an
+  // empty margin nobody can explain.
+  it('gives the row back to the sheet when the gutter is off', () => {
+    renderView({ gutterItems: ITEMS, gutterVisible: false });
+    const row = screen.getByTestId('canvas-document-page-row');
+    expect(row).toHaveAttribute('data-gutter', 'hidden');
+    expect(row.className).not.toContain('gap-6');
+    expect(row).toContainElement(screen.getByTestId('canvas-document-paper'));
+    expect(row).not.toContainElement(screen.queryByTestId('canvas-document-gutter'));
+  });
+
+  it('shares the row with the gutter when it is on', () => {
+    renderView({ gutterItems: ITEMS });
+    const row = screen.getByTestId('canvas-document-page-row');
+    expect(row).toHaveAttribute('data-gutter', 'visible');
+    expect(row.className).toContain('gap-6');
+    expect(row).toContainElement(screen.getByTestId('canvas-document-gutter'));
+  });
+
+  // The critical detail: hiding the threads must not hide the FACT of them.
+  // The toolbar keeps the count whether or not the column is drawn.
+  it('still reports the count to the toolbar while hidden', () => {
+    renderView({ gutterItems: ITEMS, gutterVisible: false, onToggleGutter: () => {} });
+    const toolbar = screen.getByTestId('toolbar-stub');
+    expect(toolbar).toHaveAttribute('data-comment-count', '3');
+    expect(toolbar).toHaveAttribute('data-gutter-visible', 'false');
+    expect(toolbar).toHaveAttribute('data-has-toggle', 'true');
+  });
+
+  it('offers nothing to toggle when the document has no comments', () => {
+    renderView({ gutterItems: [], onToggleGutter: () => {} });
+    expect(screen.getByTestId('toolbar-stub')).toHaveAttribute('data-comment-count', '0');
+    expect(screen.queryByTestId('canvas-document-gutter')).toBeNull();
+  });
+
+  // Controlled, not internal: the component never flips its own state, so a
+  // host that forgets to persist the preference is a visible bug rather than
+  // one that silently resets on the next navigation.
+  it('does not hide the gutter on its own when told to stay open', () => {
+    const onToggleGutter = vi.fn();
+    renderView({ gutterItems: ITEMS, gutterVisible: true, onToggleGutter });
+    expect(screen.getByTestId('canvas-document-gutter')).toBeInTheDocument();
+    expect(onToggleGutter).not.toHaveBeenCalled();
   });
 });
 

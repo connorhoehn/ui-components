@@ -927,6 +927,21 @@ export declare interface FloatingPanelProps {
     'data-testid'?: string;
 }
 
+export declare function FollowBanner({ name, onStop, autoStopOnInteract, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
+
+export declare interface FollowBannerProps {
+    /** Who is being followed. Null renders nothing. */
+    name: string | null;
+    onStop: () => void;
+    /**
+     * End follow on the viewer's own mousedown / keydown / wheel. Default on;
+     * turn off only where the host routes those interactions itself.
+     */
+    autoStopOnInteract?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /**
  * A strip of clickable follow-up suggestion chips, with optional refresh button.
  */
@@ -1482,7 +1497,7 @@ export declare type PermissionKind = 'camera' | 'microphone' | 'screen';
 declare type PermissionState_2 = 'denied' | 'blocked' | 'no-device' | 'unavailable';
 export { PermissionState_2 as PermissionState }
 
-export declare function PresenceAvatars({ users, maxVisible, size, onMoreClick, onUserClick, className, }: PresenceAvatarsProps): JSX.Element;
+export declare function PresenceAvatars({ users, maxVisible, size, onMoreClick, onUserClick, onFollowUser, followingUserId, className, }: PresenceAvatarsProps): JSX.Element;
 
 export declare interface PresenceAvatarsProps {
     users: PresenceAvatarUser[];
@@ -1497,6 +1512,18 @@ export declare interface PresenceAvatarsProps {
      *  accessibility; when omitted, items render as `<div>` (back-compat
      *  with consumers that just want a static row). */
     onUserClick?: (id: string) => void;
+    /**
+     * Enables follow mode: each avatar grows a hover/focus card (name, detail,
+     * location) with a Follow action. Click stays `onUserClick` — jump once —
+     * and follow is the card's explicit verb, because a bubble that follows on
+     * bare click turns every glance into a mode change.
+     *
+     * The card replaces the native `title` tooltip when set; two tooltips
+     * fighting over one hover is worse than either.
+     */
+    onFollowUser?: (id: string) => void;
+    /** The user currently being followed, so their card offers Stop instead. */
+    followingUserId?: string | null;
     className?: string;
 }
 
@@ -1519,6 +1546,12 @@ export declare interface PresenceAvatarUser {
     /** Optional editing mode — renders a small mode badge on the
      *  upper-right of the avatar (pencil / check / eye). */
     mode?: PresenceMode;
+    /** One status line for the hover card — "editing", "away · 3m". Free text
+     *  because the library does not know the host's vocabulary. */
+    detail?: string;
+    /** Where in the surface the user is — a section title, a pane name.
+     *  Rendered under the detail line on the hover card. */
+    location?: string;
 }
 
 export declare function PresenceDot({ state, ariaLabel, label, pulse, size, className, style, title, 'data-testid': testId, }: PresenceDotProps): JSX.Element;

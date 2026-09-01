@@ -4371,7 +4371,9 @@ var xn = class {
 		this.url = e, this.withCredentials = !!t?.withCredentials;
 		let n = bn(e), r = 0;
 		this.schedule(0, () => {
-			this.readyState = 1, this.emit("open", new Event("open"));
+			this.readyState = 1;
+			let e = new Event("open");
+			this.onopen?.(e), this.emit("open", e);
 		});
 		for (let e of n.frames) r += e.afterMs, this.schedule(r, () => this.deliver(e.data));
 	}

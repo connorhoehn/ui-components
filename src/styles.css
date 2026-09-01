@@ -663,6 +663,83 @@
 
 .doc-page .ProseMirror .is-empty::before { color: var(--color-paper-ink-subtle); }
 
+/* ---------------------------------------------------------------------------
+   Comment ghosts — the painted evidence that a discussion exists.
+
+   The classes are realtime-modules' `CommentHighlight` contract; it decorates
+   the anchored characters and ships NO colours, which is what this block is.
+   The card those marks open into is CommentGhostPopover.tsx.
+
+   .canvas-comment              every painted range
+   .canvas-comment--open        a live thread
+   .canvas-comment--active      the thread the reader is focused on
+   .canvas-comment--resolved    settled — QUIETER, not louder
+   [data-comment-id]            which thread the span belongs to
+
+   ## A marker, never a selection
+
+   The temptation is a solid fill, and it is wrong twice over: a saturated
+   block competes with the prose it is supposed to annotate, and a filled
+   range is exactly what a text selection looks like — so the reader thinks
+   they left text highlighted rather than that someone commented on it. Hence
+   a translucent wash plus an underline: the underline is what says "this is a
+   mark on the text", and it survives on top of a `<strong>` or a link where a
+   background alone reads as a rendering artefact.
+
+   ## Fixed amber, not a theme token
+
+   These paint ON PAPER, which is theme-invariant (see the --color-paper block
+   near the top of this file). A --color-text-* or --color-primary value here
+   flips under [data-theme="dark"] and lands near-white on a permanently white
+   sheet — the same bug the paper tokens exist to prevent, in one more
+   permutation. So the accent is a literal amber, chosen the way every
+   word processor picks it, and the INK is never touched: colour is inherited
+   from the page so commented text stays as readable as the text around it.
+
+   Translucent on purpose: overlapping comments render as NESTED spans, so a
+   busy passage darkens on its own without any extra machinery.
+   --------------------------------------------------------------------------- */
+.doc-page .canvas-comment {
+  background-color: rgba(245, 158, 11, 0.16);
+  border-bottom: 2px solid rgba(217, 119, 6, 0.55);
+  border-radius: 2px;
+  /* The mark IS the affordance — it opens a card, so it has to look clickable
+     even though it is a ProseMirror decoration and not a button. */
+  cursor: pointer;
+  transition: background-color 120ms ease-out, border-color 120ms ease-out;
+}
+
+/* `--open` is the default state and deliberately adds nothing: a rule that
+   restates the base one is a second place to keep the colour in sync. */
+
+.doc-page .canvas-comment:hover {
+  background-color: rgba(245, 158, 11, 0.28);
+}
+
+/* The thread the reader is IN. Loud enough to find from across the page after
+   a jump — this is what an "open thread" or a gutter focus lands on. */
+.doc-page .canvas-comment--active {
+  background-color: rgba(245, 158, 11, 0.42);
+  border-bottom-color: rgba(180, 83, 9, 0.9);
+  box-shadow: 0 0 0 1px rgba(217, 119, 6, 0.35);
+}
+
+/* Settled. Still painted — a resolved thread is the evidence that a decision
+   was made about this sentence — but it must not compete with a live one, so
+   the wash goes and a dotted grey rule is all that is left. */
+.doc-page .canvas-comment--resolved {
+  background-color: transparent;
+  border-bottom: 1px dotted var(--color-paper-ink-subtle);
+  box-shadow: none;
+}
+.doc-page .canvas-comment--resolved:hover {
+  background-color: rgba(148, 163, 184, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doc-page .canvas-comment { transition: none; }
+}
+
 /* react-flow controls theme overrides (PipelineCanvas) */
 .react-flow__controls button {
   background: transparent;

@@ -175,6 +175,8 @@ export const WithPresenceAndComments: Story = {
     const { ydoc, provider, body } = useFixture();
     const onEditorReady = useSeed(SAMPLE_HTML, body);
     const [focused, setFocused] = useState<string | null>(null);
+    // Host-owned, because the component is controlled — see GutterHidden.
+    const [gutterVisible, setGutterVisible] = useState(true);
     // Follow mode: hover a bubble for the card (name, what they are doing,
     // where), Follow locks onto them, and any local interaction — or Stop —
     // unlocks. In an app the lock scrolls the canvas to the followed cursor
@@ -243,6 +245,53 @@ export const WithPresenceAndComments: Story = {
           { id: 'c3', top: 380, active: focused === 'c3', content: thread('c3', 'Alan Turing', '#16a34a', 'Resolved — added to the ops runbook.') },
         ]}
         onFocusGutterItem={setFocused}
+        gutterVisible={gutterVisible}
+        onToggleGutter={() => setGutterVisible((v) => !v)}
+      />
+    );
+  },
+};
+
+/**
+ * The gutter switched OFF — the reading view.
+ *
+ * Two things to look at. The sheet recentres across the full workspace once
+ * the margin column stops reserving space for itself, and the toolbar still
+ * says "Comments 3 · hidden". That second half is the whole reason the toggle
+ * is shaped this way: a switch that removed the threads without a trace would
+ * let someone read this page and never learn three people argued about it.
+ *
+ * The story owns the state, which is exactly what the host must do — the
+ * component is controlled so the preference can be persisted, and a component
+ * that owned it privately would forget on every navigation.
+ */
+export const GutterHidden: Story = {
+  args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
+  render: (args) => {
+    const { ydoc, provider, body } = useFixture();
+    const onEditorReady = useSeed(SAMPLE_HTML, body);
+    const [gutterVisible, setGutterVisible] = useState(false);
+    const note = (id: string, who: string, text: string) => (
+      <div className="p-1 text-xs text-text-secondary">
+        <span className="font-semibold text-text-primary">{who}</span> — {text}
+        <span className="sr-only">{id}</span>
+      </div>
+    );
+    return (
+      <CanvasDocumentView
+        {...args}
+        isCanvas
+        body={body}
+        ydoc={ydoc}
+        provider={provider}
+        onEditorReady={onEditorReady as never}
+        gutterVisible={gutterVisible}
+        onToggleGutter={() => setGutterVisible((v) => !v)}
+        gutterItems={[
+          { id: 'c1', top: 40, content: note('c1', 'Ada Lovelace', 'Do we have the p95 for the recovery window too?') },
+          { id: 'c2', top: 180, content: note('c2', 'Grace Hopper', 'Jitter alone will not fix the synchronised TTL.') },
+          { id: 'c3', top: 380, content: note('c3', 'Alan Turing', 'Added to the ops runbook.') },
+        ]}
       />
     );
   },

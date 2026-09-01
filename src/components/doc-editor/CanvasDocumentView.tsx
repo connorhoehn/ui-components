@@ -25,6 +25,7 @@
 import { useState, type ReactNode } from 'react';
 import type { XmlFragment } from 'yjs';
 import type * as Y from 'yjs';
+import { cn } from '../../lib/cn';
 import TiptapEditor from './TiptapEditor';
 import DocumentToolbar from './DocumentToolbar';
 import DocumentGutter, { type GutterItem } from './DocumentGutter';
@@ -83,6 +84,23 @@ export interface CanvasDocumentViewProps {
   gutterItems?: readonly GutterItem[];
   onFocusGutterItem?: (id: string) => void;
   /**
+   * Whether the margin gutter is showing. Defaults to true, so a caller that
+   * knows nothing about this keeps today's behaviour.
+   *
+   * CONTROLLED on purpose. "Show comments" is a reading preference, and a
+   * preference the component owns privately is one it forgets on every
+   * navigation — open the document again and the margin is back. Only the host
+   * can persist it (profile, localStorage, the document itself), so only the
+   * host can own it.
+   */
+  gutterVisible?: boolean;
+  /**
+   * Flips `gutterVisible`. Its absence means no toggle is offered at all,
+   * which is the right default for a read-only embed with no place to store
+   * the answer.
+   */
+  onToggleGutter?: () => void;
+  /**
    * Hands the live editor out once it exists (null while initialising).
    *
    * Not a convenience: `materialize()` needs the LIVE editor's ProseMirror
@@ -108,6 +126,8 @@ export default function CanvasDocumentView({
   toolbarActions,
   gutterItems,
   onFocusGutterItem,
+  gutterVisible = true,
+  onToggleGutter,
   onEditorReady,
   'data-testid': testId = 'canvas-document',
 }: CanvasDocumentViewProps) {
@@ -116,6 +136,12 @@ export default function CanvasDocumentView({
   // Held so the toolbar can render in the chrome ABOVE the sheet rather than
   // inside the page margins. Null until the editor finishes initialising.
   const [editor, setEditor] = useState<Parameters<typeof DocumentToolbar>[0]['editor'] | null>(null);
+
+  const commentCount = gutterItems?.length ?? 0;
+  // Two conditions, not one: there has to be something to show, AND the gutter
+  // has to be switched on. Splitting them is what lets the toolbar keep
+  // reporting the count while the column itself is gone.
+  const showGutter = commentCount > 0 && gutterVisible;
 
   const handleConvert = async () => {
     if (!onConvert || converting) return; // a second click races the first
@@ -179,13 +205,30 @@ export default function CanvasDocumentView({
               className="sticky top-0 z-10 border-b border-border bg-surface-panel"
             >
               <div className="mx-auto max-w-[816px] px-2">
-                <DocumentToolbar editor={editor} actions={toolbarActions} />
+                <DocumentToolbar
+                  editor={editor}
+                  actions={toolbarActions}
+                  // Passed even when the gutter is hidden — that is precisely
+                  // when the count is the only remaining evidence that a
+                  // discussion exists.
+                  commentCount={commentCount}
+                  gutterVisible={gutterVisible}
+                  {...(onToggleGutter ? { onToggleGutter } : {})}
+                />
               </div>
             </div>
           )}
           {/* Page and gutter share a row, so a thread sits BESIDE the text it
-              refers to rather than under the document. */}
-          <div className="flex justify-center gap-6 py-8 px-6">
+              refers to rather than under the document. With the gutter off the
+              row collapses to the sheet alone: no reserved column, no gap, so
+              the page recentres across the full workspace instead of sitting
+              left of centre to leave margin space for threads that are not
+              being rendered. */}
+          <div
+            data-testid={`${testId}-page-row`}
+            data-gutter={showGutter ? 'visible' : 'hidden'}
+            className={cn('flex justify-center py-8 px-6', showGutter && 'gap-6')}
+          >
           <div
             // The sheet. 816px is 8.5in at 96dpi and 1056px is 11in, so the
             // page has the proportions of the thing it is imitating; 96px
@@ -214,7 +257,7 @@ export default function CanvasDocumentView({
               onEditorReady={(e) => { setEditor(e); onEditorReady?.(e); }}
             />
             </div>
-            {gutterItems && gutterItems.length > 0 && (
+            {showGutter && gutterItems && (
               <DocumentGutter
                 items={gutterItems}
                 onFocusItem={onFocusGutterItem}

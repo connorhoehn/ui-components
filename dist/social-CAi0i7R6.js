@@ -1,11 +1,11 @@
 import { a as e, i as t, n, o as r, r as i, t as a } from "./useSocialProfile-5S1qyvsv.js";
 import { n as o } from "./ToastProvider-BKjV21G4.js";
 import { t as s } from "./cn-DhjIN-s0.js";
-import { n as c, t as l } from "./Avatar-Yxs_9Jio.js";
-import { t as u } from "./Input-DLknWXri.js";
-import { t as d } from "./Textarea-Dz4doxTv.js";
-import { t as f } from "./PresenceDot-3gBZGPvX.js";
-import { d as p, i as m, r as h, u as g } from "./PresencePanel-BYowFHnl.js";
+import { t as c } from "./Input-DLknWXri.js";
+import { t as l } from "./Textarea-Dz4doxTv.js";
+import { t as u } from "./PresenceDot-3gBZGPvX.js";
+import { n as d, t as f } from "./Avatar-BzicCOft.js";
+import { d as p, i as m, r as h, u as g } from "./PresencePanel-TLZ43ZF1.js";
 import { t as _ } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as v } from "./Select-CqVokE2v.js";
 import { useCallback as y, useEffect as b, useId as x, useRef as S, useState as C } from "react";
@@ -96,16 +96,16 @@ function A({ targetUser: e, followState: t, compact: n = !1, onFollowChange: r }
 	});
 }
 function j({ user: e, isOwnProfile: t, onSave: n }) {
-	let [r, i] = C(!1), [a, o] = C(e.displayName), [c, l] = C(e.bio), [f, p] = C(e.avatarUrl ?? ""), [m, h] = C(e.visibility), [g, v] = C(!1), [y, S] = C(null), w = x();
+	let [r, i] = C(!1), [a, o] = C(e.displayName), [u, d] = C(e.bio), [f, p] = C(e.avatarUrl ?? ""), [m, h] = C(e.visibility), [g, v] = C(!1), [y, S] = C(null), w = x();
 	b(() => {
-		o(e.displayName), l(e.bio), p(e.avatarUrl ?? ""), h(e.visibility);
+		o(e.displayName), d(e.bio), p(e.avatarUrl ?? ""), h(e.visibility);
 	}, [e.id]);
 	let D = async () => {
 		v(!0), S(null);
 		try {
 			await n({
 				displayName: a,
-				bio: c,
+				bio: u,
 				avatarUrl: f || void 0,
 				visibility: m
 			}), i(!1);
@@ -122,7 +122,7 @@ function j({ user: e, isOwnProfile: t, onSave: n }) {
 				htmlFor: `${w}-display-name`,
 				className: "text-sm text-text-primary block mb-1",
 				children: "Display name"
-			}), /* @__PURE__ */ T(u, {
+			}), /* @__PURE__ */ T(c, {
 				id: `${w}-display-name`,
 				value: a,
 				onChange: (e) => o(e.target.value.slice(0, 50)),
@@ -136,10 +136,10 @@ function j({ user: e, isOwnProfile: t, onSave: n }) {
 				htmlFor: `${w}-bio`,
 				className: "text-sm text-text-primary block mb-1",
 				children: "Bio"
-			}), /* @__PURE__ */ T(d, {
+			}), /* @__PURE__ */ T(l, {
 				id: `${w}-bio`,
-				value: c,
-				onChange: (e) => l(e.target.value.slice(0, 160)),
+				value: u,
+				onChange: (e) => d(e.target.value.slice(0, 160)),
 				placeholder: "Tell people a bit about yourself (max 160 characters)",
 				maxLength: 160,
 				rows: 3,
@@ -152,7 +152,7 @@ function j({ user: e, isOwnProfile: t, onSave: n }) {
 				htmlFor: `${w}-avatar-url`,
 				className: "text-sm text-text-primary block mb-1",
 				children: "Avatar URL"
-			}), /* @__PURE__ */ T(u, {
+			}), /* @__PURE__ */ T(c, {
 				id: `${w}-avatar-url`,
 				value: f,
 				onChange: (e) => p(e.target.value),
@@ -406,7 +406,7 @@ function N({ idToken: t, onMessage: n }) {
 //#endregion
 //#region src/components/social/RoomList.tsx
 function P({ onCreate: e, onDiscard: t, loading: n }) {
-	let [r, i] = C(""), [a, o] = C(null), c = async (t) => {
+	let [r, i] = C(""), [a, o] = C(null), l = async (t) => {
 		if (t.preventDefault(), r.trim()) {
 			o(null);
 			try {
@@ -418,11 +418,11 @@ function P({ onCreate: e, onDiscard: t, loading: n }) {
 	};
 	return /* @__PURE__ */ E("form", {
 		onSubmit: (e) => {
-			c(e);
+			l(e);
 		},
 		className: "my-1 mb-2 p-2 bg-surface-panel rounded-md border border-border",
 		children: [
-			/* @__PURE__ */ T(u, {
+			/* @__PURE__ */ T(c, {
 				size: "sm",
 				value: r,
 				onChange: (e) => i(e.target.value.slice(0, 50)),
@@ -669,7 +669,7 @@ function ee({ group: e, isSelected: t, onClick: n }) {
 	});
 }
 function B({ onCreate: e, onDiscard: t, loading: n }) {
-	let [r, i] = C(""), [a, o] = C(null), c = async (t) => {
+	let [r, i] = C(""), [a, o] = C(null), l = async (t) => {
 		if (t.preventDefault(), r.trim()) {
 			o(null);
 			try {
@@ -681,11 +681,11 @@ function B({ onCreate: e, onDiscard: t, loading: n }) {
 	};
 	return /* @__PURE__ */ E("form", {
 		onSubmit: (e) => {
-			c(e);
+			l(e);
 		},
 		className: "p-2 bg-surface-panel rounded-md border border-border my-1 mb-2",
 		children: [
-			/* @__PURE__ */ T(u, {
+			/* @__PURE__ */ T(c, {
 				size: "sm",
 				value: r,
 				onChange: (e) => i(e.target.value.slice(0, 50)),
@@ -716,12 +716,12 @@ function B({ onCreate: e, onDiscard: t, loading: n }) {
 		]
 	});
 }
-function te({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, createGroupRoom: a, onRoomSelect: o, inviteUser: c, loading: l }) {
+function te({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, createGroupRoom: a, onRoomSelect: o, inviteUser: l, loading: u }) {
 	let [d, f] = C(!1), [p, m] = C(""), [h, g] = C(null), [_, v] = C(!1), [y, b] = C(""), [x, S] = C(null), w = e.ownerId === i, D = n.filter((e) => e.groupId === r), O = async (e) => {
 		if (e.preventDefault(), p.trim()) {
 			g(null);
 			try {
-				await c(r, p.trim());
+				await l(r, p.trim());
 			} catch (e) {
 				g(e instanceof Error ? e.message : "Failed to invite user");
 				return;
@@ -763,7 +763,7 @@ function te({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 					O(e);
 				},
 				className: "flex gap-1 mb-1.5",
-				children: [/* @__PURE__ */ T(u, {
+				children: [/* @__PURE__ */ T(c, {
 					size: "sm",
 					value: p,
 					onChange: (e) => m(e.target.value),
@@ -813,7 +813,7 @@ function te({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 					k(e);
 				},
 				className: "flex gap-1 mb-1.5",
-				children: [/* @__PURE__ */ T(u, {
+				children: [/* @__PURE__ */ T(c, {
 					size: "sm",
 					value: y,
 					onChange: (e) => b(e.target.value.slice(0, 50)),
@@ -821,8 +821,8 @@ function te({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 					className: "flex-1"
 				}), /* @__PURE__ */ T("button", {
 					type: "submit",
-					disabled: !y.trim() || l,
-					className: s("h-6 px-2 border-none rounded text-[11px] font-[inherit]", !y.trim() || l ? "bg-border text-text-tertiary cursor-default" : "bg-primary text-white cursor-pointer"),
+					disabled: !y.trim() || u,
+					className: s("h-6 px-2 border-none rounded text-[11px] font-[inherit]", !y.trim() || u ? "bg-border text-text-tertiary cursor-default" : "bg-primary text-white cursor-pointer"),
 					children: "Create"
 				})]
 			}),
@@ -848,13 +848,13 @@ function te({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 	});
 }
 function ne({ onCreate: e, onDiscard: t, loading: n }) {
-	let [r, i] = C(""), [a, o] = C("public"), [c, l] = C(null), d = x(), f = async (t) => {
+	let [r, i] = C(""), [a, o] = C("public"), [l, u] = C(null), d = x(), f = async (t) => {
 		if (t.preventDefault(), r.trim()) {
-			l(null);
+			u(null);
 			try {
 				await e(r.trim(), void 0, a);
 			} catch (e) {
-				l(e instanceof Error ? e.message : "Failed to create group");
+				u(e instanceof Error ? e.message : "Failed to create group");
 			}
 		}
 	};
@@ -870,10 +870,10 @@ function ne({ onCreate: e, onDiscard: t, loading: n }) {
 					htmlFor: `${d}-group-name`,
 					className: "text-sm text-text-primary block mb-1",
 					children: "Group name"
-				}), /* @__PURE__ */ T(u, {
+				}), /* @__PURE__ */ T(c, {
 					id: `${d}-group-name`,
-					"aria-describedby": c ? `${d}-form-error` : void 0,
-					"aria-invalid": c ? !0 : void 0,
+					"aria-describedby": l ? `${d}-form-error` : void 0,
+					"aria-invalid": l ? !0 : void 0,
 					value: r,
 					onChange: (e) => i(e.target.value.slice(0, 50)),
 					placeholder: "Group name",
@@ -917,11 +917,11 @@ function ne({ onCreate: e, onDiscard: t, loading: n }) {
 					children: "Cancel"
 				})]
 			}),
-			c && /* @__PURE__ */ T("div", {
+			l && /* @__PURE__ */ T("div", {
 				id: `${d}-form-error`,
 				role: "alert",
 				className: "text-danger-fg text-[13px] mt-1.5",
-				children: c
+				children: l
 			})
 		]
 	});
@@ -999,7 +999,7 @@ function ie({ groupId: e, onInvite: t }) {
 			o(e);
 		},
 		className: "flex gap-2 mt-2",
-		children: [/* @__PURE__ */ T(u, {
+		children: [/* @__PURE__ */ T(c, {
 			className: "flex-1",
 			value: n,
 			onChange: (e) => r(e.target.value),
@@ -1041,16 +1041,16 @@ function ae({ members: e }) {
 	});
 }
 function oe({ rooms: e, groupId: t, selectedGroupRole: n, createGroupRoom: r, onRoomSelect: i, loading: a }) {
-	let [o, c] = C(!1), [l, d] = C(""), [f, p] = C(null), m = e.filter((e) => e.groupId === t), h = async (e) => {
-		if (e.preventDefault(), l.trim()) {
+	let [o, l] = C(!1), [u, d] = C(""), [f, p] = C(null), m = e.filter((e) => e.groupId === t), h = async (e) => {
+		if (e.preventDefault(), u.trim()) {
 			p(null);
 			try {
-				await r(t, l.trim());
+				await r(t, u.trim());
 			} catch (e) {
 				p(e instanceof Error ? e.message : "Failed to create room");
 				return;
 			}
-			d(""), c(!1);
+			d(""), l(!1);
 		}
 	};
 	return /* @__PURE__ */ E("div", {
@@ -1068,9 +1068,9 @@ function oe({ rooms: e, groupId: t, selectedGroupRole: n, createGroupRoom: r, on
 				children: [/* @__PURE__ */ E("div", {
 					className: "flex gap-2",
 					children: [
-						/* @__PURE__ */ T(u, {
+						/* @__PURE__ */ T(c, {
 							className: "flex-1",
-							value: l,
+							value: u,
 							onChange: (e) => d(e.target.value.slice(0, 50)),
 							placeholder: "Room name",
 							maxLength: 50,
@@ -1078,13 +1078,13 @@ function oe({ rooms: e, groupId: t, selectedGroupRole: n, createGroupRoom: r, on
 						}),
 						/* @__PURE__ */ T("button", {
 							type: "submit",
-							disabled: !l.trim() || a,
-							className: s("h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]", !l.trim() || a ? "bg-surface-hover text-text-tertiary border border-border cursor-default" : "bg-primary text-white border-none cursor-pointer"),
+							disabled: !u.trim() || a,
+							className: s("h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]", !u.trim() || a ? "bg-surface-hover text-text-tertiary border border-border cursor-default" : "bg-primary text-white border-none cursor-pointer"),
 							children: a ? "Creating…" : "Create Room"
 						}),
 						/* @__PURE__ */ T("button", {
 							type: "button",
-							onClick: () => c(!1),
+							onClick: () => l(!1),
 							className: "text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]",
 							children: "Cancel"
 						})
@@ -1096,7 +1096,7 @@ function oe({ rooms: e, groupId: t, selectedGroupRole: n, createGroupRoom: r, on
 					children: f
 				})]
 			}) : /* @__PURE__ */ T("button", {
-				onClick: () => c(!0),
+				onClick: () => l(!0),
 				className: "w-full h-9 mb-2 bg-primary text-white border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]",
 				children: "Create Room"
 			})),
@@ -1351,7 +1351,7 @@ function q({ post: e, isOwn: t, showSender: n }) {
 	});
 }
 function J({ idToken: e, roomId: t, roomName: r, onMessage: i }) {
-	let { posts: a, createPost: o, loading: c, hasMore: l, loadMore: d, error: f, loadError: p } = n({
+	let { posts: a, createPost: o, loading: l, hasMore: u, loadMore: d, error: f, loadError: p } = n({
 		idToken: e,
 		roomId: t,
 		onMessage: i
@@ -1384,16 +1384,16 @@ function J({ idToken: e, roomId: t, roomName: r, onMessage: i }) {
 			/* @__PURE__ */ E("div", {
 				className: "flex-1 overflow-y-auto flex flex-col pb-1",
 				children: [
-					l && /* @__PURE__ */ T("div", {
+					u && /* @__PURE__ */ T("div", {
 						className: "text-center py-2",
 						children: /* @__PURE__ */ T("button", {
 							onClick: () => void d(),
-							disabled: c,
-							className: s("text-xs text-text-secondary bg-transparent border border-border rounded-full px-3.5 py-0.5 font-[inherit]", c ? "cursor-default" : "cursor-pointer"),
-							children: c ? "Loading…" : "Load earlier"
+							disabled: l,
+							className: s("text-xs text-text-secondary bg-transparent border border-border rounded-full px-3.5 py-0.5 font-[inherit]", l ? "cursor-default" : "cursor-pointer"),
+							children: l ? "Loading…" : "Load earlier"
 						})
 					}),
-					c && D.length === 0 ? /* @__PURE__ */ T("div", {
+					l && D.length === 0 ? /* @__PURE__ */ T("div", {
 						className: "flex-1 flex items-center justify-center text-text-tertiary text-[13px]",
 						children: "Loading messages…"
 					}) : p && D.length === 0 ? /* @__PURE__ */ E("div", {
@@ -1446,7 +1446,7 @@ function J({ idToken: e, roomId: t, roomName: r, onMessage: i }) {
 			}),
 			/* @__PURE__ */ E("div", {
 				className: "flex items-center gap-2 px-3 py-2.5 border-t border-border bg-surface shrink-0",
-				children: [/* @__PURE__ */ T(u, {
+				children: [/* @__PURE__ */ T(c, {
 					value: m,
 					onChange: (e) => h(e.target.value),
 					onKeyDown: (e) => {
@@ -1763,7 +1763,7 @@ function ue(e) {
 	}
 }
 function Z({ onSubmit: e, placeholder: t = "Write a reply…", loading: n }) {
-	let [r, i] = C(""), [a, o] = C(null), c = async (t) => {
+	let [r, i] = C(""), [a, o] = C(null), l = async (t) => {
 		t.preventDefault();
 		let n = r.trim();
 		if (n) {
@@ -1779,11 +1779,11 @@ function Z({ onSubmit: e, placeholder: t = "Write a reply…", loading: n }) {
 	};
 	return /* @__PURE__ */ E("form", {
 		onSubmit: (e) => {
-			c(e);
+			l(e);
 		},
 		className: "flex flex-wrap gap-2 mt-2",
 		children: [
-			/* @__PURE__ */ T(u, {
+			/* @__PURE__ */ T(c, {
 				value: r,
 				onChange: (e) => i(e.target.value),
 				placeholder: t,
@@ -1982,7 +1982,7 @@ function he({ onCreate: e, loading: t }) {
 			o(e);
 		},
 		children: [
-			/* @__PURE__ */ T(d, {
+			/* @__PURE__ */ T(l, {
 				value: n,
 				onChange: (e) => r(e.target.value),
 				placeholder: "What's on your mind?",
@@ -2039,7 +2039,7 @@ function _e({ reactWithEmoji: e }) {
 	});
 }
 function ve({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: a, onEdit: o, onDelete: c }) {
-	let { isLiked: l, likeCount: u, whoLiked: f, toggle: p, reactWithEmoji: m, error: h } = i({
+	let { isLiked: u, likeCount: d, whoLiked: f, toggle: p, reactWithEmoji: m, error: h } = i({
 		idToken: t,
 		roomId: n,
 		postId: e.postId,
@@ -2092,7 +2092,7 @@ function ve({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: a, on
 			}),
 			w ? /* @__PURE__ */ E("div", {
 				className: "mb-2",
-				children: [/* @__PURE__ */ T(d, {
+				children: [/* @__PURE__ */ T(l, {
 					value: O,
 					onChange: (e) => k(e.target.value),
 					rows: 3,
@@ -2122,8 +2122,8 @@ function ve({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: a, on
 				className: "flex gap-4 text-sm mt-1 items-center flex-wrap",
 				children: [
 					/* @__PURE__ */ T(ge, {
-						isLiked: l,
-						likeCount: u,
+						isLiked: u,
+						likeCount: d,
 						whoLiked: f,
 						toggle: p
 					}),
@@ -2446,30 +2446,30 @@ function Te({ idToken: e, sendMessage: t, onMessage: n, connectionState: r }) {
 }
 //#endregion
 //#region src/components/social/ConversationList.tsx
-function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel: i = "No conversations yet", tone: a = "light", className: o, "data-testid": u }) {
-	let d = a === "dark";
+function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel: i = "No conversations yet", tone: a = "light", className: o, "data-testid": c }) {
+	let l = a === "dark";
 	return /* @__PURE__ */ E("div", {
 		className: s("flex min-h-0 flex-col gap-1", o),
-		"data-testid": u,
+		"data-testid": c,
 		children: [r && /* @__PURE__ */ E("button", {
 			type: "button",
 			onClick: r,
 			"data-testid": "conversation-new-chat",
-			className: s("flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[13px] font-medium", d ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"),
+			className: s("flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[13px] font-medium", l ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"),
 			children: [/* @__PURE__ */ T("span", {
 				"aria-hidden": "true",
-				className: s("grid h-6 w-6 place-items-center rounded-full border border-dashed text-sm leading-none", d ? "border-white/30" : "border-border"),
+				className: s("grid h-6 w-6 place-items-center rounded-full border border-dashed text-sm leading-none", l ? "border-white/30" : "border-border"),
 				children: "+"
 			}), "New chat"]
 		}), e.length === 0 ? /* @__PURE__ */ T("p", {
-			className: s("m-0 px-2 py-1.5 text-[13px]", d ? "text-white/60" : "text-text-secondary"),
+			className: s("m-0 px-2 py-1.5 text-[13px]", l ? "text-white/60" : "text-text-secondary"),
 			"data-testid": "conversation-empty",
 			children: i
 		}) : /* @__PURE__ */ T("ul", {
 			className: "m-0 flex min-h-0 list-none flex-col gap-0.5 overflow-y-auto p-0",
 			"aria-label": "Conversations",
 			children: e.map((e) => {
-				let r = e.channel === t, i = e.peers.length > 1, a = e.peers[0], o = e.peers.map((e) => e.displayName).join(", "), u = e.lastMessageAt ? p(e.lastMessageAt) : "", m = e.unreadCount ?? 0;
+				let r = e.channel === t, i = e.peers.length > 1, a = e.peers[0], o = e.peers.map((e) => e.displayName).join(", "), c = e.lastMessageAt ? p(e.lastMessageAt) : "", m = e.unreadCount ?? 0;
 				return /* @__PURE__ */ T("li", { children: /* @__PURE__ */ E("button", {
 					type: "button",
 					onClick: () => n(e.channel),
@@ -2477,9 +2477,9 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 					"data-channel": e.channel,
 					"data-active": r ? "true" : "false",
 					"aria-current": r ? "true" : void 0,
-					className: s("flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left", d ? "hover:bg-white/10" : "hover:bg-surface-hover", r && (d ? "bg-white/10" : "bg-surface-hover")),
+					className: s("flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left", l ? "hover:bg-white/10" : "hover:bg-surface-hover", r && (l ? "bg-white/10" : "bg-surface-hover")),
 					children: [
-						i ? /* @__PURE__ */ T(c, {
+						i ? /* @__PURE__ */ T(d, {
 							size: 28,
 							maxVisible: 2,
 							items: e.peers.map((e) => ({
@@ -2489,15 +2489,15 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 							}))
 						}) : a ? /* @__PURE__ */ E("span", {
 							className: "relative inline-flex shrink-0",
-							children: [/* @__PURE__ */ T(l, {
+							children: [/* @__PURE__ */ T(f, {
 								name: a.displayName,
 								color: a.color,
 								src: a.avatarUrl,
 								size: 28
-							}), a.online !== void 0 && /* @__PURE__ */ T(f, {
+							}), a.online !== void 0 && /* @__PURE__ */ T(u, {
 								state: a.online ? "online" : "offline",
 								pulse: !1,
-								className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", d ? "ring-call-chrome" : "ring-surface")
+								className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", l ? "ring-call-chrome" : "ring-surface")
 							})]
 						}) : null,
 						/* @__PURE__ */ E("span", {
@@ -2505,15 +2505,15 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 							children: [/* @__PURE__ */ E("span", {
 								className: "flex items-baseline gap-2",
 								children: [/* @__PURE__ */ T("span", {
-									className: s("min-w-0 flex-1 truncate text-[13px]", m > 0 ? "font-semibold" : "font-medium", d ? "text-white" : "text-text-primary"),
+									className: s("min-w-0 flex-1 truncate text-[13px]", m > 0 ? "font-semibold" : "font-medium", l ? "text-white" : "text-text-primary"),
 									children: o
-								}), u && /* @__PURE__ */ T("span", {
-									className: s("shrink-0 text-[11px] tabular-nums", d ? "text-white/50" : "text-text-tertiary"),
+								}), c && /* @__PURE__ */ T("span", {
+									className: s("shrink-0 text-[11px] tabular-nums", l ? "text-white/50" : "text-text-tertiary"),
 									"data-testid": "conversation-time",
-									children: u
+									children: c
 								})]
 							}), e.lastMessagePreview && /* @__PURE__ */ T("span", {
-								className: s("truncate text-[12px]", d ? "text-white/60" : "text-text-secondary"),
+								className: s("truncate text-[12px]", l ? "text-white/60" : "text-text-secondary"),
 								"data-testid": "conversation-preview",
 								children: e.lastMessagePreview
 							})]

@@ -220,3 +220,81 @@ describe('DocumentToolbar', () => {
     expect(screen.getByTestId('extra')).toBeInTheDocument();
   });
 });
+
+describe('DocumentToolbar — the comment-gutter toggle', () => {
+  const TOGGLE = 'document-toolbar-gutter-toggle';
+
+  it('shows the count so a hidden gutter still announces itself', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} commentCount={3} gutterVisible={false} onToggleGutter={() => {}} />);
+    const btn = screen.getByTestId(TOGGLE);
+    expect(btn).toHaveTextContent('Comments');
+    expect(btn).toHaveTextContent('3');
+    // The reason the whole control exists: with the column gone, this word is
+    // the only thing telling the reader a discussion is being withheld.
+    expect(btn).toHaveTextContent('hidden');
+  });
+
+  it('carries the count in its accessible name too', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} commentCount={2} gutterVisible={false} onToggleGutter={() => {}} />);
+    expect(screen.getByRole('button', { name: 'Show comments (2)' })).toBeInTheDocument();
+  });
+
+  it('calls back instead of hiding the gutter itself', () => {
+    const onToggleGutter = vi.fn();
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} commentCount={1} onToggleGutter={onToggleGutter} />);
+    fireEvent.click(screen.getByTestId(TOGGLE));
+    expect(onToggleGutter).toHaveBeenCalledTimes(1);
+  });
+
+  it('conveys visibility via aria-pressed, not colour alone', () => {
+    const { editor } = makeEditor();
+    const { rerender } = render(
+      <DocumentToolbar editor={editor} commentCount={1} gutterVisible onToggleGutter={() => {}} />,
+    );
+    expect(screen.getByTestId(TOGGLE)).toHaveAttribute('aria-pressed', 'true');
+    rerender(<DocumentToolbar editor={editor} commentCount={1} gutterVisible={false} onToggleGutter={() => {}} />);
+    expect(screen.getByTestId(TOGGLE)).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  // Nothing to show or hide. A live button whose only effect is invisible
+  // reads as broken, not as "no comments".
+  it('renders no toggle when there are zero comments', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} commentCount={0} onToggleGutter={() => {}} />);
+    expect(screen.queryByTestId(TOGGLE)).toBeNull();
+  });
+
+  it('renders no toggle when the host offers no handler', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} commentCount={4} />);
+    expect(screen.queryByTestId(TOGGLE)).toBeNull();
+  });
+
+  // Chrome, never paper: the toolbar is themed and goes dark, so paper tokens
+  // here would paint a white-on-white control in dark mode.
+  it('paints the toggle from themed chrome tokens', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} commentCount={3} gutterVisible={false} onToggleGutter={() => {}} />);
+    const cls = screen.getByTestId(TOGGLE).className;
+    expect(cls).not.toMatch(/bg-paper|text-paper-ink/);
+    expect(cls).toMatch(/bg-primary-bg/);
+  });
+
+  it('leaves the host actions their place at the far edge', () => {
+    const { editor } = makeEditor();
+    render(
+      <DocumentToolbar
+        editor={editor}
+        commentCount={2}
+        onToggleGutter={() => {}}
+        actions={<button data-testid="extra">Share</button>}
+      />,
+    );
+    const toggle = screen.getByTestId(TOGGLE);
+    const extra = screen.getByTestId('extra');
+    expect(toggle.compareDocumentPosition(extra) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+});

@@ -6,10 +6,11 @@ import { t as i } from "./overlayStack-BFH9XXvN.js";
 import { t as a } from "./Modal-CyoyiNKN.js";
 import { n as o, t as s } from "./PermissionDeniedCard-B9cc5d5O.js";
 import { n as c, r as l, t as u } from "./focusTrap-CmWJlptm.js";
-import { a as d, t as f } from "./Avatar-Yxs_9Jio.js";
+import { t as d } from "./DockedPanelContext-pH9A5z1h.js";
+import { t as f } from "./Avatar-BzicCOft.js";
 import { t as p } from "./activationKey-CjbL3LUv.js";
 import { t as m } from "./Select-CqVokE2v.js";
-import { m as h, o as g } from "./MediaEffectsPreviewPanel-Alkfwgwk.js";
+import { m as h, o as g } from "./MediaEffectsPreviewPanel-DhMdqGuZ.js";
 import { useCallback as _, useEffect as v, useImperativeHandle as y, useLayoutEffect as b, useMemo as x, useRef as S, useState as C } from "react";
 import { Fragment as w, jsx as T, jsxs as E } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx

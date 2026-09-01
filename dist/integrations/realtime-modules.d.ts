@@ -120,6 +120,23 @@ declare interface CanvasDocumentViewProps {
     gutterItems?: readonly GutterItem[];
     onFocusGutterItem?: (id: string) => void;
     /**
+     * Whether the margin gutter is showing. Defaults to true, so a caller that
+     * knows nothing about this keeps today's behaviour.
+     *
+     * CONTROLLED on purpose. "Show comments" is a reading preference, and a
+     * preference the component owns privately is one it forgets on every
+     * navigation — open the document again and the margin is back. Only the host
+     * can persist it (profile, localStorage, the document itself), so only the
+     * host can own it.
+     */
+    gutterVisible?: boolean;
+    /**
+     * Flips `gutterVisible`. Its absence means no toggle is offered at all,
+     * which is the right default for a read-only embed with no place to store
+     * the answer.
+     */
+    onToggleGutter?: () => void;
+    /**
      * Hands the live editor out once it exists (null while initialising).
      *
      * Not a convenience: `materialize()` needs the LIVE editor's ProseMirror
@@ -245,12 +262,30 @@ declare type ConnectionPillTone = SurfaceTone;
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
-declare function DocumentToolbar({ editor, actions, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 declare interface DocumentToolbarProps {
     editor: Editor | null;
     /** Rendered at the end of the bar — insert-macro menus, share, etc. */
     actions?: ReactNode;
+    /**
+     * How many comment threads the margin gutter holds.
+     *
+     * A first-class prop rather than something the page shoves into `actions`,
+     * because `actions` is the HOST's slot: whatever the app passes (presence,
+     * share) lands there, and merging a library-owned control into it means the
+     * toolbar can no longer decide where its own control sits, nor keep a host
+     * that fills the slot from displacing it.
+     */
+    commentCount?: number;
+    /** Whether the gutter is currently showing. Drives `aria-pressed`. */
+    gutterVisible?: boolean;
+    /**
+     * Toggles the gutter. Its absence — or a zero count — means no control at
+     * all: a toggle for a gutter with nothing in it is a button that does
+     * nothing visible, which reads as broken rather than as empty.
+     */
+    onToggleGutter?: () => void;
     'data-testid'?: string;
 }
 
@@ -560,6 +595,12 @@ declare interface PresenceUser {
     /** Optional editing mode — renders a small mode badge on the
      *  upper-right of the avatar (pencil / check / eye). */
     mode?: PresenceMode;
+    /** One status line for the hover card — "editing", "away · 3m". Free text
+     *  because the library does not know the host's vocabulary. */
+    detail?: string;
+    /** Where in the surface the user is — a section title, a pane name.
+     *  Rendered under the detail line on the hover card. */
+    location?: string;
 }
 
 export declare function ReconnectingShim({ connectionState, children, onRetry, reconnectingLabel, disconnectedTitle, disconnectedDescription, retryLabel, connectingPlaceholder, disconnectedFallback, className, }: ReconnectingShimProps): JSX.Element;

@@ -30,6 +30,24 @@ export interface DocumentToolbarProps {
   editor: Editor | null;
   /** Rendered at the end of the bar — insert-macro menus, share, etc. */
   actions?: ReactNode;
+  /**
+   * How many comment threads the margin gutter holds.
+   *
+   * A first-class prop rather than something the page shoves into `actions`,
+   * because `actions` is the HOST's slot: whatever the app passes (presence,
+   * share) lands there, and merging a library-owned control into it means the
+   * toolbar can no longer decide where its own control sits, nor keep a host
+   * that fills the slot from displacing it.
+   */
+  commentCount?: number;
+  /** Whether the gutter is currently showing. Drives `aria-pressed`. */
+  gutterVisible?: boolean;
+  /**
+   * Toggles the gutter. Its absence — or a zero count — means no control at
+   * all: a toggle for a gutter with nothing in it is a button that does
+   * nothing visible, which reads as broken rather than as empty.
+   */
+  onToggleGutter?: () => void;
   'data-testid'?: string;
 }
 
@@ -123,9 +141,64 @@ function Divider() {
   return <span aria-hidden className="mx-1 h-5 w-px self-center bg-border" />;
 }
 
+/**
+ * The gutter switch.
+ *
+ * It carries the COUNT, and that is the whole design. Hiding the margin is a
+ * reading-room preference, but a preference that erases the fact that three
+ * people questioned a paragraph is a trap: the next reader opens the document,
+ * sees clean prose, and never learns there was an argument about it. So the
+ * control is never a bare eye icon — the number stays on screen whether the
+ * threads are showing or not, and "hidden" is stated rather than implied by
+ * the absence of a column the reader cannot know used to be there.
+ */
+function GutterToggle({
+  count, visible, onToggle, testId,
+}: { count: number; visible: boolean; onToggle: () => void; testId: string }) {
+  const label = `${visible ? 'Hide' : 'Show'} comments (${count})`;
+  return (
+    <button
+      type="button"
+      data-testid={testId}
+      title={label}
+      // The accessible name carries the count too — a screen-reader user gets
+      // the same "there are three of these" signal the badge gives visually.
+      aria-label={label}
+      aria-pressed={visible}
+      onClick={onToggle}
+      className={cn(
+        'inline-flex items-center gap-1.5 h-7 px-2 rounded border text-xs font-semibold cursor-pointer',
+        // Chrome, not paper: the toolbar is themed, so both states use surface
+        // and primary tokens and go dark with the rest of the app.
+        visible
+          ? 'bg-primary text-white border-primary'
+          // Off is TINTED, not greyed out. A disabled-looking control would
+          // say "no comments"; this says "comments, currently put away".
+          : 'bg-primary-bg text-primary-fg border-primary-border hover:bg-surface-hover',
+      )}
+    >
+      <span>Comments</span>
+      <span
+        className={cn(
+          'rounded-full px-1.5 leading-4 tabular-nums',
+          visible ? 'bg-white/25 text-white' : 'bg-primary text-white',
+        )}
+      >
+        {count}
+      </span>
+      {!visible && (
+        <span className="text-[10px] font-normal uppercase tracking-wide">hidden</span>
+      )}
+    </button>
+  );
+}
+
 export default function DocumentToolbar({
   editor,
   actions,
+  commentCount = 0,
+  gutterVisible = true,
+  onToggleGutter,
   'data-testid': testId = 'document-toolbar',
 }: DocumentToolbarProps) {
   // Subscribes to the editor so the controls track the CURSOR, not just the
@@ -297,7 +370,21 @@ export default function DocumentToolbar({
         testId={`${testId}-hr`}
       />
 
-      {actions && <span className="ml-auto flex items-center gap-1">{actions}</span>}
+      {(onToggleGutter && commentCount > 0) || actions ? (
+        <span className="ml-auto flex items-center gap-1">
+          {/* Left of the host's actions so presence avatars stay pinned to the
+              far edge where every collaborative tool puts them. */}
+          {onToggleGutter && commentCount > 0 && (
+            <GutterToggle
+              count={commentCount}
+              visible={gutterVisible}
+              onToggle={onToggleGutter}
+              testId={`${testId}-gutter-toggle`}
+            />
+          )}
+          {actions}
+        </span>
+      ) : null}
 
       <LinkPopover
         trigger={linkAnchor}

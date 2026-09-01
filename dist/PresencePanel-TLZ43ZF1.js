@@ -1,7 +1,8 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Button-wU9TwJvB.js";
-import { o as n, t as r } from "./Avatar-Yxs_9Jio.js";
-import { t as i } from "./Input-DLknWXri.js";
+import { n } from "./DockedPanelContext-pH9A5z1h.js";
+import { t as r } from "./Input-DLknWXri.js";
+import { t as i } from "./Avatar-BzicCOft.js";
 import { useCallback as a, useEffect as o, useId as s, useLayoutEffect as c, useMemo as l, useRef as u, useState as d } from "react";
 import { Fragment as f, jsx as p, jsxs as m } from "react/jsx-runtime";
 import { Command as h } from "cmdk";
@@ -43,15 +44,15 @@ function y(e) {
 		return "";
 	}
 }
-function b({ author: t, content: n, timestamp: i, avatarUrl: a, hideAvatar: o = !1, hideAuthor: s = !1, mine: c = !1, footer: l, tone: u = "light", className: d }) {
-	let f = u === "dark", h = y(i), g = !s || !!h;
+function b({ author: t, content: n, timestamp: r, avatarUrl: a, hideAvatar: o = !1, hideAuthor: s = !1, mine: c = !1, footer: l, tone: u = "light", className: d }) {
+	let f = u === "dark", h = y(r), g = !s || !!h;
 	return /* @__PURE__ */ m("div", {
 		"data-testid": "message-row",
 		"data-mine": c ? "true" : "false",
 		className: e("flex items-start gap-2 py-1", d),
 		children: [/* @__PURE__ */ p("div", {
 			className: "w-5 shrink-0 mt-0.5",
-			children: !o && /* @__PURE__ */ p(r, {
+			children: !o && /* @__PURE__ */ p(i, {
 				name: t,
 				src: a,
 				size: 20
@@ -379,8 +380,8 @@ function ne(e) {
 	let t = e.length - 2;
 	return `${e[0]}, ${e[1]} and ${t} other${t > 1 ? "s" : ""} are typing...`;
 }
-function j({ messages: r, onSend: a, disabled: s = !1, onTyping: c, typingUsers: l = [], tone: h = "light", showHeader: g, fill: _, onLoadMore: v, hasMore: y, loadingMore: x = !1, onSendFiles: S, transfers: T = [], currentActor: E, onCancelTransfer: D, attachmentSrc: ee, onOpenAttachment: j, acceptFiles: M, maxFileSize: N, onFileError: P, emojis: ie = k }) {
-	let F = h === "dark", ae = n(), oe = g ?? !(ae?.hasHeader ?? !1), I = _ ?? ae?.fillsHeight ?? !1, [L, R] = d(""), z = u(null), B = u(null), se = !!v && y !== !1, V = u(null), H = u(null), [U, W] = d(!1), G = !!S && !s, [K, q] = d(0), J = u(!0), Y = u(r.length), X = r.length + T.length, Z = u(null);
+function j({ messages: i, onSend: a, disabled: s = !1, onTyping: c, typingUsers: l = [], tone: h = "light", showHeader: g, fill: _, onLoadMore: v, hasMore: y, loadingMore: x = !1, onSendFiles: S, transfers: T = [], currentActor: E, onCancelTransfer: D, attachmentSrc: ee, onOpenAttachment: j, acceptFiles: M, maxFileSize: N, onFileError: P, emojis: ie = k }) {
+	let F = h === "dark", ae = n(), oe = g ?? !(ae?.hasHeader ?? !1), I = _ ?? ae?.fillsHeight ?? !1, [L, R] = d(""), z = u(null), B = u(null), se = !!v && y !== !1, V = u(null), H = u(null), [U, W] = d(!1), G = !!S && !s, [K, q] = d(0), J = u(!0), Y = u(i.length), X = i.length + T.length, Z = u(null);
 	function ce() {
 		let e = z.current;
 		e && (e.scrollTop = e.scrollHeight, J.current = !0, q(0));
@@ -437,7 +438,7 @@ function j({ messages: r, onSend: a, disabled: s = !1, onTyping: c, typingUsers:
 				className: e("text-sm font-semibold mb-2 shrink-0", F ? "text-white/90" : "text-text-primary"),
 				children: [
 					"Chat (",
-					r.length,
+					i.length,
 					")"
 				]
 			}),
@@ -453,7 +454,7 @@ function j({ messages: r, onSend: a, disabled: s = !1, onTyping: c, typingUsers:
 					"data-testid": "chat-panel-messages",
 					className: e("overflow-y-auto overflow-x-hidden", I ? "min-h-0 flex-1" : "max-h-[200px]"),
 					children: [
-						se && r.length > 0 && /* @__PURE__ */ p("div", {
+						se && i.length > 0 && /* @__PURE__ */ p("div", {
 							className: "flex justify-center pb-1",
 							children: /* @__PURE__ */ p("button", {
 								type: "button",
@@ -464,10 +465,10 @@ function j({ messages: r, onSend: a, disabled: s = !1, onTyping: c, typingUsers:
 								children: x ? "Loading…" : "Load earlier messages"
 							})
 						}),
-						r.length === 0 ? /* @__PURE__ */ p("div", {
+						i.length === 0 ? /* @__PURE__ */ p("div", {
 							className: e("text-sm", F ? "text-white/40" : "text-text-secondary"),
 							children: "No messages yet"
-						}) : r.map((e, t) => {
+						}) : i.map((e, t) => {
 							let n = e.displayName ?? e.clientId.slice(0, 8), r = e.attachments ?? [], i = r.length === 0 ? e.content : /* @__PURE__ */ m(f, { children: [e.content && /* @__PURE__ */ p("span", { children: e.content }), r.map((e) => /* @__PURE__ */ p(C, {
 								attachment: e,
 								src: ee?.(e),
@@ -552,7 +553,7 @@ function j({ messages: r, onSend: a, disabled: s = !1, onTyping: c, typingUsers:
 						triggerRef: H,
 						emojis: ie
 					}),
-					/* @__PURE__ */ p(i, {
+					/* @__PURE__ */ p(r, {
 						size: "sm",
 						value: L,
 						onChange: (e) => R(e.target.value),
