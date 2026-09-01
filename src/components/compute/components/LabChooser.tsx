@@ -15,6 +15,7 @@ import { cn } from '../../../lib/cn';
 import { StatusDot } from '../../shared/StatusDot';
 import Chip from '../../shared/Chip';
 import { COMPUTE_STATUS, statusOf } from '../lib/status';
+import { chromeVarsFor, type ChromeTone } from '../lib/chromeTokens';
 import type { PaneLeaf } from '../lib/paneTree';
 import { ProjectSummary } from './ProjectSummary';
 import type { ProjectRollup } from '../hooks/useComputeProjects';
@@ -43,6 +44,15 @@ export interface LabChooserProps {
   projects?: readonly ProjectRollup[];
   /** Focus a project's first computer, or offer to make one if it has none. */
   onSelectProject?: (project: ProjectRollup) => void;
+  /**
+   * Which palette the chooser card paints in. `code` (default) keeps the
+   * terminal family; `app` re-points it at the host's tokens, the way the
+   * lab's own chrome does — see `../lib/chromeTokens`.
+   *
+   * The scrim is NOT affected either way. It covers the panes as well as the
+   * chrome, and a light film over a terminal dims nothing.
+   */
+  chrome?: ChromeTone;
 }
 
 /**
@@ -74,7 +84,7 @@ export function fuzzyScore(text: string, query: string): number | null {
 
 export function LabChooser({
   open, onClose, computers, panes, onJumpToPane, onRetarget, onOpenInSplit,
-  projects = [], onSelectProject,
+  projects = [], onSelectProject, chrome: chromeTone = 'code',
 }: LabChooserProps) {
   const [query, setQuery] = useState('');
   const [highlight, setHighlight] = useState(0);
@@ -164,6 +174,7 @@ export function LabChooser({
       onClick={onClose}
     >
       <div
+        style={chromeVarsFor(chromeTone)}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Jump to a computer, pane or project"
@@ -244,9 +255,15 @@ export function LabChooser({
                   data-highlighted={selected}
                   onMouseEnter={() => setHighlight(index)}
                   onClick={(e) => commit(row, e.shiftKey)}
+                  // Same left rule the project rows already carry. A tinted
+                  // background alone is the whole selection cue, and on the app
+                  // palette that tint is `surface-hover` on `surface-panel` —
+                  // two greys four percent apart. The rule reads at any
+                  // contrast, and it makes both row shapes indicate the same
+                  // way, which they did not before.
                   className={cn(
-                    'flex items-center gap-2 px-3 py-1.5 cursor-pointer',
-                    selected ? 'bg-code-surface' : 'bg-transparent',
+                    'flex items-center gap-2 px-3 py-1.5 cursor-pointer border-l-2',
+                    selected ? 'bg-code-surface border-code-blue' : 'bg-transparent border-transparent',
                   )}
                 >
                   <StatusDot size="xs" color={meta.color} pulse={meta.pulse} aria-label={meta.label} />

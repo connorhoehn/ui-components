@@ -458,6 +458,82 @@ describe('chrome', () => {
     expect(remapped.length).toBeGreaterThanOrEqual(3);
     expect(remapped[0]!.style.getPropertyValue('--color-code-bg')).toBe('var(--color-surface)');
   });
+
+  it('does NOT remap the field the panes sit on', async () => {
+    // The stronger form of the root invariant above, and the one that actually
+    // protects the terminals now that the field carries a background of its
+    // own. A pane's ancestors inside the lab are: root -> body row -> field.
+    // None of the three may carry the remap, or every `text-code-*` inside a
+    // pane — the status line, the frame title, the connecting strip — flips to
+    // app tokens and the pane reads as two half-themed halves.
+    renderLab({ variant: 'inline' });
+    await summary();
+    // Every pane frame paints `bg-terminal-bg` (TitledFrame's code tone).
+    const panes = [...root().querySelectorAll<HTMLElement>('.bg-terminal-bg')];
+    expect(panes.length).toBeGreaterThan(0);
+    for (const pane of panes) {
+      for (let node: HTMLElement | null = pane; node; node = node.parentElement) {
+        expect(node.style.getPropertyValue('--color-code-bg')).toBe('');
+        if (node === root()) break;
+      }
+    }
+  });
+
+  it('remaps the accents too, because in the chrome they are affordances', async () => {
+    // The first pass left the accents alone on the reasoning that they carry
+    // meaning. That holds inside a pane and does not hold in the chrome:
+    // nothing up here reports a computer's state through them (the dots read
+    // COMPUTE_STATUS.color, the chips take a design-system tone, both already
+    // theme-aware). What they colour is `send`, `new`, the armed-broadcast
+    // border and the selected window tab — and Catppuccin's pastels land under
+    // 2:1 on light chrome. See lib/chromeTokens.
+    renderLab({ variant: 'inline' });
+    await summary();
+    const bar = root().querySelector<HTMLElement>('[style*="--color-code-bg"]')!;
+    expect(bar.style.getPropertyValue('--color-code-green')).toBe('var(--color-success)');
+    expect(bar.style.getPropertyValue('--color-code-peach')).toBe('var(--color-caution)');
+    expect(bar.style.getPropertyValue('--color-code-blue')).toBe('var(--color-info)');
+  });
+
+  it('gives an inline lab a containing block, so its dialogs land inside it', async () => {
+    // Both dialogs are `absolute inset-0`. An overlay root is `fixed` and so
+    // already a containing block; an inline root was not, so the chooser and
+    // the shortcut sheet resolved against whatever ancestor of the HOST
+    // happened to be positioned — in a real page, over the app's own nav.
+    renderLab({ variant: 'inline' });
+    await summary();
+    expect(root().className).toContain('relative');
+  });
+
+  it('themes the chooser card with the host, but never its scrim', async () => {
+    renderLab({ variant: 'inline' });
+    await summary();
+    cmd('k');
+    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer, pane or project' });
+    expect(dialog.style.getPropertyValue('--color-code-panel')).toBe('var(--color-surface-panel)');
+    // The scrim covers the panes as well as the chrome. Remapped, it would be
+    // a light film over a terminal, which dims nothing.
+    const scrim = dialog.parentElement!;
+    expect(scrim.style.getPropertyValue('--color-code-bg')).toBe('');
+    expect(scrim.className).toContain('bg-code-bg/70');
+  });
+
+  it('leaves the chooser on the terminal palette for an overlay lab', async () => {
+    renderLab({ variant: 'overlay' });
+    await summary();
+    cmd('k');
+    const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer, pane or project' });
+    expect(dialog.style.getPropertyValue('--color-code-panel')).toBe('');
+  });
+
+  it('themes the shortcut sheet card with the host', async () => {
+    renderLab({ variant: 'inline' });
+    await summary();
+    cmd('/');
+    const sheet = await screen.findByRole('dialog', { name: 'Keyboard shortcuts' });
+    const card = within(sheet).getByText('Keyboard shortcuts').closest('[style]') as HTMLElement;
+    expect(card.style.getPropertyValue('--color-code-panel')).toBe('var(--color-surface-panel)');
+  });
 });
 
 // ─── Watching a bot ──────────────────────────────────────────────────────────

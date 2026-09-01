@@ -31,6 +31,7 @@ import {
   DEFAULT_KEYMAP, groupBindings, isLeaderKey, labelFor, matchBinding, matchLeaderBinding,
   type KeyBinding, type LabCommand, type LeaderConfig,
 } from '../lib/keymap';
+import { chromeVarsFor, type ChromeTone } from '../lib/chromeTokens';
 import type { Direction, PaneLeaf } from '../lib/paneTree';
 import { LabRail } from './LabRail';
 import { LabChooser } from './LabChooser';
@@ -102,35 +103,12 @@ export interface ComputerLabProps {
    * applied to the chrome containers rather than the root precisely so it does
    * not inherit into them. Defaults to `app` for an inline lab and `code` for
    * an overlay, which is what each is usually for.
+   *
+   * @see `../lib/chromeTokens` for the map itself and where it may be applied.
    */
-  chrome?: 'code' | 'app';
+  chrome?: ChromeTone;
   className?: string;
 }
-
-/**
- * Re-point the code family at the host's app tokens.
- *
- * Only the structural tokens — backgrounds, borders, text. The accents
- * (green/red/peach/blue) stay put: they carry meaning (a running pane, an
- * expiring session, a broadcast armed) and they read on both themes, so
- * translating them would cost the meaning and buy nothing.
- */
-const APP_CHROME_VARS = {
-  '--color-code-bg': 'var(--color-surface)',
-  '--color-code-panel': 'var(--color-surface-panel)',
-  '--color-code-surface': 'var(--color-surface-hover)',
-  '--color-code-border': 'var(--color-border)',
-  // The text ramp, darkest to faintest. `raised` is a mid-grey in the dark
-  // family that doubles as a dim foreground, and it is used almost entirely as
-  // one here — placeholders, separators, "nothing here", counts. Mapping it to
-  // a background token (surface-emphasis) was the first attempt and made half
-  // the rail invisible on white: #e2e8f0 text on #ffffff is not text.
-  '--color-code-text': 'var(--color-text-primary)',
-  '--color-code-subtle': 'var(--color-text-secondary)',
-  '--color-code-muted': 'var(--color-text-secondary)',
-  '--color-code-comment': 'var(--color-text-tertiary)',
-  '--color-code-raised': 'var(--color-text-tertiary)',
-} as React.CSSProperties;
 
 export function ComputerLab({
   open,
@@ -398,7 +376,12 @@ export function ComputerLab({
   if (!open) return null;
 
   const chord = (command: LabCommand) => labelFor(keymap, command);
-  const chromeVars = chromeTone === 'app' ? APP_CHROME_VARS : undefined;
+  const chromeVars = chromeVarsFor(chromeTone);
+  const isApp = chromeTone === 'app';
+  // Inline, the lab is one panel among several on a page that already spends
+  // height on its own header and nav. Overlay owns the viewport and can afford
+  // the looser rhythm it was designed at.
+  const dense = variant === 'inline';
 
   return (
     <div
@@ -412,15 +395,34 @@ export function ComputerLab({
         // The root takes a real class rather than the variable remap, because
         // custom properties inherit: setting them here would repaint the panes
         // too, and a light terminal is not a terminal.
-        chromeTone === 'app' ? 'bg-surface text-text-primary' : 'bg-code-bg text-code-text',
-        variant === 'overlay' ? 'fixed inset-0 z-[150]' : 'h-full min-h-0 w-full',
+        isApp ? 'bg-surface text-text-primary' : 'bg-code-bg text-code-text',
+        variant === 'overlay'
+          ? 'fixed inset-0 z-[150]'
+          // `relative` is load-bearing inline, not decoration. The chooser and
+          // the shortcut sheet are `absolute inset-0`; an overlay root is
+          // `fixed` and so already a containing block, but an inline root was
+          // not, and both dialogs resolved against whatever ancestor of the
+          // HOST happened to be positioned — landing over the app's own nav.
+          //
+          // The border and radius are the other half of "not an iframe": an
+          // edgeless dark region bleeding to the container reads as an embed,
+          // whereas a panel with the same edge as every other panel on the
+          // page reads as part of the page. `overflow-hidden` keeps the two
+          // dialogs and the pane field inside that radius.
+          : cn(
+              'relative h-full min-h-0 w-full',
+              isApp && 'rounded-lg border border-border overflow-hidden',
+            ),
         className,
       )}
     >
       {/* ── Top bar: identity, window tabs, budget, exit ── */}
       <div
         style={chromeVars}
-        className="flex items-center gap-3 px-3 h-10 shrink-0 border-b border-code-border bg-code-panel"
+        className={cn(
+          'flex items-center gap-3 px-3 shrink-0 border-b border-code-border bg-code-panel',
+          dense ? 'h-9' : 'h-10',
+        )}
       >
         <span className="text-[11px] font-mono font-semibold tracking-wide text-code-mauve select-none">LAB</span>
         <span data-testid="lab-summary" className="text-[10px] font-mono text-code-muted tabular-nums">
@@ -452,7 +454,11 @@ export function ComputerLab({
             disabled={!activePane}
             title="New window"
             aria-label="New window"
-            className="px-1.5 py-0.5 text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text disabled:text-code-raised disabled:cursor-not-allowed"
+            // Faded rather than recoloured when disabled. `code-raised` is a
+            // near-invisible grey on the terminal ground and an ordinary text
+            // grey once remapped, so it stopped reading as "off" the moment the
+            // chrome went light — the same reason the send button changed.
+            className="px-1.5 py-0.5 text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text disabled:opacity-40 disabled:cursor-not-allowed"
           >
             +
           </button>
@@ -468,6 +474,13 @@ export function ComputerLab({
           showPercent={false}
           note={`${shellPanes} of ${MAX_SHELLS} open`}
           warnAbove={0.74}
+          // Given the real tone rather than left to inherit the remap. The
+          // meter's UNSPENT segments are `bg-code-raised`, and `raised` is the
+          // one token in the family that is a background here and a dim
+          // foreground everywhere else — the remap has to send it to a text
+          // grey (see chromeTokens), which turned the empty dots into dark
+          // ones and made a quiet lab look like a full one.
+          tone={isApp ? 'surface' : 'code'}
           className="hidden md:flex"
         />
 
@@ -549,7 +562,21 @@ export function ComputerLab({
         />
         </div>
 
-        <div className="flex-1 min-w-0 min-h-0 p-2">
+        {/* The field the panes sit on. Explicitly toned rather than left to
+            inherit from the root: it is the one large surface where the app
+            side and the pane side actually meet, and the gutter reads as the
+            page's own paper against the greyer chrome either side of it —
+            which is what stops a window of dark panes reading as one dark
+            region with things drawn on it.
+
+            NOT remapped. The panes are in here, and the remap inherits. */}
+        <div
+          className={cn(
+            'flex-1 min-w-0 min-h-0',
+            dense ? 'p-1.5' : 'p-2',
+            isApp ? 'bg-surface' : 'bg-code-bg',
+          )}
+        >
           {layout.activeWindow && activePane ? (
             <PaneTreeView
               className="flex-1 h-full"
@@ -586,7 +613,14 @@ export function ComputerLab({
               }}
             />
           ) : (
-            <div className="h-full flex flex-col items-center justify-center gap-3 text-center">
+            // Safe to remap: with no window there is no pane in here to
+            // repaint, and the empty state is app-side content — it is the
+            // page talking, not a terminal. Unremapped it was `code-subtle`
+            // (#a6adc8) on white, which is a heading you cannot read.
+            <div
+              style={chromeVars}
+              className="h-full flex flex-col items-center justify-center gap-3 text-center"
+            >
               <div className="text-[13px] font-mono text-code-subtle">No computers to lab</div>
               <div className="text-[11px] font-mono text-code-muted max-w-sm">
                 Computer Lab multiplexes a fleet. Provision at least one computer and it will open in a pane.
@@ -595,7 +629,10 @@ export function ComputerLab({
                 <button
                   type="button"
                   onClick={() => provision()}
-                  className="text-[11px] font-mono text-code-green border border-code-border rounded px-3 py-1 bg-transparent cursor-pointer hover:bg-code-surface"
+                  // Same tinted treatment as `send`. This is the only thing to
+                  // do on an empty lab, so it cannot be the faintest mark on
+                  // the screen — which a bare pastel-green word on white is.
+                  className="text-[11px] font-mono rounded px-3 py-1 cursor-pointer border border-code-green/60 bg-code-green/15 text-code-green hover:bg-code-green/30"
                 >
                   + new computer
                 </button>
@@ -609,8 +646,17 @@ export function ComputerLab({
       <div
         style={chromeVars}
         className={cn(
-          'flex items-center gap-2 px-3 py-1.5 shrink-0 border-t font-mono',
-          broadcast ? 'border-code-peach bg-code-peach/10' : 'border-code-border bg-code-panel',
+          'flex items-center gap-2 px-3 shrink-0 border-t font-mono transition-colors',
+          dense ? 'py-1' : 'py-1.5',
+          // The composer is a bare `outline-none` textarea with no field of its
+          // own — right for a command line, and on dark chrome the caret alone
+          // was enough of a focus cue. On light chrome it is not: nothing on
+          // the row changed when it took focus, so ⌘-to-composer looked like it
+          // had done nothing. The rule the row already draws doubles as the
+          // indicator rather than adding a box the idiom does not want.
+          broadcast
+            ? 'border-code-peach bg-code-peach/10'
+            : 'border-code-border bg-code-panel focus-within:border-code-blue',
         )}
       >
         <button
@@ -621,7 +667,13 @@ export function ComputerLab({
           className={cn(
             'text-[10px] px-1.5 py-0.5 rounded-sm cursor-pointer border transition-colors shrink-0',
             broadcast
-              ? 'border-code-peach text-code-peach font-semibold'
+              // Filled, not just recoloured. Armed broadcast is the one state
+              // in the lab where a stray ⏎ reaches every pane at once, so it
+              // has to be legible at a glance on a light row too — a peach
+              // word on near-white was the weakest mark on the surface.
+              // /25 against the row's own /10 wash: at the same strength the
+              // toggle disappeared into the bar it is meant to stand on.
+              ? 'border-code-peach bg-code-peach/25 text-code-peach font-semibold'
               : 'border-code-border text-code-muted bg-transparent hover:text-code-text',
           )}
         >
@@ -650,14 +702,25 @@ export function ComputerLab({
               : `instruction for ${activeComputer?.label ?? 'the focused pane'} — ⏎ to send`
           }
           aria-label="Broadcast instruction"
-          className="flex-1 min-w-0 resize-none bg-transparent border-none outline-none text-[12px] leading-6 text-code-text placeholder:text-code-raised"
+          className="flex-1 min-w-0 resize-none bg-transparent border-none outline-none text-[12px] leading-6 text-code-text caret-code-blue placeholder:text-code-raised"
         />
 
         <button
           type="button"
           onClick={sendBroadcast}
           disabled={!broadcastText.trim() || targets.length === 0}
-          className="shrink-0 text-[11px] px-2 py-0.5 rounded-sm border border-code-border text-code-green bg-transparent cursor-pointer hover:bg-code-surface disabled:text-code-raised disabled:cursor-not-allowed"
+          // Tinted rather than a bare coloured word. `send` is the only
+          // committing control on the row and it was previously the lowest
+          // contrast thing on it; a fill carries the affordance so the label's
+          // colour does not have to do all the work. Disabled fades the whole
+          // button instead of swapping to a dim text token, because the dim
+          // token maps to ordinary secondary text on the app side and stopped
+          // reading as "off".
+          className={cn(
+            'shrink-0 text-[11px] px-2 py-0.5 rounded-sm border cursor-pointer transition-colors',
+            'border-code-green/60 bg-code-green/15 text-code-green hover:bg-code-green/30',
+            'disabled:border-code-border disabled:bg-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+          )}
         >
           send
         </button>
@@ -666,6 +729,7 @@ export function ComputerLab({
       <LabChooser
         open={showChooser}
         onClose={() => setShowChooser(false)}
+        chrome={chromeTone}
         computers={computers}
         panes={layout.panes}
         onJumpToPane={layout.focusPane}
@@ -696,7 +760,14 @@ export function ComputerLab({
         }}
       />
 
-      {showHelp && <ShortcutSheet keymap={keymap} leader={leader} onClose={() => setShowHelp(false)} />}
+      {showHelp && (
+        <ShortcutSheet
+          keymap={keymap}
+          leader={leader}
+          chrome={chromeTone}
+          onClose={() => setShowHelp(false)}
+        />
+      )}
     </div>
   );
 }
@@ -737,7 +808,11 @@ function LabPane({
   if (!computer || !kind) {
     return (
       <TitledFrame title="unbound" active={active} className="flex-1 min-w-0" onActivate={onFocus}>
-        <div className="h-full flex items-center justify-center text-[11px] font-mono text-code-raised">
+        {/* `code-raised` is a mid-grey the family uses for separators and
+            disabled marks; as the only text in an otherwise empty pane it read
+            at 1.9:1 against the terminal surface. This is a sentence explaining
+            why the pane is blank — it has to be readable. */}
+        <div className="h-full flex items-center justify-center text-[11px] font-mono text-code-subtle">
           {computer ? 'no pane kind registered' : 'this computer is gone'}
         </div>
       </TitledFrame>
@@ -748,6 +823,21 @@ function LabPane({
   const meta = COMPUTE_STATUS[status];
 
   return (
+    // `tone="code"` (the default) even when the surrounding chrome is the
+    // host's, and it was tried the other way first.
+    //
+    // `tone="surface"` paints `palette.frame` on the frame background AND on
+    // the strips behind the title and the title action — and that frame
+    // background is exactly what shows through the 8px band above the xterm
+    // canvas. On a light host that band becomes a white bar sitting between the
+    // pane's title and its first line of output, with the status line dark
+    // again underneath: two seams bought in exchange for a lighter border.
+    //
+    // The rule the whole pass follows instead: the frame IS the boundary.
+    // Title row, canvas and status line are pane-side and stay on the code
+    // family; the top bar, rail, command line, field and dialogs are app-side.
+    // Nothing straddles, so there is exactly one colour change to look at per
+    // pane and it lands on the border where a multiplexer expects it.
     <TitledFrame
       active={active}
       onActivate={onFocus}
@@ -786,6 +876,12 @@ function LabPane({
       </div>
 
       <PaneStatusLine
+        // The frame is `rounded` (4px) with a 1px border, so the inner radius
+        // is 3px. Left square, the status line's darker panel painted over both
+        // bottom corners as small nubs — invisible on a dark page, obvious
+        // against a light gutter, and exactly the kind of edge that makes a
+        // surface read as pasted on rather than drawn.
+        className="rounded-b-[3px]"
         computer={computer}
         idleWindowMs={idleWindowMs}
         broadcasting={broadcasting}
@@ -808,10 +904,12 @@ function LabPane({
 function ShortcutSheet({
   keymap,
   leader,
+  chrome: chromeTone = 'code',
   onClose,
 }: {
   keymap: readonly KeyBinding[];
   leader: LeaderConfig | null;
+  chrome?: ChromeTone;
   onClose: () => void;
 }) {
   const GROUP_LABEL: Record<KeyBinding['group'], string> = {
@@ -821,6 +919,12 @@ function ShortcutSheet({
   };
 
   return (
+    // The scrim stays on the code family in BOTH tones, deliberately. It is
+    // not chrome — it is the dark a modal puts over everything, panes included,
+    // and remapping it to `surface` would wash a light film over the terminals
+    // rather than dimming them. The card is where the host's theme belongs: a
+    // permanently dark keyboard reference popping out of a light application is
+    // the single loudest "this is an embedded thing" tell in the surface.
     <div
       role="dialog"
       aria-label="Keyboard shortcuts"
@@ -828,8 +932,9 @@ function ShortcutSheet({
       onClick={onClose}
     >
       <div
+        style={chromeVarsFor(chromeTone)}
         onClick={(e) => e.stopPropagation()}
-        className="w-[560px] max-w-[92vw] max-h-[80vh] overflow-y-auto rounded-lg border border-code-border bg-code-panel p-5"
+        className="w-[560px] max-w-[92vw] max-h-[80vh] overflow-y-auto rounded-lg border border-code-border bg-code-panel p-5 shadow-2xl"
       >
         <div className="flex items-baseline gap-2 mb-4">
           <span className="text-[13px] font-semibold text-code-text">Keyboard shortcuts</span>
