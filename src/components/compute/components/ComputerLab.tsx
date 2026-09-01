@@ -134,6 +134,7 @@ export function ComputerLab({
 
   const panesRef = useRef(new Map<string, { handle: PaneHandle; kind: PaneKind }>());
   const composerRef = useRef<HTMLTextAreaElement>(null);
+  const railRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
   const byId = useMemo(() => new Map(computers.map((c) => [c.id, c])), [computers]);
@@ -309,14 +310,53 @@ export function ComputerLab({
         case 'next-kind': cycleActiveKind(); return;
         case 'jump': setShowChooser(true); return;
         case 'focus-composer': composerRef.current?.focus(); return;
+        // One key cycles the three focus regions: panes → computers list →
+        // agents list → panes. The rail's rows already carry a roving
+        // tabindex, so landing on the row marked tabindex=0 (the active one)
+        // resumes where the operator left off rather than resetting to the
+        // top; an empty section is skipped rather than focused, because
+        // focusing nothing strands the keyboard.
+        case 'focus-rail': {
+          const rail = railRef.current;
+          if (!rail) return;
+          const rowIn = (label: string) =>
+            rail.querySelector<HTMLElement>(`[role="listbox"][aria-label="${label}"] [data-rail-row][tabindex="0"]`)
+            ?? rail.querySelector<HTMLElement>(`[role="listbox"][aria-label="${label}"] [data-rail-row]`);
+          const at = document.activeElement;
+          const within = (label: string) =>
+            !!at && !!rail.querySelector(`[role="listbox"][aria-label="${label}"]`)?.contains(at);
+          if (within('computers')) {
+            const next = rowIn('agents');
+            if (next) next.focus();
+            else if (activePane) panesRef.current.get(activePane.id)?.handle.focus?.();
+            return;
+          }
+          if (within('agents')) {
+            if (activePane) panesRef.current.get(activePane.id)?.handle.focus?.();
+            return;
+          }
+          (rowIn('computers') ?? rowIn('agents'))?.focus();
+          return;
+        }
         case 'toggle-broadcast': setBroadcast((v) => !v); return;
         case 'help': setShowHelp((v) => !v); return;
-        // Inline, there is nothing to exit to — Esc would either do nothing
-        // (confusing) or unmount the page's own content (worse).
-        case 'exit': if (variant === 'overlay') onClose(); return;
+        // Esc from the rail returns to the panes first — leaving the rail
+        // and leaving the lab are different sizes of "get me out", and
+        // collapsing them means an overlay closes under someone who only
+        // meant to put the keyboard back in a shell. Inline, there is
+        // nothing further to exit to — Esc past the rail does nothing rather
+        // than unmounting the page's own content.
+        case 'exit': {
+          if (railRef.current?.contains(document.activeElement)) {
+            if (activePane) panesRef.current.get(activePane.id)?.handle.focus?.();
+            return;
+          }
+          if (variant === 'overlay') onClose();
+          return;
+        }
       }
     },
-    [layout, splitWith, cycleActiveKind, onClose, variant],
+    [layout, splitWith, cycleActiveKind, onClose, variant, activePane],
   );
 
   // Capture phase, because xterm swallows nearly everything once a terminal
@@ -520,8 +560,10 @@ export function ComputerLab({
       {/* ── Body: rail + panes ── */}
       <div className="flex flex-1 min-h-0">
         {/* `contents` so the remap reaches the rail without adding a box to
-            the flex row — custom properties inherit through it. */}
-        <div style={chromeVars} className="contents">
+            the flex row — custom properties inherit through it. The ref is
+            how the keyboard knows focus is in the rail: display:contents
+            removes the layout box, not the DOM node, so contains() works. */}
+        <div ref={railRef} style={chromeVars} className="contents">
         <LabRail
           className="w-[210px] shrink-0"
           computers={computers}
