@@ -124,14 +124,18 @@
   --color-code-peach: #fab387;
   --color-code-mauve: #cba6f7;
 
-  /* The surface a PTY paints on. Its own token, not `code-bg`, because the two
-     answer different questions: `code-bg` is the darkest step of the code
-     family and is right behind chrome, while a terminal sitting next to light
-     app chrome reads as a hole punched in the page when it is near-black.
-     Defaults to the family's mid surface — dark enough to be a terminal,
-     grey enough to sit in a page. Re-point it to restyle every terminal at
-     once, or pass `background` to one ShellTerminal. */
-  --color-terminal-bg: #1e1e2e;
+  /* The terminal ramp — the surface a PTY paints on, and its ink.
+     Its own family, not `code-*`, because the two answer different questions:
+     the code family is PERMANENTLY dark (log consoles, pipeline debuggers),
+     while the terminal follows day and night with the app — an explicit
+     product decision replacing the earlier always-dark terminal. Light here;
+     the [data-theme="dark"] block flips all four together. Re-point them to
+     restyle every terminal at once, or pass `background` to one
+     ShellTerminal. */
+  --color-terminal-bg: #ffffff;
+  --color-terminal-fg: #1e293b;
+  --color-terminal-cursor: #16a34a;
+  --color-terminal-selection: #bfdbfe;
 
   /* Video stage surfaces — the near-black letterbox behind video tiles and
      the dark tile placeholder. Previously three slightly-different ad hoc
@@ -244,6 +248,15 @@
  * body, ink included) — see their comments above — are theme-invariant.
  */
 [data-theme="dark"] {
+  /* Terminal ramp, night side — the Catppuccin values the terminal always
+     had before it learned to follow the theme. All four flip together; a
+     dark canvas under light ink (or the reverse) is unreadable, so no token
+     in this ramp may flip alone. */
+  --color-terminal-bg: #1e1e2e;
+  --color-terminal-fg: #cdd6f4;
+  --color-terminal-cursor: #a6e3a1;
+  --color-terminal-selection: #45475a;
+
   color-scheme: dark;
 
   --color-primary: #8b91ff;

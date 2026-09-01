@@ -43,8 +43,17 @@ describe('terminal background', () => {
     expect(shell).not.toMatch(/background: token\('--color-code-bg'/);
   });
 
-  it('defaults to a grey, not black', () => {
+  it('flips with the theme — light canvas by day, Catppuccin by night', () => {
+    // The terminal follows the app's day/night by product decision (this
+    // replaced the earlier always-dark terminal). Both sides must exist, and
+    // the whole ramp flips together — a dark canvas under light ink is
+    // unreadable, so no token may flip alone.
+    expect(styles).toMatch(/--color-terminal-bg:\s*#ffffff/);
     expect(styles).toMatch(/--color-terminal-bg:\s*#1e1e2e/);
+    for (const t of ['fg', 'cursor', 'selection']) {
+      expect((styles.match(new RegExp(`--color-terminal-${t}:`, 'g')) ?? []).length,
+        `--color-terminal-${t} must be defined on both sides`).toBe(2);
+    }
   });
 
   it('is overridable per terminal', () => {

@@ -1,7 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Avatar } from '../shared/Avatar';
-import { NavRail } from '../shared/NavRail';
 import { ComputeProvider } from './context/ComputeContext';
 import { ComputerLab } from './components/ComputerLab';
 import { fixtureComputers, fixtureModels, fixtureRuntimeStatus } from './fixtures/computeFixture';
@@ -186,47 +184,27 @@ export const WatchingABot: Story = {
   parameters: { labLayout: WATCHING_SEED },
 };
 
-// ── The acceptance test for the inline lab ───────────────────────────────────
-
-/** A neutral host — generic labels, dead links. The library has no app. */
-const HOST_NAV = [
-  { to: '#overview', label: 'Overview' },
-  { to: '#projects', label: 'Projects' },
-  { to: '#computers', label: 'Computers' },
-  { to: '#settings', label: 'Settings' },
-];
+// ── The inline lab, bare ────────────────────────────────────────────────────
 
 /**
- * The lab as a page in somebody else's light application.
+ * The lab as a page section — just the component, no pretend application.
  *
- * Alone on a fullscreen canvas a dark surface cannot fail — with nothing to
- * compare against, it just looks intentional. The complaint this story exists
- * to catch ("feels like an iframe, doesn't natively fit in") only shows next
- * to a host, so a minimal one is sketched from shared primitives: a header, a
- * nav rail, a content column. The host is deliberately anonymous — the
- * library serves many apps and must not carry any one of them in its stories.
+ * An earlier version wrapped this in a mocked host (nav rail, header,
+ * breadcrumbs) to judge the seam against neighbouring chrome. That mock read
+ * as an iframe demo and was cut on direct feedback: a story shows the
+ * component, and the seam is judged in the app that owns the nav.
  *
- * Judge one thing: the lab's chrome should read as panels of THIS page, with
- * only the panes staying dark — the frame border is the theme boundary, and a
- * pane should sit in a light page the way a code block sits in a document.
- * Flip dark mode in the toolbar and the same rule should hold reversed.
+ * Day and night: the lab follows the theme toolbar. In light mode the whole
+ * surface — chrome AND terminals — is light (the `--color-terminal-*` ramp
+ * flips with the theme); switch the toolbar to dark and everything flips
+ * together. `chrome="code"` remains the opt-in permanently-dark lab.
  */
-export const InlineInLightApp: Story = {
+export const Inline: Story = {
   args: { open: true, onClose: () => {}, variant: 'inline' },
   parameters: { layout: 'fullscreen' },
   render: (args) => (
-    <div className="h-screen flex flex-col bg-surface text-text-primary">
-      <header className="h-12 shrink-0 flex items-center gap-4 px-4 border-b border-border bg-surface-panel">
-        <span className="text-[14px] font-semibold tracking-tight">Console</span>
-        <span className="flex-1" />
-        <Avatar name="A Person" size={24} />
-      </header>
-      <div className="flex flex-1 min-h-0">
-        <NavRail items={HOST_NAV} activeHref="#computers" width="narrow" className="shrink-0" />
-        <main className="flex-1 min-w-0 min-h-0 p-4">
-          <ComputerLab {...args} />
-        </main>
-      </div>
+    <div className="h-screen p-4 bg-surface">
+      <ComputerLab {...args} />
     </div>
   ),
 };

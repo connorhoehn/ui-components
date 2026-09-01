@@ -23,6 +23,7 @@
 // shell opened in one is not a shell in the other.
 
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
+import { APP_CHROME_VARS } from '../lib/chromeTokens';
 import { FloatingPanel } from '../../shared/FloatingPanel';
 import { ShellTerminal } from './ShellTerminal';
 import { SHELL_STATUS } from '../lib/status';
@@ -170,7 +171,12 @@ export function ComputeDock({ hotkeys = true, reconcile = true, className = '' }
   const tiled = showsAllPanes(dock.mode);
 
   const body = (
-    <div className="flex flex-col h-full min-h-0">
+    // The dock dresses for the app's day or night, the same way the lab does:
+    // the code-token remap inherits from here, and the terminal ramp flips
+    // the canvases. Follows the product decision that killed the always-dark
+    // pane; a dock that stayed midnight over a light page was the loudest
+    // leftover of it.
+    <div style={APP_CHROME_VARS} className="flex flex-col h-full min-h-0">
       {/* Tab strip. Not a <button> wrapping a <button>: nesting interactive
           elements is invalid HTML and leaves the inner control unreachable by
           keyboard, so close is a sibling of select, not a child. */}
@@ -326,9 +332,10 @@ export function ComputeDock({ hotkeys = true, reconcile = true, className = '' }
       // bg-terminal-bg: this is the dock's own frame around the docked
       // ShellTerminal (chrome={false}) — same seam rule as the tab strip above.
       className={`${shell} z-[120] flex flex-col bg-terminal-bg border-code-border ${className}`}
-      // Height alone stays inline: it is a persisted, user-dragged pixel value,
-      // which is exactly the case the Tailwind heuristic exempts.
-      style={dock.mode === 'stack' ? undefined : { height: dock.geometry.dockHeight }}
+      // The remap must sit on THIS element too, not only the body inside it —
+      // the root paints its own tokens, and vars do not reach up. Height stays
+      // inline regardless: a persisted, user-dragged pixel value.
+      style={dock.mode === 'stack' ? APP_CHROME_VARS : { ...APP_CHROME_VARS, height: dock.geometry.dockHeight }}
     >
       {body}
     </div>

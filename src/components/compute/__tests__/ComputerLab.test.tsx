@@ -423,11 +423,14 @@ describe('chrome', () => {
     expect(root().className).not.toContain('bg-code-bg');
   });
 
-  it('overlay defaults to the terminal palette', async () => {
+  it('overlay defaults to the host palette too — day/night is the one axis', async () => {
+    // The overlay used to default permanently dark. Reversed by product
+    // decision: the lab follows the app's theme everywhere, and `code` is the
+    // explicit opt-in for an always-dark room.
     renderLab();
     await summary();
     const dialog = screen.getByRole('dialog', { name: 'Computer Lab' });
-    expect(dialog.className).toContain('bg-code-bg');
+    expect(dialog.className).toContain('bg-surface');
   });
 
   it('the tone is overridable in both directions', async () => {
@@ -441,62 +444,35 @@ describe('chrome', () => {
     expect(root().className).toContain('bg-surface');
   });
 
-  it('does NOT remap the code palette on the root, so panes stay dark', async () => {
-    // The remap is applied to the chrome containers rather than the root
-    // precisely because custom properties inherit. On the root it would repaint
-    // the terminals too, and a light terminal is not a terminal.
+  it('remaps the code palette on the ROOT, panes included — day and night', async () => {
+    // The remap used to stop at the chrome so the panes could stay
+    // permanently dark. Reversed by product decision: the terminal follows
+    // the theme (the --color-terminal-* ramp flips its canvas), so the remap
+    // sits once on the root and inherits everywhere. `code` opts back into
+    // the always-dark lab.
     renderLab({ variant: 'inline' });
+    await summary();
+    expect(root().style.getPropertyValue('--color-code-bg')).toBe('var(--color-surface)');
+  });
+
+  it("code tone carries no remap — that is what 'always dark' means", async () => {
+    renderLab({ variant: 'inline', chrome: 'code' });
     await summary();
     expect(root().style.getPropertyValue('--color-code-bg')).toBe('');
-  });
-
-  it('remaps the palette on the chrome containers', async () => {
-    renderLab({ variant: 'inline' });
-    await summary();
-    const remapped = [...root().querySelectorAll<HTMLElement>('[style*="--color-code-bg"]')];
-    // Top bar, rail, command line.
-    expect(remapped.length).toBeGreaterThanOrEqual(3);
-    expect(remapped[0]!.style.getPropertyValue('--color-code-bg')).toBe('var(--color-surface)');
-  });
-
-  it('does NOT remap the field the panes sit on', async () => {
-    // The stronger form of the root invariant above, and the one that actually
-    // protects the terminals now that the field carries a background of its
-    // own. A pane's ancestors inside the lab are: root -> body row -> field.
-    // None of the three may carry the remap, or every `text-code-*` inside a
-    // pane — the status line, the frame title, the connecting strip — flips to
-    // app tokens and the pane reads as two half-themed halves.
-    renderLab({ variant: 'inline' });
-    await summary();
-    // Every pane frame paints `bg-terminal-bg` (TitledFrame's code tone).
-    // waitFor, not a bare read: summary() proves the fleet arrived, but the
-    // first pane's frame mounts a beat later — asserting synchronously here
-    // failed roughly one run in three.
-    await waitFor(() =>
-      expect(root().querySelectorAll('.bg-terminal-bg').length).toBeGreaterThan(0));
-    const panes = [...root().querySelectorAll<HTMLElement>('.bg-terminal-bg')];
-    for (const pane of panes) {
-      for (let node: HTMLElement | null = pane; node; node = node.parentElement) {
-        expect(node.style.getPropertyValue('--color-code-bg')).toBe('');
-        if (node === root()) break;
-      }
-    }
+    expect(root().className).toContain('bg-code-bg');
   });
 
   it('remaps the accents too, because in the chrome they are affordances', async () => {
-    // The first pass left the accents alone on the reasoning that they carry
-    // meaning. That holds inside a pane and does not hold in the chrome:
-    // nothing up here reports a computer's state through them (the dots read
-    // COMPUTE_STATUS.color, the chips take a design-system tone, both already
-    // theme-aware). What they colour is `send`, `new`, the armed-broadcast
-    // border and the selected window tab — and Catppuccin's pastels land under
-    // 2:1 on light chrome. See lib/chromeTokens.
+    // Nothing in the chrome reports a computer's state through the accents
+    // (the dots read COMPUTE_STATUS.color, the chips take a design-system
+    // tone); what they colour is `send`, `new`, the armed-broadcast border —
+    // and Catppuccin's pastels land under 2:1 on light chrome. See
+    // lib/chromeTokens.
     renderLab({ variant: 'inline' });
     await summary();
-    const bar = root().querySelector<HTMLElement>('[style*="--color-code-bg"]')!;
-    expect(bar.style.getPropertyValue('--color-code-green')).toBe('var(--color-success)');
-    expect(bar.style.getPropertyValue('--color-code-peach')).toBe('var(--color-caution)');
-    expect(bar.style.getPropertyValue('--color-code-blue')).toBe('var(--color-info)');
+    expect(root().style.getPropertyValue('--color-code-green')).toBe('var(--color-success)');
+    expect(root().style.getPropertyValue('--color-code-peach')).toBe('var(--color-caution)');
+    expect(root().style.getPropertyValue('--color-code-blue')).toBe('var(--color-info)');
   });
 
   it('gives an inline lab a containing block, so its dialogs land inside it', async () => {
@@ -522,8 +498,10 @@ describe('chrome', () => {
     expect(scrim.className).toContain('bg-code-bg/70');
   });
 
-  it('leaves the chooser on the terminal palette for an overlay lab', async () => {
-    renderLab({ variant: 'overlay' });
+  it('leaves the chooser on the terminal palette for a CODE-toned lab', async () => {
+    // Overlay is no longer synonymous with dark — day/night is the one axis
+    // and `code` is the opt-in. The dialog follows the lab's tone.
+    renderLab({ variant: 'overlay', chrome: 'code' });
     await summary();
     cmd('k');
     const dialog = await screen.findByRole('dialog', { name: 'Jump to a computer, pane or project' });

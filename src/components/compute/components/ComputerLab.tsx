@@ -115,7 +115,7 @@ export function ComputerLab({
   onClose,
   focusComputerId = null,
   variant = 'overlay',
-  chrome: chromeTone = variant === 'inline' ? 'app' : 'code',
+  chrome: chromeTone = 'app',
   keymap = DEFAULT_KEYMAP,
   leader = null,
   idleWindowMs = DEFAULT_IDLE_WINDOW_MS,
@@ -430,11 +430,15 @@ export function ComputerLab({
         ? { role: 'dialog' as const, 'aria-modal': true }
         : { role: 'region' as const })}
       aria-label="Computer Lab"
+      // In app tone the remap sits on the ROOT and inherits everywhere —
+      // panes included. That is the point now, not a hazard: the terminal
+      // follows day and night with the app (an explicit product decision
+      // reversing the earlier always-dark pane doctrine), and the
+      // --color-terminal-* ramp flips its canvas in step. `code` remains the
+      // opt-in permanently-dark lab.
+      style={chromeVars}
       className={cn(
         'flex flex-col',
-        // The root takes a real class rather than the variable remap, because
-        // custom properties inherit: setting them here would repaint the panes
-        // too, and a light terminal is not a terminal.
         isApp ? 'bg-surface text-text-primary' : 'bg-code-bg text-code-text',
         variant === 'overlay'
           ? 'fixed inset-0 z-[150]'
@@ -458,7 +462,6 @@ export function ComputerLab({
     >
       {/* ── Top bar: identity, window tabs, budget, exit ── */}
       <div
-        style={chromeVars}
         className={cn(
           'flex items-center gap-3 px-3 shrink-0 border-b border-code-border bg-code-panel',
           dense ? 'h-9' : 'h-10',
@@ -563,7 +566,7 @@ export function ComputerLab({
             the flex row — custom properties inherit through it. The ref is
             how the keyboard knows focus is in the rail: display:contents
             removes the layout box, not the DOM node, so contains() works. */}
-        <div ref={railRef} style={chromeVars} className="contents">
+        <div ref={railRef} className="contents">
         <LabRail
           className="w-[210px] shrink-0"
           computers={computers}
@@ -655,14 +658,7 @@ export function ComputerLab({
               }}
             />
           ) : (
-            // Safe to remap: with no window there is no pane in here to
-            // repaint, and the empty state is app-side content — it is the
-            // page talking, not a terminal. Unremapped it was `code-subtle`
-            // (#a6adc8) on white, which is a heading you cannot read.
-            <div
-              style={chromeVars}
-              className="h-full flex flex-col items-center justify-center gap-3 text-center"
-            >
+            <div className="h-full flex flex-col items-center justify-center gap-3 text-center">
               <div className="text-[13px] font-mono text-code-subtle">No computers to lab</div>
               <div className="text-[11px] font-mono text-code-muted max-w-sm">
                 Computer Lab multiplexes a fleet. Provision at least one computer and it will open in a pane.
@@ -686,7 +682,6 @@ export function ComputerLab({
 
       {/* ── Command line: broadcast. The reason to be in this mode. ── */}
       <div
-        style={chromeVars}
         className={cn(
           'flex items-center gap-2 px-3 shrink-0 border-t font-mono transition-colors',
           dense ? 'py-1' : 'py-1.5',
@@ -946,7 +941,7 @@ function LabPane({
 function ShortcutSheet({
   keymap,
   leader,
-  chrome: chromeTone = 'code',
+  chrome: chromeTone = 'app',
   onClose,
 }: {
   keymap: readonly KeyBinding[];

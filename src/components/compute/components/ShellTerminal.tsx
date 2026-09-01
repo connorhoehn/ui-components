@@ -128,7 +128,9 @@ export interface ShellTerminalProps {
  * `override` is the per-instance escape hatch, for the one pane that needs to
  * look different from the rest.
  */
-function themePalette(override?: string): Record<string, string> {
+function themePalette(override?: string, from?: Element | null): Record<string, string> {
+  // Night-side fallbacks: an environment with no computed styles (SSR, a
+  // detached node) gets a readable dark terminal rather than white-on-white.
   const fallback = {
     background: '#1e1e2e',
     foreground: '#cdd6f4',
@@ -138,13 +140,16 @@ function themePalette(override?: string): Record<string, string> {
   if (typeof globalThis.getComputedStyle !== 'function' || typeof document === 'undefined') {
     return override ? { ...fallback, background: override } : fallback;
   }
-  const style = globalThis.getComputedStyle(document.documentElement);
+  // Read from the terminal's own host, not documentElement: a subtree can be
+  // themed independently (<div data-theme="dark">), and a terminal inside one
+  // must dress for the room it is actually in.
+  const style = globalThis.getComputedStyle(from ?? document.documentElement);
   const token = (name: string, or: string) => style.getPropertyValue(name).trim() || or;
   return {
     background: override ?? token('--color-terminal-bg', fallback.background),
-    foreground: token('--color-code-text', fallback.foreground),
-    cursor: token('--color-code-green', fallback.cursor),
-    selectionBackground: token('--color-code-raised', fallback.selectionBackground),
+    foreground: token('--color-terminal-fg', fallback.foreground),
+    cursor: token('--color-terminal-cursor', fallback.cursor),
+    selectionBackground: token('--color-terminal-selection', fallback.selectionBackground),
   };
 }
 
@@ -168,6 +173,31 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
   const { client } = useCompute();
 
   const hostRef = useRef<HTMLDivElement>(null);
+
+  // Day/night follows the app live. xterm takes its palette at construction,
+  // so without this a theme toggle leaves every open terminal dressed for the
+  // previous mode. The two signals that flip the ramp are the documentElement
+  // data-theme attribute and the OS scheme; both re-read the computed tokens
+  // from the host so a subtree theme also lands correctly.
+  useEffect(() => {
+    const term = () => termRef.current;
+    const apply = () => {
+      const t = term();
+      if (t) t.options.theme = themePalette(background, hostRef.current);
+    };
+    const observer = typeof MutationObserver === 'function'
+      ? new MutationObserver(apply)
+      : null;
+    observer?.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+    const mq = typeof globalThis.matchMedia === 'function'
+      ? globalThis.matchMedia('(prefers-color-scheme: dark)')
+      : null;
+    mq?.addEventListener?.('change', apply);
+    return () => {
+      observer?.disconnect();
+      mq?.removeEventListener?.('change', apply);
+    };
+  }, [background]);
   const termRef = useRef<Terminal | null>(null);
   const fitRef = useRef<FitAddon | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
@@ -334,7 +364,7 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
       cursorBlink: true,
       fontSize: 12.5,
       fontFamily: '"Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace',
-      theme: themePalette(background),
+      theme: themePalette(background, hostRef.current),
       scrollback: 5_000,
     });
     const fit = new FitAddon();
