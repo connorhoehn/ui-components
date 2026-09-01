@@ -356,3 +356,53 @@ describe('focusComputerId', () => {
     await waitFor(async () => expect(await placeholder()).toBe(after));
   });
 });
+
+// ─── Variants ────────────────────────────────────────────────────────────────
+//
+// `inline` exists for a host that routes to the lab as a page rather than
+// summoning it over one. The differences are small but each is load-bearing.
+
+describe('variant', () => {
+  it('overlay claims the viewport and tells assistive tech the page is inert', async () => {
+    renderLab();
+    await summary();
+    const root = screen.getByRole('dialog', { name: 'Computer Lab' });
+    expect(root).toHaveAttribute('aria-modal', 'true');
+    expect(root.className).toContain('fixed');
+  });
+
+  it('inline fills its container and is NOT modal', async () => {
+    // aria-modal here would be a lie: the host's nav is still on screen and
+    // still reachable, so telling a screen reader the rest of the page is
+    // inert would strand someone in the lab.
+    renderLab({ variant: 'inline' });
+    await summary();
+    const root = screen.getByRole('region', { name: 'Computer Lab' });
+    expect(root).not.toHaveAttribute('aria-modal');
+    expect(root.className).not.toContain('fixed');
+    expect(screen.queryByRole('dialog', { name: 'Computer Lab' })).toBeNull();
+  });
+
+  it('inline offers no exit — the host nav is the way out', async () => {
+    renderLab({ variant: 'inline' });
+    await summary();
+    // A ✕ that leads nowhere is worse than no ✕.
+    expect(screen.queryByTitle(/Leave the lab/)).toBeNull();
+  });
+
+  it('inline ignores the exit chord instead of calling onClose', async () => {
+    const onClose = vi.fn();
+    renderLab({ variant: 'inline', onClose });
+    await summary();
+    press('Escape');
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('overlay still exits on the chord', async () => {
+    const onClose = vi.fn();
+    renderLab({ onClose });
+    await summary();
+    press('Escape');
+    expect(onClose).toHaveBeenCalled();
+  });
+});

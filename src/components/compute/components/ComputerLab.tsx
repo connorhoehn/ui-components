@@ -71,6 +71,20 @@ export interface ComputerLabProps {
    * finding out is a worse answer than doing nothing.
    */
   focusComputerId?: string | null;
+  /**
+   * How the lab occupies the page.
+   *
+   * `overlay` (default) covers the viewport — the lab as a mode you enter,
+   * which is right when it is summoned over whatever you were doing.
+   *
+   * `inline` fills its container instead, so a host that routes to the lab as
+   * a *page* keeps its own nav and header around it. The difference is not
+   * only cosmetic: an overlay is `role="dialog" aria-modal`, which tells a
+   * screen reader the rest of the page is inert. That is a lie when the lab is
+   * the page's content and the app's navigation is still right there, so the
+   * inline variant drops both.
+   */
+  variant?: 'overlay' | 'inline';
   className?: string;
 }
 
@@ -78,6 +92,7 @@ export function ComputerLab({
   open,
   onClose,
   focusComputerId = null,
+  variant = 'overlay',
   keymap = DEFAULT_KEYMAP,
   leader = null,
   idleWindowMs = DEFAULT_IDLE_WINDOW_MS,
@@ -273,10 +288,12 @@ export function ComputerLab({
         case 'focus-composer': composerRef.current?.focus(); return;
         case 'toggle-broadcast': setBroadcast((v) => !v); return;
         case 'help': setShowHelp((v) => !v); return;
-        case 'exit': onClose(); return;
+        // Inline, there is nothing to exit to — Esc would either do nothing
+        // (confusing) or unmount the page's own content (worse).
+        case 'exit': if (variant === 'overlay') onClose(); return;
       }
     },
-    [layout, splitWith, cycleActiveKind, onClose],
+    [layout, splitWith, cycleActiveKind, onClose, variant],
   );
 
   // Capture phase, because xterm swallows nearly everything once a terminal
@@ -340,10 +357,15 @@ export function ComputerLab({
   return (
     <div
       ref={rootRef}
-      role="dialog"
-      aria-modal="true"
+      {...(variant === 'overlay'
+        ? { role: 'dialog' as const, 'aria-modal': true }
+        : { role: 'region' as const })}
       aria-label="Computer Lab"
-      className={cn('fixed inset-0 z-[150] flex flex-col bg-code-bg text-code-text', className)}
+      className={cn(
+        'flex flex-col bg-code-bg text-code-text',
+        variant === 'overlay' ? 'fixed inset-0 z-[150]' : 'h-full min-h-0 w-full',
+        className,
+      )}
     >
       {/* ── Top bar: identity, window tabs, budget, exit ── */}
       <div className="flex items-center gap-3 px-3 h-10 shrink-0 border-b border-code-border bg-code-panel">
@@ -414,14 +436,19 @@ export function ComputerLab({
         >
           ?
         </button>
-        <button
-          type="button"
-          onClick={onClose}
-          title={`Leave the lab${chord('exit') ? ` · ${chord('exit')}` : ''}`}
-          className="text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-red"
-        >
-          ✕
-        </button>
+        {/* No exit when the lab IS the page: a ✕ that leads nowhere is worse
+            than no ✕, and the host's own nav is the way out. Esc is dropped
+            for the same reason — see the keymap handler. */}
+        {variant === 'overlay' && (
+          <button
+            type="button"
+            onClick={onClose}
+            title={`Leave the lab${chord('exit') ? ` · ${chord('exit')}` : ''}`}
+            className="text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-red"
+          >
+            ✕
+          </button>
+        )}
       </div>
 
       {/* ── Body: rail + panes ── */}
