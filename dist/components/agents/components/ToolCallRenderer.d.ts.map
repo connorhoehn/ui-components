@@ -1,1 +1,0 @@
-{"version":3,"file":"ToolCallRenderer.d.ts","sourceRoot":"","sources":["../../../../src/components/agents/components/ToolCallRenderer.tsx"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,uBAAuB,CAAC;AAE1D,UAAU,qBAAqB;IAC7B,QAAQ,EAAE,YAAY,CAAC;IACvB,SAAS,CAAC,EAAE,MAAM,CAAC;CACpB;AAQD,wBAAgB,gBAAgB,CAAC,EAAE,QAAQ,EAAE,SAAS,EAAE,EAAE,qBAAqB,+BAuD9E"}

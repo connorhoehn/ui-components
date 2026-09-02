@@ -2060,6 +2060,19 @@ export declare interface SearchInputProps {
 /** @see SurfaceTone — which colour family the field paints in. */
 export declare type SearchInputTone = SurfaceTone;
 
+export declare function SectionLabel({ children, as: As, className, 'data-testid': testId, }: SectionLabelProps): JSX.Element;
+
+export declare interface SectionLabelProps {
+    children: ReactNode;
+    /**
+     * The element to render. Defaults to `span` so it can sit inline beside a
+     * count or a chip; pass `"div"` when the caption owns its own line.
+     */
+    as?: ElementType;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function SegmentedControl({ options, value, onChange, size, className, }: SegmentedControlProps): JSX.Element;
 
 export declare interface SegmentedControlProps {

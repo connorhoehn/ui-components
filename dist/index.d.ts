@@ -7852,6 +7852,19 @@ export declare interface Section {
     placeholder?: string;
 }
 
+export declare function SectionLabel({ children, as: As, className, 'data-testid': testId, }: SectionLabelProps): JSX.Element;
+
+export declare interface SectionLabelProps {
+    children: ReactNode;
+    /**
+     * The element to render. Defaults to `span` so it can sit inline beside a
+     * count or a chip; pass `"div"` when the caption owns its own line.
+     */
+    as?: ElementType;
+    className?: string;
+    'data-testid'?: string;
+}
+
 declare type SectionRenderer = React.ComponentType<SectionRendererProps>;
 
 declare interface SectionRendererProps {

@@ -1,1 +1,0 @@
-{"version":3,"file":"useEventCallback.d.ts","sourceRoot":"","sources":["../../src/hooks/useEventCallback.ts"],"names":[],"mappings":"AA2BA,wBAAgB,gBAAgB,CAAC,CAAC,SAAS,GAAG,EAAE,EAAE,CAAC,EACjD,EAAE,EAAE,CAAC,CAAC,GAAG,IAAI,EAAE,CAAC,KAAK,CAAC,CAAC,GAAG,SAAS,GAClC,CAAC,GAAG,IAAI,EAAE,CAAC,KAAK,CAAC,GAAG,SAAS,CAU/B;AAED,eAAe,gBAAgB,CAAC"}

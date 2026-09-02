@@ -194,6 +194,8 @@ export type {
   NavRailTone,
 } from './NavRail';
 export { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarLabel } from './Toolbar';
+export { SectionLabel } from './SectionLabel';
+export type { SectionLabelProps } from './SectionLabel';
 export type {
   ToolbarProps,
   ToolbarGroupProps,

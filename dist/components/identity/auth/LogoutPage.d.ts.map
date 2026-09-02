@@ -1,1 +1,0 @@
-{"version":3,"file":"LogoutPage.d.ts","sourceRoot":"","sources":["../../../../src/components/identity/auth/LogoutPage.tsx"],"names":[],"mappings":"AAEA,MAAM,WAAW,eAAe;IAC9B,SAAS,EAAE,MAAM,IAAI,CAAC;IACtB,QAAQ,CAAC,EAAE,MAAM,IAAI,CAAC;IACtB,UAAU,CAAC,EAAE,MAAM,CAAC;CACrB;AAED,wBAAgB,UAAU,CAAC,EAAE,SAAS,EAAE,QAAQ,EAAE,UAAU,EAAE,EAAE,eAAe,+BA8B9E;AAED,eAAe,UAAU,CAAC"}
