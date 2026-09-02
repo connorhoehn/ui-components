@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { cn } from '../../../lib/cn';
 import type { StepExecution } from '../../../types/pipeline';
 import { StepSection } from './StepSection';
 import { codeBlockClass, proseBlockClass, thClass, tdClass, eventChipClass } from './stepStyles';
+import { classifyStepOutput } from '../utils/classifyStepOutput';
+import { AgentTraceSection } from './AgentTraceSection';
+import { isAgentStepOutput, liveAgentOutputFromCalls } from './agentTrace';
+import { VisionResultViewer } from '../vision';
+import type { VisionResult } from '../vision';
+import { useImageUrlOptional } from '../services/PipelineEditorServicesContext';
 
 export interface StepThreadProps {
   stepId: string;
@@ -29,8 +35,43 @@ function countTokens(v: unknown): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+/**
+ * Adapt a vision step's `output` bag into the shape <VisionResultViewer> wants.
+ *
+ * The step persists an opaque `imageId`; the viewer wants a URL it can put in
+ * an <img>. Resolving that is the host's job, so with no resolver mounted the
+ * caption, tags and extracted JSON still render and only the preview is absent.
+ */
+function visionResultFrom(
+  output: Record<string, unknown>,
+  imageUrl: ((imageId: string) => string) | null,
+): VisionResult {
+  const imgId = typeof output.imageId === 'string' ? output.imageId : null;
+  const extracted = (output.extracted ?? {}) as Record<string, unknown>;
+  return {
+    ...extracted,
+    ...(typeof output.caption === 'string' ? { caption: output.caption } : {}),
+    ...(typeof output.rawModelText === 'string' ? { rawModelText: output.rawModelText } : {}),
+    ...(imgId && imageUrl ? { imageUrl: imageUrl(imgId) } : {}),
+  } as VisionResult;
+}
+
 export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep }: StepThreadProps) {
   const [expanded, setExpanded] = useState(false);
+  const [copyLabel, setCopyLabel] = useState<'Copy JSON' | 'Copied!'>('Copy JSON');
+  // Optional on purpose: a run-detail page is read-only and does not mount the
+  // editor's services provider. No host resolver means the produced-images
+  // section simply does not render — see useImageUrlOptional.
+  const imageUrl = useImageUrlOptional();
+
+  const handleCopyOutput = useCallback(() => {
+    const out = step.output as Record<string, unknown> | undefined;
+    if (!out) return;
+    void navigator.clipboard.writeText(JSON.stringify(out, null, 2)).then(() => {
+      setCopyLabel('Copied!');
+      setTimeout(() => setCopyLabel('Copy JSON'), 1000);
+    });
+  }, [step.output]);
 
   const output = step.output as Record<string, unknown> | undefined;
   const llmResponse = output?.response as string | undefined;
@@ -51,6 +92,13 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(!expanded); } }}
+        // Stable handle for the disclosure. Without it a spec has to match
+        // this row by its text, and `getByRole('button', { name: /agent/i })`
+        // matches the host's SIDEBAR pipeline link first whenever the
+        // pipeline's own name contains the word — clicking it navigates away
+        // and the step panel never opens, which reads as "the trace is broken".
+        data-testid={`step-row-${stepId}`}
+        data-node-type={nodeType}
         className={cn(
           'flex items-center gap-2.5 px-3.5 py-2.5 cursor-pointer transition-colors duration-100',
           expanded ? 'bg-surface-inset rounded-t-lg' : 'bg-surface rounded-lg',
@@ -200,11 +248,85 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
             </StepSection>
           )}
 
+          {/* Produced images — populated by `pipeline:step:image:produced`
+              events (crop / adjust / save handlers). Rendered BEFORE the
+              output section so image pipelines surface their artifacts at
+              the top of the expanded panel. Needs a host image resolver;
+              without one the section is omitted rather than rendering
+              broken thumbnails. */}
+          {imageUrl && step.images && step.images.length > 0 && (
+            <StepSection title={`Produced images (${step.images.length})`}>
+              <div className="flex flex-wrap gap-2">
+                {step.images.map((img) => {
+                  const bboxLabel = img.bbox
+                    ? `[${img.bbox.x},${img.bbox.y} ${img.bbox.width}×${img.bbox.height}]`
+                    : `${img.width}×${img.height}`;
+                  return (
+                    <figure
+                      key={img.imageId}
+                      className="m-0 flex flex-col gap-1 w-32"
+                      title={`${img.imageId} — ${bboxLabel}`}
+                    >
+                      <img
+                        src={imageUrl(img.imageId)}
+                        alt={`Produced image ${img.imageId}`}
+                        loading="lazy"
+                        className="w-32 h-24 object-cover rounded border border-border bg-surface-inset block"
+                      />
+                      <figcaption className="font-mono text-[10px] text-text-tertiary overflow-hidden text-ellipsis whitespace-nowrap">
+                        {bboxLabel}
+                      </figcaption>
+                    </figure>
+                  );
+                })}
+              </div>
+            </StepSection>
+          )}
+
           {(llmResponse || llmData?.response) ? (
             <StepSection title="Response">
               <div className={proseBlockClass}>
                 {llmResponse ?? llmData?.response}
               </div>
+            </StepSection>
+          ) : isAgentStepOutput(output) ? (
+            // `agent` steps get the tool-call waterfall + an honest header
+            // instead of a JSON dump. See AgentTraceSection.
+            <AgentTraceSection
+              stepId={stepId}
+              output={output}
+              startedAt={step.startedAt}
+              completedAt={step.completedAt}
+            />
+          ) : step.status === 'running' && (step.agentLive || nodeType === 'agent') ? (
+            // LIVE agent trace: the step has no persisted output yet, but
+            // `pipeline.step.agent.tool` events have been streaming into
+            // `step.agentLive` (or the agent step just started and no tool
+            // has fired). Render the same section in live mode so the
+            // waterfall grows as calls happen instead of appearing only
+            // after completion. When `step.output` lands, the branch above
+            // takes over with the persisted truth.
+            <AgentTraceSection
+              stepId={stepId}
+              output={liveAgentOutputFromCalls(step.agentLive?.toolCalls ?? [])}
+              startedAt={step.startedAt}
+              live
+            />
+          ) : output && classifyStepOutput(output) === 'vision' ? (
+            // image:vision-analyze steps deserve the structured
+            // VisionResultViewer composite — caption + tags + extracted JSON
+            // + image preview — rather than a raw JSON dump. The viewer wants
+            // a URL, so `imageId` is resolved through the host seam; with no
+            // resolver the preview is simply absent and the rest still renders.
+            <StepSection title="Vision result">
+              <button
+                type="button"
+                onClick={handleCopyOutput}
+                className="mb-1.5 px-2 py-[3px] text-[11px] font-medium border border-border-field rounded bg-transparent cursor-pointer font-[inherit] text-text-secondary"
+              >
+                📋 {copyLabel}
+              </button>
+              <VisionResultViewer result={visionResultFrom(output, imageUrl)} />
             </StepSection>
           ) : (
             <StepSection title="Output">

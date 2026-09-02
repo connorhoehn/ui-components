@@ -11,6 +11,26 @@ export { default as AllRunsPage } from './AllRunsPage';
 export { default as PipelineStatsPage } from './PipelineStatsPage';
 export { default as PendingApprovalsPage } from './PendingApprovalsPage';
 
+// ─── Run-detail step timeline ────────────────────────────────────────────────
+//
+// The parts <PipelineRunReplayPage> builds its own step timeline from, so a
+// host rendering its own run-detail page composes it from the same components
+// instead of forking them: <StepTree> lays out the per-run step DAG, each entry
+// rendered as a <StepThread>, whose expanded body is grouped into <StepSection>
+// blocks; <ExecutorLog> is the raw executor output pane beside it.
+//
+// These render fine with no <PipelineEditorServicesProvider> mounted — a
+// run-detail view is read-only and is not expected to mount the editor's
+// services seam (see useImageUrlOptional below).
+export { StepTree } from './steps/StepTree';
+export type { StepTreeProps } from './steps/StepTree';
+export { StepThread } from './steps/StepThread';
+export type { StepThreadProps } from './steps/StepThread';
+export { StepSection } from './steps/StepSection';
+export type { StepSectionProps } from './steps/StepSection';
+export { default as ExecutorLog } from './ExecutorLog';
+export type { ExecutorLogProps } from './ExecutorLog';
+
 // ─── Contexts & Providers ────────────────────────────────────────────────────
 export {
   EventStreamProvider,
@@ -185,6 +205,11 @@ export type {
 export {
   PipelineEditorServicesProvider,
   useImageUrl,
+  // Non-throwing variant. useImageUrl() is right for the editor, where a
+  // missing provider is a wiring bug; a run-detail page that never mounts the
+  // provider uses this one and skips its produced-images section instead of
+  // taking the whole page down over a thumbnail.
+  useImageUrlOptional,
   usePipelineEditorServices,
   // Additive: inbound webhook delivery is a HOST property. Undeclared means
   // "not wired", and the trigger panel says so rather than handing out a URL

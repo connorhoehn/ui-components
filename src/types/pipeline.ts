@@ -223,6 +223,41 @@ export interface AgentNodeData {
   retryPolicy?: RetryPolicy;
 }
 
+/** One tool invocation inside an agent loop, as persisted on the step output. */
+export interface AgentToolCall {
+  name: string;
+  input?: unknown;
+  output?: unknown;
+  ok: boolean;
+  /** ISO timestamp. */
+  startedAt: string;
+  /** ISO timestamp; absent while the call is still in flight. */
+  endedAt?: string;
+  /** Present when `ok === false`. */
+  error?: string;
+}
+
+export type AgentStopReason =
+  | 'complete'
+  | 'max_turns'
+  | 'timeout'
+  | 'error'
+  | 'cancelled';
+
+/** `step.output` shape for an `agent` node. */
+export interface AgentStepOutput {
+  /** Final assistant text. */
+  text: string;
+  turns: number;
+  toolCalls: AgentToolCall[];
+  model: string;
+  tokensIn: number;
+  tokensOut: number;
+  stopReason: AgentStopReason;
+  /** True when the step ran with no tools allowed (see `allowedTools`). */
+  toolless: boolean;
+}
+
 export type GuardrailAction = 'block' | 'mask' | 'warn';
 
 export interface GuardrailNodeData {
@@ -767,6 +802,16 @@ export interface StepExecution {
     streamOpened?: boolean;
     /** Wall-clock ms from stream open to first token (DC v0.3.7+). */
     firstTokenLatencyMs?: number;
+  };
+  // Agent-specific (agent step). Live-accumulating tool-call trace folded
+  // from `pipeline.step.agent.tool` events — the streaming counterpart of
+  // the persisted `AgentStepOutput.toolCalls[]`, mirroring how `vision`
+  // accumulates token deltas. Sparse-by-callIndex is normalised at fold
+  // time; entries never carry tool input/output (events don't either).
+  // Once the step completes, the persisted output (`step.output`) is the
+  // source of truth and this slot is only a fallback.
+  agentLive?: {
+    toolCalls: AgentToolCall[];
   };
   /**
    * Image previews produced by steps that emit `pipeline:step:image:produced`

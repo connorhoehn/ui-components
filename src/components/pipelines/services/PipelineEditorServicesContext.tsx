@@ -183,6 +183,28 @@ export function useImageUrl(): (imageId: string) => string {
   return svc.getImageUrl;
 }
 
+/**
+ * Optional form of {@link useImageUrl}: the host's `getImageUrl` when a
+ * provider is mounted, `null` when there is none.
+ *
+ * For consumers that render produced images as an OPTIONAL section rather than
+ * as their reason for existing — the run-detail step panel is the case this
+ * exists for. It is rendered by hosts that never mount
+ * <PipelineEditorServicesProvider> (it is a read-only run view, not the
+ * editor), and a step that happens to have produced images should simply not
+ * show that section there. With `useImageUrl` the same page throws on first
+ * render and the operator loses the whole run detail — every log line, every
+ * error message — because the library could not resolve a thumbnail.
+ *
+ * `useImageUrl` stays the right hook inside the editor: there a missing
+ * provider is a genuine wiring bug, and failing loudly at first render beats
+ * shipping an editor whose image nodes are quietly blank.
+ */
+export function useImageUrlOptional(): ((imageId: string) => string) | null {
+  const svc = useContext(PipelineEditorServicesContext);
+  return svc?.getImageUrl ?? null;
+}
+
 export function usePipelineEditorServices(): PipelineEditorServices {
   const svc = useContext(PipelineEditorServicesContext);
   if (!svc) {
