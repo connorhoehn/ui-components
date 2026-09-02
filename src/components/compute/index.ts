@@ -27,6 +27,12 @@ export { ProjectSummary } from './components/ProjectSummary';
 export type { ProjectSummaryProps } from './components/ProjectSummary';
 export type { PaneStatusLineProps } from './components/PaneStatusLine';
 
+// Machine presence — the user's own machine as a fleet participant
+export {
+  MachinePresenceMenu, memorySummary, providerSummary,
+} from './components/MachinePresenceMenu';
+export type { MachinePresenceMenuProps } from './components/MachinePresenceMenu';
+
 // Panes
 export { ComputeDock } from './components/ComputeDock';
 export type { ComputeDockProps } from './components/ComputeDock';
@@ -107,6 +113,7 @@ export type { StatusMeta } from './lib/status';
 // Fixtures
 export {
   fixtureComputers, fixtureRuntimeStatus, fixtureModels, fixtureWorkspace,
+  fixtureMachines,
 } from './fixtures/computeFixture';
 export { installMockShellSocket, mockShellUrl, MOCK_SHELL_SCHEME } from './fixtures/mockShell';
 export {
@@ -119,4 +126,5 @@ export type { MockShellOptions } from './fixtures/mockShell';
 export type {
   Computer, ComputeStatus, ComputeRunResult, ComputeRuntimeStatus, ComputeModel, ComputeProject,
   ComputeSource, ShellStatus, WorkspaceNode, WorkspaceSnapshot,
+  MachineNode, MachineSession, MachineMemoryState, MachineMemoryMode, MachinePresenceStatus,
 } from './types';

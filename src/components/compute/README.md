@@ -174,6 +174,7 @@ longer knows falls back to the first kind rather than rendering a blank pane.
 | `PaneStatusLine` | Per-pane status line: model, cost, turns, expiry meter, mode |
 | `ShellTerminal` | xterm.js over a presigned WebSocket, speaking the runtime shell protocol |
 | `TailPane` | Read-only stream of what is running on a box. Costs no shell slot |
+| `MachinePresenceMenu` | Top-nav chip + panel for the user's own machines: live local sessions, model provider, context, memory-sync state. Renders null with no machines |
 
 ### Provider and client
 

@@ -167,3 +167,61 @@ export type ShellStatus = 'connecting' | 'ready' | 'busy' | 'detached' | 'error'
  * boxes look like a live fleet.
  */
 export type ComputeSource = 'fixture' | 'remote' | 'provided';
+
+// ─── Machine presence — a developer's own machine in the fleet ───────────────
+// Distinct from `Computer` on purpose: a Computer is a microVM the platform
+// provisions and can open a shell into; a machine is someone's laptop that
+// only ever dials OUT, announcing what its local agent sessions are doing.
+// Folding them into one type would invite affordances (shells, stop buttons)
+// the machine can't serve. Named "machine", not "presence": in this library
+// presence already means human collaborators (PresenceAvatars).
+
+/** Derived server-side from heartbeat age — never claimed by the machine. */
+export type MachinePresenceStatus = 'connected' | 'stale' | 'offline';
+
+/** How the machine's local memory sidecar stands against the shared mesh. */
+export type MachineMemoryMode = 'synced' | 'pending' | 'offline' | 'disabled';
+
+export interface MachineMemoryState {
+  mode: MachineMemoryMode;
+  /** Records queued locally, awaiting upload (the sidecar's outbox depth). */
+  pendingOps?: number;
+  /** How stale the machine's read replica is, in seconds. */
+  pullCursorAgeS?: number;
+  /** Context packs the sidecar has imported, e.g. `capability-registry`. */
+  importedPacks?: string[];
+}
+
+/** One live agent session on a machine. */
+export interface MachineSession {
+  id: string;
+  /** Which harness: `claude-code`, `cursor`, ... Informational. */
+  harness?: string;
+  projectId?: string;
+  /** Denormalised for display — a bare `p-realtime` means nothing to a reader. */
+  projectName?: string;
+  repo?: string;
+  branch?: string;
+  /** Checkout path on the machine — tooltip detail, owner-visible data. */
+  worktree?: string;
+  /** One distilled line of what the session is doing — never raw prompt text. */
+  intent?: string;
+  /** `bedrock`, `ollama`, `vllm`, `lmstudio`, ... The vendor axis `Computer`
+   *  never needed, because a microVM's provider is always the platform's. */
+  modelProvider?: string;
+  model?: string;
+  /** Fraction (0–1) of the model's context window in use. */
+  contextUsed?: number;
+  memory?: MachineMemoryState;
+  startedAt?: number;
+}
+
+/** A paired machine and its live sessions. */
+export interface MachineNode {
+  id: string;
+  label: string;
+  status: MachinePresenceStatus;
+  /** `darwin/arm64` — shown as a caption, never parsed. */
+  platform?: string;
+  sessions: MachineSession[];
+}

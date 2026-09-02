@@ -4,7 +4,9 @@
 // `demo-` so a screenshot can never be mistaken for a real fleet, and every
 // surface that renders these is expected to say `source === 'fixture'`.
 
-import type { Computer, ComputeModel, ComputeProject, ComputeRuntimeStatus, WorkspaceSnapshot } from '../types';
+import type {
+  Computer, ComputeModel, ComputeProject, ComputeRuntimeStatus, MachineNode, WorkspaceSnapshot,
+} from '../types';
 
 /** Sessions must be ≥33 chars, so the fixtures are too — short ids hide bugs. */
 const session = (seed: string) => `demo-session-${seed}-0000000000000000`.slice(0, 40);
@@ -132,6 +134,66 @@ export const fixtureModels: ComputeModel[] = [
   },
   { id: 'us.anthropic.claude-sonnet-5', label: 'Sonnet', hint: 'harder multi-step work' },
   { id: 'us.anthropic.claude-opus-4-8', label: 'Opus', hint: 'the expensive one — reach for it deliberately' },
+];
+
+/**
+ * Sample machines for MachinePresenceMenu. Deliberately uneven, like the
+ * projects above: one healthy machine mixing local and platform models, and
+ * one stale workstation whose sidecar is queuing offline — the two states the
+ * menu exists to distinguish.
+ */
+export const fixtureMachines: MachineNode[] = [
+  {
+    id: 'demo-machine-1',
+    label: 'demo-macbook',
+    status: 'connected',
+    platform: 'darwin/arm64',
+    sessions: [
+      {
+        id: session('local-a'),
+        harness: 'claude-code',
+        projectId: 'proj-auth',
+        projectName: 'Auth migration',
+        branch: 'feat/oidc-callback',
+        worktree: '~/dev/auth/.claude/worktrees/oidc-callback',
+        intent: 'wire the OIDC callback to the session mint',
+        modelProvider: 'bedrock',
+        model: 'us.anthropic.claude-sonnet-5',
+        contextUsed: 0.42,
+        memory: { mode: 'synced', pullCursorAgeS: 12 },
+      },
+      {
+        id: session('local-b'),
+        harness: 'claude-code',
+        projectId: 'proj-search',
+        projectName: 'Search relevance',
+        branch: 'main',
+        intent: 'nightly re-embedding batch over the corpus',
+        modelProvider: 'ollama',
+        model: 'qwen2.5-coder:14b',
+        contextUsed: 0.87,
+        memory: { mode: 'pending', pendingOps: 14 },
+      },
+    ],
+  },
+  {
+    id: 'demo-machine-2',
+    label: 'demo-workstation',
+    status: 'stale',
+    platform: 'linux/x86_64',
+    sessions: [
+      {
+        id: session('local-c'),
+        harness: 'claude-code',
+        projectName: 'Platform upkeep',
+        branch: 'main',
+        intent: 'consolidation pass over duplicate findings',
+        modelProvider: 'ollama',
+        model: 'qwen2.5-coder:32b',
+        memory: { mode: 'offline', pendingOps: 203 },
+      },
+    ],
+  },
 ];
 
 export const fixtureWorkspace: WorkspaceSnapshot = {
