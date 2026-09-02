@@ -262,6 +262,29 @@ export default function TiptapEditor({
     editable,
   }, [extensions]);
 
+  /**
+   * Re-apply `editable` when it changes.
+   *
+   * `useEditor`'s options object is only read at CREATION, and the dep array
+   * here is `[extensions]`, so a later `editable={false}` never reached the
+   * editor. Switching a document to Read mode hid the toolbar (that is plain
+   * conditional rendering) while the ProseMirror view kept its mount-time
+   * editability: measured live, `contenteditable` stayed "true" at 300ms, 1s and
+   * 2.5s after the switch, and only corrected once an unrelated re-render
+   * happened to rebuild the view.
+   *
+   * That is the "read-only that only hides the buttons" this component is
+   * supposed to rule out. The same fix already exists in realtime-modules'
+   * TiptapEditor — this is its fork, and it never received it.
+   *
+   * Guarded on `isEditable` so it is a no-op on every unrelated render, and on
+   * `isDestroyed` because an unmount can land between the render and the effect.
+   */
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return;
+    if (editor.isEditable !== editable) editor.setEditable(editable);
+  }, [editor, editable]);
+
   // ---- Custom cursor overlay using awareness directly ----
   const [remoteCursors, setRemoteCursors] = useState<RemoteCursorInfo[]>([]);
   // State, not a ref: the overlay positions carets relative to this element, and

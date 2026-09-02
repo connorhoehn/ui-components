@@ -10,7 +10,7 @@ import { t as d } from "./Input-DLknWXri.js";
 import { t as f } from "./Textarea-Dz4doxTv.js";
 import { t as p } from "./Select-CqVokE2v.js";
 import { t as m } from "./Checkbox-DsS7fIUO.js";
-import { t as h } from "./TiptapEditor-CnjifOQz.js";
+import { t as h } from "./TiptapEditor-CUZ_20iC.js";
 import { Component as g, useCallback as _, useEffect as v, useId as y, useRef as b, useState as x } from "react";
 import { Fragment as S, jsx as C, jsxs as w } from "react/jsx-runtime";
 //#region src/components/doc-editor/NewDocumentModal.tsx

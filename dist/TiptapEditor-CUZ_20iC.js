@@ -224,7 +224,11 @@ function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, place
 	]), N = u({
 		extensions: M,
 		editable: w
-	}, [M]), [P, F] = i([]), [I, L] = i(null);
+	}, [M]);
+	n(() => {
+		!N || N.isDestroyed || N.isEditable !== w && N.setEditable(w);
+	}, [N, w]);
+	let [P, F] = i([]), [I, L] = i(null);
 	n(() => {
 		if (D) D(C.name, C.color);
 		else if (x?.awareness) {
