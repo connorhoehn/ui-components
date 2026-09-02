@@ -8,7 +8,7 @@ import { createRoot as p } from "react-dom/client";
 import { Extension as m } from "@tiptap/core";
 import { Plugin as h, PluginKey as g } from "@tiptap/pm/state";
 //#region src/components/diagram/CollaborativeExcalidraw.tsx
-var _ = s(() => import("./ExcalidrawCanvas-BO3EZf65.js"));
+var _ = s(() => import("./ExcalidrawCanvas-DMQGlcJ1.js"));
 function v({ label: e }) {
 	return /* @__PURE__ */ d("div", {
 		"data-testid": "diagram-loading",

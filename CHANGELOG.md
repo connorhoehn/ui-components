@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.120.2] — 2026-09-02
+
+### Fixed — `./diagram`
+
+- **A diagram opened cold showed an empty canvas, forever.** Hydration was one
+  attempt behind a ref, and two unordered events had to line up for it: the
+  shared scene arrives when the server snapshot lands (after the provider hands
+  over its empty Y.Doc), and `<Excalidraw>` initialises its own empty scene
+  while it mounts — the `excalidrawAPI` callback fires in the middle of that, so
+  an `updateScene` on the first tick can be overwritten by an initialisation
+  still finishing. The single attempt burned its one chance either way, and only
+  a further remote CHANGE could repair it — which a document whose diagram is
+  already complete never produces. Hydration is now stated as the invariant it
+  is (*the canvas shows what the shared scene holds*) and re-checked on a
+  bounded backoff to ~5s, stopping at the first success.
+
+---
+
 ## [2.120.1] — 2026-09-02
 
 ### Fixed — `./diagram`

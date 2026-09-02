@@ -96,20 +96,79 @@ export default function ExcalidrawCanvas({
             onRemoteElements: applyRemote,
         });
 
-    // ---- Hydrate once the API and the shared doc both exist ----------------
+    // ---- Hydrate the canvas from the shared scene --------------------------
+    //
+    // ## Why this retries instead of running once
+    //
+    // This used to be a single attempt behind a `hydratedRef`, and it lost the
+    // whole scene on a cold open. Two things have to line up and neither is
+    // ordered with respect to the other:
+    //
+    //   * the shared scene arrives when the server's snapshot lands, which is
+    //     some milliseconds after the provider hands over its (empty) Y.Doc;
+    //   * `<Excalidraw>` initialises its OWN empty scene while it mounts, and
+    //     the `excalidrawAPI` callback fires in the middle of that — so an
+    //     `updateScene` issued on the very first tick can be overwritten by
+    //     the initialisation that is still finishing.
+    //
+    // The single attempt burned its one chance in both directions: an early
+    // read returned nothing and set the flag forever, and a read that DID
+    // return elements could still be clobbered a frame later. After that only
+    // a further remote CHANGE could repair it, and a document whose diagram was
+    // already complete never produces one — so it stayed blank through every
+    // reload, while the elements sat in the Y.Doc and on the server the whole
+    // time. Verified in the browser: `readAll()` returned four elements from
+    // the live document's own snapshot while zoom-to-fit found nothing to
+    // frame.
+    //
+    // So the condition is stated as the invariant it actually is — *the canvas
+    // must show what the shared scene holds* — and re-checked on a bounded
+    // backoff until it does. It stops at the first success, and every attempt
+    // is a cheap array-length comparison.
     const hydratedRef = useRef(false);
     useEffect(() => {
         if (hydratedRef.current || !apiReady || !ready) return;
-        const api = apiRef.current;
-        if (!api) return;
-        hydratedRef.current = true;
-        const existing = readAll();
-        if (existing.length > 0) {
-            api.updateScene({
-                elements: existing as unknown as readonly AnyElement[],
-                captureUpdate: CaptureUpdateAction.NEVER,
-            });
-        }
+
+        let cancelled = false;
+        let timer: ReturnType<typeof setTimeout> | null = null;
+
+        const attempt = (delays: readonly number[]): void => {
+            if (cancelled || hydratedRef.current) return;
+            const api = apiRef.current;
+            const shared = api ? readAll() : [];
+            if (
+                api &&
+                shared.length > 0 &&
+                api.getSceneElementsIncludingDeleted().length === 0
+            ) {
+                hydratedRef.current = true;
+                api.updateScene({
+                    elements: shared as unknown as readonly AnyElement[],
+                    // Loading the existing scene is not the local user's undo
+                    // history — pressing undo must not erase everyone's work.
+                    captureUpdate: CaptureUpdateAction.NEVER,
+                });
+                return;
+            }
+            // A canvas that already has elements needs no hydration; treat that
+            // as done rather than retrying against a scene the user is drawing.
+            if (api && api.getSceneElementsIncludingDeleted().length > 0) {
+                hydratedRef.current = true;
+                return;
+            }
+            const [next, ...rest] = delays;
+            if (next === undefined) return;
+            timer = setTimeout(() => attempt(rest), next);
+        };
+
+        // Ends at ~5s. Past that the snapshot is not coming, and the observer
+        // is the right path for anything that arrives later.
+        attempt([0, 60, 150, 300, 600, 1000, 1500, 1500]);
+
+        return () => {
+            cancelled = true;
+            if (timer) clearTimeout(timer);
+        };
     }, [apiReady, ready, readAll]);
 
     // ---- Canvas → shared doc ----------------------------------------------

@@ -28,14 +28,35 @@ function d({ ydoc: d, awareness: f, blockId: p, user: m, editable: h = !0, class
 	}), A = i(!1);
 	r(() => {
 		if (A.current || !S || !T) return;
-		let e = x.current;
-		if (!e) return;
-		A.current = !0;
-		let t = k();
-		t.length > 0 && e.updateScene({
-			elements: t,
-			captureUpdate: s.NEVER
-		});
+		let e = !1, t = null, n = (r) => {
+			if (e || A.current) return;
+			let i = x.current, a = i ? k() : [];
+			if (i && a.length > 0 && i.getSceneElementsIncludingDeleted().length === 0) {
+				A.current = !0, i.updateScene({
+					elements: a,
+					captureUpdate: s.NEVER
+				});
+				return;
+			}
+			if (i && i.getSceneElementsIncludingDeleted().length > 0) {
+				A.current = !0;
+				return;
+			}
+			let [o, ...c] = r;
+			o !== void 0 && (t = setTimeout(() => n(c), o));
+		};
+		return n([
+			0,
+			60,
+			150,
+			300,
+			600,
+			1e3,
+			1500,
+			1500
+		]), () => {
+			e = !0, t && clearTimeout(t);
+		};
 	}, [
 		S,
 		T,
