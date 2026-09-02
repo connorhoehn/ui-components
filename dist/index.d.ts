@@ -8794,13 +8794,30 @@ export declare interface StepExecution {
         tokensIn?: number;
         tokensOut?: number;
         tokensSeen: number;
-        analyzed: boolean;
+        /**
+         * True once `pipeline:image:vision:analyzed` lands.
+         *
+         * OPTIONAL, deliberately. This was `analyzed: boolean` — required — which
+         * described the end state rather than the stream: a reducer folding
+         * `pipeline:image:vision:*` events has a `vision` slot from the first
+         * token delta, long before it knows whether the step finished. Demanding
+         * the field meant a host with a truthful, incrementally-built run store
+         * could not hand its steps to these components at all. Every read here is
+         * already a truthiness check, so absent and false behave alike.
+         */
+        analyzed?: boolean;
         failure?: {
             reason: string;
             error: string;
         };
         imageId?: string;
         costUsd?: number;
+        /** Model that produced the analysis, when the host records it. */
+        visionModel?: string;
+        /** Whether the step requested structured extraction against a schema. */
+        hasSchema?: boolean;
+        /** Final VisionResult payload (caption + extracted JSON + cost/usage). */
+        result?: unknown;
     };
     /**
      * hub#2226: edit-and-continue patch history applied while the run was
