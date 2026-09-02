@@ -22,7 +22,7 @@
 // choosing between a continuous page and a set of section forms.
 
 import { useState, useEffect, useId, useRef } from 'react';
-import { loadTypes } from '../../hooks/useDocumentTypes';
+import { loadTypes, refreshTypesFromServer } from '../../hooks/useDocumentTypes';
 import type { DocumentType } from '../../types/documentType';
 import Modal from '../shared/Modal';
 import { cn } from '../../lib/cn';
@@ -86,6 +86,17 @@ const SHAPES: ReadonlyArray<{
 
 export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumentModalProps) {
   const [types, setTypes] = useState<DocumentType[]>([]);
+  /**
+   * True until we know what the SERVER has.
+   *
+   * Without it a cold cache renders "No document types defined yet — create one
+   * first", which is not merely unhelpful, it is WRONG: the types exist, and
+   * following that advice creates duplicates of them. Any fresh browser,
+   * incognito window or cleared profile hit it, and so did every client after a
+   * server-side wipe, because `refreshTypesFromServer` treats a marked type the
+   * server no longer lists as deleted and drops it from the cache.
+   */
+  const [probing, setProbing] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -103,16 +114,34 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
 
   useEffect(() => {
     if (!open) return;
+    // Cache first so the form paints immediately, then reconcile with the
+    // server. The cache is a speed-up, not the source of truth — it used to be
+    // the only thing consulted, so a client that had never opened the Document
+    // Types page believed none existed.
     const loaded = loadTypes();
     setTypes(loaded);
     setSelectedId(loaded[0]?.id ?? null);
     setTitle('');
     setDescription('');
     setShape('page');
+
+    let cancelled = false;
+    setProbing(true);
+    void refreshTypesFromServer()
+      .then((res) => {
+        if (cancelled) return;
+        // On failure keep whatever the cache had: offline with a warm cache is
+        // still a usable form, and blanking it would be a worse answer than a
+        // stale one.
+        const next = res.ok ? res.types : res.cached;
+        setTypes(next);
+        setSelectedId((cur) => (cur && next.some((t) => t.id === cur) ? cur : next[0]?.id ?? null));
+      })
+      .finally(() => { if (!cancelled) setProbing(false); });
     // Cleared on close: an uncancelled focus lands on a hidden input and
     // steals focus back from whatever the user moved to.
     const t = setTimeout(() => titleRef.current?.focus(), 50);
-    return () => clearTimeout(t);
+    return () => { cancelled = true; clearTimeout(t); };
   }, [open]);
 
   if (!open) return null;
@@ -166,7 +195,15 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
         <div className={cn('flex-1 overflow-y-auto px-6 min-h-0')}>
 
           {/* No types defined yet */}
-          {types.length === 0 ? (
+          {/* Still asking the server. NOT the empty state: claiming no types
+              exist while the request is in flight is a confident wrong answer,
+              and its call to action creates duplicates of types the user
+              already has. */}
+          {types.length === 0 && probing ? (
+            <div className={cn('text-center px-4 py-8 border border-dashed border-border-field rounded-lg mb-5 text-text-tertiary')}>
+              <div className={cn('text-[13px]')}>Loading document types…</div>
+            </div>
+          ) : types.length === 0 ? (
             <div className={cn('text-center px-4 py-8 border border-dashed border-border-field rounded-lg mb-5 text-neutral')}>
               <div className={cn('text-[40px] mb-3')}>📋</div>
               <div className={cn('text-[15px] font-semibold mb-2 text-text-primary')}>

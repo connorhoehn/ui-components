@@ -5,8 +5,16 @@ import type { DocumentType, DocumentTypeField } from '../../../types/documentTyp
 
 const loadTypes = vi.fn<() => DocumentType[]>();
 
+// `refreshTypesFromServer` is what makes the modal reconcile a cold cache with
+// the server. It defaults to echoing the cache so existing cases behave as
+// before; the reconciliation cases below override it.
+let serverTypes: DocumentType[] | null = null;
 vi.mock('../../../hooks/useDocumentTypes', () => ({
   loadTypes: () => loadTypes(),
+  refreshTypesFromServer: async () => ({
+    ok: true as const,
+    types: serverTypes ?? loadTypes(),
+  }),
 }));
 
 function mkField(id: string): DocumentTypeField {
@@ -43,15 +51,51 @@ describe('NewDocumentModal', () => {
     expect(loadTypes).not.toHaveBeenCalled();
   });
 
-  it('open + zero types: shows empty-state fallback; Close fires onClose; no footer Cancel/Create', () => {
+  it('open + zero types: shows empty-state fallback; Close fires onClose; no footer Cancel/Create', async () => {
     loadTypes.mockReturnValue([]);
+    serverTypes = [];
     const onClose = vi.fn();
     render(<NewDocumentModal open onClose={onClose} onCreate={vi.fn()} />);
+    // Only AFTER the server confirms there are none. While the probe is in
+    // flight the modal says "Loading document types…" — see the next test.
+    await act(async () => { await Promise.resolve(); });
     expect(screen.getByText(/No document types defined yet/)).toBeInTheDocument();
     expect(screen.queryByTestId('new-doc-submit')).toBeNull();
     expect(screen.queryByTestId('new-doc-cancel')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  // THE BUG THIS PINS. The modal used to read localStorage and nothing else, so
+  // a client that had never opened the Document Types page — a fresh browser, an
+  // incognito window, or any client after a server-side wipe cleared its cache —
+  // was told "No document types defined yet. Create one first." while the server
+  // held four. That is worse than unhelpful: following the advice creates
+  // duplicates of types the user already has.
+  it('reconciles a COLD CACHE with the server instead of claiming none exist', async () => {
+    loadTypes.mockReturnValue([]);                        // cache empty
+    serverTypes = [mkType({ id: 's1', name: 'Research Note' })]; // server has one
+
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+
+    // Never accuses the user of having no types while it is still asking.
+    expect(screen.queryByText(/No document types defined yet/)).toBeNull();
+    expect(screen.getByText(/Loading document types/)).toBeInTheDocument();
+
+    await act(async () => { await Promise.resolve(); });
+    expect(screen.getByText('Research Note')).toBeInTheDocument();
+    expect(screen.queryByText(/No document types defined yet/)).toBeNull();
+  });
+
+  it('keeps a warm cache when the server is unreachable', async () => {
+    // Offline with types already cached is a usable form; blanking it would be
+    // a worse answer than a slightly stale one.
+    const cached = mkType({ id: 'c1', name: 'Cached Type' });
+    loadTypes.mockReturnValue([cached]);
+    serverTypes = null; // mock echoes the cache
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    await act(async () => { await Promise.resolve(); });
+    expect(screen.getByText('Cached Type')).toBeInTheDocument();
   });
 
   it('open + types: first type is selected by default (✓ marker) and title input is rendered', () => {

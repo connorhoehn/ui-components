@@ -5,7 +5,7 @@ import "./useVideoSessions-CQvF7-8H.js";
 import "./useWebSocket-CGc0yRhM.js";
 import "./useSocialProfile-5S1qyvsv.js";
 import "./useSyncConflicts-z_Fo2YIM.js";
-import "./useDocumentTypes-tyAjMJgn.js";
+import "./useDocumentTypes-CrsHC24c.js";
 import { n as a } from "./ToastProvider-BKjV21G4.js";
 import "./useEventCallback-Cwx9QVSi.js";
 import { useCallback as o, useEffect as s, useMemo as c, useRef as l, useState as u } from "react";

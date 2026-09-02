@@ -1,6 +1,6 @@
 import { n as e } from "./IdentityContext-CQM1qwH6.js";
 import { a as t, c as n, i as r, l as i, n as a, o, r as s, s as c, t as l, u } from "./useSyncConflicts-z_Fo2YIM.js";
-import { n as d } from "./useDocumentTypes-tyAjMJgn.js";
+import { r as d } from "./useDocumentTypes-CrsHC24c.js";
 import { t as f } from "./cn-DhjIN-s0.js";
 import { t as p } from "./Button-wU9TwJvB.js";
 import { t as m } from "./Chip-YhQI5B9P.js";

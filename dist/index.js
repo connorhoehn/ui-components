@@ -1,13 +1,13 @@
 import { a as e, i as t, n, o as r, r as i, t as a } from "./registry-DbX3MVAA.js";
 import { n as o, t as s } from "./fieldType-CGXsQUaC.js";
 import { DOCUMENT_TYPE_ICONS as c, getPageConfig as l, getPagesView as u, makeEmptyField as d } from "./types.js";
-import { A as f, C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as x, c as S, d as C, f as w, g as T, h as E, i as ee, k as D, l as O, m as te, n as k, o as A, p as ne, r as re, s as ie, t as ae, u as j, v as M, w as oe, x as se, y as ce } from "./hooks-B29yIlKT.js";
+import { A as f, C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as x, c as S, d as C, f as w, g as T, h as E, i as ee, k as D, l as O, m as te, n as k, o as A, p as ne, r as re, s as ie, t as ae, u as j, v as M, w as oe, x as se, y as ce } from "./hooks-Eq7GTlFv.js";
 import { n as le, r as ue, t as N } from "./IdentityContext-CQM1qwH6.js";
 import { _ as P, a as F, c as de, d as fe, f as I, g as pe, h as me, i as he, l as ge, m as _e, n as ve, p as L, r as ye, t as be, u as xe } from "./useVideoSessions-CQvF7-8H.js";
 import { n as Se, t as Ce } from "./useWebSocket-CGc0yRhM.js";
 import { a as we, i as Te, n as R, o as Ee, r as De, t as z } from "./useSocialProfile-5S1qyvsv.js";
 import { a as Oe, c as ke, i as Ae, l as je, n as B, o as Me, r as V, s as Ne, t as Pe, u as Fe } from "./useSyncConflicts-z_Fo2YIM.js";
-import { n as Ie } from "./useDocumentTypes-tyAjMJgn.js";
+import { r as Ie } from "./useDocumentTypes-CrsHC24c.js";
 import { n as Le, t as Re } from "./WebSocketContext-DUvjGLFq.js";
 import { a as ze, i as Be, n as Ve, r as He, t as Ue } from "./ToastProvider-BKjV21G4.js";
 import { t as H } from "./cn-DhjIN-s0.js";
@@ -43,7 +43,7 @@ import { t as Nr } from "./Checkbox-DsS7fIUO.js";
 import { n as Pr, r as Fr, t as Ir } from "./ReactionsOverlay-Ob1ecsgg.js";
 import { a as Lr, c as Rr, d as zr, f as Br, i as Vr, l as Hr, n as Ur, o as Wr, p as Gr, r as Kr, s as qr, t as Jr, u as Yr } from "./PresencePanel-TLZ43ZF1.js";
 import { t as Xr } from "./activationKey-CjbL3LUv.js";
-import { a as Zr, i as Qr } from "./renderers-YYaII_km.js";
+import { a as Zr, i as Qr } from "./renderers-DFcIP7J8.js";
 import { n as $r, r as ei, t as ti } from "./EventStreamContext-CLzG8O5_.js";
 import { K as ni, R as ri, S as ii, X as ai, Y as oi, _ as si, b as ci, d as li, f as ui, g as di, h as fi, j as pi, k as mi, l as hi, m as gi, n as _i, nt as vi, p as yi, q as bi, rt as xi, s as Si, t as Ci, u as wi, v as Ti, w as Ei, y as Di } from "./services-hy17bVZA.js";
 import { n as Oi, t as ki } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1281,7 +1281,7 @@ function Vs() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Hs = Zo(() => import("./DocumentEditorPage-DRnwTjoL.js").then((e) => e.n));
+var Hs = Zo(() => import("./DocumentEditorPage-ZKhPO8zY.js").then((e) => e.n));
 function Us({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
