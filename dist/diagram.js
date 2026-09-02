@@ -1,33 +1,33 @@
 import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Button-wU9TwJvB.js";
-import { t as i } from "./useResolvedTheme-C-Qskt8V.js";
-import { Suspense as a, createElement as o, lazy as s, useCallback as c, useMemo as l, useRef as u } from "react";
-import { jsx as d, jsxs as f } from "react/jsx-runtime";
-import { createRoot as p } from "react-dom/client";
-import { Extension as m } from "@tiptap/core";
-import { Plugin as h, PluginKey as g } from "@tiptap/pm/state";
+import { n as i, t as a } from "./useResolvedTheme-MncahQcS.js";
+import { Suspense as o, createElement as s, lazy as c, useCallback as l, useMemo as u, useRef as d } from "react";
+import { jsx as f, jsxs as p } from "react/jsx-runtime";
+import { createRoot as m } from "react-dom/client";
+import { Extension as h } from "@tiptap/core";
+import { Plugin as g, PluginKey as _ } from "@tiptap/pm/state";
 //#region src/components/diagram/CollaborativeExcalidraw.tsx
-var _ = s(() => import("./ExcalidrawCanvas-DqjnIjds.js"));
-function v({ label: e }) {
-	return /* @__PURE__ */ d("div", {
+var v = c(() => import("./ExcalidrawCanvas-CKZiiYy6.js"));
+function y({ label: e }) {
+	return /* @__PURE__ */ f("div", {
 		"data-testid": "diagram-loading",
 		className: "flex h-full min-h-40 w-full items-center justify-center rounded-md border border-border bg-surface-inset text-[13px] text-neutral",
 		children: e
 	});
 }
-function y(e) {
+function b(e) {
 	return e.ydoc !== void 0;
 }
-function b(e) {
-	return y(e) ? /* @__PURE__ */ d(x, { ...e }) : /* @__PURE__ */ d(S, { ...e });
+function x(e) {
+	return b(e) ? /* @__PURE__ */ f(S, { ...e }) : /* @__PURE__ */ f(C, { ...e });
 }
-function x({ ydoc: e, awareness: t, className: r, ...i }) {
-	return /* @__PURE__ */ d("div", {
+function S({ ydoc: e, awareness: t, className: r, ...i }) {
+	return /* @__PURE__ */ f("div", {
 		className: n("h-full w-full", r),
-		children: /* @__PURE__ */ d(a, {
-			fallback: /* @__PURE__ */ d(v, { label: "Loading diagram editor…" }),
-			children: /* @__PURE__ */ d(_, {
+		children: /* @__PURE__ */ f(o, {
+			fallback: /* @__PURE__ */ f(y, { label: "Loading diagram editor…" }),
+			children: /* @__PURE__ */ f(v, {
 				ydoc: e,
 				awareness: t ?? null,
 				...i
@@ -35,65 +35,65 @@ function x({ ydoc: e, awareness: t, className: r, ...i }) {
 		})
 	});
 }
-function S({ gatewayUrl: r, diagramId: i, authToken: o, requireSync: s, loadingSlot: f, className: p, ...m }) {
-	let h = u(/* @__PURE__ */ new Set()), g = c((e) => (h.current.add(e), () => {
+function C({ gatewayUrl: r, diagramId: i, authToken: a, requireSync: s, loadingSlot: c, className: p, ...m }) {
+	let h = d(/* @__PURE__ */ new Set()), g = l((e) => (h.current.add(e), () => {
 		h.current.delete(e);
-	}), []), y = c((e) => {
+	}), []), _ = l((e) => {
 		h.current.forEach((t) => t(e));
-	}, []), b = l(() => ({
+	}, []), b = u(() => ({
 		wsUrl: r,
-		cognitoToken: o,
+		cognitoToken: a,
 		defaultChannel: `doc:${i}`
 	}), [
 		r,
-		o,
+		a,
 		i
 	]), x = t({
 		config: b,
-		onMessage: y
+		onMessage: _
 	}), { ydoc: S, provider: C, synced: w } = e({
 		documentId: i,
 		ws: x,
 		onMessage: g
 	});
-	return S && (s !== !0 || w) ? /* @__PURE__ */ d("div", {
+	return S && (s !== !0 || w) ? /* @__PURE__ */ f("div", {
 		className: n("h-full w-full", p),
-		children: /* @__PURE__ */ d(a, {
-			fallback: /* @__PURE__ */ d(v, { label: "Loading diagram editor…" }),
-			children: /* @__PURE__ */ d(_, {
+		children: /* @__PURE__ */ f(o, {
+			fallback: /* @__PURE__ */ f(y, { label: "Loading diagram editor…" }),
+			children: /* @__PURE__ */ f(v, {
 				ydoc: S,
 				awareness: C?.awareness ?? null,
 				...m
 			})
 		})
-	}) : /* @__PURE__ */ d("div", {
+	}) : /* @__PURE__ */ f("div", {
 		className: n("h-full w-full", p),
-		children: f ?? /* @__PURE__ */ d(v, { label: "Connecting…" })
+		children: c ?? /* @__PURE__ */ f(y, { label: "Connecting…" })
 	});
 }
 //#endregion
 //#region src/components/diagram/DiagramBlockRenderer.tsx
-function C({ diagramId: e, source: t = "", ydoc: i, awareness: a, editable: o = !0, user: s, assetPath: c, onRemove: l, "data-testid": u }) {
-	let p = u ?? `diagram-block-${e ?? "unreadable"}`;
-	return e ? i ? /* @__PURE__ */ f("div", {
-		"data-testid": p,
+function w({ diagramId: e, source: t = "", ydoc: i, awareness: a, editable: o = !0, user: s, assetPath: c, onRemove: l, "data-testid": u }) {
+	let d = u ?? `diagram-block-${e ?? "unreadable"}`;
+	return e ? i ? /* @__PURE__ */ p("div", {
+		"data-testid": d,
 		"data-diagram-id": e,
 		className: "my-3",
-		children: [/* @__PURE__ */ f("div", {
+		children: [/* @__PURE__ */ p("div", {
 			className: "flex items-center justify-between gap-2 rounded-t-md border border-b-0 border-border bg-surface-inset px-2.5 py-1",
-			children: [/* @__PURE__ */ d("span", {
+			children: [/* @__PURE__ */ f("span", {
 				className: "text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
 				children: "Diagram"
-			}), o && l && /* @__PURE__ */ d(r, {
+			}), o && l && /* @__PURE__ */ f(r, {
 				size: "sm",
 				variant: "ghost",
 				onClick: l,
-				"data-testid": `${p}-remove`,
+				"data-testid": `${d}-remove`,
 				children: "Remove"
 			})]
-		}), /* @__PURE__ */ d("div", {
+		}), /* @__PURE__ */ f("div", {
 			className: n("h-[420px] w-full overflow-hidden rounded-b-md border border-border"),
-			children: /* @__PURE__ */ d(b, {
+			children: /* @__PURE__ */ f(x, {
 				ydoc: i,
 				awareness: a ?? null,
 				blockId: e,
@@ -106,17 +106,17 @@ function C({ diagramId: e, source: t = "", ydoc: i, awareness: a, editable: o = 
 				}
 			})
 		})]
-	}) : /* @__PURE__ */ d("div", {
-		"data-testid": `${p}-unavailable`,
+	}) : /* @__PURE__ */ f("div", {
+		"data-testid": `${d}-unavailable`,
 		className: "rounded-md border border-dashed border-border-emphasis bg-surface-inset px-4 py-3.5 text-center text-[13px] text-neutral",
 		children: "Diagram unavailable — this page is not connected to a shared document."
-	}) : /* @__PURE__ */ f("div", {
-		"data-testid": `${p}-unreadable`,
+	}) : /* @__PURE__ */ p("div", {
+		"data-testid": `${d}-unreadable`,
 		className: "rounded-md border border-dashed border-warning-border bg-warning-bg px-4 py-3 text-[13px] text-warning-fg",
-		children: [/* @__PURE__ */ d("p", {
+		children: [/* @__PURE__ */ f("p", {
 			className: "mb-1.5 font-semibold",
 			children: "This diagram block no longer names a diagram."
-		}), /* @__PURE__ */ d("pre", {
+		}), /* @__PURE__ */ f("pre", {
 			className: "overflow-x-auto whitespace-pre-wrap font-mono text-xs",
 			children: t
 		})]
@@ -124,30 +124,30 @@ function C({ diagramId: e, source: t = "", ydoc: i, awareness: a, editable: o = 
 }
 //#endregion
 //#region src/components/diagram/macro.ts
-var w = "diagram", T = "macro";
-function E() {
+var T = "diagram", E = "macro";
+function D() {
 	let e = globalThis.crypto;
 	if (typeof e?.randomUUID == "function") return e.randomUUID();
 	let t = "";
 	for (let e = 0; e < 32; e += 1) (e === 8 || e === 12 || e === 16 || e === 20) && (t += "-"), t += Math.floor(Math.random() * 16).toString(16);
 	return t;
 }
-function D(e) {
+function O(e) {
 	return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(e);
 }
-function O(e) {
+function k(e) {
 	return `id: ${e}`;
 }
-function k(e) {
+function A(e) {
 	let t = /^id:[ \t]*(?:"([^"\n]*)"|'([^'\n]*)'|([^\s#]+))[ \t]*$/m.exec(e);
 	if (!t) return null;
 	let n = t[1] ?? t[2] ?? t[3] ?? "";
-	return D(n) ? n : null;
+	return O(n) ? n : null;
 }
 //#endregion
 //#region src/components/diagram/DiagramMacro.tsx
-var A = new g("diagramMacro");
-function j(e) {
+var j = new _("diagramMacro");
+function M(e) {
 	let t = document.createElement("pre");
 	t.setAttribute("data-macro", String(e.attrs.macroName ?? "unknown"));
 	let n = document.createElement("code");
@@ -156,7 +156,7 @@ function j(e) {
 		contentDOM: n
 	};
 }
-var M = class {
+var N = class {
 	view;
 	getPos;
 	options;
@@ -167,7 +167,7 @@ var M = class {
 	dead = !1;
 	queued = !1;
 	constructor(e, t, n, r) {
-		this.view = t, this.getPos = n, this.options = r, this.node = e, this.dom = document.createElement("div"), this.dom.setAttribute("data-macro", w), this.host = document.createElement("div"), this.dom.appendChild(this.host), this.root = p(this.host), this.schedule();
+		this.view = t, this.getPos = n, this.options = r, this.node = e, this.dom = document.createElement("div"), this.dom.setAttribute("data-macro", T), this.host = document.createElement("div"), this.dom.appendChild(this.host), this.root = m(this.host), this.schedule();
 	}
 	schedule() {
 		this.queued || this.dead || (this.queued = !0, queueMicrotask(() => {
@@ -176,8 +176,8 @@ var M = class {
 	}
 	render() {
 		let e = this.options.getContext(), t = this.node.textContent;
-		this.root.render(o(C, {
-			diagramId: k(t),
+		this.root.render(s(w, {
+			diagramId: A(t),
 			source: t,
 			ydoc: e?.ydoc ?? null,
 			awareness: e?.awareness ?? null,
@@ -213,28 +213,28 @@ var M = class {
 		let e = this.root;
 		queueMicrotask(() => e.unmount());
 	}
-}, N = m.create({
+}, P = h.create({
 	name: "diagramMacro",
 	addOptions() {
 		return { getContext: () => null };
 	},
 	addCommands() {
 		return { insertDiagram: (e) => ({ state: t, commands: n }) => t.schema.nodes.macro ? n.insertContent([{
-			type: T,
-			attrs: { macroName: w },
+			type: E,
+			attrs: { macroName: T },
 			content: [{
 				type: "text",
-				text: O(e ?? E())
+				text: k(e ?? D())
 			}]
 		}, { type: "paragraph" }]) : !1 };
 	},
 	addProseMirrorPlugins() {
 		let e = this.options, t = /* @__PURE__ */ new Set();
-		return [new h({
-			key: A,
-			props: { nodeViews: { [T]: (n, r, i) => {
-				if (n.attrs.macroName !== "diagram") return j(n);
-				let a = new M(n, r, i, e);
+		return [new g({
+			key: j,
+			props: { nodeViews: { [E]: (n, r, i) => {
+				if (n.attrs.macroName !== "diagram") return M(n);
+				let a = new N(n, r, i, e);
 				t.add(a);
 				let o = a.destroy.bind(a);
 				return a.destroy = () => {
@@ -251,4 +251,4 @@ var M = class {
 	}
 });
 //#endregion
-export { b as CollaborativeExcalidraw, w as DIAGRAM_MACRO_NAME, C as DiagramBlockRenderer, N as DiagramMacro, T as MACRO_NODE_NAME, A as diagramMacroPluginKey, O as diagramMacroText, D as isDiagramId, E as newDiagramId, k as readDiagramId, i as useResolvedTheme };
+export { x as CollaborativeExcalidraw, T as DIAGRAM_MACRO_NAME, w as DiagramBlockRenderer, P as DiagramMacro, i as DiagramPresenceBar, E as MACRO_NODE_NAME, j as diagramMacroPluginKey, k as diagramMacroText, O as isDiagramId, D as newDiagramId, A as readDiagramId, a as useResolvedTheme };

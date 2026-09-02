@@ -639,7 +639,12 @@ export declare interface NewDocumentModalProps {
         type: string;
         description?: string;
         icon: string;
-        documentTypeId: string;
+        /**
+         * Absent for a diagram: a whiteboard has no document type, so there is no id
+         * to send. Optional rather than a sentinel — a fake id would be looked up
+         * somewhere eventually and found missing.
+         */
+        documentTypeId?: string;
         shape: DocumentShape;
     }) => void;
 }

@@ -6,7 +6,8 @@ import { t as i } from "../EmptyState-ClmWoqCb.js";
 import { t as a } from "../SkeletonCard-CGe8XFPB.js";
 import { n as o, t as s } from "../FileUploadDrop-DMLKYoZL.js";
 import { t as c } from "../Avatar-BzicCOft.js";
-import { a as l, i as u, n as d, r as f, t as p } from "../Badge-C2q4ulB8.js";
+import { i as l, n as u, r as d, t as f } from "../Badge-C_anJCMo.js";
+import { t as p } from "../PresenceAvatars-BkzMACtv.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
 import { n as _, t as v } from "../PresencePanel-TLZ43ZF1.js";
 import { a as y, i as b, l as x, o as S, r as C, t as ee } from "../MediaEffectsPreviewPanel-DhMdqGuZ.js";
@@ -280,7 +281,7 @@ function pe({ presence: e, currentClientId: t, wrapWithNetworkShim: n }) {
 //#region src/integrations/realtime-modules/WrappedActivityPanel.tsx
 function me({ activity: e, visibleCount: t, rotateMs: n, staggerMs: r, kindColors: i, className: a }) {
 	let o = T(() => R(e.events), [e.events]);
-	return /* @__PURE__ */ k(d, {
+	return /* @__PURE__ */ k(u, {
 		items: o,
 		visibleCount: t,
 		rotateMs: n,
@@ -397,7 +398,7 @@ function ye({ hangout: e, localClientId: t, videoElements: n, mode: r, spotlight
 //#region src/integrations/realtime-modules/WrappedNotificationCenter.tsx
 function be({ notifications: e, onItemClick: t, ...n }) {
 	let r = W(e.notifications);
-	return /* @__PURE__ */ k(f, {
+	return /* @__PURE__ */ k(d, {
 		items: r,
 		onItemClick: (n) => {
 			t ? t(n) : e.markAsRead(n.id);
@@ -423,29 +424,29 @@ function Se({ capability: e, loading: t, fallback: n, children: r }) {
 //#endregion
 //#region src/integrations/realtime-modules/HangoutRoomRow.tsx
 function J({ slug: e, name: t, participantId: n, occupancy: r, subscribeRoomsIndex: i, onClick: a, onContextMenu: o, kebab: s, className: c, "data-testid": l = "room-row" }) {
-	let d = ie(i ? e : null, { subscribeRoomsIndex: i }), f = i ? d.occupancy ?? null : r ?? null, h = f?.count ?? 0, g = f?.members ?? [], _ = T(() => n ? g.some((e) => e.participantId === n) : !1, [g, n]), v = _, y = T(() => g.slice(0, 3).map((e) => ({
+	let u = ie(i ? e : null, { subscribeRoomsIndex: i }), d = i ? u.occupancy ?? null : r ?? null, h = d?.count ?? 0, g = d?.members ?? [], _ = T(() => n ? g.some((e) => e.participantId === n) : !1, [g, n]), v = _, y = T(() => g.slice(0, 3).map((e) => ({
 		id: e.participantId,
 		name: e.displayName ?? e.userId,
 		online: !0
 	})), [g]), b = null;
-	return h > 1 ? b = /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(u, {
+	return h > 1 ? b = /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(p, {
 		users: y,
 		maxVisible: 3,
 		size: 18
-	}), /* @__PURE__ */ k(p, {
+	}), /* @__PURE__ */ k(f, {
 		variant: "count",
 		value: h,
 		color: "muted"
-	})] }) : h === 1 && _ ? b = /* @__PURE__ */ k(p, {
+	})] }) : h === 1 && _ ? b = /* @__PURE__ */ k(f, {
 		variant: "pulse",
 		color: "accent",
 		"aria-label": "Just you in this room",
 		"data-testid": `${l}-self-pulse`
-	}) : h === 1 && (b = /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(u, {
+	}) : h === 1 && (b = /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(p, {
 		users: y,
 		maxVisible: 1,
 		size: 18
-	}), /* @__PURE__ */ k(p, {
+	}), /* @__PURE__ */ k(f, {
 		variant: "count",
 		value: 1,
 		color: "muted"

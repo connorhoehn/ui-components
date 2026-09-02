@@ -52,7 +52,12 @@ export interface NewDocumentModalProps {
     type: string;
     description?: string;
     icon: string;
-    documentTypeId: string;
+    /**
+     * Absent for a diagram: a whiteboard has no document type, so there is no id
+     * to send. Optional rather than a sentinel — a fake id would be looked up
+     * somewhere eventually and found missing.
+     */
+    documentTypeId?: string;
     shape: DocumentShape;
   }) => void;
 }
@@ -155,15 +160,25 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
 
   const selected = types.find(t => t.id === selectedId);
 
+  /**
+   * A diagram needs no document type — see the type picker below. So the submit
+   * guard cannot require one, or the button stays dead forever on a shape that
+   * never shows the control that would satisfy it.
+   */
+  const needsType = shape !== 'diagram';
+
   const handleSubmit = () => {
     const trimmed = title.trim();
-    if (!trimmed || !selected) return;
+    if (!trimmed) return;
+    if (needsType && !selected) return;
     onCreate({
       title: trimmed,
-      type: selected.name,
+      // A stable label rather than a real type id: the document list renders
+      // this as the row's chip, and "Diagram" is the true answer to "what is
+      // this". Nothing downstream looks it up in the types table.
+      type: selected && needsType ? selected.name : 'Diagram',
       description: description.trim() || undefined,
-      icon: selected.icon,
-      documentTypeId: selected.id,
+      ...(selected && needsType ? { icon: selected.icon, documentTypeId: selected.id } : { icon: '🖉' }),
       shape,
     });
     onClose();
@@ -274,7 +289,14 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                 </div>
               </div>
 
-              {/* Type picker */}
+              {/* Type picker — NOT for a diagram.
+
+                  A document type defines the sections and structure a document
+                  starts with; every card here says "Sets the icon and type". A
+                  whiteboard has neither, so asking is offering a choice that
+                  does not apply to what is being made — and then refusing to
+                  create until one is picked. */}
+              {shape !== 'diagram' && (
               <div className={cn('mb-5')}>
                 <div
                   id={typeGroupLabelId}
@@ -336,7 +358,8 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                     );
                   })}
                 </div>
-              </div>
+                </div>
+              )}
 
               {/* Title */}
               <div className={cn('mb-4')}>

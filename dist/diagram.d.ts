@@ -1,4 +1,5 @@
 import { AwarenessLike } from '@connorhoehn/realtime-modules/adapters/excalidraw';
+import { DiagramCollaborator } from '@connorhoehn/realtime-modules/adapters/excalidraw';
 import { Extension } from '@tiptap/core';
 import { JSX } from 'react';
 import { PluginKey } from '@tiptap/pm/state';
@@ -144,6 +145,20 @@ export declare const diagramMacroPluginKey: PluginKey<any>;
  * supplies the final break, exactly as `macroTextFromData` returns it).
  */
 export declare function diagramMacroText(id: string): string;
+
+export declare function DiagramPresenceBar({ participants, size, className, 'data-testid': testId, }: DiagramPresenceBarProps): JSX.Element;
+
+export declare interface DiagramPresenceBarProps {
+    /**
+     * Everyone on the board, local user included — i.e.
+     * `useCollaborativeDiagram(...).participants`.
+     */
+    participants: DiagramCollaborator[];
+    /** Avatar diameter in px. */
+    size?: number;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface DiagramUser {
     /** Stable identity (Cognito sub). Used to label your cursor for peers. */

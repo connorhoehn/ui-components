@@ -334,3 +334,48 @@ describe('NewDocumentModal — the diagram shape', () => {
     expect(onCreate.mock.calls[0][0]).toMatchObject({ shape: 'page' });
   });
 });
+
+describe('NewDocumentModal — a diagram needs no document type', () => {
+  it('hides the type picker for Diagram, and shows it for the other shapes', async () => {
+    loadTypes.mockReturnValue([mkType({ id: 'a', name: 'Alpha' })]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    await act(async () => { await Promise.resolve(); });
+
+    expect(screen.getByText('Document Type')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Diagram'));
+    expect(screen.queryByText('Document Type')).toBeNull();
+    // and back again — the picker is hidden, not destroyed
+    fireEvent.click(screen.getByText('Page'));
+    expect(screen.getByText('Document Type')).toBeInTheDocument();
+  });
+
+  it('creates a diagram with only a title', async () => {
+    // The guard used to require a selected type. With the picker hidden that
+    // made Create permanently dead on this shape — a button waiting on a
+    // control the user is never shown.
+    const onCreate = vi.fn();
+    loadTypes.mockReturnValue([mkType({ id: 'a', name: 'Alpha' })]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+    await act(async () => { await Promise.resolve(); });
+
+    fireEvent.click(screen.getByText('Diagram'));
+    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Whiteboard' } });
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+
+    expect(onCreate).toHaveBeenCalledTimes(1);
+    const meta = onCreate.mock.calls[0][0];
+    expect(meta).toMatchObject({ title: 'Whiteboard', shape: 'diagram', type: 'Diagram' });
+    expect(meta.documentTypeId).toBeUndefined();
+  });
+
+  it('still requires a type for Page and Sections', async () => {
+    // The relaxation must not leak to the shapes that DO have structure.
+    const onCreate = vi.fn();
+    loadTypes.mockReturnValue([]);          // no types available
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+    await act(async () => { await Promise.resolve(); });
+    // With zero types there is nothing to select, so Page cannot submit.
+    expect(screen.queryByTestId('new-doc-submit')).toBeNull();
+  });
+});
