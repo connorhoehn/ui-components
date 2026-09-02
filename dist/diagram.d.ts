@@ -1,14 +1,9 @@
-import { Awareness } from 'y-protocols/awareness';
 import { AwarenessLike } from '@connorhoehn/realtime-modules/adapters/excalidraw';
+import { Extension } from '@tiptap/core';
 import { JSX } from 'react';
+import { PluginKey } from '@tiptap/pm/state';
 import { RefObject } from 'react';
-import { XmlFragment } from 'yjs';
 import type * as Y from 'yjs';
-
-/** Minimal provider shape needed by awareness. */
-declare interface CollaborationProvider {
-    awareness: Awareness;
-}
 
 export declare function CollaborativeExcalidraw(props: CollaborativeExcalidrawProps): JSX.Element;
 
@@ -67,29 +62,88 @@ export declare interface CollaborativeExcalidrawHostedProps extends SharedDiagra
 
 export declare type CollaborativeExcalidrawProps = CollaborativeExcalidrawHostedProps | CollaborativeExcalidrawBootstrapProps;
 
-/** A flat comment as stored in Y.js. */
-declare interface CommentData {
-    id: string;
-    text: string;
-    userId: string;
-    displayName: string;
+/** The `macro:<name>` discriminator for an embedded diagram. */
+export declare const DIAGRAM_MACRO_NAME = "diagram";
+
+export declare interface DiagramBlockProps {
+    /**
+     * The diagram's id — the reference the macro body carries.
+     *
+     * `null` means the macro's YAML no longer says anything readable (a CRDT
+     * merge of two concurrent rewrites can do that). The block then shows the
+     * source instead of inventing an id, because inventing one would silently
+     * start a SECOND, empty diagram and lose the first.
+     */
+    diagramId: string | null;
+    /** The macro's literal body, shown when `diagramId` is null. */
+    source?: string;
+    /** The page's shared document. Null when the page is not connected. */
+    ydoc: unknown;
+    /** Awareness from the provider that owns `ydoc`, for live pointers. */
+    awareness?: AwarenessLike | null;
+    /**
+     * False renders Excalidraw in view mode AND drops every local write — see
+     * `ExcalidrawCanvas`. It is not a toolbar toggle.
+     */
+    editable?: boolean;
+    user: DiagramBlockUser;
+    /** Where Excalidraw loads its fonts from, e.g. `/excalidraw-assets/`. */
+    assetPath?: string;
+    /**
+     * Removes the whole block from the page.
+     *
+     * Its absence is what makes the block read-only-shaped: with no contentDOM
+     * the node view swallows its own events, so a click cannot select the node
+     * and a backspace cannot reach it. An embedded object a reader can never
+     * delete is a bug, so the editing host passes this and the header renders
+     * the one affordance that removes it.
+     */
+    onRemove?: () => void;
+    'data-testid'?: string;
+}
+
+export declare function DiagramBlockRenderer({ diagramId, source, ydoc, awareness, editable, user, assetPath, onRemove, 'data-testid': testId, }: DiagramBlockProps): JSX.Element;
+
+/** Local identity, as the diagram's awareness pointers should label it. */
+export declare interface DiagramBlockUser {
+    name: string;
     color: string;
-    timestamp: string;
-    parentCommentId: string | null;
-    resolved?: boolean;
-    resolvedBy?: string;
-    resolvedAt?: string;
+    userId?: string;
 }
 
-/** A comment with nested replies, assembled client-side. */
-declare interface CommentThread extends CommentData {
-    replies: CommentThread[];
+export declare const DiagramMacro: Extension<DiagramMacroOptions, any>;
+
+/**
+ * Everything a diagram block needs that the document does not carry.
+ *
+ * Supplied through a GETTER rather than as plain options, for the reason
+ * `CommentHighlight` documents: ProseMirror builds its plugin list once at
+ * editor construction, so a value baked in here would be the one captured on
+ * the first render and consulted forever. The host holds these in a ref and the
+ * node view asks for them at paint time.
+ */
+export declare interface DiagramMacroContext {
+    /** The page's Y.Doc — the same one Collaboration is bound to. */
+    ydoc: unknown;
+    /** Awareness from the provider that owns `ydoc`. */
+    awareness?: AwarenessLike | null;
+    user: DiagramBlockUser;
+    /** Where Excalidraw loads its fonts from, e.g. `/excalidraw-assets/`. */
+    assetPath?: string;
 }
 
-/** Section type key this block registers under. */
-export declare const DIAGRAM_BLOCK_TYPE = "excalidraw";
+export declare interface DiagramMacroOptions {
+    getContext: () => DiagramMacroContext | null;
+}
 
-export declare function DiagramBlockRenderer({ section, editable, ydoc, provider, user, }: SectionRendererProps): JSX.Element;
+export declare const diagramMacroPluginKey: PluginKey<any>;
+
+/**
+ * The macro body for a diagram — byte-identical to what the chassis serializer
+ * writes between the fences, with no trailing newline (the closing fence
+ * supplies the final break, exactly as `macroTextFromData` returns it).
+ */
+export declare function diagramMacroText(id: string): string;
 
 export declare interface DiagramUser {
     /** Stable identity (Cognito sub). Used to label your cursor for peers. */
@@ -104,59 +158,47 @@ export declare interface ExcalidrawCanvasProps extends SharedDiagramProps {
     awareness?: AwarenessLike | null;
 }
 
-declare interface Participant {
-    clientId: string;
-    userId: string;
-    displayName: string;
-    color: string;
-    mode: 'editor' | 'reviewer' | 'reader';
-    currentSectionId: string | null;
-    lastSeen?: number;
-    idle?: boolean;
-}
+/** True for an id this module would have minted — hex groups and dashes only. */
+export declare function isDiagramId(value: string): boolean;
 
 /**
- * Register the diagram block with the section-renderer registry.
+ * The ProseMirror node name a macro occupies.
  *
- * Call once during host app startup. Idempotent.
+ * Duplicated from realtime-modules' `MACRO_NODE_NAME` rather than imported.
+ * Importing it would pull the whole Tiptap canvas adapter — and with it a
+ * second `prosemirror-*` graph — into `./diagram`, which is the one thing the
+ * app's `optimizeDeps.exclude` list exists to prevent. `'macro'` is a wire
+ * constant on the same footing as the `data-macro` attribute, and the round
+ * trip test pins it.
  */
-export declare function registerDiagramBlock(): void;
+export declare const MACRO_NODE_NAME = "macro";
+
+/**
+ * Mints a diagram id.
+ *
+ * A plain UUID: it is what `/diagram/:id` already uses, it is unambiguous YAML
+ * (five hex groups can never be read as a date or a sexagesimal), and it is
+ * short enough to stay inside the gateway's 46-character channel limit if a
+ * diagram is ever promoted out of a page into its own document.
+ */
+export declare function newDiagramId(): string;
+
+/**
+ * The id a diagram macro's body refers to, or `null`.
+ *
+ * `null` is a real state, not an error path: a CRDT merge of two concurrent
+ * rewrites can leave text that no longer says anything, and the honest response
+ * is to show the user the raw source so they can fix it — never to invent an id
+ * and silently start a second, empty diagram under it.
+ *
+ * Deliberately strict. The quoted forms are accepted because a hand-edited or
+ * foreign-tool-normalised file may quote a scalar the chassis left bare; an
+ * arbitrary unquoted token is NOT accepted, because an id that is not shaped
+ * like an id is far more likely to be merge damage than a diagram.
+ */
+export declare function readDiagramId(source: string): string | null;
 
 export declare type ResolvedTheme = 'light' | 'dark';
-
-declare interface Section {
-    id: string;
-    type: 'summary' | 'tasks' | 'decisions' | 'notes' | 'custom';
-    title: string;
-    collapsed: boolean;
-    items: TaskItem[];
-    sectionType?: string;
-    metadata?: Record<string, unknown>;
-    placeholder?: string;
-}
-
-declare interface SectionRendererProps {
-    section: Section;
-    viewMode: ViewMode;
-    editable: boolean;
-    fragment?: XmlFragment | null;
-    ydoc?: Y.Doc | null;
-    provider?: CollaborationProvider | null;
-    user?: {
-        name: string;
-        color: string;
-    };
-    onUpdateSection?: (patch: Partial<Section>) => void;
-    onAddItem?: (item: Omit<TaskItem, 'id'>) => void;
-    onUpdateItem?: (itemId: string, patch: Partial<TaskItem>) => void;
-    onRemoveItem?: (itemId: string) => void;
-    participants?: Participant[];
-    onUpdateCursorInfo?: (name: string, color: string) => void;
-    comments?: CommentThread[];
-    commentCount?: number;
-    onOpenComments?: (sectionId: string) => void;
-    onNavigateToEditor?: (sectionId: string) => void;
-}
 
 export declare interface SharedDiagramProps {
     /**
@@ -184,19 +226,6 @@ export declare interface SharedDiagramProps {
     onSceneChange?: (elementCount: number) => void;
 }
 
-declare interface TaskItem {
-    id: string;
-    text: string;
-    status: 'pending' | 'acked' | 'done' | 'rejected';
-    assignee: string;
-    ackedBy: string;
-    ackedAt: string;
-    priority: 'low' | 'medium' | 'high';
-    notes: string;
-    dueDate?: string;
-    category?: string;
-}
-
 /**
  * The theme currently in force for `ref`'s subtree, kept live.
  *
@@ -205,6 +234,17 @@ declare interface TaskItem {
  */
 export declare function useResolvedTheme(ref: RefObject<Element | null>): ResolvedTheme;
 
-declare type ViewMode = 'editor' | 'ack' | 'reader';
-
 export { }
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}

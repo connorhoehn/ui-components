@@ -5,11 +5,21 @@
 // type imports — reaches an app that does not draw.
 
 export { default as CollaborativeExcalidraw } from './CollaborativeExcalidraw';
+export { default as DiagramBlockRenderer } from './DiagramBlockRenderer';
+export type { DiagramBlockProps, DiagramBlockUser } from './DiagramBlockRenderer';
+
+// The canvas half: a `macro:diagram` fence, drawn in the page.
+export { DiagramMacro, diagramMacroPluginKey } from './DiagramMacro';
+export type { DiagramMacroContext, DiagramMacroOptions } from './DiagramMacro';
 export {
-    default as DiagramBlockRenderer,
-    registerDiagramBlock,
-    DIAGRAM_BLOCK_TYPE,
-} from './DiagramBlockRenderer';
+    DIAGRAM_MACRO_NAME,
+    MACRO_NODE_NAME,
+    newDiagramId,
+    isDiagramId,
+    diagramMacroText,
+    readDiagramId,
+} from './macro';
+
 export { useResolvedTheme } from './useResolvedTheme';
 export type { ResolvedTheme } from './useResolvedTheme';
 

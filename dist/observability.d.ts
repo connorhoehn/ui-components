@@ -247,3 +247,16 @@ declare type RefreshInterval = 'off' | '5s' | '30s' | '60s';
 declare type TimeRange = '15m' | '1h' | '24h' | '7d';
 
 export { }
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}

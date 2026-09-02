@@ -44,7 +44,11 @@ export default defineConfig({
     cssCodeSplit: false,
     rollupOptions: {
       external: [
-        'react', 'react-dom', 'react/jsx-runtime', 'react-router',
+        // `react-dom/client` is listed for the same reason `react/jsx-runtime`
+        // is: a subpath is not covered by its package. Without it, `createRoot`
+        // in the diagram node view dragged all of react-dom AND scheduler into
+        // dist/diagram.js — a second React renderer beside the app's.
+        'react', 'react-dom', 'react-dom/client', 'react/jsx-runtime', 'react-router',
         // All three runtime `dependencies` are externalised: npm installs
         // them for the consumer, so bundling them here only duplicates code.
         // cmdk was missed until v2.73.0 — it landed in a shared chunk that
@@ -64,7 +68,26 @@ export default defineConfig({
         '@tiptap/extension-collaboration',
         '@tiptap/extension-mention', '@tiptap/extension-placeholder',
         '@tiptap/extension-task-item', '@tiptap/extension-task-list',
-        '@tiptap/pm', '@tiptap/y-tiptap',
+        // `@tiptap/core` joined the list in v2.120.0, when `./diagram` started
+        // SHIPPING a Tiptap extension (`DiagramMacro`) rather than only
+        // rendering into one. Bundled, it would be a second copy of the
+        // extension manager beside the app's — and the consuming app's vite
+        // config keeps @tiptap/core deliberately pre-bundled exactly once.
+        '@tiptap/core',
+        // SUBPATHS MUST BE LISTED. Rollup matches an external string against
+        // the unresolved id and does NOT treat `foo/bar` as covered by `foo` —
+        // which is why `react/jsx-runtime` has its own entry above and is not a
+        // redundant one. The first build of `DiagramMacro` proved the cost:
+        // `@tiptap/pm/state` fell through this list and rolldown inlined
+        // prosemirror-model, -transform and -state into `dist/diagram.js`
+        // (3.5KB → 770KB), which is a SECOND ProseMirror in the consuming app —
+        // the exact `Adding different instances of a keyed plugin` /
+        // `localsInner` class of failure the app's optimizeDeps.exclude list
+        // exists to prevent.
+        '@tiptap/pm',
+        '@tiptap/pm/state', '@tiptap/pm/view', '@tiptap/pm/model',
+        '@tiptap/pm/transform', '@tiptap/pm/keymap', '@tiptap/pm/commands',
+        '@tiptap/y-tiptap',
         'recharts',
         '@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities',
         'lib0',

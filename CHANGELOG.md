@@ -6,6 +6,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.120.0] — 2026-09-02
+
+### Added — a diagram as a block INSIDE a canvas document (`./diagram`)
+
+- **`DiagramMacro`** — the Tiptap extension that makes a `macro:diagram` fence
+  draw. It registers a node view on the existing `macro` node rather than
+  adding a node of its own, and that is the load-bearing choice: a dedicated
+  node type would emit ProseMirror JSON that a client without this extension
+  has no schema entry for, and `Node.fromJSON` throws rather than degrades. As
+  an ordinary macro the block survives such a client as a YAML fence — the
+  property `MACRO-MARKDOWN.md` calls the most important one a shared document
+  format has — and `pmModel.ts` needed no change at all.
+- **The persisted form is a REFERENCE, not the picture.** The body is one key,
+  `id: <uuid>`; the elements stay in the page's Y.Doc under
+  `excalidraw:<id>`, where `ExcalidrawYjsBinding` already puts them. Embedding
+  the scene would push a multi-kilobyte JSON blob through a CRDT TEXT node on
+  every stroke and character-merge it between two people drawing at once. The
+  argument is written out in `src/components/diagram/macro.ts`; the round trip
+  is proven in realtime-modules' `diagram-macro-roundtrip.test.ts`.
+- **`insertDiagram(id?)`** command, `newDiagramId`, `readDiagramId`,
+  `diagramMacroText`, `DIAGRAM_MACRO_NAME`.
+- **Read-only is enforced, not hidden.** `editable=false` puts Excalidraw in
+  `viewModeEnabled`, drops every local write before `commitLocal`, and removes
+  the block's `Remove` control. The flag is read from the live
+  `EditorView.editable` and re-broadcast by a plugin view when it flips, so
+  locking a page reaches a diagram already on screen.
+
+### Changed
+
+- **`DiagramBlockRenderer` no longer registers a section renderer.** It took
+  `SectionRendererProps` and called `registerRenderer` from a
+  `registerDiagramBlock()` nothing ever invoked — an orphan aimed at the
+  LEGACY sectioned-document registry, which already ships a `diagram` section
+  type of its own. The registration is deleted rather than wired (a second
+  diagram block on a surface being retired is not the fix), and the component
+  now takes the props a diagram needs and is mounted by the canvas node view.
+  `registerDiagramBlock` and `DIAGRAM_BLOCK_TYPE` are gone.
+
+### Fixed — packaging
+
+- **Rollup externals do not cover subpaths, and three were missing.**
+  `@tiptap/pm/state` and `react-dom/client` fell through the list, so the
+  first build of the node view inlined prosemirror-model/-transform/-state
+  AND all of react-dom + scheduler into `dist/diagram.js` — 3.5KB → 770KB,
+  and a second ProseMirror in every consuming app. Now 7.9KB with both
+  external. `@tiptap/core`, `@tiptap/pm` and their subpaths are externalised
+  and declared as optional peers.
+
+---
+
 ## [2.117.1] — 2026-08-31
 
 ### Fixed — `/compute`
