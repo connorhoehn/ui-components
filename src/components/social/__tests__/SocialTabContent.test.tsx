@@ -86,15 +86,14 @@ beforeEach(() => {
 });
 
 describe('SocialTabContent sidebar headers', () => {
-  // Channels and Direct Messages are one unsectioned list now, so the only
-  // header left carrying a count is Groups — which has no data of its own and
-  // must therefore show nothing rather than a confident "0".
-  it('does not print a made-up item count for the Groups section', () => {
+  // The Groups section is gone entirely, so the count it used to fake is gone
+  // with it. Group rooms appear in the conversation list like any other room,
+  // which is what the section was a partial, separately-fetched view of.
+  it('does not show a separate Groups section', () => {
     const { onMessage } = makeOnMessage();
     renderTab([room(), room({ roomId: 'r2', name: 'random' })], onMessage);
 
-    const groupsHeader = screen.getByText('Groups').closest('button')!;
-    expect(groupsHeader.textContent).not.toMatch(/\d/);
+    expect(screen.queryByText('Groups')).toBeNull();
   });
 
   it('lists channels and DMs together, without section headers between them', () => {

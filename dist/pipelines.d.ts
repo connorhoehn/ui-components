@@ -2452,6 +2452,13 @@ declare interface StepAttempt {
     idempotencyKey: string;
 }
 
+export declare function StepAttempts({ attempts, className }: StepAttemptsProps): JSX.Element | null;
+
+export declare interface StepAttemptsProps {
+    attempts: StepAttempt[];
+    className?: string;
+}
+
 declare interface StepExecution {
     nodeId: string;
     status: StepStatus;
@@ -2547,7 +2554,7 @@ export declare interface StepSectionProps {
 
 declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
 
-export declare function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep }: StepThreadProps): default_2.JSX.Element;
+export declare function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep, onArtifactClick }: StepThreadProps): default_2.JSX.Element;
 
 export declare interface StepThreadProps {
     stepId: string;
@@ -2557,6 +2564,14 @@ export declare interface StepThreadProps {
     nodeConfig?: Record<string, unknown>;
     onRetryFromStep?: (stepId: string) => void;
     onResumeFromStep?: (stepId: string) => void;
+    /**
+     * Called when the operator clicks a produced artifact. Hosts that own an
+     * artifact route (a lineage graph, an asset page) wire this to navigate
+     * there. Without it the thumbnail is still a link — it opens the resolved
+     * artifact URL in a new tab — because a produced artifact you cannot open
+     * is just a picture of your data.
+     */
+    onArtifactClick?: (imageId: string) => void;
 }
 
 export declare function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep }: StepTreeProps): default_2.JSX.Element;

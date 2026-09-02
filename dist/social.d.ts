@@ -1,8 +1,6 @@
 import { CSSProperties } from 'react';
-import { ForwardRefExoticComponent } from 'react';
 import { JSX } from 'react';
 import { ReactNode } from 'react';
-import { RefAttributes } from 'react';
 import { RefObject } from 'react';
 
 declare interface ActivityEvent {
@@ -233,16 +231,6 @@ declare interface CommentThreadProps {
     onMessage: OnMessageFn_5;
 }
 
-/** What the composer hands back on send. */
-export declare interface ComposedMessage {
-    /** Rich body. Empty when the user typed only whitespace. */
-    html: string;
-    /** Plain-text fallback, for clients and notifications that cannot render HTML. */
-    text: string;
-    /** Everyone the sender explicitly mentioned, de-duplicated, in document order. */
-    mentions: MentionCandidate[];
-}
-
 declare type ConnectionState = 'connected' | 'connecting' | 'disconnected';
 
 export declare interface ConversationItem {
@@ -347,32 +335,6 @@ declare interface GroupPanelProps {
 export declare function isImageAttachment(a: {
     contentType?: string;
 }): boolean;
-
-export declare interface MentionCandidate {
-    /** Stable identity — this is what travels in the message, not the label. */
-    id: string;
-    label: string;
-    avatarUrl?: string;
-    color?: string;
-    /** Shown under the name, e.g. a role or team. */
-    hint?: string;
-}
-
-export declare const MentionSuggestions: ForwardRefExoticComponent<MentionSuggestionsProps & RefAttributes<MentionSuggestionsHandle>>;
-
-declare interface MentionSuggestionsHandle {
-    onKeyDown: (props: {
-        event: KeyboardEvent;
-    }) => boolean;
-}
-
-export declare interface MentionSuggestionsProps {
-    items: MentionCandidate[];
-    command: (item: {
-        id: string;
-        label: string;
-    }) => void;
-}
 
 export declare function MessageGroup({ author, avatarUrl, mine, messages, className, }: MessageGroupProps): JSX.Element | null;
 
@@ -522,31 +484,6 @@ export declare interface ReactionSummary {
     count: number;
     /** True if the local viewer is one of the reactors. */
     mine?: boolean;
-}
-
-export declare function RichChatComposer({ onSend, onSearchPeople, onSendFiles, placeholder, disabled, toolbarExtras, className, 'data-testid': testId, }: RichChatComposerProps): JSX.Element;
-
-export declare interface RichChatComposerProps {
-    onSend: (message: ComposedMessage) => void;
-    /**
-     * Resolves the @ menu. Returning a promise is supported so a host can hit a
-     * directory rather than filter a preloaded array.
-     */
-    onSearchPeople?: (query: string) => MentionCandidate[] | Promise<MentionCandidate[]>;
-    /**
-     * Files chosen with the paperclip or dropped on the composer.
-     *
-     * Absent means this deployment has no file capability, and every attachment
-     * affordance disappears — not a disabled paperclip, which promises something
-     * the product cannot do.
-     */
-    onSendFiles?: (files: File[]) => void;
-    placeholder?: string;
-    disabled?: boolean;
-    /** Rendered between the formatting controls and the send button. */
-    toolbarExtras?: ReactNode;
-    className?: string;
-    'data-testid'?: string;
 }
 
 declare interface RoomItem {

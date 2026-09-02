@@ -4,9 +4,9 @@ import { Fragment as a, jsx as o, jsxs as s } from "react/jsx-runtime";
 import * as c from "yjs";
 import { EditorContent as l, useEditor as u } from "@tiptap/react";
 import d from "@tiptap/starter-kit";
-import f from "@tiptap/extension-placeholder";
-import p from "@tiptap/extension-task-list";
-import m from "@tiptap/extension-task-item";
+import f from "@tiptap/extension-task-list";
+import p from "@tiptap/extension-task-item";
+import m from "@tiptap/extension-placeholder";
 import h from "@tiptap/extension-collaboration";
 import { absolutePositionToRelativePosition as g, relativePositionToAbsolutePosition as _, ySyncPluginKey as v } from "@tiptap/y-tiptap";
 //#region src/components/doc-editor/EditorToolbar.tsx
@@ -209,9 +209,9 @@ function S({ cursors: e, editorView: t, containerEl: n }) {
 function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, placeholder: T = "Start typing...", sectionId: E, onUpdateCursorInfo: D, extensions: O, chrome: k = "card", hideToolbar: A = !1, onEditorReady: j }) {
 	let M = r(() => [
 		d.configure({ history: !1 }),
-		p,
-		m.configure({ nested: !0 }),
-		f.configure({ placeholder: T }),
+		f,
+		p.configure({ nested: !0 }),
+		m.configure({ placeholder: T }),
 		h.configure({
 			document: y,
 			fragment: a

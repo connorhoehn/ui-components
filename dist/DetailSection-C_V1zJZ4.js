@@ -647,39 +647,39 @@ var Z = {
 		dot: "bg-accent",
 		text: "text-accent-fg"
 	}
-}, Q = {
+}, ee = {
 	sm: "px-1.5 py-0.5 text-[10px] gap-1",
 	md: "px-2.5 py-1 text-[12px] gap-1.5"
-}, $ = {
+}, Q = {
 	sm: "w-1.5 h-1.5",
 	md: "w-2 h-2"
 };
-function ee({ state: e, label: n, icon: r, size: i = "md", className: a, "data-testid": o }) {
+function te({ state: e, label: n, icon: r, size: i = "md", className: a, "data-testid": o }) {
 	let s = Z[e] ?? Z.neutral ?? Object.values(Z)[0], c = e === "pending";
 	return /* @__PURE__ */ _("span", {
 		role: "status",
 		"data-testid": o,
 		"data-state": e,
-		className: t("inline-flex items-center rounded-full border font-medium leading-none select-none", s.pill, s.text, Q[i], a),
+		className: t("inline-flex items-center rounded-full border font-medium leading-none select-none", s.pill, s.text, ee[i], a),
 		children: [r ? /* @__PURE__ */ g("span", {
 			"aria-hidden": "true",
 			className: "shrink-0",
 			children: r
 		}) : /* @__PURE__ */ _("span", {
-			className: t("relative inline-flex shrink-0", $[i]),
+			className: t("relative inline-flex shrink-0", Q[i]),
 			children: [c && /* @__PURE__ */ g("span", {
 				"aria-hidden": "true",
 				className: t("absolute inset-0 rounded-full animate-ping opacity-75", s.dot)
 			}), /* @__PURE__ */ g("span", {
 				"aria-hidden": "true",
-				className: t("relative rounded-full", $[i], s.dot)
+				className: t("relative rounded-full", Q[i], s.dot)
 			})]
 		}), n]
 	});
 }
 //#endregion
 //#region src/components/forms/NumberInput.tsx
-var te = s(function({ value: e, onChange: t, onClear: n, min: r, max: i, step: o, unit: s, placeholder: l, invalid: u = !1, disabled: d = !1, size: f = "md", id: p, name: m, required: h, "aria-label": _, "aria-labelledby": v, "aria-describedby": y, "aria-invalid": b, "aria-required": x, "data-testid": S }, C) {
+var ne = s(function({ value: e, onChange: t, onClear: n, min: r, max: i, step: o, unit: s, placeholder: l, invalid: u = !1, disabled: d = !1, size: f = "md", id: p, name: m, required: h, "aria-label": _, "aria-labelledby": v, "aria-describedby": y, "aria-invalid": b, "aria-required": x, "data-testid": S }, C) {
 	let w = c((e) => {
 		let t = e;
 		return r !== void 0 && t < r && (t = r), i !== void 0 && t > i && (t = i), t;
@@ -728,7 +728,7 @@ var te = s(function({ value: e, onChange: t, onClear: n, min: r, max: i, step: o
 });
 //#endregion
 //#region src/components/forms/RadioGroup.tsx
-function ne({ name: e, value: n, onChange: r, options: i, disabled: a = !1, orientation: o = "vertical", "data-testid": s }) {
+function re({ name: e, value: n, onChange: r, options: i, disabled: a = !1, orientation: o = "vertical", "data-testid": s }) {
 	let c = d();
 	return /* @__PURE__ */ g("div", {
 		role: "radiogroup",
@@ -776,4 +776,58 @@ function ne({ name: e, value: n, onChange: r, options: i, disabled: a = !1, orie
 	});
 }
 //#endregion
-export { G as a, L as c, M as d, k as f, X as i, P as l, x as m, te as n, H as o, b as p, ee as r, z as s, ne as t, A as u };
+//#region src/components/shared/Divider.tsx
+var ie = {
+	none: "my-0",
+	sm: "my-2",
+	md: "my-4",
+	lg: "my-6"
+};
+function $({ label: e, spacing: n = "md", className: r, "data-testid": i }) {
+	let a = ie[n];
+	return e == null ? /* @__PURE__ */ g("hr", {
+		className: t("border-0 border-t border-border", a, r),
+		...i ? { "data-testid": i } : {}
+	}) : /* @__PURE__ */ _("div", {
+		role: "separator",
+		"aria-label": typeof e == "string" ? e : void 0,
+		className: t("flex items-center gap-3", a, r),
+		...i ? { "data-testid": i } : {},
+		children: [
+			/* @__PURE__ */ g("span", { className: "h-px flex-1 bg-border" }),
+			/* @__PURE__ */ g("span", {
+				className: "text-[10px] font-semibold uppercase tracking-wide text-text-tertiary whitespace-nowrap",
+				children: e
+			}),
+			/* @__PURE__ */ g("span", { className: "h-px flex-1 bg-border" })
+		]
+	});
+}
+//#endregion
+//#region src/components/shared/DetailSection.tsx
+function ae({ title: e, hint: n, actions: r, first: i = !1, children: a, className: o, "data-testid": s }) {
+	return /* @__PURE__ */ _("section", {
+		className: t(o),
+		...s ? { "data-testid": s } : {},
+		children: [
+			!i && /* @__PURE__ */ g($, { spacing: "md" }),
+			/* @__PURE__ */ _("div", {
+				className: "mb-2 flex items-baseline gap-2",
+				children: [
+					/* @__PURE__ */ g("h3", {
+						className: "m-0 text-[10px] font-semibold uppercase tracking-wide text-text-tertiary",
+						children: e
+					}),
+					n != null && /* @__PURE__ */ g("span", {
+						className: "min-w-0 truncate text-[11px] text-text-tertiary",
+						children: n
+					}),
+					r != null && /* @__PURE__ */ _(h, { children: [/* @__PURE__ */ g("span", { className: "flex-1" }), r] })
+				]
+			}),
+			a
+		]
+	});
+}
+//#endregion
+export { te as a, H as c, P as d, A as f, x as g, b as h, ne as i, z as l, k as m, $ as n, X as o, M as p, re as r, G as s, ae as t, L as u };
