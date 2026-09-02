@@ -40,6 +40,21 @@ export interface VideoDockSlotProps {
    * must not light up under a drag and promise otherwise.
    */
   canAccept: boolean;
+  /**
+   * Identifies this slot to a POINTER drag.
+   *
+   * HTML5 drag-and-drop is not the only way the widget arrives. While the
+   * widget floats it is repositioned by a mousedown/mousemove drag, and that
+   * gesture calls `preventDefault()` on mousedown — which is precisely what
+   * stops a native `dragstart` firing on the same element. So a user dragging
+   * the widget by its body generates no `drop` event here, ever, no matter how
+   * accurately they land on this box.
+   *
+   * Publishing the id in the DOM lets the free-drag hit-test for slots on
+   * mouseup and dock without a DataTransfer. Omit it and this slot is only
+   * reachable by the HTML5 path.
+   */
+  dockId?: string;
   /** Names the region for screen readers and labels the dashed prompt. */
   label?: string;
   /** Prompt text inside the empty affordance. */
@@ -71,6 +86,7 @@ function PopOutIcon() {
 export default function VideoDockSlot({
   docked,
   canAccept,
+  dockId,
   label = 'Video dock',
   hint = 'Drop the call here to read alongside it',
   undockLabel = 'Pop video back out',
@@ -118,6 +134,9 @@ export default function VideoDockSlot({
       data-testid={testId}
       data-docked={String(docked)}
       data-drag-over={String(dragOver)}
+      // Only advertised while the slot can actually take the video, so a
+      // pointer-drag hit-test cannot land on a slot that would refuse it.
+      data-call-dock-target={canAccept && dockId ? dockId : undefined}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -128,6 +147,11 @@ export default function VideoDockSlot({
         // glowing in the gutter of a dark page.
         'bg-surface',
         dragOver ? 'border-primary' : 'border-border',
+        // The pointer-drag equivalent of `dragOver`. Set imperatively by the
+        // dragging widget rather than through state: the widget is not this
+        // component's parent (it is portaled), so there is no render path
+        // between "cursor is over you" and here.
+        'data-[pointer-over=true]:border-primary',
         className,
       )}
     >

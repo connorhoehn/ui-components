@@ -682,7 +682,48 @@ function MinimizedPill({
 
 type SnapCorner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
-function useDrag(enabled: boolean) {
+/**
+ * Finds the dock slot the floating widget is currently over, by area of
+ * overlap.
+ *
+ * Overlap rather than cursor position because the user grabs the widget by its
+ * header: with a 288px-tall card the cursor sits well above the box the eye is
+ * aiming at, and a cursor hit-test would refuse drops that visually landed
+ * dead centre. Whatever the widget covers most is what the user meant.
+ */
+function findDockUnder(widget: HTMLElement): { id: string; el: HTMLElement } | null {
+  const rect = widget.getBoundingClientRect();
+  let best: { id: string; el: HTMLElement; area: number } | null = null;
+
+  for (const el of document.querySelectorAll<HTMLElement>('[data-call-dock-target]')) {
+    const id = el.dataset.callDockTarget;
+    if (!id) continue;
+    const r = el.getBoundingClientRect();
+    const w = Math.min(rect.right, r.right) - Math.max(rect.left, r.left);
+    const h = Math.min(rect.bottom, r.bottom) - Math.max(rect.top, r.top);
+    if (w <= 0 || h <= 0) continue;
+    const area = w * h;
+    // Ignore a grazing corner: docking is a big, deliberate move and should
+    // not fire because the widget was parked slightly overlapping the gutter.
+    if (area < r.width * r.height * 0.25) continue;
+    if (!best || area > best.area) best = { id, el, area };
+  }
+
+  return best ? { id: best.id, el: best.el } : null;
+}
+
+/**
+ * @param onDockOver Called on every drag frame with the slot currently under
+ *   the widget (or null), so the slot can light up mid-drag.
+ * @param onDockDrop Called on release over a slot. Returning true means the
+ *   drop was taken and the widget should stop free-dragging rather than snap
+ *   to a corner.
+ */
+function useDrag(
+  enabled: boolean,
+  onDockOver?: (id: string | null) => void,
+  onDockDrop?: (id: string) => boolean,
+) {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -775,6 +816,15 @@ function useDrag(enabled: boolean) {
 
   const snapToCornerRef = useRef(snapToCorner);
   snapToCornerRef.current = snapToCorner;
+  // The listeners below are bound once (deps: [enabled]); read the callbacks
+  // through refs so a re-render does not leave the drag calling stale ones.
+  const resetOffsetRef = useRef(resetOffset);
+  resetOffsetRef.current = resetOffset;
+  const onDockOverRef = useRef(onDockOver);
+  onDockOverRef.current = onDockOver;
+  const onDockDropRef = useRef(onDockDrop);
+  onDockDropRef.current = onDockDrop;
+  const hoveredDockRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
@@ -785,6 +835,14 @@ function useDrag(enabled: boolean) {
         x: startOffset.current.x + (e.clientX - startPos.current.x),
         y: startOffset.current.y + (e.clientY - startPos.current.y),
       });
+
+      const el = widgetRef.current;
+      const over = el ? findDockUnder(el) : null;
+      const id = over?.id ?? null;
+      if (id !== hoveredDockRef.current) {
+        hoveredDockRef.current = id;
+        onDockOverRef.current?.(id);
+      }
     };
 
     const handleMouseUp = () => {
@@ -792,9 +850,25 @@ function useDrag(enabled: boolean) {
       dragging.current = false;
       setIsDragging(false);
 
-      // Auto-snap if released near a corner (within 80px)
       const el = widgetRef.current;
       if (!el) return;
+
+      // Docking beats corner-snapping: the gutter slot sits near the page edge,
+      // so a drop onto it is also "near a corner", and snapping first would
+      // yank the widget away from the box the user just aimed at.
+      const over = findDockUnder(el);
+      if (hoveredDockRef.current !== null) {
+        hoveredDockRef.current = null;
+        onDockOverRef.current?.(null);
+      }
+      if (over && onDockDropRef.current?.(over.id)) {
+        // The widget is about to be portaled into the slot, where a leftover
+        // free-drag offset would push it back out of its own frame.
+        resetOffsetRef.current();
+        return;
+      }
+
+      // Auto-snap if released near a corner (within 80px)
       const container = el.offsetParent as HTMLElement | null;
       const snapThreshold = 80;
 
@@ -972,7 +1046,27 @@ export function CallWidget({
     [dockCallId, activeDockId],
   );
 
-  const { offset, handleMouseDown, resetOffset, snapToCorner, isDragging, isAnimating, hasMoved, widgetRef } = useDrag(freeDragEnabled);
+  // Light up whichever slot the widget is currently covering. The slots are
+  // elsewhere in the tree (this widget is portaled), so the flag is written to
+  // the DOM directly and read back by a `data-[pointer-over=true]` variant.
+  const handleDockOver = useCallback((id: string | null) => {
+    for (const el of document.querySelectorAll<HTMLElement>('[data-call-dock-target]')) {
+      if (id && el.dataset.callDockTarget === id) el.dataset.pointerOver = 'true';
+      else delete el.dataset.pointerOver;
+    }
+  }, []);
+
+  const handlePointerDock = useCallback(
+    (id: string) => {
+      if (!onDockTo) return false;
+      onDockTo(id);
+      return true;
+    },
+    [onDockTo],
+  );
+
+  const { offset, handleMouseDown, resetOffset, snapToCorner, isDragging, isAnimating, hasMoved, widgetRef } =
+    useDrag(freeDragEnabled, handleDockOver, handlePointerDock);
   // Filter undefined values so `data-x="undefined"` never leaks.
   const extraDataAttrs: Record<string, string | number> = {};
   if (dataAttrs) {
@@ -1127,7 +1221,7 @@ export function CallWidget({
                     onMouseDown={(e) => e.stopPropagation()}
                     // No onDragStart of its own — the event bubbles to the
                     // header, which is the single place the payload is written.
-                    className="flex h-4 w-3 shrink-0 cursor-grab items-center justify-center text-white/30 hover:text-white/70 active:cursor-grabbing transition-colors"
+                    className="flex h-5 w-5 shrink-0 cursor-grab items-center justify-center rounded text-white/60 hover:bg-white/10 hover:text-white active:cursor-grabbing transition-colors"
                     title="Drag the call into the page"
                     data-testid="call-dock-drag-handle"
                     aria-hidden

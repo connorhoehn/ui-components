@@ -1,4 +1,4 @@
-import { n as e, t } from "./useWebSocket-C9oAM0NL.js";
+import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Button-wU9TwJvB.js";
 import { t as i } from "./Card-DWAlG4MZ.js";
@@ -10,10 +10,10 @@ import { t as l } from "./Avatar-BzicCOft.js";
 import { t as u } from "./InlinePopover-DFdI8hw1.js";
 import { t as d } from "./Select-CqVokE2v.js";
 import { t as f } from "./activationKey-CjbL3LUv.js";
-import { a as p, n as m, r as h } from "./renderers-C1nbO0PW.js";
+import { a as p, n as m, r as h } from "./renderers-aONC4W_Z.js";
 import { o as g, s as _, t as v } from "./VerdictChip-CKnsnKYd.js";
 import { n as y, t as b } from "./TiptapEditor-CUZ_20iC.js";
-import { A as x, C as S, D as C, E as w, O as T, S as E, T as D, _ as O, a as ee, b as k, c as A, d as j, f as M, g as N, h as P, i as F, k as I, l as L, m as R, o as te, p as z, r as B, s as ne, t as V, u as H, v as U, w as re, x as W, y as ie } from "./DocumentEditorPage-De16IUjY.js";
+import { A as x, C as S, D as C, E as w, O as T, S as E, T as D, _ as O, a as ee, b as k, c as A, d as j, f as M, g as N, h as P, i as F, k as I, l as L, m as R, o as te, p as z, r as B, s as ne, t as V, u as H, v as U, w as re, x as W, y as ie } from "./DocumentEditorPage-DRMfcLtj.js";
 import { i as ae, n as oe, r as se, t as ce } from "./CanvasDocumentView-C4wtx2Iw.js";
 import { useCallback as G, useEffect as K, useImperativeHandle as le, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
@@ -1381,50 +1381,51 @@ function Ze() {
 		})]
 	});
 }
-function Qe({ docked: e, canAccept: t, label: r = "Video dock", hint: i = "Drop the call here to read alongside it", undockLabel: o = "Pop video back out", onRequestUndock: s, onDragOver: c, onDragLeave: l, onDrop: u, className: d, children: f, "data-testid": p = "video-dock-slot" }) {
-	let [m, h] = Y(!1), g = G((e) => {
-		e.preventDefault(), t && h(!0), c?.(e);
-	}, [t, c]), _ = G((e) => {
+function Qe({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: o = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, onDragOver: l, onDragLeave: u, onDrop: d, className: f, children: p, "data-testid": m = "video-dock-slot" }) {
+	let [h, g] = Y(!1), _ = G((e) => {
+		e.preventDefault(), t && g(!0), l?.(e);
+	}, [t, l]), v = G((e) => {
 		let t = e.relatedTarget;
-		t instanceof Node && e.currentTarget.contains(t) || (h(!1), l?.(e));
-	}, [l]), v = G((e) => {
-		e.preventDefault(), h(!1), t && u?.(e);
-	}, [t, u]);
+		t instanceof Node && e.currentTarget.contains(t) || (g(!1), u?.(e));
+	}, [u]), y = G((e) => {
+		e.preventDefault(), g(!1), t && d?.(e);
+	}, [t, d]);
 	return !e && !t ? null : /* @__PURE__ */ Z("div", {
-		"data-testid": p,
+		"data-testid": m,
 		"data-docked": String(e),
-		"data-drag-over": String(m),
-		onDragOver: g,
-		onDragLeave: _,
-		onDrop: v,
-		className: n("w-full overflow-hidden rounded-lg border transition-colors duration-150", "bg-surface", m ? "border-primary" : "border-border", d),
+		"data-drag-over": String(h),
+		"data-call-dock-target": t && r ? r : void 0,
+		onDragOver: _,
+		onDragLeave: v,
+		onDrop: y,
+		className: n("w-full overflow-hidden rounded-lg border transition-colors duration-150", "bg-surface", h ? "border-primary" : "border-border", "data-[pointer-over=true]:border-primary", f),
 		children: e ? /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Q("div", {
 			className: "flex items-center justify-between gap-2 border-b border-border px-2 py-1",
 			children: [/* @__PURE__ */ Z("span", {
 				className: "truncate text-xs font-medium text-text-secondary",
-				children: r
-			}), s && /* @__PURE__ */ Z(a, {
-				"aria-label": o,
+				children: i
+			}), c && /* @__PURE__ */ Z(a, {
+				"aria-label": s,
 				size: "sm",
-				onClick: s,
-				"data-testid": `${p}-undock`,
+				onClick: c,
+				"data-testid": `${m}-undock`,
 				icon: /* @__PURE__ */ Z(Ze, {})
 			})]
 		}), /* @__PURE__ */ Z("div", {
-			"data-testid": `${p}-content`,
+			"data-testid": `${m}-content`,
 			className: "aspect-video w-full",
-			children: f
+			children: p
 		})] }) : /* @__PURE__ */ Q("div", {
 			role: "region",
-			"aria-label": r,
-			"data-testid": `${p}-dropzone`,
-			className: n("flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", m ? "border-primary bg-surface-hover" : "border-border"),
+			"aria-label": i,
+			"data-testid": `${m}-dropzone`,
+			className: n("flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", h ? "border-primary bg-surface-hover" : "border-border"),
 			children: [/* @__PURE__ */ Z("span", {
 				className: "text-xs font-medium text-text-secondary",
-				children: r
+				children: i
 			}), /* @__PURE__ */ Z("span", {
 				className: "text-xs text-text-tertiary",
-				children: i
+				children: o
 			})]
 		})
 	});

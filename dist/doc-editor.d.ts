@@ -1277,7 +1277,7 @@ declare interface VideoCallPanelProps {
     onCallEnd?: () => void;
 }
 
-export declare function VideoDockSlot({ docked, canAccept, label, hint, undockLabel, onRequestUndock, onDragOver, onDragLeave, onDrop, className, children, 'data-testid': testId, }: VideoDockSlotProps): JSX.Element | null;
+export declare function VideoDockSlot({ docked, canAccept, dockId, label, hint, undockLabel, onRequestUndock, onDragOver, onDragLeave, onDrop, className, children, 'data-testid': testId, }: VideoDockSlotProps): JSX.Element | null;
 
 export declare interface VideoDockSlotProps {
     /** True when the caller has portaled the live widget into `children`. */
@@ -1288,6 +1288,21 @@ export declare interface VideoDockSlotProps {
      * must not light up under a drag and promise otherwise.
      */
     canAccept: boolean;
+    /**
+     * Identifies this slot to a POINTER drag.
+     *
+     * HTML5 drag-and-drop is not the only way the widget arrives. While the
+     * widget floats it is repositioned by a mousedown/mousemove drag, and that
+     * gesture calls `preventDefault()` on mousedown — which is precisely what
+     * stops a native `dragstart` firing on the same element. So a user dragging
+     * the widget by its body generates no `drop` event here, ever, no matter how
+     * accurately they land on this box.
+     *
+     * Publishing the id in the DOM lets the free-drag hit-test for slots on
+     * mouseup and dock without a DataTransfer. Omit it and this slot is only
+     * reachable by the HTML5 path.
+     */
+    dockId?: string;
     /** Names the region for screen readers and labels the dashed prompt. */
     label?: string;
     /** Prompt text inside the empty affordance. */
