@@ -26,6 +26,8 @@ export { StepTree } from './steps/StepTree';
 export type { StepTreeProps } from './steps/StepTree';
 export { StepThread } from './steps/StepThread';
 export type { StepThreadProps } from './steps/StepThread';
+export { StepAttempts } from './steps/StepAttempts';
+export type { StepAttemptsProps } from './steps/StepAttempts';
 export { StepSection } from './steps/StepSection';
 export type { StepSectionProps } from './steps/StepSection';
 export { default as ExecutorLog } from './ExecutorLog';

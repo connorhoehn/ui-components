@@ -8,6 +8,8 @@ export interface StepTreeProps {
   edges?: PipelineEdge[];
   onRetryFromStep?: (stepId: string) => void;
   onResumeFromStep?: (stepId: string) => void;
+  /** Forwarded to every step: click-through for the artifacts a step produced. */
+  onArtifactClick?: (imageId: string) => void;
 }
 
 export interface StepTreeNode {
@@ -44,7 +46,7 @@ function stepStartMs(step: StepExecution): number {
   return Number.POSITIVE_INFINITY;
 }
 
-export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep }: StepTreeProps) {
+export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep, onArtifactClick }: StepTreeProps) {
   const tree = useMemo(() => {
     const sorted = Object.entries(steps).sort(([, a], [, b]) => {
       const aT = stepStartMs(a);
@@ -176,6 +178,7 @@ export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeF
       return (
         <React.Fragment key={node.stepId}>
           <StepThread
+            onArtifactClick={onArtifactClick}
             stepId={node.stepId}
             step={node.step}
             index={thisIdx}

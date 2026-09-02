@@ -6,6 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StepThread } from './StepThread';
+import { PipelineEditorServicesProvider } from '../services/PipelineEditorServicesContext';
 import type { AgentStepOutput, StepExecution } from '../../../types/pipeline';
 
 const meta = {
@@ -257,5 +258,173 @@ export const WithActions: Story = {
     }),
     onRetryFromStep: (stepId: string) => console.log('retry from', stepId),
     onResumeFromStep: (stepId: string) => console.log('resume from', stepId),
+  },
+};
+
+// ── Produced artifacts ──────────────────────────────────────────────────────
+//
+// A step that emitted `pipeline:step:image:produced` events carries thumbnails
+// of what it made, and each one is a link through to the full artifact.
+//
+// Resolving an imageId to a URL is the HOST's job — the library has no idea
+// where your assets live — so this section only renders inside a
+// <PipelineEditorServicesProvider>. That is exactly why no other story here
+// shows it, and why a run-detail page that forgets the provider silently has
+// no thumbnails. The fixture below resolves to inline SVG so the story works
+// with no server behind it.
+function swatch(label: string, bg: string): string {
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="192">` +
+    `<rect width="256" height="192" fill="${bg}"/>` +
+    `<text x="128" y="100" font-family="monospace" font-size="20" fill="#fff" ` +
+    `text-anchor="middle">${label}</text></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+const ARTIFACT_URLS: Record<string, string> = {
+  'img-source-01': swatch('source', '#475569'),
+  'img-crop-02': swatch('crop', '#0f766e'),
+  'img-upscale-03': swatch('upscale', '#7c3aed'),
+};
+
+export const ProducedArtifacts: Story = {
+  name: 'Produced artifacts (clickable)',
+  decorators: [
+    (Story) => (
+      <PipelineEditorServicesProvider
+        services={{ getImageUrl: (id: string) => ARTIFACT_URLS[id] ?? swatch('missing', '#b91c1c') }}
+      >
+        <Story />
+      </PipelineEditorServicesProvider>
+    ),
+  ],
+  args: {
+    stepId: 'image-crop-7',
+    index: 3,
+    nodeType: 'image:crop',
+    nodeConfig: { type: 'image:crop', strategy: 'attention', aspectRatio: '1:1' },
+    step: makeStep({
+      nodeId: 'image-crop-7',
+      durationMs: 1840,
+      images: [
+        { imageId: 'img-source-01', width: 2048, height: 1536, mimeType: 'image/jpeg' },
+        {
+          imageId: 'img-crop-02',
+          width: 1024,
+          height: 1024,
+          mimeType: 'image/jpeg',
+          bbox: { x: 512, y: 256, width: 1024, height: 1024 },
+        },
+        { imageId: 'img-upscale-03', width: 4096, height: 4096, mimeType: 'image/png' },
+      ],
+      output: { imageId: 'img-upscale-03', bytes: 8_412_204 },
+    }),
+  },
+};
+
+export const ProducedArtifactsWithHostRoute: Story = {
+  name: 'Produced artifacts (host handles the click)',
+  decorators: ProducedArtifacts.decorators,
+  args: {
+    ...ProducedArtifacts.args,
+    // With onArtifactClick the thumbnail becomes a button and the host routes
+    // wherever it keeps artifacts — its lineage graph, an asset page. Without
+    // it (the story above) the thumbnail is a plain link to the resolved URL,
+    // so an artifact is always reachable even from a host that wired nothing.
+    onArtifactClick: (imageId: string) => {
+      // eslint-disable-next-line no-console
+      console.log('[story] navigate to artifact', imageId);
+    },
+  },
+};
+
+// ── Retries ─────────────────────────────────────────────────────────────────
+//
+// A step that eventually succeeded looks identical to one that worked first
+// time — same green chip, same duration — unless the retry history is shown.
+// The collapsed row carries an ×N badge; the panel carries the per-attempt
+// record, including WHY each failure happened and how long the backoff was.
+export const RetriedThenSucceeded: Story = {
+  name: 'Retried, then succeeded',
+  args: {
+    stepId: 'llm-summarize-2',
+    index: 1,
+    nodeType: 'llm',
+    nodeConfig: { type: 'llm', provider: 'bedrock', model: 'claude-sonnet-4-6' },
+    step: makeStep({
+      nodeId: 'llm-summarize-2',
+      durationMs: 9120,
+      output: { response: 'A three-sentence summary of the document.' },
+      attempts: [
+        {
+          attemptNumber: 1,
+          startedAt: '2026-08-25T14:03:00.000Z',
+          completedAt: '2026-08-25T14:03:02.400Z',
+          durationMs: 2400,
+          error: 'upstream connect error: connection timed out',
+          errorCategory: 'TimeoutError',
+          retryAfterMs: 2000,
+          idempotencyKey: 'run-88:llm-summarize-2:1',
+        },
+        {
+          attemptNumber: 2,
+          startedAt: '2026-08-25T14:03:04.400Z',
+          completedAt: '2026-08-25T14:03:05.100Z',
+          durationMs: 700,
+          error: 'bedrock returned 429 ThrottlingException',
+          errorCategory: 'LLMError',
+          retryAfterMs: 4000,
+          idempotencyKey: 'run-88:llm-summarize-2:2',
+        },
+        {
+          attemptNumber: 3,
+          startedAt: '2026-08-25T14:03:09.100Z',
+          completedAt: '2026-08-25T14:03:09.120Z',
+          durationMs: 2020,
+          idempotencyKey: 'run-88:llm-summarize-2:3',
+        },
+      ],
+    }),
+  },
+};
+
+export const RetriesExhausted: Story = {
+  name: 'Retries exhausted',
+  args: {
+    ...RetriedThenSucceeded.args,
+    step: makeStep({
+      nodeId: 'llm-summarize-2',
+      status: 'failed',
+      durationMs: 7300,
+      error: 'bedrock returned 429 ThrottlingException',
+      attempts: [
+        {
+          attemptNumber: 1,
+          startedAt: '2026-08-25T14:03:00.000Z',
+          durationMs: 2400,
+          error: 'bedrock returned 429 ThrottlingException',
+          errorCategory: 'LLMError',
+          retryAfterMs: 2000,
+          idempotencyKey: 'run-91:llm-summarize-2:1',
+        },
+        {
+          attemptNumber: 2,
+          startedAt: '2026-08-25T14:03:04.400Z',
+          durationMs: 2400,
+          error: 'bedrock returned 429 ThrottlingException',
+          errorCategory: 'LLMError',
+          retryAfterMs: 4000,
+          idempotencyKey: 'run-91:llm-summarize-2:2',
+        },
+        {
+          attemptNumber: 3,
+          startedAt: '2026-08-25T14:03:10.800Z',
+          durationMs: 2500,
+          error: 'bedrock returned 429 ThrottlingException',
+          errorCategory: 'LLMError',
+          idempotencyKey: 'run-91:llm-summarize-2:3',
+        },
+      ],
+    }),
   },
 };

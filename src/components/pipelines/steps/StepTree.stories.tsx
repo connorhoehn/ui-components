@@ -3,6 +3,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StepTree } from './StepTree';
+import { PipelineEditorServicesProvider } from '../services/PipelineEditorServicesContext';
 import type { NodeType, PipelineEdge, StepExecution } from '../../../types/pipeline';
 
 const meta = {
@@ -109,6 +110,109 @@ export const LiveRun: Story = {
       'llm-2': node('llm', { provider: 'bedrock', model: 'claude-sonnet-4-6', streaming: true }),
       'transform-3': node('transform', { language: 'jsonata', expression: '$.bullets' }),
       'action-4': node('action', { actionType: 'http', url: 'https://hooks.example.com/summary' }),
+    },
+  },
+};
+
+// ── An image run, as an operator actually meets it ──────────────────────────
+//
+// The whole point of a run view: every artifact the run produced is reachable
+// from the step that made it, and a step that had to retry says so instead of
+// looking like a clean first-try success.
+//
+// Thumbnails need the host to resolve an imageId to a URL, so the tree is
+// wrapped in <PipelineEditorServicesProvider>. A host that forgets it gets a
+// panel with no artifacts and no error — which is why this story exists.
+function swatch(label: string, bg: string): string {
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="192">` +
+    `<rect width="256" height="192" fill="${bg}"/>` +
+    `<text x="128" y="100" font-family="monospace" font-size="18" fill="#fff" ` +
+    `text-anchor="middle">${label}</text></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+const SWATCHES: Record<string, string> = {
+  'img-src-1': swatch('source', '#475569'),
+  'img-crop-2': swatch('crop', '#0f766e'),
+  'img-up-3': swatch('upscale', '#7c3aed'),
+  'img-wm-4': swatch('watermark', '#b45309'),
+};
+
+export const ArtifactsAndRetries: Story = {
+  name: 'Artifacts + retries',
+  decorators: [
+    (Story) => (
+      <PipelineEditorServicesProvider
+        services={{ getImageUrl: (id: string) => SWATCHES[id] ?? swatch('missing', '#b91c1c') }}
+      >
+        <Story />
+      </PipelineEditorServicesProvider>
+    ),
+  ],
+  args: {
+    onArtifactClick: (imageId: string) => {
+      // eslint-disable-next-line no-console
+      console.log('[story] open artifact', imageId);
+    },
+    steps: {
+      'image-source-1': {
+        ...completed('image-source-1', '2026-08-25T14:03:00.000Z', 120),
+        images: [{ imageId: 'img-src-1', width: 2048, height: 1536, mimeType: 'image/jpeg' }],
+      },
+      'image-crop-2': {
+        ...completed('image-crop-2', '2026-08-25T14:03:00.200Z', 340),
+        images: [
+          {
+            imageId: 'img-crop-2',
+            width: 1024,
+            height: 1024,
+            mimeType: 'image/jpeg',
+            bbox: { x: 512, y: 256, width: 1024, height: 1024 },
+          },
+        ],
+      },
+      // Throttled twice by the upscaler before it went through.
+      'image-upscale-3': {
+        ...completed('image-upscale-3', '2026-08-25T14:03:00.600Z', 9120),
+        images: [{ imageId: 'img-up-3', width: 4096, height: 4096, mimeType: 'image/png' }],
+        attempts: [
+          {
+            attemptNumber: 1,
+            startedAt: '2026-08-25T14:03:00.600Z',
+            durationMs: 2400,
+            error: 'upscaler returned 429: capacity exhausted',
+            errorCategory: 'NetworkError',
+            retryAfterMs: 2000,
+            idempotencyKey: 'run-88:image-upscale-3:1',
+          },
+          {
+            attemptNumber: 2,
+            startedAt: '2026-08-25T14:03:05.000Z',
+            durationMs: 2600,
+            error: 'upscaler returned 429: capacity exhausted',
+            errorCategory: 'NetworkError',
+            retryAfterMs: 4000,
+            idempotencyKey: 'run-88:image-upscale-3:2',
+          },
+          {
+            attemptNumber: 3,
+            startedAt: '2026-08-25T14:03:09.600Z',
+            durationMs: 4120,
+            idempotencyKey: 'run-88:image-upscale-3:3',
+          },
+        ],
+      },
+      'image-watermark-4': {
+        ...completed('image-watermark-4', '2026-08-25T14:03:09.800Z', 210),
+        images: [{ imageId: 'img-wm-4', width: 4096, height: 4096, mimeType: 'image/png' }],
+      },
+    },
+    nodeDataMap: {
+      'image-source-1': node('image:source' as NodeType, { label: 'Upload' }),
+      'image-crop-2': node('image:crop' as NodeType, { strategy: 'attention', aspectRatio: '1:1' }),
+      'image-upscale-3': node('image:upscale' as NodeType, { scale: 4, model: 'real-esrgan' }),
+      'image-watermark-4': node('image:watermark' as NodeType, { text: '© example', position: 'br' }),
     },
   },
 };

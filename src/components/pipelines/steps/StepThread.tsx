@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { cn } from '../../../lib/cn';
 import type { StepExecution } from '../../../types/pipeline';
 import { StepSection } from './StepSection';
+import { StepAttempts } from './StepAttempts';
 import { codeBlockClass, proseBlockClass, thClass, tdClass, eventChipClass } from './stepStyles';
 import { classifyStepOutput } from '../utils/classifyStepOutput';
 import { AgentTraceSection } from './AgentTraceSection';
@@ -18,6 +19,14 @@ export interface StepThreadProps {
   nodeConfig?: Record<string, unknown>;
   onRetryFromStep?: (stepId: string) => void;
   onResumeFromStep?: (stepId: string) => void;
+  /**
+   * Called when the operator clicks a produced artifact. Hosts that own an
+   * artifact route (a lineage graph, an asset page) wire this to navigate
+   * there. Without it the thumbnail is still a link — it opens the resolved
+   * artifact URL in a new tab — because a produced artifact you cannot open
+   * is just a picture of your data.
+   */
+  onArtifactClick?: (imageId: string) => void;
 }
 
 const STATUS_COLOR: Record<string, string> = {
@@ -56,7 +65,7 @@ function visionResultFrom(
   } as VisionResult;
 }
 
-export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep }: StepThreadProps) {
+export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep, onArtifactClick }: StepThreadProps) {
   const [expanded, setExpanded] = useState(false);
   const [copyLabel, setCopyLabel] = useState<'Copy JSON' | 'Copied!'>('Copy JSON');
   // Optional on purpose: a run-detail page is read-only and does not mount the
@@ -135,6 +144,17 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
             {step.durationMs < 1000 ? `${step.durationMs}ms` : `${(step.durationMs / 1000).toFixed(1)}s`}
           </span>
         )}
+        {/* A step that succeeded on its third try looks identical to one that
+            worked first time until you open it. Say so on the row. */}
+        {(step.attempts?.length ?? 0) > 1 && (
+          <span
+            data-testid={`step-attempts-badge-${stepId}`}
+            title={`${step.attempts?.length} attempts`}
+            className="text-[10px] font-semibold font-mono px-1.5 py-px rounded-[3px] bg-warning-bg text-warning-fg shrink-0"
+          >
+            ×{step.attempts?.length}
+          </span>
+        )}
         {llmData && (
           <span className="text-[10px] text-text-tertiary font-mono">
             {llmData.tokensIn + llmData.tokensOut} tok
@@ -208,6 +228,10 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
             </table>
           </StepSection>
 
+          {/* Retry history. Renders itself away when there is nothing to say
+              (a single clean attempt), so no guard is needed here. */}
+          <StepAttempts attempts={step.attempts ?? []} />
+
           <StepSection title="Node Configuration">
             {nodeConfig && Object.keys(nodeConfig).length > 1 ? (
               <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-xs">
@@ -261,14 +285,11 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
                   const bboxLabel = img.bbox
                     ? `[${img.bbox.x},${img.bbox.y} ${img.bbox.width}×${img.bbox.height}]`
                     : `${img.width}×${img.height}`;
-                  return (
-                    <figure
-                      key={img.imageId}
-                      className="m-0 flex flex-col gap-1 w-32"
-                      title={`${img.imageId} — ${bboxLabel}`}
-                    >
+                  const href = imageUrl(img.imageId);
+                  const thumb = (
+                    <>
                       <img
-                        src={imageUrl(img.imageId)}
+                        src={href}
                         alt={`Produced image ${img.imageId}`}
                         loading="lazy"
                         className="w-32 h-24 object-cover rounded border border-border bg-surface-inset block"
@@ -276,6 +297,34 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
                       <figcaption className="font-mono text-[10px] text-text-tertiary overflow-hidden text-ellipsis whitespace-nowrap">
                         {bboxLabel}
                       </figcaption>
+                    </>
+                  );
+                  return (
+                    <figure
+                      key={img.imageId}
+                      className="m-0 w-32"
+                      title={`${img.imageId} — ${bboxLabel}`}
+                    >
+                      {onArtifactClick ? (
+                        <button
+                          type="button"
+                          onClick={() => onArtifactClick(img.imageId)}
+                          data-testid={`step-artifact-${img.imageId}`}
+                          className="flex flex-col gap-1 w-32 p-0 bg-transparent border-none cursor-pointer text-left font-[inherit] hover:opacity-80"
+                        >
+                          {thumb}
+                        </button>
+                      ) : (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noreferrer"
+                          data-testid={`step-artifact-${img.imageId}`}
+                          className="flex flex-col gap-1 w-32 no-underline cursor-pointer hover:opacity-80"
+                        >
+                          {thumb}
+                        </a>
+                      )}
                     </figure>
                   );
                 })}

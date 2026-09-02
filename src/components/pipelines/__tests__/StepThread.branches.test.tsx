@@ -6,6 +6,7 @@
 // test handle the host's Playwright specs bind to, and the optional host image
 // resolver that the produced-images section needs.
 
+import { vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import type { StepExecution } from '../../../types/pipeline';
 import { StepThread } from '../steps/StepThread';
@@ -109,6 +110,38 @@ describe('StepThread — produced images', () => {
     render(<StepThread stepId="s5" step={withImages} index={0} nodeType="image:crop" />);
     expand('s5');
     expect(screen.queryByText(/Produced images/)).not.toBeInTheDocument();
+  });
+
+  it('makes an artifact reachable as a link when the host wires no click handler', () => {
+    render(
+      <PipelineEditorServicesProvider services={{ getImageUrl: (id) => `/api/images/${id}` }}>
+        <StepThread stepId="s7" step={withImages} index={0} nodeType="image:crop" />
+      </PipelineEditorServicesProvider>,
+    );
+    expand('s7');
+    const artifact = screen.getByTestId('step-artifact-img-9');
+    expect(artifact.tagName).toBe('A');
+    expect(artifact).toHaveAttribute('href', '/api/images/img-9');
+  });
+
+  it('routes through the host instead when onArtifactClick is provided', () => {
+    const onArtifactClick = vi.fn();
+    render(
+      <PipelineEditorServicesProvider services={{ getImageUrl: (id) => `/api/images/${id}` }}>
+        <StepThread
+          stepId="s8"
+          step={withImages}
+          index={0}
+          nodeType="image:crop"
+          onArtifactClick={onArtifactClick}
+        />
+      </PipelineEditorServicesProvider>,
+    );
+    expand('s8');
+    const artifact = screen.getByTestId('step-artifact-img-9');
+    expect(artifact.tagName).toBe('BUTTON');
+    fireEvent.click(artifact);
+    expect(onArtifactClick).toHaveBeenCalledWith('img-9');
   });
 
   it('resolves thumbnails through the host resolver when one is mounted', () => {
