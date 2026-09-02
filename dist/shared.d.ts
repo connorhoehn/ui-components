@@ -735,6 +735,21 @@ export declare interface DetailHeaderProps {
     'data-testid'?: string;
 }
 
+export declare function DetailSection({ title, hint, actions, first, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
+
+export declare interface DetailSectionProps {
+    title: string;
+    /** Quiet qualifier beside the title — a count, a state, a caveat. */
+    hint?: ReactNode;
+    /** Right-aligned affordance for this section only. */
+    actions?: ReactNode;
+    /** Suppress the leading rule. Use on the first section of a surface. */
+    first?: boolean;
+    children: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface DiffAnnotation {
     /** Path as it appears in the diff (new side). */
     file: string;
@@ -778,6 +793,19 @@ export declare interface DiffViewerProps {
     className?: string;
     'data-testid'?: string;
 }
+
+export declare function Divider({ label, spacing, className, 'data-testid': testId }: DividerProps): JSX.Element;
+
+export declare interface DividerProps {
+    /** Optional caption sitting on the rule. */
+    label?: ReactNode;
+    /** Vertical margin around the rule. Default `md`. */
+    spacing?: DividerSpacing;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type DividerSpacing = 'none' | 'sm' | 'md' | 'lg';
 
 export declare interface DockedPanelContextValue {
     /** The dock's own header already names the region — bodies should not

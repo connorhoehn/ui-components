@@ -291,3 +291,13 @@ export { SignoffPanel } from './SignoffPanel';
 export type { SignoffPanelProps, SignoffEntry } from './SignoffPanel';
 export { StatStrip } from './StatStrip';
 export type { StatStripProps, StatStripItem } from './StatStrip';
+
+// ── Content segmentation (2026-09) ──
+//
+// Long detail surfaces had no horizontal rule at all — only the vertical
+// ToolbarSeparator — so sections ran together and every drawer hand-rolled its
+// own titled-block markup.
+export { Divider } from './Divider';
+export type { DividerProps, DividerSpacing } from './Divider';
+export { DetailSection } from './DetailSection';
+export type { DetailSectionProps } from './DetailSection';
