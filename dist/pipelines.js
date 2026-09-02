@@ -19809,8 +19809,8 @@ function ed(e) {
 	}
 	return Infinity;
 }
-function td({ steps: e, nodeDataMap: t, edges: n, onRetryFromStep: r, onResumeFromStep: i }) {
-	let a = z(() => {
+function td({ steps: e, nodeDataMap: t, edges: n, onRetryFromStep: r, onResumeFromStep: i, onArtifactClick: a }) {
+	let o = z(() => {
 		let r = Object.entries(e).sort(([, e], [, t]) => {
 			let n = ed(e), r = ed(t);
 			return n === r ? 0 : n < r ? -1 : 1;
@@ -19888,39 +19888,40 @@ function td({ steps: e, nodeDataMap: t, edges: n, onRetryFromStep: r, onResumeFr
 		e,
 		t,
 		n
-	]), o = (e) => {
+	]), s = (e) => {
 		if (t[e]) return t[e];
 		let n = e.lastIndexOf(":");
 		if (n > 0 && /^\d+$/.test(e.slice(n + 1))) return t[e.slice(0, n)];
 	};
-	function s(e, t) {
+	function c(e, t) {
 		let n = t;
 		return e.map((e) => {
-			let t = n++, a = /* @__PURE__ */ new Map();
+			let t = n++, o = /* @__PURE__ */ new Map();
 			for (let t of e.children) {
 				let e = t.branch ?? "default";
-				a.has(e) || a.set(e, []), a.get(e).push(t);
+				o.has(e) || o.set(e, []), o.get(e).push(t);
 			}
 			return /* @__PURE__ */ W(at.Fragment, { children: [/* @__PURE__ */ U($u, {
+				onArtifactClick: a,
 				stepId: e.stepId,
 				step: e.step,
 				index: t,
-				nodeType: o(e.stepId)?.type ?? "unknown",
-				nodeConfig: o(e.stepId)?.data,
+				nodeType: s(e.stepId)?.type ?? "unknown",
+				nodeConfig: s(e.stepId)?.data,
 				onRetryFromStep: r,
 				onResumeFromStep: i
 			}), e.children.length > 0 && /* @__PURE__ */ U("div", {
 				className: "ml-9 pl-5 border-l-2 border-dashed border-border mb-1",
-				children: Array.from(a.entries()).map(([e, t], r) => /* @__PURE__ */ W("div", { children: [/* @__PURE__ */ U("div", {
+				children: Array.from(o.entries()).map(([e, t], r) => /* @__PURE__ */ W("div", { children: [/* @__PURE__ */ U("div", {
 					className: `text-[10px] font-semibold text-text-tertiary uppercase pt-1 pb-0.5 ${r === 0 ? "mt-1" : "mt-2"}`,
 					children: e.replace("-", " ")
-				}), s(t, n)] }, e))
+				}), c(t, n)] }, e))
 			})] }, e.stepId);
 		});
 	}
 	return /* @__PURE__ */ W("div", {
 		className: "relative",
-		children: [/* @__PURE__ */ U("div", { className: "absolute left-[15px] top-6 bottom-6 w-0.5 bg-border rounded-sm" }), s(a, 0)]
+		children: [/* @__PURE__ */ U("div", { className: "absolute left-[15px] top-6 bottom-6 w-0.5 bg-border rounded-sm" }), c(o, 0)]
 	});
 }
 //#endregion

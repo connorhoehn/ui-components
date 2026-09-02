@@ -2574,7 +2574,7 @@ export declare interface StepThreadProps {
     onArtifactClick?: (imageId: string) => void;
 }
 
-export declare function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep }: StepTreeProps): default_2.JSX.Element;
+export declare function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep, onArtifactClick }: StepTreeProps): default_2.JSX.Element;
 
 export declare interface StepTreeProps {
     steps: Record<string, StepExecution>;
@@ -2585,6 +2585,8 @@ export declare interface StepTreeProps {
     edges?: PipelineEdge[];
     onRetryFromStep?: (stepId: string) => void;
     onResumeFromStep?: (stepId: string) => void;
+    /** Forwarded to every step: click-through for the artifacts a step produced. */
+    onArtifactClick?: (imageId: string) => void;
 }
 
 /**
