@@ -1,9 +1,9 @@
 import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Button-wU9TwJvB.js";
-import { t as i } from "./IconButton-C3DMtvSx.js";
-import { t as a } from "./Chip-YhQI5B9P.js";
-import { t as o } from "./EmptyState-ClmWoqCb.js";
+import { t as i } from "./Card-DWAlG4MZ.js";
+import { t as a } from "./IconButton-C3DMtvSx.js";
+import { t as o } from "./Chip-YhQI5B9P.js";
 import { t as s } from "./Input-DLknWXri.js";
 import { t as c } from "./Textarea-Dz4doxTv.js";
 import { t as l } from "./Avatar-BzicCOft.js";
@@ -877,7 +877,7 @@ var Ue = {
 	field: "Field change",
 	prose: "Body text"
 };
-function We({ utterance: e, kind: t, status: i, confidence: o, attachState: c, targetLabel: u, targetReason: d, before: f, after: p, edits: m, rationale: h, draftError: y, author: b, category: x, path: S, locationHint: C, verdict: w, verdictStatus: T = "idle", verdictError: E, revision: D, onRereview: O, onAccept: ee, onReject: k, onRedraft: A, onReattach: j, onConfirmAttachment: M, className: N, "data-testid": P = "proposal-card" }) {
+function We({ utterance: e, kind: t, status: i, confidence: a, attachState: c, targetLabel: u, targetReason: d, before: f, after: p, edits: m, rationale: h, draftError: y, author: b, category: x, path: S, locationHint: C, verdict: w, verdictStatus: T = "idle", verdictError: E, revision: D, onRereview: O, onAccept: ee, onReject: k, onRedraft: A, onReattach: j, onConfirmAttachment: M, className: N, "data-testid": P = "proposal-card" }) {
 	let [F, I] = Y(!1), [L, R] = Y(null), [te, z] = Y(!1), [B, ne] = Y(""), V = i === "applied", H = i === "rejected", U = V || H;
 	async function re() {
 		I(!0), R(null);
@@ -900,7 +900,7 @@ function We({ utterance: e, kind: t, status: i, confidence: o, attachState: c, t
 	return /* @__PURE__ */ Q("div", {
 		"data-testid": P,
 		"data-status": i,
-		"data-confidence": o,
+		"data-confidence": a,
 		className: n("flex flex-col gap-3 rounded-lg border bg-surface p-3", V ? "border-success-border" : "border-border", H && "opacity-60", N),
 		children: [
 			/* @__PURE__ */ Q("div", {
@@ -924,36 +924,36 @@ function We({ utterance: e, kind: t, status: i, confidence: o, attachState: c, t
 						})]
 					}),
 					/* @__PURE__ */ Z("span", { className: "flex-1" }),
-					/* @__PURE__ */ Z(a, {
+					/* @__PURE__ */ Z(o, {
 						tone: "info",
 						size: "sm",
 						uppercase: !0,
 						"data-testid": `${P}-author`,
 						children: "AI proposal"
 					}),
-					/* @__PURE__ */ Z(a, {
-						tone: Ve[o],
+					/* @__PURE__ */ Z(o, {
+						tone: Ve[a],
 						size: "sm",
-						children: Be[o]
+						children: Be[a]
 					}),
-					c === "healed" && /* @__PURE__ */ Z(a, {
+					c === "healed" && /* @__PURE__ */ Z(o, {
 						tone: "caution",
 						size: "sm",
 						"data-testid": `${P}-healed`,
 						children: "Re-found by quote — check this"
 					}),
-					c === "author_only" && /* @__PURE__ */ Z(a, {
+					c === "author_only" && /* @__PURE__ */ Z(o, {
 						tone: "neutral",
 						size: "sm",
 						children: "Only you can see this"
 					}),
-					V && /* @__PURE__ */ Z(a, {
+					V && /* @__PURE__ */ Z(o, {
 						tone: "success",
 						size: "sm",
 						"data-testid": `${P}-applied`,
 						children: "Applied"
 					}),
-					H && /* @__PURE__ */ Z(a, {
+					H && /* @__PURE__ */ Z(o, {
 						tone: "neutral",
 						size: "sm",
 						children: "Rejected"
@@ -1113,120 +1113,115 @@ function We({ utterance: e, kind: t, status: i, confidence: o, attachState: c, t
 	});
 }
 //#endregion
-//#region src/components/doc-editor/WorkItemInbox.tsx
-function Ge({ entry: e, sections: t, onAttach: i, onDismiss: o, testId: s }) {
-	let c = [...e.candidates ?? []].sort((e, t) => t.score - e.score), l = new Set(c.map((e) => e.sectionId)), u = t.filter((e) => !l.has(e.id));
-	return /* @__PURE__ */ Q("li", {
-		className: "flex flex-col gap-2 rounded-lg border border-border bg-surface p-3",
-		"data-testid": `${s}-entry`,
-		"data-item-id": e.itemId,
-		children: [
-			/* @__PURE__ */ Q("div", {
-				className: "flex flex-wrap items-center gap-1.5",
-				children: [/* @__PURE__ */ Z(a, {
-					tone: "neutral",
-					size: "sm",
-					uppercase: !0,
-					children: "Unplaced"
-				}), e.contextSplit && /* @__PURE__ */ Z(a, {
-					tone: "caution",
-					size: "sm",
-					"data-testid": `${s}-split`,
-					children: "The screen moved while you spoke"
-				})]
-			}),
-			/* @__PURE__ */ Q("blockquote", {
-				className: "border-l-2 border-border pl-2 text-sm italic text-text-primary",
-				children: [
-					"“",
-					e.utterance,
-					"”"
-				]
-			}),
-			e.reason && /* @__PURE__ */ Z("p", {
-				className: "text-xs text-text-tertiary",
-				children: e.reason
-			}),
-			c.length > 0 && /* @__PURE__ */ Q("div", {
-				className: "flex flex-col gap-1",
-				children: [/* @__PURE__ */ Z("span", {
-					className: "text-[11px] uppercase tracking-wide text-text-tertiary",
-					children: "Best guesses"
-				}), c.map((t) => /* @__PURE__ */ Q("button", {
-					type: "button",
-					onClick: () => i(e.itemId, t.sectionId),
-					className: n("flex flex-col items-start gap-0.5 rounded border border-border", "bg-surface-inset px-2 py-1.5 text-left transition-colors", "hover:bg-surface-hover cursor-pointer"),
-					"data-testid": `${s}-candidate`,
-					"data-section-id": t.sectionId,
-					children: [/* @__PURE__ */ Z("span", {
-						className: "text-xs font-semibold text-text-primary",
-						children: t.sectionTitle ?? t.sectionId
-					}), /* @__PURE__ */ Z("span", {
-						className: "text-[11px] text-text-tertiary",
-						children: t.reason
+//#region src/components/doc-editor/WorkItemRow.tsx
+function Ge({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: s, reason: c, contextSplit: l, drafting: u = !1, draftError: f, candidates: p, sections: m, onPropose: h, onAttach: g, onDismiss: _, className: v, "data-testid": y = `work-item-${e}` }) {
+	let b = [...p ?? []].sort((e, t) => t.score - e.score), x = new Set(b.map((e) => e.sectionId)), S = m.filter((e) => !x.has(e.id));
+	return /* @__PURE__ */ Z(i, {
+		padding: "sm",
+		className: v,
+		"data-testid": y,
+		"data-item-id": e,
+		children: /* @__PURE__ */ Q("div", {
+			className: "flex flex-col gap-2",
+			children: [
+				/* @__PURE__ */ Q("div", {
+					className: "flex flex-wrap items-center gap-1.5",
+					children: [/* @__PURE__ */ Z(o, {
+						tone: a ? "neutral" : "success",
+						size: "sm",
+						uppercase: !0,
+						children: a ? "Unplaced" : s ?? "Placed"
+					}), l && /* @__PURE__ */ Z(o, {
+						tone: "caution",
+						size: "sm",
+						"data-testid": `${y}-split`,
+						children: "The screen moved while you spoke"
 					})]
-				}, t.sectionId))]
-			}),
-			u.length > 0 && /* @__PURE__ */ Q("label", {
-				className: "flex flex-col gap-1",
-				children: [/* @__PURE__ */ Z("span", {
-					className: "text-[11px] uppercase tracking-wide text-text-tertiary",
-					children: "Or file it under"
-				}), /* @__PURE__ */ Z(d, {
-					size: "sm",
-					defaultValue: "",
-					placeholder: "Choose a section…",
-					options: u.map((e) => ({
-						value: e.id,
-						label: e.title || e.id
-					})),
-					onChange: (t) => {
-						t.target.value && i(e.itemId, t.target.value);
-					},
-					"data-testid": `${s}-select`
-				})]
-			}),
-			/* @__PURE__ */ Z("div", { children: /* @__PURE__ */ Z(r, {
-				size: "sm",
-				variant: "ghost",
-				onClick: () => o(e.itemId),
-				"data-testid": `${s}-dismiss`,
-				children: "Not useful"
-			}) })
-		]
-	});
-}
-function Ke({ entries: e, sections: t, onAttach: r, onDismiss: i, className: a, "data-testid": s = "work-item-inbox" }) {
-	return e.length === 0 ? /* @__PURE__ */ Z("div", {
-		className: a,
-		"data-testid": `${s}-empty`,
-		children: /* @__PURE__ */ Z(o, {
-			title: "Nothing unplaced",
-			body: "Remarks we could not confidently attach to a section will wait here.",
-			testId: `${s}-empty-state`
+				}),
+				/* @__PURE__ */ Q("blockquote", {
+					className: "border-l-2 border-border pl-2 text-sm italic text-text-primary",
+					children: [
+						"“",
+						t,
+						"”"
+					]
+				}),
+				c && /* @__PURE__ */ Z("p", {
+					className: "text-xs text-text-tertiary",
+					children: c
+				}),
+				f && /* @__PURE__ */ Z("div", {
+					className: n("rounded border border-warning-border bg-warning-bg", "px-2 py-1.5 text-xs text-warning-fg"),
+					"data-testid": `${y}-draft-error`,
+					children: f
+				}),
+				/* @__PURE__ */ Q("div", {
+					className: "flex flex-wrap items-center gap-2",
+					children: [/* @__PURE__ */ Z(r, {
+						size: "sm",
+						variant: "primary",
+						disabled: u,
+						onClick: h,
+						"data-testid": `${y}-propose`,
+						children: u ? "Drafting…" : "Draft a change"
+					}), /* @__PURE__ */ Z(r, {
+						size: "sm",
+						variant: "ghost",
+						onClick: _,
+						"data-testid": `${y}-dismiss`,
+						children: "Not useful"
+					})]
+				}),
+				a && b.length > 0 && /* @__PURE__ */ Q("div", {
+					className: "flex flex-col gap-1",
+					children: [/* @__PURE__ */ Z("span", {
+						className: "text-[11px] uppercase tracking-wide text-text-tertiary",
+						children: "Best guesses"
+					}), b.map((e) => /* @__PURE__ */ Q(r, {
+						size: "sm",
+						variant: "secondary",
+						onClick: () => g(e.sectionId),
+						"data-testid": `${y}-candidate`,
+						children: [
+							e.sectionTitle ?? e.sectionId,
+							" — ",
+							e.reason
+						]
+					}, e.sectionId))]
+				}),
+				a && S.length > 0 && /* @__PURE__ */ Q("label", {
+					className: "flex flex-col gap-1",
+					children: [/* @__PURE__ */ Z("span", {
+						className: "text-[11px] uppercase tracking-wide text-text-tertiary",
+						children: "Or file it under"
+					}), /* @__PURE__ */ Z(d, {
+						size: "sm",
+						value: "",
+						placeholder: "Choose a section…",
+						options: S.map((e) => ({
+							value: e.id,
+							label: e.title || e.id
+						})),
+						onChange: (e) => {
+							e.target.value && g(e.target.value);
+						},
+						"data-testid": `${y}-file-under`
+					})]
+				})
+			]
 		})
-	}) : /* @__PURE__ */ Z("ul", {
-		className: n("flex flex-col gap-2", a),
-		"data-testid": s,
-		children: e.map((e) => /* @__PURE__ */ Z(Ge, {
-			entry: e,
-			sections: t,
-			onAttach: r,
-			onDismiss: i,
-			testId: s
-		}, e.itemId))
 	});
 }
 //#endregion
 //#region src/components/doc-editor/CommentGhostPopover.tsx
-var qe = "[data-comment-id]", Je = 240;
-function Ye(e) {
+var Ke = "[data-comment-id]", qe = 240;
+function Je(e) {
 	return typeof CSS < "u" && typeof CSS.escape == "function" ? CSS.escape(e) : e.replace(/["\\]/g, "\\$&");
 }
-function Xe(e) {
+function Ye(e) {
 	return e <= 0 ? "No replies" : e === 1 ? "1 reply" : `${e} replies`;
 }
-function Ze({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: o, onOpenThread: s, onResolve: c, ref: d, "data-testid": f = "comment-ghost" }) {
+function Xe({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: s, onResolve: c, ref: d, "data-testid": f = "comment-ghost" }) {
 	let [p, m] = Y(null), h = J(null), g = J(null), _ = J(null);
 	_.current = p;
 	let v = q(() => {
@@ -1241,7 +1236,7 @@ function Ze({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		b(), m(null);
 	}, [b]), S = G((e, n, r) => {
 		if (b(), !y.current.has(e)) return;
-		let i = n ?? t?.current?.querySelector(`[data-comment-id="${Ye(e)}"]`) ?? null;
+		let i = n ?? t?.current?.querySelector(`[data-comment-id="${Je(e)}"]`) ?? null;
 		i instanceof HTMLElement && (h.current = i, m({
 			id: e,
 			via: r
@@ -1253,11 +1248,11 @@ function Ze({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 	}), [S, x]);
 	let C = J(null), w = p?.id ?? null;
 	K(() => {
-		C.current !== w && (C.current = w, o?.(w));
-	}, [w, o]), K(() => b, [b]), K(() => {
+		C.current !== w && (C.current = w, a?.(w));
+	}, [w, a]), K(() => b, [b]), K(() => {
 		let e = t?.current;
 		if (!e) return;
-		let r = (e) => e instanceof Element ? e.closest(qe) : null, a = (e) => {
+		let r = (e) => e instanceof Element ? e.closest(Ke) : null, a = (e) => {
 			let t = r(e.target), n = t?.getAttribute("data-comment-id");
 			if (!(!t || !n)) {
 				if (_.current?.id === n) {
@@ -1273,7 +1268,7 @@ function Ze({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		}, s = (e) => {
 			i && r(e.target) && (b(), g.current = setTimeout(() => {
 				_.current?.via === "hover" && x();
-			}, Je));
+			}, qe));
 		};
 		return e.addEventListener("click", a), e.addEventListener("mouseover", o), e.addEventListener("mouseout", s), () => {
 			e.removeEventListener("click", a), e.removeEventListener("mouseover", o), e.removeEventListener("mouseout", s);
@@ -1305,7 +1300,7 @@ function Ze({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 			onMouseLeave: () => {
 				b(), g.current = setTimeout(() => {
 					_.current?.via === "hover" && x();
-				}, Je);
+				}, qe);
 			},
 			children: [
 				/* @__PURE__ */ Q("div", {
@@ -1324,7 +1319,7 @@ function Ze({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 							className: "text-[11px] text-text-tertiary",
 							children: k(T.timestamp)
 						}),
-						T.resolved && /* @__PURE__ */ Z(a, {
+						T.resolved && /* @__PURE__ */ Z(o, {
 							tone: "success",
 							size: "xs",
 							children: "Resolved"
@@ -1344,7 +1339,7 @@ function Ze({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 					children: [/* @__PURE__ */ Z("span", {
 						"data-testid": `${f}-replies`,
 						className: "text-[11px] text-text-tertiary",
-						children: Xe(T.replyCount ?? 0)
+						children: Ye(T.replyCount ?? 0)
 					}), /* @__PURE__ */ Q("span", {
 						className: "flex gap-1.5",
 						children: [s && /* @__PURE__ */ Z(r, {
@@ -1368,7 +1363,7 @@ function Ze({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 }
 //#endregion
 //#region src/components/doc-editor/VideoDockSlot.tsx
-function Qe() {
+function Ze() {
 	return /* @__PURE__ */ Q("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-4 w-4",
@@ -1386,7 +1381,7 @@ function Qe() {
 		})]
 	});
 }
-function $e({ docked: e, canAccept: t, label: r = "Video dock", hint: a = "Drop the call here to read alongside it", undockLabel: o = "Pop video back out", onRequestUndock: s, onDragOver: c, onDragLeave: l, onDrop: u, className: d, children: f, "data-testid": p = "video-dock-slot" }) {
+function Qe({ docked: e, canAccept: t, label: r = "Video dock", hint: i = "Drop the call here to read alongside it", undockLabel: o = "Pop video back out", onRequestUndock: s, onDragOver: c, onDragLeave: l, onDrop: u, className: d, children: f, "data-testid": p = "video-dock-slot" }) {
 	let [m, h] = Y(!1), g = G((e) => {
 		e.preventDefault(), t && h(!0), c?.(e);
 	}, [t, c]), _ = G((e) => {
@@ -1408,12 +1403,12 @@ function $e({ docked: e, canAccept: t, label: r = "Video dock", hint: a = "Drop 
 			children: [/* @__PURE__ */ Z("span", {
 				className: "truncate text-xs font-medium text-text-secondary",
 				children: r
-			}), s && /* @__PURE__ */ Z(i, {
+			}), s && /* @__PURE__ */ Z(a, {
 				"aria-label": o,
 				size: "sm",
 				onClick: s,
 				"data-testid": `${p}-undock`,
-				icon: /* @__PURE__ */ Z(Qe, {})
+				icon: /* @__PURE__ */ Z(Ze, {})
 			})]
 		}), /* @__PURE__ */ Z("div", {
 			"data-testid": `${p}-content`,
@@ -1429,10 +1424,10 @@ function $e({ docked: e, canAccept: t, label: r = "Video dock", hint: a = "Drop 
 				children: r
 			}), /* @__PURE__ */ Z("span", {
 				className: "text-xs text-text-tertiary",
-				children: a
+				children: i
 			})]
 		})
 	});
 }
 //#endregion
-export { Ne as AckMode, L as ActionItemsCard, ze as ActivityFeed, E as AttachmentsPanel, ce as CanvasDocumentView, Me as ChunkViewer, Ze as CommentGhostPopover, O as CommentThreadNode, ne as DiffViewer, V as DocumentEditorPage, oe as DocumentGutter, C as DocumentHeader, ve as DocumentListPage, ae as DocumentToolbar, y as EditorToolbar, M as ExecutiveSummaryCard, w as FollowModeBar, z as HeaderBanner, H as KeyDecisionsCard, W as MentionDropdown, ee as MyMentionsPanel, p as NewDocumentModal, T as ParticipantAvatars, We as ProposalCard, A as ReaderMode, P as ReviewMode, Ee as ReviewProgress, Ae as ReviewableItem, re as SectionBlock, N as SectionComments, S as SectionList, j as SectionSummariesCard, Ce as StandaloneTiptap, B as TableOfContents, h as TaskItemRow, m as TaskList, b as TiptapEditor, te as VersionHistoryPanel, D as VideoCallPanel, $e as VideoDockSlot, F as VideoHistoryPanel, Ke as WorkItemInbox, ye as clientIdForUser, U as countAllComments, R as generateSummaryBullets, ie as getInitials, k as relativeTime, Xe as replyLabel, se as stackOffsets, x as useDocumentActions, be as useFollowCursor, I as useSidebarPanels };
+export { Ne as AckMode, L as ActionItemsCard, ze as ActivityFeed, E as AttachmentsPanel, ce as CanvasDocumentView, Me as ChunkViewer, Xe as CommentGhostPopover, O as CommentThreadNode, ne as DiffViewer, V as DocumentEditorPage, oe as DocumentGutter, C as DocumentHeader, ve as DocumentListPage, ae as DocumentToolbar, y as EditorToolbar, M as ExecutiveSummaryCard, w as FollowModeBar, z as HeaderBanner, H as KeyDecisionsCard, W as MentionDropdown, ee as MyMentionsPanel, p as NewDocumentModal, T as ParticipantAvatars, We as ProposalCard, A as ReaderMode, P as ReviewMode, Ee as ReviewProgress, Ae as ReviewableItem, re as SectionBlock, N as SectionComments, S as SectionList, j as SectionSummariesCard, Ce as StandaloneTiptap, B as TableOfContents, h as TaskItemRow, m as TaskList, b as TiptapEditor, te as VersionHistoryPanel, D as VideoCallPanel, Qe as VideoDockSlot, F as VideoHistoryPanel, Ge as WorkItemRow, ye as clientIdForUser, U as countAllComments, R as generateSummaryBullets, ie as getInitials, k as relativeTime, Ye as replyLabel, se as stackOffsets, x as useDocumentActions, be as useFollowCursor, I as useSidebarPanels };

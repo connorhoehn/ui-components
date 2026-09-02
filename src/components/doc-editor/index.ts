@@ -53,12 +53,11 @@ export type {
   ProposalAttachState,
   ProposalKind,
 } from './ProposalCard';
-export { WorkItemInbox } from './WorkItemInbox';
-export type {
-  WorkItemInboxProps,
-  WorkItemInboxEntry,
-  WorkItemCandidate,
-} from './WorkItemInbox';
+// The PRE-proposal half of that loop: a remark that has not been drafted yet.
+// One row for placed and unplaced alike — splitting them is what dropped the
+// draft action from document-level remarks once already. See WorkItemRow.
+export { WorkItemRow } from './WorkItemRow';
+export type { WorkItemRowProps, WorkItemCandidate } from './WorkItemRow';
 
 export { default as CanvasDocumentView } from './CanvasDocumentView';
 export type {
