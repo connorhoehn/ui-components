@@ -6,6 +6,10 @@ export { default as NodesPage } from './NodesPage';
 export type { NodesPageProps } from './NodesPage';
 export { default as DashboardKPIStrip } from './components/DashboardKPIStrip';
 export { default as MetricTimeSeriesPanel } from './components/MetricTimeSeriesPanel';
+// MetricsGraph — a titled card of labelled sparklines. It was built, storied
+// and tested but never exported, so no host could use it.
+export { default as MetricsGraph } from './components/MetricsGraph';
+export type { MetricsGraphProps, MetricsGraphSeries } from './components/MetricsGraph';
 export type { MetricTimeSeriesPanelProps } from './components/MetricTimeSeriesPanel';
 export { default as AlertList, AlertItem } from './components/AlertList';
 export type { AlertListProps, AlertListEntry } from './components/AlertList';

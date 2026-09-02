@@ -267,4 +267,62 @@ describe('DataTable', () => {
       'Page 1 of 2',
     );
   });
+
+  it('is unstriped by default', () => {
+    const { container } = render(
+      <DataTable
+        data={[{ id: 'a' }, { id: 'b' }]}
+        columns={[{ key: 'id', header: 'ID' }]}
+        keyField={(r) => r.id}
+      />,
+    );
+    for (const tr of container.querySelectorAll('tbody tr')) {
+      expect(tr.className).not.toContain('bg-surface-inset');
+    }
+  });
+
+  it('striped tints the ODD rows only, so the table opens on the plain surface', () => {
+    const { container } = render(
+      <DataTable
+        striped
+        data={[{ id: 'a' }, { id: 'b' }, { id: 'c' }]}
+        columns={[{ key: 'id', header: 'ID' }]}
+        keyField={(r) => r.id}
+      />,
+    );
+    const rows = [...container.querySelectorAll('tbody tr')];
+    expect(rows).toHaveLength(3);
+    expect(rows[0]!.className).not.toContain('bg-surface-inset');
+    expect(rows[1]!.className).toContain('bg-surface-inset');
+    expect(rows[2]!.className).not.toContain('bg-surface-inset');
+  });
+
+  it('the stripe never outranks hover on a clickable row', () => {
+    // A stripe that competes with hover makes the row under the pointer
+    // ambiguous, which is worse than no stripe at all.
+    const { container } = render(
+      <DataTable
+        striped
+        data={[{ id: 'a' }, { id: 'b' }]}
+        columns={[{ key: 'id', header: 'ID' }]}
+        keyField={(r) => r.id}
+        onRowClick={() => {}}
+      />,
+    );
+    const striped = [...container.querySelectorAll('tbody tr')][1]!;
+    expect(striped.className).toContain('bg-surface-inset');
+    expect(striped.className).toContain('hover:bg-surface-panel');
+  });
+
+  it('wraps the table in its own horizontal scroller so it cannot spill', () => {
+    const { container } = render(
+      <DataTable
+        data={[{ id: 'a' }]}
+        columns={[{ key: 'id', header: 'ID' }]}
+        keyField={(r) => r.id}
+      />,
+    );
+    const scroller = container.querySelector('table')!.parentElement!;
+    expect(scroller.className).toContain('overflow-x-auto');
+  });
 });

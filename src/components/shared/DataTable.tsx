@@ -64,6 +64,16 @@ export interface DataTableProps<T> {
    * table like identity's EntityTable) can provide the frame instead.
    */
   frameless?: boolean;
+  /**
+   * Tint alternate rows so the eye can track one row across a wide table.
+   *
+   * Deliberately a few percent off the surface, not a visible band: striping
+   * is a reading aid, and once you can NAME the stripe colour it has started
+   * competing with the content. It also loses to hover and to any row the
+   * caller highlights — a stripe that fights the hover state is worse than no
+   * stripe, because it makes the row under the pointer ambiguous.
+   */
+  striped?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -122,6 +132,7 @@ export function DataTable<T>({
   loading = false,
   loadingRows = 5,
   frameless = false,
+  striped = false,
   className,
   'data-testid': testId,
 }: DataTableProps<T>) {
@@ -201,7 +212,13 @@ export function DataTable<T>({
           className="w-full max-w-xs rounded-md border border-border-field bg-surface px-3 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none"
         />
       )}
-      <Table className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
+      {/* A table is the one thing on a page that legitimately outgrows its
+          column — many columns, long cells. Without a scroller of its own it
+          simply overflows, painting its trailing columns on top of whatever
+          sits beside it (a rail, a sidebar). This keeps that spill inside the
+          table's own box. */}
+      <div className="w-full max-w-full overflow-x-auto">
+        <Table className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
         <TableHead>
           <tr>
             {columns.map((col) => {
@@ -254,6 +271,10 @@ export function DataTable<T>({
                   <TableRow
                     key={keyField(row)}
                     clickable={!!onRowClick}
+                    // Striping the ODD rows keeps the first row on the plain
+                    // surface, so the table starts flush with the page rather
+                    // than opening on a band.
+                    className={striped && rowIndex % 2 === 1 ? 'bg-surface-inset/50' : undefined}
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                   >
                     {columns.map((col) => (
@@ -276,7 +297,8 @@ export function DataTable<T>({
                   </TableRow>
                 ))}
         </TableBody>
-      </Table>
+        </Table>
+      </div>
       {pageSize && pageSize > 0 && sorted.length > pageSize && (
         <div className="flex items-center justify-between text-xs text-text-secondary">
           <span data-testid="datatable-page-summary">

@@ -8,7 +8,12 @@ export interface FilterChipProps {
   color?: string;
   /** Show a colored dot before the label. */
   dot?: boolean;
-  size?: 'sm' | 'xs';
+  /**
+   * `md` is the comfortable default for a filter bar people actually click.
+   * `sm`/`xs` are for chips packed into a dense row or a table cell — at xs a
+   * filter reads as a caption rather than a control.
+   */
+  size?: 'md' | 'sm' | 'xs';
   children: ReactNode;
   className?: string;
   disabled?: boolean;
@@ -16,7 +21,8 @@ export interface FilterChipProps {
   'data-testid'?: string;
 }
 
-const SIZE_CLASSES: Record<'sm' | 'xs', string> = {
+const SIZE_CLASSES: Record<'md' | 'sm' | 'xs', string> = {
+  md: 'px-3 py-1 text-[12.5px]',
   sm: 'px-2.5 py-0.5 text-[11px]',
   xs: 'px-2 py-px text-[10px]',
 };

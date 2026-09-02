@@ -18,9 +18,24 @@ export interface MetricsGraphProps {
   data?: number[];
   series?: MetricsGraphSeries[];
   yLabel?: string;
+  /**
+   * Sparkline size. The defaults suit the narrow dashboard card this was
+   * built for; a card given a whole page column needs to fill it, and a
+   * 180px line stranded in 600px of space reads as a rendering fault rather
+   * than a deliberate size.
+   */
+  sparkWidth?: number;
+  sparkHeight?: number;
 }
 
-function MetricsGraph({ title, data, series, yLabel }: MetricsGraphProps) {
+function MetricsGraph({
+  title,
+  data,
+  series,
+  yLabel,
+  sparkWidth = 180,
+  sparkHeight = 28,
+}: MetricsGraphProps) {
   const resolvedSeries: MetricsGraphSeries[] =
     series && series.length > 0
       ? series
@@ -64,8 +79,8 @@ function MetricsGraph({ title, data, series, yLabel }: MetricsGraphProps) {
               </div>
               <Sparkline
                 data={s.data}
-                width={180}
-                height={28}
+                width={sparkWidth}
+                height={sparkHeight}
                 color={s.color ?? 'var(--color-primary)'}
               />
             </div>
