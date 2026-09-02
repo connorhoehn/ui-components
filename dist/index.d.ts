@@ -9429,7 +9429,7 @@ export declare const TONES: readonly ["neutral", "success", "warning", "danger",
  */
 export declare function toneVar(tone: ToneOrAlias): string;
 
-export declare function Toolbar({ children, end, tone, size, sticky, bordered, className, 'aria-label': ariaLabel, 'data-testid': testId, }: ToolbarProps): JSX.Element;
+export declare function Toolbar({ children, end, tone, size, sticky, bordered, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId, }: ToolbarProps): JSX.Element;
 
 export declare function ToolbarGroup({ children, divided, tone, className, 'aria-label': ariaLabel, }: ToolbarGroupProps): JSX.Element;
 
@@ -9472,6 +9472,17 @@ export declare interface ToolbarProps {
     sticky?: boolean;
     /** Bottom hairline separating the row from content. Default true. */
     bordered?: boolean;
+    /**
+     * Let the row wrap onto a second line instead of scrolling horizontally.
+     *
+     * The default single row is right for a handful of verbs — run, stop,
+     * refresh — where an overflowing control is rare and reachable. It is wrong
+     * for a FILTER bar: six controls plus a view switch do not fit a narrow
+     * pane, and `overflow-x-auto` then hides real filters behind a scrollbar
+     * nobody looks for, which reads as "this toolbar has no status filter"
+     * rather than "scroll right". A wrapping row shows every control it holds.
+     */
+    wrap?: boolean;
     className?: string;
     /**
      * Names the toolbar for screen readers. Default 'Toolbar' — override it

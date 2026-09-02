@@ -49,6 +49,17 @@ export interface ToolbarProps {
   sticky?: boolean;
   /** Bottom hairline separating the row from content. Default true. */
   bordered?: boolean;
+  /**
+   * Let the row wrap onto a second line instead of scrolling horizontally.
+   *
+   * The default single row is right for a handful of verbs — run, stop,
+   * refresh — where an overflowing control is rare and reachable. It is wrong
+   * for a FILTER bar: six controls plus a view switch do not fit a narrow
+   * pane, and `overflow-x-auto` then hides real filters behind a scrollbar
+   * nobody looks for, which reads as "this toolbar has no status filter"
+   * rather than "scroll right". A wrapping row shows every control it holds.
+   */
+  wrap?: boolean;
   className?: string;
   /**
    * Names the toolbar for screen readers. Default 'Toolbar' — override it
@@ -84,6 +95,7 @@ export function Toolbar({
   size = 'sm',
   sticky = false,
   bordered = true,
+  wrap = false,
   className,
   'aria-label': ariaLabel = 'Toolbar',
   'data-testid': testId,
@@ -119,7 +131,10 @@ export function Toolbar({
       data-testid={testId}
       onKeyDown={onKeyDown}
       className={cn(
-        'flex flex-none items-center',
+        'flex flex-none',
+        // A wrapping row grows taller, so its groups align to the top of each
+        // line rather than centring the whole (now multi-line) block.
+        wrap ? 'items-start py-1.5' : 'items-center',
         SIZE[size],
         TONE[tone],
         bordered && 'border-b',
@@ -127,7 +142,14 @@ export function Toolbar({
         className,
       )}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto">{children}</div>
+      <div
+        className={cn(
+          'flex min-w-0 flex-1 items-center gap-2',
+          wrap ? 'flex-wrap gap-y-1.5' : 'overflow-x-auto',
+        )}
+      >
+        {children}
+      </div>
       {end && <div className="flex flex-none items-center gap-2 pl-2">{end}</div>}
     </div>
   );

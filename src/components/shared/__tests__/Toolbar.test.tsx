@@ -109,4 +109,40 @@ describe('Toolbar', () => {
     render(<ToolbarLabel>us-east-1</ToolbarLabel>);
     expect(screen.getByText('us-east-1').className).toContain('text-text-tertiary');
   });
+
+  it('scrolls horizontally by default, so a long row stays one line', () => {
+    const { container } = render(<Toolbar><button type="button">a</button></Toolbar>);
+    const row = container.querySelector('[role="toolbar"] > div')!;
+    expect(row.className).toContain('overflow-x-auto');
+    expect(row.className).not.toContain('flex-wrap');
+  });
+
+  it('wrap swaps the scroller for a wrapping row', () => {
+    // The scroller hides overflowing controls behind a scrollbar nobody looks
+    // for — fine for verbs, wrong for a filter bar, where a hidden filter
+    // reads as a missing feature.
+    const { container } = render(<Toolbar wrap><button type="button">a</button></Toolbar>);
+    const row = container.querySelector('[role="toolbar"] > div')!;
+    expect(row.className).toContain('flex-wrap');
+    expect(row.className).not.toContain('overflow-x-auto');
+  });
+
+  it('wrap aligns groups to the top, since the row is now multi-line', () => {
+    render(<Toolbar wrap data-testid="tb">x</Toolbar>);
+    expect(screen.getByTestId('tb').className).toContain('items-start');
+    expect(screen.getByTestId('tb').className).not.toContain('items-center');
+  });
+
+  it('keeps roving focus working across a wrapped row', () => {
+    render(
+      <Toolbar wrap>
+        <button type="button">one</button>
+        <button type="button">two</button>
+      </Toolbar>,
+    );
+    const one = screen.getByText('one');
+    one.focus();
+    fireEvent.keyDown(screen.getByRole('toolbar'), { key: 'ArrowRight' });
+    expect(screen.getByText('two')).toHaveFocus();
+  });
 });

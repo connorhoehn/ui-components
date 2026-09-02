@@ -3378,15 +3378,15 @@ var ln = {
 	surface: "bg-border",
 	code: "bg-code-border"
 }, fn = "a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex=\"-1\"])";
-function pn({ children: t, end: n, tone: r = "surface", size: i = "sm", sticky: a = !1, bordered: o = !0, className: s, "aria-label": c = "Toolbar", "data-testid": l }) {
-	let u = P(null), d = A((e) => {
+function pn({ children: t, end: n, tone: r = "surface", size: i = "sm", sticky: a = !1, bordered: o = !0, wrap: s = !1, className: c, "aria-label": l = "Toolbar", "data-testid": u }) {
+	let d = P(null), f = A((e) => {
 		if (![
 			"ArrowLeft",
 			"ArrowRight",
 			"Home",
 			"End"
 		].includes(e.key)) return;
-		let t = u.current;
+		let t = d.current;
 		if (!t) return;
 		let n = Array.from(t.querySelectorAll(fn));
 		if (n.length === 0) return;
@@ -3394,15 +3394,15 @@ function pn({ children: t, end: n, tone: r = "surface", size: i = "sm", sticky: 
 		i = e.key === "Home" ? 0 : e.key === "End" ? n.length - 1 : r < 0 ? 0 : (r + (e.key === "ArrowRight" ? 1 : -1) + n.length) % n.length, n[i]?.focus(), e.preventDefault();
 	}, []);
 	return /* @__PURE__ */ R("div", {
-		ref: u,
+		ref: d,
 		role: "toolbar",
-		"aria-label": c,
+		"aria-label": l,
 		"aria-orientation": "horizontal",
-		"data-testid": l,
-		onKeyDown: d,
-		className: e("flex flex-none items-center", ln[i], un[r], o && "border-b", a && "sticky top-0 z-20", s),
+		"data-testid": u,
+		onKeyDown: f,
+		className: e("flex flex-none", s ? "items-start py-1.5" : "items-center", ln[i], un[r], o && "border-b", a && "sticky top-0 z-20", c),
 		children: [/* @__PURE__ */ L("div", {
-			className: "flex min-w-0 flex-1 items-center gap-2 overflow-x-auto",
+			className: e("flex min-w-0 flex-1 items-center gap-2", s ? "flex-wrap gap-y-1.5" : "overflow-x-auto"),
 			children: t
 		}), n && /* @__PURE__ */ L("div", {
 			className: "flex flex-none items-center gap-2 pl-2",
