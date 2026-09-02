@@ -52,6 +52,12 @@ export declare interface ActivityFeedProps {
 
 export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
 
+export declare function ArtifactTile({ name, type, url }: {
+    name: string;
+    type?: string;
+    url?: string | null;
+}): JSX.Element;
+
 export declare function Avatar({ name, size, initials: initialsProp, color, src, className, style, title, }: AvatarProps): JSX.Element;
 
 export declare function AvatarGroup({ names, items, maxVisible, size, className, total, }: AvatarGroupProps): JSX.Element;
@@ -1995,11 +2001,78 @@ export declare interface RadioOption<T extends string = string> {
     description?: string;
 }
 
+export declare function RailLayout({ children, rail, railWidth, className, 'data-testid': testId }: RailLayoutProps): JSX.Element;
+
+export declare interface RailLayoutProps {
+    /** The main column. */
+    children: ReactNode;
+    /** The context rail. Compose with <RailSection>. */
+    rail: ReactNode;
+    /** Rail width at lg+. Default 'md' (300px). */
+    railWidth?: 'sm' | 'md' | 'lg';
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** One titled block in the rail. Sections divide themselves. */
+export declare function RailSection({ title, children, className }: RailSectionProps): JSX.Element;
+
+export declare interface RailSectionProps {
+    title: string;
+    children: ReactNode;
+    className?: string;
+}
+
 /** Top-left corner a panel of `width`×`height` occupies at `anchor`. */
 export declare function resolveAnchorPosition(anchor: FloatingPanelAnchor, width: number, height: number): {
     x: number;
     y: number;
 };
+
+export declare const REVIEW_KIND_LABELS: Record<string, string>;
+
+export declare const REVIEW_KIND_TONES: Record<string, ToneOrAlias>;
+
+export declare type ReviewAuthorKind = 'agent' | 'human';
+
+export declare interface ReviewPostData {
+    id: string;
+    authorKind: ReviewAuthorKind;
+    authorName: string;
+    /** Post kind slug — e.g. 'problem' | 'question' | 'decision'. */
+    kind: string;
+    body: string;
+    /** For 'question' posts: true once answered. An unresolved question is the
+     *  thread's live HITL gate and renders highlighted with a composer. */
+    resolved?: boolean;
+    /** What the author produced — a browser screenshot, diagram, document. */
+    artifact?: {
+        name: string;
+        type?: string;
+        url?: string | null;
+    } | null;
+    /** Preformatted timestamp, e.g. "4d ago". */
+    timeLabel?: string;
+}
+
+export declare function ReviewThread({ posts, onAnswer, answerBusy, answerPlaceholder, answerLabel, kindLabels, kindTones, emptyLabel, className, 'data-testid': testId, }: ReviewThreadProps): JSX.Element;
+
+export declare interface ReviewThreadProps {
+    posts: ReviewPostData[];
+    /** Answer an open question. Omit to render read-only (terminal threads). */
+    onAnswer?: (postId: string, body: string) => void;
+    answerBusy?: boolean;
+    answerPlaceholder?: string;
+    /** The submit label — say what answering does, e.g. "Answer & continue". */
+    answerLabel?: string;
+    /** Merge/override the built-in kind vocabulary. */
+    kindLabels?: Record<string, string>;
+    kindTones?: Record<string, ToneOrAlias>;
+    /** Shown when the thread has no posts yet. */
+    emptyLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /**
  * Horizontal progress-bar gauge for 0..1 scores. Used by the judge
@@ -2135,6 +2208,27 @@ export declare function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps): JS
 export declare interface ShortcutsHelpProps {
     open: boolean;
     onClose: () => void;
+}
+
+export declare interface SignoffEntry {
+    name: string;
+    /** e.g. 'owner', 'sme', 'org-leader' — shown as the chip's title. */
+    role?: string;
+    decision: 'approve' | 'reject';
+    timeLabel?: string;
+}
+
+export declare function SignoffPanel({ signoffs, required, actions, emptyHint, className, 'data-testid': testId, }: SignoffPanelProps): JSX.Element;
+
+export declare interface SignoffPanelProps {
+    signoffs: SignoffEntry[];
+    /** Approvals needed to ratify. Default 2. */
+    required?: number;
+    /** Approve/Reject buttons etc. — render only for viewers who may act. */
+    actions?: ReactNode;
+    emptyHint?: string;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function SkeletonCard({ width, height, rounded }: SkeletonCardProps): JSX.Element;
@@ -2303,6 +2397,24 @@ export declare interface StatCardProps {
     mono?: boolean;
     className?: string;
     style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare function StatStrip({ items, className, 'aria-label': ariaLabel, 'data-testid': testId }: StatStripProps): JSX.Element;
+
+export declare interface StatStripItem {
+    label: string;
+    value: ReactNode;
+    hint?: ReactNode;
+    tone?: 'default' | 'accent' | 'danger';
+    onSelect?: () => void;
+    href?: string;
+}
+
+export declare interface StatStripProps {
+    items: StatStripItem[];
+    className?: string;
+    'aria-label'?: string;
     'data-testid'?: string;
 }
 

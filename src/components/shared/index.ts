@@ -277,3 +277,17 @@ export { Checkbox } from '../forms/Checkbox';
 export type { CheckboxProps } from '../forms/Checkbox';
 export { RadioGroup } from '../forms/RadioGroup';
 export type { RadioGroupProps, RadioOption } from '../forms/RadioGroup';
+
+// ── Review threads + context rail + compact stats (2026-09) ──
+//
+// The design-review (ADR) experience: a threaded agent/human discussion with
+// inline HITL answers and artifacts, the sign-off panel that ratifies it, the
+// split layout that gives it a context rail, and the compact stat strip.
+export { ReviewThread, ArtifactTile, REVIEW_KIND_LABELS, REVIEW_KIND_TONES } from './ReviewThread';
+export type { ReviewThreadProps, ReviewPostData, ReviewAuthorKind } from './ReviewThread';
+export { RailLayout, RailSection } from './RailLayout';
+export type { RailLayoutProps, RailSectionProps } from './RailLayout';
+export { SignoffPanel } from './SignoffPanel';
+export type { SignoffPanelProps, SignoffEntry } from './SignoffPanel';
+export { StatStrip } from './StatStrip';
+export type { StatStripProps, StatStripItem } from './StatStrip';
