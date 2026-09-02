@@ -401,11 +401,12 @@ export default function ExecutorLog({
       {/* ── Footer ────────────────────────────────────────────────── */}
       <div className="flex justify-between items-center gap-2 px-3 py-2.5 border-t border-border bg-surface-panel">
         {hasMore ? (
-          <span data-testid="executor-log-load-more">
+          <span>
             <Button
               variant="secondary"
               size="sm"
               onClick={() => loadMore()}
+              data-testid="executor-log-load-more"
             >
               Load more
             </Button>
@@ -413,12 +414,13 @@ export default function ExecutorLog({
         ) : (
           <span />
         )}
-        <span data-testid="executor-log-download">
+        <span>
           <Button
             variant="secondary"
             size="sm"
             onClick={handleDownload}
             disabled={filtered.length === 0}
+            data-testid="executor-log-download"
           >
             Download log
           </Button>
