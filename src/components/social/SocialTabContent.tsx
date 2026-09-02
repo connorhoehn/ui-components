@@ -3,13 +3,14 @@
 // Slack/Teams-style layout: collapsible sidebar sections with unread badges,
 // main chat area on the right.
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import type { RoomItem } from '../../hooks/useRooms';
 import type { ActivityEvent } from '../../hooks/useActivityBus';
 import type { GatewayMessage } from '../../types/gateway';
 import { cn } from '../../lib/cn';
 
 import { RoomList } from './RoomList';
+import { ConversationList, type ConversationItem } from './ConversationList';
 import { GroupPanel } from './GroupPanel';
 import { ChatRoom } from './ChatRoom';
 
@@ -187,8 +188,38 @@ export default function SocialTabContent({
   const channels = rooms.filter(r => r.type === 'standalone' || r.type === 'group');
   const dms = rooms.filter(r => r.type === 'dm');
 
-  const channelUnreadTotal = channels.reduce((s, r) => s + (unreadCounts[r.roomId] ?? 0), 0);
-  const dmUnreadTotal = dms.reduce((s, r) => s + (unreadCounts[r.roomId] ?? 0), 0);
+  // One list, channels first — a DM is a conversation with one peer, a channel
+  // is a conversation with a name. `ConversationList` keys and selects on
+  // `channel`, and selection here is by ROOM, so the roomId is what travels.
+  const conversations: ConversationItem[] = useMemo(
+    () => [
+      ...channels.map((r) => ({
+        channel: r.roomId,
+        kind: 'channel' as const,
+        name: r.name,
+        peers: [],
+        unreadCount: unreadCounts[r.roomId] ?? 0,
+      })),
+      ...dms.map((r) => ({
+        channel: r.roomId,
+        kind: 'dm' as const,
+        // The room's name IS the peer's name for a DM; there is no separate
+        // peer record to read here, and inventing an empty one would render a
+        // row with an avatar and no label.
+        peers: [{ userId: r.dmPeerUserId ?? r.roomId, displayName: r.name }],
+        unreadCount: unreadCounts[r.roomId] ?? 0,
+      })),
+    ],
+    [channels, dms, unreadCounts],
+  );
+
+  const handleConversationSelect = useCallback(
+    (roomId: string) => {
+      const room = rooms.find((r) => r.roomId === roomId);
+      if (room) wrappedHandleRoomSelect(room);
+    },
+    [rooms, wrappedHandleRoomSelect],
+  );
 
   // Surfaces are TOKEN-driven, not branched on the React theme context.
   //
@@ -255,89 +286,60 @@ export default function SocialTabContent({
 
         {/* Scrollable sections */}
         <div className="flex-1 overflow-y-auto pt-2">
-          {/* Channels section */}
-          {/* No `count` when the rooms fetch failed — `channels.length` is 0
-              from an array nothing ever filled, and "Channels 0" reads as a
-              fact. */}
-          <CollapsibleSection title="Channels" count={roomsError ? undefined : channels.length} unreadTotal={channelUnreadTotal}>
-            <div className="px-1">
-              {roomsLoading && channels.length === 0 ? (
-                <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>Loading…</div>
-              ) : roomsError && channels.length === 0 ? (
-                /* `roomsError` reached only the (usually hidden) nested
-                   RoomList. A failed GET /api/rooms therefore rendered here as
-                   "No channels yet" — the sidebar stating the user belongs to
-                   no channels on the strength of a request that never
-                   succeeded. */
-                <div role="alert" data-testid="channels-error" className="px-6 py-2 text-xs text-danger-fg">
-                  Couldn&rsquo;t load channels
-                </div>
-              ) : channels.length === 0 ? (
-                <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>No channels yet</div>
-              ) : (
-                channels.map(room => (
-                  <SidebarRoomRow
-                    key={room.roomId}
-                    room={room}
-                    isActive={room.roomId === activeRoomId}
-                    unread={unreadCounts[room.roomId] ?? 0}
-                    onClick={() => wrappedHandleRoomSelect(room)}
-                  />
-                ))
-              )}
-              <button
-                onClick={() => setShowNewRoom(v => !v)}
-                className="flex items-center gap-1.5 w-full bg-transparent border-none cursor-pointer text-xs font-[inherit] rounded pt-[5px] pr-2 pb-[5px] pl-6"
-                style={{ color: sidebarTextSecondary }}
-              >
-                <span className="text-sm leading-none">+</span> Add channel
-              </button>
-              {showNewRoom && (
-                <div className="px-2">
-                  <RoomList
-                    idToken={idToken}
-                    rooms={[]}
-                    createRoom={createRoom}
-                    createDM={createDM}
-                    loading={roomsLoading}
-                    error={roomsError}
-                    onRetry={onRoomsRetry}
-                    onRoomSelect={wrappedHandleRoomSelect}
-                    activeRoomId={activeRoomId}
-                    compact
-                  />
-                </div>
-              )}
-            </div>
-          </CollapsibleSection>
+          {/* ONE conversation list.
 
-          {/* Direct Messages section */}
-          <CollapsibleSection title="Direct Messages" count={roomsError ? undefined : dms.length} unreadTotal={dmUnreadTotal}>
-            <div className="px-1">
-              {roomsLoading && dms.length === 0 ? (
-                <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>Loading…</div>
-              ) : roomsError && dms.length === 0 ? (
-                /* Same as Channels above: DMs come from the same `rooms`
-                   fetch, so its failure used to read as "No conversations
-                   yet". */
-                <div role="alert" data-testid="dms-error" className="px-6 py-2 text-xs text-danger-fg">
-                  Couldn&rsquo;t load conversations
-                </div>
-              ) : dms.length === 0 ? (
-                <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>No conversations yet</div>
-              ) : (
-                dms.map(room => (
-                  <SidebarRoomRow
-                    key={room.roomId}
-                    room={room}
-                    isActive={room.roomId === activeRoomId}
-                    unread={unreadCounts[room.roomId] ?? 0}
-                    onClick={() => wrappedHandleRoomSelect(room)}
-                  />
-                ))
-              )}
-            </div>
-          </CollapsibleSection>
+              Channels, group chats and DMs were three sections with three
+              separate "new" affordances — and "Add channel" opened a nested
+              RoomList carrying its own "+ New Room" and "+ New DM", so the
+              sidebar offered three ways to create a thing the server calls one
+              thing: a room, with `type: 'standalone' | 'group' | 'dm'`.
+
+              Group rooms already sat in `channels` here, so a group IS a
+              channel in this list — nothing had to be collapsed away.
+
+              A channel identifies itself by name and a #, a DM by its peer.
+              That is a row-rendering detail, not a reason for separate
+              sections. */}
+          <div className="px-1 pt-1">
+            {roomsLoading && conversations.length === 0 ? (
+              <div className="px-2 py-2 text-xs" style={{ color: sidebarTextSecondary }}>Loading…</div>
+            ) : roomsError && conversations.length === 0 ? (
+              /* An empty list drawn from a request that never succeeded would
+                 state the user belongs to nothing — a claim the failed fetch
+                 cannot support. */
+              <div role="alert" data-testid="conversations-error" className="px-2 py-2 text-xs text-danger-fg">
+                Couldn&rsquo;t load conversations
+              </div>
+            ) : (
+              <ConversationList
+                items={conversations}
+                activeChannel={activeRoomId ?? null}
+                onSelect={handleConversationSelect}
+                onNewChat={() => setShowNewRoom(v => !v)}
+                emptyLabel="No conversations yet"
+                data-testid="social-conversations"
+              />
+            )}
+
+            {/* The composer, opened by the list's single "+" — no longer
+                nested inside a section that was itself one of the choices. */}
+            {showNewRoom && (
+              <div className="px-1 pt-1">
+                <RoomList
+                  idToken={idToken}
+                  rooms={[]}
+                  createRoom={createRoom}
+                  createDM={createDM}
+                  loading={roomsLoading}
+                  error={roomsError}
+                  onRetry={onRoomsRetry}
+                  onRoomSelect={wrappedHandleRoomSelect}
+                  activeRoomId={activeRoomId}
+                  compact
+                />
+              </div>
+            )}
+          </div>
 
           {/* Groups section */}
           {/* No `count`: this shell has no groups data — `GroupPanel` owns its

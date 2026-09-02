@@ -86,16 +86,27 @@ beforeEach(() => {
 });
 
 describe('SocialTabContent sidebar headers', () => {
+  // Channels and Direct Messages are one unsectioned list now, so the only
+  // header left carrying a count is Groups — which has no data of its own and
+  // must therefore show nothing rather than a confident "0".
   it('does not print a made-up item count for the Groups section', () => {
     const { onMessage } = makeOnMessage();
     renderTab([room(), room({ roomId: 'r2', name: 'random' })], onMessage);
 
     const groupsHeader = screen.getByText('Groups').closest('button')!;
-    // Channels genuinely knows its count and still shows it...
-    const channelsHeader = screen.getByText('Channels').closest('button')!;
-    expect(channelsHeader).toHaveTextContent('2');
-    // ...Groups does not, so it shows nothing rather than "0".
     expect(groupsHeader.textContent).not.toMatch(/\d/);
+  });
+
+  it('lists channels and DMs together, without section headers between them', () => {
+    const { onMessage } = makeOnMessage();
+    renderTab(
+      [room(), room({ roomId: 'r2', name: 'Nora DaSilva', type: 'dm' })],
+      onMessage,
+    );
+
+    expect(screen.getByText('general')).toBeInTheDocument();
+    expect(screen.getByText('Nora DaSilva')).toBeInTheDocument();
+    expect(screen.queryByText('Direct Messages')).toBeNull();
   });
 });
 
@@ -109,10 +120,13 @@ describe('SocialTabContent unread rooms', () => {
       emit({ type: 'social:post', payload: { roomId: 'r1' } });
     });
 
-    const row = screen.getByText('general').closest('button')!;
-    expect(row.className).not.toMatch(/text-surface-hover/);
-    expect(row.className).toMatch(/text-text-primary/);
+    // The label carries the colour (it is the element that goes bold on
+    // unread), so that is what must not be painted with a SURFACE token.
+    const label = screen.getByText('general');
+    expect(label.className).not.toMatch(/text-surface-hover/);
+    expect(label.className).toMatch(/text-text-primary/);
     // ...and the unread badge itself renders.
+    const row = label.closest('button')!;
     expect(row).toHaveTextContent('1');
   });
 });

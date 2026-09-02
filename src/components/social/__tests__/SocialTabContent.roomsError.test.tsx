@@ -72,42 +72,28 @@ beforeEach(() => {
 });
 
 describe('SocialTabContent — rooms load failure', () => {
-  it('does not claim the user has no channels when the rooms fetch failed', () => {
-    renderTab({ roomsError: 'Failed to load rooms (503)' });
-
-    expect(screen.getByTestId('channels-error')).toHaveTextContent(/Couldn.t load channels/);
-    expect(screen.queryByText('No channels yet')).toBeNull();
-  });
-
+  // Channels and DMs are ONE list now, so there is one error and one empty
+  // state to get right instead of two. The invariant is unchanged: an empty
+  // list drawn from a request that never succeeded would tell the user they
+  // belong to nothing, which the failed fetch cannot support.
   it('does not claim the user has no conversations when the rooms fetch failed', () => {
     renderTab({ roomsError: 'Failed to load rooms (503)' });
 
-    expect(screen.getByTestId('dms-error')).toHaveTextContent(/Couldn.t load conversations/);
+    expect(screen.getByTestId('conversations-error')).toHaveTextContent(/Couldn.t load conversations/);
     expect(screen.queryByText('No conversations yet')).toBeNull();
   });
 
-  it('prints no section count it never read', () => {
-    renderTab({ roomsError: 'Failed to load rooms (503)' });
-
-    const channels = screen.getByText('Channels').closest('button')!;
-    const dms = screen.getByText('Direct Messages').closest('button')!;
-    expect(channels.textContent).not.toMatch(/\d/);
-    expect(dms.textContent).not.toMatch(/\d/);
-  });
-
-  it('still shows the genuine empty states when the fetch succeeded and returned nothing', () => {
+  it('still shows the genuine empty state when the fetch succeeded and returned nothing', () => {
     renderTab({ rooms: [], roomsError: null });
 
-    expect(screen.getByText('No channels yet')).toBeInTheDocument();
     expect(screen.getByText('No conversations yet')).toBeInTheDocument();
-    expect(screen.queryByTestId('channels-error')).toBeNull();
-    expect(screen.queryByTestId('dms-error')).toBeNull();
+    expect(screen.queryByTestId('conversations-error')).toBeNull();
   });
 
   it('keeps showing the rooms it has even if a later refresh errored', () => {
     renderTab({ rooms: [room()], roomsError: 'Failed to load rooms (500)' });
 
     expect(screen.getByText('general')).toBeInTheDocument();
-    expect(screen.queryByTestId('channels-error')).toBeNull();
+    expect(screen.queryByTestId('conversations-error')).toBeNull();
   });
 });
