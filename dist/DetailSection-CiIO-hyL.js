@@ -591,6 +591,7 @@ function G({ value: n, onChange: r, placeholder: i, maxSelect: a }) {
 //#endregion
 //#region src/components/shared/FilterChip.tsx
 var K = {
+	md: "px-3 py-1 text-[12.5px]",
 	sm: "px-2.5 py-0.5 text-[11px]",
 	xs: "px-2 py-px text-[10px]"
 }, q = "bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:border-[var(--color-border-emphasis)]", J = "bg-[var(--color-primary)] border-[var(--color-primary)] text-white hover:opacity-90", Y = "border-[var(--color-border-emphasis)] text-[var(--color-text-primary)]";

@@ -2068,33 +2068,74 @@ function it({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r })
 	});
 }
 //#endregion
+//#region src/components/observability/components/MetricsGraph.tsx
+function at({ title: e, data: n, series: r, yLabel: i, sparkWidth: a = 180, sparkHeight: o = 28 }) {
+	let s = r && r.length > 0 ? r : n ? [{
+		label: e,
+		data: n,
+		color: "var(--color-primary)"
+	}] : [];
+	return /* @__PURE__ */ O("div", {
+		"data-testid": "metrics-graph",
+		className: "flex flex-col gap-2 font-[inherit] text-[13px] text-text-primary",
+		children: [/* @__PURE__ */ O("div", {
+			className: "flex items-baseline justify-between gap-2",
+			children: [/* @__PURE__ */ D("div", {
+				className: "text-[13px] font-semibold text-text-primary",
+				children: e
+			}), i && /* @__PURE__ */ D("div", {
+				className: "text-[11px] text-text-tertiary",
+				children: i
+			})]
+		}), /* @__PURE__ */ D("div", {
+			className: t("flex flex-col gap-1", "bg-surface-inset border border-border rounded-md px-3 py-2.5"),
+			children: s.length === 0 ? /* @__PURE__ */ D("div", {
+				className: "text-xs text-text-tertiary",
+				children: "No data"
+			}) : s.map((e) => /* @__PURE__ */ O("div", {
+				className: "flex items-center gap-2.5",
+				children: [/* @__PURE__ */ D("div", {
+					className: "text-[11px] text-text-secondary w-20 shrink-0 overflow-hidden text-ellipsis whitespace-nowrap",
+					title: e.label,
+					children: e.label
+				}), /* @__PURE__ */ D(l, {
+					data: e.data,
+					width: a,
+					height: o,
+					color: e.color ?? "var(--color-primary)"
+				})]
+			}, e.label))
+		})]
+	});
+}
+//#endregion
 //#region src/components/observability/components/AlertItem.tsx
-var at = {
+var ot = {
 	critical: "var(--color-danger)",
 	warning: "var(--color-warning)",
 	info: "var(--color-info)"
-}, ot = {
+}, st = {
 	critical: "bg-[var(--color-danger-bg)]",
 	warning: "bg-[var(--color-warning-bg)]",
 	info: "bg-[var(--color-info-bg)]"
-}, st = {
+}, ct = {
 	critical: "border-l-[var(--color-danger)]",
 	warning: "border-l-[var(--color-warning)]",
 	info: "border-l-[var(--color-info)]"
 };
-function ct({ severity: e, title: n, description: r, timestamp: i, resolved: a = !1, action: s, className: c, style: l, "data-testid": u = `alert-${e}` }) {
+function lt({ severity: e, title: n, description: r, timestamp: i, resolved: a = !1, action: s, className: c, style: l, "data-testid": u = `alert-${e}` }) {
 	return /* @__PURE__ */ O("div", {
 		role: "listitem",
 		"data-testid": u,
 		"data-resolved": a || void 0,
-		className: t("rounded-md px-3 py-2.5 border-l-[3px] transition-opacity duration-300", a ? "bg-[var(--color-surface-subtle,#f8fafc)] border-l-[var(--color-text-tertiary)] opacity-70" : t(ot[e], st[e]), c),
+		className: t("rounded-md px-3 py-2.5 border-l-[3px] transition-opacity duration-300", a ? "bg-[var(--color-surface-subtle,#f8fafc)] border-l-[var(--color-text-tertiary)] opacity-70" : t(st[e], ct[e]), c),
 		style: l,
 		children: [/* @__PURE__ */ O("div", {
 			className: "flex items-center gap-1.5",
 			children: [
 				/* @__PURE__ */ D(p, {
 					size: "xs",
-					color: a ? "var(--color-text-tertiary)" : at[e],
+					color: a ? "var(--color-text-tertiary)" : ot[e],
 					"aria-label": a ? "Resolved" : e
 				}),
 				/* @__PURE__ */ D("span", {
@@ -2124,14 +2165,14 @@ function ct({ severity: e, title: n, description: r, timestamp: i, resolved: a =
 }
 //#endregion
 //#region src/components/observability/components/AlertList.tsx
-var lt = /* @__PURE__ */ D("div", {
+var ut = /* @__PURE__ */ D("div", {
 	className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8",
 	children: "No alerts."
-}), ut = /* @__PURE__ */ D("div", {
+}), dt = /* @__PURE__ */ D("div", {
 	className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8",
 	children: "Loading alerts…"
 });
-function dt({ items: e, title: r = "Alerts", headerSlot: i, loading: a = !1, empty: s, maxHeight: c, className: l, style: u, "data-testid": f = "alert-list" }) {
+function ft({ items: e, title: r = "Alerts", headerSlot: i, loading: a = !1, empty: s, maxHeight: c, className: l, style: u, "data-testid": f = "alert-list" }) {
 	let p = e.filter((e) => !e.resolved).length, m = p > 0 ? /* @__PURE__ */ O(o, {
 		tone: "danger",
 		size: "xs",
@@ -2153,7 +2194,7 @@ function dt({ items: e, title: r = "Alerts", headerSlot: i, loading: a = !1, emp
 			"data-testid": `${f}-rows`,
 			className: "flex-1 overflow-y-auto p-2 space-y-1.5",
 			style: { maxHeight: c },
-			children: a ? ut : e.length === 0 ? s ?? lt : e.map((e) => /* @__PURE__ */ D(ct, {
+			children: a ? dt : e.length === 0 ? s ?? ut : e.map((e) => /* @__PURE__ */ D(lt, {
 				severity: e.severity,
 				title: e.title,
 				description: e.description,
@@ -2166,28 +2207,28 @@ function dt({ items: e, title: r = "Alerts", headerSlot: i, loading: a = !1, emp
 }
 //#endregion
 //#region src/components/observability/components/HealthCell.tsx
-var ft = {
+var pt = {
 	healthy: "var(--color-success)",
 	degraded: "var(--color-warning)",
 	down: "var(--color-danger)",
 	unknown: "var(--color-text-tertiary)"
-}, pt = {
+}, mt = {
 	healthy: "bg-[var(--color-success-bg)] border-[var(--color-success-border)]",
 	degraded: "bg-[var(--color-warning-bg)] border-[var(--color-warning-border)]",
 	down: "bg-[var(--color-danger-bg)] border-[var(--color-danger-border)]",
 	unknown: "bg-[var(--color-surface)] border-[var(--color-border)]"
 };
-function mt({ status: e, label: n, reason: r, dense: i = !1, className: a, style: o, "data-testid": s = `health-cell-${e}` }) {
+function ht({ status: e, label: n, reason: r, dense: i = !1, className: a, style: o, "data-testid": s = `health-cell-${e}` }) {
 	return /* @__PURE__ */ O("div", {
 		"data-testid": s,
 		"data-status": e,
-		className: t("rounded-md border transition-colors duration-300", i ? "px-2.5 py-2" : "px-3 py-2.5", pt[e], a),
+		className: t("rounded-md border transition-colors duration-300", i ? "px-2.5 py-2" : "px-3 py-2.5", mt[e], a),
 		style: o,
 		children: [/* @__PURE__ */ O("div", {
 			className: "flex items-center gap-1.5",
 			children: [/* @__PURE__ */ D(p, {
 				size: "xs",
-				color: ft[e],
+				color: pt[e],
 				"aria-label": e
 			}), /* @__PURE__ */ D("span", {
 				className: "text-[11px] font-semibold text-[var(--color-text-primary)]",
@@ -2201,23 +2242,23 @@ function mt({ status: e, label: n, reason: r, dense: i = !1, className: a, style
 }
 //#endregion
 //#region src/components/observability/components/HealthGrid.tsx
-var ht = {
+var gt = {
 	1: "sm:grid-cols-1",
 	2: "sm:grid-cols-2",
 	3: "sm:grid-cols-3",
 	4: "sm:grid-cols-4",
 	6: "sm:grid-cols-6"
-}, gt = /* @__PURE__ */ D("div", {
+}, _t = /* @__PURE__ */ D("div", {
 	className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8",
 	children: "No nodes reporting."
 });
-function _t({ items: e, columns: r = 3, dense: i = !1, title: a, headerSlot: o, empty: s, className: c, style: l, "data-testid": u = "health-grid" }) {
-	let f = e.length === 0 ? s ?? gt : /* @__PURE__ */ D("div", {
+function vt({ items: e, columns: r = 3, dense: i = !1, title: a, headerSlot: o, empty: s, className: c, style: l, "data-testid": u = "health-grid" }) {
+	let f = e.length === 0 ? s ?? _t : /* @__PURE__ */ D("div", {
 		role: "list",
-		className: t("grid grid-cols-1", ht[r], i ? "gap-1.5" : "gap-2"),
+		className: t("grid grid-cols-1", gt[r], i ? "gap-1.5" : "gap-2"),
 		children: e.map((e) => /* @__PURE__ */ D("div", {
 			role: "listitem",
-			children: /* @__PURE__ */ D(mt, {
+			children: /* @__PURE__ */ D(ht, {
 				status: e.status,
 				label: e.label,
 				reason: e.reason,
@@ -2247,4 +2288,4 @@ function _t({ items: e, columns: r = 3, dense: i = !1, title: a, headerSlot: o, 
 	});
 }
 //#endregion
-export { ct as AlertItem, dt as AlertList, R as DashboardKPIStrip, Ce as DashboardPage, Je as EventsPage, mt as HealthCell, _t as HealthGrid, G as MetricTimeSeriesPanel, Ne as MetricsPage, it as NodesPage, j as ObservabilityLayout };
+export { lt as AlertItem, ft as AlertList, R as DashboardKPIStrip, Ce as DashboardPage, Je as EventsPage, ht as HealthCell, vt as HealthGrid, G as MetricTimeSeriesPanel, at as MetricsGraph, Ne as MetricsPage, it as NodesPage, j as ObservabilityLayout };

@@ -668,7 +668,7 @@ export declare interface ConsultCardProps {
     'data-testid'?: string;
 }
 
-export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, striped, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -716,6 +716,16 @@ export declare interface DataTableProps<T> {
      * table like identity's EntityTable) can provide the frame instead.
      */
     frameless?: boolean;
+    /**
+     * Tint alternate rows so the eye can track one row across a wide table.
+     *
+     * Deliberately a few percent off the surface, not a visible band: striping
+     * is a reading aid, and once you can NAME the stripe colour it has started
+     * competing with the content. It also loses to hover and to any row the
+     * caller highlights — a stripe that fights the hover state is worse than no
+     * stripe, because it makes the row under the pointer ambiguous.
+     */
+    striped?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -1120,7 +1130,12 @@ export declare interface FilterChipProps {
     color?: string;
     /** Show a colored dot before the label. */
     dot?: boolean;
-    size?: 'sm' | 'xs';
+    /**
+     * `md` is the comfortable default for a filter bar people actually click.
+     * `sm`/`xs` are for chips packed into a dense row or a table cell — at xs a
+     * filter reads as a caption rather than a control.
+     */
+    size?: 'md' | 'sm' | 'xs';
     children: ReactNode;
     className?: string;
     disabled?: boolean;

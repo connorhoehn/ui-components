@@ -85,124 +85,128 @@ function m(e) {
 	if (e === "right") return "text-right";
 	if (e === "center") return "text-center";
 }
-function h({ data: t, columns: f, keyField: h, onRowClick: g, rowActions: _, searchable: v = !1, searchPlaceholder: y = "Search…", pageSize: b, emptyMessage: x = "No records.", loading: S = !1, loadingRows: C = 5, frameless: w = !1, className: T, "data-testid": E }) {
-	let D = Array.isArray(t) ? t : [], O = Array.isArray(f) ? f : [], [k, A] = r(null), [j, M] = r("asc"), [N, P] = r(""), [F, I] = r(0), L = (e) => {
-		k === e ? M((e) => e === "asc" ? "desc" : "asc") : (A(e), M("asc"));
-	}, R = n(() => {
-		if (!v || N.trim() === "") return D;
-		let e = N.trim().toLowerCase();
-		return D.filter((t) => O.some((n) => n.filterable !== !1 && (n.getFilterText ? n.getFilterText(t) : String(t[n.key] ?? "")).toLowerCase().includes(e)));
+function h({ data: t, columns: f, keyField: h, onRowClick: g, rowActions: _, searchable: v = !1, searchPlaceholder: y = "Search…", pageSize: b, emptyMessage: x = "No records.", loading: S = !1, loadingRows: C = 5, frameless: w = !1, striped: T = !1, className: E, "data-testid": D }) {
+	let O = Array.isArray(t) ? t : [], k = Array.isArray(f) ? f : [], [A, j] = r(null), [M, N] = r("asc"), [P, F] = r(""), [I, L] = r(0), R = (e) => {
+		A === e ? N((e) => e === "asc" ? "desc" : "asc") : (j(e), N("asc"));
+	}, z = n(() => {
+		if (!v || P.trim() === "") return O;
+		let e = P.trim().toLowerCase();
+		return O.filter((t) => k.some((n) => n.filterable !== !1 && (n.getFilterText ? n.getFilterText(t) : String(t[n.key] ?? "")).toLowerCase().includes(e)));
 	}, [
-		D,
-		O,
-		N,
-		v
-	]), z = n(() => {
-		if (!k) return R;
-		let e = O.find((e) => e.key === k);
-		if (!e || !e.sortable) return R;
-		let t = e.compare ?? ((t, n) => p(t[e.key], n[e.key])), n = [...R];
-		return n.sort((e, n) => j === "asc" ? t(e, n) : -t(e, n)), n;
-	}, [
-		R,
 		O,
 		k,
-		j
-	]), B = b && b > 0 ? Math.max(1, Math.ceil(z.length / b)) : 1, V = Math.min(F, B - 1), H = n(() => {
-		if (!b || b <= 0) return z;
-		let e = V * b;
-		return z.slice(e, e + b);
+		P,
+		v
+	]), B = n(() => {
+		if (!A) return z;
+		let e = k.find((e) => e.key === A);
+		if (!e || !e.sortable) return z;
+		let t = e.compare ?? ((t, n) => p(t[e.key], n[e.key])), n = [...z];
+		return n.sort((e, n) => M === "asc" ? t(e, n) : -t(e, n)), n;
 	}, [
 		z,
+		k,
+		A,
+		M
+	]), V = b && b > 0 ? Math.max(1, Math.ceil(B.length / b)) : 1, H = Math.min(I, V - 1), U = n(() => {
+		if (!b || b <= 0) return B;
+		let e = H * b;
+		return B.slice(e, e + b);
+	}, [
+		B,
 		b,
-		V
+		H
 	]);
 	return /* @__PURE__ */ a("div", {
-		className: e("flex flex-col gap-3", T),
-		"data-testid": E,
+		className: e("flex flex-col gap-3", E),
+		"data-testid": D,
 		children: [
 			v && /* @__PURE__ */ i("input", {
 				type: "text",
-				value: N,
+				value: P,
 				onChange: (e) => {
-					P(e.target.value), I(0);
+					F(e.target.value), L(0);
 				},
 				placeholder: y,
 				"aria-label": "Search",
 				"data-testid": "datatable-search",
 				className: "w-full max-w-xs rounded-md border border-border-field bg-surface px-3 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none"
 			}),
-			/* @__PURE__ */ a(o, {
-				className: w ? void 0 : "border border-border rounded-lg overflow-hidden",
-				children: [/* @__PURE__ */ i(s, { children: /* @__PURE__ */ a("tr", { children: [O.map((t) => {
-					let n = t.sortable && k === t.key;
-					return /* @__PURE__ */ i(u, {
-						sortable: t.sortable,
-						sortDirection: n ? j : null,
-						style: t.width ? { width: t.width } : void 0,
-						className: e(m(t.align), t.className),
-						onClick: t.sortable ? () => L(t.key) : void 0,
-						"data-testid": t.sortable ? `datatable-header-${t.key}` : void 0,
-						children: t.header
-					}, t.key);
-				}), _ && /* @__PURE__ */ i(u, {
-					className: "text-right",
-					children: "Actions"
-				})] }) }), /* @__PURE__ */ i(c, { children: S ? Array.from({ length: C }).map((e, t) => /* @__PURE__ */ a(l, {
-					"data-testid": "datatable-loading-row",
-					children: [O.map((e) => /* @__PURE__ */ i(d, {
-						className: m(e.align),
-						children: /* @__PURE__ */ i("div", { className: "h-4 w-3/4 animate-pulse rounded bg-surface-hover" })
-					}, e.key)), _ && /* @__PURE__ */ i(d, {
+			/* @__PURE__ */ i("div", {
+				className: "w-full max-w-full overflow-x-auto",
+				children: /* @__PURE__ */ a(o, {
+					className: w ? void 0 : "border border-border rounded-lg overflow-hidden",
+					children: [/* @__PURE__ */ i(s, { children: /* @__PURE__ */ a("tr", { children: [k.map((t) => {
+						let n = t.sortable && A === t.key;
+						return /* @__PURE__ */ i(u, {
+							sortable: t.sortable,
+							sortDirection: n ? M : null,
+							style: t.width ? { width: t.width } : void 0,
+							className: e(m(t.align), t.className),
+							onClick: t.sortable ? () => R(t.key) : void 0,
+							"data-testid": t.sortable ? `datatable-header-${t.key}` : void 0,
+							children: t.header
+						}, t.key);
+					}), _ && /* @__PURE__ */ i(u, {
 						className: "text-right",
-						children: /* @__PURE__ */ i("div", { className: "ml-auto h-4 w-16 animate-pulse rounded bg-surface-hover" })
-					})]
-				}, `skeleton-${t}`)) : H.length === 0 ? /* @__PURE__ */ i(l, { children: /* @__PURE__ */ i(d, {
-					colSpan: O.length + +!!_,
-					className: "text-center text-text-secondary py-8",
-					children: x
-				}) }) : H.map((t, n) => /* @__PURE__ */ a(l, {
-					clickable: !!g,
-					onClick: g ? () => g(t) : void 0,
-					children: [O.map((r) => /* @__PURE__ */ i(d, {
-						className: e(m(r.align), r.className),
-						children: r.render ? r.render(t, n) : String(t[r.key] ?? "")
-					}, r.key)), _ && /* @__PURE__ */ i(d, {
-						className: "text-right",
-						onClick: (e) => e.stopPropagation(),
-						children: /* @__PURE__ */ i("div", {
-							className: "flex items-center justify-end gap-2",
-							children: _(t)
-						})
-					})]
-				}, h(t))) })]
+						children: "Actions"
+					})] }) }), /* @__PURE__ */ i(c, { children: S ? Array.from({ length: C }).map((e, t) => /* @__PURE__ */ a(l, {
+						"data-testid": "datatable-loading-row",
+						children: [k.map((e) => /* @__PURE__ */ i(d, {
+							className: m(e.align),
+							children: /* @__PURE__ */ i("div", { className: "h-4 w-3/4 animate-pulse rounded bg-surface-hover" })
+						}, e.key)), _ && /* @__PURE__ */ i(d, {
+							className: "text-right",
+							children: /* @__PURE__ */ i("div", { className: "ml-auto h-4 w-16 animate-pulse rounded bg-surface-hover" })
+						})]
+					}, `skeleton-${t}`)) : U.length === 0 ? /* @__PURE__ */ i(l, { children: /* @__PURE__ */ i(d, {
+						colSpan: k.length + +!!_,
+						className: "text-center text-text-secondary py-8",
+						children: x
+					}) }) : U.map((t, n) => /* @__PURE__ */ a(l, {
+						clickable: !!g,
+						className: T && n % 2 == 1 ? "bg-surface-inset/50" : void 0,
+						onClick: g ? () => g(t) : void 0,
+						children: [k.map((r) => /* @__PURE__ */ i(d, {
+							className: e(m(r.align), r.className),
+							children: r.render ? r.render(t, n) : String(t[r.key] ?? "")
+						}, r.key)), _ && /* @__PURE__ */ i(d, {
+							className: "text-right",
+							onClick: (e) => e.stopPropagation(),
+							children: /* @__PURE__ */ i("div", {
+								className: "flex items-center justify-end gap-2",
+								children: _(t)
+							})
+						})]
+					}, h(t))) })]
+				})
 			}),
-			b && b > 0 && z.length > b && /* @__PURE__ */ a("div", {
+			b && b > 0 && B.length > b && /* @__PURE__ */ a("div", {
 				className: "flex items-center justify-between text-xs text-text-secondary",
 				children: [/* @__PURE__ */ a("span", {
 					"data-testid": "datatable-page-summary",
 					children: [
 						"Page ",
-						V + 1,
+						H + 1,
 						" of ",
-						B,
+						V,
 						" · ",
-						z.length,
+						B.length,
 						" total"
 					]
 				}), /* @__PURE__ */ a("div", {
 					className: "flex gap-2",
 					children: [/* @__PURE__ */ i("button", {
 						type: "button",
-						onClick: () => I(Math.max(0, V - 1)),
-						disabled: V === 0,
+						onClick: () => L(Math.max(0, H - 1)),
+						disabled: H === 0,
 						"data-testid": "datatable-prev",
 						className: "rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-panel",
 						children: "Prev"
 					}), /* @__PURE__ */ i("button", {
 						type: "button",
-						onClick: () => I(Math.min(B - 1, V + 1)),
-						disabled: V >= B - 1,
+						onClick: () => L(Math.min(V - 1, H + 1)),
+						disabled: H >= V - 1,
 						"data-testid": "datatable-next",
 						className: "rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-panel",
 						children: "Next"

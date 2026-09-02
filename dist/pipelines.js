@@ -3,7 +3,7 @@ import "./WebSocketContext-DUvjGLFq.js";
 import { a as t, n } from "./ToastProvider-BKjV21G4.js";
 import { t as r } from "./cn-DhjIN-s0.js";
 import { t as i } from "./useEventCallback-Cwx9QVSi.js";
-import { a, c as o, d as s, i as c, l, m as u, o as d, p as f, r as p, s as m, t as h, u as g } from "./DetailSection-C_V1zJZ4.js";
+import { a, c as o, d as s, i as c, l, m as u, o as d, p as f, r as p, s as m, t as h, u as g } from "./DetailSection-CiIO-hyL.js";
 import { t as _ } from "./Button-wU9TwJvB.js";
 import { t as v } from "./IconButton-C3DMtvSx.js";
 import { t as y } from "./Banner-BLOg1hC_.js";
