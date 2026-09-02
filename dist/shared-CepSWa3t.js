@@ -3931,12 +3931,12 @@ function $({ item: t }) {
 		})]
 	});
 }
-function Un({ items: t, className: n, "aria-label": r, "data-testid": i }) {
+function Un({ items: t, frameless: n = !1, className: r, "aria-label": i, "data-testid": a }) {
 	return /* @__PURE__ */ L("div", {
 		role: "group",
-		className: e("flex divide-x divide-border overflow-x-auto rounded-lg border border-border bg-surface", n),
-		...r ? { "aria-label": r } : {},
-		...i ? { "data-testid": i } : {},
+		className: e("flex divide-x divide-border overflow-x-auto", !n && "rounded-lg border border-border bg-surface", r),
+		...i ? { "aria-label": i } : {},
+		...a ? { "data-testid": a } : {},
 		children: t.map((e) => e.href ? /* @__PURE__ */ L("a", {
 			href: e.href,
 			className: "min-w-0 flex-1 no-underline transition-colors hover:bg-surface-hover",

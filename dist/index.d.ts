@@ -2266,7 +2266,14 @@ declare interface CollapsedIconStripProps {
 export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): default_2.JSX.Element;
 
 export declare interface CollapsibleSectionProps {
-    title: string;
+    /**
+     * The header label. A node, not a string: real section headers pair a name
+     * with something that qualifies it — an id slug, a status dot, a count —
+     * and a `string` prop forces every such caller to either drop the qualifier
+     * or hand-roll its own accordion, which is what this component exists to
+     * stop. It is only ever rendered, never measured or compared.
+     */
+    title: default_2.ReactNode;
     defaultOpen?: boolean;
     /** Optional element rendered on the right side of the header (e.g. a count chip). */
     badge?: default_2.ReactNode;
@@ -8636,7 +8643,7 @@ export declare interface StatsCardProps {
     style?: CSSProperties;
 }
 
-export declare function StatStrip({ items, className, 'aria-label': ariaLabel, 'data-testid': testId }: StatStripProps): JSX.Element;
+export declare function StatStrip({ items, frameless, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
 
 export declare interface StatStripItem {
     label: string;
@@ -8649,6 +8656,17 @@ export declare interface StatStripItem {
 
 export declare interface StatStripProps {
     items: StatStripItem[];
+    /**
+     * Drop the strip's own border, rounding and fill so a host frame can
+     * provide them — the same escape hatch DataTable has.
+     *
+     * The strip is a card by default, which is right when it sits on the page.
+     * Inside another Card it reads as a card in a card: two nested rounded
+     * boxes a few pixels apart, which is visual noise standing in for a
+     * hierarchy that isn't there. The dividers between clusters stay, since
+     * those separate the numbers from each other, not the strip from the page.
+     */
+    frameless?: boolean;
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;

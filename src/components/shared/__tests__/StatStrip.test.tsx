@@ -18,4 +18,19 @@ describe('StatStrip', () => {
     fireEvent.click(screen.getByRole('button'));
     expect(onSelect).toHaveBeenCalled();
   });
+
+  it('frames itself by default', () => {
+    render(<StatStrip data-testid="s" items={[{ label: 'Spend', value: '$4' }]} />);
+    expect(screen.getByTestId('s').className).toContain('border-border');
+  });
+
+  it('frameless drops the frame but keeps the dividers between clusters', () => {
+    // Inside a Card the default frame reads as a card in a card. The dividers
+    // separate the NUMBERS from each other, so they survive.
+    render(<StatStrip frameless data-testid="s" items={[{ label: 'Spend', value: '$4' }]} />);
+    const el = screen.getByTestId('s');
+    expect(el.className).not.toContain('rounded-lg');
+    expect(el.className).not.toContain('border-border');
+    expect(el.className).toContain('divide-x');
+  });
 });

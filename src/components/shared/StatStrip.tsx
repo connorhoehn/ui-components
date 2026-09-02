@@ -20,6 +20,17 @@ export interface StatStripItem {
 
 export interface StatStripProps {
   items: StatStripItem[];
+  /**
+   * Drop the strip's own border, rounding and fill so a host frame can
+   * provide them — the same escape hatch DataTable has.
+   *
+   * The strip is a card by default, which is right when it sits on the page.
+   * Inside another Card it reads as a card in a card: two nested rounded
+   * boxes a few pixels apart, which is visual noise standing in for a
+   * hierarchy that isn't there. The dividers between clusters stay, since
+   * those separate the numbers from each other, not the strip from the page.
+   */
+  frameless?: boolean;
   className?: string;
   'aria-label'?: string;
   'data-testid'?: string;
@@ -49,11 +60,21 @@ function Cluster({ item }: { item: StatStripItem }) {
   );
 }
 
-export function StatStrip({ items, className, 'aria-label': ariaLabel, 'data-testid': testId }: StatStripProps) {
+export function StatStrip({
+  items,
+  frameless = false,
+  className,
+  'aria-label': ariaLabel,
+  'data-testid': testId,
+}: StatStripProps) {
   return (
     <div
       role="group"
-      className={cn('flex divide-x divide-border overflow-x-auto rounded-lg border border-border bg-surface', className)}
+      className={cn(
+        'flex divide-x divide-border overflow-x-auto',
+        !frameless && 'rounded-lg border border-border bg-surface',
+        className,
+      )}
       {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
       {...(testId ? { 'data-testid': testId } : {})}
     >

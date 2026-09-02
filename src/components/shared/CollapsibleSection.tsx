@@ -8,7 +8,14 @@ import React, { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
 
 export interface CollapsibleSectionProps {
-  title: string;
+  /**
+   * The header label. A node, not a string: real section headers pair a name
+   * with something that qualifies it — an id slug, a status dot, a count —
+   * and a `string` prop forces every such caller to either drop the qualifier
+   * or hand-roll its own accordion, which is what this component exists to
+   * stop. It is only ever rendered, never measured or compared.
+   */
+  title: React.ReactNode;
   defaultOpen?: boolean;
   /** Optional element rendered on the right side of the header (e.g. a count chip). */
   badge?: React.ReactNode;
