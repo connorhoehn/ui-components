@@ -213,12 +213,13 @@ export default function CanvasDocumentView({
       )}
 
       {isCanvas && body ? (
-        // The workspace: a recessed grey field the page floats on. This is
+        // The workspace: a recessed grey field the page floats on — `bg-workspace`,
+        // NOT `bg-surface-inset`, whose 2% tint is invisible against white paper. This is
         // what reads as "a document" rather than "a text field" — without a
         // surrounding surface, a white box on a white app is just a widget.
         <div
           data-testid={`${testId}-workspace`}
-          className="rounded-lg bg-surface-inset overflow-y-auto"
+          className="rounded-lg bg-workspace overflow-y-auto"
         >
           {/* Chrome, not paper: the toolbar is themed and goes dark, while the
               sheet below it stays white. Sticky so it survives scrolling a
@@ -229,7 +230,21 @@ export default function CanvasDocumentView({
               data-testid={`${testId}-toolbar`}
               className="sticky top-0 z-10 border-b border-border bg-surface-panel"
             >
-              <div className="mx-auto max-w-[816px] px-2">
+              {/* Full workspace width, NOT the sheet's 816px.
+
+                  Capping chrome at the PAPER width contradicts the comment
+                  above it: the toolbar belongs to the app, not to the page. It
+                  also broke as soon as the toolbar earned another control —
+                  `Insert diagram` pushed it past 816px, `flex-wrap` folded it
+                  onto a second row, and the result read as two unrelated
+                  toolbars stacked on top of each other (measured: the inner bar
+                  was 800px wide and 68px tall, i.e. two rows of controls, inside
+                  a 1372px workspace with room to spare).
+
+                  Word processors put the toolbar across the whole chrome for
+                  this reason — the sheet is centred beneath it, the controls are
+                  not. */}
+              <div className="w-full px-3">
                 <DocumentToolbar
                   editor={editor}
                   actions={toolbarActions}

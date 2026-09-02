@@ -122,7 +122,12 @@ describe('CanvasDocumentView — a document that is already a canvas', () => {
     const workspace = screen.getByTestId('canvas-document-workspace');
     const paper = screen.getByTestId('canvas-document-paper');
     expect(workspace).toContainElement(paper);
-    expect(workspace.className).toContain('bg-surface-inset');
+    // bg-workspace, NOT bg-surface-inset: the latter is a 2% tint (#fafbfc)
+    // that is invisible against white paper (#fff), so the sheet dissolved into
+    // its own workspace and the page read as an expanse of empty white. The
+    // desk has to be a visibly different surface from the page on it.
+    expect(workspace.className).toContain('bg-workspace');
+    expect(workspace.className).not.toContain('bg-surface-inset');
     expect(paper.className).toMatch(/max-w-\[816px\]/); // 8.5in at 96dpi
     expect(paper.className).toMatch(/shadow-/);
   });

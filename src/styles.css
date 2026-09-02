@@ -15,6 +15,15 @@
 
   --color-surface: #ffffff;
   --color-surface-inset: #fafbfc;
+  /* The DESK a document sheet floats on.
+     Distinct from --color-surface-inset (#fafbfc), which is a 2% tint meant for
+     a slightly recessed panel. On the canvas that tint sits against
+     --color-paper (#fff): a 5/255 difference, invisible, so the sheet dissolved
+     into its own workspace and the page read as an expanse of empty white
+     rather than a document on a surface.
+     Its own token rather than a retuned surface-inset, which has 189 call sites
+     where a subtle tint is the right answer. */
+  --color-workspace: #eef2f6;
   --color-surface-panel: #f8fafc;
   --color-surface-hover: #f1f5f9;
 
@@ -269,6 +278,11 @@
 
   --color-surface: #1e293b;
   --color-surface-inset: #1b2536;
+  /* Paper is invariant white in BOTH themes, so the desk must stay clearly
+     darker than the sheet — the same relationship as light mode, not its
+     mirror. Deeper than --color-surface-panel (#0f172a) so the chrome above
+     the workspace still separates from it. */
+  --color-workspace: #0a1120;
   --color-surface-panel: #0f172a;
   --color-surface-hover: #293548;
 
