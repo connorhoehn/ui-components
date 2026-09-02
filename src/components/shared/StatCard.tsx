@@ -47,6 +47,21 @@ export interface StatCardProps {
   danger?: boolean;
   hint?: ReactNode;
   /**
+   * Native tooltip on the whole card — for provenance a reader only needs on
+   * demand ("unknown, not zero" behind a $0.00).
+   *
+   * `hint` is the visible slot and stays the default; this is for text that
+   * would crowd the tile. Deliberately the native `title` rather than a new
+   * Tooltip component: several shared components already use `title` this way,
+   * and one hover mechanism that works everywhere beats two that disagree.
+   *
+   * It exists because ProjectDetailPage needed exactly this and had to smuggle a
+   * bare `<span title>` inside the `label` ReactNode — which put the tooltip on
+   * the caption rather than the card, so it only appeared over four words of
+   * uppercase text.
+   */
+  title?: string;
+  /**
    * Trend delta rendered below the value (▲ +12% / ▼ -4%, colored by tone).
    * Pass `null` or omit to hide.
    */
@@ -93,6 +108,7 @@ export function StatCard({
   accent = false,
   danger = false,
   hint,
+  title,
   delta,
   sparklineData,
   to,
@@ -168,13 +184,13 @@ export function StatCard({
     // router's prop name matches. Plain <a> gets `href` instead.
     if (As) {
       return (
-        <As to={to} data-testid={testId} className={baseClasses} style={style}>
+        <As to={to} title={title} data-testid={testId} className={baseClasses} style={style}>
           {content}
         </As>
       );
     }
     return (
-      <a href={to} data-testid={testId} className={baseClasses} style={style}>
+      <a href={to} title={title} data-testid={testId} className={baseClasses} style={style}>
         {content}
       </a>
     );
@@ -185,6 +201,7 @@ export function StatCard({
       <button
         type="button"
         onClick={onClick}
+        title={title}
         data-testid={testId}
         className={cn(baseClasses, 'w-full text-left')}
         style={style}
@@ -195,7 +212,7 @@ export function StatCard({
   }
 
   return (
-    <div data-testid={testId} className={baseClasses} style={style}>
+    <div data-testid={testId} title={title} className={baseClasses} style={style}>
       {content}
     </div>
   );

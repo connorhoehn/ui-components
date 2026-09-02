@@ -2217,7 +2217,7 @@ export declare interface StackProps extends Omit<HTMLAttributes<HTMLElement>, 'c
     as?: ElementType;
 }
 
-export declare function StatCard({ label, value, accent, danger, hint, delta, sparklineData, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
+export declare function StatCard({ label, value, accent, danger, hint, title, delta, sparklineData, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
 
 export declare interface StatCardDelta {
     /** Magnitude of the change. Rendered with a sign derived from `direction`. */
@@ -2248,6 +2248,21 @@ export declare interface StatCardProps {
     accent?: boolean;
     danger?: boolean;
     hint?: ReactNode;
+    /**
+     * Native tooltip on the whole card — for provenance a reader only needs on
+     * demand ("unknown, not zero" behind a $0.00).
+     *
+     * `hint` is the visible slot and stays the default; this is for text that
+     * would crowd the tile. Deliberately the native `title` rather than a new
+     * Tooltip component: several shared components already use `title` this way,
+     * and one hover mechanism that works everywhere beats two that disagree.
+     *
+     * It exists because ProjectDetailPage needed exactly this and had to smuggle a
+     * bare `<span title>` inside the `label` ReactNode — which put the tooltip on
+     * the caption rather than the card, so it only appeared over four words of
+     * uppercase text.
+     */
+    title?: string;
     /**
      * Trend delta rendered below the value (▲ +12% / ▼ -4%, colored by tone).
      * Pass `null` or omit to hide.

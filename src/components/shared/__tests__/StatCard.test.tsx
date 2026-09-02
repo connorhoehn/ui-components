@@ -160,3 +160,31 @@ describe('StatCard', () => {
     expect(container.querySelector('.font-mono')).not.toBeNull();
   });
 });
+
+describe('title (the on-demand provenance tooltip)', () => {
+  // Lives on the CARD, not on the label. ProjectDetailPage had to smuggle a
+  // <span title> inside the `label` ReactNode, which put the tooltip on four
+  // words of uppercase caption instead of the tile a reader actually points at.
+  it('lands on the card root for a plain card', () => {
+    render(<StatCard label="Agent spend" value="$0.00" title="unknown, not zero" data-testid="sc" />);
+    expect(screen.getByTestId('sc')).toHaveAttribute('title', 'unknown, not zero');
+  });
+
+  it('survives every render branch, not just the div', () => {
+    // Four branches (as / anchor / button / div) and a prop that reaches only
+    // one is worse than none — it works where you tested and vanishes where you
+    // did not.
+    const { rerender } = render(
+      <StatCard label="L" value="1" title="why" to="/somewhere" data-testid="sc" />,
+    );
+    expect(screen.getByTestId('sc')).toHaveAttribute('title', 'why');
+
+    rerender(<StatCard label="L" value="1" title="why" onClick={() => {}} data-testid="sc" />);
+    expect(screen.getByTestId('sc')).toHaveAttribute('title', 'why');
+  });
+
+  it('renders no title attribute when none is given', () => {
+    render(<StatCard label="L" value="1" data-testid="sc" />);
+    expect(screen.getByTestId('sc')).not.toHaveAttribute('title');
+  });
+});

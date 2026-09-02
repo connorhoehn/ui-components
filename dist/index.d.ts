@@ -1,55 +1,11225 @@
-export * from './types';
-export * from './hooks';
-export * from './contexts';
-export * from './components/shared';
-export * from './components/sidebar';
-export * from './components/hangout';
-export * from './components/layout';
-export * from './components/social';
-export * from './components/video';
-export * from './components/identity';
-export * from './components/change-review';
-export * from './styles';
-export * from './theme';
-export * from './api';
-export * from './renderers';
-export { Input } from './components/forms/Input';
-export type { InputProps, InputSize, InputType } from './components/forms/Input';
-export { Select } from './components/forms/Select';
-export type { SelectProps, SelectSize, SelectOption, SelectOptionGroup } from './components/forms/Select';
-export { Textarea } from './components/forms/Textarea';
-export type { TextareaProps } from './components/forms/Textarea';
-export { JsonPathInput } from './components/forms/JsonPathInput';
-export type { JsonPathInputProps, JsonPathSample } from './components/forms/JsonPathInput';
-export { NumberInput } from './components/forms/NumberInput';
-export type { NumberInputProps } from './components/forms/NumberInput';
-export { RadioGroup } from './components/forms/RadioGroup';
-export type { RadioGroupProps, RadioOption } from './components/forms/RadioGroup';
-export { Checkbox } from './components/forms/Checkbox';
-export type { CheckboxProps } from './components/forms/Checkbox';
-export { ColorInput } from './components/forms/ColorInput';
-export type { ColorInputProps } from './components/forms/ColorInput';
-export { Slider } from './components/forms/Slider';
-export type { SliderProps } from './components/forms/Slider';
-export { ImageThumbnail } from './components/image/ImageThumbnail';
-export type { ImageThumbnailProps, ImageThumbnailSize, ImageThumbnailAspect } from './components/image/ImageThumbnail';
-export { GenerativeImagePreview } from './components/image/GenerativeImagePreview';
-export type { GenerativeImagePreviewProps, GenerativeImagePreviewStatus } from './components/image/GenerativeImagePreview';
-export { NodeCard } from './components/pipelines/nodes/NodeCard';
-export type { NodeCardProps } from './components/pipelines/nodes/NodeCard';
-export { PipelineEditorServicesProvider, useImageUrl, usePipelineEditorServices, } from './components/pipelines/services';
-export type { PipelineEditorServices, } from './components/pipelines/services';
-export type { UploadedImage as PipelineUploadedImage } from './components/pipelines/services';
-export type { CommentThread } from './types';
-export type { Participant } from './types';
-export type { MfaDevice } from './types';
-export { FormField } from './components/shared';
-export type { FormFieldProps } from './components/shared';
-export type { AuditPage } from './api/pipelineAudit';
-export { CommentThread as CommentThreadPanel } from './components/social';
-export type { Participant as VideoParticipant } from './components/video';
-export { FormField as IdentityFormField } from './components/identity';
-export type { FormFieldProps as IdentityFormFieldProps } from './components/identity';
-export { AuditPage as IdentityAuditPage } from './components/identity';
-export { ErrorBoundary } from './components/misc/ErrorBoundary';
-//# sourceMappingURL=index.d.ts.map
+import { AnchorHTMLAttributes } from 'react';
+import { Awareness } from 'y-protocols/awareness';
+import { ButtonHTMLAttributes } from 'react';
+import { Component } from 'react';
+import { CSSProperties } from 'react';
+import { default as default_2 } from 'react';
+import { ElementType } from 'react';
+import { ErrorInfo } from 'react';
+import { ForwardRefExoticComponent } from 'react';
+import { HTMLAttributes } from 'react';
+import { InputHTMLAttributes } from 'react';
+import { JSX } from 'react';
+import { JSXElementConstructor } from 'react';
+import { MouseEvent as MouseEvent_2 } from 'react';
+import { MutableRefObject } from 'react';
+import { Observable } from 'lib0/observable';
+import { ReactElement } from 'react';
+import { ReactNode } from 'react';
+import { ReactPortal } from 'react';
+import { Ref } from 'react';
+import { RefAttributes } from 'react';
+import { RefObject } from 'react';
+import { SelectHTMLAttributes } from 'react';
+import { SVGProps } from 'react';
+import { TdHTMLAttributes } from 'react';
+import { TextareaHTMLAttributes } from 'react';
+import { ThHTMLAttributes } from 'react';
+import { XmlFragment } from 'yjs';
+import * as Y from 'yjs';
+
+export declare interface A2AMessage {
+    id: string;
+    from: string;
+    to: string;
+    content: string;
+    protocol: 'a2a';
+    timestamp: string;
+    metadata?: Record<string, unknown>;
+}
+
+export declare interface A2ASession {
+    sessionId: string;
+    participants: AgentDefinition[];
+    messages: A2AMessage[];
+    startedAt: string;
+    status: 'active' | 'completed' | 'failed';
+}
+
+export declare interface ActionNodeData {
+    type: 'action';
+    actionType: ActionType;
+    /** Shape varies per `actionType`; refined in Phase 2. */
+    config: Record<string, unknown>;
+    idempotent?: boolean;
+    /**
+     * Dedup scope when `idempotent: true`.
+     * - `per-step` (default): fire at most once per step across all retries.
+     * - `per-attempt`: fire once per attempt; retries get a fresh dedup window.
+     */
+    idempotencyMode?: 'per-attempt' | 'per-step';
+    onError?: 'route-error' | 'fail-run';
+    retryPolicy?: RetryPolicy;
+}
+
+export declare type ActionType = 'update-document' | 'post-comment' | 'notify' | 'webhook' | 'mcp-tool' | 'sync-back';
+
+export declare function ActiveCallBanner({ open, onJoin, onDismiss, lobbyLabel, elapsedMs, participants, participantCount, loading, }: ActiveCallBannerProps): JSX.Element | null;
+
+/** Thin participant shape — same contract as ResumeCallParticipant:
+ *  caller MUST pass safeDisplayName output, never a raw UUID. */
+export declare interface ActiveCallBannerParticipant {
+    userId: string;
+    name: string;
+    avatarUrl?: string;
+}
+
+export declare interface ActiveCallBannerProps {
+    /** Visibility — when false nothing renders. */
+    open: boolean;
+    /** Join button → consumer starts its join flow (may be async; flip
+     *  `loading` while pending). */
+    onJoin: () => void | Promise<void>;
+    /** Dismiss (X / "Not now") → consumer hides and typically remembers
+     *  the dismissal for this callId so the banner doesn't re-appear. */
+    onDismiss: () => void;
+    /** Human-readable lobby label shown in the banner title. */
+    lobbyLabel: string;
+    /** Elapsed ms at mount — live display advances on a local 1s tick,
+     *  so the parent never re-renders to move the clock. 0/absent hides
+     *  the duration chip (status replies without startedAt). */
+    elapsedMs?: number;
+    /** Participants currently in the call. Names pre-resolved. */
+    participants: ActiveCallBannerParticipant[];
+    /** Overrides the "N in call" count when the caller knows a truer
+     *  number than participants.length (e.g. server participantCount
+     *  when some names couldn't be resolved). */
+    participantCount?: number;
+    /** True while the join attempt is in flight. */
+    loading?: boolean;
+}
+
+export declare const activeNavItemStyle: CSSProperties;
+
+declare interface ActiveSync {
+    sourceId: string;
+    sourceName: string;
+    fileCount: number;
+    filesFetched: number;
+    itemsMapped: number;
+    itemsMaterialized: number;
+    startedAt: string;
+}
+
+declare interface ActivityEvent {
+    id: string;
+    eventType: string;
+    detail: Record<string, unknown>;
+    timestamp: string;
+    userId?: string;
+    displayName?: string;
+    color?: string;
+    source: 'local' | 'remote';
+}
+
+export declare function ActivityFeed({ items, visibleCount, rotateMs, staggerMs, kindColors, className, }: ActivityFeedProps): JSX.Element;
+
+export declare interface ActivityFeedItem {
+    id: string;
+    /** Display name of the person who performed the action, e.g. "Alex Chen". */
+    actor: string;
+    /** Verb phrase, e.g. "completed". */
+    action: string;
+    /** Jira-style ticket ID badge, e.g. "K8S-182". */
+    ticketId?: string;
+    /** Short description/title of the work item. */
+    subject: string;
+    /** Human-readable relative timestamp, e.g. "2m ago". */
+    timeLabel?: string;
+    /** Controls the type-dot color. */
+    kind?: ActivityKind;
+}
+
+export declare interface ActivityFeedProps {
+    items: ActivityFeedItem[];
+    /** Number of items visible at once (default: 3). */
+    visibleCount?: number;
+    /** Auto-rotation interval in ms (default: 4200). Set 0 to disable. */
+    rotateMs?: number;
+    /** Delay before the first rotation fires, for stagger between sibling feeds (ms). */
+    staggerMs?: number;
+    /** Override dot colors per kind. Merged over the built-in palette. */
+    kindColors?: Record<string, string>;
+    className?: string;
+}
+
+export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
+
+export declare function ActivityPanel({ idToken, sendMessage, onMessage, connectionState }: ActivityPanelProps): JSX.Element;
+
+declare interface ActivityPanelProps {
+    idToken: string | null;
+    sendMessage: (msg: Record<string, unknown>) => void;
+    onMessage: OnMessageFn_11;
+    connectionState: ConnectionState_4;
+}
+
+export declare type AdjustLayer = {
+    kind: 'brightness';
+    value: number;
+} | {
+    kind: 'contrast';
+    value: number;
+} | {
+    kind: 'saturation';
+    value: number;
+} | {
+    kind: 'hue';
+    degrees: number;
+} | {
+    kind: 'blur';
+    radiusPx: number;
+};
+
+export declare function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminDashboardPageProps): JSX.Element;
+
+export declare interface AdminDashboardPageProps {
+    stats: {
+        userPools: number;
+        clients: number;
+        totalUsers: number;
+    };
+    pools: Array<{
+        poolId: string;
+        poolName: string;
+        createdAt: string;
+    }>;
+    onNavigate: (path: string) => void;
+    loading?: boolean;
+}
+
+export declare interface AgentDefinition {
+    id: string;
+    name: string;
+    status: AgentStatus;
+    protocol: AgentProtocol;
+    model: string;
+    tools: string[];
+    guardrails: string[];
+    endpoint: string;
+    description?: string;
+    lastInvocation?: string;
+    avgLatencyMs?: number;
+    invocationsLast24h?: number;
+}
+
+export declare type AgentInvokeProtocol = 'a2a' | 'direct';
+
+export declare interface AgentMetrics {
+    agentId: string;
+    invocationsTotal: number;
+    invocationsLast24h: number;
+    errorsLast24h: number;
+    avgLatencyMs: number;
+    p99LatencyMs: number;
+    tokensInLast24h: number;
+    tokensOutLast24h: number;
+    guardrailBlocksLast24h: number;
+    asOf: string;
+}
+
+/**
+ * `agent` node config — agent-step contract v1.
+ *
+ * BREAKING CHANGE in 2.96.0. This interface previously described an
+ * aspirational "invoke a registered Strands agent over A2A" node
+ * (`agentId` / `protocol` / `inputTemplate` / `streaming`). That node was
+ * never executable by any host: no config panel ever shipped for it, no
+ * executor ever handled it, and `AgentNode` crashed on
+ * `data.protocol.toUpperCase()` for any host that dropped one on a canvas.
+ *
+ * It is replaced by the real thing: a Claude agent loop (multi-turn, tool
+ * use) run via `claude -p`, whose contract is shared with the backend
+ * (platform-api) and the executor (distributed-core). If you need the old
+ * A2A-invoke semantics back, they belong on a distinct node type — not on
+ * this one.
+ */
+export declare interface AgentNodeData {
+    type: 'agent';
+    /** The task. Supports the same {{ context.x }} interpolation as `llm`. */
+    prompt: string;
+    systemPrompt?: string;
+    /** Friendly alias ('sonnet' | 'opus' | 'haiku') or an explicit model id. */
+    model?: string;
+    /**
+     * Tools the agent may use. DEFAULT-DENY: absent or empty means the agent
+     * runs with NO tools and is equivalent to a plain `llm` step. Never widen
+     * this implicitly — hosts must make the empty case visible to authors.
+     */
+    allowedTools?: string[];
+    /** Hard ceiling on agent turns. Default 8. */
+    maxTurns?: number;
+    /** Wall-clock ceiling for the whole step. Default 120_000. */
+    timeoutMs?: number;
+    retryPolicy?: RetryPolicy;
+}
+
+export declare type AgentProtocol = 'a2a' | 'direct';
+
+export declare type AgentStatus = 'healthy' | 'degraded' | 'offline' | 'deploying';
+
+export declare interface AgUiActivityDeltaEvent extends AgUiEventBase {
+    type: 'ACTIVITY_DELTA';
+    messageId: string;
+    activityType: string;
+    patch: JsonPatchOp[];
+}
+
+export declare interface AgUiActivitySnapshotEvent extends AgUiEventBase {
+    type: 'ACTIVITY_SNAPSHOT';
+    messageId: string;
+    activityType: string;
+    content: unknown;
+    replace?: boolean;
+}
+
+export declare interface AgUiCustomEvent extends AgUiEventBase {
+    type: 'CUSTOM';
+    name: string;
+    value: unknown;
+}
+
+export declare type AgUiEvent = AgUiRunStartedEvent | AgUiRunFinishedEvent | AgUiRunErrorEvent | AgUiStepStartedEvent | AgUiStepFinishedEvent | AgUiTextMessageStartEvent | AgUiTextMessageContentEvent | AgUiTextMessageEndEvent | AgUiTextMessageChunkEvent | AgUiToolCallStartEvent | AgUiToolCallArgsEvent | AgUiToolCallEndEvent | AgUiToolCallResultEvent | AgUiToolCallChunkEvent | AgUiStateSnapshotEvent | AgUiStateDeltaEvent | AgUiMessagesSnapshotEvent | AgUiActivitySnapshotEvent | AgUiActivityDeltaEvent | AgUiReasoningStartEvent | AgUiReasoningMessageStartEvent | AgUiReasoningMessageContentEvent | AgUiReasoningMessageEndEvent | AgUiReasoningMessageChunkEvent | AgUiReasoningEndEvent | AgUiReasoningEncryptedValueEvent | AgUiRawEvent | AgUiCustomEvent | AgUiMetaEvent;
+
+declare interface AgUiEventBase {
+    timestamp?: number;
+    rawEvent?: unknown;
+}
+
+export declare type AgUiEventType = AgUiEvent['type'];
+
+export declare interface AgUiMessage {
+    id: string;
+    role: AgUiRole;
+    content: string;
+    isStreaming: boolean;
+    toolCalls: AgUiToolCall[];
+    reasoning?: string;
+}
+
+export declare interface AgUiMessagesSnapshotEvent extends AgUiEventBase {
+    type: 'MESSAGES_SNAPSHOT';
+    messages: unknown[];
+}
+
+export declare interface AgUiMetaEvent extends AgUiEventBase {
+    type: 'META_EVENT';
+    metaType: string;
+    payload: unknown;
+}
+
+export declare type AgUiOutputEventType = 'TEXT_MESSAGE_CONTENT' | 'STATE_DELTA' | 'CUSTOM';
+
+export declare interface AgUiOutputNodeData {
+    type: 'ag-ui-output';
+    sourceField: string;
+    eventType: AgUiOutputEventType;
+    terminal: boolean;
+    customEventName?: string;
+}
+
+export declare interface AgUiRawEvent extends AgUiEventBase {
+    type: 'RAW';
+    event: unknown;
+    source?: string;
+}
+
+export declare interface AgUiReasoningEncryptedValueEvent extends AgUiEventBase {
+    type: 'REASONING_ENCRYPTED_VALUE';
+    subtype: 'message' | 'tool-call';
+    entityId: string;
+    encryptedValue: string;
+}
+
+export declare interface AgUiReasoningEndEvent extends AgUiEventBase {
+    type: 'REASONING_END';
+    messageId: string;
+}
+
+export declare interface AgUiReasoningMessageChunkEvent extends AgUiEventBase {
+    type: 'REASONING_MESSAGE_CHUNK';
+    messageId: string;
+    delta?: string;
+}
+
+export declare interface AgUiReasoningMessageContentEvent extends AgUiEventBase {
+    type: 'REASONING_MESSAGE_CONTENT';
+    messageId: string;
+    delta: string;
+}
+
+export declare interface AgUiReasoningMessageEndEvent extends AgUiEventBase {
+    type: 'REASONING_MESSAGE_END';
+    messageId: string;
+}
+
+export declare interface AgUiReasoningMessageStartEvent extends AgUiEventBase {
+    type: 'REASONING_MESSAGE_START';
+    messageId: string;
+    role: 'reasoning';
+}
+
+export declare interface AgUiReasoningStartEvent extends AgUiEventBase {
+    type: 'REASONING_START';
+    messageId: string;
+}
+
+export declare type AgUiRole = 'developer' | 'system' | 'assistant' | 'user' | 'tool';
+
+export declare interface AgUiRunErrorEvent extends AgUiEventBase {
+    type: 'RUN_ERROR';
+    message: string;
+    code?: string;
+}
+
+export declare interface AgUiRunFinishedEvent extends AgUiEventBase {
+    type: 'RUN_FINISHED';
+    outcome?: {
+        type: 'success';
+    } | {
+        type: 'interrupt';
+        interrupts: unknown[];
+    };
+    result?: unknown;
+}
+
+export declare interface AgUiRunStartedEvent extends AgUiEventBase {
+    type: 'RUN_STARTED';
+    threadId: string;
+    runId: string;
+    parentRunId?: string;
+    input?: unknown;
+}
+
+export declare interface AgUiSession {
+    threadId: string;
+    runId: string | null;
+    messages: AgUiMessage[];
+    state: unknown;
+}
+
+export declare interface AgUiStateDeltaEvent extends AgUiEventBase {
+    type: 'STATE_DELTA';
+    delta: JsonPatchOp[];
+}
+
+export declare interface AgUiStateSnapshotEvent extends AgUiEventBase {
+    type: 'STATE_SNAPSHOT';
+    snapshot: unknown;
+}
+
+export declare interface AgUiStepFinishedEvent extends AgUiEventBase {
+    type: 'STEP_FINISHED';
+    stepName: string;
+}
+
+export declare interface AgUiStepStartedEvent extends AgUiEventBase {
+    type: 'STEP_STARTED';
+    stepName: string;
+}
+
+export declare interface AgUiTextMessageChunkEvent extends AgUiEventBase {
+    type: 'TEXT_MESSAGE_CHUNK';
+    messageId?: string;
+    role?: AgUiRole;
+    delta?: string;
+}
+
+export declare interface AgUiTextMessageContentEvent extends AgUiEventBase {
+    type: 'TEXT_MESSAGE_CONTENT';
+    messageId: string;
+    delta: string;
+}
+
+export declare interface AgUiTextMessageEndEvent extends AgUiEventBase {
+    type: 'TEXT_MESSAGE_END';
+    messageId: string;
+}
+
+export declare interface AgUiTextMessageStartEvent extends AgUiEventBase {
+    type: 'TEXT_MESSAGE_START';
+    messageId: string;
+    role: AgUiRole;
+}
+
+export declare interface AgUiToolCall {
+    id: string;
+    name: string;
+    args: string;
+    result?: unknown;
+    status: 'streaming' | 'completed' | 'error';
+    startedAt: number;
+    endedAt?: number;
+    parentMessageId?: string;
+}
+
+export declare interface AgUiToolCallArgsEvent extends AgUiEventBase {
+    type: 'TOOL_CALL_ARGS';
+    toolCallId: string;
+    delta: string;
+}
+
+export declare interface AgUiToolCallChunkEvent extends AgUiEventBase {
+    type: 'TOOL_CALL_CHUNK';
+    toolCallId?: string;
+    toolCallName?: string;
+    parentMessageId?: string;
+    delta?: string;
+}
+
+export declare interface AgUiToolCallEndEvent extends AgUiEventBase {
+    type: 'TOOL_CALL_END';
+    toolCallId: string;
+}
+
+export declare interface AgUiToolCallResultEvent extends AgUiEventBase {
+    type: 'TOOL_CALL_RESULT';
+    messageId: string;
+    toolCallId: string;
+    content: unknown;
+    role?: string;
+}
+
+export declare interface AgUiToolCallStartEvent extends AgUiEventBase {
+    type: 'TOOL_CALL_START';
+    toolCallId: string;
+    toolCallName: string;
+    parentMessageId?: string;
+}
+
+export declare type AnyCallWidgetMode = CallWidgetMode | LegacyCallWidgetMode;
+
+declare interface ApiCallState<T> {
+    data: T | null;
+    loading: boolean;
+    error: string | null;
+    execute: (...args: unknown[]) => Promise<void>;
+    retry: () => Promise<void>;
+    reset: () => void;
+}
+
+export declare function ApiDegradedBanner({ health }: ApiDegradedBannerProps): JSX.Element | null;
+
+declare interface ApiDegradedBannerProps {
+    health: ApiHealthSnapshot;
+}
+
+declare interface ApiHealthCheck {
+    status: 'ok' | 'error' | string;
+    latencyMs?: number;
+    error?: string;
+}
+
+declare interface ApiHealthSnapshot {
+    status: ApiHealthStatus;
+    checks: Record<string, ApiHealthCheck>;
+    /** Names of failing dependencies (status !== 'ok'). Empty when healthy or unknown. */
+    failing: string[];
+}
+
+declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
+
+/**
+ * Wraps the layout body in the pipelines event-stream + runs providers so
+ * the cross-pipeline approvals page and the document-trigger hook can
+ * share a single runs store for the whole app. Events are sourced from the
+ * gateway WS bridge — there is no other producer.
+ */
+export declare function AppLayout(props: AppLayoutProps): JSX.Element;
+
+declare interface AppLayoutProps {
+    currentChannel: string;
+    onSwitchChannel: (channel: string) => void;
+    onDisconnect: () => void;
+    onReconnect: () => void;
+    activeReactions: EphemeralReaction[];
+    logEntries: LogEntry[];
+    errors: GatewayError[];
+    lastError: GatewayError | null;
+    activityEvents: ActivityEvent[];
+    activityPublish: (eventType: string, detail: Record<string, unknown>) => void;
+    activityIsLive: boolean;
+    /**
+     * Whether the left sidebar starts expanded. Optional and **initial-only**
+     * — the layout still owns the state afterwards, so the collapse/expand
+     * controls keep working. Omit it and the sidebar starts open, which is the
+     * historical behaviour.
+     *
+     * It exists because the 56px `CollapsedIconStrip` was previously reachable
+     * only by clicking the sidebar's collapse control: a host cannot restore
+     * the user's saved preference on mount, and a test has to click before it
+     * can assert on the collapsed chrome.
+     */
+    defaultSidebarOpen?: boolean;
+}
+
+export declare function ApplicationFormPage({ application, isEdit, pools, onSubmit, onCancel, error, }: ApplicationFormPageProps): JSX.Element;
+
+export declare interface ApplicationFormPageProps {
+    application?: {
+        clientId?: string;
+        clientName: string;
+        poolId: string;
+        redirectUris: string[];
+        postLogoutRedirectUris?: string[];
+        grantTypes: string[];
+        responseTypes?: string[];
+        scope?: string;
+    };
+    isEdit: boolean;
+    pools: Array<{
+        poolId: string;
+        poolName: string;
+    }>;
+    onSubmit: (data: {
+        clientName: string;
+        poolId: string;
+        redirectUris: string[];
+        postLogoutRedirectUris: string[];
+        grantTypes: string[];
+        responseTypes: string[];
+        scope: string;
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function ApplicationListPage({ applications, onCreateApp, onCreateAppWithPool, onEditApp, onDeleteApp, loading, }: ApplicationListPageProps): JSX.Element;
+
+export declare interface ApplicationListPageProps {
+    applications: Array<{
+        clientId: string;
+        clientName: string;
+        poolId: string;
+        poolName?: string;
+        redirectUris: string[];
+    }>;
+    onCreateApp: () => void;
+    onCreateAppWithPool: () => void;
+    onEditApp: (clientId: string) => void;
+    onDeleteApp: (clientId: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export declare function ApplicationPoolFormPage({ onSubmit, onCancel, error }: ApplicationPoolFormPageProps): JSX.Element;
+
+export declare interface ApplicationPoolFormPageProps {
+    onSubmit: (data: {
+        clientName: string;
+        poolName: string;
+        redirectUris: string[];
+        grantTypes?: string[];
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+/**
+ * Apply a paused-context patch. Resolves the executor's `PatchResult` on a
+ * 200. Throws `PatchValidationRejectedError` on a 422 (carrying the executor
+ * rejection reason). Throws `PatchHttpError` on any other non-2xx.
+ */
+export declare function applyPatch(pipelineId: string, runId: string, stepId: string, patch: ContextPatch, appliedBy?: string): Promise<PatchResult>;
+
+export declare interface ApprovalNodeData {
+    type: 'approval';
+    approvers: Approver[];
+    /** n-of-m — how many approvals required to pass. */
+    requiredCount: number;
+    timeoutMs?: number;
+    timeoutAction?: ApprovalTimeoutAction;
+    /** Message shown to the approver. */
+    message?: string;
+}
+
+export declare interface ApprovalRecord {
+    userId: string;
+    decision: 'approve' | 'reject';
+    comment?: string;
+    at: string;
+}
+
+export declare type ApprovalTimeoutAction = 'reject' | 'approve' | 'escalate';
+
+export declare interface Approver {
+    type: 'user' | 'role';
+    value: string;
+}
+
+/**
+ * AppShell wraps its children in a ToastProvider by default.
+ * Pass `toastRegion={null}` to opt out (e.g. parent already has one).
+ */
+export declare function AppShell({ sidebar, header, children, toastRegion, loading, apiDegraded, commandPalette, className, sidebarWidth, }: AppShellProps): JSX.Element;
+
+export declare interface AppShellProps {
+    /** Slot: full-height left sidebar (CollapsibleSidebar etc.) */
+    sidebar?: ReactNode;
+    /** Slot: fixed top header bar */
+    header: ReactNode;
+    /** Page content */
+    children: ReactNode;
+    /** Slot: override default ToastProvider region (pass null to suppress) */
+    toastRegion?: ReactNode | null;
+    /** When truthy, renders a full-screen loading overlay */
+    loading?: boolean | ReactNode;
+    /** When truthy, renders an API-degraded banner below the header */
+    apiDegraded?: ReactNode;
+    /**
+     * Slot: a global command palette (e.g. `<CommandPalette />`). Rendered
+     * once at the shell level so any page can open it via `useCommandPalette`.
+     * Wrap the AppShell in `<CommandPaletteProvider>` so the palette and the
+     * pages inside share the same registry.
+     */
+    commandPalette?: ReactNode;
+    className?: string;
+    /** Width of the sidebar slot in px (default 260) */
+    sidebarWidth?: number;
+}
+
+export declare function AttachmentBubble({ attachment, src, onOpen, className }: AttachmentBubbleProps): JSX.Element;
+
+export declare interface AttachmentBubbleProps {
+    attachment: ChatAttachment;
+    /**
+     * Resolved, directly-renderable source for an image (typically an object
+     * URL produced by an authenticated fetch). Falls back to `attachment.preview`
+     * so the recipient sees the placeholder rather than a broken image while
+     * the full-size fetch is in flight.
+     */
+    src?: string;
+    /** Invoked when the viewer activates the attachment (open / download). */
+    onOpen?: (attachment: ChatAttachment) => void;
+    className?: string;
+}
+
+export declare interface AuditActor {
+    type: 'admin' | 'user' | 'system';
+    email?: string;
+    userId?: string;
+    reason?: string;
+}
+
+export declare interface AuditFilters {
+    /** ISO 8601 lower bound on `timestamp`. */
+    since?: string;
+    /** ISO 8601 upper bound on `timestamp`. */
+    until?: string;
+    /** Action types to keep — comma-joined for the query string. */
+    actions?: string[];
+    /** Page size (1..1000). Server defaults to 100. */
+    limit?: number;
+    /** Opaque pagination token from a previous response. */
+    cursor?: string;
+}
+
+export declare interface AuditPage {
+    items: AuditRow[];
+    nextCursor?: string;
+}
+
+export declare interface AuditPageProps {
+    records: Array<{
+        timestamp: number;
+        actor: {
+            id?: string;
+            email?: string;
+        } | string;
+        entityType: string;
+        entityId: string;
+        operation: string;
+    }>;
+    onQuery: (params: {
+        entityType?: string;
+        entityId?: string;
+        fromTime?: number;
+        toTime?: number;
+        limit?: number;
+    }) => Promise<void>;
+    onViewEntity: (entityType: string, entityId: string) => void;
+    onReplay: (entityId: string, atTime: number) => Promise<Record<string, unknown> | null>;
+    loading?: boolean;
+    totalRecords?: number;
+}
+
+export declare interface AuditQueryParams {
+    entityType?: string;
+    entityId?: string;
+    fromTime?: number;
+    toTime?: number;
+    limit?: number;
+    cursor?: string;
+}
+
+export declare interface AuditRecord {
+    timestamp: number;
+    actor: AuditActor;
+    entityType: string;
+    entityId: string;
+    operation: string;
+    before?: Record<string, unknown>;
+    after?: Record<string, unknown>;
+}
+
+/**
+ * Mirrors `StoredAuditEvent` from social-api/src/pipeline/audit-repository.ts.
+ * Re-declared here as a plain TS interface (per project conventions — no
+ * runtime schema lib) so the frontend doesn't pull a backend module across
+ * the Vite/TSX boundary.
+ */
+export declare interface AuditRow {
+    auditId: string;
+    timestamp: string;
+    action: string;
+    actorUserId: string;
+    pipelineId: string;
+    runId?: string;
+    decision?: 'approved' | 'rejected' | 'cancelled' | 'failed' | 'completed' | 'success' | 'error';
+    outcome?: 'success' | 'error' | 'rejected';
+    details?: Record<string, unknown>;
+    before?: Record<string, unknown>;
+    after?: Record<string, unknown>;
+    trace?: Record<string, unknown>;
+    ttlEpoch?: number;
+}
+
+/**
+ * Identity attached to every request handled by the pipeline router. The
+ * host (social-api today, distributed-core later) populates this from its
+ * own auth middleware and injects a getter into the router factory; the
+ * route handlers themselves never speak to Cognito / IAM / etc.
+ *
+ * `userId` is a stable opaque identifier — no assumption about format.
+ * `scopes` is an optional capability list; routes that need fine-grained
+ * authorization should check membership rather than guess from `userId`.
+ */
+export declare interface AuthContext {
+    userId: string;
+    scopes?: readonly string[];
+}
+
+/**
+ * Authoring bounding-box painted by the user in BBoxAuthoringCanvas.
+ * These are forwarded to the vision call as a system-prompt hint.
+ */
+export declare interface AuthoringBBox {
+    /** Stable client-side id (uuid). */
+    id: string;
+    /** Pixel x of the box origin (post-resize). */
+    x: number;
+    /** Pixel y of the box origin (post-resize). */
+    y: number;
+    width: number;
+    height: number;
+    /** Free-form label entered by the author. */
+    label?: string;
+}
+
+declare interface AuthState {
+    status: 'loading' | 'unauthenticated' | 'authenticated';
+    idToken: string | null;
+    email: string | null;
+    error: string | null;
+}
+
+export declare function AutoplayGate({ chipLabel, chipClassName, wrapperClassName, onPlayStateChange, ...streamProps }: AutoplayGateProps): JSX.Element;
+
+export declare interface AutoplayGateProps extends StreamVideoProps {
+    /** Chip label. Default: "Tap to unmute". */
+    chipLabel?: string;
+    /** Override the chip's Tailwind classes. */
+    chipClassName?: string;
+    /** Wrapper class for the relatively-positioned container. */
+    wrapperClassName?: string;
+}
+
+export declare function Avatar({ name, size, initials: initialsProp, color, src, className, style, title, }: AvatarProps): JSX.Element;
+
+export declare function AvatarGroup({ names, items, maxVisible, size, className, total, }: AvatarGroupProps): JSX.Element;
+
+/** One person in an AvatarGroup, when a bare name isn't enough. */
+export declare interface AvatarGroupItem {
+    name: string;
+    initials?: string;
+    color?: string;
+    src?: string;
+}
+
+export declare interface AvatarGroupProps {
+    /** Convenience form — colors and initials are derived from the name. */
+    names?: string[];
+    /**
+     * Richer form, for callers that already know each person's brand color,
+     * canonical initials, or photo. Takes precedence over `names`. Without this,
+     * callers with per-user colors had to hand-roll the whole stack.
+     */
+    items?: AvatarGroupItem[];
+    maxVisible?: number;
+    size?: number;
+    className?: string;
+    /**
+     * Total people, when it exceeds what was passed in. Lets a caller render
+     * "+3" without materialising three more entries.
+     */
+    total?: number;
+}
+
+export declare interface AvatarProps {
+    name: string;
+    size?: number;
+    /**
+     * Override the derived initials. Use when the caller already has canonical
+     * initials (e.g. from a presence payload) and shouldn't re-derive them from
+     * a display name — deriving would turn "AS" into "As".
+     */
+    initials?: string;
+    /** Override the auto-computed color. */
+    color?: string;
+    /** Optional profile image URL. Falls back to initials if absent or load fails. */
+    src?: string;
+    className?: string;
+    style?: CSSProperties;
+    title?: string;
+}
+
+declare interface AwarenessFields {
+    userId: string;
+    displayName: string;
+    color: string;
+    mode: string;
+    currentSectionId: string | null;
+    lastSeen: number;
+    idle: boolean;
+    /** Tiptap cursor display name (may differ from displayName in edge cases). */
+    name?: string;
+}
+
+declare interface AwarenessUpdaters {
+    updateSection: (sectionId: string | null) => void;
+    updateMode: (mode: string) => void;
+    updateIdle: (idle: boolean) => void;
+    /** Merge Tiptap-specific cursor info (name, color) without clobbering other fields. */
+    updateCursorInfo: (name: string, color: string) => void;
+}
+
+export declare function Badge({ variant, value, color, 'aria-label': ariaLabel, className, 'data-testid': testId, }: BadgeProps): JSX.Element;
+
+export declare type BadgeColor = 'accent' | 'success' | 'danger' | 'muted';
+
+export declare interface BadgeProps {
+    variant: BadgeVariant;
+    /** Required for variant="count". Ignored otherwise. */
+    value?: number;
+    color?: BadgeColor;
+    /** Optional override label for screen readers. */
+    'aria-label'?: string;
+    className?: string;
+    /** Optional testid. */
+    'data-testid'?: string;
+}
+
+export declare type BadgeVariant = 'count' | 'dot' | 'pulse';
+
+export declare function Banner({ variant, title, onDismiss, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
+
+export declare interface BannerProps {
+    variant?: BannerVariant;
+    /** Bold prefix label shown before children. */
+    title?: string;
+    onDismiss?: () => void;
+    children?: ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare type BannerVariant = 'error' | 'warning' | 'info' | 'success';
+
+export declare function BarChart({ data, height, xKey, yKey, color, yFormat, }: {
+    data: Array<Record<string, unknown>>;
+    height?: number;
+    xKey: string;
+    yKey: string;
+    color?: string;
+    yFormat?: (v: number) => string;
+}): JSX.Element;
+
+export declare interface BBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+export declare function BoardColumn({ label, count, children, emptyLabel, action, className, 'data-testid': testId, }: BoardColumnProps): JSX.Element;
+
+export declare interface BoardColumnProps {
+    /** The lane's name — "In progress", "Blocked". */
+    label: ReactNode;
+    /**
+     * Count shown at the end of the header. Pass it explicitly rather than
+     * counting children: a lane that paginates or virtualises still knows its
+     * real total.
+     */
+    count?: number;
+    /** Cards in the lane. When absent, `emptyLabel` is shown instead. */
+    children?: ReactNode;
+    /** Shown when the lane holds nothing. Default "Nothing here". */
+    emptyLabel?: string;
+    /** Right-aligned control in the header, e.g. a per-lane "add" button. */
+    action?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare const borderRadius: {
+    readonly sm: string;
+    readonly md: string;
+    readonly lg: string;
+    readonly xl: string;
+    readonly full: string;
+};
+
+export declare interface BreadcrumbItem {
+    label: string;
+    href?: string;
+    onClick?: (e: React.MouseEvent) => void;
+}
+
+export declare type BreadcrumbOverflow = 'ellipsis' | 'menu';
+
+export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
+
+export declare interface BreadcrumbsProps {
+    items: BreadcrumbItem[];
+    /** Custom separator rendered between items (default: "/") */
+    separator?: ReactNode;
+    /**
+     * When set, truncate the middle of the list to fit this many visible items.
+     * The first and last are always shown; middle items collapse per `overflow`.
+     */
+    maxItems?: number;
+    /**
+     * How the collapsed middle behaves. `ellipsis` (default) is inert text;
+     * `menu` opens the hidden crumbs as a list of real links.
+     */
+    overflow?: BreadcrumbOverflow;
+    /**
+     * Render nothing below this many crumbs. A two-level trail usually repeats
+     * what the nav rail already highlights, so shells that show breadcrumbs on
+     * every route can set `minItems={3}` and let shallow pages keep the row.
+     */
+    minItems?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function Button({ variant, size, tone, disabled, fullWidth, children, type, className, ...rest }: ButtonProps): JSX.Element;
+
+export declare interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette. Every bare `<button>` in a
+     * terminal or log surface is there because this prop did not exist.
+     */
+    tone?: ButtonTone;
+    fullWidth?: boolean;
+    children: ReactNode;
+}
+
+export declare type ButtonSize = 'sm' | 'md' | 'lg';
+
+/** @see SurfaceTone — which colour family the button paints in. */
+export declare type ButtonTone = SurfaceTone;
+
+export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
+
+/** Card width with the dock closed. */
+export declare const CALL_CARD_WIDTH = "w-[380px]";
+
+/**
+ * dataTransfer key the widget stamps on a dock drag.
+ *
+ * A custom type rather than `text/plain` on purpose, in both directions: an
+ * ordinary text drop target (a comment box, a rich-text editor) must not
+ * mistake a dragged call for pasted text, and a dock slot must be able to
+ * accept-or-reject during `dragover` — where the only thing a browser
+ * exposes is `dataTransfer.types`, never the payload itself.
+ */
+export declare const CALL_DOCK_DRAG_TYPE = "application/x-call-dock";
+
+/** The single height both columns take when the dock is open. */
+export declare const CALL_DOCK_ROW_HEIGHT = "h-[480px]";
+
+/** Video-column width with the dock open — it GROWS, it is not pinned. */
+export declare const CALL_STAGE_DOCKED_WIDTH = "w-[480px]";
+
+export declare function CallControls({ mode, density, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, extras, className, }: CallControlsProps): JSX.Element;
+
+/**
+ * How much of the control set the surface has room for.
+ *
+ *   'full'     every wired control sits in the row (default — unchanged).
+ *   'compact'  only the controls needed to STAY in the call stay in the
+ *              row (mute, camera, end) plus the caller's `extras`; the
+ *              rest move into the "More" menu.
+ *
+ * A 320px widget docked beside a document was rendering the same nine-icon
+ * row as a fullscreen stage, which is what made it read as "duplicated and
+ * way off". Compact thins the row without REMOVING anything: a control the
+ * caller wired but the user cannot reach is a regression, not a
+ * simplification, so everything demoted is still one click away.
+ */
+export declare type CallControlsDensity = 'full' | 'compact';
+
+export declare type CallControlsMode = 'audio' | 'video';
+
+export declare interface CallControlsProps {
+    mode: CallControlsMode;
+    /** Row density. Defaults to 'full' — see {@link CallControlsDensity}. */
+    density?: CallControlsDensity;
+    isMuted?: boolean;
+    isCameraOn?: boolean;
+    isScreenSharing?: boolean;
+    onToggleMute?: () => void;
+    onToggleCamera?: () => void;
+    onToggleScreenShare?: () => void;
+    onUpgradeToVideo?: () => void;
+    onEndCall?: () => void;
+    /** When provided, shows the "add participant" button + picker popover. */
+    onAddParticipant?: (participantId: string) => void;
+    /**
+     * People who can still be added. Participants already in the call
+     * should be filtered out by the caller — or pass `currentParticipantIds`
+     * and let CallControls dedupe.
+     */
+    availableParticipants?: CallStripParticipant[];
+    /** Optional explicit set of ids already in the call to dedupe against. */
+    currentParticipantIds?: ReadonlyArray<string>;
+    /** Consumer-owned "add people" flow. When set, the add-participant
+     *  button calls this instead of toggling the built-in inline picker —
+     *  for hosts that already have their own invite surface (a modal over
+     *  the presence roster, say) and just want the button in the row,
+     *  looking like every other control. */
+    onOpenAddParticipant?: () => void;
+    /** Slot rendered IN the control row, between add-participant and the
+     *  End button — camera effects, captions, raise-hand. Same contract
+     *  as MediaControlsBar's `extras`: extra controls belong in the row,
+     *  not floating in their own strip above it. */
+    extras?: ReactNode;
+    className?: string;
+}
+
+/** JSON written under {@link CALL_DOCK_DRAG_TYPE}. */
+export declare interface CallDockDragPayload {
+    /** The call being moved, when the host stamped `data-call-id` via `dataAttrs`. */
+    callId?: string;
+    /** Slot the widget is leaving, or null when it was floating free. */
+    fromDockId: string | null;
+}
+
+/** A place in the page that can hold the call. */
+export declare interface CallDockTarget {
+    id: string;
+    label: string;
+}
+
+export declare function CallingStatusPill({ show, label }: CallingStatusPillProps): JSX.Element | null;
+
+export declare interface CallingStatusPillProps {
+    /** Show/hide gate — the parent decides ringing semantics. */
+    show: boolean;
+    /** Label for the callee(s). E.g. "Alice", "Alice & Bob", "3 people". */
+    label: string;
+}
+
+export declare type CallMode = 'audio' | 'video';
+
+export declare function CallParticipantStrip({ participants, localFallback, maxVisible, avatarSize, testId, className, style, }: CallParticipantStripProps): JSX.Element;
+
+export declare interface CallParticipantStripProps {
+    /** Participants in the call. */
+    participants: CallStripParticipant[];
+    /**
+     * Optional fallback shown when `participants` is empty (e.g. the local
+     * user before any remote joins). Rendered as a single Avatar tile.
+     */
+    localFallback?: CallStripParticipant;
+    /** Max avatars to render inline before collapsing into a `+N` indicator. */
+    maxVisible?: number;
+    /** Avatar diameter in px. Defaults to 36. */
+    avatarSize?: number;
+    /** Stable data-testid (e2e hook). Defaults to `call-participant-strip`. */
+    testId?: string;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare function CallPresenceIndicator({ participants, count, onClick, label, maxVisible, }: CallPresenceIndicatorProps): JSX.Element | null;
+
+export declare interface CallPresenceIndicatorProps {
+    /** People currently on the call. Names must be pre-resolved. */
+    participants: Array<{
+        userId: string;
+        name: string;
+        avatarUrl?: string;
+    }>;
+    /** Overrides the rendered count when the caller knows a truer number
+     *  than it has names for (e.g. the server's participantCount while
+     *  some display names are still resolving). */
+    count?: number;
+    /** Click target — typically "open/expand the call". */
+    onClick?: () => void;
+    /** Live-region label prefix, e.g. the lobby name. */
+    label?: string;
+    maxVisible?: number;
+}
+
+export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, effectsContent, peopleContent, chatContent, showPreview, title, className, }: CallSettingsDialogProps): JSX.Element;
+
+export declare interface CallSettingsDialogProps {
+    open: boolean;
+    /** Backdrop click, Escape and the ✕ button all fire this. */
+    onClose: () => void;
+    /** Live self-preview stream — rendered muted, mirrored, autoplaying.
+     *  Pass null for the "Camera off" empty state. */
+    previewStream: MediaStream | null;
+    /** Tab shown each time the dialog opens. Ignored (falls back to the
+     *  first available tab) when that tab's slot is missing. */
+    initialTab?: CallSettingsTab;
+    /** "Effects" tab body — e.g. a <MediaEffectsTray/> wired to the
+     *  consumer's effects engine. Omit to hide the tab. */
+    effectsContent?: ReactNode;
+    /** "People" tab body — e.g. an <InviteCandidateList/> wired to the
+     *  consumer's roster + invite call. Omit to hide the tab. */
+    peopleContent?: ReactNode;
+    /** "Chat" tab body — e.g. a chat panel wired to the call's channel.
+     *  Omit to hide the tab. */
+    chatContent?: ReactNode;
+    /**
+     * Show the small live self-preview on the left. Default true.
+     *
+     * Pass false when the tab body brings its own (larger) preview — which
+     * is exactly what <MediaEffectsPreviewPanel> does. Two self-views side
+     * by side, one live and one draft, is the confusing arrangement the
+     * preview-before-publish work exists to remove.
+     */
+    showPreview?: boolean;
+    /** Dialog heading. Defaults to "Call settings". */
+    title?: string;
+    className?: string;
+}
+
+export declare type CallSettingsTab = 'effects' | 'people' | 'chat';
+
+export declare function CallSidePanel({ tabs, activeTab, onTabChange, mode, open, onClose, title, children, widthClassName, className, 'data-testid': testId, }: CallSidePanelProps): JSX.Element | null;
+
+export declare function callSidePanelBodyTestId(tab: CallSidePanelTab): string;
+
+/** How the dock rendered itself for the host widget's display mode. */
+export declare type CallSidePanelPlacement = 'docked' | 'overlay';
+
+/**
+ * Which placement the dock takes for a given widget display mode.
+ *
+ * 'mini' is the only mode that cannot afford a column: at 320px a docked
+ * panel would leave the video ~0px wide, so the dock covers the stage
+ * instead (Meet/Teams narrow-window behaviour).
+ */
+export declare function callSidePanelPlacement(mode: CallWidgetMode): CallSidePanelPlacement;
+
+export declare interface CallSidePanelProps {
+    /** Destinations available in the dock. Supplying this switches the
+     *  component to the tabbed API; `open`/`title`/`children` are ignored. */
+    tabs?: CallSidePanelTab[];
+    /** The single open destination, or null when the dock is closed. */
+    activeTab?: string | null;
+    /** Fires with the next id, or null when the dock should close. */
+    onTabChange?: (id: string | null) => void;
+    /** Host widget's display mode — decides docked vs overlay placement.
+     *  Defaults to 'window' (docked). */
+    mode?: CallWidgetMode;
+    /** @deprecated Use `tabs` + `activeTab`. Kept working as a one-tab dock. */
+    open?: boolean;
+    /** The header ✕ fires this. The consumer owns the open/closed state.
+     *  In the tabbed API this fires alongside `onTabChange(null)`. */
+    onClose?: () => void;
+    /** @deprecated Use `tabs`. Header text, e.g. "Chat". */
+    title?: string;
+    /** @deprecated Use `tabs`. Panel body. */
+    children?: ReactNode;
+    /** Width utility for the docked column. Defaults to `w-80`. Ignored in
+     *  'overlay' placement, which is always full-bleed. */
+    widthClassName?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface CallSidePanelTab {
+    /** Stable id. 'chat' | 'people' | 'captions' get canonical testids and
+     *  default icons; any other id works and falls back to derived ones. */
+    id: string;
+    /** Header text and toggle-button accessible name, e.g. "Chat". */
+    label: string;
+    /** Panel body — rendered inside a `min-h-0 flex-1 overflow-y-auto` slot. */
+    content: ReactNode;
+    /** Toggle-button glyph. Defaults by id for the three well-known tabs. */
+    icon?: ReactNode;
+    /** Unread/attention count rendered as a badge on the toggle button. */
+    badgeCount?: number;
+    /** Disable just this destination (e.g. captions still warming up). */
+    disabled?: boolean;
+    /** Override the derived toggle-button testid. */
+    toggleTestId?: string;
+    /** Override the derived tab-body testid. */
+    panelTestId?: string;
+}
+
+/**
+ * Icon toggles for the dock's destinations. Rendered automatically by
+ * <CallWidget> and <ExpandableCallWidget> into their control rows when
+ * `sidePanelTabs` is supplied — a consumer never positions these by hand.
+ * Exported for hosts that build their own control bar.
+ */
+export declare function CallSidePanelToggles({ tabs, activeTab, onTabChange, disabled, className, 'data-testid': testId, }: CallSidePanelTogglesProps): JSX.Element | null;
+
+export declare interface CallSidePanelTogglesProps {
+    tabs: CallSidePanelTab[];
+    /** Currently open destination, or null/undefined when the dock is closed. */
+    activeTab?: string | null;
+    /** Fires with the next destination id, or null when the active button
+     *  is clicked again (click-to-close, like Meet's chat button). */
+    onTabChange?: (id: string | null) => void;
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function callSidePanelToggleTestId(tab: CallSidePanelTab): string;
+
+/**
+ * Slack-Huddles-style "someone started a hangout" banner. Lightweight,
+ * inline (not modal), low-friction: click "Join" to enter the call,
+ * click dismiss to ignore. No system-level ringing.
+ *
+ * Pure presentational — the consumer mounts it (typically near the top of
+ * the app shell or inside a notifications stack) and wires `onJoin` /
+ * `onDismiss` to actual behavior (joining the lobby, declining the invite).
+ *
+ * Auto-dismisses after `autoExpireSec` seconds (default 30) to avoid
+ * stale-banner spam if the call is over by the time the recipient looks.
+ */
+export declare function CallStartedBanner({ callerName, callerAvatarUrl, context, mode, onJoin, onDismiss, autoExpireSec, className, style, }: CallStartedBannerProps): JSX.Element | null;
+
+export declare type CallStartedBannerMode = 'started' | 'calling';
+
+export declare interface CallStartedBannerProps {
+    /** Display name of the user who started / is making the call. */
+    callerName: string;
+    /** Optional avatar URL — falls back to an initial-circle. */
+    callerAvatarUrl?: string;
+    /** Optional channel / room context shown under the caller name
+     * (e.g. "in #general", "in this document"). */
+    context?: string;
+    /**
+     * Copy framing:
+     *   - 'started' (default) — "Name started a call". Use for broadcast /
+     *     ambient hangouts where multiple people might be invited.
+     *   - 'calling'           — "Name is calling you". Use for direct 1:1
+     *     calls where the recipient is specifically targeted.
+     */
+    mode?: CallStartedBannerMode;
+    /** Click handler for the "Join" action. */
+    onJoin?: () => void;
+    /** Click handler for the dismiss / decline action. Banner self-hides
+     * via the autoExpireSec timeout if not provided. */
+    onDismiss?: () => void;
+    /** Auto-expire after this many seconds. Set to 0 to disable. Default 30. */
+    autoExpireSec?: number;
+    /** Escape hatches. */
+    className?: string;
+    style?: CSSProperties;
+}
+
+declare type CallState = 'idle' | 'creating' | 'joining' | 'active' | 'error';
+
+export declare function CallStatsOverlay({ stats, position, testId, className, style, }: CallStatsOverlayProps): JSX.Element | null;
+
+export declare type CallStatsOverlayPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
+export declare interface CallStatsOverlayProps {
+    /** When undefined or empty (no fields set), the overlay renders nothing. */
+    stats?: CallStatsOverlayStats;
+    /** Corner to dock the overlay against its positioned parent. */
+    position?: CallStatsOverlayPosition;
+    /** Stable data-testid (e2e hook). Defaults to `call-stats-overlay`. */
+    testId?: string;
+    /**
+     * Extra positioning / sizing classes. Prefer this over `style` — it is
+     * composed after the `position` classes through `cn()`, so a caller class
+     * wins (e.g. `top-8` overriding `top-2`), and inline styles are banned in
+     * demos and stories.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
+    style?: CSSProperties;
+}
+
+export declare interface CallStatsOverlayStats {
+    networkQuality?: NetworkQuality;
+    bitrateKbps?: number;
+    latencyMs?: number;
+    packetLossPct?: number;
+}
+
+export declare interface CallStripParticipant {
+    id: string;
+    displayName: string;
+    avatarUrl?: string;
+    isMuted?: boolean;
+    isSpeaking?: boolean;
+}
+
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, displayMode, minimized: minimizedProp, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, sidePanelWidthClassName, dockTargets, activeDockId, onDockTo, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+
+/** Canonical display mode for any call surface. */
+export declare type CallWidgetMode = 'mini' | 'window' | 'fullscreen';
+
+export declare interface CallWidgetParticipant extends CallStripParticipant {
+    videoStream?: MediaStream | null;
+}
+
+export declare interface CallWidgetProps {
+    state: CallWidgetState;
+    mode: CallMode;
+    participants: CallWidgetParticipant[];
+    localParticipant?: CallWidgetParticipant;
+    callerName?: string;
+    duration?: number;
+    isMuted?: boolean;
+    isCameraOn?: boolean;
+    isScreenSharing?: boolean;
+    onAnswer?: () => void;
+    onDecline?: () => void;
+    onEndCall?: () => void;
+    onToggleMute?: () => void;
+    onToggleCamera?: () => void;
+    onToggleScreenShare?: () => void;
+    onUpgradeToVideo?: () => void;
+    onAddParticipant?: (participantId: string) => void;
+    /** Slot rendered IN the control row (between add-participant and End)
+     *  — the collapsed-widget counterpart to MediaControlsBar's `extras`.
+     *  Lets a consumer add one action (effects, captions, settings)
+     *  without forking the chrome, so the docked and expanded widgets can
+     *  offer the SAME affordance in the same place. */
+    controlsExtras?: ReactNode;
+    /** Consumer-owned "add people" flow — see CallControls. Renders the
+     *  add-participant button inline with the other controls (which is
+     *  where it belongs visually) while the consumer owns the picker. */
+    onOpenAddParticipant?: () => void;
+    /** List of people available to add to the call */
+    availableParticipants?: CallWidgetParticipant[];
+    onMinimize?: () => void;
+    onExpand?: () => void;
+    /**
+     * Canonical display mode for the widget chrome.
+     *
+     *   'mini'        collapsed pill (what `minimized` used to mean)
+     *   'window'      the normal 320px widget
+     *   'fullscreen'  same chrome as 'window'; <CallWidget> has no
+     *                 viewport-filling stage of its own, so this renders
+     *                 the full chrome and stamps `data-call-widget-mode`
+     *                 for a host that supplies the stage.
+     *
+     * NOTE the prop is `displayMode`, not `mode`: `mode` on this component
+     * has always meant the CALL mode ('audio' | 'video'), an orthogonal
+     * axis, and renaming it would be the breaking change this API exists
+     * to avoid. <ExpandableCallWidget> — which has no such collision —
+     * spells the same vocabulary `defaultMode`/`setMode`.
+     *
+     * Wins over `minimized` when both are supplied (dev-only warn).
+     */
+    displayMode?: CallWidgetMode;
+    /**
+     * @deprecated Use `displayMode`. Maps as
+     * `minimized === true → 'mini'`, `minimized === false → 'window'`.
+     * Still fully supported; `displayMode` takes precedence if both are set.
+     */
+    minimized?: boolean;
+    position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+    /** When true, uses absolute positioning within a relative parent instead of fixed to viewport */
+    contained?: boolean;
+    draggable?: boolean;
+    /**
+     * Optional render slot that replaces the default video area (local fullscreen
+     * + single remote PiP). When provided, the widget renders this node in the
+     * video area while preserving its own header, controls, drag/minimize, and
+     * call-state machine. Use for multi-person hangout layouts (pair with
+     * `HangoutLayout` from the same module).
+     *
+     * Absent → the widget renders today's single-PiP layout (backwards compatible).
+     */
+    layoutComponent?: ReactNode;
+    /**
+     * Optional diagnostics stats. When provided (and at least one field is
+     * set), CallWidget renders a `<CallStatsOverlay>` inside the video area.
+     */
+    callStats?: CallStatsOverlayStats;
+    className?: string;
+    style?: CSSProperties;
+    /**
+     * Destinations for the docked side panel (chat / people / captions).
+     *
+     * Supplying this gives the widget a side-panel REGION that is part of
+     * the widget — not a detached floating window. The toggle buttons are
+     * rendered automatically into the control row (ahead of
+     * `controlsExtras`), and because the panel lives inside the widget's
+     * own transformed root it travels with the widget when dragged.
+     *
+     * Per-mode behaviour:
+     *   'window' / 'fullscreen'  the card WIDENS — the stage has no slack to
+     *                            give up, so Meet's split becomes a grow
+     *                            here: the stage column itself goes to
+     *                            `CALL_STAGE_DOCKED_WIDTH` and the dock is
+     *                            added beside it. Both columns take one
+     *                            height (`CALL_DOCK_ROW_HEIGHT`), the stage
+     *                            and the panel body absorbing the slack, so
+     *                            the card has no dead bands in it.
+     *   'mini'                   the collapsed pill has no video stage to
+     *                            dock beside; the dock and its toggles are
+     *                            not rendered. Expand to reach chat, which
+     *                            is what Meet's PiP and Slack's huddle bar
+     *                            both do.
+     */
+    sidePanelTabs?: CallSidePanelTab[];
+    /** The single open destination, or null when the dock is closed. */
+    activeSidePanelTab?: string | null;
+    /** Fires with the next id, or null when the dock should close. */
+    onSidePanelTabChange?: (id: string | null) => void;
+    /** Width utility for the docked column. Defaults to `w-80`. */
+    sidePanelWidthClassName?: string;
+    /**
+     * Places in the page the call can be moved INTO (see "Page docking"
+     * above). Supplying a non-empty list turns on the dock affordances: a
+     * drag grip in the header, and a "Move to…" menu beside the window
+     * controls.
+     *
+     * Absent or empty → the widget is exactly the floating card it has
+     * always been. Nothing about the free-drag changes.
+     */
+    dockTargets?: CallDockTarget[];
+    /**
+     * The slot currently holding the call, or null while it floats. When
+     * set, the widget stops free-dragging: it is part of the page's layout
+     * now, and an offset transform would shove it back out of the slot it
+     * was just dropped into. Pop out to get the floating card back.
+     */
+    activeDockId?: string | null;
+    /** Fires with the destination slot id, or null to pop back out. */
+    onDockTo?: (id: string | null) => void;
+    /** Arbitrary `data-*` attributes to spread onto the root element.
+     *  Lets callers (e.g. HangoutOverlay) attach e2e-friendly testids and
+     *  lobby/callId metadata without an extra wrapper div that would
+     *  conflict with the widget's own `position: fixed` placement. */
+    dataAttrs?: Record<string, string | number | undefined>;
+}
+
+export declare type CallWidgetState = 'idle' | 'ringing' | 'connecting' | 'active' | 'ended';
+
+declare type CanvasTool = 'brush' | 'pen' | 'eraser' | 'select';
+
+export declare function CapabilityDeniedFallback({ capabilityName, title, description, actionLabel, onAction, actions, icon, testId, }: CapabilityDeniedFallbackProps): JSX.Element;
+
+export declare interface CapabilityDeniedFallbackProps {
+    /**
+     * Capability name as the user would recognize it (e.g. "Chat",
+     * "Recording", "AI Assistant"). Used in the default title.
+     */
+    capabilityName?: string;
+    /** Override the default title entirely. */
+    title?: string;
+    /** Body copy explaining why the feature is unavailable / how to enable it. */
+    description?: ReactNode;
+    /**
+     * Optional CTA — typically a "Request access" or "Upgrade plan" link.
+     * For multiple CTAs use `actions` instead.
+     */
+    actionLabel?: string;
+    onAction?: () => void;
+    /** Multi-action variant. Takes precedence over actionLabel/onAction. */
+    actions?: EmptyStateAction[];
+    /** Override the default lock icon. Pass `null` to remove the icon. */
+    icon?: ReactNode | null;
+    /** Test id (defaults to `capability-denied-fallback`). */
+    testId?: string;
+}
+
+export declare interface CaptionLine {
+    id: string;
+    speakerId: string;
+    speakerName?: string;
+    text: string;
+    /** ISO timestamp of caption emission. Seeds the linger timer for lines
+     *  that never update again. */
+    at: string;
+    /** True if the caption is still being updated (interim) vs final.
+     *  Omitted/false = final: final text always replaces the displayed text;
+     *  interim text is subject to the stable-transcription shrink filter. */
+    interim?: boolean;
+}
+
+/** CC / captions glyph — the live-captions affordance. */
+export declare function CaptionsIcon({ size, ...rest }: IconProps): JSX.Element;
+
+export declare function Card({ children, padding, className, ...rest }: CardProps): JSX.Element;
+
+export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): default_2.JSX.Element;
+
+export declare interface CardHeaderProps {
+    title: string;
+    /** Small text below the title. */
+    subtitle?: string;
+    /** Extra content rendered immediately to the right of the title (badges/chips). */
+    meta?: default_2.ReactNode;
+    /** Right-aligned action area (buttons, menus). */
+    action?: default_2.ReactNode;
+    className?: string;
+}
+
+export declare type CardPadding = 'none' | 'sm' | 'md' | 'lg';
+
+export declare interface CardProps extends HTMLAttributes<HTMLDivElement> {
+    children?: ReactNode;
+    padding?: CardPadding;
+}
+
+export declare function CatalogGrid({ children, columns, dense, className, style, 'data-testid': testId, }: CatalogGridProps): JSX.Element;
+
+export declare type CatalogGridColumns = 1 | 2 | 3 | 4 | 5;
+
+export declare interface CatalogGridProps {
+    /** Children — expected to be <ThumbnailCard> instances (any node accepted). */
+    children: ReactNode;
+    /** Target column count at >=640px. Default 3. Always collapses to 1 below. */
+    columns?: CatalogGridColumns;
+    /** Tighter gap (12px vs 20px). Default false. */
+    dense?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+/** What the host reports back after trying to apply. */
+export declare interface ChangeApplyOutcome {
+    ok: boolean;
+    /** Shown verbatim when `ok` is false. Say what happened, not "error". */
+    message?: string;
+    /** Set when the refusal was specifically a compare-and-set mismatch. */
+    stale?: {
+        expected: unknown;
+        actual: unknown;
+    };
+}
+
+/** Who is asking for the change. */
+export declare interface ChangeAuthor {
+    name: string;
+    /**
+     * `agent` renders the machine label. This is not decoration: an unreviewed
+     * machine edit and a colleague's edit carry very different weight, and the
+     * only thing separating them on screen is this.
+     */
+    kind?: 'human' | 'agent';
+    avatarUrl?: string;
+}
+
+export declare function ChangeDiff({ pairs, beforeLabel, afterLabel, className, 'data-testid': testId, }: ChangeDiffProps): JSX.Element | null;
+
+export declare interface ChangeDiffPair {
+    before: string;
+    after: string;
+}
+
+export declare interface ChangeDiffProps {
+    pairs: readonly ChangeDiffPair[];
+    /** Label for the current value. */
+    beforeLabel?: string;
+    /** Label for the value being proposed. */
+    afterLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function ChangeLocation({ path, hint, rootLabel, className, 'data-testid': testId, }: ChangeLocationProps): JSX.Element;
+
+export declare interface ChangeLocationProps {
+    /**
+     * Breadcrumb from the document root, outermost first —
+     * e.g. `['Section 4', 'Payment terms']`. An empty array renders the
+     * document-level case rather than an empty strip.
+     */
+    path: readonly string[];
+    /** Position within the target, e.g. `paragraph 3`. Optional. */
+    hint?: string | undefined;
+    /** Shown when `path` is empty. */
+    rootLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function ChangeReviewCard({ category, author, path, locationHint, pairs, beforeLabel, afterLabel, utterance, rationale, verdict, verdictStatus, verdictError, revision, status, draftError, badges, onAccept, onReject, onRereview, actions, className, 'data-testid': testId, }: ChangeReviewCardProps): JSX.Element;
+
+export declare interface ChangeReviewCardProps {
+    /**
+     * What KIND of change this is, in the reviewer's words — "Title", "Payment
+     * terms", "Body text". Rendered first and most prominent.
+     */
+    category: string;
+    /**
+     * Who made / is asking for the change.
+     *
+     * Optional, and its absence is RENDERED — as "Unattributed", not as a blank.
+     * Plenty of real sources cannot name an editor (an S3 object has no author),
+     * and the wrong fix is to fill the gap with the system that delivered the
+     * change. "Contracts (Google Drive)" is a provenance, not a person; showing
+     * it where a person belongs is what made the queue it replaces unreadable.
+     */
+    author?: ChangeAuthor;
+    /** Breadcrumb to the change site. See `ChangeLocation`. */
+    path?: readonly string[];
+    /** Position within the target, e.g. `paragraph 3`. */
+    locationHint?: string;
+    /** The before/after pairs. One for a field, several for prose edits. */
+    pairs: readonly ChangeDiffPair[];
+    /** Label for the current value. Defaults to "Now". */
+    beforeLabel?: string;
+    /** Label for the proposed value. Defaults to "Proposed". */
+    afterLabel?: string;
+    /** Verbatim request that raised this, if there was one. Never paraphrase it. */
+    utterance?: string;
+    /** The author's one-line justification for the change itself. */
+    rationale?: string;
+    verdict?: ChangeReviewVerdict | undefined;
+    verdictStatus?: ChangeReviewStatus | undefined;
+    verdictError?: string | undefined;
+    /**
+     * The change's CURRENT revision. Pass it, or a verdict computed against an
+     * older revision renders as though it still applies.
+     */
+    revision?: string | undefined;
+    status?: ChangeReviewCardStatus;
+    /** When set, rendered instead of the diff — the change could not be drafted. */
+    draftError?: string;
+    /** Extra chips for the header line (attachment state, confidence, …). */
+    badges?: ReactNode;
+    /**
+     * Apply the change. MUST perform the mutation and report what happened —
+     * returning `{ ok: true }` without changing the document is the exact bug
+     * this component is shaped to prevent.
+     */
+    onAccept?: () => Promise<ChangeApplyOutcome> | ChangeApplyOutcome;
+    onReject?: (reason: string) => void;
+    /** Ask for a fresh review of the current revision. Offered on stale/failed. */
+    onRereview?: () => void;
+    /** Extra actions, rendered after the built-in ones. */
+    actions?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type ChangeReviewCardStatus = 'pending' | 'applied' | 'rejected';
+
+export declare function ChangeReviewList({ documentTitle, changeCount, documentMeta, headerActions, pageSize, emptyState, notices, footer, children, className, 'data-testid': testId, }: ChangeReviewListProps): JSX.Element;
+
+export declare interface ChangeReviewListProps {
+    /** The document being changed. This is the heading — not the queue's name. */
+    documentTitle: string;
+    /**
+     * Total number of changes awaiting review. Defaults to the number of
+     * children. Pass it explicitly when some children are not cards, or when the
+     * host is paging server-side and the children are only part of the total.
+     */
+    changeCount?: number;
+    /** Document type, owner, last-edited — whatever orients the reviewer. */
+    documentMeta?: ReactNode;
+    /** Rendered on the right of the heading, e.g. a Refresh button. */
+    headerActions?: ReactNode;
+    /** How many cards to show before the "show more" control. Default 3. */
+    pageSize?: number;
+    /** Rendered in place of the queue when there is nothing to review. */
+    emptyState?: ReactNode;
+    /** Banners — load errors, stale-data notices — above the queue. */
+    notices?: ReactNode;
+    /**
+     * Rendered after the queue and OUTSIDE the `pageSize` window.
+     *
+     * Commit controls belong here, not in `children`: a "Apply to document"
+     * button passed as a child is one of the paged items, so on a queue longer
+     * than `pageSize` it disappears behind "show more" and the surface becomes
+     * unsubmittable.
+     */
+    footer?: ReactNode;
+    children?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * How the review itself is going, independent of what it concluded.
+ *
+ * Separate from `ChangeReviewVerdict` because "we have not asked yet", "we are
+ * asking" and "asking failed" are three different things to a reviewer, and
+ * none of them is a verdict. Folding them into an optional verdict field would
+ * make the absent case ambiguous.
+ */
+export declare type ChangeReviewStatus = 'idle' | 'pending' | 'failed';
+
+export declare interface ChangeReviewVerdict {
+    verdict: ChangeVerdict;
+    /** One line, always shown beside the chip. */
+    headline: string;
+    /** Expandable detail. Absent when the model gave none — render nothing, not "no reasoning". */
+    reasoning?: string;
+    producedAt: string;
+    /** The change revision this verdict was computed against. */
+    forRevision: string;
+}
+
+/** An agent's judgement on a single proposed change. */
+export declare type ChangeVerdict = 'pass' | 'concern' | 'fail';
+
+export declare function ChannelHeader({ name, memberCount, description, actions, avatarUrl, online, onMembersClick, className, }: ChannelHeaderProps): JSX.Element;
+
+export declare interface ChannelHeaderProps {
+    /** Display name of the channel or user */
+    name: string;
+    /** Number of members in the channel */
+    memberCount?: number;
+    /** Short description shown below the name */
+    description?: string;
+    /** Right-aligned action area */
+    actions?: ReactNode;
+    /** Avatar URL; falls back to name initials */
+    avatarUrl?: string;
+    /** Show green online indicator */
+    online?: boolean;
+    /** Called when member-count area is clicked */
+    onMembersClick?: () => void;
+    className?: string;
+}
+
+export declare interface ChatAttachment {
+    /** Correlation id shared with the sender's in-flight transfer. */
+    id: string;
+    /** Original filename. User content — never used as a path, never trusted. */
+    name: string;
+    /** Byte length of the stored object. */
+    size: number;
+    /** Declared MIME type. Advisory: used to pick a layout, never to trust. */
+    contentType: string;
+    /**
+     * Authenticated download URL. Because the download route requires a bearer
+     * token, an `<img src>` pointed straight at this will 401 — a resolved
+     * object URL should be handed in as `src` by the integration layer.
+     */
+    url: string;
+    /** Intrinsic dimensions when known, so the row reserves space before load. */
+    width?: number;
+    height?: number;
+    /**
+     * Tiny inline data-URI placeholder captured by the sender before upload.
+     * Lets a recipient see what the image IS while the bytes are still moving.
+     */
+    preview?: string;
+}
+
+/** Chat bubble glyph — the in-call chat affordance. Pair with
+ *  CircularIconToggle in a controls `extras` slot to open a chat side
+ *  panel (CallSidePanel) or the settings dialog's Chat tab. */
+export declare function ChatBubbleIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/**
+ * Chat input with send button. Stateless — value/onChange controlled by parent.
+ *
+ * - Enter submits (Shift+Enter inserts newline in multiline mode).
+ * - Submit disabled when `disabled` or value is empty/whitespace.
+ */
+export declare function ChatComposer({ value, onChange, onSubmit, disabled, multiline, placeholder, submitLabel, className, style, autoFocus, maxRows, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, submitAriaLabel, }: ChatComposerProps): JSX.Element;
+
+export declare interface ChatComposerProps {
+    value: string;
+    onChange: (value: string) => void;
+    onSubmit: () => void;
+    disabled?: boolean;
+    /** false: single-line input, true: textarea (default false) */
+    multiline?: boolean;
+    placeholder?: string;
+    /** default '→' */
+    submitLabel?: string | ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    autoFocus?: boolean;
+    /** for multiline, max rows before scroll (default 4) */
+    maxRows?: number;
+    /**
+     * Accessible name for the message field (default "Message").
+     *
+     * The field is rendered internally, so a host has no way to wrap it in its
+     * own `<label>`; without this it had no accessible name at all and announced
+     * as a bare "edit text". A `placeholder` is not a substitute — browsers only
+     * fall back to it, and it is gone the moment the user types.
+     */
+    'aria-label'?: string;
+    /** Id of an existing visible element naming the field; wins over `aria-label`. */
+    'aria-labelledby'?: string;
+    /**
+     * Accessible name for the send button. Only applied when `submitLabel` has
+     * no readable text of its own — the default `'→'` and any icon node. When
+     * `submitLabel` IS words ("Send", "Post"), that visible text is the name and
+     * this is ignored, so the spoken name can never contradict what is on screen.
+     */
+    submitAriaLabel?: string;
+}
+
+export declare function ChatDropZone({ children, onFiles, accept, maxSize, onError, disabled, label, className, }: ChatDropZoneProps): JSX.Element;
+
+export declare interface ChatDropZoneProps {
+    children: ReactNode;
+    /** Receives the dropped files after validation. */
+    onFiles: (files: File[]) => void;
+    /** Comma-separated MIME patterns, e.g. "image/*,.pdf". Omit to accept all. */
+    accept?: string;
+    /** Per-file byte cap. Rejected files are reported via `onError`. */
+    maxSize?: number;
+    /** Called with a human-readable reason when a drop is rejected. */
+    onError?: (message: string) => void;
+    /** Suppresses the drop affordance entirely (e.g. while disconnected). */
+    disabled?: boolean;
+    /** Overlay copy. Defaults to a generic prompt. */
+    label?: string;
+    className?: string;
+}
+
+export declare interface ChatMessage {
+    id?: string;
+    clientId: string;
+    content: string;
+    timestamp: string;
+    displayName?: string;
+    avatarUrl?: string;
+    /**
+     * Files shared alongside (or instead of) the text.
+     *
+     * An attachment rides ON a message rather than being its own message kind
+     * so that ordering is free: the file lands exactly where the sender put it
+     * in the conversation, interleaved correctly with the text around it. A
+     * separate "file event" stream would have to be merged back against the
+     * message stream at render time, and the merge would be wrong at exactly
+     * the moment it matters — when someone is typing while a file uploads.
+     *
+     * `content` may be empty when a message is nothing but attachments.
+     */
+    attachments?: ChatAttachment[];
+}
+
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+
+export declare interface ChatPanelProps {
+    messages: ChatMessage[];
+    onSend: (content: string) => void;
+    disabled?: boolean;
+    onTyping?: (isTyping: boolean) => void;
+    typingUsers?: string[];
+    /** Surface the panel renders on. 'light' (default) keeps the theme
+     *  tokens; 'dark' swaps to white/alpha classes for dark call chrome
+     *  (e.g. inside a FloatingPanel next to the call widget) — without it
+     *  the message text renders dark-on-dark and disappears. Mirrors
+     *  InviteCandidateList's tone seam. */
+    tone?: 'light' | 'dark';
+    /** Render the panel's own "Chat (n)" heading.
+     *
+     *  Default: TRUE standalone — every consumer in this repo (the DMs
+     *  page's <SocialPanel>, <PanelsView>, <WrappedChatPanel>, the hook
+     *  demos) drops the panel into a plain container and relies on it to
+     *  name itself. Default FALSE inside a panel dock, which already names
+     *  the region with its tab bar — that is where "Chat" appeared twice,
+     *  ~40px apart. Pass it explicitly to override either way. */
+    showHeader?: boolean;
+    /** Fill the parent's height — the message list becomes the flexible
+     *  region and the composer sits on the bottom edge — instead of sizing
+     *  to a 200px-tall list inside a bordered card.
+     *
+     *  Default: FALSE standalone (the card is what the DMs page and the
+     *  demos expect), TRUE inside a dock, whose column has a definite
+     *  height that the body must match or leave a dead band behind. */
+    fill?: boolean;
+    /** Called when the reader asks for older messages. When present (and
+     *  `hasMore` is not false) a "Load earlier messages" button renders
+     *  above the first message. The panel preserves the reader's scroll
+     *  position across the prepend — growing the list must not yank the
+     *  viewport, which is the same bug class as the auto-scroll below. */
+    onLoadMore?: () => void;
+    /** Whether older messages exist. Defaults to true when `onLoadMore` is
+     *  given; pass false once the whole history is loaded to retire the button. */
+    hasMore?: boolean;
+    /** Show the load-more button in a pending state. */
+    loadingMore?: boolean;
+    /**
+     * Receives files the user dropped on the thread, pasted into the composer,
+     * or picked with the paperclip. When absent, every attachment affordance is
+     * suppressed — a panel wired to a transport with no upload service must not
+     * advertise one.
+     */
+    onSendFiles?: (files: File[]) => void;
+    /**
+     * Transfers currently in flight IN THIS CHANNEL — including other people's.
+     *
+     * This is the prop that makes the feature feel live rather than
+     * transactional. Rendering only your own uploads here would leave every
+     * other participant staring at an unchanged thread until a file appears
+     * fully-formed out of nowhere.
+     */
+    transfers?: ChatTransfer[];
+    /** Identifies the viewer so their own transfers get the cancel affordance. */
+    currentActor?: string;
+    onCancelTransfer?: (transferId: string) => void;
+    /**
+     * Resolves an attachment to a directly-renderable image source. The download
+     * route is bearer-authenticated, so an `<img src>` pointed at the raw URL
+     * 401s; the integration layer fetches with credentials and hands back an
+     * object URL. Attachments with no resolved src fall back to their inline
+     * preview.
+     */
+    attachmentSrc?: (attachment: ChatAttachment) => string | undefined;
+    /** Invoked when the viewer opens/downloads an attachment. */
+    onOpenAttachment?: (attachment: ChatAttachment) => void;
+    /** MIME/extension filter for drops and the picker. Defaults to everything. */
+    acceptFiles?: string;
+    /** Per-file byte cap enforced before the transfer starts. */
+    maxFileSize?: number;
+    /** Reports a rejected drop/paste so the host can surface it. */
+    onFileError?: (message: string) => void;
+    /**
+     * Emoji offered by the composer picker. Defaults to the library's full
+     * searchable set — deliberately NOT a short service-side catalog. A fixed
+     * server-blessed list is right for reactions that get aggregated and
+     * persisted; it is wrong for typing, where an emoji is just a character and
+     * an unavailable one reads as a missing feature.
+     */
+    emojis?: readonly string[];
+}
+
+export declare function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps): JSX.Element;
+
+declare interface ChatRoomProps {
+    idToken: string | null;
+    roomId: string;
+    roomName: string;
+    onMessage: OnMessageFn_9;
+}
+
+export declare interface ChatTransfer {
+    transferId: string;
+    /** Who is sending. Rendered so a recipient knows whose file this is. */
+    actor: string;
+    name: string;
+    size: number;
+    transferred: number;
+    phase: TransferPhase;
+    contentType?: string;
+    preview?: string;
+    error?: string;
+}
+
+export declare const Checkbox: ForwardRefExoticComponent<CheckboxProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface CheckboxProps {
+    id?: string;
+    /** Form field name, for label association and form submission. */
+    name?: string;
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+    /**
+     * Mixed state — "some but not all selected". Rendered natively (the dash),
+     * exposed to AT via aria-checked="mixed". Clicking a mixed checkbox
+     * reports `true`, matching the native select-all convention.
+     */
+    indeterminate?: boolean;
+    disabled?: boolean;
+    /** Accessible name. Required when no visible <label> wraps this. */
+    'aria-label'?: string;
+    /**
+     * Id of the element naming this checkbox. Prefer this over `aria-label` when
+     * a visible label exists but cannot wrap the control (e.g. a generated form
+     * that renders the label above a row of widgets) — a hand-written
+     * `aria-label` is a copy that drifts from the words on screen.
+     */
+    'aria-labelledby'?: string;
+    /** Id(s) of the help / error text describing this checkbox. */
+    'aria-describedby'?: string;
+    /**
+     * Click pass-through. Row-selection checkboxes live inside clickable
+     * rows/cards and need `e.stopPropagation()` so ticking the box doesn't
+     * also open the row.
+     */
+    onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
+    /** Key pass-through, for shift-range selection handling. */
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function Chip({ tone, palette, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
+
+/**
+ * `tone` was already spoken for by the semantic scale, so the surface-family
+ * axis is `palette` here. Same idea as `TitledFrame`'s `tone`, different word
+ * only because renaming the seven-year-old `tone` prop would break every one
+ * of Chip's several hundred call sites.
+ */
+export declare type ChipPalette = SurfaceTone;
+
+export declare interface ChipProps {
+    tone?: ChipTone;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette, for chips inside a log console,
+     * debugger or terminal pane.
+     */
+    palette?: ChipPalette;
+    size?: 'sm' | 'xs';
+    /** Solid fill (dark bg + white text) instead of soft tint. */
+    solid?: boolean;
+    /** Monospace font — for count badges. */
+    mono?: boolean;
+    /** Indicator dot. 'static' = filled circle, 'pulse' = filled circle
+     *  with an animated outer ping (matches Badge variant="pulse"). */
+    dot?: 'static' | 'pulse';
+    /** Uppercase the label with letter-spacing — the "REC" / "LIVE"
+     *  pattern common to status pills. */
+    uppercase?: boolean;
+    /** Optional leading icon (SVG element). Sized by the chip's `size`. */
+    icon?: ReactNode;
+    children: ReactNode;
+    title?: string;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+    'aria-label'?: string;
+}
+
+/** @see Tone — the library-wide semantic tone scale. */
+export declare type ChipTone = ToneOrAlias;
+
+export declare function CircularIconToggle({ on, iconOn, iconOff, 'aria-label': ariaLabel, offTone, size, disabled, className, ...rest }: CircularIconToggleProps): JSX.Element;
+
+export declare interface CircularIconToggleProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+    /** Whether the underlying feature (mic / cam / share) is currently on. */
+    on: boolean;
+    /** Icon rendered when `on === true`. */
+    iconOn: ReactNode;
+    /** Icon rendered when `on === false`. */
+    iconOff: ReactNode;
+    /** Required for screen readers — describes the toggle target
+     *  ("Microphone", "Camera"). The component derives the on/off state
+     *  via aria-pressed. */
+    'aria-label': string;
+    /** Tone when in the OFF state. Defaults to 'danger' (red soft) to
+     *  match the Google Meet convention. */
+    offTone?: CircularIconToggleTone;
+    size?: CircularIconToggleSize;
+}
+
+export declare type CircularIconToggleSize = 'sm' | 'md' | 'lg';
+
+export declare type CircularIconToggleTone = 'neutral' | 'danger';
+
+/**
+ * `TONE_SOFT` in the code family. One background for all tones — the code
+ * palette carries meaning in the foreground, the way syntax highlighting
+ * does; tinted backgrounds behind text this dark read as noise.
+ */
+export declare const CODE_TONE_SOFT: Record<Tone, string>;
+
+/**
+ * `TONE_SOLID` in the code family. Text is `code-bg` rather than white:
+ * these accents are pastels, and white on a pastel fails contrast.
+ */
+export declare const CODE_TONE_SOLID: Record<Tone, string>;
+
+/** `TONE_SOLID_BG` in the code family — swatches, dots, legend keys. */
+export declare const CODE_TONE_SOLID_BG: Record<Tone, string>;
+
+/** `TONE_TEXT` in the code family — labels and icons on an untinted surface. */
+export declare const CODE_TONE_TEXT: Record<Tone, string>;
+
+export declare function CodeBlock({ code, language, theme, copyButton, showLineNumbers, className, style, 'data-testid': testId, ariaLabel, }: CodeBlockProps): JSX.Element;
+
+export declare type CodeBlockLanguage = 'tsx' | 'ts' | 'jsx' | 'js' | 'json' | 'bash' | 'sh' | 'text';
+
+export declare interface CodeBlockProps {
+    code: string;
+    language?: CodeBlockLanguage;
+    theme?: CodeBlockTheme;
+    copyButton?: boolean;
+    showLineNumbers?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+    ariaLabel?: string;
+}
+
+export declare type CodeBlockTheme = 'dark' | 'light';
+
+export declare function CodeEditor({ value, onChange, language: _language, // Phase 1: accepted but not applied yet
+    placeholder, minLines, maxLines, readOnly, variables, 'aria-label': ariaLabel, }: CodeEditorProps): JSX.Element;
+
+export declare interface CodeEditorProps {
+    value: string;
+    onChange: (next: string) => void;
+    /** Hint for future syntax highlighting. Phase 1: purely cosmetic / no-op. */
+    language?: 'jsonpath' | 'javascript' | 'template' | 'plain';
+    placeholder?: string;
+    /** Minimum visible lines. Default 4. */
+    minLines?: number;
+    /** Maximum visible lines before the editor starts scrolling. Default 20. */
+    maxLines?: number;
+    readOnly?: boolean;
+    /** Available context variables — rendered as clickable insert pills. */
+    variables?: string[];
+    'aria-label'?: string;
+}
+
+export declare function CodeInput({ length, onComplete, error, disabled, autoFocus, }: CodeInputProps): JSX.Element;
+
+export declare interface CodeInputProps {
+    length?: number;
+    onComplete: (code: string) => void;
+    error?: string | null;
+    disabled?: boolean;
+    autoFocus?: boolean;
+}
+
+/** Minimal provider shape needed by awareness. */
+declare interface CollaborationProvider {
+    awareness: Awareness;
+}
+
+export declare function CollapsedIconStrip({ connectionState, onExpand, onDocuments, onPipelines, onObservability, }: CollapsedIconStripProps): JSX.Element;
+
+declare interface CollapsedIconStripProps {
+    connectionState: ConnectionState_3;
+    onExpand: () => void;
+    onDocuments: () => void;
+    onPipelines: () => void;
+    onObservability: () => void;
+}
+
+export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): default_2.JSX.Element;
+
+export declare interface CollapsibleSectionProps {
+    title: string;
+    defaultOpen?: boolean;
+    /** Optional element rendered on the right side of the header (e.g. a count chip). */
+    badge?: default_2.ReactNode;
+    children: default_2.ReactNode;
+    className?: string;
+    /** If provided, the open state is persisted to localStorage under this key. */
+    storageKey?: string;
+}
+
+export declare function CollapsibleSidebar({ connectionState, onDisconnect, onReconnect, onCollapse, presenceUsers, currentClientId, currentChannel, activityEvents, userId, documents, onOpenDocument, pipelines, onOpenPipeline, onSeeAllPipelines, videoSlot, }: CollapsibleSidebarProps): JSX.Element;
+
+declare interface CollapsibleSidebarProps {
+    connectionState: ConnectionState_2;
+    onDisconnect: () => void;
+    onReconnect: () => void;
+    onCollapse?: () => void;
+    presenceUsers: PresenceUser_3[];
+    currentClientId: string;
+    currentChannel: string;
+    activityEvents: ActivityEvent[];
+    userId: string;
+    documents: DocumentInfo[];
+    onOpenDocument: (id: string) => void;
+    pipelines?: PipelineSidebarEntry[];
+    onOpenPipeline?: (id: string) => void;
+    onSeeAllPipelines?: () => void;
+    videoSlot?: React.ReactNode;
+}
+
+export declare const ColorInput: ForwardRefExoticComponent<ColorInputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface ColorInputProps {
+    /** Hex color value, e.g. "#3b82f6". */
+    value: string;
+    onChange: (value: string) => void;
+    disabled?: boolean;
+    /** Accessible name. Required when no visible <label> wraps this. */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare const colors: {
+    readonly primary: string;
+    readonly primaryDark: string;
+    readonly primaryLight: string;
+    readonly danger: string;
+    readonly dangerLight: string;
+    readonly success: string;
+    readonly successLight: string;
+    readonly warning: string;
+    readonly warningLight: string;
+    readonly info: string;
+    readonly infoLight: string;
+    readonly textPrimary: string;
+    readonly textSecondary: string;
+    readonly textMuted: string;
+    readonly textInverse: string;
+    readonly border: string;
+    readonly borderLight: string;
+    readonly background: string;
+    readonly surface: string;
+    readonly surfaceRaised: string;
+    readonly surfaceOverlay: string;
+};
+
+export declare function ColorSchemeProvider({ children }: {
+    children: React.ReactNode;
+}): JSX.Element;
+
+export declare interface Column<T> {
+    key: string;
+    header: string;
+    render?: (item: T) => React.ReactNode;
+    sortable?: boolean;
+    width?: string;
+    align?: 'left' | 'right' | 'center';
+}
+
+export declare interface Command {
+    id: string;
+    label: string;
+    group?: string;
+    hint?: string;
+    keywords?: string[];
+    icon?: ReactNode;
+    /** Display-only shortcut glyphs rendered right-aligned in the item. */
+    shortcut?: string[];
+    /**
+     * Active global hotkey that invokes `run()` without opening the palette.
+     * Format: `[mod+|cmd+|meta+|ctrl+|shift+|alt+]<key>`. `mod` resolves to
+     * cmd on macOS and ctrl elsewhere. The key portion is matched against
+     * `KeyboardEvent.key` lowercased — so `?`, `/`, `k`, `arrowdown` all
+     * work; multi-key chords are not supported in v1.
+     */
+    hotkey?: string;
+    /** Visibility predicate — when returns false, the command is filtered out. */
+    when?: () => boolean;
+    /** Action invoked when the item is selected. */
+    run: () => void | Promise<void>;
+}
+
+export declare function CommandPalette({ placeholder, emptyState, className, }?: CommandPaletteProps): JSX.Element;
+
+export declare interface CommandPaletteController {
+    open: () => void;
+    close: () => void;
+    toggle: () => void;
+    isOpen: boolean;
+    query: string;
+}
+
+export declare function CommandPaletteHint({ className }?: CommandPaletteHintProps): JSX.Element;
+
+export declare interface CommandPaletteHintProps {
+    className?: string;
+}
+
+export declare interface CommandPaletteProps {
+    placeholder?: string;
+    emptyState?: ReactNode;
+    className?: string;
+}
+
+export declare function CommandPaletteProvider({ commands, getDynamicCommands, recentsKey, recentsLimit, children, }: CommandPaletteProviderProps): JSX.Element;
+
+export declare interface CommandPaletteProviderProps {
+    /**
+     * Static command list. Optional: pure-registry consumers can pass
+     * nothing and have pages contribute commands via `useRegisterCommand`.
+     */
+    commands?: Command[];
+    /**
+     * Synchronous derivation hook for query-dependent commands (URL paste,
+     * UUID detection, etc.). Results are merged with the static `commands`
+     * list before cmdk runs its own filter.
+     */
+    getDynamicCommands?: (query: string) => Command[];
+    /**
+     * Future hook — currently the keybinding is always cmd/ctrl + K. Accepted
+     * for API forward-compat; ignored in v1.
+     */
+    toggleShortcut?: string[];
+    /**
+     * localStorage key for the most-recently-used command id list. Pass
+     * `null` to disable persistence (useful for tests and SSR). Defaults
+     * to `'cui:command-palette:recents'`.
+     */
+    recentsKey?: string | null;
+    /** Maximum number of recent command ids to remember. Default: 5. */
+    recentsLimit?: number;
+    children: ReactNode;
+}
+
+/** A flat comment as stored in Y.js. */
+export declare interface CommentData {
+    id: string;
+    text: string;
+    userId: string;
+    displayName: string;
+    color: string;
+    timestamp: string;
+    parentCommentId: string | null;
+    resolved?: boolean;
+    resolvedBy?: string;
+    resolvedAt?: string;
+}
+
+declare interface CommentItem {
+    postId: string;
+    commentId: string;
+    authorId: string;
+    content: string;
+    parentCommentId?: string;
+    createdAt: string;
+    _fadeIn?: boolean;
+}
+
+/** A comment with nested replies, assembled client-side. */
+export declare interface CommentThread extends CommentData {
+    replies: CommentThread[];
+}
+
+/**
+ * Inline comment thread for a single post.
+ *
+ * Safe to keep mounted across `postId` / `roomId` changes: the underlying
+ * `useComments` clears the thread and cancels the in-flight request when
+ * either id changes, so a caller does not need a `key` to avoid seeing the
+ * previous post's comments.
+ */
+export declare function CommentThreadPanel({ idToken, roomId, postId, onMessage }: CommentThreadProps): JSX.Element;
+
+declare interface CommentThreadProps {
+    idToken: string | null;
+    roomId: string | null;
+    postId: string | null;
+    onMessage: OnMessageFn;
+}
+
+export declare interface ComposerSuggestion {
+    id: string;
+    /** Why this is being offered — shown above the title on the card. */
+    reason: string;
+    title: string;
+    /** Fills the prompt field when chosen. */
+    prompt: string;
+    /** Fills the title field. Defaults to the suggestion's own title. */
+    fillTitle?: string;
+    label?: string;
+    tone?: Tone;
+    meta?: ReactNode;
+    context?: string;
+}
+
+export declare interface ConditionNodeData {
+    type: 'condition';
+    /** JSONPath or boolean expression evaluated over context. */
+    expression: string;
+    /** UI label shown on the node. */
+    label?: string;
+}
+
+export declare function ConfirmDialog({ open, onConfirm, onCancel, title, body, confirmLabel, cancelLabel, confirmDisabled, tone, children, }: ConfirmDialogProps): JSX.Element;
+
+export declare interface ConfirmDialogProps {
+    open: boolean;
+    onConfirm: () => void;
+    onCancel: () => void;
+    title?: string;
+    body?: string;
+    confirmLabel?: string;
+    cancelLabel?: string;
+    confirmDisabled?: boolean;
+    /** Visual tone for the confirm button. Defaults to 'info' (primary blue). */
+    tone?: 'destructive' | 'caution' | 'info';
+    /** Preview slot — extra content rendered between body and footer. */
+    children?: React.ReactNode;
+}
+
+export declare interface ConflictField {
+    /** Field key (path within the typed document — e.g. "title", "body.text"). */
+    field: string;
+    /** Value as it currently exists in the source system. */
+    sourceValue: unknown;
+    /** Value as it currently exists in the platform CRDT. */
+    platformValue: unknown;
+    /** Optional auto-merge proposal (if the engine produced one). */
+    mergedValue?: unknown;
+    /**
+     * Who made the source-side edit, when the connector can tell us.
+     *
+     * Additive and optional because most connectors CANNOT tell us: a Drive
+     * revision carries an editor, an S3 object generally does not. Absent means
+     * "unattributed", and the review UI says exactly that rather than crediting
+     * the change to the source system — "Contracts (Google Drive)" is where the
+     * change came from, not who made it, and showing a system where a person
+     * belongs is what made this queue unreadable.
+     */
+    changedBy?: string;
+    /**
+     * Human-readable location of this field in the document, outermost first —
+     * e.g. `['Payment terms']`. The `field` path above is a machine key; this is
+     * where a reader would look on the page. Optional: connectors that only know
+     * the field path omit it, and the UI falls back to showing the path.
+     */
+    path?: string[];
+}
+
+export declare interface ConflictResolution {
+    /** Which side wins as a whole — used when fieldChoices is empty. */
+    pick: ConflictSide;
+    /**
+     * Optional per-field override map. Keys are field paths matching
+     * ConflictField.field; values are 'source' | 'platform' | 'merged' or a
+     * literal value supplied by the operator.
+     */
+    fieldChoices?: Record<string, ConflictSide | {
+        custom: unknown;
+    }>;
+    /** Operator note explaining the pick. */
+    note?: string;
+}
+
+export declare type ConflictSide = 'source' | 'platform' | 'merged';
+
+export declare function ConnectionPill({ state, tone, compact, withLabel, labels, className, 'data-testid': testId, }: ConnectionPillProps): JSX.Element;
+
+export declare interface ConnectionPillProps {
+    state: ConnectionState;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette.
+     *
+     * A wrapper `className` cannot substitute: the label and dot colours come
+     * from the per-state map below, on children the caller never sees.
+     */
+    tone?: ConnectionPillTone;
+    /** Dot-only rendering — no label text. Default false. */
+    compact?: boolean;
+    /** Render the text label next to the dot. Default true. Set false for dot-only. */
+    withLabel?: boolean;
+    /** Override label text per state (e.g. localized strings). */
+    labels?: Partial<Record<ConnectionState, string>>;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** @see SurfaceTone — which colour family the pill paints in. */
+export declare type ConnectionPillTone = SurfaceTone;
+
+/** Connection lifecycle states */
+export declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+declare type ConnectionState_2 = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+declare type ConnectionState_3 = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+declare type ConnectionState_4 = 'connected' | 'connecting' | 'disconnected';
+
+/** @deprecated Use `ConnectionPill` from `/shared`. Alias retained for one minor. */
+export declare function ConnectionStatus(props: ConnectionStatusProps): JSX.Element;
+
+/** @deprecated Use `ConnectionPill` from `/shared`. Alias retained for one minor. */
+declare type ConnectionStatusProps = Pick<ConnectionPillProps, 'state'>;
+
+export declare function ConsentPage({ clientName, scopes, redirectUri, onAuthorize, onDeny, logoUrl, }: ConsentPageProps): JSX.Element;
+
+export declare interface ConsentPageProps {
+    clientName: string;
+    scopes: string[];
+    redirectUri?: string;
+    onAuthorize: () => Promise<void>;
+    onDeny: () => Promise<void>;
+    logoUrl?: string;
+}
+
+export declare function ConsultCard({ question, context, origin, askedAt, status, answer, answeredBy, onAnswer, answerPlaceholder, busy, footer, className, 'data-testid': testId, }: ConsultCardProps): JSX.Element;
+
+export declare interface ConsultCardProps {
+    /** The agent's question. */
+    question: string;
+    /** What the agent was doing when it asked. */
+    context?: string;
+    /** Where it came from — repo, box, session. Rendered as quiet chips. */
+    origin?: readonly string[];
+    /** ISO timestamp or preformatted "asked 4m ago" string. */
+    askedAt?: string;
+    status: 'pending' | 'answered' | 'expired' | 'withdrawn';
+    answer?: string;
+    answeredBy?: string;
+    /** Submit an answer. Only rendered while status is 'pending'. */
+    onAnswer?: (answer: string) => void;
+    answerPlaceholder?: string;
+    busy?: boolean;
+    /** Extra footer content, e.g. a link to the session. */
+    footer?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type ContextPatch = ContextPatchMerge | ContextPatchJsonPatch;
+
+export declare interface ContextPatchJsonPatch {
+    mode: 'jsonPatch';
+    ops: Array<{
+        op: 'add' | 'remove' | 'replace' | 'move' | 'copy' | 'test';
+        path: string;
+        value?: unknown;
+        from?: string;
+    }>;
+}
+
+export declare interface ContextPatchMerge {
+    mode: 'merge';
+    values: Record<string, unknown>;
+}
+
+export declare interface ConversationItem {
+    /** Chat channel id — handed back verbatim by `onSelect`. */
+    channel: string;
+    /** 1 peer for a 1:1 conversation, N for groups. */
+    peers: ConversationPeer[];
+    lastMessagePreview?: string;
+    /** ISO timestamp of the last message. Rendered as HH:MM. */
+    lastMessageAt?: string;
+    unreadCount?: number;
+}
+
+export declare function ConversationList({ items, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+
+export declare interface ConversationListProps {
+    items: ConversationItem[];
+    /** Channel of the conversation currently open — its row highlights. */
+    activeChannel?: string | null;
+    onSelect: (channel: string) => void;
+    /** Renders a "+ New chat" affordance above the rows when set. */
+    onNewChat?: () => void;
+    /** Empty-state text. Defaults to "No conversations yet". */
+    emptyLabel?: string;
+    tone?: 'light' | 'dark';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ConversationPeer {
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+    color?: string;
+    /** Presence: true → online dot, false → offline dot, undefined → no dot. */
+    online?: boolean;
+}
+
+export declare interface CreateClientInput {
+    clientName: string;
+    poolId: string;
+    redirectUris: string[];
+    postLogoutRedirectUris?: string[];
+    grantTypes?: string[];
+    responseTypes?: string[];
+    scope?: string;
+}
+
+export declare interface CreateClientWithPoolInput {
+    clientName: string;
+    poolName: string;
+    redirectUris: string[];
+    grantTypes?: string[];
+}
+
+export declare interface CreateEmailTemplateInput {
+    name: string;
+    subject: string;
+    htmlBody: string;
+    textBody: string;
+    variables?: string[];
+}
+
+export declare interface CreateGroupInput {
+    groupName: string;
+    description?: string;
+    permissions?: string[];
+}
+
+export declare interface CreatePoolInput {
+    poolName: string;
+    customAttributes?: Record<string, string>;
+    settings?: Partial<PoolSettings>;
+}
+
+export declare interface CreateUserInput {
+    email: string;
+    password?: string;
+    givenName?: string;
+    familyName?: string;
+    nickname?: string;
+    customAttributes?: Record<string, unknown>;
+}
+
+/**
+ * Returns a `var(--ui-...)` reference for use in inline styles or CSS-in-JS.
+ *
+ * Usage:
+ *   style={{ color: cssVar('textPrimary') }}
+ *   // → "var(--ui-text-primary)"
+ */
+export declare function cssVar(token: keyof ThemeTokens): string;
+
+declare type CursorMode = 'freeform' | 'table' | 'text' | 'canvas';
+
+export declare const CUSTOM_FIELD_TYPE_STORAGE_KEY = "ws_field_types_v1";
+
+export declare interface CustomFieldType {
+    id: string;
+    name: string;
+    icon: string;
+    description: string;
+    /**
+     * Primitive storage type — e.g. 'long_text_and_summary', 'list_text'.
+     * Identifies the Drupal-style data storage class the user selected.
+     * Optional for backward-compat with records persisted before this field was added.
+     */
+    primitiveType?: string;
+    /**
+     * Which built-in renderer to delegate to for display.
+     * Derived from primitiveType at creation time.
+     */
+    baseType: string;
+    /**
+     * Per-view-mode visibility + renderer choice from step 2 of the wizard.
+     * Optional for backward-compat with records persisted before it existed;
+     * absent means "visible everywhere, base type's default renderer".
+     */
+    display?: Partial<Record<ViewMode, CustomFieldTypeDisplay>>;
+    createdAt: string;
+    updatedAt: string;
+}
+
+/**
+ * Step 2 ("Display") of the Data Types wizard, for one view mode.
+ *
+ * ADDITIVE, optional. Before this existed, `FieldTypesPage.handleSave` sent
+ * only `{name, icon, description, primitiveType, baseType}` — the Visible
+ * checkboxes and the renderer pickers had nowhere to be written, so every
+ * step-2 choice was discarded the moment the user pressed Save and reopening
+ * the type for edit showed all three modes visible with the default renderer.
+ */
+export declare interface CustomFieldTypeDisplay {
+    /** Does this field appear at all in this view mode? */
+    visible: boolean;
+    /** Chosen renderer key, e.g. `'rich-text:reader'`. Absent = the base type's first. */
+    renderer?: string;
+}
+
+/** Dark theme preset — proper dark UI design, not simply inverted.
+ *
+ * MUST stay consistent with the `[data-theme="dark"]` token block in
+ * src/styles.css (same source-of-truth direction as the light preset: the
+ * CSS block mirrors this file). Primary was re-derived 2026-08 from the
+ * brand indigo (#646cff lightened for dark surfaces) — it had drifted to a
+ * plain blue (#60a5fa) from the pre-#646cff era. */
+export declare const darkTheme: ThemeTokens;
+
+export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
+
+export declare interface DataTableColumn<T> {
+    /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
+    key: string;
+    /** Header label. */
+    header: ReactNode;
+    /** Optional cell renderer. If absent, the value at `key` is rendered as a string. */
+    render?: (row: T, rowIndex: number) => ReactNode;
+    /**
+     * Optional sort comparator. If absent but `sortable=true`, the default
+     * comparator compares numbers/bigints/Dates/booleans by VALUE and everything
+     * else by `String(...)`. (It used to stringify unconditionally, which sorted a
+     * numeric column lexicographically — 1, 10, 100, 2, 9 — and a Date column by
+     * weekday name.)
+     */
+    compare?: (a: T, b: T) => number;
+    /** Optional filter accessor. If absent but `filterable=true`, filters by `String(row[key])`. */
+    getFilterText?: (row: T) => string;
+    sortable?: boolean;
+    /** Include this column's text in the global search box. Default: true if a search box is shown. */
+    filterable?: boolean;
+    width?: string;
+    align?: 'left' | 'right' | 'center';
+    className?: string;
+}
+
+export declare interface DataTableProps<T> {
+    data: T[];
+    columns: DataTableColumn<T>[];
+    /** Stable id for each row. Used as React key. */
+    keyField: (row: T) => string;
+    onRowClick?: (row: T) => void;
+    /** Per-row trailing action cell (buttons, menu, etc.). */
+    rowActions?: (row: T) => ReactNode;
+    /** Show a global search input. Default: false. */
+    searchable?: boolean;
+    searchPlaceholder?: string;
+    /** Page size. Pagination is shown when data.length > pageSize. */
+    pageSize?: number;
+    emptyMessage?: ReactNode;
+    loading?: boolean;
+    loadingRows?: number;
+    /**
+     * Drop the table's own border/rounding so a composite (e.g. a Card-framed
+     * table like identity's EntityTable) can provide the frame instead.
+     */
+    frameless?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
+
+export declare const DEFAULT_PIPELINE_ICONS: string[];
+
+declare type DeleteOutcome = {
+    status: 'synced';
+} | {
+    status: 'offline';
+    error: string;
+} | {
+    status: 'rejected';
+    error: string;
+};
+
+export declare function DetailHeader({ title, badge, description, meta, aside, asideWidth, as: Heading, className, 'data-testid': testId, }: DetailHeaderProps): JSX.Element;
+
+export declare interface DetailHeaderProps {
+    title: ReactNode;
+    /** Sits inline after the title — a status chip, a badge, a count. */
+    badge?: ReactNode;
+    /** One line of prose. Capped at a readable measure, not the panel width. */
+    description?: ReactNode;
+    /** The metadata line. Pass a `<MetaLine>`; anything is accepted. */
+    meta?: ReactNode;
+    /** Right-hand region — progress bars, a gauge, a small action cluster. */
+    aside?: ReactNode;
+    /** Width of the aside in px. Default 260. */
+    asideWidth?: number;
+    /** Heading level, so a panel nested under a page h1 does not claim h1. */
+    as?: 'h2' | 'h3';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface DiagnosticsInfo {
+    node: Record<string, unknown>;
+    cluster: Record<string, unknown>;
+    resources: Record<string, unknown>;
+}
+
+export declare function DiagnosticsPage({ diagnostics, rates, dlq, onRedrive, onPurge, onRefresh, loading, }: DiagnosticsPageProps): JSX.Element;
+
+export declare interface DiagnosticsPageProps {
+    diagnostics?: Record<string, unknown>;
+    rates?: Record<string, unknown>;
+    dlq?: Array<{
+        id: string;
+        payload: unknown;
+        error: string;
+        failedAt: string;
+        retryCount: number;
+    }>;
+    onRedrive: (id: string) => Promise<void>;
+    onPurge: (id: string) => Promise<void>;
+    onRefresh: () => void;
+    loading?: boolean;
+}
+
+export declare interface DiffAnnotation {
+    /** Path as it appears in the diff (new side). */
+    file: string;
+    /** New-side line number. Omit for a file-level note. */
+    line?: number;
+    severity?: 'critical' | 'warning' | 'info';
+    note: string;
+    /** Who said it — a reviewer model, a person. */
+    author?: string;
+}
+
+export declare interface DiffFile {
+    path: string;
+    oldPath: string | null;
+    status: 'added' | 'deleted' | 'renamed' | 'modified';
+    adds: number;
+    dels: number;
+    lines: DiffLine[];
+    binary: boolean;
+}
+
+export declare interface DiffLine {
+    kind: 'add' | 'del' | 'ctx' | 'hunk';
+    text: string;
+    oldNo: number | null;
+    newNo: number | null;
+}
+
+export declare function DiffViewer({ diff, annotations, defaultCollapsed, maxLinesPerFile, truncatedNote, className, 'data-testid': testId, }: DiffViewerProps): JSX.Element;
+
+export declare interface DiffViewerProps {
+    /** Unified diff — real `git diff` output. */
+    diff: string;
+    annotations?: readonly DiffAnnotation[];
+    /** Start with every file collapsed (big changes). Default false. */
+    defaultCollapsed?: boolean;
+    /** Hard cap on rendered lines per file, beyond which the file truncates. */
+    maxLinesPerFile?: number;
+    /** Note rendered when the caller knows the diff itself was truncated upstream. */
+    truncatedNote?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface DLQEntry {
+    messageId: string;
+    eventType: string;
+    eventPayload: unknown;
+    lastError: string;
+    failedAt: string;
+    totalAttempts: number;
+    errorKind: string | null;
+}
+
+export declare interface DlqEntry {
+    id: string;
+    payload: unknown;
+    error: string;
+    failedAt: string;
+    retryCount: number;
+}
+
+declare interface DLQEntryRow {
+    /** Envelope id — primary key for replay / purge. */
+    id: string;
+    /** Failed payload, T-untyped. The page renders a few well-known fields. */
+    envelope: {
+        id?: string;
+        body?: unknown;
+    };
+    lastError: string;
+    failedAtMs: number;
+    totalAttempts: number;
+}
+
+export declare interface DLQListResponse {
+    items: DLQEntry[];
+    cursor?: string;
+}
+
+export declare interface DLQPurgeResponse {
+    purged: string[];
+    notFound: string[];
+}
+
+export declare interface DLQRedriveResponse {
+    redriven: string[];
+    notFound: string[];
+}
+
+export declare interface DockedPanelContextValue {
+    /** The dock's own header already names the region — bodies should not
+     *  repeat it. */
+    hasHeader: boolean;
+    /** The dock gives its body a definite height; bodies should fill it and
+     *  let their own scrollable region absorb the slack. */
+    fillsHeight: boolean;
+}
+
+/** Wraps a dock's body slot. Docks render this; consumers rarely do. */
+export declare function DockedPanelProvider({ hasHeader, fillsHeight, children, }: DockedPanelProviderProps): JSX.Element;
+
+export declare interface DockedPanelProviderProps extends Partial<DockedPanelContextValue> {
+    children: ReactNode;
+}
+
+export declare function DocsShell({ topNav, sidebar, rightRail, children, fullBleed, preContent, className, style, scrollResetKey, }: DocsShellProps): JSX.Element;
+
+export declare interface DocsShellProps {
+    /** Sticky top navigation. Typically <DocsTopNav>. */
+    topNav: ReactNode;
+    /** Left sidebar. Typically <DocsSidebar>. */
+    sidebar: ReactNode;
+    /**
+     * Changing this scrolls the content pane back to the top — pass the current
+     * pathname. <main> is the scroll container, not the window, so the browser's
+     * scroll restoration does not apply.
+     */
+    scrollResetKey?: string;
+    /** Optional right rail. Typically <TableOfContents>. */
+    rightRail?: ReactNode;
+    /** Main content. */
+    children: ReactNode;
+    /**
+     * Full-bleed mode skips the centered content padding so a hosted
+     * application demo (e.g. a chat panel filling the viewport) can
+     * occupy the entire content rectangle.
+     */
+    fullBleed?: boolean;
+    /** Pre-content slot (breadcrumbs, page header). Skipped when fullBleed. */
+    preContent?: ReactNode;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare function DocsSidebar({ sections, activeHref, defaultCollapsedSections, renderLink, className, style, 'aria-label': ariaLabel, }: DocsSidebarProps): JSX.Element;
+
+export declare interface DocsSidebarGroup {
+    id: string;
+    label?: ReactNode;
+    /** When set, the group label itself is rendered as a direct link instead of a section. */
+    to?: string;
+    items: DocsSidebarItem[];
+}
+
+export declare interface DocsSidebarItem {
+    id: string;
+    label: ReactNode;
+    to: string;
+    badge?: ReactNode;
+}
+
+export declare interface DocsSidebarProps {
+    sections: DocsSidebarSection[];
+    /** Current pathname — drives the active-item highlight. */
+    activeHref?: string;
+    /** Section ids that should start collapsed. */
+    defaultCollapsedSections?: string[];
+    /** Plug a routing library's Link. Defaults to <a href>. */
+    renderLink?: LinkRenderer;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+}
+
+export declare interface DocsSidebarSection {
+    id: string;
+    label: ReactNode;
+    /** Used to detect "section active" highlighting in section header. */
+    basePath?: string;
+    groups: DocsSidebarGroup[];
+}
+
+export declare function DocsTopNav({ items, activeHref, brand, brandTo, search, showSearchPlaceholder, rightSlot, renderLink, className, style, }: DocsTopNavProps): JSX.Element;
+
+export declare interface DocsTopNavProps {
+    items: TopNavItem[];
+    activeHref?: string;
+    /** Brand/logo. A string renders as a bold title; ReactNode is rendered as-is. */
+    brand?: ReactNode;
+    /** Optional href for the brand to link to. Default "/". Pass null to render brand as a static span. */
+    brandTo?: string | null;
+    /**
+     * Search affordance. Convention: a button that opens a CommandPalette.
+     * Falls back to a styled "Search… ⌘K" placeholder when omitted but
+     * `showSearchPlaceholder` is true.
+     */
+    search?: ReactNode;
+    /** Renders a static "Search… ⌘K" pill when `search` is omitted. Default true. */
+    showSearchPlaceholder?: boolean;
+    /** Right-side slot for auxiliary links (GitHub, version, theme switcher). */
+    rightSlot?: ReactNode;
+    renderLink?: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    className?: string;
+    style?: CSSProperties;
+}
+
+declare interface DocTypeProposalRow {
+    proposalId: string;
+    sourceId: string;
+    signature: string;
+    sampleIngestIds: string[];
+    proposedName: string;
+    proposedDescription: string;
+    proposedFields: ProposedField[];
+    reasoning: string;
+    status: 'pending' | 'promoted' | 'rejected';
+    createdAt: string;
+}
+
+export declare const DOCUMENT_TYPE_ICONS: string[];
+
+export declare interface DocumentData {
+    meta: DocumentMeta;
+    sections: Section[];
+}
+
+declare interface DocumentInfo {
+    id: string;
+    title: string;
+    type: string;
+    status: string;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+    icon: string;
+    description?: string;
+    activeCallSessionId?: string;
+}
+
+export declare interface DocumentMeta {
+    id: string;
+    title: string;
+    sourceType: 'transcript' | 'meeting' | 'notes' | 'custom';
+    sourceId: string;
+    createdBy: string;
+    createdByName?: string;
+    createdAt: string;
+    aiModel: string;
+    status: 'draft' | 'review' | 'final';
+    documentType?: string;
+    updatedAt?: string;
+    activeCallSessionId?: string;
+}
+
+declare interface DocumentPresenceUser {
+    userId: string;
+    displayName: string;
+    color: string;
+    mode?: string;
+    idle?: boolean;
+}
+
+declare interface DocumentType_2 {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    fields: DocumentTypeField[];
+    /** Phase 51 / hub#66 — multi-page layout. Optional; absent = single-page (legacy). */
+    pages?: DocumentTypePage[];
+    /** Phase 51 / hub#66 — page-level configuration. Only meaningful when pages.length > 1. */
+    pageConfig?: DocumentTypePageConfig;
+    /**
+     * Remote-first (2026-08): the server row this type is stored under.
+     * Stamped on every server hydration and successful create. Its ABSENCE is
+     * what marks a type as genuinely local (pre-remote-era or created offline)
+     * and therefore eligible for the one-time upload migration — without it, a
+     * cache entry of a server-DELETED type is indistinguishable from a local
+     * type and gets resurrected onto the server forever.
+     */
+    serverTypeId?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+export { DocumentType_2 as DocumentType }
+
+export declare interface DocumentTypeField {
+    id: string;
+    name: string;
+    sectionType: string;
+    required: boolean;
+    defaultCollapsed: boolean;
+    placeholder: string;
+    hiddenInModes: ViewMode[];
+    rendererOverrides: Partial<Record<ViewMode, string>>;
+}
+
+export declare interface DocumentTypePage {
+    id: string;
+    title?: string;
+    sectionIds: string[];
+}
+
+export declare interface DocumentTypePageConfig {
+    showTableOfContents: boolean;
+}
+
+export declare function DotMeter({ label, value, segments, showPercent, note, warnAbove, tone, className, 'data-testid': testId, }: DotMeterProps): JSX.Element;
+
+export declare interface DotMeterProps {
+    /** Row label, e.g. `current` / `weekly`. Omit for a bare meter. */
+    label?: string;
+    /** 0–1. Values outside the range are clamped rather than overflowing. */
+    value: number;
+    /** Number of dots. Ten is the default because it reads as a percentage. */
+    segments?: number;
+    /** Show the value as a percentage after the dots. Default true. */
+    showPercent?: boolean;
+    /**
+     * Trailing note, conventionally the reset time (`⟳ Sun 10:00pm`). This is
+     * the field that makes a quota meter actionable — "89% used" is alarming
+     * until you know it resets in nine minutes.
+     */
+    note?: string;
+    /**
+     * Fraction above which the meter reads as spent. Default 0.85. Below it the
+     * meter is neutral: a half-used budget is not a warning.
+     */
+    warnAbove?: number;
+    tone?: DotMeterTone;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type DotMeterTone = 'code' | 'surface';
+
+export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, 'aria-label': ariaLabel, 'data-testid': testId, }: DrawerProps): default_2.ReactPortal | null;
+
+export declare interface DrawerProps {
+    open: boolean;
+    onClose: () => void;
+    title?: string;
+    subtitle?: string;
+    /** Panel width in pixels. Defaults to 460. */
+    width?: number;
+    children: default_2.ReactNode;
+    footer?: default_2.ReactNode;
+    /**
+     * Accessible name for the dialog when there is no visible `title` to point
+     * at. When `title` IS set the heading labels the dialog via
+     * `aria-labelledby` and this prop is unnecessary.
+     */
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+
+export declare interface DropdownMenuItem {
+    /** Visible item label. */
+    label: string;
+    /** Optional leading icon / glyph. */
+    icon?: ReactNode;
+    /** Highlight this item as the currently-active selection. */
+    active?: boolean;
+    /** Style this item as destructive. */
+    danger?: boolean;
+    /** Fires on click / Enter; the menu closes afterwards. */
+    onSelect: () => void;
+}
+
+export declare interface DropdownMenuProps {
+    /** Content of the built-in trigger button (icon, glyph, text…). */
+    trigger: ReactNode;
+    /** Accessible label for the trigger button. Default 'Open menu'. */
+    triggerLabel?: string;
+    /** Optional title attribute (hover tooltip) for the trigger button. */
+    triggerTitle?: string;
+    /** Optional className for the trigger button. */
+    triggerClassName?: string;
+    /**
+     * Panel alignment relative to the trigger. 'start' (default) anchors the
+     * panel's left edge to the trigger's left edge; 'end' anchors the panel's
+     * RIGHT edge to the trigger's right edge.
+     */
+    align?: 'start' | 'end';
+    sections: DropdownMenuSection[];
+    /** Optional className for the dropdown panel. */
+    className?: string;
+    /** Optional testid for the panel. Default 'dropdown-menu'. */
+    'data-testid'?: string;
+}
+
+export declare interface DropdownMenuSection {
+    /** Optional uppercase section heading. */
+    label?: string;
+    items: DropdownMenuItem[];
+}
+
+export declare interface EmailTemplate {
+    templateId: string;
+    name: string;
+    subject: string;
+    htmlBody: string;
+    textBody: string;
+    variables: string[];
+}
+
+export declare function EmailTemplateFormPage({ template, isEdit, onSubmit, onCancel, error, }: EmailTemplateFormPageProps): JSX.Element;
+
+export declare interface EmailTemplateFormPageProps {
+    template?: {
+        templateId?: string;
+        name: string;
+        subject: string;
+        htmlBody: string;
+        textBody: string;
+        variables: string[];
+    };
+    isEdit: boolean;
+    onSubmit: (data: {
+        name: string;
+        subject: string;
+        htmlBody: string;
+        textBody: string;
+        variables: string[];
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function EmailTemplateListPage({ templates, onCreateTemplate, onEditTemplate, onDeleteTemplate, onTestSend, loading, }: EmailTemplateListPageProps): JSX.Element;
+
+export declare interface EmailTemplateListPageProps {
+    templates: Array<{
+        templateId: string;
+        name: string;
+        subject: string;
+    }>;
+    onCreateTemplate: () => void;
+    onEditTemplate: (templateId: string) => void;
+    onDeleteTemplate: (templateId: string) => Promise<void>;
+    onTestSend: (templateId: string, email: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, }: EmptyStateProps): JSX.Element;
+
+export declare interface EmptyStateAction {
+    /** Visible label on the action button or link. */
+    label: string;
+    /** Click handler — required when `href` is not set. */
+    onClick?: () => void;
+    /** External / internal link — required when `onClick` is not set. */
+    href?: string;
+    /**
+     * Visual variant.
+     * `primary`   — solid indigo, used for the first/most important step
+     * `secondary` — outlined, used for additional steps
+     * Defaults to `primary` for the first action, `secondary` for the rest.
+     */
+    variant?: 'primary' | 'secondary';
+    /**
+     * When true (and `href` is set), opens in a new tab with
+     * `target=_blank rel=noopener noreferrer` and an sr-only
+     * "(opens in new tab)" hint.
+     */
+    external?: boolean;
+    /**
+     * Optional copy-to-clipboard CLI snippet rendered in a monospaced
+     * `<pre>` underneath the action button.
+     */
+    code?: string;
+}
+
+export declare interface EmptyStateProps {
+    icon?: ReactNode;
+    title: string;
+    /** Plain-text body (preferred when no markup is needed). */
+    body?: string;
+    /** Alias for `body` — accepts any ReactNode for richer copy. */
+    description?: ReactNode;
+    actionLabel?: string;
+    onAction?: () => void;
+    /** Custom action node (overrides actionLabel/onAction when present). */
+    action?: ReactNode;
+    /**
+     * Multi-action "what to do next" list. When provided, takes precedence
+     * over `action` / `actionLabel`+`onAction`. Each entry renders a
+     * button or link, with an optional copyable code snippet underneath.
+     */
+    actions?: EmptyStateAction[];
+    /**
+     * Optional testid for the container (defaults to "empty-state").
+     * Callers with existing tests targeting a specific id can pass it here.
+     */
+    testId?: string;
+    /**
+     * Optional testid for the action button (defaults to "empty-state-action").
+     */
+    actionTestId?: string;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette.
+     */
+    tone?: EmptyStateTone;
+    /**
+     * Class for the container. Until now EmptyState took no class at all, so a
+     * caller could not even change its padding — which is why every dark or
+     * cramped surface hand-rolled its own placeholder instead. For a region too
+     * small for the 220px block, reach for `InlinePlaceholder`.
+     */
+    className?: string;
+}
+
+/** @see SurfaceTone — which colour family the empty state paints in. */
+export declare type EmptyStateTone = SurfaceTone;
+
+export declare function EntityCell({ label, id, href, mono, className, labelClassName, }: EntityCellProps): JSX.Element;
+
+export declare interface EntityCellProps {
+    label: string;
+    /** Secondary monospace subline (e.g. ID or slug). */
+    id?: string;
+    /** Makes the label a link. */
+    href?: string;
+    /** Extra monospace styling on the ID subline (already monospace by default; this is reserved for callers needing emphasis). */
+    mono?: boolean;
+    className?: string;
+    labelClassName?: string;
+}
+
+export declare function EntityTable<T extends Record<string, unknown>>({ columns, data, keyField, onRowClick, actions, emptyMessage, emptyIcon, loading, }: EntityTableProps<T>): JSX.Element;
+
+export declare interface EntityTableProps<T> {
+    columns: Column<T>[];
+    data: T[];
+    keyField: string;
+    onRowClick?: (item: T) => void;
+    actions?: (item: T) => React.ReactNode;
+    emptyMessage?: string;
+    emptyIcon?: string;
+    loading?: boolean;
+}
+
+declare interface EphemeralReaction {
+    id: string;
+    emoji: string;
+    x: number;
+    y: number;
+    timestamp: string;
+}
+
+export declare class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+    constructor(props: ErrorBoundaryProps);
+    static getDerivedStateFromError(error: Error): ErrorBoundaryState;
+    componentDidCatch(error: Error, info: ErrorInfo): void;
+    handleRetry: () => void;
+    render(): string | number | bigint | boolean | JSX.Element | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined;
+}
+
+declare interface ErrorBoundaryProps {
+    /** Identifier for which boundary caught the error (logged to console). */
+    name: string;
+    children: ReactNode;
+}
+
+declare interface ErrorBoundaryState {
+    hasError: boolean;
+    error: Error | null;
+}
+
+export declare type ErrorCategory = 'NetworkError' | 'TimeoutError' | 'ValidationError' | 'LLMError' | 'RegistryConflict' | 'UnknownError';
+
+export declare function ErrorPage({ title, message, error, onRetry, onBack, }: ErrorPageProps): JSX.Element;
+
+export declare interface ErrorPageProps {
+    title?: string;
+    message: string;
+    error?: string;
+    onRetry?: () => void;
+    onBack?: () => void;
+}
+
+export declare function ErrorState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, }: ErrorStateProps): JSX.Element;
+
+export declare interface ErrorStateProps {
+    /** Override the default ⚠️ glyph. Pass a string emoji or a ReactNode. */
+    icon?: ReactNode;
+    title: string;
+    /** Plain-text body (preferred when no markup is needed). */
+    body?: string;
+    /** Alias for `body` — accepts any ReactNode for richer copy (stack traces, links). */
+    description?: ReactNode;
+    actionLabel?: string;
+    onAction?: () => void;
+    /** Custom action node (overrides actionLabel/onAction when present). */
+    action?: ReactNode;
+    testId?: string;
+    actionTestId?: string;
+}
+
+export declare interface EventGlyph {
+    icon: string;
+    color: string;
+    severity: 'info' | 'success' | 'warning' | 'error' | 'neutral';
+}
+
+export declare const eventGlyphs: Record<string, EventGlyph>;
+
+export declare function EventRow({ timestamp, type, summary, severity, onClick, selected }: EventRowProps): JSX.Element;
+
+export declare interface EventRowProps {
+    timestamp: string;
+    type: string;
+    summary: string;
+    severity?: 'info' | 'warning' | 'error' | 'success';
+    onClick?: () => void;
+    selected?: boolean;
+}
+
+export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, onModeChange, persistKey, apiRef, defaultCorner, expandable, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, zIndex, className, 'data-testid': rootTestId, }: ExpandableCallWidgetProps): JSX.Element;
+
+export declare interface ExpandableCallWidgetHandle {
+    /** Always canonical — 'window', never 'docked'. */
+    mode: CallWidgetMode;
+    /** Accepts either dialect; normalizes to canonical. */
+    setMode: (m: AnyCallWidgetMode) => void;
+}
+
+export declare interface ExpandableCallWidgetProps {
+    /** Header label (left side of chrome). */
+    title?: ReactNode;
+    /** Optional status line shown under the title (e.g. "0:36 • 3 in call"). */
+    subtitle?: ReactNode;
+    /** Elapsed call time in seconds. When set, a monospace timer
+     *  (data-testid="call-timer") renders after the subtitle — the same
+     *  affordance CallWidget's collapsed chrome exposes, so e2e journeys
+     *  can read the duration in either mode. */
+    durationSeconds?: number;
+    /** Body — typically `<HangoutLayout fillParent participants={…}/>`. */
+    children: ReactNode;
+    /** Optional controls strip rendered below the body. Stays inside the
+     *  widget chrome in mini mode (compact); spans full width in window
+     *  and fullscreen modes. */
+    controls?: ReactNode;
+    /** Initial mode. Persisted modes override this once `persistKey` is
+     *  set and storage has a prior value. Default: 'mini'.
+     *
+     *  The pre-2.106 spelling `'docked'` is accepted and normalized to
+     *  `'window'`.
+     *  @see CallWidgetMode */
+    defaultMode?: PersistedWidgetMode | 'docked';
+    /** Fires after every settled mode change (programmatic or via UI).
+     *  Emits the CANONICAL vocabulary — 'window' where builds before
+     *  2.106 emitted 'docked'. */
+    onModeChange?: (mode: CallWidgetMode) => void;
+    /** localStorage key for `{mode,x,y,width,height}`. Omit to opt out
+     *  (state lives only in memory). */
+    persistKey?: string;
+    /** Imperative handle — `apiRef.current.setMode('fullscreen')`. */
+    apiRef?: Ref<ExpandableCallWidgetHandle>;
+    /** Initial corner-snap for mini mode (only used if no persisted
+     *  position exists). Default 'bottom-right'. */
+    defaultCorner?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+    /** Hide the expand affordances (useful for read-only viewers). */
+    expandable?: boolean;
+    /**
+     * Destinations for the docked side panel (chat / people / captions).
+     *
+     * The panel is part of the widget, not a sibling floating window: it
+     * renders inside the same positioned root, so it moves, resizes and
+     * closes with the call. Its toggle buttons are appended to the controls
+     * strip automatically — the host positions nothing.
+     *
+     * Per-mode behaviour (see ./CallSidePanel for the full rationale):
+     *   'window' / 'fullscreen'  SPLIT — the stage keeps `flex-1` and the
+     *                            dock takes a right-edge column (w-80, or
+     *                            w-96 in fullscreen). This is the Google
+     *                            Meet / Zoom / Teams layout.
+     *   'mini'                   OVERLAY — a full-bleed sheet on top of the
+     *                            320px stage. Splitting a mini widget would
+     *                            leave the video ~0px wide; Meet and Teams
+     *                            both switch to a covering sheet at this
+     *                            size instead.
+     */
+    sidePanelTabs?: CallSidePanelTab[];
+    /** The single open destination, or null when the dock is closed. */
+    activeSidePanelTab?: string | null;
+    /** Fires with the next id, or null when the dock should close. */
+    onSidePanelTabChange?: (id: string | null) => void;
+    /** z-index for the floating modes. Default 9999. */
+    zIndex?: number;
+    /** Class on the root. */
+    className?: string;
+    /** Root testid. Defaults to 'expandable-call-widget' so tests (and the
+     *  demo harness) can scope to THIS widget — `data-call-widget-mode` is
+     *  also stamped by <CallWidget>, so it is not a unique handle. */
+    'data-testid'?: string;
+}
+
+export declare function ExpertCard({ name, title, subtitle, imageUrl, matchedSkills, otherSkills, contexts, evidence, evidenceLabel, onAsk, askLabel, footerExtra, onOpen, className, 'data-testid': testId, }: ExpertCardProps): JSX.Element;
+
+export declare interface ExpertCardProps {
+    name: string;
+    title?: string;
+    /** Second context line, e.g. department or team. */
+    subtitle?: string;
+    imageUrl?: string;
+    /** Skills that matched the query, strongest first. */
+    matchedSkills: readonly ExpertSkillMatch[];
+    /** The person's other skills, shown quieter. Keep short; the card truncates. */
+    otherSkills?: readonly string[];
+    /** Where this person spends their time — initiative/project names. */
+    contexts?: readonly string[];
+    /** The work the match was derived from. */
+    evidence?: readonly ExpertEvidenceItem[];
+    /** Heading over the evidence list. */
+    evidenceLabel?: string;
+    /** Primary action. Omit to render a card with no footer. */
+    onAsk?: () => void;
+    askLabel?: string;
+    /** Secondary slot beside the action, e.g. a link into an org graph. */
+    footerExtra?: ReactNode;
+    /** Click anywhere that isn't a control — e.g. open a profile. */
+    onOpen?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ExpertEvidenceItem {
+    id: string;
+    /** e.g. a document title, an ADR, a postmortem. */
+    title: string;
+    /** Where it came from — "adr", "slack", "postmortem". Shown as a quiet tag. */
+    source?: string;
+    href?: string;
+}
+
+export declare interface ExpertSkillMatch {
+    name: string;
+    /**
+     * 0..1 evidence strength for THIS skill on THIS person, when the domain
+     * has one (e.g. a person→skill edge weight). Renders as chip emphasis,
+     * never as a printed number — a number invites ranking people, which is
+     * exactly the reading this card exists to avoid.
+     */
+    strength?: number;
+}
+
+declare interface FieldTypeDefinition {
+    /** Unique key — matches SectionType for built-ins; UUID for user-defined types */
+    type: string;
+    label: string;
+    icon: string;
+    description: string;
+    /** Available renderer keys per view mode, e.g. { editor: ['tasks:editor'] } */
+    rendererKeys: Partial<Record<ViewMode, string[]>>;
+    /** Human-readable label for each renderer key */
+    rendererLabels: Record<string, string>;
+    /**
+     * When set, renderer resolution uses this type's renderers instead of `type`.
+     * User-defined field types set this to the built-in type they wrap.
+     */
+    rendererType?: string;
+}
+
+export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, }: FileUploadDropProps): JSX.Element;
+
+export declare interface FileUploadDropProps {
+    /** Comma-separated MIME types or extensions, e.g. "image/*,.pdf" */
+    accept?: string;
+    /** Max individual file size in bytes */
+    maxSize?: number;
+    multiple?: boolean;
+    onFiles: (files: File[]) => void;
+    onError?: (message: string) => void;
+    disabled?: boolean;
+    /** Custom drop-zone label */
+    label?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * Height the region should take: everything from its own top edge down to
+ * the bottom of the window, minus `bottomGap`, never below `minHeight`.
+ * Exported for testing — the arithmetic is the whole component.
+ */
+export declare function fillHeight(offsetTop: number, viewportHeight: number, bottomGap: number, minHeight: number): number;
+
+export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, 'data-testid': dataTestId, }: FilterChipProps): JSX.Element;
+
+export declare interface FilterChipProps {
+    active: boolean;
+    onClick: () => void;
+    /** Dot color (for colored department/status dots); also tints the active state. */
+    color?: string;
+    /** Show a colored dot before the label. */
+    dot?: boolean;
+    size?: 'sm' | 'xs';
+    children: ReactNode;
+    className?: string;
+    disabled?: boolean;
+    /** Forwarded to the underlying <button> for test selectors. */
+    'data-testid'?: string;
+}
+
+export declare const FLOATING_PANEL_ANCHORS: readonly FloatingPanelAnchor[];
+
+export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, snapEnabled, snapThreshold, snapAnchors, onSnap, baseZIndex, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, }: FloatingPanelProps): ReactPortal | null;
+
+/** Named viewport docking positions a panel can snap to. */
+export declare type FloatingPanelAnchor = 'top-left' | 'top-right' | 'left-center' | 'right-center' | 'bottom-left' | 'bottom-right';
+
+export declare interface FloatingPanelProps {
+    open: boolean;
+    onClose: () => void;
+    title: string;
+    children: ReactNode;
+    /** Viewport-relative initial anchor when no persisted position exists.
+     *  Accepts any of the six named anchors or an explicit point. */
+    defaultPosition?: FloatingPanelAnchor | {
+        x: number;
+        y: number;
+    };
+    /** localStorage key persisting the resolved anchor + offset across
+     *  sessions. */
+    persistKey?: string;
+    /** Snap to a nearby anchor on drag release. Default true. */
+    snapEnabled?: boolean;
+    /** Proximity (px) at which an anchor arms. Default 24. */
+    snapThreshold?: number;
+    /** Restrict which anchors participate. Default: all six. */
+    snapAnchors?: readonly FloatingPanelAnchor[];
+    /** Fires when a drag settles into an anchor. */
+    onSnap?: (anchor: FloatingPanelAnchor) => void;
+    /** Floor for the shared focus-to-front z-order. Default 9999 — matches
+     *  `zIndexClassName`. Pass alongside a custom `zIndexClassName` so a
+     *  raise doesn't jump the panel out of its intended layer. */
+    baseZIndex?: number;
+    widthClassName?: string;
+    heightClassName?: string;
+    tone?: 'light' | 'dark';
+    zIndexClassName?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function FollowBanner({ name, onStop, autoStopOnInteract, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
+
+export declare interface FollowBannerProps {
+    /** Who is being followed. Null renders nothing. */
+    name: string | null;
+    onStop: () => void;
+    /**
+     * End follow on the viewer's own mousedown / keydown / wheel. Default on;
+     * turn off only where the host routes those interactions itself.
+     */
+    autoStopOnInteract?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * A strip of clickable follow-up suggestion chips, with optional refresh button.
+ */
+export declare function FollowUpChips({ suggestions, onSelect, onRefresh, label, className, }: FollowUpChipsProps): JSX.Element;
+
+export declare interface FollowUpChipsProps {
+    suggestions: string[];
+    onSelect: (suggestion: string) => void;
+    /** if provided, shows a ↻ refresh button */
+    onRefresh?: () => void;
+    /** optional label before chips, e.g. "Follow up:" */
+    label?: string;
+    className?: string;
+}
+
+export declare const fontSize: {
+    readonly xs: string;
+    readonly sm: string;
+    readonly md: string;
+    readonly lg: string;
+    readonly xl: string;
+};
+
+export declare function forceFail(pipelineId: string, runId: string): Promise<ForceFailResponse>;
+
+export declare interface ForceFailResponse {
+    runId: string;
+    status: string;
+    hint: string;
+    at: string;
+}
+
+export declare interface ForkNodeData {
+    type: 'fork';
+    /** Number of parallel output branches (2..8). */
+    branchCount: number;
+    branchLabels?: string[];
+}
+
+export declare function formatBytes(bytes: number): string;
+
+/** Formats an ISO timestamp string to HH:MM local time. */
+export declare function formatChatTime(isoString: string): string;
+
+/** Formats a list of typing user names. Trims to a max of 2 explicit names + "+N others". */
+export declare function formatTypingBanner(names: string[]): string;
+
+/**
+ * Labeled wrapper around an input control. Wires `<label htmlFor>` →
+ * `<input id>`, plus `aria-describedby` for hints/errors and `aria-invalid`
+ * for the error state. Use the render-prop API so we don't have to wrap
+ * every kind of input the library ships.
+ */
+export declare function FormField({ label, hint, error, required, layout, children, className, labelClassName, style, 'data-testid': testId, }: FormFieldProps): JSX.Element;
+
+export declare type FormFieldLayout = 'stacked' | 'inline';
+
+export declare interface FormFieldProps {
+    label: string;
+    /** Helper text shown under the control. */
+    hint?: string;
+    /** Error message; when present, replaces the hint and adds a danger border. */
+    error?: string;
+    /** Renders an asterisk after the label. Does NOT enforce validation. */
+    required?: boolean;
+    layout?: FormFieldLayout;
+    /**
+     * Pass-through render. The function receives an `id` and the wiring
+     * (`aria-describedby` / `aria-invalid`) you should spread onto the input
+     * so the label associates correctly:
+     *
+     *   <FormField label="Name">
+     *     {(p) => <input {...p} value={...} onChange={...} />}
+     *   </FormField>
+     *
+     * For controls that take an explicit `id` prop (Switch's `aria-labelledby`),
+     * `wiring.labelId` exposes the label's id.
+     */
+    children: (wiring: {
+        id: string;
+        labelId: string;
+        'aria-describedby'?: string;
+        'aria-invalid'?: boolean;
+        'aria-required'?: boolean;
+    }) => ReactNode;
+    className?: string;
+    /**
+     * Overrides the label's typography. Exists so surfaces with their own label
+     * look — the uppercase filter-bar captions on the identity admin pages, for
+     * instance — can adopt this component for its `htmlFor` / `aria-describedby`
+     * wiring instead of hand-rolling a detached `<label>` that names nothing.
+     * Merged over the defaults, so error colouring still applies unless you
+     * override it.
+     */
+    labelClassName?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare function FormRow({ children, stackBelow, gap, className, 'data-testid': testId, }: FormRowProps): JSX.Element;
+
+export declare interface FormRowProps {
+    /** The fields. Usually `<FormField>`s; anything is accepted. */
+    children: ReactNode;
+    /**
+     * Below this width the row stacks. `sm` (default, 640px) suits a modal;
+     * `md` (768px) suits a full-width form where three fields share the row.
+     */
+    stackBelow?: 'sm' | 'md';
+    /** Gap between fields. Default 12px, matching Stack's `md`. */
+    gap?: 'sm' | 'md' | 'lg';
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** Runtime configuration read from env vars */
+export declare interface GatewayConfig {
+    wsUrl: string;
+    cognitoToken: string;
+    defaultChannel: string;
+}
+
+/** Error received from the gateway (matches server error-codes.js format) */
+export declare interface GatewayError {
+    /** Standardized error code (e.g. AUTH_TOKEN_EXPIRED, AUTHZ_CHANNEL_DENIED) */
+    code: string;
+    /** Human-readable description for display */
+    message: string;
+    timestamp: string;
+}
+
+/** A raw message received over the WebSocket */
+export declare interface GatewayMessage {
+    type: string;
+    action?: string;
+    channel?: string;
+    error?: GatewayError;
+    [key: string]: unknown;
+}
+
+declare interface GatewayMessage_2 {
+    type: string;
+    channel?: string;
+    payload?: unknown;
+    [key: string]: unknown;
+}
+
+declare class GatewayProvider extends Observable<string> {
+    readonly doc: Y.Doc;
+    readonly channel: string;
+    readonly awareness: Awareness;
+    private readonly _sendMessage;
+    private _synced;
+    private _destroyed;
+    private _awarenessTimer;
+    private readonly _updateHandler;
+    constructor(doc: Y.Doc, channel: string, sendMessage: SendMessage);
+    /** Whether we have received at least one snapshot from the server. */
+    get synced(): boolean;
+    /**
+     * Apply a remote Y.js document update received from the gateway.
+     * Uses `this` as origin so the update handler above skips re-sending it.
+     */
+    applyRemoteUpdate(b64: string): void;
+    /**
+     * Apply the initial document snapshot from the server.
+     * Functionally identical to applyRemoteUpdate but marks the provider as synced.
+     */
+    applySnapshot(b64: string): void;
+    /**
+     * Apply a remote awareness update received from the gateway.
+     */
+    applyAwarenessUpdate(b64: string): void;
+    /**
+     * Tell peers this client is gone — synchronously, on the current tick.
+     *
+     * The awareness sender is debounced by 50ms, which is fatal at teardown:
+     * `Awareness.destroy()` clears the local state, our update handler schedules
+     * the removal broadcast 50ms in the future, and by then `useYjsDoc` has
+     * already sent `unsubscribe` for this channel (a gateway routes crdt
+     * messages by subscription, so it drops the late one). On a page unload the
+     * timer never runs at all. Either way the departing client lingers in every
+     * other participant's avatar list until awareness times it out — or forever,
+     * if no other awareness traffic arrives to prompt a re-render.
+     */
+    private _broadcastDeparture;
+    destroy(): void;
+}
+
+export declare function GenerativeImagePreview({ status, src, alt, startedAt, className, }: GenerativeImagePreviewProps): JSX.Element;
+
+export declare interface GenerativeImagePreviewProps {
+    status: GenerativeImagePreviewStatus;
+    /** Produced-image URL; rendered when status is 'done'. */
+    src?: string;
+    alt?: string;
+    /** Epoch ms when synthesis started — enables the elapsed-time chip. */
+    startedAt?: number;
+    /** Caller controls size (width/height/aspect), like ImageThumbnail. */
+    className?: string;
+}
+
+export declare type GenerativeImagePreviewStatus = 'synthesizing' | 'done';
+
+export declare type GeometricOp = GeometricOpRotate | GeometricOpFlip | GeometricOpFlop;
+
+export declare type GeometricOpFlip = {
+    op: 'flip';
+};
+
+export declare type GeometricOpFlop = {
+    op: 'flop';
+};
+
+export declare type GeometricOpRotate = {
+    op: 'rotate';
+    degrees: number;
+    background?: string;
+    trimAfter?: boolean;
+};
+
+/**
+ * Maps an event type prefix to a category for filter UIs.
+ * Used by ExecutionLog + Observability EventsPage to group filters.
+ */
+export declare function getEventCategory(type: string): 'lifecycle' | 'step' | 'llm' | 'approval' | 'activity' | 'social' | 'other';
+
+/**
+ * Look up a glyph for an event type, falling back to a neutral bullet.
+ */
+export declare function getEventGlyph(type: string): EventGlyph;
+
+export declare function getFieldType(type: string): FieldTypeDefinition | undefined;
+
+export declare function getFieldTypes(): FieldTypeDefinition[];
+
+/**
+ * Returns a fresh page-config (with safe defaults) when the stored
+ * config is undefined. Used by the wizard so toggles always have a
+ * value to bind to.
+ */
+export declare function getPageConfig(type: DocumentType_2): DocumentTypePageConfig;
+
+/**
+ * Migration helper. Returns the type's `pages` if present, otherwise
+ * derives a single page that wraps every field. Pure function — does
+ * NOT mutate the input. Existing code paths that don't know about
+ * pages can keep reading `fields`; the wizard reads via this helper.
+ */
+export declare function getPagesView(type: DocumentType_2): DocumentTypePage[];
+
+/**
+ * Fetch a single pipeline run by runId from the dedicated v2 endpoint.
+ * The v2 handler does live-then-stored fallback so historical runs (no
+ * longer in the runtime's in-memory state) resolve correctly.
+ *
+ * **Resolves `null` for a genuine 404 only. Rejects for everything else** —
+ * transport failure, 5xx, 401, malformed JSON. It used to spell both the
+ * same way, so an unreachable API was indistinguishable from a run that had
+ * really been garbage-collected: `PipelineRunReplayPage` told the user
+ * "Run not available — it may have been trimmed from history." with no
+ * retry, and `PendingApprovalsPage` claimed the upstream steps "haven't
+ * produced reviewable output yet" while the approver decided blind.
+ * Same class as `listPipelineRuns` above (fixed in v2.92.0).
+ *
+ * Wire shape comes from `PipelineRunDetailResponse` in
+ * frontend/src/types/pipeline-contracts.ts — kept in lockstep with
+ * social-api/src/pipeline/http/contracts.ts.
+ */
+export declare function getPipelineRun(pipelineId: string, runId: string): Promise<PipelineRun | null>;
+
+export declare function getRenderer(sectionType: string | null | undefined, viewMode: ViewMode): SectionRenderer | null;
+
+/**
+ * Per-run audit timeline. Returns a single page; callers paginate with
+ * `nextCursor`. The backend route returns `{ items: [], nextCursor }`
+ * with rows newest-first.
+ */
+export declare function getRunAuditLog(pipelineId: string, runId: string, filters?: AuditFilters): Promise<AuditPage>;
+
+export declare interface GraphQueryNodeData {
+    type: 'graph-query';
+    graphId: string;
+    query: string;
+    parameters?: Record<string, string>;
+    outputKey?: string;
+    timeoutMs?: number;
+    retryPolicy?: RetryPolicy;
+}
+
+export declare function gridCols(count: number): number;
+
+export declare function GroupFormPage({ group, isEdit, members, availableUsers, onSubmit, onAddMember, onRemoveMember, onCancel, error, }: GroupFormPageProps): JSX.Element;
+
+export declare interface GroupFormPageProps {
+    group?: {
+        groupId?: string;
+        groupName: string;
+        description?: string;
+        permissions: string[];
+    };
+    isEdit: boolean;
+    poolId: string;
+    members?: Array<{
+        userId: string;
+        email: string;
+    }>;
+    availableUsers?: Array<{
+        userId: string;
+        email: string;
+    }>;
+    onSubmit: (data: {
+        groupName: string;
+        description: string;
+        permissions: string[];
+    }) => Promise<void>;
+    onAddMember?: (userId: string) => Promise<void>;
+    onRemoveMember?: (userId: string) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+declare interface GroupItem {
+    groupId: string;
+    name: string;
+    description?: string;
+    visibility: 'public' | 'private';
+    ownerId: string;
+    createdAt: string;
+}
+
+export declare function GroupListPage({ groups, poolName, onCreateGroup, onEditGroup, onDeleteGroup, loading, }: GroupListPageProps): JSX.Element;
+
+export declare interface GroupListPageProps {
+    groups: Array<{
+        groupId: string;
+        groupName: string;
+        description?: string;
+        permissions: string[];
+    }>;
+    poolId: string;
+    poolName: string;
+    onCreateGroup: () => void;
+    onEditGroup: (groupId: string) => void;
+    onDeleteGroup: (groupId: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export declare function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, roomsLoading, compact }: GroupPanelProps): JSX.Element;
+
+declare interface GroupPanelProps {
+    idToken: string | null;
+    rooms: RoomItem[];
+    createGroupRoom: (groupId: string, name: string) => Promise<void>;
+    onRoomSelect?: (room: RoomItem) => void;
+    roomsLoading: boolean;
+    compact?: boolean;
+}
+
+/**
+ * The safety gate, hoisted out of the component so it can be asserted on
+ * directly. Every selection handler in this panel is wrapped in it.
+ *
+ * Outside a preview session the wrapped callback is a no-op — a click
+ * cannot reach the controller, and therefore cannot reach peers. The
+ * `disabled` attribute on the chips is the SECOND layer, not this one;
+ * disabling is a rendering detail a refactor can drop, whereas this
+ * refuses to run.
+ */
+export declare function guardedSelection<A extends unknown[]>(previewActive: boolean, fn: (...args: A) => void): (...args: A) => void;
+
+export declare type GuardrailAction = 'block' | 'mask' | 'warn';
+
+export declare interface GuardrailNodeData {
+    type: 'guardrail';
+    guardrailId: string;
+    guardrailVersion?: string;
+    inputField: string;
+    action: GuardrailAction;
+    label?: string;
+}
+
+export declare function HangoutGrid({ participants, localParticipant, activeSpeakerId, onParticipantClick, fillParent, pipWidth, className, style, }: HangoutGridProps): JSX.Element;
+
+export declare interface HangoutGridProps {
+    /** Remote participants. Caller should NOT include the local user here. */
+    participants: HangoutLayoutParticipant[];
+    /** The local user. Placed in-grid at N≥2, as PiP at N=1, solo at N=0,
+     *  or omitted entirely if null/undefined. */
+    localParticipant?: HangoutLayoutParticipant | null;
+    /** Active speaker id — drives the green-border highlight (no reflow). */
+    activeSpeakerId?: string | null;
+    /** Click handler per tile (e.g. pin / promote to spotlight). */
+    onParticipantClick?: (id: string) => void;
+    /** Fill parent dimensions instead of letting tiles drive height via
+     *  aspect-video. Used in docked + fullscreen widget modes where the
+     *  outer container owns dimensions. */
+    fillParent?: boolean;
+    /** Local-PiP width (px) — defaults to 96 (small widget). Larger sizes
+     *  for docked (128) and fullscreen (192). */
+    pipWidth?: number;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare function HangoutLayout({ participants, localParticipant, mode, activeSpeakerId, speakerHysteresisMs, spotlightContent, spotlightContentLabel, onParticipantClick, fillParent, pipWidth, filmstripTileWidth, className, style, }: HangoutLayoutProps): JSX.Element;
+
+export declare interface HangoutLayoutParticipant {
+    id: string;
+    displayName: string;
+    avatarUrl?: string;
+    isMuted?: boolean;
+    isLocal?: boolean;
+    /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
+    videoElement?: ReactNode;
+    /** Pre-rendered screen-share video element. When ANY participant supplies
+     *  this, `<HangoutLayout>` auto-flips to spotlight mode and
+     *  `<HangoutSpotlight>` promotes this element into the main slot (the
+     *  sharer's camera tile stays visible in the filmstrip). An explicit
+     *  `spotlightContent` prop on `<HangoutLayout>` still wins. */
+    screenElement?: ReactNode;
+}
+
+export declare interface HangoutLayoutProps {
+    /** Remote participants (callers should NOT include the local user here). */
+    participants: HangoutLayoutParticipant[];
+    /** The local user. Rendered as a tile in the grid at N≥3 (per Meet/Teams
+     * convention) or as a small PiP overlay at N≤2. Pass null/undefined to
+     * suppress entirely. */
+    localParticipant?: HangoutLayoutParticipant | null;
+    /** 'auto' = grid view; 'spotlight' = main slot + filmstrip. Spotlight is
+     * forced on whenever `spotlightContent` is non-null regardless of mode. */
+    mode?: HangoutMode;
+    /** Active speaker id — drives the spotlight slot (in spotlight mode) and
+     * the green-border highlight (in any mode). Hysteresis is applied
+     * internally (default 750ms) so brief speech bursts don't flicker the
+     * main slot. */
+    activeSpeakerId?: string | null;
+    /** Override the hysteresis window (ms) before the spotlight slot swaps.
+     * 0 disables hysteresis (immediate swap). Default 750. */
+    speakerHysteresisMs?: number;
+    /** Content for the spotlight main slot — typically a `<video>` for a
+     * shared screen, or a `<ParticipantTile>` clone. When provided, the
+     * layout switches to spotlight regardless of `mode`. */
+    spotlightContent?: ReactNode;
+    /** Attribution label for `spotlightContent` — see HangoutSpotlight. */
+    spotlightContentLabel?: string;
+    /** Click handler per tile (e.g. pin / promote to spotlight). */
+    onParticipantClick?: (id: string) => void;
+    /** Fill parent dimensions — propagates down through grid/spotlight/tile
+     *  so the layout adapts to docked/fullscreen containers instead of
+     *  enforcing aspect-video against an unsized parent. */
+    fillParent?: boolean;
+    /** Local-PiP width (grid mode) — defaults to 96 for mini, override for
+     *  larger widget modes. */
+    pipWidth?: number;
+    /** Filmstrip tile width (spotlight mode) — defaults to 128 for mini. */
+    filmstripTileWidth?: number;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare type HangoutMode = 'auto' | 'spotlight';
+
+export declare type HangoutPhase = 'idle' | 'joining' | 'joined' | 'reconnecting' | 'ended' | 'failed';
+
+export declare function HangoutPreJoinShell({ channelName, localIdentity, previewStream, permission, permissionMessage, audioEnabled, videoEnabled, onToggleAudio, onToggleVideo, onRetryPermission, participants, readyState, readyLoading, effectsSlot, onJoin, onCancel, joinLabel, joinDisabled, subtitleOverride, className, 'data-testid': testId, }: HangoutPreJoinShellProps): JSX.Element;
+
+export declare interface HangoutPreJoinShellProps {
+    /** Channel display name surfaced at the top of the shell. */
+    channelName: string;
+    /** When set, the camera-off preview renders a Meet/Teams-style identity
+     *  tile (avatar + display name) instead of the bare "Camera off" text.
+     *  Backward-compatible — omitted = legacy text fallback, so existing
+     *  consumers that don't pass identity are unaffected. */
+    localIdentity?: PreJoinLocalIdentity;
+    /** Live MediaStream for the camera preview. Null when not yet acquired
+     *  or when permission is anything but 'granted'. */
+    previewStream: MediaStream | null;
+    permission: PreJoinPermission;
+    /** Browser-supplied error message (e.g. "NotAllowedError"). Surfaced
+     *  in the permission fallback card when present. */
+    permissionMessage?: string | null;
+    audioEnabled: boolean;
+    videoEnabled: boolean;
+    onToggleAudio: () => void;
+    onToggleVideo: () => void;
+    /** Optional retry hook surfaced on the permission-fallback card. */
+    onRetryPermission?: () => void;
+    participants?: PreJoinRosterEntry[];
+    readyState?: PreJoinReadyState;
+    /** When true, render a small spinner above the roster instead of the
+     *  participant list — for the "/ready not yet fetched" phase. */
+    readyLoading?: boolean;
+    /** Rendered in the green room between the camera preview (with its
+     *  mic/cam pre-flight toggles) and the Join controls. Intended for
+     *  <MediaEffectsTray> so users can pick filters / background / face FX
+     *  before joining. Omitted = rendering is unchanged. */
+    effectsSlot?: ReactNode;
+    /** Called when the user clicks Join. Carries the pre-flight intent so
+     *  the consumer can spawn the publisher in the desired mute state. */
+    onJoin: (intent: {
+        audio: boolean;
+        video: boolean;
+    }) => void;
+    onCancel: () => void;
+    /** Override the Join button label. Default: "Join now" (or "Allow
+     *  camera to join" when permission != 'granted'). */
+    joinLabel?: string;
+    /** Force-disable the Join button even when permission is granted. */
+    joinDisabled?: boolean;
+    /** Show a custom subtitle in the right-rail. Overrides the auto-
+     *  computed "N people are in this call" copy. */
+    subtitleOverride?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function HangoutRoomHeader({ channelName, subtitle, recording, elapsedLabel, phase, actions, className, 'data-testid': testId, }: HangoutRoomHeaderProps): JSX.Element;
+
+export declare interface HangoutRoomHeaderProps {
+    channelName: string;
+    subtitle?: ReactNode;
+    recording?: HangoutRoomHeaderRecording;
+    elapsedLabel?: string;
+    phase?: HangoutPhase;
+    actions?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface HangoutRoomHeaderRecording {
+    /** Whether recording is armed for this room. When false, no pill is rendered. */
+    armed: boolean;
+    /** Whether the recording is actively writing (someone is publishing). */
+    active: boolean;
+}
+
+export declare function HangoutSpotlight({ participants, localParticipant, spotlightContent, spotlightContentLabel, activeSpeakerId, speakerHysteresisMs, onParticipantClick, fillParent, filmstripTileWidth, className, style, }: HangoutSpotlightProps): JSX.Element;
+
+export declare interface HangoutSpotlightProps {
+    /** Remote participants. Caller should NOT include the local user here. */
+    participants: HangoutLayoutParticipant[];
+    /** The local user — always renders in the filmstrip in spotlight mode. */
+    localParticipant?: HangoutLayoutParticipant | null;
+    /** Content for the main slot — typically a screen-share `<video>`. When
+     *  provided, takes priority over the active-speaker tile. */
+    spotlightContent?: ReactNode;
+    /** Attribution label for `spotlightContent` — WHO is sharing. Without
+     *  it the spotlight falls back to the active speaker's name, which is
+     *  wrong whenever the person talking isn't the person sharing (F5). */
+    spotlightContentLabel?: string;
+    /** Active speaker id — drives spotlight slot via stabilized hysteresis. */
+    activeSpeakerId?: string | null;
+    /**
+     * Hysteresis window (ms) before the spotlight slot swaps to a new
+     * `activeSpeakerId`. Default 750.
+     *
+     * In a real call you WANT the delay — it stops the spotlight flickering on
+     * coughs, laughs, and one-word interjections.
+     *
+     * Pass `0` when you need the rendered output to match the props you just
+     * handed in, with no timers involved:
+     *  - **Tests** — otherwise a change to `activeSpeakerId` needs fake timers
+     *    plus an `act()`-wrapped `advanceTimersByTime` before any assertion.
+     *  - **Storybook / demos** — changing the `activeSpeakerId` control would
+     *    otherwise appear to do nothing for three quarters of a second, and a
+     *    visual-regression snapshot could catch either state.
+     */
+    speakerHysteresisMs?: number;
+    /** Click handler per filmstrip tile. */
+    onParticipantClick?: (id: string) => void;
+    /** Fill parent dimensions instead of letting the spotlight slot drive
+     *  height via aspect-video. Used in docked + fullscreen widget modes. */
+    fillParent?: boolean;
+    /** Filmstrip tile width (px). Default 128 (Tailwind w-32). Larger for
+     *  docked/fullscreen so small thumbs don't dominate a wide canvas. */
+    filmstripTileWidth?: number;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, tone, size, className, ...rest }: IconButtonProps): JSX.Element;
+
+export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+    'aria-label': string;
+    icon?: ReactNode;
+    children?: ReactNode;
+    variant?: IconButtonVariant;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette — the close/split/kill controls
+     * that live in terminal pane chrome.
+     */
+    tone?: IconButtonTone;
+    size?: 'sm' | 'md' | 'lg';
+}
+
+/** @see SurfaceTone — which colour family the button paints in. */
+export declare type IconButtonTone = SurfaceTone;
+
+export declare type IconButtonVariant = 'ghost' | 'primary' | 'danger';
+
+export declare function IconPicker({ value, onChange, curated, }: IconPickerProps): JSX.Element;
+
+export declare interface IconPickerProps {
+    value: string;
+    onChange: (emoji: string) => void;
+    curated?: string[];
+}
+
+export declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'children'> {
+    size?: number;
+}
+
+export declare const IDENTITY_BASE_URL: string;
+
+export declare function IdentityAdminLayout({ children, activePath, adminEmail, onNavigate, onLogout, defaultSidebarOpen, }: IdentityAdminLayoutProps): JSX.Element;
+
+export declare interface IdentityAdminLayoutProps {
+    children: React.ReactNode;
+    activePath?: string;
+    adminEmail?: string;
+    onNavigate: (path: string) => void;
+    onLogout?: () => void;
+    /**
+     * Whether the sidebar starts open. Optional and **initial-only** — the
+     * layout still owns the state afterwards, so the header toggle keeps
+     * working. Omit it and the sidebar starts open, which is the historical
+     * behaviour.
+     *
+     * It exists because the collapsed rail was previously reachable only by
+     * clicking the toggle: a host cannot restore the user's saved preference
+     * on mount, a story cannot show the collapsed chrome, and a test has to
+     * click before it can assert on it.
+     */
+    defaultSidebarOpen?: boolean;
+}
+
+export declare function identityApiFetch<T>(path: string, idToken: string | null, options?: RequestInit): Promise<T>;
+
+export declare function IdentityAuditPage({ records, onQuery, onViewEntity, onReplay, loading, totalRecords, }: AuditPageProps): JSX.Element;
+
+export declare interface IdentityClient {
+    clientId: string;
+    clientName: string;
+    clientSecret?: string;
+    poolId: string;
+    poolName?: string;
+    redirectUris: string[];
+    postLogoutRedirectUris?: string[];
+    grantTypes: string[];
+    responseTypes?: string[];
+    scope?: string;
+}
+
+export declare interface IdentityContextValue {
+    userId: string;
+    displayName: string;
+    userEmail: string | null;
+    idToken: string | null;
+    onSignOut: () => void;
+}
+
+export declare function IdentityFormField({ label, name, type, value, onChange, error, required, placeholder, options, helpText, disabled, }: IdentityFormFieldProps): JSX.Element;
+
+export declare interface IdentityFormFieldProps {
+    label: string;
+    name: string;
+    type?: 'text' | 'email' | 'password' | 'textarea' | 'select' | 'checkbox' | 'number';
+    value: string | boolean | number;
+    onChange: (value: string | boolean | number) => void;
+    error?: string;
+    required?: boolean;
+    placeholder?: string;
+    options?: Array<{
+        value: string;
+        label: string;
+    }>;
+    helpText?: string;
+    disabled?: boolean;
+}
+
+export declare interface IdentityGroup {
+    groupId: string;
+    poolId: string;
+    groupName: string;
+    description?: string;
+    permissions: string[];
+    members?: string[];
+}
+
+export declare interface IdentityPool {
+    poolId: string;
+    poolName: string;
+    clientId: string;
+    customAttributes: Record<string, string>;
+    settings: PoolSettings;
+    createdAt: string;
+}
+
+export declare function IdentityProvider({ value, children, }: {
+    value: IdentityContextValue;
+    children: ReactNode;
+}): JSX.Element;
+
+export declare interface IdentityUser {
+    userId: string;
+    poolId: string;
+    email: string;
+    givenName?: string;
+    familyName?: string;
+    nickname?: string;
+    picture?: string;
+    website?: string;
+    status: 'CONFIRMED' | 'UNCONFIRMED' | 'FORCE_CHANGE_PASSWORD' | 'ARCHIVED' | 'COMPROMISED' | 'UNKNOWN';
+    emailVerified?: boolean;
+    mfaEnabled: boolean;
+    groups: string[];
+    customAttributes: Record<string, unknown>;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export declare interface ImageAdjustBwNodeData {
+    type: 'image:adjust-bw';
+    sourceImagePath?: string;
+    algorithm?: 'luminosity' | 'average' | 'desaturate';
+    contrast?: number;
+}
+
+export declare interface ImageAdjustLayerNodeData {
+    type: 'image:adjust-layer';
+    sourceImagePath?: string;
+    layers: AdjustLayer[];
+    /**
+     * Optional manual override for the live-preview source. When set, this
+     * pinned imageId wins over the auto-wired upstream-run image resolved by
+     * `useLatestStepForNode`. Cleared via the caption "x" affordance.
+     */
+    previewSourceImageId?: string;
+}
+
+export declare interface ImageCropNodeData {
+    type: 'image:crop';
+    sourceImagePath?: string;
+    bboxPath?: string;
+    bbox?: BBox;
+    materialize?: boolean;
+}
+
+export declare interface ImageDimensionsNodeData {
+    type: 'image:dimensions';
+    sourceImagePath?: string;
+    /**
+     * Longest-edge target used to derive generation dimensions. The handler
+     * reads the source image's natural size and emits width/height/aspectRatio
+     * plus genWidth/genHeight scaled to fit within `maxEdge`. Default: 1024.
+     */
+    maxEdge?: number;
+}
+
+export declare interface ImageEditPromptNodeData {
+    type: 'image:edit-prompt';
+    sourceImagePath?: string;
+    maskImagePath?: string;
+    prompt: string;
+    model?: string;
+}
+
+export declare type ImageFormat = 'jpeg' | 'png' | 'webp' | 'avif';
+
+export declare interface ImageFormatConvertNodeData {
+    type: 'image:format-convert';
+    sourceImagePath?: string;
+    format: ImageFormat;
+    quality?: number;
+    lossless?: boolean;
+    stripMetadata?: boolean;
+}
+
+export declare interface ImageGenerateNodeData {
+    type: 'image:generate';
+    prompt: string;
+    model?: string;
+    width?: number;
+    height?: number;
+    seed?: number;
+    numImages?: number;
+}
+
+export declare function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageLightboxProps): ReactPortal | null;
+
+export declare interface ImageLightboxImage {
+    src: string;
+    alt?: string;
+    caption?: string;
+}
+
+export declare interface ImageLightboxProps {
+    images: ImageLightboxImage[];
+    /** Index of the open image, or null when the lightbox is closed. */
+    openIndex: number | null;
+    onClose: () => void;
+    /**
+     * Controlled navigation callback. When provided, prev/next/arrow-keys
+     * call this and the parent is expected to update `openIndex`. When
+     * omitted, the lightbox navigates with internal fallback state.
+     */
+    onNavigate?: (index: number) => void;
+}
+
+export declare interface ImageResizeNodeData {
+    type: 'image:resize';
+    sourceImagePath?: string;
+    width?: number;
+    height?: number;
+    fit?: ResizeFit;
+    withoutEnlargement?: boolean;
+    background?: string;
+}
+
+export declare interface ImageSaveNodeData {
+    type: 'image:save';
+    /** JSONPath to the source imageId in context. */
+    sourceImagePath?: string;
+    /**
+     * Output filename template. Supports `{{scatter.item.label}}`,
+     * `{{scatter.index}}`, and `{{scatter.parentImageId}}` substitutions.
+     * Default: 'crop-{{scatter.index}}.png'.
+     */
+    filenameTemplate?: string;
+}
+
+export declare interface ImageSharpenNodeData {
+    type: 'image:sharpen';
+    sourceImagePath?: string;
+    sigma?: number;
+    m1?: number;
+    m2?: number;
+}
+
+export declare interface ImageSourceNodeData {
+    type: 'image-source';
+    /** imageId to inject into the pipeline context. */
+    imageId?: string;
+    /** Key under which the imageId is written to context. Default: 'imageRef'. */
+    outputKey?: string;
+}
+
+export declare function ImageThumbnail({ src, alt, size, aspectRatio, rounded, fallback, loading, className, 'data-testid': testId, }: ImageThumbnailProps): JSX.Element;
+
+export declare type ImageThumbnailAspect = 'square' | 'video' | 'auto';
+
+export declare interface ImageThumbnailProps {
+    src: string;
+    alt: string;
+    size?: ImageThumbnailSize;
+    aspectRatio?: ImageThumbnailAspect;
+    rounded?: boolean;
+    /** Rendered when the image fails to load. Defaults to a broken-image icon. */
+    fallback?: ReactNode;
+    loading?: 'lazy' | 'eager';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type ImageThumbnailSize = 'sm' | 'md' | 'lg';
+
+export declare interface ImageTransformNodeData {
+    type: 'image:transform';
+    sourceImagePath?: string;
+    operations: GeometricOp[];
+}
+
+export declare interface ImageUpscaleNodeData {
+    type: 'image:upscale';
+    sourceImagePath?: string;
+    /** Optional prompt forwarded to the self-hosted x4 upscaler. */
+    prompt?: string;
+    /** Longest-edge cap applied before super-resolution. Default: 1024. */
+    maxEdge?: number;
+}
+
+export declare interface ImageVariationNodeData {
+    type: 'image:variation';
+    sourceImagePath?: string;
+    numVariations?: number;
+    similarity?: number;
+    model?: string;
+}
+
+export declare interface ImageVisionAnalyzeNodeData {
+    type: 'image:vision-analyze';
+    model?: string;
+    systemPrompt?: string;
+    userPrompt: string;
+    imageRefPath: string;
+    outputSchema?: Record<string, unknown>;
+    maxOutputTokens?: number;
+    /**
+     * Optional seed regions painted by the user in the BBoxAuthoringCanvas.
+     * Rendered when outputSchema matches the 'detection-regions' preset.
+     * Forwarded to platform-api's vision handler as focus hints.
+     */
+    seedRegions?: AuthoringBBox[];
+}
+
+export declare interface ImageVisionClassifyNodeData {
+    type: 'image:vision-classify';
+    model?: string;
+    imageRefPath: string;
+    labels: string[];
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+export declare interface ImageVisionDescribeNodeData {
+    type: 'image:vision-describe';
+    model?: string;
+    imageRefPath: string;
+    userPrompt: string;
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+export declare interface ImageVisionExtractTextNodeData {
+    type: 'image:vision-extract-text';
+    model?: string;
+    imageRefPath: string;
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+export declare interface ImageVisionTagNodeData {
+    type: 'image:vision-tag';
+    model?: string;
+    imageRefPath: string;
+    candidateTags?: string[];
+    maxTags?: number;
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+export declare interface ImageWatermarkNodeData {
+    type: 'image:watermark';
+    sourceImagePath?: string;
+    overlayImageId: string;
+    gravity?: WatermarkGravity;
+    opacity?: number;
+    offsetX?: number;
+    offsetY?: number;
+}
+
+declare interface IngestAuditEntry {
+    auditId: string;
+    createdAt: string;
+    actor: string;
+    eventType: IngestAuditEventType;
+    targetType: 'source' | 'item' | 'document';
+    targetId: string;
+    summary: string;
+    detail: Record<string, unknown>;
+}
+
+declare type IngestAuditEventType = 'mapping.decided' | 'source.created' | 'source.updated' | 'source.paused' | 'source.resumed' | 'writeback.attempted' | 'writeback.failed';
+
+declare interface IngestAuditFilters {
+    since?: string;
+    until?: string;
+    actor?: string;
+    eventType?: IngestAuditEventType;
+    targetId?: string;
+    limit?: number;
+}
+
+export declare interface IngestItem {
+    itemId: string;
+    sourceId: string;
+    sourcePath: string;
+    status: IngestItemStatus;
+    documentTypeId: string | null;
+    documentId: string | null;
+    pipelineRunId: string | null;
+    mappingMethod: IngestMappingMethod | null;
+    /** Confidence in the mapping decision (0..1). Null when no mapping attempted. */
+    mappingConfidence?: number | null;
+    /** Retry attempts so far. Optional — backend may omit. */
+    attempts?: number;
+    error: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export declare type IngestItemStatus = 'queued' | 'mapping' | 'materializing' | 'triggering' | 'done' | 'failed';
+
+export declare type IngestMappingMethod = 'rule' | 'llm-match' | 'llm-generate';
+
+declare interface IngestProgressEvent {
+    type: string;
+    timestamp: string;
+    [key: string]: unknown;
+}
+
+export declare interface IngestSource {
+    sourceId: string;
+    name: string;
+    type: IngestSourceType;
+    config: Record<string, unknown>;
+    syncSchedule: string | null;
+    mappingRules: MappingRule[];
+    defaultPipelineId: string | null;
+    /**
+     * Per-DocType pipeline override. Keys are `targetTypeId` (the DocType id
+     * a mapping rule resolved to); values are pipeline ids that should run
+     * instead of `defaultPipelineId` for items of that type. Absent / empty
+     * map ⇒ use defaultPipelineId for everything. AGENTIC_ETL_VISION §C.
+     */
+    pipelineByDocType?: Record<string, string>;
+    status: IngestSourceStatus;
+    lastSyncAt: string | null;
+    lastSyncStats: SyncStats | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export declare type IngestSourceStatus = 'active' | 'paused' | 'error';
+
+export declare type IngestSourceType = 'local' | 's3' | 'google-drive' | 'webhook';
+
+/**
+ * Returns a CSS string for injecting into a <style> tag or :root selector.
+ *
+ * Example output:
+ *   :root {
+ *     --ui-primary: #3b82f6;
+ *     --ui-primary-dark: #1d4ed8;
+ *     ...
+ *   }
+ */
+export declare function injectThemeVars(tokens: ThemeTokens): string;
+
+/**
+ * Horizontal flex row with a scale gap. Wraps by default — an un-wrapping row
+ * of chips is how a toolbar overflows its container on a narrow window, and
+ * every consumer that hand-rolled this wrote `flexWrap: 'wrap'` anyway.
+ */
+export declare function Inline({ children, gap, align, justify, wrap, as: As, className, ...rest }: StackProps): JSX.Element;
+
+export declare function InlineAlert({ tone, palette, children, onDismiss, className }: InlineAlertProps): default_2.JSX.Element;
+
+/**
+ * `tone` already names the severity here, so the surface-family axis is
+ * `palette` — same split as Chip. See `SurfaceTone` in tones.ts.
+ */
+export declare type InlineAlertPalette = SurfaceTone;
+
+export declare interface InlineAlertProps {
+    tone: InlineAlertTone;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette, for alerts inside a log console
+     * or debugger panel.
+     */
+    palette?: InlineAlertPalette;
+    children: default_2.ReactNode;
+    onDismiss?: () => void;
+    className?: string;
+}
+
+export declare type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
+
+/**
+ * Inline pipeline definition shipped on a trigger request. Optional: when
+ * absent, the server resolves the definition from its persistent store.
+ *
+ * Carrying the full definition is keyed by `id`; everything else is
+ * adapter-/version-specific and stays opaque from the contracts layer.
+ */
+export declare interface InlinePipelineDefinition {
+    id: string;
+    [key: string]: unknown;
+}
+
+export declare function InlinePlaceholder({ children, action, size, align, tone, className, 'data-testid': testId, }: InlinePlaceholderProps): JSX.Element;
+
+export declare interface InlinePlaceholderProps {
+    /** The message. One short line — "nothing here", "no runs yet". */
+    children: ReactNode;
+    /**
+     * Optional control beside the message, e.g. a `<Button size="sm">` that
+     * creates the missing thing. Sits after the text, not below it.
+     */
+    action?: ReactNode;
+    /**
+     * `xs` (default) is the list/rail scale; `sm` is for a pane-sized region
+     * where the line is the only thing on screen.
+     */
+    size?: 'xs' | 'sm';
+    /**
+     * `start` (default) reads as a list row, which is what a rail section or a
+     * filtered result list wants. `center` is for a region the placeholder owns
+     * outright — an empty pane.
+     */
+    align?: 'start' | 'center';
+    tone?: InlinePlaceholderTone;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** @see SurfaceTone — which colour family the placeholder paints in. */
+export declare type InlinePlaceholderTone = SurfaceTone;
+
+export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, children, }: InlinePopoverProps): ReactPortal | null;
+
+export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
+
+export declare interface InlinePopoverProps {
+    /** Ref to the anchor element (the visible trigger). */
+    trigger: RefObject<HTMLElement | null>;
+    /** Whether the popover is currently open. Controlled by the caller. */
+    open: boolean;
+    /** Fires when the popover should dismiss (outside click / Esc / tab-out). */
+    onClose: () => void;
+    /** Placement relative to the trigger. Defaults to 'bottom-start'. */
+    placement?: InlinePopoverPlacement;
+    /** Pixel gap between trigger and panel. Default 6. */
+    offset?: number;
+    /** Optional className for the panel. */
+    className?: string;
+    /** Optional z-index (default 9500 — under modals at 10000). */
+    zIndex?: number;
+    /** Optional testid for the panel. Default 'inline-popover'. */
+    'data-testid'?: string;
+    /**
+     * Accessible name for the `role="dialog"` panel. A dialog with no name
+     * announces as a bare "dialog", so callers that don't render their own
+     * labelled surface inside should pass one.
+     */
+    'aria-label'?: string;
+    /** Id of an element inside the panel that names it. */
+    'aria-labelledby'?: string;
+    children: ReactNode;
+}
+
+export declare const Input: ForwardRefExoticComponent<InputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'prefix'> {
+    type?: InputType;
+    size?: InputSize;
+    /** Node rendered inside the left edge of the input (icon, currency symbol, etc.) */
+    prefix?: ReactNode;
+    /** Node rendered inside the right edge of the input (unit, clear button, etc.) */
+    suffix?: ReactNode;
+    /** When true, applies a danger-colored border. */
+    invalid?: boolean;
+    /** When true, renders the input value in a monospace font (e.g. JSONPath, code). */
+    mono?: boolean;
+    'data-testid'?: string;
+}
+
+export declare type InputSize = 'sm' | 'md';
+
+export declare type InputType = 'text' | 'number' | 'url' | 'password' | 'email' | 'search' | 'date' | 'datetime-local' | 'time';
+
+/** A person who can be invited. Thin on purpose so callers can map a
+ *  presence roster straight in without dragging in PresenceUser. */
+export declare interface InviteCandidate {
+    userId: string;
+    /** Pre-resolved display name — callers MUST pass a human name, never
+     *  a raw id/UUID (mirrors ResumeCallParticipant's contract). */
+    name: string;
+    avatarUrl?: string;
+    /** True when this person is already on the call. Rendered as a
+     *  non-selectable "In call" row so the list still reads as the full
+     *  roster rather than mysteriously omitting people. */
+    alreadyInCall?: boolean;
+    /** True when they have been rung but have not answered yet. */
+    pending?: boolean;
+    /** Non-selectable for a reason that is NOT "already on this call" —
+     *  e.g. an offline person a ring would never reach. Renders the same
+     *  dimmed, non-clickable row without claiming "In call". Pair it with
+     *  `statusLabel` so the row says WHY. */
+    disabled?: boolean;
+    /** Free-text right-hand annotation, e.g. "On a call" / "Offline".
+     *  Purely informational — it does NOT affect selectability, so a
+     *  caller can mark someone busy while still allowing a knock/join.
+     *  `alreadyInCall` and `pending` keep their own fixed labels and win
+     *  over this one. */
+    statusLabel?: string;
+    /** Presence: true → online dot, false → offline dot, undefined → no
+     *  dot. Also drives which section a row lands in under `grouped`. */
+    online?: boolean;
+    /** Shown on offline rows when present, e.g. "Last seen 2h ago".
+     *  Pre-formatted by the caller — this component never touches
+     *  Date.now(). */
+    lastSeenLabel?: string;
+    /** Avatar brand color override (falls back to the name hash). */
+    color?: string;
+}
+
+export declare function InviteCandidateList({ candidates, onInvite, loading, resetKey, children, tone, searchable, grouped, selectMode, onPick, confirmLabel, confirmLoadingLabel, className, 'data-testid': testId, }: InviteCandidateListProps): JSX.Element;
+
+/** The two extracted blocks handed to the `children` render prop. */
+export declare interface InviteCandidateListParts {
+    /** Empty states + the selectable candidate rows. */
+    list: ReactNode;
+    /** The "Invite N people" confirm button (testid `invite-to-call-confirm`).
+     *  null when `selectMode='single'` — there is nothing to confirm. */
+    confirm: ReactNode;
+}
+
+export declare interface InviteCandidateListProps {
+    /** Everyone invitable, including people already on the call (they
+     *  render disabled). */
+    candidates: InviteCandidate[];
+    /** Confirm handler — receives every selected userId. May be async;
+     *  the caller flips `loading` while the invites are in flight. */
+    onInvite: (userIds: string[]) => void | Promise<void>;
+    loading?: boolean;
+    /** Selection clears whenever this value changes — dialogs pass their
+     *  `open` flag so a previous invite's choices never leak into the
+     *  next one. */
+    resetKey?: unknown;
+    /** Custom layout: receives the list and confirm blocks and places
+     *  them (InviteToCallDialog puts the confirm in its modal footer).
+     *  Omit for the default stacked layout. */
+    children?: (parts: InviteCandidateListParts) => ReactNode;
+    /** Surface the list renders on. 'light' (default) uses the theme
+     *  tokens the invite modal always used; 'dark' swaps to white/alpha
+     *  classes for dark call chrome (CallSettingsDialog's People tab) —
+     *  without it the names render dark-on-dark and disappear. */
+    tone?: 'light' | 'dark';
+    /** Renders a filter input (testid `people-search`) that narrows the
+     *  rows by name or userId, case-insensitive. */
+    searchable?: boolean;
+    /** Renders "Online" then "Offline" section headers. Rows with
+     *  `online: true` land under Online; everything else (including rows
+     *  without presence data) lands under Offline. Offline rows show
+     *  `lastSeenLabel` when present and are STILL selectable. */
+    grouped?: boolean;
+    /** 'multi' (default) keeps the checkbox + confirm flow. 'single'
+     *  drops checkboxes and confirm — clicking a row fires `onPick`
+     *  immediately. */
+    selectMode?: 'multi' | 'single';
+    /** Row click handler for `selectMode='single'`. */
+    onPick?: (userId: string) => void;
+    /** Verb on the confirm button. Defaults to "Invite" (so every existing
+     *  host keeps "Invite 2 people"); a call picker passes "Call". The
+     *  zero-selection state renders the bare verb. */
+    confirmLabel?: string;
+    /** Text while `loading`. Defaults to "Inviting…". */
+    confirmLoadingLabel?: string;
+    /** Applied to the default stacked layout's root only. */
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function InviteToCallDialog({ open, onClose, onInvite, candidates, lobbyLabel, loading, shareLink, }: InviteToCallDialogProps): JSX.Element;
+
+export declare interface InviteToCallDialogProps {
+    open: boolean;
+    onClose: () => void;
+    /** Confirm handler — receives every selected userId. May be async;
+     *  the caller flips `loading` while the invites are in flight. */
+    onInvite: (userIds: string[]) => void | Promise<void>;
+    /** Everyone invitable, including people already on the call (they
+     *  render disabled). */
+    candidates: InviteCandidate[];
+    /** Human label for the call being invited to, shown in the subtitle. */
+    lobbyLabel?: string;
+    loading?: boolean;
+    /** Optional join URL. Rooms are link-shareable, so the picker is the
+     *  natural home for that link — it is the one place the user goes
+     *  when they want more people here. Previously this lived in a
+     *  full-bleed overlay across the call tiles, which covered the video
+     *  and read as a rendering bug. */
+    shareLink?: string;
+}
+
+export declare function isImageAttachment(a: {
+    contentType?: string;
+}): boolean;
+
+export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType;
+
+export declare type JoinMergeStrategy = 'deep-merge' | 'array-collect' | 'last-writer-wins';
+
+export declare type JoinMode = 'all' | 'any' | 'n_of_m';
+
+export declare interface JoinNodeData {
+    type: 'join';
+    mode: JoinMode;
+    /** Required when `mode === 'n_of_m'`. */
+    n?: number;
+    mergeStrategy: JoinMergeStrategy;
+}
+
+export declare interface JsonPatchOp {
+    op: string;
+    path: string;
+    value?: unknown;
+    from?: string;
+}
+
+export declare const JsonPathInput: ForwardRefExoticComponent<JsonPathInputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface JsonPathInputProps {
+    value: string;
+    onChange: (value: string) => void;
+    samples?: JsonPathSample[];
+    placeholder?: string;
+    invalid?: boolean;
+    errorMessage?: string;
+    disabled?: boolean;
+    size?: 'sm' | 'md';
+    /**
+     * When true, validate that value starts with '$.' on blur and surface the
+     * error via the errorMessage slot (caller receives the validated value
+     * unchanged — validation is display-only here).
+     */
+    enforcePrefix?: boolean;
+    'data-testid'?: string;
+}
+
+export declare interface JsonPathSample {
+    /** Short display label, e.g. '$.trigger.imageRef' */
+    label: string;
+    /** The value to paste into the input when clicked */
+    value: string;
+}
+
+declare interface KeyboardShortcut {
+    /** Key to match (case-insensitive, e.g., 's', 'Enter', 'Escape') */
+    key: string;
+    /** Require Cmd/Ctrl modifier */
+    meta?: boolean;
+    /** Require Shift modifier */
+    shift?: boolean;
+    /** Require Alt/Option modifier */
+    alt?: boolean;
+    /** Callback to invoke when shortcut matches */
+    handler: (e: KeyboardEvent) => void;
+    /** Prevent default browser action (default: true) */
+    preventDefault?: boolean;
+}
+
+export declare interface KnowledgeBaseNodeData {
+    type: 'knowledge-base';
+    knowledgeBaseId: string;
+    queryTemplate: string;
+    topK: number;
+    scoreThreshold?: number;
+    outputKey?: string;
+    retryPolicy?: RetryPolicy;
+}
+
+export declare function KPIGrid({ children, columns, dense, className, style, 'data-testid': testId, }: KPIGridProps): JSX.Element;
+
+export declare type KPIGridColumns = 1 | 2 | 3 | 4;
+
+export declare interface KPIGridProps {
+    /** Children — expected to be <StatCard> instances. */
+    children: ReactNode;
+    /** Number of columns at >=640px. Default 4. Always collapses to 1 below. */
+    columns?: KPIGridColumns;
+    /** Tighter gap (8px vs 16px). Default false. */
+    dense?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+/** Alias kept for diagrams better described as a stack of horizontal layers. */
+export declare const LayerStack: typeof StackDiagram;
+
+/**
+ * @deprecated Pre-2.106 spelling. 'docked' is now 'window'; everything
+ * that accepts a mode still takes this union, but emits {@link CallWidgetMode}.
+ */
+export declare type LegacyCallWidgetMode = 'mini' | 'docked' | 'fullscreen';
+
+/** Default light theme — derived from the original hardcoded tokens. */
+export declare const lightTheme: ThemeTokens;
+
+export declare function LineChart({ series, height, yFormat, xFormat, }: {
+    series: LineSeries[];
+    height?: number;
+    yFormat?: (v: number) => string;
+    xFormat?: (v: number | string) => string;
+}): JSX.Element;
+
+export declare interface LineSeries {
+    label: string;
+    data: Array<{
+        x: number | string;
+        y: number;
+    }>;
+    color?: string;
+}
+
+declare type LinkRenderer = (item: {
+    to: string;
+    id: string;
+}, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+
+/**
+ * Fetch DLQ entries with optional filters.
+ */
+export declare function listDLQEntries(options?: {
+    limit?: number;
+    cursor?: string;
+    errorKind?: string;
+    sinceMs?: number;
+}): Promise<DLQListResponse>;
+
+/**
+ * Fetch pipeline run history from the backend API.
+ *
+ * **Rejects** when the endpoint is unavailable or answers non-2xx. It used to
+ * swallow the failure and resolve `{ runs: [] }`, which is indistinguishable
+ * from "this pipeline has never run": `PipelineRunsPanel` rendered
+ * "No runs yet. Trigger this pipeline to see history here." with its error
+ * banner unreachable, and `PipelineRunsContext`'s localStorage fallback —
+ * written in its `.catch` — could never run because nothing ever rejected.
+ * Every caller already has a `catch`/`.catch` that does the right thing.
+ */
+export declare function listPipelineRuns(pipelineId: string, options?: {
+    limit?: number;
+    cursor?: string;
+}): Promise<ListRunsResponse>;
+
+/** Returns all registered (sectionType, viewMode) pairs — useful for debug / config UIs. */
+export declare function listRegisteredRenderers(): Array<{
+    sectionType: string;
+    viewMode: string;
+    component: SectionRenderer;
+}>;
+
+export declare interface ListRunsResponse {
+    runs: PipelineRun[];
+    nextCursor?: string;
+}
+
+export declare interface LLMNodeData {
+    type: 'llm';
+    provider: LLMProvider;
+    /** Model identifier, e.g. 'claude-sonnet-4-6'. */
+    model: string;
+    systemPrompt: string;
+    /** Supports `{{context.foo}}` substitution. */
+    userPromptTemplate: string;
+    temperature?: number;
+    maxTokens?: number;
+    streaming: boolean;
+    retryPolicy?: RetryPolicy;
+}
+
+export declare type LLMProvider = 'anthropic' | 'bedrock' | 'claude-code';
+
+export declare function LoadingState({ label, description, spinnerSize, spinnerColor, testId, }: LoadingStateProps): JSX.Element;
+
+export declare interface LoadingStateProps {
+    /** Primary label. Defaults to "Loading…". */
+    label?: string;
+    /** Optional secondary copy below the label. */
+    description?: ReactNode;
+    spinnerSize?: SpinnerSize;
+    spinnerColor?: string;
+    testId?: string;
+}
+
+declare interface LogEntry {
+    id: string;
+    direction: 'sent' | 'received';
+    message: GatewayMessage | Record<string, unknown>;
+    timestamp: string;
+}
+
+export declare function LoginPage({ uid, interactionUrl, clientName, logoUrl, error, onLogin, onRegister, onForgotPassword, registrationEnabled, forgotPasswordEnabled, defaultTab, }: LoginPageProps): JSX.Element;
+
+export declare interface LoginPageProps {
+    uid: string;
+    interactionUrl: string;
+    clientName?: string;
+    logoUrl?: string;
+    error?: string | null;
+    onLogin: (email: string, password: string) => Promise<void>;
+    onRegister: (data: {
+        email: string;
+        password: string;
+        givenName?: string;
+        familyName?: string;
+        enableMfa?: boolean;
+    }) => Promise<void>;
+    onForgotPassword: (email: string) => Promise<void>;
+    registrationEnabled?: boolean;
+    forgotPasswordEnabled?: boolean;
+    /**
+     * Tab the page opens on. Optional and **initial-only** — the page still
+     * owns the tab afterwards, so the tab bar keeps working unchanged. Omit it
+     * and the page opens on `'signin'`, which is the historical behaviour.
+     *
+     * It exists because the register and forgot-password forms were previously
+     * reachable only by clicking their tab: an OIDC host cannot honour a
+     * `?screen_hint=signup` deep link, a story cannot show either form, and a
+     * test has to click a tab before it can assert on the form behind it.
+     *
+     * A tab that the corresponding `*Enabled` flag has switched off is ignored
+     * and `'signin'` is used instead, so this prop can never render a form the
+     * host has disabled.
+     */
+    defaultTab?: LoginTab;
+}
+
+/** The three authentication forms the page can show. */
+declare type LoginTab = 'signin' | 'register' | 'forgot';
+
+export declare type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+export declare interface LogLine {
+    id: string;
+    /** Pre-formatted timestamp string (e.g. "10:48:21.024"). Optional. */
+    timestamp?: string;
+    /** Severity. Drives glyph + color. */
+    level?: LogLevel;
+    /** Optional source/component prefix (e.g. "auth-svc", "pipeline-7"). */
+    source?: string;
+    /** The log message body. */
+    message: ReactNode;
+}
+
+export declare function LogoutPage({ onConfirm, onCancel, clientName }: LogoutPageProps): JSX.Element;
+
+export declare interface LogoutPageProps {
+    onConfirm: () => void;
+    onCancel?: () => void;
+    clientName?: string;
+}
+
+export declare function LogStream({ lines, follow, showTimestamp, showLevel, showSource, title, headerSlot, emptyMessage, maxHeight, onClear, className, style, 'data-testid': testId, }: LogStreamProps): JSX.Element;
+
+export declare interface LogStreamProps {
+    lines: LogLine[];
+    /** When true, autoscroll to the latest line as new lines arrive. Default true. */
+    follow?: boolean;
+    /** When true, render the small timestamp column. Default true. */
+    showTimestamp?: boolean;
+    /** When true, render the level glyph. Default true. */
+    showLevel?: boolean;
+    /** When true, render the source prefix column. Default true. */
+    showSource?: boolean;
+    /** Header title. Default: "Log stream". Set to null to hide the header. */
+    title?: string | null;
+    /** Optional right-side meta slot in the header (overrides default line count). */
+    headerSlot?: ReactNode;
+    /** Empty-state message when lines is empty. */
+    emptyMessage?: ReactNode;
+    /** Optional max-height for the scroll region. */
+    maxHeight?: string;
+    /** When provided, renders a "Clear" button in the header. */
+    onClear?: () => void;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare function makeEmptyField(sectionType: string): DocumentTypeField;
+
+export declare interface MappingRule {
+    /** Glob or regex pattern matching source file paths. */
+    pattern: string;
+    /** Document type to assign when pattern matches. */
+    documentTypeId: string;
+    /** Optional pipeline to trigger on ingest. Overrides source-level default. */
+    pipelineId?: string;
+    /** Priority when multiple rules match — higher wins. */
+    priority: number;
+}
+
+export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
+
+export declare interface McpToolNodeData {
+    type: 'mcp-tool';
+    gatewayUrl: string;
+    toolName: string;
+    inputTemplate: string;
+    outputKey?: string;
+    timeoutMs?: number;
+    retryPolicy?: RetryPolicy;
+}
+
+export declare function MediaControlsBar({ audioOn, videoOn, screenSharing, onToggleAudio, onToggleVideo, onToggleScreenShare, onLeave, audioDisabled, videoDisabled, screenShareDisabled, extras, leaveLabel, size, className, 'data-testid': testId, }: MediaControlsBarProps): JSX.Element;
+
+export declare interface MediaControlsBarProps {
+    audioOn: boolean;
+    videoOn: boolean;
+    screenSharing?: boolean;
+    onToggleAudio: () => void;
+    onToggleVideo: () => void;
+    /** When omitted, the screen-share toggle is not rendered. */
+    onToggleScreenShare?: () => void;
+    /** Required — leaves the call. Per the locked contract, leave lives here. */
+    onLeave: () => void;
+    audioDisabled?: boolean;
+    videoDisabled?: boolean;
+    screenShareDisabled?: boolean;
+    /** Slot rendered between the screen-share toggle and the Leave button.
+     *  Use for raise-hand, captions, chat-open, settings, etc. */
+    extras?: ReactNode;
+    /** Override the Leave button's accessible label. Default: "Leave call". */
+    leaveLabel?: string;
+    /** Size of each control. Defaults to 'md'. */
+    size?: CircularIconToggleSize;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface MediaEffectsBackgroundOption {
+    id: string;
+    label: string;
+    /** Thumbnail + replacement image URL, rendered as the chip's preview. */
+    url: string;
+}
+
+export declare interface MediaEffectsFilterOption {
+    id: string;
+    label: string;
+}
+
+export declare function MediaEffectsPreviewPanel({ previewActive, previewStream, isDirty, onApply, onCancel, filters, activeFilterId, onSelectFilter, backgrounds, backgroundMode, activeBackgroundUrl, onSelectBackground, faceSprites, activeFaceSpriteId, onSelectFaceSprite, disabled, title, applyLabel, className, 'data-testid': testId, }: MediaEffectsPreviewPanelProps): JSX.Element;
+
+export declare interface MediaEffectsPreviewPanelProps extends Pick<MediaEffectsTrayProps, 'filters' | 'activeFilterId' | 'onSelectFilter' | 'backgrounds' | 'backgroundMode' | 'activeBackgroundUrl' | 'onSelectBackground' | 'faceSprites' | 'activeFaceSpriteId' | 'onSelectFaceSprite'> {
+    /**
+     * True while a preview session is open — i.e. the controller has a
+     * non-null `draft` and its setters write that draft instead of the
+     * live pipeline. When false the panel renders read-only and NO
+     * selection callback fires, so nothing can reach peers.
+     */
+    previewActive: boolean;
+    /**
+     * The draft self-view (built from the controller's `previewTrack`).
+     * Never published. Pass null for the camera-off / warming-up state.
+     */
+    previewStream: MediaStream | null;
+    /** Draft differs from live. Gates Apply. */
+    isDirty: boolean;
+    /** Commit the draft — the only thing that changes what peers see. */
+    onApply: () => void;
+    /** Discard the draft and dismiss. Live stays untouched. */
+    onCancel: () => void;
+    /** Extra dimming on top of `previewActive`, e.g. while the engine warms. */
+    disabled?: boolean;
+    /** Panel heading. Defaults to "Video effects" (Teams' wording). */
+    title?: string;
+    /** Label for the commit button. Defaults to "Apply". */
+    applyLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function MediaEffectsTray({ filters, activeFilterId, onSelectFilter, backgrounds, backgroundMode, activeBackgroundUrl, onSelectBackground, faceSprites, activeFaceSpriteId, onSelectFaceSprite, disabled, compact, className, 'data-testid': testId, }: MediaEffectsTrayProps): JSX.Element;
+
+export declare interface MediaEffectsTrayProps {
+    filters: MediaEffectsFilterOption[];
+    /** 'none' = no filter active. */
+    activeFilterId: string;
+    onSelectFilter: (id: string) => void;
+    backgrounds: MediaEffectsBackgroundOption[];
+    backgroundMode: 'none' | 'blur' | 'image';
+    /** Only meaningful when backgroundMode === 'image'. */
+    activeBackgroundUrl: string | null;
+    /** ('none', null) | ('blur', null) | ('image', url) */
+    onSelectBackground: (mode: 'none' | 'blur' | 'image', url: string | null) => void;
+    faceSprites: MediaEffectsFilterOption[];
+    /** null = no sprite active. */
+    activeFaceSpriteId: string | null;
+    onSelectFaceSprite: (id: string | null) => void;
+    /** Dims every chip and blocks clicks — e.g. while the engine loads. */
+    disabled?: boolean;
+    /** Compact = tighter paddings for popover placement. */
+    compact?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+declare interface MemberItem {
+    groupId: string;
+    userId: string;
+    role: 'owner' | 'admin' | 'member';
+    joinedAt: string;
+    displayName?: string;
+    status?: string;
+}
+
+export declare type MemoryMode = 'read' | 'write';
+
+export declare interface MemoryNodeData {
+    type: 'memory';
+    mode: MemoryMode;
+    scope: MemoryScope;
+    namespace: string;
+    keyExpression: string;
+    valueField?: string;
+    outputKey?: string;
+}
+
+export declare type MemoryScope = 'session' | 'long-term';
+
+declare interface MentionItem {
+    kind: 'mention';
+    sectionId: string;
+    sectionTitle: string;
+    commentId: string;
+    authorName: string;
+    authorColor: string;
+    commentText: string;
+    timestamp: string;
+}
+
+declare interface MentionUser {
+    userId: string;
+    displayName: string;
+    color: string;
+    online: boolean;
+    mode?: string;
+    type: 'user' | 'group';
+    memberCount?: number;
+}
+
+/**
+ * A chat message bubble for user/assistant messages.
+ *
+ * Stateless — accepts content + tool calls as props. Renders a role label,
+ * an optional tool-call strip, and the message body (markdown for assistants
+ * when `renderMarkdown` is supplied, plain `whitespace-pre-wrap` otherwise).
+ */
+export declare function MessageBubble({ role, content, toolCalls, streaming, agentName, userName, renderMarkdown, className, }: MessageBubbleProps): JSX.Element;
+
+export declare interface MessageBubbleProps {
+    role: 'user' | 'assistant';
+    content: string;
+    toolCalls?: ToolCallItem[];
+    /** shows ThinkingDots when content is empty */
+    streaming?: boolean;
+    /** label shown for assistant (default 'Assistant') */
+    agentName?: string;
+    /** label shown for user (default 'You') */
+    userName?: string;
+    /** inject markdown renderer */
+    renderMarkdown?: (content: string) => ReactNode;
+    className?: string;
+}
+
+export declare function MessageGroup({ author, avatarUrl, mine, messages, className, }: MessageGroupProps): JSX.Element | null;
+
+export declare interface MessageGroupItem {
+    /** Stable React key for the row. */
+    id: string;
+    content: ReactNode;
+    /** ISO timestamp string; rendered as local HH:MM. */
+    timestamp: string;
+    /** Optional per-row footer (e.g. a `<ReactionsBar>` specific to this message). */
+    footer?: ReactNode;
+}
+
+export declare interface MessageGroupProps {
+    /** Display name shown on the first row of the group. */
+    author: string;
+    /** Avatar image URL for the group header. Falls back to initials. */
+    avatarUrl?: string;
+    /** Mark all rows as the current viewer's own — passed through to each MessageRow. */
+    mine?: boolean;
+    /** Messages in this group, in chronological order. */
+    messages: MessageGroupItem[];
+    className?: string;
+}
+
+export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, tone, className, }: MessageRowProps): JSX.Element;
+
+export declare interface MessageRowProps {
+    /** Display name shown next to the message; required even for anonymous rows (use a fallback). */
+    author: string;
+    /** Message body. Plain text or pre-rendered ReactNode for rich content. */
+    content: ReactNode;
+    /** ISO timestamp string; rendered as local HH:MM. */
+    timestamp: string;
+    /** Optional avatar image URL. Falls back to initials derived from `author`. */
+    avatarUrl?: string;
+    /** Hide the avatar slot (e.g. middle of a MessageGroup). Defaults to false. */
+    hideAvatar?: boolean;
+    /** Hide the author label (e.g. middle of a MessageGroup). Defaults to false. */
+    hideAuthor?: boolean;
+    /** Mark this row as the current viewer's own message — exposed on data attr for styling hooks. */
+    mine?: boolean;
+    /**
+     * Slot rendered below the content (e.g. a `<ReactionsBar>` for this message).
+     * Indented under the content so it lines up under text, not under the avatar.
+     */
+    footer?: ReactNode;
+    /** Surface the row renders on. 'light' (default) keeps the theme tokens;
+     *  'dark' swaps to white/alpha classes for dark call chrome — without it
+     *  the message text renders dark-on-dark and disappears. Mirrors
+     *  InviteCandidateList's tone seam. */
+    tone?: 'light' | 'dark';
+    className?: string;
+}
+
+export declare function MetaLine({ items, separator, size, tone, className, 'data-testid': testId, }: MetaLineProps): JSX.Element | null;
+
+export declare interface MetaLineProps {
+    /** The pieces, in order. Falsy entries are dropped with their separator. */
+    items: ReactNode[];
+    /** Separator woven between surviving items. Default `·`. */
+    separator?: ReactNode;
+    /** `xs` (11px, the default) is the card/list scale; `sm` (12px) is body meta. */
+    size?: MetaLineSize;
+    tone?: MetaLineTone;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type MetaLineSize = 'xs' | 'sm';
+
+export declare type MetaLineTone = 'tertiary' | 'secondary';
+
+export declare function MfaDashboardPage({ devices, userEmail, mfaEnabled, onAddDevice, onRenameDevice, onRemoveDevice, loading, }: MfaDashboardPageProps): JSX.Element;
+
+export declare interface MfaDashboardPageProps {
+    devices: MfaDevice_2[];
+    userEmail?: string;
+    mfaEnabled: boolean;
+    onAddDevice: () => void;
+    onRenameDevice: (deviceId: string, newName: string) => Promise<void>;
+    onRemoveDevice: (deviceId: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export declare interface MfaDevice {
+    deviceId: string;
+    deviceName: string;
+    deviceType: string;
+    isVerified: boolean;
+    createdAt: string;
+    lastUsed?: string;
+}
+
+declare interface MfaDevice_2 {
+    deviceId: string;
+    deviceName: string;
+    deviceType: string;
+    isVerified: boolean;
+    createdAt: string;
+    lastUsed?: string;
+}
+
+export declare function MfaManagementPage({ metrics, users, pools, onRefresh, loading, }: MfaManagementPageProps): JSX.Element;
+
+export declare interface MfaManagementPageProps {
+    metrics?: {
+        totalUsers: number;
+        mfaEnabled: number;
+        mfaDisabled: number;
+        adoptionRate: number;
+    };
+    users?: Array<{
+        userId: string;
+        email: string;
+        mfaEnabled: boolean;
+        deviceCount: number;
+        /**
+         * Pool the user belongs to. Optional and additive.
+         *
+         * The "Filter by pool" control is only rendered when at least one row
+         * carries this, because without it the page has no way to tell which pool
+         * a row belongs to — which is exactly why the control used to be inert.
+         */
+        poolId?: string;
+    }>;
+    pools?: Array<{
+        poolId: string;
+        poolName: string;
+        userCount: number;
+    }>;
+    onRefresh: () => void;
+    loading?: boolean;
+}
+
+export declare interface MfaMetrics {
+    totalUsers: number;
+    mfaEnabled: number;
+    mfaDisabled: number;
+    adoptionRate: number;
+}
+
+export declare function MfaSetupPage({ onSetup, onVerify, onComplete, userEmail, initialStep, initialSetupResult, initialDeviceName, }: MfaSetupPageProps): JSX.Element;
+
+export declare interface MfaSetupPageProps {
+    onSetup: (deviceName: string) => Promise<MfaSetupResult_2>;
+    onVerify: (deviceId: string, code: string) => Promise<{
+        success: boolean;
+        backupCodes?: string[];
+    }>;
+    onComplete: () => void;
+    userEmail?: string;
+    /**
+     * Step the wizard opens on. Optional and **initial-only** — the page keeps
+     * owning the step afterwards, so Back/Continue still work exactly as they
+     * do without the prop. Omit it and the wizard opens on `'name'`, which is
+     * the historical behaviour.
+     *
+     * It exists because every step past the first was previously reachable
+     * only by clicking through the one before it: a host cannot deep-link a
+     * user back into a half-finished enrolment (`/mfa/setup?step=scan` after a
+     * reload), a story cannot show the scan or backup screens, and a test has
+     * to drive the whole flow to assert on the last one.
+     *
+     * `'scan'` renders the QR code, so it needs `initialSetupResult` as well;
+     * without it the wizard falls back to `'name'` rather than rendering an
+     * empty card.
+     */
+    initialStep?: MfaSetupStep;
+    /**
+     * Seeds the enrolment payload that `onSetup` would normally have returned,
+     * so `initialStep` can open on a step that needs it — `'scan'` (QR code +
+     * secret) and `'backup'` (the backup-code grid). Initial-only: a later
+     * real `onSetup` call replaces it.
+     *
+     * Use it when the host already holds the payload (resuming an enrolment
+     * after a reload) or when a story/test wants a specific step rendered
+     * directly instead of clicking to it.
+     */
+    initialSetupResult?: MfaSetupResult_2;
+    /**
+     * Seeds the device-name field, so a wizard opened at a later
+     * `initialStep` still shows the name the user typed on step 1 (it appears
+     * as the QR caption). Initial-only — the field stays editable.
+     */
+    initialDeviceName?: string;
+}
+
+export declare interface MfaSetupResult {
+    deviceId: string;
+    qrCode: string;
+    secret: string;
+    backupCodes: string[];
+}
+
+/** The enrolment payload the identity server returns from `onSetup`. */
+declare interface MfaSetupResult_2 {
+    deviceId: string;
+    qrCode: string;
+    secret: string;
+    backupCodes: string[];
+}
+
+/** The four wizard steps, in the order the user walks them. */
+declare type MfaSetupStep = 'name' | 'scan' | 'verify' | 'backup';
+
+/** Which challenge the page presents: authenticator code or backup code. */
+declare type MfaVerifyMode = 'totp' | 'backup';
+
+export declare function MfaVerifyPage({ onVerify, onVerifyBackup, error, defaultMode, }: MfaVerifyPageProps): JSX.Element;
+
+export declare interface MfaVerifyPageProps {
+    onVerify: (code: string) => Promise<void>;
+    onVerifyBackup: (code: string) => Promise<void>;
+    error?: string | null;
+    /**
+     * Challenge the page opens on. Optional and **initial-only** — the page
+     * still owns the mode afterwards, so the two "use … instead" links keep
+     * flipping it. Omit it and the page opens on `'totp'`, which is the
+     * historical behaviour.
+     *
+     * It exists because the backup-code form was previously reachable only by
+     * clicking "Use a backup code instead": a host that already knows the user
+     * has lost their authenticator cannot land them on the right challenge, a
+     * story cannot show that form, and a test has to click before asserting.
+     */
+    defaultMode?: MfaVerifyMode;
+}
+
+export declare function MicIcon({ size, ...rest }: IconProps): JSX.Element;
+
+export declare function MicOffIcon({ size, ...rest }: IconProps): JSX.Element;
+
+export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
+
+export declare interface ModalProps {
+    open: boolean;
+    onClose: () => void;
+    title?: string;
+    /**
+     * Accessible name for the dialog when it renders its own heading (or none
+     * at all) instead of using `title`. Without one of the two, screen readers
+     * announce a bare "dialog" with no indication of what opened.
+     */
+    ariaLabel?: string;
+    maxWidth?: number;
+    children: React.ReactNode;
+    footer?: React.ReactNode;
+    /**
+     * Optional overrides for the backdrop testid (defaults to "modal-backdrop").
+     * Callers that need a specific testid on the backdrop — e.g. existing tests
+     * that assert `getByTestId('delete-modal')` and click it to trigger
+     * backdrop-close — can pass it through here.
+     */
+    backdropTestId?: string;
+    /**
+     * Optional override for the backdrop background. Defaults to the standard
+     * rgba(0,0,0,0.45) overlay used across the app.
+     */
+    backdropStyle?: React.CSSProperties;
+    /**
+     * Optional override for the inner card container style. Spread over the
+     * default 12px-radius, 28px/24px-padded, shadowed white card.
+     */
+    cardStyle?: React.CSSProperties;
+    /**
+     * Tailwind classes merged onto the card AFTER the defaults (cn/tw-merge,
+     * so e.g. `bg-surface-inverse p-0` beats the default `bg-surface px-6 py-7`).
+     * Lets dark-chrome dialogs (CallSettingsDialog) restyle the card without
+     * reaching for inline styles.
+     */
+    cardClassName?: string;
+    /**
+     * Optional z-index for the backdrop. Defaults to 10000.
+     */
+    zIndex?: number;
+    /**
+     * When true, render children directly inside the card without the default
+     * text-sm text-text-secondary wrapper div. Useful for modals that manage
+     * their own full-layout and need the card to be a flex container.
+     */
+    rawChildren?: boolean;
+}
+
+/**
+ * Map the legacy `minimized` boolean onto the canonical vocabulary.
+ *
+ *   minimized === true   → 'mini'
+ *   minimized === false  → 'window'
+ *
+ * There is no legacy boolean for 'fullscreen' — <CallWidget> never had
+ * one, which is exactly why the new prop exists.
+ */
+export declare function modeFromMinimized(minimized: boolean): CallWidgetMode;
+
+/** One selectable model. `value` is what gets written to the node's data. */
+declare interface ModelOption {
+    value: string;
+    label?: string;
+}
+
+export declare function MoreHorizontalIcon({ size, ...rest }: IconProps): JSX.Element;
+
+export declare function MuteWhileTalkingToast({ show, label, }: MuteWhileTalkingToastProps): JSX.Element | null;
+
+export declare interface MuteWhileTalkingToastProps {
+    show: boolean;
+    /** Optional label override. */
+    label?: string;
+}
+
+declare type MyItem = MentionItem | TaskAssignment;
+
+export declare function nameToColor(name: string): string;
+
+export declare function nameToInitials(name: string): string;
+
+export declare function NavRail({ title, items, activeHref, match, titleAction, header, footer, width, storageKey, renderLink, tone, 'aria-label': ariaLabel, className, 'data-testid': testId, }: NavRailProps): JSX.Element;
+
+export declare interface NavRailItem {
+    /** Target path. Also the React key unless `id` is given. */
+    to?: string;
+    /** Renders as a button instead of a link. For in-page verbs (Halt, Reset). */
+    onClick?: () => void;
+    /** Required when an item has neither `to` nor a unique label. */
+    id?: string;
+    label: ReactNode;
+    /** Small right-aligned count — queue depth, unread, failures. */
+    badge?: ReactNode;
+    /** One dim line under the label. Say what the page is FOR, not what it is. */
+    hint?: string;
+    /** Leading glyph. */
+    icon?: ReactNode;
+    /** Section heading. Items sharing a group render under one collapsible head. */
+    group?: string;
+    disabled?: boolean;
+}
+
+/** How `activeHref` is matched against an item's `to`. */
+export declare type NavRailMatch = 'exact' | 'prefix';
+
+export declare interface NavRailProps {
+    /** Rail heading. Omit for a rail that needs no name (a single leaf list). */
+    title?: ReactNode;
+    items: NavRailItem[];
+    /** Current path. An item lights when it matches per `match`. */
+    activeHref?: string;
+    /**
+     * `prefix` (default) keeps a rail lit while you are anywhere beneath it —
+     * what an outer rail wants. `exact` is for the innermost rail, where two
+     * items share a prefix and both would otherwise light.
+     */
+    match?: NavRailMatch;
+    /** Element beside the title — a help "?" or a count. */
+    titleAction?: ReactNode;
+    /** Content above the items — a [+ New] button, a filter. */
+    header?: ReactNode;
+    /** Content pinned below the items — a status line, a collapse toggle. */
+    footer?: ReactNode;
+    /**
+     * Discrete widths, not a pixel number: a `style={{ width }}` here is an
+     * inline style on every rail in the app, and three sizes have covered every
+     * rail we have shipped. Use `className` for the genuine exception.
+     */
+    width?: 'narrow' | 'default' | 'wide';
+    /**
+     * Persist per-group collapsed state under this key. Omit and groups still
+     * collapse — they just forget on reload. Rails at different depths MUST use
+     * different keys or they share collapse state.
+     */
+    storageKey?: string;
+    /** Render links with a router's Link/NavLink. Defaults to a plain `<a>`. */
+    renderLink?: (item: NavRailItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    tone?: NavRailTone;
+    /** Names the nav landmark. Falls back to the title, then 'Navigation'. */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** One level of the stack. `id` keys the rail and seeds its storage key. */
+export declare interface NavRailSpec extends Omit<NavRailProps, 'storageKey'> {
+    id: string;
+}
+
+export declare function NavRailStack({ rails, activeHref, renderLink, tone, storageKey, children, className, 'data-testid': testId, }: NavRailStackProps): JSX.Element;
+
+export declare interface NavRailStackProps {
+    /**
+     * Outermost rail first. An empty array renders content full-bleed, which is
+     * the right answer for a leaf page that wants the width back — a rail with
+     * nothing in it is a dead 200px column, not a smaller rail.
+     */
+    rails: NavRailSpec[];
+    /** Applied to every rail that does not set its own. */
+    activeHref?: string;
+    /** Applied to every rail that does not set its own. */
+    renderLink?: NavRailProps['renderLink'];
+    /** Applied to every rail that does not set its own. */
+    tone?: NavRailTone;
+    /** Prefix for each rail's group-collapse persistence, suffixed by rail id. */
+    storageKey?: string;
+    /** The content region beside the rails. Usually a `WorkArea` or an Outlet. */
+    children?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** @see SurfaceTone — which colour family the rail paints in. */
+export declare type NavRailTone = SurfaceTone;
+
+/** Sub-section navigation: link-based underline tab strip (no state — consumer routes via activeHref). */
+export declare function NavTabs({ items, activeHref, renderLink, className, style, 'aria-label': ariaLabel, }: NavTabsProps): JSX.Element;
+
+export declare interface NavTabsProps {
+    items: TopNavItem[];
+    activeHref?: string;
+    renderLink?: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+}
+
+export declare type NetworkQuality = 'good' | 'medium' | 'poor' | 'dead';
+
+export declare function NetworkQualityBadge({ quality, className, style }: NetworkQualityBadgeProps): JSX.Element;
+
+export declare interface NetworkQualityBadgeProps {
+    quality: NetworkQuality;
+    /**
+     * Positioning / spacing classes from the caller. Prefer this over `style`:
+     * the badge is normally docked into a corner of the video stage, and with
+     * no className seam callers had to reach for an inline style (banned in
+     * demos and stories). Composed through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
+    style?: CSSProperties;
+}
+
+export declare function NodeCard({ icon, label, subtitle, status, statusLabel, body, selected, accentClass, className, onClick, }: NodeCardProps): JSX.Element;
+
+export declare interface NodeCardProps {
+    /** Emoji or short string icon for the node type. */
+    icon: string;
+    label: string;
+    subtitle?: string;
+    /** Maps to StatusPill state — drives the pill and border accent. */
+    status?: StatusPillState;
+    /** Status label shown in the pill. Defaults to a capitalized form of status. */
+    statusLabel?: string;
+    /** Body content slot (preview text, stats, etc.). */
+    body?: ReactNode;
+    /** Whether the card appears selected (elevated shadow). */
+    selected?: boolean;
+    /** Accent color for the left border strip (Tailwind bg-* class). */
+    accentClass?: string;
+    className?: string;
+    onClick?: () => void;
+}
+
+export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData | ImageResizeNodeData | ImageTransformNodeData | ImageFormatConvertNodeData | ImageSharpenNodeData | ImageWatermarkNodeData | ImageCropNodeData | ImageAdjustBwNodeData | ImageAdjustLayerNodeData | ImageDimensionsNodeData | ImageUpscaleNodeData | ImageVisionAnalyzeNodeData | ImageVisionClassifyNodeData | ImageVisionDescribeNodeData | ImageVisionTagNodeData | ImageVisionExtractTextNodeData | ImageGenerateNodeData | ImageVariationNodeData | ImageEditPromptNodeData;
+
+export declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter' | 'image:resize' | 'image:transform' | 'image:format-convert' | 'image:sharpen' | 'image:watermark' | 'image:crop' | 'image:adjust-bw' | 'image:adjust-layer' | 'image:dimensions' | 'image:upscale' | 'image:vision-analyze' | 'image:vision-classify' | 'image:vision-describe' | 'image:vision-tag' | 'image:vision-extract-text' | 'image:generate' | 'image:variation' | 'image:edit-prompt';
+
+/** Per-node-type overrides for config-field wording. */
+declare interface NodeVocabulary {
+    /** Field key -> visible label. */
+    labels?: Record<string, string>;
+    /** Field key -> help text shown under the control. */
+    help?: Record<string, string>;
+    /** Field key -> input placeholder. */
+    placeholders?: Record<string, string>;
+}
+
+export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
+
+export declare interface NotificationCenterProps {
+    items: NotificationItem[];
+    onItemClick?: (item: NotificationItem) => void;
+    onMarkAllRead?: () => void;
+    onClearAll?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface NotificationItem {
+    id: string;
+    title: string;
+    body?: string;
+    timestamp?: string | number;
+    read?: boolean;
+    /** Optional icon / emoji / ReactNode prefix */
+    icon?: string;
+    /** Optional grouping / category label */
+    category?: string;
+}
+
+export declare const NumberInput: ForwardRefExoticComponent<NumberInputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface NumberInputProps {
+    /**
+     * `undefined` renders an empty field, for a genuinely optional numeric
+     * setting. Distinguishing "unset" from 0 matters: 0 is a real value for a
+     * seed, a threshold or an offset.
+     */
+    value: number | undefined;
+    onChange: (value: number) => void;
+    /**
+     * Called when the field is emptied. Supplying it is what makes the field
+     * clearable — without it, deleting the text leaves the previous value in
+     * place, because a half-typed "-" or "" cannot be parsed to a number.
+     *
+     * Kept separate from `onChange` so widening that callback's parameter to
+     * `number | undefined` doesn't break every existing caller.
+     */
+    onClear?: () => void;
+    min?: number;
+    max?: number;
+    step?: number;
+    /** Rendered as a right-edge suffix: 'px' | '°' | '%' | … */
+    unit?: string;
+    placeholder?: string;
+    invalid?: boolean;
+    disabled?: boolean;
+    size?: 'sm' | 'md';
+    /**
+     * Id of the rendered `<input>`, so an external `<label htmlFor>` can point
+     * at it. Without this the prop was silently dropped and the label named
+     * nothing.
+     */
+    id?: string;
+    /** Form field name, for label association and form submission. */
+    name?: string;
+    /** Accessible name. Required when no visible `<label>` is wired up. */
+    'aria-label'?: string;
+    /** Id of the element that labels this control. */
+    'aria-labelledby'?: string;
+    /** Id(s) of hint / error text describing this control. */
+    'aria-describedby'?: string;
+    'aria-invalid'?: boolean;
+    'aria-required'?: boolean;
+    required?: boolean;
+    'data-testid'?: string;
+}
+
+declare type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_10 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_11 = (handler: (msg: GatewayMessage_2) => void) => () => void;
+
+declare type OnMessageFn_2 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_3 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_4 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_5 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_6 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_7 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_8 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_9 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): default_2.JSX.Element;
+
+export declare interface PageHeaderBack {
+    label: string;
+    to: string;
+    onClick?: (e: default_2.MouseEvent<HTMLAnchorElement>) => void;
+}
+
+export declare interface PageHeaderProps {
+    title: string;
+    description?: string;
+    /** Right-aligned action area (buttons, menus). */
+    actions?: default_2.ReactNode;
+    /** Optional back link rendered above the title. */
+    back?: PageHeaderBack;
+    /** Badge or status pill rendered to the right of the title. */
+    badge?: default_2.ReactNode;
+    className?: string;
+}
+
+export declare function PageSection({ title, description, actions, children, className, }: PageSectionProps): JSX.Element;
+
+export declare interface PageSectionProps {
+    title: string;
+    description?: string;
+    actions?: ReactNode;
+    children: ReactNode;
+    className?: string;
+}
+
+/** Parse unified git diff output. Exported for tests and for hosts that need
+ *  the file list without rendering. */
+export declare function parseUnifiedDiff(diff: string): DiffFile[];
+
+export declare interface Participant {
+    clientId: string;
+    userId: string;
+    displayName: string;
+    color: string;
+    mode: 'editor' | 'reviewer' | 'reader';
+    currentSectionId: string | null;
+    lastSeen?: number;
+    idle?: boolean;
+}
+
+/**
+ * Single-participant tile used in `VideoGrid` and `HangoutLayout`. Pure
+ * presentational — no media wiring, no signaling — caller owns the `<video>`
+ * element via `videoElement` and the speaking/mute booleans.
+ *
+ * The speaking border is intentionally just a border (no reflow): per industry
+ * convention (Meet/Teams/Zoom), reflowing tiles on speaker change is jarring;
+ * a green border is the agreed-on cue.
+ */
+export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, isLocal, isSpotlight, videoElement, onClick, fillParent, className, style, }: ParticipantTileProps): JSX.Element;
+
+export declare interface ParticipantTileProps {
+    /** Unique identifier for keying / pin actions. */
+    id: string;
+    /** Name shown in the bottom badge. */
+    displayName: string;
+    /** Optional avatar URL — used as fallback when no videoElement is provided. */
+    avatarUrl?: string;
+    /** Whether to render with a speaking-indicator green border + corner dot. */
+    isSpeaking?: boolean;
+    /** Whether to overlay a muted-mic glyph in the badge. */
+    isMuted?: boolean;
+    /** Whether this tile represents the local user — replaces the displayName label with "You". */
+    isLocal?: boolean;
+    /** When true, applies the "main / spotlight" emphasis style (larger border, taller aspect). */
+    isSpotlight?: boolean;
+    /** A pre-rendered media element (a `<video>` typically) — the consumer manages srcObject. */
+    videoElement?: ReactNode;
+    /** Click handler — used by HangoutLayout for pin / spotlight selection. */
+    onClick?: () => void;
+    /** When true, the tile fills its parent (`w-full h-full`) instead of
+     *  enforcing its own `aspect-video`. Used by ExpandableCallWidget's
+     *  docked + fullscreen modes where the parent owns dimensions. */
+    fillParent?: boolean;
+    /** Escape hatches. */
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare interface PasswordPolicy {
+    minLength: number;
+    requireUppercase: boolean;
+    requireLowercase: boolean;
+    requireNumbers: boolean;
+    requireSymbols: boolean;
+}
+
+/**
+ * hub#2226 — single entry in `StepExecution.patches`. Mirrors the
+ * distributed-core `PatchEntry` shape but stays decoupled from the
+ * type pin (consumers care about `patchId`, `appliedAt`, `revertedAt`,
+ * `unvalidated`; `beforeContext`/`patch` are optional bookkeeping the
+ * frontend doesn't need today).
+ */
+export declare interface PatchEntry {
+    patchId: string;
+    appliedAt: string;
+    appliedBy?: string;
+    /** Mirror of `ContextPatch['mode']`. */
+    mode?: 'merge' | 'jsonPatch';
+    /** Set on a successful revert. */
+    revertedAt?: string;
+    /** True when no validator was registered for the paused step's node type. */
+    unvalidated?: boolean;
+}
+
+/**
+ * Thrown for non-2xx/422 transport errors (404, 409, 500, 503, ...).
+ * `status` is the HTTP status; `body` is the parsed JSON body when present.
+ */
+export declare class PatchHttpError extends Error {
+    readonly status: number;
+    readonly body?: unknown;
+    constructor(status: number, message: string, body?: unknown);
+}
+
+export declare interface PatchResult {
+    patchId: string;
+    before: Record<string, unknown>;
+    after: Record<string, unknown>;
+    validation: {
+        ok: true;
+    } | {
+        ok: false;
+        reason: string;
+    };
+}
+
+/**
+ * Thrown when the executor's `ContextValidator` rejected a paused-context
+ * patch. The patch was NOT applied; the UI should keep the dirty buffer
+ * intact and show `reason` to the user.
+ */
+export declare class PatchValidationRejectedError extends Error {
+    readonly reason: string;
+    readonly result?: PatchResult;
+    constructor(reason: string, result?: PatchResult);
+}
+
+export declare function PermissionDeniedCard({ kind, state, message, onRetry, retryLabel, icon, className, 'data-testid': testId, }: PermissionDeniedCardProps): JSX.Element;
+
+export declare interface PermissionDeniedCardProps {
+    /** Which underlying capability was denied. Drives the default copy + icon. */
+    kind: PermissionKind;
+    state: PermissionState_2;
+    /** Optional verbatim error message (browser-specific text). When omitted
+     *  the card renders default copy keyed on `state`. */
+    message?: string | null;
+    /** Optional retry action. Hidden when omitted. */
+    onRetry?: () => void;
+    /** Optional override label for the retry button (default: "Try again"). */
+    retryLabel?: string;
+    /** Optional override icon (replaces the default per-kind glyph). */
+    icon?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type PermissionKind = 'camera' | 'microphone' | 'screen';
+
+declare type PermissionState_2 = 'denied' | 'blocked' | 'no-device' | 'unavailable';
+export { PermissionState_2 as PermissionState }
+
+/**
+ * Modes that survive a reload. Canonical vocabulary ('window', not the
+ * pre-2.106 'docked') — see ./callWidgetMode. The value written to
+ * localStorage keeps the LEGACY spelling so a rollback to an older build
+ * still reads back the window state it wrote; the translation happens at
+ * the storage boundary only.
+ */
+export declare type PersistedWidgetMode = 'mini' | 'window';
+
+export declare interface PersistedWidgetState {
+    mode: PersistedWidgetMode;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+export declare function PhoneOffIcon({ size, ...rest }: IconProps): JSX.Element;
+
+export declare function PiPButton({ getVideoElement, className, title, }: PiPButtonProps): JSX.Element;
+
+export declare interface PiPButtonProps {
+    /** Callback to obtain the `<video>` element to enter PiP with. */
+    getVideoElement: () => HTMLVideoElement | null;
+    className?: string;
+    title?: string;
+}
+
+export declare interface PipelineApprovalResolveRequest {
+    stepId: string;
+    decision: 'approve' | 'reject';
+    /** Optional free-form note recorded alongside the decision. */
+    comment?: string;
+}
+
+/** 204 No Content on success. No structured response body. */
+export declare type PipelineApprovalResolveResponse = void;
+
+export declare interface PipelineCancelRequest {
+    /** Optional reason recorded in the audit log. */
+    reason?: string;
+}
+
+/** 204 No Content on success. */
+export declare type PipelineCancelResponse = void;
+
+export declare interface PipelineDefinition {
+    id: string;
+    name: string;
+    description?: string;
+    /** Free-form labels for filtering / grouping in the list view. Stored normalized (lowercase, trimmed). */
+    tags?: string[];
+    icon?: string;
+    /** Bumped on each save. */
+    version: number;
+    status: PipelineStatus;
+    /** Snapshot of `version` at last publish; runs trigger on this version. */
+    publishedVersion?: number;
+    /**
+     * Deep clone of the definition as it existed at the last `publishPipeline`
+     * call (minus this field, to avoid recursion). Enables the VersionDiffModal
+     * to show real per-node/edge differences between the current draft and the
+     * last-published state. Populated by `publishPipeline`.
+     */
+    publishedSnapshot?: Omit<PipelineDefinition, 'publishedSnapshot'>;
+    /** Cached for fast lookup by trigger dispatch. */
+    triggerBinding?: TriggerBinding;
+    nodes: PipelineNode[];
+    edges: PipelineEdge[];
+    createdAt: string;
+    updatedAt: string;
+    createdBy: string;
+}
+
+declare interface PipelineDefSummary {
+    id: string;
+    name: string;
+    status?: string;
+    icon?: string;
+}
+
+export declare interface PipelineEdge {
+    id: string;
+    source: string;
+    /** 'out', 'true'/'false', 'branch-N', 'approved'/'rejected', 'error'. */
+    sourceHandle: string;
+    target: string;
+    /** 'in' or 'in-N' for Join. */
+    targetHandle: string;
+}
+
+export declare interface PipelineEditorServices {
+    /**
+     * Resolve an imageId to a browser-loadable URL. Used by every node body
+     * that renders `<img src=...>` for a produced image (crop, adjust, save,
+     * generate, etc.). The host is responsible for any auth wrangling — the
+     * URL must work with a bare `<img>` tag (cookie session, signed URL,
+     * permissive route, etc.).
+     */
+    getImageUrl(imageId: string): string;
+    /**
+     * Optional upload helper used by image-source / image picker primitives.
+     * Hosts that mount an upload UI implement this against their backend.
+     * Nodes that just render produced images do NOT need this method.
+     */
+    uploadImage?(input: File | {
+        url: string;
+    }): Promise<PipelineUploadedImage>;
+    /**
+     * Node types this host's executor can actually run.
+     *
+     * The palette ships more node types than any given backend implements — a
+     * survey against platform-api found 11 of 37 with no discoverable handler
+     * (agent, approval, policy, guardrail, graph-query, ag-ui-output, mcp-tool,
+     * knowledge-base, and the control-flow trio). An author could drag one on,
+     * wire it up, and get a pipeline that silently never runs that step.
+     *
+     * The library deliberately does NOT hardcode this: which types execute is a
+     * property of the HOST's deployment, not of the component library, and
+     * baking in a guess would go stale the moment a handler ships. Declare the
+     * set here and the palette marks everything else as preview.
+     *
+     * Omit it entirely and nothing is marked — the pre-2.44 behaviour, for hosts
+     * that haven't wired this up yet.
+     */
+    executableNodeTypes?: readonly string[];
+    /**
+     * Host-supplied vocabulary for node config fields, keyed by node type.
+     *
+     * The library ships VENDOR-NEUTRAL copy: a retrieval node asks for a
+     * "Knowledge base ID", a graph node asks for a "Graph ID" and a "Graph
+     * query". It deliberately does not say "Bedrock" or "Neptune" or
+     * "openCypher", for the same reason it does not hardcode
+     * `executableNodeTypes`: which backend stands behind a node type is a
+     * property of the HOST's deployment, not of the component library. Baking a
+     * vendor's name into a shared primitive makes the library wrong for every
+     * host that uses a different one, and it cannot be corrected without a
+     * breaking change to a frozen surface.
+     *
+     * A host that IS running a specific backend supplies its own words here and
+     * gets the vendor-accurate UI it wants:
+     *
+     * ```ts
+     * nodeVocabulary: {
+     *   'knowledge-base': {
+     *     labels: { knowledgeBaseId: 'Bedrock KB ID' },
+     *     help: { knowledgeBaseId: 'The Bedrock Knowledge Base to retrieve from.' },
+     *     placeholders: { knowledgeBaseId: 'kb-3f9c1a2b' },
+     *   },
+     *   'graph-query': { labels: { query: 'openCypher query' } },
+     * }
+     * ```
+     *
+     * Omit it and every field keeps its neutral wording.
+     */
+    nodeVocabulary?: Record<string, NodeVocabulary>;
+    /**
+     * Host-supplied model choices, keyed by model GROUP.
+     *
+     * The library ships a small default list per group so the editor is usable
+     * out of the box, but a hardcoded list is wrong the moment a host runs a
+     * different backend — or the same backend a version later. Which models a
+     * deployment can actually call is a property of the HOST, exactly like
+     * `executableNodeTypes` and `nodeVocabulary`.
+     *
+     * Group names the library asks for:
+     *   - `image:generate`  — image generation models
+     *   - `llm:<provider>`  — chat models for an LLM node's selected provider,
+     *                         e.g. `llm:anthropic`, `llm:bedrock`
+     *
+     * Supplying a group REPLACES the default list for it; groups you omit keep
+     * their defaults, so a host can override one without restating the rest.
+     */
+    modelOptions?: Record<string, readonly ModelOption[]>;
+    /**
+     * Whether this deployment has an inbound webhook relay that actually starts
+     * runs — and where its public origin is.
+     *
+     * ADDITIVE and **defaults to disabled**, which is the honest default: the
+     * library ships the trigger UI, not the relay. The `/hooks/pipeline/:path`
+     * route on the reference backend logs the delivery and answers 202; the
+     * bridge that would forward it onto the pipeline event source is not wired,
+     * so `useWebhookTriggers` is a dormant subscriber and a correctly-signed
+     * POST runs nothing. The editor nonetheless rendered an invokable-looking
+     * URL, a Copy button, and a reveal/copy pair for the signing secret —
+     * everything an integrator needs to build against an endpoint that is
+     * silently inert, and to blame their own HMAC when nothing happens.
+     *
+     * Declare `{ enabled: true }` once your host forwards those deliveries; the
+     * panel then offers the URL and secret as before. Until then it says the
+     * endpoint is not active and withholds the copy affordances.
+     */
+    webhookRelay?: WebhookRelayStatus;
+}
+
+export declare function PipelineEditorServicesProvider({ services, children, }: {
+    services: PipelineEditorServices;
+    children: ReactNode;
+}): JSX.Element;
+
+/** Structured error body returned on bridge / framework failures. */
+export declare interface PipelineErrorBody {
+    error: string;
+    /** Logical action attempted ("trigger", "cancel", "resolveApproval", ...). */
+    action: string;
+}
+
+/** Pipeline event frame received via WebSocket (type === 'pipeline:event') */
+export declare interface PipelineEventFrame extends GatewayMessage {
+    type: 'pipeline:event';
+    eventType: PipelineWireEventType;
+    payload: unknown;
+    seq?: number;
+    sourceNodeId?: string;
+    emittedAt?: number;
+    channel?: string;
+}
+
+export declare type PipelineEventMap = {
+    'pipeline.run.started': {
+        runId: string;
+        pipelineId: string;
+        triggeredBy: PipelineRunTrigger;
+        at: string;
+    };
+    'pipeline.run.completed': {
+        runId: string;
+        durationMs: number;
+        at: string;
+    };
+    'pipeline.run.failed': {
+        runId: string;
+        error: PipelineRunError;
+        at: string;
+    };
+    'pipeline.run.cancelled': {
+        runId: string;
+        at: string;
+    };
+    'pipeline.run.orphaned': {
+        runId: string;
+        previousOwner: string;
+        at: string;
+    };
+    'pipeline.run.reassigned': {
+        runId: string;
+        from: string;
+        to: string;
+        at: string;
+    };
+    'pipeline.step.started': {
+        runId: string;
+        stepId: string;
+        nodeType: NodeType;
+        at: string;
+    };
+    'pipeline.step.completed': {
+        runId: string;
+        stepId: string;
+        durationMs: number;
+        output?: unknown;
+        at: string;
+    };
+    'pipeline.step.failed': {
+        runId: string;
+        stepId: string;
+        error: string;
+        at: string;
+    };
+    'pipeline.step.skipped': {
+        runId: string;
+        stepId: string;
+        reason: string;
+        at: string;
+    };
+    'pipeline.step.cancelled': {
+        runId: string;
+        stepId: string;
+        at: string;
+    };
+    'pipeline.step.breakpoint': {
+        runId: string;
+        stepId: string;
+        at: string;
+    };
+    /** Patch was applied AND validated by a registered ContextValidator. */
+    'pipeline.step.context.patched': {
+        runId: string;
+        stepId: string;
+        patchId: string;
+        /** Mirror of `ContextPatch['mode']`. */
+        mode: 'merge' | 'jsonPatch';
+        at: string;
+    };
+    /** Patch was applied but no validator was registered for this step's node type. */
+    'pipeline.step.context.patched-unvalidated': {
+        runId: string;
+        stepId: string;
+        patchId: string;
+        mode: 'merge' | 'jsonPatch';
+        at: string;
+    };
+    /** A previously-applied patch was reverted while still paused at the same step. */
+    'pipeline.step.context.patch-reverted': {
+        runId: string;
+        stepId: string;
+        patchId: string;
+        at: string;
+    };
+    'pipeline.llm.prompt': {
+        runId: string;
+        stepId: string;
+        model: string;
+        prompt: string;
+        at: string;
+    };
+    'pipeline.llm.stream.opened': {
+        runId: string;
+        stepId: string;
+        model: string;
+        openedAt: string;
+    };
+    'pipeline.llm.token': {
+        runId: string;
+        stepId: string;
+        token: string;
+        at: string;
+    };
+    'pipeline.llm.response': {
+        runId: string;
+        stepId: string;
+        response: string;
+        tokensIn: number;
+        tokensOut: number;
+        at: string;
+    };
+    'pipeline.approval.requested': {
+        runId: string;
+        stepId: string;
+        approvers: ApprovalNodeData['approvers'];
+        at: string;
+    };
+    'pipeline.approval.recorded': {
+        runId: string;
+        stepId: string;
+        userId: string;
+        decision: 'approve' | 'reject';
+        at: string;
+    };
+    'pipeline.run.paused': {
+        runId: string;
+        atStepIds: string[];
+        at: string;
+    };
+    'pipeline.run.resumed': {
+        runId: string;
+        at: string;
+    };
+    /**
+     * hub#2223: emitted by the executor when a previously-failed run is
+     * restarted from `fromNodeId` via `PipelineModule.resumeFromStep`. The
+     * canonical wire name is `pipeline:run:resumed-from-step` (DC source);
+     * after the gateway's `:` → `.` mapping that becomes
+     * `pipeline.run.resumed-from-step`. The legacy alias
+     * `pipeline.run.resumeFromStep` (camelCase) was a placeholder for the
+     * pre-producer Phase 5 stub and has no producer; the past-tense kebab
+     * form is the one consumers should key on.
+     */
+    'pipeline.run.resumed-from-step': {
+        runId: string;
+        fromNodeId: string;
+        /** The stepId that originally failed and triggered this resumption, if known. */
+        originalFailedStepId?: string;
+        at: string;
+    };
+    /**
+     * Canonical colon-form request event emitted by the gateway's local fallback
+     * when no PipelineModule is wired. Wire name: `pipeline:run:resumeFromStep`.
+     * The past-tense `pipeline.run.resumed-from-step` (DC-sourced) is the
+     * producer-backed form; this key covers the gateway-local stub path.
+     */
+    'pipeline:run:resumeFromStep': {
+        runId: string;
+        fromNodeId: string;
+        at: string;
+    };
+    'pipeline.run.retry': {
+        newRunId: string;
+        previousRunId: string;
+        at: string;
+    };
+    'pipeline.webhook.triggered': {
+        webhookPath: string;
+        body: unknown;
+        headers: Record<string, string>;
+        at: string;
+    };
+    'pipeline.join.waiting': {
+        runId: string;
+        stepId: string;
+        received: number;
+        required: number;
+        at: string;
+    };
+    'pipeline.join.fired': {
+        runId: string;
+        stepId: string;
+        inputs: string[];
+        at: string;
+    };
+};
+
+export declare interface PipelineNode {
+    id: string;
+    type: NodeType;
+    position: {
+        x: number;
+        y: number;
+    };
+    /** Discriminated union keyed on `data.type`. */
+    data: NodeData;
+}
+
+export declare interface PipelinePendingApproval {
+    runId: string;
+    pipelineId: string;
+    stepId: string;
+    approvers: readonly PipelinePendingApprover[];
+    /** Display message authored on the approval node. */
+    message?: string;
+    /** ISO 8601 of the first request. */
+    requestedAt: string;
+    /** Number of approvals required to advance the step. Default 1. */
+    requiredCount?: number;
+    /** Approvals already recorded against the step. */
+    recordedCount?: number;
+}
+
+export declare interface PipelinePendingApprovalsResponse {
+    approvals: readonly PipelinePendingApproval[];
+}
+
+export declare interface PipelinePendingApprover {
+    type: 'role' | 'user';
+    value: string;
+}
+
+export declare interface PipelineRun {
+    id: string;
+    pipelineId: string;
+    pipelineVersion: number;
+    status: RunStatus;
+    triggeredBy: PipelineRunTrigger;
+    /** Distributed-core ResourceRouter owner. */
+    ownerNodeId: string;
+    startedAt: string;
+    completedAt?: string;
+    durationMs?: number;
+    /** Active frontier — can be > 1 with Fork. */
+    currentStepIds: string[];
+    steps: Record<string, StepExecution>;
+    /** Accumulated as the run progresses. */
+    context: Record<string, unknown>;
+    error?: PipelineRunError;
+    /** Per-model token usage accumulated during the run. */
+    tokenUsage?: Record<string, TokenUsageByModel>;
+    /** Estimated total cost in USD for this run. */
+    estimatedCostUsd?: number;
+    /** ISO timestamp set by StuckRunDetector when the run hasn't emitted events past the threshold. */
+    stuckAt?: string;
+    /**
+     * hub#2223: monotonic count of `resumeFromStep` invocations against this
+     * run. Defaults to undefined / 0 on a fresh run; the executor increments
+     * it each time the run is restarted from a specific step. Surfaces in the
+     * run-detail page so operators can see at a glance that a run was replayed.
+     */
+    replayAttempts?: number;
+    /**
+     * hub#2223: history of resume-from-step invocations on this run. Populated
+     * by the `pipeline:run:resumed-from-step` event handler in
+     * PipelineRunsContext so the run-detail banner can render an at-a-glance
+     * timeline of replays.
+     */
+    resumeHistory?: ResumeFromStepEntry[];
+}
+
+/**
+ * Full run snapshot. Same shape as `PipelineRunSummary` today; kept as a
+ * distinct alias because the detail endpoint may grow fields that aren't
+ * meaningful in list responses (full step input/output, attempt history,
+ * audit trail) without churning the list shape.
+ */
+export declare type PipelineRunDetailResponse = PipelineRunSummary;
+
+export declare interface PipelineRunError {
+    nodeId: string;
+    message: string;
+    stack?: string;
+    errorCategory?: ErrorCategory;
+}
+
+export declare interface PipelineRunsListQuery {
+    /** Page size, clamped server-side to [1, 100]. */
+    limit?: number;
+    /** Opaque cursor returned by a prior page. */
+    cursor?: string;
+}
+
+export declare interface PipelineRunsListResponse {
+    runs: readonly PipelineRunSummary[];
+    /** Present when more pages exist; pass to the next call as `cursor`. */
+    nextCursor?: string;
+}
+
+export declare interface PipelineRunSummary {
+    runId: string;
+    pipelineId: string;
+    status: 'running' | 'succeeded' | 'failed' | 'canceled' | 'interrupted';
+    startedAt: string;
+    completedAt?: string;
+    triggeredBy: {
+        userId?: string;
+        triggerType: string;
+        payload?: Record<string, unknown>;
+    };
+    triggerType?: string;
+    /** Per-step state map. Keyed by node ID; shape evolves with the framework. */
+    steps?: Record<string, unknown>;
+    /** Structured terminal-error envelope. Absent on non-failed runs. */
+    error?: {
+        nodeId: string;
+        message: string;
+        errorCategory?: string;
+        retryability?: string;
+        [key: string]: unknown;
+    };
+}
+
+export declare interface PipelineRunTrigger {
+    userId?: string;
+    triggerType: string;
+    payload: Record<string, unknown>;
+}
+
+declare interface PipelineSidebarEntry {
+    id: string;
+    name: string;
+    status: 'draft' | 'published' | 'archived';
+    updatedAt: string;
+    icon?: string;
+}
+
+export declare type PipelineStatus = 'draft' | 'published' | 'archived';
+
+export declare interface PipelineTriggerRequest {
+    /** Optional inline definition. When absent, server reads from store. */
+    definition?: InlinePipelineDefinition;
+    /** Free-form key/value passed to the trigger node's evaluation context. */
+    triggerPayload?: Record<string, unknown>;
+    /** Node IDs at which the run should pause for step-by-step debugging. */
+    breakpoints?: readonly string[];
+}
+
+export declare interface PipelineTriggerResponse {
+    runId: string;
+    pipelineId: string;
+    triggeredBy: {
+        userId: string;
+        triggerType: string;
+    };
+    /** ISO 8601 timestamp the server stamped the trigger acknowledgement. */
+    at: string;
+}
+
+export declare interface PipelineUploadedImage {
+    imageId: string;
+    width: number;
+    height: number;
+    mimeType: string;
+    sizeBytes: number;
+}
+
+/**
+ * Wire envelope that wraps every PipelineEventMap event as it crosses the
+ * network boundary (mock adapter in Phase 1, WebSocket in Phase 4+). Carries
+ * ordering metadata that lets the frontend dedupe replayed events after a
+ * ResourceRouter-orphaned run is resumed on a new owner.
+ */
+export declare interface PipelineWireEvent<K extends keyof PipelineEventMap = keyof PipelineEventMap> {
+    eventType: K;
+    payload: PipelineEventMap[K];
+    /** Monotonic per-run sequence — starts at 0, increments on each emit. Stable across replays. */
+    seq: number;
+    /** Node id that emitted the event. For observability + debugging. */
+    sourceNodeId: string;
+    /** Wall-clock emission time (ms). Re-stamped on replay — NEVER use for dedupe. */
+    emittedAt: number;
+}
+
+/**
+ * Wire-form event type carried on the gateway's `pipeline:event` frame.
+ *
+ * Most events use the same name on the wire as in `PipelineEventMap` (the
+ * gateway bridge canonicalises distributed-core's colon-form `:` to dot-form
+ * `.` to align with the in-app map keys). Known divergences:
+ *
+ *  - `pipeline.run.resume-from-step` (wire, kebab) ↔
+ *    `pipeline:run:resumeFromStep` (in-app, colon-form)
+ *
+ * The kebab form is the canonical wire name from DC post-deprecation-window
+ * (hub#2209). `WebSocketEventAdapter` normalises it before dispatch, so
+ * subscribers key on `PipelineEventMap`. The type below admits both shapes so
+ * that frame decoders don't fail typecheck on receipt of the kebab form.
+ */
+export declare type PipelineWireEventType = keyof PipelineEventMap | 'pipeline.run.resume-from-step';
+
+export declare function PlaybackReactionsLayer({ reactions, currentTimeMs, className, }: PlaybackReactionsLayerProps): JSX.Element;
+
+export declare interface PlaybackReactionsLayerProps {
+    reactions: TimedReaction[];
+    /** Current playhead position in ms (player timeupdate). */
+    currentTimeMs: number;
+    className?: string;
+}
+
+export declare type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
+
+export declare interface PolicyNodeData {
+    type: 'policy';
+    policyStoreId: string;
+    principal: string;
+    action: string;
+    resource: string;
+    contextEntities?: string;
+    label?: string;
+}
+
+export declare function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFormPageProps): JSX.Element;
+
+export declare interface PoolFormPageProps {
+    pool?: {
+        poolId?: string;
+        poolName: string;
+        customAttributes: Record<string, string>;
+        settings: PoolSettings;
+    };
+    isEdit: boolean;
+    onSubmit: (data: {
+        poolName: string;
+        customAttributes: Record<string, string>;
+        settings: PoolSettings;
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function PoolListPage({ pools, onCreatePool, onEditPool, onDeletePool, onViewPool, loading, }: PoolListPageProps): JSX.Element;
+
+export declare interface PoolListPageProps {
+    pools: Array<{
+        poolId: string;
+        poolName: string;
+        clientId: string;
+        createdAt: string;
+    }>;
+    onCreatePool: () => void;
+    onEditPool: (poolId: string) => void;
+    onDeletePool: (poolId: string) => Promise<void>;
+    onViewPool: (poolId: string) => void;
+    loading?: boolean;
+}
+
+export declare function PoolScopedLayout({ children, poolId, poolName, activeSection, onNavigate, onBack, }: PoolScopedLayoutProps): JSX.Element;
+
+export declare interface PoolScopedLayoutProps {
+    children: React.ReactNode;
+    poolId: string;
+    poolName: string;
+    activeSection?: 'users' | 'groups' | 'mfa';
+    onNavigate: (path: string) => void;
+    onBack: () => void;
+}
+
+export declare interface PoolSettings {
+    passwordPolicy?: PasswordPolicy;
+    mfaConfiguration: 'OFF' | 'OPTIONAL' | 'REQUIRED';
+    accountRecovery?: {
+        email: boolean;
+        sms: boolean;
+    };
+}
+
+export declare interface PoolStats {
+    userCount: number;
+    poolId: string;
+    poolName: string;
+}
+
+export declare function PostFeed({ idToken, roomId, onMessage }: PostFeedProps): JSX.Element;
+
+declare interface PostFeedProps {
+    idToken: string | null;
+    /**
+     * Room whose posts are shown. Changing this resets the feed: the previous
+     * room's posts and paging cursor are dropped and its in-flight request is
+     * ignored, so a caller does NOT need `key={roomId}` to avoid a wrong-room
+     * render. (It used to: the slower of two overlapping requests won, so
+     * switching rooms could repaint the new room with the old room's posts.)
+     */
+    roomId: string | null;
+    onMessage: OnMessageFn_10;
+}
+
+declare interface PostItem {
+    roomId: string;
+    postId: string;
+    authorId: string;
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+    _fadeIn?: boolean;
+}
+
+declare interface PreJoinLocalIdentity {
+    /** Display name shown on the avatar tile when the camera is off. */
+    displayName: string;
+    /** Optional avatar image URL. Falls back to initials if absent. */
+    avatarSrc?: string;
+}
+
+export declare type PreJoinPermission = 'pending' | 'granted' | 'denied' | 'blocked' | 'no-device' | 'unavailable';
+
+export declare type PreJoinReadyState = 'empty' | 'pending' | 'ready';
+
+export declare interface PreJoinRosterEntry {
+    participantId: string;
+    /** True when this participant's transport is DTLS-connected and they're
+     *  consumable. False = they're publishing but still mid-handshake. */
+    ready: boolean;
+    /** Optional display name override. Falls back to participantId.slice(0, 8). */
+    displayName?: string;
+    /** Optional kinds list (e.g. ['audio', 'video']). Currently informational. */
+    kinds?: string[];
+}
+
+export declare function PresenceAvatars({ users, maxVisible, size, onMoreClick, onUserClick, onFollowUser, followingUserId, className, }: PresenceAvatarsProps): JSX.Element;
+
+export declare interface PresenceAvatarsProps {
+    users: PresenceAvatarUser[];
+    /** Maximum avatars to render before "+N" chip (default 5) */
+    maxVisible?: number;
+    /** Avatar diameter in px (default 28) */
+    size?: number;
+    /** Called when the "+N" overflow chip is clicked */
+    onMoreClick?: () => void;
+    /** Called with the user's `id` when an avatar is clicked. When set,
+     *  each avatar becomes a `<button>` for keyboard + screen-reader
+     *  accessibility; when omitted, items render as `<div>` (back-compat
+     *  with consumers that just want a static row). */
+    onUserClick?: (id: string) => void;
+    /**
+     * Enables follow mode: each avatar grows a hover/focus card (name, detail,
+     * location) with a Follow action. Click stays `onUserClick` — jump once —
+     * and follow is the card's explicit verb, because a bubble that follows on
+     * bare click turns every glance into a mode change.
+     *
+     * The card replaces the native `title` tooltip when set; two tooltips
+     * fighting over one hover is worse than either.
+     */
+    onFollowUser?: (id: string) => void;
+    /** The user currently being followed, so their card offers Stop instead. */
+    followingUserId?: string | null;
+    className?: string;
+}
+
+export declare interface PresenceAvatarUser {
+    /** Unique identifier for the user. Passed back to `onUserClick`. */
+    id: string;
+    name: string;
+    /** Optional avatar image URL. Wins over `color` when present. */
+    avatarUrl?: string;
+    /** Online flag. Drives the status dot when `idle` is not set:
+     *  `undefined`/`true` → green; `false` → gray. */
+    online?: boolean;
+    /** Override the auto-computed avatar background. Useful when the
+     *  user identity needs to match a CRDT cursor color elsewhere. */
+    color?: string;
+    /** Present but away. Dims the avatar (alpha-blends `color` when
+     *  provided, otherwise drops opacity) and flips the status dot to
+     *  amber. Wins over `online` for the dot color. */
+    idle?: boolean;
+    /** Optional editing mode — renders a small mode badge on the
+     *  upper-right of the avatar (pencil / check / eye). */
+    mode?: PresenceMode;
+    /** One status line for the hover card — "editing", "away · 3m". Free text
+     *  because the library does not know the host's vocabulary. */
+    detail?: string;
+    /** Where in the surface the user is — a section title, a pane name.
+     *  Rendered under the detail line on the hover card. */
+    location?: string;
+}
+
+export declare interface PresenceContextValue {
+    presenceUsers: PresenceUser_2[];
+    currentClientId: string | null;
+    setTyping: (isTyping: boolean) => void;
+}
+
+export declare function PresenceDot({ state, ariaLabel, label, pulse, size, className, style, title, 'data-testid': testId, }: PresenceDotProps): JSX.Element;
+
+export declare interface PresenceDotProps {
+    state: PresenceState;
+    /** Override the auto-computed accessible label. */
+    ariaLabel?: string;
+    /** Visible text label after the dot. */
+    label?: ReactNode;
+    /** Pulse animation. Defaults to true when state === 'online'. */
+    pulse?: boolean;
+    size?: StatusDotSize;
+    className?: string;
+    style?: CSSProperties;
+    title?: string;
+    'data-testid'?: string;
+}
+
+export declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
+
+export declare function PresencePanel({ users, currentClientId }: PresencePanelProps): JSX.Element;
+
+declare interface PresencePanelProps {
+    users: PresenceUser_2[];
+    currentClientId: string | null;
+}
+
+export declare function PresenceProvider({ value, children, }: {
+    value: PresenceContextValue;
+    children: ReactNode;
+}): JSX.Element;
+
+export declare type PresenceState = 'online' | 'away' | 'busy' | 'offline' | 'unknown';
+
+/**
+ * @deprecated Renamed to `PresenceAvatarUser` (the barrel-exported name for
+ * the `PresenceAvatars` user shape). Import `PresenceAvatarUser` instead;
+ * this back-compat alias will be removed in the next major.
+ */
+export declare type PresenceUser = PresenceAvatarUser;
+
+declare interface PresenceUser_2 {
+    clientId: string;
+    status: string;
+    metadata: Record<string, unknown>;
+}
+
+declare interface PresenceUser_3 {
+    clientId: string;
+    metadata: Record<string, unknown>;
+}
+
+declare interface ProfileItem {
+    userId: string;
+    displayName: string;
+    bio?: string;
+    avatarUrl?: string;
+    visibility: 'public' | 'private';
+    createdAt: string;
+    updatedAt: string;
+}
+
+export declare function ProgressBar({ value, max, color, size, label, showRatio, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ProgressBarProps): JSX.Element;
+
+export declare interface ProgressBarProps {
+    value: number;
+    /** Maximum value. Defaults to 100. */
+    max?: number;
+    /** Fill color. Defaults to var(--color-primary). */
+    color?: string;
+    size?: ProgressBarSize;
+    label?: ReactNode;
+    /** When true (default), shows "{value}/{max}". Otherwise shows percentage. */
+    showRatio?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+    'aria-label'?: string;
+}
+
+export declare type ProgressBarSize = 'sm' | 'md';
+
+export declare function ProjectCard({ name, id, status, statusColors, contributorNames, contributorCount, activityItems, presenceDotColor, activityLabel, cardIndex, onClick, className, style, minHeight, }: ProjectCardProps): JSX.Element;
+
+export declare interface ProjectCardProps {
+    /** Primary display name. */
+    name: string;
+    /** Optional monospace slug shown below the name (e.g. "proj-k8s"). */
+    id?: string;
+    /**
+     * Status key used for accent color. Built-in keys: active, in_progress,
+     * completed, archived, planning, paused. Supply `statusColors` to extend.
+     */
+    status?: string;
+    /** Override or extend the built-in status → color map. */
+    statusColors?: Record<string, StatusColors>;
+    /** Names used for AvatarGroup in the footer. */
+    contributorNames?: string[];
+    /** Total contributor count — used to compute the "+N more" overflow label. */
+    contributorCount?: number;
+    /** Activity ticker items. */
+    activityItems?: ActivityFeedItem[];
+    /**
+     * Color of the presence dot in the footer (e.g. 'var(--color-success)' for green).
+     * Default: 'var(--color-border-field)' (grey = unknown).
+     */
+    presenceDotColor?: string;
+    /** Human-readable "last active" label shown next to the presence dot. */
+    activityLabel?: string;
+    /** Index used to stagger the activity rotation offset. */
+    cardIndex?: number;
+    /** Click handler. */
+    onClick?: () => void;
+    className?: string;
+    style?: CSSProperties;
+    /** Minimum card height (default: 190). */
+    minHeight?: number;
+}
+
+declare interface ProposedField {
+    name: string;
+    sectionType: string;
+    required: boolean;
+}
+
+declare interface PublicProfile {
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+    visibility: 'public' | 'private';
+}
+
+/**
+ * Purge (permanently delete) one or more DLQ entries.
+ */
+export declare function purgeDLQEntries(ids: string[], options?: {
+    preview?: boolean;
+}): Promise<DLQPurgeResponse>;
+
+export declare function QrCodeDisplay({ value, size, label }: QrCodeDisplayProps): JSX.Element;
+
+export declare interface QrCodeDisplayProps {
+    value: string;
+    size?: number;
+    label?: string;
+}
+
+export declare interface QuickPrompt {
+    label: string;
+    hint?: string;
+}
+
+/**
+ * Empty-state grid of prompt suggestion cards. Each card is a button calling
+ * `onSelect(label)`.
+ */
+export declare function QuickPromptGrid({ prompts, onSelect, columns, title, className, }: QuickPromptGridProps): JSX.Element;
+
+export declare interface QuickPromptGridProps {
+    prompts: QuickPrompt[];
+    onSelect: (label: string) => void;
+    /** default auto-fit (responsive 220px min column width) */
+    columns?: number;
+    /** optional heading above, e.g. "Try asking:" */
+    title?: string;
+    className?: string;
+}
+
+export declare function RadioGroup<T extends string = string>({ name, value, onChange, options, disabled, orientation, 'data-testid': testId, }: RadioGroupProps<T>): JSX.Element;
+
+export declare interface RadioGroupProps<T extends string = string> {
+    /** Used as the HTML radio group name and as a stable ID base for labels. */
+    name: string;
+    value: T;
+    onChange: (value: T) => void;
+    options: RadioOption<T>[];
+    disabled?: boolean;
+    /** @default 'vertical' */
+    orientation?: 'vertical' | 'horizontal';
+    'data-testid'?: string;
+}
+
+export declare interface RadioOption<T extends string = string> {
+    value: T;
+    label: string;
+    /** Short caption rendered below the label in muted text. */
+    description?: string;
+}
+
+export declare interface RateInfo {
+    [key: string]: unknown;
+}
+
+export declare const rawBorderRadius: {
+    readonly sm: 4;
+    readonly md: 6;
+    readonly lg: 8;
+    readonly xl: 12;
+    readonly full: 9999;
+};
+
+export declare const rawColors: {
+    readonly primary: "#3b82f6";
+    readonly primaryDark: "#1d4ed8";
+    readonly primaryLight: "#93c5fd";
+    readonly danger: "#dc2626";
+    readonly dangerLight: "#fca5a5";
+    readonly success: "#10b981";
+    readonly successLight: "#6ee7b7";
+    readonly warning: "#f59e0b";
+    readonly warningLight: "#fcd34d";
+    readonly info: "#0ea5e9";
+    readonly infoLight: "#7dd3fc";
+    readonly textPrimary: "#1e293b";
+    readonly textSecondary: "#64748b";
+    readonly textMuted: "#94a3b8";
+    readonly textInverse: "#ffffff";
+    readonly border: "#e2e8f0";
+    readonly borderLight: "#f1f5f9";
+    readonly background: "#f8fafc";
+    readonly surface: "#ffffff";
+    readonly surfaceRaised: "#ffffff";
+    readonly surfaceOverlay: "rgba(15, 23, 42, 0.5)";
+};
+
+export declare const rawFontSize: {
+    readonly xs: 11;
+    readonly sm: 13;
+    readonly md: 14;
+    readonly lg: 16;
+    readonly xl: 22;
+};
+
+export declare const rawSpacing: {
+    readonly xs: 4;
+    readonly sm: 8;
+    readonly md: 16;
+    readonly lg: 24;
+    readonly xl: 32;
+};
+
+export declare const rawTokens: {
+    readonly colors: {
+        readonly primary: "#3b82f6";
+        readonly primaryDark: "#1d4ed8";
+        readonly primaryLight: "#93c5fd";
+        readonly danger: "#dc2626";
+        readonly dangerLight: "#fca5a5";
+        readonly success: "#10b981";
+        readonly successLight: "#6ee7b7";
+        readonly warning: "#f59e0b";
+        readonly warningLight: "#fcd34d";
+        readonly info: "#0ea5e9";
+        readonly infoLight: "#7dd3fc";
+        readonly textPrimary: "#1e293b";
+        readonly textSecondary: "#64748b";
+        readonly textMuted: "#94a3b8";
+        readonly textInverse: "#ffffff";
+        readonly border: "#e2e8f0";
+        readonly borderLight: "#f1f5f9";
+        readonly background: "#f8fafc";
+        readonly surface: "#ffffff";
+        readonly surfaceRaised: "#ffffff";
+        readonly surfaceOverlay: "rgba(15, 23, 42, 0.5)";
+    };
+    readonly spacing: {
+        readonly xs: 4;
+        readonly sm: 8;
+        readonly md: 16;
+        readonly lg: 24;
+        readonly xl: 32;
+    };
+    readonly fontSize: {
+        readonly xs: 11;
+        readonly sm: 13;
+        readonly md: 14;
+        readonly lg: 16;
+        readonly xl: 22;
+    };
+    readonly borderRadius: {
+        readonly sm: 4;
+        readonly md: 6;
+        readonly lg: 8;
+        readonly xl: 12;
+        readonly full: 9999;
+    };
+};
+
+export declare interface Reaction {
+    id: string;
+    emoji: string;
+    userId?: string;
+    displayName?: string;
+}
+
+/** Testid-safe name for a reaction emoji: 'heart', 'thumbs-up', … for the
+ *  default set, hyphen-joined hex codepoints for anything else. Exported so
+ *  consumers can build `reaction-option-${reactionEmojiName(e)}` selectors. */
+export declare function reactionEmojiName(emoji: string): string;
+
+export declare function ReactionOverlay({ reactions, className, style }: ReactionOverlayProps): JSX.Element;
+
+export declare interface ReactionOverlayProps {
+    reactions: Reaction[];
+    /**
+     * Positioning / sizing classes from the caller. Prefer this over `style`:
+     * the overlay is `absolute inset-0` by default, and callers wanting to
+     * scope it to a sub-region had no seam but an inline style (banned in
+     * demos and stories). Composed through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
+    style?: CSSProperties;
+}
+
+export declare function ReactionPicker({ onReact, emojis, className, style }: ReactionPickerProps): JSX.Element;
+
+/**
+ * Icon trigger + popover pairing of ReactionPicker, sized to sit in a call
+ * control row next to CallControls' 36px round buttons.
+ *
+ * The popover is positioned `absolute` against the wrapper — NEVER
+ * `position: fixed` — because CallWidget applies a CSS transform to its
+ * root, which makes transformed ancestors the containing block for fixed
+ * children. Absolute-in-relative keeps the popover anchored to the button
+ * in both the docked and expanded layouts.
+ */
+export declare function ReactionPickerButton({ onReact, emojis, closeOnReact, align, disabled, className, }: ReactionPickerButtonProps): JSX.Element;
+
+export declare interface ReactionPickerButtonProps {
+    onReact: (emoji: string) => void;
+    emojis?: string[];
+    /** Close the popover after an emoji is picked. Default true. */
+    closeOnReact?: boolean;
+    /** Horizontal anchoring of the popover relative to the trigger. Default
+     *  'center'. Use 'right' when the button sits near the widget's right
+     *  edge (docked CallWidget) so the row doesn't overflow the clip rect. */
+    align?: 'center' | 'left' | 'right';
+    /** Dims the trigger and blocks opening — e.g. while the send path
+     *  is unavailable. */
+    disabled?: boolean;
+    className?: string;
+}
+
+export declare function ReactionPickerPopover({ open, onSelect, onClose, triggerRef, emojis, showSearch, className, style, }: ReactionPickerPopoverProps): JSX.Element | null;
+
+export declare interface ReactionPickerPopoverProps {
+    /** Controls visibility. */
+    open: boolean;
+    /** Fires with the chosen emoji. */
+    onSelect: (emoji: string) => void;
+    /** Fires when the popover should close (Escape, click outside, select). */
+    onClose: () => void;
+    /**
+     * Trigger element to anchor against. When provided, the popover positions
+     * itself above the trigger; otherwise it falls back to absolute centering
+     * at top:auto/left:0 (useful inside a relatively-positioned container).
+     */
+    triggerRef?: RefObject<HTMLElement | null>;
+    /** Override the emoji list. Defaults to 64. */
+    emojis?: readonly string[];
+    /** Render a search input above the grid. Defaults to true. */
+    showSearch?: boolean;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare interface ReactionPickerProps {
+    onReact: (emoji: string) => void;
+    emojis?: string[];
+    /**
+     * Positioning / spacing classes from the caller. Prefer this over `style`:
+     * the picker is usually floated over a call stage, which previously
+     * required an inline style (banned in demos and stories). Composed
+     * through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
+    style?: CSSProperties;
+}
+
+export declare function ReactionsBar({ reactions, onReact, disabled, pickerEmojis, addTriggerLabel, hideAddTrigger, className, }: ReactionsBarProps): JSX.Element;
+
+export declare interface ReactionsBarProps {
+    reactions: ReactionSummary[];
+    /**
+     * Called when the viewer clicks a chip (toggle) OR picks an emoji from
+     * the popover. The consumer decides whether this is an add or a remove
+     * based on the `mine` flag of the matching chip.
+     */
+    onReact: (emoji: string) => void;
+    /**
+     * Disables both the chips and the add-reaction trigger (e.g. when the
+     * connection is not 'connected'). Defaults to false.
+     */
+    disabled?: boolean;
+    /**
+     * Override the popover emoji set. Defaults to the 64-emoji 8x8 grid.
+     */
+    pickerEmojis?: readonly string[];
+    /** Override the add-reaction trigger label. Defaults to a "+" plus emoji. */
+    addTriggerLabel?: ReactNode;
+    /** Hide the add-reaction trigger entirely (read-only mode). */
+    hideAddTrigger?: boolean;
+    className?: string;
+}
+
+export declare interface ReactionSummary {
+    emoji: string;
+    count: number;
+    /** True if the local viewer is one of the reactors. */
+    mine?: boolean;
+}
+
+export declare function ReconnectingBanner({ show, label }: ReconnectingBannerProps): JSX.Element | null;
+
+export declare interface ReconnectingBannerProps {
+    show: boolean;
+    /** Optional label override. Default: "Reconnecting…". */
+    label?: string;
+}
+
+export declare function RecordingList({ recordings, selectedId, onSelect, loading, emptyState, renderActions, className, }: RecordingListProps): JSX.Element;
+
+export declare interface RecordingListItem {
+    id: string;
+    startIso: string;
+    endIso: string;
+    durationSec: number;
+    participantCount?: number;
+    thumbnailUrl?: string;
+    /** Optional human label — e.g. "Hank & Alice" or "Global hangout". */
+    label?: string;
+    /** Defaults to 'ready'. Forwarded to RecordingRow. */
+    status?: RecordingStatus;
+}
+
+export declare interface RecordingListProps {
+    recordings: RecordingListItem[];
+    selectedId?: string;
+    onSelect: (id: string) => void;
+    loading?: boolean;
+    emptyState?: ReactNode;
+    /** Render a per-row actions slot (e.g. download/share buttons). */
+    renderActions?: (item: RecordingListItem) => ReactNode;
+    className?: string;
+}
+
+export declare function RecordingPlayer({ playlistUrl, poster, autoPlay, muted, onLoadedMetadata, onTimeUpdate, onError, hideDownload, className, }: RecordingPlayerProps): JSX.Element;
+
+export declare interface RecordingPlayerProps {
+    playlistUrl: string | null;
+    poster?: string;
+    autoPlay?: boolean;
+    muted?: boolean;
+    onLoadedMetadata?: (durationSec: number) => void;
+    onTimeUpdate?: (currentTime: number, duration: number) => void;
+    onError?: (err: Error) => void;
+    /** Hide the download button (private channels). Default false. */
+    hideDownload?: boolean;
+    className?: string;
+}
+
+export declare function RecordingRow({ id, startIso, durationSec, participantCount, thumbnailUrl, label, status, selected, onClick, actions, className, }: RecordingRowProps): JSX.Element;
+
+export declare interface RecordingRowProps {
+    id: string;
+    startIso: string;
+    endIso?: string;
+    durationSec: number;
+    participantCount?: number;
+    thumbnailUrl?: string;
+    /** Optional human label — e.g. "Hank & Alice" or "Global hangout". */
+    label?: string;
+    /** Defaults to 'ready'. 'processing' shows a spinner badge; 'failed' shows an error badge. */
+    status?: RecordingStatus;
+    selected?: boolean;
+    onClick?: (id: string) => void;
+    /** Slot rendered in the row footer (e.g. a download or share button). */
+    actions?: ReactNode;
+    className?: string;
+}
+
+export declare type RecordingStatus = 'ready' | 'processing' | 'failed';
+
+/**
+ * Redrive one or more DLQ entries (re-publish them to the event bus).
+ */
+export declare function redriveDLQEntries(ids: string[], options?: {
+    resetAttempts?: boolean;
+    preview?: boolean;
+}): Promise<DLQRedriveResponse>;
+
+export declare function registerFieldType(def: FieldTypeDefinition): void;
+
+export declare function registerRenderer(sectionType: string, viewMode: ViewMode | '*', component: SectionRenderer): void;
+
+declare interface RemoteCursor {
+    clientId: string;
+    position: Record<string, unknown>;
+    metadata: Record<string, unknown>;
+}
+
+export declare function RemoteTileSlot({ stream, displayName, cameraOn, avatarSize, }: RemoteTileSlotProps): JSX.Element;
+
+export declare interface RemoteTileSlotProps {
+    stream: MediaStream | undefined;
+    displayName: string;
+    /** Camera enabled by sender. False → show avatar even if a stream exists. */
+    cameraOn: boolean;
+    /** Avatar size when fallback renders. Default 96. */
+    avatarSize?: number;
+}
+
+export declare type ResizeFit = 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+
+/** Top-left corner a panel of `width`×`height` occupies at `anchor`. */
+export declare function resolveAnchorPosition(anchor: FloatingPanelAnchor, width: number, height: number): {
+    x: number;
+    y: number;
+};
+
+export declare interface ResolveVerdictInput {
+    verdict?: ChangeReviewVerdict | undefined;
+    status?: ChangeReviewStatus | undefined;
+    /**
+     * The revision of the change as it stands NOW. When this and the verdict's
+     * `forRevision` disagree, the verdict describes a change that no longer
+     * exists in that form.
+     */
+    revision?: string | undefined;
+}
+
+/**
+ * Decide which of the five states to paint.
+ *
+ * The staleness rule is the reason this function exists. A cached "Pass"
+ * computed against an earlier draft of a change is not a weaker Pass — it is a
+ * statement about a different change, and showing it as a live Pass is how a
+ * reviewer approves something no agent ever looked at. So the comparison is
+ * exact-match on `forRevision`, and any disagreement demotes to `stale`.
+ *
+ * `pending` outranks `stale`: if a fresh review is already in flight, "checking
+ * this now" is more useful than "the old answer is out of date", and the
+ * pending state does not show the old verdict's colour either way.
+ *
+ * A missing `revision` means the host cannot tell us what the change's current
+ * revision is. We do NOT silently treat that as fresh — but we also cannot call
+ * it stale without evidence, so it renders `ready`. Hosts that care about
+ * staleness must pass `revision`; that is documented on every consumer prop.
+ */
+export declare function resolveVerdictState({ verdict, status, revision, }: ResolveVerdictInput): VerdictState;
+
+export declare function ResumeCallDialog({ open, onClose, onReconnect, callerName, lobbyName, elapsedMs, participants, loading, }: ResumeCallDialogProps): JSX.Element;
+
+export declare interface ResumeCallDialogProps {
+    /** Visibility — when false the modal is unmounted entirely. */
+    open: boolean;
+    /** Backdrop click / Esc / Dismiss button → caller decides whether to
+     *  hide (typically yes) and whether to remember the dismissal. */
+    onClose: () => void;
+    /** Reconnect button. May be async; the dialog spins while pending
+     *  IF `loading` is also true (the caller controls that state). */
+    onReconnect: () => void | Promise<void>;
+    /** Display name of the user who originally started the call. Pass
+     *  safeDisplayName output — must never be a raw UUID. */
+    callerName: string;
+    /** Human-readable lobby name shown in the dialog subtitle. */
+    lobbyName: string;
+    /** Elapsed ms at MOUNT time. The dialog re-derives the displayed
+     *  duration from a per-second tick so the parent never has to re-
+     *  render to advance the clock. Pass `Date.now() - call.startedAtMs`
+     *  (or just `call.durationMs` from the API). */
+    elapsedMs: number;
+    /** Other participants currently in the call (excludes self). When
+     *  empty the dialog still renders — the prompt becomes
+     *  "you were in a call" with no chip row — but the parent should
+     *  generally not show the dialog with zero participants (see
+     *  useActiveCallResume's filter). */
+    participants: ResumeCallParticipant[];
+    /** True while a reconnect attempt is in flight. Disables the buttons
+     *  and replaces the Reconnect label with "Reconnecting…". */
+    loading?: boolean;
+}
+
+/** Resume-dialog participant shape. Independent of any hangout-internal
+ *  type so callers can pass thin {id,name} objects without dragging in
+ *  PresenceUser / SfuParticipant. */
+export declare interface ResumeCallParticipant {
+    /** Stable identifier — used as React key + safeDisplayName fallback. */
+    userId: string;
+    /** Pre-resolved display name. Caller MUST pass safeDisplayName output
+     *  so a raw UUID never reaches the dialog. */
+    name: string;
+    /** Optional avatar URL — Avatar falls back to initials when absent. */
+    avatarUrl?: string;
+}
+
+export declare function resumeFromStep(pipelineId: string, runId: string, fromNodeId: string, options?: ResumeFromStepOptions): Promise<ResumeFromStepResponse>;
+
+/** A single resume-from-step entry on a PipelineRun (hub#2223). */
+export declare interface ResumeFromStepEntry {
+    fromNodeId: string;
+    /** The step that originally failed when this resumption was triggered, if known. */
+    originalFailedStepId?: string;
+    at: string;
+}
+
+export declare interface ResumeFromStepOptions {
+    /** When true, allow resuming a `succeeded`/`done` run for diagnostic re-execution. */
+    allowCompleted?: boolean;
+    /** Optional list of node ids to break on during the resumed dispatch loop. */
+    breakpoints?: string[];
+}
+
+export declare interface ResumeFromStepResponse {
+    runId: string;
+    fromNodeId: string;
+    /** The stepId that originally failed, when surfaceable. */
+    originalFailedStepId?: string;
+    /** Monotonic count of `resumeFromStep` invocations on this run. */
+    replayAttempts: number;
+    at: string;
+}
+
+export declare function retryFromNode(pipelineId: string, runId: string, nodeId: string, inputs?: Record<string, unknown>, snapshotInput?: boolean): Promise<RetryFromNodeResponse>;
+
+export declare interface RetryFromNodeResponse {
+    newRunId: string;
+    originalRunId: string;
+    pipelineId: string;
+    retryFromNodeId: string;
+    skippedNodes: string[];
+    at: string;
+}
+
+export declare interface RetryPolicy {
+    maxAttempts: number;
+    backoffMs: number;
+    backoffMultiplier: number;
+}
+
+/**
+ * Revert a previously-applied paused-context patch. Throws `PatchHttpError`
+ * for non-204 (typically 409 once the run has resumed past the breakpoint).
+ */
+export declare function revertPatch(pipelineId: string, runId: string, stepId: string, patchId: string): Promise<void>;
+
+declare interface RoomItem {
+    roomId: string;
+    channelId: string;
+    name: string;
+    type: 'standalone' | 'group' | 'dm';
+    ownerId: string;
+    groupId?: string;
+    dmPeerUserId?: string;
+    createdAt: string;
+}
+
+export declare function RoomList({ idToken, rooms, createRoom, createDM, loading, error, onRetry, onRoomSelect, activeRoomId, compact }: RoomListProps): JSX.Element;
+
+declare interface RoomListProps {
+    idToken: string | null;
+    rooms: RoomItem[];
+    createRoom: (name: string) => Promise<void>;
+    createDM: (peerId: string) => Promise<void>;
+    loading: boolean;
+    /** Inline-render an error + retry control instead of the empty state when set. */
+    error?: string | null;
+    onRetry?: () => void;
+    onRoomSelect: (room: RoomItem) => void;
+    activeRoomId?: string | null;
+    compact?: boolean;
+}
+
+declare interface RoomMemberItem {
+    roomId: string;
+    userId: string;
+    displayName?: string;
+    joinedAt: string;
+}
+
+export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, className, }: RosterPanelProps): JSX.Element;
+
+export declare interface RosterPanelProps {
+    participants: RosterParticipant[];
+    activeSpeakerId?: string | null;
+    /** Click handler per row — e.g. promote to spotlight. */
+    onParticipantClick?: (id: string) => void;
+    /** Total-participants count shown in header. Defaults to participants.length. */
+    count?: number;
+    /** Optional header — e.g. "In this call". Default "Participants". */
+    title?: string;
+    /** Optional footer — e.g. an "+ Add" button. */
+    footer?: ReactNode;
+    /** 'dark' renders on black call chrome (the shipped token palette is
+     *  light-only, so the default is a white slab inside the dark call
+     *  widget — 2026-08-25 audit P0-3). */
+    tone?: 'light' | 'dark';
+    className?: string;
+}
+
+export declare interface RosterParticipant {
+    id: string;
+    displayName: string;
+    avatarUrl?: string;
+    isMuted?: boolean;
+    isLocal?: boolean;
+    isScreenSharing?: boolean;
+    handRaised?: boolean;
+}
+
+export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
+
+declare type SaveOutcome = {
+    status: 'synced';
+    type: DocumentType_2;
+}
+/** Server unreachable / 5xx — saved to the local cache, NOT on the server. */
+| {
+    status: 'offline';
+    type: DocumentType_2;
+    error: string;
+}
+/** Server rejected the payload (4xx) — NOTHING was saved. */
+| {
+    status: 'rejected';
+    error: string;
+};
+
+export declare interface ScatterNodeData {
+    type: 'scatter';
+    /**
+     * JSONPath into pipeline context that resolves to an array. Each element
+     * becomes one scatter arm. E.g. `$.steps.visionAnalyze.output.regions`.
+     */
+    itemsPath: string;
+    /**
+     * Key written to each per-arm context (default: 'item'). Downstream nodes
+     * read `$.scatter.<itemAlias>` to get the per-arm payload.
+     */
+    itemAlias?: string;
+    /**
+     * Maximum number of arms executing concurrently (default: 4). Guards
+     * against saturating Anthropic rate limits or the Sharp thread pool.
+     */
+    maxConcurrency?: number;
+}
+
+/**
+ * Horizontal progress-bar gauge for 0..1 scores. Used by the judge
+ * composites for per-criterion + overall scores, but generic enough to be
+ * reused elsewhere (rate-limit budget, processing progress, etc.).
+ *
+ * a11y: rendered with `role="meter"`, `aria-valuenow / -valuemin / -valuemax`.
+ */
+export declare function ScoreBarGauge({ value, threshold, tone, size, showLabel, formatLabel, ariaLabel, className, }: ScoreBarGaugeProps): JSX.Element;
+
+export declare interface ScoreBarGaugeProps {
+    /** 0..1 value. Out-of-range inputs are clamped, NaN renders an empty gauge. */
+    value: number;
+    /** Threshold at which the gauge flips from "below threshold" tone to "above". 0..1, default 0.5. */
+    threshold?: number;
+    /** Override tone selection; otherwise derived from `value` vs `threshold`. */
+    tone?: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+    /** Default 'md'. */
+    size?: 'sm' | 'md' | 'lg';
+    /** Render the percentage label inline (right-aligned). Default true. */
+    showLabel?: boolean;
+    /** Custom label formatter — receives the clamped 0..1 value. Default: percent. */
+    formatLabel?: (value: number) => string;
+    /**
+     * aria-label override. When omitted, the component synthesizes a label
+     * from value + threshold + pass state.
+     */
+    ariaLabel?: string;
+    className?: string;
+}
+
+export declare function ScreenShareIcon({ size, ...rest }: IconProps): JSX.Element;
+
+export declare function ScreenShareOffIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/**
+ * Cross-run audit search. At least one of `actor` / `pipelineId` is required;
+ * the backend returns 400 otherwise.
+ */
+export declare function searchAudit(filters: SearchAuditFilters): Promise<AuditPage>;
+
+export declare interface SearchAuditFilters extends AuditFilters {
+    /** Either `actor` or `pipelineId` is required. */
+    actor?: string;
+    /** Either `actor` or `pipelineId` is required. */
+    pipelineId?: string;
+}
+
+export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): default_2.JSX.Element;
+
+export declare interface SearchInputProps {
+    value: string;
+    onChange: (value: string) => void;
+    placeholder?: string;
+    /** Called after the value is cleared via the clear button. */
+    onClear?: () => void;
+    /**
+     * Colour family. `surface` (default) follows the host theme; `code` paints
+     * in the permanently-dark terminal palette.
+     *
+     * This prop exists because `className` lands on the WRAPPER — the input is
+     * a child, so no caller-supplied class could ever reach the field itself,
+     * and a SearchInput dropped into a dark panel stayed a white box.
+     */
+    tone?: SearchInputTone;
+    /** Class for the wrapper. Sizing and positioning; not the field's colours. */
+    className?: string;
+    /** Class for the `<input>` itself — the one `className` cannot reach. */
+    inputClassName?: string;
+    style?: default_2.CSSProperties;
+    autoFocus?: boolean;
+    'aria-label'?: string;
+}
+
+/** @see SurfaceTone — which colour family the field paints in. */
+export declare type SearchInputTone = SurfaceTone;
+
+export declare interface Section {
+    id: string;
+    type: 'summary' | 'tasks' | 'decisions' | 'notes' | 'custom';
+    title: string;
+    collapsed: boolean;
+    items: TaskItem[];
+    sectionType?: string;
+    metadata?: Record<string, unknown>;
+    placeholder?: string;
+}
+
+declare type SectionRenderer = React.ComponentType<SectionRendererProps>;
+
+declare interface SectionRendererProps {
+    section: Section;
+    viewMode: ViewMode;
+    editable: boolean;
+    fragment?: XmlFragment | null;
+    ydoc?: Y.Doc | null;
+    provider?: CollaborationProvider | null;
+    user?: {
+        name: string;
+        color: string;
+    };
+    onUpdateSection?: (patch: Partial<Section>) => void;
+    onAddItem?: (item: Omit<TaskItem, 'id'>) => void;
+    onUpdateItem?: (itemId: string, patch: Partial<TaskItem>) => void;
+    onRemoveItem?: (itemId: string) => void;
+    participants?: Participant[];
+    onUpdateCursorInfo?: (name: string, color: string) => void;
+    comments?: CommentThread[];
+    commentCount?: number;
+    onOpenComments?: (sectionId: string) => void;
+    onNavigateToEditor?: (sectionId: string) => void;
+}
+
+/** Per-section review status (DocuSign-style acknowledgement). */
+export declare interface SectionReview {
+    userId: string;
+    displayName: string;
+    status: 'reviewed' | 'approved' | 'changes_requested';
+    timestamp: string;
+    comment?: string;
+}
+
+/** Specialized section renderer type — extends beyond the base `type` for richer UIs. */
+export declare type SectionType = 'tasks' | 'rich-text' | 'decisions' | 'timeline' | 'checklist' | 'rating' | 'voting';
+
+export declare function SegmentedControl({ options, value, onChange, size, className, }: SegmentedControlProps): JSX.Element;
+
+export declare interface SegmentedControlProps {
+    options: SegmentOption[];
+    value: string;
+    onChange: (value: string) => void;
+    size?: 'sm' | 'md';
+    className?: string;
+}
+
+export declare interface SegmentOption {
+    label: string;
+    value: string;
+    icon?: ReactNode;
+}
+
+export declare const Select: ForwardRefExoticComponent<SelectProps & RefAttributes<HTMLSelectElement>>;
+
+export declare function SelectableCard({ children, selected, onSelect, padding, disabled, className, ...rest }: SelectableCardProps): JSX.Element;
+
+export declare type SelectableCardPadding = 'sm' | 'md' | 'lg';
+
+export declare interface SelectableCardProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onSelect' | 'children' | 'type'> {
+    children?: ReactNode;
+    /** Draws the selected chrome and sets `aria-pressed`. */
+    selected?: boolean;
+    /** Fired on click. Named `onSelect` so callers read as pickers, not buttons. */
+    onSelect?: () => void;
+    /** Default `sm` (12px) — these sit in dense grids, unlike Card's 24px `md`. */
+    padding?: SelectableCardPadding;
+}
+
+export declare interface SelectOption {
+    value: string;
+    label: string;
+    disabled?: boolean;
+}
+
+export declare interface SelectOptionGroup {
+    label: string;
+    options: SelectOption[];
+}
+
+export declare interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+    options: SelectOption[];
+    /** Optional labelled option groups, rendered after the flat `options`. */
+    groups?: SelectOptionGroup[];
+    /** Shown as a disabled placeholder option when no value is selected. */
+    placeholder?: string;
+    size?: SelectSize;
+    /** When true, applies a danger-colored border. */
+    invalid?: boolean;
+    'data-testid'?: string;
+}
+
+export declare type SelectSize = 'sm' | 'md';
+
+declare type SendMessage = (msg: Record<string, unknown>) => void;
+
+/** Server welcome message (type === 'session') */
+export declare interface SessionMessage extends GatewayMessage {
+    type: 'session';
+    clientId: string;
+    sessionToken: string;
+    restored: boolean;
+}
+
+export declare function SettingsLayout({ title, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
+
+export declare interface SettingsLayoutProps {
+    /** Page title shown above the rail. */
+    title: ReactNode;
+    /** Optional secondary line under the title. */
+    subtitle?: ReactNode;
+    /** Section list. The first section is selected by default. */
+    sections: SettingsSection[];
+    /** Currently active section id (controlled). When omitted, uncontrolled. */
+    activeSectionId?: string;
+    /** Notified when the user picks a section. */
+    onSectionChange?: (id: string) => void;
+    /**
+     * When true (or non-null), shows the sticky save bar.
+     * The bar exposes Save + Cancel buttons.
+     */
+    dirty?: boolean;
+    /** Save button label. Default "Save changes". */
+    saveLabel?: ReactNode;
+    /** Cancel button label. Default "Cancel". */
+    cancelLabel?: ReactNode;
+    /** Save click handler. */
+    onSave?: () => void;
+    /** Cancel click handler. */
+    onCancel?: () => void;
+    /** When true, the save button shows a saving state. */
+    saving?: boolean;
+    /** Optional extra content for the save bar (e.g. dirty-field count). */
+    saveBarSlot?: ReactNode;
+    /** Width of the rail in px. Default 220. */
+    railWidth?: number;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare interface SettingsSection {
+    id: string;
+    /** Sidebar label. */
+    label: ReactNode;
+    /** Optional small description shown under the label in the rail. */
+    description?: ReactNode;
+    /** Optional icon glyph rendered next to the label. */
+    icon?: ReactNode;
+    /** Section content. */
+    content: ReactNode;
+}
+
+export declare function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps): JSX.Element;
+
+export declare interface SetupGuidePageProps {
+    status: {
+        hasUserPools: boolean;
+        poolCount: number;
+        hasClients: boolean;
+        clientCount: number;
+        hasAdminUser: boolean;
+        totalUsers: number;
+        adminEmails: string[];
+        smtpConfigured: boolean;
+        smtpHost?: string;
+        issuer: string;
+        issuerConfigured: boolean;
+        wellKnownUrl?: string;
+        firstPoolId?: string;
+        firstClientId?: string;
+    };
+    onNavigate: (path: string) => void;
+}
+
+export declare interface SetupStatus {
+    hasUserPools: boolean;
+    poolCount: number;
+    hasClients: boolean;
+    clientCount: number;
+    hasAdminUser: boolean;
+    totalUsers: number;
+    adminEmails: string[];
+    firstPoolId?: string;
+    smtpConfigured: boolean;
+    smtpHost?: string;
+    smtpPort?: string;
+    smtpFrom?: string;
+    issuer: string;
+    externalIssuer?: string;
+    issuerIsCustom: boolean;
+    issuerConfigured: boolean;
+    wellKnownUrl?: string;
+    firstClientId?: string;
+}
+
+export declare const shadows: {
+    /** Subtle shadow for cards, panels */
+    readonly sm: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)";
+    /** Medium shadow for dropdowns, popovers */
+    readonly md: "0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)";
+    /** Strong shadow for modals, dialogs */
+    readonly lg: "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)";
+    /** Extra strong shadow for elevated modals */
+    readonly xl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)";
+};
+
+export declare function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps): JSX.Element;
+
+export declare interface ShortcutsHelpProps {
+    open: boolean;
+    onClose: () => void;
+}
+
+export declare function SidebarRow({ icon, label, trailing, active, onClick, onContextMenu, href, kebab, disabled, 'aria-label': ariaLabel, className, 'data-testid': testId, dataAttrs, }: SidebarRowProps): JSX.Element;
+
+export declare interface SidebarRowProps {
+    /** Leading icon. */
+    icon?: ReactNode;
+    /** Primary label (string or ReactNode). */
+    label: ReactNode;
+    /** Right-side slot for badges, avatar stacks, etc. */
+    trailing?: ReactNode;
+    /** Highlighted state. */
+    active?: boolean;
+    onClick?: () => void;
+    onContextMenu?: (e: MouseEvent_2<HTMLElement>) => void;
+    /** When set, the row renders as an <a href>. Click handling still fires. */
+    href?: string;
+    /** Optional kebab-menu trigger node (typically an IconButton). */
+    kebab?: ReactNode;
+    /** Disabled state — non-interactive, muted styling. */
+    disabled?: boolean;
+    /** Accessibility label override (when `label` isn't a string). */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+    /** Arbitrary `data-*` attributes spread onto the root element.
+     *  Used by e2e tooling to expose row-level metadata (e.g.
+     *  `data-room-slug`) without bespoke wrapper divs that interfere
+     *  with the row layout. */
+    dataAttrs?: Record<string, string | number | undefined>;
+}
+
+export declare function SidebarSection({ title, actions, collapsible, defaultCollapsed, storageKey, children, className, 'data-testid': testId, }: SidebarSectionProps): JSX.Element;
+
+export declare interface SidebarSectionProps {
+    /** Visible section label. Used to derive the localStorage key. */
+    title: string;
+    /** Right-aligned slot in the header (e.g. an IconButton). */
+    actions?: ReactNode;
+    /** When true (default), header click toggles collapse. */
+    collapsible?: boolean;
+    /** Initial collapsed state. Defaults to false (open). */
+    defaultCollapsed?: boolean;
+    /** Optional explicit localStorage key. Defaults to `sidebar-section:${title}`. */
+    storageKey?: string;
+    /** Section body. */
+    children?: ReactNode;
+    /** Extra classes for the outer wrapper. */
+    className?: string;
+    /** Test id (defaults to "sidebar-section"). */
+    'data-testid'?: string;
+}
+
+export declare function SkeletonCard({ width, height, rounded }: SkeletonCardProps): JSX.Element;
+
+export declare interface SkeletonCardProps {
+    width?: number | string;
+    height?: number | string;
+    /**
+     * Corner shape. 'full' makes a circle/pill — the avatar-placeholder case
+     * that used to force pages to hand-roll their own skeleton rect.
+     * @default 'lg'
+     */
+    rounded?: 'md' | 'lg' | 'full';
+}
+
+export declare const Slider: ForwardRefExoticComponent<SliderProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface SliderProps {
+    value: number;
+    onChange: (value: number) => void;
+    min?: number;
+    max?: number;
+    step?: number;
+    /** Accessible name. Required when no visible label is wired up. */
+    'aria-label'?: string;
+    /**
+     * Show the current value beside the track. Pass a formatter to control how
+     * it reads (units, decimal places); `true` uses the raw number.
+     * @default true
+     */
+    readout?: boolean | ((value: number) => string);
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+declare interface SloPoint {
+    at: string;
+    value: number | null;
+}
+
+declare type SloWindow = '15m' | '1h' | '6h' | '24h';
+
+/** Plain-object snapshot of a section for diffing (no Y.js references). */
+declare interface SnapshotSection {
+    id: string;
+    type: string;
+    title: string;
+    /** Plain text extracted from the section's rich-text content. */
+    textContent: string;
+    items: Array<{
+        id: string;
+        text: string;
+        status: string;
+        assignee: string;
+        priority: string;
+    }>;
+}
+
+export declare function SocialPanel({ idToken, onMessage }: {
+    idToken: string | null;
+    onMessage: OnMessageFn_7;
+}): JSX.Element;
+
+export declare function SocialTabContent({ userId, displayName, idToken, rooms, createRoom, createDM, createGroupRoom, roomsLoading, roomsError, onRoomsRetry, handleRoomSelect, activeRoomId, onMessage, }: SocialTabContentProps): JSX.Element;
+
+declare interface SocialTabContentProps {
+    userId: string;
+    displayName: string;
+    userEmail: string;
+    connectionState: string;
+    idToken: string | null;
+    rooms: RoomItem[];
+    createRoom: (name: string) => Promise<void>;
+    createDM: (targetUserId: string) => Promise<void>;
+    createGroupRoom: (groupId: string, name: string) => Promise<void>;
+    roomsLoading: boolean;
+    roomsError?: string | null;
+    onRoomsRetry?: () => void;
+    handleRoomSelect: (room: RoomItem) => void;
+    activeRoomId: string | null;
+    activityEvents: ActivityEvent[];
+    onMessage: OnMessageFn_8;
+}
+
+declare interface SourceSloMetrics {
+    sourceId: string;
+    window: string;
+    bucketSizeMs: number;
+    latencyP95: SloPoint[];
+    errorRate: SloPoint[];
+    queueDepth: SloPoint[];
+}
+
+export declare const spacing: {
+    readonly xs: string;
+    readonly sm: string;
+    readonly md: string;
+    readonly lg: string;
+    readonly xl: string;
+};
+
+export declare type SpanKind = 'agent' | 'tool' | 'llm' | 'retrieval' | 'guardrail' | 'internal';
+
+export declare type SpanStatus = 'ok' | 'error' | 'unset';
+
+/** Sparkles / magic-wand glyph — the media-effects affordance. Pair with
+ *  CircularIconToggle in MediaControlsBar's `extras` slot to open a
+ *  MediaEffectsTray. */
+export declare function SparklesIcon({ size, ...rest }: IconProps): JSX.Element;
+
+export declare function Sparkline({ data, width, height, color }: SparklineProps): JSX.Element;
+
+export declare interface SparklineProps {
+    data: number[];
+    width?: number;
+    height?: number;
+    color?: string;
+}
+
+export declare function Spinner({ size, color, className, style, 'aria-label': ariaLabel, 'data-testid': testId, }: SpinnerProps): JSX.Element;
+
+export declare interface SpinnerProps {
+    size?: SpinnerSize;
+    /** Arc color. Defaults to var(--color-primary). */
+    color?: string;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
+export declare type SpinnerSize = 'sm' | 'md' | 'lg';
+
+/** Vertical flex column with a scale gap. */
+export declare function Stack({ children, gap, align, justify, wrap, as: As, className, ...rest }: StackProps): JSX.Element;
+
+export declare type StackAlign = 'start' | 'center' | 'end' | 'baseline' | 'stretch';
+
+export declare function StackDiagram({ layers, orientation, connector, className, style, 'data-testid': testId, }: StackDiagramProps): JSX.Element;
+
+export declare type StackDiagramConnector = 'arrow' | 'line' | 'none';
+
+export declare type StackDiagramOrientation = 'vertical' | 'horizontal';
+
+export declare interface StackDiagramProps {
+    layers: StackLayerSpec[];
+    /** Vertical stacks top-to-bottom (default); horizontal flows left-to-right. */
+    orientation?: StackDiagramOrientation;
+    /** Connector glyph between layers. Default 'arrow'. */
+    connector?: StackDiagramConnector;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare function StackedAreaChart({ series, height, }: {
+    series: LineSeries[];
+    height?: number;
+}): JSX.Element;
+
+/** Spacing scale. Matches Tailwind's 4px base: xs=6, sm=8, md=12, lg=16, xl=24. */
+export declare type StackGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+export declare type StackJustify = 'start' | 'center' | 'end' | 'between';
+
+export declare interface StackLayerSpec {
+    id: string;
+    label: ReactNode;
+    description?: ReactNode;
+    icon?: ReactNode;
+    /** Color tone (matches <Chip> tones). Default 'neutral'. */
+    tone?: ChipTone;
+    /** Optional right-aligned meta slot (badge, version chip). */
+    meta?: ReactNode;
+}
+
+export declare interface StackProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+    children?: ReactNode;
+    /** Space between children. Default `md` (12px). */
+    gap?: StackGap;
+    /** Cross-axis alignment (`align-items`). */
+    align?: StackAlign;
+    /** Main-axis distribution (`justify-content`). */
+    justify?: StackJustify;
+    /** Allow children to wrap onto more lines. Default false for Stack, true for Inline. */
+    wrap?: boolean;
+    /** Render as something other than a `<div>` — `ul`, `section`, `label`, … */
+    as?: ElementType;
+}
+
+export declare function StatCard({ label, value, accent, danger, hint, title, delta, sparklineData, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
+
+export declare interface StatCardDelta {
+    /** Magnitude of the change. Rendered with a sign derived from `direction`. */
+    value: number;
+    /** Trend direction. Drives the arrow glyph (▲/▼) and default sign. */
+    direction: 'up' | 'down';
+    /**
+     * Color tone for the delta line. Defaults:
+     *   - up   → positive (success/green)
+     *   - down → negative (danger/red)
+     *
+     * Pass explicitly to override — e.g. on a "Failed events" KPI, a
+     * downward trend is actually positive, so `tone: 'positive'`.
+     */
+    tone?: 'positive' | 'negative' | 'neutral';
+    /**
+     * Suffix appended to the numeric value. Default `'%'`. Pass `''` for raw
+     * counts (e.g. `+12` errors), or `' ms'` etc. for units.
+     */
+    suffix?: string;
+    /** Optional aria-label override for the delta line. */
+    'aria-label'?: string;
+}
+
+export declare interface StatCardProps {
+    label: ReactNode;
+    value: ReactNode;
+    accent?: boolean;
+    danger?: boolean;
+    hint?: ReactNode;
+    /**
+     * Native tooltip on the whole card — for provenance a reader only needs on
+     * demand ("unknown, not zero" behind a $0.00).
+     *
+     * `hint` is the visible slot and stays the default; this is for text that
+     * would crowd the tile. Deliberately the native `title` rather than a new
+     * Tooltip component: several shared components already use `title` this way,
+     * and one hover mechanism that works everywhere beats two that disagree.
+     *
+     * It exists because ProjectDetailPage needed exactly this and had to smuggle a
+     * bare `<span title>` inside the `label` ReactNode — which put the tooltip on
+     * the caption rather than the card, so it only appeared over four words of
+     * uppercase text.
+     */
+    title?: string;
+    /**
+     * Trend delta rendered below the value (▲ +12% / ▼ -4%, colored by tone).
+     * Pass `null` or omit to hide.
+     */
+    delta?: StatCardDelta | null;
+    /**
+     * Inline sparkline drawn to the right of the value. Pass the raw number
+     * series — the card sizes it at 80×20 by default. Omit to hide.
+     */
+    sparklineData?: number[];
+    /** Destination URL / path. When provided the card renders as a link. */
+    to?: string;
+    /**
+     * Override the link element. Defaults to a plain `<a>` (passes `href`).
+     * Pass your router's Link component to get client-side navigation — the `to`
+     * prop is forwarded directly so it matches React Router's `<Link to>` API.
+     *
+     * @example
+     * import { Link } from 'react-router';
+     * <StatCard to="/admin/capabilities" as={Link} label="…" value={0} />
+     */
+    as?: ElementType<any>;
+    /** Click handler — renders a <button> wrapper if no `to` is given. */
+    onClick?: () => void;
+    mono?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare function StatsCard({ metrics, className, style }: StatsCardProps): JSX.Element;
+
+export declare interface StatsCardProps {
+    metrics: StreamMetrics | null;
+    /**
+     * Sizing / positioning classes from the caller. Prefer this over `style`:
+     * the card has no intrinsic width, so every consumer was wrapping it in a
+     * `<div>` purely to size it — inline styles are banned in demos and
+     * stories. Applied to BOTH the empty and populated states, and composed
+     * through `cn()` so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
+    style?: CSSProperties;
+}
+
+export declare function StatusBadge({ status, variant }: StatusBadgeProps): JSX.Element;
+
+export declare interface StatusBadgeProps {
+    status: string;
+    variant?: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+}
+
+export declare interface StatusColors {
+    bg: string;
+    border: string;
+    text: string;
+    accent: string;
+}
+
+export declare function StatusDot({ color, pulse, size, label, className, style, title, 'data-testid': testId, 'aria-label': ariaLabel, }: StatusDotProps): JSX.Element;
+
+export declare interface StatusDotProps {
+    /** Dot color. Defaults to var(--color-text-tertiary). */
+    color?: string;
+    pulse?: boolean;
+    size?: StatusDotSize;
+    label?: ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    title?: string;
+    'data-testid'?: string;
+    'aria-label'?: string;
+}
+
+export declare type StatusDotSize = 'xs' | 'sm' | 'md';
+
+export declare function StatusPill({ state, label, icon, size, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
+
+export declare interface StatusPillProps {
+    state: StatusPillState;
+    label: string;
+    /** Optional icon placed to the left of the label. */
+    icon?: ReactNode;
+    size?: StatusPillSize;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type StatusPillSize = 'sm' | 'md';
+
+export declare type StatusPillState = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'pending';
+
+export declare function StatusStrip({ phase, bitrateBps, viewerCount, duration, className, style }: StatusStripProps): JSX.Element;
+
+export declare interface StatusStripProps {
+    phase: PlayerPhase | 'live' | 'reconnecting';
+    bitrateBps?: number;
+    viewerCount?: number;
+    duration?: number;
+    /**
+     * Sizing / positioning classes from the caller. Prefer this over `style`:
+     * overlaying the strip on a player or widening it previously needed a
+     * wrapper `<div>`, because inline styles are banned in demos and stories.
+     * Composed through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
+    style?: CSSProperties;
+}
+
+/**
+ * One execution attempt of a step. Hub task #1280.
+ *
+ * `StepExecution` retains its top-level `status`/`error`/`output`/timing fields
+ * — they always reflect the LATEST attempt, so existing single-attempt readers
+ * are unaffected. `attempts[]` carries the full history for retry-aware UI
+ * (history view, compare-attempts diff). See ADR-DURABLE-PIPELINE-EXECUTION.
+ */
+export declare interface StepAttempt {
+    attemptNumber: number;
+    startedAt: string;
+    completedAt?: string;
+    durationMs?: number;
+    input?: unknown;
+    output?: unknown;
+    error?: string;
+    errorCategory?: ErrorCategory;
+    /** Backoff delay applied before the next attempt; only set on retryable failures. */
+    retryAfterMs?: number;
+    /** `${runId}:${nodeId}:${attemptNumber}` (per-attempt) or `${runId}:${nodeId}` (per-step idempotent). */
+    idempotencyKey: string;
+}
+
+export declare interface StepExecution {
+    nodeId: string;
+    status: StepStatus;
+    startedAt?: string;
+    completedAt?: string;
+    durationMs?: number;
+    input?: unknown;
+    output?: unknown;
+    error?: string;
+    /** Full per-attempt history. Absent on rows persisted before hub#1280. */
+    attempts?: StepAttempt[];
+    llm?: {
+        prompt: string;
+        response: string;
+        tokensIn: number;
+        tokensOut: number;
+        /** True between `pipeline.llm.stream.opened` and the first token; cleared when tokensOut > 0. */
+        streamOpened?: boolean;
+        /** Wall-clock ms from stream open to first token (DC v0.3.7+). */
+        firstTokenLatencyMs?: number;
+    };
+    /**
+     * Image previews produced by steps that emit `pipeline:step:image:produced`
+     * events (e.g. CropNode, SaveNode). Each entry carries an imageId that
+     * resolves through the host's `getImageUrl` service.
+     */
+    images?: Array<{
+        imageId: string;
+        width: number;
+        height: number;
+        mimeType: string;
+        bbox?: {
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+        };
+    }>;
+    approvals?: ApprovalRecord[];
+    /**
+     * Vision-specific streaming data — populated as `image:vision-analyze`
+     * events arrive (pipeline:step:vision:*). `analyzed` flips to true once
+     * the model has finished outputting tokens.
+     */
+    vision?: {
+        response: string;
+        tokensIn?: number;
+        tokensOut?: number;
+        tokensSeen: number;
+        analyzed: boolean;
+        failure?: {
+            reason: string;
+            error: string;
+        };
+        imageId?: string;
+        costUsd?: number;
+    };
+    /**
+     * hub#2226: edit-and-continue patch history applied while the run was
+     * paused at this step's breakpoint. Append-only at apply time;
+     * `revertedAt` is set when a patch is undone via `revertContextPatch`.
+     * Empty/undefined for steps that were never paused-and-patched.
+     */
+    patches?: PatchEntry[];
+}
+
+export declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
+
+/**
+ * Companion utility: returns true when the stream has at least one
+ * paintable video track (live + enabled + not muted). Pair with
+ * useTrackStateBump in the same component so the boolean re-derives on
+ * every track transition.
+ */
+export declare function streamHasUsableVideo(stream: MediaStream | undefined | null): boolean;
+
+export declare interface StreamMetrics {
+    bitrateBps: number;
+    fps: number;
+    resolution: {
+        width: number;
+        height: number;
+    };
+    packetsLost: number;
+    jitter?: number;
+}
+
+export declare function StreamVideo({ stream, muted, videoRef, className, onPlayStateChange, }: StreamVideoProps): JSX.Element;
+
+export declare type StreamVideoPlayState = 'playing' | 'paused-by-autoplay' | 'ended';
+
+export declare interface StreamVideoProps {
+    stream: MediaStream;
+    muted?: boolean;
+    /** Optional external ref. Lets callers reach the underlying <video>
+     *  for OS-level Picture-in-Picture. */
+    videoRef?: MutableRefObject<HTMLVideoElement | null>;
+    /** Tailwind class overrides. Defaults to `h-full w-full object-cover`. */
+    className?: string;
+    /** Notifies on playback state transitions. Fires `paused-by-autoplay`
+     *  when the browser rejects autoplay with `NotAllowedError`. */
+    onPlayStateChange?: (state: StreamVideoPlayState) => void;
+}
+
+export declare interface SubNavItem {
+    /** Path relative to the section root, e.g. "summary" or "crawl". For action
+     *  items (onClick set), this is just used as a React key — provide something
+     *  unique like "halt" or "manual". */
+    path: string;
+    label: string;
+    /** Optional small badge (e.g. live count) shown right-aligned. */
+    count?: number | string;
+    /** Optional dim subtitle below the label. */
+    hint?: string;
+    /** Optional group heading. When set on any item, the layout renders
+     *  collapsible sections by group. Items without a group go into an
+     *  un-headered first section. */
+    group?: string;
+    /** If set, the item renders as a button that calls onClick instead of a
+     *  link that navigates. Use for in-page actions like Halt or toggle. */
+    onClick?: () => void;
+    /** Optional left-side accent color (action items often want danger/warning). */
+    accent?: 'default' | 'danger' | 'warning' | 'success';
+    /** If any item in a group specifies groupScrollAfter, cap the visible
+     *  height at that many items and make the rest scrollable. */
+    groupScrollAfter?: number;
+}
+
+export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, children, }: SubNavLayoutProps): JSX.Element;
+
+export declare interface SubNavLayoutProps {
+    /** Section title shown at top of the rail. */
+    title: string;
+    items: SubNavItem[];
+    /** Optional element rendered next to the title (e.g. a help "?" button). */
+    titleAction?: ReactNode;
+    /** Optional content rendered above the nav items (e.g. a [+ New] button). */
+    railHeader?: ReactNode;
+    /** Override the default rail width. */
+    railWidth?: number;
+    /** Storage key prefix for collapsed-section persistence (default 'subnav'). */
+    storageKey?: string;
+    /** Secondary rail — rendered between the primary rail and main content.
+     *  Keeps section-specific items separate from the top-level nav. */
+    secondaryTitle?: string;
+    secondaryItems?: SubNavItem[];
+    secondaryStorageKey?: string;
+    secondaryRailWidth?: number;
+    /**
+     * Custom renderer for navigation link items (items without an onClick).
+     * Receives the item, its pre-built body content (label + hint + count), and
+     * the base inactive CSSProperties to apply to the link element.
+     *
+     * Use this to integrate with your router's NavLink (e.g. React Router v7):
+     * ```tsx
+     * renderNavItem={(item, children, baseStyle) => (
+     *   <NavLink
+     *     to={item.path}
+     *     style={({ isActive }) =>
+     *       isActive
+     *         ? { ...baseStyle, borderLeft: '3px solid var(--color-primary)', background: 'var(--color-surface-hover)', color: 'var(--color-text-primary)' }
+     *         : baseStyle
+     *     }
+     *   >
+     *     {children}
+     *   </NavLink>
+     * )}
+     * ```
+     *
+     * If not provided, a plain `<a href={item.path}>` is rendered with no
+     * active-state detection.
+     */
+    renderNavItem?: (item: SubNavItem, children: ReactNode, baseStyle: CSSProperties) => ReactNode;
+    /**
+     * The main content area. When used with React Router, omit this and pass an
+     * `<Outlet />` as children, or leave empty if the router renders children
+     * directly. Defaults to rendering children.
+     */
+    children?: ReactNode;
+}
+
+export declare function SuggestionCard({ reason, title, label, tone, meta, context, onSelect, actionLabel, disabled, className, 'data-testid': testId, }: SuggestionCardProps): JSX.Element;
+
+export declare interface SuggestionCardProps {
+    /** Why this is being suggested. Shown above the title — see the note above. */
+    reason: string;
+    /** The thing itself. */
+    title: string;
+    /**
+     * Short category shown as a pill beside the reason, e.g. "blocked".
+     * Omit where every suggestion on screen is the same kind.
+     */
+    label?: string;
+    /** Tone for the label pill. Defaults to neutral. */
+    tone?: Tone;
+    /** What acting costs — estimates, owner, target. Kept to one line. */
+    meta?: ReactNode;
+    /** Where it points, e.g. an initiative. Rendered as a quiet trailing note. */
+    context?: string;
+    /** Primary action. The whole card is the hit target. */
+    onSelect: () => void;
+    /** Verb for the action, shown on hover/focus. Default "Use this". */
+    actionLabel?: string;
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function SummaryPanel({ status, markdown, renderMarkdown, title, errorMessage, pendingMessage, idleState, className, }: SummaryPanelProps): JSX.Element;
+
+export declare interface SummaryPanelProps {
+    status: TranscriptStatus;
+    /** The raw markdown returned by GET /api/recordings/:id/summary. */
+    markdown?: string | null;
+    /** Caller-provided renderer. If omitted, the markdown is rendered as
+     *  a <pre>-wrapped code block — readable but not pretty. */
+    renderMarkdown?: (md: string) => ReactNode;
+    /** Optional title above the panel. Defaults to "Summary". */
+    title?: string;
+    errorMessage?: string;
+    pendingMessage?: string;
+    idleState?: ReactNode;
+    className?: string;
+}
+
+/** Which colour family a primitive paints in. See the block comment above. */
+export declare type SurfaceTone = 'surface' | 'code';
+
+/**
+ * Accessible on/off toggle. Renders as a `role="switch"` button so screen
+ * readers announce the state. Use inside `FormField` for a labeled row, or
+ * pass `aria-label` directly for inline use.
+ */
+export declare function Switch({ checked, onChange, disabled, size, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, className, style, 'data-testid': testId, }: SwitchProps): JSX.Element;
+
+export declare interface SwitchProps {
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+    disabled?: boolean;
+    size?: SwitchSize;
+    /** Accessible label — required for screen readers when no visible label is wired. */
+    'aria-label'?: string;
+    /** When using <FormField label="..."><Switch ...></FormField>, set this to the label's id. */
+    'aria-labelledby'?: string;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare type SwitchSize = 'sm' | 'md';
+
+export declare interface SyncConflict {
+    conflictId: string;
+    sourceId: string;
+    documentId: string;
+    /**
+     * The document's human name.
+     *
+     * Additive and optional. The review surface leads with the DOCUMENT, and
+     * until now the only document identity in this payload was `documentId` — so
+     * the page could not name the thing it was asking the operator to change.
+     * Absent falls back to `documentId`.
+     */
+    documentTitle?: string;
+    documentTypeId: string | null;
+    /** Stable identity in the source system (e.g. Drive file id). */
+    sourceRef: string;
+    /** Free-form short summary, e.g. "title and body changed remotely". */
+    summary: string;
+    fields: ConflictField[];
+    status: SyncConflictStatus;
+    /** Last edit time from the platform side. */
+    platformUpdatedAt: string;
+    /** Last edit time from the source side. */
+    sourceUpdatedAt: string;
+    detectedAt: string;
+    resolvedAt?: string | null;
+}
+
+export declare type SyncConflictStatus = 'pending' | 'resolved' | 'discarded';
+
+export declare interface SyncStats {
+    /** Total files the adapter saw on the source. */
+    filesFound: number;
+    /** Newly-ingested files (not seen before). */
+    filesNew: number;
+    /** Existing files whose hash changed since last sync. */
+    filesUpdated: number;
+    /** Files skipped (already-seen + unchanged). */
+    filesSkipped: number;
+    /** Errors during this sync (per-file failures). */
+    errors: number;
+    /** Sync duration in ms. */
+    durationMs: number;
+}
+
+export declare interface TabItem {
+    id: string;
+    label: ReactNode;
+    icon?: ReactNode;
+    badge?: ReactNode;
+    disabled?: boolean;
+}
+
+export declare function Table({ children, className, ...rest }: TableProps): JSX.Element;
+
+export declare function TableBody({ children, className, ...rest }: TableBodyProps): JSX.Element;
+
+export declare interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> {
+    children: ReactNode;
+}
+
+export declare function TableHead({ children, className, ...rest }: TableHeadProps): JSX.Element;
+
+export declare interface TableHeadProps extends HTMLAttributes<HTMLTableSectionElement> {
+    children: ReactNode;
+}
+
+export declare interface TableProps extends HTMLAttributes<HTMLTableElement> {
+    children: ReactNode;
+}
+
+export declare function TableRow({ children, clickable, className, ...rest }: TableRowProps): JSX.Element;
+
+export declare interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
+    children: ReactNode;
+    clickable?: boolean;
+}
+
+export declare function TableTd({ children, className, ...rest }: TableTdProps): JSX.Element;
+
+export declare interface TableTdProps extends TdHTMLAttributes<HTMLTableCellElement> {
+    children?: ReactNode;
+}
+
+export declare function TableTh({ children, sortable, sortDirection, className, ...rest }: TableThProps): JSX.Element;
+
+export declare interface TableThProps extends ThHTMLAttributes<HTMLTableCellElement> {
+    children?: ReactNode;
+    sortable?: boolean;
+    sortDirection?: 'asc' | 'desc' | null;
+}
+
+export declare function TabPanel({ id, when, idPrefix, className, style, children }: TabPanelProps): JSX.Element | null;
+
+export declare interface TabPanelProps {
+    /** The tab id this panel is associated with. */
+    id: string;
+    /** Currently-active tab id. Panel renders only when these match. */
+    when: string;
+    /** Must match the Tabs `idPrefix` for accessibility wiring. Auto-generated tabs without an idPrefix should pass it through. */
+    idPrefix?: string;
+    className?: string;
+    style?: CSSProperties;
+    children?: ReactNode;
+}
+
+export declare function Tabs({ items, value, onValueChange, variant, size, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, }: TabsProps): JSX.Element;
+
+export declare interface TabsProps {
+    items: TabItem[];
+    value: string;
+    onValueChange: (id: string) => void;
+    variant?: TabsVariant;
+    size?: 'sm' | 'md';
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+    /** Shared id used to wire <TabPanel> regions to their <tab> triggers. Auto-generated if omitted. */
+    idPrefix?: string;
+}
+
+export declare type TabsVariant = 'underline' | 'pill' | 'segmented';
+
+export declare function TagEditor({ 'aria-label': ariaLabel, value, onChange, placeholder, suggestions, lowercase, }: TagEditorProps): JSX.Element;
+
+export declare interface TagEditorProps {
+    /** Accessible name for the draft-tag box; defaults to the placeholder text. */
+    'aria-label'?: string;
+    value: string[];
+    onChange: (tags: string[]) => void;
+    placeholder?: string;
+    suggestions?: string[];
+    /**
+     * Lowercase tags before insertion. Defaults to true to preserve historical
+     * behavior. Set false when you need case-sensitive identifiers (e.g. Cedar
+     * action names like `ViewSalary`).
+     */
+    lowercase?: boolean;
+}
+
+declare interface TaskAssignment {
+    kind: 'task';
+    sectionId: string;
+    sectionTitle: string;
+    itemId: string;
+    taskText: string;
+    status: string;
+    priority: string;
+}
+
+export declare function TaskComposer({ title, description, titlePlaceholder, promptPlaceholder, suggestions, suggestionsTitle, suggestionsLoading, suggestionsEmpty, onSubmit, onChooseSuggestion, submitLabel, hint, busy, className, 'data-testid': testId, }: TaskComposerProps): JSX.Element;
+
+export declare interface TaskComposerProps {
+    /** Section heading, e.g. "Queue a job". */
+    title: string;
+    /** One line under the heading saying what happens on submit. */
+    description?: string;
+    titlePlaceholder?: string;
+    promptPlaceholder?: string;
+    /** Offered above the fields. Empty or omitted renders no strip at all. */
+    suggestions?: readonly ComposerSuggestion[];
+    /** Heading for the strip. */
+    suggestionsTitle?: string;
+    /** Shown in place of the strip while suggestions are still being fetched. */
+    suggestionsLoading?: boolean;
+    /**
+     * Shown when there are no suggestions AND loading is done. Omit to render
+     * nothing — an empty state for an optional nicety is itself noise.
+     */
+    suggestionsEmpty?: ReactNode;
+    onSubmit: (task: {
+        title: string;
+        prompt: string;
+        suggestionId?: string;
+    }) => void;
+    /** Fires when a suggestion is chosen, before the fields are filled. */
+    onChooseSuggestion?: (suggestion: ComposerSuggestion) => void;
+    submitLabel?: string;
+    /** Quiet note beside the submit button, e.g. where it will run. */
+    hint?: ReactNode;
+    busy?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface TaskItem {
+    id: string;
+    text: string;
+    status: 'pending' | 'acked' | 'done' | 'rejected';
+    assignee: string;
+    ackedBy: string;
+    ackedAt: string;
+    priority: 'low' | 'medium' | 'high';
+    notes: string;
+    dueDate?: string;
+    category?: string;
+}
+
+/** Alias kept for clarity in contexts where "terminal log" reads better. */
+export declare const TerminalLog: typeof LogStream;
+
+export declare const Textarea: ForwardRefExoticComponent<TextareaProps & RefAttributes<HTMLTextAreaElement>>;
+
+export declare interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'rows'> {
+    /** Fixed row count. Mutually exclusive with autoResize. */
+    rows?: number;
+    /** Minimum visible rows (used with autoResize). Default: 2. */
+    minRows?: number;
+    /** Maximum rows before the box scrolls (used with autoResize). */
+    maxRows?: number;
+    /** Grow to fit content automatically. Default: false. */
+    autoResize?: boolean;
+    /** When true, applies a danger-colored border. */
+    invalid?: boolean;
+    'data-testid'?: string;
+}
+
+declare interface TextSelectionData {
+    start: number;
+    end: number;
+    text: string;
+}
+
+declare type Theme = 'light' | 'dark';
+
+/**
+ * ThemeTokens key -> the `@theme` custom property in src/styles.css that
+ * Tailwind utilities actually compile against.
+ *
+ * Why this exists: ThemeProvider only ever wrote `--ui-*`, and no utility class
+ * reads those, so `<ThemeProvider theme={{ primary: 'red' }}>` changed nothing
+ * visible. Writing these names too is what makes the provider real. Keys with
+ * no semantic counterpart (textInverse, surfaceOverlay, borderLight, …) stay
+ * `--ui-*`-only and are intentionally absent.
+ */
+export declare const THEME_TOKEN_ALIASES: Partial<Record<keyof ThemeTokens, string>>;
+
+declare interface ThemeContextValue {
+    theme: Theme;
+    toggleTheme: () => void;
+}
+
+/**
+ * Injects the theme as CSS custom properties on the document root.
+ *
+ * Writes BOTH namespaces:
+ *   - `--ui-*`   for every ThemeTokens key (kept for `cssVar()` callers)
+ *   - `--color-*` / `--radius-*` for keys with a real token counterpart, which
+ *     is what Tailwind utilities compile against
+ *
+ * The second half is what makes this component do anything. Until v2.40.2 it
+ * wrote only `--ui-*`, which no utility class reads, so
+ * `<ThemeProvider theme={{ primary: 'red' }}>` was silently inert.
+ *
+ * Mounting with no overrides is a no-op: the light preset mirrors the @theme
+ * defaults in src/styles.css.
+ *
+ * `preset="dark"` is PARTIAL — it re-tones text/surface/border and the semantic
+ * colours, but the token set has no dark-specific palette, so surfaces that use
+ * literal utilities won't follow. Treat it as a starting point.
+ */
+export declare function ThemeProvider({ children, preset, theme, tones }: ThemeProviderProps): JSX.Element;
+
+export declare interface ThemeProviderProps {
+    children?: ReactNode;
+    /** Base preset to use. Defaults to 'light'. */
+    preset?: 'light' | 'dark';
+    /** Partial overrides merged on top of the preset. */
+    theme?: Partial<ThemeTokens>;
+    /**
+     * Rebrand tones from the semantic scale — the recommended path, because it
+     * maps 1:1 onto what every tinted surface in the library reads:
+     *
+     *   <ThemeProvider tones={{ accent: { base: '#0d9488', bg: '#f0fdfa' } }}>
+     *
+     * Equivalent to overriding `--color-accent` / `--color-accent-bg` in CSS.
+     */
+    tones?: Record<string, ToneOverride>;
+}
+
+/**
+ * Returns all ThemeTokens as a Record mapping CSS variable names to their values.
+ */
+export declare function themeToCssVars(tokens: ThemeTokens): Record<string, string>;
+
+/** The full set of design tokens exposed as CSS custom properties. */
+export declare interface ThemeTokens {
+    primary: string;
+    primaryDark: string;
+    primaryLight: string;
+    danger: string;
+    dangerLight: string;
+    success: string;
+    successLight: string;
+    warning: string;
+    warningLight: string;
+    info: string;
+    infoLight: string;
+    textPrimary: string;
+    textSecondary: string;
+    textMuted: string;
+    textInverse: string;
+    background: string;
+    surface: string;
+    surfaceRaised: string;
+    surfaceOverlay: string;
+    border: string;
+    borderLight: string;
+    spaceXs: string;
+    spaceSm: string;
+    spaceMd: string;
+    spaceLg: string;
+    spaceXl: string;
+    fontXs: string;
+    fontSm: string;
+    fontMd: string;
+    fontLg: string;
+    fontXl: string;
+    radiusSm: string;
+    radiusMd: string;
+    radiusLg: string;
+    radiusXl: string;
+    radiusFull: string;
+    shadowSm: string;
+    shadowMd: string;
+    shadowLg: string;
+    shadowXl: string;
+}
+
+/**
+ * A collapsible `<details>` block for showing chain-of-thought reasoning.
+ *
+ * Pair with a parser that strips `<thinking>...</thinking>` from the assistant
+ * message and feeds the extracted text into `content`.
+ */
+export declare function ThinkingBlock({ content, streaming, defaultOpen, className, }: ThinkingBlockProps): JSX.Element;
+
+export declare interface ThinkingBlockProps {
+    /** the thinking/reasoning text */
+    content: string;
+    /** if true, show "Thinking…" and ThinkingDots when content empty */
+    streaming?: boolean;
+    /** default false (collapsed) */
+    defaultOpen?: boolean;
+    className?: string;
+}
+
+/**
+ * Animated 3-dot typing/thinking indicator.
+ *
+ * Uses inline `<style>` for keyframes to avoid global CSS dependency.
+ */
+export declare function ThinkingDots({ size, color, className }: ThinkingDotsProps): JSX.Element;
+
+export declare interface ThinkingDotsProps {
+    /** sm: 4px dots, md: 6px dots (default md) */
+    size?: 'sm' | 'md';
+    /** dot color, default var(--color-text-tertiary) */
+    color?: string;
+    className?: string;
+}
+
+export declare function ThumbnailCard({ title, description, category, categoryTone, thumbnail, icon, thumbnailHeight, href, onClick, badge, meta, className, style, 'data-testid': testId, }: ThumbnailCardProps): JSX.Element;
+
+export declare interface ThumbnailCardProps {
+    /** Card title (required). */
+    title: ReactNode;
+    /** Short description. */
+    description?: ReactNode;
+    /** Optional category label. Shows as a Chip in the content area. */
+    category?: ReactNode;
+    /** Tone for the category chip. Default 'neutral'. */
+    categoryTone?: ChipTone;
+    /**
+     * Optional thumbnail image URL. When omitted, an icon/emoji placeholder is
+     * rendered against a tonal gradient background.
+     */
+    thumbnail?: string;
+    /** Fallback glyph rendered when no thumbnail is provided. */
+    icon?: ReactNode;
+    /** Pixel height of the thumbnail strip. Default 160. */
+    thumbnailHeight?: number;
+    /** When provided, renders as an <a> wrapping the card. */
+    href?: string;
+    /** Optional click handler (renders as a button if no href). */
+    onClick?: () => void;
+    /** When provided, renders a small badge in the top-right of the thumbnail. */
+    badge?: ReactNode;
+    /** Optional render function for a custom right-side meta in the content. */
+    meta?: ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare interface TimedReaction {
+    id: string;
+    emoji: string;
+    /** Milliseconds from the start of the recording. */
+    offsetMs: number;
+    displayName?: string;
+}
+
+export declare function TitledFrame({ title, titleAction, active, tone, children, onActivate, className, bodyClassName, style, 'data-testid': testId, }: TitledFrameProps): JSX.Element;
+
+export declare interface TitledFrameProps {
+    /** Text sitting in the top border. Keep it short — it is a label, not a line. */
+    title: ReactNode;
+    /** Right-aligned content in the top border, e.g. a close control. */
+    titleAction?: ReactNode;
+    /** Draw the focused border. In a pane grid, exactly one should be true. */
+    active?: boolean;
+    /**
+     * Terminal chrome (`code`, the default) or the app's own surface tokens.
+     * `code` is the right choice whenever the frame contains a terminal — a
+     * pane that themes with the page but holds a fixed-palette PTY reads as
+     * two different applications.
+     */
+    tone?: TitledFrameTone;
+    children: ReactNode;
+    /** Fires on mousedown anywhere in the frame — how a pane claims focus. */
+    onActivate?: () => void;
+    className?: string;
+    /** Class for the content region, e.g. padding or `overflow-auto`. */
+    bodyClassName?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare type TitledFrameTone = 'code' | 'surface';
+
+export declare function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }: ToastProps): JSX.Element;
+
+export declare interface ToastContextValue {
+    toast: (message: string, opts?: ToastOptions) => void;
+}
+
+export declare interface ToastOptions {
+    type?: ToastType;
+    durationMs?: number;
+    actionLabel?: string;
+    onAction?: () => void;
+}
+
+export declare interface ToastProps {
+    id: string;
+    message: string;
+    type: ToastType;
+    /** Exit state drives fade-out animation before removal from the DOM. */
+    exiting?: boolean;
+    actionLabel?: string;
+    onAction?: () => void;
+    onDismiss: (id: string) => void;
+}
+
+export declare function ToastProvider({ children }: {
+    children: ReactNode;
+}): JSX.Element;
+
+export declare type ToastType = 'info' | 'success' | 'warning' | 'error';
+
+/** Normalize either dialect to the canonical vocabulary. */
+export declare function toCanonicalMode(mode: AnyCallWidgetMode): CallWidgetMode;
+
+/**
+ * Convert a camelCase token key to a CSS variable name with --ui- prefix.
+ *
+ * Examples:
+ *   'primary'      → '--ui-primary'
+ *   'primaryDark'  → '--ui-primary-dark'
+ *   'textPrimary'  → '--ui-text-primary'
+ *   'spaceXs'      → '--ui-space-xs'
+ */
+export declare function tokenToCssVarName(token: keyof ThemeTokens): string;
+
+export declare interface TokenUsageByModel {
+    tokensIn: number;
+    tokensOut: number;
+}
+
+/** Canonical → the pre-2.106 spelling, for back-compat surfaces. */
+export declare function toLegacyMode(mode: CallWidgetMode): LegacyCallWidgetMode;
+
+export declare type Tone = (typeof TONES)[number];
+
+/** Soft background only. */
+export declare const TONE_BG: Record<Tone, string>;
+
+/** Border for a soft surface. */
+export declare const TONE_BORDER: Record<Tone, string>;
+
+/** Soft tinted surface: background + readable foreground. */
+export declare const TONE_SOFT: Record<Tone, string>;
+
+/** Solid fill with inverse text. */
+export declare const TONE_SOLID: Record<Tone, string>;
+
+/** Solid swatch only — indicator dots, bars, legend keys. */
+export declare const TONE_SOLID_BG: Record<Tone, string>;
+
+/** Foreground only — labels, icons on an untinted surface. */
+export declare const TONE_TEXT: Record<Tone, string>;
+
+/**
+ * Custom-property name for one role of one tone, e.g.
+ * `toneCssVarName('success', 'bg')` -> `--color-success-bg`.
+ */
+export declare function toneCssVarName(tone: string, role: ToneRole): string;
+
+/** Normalise a caller-supplied tone (folds the deprecated 'purple'). */
+export declare function toneKey(tone: ToneOrAlias): Tone;
+
+/** Tone plus the historical alias kept for source compatibility. */
+export declare type ToneOrAlias = Tone | 'purple';
+
+/** Overrides for one tone in the semantic scale. Omitted roles keep their default. */
+export declare interface ToneOverride {
+    /** Solid fill / icon / indicator dot. */
+    base?: string;
+    /** Soft tinted background. */
+    bg?: string;
+    /** Readable text on the soft background. */
+    fg?: string;
+    /** Border for the soft surface. */
+    border?: string;
+}
+
+/** The four roles every tone in the scale carries. */
+export declare type ToneRole = 'base' | 'bg' | 'fg' | 'border';
+
+export declare const TONES: readonly ["neutral", "success", "warning", "danger", "info", "caution", "accent"];
+
+/**
+ * The raw CSS variable for a tone's solid swatch, for the rare caller that
+ * needs a colour value rather than a class (canvas/SVG fills, chart series).
+ * Prefer the class maps above wherever a class will do.
+ */
+export declare function toneVar(tone: ToneOrAlias): string;
+
+export declare function Toolbar({ children, end, tone, size, sticky, bordered, className, 'aria-label': ariaLabel, 'data-testid': testId, }: ToolbarProps): JSX.Element;
+
+export declare function ToolbarGroup({ children, divided, tone, className, 'aria-label': ariaLabel, }: ToolbarGroupProps): JSX.Element;
+
+export declare interface ToolbarGroupProps {
+    children: ReactNode;
+    /**
+     * Draw a divider before the group. Cheaper than asking every caller to
+     * interleave `<ToolbarSeparator>` by hand, and it cannot end up orphaned at
+     * the start of a row when the group before it renders conditionally.
+     */
+    divided?: boolean;
+    tone?: ToolbarTone;
+    className?: string;
+    /** Names the group for screen readers, e.g. "Zoom". */
+    'aria-label'?: string;
+}
+
+/** Muted, non-interactive text in the row — "12 selected", "us-east-1". */
+export declare function ToolbarLabel({ children, tone, className }: ToolbarLabelProps): JSX.Element;
+
+export declare interface ToolbarLabelProps {
+    children: ReactNode;
+    tone?: ToolbarTone;
+    className?: string;
+}
+
+export declare interface ToolbarProps {
+    /** Start-aligned content. Wrap related controls in `<ToolbarGroup>`. */
+    children?: ReactNode;
+    /** Right-aligned content — the low-frequency verbs (refresh, overflow ⋯). */
+    end?: ReactNode;
+    tone?: ToolbarTone;
+    /** `sm` (default) is the shell scale; `md` is for a toolbar that owns a pane. */
+    size?: 'sm' | 'md';
+    /**
+     * Stick to the top of the scroll container. Off by default: a toolbar
+     * inside `WorkArea` is already outside the scrolling region, and stacking
+     * two sticky layers is how you get a row that hovers over its own header.
+     */
+    sticky?: boolean;
+    /** Bottom hairline separating the row from content. Default true. */
+    bordered?: boolean;
+    className?: string;
+    /**
+     * Names the toolbar for screen readers. Default 'Toolbar' — override it
+     * whenever a page shows more than one ("Canvas actions", "Run filters").
+     */
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
+export declare function ToolbarSeparator({ tone, className }: ToolbarSeparatorProps): JSX.Element;
+
+export declare interface ToolbarSeparatorProps {
+    tone?: ToolbarTone;
+    className?: string;
+}
+
+/** @see SurfaceTone — which colour family the toolbar paints in. */
+export declare type ToolbarTone = SurfaceTone;
+
+export declare interface ToolCall {
+    id: string;
+    name: string;
+    done: boolean;
+    args?: string;
+}
+
+export declare interface ToolCallItem {
+    id: string;
+    name: string;
+    done: boolean;
+    args?: string;
+}
+
+/**
+ * A single pill rendering one tool call's name + done/pending state.
+ */
+export declare function ToolCallPill({ name, done, className }: ToolCallPillProps): JSX.Element;
+
+export declare interface ToolCallPillProps {
+    name: string;
+    done: boolean;
+    className?: string;
+}
+
+/**
+ * A compact strip of tool call pills.
+ */
+export declare function ToolCallStrip({ toolCalls, className }: ToolCallStripProps): JSX.Element;
+
+export declare interface ToolCallStripProps {
+    toolCalls: ToolCall[];
+    className?: string;
+}
+
+export declare function TopNav({ items, activeHref, brand, rightSlot, renderLink, maxVisible, className, style, 'aria-label': ariaLabel, }: TopNavProps): JSX.Element;
+
+export declare interface TopNavItem {
+    label: ReactNode;
+    to: string;
+    icon?: ReactNode;
+    badge?: ReactNode;
+    disabled?: boolean;
+}
+
+export declare interface TopNavProps {
+    items: TopNavItem[];
+    /** Active href — typically the current pathname. An item is active when activeHref === item.to OR activeHref.startsWith(item.to + '/'). */
+    activeHref?: string;
+    /** Brand/logo slot rendered at the left. */
+    brand?: ReactNode;
+    /** Optional right-aligned slot (search, user menu, profile, etc.). */
+    rightSlot?: ReactNode;
+    /** Render function for link elements. Defaults to <a>. Use this to plug in react-router <Link>, next/link, etc. */
+    renderLink?: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    /** Maximum number of items to render inline before collapsing the rest into a "More" menu. Default: render all. */
+    maxVisible?: number;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+}
+
+export declare interface TraceSpan {
+    traceId: string;
+    spanId: string;
+    parentSpanId?: string;
+    name: string;
+    kind: SpanKind;
+    startTime: string;
+    endTime: string;
+    durationMs: number;
+    status: SpanStatus;
+    attributes: Record<string, string | number | boolean>;
+}
+
+export declare interface TraceTimeline {
+    traceId: string;
+    rootSpanId: string;
+    spans: TraceSpan[];
+    totalDurationMs: number;
+    agentId: string;
+    startedAt: string;
+}
+
+export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, now: nowProp, className, }: TranscriptOverlayProps): JSX.Element | null;
+
+export declare interface TranscriptOverlayProps {
+    lines: CaptionLine[];
+    /** How many recent lines to show simultaneously. Default 4. */
+    maxLines?: number;
+    /**
+     * Fade window ms: opacity ramps from 1 toward the 0.35 floor over this
+     * span of no-update time. Default = REMOVE_AFTER_MS (3000), so a quiet
+     * line fades all the way out and is then removed.
+     */
+    fadeAfterMs?: number;
+    /**
+     * "Now" in ms since epoch, used as the reference point for each line's
+     * since-last-update opacity. Defaults to `Date.now()` — exposed for
+     * deterministic tests and stories. When provided, the internal live-fade
+     * interval is disabled, so the render is a pure function of props (plus
+     * the per-line displayed-text memory).
+     *
+     * Without it, any fixture built from fixed ISO timestamps is arbitrarily
+     * old by the time it renders, so every line has aged past the 3s linger
+     * window and nothing renders at all. Pass the same epoch the fixture
+     * timestamps were written against and the ramp is reproducible.
+     */
+    now?: number;
+    className?: string;
+}
+
+export declare function TranscriptPanel({ status, segments, currentTimeMs, onSeek, title, errorMessage, pendingMessage, idleState, className, }: TranscriptPanelProps): JSX.Element;
+
+export declare interface TranscriptPanelProps {
+    status: TranscriptStatus;
+    segments?: TranscriptSegment[];
+    /** Current playback position in milliseconds; used to highlight the
+     *  active segment. Pass null/undefined to disable highlighting. */
+    currentTimeMs?: number | null;
+    /** When provided, clicking a segment seeks the player to that time. */
+    onSeek?: (timeMs: number) => void;
+    /** Optional title above the panel. Defaults to "Transcript". */
+    title?: string;
+    /** Surface the failure message when status === 'failed'. */
+    errorMessage?: string;
+    /** When status is processing/pending, surface what phase. */
+    pendingMessage?: string;
+    /** Render-prop slot for the empty/idle state. */
+    idleState?: ReactNode;
+    className?: string;
+}
+
+export declare interface TranscriptSegment {
+    startMs: number;
+    endMs: number;
+    speakerId: string;
+    speakerLabel: string;
+    text: string;
+    avgLogprob?: number;
+    noSpeechProb?: number;
+}
+
+export declare type TranscriptStatus = 'idle' | 'pending' | 'processing' | 'ready' | 'failed';
+
+export declare function TransferBubble({ transfer, mine, onCancel, className }: TransferBubbleProps): JSX.Element;
+
+export declare interface TransferBubbleProps {
+    transfer: ChatTransfer;
+    /**
+     * True when the viewer is the sender. Only the sender gets a cancel
+     * affordance — a recipient cancelling someone else's upload is not a
+     * feature, and offering the button implies a permission that does not exist.
+     */
+    mine?: boolean;
+    onCancel?: (transferId: string) => void;
+    className?: string;
+}
+
+export declare type TransferPhase = 'started' | 'transferring' | 'verifying' | 'complete' | 'failed' | 'cancelled';
+
+export declare interface TransformNodeData {
+    type: 'transform';
+    transformType: TransformType;
+    expression: string;
+    /** Where in context to write the result; defaults to merging into root. */
+    outputKey?: string;
+    /** Marks this node as an intentional terminal/sink — silences DEAD_END lint. */
+    terminal?: boolean;
+    retryPolicy?: RetryPolicy;
+}
+
+export declare type TransformType = 'jsonpath' | 'template' | 'javascript';
+
+/**
+ * Generic 0..N-point sparkline. Pure SVG, no canvas / chart library.
+ * Used by the judge trend chart, but generic enough to be reused
+ * elsewhere (request-rate strips, latency mini-charts, etc.).
+ *
+ * a11y: rendered with `role="img"` + aria-label. The actual SVG is
+ * marked `aria-hidden` because polylines aren't screen-reader-meaningful.
+ */
+export declare function TrendSparkline({ points, yMin, yMax, width, height, stroke, strokeWidth, showLastPoint, showFill, ariaLabel, className, }: TrendSparklineProps): JSX.Element;
+
+export declare interface TrendSparklineProps {
+    /** Y-values, oldest → newest. Empty array renders an empty placeholder. */
+    points: number[];
+    /** Optional fixed Y-axis bounds. Defaults to data extent + 5% padding. */
+    yMin?: number;
+    yMax?: number;
+    /** Pixel width / height for the SVG viewbox. Default 120x32. */
+    width?: number;
+    height?: number;
+    /** Stroke color — default uses CSS var so tone can be tinted by parent. */
+    stroke?: string;
+    /** Stroke width in viewbox units. Default 1.5. */
+    strokeWidth?: number;
+    /** Render the last-point dot. Default true. */
+    showLastPoint?: boolean;
+    /** Render a fill under the line. Default true. */
+    showFill?: boolean;
+    /**
+     * aria-label override. When omitted, the component synthesizes a label
+     * from point count + first/last values.
+     */
+    ariaLabel?: string;
+    className?: string;
+}
+
+export declare interface TriggerBinding {
+    event: TriggerType;
+    documentTypeId?: string;
+    schedule?: string;
+    webhookPath?: string;
+    /**
+     * 32-byte hex secret used to verify HMAC-SHA256 signatures on incoming
+     * webhook payloads. Generated server-side by social-api the first time a
+     * webhook trigger binding is saved (see
+     * `social-api/src/routes/pipelineDefinitions.ts`). The frontend never
+     * mints this — it only displays it so the user can copy it into the
+     * external webhook source's "secret" field. Absent → the route falls
+     * back to Phase-1 unsigned-OK behavior.
+     */
+    webhookSecret?: string;
+}
+
+export declare interface TriggerNodeData {
+    type: 'trigger';
+    triggerType: TriggerType;
+    /** Required for `document.*` triggers. */
+    documentTypeId?: string;
+    /** Cron expression; required when `triggerType === 'schedule'`. */
+    schedule?: string;
+    /** Required when `triggerType === 'webhook'`. */
+    webhookPath?: string;
+}
+
+export declare type TriggerType = 'manual' | 'document.finalize' | 'document.comment' | 'document.submit' | 'schedule' | 'webhook';
+
+declare interface TypedDocument {
+    documentId: string;
+    typeId: string;
+    values: Record<string, TypedDocumentValue>;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+declare type TypedDocumentValue = string | string[] | number | number[] | boolean;
+
+/** Where the currently rendered list came from. */
+declare type TypesSource = 'loading' | 'remote' | 'cache';
+
+export declare function TypingIndicator({ names, compact, color, size, className, 'data-testid': testId, }: TypingIndicatorProps): JSX.Element | null;
+
+export declare interface TypingIndicatorProps {
+    /**
+     * Names currently typing. Empty array → renders nothing (component returns null
+     * so callers don't have to wrap it in a conditional).
+     */
+    names: string[];
+    /** Render only the animated dots, with no banner text. Default: false. */
+    compact?: boolean;
+    /** Dot color override (passes through to ThinkingDots). */
+    color?: string;
+    /** Dot size (passes through to ThinkingDots). Default 'sm'. */
+    size?: 'sm' | 'md';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface UpdateClientInput {
+    clientName?: string;
+    redirectUris?: string[];
+    postLogoutRedirectUris?: string[];
+    grantTypes?: string[];
+    responseTypes?: string[];
+    scope?: string;
+}
+
+export declare interface UpdateEmailTemplateInput {
+    name?: string;
+    subject?: string;
+    htmlBody?: string;
+    textBody?: string;
+    variables?: string[];
+}
+
+export declare interface UpdateGroupInput {
+    groupName?: string;
+    description?: string;
+    permissions?: string[];
+}
+
+export declare interface UpdatePoolInput {
+    poolName?: string;
+    customAttributes?: Record<string, string>;
+    settings?: Partial<PoolSettings>;
+}
+
+export declare interface UpdateUserInput {
+    email?: string;
+    givenName?: string;
+    familyName?: string;
+    nickname?: string;
+    picture?: string;
+    website?: string;
+    customAttributes?: Record<string, unknown>;
+}
+
+declare interface UrlFilterState<T extends Record<string, string | undefined>> {
+    filters: T;
+    setFilter: <K extends keyof T>(key: K, value: T[K]) => void;
+    clearFilters: () => void;
+}
+
+export declare function useActivityBus(options: UseActivityBusOptions): UseActivityBusReturn;
+
+declare interface UseActivityBusOptions {
+    sendMessage: (msg: Record<string, unknown>) => void;
+    onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+    connectionState: ConnectionState;
+    userId: string;
+    displayName: string;
+    color?: string;
+    maxItems?: number;
+}
+
+declare interface UseActivityBusReturn {
+    events: ActivityEvent[];
+    publish: (eventType: string, detail: Record<string, unknown>) => void;
+    isLive: boolean;
+}
+
+/**
+ * Wrap an async function with loading/error/retry state.
+ * Useful for API calls in components that need to show loading spinners,
+ * error messages, and retry buttons.
+ *
+ * @param fn Async function to wrap
+ * @returns { data, loading, error, execute, retry, reset }
+     *
+     * @example
+     * const { data, loading, error, execute, retry } = useApiCall(
+     *   async (pipelineId: string) => {
+     *     const res = await fetch(`/api/pipelines/${pipelineId}`);
+     *     return res.json();
+     *   }
+     * );
+     *
+     * useEffect(() => { execute(pipelineId); }, [pipelineId]);
+     */
+ export declare function useApiCall<T>(fn: (...args: unknown[]) => Promise<T>): ApiCallState<T>;
+
+ /**
+  * Polls /health every `pollMs`. The first sample lands as soon as the network
+  * round-trip completes; the hook starts in `unknown` so callers don't flash
+  * "degraded" before the first response.
+  */
+ export declare function useApiHealth(pollMs?: number): ApiHealthSnapshot;
+
+ export declare function useAuth(): UseAuthReturn;
+
+ declare interface UseAuthReturn extends AuthState {
+     signIn: (email: string, password: string) => Promise<void>;
+     signUp: (email: string, password: string) => Promise<void>;
+     signOut: () => void;
+ }
+
+ export declare function useAwareness(provider: GatewayProvider | null, opts: UseAwarenessOptions): UseAwarenessReturn;
+
+ declare interface UseAwarenessOptions {
+     userId: string;
+     displayName: string;
+     color: string;
+     mode: ViewMode;
+ }
+
+ declare interface UseAwarenessReturn {
+     awareness: AwarenessUpdaters;
+     participants: Participant[];
+ }
+
+ export declare function useAwarenessState(provider: GatewayProvider | null, initial: Omit<AwarenessFields, 'lastSeen' | 'idle'>): AwarenessUpdaters;
+
+ export declare function useCallWidgetPersistence({ persistKey, defaults, debounceMs, }: UseCallWidgetPersistenceOptions): {
+     state: PersistedWidgetState;
+     setState: (next: Partial<PersistedWidgetState>) => void;
+ };
+
+ export declare interface UseCallWidgetPersistenceOptions {
+     /** localStorage key. When undefined, the hook is a no-op (state lives
+      *  only in memory) — useful for tests and for ephemeral consumers. */
+     persistKey: string | undefined;
+     /** Defaults written if no key exists yet (or storage is empty). */
+     defaults: PersistedWidgetState;
+     /** Debounce window for writes. Default 200ms. */
+     debounceMs?: number;
+ }
+
+ export declare function useChat(options: UseChatOptions): UseChatReturn;
+
+ declare interface UseChatOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     currentChannel: string;
+     connectionState: ConnectionState;
+     displayName: string;
+ }
+
+ declare interface UseChatReturn {
+     messages: ChatMessage[];
+     send: (content: string) => void;
+ }
+
+ /**
+  * Invoke `onClickOutside` when a mousedown occurs outside the ref element.
+  * Useful for closing popovers, dropdowns, and modals on outside click.
+  *
+  * @param ref React ref to the element that should not trigger the callback.
+  *   Accepts a nullable ref — under React 19's types `useRef<HTMLDivElement>(null)`
+  *   yields `RefObject<HTMLDivElement | null>`, so the previous non-null
+  *   `RefObject<T>` signature rejected every ref a component can actually
+  *   create (including this hook's own example below). Widening is
+  *   source-compatible for existing callers.
+  * @param onClickOutside Callback invoked on outside click
+  * @param enabled Enable/disable the listener (default: true)
+  *
+  * @example
+  * const menuRef = useRef<HTMLDivElement>(null);
+  * useClickOutside(menuRef, () => setMenuOpen(false), menuOpen);
+  */
+ export declare function useClickOutside<T extends HTMLElement>(ref: RefObject<T | null>, onClickOutside: () => void, enabled?: boolean): void;
+
+ export declare function useCollaborativeDoc(options: UseCollaborativeDocOptions): UseCollaborativeDocReturn;
+
+ declare interface UseCollaborativeDocOptions {
+     documentId: string;
+     mode: ViewMode;
+     ws: UseWebSocketReturn;
+     userId: string;
+     displayName: string;
+     color: string;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+ }
+
+ declare interface UseCollaborativeDocReturn {
+     meta: DocumentMeta | null;
+     sections: Section[];
+     synced: boolean;
+     updateMeta: (partial: Partial<DocumentMeta>) => void;
+     addSection: (section: Section) => void;
+     updateSection: (sectionId: string, partial: Partial<Section>) => void;
+     removeSection: (sectionId: string) => void;
+     addItem: (sectionId: string, item: TaskItem) => void;
+     updateItem: (sectionId: string, itemId: string, partial: Partial<TaskItem>) => void;
+     ackItem: (sectionId: string, itemId: string, userId: string) => void;
+     rejectItem: (sectionId: string, itemId: string, userId: string) => void;
+     removeItem: (sectionId: string, itemId: string) => void;
+     getSectionFragment: (sectionId: string) => Y.XmlFragment | null;
+     ydoc: Y.Doc | null;
+     provider: GatewayProvider | null;
+     /**
+      * @deprecated NOT IMPLEMENTED. Calling this logs a warning and does
+      * nothing — it does not load anything into the document. It is retained
+      * only because it is part of this hook's published return shape; removing
+      * it is a breaking change. Do not call it expecting an effect.
+      */
+     loadFromMarkdown: (markdown: string) => void;
+     exportJSON: () => DocumentData | null;
+     participants: Participant[];
+     comments: Record<string, CommentThread[]>;
+     addComment: (sectionId: string, opts: {
+         text: string;
+         userId: string;
+         displayName: string;
+         color: string;
+         parentCommentId?: string | null;
+     }) => void;
+     resolveThread: (sectionId: string, commentId: string, resolverDisplayName: string) => void;
+     unresolveThread: (sectionId: string, commentId: string) => void;
+     sectionReviews: Record<string, SectionReview[]>;
+     reviewSection: (sectionId: string, status: SectionReview['status'], comment?: string) => void;
+     awareness: AwarenessUpdaters;
+ }
+
+ export declare function useColorScheme(): ThemeContextValue;
+
+ export declare function useCommandPalette(): CommandPaletteController;
+
+ export declare function useComments({ idToken, roomId, postId, onMessage }: UseCommentsOptions): UseCommentsReturn;
+
+ declare interface UseCommentsOptions {
+     idToken: string | null;
+     roomId: string | null;
+     postId: string | null;
+     onMessage: OnMessageFn_2;
+ }
+
+ declare interface UseCommentsReturn {
+     comments: CommentItem[];
+     createComment: (content: string, parentCommentId?: string) => Promise<void>;
+     deleteComment: (commentId: string) => Promise<void>;
+     /** True only while the thread itself is being fetched. */
+     loading: boolean;
+     /**
+      * True while `createComment` is posting. Separate from `loading` because
+      * `CommentThread` swaps the whole list out for "Loading comments…" when
+      * `loading` is true — so sharing one flag made every existing comment
+      * disappear for the duration of posting a reply.
+      */
+     submitting: boolean;
+     error: string | null;
+ }
+
+ export declare function useCRDT(options: UseCRDTOptions): UseCRDTReturn;
+
+ declare interface UseCRDTOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     currentChannel: string;
+     connectionState: ConnectionState;
+ }
+
+ declare interface UseCRDTReturn {
+     content: string;
+     applyLocalEdit: (newText: string) => void;
+     hasConflict: boolean;
+     dismissConflict: () => void;
+ }
+
+ export declare function useCursors(options: UseCursorsOptions): UseCursorsReturn;
+
+ declare interface UseCursorsOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     currentChannel: string;
+     connectionState: ConnectionState;
+     clientId: string | null;
+     displayName: string;
+ }
+
+ declare interface UseCursorsReturn {
+     cursors: Map<string, RemoteCursor>;
+     localCursor: RemoteCursor | null;
+     activeMode: CursorMode;
+     sendFreeformUpdate: (x: number, y: number) => void;
+     sendTableUpdate: (row: number, col: number) => void;
+     sendTextUpdate: (position: number, selectionData: TextSelectionData | null, hasSelection: boolean) => void;
+     sendCanvasUpdate: (x: number, y: number, tool: CanvasTool, color: string, size: number) => void;
+     switchMode: (mode: CursorMode) => void;
+ }
+
+ export declare function useCustomFieldTypes(): UseCustomFieldTypesReturn;
+
+ declare interface UseCustomFieldTypesReturn {
+     types: CustomFieldType[];
+     createType: (draft: Omit<CustomFieldType, 'id' | 'createdAt' | 'updatedAt'>) => CustomFieldType;
+     updateType: (id: string, patch: Partial<Omit<CustomFieldType, 'id' | 'createdAt'>>) => void;
+     deleteType: (id: string) => void;
+ }
+
+ /**
+  * Read the surrounding dock, if any. `null` means "standalone" — the body
+  * owns its own header and sizing.
+  */
+ export declare function useDockedPanel(): DockedPanelContextValue | null;
+
+ export declare function useDocTypeProposals(): UseDocTypeProposalsResult;
+
+ declare interface UseDocTypeProposalsResult {
+     proposals: DocTypeProposalRow[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+     promote: (proposalId: string) => Promise<void>;
+     reject: (proposalId: string) => Promise<void>;
+ }
+
+ export declare function useDocumentComments(options: UseDocumentCommentsOptions): UseDocumentCommentsReturn;
+
+ declare interface UseDocumentCommentsOptions {
+     documentId: string;
+     idToken: string | null;
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     connectionState: string;
+ }
+
+ declare interface UseDocumentCommentsReturn {
+     comments: Record<string, CommentThread[]>;
+     addComment: (sectionId: string, text: string, parentCommentId?: string | null) => Promise<void>;
+     resolveThread: (sectionId: string, commentId: string) => Promise<void>;
+     unresolveThread: (sectionId: string, commentId: string) => Promise<void>;
+     loading: boolean;
+ }
+
+ export declare function useDocumentExport(ydoc: Y.Doc | null): UseDocumentExportReturn;
+
+ declare interface UseDocumentExportReturn {
+     exportJSON: () => DocumentData | null;
+ }
+
+ export declare function useDocumentItems(options: UseDocumentItemsOptions): UseDocumentItemsReturn;
+
+ declare interface UseDocumentItemsOptions {
+     documentId: string;
+     /** Section IDs to load items for. Items are fetched per-section. */
+     sectionIds: string[];
+     idToken: string | null;
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     connectionState: string;
+ }
+
+ declare interface UseDocumentItemsReturn {
+     items: Record<string, TaskItem[]>;
+     addItem: (sectionId: string, item: Partial<TaskItem>) => Promise<void>;
+     updateItem: (sectionId: string, itemId: string, updates: Partial<TaskItem>) => Promise<void>;
+     removeItem: (sectionId: string, itemId: string) => Promise<void>;
+     ackItem: (sectionId: string, itemId: string) => Promise<void>;
+     loading: boolean;
+     /**
+      * Per-section load failures, keyed by sectionId. A section present here
+      * failed to load — which is NOT the same as having no items, and the two
+      * used to be indistinguishable (see the catch in the load effect).
+      * Sections that loaded fine are absent from this map.
+      */
+     itemErrors: Record<string, string>;
+ }
+
+ export declare function useDocumentMetadata(ydoc: Y.Doc | null): UseDocumentMetadataReturn;
+
+ declare interface UseDocumentMetadataReturn {
+     meta: DocumentMeta | null;
+     updateMeta: (partial: Partial<DocumentMeta>) => void;
+ }
+
+ export declare function useDocumentReviews(options: UseDocumentReviewsOptions): UseDocumentReviewsReturn;
+
+ declare interface UseDocumentReviewsOptions {
+     documentId: string;
+     idToken: string | null;
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     connectionState: string;
+ }
+
+ declare interface UseDocumentReviewsReturn {
+     sectionReviews: Record<string, SectionReview[]>;
+     reviewSection: (sectionId: string, status: string, comment?: string) => Promise<void>;
+     loading: boolean;
+ }
+
+ export declare function useDocuments(options: UseDocumentsOptions): UseDocumentsReturn;
+
+ declare interface UseDocumentsOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     connectionState: ConnectionState;
+ }
+
+ declare interface UseDocumentsReturn {
+     documents: DocumentInfo[];
+     presence: Record<string, DocumentPresenceUser[]>;
+     loading: boolean;
+     createDocument: (meta: {
+         title: string;
+         type: string;
+         description?: string;
+     }) => void;
+     deleteDocument: (documentId: string) => void;
+     updateDocumentMeta: (documentId: string, meta: Partial<DocumentInfo>) => void;
+     refreshDocuments: () => void;
+     refreshPresence: () => void;
+ }
+
+ export declare function useDocumentTypes(options?: UseDocumentTypesOptions): UseDocumentTypesReturn;
+
+ declare interface UseDocumentTypesOptions {
+     /** Cognito ID token. Attached to every server call when present. */
+     idToken?: string | null;
+ }
+
+ declare interface UseDocumentTypesReturn {
+     types: DocumentType_2[];
+     /** True while the initial server fetch (or a refresh) is in flight. */
+     loading: boolean;
+     /** 'remote' = list reflects the server; 'cache' = offline fallback. */
+     source: TypesSource;
+     /** Last fetch error (when source === 'cache'), else null. */
+     error: string | null;
+     /** Re-fetch from the server. */
+     refresh: () => Promise<void>;
+     createType: (data: Omit<DocumentType_2, 'id' | 'createdAt' | 'updatedAt'>) => Promise<SaveOutcome>;
+     updateType: (id: string, patch: Partial<Omit<DocumentType_2, 'id' | 'createdAt'>>) => Promise<SaveOutcome>;
+     deleteType: (id: string) => Promise<DeleteOutcome>;
+     getType: (id: string) => DocumentType_2 | undefined;
+ }
+
+ export declare function useEventCallback<A extends any[], R>(fn: ((...args: A) => R) | undefined): (...args: A) => R | undefined;
+
+ export declare function useFriends({ idToken }: UseFriendsOptions): UseFriendsReturn;
+
+ declare interface UseFriendsOptions {
+     idToken: string | null;
+ }
+
+ declare interface UseFriendsReturn {
+     followers: PublicProfile[];
+     following: PublicProfile[];
+     friends: PublicProfile[];
+     follow: (userId: string) => Promise<void>;
+     unfollow: (userId: string) => Promise<void>;
+     loading: boolean;
+     error: string | null;
+     /**
+      * Failure of the three list loads specifically. Kept separate from `error`,
+      * which is whatever the last follow/unfollow reported.
+      *
+      * A caller cannot use `error` to decide between "you follow nobody" and "we
+      * never managed to read your graph": a refused *follow* also sets `error`,
+      * so keying an error state off it made a rejected button click claim the
+      * whole graph had failed to load. Only `loadError` means the lists below are
+      * empty because we do not know, not because they are empty.
+      */
+     loadError: string | null;
+ }
+
+ export declare function useGroups({ idToken }: UseGroupsOptions): UseGroupsReturn;
+
+ declare interface UseGroupsOptions {
+     idToken: string | null;
+ }
+
+ declare interface UseGroupsReturn {
+     groups: GroupItem[];
+     /**
+      * Re-run `GET /api/groups`. Called once on mount (and on every `idToken`
+      * change); exposed so a failed load can be retried without a remount.
+      */
+     refresh: () => Promise<void>;
+     /**
+      * `false` until the first `GET /api/groups` has settled. Distinguishes
+      * "the server says you have no groups" from "we have not asked yet" —
+      * without it an empty `groups` array renders the same "No groups yet"
+      * empty state in both cases.
+      */
+     loaded: boolean;
+     /**
+      * Failure of the list load specifically. Kept separate from `error`, which
+      * is whatever the last create/join/invite/… attempt reported: a refused
+      * invite must not blank out a list that loaded perfectly well.
+      */
+     loadError: string | null;
+     createGroup: (name: string, description?: string, visibility?: 'public' | 'private') => Promise<void>;
+     deleteGroup: (groupId: string) => Promise<void>;
+     joinGroup: (groupId: string) => Promise<void>;
+     leaveGroup: (groupId: string) => Promise<void>;
+     inviteUser: (groupId: string, userId: string) => Promise<void>;
+     acceptInvite: (groupId: string, accept: boolean) => Promise<void>;
+     loadMembers: (groupId: string) => Promise<void>;
+     members: MemberItem[];
+     loading: boolean;
+     error: string | null;
+ }
+
+ export declare function useIdentityAdmin(): UseIdentityAdminReturn;
+
+ declare interface UseIdentityAdminReturn {
+     authenticated: boolean;
+     loading: boolean;
+     error: string | null;
+     login: (email: string, password: string) => Promise<void>;
+     logout: () => Promise<void>;
+     checkSession: () => Promise<void>;
+ }
+
+ export declare function useIdentityAudit(): UseIdentityAuditReturn;
+
+ declare interface UseIdentityAuditReturn {
+     records: AuditRecord[];
+     loading: boolean;
+     error: string | null;
+     query: (params: AuditQueryParams) => Promise<void>;
+     getEntityHistory: (entityType: string, entityId: string) => Promise<AuditRecord[]>;
+     getStateAtTime: (entityId: string, timestamp: number) => Promise<Record<string, unknown> | null>;
+ }
+
+ export declare function useIdentityClients(): UseIdentityClientsReturn;
+
+ declare interface UseIdentityClientsReturn {
+     clients: IdentityClient[];
+     loading: boolean;
+     error: string | null;
+     createClient: (input: CreateClientInput) => Promise<IdentityClient | null>;
+     updateClient: (clientId: string, input: UpdateClientInput) => Promise<IdentityClient | null>;
+     deleteClient: (clientId: string) => Promise<void>;
+     createWithPool: (input: CreateClientWithPoolInput) => Promise<IdentityClient | null>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityContext(): IdentityContextValue;
+
+ export declare function useIdentityDiagnostics(): UseIdentityDiagnosticsReturn;
+
+ declare interface UseIdentityDiagnosticsReturn {
+     diagnostics: DiagnosticsInfo | null;
+     rates: RateInfo | null;
+     dlq: DlqEntry[];
+     loading: boolean;
+     error: string | null;
+     redriveDlq: (id: string) => Promise<void>;
+     purgeDlq: (id: string) => Promise<void>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityEmailTemplates(): UseIdentityEmailTemplatesReturn;
+
+ declare interface UseIdentityEmailTemplatesReturn {
+     templates: EmailTemplate[];
+     loading: boolean;
+     error: string | null;
+     createTemplate: (input: CreateEmailTemplateInput) => Promise<EmailTemplate | null>;
+     updateTemplate: (templateId: string, input: UpdateEmailTemplateInput) => Promise<EmailTemplate | null>;
+     deleteTemplate: (templateId: string) => Promise<void>;
+     testSend: (templateId: string, recipientEmail: string) => Promise<void>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityGroups(poolId: string | null): UseIdentityGroupsReturn;
+
+ declare interface UseIdentityGroupsReturn {
+     groups: IdentityGroup[];
+     loading: boolean;
+     error: string | null;
+     createGroup: (input: CreateGroupInput) => Promise<IdentityGroup | null>;
+     updateGroup: (groupId: string, input: UpdateGroupInput) => Promise<IdentityGroup | null>;
+     deleteGroup: (groupId: string) => Promise<void>;
+     addMember: (groupId: string, userId: string) => Promise<void>;
+     removeMember: (groupId: string, userId: string) => Promise<void>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityMfa(): UseIdentityMfaReturn;
+
+ export declare function useIdentityMfaAdmin(): UseIdentityMfaAdminReturn;
+
+ declare interface UseIdentityMfaAdminReturn {
+     metrics: MfaMetrics | null;
+     users: IdentityUser[];
+     pools: IdentityPool[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+ }
+
+ declare interface UseIdentityMfaReturn {
+     devices: MfaDevice[];
+     loading: boolean;
+     error: string | null;
+     setupDevice: (poolId: string, userId: string, deviceName: string) => Promise<MfaSetupResult | null>;
+     verifySetup: (poolId: string, userId: string, deviceId: string, code: string) => Promise<boolean>;
+     renameDevice: (poolId: string, userId: string, deviceId: string, newName: string) => Promise<void>;
+     removeDevice: (poolId: string, userId: string, deviceId: string) => Promise<void>;
+     refresh: (poolId: string, userId: string) => Promise<void>;
+ }
+
+ export declare function useIdentityPools(): UseIdentityPoolsReturn;
+
+ declare interface UseIdentityPoolsReturn {
+     pools: IdentityPool[];
+     loading: boolean;
+     error: string | null;
+     createPool: (input: CreatePoolInput) => Promise<IdentityPool | null>;
+     updatePool: (poolId: string, input: UpdatePoolInput) => Promise<IdentityPool | null>;
+     deletePool: (poolId: string) => Promise<void>;
+     getStats: () => Promise<PoolStats[]>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityResource<T>(initialData: T, opts: UseIdentityResourceOptions): UseIdentityResourceReturn<T>;
+
+ declare interface UseIdentityResourceOptions {
+     url: string | null;
+     fetchOnMount?: boolean;
+ }
+
+ declare interface UseIdentityResourceReturn<T> {
+     data: T;
+     loading: boolean;
+     error: string | null;
+     setData: React.Dispatch<React.SetStateAction<T>>;
+     refresh: () => Promise<void>;
+     mutate: <R>(url: string, options?: RequestInit) => Promise<R | null>;
+ }
+
+ export declare function useIdentitySetupStatus(): UseIdentitySetupStatusReturn;
+
+ declare interface UseIdentitySetupStatusReturn {
+     status: SetupStatus | null;
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityUsers(poolId: string | null): UseIdentityUsersReturn;
+
+ declare interface UseIdentityUsersReturn {
+     users: IdentityUser[];
+     loading: boolean;
+     error: string | null;
+     createUser: (input: CreateUserInput) => Promise<IdentityUser | null>;
+     updateUser: (userId: string, input: UpdateUserInput) => Promise<IdentityUser | null>;
+     deleteUser: (userId: string) => Promise<void>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdleDetector(options?: UseIdleDetectorOptions): UseIdleDetectorReturn;
+
+ declare interface UseIdleDetectorOptions {
+     /** Idle timeout in milliseconds (default: 120000 = 2 minutes). */
+     timeoutMs?: number;
+ }
+
+ declare interface UseIdleDetectorReturn {
+     isIdle: boolean;
+ }
+
+ /**
+  * Returns the host-provided `getImageUrl(imageId): string` callback.
+  * Throws when called outside a provider — catches the "I forgot to mount
+  * the services provider" misuse at first render rather than first
+  * thumbnail.
+  */
+ export declare function useImageUrl(): (imageId: string) => string;
+
+ export declare function useIngestAudit(filters?: IngestAuditFilters): UseIngestAuditResult;
+
+ declare interface UseIngestAuditResult {
+     entries: IngestAuditEntry[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIngestDLQ(): UseIngestDLQResult;
+
+ declare interface UseIngestDLQResult {
+     entries: DLQEntryRow[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+     replay: (id: string) => Promise<void>;
+     drop: (id: string) => Promise<void>;
+ }
+
+ export declare function useIngestItems(options?: UseIngestItemsOptions): UseIngestItemsReturn;
+
+ declare interface UseIngestItemsOptions {
+     sourceId?: string | null;
+     status?: IngestItemStatus | null;
+ }
+
+ declare interface UseIngestItemsReturn {
+     items: IngestItem[];
+     loading: boolean;
+     /** Why the LIST fetch failed. Never set by retry/skip — see `actionError`. */
+     error: string | null;
+     refresh: () => Promise<void>;
+     retryItem: (itemId: string) => Promise<boolean>;
+     skipItem: (itemId: string) => Promise<boolean>;
+     /**
+      * Why the last `retryItem`/`skipItem` failed, or `null`. Additive
+      * (v2.95.0).
+      *
+      * These used to write into `error`, the same state the list loader owns.
+      * A failed Skip therefore made `IngestItemsPage` hide the entire,
+      * correctly-loaded table behind a banner reading "Failed to load ingest
+      * items." — a statement that was simply false — whose Retry button
+      * re-fetched the list rather than re-trying the skip. The next refresh
+      * cleared `error`, everything reappeared, and the operator concluded the
+      * skip had worked. It had not.
+      */
+     actionError: string | null;
+     /** Dismiss `actionError`. Additive (v2.95.0). */
+     clearActionError: () => void;
+ }
+
+ export declare function useIngestProgress(): UseIngestProgressResult;
+
+ declare interface UseIngestProgressResult {
+     events: IngestProgressEvent[];
+     activeSyncs: Map<string, ActiveSync>;
+     clearEvents: () => void;
+ }
+
+ export declare function useIngestSources(): UseIngestSourcesReturn;
+
+ declare interface UseIngestSourcesReturn {
+     sources: IngestSource[];
+     loading: boolean;
+     /** Why the LIST fetch failed. Never set by the mutations — see `actionError`. */
+     error: string | null;
+     refresh: () => Promise<void>;
+     createSource: (data: Omit<IngestSource, 'sourceId' | 'createdAt' | 'updatedAt' | 'lastSyncAt' | 'lastSyncStats'>) => Promise<IngestSource | null>;
+     deleteSource: (sourceId: string) => Promise<boolean>;
+     triggerSync: (sourceId: string) => Promise<boolean>;
+     /**
+      * Why the last create/delete/sync failed, or `null`. Additive (v2.95.0).
+      *
+      * These used to write into `error`, which `SourcesPage` renders as the
+      * hard-coded "Failed to load sources." — blaming the wrong operation — and
+      * which `refresh()` clears unconditionally. A failed "Sync now" was
+      * therefore erased before it could be rendered at all: the spinner stopped
+      * and nothing else happened, exactly like a successful trigger, and the
+      * operator walked away believing a sync was running.
+      */
+     actionError: string | null;
+     /** Dismiss `actionError`. Additive (v2.95.0). */
+     clearActionError: () => void;
+ }
+
+ /**
+  * Register keyboard shortcuts with automatic cleanup.
+  * Shortcuts are skipped when typing in input/textarea/contentEditable elements.
+  *
+  * @example
+  * useKeyboardShortcuts([
+  *   { key: 's', meta: true, handler: save },
+  *   { key: 'Enter', meta: true, handler: run },
+  *   { key: 'Escape', handler: clearSelection, preventDefault: false },
+  * ]);
+  */
+ export declare function useKeyboardShortcuts(shortcuts: KeyboardShortcut[]): void;
+
+ export declare function useLikes({ idToken, roomId, postId, commentId, onMessage }: UseLikesOptions): UseLikesReturn;
+
+ declare interface UseLikesOptions {
+     idToken: string | null;
+     roomId: string | null;
+     postId: string | null;
+     commentId?: string | null;
+     onMessage: OnMessageFn_3;
+ }
+
+ declare interface UseLikesReturn {
+     isLiked: boolean;
+     likeCount: number;
+     whoLiked: PublicProfile[];
+     toggle: () => Promise<void>;
+     reactWithEmoji: (emoji: string) => Promise<void>;
+     loading: boolean;
+     error: string | null;
+ }
+
+ export declare function useMappingReviewQueue(): UseMappingReviewQueueResult;
+
+ declare interface UseMappingReviewQueueResult {
+     items: IngestItem[];
+     threshold: number;
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+     remap: (itemId: string, typeId: string) => Promise<void>;
+     skip: (itemId: string) => Promise<void>;
+ }
+
+ /**
+  * Aggregate mention-able users from awareness (online) + user directory (offline) + groups.
+  * Online users appear first, then offline users, then groups.
+  */
+ export declare function useMentionUsers(participants: Participant[]): MentionUser[];
+
+ export declare function useMuteWhileTalking({ localStream, isMuted, threshold, triggerMs, cooldownMs, }: UseMuteWhileTalkingOptions): boolean;
+
+ declare interface UseMuteWhileTalkingOptions {
+     localStream: MediaStream | null;
+     isMuted: boolean;
+     /** dB threshold for "talking". Default -45 — well above ambient. */
+     threshold?: number;
+     /** Sustained talking duration (ms) before the toast fires. Default 1500. */
+     triggerMs?: number;
+     /** Cool-down between toast fires (ms). Default 6000. */
+     cooldownMs?: number;
+ }
+
+ export declare function useMyMentionsAndTasks({ sections, comments, displayName, userId, }: UseMyMentionsAndTasksArgs): MyItem[];
+
+ declare interface UseMyMentionsAndTasksArgs {
+     sections: Section[];
+     comments: Record<string, CommentThread[]>;
+     displayName: string;
+     userId: string;
+ }
+
+ /**
+  * Non-throwing variant: returns `null` when there is no `<IdentityProvider>`
+  * above.
+  *
+  * `useIdentityContext` is the right hook for a component that genuinely
+  * cannot work unsigned-in. It is the wrong hook for a component that would
+  * merely *like* a token — calling it there turns an optional enhancement
+  * into a hard mount-time dependency on the provider. `ObservabilityProvider`
+  * is exactly that case: it wants a bearer token when one exists, and must
+  * still render (against fixture data) in a backendless demo with no identity
+  * in the tree.
+  */
+ export declare function useOptionalIdentityContext(): IdentityContextValue | null;
+
+ export declare function usePipelineDefs(): UsePipelineDefsReturn;
+
+ declare interface UsePipelineDefsReturn {
+     pipelines: PipelineDefSummary[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function usePipelineEditorServices(): PipelineEditorServices;
+
+ export declare function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePostsReturn;
+
+ declare interface UsePostsOptions {
+     idToken: string | null;
+     roomId: string | null;
+     onMessage: OnMessageFn_4;
+ }
+
+ declare interface UsePostsReturn {
+     posts: PostItem[];
+     createPost: (content: string) => Promise<void>;
+     editPost: (postId: string, content: string) => Promise<void>;
+     deletePost: (postId: string) => Promise<void>;
+     getUserPosts: (userId: string) => Promise<PostItem[]>;
+     /** True during the initial fetch and `loadMore`. NOT set by mutations. */
+     loading: boolean;
+     /**
+      * True while `createPost` / `editPost` / `deletePost` is in flight.
+      *
+      * Kept separate from `loading` on purpose — a mutation must not drop the
+      * feed back into its "Loading…" skeleton. But the flag was computed into an
+      * unread `_mutating` and never returned, so the composer's only busy signal
+      * was `loading`, which goes false once the first page resolves and never
+      * moves again. The submit button stayed enabled and labelled "Post" for the
+      * whole request, and a second click created the post twice.
+      */
+     mutating: boolean;
+     error: string | null;
+     /**
+      * Failure of the feed LOAD specifically (initial fetch + `loadMore`). Kept
+      * separate from `error`, which is also set by `createPost`/`editPost`/
+      * `deletePost`.
+      *
+      * Callers use it to tell "this room has no posts" from "we never managed to
+      * read this room". Keying that off `error` made a rejected *send* in an
+      * empty room replace the "No posts yet" empty state with "Couldn't load
+      * posts" — blaming the read for a write that failed, next to a composer that
+      * was already reporting the real reason.
+      */
+     loadError: string | null;
+     hasMore: boolean;
+     loadMore: () => Promise<void>;
+ }
+
+ export declare function usePrefersReducedMotion(): boolean;
+
+ export declare function usePresence(options: UsePresenceOptions): UsePresenceReturn;
+
+ export declare function usePresenceContext(): PresenceContextValue;
+
+ declare interface UsePresenceOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     currentChannel: string;
+     connectionState: ConnectionState;
+     displayName: string;
+ }
+
+ declare interface UsePresenceReturn {
+     users: PresenceUser_2[];
+     setTyping: (isTyping: boolean) => void;
+ }
+
+ export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, 'data-testid': testId, }: UserChipProps): JSX.Element;
+
+ export declare interface UserChipProps {
+     name: string;
+     /** Optional display label (e.g. "@alice"); defaults to `name`. */
+     label?: string;
+     /** Avatar pixel size. Defaults to 20. */
+     avatarSize?: number;
+     /** Override the avatar background color. */
+     avatarColor?: string;
+     /** Show a presence indicator after the name. */
+     presence?: PresenceState;
+     /** Make the whole chip clickable. */
+     onClick?: (e: MouseEvent_2<HTMLElement>) => void;
+     className?: string;
+     style?: CSSProperties;
+     title?: string;
+     'data-testid'?: string;
+ }
+
+ export declare function useReactions(options: UseReactionsOptions): UseReactionsReturn;
+
+ declare interface UseReactionsOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     currentChannel: string;
+     connectionState: ConnectionState;
+ }
+
+ declare interface UseReactionsReturn {
+     activeReactions: EphemeralReaction[];
+     react: (emoji: string) => void;
+ }
+
+ /**
+  * Register a command into the active CommandPaletteProvider for the lifetime
+  * of the calling component. Registers on mount, unregisters on unmount.
+  *
+  * Re-registers whenever the `command` reference changes — wrap in `useMemo`
+  * (or define the command outside the component) to avoid churn.
+  */
+ export declare function useRegisterCommand(command: Command): void;
+
+ export declare function UserFormPage({ user, isEdit, customAttributeDefinitions, onSubmit, onCancel, error, }: UserFormPageProps): JSX.Element;
+
+ export declare interface UserFormPageProps {
+     user?: {
+         userId?: string;
+         email: string;
+         givenName?: string;
+         familyName?: string;
+         nickname?: string;
+         picture?: string;
+         website?: string;
+         customAttributes?: Record<string, unknown>;
+     };
+     isEdit: boolean;
+     poolId: string;
+     customAttributeDefinitions?: Record<string, string>;
+     onSubmit: (data: {
+         email: string;
+         givenName?: string;
+         familyName?: string;
+         nickname?: string;
+         picture?: string;
+         website?: string;
+         customAttributes?: Record<string, unknown>;
+     }) => Promise<void>;
+     onCancel: () => void;
+     error?: string | null;
+ }
+
+ export declare function UserListPage({ users, poolName, onCreateUser, onEditUser, onDeleteUser, loading, }: UserListPageProps): JSX.Element;
+
+ export declare interface UserListPageProps {
+     users: Array<{
+         userId: string;
+         email: string;
+         givenName?: string;
+         familyName?: string;
+         status: string;
+         createdAt: string;
+     }>;
+     poolId: string;
+     poolName: string;
+     onCreateUser: () => void;
+     onEditUser: (userId: string) => void;
+     onDeleteUser: (userId: string) => Promise<void>;
+     loading?: boolean;
+ }
+
+ export declare function UserMenu({ user, items, className, 'data-testid': testId }: UserMenuProps): JSX.Element;
+
+ export declare interface UserMenuItem {
+     label: string;
+     icon?: ReactNode;
+     onClick: () => void;
+     /** Render a divider above this item */
+     separator?: boolean;
+     /** Style this item as destructive */
+     danger?: boolean;
+ }
+
+ export declare interface UserMenuProps {
+     user: UserMenuUser;
+     items: UserMenuItem[];
+     className?: string;
+     'data-testid'?: string;
+ }
+
+ export declare interface UserMenuUser {
+     name: string;
+     email: string;
+     avatarUrl?: string;
+ }
+
+ export declare function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsReturn;
+
+ declare interface UseRoomsOptions {
+     idToken: string | null;
+     onMessage: OnMessageFn_5;
+ }
+
+ declare interface UseRoomsReturn {
+     rooms: RoomItem[];
+     activeRoom: RoomItem | null;
+     setActiveRoom: (room: RoomItem | null) => void;
+     createRoom: (name: string) => Promise<void>;
+     createDM: (peerId: string) => Promise<void>;
+     createGroupRoom: (groupId: string, name: string) => Promise<void>;
+     joinRoom: (roomId: string) => Promise<void>;
+     leaveRoom: (roomId: string) => Promise<void>;
+     loadMembers: (roomId: string) => Promise<void>;
+     members: RoomMemberItem[];
+     loading: boolean;
+     error: string | null;
+     /**
+      * Failure of the `GET /api/rooms` hydrate specifically. Kept separate from
+      * `error`, which is also set by create/join/leave/loadMembers.
+      *
+      * `RoomList` renders "Couldn't load rooms" + Retry whenever the `error` prop
+      * it is given is set and the list is empty — so wiring `error` straight
+      * through made a refused *createRoom* by a user with no rooms yet blame the
+      * read: the panel claimed the room list had failed to load and offered to
+      * re-fetch it, while the create form beside it showed the real reason.
+      * Pass this to `RoomList`'s `error` prop; use `error` for mutation feedback.
+      */
+     loadError: string | null;
+     /** Retry the GET /api/rooms hydrate after a fetch failure. */
+     retry: () => void;
+ }
+
+ export declare function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps): JSX.Element;
+
+ export declare interface UserPickerProps {
+     value: string[];
+     onChange: (userIds: string[]) => void;
+     placeholder?: string;
+     maxSelect?: number;
+ }
+
+ /** Add-a-person. Lives here rather than inside CallControls' private
+  *  icon map so the docked and expanded call chromes can both render the
+  *  same "add people" affordance. */
+ export declare function UserPlusIcon({ size, ...rest }: IconProps): JSX.Element;
+
+ /** Roster glyph (two people, no "+") — the People destination in the
+  *  call side-panel dock. Distinct from UserPlusIcon, which means "invite
+  *  someone new" rather than "show who is here". */
+ export declare function UsersIcon({ size, ...rest }: IconProps): JSX.Element;
+
+ export declare function useSectionList(ydoc: Y.Doc | null): UseSectionListReturn;
+
+ declare interface UseSectionListReturn {
+     sections: Section[];
+     comments: Record<string, CommentThread[]>;
+     addSection: (section: Section) => void;
+     updateSection: (sectionId: string, partial: Partial<Section>) => void;
+     removeSection: (sectionId: string) => void;
+     addItem: (sectionId: string, item: TaskItem) => void;
+     updateItem: (sectionId: string, itemId: string, partial: Partial<TaskItem>) => void;
+     removeItem: (sectionId: string, itemId: string) => void;
+     ackItem: (sectionId: string, itemId: string, userId: string) => void;
+     rejectItem: (sectionId: string, itemId: string, userId: string) => void;
+     getSectionFragment: (sectionId: string) => Y.XmlFragment | null;
+     addComment: (sectionId: string, opts: {
+         text: string;
+         userId: string;
+         displayName: string;
+         color: string;
+         parentCommentId?: string | null;
+     }) => void;
+     resolveThread: (sectionId: string, commentId: string, resolverDisplayName: string) => void;
+     unresolveThread: (sectionId: string, commentId: string) => void;
+ }
+
+ export declare function useSocialProfile({ idToken }: UseSocialProfileOptions): UseSocialProfileReturn;
+
+ declare interface UseSocialProfileOptions {
+     idToken: string | null;
+ }
+
+ declare interface UseSocialProfileReturn {
+     profile: ProfileItem | null;
+     loading: boolean;
+     error: string | null;
+     updateProfile: (updates: Partial<ProfileItem>) => Promise<void>;
+     viewProfile: (userId: string) => Promise<ProfileItem | null>;
+ }
+
+ export declare function useSourceSloMetrics(sourceId: string | undefined, window?: SloWindow): UseSourceSloMetricsResult;
+
+ declare interface UseSourceSloMetricsResult {
+     metrics: SourceSloMetrics | null;
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+ }
+
+ /**
+  * Debounce activeSpeakerId so the spotlight slot only swaps after the new
+  * speaker has been talking for at least `hysteresisMs`. Without this,
+  * every cough, laugh, or short interjection causes flicker.
+  *
+  * `hysteresisMs <= 0` bypasses the timer entirely and commits the new id on
+  * the next effect flush — the escape hatch tests and stories use so the
+  * rendered output tracks the props synchronously.
+  */
+ export declare function useStableActiveSpeaker(activeSpeakerId: string | null | undefined, hysteresisMs: number): string | null;
+
+ export declare function useSyncConflicts(): UseSyncConflictsReturn;
+
+ declare interface UseSyncConflictsReturn {
+     conflicts: SyncConflict[];
+     loading: boolean;
+     /** Why the LIST fetch failed. Never set by resolve/discard — see `actionError`. */
+     error: string | null;
+     /** True when the data came from the local mock fallback. */
+     usingMock: boolean;
+     refresh: () => Promise<void>;
+     resolveConflict: (id: string, resolution: ConflictResolution) => Promise<boolean>;
+     discardConflict: (id: string) => Promise<boolean>;
+     /**
+      * Why the last `resolveConflict` / `discardConflict` failed, or `null`.
+      * Additive.
+      *
+      * These used to write into `error`, which `ConflictsPage` renders as
+      * "Failed to load conflicts: …". A rejected Resolve therefore reported a
+      * load failure for a queue that had loaded perfectly and was still on
+      * screen, while the conflict itself stayed pending — and the next poll
+      * cleared `error`, so the operator was left believing the resolve landed.
+      */
+     actionError: string | null;
+     /** Dismiss `actionError`. Additive. */
+     clearActionError: () => void;
+ }
+
+ /**
+  * Returns the current resolved theme tokens from the nearest ThemeProvider.
+  * Falls back to the default light theme if no provider is present.
+  */
+ export declare function useTheme(): ThemeTokens;
+
+ /**
+  * Returns the current resolved theme tokens from the nearest ThemeProvider.
+  * Falls back to the light theme if no provider is present.
+  */
+ export declare function useThemeContext(): ThemeTokens;
+
+ export declare function useToast(): ToastContextValue;
+
+ /**
+  * Non-throwing variant, for components that WANT to toast but must still
+  * mount where no provider exists — a widget reused inside a panel or
+  * rendered bare in a component test. Callers use `toast?.(…)`; the
+  * notification is simply skipped rather than crashing the subtree.
+  */
+ export declare function useToastOptional(): ToastContextValue | null;
+
+ export declare function useTrackStateBump(stream: MediaStream | undefined | null, participantLabel: string): number;
+
+ export declare function useTypedDocuments({ idToken, typeId }: UseTypedDocumentsOptions): UseTypedDocumentsReturn;
+
+ declare interface UseTypedDocumentsOptions {
+     idToken: string | null;
+     typeId: string | null;
+ }
+
+ declare interface UseTypedDocumentsReturn {
+     documents: TypedDocument[];
+     loading: boolean;
+     error: string | null;
+     createDocument: (values: Record<string, TypedDocumentValue>) => Promise<TypedDocument>;
+     refresh: () => void;
+ }
+
+ /**
+  * Sync filter state with URL search params for shareable filter links.
+  * Each filter key maps to a query param; undefined values are omitted.
+  *
+  * @param defaults Default filter values (used when param is missing)
+  * @returns { filters, setFilter, clearFilters }
+      *
+      * @example
+      * const { filters, setFilter } = useUrlFilterState({
+      *   status: 'all',
+      *   search: undefined,
+      * });
+      *
+      * // URL: /pipelines?status=running&search=test
+      * // filters = { status: 'running', search: 'test' }
+      */
+  export declare function useUrlFilterState<T extends Record<string, string | undefined>>(defaults: T): UrlFilterState<T>;
+
+  export declare function useVersionHistory(options: UseVersionHistoryOptions): UseVersionHistoryReturn;
+
+  declare interface UseVersionHistoryOptions {
+      channel: string;
+      sendMessage: (msg: Record<string, unknown>) => void;
+      onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+  }
+
+  declare interface UseVersionHistoryReturn {
+      versions: VersionEntry[];
+      loading: boolean;
+      fetchVersions: () => void;
+      previewVersion: (timestamp: number) => void;
+      restoreVersion: (timestamp: number) => void;
+      previewDoc: Y.Doc | null;
+      previewTimestamp: number | null;
+      clearPreview: () => void;
+      /** Save a named version snapshot. */
+      saveVersion: (name: string) => void;
+      /** Extract sections as plain JSON from a Y.Doc (live or preview). */
+      extractSections: (doc: Y.Doc) => SnapshotSection[];
+      /** Compare sections: load preview for a given timestamp, returns sections via callback. */
+      compareSections: SnapshotSection[] | null;
+      compareTimestamp: number | null;
+      compareVersion: (timestamp: number) => void;
+      clearCompare: () => void;
+  }
+
+  export declare function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn;
+
+  declare interface UseVideoCallOptions {
+      documentId: string;
+      idToken: string | null;
+      /** Current document meta (from Y.js). */
+      meta: DocumentMeta | null;
+      /** Update document meta (writes to Y.js). */
+      updateMeta: (partial: Partial<DocumentMeta>) => void;
+      /** Send WebSocket message to gateway (for document list metadata sync). */
+      sendMessage: (msg: Record<string, unknown>) => void;
+      /** Display name for participant tracking. */
+      displayName?: string;
+  }
+
+  declare interface UseVideoCallReturn {
+      callState: CallState;
+      sessionId: string | null;
+      stageToken: string | null;
+      participantId: string | null;
+      userId: string | null;
+      error: string | null;
+      /** Whether another user started a call (detected via Y.js meta). */
+      hasActiveCall: boolean;
+      /** Start a new call (creates session + joins). */
+      startCall: () => Promise<void>;
+      /** Join an existing call by sessionId. */
+      joinCall: (sessionId: string) => Promise<void>;
+      /** End/leave the call. */
+      endCall: () => Promise<void>;
+  }
+
+  export declare function useVideoSessions(documentId: string, idToken: string | null): {
+      sessions: VideoSession[];
+      loading: boolean;
+      fetchSessions: () => Promise<void>;
+  };
+
+  export declare function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn;
+
+  export declare function useWebSocketContext(): WebSocketContextValue;
+
+  declare interface UseWebSocketOptions {
+      config: GatewayConfig;
+      onMessage?: (msg: GatewayMessage) => void;
+  }
+
+  declare interface UseWebSocketReturn {
+      connectionState: ConnectionState;
+      lastError: GatewayError | null;
+      sessionToken: string | null;
+      clientId: string | null;
+      currentChannel: string;
+      switchChannel: (channel: string) => void;
+      sendMessage: (msg: Record<string, unknown>) => void;
+      disconnect: () => void;
+      reconnect: () => void;
+  }
+
+  export declare function useYjsDoc(options: UseYjsDocOptions): UseYjsDocReturn;
+
+  declare interface UseYjsDocOptions {
+      documentId: string;
+      ws: UseWebSocketReturn;
+      onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+      /**
+       * Optional callback fired when the server replaces the document
+       * (e.g. via version restore) and we rebuild the Y.Doc + provider.
+       * Consumers (observers in sibling hooks) can use it to re-attach.
+       */
+      onDocReplaced?: (ydoc: Y.Doc, provider: GatewayProvider) => void;
+  }
+
+  declare interface UseYjsDocReturn {
+      ydoc: Y.Doc | null;
+      provider: GatewayProvider | null;
+      synced: boolean;
+      /**
+       * Bumped every time the underlying Y.Doc / provider is recreated
+       * (initial mount counts as 0). Sibling hooks can depend on this
+       * to re-run their observer setup.
+       */
+      docVersion: number;
+  }
+
+  export declare type ValidationCode = 'NO_TRIGGER' | 'MULTIPLE_TRIGGERS' | 'CYCLE_DETECTED' | 'INVALID_HANDLE' | 'MISSING_CONFIG' | 'APPROVAL_NO_APPROVERS' | 'JOIN_INSUFFICIENT_INPUTS' | 'ORPHAN_NODE' | 'DEAD_END' | 'UNUSED_FORK_BRANCH' | 'UNUSED_CONDITION_BRANCH' | 'NO_ERROR_HANDLER' | 'LLM_NO_MAX_TOKENS' | 'UNGUARDED_APPROVAL_TIMEOUT' | 'LARGE_FORK' | 'DEEP_CHAIN' | 'DUPLICATE_NODE_NAME' | 'LOW_TEMPERATURE_NON_DETERMINISTIC_PROMPT' | 'NO_PUBLISHED_VERSION_BUT_TRIGGER_SCHEDULED' | 'UNREACHABLE_AFTER_CONDITION_FALSE' | 'FORK_WITHOUT_MATCHING_JOIN';
+
+  export declare interface ValidationIssue {
+      code: ValidationCode;
+      message: string;
+      severity: 'error' | 'warning';
+      nodeId?: string;
+      edgeId?: string;
+      /** For config errors — which field on the node is at fault. */
+      field?: string;
+  }
+
+  export declare interface ValidationResult {
+      errors: ValidationIssue[];
+      warnings: ValidationIssue[];
+      /** `errors.length === 0`. */
+      isValid: boolean;
+      /** `errors.length === 0` — blocks publish (and therefore run), not save. */
+      canPublish: boolean;
+  }
+
+  /**
+   * Glyph per verdict, as a second non-colour channel.
+   *
+   * Check / bang / cross are distinguishable in monochrome and at small sizes,
+   * which is the whole point: the accessibility requirement is not "add an icon",
+   * it is "a reader who sees no colour still gets the verdict".
+   */
+  export declare const VERDICT_GLYPH: Record<ChangeVerdict, string>;
+
+  /** Human label per verdict. Always rendered — the chip must never be colour-only. */
+  export declare const VERDICT_LABEL: Record<ChangeVerdict, string>;
+
+  /** Tone per verdict, resolved through the library-wide semantic scale. */
+  export declare const VERDICT_TONE: {
+      readonly pass: "success";
+      readonly concern: "caution";
+      readonly fail: "danger";
+  };
+
+  export declare function VerdictChip({ verdict, status, error, revision, defaultExpanded, className, 'data-testid': testId, }: VerdictChipProps): JSX.Element;
+
+  export declare interface VerdictChipProps {
+      verdict?: ChangeReviewVerdict | undefined;
+      /** How the review itself is going. Defaults to `idle`. */
+      status?: ChangeReviewStatus | undefined;
+      /** Why the review failed. Shown verbatim when `status` is `failed`. */
+      error?: string | undefined;
+      /**
+       * The change's CURRENT revision. Pass it, or staleness cannot be detected
+       * and an out-of-date verdict will render as if it still applies.
+       */
+      revision?: string | undefined;
+      /** Start with the reasoning open. Default false — see the note above. */
+      defaultExpanded?: boolean;
+      className?: string;
+      'data-testid'?: string;
+  }
+
+  /**
+   * What the UI actually renders. Derived — never passed in directly, so a host
+   * cannot claim `ready` for a verdict that is out of date.
+   */
+  export declare type VerdictState = 'absent' | 'pending' | 'failed' | 'stale' | 'ready';
+
+  declare interface VersionEntry {
+      timestamp: number;
+      age: number;
+      name?: string;
+      author?: string;
+      type?: 'manual' | 'auto' | 'pre-restore';
+  }
+
+  /**
+   * Static N-way grid: 1 / 2×2 / 3×3 / 4×4 column count based on participant
+   * count. Tiles do NOT reflow on speaker change — speaking is indicated via
+   * border highlight on the tile only (see ParticipantTile). For an
+   * active-speaker-aware spotlight layout, use `HangoutLayout` instead.
+   */
+  export declare function VideoGrid({ participants, className, style }: VideoGridProps): JSX.Element;
+
+  export declare interface VideoGridProps {
+      participants: VideoParticipant[];
+      /**
+       * Sizing / spacing classes from the caller. Prefer this over `style`:
+       * callers only ever needed `style` to constrain the grid's width, which
+       * forced a wrapper `<div>` on every consumer (inline styles are banned in
+       * demos and stories). Composed through `cn()`, so a caller class wins.
+       */
+      className?: string;
+      /** @deprecated Use `className`. Kept so existing callers keep compiling. */
+      style?: CSSProperties;
+  }
+
+  export declare function VideoIcon({ size, ...rest }: IconProps): JSX.Element;
+
+  export declare function VideoOffIcon({ size, ...rest }: IconProps): JSX.Element;
+
+  export declare interface VideoParticipant {
+      id: string;
+      displayName: string;
+      avatarUrl?: string;
+      isSpeaking?: boolean;
+      isMuted?: boolean;
+      isLocal?: boolean;
+      videoElement?: ReactNode;
+  }
+
+  export declare function VideoPlayer({ src, stream, autoPlay, muted, loop, controls, poster, phase: controlledPhase, className, style, onPhaseChange, onTimeUpdate, }: VideoPlayerProps): JSX.Element;
+
+  export declare function VideoPlayerModal({ onClose, sources, title, subtitle, autoPlay, muted, hideDownload, header, footer, className, }: VideoPlayerModalProps): JSX.Element;
+
+  export declare interface VideoPlayerModalProps {
+      /** Required — backdrop click + Escape both fire this. */
+      onClose: () => void;
+      /** One or more media URLs. The first plays first; multiple ⇒ segment switcher. */
+      sources: VideoPlayerSource[];
+      /** Optional small title shown in the modal header (e.g. channel name). */
+      title?: string;
+      /** Optional subtitle shown under the title (e.g. start time + duration). */
+      subtitle?: string;
+      /** Auto-play the first source on mount. Default true. */
+      autoPlay?: boolean;
+      /** Start muted (useful when autoPlay is on — many browsers require it). Default false. */
+      muted?: boolean;
+      /** Hide the per-source Download link in the footer. Default false. */
+      hideDownload?: boolean;
+      /** Render extra content in the header (right side, before the close button). */
+      header?: ReactNode;
+      /** Render extra content in the footer (right side). */
+      footer?: ReactNode;
+      className?: string;
+  }
+
+  export declare interface VideoPlayerProps {
+      src?: string;
+      /**
+       * MediaStream source for WebRTC playback (WHEP, RTCPeerConnection.ontrack,
+       * getUserMedia, etc.). When set, attached to the underlying <video>'s
+       * `srcObject`. Takes precedence over `src` if both are supplied. Pass
+       * `null` to clear.
+       */
+      stream?: MediaStream | null;
+      autoPlay?: boolean;
+      muted?: boolean;
+      loop?: boolean;
+      controls?: boolean;
+      poster?: string;
+      phase?: PlayerPhase;
+      className?: string;
+      style?: CSSProperties;
+      onPhaseChange?: (phase: PlayerPhase) => void;
+      onTimeUpdate?: (currentTime: number, duration: number) => void;
+  }
+
+  export declare interface VideoPlayerSource {
+      /** Direct media URL (mp4 / webm / etc) served with Range support. */
+      url: string;
+      /** Optional human label for the segment switcher (e.g. "Segment 1"). */
+      label?: string;
+      /** Optional size in bytes — shown next to the label when present. */
+      sizeBytes?: number;
+  }
+
+  declare interface VideoSession {
+      documentId: string;
+      sessionId: string;
+      vnlSessionId: string;
+      status: 'active' | 'ended';
+      startedAt: string;
+      endedAt?: string;
+      startedBy: string;
+      participants: VideoSessionParticipant[];
+      transcriptStatus?: 'pending' | 'processing' | 'available' | 'failed';
+      transcript?: string;
+      aiSummary?: string;
+  }
+
+  declare interface VideoSessionParticipant {
+      userId: string;
+      displayName: string;
+      joinedAt: string;
+  }
+
+  export declare function ViewerCount({ count, className, style }: ViewerCountProps): JSX.Element;
+
+  export declare interface ViewerCountProps {
+      count: number;
+      /**
+       * Positioning / spacing classes from the caller. Prefer this over `style`:
+       * callers overlaying the badge on a player had no className seam, so they
+       * were forced into an inline style.
+       */
+      className?: string;
+      /** @deprecated Use `className`. Kept so existing callers keep compiling. */
+      style?: CSSProperties;
+  }
+
+  export declare type ViewMode = 'editor' | 'ack' | 'reader';
+
+  export declare function ViewportFillRegion({ bottomGap, minHeight, className, children, 'data-testid': testId, }: ViewportFillRegionProps): JSX.Element;
+
+  export declare interface ViewportFillRegionProps {
+      /** Space to leave between the region's bottom edge and the window bottom. */
+      bottomGap?: number;
+      /** Floor for the computed height, so the region never collapses. */
+      minHeight?: number;
+      className?: string;
+      children: React.ReactNode;
+      'data-testid'?: string;
+  }
+
+  export declare type WatermarkGravity = 'northwest' | 'north' | 'northeast' | 'west' | 'center' | 'east' | 'southwest' | 'south' | 'southeast';
+
+  /** Host declaration of inbound webhook delivery. See `webhookRelay`. */
+  declare interface WebhookRelayStatus {
+      /** True ONLY when a delivery to the webhook path actually triggers a run. */
+      enabled: boolean;
+      /**
+       * Public origin the webhook URL is built from, e.g. `https://api.example.com`.
+       * Falls back to `VITE_SOCIAL_API_URL`, then to the local dev port.
+       */
+      publicUrlBase?: string;
+  }
+
+  export declare interface WebSocketContextValue {
+      connectionState: ConnectionState;
+      sendMessage: (msg: Record<string, unknown>) => void;
+      onMessage: OnMessageFn_6;
+      ws: UseWebSocketReturn;
+      clientId: string | null;
+      sessionToken: string | null;
+  }
+
+  export declare function WebSocketProvider({ value, children, }: {
+      value: WebSocketContextValue;
+      children: ReactNode;
+  }): JSX.Element;
+
+  export declare function WorkArea({ breadcrumbs, toolbar, children, status, padded, tone, className, bodyClassName, 'data-testid': testId, }: WorkAreaProps): JSX.Element;
+
+  export declare interface WorkAreaProps {
+      /** The trail row. Usually a `<Breadcrumbs>`; renders nothing when omitted. */
+      breadcrumbs?: ReactNode;
+      /** The action row. Usually a `<Toolbar>`. Sits below the trail. */
+      toolbar?: ReactNode;
+      /** Scrolling page content. */
+      children: ReactNode;
+      /** Pinned bottom row — counts, freshness, a connection pill. */
+      status?: ReactNode;
+      /** Comfortable padding around `children`. Off for canvases and nested rails. */
+      padded?: boolean;
+      tone?: WorkAreaTone;
+      className?: string;
+      /** Applied to the scrolling body, not the column. */
+      bodyClassName?: string;
+      'data-testid'?: string;
+  }
+
+  /** @see SurfaceTone — which colour family the work area paints in. */
+  export declare type WorkAreaTone = SurfaceTone;
+
+  export declare const zIndex: {
+      /** Sticky headers, fixed toolbars */
+      readonly sticky: 20;
+      /** Dropdowns, popovers, tooltips */
+      readonly dropdown: 50;
+      /** Modals, dialogs, overlays */
+      readonly modal: 100;
+      /** Toast notifications (above modals) */
+      readonly toast: 200;
+  };
+
+  export { }

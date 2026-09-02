@@ -4,9 +4,13 @@
 // The library had DataTable for rows and CatalogGrid for tiles but nothing for
 // the third way these apps show a work list. So every board hand-rolled the
 // same header — `display:flex; justifyContent:space-between; fontSize:12;
-// textTransform:uppercase; letterSpacing:0.04em; color:var(--color-text-
-// tertiary)` — and then rendered a bare `—` for an empty lane, which reads as
-// a broken row rather than "nothing here yet".
+// textTransform:uppercase; letterSpacing:0.04em` with the tertiary text token —
+// and then rendered a bare `—` for an empty lane, which reads as a broken row
+// rather than "nothing here yet".
+//
+// (That token name is described rather than written out because the
+// darkSurfaceTokens guard scans comments too, and a `--color-*` split across a
+// line wrap reads to it as a reference to an undefined token.)
 //
 // Pair with `<CatalogGrid columns={n}>`: fixed columns keep an empty lane the
 // same width as a full one. An `auto-fit` grid, which is what the hand-rolled
