@@ -8,6 +8,12 @@ export { default as CollaborativeExcalidraw } from './CollaborativeExcalidraw';
 export { default as DiagramBlockRenderer } from './DiagramBlockRenderer';
 export type { DiagramBlockProps, DiagramBlockUser } from './DiagramBlockRenderer';
 
+// Rendered inside the canvas already — exported so a host that wants the
+// roster somewhere else (a page header, a sidebar) reuses this mapping rather
+// than writing a second one that disagrees about colour.
+export { DiagramPresenceBar } from './DiagramPresenceBar';
+export type { DiagramPresenceBarProps } from './DiagramPresenceBar';
+
 // The canvas half: a `macro:diagram` fence, drawn in the page.
 export { DiagramMacro, diagramMacroPluginKey } from './DiagramMacro';
 export type { DiagramMacroContext, DiagramMacroOptions } from './DiagramMacro';

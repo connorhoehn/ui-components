@@ -20,6 +20,7 @@ import { useCollaborativeDiagram } from '@connorhoehn/realtime-modules/adapters/
 import type { DiagramElement } from '@connorhoehn/realtime-modules/adapters/excalidraw';
 import { cn } from '../../lib/cn';
 import { useResolvedTheme } from './useResolvedTheme';
+import { DiagramPresenceBar } from './DiagramPresenceBar';
 import type { ExcalidrawCanvasProps } from './types';
 
 /**
@@ -83,7 +84,7 @@ export default function ExcalidrawCanvas({
         });
     }, []);
 
-    const { ready, collaborators, commitLocal, publishPointer, readAll } =
+    const { ready, collaborators, participants, commitLocal, publishPresence, readAll } =
         useCollaborativeDiagram({
             // `as never`: in this monorepo both ui-components and
             // realtime-modules resolve their own copy of `yjs`, so TS sees two
@@ -181,13 +182,19 @@ export default function ExcalidrawCanvas({
         ) => {
             if (!editable) return;
             commitLocal(elements as unknown as readonly DiagramElement[]);
-            // Selection rides the pointer frame rather than its own — it
-            // changes on the same gestures and the awareness budget is shared
-            // with the document editor's carets.
-            publishPointer({ selectedElementIds: appState.selectedElementIds });
+            // Selection rides the same presence record as the pointer rather
+            // than a channel of its own — it changes on the same gestures, and
+            // the awareness budget is shared with the document editor's carets.
+            //
+            // This is a PATCH: the hook merges it over the last published
+            // record, so publishing a selection here no longer erases the
+            // pointer that `handlePointerUpdate` published a few milliseconds
+            // ago. When both wrote whole records they alternated at pointer
+            // rate and each destroyed the other's field.
+            publishPresence({ selectedElementIds: appState.selectedElementIds });
             onSceneChange?.(elements.length);
         },
-        [commitLocal, publishPointer, editable, onSceneChange],
+        [commitLocal, publishPresence, editable, onSceneChange],
     );
 
     const handlePointerUpdate = useCallback(
@@ -195,9 +202,9 @@ export default function ExcalidrawCanvas({
             pointer: { x: number; y: number; tool: 'pointer' | 'laser' };
             button: 'down' | 'up';
         }) => {
-            publishPointer({ pointer: payload.pointer, button: payload.button });
+            publishPresence({ pointer: payload.pointer, button: payload.button });
         },
-        [publishPointer],
+        [publishPresence],
     );
 
     // ---- Peers → Excalidraw's native collaborator cursors ------------------
@@ -226,8 +233,18 @@ export default function ExcalidrawCanvas({
         <div
             ref={hostRef}
             data-testid="excalidraw-canvas"
-            className={cn('h-full w-full', className)}
+            className={cn('relative h-full w-full', className)}
         >
+            {/* Top-RIGHT, and above the canvas. Excalidraw owns the top-left
+                (its main menu) and the top-centre (the toolbar); the right rail
+                is the only corner with nothing in it at any breakpoint. `z-[5]`
+                clears the canvas layers without reaching the modal stack, and
+                the wrapper is pointer-events-none so the strip never eats a
+                drag that starts underneath it. */}
+            <div className="pointer-events-none absolute right-2 top-2 z-[5] flex justify-end">
+                <DiagramPresenceBar participants={participants} />
+            </div>
+
             <Excalidraw
                 theme={theme}
                 viewModeEnabled={!editable}
