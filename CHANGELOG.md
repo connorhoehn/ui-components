@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.120.1] — 2026-09-02
+
+### Fixed — `./diagram`
+
+- **The diagram node view painted during React's render phase.** ProseMirror
+  builds node views from inside `EditorView`'s construction and `@tiptap/react`
+  constructs the view from inside React's own work, so the `root.render()` in
+  the node view's constructor was a nested update during a render — React
+  reported *"Render methods should be a pure function of props and state"* on
+  every page holding a diagram. Paints are now deferred by one microtask and
+  coalesced, so a transaction that calls `update()` twice mounts one canvas.
+
+---
+
 ## [2.120.0] — 2026-09-02
 
 ### Added — a diagram as a block INSIDE a canvas document (`./diagram`)

@@ -164,8 +164,15 @@ var M = class {
 	root;
 	host;
 	node;
+	dead = !1;
+	queued = !1;
 	constructor(e, t, n, r) {
-		this.view = t, this.getPos = n, this.options = r, this.node = e, this.dom = document.createElement("div"), this.dom.setAttribute("data-macro", w), this.host = document.createElement("div"), this.dom.appendChild(this.host), this.root = p(this.host), this.render();
+		this.view = t, this.getPos = n, this.options = r, this.node = e, this.dom = document.createElement("div"), this.dom.setAttribute("data-macro", w), this.host = document.createElement("div"), this.dom.appendChild(this.host), this.root = p(this.host), this.schedule();
+	}
+	schedule() {
+		this.queued || this.dead || (this.queued = !0, queueMicrotask(() => {
+			this.queued = !1, this.dead || this.render();
+		}));
 	}
 	render() {
 		let e = this.options.getContext(), t = this.node.textContent;
@@ -188,12 +195,12 @@ var M = class {
 		e !== void 0 && this.view.dispatch(this.view.state.tr.delete(e, e + this.node.nodeSize));
 	}
 	refresh() {
-		this.render();
+		this.schedule();
 	}
 	update(e) {
 		if (e.type !== this.node.type || e.attrs.macroName !== "diagram") return !1;
 		let t = e.textContent !== this.node.textContent;
-		return this.node = e, t && this.render(), !0;
+		return this.node = e, t && this.schedule(), !0;
 	}
 	ignoreMutation() {
 		return !0;
@@ -202,6 +209,7 @@ var M = class {
 		return !0;
 	}
 	destroy() {
+		this.dead = !0;
 		let e = this.root;
 		queueMicrotask(() => e.unmount());
 	}

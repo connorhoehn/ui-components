@@ -154,6 +154,10 @@ class DiagramMacroView implements NodeView {
 
     private node: PmNode;
 
+    private dead = false;
+
+    private queued = false;
+
     constructor(
         node: PmNode,
         private view: EditorView,
@@ -166,7 +170,30 @@ class DiagramMacroView implements NodeView {
         this.host = document.createElement('div');
         this.dom.appendChild(this.host);
         this.root = createRoot(this.host);
-        this.render();
+        this.schedule();
+    }
+
+    /**
+     * Paints on a microtask, never synchronously.
+     *
+     * ProseMirror builds node views from inside `EditorView`'s construction,
+     * and `@tiptap/react` constructs the view from inside React's own work —
+     * so a synchronous `root.render()` here is a nested update during a render
+     * phase, which React reports as *"Render methods should be a pure function
+     * of props and state"*. Verified in the browser: the warning appears on
+     * every page that holds a diagram, and disappears when the paint is
+     * deferred by one microtask.
+     *
+     * Coalesced, because a single transaction can call `update()` more than
+     * once and each paint mounts an Excalidraw canvas.
+     */
+    private schedule(): void {
+        if (this.queued || this.dead) return;
+        this.queued = true;
+        queueMicrotask(() => {
+            this.queued = false;
+            if (!this.dead) this.render();
+        });
     }
 
     private render(): void {
@@ -201,7 +228,7 @@ class DiagramMacroView implements NodeView {
 
     /** Called by the plugin view when `EditorView.editable` flips. */
     refresh(): void {
-        this.render();
+        this.schedule();
     }
 
     update(node: PmNode): boolean {
@@ -214,7 +241,7 @@ class DiagramMacroView implements NodeView {
         // Re-render on a text change only. A CRDT merge can rewrite the id, and
         // the canvas must then follow it to the other diagram's elements rather
         // than keep drawing the old one.
-        if (changed) this.render();
+        if (changed) this.schedule();
         return true;
     }
 
@@ -233,6 +260,7 @@ class DiagramMacroView implements NodeView {
         // render or a commit, and ProseMirror destroys node views from inside
         // its own update cycle. Unmounting inline logs a warning and can leave
         // the canvas' listeners attached.
+        this.dead = true;
         const root = this.root;
         queueMicrotask(() => root.unmount());
     }
