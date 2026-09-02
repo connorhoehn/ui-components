@@ -222,3 +222,10 @@ export {
   UsersIcon,
 } from './MediaIcons';
 export type { IconProps } from './MediaIcons';
+
+// StreamStage — the composed surface a stream or call is WATCHED on: video,
+// identity badges, and chat rotating over the frame rather than beside it.
+export { StreamStage } from './StreamStage';
+export type { StreamStageProps } from './StreamStage';
+export { StreamChatTicker } from './StreamChatTicker';
+export type { StreamChatTickerProps, StreamChatMessage } from './StreamChatTicker';

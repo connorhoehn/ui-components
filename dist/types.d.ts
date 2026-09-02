@@ -121,6 +121,36 @@ export declare type AgentProtocol = 'a2a' | 'direct';
 
 export declare type AgentStatus = 'healthy' | 'degraded' | 'offline' | 'deploying';
 
+/** `step.output` shape for an `agent` node. */
+export declare interface AgentStepOutput {
+    /** Final assistant text. */
+    text: string;
+    turns: number;
+    toolCalls: AgentToolCall[];
+    model: string;
+    tokensIn: number;
+    tokensOut: number;
+    stopReason: AgentStopReason;
+    /** True when the step ran with no tools allowed (see `allowedTools`). */
+    toolless: boolean;
+}
+
+export declare type AgentStopReason = 'complete' | 'max_turns' | 'timeout' | 'error' | 'cancelled';
+
+/** One tool invocation inside an agent loop, as persisted on the step output. */
+export declare interface AgentToolCall {
+    name: string;
+    input?: unknown;
+    output?: unknown;
+    ok: boolean;
+    /** ISO timestamp. */
+    startedAt: string;
+    /** ISO timestamp; absent while the call is still in flight. */
+    endedAt?: string;
+    /** Present when `ok === false`. */
+    error?: string;
+}
+
 export declare interface AgUiActivityDeltaEvent extends AgUiEventBase {
     type: 'ACTIVITY_DELTA';
     messageId: string;
@@ -1852,6 +1882,9 @@ export declare interface StepExecution {
         streamOpened?: boolean;
         /** Wall-clock ms from stream open to first token (DC v0.3.7+). */
         firstTokenLatencyMs?: number;
+    };
+    agentLive?: {
+        toolCalls: AgentToolCall[];
     };
     /**
      * Image previews produced by steps that emit `pipeline:step:image:produced`

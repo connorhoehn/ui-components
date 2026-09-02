@@ -2288,11 +2288,14 @@ function gt() {
 	return e.getImageUrl;
 }
 function _t() {
+	return d($)?.getImageUrl ?? null;
+}
+function vt() {
 	let e = d($);
 	if (!e) throw Error("usePipelineEditorServices must be called inside <PipelineEditorServicesProvider>.");
 	return e;
 }
-function vt(e) {
+function yt(e) {
 	let t = d($)?.nodeVocabulary?.[e];
 	return m(() => ({
 		label: (e, n) => t?.labels?.[e] ?? n,
@@ -2300,22 +2303,22 @@ function vt(e) {
 		placeholder: (e, n) => t?.placeholders?.[e] ?? n
 	}), [t]);
 }
-function yt(e, t) {
+function bt(e, t) {
 	let n = d($)?.modelOptions?.[e];
 	return m(() => n ?? t, [n, t]);
 }
-function bt() {
+function xt() {
 	let e = d($)?.modelOptions;
 	return m(() => (t, n) => e?.[t] ?? n, [e]);
 }
-function xt() {
+function St() {
 	let e = d($)?.webhookRelay;
 	return m(() => ({
 		enabled: e?.enabled ?? !1,
 		publicUrlBase: e?.publicUrlBase
 	}), [e?.enabled, e?.publicUrlBase]);
 }
-function St() {
+function Ct() {
 	let e = d($)?.executableNodeTypes;
 	return m(() => {
 		if (!e) return () => !0;
@@ -2324,4 +2327,4 @@ function St() {
 	}, [e]);
 }
 //#endregion
-export { j as $, Ae as A, _e as B, Ke as C, Ne as D, We as E, Ce as F, ae as G, re as H, ve as I, W as J, H as K, ge as L, we as M, X as N, Pe as O, Se as P, A as Q, pe as R, Be as S, Ge as T, K as U, he as V, ie as W, N as X, P as Y, M as Z, Xe as _, bt as a, Ye as b, xt as c, st as d, k as et, ot as f, Ze as g, tt as h, yt as i, De as j, je as k, mt as l, it as m, gt as n, b as nt, vt as o, rt as p, U as q, St as r, x as rt, _t as s, ht as t, O as tt, dt as u, $e as v, He as w, Je as x, et as y, me as z };
+export { A as $, je as A, me as B, Be as C, We as D, Ge as E, Se as F, ie as G, he as H, Ce as I, U as J, ae as K, ve as L, De as M, we as N, Ne as O, X as P, M as Q, ge as R, Je as S, He as T, re as U, _e as V, K as W, P as X, W as Y, N as Z, Ze as _, bt as a, et as b, vt as c, dt as d, j as et, st as f, tt as g, it as h, Ct as i, x as it, Ae as j, Pe as k, St as l, rt as m, gt as n, O as nt, xt as o, ot as p, H as q, _t as r, b as rt, yt as s, ht as t, k as tt, mt as u, Xe as v, Ke as w, Ye as x, $e as y, pe as z };

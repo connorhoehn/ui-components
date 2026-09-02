@@ -138,6 +138,20 @@ declare interface AgentNodeData {
     retryPolicy?: RetryPolicy;
 }
 
+/** One tool invocation inside an agent loop, as persisted on the step output. */
+declare interface AgentToolCall {
+    name: string;
+    input?: unknown;
+    output?: unknown;
+    ok: boolean;
+    /** ISO timestamp. */
+    startedAt: string;
+    /** ISO timestamp; absent while the call is still in flight. */
+    endedAt?: string;
+    /** Present when `ok === false`. */
+    error?: string;
+}
+
 /**
  * One day's rollup for a (pipelineId, rubricId) pair. Mirrors the row
  * shape platform-api's JudgmentAggregateRepository emits over
@@ -615,6 +629,20 @@ export declare interface EventStreamValue {
     subscribeToAll(): () => void;
     /** Same contract as `subscribeToRun`, for the `pipeline:approvals` channel. */
     subscribeToApprovals(): () => void;
+}
+
+export declare function ExecutorLog({ pipelineId, runId, onStepClick, }: ExecutorLogProps): default_2.JSX.Element;
+
+export declare interface ExecutorLogProps {
+    pipelineId: string;
+    runId: string;
+    /**
+     * Called when an operator clicks a `pipeline.step.*` row. Receives the
+     * stepId pulled from the audit row's `details.stepId` / `trace.stepId`.
+     * Optional — when omitted the rows are still expandable but the click
+     * is a no-op.
+     */
+    onStepClick?: (stepId: string) => void;
 }
 
 /** Query options for the aggregate-list fetcher. */
@@ -2445,6 +2473,9 @@ declare interface StepExecution {
         /** Wall-clock ms from stream open to first token (DC v0.3.7+). */
         firstTokenLatencyMs?: number;
     };
+    agentLive?: {
+        toolCalls: AgentToolCall[];
+    };
     /**
      * Image previews produced by steps that emit `pipeline:step:image:produced`
      * events (e.g. CropNode, SaveNode). Each entry carries an imageId that
@@ -2490,7 +2521,39 @@ declare interface StepExecution {
     patches?: PatchEntry[];
 }
 
+export declare function StepSection({ title, children }: StepSectionProps): default_2.JSX.Element;
+
+export declare interface StepSectionProps {
+    title: string;
+    children: default_2.ReactNode;
+}
+
 declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
+
+export declare function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep }: StepThreadProps): default_2.JSX.Element;
+
+export declare interface StepThreadProps {
+    stepId: string;
+    step: StepExecution;
+    index: number;
+    nodeType: string;
+    nodeConfig?: Record<string, unknown>;
+    onRetryFromStep?: (stepId: string) => void;
+    onResumeFromStep?: (stepId: string) => void;
+}
+
+export declare function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep }: StepTreeProps): default_2.JSX.Element;
+
+export declare interface StepTreeProps {
+    steps: Record<string, StepExecution>;
+    nodeDataMap: Record<string, {
+        type: NodeType;
+        data: Record<string, unknown>;
+    }>;
+    edges?: PipelineEdge[];
+    onRetryFromStep?: (stepId: string) => void;
+    onResumeFromStep?: (stepId: string) => void;
+}
 
 /**
  * Wrap-flow chip cloud for vision tags.
@@ -2672,6 +2735,25 @@ export declare interface UseImageLineageResult {
  * thumbnail.
  */
 export declare function useImageUrl(): (imageId: string) => string;
+
+/**
+ * Optional form of {@link useImageUrl}: the host's `getImageUrl` when a
+ * provider is mounted, `null` when there is none.
+ *
+ * For consumers that render produced images as an OPTIONAL section rather than
+ * as their reason for existing — the run-detail step panel is the case this
+ * exists for. It is rendered by hosts that never mount
+ * <PipelineEditorServicesProvider> (it is a read-only run view, not the
+ * editor), and a step that happens to have produced images should simply not
+ * show that section there. With `useImageUrl` the same page throws on first
+ * render and the operator loses the whole run detail — every log line, every
+ * error message — because the library could not resolve a thumbnail.
+ *
+ * `useImageUrl` stays the right hook inside the editor: there a missing
+ * provider is a genuine wiring bug, and failing loudly at first render beats
+ * shipping an editor whose image nodes are quietly blank.
+ */
+export declare function useImageUrlOptional(): ((imageId: string) => string) | null;
 
 /**
  * Whether the host's executor can run a given node type.
