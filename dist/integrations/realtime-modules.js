@@ -12,12 +12,13 @@ import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
 import { n as _, t as v } from "../PresencePanel-TLZ43ZF1.js";
 import { a as y, i as b, l as x, o as S, r as C, t as ee } from "../MediaEffectsPreviewPanel-DhMdqGuZ.js";
 import { t as te } from "../CanvasDocumentView-CyuwiD04.js";
-import { Component as ne, useCallback as re, useEffect as w, useMemo as T, useRef as E, useState as D } from "react";
+import { Component as ne, createContext as re, useCallback as ie, useContext as ae, useEffect as w, useMemo as T, useRef as E, useState as D } from "react";
 import { Fragment as O, jsx as k, jsxs as A } from "react/jsx-runtime";
-import { useRoomOccupancy as ie } from "@connorhoehn/realtime-modules/client/hangout-rooms";
-import { useLVSHangout as ae } from "@connorhoehn/realtime-modules/client/video";
+import { useRoomOccupancy as oe } from "@connorhoehn/realtime-modules/client/hangout-rooms";
+import { useLVSHangout as se } from "@connorhoehn/realtime-modules/client/video";
+import { useCapabilities as ce } from "@connorhoehn/realtime-modules/client";
 //#region src/integrations/realtime-modules/adapters.ts
-function j(e) {
+function le(e) {
 	let t = e.metadata?.attachments, n = Array.isArray(t) ? t.filter((e) => !!e && typeof e == "object" && typeof e.url == "string") : void 0;
 	return {
 		id: e.id,
@@ -29,10 +30,10 @@ function j(e) {
 		...n && n.length > 0 ? { attachments: n } : {}
 	};
 }
-function M(e) {
-	return e.map(j);
+function j(e) {
+	return e.map(le);
 }
-function N(e) {
+function M(e) {
 	return {
 		id: e.clientId,
 		name: e.metadata?.displayName ?? e.clientId.slice(0, 12),
@@ -40,10 +41,10 @@ function N(e) {
 		online: e.status !== "offline"
 	};
 }
-function oe(e) {
-	return e.map(N);
+function ue(e) {
+	return e.map(M);
 }
-var P = [
+var N = [
 	15,
 	25,
 	35,
@@ -52,15 +53,15 @@ var P = [
 	65,
 	75,
 	85
-], F = [
+], P = [
 	20,
 	35,
 	50,
 	65,
 	80
 ];
-function I(e, t) {
-	let n = P[t % P.length] ?? 50, r = F[Math.floor(t / P.length) % F.length] ?? 50, i = e.position != null && typeof e.position == "object" ? e.position : null;
+function F(e, t) {
+	let n = N[t % N.length] ?? 50, r = P[Math.floor(t / N.length) % P.length] ?? 50, i = e.position != null && typeof e.position == "object" ? e.position : null;
 	return {
 		id: e.id,
 		emoji: e.emoji,
@@ -69,10 +70,10 @@ function I(e, t) {
 		timestamp: e.timestamp
 	};
 }
-function se(e) {
-	return e.map(I);
+function de(e) {
+	return e.map(F);
 }
-function ce(e) {
+function fe(e) {
 	try {
 		let t = Date.now() - new Date(e).getTime(), n = Math.floor(t / 1e3);
 		return n < 60 ? "just now" : n < 3600 ? `${Math.floor(n / 60)}m ago` : n < 86400 ? `${Math.floor(n / 3600)}h ago` : e.slice(0, 10);
@@ -80,7 +81,7 @@ function ce(e) {
 		return "";
 	}
 }
-var le = {
+var pe = {
 	"social.room.join": "joined",
 	"social.room.leave": "left",
 	"social.follow": "followed",
@@ -94,26 +95,26 @@ var le = {
 	"pipeline.run.failed": "failed",
 	"pipeline.approval.requested": "requested approval"
 };
-function ue(e) {
+function me(e) {
 	let t = e.detail;
 	return typeof t.subject == "string" ? t.subject : typeof t.contentId == "string" ? t.contentId.slice(0, 12) : typeof t.roomId == "string" ? `room:${t.roomId.slice(0, 8)}` : typeof t.pipelineId == "string" ? `pipeline:${t.pipelineId}` : e.eventType;
 }
-var de = 0;
-function L(e) {
+var he = 0;
+function I(e) {
 	return {
-		id: `${e.eventType}-${e.timestamp}-${de++}`,
+		id: `${e.eventType}-${e.timestamp}-${he++}`,
 		actor: e.displayName,
-		action: le[e.eventType] ?? e.eventType.split(".").pop() ?? "did",
-		subject: ue(e),
+		action: pe[e.eventType] ?? e.eventType.split(".").pop() ?? "did",
+		subject: me(e),
 		ticketId: typeof e.detail.ticketId == "string" ? e.detail.ticketId : void 0,
-		timeLabel: ce(e.timestamp),
+		timeLabel: fe(e.timestamp),
 		kind: e.eventType.split(".")[0]
 	};
 }
-function R(e) {
-	return e.map(L);
+function L(e) {
+	return e.map(I);
 }
-function z(e) {
+function R(e) {
 	return {
 		id: e.id,
 		filename: e.filename,
@@ -123,10 +124,10 @@ function z(e) {
 		error: e.error
 	};
 }
-function B(e) {
-	return e.map(z);
+function z(e) {
+	return e.map(R);
 }
-function V(e, t) {
+function B(e, t) {
 	return {
 		id: e.clientId,
 		displayName: e.displayName ?? e.clientId.slice(0, 12),
@@ -134,10 +135,10 @@ function V(e, t) {
 		isLocal: t == null ? void 0 : e.clientId === t
 	};
 }
-function H(e, t) {
-	return e.map((e) => V(e, t));
+function V(e, t) {
+	return e.map((e) => B(e, t));
 }
-function U(e) {
+function H(e) {
 	return {
 		id: e.id,
 		title: e.title,
@@ -148,12 +149,12 @@ function U(e) {
 		icon: typeof e.payload?.icon == "string" ? e.payload.icon : void 0
 	};
 }
-function W(e) {
-	return e.map(U);
+function U(e) {
+	return e.map(H);
 }
 //#endregion
 //#region src/integrations/realtime-modules/NetworkErrorBoundary.tsx
-var G = class extends ne {
+var W = class extends ne {
 	state = { error: null };
 	static getDerivedStateFromError(e) {
 		return { error: e };
@@ -183,7 +184,7 @@ var G = class extends ne {
 };
 //#endregion
 //#region src/integrations/realtime-modules/ReconnectingShim.tsx
-function K({ connectionState: t, children: n, onRetry: r, reconnectingLabel: o, disconnectedTitle: s = "Disconnected", disconnectedDescription: c = "The connection to the server was lost. Check your network and try again.", retryLabel: l = "Try again", connectingPlaceholder: u, disconnectedFallback: d, className: f }) {
+function G({ connectionState: t, children: n, onRetry: r, reconnectingLabel: o, disconnectedTitle: s = "Disconnected", disconnectedDescription: c = "The connection to the server was lost. Check your network and try again.", retryLabel: l = "Try again", connectingPlaceholder: u, disconnectedFallback: d, className: f }) {
 	return t === "connecting" ? /* @__PURE__ */ k("div", {
 		"data-testid": "reconnecting-shim-connecting",
 		className: f,
@@ -216,15 +217,15 @@ function K({ connectionState: t, children: n, onRetry: r, reconnectingLabel: o, 
 }
 //#endregion
 //#region src/integrations/realtime-modules/networkShim.tsx
-function q(e, t) {
-	return t ? /* @__PURE__ */ k(G, {
+function K(e, t) {
+	return t ? /* @__PURE__ */ k(W, {
 		title: t.errorTitle,
 		description: t.errorDescription,
 		retryLabel: t.retryLabel,
 		onRetry: t.onRetry,
 		onError: t.onError,
 		fallback: t.errorFallback,
-		children: /* @__PURE__ */ k(K, {
+		children: /* @__PURE__ */ k(G, {
 			connectionState: t.connectionState,
 			onRetry: t.onRetry,
 			reconnectingLabel: t.reconnectingLabel,
@@ -240,8 +241,8 @@ function q(e, t) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedChatPanel.tsx
-function fe({ chat: e, presence: t, upload: n, currentActor: r, attachmentSrc: i, onOpenAttachment: a, acceptFiles: o, maxFileSize: s, onFileError: c, disabled: l, typingUsers: u, tone: d, fill: f, wrapWithNetworkShim: p }) {
-	let m = M(e.messages), h = u ?? t?.roster.filter((e) => e.metadata?.isTyping === !0).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], g = /* @__PURE__ */ k(_, {
+function ge({ chat: e, presence: t, upload: n, currentActor: r, attachmentSrc: i, onOpenAttachment: a, acceptFiles: o, maxFileSize: s, onFileError: c, disabled: l, typingUsers: u, tone: d, fill: f, wrapWithNetworkShim: p }) {
+	let m = j(e.messages), h = u ?? t?.roster.filter((e) => e.metadata?.isTyping === !0).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], g = /* @__PURE__ */ k(_, {
 		messages: m,
 		onSend: e.sendMessage,
 		disabled: l,
@@ -262,25 +263,25 @@ function fe({ chat: e, presence: t, upload: n, currentActor: r, attachmentSrc: i
 		maxFileSize: s,
 		onFileError: c
 	});
-	return /* @__PURE__ */ k(O, { children: q(g, p) });
+	return /* @__PURE__ */ k(O, { children: K(g, p) });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedPresencePanel.tsx
-function pe({ presence: e, currentClientId: t, wrapWithNetworkShim: n }) {
+function _e({ presence: e, currentClientId: t, wrapWithNetworkShim: n }) {
 	let r = e.roster.map((e) => ({
 		clientId: e.clientId,
 		status: e.status,
 		metadata: e.metadata
 	}));
-	return /* @__PURE__ */ k(O, { children: q(/* @__PURE__ */ k(v, {
+	return /* @__PURE__ */ k(O, { children: K(/* @__PURE__ */ k(v, {
 		users: r,
 		currentClientId: t
 	}), n) });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedActivityPanel.tsx
-function me({ activity: e, visibleCount: t, rotateMs: n, staggerMs: r, kindColors: i, className: a }) {
-	let o = T(() => R(e.events), [e.events]);
+function ve({ activity: e, visibleCount: t, rotateMs: n, staggerMs: r, kindColors: i, className: a }) {
+	let o = T(() => L(e.events), [e.events]);
 	return /* @__PURE__ */ k(u, {
 		items: o,
 		visibleCount: t,
@@ -292,11 +293,11 @@ function me({ activity: e, visibleCount: t, rotateMs: n, staggerMs: r, kindColor
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedReactionsOverlay.tsx
-function he({ reactions: e, ttlMs: t = 2500 }) {
+function ye({ reactions: e, ttlMs: t = 2500 }) {
 	let [n, r] = D([]), i = e.reactions, a = E(/* @__PURE__ */ new Map());
 	return w(() => {
 		if (i.length === 0) return;
-		let e = i[i.length - 1], n = I(e, i.length - 1), o = a.current;
+		let e = i[i.length - 1], n = F(e, i.length - 1), o = a.current;
 		o.has(n.id) || (r((e) => e.some((e) => e.id === n.id) ? e : [...e, n]), o.set(n.id, setTimeout(() => {
 			o.delete(n.id), r((e) => e.filter((e) => e.id !== n.id));
 		}, t)));
@@ -309,8 +310,8 @@ function he({ reactions: e, ttlMs: t = 2500 }) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedFileUploadDrop.tsx
-function ge({ fileUpload: e, accept: t, maxSize: n, multiple: r, disabled: i, label: a, className: o, uploadMetadata: c, onError: l }) {
-	let u = B(e.uploads);
+function be({ fileUpload: e, accept: t, maxSize: n, multiple: r, disabled: i, label: a, className: o, uploadMetadata: c, onError: l }) {
+	let u = z(e.uploads);
 	function d(t) {
 		for (let n of t) e.upload(n, c ? { metadata: c } : void 0).catch((e) => {
 			let t = e instanceof Error ? e.message : "Upload failed";
@@ -326,12 +327,12 @@ function ge({ fileUpload: e, accept: t, maxSize: n, multiple: r, disabled: i, la
 		className: o,
 		onFiles: d,
 		onError: l
-	}), u.length > 0 && /* @__PURE__ */ k(_e, {
+	}), u.length > 0 && /* @__PURE__ */ k(xe, {
 		summaries: u,
 		onDismiss: () => e.removeCompleted()
 	})] });
 }
-function _e({ summaries: e, onDismiss: t }) {
+function xe({ summaries: e, onDismiss: t }) {
 	return /* @__PURE__ */ k("ul", {
 		className: "mt-2 p-0 list-none text-[13px]",
 		children: e.map((e) => /* @__PURE__ */ A("li", {
@@ -342,7 +343,7 @@ function _e({ summaries: e, onDismiss: t }) {
 					children: e.filename
 				}),
 				/* @__PURE__ */ k("span", {
-					className: `text-xs font-semibold ${ve(e.status)}`,
+					className: `text-xs font-semibold ${Se(e.status)}`,
 					children: e.status === "uploading" ? `${e.progress}%` : e.status
 				}),
 				(e.status === "completed" || e.status === "clean") && e.downloadUrl && /* @__PURE__ */ k("a", {
@@ -362,7 +363,7 @@ function _e({ summaries: e, onDismiss: t }) {
 		}, e.id))
 	});
 }
-function ve(e) {
+function Se(e) {
 	switch (e) {
 		case "completed":
 		case "clean": return "text-state-completed";
@@ -375,8 +376,8 @@ function ve(e) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedHangoutLayout.tsx
-function ye({ hangout: e, localClientId: t, videoElements: n, mode: r, spotlightContent: i, activeSpeakerId: a, speakerHysteresisMs: o, onParticipantClick: s, className: c }) {
-	let l = H(e.participants, t), u = t == null ? null : l.find((e) => e.id === t) ?? null, d = t == null ? l : l.filter((e) => e.id !== t);
+function Ce({ hangout: e, localClientId: t, videoElements: n, mode: r, spotlightContent: i, activeSpeakerId: a, speakerHysteresisMs: o, onParticipantClick: s, className: c }) {
+	let l = V(e.participants, t), u = t == null ? null : l.find((e) => e.id === t) ?? null, d = t == null ? l : l.filter((e) => e.id !== t);
 	function f(e) {
 		return n ? e.map((e) => ({
 			...e,
@@ -396,8 +397,8 @@ function ye({ hangout: e, localClientId: t, videoElements: n, mode: r, spotlight
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedNotificationCenter.tsx
-function be({ notifications: e, onItemClick: t, ...n }) {
-	let r = W(e.notifications);
+function we({ notifications: e, onItemClick: t, ...n }) {
+	let r = U(e.notifications);
 	return /* @__PURE__ */ k(d, {
 		items: r,
 		onItemClick: (n) => {
@@ -410,7 +411,7 @@ function be({ notifications: e, onItemClick: t, ...n }) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedConnectionPill.tsx
-function xe({ socket: e, ...t }) {
+function Te({ socket: e, ...t }) {
 	return /* @__PURE__ */ k(l, {
 		state: e.connectionState,
 		...t
@@ -418,13 +419,13 @@ function xe({ socket: e, ...t }) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/CapabilityBoundary.tsx
-function Se({ capability: e, loading: t, fallback: n, children: r }) {
+function Ee({ capability: e, loading: t, fallback: n, children: r }) {
 	return e.isLoading ? /* @__PURE__ */ k(O, { children: t ?? null }) : e.enabled ? /* @__PURE__ */ k(O, { children: r }) : /* @__PURE__ */ k(O, { children: n ?? null });
 }
 //#endregion
 //#region src/integrations/realtime-modules/HangoutRoomRow.tsx
-function J({ slug: e, name: t, participantId: n, occupancy: r, subscribeRoomsIndex: i, onClick: a, onContextMenu: o, kebab: s, className: c, "data-testid": l = "room-row" }) {
-	let u = ie(i ? e : null, { subscribeRoomsIndex: i }), d = i ? u.occupancy ?? null : r ?? null, h = d?.count ?? 0, g = d?.members ?? [], _ = T(() => n ? g.some((e) => e.participantId === n) : !1, [g, n]), v = _, y = T(() => g.slice(0, 3).map((e) => ({
+function q({ slug: e, name: t, participantId: n, occupancy: r, subscribeRoomsIndex: i, onClick: a, onContextMenu: o, kebab: s, className: c, "data-testid": l = "room-row" }) {
+	let u = oe(i ? e : null, { subscribeRoomsIndex: i }), d = i ? u.occupancy ?? null : r ?? null, h = d?.count ?? 0, g = d?.members ?? [], _ = T(() => n ? g.some((e) => e.participantId === n) : !1, [g, n]), v = _, y = T(() => g.slice(0, 3).map((e) => ({
 		id: e.participantId,
 		name: e.displayName ?? e.userId,
 		online: !0
@@ -475,20 +476,20 @@ function J({ slug: e, name: t, participantId: n, occupancy: r, subscribeRoomsInd
 }
 //#endregion
 //#region src/integrations/realtime-modules/NewHangoutRoomDialog.tsx
-var Y = 3, X = 48;
-function Z(e) {
+var J = 3, Y = 48;
+function X(e) {
 	return e.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
 }
-function Ce(e) {
+function De(e) {
 	let t = e.trim();
-	return t.length === 0 ? "Name is required." : t.length < Y ? `Name must be at least ${Y} characters.` : t.length > X ? `Name must be at most ${X} characters.` : null;
+	return t.length === 0 ? "Name is required." : t.length < J ? `Name must be at least ${J} characters.` : t.length > Y ? `Name must be at most ${Y} characters.` : null;
 }
-function Q({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility: s }) {
+function Z({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility: s }) {
 	let [c, l] = D(""), [u, d] = D(""), [f, p] = D(!1), [m, h] = D(!1), [g, _] = D(!1), [v, y] = D(null);
 	w(() => {
 		e && (l(""), d(""), p(!1), h(!1), _(!1), y(null));
 	}, [e]);
-	let b = T(() => Ce(c), [c]), x = T(() => Z(c), [c]), S = !b && !g;
+	let b = T(() => De(c), [c]), x = T(() => X(c), [c]), S = !b && !g;
 	async function C(e) {
 		if (e.preventDefault(), S) {
 			_(!0), y(null);
@@ -543,7 +544,7 @@ function Q({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility: 
 							children: [/* @__PURE__ */ k("span", {
 								"data-testid": "new-hangout-room-slug-preview",
 								children: x ? `#${x}` : "Slug preview appears here"
-							}), /* @__PURE__ */ k("span", { children: `${c.trim().length}/${X}` })]
+							}), /* @__PURE__ */ k("span", { children: `${c.trim().length}/${Y}` })]
 						}),
 						b && c.length > 0 && /* @__PURE__ */ k("span", {
 							"data-testid": "new-hangout-room-name-error",
@@ -638,7 +639,7 @@ function Q({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility: 
 }
 //#endregion
 //#region src/integrations/realtime-modules/HangoutRoomsSection.tsx
-function $({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, onJoinRoom: s, onContextMenu: c, onBrowseAll: l, maxVisible: u = 10, title: d = "Rooms", storageKey: f, renderCreateDialog: p }) {
+function Q({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, onJoinRoom: s, onContextMenu: c, onBrowseAll: l, maxVisible: u = 10, title: d = "Rooms", storageKey: f, renderCreateDialog: p }) {
 	let [g, _] = D(!1), v = () => _(!0), y = () => _(!1), b = T(() => e.rooms.filter((e) => e.state === "active"), [e.rooms]), x = T(() => b.slice(0, u), [b, u]), S = b.length - x.length;
 	return /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ A(h, {
 		title: d,
@@ -695,7 +696,7 @@ function $({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, o
 			}),
 			!e.isLoading && !e.error && b.length > 0 && /* @__PURE__ */ A("div", {
 				className: "flex flex-col gap-0.5",
-				children: [x.map((e) => /* @__PURE__ */ k(J, {
+				children: [x.map((e) => /* @__PURE__ */ k(q, {
 					slug: e.slug,
 					name: e.name,
 					participantId: o,
@@ -720,7 +721,7 @@ function $({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, o
 	}), p ? p({
 		open: g,
 		onClose: y
-	}) : /* @__PURE__ */ k(Q, {
+	}) : /* @__PURE__ */ k(Z, {
 		open: g,
 		onClose: y,
 		onCreate: e.createRoom,
@@ -731,7 +732,7 @@ function $({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, o
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedLVSHangoutLayout.tsx
-function we({ stream: e, displayName: t }) {
+function Oe({ stream: e, displayName: t }) {
 	return e ? /* @__PURE__ */ k("video", {
 		autoPlay: !0,
 		playsInline: !0,
@@ -749,8 +750,8 @@ function we({ stream: e, displayName: t }) {
 		})
 	});
 }
-function Te(e, t) {
-	let n = e.isLocal, r = n ? t ?? e.displayName ?? "You" : e.displayName || e.participantId.slice(0, 8), i = e.streams[0], a = e.screenStream, o = n ? /* @__PURE__ */ k(we, {
+function ke(e, t) {
+	let n = e.isLocal, r = n ? t ?? e.displayName ?? "You" : e.displayName || e.participantId.slice(0, 8), i = e.streams[0], a = e.screenStream, o = n ? /* @__PURE__ */ k(Oe, {
 		stream: i,
 		displayName: r
 	}) : /* @__PURE__ */ k(y, {
@@ -771,13 +772,13 @@ function Te(e, t) {
 		screenElement: s
 	};
 }
-function Ee({ stageToken: e, participantId: t, userId: n, localClientId: r, getStageToken: i, overlay: a, spotlightContent: o, onParticipantClick: s, mode: c = "auto", activeSpeakerStrategy: l = "audio-level", localTileLabel: u, showLocalAsTile: d = !0, className: f, "data-testid": p }) {
-	let m = ae({
+function Ae({ stageToken: e, participantId: t, userId: n, localClientId: r, getStageToken: i, overlay: a, spotlightContent: o, onParticipantClick: s, mode: c = "auto", activeSpeakerStrategy: l = "audio-level", localTileLabel: u, showLocalAsTile: d = !0, className: f, "data-testid": p }) {
+	let m = se({
 		stageToken: e,
 		participantId: t,
 		userId: n ?? t.slice(0, 8),
 		getAuthToken: i
-	}), h = T(() => m.participants.filter((e) => d || !e.isLocal).map((e) => Te(e, u)), [
+	}), h = T(() => m.participants.filter((e) => d || !e.isLocal).map((e) => ke(e, u)), [
 		m.participants,
 		d,
 		u
@@ -809,11 +810,11 @@ function Ee({ stageToken: e, participantId: t, userId: n, localClientId: r, getS
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedHangoutRoomsList.tsx
-function De({ hangoutRooms: e, subscribeRoomsIndex: t, occupancyFor: n, participantId: r, onJoin: i, onContextMenu: a, onBrowseAll: o, maxVisible: s, title: c, storageKey: l, renderEmpty: u, renderCreateDialog: d, wrapWithNetworkShim: f }) {
+function je({ hangoutRooms: e, subscribeRoomsIndex: t, occupancyFor: n, participantId: r, onJoin: i, onContextMenu: a, onBrowseAll: o, maxVisible: s, title: c, storageKey: l, renderEmpty: u, renderCreateDialog: d, wrapWithNetworkShim: f }) {
 	return e.rooms.filter((e) => e.state === "active").length === 0 && !e.isLoading && !e.error && u ? /* @__PURE__ */ k("div", {
 		"data-testid": "wrapped-hangout-rooms-empty-slot",
 		children: u
-	}) : /* @__PURE__ */ k(O, { children: q(/* @__PURE__ */ k($, {
+	}) : /* @__PURE__ */ k(O, { children: K(/* @__PURE__ */ k(Q, {
 		rooms: e,
 		occupancyAdapter: t,
 		occupancyFor: n,
@@ -829,7 +830,7 @@ function De({ hangoutRooms: e, subscribeRoomsIndex: t, occupancyFor: n, particip
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedMediaEffectsTray.tsx
-function Oe({ controller: e, ...t }) {
+function Me({ controller: e, ...t }) {
 	return /* @__PURE__ */ k(C, {
 		filters: e.filters.map(({ id: e, label: t }) => ({
 			id: e,
@@ -858,7 +859,7 @@ function Oe({ controller: e, ...t }) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedMediaEffectsPreviewPanel.tsx
-function ke({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
+function Ne({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
 	let a = E(t);
 	a.current = t;
 	let o = E(!1);
@@ -922,8 +923,8 @@ function ke({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedCanvasDocument.tsx
-function Ae({ canvas: e, schema: t, legacyModel: n, ...r }) {
-	let [i, a] = D([]), o = re(async () => {
+function Pe({ canvas: e, schema: t, legacyModel: n, ...r }) {
+	let [i, a] = D([]), o = ie(async () => {
 		if (!t) return "The editor is still loading — try again in a moment.";
 		let r = e.materialize(t, n ?? {
 			frontMatter: {},
@@ -944,4 +945,50 @@ function Ae({ canvas: e, schema: t, legacyModel: n, ...r }) {
 	});
 }
 //#endregion
-export { Se as CapabilityBoundary, J as HangoutRoomRow, $ as HangoutRoomsSection, G as NetworkErrorBoundary, Q as NewHangoutRoomDialog, K as ReconnectingShim, me as WrappedActivityPanel, Ae as WrappedCanvasDocument, fe as WrappedChatPanel, xe as WrappedConnectionPill, ge as WrappedFileUploadDrop, ye as WrappedHangoutLayout, De as WrappedHangoutRoomsList, Ee as WrappedLVSHangoutLayout, ke as WrappedMediaEffectsPreviewPanel, Oe as WrappedMediaEffectsTray, be as WrappedNotificationCenter, pe as WrappedPresencePanel, he as WrappedReactionsOverlay, L as adaptActivityEvent, R as adaptActivityEvents, j as adaptChatMessage, M as adaptChatMessages, z as adaptFileUploadState, B as adaptFileUploads, V as adaptHangoutParticipant, H as adaptHangoutParticipants, U as adaptNotification, W as adaptNotifications, N as adaptPresenceEntry, oe as adaptPresenceRoster, I as adaptReaction, se as adaptReactions, q as applyNetworkShim, Z as slugifyRoomName };
+//#region src/integrations/realtime-modules/capabilities.tsx
+var $ = [
+	"chat",
+	"presence",
+	"video",
+	"audio",
+	"files",
+	"reactions",
+	"recordings"
+], Fe = {
+	chat: !0,
+	presence: !0
+}, Ie = re(null);
+function Le({ capabilities: e = Fe, channel: t, children: n }) {
+	let r = T(() => $.filter((t) => e[t] === !0), [e]), { enabled: i, isLoading: a } = ce(r, t), o = T(() => {
+		let t = {}, n = {}, r = {};
+		for (let a of $) t[a] = e[a] === !0, n[a] = i[a] ?? !1, r[a] = t[a] && n[a];
+		return {
+			can: r,
+			declared: t,
+			provisioned: n,
+			isLoading: a
+		};
+	}, [
+		e,
+		i,
+		a
+	]);
+	return /* @__PURE__ */ k(Ie.Provider, {
+		value: o,
+		children: n
+	});
+}
+function Re() {
+	return ae(Ie) ?? {
+		can: Object.fromEntries($.map((e) => [e, !1])),
+		declared: Object.fromEntries($.map((e) => [e, !1])),
+		provisioned: Object.fromEntries($.map((e) => [e, !1])),
+		isLoading: !1
+	};
+}
+function ze({ need: e, children: t, fallback: n = null }) {
+	let { can: r } = Re(), i = (Array.isArray(e) ? e : [e]).every((e) => r[e]);
+	return /* @__PURE__ */ k(O, { children: i ? t : n });
+}
+//#endregion
+export { $ as ALL_REALTIME_CAPABILITIES, Ee as CapabilityBoundary, ze as CapabilityGate, Fe as DEFAULT_REALTIME_CAPABILITIES, q as HangoutRoomRow, Q as HangoutRoomsSection, W as NetworkErrorBoundary, Z as NewHangoutRoomDialog, Le as RealtimeCapabilityProvider, G as ReconnectingShim, ve as WrappedActivityPanel, Pe as WrappedCanvasDocument, ge as WrappedChatPanel, Te as WrappedConnectionPill, be as WrappedFileUploadDrop, Ce as WrappedHangoutLayout, je as WrappedHangoutRoomsList, Ae as WrappedLVSHangoutLayout, Ne as WrappedMediaEffectsPreviewPanel, Me as WrappedMediaEffectsTray, we as WrappedNotificationCenter, _e as WrappedPresencePanel, ye as WrappedReactionsOverlay, I as adaptActivityEvent, L as adaptActivityEvents, le as adaptChatMessage, j as adaptChatMessages, R as adaptFileUploadState, z as adaptFileUploads, B as adaptHangoutParticipant, V as adaptHangoutParticipants, H as adaptNotification, U as adaptNotifications, M as adaptPresenceEntry, ue as adaptPresenceRoster, F as adaptReaction, de as adaptReactions, K as applyNetworkShim, X as slugifyRoomName, Re as useRealtimeCapabilities };

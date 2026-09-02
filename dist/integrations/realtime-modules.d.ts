@@ -70,6 +70,8 @@ export declare function adaptReaction(reaction: RMReaction, index: number): Ephe
 
 export declare function adaptReactions(reactions: RMReaction[]): EphemeralReaction[];
 
+export declare const ALL_REALTIME_CAPABILITIES: readonly RealtimeCapabilityName[];
+
 /**
  * Wrap `node` in NetworkErrorBoundary + ReconnectingShim when `opts` is
  * provided; otherwise return `node` unchanged. Used by Wrapped* adapters
@@ -209,6 +211,23 @@ export declare interface CapabilityBoundaryProps {
     children: ReactNode;
 }
 
+export declare function CapabilityGate({ need, children, fallback }: CapabilityGateProps): JSX.Element;
+
+export declare interface CapabilityGateProps {
+    /** Renders children only when ALL of these are effective. */
+    need: RealtimeCapabilityName | readonly RealtimeCapabilityName[];
+    children: ReactNode;
+    /**
+     * Shown when the capability is unavailable. Defaults to nothing.
+     *
+     * Nothing, not a disabled control or an upsell: a greyed "Start call" in a
+     * chat-only deployment is a promise the product cannot keep, and the reader
+     * cannot tell whether it is broken, loading, or needs a permission. The way a
+     * surface says "this does not apply here" is by not being there.
+     */
+    fallback?: ReactNode;
+}
+
 declare interface ChatAttachment {
     /** Correlation id shared with the sender's in-flight transfer. */
     id: string;
@@ -299,6 +318,16 @@ declare type ConnectionPillTone = SurfaceTone;
 
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+/**
+ * Chat and presence only.
+ *
+ * The default for a host that declares nothing, chosen deliberately: the
+ * conservative set is the one that cannot surprise anyone with a camera, a
+ * microphone, or a stored recording. Opting IN to those is a decision a host
+ * should have to write down.
+ */
+export declare const DEFAULT_REALTIME_CAPABILITIES: RealtimeCapabilitySet;
 
 declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
@@ -641,6 +670,45 @@ declare interface PresenceUser {
     location?: string;
 }
 
+export declare type RealtimeCapabilityName = keyof RealtimeCapabilitySet;
+
+export declare function RealtimeCapabilityProvider({ capabilities, channel, children, }: RealtimeCapabilityProviderProps): JSX.Element;
+
+export declare interface RealtimeCapabilityProviderProps {
+    /**
+     * What this host wants. Omitted keys are OFF — an allow-list, so adding a
+     * capability to this library never switches something on inside an app that
+     * never asked for it.
+     */
+    capabilities?: RealtimeCapabilitySet;
+    /** Scope the grant lookup to one channel. */
+    channel?: string;
+    children: ReactNode;
+}
+
+/**
+ * The capabilities a conversation surface can be composed from.
+ *
+ * Each is a distinct product decision, not a UI detail:
+ *   chat       — send and read messages
+ *   presence   — who is here / typing
+ *   video      — start or join a video room from a conversation
+ *   audio      — audio-only call, independently of video: a host may want
+ *                voice without ever putting a camera in the product
+ *   files      — attachments and drag-drop upload
+ *   reactions  — emoji on messages
+ *   recordings — past-call playback and transcripts
+ */
+export declare interface RealtimeCapabilitySet {
+    chat?: boolean;
+    presence?: boolean;
+    video?: boolean;
+    audio?: boolean;
+    files?: boolean;
+    reactions?: boolean;
+    recordings?: boolean;
+}
+
 export declare function ReconnectingShim({ connectionState, children, onRetry, reconnectingLabel, disconnectedTitle, disconnectedDescription, retryLabel, connectingPlaceholder, disconnectedFallback, className, }: ReconnectingShimProps): JSX.Element;
 
 export declare type ReconnectingShimConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -671,6 +739,17 @@ export declare interface ReconnectingShimProps {
      */
     disconnectedFallback?: ReactNode;
     className?: string;
+}
+
+export declare interface ResolvedCapabilities {
+    /** declared ∩ provisioned — what may actually render. */
+    can: Record<RealtimeCapabilityName, boolean>;
+    /** What the host asked for. */
+    declared: Record<RealtimeCapabilityName, boolean>;
+    /** What the tenant is granted. */
+    provisioned: Record<RealtimeCapabilityName, boolean>;
+    /** True until the grant has been resolved once. */
+    isLoading: boolean;
 }
 
 /** Mirror of realtime-modules/src/client/types.ts ActivityEvent */
@@ -1068,6 +1147,15 @@ declare interface TiptapEditorProps {
 }
 
 declare type TransferPhase = 'started' | 'transferring' | 'verifying' | 'complete' | 'failed' | 'cancelled';
+
+/**
+ * Read the effective capabilities.
+ *
+ * Outside a provider every capability is OFF rather than ON. An unwrapped
+ * surface silently rendering video is exactly the failure this module exists to
+ * prevent, so the unconfigured case is the safe one.
+ */
+export declare function useRealtimeCapabilities(): ResolvedCapabilities;
 
 export declare function WrappedActivityPanel({ activity, visibleCount, rotateMs, staggerMs, kindColors, className, }: WrappedActivityPanelProps): JSX.Element;
 

@@ -142,3 +142,21 @@ export type {
   WrappedCanvasDocumentProps,
   RMUseCanvasDocumentReturn,
 } from './WrappedCanvasDocument';
+
+// Capability composition — what an embedded surface is ALLOWED to render.
+// Effective = declared by the host ∩ provisioned by the gateway; see
+// ./capabilities for why either alone is the wrong answer.
+export {
+  RealtimeCapabilityProvider,
+  CapabilityGate,
+  useRealtimeCapabilities,
+  ALL_REALTIME_CAPABILITIES,
+  DEFAULT_REALTIME_CAPABILITIES,
+} from './capabilities';
+export type {
+  RealtimeCapabilitySet,
+  RealtimeCapabilityName,
+  ResolvedCapabilities,
+  RealtimeCapabilityProviderProps,
+  CapabilityGateProps,
+} from './capabilities';
