@@ -14,17 +14,26 @@ import { t as h } from "./TiptapEditor-CUZ_20iC.js";
 import { Component as g, useCallback as _, useEffect as v, useId as y, useRef as b, useState as x } from "react";
 import { Fragment as S, jsx as C, jsxs as w } from "react/jsx-runtime";
 //#region src/components/doc-editor/NewDocumentModal.tsx
-var T = [{
-	id: "page",
-	icon: "📄",
-	name: "Page",
-	description: "One continuous document. Headings, paragraphs, lists and tables flow down a single sheet — like Google Docs or Confluence."
-}, {
-	id: "sections",
-	icon: "🗂️",
-	name: "Sections",
-	description: "A structured set of section forms — task lists, decisions and notes, each in its own box. Better as a todo creator or a notepad."
-}];
+var T = [
+	{
+		id: "page",
+		icon: "📄",
+		name: "Page",
+		description: "One continuous document. Headings, paragraphs, lists and tables flow down a single sheet — like Google Docs or Confluence."
+	},
+	{
+		id: "sections",
+		icon: "🗂️",
+		name: "Sections",
+		description: "A structured set of section forms — task lists, decisions and notes, each in its own box. Better as a todo creator or a notepad."
+	},
+	{
+		id: "diagram",
+		icon: "🖉",
+		name: "Diagram",
+		description: "A whiteboard. Shapes, arrows and text on an infinite canvas, drawn with others in real time — opens full width with the sidebar out of the way."
+	}
+];
 function E({ open: e, onClose: t, onCreate: n }) {
 	let [r, s] = x([]), [p, m] = x(!1), [h, g] = x(null), [_, E] = x(""), [D, O] = x(""), [k, A] = x("page"), j = b(null), M = y(), N = `${M}-shape-label`, P = `${M}-type-label`, F = `${M}-title`, I = `${M}-description`;
 	if (v(() => {

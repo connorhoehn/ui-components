@@ -42,7 +42,7 @@ import Chip from '../shared/Chip';
  * gate the editor branches on. Doing that translation is the host's job, not
  * this modal's; the modal only reports which shape the person chose.
  */
-export type DocumentShape = 'page' | 'sections';
+export type DocumentShape = 'page' | 'sections' | 'diagram';
 
 export interface NewDocumentModalProps {
   open: boolean;
@@ -77,6 +77,13 @@ const SHAPES: ReadonlyArray<{
     name: 'Sections',
     description:
       'A structured set of section forms — task lists, decisions and notes, each in its own box. Better as a todo creator or a notepad.',
+  },
+  {
+    id: 'diagram',
+    icon: '🖉',
+    name: 'Diagram',
+    description:
+      'A whiteboard. Shapes, arrows and text on an infinite canvas, drawn with others in real time — opens full width with the sidebar out of the way.',
   },
 ];
 

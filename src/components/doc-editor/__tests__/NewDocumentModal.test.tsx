@@ -296,3 +296,41 @@ describe('NewDocumentModal — accessibility wiring', () => {
     expect(screen.getByRole('group', { name: 'Document Type' })).toBeInTheDocument();
   });
 });
+
+describe('NewDocumentModal — the diagram shape', () => {
+  it('offers Diagram alongside Page and Sections', async () => {
+    loadTypes.mockReturnValue([mkType({ id: 'a', name: 'Alpha' })]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    await act(async () => { await Promise.resolve(); });
+    expect(screen.getByText('Diagram')).toBeInTheDocument();
+    expect(screen.getByText('Page')).toBeInTheDocument();
+    expect(screen.getByText('Sections')).toBeInTheDocument();
+  });
+
+  it('reports shape "diagram" on create', async () => {
+    // The shape is the ONLY field the server never sees — it is applied to the
+    // new document's CRDT by the seeder — so if it does not come out of here
+    // correctly nothing downstream can recover it.
+    const onCreate = vi.fn();
+    loadTypes.mockReturnValue([mkType({ id: 'a', name: 'Alpha' })]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+    await act(async () => { await Promise.resolve(); });
+
+    fireEvent.click(screen.getByText('Diagram'));
+    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Arch sketch' } });
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+
+    expect(onCreate).toHaveBeenCalledTimes(1);
+    expect(onCreate.mock.calls[0][0]).toMatchObject({ title: 'Arch sketch', shape: 'diagram' });
+  });
+
+  it('still defaults to Page, so the new option does not change the default', async () => {
+    const onCreate = vi.fn();
+    loadTypes.mockReturnValue([mkType({ id: 'a', name: 'Alpha' })]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+    await act(async () => { await Promise.resolve(); });
+    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'T' } });
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+    expect(onCreate.mock.calls[0][0]).toMatchObject({ shape: 'page' });
+  });
+});

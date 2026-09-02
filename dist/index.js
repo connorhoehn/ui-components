@@ -43,7 +43,7 @@ import { t as Vr } from "./Checkbox-DsS7fIUO.js";
 import { n as Hr, r as Ur, t as Wr } from "./ReactionsOverlay-Ob1ecsgg.js";
 import { a as Gr, c as Kr, d as qr, f as Jr, i as Yr, l as Xr, n as Zr, o as Qr, p as $r, r as ei, s as ti, t as ni, u as ri } from "./PresencePanel-TLZ43ZF1.js";
 import { t as ii } from "./activationKey-CjbL3LUv.js";
-import { a as ai, i as oi } from "./renderers-s58QxAq7.js";
+import { a as ai, i as oi } from "./renderers-XdIFnYEL.js";
 import { n as si, r as ci, t as li } from "./EventStreamContext-CLzG8O5_.js";
 import { K as ui, R as di, S as fi, X as pi, Y as mi, _ as hi, b as gi, d as _i, f as vi, g as yi, h as bi, j as xi, k as Si, l as Ci, m as wi, n as Ti, nt as Ei, p as Di, q as Oi, rt as ki, s as Ai, t as ji, u as Mi, v as Ni, w as Pi, y as Fi } from "./services-hy17bVZA.js";
 import { n as Ii, t as Li } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1281,7 +1281,7 @@ function Ys() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Xs = as(() => import("./DocumentEditorPage-BqgLBmCI.js").then((e) => e.n));
+var Xs = as(() => import("./DocumentEditorPage-IMyFl7vY.js").then((e) => e.n));
 function Zs({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

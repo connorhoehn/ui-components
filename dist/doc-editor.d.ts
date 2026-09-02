@@ -487,7 +487,7 @@ declare interface DocumentMeta {
  * gate the editor branches on. Doing that translation is the host's job, not
  * this modal's; the modal only reports which shape the person chose.
  */
-export declare type DocumentShape = 'page' | 'sections';
+export declare type DocumentShape = 'page' | 'sections' | 'diagram';
 
 export declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
