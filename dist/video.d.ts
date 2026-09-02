@@ -1324,6 +1324,36 @@ export declare interface StatusStripProps {
     style?: CSSProperties;
 }
 
+export declare interface StreamChatMessage {
+    id: string;
+    /** Who sent it. */
+    displayName: string;
+    /** The message body. */
+    content: string;
+    /** ISO timestamp, rendered as HH:MM. */
+    timestamp?: string;
+}
+
+export declare function StreamChatTicker({ messages, visibleCount, rotateMs, window: windowSize, className, 'data-testid': testId, }: StreamChatTickerProps): JSX.Element | null;
+
+export declare interface StreamChatTickerProps {
+    messages: readonly StreamChatMessage[];
+    /** How many messages are on screen at once. */
+    visibleCount?: number;
+    /** Rotation interval in ms. 0 disables rotation and pins the newest. */
+    rotateMs?: number;
+    /**
+     * How many recent messages the ticker may cycle through.
+     *
+     * Without a cap, a long call's history keeps growing and the rotation takes
+     * minutes to come back around to anything current — a "live" ticker showing
+     * a message from twenty minutes ago is worse than showing none.
+     */
+    window?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /**
  * Companion utility: returns true when the stream has at least one
  * paintable video track (live + enabled + not muted). Pair with
@@ -1341,6 +1371,38 @@ export declare interface StreamMetrics {
     };
     packetsLost: number;
     jitter?: number;
+}
+
+export declare function StreamStage({ stream, title, viewerCount, live, chatMessages, chatVisibleCount, chatRotateMs, muted, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
+
+export declare interface StreamStageProps {
+    /**
+     * The live stream. Null renders the placeholder instead — a stage with no
+     * stream is the normal state before a broadcast starts, not an error.
+     */
+    stream?: MediaStream | null;
+    /** Name of the stream or call, shown top-left. */
+    title?: string;
+    /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
+    viewerCount?: number;
+    /** True while the stream is live — drives the LIVE badge. */
+    live?: boolean;
+    /**
+     * Chat to rotate over the video. Empty or omitted renders no ticker at all,
+     * so a silent stream is not carrying an empty chat frame.
+     */
+    chatMessages?: readonly StreamChatMessage[];
+    /** Forwarded to the ticker. */
+    chatVisibleCount?: number;
+    chatRotateMs?: number;
+    /** Muted by default: an autoplaying stream that makes noise is hostile. */
+    muted?: boolean;
+    /** Controls rendered bottom-right, e.g. leave / mute / fullscreen. */
+    controls?: ReactNode;
+    /** Shown centred when there is no stream. */
+    placeholder?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function StreamVideo({ stream, muted, videoRef, className, onPlayStateChange, }: StreamVideoProps): JSX.Element;

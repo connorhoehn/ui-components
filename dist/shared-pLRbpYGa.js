@@ -25,9 +25,10 @@ import { n as x, t as S } from "./Avatar-BzicCOft.js";
 import "./FloatingPanel-CNQWLXV-.js";
 import { t as C } from "./StatusDot-Bgx2zxgC.js";
 import { t as w } from "./PresenceDot-3gBZGPvX.js";
-import { n as T } from "./Badge-C_anJCMo.js";
+import "./Badge-w_b39PZr.js";
 import "./PresenceAvatars-BkzMACtv.js";
-import { t as E } from "./InlinePopover-DFdI8hw1.js";
+import { t as T } from "./InlinePopover-DFdI8hw1.js";
+import { t as E } from "./ActivityFeed-BvBfBfGZ.js";
 import "./Select-CqVokE2v.js";
 import "./Checkbox-DsS7fIUO.js";
 import { Children as D, createContext as O, isValidElement as k, useCallback as A, useContext as ee, useEffect as j, useId as M, useMemo as N, useRef as P, useState as F } from "react";
@@ -2723,7 +2724,7 @@ function Bt({ items: e }) {
 		onClick: () => n((e) => !e),
 		className: "text-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] border-none bg-transparent cursor-pointer px-1 py-0 rounded-sm leading-snug",
 		children: "…"
-	}), /* @__PURE__ */ L(E, {
+	}), /* @__PURE__ */ L(T, {
 		trigger: r,
 		open: t,
 		onClose: () => n(!1),
@@ -2914,7 +2915,7 @@ function Gt({ name: e, id: t, status: n, statusColors: r, contributorNames: i = 
 					colors: m
 				})]
 			}),
-			/* @__PURE__ */ L(T, {
+			/* @__PURE__ */ L(E, {
 				items: o,
 				staggerMs: g
 			}),
@@ -3526,7 +3527,7 @@ function wn({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: r, trigge
 		onClick: () => u((e) => !e),
 		className: e("inline-flex items-center justify-center gap-1.5 cursor-pointer", "rounded-md border border-[var(--color-border)] px-2 py-1", "text-base leading-none text-[var(--color-text-secondary)]", "bg-transparent hover:bg-[var(--color-surface-hover)] transition-colors duration-100", l && "bg-[var(--color-surface-hover)]", i),
 		children: t
-	}), /* @__PURE__ */ L(E, {
+	}), /* @__PURE__ */ L(T, {
 		trigger: d,
 		open: l,
 		onClose: p,
@@ -4006,4 +4007,101 @@ function Kn({ title: t, hint: n, actions: r, first: i = !1, children: a, classNa
 	});
 }
 //#endregion
-export { ct as $, Ft as A, wt as B, sn as C, ve as Ct, Gt as D, Qt as E, kt as F, Z as G, bt as H, At as I, ht as J, X as K, Ot as L, Nt as M, Mt as N, Vt as O, jt as P, lt as Q, Dt as R, hn as S, Te as St, Jt as T, oe as Tt, xt as U, St as V, _t as W, ft as X, pt as Y, ut as Z, yn as _, De as _t, zn as a, Je as at, mn as b, H as bt, Pn as c, U as ct, Nn as d, ze as dt, it as et, Mn as f, Re as ft, Cn as g, Ae as gt, wn as h, je as ht, Vn as i, G as it, Pt as j, It as k, Q as l, Ue as lt, On as m, Me as mt, Gn as n, tt as nt, Bn as o, Ke as ot, kn as p, Pe as pt, gt as q, Un as r, $e as rt, Fn as s, We as st, Kn as t, rt as tt, Ln as u, He as ut, _n as v, Oe as vt, cn as w, se as wt, gn as x, Ce as xt, pn as y, we as yt, Et as z };
+//#region src/components/shared/PersonHoverCard.tsx
+function qn({ person: t, children: n, actions: r, details: i, interactiveChild: a = !1, openDelay: o = 450, closeDelay: s = 250, className: c, "data-testid": l = "person-hover-card" }) {
+	let u = P(null), [d, f] = F(!1), p = P(null), m = A(() => {
+		p.current &&= (clearTimeout(p.current), null);
+	}, []);
+	j(() => m, [m]);
+	let h = A(() => {
+		m(), p.current = setTimeout(() => f(!0), o);
+	}, [m, o]), g = A(() => {
+		m(), p.current = setTimeout(() => f(!1), s);
+	}, [m, s]);
+	return /* @__PURE__ */ R(I, { children: [/* @__PURE__ */ L("span", {
+		ref: u,
+		...a ? {} : {
+			tabIndex: 0,
+			role: "button",
+			"aria-haspopup": "dialog",
+			onKeyDown: (e) => {
+				(e.key === "Enter" || e.key === " ") && (e.preventDefault(), f((e) => !e)), e.key === "Escape" && f(!1);
+			}
+		},
+		"aria-expanded": d,
+		"data-testid": `${l}-trigger`,
+		className: e("rounded-sm underline-offset-2", a ? "inline-flex" : "cursor-default hover:underline", c),
+		onMouseEnter: h,
+		onMouseLeave: g,
+		onFocus: () => f(!0),
+		children: n
+	}), /* @__PURE__ */ L(T, {
+		trigger: u,
+		open: d,
+		onClose: () => {
+			m(), f(!1);
+		},
+		placement: "bottom-start",
+		"aria-label": `About ${t.displayName}`,
+		"data-testid": l,
+		children: /* @__PURE__ */ R("div", {
+			className: "w-72 p-3",
+			onMouseEnter: m,
+			onMouseLeave: g,
+			children: [
+				/* @__PURE__ */ R("div", {
+					className: "flex items-start gap-3",
+					children: [/* @__PURE__ */ L(S, {
+						name: t.displayName,
+						src: t.avatarUrl,
+						color: t.color,
+						size: 40
+					}), /* @__PURE__ */ R("div", {
+						className: "min-w-0 flex-1",
+						children: [
+							/* @__PURE__ */ R("div", {
+								className: "flex items-center gap-1.5",
+								children: [/* @__PURE__ */ L("span", {
+									className: "truncate text-sm font-semibold text-text-primary",
+									children: t.displayName
+								}), t.online !== void 0 && /* @__PURE__ */ L(w, { state: t.online ? "online" : "offline" })]
+							}),
+							t.title && /* @__PURE__ */ L("div", {
+								className: "truncate text-xs text-text-secondary",
+								children: t.title
+							}),
+							t.department && /* @__PURE__ */ L("div", {
+								className: "truncate text-xs text-text-tertiary",
+								children: t.department
+							})
+						]
+					})]
+				}),
+				t.statusText && /* @__PURE__ */ L("div", {
+					className: "mt-2 truncate text-xs italic text-text-secondary",
+					children: t.statusText
+				}),
+				(t.email || t.localTime) && /* @__PURE__ */ R("div", {
+					className: "mt-2 space-y-0.5 border-t border-border pt-2",
+					children: [t.email && /* @__PURE__ */ L("div", {
+						className: "truncate text-xs text-text-secondary",
+						children: t.email
+					}), t.localTime && /* @__PURE__ */ R("div", {
+						className: "text-xs text-text-tertiary",
+						children: [t.localTime, " local time"]
+					})]
+				}),
+				i && /* @__PURE__ */ L("div", {
+					className: "mt-2 border-t border-border pt-2",
+					children: i
+				}),
+				r && /* @__PURE__ */ L("div", {
+					className: "mt-3 flex items-center gap-2",
+					children: r
+				})
+			]
+		})
+	})] });
+}
+//#endregion
+export { lt as $, It as A, Et as B, hn as C, Te as Ct, Qt as D, Jt as E, oe as Et, jt as F, _t as G, St as H, kt as I, gt as J, Z as K, At as L, Pt as M, Nt as N, Gt as O, Mt as P, ut as Q, Ot as R, gn as S, Ce as St, cn as T, se as Tt, bt as U, wt as V, xt as W, pt as X, ht as Y, ft as Z, Cn as _, Ae as _t, Vn as a, G as at, pn as b, we as bt, Fn as c, We as ct, Ln as d, He as dt, ct as et, Nn as f, ze as ft, wn as g, je as gt, On as h, Me as ht, Un as i, $e as it, Ft as j, Vt as k, Pn as l, U as lt, kn as m, Pe as mt, Kn as n, rt as nt, zn as o, Je as ot, Mn as p, Re as pt, X as q, Gn as r, tt as rt, Bn as s, Ke as st, qn as t, it as tt, Q as u, Ue as ut, yn as v, De as vt, sn as w, ve as wt, mn as x, H as xt, _n as y, Oe as yt, Dt as z };

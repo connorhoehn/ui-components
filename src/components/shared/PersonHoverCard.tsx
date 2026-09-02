@@ -23,7 +23,14 @@
 // and touch users, which for a control carrying someone's contact actions is
 // not an acceptable place to leave them.
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent as KeyboardEvent_,
+  type ReactNode,
+} from 'react';
 import { cn } from '../../lib/cn';
 import { Avatar } from './Avatar';
 import { PresenceDot } from './PresenceDot';
@@ -53,6 +60,25 @@ export interface PersonHoverCardProps {
   children: ReactNode;
   /** Actions rendered at the foot of the card (Message, Call, …). */
   actions?: ReactNode;
+  /**
+   * Extra content between the identity block and the actions — skills,
+   * a score, recent work. Domain-shaped detail the card itself should not
+   * try to model, since every product means something different by it.
+   */
+  details?: ReactNode;
+  /**
+   * Set when `children` is ITSELF interactive — a link or a button.
+   *
+   * The trigger is normally a `role="button"` span so the card is reachable
+   * without a pointer. But wrapping a link in that produces a link inside a
+   * button: two nested activation targets with different destinations, which
+   * assistive tech announces as one confused control and which swallows the
+   * link's own Enter behaviour. With this set the wrapper keeps only the
+   * pointer handlers and lets the child own focus and activation — hover
+   * still opens the card, and focusing the link still opens it, because
+   * React's onFocus is focusin and bubbles from the child.
+   */
+  interactiveChild?: boolean;
   /** ms before hover opens the card. */
   openDelay?: number;
   /** ms before leaving closes it. Must outlast the trigger→panel pointer trip. */
@@ -65,6 +91,8 @@ export function PersonHoverCard({
   person,
   children,
   actions,
+  details,
+  interactiveChild = false,
   openDelay = 450,
   closeDelay = 250,
   className,
@@ -100,23 +128,34 @@ export function PersonHoverCard({
       <span
         ref={triggerRef}
         // Focusable and keyboard-operable: a card that only exists on hover is
-        // unreachable by keyboard and touch.
-        tabIndex={0}
-        role="button"
+        // unreachable by keyboard and touch. Unless the child already is —
+        // see `interactiveChild`.
+        {...(interactiveChild
+          ? {}
+          : {
+            tabIndex: 0,
+            role: 'button',
+            'aria-haspopup': 'dialog' as const,
+            onKeyDown: (e: KeyboardEvent_) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setOpen((v) => !v);
+              }
+              if (e.key === 'Escape') setOpen(false);
+            },
+          })}
         aria-expanded={open}
-        aria-haspopup="dialog"
         data-testid={`${testId}-trigger`}
-        className={cn('cursor-default rounded-sm underline-offset-2 hover:underline', className)}
+        className={cn(
+          'rounded-sm underline-offset-2',
+          // An interactive child brings its own affordance; adding the span's
+          // underline on top double-decorates a link that already underlines.
+          interactiveChild ? 'inline-flex' : 'cursor-default hover:underline',
+          className,
+        )}
         onMouseEnter={scheduleOpen}
         onMouseLeave={scheduleClose}
         onFocus={() => setOpen(true)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            setOpen((v) => !v);
-          }
-          if (e.key === 'Escape') setOpen(false);
-        }}
       >
         {children}
       </span>
@@ -175,6 +214,8 @@ export function PersonHoverCard({
               )}
             </div>
           )}
+
+          {details && <div className="mt-2 border-t border-border pt-2">{details}</div>}
 
           {actions && <div className="mt-3 flex items-center gap-2">{actions}</div>}
         </div>

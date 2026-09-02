@@ -2648,7 +2648,27 @@ export declare interface ContextPatchMerge {
 export declare interface ConversationItem {
     /** Chat channel id — handed back verbatim by `onSelect`. */
     channel: string;
-    /** 1 peer for a 1:1 conversation, N for groups. */
+    /**
+     * What kind of conversation this is.
+     *
+     * The server already models all three as ONE thing — a room carries
+     * `type: 'standalone' | 'group' | 'dm'` — so they belong in one list rather
+     * than three panels with three "new" buttons. This only changes how the row
+     * IDENTIFIES itself:
+     *
+     *   'dm'      → the peer's avatar and name
+     *   'group'   → stacked avatars, all the names
+     *   'channel' → a # and the channel's own name. A channel is not the sum of
+     *               its members; #general does not want forty stacked avatars,
+     *               and its identity survives everyone leaving.
+     *
+     * Defaults to peer-derived ('dm' or 'group' by peer count), so every existing
+     * caller keeps the rows it already had.
+     */
+    kind?: 'dm' | 'group' | 'channel';
+    /** Required for `kind: 'channel'` — the channel's name, without the '#'. */
+    name?: string;
+    /** 1 peer for a 1:1 conversation, N for groups. Empty for a channel. */
     peers: ConversationPeer[];
     lastMessagePreview?: string;
     /** ISO timestamp of the last message. Rendered as HH:MM. */
@@ -6290,6 +6310,59 @@ export declare interface PersistedWidgetState {
     height: number;
 }
 
+export declare interface PersonCardData {
+    userId?: string;
+    displayName: string;
+    /** Job title / role, e.g. "Staff Engineer". */
+    title?: string;
+    email?: string;
+    /** Team or department. */
+    department?: string;
+    /** Local time where they are, already formatted, e.g. "3:42 PM". */
+    localTime?: string;
+    avatarUrl?: string;
+    color?: string;
+    /** true → online, false → offline, undefined → unknown (no dot). */
+    online?: boolean;
+    /** Free-text status, e.g. "In a meeting". */
+    statusText?: string;
+}
+
+export declare function PersonHoverCard({ person, children, actions, details, interactiveChild, openDelay, closeDelay, className, 'data-testid': testId, }: PersonHoverCardProps): JSX.Element;
+
+export declare interface PersonHoverCardProps {
+    person: PersonCardData;
+    /** The inline element that opens the card — usually the person's name. */
+    children: ReactNode;
+    /** Actions rendered at the foot of the card (Message, Call, …). */
+    actions?: ReactNode;
+    /**
+     * Extra content between the identity block and the actions — skills,
+     * a score, recent work. Domain-shaped detail the card itself should not
+     * try to model, since every product means something different by it.
+     */
+    details?: ReactNode;
+    /**
+     * Set when `children` is ITSELF interactive — a link or a button.
+     *
+     * The trigger is normally a `role="button"` span so the card is reachable
+     * without a pointer. But wrapping a link in that produces a link inside a
+     * button: two nested activation targets with different destinations, which
+     * assistive tech announces as one confused control and which swallows the
+     * link's own Enter behaviour. With this set the wrapper keeps only the
+     * pointer handlers and lets the child own focus and activation — hover
+     * still opens the card, and focusing the link still opens it, because
+     * React's onFocus is focusin and bubbles from the child.
+     */
+    interactiveChild?: boolean;
+    /** ms before hover opens the card. */
+    openDelay?: number;
+    /** ms before leaving closes it. Must outlast the trigger→panel pointer trip. */
+    closeDelay?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function PhoneOffIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare function PiPButton({ getVideoElement, className, title, }: PiPButtonProps): JSX.Element;
@@ -8740,6 +8813,36 @@ export declare interface StepExecution {
 
 export declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
 
+export declare interface StreamChatMessage {
+    id: string;
+    /** Who sent it. */
+    displayName: string;
+    /** The message body. */
+    content: string;
+    /** ISO timestamp, rendered as HH:MM. */
+    timestamp?: string;
+}
+
+export declare function StreamChatTicker({ messages, visibleCount, rotateMs, window: windowSize, className, 'data-testid': testId, }: StreamChatTickerProps): JSX.Element | null;
+
+export declare interface StreamChatTickerProps {
+    messages: readonly StreamChatMessage[];
+    /** How many messages are on screen at once. */
+    visibleCount?: number;
+    /** Rotation interval in ms. 0 disables rotation and pins the newest. */
+    rotateMs?: number;
+    /**
+     * How many recent messages the ticker may cycle through.
+     *
+     * Without a cap, a long call's history keeps growing and the rotation takes
+     * minutes to come back around to anything current — a "live" ticker showing
+     * a message from twenty minutes ago is worse than showing none.
+     */
+    window?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /**
  * Companion utility: returns true when the stream has at least one
  * paintable video track (live + enabled + not muted). Pair with
@@ -8757,6 +8860,38 @@ export declare interface StreamMetrics {
     };
     packetsLost: number;
     jitter?: number;
+}
+
+export declare function StreamStage({ stream, title, viewerCount, live, chatMessages, chatVisibleCount, chatRotateMs, muted, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
+
+export declare interface StreamStageProps {
+    /**
+     * The live stream. Null renders the placeholder instead — a stage with no
+     * stream is the normal state before a broadcast starts, not an error.
+     */
+    stream?: MediaStream | null;
+    /** Name of the stream or call, shown top-left. */
+    title?: string;
+    /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
+    viewerCount?: number;
+    /** True while the stream is live — drives the LIVE badge. */
+    live?: boolean;
+    /**
+     * Chat to rotate over the video. Empty or omitted renders no ticker at all,
+     * so a silent stream is not carrying an empty chat frame.
+     */
+    chatMessages?: readonly StreamChatMessage[];
+    /** Forwarded to the ticker. */
+    chatVisibleCount?: number;
+    chatRotateMs?: number;
+    /** Muted by default: an autoplaying stream that makes noise is hostile. */
+    muted?: boolean;
+    /** Controls rendered bottom-right, e.g. leave / mute / fullscreen. */
+    controls?: ReactNode;
+    /** Shown centred when there is no stream. */
+    placeholder?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function StreamVideo({ stream, muted, videoRef, className, onPlayStateChange, }: StreamVideoProps): JSX.Element;

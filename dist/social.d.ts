@@ -236,7 +236,27 @@ declare type ConnectionState = 'connected' | 'connecting' | 'disconnected';
 export declare interface ConversationItem {
     /** Chat channel id — handed back verbatim by `onSelect`. */
     channel: string;
-    /** 1 peer for a 1:1 conversation, N for groups. */
+    /**
+     * What kind of conversation this is.
+     *
+     * The server already models all three as ONE thing — a room carries
+     * `type: 'standalone' | 'group' | 'dm'` — so they belong in one list rather
+     * than three panels with three "new" buttons. This only changes how the row
+     * IDENTIFIES itself:
+     *
+     *   'dm'      → the peer's avatar and name
+     *   'group'   → stacked avatars, all the names
+     *   'channel' → a # and the channel's own name. A channel is not the sum of
+     *               its members; #general does not want forty stacked avatars,
+     *               and its identity survives everyone leaving.
+     *
+     * Defaults to peer-derived ('dm' or 'group' by peer count), so every existing
+     * caller keeps the rows it already had.
+     */
+    kind?: 'dm' | 'group' | 'channel';
+    /** Required for `kind: 'channel'` — the channel's name, without the '#'. */
+    name?: string;
+    /** 1 peer for a 1:1 conversation, N for groups. Empty for a channel. */
     peers: ConversationPeer[];
     lastMessagePreview?: string;
     /** ISO timestamp of the last message. Rendered as HH:MM. */

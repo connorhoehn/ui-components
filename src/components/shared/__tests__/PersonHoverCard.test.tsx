@@ -88,4 +88,57 @@ describe('PersonHoverCard', () => {
     fireEvent.focus(trigger());
     expect(trigger()).toHaveAttribute('aria-expanded', 'true');
   });
+
+  it('renders the details slot between identity and actions', () => {
+    render(
+      <PersonHoverCard
+        person={{ displayName: 'Nora DaSilva' }}
+        details={<span>Kubernetes · Observability</span>}
+        actions={<button type="button">Open</button>}
+      >
+        Nora DaSilva
+      </PersonHoverCard>,
+    );
+    fireEvent.focus(screen.getByTestId('person-hover-card-trigger'));
+    expect(screen.getByText('Kubernetes · Observability')).toBeInTheDocument();
+  });
+
+  it('drops the button role when the child is itself interactive', () => {
+    // A link inside a role=button span is two nested activation targets;
+    // assistive tech announces one confused control and Enter stops
+    // following the link.
+    render(
+      <PersonHoverCard person={{ displayName: 'Nora DaSilva' }} interactiveChild>
+        <a href="/people/nora">Nora DaSilva</a>
+      </PersonHoverCard>,
+    );
+    const trigger = screen.getByTestId('person-hover-card-trigger');
+    expect(trigger).not.toHaveAttribute('role', 'button');
+    expect(trigger).not.toHaveAttribute('tabindex');
+    expect(screen.getByRole('link', { name: 'Nora DaSilva' })).toBeInTheDocument();
+  });
+
+  it('still opens when the interactive child takes focus', () => {
+    render(
+      <PersonHoverCard
+        person={{ displayName: 'Nora DaSilva', title: 'Staff SRE' }}
+        interactiveChild
+        openDelay={0}
+      >
+        <a href="/people/nora">Nora DaSilva</a>
+      </PersonHoverCard>,
+    );
+    // Focus BUBBLES to the wrapper, so tabbing to the link opens the card —
+    // which is the only way a keyboard user reaches it once the wrapper has
+    // given up its own tab stop to the child.
+    fireEvent.focusIn(screen.getByRole('link', { name: 'Nora DaSilva' }));
+    expect(screen.getByText('Staff SRE')).toBeInTheDocument();
+  });
+
+  it('keeps the button role by default so the card stays keyboard-reachable', () => {
+    render(<PersonHoverCard person={{ displayName: 'Nora DaSilva' }}>Nora DaSilva</PersonHoverCard>);
+    const trigger = screen.getByTestId('person-hover-card-trigger');
+    expect(trigger).toHaveAttribute('role', 'button');
+    expect(trigger).toHaveAttribute('tabindex', '0');
+  });
 });

@@ -112,3 +112,55 @@ describe('ConversationList', () => {
     expect(root.querySelector('.text-white')).not.toBeNull();
   });
 });
+
+// One list, three kinds — because the server already models them as one thing.
+describe('ConversationList — channels alongside DMs and groups', () => {
+  const items = [
+    { channel: 'general', kind: 'channel' as const, name: 'general', peers: [] },
+    { channel: 'dm-1', peers: [{ userId: 'u1', displayName: 'Nora DaSilva', online: true }] },
+    {
+      channel: 'grp-1',
+      peers: [
+        { userId: 'u2', displayName: 'Sam Ruiz' },
+        { userId: 'u3', displayName: 'Bea Okonjo' },
+      ],
+    },
+  ];
+
+  it('identifies a channel by name and a #, not by its members', () => {
+    render(<ConversationList items={items} onSelect={() => {}} />);
+    expect(screen.getByText('general')).toBeInTheDocument();
+    expect(screen.getByTestId('conversation-channel-glyph')).toBeInTheDocument();
+  });
+
+  // #general does not want forty stacked avatars, and its identity survives
+  // everyone leaving.
+  it('renders no avatars for a channel', () => {
+    render(<ConversationList items={[items[0]]} onSelect={() => {}} />);
+    expect(screen.queryByText('ND')).toBeNull();
+  });
+
+  it('still renders DMs and groups the way it always did', () => {
+    render(<ConversationList items={items} onSelect={() => {}} />);
+    expect(screen.getByText('Nora DaSilva')).toBeInTheDocument();
+    expect(screen.getByText('Sam Ruiz, Bea Okonjo')).toBeInTheDocument();
+  });
+
+  it('selects a channel by its channel id', () => {
+    const onSelect = vi.fn();
+    render(<ConversationList items={items} onSelect={onSelect} />);
+    fireEvent.click(screen.getByText('general'));
+    expect(onSelect).toHaveBeenCalledWith('general');
+  });
+
+  // A mislabelled row should stay readable rather than render blank.
+  it('falls back to the channel id when a channel has no name', () => {
+    render(
+      <ConversationList
+        items={[{ channel: 'random', kind: 'channel', peers: [] }]}
+        onSelect={() => {}}
+      />,
+    );
+    expect(screen.getByText('random')).toBeInTheDocument();
+  });
+});

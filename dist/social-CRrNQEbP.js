@@ -2469,7 +2469,7 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 			className: "m-0 flex min-h-0 list-none flex-col gap-0.5 overflow-y-auto p-0",
 			"aria-label": "Conversations",
 			children: e.map((e) => {
-				let r = e.channel === t, i = e.peers.length > 1, a = e.peers[0], o = e.peers.map((e) => e.displayName).join(", "), c = e.lastMessageAt ? m(e.lastMessageAt) : "", p = e.unreadCount ?? 0;
+				let r = e.channel === t, i = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), a = i === "channel", o = i === "group", c = e.peers[0], p = a ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), h = e.lastMessageAt ? m(e.lastMessageAt) : "", g = e.unreadCount ?? 0;
 				return /* @__PURE__ */ T("li", { children: /* @__PURE__ */ E("button", {
 					type: "button",
 					onClick: () => n(e.channel),
@@ -2479,7 +2479,12 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 					"aria-current": r ? "true" : void 0,
 					className: s("flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left", l ? "hover:bg-white/10" : "hover:bg-surface-hover", r && (l ? "bg-white/10" : "bg-surface-hover")),
 					children: [
-						i ? /* @__PURE__ */ T(u, {
+						a ? /* @__PURE__ */ T("span", {
+							"aria-hidden": "true",
+							"data-testid": "conversation-channel-glyph",
+							className: s("grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[15px] font-semibold leading-none", l ? "bg-white/10 text-white/70" : "bg-surface-inset text-text-secondary"),
+							children: "#"
+						}) : o ? /* @__PURE__ */ T(u, {
 							size: 28,
 							maxVisible: 2,
 							items: e.peers.map((e) => ({
@@ -2487,15 +2492,15 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 								color: e.color,
 								src: e.avatarUrl
 							}))
-						}) : a ? /* @__PURE__ */ E("span", {
+						}) : c ? /* @__PURE__ */ E("span", {
 							className: "relative inline-flex shrink-0",
 							children: [/* @__PURE__ */ T(d, {
-								name: a.displayName,
-								color: a.color,
-								src: a.avatarUrl,
+								name: c.displayName,
+								color: c.color,
+								src: c.avatarUrl,
 								size: 28
-							}), a.online !== void 0 && /* @__PURE__ */ T(f, {
-								state: a.online ? "online" : "offline",
+							}), c.online !== void 0 && /* @__PURE__ */ T(f, {
+								state: c.online ? "online" : "offline",
 								pulse: !1,
 								className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", l ? "ring-call-chrome" : "ring-surface")
 							})]
@@ -2505,12 +2510,12 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 							children: [/* @__PURE__ */ E("span", {
 								className: "flex items-baseline gap-2",
 								children: [/* @__PURE__ */ T("span", {
-									className: s("min-w-0 flex-1 truncate text-[13px]", p > 0 ? "font-semibold" : "font-medium", l ? "text-white" : "text-text-primary"),
-									children: o
-								}), c && /* @__PURE__ */ T("span", {
+									className: s("min-w-0 flex-1 truncate text-[13px]", g > 0 ? "font-semibold" : "font-medium", l ? "text-white" : "text-text-primary"),
+									children: p
+								}), h && /* @__PURE__ */ T("span", {
 									className: s("shrink-0 text-[11px] tabular-nums", l ? "text-white/50" : "text-text-tertiary"),
 									"data-testid": "conversation-time",
-									children: c
+									children: h
 								})]
 							}), e.lastMessagePreview && /* @__PURE__ */ T("span", {
 								className: s("truncate text-[12px]", l ? "text-white/60" : "text-text-secondary"),
@@ -2518,10 +2523,10 @@ function Ee({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel:
 								children: e.lastMessagePreview
 							})]
 						}),
-						p > 0 && /* @__PURE__ */ T("span", {
+						g > 0 && /* @__PURE__ */ T("span", {
 							"data-testid": "conversation-unread",
 							className: "grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold leading-none text-white",
-							children: p > 99 ? "99+" : p
+							children: g > 99 ? "99+" : g
 						})
 					]
 				}) }, e.channel);

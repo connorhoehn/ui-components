@@ -29,7 +29,27 @@ export interface ConversationPeer {
 export interface ConversationItem {
   /** Chat channel id — handed back verbatim by `onSelect`. */
   channel: string;
-  /** 1 peer for a 1:1 conversation, N for groups. */
+  /**
+   * What kind of conversation this is.
+   *
+   * The server already models all three as ONE thing — a room carries
+   * `type: 'standalone' | 'group' | 'dm'` — so they belong in one list rather
+   * than three panels with three "new" buttons. This only changes how the row
+   * IDENTIFIES itself:
+   *
+   *   'dm'      → the peer's avatar and name
+   *   'group'   → stacked avatars, all the names
+   *   'channel' → a # and the channel's own name. A channel is not the sum of
+   *               its members; #general does not want forty stacked avatars,
+   *               and its identity survives everyone leaving.
+   *
+   * Defaults to peer-derived ('dm' or 'group' by peer count), so every existing
+   * caller keeps the rows it already had.
+   */
+  kind?: 'dm' | 'group' | 'channel';
+  /** Required for `kind: 'channel'` — the channel's name, without the '#'. */
+  name?: string;
+  /** 1 peer for a 1:1 conversation, N for groups. Empty for a channel. */
   peers: ConversationPeer[];
   lastMessagePreview?: string;
   /** ISO timestamp of the last message. Rendered as HH:MM. */
@@ -104,9 +124,15 @@ export function ConversationList({
         >
           {items.map((item) => {
             const isActive = item.channel === activeChannel;
-            const isGroup = item.peers.length > 1;
+            const kind = item.kind ?? (item.peers.length > 1 ? 'group' : 'dm');
+            const isChannel = kind === 'channel';
+            const isGroup = kind === 'group';
             const primary = item.peers[0];
-            const names = item.peers.map((p) => p.displayName).join(', ');
+            // A channel is named, not enumerated. Falling back to the channel
+            // id keeps a mislabelled row readable instead of blank.
+            const names = isChannel
+              ? (item.name ?? item.channel)
+              : item.peers.map((p) => p.displayName).join(', ');
             const time = item.lastMessageAt ? formatChatTime(item.lastMessageAt) : '';
             const unread = item.unreadCount ?? 0;
             return (
@@ -126,7 +152,18 @@ export function ConversationList({
                 >
                   {/* Avatar (1:1) or stacked avatars (group), with a
                       presence dot only when the peer's presence is known. */}
-                  {isGroup ? (
+                  {isChannel ? (
+                    <span
+                      aria-hidden="true"
+                      data-testid="conversation-channel-glyph"
+                      className={cn(
+                        'grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[15px] font-semibold leading-none',
+                        dark ? 'bg-white/10 text-white/70' : 'bg-surface-inset text-text-secondary',
+                      )}
+                    >
+                      #
+                    </span>
+                  ) : isGroup ? (
                     <AvatarGroup
                       size={28}
                       maxVisible={2}
