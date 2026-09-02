@@ -38,3 +38,11 @@ export type {
 
 export { ChatDropZone } from './ChatDropZone';
 export type { ChatDropZoneProps } from './ChatDropZone';
+
+// RichChatComposer — the Teams-style message box: formatting, @mentions,
+// attachments and drag-drop. ChatComposer remains for hosts that want a plain
+// field and should not pay for a rich-text stack.
+export { RichChatComposer } from './RichChatComposer';
+export type { RichChatComposerProps, ComposedMessage } from './RichChatComposer';
+export { MentionSuggestions } from './MentionSuggestions';
+export type { MentionCandidate, MentionSuggestionsProps } from './MentionSuggestions';

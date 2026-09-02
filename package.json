@@ -1,7 +1,7 @@
 {
   "name": "@connorhoehnslalom/ui-components",
   "version": "2.127.0",
-  "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
+  "description": "React component library for real-time collaborative applications \u2014 chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
     "components",
@@ -139,8 +139,10 @@
   },
   "peerDependencies": {
     "@connorhoehn/realtime-modules": ">=0.17.0 <1",
+    "@excalidraw/excalidraw": "^0.18.0",
     "@tiptap/core": "^3.0.0",
     "@tiptap/extension-collaboration": "^3.22.3",
+    "@tiptap/extension-mention": "^3.22.3",
     "@tiptap/extension-placeholder": "^3.22.3",
     "@tiptap/extension-task-item": "^3.22.3",
     "@tiptap/extension-task-list": "^3.22.3",
@@ -160,17 +162,25 @@
     "react-router": "^7.0.0 || ^8.0.0",
     "recharts": "^3.0.0",
     "y-protocols": "^1.0.7",
-    "yjs": "^13.6.0",
-    "@excalidraw/excalidraw": "^0.18.0"
+    "yjs": "^13.6.0"
   },
   "peerDependenciesMeta": {
     "@connorhoehn/realtime-modules": {
       "optional": true
     },
+    "@excalidraw/excalidraw": {
+      "optional": true,
+      "_subpaths": [
+        "./diagram"
+      ]
+    },
     "@tiptap/core": {
       "optional": true
     },
     "@tiptap/extension-collaboration": {
+      "optional": true
+    },
+    "@tiptap/extension-mention": {
       "optional": true
     },
     "@tiptap/extension-placeholder": {
@@ -220,12 +230,6 @@
     },
     "y-protocols": {
       "optional": true
-    },
-    "@excalidraw/excalidraw": {
-      "optional": true,
-      "_subpaths": [
-        "./diagram"
-      ]
     }
   },
   "devDependencies": {
