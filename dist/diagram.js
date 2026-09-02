@@ -1,4 +1,4 @@
-import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
+import { n as e, t } from "./useWebSocket-C9oAM0NL.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Button-wU9TwJvB.js";
 import { n as i, t as a } from "./useResolvedTheme-MncahQcS.js";
@@ -8,7 +8,7 @@ import { createRoot as m } from "react-dom/client";
 import { Extension as h } from "@tiptap/core";
 import { Plugin as g, PluginKey as _ } from "@tiptap/pm/state";
 //#region src/components/diagram/CollaborativeExcalidraw.tsx
-var v = c(() => import("./ExcalidrawCanvas-CKZiiYy6.js"));
+var v = c(() => import("./ExcalidrawCanvas-CeMIuSNG.js"));
 function y({ label: e }) {
 	return /* @__PURE__ */ f("div", {
 		"data-testid": "diagram-loading",

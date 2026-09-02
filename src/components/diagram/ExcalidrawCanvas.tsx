@@ -235,13 +235,17 @@ export default function ExcalidrawCanvas({
             data-testid="excalidraw-canvas"
             className={cn('relative h-full w-full', className)}
         >
-            {/* Top-RIGHT, and above the canvas. Excalidraw owns the top-left
-                (its main menu) and the top-centre (the toolbar); the right rail
-                is the only corner with nothing in it at any breakpoint. `z-[5]`
-                clears the canvas layers without reaching the modal stack, and
-                the wrapper is pointer-events-none so the strip never eats a
-                drag that starts underneath it. */}
-            <div className="pointer-events-none absolute right-2 top-2 z-[5] flex justify-end">
+            {/* Right rail, BELOW Excalidraw's own top island.
+                Excalidraw owns the top-left (main menu), the top-centre
+                (toolbar) and — when `isCollaborating` — a small avatar row at
+                the top-right of that island. Sitting at `top-2` put this strip
+                immediately beside that row, so a remote person appeared twice
+                in two different colours about fifteen pixels apart. Dropping
+                below the island reads as a separate roster, which is what it
+                is. `z-[5]` clears the canvas layers without reaching the modal
+                stack, and pointer-events-none on the wrapper means the strip
+                never eats a drag that starts underneath it. */}
+            <div className="pointer-events-none absolute right-2 top-20 z-[5] flex justify-end">
                 <DiagramPresenceBar participants={participants} />
             </div>
 

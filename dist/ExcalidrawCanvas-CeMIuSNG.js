@@ -93,7 +93,7 @@ function p({ ydoc: p, awareness: m, blockId: h, user: g, editable: _ = !0, class
 		"data-testid": "excalidraw-canvas",
 		className: e("relative h-full w-full", v),
 		children: [/* @__PURE__ */ s("div", {
-			className: "pointer-events-none absolute right-2 top-2 z-[5] flex justify-end",
+			className: "pointer-events-none absolute right-2 top-20 z-[5] flex justify-end",
 			children: /* @__PURE__ */ s(t, { participants: k })
 		}), /* @__PURE__ */ s(u, {
 			theme: S,

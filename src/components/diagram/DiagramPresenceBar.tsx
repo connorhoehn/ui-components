@@ -58,9 +58,16 @@ export function DiagramPresenceBar({
         // only for genuinely anonymous sessions.
         id: p.userId || p.clientId,
         name: p.isSelf ? `${p.displayName} (you)` : p.displayName,
-        // Taken from presence, never re-hashed here. The host derives it once
-        // (identityToColor) and it has to be the same colour as this person's
-        // cursor on the canvas and their caret in the document.
+        // Taken from presence, never re-hashed here: the host derives it once
+        // (identityToColor) so a person is one colour across the roster, the
+        // document carets and the presence list.
+        //
+        // It does NOT match the cursor Excalidraw draws on the canvas, and
+        // cannot be made to. Excalidraw 0.18 ignores `collaborator.color`
+        // outright — `getClientColor` is
+        //   `hsl(hashToInteger(collaborator.id ?? socketId) % 37 * 10, 100%, 83%)`
+        // — a pastel derived from the id with no way in. So this roster is the
+        // authoritative colour surface, and the canvas cursor is Excalidraw's.
         color: p.color,
         online: true,
         detail: p.isSelf
