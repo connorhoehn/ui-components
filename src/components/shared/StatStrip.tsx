@@ -42,9 +42,19 @@ const VALUE_TONE: Record<NonNullable<StatStripItem['tone']>, string> = {
   danger: 'text-danger',
 };
 
-function Cluster({ item }: { item: StatStripItem }) {
+function Cluster({ item, flush }: { item: StatStripItem; flush?: 'start' | 'end' | 'both' }) {
   return (
-    <div className="min-w-0 px-4 py-2.5">
+    <div
+      className={cn(
+        'min-w-0 px-4 py-2.5',
+        // A framed strip pads its own edges. A frameless one sits inside a
+        // host that already did, so keeping the outer padding indents the
+        // first number past everything else in that container — the exact
+        // misalignment the frame was hiding.
+        (flush === 'start' || flush === 'both') && 'pl-0',
+        (flush === 'end' || flush === 'both') && 'pr-0',
+      )}
+    >
       <div className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">
         {item.label}
       </div>
@@ -78,11 +88,22 @@ export function StatStrip({
       {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
       {...(testId ? { 'data-testid': testId } : {})}
     >
-      {items.map((item) => {
+      {items.map((item, i) => {
+        // Only the OUTER edges go flush, and only when frameless: the padding
+        // between clusters is what keeps the dividers from crowding numbers.
+        const flush = !frameless
+          ? undefined
+          : items.length === 1
+            ? ('both' as const)
+            : i === 0
+              ? ('start' as const)
+              : i === items.length - 1
+                ? ('end' as const)
+                : undefined;
         if (item.href) {
           return (
             <a key={item.label} href={item.href} className="min-w-0 flex-1 no-underline transition-colors hover:bg-surface-hover">
-              <Cluster item={item} />
+              <Cluster item={item} flush={flush} />
             </a>
           );
         }
@@ -94,13 +115,13 @@ export function StatStrip({
               onClick={item.onSelect}
               className="min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left transition-colors hover:bg-surface-hover"
             >
-              <Cluster item={item} />
+              <Cluster item={item} flush={flush} />
             </button>
           );
         }
         return (
           <div key={item.label} className="min-w-0 flex-1">
-            <Cluster item={item} />
+            <Cluster item={item} flush={flush} />
           </div>
         );
       })}

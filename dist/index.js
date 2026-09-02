@@ -13,7 +13,7 @@ import { a as ze, i as Be, n as Ve, r as He, t as Ue } from "./ToastProvider-BKj
 import { t as H } from "./cn-DhjIN-s0.js";
 import { t as We } from "./useEventCallback-Cwx9QVSi.js";
 import { a as Ge, c as Ke, d as qe, f as Je, i as Ye, l as Xe, m as Ze, n as Qe, o as $e, p as et, r as tt, s as nt, t as rt, u as it } from "./RadioGroup-BxEP1bs4.js";
-import { $ as at, A as ot, B as st, C as ct, Ct as lt, D as ut, E as dt, Et as ft, F as pt, G as mt, H as ht, I as gt, J as _t, K as vt, L as yt, M as bt, N as xt, O as St, P as Ct, Q as wt, R as Tt, S as Et, St as Dt, T as Ot, Tt as kt, U as At, V as jt, W as Mt, X as Nt, Y as Pt, Z as Ft, _ as It, _t as Lt, a as Rt, at as zt, b as Bt, bt as Vt, c as Ht, ct as Ut, d as Wt, dt as Gt, et as Kt, f as qt, ft as Jt, g as Yt, gt as Xt, h as Zt, ht as Qt, i as $t, it as en, j as tn, k as nn, l as rn, lt as an, m as on, mt as sn, n as cn, nt as ln, o as un, ot as dn, p as fn, pt as pn, q as mn, r as hn, rt as gn, s as _n, st as vn, t as yn, tt as bn, u as xn, ut as Sn, v as Cn, vt as wn, w as Tn, wt as En, x as Dn, xt as On, y as kn, yt as An, z as jn } from "./shared-CepSWa3t.js";
+import { $ as at, A as ot, B as st, C as ct, Ct as lt, D as ut, E as dt, Et as ft, F as pt, G as mt, H as ht, I as gt, J as _t, K as vt, L as yt, M as bt, N as xt, O as St, P as Ct, Q as wt, R as Tt, S as Et, St as Dt, T as Ot, Tt as kt, U as At, V as jt, W as Mt, X as Nt, Y as Pt, Z as Ft, _ as It, _t as Lt, a as Rt, at as zt, b as Bt, bt as Vt, c as Ht, ct as Ut, d as Wt, dt as Gt, et as Kt, f as qt, ft as Jt, g as Yt, gt as Xt, h as Zt, ht as Qt, i as $t, it as en, j as tn, k as nn, l as rn, lt as an, m as on, mt as sn, n as cn, nt as ln, o as un, ot as dn, p as fn, pt as pn, q as mn, r as hn, rt as gn, s as _n, st as vn, t as yn, tt as bn, u as xn, ut as Sn, v as Cn, vt as wn, w as Tn, wt as En, x as Dn, xt as On, y as kn, yt as An, z as jn } from "./shared-KKJ4_Yk-.js";
 import { t as U } from "./Button-wU9TwJvB.js";
 import { t as Mn } from "./Card-DWAlG4MZ.js";
 import { a as Nn, c as Pn, i as Fn, l as In, n as Ln, o as Rn, r as zn, s as Bn, t as Vn } from "./FormField-qzkrC8vN.js";
@@ -45,35 +45,35 @@ import { t as Wr } from "./Checkbox-DsS7fIUO.js";
 import { n as Gr, r as Kr, t as qr } from "./ReactionsOverlay-Ob1ecsgg.js";
 import { a as Jr, c as Yr, d as Xr, f as Zr, i as Qr, l as $r, n as ei, o as ti, p as ni, r as ri, s as ii, t as ai, u as oi } from "./PresencePanel-TLZ43ZF1.js";
 import { t as si } from "./activationKey-CjbL3LUv.js";
-import { a as ci, i as li } from "./renderers-aONC4W_Z.js";
+import { a as ci, i as li } from "./renderers-CDpxI6U9.js";
 import { n as ui, r as di, t as fi } from "./EventStreamContext-CLzG8O5_.js";
 import { A as pi, C as mi, J as hi, M as gi, T as _i, X as vi, Z as yi, _ as bi, b as xi, c as Si, d as Ci, f as wi, g as Ti, h as Ei, it as Di, m as Oi, n as ki, p as Ai, q as ji, rt as Mi, t as Ni, u as Pi, v as Fi, x as Ii, y as Li, z as Ri } from "./services-DA0gJcWq.js";
 import { n as zi, t as Bi } from "./ObservabilityContext-DpoDrm3T.js";
-import { a as Vi, c as Hi, d as Ui, i as Wi, l as Gi, n as Ki, o as qi, r as Ji, s as Yi, t as Xi, u as Zi } from "./social-Dq4bDwiv.js";
-import { $ as Qi, A as $i, B as ea, C as ta, D as na, E as ra, F as ia, G as aa, H as oa, I as sa, J as ca, K as la, L as ua, M as da, N as fa, O as pa, P as ma, Q as ha, R as ga, S as _a, T as va, U as ya, V as ba, W as xa, X as Sa, Y as Ca, Z as wa, _ as Ta, a as Ea, at as Da, b as Oa, c as ka, ct as Aa, d as ja, et as Ma, f as Na, g as Pa, h as Fa, i as Ia, it as La, j as Ra, k as za, l as Ba, lt as Va, m as Ha, n as Ua, nt as Wa, o as Ga, ot as Ka, p as qa, q as Ja, r as Ya, rt as Xa, s as Za, st as Qa, t as $a, tt as eo, u as to, v as no, w as ro, x as io, y as ao, z as oo } from "./video-DgwONDgQ.js";
-import { a as so, c as co, d as lo, f as uo, i as fo, l as po, m as mo, n as ho, o as go, p as _o, r as vo, s as yo, t as bo, u as xo } from "./MediaEffectsPreviewPanel-DhMdqGuZ.js";
-import { A as So, C as Co, D as wo, E as To, O as Eo, S as Do, T as Oo, _ as ko, a as Ao, b as jo, c as Mo, d as No, f as Po, g as Fo, h as Io, i as Lo, k as Ro, l as zo, m as Bo, n as Vo, o as Ho, p as Uo, r as Wo, s as Go, t as Ko, u as qo, v as Jo, w as Yo, x as Xo, y as Zo } from "./identity-DumDpnBr.js";
-import { n as Qo, t as $o } from "./ChangeReviewCard-LrS1BxGk.js";
-import { a as es, i as ts, n as ns, o as rs, r as is, s as as, t as os } from "./VerdictChip-CKnsnKYd.js";
-import { Suspense as ss, createContext as cs, forwardRef as ls, lazy as us, useCallback as W, useContext as ds, useEffect as G, useId as fs, useLayoutEffect as ps, useMemo as K, useRef as q, useState as J } from "react";
+import { a as Vi, c as Hi, d as Ui, f as Wi, i as Gi, l as Ki, n as qi, o as Ji, p as Yi, r as Xi, s as Zi, t as Qi, u as $i } from "./social-Bn39czg9.js";
+import { $ as ea, A as ta, B as na, C as ra, D as ia, E as aa, F as oa, G as sa, H as ca, I as la, J as ua, K as da, L as fa, M as pa, N as ma, O as ha, P as ga, Q as _a, R as va, S as ya, T as ba, U as xa, V as Sa, W as Ca, X as wa, Y as Ta, Z as Ea, _ as Da, a as Oa, at as ka, b as Aa, c as ja, ct as Ma, d as Na, et as Pa, f as Fa, g as Ia, h as La, i as Ra, it as za, j as Ba, k as Va, l as Ha, lt as Ua, m as Wa, n as Ga, nt as Ka, o as qa, ot as Ja, p as Ya, q as Xa, r as Za, rt as Qa, s as $a, st as eo, t as to, tt as no, u as ro, v as io, w as ao, x as oo, y as so, z as co } from "./video-DgwONDgQ.js";
+import { a as lo, c as uo, d as fo, f as po, i as mo, l as ho, m as go, n as _o, o as vo, p as yo, r as bo, s as xo, t as So, u as Co } from "./MediaEffectsPreviewPanel-DhMdqGuZ.js";
+import { A as wo, C as To, D as Eo, E as Do, O as Oo, S as ko, T as Ao, _ as jo, a as Mo, b as No, c as Po, d as Fo, f as Io, g as Lo, h as Ro, i as zo, k as Bo, l as Vo, m as Ho, n as Uo, o as Wo, p as Go, r as Ko, s as qo, t as Jo, u as Yo, v as Xo, w as Zo, x as Qo, y as $o } from "./identity-DumDpnBr.js";
+import { n as es, t as ts } from "./ChangeReviewCard-LrS1BxGk.js";
+import { a as ns, i as rs, n as is, o as as, r as os, s as ss, t as cs } from "./VerdictChip-CKnsnKYd.js";
+import { Suspense as ls, createContext as us, forwardRef as ds, lazy as fs, useCallback as W, useContext as ps, useEffect as G, useId as ms, useLayoutEffect as hs, useMemo as K, useRef as q, useState as J } from "react";
 import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
-import { Outlet as ms, useLocation as hs, useNavigate as gs } from "react-router";
+import { Outlet as gs, useLocation as _s, useNavigate as vs } from "react-router";
 //#region src/contexts/ThemeContext.tsx
-var _s = cs({
+var ys = us({
 	theme: "light",
 	toggleTheme: () => {}
-}), vs = "wsg-theme";
-function ys({ children: e }) {
+}), bs = "wsg-theme";
+function xs({ children: e }) {
 	let [t, n] = J(() => {
 		try {
-			let e = localStorage.getItem(vs);
+			let e = localStorage.getItem(bs);
 			if (e === "dark" || e === "light") return e;
 		} catch {}
 		return "light";
 	});
 	G(() => {
 		try {
-			localStorage.setItem(vs, t);
+			localStorage.setItem(bs, t);
 		} catch {}
 		document.documentElement.setAttribute("data-theme", t);
 	}, [t]);
@@ -83,17 +83,17 @@ function ys({ children: e }) {
 		theme: t,
 		toggleTheme: r
 	}), [t, r]);
-	return /* @__PURE__ */ X(_s.Provider, {
+	return /* @__PURE__ */ X(ys.Provider, {
 		value: i,
 		children: e
 	});
 }
-function bs() {
-	return ds(_s);
+function Ss() {
+	return ps(ys);
 }
 //#endregion
 //#region src/components/hangout/InviteCandidateList.tsx
-function xs({ candidates: e, onInvite: t, loading: n = !1, resetKey: r, children: i, tone: a = "light", searchable: o = !1, grouped: s = !1, selectMode: c = "multi", onPick: l, confirmLabel: u = "Invite", confirmLoadingLabel: d = "Inviting…", className: f, "data-testid": p }) {
+function Cs({ candidates: e, onInvite: t, loading: n = !1, resetKey: r, children: i, tone: a = "light", searchable: o = !1, grouped: s = !1, selectMode: c = "multi", onPick: l, confirmLabel: u = "Invite", confirmLoadingLabel: d = "Inviting…", className: f, "data-testid": p }) {
 	let m = a === "dark", h = c === "single", [g, _] = J(() => /* @__PURE__ */ new Set()), [v, y] = J("");
 	G(() => {
 		_(/* @__PURE__ */ new Set()), y("");
@@ -231,11 +231,11 @@ function xs({ candidates: e, onInvite: t, loading: n = !1, resetKey: r, children
 }
 //#endregion
 //#region src/components/hangout/InviteToCallDialog.tsx
-function Ss({ open: e, onClose: t, onInvite: n, candidates: r, lobbyLabel: i, loading: a = !1, shareLink: o }) {
+function ws({ open: e, onClose: t, onInvite: n, candidates: r, lobbyLabel: i, loading: a = !1, shareLink: o }) {
 	let [s, c] = J(!1), l = q(null);
 	return G(() => () => {
 		l.current && clearTimeout(l.current);
-	}, []), /* @__PURE__ */ X(xs, {
+	}, []), /* @__PURE__ */ X(Cs, {
 		candidates: r,
 		onInvite: n,
 		loading: a,
@@ -312,7 +312,7 @@ function Ss({ open: e, onClose: t, onInvite: n, candidates: r, lobbyLabel: i, lo
 }
 //#endregion
 //#region src/components/hangout/CallPresenceIndicator.tsx
-function Cs({ participants: e, count: t, onClick: n, label: r, maxVisible: i = 3 }) {
+function Ts({ participants: e, count: t, onClick: n, label: r, maxVisible: i = 3 }) {
 	let a = t ?? e.length;
 	if (a <= 0) return null;
 	let o = e.map((e) => ({
@@ -356,11 +356,11 @@ function Cs({ participants: e, count: t, onClick: n, label: r, maxVisible: i = 3
 }
 //#endregion
 //#region src/components/hangout/ActiveCallBanner.tsx
-function ws(e) {
+function Es(e) {
 	let t = Math.max(0, Math.floor(e / 1e3)), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60, a = String(r).padStart(2, "0"), o = String(i).padStart(2, "0");
 	return n > 0 ? `${n}:${a}:${o}` : `${a}:${o}`;
 }
-function Ts({ open: e, onJoin: t, onDismiss: n, lobbyLabel: r, elapsedMs: i = 0, participants: a, participantCount: o, loading: s = !1 }) {
+function Ds({ open: e, onJoin: t, onDismiss: n, lobbyLabel: r, elapsedMs: i = 0, participants: a, participantCount: o, loading: s = !1 }) {
 	let [c, l] = J(null), [u, d] = J(() => Date.now());
 	if (G(() => {
 		if (!e) {
@@ -410,7 +410,7 @@ function Ts({ open: e, onJoin: t, onDismiss: n, lobbyLabel: r, elapsedMs: i = 0,
 					}), i > 0 && /* @__PURE__ */ X("span", {
 						className: "font-mono text-[12px]",
 						"data-testid": "active-call-elapsed",
-						children: ws(f)
+						children: Es(f)
 					})]
 				})]
 			}),
@@ -459,11 +459,11 @@ function Ts({ open: e, onJoin: t, onDismiss: n, lobbyLabel: r, elapsedMs: i = 0,
 }
 //#endregion
 //#region src/components/hangout/ResumeCallDialog.tsx
-function Es(e) {
+function Os(e) {
 	let t = Math.max(0, Math.floor(e / 1e3)), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60, a = String(r).padStart(2, "0"), o = String(i).padStart(2, "0");
 	return n > 0 ? `${n}:${a}:${o}` : `${a}:${o}`;
 }
-function Ds({ open: e, onClose: t, onReconnect: n, callerName: r, lobbyName: i, elapsedMs: a, participants: o, loading: s = !1 }) {
+function ks({ open: e, onClose: t, onReconnect: n, callerName: r, lobbyName: i, elapsedMs: a, participants: o, loading: s = !1 }) {
 	let [c, l] = J(null), [u, d] = J(() => Date.now());
 	G(() => {
 		if (!e) {
@@ -534,7 +534,7 @@ function Ds({ open: e, onClose: t, onReconnect: n, callerName: r, lobbyName: i, 
 						className: "font-mono text-[13px] text-text-primary",
 						"data-testid": "resume-call-elapsed",
 						"aria-live": "polite",
-						children: Es(f)
+						children: Os(f)
 					})]
 				}),
 				o.length > 0 && /* @__PURE__ */ X("div", {
@@ -567,12 +567,12 @@ function Ds({ open: e, onClose: t, onReconnect: n, callerName: r, lobbyName: i, 
 }
 //#endregion
 //#region src/components/layout/ConnectionStatus.tsx
-function Os(e) {
+function As(e) {
 	return /* @__PURE__ */ X(Rr, { ...e });
 }
 //#endregion
 //#region src/components/layout/ApiDegradedBanner.tsx
-function ks({ health: e }) {
+function js({ health: e }) {
 	if (e.status !== "degraded") return null;
 	let t = e.failing.length > 0 ? `Affected: ${e.failing.join(", ")}.` : "Some dependencies are unreachable.";
 	return /* @__PURE__ */ Z("div", {
@@ -599,8 +599,8 @@ function ks({ health: e }) {
 }
 //#endregion
 //#region src/components/layout/CollapsibleSidebar.tsx
-var As = [];
-function js(e) {
+var Ms = [];
+function Ns(e) {
 	let t = Date.now() - new Date(e).getTime();
 	if (t < 0) return "just now";
 	let n = Math.floor(t / 1e3);
@@ -610,10 +610,10 @@ function js(e) {
 	let i = Math.floor(r / 60);
 	return i < 24 ? `${i}h ago` : `${Math.floor(i / 24)}d ago`;
 }
-function Ms(e) {
+function Ps(e) {
 	return e.includes("cursor") ? "◎" : e.includes("chat") ? "✉" : e.includes("reaction") ? "❤" : e.includes("join") ? "→" : e.includes("leave") ? "←" : e.includes("doc") || e.includes("edit") ? "✎" : e.includes("mention") ? "@" : e.includes("presence") ? "●" : "•";
 }
-function Ns(e) {
+function Fs(e) {
 	let t = e.displayName ?? e.userId?.slice(0, 8) ?? "Someone", n = e.detail;
 	if (e.eventType.includes("chat")) return `${t}: ${typeof n.text == "string" ? n.text : ""}`;
 	if (e.eventType.includes("join")) return `${t} joined`;
@@ -629,13 +629,13 @@ function Ns(e) {
 	}
 	return `${t}: ${e.eventType}`;
 }
-function Ps(e, t) {
+function Is(e, t) {
 	if (e.eventType.includes("mention")) return !0;
 	let n = e.detail.mentionedUsers;
 	return !!(Array.isArray(n) && n.includes(t));
 }
 function Q({ title: e, emoji: t, count: n, defaultExpanded: r = !0, children: i }) {
-	let [a, o] = J(r), s = fs(), c = `${s}-label`, l = `${s}-panel`, u = q(null), d = q(null);
+	let [a, o] = J(r), s = ms(), c = `${s}-label`, l = `${s}-panel`, u = q(null), d = q(null);
 	return /* @__PURE__ */ Z("section", {
 		"aria-labelledby": c,
 		"data-expanded": a ? "true" : "false",
@@ -681,8 +681,8 @@ function Q({ title: e, emoji: t, count: n, defaultExpanded: r = !0, children: i 
 		})]
 	});
 }
-function Fs({ connectionState: e, onDisconnect: t, onReconnect: n, onCollapse: r, presenceUsers: i, currentClientId: a, currentChannel: o, activityEvents: s, userId: c, documents: l, onOpenDocument: u, pipelines: d, onOpenPipeline: f, onSeeAllPipelines: p, videoSlot: m }) {
-	let h = e === "connected", g = K(() => s.slice(0, 5), [s]), _ = K(() => l.slice(0, 5), [l]), v = d ?? As, y = K(() => (d ?? As).slice(0, 12), [d]), b = d !== void 0;
+function Ls({ connectionState: e, onDisconnect: t, onReconnect: n, onCollapse: r, presenceUsers: i, currentClientId: a, currentChannel: o, activityEvents: s, userId: c, documents: l, onOpenDocument: u, pipelines: d, onOpenPipeline: f, onSeeAllPipelines: p, videoSlot: m }) {
+	let h = e === "connected", g = K(() => s.slice(0, 5), [s]), _ = K(() => l.slice(0, 5), [l]), v = d ?? Ms, y = K(() => (d ?? Ms).slice(0, 12), [d]), b = d !== void 0;
 	return /* @__PURE__ */ Z("div", {
 		className: "flex flex-col gap-0",
 		children: [
@@ -759,22 +759,22 @@ function Fs({ connectionState: e, onDisconnect: t, onReconnect: n, onCollapse: r
 							children: "No recent activity"
 						}),
 						g.map((e) => {
-							let t = Ps(e, c);
+							let t = Is(e, c);
 							return /* @__PURE__ */ Z("div", {
 								className: H("flex items-start gap-1.5 px-1 py-[3px] rounded text-xs font-sans", t ? "bg-[rgba(59,130,246,0.10)] [animation:mentionPulse_2s_ease-in-out_3,fadeSlideIn_0.3s_ease-out]" : "[animation:fadeSlideIn_0.3s_ease-out]"),
 								children: [
 									/* @__PURE__ */ X("span", {
 										"aria-hidden": "true",
 										className: "shrink-0 w-4 text-center text-text-tertiary",
-										children: Ms(e.eventType)
+										children: Ps(e.eventType)
 									}),
 									/* @__PURE__ */ X("span", {
 										className: "flex-1 text-text-primary overflow-hidden text-ellipsis whitespace-nowrap",
-										children: Ns(e)
+										children: Fs(e)
 									}),
 									/* @__PURE__ */ X("span", {
 										className: "shrink-0 text-[10px] text-text-tertiary font-mono whitespace-nowrap",
-										children: js(e.timestamp)
+										children: Ns(e.timestamp)
 									})
 								]
 							}, e.id);
@@ -801,7 +801,7 @@ function Fs({ connectionState: e, onDisconnect: t, onReconnect: n, onCollapse: r
 							children: e.title
 						}), /* @__PURE__ */ X("span", {
 							className: "shrink-0 text-[10px] text-text-tertiary font-mono ml-2",
-							children: js(e.updatedAt ?? e.createdAt)
+							children: Ns(e.updatedAt ?? e.createdAt)
 						})]
 					}, e.id))]
 				})
@@ -866,7 +866,7 @@ function Fs({ connectionState: e, onDisconnect: t, onReconnect: n, onCollapse: r
 }
 //#endregion
 //#region src/components/layout/CollapsedIconStrip.tsx
-function Is({ icon: e, title: t, onClick: n }) {
+function Rs({ icon: e, title: t, onClick: n }) {
 	return /* @__PURE__ */ X("button", {
 		type: "button",
 		className: H("w-10 h-10 rounded-lg border-none bg-transparent cursor-pointer", "flex items-center justify-center text-lg text-text-secondary", "font-[inherit] p-0 transition-colors duration-150 ease-in-out", "hover:bg-surface-hover"),
@@ -876,12 +876,12 @@ function Is({ icon: e, title: t, onClick: n }) {
 		children: e
 	});
 }
-function Ls({ connectionState: e, onExpand: t, onDocuments: n, onPipelines: r, onObservability: i }) {
+function zs({ connectionState: e, onExpand: t, onDocuments: n, onPipelines: r, onObservability: i }) {
 	return /* @__PURE__ */ Z("div", {
 		"data-testid": "collapsed-icon-strip",
 		className: "flex flex-col items-center gap-1 h-full",
 		children: [
-			/* @__PURE__ */ X(Is, {
+			/* @__PURE__ */ X(Rs, {
 				icon: "☰",
 				title: "Expand sidebar",
 				onClick: t
@@ -892,17 +892,17 @@ function Ls({ connectionState: e, onExpand: t, onDocuments: n, onPipelines: r, o
 				"aria-label": `Connection: ${e}`
 			}),
 			/* @__PURE__ */ X("div", { className: "h-2" }),
-			/* @__PURE__ */ X(Is, {
+			/* @__PURE__ */ X(Rs, {
 				icon: "📄",
 				title: "Documents",
 				onClick: n
 			}),
-			/* @__PURE__ */ X(Is, {
+			/* @__PURE__ */ X(Rs, {
 				icon: "🔀",
 				title: "Pipelines",
 				onClick: r
 			}),
-			/* @__PURE__ */ X(Is, {
+			/* @__PURE__ */ X(Rs, {
 				icon: "📡",
 				title: "Observability",
 				onClick: i
@@ -912,7 +912,7 @@ function Ls({ connectionState: e, onExpand: t, onDocuments: n, onPipelines: r, o
 }
 //#endregion
 //#region src/components/misc/errorCodes.ts
-var Rs = {
+var Bs = {
 	AUTH_TOKEN_MISSING: "No authentication token provided.",
 	AUTH_TOKEN_EXPIRED: "Your session token has expired. Please refresh your credentials.",
 	AUTH_TOKEN_INVALID: "The provided token is invalid or malformed.",
@@ -936,9 +936,9 @@ var Rs = {
 };
 //#endregion
 //#region src/components/misc/ErrorDisplay.tsx
-function zs({ error: e }) {
+function Vs({ error: e }) {
 	if (!e) return null;
-	let t = Rs[e.code] ?? e.message;
+	let t = Bs[e.code] ?? e.message;
 	return /* @__PURE__ */ Z("div", {
 		className: "bg-danger-bg border border-danger-border rounded px-4 py-3 font-mono mt-2",
 		children: [
@@ -964,7 +964,7 @@ function zs({ error: e }) {
 }
 //#endregion
 //#region src/components/misc/ErrorPanel.tsx
-function Bs({ errors: e }) {
+function Hs({ errors: e }) {
 	return /* @__PURE__ */ Z("div", {
 		className: "border-t border-border pt-4 mt-4",
 		children: [/* @__PURE__ */ Z("h3", {
@@ -1000,7 +1000,7 @@ function Bs({ errors: e }) {
 					" ",
 					/* @__PURE__ */ X("span", {
 						className: "text-text-primary",
-						children: Rs[e.code] ?? e.message
+						children: Bs[e.code] ?? e.message
 					}),
 					/* @__PURE__ */ X("div", {
 						className: "text-text-tertiary text-[0.7rem]",
@@ -1013,14 +1013,14 @@ function Bs({ errors: e }) {
 }
 //#endregion
 //#region src/components/misc/TabbedEventLog.tsx
-var Vs = [
+var Us = [
 	"Chat",
 	"Presence",
 	"Cursors",
 	"Reactions",
 	"System"
 ];
-function Hs(e, t) {
+function Ws(e, t) {
 	return e.filter((e) => {
 		let n = e.message.type;
 		if (!n) return t === "System";
@@ -1034,14 +1034,14 @@ function Hs(e, t) {
 		}
 	});
 }
-function Us({ entries: e }) {
+function Gs({ entries: e }) {
 	let [t, n] = J("Chat"), r = q(null);
 	G(() => {
 		r.current?.scrollIntoView({ behavior: "smooth" });
 	}, [e, t]);
 	let i = K(() => {
 		let t = {};
-		for (let n of Vs) t[n] = Hs(e, n);
+		for (let n of Us) t[n] = Ws(e, n);
 		return t;
 	}, [e]), a = i[t];
 	return /* @__PURE__ */ Z("div", {
@@ -1064,7 +1064,7 @@ function Us({ entries: e }) {
 			}),
 			/* @__PURE__ */ X("div", {
 				className: "flex gap-2 mb-4 border-b border-border pb-4 flex-wrap",
-				children: Vs.map((e) => {
+				children: Us.map((e) => {
 					let r = i[e].length;
 					return /* @__PURE__ */ Z("button", {
 						onClick: () => n(e),
@@ -1108,12 +1108,12 @@ function Us({ entries: e }) {
 }
 //#endregion
 //#region src/components/pipelines/hooks/useDocumentTriggers.ts
-var Ws = {
+var Ks = {
 	"doc.finalize": "document.finalize",
 	"doc.comment": "document.comment",
 	"doc.add_item": "document.submit"
-}, Gs = 500;
-function Ks(e) {
+}, qs = 500;
+function Js(e) {
 	let { triggerRun: t } = _i(), n = q(null), r = q(!1), i = q(/* @__PURE__ */ new Map());
 	G(() => {
 		if (e.length === 0) return;
@@ -1130,14 +1130,14 @@ function Ks(e) {
 		n.current = e[0].id, a.reverse();
 		let o = ji().filter((e) => e.status === "published").map((e) => hi(e.id)).filter((e) => e !== null);
 		for (let e of a) {
-			let n = Ws[e.eventType];
+			let n = Ks[e.eventType];
 			if (!n) continue;
 			let r = e.detail ?? {}, a = typeof r.documentId == "string" ? r.documentId : void 0, s = typeof r.documentTypeId == "string" ? r.documentTypeId : void 0;
 			for (let r of o) {
 				let o = r.triggerBinding;
 				if (!o || o.event !== n || o.documentTypeId && o.documentTypeId !== s) continue;
 				let c = Date.now();
-				if (c - (i.current.get(r.id) ?? 0) < Gs) continue;
+				if (c - (i.current.get(r.id) ?? 0) < qs) continue;
 				i.current.set(r.id, c);
 				let l = {
 					event: n,
@@ -1154,14 +1154,14 @@ function Ks(e) {
 }
 //#endregion
 //#region src/components/pipelines/hooks/useWebhookTriggers.ts
-var qs = 500;
-function Js() {
+var Ys = 500;
+function Xs() {
 	let { triggerRun: e } = _i(), t = q(/* @__PURE__ */ new Map());
 	ui("pipeline.webhook.triggered", (n) => {
 		let r = n && typeof n == "object" && "webhookPath" in n ? n : n.payload;
 		if (!r || typeof r.webhookPath != "string") return;
 		let i = r.webhookPath, a = Date.now();
-		if (a - (t.current.get(i) ?? 0) < qs) return;
+		if (a - (t.current.get(i) ?? 0) < Ys) return;
 		t.current.set(i, a);
 		let o = ji();
 		for (let t of o) {
@@ -1182,13 +1182,13 @@ function Js() {
 }
 //#endregion
 //#region src/components/pipelines/hooks/usePipelineActivityRelay.ts
-var Ys = /* @__PURE__ */ new Set([
+var Zs = /* @__PURE__ */ new Set([
 	"pipeline.run.started",
 	"pipeline.run.completed",
 	"pipeline.run.failed",
 	"pipeline.approval.requested"
 ]);
-function Xs(e, t) {
+function Qs(e, t) {
 	let n = t;
 	if (!n) return null;
 	switch (e) {
@@ -1225,20 +1225,20 @@ function Xs(e, t) {
 		default: return null;
 	}
 }
-function Zs(e) {
+function $s(e) {
 	let { subscribe: t } = di(), n = q(e);
 	G(() => {
 		n.current = e;
 	}, [e]), G(() => t("*", (e) => {
 		let t = e, r = t.eventType;
-		if (!Ys.has(r)) return;
-		let i = Xs(r, t.payload);
+		if (!Zs.has(r)) return;
+		let i = Qs(r, t.payload);
 		i && n.current(r, i);
 	}), [t]);
 }
 //#endregion
 //#region src/components/observability/hooks/useAlertToasts.ts
-var Qs = {
+var ec = {
 	info: {
 		type: "info",
 		durationMs: 4e3
@@ -1256,19 +1256,19 @@ var Qs = {
 		durationMs: 1e4
 	}
 };
-function $s(e, t) {
+function tc(e, t) {
 	return `${e}:${t}`;
 }
-function ec() {
-	let { dashboard: e } = zi(), { toast: t } = Ve(), n = gs(), r = q(/* @__PURE__ */ new Set());
+function nc() {
+	let { dashboard: e } = zi(), { toast: t } = Ve(), n = vs(), r = q(/* @__PURE__ */ new Set());
 	G(() => {
 		if (!e) return;
 		let i = Array.isArray(e.alerts) ? e.alerts : [], a = /* @__PURE__ */ new Set();
 		for (let e of i) {
 			if (!e) continue;
-			let i = $s(e.severity, e.message);
+			let i = tc(e.severity, e.message);
 			if (a.add(i), r.current.has(i)) continue;
-			let o = Qs[e.severity] ?? Qs.error, s = {
+			let o = ec[e.severity] ?? ec.error, s = {
 				type: o.type,
 				durationMs: o.durationMs
 			};
@@ -1283,8 +1283,8 @@ function ec() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var tc = us(() => import("./DocumentEditorPage-DRMfcLtj.js").then((e) => e.n));
-function nc({ notifications: e, onDismiss: t, onClick: n }) {
+var rc = fs(() => import("./DocumentEditorPage-pLApEV_L.js").then((e) => e.n));
+function ic({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
 	return /* @__PURE__ */ X("div", {
@@ -1309,15 +1309,15 @@ function nc({ notifications: e, onDismiss: t, onClick: n }) {
 		}, e.id))
 	});
 }
-function rc(e) {
+function ac(e) {
 	let t = pi();
 	return /* @__PURE__ */ X(fi, {
 		channelTransport: t,
-		children: /* @__PURE__ */ X(mi, { children: /* @__PURE__ */ X(Bi, { children: /* @__PURE__ */ X(ic, { ...e }) }) })
+		children: /* @__PURE__ */ X(mi, { children: /* @__PURE__ */ X(Bi, { children: /* @__PURE__ */ X(oc, { ...e }) }) })
 	});
 }
-function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReactions: r, logEntries: i, errors: a, lastError: o, activityEvents: s, activityPublish: c, defaultSidebarOpen: l = !0 }) {
-	let { connectionState: u, sendMessage: d, onMessage: f, ws: p, clientId: m, sessionToken: h } = Le(), { userId: _, displayName: v, userEmail: y, idToken: b, onSignOut: x } = le(), { presenceUsers: S, currentClientId: w } = Ze(), T = gs(), E = hs(), ee = g(), { toast: D } = Ve(), O = We(n), te = q(null);
+function oc({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReactions: r, logEntries: i, errors: a, lastError: o, activityEvents: s, activityPublish: c, defaultSidebarOpen: l = !0 }) {
+	let { connectionState: u, sendMessage: d, onMessage: f, ws: p, clientId: m, sessionToken: h } = Le(), { userId: _, displayName: v, userEmail: y, idToken: b, onSignOut: x } = le(), { presenceUsers: S, currentClientId: w } = Ze(), T = vs(), E = _s(), ee = g(), { toast: D } = Ve(), O = We(n), te = q(null);
 	G(() => {
 		let e = o ? `${o.code}@${o.timestamp}` : null;
 		o?.code === "RECONNECT_EXHAUSTED" && te.current !== e && D(o.message, {
@@ -1345,7 +1345,7 @@ function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 		}), () => {
 			e = !0;
 		};
-	}, []), Ks(s), Js();
+	}, []), Js(s), Xs();
 	let { dispatchEnvelope: _e } = di();
 	gi({
 		channel: "pipeline:all",
@@ -1353,7 +1353,7 @@ function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 		enabled: !0
 	});
 	let ve = Ii().length;
-	Zs(c), ec();
+	$s(c), nc();
 	let [L, ye] = J([]), be = q(A);
 	G(() => {
 		be.current = A;
@@ -1458,7 +1458,7 @@ function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 		className: "relative min-h-screen font-sans bg-surface-panel",
 		children: [
 			/* @__PURE__ */ X(qr, { reactions: r }),
-			/* @__PURE__ */ X(nc, {
+			/* @__PURE__ */ X(ic, {
 				notifications: L,
 				onDismiss: Te,
 				onClick: Ee
@@ -1472,7 +1472,7 @@ function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 					}),
 					/* @__PURE__ */ Z("div", {
 						className: "flex items-center gap-4 flex-1 justify-center",
-						children: [/* @__PURE__ */ X(Os, { state: u }), /* @__PURE__ */ X("span", {
+						children: [/* @__PURE__ */ X(As, { state: u }), /* @__PURE__ */ X("span", {
 							className: "text-sm text-neutral font-mono bg-surface-hover border border-border rounded-md px-2.5 py-1",
 							children: I.find((e) => e.roomId === A)?.name ?? e
 						})]
@@ -1583,7 +1583,7 @@ function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 						width: fe,
 						padding: F ? "1rem" : "0.5rem 0"
 					},
-					children: F ? /* @__PURE__ */ X(Fs, {
+					children: F ? /* @__PURE__ */ X(Ls, {
 						connectionState: u,
 						onDisconnect: t,
 						onReconnect: n,
@@ -1601,7 +1601,7 @@ function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 						onOpenPipeline: (e) => T(`/pipelines/${e}`),
 						onSeeAllPipelines: () => T("/pipelines"),
 						videoSlot: N ? /* @__PURE__ */ X("div", { id: "sidebar-video-slot" }) : void 0
-					}) : /* @__PURE__ */ X(Ls, {
+					}) : /* @__PURE__ */ X(zs, {
 						connectionState: u,
 						onExpand: () => Oe(!0),
 						onPipelines: () => T("/pipelines"),
@@ -1814,11 +1814,11 @@ function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 						})(),
 						/* @__PURE__ */ Z("div", {
 							className: "px-8 pt-4 pb-6 flex flex-col gap-4 flex-1 min-h-0",
-							children: [/* @__PURE__ */ X(ks, { health: ee }), /* @__PURE__ */ X(li, {
+							children: [/* @__PURE__ */ X(js, { health: ee }), /* @__PURE__ */ X(li, {
 								name: "RouteContent",
-								children: /* @__PURE__ */ X(ss, {
+								children: /* @__PURE__ */ X(ls, {
 									fallback: /* @__PURE__ */ X("div", { children: "Loading..." }),
-									children: /* @__PURE__ */ X(ms, { context: {
+									children: /* @__PURE__ */ X(gs, { context: {
 										dockedVideoDocId: N,
 										setDockedVideoDocId: P
 									} })
@@ -1827,11 +1827,11 @@ function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 						}),
 						N && E.pathname !== `/documents/${N}` && /* @__PURE__ */ X(li, {
 							name: "DockedVideoEditor",
-							children: /* @__PURE__ */ X(ss, {
+							children: /* @__PURE__ */ X(ls, {
 								fallback: /* @__PURE__ */ X("div", { children: "Loading..." }),
 								children: /* @__PURE__ */ X("div", {
 									className: "hidden",
-									children: /* @__PURE__ */ X(tc, {
+									children: /* @__PURE__ */ X(rc, {
 										documentId: N,
 										ws: p,
 										userId: _,
@@ -1865,9 +1865,9 @@ function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 				}), /* @__PURE__ */ Z("div", {
 					className: "flex-1 overflow-auto p-4",
 					children: [
-						/* @__PURE__ */ X(zs, { error: o }),
-						/* @__PURE__ */ X(Bs, { errors: a }),
-						/* @__PURE__ */ X(Us, { entries: i }),
+						/* @__PURE__ */ X(Vs, { error: o }),
+						/* @__PURE__ */ X(Hs, { errors: a }),
+						/* @__PURE__ */ X(Gs, { entries: i }),
 						/* @__PURE__ */ Z("div", {
 							className: "text-xs text-text-tertiary font-mono mt-2",
 							children: [
@@ -1896,7 +1896,7 @@ function ic({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 }
 //#endregion
 //#region src/components/layout/AppShell.tsx
-function ac({ children: e }) {
+function sc({ children: e }) {
 	return /* @__PURE__ */ X("div", {
 		role: "status",
 		"aria-label": "Loading",
@@ -1910,7 +1910,7 @@ function ac({ children: e }) {
 		})
 	});
 }
-function oc({ sidebar: e, header: t, children: n, toastRegion: r, loading: i, apiDegraded: a, commandPalette: o, className: s, sidebarWidth: c = 260 }) {
+function cc({ sidebar: e, header: t, children: n, toastRegion: r, loading: i, apiDegraded: a, commandPalette: o, className: s, sidebarWidth: c = 260 }) {
 	let l = /* @__PURE__ */ Z("div", {
 		className: H("relative min-h-screen font-sans bg-[var(--color-surface-panel)]", s),
 		children: [
@@ -1933,7 +1933,7 @@ function oc({ sidebar: e, header: t, children: n, toastRegion: r, loading: i, ap
 					children: n
 				})]
 			}),
-			i && /* @__PURE__ */ X(ac, { children: typeof i == "boolean" ? void 0 : i }),
+			i && /* @__PURE__ */ X(sc, { children: typeof i == "boolean" ? void 0 : i }),
 			o
 		]
 	});
@@ -1941,17 +1941,17 @@ function oc({ sidebar: e, header: t, children: n, toastRegion: r, loading: i, ap
 }
 //#endregion
 //#region src/components/layout/TopNav.tsx
-function sc(e, t) {
+function lc(e, t) {
 	return e ? e === t || t !== "/" && e.startsWith(t + "/") : !1;
 }
-function cc(e, t) {
+function uc(e, t) {
 	return /* @__PURE__ */ X("a", {
 		...t,
 		href: e.to,
 		children: t.children
 	});
 }
-function lc({ item: e, active: t, renderLink: n }) {
+function dc({ item: e, active: t, renderLink: n }) {
 	let r = {
 		"aria-current": t ? "page" : void 0,
 		"aria-disabled": e.disabled || void 0,
@@ -1968,7 +1968,7 @@ function lc({ item: e, active: t, renderLink: n }) {
 	};
 	return /* @__PURE__ */ X(Y, { children: n(e, r) });
 }
-function uc({ items: e, activeHref: t, brand: n, rightSlot: r, renderLink: i = cc, maxVisible: a, className: o, style: s, "aria-label": c = "Main navigation" }) {
+function fc({ items: e, activeHref: t, brand: n, rightSlot: r, renderLink: i = uc, maxVisible: a, className: o, style: s, "aria-label": c = "Main navigation" }) {
 	let [l, u] = J(!1), d = q(null);
 	G(() => {
 		if (!l) return;
@@ -1977,7 +1977,7 @@ function uc({ items: e, activeHref: t, brand: n, rightSlot: r, renderLink: i = c
 		}
 		return document.addEventListener("mousedown", e), () => document.removeEventListener("mousedown", e);
 	}, [l]);
-	let f = a === void 0 ? e : e.slice(0, a), p = a === void 0 ? [] : e.slice(a), m = p.some((e) => sc(t, e.to));
+	let f = a === void 0 ? e : e.slice(0, a), p = a === void 0 ? [] : e.slice(a), m = p.some((e) => lc(t, e.to));
 	return /* @__PURE__ */ Z("nav", {
 		"aria-label": c,
 		className: H("h-14 flex items-center px-6 bg-[var(--color-surface,#fff)] border-b border-[var(--color-border)]", o),
@@ -1989,9 +1989,9 @@ function uc({ items: e, activeHref: t, brand: n, rightSlot: r, renderLink: i = c
 			}),
 			/* @__PURE__ */ Z("div", {
 				className: "flex items-stretch gap-1 flex-1 min-w-0",
-				children: [f.map((e) => /* @__PURE__ */ X(lc, {
+				children: [f.map((e) => /* @__PURE__ */ X(dc, {
 					item: e,
-					active: sc(t, e.to),
+					active: lc(t, e.to),
 					renderLink: i
 				}, e.to)), p.length > 0 && /* @__PURE__ */ Z("div", {
 					className: "relative",
@@ -2012,7 +2012,7 @@ function uc({ items: e, activeHref: t, brand: n, rightSlot: r, renderLink: i = c
 						className: "absolute right-0 top-full mt-1 min-w-[180px] rounded-md border border-[var(--color-border)] bg-[var(--color-surface,#fff)] shadow-lg z-10 py-1",
 						"data-testid": "topnav-more-menu",
 						children: p.map((e) => {
-							let n = sc(t, e.to), r = {
+							let n = lc(t, e.to), r = {
 								role: "menuitem",
 								"aria-current": n ? "page" : void 0,
 								"data-testid": `topnav-more-link-${e.to}`,
@@ -2042,21 +2042,21 @@ function uc({ items: e, activeHref: t, brand: n, rightSlot: r, renderLink: i = c
 		]
 	});
 }
-function dc({ items: e, activeHref: t, renderLink: n = cc, className: r, style: i, "aria-label": a = "Sub navigation" }) {
+function pc({ items: e, activeHref: t, renderLink: n = uc, className: r, style: i, "aria-label": a = "Sub navigation" }) {
 	return /* @__PURE__ */ X("nav", {
 		"aria-label": a,
 		className: H("inline-flex items-center gap-1 border-b border-[var(--color-border)]", r),
 		style: i,
-		children: e.map((e) => /* @__PURE__ */ X(lc, {
+		children: e.map((e) => /* @__PURE__ */ X(dc, {
 			item: e,
-			active: sc(t, e.to),
+			active: lc(t, e.to),
 			renderLink: n
 		}, e.to))
 	});
 }
 //#endregion
 //#region src/components/layout/SettingsLayout.tsx
-function fc({ title: e, subtitle: t, sections: n, activeSectionId: r, onSectionChange: i, dirty: a = !1, saveLabel: o = "Save changes", cancelLabel: s = "Cancel", onSave: c, onCancel: l, saving: u = !1, saveBarSlot: d, railWidth: f = 220, className: p, style: m, "data-testid": h = "settings-layout" }) {
+function mc({ title: e, subtitle: t, sections: n, activeSectionId: r, onSectionChange: i, dirty: a = !1, saveLabel: o = "Save changes", cancelLabel: s = "Cancel", onSave: c, onCancel: l, saving: u = !1, saveBarSlot: d, railWidth: f = 220, className: p, style: m, "data-testid": h = "settings-layout" }) {
 	let g = n[0]?.id ?? null, [_, v] = J(g), y = r ?? _, b = q(null);
 	G(() => {
 		r == null && g && _ == null && v(g);
@@ -2165,7 +2165,7 @@ function fc({ title: e, subtitle: t, sections: n, activeSectionId: r, onSectionC
 }
 //#endregion
 //#region src/components/layout/DocsShell.tsx
-function pc({ topNav: e, sidebar: t, rightRail: n, children: r, fullBleed: i = !1, preContent: a, className: o, style: s, scrollResetKey: c }) {
+function hc({ topNav: e, sidebar: t, rightRail: n, children: r, fullBleed: i = !1, preContent: a, className: o, style: s, scrollResetKey: c }) {
 	let l = q(null);
 	return G(() => {
 		let e = l.current;
@@ -2207,17 +2207,17 @@ function pc({ topNav: e, sidebar: t, rightRail: n, children: r, fullBleed: i = !
 }
 //#endregion
 //#region src/components/layout/DocsSidebar.tsx
-function mc(e, t) {
+function gc(e, t) {
 	return e ? e === t || t !== "/" && e.startsWith(t + "/") : !1;
 }
-function hc(e, t) {
+function _c(e, t) {
 	return /* @__PURE__ */ X("a", {
 		...t,
 		href: e.to,
 		children: t.children
 	});
 }
-function gc({ sections: e, activeHref: t, defaultCollapsedSections: n, renderLink: r = hc, className: i, style: a, "aria-label": o = "Documentation navigation" }) {
+function vc({ sections: e, activeHref: t, defaultCollapsedSections: n, renderLink: r = _c, className: i, style: a, "aria-label": o = "Documentation navigation" }) {
 	let [s, c] = J(() => {
 		let e = {};
 		for (let t of n ?? []) e[t] = !0;
@@ -2246,7 +2246,7 @@ function gc({ sections: e, activeHref: t, defaultCollapsedSections: n, renderLin
 						className: H("inline-block text-[10px] transition-transform", n ? "-rotate-90" : "rotate-0"),
 						children: "▼"
 					}), e.label]
-				}), !n && /* @__PURE__ */ X("div", { children: e.groups.map((e) => /* @__PURE__ */ X(_c, {
+				}), !n && /* @__PURE__ */ X("div", { children: e.groups.map((e) => /* @__PURE__ */ X(yc, {
 					group: e,
 					activeHref: t,
 					renderLink: r
@@ -2255,12 +2255,12 @@ function gc({ sections: e, activeHref: t, defaultCollapsedSections: n, renderLin
 		})
 	});
 }
-function _c({ group: e, activeHref: t, renderLink: n }) {
+function yc({ group: e, activeHref: t, renderLink: n }) {
 	if (e.to) {
-		let r = mc(t, e.to);
+		let r = gc(t, e.to);
 		return /* @__PURE__ */ X("div", {
 			className: "mb-1",
-			children: /* @__PURE__ */ X(vc, {
+			children: /* @__PURE__ */ X(bc, {
 				to: e.to,
 				id: e.id,
 				label: e.label,
@@ -2277,8 +2277,8 @@ function _c({ group: e, activeHref: t, renderLink: n }) {
 			className: "px-5 pt-1.5 pb-1 pl-8 text-[12px] font-semibold text-[var(--color-text-secondary)]",
 			children: e.label
 		}), e.items.map((e) => {
-			let r = mc(t, e.to);
-			return /* @__PURE__ */ X(vc, {
+			let r = gc(t, e.to);
+			return /* @__PURE__ */ X(bc, {
 				to: e.to,
 				id: e.id,
 				label: e.label,
@@ -2290,7 +2290,7 @@ function _c({ group: e, activeHref: t, renderLink: n }) {
 		})]
 	});
 }
-function vc({ id: e, to: t, label: n, badge: r, active: i, renderLink: a, indented: o }) {
+function bc({ id: e, to: t, label: n, badge: r, active: i, renderLink: a, indented: o }) {
 	let s = {
 		"aria-current": i ? "page" : void 0,
 		"data-testid": `docs-sidebar-link-${e}`,
@@ -2310,7 +2310,7 @@ function vc({ id: e, to: t, label: n, badge: r, active: i, renderLink: a, indent
 }
 //#endregion
 //#region src/components/layout/DocsTopNav.tsx
-function yc(e, t) {
+function xc(e, t) {
 	return /* @__PURE__ */ X("a", {
 		href: e,
 		className: "text-base font-bold text-[var(--color-text-primary)] no-underline whitespace-nowrap",
@@ -2318,7 +2318,7 @@ function yc(e, t) {
 		children: t
 	});
 }
-function bc() {
+function Sc() {
 	return /* @__PURE__ */ Z("div", {
 		"data-testid": "docs-topnav-search-placeholder",
 		className: "flex items-center gap-2 min-w-[180px] cursor-pointer rounded-md border border-[var(--color-border)] bg-[var(--color-surface-hover,#f8fafc)] px-3 py-1.5 text-[13px] text-[var(--color-text-tertiary,#94a3b8)]",
@@ -2328,16 +2328,16 @@ function bc() {
 		})]
 	});
 }
-function xc({ items: e, activeHref: t, brand: n, brandTo: r = "/", search: i, showSearchPlaceholder: a = !0, rightSlot: o, renderLink: s, className: c, style: l }) {
-	let u = n ? r ? yc(r, n) : /* @__PURE__ */ X("span", {
+function Cc({ items: e, activeHref: t, brand: n, brandTo: r = "/", search: i, showSearchPlaceholder: a = !0, rightSlot: o, renderLink: s, className: c, style: l }) {
+	let u = n ? r ? xc(r, n) : /* @__PURE__ */ X("span", {
 		className: "text-base font-bold text-[var(--color-text-primary)] whitespace-nowrap",
 		children: n
-	}) : void 0, d = /* @__PURE__ */ Z(Y, { children: [i ?? (a ? /* @__PURE__ */ X(bc, {}) : null), o] });
+	}) : void 0, d = /* @__PURE__ */ Z(Y, { children: [i ?? (a ? /* @__PURE__ */ X(Sc, {}) : null), o] });
 	return /* @__PURE__ */ X("div", {
 		"data-testid": "docs-topnav",
 		className: H("sticky top-0 z-[1000] bg-[var(--color-surface,#fff)]", c),
 		style: l,
-		children: /* @__PURE__ */ X(uc, {
+		children: /* @__PURE__ */ X(fc, {
 			items: e,
 			activeHref: t,
 			brand: u,
@@ -2349,17 +2349,17 @@ function xc({ items: e, activeHref: t, brand: n, brandTo: r = "/", search: i, sh
 }
 //#endregion
 //#region src/components/layout/ViewportFillRegion.tsx
-function Sc(e, t, n, r) {
+function wc(e, t, n, r) {
 	return Math.max(r, t - e - n);
 }
-function Cc({ bottomGap: e = 0, minHeight: t = 240, className: n, children: r, "data-testid": i }) {
+function Tc({ bottomGap: e = 0, minHeight: t = 240, className: n, children: r, "data-testid": i }) {
 	let a = q(null), [o, s] = J(null), c = W(() => {
 		let n = a.current;
 		if (!n || typeof window > "u") return;
 		let r = n.getBoundingClientRect().top + window.scrollY;
-		s(Sc(r, window.innerHeight, e, t));
+		s(wc(r, window.innerHeight, e, t));
 	}, [e, t]);
-	return ps(() => {
+	return hs(() => {
 		c();
 	}, [c]), G(() => {
 		if (typeof window > "u") return;
@@ -2380,22 +2380,22 @@ function Cc({ bottomGap: e = 0, minHeight: t = 240, className: n, children: r, "
 }
 //#endregion
 //#region src/theme/css-variables.ts
-function wc(e) {
+function Ec(e) {
 	return `--ui-${e.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
 }
-function Tc(e) {
+function Dc(e) {
 	let t = {};
-	for (let n of Object.keys(e)) t[wc(n)] = e[n];
+	for (let n of Object.keys(e)) t[Ec(n)] = e[n];
 	return t;
 }
-function Ec(e) {
-	let t = Tc(e);
+function Oc(e) {
+	let t = Dc(e);
 	return `:root {\n${Object.entries(t).map(([e, t]) => `  ${e}: ${t};`).join("\n")}\n}`;
 }
 function $(e) {
-	return `var(${wc(e)})`;
+	return `var(${Ec(e)})`;
 }
-var Dc = {
+var kc = {
 	primary: "--color-primary",
 	primaryDark: "--color-primary-hover",
 	danger: "--color-danger",
@@ -2410,18 +2410,18 @@ var Dc = {
 	radiusSm: "--radius-sm",
 	radiusMd: "--radius-md",
 	radiusLg: "--radius-lg"
-}, Oc = {
+}, Ac = {
 	base: "",
 	bg: "-bg",
 	fg: "-fg",
 	border: "-border"
 };
-function kc(e, t) {
-	return `--color-${e}${Oc[t]}`;
+function jc(e, t) {
+	return `--color-${e}${Ac[t]}`;
 }
 //#endregion
 //#region src/styles/tokens.ts
-var Ac = {
+var Mc = {
 	primary: "#3b82f6",
 	primaryDark: "#1d4ed8",
 	primaryLight: "#93c5fd",
@@ -2443,30 +2443,30 @@ var Ac = {
 	surface: "#ffffff",
 	surfaceRaised: "#ffffff",
 	surfaceOverlay: "rgba(15, 23, 42, 0.5)"
-}, jc = {
+}, Nc = {
 	xs: 4,
 	sm: 8,
 	md: 16,
 	lg: 24,
 	xl: 32
-}, Mc = {
+}, Pc = {
 	xs: 11,
 	sm: 13,
 	md: 14,
 	lg: 16,
 	xl: 22
-}, Nc = {
+}, Fc = {
 	sm: 4,
 	md: 6,
 	lg: 8,
 	xl: 12,
 	full: 9999
-}, Pc = {
-	colors: Ac,
-	spacing: jc,
-	fontSize: Mc,
-	borderRadius: Nc
-}, Fc = {
+}, Ic = {
+	colors: Mc,
+	spacing: Nc,
+	fontSize: Pc,
+	borderRadius: Fc
+}, Lc = {
 	primary: $("primary"),
 	primaryDark: $("primaryDark"),
 	primaryLight: $("primaryLight"),
@@ -2488,25 +2488,25 @@ var Ac = {
 	surface: $("surface"),
 	surfaceRaised: $("surfaceRaised"),
 	surfaceOverlay: $("surfaceOverlay")
-}, Ic = {
+}, Rc = {
 	xs: $("spaceXs"),
 	sm: $("spaceSm"),
 	md: $("spaceMd"),
 	lg: $("spaceLg"),
 	xl: $("spaceXl")
-}, Lc = {
+}, zc = {
 	xs: $("fontXs"),
 	sm: $("fontSm"),
 	md: $("fontMd"),
 	lg: $("fontLg"),
 	xl: $("fontXl")
-}, Rc = {
+}, Bc = {
 	sm: $("radiusSm"),
 	md: $("radiusMd"),
 	lg: $("radiusLg"),
 	xl: $("radiusXl"),
 	full: $("radiusFull")
-}, zc = {
+}, Vc = {
 	primary: "#646cff",
 	primaryDark: "#4f55ff",
 	primaryLight: "#93c5fd",
@@ -2547,7 +2547,7 @@ var Ac = {
 	shadowMd: "0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)",
 	shadowLg: "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)",
 	shadowXl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)"
-}, Bc = {
+}, Hc = {
 	primary: "#8b91ff",
 	primaryDark: "#646cff",
 	primaryLight: "#312e81",
@@ -2588,9 +2588,9 @@ var Ac = {
 	shadowMd: "0 4px 6px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15)",
 	shadowLg: "0 10px 15px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.15)",
 	shadowXl: "0 20px 25px rgba(0,0,0,0.4), 0 10px 10px rgba(0,0,0,0.2)"
-}, Vc = cs(zc), Hc = cs(!1);
-function Uc({ children: e, preset: t = "light", theme: n, tones: r }) {
-	let i = t === "dark" ? Bc : zc, a = ds(Hc), o = q(!1), s = JSON.stringify(n ?? null), c = JSON.stringify(r ?? null), l = K(() => ({
+}, Uc = us(Vc), Wc = us(!1);
+function Gc({ children: e, preset: t = "light", theme: n, tones: r }) {
+	let i = t === "dark" ? Hc : Vc, a = ps(Wc), o = q(!1), s = JSON.stringify(n ?? null), c = JSON.stringify(r ?? null), l = K(() => ({
 		...i,
 		...n
 	}), [i, s]);
@@ -2600,11 +2600,11 @@ function Uc({ children: e, preset: t = "light", theme: n, tones: r }) {
 			e.style.setProperty(t, r), n.push(t);
 		};
 		for (let e of t) {
-			i(wc(e), l[e]);
-			let t = Dc[e];
+			i(Ec(e), l[e]);
+			let t = kc[e];
 			t && i(t, l[e]);
 		}
-		for (let [e, t] of Object.entries(r ?? {})) for (let [n, r] of Object.entries(t)) r && i(kc(e, n), r);
+		for (let [e, t] of Object.entries(r ?? {})) for (let [n, r] of Object.entries(t)) r && i(jc(e, n), r);
 		return () => {
 			for (let t of n) e.style.removeProperty(t);
 		};
@@ -2612,30 +2612,30 @@ function Uc({ children: e, preset: t = "light", theme: n, tones: r }) {
 		l,
 		c,
 		a
-	]), /* @__PURE__ */ X(Hc.Provider, {
+	]), /* @__PURE__ */ X(Wc.Provider, {
 		value: !0,
-		children: /* @__PURE__ */ X(Vc.Provider, {
+		children: /* @__PURE__ */ X(Uc.Provider, {
 			value: l,
 			children: e
 		})
 	});
 }
-function Wc() {
-	return ds(Vc);
+function Kc() {
+	return ps(Uc);
 }
 //#endregion
 //#region src/theme/useTheme.ts
-function Gc() {
-	return Wc();
+function qc() {
+	return Kc();
 }
 //#endregion
 //#region src/theme/shadows.ts
-var Kc = {
+var Jc = {
 	sm: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)",
 	md: "0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)",
 	lg: "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)",
 	xl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)"
-}, qc = {
+}, Yc = {
 	sticky: 20,
 	dropdown: 50,
 	modal: 100,
@@ -2643,7 +2643,7 @@ var Kc = {
 };
 //#endregion
 //#region src/api/pipelineDLQ.ts
-async function Jc(e) {
+async function Xc(e) {
 	let t = new URLSearchParams();
 	e?.limit && t.set("limit", String(e.limit)), e?.cursor && t.set("cursor", e.cursor), e?.errorKind && t.set("errorKind", e.errorKind), e?.sinceMs && t.set("sinceMs", String(e.sinceMs));
 	let n = `/api/pipelines/dlq${t.toString() ? `?${t}` : ""}`, r = await fetch(n, {
@@ -2657,7 +2657,7 @@ async function Jc(e) {
 	}
 	return r.json();
 }
-async function Yc(e, t) {
+async function Zc(e, t) {
 	let n = await fetch("/api/pipelines/dlq/redrive", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -2674,7 +2674,7 @@ async function Yc(e, t) {
 	}
 	return n.json();
 }
-async function Xc(e, t) {
+async function Qc(e, t) {
 	let n = await fetch("/api/pipelines/dlq/purge", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -2692,7 +2692,7 @@ async function Xc(e, t) {
 }
 //#endregion
 //#region src/components/forms/ColorInput.tsx
-var Zc = ls(function({ value: e, onChange: t, disabled: n = !1, "aria-label": r, className: i, "data-testid": a }, o) {
+var $c = ds(function({ value: e, onChange: t, disabled: n = !1, "aria-label": r, className: i, "data-testid": a }, o) {
 	return /* @__PURE__ */ X("input", {
 		ref: o,
 		type: "color",
@@ -2703,7 +2703,7 @@ var Zc = ls(function({ value: e, onChange: t, disabled: n = !1, "aria-label": r,
 		className: H("w-8 h-6 p-0 border-none bg-transparent cursor-pointer disabled:cursor-not-allowed", i),
 		"data-testid": a
 	});
-}), Qc = {
+}), el = {
 	success: "border-success",
 	error: "border-danger",
 	warning: "border-warning",
@@ -2711,8 +2711,8 @@ var Zc = ls(function({ value: e, onChange: t, disabled: n = !1, "aria-label": r,
 	neutral: "border-border-emphasis",
 	pending: "border-accent"
 };
-function $c({ icon: e, label: t, subtitle: n, status: r = "neutral", statusLabel: i, body: a, selected: o = !1, accentClass: s, className: c, onClick: l }) {
-	let u = i ?? r.charAt(0).toUpperCase() + r.slice(1), d = Qc[r];
+function tl({ icon: e, label: t, subtitle: n, status: r = "neutral", statusLabel: i, body: a, selected: o = !1, accentClass: s, className: c, onClick: l }) {
+	let u = i ?? r.charAt(0).toUpperCase() + r.slice(1), d = el[r];
 	return /* @__PURE__ */ Z(Mn, {
 		className: H("relative w-40 transition-shadow duration-200 border-2", l && "cursor-pointer", d, o && "shadow-[0_0_0_3px_rgba(99,102,241,0.25)]", !o && "shadow-sm", !o && l && "hover:shadow-md", c),
 		onClick: l,
@@ -2748,4 +2748,4 @@ function $c({ icon: e, label: t, subtitle: n, status: r = "neutral", statusLabel
 	});
 }
 //#endregion
-export { Ts as ActiveCallBanner, Hr as ActivityFeed, Ki as ActivityPanel, So as AdminDashboardPage, ks as ApiDegradedBanner, rc as AppLayout, oc as AppShell, Zo as ApplicationFormPage, jo as ApplicationListPage, Jo as ApplicationPoolFormPage, Ht as ArtifactTile, ti as AttachmentBubble, Bo as AuditPage, Bo as IdentityAuditPage, qa as AutoplayGate, kr as Avatar, Dr as AvatarGroup, zr as Badge, Wn as Banner, qn as BarChart, on as BoardColumn, nn as Breadcrumbs, U as Button, ta as CALL_CARD_WIDTH, ro as CALL_DOCK_DRAG_TYPE, va as CALL_DOCK_ROW_HEIGHT, ra as CALL_STAGE_DOCKED_WIDTH, tr as CODE_TONE_SOFT, ir as CODE_TONE_SOLID, Qn as CODE_TONE_SOLID_BG, Jn as CODE_TONE_TEXT, s as CUSTOM_FIELD_TYPE_STORAGE_KEY, Sa as CallControls, wa as CallParticipantStrip, Cs as CallPresenceIndicator, Ya as CallSettingsDialog, Ra as CallSidePanel, da as CallSidePanelToggles, _a as CallStartedBanner, Ca as CallStatsOverlay, na as CallWidget, to as CallingStatusPill, Lt as CapabilityDeniedFallback, sa as CaptionsIcon, Mn as Card, vr as CardHeader, jt as CatalogGrid, as as ChangeDiff, rs as ChangeLocation, $o as ChangeReviewCard, Qo as ChangeReviewList, tn as ChannelHeader, ua as ChatBubbleIcon, Tt as ChatComposer, Jr as ChatDropZone, ei as ChatPanel, Yi as ChatRoom, Wr as Checkbox, or as Chip, Za as CircularIconToggle, En as CodeBlock, Je as CodeEditor, Mo as CodeInput, Ls as CollapsedIconStrip, Ft as CollapsibleSection, Fs as CollapsibleSidebar, Zc as ColorInput, ys as ColorSchemeProvider, wn as CommandPalette, An as CommandPaletteHint, Vt as CommandPaletteProvider, Wi as CommentThread, Wi as CommentThreadPanel, lr as ConfirmDialog, Rr as ConnectionPill, Os as ConnectionStatus, qo as ConsentPage, dn as ConsultCard, Gi as ConversationList, ri as DEFAULT_PICKER_EMOJIS, it as DEFAULT_PIPELINE_ICONS, c as DOCUMENT_TYPE_ICONS, Ln as DataTable, qt as DetailHeader, cn as DetailSection, Po as DiagnosticsPage, en as DiffViewer, hn as Divider, Cr as DockedPanelProvider, pc as DocsShell, gc as DocsSidebar, xc as DocsTopNav, jr as DotMeter, wt as Drawer, Yt as DropdownMenu, Fo as EmailTemplateFormPage, ko as EmailTemplateListPage, ur as EmptyState, at as EntityCell, Ro as EntityTable, li as ErrorBoundary, Wo as ErrorPage, Xt as ErrorState, _r as EventRow, ja as ExpandableCallWidget, vn as ExpertCard, Pr as FLOATING_PANEL_ANCHORS, xr as FileUploadDrop, Ye as FilterChip, Mr as FloatingPanel, Sn as FollowBanner, bt as FollowUpChips, Vn as FormField, fn as FormRow, Pi as GenerativeImagePreview, Xo as GroupFormPage, Do as GroupListPage, Hi as GroupPanel, uo as HangoutGrid, po as HangoutLayout, Ga as HangoutPreJoinShell, Ea as HangoutRoomHeader, xo as HangoutSpotlight, h as IDENTITY_BASE_URL, Hn as IconButton, qe as IconPicker, Vo as IdentityAdminLayout, wo as IdentityFormField, N as IdentityProvider, Xe as ImageLightbox, Ci as ImageThumbnail, kt as Inline, Pt as InlineAlert, It as InlinePlaceholder, Vr as InlinePopover, wr as Input, xs as InviteCandidateList, Ss as InviteToCallDialog, Ai as JsonPathInput, gn as KPIGrid, jn as LayerStack, Gn as LineChart, Qt as LoadingState, At as LogStream, No as LoginPage, Lo as LogoutPage, Ia as MediaControlsBar, bo as MediaEffectsPreviewPanel, vo as MediaEffectsTray, pt as MessageBubble, Vi as MessageGroup, oi as MessageRow, Zt as MetaLine, Ao as MfaDashboardPage, Io as MfaManagementPage, Go as MfaSetupPage, Ho as MfaVerifyPage, ga as MicIcon, oo as MicOffIcon, cr as Modal, ea as MoreHorizontalIcon, Ba as MuteWhileTalkingToast, Tn as NavRail, Ot as NavRailStack, dc as NavTabs, Ka as NetworkQualityBadge, $c as NodeCard, Lr as NotificationCenter, Qe as NumberInput, _t as PageHeader, zn as PageSection, mo as ParticipantTile, bi as PatchHttpError, Fi as PatchValidationRejectedError, fr as PermissionDeniedCard, yn as PersonHoverCard, ba as PhoneOffIcon, Pa as PiPButton, Ni as PipelineEditorServicesProvider, Ma as PlaybackReactionsLayer, To as PoolFormPage, Eo as PoolListPage, Ko as PoolScopedLayout, Ji as PostFeed, Br as PresenceAvatars, Ir as PresenceDot, ai as PresencePanel, et as PresenceProvider, ln as ProgressBar, St as ProjectCard, zo as QrCodeDisplay, xt as QuickPromptGrid, rn as REVIEW_KIND_LABELS, xn as REVIEW_KIND_TONES, rt as RadioGroup, un as RailLayout, _n as RailSection, eo as ReactionOverlay, Wa as ReactionPicker, Xa as ReactionPickerButton, Qr as ReactionPickerPopover, Xi as ReactionsBar, fo as ReconnectingBanner, ao as RecordingList, io as RecordingPlayer, Oa as RecordingRow, so as RemoteTileSlot, Ds as ResumeCallDialog, Wt as ReviewThread, Zi as RoomList, Fa as RosterPanel, Ke as ScoreBarGauge, oa as ScreenShareIcon, ya as ScreenShareOffIcon, Nt as SearchInput, kn as SectionLabel, Kt as SegmentedControl, Ur as Select, Un as SelectableCard, fc as SettingsLayout, Uo as SetupGuidePage, sn as ShortcutsHelp, Gr as SidebarRow, Kr as SidebarSection, Rt as SignoffPanel, yr as SkeletonCard, wi as Slider, Ui as SocialPanel, qi as SocialTabContent, xa as SparklesIcon, hr as Sparkline, dr as Spinner, ft as Stack, st as StackDiagram, Kn as StackedAreaChart, Gt as StatCard, $t as StatStrip, Qa as StatsCard, Oo as StatusBadge, Fr as StatusDot, tt as StatusPill, Qi as StatusStrip, Ua as StreamChatTicker, $a as StreamStage, go as StreamVideo, dt as SubNavLayout, an as SuggestionCard, Ta as SummaryPanel, br as Switch, Dc as THEME_TOKEN_ALIASES, nr as TONES, ar as TONE_BG, Yn as TONE_BORDER, $n as TONE_SOFT, sr as TONE_SOLID, Xn as TONE_SOLID_BG, Zn as TONE_TEXT, Jt as TabPanel, Fn as Table, Nn as TableBody, Rn as TableHead, Bn as TableRow, Pn as TableTd, In as TableTh, pn as Tabs, $e as TagEditor, Ut as TaskComposer, Mt as TerminalLog, Tr as Textarea, Uc as ThemeProvider, Ct as ThinkingBlock, mn as ThinkingDots, ht as ThumbnailCard, Ar as TitledFrame, Be as Toast, Ue as ToastProvider, gt as ToolCallPill, yt as ToolCallStrip, Bt as Toolbar, Dn as ToolbarGroup, Et as ToolbarLabel, ct as ToolbarSeparator, uc as TopNav, ka as TranscriptOverlay, no as TranscriptPanel, ii as TransferBubble, nt as TrendSparkline, mt as TypingIndicator, bn as UserChip, Co as UserFormPage, Yo as UserListPage, ot as UserMenu, Ge as UserPicker, aa as UserPlusIcon, la as UsersIcon, ns as VERDICT_GLYPH, is as VERDICT_LABEL, ts as VERDICT_TONE, os as VerdictChip, Da as VideoGrid, Ja as VideoIcon, ca as VideoOffIcon, Va as VideoPlayer, Aa as VideoPlayerModal, ha as ViewerCount, Cc as ViewportFillRegion, Re as WebSocketProvider, Cn as WorkArea, ut as activeNavItemStyle, Li as applyPatch, Rc as borderRadius, fa as callSidePanelBodyTestId, ma as callSidePanelPlacement, ia as callSidePanelToggleTestId, Fc as colors, $ as cssVar, Bc as darkTheme, mr as eventGlyphs, Sc as fillHeight, Lc as fontSize, Mi as forceFail, Yr as formatBytes, Xr as formatChatTime, vt as formatTypingBanner, pr as getEventCategory, gr as getEventGlyph, a as getFieldType, n as getFieldTypes, l as getPageConfig, u as getPagesView, vi as getPipelineRun, i as getRenderer, Oi as getRunAuditLog, _o as gridCols, ho as guardedSelection, m as identityApiFetch, Ec as injectThemeVars, $r as isImageAttachment, o as isValidCustomFieldType, zc as lightTheme, Jc as listDLQEntries, yi as listPipelineRuns, t as listRegisteredRenderers, d as makeEmptyField, On as matchHotkey, pa as modeFromMinimized, Or as nameToColor, Er as nameToInitials, zt as parseUnifiedDiff, Xc as purgeDLQEntries, Nc as rawBorderRadius, Ac as rawColors, Mc as rawFontSize, jc as rawSpacing, Pc as rawTokens, La as reactionEmojiName, Yc as redriveDLQEntries, e as registerFieldType, r as registerRenderer, Nr as resolveAnchorPosition, es as resolveVerdictState, Ti as resumeFromStep, Di as retryFromNode, xi as revertPatch, Ei as searchAudit, Kc as shadows, Ic as spacing, yo as streamHasUsableVideo, Tc as themeToCssVars, za as toCanonicalMode, $i as toLegacyMode, wc as tokenToCssVarName, kc as toneCssVarName, rr as toneKey, er as toneVar, f as useActivityBus, D as useApiCall, g as useApiHealth, ne as useAuth, me as useAwareness, pe as useAwarenessState, j as useCRDT, Na as useCallWidgetPersistence, w as useChat, C as useClickOutside, fe as useCollaborativeDoc, bs as useColorScheme, Dt as useCommandPalette, Ee as useComments, O as useCursors, S as useCustomFieldTypes, Fe as useDocTypeProposals, Sr as useDockedPanel, xe as useDocumentComments, I as useDocumentExport, ge as useDocumentItems, _e as useDocumentMetadata, de as useDocumentReviews, Ie as useDocumentTypes, ie as useDocuments, We as useEventCallback, we as useFriends, Te as useGroups, v as useIdentityAdmin, oe as useIdentityAudit, _ as useIdentityClients, le as useIdentityContext, se as useIdentityDiagnostics, x as useIdentityEmailTemplates, ce as useIdentityGroups, M as useIdentityMfa, y as useIdentityMfaAdmin, T as useIdentityPools, p as useIdentityResource, E as useIdentitySetupStatus, te as useIdentityUsers, P as useIdleDetector, ki as useImageUrl, je as useIngestAudit, ke as useIngestDLQ, Ne as useIngestItems, Me as useIngestProgress, Oe as useIngestSources, A as useKeyboardShortcuts, De as useLikes, Ae as useMappingReviewQueue, F as useMentionUsers, Ha as useMuteWhileTalking, he as useMyMentionsAndTasks, ue as useOptionalIdentityContext, V as usePipelineDefs, Si as usePipelineEditorServices, R as usePosts, ze as usePrefersReducedMotion, b as usePresence, Ze as usePresenceContext, ee as useReactions, lt as useRegisterCommand, re as useRooms, L as useSectionList, z as useSocialProfile, B as useSourceSloMetrics, lo as useStableActiveSpeaker, Pe as useSyncConflicts, Gc as useTheme, Wc as useThemeContext, Ve as useToast, He as useToastOptional, co as useTrackStateBump, k as useTypedDocuments, ae as useUrlFilterState, ye as useVersionHistory, ve as useVideoCall, be as useVideoSessions, Ce as useWebSocket, Le as useWebSocketContext, Se as useYjsDoc, qc as zIndex };
+export { Ds as ActiveCallBanner, Hr as ActivityFeed, Gi as ActivityPanel, wo as AdminDashboardPage, js as ApiDegradedBanner, ac as AppLayout, cc as AppShell, $o as ApplicationFormPage, No as ApplicationListPage, Xo as ApplicationPoolFormPage, Ht as ArtifactTile, ti as AttachmentBubble, Ho as AuditPage, Ho as IdentityAuditPage, Ya as AutoplayGate, kr as Avatar, Dr as AvatarGroup, zr as Badge, Wn as Banner, qn as BarChart, on as BoardColumn, nn as Breadcrumbs, U as Button, ra as CALL_CARD_WIDTH, ao as CALL_DOCK_DRAG_TYPE, ba as CALL_DOCK_ROW_HEIGHT, aa as CALL_STAGE_DOCKED_WIDTH, tr as CODE_TONE_SOFT, ir as CODE_TONE_SOLID, Qn as CODE_TONE_SOLID_BG, Jn as CODE_TONE_TEXT, s as CUSTOM_FIELD_TYPE_STORAGE_KEY, wa as CallControls, Ea as CallParticipantStrip, Ts as CallPresenceIndicator, Za as CallSettingsDialog, Ba as CallSidePanel, pa as CallSidePanelToggles, ya as CallStartedBanner, Ta as CallStatsOverlay, ia as CallWidget, ro as CallingStatusPill, Lt as CapabilityDeniedFallback, la as CaptionsIcon, Mn as Card, vr as CardHeader, jt as CatalogGrid, ss as ChangeDiff, as as ChangeLocation, ts as ChangeReviewCard, es as ChangeReviewList, tn as ChannelHeader, fa as ChatBubbleIcon, Tt as ChatComposer, Jr as ChatDropZone, ei as ChatPanel, $i as ChatRoom, Wr as Checkbox, or as Chip, $a as CircularIconToggle, En as CodeBlock, Je as CodeEditor, Po as CodeInput, zs as CollapsedIconStrip, Ft as CollapsibleSection, Ls as CollapsibleSidebar, $c as ColorInput, xs as ColorSchemeProvider, wn as CommandPalette, An as CommandPaletteHint, Vt as CommandPaletteProvider, Zi as CommentThread, Zi as CommentThreadPanel, lr as ConfirmDialog, Rr as ConnectionPill, As as ConnectionStatus, Yo as ConsentPage, dn as ConsultCard, Ui as ConversationList, ri as DEFAULT_PICKER_EMOJIS, it as DEFAULT_PIPELINE_ICONS, c as DOCUMENT_TYPE_ICONS, Ln as DataTable, qt as DetailHeader, cn as DetailSection, Io as DiagnosticsPage, en as DiffViewer, hn as Divider, Cr as DockedPanelProvider, hc as DocsShell, vc as DocsSidebar, Cc as DocsTopNav, jr as DotMeter, wt as Drawer, Yt as DropdownMenu, Lo as EmailTemplateFormPage, jo as EmailTemplateListPage, ur as EmptyState, at as EntityCell, Bo as EntityTable, li as ErrorBoundary, Ko as ErrorPage, Xt as ErrorState, _r as EventRow, Na as ExpandableCallWidget, vn as ExpertCard, Pr as FLOATING_PANEL_ANCHORS, xr as FileUploadDrop, Ye as FilterChip, Mr as FloatingPanel, Sn as FollowBanner, bt as FollowUpChips, Vn as FormField, fn as FormRow, Pi as GenerativeImagePreview, Qo as GroupFormPage, ko as GroupListPage, Vi as GroupPanel, po as HangoutGrid, ho as HangoutLayout, qa as HangoutPreJoinShell, Oa as HangoutRoomHeader, Co as HangoutSpotlight, h as IDENTITY_BASE_URL, Hn as IconButton, qe as IconPicker, Uo as IdentityAdminLayout, Eo as IdentityFormField, N as IdentityProvider, Xe as ImageLightbox, Ci as ImageThumbnail, kt as Inline, Pt as InlineAlert, It as InlinePlaceholder, Vr as InlinePopover, wr as Input, Cs as InviteCandidateList, ws as InviteToCallDialog, Ai as JsonPathInput, gn as KPIGrid, jn as LayerStack, Gn as LineChart, Qt as LoadingState, At as LogStream, Fo as LoginPage, zo as LogoutPage, Ra as MediaControlsBar, So as MediaEffectsPreviewPanel, bo as MediaEffectsTray, qi as MentionSuggestions, pt as MessageBubble, Hi as MessageGroup, oi as MessageRow, Zt as MetaLine, Mo as MfaDashboardPage, Ro as MfaManagementPage, qo as MfaSetupPage, Wo as MfaVerifyPage, va as MicIcon, co as MicOffIcon, cr as Modal, na as MoreHorizontalIcon, Ha as MuteWhileTalkingToast, Tn as NavRail, Ot as NavRailStack, pc as NavTabs, Ja as NetworkQualityBadge, tl as NodeCard, Lr as NotificationCenter, Qe as NumberInput, _t as PageHeader, zn as PageSection, go as ParticipantTile, bi as PatchHttpError, Fi as PatchValidationRejectedError, fr as PermissionDeniedCard, yn as PersonHoverCard, Sa as PhoneOffIcon, Ia as PiPButton, Ni as PipelineEditorServicesProvider, Pa as PlaybackReactionsLayer, Do as PoolFormPage, Oo as PoolListPage, Jo as PoolScopedLayout, Ji as PostFeed, Br as PresenceAvatars, Ir as PresenceDot, ai as PresencePanel, et as PresenceProvider, ln as ProgressBar, St as ProjectCard, Vo as QrCodeDisplay, xt as QuickPromptGrid, rn as REVIEW_KIND_LABELS, xn as REVIEW_KIND_TONES, rt as RadioGroup, un as RailLayout, _n as RailSection, no as ReactionOverlay, Ka as ReactionPicker, Qa as ReactionPickerButton, Qr as ReactionPickerPopover, Xi as ReactionsBar, mo as ReconnectingBanner, so as RecordingList, oo as RecordingPlayer, Aa as RecordingRow, lo as RemoteTileSlot, ks as ResumeCallDialog, Wt as ReviewThread, Qi as RichChatComposer, Wi as RoomList, La as RosterPanel, Ke as ScoreBarGauge, ca as ScreenShareIcon, xa as ScreenShareOffIcon, Nt as SearchInput, kn as SectionLabel, Kt as SegmentedControl, Ur as Select, Un as SelectableCard, mc as SettingsLayout, Go as SetupGuidePage, sn as ShortcutsHelp, Gr as SidebarRow, Kr as SidebarSection, Rt as SignoffPanel, yr as SkeletonCard, wi as Slider, Yi as SocialPanel, Ki as SocialTabContent, Ca as SparklesIcon, hr as Sparkline, dr as Spinner, ft as Stack, st as StackDiagram, Kn as StackedAreaChart, Gt as StatCard, $t as StatStrip, eo as StatsCard, Ao as StatusBadge, Fr as StatusDot, tt as StatusPill, ea as StatusStrip, Ga as StreamChatTicker, to as StreamStage, vo as StreamVideo, dt as SubNavLayout, an as SuggestionCard, Da as SummaryPanel, br as Switch, kc as THEME_TOKEN_ALIASES, nr as TONES, ar as TONE_BG, Yn as TONE_BORDER, $n as TONE_SOFT, sr as TONE_SOLID, Xn as TONE_SOLID_BG, Zn as TONE_TEXT, Jt as TabPanel, Fn as Table, Nn as TableBody, Rn as TableHead, Bn as TableRow, Pn as TableTd, In as TableTh, pn as Tabs, $e as TagEditor, Ut as TaskComposer, Mt as TerminalLog, Tr as Textarea, Gc as ThemeProvider, Ct as ThinkingBlock, mn as ThinkingDots, ht as ThumbnailCard, Ar as TitledFrame, Be as Toast, Ue as ToastProvider, gt as ToolCallPill, yt as ToolCallStrip, Bt as Toolbar, Dn as ToolbarGroup, Et as ToolbarLabel, ct as ToolbarSeparator, fc as TopNav, ja as TranscriptOverlay, io as TranscriptPanel, ii as TransferBubble, nt as TrendSparkline, mt as TypingIndicator, bn as UserChip, To as UserFormPage, Zo as UserListPage, ot as UserMenu, Ge as UserPicker, sa as UserPlusIcon, da as UsersIcon, is as VERDICT_GLYPH, os as VERDICT_LABEL, rs as VERDICT_TONE, cs as VerdictChip, ka as VideoGrid, Xa as VideoIcon, ua as VideoOffIcon, Ua as VideoPlayer, Ma as VideoPlayerModal, _a as ViewerCount, Tc as ViewportFillRegion, Re as WebSocketProvider, Cn as WorkArea, ut as activeNavItemStyle, Li as applyPatch, Bc as borderRadius, ma as callSidePanelBodyTestId, ga as callSidePanelPlacement, oa as callSidePanelToggleTestId, Lc as colors, $ as cssVar, Hc as darkTheme, mr as eventGlyphs, wc as fillHeight, zc as fontSize, Mi as forceFail, Yr as formatBytes, Xr as formatChatTime, vt as formatTypingBanner, pr as getEventCategory, gr as getEventGlyph, a as getFieldType, n as getFieldTypes, l as getPageConfig, u as getPagesView, vi as getPipelineRun, i as getRenderer, Oi as getRunAuditLog, yo as gridCols, _o as guardedSelection, m as identityApiFetch, Oc as injectThemeVars, $r as isImageAttachment, o as isValidCustomFieldType, Vc as lightTheme, Xc as listDLQEntries, yi as listPipelineRuns, t as listRegisteredRenderers, d as makeEmptyField, On as matchHotkey, ha as modeFromMinimized, Or as nameToColor, Er as nameToInitials, zt as parseUnifiedDiff, Qc as purgeDLQEntries, Fc as rawBorderRadius, Mc as rawColors, Pc as rawFontSize, Nc as rawSpacing, Ic as rawTokens, za as reactionEmojiName, Zc as redriveDLQEntries, e as registerFieldType, r as registerRenderer, Nr as resolveAnchorPosition, ns as resolveVerdictState, Ti as resumeFromStep, Di as retryFromNode, xi as revertPatch, Ei as searchAudit, Jc as shadows, Rc as spacing, xo as streamHasUsableVideo, Dc as themeToCssVars, Va as toCanonicalMode, ta as toLegacyMode, Ec as tokenToCssVarName, jc as toneCssVarName, rr as toneKey, er as toneVar, f as useActivityBus, D as useApiCall, g as useApiHealth, ne as useAuth, me as useAwareness, pe as useAwarenessState, j as useCRDT, Fa as useCallWidgetPersistence, w as useChat, C as useClickOutside, fe as useCollaborativeDoc, Ss as useColorScheme, Dt as useCommandPalette, Ee as useComments, O as useCursors, S as useCustomFieldTypes, Fe as useDocTypeProposals, Sr as useDockedPanel, xe as useDocumentComments, I as useDocumentExport, ge as useDocumentItems, _e as useDocumentMetadata, de as useDocumentReviews, Ie as useDocumentTypes, ie as useDocuments, We as useEventCallback, we as useFriends, Te as useGroups, v as useIdentityAdmin, oe as useIdentityAudit, _ as useIdentityClients, le as useIdentityContext, se as useIdentityDiagnostics, x as useIdentityEmailTemplates, ce as useIdentityGroups, M as useIdentityMfa, y as useIdentityMfaAdmin, T as useIdentityPools, p as useIdentityResource, E as useIdentitySetupStatus, te as useIdentityUsers, P as useIdleDetector, ki as useImageUrl, je as useIngestAudit, ke as useIngestDLQ, Ne as useIngestItems, Me as useIngestProgress, Oe as useIngestSources, A as useKeyboardShortcuts, De as useLikes, Ae as useMappingReviewQueue, F as useMentionUsers, Wa as useMuteWhileTalking, he as useMyMentionsAndTasks, ue as useOptionalIdentityContext, V as usePipelineDefs, Si as usePipelineEditorServices, R as usePosts, ze as usePrefersReducedMotion, b as usePresence, Ze as usePresenceContext, ee as useReactions, lt as useRegisterCommand, re as useRooms, L as useSectionList, z as useSocialProfile, B as useSourceSloMetrics, fo as useStableActiveSpeaker, Pe as useSyncConflicts, qc as useTheme, Kc as useThemeContext, Ve as useToast, He as useToastOptional, uo as useTrackStateBump, k as useTypedDocuments, ae as useUrlFilterState, ye as useVersionHistory, ve as useVideoCall, be as useVideoSessions, Ce as useWebSocket, Le as useWebSocketContext, Se as useYjsDoc, Yc as zIndex };

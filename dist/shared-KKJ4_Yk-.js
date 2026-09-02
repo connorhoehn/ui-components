@@ -3913,9 +3913,9 @@ var Hn = {
 	accent: "text-primary",
 	danger: "text-danger"
 };
-function $({ item: t }) {
+function $({ item: t, flush: n }) {
 	return /* @__PURE__ */ R("div", {
-		className: "min-w-0 px-4 py-2.5",
+		className: e("min-w-0 px-4 py-2.5", (n === "start" || n === "both") && "pl-0", (n === "end" || n === "both") && "pr-0"),
 		children: [/* @__PURE__ */ L("div", {
 			className: "whitespace-nowrap text-[10px] font-semibold uppercase tracking-wide text-text-tertiary",
 			children: t.label
@@ -3937,19 +3937,31 @@ function Un({ items: t, frameless: n = !1, className: r, "aria-label": i, "data-
 		className: e("flex divide-x divide-border overflow-x-auto", !n && "rounded-lg border border-border bg-surface", r),
 		...i ? { "aria-label": i } : {},
 		...a ? { "data-testid": a } : {},
-		children: t.map((e) => e.href ? /* @__PURE__ */ L("a", {
-			href: e.href,
-			className: "min-w-0 flex-1 no-underline transition-colors hover:bg-surface-hover",
-			children: /* @__PURE__ */ L($, { item: e })
-		}, e.label) : e.onSelect ? /* @__PURE__ */ L("button", {
-			type: "button",
-			onClick: e.onSelect,
-			className: "min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left transition-colors hover:bg-surface-hover",
-			children: /* @__PURE__ */ L($, { item: e })
-		}, e.label) : /* @__PURE__ */ L("div", {
-			className: "min-w-0 flex-1",
-			children: /* @__PURE__ */ L($, { item: e })
-		}, e.label))
+		children: t.map((e, r) => {
+			let i = n ? t.length === 1 ? "both" : r === 0 ? "start" : r === t.length - 1 ? "end" : void 0 : void 0;
+			return e.href ? /* @__PURE__ */ L("a", {
+				href: e.href,
+				className: "min-w-0 flex-1 no-underline transition-colors hover:bg-surface-hover",
+				children: /* @__PURE__ */ L($, {
+					item: e,
+					flush: i
+				})
+			}, e.label) : e.onSelect ? /* @__PURE__ */ L("button", {
+				type: "button",
+				onClick: e.onSelect,
+				className: "min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left transition-colors hover:bg-surface-hover",
+				children: /* @__PURE__ */ L($, {
+					item: e,
+					flush: i
+				})
+			}, e.label) : /* @__PURE__ */ L("div", {
+				className: "min-w-0 flex-1",
+				children: /* @__PURE__ */ L($, {
+					item: e,
+					flush: i
+				})
+			}, e.label);
+		})
 	});
 }
 //#endregion

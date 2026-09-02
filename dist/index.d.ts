@@ -2474,6 +2474,16 @@ declare interface CommentThreadProps {
     onMessage: OnMessageFn;
 }
 
+/** What the composer hands back on send. */
+export declare interface ComposedMessage {
+    /** Rich body. Empty when the user typed only whitespace. */
+    html: string;
+    /** Plain-text fallback, for clients and notifications that cannot render HTML. */
+    text: string;
+    /** Everyone the sender explicitly mentioned, de-duplicated, in document order. */
+    mentions: MentionCandidate[];
+}
+
 export declare interface ComposerSuggestion {
     id: string;
     /** Why this is being offered — shown above the title on the card. */
@@ -5520,6 +5530,16 @@ export declare interface MemoryNodeData {
 
 export declare type MemoryScope = 'session' | 'long-term';
 
+export declare interface MentionCandidate {
+    /** Stable identity — this is what travels in the message, not the label. */
+    id: string;
+    label: string;
+    avatarUrl?: string;
+    color?: string;
+    /** Shown under the name, e.g. a role or team. */
+    hint?: string;
+}
+
 declare interface MentionItem {
     kind: 'mention';
     sectionId: string;
@@ -5529,6 +5549,22 @@ declare interface MentionItem {
     authorColor: string;
     commentText: string;
     timestamp: string;
+}
+
+export declare const MentionSuggestions: ForwardRefExoticComponent<MentionSuggestionsProps & RefAttributes<MentionSuggestionsHandle>>;
+
+declare interface MentionSuggestionsHandle {
+    onKeyDown: (props: {
+        event: KeyboardEvent;
+    }) => boolean;
+}
+
+export declare interface MentionSuggestionsProps {
+    items: MentionCandidate[];
+    command: (item: {
+        id: string;
+        label: string;
+    }) => void;
 }
 
 declare interface MentionUser {
@@ -7871,6 +7907,31 @@ export declare interface ReviewThreadProps {
     kindTones?: Record<string, ToneOrAlias>;
     /** Shown when the thread has no posts yet. */
     emptyLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function RichChatComposer({ onSend, onSearchPeople, onSendFiles, placeholder, disabled, toolbarExtras, className, 'data-testid': testId, }: RichChatComposerProps): JSX.Element;
+
+export declare interface RichChatComposerProps {
+    onSend: (message: ComposedMessage) => void;
+    /**
+     * Resolves the @ menu. Returning a promise is supported so a host can hit a
+     * directory rather than filter a preloaded array.
+     */
+    onSearchPeople?: (query: string) => MentionCandidate[] | Promise<MentionCandidate[]>;
+    /**
+     * Files chosen with the paperclip or dropped on the composer.
+     *
+     * Absent means this deployment has no file capability, and every attachment
+     * affordance disappears — not a disabled paperclip, which promises something
+     * the product cannot do.
+     */
+    onSendFiles?: (files: File[]) => void;
+    placeholder?: string;
+    disabled?: boolean;
+    /** Rendered between the formatting controls and the send button. */
+    toolbarExtras?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }

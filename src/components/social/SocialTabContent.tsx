@@ -11,7 +11,6 @@ import { cn } from '../../lib/cn';
 
 import { RoomList } from './RoomList';
 import { ConversationList, type ConversationItem } from './ConversationList';
-import { GroupPanel } from './GroupPanel';
 import { ChatRoom } from './ChatRoom';
 
 type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
@@ -33,53 +32,6 @@ export interface SocialTabContentProps {
   activeRoomId: string | null;
   activityEvents: ActivityEvent[];
   onMessage: OnMessageFn;
-}
-
-// ---------------------------------------------------------------------------
-// CollapsibleSection
-// ---------------------------------------------------------------------------
-
-function CollapsibleSection({ title, count, unreadTotal, defaultOpen = true, children }: {
-  title: string;
-  /** Item count shown on the right of the header. Omit when the section's
-   *  contents are owned by a child component and this shell cannot count
-   *  them — rendering a made-up number is worse than rendering none. */
-  count?: number;
-  unreadTotal?: number;
-  defaultOpen?: boolean;
-  children: React.ReactNode;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
-
-  return (
-    <div className="mb-0.5">
-      <button
-        onClick={() => setOpen(v => !v)}
-        className="flex items-center gap-1 w-full px-3 py-1.5 bg-transparent border-none cursor-pointer font-[inherit] text-left"
-      >
-        <span
-          className={cn(
-            'text-[10px] text-text-secondary inline-block w-3 transition-transform duration-150',
-            open ? 'rotate-90' : 'rotate-0',
-          )}
-        >
-          ▶
-        </span>
-        <span className="text-[11px] font-bold text-text-tertiary uppercase tracking-wide flex-1">
-          {title}
-        </span>
-        {!open && unreadTotal !== undefined && unreadTotal > 0 && (
-          <span className="min-w-[18px] h-[18px] rounded-[9px] bg-danger text-white text-[10px] font-bold flex items-center justify-center px-1.5">
-            {unreadTotal > 99 ? '99+' : unreadTotal}
-          </span>
-        )}
-        {count !== undefined && (
-          <span className="text-[11px] text-text-secondary">{count}</span>
-        )}
-      </button>
-      {open && children}
-    </div>
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -341,21 +293,16 @@ export default function SocialTabContent({
             )}
           </div>
 
-          {/* Groups section */}
-          {/* No `count`: this shell has no groups data — `GroupPanel` owns its
-              own `useGroups`. It used to pass a hard-coded 0, so the Groups
-              header read "0" no matter how many groups were listed directly
-              underneath it. */}
-          <CollapsibleSection title="Groups" defaultOpen={false}>
-            <GroupPanel
-              idToken={idToken}
-              rooms={rooms}
-              createGroupRoom={createGroupRoom}
-              onRoomSelect={wrappedHandleRoomSelect}
-              roomsLoading={roomsLoading}
-              compact
-            />
-          </CollapsibleSection>
+          {/* Groups used to have its own section here, listing a separate
+              `useGroups` fetch beside the conversation list. It was removed:
+              group rooms already appear in the list above (a group room is a
+              room with `type: 'group'`), so the section was a second, partial
+              view of conversations the user could already see — and when its
+              endpoint 404s it reported "Couldn't load groups" about something
+              that was never missing.
+
+              Group MEMBERSHIP administration is a real feature and a different
+              screen; it does not belong in a conversation switcher. */}
         </div>
       </div>
 
