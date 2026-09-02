@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.120.3] — 2026-09-02
+
+### Fixed — `./diagram`
+
+- **2.120.2's retry stopped one look too early.** Instrumenting a real document
+  showed the actual mechanism: the first `updateScene` DOES take (`scene: 5`
+  immediately after) and Excalidraw then replaces the scene while finishing its
+  own mount, so the next look finds `scene: 0` again. A second apply sticks. The
+  loop no longer treats *writing* as success — `hydratedRef` is set only by the
+  branch that OBSERVES elements already on the canvas, so hydration ends when
+  the scene has actually survived a look, not when we last called into the API.
+
+---
+
 ## [2.120.2] — 2026-09-02
 
 ### Fixed — `./diagram`

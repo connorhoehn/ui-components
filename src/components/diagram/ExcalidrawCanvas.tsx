@@ -117,14 +117,19 @@ export default function ExcalidrawCanvas({
     // a further remote CHANGE could repair it, and a document whose diagram was
     // already complete never produces one — so it stayed blank through every
     // reload, while the elements sat in the Y.Doc and on the server the whole
-    // time. Verified in the browser: `readAll()` returned four elements from
-    // the live document's own snapshot while zoom-to-fit found nothing to
-    // frame.
+    // time.
     //
-    // So the condition is stated as the invariant it actually is — *the canvas
-    // must show what the shared scene holds* — and re-checked on a bounded
-    // backoff until it does. It stops at the first success, and every attempt
-    // is a cheap array-length comparison.
+    // Both halves were then observed, in that order, in a real document:
+    //
+    //   attempt  api:true shared:5 scene:0   -> applied, scene:5 immediately
+    //   attempt  api:true shared:5 scene:0   <- Excalidraw had replaced it
+    //   attempt  api:true shared:5 scene:5   -> stuck; done
+    //
+    // The second line is the whole reason this loop cannot mark itself done
+    // when it WRITES. Success is not "we called updateScene", it is "the
+    // canvas still holds the scene on the next look" — so `hydratedRef` is set
+    // only by the branch that OBSERVES elements already there, never by the
+    // branch that puts them there.
     const hydratedRef = useRef(false);
     useEffect(() => {
         if (hydratedRef.current || !apiReady || !ready) return;
@@ -136,25 +141,22 @@ export default function ExcalidrawCanvas({
             if (cancelled || hydratedRef.current) return;
             const api = apiRef.current;
             const shared = api ? readAll() : [];
-            if (
-                api &&
-                shared.length > 0 &&
-                api.getSceneElementsIncludingDeleted().length === 0
-            ) {
+            if (api && api.getSceneElementsIncludingDeleted().length > 0) {
+                // Elements are on the canvas — either ours from a previous
+                // attempt that stuck, or the user's, who started drawing before
+                // the snapshot arrived. Either way there is nothing to hydrate
+                // and nothing may be overwritten.
                 hydratedRef.current = true;
+                return;
+            }
+            if (api && shared.length > 0) {
                 api.updateScene({
                     elements: shared as unknown as readonly AnyElement[],
                     // Loading the existing scene is not the local user's undo
                     // history — pressing undo must not erase everyone's work.
                     captureUpdate: CaptureUpdateAction.NEVER,
                 });
-                return;
-            }
-            // A canvas that already has elements needs no hydration; treat that
-            // as done rather than retrying against a scene the user is drawing.
-            if (api && api.getSceneElementsIncludingDeleted().length > 0) {
-                hydratedRef.current = true;
-                return;
+                // Deliberately NOT marked done. The next pass is what decides.
             }
             const [next, ...rest] = delays;
             if (next === undefined) return;

@@ -31,17 +31,14 @@ function d({ ydoc: d, awareness: f, blockId: p, user: m, editable: h = !0, class
 		let e = !1, t = null, n = (r) => {
 			if (e || A.current) return;
 			let i = x.current, a = i ? k() : [];
-			if (i && a.length > 0 && i.getSceneElementsIncludingDeleted().length === 0) {
-				A.current = !0, i.updateScene({
-					elements: a,
-					captureUpdate: s.NEVER
-				});
-				return;
-			}
 			if (i && i.getSceneElementsIncludingDeleted().length > 0) {
 				A.current = !0;
 				return;
 			}
+			i && a.length > 0 && i.updateScene({
+				elements: a,
+				captureUpdate: s.NEVER
+			});
 			let [o, ...c] = r;
 			o !== void 0 && (t = setTimeout(() => n(c), o));
 		};
