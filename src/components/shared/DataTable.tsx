@@ -67,11 +67,15 @@ export interface DataTableProps<T> {
   /**
    * Tint alternate rows so the eye can track one row across a wide table.
    *
-   * Deliberately a few percent off the surface, not a visible band: striping
-   * is a reading aid, and once you can NAME the stripe colour it has started
-   * competing with the content. It also loses to hover and to any row the
-   * caller highlights — a stripe that fights the hover state is worse than no
-   * stripe, because it makes the row under the pointer ambiguous.
+   * `surface-inset` is the tint, at full strength — about 2% off `surface`,
+   * which is a reading aid you feel rather than see. Half that (the first
+   * attempt) measured ~1% and was simply invisible: a stripe nobody can
+   * perceive is not a subtle stripe, it is a no-op with a prop attached.
+   *
+   * It stays lighter than `surface-panel`, the hover fill, so hover still
+   * reads as the darker row — a stripe that fights the hover state is worse
+   * than no stripe, because it makes the row under the pointer ambiguous.
+   * Both are tokens, so the relationship holds in dark mode too.
    */
   striped?: boolean;
   className?: string;
@@ -274,7 +278,7 @@ export function DataTable<T>({
                     // Striping the ODD rows keeps the first row on the plain
                     // surface, so the table starts flush with the page rather
                     // than opening on a band.
-                    className={striped && rowIndex % 2 === 1 ? 'bg-surface-inset/50' : undefined}
+                    className={striped && rowIndex % 2 === 1 ? 'bg-surface-inset' : undefined}
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                   >
                     {columns.map((col) => (

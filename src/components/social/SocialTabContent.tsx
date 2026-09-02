@@ -9,7 +9,8 @@ import type { ActivityEvent } from '../../hooks/useActivityBus';
 import type { GatewayMessage } from '../../types/gateway';
 import { cn } from '../../lib/cn';
 
-import { RoomList } from './RoomList';
+import { NewConversationPanel } from './NewConversationPanel';
+import { useFriends } from '../../hooks/useFriends';
 import { ConversationList, type ConversationItem } from './ConversationList';
 import { ChatRoom } from './ChatRoom';
 
@@ -131,6 +132,10 @@ export default function SocialTabContent({
 
   // ---- Sidebar state ----
   const [showNewRoom, setShowNewRoom] = useState(false);
+  const [creatingConversation, setCreatingConversation] = useState(false);
+  // The people you can DM. Read here rather than inside the panel so the panel
+  // stays presentational and testable without a network stub.
+  const { friends, loadError: friendsError } = useFriends({ idToken });
 
   const initials = displayName
     ? displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -273,21 +278,41 @@ export default function SocialTabContent({
               />
             )}
 
-            {/* The composer, opened by the list's single "+" — no longer
-                nested inside a section that was itself one of the choices. */}
+            {/* One way to start a conversation, opened by the list's single
+                "+". This used to be a RoomList in compact mode, which rendered
+                a "Room name / Create" form AND a friends dropdown with "Open
+                DM" — two always-visible forms, both usually half-disabled,
+                demanding you decide what KIND of thing you wanted before you
+                could type anything. */}
             {showNewRoom && (
-              <div className="px-1 pt-1">
-                <RoomList
-                  idToken={idToken}
-                  rooms={[]}
-                  createRoom={createRoom}
-                  createDM={createDM}
-                  loading={roomsLoading}
-                  error={roomsError}
-                  onRetry={onRoomsRetry}
-                  onRoomSelect={wrappedHandleRoomSelect}
-                  activeRoomId={activeRoomId}
-                  compact
+              <div className="px-1 pt-1.5">
+                <NewConversationPanel
+                  people={friends.map((f) => ({
+                    userId: f.userId,
+                    displayName: f.displayName,
+                    avatarUrl: f.avatarUrl,
+                  }))}
+                  peopleError={friendsError}
+                  busy={creatingConversation}
+                  onCancel={() => setShowNewRoom(false)}
+                  onStartDm={async (userId) => {
+                    setCreatingConversation(true);
+                    try {
+                      await createDM(userId);
+                      setShowNewRoom(false);
+                    } finally {
+                      setCreatingConversation(false);
+                    }
+                  }}
+                  onCreateChannel={async (name) => {
+                    setCreatingConversation(true);
+                    try {
+                      await createRoom(name);
+                      setShowNewRoom(false);
+                    } finally {
+                      setCreatingConversation(false);
+                    }
+                  }}
                 />
               </div>
             )}

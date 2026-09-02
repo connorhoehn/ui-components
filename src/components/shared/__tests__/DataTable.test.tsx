@@ -294,6 +294,9 @@ describe('DataTable', () => {
     expect(rows).toHaveLength(3);
     expect(rows[0]!.className).not.toContain('bg-surface-inset');
     expect(rows[1]!.className).toContain('bg-surface-inset');
+    // Full strength, not a fraction of it: at 50% the tint measured ~1% off
+    // the surface and could not be seen at all.
+    expect(rows[1]!.className).not.toContain('bg-surface-inset/');
     expect(rows[2]!.className).not.toContain('bg-surface-inset');
   });
 

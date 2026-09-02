@@ -390,6 +390,35 @@ export declare interface MessageRowProps {
     className?: string;
 }
 
+export declare function NewConversationPanel({ people, onStartDm, onCreateChannel, onCancel, peopleError, busy, className, 'data-testid': testId, }: NewConversationPanelProps): JSX.Element;
+
+export declare interface NewConversationPanelProps {
+    people: readonly NewConversationPerson[];
+    /** Start (or open) a direct conversation with this person. */
+    onStartDm: (userId: string) => void | Promise<void>;
+    /** Create a channel with this name. Omit to disable channel creation. */
+    onCreateChannel?: (name: string) => void | Promise<void>;
+    onCancel?: () => void;
+    /**
+     * Set when the directory fetch FAILED. An empty list and a failed fetch look
+     * identical on screen otherwise, and "no one to talk to" is a much stronger
+     * claim than "we could not ask".
+     */
+    peopleError?: string | null;
+    busy?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface NewConversationPerson {
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+    color?: string;
+    /** Secondary line — role, team, or handle. */
+    hint?: string;
+}
+
 declare type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
 declare type OnMessageFn_2 = (handler: (msg: GatewayMessage) => void) => () => void;
@@ -538,6 +567,9 @@ declare interface SocialTabContentProps {
     activityEvents: ActivityEvent[];
     onMessage: OnMessageFn_2;
 }
+
+/** Channel names are lowercase and hyphenated, like every chat product's. */
+export declare function toChannelName(raw: string): string;
 
 export declare function TransferBubble({ transfer, mine, onCancel, className }: TransferBubbleProps): JSX.Element;
 

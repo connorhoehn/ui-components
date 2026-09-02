@@ -53,3 +53,8 @@ export type { ChatDropZoneProps } from './ChatDropZone';
 //
 // MentionSuggestions is safe on its own (no tiptap imports) but stays beside
 // it, because it is meaningless without the composer that drives it.
+
+// NewConversationPanel — one field that finds people and names channels,
+// replacing the two stacked create-forms.
+export { NewConversationPanel, toChannelName } from './NewConversationPanel';
+export type { NewConversationPanelProps, NewConversationPerson } from './NewConversationPanel';

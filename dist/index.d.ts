@@ -2869,11 +2869,15 @@ export declare interface DataTableProps<T> {
     /**
      * Tint alternate rows so the eye can track one row across a wide table.
      *
-     * Deliberately a few percent off the surface, not a visible band: striping
-     * is a reading aid, and once you can NAME the stripe colour it has started
-     * competing with the content. It also loses to hover and to any row the
-     * caller highlights — a stripe that fights the hover state is worse than no
-     * stripe, because it makes the row under the pointer ambiguous.
+     * `surface-inset` is the tint, at full strength — about 2% off `surface`,
+     * which is a reading aid you feel rather than see. Half that (the first
+     * attempt) measured ~1% and was simply invisible: a stripe nobody can
+     * perceive is not a subtle stripe, it is a no-op with a prop attached.
+     *
+     * It stays lighter than `surface-panel`, the hover fill, so hover still
+     * reads as the darker row — a stripe that fights the hover state is worse
+     * than no stripe, because it makes the row under the pointer ambiguous.
+     * Both are tokens, so the relationship holds in dark mode too.
      */
     striped?: boolean;
     className?: string;
@@ -6017,6 +6021,35 @@ export declare interface NetworkQualityBadgeProps {
     className?: string;
     /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
+}
+
+export declare function NewConversationPanel({ people, onStartDm, onCreateChannel, onCancel, peopleError, busy, className, 'data-testid': testId, }: NewConversationPanelProps): JSX.Element;
+
+export declare interface NewConversationPanelProps {
+    people: readonly NewConversationPerson[];
+    /** Start (or open) a direct conversation with this person. */
+    onStartDm: (userId: string) => void | Promise<void>;
+    /** Create a channel with this name. Omit to disable channel creation. */
+    onCreateChannel?: (name: string) => void | Promise<void>;
+    onCancel?: () => void;
+    /**
+     * Set when the directory fetch FAILED. An empty list and a failed fetch look
+     * identical on screen otherwise, and "no one to talk to" is a much stronger
+     * claim than "we could not ask".
+     */
+    peopleError?: string | null;
+    busy?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface NewConversationPerson {
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+    color?: string;
+    /** Secondary line — role, team, or handle. */
+    hint?: string;
 }
 
 export declare function NodeCard({ icon, label, subtitle, status, statusLabel, body, selected, accentClass, className, onClick, }: NodeCardProps): JSX.Element;
@@ -9571,6 +9604,9 @@ export declare type ToastType = 'info' | 'success' | 'warning' | 'error';
 
 /** Normalize either dialect to the canonical vocabulary. */
 export declare function toCanonicalMode(mode: AnyCallWidgetMode): CallWidgetMode;
+
+/** Channel names are lowercase and hyphenated, like every chat product's. */
+export declare function toChannelName(raw: string): string;
 
 /**
  * Convert a camelCase token key to a CSS variable name with --ui- prefix.

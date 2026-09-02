@@ -165,7 +165,7 @@ function h({ data: t, columns: f, keyField: h, onRowClick: g, rowActions: _, sea
 						children: x
 					}) }) : U.map((t, n) => /* @__PURE__ */ a(l, {
 						clickable: !!g,
-						className: T && n % 2 == 1 ? "bg-surface-inset/50" : void 0,
+						className: T && n % 2 == 1 ? "bg-surface-inset" : void 0,
 						onClick: g ? () => g(t) : void 0,
 						children: [k.map((r) => /* @__PURE__ */ i(d, {
 							className: e(m(r.align), r.className),
