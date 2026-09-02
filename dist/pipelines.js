@@ -20214,24 +20214,20 @@ function md({ pipelineId: e, runId: t, onStepClick: n }) {
 			}),
 			/* @__PURE__ */ U("div", {
 				className: "flex justify-between items-center gap-2 px-3 py-2.5 border-t border-border bg-surface-panel",
-				children: [o ? /* @__PURE__ */ H("span", {
+				children: [o ? /* @__PURE__ */ H("span", { children: /* @__PURE__ */ H(g, {
+					variant: "secondary",
+					size: "sm",
+					onClick: () => s(),
 					"data-testid": "executor-log-load-more",
-					children: /* @__PURE__ */ H(g, {
-						variant: "secondary",
-						size: "sm",
-						onClick: () => s(),
-						children: "Load more"
-					})
-				}) : /* @__PURE__ */ H("span", {}), /* @__PURE__ */ H("span", {
+					children: "Load more"
+				}) }) : /* @__PURE__ */ H("span", {}), /* @__PURE__ */ H("span", { children: /* @__PURE__ */ H(g, {
+					variant: "secondary",
+					size: "sm",
+					onClick: x,
+					disabled: b.length === 0,
 					"data-testid": "executor-log-download",
-					children: /* @__PURE__ */ H(g, {
-						variant: "secondary",
-						size: "sm",
-						onClick: x,
-						disabled: b.length === 0,
-						children: "Download log"
-					})
-				})]
+					children: "Download log"
+				}) })]
 			})
 		]
 	});
