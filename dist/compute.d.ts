@@ -618,6 +618,14 @@ export declare function findLeaf(node: PaneNode, paneId: string): PaneLeaf | nul
 export declare const fixtureComputers: Computer[];
 
 /**
+ * Sample machines for MachinePresenceMenu. Deliberately uneven, like the
+ * projects above: one healthy machine mixing local and platform models, and
+ * one stale workstation whose sidecar is queuing offline — the two states the
+ * menu exists to distinguish.
+ */
+export declare const fixtureMachines: MachineNode[];
+
+/**
  * Models the reference container accepts.
  *
  * These are Bedrock inference-profile ids, not first-party model names: the
@@ -816,6 +824,71 @@ export declare interface LeaderConfig {
 
 export declare function listLeaves(node: PaneNode): PaneLeaf[];
 
+/** How the machine's local memory sidecar stands against the shared mesh. */
+declare type MachineMemoryMode = 'synced' | 'pending' | 'offline' | 'disabled';
+
+declare interface MachineMemoryState {
+    mode: MachineMemoryMode;
+    /** Records queued locally, awaiting upload (the sidecar's outbox depth). */
+    pendingOps?: number;
+    /** How stale the machine's read replica is, in seconds. */
+    pullCursorAgeS?: number;
+    /** Context packs the sidecar has imported, e.g. `capability-registry`. */
+    importedPacks?: string[];
+}
+
+/** A paired machine and its live sessions. */
+declare interface MachineNode {
+    id: string;
+    label: string;
+    status: MachinePresenceStatus;
+    /** `darwin/arm64` — shown as a caption, never parsed. */
+    platform?: string;
+    sessions: MachineSession[];
+}
+
+export declare function MachinePresenceMenu({ nodes, models, onOpenLab, onManage, className, 'data-testid': testId, }: MachinePresenceMenuProps): JSX.Element | null;
+
+export declare interface MachinePresenceMenuProps {
+    /** The user's paired machines with their live sessions. Empty → renders null. */
+    nodes: MachineNode[];
+    /** Known platform models, so Bedrock ids shorten the way the lab shortens them. */
+    models?: ComputeModel[];
+    /** Wire to deep-link into the Computer Lab. Omitted → no lab affordance. */
+    onOpenLab?: () => void;
+    /** Wire to the machines settings surface (pairing, revoke). */
+    onManage?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** Derived server-side from heartbeat age — never claimed by the machine. */
+declare type MachinePresenceStatus = 'connected' | 'stale' | 'offline';
+
+/** One live agent session on a machine. */
+declare interface MachineSession {
+    id: string;
+    /** Which harness: `claude-code`, `cursor`, ... Informational. */
+    harness?: string;
+    projectId?: string;
+    /** Denormalised for display — a bare `p-realtime` means nothing to a reader. */
+    projectName?: string;
+    repo?: string;
+    branch?: string;
+    /** Checkout path on the machine — tooltip detail, owner-visible data. */
+    worktree?: string;
+    /** One distilled line of what the session is doing — never raw prompt text. */
+    intent?: string;
+    /** `bedrock`, `ollama`, `vllm`, `lmstudio`, ... The vendor axis `Computer`
+     *  never needed, because a microVM's provider is always the platform's. */
+    modelProvider?: string;
+    model?: string;
+    /** Fraction (0–1) of the model's context window in use. */
+    contextUsed?: number;
+    memory?: MachineMemoryState;
+    startedAt?: number;
+}
+
 export declare function makeLeaf(id: string, computerId: string, kindId: string): PaneLeaf;
 
 /**
@@ -845,6 +918,17 @@ export declare const MAX_RETRIES = 5;
 
 /** AgentCore allows 10 concurrent shells per runtime; stop short of the wall. */
 export declare const MAX_SHELLS = 8;
+
+/**
+ * One line for the session's memory-sync state. Exported for tests and for
+ * hosts that render the same state elsewhere (a settings page, a lab pane).
+ *
+ *   synced   → "● synced"
+ *   pending  → "◐ 14 pending"      (the sidecar's outbox is draining)
+ *   offline  → "○ offline — queuing" (writes queue locally; nothing is lost)
+ *   disabled → "— sync off"
+ */
+export declare function memorySummary(memory: MachineMemoryState | undefined): string;
 
 /** Panes below this get unreadable; splitting further is refused. */
 export declare const MIN_RATIO = 0.1;
@@ -1112,6 +1196,10 @@ export declare interface ProjectSummaryProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** `ollama · qwen2.5-coder:14b` / `bedrock · nova-pro`. Bedrock ids go
+ *  through the same shortener the pane status line uses. */
+export declare function providerSummary(session: MachineSession, models?: ComputeModel[]): string;
 
 /** How many panes in a window consume a given quota. */
 export declare function quotaUsage(registry: PaneKindRegistry, paneKindIds: readonly string[], quota: PaneQuota): number;
