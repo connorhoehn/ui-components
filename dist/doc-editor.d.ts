@@ -60,7 +60,7 @@ declare interface AttachmentsPanelProps {
     editable: boolean;
 }
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, unsupported, schemaProbe, header, toolbarActions, gutterItems, onFocusGutterItem, gutterVisible, onToggleGutter, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, onFocusGutterItem, gutterVisible, onToggleGutter, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -86,6 +86,20 @@ export declare interface CanvasDocumentViewProps {
      * refusal reason on failure, or null on success.
      */
     onConvert?: () => Promise<string | null>;
+    /**
+     * Where to render the convert control on a legacy document.
+     *
+     * Given an element, the button is portaled into it and the full-width
+     * explanatory prompt is not rendered at all. That is the right shape once
+     * the host has a toolbar: the prompt is a standing offer about the
+     * document's FORMAT, not a piece of its content, and as a block it pushed
+     * the actual document down the page every single visit — an advertisement
+     * above the thing you came to read.
+     *
+     * Null or omitted keeps the block prompt, which is still correct for a host
+     * with nowhere else to put it.
+     */
+    convertSlot?: HTMLElement | null;
     /** Forms that could not be represented, from the last conversion. */
     unsupported?: readonly CanvasUnsupportedForm[];
     /**

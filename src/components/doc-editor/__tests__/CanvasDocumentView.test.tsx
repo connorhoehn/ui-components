@@ -296,3 +296,46 @@ describe('CanvasDocumentView — content that could not be represented', () => {
     expect(screen.queryByTestId('canvas-document-unsupported')).toBeNull();
   });
 });
+
+describe('CanvasDocumentView — the convert offer in a toolbar slot', () => {
+  // The prompt is a standing offer about the document's FORMAT, not part of its
+  // content. As a full-width block it pushed the actual document down the page
+  // on every visit, so a host with a toolbar hands us somewhere to put it.
+  function slot() {
+    const el = document.createElement('div');
+    el.setAttribute('data-testid', 'toolbar-slot');
+    document.body.appendChild(el);
+    return el;
+  }
+
+  it('portals the button into the slot and drops the block prompt', () => {
+    const el = slot();
+    renderView({ isCanvas: false, body: null, onConvert: async () => null, convertSlot: el });
+
+    expect(el.querySelector('[data-testid="canvas-document-convert"]')).not.toBeNull();
+    expect(screen.queryByTestId('canvas-document-convert-prompt')).toBeNull();
+  });
+
+  it('keeps the explanation on the control, which otherwise loses its object', () => {
+    const el = slot();
+    renderView({ isCanvas: false, body: null, onConvert: async () => null, convertSlot: el });
+
+    const btn = el.querySelector('[data-testid="canvas-document-convert"]');
+    expect(btn?.getAttribute('title')).toMatch(/sections become headings/i);
+  });
+
+  it('still converts from the slotted button', async () => {
+    const el = slot();
+    const onConvert = vi.fn(async () => null);
+    renderView({ isCanvas: false, body: null, onConvert, convertSlot: el });
+
+    fireEvent.click(el.querySelector('[data-testid="canvas-document-convert"]')!);
+    await waitFor(() => expect(onConvert).toHaveBeenCalled());
+  });
+
+  // A host with nowhere to put it must still get the full offer.
+  it('falls back to the block prompt without a slot', () => {
+    renderView({ isCanvas: false, body: null, onConvert: async () => null });
+    expect(screen.getByTestId('canvas-document-convert-prompt')).toBeInTheDocument();
+  });
+});

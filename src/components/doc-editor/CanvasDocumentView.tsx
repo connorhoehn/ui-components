@@ -23,6 +23,7 @@
 //                        see reads as a dead button.
 
 import { useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import type { XmlFragment } from 'yjs';
 import type * as Y from 'yjs';
 import { cn } from '../../lib/cn';
@@ -65,6 +66,20 @@ export interface CanvasDocumentViewProps {
    * refusal reason on failure, or null on success.
    */
   onConvert?: () => Promise<string | null>;
+  /**
+   * Where to render the convert control on a legacy document.
+   *
+   * Given an element, the button is portaled into it and the full-width
+   * explanatory prompt is not rendered at all. That is the right shape once
+   * the host has a toolbar: the prompt is a standing offer about the
+   * document's FORMAT, not a piece of its content, and as a block it pushed
+   * the actual document down the page every single visit — an advertisement
+   * above the thing you came to read.
+   *
+   * Null or omitted keeps the block prompt, which is still correct for a host
+   * with nowhere else to put it.
+   */
+  convertSlot?: HTMLElement | null;
   /** Forms that could not be represented, from the last conversion. */
   unsupported?: readonly CanvasUnsupportedForm[];
   /**
@@ -145,6 +160,7 @@ export default function CanvasDocumentView({
   editable = true,
   extensions,
   onConvert,
+  convertSlot = null,
   unsupported = [],
   schemaProbe,
   header,
@@ -308,18 +324,37 @@ export default function CanvasDocumentView({
         </div>
       ) : (
         <>
-          <EmptyState
-            testId={`${testId}-convert-prompt`}
-            title="This document still uses sections"
-            description="Convert it to a single page to edit it as one continuous document. Your existing sections become headings; nothing is deleted."
-            action={
-              onConvert ? (
-                <Button onClick={handleConvert} disabled={converting} data-testid={`${testId}-convert`}>
+          {onConvert && convertSlot
+            ? createPortal(
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={handleConvert}
+                  disabled={converting}
+                  data-testid={`${testId}-convert`}
+                  // The explanation the block prompt carried has to survive the
+                  // move somewhere, or the control becomes a verb with no
+                  // object: "convert to what, and what happens to my sections?"
+                  title="Convert this sectioned document into a single page. Your sections become headings; nothing is deleted."
+                >
                   {converting ? 'Converting…' : 'Convert to page'}
-                </Button>
-              ) : undefined
-            }
-          />
+                </Button>,
+                convertSlot,
+              )
+            : (
+              <EmptyState
+                testId={`${testId}-convert-prompt`}
+                title="This document still uses sections"
+                description="Convert it to a single page to edit it as one continuous document. Your existing sections become headings; nothing is deleted."
+                action={
+                  onConvert ? (
+                    <Button onClick={handleConvert} disabled={converting} data-testid={`${testId}-convert`}>
+                      {converting ? 'Converting…' : 'Convert to page'}
+                    </Button>
+                  ) : undefined
+                }
+              />
+            )}
           {/* The schema probe — see `schemaProbe`. `hidden` rather than a
               utility class so it does not depend on the consuming app having
               this package's stylesheet; the UA rule alone takes it out of the
