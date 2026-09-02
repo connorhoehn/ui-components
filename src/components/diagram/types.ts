@@ -38,6 +38,14 @@ export interface SharedDiagramProps {
     assetPath?: string;
     /** Fires with the element count after every local scene change. */
     onSceneChange?: (elementCount: number) => void;
+    /**
+     * Mirror this participant's camera: their scroll and zoom are applied to
+     * this canvas as they move. Matched against `userId` first, then
+     * `clientId`, so following survives the peer reconnecting on a new socket.
+     *
+     * Null (the default) leaves the viewport under local control.
+     */
+    followUserId?: string | null;
 }
 
 /** Props of the lazily-loaded canvas — always fully resolved by this point. */

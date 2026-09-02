@@ -30,7 +30,7 @@ function mountDock(rect: { left: number; top: number; width: number; height: num
   return el;
 }
 
-function renderWidget(onDockTo: (id: string) => void) {
+function renderWidget(onDockTo: (id: string | null) => void) {
   render(
     <CallWidget
       state="active"

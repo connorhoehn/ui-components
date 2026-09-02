@@ -9,7 +9,7 @@
 // realtime-modules. This file is the glue between that hook and Excalidraw's
 // imperative API, and nothing more.
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     Excalidraw,
     reconcileElements,
@@ -47,11 +47,16 @@ export default function ExcalidrawCanvas({
     className,
     assetPath,
     onSceneChange,
+    followUserId = null,
 }: ExcalidrawCanvasProps) {
     const hostRef = useRef<HTMLDivElement | null>(null);
     const theme = useResolvedTheme(hostRef);
 
     const apiRef = useRef<ExcalidrawAPI | null>(null);
+    /** Last camera we published, so a drag does not publish every frame. */
+    const lastViewportRef = useRef<{ scrollX: number; scrollY: number; zoom: number } | null>(null);
+    /** True only while a followed peer's viewport is being written in. */
+    const applyingFollowRef = useRef(false);
     const [apiReady, setApiReady] = useState(false);
 
     // Excalidraw resolves its hand-drawn fonts against this global. Left
@@ -178,8 +183,42 @@ export default function ExcalidrawCanvas({
     const handleChange = useCallback(
         (
             elements: readonly AnyElement[],
-            appState: { selectedElementIds?: Record<string, boolean> },
+            appState: {
+                selectedElementIds?: Record<string, boolean>;
+                scrollX?: number;
+                scrollY?: number;
+                zoom?: { value: number };
+            },
         ) => {
+            // Published ABOVE the `editable` gate: a viewer's camera is not an
+            // edit, and someone walking a read-only board through a review is
+            // exactly who others want to follow.
+            //
+            // Skipped while we are applying someone else's viewport — that
+            // write comes back through onChange, and re-publishing it would
+            // make two people following each other chase one another around
+            // the board forever.
+            if (!applyingFollowRef.current) {
+                const next = {
+                    scrollX: appState.scrollX ?? 0,
+                    scrollY: appState.scrollY ?? 0,
+                    zoom: appState.zoom?.value ?? 1,
+                };
+                const prev = lastViewportRef.current;
+                // Sub-pixel scroll deltas arrive on almost every frame of a
+                // drag; publishing them all would spend the presence budget on
+                // movement nobody can see.
+                const moved =
+                    !prev ||
+                    Math.abs(prev.scrollX - next.scrollX) > 0.5 ||
+                    Math.abs(prev.scrollY - next.scrollY) > 0.5 ||
+                    prev.zoom !== next.zoom;
+                if (moved) {
+                    lastViewportRef.current = next;
+                    publishPresence({ viewport: next });
+                }
+            }
+
             if (!editable) return;
             commitLocal(elements as unknown as readonly DiagramElement[]);
             // Selection rides the same presence record as the pointer rather
@@ -228,6 +267,43 @@ export default function ExcalidrawCanvas({
         }
         api.updateScene({ collaborators: collabMap });
     }, [collaborators, apiReady]);
+
+    // ---- Follow mode ------------------------------------------------------
+    //
+    // Matched on `userId` first so following survives the peer reconnecting on
+    // a new socket, which mints a new clientId and would otherwise silently
+    // drop the follow.
+    const followed = useMemo(() => {
+        if (!followUserId) return null;
+        return (
+            participants.find(
+                (p) => !p.isSelf && (p.userId === followUserId || p.clientId === followUserId),
+            ) ?? null
+        );
+    }, [followUserId, participants]);
+
+    const fx = followed?.viewport?.scrollX;
+    const fy = followed?.viewport?.scrollY;
+    const fz = followed?.viewport?.zoom;
+
+    useEffect(() => {
+        const api = apiRef.current;
+        if (!api || fx === undefined || fy === undefined || fz === undefined) return;
+
+        applyingFollowRef.current = true;
+        api.updateScene({
+            appState: { scrollX: fx, scrollY: fy, zoom: { value: fz } },
+            // Being carried somewhere is not something the follower should be
+            // able to undo — their history is their own edits.
+            captureUpdate: CaptureUpdateAction.NEVER,
+        });
+        // Cleared after onChange has drained, so the echo of our own write is
+        // the thing being suppressed and not the user's next real gesture.
+        const id = setTimeout(() => {
+            applyingFollowRef.current = false;
+        }, 0);
+        return () => clearTimeout(id);
+    }, [fx, fy, fz, apiReady]);
 
     return (
         <div
