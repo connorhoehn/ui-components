@@ -75,6 +75,17 @@ export interface ConversationListProps {
   onNewChat?: () => void;
   /** Empty-state text. Defaults to "No conversations yet". */
   emptyLabel?: string;
+  /**
+   * Split the list into Channels and Direct messages, the way Slack and Teams
+   * do.
+   *
+   * A flat list mixing the two is scannable at four rows and not at forty: a
+   * channel and a person are different kinds of destination, and the eye
+   * looks for them in different places. Off by default so existing callers —
+   * a compact sidebar, a call's people list — keep the single run they were
+   * designed around.
+   */
+  grouped?: boolean;
   tone?: 'light' | 'dark';
   className?: string;
   'data-testid'?: string;
@@ -82,6 +93,7 @@ export interface ConversationListProps {
 
 export function ConversationList({
   items,
+  grouped = false,
   activeChannel,
   onSelect,
   onNewChat,
@@ -91,6 +103,23 @@ export function ConversationList({
   'data-testid': testId,
 }: ConversationListProps) {
   const dark = tone === 'dark';
+
+  // Section headings are interleaved as entries rather than wrapping each
+  // group in its own <ul>: one list means one scroll container and one
+  // tab order, and the rows below stay exactly as they were.
+  const entries: Array<ConversationItem | { heading: string }> = [];
+  if (grouped) {
+    const isChannelRow = (i: ConversationItem) =>
+      (i.kind ?? (i.peers.length > 1 ? 'group' : 'dm')) === 'channel';
+    const channels = items.filter(isChannelRow);
+    const directs = items.filter((i) => !isChannelRow(i));
+    // A heading with nothing under it is a promise of content that is not
+    // there, so each one appears only when its group does.
+    if (channels.length > 0) entries.push({ heading: 'Channels' }, ...channels);
+    if (directs.length > 0) entries.push({ heading: 'Direct messages' }, ...directs);
+  } else {
+    entries.push(...items);
+  }
 
   return (
     <div className={cn('flex min-h-0 flex-col gap-1', className)} data-testid={testId}>
@@ -131,7 +160,26 @@ export function ConversationList({
           className="m-0 flex min-h-0 list-none flex-col gap-0.5 overflow-y-auto p-0"
           aria-label="Conversations"
         >
-          {items.map((item) => {
+          {entries.map((entry) => {
+            if ('heading' in entry) {
+              return (
+                <li
+                  key={`heading:${entry.heading}`}
+                  data-testid="conversation-section"
+                  // Presentational: the rows carry the semantics, and a
+                  // heading announced as a list item would just be noise
+                  // between them.
+                  aria-hidden
+                  className={cn(
+                    'px-2 pb-0.5 pt-3 text-[11px] font-semibold uppercase tracking-wide',
+                    dark ? 'text-white/40' : 'text-text-tertiary',
+                  )}
+                >
+                  {entry.heading}
+                </li>
+              );
+            }
+            const item = entry;
             const isActive = item.channel === activeChannel;
             const kind = item.kind ?? (item.peers.length > 1 ? 'group' : 'dm');
             const isChannel = kind === 'channel';

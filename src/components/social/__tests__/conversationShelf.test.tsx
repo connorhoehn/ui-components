@@ -74,3 +74,54 @@ describe('a mention on a conversation row', () => {
     expect(screen.getByLabelText('You were mentioned')).toBeInTheDocument();
   });
 });
+
+describe('grouping the rail', () => {
+  const rows = [
+    { channel: 'general', kind: 'channel' as const, name: 'general', peers: [] },
+    { channel: 'chat:dm:a:b', peers: [{ userId: 'b', displayName: 'Bob' }] },
+    { channel: 'room:asdf', kind: 'channel' as const, name: 'asdf', peers: [] },
+  ];
+
+  const sections = () =>
+    screen.queryAllByTestId('conversation-section').map((e) => e.textContent);
+
+  // A flat list mixing channels and people is scannable at four rows and not
+  // at forty: they are different kinds of destination and the eye looks for
+  // them in different places.
+  it('splits channels from direct messages', () => {
+    render(<ConversationList items={rows} onSelect={vi.fn()} grouped />);
+    expect(sections()).toEqual(['Channels', 'Direct messages']);
+  });
+
+  it('puts every row under the right heading', () => {
+    render(<ConversationList items={rows} onSelect={vi.fn()} grouped />);
+    // Walked as DOM children rather than by role: the headings are
+    // aria-hidden on purpose — the rows carry the semantics, and a heading
+    // announced between them would just be noise.
+    const list = screen.getByRole('list');
+    const order = [...list.children].map((li) =>
+      li.getAttribute('data-testid') === 'conversation-section'
+        ? li.textContent
+        : li.querySelector('[data-testid="conversation-row"]')?.getAttribute('data-channel'),
+    );
+    expect(order).toEqual(['Channels', 'general', 'room:asdf', 'Direct messages', 'chat:dm:a:b']);
+  });
+
+  // A heading with nothing under it promises content that is not there.
+  it('omits a heading whose group is empty', () => {
+    render(<ConversationList items={[rows[1]]} onSelect={vi.fn()} grouped />);
+    expect(sections()).toEqual(['Direct messages']);
+  });
+
+  // Existing callers — a compact sidebar, a call's people list — keep the
+  // single run they were designed around.
+  it('stays flat by default', () => {
+    render(<ConversationList items={rows} onSelect={vi.fn()} />);
+    expect(sections()).toEqual([]);
+  });
+
+  it('keeps one list, so there is one scroll container and one tab order', () => {
+    render(<ConversationList items={rows} onSelect={vi.fn()} grouped />);
+    expect(screen.getAllByRole('list')).toHaveLength(1);
+  });
+});

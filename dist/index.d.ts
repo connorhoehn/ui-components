@@ -2876,7 +2876,7 @@ export declare interface ConversationItem {
     mentioned?: boolean;
 }
 
-export declare function ConversationList({ items, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+export declare function ConversationList({ items, grouped, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
 
 export declare interface ConversationListProps {
     items: ConversationItem[];
@@ -2887,6 +2887,17 @@ export declare interface ConversationListProps {
     onNewChat?: () => void;
     /** Empty-state text. Defaults to "No conversations yet". */
     emptyLabel?: string;
+    /**
+     * Split the list into Channels and Direct messages, the way Slack and Teams
+     * do.
+     *
+     * A flat list mixing the two is scannable at four rows and not at forty: a
+     * channel and a person are different kinds of destination, and the eye
+     * looks for them in different places. Off by default so existing callers —
+     * a compact sidebar, a call's people list — keep the single run they were
+     * designed around.
+     */
+    grouped?: boolean;
     tone?: 'light' | 'dark';
     className?: string;
     'data-testid'?: string;

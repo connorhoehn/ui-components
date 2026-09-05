@@ -500,63 +500,73 @@ function I({ people: e, onStartDm: t, onCreateChannel: n, onCancel: r, peopleErr
 }
 //#endregion
 //#region src/components/social/ConversationList.tsx
-function L({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel: i = "No conversations yet", tone: a = "light", className: o, "data-testid": c }) {
-	let l = a === "dark";
+function L({ items: e, grouped: t = !1, activeChannel: n, onSelect: r, onNewChat: i, emptyLabel: a = "No conversations yet", tone: o = "light", className: c, "data-testid": l }) {
+	let p = o === "dark", m = [];
+	if (t) {
+		let t = (e) => (e.kind ?? (e.peers.length > 1 ? "group" : "dm")) === "channel", n = e.filter(t), r = e.filter((e) => !t(e));
+		n.length > 0 && m.push({ heading: "Channels" }, ...n), r.length > 0 && m.push({ heading: "Direct messages" }, ...r);
+	} else m.push(...e);
 	return /* @__PURE__ */ D("div", {
-		className: s("flex min-h-0 flex-col gap-1", o),
-		"data-testid": c,
-		children: [r && /* @__PURE__ */ D("button", {
+		className: s("flex min-h-0 flex-col gap-1", c),
+		"data-testid": l,
+		children: [i && /* @__PURE__ */ D("button", {
 			type: "button",
-			onClick: r,
+			onClick: i,
 			"data-testid": "conversation-new-chat",
-			className: s("flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[13px] font-medium", l ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"),
+			className: s("flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[13px] font-medium", p ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"),
 			children: [/* @__PURE__ */ E("span", {
 				"aria-hidden": "true",
-				className: s("grid h-6 w-6 place-items-center rounded-full border border-dashed text-sm leading-none", l ? "border-white/30" : "border-border"),
+				className: s("grid h-6 w-6 place-items-center rounded-full border border-dashed text-sm leading-none", p ? "border-white/30" : "border-border"),
 				children: "+"
 			}), "New chat"]
 		}), e.length === 0 ? /* @__PURE__ */ E("p", {
-			className: s("m-0 px-2 py-1.5 text-[13px]", l ? "text-white/60" : "text-text-secondary"),
+			className: s("m-0 px-2 py-1.5 text-[13px]", p ? "text-white/60" : "text-text-secondary"),
 			"data-testid": "conversation-empty",
-			children: i
+			children: a
 		}) : /* @__PURE__ */ E("ul", {
 			className: "m-0 flex min-h-0 list-none flex-col gap-0.5 overflow-y-auto p-0",
 			"aria-label": "Conversations",
-			children: e.map((e) => {
-				let r = e.channel === t, i = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), a = i === "channel", o = i === "group", c = e.peers[0], p = a ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), m = e.lastMessageAt ? h(e.lastMessageAt) : "", g = e.unreadCount ?? 0, _ = !!e.mentioned;
+			children: m.map((e) => {
+				if ("heading" in e) return /* @__PURE__ */ E("li", {
+					"data-testid": "conversation-section",
+					"aria-hidden": !0,
+					className: s("px-2 pb-0.5 pt-3 text-[11px] font-semibold uppercase tracking-wide", p ? "text-white/40" : "text-text-tertiary"),
+					children: e.heading
+				}, `heading:${e.heading}`);
+				let t = e, i = t.channel === n, a = t.kind ?? (t.peers.length > 1 ? "group" : "dm"), o = a === "channel", c = a === "group", l = t.peers[0], m = o ? t.name ?? t.channel : t.peers.map((e) => e.displayName).join(", "), g = t.lastMessageAt ? h(t.lastMessageAt) : "", _ = t.unreadCount ?? 0, v = !!t.mentioned;
 				return /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
 					type: "button",
-					onClick: () => n(e.channel),
+					onClick: () => r(t.channel),
 					"data-testid": "conversation-row",
-					"data-channel": e.channel,
-					"data-active": r ? "true" : "false",
-					"aria-current": r ? "true" : void 0,
-					className: s("flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left", l ? "hover:bg-white/10" : "hover:bg-surface-hover", r && (l ? "bg-white/10" : "bg-surface-hover")),
+					"data-channel": t.channel,
+					"data-active": i ? "true" : "false",
+					"aria-current": i ? "true" : void 0,
+					className: s("flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left", p ? "hover:bg-white/10" : "hover:bg-surface-hover", i && (p ? "bg-white/10" : "bg-surface-hover")),
 					children: [
-						a ? /* @__PURE__ */ E("span", {
+						o ? /* @__PURE__ */ E("span", {
 							"aria-hidden": "true",
 							"data-testid": "conversation-channel-glyph",
-							className: s("grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[15px] font-semibold leading-none", l ? "bg-white/10 text-white/70" : "bg-surface-inset text-text-secondary"),
+							className: s("grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[15px] font-semibold leading-none", p ? "bg-white/10 text-white/70" : "bg-surface-inset text-text-secondary"),
 							children: "#"
-						}) : o ? /* @__PURE__ */ E(u, {
+						}) : c ? /* @__PURE__ */ E(u, {
 							size: 28,
 							maxVisible: 2,
-							items: e.peers.map((e) => ({
+							items: t.peers.map((e) => ({
 								name: e.displayName,
 								color: e.color,
 								src: e.avatarUrl
 							}))
-						}) : c ? /* @__PURE__ */ D("span", {
+						}) : l ? /* @__PURE__ */ D("span", {
 							className: "relative inline-flex shrink-0",
 							children: [/* @__PURE__ */ E(d, {
-								name: c.displayName,
-								color: c.color,
-								src: c.avatarUrl,
+								name: l.displayName,
+								color: l.color,
+								src: l.avatarUrl,
 								size: 28
-							}), c.online !== void 0 && /* @__PURE__ */ E(f, {
-								state: c.online ? "online" : "offline",
+							}), l.online !== void 0 && /* @__PURE__ */ E(f, {
+								state: l.online ? "online" : "offline",
 								pulse: !1,
-								className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", l ? "ring-call-chrome" : "ring-surface")
+								className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", p ? "ring-call-chrome" : "ring-surface")
 							})]
 						}) : null,
 						/* @__PURE__ */ D("span", {
@@ -564,33 +574,33 @@ function L({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel: 
 							children: [/* @__PURE__ */ D("span", {
 								className: "flex items-baseline gap-2",
 								children: [/* @__PURE__ */ E("span", {
-									className: s("min-w-0 flex-1 truncate text-[13px]", g > 0 ? "font-semibold" : "font-medium", l ? "text-white" : "text-text-primary"),
-									children: p
-								}), m && /* @__PURE__ */ E("span", {
-									className: s("shrink-0 text-[11px] tabular-nums", l ? "text-white/50" : "text-text-tertiary"),
-									"data-testid": "conversation-time",
+									className: s("min-w-0 flex-1 truncate text-[13px]", _ > 0 ? "font-semibold" : "font-medium", p ? "text-white" : "text-text-primary"),
 									children: m
+								}), g && /* @__PURE__ */ E("span", {
+									className: s("shrink-0 text-[11px] tabular-nums", p ? "text-white/50" : "text-text-tertiary"),
+									"data-testid": "conversation-time",
+									children: g
 								})]
-							}), e.lastMessagePreview && /* @__PURE__ */ E("span", {
-								className: s("truncate text-[12px]", l ? "text-white/60" : "text-text-secondary"),
+							}), t.lastMessagePreview && /* @__PURE__ */ E("span", {
+								className: s("truncate text-[12px]", p ? "text-white/60" : "text-text-secondary"),
 								"data-testid": "conversation-preview",
-								children: e.lastMessagePreview
+								children: t.lastMessagePreview
 							})]
 						}),
-						_ && /* @__PURE__ */ E("span", {
+						v && /* @__PURE__ */ E("span", {
 							"data-testid": "conversation-mention",
 							"aria-label": "You were mentioned",
 							title: "You were mentioned",
 							className: "grid h-5 w-5 shrink-0 place-items-center rounded-full bg-danger text-[11px] font-bold leading-none text-white",
 							children: "@"
 						}),
-						g > 0 && /* @__PURE__ */ E("span", {
+						_ > 0 && /* @__PURE__ */ E("span", {
 							"data-testid": "conversation-unread",
 							className: "grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold leading-none text-white",
-							children: g > 99 ? "99+" : g
+							children: _ > 99 ? "99+" : _
 						})
 					]
-				}) }, e.channel);
+				}) }, t.channel);
 			})
 		})]
 	});
