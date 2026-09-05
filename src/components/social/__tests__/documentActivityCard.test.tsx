@@ -139,3 +139,67 @@ describe('an editor we cannot name', () => {
     expect(container.textContent).not.toContain('6e');
   });
 });
+
+describe('a document SHARED into the thread', () => {
+  // Two features put a document into a conversation and each invented its own
+  // metadata: the gateway announces a creation, Share-to-room posts a share.
+  // Same fact, same card — and the share shape had no renderer at all, so it
+  // arrived as a line of text with a URL in it.
+  const shared = {
+    id: 'm9',
+    clientId: 'c1',
+    displayName: 'Bob Martinez',
+    content: 'Bob shared Upload path RFC — http://localhost/documents/d1',
+    timestamp: '2026-09-05T08:00:00Z',
+    metadata: {
+      share: { kind: 'document', id: 'd1', title: 'Upload path RFC', url: 'http://localhost/documents/d1' },
+    },
+  };
+
+  it('renders as the same card a created document gets', () => {
+    render(<ChatPanel messages={[shared]} onSend={vi.fn()} />);
+    expect(screen.getByTestId('document-activity-card')).toBeInTheDocument();
+    expect(screen.getByText('Upload path RFC')).toBeInTheDocument();
+  });
+
+  it('replaces the text-and-URL body', () => {
+    render(<ChatPanel messages={[shared]} onSend={vi.fn()} />);
+    expect(screen.queryByText(/http:\/\/localhost\/documents\/d1/)).toBeNull();
+  });
+
+  it('picks up live editors, same as a created one', () => {
+    render(
+      <ChatPanel messages={[shared]} onSend={vi.fn()} documentEditors={() => editors} />,
+    );
+    expect(screen.getByText(/editing now/)).toBeInTheDocument();
+  });
+
+  it('opens the shared document', () => {
+    const onOpenDocument = vi.fn();
+    render(<ChatPanel messages={[shared]} onSend={vi.fn()} onOpenDocument={onOpenDocument} />);
+    fireEvent.click(screen.getByTestId('document-activity-card-open'));
+    expect(onOpenDocument).toHaveBeenCalledWith('d1');
+  });
+
+  // A share that names no document is not a document reference; a card with
+  // no target is an Open button to nowhere.
+  it('ignores a share with no id', () => {
+    render(
+      <ChatPanel
+        messages={[{ ...shared, metadata: { share: { kind: 'document', title: 'x' } } }]}
+        onSend={vi.fn()}
+      />,
+    );
+    expect(screen.queryByTestId('document-activity-card')).toBeNull();
+  });
+
+  it('ignores a share of something that is not a document', () => {
+    render(
+      <ChatPanel
+        messages={[{ ...shared, metadata: { share: { kind: 'pipeline', id: 'p1' } } }]}
+        onSend={vi.fn()}
+      />,
+    );
+    expect(screen.queryByTestId('document-activity-card')).toBeNull();
+  });
+});

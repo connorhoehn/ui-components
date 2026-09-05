@@ -191,6 +191,46 @@ function formatTypingBanner(users: string[]): string {
 // Component
 // ---------------------------------------------------------------------------
 
+/**
+ * A document referenced by a message, whichever way it got there.
+ *
+ * Two features put a document into a conversation and each invented its own
+ * metadata: the gateway announces a document CREATED in the channel as
+ * `{ kind: 'document', documentId }`, and Share-to-room posts
+ * `{ share: { kind: 'document', id, url } }`. They are the same fact —
+ * "there is a document in this thread" — so they get the same card. Reading
+ * both here rather than teaching each producer the other's shape keeps the
+ * older wire format working unchanged.
+ *
+ * Returns null for anything that is not a document reference, including a
+ * reference that names no document: a card with no target is an Open button
+ * to nowhere.
+ */
+export function documentRefFromMetadata(
+  metadata: Record<string, unknown> | undefined,
+): { documentId: string; title: string; icon?: string } | null {
+  if (!metadata) return null;
+
+  if (metadata.kind === 'document' && typeof metadata.documentId === 'string' && metadata.documentId) {
+    return {
+      documentId: metadata.documentId,
+      title: typeof metadata.title === 'string' ? metadata.title : '',
+      icon: typeof metadata.icon === 'string' ? metadata.icon : undefined,
+    };
+  }
+
+  const share = metadata.share as Record<string, unknown> | undefined;
+  if (share && share.kind === 'document' && typeof share.id === 'string' && share.id) {
+    return {
+      documentId: share.id,
+      title: typeof share.title === 'string' ? share.title : '',
+      icon: typeof share.icon === 'string' ? share.icon : undefined,
+    };
+  }
+
+  return null;
+}
+
 export function ChatPanel({
   messages,
   onSend,
@@ -446,19 +486,20 @@ export function ChatPanel({
               // the stored message for anywhere that renders plain text
               // (notification previews, the conversation list) but the thread
               // shows the thing itself.
-              const docMeta = (message as {
-                metadata?: { kind?: unknown; documentId?: unknown; title?: unknown; icon?: unknown; displayName?: unknown };
-              }).metadata;
-              const isDocumentEvent =
-                docMeta?.kind === 'document' && typeof docMeta.documentId === 'string';
+              const docRef = documentRefFromMetadata(
+                (message as { metadata?: Record<string, unknown> }).metadata,
+              );
 
-              const body = isDocumentEvent ? (
+              const body = docRef ? (
                 <DocumentActivityCard
-                  documentId={docMeta!.documentId as string}
-                  title={(docMeta!.title as string) || message.content}
-                  icon={docMeta!.icon as string | undefined}
-                  createdBy={(docMeta!.displayName as string | undefined) ?? message.displayName}
-                  editors={documentEditors?.(docMeta!.documentId as string) ?? []}
+                  documentId={docRef.documentId}
+                  title={docRef.title || message.content}
+                  icon={docRef.icon}
+                  createdBy={
+                    ((message as { metadata?: { displayName?: string } }).metadata?.displayName)
+                    ?? message.displayName
+                  }
+                  editors={documentEditors?.(docRef.documentId) ?? []}
                   onOpen={onOpenDocument}
                 />
               ) : files.length === 0 ? (
