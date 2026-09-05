@@ -433,6 +433,36 @@ export declare const CONVERSATION_CAPABILITY_NAMES: Record<Exclude<ConversationF
 /** The views a conversation can offer. `chat` is the transcript itself. */
 declare type ConversationFeature = 'chat' | 'files' | 'documents' | 'pins' | 'mentions' | 'calls';
 
+/**
+ * Which features a conversation is CAPABLE of, before anyone asks the gateway
+ * what it provisions.
+ *
+ * This is the host's half of the two gates: the app declares what it ships,
+ * the gateway says what it provisions per channel, and the surface renders the
+ * intersection. Some of the host's half depends on WHICH conversation this is,
+ * and that is what this answers.
+ *
+ * The rule that motivated it: a call is addressed to a LOBBY, and a plain
+ * channel has none — calls go to people (`dm:`) or to a room (`room:`). A
+ * `#general` that offered a Calls tab showed an empty state reading "Calls
+ * recorded in this conversation show up here", which no call ever could:
+ * there is no way to start one and nowhere to record it. A feature this
+ * conversation cannot have should be ABSENT, not empty — the same rule that
+ * drops documents when the host is mounted without their provider.
+ *
+ * `mentions` is never included: mentions span every conversation, so a
+ * per-channel tab for them claims a scope it does not have. They belong on a
+ * shelf beside the conversation list.
+ */
+export declare function conversationFeaturesFor(opts: {
+    /** The conversation's channel id. Null before one is open. */
+    channel?: string | null;
+    /** False when the host ships without a documents provider. */
+    hasDocuments?: boolean;
+    /** Defaults to everything the surface knows how to render. */
+    from?: readonly ConversationFeature[];
+}): ConversationFeature[];
+
 declare interface ConversationSurfaceProps {
     /** Channel name, or the people in a DM. */
     name: string;

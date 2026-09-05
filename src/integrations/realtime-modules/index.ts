@@ -166,6 +166,7 @@ export type {
 export {
   WrappedConversationSurface,
   capabilityNamesFor,
+  conversationFeaturesFor,
   CONVERSATION_CAPABILITY_NAMES,
 } from './WrappedConversationSurface';
 export type {
