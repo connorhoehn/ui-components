@@ -523,7 +523,7 @@ function L({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel: 
 			className: "m-0 flex min-h-0 list-none flex-col gap-0.5 overflow-y-auto p-0",
 			"aria-label": "Conversations",
 			children: e.map((e) => {
-				let r = e.channel === t, i = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), a = i === "channel", o = i === "group", c = e.peers[0], p = a ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), m = e.lastMessageAt ? h(e.lastMessageAt) : "", g = e.unreadCount ?? 0;
+				let r = e.channel === t, i = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), a = i === "channel", o = i === "group", c = e.peers[0], p = a ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), m = e.lastMessageAt ? h(e.lastMessageAt) : "", g = e.unreadCount ?? 0, _ = !!e.mentioned;
 				return /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
 					type: "button",
 					onClick: () => n(e.channel),
@@ -576,6 +576,13 @@ function L({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel: 
 								"data-testid": "conversation-preview",
 								children: e.lastMessagePreview
 							})]
+						}),
+						_ && /* @__PURE__ */ E("span", {
+							"data-testid": "conversation-mention",
+							"aria-label": "You were mentioned",
+							title: "You were mentioned",
+							className: "grid h-5 w-5 shrink-0 place-items-center rounded-full bg-danger text-[11px] font-bold leading-none text-white",
+							children: "@"
 						}),
 						g > 0 && /* @__PURE__ */ E("span", {
 							"data-testid": "conversation-unread",
@@ -2093,7 +2100,7 @@ function ve({ groupId: e, onInvite: t }) {
 		children: i
 	})] });
 }
-function $({ members: e }) {
+function ye({ members: e }) {
 	let t = (e) => e === "owner" ? "bg-success-bg text-success text-xs px-2 py-0.5 rounded" : e === "admin" ? "bg-info-bg text-info text-xs px-2 py-0.5 rounded" : "bg-surface-hover text-text-secondary text-xs px-2 py-0.5 rounded";
 	return /* @__PURE__ */ E("div", {
 		className: "max-h-[200px] overflow-y-auto mt-2 border-t border-border",
@@ -2116,7 +2123,7 @@ function $({ members: e }) {
 		}, e.userId))
 	});
 }
-function ye({ rooms: e, groupId: t, selectedGroupRole: n, createGroupRoom: r, onRoomSelect: i, loading: a }) {
+function be({ rooms: e, groupId: t, selectedGroupRole: n, createGroupRoom: r, onRoomSelect: i, loading: a }) {
 	let [o, l] = w(!1), [u, d] = w(""), [f, p] = w(null), m = e.filter((e) => e.groupId === t), h = async (e) => {
 		if (e.preventDefault(), u.trim()) {
 			p(null);
@@ -2199,7 +2206,7 @@ function ye({ rooms: e, groupId: t, selectedGroupRole: n, createGroupRoom: r, on
 		]
 	});
 }
-function be({ idToken: e, rooms: n, createGroupRoom: r, onRoomSelect: i, roomsLoading: a, compact: o }) {
+function xe({ idToken: e, rooms: n, createGroupRoom: r, onRoomSelect: i, roomsLoading: a, compact: o }) {
 	let { groups: c, createGroup: l, deleteGroup: u, inviteUser: d, loadMembers: f, members: p, loading: m, loaded: h, loadError: g, refresh: _ } = t({ idToken: e }), v = !h && !g, [y, b] = w(!1), [x, S] = w(null), C = e ? (() => {
 		try {
 			return JSON.parse(atob(e.split(".")[1])).sub;
@@ -2327,12 +2334,12 @@ function be({ idToken: e, rooms: n, createGroupRoom: r, onRoomSelect: i, roomsLo
 			x && /* @__PURE__ */ D("div", {
 				className: "mb-3",
 				children: [
-					/* @__PURE__ */ E($, { members: p }),
+					/* @__PURE__ */ E(ye, { members: p }),
 					(A === "owner" || A === "admin") && /* @__PURE__ */ E(ve, {
 						groupId: x,
 						onInvite: d
 					}),
-					/* @__PURE__ */ E(ye, {
+					/* @__PURE__ */ E(be, {
 						rooms: n,
 						groupId: x,
 						selectedGroupRole: A,
@@ -2357,11 +2364,11 @@ function be({ idToken: e, rooms: n, createGroupRoom: r, onRoomSelect: i, roomsLo
 }
 //#endregion
 //#region src/components/social/ActivityPanel.tsx
-function xe() {
+function Se() {
 	return "";
 }
-var Se = 50;
-function Ce(e) {
+var Ce = 50;
+function we(e) {
 	let t = e.detail;
 	switch (e.eventType) {
 		case "social.room.join": return {
@@ -2421,11 +2428,11 @@ function Ce(e) {
 		};
 	}
 }
-function we(e) {
+function Te(e) {
 	let t = Date.now() - new Date(e).getTime(), n = Math.floor(t / 1e3);
 	return n < 60 ? "just now" : n < 3600 ? `${Math.floor(n / 60)}m ago` : e.slice(0, 10);
 }
-function Te(e) {
+function $(e) {
 	if (!e) return null;
 	try {
 		return JSON.parse(atob(e.split(".")[1])).sub;
@@ -2438,9 +2445,9 @@ function Ee({ idToken: e, sendMessage: t, onMessage: n, connectionState: r }) {
 	b(() => {
 		h.current = t;
 	}, [t]);
-	let { toast: g } = o(), _ = Te(e), v = y(() => m((e) => e + 1), []);
+	let { toast: g } = o(), _ = $(e), v = y(() => m((e) => e + 1), []);
 	return b(() => {
-		let t = xe();
+		let t = Se();
 		if (!e || !t) {
 			c(!1);
 			return;
@@ -2488,7 +2495,7 @@ function Ee({ idToken: e, sendMessage: t, onMessage: n, connectionState: r }) {
 			eventType: t.eventType,
 			timestamp: t.timestamp,
 			detail: t.detail
-		}, ...e].slice(0, Se));
+		}, ...e].slice(0, Ce));
 	}), [n]), {
 		items: i,
 		loading: s,
@@ -2535,7 +2542,7 @@ function De({ idToken: e, sendMessage: t, onMessage: n, connectionState: r }) {
 			className: "py-10 text-center text-text-tertiary text-sm",
 			children: "No activity yet"
 		}) : /* @__PURE__ */ E("div", { children: i.map((e, t) => {
-			let { icon: n, text: r } = Ce(e);
+			let { icon: n, text: r } = we(e);
 			return /* @__PURE__ */ D("div", {
 				className: s("flex flex-row items-center gap-2 py-2", t < i.length - 1 && "border-b border-surface-hover"),
 				children: [
@@ -2549,7 +2556,7 @@ function De({ idToken: e, sendMessage: t, onMessage: n, connectionState: r }) {
 					}),
 					/* @__PURE__ */ E("span", {
 						className: "text-xs text-text-tertiary shrink-0",
-						children: we(e.timestamp)
+						children: Te(e.timestamp)
 					})
 				]
 			}, t);
@@ -2622,4 +2629,39 @@ function Oe({ reactions: e, onReact: t, disabled: n = !1, pickerEmojis: r = v, a
 	});
 }
 //#endregion
-export { Q as a, G as c, I as d, F as f, fe as i, W as l, De as n, ne as o, P as p, be as r, K as s, Oe as t, L as u };
+//#region src/components/social/ConversationShelf.tsx
+function ke({ items: e, activeId: t, onSelect: n, className: r, "data-testid": i = "conversation-shelf" }) {
+	return e.length === 0 ? null : /* @__PURE__ */ E("ul", {
+		"data-testid": i,
+		className: s("m-0 flex list-none flex-col gap-0.5 p-0", r),
+		children: e.map((e) => {
+			let r = e.id === t, a = e.count ?? 0;
+			return /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
+				type: "button",
+				onClick: () => n(e.id),
+				"data-testid": `${i}-${e.id}`,
+				"data-active": r ? "true" : "false",
+				"aria-current": r ? "true" : void 0,
+				className: s("flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left", "hover:bg-surface-hover", r && "bg-surface-hover"),
+				children: [
+					/* @__PURE__ */ E("span", {
+						"aria-hidden": !0,
+						className: "grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-inset text-[13px]",
+						children: e.icon ?? "•"
+					}),
+					/* @__PURE__ */ E("span", {
+						className: s("min-w-0 flex-1 truncate text-[13px]", a > 0 ? "font-semibold text-text-primary" : "font-medium text-text-secondary"),
+						children: e.label
+					}),
+					a > 0 && /* @__PURE__ */ E("span", {
+						"data-testid": `${i}-${e.id}-count`,
+						className: s("grid h-5 min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-semibold leading-none text-white", e.urgent ? "bg-danger" : "bg-primary"),
+						children: a > 99 ? "99+" : a
+					})
+				]
+			}) }, e.id);
+		})
+	});
+}
+//#endregion
+export { fe as a, K as c, L as d, I as f, xe as i, G as l, P as m, Oe as n, Q as o, F as p, De as r, ne as s, ke as t, W as u };

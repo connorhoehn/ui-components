@@ -110,3 +110,8 @@ export type { ConversationFeature, ConversationSurfaceProps } from './Conversati
 // right now, and a way in that does not cost you the thread.
 export { DocumentActivityCard } from './DocumentActivityCard';
 export type { DocumentActivityCardProps, DocumentActivityEditor } from './DocumentActivityCard';
+
+// The persistent destinations above a conversation list — Activity, Mentions.
+// They are not conversations, so they do not live in a list sorted by recency.
+export { ConversationShelf } from './ConversationShelf';
+export type { ConversationShelfItem, ConversationShelfProps } from './ConversationShelf';

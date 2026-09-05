@@ -439,6 +439,15 @@ export declare interface ConversationItem {
     /** ISO timestamp of the last message. Rendered as HH:MM. */
     lastMessageAt?: string;
     unreadCount?: number;
+    /**
+     * Somebody named YOU in this conversation.
+     *
+     * Separate from `unreadCount` because they answer different questions and
+     * only one of them is urgent: unread is "there is traffic here", a mention
+     * is "someone is waiting on you". Rolling them into one number is how a
+     * mention gets lost inside a busy channel's 40 unread.
+     */
+    mentioned?: boolean;
 }
 
 export declare function ConversationList({ items, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
@@ -464,6 +473,31 @@ export declare interface ConversationPeer {
     color?: string;
     /** Presence: true → online dot, false → offline dot, undefined → no dot. */
     online?: boolean;
+}
+
+export declare function ConversationShelf({ items, activeId, onSelect, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
+
+export declare interface ConversationShelfItem {
+    id: string;
+    label: string;
+    /** Emoji or glyph. Kept short — this rail is narrow by design. */
+    icon?: ReactNode;
+    /** Unread/waiting count. Zero renders no badge rather than a "0". */
+    count?: number;
+    /**
+     * Draws the count in the alert colour. An @-mention is not the same kind of
+     * pending as "there is traffic"; the rail should not make you open it to
+     * find out which one this is.
+     */
+    urgent?: boolean;
+}
+
+export declare interface ConversationShelfProps {
+    items: readonly ConversationShelfItem[];
+    activeId?: string | null;
+    onSelect: (id: string) => void;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;

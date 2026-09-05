@@ -55,6 +55,15 @@ export interface ConversationItem {
   /** ISO timestamp of the last message. Rendered as HH:MM. */
   lastMessageAt?: string;
   unreadCount?: number;
+  /**
+   * Somebody named YOU in this conversation.
+   *
+   * Separate from `unreadCount` because they answer different questions and
+   * only one of them is urgent: unread is "there is traffic here", a mention
+   * is "someone is waiting on you". Rolling them into one number is how a
+   * mention gets lost inside a busy channel's 40 unread.
+   */
+  mentioned?: boolean;
 }
 
 export interface ConversationListProps {
@@ -135,6 +144,7 @@ export function ConversationList({
               : item.peers.map((p) => p.displayName).join(', ');
             const time = item.lastMessageAt ? formatChatTime(item.lastMessageAt) : '';
             const unread = item.unreadCount ?? 0;
+            const mentioned = !!item.mentioned;
             return (
               <li key={item.channel}>
                 <button
@@ -224,6 +234,20 @@ export function ConversationList({
                     )}
                   </span>
 
+                  {/* Shown ALONGSIDE the unread count, never instead of it.
+                      "40 unread" and "one of them is about you" are different
+                      facts, and collapsing them is how a mention gets lost
+                      inside a busy channel. */}
+                  {mentioned && (
+                    <span
+                      data-testid="conversation-mention"
+                      aria-label="You were mentioned"
+                      title="You were mentioned"
+                      className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-danger text-[11px] font-bold leading-none text-white"
+                    >
+                      @
+                    </span>
+                  )}
                   {unread > 0 && (
                     <span
                       data-testid="conversation-unread"
