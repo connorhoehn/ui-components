@@ -336,3 +336,101 @@ export function ChannelMentionsPanel({
     </PanelShell>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Recordings
+// ---------------------------------------------------------------------------
+
+export interface ChannelRecordingItem {
+  recordingId: string;
+  /** ISO-8601 of when the call started. */
+  startedAt?: string;
+  /** Length of the recorded media, in milliseconds. */
+  durationMs?: number;
+  /** Distinct PEOPLE on the call, not sessions — rejoins are not extra heads. */
+  participantCount?: number;
+  participants?: Array<{ userId: string; displayName?: string }>;
+  thumbnailUrl?: string;
+  /**
+   * Whether the recording can actually be played. A row that opens a player
+   * showing nothing is worse than a row that says the recording is still
+   * being assembled.
+   */
+  playable?: boolean;
+}
+
+export interface ChannelRecordingsPanelProps {
+  recordings: readonly ChannelRecordingItem[];
+  onOpen?: (recordingId: string) => void;
+  className?: string;
+  'data-testid'?: string;
+}
+
+/** "12:04" / "1:02:11" — a duration people read, not a millisecond count. */
+export function formatDuration(ms?: number): string {
+  if (!ms || ms < 0) return '';
+  const total = Math.round(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const sec = total % 60;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${m}:${pad(sec)}`;
+}
+
+/** Names, never raw ids: "dev-e2e-bob-uo0cpk" is not a person. */
+function describeParticipants(r: ChannelRecordingItem): string {
+  const named = (r.participants ?? []).map((p) => p.displayName).filter(Boolean) as string[];
+  if (named.length > 0) {
+    return named.length <= 3 ? named.join(', ') : `${named.slice(0, 2).join(', ')} and ${named.length - 2} others`;
+  }
+  const n = r.participantCount ?? 0;
+  return n > 0 ? `${n} ${n === 1 ? 'person' : 'people'}` : '';
+}
+
+export function ChannelRecordingsPanel({
+  recordings,
+  onOpen,
+  className,
+  'data-testid': testId = 'channel-recordings-panel',
+}: ChannelRecordingsPanelProps) {
+  return (
+    <PanelShell empty={recordings.length === 0} className={className} data-testid={testId}>
+      {recordings.length === 0 ? (
+        <EmptyState
+          icon="🎥"
+          title="No recorded calls"
+          description="Calls recorded in this conversation show up here."
+        />
+      ) : (
+        recordings.map((r) => {
+          const notReady = r.playable === false;
+          return (
+            <DigestRow
+              key={r.recordingId}
+              data-testid="channel-recording"
+              leading={
+                r.thumbnailUrl ? (
+                  <img src={r.thumbnailUrl} alt="" className="h-8 w-12 rounded object-cover" />
+                ) : (
+                  <span aria-hidden className="grid h-8 w-12 place-items-center rounded bg-surface-inset text-sm">
+                    🎥
+                  </span>
+                )
+              }
+              title={[timeLabel(r.startedAt), formatDuration(r.durationMs)].filter(Boolean).join(' · ') || 'Recording'}
+              meta={
+                notReady
+                  ? 'Still being assembled'
+                  : describeParticipants(r)
+              }
+              // A row that opens a player showing nothing is worse than one
+              // that says so and stays put.
+              onJump={onOpen && !notReady ? () => onOpen(r.recordingId) : undefined}
+              jumpLabel="Play this recording"
+            />
+          );
+        })
+      )}
+    </PanelShell>
+  );
+}

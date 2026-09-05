@@ -1919,6 +1919,36 @@ export declare interface ChannelMentionsPanelProps {
     'data-testid'?: string;
 }
 
+export declare interface ChannelRecordingItem {
+    recordingId: string;
+    /** ISO-8601 of when the call started. */
+    startedAt?: string;
+    /** Length of the recorded media, in milliseconds. */
+    durationMs?: number;
+    /** Distinct PEOPLE on the call, not sessions — rejoins are not extra heads. */
+    participantCount?: number;
+    participants?: Array<{
+        userId: string;
+        displayName?: string;
+    }>;
+    thumbnailUrl?: string;
+    /**
+     * Whether the recording can actually be played. A row that opens a player
+     * showing nothing is worse than a row that says the recording is still
+     * being assembled.
+     */
+    playable?: boolean;
+}
+
+export declare function ChannelRecordingsPanel({ recordings, onOpen, className, 'data-testid': testId, }: ChannelRecordingsPanelProps): JSX.Element;
+
+export declare interface ChannelRecordingsPanelProps {
+    recordings: readonly ChannelRecordingItem[];
+    onOpen?: (recordingId: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface ChatAttachment {
     /** Correlation id shared with the sender's in-flight transfer. */
     id: string;
@@ -3999,6 +4029,9 @@ export declare function formatBytes(bytes: number): string;
 
 /** Formats an ISO timestamp string to HH:MM local time. */
 export declare function formatChatTime(isoString: string): string;
+
+/** "12:04" / "1:02:11" — a duration people read, not a millisecond count. */
+export declare function formatDuration(ms?: number): string;
 
 /** Formats a list of typing user names. Trims to a max of 2 explicit names + "+N others". */
 export declare function formatTypingBanner(names: string[]): string;

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { PinnedMessagesPanel, ChannelFilesPanel, ChannelMentionsPanel } from '../ChannelViews';
+import { PinnedMessagesPanel, ChannelFilesPanel, ChannelMentionsPanel, ChannelRecordingsPanel, formatDuration } from '../ChannelViews';
 import { ChannelHeader } from '../../shared/ChannelHeader';
 
 afterEach(cleanup);
@@ -180,5 +180,78 @@ describe('ChannelMentionsPanel', () => {
   it('is empty rather than blank when nobody has named you', () => {
     render(<ChannelMentionsPanel mentions={[]} />);
     expect(screen.getByText('No mentions')).toBeInTheDocument();
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+const recording = (over = {}) => ({
+  recordingId: 'rec-1',
+  startedAt: '2026-09-05T08:00:00.000Z',
+  durationMs: 12 * 60 * 1000 + 4000,
+  participants: [
+    { userId: 'dev-bob', displayName: 'Bob Martinez' },
+    { userId: 'dev-hank', displayName: 'Hank Anderson' },
+  ],
+  ...over,
+});
+
+describe('formatDuration', () => {
+  it('reads as a duration, not a millisecond count', () => {
+    expect(formatDuration(724_000)).toBe('12:04');
+  });
+
+  it('grows an hours field only when there are hours', () => {
+    expect(formatDuration(3_731_000)).toBe('1:02:11');
+  });
+
+  it('says nothing rather than 0:00 when the length is unknown', () => {
+    expect(formatDuration(undefined)).toBe('');
+  });
+});
+
+describe('ChannelRecordingsPanel', () => {
+  it('names who was on the call', () => {
+    render(<ChannelRecordingsPanel recordings={[recording()]} />);
+    expect(screen.getByText('Bob Martinez, Hank Anderson')).toBeInTheDocument();
+  });
+
+  // "dev-e2e-bob-uo0cpk" is not a person.
+  it('falls back to a count rather than to raw user ids', () => {
+    render(
+      <ChannelRecordingsPanel
+        recordings={[recording({ participants: [{ userId: 'dev-e2e-bob-uo0cpk' }], participantCount: 2 })]}
+      />,
+    );
+    expect(screen.getByText('2 people')).toBeInTheDocument();
+    expect(screen.queryByText(/uo0cpk/)).toBeNull();
+  });
+
+  it('summarises a crowd instead of listing everyone', () => {
+    render(
+      <ChannelRecordingsPanel
+        recordings={[recording({ participants: [1, 2, 3, 4].map((n) => ({ userId: `u${n}`, displayName: `P${n}` })) })]}
+      />,
+    );
+    expect(screen.getByText('P1, P2 and 2 others')).toBeInTheDocument();
+  });
+
+  it('opens a playable recording', () => {
+    const onOpen = vi.fn();
+    render(<ChannelRecordingsPanel recordings={[recording()]} onOpen={onOpen} />);
+    fireEvent.click(screen.getByTestId('channel-recording-jump'));
+    expect(onOpen).toHaveBeenCalledWith('rec-1');
+  });
+
+  // A player showing nothing is worse than a row that says why.
+  it('will not open one that is still being assembled', () => {
+    render(<ChannelRecordingsPanel recordings={[recording({ playable: false })]} onOpen={vi.fn()} />);
+    expect(screen.queryByTestId('channel-recording-jump')).toBeNull();
+    expect(screen.getByText('Still being assembled')).toBeInTheDocument();
+  });
+
+  it('says calls land here when there are none', () => {
+    render(<ChannelRecordingsPanel recordings={[]} />);
+    expect(screen.getByText('No recorded calls')).toBeInTheDocument();
   });
 });
