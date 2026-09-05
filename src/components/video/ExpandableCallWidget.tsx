@@ -83,6 +83,18 @@ export interface ExpandableCallWidgetProps {
    *  `'window'`.
    *  @see CallWidgetMode */
   defaultMode?: PersistedWidgetMode | 'docked';
+  /**
+   * The widget is living INSIDE a container — a document's gutter, a panel —
+   * rather than floating over the page.
+   *
+   * Every mode below is `position: fixed` with a pixel width, which is right
+   * for a window and wrong for a slot: re-parented into a 280px column the
+   * widget kept its fixed positioning and its own width, so it floated over
+   * the page it was supposedly docked into and was clipped by the column it
+   * overflowed. Inline drops the positioning and fills the container, and the
+   * host owns the geometry.
+   */
+  inline?: boolean;
   /** Fires after every settled mode change (programmatic or via UI).
    *  Emits the CANONICAL vocabulary — 'window' where builds before
    *  2.106 emitted 'docked'. */
@@ -148,6 +160,7 @@ export function ExpandableCallWidget({
   children,
   controls,
   defaultMode: defaultModeProp = 'mini',
+  inline = false,
   onModeChange,
   persistKey,
   apiRef,
@@ -369,6 +382,11 @@ export function ExpandableCallWidget({
 
   // ---- Compose root style + className from effective mode. ----
   const rootStyle = useMemo<CSSProperties>(() => {
+    // Checked before every mode: a widget in a slot is not positioned at all,
+    // whatever mode it thinks it is in.
+    if (inline) {
+      return { position: 'relative', width: '100%', height: 'auto' };
+    }
     if (effectiveMode === 'fullscreen') {
       return {
         position: 'fixed', inset: 0, width: '100vw', height: '100vh',
@@ -390,7 +408,7 @@ export function ExpandableCallWidget({
       width: MINI_WIDTH, height: MINI_HEIGHT,
       zIndex,
     };
-  }, [effectiveMode, state.x, state.y, state.width, state.height, zIndex]);
+  }, [inline, effectiveMode, state.x, state.y, state.width, state.height, zIndex]);
 
   return (
     <div

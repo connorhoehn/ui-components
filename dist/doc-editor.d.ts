@@ -60,7 +60,7 @@ declare interface AttachmentsPanelProps {
     editable: boolean;
 }
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, onFocusGutterItem, gutterVisible, onToggleGutter, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, onToggleGutter, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -141,6 +141,16 @@ export declare interface CanvasDocumentViewProps {
      * document with no discussion keeps the full width for its text.
      */
     gutterItems?: readonly GutterItem[];
+    /**
+     * Pinned to the top of the gutter — this is where a docked call goes.
+     *
+     * The margin beside the sheet is the right home for it: it scrolls with the
+     * document, it is beside the text rather than over it, and it does not
+     * reserve a band of empty page above the toolbar the way a floating dock
+     * did. Its presence alone is enough to show the gutter — a call has to live
+     * somewhere and "no comments yet" is not a reason to drop it.
+     */
+    gutterLead?: ReactNode;
     onFocusGutterItem?: (id: string) => void;
     /**
      * Whether the margin gutter is showing. Defaults to true, so a caller that
@@ -382,10 +392,21 @@ declare interface DocumentEditorPageProps {
     onUndockVideo?: () => void;
 }
 
-export declare function DocumentGutter({ items, gap, estimatedHeight, onFocusItem, emptyLabel, 'data-testid': testId, }: DocumentGutterProps): JSX.Element;
+export declare function DocumentGutter({ items, lead, gap, estimatedHeight, onFocusItem, emptyLabel, 'data-testid': testId, }: DocumentGutterProps): JSX.Element;
 
 export declare interface DocumentGutterProps {
     items: readonly GutterItem[];
+    /**
+     * Pinned to the TOP of the gutter, above the threads — a docked call, say.
+     *
+     * In normal flow rather than anchored, because it belongs to the document
+     * as a whole and not to a line of it. That does push the thread cards down
+     * by its height, which is the honest tradeoff: a call and a comment cannot
+     * both own the same strip of margin, and Google Docs resolves it the same
+     * way. Anchoring is not yet driven by real positions here anyway — see the
+     * note at the top of this file.
+     */
+    lead?: ReactNode;
     /** Minimum vertical gap between two cards. */
     gap?: number;
     /** Approximate rendered height of a card, used for collision spacing. */

@@ -3858,7 +3858,7 @@ export declare interface EventRowProps {
 /** Caps an excerpt on a word boundary so a quote never dominates its reply. */
 export declare function excerpt(text: string, limit?: number): string;
 
-export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, onModeChange, persistKey, apiRef, defaultCorner, expandable, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, zIndex, className, 'data-testid': rootTestId, }: ExpandableCallWidgetProps): JSX.Element;
+export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, inline, onModeChange, persistKey, apiRef, defaultCorner, expandable, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, zIndex, className, 'data-testid': rootTestId, }: ExpandableCallWidgetProps): JSX.Element;
 
 export declare interface ExpandableCallWidgetHandle {
     /** Always canonical — 'window', never 'docked'. */
@@ -3890,6 +3890,18 @@ export declare interface ExpandableCallWidgetProps {
      *  `'window'`.
      *  @see CallWidgetMode */
     defaultMode?: PersistedWidgetMode | 'docked';
+    /**
+     * The widget is living INSIDE a container — a document's gutter, a panel —
+     * rather than floating over the page.
+     *
+     * Every mode below is `position: fixed` with a pixel width, which is right
+     * for a window and wrong for a slot: re-parented into a 280px column the
+     * widget kept its fixed positioning and its own width, so it floated over
+     * the page it was supposedly docked into and was clipped by the column it
+     * overflowed. Inline drops the positioning and fills the container, and the
+     * host owns the geometry.
+     */
+    inline?: boolean;
     /** Fires after every settled mode change (programmatic or via UI).
      *  Emits the CANONICAL vocabulary — 'window' where builds before
      *  2.106 emitted 'docked'. */

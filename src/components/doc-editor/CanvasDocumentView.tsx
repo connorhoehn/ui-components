@@ -121,6 +121,16 @@ export interface CanvasDocumentViewProps {
    * document with no discussion keeps the full width for its text.
    */
   gutterItems?: readonly GutterItem[];
+  /**
+   * Pinned to the top of the gutter — this is where a docked call goes.
+   *
+   * The margin beside the sheet is the right home for it: it scrolls with the
+   * document, it is beside the text rather than over it, and it does not
+   * reserve a band of empty page above the toolbar the way a floating dock
+   * did. Its presence alone is enough to show the gutter — a call has to live
+   * somewhere and "no comments yet" is not a reason to drop it.
+   */
+  gutterLead?: ReactNode;
   onFocusGutterItem?: (id: string) => void;
   /**
    * Whether the margin gutter is showing. Defaults to true, so a caller that
@@ -166,6 +176,7 @@ export default function CanvasDocumentView({
   header,
   toolbarActions,
   gutterItems,
+  gutterLead,
   onFocusGutterItem,
   gutterVisible = true,
   onToggleGutter,
@@ -182,7 +193,9 @@ export default function CanvasDocumentView({
   // Two conditions, not one: there has to be something to show, AND the gutter
   // has to be switched on. Splitting them is what lets the toolbar keep
   // reporting the count while the column itself is gone.
-  const showGutter = commentCount > 0 && gutterVisible;
+  // A docked call keeps the gutter open on its own. Without this the call
+  // would vanish the moment a document had no comments, which is most of them.
+  const showGutter = (commentCount > 0 || !!gutterLead) && gutterVisible;
 
   const handleConvert = async () => {
     if (!onConvert || converting) return; // a second click races the first
@@ -313,9 +326,10 @@ export default function CanvasDocumentView({
               onEditorReady={(e) => { setEditor(e); onEditorReady?.(e); }}
             />
             </div>
-            {showGutter && gutterItems && (
+            {showGutter && (
               <DocumentGutter
-                items={gutterItems}
+                items={gutterItems ?? []}
+                lead={gutterLead}
                 onFocusItem={onFocusGutterItem}
                 data-testid={`${testId}-gutter`}
               />

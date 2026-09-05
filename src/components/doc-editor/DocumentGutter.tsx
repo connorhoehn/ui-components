@@ -40,6 +40,17 @@ export interface GutterItem {
 
 export interface DocumentGutterProps {
   items: readonly GutterItem[];
+  /**
+   * Pinned to the TOP of the gutter, above the threads — a docked call, say.
+   *
+   * In normal flow rather than anchored, because it belongs to the document
+   * as a whole and not to a line of it. That does push the thread cards down
+   * by its height, which is the honest tradeoff: a call and a comment cannot
+   * both own the same strip of margin, and Google Docs resolves it the same
+   * way. Anchoring is not yet driven by real positions here anyway — see the
+   * note at the top of this file.
+   */
+  lead?: ReactNode;
   /** Minimum vertical gap between two cards. */
   gap?: number;
   /** Approximate rendered height of a card, used for collision spacing. */
@@ -84,6 +95,7 @@ export function stackOffsets(
 
 export default function DocumentGutter({
   items,
+  lead,
   gap = 12,
   estimatedHeight = 120,
   onFocusItem,
@@ -132,8 +144,14 @@ export default function DocumentGutter({
     return max;
   }, [offsets, heights, estimatedHeight]);
 
+  // A lead with no threads is still a gutter worth rendering: the call has to
+  // live somewhere, and "no comments yet" is not a reason to drop it.
   if (items.length === 0) {
-    return (
+    return lead ? (
+      <div data-testid={testId} className="w-[280px] shrink-0">
+        <div data-testid={`${testId}-lead`}>{lead}</div>
+      </div>
+    ) : (
       <div data-testid={`${testId}-empty`} className="px-3 py-4 text-xs text-text-tertiary">
         {emptyLabel}
       </div>
@@ -141,7 +159,12 @@ export default function DocumentGutter({
   }
 
   return (
-    <div data-testid={testId} className="relative w-[280px] shrink-0" style={{ height }}>
+    <div data-testid={testId} className="w-[280px] shrink-0">
+      {lead && <div data-testid={`${testId}-lead`} className="mb-3">{lead}</div>}
+      {/* The card area reserves the height, not the column: with a lead
+          pinned above, the column is lead + cards and only the card half is a
+          function of the anchors. */}
+      <div data-testid={`${testId}-cards`} className="relative" style={{ height }}>
       {items.map((item) => (
         <div
           key={item.id}
@@ -179,6 +202,7 @@ export default function DocumentGutter({
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }

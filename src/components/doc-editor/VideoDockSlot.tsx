@@ -156,26 +156,29 @@ export default function VideoDockSlot({
       )}
     >
       {docked ? (
-        <>
-          <div className="flex items-center justify-between gap-2 border-b border-border px-2 py-1">
-            <span className="truncate text-xs font-medium text-text-secondary">{label}</span>
-            {onRequestUndock && (
+        // No title bar of its own.
+        //
+        // The widget that gets portaled in brings its own header — a name, a
+        // drag grip, a live dot — so drawing a second one above it stacked two
+        // title bars for one call and ate a slice of a 280px column that the
+        // video needed. The undock control moves onto the frame as an overlay
+        // instead: one chrome, and it sits over the video where every other
+        // video product puts its controls.
+        <div data-testid={`${testId}-content`} className="relative w-full">
+          {children}
+          {onRequestUndock && (
+            <div className="absolute right-1 top-1 z-10 rounded bg-black/45 backdrop-blur-sm">
               <IconButton
                 aria-label={undockLabel}
                 size="sm"
                 onClick={onRequestUndock}
                 data-testid={`${testId}-undock`}
                 icon={<PopOutIcon />}
+                className="text-white hover:bg-white/20"
               />
-            )}
-          </div>
-          {/* Fixed aspect so the page does not reflow as the widget's own
-              layout settles — a gutter that jumps mid-sentence is worse than
-              one that reserves slightly the wrong height. */}
-          <div data-testid={`${testId}-content`} className="aspect-video w-full">
-            {children}
-          </div>
-        </>
+            </div>
+          )}
+        </div>
       ) : (
         <div
           role="region"

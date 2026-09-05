@@ -14,7 +14,7 @@ import { a as p, n as m, r as h } from "./renderers-aONC4W_Z.js";
 import { o as g, s as _, t as v } from "./VerdictChip-CKnsnKYd.js";
 import { n as y, t as b } from "./TiptapEditor-CUZ_20iC.js";
 import { A as x, C as S, D as C, E as w, O as T, S as E, T as D, _ as O, a as ee, b as k, c as A, d as j, f as M, g as N, h as P, i as F, k as I, l as L, m as R, o as te, p as z, r as B, s as ne, t as V, u as H, v as U, w as re, x as W, y as ie } from "./DocumentEditorPage-DRMfcLtj.js";
-import { i as ae, n as oe, r as se, t as ce } from "./CanvasDocumentView-CyuwiD04.js";
+import { i as ae, n as oe, r as se, t as ce } from "./CanvasDocumentView-DiSze3Oy.js";
 import { useCallback as G, useEffect as K, useImperativeHandle as le, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import * as ue from "yjs";
@@ -1399,23 +1399,21 @@ function Qe({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 		onDragLeave: v,
 		onDrop: y,
 		className: n("w-full overflow-hidden rounded-lg border transition-colors duration-150", "bg-surface", h ? "border-primary" : "border-border", "data-[pointer-over=true]:border-primary", f),
-		children: e ? /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Q("div", {
-			className: "flex items-center justify-between gap-2 border-b border-border px-2 py-1",
-			children: [/* @__PURE__ */ Z("span", {
-				className: "truncate text-xs font-medium text-text-secondary",
-				children: i
-			}), c && /* @__PURE__ */ Z(a, {
-				"aria-label": s,
-				size: "sm",
-				onClick: c,
-				"data-testid": `${m}-undock`,
-				icon: /* @__PURE__ */ Z(Ze, {})
-			})]
-		}), /* @__PURE__ */ Z("div", {
+		children: e ? /* @__PURE__ */ Q("div", {
 			"data-testid": `${m}-content`,
-			className: "aspect-video w-full",
-			children: p
-		})] }) : /* @__PURE__ */ Q("div", {
+			className: "relative w-full",
+			children: [p, c && /* @__PURE__ */ Z("div", {
+				className: "absolute right-1 top-1 z-10 rounded bg-black/45 backdrop-blur-sm",
+				children: /* @__PURE__ */ Z(a, {
+					"aria-label": s,
+					size: "sm",
+					onClick: c,
+					"data-testid": `${m}-undock`,
+					icon: /* @__PURE__ */ Z(Ze, {}),
+					className: "text-white hover:bg-white/20"
+				})
+			})]
+		}) : /* @__PURE__ */ Q("div", {
 			role: "region",
 			"aria-label": i,
 			"data-testid": `${m}-dropzone`,

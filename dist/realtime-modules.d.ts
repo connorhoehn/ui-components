@@ -158,6 +158,16 @@ declare interface CanvasDocumentViewProps {
      * document with no discussion keeps the full width for its text.
      */
     gutterItems?: readonly GutterItem[];
+    /**
+     * Pinned to the top of the gutter — this is where a docked call goes.
+     *
+     * The margin beside the sheet is the right home for it: it scrolls with the
+     * document, it is beside the text rather than over it, and it does not
+     * reserve a band of empty page above the toolbar the way a floating dock
+     * did. Its presence alone is enough to show the gutter — a call has to live
+     * somewhere and "no comments yet" is not a reason to drop it.
+     */
+    gutterLead?: ReactNode;
     onFocusGutterItem?: (id: string) => void;
     /**
      * Whether the margin gutter is showing. Defaults to true, so a caller that

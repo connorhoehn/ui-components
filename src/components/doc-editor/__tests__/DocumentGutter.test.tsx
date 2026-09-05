@@ -127,8 +127,32 @@ describe('DocumentGutter', () => {
 
   // The cards are absolutely positioned, so without an explicit height the
   // container collapses and the last thread is clipped.
+  // Without a reserved height the absolutely-positioned cards give their
+  // container none, and the lowest one is clipped.
   it('reserves height for the lowest card', () => {
     render(<DocumentGutter items={[item('a', 500)]} estimatedHeight={100} />);
-    expect(screen.getByTestId('document-gutter')).toHaveStyle({ height: '600px' });
+    expect(screen.getByTestId('document-gutter-cards')).toHaveStyle({ height: '600px' });
+  });
+});
+
+describe('DocumentGutter lead', () => {
+  // A docked call has to live somewhere, and "no comments yet" is not a reason
+  // to drop it — before this the gutter rendered an empty-state string instead.
+  it('renders with a lead and no threads at all', () => {
+    render(<DocumentGutter items={[]} lead={<div data-testid="call" />} />);
+    expect(screen.getByTestId('call')).toBeInTheDocument();
+    expect(screen.queryByTestId('document-gutter-empty')).toBeNull();
+  });
+
+  it('keeps the empty state when there is neither', () => {
+    render(<DocumentGutter items={[]} />);
+    expect(screen.getByTestId('document-gutter-empty')).toBeInTheDocument();
+  });
+
+  it('shows the lead above the threads', () => {
+    render(<DocumentGutter items={[item('a', 0)]} lead={<div data-testid="call" />} />);
+    const lead = screen.getByTestId('document-gutter-lead');
+    const cards = screen.getByTestId('document-gutter-cards');
+    expect(lead.compareDocumentPosition(cards) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });
