@@ -2912,6 +2912,9 @@ declare type DeleteOutcome = {
     error: string;
 };
 
+/** "You and Ada", "Ada, Sam and 3 others" — the tooltip people expect. */
+export declare function describeReactors(group: ReactionGroup): string;
+
 export declare function DetailHeader({ title, badge, description, meta, aside, asideWidth, as: Heading, className, 'data-testid': testId, }: DetailHeaderProps): JSX.Element;
 
 export declare interface DetailHeaderProps {
@@ -3606,6 +3609,9 @@ export declare interface EventRowProps {
     selected?: boolean;
 }
 
+/** Caps an excerpt on a word boundary so a quote never dominates its reply. */
+export declare function excerpt(text: string, limit?: number): string;
+
 export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, onModeChange, persistKey, apiRef, defaultCorner, expandable, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, zIndex, className, 'data-testid': rootTestId, }: ExpandableCallWidgetProps): JSX.Element;
 
 export declare interface ExpandableCallWidgetHandle {
@@ -4212,6 +4218,9 @@ declare interface GroupPanelProps {
     roomsLoading: boolean;
     compact?: boolean;
 }
+
+/** Groups by emoji, preserving first-seen order so chips do not reshuffle. */
+export declare function groupReactions(reactions: readonly MessageReaction[], currentUserId: string): ReactionGroup[];
 
 /**
  * The safety gate, hoisted out of the component so it can be asserted on
@@ -5637,6 +5646,28 @@ declare interface MentionUser {
     memberCount?: number;
 }
 
+export declare function MessageActionBar({ quickReactions, onReact, onOpenReactionPicker, onReply, onTogglePin, pinned, onCopyLink, onEdit, onDelete, className, 'data-testid': testId, }: MessageActionBarProps): JSX.Element;
+
+export declare interface MessageActionBarProps {
+    /** Emoji offered inline. Keep it short; the picker covers the rest. */
+    quickReactions?: readonly string[];
+    onReact?: (emoji: string) => void;
+    /** Opens the full emoji picker. Omit to show only the quick row. */
+    onOpenReactionPicker?: () => void;
+    onReply?: () => void;
+    /** Pin/unpin. Absent means this viewer may not pin here — the control is
+     *  then not rendered at all, rather than rendered disabled: a greyed pin is
+     *  a promise the product will not keep. */
+    onTogglePin?: () => void;
+    pinned?: boolean;
+    onCopyLink?: () => void;
+    /** Own-message actions. Absent for other people's messages. */
+    onEdit?: () => void;
+    onDelete?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function MessageBody({ html, text, className, 'data-testid': testId }: MessageBodyProps): JSX.Element;
 
 export declare interface MessageBodyProps {
@@ -5694,6 +5725,13 @@ export declare interface MessageGroupProps {
     /** Messages in this group, in chronological order. */
     messages: MessageGroupItem[];
     className?: string;
+}
+
+export declare interface MessageReaction {
+    emoji: string;
+    /** Who reacted. Drives the count, the "you" state, and the tooltip. */
+    userId: string;
+    displayName?: string;
 }
 
 export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, tone, className, }: MessageRowProps): JSX.Element;
@@ -7473,6 +7511,29 @@ export declare interface QuickPromptGridProps {
     className?: string;
 }
 
+export declare function QuoteBlock({ quote, onJump, onDismiss, className, 'data-testid': testId, }: QuoteBlockProps): JSX.Element;
+
+export declare interface QuoteBlockProps {
+    quote: QuotedMessage;
+    /** Jumps to the original. Omit when the original is unreachable (deleted,
+     *  or outside a window this client cannot load) — the quote then reads as
+     *  what it is, a record of something said, rather than a dead control. */
+    onJump?: (messageId: string) => void;
+    /** Removes the quote — only meaningful in the composer. */
+    onDismiss?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface QuotedMessage {
+    messageId: string;
+    author: string;
+    /** ISO timestamp of the quoted message. */
+    timestamp?: string;
+    /** Plain text of the original. Trimmed for display; the full text is not needed. */
+    text: string;
+}
+
 export declare function RadioGroup<T extends string = string>({ name, value, onChange, options, disabled, orientation, 'data-testid': testId, }: RadioGroupProps<T>): JSX.Element;
 
 export declare interface RadioGroupProps<T extends string = string> {
@@ -7622,10 +7683,28 @@ export declare interface Reaction {
     displayName?: string;
 }
 
+export declare function ReactionChips({ reactions, currentUserId, onToggle, className, 'data-testid': testId, }: ReactionChipsProps): JSX.Element | null;
+
+export declare interface ReactionChipsProps {
+    reactions: readonly MessageReaction[];
+    /** The viewer, so their own reactions can be marked and toggled. */
+    currentUserId: string;
+    onToggle: (emoji: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** Testid-safe name for a reaction emoji: 'heart', 'thumbs-up', … for the
  *  default set, hyphen-joined hex codepoints for anything else. Exported so
  *  consumers can build `reaction-option-${reactionEmojiName(e)}` selectors. */
 export declare function reactionEmojiName(emoji: string): string;
+
+export declare interface ReactionGroup {
+    emoji: string;
+    count: number;
+    mine: boolean;
+    names: string[];
+}
 
 export declare function ReactionOverlay({ reactions, className, style }: ReactionOverlayProps): JSX.Element;
 

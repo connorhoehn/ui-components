@@ -305,6 +305,9 @@ export declare interface ConversationPeer {
 
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
+/** "You and Ada", "Ada, Sam and 3 others" — the tooltip people expect. */
+export declare function describeReactors(group: ReactionGroup): string;
+
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
 
 export declare interface EmojiShortcode {
@@ -314,6 +317,9 @@ export declare interface EmojiShortcode {
     /** Extra search terms, so `:party:` finds 🎉 even though its code is `tada`. */
     keywords?: readonly string[];
 }
+
+/** Caps an excerpt on a word boundary so a quote never dominates its reply. */
+export declare function excerpt(text: string, limit?: number): string;
 
 export declare function formatBytes(bytes: number): string;
 
@@ -356,6 +362,9 @@ declare interface GroupPanelProps {
     compact?: boolean;
 }
 
+/** Groups by emoji, preserving first-seen order so chips do not reshuffle. */
+export declare function groupReactions(reactions: readonly MessageReaction[], currentUserId: string): ReactionGroup[];
+
 export declare function isImageAttachment(a: {
     contentType?: string;
 }): boolean;
@@ -378,6 +387,28 @@ export declare interface LinkDialogValue {
     href: string;
     /** The visible text. Empty means "keep whatever is selected". */
     text: string;
+}
+
+export declare function MessageActionBar({ quickReactions, onReact, onOpenReactionPicker, onReply, onTogglePin, pinned, onCopyLink, onEdit, onDelete, className, 'data-testid': testId, }: MessageActionBarProps): JSX.Element;
+
+export declare interface MessageActionBarProps {
+    /** Emoji offered inline. Keep it short; the picker covers the rest. */
+    quickReactions?: readonly string[];
+    onReact?: (emoji: string) => void;
+    /** Opens the full emoji picker. Omit to show only the quick row. */
+    onOpenReactionPicker?: () => void;
+    onReply?: () => void;
+    /** Pin/unpin. Absent means this viewer may not pin here — the control is
+     *  then not rendered at all, rather than rendered disabled: a greyed pin is
+     *  a promise the product will not keep. */
+    onTogglePin?: () => void;
+    pinned?: boolean;
+    onCopyLink?: () => void;
+    /** Own-message actions. Absent for other people's messages. */
+    onEdit?: () => void;
+    onDelete?: () => void;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function MessageBody({ html, text, className, 'data-testid': testId }: MessageBodyProps): JSX.Element;
@@ -413,6 +444,13 @@ export declare interface MessageGroupProps {
     /** Messages in this group, in chronological order. */
     messages: MessageGroupItem[];
     className?: string;
+}
+
+export declare interface MessageReaction {
+    emoji: string;
+    /** Who reacted. Drives the count, the "you" state, and the tooltip. */
+    userId: string;
+    displayName?: string;
 }
 
 export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, tone, className, }: MessageRowProps): JSX.Element;
@@ -521,6 +559,47 @@ declare interface PresenceUser {
     clientId: string;
     status: string;
     metadata: Record<string, unknown>;
+}
+
+export declare function QuoteBlock({ quote, onJump, onDismiss, className, 'data-testid': testId, }: QuoteBlockProps): JSX.Element;
+
+export declare interface QuoteBlockProps {
+    quote: QuotedMessage;
+    /** Jumps to the original. Omit when the original is unreachable (deleted,
+     *  or outside a window this client cannot load) — the quote then reads as
+     *  what it is, a record of something said, rather than a dead control. */
+    onJump?: (messageId: string) => void;
+    /** Removes the quote — only meaningful in the composer. */
+    onDismiss?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface QuotedMessage {
+    messageId: string;
+    author: string;
+    /** ISO timestamp of the quoted message. */
+    timestamp?: string;
+    /** Plain text of the original. Trimmed for display; the full text is not needed. */
+    text: string;
+}
+
+export declare function ReactionChips({ reactions, currentUserId, onToggle, className, 'data-testid': testId, }: ReactionChipsProps): JSX.Element | null;
+
+export declare interface ReactionChipsProps {
+    reactions: readonly MessageReaction[];
+    /** The viewer, so their own reactions can be marked and toggled. */
+    currentUserId: string;
+    onToggle: (emoji: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ReactionGroup {
+    emoji: string;
+    count: number;
+    mine: boolean;
+    names: string[];
 }
 
 export declare function ReactionPickerPopover({ open, onSelect, onClose, triggerRef, emojis, showSearch, className, style, }: ReactionPickerPopoverProps): JSX.Element | null;

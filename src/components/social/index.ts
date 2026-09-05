@@ -73,3 +73,12 @@ export type { LinkDialogProps, LinkDialogValue } from './LinkDialog';
 // them safe.
 export { MessageBody } from './MessageBody';
 export type { MessageBodyProps } from './MessageBody';
+
+// Message-level interaction primitives. Each is presentational — the transport
+// (useReactions, chat metadata, pin events) is the host's to wire.
+export { ReactionChips, groupReactions, describeReactors } from './ReactionChips';
+export type { ReactionChipsProps, MessageReaction, ReactionGroup } from './ReactionChips';
+export { MessageActionBar } from './MessageActionBar';
+export type { MessageActionBarProps } from './MessageActionBar';
+export { QuoteBlock, excerpt } from './QuoteBlock';
+export type { QuoteBlockProps, QuotedMessage } from './QuoteBlock';
