@@ -825,9 +825,9 @@ export declare interface LeaderConfig {
 export declare function listLeaves(node: PaneNode): PaneLeaf[];
 
 /** How the machine's local memory sidecar stands against the shared mesh. */
-declare type MachineMemoryMode = 'synced' | 'pending' | 'offline' | 'disabled';
+export declare type MachineMemoryMode = 'synced' | 'pending' | 'offline' | 'disabled';
 
-declare interface MachineMemoryState {
+export declare interface MachineMemoryState {
     mode: MachineMemoryMode;
     /** Records queued locally, awaiting upload (the sidecar's outbox depth). */
     pendingOps?: number;
@@ -838,7 +838,7 @@ declare interface MachineMemoryState {
 }
 
 /** A paired machine and its live sessions. */
-declare interface MachineNode {
+export declare interface MachineNode {
     id: string;
     label: string;
     status: MachinePresenceStatus;
@@ -863,10 +863,10 @@ export declare interface MachinePresenceMenuProps {
 }
 
 /** Derived server-side from heartbeat age — never claimed by the machine. */
-declare type MachinePresenceStatus = 'connected' | 'stale' | 'offline';
+export declare type MachinePresenceStatus = 'connected' | 'stale' | 'offline';
 
 /** One live agent session on a machine. */
-declare interface MachineSession {
+export declare interface MachineSession {
     id: string;
     /** Which harness: `claude-code`, `cursor`, ... Informational. */
     harness?: string;

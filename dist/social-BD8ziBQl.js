@@ -6,8 +6,9 @@ import { t as l } from "./Textarea-Dz4doxTv.js";
 import { n as u, t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./PresenceDot-3gBZGPvX.js";
 import { t as p } from "./Select-CqVokE2v.js";
-import { d as m, i as h, r as g, u as _ } from "./PresencePanel-TLZ43ZF1.js";
-import { t as v } from "./rovingFocus-Bj5Y6kwY.js";
+import { c as m, s as h } from "./PresencePanel-lernt_07.js";
+import { t as g } from "./rovingFocus-Bj5Y6kwY.js";
+import { n as _, t as v } from "./ReactionPickerPopover-moHezwrL.js";
 import { useCallback as y, useEffect as b, useId as x, useMemo as S, useRef as C, useState as w } from "react";
 import { Fragment as T, jsx as E, jsxs as D } from "react/jsx-runtime";
 //#region src/components/social/SocialPanel.tsx
@@ -96,12 +97,12 @@ function j({ targetUser: e, followState: t, compact: n = !1, onFollowChange: r }
 	});
 }
 function M({ user: e, isOwnProfile: t, onSave: n }) {
-	let [r, i] = w(!1), [a, o] = w(e.displayName), [u, d] = w(e.bio), [f, p] = w(e.avatarUrl ?? ""), [m, h] = w(e.visibility), [g, _] = w(!1), [y, S] = w(null), C = x();
+	let [r, i] = w(!1), [a, o] = w(e.displayName), [u, d] = w(e.bio), [f, p] = w(e.avatarUrl ?? ""), [m, h] = w(e.visibility), [_, v] = w(!1), [y, S] = w(null), C = x();
 	b(() => {
 		o(e.displayName), d(e.bio), p(e.avatarUrl ?? ""), h(e.visibility);
 	}, [e.id]);
 	let T = async () => {
-		_(!0), S(null);
+		v(!0), S(null);
 		try {
 			await n({
 				displayName: a,
@@ -112,7 +113,7 @@ function M({ user: e, isOwnProfile: t, onSave: n }) {
 		} catch (e) {
 			S(e instanceof Error ? e.message : "Failed to save profile");
 		} finally {
-			_(!1);
+			v(!1);
 		}
 	};
 	return r ? /* @__PURE__ */ D("div", { children: [
@@ -164,7 +165,7 @@ function M({ user: e, isOwnProfile: t, onSave: n }) {
 			children: /* @__PURE__ */ E("div", {
 				role: "radiogroup",
 				"aria-label": "Profile visibility",
-				onKeyDown: (e) => v(e, { itemSelector: "[role=\"radio\"]" }),
+				onKeyDown: (e) => g(e, { itemSelector: "[role=\"radio\"]" }),
 				className: "flex gap-2",
 				children: ["public", "private"].map((e) => /* @__PURE__ */ E("button", {
 					type: "button",
@@ -183,9 +184,9 @@ function M({ user: e, isOwnProfile: t, onSave: n }) {
 				onClick: () => {
 					T();
 				},
-				disabled: g,
-				className: s("flex-1 h-9 bg-primary text-white border-none rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]", g ? "cursor-default" : "cursor-pointer"),
-				children: g ? "Saving…" : "Save Changes"
+				disabled: _,
+				className: s("flex-1 h-9 bg-primary text-white border-none rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]", _ ? "cursor-default" : "cursor-pointer"),
+				children: _ ? "Saving…" : "Save Changes"
 			}), /* @__PURE__ */ E("button", {
 				onClick: () => i(!1),
 				className: "text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]",
@@ -281,7 +282,7 @@ function N({ followers: e, following: t, friends: n, followStates: r, onFollowCh
 		children: [/* @__PURE__ */ E("div", {
 			role: "tablist",
 			"aria-label": "Connections",
-			onKeyDown: v,
+			onKeyDown: g,
 			className: "flex border-b border-border mb-3",
 			children: u.map((e) => /* @__PURE__ */ E("button", {
 				type: "button",
@@ -970,7 +971,7 @@ function K({ author: e, avatarUrl: t, mine: n = !1, messages: r, className: i })
 		"data-author": e,
 		"data-row-count": r.length,
 		className: s("flex flex-col", i),
-		children: r.map((r, i) => /* @__PURE__ */ E(_, {
+		children: r.map((r, i) => /* @__PURE__ */ E(h, {
 			author: e,
 			content: r.content,
 			timestamp: r.timestamp,
@@ -2556,7 +2557,7 @@ function De({ idToken: e, sendMessage: t, onMessage: n, connectionState: r }) {
 }
 //#endregion
 //#region src/components/social/ReactionsBar.tsx
-function Oe({ reactions: e, onReact: t, disabled: n = !1, pickerEmojis: r = g, addTriggerLabel: i, hideAddTrigger: a = !1, className: o }) {
+function Oe({ reactions: e, onReact: t, disabled: n = !1, pickerEmojis: r = v, addTriggerLabel: i, hideAddTrigger: a = !1, className: o }) {
 	let [c, l] = w(!1), u = C(null), d = (e) => {
 		n || t(e);
 	}, f = (e) => {
@@ -2609,7 +2610,7 @@ function Oe({ reactions: e, onReact: t, disabled: n = !1, pickerEmojis: r = g, a
 					children: "Add reaction"
 				})]
 			}),
-			/* @__PURE__ */ E(h, {
+			/* @__PURE__ */ E(_, {
 				open: c,
 				onSelect: f,
 				onClose: () => l(!1),

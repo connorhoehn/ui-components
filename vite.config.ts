@@ -29,6 +29,9 @@ export default defineConfig({
         'doc-editor': resolve(import.meta.dirname, 'src/components/doc-editor/index.ts'),
         diagram: resolve(import.meta.dirname, 'src/components/diagram/index.ts'),
         social: resolve(import.meta.dirname, 'src/components/social/index.ts'),
+        // Separate entry so the tiptap optional peers stay OUT of the plain
+        // `social` bundle — see src/components/social/rich-composer.ts.
+        'social/rich-composer': resolve(import.meta.dirname, 'src/components/social/rich-composer.ts'),
         hooks: resolve(import.meta.dirname, 'src/hooks/index.ts'),
         types: resolve(import.meta.dirname, 'src/types/index.ts'),
         shared: resolve(import.meta.dirname, 'src/components/shared/index.ts'),

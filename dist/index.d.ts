@@ -3407,6 +3407,16 @@ export declare interface EmailTemplateListPageProps {
     loading?: boolean;
 }
 
+export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
+
+export declare interface EmojiShortcode {
+    /** The code typed between colons, without them. */
+    code: string;
+    emoji: string;
+    /** Extra search terms, so `:party:` finds 🎉 even though its code is `tada`. */
+    keywords?: readonly string[];
+}
+
 export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateAction {
@@ -5408,6 +5418,39 @@ export declare interface MappingRule {
     pipelineId?: string;
     /** Priority when multiple rules match — higher wins. */
     priority: number;
+}
+
+export declare function MarkdownView({ markdown, className, 'data-testid': testId }: MarkdownViewProps): JSX.Element;
+
+export declare interface MarkdownViewProps {
+    markdown: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, renderRow, renderCompactRow, renderDetail, railTitle, railWidth, compactWidth, storageKey, emptyDetail, className, 'data-testid': testId, }: MasterDetailProps<T>): JSX.Element;
+
+export declare interface MasterDetailProps<T> {
+    items: T[];
+    keyOf: (item: T) => string;
+    selectedKey: string | null;
+    onSelect: (key: string) => void;
+    /** Expanded rail row. */
+    renderRow: (item: T, index: number, selected: boolean) => ReactNode;
+    /** Compact (72px) rail row. Falls back to an index badge when omitted. */
+    renderCompactRow?: (item: T, index: number, selected: boolean) => ReactNode;
+    renderDetail: (item: T, index: number) => ReactNode;
+    railTitle?: ReactNode;
+    /** Expanded rail width in px. Default 340. */
+    railWidth?: number;
+    /** Compact rail width in px. Default 72. */
+    compactWidth?: number;
+    /** Persists compact/expanded mode under this localStorage key. */
+    storageKey?: string;
+    /** Rendered in the detail pane when nothing resolves from `selectedKey`. */
+    emptyDetail?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
@@ -8071,6 +8114,16 @@ export declare interface SearchAuditFilters extends AuditFilters {
     pipelineId?: string;
 }
 
+/**
+ * Ranks shortcodes for a query.
+ *
+ * Prefix matches on the CODE come first: someone typing `:fi` means `fire`,
+ * not `crossed_fingers` — a plain substring search buries the obvious answer
+ * under coincidental matches, which is the difference between autocomplete
+ * that feels instant and autocomplete you have to read.
+ */
+export declare function searchEmoji(query: string, list?: readonly EmojiShortcode[], limit?: number): EmojiShortcode[];
+
 export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): default_2.JSX.Element;
 
 export declare interface SearchInputProps {
@@ -9791,6 +9844,23 @@ export declare interface ToolCallStripProps {
     className?: string;
 }
 
+export declare function Tooltip({ content, children, placement, openDelay, closeDelay, disabled, className, 'data-testid': testId, }: TooltipProps): JSX.Element;
+
+export declare type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
+
+export declare interface TooltipProps {
+    content: ReactNode;
+    children: ReactElement;
+    placement?: TooltipPlacement;
+    /** ms before hover opens the tooltip. Default 350. */
+    openDelay?: number;
+    /** ms before leaving closes it. Default 100. */
+    closeDelay?: number;
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function TopNav({ items, activeHref, brand, rightSlot, renderLink, maxVisible, className, style, 'aria-label': ariaLabel, }: TopNavProps): JSX.Element;
 
 export declare interface TopNavItem {
@@ -9929,6 +9999,34 @@ export declare interface TransformNodeData {
 }
 
 export declare type TransformType = 'jsonpath' | 'template' | 'javascript';
+
+export declare type TreeDropPosition = 'before' | 'after' | 'into';
+
+export declare interface TreeNode {
+    id: string;
+    title: string;
+    parentId: string | null;
+    isDir?: boolean;
+    badge?: ReactNode;
+    meta?: string;
+    disabled?: boolean;
+}
+
+export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, onReorder, renderTrailing, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
+
+export declare interface TreeViewProps {
+    nodes: TreeNode[];
+    selectedId: string | null;
+    onSelect: (id: string) => void;
+    /** Node ids expanded on first render. Ancestors of `selectedId` auto-expand. */
+    defaultExpanded?: string[];
+    /** Enables HTML5 drag-and-drop reorder/reparent when provided. */
+    onReorder?: (id: string, targetParentId: string | null, position: number) => void;
+    /** Trailing slot per row — count chip, badge, menu button. */
+    renderTrailing?: (node: TreeNode) => ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /**
  * Generic 0..N-point sparkline. Pure SVG, no canvas / chart library.
@@ -11606,6 +11704,26 @@ declare interface UseActivityBusReturn {
       children: ReactNode;
   }): JSX.Element;
 
+  export declare function Wizard({ steps, activeKey, onStep, onFinish, finishLabel, className, 'data-testid': testId, }: WizardProps): JSX.Element;
+
+  export declare interface WizardProps {
+      steps: WizardStep[];
+      activeKey: string;
+      onStep: (key: string) => void;
+      onFinish?: () => void;
+      finishLabel?: string;
+      className?: string;
+      'data-testid'?: string;
+  }
+
+  export declare interface WizardStep {
+      key: string;
+      label: string;
+      content: ReactNode;
+      /** Default true. false disables Next/Finish while this step is active. */
+      canAdvance?: boolean;
+  }
+
   export declare function WorkArea({ breadcrumbs, toolbar, children, status, padded, tone, className, bodyClassName, 'data-testid': testId, }: WorkAreaProps): JSX.Element;
 
   export declare interface WorkAreaProps {
@@ -11628,6 +11746,22 @@ declare interface UseActivityBusReturn {
 
   /** @see SurfaceTone — which colour family the work area paints in. */
   export declare type WorkAreaTone = SurfaceTone;
+
+  export declare interface WorkflowStep {
+      step: number;
+      label: string;
+      done: boolean;
+      active: boolean;
+  }
+
+  export declare function WorkflowStepper({ steps, size, className, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
+
+  export declare interface WorkflowStepperProps {
+      steps: WorkflowStep[];
+      size?: 'sm' | 'md';
+      className?: string;
+      'data-testid'?: string;
+  }
 
   export declare const zIndex: {
       /** Sticky headers, fixed toolbars */

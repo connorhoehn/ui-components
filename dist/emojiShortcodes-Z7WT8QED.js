@@ -1,0 +1,542 @@
+//#region src/components/social/emojiShortcodes.ts
+var e = [
+	{
+		code: "+1",
+		emoji: "👍",
+		keywords: [
+			"thumbsup",
+			"yes",
+			"lgtm",
+			"approve"
+		]
+	},
+	{
+		code: "-1",
+		emoji: "👎",
+		keywords: ["thumbsdown", "no"]
+	},
+	{
+		code: "heart",
+		emoji: "❤️",
+		keywords: ["love"]
+	},
+	{
+		code: "fire",
+		emoji: "🔥",
+		keywords: ["lit", "hot"]
+	},
+	{
+		code: "tada",
+		emoji: "🎉",
+		keywords: [
+			"party",
+			"celebrate",
+			"ship"
+		]
+	},
+	{
+		code: "clap",
+		emoji: "👏",
+		keywords: ["applause"]
+	},
+	{
+		code: "100",
+		emoji: "💯",
+		keywords: ["hundred", "perfect"]
+	},
+	{
+		code: "eyes",
+		emoji: "👀",
+		keywords: ["look", "watching"]
+	},
+	{
+		code: "rocket",
+		emoji: "🚀",
+		keywords: [
+			"ship",
+			"deploy",
+			"launch"
+		]
+	},
+	{
+		code: "sparkles",
+		emoji: "✨",
+		keywords: ["new", "shiny"]
+	},
+	{
+		code: "pray",
+		emoji: "🙏",
+		keywords: [
+			"please",
+			"thanks",
+			"thankyou"
+		]
+	},
+	{
+		code: "muscle",
+		emoji: "💪",
+		keywords: ["strong"]
+	},
+	{
+		code: "wave",
+		emoji: "👋",
+		keywords: [
+			"hello",
+			"hi",
+			"bye"
+		]
+	},
+	{
+		code: "ok_hand",
+		emoji: "👌",
+		keywords: ["ok", "fine"]
+	},
+	{
+		code: "handshake",
+		emoji: "🤝",
+		keywords: ["deal", "agree"]
+	},
+	{
+		code: "crossed_fingers",
+		emoji: "🤞",
+		keywords: ["hope", "luck"]
+	},
+	{
+		code: "salute",
+		emoji: "🫡",
+		keywords: [
+			"yes",
+			"ack",
+			"onit"
+		]
+	},
+	{
+		code: "smile",
+		emoji: "😀",
+		keywords: ["happy"]
+	},
+	{
+		code: "grin",
+		emoji: "😁"
+	},
+	{
+		code: "joy",
+		emoji: "😂",
+		keywords: [
+			"lol",
+			"laugh",
+			"crying"
+		]
+	},
+	{
+		code: "rofl",
+		emoji: "🤣",
+		keywords: ["lmao", "laugh"]
+	},
+	{
+		code: "sweat_smile",
+		emoji: "😅",
+		keywords: ["phew", "nervous"]
+	},
+	{
+		code: "wink",
+		emoji: "😉"
+	},
+	{
+		code: "heart_eyes",
+		emoji: "😍",
+		keywords: ["love"]
+	},
+	{
+		code: "smiling_face_with_tear",
+		emoji: "🥲"
+	},
+	{
+		code: "thinking",
+		emoji: "🤔",
+		keywords: ["hmm", "think"]
+	},
+	{
+		code: "sunglasses",
+		emoji: "😎",
+		keywords: ["cool"]
+	},
+	{
+		code: "upside_down",
+		emoji: "🙃",
+		keywords: ["irony"]
+	},
+	{
+		code: "star_struck",
+		emoji: "🤩",
+		keywords: ["wow"]
+	},
+	{
+		code: "cry",
+		emoji: "😢",
+		keywords: ["sad"]
+	},
+	{
+		code: "sob",
+		emoji: "😭",
+		keywords: ["crying", "sad"]
+	},
+	{
+		code: "rage",
+		emoji: "😡",
+		keywords: ["angry", "mad"]
+	},
+	{
+		code: "exploding_head",
+		emoji: "🤯",
+		keywords: ["mindblown", "wow"]
+	},
+	{
+		code: "scream",
+		emoji: "😱",
+		keywords: ["fear", "panic"]
+	},
+	{
+		code: "sleeping",
+		emoji: "😴",
+		keywords: ["tired", "zzz"]
+	},
+	{
+		code: "zany_face",
+		emoji: "🤪",
+		keywords: ["silly"]
+	},
+	{
+		code: "melting_face",
+		emoji: "🫠",
+		keywords: ["dead", "overwhelmed"]
+	},
+	{
+		code: "face_with_monocle",
+		emoji: "🧐",
+		keywords: ["inspect", "review"]
+	},
+	{
+		code: "shushing_face",
+		emoji: "🤫",
+		keywords: ["quiet", "secret"]
+	},
+	{
+		code: "partying_face",
+		emoji: "🥳",
+		keywords: ["party", "birthday"]
+	},
+	{
+		code: "grimacing",
+		emoji: "😬",
+		keywords: ["yikes", "awkward"]
+	},
+	{
+		code: "neutral_face",
+		emoji: "😐",
+		keywords: ["meh"]
+	},
+	{
+		code: "expressionless",
+		emoji: "😑",
+		keywords: ["blank"]
+	},
+	{
+		code: "smiling_imp",
+		emoji: "😈",
+		keywords: ["evil"]
+	},
+	{
+		code: "bug",
+		emoji: "🐛",
+		keywords: ["defect", "issue"]
+	},
+	{
+		code: "wrench",
+		emoji: "🔧",
+		keywords: ["fix", "tool"]
+	},
+	{
+		code: "hammer",
+		emoji: "🔨",
+		keywords: ["build"]
+	},
+	{
+		code: "gear",
+		emoji: "⚙️",
+		keywords: ["settings", "config"]
+	},
+	{
+		code: "warning",
+		emoji: "⚠️",
+		keywords: ["careful", "caution"]
+	},
+	{
+		code: "rotating_light",
+		emoji: "🚨",
+		keywords: [
+			"alert",
+			"incident",
+			"siren"
+		]
+	},
+	{
+		code: "white_check_mark",
+		emoji: "✅",
+		keywords: [
+			"done",
+			"pass",
+			"green"
+		]
+	},
+	{
+		code: "x",
+		emoji: "❌",
+		keywords: [
+			"fail",
+			"no",
+			"red"
+		]
+	},
+	{
+		code: "heavy_check_mark",
+		emoji: "✔️",
+		keywords: ["done"]
+	},
+	{
+		code: "hourglass",
+		emoji: "⏳",
+		keywords: [
+			"wait",
+			"pending",
+			"slow"
+		]
+	},
+	{
+		code: "zap",
+		emoji: "⚡",
+		keywords: [
+			"fast",
+			"perf",
+			"lightning"
+		]
+	},
+	{
+		code: "boom",
+		emoji: "💥",
+		keywords: ["crash", "break"]
+	},
+	{
+		code: "memo",
+		emoji: "📝",
+		keywords: [
+			"note",
+			"docs",
+			"write"
+		]
+	},
+	{
+		code: "chart_with_upwards_trend",
+		emoji: "📈",
+		keywords: [
+			"metrics",
+			"up",
+			"growth"
+		]
+	},
+	{
+		code: "chart_with_downwards_trend",
+		emoji: "📉",
+		keywords: ["metrics", "down"]
+	},
+	{
+		code: "lock",
+		emoji: "🔒",
+		keywords: [
+			"secure",
+			"auth",
+			"private"
+		]
+	},
+	{
+		code: "key",
+		emoji: "🔑",
+		keywords: ["secret", "auth"]
+	},
+	{
+		code: "mag",
+		emoji: "🔍",
+		keywords: [
+			"search",
+			"find",
+			"investigate"
+		]
+	},
+	{
+		code: "link",
+		emoji: "🔗",
+		keywords: ["url"]
+	},
+	{
+		code: "pushpin",
+		emoji: "📌",
+		keywords: ["pin", "important"]
+	},
+	{
+		code: "calendar",
+		emoji: "📅",
+		keywords: ["date", "schedule"]
+	},
+	{
+		code: "bulb",
+		emoji: "💡",
+		keywords: ["idea", "suggestion"]
+	},
+	{
+		code: "construction",
+		emoji: "🚧",
+		keywords: ["wip", "progress"]
+	},
+	{
+		code: "recycle",
+		emoji: "♻️",
+		keywords: ["refactor"]
+	},
+	{
+		code: "lipstick",
+		emoji: "💄",
+		keywords: [
+			"ui",
+			"style",
+			"polish"
+		]
+	},
+	{
+		code: "package",
+		emoji: "📦",
+		keywords: [
+			"release",
+			"build",
+			"bundle"
+		]
+	},
+	{
+		code: "robot",
+		emoji: "🤖",
+		keywords: [
+			"bot",
+			"ai",
+			"agent"
+		]
+	},
+	{
+		code: "ghost",
+		emoji: "👻",
+		keywords: ["flaky", "spooky"]
+	},
+	{
+		code: "snail",
+		emoji: "🐌",
+		keywords: ["slow"]
+	},
+	{
+		code: "trophy",
+		emoji: "🏆",
+		keywords: ["win", "best"]
+	},
+	{
+		code: "dart",
+		emoji: "🎯",
+		keywords: ["target", "goal"]
+	},
+	{
+		code: "brain",
+		emoji: "🧠",
+		keywords: ["smart", "think"]
+	},
+	{
+		code: "coffee",
+		emoji: "☕",
+		keywords: ["brb", "morning"]
+	},
+	{
+		code: "pizza",
+		emoji: "🍕",
+		keywords: ["lunch", "food"]
+	},
+	{
+		code: "beers",
+		emoji: "🍻",
+		keywords: ["cheers", "friday"]
+	},
+	{
+		code: "cake",
+		emoji: "🍰",
+		keywords: ["birthday"]
+	},
+	{
+		code: "star",
+		emoji: "⭐",
+		keywords: ["favourite", "favorite"]
+	},
+	{
+		code: "rainbow",
+		emoji: "🌈"
+	},
+	{
+		code: "sunny",
+		emoji: "☀️",
+		keywords: ["sun", "weather"]
+	},
+	{
+		code: "snowflake",
+		emoji: "❄️",
+		keywords: ["cold", "freeze"]
+	},
+	{
+		code: "dog",
+		emoji: "🐶"
+	},
+	{
+		code: "cat",
+		emoji: "🐱"
+	},
+	{
+		code: "unicorn",
+		emoji: "🦄",
+		keywords: ["rare"]
+	},
+	{
+		code: "seedling",
+		emoji: "🌱",
+		keywords: ["new", "grow"]
+	},
+	{
+		code: "anchor",
+		emoji: "⚓",
+		keywords: ["stable"]
+	},
+	{
+		code: "balloon",
+		emoji: "🎈",
+		keywords: ["party"]
+	},
+	{
+		code: "gift",
+		emoji: "🎁",
+		keywords: ["present"]
+	}
+];
+function t(t, n = e, r = 8) {
+	let i = t.trim().toLowerCase();
+	if (!i) return n.slice(0, r);
+	let a = [], o = [], s = [];
+	for (let e of n) e.code.startsWith(i) ? a.push(e) : e.code.includes(i) ? o.push(e) : e.keywords?.some((e) => e.startsWith(i)) && s.push(e);
+	return [
+		...a,
+		...o,
+		...s
+	].slice(0, r);
+}
+//#endregion
+export { t as n, e as t };

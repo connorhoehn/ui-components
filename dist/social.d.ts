@@ -291,6 +291,16 @@ export declare interface ConversationPeer {
 
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
+export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
+
+export declare interface EmojiShortcode {
+    /** The code typed between colons, without them. */
+    code: string;
+    emoji: string;
+    /** Extra search terms, so `:party:` finds 🎉 even though its code is `tada`. */
+    keywords?: readonly string[];
+}
+
 export declare function formatBytes(bytes: number): string;
 
 /** Formats an ISO timestamp string to HH:MM local time. */
@@ -541,6 +551,16 @@ declare interface RoomListProps {
     activeRoomId?: string | null;
     compact?: boolean;
 }
+
+/**
+ * Ranks shortcodes for a query.
+ *
+ * Prefix matches on the CODE come first: someone typing `:fi` means `fire`,
+ * not `crossed_fingers` — a plain substring search buries the obvious answer
+ * under coincidental matches, which is the difference between autocomplete
+ * that feels instant and autocomplete you have to read.
+ */
+export declare function searchEmoji(query: string, list?: readonly EmojiShortcode[], limit?: number): EmojiShortcode[];
 
 export declare function SocialPanel({ idToken, onMessage }: {
     idToken: string | null;
