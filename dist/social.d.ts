@@ -360,6 +360,37 @@ export declare function isImageAttachment(a: {
     contentType?: string;
 }): boolean;
 
+export declare function LinkDialog({ open, initialText, initialHref, onSubmit, onRemove, onClose, 'data-testid': testId, }: LinkDialogProps): JSX.Element;
+
+export declare interface LinkDialogProps {
+    open: boolean;
+    /** Selected text at the time the dialog opened; prefills the label. */
+    initialText?: string;
+    /** Existing href when editing a link rather than creating one. */
+    initialHref?: string;
+    onSubmit: (value: LinkDialogValue) => void;
+    onRemove?: () => void;
+    onClose: () => void;
+    'data-testid'?: string;
+}
+
+export declare interface LinkDialogValue {
+    href: string;
+    /** The visible text. Empty means "keep whatever is selected". */
+    text: string;
+}
+
+export declare function MessageBody({ html, text, className, 'data-testid': testId }: MessageBodyProps): JSX.Element;
+
+export declare interface MessageBodyProps {
+    /** Rich body from the composer. When absent, `text` is rendered plainly. */
+    html?: string;
+    /** Plain-text fallback — also what a client that cannot render HTML shows. */
+    text: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function MessageGroup({ author, avatarUrl, mine, messages, className, }: MessageGroupProps): JSX.Element | null;
 
 export declare interface MessageGroupItem {
@@ -442,6 +473,15 @@ export declare interface NewConversationPerson {
     /** Secondary line — role, team, or handle. */
     hint?: string;
 }
+
+/**
+ * Accepts what people actually paste.
+ *
+ * `example.com` is a URL to everyone except a URL parser, so a bare host gets
+ * https://. Anything with a scheme is left alone — including mailto: and
+ * relative paths, which a naive prefix would corrupt.
+ */
+export declare function normalizeHref(raw: string): string;
 
 declare type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 

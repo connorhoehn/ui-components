@@ -149,6 +149,7 @@
     "@excalidraw/excalidraw": "^0.18.0",
     "@tiptap/core": "^3.0.0",
     "@tiptap/extension-collaboration": "^3.22.3",
+    "@tiptap/extension-link": "^3.22.3",
     "@tiptap/extension-mention": "^3.22.3",
     "@tiptap/extension-placeholder": "^3.22.3",
     "@tiptap/extension-task-item": "^3.22.3",
@@ -185,6 +186,9 @@
       "optional": true
     },
     "@tiptap/extension-collaboration": {
+      "optional": true
+    },
+    "@tiptap/extension-link": {
       "optional": true
     },
     "@tiptap/extension-mention": {

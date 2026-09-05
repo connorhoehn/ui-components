@@ -5255,6 +5255,26 @@ export declare interface LineSeries {
     color?: string;
 }
 
+export declare function LinkDialog({ open, initialText, initialHref, onSubmit, onRemove, onClose, 'data-testid': testId, }: LinkDialogProps): JSX.Element;
+
+export declare interface LinkDialogProps {
+    open: boolean;
+    /** Selected text at the time the dialog opened; prefills the label. */
+    initialText?: string;
+    /** Existing href when editing a link rather than creating one. */
+    initialHref?: string;
+    onSubmit: (value: LinkDialogValue) => void;
+    onRemove?: () => void;
+    onClose: () => void;
+    'data-testid'?: string;
+}
+
+export declare interface LinkDialogValue {
+    href: string;
+    /** The visible text. Empty means "keep whatever is selected". */
+    text: string;
+}
+
 declare type LinkRenderer = (item: {
     to: string;
     id: string;
@@ -5615,6 +5635,17 @@ declare interface MentionUser {
     mode?: string;
     type: 'user' | 'group';
     memberCount?: number;
+}
+
+export declare function MessageBody({ html, text, className, 'data-testid': testId }: MessageBodyProps): JSX.Element;
+
+export declare interface MessageBodyProps {
+    /** Rich body from the composer. When absent, `text` is rendered plainly. */
+    html?: string;
+    /** Plain-text fallback — also what a client that cannot render HTML shows. */
+    text: string;
+    className?: string;
+    'data-testid'?: string;
 }
 
 /**
@@ -6143,6 +6174,15 @@ declare interface NodeVocabulary {
     /** Field key -> input placeholder. */
     placeholders?: Record<string, string>;
 }
+
+/**
+ * Accepts what people actually paste.
+ *
+ * `example.com` is a URL to everyone except a URL parser, so a bare host gets
+ * https://. Anything with a scheme is left alone — including mailto: and
+ * relative paths, which a naive prefix would corrupt.
+ */
+export declare function normalizeHref(raw: string): string;
 
 export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
 

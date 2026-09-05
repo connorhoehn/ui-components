@@ -623,6 +623,11 @@
   border-left: 3px solid var(--color-border);
   color: var(--color-text-secondary);
 }
+.ProseMirror a {
+  color: var(--color-primary-fg);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 .ProseMirror code {
   background: var(--color-surface-inset);
   border-radius: 3px;

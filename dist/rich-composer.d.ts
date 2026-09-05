@@ -76,7 +76,7 @@ export declare interface MentionSuggestionsProps {
     }) => void;
 }
 
-export declare function RichChatComposer({ onSend, onSearchPeople, allowAttachments, allowEmoji, placeholder, disabled, toolbarExtras, className, 'data-testid': testId, }: RichChatComposerProps): JSX.Element;
+export declare function RichChatComposer({ onSend, onSearchPeople, allowAttachments, allowEmoji, onRequestLink, placeholder, disabled, toolbarExtras, className, 'data-testid': testId, }: RichChatComposerProps): JSX.Element;
 
 export declare interface RichChatComposerProps {
     onSend: (message: ComposedMessage) => void;
@@ -95,6 +95,15 @@ export declare interface RichChatComposerProps {
     allowAttachments?: boolean;
     /** Turns the emoji picker on. */
     allowEmoji?: boolean;
+    /**
+     * Asks the host for a URL when the link button is pressed, receiving the
+     * selected text so it can prefill. Returning nothing cancels.
+     *
+     * A callback rather than a built-in prompt: `window.prompt` is blocked in
+     * some embeddings and unstyleable in all of them, and a library that opens
+     * one has decided what the host's dialogs look like.
+     */
+    onRequestLink?: (selectedText: string) => string | null | undefined;
     placeholder?: string;
     disabled?: boolean;
     /** Rendered between the formatting controls and the send button. */

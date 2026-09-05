@@ -39,12 +39,14 @@ import { Extension, type Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Mention from '@tiptap/extension-mention';
+import Link from '@tiptap/extension-link';
 import Suggestion from '@tiptap/suggestion';
 import type { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion';
 import { cn } from '../../lib/cn';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover } from './ReactionPickerPopover';
 import { ComposerAttachments, type StagedFile } from './ComposerAttachments';
+import { LinkDialog } from './LinkDialog';
 import { MentionSuggestions, type MentionCandidate } from './MentionSuggestions';
 import { EmojiSuggestions } from './EmojiSuggestions';
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
@@ -80,6 +82,15 @@ export interface RichChatComposerProps {
   allowAttachments?: boolean;
   /** Turns the emoji picker on. */
   allowEmoji?: boolean;
+  /**
+   * Asks the host for a URL when the link button is pressed, receiving the
+   * selected text so it can prefill. Returning nothing cancels.
+   *
+   * A callback rather than a built-in prompt: `window.prompt` is blocked in
+   * some embeddings and unstyleable in all of them, and a library that opens
+   * one has decided what the host's dialogs look like.
+   */
+  onRequestLink?: (selectedText: string) => string | null | undefined;
   placeholder?: string;
   disabled?: boolean;
   /** Rendered between the formatting controls and the send button. */
@@ -143,6 +154,7 @@ export function RichChatComposer({
   onSearchPeople,
   allowAttachments = false,
   allowEmoji = false,
+  onRequestLink,
   placeholder = 'Write a message…',
   disabled = false,
   toolbarExtras,
@@ -153,9 +165,15 @@ export function RichChatComposer({
   // Reading it through a ref is what lets the extension stay stable without
   // capturing a stale closure over the staged files.
   const sendRef = useRef<() => void>(() => {});
+  const linkRef = useRef<() => void>(() => {});
   const fileInput = useRef<HTMLInputElement | null>(null);
   const emojiTrigger = useRef<HTMLButtonElement | null>(null);
   const [emojiOpen, setEmojiOpen] = useState(false);
+  // The link dialog's opening state. `text` is the selection at open time, so
+  // the label field is prefilled with what the user highlighted.
+  const [linkState, setLinkState] = useState<{ open: boolean; href: string; text: string }>(
+    { open: false, href: '', text: '' },
+  );
   const [staged, setStaged] = useState<StagedFile[]>([]);
   // Mirrors emptiness so the send button can disable. `editor.isEmpty` is not
   // reactive, so reading it during render leaves the button one keystroke stale.
@@ -171,6 +189,14 @@ export function RichChatComposer({
         horizontalRule: false,
       }),
       Placeholder.configure({ placeholder }),
+      Link.configure({
+        openOnClick: false,
+        // Typing or pasting a URL marks it automatically, which is what every
+        // chat product does and what makes the toolbar button a rarity rather
+        // than a requirement.
+        autolink: true,
+        HTMLAttributes: { rel: 'noopener noreferrer nofollow', target: '_blank' },
+      }),
       // `:` emoji autocomplete, the way Teams and Slack do it. A second
       // Suggestion plugin rather than a second editor concept: the trigger
       // character is the only thing that differs, and reusing the plugin means
@@ -252,6 +278,13 @@ export function RichChatComposer({
           return {
             Enter: () => {
               sendRef.current();
+              return true;
+            },
+            // The universal link shortcut. Bound here rather than on the
+            // wrapper so it fires with the editor focused and the selection
+            // still intact.
+            'Mod-k': () => {
+              linkRef.current();
               return true;
             },
             // The chat convention: Shift+Enter is the newline.
@@ -336,6 +369,33 @@ export function RichChatComposer({
   // without typing is the common case.
   const canSend = !disabled && (!empty || staged.length > 0);
 
+  /** Opens the dialog seeded from the selection, or from the link under it. */
+  const openLinkDialog = useCallback(() => {
+    if (!editor) return;
+    const { from, to } = editor.state.selection;
+    setLinkState({
+      open: true,
+      href: (editor.getAttributes('link').href as string) ?? '',
+      text: editor.state.doc.textBetween(from, to),
+    });
+  }, [editor]);
+
+  const applyLink = useCallback(
+    ({ href, text }: { href: string; text: string }) => {
+      if (!editor) return;
+      const chain = editor.chain().focus();
+      const { empty } = editor.state.selection;
+      // With a selection, the label may have been rewritten in the dialog —
+      // replacing it is what "adjust the text" means. With no selection there
+      // is nothing to wrap, so the label (or the URL) becomes the text.
+      if (empty) chain.insertContent(`<a href="${href}">${text || href}</a>`).run();
+      else if (text) chain.insertContent(`<a href="${href}">${text}</a>`).run();
+      else chain.setLink({ href }).run();
+      setLinkState({ open: false, href: '', text: '' });
+    },
+    [editor],
+  );
+
   const send = useCallback(() => {
     if (!editor || !canSend) return;
     onSend({
@@ -350,6 +410,7 @@ export function RichChatComposer({
   }, [editor, canSend, onSend, staged]);
 
   sendRef.current = send;
+  linkRef.current = openLinkDialog;
 
   const stage = useCallback(
     (files: File[]) => {
@@ -418,6 +479,12 @@ export function RichChatComposer({
             toolbarButton('Italic', editor.isActive('italic'), () => editor.chain().focus().toggleItalic().run(), <i>I</i>),
             toolbarButton('Strikethrough', editor.isActive('strike'), () => editor.chain().focus().toggleStrike().run(), <s>S</s>),
             toolbarButton('Code', editor.isActive('code'), () => editor.chain().focus().toggleCode().run(), <span className="font-mono text-[11px]">{'<>'}</span>),
+            toolbarButton(
+              editor.isActive('link') ? 'Edit link' : 'Add link',
+              editor.isActive('link'),
+              () => openLinkDialog(),
+              <span aria-hidden>🔗</span>,
+            ),
             <span key="sep1" aria-hidden className="mx-1 h-4 w-px bg-border" />,
             toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), <span>•</span>),
             toolbarButton('Numbered list', editor.isActive('orderedList'), () => editor.chain().focus().toggleOrderedList().run(), <span className="text-[11px]">1.</span>),
@@ -475,6 +542,22 @@ export function RichChatComposer({
             Send
           </button>
         </div>
+        <LinkDialog
+          open={linkState.open}
+          initialHref={linkState.href}
+          initialText={linkState.text}
+          onSubmit={(v) => (onRequestLink ? applyLink({ ...v, href: onRequestLink(v.text) ?? v.href }) : applyLink(v))}
+          onRemove={() => {
+            editor?.chain().focus().unsetLink().run();
+            setLinkState({ open: false, href: '', text: '' });
+          }}
+          onClose={() => {
+            setLinkState({ open: false, href: '', text: '' });
+            // Focus returns to the editor, or the caret is lost and the next
+            // keystroke goes nowhere.
+            editor?.commands.focus();
+          }}
+        />
       </div>
     </ChatDropZone>
   );

@@ -1,8 +1,8 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { n as t } from "./overlayStack-tmtTS-39.js";
+import { t } from "./Chip-YhQI5B9P.js";
 import { a as n, i as r, n as i, o as a, s as o } from "./FloatingPanel-CVnSIFM0.js";
 import { t as s } from "./StatusDot-Bgx2zxgC.js";
-import { t as c } from "./InlinePopover-DsaEWXby.js";
+import { t as c } from "./InlinePopover-DFdI8hw1.js";
 import { Fragment as l, createContext as u, forwardRef as d, useCallback as f, useContext as p, useEffect as m, useImperativeHandle as h, useLayoutEffect as g, useMemo as _, useRef as v, useState as y, useSyncExternalStore as b } from "react";
 import { Fragment as x, jsx as S, jsxs as C } from "react/jsx-runtime";
 import { Terminal as w } from "@xterm/xterm";

@@ -58,3 +58,18 @@ export type { ChatDropZoneProps } from './ChatDropZone';
 // replacing the two stacked create-forms.
 export { NewConversationPanel, toChannelName } from './NewConversationPanel';
 export type { NewConversationPanelProps, NewConversationPerson } from './NewConversationPanel';
+
+// Emoji shortcodes for `:` autocomplete. Data, so a host can supply its own set.
+export { EMOJI_SHORTCODES, searchEmoji } from './emojiShortcodes';
+export type { EmojiShortcode } from './emojiShortcodes';
+
+// LinkDialog — URL + display text. Exported so a host can reuse the same
+// dialog outside the composer (message edit, a link in a doc comment).
+export { LinkDialog, normalizeHref } from './LinkDialog';
+export type { LinkDialogProps, LinkDialogValue } from './LinkDialog';
+
+// MessageBody — renders a message's rich text from an ALLOW-LIST. Message
+// bodies are attacker-controlled; this is the component that makes rendering
+// them safe.
+export { MessageBody } from './MessageBody';
+export type { MessageBodyProps } from './MessageBody';

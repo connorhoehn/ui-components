@@ -11,6 +11,7 @@ import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
 import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
+import { MessageBody } from './MessageBody';
 import { AttachmentBubble, TransferBubble, type ChatAttachment, type ChatTransfer } from './ChatAttachment';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover, DEFAULT_PICKER_EMOJIS } from './ReactionPickerPopover';
@@ -380,12 +381,20 @@ export function ChatPanel({
               // sibling rows, so a caption and its image stay one message —
               // they share an author, a timestamp, and a position in the
               // ordering, and splitting them lets the two drift apart.
+              // `metadata.html` is the composer's rich body. Rendering
+              // `content` alone threw away every link, bold run and mention the
+              // sender created — MessageBody restores them, from an allow-list,
+              // because a message body is attacker-controlled text.
+              const rich = (message as { metadata?: { html?: unknown } }).metadata?.html;
+              const richHtml = typeof rich === 'string' ? rich : undefined;
+              const text = <MessageBody html={richHtml} text={message.content} />;
+
               const body =
                 files.length === 0 ? (
-                  message.content
+                  text
                 ) : (
                   <>
-                    {message.content && <span>{message.content}</span>}
+                    {(message.content || richHtml) && text}
                     {files.map((file) => (
                       <AttachmentBubble
                         key={file.id}
