@@ -1292,6 +1292,7 @@ function Ft({ onSend: t, onSearchPeople: a, allowAttachments: o = !1, allowEmoji
 			b.configure({ placeholder: l }),
 			x.create({
 				name: "emojiSuggestion",
+				priority: 101,
 				addProseMirrorPlugins() {
 					return [Et({
 						editor: this.editor,

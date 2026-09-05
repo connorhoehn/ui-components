@@ -39,12 +39,15 @@ import { Extension, type Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Mention from '@tiptap/extension-mention';
+import Suggestion from '@tiptap/suggestion';
 import type { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion';
 import { cn } from '../../lib/cn';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover } from './ReactionPickerPopover';
 import { ComposerAttachments, type StagedFile } from './ComposerAttachments';
 import { MentionSuggestions, type MentionCandidate } from './MentionSuggestions';
+import { EmojiSuggestions } from './EmojiSuggestions';
+import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
 
 export type { MentionCandidate };
 
@@ -83,6 +86,40 @@ export interface RichChatComposerProps {
   toolbarExtras?: ReactNode;
   className?: string;
   'data-testid'?: string;
+}
+
+/**
+ * Mounts a suggestion menu and keeps it at the caret.
+ *
+ * ReactRenderer BUILDS a menu; it does not put it on screen. The upstream
+ * examples hand `renderer.element` to tippy.js, a dependency this library does
+ * not carry — so without this the menu renders into a detached node and the
+ * trigger character appears to do nothing. Mentions shipped broken that way
+ * once; sharing the helper is what stops the emoji menu repeating it.
+ */
+function mountSuggestionMenu() {
+  let host: HTMLElement | null = null;
+  return {
+    attach(el: HTMLElement) {
+      host = el;
+      document.body.appendChild(el);
+    },
+    place(rect: DOMRect | null | undefined) {
+      if (!host || !rect) return;
+      host.style.position = 'absolute';
+      host.style.zIndex = '9600';
+      // Flipped above when the caret sits near the bottom, which in a chat
+      // composer is most of the time.
+      const wouldOverflow = rect.bottom + 240 > window.innerHeight;
+      host.style.top = `${(wouldOverflow ? rect.top - 6 : rect.bottom + 6) + window.scrollY}px`;
+      host.style.left = `${rect.left + window.scrollX}px`;
+      host.style.transform = wouldOverflow ? 'translateY(-100%)' : '';
+    },
+    detach() {
+      host?.remove();
+      host = null;
+    },
+  };
 }
 
 /** Collects mention nodes in document order, de-duplicated by id. */
@@ -134,6 +171,72 @@ export function RichChatComposer({
         horizontalRule: false,
       }),
       Placeholder.configure({ placeholder }),
+      // `:` emoji autocomplete, the way Teams and Slack do it. A second
+      // Suggestion plugin rather than a second editor concept: the trigger
+      // character is the only thing that differs, and reusing the plugin means
+      // arrow keys, Enter/Tab and Escape behave identically in both menus.
+      Extension.create({
+        name: 'emojiSuggestion',
+        // Above the default 100 that `chatComposerKeymap` runs at, so this
+        // plugin sees Enter FIRST and can consume it while the menu is open.
+        // Without it Enter fell through to the composer and sent the literal
+        // ":fi" — the same failure the mention menu had, which only avoided it
+        // because Mention ships a raised priority of its own.
+        priority: 101,
+        addProseMirrorPlugins() {
+          return [
+            Suggestion({
+              editor: this.editor,
+              char: ':',
+              // Two characters before the menu opens. With `allow` on one, every
+              // bare colon in "note: this" would pop a menu mid-sentence.
+              allow: ({ state, range }) => {
+                const text = state.doc.textBetween(range.from, range.to, '\0');
+                return text.length >= 3;
+              },
+              items: ({ query }: { query: string }) => searchEmoji(query),
+              command: ({ editor: e, range, props }) => {
+                e.chain().focus().deleteRange(range).insertContent(props.emoji).run();
+              },
+              render: () => {
+                let renderer: ReactRenderer | null = null;
+                const menu = mountSuggestionMenu();
+                return {
+                  onStart: (props: SuggestionProps) => {
+                    renderer = new ReactRenderer(EmojiSuggestions, {
+                      props,
+                      editor: props.editor,
+                    });
+                    menu.attach(renderer.element as HTMLElement);
+                    menu.place(props.clientRect?.());
+                  },
+                  onUpdate: (props: SuggestionProps) => {
+                    renderer?.updateProps(props);
+                    menu.place(props.clientRect?.());
+                  },
+                  onKeyDown: (props: SuggestionKeyDownProps) => {
+                    if (props.event.key === 'Escape') {
+                      menu.detach();
+                      return true;
+                    }
+                    return (
+                      (
+                        renderer?.ref as {
+                          onKeyDown?: (p: SuggestionKeyDownProps) => boolean;
+                        } | null
+                      )?.onKeyDown?.(props) ?? false
+                    );
+                  },
+                  onExit: () => {
+                    menu.detach();
+                    renderer?.destroy();
+                  },
+                };
+              },
+            }),
+          ];
+        },
+      }),
       // Enter is handled HERE, in the ProseMirror keymap, not as a React
       // onKeyDown on the wrapper.
       //
@@ -168,27 +271,7 @@ export function RichChatComposer({
             items: ({ query }: { query: string }) => onSearchPeople(query),
             render: () => {
               let renderer: ReactRenderer | null = null;
-
-              // ReactRenderer BUILDS the menu; it does not put it on screen.
-              // The upstream examples hand `renderer.element` to tippy.js for
-              // that, which is a dependency this library does not carry — so
-              // without these three lines the menu renders into a detached node
-              // and typing "@" appears to do nothing at all. That is exactly
-              // how mentions shipped broken once already.
-              const place = (rect: DOMRect | null | undefined) => {
-                const el = renderer?.element as HTMLElement | undefined;
-                if (!el || !rect) return;
-                el.style.position = 'absolute';
-                el.style.zIndex = '9600';
-                // Below the caret, and nudged up if that would run off-screen —
-                // the caret is often near the bottom of the viewport in a chat.
-                const below = rect.bottom + 6 + window.scrollY;
-                const wouldOverflow = rect.bottom + 240 > window.innerHeight;
-                el.style.top = `${wouldOverflow ? rect.top - 6 + window.scrollY : below}px`;
-                el.style.left = `${rect.left + window.scrollX}px`;
-                if (wouldOverflow) el.style.transform = 'translateY(-100%)';
-                else el.style.transform = '';
-              };
+              const menu = mountSuggestionMenu();
 
               return {
                 onStart: (props: SuggestionProps) => {
@@ -196,19 +279,18 @@ export function RichChatComposer({
                     props,
                     editor: props.editor,
                   });
-                  const el = renderer.element as HTMLElement;
-                  document.body.appendChild(el);
-                  place(props.clientRect?.());
+                  menu.attach(renderer.element as HTMLElement);
+                  menu.place(props.clientRect?.());
                 },
                 onUpdate: (props: SuggestionProps) => {
                   renderer?.updateProps(props);
-                  place(props.clientRect?.());
+                  menu.place(props.clientRect?.());
                 },
                 // Returning the menu's answer is what stops Enter reaching the
                 // composer and sending "@no" mid-selection.
                 onKeyDown: (props: SuggestionKeyDownProps) => {
                   if (props.event.key === 'Escape') {
-                    renderer?.element?.remove();
+                    menu.detach();
                     return true;
                   }
                   return (
@@ -217,10 +299,10 @@ export function RichChatComposer({
                   );
                 },
                 onExit: () => {
-                  // Removed from the DOM before destroy: destroy() unmounts the
-                  // React tree but leaves the host node parented to <body>, so
-                  // every dismissed menu would leak an empty div.
-                  renderer?.element?.remove();
+                  // Detached before destroy: destroy() unmounts the React tree
+                  // but leaves the host node parented to <body>, so every
+                  // dismissed menu would leak an empty div.
+                  menu.detach();
                   renderer?.destroy();
                 },
               };
