@@ -234,13 +234,13 @@ function te(e) {
 	let t = e.length - 2;
 	return `${e[0]}, ${e[1]} and ${t} other${t > 1 ? "s" : ""} are typing...`;
 }
-function w({ messages: i, onSend: m, disabled: h = !1, onTyping: g, typingUsers: _ = [], tone: y = "light", showHeader: b, fill: C, onLoadMore: w, hasMore: T, loadingMore: E = !1, onSendFiles: D, transfers: O = [], currentActor: k, onCancelTransfer: re, attachmentSrc: ie, onOpenAttachment: ae, acceptFiles: A, maxFileSize: j, onFileError: M, emojis: oe = s }) {
-	let N = y === "dark", P = n(), se = b ?? !(P?.hasHeader ?? !1), F = C ?? P?.fillsHeight ?? !1, [I, L] = u(""), R = l(null), z = l(null), ce = !!w && T !== !1, B = l(null), V = l(null), [H, U] = u(!1), W = !!D && !h, [G, K] = u(0), q = l(!0), J = l(i.length), Y = i.length + O.length, X = l(null);
-	function le() {
+function w({ messages: i, onSend: m, disabled: h = !1, onTyping: g, typingUsers: _ = [], composer: y, tone: b = "light", showHeader: C, fill: w, onLoadMore: T, hasMore: re, loadingMore: E = !1, onSendFiles: D, transfers: O = [], currentActor: k, onCancelTransfer: ie, attachmentSrc: ae, onOpenAttachment: oe, acceptFiles: A, maxFileSize: j, onFileError: M, emojis: se = s }) {
+	let N = b === "dark", P = n(), ce = C ?? !(P?.hasHeader ?? !1), F = w ?? P?.fillsHeight ?? !1, [I, L] = u(""), R = l(null), z = l(null), le = !!T && re !== !1, B = l(null), V = l(null), [H, U] = u(!1), W = !!D && !h, [G, K] = u(0), q = l(!0), J = l(i.length), Y = i.length + O.length, X = l(null);
+	function ue() {
 		let e = R.current;
 		e && (e.scrollTop = e.scrollHeight, q.current = !0, K(0));
 	}
-	function ue() {
+	function de() {
 		let e = R.current;
 		if (!e) return;
 		let t = ee(e);
@@ -256,12 +256,12 @@ function w({ messages: i, onSend: m, disabled: h = !1, onTyping: g, typingUsers:
 		}
 		q.current ? (e.scrollTop = e.scrollHeight, K(0)) : n > 0 && K((e) => e + n);
 	}, [Y]);
-	function de() {
+	function fe() {
 		let e = R.current;
 		e && (X.current = {
 			scrollHeight: e.scrollHeight,
 			scrollTop: e.scrollTop
-		}), w?.();
+		}), T?.();
 	}
 	c(() => () => {
 		z.current && clearTimeout(z.current);
@@ -273,22 +273,22 @@ function w({ messages: i, onSend: m, disabled: h = !1, onTyping: g, typingUsers:
 	function Q(e) {
 		!W || e.length === 0 || (q.current = !0, D?.(e));
 	}
-	function fe(e) {
+	function pe(e) {
 		if (!W) return;
 		let t = Array.from(e.clipboardData?.items ?? []).filter((e) => e.kind === "file").map((e) => e.getAsFile()).filter((e) => e !== null);
 		t.length !== 0 && (e.preventDefault(), Q(t));
 	}
-	function pe(e) {
+	function me(e) {
 		L((t) => t + e), U(!1);
 	}
-	function me(e) {
+	function he(e) {
 		h || (g?.(!0), z.current && clearTimeout(z.current), z.current = setTimeout(() => g?.(!1), 2e3)), e.key === "Enter" && !h && I.trim() && Z();
 	}
 	let $ = /* @__PURE__ */ p("div", {
 		"data-testid": "chat-panel",
 		className: e(F ? "flex h-full min-h-0 flex-col px-3 pb-3 pt-2" : e("border rounded p-3 mt-4", N ? "border-white/10 bg-white/5" : "border-border")),
 		children: [
-			se && /* @__PURE__ */ p("div", {
+			ce && /* @__PURE__ */ p("div", {
 				className: e("text-sm font-semibold mb-2 shrink-0", N ? "text-white/90" : "text-text-primary"),
 				children: [
 					"Chat (",
@@ -304,16 +304,16 @@ function w({ messages: i, onSend: m, disabled: h = !1, onTyping: g, typingUsers:
 				className: e("relative flex flex-col mb-2", F ? "min-h-0 flex-1" : ""),
 				children: [/* @__PURE__ */ p("div", {
 					ref: R,
-					onScroll: ue,
+					onScroll: de,
 					"data-testid": "chat-panel-messages",
 					className: e("overflow-y-auto overflow-x-hidden", F ? "min-h-0 flex-1" : "max-h-[200px]"),
 					children: [
-						ce && i.length > 0 && /* @__PURE__ */ f("div", {
+						le && i.length > 0 && /* @__PURE__ */ f("div", {
 							className: "flex justify-center pb-1",
 							children: /* @__PURE__ */ f("button", {
 								type: "button",
 								"data-testid": "chat-panel-load-more",
-								onClick: de,
+								onClick: fe,
 								disabled: E,
 								className: e("rounded px-2 py-1 text-xs disabled:opacity-60", N ? "text-white/70 hover:bg-white/10" : "text-text-secondary hover:bg-surface-hover"),
 								children: E ? "Loading…" : "Load earlier messages"
@@ -325,32 +325,32 @@ function w({ messages: i, onSend: m, disabled: h = !1, onTyping: g, typingUsers:
 						}) : i.map((e, t) => {
 							let n = e.displayName ?? e.clientId.slice(0, 8), r = e.attachments ?? [], i = r.length === 0 ? e.content : /* @__PURE__ */ p(d, { children: [e.content && /* @__PURE__ */ f("span", { children: e.content }), r.map((e) => /* @__PURE__ */ f(x, {
 								attachment: e,
-								src: ie?.(e),
-								onOpen: ae
+								src: ae?.(e),
+								onOpen: oe
 							}, e.id))] });
 							return /* @__PURE__ */ f(v, {
 								author: n,
 								content: i,
 								timestamp: e.timestamp,
 								avatarUrl: e.avatarUrl,
-								tone: y
+								tone: b
 							}, e.id ?? t);
 						}),
 						O.map((e) => /* @__PURE__ */ f(v, {
 							author: e.actor,
 							timestamp: "",
-							tone: y,
+							tone: b,
 							content: /* @__PURE__ */ f(S, {
 								transfer: e,
 								mine: !!k && e.actor === k,
-								onCancel: re
+								onCancel: ie
 							})
 						}, e.transferId))
 					]
 				}), G > 0 && /* @__PURE__ */ p("button", {
 					type: "button",
 					"data-testid": "chat-panel-new-messages",
-					onClick: le,
+					onClick: ue,
 					className: e("absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs shadow-md", N ? "bg-white/20 text-white" : "bg-primary text-white"),
 					children: [
 						G,
@@ -360,7 +360,11 @@ function w({ messages: i, onSend: m, disabled: h = !1, onTyping: g, typingUsers:
 					]
 				})]
 			}),
-			/* @__PURE__ */ p("div", {
+			y ? /* @__PURE__ */ f("div", {
+				className: "shrink-0",
+				"data-testid": "chat-panel-composer-slot",
+				children: y
+			}) : /* @__PURE__ */ p("div", {
 				className: "flex flex-row items-center gap-2 shrink-0",
 				children: [
 					D && /* @__PURE__ */ p(d, { children: [/* @__PURE__ */ f("button", {
@@ -402,17 +406,17 @@ function w({ messages: i, onSend: m, disabled: h = !1, onTyping: g, typingUsers:
 					}),
 					/* @__PURE__ */ f(a, {
 						open: H,
-						onSelect: pe,
+						onSelect: me,
 						onClose: () => U(!1),
 						triggerRef: V,
-						emojis: oe
+						emojis: se
 					}),
 					/* @__PURE__ */ f(r, {
 						size: "sm",
 						value: I,
 						onChange: (e) => L(e.target.value),
-						onKeyDown: me,
-						onPaste: fe,
+						onKeyDown: he,
+						onPaste: pe,
 						disabled: h,
 						placeholder: h ? "Not connected" : "Type a message...",
 						className: e("flex-1 text-sm", N && "border-white/20 bg-white/10 text-white placeholder:text-white/35 focus:border-white/40 focus:bg-white/10 focus:ring-white/20")

@@ -270,3 +270,29 @@ describe('ChatPanel — dark tone', () => {
     expect(input.value).toBe('');
   });
 });
+
+// The composer slot: a host with the rich-text stack swaps in its own input.
+// ChatPanel's plain field stays the default so a support widget or log console
+// pays no rich-text cost.
+describe('ChatPanel — composer slot', () => {
+  it('renders the host composer in place of the built-in input row', () => {
+    render(
+      <ChatPanel
+        messages={[]}
+        onSend={vi.fn()}
+        composer={<button>my composer</button>}
+      />,
+    );
+
+    expect(screen.getByTestId('chat-panel-composer-slot')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'my composer' })).toBeInTheDocument();
+    // The built-in field is GONE, not hidden behind it — two message inputs in
+    // one panel is two places to type and one of them does nothing.
+    expect(screen.queryByPlaceholderText(/type a message/i)).toBeNull();
+  });
+
+  it('keeps its own input when no slot is given', () => {
+    render(<ChatPanel messages={[]} onSend={vi.fn()} />);
+    expect(screen.queryByTestId('chat-panel-composer-slot')).toBeNull();
+  });
+});

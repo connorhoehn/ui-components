@@ -4,7 +4,7 @@
 // with an input field and Send button. Displays message author as
 // displayName when available, falling back to the first 8 chars of clientId.
 
-import { useState, useRef, useEffect, type ClipboardEvent } from 'react';
+import { useState, useRef, useEffect, type ClipboardEvent, type ReactNode } from 'react';
 import type { ChatMessage } from '../../hooks/useChat';
 import { MessageRow } from './MessageRow';
 import { cn } from '../../lib/cn';
@@ -22,6 +22,20 @@ import { ReactionPickerPopover, DEFAULT_PICKER_EMOJIS } from './ReactionPickerPo
 export interface ChatPanelProps {
   messages: ChatMessage[];
   onSend: (content: string) => void;
+  /**
+   * Replaces the built-in input row entirely.
+   *
+   * The default composer is a plain field, which is the right default: it costs
+   * no rich-text dependency and suits a support widget or a log console. A host
+   * that wants formatting, @mentions, `:` emoji and staged attachments passes
+   * `RichChatComposer` here (from `ui-components/social/rich-composer`, which
+   * carries the tiptap peers) rather than this panel growing a second mode.
+   *
+   * When set, `onSend`, `onSendFiles`, `emojis` and the other composer-shaped
+   * props are NOT used for input — the slot owns sending. They still apply to
+   * the message list.
+   */
+  composer?: ReactNode;
   disabled?: boolean;
   onTyping?: (isTyping: boolean) => void;
   typingUsers?: string[];
@@ -141,6 +155,7 @@ export function ChatPanel({
   disabled = false,
   onTyping,
   typingUsers = [],
+  composer,
   tone = 'light',
   showHeader,
   fill,
@@ -429,7 +444,10 @@ export function ChatPanel({
         )}
       </div>
 
-      {/* Input row */}
+      {/* Input row — or whatever the host put in its place. */}
+      {composer ? (
+        <div className="shrink-0" data-testid="chat-panel-composer-slot">{composer}</div>
+      ) : (
       <div className="flex flex-row items-center gap-2 shrink-0">
         {onSendFiles && (
           <>
@@ -521,6 +539,7 @@ export function ChatPanel({
           Send
         </Button>
       </div>
+      )}
     </div>
   );
 

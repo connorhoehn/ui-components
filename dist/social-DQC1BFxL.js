@@ -6,7 +6,7 @@ import { t as l } from "./Textarea-Dz4doxTv.js";
 import { n as u, t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./PresenceDot-3gBZGPvX.js";
 import { t as p } from "./Select-CqVokE2v.js";
-import { c as m, s as h } from "./PresencePanel-lernt_07.js";
+import { c as m, s as h } from "./PresencePanel-BBYAOrzm.js";
 import { t as g } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as _, t as v } from "./ReactionPickerPopover-moHezwrL.js";
 import { useCallback as y, useEffect as b, useId as x, useMemo as S, useRef as C, useState as w } from "react";

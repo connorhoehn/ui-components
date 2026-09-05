@@ -1970,11 +1970,25 @@ export declare interface ChatMessage {
     attachments?: ChatAttachment[];
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
     onSend: (content: string) => void;
+    /**
+     * Replaces the built-in input row entirely.
+     *
+     * The default composer is a plain field, which is the right default: it costs
+     * no rich-text dependency and suits a support widget or a log console. A host
+     * that wants formatting, @mentions, `:` emoji and staged attachments passes
+     * `RichChatComposer` here (from `ui-components/social/rich-composer`, which
+     * carries the tiptap peers) rather than this panel growing a second mode.
+     *
+     * When set, `onSend`, `onSendFiles`, `emojis` and the other composer-shaped
+     * props are NOT used for input — the slot owns sending. They still apply to
+     * the message list.
+     */
+    composer?: ReactNode;
     disabled?: boolean;
     onTyping?: (isTyping: boolean) => void;
     typingUsers?: string[];
