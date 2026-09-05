@@ -39,6 +39,41 @@ describe('DocumentActivityCard', () => {
     expect(screen.getByText(/and 2 others are editing now/)).toBeInTheDocument();
   });
 
+  // The faces render every editor, named or not. Counting only the named
+  // ones put one name beside two avatars.
+  it('counts the editors it cannot name', () => {
+    render(
+      <DocumentActivityCard
+        documentId="d1"
+        title="RFC"
+        editors={[{ userId: 'u1', displayName: 'Hank Anderson' }, { userId: 'anon-1' }]}
+      />,
+    );
+    expect(screen.getByText('Hank Anderson and 1 other are editing now')).toBeInTheDocument();
+  });
+
+  it('pluralises the ones it cannot name', () => {
+    render(
+      <DocumentActivityCard
+        documentId="d1"
+        title="RFC"
+        editors={[{ userId: 'u1', displayName: 'Hank Anderson' }, { userId: 'a1' }, { userId: 'a2' }]}
+      />,
+    );
+    expect(screen.getByText('Hank Anderson and 2 others are editing now')).toBeInTheDocument();
+  });
+
+  it('does not say "1 others"', () => {
+    render(
+      <DocumentActivityCard
+        documentId="d1"
+        title="RFC"
+        editors={[...editors, { userId: 'u3', displayName: 'Nora' }]}
+      />,
+    );
+    expect(screen.getByText('Hank Anderson, Bob Martinez and 1 other are editing now')).toBeInTheDocument();
+  });
+
   // Never a raw userId where a person should be.
   it('falls back to a count when nobody has a name', () => {
     render(<DocumentActivityCard documentId="d1" title="RFC" editors={[{ userId: 'dev-e2e-uo0cpk' }]} />);

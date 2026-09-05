@@ -126,15 +126,24 @@ export function DocumentActivityCard({
   );
 }
 
-/** Names, not ids: "who" is what decides whether you join them. */
+/**
+ * Names, not ids: "who" is what decides whether you join them.
+ *
+ * The count is over EVERY editor, named or not. An editor with no resolvable
+ * name still gets a face in the row beside this sentence, so counting only
+ * the named ones put "Hank Anderson is editing now" next to two avatars — the
+ * sentence and the faces disagreeing about how many people were in the
+ * document.
+ */
 function describeEditors(editors: readonly DocumentActivityEditor[]): string {
-  const names = editors.map((e) => e.displayName).filter(Boolean) as string[];
-  if (names.length === 0) {
-    return editors.length === 1 ? 'Someone is' : `${editors.length} people are`;
-  }
-  if (names.length === 1) return `${names[0]} is`;
-  if (names.length === 2) return `${names[0]} and ${names[1]} are`;
-  return `${names[0]}, ${names[1]} and ${names.length - 2} others are`;
+  const total = editors.length;
+  const shown = (editors.map((e) => e.displayName).filter(Boolean) as string[]).slice(0, 2);
+  const rest = total - shown.length;
+
+  if (shown.length === 0) return total === 1 ? 'Someone is' : `${total} people are`;
+  if (rest === 0) return shown.length === 1 ? `${shown[0]} is` : `${shown[0]} and ${shown[1]} are`;
+  const others = rest === 1 ? '1 other' : `${rest} others`;
+  return shown.length === 1 ? `${shown[0]} and ${others} are` : `${shown[0]}, ${shown[1]} and ${others} are`;
 }
 
 export default DocumentActivityCard;

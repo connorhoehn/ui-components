@@ -208,8 +208,11 @@ function A({ documentId: t, title: n, icon: r, createdBy: i, editors: a = [], on
 	});
 }
 function ee(e) {
-	let t = e.map((e) => e.displayName).filter(Boolean);
-	return t.length === 0 ? e.length === 1 ? "Someone is" : `${e.length} people are` : t.length === 1 ? `${t[0]} is` : t.length === 2 ? `${t[0]} and ${t[1]} are` : `${t[0]}, ${t[1]} and ${t.length - 2} others are`;
+	let t = e.length, n = e.map((e) => e.displayName).filter(Boolean).slice(0, 2), r = t - n.length;
+	if (n.length === 0) return t === 1 ? "Someone is" : `${t} people are`;
+	if (r === 0) return n.length === 1 ? `${n[0]} is` : `${n[0]} and ${n[1]} are`;
+	let i = r === 1 ? "1 other" : `${r} others`;
+	return n.length === 1 ? `${n[0]} and ${i} are` : `${n[0]}, ${n[1]} and ${i} are`;
 }
 //#endregion
 //#region src/components/social/ReactionChips.tsx
