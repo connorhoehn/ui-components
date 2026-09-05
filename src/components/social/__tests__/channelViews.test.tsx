@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { PinnedMessagesPanel, ChannelFilesPanel, ChannelMentionsPanel, ChannelRecordingsPanel, formatDuration } from '../ChannelViews';
+import { PinnedMessagesPanel, ChannelFilesPanel, ChannelMentionsPanel, ChannelRecordingsPanel, ChannelDocumentsPanel, formatDuration } from '../ChannelViews';
 import { ChannelHeader } from '../../shared/ChannelHeader';
 
 afterEach(cleanup);
@@ -253,5 +253,60 @@ describe('ChannelRecordingsPanel', () => {
   it('says calls land here when there are none', () => {
     render(<ChannelRecordingsPanel recordings={[]} />);
     expect(screen.getByText('No recorded calls')).toBeInTheDocument();
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+const doc = (over = {}) => ({
+  documentId: 'doc-1',
+  title: 'Upload path RFC',
+  icon: '📘',
+  createdBy: 'Hank Anderson',
+  updatedAt: '2026-09-05T08:00:00.000Z',
+  ...over,
+});
+
+describe('ChannelDocumentsPanel', () => {
+  it('opens a document', () => {
+    const onOpen = vi.fn();
+    render(<ChannelDocumentsPanel documents={[doc()]} onOpen={onOpen} />);
+    fireEvent.click(screen.getByTestId('channel-document-jump'));
+    expect(onOpen).toHaveBeenCalledWith('doc-1');
+  });
+
+  // Hiding create behind the empty state makes it vanish exactly when a
+  // second document becomes likely.
+  it('offers create whether or not the list is empty', () => {
+    const { rerender } = render(<ChannelDocumentsPanel documents={[]} onCreate={vi.fn()} />);
+    expect(screen.getByTestId('channel-documents-create')).toBeInTheDocument();
+    rerender(<ChannelDocumentsPanel documents={[doc()]} onCreate={vi.fn()} />);
+    expect(screen.getByTestId('channel-documents-create')).toBeInTheDocument();
+  });
+
+  it('omits create for a viewer who may not create here', () => {
+    render(<ChannelDocumentsPanel documents={[doc()]} />);
+    expect(screen.queryByTestId('channel-documents-create')).toBeNull();
+  });
+
+  // Somebody being in it right now is the reason to open it now.
+  it('says when people are editing', () => {
+    render(<ChannelDocumentsPanel documents={[doc({ activeEditors: 2 })]} />);
+    expect(screen.getByText(/2 editing/)).toBeInTheDocument();
+  });
+
+  it('does not claim 0 editing when nobody is', () => {
+    render(<ChannelDocumentsPanel documents={[doc({ activeEditors: 0 })]} />);
+    expect(screen.queryByText(/editing/)).toBeNull();
+  });
+
+  it('shows Untitled rather than an empty row', () => {
+    render(<ChannelDocumentsPanel documents={[doc({ title: '' })]} />);
+    expect(screen.getByText('Untitled')).toBeInTheDocument();
+  });
+
+  it('says documents stay with the conversation when there are none', () => {
+    render(<ChannelDocumentsPanel documents={[]} />);
+    expect(screen.getByText('No documents yet')).toBeInTheDocument();
   });
 });

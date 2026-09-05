@@ -85,7 +85,7 @@ export type { QuoteBlockProps, QuotedMessage } from './QuoteBlock';
 
 // Channel views — the same channel seen as its files, its pins, or the times
 // you were named in it. These are the panels behind ChannelHeader's tabs.
-export { PinnedMessagesPanel, ChannelFilesPanel, ChannelMentionsPanel, ChannelRecordingsPanel, formatDuration } from './ChannelViews';
+export { PinnedMessagesPanel, ChannelFilesPanel, ChannelMentionsPanel, ChannelRecordingsPanel, ChannelDocumentsPanel, formatDuration } from './ChannelViews';
 export type {
     PinnedMessageItem,
     PinnedMessagesPanelProps,
@@ -95,4 +95,6 @@ export type {
     ChannelMentionsPanelProps,
     ChannelRecordingItem,
     ChannelRecordingsPanelProps,
+    ChannelDocumentItem,
+    ChannelDocumentsPanelProps,
 } from './ChannelViews';

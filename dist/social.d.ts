@@ -39,6 +39,30 @@ export declare interface AttachmentBubbleProps {
     className?: string;
 }
 
+export declare interface ChannelDocumentItem {
+    documentId: string;
+    title: string;
+    /** Emoji or short glyph from the document's type. */
+    icon?: string;
+    /** Display name of whoever created it. */
+    createdBy?: string;
+    /** ISO-8601 of the last edit — what people scan this list by. */
+    updatedAt?: string;
+    /** People with the document open right now. */
+    activeEditors?: number;
+}
+
+export declare function ChannelDocumentsPanel({ documents, onOpen, onCreate, className, 'data-testid': testId, }: ChannelDocumentsPanelProps): JSX.Element;
+
+export declare interface ChannelDocumentsPanelProps {
+    documents: readonly ChannelDocumentItem[];
+    onOpen?: (documentId: string) => void;
+    /** Omit for a viewer who may not create documents here. */
+    onCreate?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface ChannelFileItem {
     /** The message the file arrived on — what the row jumps back to. */
     messageId: string;

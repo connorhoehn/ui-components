@@ -434,3 +434,90 @@ export function ChannelRecordingsPanel({
     </PanelShell>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Documents
+// ---------------------------------------------------------------------------
+
+export interface ChannelDocumentItem {
+  documentId: string;
+  title: string;
+  /** Emoji or short glyph from the document's type. */
+  icon?: string;
+  /** Display name of whoever created it. */
+  createdBy?: string;
+  /** ISO-8601 of the last edit — what people scan this list by. */
+  updatedAt?: string;
+  /** People with the document open right now. */
+  activeEditors?: number;
+}
+
+export interface ChannelDocumentsPanelProps {
+  documents: readonly ChannelDocumentItem[];
+  onOpen?: (documentId: string) => void;
+  /** Omit for a viewer who may not create documents here. */
+  onCreate?: () => void;
+  className?: string;
+  'data-testid'?: string;
+}
+
+export function ChannelDocumentsPanel({
+  documents,
+  onOpen,
+  onCreate,
+  className,
+  'data-testid': testId = 'channel-documents-panel',
+}: ChannelDocumentsPanelProps) {
+  const create = onCreate && (
+    <button
+      type="button"
+      onClick={onCreate}
+      data-testid="channel-documents-create"
+      className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] font-medium text-primary hover:bg-surface-hover"
+    >
+      <span aria-hidden className="grid h-7 w-7 place-items-center rounded bg-surface-inset">+</span>
+      New document in this conversation
+    </button>
+  );
+
+  // The create affordance sits ABOVE the list in both states. Hiding it behind
+  // an empty state means it disappears the moment the list stops being empty —
+  // exactly when a second document becomes likely.
+  return (
+    <div className={cn('min-h-0 overflow-y-auto p-2', className)} data-testid={testId}>
+      {create}
+      {documents.length === 0 ? (
+        <EmptyState
+          icon="📄"
+          title="No documents yet"
+          description="Documents written in this conversation stay with it."
+        />
+      ) : (
+        <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
+          {documents.map((d) => (
+            <DigestRow
+              key={d.documentId}
+              data-testid="channel-document"
+              leading={
+                <span aria-hidden className="grid h-8 w-8 place-items-center rounded bg-surface-inset text-sm">
+                  {d.icon || '\u{1F4C4}'}
+                </span>
+              }
+              title={d.title || 'Untitled'}
+              meta={[
+                d.createdBy,
+                timeLabel(d.updatedAt),
+                // Presence is the reason to open it NOW rather than later.
+                d.activeEditors ? `${d.activeEditors} editing` : '',
+              ]
+                .filter(Boolean)
+                .join(' \u00b7 ')}
+              onJump={onOpen ? () => onOpen(d.documentId) : undefined}
+              jumpLabel={`Open ${d.title || 'this document'}`}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
