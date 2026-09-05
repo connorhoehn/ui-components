@@ -173,7 +173,7 @@ describe('ChannelMentionsPanel', () => {
 
   it('marks the ones that still need you', () => {
     render(<ChannelMentionsPanel mentions={[mention({ unread: true })]} />);
-    expect(screen.getByTestId('mention-unread')).toBeInTheDocument();
+    expect(screen.getByTestId('mention')).toHaveAttribute('data-unread', 'true');
     expect(screen.getByLabelText('Unread')).toBeInTheDocument();
   });
 

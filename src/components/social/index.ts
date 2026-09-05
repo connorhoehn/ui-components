@@ -98,3 +98,10 @@ export type {
     ChannelDocumentItem,
     ChannelDocumentsPanelProps,
 } from './ChannelViews';
+
+// The whole conversation, assembled: header, tabs, transcript and every view
+// that belongs to the channel. Which views exist is DATA, so the same
+// component ships as chat-only in one product and chat+video+documents in
+// another.
+export { ConversationSurface, ALL_CONVERSATION_FEATURES } from './ConversationSurface';
+export type { ConversationFeature, ConversationSurfaceProps } from './ConversationSurface';

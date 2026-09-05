@@ -34,6 +34,8 @@ import { cn } from '../../lib/cn';
 // ---------------------------------------------------------------------------
 
 interface DigestRowProps {
+  /** Reflected onto the row so callers can select unread ones. */
+  'data-unread'?: boolean;
   /** Left-hand visual: a thumbnail, an avatar, a glyph. */
   leading: ReactNode;
   title: ReactNode;
@@ -45,7 +47,10 @@ interface DigestRowProps {
   'data-testid'?: string;
 }
 
-function DigestRow({ leading, title, meta, actions, onJump, jumpLabel, 'data-testid': testId }: DigestRowProps) {
+function DigestRow({
+  leading, title, meta, actions, onJump, jumpLabel,
+  'data-testid': testId, 'data-unread': unread,
+}: DigestRowProps) {
   const body = (
     <>
       <span className="shrink-0">{leading}</span>
@@ -59,6 +64,7 @@ function DigestRow({ leading, title, meta, actions, onJump, jumpLabel, 'data-tes
   return (
     <li
       data-testid={testId}
+      data-unread={unread ? 'true' : undefined}
       className="flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-surface-hover"
     >
       {onJump ? (
@@ -314,7 +320,11 @@ export function ChannelMentionsPanel({
         mentions.map((m) => (
           <DigestRow
             key={`${m.channel}:${m.messageId}`}
-            data-testid={m.unread ? 'mention-unread' : 'mention'}
+            // Stable id, state as an attribute. Encoding "unread" in the
+            // testid means the row has no selector that survives being read,
+            // which is exactly when a test or an e2e script wants to find it.
+            data-testid="mention"
+            data-unread={m.unread}
             leading={
               <span className="relative">
                 <Avatar name={m.author} size={28} />

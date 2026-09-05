@@ -1,0 +1,143 @@
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ConversationSurface } from '../ConversationSurface';
+
+afterEach(cleanup);
+
+const file = {
+  messageId: 'm1',
+  author: 'Hank',
+  attachment: { id: 'a1', name: 'shape.png', size: 1024, contentType: 'image/png', url: 'https://gw/a1' },
+};
+const doc = { documentId: 'd1', title: 'RFC' };
+const pin = { messageId: 'm2', author: 'Hank', preview: 'the upload path' };
+const mention = { messageId: 'm3', channel: 'c1', author: 'Hank', excerpt: '@bob look', unread: true };
+const recording = { recordingId: 'r1', startedAt: '2026-09-05T08:00:00.000Z', durationMs: 60_000, composedUrl: 'x', playable: true };
+
+const tabNames = () => screen.queryAllByRole('tab').map((t) => t.textContent);
+
+describe('which views exist is data', () => {
+  it('offers every view by default', () => {
+    render(<ConversationSurface name="Hank" />);
+    expect(tabNames()).toEqual(['Chat', 'Files', 'Documents', 'Pinned', 'Mentions', 'Calls']);
+  });
+
+  // The chat-only embed. Not a greyed tab, not an upsell — absent.
+  it('renders no tabs at all for a chat-only deployment', () => {
+    render(<ConversationSurface name="Hank" features={['chat']}><p>transcript</p></ConversationSurface>);
+    expect(screen.queryAllByRole('tab')).toHaveLength(0);
+    expect(screen.getByText('transcript')).toBeInTheDocument();
+  });
+
+  it('renders exactly the set it is handed, in that order', () => {
+    render(<ConversationSurface name="Hank" features={['chat', 'documents']} />);
+    expect(tabNames()).toEqual(['Chat', 'Documents']);
+  });
+
+  // A tab whose panel is switched off would render a blank pane.
+  it('never opens a panel for a feature that is off', () => {
+    render(<ConversationSurface name="Hank" features={['chat']} view="files" files={[file]} />);
+    expect(screen.queryByTestId('channel-files-panel')).toBeNull();
+  });
+
+  it('falls back to the first available view when the open one is turned off', () => {
+    const { rerender } = render(
+      <ConversationSurface name="Hank" features={['chat', 'files']} view="files" files={[file]} />,
+    );
+    expect(screen.getByTestId('channel-files-panel')).toBeInTheDocument();
+    rerender(<ConversationSurface name="Hank" features={['chat']} view="files" files={[file]} />);
+    expect(screen.getByTestId('conversation-surface-chat')).not.toHaveAttribute('hidden');
+  });
+});
+
+describe('counts on the tabs', () => {
+  it('says how much is behind a tab', () => {
+    render(<ConversationSurface name="Hank" files={[file]} documents={[doc]} pins={[pin]} recordings={[recording]} />);
+    expect(screen.getByRole('tab', { name: /Files/ }).textContent).toContain('1');
+  });
+
+  // "Files 0" is noise; the tab already says there is a files view.
+  it('shows no badge rather than a zero', () => {
+    render(<ConversationSurface name="Hank" />);
+    expect(screen.getByRole('tab', { name: /Files/ }).textContent).toBe('Files');
+  });
+
+  // Mentions you have already read are not waiting for you.
+  it('counts only unread mentions', () => {
+    render(<ConversationSurface name="Hank" mentions={[mention, { ...mention, messageId: 'm4', unread: false }]} />);
+    expect(screen.getByRole('tab', { name: /Mentions/ }).textContent).toContain('1');
+  });
+});
+
+describe('the transcript', () => {
+  // Remounting a transcript re-joins its channel: history refetches and the
+  // scroll position is lost every time somebody glances at the file list.
+  it('stays mounted behind another view', () => {
+    render(
+      <ConversationSurface name="Hank" view="files" files={[file]}><p>transcript</p></ConversationSurface>,
+    );
+    expect(screen.getByText('transcript')).toBeInTheDocument();
+    expect(screen.getByTestId('conversation-surface-chat')).toHaveAttribute('hidden');
+  });
+});
+
+describe('calls', () => {
+  it('offers audio and video when the deployment has calling', () => {
+    const onStartCall = vi.fn();
+    render(<ConversationSurface name="Hank" onStartCall={onStartCall} />);
+    fireEvent.click(screen.getByTestId('conversation-surface-audio-call'));
+    expect(onStartCall).toHaveBeenCalledWith(true);
+    fireEvent.click(screen.getByTestId('conversation-surface-video-call'));
+    expect(onStartCall).toHaveBeenCalledWith(false);
+  });
+
+  // This is how a chat-only deployment looks: no control at all.
+  it('renders no call controls without a handler', () => {
+    render(<ConversationSurface name="Hank" />);
+    expect(screen.queryByTestId('conversation-surface-audio-call')).toBeNull();
+  });
+
+  it('says Join once a call is already running', () => {
+    render(<ConversationSurface name="Hank" onStartCall={vi.fn()} callInProgress />);
+    expect(screen.getByLabelText('Join the call')).toBeInTheDocument();
+  });
+});
+
+describe('getting back to the message', () => {
+  it('switches to the transcript and jumps', () => {
+    const onJumpToMessage = vi.fn();
+    render(<ConversationSurface name="Hank" view="pins" pins={[pin]} onJumpToMessage={onJumpToMessage} onViewChange={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('pinned-message-jump'));
+    expect(onJumpToMessage).toHaveBeenCalledWith('m2');
+  });
+
+  it('carries the channel as well as the message for a mention', () => {
+    const onOpenMention = vi.fn();
+    render(<ConversationSurface name="Hank" view="mentions" mentions={[mention]} onOpenMention={onOpenMention} onViewChange={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('mention-jump'));
+    expect(onOpenMention).toHaveBeenCalledWith('c1', 'm3');
+  });
+
+  // Without a jump handler the rows are records, not dead buttons.
+  it('leaves rows unclickable when there is nowhere to jump', () => {
+    render(<ConversationSurface name="Hank" view="pins" pins={[pin]} />);
+    expect(screen.queryByTestId('pinned-message-jump')).toBeNull();
+  });
+});
+
+describe('view state', () => {
+  it('keeps its own when uncontrolled', () => {
+    render(<ConversationSurface name="Hank" documents={[doc]} />);
+    fireEvent.click(screen.getByRole('tab', { name: /Documents/ }));
+    expect(screen.getByTestId('channel-documents-panel')).toBeInTheDocument();
+  });
+
+  // A controlled surface that moved on its own would fight its owner.
+  it('does not move itself when controlled', () => {
+    const onViewChange = vi.fn();
+    render(<ConversationSurface name="Hank" view="chat" onViewChange={onViewChange} documents={[doc]} />);
+    fireEvent.click(screen.getByRole('tab', { name: /Documents/ }));
+    expect(onViewChange).toHaveBeenCalledWith('documents');
+    expect(screen.queryByTestId('channel-documents-panel')).toBeNull();
+  });
+});

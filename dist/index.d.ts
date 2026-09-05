@@ -527,6 +527,8 @@ export declare interface AgUiToolCallStartEvent extends AgUiEventBase {
     parentMessageId?: string;
 }
 
+export declare const ALL_CONVERSATION_FEATURES: readonly ConversationFeature[];
+
 export declare type AnyCallWidgetMode = CallWidgetMode | LegacyCallWidgetMode;
 
 declare interface ApiCallState<T> {
@@ -2816,6 +2818,9 @@ export declare interface ContextPatchMerge {
     values: Record<string, unknown>;
 }
 
+/** The views a conversation can offer. `chat` is the transcript itself. */
+export declare type ConversationFeature = 'chat' | 'files' | 'documents' | 'pins' | 'mentions' | 'calls';
+
 export declare interface ConversationItem {
     /** Chat channel id — handed back verbatim by `onSelect`. */
     channel: string;
@@ -2870,6 +2875,56 @@ export declare interface ConversationPeer {
     color?: string;
     /** Presence: true → online dot, false → offline dot, undefined → no dot. */
     online?: boolean;
+}
+
+export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
+
+export declare interface ConversationSurfaceProps {
+    /** Channel name, or the people in a DM. */
+    name: string;
+    /** Sub-line under the name. */
+    description?: string;
+    online?: boolean;
+    avatarUrl?: string;
+    /**
+     * Which views this deployment offers. Defaults to all of them.
+     *
+     * Hand in the INTERSECTION of what the product declares and what the server
+     * provisions — a view whose backend is not wired renders an empty tab, which
+     * reads as a broken feature rather than an absent one.
+     */
+    features?: readonly ConversationFeature[];
+    /** The transcript and its composer. Owned by the caller. */
+    children?: ReactNode;
+    files?: readonly ChannelFileItem[];
+    /** Resolves a displayable image source; the download route is authenticated. */
+    thumbnailSrc?: (a: ChatAttachment) => string | undefined;
+    documents?: readonly ChannelDocumentItem[];
+    onOpenDocument?: (documentId: string) => void;
+    /** Omit for a viewer who may not create documents here. */
+    onCreateDocument?: () => void;
+    pins?: readonly PinnedMessageItem[];
+    onUnpin?: (messageId: string) => void;
+    mentions?: readonly ChannelMentionItem[];
+    onOpenMention?: (channel: string, messageId: string) => void;
+    recordings?: readonly ChannelRecordingItem[];
+    onOpenRecording?: (recordingId: string) => void;
+    /** Scrolls the transcript to a message. Used by pins, files and mentions. */
+    onJumpToMessage?: (messageId: string) => void;
+    /**
+     * Start (or join) a call with the people in this conversation. Omit and no
+     * call controls render — which is how a chat-only deployment looks.
+     */
+    onStartCall?: (audioOnly: boolean) => void;
+    /** Someone here is already on a call, so the controls say Join. */
+    callInProgress?: boolean;
+    /** Extra header controls, to the right of the call buttons. */
+    headerActions?: ReactNode;
+    /** Controlled view. Omit to let the surface keep its own. */
+    view?: ConversationFeature;
+    onViewChange?: (view: ConversationFeature) => void;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare interface CreateClientInput {
