@@ -160,3 +160,15 @@ export type {
   RealtimeCapabilityProviderProps,
   CapabilityGateProps,
 } from './capabilities';
+
+// The whole conversation, capability-gated. `effective = declared ∩
+// provisioned` — see the component header for why either gate alone is wrong.
+export {
+  WrappedConversationSurface,
+  capabilityNamesFor,
+  CONVERSATION_CAPABILITY_NAMES,
+} from './WrappedConversationSurface';
+export type {
+  WrappedConversationSurfaceProps,
+  RMCapabilityMap,
+} from './WrappedConversationSurface';

@@ -101,37 +101,8 @@ function p({ id: e, when: t, idPrefix: n, className: r, style: i, children: a })
 	}) : null;
 }
 //#endregion
-//#region src/components/shared/PresenceDot.tsx
-var m = {
-	online: "var(--color-success, #22c55e)",
-	away: "var(--color-state-pending, #f59e0b)",
-	busy: "var(--color-state-error, #ef4444)",
-	offline: "var(--color-text-tertiary, #94a3b8)",
-	unknown: "var(--color-text-tertiary, #94a3b8)"
-}, h = {
-	online: "Online",
-	away: "Away",
-	busy: "Busy",
-	offline: "Offline",
-	unknown: "Unknown presence"
-};
-function g({ state: e, ariaLabel: t, label: r, pulse: i, size: a = "sm", className: o, style: c, title: l, "data-testid": u }) {
-	let d = i ?? e === "online", f = t ?? h[e];
-	return /* @__PURE__ */ s(n, {
-		color: m[e],
-		pulse: d,
-		size: a,
-		label: r,
-		className: o,
-		style: c,
-		title: l,
-		"data-testid": u ?? `presence-${e}`,
-		"aria-label": f
-	});
-}
-//#endregion
 //#region src/components/shared/ChannelHeader.tsx
-function _({ name: r, memberCount: i, description: a, tabs: o, actions: l, avatarUrl: u, online: d, onMembersClick: f, className: p, "data-testid": m }) {
+function m({ name: r, memberCount: i, description: a, tabs: o, actions: l, avatarUrl: u, online: d, onMembersClick: f, className: p, "data-testid": m }) {
 	return /* @__PURE__ */ c("div", {
 		"data-testid": m,
 		className: e("flex items-center justify-between gap-4 px-6 py-3", "border-b border-[var(--color-border)] bg-[var(--color-surface)]", p),
@@ -191,4 +162,4 @@ function _({ name: r, memberCount: i, description: a, tabs: o, actions: l, avata
 	});
 }
 //#endregion
-export { f as i, g as n, p as r, _ as t };
+export { p as n, f as r, m as t };

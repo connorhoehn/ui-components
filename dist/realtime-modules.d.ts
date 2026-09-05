@@ -228,6 +228,77 @@ export declare interface CapabilityGateProps {
     fallback?: ReactNode;
 }
 
+/**
+ * The capability names to resolve for a declared feature set — feed this to
+ * `useCapabilities`. Asking for names the host has not declared would make the
+ * gateway's answer decide a question the host already answered.
+ */
+export declare function capabilityNamesFor(declare?: readonly ConversationFeature[], overrides?: Partial<Record<Exclude<ConversationFeature, 'chat'>, string>>): string[];
+
+declare interface ChannelDocumentItem {
+    documentId: string;
+    title: string;
+    /** Emoji or short glyph from the document's type. */
+    icon?: string;
+    /** Display name of whoever created it. */
+    createdBy?: string;
+    /** ISO-8601 of the last edit — what people scan this list by. */
+    updatedAt?: string;
+    /** People with the document open right now. */
+    activeEditors?: number;
+}
+
+declare interface ChannelFileItem {
+    /** The message the file arrived on — what the row jumps back to. */
+    messageId: string;
+    attachment: ChatAttachment;
+    author: string;
+    /** ISO-8601 of the message. */
+    sentAt?: string;
+}
+
+/**
+ * One time you were named, in a CHANNEL. Named `ChannelMention…` because the
+ * library already has a `MentionItem` for the other kind — being named in a
+ * document comment — and those two are not interchangeable: one points at a
+ * message in a conversation, the other at a comment on a section.
+ */
+declare interface ChannelMentionItem {
+    messageId: string;
+    /** Channel the mention happened in — the id used to navigate. */
+    channel: string;
+    /** Human-readable channel name. Falls back to the id when absent. */
+    channelLabel?: string;
+    author: string;
+    /** The message text, trimmed by the caller if it is long. */
+    excerpt: string;
+    /** ISO-8601. */
+    at?: string;
+    /** Unread mentions are the ones that still need you. */
+    unread?: boolean;
+}
+
+declare interface ChannelRecordingItem {
+    recordingId: string;
+    /** ISO-8601 of when the call started. */
+    startedAt?: string;
+    /** Length of the recorded media, in milliseconds. */
+    durationMs?: number;
+    /** Distinct PEOPLE on the call, not sessions — rejoins are not extra heads. */
+    participantCount?: number;
+    participants?: Array<{
+        userId: string;
+        displayName?: string;
+    }>;
+    thumbnailUrl?: string;
+    /**
+     * Whether the recording can actually be played. A row that opens a player
+     * showing nothing is worse than a row that says the recording is still
+     * being assembled.
+     */
+    playable?: boolean;
+}
+
 declare interface ChatAttachment {
     /** Correlation id shared with the sender's in-flight transfer. */
     id: string;
@@ -318,6 +389,64 @@ declare type ConnectionPillTone = SurfaceTone;
 
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+/**
+ * Capability name per view. Exported so a host whose CRDs are named
+ * differently can remap without forking the component — the names below are a
+ * default, not a protocol.
+ */
+export declare const CONVERSATION_CAPABILITY_NAMES: Record<Exclude<ConversationFeature, 'chat'>, string>;
+
+/** The views a conversation can offer. `chat` is the transcript itself. */
+declare type ConversationFeature = 'chat' | 'files' | 'documents' | 'pins' | 'mentions' | 'calls';
+
+declare interface ConversationSurfaceProps {
+    /** Channel name, or the people in a DM. */
+    name: string;
+    /** Sub-line under the name. */
+    description?: string;
+    online?: boolean;
+    avatarUrl?: string;
+    /**
+     * Which views this deployment offers. Defaults to all of them.
+     *
+     * Hand in the INTERSECTION of what the product declares and what the server
+     * provisions — a view whose backend is not wired renders an empty tab, which
+     * reads as a broken feature rather than an absent one.
+     */
+    features?: readonly ConversationFeature[];
+    /** The transcript and its composer. Owned by the caller. */
+    children?: ReactNode;
+    files?: readonly ChannelFileItem[];
+    /** Resolves a displayable image source; the download route is authenticated. */
+    thumbnailSrc?: (a: ChatAttachment) => string | undefined;
+    documents?: readonly ChannelDocumentItem[];
+    onOpenDocument?: (documentId: string) => void;
+    /** Omit for a viewer who may not create documents here. */
+    onCreateDocument?: () => void;
+    pins?: readonly PinnedMessageItem[];
+    onUnpin?: (messageId: string) => void;
+    mentions?: readonly ChannelMentionItem[];
+    onOpenMention?: (channel: string, messageId: string) => void;
+    recordings?: readonly ChannelRecordingItem[];
+    onOpenRecording?: (recordingId: string) => void;
+    /** Scrolls the transcript to a message. Used by pins, files and mentions. */
+    onJumpToMessage?: (messageId: string) => void;
+    /**
+     * Start (or join) a call with the people in this conversation. Omit and no
+     * call controls render — which is how a chat-only deployment looks.
+     */
+    onStartCall?: (audioOnly: boolean) => void;
+    /** Someone here is already on a call, so the controls say Join. */
+    callInProgress?: boolean;
+    /** Extra header controls, to the right of the call buttons. */
+    headerActions?: ReactNode;
+    /** Controlled view. Omit to let the surface keep its own. */
+    view?: ConversationFeature;
+    onViewChange?: (view: ConversationFeature) => void;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /**
  * Chat and presence only.
@@ -641,6 +770,18 @@ declare interface NotificationItem {
     category?: string;
 }
 
+declare interface PinnedMessageItem {
+    messageId: string;
+    /** Who wrote the message. */
+    author: string;
+    /** Short excerpt of it — the panel never re-reads the transcript. */
+    preview: string;
+    /** ISO-8601. */
+    pinnedAt?: string;
+    /** Display name of whoever pinned it. */
+    pinnedBy?: string;
+}
+
 declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
 
 declare interface PresenceUser {
@@ -776,6 +917,9 @@ export declare interface RMCapabilityHookResult {
     isLoading: boolean;
     error?: Error;
 }
+
+/** The `enabled` map from realtime-modules' `useCapabilities`, restated. */
+export declare type RMCapabilityMap = Record<string, boolean>;
 
 /** Mirror of realtime-modules/src/client/types.ts ChatMessage */
 export declare interface RMChatMessage {
@@ -1244,6 +1388,27 @@ export declare interface WrappedConnectionPillProps extends Omit<ConnectionPillP
      * `useWebSocket(...)` or `useGateway()` from realtime-modules.
      */
     socket: RMConnectionStateSource;
+}
+
+export declare function WrappedConversationSurface({ declare, capabilities, capabilityNames, children, ...surface }: WrappedConversationSurfaceProps): JSX.Element;
+
+export declare interface WrappedConversationSurfaceProps extends Omit<ConversationSurfaceProps, 'features'> {
+    /**
+     * What this product offers. Defaults to everything, so a host that has not
+     * thought about it gets whatever the gateway provisions.
+     */
+    declare?: readonly ConversationFeature[];
+    /**
+     * `useCapabilities(capabilityNamesFor(declare)).enabled`. Omit it entirely
+     * to skip the gateway gate — appropriate for a deployment with no
+     * capability service, where the host's declaration is the only answer
+     * available and treating "no service" as "nothing enabled" would leave a
+     * bare transcript.
+     */
+    capabilities?: RMCapabilityMap;
+    /** Remap capability names when the host's CRDs are named differently. */
+    capabilityNames?: Partial<Record<Exclude<ConversationFeature, 'chat'>, string>>;
+    children?: ReactNode;
 }
 
 export declare function WrappedFileUploadDrop({ fileUpload, accept, maxSize, multiple, disabled, label, className, uploadMetadata, onError, }: WrappedFileUploadDropProps): JSX.Element;
