@@ -1003,19 +1003,20 @@ var $ = {
 function Ue(e = y, t = {}) {
 	return e.filter((e) => e !== "chat").map((e) => t[e] ?? $[e]);
 }
-function We({ declare: e = y, capabilities: t, capabilityNames: n = {}, children: r, ...i }) {
-	let a = T(() => {
-		let r = n;
-		return e.filter((e) => e === "chat" || !t || t[r[e] ?? $[e]] === !0);
+function We({ declare: e = y, capabilities: t, capabilitiesError: n, capabilityNames: r = {}, children: i, ...a }) {
+	let o = T(() => {
+		let i = r;
+		return e.filter((e) => e === "chat" || !t || n ? !0 : t[i[e] ?? $[e]] === !0);
 	}, [
 		e,
 		t,
-		n
+		n,
+		r
 	]);
 	return /* @__PURE__ */ k(v, {
-		...i,
-		features: a,
-		children: r
+		...a,
+		features: o,
+		children: i
 	});
 }
 //#endregion

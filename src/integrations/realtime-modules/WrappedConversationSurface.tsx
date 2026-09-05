@@ -71,6 +71,16 @@ export interface WrappedConversationSurfaceProps
    * bare transcript.
    */
   capabilities?: RMCapabilityMap;
+  /**
+   * The `error` from `useCapabilities`. Load-bearing: the hook reports every
+   * unresolved name as `false`, so a gateway that is momentarily 500ing is
+   * indistinguishable from one that provisions nothing — and a surface gated
+   * on that silently loses every view, with no explanation, until the gateway
+   * recovers. COULD NOT ASK is not the same answer as NO, so a failed
+   * resolution falls back to the host's declaration, exactly as a deployment
+   * with no capability service does.
+   */
+  capabilitiesError?: unknown;
   /** Remap capability names when the host's CRDs are named differently. */
   capabilityNames?: Partial<Record<Exclude<ConversationFeature, 'chat'>, string>>;
   children?: ReactNode;
@@ -93,6 +103,7 @@ export function capabilityNamesFor(
 export function WrappedConversationSurface({
   declare = ALL_CONVERSATION_FEATURES,
   capabilities,
+  capabilitiesError,
   capabilityNames = {},
   children,
   ...surface
@@ -102,13 +113,13 @@ export function WrappedConversationSurface({
     return declare.filter((f) => {
       // Never gated: see the header.
       if (f === 'chat') return true;
-      // No capability map at all means no capability service to ask, so the
-      // host's declaration stands on its own.
-      if (!capabilities) return true;
+      // Nothing to ask, or asking failed: the host's declaration stands on
+      // its own. Both are "we do not know", and neither is "no".
+      if (!capabilities || capabilitiesError) return true;
       const name = names[f] ?? CONVERSATION_CAPABILITY_NAMES[f];
       return capabilities[name] === true;
     });
-  }, [declare, capabilities, capabilityNames]);
+  }, [declare, capabilities, capabilitiesError, capabilityNames]);
 
   return (
     <ConversationSurface {...surface} features={features}>

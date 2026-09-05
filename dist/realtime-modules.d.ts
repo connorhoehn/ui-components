@@ -1390,7 +1390,7 @@ export declare interface WrappedConnectionPillProps extends Omit<ConnectionPillP
     socket: RMConnectionStateSource;
 }
 
-export declare function WrappedConversationSurface({ declare, capabilities, capabilityNames, children, ...surface }: WrappedConversationSurfaceProps): JSX.Element;
+export declare function WrappedConversationSurface({ declare, capabilities, capabilitiesError, capabilityNames, children, ...surface }: WrappedConversationSurfaceProps): JSX.Element;
 
 export declare interface WrappedConversationSurfaceProps extends Omit<ConversationSurfaceProps, 'features'> {
     /**
@@ -1406,6 +1406,16 @@ export declare interface WrappedConversationSurfaceProps extends Omit<Conversati
      * bare transcript.
      */
     capabilities?: RMCapabilityMap;
+    /**
+     * The `error` from `useCapabilities`. Load-bearing: the hook reports every
+     * unresolved name as `false`, so a gateway that is momentarily 500ing is
+     * indistinguishable from one that provisions nothing — and a surface gated
+     * on that silently loses every view, with no explanation, until the gateway
+     * recovers. COULD NOT ASK is not the same answer as NO, so a failed
+     * resolution falls back to the host's declaration, exactly as a deployment
+     * with no capability service does.
+     */
+    capabilitiesError?: unknown;
     /** Remap capability names when the host's CRDs are named differently. */
     capabilityNames?: Partial<Record<Exclude<ConversationFeature, 'chat'>, string>>;
     children?: ReactNode;

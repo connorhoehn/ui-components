@@ -121,3 +121,40 @@ describe('everything else passes straight through', () => {
     expect(screen.getByText('the upload path')).toBeInTheDocument();
   });
 });
+
+describe('when the capability query fails', () => {
+  // The hook reports unresolved names as false, so a momentarily 500ing
+  // gateway is indistinguishable from one that provisions nothing. Gating on
+  // that loses every view with no explanation until the gateway recovers.
+  it('keeps the declared views rather than silently losing them', () => {
+    render(
+      <WrappedConversationSurface
+        name="Hank"
+        declare={['chat', 'files', 'documents']}
+        capabilities={{}}
+        capabilitiesError={new Error('HTTP 500')}
+      />,
+    );
+    expect(tabNames()).toEqual(['Chat', 'Files', 'Documents']);
+  });
+
+  // A recovered query is authoritative again.
+  it('goes back to the gate once the query succeeds', () => {
+    const { rerender } = render(
+      <WrappedConversationSurface
+        name="Hank"
+        declare={['chat', 'files', 'documents']}
+        capabilities={{}}
+        capabilitiesError={new Error('HTTP 500')}
+      />,
+    );
+    rerender(
+      <WrappedConversationSurface
+        name="Hank"
+        declare={['chat', 'files', 'documents']}
+        capabilities={{ 'conversation.files': true, 'conversation.documents': false }}
+      />,
+    );
+    expect(tabNames()).toEqual(['Chat', 'Files']);
+  });
+});
