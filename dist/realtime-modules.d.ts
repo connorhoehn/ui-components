@@ -532,7 +532,7 @@ declare interface HangoutLayoutParticipant {
 
 declare type HangoutMode = 'auto' | 'spotlight';
 
-export declare function HangoutRoomRow({ slug, name, participantId, occupancy, subscribeRoomsIndex, onClick, onContextMenu, kebab, className, 'data-testid': testId, }: HangoutRoomRowProps): JSX.Element;
+export declare function HangoutRoomRow({ slug, name, participantId, occupancy, subscribeRoomsIndex, onClick, onContextMenu, onOpenConversation, kebab, className, 'data-testid': testId, }: HangoutRoomRowProps): JSX.Element;
 
 export declare interface HangoutRoomRowProps {
     /** Room slug (immutable identifier). */
@@ -554,13 +554,25 @@ export declare interface HangoutRoomRowProps {
     onClick?: () => void;
     /** Fired on right-click — caller can show a context menu. */
     onContextMenu?: (e: MouseEvent_2<HTMLElement>) => void;
+    /**
+     * Open the room's CONVERSATION rather than joining its call.
+     *
+     * A room is not only a call. Things are said in it, files are dropped in
+     * it, documents get written in it — and until this existed the only way
+     * into a room was to join the video, so everything that came out of it was
+     * unreachable unless somebody was in there right now.
+     *
+     * Secondary by design: the row's own click still joins, because that is
+     * what a hangout row is for. Omit to render no such control.
+     */
+    onOpenConversation?: () => void;
     /** Optional kebab node passed through to the row. */
     kebab?: React.ReactNode;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare function HangoutRoomsSection({ rooms, occupancyFor, occupancyAdapter, participantId, onJoinRoom, onContextMenu, onBrowseAll, maxVisible, title, storageKey, renderCreateDialog, }: HangoutRoomsSectionProps): JSX.Element;
+export declare function HangoutRoomsSection({ rooms, occupancyFor, occupancyAdapter, participantId, onJoinRoom, onOpenConversation, onContextMenu, onBrowseAll, maxVisible, title, storageKey, renderCreateDialog, }: HangoutRoomsSectionProps): JSX.Element;
 
 export declare interface HangoutRoomsSectionProps {
     /** Return value of `useHangoutRooms()` from realtime-modules. */
@@ -581,6 +593,11 @@ export declare interface HangoutRoomsSectionProps {
     onJoinRoom?: (room: RMRoom) => void;
     /** Called when a row is right-clicked. */
     onContextMenu?: (room: RMRoom, e: MouseEvent_2<HTMLElement>) => void;
+    /**
+     * Open a room's conversation instead of joining its call. Omit and rooms
+     * stay call-only, which is what they were before this existed.
+     */
+    onOpenConversation?: (room: RMRoom) => void;
     /** Called when "Browse all" is clicked (when rooms exceed `maxVisible`). */
     onBrowseAll?: () => void;
     /** Max rows to render inline. Defaults to 10. */

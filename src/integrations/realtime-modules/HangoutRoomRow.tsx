@@ -56,6 +56,18 @@ export interface HangoutRoomRowProps {
   onClick?: () => void;
   /** Fired on right-click — caller can show a context menu. */
   onContextMenu?: (e: MouseEvent<HTMLElement>) => void;
+  /**
+   * Open the room's CONVERSATION rather than joining its call.
+   *
+   * A room is not only a call. Things are said in it, files are dropped in
+   * it, documents get written in it — and until this existed the only way
+   * into a room was to join the video, so everything that came out of it was
+   * unreachable unless somebody was in there right now.
+   *
+   * Secondary by design: the row's own click still joins, because that is
+   * what a hangout row is for. Omit to render no such control.
+   */
+  onOpenConversation?: () => void;
   /** Optional kebab node passed through to the row. */
   kebab?: React.ReactNode;
   className?: string;
@@ -70,6 +82,7 @@ export function HangoutRoomRow({
   subscribeRoomsIndex,
   onClick,
   onContextMenu,
+  onOpenConversation,
   kebab,
   className,
   // Default testid is `room-row` — matches the e2e RoomsSidebar page-
@@ -135,6 +148,27 @@ export function HangoutRoomRow({
     );
   }
 
+  // Sits in the kebab slot so it never competes with the row's own click
+  // target, and only shows on hover or focus — a persistent second button on
+  // every room turns a navigation list into a toolbar.
+  const conversationControl = onOpenConversation ? (
+    <button
+      type="button"
+      aria-label={`Open the ${name} conversation`}
+      title="Open conversation"
+      data-testid={`${testId}-open-conversation`}
+      onClick={(e) => {
+        // Without this the row's own handler also fires and the call opens
+        // on top of the conversation you asked for.
+        e.stopPropagation();
+        onOpenConversation();
+      }}
+      className="grid h-5 w-5 place-items-center rounded bg-transparent text-[11px] text-text-tertiary opacity-0 transition-opacity hover:bg-surface-hover hover:text-text-primary focus:opacity-100 group-hover:opacity-100"
+    >
+      💬
+    </button>
+  ) : null;
+
   return (
     <SidebarRow
       data-testid={testId}
@@ -144,7 +178,7 @@ export function HangoutRoomRow({
       active={active}
       onClick={onClick}
       onContextMenu={onContextMenu}
-      kebab={kebab}
+      kebab={kebab ?? conversationControl}
       aria-label={`${name} room`}
       className={className}
       // E2E hooks: room slug + live occupancy + joined-state flags so the

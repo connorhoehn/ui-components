@@ -425,53 +425,65 @@ function De({ capability: e, loading: t, fallback: n, children: r }) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/HangoutRoomRow.tsx
-function J({ slug: e, name: t, participantId: n, occupancy: r, subscribeRoomsIndex: i, onClick: a, onContextMenu: o, kebab: s, className: c, "data-testid": l = "room-row" }) {
-	let u = ce(i ? e : null, { subscribeRoomsIndex: i }), p = i ? u.occupancy ?? null : r ?? null, h = p?.count ?? 0, g = p?.members ?? [], _ = T(() => n ? g.some((e) => e.participantId === n) : !1, [g, n]), v = _, y = T(() => g.slice(0, 3).map((e) => ({
+function J({ slug: e, name: t, participantId: n, occupancy: r, subscribeRoomsIndex: i, onClick: a, onContextMenu: o, onOpenConversation: s, kebab: c, className: l, "data-testid": u = "room-row" }) {
+	let p = ce(i ? e : null, { subscribeRoomsIndex: i }), h = i ? p.occupancy ?? null : r ?? null, g = h?.count ?? 0, _ = h?.members ?? [], v = T(() => n ? _.some((e) => e.participantId === n) : !1, [_, n]), y = v, b = T(() => _.slice(0, 3).map((e) => ({
 		id: e.participantId,
 		name: e.displayName ?? e.userId,
 		online: !0
-	})), [g]), b = null;
-	return h > 1 ? b = /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(f, {
-		users: y,
+	})), [_]), x = null;
+	g > 1 ? x = /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(f, {
+		users: b,
 		maxVisible: 3,
 		size: 18
 	}), /* @__PURE__ */ k(d, {
 		variant: "count",
-		value: h,
+		value: g,
 		color: "muted"
-	})] }) : h === 1 && _ ? b = /* @__PURE__ */ k(d, {
+	})] }) : g === 1 && v ? x = /* @__PURE__ */ k(d, {
 		variant: "pulse",
 		color: "accent",
 		"aria-label": "Just you in this room",
-		"data-testid": `${l}-self-pulse`
-	}) : h === 1 && (b = /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(f, {
-		users: y,
+		"data-testid": `${u}-self-pulse`
+	}) : g === 1 && (x = /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(f, {
+		users: b,
 		maxVisible: 1,
 		size: 18
 	}), /* @__PURE__ */ k(d, {
 		variant: "count",
 		value: 1,
 		color: "muted"
-	})] })), /* @__PURE__ */ k(m, {
-		"data-testid": l,
+	})] }));
+	let S = s ? /* @__PURE__ */ k("button", {
+		type: "button",
+		"aria-label": `Open the ${t} conversation`,
+		title: "Open conversation",
+		"data-testid": `${u}-open-conversation`,
+		onClick: (e) => {
+			e.stopPropagation(), s();
+		},
+		className: "grid h-5 w-5 place-items-center rounded bg-transparent text-[11px] text-text-tertiary opacity-0 transition-opacity hover:bg-surface-hover hover:text-text-primary focus:opacity-100 group-hover:opacity-100",
+		children: "💬"
+	}) : null;
+	return /* @__PURE__ */ k(m, {
+		"data-testid": u,
 		icon: /* @__PURE__ */ k("span", {
 			"aria-hidden": "true",
 			className: "font-semibold text-text-tertiary",
 			children: "#"
 		}),
 		label: t,
-		trailing: b,
-		active: v,
+		trailing: x,
+		active: y,
 		onClick: a,
 		onContextMenu: o,
-		kebab: s,
+		kebab: c ?? S,
 		"aria-label": `${t} room`,
-		className: c,
+		className: l,
 		dataAttrs: {
 			"data-room-slug": e,
 			"data-room-name": t,
-			"data-room-active-count": h,
-			"data-joined": v ? "true" : "false"
+			"data-room-active-count": g,
+			"data-joined": y ? "true" : "false"
 		}
 	});
 }
@@ -640,15 +652,15 @@ function Ae({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility:
 }
 //#endregion
 //#region src/integrations/realtime-modules/HangoutRoomsSection.tsx
-function je({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, onJoinRoom: s, onContextMenu: c, onBrowseAll: l, maxVisible: u = 10, title: d = "Rooms", storageKey: f, renderCreateDialog: p }) {
-	let [g, _] = D(!1), v = () => _(!0), y = () => _(!1), b = T(() => e.rooms.filter((e) => e.state === "active"), [e.rooms]), x = T(() => b.slice(0, u), [b, u]), S = b.length - x.length;
+function je({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, onJoinRoom: s, onOpenConversation: c, onContextMenu: l, onBrowseAll: u, maxVisible: d = 10, title: f = "Rooms", storageKey: p, renderCreateDialog: g }) {
+	let [_, v] = D(!1), y = () => v(!0), b = () => v(!1), x = T(() => e.rooms.filter((e) => e.state === "active"), [e.rooms]), S = T(() => x.slice(0, d), [x, d]), C = x.length - S.length;
 	return /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ A(h, {
-		title: d,
-		storageKey: f,
+		title: f,
+		storageKey: p,
 		actions: /* @__PURE__ */ k(n, {
 			"aria-label": "New room",
 			size: "sm",
-			onClick: v,
+			onClick: y,
 			icon: /* @__PURE__ */ k("span", {
 				"aria-hidden": "true",
 				className: "text-[14px] leading-none font-bold",
@@ -684,47 +696,48 @@ function je({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, 
 					children: "Retry"
 				})]
 			}),
-			!e.isLoading && !e.error && b.length === 0 && /* @__PURE__ */ k(i, {
+			!e.isLoading && !e.error && x.length === 0 && /* @__PURE__ */ k(i, {
 				testId: "hangout-rooms-empty",
 				title: "No rooms yet",
 				description: "Create one to start an ongoing hangout.",
 				action: /* @__PURE__ */ k(t, {
-					onClick: v,
+					onClick: y,
 					variant: "primary",
 					size: "sm",
 					children: "Create room"
 				})
 			}),
-			!e.isLoading && !e.error && b.length > 0 && /* @__PURE__ */ A("div", {
+			!e.isLoading && !e.error && x.length > 0 && /* @__PURE__ */ A("div", {
 				className: "flex flex-col gap-0.5",
-				children: [x.map((e) => /* @__PURE__ */ k(J, {
+				children: [S.map((e) => /* @__PURE__ */ k(J, {
 					slug: e.slug,
 					name: e.name,
 					participantId: o,
 					subscribeRoomsIndex: a,
 					occupancy: a ? null : r?.(e.slug) ?? null,
 					onClick: s ? () => s(e) : void 0,
-					onContextMenu: c ? (t) => c(e, t) : void 0
-				}, e.slug)), S > 0 && l && /* @__PURE__ */ k(m, {
+					onOpenConversation: c ? () => c(e) : void 0,
+					onContextMenu: l ? (t) => l(e, t) : void 0
+				}, e.slug)), C > 0 && u && /* @__PURE__ */ k(m, {
 					"data-testid": "hangout-rooms-browse-all",
 					label: /* @__PURE__ */ A("span", {
 						className: "text-[12px] text-neutral",
 						children: [
 							"Browse all (",
-							b.length,
+							x.length,
 							")"
 						]
 					}),
-					onClick: l
+					onClick: u
 				})]
 			})
 		]
-	}), p ? p({
-		open: g,
-		onClose: y
+	}), g ? g({
+		open: _,
+		onClose: b
 	}) : /* @__PURE__ */ k(Ae, {
-		open: g,
-		onClose: y,
+		open: _,
+		onClose: b,
 		onCreate: e.createRoom,
 		onCreated: (e) => {
 			s?.(e);

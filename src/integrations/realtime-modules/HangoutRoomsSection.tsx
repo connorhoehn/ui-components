@@ -56,6 +56,11 @@ export interface HangoutRoomsSectionProps {
   onJoinRoom?: (room: RMRoom) => void;
   /** Called when a row is right-clicked. */
   onContextMenu?: (room: RMRoom, e: MouseEvent<HTMLElement>) => void;
+  /**
+   * Open a room's conversation instead of joining its call. Omit and rooms
+   * stay call-only, which is what they were before this existed.
+   */
+  onOpenConversation?: (room: RMRoom) => void;
   /** Called when "Browse all" is clicked (when rooms exceed `maxVisible`). */
   onBrowseAll?: () => void;
   /** Max rows to render inline. Defaults to 10. */
@@ -74,6 +79,7 @@ export function HangoutRoomsSection({
   occupancyAdapter,
   participantId,
   onJoinRoom,
+  onOpenConversation,
   onContextMenu,
   onBrowseAll,
   maxVisible = 10,
@@ -176,6 +182,9 @@ export function HangoutRoomsSection({
                   occupancyAdapter ? null : (occupancyFor?.(room.slug) ?? null)
                 }
                 onClick={onJoinRoom ? () => onJoinRoom(room) : undefined}
+                onOpenConversation={
+                  onOpenConversation ? () => onOpenConversation(room) : undefined
+                }
                 onContextMenu={
                   onContextMenu ? (e) => onContextMenu(room, e) : undefined
                 }
