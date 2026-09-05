@@ -6,7 +6,7 @@ import { t as l } from "./Textarea-Dz4doxTv.js";
 import { n as u, t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./PresenceDot-3gBZGPvX.js";
 import { t as p } from "./Select-CqVokE2v.js";
-import { C as m, S as h } from "./ConversationSurface-dCF4yQ6Y.js";
+import { C as m, w as h } from "./ConversationSurface-DXsM6Rkj.js";
 import { t as g } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as _, t as v } from "./ReactionPickerPopover-moHezwrL.js";
 import "./LinkDialog-DazAeDjI.js";
@@ -523,7 +523,7 @@ function L({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel: 
 			className: "m-0 flex min-h-0 list-none flex-col gap-0.5 overflow-y-auto p-0",
 			"aria-label": "Conversations",
 			children: e.map((e) => {
-				let r = e.channel === t, i = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), a = i === "channel", o = i === "group", c = e.peers[0], p = a ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), h = e.lastMessageAt ? m(e.lastMessageAt) : "", g = e.unreadCount ?? 0;
+				let r = e.channel === t, i = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), a = i === "channel", o = i === "group", c = e.peers[0], p = a ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), m = e.lastMessageAt ? h(e.lastMessageAt) : "", g = e.unreadCount ?? 0;
 				return /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
 					type: "button",
 					onClick: () => n(e.channel),
@@ -566,10 +566,10 @@ function L({ items: e, activeChannel: t, onSelect: n, onNewChat: r, emptyLabel: 
 								children: [/* @__PURE__ */ E("span", {
 									className: s("min-w-0 flex-1 truncate text-[13px]", g > 0 ? "font-semibold" : "font-medium", l ? "text-white" : "text-text-primary"),
 									children: p
-								}), h && /* @__PURE__ */ E("span", {
+								}), m && /* @__PURE__ */ E("span", {
 									className: s("shrink-0 text-[11px] tabular-nums", l ? "text-white/50" : "text-text-tertiary"),
 									"data-testid": "conversation-time",
-									children: h
+									children: m
 								})]
 							}), e.lastMessagePreview && /* @__PURE__ */ E("span", {
 								className: s("truncate text-[12px]", l ? "text-white/60" : "text-text-secondary"),
@@ -972,7 +972,7 @@ function K({ author: e, avatarUrl: t, mine: n = !1, messages: r, className: i })
 		"data-author": e,
 		"data-row-count": r.length,
 		className: s("flex flex-col", i),
-		children: r.map((r, i) => /* @__PURE__ */ E(h, {
+		children: r.map((r, i) => /* @__PURE__ */ E(m, {
 			author: e,
 			content: r.content,
 			timestamp: r.timestamp,

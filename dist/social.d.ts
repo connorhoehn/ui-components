@@ -217,7 +217,7 @@ declare interface ChatMessage {
     attachments?: ChatAttachment[];
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -262,6 +262,14 @@ export declare interface ChatPanelProps {
      * shape when the original is outside the loaded window.
      */
     onJumpToMessage?: (messageId: string) => void;
+    /**
+     * People currently editing a document, keyed by documentId. Feeds the
+     * document cards in the thread, which is where the difference between "a
+     * document exists" and "two people are in it right now" shows up.
+     */
+    documentEditors?: (documentId: string) => readonly DocumentActivityEditor[];
+    /** Opens a document announced in the thread. */
+    onOpenDocument?: (documentId: string) => void;
     /**
      * The message a jump just landed on. Highlighted so arriving somewhere in
      * the middle of a transcript says WHICH message you were sent to — without
@@ -505,6 +513,32 @@ export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", 
 
 /** "You and Ada", "Ada, Sam and 3 others" — the tooltip people expect. */
 export declare function describeReactors(group: ReactionGroup): string;
+
+export declare function DocumentActivityCard({ documentId, title, icon, createdBy, editors, onOpen, className, 'data-testid': testId, }: DocumentActivityCardProps): JSX.Element;
+
+export declare interface DocumentActivityCardProps {
+    documentId: string;
+    title: string;
+    /** Emoji or short glyph from the document's type. */
+    icon?: string;
+    /** Who created it — a display name, never a raw userId. */
+    createdBy?: string;
+    /** People in the document right now. Empty means nobody. */
+    editors?: readonly DocumentActivityEditor[];
+    /**
+     * Opens the document. Omit and the card is a record rather than a dead
+     * button — a document the viewer cannot reach should not offer a way in.
+     */
+    onOpen?: (documentId: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface DocumentActivityEditor {
+    userId: string;
+    displayName?: string;
+    avatarUrl?: string;
+}
 
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
 

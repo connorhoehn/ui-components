@@ -105,3 +105,8 @@ export type {
 // another.
 export { ConversationSurface, ALL_CONVERSATION_FEATURES } from './ConversationSurface';
 export type { ConversationFeature, ConversationSurfaceProps } from './ConversationSurface';
+
+// A document as it appears INSIDE a conversation: what it is, who is in it
+// right now, and a way in that does not cost you the thread.
+export { DocumentActivityCard } from './DocumentActivityCard';
+export type { DocumentActivityCardProps, DocumentActivityEditor } from './DocumentActivityCard';

@@ -12,6 +12,7 @@ import { Input } from '../forms/Input';
 import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
 import { MessageBody } from './MessageBody';
+import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
 import { QuoteBlock } from './QuoteBlock';
@@ -62,6 +63,14 @@ export interface ChatPanelProps {
    * shape when the original is outside the loaded window.
    */
   onJumpToMessage?: (messageId: string) => void;
+  /**
+   * People currently editing a document, keyed by documentId. Feeds the
+   * document cards in the thread, which is where the difference between "a
+   * document exists" and "two people are in it right now" shows up.
+   */
+  documentEditors?: (documentId: string) => readonly DocumentActivityEditor[];
+  /** Opens a document announced in the thread. */
+  onOpenDocument?: (documentId: string) => void;
   /**
    * The message a jump just landed on. Highlighted so arriving somewhere in
    * the middle of a transcript says WHICH message you were sent to — without
@@ -197,6 +206,8 @@ export function ChatPanel({
   pinnedMessageIds,
   onJumpToMessage,
   highlightedMessageId,
+  documentEditors,
+  onOpenDocument,
   tone = 'light',
   showHeader,
   fill,
@@ -429,8 +440,28 @@ export function ChatPanel({
               const richHtml = typeof rich === 'string' ? rich : undefined;
               const text = <MessageBody html={richHtml} text={message.content} />;
 
-              const body =
-                files.length === 0 ? (
+              // A document event is not a message with a document mentioned in
+              // it — it IS the document, so the card replaces the text rather
+              // than sitting under it. The sentence the server wrote stays in
+              // the stored message for anywhere that renders plain text
+              // (notification previews, the conversation list) but the thread
+              // shows the thing itself.
+              const docMeta = (message as {
+                metadata?: { kind?: unknown; documentId?: unknown; title?: unknown; icon?: unknown; displayName?: unknown };
+              }).metadata;
+              const isDocumentEvent =
+                docMeta?.kind === 'document' && typeof docMeta.documentId === 'string';
+
+              const body = isDocumentEvent ? (
+                <DocumentActivityCard
+                  documentId={docMeta!.documentId as string}
+                  title={(docMeta!.title as string) || message.content}
+                  icon={docMeta!.icon as string | undefined}
+                  createdBy={(docMeta!.displayName as string | undefined) ?? message.displayName}
+                  editors={documentEditors?.(docMeta!.documentId as string) ?? []}
+                  onOpen={onOpenDocument}
+                />
+              ) : files.length === 0 ? (
                   text
                 ) : (
                   <>
