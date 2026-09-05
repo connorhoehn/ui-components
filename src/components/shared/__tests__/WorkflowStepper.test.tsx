@@ -1,0 +1,40 @@
+import { render, screen, cleanup } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
+import { WorkflowStepper, type WorkflowStep } from '../WorkflowStepper';
+
+const STEPS: WorkflowStep[] = [
+  { step: 1, label: 'Intake', done: true, active: false },
+  { step: 2, label: 'Classify', done: true, active: false },
+  { step: 3, label: 'Score', done: false, active: true },
+  { step: 4, label: 'Review', done: false, active: false },
+  { step: 5, label: 'Publish', done: false, active: false },
+  { step: 6, label: 'Follow-up', done: false, active: false },
+];
+
+afterEach(cleanup);
+
+describe('WorkflowStepper', () => {
+  it('renders one list item per step with its label', () => {
+    render(<WorkflowStepper steps={STEPS} />);
+    STEPS.forEach((s) => expect(screen.getByText(s.label)).toBeInTheDocument());
+    expect(screen.getAllByRole('listitem')).toHaveLength(6);
+  });
+
+  it('marks exactly one step aria-current="step"', () => {
+    render(<WorkflowStepper steps={STEPS} />);
+    const current = screen.getAllByRole('listitem').filter((li) => li.getAttribute('aria-current') === 'step');
+    expect(current).toHaveLength(1);
+    expect(current[0]).toHaveTextContent('Score');
+  });
+
+  it('marks no step current when none is active', () => {
+    render(<WorkflowStepper steps={STEPS.map((s) => ({ ...s, active: false }))} />);
+    const current = screen.getAllByRole('listitem').filter((li) => li.getAttribute('aria-current') === 'step');
+    expect(current).toHaveLength(0);
+  });
+
+  it('renders as an ordered list', () => {
+    render(<WorkflowStepper steps={STEPS} />);
+    expect(screen.getByRole('list').tagName).toBe('OL');
+  });
+});

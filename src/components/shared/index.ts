@@ -306,3 +306,17 @@ export type { DetailSectionProps } from './DetailSection';
 // get who they are and what you can do about it.
 export { PersonHoverCard } from './PersonHoverCard';
 export type { PersonHoverCardProps, PersonCardData } from './PersonHoverCard';
+
+// ── Master-detail, tree, workflow + wizard shells, markdown, tooltip (2026-09) ──
+export { MasterDetail } from './MasterDetail';
+export type { MasterDetailProps } from './MasterDetail';
+export { TreeView } from './TreeView';
+export type { TreeViewProps, TreeNode, TreeDropPosition } from './TreeView';
+export { WorkflowStepper } from './WorkflowStepper';
+export type { WorkflowStepperProps, WorkflowStep } from './WorkflowStepper';
+export { Wizard } from './Wizard';
+export type { WizardProps, WizardStep } from './Wizard';
+export { MarkdownView } from './MarkdownView';
+export type { MarkdownViewProps } from './MarkdownView';
+export { Tooltip } from './Tooltip';
+export type { TooltipProps, TooltipPlacement } from './Tooltip';

@@ -55,6 +55,11 @@ export default defineConfig({
         // EVERY entry pulled, so importing `Chip` dragged in 64KB of
         // command-palette fuzzy-matching.
         'clsx', 'tailwind-merge', 'cmdk',
+        // MarkdownView's renderer + its GFM (tables, strikethrough, task
+        // lists) plugin. Same rationale as clsx/tailwind-merge/cmdk above:
+        // real `dependencies`, so npm installs them for the consumer, and
+        // bundling them here would only duplicate code.
+        'react-markdown', 'remark-gfm',
         // ajv does runtime schema validation of persisted pipelines. It was
         // an UNDECLARED direct import until v2.73.3 — only resolvable because
         // vite-plugin-dts 4 happened to pull it in transitively, and it got

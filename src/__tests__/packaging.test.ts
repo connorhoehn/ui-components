@@ -253,7 +253,9 @@ describe('entry points and their transitive optional peers', () => {
       'video-ivs': { static: [], dynamic: ['amazon-ivs-web-broadcast'] },
       social: { static: ['cmdk'], dynamic: [] },
       agents: { static: ['@xyflow/react'], dynamic: [] },
-      shared: { static: ['cmdk', 'recharts'], dynamic: [] },
+      // react-markdown + remark-gfm power MarkdownView (real `dependencies`,
+      // same footing as cmdk — npm installs them for the consumer).
+      shared: { static: ['cmdk', 'react-markdown', 'recharts', 'remark-gfm'], dynamic: [] },
       observability: { static: ['react-router', 'recharts'], dynamic: [] },
       ingest: { static: ['react-router', 'recharts'], dynamic: [] },
       hooks: { static: ['amazon-cognito-identity-js', 'react-router', 'yjs'], dynamic: [] },
@@ -262,7 +264,10 @@ describe('entry points and their transitive optional peers', () => {
       // The root barrel re-exports nearly everything, so it needs nearly
       // everything. That is expected — subpaths are how a consumer opts out.
       index: {
-        static: [...TIPTAP, 'amazon-cognito-identity-js', 'cmdk', 'react-router', 'recharts', 'yjs'].sort(),
+        static: [
+          ...TIPTAP,
+          'amazon-cognito-identity-js', 'cmdk', 'react-markdown', 'react-router', 'recharts', 'remark-gfm', 'yjs',
+        ].sort(),
         dynamic: ['amazon-ivs-web-broadcast'],
       },
     };
