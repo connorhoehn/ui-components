@@ -286,6 +286,8 @@ export function ChatPanel({
   // to the live edge mid-sentence. The viewport now belongs to the
   // reader unless they are already at the bottom.
   const [unreadBelow, setUnreadBelow] = useState(0);
+  /** True once the list has content scrolled above the top edge. */
+  const [scrolledFromTop, setScrolledFromTop] = useState(false);
   const pinnedRef = useRef(true);
   const prevCountRef = useRef(messages.length);
   // An arriving transfer grows the list exactly like an arriving message, so
@@ -310,6 +312,10 @@ export function ChatPanel({
     const pinned = isPinnedToBottom(el);
     pinnedRef.current = pinned;
     if (pinned) setUnreadBelow(0);
+    // Only fade when there is something above to fade INTO. At the top of a
+    // short thread the oldest message is fully visible and washing it out
+    // would be a lie about there being more.
+    setScrolledFromTop(el.scrollTop > 8);
   }
 
   useEffect(() => {
@@ -330,6 +336,11 @@ export function ChatPanel({
     if (pinnedRef.current) {
       el.scrollTop = el.scrollHeight;
       setUnreadBelow(0);
+      // Recomputed here as well as in onScroll: the jump to the bottom is
+      // PROGRAMMATIC, and the first render of a long thread lands scrolled
+      // without the user ever having scrolled — so the handler that would
+      // have noticed never ran and the top edge stayed hard.
+      setScrolledFromTop(el.scrollTop > 8);
     } else if (grew > 0) {
       setUnreadBelow((n) => n + grew);
     }
@@ -440,7 +451,19 @@ export function ChatPanel({
           ref={listRef}
           onScroll={handleListScroll}
           data-testid="chat-panel-messages"
-          className={cn('overflow-y-auto overflow-x-hidden', fills ? 'min-h-0 flex-1' : 'max-h-[200px]')}
+          className={cn(
+            'scrollbar-none overflow-y-auto overflow-x-hidden',
+            // A long thread runs off the top edge with a hard cut. The mask
+            // softens the oldest visible messages so the list reads as
+            // continuing rather than as starting there.
+            //
+            // A mask rather than an overlay gradient: an overlay has to be
+            // painted in the pane's own background colour, which is wrong the
+            // moment the surface is dark or tinted. A mask fades the content
+            // itself and is correct on any background.
+            scrolledFromTop && 'fade-top',
+            fills ? 'min-h-0 flex-1' : 'max-h-[200px]',
+          )}
         >
           {canLoadMore && messages.length > 0 && (
             <div className="flex justify-center pb-1">
@@ -523,6 +546,12 @@ export function ChatPanel({
                 | { messageId: string; author: string; text: string; timestamp?: string }
                 | undefined;
               const isPinned = !!messageId && !!pinnedMessageIds?.has(messageId);
+              // Matched on the AUTHENTICATED user id, never on clientId: a
+              // clientId is per-connection and changes on every reconnect, so
+              // keying on it would make your own messages stop being yours
+              // halfway up the thread.
+              const isMine =
+                !!currentUserId && (message as { userId?: string }).userId === currentUserId;
 
               // The quote, the message, its reactions — one unit. Rendering
               // them as siblings of the row would let a reaction drift away
@@ -561,8 +590,13 @@ export function ChatPanel({
                   // keeps the bar reachable without a pointer.
                   className={cn(
                     'group relative rounded-md',
+                    // `ring-inset`: an outset ring is drawn OUTSIDE the row's
+                    // box, and the scroll container clips overflow — so the
+                    // right edge of the highlight was cut off against the
+                    // pane boundary. Inset draws it within the row's own
+                    // bounds, which nothing can clip.
                     messageId && messageId === highlightedMessageId &&
-                      'bg-surface-inset ring-1 ring-primary transition-colors',
+                      'bg-surface-inset ring-1 ring-inset ring-primary transition-colors',
                   )}
                 >
                   <MessageRow
@@ -576,10 +610,7 @@ export function ChatPanel({
                     // clientId is per-connection and changes on every
                     // reconnect, so keying on it would make your own messages
                     // stop being yours halfway up the thread.
-                    mine={
-                      !!currentUserId &&
-                      (message as { userId?: string }).userId === currentUserId
-                    }
+                    mine={isMine}
                   />
                   {messageId && (onToggleReaction || onReply || onTogglePin) && (
                     <MessageActionBar
@@ -600,7 +631,14 @@ export function ChatPanel({
                       // on screen at once, one of them for a message you were
                       // no longer pointing at. focus-visible is keyboard-only,
                       // which is the case the reveal-on-focus exists for.
-                      className="absolute left-14 -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100"
+                      className={cn(
+                        'absolute -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100',
+                        // Mirrors with the message. Own messages moved to the
+                        // right side, and a bar hard-coded to the left put the
+                        // controls for a message on one edge of the pane and
+                        // the message it acts on at the other.
+                        isMine ? 'right-14' : 'left-14',
+                      )}
                       onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
                       onReply={onReply ? () => onReply(message) : undefined}
                       onTogglePin={onTogglePin ? () => onTogglePin(message) : undefined}

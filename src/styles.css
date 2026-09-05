@@ -936,3 +936,35 @@
 [cmdk-input]::-webkit-search-cancel-button {
   display: none;
 }
+
+/* Scrollable panes that should not advertise the fact.
+ *
+ * A conversation, a file list, a gutter: these scroll constantly and a track
+ * pinned down their edge is permanent chrome for a transient state. Hiding it
+ * is a styling choice, NOT a functional one — the pane still scrolls by wheel,
+ * trackpad, keyboard and touch, and the content is still reachable. That is
+ * the line: hide the indicator, never the ability.
+ *
+ * `overflow` stays wherever the component set it; this only paints. */
+.scrollbar-none {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* legacy Edge */
+}
+.scrollbar-none::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Softens the top edge of a scrolled list — the oldest visible messages fade
+ * out so a long thread reads as continuing rather than as starting at a hard
+ * cut.
+ *
+ * A MASK, not an overlay gradient. An overlay has to be painted in the pane's
+ * own background colour, so it is wrong the moment the surface is dark, tinted
+ * or sits on paper; a mask fades the content itself and is correct on any
+ * background. Applied only while the list is actually scrolled — fading the
+ * top of a short thread would be a lie about there being more above. */
+.fade-top {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 48px);
+}

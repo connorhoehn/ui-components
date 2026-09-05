@@ -14,24 +14,24 @@ import { t as x } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as S } from "./useActiveSpeaker-Dc9r75EE.js";
 import { forwardRef as C, useCallback as w, useEffect as T, useImperativeHandle as E, useMemo as D, useRef as O, useState as k } from "react";
 import { Fragment as A, jsx as j, jsxs as M } from "react/jsx-runtime";
-import ee, { createPortal as N } from "react-dom";
+import N, { createPortal as P } from "react-dom";
 //#region src/utils/markdownParser.ts
-function P() {
+function F() {
 	return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
-var te = /^- \[([ xX])\]\s+(.+)$/;
-function ne(e, t) {
+var ee = /^- \[([ xX])\]\s+(.+)$/;
+function te(e, t) {
 	let n = e.toLowerCase();
-	return te.test(t) || /- \[[ xX]\]/.test(t) ? "tasks" : n.includes("decision") ? "decisions" : n.includes("summary") ? "summary" : "notes";
+	return ee.test(t) || /- \[[ xX]\]/.test(t) ? "tasks" : n.includes("decision") ? "decisions" : n.includes("summary") ? "summary" : "notes";
 }
-function F(e) {
+function ne(e) {
 	let t = e.split("\n"), n = [], r = [];
 	for (let e of t) {
-		let t = e.match(te);
+		let t = e.match(ee);
 		if (t) {
 			let e = t[1].toLowerCase() === "x";
 			n.push({
-				id: P(),
+				id: F(),
 				text: t[2].trim(),
 				status: e ? "done" : "pending",
 				assignee: "",
@@ -54,9 +54,9 @@ function re(e) {
 	if (a.length <= 1) {
 		let e = r.replace(/^# .+\n*/m, "").trim();
 		if (e.length > 0) {
-			let { items: r, remaining: i } = F(e);
+			let { items: r, remaining: i } = ne(e);
 			n.push({
-				id: P(),
+				id: F(),
 				type: "summary",
 				title: t.title ?? "Untitled",
 				contentMarkdown: i,
@@ -69,9 +69,9 @@ function re(e) {
 		};
 	}
 	for (let e = 1; e < a.length; e++) {
-		let t = a[e], r = t.indexOf("\n"), i = r === -1 ? t.trim() : t.slice(0, r).trim(), o = r === -1 ? "" : t.slice(r + 1).trim(), { items: s, remaining: c } = F(o), l = ne(i, o);
+		let t = a[e], r = t.indexOf("\n"), i = r === -1 ? t.trim() : t.slice(0, r).trim(), o = r === -1 ? "" : t.slice(r + 1).trim(), { items: s, remaining: c } = ne(o), l = te(i, o);
 		n.push({
-			id: P(),
+			id: F(),
 			type: l,
 			title: i,
 			contentMarkdown: c,
@@ -259,12 +259,12 @@ function z(e) {
 	return e.toString().replace(/<\/?(paragraph|heading|blockquote|codeBlock|bulletList|orderedList|listItem|taskList|taskItem|horizontalRule|hardBreak|doc)[^>]*>/g, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim();
 }
 function B({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, color: m = "var(--color-info)", onMessage: h, activityPublish: g, isVideoDocked: _, onDockVideo: v, onUndockVideo: y, onBack: b }) {
-	let [x, S] = k(pe), { showHistory: C, showMyItems: E, showVideoHistory: A, toggleHistory: j, toggleMyItems: M, toggleVideoHistory: ee, closePanel: N } = ue(), [P, te] = k(_ ?? !1), [ne, F] = k(typeof window < "u" ? window.innerWidth : 1400);
+	let [x, S] = k(pe), { showHistory: C, showMyItems: E, showVideoHistory: A, toggleHistory: j, toggleMyItems: M, toggleVideoHistory: N, closePanel: P } = ue(), [F, ee] = k(_ ?? !1), [te, ne] = k(typeof window < "u" ? window.innerWidth : 1400);
 	T(() => {
-		let e = () => F(window.innerWidth);
+		let e = () => ne(window.innerWidth);
 		return window.addEventListener("resize", e), () => window.removeEventListener("resize", e);
 	}, []);
-	let re = ne >= 1200, ie = ne >= 900, [ae, oe] = k(!1), I = O(null), L = O(null), [se, ce] = k(0), [, le] = k(0), z = O(null), B = w(() => {
+	let re = te >= 1200, ie = te >= 900, [ae, oe] = k(!1), I = O(null), L = O(null), [se, ce] = k(0), [, le] = k(0), z = O(null), B = w(() => {
 		if (z.current === null) {
 			let e = I.current ?? L.current;
 			e && (z.current = e.getBoundingClientRect().top + window.scrollY);
@@ -284,7 +284,7 @@ function B({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, c
 			z.current = null, B();
 		}, 50);
 		return () => clearTimeout(e);
-	}, [P, B]);
+	}, [F, B]);
 	let [me, he] = k(null), [ge, _e] = k(!1), [ve, ye] = k(null), { idToken: V } = n(), be = u(e, V), { meta: H, sections: U, synced: W, updateMeta: G, addSection: xe, updateSection: Se, addItem: Ce, updateItem: we, removeItem: Te, getSectionFragment: Ee, ydoc: K, provider: q, exportJSON: De, participants: Oe, awareness: J } = a({
 		documentId: e,
 		mode: x,
@@ -515,9 +515,9 @@ function B({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, c
 				t.style.boxShadow = "";
 			}, 2e3));
 		}, 150);
-	}, []), st = M, ct = j, $ = ee, lt = w(() => {
-		te((e) => !e), N();
-	}, [N]);
+	}, []), st = M, ct = j, $ = N, lt = w(() => {
+		ee((e) => !e), P();
+	}, [P]);
 	T(() => {
 		let e = (e) => {
 			(e.metaKey || e.ctrlKey) && e.key === "m" && (e.preventDefault(), st());
@@ -658,9 +658,9 @@ function B({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, c
 		handleToggleHistory: ct,
 		handleToggleMyItems: st,
 		handleToggleVideoHistory: $,
-		closePanel: N,
-		showVideoCall: P,
-		setShowVideoCall: te,
+		closePanel: P,
+		showVideoCall: F,
+		setShowVideoCall: ee,
 		handleToggleVideoCall: lt,
 		videoSessions: be,
 		isVideoDocked: _,
@@ -677,9 +677,9 @@ function B({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, c
 		handleNavigateToSection: ot,
 		versionHistory: dt,
 		handleBack: w(() => {
-			P && !_ && v?.(), b?.();
+			F && !_ && v?.(), b?.();
 		}, [
-			P,
+			F,
 			_,
 			v,
 			b
@@ -883,8 +883,8 @@ var H = {
 		label: "Read"
 	}
 ];
-function xe({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: i, onExport: a, onToggleHistory: o, onToggleVideoCall: s, onToggleVideoHistory: c, isCallActive: l, callVariant: u, callLabel: d, onClearDocument: f, onJumpToUser: m, sections: g, onToggleMyItems: _, myItemCount: v, commentCount: y, onBack: b, onFollowUser: x, followingUserId: S, onFinalize: C, onUnlock: w, pastCallsCount: T }) {
-	let [E, D] = k(!1), O = H[e.status] ?? H.draft, A = u ?? (l ? "active" : "idle");
+function xe({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: i, onExport: a, onToggleHistory: o, onToggleVideoCall: s, onToggleVideoHistory: c, isCallActive: l, callVariant: u, callLabel: d, onClearDocument: f, onJumpToUser: m, sections: g, onToggleMyItems: _, myItemCount: v, commentCount: y, onBack: b, onFollowUser: x, followingUserId: S, onFinalize: C, onUnlock: w, pastCallsCount: T, extraMenuItems: E }) {
+	let [D, O] = k(!1), A = H[e.status] ?? H.draft, N = u ?? (l ? "active" : "idle");
 	return /* @__PURE__ */ M("header", {
 		className: p("flex flex-col py-2 px-4 bg-surface border-b border-border shrink-0 gap-1.5 sticky top-[53px] z-[34]"),
 		children: [/* @__PURE__ */ M("div", {
@@ -907,8 +907,8 @@ function xe({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: 
 					/* @__PURE__ */ j("span", {
 						className: p("inline-block text-[11px] font-semibold py-0.5 px-2.5 rounded-full"),
 						style: {
-							background: O.bg,
-							color: O.text
+							background: A.bg,
+							color: A.text
 						},
 						children: e.status
 					}),
@@ -970,11 +970,11 @@ function xe({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: 
 					}),
 					s && /* @__PURE__ */ j("button", {
 						type: "button",
-						"aria-pressed": A === "active",
-						"data-call-variant": A,
-						className: p("py-1.5 px-3 text-[13px] font-medium border rounded-md cursor-pointer font-[inherit] relative", W[A]),
+						"aria-pressed": N === "active",
+						"data-call-variant": N,
+						className: p("py-1.5 px-3 text-[13px] font-medium border rounded-md cursor-pointer font-[inherit] relative", W[N]),
 						onClick: s,
-						children: d ?? U[A]
+						children: d ?? U[N]
 					}),
 					e.status === "final" ? w && /* @__PURE__ */ j("button", {
 						type: "button",
@@ -992,17 +992,17 @@ function xe({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: 
 						children: [/* @__PURE__ */ j("button", {
 							type: "button",
 							className: p("py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-surface text-text-primary cursor-pointer font-[inherit] relative tracking-wider"),
-							onClick: () => D((e) => !e),
+							onClick: () => O((e) => !e),
 							title: "More actions",
 							children: "⋯"
-						}), E && /* @__PURE__ */ M("div", {
+						}), D && /* @__PURE__ */ M("div", {
 							className: p("absolute top-full right-0 mt-1 bg-surface border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] overflow-hidden"),
 							children: [
 								/* @__PURE__ */ j("button", {
 									type: "button",
 									className: p("block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover"),
 									onClick: () => {
-										o(), D(!1);
+										o(), O(!1);
 									},
 									children: "History"
 								}),
@@ -1010,7 +1010,7 @@ function xe({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: 
 									type: "button",
 									className: p("block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover"),
 									onClick: () => {
-										c(), D(!1);
+										c(), O(!1);
 									},
 									children: [
 										"Past Calls (",
@@ -1018,6 +1018,15 @@ function xe({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: 
 										")"
 									]
 								}),
+								E?.map((e) => /* @__PURE__ */ j("button", {
+									type: "button",
+									"data-testid": `document-header-menu-${e.id}`,
+									className: p("block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover"),
+									onClick: () => {
+										e.onSelect(), O(!1);
+									},
+									children: e.label
+								}, e.id)),
 								/* @__PURE__ */ j("div", { className: p("border-t border-border-subtle my-1") }),
 								[
 									"markdown",
@@ -1027,7 +1036,7 @@ function xe({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: 
 									type: "button",
 									className: p("block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover"),
 									onClick: () => {
-										a(e), D(!1);
+										a(e), O(!1);
 									},
 									children: ["Export ", e.charAt(0).toUpperCase() + e.slice(1)]
 								}, e)),
@@ -1036,7 +1045,7 @@ function xe({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: 
 									type: "button",
 									className: p("block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-danger-fg text-left cursor-pointer font-[inherit] hover:bg-danger-bg"),
 									onClick: () => {
-										D(!1), window.confirm("Clear all document content? This cannot be undone.") && f();
+										O(!1), window.confirm("Clear all document content? This cannot be undone.") && f();
 									},
 									children: "Clear Document"
 								})
@@ -1084,7 +1093,7 @@ function Se({ followingUserId: e, participants: t, onStopFollow: n }) {
 }
 //#endregion
 //#region src/components/ui/Panel.tsx
-var Ce = ({ children: e, variant: t = "light", width: n = 320, style: r }) => typeof document > "u" ? null : N(/* @__PURE__ */ j("div", {
+var Ce = ({ children: e, variant: t = "light", width: n = 320, style: r }) => typeof document > "u" ? null : P(/* @__PURE__ */ j("div", {
 	className: p("fixed right-0 top-0 h-full z-[60] flex flex-col shadow-[-4px_0_12px_rgba(0,0,0,0.08)]", t === "dark" ? "bg-call-chrome" : "bg-surface"),
 	style: {
 		width: n,
@@ -1434,7 +1443,7 @@ function Ie({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 	let [C, w] = k(e.collapsed), T = () => {
 		let e = !C;
 		w(e), s({ collapsed: e });
-	}, E = t(e.sectionType ?? e.type, "editor") ?? y, D = d && d.length > 0, O = D ? d[0].color || "#3b82f6" : "transparent", [A, ee] = k(!1);
+	}, E = t(e.sectionType ?? e.type, "editor") ?? y, D = d && d.length > 0, O = D ? d[0].color || "#3b82f6" : "transparent", [A, N] = k(!1);
 	return /* @__PURE__ */ M("div", {
 		id: `section-${e.id}`,
 		"data-testid": `section-block-${e.id}`,
@@ -1451,8 +1460,8 @@ function Ie({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 				onClick: (t) => {
 					t.stopPropagation(), x(e.id);
 				},
-				onMouseEnter: () => ee(!0),
-				onMouseLeave: () => ee(!1),
+				onMouseEnter: () => N(!0),
+				onMouseLeave: () => N(!1),
 				className: p("absolute top-1/2 -right-[52px] -translate-y-1/2 w-10 h-10 rounded-full border border-border flex items-center justify-center text-xl leading-none p-0 z-[1] shadow-sm cursor-pointer transition-[opacity,background] duration-150 ease-in-out", A ? "bg-surface-hover opacity-90" : "bg-surface opacity-40"),
 				title: "Open comments",
 				children: [
@@ -1799,7 +1808,7 @@ var Ge = C(function({ query: e, users: t, position: n, onSelect: r, onDismiss: i
 		r,
 		i
 	]);
-	return E(a, () => ({ handleKeyDown: u }), [u]), ee.createPortal(/* @__PURE__ */ j("div", {
+	return E(a, () => ({ handleKeyDown: u }), [u]), N.createPortal(/* @__PURE__ */ j("div", {
 		ref: c,
 		role: "listbox",
 		className: p("fixed z-[1000] bg-surface border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] max-h-60 overflow-y-auto min-w-[200px]"),
@@ -3262,7 +3271,7 @@ function Tt({ sections: e, participants: t, meta: n, commentCounts: r, sectionCo
 }
 //#endregion
 //#region src/components/doc-editor/EditorModeSwitch.tsx
-function Et({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, displayName: a, color: o, userId: s, ydoc: c, provider: l, getSectionFragment: u, updateSection: d, participants: f, focusedSectionId: m, onSectionFocus: h, comments: g, onAddComment: _, onResolveThread: v, onUnresolveThread: y, onUpdateCursorInfo: b, onOpenComments: x, onAddItem: S, onUpdateItem: C, onRemoveItem: w, restItems: T, itemErrors: E, commentSidebarOpen: D, commentSectionId: O, commentSidebarTop: k, sectionListRef: ee, onCloseComments: N, showVideoCall: P, isVideoDocked: te, showInlineVideo: ne, sidebarFixed: F, videoSpacerRef: re, videoLeft: ie, FIXED_TOP: ae, showTOC: oe, sectionReviews: I, reviewSection: L, headerMeta: se, onLoadDemo: ce, activityPublish: le }) {
+function Et({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, displayName: a, color: o, userId: s, ydoc: c, provider: l, getSectionFragment: u, updateSection: d, participants: f, focusedSectionId: m, onSectionFocus: h, comments: g, onAddComment: _, onResolveThread: v, onUnresolveThread: y, onUpdateCursorInfo: b, onOpenComments: x, onAddItem: S, onUpdateItem: C, onRemoveItem: w, restItems: T, itemErrors: E, commentSidebarOpen: D, commentSectionId: O, commentSidebarTop: k, sectionListRef: N, onCloseComments: P, showVideoCall: F, isVideoDocked: ee, showInlineVideo: te, sidebarFixed: ne, videoSpacerRef: re, videoLeft: ie, FIXED_TOP: ae, showTOC: oe, sectionReviews: I, reviewSection: L, headerMeta: se, onLoadDemo: ce, activityPublish: le }) {
 	let R = Object.keys(E ?? {}).map((e) => r.find((t) => t.id === e)?.title || e);
 	return /* @__PURE__ */ M(A, { children: [
 		R.length > 0 && /* @__PURE__ */ M("div", {
@@ -3299,16 +3308,16 @@ function Et({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, d
 			]
 		}),
 		!t && e === "editor" && c && /* @__PURE__ */ M("div", {
-			ref: ee,
+			ref: N,
 			className: "flex gap-4 relative min-w-0",
 			children: [
-				P && !te && ne && /* @__PURE__ */ j("div", {
+				F && !ee && te && /* @__PURE__ */ j("div", {
 					ref: re,
 					className: "w-[240px] shrink-0",
 					children: /* @__PURE__ */ j("div", {
 						id: "inline-video-slot",
-						className: p(F && "fixed z-30"),
-						style: F ? {
+						className: p(ne && "fixed z-30"),
+						style: ne ? {
 							top: ae,
 							left: ie,
 							width: 240
@@ -3361,7 +3370,7 @@ function Et({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, d
 							children: r.find((e) => e.id === O)?.title ?? "Comments"
 						}), /* @__PURE__ */ j("button", {
 							type: "button",
-							onClick: N,
+							onClick: P,
 							className: p("border-none bg-transparent cursor-pointer", "text-base text-neutral px-1.5 py-0.5 rounded leading-none shrink-0"),
 							title: "Close comments",
 							children: "✕"
@@ -4114,7 +4123,7 @@ function qt({ documentId: e, documentType: t, ws: n, userId: r, displayName: i, 
 	]), T(() => () => {
 		m?.parentNode?.removeChild(m);
 	}, [m]);
-	let h = f.showVideoCall && m ? N(/* @__PURE__ */ j(Ae, {
+	let h = f.showVideoCall && m ? P(/* @__PURE__ */ j(Ae, {
 		documentId: e,
 		userId: r,
 		idToken: f.idToken,

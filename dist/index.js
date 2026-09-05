@@ -44,13 +44,13 @@ import { t as Jr } from "./ActivityFeed-BvBfBfGZ.js";
 import { t as Yr } from "./Select-CqVokE2v.js";
 import { t as Xr } from "./Checkbox-DsS7fIUO.js";
 import { n as Zr, r as Qr, t as $r } from "./ReactionsOverlay-Ob1ecsgg.js";
-import { C as ei, E as ti, S as ni, T as ri, _ as ii, a as ai, b as oi, c as si, d as ci, f as li, g as ui, h as di, i as fi, l as pi, m as mi, n as hi, o as gi, p as _i, r as vi, s as yi, t as bi, u as xi, v as Si, w as Ci, x as wi, y as Ti } from "./ConversationSurface-DYgv19jP.js";
+import { C as ei, E as ti, S as ni, T as ri, _ as ii, a as ai, b as oi, c as si, d as ci, f as li, g as ui, h as di, i as fi, l as pi, m as mi, n as hi, o as gi, p as _i, r as vi, s as yi, t as bi, u as xi, v as Si, w as Ci, x as wi, y as Ti } from "./ConversationSurface-eflYWsU7.js";
 import { t as Ei } from "./activationKey-CjbL3LUv.js";
 import { a as Di, i as Oi } from "./renderers-aONC4W_Z.js";
 import { n as ki, r as Ai, t as ji } from "./EventStreamContext-CLzG8O5_.js";
 import { A as Mi, C as Ni, J as Pi, M as Fi, T as Ii, X as Li, Z as Ri, _ as zi, b as Bi, c as Vi, d as Hi, f as Ui, g as Wi, h as Gi, it as Ki, m as qi, n as Ji, p as Yi, q as Xi, rt as Zi, t as Qi, u as $i, v as ea, x as ta, y as na, z as ra } from "./services-DA0gJcWq.js";
 import { n as ia, t as aa } from "./ObservabilityContext-DpoDrm3T.js";
-import { a as oa, c as sa, d as ca, f as la, i as ua, l as da, n as fa, o as pa, p as ma, r as ha, s as ga, t as _a, u as va } from "./social-DIoP4qNI.js";
+import { a as oa, c as sa, d as ca, f as la, i as ua, l as da, n as fa, o as pa, p as ma, r as ha, s as ga, t as _a, u as va } from "./social-BHrEFSAr.js";
 import { n as ya, r as ba, t as xa } from "./ReactionPickerPopover-moHezwrL.js";
 import { i as Sa, n as Ca, r as wa, t as Ta } from "./LinkDialog-DazAeDjI.js";
 import { $ as Ea, A as Da, B as Oa, C as ka, D as Aa, E as ja, F as Ma, G as Na, H as Pa, I as Fa, J as Ia, K as La, L as Ra, M as za, N as Ba, O as Va, P as Ha, Q as Ua, R as Wa, S as Ga, T as Ka, U as qa, V as Ja, W as Ya, X as Xa, Y as Za, Z as Qa, _ as $a, a as eo, at as to, b as no, c as ro, ct as io, d as ao, et as oo, f as so, g as co, h as lo, i as uo, it as fo, j as po, k as mo, l as ho, lt as go, m as _o, n as vo, nt as yo, o as bo, ot as xo, p as So, q as Co, r as wo, rt as To, s as Eo, st as Do, t as Oo, tt as ko, u as Ao, v as jo, w as Mo, x as No, y as Po, z as Fo } from "./video-BVvENI4-.js";
@@ -1286,7 +1286,7 @@ function Oc() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var kc = Rs(() => import("./DocumentEditorPage-DRMfcLtj.js").then((e) => e.n));
+var kc = Rs(() => import("./DocumentEditorPage-CCLMqUVt.js").then((e) => e.n));
 function Ac({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

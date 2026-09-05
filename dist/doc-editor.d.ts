@@ -416,7 +416,7 @@ export declare interface DocumentGutterProps {
     'data-testid'?: string;
 }
 
-export declare function DocumentHeader({ meta, mode, onModeChange, participants, onUpdateMeta, onExport, onToggleHistory, onToggleVideoCall, onToggleVideoHistory, isCallActive, callVariant, callLabel, onClearDocument, onJumpToUser, sections, onToggleMyItems, myItemCount, commentCount, onBack, onFollowUser, followingUserId, onFinalize, onUnlock, pastCallsCount, }: DocumentHeaderProps): JSX.Element;
+export declare function DocumentHeader({ meta, mode, onModeChange, participants, onUpdateMeta, onExport, onToggleHistory, onToggleVideoCall, onToggleVideoHistory, isCallActive, callVariant, callLabel, onClearDocument, onJumpToUser, sections, onToggleMyItems, myItemCount, commentCount, onBack, onFollowUser, followingUserId, onFinalize, onUnlock, pastCallsCount, extraMenuItems, }: DocumentHeaderProps): JSX.Element;
 
 /**
  * How the call button presents itself.
@@ -434,6 +434,16 @@ export declare function DocumentHeader({ meta, mode, onModeChange, participants,
 export declare type DocumentHeaderCallVariant = 'idle' | 'available' | 'active';
 
 declare interface DocumentHeaderProps {
+    /**
+     * Extra rows for the ⋯ menu — actions that are real but not frequent enough
+     * to earn a permanent button. The alternative is a toolbar that grows one
+     * control per feature until none of them are findable.
+     */
+    extraMenuItems?: ReadonlyArray<{
+        id: string;
+        label: string;
+        onSelect: () => void;
+    }>;
     meta: DocumentMeta;
     mode: ViewMode;
     onModeChange: (mode: ViewMode) => void;

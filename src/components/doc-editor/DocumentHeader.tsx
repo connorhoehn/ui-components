@@ -24,6 +24,12 @@ import { Input } from '../forms/Input';
 export type DocumentHeaderCallVariant = 'idle' | 'available' | 'active';
 
 interface DocumentHeaderProps {
+  /**
+   * Extra rows for the ⋯ menu — actions that are real but not frequent enough
+   * to earn a permanent button. The alternative is a toolbar that grows one
+   * control per feature until none of them are findable.
+   */
+  extraMenuItems?: ReadonlyArray<{ id: string; label: string; onSelect: () => void }>;
   meta: DocumentMeta;
   mode: ViewMode;
   onModeChange: (mode: ViewMode) => void;
@@ -110,6 +116,7 @@ export default function DocumentHeader({
   onFinalize,
   onUnlock,
   pastCallsCount,
+  extraMenuItems,
 }: DocumentHeaderProps) {
   const [showMore, setShowMore] = useState(false);
 
@@ -287,6 +294,17 @@ export default function DocumentHeader({
                     Past Calls ({pastCallsCount})
                   </button>
                 )}
+                {extraMenuItems?.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    data-testid={`document-header-menu-${item.id}`}
+                    className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover')}
+                    onClick={() => { item.onSelect(); setShowMore(false); }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
                 <div className={cn('border-t border-border-subtle my-1')} />
                 {(['markdown', 'pdf', 'json'] as const).map((fmt) => (
                   <button

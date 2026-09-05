@@ -296,7 +296,11 @@ export default function CanvasDocumentView({
           <div
             data-testid={`${testId}-page-row`}
             data-gutter={showGutter ? 'visible' : 'hidden'}
-            className={cn('flex justify-center py-8 px-6', showGutter && 'gap-6')}
+            // Page padding shrinks first when the window does: the sheet is
+            // the content, and giving a narrow window six paces of empty
+            // workspace on each side while the text squeezes gets the priority
+            // backwards.
+            className={cn('flex justify-center py-4 px-2 sm:py-8 sm:px-6', showGutter && 'gap-3 sm:gap-6')}
           >
           <div
             // The sheet. 816px is 8.5in at 96dpi and 1056px is 11in, so the
@@ -310,7 +314,12 @@ export default function CanvasDocumentView({
             // paper in dark mode, which still "renders" and so survives a
             // screenshot check; darkSurfaceTokens (d) fails the build for it.
             data-testid={`${testId}-paper`}
-            className="doc-page w-full max-w-[816px] min-h-[1056px] bg-paper px-[96px] py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]"
+            // 96px is a 1in margin and right on a full-width sheet. On a
+            // narrow window it is most of the line: 816px of paper minus
+            // 192px of margin leaves the text in a column too thin to read,
+            // and the page still overflows. The margin scales with the
+            // viewport and reaches its proper inch when there is room for it.
+            className="doc-page w-full max-w-[816px] min-h-[1056px] bg-paper px-6 py-10 sm:px-12 sm:py-16 lg:px-[96px] lg:py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]"
           >
             <TiptapEditor
               fragment={body}
