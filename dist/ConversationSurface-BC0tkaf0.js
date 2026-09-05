@@ -53,7 +53,7 @@ function w({ author: t, content: n, timestamp: r, avatarUrl: i, hideAvatar: a = 
 	return /* @__PURE__ */ y("div", {
 		"data-testid": "message-row",
 		"data-mine": s ? "true" : "false",
-		className: e("flex items-start gap-2 py-1", d),
+		className: e("flex items-start gap-2 py-1", s && "flex-row-reverse", d),
 		children: [/* @__PURE__ */ v("div", {
 			className: "w-5 shrink-0 mt-0.5",
 			children: !a && /* @__PURE__ */ v(c, {
@@ -62,10 +62,10 @@ function w({ author: t, content: n, timestamp: r, avatarUrl: i, hideAvatar: a = 
 				size: 20
 			})
 		}), /* @__PURE__ */ y("div", {
-			className: "flex grow flex-col min-w-0",
+			className: e("flex grow flex-col min-w-0", s && "items-end"),
 			children: [
 				m && /* @__PURE__ */ y("div", {
-					className: "flex items-baseline gap-2 min-w-0",
+					className: e("flex items-baseline gap-2 min-w-0", s && "flex-row-reverse"),
 					children: [!o && /* @__PURE__ */ v("span", {
 						"data-testid": "message-row-author",
 						className: e("text-xs font-semibold truncate", f ? "text-white/70" : "text-text-secondary"),
@@ -78,12 +78,12 @@ function w({ author: t, content: n, timestamp: r, avatarUrl: i, hideAvatar: a = 
 				}),
 				/* @__PURE__ */ v("span", {
 					"data-testid": "message-row-content",
-					className: e("text-sm min-w-0 break-words whitespace-pre-wrap", f ? "text-white/90" : "text-text-primary"),
+					className: e("text-sm min-w-0 break-words whitespace-pre-wrap", f ? "text-white/90" : "text-text-primary", s && "max-w-[85%] rounded-lg rounded-tr-sm px-3 py-1.5 text-right", s && (f ? "bg-white/15" : "bg-primary-bg")),
 					children: n
 				}),
 				l && /* @__PURE__ */ v("div", {
 					"data-testid": "message-row-footer",
-					className: "mt-1",
+					className: e("mt-1", s && "self-end"),
 					children: l
 				})
 			]
@@ -639,9 +639,10 @@ function B({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers:
 									content: h,
 									timestamp: t.timestamp,
 									avatarUrl: t.avatarUrl,
-									tone: A
+									tone: A,
+									mine: !!m && t.userId === m
 								}), u && (x || S || C) && /* @__PURE__ */ v(N, {
-									className: "absolute right-2 top-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus-within:opacity-100",
+									className: "absolute left-14 -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100",
 									onReact: x ? (e) => x(u, e) : void 0,
 									onReply: S ? () => S(t) : void 0,
 									onTogglePin: C ? () => C(t) : void 0,

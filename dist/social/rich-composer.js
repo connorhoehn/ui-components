@@ -2166,7 +2166,8 @@ function bi({ onSend: t, onSearchPeople: a, allowAttachments: s = !1, allowEmoji
 		let e = [
 			b.configure({
 				heading: !1,
-				horizontalRule: !1
+				horizontalRule: !1,
+				link: !1
 			}),
 			x.configure({ placeholder: C }),
 			yn.configure({

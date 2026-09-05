@@ -20,6 +20,13 @@ export type { ChatAttachment };
 export interface ChatMessage {
   id?: string;        // server-assigned message ID for deduplication
   clientId: string;
+  /**
+   * Authenticated sender, stamped server-side. Distinct from `clientId`,
+   * which identifies a CONNECTION and changes on every reconnect — which is
+   * why "is this mine" keys on this and never on clientId: otherwise your own
+   * messages stop being yours partway up the thread.
+   */
+  userId?: string;
   content: string;
   timestamp: string;  // ISO string from server
   displayName?: string;

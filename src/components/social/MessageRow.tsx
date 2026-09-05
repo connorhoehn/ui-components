@@ -19,7 +19,18 @@ export interface MessageRowProps {
   hideAvatar?: boolean;
   /** Hide the author label (e.g. middle of a MessageGroup). Defaults to false. */
   hideAuthor?: boolean;
-  /** Mark this row as the current viewer's own message — exposed on data attr for styling hooks. */
+  /**
+   * This row is the viewer's own message.
+   *
+   * Mirrors what Teams and iMessage do, and for the same reason: in a busy
+   * thread the question "which of these did I write" is answered constantly
+   * and answering it by reading names is work. The row flips to the other
+   * side and takes a tinted bubble, so the shape of the conversation is
+   * legible before any of it is read.
+   *
+   * The avatar goes with it — a own-side bubble with a left-hand avatar reads
+   * as somebody else's message that has drifted right.
+   */
   mine?: boolean;
   /**
    * Slot rendered below the content (e.g. a `<ReactionsBar>` for this message).
@@ -71,14 +82,19 @@ export function MessageRow({
     <div
       data-testid="message-row"
       data-mine={mine ? 'true' : 'false'}
-      className={cn('flex items-start gap-2 py-1', className)}
+      className={cn(
+        'flex items-start gap-2 py-1',
+        // Own messages run the other way: avatar last, content pushed right.
+        mine && 'flex-row-reverse',
+        className,
+      )}
     >
       <div className="w-5 shrink-0 mt-0.5">
         {!hideAvatar && <Avatar name={author} src={avatarUrl} size={20} />}
       </div>
-      <div className="flex grow flex-col min-w-0">
+      <div className={cn('flex grow flex-col min-w-0', mine && 'items-end')}>
         {metaVisible && (
-          <div className="flex items-baseline gap-2 min-w-0">
+          <div className={cn('flex items-baseline gap-2 min-w-0', mine && 'flex-row-reverse')}>
             {!hideAuthor && (
               <span
                 data-testid="message-row-author"
@@ -107,12 +123,19 @@ export function MessageRow({
           className={cn(
             'text-sm min-w-0 break-words whitespace-pre-wrap',
             dark ? 'text-white/90' : 'text-text-primary',
+            // A bubble only on own messages. Giving BOTH sides one doubles the
+            // ink in the thread and makes the two harder to tell apart, not
+            // easier — the contrast is the signal, so only one side carries it.
+            // max-w so a long message still reads as a bubble rather than as a
+            // full-width band with a tint.
+            mine && 'max-w-[85%] rounded-lg rounded-tr-sm px-3 py-1.5 text-right',
+            mine && (dark ? 'bg-white/15' : 'bg-primary-bg'),
           )}
         >
           {content}
         </span>
         {footer && (
-          <div data-testid="message-row-footer" className="mt-1">
+          <div data-testid="message-row-footer" className={cn('mt-1', mine && 'self-end')}>
             {footer}
           </div>
         )}

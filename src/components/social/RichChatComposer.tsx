@@ -187,6 +187,13 @@ export function RichChatComposer({
         // A chat message is not a document.
         heading: false,
         horizontalRule: false,
+        // StarterKit 3.x bundles Link, and registering it again below made
+        // tiptap warn "Duplicate extension names found: ['link']" on every
+        // mount. Two registrations of the same mark is not a cosmetic
+        // warning: which configuration wins is undefined, so the openOnClick,
+        // autolink and rel/target settings a few lines down were being
+        // applied to a mark that may or may not have been the one in use.
+        link: false,
       }),
       Placeholder.configure({ placeholder }),
       Link.configure({

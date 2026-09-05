@@ -530,10 +530,36 @@ export function ChatPanel({
                     timestamp={message.timestamp}
                     avatarUrl={message.avatarUrl}
                     tone={tone}
+                    // Own messages flip side and take a tinted bubble. Matched
+                    // on the AUTHENTICATED user id, never on clientId: a
+                    // clientId is per-connection and changes on every
+                    // reconnect, so keying on it would make your own messages
+                    // stop being yours halfway up the thread.
+                    mine={
+                      !!currentUserId &&
+                      (message as { userId?: string }).userId === currentUserId
+                    }
                   />
                   {messageId && (onToggleReaction || onReply || onTogglePin) && (
                     <MessageActionBar
-                      className="absolute right-2 top-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus-within:opacity-100"
+                      // Positioned against the MESSAGE COLUMN's left edge, not
+                      // the row's right. Pinning it right put the controls for
+                      // "asdasdf" three hundred pixels away from the word they
+                      // act on, across empty space, with a different message's
+                      // bar directly above them — so the bar you were aiming
+                      // for was ambiguous at the moment you reached for it.
+                      // `left-14` clears the avatar gutter; `-top-3` lifts it
+                      // onto the row's top edge so it overlaps the gap rather
+                      // than the text.
+                      //
+                      // `group-has-[:focus-visible]` rather than
+                      // `group-focus-within`: focus-within is true after a
+                      // MOUSE click too, so clicking a reaction left that row's
+                      // bar stuck open after the pointer moved away — two bars
+                      // on screen at once, one of them for a message you were
+                      // no longer pointing at. focus-visible is keyboard-only,
+                      // which is the case the reveal-on-focus exists for.
+                      className="absolute left-14 -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100"
                       onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
                       onReply={onReply ? () => onReply(message) : undefined}
                       onTogglePin={onTogglePin ? () => onTogglePin(message) : undefined}

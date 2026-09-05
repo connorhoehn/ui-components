@@ -198,6 +198,13 @@ export declare interface ChatDropZoneProps {
 declare interface ChatMessage {
     id?: string;
     clientId: string;
+    /**
+     * Authenticated sender, stamped server-side. Distinct from `clientId`,
+     * which identifies a CONNECTION and changes on every reconnect — which is
+     * why "is this mine" keys on this and never on clientId: otherwise your own
+     * messages stop being yours partway up the thread.
+     */
+    userId?: string;
     content: string;
     timestamp: string;
     displayName?: string;
@@ -703,7 +710,18 @@ export declare interface MessageRowProps {
     hideAvatar?: boolean;
     /** Hide the author label (e.g. middle of a MessageGroup). Defaults to false. */
     hideAuthor?: boolean;
-    /** Mark this row as the current viewer's own message — exposed on data attr for styling hooks. */
+    /**
+     * This row is the viewer's own message.
+     *
+     * Mirrors what Teams and iMessage do, and for the same reason: in a busy
+     * thread the question "which of these did I write" is answered constantly
+     * and answering it by reading names is work. The row flips to the other
+     * side and takes a tinted bubble, so the shape of the conversation is
+     * legible before any of it is read.
+     *
+     * The avatar goes with it — a own-side bubble with a left-hand avatar reads
+     * as somebody else's message that has drifted right.
+     */
     mine?: boolean;
     /**
      * Slot rendered below the content (e.g. a `<ReactionsBar>` for this message).

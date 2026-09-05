@@ -327,6 +327,13 @@ declare interface ChatAttachment {
 declare interface ChatMessage {
     id?: string;
     clientId: string;
+    /**
+     * Authenticated sender, stamped server-side. Distinct from `clientId`,
+     * which identifies a CONNECTION and changes on every reconnect — which is
+     * why "is this mine" keys on this and never on clientId: otherwise your own
+     * messages stop being yours partway up the thread.
+     */
+    userId?: string;
     content: string;
     timestamp: string;
     displayName?: string;
