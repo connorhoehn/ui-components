@@ -115,3 +115,8 @@ export type { DocumentActivityCardProps, DocumentActivityEditor } from './Docume
 // They are not conversations, so they do not live in a list sorted by recency.
 export { ConversationShelf } from './ConversationShelf';
 export type { ConversationShelfItem, ConversationShelfProps } from './ConversationShelf';
+
+// ConversationRail — shelf + conversation list under ONE selection, so a host
+// cannot end up with two highlighted rows and one pane.
+export { ConversationRail } from './ConversationRail';
+export type { ConversationRailProps, RailSelection } from './ConversationRail';

@@ -1680,14 +1680,14 @@ function et({ mode: t, fillHeight: n = !1, participants: r, localParticipant: i,
 	return /* @__PURE__ */ D("div", {
 		className: e("flex flex-col", n && "h-full min-h-0"),
 		children: [
-			t === "video" && v && /* @__PURE__ */ D("div", {
+			v && /* @__PURE__ */ D("div", {
 				className: e("mx-3 mt-3 rounded-lg overflow-hidden relative", n && "min-h-0 flex-1"),
 				children: [v, /* @__PURE__ */ E(ye, {
 					stats: y,
 					position: "bottom-left"
 				})]
 			}),
-			t === "video" && !v && /* @__PURE__ */ D("div", {
+			!v && t === "video" && /* @__PURE__ */ D("div", {
 				className: e("relative bg-black rounded-lg overflow-hidden mx-3 mt-3", n ? "min-h-0 flex-1" : "aspect-video"),
 				children: [
 					i?.videoStream && b ? /* @__PURE__ */ E(Qe, {
@@ -1740,7 +1740,7 @@ function et({ mode: t, fillHeight: n = !1, participants: r, localParticipant: i,
 					})
 				]
 			}),
-			t === "audio" && /* @__PURE__ */ E("div", {
+			!v && t === "audio" && /* @__PURE__ */ E("div", {
 				className: e(n && "flex min-h-0 flex-1 items-center justify-center"),
 				children: /* @__PURE__ */ E(de, {
 					participants: r,

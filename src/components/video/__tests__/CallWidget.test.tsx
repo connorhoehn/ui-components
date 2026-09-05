@@ -349,3 +349,40 @@ describe('CallWidget — the minimized pill only claims to expand when it can', 
     expect(onMinimize).toHaveBeenCalledTimes(1);
   });
 });
+
+// `mode` says what KIND of call this is; `layoutComponent` says what the
+// caller renders on the stage. Gating the layout on mode='video' meant an
+// audio call could only have the built-in avatar strip — and so lost the
+// ringing pill, captions, reactions and banners that live in the caller's
+// tree alongside its tiles.
+describe('CallWidget — layoutComponent vs mode', () => {
+  it('renders the caller layout in an audio call', () => {
+    render(
+      <CallWidget
+        state="active"
+        mode="audio"
+        participants={[p('a', 'Alice')]}
+        layoutComponent={<div data-testid="host-stage">stage</div>}
+      />,
+    );
+    expect(screen.getByTestId('host-stage')).toBeInTheDocument();
+  });
+
+  it('falls back to the avatar strip when an audio call supplies no layout', () => {
+    render(<CallWidget state="active" mode="audio" participants={[p('a', 'Alice')]} />);
+    expect(screen.queryByTestId('host-stage')).toBeNull();
+    expect(screen.getByTestId('call-participant-strip')).toBeInTheDocument();
+  });
+
+  it('does not stack the built-in stage under the caller layout', () => {
+    render(
+      <CallWidget
+        state="active"
+        mode="video"
+        participants={[p('a', 'Alice')]}
+        layoutComponent={<div data-testid="host-stage">stage</div>}
+      />,
+    );
+    expect(screen.getAllByTestId('host-stage')).toHaveLength(1);
+  });
+});

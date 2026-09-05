@@ -2912,6 +2912,35 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, emptyLabel, header, footer, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+
+export declare interface ConversationRailProps {
+    /**
+     * Persistent destinations — Mentions, Threads, Drafts. Empty renders
+     * nothing at all rather than an empty strip.
+     */
+    shelf?: readonly ConversationShelfItem[];
+    conversations: ConversationItem[];
+    /** Null when nothing is open — a cold start, or a pane the rail does not model. */
+    selected?: RailSelection | null;
+    onSelect: (selection: RailSelection) => void;
+    /** Renders the "+ New chat" row above the conversations when set. */
+    onNewChat?: () => void;
+    /**
+     * Split conversations into Channels and Direct messages. On by default
+     * here — unlike the bare list, which serves compact sidebars too. A rail is
+     * the full-height case, where a forty-row flat mix stops being scannable.
+     */
+    grouped?: boolean;
+    emptyLabel?: string;
+    /** Above the shelf: a workspace switcher, a search field, a title. */
+    header?: ReactNode;
+    /** Below the list: a "you" row, a status control. */
+    footer?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function ConversationShelf({ items, activeId, onSelect, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
 
 export declare interface ConversationShelfItem {
@@ -7916,6 +7945,17 @@ export declare interface RailSectionProps {
     children: ReactNode;
     className?: string;
 }
+
+/**
+ * What the rail currently points at. One value, because one pane.
+ */
+export declare type RailSelection = {
+    kind: 'shelf';
+    id: string;
+} | {
+    kind: 'conversation';
+    channel: string;
+};
 
 export declare interface RateInfo {
     [key: string]: unknown;

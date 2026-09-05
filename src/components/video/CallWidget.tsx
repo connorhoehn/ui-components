@@ -454,13 +454,20 @@ function ActiveCallContent({
       {/* Video area — caller-provided layout takes precedence over the
        * default single-PiP layout. Wrap in the same mx-3/mt-3 container so
        * external layouts don't have to know the widget's outer padding. */}
-      {mode === 'video' && layoutComponent && (
+      {/* A caller-supplied layout wins over `mode`. `mode` describes the
+       * CALL — an audio call whose stage is a black rectangle with a name on
+       * it is the failure this ordering prevents — but only the caller knows
+       * what its own layout renders, and an audio call still needs the
+       * overlays (ringing pill, captions, reactions, banners) that live in
+       * that tree. So `mode` picks the FALLBACK stage, not whether the
+       * caller's stage is allowed to exist. */}
+      {layoutComponent && (
         <div className={cn('mx-3 mt-3 rounded-lg overflow-hidden relative', fillHeight && 'min-h-0 flex-1')}>
           {layoutComponent}
           <CallStatsOverlay stats={callStats} position="bottom-left" />
         </div>
       )}
-      {mode === 'video' && !layoutComponent && (
+      {!layoutComponent && mode === 'video' && (
         <div
           className={cn(
             'relative bg-black rounded-lg overflow-hidden mx-3 mt-3',
@@ -507,8 +514,9 @@ function ActiveCallContent({
         </div>
       )}
 
-      {/* Audio-only participant display */}
-      {mode === 'audio' && (
+      {/* Audio-only participant display — the built-in stage for a call with
+          no video, used when the caller supplied no layout of its own. */}
+      {!layoutComponent && mode === 'audio' && (
         <div className={cn(fillHeight && 'flex min-h-0 flex-1 items-center justify-center')}>
           <CallParticipantStrip
             participants={participants}
