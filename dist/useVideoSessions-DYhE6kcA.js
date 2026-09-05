@@ -1,4 +1,4 @@
-import { n as e, r as t } from "./useWebSocket-CGc0yRhM.js";
+import { n as e, r as t } from "./useWebSocket-16eHDqT5.js";
 import { useCallback as n, useEffect as r, useMemo as i, useRef as a, useState as o } from "react";
 import * as s from "yjs";
 //#region src/hooks/useIdleDetector.ts

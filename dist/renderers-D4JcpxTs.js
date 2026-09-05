@@ -1,5 +1,5 @@
 import { a as e, o as t } from "./registry-DbX3MVAA.js";
-import { o as n, s as r } from "./useVideoSessions-CQvF7-8H.js";
+import { o as n, s as r } from "./useVideoSessions-DYhE6kcA.js";
 import { n as i, t as a } from "./useDocumentTypes-CrsHC24c.js";
 import { t as o } from "./cn-DhjIN-s0.js";
 import { t as s } from "./useEventCallback-Cwx9QVSi.js";
