@@ -13,6 +13,7 @@ import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
 import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
+import { CallActivityCard, type CallActivityParticipant } from './CallActivityCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
 import { QuoteBlock } from './QuoteBlock';
@@ -69,6 +70,19 @@ export interface ChatPanelProps {
    * document exists" and "two people are in it right now" shows up.
    */
   documentEditors?: (documentId: string) => readonly DocumentActivityEditor[];
+  /**
+   * Who is in a call right now, keyed by callId. Overrides the participant
+   * list frozen into the message metadata, which is only a snapshot of the
+   * moment the event was written — people join a call after it starts, and a
+   * card showing the founding members while three more are inside is why you
+   * would not bother joining.
+   */
+  callParticipants?: (callId: string) => readonly CallActivityParticipant[];
+  /**
+   * Joins a live call from the thread. Omit when the viewer cannot join —
+   * the card then renders as a record rather than a dead button.
+   */
+  onJoinCall?: (callId: string) => void;
   /** Opens a document announced in the thread. */
   onOpenDocument?: (documentId: string) => void;
   /**
@@ -231,6 +245,62 @@ export function documentRefFromMetadata(
   return null;
 }
 
+/**
+ * A call event, read off a message's metadata.
+ *
+ * The sibling of documentRefFromMetadata, and the same idea: the server
+ * writes a sentence for anywhere that renders plain text, and the metadata
+ * carries the facts the thread renders as a card.
+ *
+ * Liveness is POSITIVE evidence only. A stored message is replayed forever,
+ * so inferring "still going" from a missing `endedAt` would put a Join button
+ * on every call that ever happened, and after a reload the thread would
+ * cheerfully advertise a call that ended three hours ago. The gateway posts
+ * this event when a call ENDS — the durable fact a transcript wants is that a
+ * call happened, who was in it and how long it took. A host that genuinely
+ * knows a call is live right now says so through ChatPanel's
+ * `callParticipants`; nothing here guesses.
+ */
+export function callRefFromMetadata(
+  metadata: Record<string, unknown> | undefined,
+): {
+  callId: string;
+  live: boolean;
+  durationMs?: number;
+  audioOnly?: boolean;
+  participants: CallActivityParticipant[];
+} | null {
+  if (!metadata || metadata.kind !== 'call') return null;
+  const callId = typeof metadata.callId === 'string' ? metadata.callId : '';
+  // A card with no call cannot be joined and cannot be identified.
+  if (!callId) return null;
+
+  const raw = Array.isArray(metadata.participants) ? metadata.participants : [];
+  const participants: CallActivityParticipant[] = raw
+    .map((entry) => {
+      const p = entry as Record<string, unknown>;
+      const userId = typeof p?.userId === 'string' ? p.userId : '';
+      return userId
+        ? {
+            userId,
+            displayName: typeof p.displayName === 'string' ? p.displayName : undefined,
+          }
+        : null;
+    })
+    .filter(Boolean) as CallActivityParticipant[];
+
+  return {
+    callId,
+    // Only an explicit flag, never the absence of one.
+    live: metadata.live === true,
+    durationMs: typeof metadata.durationMs === 'number' ? metadata.durationMs : undefined,
+    // Tri-state: absent means the record does not say, and the card renders
+    // an unqualified "Call" rather than guessing which kind it was.
+    audioOnly: typeof metadata.audioOnly === 'boolean' ? metadata.audioOnly : undefined,
+    participants,
+  };
+}
+
 export function ChatPanel({
   messages,
   onSend,
@@ -247,6 +317,8 @@ export function ChatPanel({
   onJumpToMessage,
   highlightedMessageId,
   documentEditors,
+  callParticipants,
+  onJoinCall,
   onOpenDocument,
   tone = 'light',
   showHeader,
@@ -499,7 +571,7 @@ export function ChatPanel({
               // `content` alone threw away every link, bold run and mention the
               // sender created — MessageBody restores them, from an allow-list,
               // because a message body is attacker-controlled text.
-              const rich = (message as { metadata?: { html?: unknown } }).metadata?.html;
+              const rich = message.metadata?.html;
               const richHtml = typeof rich === 'string' ? rich : undefined;
               const text = <MessageBody html={richHtml} text={message.content} />;
 
@@ -509,17 +581,39 @@ export function ChatPanel({
               // the stored message for anywhere that renders plain text
               // (notification previews, the conversation list) but the thread
               // shows the thing itself.
-              const docRef = documentRefFromMetadata(
-                (message as { metadata?: Record<string, unknown> }).metadata,
-              );
+              const docRef = documentRefFromMetadata(message.metadata);
 
-              const body = docRef ? (
+              // Same rule for a call: the event IS the call, so the card
+              // replaces the text. Unlike a document, a call CHANGES while
+              // the thread is open — live it is an invitation, ended it is a
+              // record — which is why one card renders both states in place
+              // rather than the transcript swapping rows underneath a reader.
+              const callRef = callRefFromMetadata(message.metadata);
+
+              const body = callRef ? (
+                <CallActivityCard
+                  callId={callRef.callId}
+                  startedBy={
+                    (typeof message.metadata?.displayName === 'string'
+                      ? message.metadata.displayName
+                      : undefined)
+                    ?? message.displayName
+                  }
+                  participants={callParticipants?.(callRef.callId) ?? callRef.participants}
+                  live={callRef.live}
+                  durationMs={callRef.durationMs}
+                  audioOnly={callRef.audioOnly}
+                  onJoin={onJoinCall}
+                />
+              ) : docRef ? (
                 <DocumentActivityCard
                   documentId={docRef.documentId}
                   title={docRef.title || message.content}
                   icon={docRef.icon}
                   createdBy={
-                    ((message as { metadata?: { displayName?: string } }).metadata?.displayName)
+                    (typeof message.metadata?.displayName === 'string'
+                      ? message.metadata.displayName
+                      : undefined)
                     ?? message.displayName
                   }
                   editors={documentEditors?.(docRef.documentId) ?? []}
@@ -542,7 +636,7 @@ export function ChatPanel({
                 );
               const messageId = message.id ?? '';
               const reactions = messageId && reactionsFor ? reactionsFor(messageId) : [];
-              const quoted = (message as { metadata?: { replyTo?: unknown } }).metadata?.replyTo as
+              const quoted = message.metadata?.replyTo as
                 | { messageId: string; author: string; text: string; timestamp?: string }
                 | undefined;
               const isPinned = !!messageId && !!pinnedMessageIds?.has(messageId);

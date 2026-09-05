@@ -361,6 +361,22 @@ declare interface ChatMessage {
      * `content` may be empty when a message is nothing but attachments.
      */
     attachments?: ChatAttachment[];
+    /**
+     * Server-stamped facts about what this message IS, beyond its text.
+     *
+     * The thread renders some messages as objects rather than sentences — a
+     * document that was created, a call that is happening — and this is where
+     * the facts for those live: `{ kind: 'document', documentId, title }`,
+     * `{ kind: 'call', callId, participants, endedAt }`. The sentence stays in
+     * `content` for everywhere that renders plain text (notification previews,
+     * the conversation list preview), so a host that does nothing with metadata
+     * still shows something true.
+     *
+     * Deliberately open: the gateway adds event kinds without the library
+     * needing a release, and `documentRefFromMetadata` / `callRefFromMetadata`
+     * are the readers that turn this back into something typed.
+     */
+    metadata?: Record<string, unknown>;
 }
 
 declare interface ChatTransfer {

@@ -1,6 +1,9 @@
 export { SocialPanel } from './SocialPanel';
 export { default as SocialTabContent } from './SocialTabContent';
-export { ChatPanel } from './ChatPanel';
+// documentRefFromMetadata / callRefFromMetadata are exported so a host that
+// renders its own transcript can read the same events out of message metadata
+// rather than reimplementing the wire shape.
+export { ChatPanel, documentRefFromMetadata, callRefFromMetadata } from './ChatPanel';
 export type { ChatPanelProps } from './ChatPanel';
 export { MessageRow, formatChatTime } from './MessageRow';
 export type { MessageRowProps } from './MessageRow';
@@ -110,6 +113,12 @@ export type { ConversationFeature, ConversationSurfaceProps } from './Conversati
 // right now, and a way in that does not cost you the thread.
 export { DocumentActivityCard } from './DocumentActivityCard';
 export type { DocumentActivityCardProps, DocumentActivityEditor } from './DocumentActivityCard';
+
+// CallActivityCard — the same idea for calls: live it is an invitation, ended
+// it is a record, and it is one component so the transcript does not swap
+// rows underneath a reader as the call ends.
+export { CallActivityCard, formatCallDuration, describeParticipants } from './CallActivityCard';
+export type { CallActivityCardProps, CallActivityParticipant } from './CallActivityCard';
 
 // The persistent destinations above a conversation list — Activity, Mentions.
 // They are not conversations, so they do not live in a list sorted by recency.

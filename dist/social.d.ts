@@ -41,6 +41,74 @@ export declare interface AttachmentBubbleProps {
     className?: string;
 }
 
+export declare function CallActivityCard({ callId, startedBy, participants, live, durationMs, audioOnly, onJoin, className, 'data-testid': testId, }: CallActivityCardProps): JSX.Element;
+
+export declare interface CallActivityCardProps {
+    callId: string;
+    /** Who started it — a display name, never a raw userId. */
+    startedBy?: string;
+    /**
+     * People in the call. While live these are the people to join; once ended
+     * they are who was there.
+     */
+    participants?: readonly CallActivityParticipant[];
+    /**
+     * Whether the call is still going. This is the card's whole state machine:
+     * live offers a way in, ended is a record.
+     */
+    live?: boolean;
+    /** Wall-clock length in ms. Rendered only once the call has ended. */
+    durationMs?: number;
+    /**
+     * True when the call had no camera, false when it had one — and UNDEFINED
+     * when nobody knows.
+     *
+     * The third state is load-bearing. The invite frame does not carry this, so
+     * a server-written record genuinely cannot tell, and defaulting to either
+     * one puts a confident "Video call" on a call that may have been audio. An
+     * unqualified "Call" is the true statement.
+     */
+    audioOnly?: boolean;
+    /**
+     * Joins the call. Ignored once `live` is false — a call that ended has
+     * nothing to join, and the button would be a dead control. Omit it when the
+     * viewer may not join, rather than rendering it disabled.
+     */
+    onJoin?: (callId: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface CallActivityParticipant {
+    userId: string;
+    displayName?: string;
+    avatarUrl?: string;
+}
+
+/**
+ * A call event, read off a message's metadata.
+ *
+ * The sibling of documentRefFromMetadata, and the same idea: the server
+ * writes a sentence for anywhere that renders plain text, and the metadata
+ * carries the facts the thread renders as a card.
+ *
+ * Liveness is POSITIVE evidence only. A stored message is replayed forever,
+ * so inferring "still going" from a missing `endedAt` would put a Join button
+ * on every call that ever happened, and after a reload the thread would
+ * cheerfully advertise a call that ended three hours ago. The gateway posts
+ * this event when a call ENDS — the durable fact a transcript wants is that a
+ * call happened, who was in it and how long it took. A host that genuinely
+ * knows a call is live right now says so through ChatPanel's
+ * `callParticipants`; nothing here guesses.
+ */
+export declare function callRefFromMetadata(metadata: Record<string, unknown> | undefined): {
+    callId: string;
+    live: boolean;
+    durationMs?: number;
+    audioOnly?: boolean;
+    participants: CallActivityParticipant[];
+} | null;
+
 export declare interface ChannelDocumentItem {
     documentId: string;
     title: string;
@@ -222,9 +290,25 @@ declare interface ChatMessage {
      * `content` may be empty when a message is nothing but attachments.
      */
     attachments?: ChatAttachment[];
+    /**
+     * Server-stamped facts about what this message IS, beyond its text.
+     *
+     * The thread renders some messages as objects rather than sentences — a
+     * document that was created, a call that is happening — and this is where
+     * the facts for those live: `{ kind: 'document', documentId, title }`,
+     * `{ kind: 'call', callId, participants, endedAt }`. The sentence stays in
+     * `content` for everywhere that renders plain text (notification previews,
+     * the conversation list preview), so a host that does nothing with metadata
+     * still shows something true.
+     *
+     * Deliberately open: the gateway adds event kinds without the library
+     * needing a release, and `documentRefFromMetadata` / `callRefFromMetadata`
+     * are the readers that turn this back into something typed.
+     */
+    metadata?: Record<string, unknown>;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -275,6 +359,19 @@ export declare interface ChatPanelProps {
      * document exists" and "two people are in it right now" shows up.
      */
     documentEditors?: (documentId: string) => readonly DocumentActivityEditor[];
+    /**
+     * Who is in a call right now, keyed by callId. Overrides the participant
+     * list frozen into the message metadata, which is only a snapshot of the
+     * moment the event was written — people join a call after it starts, and a
+     * card showing the founding members while three more are inside is why you
+     * would not bother joining.
+     */
+    callParticipants?: (callId: string) => readonly CallActivityParticipant[];
+    /**
+     * Joins a live call from the thread. Omit when the viewer cannot join —
+     * the card then renders as a record rather than a dead button.
+     */
+    onJoinCall?: (callId: string) => void;
     /** Opens a document announced in the thread. */
     onOpenDocument?: (documentId: string) => void;
     /**
@@ -592,6 +689,15 @@ export declare interface ConversationSurfaceProps {
 
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
+/**
+ * Names, not ids, and never more than two before it starts counting.
+ *
+ * Counts EVERY participant, including the ones it cannot name — they are
+ * faces in the row beside this sentence, so leaving them out of the sentence
+ * makes the two disagree about how many people were there.
+ */
+export declare function describeParticipants(participants: readonly CallActivityParticipant[], live: boolean): string;
+
 /** "You and Ada", "Ada, Sam and 3 others" — the tooltip people expect. */
 export declare function describeReactors(group: ReactionGroup): string;
 
@@ -621,6 +727,27 @@ export declare interface DocumentActivityEditor {
     avatarUrl?: string;
 }
 
+/**
+ * A document referenced by a message, whichever way it got there.
+ *
+ * Two features put a document into a conversation and each invented its own
+ * metadata: the gateway announces a document CREATED in the channel as
+ * `{ kind: 'document', documentId }`, and Share-to-room posts
+ * `{ share: { kind: 'document', id, url } }`. They are the same fact —
+ * "there is a document in this thread" — so they get the same card. Reading
+ * both here rather than teaching each producer the other's shape keeps the
+ * older wire format working unchanged.
+ *
+ * Returns null for anything that is not a document reference, including a
+ * reference that names no document: a card with no target is an Open button
+ * to nowhere.
+ */
+export declare function documentRefFromMetadata(metadata: Record<string, unknown> | undefined): {
+    documentId: string;
+    title: string;
+    icon?: string;
+} | null;
+
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
 
 export declare interface EmojiShortcode {
@@ -635,6 +762,9 @@ export declare interface EmojiShortcode {
 export declare function excerpt(text: string, limit?: number): string;
 
 export declare function formatBytes(bytes: number): string;
+
+/** "12m 4s" — the shape a transcript wants, not "00:12:04". */
+export declare function formatCallDuration(ms: number): string;
 
 /** Formats an ISO timestamp string to HH:MM local time. */
 export declare function formatChatTime(isoString: string): string;
