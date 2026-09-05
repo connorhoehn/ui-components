@@ -2541,55 +2541,63 @@ function zt({ suggestions: t, onSelect: n, onRefresh: r, label: i, className: a 
 }
 //#endregion
 //#region src/components/shared/ChannelHeader.tsx
-function Bt({ name: t, memberCount: n, description: r, actions: i, avatarUrl: a, online: o, onMembersClick: s, className: c }) {
+function Bt({ name: t, memberCount: n, description: r, tabs: i, actions: a, avatarUrl: o, online: s, onMembersClick: c, className: l, "data-testid": u }) {
 	return /* @__PURE__ */ R("div", {
-		className: e("flex items-center justify-between gap-4 px-6 py-3", "border-b border-[var(--color-border)] bg-[var(--color-surface)]", c),
-		children: [/* @__PURE__ */ R("div", {
-			className: "flex items-center gap-3 min-w-0",
-			children: [/* @__PURE__ */ R("div", {
-				className: "relative shrink-0",
-				children: [a ? /* @__PURE__ */ L("img", {
-					src: a,
-					alt: t,
-					className: "w-9 h-9 rounded-full object-cover"
-				}) : /* @__PURE__ */ L(S, {
-					name: t,
-					size: 36
-				}), o !== void 0 && /* @__PURE__ */ L("span", {
-					className: "absolute -bottom-0.5 -right-0.5",
-					children: /* @__PURE__ */ L(w, {
-						color: o ? "var(--color-success)" : "var(--color-text-tertiary)",
-						size: "sm",
-						"aria-label": o ? "Online" : "Offline"
-					})
-				})]
-			}), /* @__PURE__ */ R("div", {
-				className: "min-w-0 flex flex-col gap-0.5",
+		"data-testid": u,
+		className: e("flex items-center justify-between gap-4 px-6 py-3", "border-b border-[var(--color-border)] bg-[var(--color-surface)]", l),
+		children: [
+			/* @__PURE__ */ R("div", {
+				className: "flex items-center gap-3 min-w-0",
 				children: [/* @__PURE__ */ R("div", {
-					className: "flex items-center gap-2",
-					children: [/* @__PURE__ */ L("h2", {
-						className: "text-[15px] font-semibold text-[var(--color-text-primary)] leading-tight truncate",
-						children: t
-					}), n !== void 0 && /* @__PURE__ */ R("button", {
-						type: "button",
-						onClick: s,
-						disabled: !s,
-						className: e("text-[11px] font-medium text-[var(--color-text-tertiary)]", "bg-transparent border-none p-0 leading-none", s && "cursor-pointer hover:text-[var(--color-text-secondary)]", !s && "cursor-default"),
-						children: [
-							n,
-							" ",
-							n === 1 ? "member" : "members"
-						]
+					className: "relative shrink-0",
+					children: [o ? /* @__PURE__ */ L("img", {
+						src: o,
+						alt: t,
+						className: "w-9 h-9 rounded-full object-cover"
+					}) : /* @__PURE__ */ L(S, {
+						name: t,
+						size: 36
+					}), s !== void 0 && /* @__PURE__ */ L("span", {
+						className: "absolute -bottom-0.5 -right-0.5",
+						children: /* @__PURE__ */ L(w, {
+							color: s ? "var(--color-success)" : "var(--color-text-tertiary)",
+							size: "sm",
+							"aria-label": s ? "Online" : "Offline"
+						})
 					})]
-				}), r && /* @__PURE__ */ L("p", {
-					className: "text-[12px] text-[var(--color-text-tertiary)] truncate leading-tight",
-					children: r
+				}), /* @__PURE__ */ R("div", {
+					className: "min-w-0 flex flex-col gap-0.5",
+					children: [/* @__PURE__ */ R("div", {
+						className: "flex items-center gap-2",
+						children: [/* @__PURE__ */ L("h2", {
+							className: "text-[15px] font-semibold text-[var(--color-text-primary)] leading-tight truncate",
+							children: t
+						}), n !== void 0 && /* @__PURE__ */ R("button", {
+							type: "button",
+							onClick: c,
+							disabled: !c,
+							className: e("text-[11px] font-medium text-[var(--color-text-tertiary)]", "bg-transparent border-none p-0 leading-none", c && "cursor-pointer hover:text-[var(--color-text-secondary)]", !c && "cursor-default"),
+							children: [
+								n,
+								" ",
+								n === 1 ? "member" : "members"
+							]
+						})]
+					}), r && /* @__PURE__ */ L("p", {
+						className: "text-[12px] text-[var(--color-text-tertiary)] truncate leading-tight",
+						children: r
+					})]
 				})]
-			})]
-		}), i && /* @__PURE__ */ L("div", {
-			className: "flex items-center gap-2 shrink-0",
-			children: i
-		})]
+			}),
+			i && /* @__PURE__ */ L("div", {
+				className: "flex min-w-0 flex-1 items-center overflow-x-auto",
+				children: i
+			}),
+			a && /* @__PURE__ */ L("div", {
+				className: "flex items-center gap-2 shrink-0",
+				children: a
+			})
+		]
 	});
 }
 //#endregion

@@ -291,7 +291,7 @@ export declare interface CatalogGridProps {
     'data-testid'?: string;
 }
 
-export declare function ChannelHeader({ name, memberCount, description, actions, avatarUrl, online, onMembersClick, className, }: ChannelHeaderProps): JSX.Element;
+export declare function ChannelHeader({ name, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
 
 export declare interface ChannelHeaderProps {
     /** Display name of the channel or user */
@@ -300,6 +300,12 @@ export declare interface ChannelHeaderProps {
     memberCount?: number;
     /** Short description shown below the name */
     description?: string;
+    /**
+     * Views of this channel — files, documents, recordings, pinned. Rendered
+     * inline beside the name; pass a <Tabs variant="underline" size="sm">.
+     * The header owns no tab state: which one is active is the caller's.
+     */
+    tabs?: ReactNode;
     /** Right-aligned action area */
     actions?: ReactNode;
     /** Avatar URL; falls back to name initials */
@@ -309,6 +315,7 @@ export declare interface ChannelHeaderProps {
     /** Called when member-count area is clicked */
     onMembersClick?: () => void;
     className?: string;
+    'data-testid'?: string;
 }
 
 /**

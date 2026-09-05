@@ -1,0 +1,184 @@
+import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { PinnedMessagesPanel, ChannelFilesPanel, ChannelMentionsPanel } from '../ChannelViews';
+import { ChannelHeader } from '../../shared/ChannelHeader';
+
+afterEach(cleanup);
+
+const pin = (over = {}) => ({
+  messageId: 'm1',
+  author: 'Hank Anderson',
+  preview: 'the upload path is live on my branch',
+  pinnedAt: '2026-09-05T08:00:00.000Z',
+  pinnedBy: 'Bob Martinez',
+  ...over,
+});
+
+const file = (over = {}) => ({
+  messageId: 'm2',
+  author: 'Hank Anderson',
+  sentAt: '2026-09-05T08:00:00.000Z',
+  attachment: {
+    id: 'a1',
+    name: 'attachment-shape.png',
+    size: 180 * 1024,
+    contentType: 'image/png',
+    url: 'https://gw/files/a1',
+  },
+  ...over,
+});
+
+const mention = (over = {}) => ({
+  messageId: 'm3',
+  channel: 'chat:dm:dev-bob:dev-hank',
+  channelLabel: 'Hank Anderson',
+  author: 'Hank Anderson',
+  excerpt: '@bob can you take a look',
+  at: '2026-09-05T08:00:00.000Z',
+  ...over,
+});
+
+describe('ChannelHeader tabs', () => {
+  // The point of the slot: the channel's other views live on the channel's own
+  // bar, not on a second row of navigation under it.
+  it('renders the tabs inline with the name and the actions', () => {
+    const { container } = render(
+      <ChannelHeader name="Hank Anderson" tabs={<button type="button">Files</button>} actions={<button type="button">Call</button>} />,
+    );
+    expect(screen.getByText('Hank Anderson')).toBeInTheDocument();
+    expect(screen.getByText('Files')).toBeInTheDocument();
+    expect(screen.getByText('Call')).toBeInTheDocument();
+    // One bar, not two: the header's own element is the only bordered row.
+    expect(container.querySelectorAll('.border-b').length).toBe(1);
+  });
+
+  it('is unchanged when no tabs are given', () => {
+    render(<ChannelHeader name="general" />);
+    expect(screen.getByText('general')).toBeInTheDocument();
+  });
+});
+
+describe('PinnedMessagesPanel', () => {
+  it('says who wrote it AND who pinned it — different people, both load-bearing', () => {
+    render(<PinnedMessagesPanel pins={[pin()]} />);
+    const row = screen.getByTestId('pinned-message');
+    expect(within(row).getByText(/upload path is live/)).toBeInTheDocument();
+    expect(within(row).getByText(/Hank Anderson/)).toBeInTheDocument();
+    expect(within(row).getByText(/pinned by Bob Martinez/)).toBeInTheDocument();
+  });
+
+  it('jumps back to the original', () => {
+    const onJump = vi.fn();
+    render(<PinnedMessagesPanel pins={[pin()]} onJump={onJump} />);
+    fireEvent.click(screen.getByTestId('pinned-message-jump'));
+    expect(onJump).toHaveBeenCalledWith('m1');
+  });
+
+  // A pinned message you cannot get back to is a screenshot.
+  it('is not clickable when the original is out of reach', () => {
+    render(<PinnedMessagesPanel pins={[pin()]} />);
+    expect(screen.queryByTestId('pinned-message-jump')).toBeNull();
+  });
+
+  it('unpins', () => {
+    const onUnpin = vi.fn();
+    render(<PinnedMessagesPanel pins={[pin()]} onUnpin={onUnpin} />);
+    fireEvent.click(screen.getByTestId('pinned-message-unpin'));
+    expect(onUnpin).toHaveBeenCalledWith('m1');
+  });
+
+  // A greyed control is a promise the product will not keep.
+  it('omits unpin for a viewer who may not unpin', () => {
+    render(<PinnedMessagesPanel pins={[pin()]} />);
+    expect(screen.queryByTestId('pinned-message-unpin')).toBeNull();
+  });
+
+  it('explains what pinning is for when there is nothing pinned', () => {
+    render(<PinnedMessagesPanel pins={[]} />);
+    expect(screen.getByText('Nothing pinned yet')).toBeInTheDocument();
+  });
+});
+
+describe('ChannelFilesPanel', () => {
+  it('shows a thumbnail for an image once a source resolves', () => {
+    const { container } = render(
+      <ChannelFilesPanel files={[file()]} thumbnailSrc={() => 'blob:resolved'} />,
+    );
+    expect(container.querySelector('img')?.getAttribute('src')).toBe('blob:resolved');
+  });
+
+  // The download route is authenticated, so the raw url in an <img> 401s.
+  // With nothing resolved, the row must not point at it and render broken.
+  it('does not fall back to the authenticated url for a thumbnail', () => {
+    const { container } = render(<ChannelFilesPanel files={[file()]} />);
+    expect(container.querySelector('img')).toBeNull();
+  });
+
+  it('uses the inline preview while the real bytes are still coming', () => {
+    const { container } = render(
+      <ChannelFilesPanel files={[file({ attachment: { ...file().attachment, preview: 'data:image/png;base64,AAA' } })]} />,
+    );
+    expect(container.querySelector('img')?.getAttribute('src')).toBe('data:image/png;base64,AAA');
+  });
+
+  it('gives a non-image a file row rather than a broken image', () => {
+    const { container } = render(
+      <ChannelFilesPanel
+        files={[file({ attachment: { ...file().attachment, name: 'notes.pdf', contentType: 'application/pdf' } })]}
+        thumbnailSrc={() => 'blob:resolved'}
+      />,
+    );
+    expect(container.querySelector('img')).toBeNull();
+    expect(screen.getByText('notes.pdf')).toBeInTheDocument();
+  });
+
+  it('names the sender and the size, which is what makes the list scannable', () => {
+    render(<ChannelFilesPanel files={[file()]} />);
+    expect(screen.getByText(/Hank Anderson/)).toBeInTheDocument();
+    expect(screen.getByText(/180/)).toBeInTheDocument();
+  });
+
+  it('jumps to the message the file arrived on', () => {
+    const onJump = vi.fn();
+    render(<ChannelFilesPanel files={[file()]} onJump={onJump} />);
+    fireEvent.click(screen.getByTestId('channel-file-jump'));
+    expect(onJump).toHaveBeenCalledWith('m2');
+  });
+
+  it('says what to do when the channel has no files', () => {
+    render(<ChannelFilesPanel files={[]} />);
+    expect(screen.getByText('No files here yet')).toBeInTheDocument();
+  });
+});
+
+describe('ChannelMentionsPanel', () => {
+  it('names the channel, because a mention is read out of context', () => {
+    render(<ChannelMentionsPanel mentions={[mention()]} />);
+    expect(screen.getByText(/Hank Anderson · Hank Anderson/)).toBeInTheDocument();
+  });
+
+  it('falls back to the channel id when there is no label for it', () => {
+    render(<ChannelMentionsPanel mentions={[mention({ channelLabel: undefined })]} />);
+    expect(screen.getByText(/chat:dm:dev-bob:dev-hank/)).toBeInTheDocument();
+  });
+
+  // A mention can be in a channel you are not currently in, so the jump has
+  // to carry both halves.
+  it('jumps with the channel as well as the message', () => {
+    const onJump = vi.fn();
+    render(<ChannelMentionsPanel mentions={[mention()]} onJump={onJump} />);
+    fireEvent.click(screen.getByTestId('mention-jump'));
+    expect(onJump).toHaveBeenCalledWith('chat:dm:dev-bob:dev-hank', 'm3');
+  });
+
+  it('marks the ones that still need you', () => {
+    render(<ChannelMentionsPanel mentions={[mention({ unread: true })]} />);
+    expect(screen.getByTestId('mention-unread')).toBeInTheDocument();
+    expect(screen.getByLabelText('Unread')).toBeInTheDocument();
+  });
+
+  it('is empty rather than blank when nobody has named you', () => {
+    render(<ChannelMentionsPanel mentions={[]} />);
+    expect(screen.getByText('No mentions')).toBeInTheDocument();
+  });
+});

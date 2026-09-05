@@ -2,6 +2,20 @@
 //
 // Composes Avatar + StatusDot + PageHeader + IconButton into a single
 // presentational bar. All state and navigation live in the caller.
+//
+// ## Why the tabs sit ON this bar and not under it
+//
+// A channel is not only its messages: the files shared in it, the documents
+// bound to it, the calls recorded from it are all the same conversation seen
+// from a different angle, and they belong to the channel rather than to some
+// other corner of the app. Teams and Slack both put those on the channel's
+// own header, which is what keeps them one place instead of a navigation
+// errand.
+//
+// They go INLINE, to the right of the name — not on a second row. A row of
+// tabs stacked under a row of identity under a row of app navigation is three
+// horizontal bars before any content, and each one is cheap to add and
+// expensive to live with.
 
 import type { ReactNode } from 'react';
 import { Avatar } from './Avatar';
@@ -15,6 +29,12 @@ export interface ChannelHeaderProps {
   memberCount?: number;
   /** Short description shown below the name */
   description?: string;
+  /**
+   * Views of this channel — files, documents, recordings, pinned. Rendered
+   * inline beside the name; pass a <Tabs variant="underline" size="sm">.
+   * The header owns no tab state: which one is active is the caller's.
+   */
+  tabs?: ReactNode;
   /** Right-aligned action area */
   actions?: ReactNode;
   /** Avatar URL; falls back to name initials */
@@ -24,20 +44,24 @@ export interface ChannelHeaderProps {
   /** Called when member-count area is clicked */
   onMembersClick?: () => void;
   className?: string;
+  'data-testid'?: string;
 }
 
 export function ChannelHeader({
   name,
   memberCount,
   description,
+  tabs,
   actions,
   avatarUrl,
   online,
   onMembersClick,
   className,
+  'data-testid': testId,
 }: ChannelHeaderProps) {
   return (
     <div
+      data-testid={testId}
       className={cn(
         'flex items-center justify-between gap-4 px-6 py-3',
         'border-b border-[var(--color-border)] bg-[var(--color-surface)]',
@@ -95,6 +119,14 @@ export function ChannelHeader({
           )}
         </div>
       </div>
+
+      {/* Middle: the channel's other views. Allowed to shrink and scroll
+          rather than push the name or the actions off the bar. */}
+      {tabs && (
+        <div className="flex min-w-0 flex-1 items-center overflow-x-auto">
+          {tabs}
+        </div>
+      )}
 
       {/* Right: actions */}
       {actions && (

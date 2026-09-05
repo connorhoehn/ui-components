@@ -29,6 +29,11 @@ function Harness(props: Partial<React.ComponentProps<typeof RichChatComposer>>) 
       <RichChatComposer
         allowAttachments
         allowEmoji
+        // A real host would open its own dialog; the story uses prompt() only
+        // because it is the shortest thing that proves the callback shape.
+        onRequestLink={(selected) =>
+          window.prompt(selected ? `Link for "${selected}"` : 'URL', 'https://') || undefined
+        }
         onSend={setSent}
         onSearchPeople={(q) =>
           PEOPLE.filter((p) => p.label.toLowerCase().includes(q.toLowerCase())).slice(0, 6)

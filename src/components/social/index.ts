@@ -82,3 +82,15 @@ export { MessageActionBar } from './MessageActionBar';
 export type { MessageActionBarProps } from './MessageActionBar';
 export { QuoteBlock, excerpt } from './QuoteBlock';
 export type { QuoteBlockProps, QuotedMessage } from './QuoteBlock';
+
+// Channel views — the same channel seen as its files, its pins, or the times
+// you were named in it. These are the panels behind ChannelHeader's tabs.
+export { PinnedMessagesPanel, ChannelFilesPanel, ChannelMentionsPanel } from './ChannelViews';
+export type {
+    PinnedMessageItem,
+    PinnedMessagesPanelProps,
+    ChannelFileItem,
+    ChannelFilesPanelProps,
+    ChannelMentionItem,
+    ChannelMentionsPanelProps,
+} from './ChannelViews';

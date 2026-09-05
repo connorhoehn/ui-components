@@ -12,6 +12,9 @@ import { Input } from '../forms/Input';
 import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
 import { MessageBody } from './MessageBody';
+import { ReactionChips } from './ReactionChips';
+import { MessageActionBar } from './MessageActionBar';
+import { QuoteBlock } from './QuoteBlock';
 import { AttachmentBubble, TransferBubble, type ChatAttachment, type ChatTransfer } from './ChatAttachment';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover, DEFAULT_PICKER_EMOJIS } from './ReactionPickerPopover';
@@ -37,6 +40,35 @@ export interface ChatPanelProps {
    * the message list.
    */
   composer?: ReactNode;
+  /**
+   * The viewer, so their own reactions can be marked and their own messages
+   * can offer edit/delete. Without it reactions render but cannot be toggled
+   * meaningfully — "did I react?" is unanswerable.
+   */
+  currentUserId?: string;
+  /** Reactions on one message. Omit to render no reaction UI at all. */
+  reactionsFor?: (messageId: string) => readonly { emoji: string; userId: string; displayName?: string }[];
+  /** Toggles the viewer's reaction. Presence of this enables the react controls. */
+  onToggleReaction?: (messageId: string, emoji: string) => void;
+  /** Starts a quote-reply. Presence of this enables the reply control. */
+  onReply?: (message: ChatMessage) => void;
+  /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
+  onTogglePin?: (message: ChatMessage) => void;
+  /** Message ids currently pinned in this channel. */
+  pinnedMessageIds?: ReadonlySet<string>;
+  /**
+   * Scrolls to a quoted original. Omit and quotes render as a record of what
+   * was said rather than a control that goes nowhere — which is the honest
+   * shape when the original is outside the loaded window.
+   */
+  onJumpToMessage?: (messageId: string) => void;
+  /**
+   * The message a jump just landed on. Highlighted so arriving somewhere in
+   * the middle of a transcript says WHICH message you were sent to — without
+   * it a jump scrolls and leaves you to guess. The caller clears it; the
+   * panel does not own a timer.
+   */
+  highlightedMessageId?: string | null;
   disabled?: boolean;
   onTyping?: (isTyping: boolean) => void;
   typingUsers?: string[];
@@ -157,6 +189,14 @@ export function ChatPanel({
   onTyping,
   typingUsers = [],
   composer,
+  currentUserId,
+  reactionsFor,
+  onToggleReaction,
+  onReply,
+  onTogglePin,
+  pinnedMessageIds,
+  onJumpToMessage,
+  highlightedMessageId,
   tone = 'light',
   showHeader,
   fill,
@@ -405,15 +445,71 @@ export function ChatPanel({
                     ))}
                   </>
                 );
+              const messageId = message.id ?? '';
+              const reactions = messageId && reactionsFor ? reactionsFor(messageId) : [];
+              const quoted = (message as { metadata?: { replyTo?: unknown } }).metadata?.replyTo as
+                | { messageId: string; author: string; text: string; timestamp?: string }
+                | undefined;
+              const isPinned = !!messageId && !!pinnedMessageIds?.has(messageId);
+
+              // The quote, the message, its reactions — one unit. Rendering
+              // them as siblings of the row would let a reaction drift away
+              // from the message it belongs to when the list reflows.
+              const withInteractions = (
+                <>
+                  {quoted && (
+                    <QuoteBlock
+                      quote={quoted}
+                      onJump={onJumpToMessage}
+                      className="mb-1"
+                    />
+                  )}
+                  {isPinned && (
+                    <span className="mb-0.5 block text-[11px] text-text-tertiary" data-testid="pinned-marker">
+                      📌 Pinned
+                    </span>
+                  )}
+                  {body}
+                  {reactions.length > 0 && currentUserId && onToggleReaction && (
+                    <ReactionChips
+                      reactions={reactions}
+                      currentUserId={currentUserId}
+                      onToggle={(emoji) => onToggleReaction(messageId, emoji)}
+                    />
+                  )}
+                </>
+              );
+
               return (
-                <MessageRow
+                <div
                   key={message.id ?? index}
-                  author={author}
-                  content={body}
-                  timestamp={message.timestamp}
-                  avatarUrl={message.avatarUrl}
-                  tone={tone}
-                />
+                  data-testid="chat-message"
+                  data-message-id={messageId || undefined}
+                  // `group` drives the hover reveal; `focus-within` is what
+                  // keeps the bar reachable without a pointer.
+                  className={cn(
+                    'group relative rounded-md',
+                    messageId && messageId === highlightedMessageId &&
+                      'bg-surface-inset ring-1 ring-primary transition-colors',
+                  )}
+                >
+                  <MessageRow
+                    author={author}
+                    content={withInteractions}
+                    timestamp={message.timestamp}
+                    avatarUrl={message.avatarUrl}
+                    tone={tone}
+                  />
+                  {messageId && (onToggleReaction || onReply || onTogglePin) && (
+                    <MessageActionBar
+                      className="absolute right-2 top-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus-within:opacity-100"
+                      onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
+                      onReply={onReply ? () => onReply(message) : undefined}
+                      onTogglePin={onTogglePin ? () => onTogglePin(message) : undefined}
+                      pinned={isPinned}
+                    />
+                  )}
+                </div>
               );
             })
           )}

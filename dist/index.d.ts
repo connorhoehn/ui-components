@@ -1836,7 +1836,32 @@ export declare interface ChangeReviewVerdict {
 /** An agent's judgement on a single proposed change. */
 export declare type ChangeVerdict = 'pass' | 'concern' | 'fail';
 
-export declare function ChannelHeader({ name, memberCount, description, actions, avatarUrl, online, onMembersClick, className, }: ChannelHeaderProps): JSX.Element;
+export declare interface ChannelFileItem {
+    /** The message the file arrived on — what the row jumps back to. */
+    messageId: string;
+    attachment: ChatAttachment;
+    author: string;
+    /** ISO-8601 of the message. */
+    sentAt?: string;
+}
+
+export declare function ChannelFilesPanel({ files, thumbnailSrc, onJump, className, 'data-testid': testId, }: ChannelFilesPanelProps): JSX.Element;
+
+export declare interface ChannelFilesPanelProps {
+    files: readonly ChannelFileItem[];
+    /**
+     * Resolves a displayable image source. The download route is authenticated,
+     * so `attachment.url` in an <img> would 401 — the integration layer hands
+     * back a resolved object URL. Falling back to the inline preview keeps the
+     * thumbnail honest while the real bytes are still being fetched.
+     */
+    thumbnailSrc?: (a: ChatAttachment) => string | undefined;
+    onJump?: (messageId: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function ChannelHeader({ name, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
 
 export declare interface ChannelHeaderProps {
     /** Display name of the channel or user */
@@ -1845,6 +1870,12 @@ export declare interface ChannelHeaderProps {
     memberCount?: number;
     /** Short description shown below the name */
     description?: string;
+    /**
+     * Views of this channel — files, documents, recordings, pinned. Rendered
+     * inline beside the name; pass a <Tabs variant="underline" size="sm">.
+     * The header owns no tab state: which one is active is the caller's.
+     */
+    tabs?: ReactNode;
     /** Right-aligned action area */
     actions?: ReactNode;
     /** Avatar URL; falls back to name initials */
@@ -1854,6 +1885,38 @@ export declare interface ChannelHeaderProps {
     /** Called when member-count area is clicked */
     onMembersClick?: () => void;
     className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * One time you were named, in a CHANNEL. Named `ChannelMention…` because the
+ * library already has a `MentionItem` for the other kind — being named in a
+ * document comment — and those two are not interchangeable: one points at a
+ * message in a conversation, the other at a comment on a section.
+ */
+export declare interface ChannelMentionItem {
+    messageId: string;
+    /** Channel the mention happened in — the id used to navigate. */
+    channel: string;
+    /** Human-readable channel name. Falls back to the id when absent. */
+    channelLabel?: string;
+    author: string;
+    /** The message text, trimmed by the caller if it is long. */
+    excerpt: string;
+    /** ISO-8601. */
+    at?: string;
+    /** Unread mentions are the ones that still need you. */
+    unread?: boolean;
+}
+
+export declare function ChannelMentionsPanel({ mentions, onJump, className, 'data-testid': testId, }: ChannelMentionsPanelProps): JSX.Element;
+
+export declare interface ChannelMentionsPanelProps {
+    mentions: readonly ChannelMentionItem[];
+    /** Jump takes both, because a mention can be in a channel you are not in. */
+    onJump?: (channel: string, messageId: string) => void;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare interface ChatAttachment {
@@ -1970,7 +2033,7 @@ export declare interface ChatMessage {
     attachments?: ChatAttachment[];
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -1989,6 +2052,39 @@ export declare interface ChatPanelProps {
      * the message list.
      */
     composer?: ReactNode;
+    /**
+     * The viewer, so their own reactions can be marked and their own messages
+     * can offer edit/delete. Without it reactions render but cannot be toggled
+     * meaningfully — "did I react?" is unanswerable.
+     */
+    currentUserId?: string;
+    /** Reactions on one message. Omit to render no reaction UI at all. */
+    reactionsFor?: (messageId: string) => readonly {
+        emoji: string;
+        userId: string;
+        displayName?: string;
+    }[];
+    /** Toggles the viewer's reaction. Presence of this enables the react controls. */
+    onToggleReaction?: (messageId: string, emoji: string) => void;
+    /** Starts a quote-reply. Presence of this enables the reply control. */
+    onReply?: (message: ChatMessage) => void;
+    /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
+    onTogglePin?: (message: ChatMessage) => void;
+    /** Message ids currently pinned in this channel. */
+    pinnedMessageIds?: ReadonlySet<string>;
+    /**
+     * Scrolls to a quoted original. Omit and quotes render as a record of what
+     * was said rather than a control that goes nowhere — which is the honest
+     * shape when the original is outside the loaded window.
+     */
+    onJumpToMessage?: (messageId: string) => void;
+    /**
+     * The message a jump just landed on. Highlighted so arriving somewhere in
+     * the middle of a transcript says WHICH message you were sent to — without
+     * it a jump scrolls and leaves you to guess. The caller clears it; the
+     * panel does not own a timer.
+     */
+    highlightedMessageId?: string | null;
     disabled?: boolean;
     onTyping?: (isTyping: boolean) => void;
     typingUsers?: string[];
@@ -6554,6 +6650,29 @@ export declare interface PersonHoverCardProps {
 }
 
 export declare function PhoneOffIcon({ size, ...rest }: IconProps): JSX.Element;
+
+export declare interface PinnedMessageItem {
+    messageId: string;
+    /** Who wrote the message. */
+    author: string;
+    /** Short excerpt of it — the panel never re-reads the transcript. */
+    preview: string;
+    /** ISO-8601. */
+    pinnedAt?: string;
+    /** Display name of whoever pinned it. */
+    pinnedBy?: string;
+}
+
+export declare function PinnedMessagesPanel({ pins, onJump, onUnpin, className, 'data-testid': testId, }: PinnedMessagesPanelProps): JSX.Element;
+
+export declare interface PinnedMessagesPanelProps {
+    pins: readonly PinnedMessageItem[];
+    onJump?: (messageId: string) => void;
+    /** Omit to render a read-only panel — e.g. for someone who may not unpin. */
+    onUnpin?: (messageId: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare function PiPButton({ getVideoElement, className, title, }: PiPButtonProps): JSX.Element;
 
