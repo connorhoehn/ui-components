@@ -261,6 +261,41 @@ export function documentRefFromMetadata(
  * knows a call is live right now says so through ChatPanel's
  * `callParticipants`; nothing here guesses.
  */
+/** Internal metadata keys, in the words a reader would use for them. */
+const DROPPED_KEY_LABELS: Record<string, string> = {
+  attachments: 'files',
+  html: 'formatting',
+  mentions: 'mentions',
+  replyTo: 'the quoted reply',
+};
+
+/**
+ * What the server could not fit in this message, if anything.
+ *
+ * Chat metadata has a size budget, and attachments share it with the rich
+ * body, the mentions and the reply. Past the cap the server sheds the largest
+ * keys and stamps `_truncated` / `_droppedKeys` on what survives.
+ *
+ * Rendering it is the whole point. Before this, an oversized send looked
+ * IDENTICAL to a successful one — the text appeared, the three files the
+ * sender had just watched upload were simply not there, and no part of the
+ * product ever said so. A message that lost something has to admit it, or the
+ * transcript is quietly lying about what was said.
+ */
+export function truncationFromMetadata(
+  metadata: Record<string, unknown> | undefined,
+): { droppedKeys: string[]; labels: string[] } | null {
+  if (!metadata || metadata._truncated !== true) return null;
+  const raw = Array.isArray(metadata._droppedKeys) ? metadata._droppedKeys : [];
+  const droppedKeys = raw.filter((k): k is string => typeof k === 'string');
+  // An older server stamps `_truncated` with no key list. Still worth saying
+  // something happened — "part of this message" beats silence.
+  return {
+    droppedKeys,
+    labels: droppedKeys.map((k) => DROPPED_KEY_LABELS[k] ?? k),
+  };
+}
+
 export function callRefFromMetadata(
   metadata: Record<string, unknown> | undefined,
 ): {
@@ -589,6 +624,7 @@ export function ChatPanel({
               // record — which is why one card renders both states in place
               // rather than the transcript swapping rows underneath a reader.
               const callRef = callRefFromMetadata(message.metadata);
+              const truncation = truncationFromMetadata(message.metadata);
 
               const body = callRef ? (
                 <CallActivityCard
@@ -665,6 +701,17 @@ export function ChatPanel({
                     </span>
                   )}
                   {body}
+                  {truncation && (
+                    <div
+                      data-testid="message-truncated"
+                      className="mt-1 text-[11px] text-warning-fg"
+                    >
+                      ⚠{' '}
+                      {truncation.labels.length > 0
+                        ? `Too large to send: ${truncation.labels.join(', ')}`
+                        : 'Part of this message was too large to send'}
+                    </div>
+                  )}
                   {reactions.length > 0 && currentUserId && onToggleReaction && (
                     <ReactionChips
                       reactions={reactions}

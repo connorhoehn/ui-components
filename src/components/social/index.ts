@@ -3,7 +3,12 @@ export { default as SocialTabContent } from './SocialTabContent';
 // documentRefFromMetadata / callRefFromMetadata are exported so a host that
 // renders its own transcript can read the same events out of message metadata
 // rather than reimplementing the wire shape.
-export { ChatPanel, documentRefFromMetadata, callRefFromMetadata } from './ChatPanel';
+export {
+  ChatPanel,
+  documentRefFromMetadata,
+  callRefFromMetadata,
+  truncationFromMetadata,
+} from './ChatPanel';
 export type { ChatPanelProps } from './ChatPanel';
 export { MessageRow, formatChatTime } from './MessageRow';
 export type { MessageRowProps } from './MessageRow';

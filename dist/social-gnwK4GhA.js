@@ -6,7 +6,7 @@ import { t as l } from "./Textarea-Dz4doxTv.js";
 import { n as u, t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./PresenceDot-3gBZGPvX.js";
 import { t as p } from "./Select-CqVokE2v.js";
-import { O as m, k as h } from "./ConversationSurface-DdpgL0en.js";
+import { A as m, k as h } from "./ConversationSurface-CV8SXG_9.js";
 import { t as g } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as _, t as v } from "./ReactionPickerPopover-moHezwrL.js";
 import "./LinkDialog-DazAeDjI.js";
@@ -501,11 +501,11 @@ function I({ people: e, onStartDm: t, onCreateChannel: n, onCancel: r, peopleErr
 //#endregion
 //#region src/components/social/ConversationList.tsx
 function L({ items: e, grouped: t = !1, activeChannel: n, onSelect: r, onNewChat: i, emptyLabel: a = "No conversations yet", tone: o = "light", className: c, "data-testid": l }) {
-	let p = o === "dark", m = [];
+	let p = o === "dark", h = [];
 	if (t) {
 		let t = (e) => (e.kind ?? (e.peers.length > 1 ? "group" : "dm")) === "channel", n = e.filter(t), r = e.filter((e) => !t(e));
-		n.length > 0 && m.push({ heading: "Channels" }, ...n), r.length > 0 && m.push({ heading: "Direct messages" }, ...r);
-	} else m.push(...e);
+		n.length > 0 && h.push({ heading: "Channels" }, ...n), r.length > 0 && h.push({ heading: "Direct messages" }, ...r);
+	} else h.push(...e);
 	return /* @__PURE__ */ D("div", {
 		className: s("flex min-h-0 flex-col gap-1", c),
 		"data-testid": l,
@@ -526,14 +526,14 @@ function L({ items: e, grouped: t = !1, activeChannel: n, onSelect: r, onNewChat
 		}) : /* @__PURE__ */ E("ul", {
 			className: "m-0 flex min-h-0 list-none flex-col gap-0.5 overflow-y-auto p-0",
 			"aria-label": "Conversations",
-			children: m.map((e) => {
+			children: h.map((e) => {
 				if ("heading" in e) return /* @__PURE__ */ E("li", {
 					"data-testid": "conversation-section",
 					"aria-hidden": !0,
 					className: s("px-2 pb-0.5 pt-3 text-[11px] font-semibold uppercase tracking-wide", p ? "text-white/40" : "text-text-tertiary"),
 					children: e.heading
 				}, `heading:${e.heading}`);
-				let t = e, i = t.channel === n, a = t.kind ?? (t.peers.length > 1 ? "group" : "dm"), o = a === "channel", c = a === "group", l = t.peers[0], m = o ? t.name ?? t.channel : t.peers.map((e) => e.displayName).join(", "), g = t.lastMessageAt ? h(t.lastMessageAt) : "", _ = t.unreadCount ?? 0, v = !!t.mentioned;
+				let t = e, i = t.channel === n, a = t.kind ?? (t.peers.length > 1 ? "group" : "dm"), o = a === "channel", c = a === "group", l = t.peers[0], h = o ? t.name ?? t.channel : t.peers.map((e) => e.displayName).join(", "), g = t.lastMessageAt ? m(t.lastMessageAt) : "", _ = t.unreadCount ?? 0, v = !!t.mentioned;
 				return /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
 					type: "button",
 					onClick: () => r(t.channel),
@@ -575,7 +575,7 @@ function L({ items: e, grouped: t = !1, activeChannel: n, onSelect: r, onNewChat
 								className: "flex items-baseline gap-2",
 								children: [/* @__PURE__ */ E("span", {
 									className: s("min-w-0 flex-1 truncate text-[13px]", _ > 0 ? "font-semibold" : "font-medium", p ? "text-white" : "text-text-primary"),
-									children: m
+									children: h
 								}), g && /* @__PURE__ */ E("span", {
 									className: s("shrink-0 text-[11px] tabular-nums", p ? "text-white/50" : "text-text-tertiary"),
 									"data-testid": "conversation-time",
@@ -989,7 +989,7 @@ function K({ author: e, avatarUrl: t, mine: n = !1, messages: r, className: i })
 		"data-author": e,
 		"data-row-count": r.length,
 		className: s("flex flex-col", i),
-		children: r.map((r, i) => /* @__PURE__ */ E(m, {
+		children: r.map((r, i) => /* @__PURE__ */ E(h, {
 			author: e,
 			content: r.content,
 			timestamp: r.timestamp,

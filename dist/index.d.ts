@@ -1269,22 +1269,6 @@ export declare interface CallPresenceIndicatorProps {
     maxVisible?: number;
 }
 
-/**
- * A call event, read off a message's metadata.
- *
- * The sibling of documentRefFromMetadata, and the same idea: the server
- * writes a sentence for anywhere that renders plain text, and the metadata
- * carries the facts the thread renders as a card.
- *
- * Liveness is POSITIVE evidence only. A stored message is replayed forever,
- * so inferring "still going" from a missing `endedAt` would put a Join button
- * on every call that ever happened, and after a reload the thread would
- * cheerfully advertise a call that ended three hours ago. The gateway posts
- * this event when a call ENDS — the durable fact a transcript wants is that a
- * call happened, who was in it and how long it took. A host that genuinely
- * knows a call is live right now says so through ChatPanel's
- * `callParticipants`; nothing here guesses.
- */
 export declare function callRefFromMetadata(metadata: Record<string, unknown> | undefined): {
     callId: string;
     live: boolean;
@@ -10777,6 +10761,24 @@ export declare interface TriggerNodeData {
 }
 
 export declare type TriggerType = 'manual' | 'document.finalize' | 'document.comment' | 'document.submit' | 'schedule' | 'webhook';
+
+/**
+ * What the server could not fit in this message, if anything.
+ *
+ * Chat metadata has a size budget, and attachments share it with the rich
+ * body, the mentions and the reply. Past the cap the server sheds the largest
+ * keys and stamps `_truncated` / `_droppedKeys` on what survives.
+ *
+ * Rendering it is the whole point. Before this, an oversized send looked
+ * IDENTICAL to a successful one — the text appeared, the three files the
+ * sender had just watched upload were simply not there, and no part of the
+ * product ever said so. A message that lost something has to admit it, or the
+ * transcript is quietly lying about what was said.
+ */
+export declare function truncationFromMetadata(metadata: Record<string, unknown> | undefined): {
+    droppedKeys: string[];
+    labels: string[];
+} | null;
 
 declare interface TypedDocument {
     documentId: string;
