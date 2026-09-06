@@ -533,7 +533,7 @@ function L({ items: e, grouped: t = !1, activeChannel: n, onSelect: r, onNewChat
 					className: s("px-2 pb-0.5 pt-3 text-[11px] font-semibold uppercase tracking-wide", p ? "text-white/40" : "text-text-tertiary"),
 					children: e.heading
 				}, `heading:${e.heading}`);
-				let t = e, i = t.channel === n, a = t.kind ?? (t.peers.length > 1 ? "group" : "dm"), o = a === "channel", c = a === "group", l = t.peers[0], h = o ? t.name ?? t.channel : t.peers.map((e) => e.displayName).join(", "), g = t.lastMessageAt ? m(t.lastMessageAt) : "", _ = t.unreadCount ?? 0, v = !!t.mentioned;
+				let t = e, i = t.channel === n, a = t.kind ?? (t.peers.length > 1 ? "group" : "dm"), o = a === "channel", c = a === "group", l = t.peers[0], h = o ? t.name ?? t.channel : t.peers.map((e) => e.displayName).join(", "), g = t.lastMessageAt ? m(t.lastMessageAt) : "", _ = t.unreadCount ?? 0, v = !!t.mentioned, y = !!t.live;
 				return /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
 					type: "button",
 					onClick: () => r(t.channel),
@@ -586,6 +586,16 @@ function L({ items: e, grouped: t = !1, activeChannel: n, onSelect: r, onNewChat
 								"data-testid": "conversation-preview",
 								children: t.lastMessagePreview
 							})]
+						}),
+						y && /* @__PURE__ */ D("span", {
+							"data-testid": "conversation-live",
+							"aria-label": "Call in progress",
+							title: "Call in progress",
+							className: "inline-flex shrink-0 items-center gap-1 rounded-full bg-danger px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wide text-white",
+							children: [/* @__PURE__ */ E("span", {
+								"aria-hidden": !0,
+								className: "h-1.5 w-1.5 rounded-full bg-white"
+							}), "Live"]
 						}),
 						v && /* @__PURE__ */ E("span", {
 							"data-testid": "conversation-mention",

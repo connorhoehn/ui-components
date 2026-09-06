@@ -64,6 +64,21 @@ export interface ConversationItem {
    * mention gets lost inside a busy channel's 40 unread.
    */
   mentioned?: boolean;
+  /**
+   * A call is happening in this conversation RIGHT NOW.
+   *
+   * Its own signal, for the same reason `mentioned` is: unread says "there is
+   * traffic here", a mention says "someone is waiting on you", and this says
+   * "something is happening that you can still join". Only the last one
+   * expires — a call you learn about afterwards is a fact, not an invitation.
+   *
+   * Until this existed a call was invisible from the list: the thread posted a
+   * card when the call ENDED, so the only way to discover one in progress was
+   * to already be looking at the conversation it was in. For a stream meant
+   * for an audience that is the whole problem — nobody can watch what nobody
+   * can find.
+   */
+  live?: boolean;
 }
 
 export interface ConversationListProps {
@@ -193,6 +208,7 @@ export function ConversationList({
             const time = item.lastMessageAt ? formatChatTime(item.lastMessageAt) : '';
             const unread = item.unreadCount ?? 0;
             const mentioned = !!item.mentioned;
+            const live = !!item.live;
             return (
               <li key={item.channel}>
                 <button
@@ -286,6 +302,19 @@ export function ConversationList({
                       "40 unread" and "one of them is about you" are different
                       facts, and collapsing them is how a mention gets lost
                       inside a busy channel. */}
+                  {/* First in the row: it is the only one of these badges
+                      that is time-limited. */}
+                  {live && (
+                    <span
+                      data-testid="conversation-live"
+                      aria-label="Call in progress"
+                      title="Call in progress"
+                      className="inline-flex shrink-0 items-center gap-1 rounded-full bg-danger px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wide text-white"
+                    >
+                      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-white" />
+                      Live
+                    </span>
+                  )}
                   {mentioned && (
                     <span
                       data-testid="conversation-mention"

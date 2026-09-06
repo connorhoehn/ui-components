@@ -529,6 +529,21 @@ export declare interface ConversationItem {
      * mention gets lost inside a busy channel's 40 unread.
      */
     mentioned?: boolean;
+    /**
+     * A call is happening in this conversation RIGHT NOW.
+     *
+     * Its own signal, for the same reason `mentioned` is: unread says "there is
+     * traffic here", a mention says "someone is waiting on you", and this says
+     * "something is happening that you can still join". Only the last one
+     * expires — a call you learn about afterwards is a fact, not an invitation.
+     *
+     * Until this existed a call was invisible from the list: the thread posted a
+     * card when the call ENDED, so the only way to discover one in progress was
+     * to already be looking at the conversation it was in. For a stream meant
+     * for an audience that is the whole problem — nobody can watch what nobody
+     * can find.
+     */
+    live?: boolean;
 }
 
 export declare function ConversationList({ items, grouped, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;

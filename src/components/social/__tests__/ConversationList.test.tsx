@@ -164,3 +164,48 @@ describe('ConversationList — channels alongside DMs and groups', () => {
     expect(screen.getByText('random')).toBeInTheDocument();
   });
 });
+
+// A call in progress is the one signal in this list that expires. Until it
+// existed, a call was invisible from the rail — the thread only posted a card
+// once the call had ENDED, so the only way to find one in progress was to
+// already be looking at the conversation it was in.
+describe('a live call', () => {
+  const item = (over: Record<string, unknown> = {}) => ({
+    channel: 'room:design',
+    kind: 'channel' as const,
+    name: 'design',
+    peers: [],
+    ...over,
+  });
+
+  it('is not claimed unless it is happening', () => {
+    render(<ConversationList items={[item()]} />);
+    expect(screen.queryByTestId('conversation-live')).toBeNull();
+  });
+
+  it('marks the conversation carrying it', () => {
+    render(<ConversationList items={[item({ live: true })]} />);
+    expect(screen.getByTestId('conversation-live')).toHaveTextContent('Live');
+  });
+
+  it('names itself for a screen reader rather than relying on a red dot', () => {
+    render(<ConversationList items={[item({ live: true })]} />);
+    expect(screen.getByLabelText('Call in progress')).toBeInTheDocument();
+  });
+
+  // Three different facts, none of which replaces another.
+  it('sits alongside unread and mention badges', () => {
+    render(<ConversationList items={[item({ live: true, mentioned: true, unreadCount: 3 })]} />);
+    expect(screen.getByTestId('conversation-live')).toBeInTheDocument();
+    expect(screen.getByTestId('conversation-mention')).toBeInTheDocument();
+    expect(screen.getByTestId('conversation-unread')).toHaveTextContent('3');
+  });
+
+  it('marks only the conversation that has one', () => {
+    render(<ConversationList items={[
+      item({ channel: 'room:a', name: 'a' }),
+      item({ channel: 'room:b', name: 'b', live: true }),
+    ]} />);
+    expect(screen.getAllByTestId('conversation-live')).toHaveLength(1);
+  });
+});
