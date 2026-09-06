@@ -4,10 +4,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 // The mapping under test: one component, two transports, mode as data.
 const subscriber = vi.fn();
 const liveHls = vi.fn();
+const viewerCount = vi.fn();
 
 vi.mock('@connorhoehn/realtime-modules/client/video', () => ({
   useLVSSubscriber: (o: unknown) => subscriber(o),
   useLVSLiveHls: (o: unknown) => liveHls(o),
+  useLVSViewerCount: (o: unknown) => viewerCount(o),
 }));
 
 import { WrappedStreamStage } from '../WrappedStreamStage';
@@ -19,12 +21,14 @@ function mockHooks({
   phase = 'idle',
   playlistUrl = null as string | null,
   ready = false,
+  viewers = null as number | null,
 } = {}) {
   subscriber.mockReturnValue({ stream, phase, error: null, tracks: new Map() });
   liveHls.mockReturnValue({ playlistUrl, ready, tokenExpiresInSec: null });
+  viewerCount.mockReturnValue({ viewerCount: viewers, error: null });
 }
 
-afterEach(() => { cleanup(); subscriber.mockReset(); liveHls.mockReset(); });
+afterEach(() => { cleanup(); subscriber.mockReset(); liveHls.mockReset(); viewerCount.mockReset(); });
 
 describe('WrappedStreamStage — transport selection', () => {
   // A component whose job is "let people watch" should default to the mode
@@ -68,6 +72,7 @@ describe('WrappedStreamStage — transport selection', () => {
       throw new Error('[lvs] useLVSContext called outside <LVSProvider>');
     });
     liveHls.mockReturnValue({ playlistUrl: 'http://lvs/hls/master.m3u8', ready: true, tokenExpiresInSec: null });
+    viewerCount.mockReturnValue({ viewerCount: null, error: null });
     render(<WrappedStreamStage channelArn={ARN} mode="near-realtime" />);
     expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-transport', 'hls');
   });
@@ -117,6 +122,46 @@ describe('WrappedStreamStage — transport selection', () => {
     render(<WrappedStreamStage channelArn={ARN} onStatusChange={onStatusChange} />);
     expect(onStatusChange).toHaveBeenCalledWith(
       expect.objectContaining({ mode: 'near-realtime', live: true }),
+    );
+  });
+});
+
+
+// The number a broadcast is about. StreamStage has accepted `viewerCount`
+// from the beginning and nothing ever supplied one, so a stream to a mass
+// audience reported no audience at all.
+describe('WrappedStreamStage — the audience', () => {
+  it('shows the count on the near-realtime leg, which is the one that scales', () => {
+    mockHooks({ playlistUrl: 'u', ready: true, viewers: 1200 });
+    render(<WrappedStreamStage channelArn={ARN} />);
+    expect(screen.getByText('1.2K watching')).toBeInTheDocument();
+  });
+
+  it('shows it on the realtime leg too', () => {
+    const stream = { id: 's' } as unknown as MediaStream;
+    mockHooks({ stream, phase: 'live', viewers: 3 });
+    render(<WrappedStreamStage channelArn={ARN} mode="realtime" />);
+    expect(screen.getByText('3 watching')).toBeInTheDocument();
+  });
+
+  // "We have not been told" must not render as an empty house.
+  it('says nothing when the count is unknown', () => {
+    mockHooks({ playlistUrl: 'u', ready: true, viewers: null });
+    render(<WrappedStreamStage channelArn={ARN} />);
+    expect(screen.queryByText(/watching/)).toBeNull();
+  });
+
+  it('reports a genuine zero', () => {
+    mockHooks({ playlistUrl: 'u', ready: true, viewers: 0 });
+    render(<WrappedStreamStage channelArn={ARN} />);
+    expect(screen.getByText('0 watching')).toBeInTheDocument();
+  });
+
+  it('counts the channel being watched', () => {
+    mockHooks({ playlistUrl: 'u', ready: true, viewers: 5 });
+    render(<WrappedStreamStage channelArn={ARN} baseUrl="http://lvs.local" />);
+    expect(viewerCount).toHaveBeenCalledWith(
+      expect.objectContaining({ channelArn: ARN, baseUrl: 'http://lvs.local' }),
     );
   });
 });

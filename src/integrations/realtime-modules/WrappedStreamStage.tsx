@@ -41,6 +41,7 @@ import { useEffect } from 'react';
 import {
   useLVSSubscriber,
   useLVSLiveHls,
+  useLVSViewerCount,
 } from '@connorhoehn/realtime-modules/client/video';
 import { StreamStage, type StreamStageProps } from '../../components/video/StreamStage';
 
@@ -110,11 +111,22 @@ function RealtimeStage({
   });
 
   const live = sub.phase === 'live';
+  const { viewerCount } = useLVSViewerCount({ channelArn, baseUrl });
   useEffect(() => {
     onStatusChange?.({ mode: 'realtime', live, error: sub.error });
   }, [live, sub.error, onStatusChange]);
 
-  return <StreamStage {...stage} live={live} stream={sub.stream} />;
+  return (
+    <StreamStage
+      {...stage}
+      live={live}
+      stream={sub.stream}
+      // Omitted rather than passed as null: the stage's own contract is to
+      // show nothing when the count is unknown, and a caller that turns
+      // "not told" into 0 would have it announce an empty house.
+      {...(viewerCount !== null ? { viewerCount } : {})}
+    />
+  );
 }
 
 /** Near-realtime leg. A pure URL composer — no provider required. */
@@ -126,12 +138,22 @@ function NearRealtimeStage({
   ...stage
 }: Omit<WrappedStreamStageProps, 'mode' | 'excludeParticipantId' | 'getAuthToken'>) {
   const hls = useLVSLiveHls({ channelArn, playbackToken, baseUrl });
+  // This is the leg that carries a mass audience, so it is the one the number
+  // matters most on.
+  const { viewerCount } = useLVSViewerCount({ channelArn, baseUrl, playbackToken });
 
   useEffect(() => {
     onStatusChange?.({ mode: 'near-realtime', live: hls.ready, error: null });
   }, [hls.ready, onStatusChange]);
 
-  return <StreamStage {...stage} live={hls.ready} playlistUrl={hls.playlistUrl} />;
+  return (
+    <StreamStage
+      {...stage}
+      live={hls.ready}
+      playlistUrl={hls.playlistUrl}
+      {...(viewerCount !== null ? { viewerCount } : {})}
+    />
+  );
 }
 
 export function WrappedStreamStage({ mode = 'near-realtime', ...props }: WrappedStreamStageProps) {
