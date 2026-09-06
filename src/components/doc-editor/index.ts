@@ -102,3 +102,8 @@ export { useDocumentOutline, readOutline } from './useDocumentOutline';
 
 export { DocumentStatusBar, ZOOM_STEPS } from './DocumentStatusBar';
 export type { DocumentStatusBarProps } from './DocumentStatusBar';
+
+export { DocumentOwnership } from './DocumentOwnership';
+export type { DocumentOwnershipProps, DocumentPerson } from './DocumentOwnership';
+export { DocumentShareDialog, SHARE_ROLES } from './DocumentShareDialog';
+export type { DocumentShareDialogProps, ShareEntry, ShareRole, GeneralAccess } from './DocumentShareDialog';

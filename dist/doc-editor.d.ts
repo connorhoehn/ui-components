@@ -557,6 +557,30 @@ export declare interface DocumentOutlineProps {
     'data-testid'?: string;
 }
 
+export declare function DocumentOwnership({ owner, collaborators, maxAvatars, onShare, className, 'data-testid': testId, }: DocumentOwnershipProps): JSX.Element | null;
+
+export declare interface DocumentOwnershipProps {
+    /** The document's owner. Omit while it is still loading — renders nothing. */
+    owner?: DocumentPerson | null;
+    /**
+     * Everyone else with access, owner excluded. Shown as stacked avatars, so
+     * the answer to "who else is on this" costs no reading.
+     */
+    collaborators?: readonly DocumentPerson[];
+    /** How many avatars before the rest become a +N. Default 3. */
+    maxAvatars?: number;
+    /** Opens the share surface. Omit and no Share control is offered. */
+    onShare?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface DocumentPerson {
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+}
+
 export declare function DocumentRuler({ pageWidth, marginLeft, marginRight, zoom, className, style, 'data-testid': testId, }: DocumentRulerProps): JSX.Element;
 
 export declare interface DocumentRulerProps {
@@ -585,6 +609,26 @@ export declare interface DocumentRulerProps {
  * this modal's; the modal only reports which shape the person chose.
  */
 export declare type DocumentShape = 'page' | 'sections' | 'diagram';
+
+export declare function DocumentShareDialog({ open, onClose, documentTitle, people, generalAccess, orgName, onChangeGeneralAccess, onChangeRole, onInvite, onCopyLink, 'data-testid': testId, }: DocumentShareDialogProps): JSX.Element;
+
+export declare interface DocumentShareDialogProps {
+    open: boolean;
+    onClose: () => void;
+    documentTitle?: string;
+    /** Everyone with explicit access, owner first. */
+    people: readonly ShareEntry[];
+    generalAccess?: GeneralAccess;
+    /** Name of the org, for the general-access wording. */
+    orgName?: string;
+    onChangeGeneralAccess?: (next: GeneralAccess) => void;
+    onChangeRole?: (userId: string, next: ShareRole) => void;
+    /** Invite by email or name. The host resolves it to a person. */
+    onInvite?: (query: string) => void;
+    /** Copy a link to the document. */
+    onCopyLink?: () => void;
+    'data-testid'?: string;
+}
 
 export declare function DocumentStatusBar({ wordCount, zoom, onZoomChange, children, className, 'data-testid': testId, }: DocumentStatusBarProps): JSX.Element;
 
@@ -665,6 +709,9 @@ declare interface GatewayMessage {
     error?: GatewayError;
     [key: string]: unknown;
 }
+
+/** How the wider organisation sees this document. */
+export declare type GeneralAccess = 'restricted' | 'org-view' | 'org-edit' | 'link-view';
 
 export declare function generateSummaryBullets(allItems: TaskItem[], sections: Section[]): string[];
 
@@ -1097,6 +1144,8 @@ export declare function SectionSummariesCard({ sections, commentCounts, sectionC
     provider?: CollaborationProvider | null;
 }): JSX.Element;
 
+export declare const SHARE_ROLES: readonly ShareRole[];
+
 declare interface SharedProps {
     user: StandaloneTiptapUser;
     /** Y.XmlFragment name on the shared doc. Default: 'prosemirror'. */
@@ -1132,6 +1181,13 @@ declare interface SharedProps {
      */
     requireSync?: boolean;
 }
+
+export declare interface ShareEntry extends DocumentPerson {
+    role: ShareRole;
+}
+
+/** What a person may do with the document. */
+export declare type ShareRole = 'owner' | 'editor' | 'commenter' | 'viewer';
 
 declare type SidebarPanel = 'history' | 'myItems' | 'videoHistory';
 
