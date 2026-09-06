@@ -11,6 +11,14 @@
 export interface RMChatMessage {
   id: string;
   clientId: string;
+  /**
+   * The AUTHENTICATED author. realtime-modules has emitted this since the
+   * gateway started stamping it, but this mirror never declared it, so the
+   * adapter below could not carry it even in principle — and "is this message
+   * mine" keys on exactly this field. Without it every message in an embedded
+   * transcript belongs to somebody else.
+   */
+  userId?: string;
   channel: string;
   /** NOTE: realtime-modules uses `message`, not `content` */
   message: string;

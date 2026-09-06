@@ -97,3 +97,36 @@ describe('WrappedChatPanel', () => {
     expect(screen.getByTestId('hangout-reconnecting-banner')).toBeInTheDocument();
   });
 });
+
+// The two things the adapter used to leave behind. Both are only observable
+// through the wrapper — which is the path a host embedding this actually
+// takes, and the reason neither gap showed up in ChatPanel's own tests.
+describe('WrappedChatPanel carries the message through whole', () => {
+  it('makes the viewer own their messages', () => {
+    const mine: RMChatMessage = { ...makeMsg('m1', 'hello'), userId: 'user-alice' };
+    render(<WrappedChatPanel chat={makeChat([mine])} currentUserId="user-alice" />);
+    expect(screen.getByTestId('chat-message').querySelector('[data-mine="true"]'))
+      .not.toBeNull();
+  });
+
+  it('does not claim someone else’s message', () => {
+    const theirs: RMChatMessage = { ...makeMsg('m1', 'hello'), userId: 'user-bob' };
+    render(<WrappedChatPanel chat={makeChat([theirs])} currentUserId="user-alice" />);
+    expect(screen.getByTestId('chat-message').querySelector('[data-mine="true"]'))
+      .toBeNull();
+  });
+
+  // Proof the whole metadata bag survives the adapter: this notice is rendered
+  // purely from markers the server stamps into metadata, so it can only appear
+  // if the bag arrived.
+  it('delivers metadata to the panel readers', () => {
+    const truncated: RMChatMessage = {
+      ...makeMsg('m1', 'here you go'),
+      metadata: { _truncated: true, _droppedKeys: ['attachments'] },
+    };
+    render(<WrappedChatPanel chat={makeChat([truncated])} />);
+    expect(screen.getByTestId('message-truncated')).toHaveTextContent(
+      'Too large to send: files',
+    );
+  });
+});

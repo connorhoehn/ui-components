@@ -40,6 +40,17 @@ export interface WrappedChatPanelProps {
   /** Identifies the viewer so their own transfers get a cancel button. */
   currentActor?: string;
   /**
+   * The viewer's AUTHENTICATED user id — what makes their own messages theirs.
+   *
+   * Distinct from `currentActor`, which identifies a transfer's owner. This is
+   * the id ChatPanel compares against each message's `userId` to decide "is
+   * this mine", which drives own-message treatment. Without it every message
+   * in an embedded transcript reads as somebody else's, including yours, and
+   * no styling on the host's side can fix that — the panel simply has nothing
+   * to compare.
+   */
+  currentUserId?: string;
+  /**
    * Resolves an attachment to a renderable image src. The gateway's download
    * route is bearer-authenticated, so an `<img>` pointed at the raw URL 401s;
    * the host supplies an object URL (see useAttachmentSrc).
@@ -70,6 +81,7 @@ export function WrappedChatPanel({
   presence,
   upload,
   currentActor,
+  currentUserId,
   attachmentSrc,
   onOpenAttachment,
   acceptFiles,
@@ -115,6 +127,7 @@ export function WrappedChatPanel({
           }
         : {})}
       currentActor={currentActor}
+      currentUserId={currentUserId}
       attachmentSrc={attachmentSrc}
       onOpenAttachment={onOpenAttachment}
       acceptFiles={acceptFiles}

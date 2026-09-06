@@ -1039,6 +1039,14 @@ export declare type RMCapabilityMap = Record<string, boolean>;
 export declare interface RMChatMessage {
     id: string;
     clientId: string;
+    /**
+     * The AUTHENTICATED author. realtime-modules has emitted this since the
+     * gateway started stamping it, but this mirror never declared it, so the
+     * adapter below could not carry it even in principle — and "is this message
+     * mine" keys on exactly this field. Without it every message in an embedded
+     * transcript belongs to somebody else.
+     */
+    userId?: string;
     channel: string;
     /** NOTE: realtime-modules uses `message`, not `content` */
     message: string;
@@ -1503,7 +1511,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     legacyModel?: unknown;
 }
 
-export declare function WrappedChatPanel({ chat, presence, upload, currentActor, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, presence, upload, currentActor, currentUserId, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -1519,6 +1527,17 @@ export declare interface WrappedChatPanelProps {
     upload?: RMUseFileUploadReturn_2;
     /** Identifies the viewer so their own transfers get a cancel button. */
     currentActor?: string;
+    /**
+     * The viewer's AUTHENTICATED user id — what makes their own messages theirs.
+     *
+     * Distinct from `currentActor`, which identifies a transfer's owner. This is
+     * the id ChatPanel compares against each message's `userId` to decide "is
+     * this mine", which drives own-message treatment. Without it every message
+     * in an embedded transcript reads as somebody else's, including yours, and
+     * no styling on the host's side can fix that — the panel simply has nothing
+     * to compare.
+     */
+    currentUserId?: string;
     /**
      * Resolves an attachment to a renderable image src. The gateway's download
      * route is bearer-authenticated, so an `<img>` pointed at the raw URL 401s;

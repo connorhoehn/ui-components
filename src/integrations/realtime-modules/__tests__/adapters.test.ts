@@ -127,6 +127,46 @@ describe('adaptChatMessage', () => {
     expect(result.avatarUrl).toBe('https://example.com/alice.png');
   });
 
+  // Everything ChatPanel renders as an OBJECT rather than a sentence — the
+  // document card, the call card, the rich html body, the replyTo quote, the
+  // truncation notice — reads the metadata bag. Leaving it behind gave a host
+  // using this adapter a strictly worse thread than one that wired the hook up
+  // by hand.
+  it('carries the whole metadata bag through', () => {
+    const withKind: RMChatMessage = {
+      ...rmChat,
+      metadata: {
+        displayName: 'Alice',
+        kind: 'document',
+        documentId: 'doc-7',
+        title: 'Q3 plan',
+        html: '<p>rich</p>',
+      },
+    };
+    const result = adaptChatMessage(withKind);
+    expect(result.metadata).toEqual(withKind.metadata);
+    // and the lifted convenience fields still work off the same bag
+    expect(result.displayName).toBe('Alice');
+  });
+
+  it('omits metadata entirely when there was none', () => {
+    const result = adaptChatMessage({ ...rmChat, metadata: undefined });
+    expect(result.metadata).toBeUndefined();
+  });
+
+  // isMine keys on the authenticated userId, never on clientId — which
+  // changes on every reconnect. Dropping it made your own messages somebody
+  // else's, so an embedded transcript could not put them on your side.
+  it('carries the authenticated userId', () => {
+    const result = adaptChatMessage({ ...rmChat, userId: 'user-alice' });
+    expect(result.userId).toBe('user-alice');
+  });
+
+  it('omits userId when the server did not stamp one', () => {
+    const result = adaptChatMessage(rmChat);
+    expect(result.userId).toBeUndefined();
+  });
+
   it('handles empty messages array', () => {
     expect(adaptChatMessages([])).toEqual([]);
   });

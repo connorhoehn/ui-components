@@ -25,11 +25,13 @@ function j(e) {
 	return {
 		id: e.id,
 		clientId: e.clientId,
+		...e.userId ? { userId: e.userId } : {},
 		content: e.message,
 		timestamp: e.timestamp,
 		displayName: e.metadata?.displayName ?? void 0,
 		avatarUrl: e.metadata?.avatarUrl ?? void 0,
-		...n && n.length > 0 ? { attachments: n } : {}
+		...n && n.length > 0 ? { attachments: n } : {},
+		...e.metadata ? { metadata: e.metadata } : {}
 	};
 }
 function M(e) {
@@ -243,14 +245,14 @@ function q(e, t) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedChatPanel.tsx
-function xe({ chat: e, presence: t, upload: n, currentActor: r, attachmentSrc: i, onOpenAttachment: a, acceptFiles: o, maxFileSize: s, onFileError: c, disabled: l, typingUsers: u, tone: d, fill: f, wrapWithNetworkShim: p }) {
-	let m = M(e.messages), h = u ?? t?.roster.filter((e) => e.metadata?.isTyping === !0).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], g = /* @__PURE__ */ k(b, {
-		messages: m,
+function xe({ chat: e, presence: t, upload: n, currentActor: r, currentUserId: i, attachmentSrc: a, onOpenAttachment: o, acceptFiles: s, maxFileSize: c, onFileError: l, disabled: u, typingUsers: d, tone: f, fill: p, wrapWithNetworkShim: m }) {
+	let h = M(e.messages), g = d ?? t?.roster.filter((e) => e.metadata?.isTyping === !0).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], _ = /* @__PURE__ */ k(b, {
+		messages: h,
 		onSend: e.sendMessage,
-		disabled: l,
-		typingUsers: h,
-		tone: d,
-		fill: f,
+		disabled: u,
+		typingUsers: g,
+		tone: f,
+		fill: p,
 		...n ? {
 			onSendFiles: (e) => {
 				for (let t of e) n.upload(t);
@@ -259,13 +261,14 @@ function xe({ chat: e, presence: t, upload: n, currentActor: r, attachmentSrc: i
 			onCancelTransfer: n.cancelTransfer
 		} : {},
 		currentActor: r,
-		attachmentSrc: i,
-		onOpenAttachment: a,
-		acceptFiles: o,
-		maxFileSize: s,
-		onFileError: c
+		currentUserId: i,
+		attachmentSrc: a,
+		onOpenAttachment: o,
+		acceptFiles: s,
+		maxFileSize: c,
+		onFileError: l
 	});
-	return /* @__PURE__ */ k(O, { children: q(g, p) });
+	return /* @__PURE__ */ k(O, { children: q(_, m) });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedPresencePanel.tsx

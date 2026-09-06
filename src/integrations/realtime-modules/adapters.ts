@@ -48,11 +48,24 @@ export function adaptChatMessage(msg: RMChatMessage): UIChatMessage {
   return {
     id: msg.id,
     clientId: msg.clientId,
+    // Carried, not derived. `isMine` keys on the authenticated userId and
+    // never on clientId, which changes on every reconnect — so dropping this
+    // made every message in an embedded transcript somebody else's, including
+    // your own, and no amount of styling could put them on the right side.
+    ...(msg.userId ? { userId: msg.userId } : {}),
     content: msg.message,
     timestamp: msg.timestamp,
     displayName: (msg.metadata?.displayName as string | undefined) ?? undefined,
     avatarUrl: (msg.metadata?.avatarUrl as string | undefined) ?? undefined,
     ...(attachments && attachments.length > 0 ? { attachments } : {}),
+    // The whole bag rides through. ChatPanel reads it for the things a
+    // transcript renders as objects rather than sentences — a document that
+    // was created, a call that happened, the rich `html` body, the `replyTo`
+    // quote, the truncation markers — and every one of those readers returns
+    // null on a message whose metadata was left behind. Pulling two fields
+    // out of the bag and discarding the rest meant a host using this adapter
+    // got a strictly worse thread than one that wired the hook up by hand.
+    ...(msg.metadata ? { metadata: msg.metadata } : {}),
   };
 }
 
