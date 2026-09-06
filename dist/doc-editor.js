@@ -14,13 +14,13 @@ import { a as p, n as m, r as h } from "./renderers-BMmyBHnN.js";
 import { o as g, s as _, t as v } from "./VerdictChip-CKnsnKYd.js";
 import { n as y, t as b } from "./TiptapEditor-CUZ_20iC.js";
 import { A as x, C as S, D as C, E as w, O as T, S as E, T as D, _ as O, a as ee, b as k, c as A, d as j, f as M, g as N, h as P, i as F, k as I, l as L, m as R, o as te, p as z, r as B, s as ne, t as V, u as H, v as U, w as re, x as W, y as ie } from "./DocumentEditorPage-Cc9ojXIA.js";
-import { a as ae, c as oe, i as se, l as ce, n as le, o as ue, r as de, s as fe, t as pe } from "./CanvasDocumentView-CJzCeL5b.js";
-import { useCallback as G, useEffect as K, useImperativeHandle as me, useMemo as q, useRef as J, useState as Y } from "react";
+import { a as ae, c as oe, d as se, i as ce, l as le, n as ue, o as de, r as fe, s as pe, t as me, u as he } from "./CanvasDocumentView-aZkEKOmp.js";
+import { useCallback as G, useEffect as K, useImperativeHandle as ge, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
-import * as he from "yjs";
-import { relativePositionToAbsolutePosition as ge, ySyncPluginKey as _e } from "@tiptap/y-tiptap";
+import * as _e from "yjs";
+import { relativePositionToAbsolutePosition as ve, ySyncPluginKey as ye } from "@tiptap/y-tiptap";
 //#region src/components/doc-editor/DocumentListPage.tsx
-function ve(e) {
+function be(e) {
 	let t = Date.now(), n = new Date(e).getTime();
 	if (isNaN(n)) return "";
 	let r = t - n;
@@ -34,7 +34,7 @@ function ve(e) {
 	let s = Math.floor(o / 24);
 	return s < 30 ? `${s}d ago` : `${Math.floor(s / 30)}mo ago`;
 }
-var ye = {
+var xe = {
 	draft: {
 		bg: "var(--color-warning-bg)",
 		color: "var(--color-warning-fg)"
@@ -52,8 +52,8 @@ var ye = {
 		color: "var(--color-text-secondary)"
 	}
 };
-function be({ status: e }) {
-	let t = ye[e] ?? ye.draft;
+function Se({ status: e }) {
+	let t = xe[e] ?? xe.draft;
 	return /* @__PURE__ */ Z("span", {
 		className: n("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-full capitalize leading-[18px]"),
 		style: {
@@ -63,7 +63,7 @@ function be({ status: e }) {
 		children: e
 	});
 }
-var xe = {
+var Ce = {
 	editor: {
 		icon: "✏",
 		label: "Editing"
@@ -77,12 +77,12 @@ var xe = {
 		label: "Viewing"
 	}
 };
-function Se({ users: e, onClickUser: t }) {
+function we({ users: e, onClickUser: t }) {
 	let r = e.slice(0, 5), i = e.length - 5;
 	return /* @__PURE__ */ Q("div", {
 		className: n("flex items-center gap-0.5"),
 		children: [r.map((e, r) => {
-			let i = xe[e.mode ?? "editor"] ?? xe.editor, a = e.idle === !0, o = a ? "var(--color-warning)" : "var(--color-success)";
+			let i = Ce[e.mode ?? "editor"] ?? Ce.editor, a = e.idle === !0, o = a ? "var(--color-warning)" : "var(--color-success)";
 			return /* @__PURE__ */ Q("button", {
 				type: "button",
 				title: `${e.displayName} — ${a ? "Away" : i.label}`,
@@ -117,7 +117,7 @@ function Se({ users: e, onClickUser: t }) {
 		})]
 	});
 }
-function Ce({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i, onDeleteDocument: a, onJumpToUser: o, hideHeader: s }) {
+function Te({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i, onDeleteDocument: a, onJumpToUser: o, hideHeader: s }) {
 	let [c, l] = Y(!1), [u, d] = Y(null), [m, h] = Y(null), [g, _] = Y(1), v = Math.max(1, Math.ceil(e.length / 10)), y = Math.min(g, v), b = q(() => {
 		let t = (y - 1) * 10;
 		return e.slice(t, t + 10);
@@ -179,7 +179,7 @@ function Ce({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 												className: n("text-[15px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"),
 												children: e.title
 											}),
-											/* @__PURE__ */ Z(be, { status: e.status }),
+											/* @__PURE__ */ Z(Se, { status: e.status }),
 											e.type && /* @__PURE__ */ Z("span", {
 												className: n("inline-block px-2 py-px text-[11px] font-semibold rounded-full bg-surface-hover text-text-secondary whitespace-nowrap shrink-0"),
 												children: e.type
@@ -196,13 +196,13 @@ function Ce({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 									}),
 									/* @__PURE__ */ Q("div", {
 										className: n("text-xs text-text-tertiary"),
-										children: ["Updated ", ve(e.updatedAt)]
+										children: ["Updated ", be(e.updatedAt)]
 									})
 								]
 							}),
 							i.length > 0 && /* @__PURE__ */ Z("div", {
 								className: n("shrink-0"),
-								children: /* @__PURE__ */ Z(Se, {
+								children: /* @__PURE__ */ Z(we, {
 									users: i,
 									onClickUser: (t) => o(e.id, t)
 								})
@@ -260,14 +260,14 @@ function Ce({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 }
 //#endregion
 //#region src/components/doc-editor/useFollowCursor.ts
-function we(e, t) {
+function Ee(e, t) {
 	for (let [n, r] of e.getStates()) {
 		let e = r?.user;
 		if (e && t(e)) return n;
 	}
 	return null;
 }
-function Te({ editor: e, provider: t, followClientId: n, onLost: r }) {
+function De({ editor: e, provider: t, followClientId: n, onLost: r }) {
 	K(() => {
 		let i = t?.awareness;
 		if (!e || !i || n == null) return;
@@ -279,9 +279,9 @@ function Te({ editor: e, provider: t, followClientId: n, onLost: r }) {
 			}
 			let a = t.cursor;
 			if (a) try {
-				let t = _e.getState(e.view.state);
+				let t = ye.getState(e.view.state);
 				if (!t?.type || !t?.binding?.mapping) return;
-				let n = ge(t.doc, t.type, he.createRelativePositionFromJSON(a.head), t.binding.mapping);
+				let n = ve(t.doc, t.type, _e.createRelativePositionFromJSON(a.head), t.binding.mapping);
 				if (n == null) return;
 				let r = Math.max(0, Math.min(n, e.state.doc.content.size)), i = e.view.domAtPos(r);
 				(i.node instanceof Element ? i.node : i.node.parentElement)?.scrollIntoView({
@@ -300,14 +300,14 @@ function Te({ editor: e, provider: t, followClientId: n, onLost: r }) {
 }
 //#endregion
 //#region src/components/doc-editor/StandaloneTiptap.tsx
-var Ee = "prosemirror";
-function De(e) {
+var Oe = "prosemirror";
+function ke(e) {
 	return e.ydoc !== void 0;
 }
-function Oe(e) {
-	return De(e) ? /* @__PURE__ */ Z(ke, { ...e }) : /* @__PURE__ */ Z(Ae, { ...e });
+function Ae(e) {
+	return ke(e) ? /* @__PURE__ */ Z(je, { ...e }) : /* @__PURE__ */ Z(Me, { ...e });
 }
-function ke({ ydoc: e, provider: t, fragment: r, user: i, fragmentName: a = Ee, editable: o, placeholder: s, className: c, onFragmentReady: l }) {
+function je({ ydoc: e, provider: t, fragment: r, user: i, fragmentName: a = Oe, editable: o, placeholder: s, className: c, onFragmentReady: l }) {
 	let u = q(() => r ?? e.getXmlFragment(a), [
 		r,
 		e,
@@ -325,7 +325,7 @@ function ke({ ydoc: e, provider: t, fragment: r, user: i, fragmentName: a = Ee, 
 		})
 	});
 }
-function Ae({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragmentName: c = Ee, editable: l, placeholder: u, className: d, onFragmentReady: f, loadingSlot: p, requireSync: m }) {
+function Me({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragmentName: c = Oe, editable: l, placeholder: u, className: d, onFragmentReady: f, loadingSlot: p, requireSync: m }) {
 	let h = o ?? `doc:${i}`, g = J(/* @__PURE__ */ new Set()), _ = G((e) => (g.current.add(e), () => {
 		g.current.delete(e);
 	}), []), v = G((e) => {
@@ -363,7 +363,7 @@ function Ae({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragme
 }
 //#endregion
 //#region src/components/doc-editor/ReviewProgress.tsx
-function je({ current: e, total: t }) {
+function Ne({ current: e, total: t }) {
 	let r = t > 0 ? Math.round(e / t * 100) : 0;
 	return /* @__PURE__ */ Q("div", {
 		className: n("mb-4"),
@@ -386,7 +386,7 @@ function je({ current: e, total: t }) {
 }
 //#endregion
 //#region src/components/doc-editor/ReviewableItem.tsx
-var Me = {
+var Pe = {
 	pending: {
 		bg: "var(--color-warning-bg)",
 		text: "var(--color-warning-fg)"
@@ -403,16 +403,16 @@ var Me = {
 		bg: "var(--color-danger-bg)",
 		text: "var(--color-danger-fg)"
 	}
-}, Ne = {
+}, Fe = {
 	low: "var(--color-neutral)",
 	medium: "var(--color-warning)",
 	high: "var(--color-danger)"
-}, Pe = {
+}, Ie = {
 	bg: "var(--color-surface-hover)",
 	text: "var(--color-text-secondary)"
 };
-function Fe({ item: e, onAck: t, onReject: r }) {
-	let [i, a] = Y(!1), [o, s] = Y(""), [l, u] = Y("none"), d = J(e.status), f = Me[e.status] ?? Pe, p = Ne[e.priority] ?? "var(--color-neutral)", [m, h] = Y(!1), g = J(null);
+function Le({ item: e, onAck: t, onReject: r }) {
+	let [i, a] = Y(!1), [o, s] = Y(""), [l, u] = Y("none"), d = J(e.status), f = Pe[e.status] ?? Ie, p = Fe[e.priority] ?? "var(--color-neutral)", [m, h] = Y(!1), g = J(null);
 	K(() => () => {
 		g.current && clearTimeout(g.current);
 	}, []), K(() => {
@@ -565,7 +565,7 @@ function Fe({ item: e, onAck: t, onReject: r }) {
 }
 //#endregion
 //#region src/components/doc-editor/ChunkViewer.tsx
-var Ie = {
+var Re = {
 	summary: {
 		bg: "var(--color-info-bg)",
 		text: "var(--color-info-fg)"
@@ -587,8 +587,8 @@ var Ie = {
 		text: "var(--color-primary-fg)"
 	}
 };
-function Le({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, provider: o, comments: s, onAddComment: c, onResolveThread: l, onUnresolveThread: u, participants: d }) {
-	let f = Ie[e.type] ?? Ie.custom, p = e.items.filter((e) => e.status !== "pending").length;
+function ze({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, provider: o, comments: s, onAddComment: c, onResolveThread: l, onUnresolveThread: u, participants: d }) {
+	let f = Re[e.type] ?? Re.custom, p = e.items.filter((e) => e.status !== "pending").length;
 	return /* @__PURE__ */ Q("div", {
 		className: n("bg-surface border border-border rounded-lg p-5 mb-4"),
 		children: [
@@ -626,7 +626,7 @@ function Le({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, p
 					" section has no content. Switch to Editor mode to add content."
 				]
 			}),
-			e.items.length > 0 && /* @__PURE__ */ Q("div", { children: [e.items.map((e) => /* @__PURE__ */ Z(Fe, {
+			e.items.length > 0 && /* @__PURE__ */ Q("div", { children: [e.items.map((e) => /* @__PURE__ */ Z(Le, {
 				item: e,
 				onAck: (n) => t(e.id, n),
 				onReject: (t) => r(e.id, t)
@@ -652,7 +652,7 @@ function Le({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, p
 //#endregion
 //#region src/components/doc-editor/AckMode.tsx
 var $ = 4;
-function Re({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSectionFocus: a, jumpToIndex: o, onJumpComplete: s, getSectionFragment: c, ydoc: l, provider: u, comments: d, onAddComment: f, onResolveThread: p, onUnresolveThread: m }) {
+function Be({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSectionFocus: a, jumpToIndex: o, onJumpComplete: s, getSectionFragment: c, ydoc: l, provider: u, comments: d, onAddComment: f, onResolveThread: p, onUnresolveThread: m }) {
 	let [h, g] = Y(0), _ = Math.max(1, Math.ceil(e.length / $)), v = h * $, y = e.slice(v, v + $);
 	if (K(() => {
 		o != null && o >= 0 && o < e.length && (g(Math.floor(o / $)), s?.());
@@ -668,7 +668,7 @@ function Re({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 	});
 	let b = () => g((e) => Math.max(0, e - 1)), x = () => g((e) => Math.min(_ - 1, e + 1)), S = v + y.length;
 	return /* @__PURE__ */ Q("div", { children: [
-		/* @__PURE__ */ Z(je, {
+		/* @__PURE__ */ Z(Ne, {
 			current: S,
 			total: e.length
 		}),
@@ -687,7 +687,7 @@ function Re({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 						style: { background: e.color },
 						children: e.displayName.split(" ").map((e) => e[0]).join("").toUpperCase().slice(0, 2)
 					}, e.clientId))]
-				}), /* @__PURE__ */ Z(Le, {
+				}), /* @__PURE__ */ Z(ze, {
 					section: e,
 					onAckItem: (n, r) => t(e.id, n, r),
 					onRejectItem: (t, n) => r(e.id, t, n),
@@ -737,10 +737,10 @@ function Re({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 }
 //#endregion
 //#region src/components/doc-editor/ActivityFeed.tsx
-function ze(e) {
+function Ve(e) {
 	return e === "doc.ack" ? "✅" : e === "doc.reject" ? "❌" : e === "doc.add_item" || e === "doc.add_section" ? "➕" : e === "doc.edit_section" ? "✏️" : e === "doc.remove_item" ? "➖" : e === "doc.comment" ? "💬" : e.endsWith(".join") ? "🟢" : e.endsWith(".leave") ? "🔴" : e.startsWith("social.") ? "💬" : e === "pipeline.run.started" ? "▶" : e === "pipeline.run.completed" ? "✓" : e === "pipeline.run.failed" ? "✕" : e === "pipeline.approval.requested" ? "✋" : "•";
 }
-function Be(e, t) {
+function He(e, t) {
 	let n = t.documentTitle ? ` in ${t.documentTitle}` : "";
 	switch (e) {
 		case "doc.ack": return `acknowledged "${t.itemText || "item"}"${n}`;
@@ -760,10 +760,10 @@ function Be(e, t) {
 		default: return t.description ? String(t.description) : e;
 	}
 }
-function Ve(e) {
+function Ue(e) {
 	return e.split(" ").map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function He(e) {
+function We(e) {
 	try {
 		return new Date(e).toLocaleTimeString([], {
 			hour: "2-digit",
@@ -774,7 +774,7 @@ function He(e) {
 		return "";
 	}
 }
-function Ue(e) {
+function Ge(e) {
 	switch (e) {
 		case "editor": return "editing";
 		case "reviewer": return "reviewing";
@@ -782,7 +782,7 @@ function Ue(e) {
 		default: return "online";
 	}
 }
-function We({ events: e, participants: t }) {
+function Ke({ events: e, participants: t }) {
 	let [r, i] = Y(!1);
 	return /* @__PURE__ */ Q("div", {
 		className: n("bg-surface-panel border border-border rounded-lg overflow-hidden"),
@@ -809,7 +809,7 @@ function We({ events: e, participants: t }) {
 					}),
 					e.displayName,
 					" (",
-					Ue(e.mode),
+					Ge(e.mode),
 					")"
 				]
 			}, e.clientId))]
@@ -824,7 +824,7 @@ function We({ events: e, participants: t }) {
 					/* @__PURE__ */ Z("div", {
 						className: n("w-[22px] h-[22px] rounded-full text-white flex items-center justify-center text-[9px] font-bold shrink-0 mt-px"),
 						style: { background: e.color || "var(--color-text-tertiary)" },
-						children: Ve(e.displayName || "Unknown")
+						children: Ue(e.displayName || "Unknown")
 					}),
 					/* @__PURE__ */ Q("div", { children: [
 						/* @__PURE__ */ Z("span", {
@@ -835,15 +835,15 @@ function We({ events: e, participants: t }) {
 						/* @__PURE__ */ Q("span", {
 							className: n("text-neutral"),
 							children: [
-								ze(e.eventType),
+								Ve(e.eventType),
 								" ",
-								Be(e.eventType, e.detail)
+								He(e.eventType, e.detail)
 							]
 						})
 					] }),
 					/* @__PURE__ */ Z("span", {
 						className: n("text-[10px] text-text-tertiary whitespace-nowrap ml-auto pl-2 shrink-0"),
-						children: He(e.timestamp)
+						children: We(e.timestamp)
 					})
 				]
 			}, e.id))
@@ -852,16 +852,16 @@ function We({ events: e, participants: t }) {
 }
 //#endregion
 //#region src/components/doc-editor/ProposalCard.tsx
-var Ge = {
+var qe = {
 	high: "High confidence",
 	medium: "Needs your confirmation",
 	low: "Unplaced"
-}, Ke = {
+}, Je = {
 	high: "success",
 	medium: "warning",
 	low: "neutral"
 };
-function qe({ label: e, children: t }) {
+function Ye({ label: e, children: t }) {
 	return /* @__PURE__ */ Q("div", {
 		className: "flex gap-2 text-xs",
 		children: [/* @__PURE__ */ Z("span", {
@@ -873,11 +873,11 @@ function qe({ label: e, children: t }) {
 		})]
 	});
 }
-var Je = {
+var Xe = {
 	field: "Field change",
 	prose: "Body text"
 };
-function Ye({ utterance: e, kind: t, status: i, confidence: a, attachState: c, targetLabel: u, targetReason: d, before: f, after: p, edits: m, rationale: h, draftError: y, author: b, category: x, path: S, locationHint: C, verdict: w, verdictStatus: T = "idle", verdictError: E, revision: D, onRereview: O, onAccept: ee, onReject: k, onRedraft: A, onReattach: j, onConfirmAttachment: M, className: N, "data-testid": P = "proposal-card" }) {
+function Ze({ utterance: e, kind: t, status: i, confidence: a, attachState: c, targetLabel: u, targetReason: d, before: f, after: p, edits: m, rationale: h, draftError: y, author: b, category: x, path: S, locationHint: C, verdict: w, verdictStatus: T = "idle", verdictError: E, revision: D, onRereview: O, onAccept: ee, onReject: k, onRedraft: A, onReattach: j, onConfirmAttachment: M, className: N, "data-testid": P = "proposal-card" }) {
 	let [F, I] = Y(!1), [L, R] = Y(null), [te, z] = Y(!1), [B, ne] = Y(""), V = i === "applied", H = i === "rejected", U = V || H;
 	async function re() {
 		I(!0), R(null);
@@ -909,7 +909,7 @@ function Ye({ utterance: e, kind: t, status: i, confidence: a, attachState: c, t
 					/* @__PURE__ */ Z("span", {
 						className: "text-sm font-semibold leading-tight text-text-primary",
 						"data-testid": `${P}-category`,
-						children: x ?? Je[t]
+						children: x ?? Xe[t]
 					}),
 					b && /* @__PURE__ */ Q("span", {
 						className: "flex min-w-0 items-center gap-1.5",
@@ -932,9 +932,9 @@ function Ye({ utterance: e, kind: t, status: i, confidence: a, attachState: c, t
 						children: "AI proposal"
 					}),
 					/* @__PURE__ */ Z(o, {
-						tone: Ke[a],
+						tone: Je[a],
 						size: "sm",
-						children: Ge[a]
+						children: qe[a]
 					}),
 					c === "healed" && /* @__PURE__ */ Z(o, {
 						tone: "caution",
@@ -975,10 +975,10 @@ function Ye({ utterance: e, kind: t, status: i, confidence: a, attachState: c, t
 			}),
 			/* @__PURE__ */ Q("div", {
 				className: "flex flex-col gap-1",
-				children: [d && /* @__PURE__ */ Z(qe, {
+				children: [d && /* @__PURE__ */ Z(Ye, {
 					label: "Why",
 					children: d
-				}), h && /* @__PURE__ */ Z(qe, {
+				}), h && /* @__PURE__ */ Z(Ye, {
 					label: "Rationale",
 					children: h
 				})]
@@ -1114,7 +1114,7 @@ function Ye({ utterance: e, kind: t, status: i, confidence: a, attachState: c, t
 }
 //#endregion
 //#region src/components/doc-editor/WorkItemRow.tsx
-function Xe({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: s, reason: c, contextSplit: l, drafting: u = !1, draftError: f, candidates: p, sections: m, onPropose: h, onAttach: g, onDismiss: _, className: v, "data-testid": y = `work-item-${e}` }) {
+function Qe({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: s, reason: c, contextSplit: l, drafting: u = !1, draftError: f, candidates: p, sections: m, onPropose: h, onAttach: g, onDismiss: _, className: v, "data-testid": y = `work-item-${e}` }) {
 	let b = [...p ?? []].sort((e, t) => t.score - e.score), x = new Set(b.map((e) => e.sectionId)), S = m.filter((e) => !x.has(e.id));
 	return /* @__PURE__ */ Z(i, {
 		padding: "sm",
@@ -1214,14 +1214,14 @@ function Xe({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: s, reason:
 }
 //#endregion
 //#region src/components/doc-editor/CommentGhostPopover.tsx
-var Ze = "[data-comment-id]", Qe = 240;
-function $e(e) {
+var $e = "[data-comment-id]", et = 240;
+function tt(e) {
 	return typeof CSS < "u" && typeof CSS.escape == "function" ? CSS.escape(e) : e.replace(/["\\]/g, "\\$&");
 }
-function et(e) {
+function nt(e) {
 	return e <= 0 ? "No replies" : e === 1 ? "1 reply" : `${e} replies`;
 }
-function tt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: s, onResolve: c, ref: d, "data-testid": f = "comment-ghost" }) {
+function rt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: s, onResolve: c, ref: d, "data-testid": f = "comment-ghost" }) {
 	let [p, m] = Y(null), h = J(null), g = J(null), _ = J(null);
 	_.current = p;
 	let v = q(() => {
@@ -1236,13 +1236,13 @@ function tt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		b(), m(null);
 	}, [b]), S = G((e, n, r) => {
 		if (b(), !y.current.has(e)) return;
-		let i = n ?? t?.current?.querySelector(`[data-comment-id="${$e(e)}"]`) ?? null;
+		let i = n ?? t?.current?.querySelector(`[data-comment-id="${tt(e)}"]`) ?? null;
 		i instanceof HTMLElement && (h.current = i, m({
 			id: e,
 			via: r
 		}));
 	}, [b, t]);
-	me(d, () => ({
+	ge(d, () => ({
 		openComment: (e, t) => S(e, t, "click"),
 		close: x
 	}), [S, x]);
@@ -1252,7 +1252,7 @@ function tt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 	}, [w, a]), K(() => b, [b]), K(() => {
 		let e = t?.current;
 		if (!e) return;
-		let r = (e) => e instanceof Element ? e.closest(Ze) : null, a = (e) => {
+		let r = (e) => e instanceof Element ? e.closest($e) : null, a = (e) => {
 			let t = r(e.target), n = t?.getAttribute("data-comment-id");
 			if (!(!t || !n)) {
 				if (_.current?.id === n) {
@@ -1268,7 +1268,7 @@ function tt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		}, s = (e) => {
 			i && r(e.target) && (b(), g.current = setTimeout(() => {
 				_.current?.via === "hover" && x();
-			}, Qe));
+			}, et));
 		};
 		return e.addEventListener("click", a), e.addEventListener("mouseover", o), e.addEventListener("mouseout", s), () => {
 			e.removeEventListener("click", a), e.removeEventListener("mouseover", o), e.removeEventListener("mouseout", s);
@@ -1300,7 +1300,7 @@ function tt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 			onMouseLeave: () => {
 				b(), g.current = setTimeout(() => {
 					_.current?.via === "hover" && x();
-				}, Qe);
+				}, et);
 			},
 			children: [
 				/* @__PURE__ */ Q("div", {
@@ -1339,7 +1339,7 @@ function tt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 					children: [/* @__PURE__ */ Z("span", {
 						"data-testid": `${f}-replies`,
 						className: "text-[11px] text-text-tertiary",
-						children: et(T.replyCount ?? 0)
+						children: nt(T.replyCount ?? 0)
 					}), /* @__PURE__ */ Q("span", {
 						className: "flex gap-1.5",
 						children: [s && /* @__PURE__ */ Z(r, {
@@ -1363,7 +1363,7 @@ function tt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 }
 //#endregion
 //#region src/components/doc-editor/VideoDockSlot.tsx
-function nt() {
+function it() {
 	return /* @__PURE__ */ Q("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-4 w-4",
@@ -1381,7 +1381,7 @@ function nt() {
 		})]
 	});
 }
-function rt({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: o = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, onDragOver: l, onDragLeave: u, onDrop: d, className: f, children: p, "data-testid": m = "video-dock-slot" }) {
+function at({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: o = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, onDragOver: l, onDragLeave: u, onDrop: d, className: f, children: p, "data-testid": m = "video-dock-slot" }) {
 	let [h, g] = Y(!1), _ = G((e) => {
 		e.preventDefault(), t && g(!0), l?.(e);
 	}, [t, l]), v = G((e) => {
@@ -1409,7 +1409,7 @@ function rt({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 					size: "sm",
 					onClick: c,
 					"data-testid": `${m}-undock`,
-					icon: /* @__PURE__ */ Z(nt, {}),
+					icon: /* @__PURE__ */ Z(it, {}),
 					className: "text-white hover:bg-white/20"
 				})
 			})]
@@ -1429,4 +1429,4 @@ function rt({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 	});
 }
 //#endregion
-export { Re as AckMode, L as ActionItemsCard, We as ActivityFeed, E as AttachmentsPanel, pe as CanvasDocumentView, Le as ChunkViewer, tt as CommentGhostPopover, O as CommentThreadNode, ne as DiffViewer, V as DocumentEditorPage, le as DocumentGutter, C as DocumentHeader, Ce as DocumentListPage, fe as DocumentOutline, oe as DocumentRuler, se as DocumentToolbar, y as EditorToolbar, M as ExecutiveSummaryCard, w as FollowModeBar, z as HeaderBanner, H as KeyDecisionsCard, W as MentionDropdown, ee as MyMentionsPanel, p as NewDocumentModal, ce as PX_PER_INCH, T as ParticipantAvatars, Ye as ProposalCard, A as ReaderMode, P as ReviewMode, je as ReviewProgress, Fe as ReviewableItem, re as SectionBlock, N as SectionComments, S as SectionList, j as SectionSummariesCard, Oe as StandaloneTiptap, B as TableOfContents, h as TaskItemRow, m as TaskList, b as TiptapEditor, te as VersionHistoryPanel, D as VideoCallPanel, rt as VideoDockSlot, F as VideoHistoryPanel, Xe as WorkItemRow, we as clientIdForUser, U as countAllComments, R as generateSummaryBullets, ie as getInitials, ae as readOutline, k as relativeTime, et as replyLabel, de as stackOffsets, x as useDocumentActions, ue as useDocumentOutline, Te as useFollowCursor, I as useSidebarPanels };
+export { Be as AckMode, L as ActionItemsCard, Ke as ActivityFeed, E as AttachmentsPanel, me as CanvasDocumentView, ze as ChunkViewer, rt as CommentGhostPopover, O as CommentThreadNode, ne as DiffViewer, V as DocumentEditorPage, ue as DocumentGutter, C as DocumentHeader, Te as DocumentListPage, le as DocumentOutline, he as DocumentRuler, pe as DocumentStatusBar, ce as DocumentToolbar, y as EditorToolbar, M as ExecutiveSummaryCard, w as FollowModeBar, z as HeaderBanner, H as KeyDecisionsCard, W as MentionDropdown, ee as MyMentionsPanel, p as NewDocumentModal, se as PX_PER_INCH, T as ParticipantAvatars, Ze as ProposalCard, A as ReaderMode, P as ReviewMode, Ne as ReviewProgress, Le as ReviewableItem, re as SectionBlock, N as SectionComments, S as SectionList, j as SectionSummariesCard, Ae as StandaloneTiptap, B as TableOfContents, h as TaskItemRow, m as TaskList, b as TiptapEditor, te as VersionHistoryPanel, D as VideoCallPanel, at as VideoDockSlot, F as VideoHistoryPanel, Qe as WorkItemRow, oe as ZOOM_STEPS, Ee as clientIdForUser, U as countAllComments, R as generateSummaryBullets, ie as getInitials, ae as readOutline, k as relativeTime, nt as replyLabel, fe as stackOffsets, x as useDocumentActions, de as useDocumentOutline, De as useFollowCursor, I as useSidebarPanels };

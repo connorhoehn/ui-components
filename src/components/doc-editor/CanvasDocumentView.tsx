@@ -30,6 +30,7 @@ import { cn } from '../../lib/cn';
 import TiptapEditor from './TiptapEditor';
 import { DocumentRuler } from './DocumentRuler';
 import { DocumentOutline } from './DocumentOutline';
+import { DocumentStatusBar } from './DocumentStatusBar';
 import { useDocumentOutline, useDocumentWordCount } from './useDocumentOutline';
 import DocumentToolbar from './DocumentToolbar';
 import DocumentGutter, { type GutterItem } from './DocumentGutter';
@@ -147,8 +148,13 @@ export interface CanvasDocumentViewProps {
    */
   gutterVisible?: boolean;
   /**
-   * Show the ruler above the sheet. Default true — a page-shaped editor
-   * without one leaves its margins visible but unmeasurable.
+   * Show the ruler above the sheet.
+   *
+   * OFF by default. Zoomed, its inches stop being the DOCUMENT's inches: the
+   * ruler scales with the sheet, so at 150% one marked inch is an inch and a
+   * half of screen and the numbers no longer mean anything you could measure
+   * a margin with. Left in place, off, until the measure it should show is
+   * settled.
    */
   showRuler?: boolean;
   /**
@@ -195,7 +201,7 @@ export default function CanvasDocumentView({
   gutterLead,
   onFocusGutterItem,
   gutterVisible = true,
-  showRuler = true,
+  showRuler = false,
   showOutline = false,
   onToggleGutter,
   onEditorReady,
@@ -329,9 +335,6 @@ export default function CanvasDocumentView({
               <div className="w-full px-3">
                 <DocumentToolbar
                   editor={editor}
-                  zoom={zoom}
-                  onZoomChange={setZoom}
-                  wordCount={wordCount}
                   actions={toolbarActions}
                   // Passed even when the gutter is hidden — that is precisely
                   // when the count is the only remaining evidence that a
@@ -343,6 +346,10 @@ export default function CanvasDocumentView({
               </div>
             </div>
           )}
+          {/* Status, not formatting: zoom and length describe the document and
+              the view of it rather than acting on a selection, so they sit
+              along the bottom edge like every word processor puts them,
+              leaving the top bar to the controls that change your text. */}
           {/* Page and gutter share a row, so a thread sits BESIDE the text it
               refers to rather than under the document. With the gutter off the
               row collapses to the sheet alone: no reserved column, no gap, so
@@ -464,6 +471,16 @@ export default function CanvasDocumentView({
               />
             )}
           </div>
+
+          {/* Sticky along the bottom edge of the workspace: a status bar that
+              scrolls away with the page stops being a status bar. */}
+          <DocumentStatusBar
+            className="sticky bottom-0 z-10"
+            wordCount={wordCount}
+            zoom={zoom}
+            onZoomChange={setZoom}
+            data-testid={`${testId}-status-bar`}
+          />
         </div>
       ) : (
         <>

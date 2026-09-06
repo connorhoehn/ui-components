@@ -31,21 +31,6 @@ export interface DocumentToolbarProps {
   /** Rendered at the end of the bar — insert-macro menus, share, etc. */
   actions?: ReactNode;
   /**
-   * Display scale of the page, 1 being 100%.
-   *
-   * A first-class prop for the same reason the gutter toggle is one: zoom is
-   * document chrome, not host content, and `actions` is the HOST's slot.
-   * Omitting `onZoomChange` renders no control — a host that cannot scale its
-   * page should not be offered the choice.
-   */
-  zoom?: number;
-  onZoomChange?: (zoom: number) => void;
-  /**
-   * Document length. Omit (or pass null) when it is not known — an unknown
-   * count must not render as "0 words" on a document full of them.
-   */
-  wordCount?: number | null;
-  /**
    * How many comment threads the margin gutter holds.
    *
    * A first-class prop rather than something the page shoves into `actions`,
@@ -88,7 +73,8 @@ function currentBlock(editor: Editor): string {
 
 interface MarkButton {
   key: string;
-  label: string;
+  /** ReactNode so a control can carry a drawn icon rather than a character. */
+  label: ReactNode;
   /** Shown in the tooltip so the markdown shortcut stays discoverable. */
   hint: string;
   run: (e: Editor) => void;
@@ -153,37 +139,36 @@ function ToolButton({
 }
 
 /**
- * Page scale.
+ * Alignment, drawn the way every word processor draws it: four lines whose
+ * ragged edge IS the alignment.
  *
- * Presets rather than a free number: the useful scales are few, and the ones
- * that matter are named — 100% is the printed size, and the rest are the
- * steps between "I need to see the shape of the page" and "I need to read
- * this". Zoom does NOT reflow the text; it scales the page, which is the
- * distinction between zooming a document and resizing a window.
+ * The previous labels were `⯇`, `≡` and `⯈` — two triangles and an
+ * "identical to" sign. A triangle pointing left does not mean left-aligned
+ * anywhere; it means play-in-reverse. Nothing in that row read as alignment.
  */
-const ZOOM_STEPS = [0.5, 0.75, 0.9, 1, 1.25, 1.5, 2] as const;
-
-function ZoomControl({
-  zoom, onChange, testId,
-}: { zoom: number; onChange: (z: number) => void; testId: string }) {
-  // A host-supplied scale that is not one of the presets still has to be
-  // shown honestly rather than silently snapped to the nearest one.
-  const options = ZOOM_STEPS.includes(zoom as (typeof ZOOM_STEPS)[number])
-    ? ZOOM_STEPS
-    : [...ZOOM_STEPS, zoom].sort((a, b) => a - b);
+function AlignIcon({ align }: { align: 'left' | 'center' | 'right' | 'justify' }) {
+  // Long lines are full width; the short ones are the ragged edge, placed
+  // opposite the side the text is anchored to. Justify has no ragged edge at
+  // all — that is the whole point of it.
+  const short = align === 'justify' ? 12 : 7;
+  const shortX = align === 'right' ? 6 : align === 'center' ? 3.5 : 1;
   return (
-    <select
-      data-testid={testId}
-      aria-label="Zoom"
-      title="Zoom"
-      value={String(zoom)}
-      onChange={(ev) => onChange(Number(ev.target.value))}
-      className="h-7 rounded border border-border bg-surface px-1 text-xs text-text-secondary cursor-pointer"
-    >
-      {options.map((z) => (
-        <option key={z} value={String(z)}>{`${Math.round(z * 100)}%`}</option>
-      ))}
-    </select>
+    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false">
+      {[2, 5, 8, 11].map((y, i) => {
+        const isShort = i % 2 === 1;
+        return (
+          <rect
+            key={y}
+            x={isShort ? shortX : 1}
+            y={y}
+            width={isShort ? short : 12}
+            height="1.4"
+            rx="0.7"
+            fill="currentColor"
+          />
+        );
+      })}
+    </svg>
   );
 }
 
@@ -246,9 +231,6 @@ function GutterToggle({
 export default function DocumentToolbar({
   editor,
   actions,
-  zoom = 1,
-  onZoomChange,
-  wordCount = null,
   commentCount = 0,
   gutterVisible = true,
   onToggleGutter,
@@ -371,13 +353,15 @@ export default function DocumentToolbar({
       {has(editor, 'setTextAlign') && (
         <>
           <Divider />
-          {(['left', 'center', 'right'] as const).map((align) => (
+          {(['left', 'center', 'right', 'justify'] as const).map((align) => (
             <ToolButton
               key={align}
               btn={{
                 key: `align-${align}`,
-                label: align === 'left' ? '⯇' : align === 'center' ? '≡' : '⯈',
-                hint: `Align ${align}`,
+                label: <AlignIcon align={align} />,
+                // Justify is not "align justify" in any word processor's
+                // wording, and it is the one of the four people hunt for.
+                hint: align === 'justify' ? 'Justify' : `Align ${align}`,
                 run: (e) => {
                   const chain = e.chain().focus() as never as Record<string, (a: string) => { run: () => void }>;
                   chain['setTextAlign']!(align).run();
@@ -423,19 +407,8 @@ export default function DocumentToolbar({
         testId={`${testId}-hr`}
       />
 
-      {(onToggleGutter && commentCount > 0) || actions || onZoomChange || wordCount !== null ? (
+      {(onToggleGutter && commentCount > 0) || actions ? (
         <span className="ml-auto flex items-center gap-1">
-          {wordCount !== null && (
-            <span
-              data-testid={`${testId}-word-count`}
-              className="px-1 text-xs tabular-nums text-text-tertiary"
-            >
-              {wordCount === 1 ? '1 word' : `${wordCount.toLocaleString()} words`}
-            </span>
-          )}
-          {onZoomChange && (
-            <ZoomControl zoom={zoom} onChange={onZoomChange} testId={`${testId}-zoom`} />
-          )}
           {/* Left of the host's actions so presence avatars stay pinned to the
               far edge where every collaborative tool puts them. */}
           {onToggleGutter && commentCount > 0 && (

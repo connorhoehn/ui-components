@@ -190,8 +190,13 @@ declare interface CanvasDocumentViewProps {
      */
     gutterVisible?: boolean;
     /**
-     * Show the ruler above the sheet. Default true — a page-shaped editor
-     * without one leaves its margins visible but unmeasurable.
+     * Show the ruler above the sheet.
+     *
+     * OFF by default. Zoomed, its inches stop being the DOCUMENT's inches: the
+     * ruler scales with the sheet, so at 150% one marked inch is an inch and a
+     * half of screen and the numbers no longer mean anything you could measure
+     * a margin with. Left in place, off, until the measure it should show is
+     * settled.
      */
     showRuler?: boolean;
     /**
@@ -577,27 +582,12 @@ declare interface ConversationSurfaceProps {
  */
 export declare const DEFAULT_REALTIME_CAPABILITIES: RealtimeCapabilitySet;
 
-declare function DocumentToolbar({ editor, actions, zoom, onZoomChange, wordCount, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 declare interface DocumentToolbarProps {
     editor: Editor | null;
     /** Rendered at the end of the bar — insert-macro menus, share, etc. */
     actions?: ReactNode;
-    /**
-     * Display scale of the page, 1 being 100%.
-     *
-     * A first-class prop for the same reason the gutter toggle is one: zoom is
-     * document chrome, not host content, and `actions` is the HOST's slot.
-     * Omitting `onZoomChange` renders no control — a host that cannot scale its
-     * page should not be offered the choice.
-     */
-    zoom?: number;
-    onZoomChange?: (zoom: number) => void;
-    /**
-     * Document length. Omit (or pass null) when it is not known — an unknown
-     * count must not render as "0 words" on a document full of them.
-     */
-    wordCount?: number | null;
     /**
      * How many comment threads the margin gutter holds.
      *

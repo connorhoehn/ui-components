@@ -99,3 +99,6 @@ export type { DocumentRulerProps } from './DocumentRuler';
 export { DocumentOutline } from './DocumentOutline';
 export type { DocumentOutlineProps, OutlineEntry } from './DocumentOutline';
 export { useDocumentOutline, readOutline } from './useDocumentOutline';
+
+export { DocumentStatusBar, ZOOM_STEPS } from './DocumentStatusBar';
+export type { DocumentStatusBarProps } from './DocumentStatusBar';

@@ -165,8 +165,13 @@ export declare interface CanvasDocumentViewProps {
      */
     gutterVisible?: boolean;
     /**
-     * Show the ruler above the sheet. Default true — a page-shaped editor
-     * without one leaves its margins visible but unmeasurable.
+     * Show the ruler above the sheet.
+     *
+     * OFF by default. Zoomed, its inches stop being the DOCUMENT's inches: the
+     * ruler scales with the sheet, so at 150% one marked inch is an inch and a
+     * half of screen and the numbers no longer mean anything you could measure
+     * a margin with. Left in place, off, until the measure it should show is
+     * settled.
      */
     showRuler?: boolean;
     /**
@@ -581,27 +586,25 @@ export declare interface DocumentRulerProps {
  */
 export declare type DocumentShape = 'page' | 'sections' | 'diagram';
 
-export declare function DocumentToolbar({ editor, actions, zoom, onZoomChange, wordCount, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+export declare function DocumentStatusBar({ wordCount, zoom, onZoomChange, children, className, 'data-testid': testId, }: DocumentStatusBarProps): JSX.Element;
+
+export declare interface DocumentStatusBarProps {
+    /** Document length. Null when unknown — renders nothing rather than "0 words". */
+    wordCount?: number | null;
+    zoom?: number;
+    onZoomChange?: (zoom: number) => void;
+    /** Anything else the host wants along the bar (a save state, a page count). */
+    children?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 export declare interface DocumentToolbarProps {
     editor: Editor | null;
     /** Rendered at the end of the bar — insert-macro menus, share, etc. */
     actions?: ReactNode;
-    /**
-     * Display scale of the page, 1 being 100%.
-     *
-     * A first-class prop for the same reason the gutter toggle is one: zoom is
-     * document chrome, not host content, and `actions` is the HOST's slot.
-     * Omitting `onZoomChange` renders no control — a host that cannot scale its
-     * page should not be offered the choice.
-     */
-    zoom?: number;
-    onZoomChange?: (zoom: number) => void;
-    /**
-     * Document length. Omit (or pass null) when it is not known — an unknown
-     * count must not render as "0 words" on a document full of them.
-     */
-    wordCount?: number | null;
     /**
      * How many comment threads the margin gutter holds.
      *
@@ -1565,6 +1568,12 @@ export declare interface WorkItemRowProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/**
+ * The scales worth offering. The useful ones are few and the one that matters
+ * is named: 100% is the printed size.
+ */
+export declare const ZOOM_STEPS: readonly [0.5, 0.75, 0.9, 1, 1.25, 1.5, 2];
 
 export { }
 
