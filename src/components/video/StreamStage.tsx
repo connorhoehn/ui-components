@@ -19,19 +19,46 @@
 //
 // Everything overlaid is `pointer-events-none` except deliberate controls, so
 // the video keeps its own click targets (play, fullscreen, PiP).
+//
+// ## Two transports, one stage
+//
+// LVS delivers the same channel two ways and they are NOT interchangeable:
+//
+//   `stream`      — a MediaStream from WHEP (`useLVSSubscriber`). Sub-second,
+//                   one peer connection per viewer. That per-viewer cost is
+//                   what makes a CALL work and what makes a thousand-viewer
+//                   broadcast expensive.
+//   `playlistUrl` — an HLS playlist from `useLVSLiveHls`. Segmented plain
+//                   HTTP, so a CDN can carry it to an audience of any size.
+//                   Costs a few seconds of latency.
+//
+// The stage takes either, because the chrome is identical either way — a
+// viewer cannot tell which transport they are on, and neither should the code
+// that lays out the LIVE badge. `stream` wins when both are given: it is the
+// lower-latency source, so passing both reads as "realtime, with HLS as the
+// thing I fall back to", and that is what happens.
 
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { useHlsSource } from '../../lib/video/useHlsSource';
 import { StreamVideo } from './StreamVideo';
 import { ViewerCount } from './ViewerCount';
 import { StreamChatTicker, type StreamChatMessage } from './StreamChatTicker';
 
 export interface StreamStageProps {
   /**
-   * The live stream. Null renders the placeholder instead — a stage with no
-   * stream is the normal state before a broadcast starts, not an error.
+   * The live stream, realtime transport. Null renders the placeholder — a
+   * stage with no stream is the normal state before a broadcast starts, not
+   * an error.
    */
   stream?: MediaStream | null;
+  /**
+   * The live stream, near-realtime transport: an HLS playlist URL, typically
+   * from `useLVSLiveHls`. Used when `stream` is absent.
+   */
+  playlistUrl?: string | null;
+  /** Surfaced when HLS cannot play — an unsupported browser, a dead playlist. */
+  onPlaybackError?: (err: Error) => void;
   /** Name of the stream or call, shown top-left. */
   title?: string;
   /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
@@ -58,6 +85,8 @@ export interface StreamStageProps {
 
 export function StreamStage({
   stream = null,
+  playlistUrl = null,
+  onPlaybackError,
   title,
   viewerCount,
   live = false,
@@ -70,10 +99,19 @@ export function StreamStage({
   className,
   'data-testid': testId = 'stream-stage',
 }: StreamStageProps) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  // Only engaged on the HLS path; passing null keeps the hook inert when a
+  // MediaStream is driving the stage.
+  const hls = useHlsSource(videoRef, stream ? null : playlistUrl, {
+    live: true,
+    onError: onPlaybackError,
+  });
+
   return (
     <div
       data-testid={testId}
       data-live={String(live)}
+      data-transport={stream ? 'realtime' : playlistUrl ? 'hls' : 'none'}
       // Always black, in both themes: letterbox bars around a video are black
       // everywhere video is watched, and a white stage in light mode makes the
       // frame edges glow. This is one of the few surfaces that should not
@@ -82,12 +120,32 @@ export function StreamStage({
     >
       {stream ? (
         <StreamVideo stream={stream} muted={muted} className="h-full w-full object-contain" />
+      ) : playlistUrl ? (
+        <video
+          ref={videoRef}
+          data-testid={`${testId}-hls`}
+          autoPlay
+          playsInline
+          muted={muted}
+          className="h-full w-full object-contain"
+        />
       ) : (
         <div
           data-testid={`${testId}-placeholder`}
           className="flex h-full w-full items-center justify-center text-sm text-white/60"
         >
           {placeholder ?? 'Waiting for the stream to start…'}
+        </div>
+      )}
+
+      {/* An unplayable stream says so. Before this the stage sat black and
+          indistinguishable from a broadcast that had not started. */}
+      {hls.error && (
+        <div
+          data-testid={`${testId}-error`}
+          className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/80"
+        >
+          {hls.error}
         </div>
       )}
 

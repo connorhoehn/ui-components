@@ -1314,6 +1314,57 @@ declare type RoomsIndexSubscriber_2 = NonNullable<HangoutRoomsSectionProps['occu
  *  server-side slug generation closely enough for a preview UI. */
 export declare function slugifyRoomName(input: string): string;
 
+declare interface StreamChatMessage {
+    id: string;
+    /** Who sent it. */
+    displayName: string;
+    /** The message body. */
+    content: string;
+    /** ISO timestamp, rendered as HH:MM. */
+    timestamp?: string;
+}
+
+/** Which transport carries the stream. See the header for how to choose. */
+export declare type StreamMode = 'realtime' | 'near-realtime';
+
+declare interface StreamStageProps {
+    /**
+     * The live stream, realtime transport. Null renders the placeholder — a
+     * stage with no stream is the normal state before a broadcast starts, not
+     * an error.
+     */
+    stream?: MediaStream | null;
+    /**
+     * The live stream, near-realtime transport: an HLS playlist URL, typically
+     * from `useLVSLiveHls`. Used when `stream` is absent.
+     */
+    playlistUrl?: string | null;
+    /** Surfaced when HLS cannot play — an unsupported browser, a dead playlist. */
+    onPlaybackError?: (err: Error) => void;
+    /** Name of the stream or call, shown top-left. */
+    title?: string;
+    /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
+    viewerCount?: number;
+    /** True while the stream is live — drives the LIVE badge. */
+    live?: boolean;
+    /**
+     * Chat to rotate over the video. Empty or omitted renders no ticker at all,
+     * so a silent stream is not carrying an empty chat frame.
+     */
+    chatMessages?: readonly StreamChatMessage[];
+    /** Forwarded to the ticker. */
+    chatVisibleCount?: number;
+    chatRotateMs?: number;
+    /** Muted by default: an autoplaying stream that makes noise is hostile. */
+    muted?: boolean;
+    /** Controls rendered bottom-right, e.g. leave / mute / fullscreen. */
+    controls?: ReactNode;
+    /** Shown centred when there is no stream. */
+    placeholder?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** Which colour family a primitive paints in. See the block comment above. */
 declare type SurfaceTone = 'surface' | 'code';
 
@@ -1712,6 +1763,37 @@ export declare interface WrappedReactionsOverlayProps {
      * Default 2500 matches the CSS animation duration.
      */
     ttlMs?: number;
+}
+
+export declare function WrappedStreamStage({ channelArn, mode, playbackToken, baseUrl, excludeParticipantId, getAuthToken, onStatusChange, ...stage }: WrappedStreamStageProps): JSX.Element;
+
+export declare interface WrappedStreamStageProps extends Omit<StreamStageProps, 'stream' | 'playlistUrl' | 'live'> {
+    /** Channel to watch. Null is idle — the stage shows its placeholder. */
+    channelArn: string | null;
+    /**
+     * Defaults to 'near-realtime'. A component whose job is "let people watch"
+     * should default to the mode that scales; realtime is the deliberate,
+     * more expensive choice.
+     */
+    mode?: StreamMode;
+    /** Playback JWT for a private channel. Public channels need none. */
+    playbackToken?: string | null;
+    /** Override the LVS base URL (else taken from LVSProvider). */
+    baseUrl?: string;
+    /** Realtime only: skip our own published tracks in the WHEP answer. */
+    excludeParticipantId?: string;
+    /** Realtime only: auth for the WHEP negotiation. */
+    getAuthToken?: () => string | Promise<string>;
+    /**
+     * Reports transport state so a host can render its own connecting/failed
+     * chrome. The stage renders playback errors itself; this is for the host's
+     * larger surface (a banner, a retry).
+     */
+    onStatusChange?: (status: {
+        mode: StreamMode;
+        live: boolean;
+        error: string | null;
+    }) => void;
 }
 
 export { }

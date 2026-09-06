@@ -173,3 +173,9 @@ export type {
   WrappedConversationSurfaceProps,
   RMCapabilityMap,
 } from './WrappedConversationSurface';
+
+// WrappedStreamStage — watch a channel in either transport. The mode is data:
+// 'realtime' (WHEP, sub-second, per-viewer cost) or 'near-realtime' (HLS,
+// cacheable, any audience size). See the file header for how to choose.
+export { WrappedStreamStage } from './WrappedStreamStage';
+export type { WrappedStreamStageProps, StreamMode } from './WrappedStreamStage';

@@ -1385,14 +1385,22 @@ export declare interface StreamMetrics {
     jitter?: number;
 }
 
-export declare function StreamStage({ stream, title, viewerCount, live, chatMessages, chatVisibleCount, chatRotateMs, muted, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
+export declare function StreamStage({ stream, playlistUrl, onPlaybackError, title, viewerCount, live, chatMessages, chatVisibleCount, chatRotateMs, muted, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
 
 export declare interface StreamStageProps {
     /**
-     * The live stream. Null renders the placeholder instead — a stage with no
-     * stream is the normal state before a broadcast starts, not an error.
+     * The live stream, realtime transport. Null renders the placeholder — a
+     * stage with no stream is the normal state before a broadcast starts, not
+     * an error.
      */
     stream?: MediaStream | null;
+    /**
+     * The live stream, near-realtime transport: an HLS playlist URL, typically
+     * from `useLVSLiveHls`. Used when `stream` is absent.
+     */
+    playlistUrl?: string | null;
+    /** Surfaced when HLS cannot play — an unsupported browser, a dead playlist. */
+    onPlaybackError?: (err: Error) => void;
     /** Name of the stream or call, shown top-left. */
     title?: string;
     /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
