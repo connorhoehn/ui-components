@@ -29,6 +29,8 @@ import type * as Y from 'yjs';
 import { cn } from '../../lib/cn';
 import TiptapEditor from './TiptapEditor';
 import { DocumentRuler } from './DocumentRuler';
+import { DocumentOutline } from './DocumentOutline';
+import { useDocumentOutline } from './useDocumentOutline';
 import DocumentToolbar from './DocumentToolbar';
 import DocumentGutter, { type GutterItem } from './DocumentGutter';
 import Banner from '../shared/Banner';
@@ -150,6 +152,14 @@ export interface CanvasDocumentViewProps {
    */
   showRuler?: boolean;
   /**
+   * Show the outline column beside the page.
+   *
+   * Off by default: it is the host's call whether a document is long enough to
+   * need navigating, and an outline on a two-paragraph note is a column of
+   * emptiness next to the thing you are reading.
+   */
+  showOutline?: boolean;
+  /**
    * Flips `gutterVisible`. Its absence means no toggle is offered at all,
    * which is the right default for a read-only embed with no place to store
    * the answer.
@@ -186,6 +196,7 @@ export default function CanvasDocumentView({
   onFocusGutterItem,
   gutterVisible = true,
   showRuler = true,
+  showOutline = false,
   onToggleGutter,
   onEditorReady,
   'data-testid': testId = 'canvas-document',
@@ -195,6 +206,10 @@ export default function CanvasDocumentView({
   // Held so the toolbar can render in the chrome ABOVE the sheet rather than
   // inside the page margins. Null until the editor finishes initialising.
   const [editor, setEditor] = useState<Parameters<typeof DocumentToolbar>[0]['editor'] | null>(null);
+
+  // Derived from the document, not the DOM: a canvas heading carries no id,
+  // so there is nothing in the rendered page to address it by.
+  const outline = useDocumentOutline(editor as Parameters<typeof useDocumentOutline>[0]);
 
   const commentCount = gutterItems?.length ?? 0;
   // Two conditions, not one: there has to be something to show, AND the gutter
@@ -311,7 +326,13 @@ export default function CanvasDocumentView({
               // Shifted by half the gutter column so the ruler stays centred
               // over the SHEET rather than over the row, which is wider than
               // the sheet whenever a thread is open beside it.
-              style={showGutter ? { paddingRight: 280 + 24 } : undefined}
+              // Centred over the SHEET, not the row: each open column shifts
+              // the sheet, and a ruler that measured the row would be off by
+              // half a column the moment either one appeared.
+              style={{
+                ...(showGutter ? { paddingRight: 280 + 24 } : {}),
+                ...(showOutline ? { paddingLeft: 220 + 24 } : {}),
+              }}
             />
           )}
           <div
@@ -321,8 +342,27 @@ export default function CanvasDocumentView({
             // the content, and giving a narrow window six paces of empty
             // workspace on each side while the text squeezes gets the priority
             // backwards.
-            className={cn('flex justify-center py-4 px-2 sm:py-8 sm:px-6', showGutter && 'gap-3 sm:gap-6')}
+            className={cn(
+              'flex justify-center py-4 px-2 sm:py-8 sm:px-6',
+              (showGutter || showOutline) && 'gap-3 sm:gap-6',
+            )}
           >
+          {/* The outline is a COLUMN, not a floating pane: it takes its place
+              in the row beside the sheet, the page moves over to make room,
+              and closing it gives the width back. A pane that hovers over the
+              document hides the thing it is meant to help you read. */}
+          {showOutline && (
+            <aside
+              data-testid={`${testId}-outline`}
+              className="w-[220px] shrink-0 self-start sticky top-4"
+            >
+              <DocumentOutline
+                entries={outline.entries}
+                activeId={outline.activeId}
+                onSelect={outline.goTo}
+              />
+            </aside>
+          )}
           <div
             // The sheet. 816px is 8.5in at 96dpi and 1056px is 11in, so the
             // page has the proportions of the thing it is imitating; 96px

@@ -195,6 +195,14 @@ declare interface CanvasDocumentViewProps {
      */
     showRuler?: boolean;
     /**
+     * Show the outline column beside the page.
+     *
+     * Off by default: it is the host's call whether a document is long enough to
+     * need navigating, and an outline on a two-paragraph note is a column of
+     * emptiness next to the thing you are reading.
+     */
+    showOutline?: boolean;
+    /**
      * Flips `gutterVisible`. Its absence means no toggle is offered at all,
      * which is the right default for a read-only embed with no place to store
      * the answer.

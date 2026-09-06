@@ -95,3 +95,7 @@ export type { CommentThreadNodeProps } from './CommentThread';
 
 export { DocumentRuler, PX_PER_INCH } from './DocumentRuler';
 export type { DocumentRulerProps } from './DocumentRuler';
+
+export { DocumentOutline } from './DocumentOutline';
+export type { DocumentOutlineProps, OutlineEntry } from './DocumentOutline';
+export { useDocumentOutline, readOutline } from './useDocumentOutline';

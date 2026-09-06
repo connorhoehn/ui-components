@@ -61,7 +61,7 @@ declare interface AttachmentsPanelProps {
     editable: boolean;
 }
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, onToggleGutter, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, showOutline, onToggleGutter, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -169,6 +169,14 @@ export declare interface CanvasDocumentViewProps {
      * without one leaves its margins visible but unmeasurable.
      */
     showRuler?: boolean;
+    /**
+     * Show the outline column beside the page.
+     *
+     * Off by default: it is the host's call whether a document is long enough to
+     * need navigating, and an outline on a two-paragraph note is a column of
+     * emptiness next to the thing you are reading.
+     */
+    showOutline?: boolean;
     /**
      * Flips `gutterVisible`. Its absence means no toggle is offered at all,
      * which is the right default for a read-only embed with no place to store
@@ -531,6 +539,19 @@ declare interface DocumentMeta {
     activeCallSessionId?: string;
 }
 
+export declare function DocumentOutline({ entries, activeId, onSelect, emptyLabel, className, 'data-testid': testId, }: DocumentOutlineProps): JSX.Element;
+
+export declare interface DocumentOutlineProps {
+    entries: readonly OutlineEntry[];
+    /** The entry the reader is currently inside, if the host tracks it. */
+    activeId?: string | null;
+    onSelect?: (id: string) => void;
+    /** Shown when the document has no headings yet. */
+    emptyLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function DocumentRuler({ pageWidth, marginLeft, marginRight, zoom, className, style, 'data-testid': testId, }: DocumentRulerProps): JSX.Element;
 
 export declare interface DocumentRulerProps {
@@ -720,6 +741,43 @@ export declare interface NewDocumentModalProps {
     }) => void;
 }
 
+/**
+ * The slice of a Tiptap editor this needs.
+ *
+ * Structural on purpose: ui-components keeps the tiptap packages as optional
+ * peers, and an outline is not a reason for a host to install them.
+ */
+declare interface OutlineEditorLike {
+    state: {
+        doc: {
+            descendants(fn: (node: OutlineNodeLike, pos: number) => void): void;
+        };
+    };
+    view: {
+        domAtPos(pos: number): {
+            node: Node;
+        };
+    };
+    on(event: 'update', cb: () => void): void;
+    off(event: 'update', cb: () => void): void;
+}
+
+export declare interface OutlineEntry {
+    /** Opaque to this component — an element id, a position, whatever the host resolves. */
+    id: string;
+    text: string;
+    /** 1-6. Drives indentation only; the list is flat and in document order. */
+    level: number;
+}
+
+declare interface OutlineNodeLike {
+    type: {
+        name: string;
+    };
+    attrs?: Record<string, unknown>;
+    textContent?: string;
+}
+
 declare interface Participant {
     clientId: string;
     userId: string;
@@ -872,6 +930,9 @@ declare interface ReaderModeProps {
     /** Collaboration provider for awareness */
     provider?: CollaborationProvider | null;
 }
+
+/** Walk the document once and collect its headings, in order. */
+export declare function readOutline(editor: OutlineEditorLike | null): OutlineEntry[];
 
 export declare function relativeTime(iso: string): string;
 
@@ -1251,6 +1312,15 @@ declare interface UseDocumentActionsArgs {
     } | null;
     getSectionFragment: (sectionId: string) => XmlFragment | null;
     comments: Record<string, CommentThread[]>;
+}
+
+export declare function useDocumentOutline(editor: OutlineEditorLike | null): UseDocumentOutlineResult;
+
+declare interface UseDocumentOutlineResult {
+    entries: OutlineEntry[];
+    activeId: string | null;
+    /** Scroll the document to an entry and mark it current. */
+    goTo: (id: string) => void;
 }
 
 export declare function useFollowCursor({ editor, provider, followClientId, onLost }: UseFollowCursorOptions): void;
