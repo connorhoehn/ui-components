@@ -10,7 +10,7 @@ import { n as l, r as u, t as d } from "../Badge-w_b39PZr.js";
 import { t as f } from "../PresenceAvatars-BkzMACtv.js";
 import { t as p } from "../ActivityFeed-BvBfBfGZ.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
-import { l as _, n as v, t as y, u as b } from "../ConversationSurface-7JSRNVjK.js";
+import { l as _, n as v, t as y, u as b } from "../ConversationSurface-DdpgL0en.js";
 import { a as x, c as S, d as C, o as ee, r as te, s as ne, t as re } from "../StreamStage-CCmCa95f.js";
 import { t as ie } from "../CanvasDocumentView-UbjnnaEo.js";
 import { Component as ae, createContext as oe, useCallback as se, useContext as ce, useEffect as w, useMemo as T, useRef as E, useState as D } from "react";
@@ -1039,34 +1039,50 @@ function Ye({ declare: e = y, capabilities: t, capabilitiesError: n, capabilityN
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedStreamStage.tsx
-function Xe({ channelArn: e, mode: t = "near-realtime", playbackToken: n = null, baseUrl: r, excludeParticipantId: i, getAuthToken: a, onStatusChange: o, ...s }) {
-	let c = t === "realtime", l = fe({
-		channelArn: c && e ? e : "",
-		autoStart: c && !!e,
-		excludeParticipantId: i,
+function Xe({ channelArn: e, excludeParticipantId: t, getAuthToken: n, baseUrl: r, onStatusChange: i, ...a }) {
+	let o = fe({
+		channelArn: e ?? "",
+		autoStart: !!e,
+		excludeParticipantId: t,
 		baseUrl: r,
-		getAuthToken: a
-	}), u = de({
-		channelArn: c ? null : e,
-		playbackToken: n,
-		baseUrl: r
-	}), d = c ? l.phase === "live" : u.ready, f = c ? l.error : null;
-	return T(() => {
-		o?.({
-			mode: t,
-			live: d,
-			error: f
+		getAuthToken: n
+	}), s = o.phase === "live";
+	return w(() => {
+		i?.({
+			mode: "realtime",
+			live: s,
+			error: o.error
 		});
 	}, [
-		t,
-		d,
-		f
+		s,
+		o.error,
+		i
 	]), /* @__PURE__ */ k(re, {
-		...s,
-		live: d,
-		stream: c ? l.stream : null,
-		playlistUrl: c ? null : u.playlistUrl
+		...a,
+		live: s,
+		stream: o.stream
 	});
 }
+function Ze({ channelArn: e, playbackToken: t, baseUrl: n, onStatusChange: r, ...i }) {
+	let a = de({
+		channelArn: e,
+		playbackToken: t,
+		baseUrl: n
+	});
+	return w(() => {
+		r?.({
+			mode: "near-realtime",
+			live: a.ready,
+			error: null
+		});
+	}, [a.ready, r]), /* @__PURE__ */ k(re, {
+		...i,
+		live: a.ready,
+		playlistUrl: a.playlistUrl
+	});
+}
+function Qe({ mode: e = "near-realtime", ...t }) {
+	return k(e === "realtime" ? Xe : Ze, { ...t });
+}
 //#endregion
-export { X as ALL_REALTIME_CAPABILITIES, $ as CONVERSATION_CAPABILITY_NAMES, je as CapabilityBoundary, Ke as CapabilityGate, Z as DEFAULT_REALTIME_CAPABILITIES, J as HangoutRoomRow, Ie as HangoutRoomsSection, G as NetworkErrorBoundary, Fe as NewHangoutRoomDialog, Ge as RealtimeCapabilityProvider, K as ReconnectingShim, Ce as WrappedActivityPanel, Ue as WrappedCanvasDocument, xe as WrappedChatPanel, Ae as WrappedConnectionPill, Ye as WrappedConversationSurface, Te as WrappedFileUploadDrop, Oe as WrappedHangoutLayout, Be as WrappedHangoutRoomsList, ze as WrappedLVSHangoutLayout, He as WrappedMediaEffectsPreviewPanel, Ve as WrappedMediaEffectsTray, ke as WrappedNotificationCenter, Se as WrappedPresencePanel, we as WrappedReactionsOverlay, Xe as WrappedStreamStage, L as adaptActivityEvent, R as adaptActivityEvents, j as adaptChatMessage, M as adaptChatMessages, z as adaptFileUploadState, B as adaptFileUploads, V as adaptHangoutParticipant, H as adaptHangoutParticipants, U as adaptNotification, W as adaptNotifications, N as adaptPresenceEntry, he as adaptPresenceRoster, I as adaptReaction, ge as adaptReactions, q as applyNetworkShim, qe as capabilityNamesFor, Je as conversationFeaturesFor, Ne as slugifyRoomName, Q as useRealtimeCapabilities };
+export { X as ALL_REALTIME_CAPABILITIES, $ as CONVERSATION_CAPABILITY_NAMES, je as CapabilityBoundary, Ke as CapabilityGate, Z as DEFAULT_REALTIME_CAPABILITIES, J as HangoutRoomRow, Ie as HangoutRoomsSection, G as NetworkErrorBoundary, Fe as NewHangoutRoomDialog, Ge as RealtimeCapabilityProvider, K as ReconnectingShim, Ce as WrappedActivityPanel, Ue as WrappedCanvasDocument, xe as WrappedChatPanel, Ae as WrappedConnectionPill, Ye as WrappedConversationSurface, Te as WrappedFileUploadDrop, Oe as WrappedHangoutLayout, Be as WrappedHangoutRoomsList, ze as WrappedLVSHangoutLayout, He as WrappedMediaEffectsPreviewPanel, Ve as WrappedMediaEffectsTray, ke as WrappedNotificationCenter, Se as WrappedPresencePanel, we as WrappedReactionsOverlay, Qe as WrappedStreamStage, L as adaptActivityEvent, R as adaptActivityEvents, j as adaptChatMessage, M as adaptChatMessages, z as adaptFileUploadState, B as adaptFileUploads, V as adaptHangoutParticipant, H as adaptHangoutParticipants, U as adaptNotification, W as adaptNotifications, N as adaptPresenceEntry, he as adaptPresenceRoster, I as adaptReaction, ge as adaptReactions, q as applyNetworkShim, qe as capabilityNamesFor, Je as conversationFeaturesFor, Ne as slugifyRoomName, Q as useRealtimeCapabilities };

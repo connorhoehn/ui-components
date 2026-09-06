@@ -37,7 +37,7 @@
 // wrapper resolves the TRANSPORT and nothing else: a host that already has a
 // chat surface should not be made to adopt a second one to show a video.
 
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 import {
   useLVSSubscriber,
   useLVSLiveHls,
@@ -73,53 +73,65 @@ export interface WrappedStreamStageProps
   onStatusChange?: (status: { mode: StreamMode; live: boolean; error: string | null }) => void;
 }
 
-export function WrappedStreamStage({
+/**
+ * Realtime leg. Its hook lives here, not in the parent, because
+ * `useLVSSubscriber` THROWS outside an LVSProvider — it is not inert when
+ * unused. Calling both hooks in one component to keep hook order stable
+ * therefore crashed every near-realtime viewer in a host that has no rm
+ * LVSProvider, which is most of them: HLS needs no provider at all.
+ *
+ * One component per transport means only the chosen hook ever runs, so the
+ * broadcast path cannot be broken by the realtime path's requirements — and
+ * a broadcast provably opens no peer connection, rather than opening one and
+ * asking it nicely not to start.
+ */
+function RealtimeStage({
   channelArn,
-  mode = 'near-realtime',
-  playbackToken = null,
-  baseUrl,
   excludeParticipantId,
   getAuthToken,
+  baseUrl,
   onStatusChange,
   ...stage
-}: WrappedStreamStageProps) {
-  const realtime = mode === 'realtime';
-
-  // Both hooks run unconditionally — hooks cannot be called conditionally, and
-  // each is inert when its inputs are null. The WHEP subscriber does not
-  // connect without a channel, and the HLS composer is a pure URL builder.
+}: Omit<WrappedStreamStageProps, 'mode' | 'playbackToken'>) {
   const sub = useLVSSubscriber({
-    channelArn: realtime && channelArn ? channelArn : '',
-    autoStart: realtime && !!channelArn,
+    channelArn: channelArn ?? '',
+    autoStart: !!channelArn,
     excludeParticipantId,
     baseUrl,
     getAuthToken,
   });
 
-  const hls = useLVSLiveHls({
-    channelArn: realtime ? null : channelArn,
-    playbackToken,
-    baseUrl,
-  });
+  const live = sub.phase === 'live';
+  useEffect(() => {
+    onStatusChange?.({ mode: 'realtime', live, error: sub.error });
+  }, [live, sub.error, onStatusChange]);
 
-  const live = realtime ? sub.phase === 'live' : hls.ready;
-  const error = realtime ? sub.error : null;
+  return <StreamStage {...stage} live={live} stream={sub.stream} />;
+}
 
-  useMemo(() => {
-    onStatusChange?.({ mode, live, error });
-    // Reporting is a side effect of the values, not of the callback identity —
-    // a host passing an inline arrow must not re-fire this every render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, live, error]);
+/** Near-realtime leg. A pure URL composer — no provider required. */
+function NearRealtimeStage({
+  channelArn,
+  playbackToken,
+  baseUrl,
+  onStatusChange,
+  ...stage
+}: Omit<WrappedStreamStageProps, 'mode' | 'excludeParticipantId' | 'getAuthToken'>) {
+  const hls = useLVSLiveHls({ channelArn, playbackToken, baseUrl });
 
-  return (
-    <StreamStage
-      {...stage}
-      live={live}
-      stream={realtime ? sub.stream : null}
-      playlistUrl={realtime ? null : hls.playlistUrl}
-    />
-  );
+  useEffect(() => {
+    onStatusChange?.({ mode: 'near-realtime', live: hls.ready, error: null });
+  }, [hls.ready, onStatusChange]);
+
+  return <StreamStage {...stage} live={hls.ready} playlistUrl={hls.playlistUrl} />;
+}
+
+export function WrappedStreamStage({ mode = 'near-realtime', ...props }: WrappedStreamStageProps) {
+  // A branch, not a flag: the two legs have different hooks and different
+  // requirements, and only one of them may run.
+  return mode === 'realtime'
+    ? <RealtimeStage {...props} />
+    : <NearRealtimeStage {...props} />;
 }
 
 export default WrappedStreamStage;

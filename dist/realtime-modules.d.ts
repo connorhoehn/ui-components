@@ -500,6 +500,19 @@ declare interface ConversationSurfaceProps {
      * call controls render — which is how a chat-only deployment looks.
      */
     onStartCall?: (audioOnly: boolean) => void;
+    /**
+     * Watch instead of joining.
+     *
+     * A conversation that many more people watch than speak in — an all-hands,
+     * a demo — should not make every viewer open a peer connection. Joining is
+     * realtime and costs one connection per head; watching is near-realtime HLS
+     * and a CDN carries it to any audience. Offering both is the difference
+     * between a room that seats twelve and one that seats a thousand.
+     *
+     * Omit when the conversation cannot be watched, rather than rendering a
+     * disabled control.
+     */
+    onWatch?: () => void;
     /** Someone here is already on a call, so the controls say Join. */
     callInProgress?: boolean;
     /** Extra header controls, to the right of the call buttons. */
@@ -1765,7 +1778,7 @@ export declare interface WrappedReactionsOverlayProps {
     ttlMs?: number;
 }
 
-export declare function WrappedStreamStage({ channelArn, mode, playbackToken, baseUrl, excludeParticipantId, getAuthToken, onStatusChange, ...stage }: WrappedStreamStageProps): JSX.Element;
+export declare function WrappedStreamStage({ mode, ...props }: WrappedStreamStageProps): JSX.Element;
 
 export declare interface WrappedStreamStageProps extends Omit<StreamStageProps, 'stream' | 'playlistUrl' | 'live'> {
     /** Channel to watch. Null is idle — the stage shows its placeholder. */

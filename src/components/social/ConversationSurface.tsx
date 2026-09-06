@@ -114,6 +114,19 @@ export interface ConversationSurfaceProps {
    * call controls render — which is how a chat-only deployment looks.
    */
   onStartCall?: (audioOnly: boolean) => void;
+  /**
+   * Watch instead of joining.
+   *
+   * A conversation that many more people watch than speak in — an all-hands,
+   * a demo — should not make every viewer open a peer connection. Joining is
+   * realtime and costs one connection per head; watching is near-realtime HLS
+   * and a CDN carries it to any audience. Offering both is the difference
+   * between a room that seats twelve and one that seats a thousand.
+   *
+   * Omit when the conversation cannot be watched, rather than rendering a
+   * disabled control.
+   */
+  onWatch?: () => void;
   /** Someone here is already on a call, so the controls say Join. */
   callInProgress?: boolean;
 
@@ -157,6 +170,7 @@ export function ConversationSurface({
   onOpenRecording,
   onJumpToMessage,
   onStartCall,
+  onWatch,
   callInProgress = false,
   headerActions,
   view: controlledView,
@@ -218,7 +232,7 @@ export function ConversationSurface({
           ) : undefined
         }
         actions={
-          onStartCall || headerActions ? (
+          onStartCall || onWatch || headerActions ? (
             <>
               {onStartCall && (
                 <>
@@ -240,6 +254,16 @@ export function ConversationSurface({
                     🎥
                   </IconButton>
                 </>
+              )}
+              {onWatch && (
+                <IconButton
+                  aria-label="Watch the stream"
+                  title="Watch — near-realtime, scales to any audience"
+                  data-testid={`${testId}-watch`}
+                  onClick={onWatch}
+                >
+                  👁
+                </IconButton>
               )}
               {headerActions}
             </>

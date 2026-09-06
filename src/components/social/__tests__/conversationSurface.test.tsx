@@ -141,3 +141,28 @@ describe('view state', () => {
     expect(screen.queryByTestId('channel-documents-panel')).toBeNull();
   });
 });
+
+// Watching vs joining is a capacity decision, not a preference. Joining is
+// realtime and costs one peer connection per head; watching is near-realtime
+// HLS that a CDN carries to any audience. A conversation many more people
+// watch than speak in — an all-hands, a demo — needs the second one.
+describe('ConversationSurface — watch', () => {
+  it('offers Watch when the conversation can be watched', () => {
+    const onWatch = vi.fn();
+    render(<ConversationSurface name="#all-hands" onWatch={onWatch} />);
+    fireEvent.click(screen.getByTestId('conversation-surface-watch'));
+    expect(onWatch).toHaveBeenCalled();
+  });
+
+  // Absent, not disabled — the rule this surface already applies everywhere.
+  it('offers nothing when the conversation cannot be watched', () => {
+    render(<ConversationSurface name="#general" />);
+    expect(screen.queryByTestId('conversation-surface-watch')).toBeNull();
+  });
+
+  it('offers Watch alongside calling, since they are different choices', () => {
+    render(<ConversationSurface name="#all-hands" onStartCall={vi.fn()} onWatch={vi.fn()} />);
+    expect(screen.getByTestId('conversation-surface-watch')).toBeInTheDocument();
+    expect(screen.getByTestId('conversation-surface-audio-call')).toBeInTheDocument();
+  });
+});

@@ -45,16 +45,31 @@ describe('WrappedStreamStage — transport selection', () => {
 
   // Each hook must stay inert on the other mode — a broadcast that also opens
   // a peer connection per viewer has thrown away the reason to use HLS.
-  it('does not open a WHEP connection for a broadcast', () => {
+  // Structural, not a flag. useLVSSubscriber THROWS outside an LVSProvider —
+  // it is not inert when unused — so a broadcast that merely asked it not to
+  // start still crashed in any host without that provider, which is most of
+  // them: HLS needs no provider at all. Only the chosen hook may run.
+  it('never calls the WHEP hook for a broadcast', () => {
     mockHooks({ playlistUrl: 'http://lvs/hls/master.m3u8', ready: true });
     render(<WrappedStreamStage channelArn={ARN} mode="near-realtime" />);
-    expect(subscriber).toHaveBeenCalledWith(expect.objectContaining({ autoStart: false }));
+    expect(subscriber).not.toHaveBeenCalled();
   });
 
-  it('does not build an HLS url for a realtime viewer', () => {
+  it('never calls the HLS hook for a realtime viewer', () => {
     mockHooks({ stream: { id: 's' } as unknown as MediaStream, phase: 'live' });
     render(<WrappedStreamStage channelArn={ARN} mode="realtime" />);
-    expect(liveHls).toHaveBeenCalledWith(expect.objectContaining({ channelArn: null }));
+    expect(liveHls).not.toHaveBeenCalled();
+  });
+
+  // The regression this split exists for: a near-realtime viewer must render
+  // even when the realtime hook would throw for want of a provider.
+  it('renders a broadcast when the WHEP hook would throw', () => {
+    subscriber.mockImplementation(() => {
+      throw new Error('[lvs] useLVSContext called outside <LVSProvider>');
+    });
+    liveHls.mockReturnValue({ playlistUrl: 'http://lvs/hls/master.m3u8', ready: true, tokenExpiresInSec: null });
+    render(<WrappedStreamStage channelArn={ARN} mode="near-realtime" />);
+    expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-transport', 'hls');
   });
 
   it('is idle with no channel — the pre-broadcast state, not an error', () => {

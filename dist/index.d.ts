@@ -3063,7 +3063,7 @@ export declare interface ConversationShelfProps {
     'data-testid'?: string;
 }
 
-export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
+export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, onWatch, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
 
 export declare interface ConversationSurfaceProps {
     /** Channel name, or the people in a DM. */
@@ -3102,6 +3102,19 @@ export declare interface ConversationSurfaceProps {
      * call controls render — which is how a chat-only deployment looks.
      */
     onStartCall?: (audioOnly: boolean) => void;
+    /**
+     * Watch instead of joining.
+     *
+     * A conversation that many more people watch than speak in — an all-hands,
+     * a demo — should not make every viewer open a peer connection. Joining is
+     * realtime and costs one connection per head; watching is near-realtime HLS
+     * and a CDN carries it to any audience. Offering both is the difference
+     * between a room that seats twelve and one that seats a thousand.
+     *
+     * Omit when the conversation cannot be watched, rather than rendering a
+     * disabled control.
+     */
+    onWatch?: () => void;
     /** Someone here is already on a call, so the controls say Join. */
     callInProgress?: boolean;
     /** Extra header controls, to the right of the call buttons. */
