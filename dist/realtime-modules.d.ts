@@ -577,12 +577,22 @@ declare interface ConversationSurfaceProps {
  */
 export declare const DEFAULT_REALTIME_CAPABILITIES: RealtimeCapabilitySet;
 
-declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+declare function DocumentToolbar({ editor, actions, zoom, onZoomChange, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 declare interface DocumentToolbarProps {
     editor: Editor | null;
     /** Rendered at the end of the bar — insert-macro menus, share, etc. */
     actions?: ReactNode;
+    /**
+     * Display scale of the page, 1 being 100%.
+     *
+     * A first-class prop for the same reason the gutter toggle is one: zoom is
+     * document chrome, not host content, and `actions` is the HOST's slot.
+     * Omitting `onZoomChange` renders no control — a host that cannot scale its
+     * page should not be offered the choice.
+     */
+    zoom?: number;
+    onZoomChange?: (zoom: number) => void;
     /**
      * How many comment threads the margin gutter holds.
      *

@@ -298,3 +298,37 @@ describe('DocumentToolbar — the comment-gutter toggle', () => {
     expect(toggle.compareDocumentPosition(extra) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });
+
+describe('zoom', () => {
+  const renderToolbar = (props: Record<string, unknown> = {}) =>
+    render(<DocumentToolbar editor={makeEditor().editor} {...props} />);
+
+  it('is absent unless the host can act on it', () => {
+    renderToolbar();
+    expect(screen.queryByTestId('document-toolbar-zoom')).toBeNull();
+  });
+
+  it('offers the presets and reports the chosen scale as a number', () => {
+    const onZoomChange = vi.fn();
+    renderToolbar({ onZoomChange });
+    const select = screen.getByTestId('document-toolbar-zoom');
+    expect([...select.querySelectorAll('option')].map((o) => o.textContent))
+      .toEqual(['50%', '75%', '90%', '100%', '125%', '150%', '200%']);
+    fireEvent.change(select, { target: { value: '1.5' } });
+    expect(onZoomChange).toHaveBeenCalledWith(1.5);
+  });
+
+  it('shows the current scale', () => {
+    renderToolbar({ zoom: 1.25, onZoomChange: vi.fn() });
+    expect(screen.getByTestId('document-toolbar-zoom')).toHaveValue('1.25');
+  });
+
+  // A host-supplied scale outside the presets is still the truth about the
+  // page, and snapping it silently would misreport what the reader is seeing.
+  it('keeps an off-preset scale rather than snapping it', () => {
+    renderToolbar({ zoom: 1.1, onZoomChange: vi.fn() });
+    const select = screen.getByTestId('document-toolbar-zoom');
+    expect(select).toHaveValue('1.1');
+    expect([...select.querySelectorAll('option')].map((o) => o.textContent)).toContain('110%');
+  });
+});

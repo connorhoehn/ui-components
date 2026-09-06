@@ -22,7 +22,7 @@
 //                        duplicating content), and a refusal the user cannot
 //                        see reads as a dead button.
 
-import { useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import type { XmlFragment } from 'yjs';
 import type * as Y from 'yjs';
@@ -201,6 +201,34 @@ export default function CanvasDocumentView({
   onEditorReady,
   'data-testid': testId = 'canvas-document',
 }: CanvasDocumentViewProps) {
+  // Display scale of the sheet. CSS `zoom` rather than a transform: it scales
+  // the LAYOUT box, so the workspace scrolls the right distance and the sheet
+  // reserves the space it visually occupies. A transform would paint a larger
+  // page over an unchanged 816x1056 hole in the layout.
+  const [zoom, setZoom] = useState(1);
+
+  // The ruler measures the sheet by MEASURING it, not by predicting it.
+  //
+  // Computing `816 * zoom` was wrong the moment the sheet could not have that
+  // width: the page is `w-full max-w-[816px]`, so a zoom that exceeds the
+  // workspace clamps it to the container instead. Verified in the browser at
+  // 150% — the sheet came out 1196px while a predicted ruler drew 1224, so
+  // every measure on it was off by half an inch. Reading the real width keeps
+  // the two in agreement whatever the layout does to the page.
+  const paperRef = useRef<HTMLDivElement | null>(null);
+  const [paperWidth, setPaperWidth] = useState<number | null>(null);
+  const measurePaper = useCallback(() => {
+    const el = paperRef.current;
+    if (el) setPaperWidth(el.getBoundingClientRect().width);
+  }, []);
+  useEffect(() => {
+    measurePaper();
+    const el = paperRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(measurePaper);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [measurePaper, zoom]);
   const [converting, setConverting] = useState(false);
   const [convertError, setConvertError] = useState<string | null>(null);
   // Held so the toolbar can render in the chrome ABOVE the sheet rather than
@@ -298,6 +326,8 @@ export default function CanvasDocumentView({
               <div className="w-full px-3">
                 <DocumentToolbar
                   editor={editor}
+                  zoom={zoom}
+                  onZoomChange={setZoom}
                   actions={toolbarActions}
                   // Passed even when the gutter is hidden — that is precisely
                   // when the count is the only remaining evidence that a
@@ -322,6 +352,11 @@ export default function CanvasDocumentView({
               cannot find the same measure twice. */}
           {showRuler && (
             <DocumentRuler
+              // Measured, so a clamped page and its ruler agree. Margins still
+              // scale with zoom: CSS `zoom` scales the sheet's padding too.
+              {...(paperWidth ? { pageWidth: paperWidth } : {})}
+              marginLeft={96 * zoom}
+              marginRight={96 * zoom}
               className="pt-3"
               // Shifted by half the gutter column so the ruler stays centred
               // over the SHEET rather than over the row, which is wider than
@@ -374,12 +409,14 @@ export default function CanvasDocumentView({
             // `text-text-primary` here would render near-white prose on white
             // paper in dark mode, which still "renders" and so survives a
             // screenshot check; darkSurfaceTokens (d) fails the build for it.
+            ref={paperRef}
             data-testid={`${testId}-paper`}
             // 96px is a 1in margin and right on a full-width sheet. On a
             // narrow window it is most of the line: 816px of paper minus
             // 192px of margin leaves the text in a column too thin to read,
             // and the page still overflows. The margin scales with the
             // viewport and reaches its proper inch when there is room for it.
+            style={zoom === 1 ? undefined : { zoom }}
             className="doc-page w-full max-w-[816px] min-h-[1056px] bg-paper px-6 py-10 sm:px-12 sm:py-16 lg:px-[96px] lg:py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]"
           >
             <TiptapEditor

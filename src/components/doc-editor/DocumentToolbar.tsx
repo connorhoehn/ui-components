@@ -31,6 +31,16 @@ export interface DocumentToolbarProps {
   /** Rendered at the end of the bar — insert-macro menus, share, etc. */
   actions?: ReactNode;
   /**
+   * Display scale of the page, 1 being 100%.
+   *
+   * A first-class prop for the same reason the gutter toggle is one: zoom is
+   * document chrome, not host content, and `actions` is the HOST's slot.
+   * Omitting `onZoomChange` renders no control — a host that cannot scale its
+   * page should not be offered the choice.
+   */
+  zoom?: number;
+  onZoomChange?: (zoom: number) => void;
+  /**
    * How many comment threads the margin gutter holds.
    *
    * A first-class prop rather than something the page shoves into `actions`,
@@ -137,6 +147,41 @@ function ToolButton({
   );
 }
 
+/**
+ * Page scale.
+ *
+ * Presets rather than a free number: the useful scales are few, and the ones
+ * that matter are named — 100% is the printed size, and the rest are the
+ * steps between "I need to see the shape of the page" and "I need to read
+ * this". Zoom does NOT reflow the text; it scales the page, which is the
+ * distinction between zooming a document and resizing a window.
+ */
+const ZOOM_STEPS = [0.5, 0.75, 0.9, 1, 1.25, 1.5, 2] as const;
+
+function ZoomControl({
+  zoom, onChange, testId,
+}: { zoom: number; onChange: (z: number) => void; testId: string }) {
+  // A host-supplied scale that is not one of the presets still has to be
+  // shown honestly rather than silently snapped to the nearest one.
+  const options = ZOOM_STEPS.includes(zoom as (typeof ZOOM_STEPS)[number])
+    ? ZOOM_STEPS
+    : [...ZOOM_STEPS, zoom].sort((a, b) => a - b);
+  return (
+    <select
+      data-testid={testId}
+      aria-label="Zoom"
+      title="Zoom"
+      value={String(zoom)}
+      onChange={(ev) => onChange(Number(ev.target.value))}
+      className="h-7 rounded border border-border bg-surface px-1 text-xs text-text-secondary cursor-pointer"
+    >
+      {options.map((z) => (
+        <option key={z} value={String(z)}>{`${Math.round(z * 100)}%`}</option>
+      ))}
+    </select>
+  );
+}
+
 function Divider() {
   return <span aria-hidden className="mx-1 h-5 w-px self-center bg-border" />;
 }
@@ -196,6 +241,8 @@ function GutterToggle({
 export default function DocumentToolbar({
   editor,
   actions,
+  zoom = 1,
+  onZoomChange,
   commentCount = 0,
   gutterVisible = true,
   onToggleGutter,
@@ -370,8 +417,11 @@ export default function DocumentToolbar({
         testId={`${testId}-hr`}
       />
 
-      {(onToggleGutter && commentCount > 0) || actions ? (
+      {(onToggleGutter && commentCount > 0) || actions || onZoomChange ? (
         <span className="ml-auto flex items-center gap-1">
+          {onZoomChange && (
+            <ZoomControl zoom={zoom} onChange={onZoomChange} testId={`${testId}-zoom`} />
+          )}
           {/* Left of the host's actions so presence avatars stay pinned to the
               far edge where every collaborative tool puts them. */}
           {onToggleGutter && commentCount > 0 && (
