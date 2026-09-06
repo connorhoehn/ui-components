@@ -84,10 +84,21 @@ export function DocumentRuler({
       // Presentational: a screen reader gains nothing from 68 tick marks, and
       // the measurements it describes are not actionable here.
       aria-hidden="true"
-      className={cn('flex justify-center select-none', className)}
+      // Centred by the track's own auto margins, not by justification: a
+      // zoomed page is wider than the workspace, and a justified flex item
+      // cannot be scrolled back to once it overflows.
+      className={cn('flex select-none', className)}
       style={style}
     >
-      <div className="relative h-6" style={{ width: w }} data-testid={`${testId}-track`}>
+      {/* `shrink-0`: without it flex shrinks the track to the container and
+          the ruler quietly measures the WORKSPACE instead of the page — at
+          150% on a 924px workspace it drew 924px of ruler over 1224px of
+          paper, which is worse than no ruler at all. */}
+      <div
+        className="relative h-6 shrink-0 mx-auto"
+        style={{ width: w }}
+        data-testid={`${testId}-track`}
+      >
         {/* The text column reads as the page; the margins are the darker
             surround. Same figure/ground as the paper below it, so the eye
             lines the two up without having to measure. */}

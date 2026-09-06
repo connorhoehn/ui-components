@@ -299,7 +299,9 @@ export default function CanvasDocumentView({
         // surrounding surface, a white box on a white app is just a widget.
         <div
           data-testid={`${testId}-workspace`}
-          className="rounded-lg bg-workspace overflow-y-auto"
+          // `overflow-x-auto`: a page zoomed past the width of the workspace
+          // has to be scrollable to, not squeezed into it.
+          className="rounded-lg bg-workspace overflow-y-auto overflow-x-auto"
         >
           {/* Chrome, not paper: the toolbar is themed and goes dark, while the
               sheet below it stays white. Sticky so it survives scrolling a
@@ -359,7 +361,10 @@ export default function CanvasDocumentView({
               {...(paperWidth ? { pageWidth: paperWidth } : {})}
               marginLeft={96 * zoom}
               marginRight={96 * zoom}
-              className="pt-3"
+              // Same horizontal padding as the page row below, so the two
+              // share a left edge once the workspace scrolls — without it the
+              // ruler starts 24px left of the paper it is measuring.
+              className="pt-3 px-2 sm:px-6"
               // Shifted by half the gutter column so the ruler stays centred
               // over the SHEET rather than over the row, which is wider than
               // the sheet whenever a thread is open beside it.
@@ -379,8 +384,13 @@ export default function CanvasDocumentView({
             // the content, and giving a narrow window six paces of empty
             // workspace on each side while the text squeezes gets the priority
             // backwards.
+            // Centring via the SHEET's auto margins rather than
+            // `justify-center`: a flex item centred by justification cannot be
+            // scrolled back to once it overflows — its leading edge is simply
+            // unreachable. Auto margins centre the same way and collapse
+            // correctly when there is no room to spare.
             className={cn(
-              'flex justify-center py-4 px-2 sm:py-8 sm:px-6',
+              'flex py-4 px-2 sm:py-8 sm:px-6',
               (showGutter || showOutline) && 'gap-3 sm:gap-6',
             )}
           >
@@ -419,7 +429,17 @@ export default function CanvasDocumentView({
             // and the page still overflows. The margin scales with the
             // viewport and reaches its proper inch when there is room for it.
             style={zoom === 1 ? undefined : { zoom }}
-            className="doc-page w-full max-w-[816px] min-h-[1056px] bg-paper px-6 py-10 sm:px-12 sm:py-16 lg:px-[96px] lg:py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]"
+            className={cn(
+              'doc-page min-h-[1056px] mx-auto bg-paper px-6 py-10 sm:px-12 sm:py-16 lg:px-[96px] lg:py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]',
+              // At 100% the sheet stays responsive: it gives way on a narrow
+              // window rather than forcing a sideways scroll to read a
+              // paragraph. Zoomed, it takes its true width and the workspace
+              // scrolls — `w-full` is a share of the CONTAINER, so under zoom
+              // it clamped the page to the space available and the text column
+              // narrowed instead of the page growing. That is resizing a
+              // window, not zooming a document.
+              zoom === 1 ? 'w-full max-w-[816px]' : 'w-[816px] shrink-0',
+            )}
           >
             <TiptapEditor
               fragment={body}
