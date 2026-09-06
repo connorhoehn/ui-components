@@ -402,3 +402,80 @@ describe('adaptHangoutParticipant', () => {
     expect(adaptHangoutParticipants([])).toEqual([]);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Identity and stability — the two properties a host's React tree depends on.
+// ---------------------------------------------------------------------------
+
+describe('activity ids are stable', () => {
+  const event = {
+    eventType: 'social.room.join',
+    displayName: 'Alice',
+    userId: 'user-alice',
+    timestamp: '2026-01-01T00:00:00.000Z',
+    detail: {},
+  };
+
+  // ActivityFeed keys its rows on this. A counter-derived id meant every row
+  // unmounted and remounted on every re-adapt — and the rotation timers reset
+  // with them.
+  it('gives the same event the same id every time', () => {
+    expect(adaptActivityEvents([event])[0].id).toBe(adaptActivityEvents([event])[0].id);
+  });
+
+  it('separates events that differ', () => {
+    const other = { ...event, eventType: 'social.room.leave' };
+    const [a, b] = adaptActivityEvents([event, other]);
+    expect(a.id).not.toBe(b.id);
+  });
+
+  it('keeps keys unique when two events are genuinely identical', () => {
+    const ids = adaptActivityEvents([event, event]).map((e) => e.id);
+    expect(new Set(ids).size).toBe(2);
+  });
+
+  it('does not shift an existing id when a new event arrives', () => {
+    const before = adaptActivityEvents([event])[0].id;
+    const newer = { ...event, timestamp: '2026-01-01T00:00:05.000Z' };
+    const after = adaptActivityEvents([newer, event]).find((e) => e.id === before);
+    expect(after).toBeDefined();
+  });
+});
+
+describe('presence roster is people, not connections', () => {
+  const tab = (clientId: string, over: Record<string, unknown> = {}) => ({
+    clientId,
+    status: 'online' as const,
+    metadata: { displayName: 'Alice', userId: 'user-alice', ...over },
+  });
+
+  it('collapses one person’s tabs into one row', () => {
+    const roster = adaptPresenceRoster([tab('conn-1'), tab('conn-2')]);
+    expect(roster).toHaveLength(1);
+    expect(roster[0].name).toBe('Alice');
+  });
+
+  it('identifies the person, so a click can be acted on', () => {
+    expect(adaptPresenceRoster([tab('conn-1')])[0].id).toBe('user-alice');
+  });
+
+  // A stale tab must not grey out someone sitting right there in another one.
+  it('is online if any of the person’s connections is', () => {
+    const stale = { ...tab('conn-1'), status: 'offline' as const };
+    expect(adaptPresenceRoster([stale, tab('conn-2')])[0].online).toBe(true);
+  });
+
+  it('keeps distinct people apart', () => {
+    const bob = tab('conn-9', { displayName: 'Bob', userId: 'user-bob' });
+    expect(adaptPresenceRoster([tab('conn-1'), bob])).toHaveLength(2);
+  });
+
+  // Anonymous presence has no userId; the connection is the best identity
+  // available and must still produce one row per connection.
+  it('falls back to the connection when there is no user', () => {
+    const anon = { clientId: 'conn-x', status: 'online' as const, metadata: { displayName: 'Guest' } };
+    const roster = adaptPresenceRoster([anon, { ...anon, clientId: 'conn-y' }]);
+    expect(roster).toHaveLength(2);
+    expect(roster[0].id).toBe('conn-x');
+  });
+});

@@ -64,6 +64,15 @@ export declare function adaptNotifications(entries: RMNotificationEntry[]): Noti
 
 export declare function adaptPresenceEntry(entry: RMPresenceEntry): PresenceUser;
 
+/**
+ * The roster as PEOPLE. Presence has one row per connection, so someone with
+ * the app open in two tabs arrived twice — two identical avatars side by side,
+ * and a participant count that read one higher than the number of humans.
+ *
+ * First entry wins for name and avatar; online-ness is the OR across a
+ * person's connections, because a stale tab must not be able to grey out
+ * someone who is sitting right there in another one.
+ */
 export declare function adaptPresenceRoster(roster: RMPresenceEntry[]): PresenceUser[];
 
 export declare function adaptReaction(reaction: RMReaction, index: number): EphemeralReaction;

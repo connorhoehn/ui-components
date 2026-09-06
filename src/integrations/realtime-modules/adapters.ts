@@ -83,8 +83,15 @@ export function adaptChatMessages(messages: RMChatMessage[]): UIChatMessage[] {
 // ---------------------------------------------------------------------------
 
 export function adaptPresenceEntry(entry: RMPresenceEntry): UIPresenceUser {
+  // The USER, not the connection, when presence carries one.
+  //
+  // `id` is what comes back to `onUserClick`, and a host answering that click
+  // wants to do something to a PERSON — open the DM, start the call. A
+  // clientId identifies a socket: it changes on every reconnect and there is
+  // one per tab, so it cannot be looked up in any directory the host has.
+  const userId = entry.metadata?.userId;
   return {
-    id: entry.clientId,
+    id: typeof userId === 'string' && userId ? userId : entry.clientId,
     name:
       (entry.metadata?.displayName as string | undefined) ??
       entry.clientId.slice(0, 12),
@@ -93,8 +100,29 @@ export function adaptPresenceEntry(entry: RMPresenceEntry): UIPresenceUser {
   };
 }
 
+/**
+ * The roster as PEOPLE. Presence has one row per connection, so someone with
+ * the app open in two tabs arrived twice — two identical avatars side by side,
+ * and a participant count that read one higher than the number of humans.
+ *
+ * First entry wins for name and avatar; online-ness is the OR across a
+ * person's connections, because a stale tab must not be able to grey out
+ * someone who is sitting right there in another one.
+ */
 export function adaptPresenceRoster(roster: RMPresenceEntry[]): UIPresenceUser[] {
-  return roster.map(adaptPresenceEntry);
+  const byId = new Map<string, UIPresenceUser>();
+  for (const entry of roster) {
+    const adapted = adaptPresenceEntry(entry);
+    const existing = byId.get(adapted.id);
+    if (!existing) {
+      byId.set(adapted.id, adapted);
+      continue;
+    }
+    if (adapted.online && !existing.online) {
+      byId.set(adapted.id, { ...existing, online: true });
+    }
+  }
+  return [...byId.values()];
 }
 
 // ---------------------------------------------------------------------------
@@ -183,11 +211,28 @@ function deriveSubject(event: RMActivityEvent): string {
   return event.eventType;
 }
 
-let _activityCounter = 0;
+/**
+ * A stable id, derived from the event itself.
+ *
+ * This used to be a module-level counter, which meant the SAME event got a
+ * different id every time it was adapted. ActivityFeed keys its rows on this,
+ * so every row unmounted and remounted whenever the feed was re-adapted —
+ * which is every time a new event arrives, since that produces a new array.
+ * The rotation timers reset with them, so the feed could stop rotating
+ * entirely under a parent that re-rendered briskly. WrappedActivityPanel had
+ * already reached for a useMemo against the symptom; the ids themselves were
+ * the cause, and a memo cannot help when the input array is genuinely new.
+ *
+ * realtime-modules does not stamp activity events with an id, so the content
+ * is the identity: what happened, when, who did it, to what.
+ */
+function activityId(event: RMActivityEvent, subject: string): string {
+  return [event.eventType, event.timestamp, event.userId ?? event.displayName, subject].join('|');
+}
 
 export function adaptActivityEvent(event: RMActivityEvent): ActivityFeedItem {
   return {
-    id: `${event.eventType}-${event.timestamp}-${_activityCounter++}`,
+    id: activityId(event, deriveSubject(event)),
     actor: event.displayName,
     action: EVENT_VERB[event.eventType] ?? event.eventType.split('.').pop() ?? 'did',
     subject: deriveSubject(event),
@@ -199,7 +244,17 @@ export function adaptActivityEvent(event: RMActivityEvent): ActivityFeedItem {
 }
 
 export function adaptActivityEvents(events: RMActivityEvent[]): ActivityFeedItem[] {
-  return events.map(adaptActivityEvent);
+  // Two genuinely identical events — same actor, same subject, same
+  // millisecond — would otherwise share a key. Disambiguate by how many of
+  // that exact event we have already seen in THIS list, which stays stable as
+  // long as the list does.
+  const seen = new Map<string, number>();
+  return events.map((event) => {
+    const item = adaptActivityEvent(event);
+    const n = seen.get(item.id) ?? 0;
+    seen.set(item.id, n + 1);
+    return n === 0 ? item : { ...item, id: `${item.id}#${n}` };
+  });
 }
 
 // ---------------------------------------------------------------------------
