@@ -30,7 +30,7 @@ import { cn } from '../../lib/cn';
 import TiptapEditor from './TiptapEditor';
 import { DocumentRuler } from './DocumentRuler';
 import { DocumentOutline } from './DocumentOutline';
-import { useDocumentOutline } from './useDocumentOutline';
+import { useDocumentOutline, useDocumentWordCount } from './useDocumentOutline';
 import DocumentToolbar from './DocumentToolbar';
 import DocumentGutter, { type GutterItem } from './DocumentGutter';
 import Banner from '../shared/Banner';
@@ -238,6 +238,7 @@ export default function CanvasDocumentView({
   // Derived from the document, not the DOM: a canvas heading carries no id,
   // so there is nothing in the rendered page to address it by.
   const outline = useDocumentOutline(editor as Parameters<typeof useDocumentOutline>[0]);
+  const wordCount = useDocumentWordCount(editor as Parameters<typeof useDocumentWordCount>[0]);
 
   const commentCount = gutterItems?.length ?? 0;
   // Two conditions, not one: there has to be something to show, AND the gutter
@@ -328,6 +329,7 @@ export default function CanvasDocumentView({
                   editor={editor}
                   zoom={zoom}
                   onZoomChange={setZoom}
+                  wordCount={wordCount}
                   actions={toolbarActions}
                   // Passed even when the gutter is hidden — that is precisely
                   // when the count is the only remaining evidence that a

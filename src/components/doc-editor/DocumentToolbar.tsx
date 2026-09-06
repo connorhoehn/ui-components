@@ -41,6 +41,11 @@ export interface DocumentToolbarProps {
   zoom?: number;
   onZoomChange?: (zoom: number) => void;
   /**
+   * Document length. Omit (or pass null) when it is not known — an unknown
+   * count must not render as "0 words" on a document full of them.
+   */
+  wordCount?: number | null;
+  /**
    * How many comment threads the margin gutter holds.
    *
    * A first-class prop rather than something the page shoves into `actions`,
@@ -243,6 +248,7 @@ export default function DocumentToolbar({
   actions,
   zoom = 1,
   onZoomChange,
+  wordCount = null,
   commentCount = 0,
   gutterVisible = true,
   onToggleGutter,
@@ -417,8 +423,16 @@ export default function DocumentToolbar({
         testId={`${testId}-hr`}
       />
 
-      {(onToggleGutter && commentCount > 0) || actions || onZoomChange ? (
+      {(onToggleGutter && commentCount > 0) || actions || onZoomChange || wordCount !== null ? (
         <span className="ml-auto flex items-center gap-1">
+          {wordCount !== null && (
+            <span
+              data-testid={`${testId}-word-count`}
+              className="px-1 text-xs tabular-nums text-text-tertiary"
+            >
+              {wordCount === 1 ? '1 word' : `${wordCount.toLocaleString()} words`}
+            </span>
+          )}
           {onZoomChange && (
             <ZoomControl zoom={zoom} onChange={onZoomChange} testId={`${testId}-zoom`} />
           )}

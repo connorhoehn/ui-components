@@ -113,3 +113,55 @@ export function useDocumentOutline(
 
   return { entries, activeId, goTo };
 }
+
+
+/**
+ * How long the document is.
+ *
+ * Counted from the document's own text rather than by adding Tiptap's
+ * CharacterCount extension. That extension lives in `@tiptap/extensions`,
+ * which is not in this package's optional-peer set — the packaging test
+ * rejected it, correctly: a word count is not worth making every host that
+ * imports the doc editor install another package.
+ *
+ * Whitespace-separated runs, which is what a word processor means by "words".
+ * Null only when there is no document to count.
+ */
+export function readWordCount(editor: OutlineEditorLike | null): number | null {
+  const doc = (editor as unknown as { state?: { doc?: { textBetween?: unknown; textContent?: string } } } | null)
+    ?.state?.doc;
+  if (!doc) return null;
+  // `textContent` concatenates without separators, so two block nodes would
+  // otherwise fuse their last and first words into one.
+  let text = '';
+  const walk = (editor as OutlineEditorLike).state?.doc?.descendants;
+  if (typeof walk === 'function') {
+    (editor as OutlineEditorLike).state.doc.descendants((node) => {
+      const t = (node as { text?: string; textContent?: string }).text;
+      if (typeof t === 'string') text += `${t} `;
+    });
+  } else if (typeof doc.textContent === 'string') {
+    text = doc.textContent;
+  }
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  return words.length;
+}
+
+/** Live word count, kept in step with the document. */
+export function useDocumentWordCount(editor: OutlineEditorLike | null): number | null {
+  const [words, setWords] = useState<number | null>(() => readWordCount(editor));
+
+  useEffect(() => {
+    if (!editor) {
+      setWords(null);
+      return;
+    }
+    const refresh = () => setWords(readWordCount(editor));
+    refresh();
+    if (typeof editor.on !== 'function' || typeof editor.off !== 'function') return;
+    editor.on('update', refresh);
+    return () => editor.off('update', refresh);
+  }, [editor]);
+
+  return words;
+}

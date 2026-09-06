@@ -332,3 +332,32 @@ describe('zoom', () => {
     expect([...select.querySelectorAll('option')].map((o) => o.textContent)).toContain('110%');
   });
 });
+
+describe('word count', () => {
+  const renderWith = (props: Record<string, unknown> = {}) =>
+    render(<DocumentToolbar editor={makeEditor().editor} {...props} />);
+
+  // An unknown count is not zero. A host composing its own extension set may
+  // leave CharacterCount out, and "0 words" on a full document is a lie.
+  it('says nothing when the count is unknown', () => {
+    renderWith();
+    expect(screen.queryByTestId('document-toolbar-word-count')).toBeNull();
+    renderWith({ wordCount: null });
+    expect(screen.queryByTestId('document-toolbar-word-count')).toBeNull();
+  });
+
+  it('reports a genuine empty document', () => {
+    renderWith({ wordCount: 0 });
+    expect(screen.getByTestId('document-toolbar-word-count')).toHaveTextContent('0 words');
+  });
+
+  it('counts in the reader’s own notation', () => {
+    renderWith({ wordCount: 12345 });
+    expect(screen.getByTestId('document-toolbar-word-count')).toHaveTextContent('12,345 words');
+  });
+
+  it('does not say "1 words"', () => {
+    renderWith({ wordCount: 1 });
+    expect(screen.getByTestId('document-toolbar-word-count')).toHaveTextContent('1 word');
+  });
+});

@@ -581,7 +581,7 @@ export declare interface DocumentRulerProps {
  */
 export declare type DocumentShape = 'page' | 'sections' | 'diagram';
 
-export declare function DocumentToolbar({ editor, actions, zoom, onZoomChange, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+export declare function DocumentToolbar({ editor, actions, zoom, onZoomChange, wordCount, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 export declare interface DocumentToolbarProps {
     editor: Editor | null;
@@ -597,6 +597,11 @@ export declare interface DocumentToolbarProps {
      */
     zoom?: number;
     onZoomChange?: (zoom: number) => void;
+    /**
+     * Document length. Omit (or pass null) when it is not known — an unknown
+     * count must not render as "0 words" on a document full of them.
+     */
+    wordCount?: number | null;
     /**
      * How many comment threads the margin gutter holds.
      *

@@ -105,3 +105,41 @@ describe('readOutline', () => {
     expect(readOutline({ state: {} } as never)).toEqual([]);
   });
 });
+
+import { readWordCount } from '../useDocumentOutline';
+
+describe('readWordCount', () => {
+  const editorWithText = (texts: string[]) => ({
+    state: {
+      doc: {
+        descendants(fn: (n: unknown, pos: number) => void) {
+          texts.forEach((t, i) => fn({ type: { name: 'text' }, text: t }, i));
+        },
+      },
+    },
+  }) as never;
+
+  it('counts whitespace-separated words', () => {
+    expect(readWordCount(editorWithText(['the quick brown fox']))).toBe(4);
+  });
+
+  // Text nodes concatenated without a separator would fuse the last word of
+  // one block into the first of the next and undercount every paragraph break.
+  it('does not fuse words across nodes', () => {
+    expect(readWordCount(editorWithText(['first', 'second']))).toBe(2);
+  });
+
+  it('ignores stray whitespace', () => {
+    expect(readWordCount(editorWithText(['  spaced   out  ']))).toBe(2);
+  });
+
+  it('counts an empty document as zero, not unknown', () => {
+    expect(readWordCount(editorWithText([]))).toBe(0);
+    expect(readWordCount(editorWithText([' ']))).toBe(0);
+  });
+
+  it('is unknown when there is no document', () => {
+    expect(readWordCount(null)).toBeNull();
+    expect(readWordCount({} as never)).toBeNull();
+  });
+});

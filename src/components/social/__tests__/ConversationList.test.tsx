@@ -179,23 +179,23 @@ describe('a live call', () => {
   });
 
   it('is not claimed unless it is happening', () => {
-    render(<ConversationList items={[item()]} />);
+    render(<ConversationList items={[item()]} onSelect={vi.fn()} />);
     expect(screen.queryByTestId('conversation-live')).toBeNull();
   });
 
   it('marks the conversation carrying it', () => {
-    render(<ConversationList items={[item({ live: true })]} />);
+    render(<ConversationList items={[item({ live: true })]} onSelect={vi.fn()} />);
     expect(screen.getByTestId('conversation-live')).toHaveTextContent('Live');
   });
 
   it('names itself for a screen reader rather than relying on a red dot', () => {
-    render(<ConversationList items={[item({ live: true })]} />);
+    render(<ConversationList items={[item({ live: true })]} onSelect={vi.fn()} />);
     expect(screen.getByLabelText('Call in progress')).toBeInTheDocument();
   });
 
   // Three different facts, none of which replaces another.
   it('sits alongside unread and mention badges', () => {
-    render(<ConversationList items={[item({ live: true, mentioned: true, unreadCount: 3 })]} />);
+    render(<ConversationList items={[item({ live: true, mentioned: true, unreadCount: 3 })]} onSelect={vi.fn()} />);
     expect(screen.getByTestId('conversation-live')).toBeInTheDocument();
     expect(screen.getByTestId('conversation-mention')).toBeInTheDocument();
     expect(screen.getByTestId('conversation-unread')).toHaveTextContent('3');
@@ -205,7 +205,7 @@ describe('a live call', () => {
     render(<ConversationList items={[
       item({ channel: 'room:a', name: 'a' }),
       item({ channel: 'room:b', name: 'b', live: true }),
-    ]} />);
+    ]} onSelect={vi.fn()} />);
     expect(screen.getAllByTestId('conversation-live')).toHaveLength(1);
   });
 });
