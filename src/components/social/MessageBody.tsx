@@ -104,6 +104,58 @@ export interface MessageBodyProps {
   'data-testid'?: string;
 }
 
+/**
+ * Backtick code, for messages that are PLAIN TEXT.
+ *
+ * The rich composer emits real `<pre>`/`<code>` markup, which the allow-list
+ * above already renders. But not every chat has a rich composer — the in-call
+ * chat is a bare input — and someone pasting a stack trace into it got their
+ * backticks rendered as backticks. Code is the one thing people paste into a
+ * call chat, so it has to work in the SIMPLE composer too.
+ *
+ * Deliberately just the two code forms, not a markdown engine: ```fences```
+ * and `inline`. Everything else stays literal, because a chat that silently
+ * eats asterisks and underscores in ordinary prose is worse than one that
+ * renders none of it.
+ */
+const FENCE_OR_INLINE = /```([\s\S]*?)```|`([^`\n]+)`/g;
+
+export function renderBackticks(text: string): ReactNode {
+  if (!text || text.indexOf('`') === -1) return text;
+
+  const out: ReactNode[] = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  FENCE_OR_INLINE.lastIndex = 0;
+
+  while ((m = FENCE_OR_INLINE.exec(text)) !== null) {
+    if (m.index > last) out.push(text.slice(last, m.index));
+    const fenced = m[1];
+    if (fenced !== undefined) {
+      // A fence usually opens with a language tag and a newline; neither is
+      // content. Only the FIRST line is eligible, and only when it looks like
+      // a bare word — "```const x = 1```" on one line must not lose "const".
+      let body = fenced.replace(/^\r?\n/, '');
+      const firstBreak = body.indexOf('\n');
+      if (firstBreak > 0 && /^[a-zA-Z0-9_+-]{1,20}$/.test(body.slice(0, firstBreak).trim())) {
+        body = body.slice(firstBreak + 1);
+      }
+      out.push(
+        <pre key={`f${m.index}`} className="message-code-block">
+          <code>{body.replace(/\n$/, '')}</code>
+        </pre>,
+      );
+    } else {
+      out.push(<code key={`i${m.index}`} className="message-code-inline">{m[2]}</code>);
+    }
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  // An unmatched backtick produces one chunk that is the whole string; hand
+  // back the string itself so nothing changes for ordinary prose.
+  return out.length === 1 && typeof out[0] === 'string' ? out[0] : out;
+}
+
 export function MessageBody({ html, text, className, 'data-testid': testId = 'message-body' }: MessageBodyProps) {
   const rendered = useMemo(() => {
     if (!html) return null;
@@ -113,9 +165,11 @@ export function MessageBody({ html, text, className, 'data-testid': testId = 'me
     return Array.from(doc.body.childNodes).map((n, i) => toReact(n, `n${i}`));
   }, [html]);
 
+  const plain = useMemo(() => renderBackticks(text ?? ''), [text]);
+
   return (
     <div data-testid={testId} className={cn('message-body', className)}>
-      {rendered ?? text}
+      {rendered ?? plain}
     </div>
   );
 }

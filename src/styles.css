@@ -968,3 +968,40 @@
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px);
   mask-image: linear-gradient(to bottom, transparent 0, #000 48px);
 }
+
+/* Backtick code inside a chat message.
+ *
+ * Rendered by MessageBody for PLAIN-TEXT messages (the rich composer emits
+ * real <pre>/<code>, which the sanitizer's allow-list already covers). Styled
+ * here rather than with utility classes because these elements are produced by
+ * a parser, not written in JSX, and because both tones need them: an in-call
+ * chat is dark chrome and a thread is light.
+ *
+ * `color: inherit` on purpose — the bubble owns the foreground, so a code span
+ * stays readable inside a "mine" bubble, a dark call panel and a light thread
+ * without three variants. */
+.message-code-inline {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  color: inherit;
+}
+.message-code-block {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  margin: 0.35em 0 0;
+  padding: 0.5em 0.65em;
+  border-radius: 6px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  color: inherit;
+  /* A pasted stack trace must not widen the panel it is in. */
+  overflow-x: auto;
+  white-space: pre;
+}
+.message-code-block code {
+  font: inherit;
+  background: none;
+  padding: 0;
+}
