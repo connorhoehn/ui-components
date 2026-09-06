@@ -38,11 +38,18 @@
 // lower-latency source, so passing both reads as "realtime, with HLS as the
 // thing I fall back to", and that is what happens.
 
-import { useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { useHlsSource } from '../../lib/video/useHlsSource';
 import { StreamVideo } from './StreamVideo';
 import { ViewerCount } from './ViewerCount';
+
+/**
+ * How long a stream may say "Connecting…" before admitting nothing is coming.
+ * A live manifest answers in a second or two; ten seconds is generous enough
+ * that a slow one is never called dead.
+ */
+const STALL_AFTER_MS = 10_000;
 import { StreamChatTicker, type StreamChatMessage } from './StreamChatTicker';
 
 export interface StreamStageProps {
@@ -59,6 +66,10 @@ export interface StreamStageProps {
   playlistUrl?: string | null;
   /** Surfaced when HLS cannot play — an unsupported browser, a dead playlist. */
   onPlaybackError?: (err: Error) => void;
+  /** Replaces the default wording once a stream has failed to start. */
+  notStartedLabel?: string;
+  /** How long to wait before saying so. Default 10s. */
+  stallAfterMs?: number;
   /** Name of the stream or call, shown top-left. */
   title?: string;
   /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
@@ -94,6 +105,8 @@ export function StreamStage({
   title,
   viewerCount,
   live = false,
+  notStartedLabel,
+  stallAfterMs = STALL_AFTER_MS,
   chatMessages,
   chatVisibleCount,
   chatRotateMs,
@@ -121,6 +134,22 @@ export function StreamStage({
   // it: still attaching, or failed, means not live. The realtime path is
   // unaffected — its `stream` either has tracks or the caller does not pass it.
   const playing = stream ? live : live && !hls.loading && !hls.error;
+
+  // "Connecting…" has to stop eventually.
+  //
+  // A playlist URL can be composed for a channel nobody is broadcasting to,
+  // and HLS does not error on that — it simply never delivers a segment. So a
+  // viewer who opens a stream that has not started waits on a spinner
+  // indefinitely, told nothing. After a grace period long enough for a real
+  // manifest (a live one answers in a second or two), say the true thing
+  // instead: there is nothing coming.
+  const [stalled, setStalled] = useState(false);
+  useEffect(() => {
+    setStalled(false);
+    if (!playlistUrl || stream || !hls.loading || hls.error) return;
+    const timer = setTimeout(() => setStalled(true), stallAfterMs);
+    return () => clearTimeout(timer);
+  }, [playlistUrl, stream, hls.loading, hls.error, stallAfterMs]);
 
   return (
     <div
@@ -158,10 +187,10 @@ export function StreamStage({
           exactly the same for as long as the manifest takes. */}
       {playlistUrl && !stream && hls.loading && !hls.error && (
         <div
-          data-testid={`${testId}-connecting`}
-          className="absolute inset-0 flex items-center justify-center text-sm text-white/60"
+          data-testid={stalled ? `${testId}-not-started` : `${testId}-connecting`}
+          className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/60"
         >
-          Connecting…
+          {stalled ? (notStartedLabel ?? 'Nothing is being broadcast right now.') : 'Connecting…'}
         </div>
       )}
 

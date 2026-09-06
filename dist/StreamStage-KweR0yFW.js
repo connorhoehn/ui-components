@@ -697,71 +697,82 @@ function M({ messages: t, visibleCount: r = 3, rotateMs: a = 4200, window: o = 2
 }
 //#endregion
 //#region src/components/video/StreamStage.tsx
-function N({ stream: t = null, playlistUrl: n = null, onPlaybackError: r, title: i, viewerCount: o, live: l = !1, chatMessages: u, chatVisibleCount: d, chatRotateMs: p, muted: m = !0, controls: h, placeholder: g, className: _, "data-testid": v = "stream-stage" }) {
-	let y = a(null), b = A(y, t ? null : n, {
+var N = 1e4;
+function P({ stream: t = null, playlistUrl: n = null, onPlaybackError: i, title: l, viewerCount: u, live: d = !1, notStartedLabel: p, stallAfterMs: m = N, chatMessages: h, chatVisibleCount: g, chatRotateMs: _, muted: v = !0, controls: y, placeholder: b, className: S, "data-testid": C = "stream-stage" }) {
+	let w = a(null), T = A(w, t ? null : n, {
 		live: !0,
-		onError: r
-	}), S = t ? l : l && !b.loading && !b.error;
-	return /* @__PURE__ */ c("div", {
-		"data-testid": v,
-		"data-live": String(S),
+		onError: i
+	}), E = t ? d : d && !T.loading && !T.error, [D, O] = o(!1);
+	return r(() => {
+		if (O(!1), !n || t || !T.loading || T.error) return;
+		let e = setTimeout(() => O(!0), m);
+		return () => clearTimeout(e);
+	}, [
+		n,
+		t,
+		T.loading,
+		T.error,
+		m
+	]), /* @__PURE__ */ c("div", {
+		"data-testid": C,
+		"data-live": String(E),
 		"data-transport": t ? "realtime" : n ? "hls" : "none",
-		className: e("relative h-full w-full overflow-hidden rounded-lg bg-black", _),
+		className: e("relative h-full w-full overflow-hidden rounded-lg bg-black", S),
 		children: [
 			t ? /* @__PURE__ */ s(x, {
 				stream: t,
-				muted: m,
+				muted: v,
 				className: "h-full w-full object-contain"
 			}) : n ? /* @__PURE__ */ s("video", {
-				ref: y,
-				"data-testid": `${v}-hls`,
+				ref: w,
+				"data-testid": `${C}-hls`,
 				autoPlay: !0,
 				playsInline: !0,
-				muted: m,
+				muted: v,
 				className: "h-full w-full object-contain"
 			}) : /* @__PURE__ */ s("div", {
-				"data-testid": `${v}-placeholder`,
+				"data-testid": `${C}-placeholder`,
 				className: "flex h-full w-full items-center justify-center text-sm text-white/60",
-				children: g ?? "Waiting for the stream to start…"
+				children: b ?? "Waiting for the stream to start…"
 			}),
-			n && !t && b.loading && !b.error && /* @__PURE__ */ s("div", {
-				"data-testid": `${v}-connecting`,
-				className: "absolute inset-0 flex items-center justify-center text-sm text-white/60",
-				children: "Connecting…"
+			n && !t && T.loading && !T.error && /* @__PURE__ */ s("div", {
+				"data-testid": D ? `${C}-not-started` : `${C}-connecting`,
+				className: "absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/60",
+				children: D ? p ?? "Nothing is being broadcast right now." : "Connecting…"
 			}),
-			b.error && /* @__PURE__ */ s("div", {
-				"data-testid": `${v}-error`,
+			T.error && /* @__PURE__ */ s("div", {
+				"data-testid": `${C}-error`,
 				className: "absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/80",
-				children: b.error
+				children: T.error
 			}),
-			(i || S || o !== void 0) && /* @__PURE__ */ c("div", {
+			(l || E || u !== void 0) && /* @__PURE__ */ c("div", {
 				className: "pointer-events-none absolute left-3 top-3 flex items-center gap-2",
 				children: [
-					S && /* @__PURE__ */ s("span", {
-						"data-testid": `${v}-live`,
+					E && /* @__PURE__ */ s("span", {
+						"data-testid": `${C}-live`,
 						className: "rounded bg-danger px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white",
 						children: "Live"
 					}),
-					i && /* @__PURE__ */ s("span", {
+					l && /* @__PURE__ */ s("span", {
 						className: "truncate text-sm font-medium text-white drop-shadow",
-						children: i
+						children: l
 					}),
-					o !== void 0 && /* @__PURE__ */ s(f, { count: o })
+					u !== void 0 && /* @__PURE__ */ s(f, { count: u })
 				]
 			}),
-			u && u.length > 0 && /* @__PURE__ */ s(M, {
-				messages: u,
-				visibleCount: d,
-				rotateMs: p,
+			h && h.length > 0 && /* @__PURE__ */ s(M, {
+				messages: h,
+				visibleCount: g,
+				rotateMs: _,
 				className: "absolute bottom-3 left-3",
-				"data-testid": `${v}-chat`
+				"data-testid": `${C}-chat`
 			}),
-			h && /* @__PURE__ */ s("div", {
+			y && /* @__PURE__ */ s("div", {
 				className: "absolute bottom-3 right-3 flex items-center gap-2",
-				children: h
+				children: y
 			})
 		]
 	});
 }
 //#endregion
-export { l as _, D as a, x as c, v as d, h as f, f as g, m as h, O as i, b as l, p as m, M as n, w as o, g as p, k as r, C as s, N as t, y as u };
+export { l as _, D as a, x as c, v as d, h as f, f as g, m as h, O as i, b as l, p as m, M as n, w as o, g as p, k as r, C as s, P as t, y as u };

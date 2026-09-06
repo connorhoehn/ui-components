@@ -9674,7 +9674,7 @@ export declare interface StreamMetrics {
     jitter?: number;
 }
 
-export declare function StreamStage({ stream, playlistUrl, onPlaybackError, title, viewerCount, live, chatMessages, chatVisibleCount, chatRotateMs, muted, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
+export declare function StreamStage({ stream, playlistUrl, onPlaybackError, title, viewerCount, live, notStartedLabel, stallAfterMs, chatMessages, chatVisibleCount, chatRotateMs, muted, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
 
 export declare interface StreamStageProps {
     /**
@@ -9690,6 +9690,10 @@ export declare interface StreamStageProps {
     playlistUrl?: string | null;
     /** Surfaced when HLS cannot play — an unsupported browser, a dead playlist. */
     onPlaybackError?: (err: Error) => void;
+    /** Replaces the default wording once a stream has failed to start. */
+    notStartedLabel?: string;
+    /** How long to wait before saying so. Default 10s. */
+    stallAfterMs?: number;
     /** Name of the stream or call, shown top-left. */
     title?: string;
     /** Shown beside the title. Omit when the count is unknown rather than passing 0. */

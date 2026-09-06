@@ -69,3 +69,51 @@ describe('a claim of live, on the HLS path', () => {
     expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-live', 'true');
   });
 });
+
+describe('a stream that never starts', () => {
+  it('says "Connecting…" first', () => {
+    hlsState.loading = true;
+    render(<StreamStage live playlistUrl={PLAYLIST} stallAfterMs={50} />);
+    expect(screen.getByTestId('stream-stage-connecting')).toBeInTheDocument();
+    expect(screen.queryByTestId('stream-stage-not-started')).toBeNull();
+  });
+
+  // HLS does not error on a channel nobody is broadcasting to — it simply
+  // never delivers a segment — so without this the viewer waits on a spinner
+  // forever, told nothing.
+  it('admits nothing is coming once the grace period passes', async () => {
+    hlsState.loading = true;
+    render(<StreamStage live playlistUrl={PLAYLIST} stallAfterMs={30} />);
+    expect(await screen.findByTestId('stream-stage-not-started')).toHaveTextContent(
+      'Nothing is being broadcast right now.',
+    );
+    expect(screen.queryByTestId('stream-stage-connecting')).toBeNull();
+  });
+
+  it('lets the host word it', async () => {
+    hlsState.loading = true;
+    render(
+      <StreamStage live playlistUrl={PLAYLIST} stallAfterMs={30} notStartedLabel="The show starts at 8." />,
+    );
+    expect(await screen.findByTestId('stream-stage-not-started')).toHaveTextContent(
+      'The show starts at 8.',
+    );
+  });
+
+  it('never calls a playing stream stalled', async () => {
+    hlsState.loading = false;
+    render(<StreamStage live playlistUrl={PLAYLIST} stallAfterMs={30} />);
+    await new Promise((r) => setTimeout(r, 60));
+    expect(screen.queryByTestId('stream-stage-not-started')).toBeNull();
+    expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-live', 'true');
+  });
+
+  it('leaves a real error to say its own piece', async () => {
+    hlsState.loading = true;
+    hlsState.error = 'Stream unavailable';
+    render(<StreamStage live playlistUrl={PLAYLIST} stallAfterMs={30} />);
+    await new Promise((r) => setTimeout(r, 60));
+    expect(screen.queryByTestId('stream-stage-not-started')).toBeNull();
+    expect(screen.getByTestId('stream-stage-error')).toBeInTheDocument();
+  });
+});
