@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ConnectionPill } from '../ConnectionPill';
 import { ConnectionStatus } from '../../layout/ConnectionStatus';
 
@@ -54,5 +55,58 @@ describe('ConnectionStatus (deprecated alias)', () => {
       'data-state',
       'connected',
     );
+  });
+});
+
+describe('ConnectionPill action', () => {
+  it('renders nothing extra when no action is given', () => {
+    render(<ConnectionPill state="connected" />);
+    expect(screen.queryByTestId('connection-pill-action')).toBeNull();
+  });
+
+  it('fires the action on click', async () => {
+    const onClick = vi.fn();
+    render(
+      <ConnectionPill state="disconnected" action={{ label: 'Reconnect', onClick }} />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Reconnect' }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('honours disabled', async () => {
+    const onClick = vi.fn();
+    render(
+      <ConnectionPill
+        state="connecting"
+        action={{ label: 'Reconnect', onClick, disabled: true }}
+      />,
+    );
+    const button = screen.getByTestId('connection-pill-action');
+    expect(button).toBeDisabled();
+    await userEvent.click(button);
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  // A dot-only pill has no room for a verb, and rendering one turned the
+  // compact variant into a wide control wherever a host passed both.
+  it('is suppressed in compact (dot-only) mode', () => {
+    render(
+      <ConnectionPill
+        state="disconnected"
+        compact
+        action={{ label: 'Reconnect', onClick: () => {} }}
+      />,
+    );
+    expect(screen.queryByTestId('connection-pill-action')).toBeNull();
+  });
+
+  it('takes a custom testid', () => {
+    render(
+      <ConnectionPill
+        state="disconnected"
+        action={{ label: 'Retry', onClick: () => {}, 'data-testid': 'ws-retry' }}
+      />,
+    );
+    expect(screen.getByTestId('ws-retry')).toBeInTheDocument();
   });
 });

@@ -32,23 +32,34 @@ var s = {
 	reconnecting: "text-code-peach",
 	disconnected: "text-code-red"
 };
-function l({ state: t, tone: n = "surface", compact: r = !1, withLabel: i = !0, labels: l, className: u, "data-testid": d = "connection-pill" }) {
-	let f = s[t], p = l?.[t] ?? f?.label ?? String(t), m = i && !r, h = n === "code" ? c[t] : f?.colorClass;
+function l({ state: t, tone: n = "surface", compact: r = !1, withLabel: i = !0, labels: l, action: u, className: d, "data-testid": f = "connection-pill" }) {
+	let p = s[t], m = l?.[t] ?? p?.label ?? String(t), h = i && !r, g = n === "code" ? c[t] : p?.colorClass;
 	return /* @__PURE__ */ o("span", {
 		role: "status",
 		"aria-live": "polite",
-		"aria-label": m ? void 0 : p,
-		"data-testid": d,
+		"aria-label": h ? void 0 : m,
+		"data-testid": f,
 		"data-state": t,
-		className: e("inline-flex items-center gap-1.5 font-mono", u),
-		children: [/* @__PURE__ */ a("span", {
-			"aria-hidden": "true",
-			className: h,
-			children: "⬤"
-		}), m && /* @__PURE__ */ a("span", {
-			className: e(h, "font-semibold"),
-			children: p
-		})]
+		className: e("inline-flex items-center gap-1.5 font-mono", d),
+		children: [
+			/* @__PURE__ */ a("span", {
+				"aria-hidden": "true",
+				className: g,
+				children: "⬤"
+			}),
+			h && /* @__PURE__ */ a("span", {
+				className: e(g, "font-semibold"),
+				children: m
+			}),
+			u && !r && /* @__PURE__ */ a("button", {
+				type: "button",
+				onClick: u.onClick,
+				disabled: u.disabled,
+				"data-testid": u["data-testid"] ?? "connection-pill-action",
+				className: e("rounded-sm px-1 underline decoration-dotted underline-offset-2", "hover:decoration-solid focus-visible:outline-2 focus-visible:outline-offset-1", "disabled:cursor-not-allowed disabled:no-underline disabled:opacity-50", g),
+				children: u.label
+			})
+		]
 	});
 }
 //#endregion

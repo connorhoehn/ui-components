@@ -6,7 +6,7 @@ import { t as i } from "../EmptyState-ClmWoqCb.js";
 import { t as a } from "../SkeletonCard-CGe8XFPB.js";
 import { n as o, t as s } from "../FileUploadDrop-DMLKYoZL.js";
 import { t as c } from "../Avatar-BzicCOft.js";
-import { n as l, r as u, t as d } from "../Badge-w_b39PZr.js";
+import { n as l, r as u, t as d } from "../Badge-B_L-ZBbN.js";
 import { t as f } from "../PresenceAvatars-BkzMACtv.js";
 import { t as p } from "../ActivityFeed-BvBfBfGZ.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";

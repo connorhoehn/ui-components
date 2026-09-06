@@ -26,7 +26,7 @@ import { n as x, t as S } from "./Avatar-BzicCOft.js";
 import { i as C } from "./FloatingPanel-CVnSIFM0.js";
 import "./StatusDot-Bgx2zxgC.js";
 import { t as w } from "./PresenceDot-3gBZGPvX.js";
-import "./Badge-w_b39PZr.js";
+import "./Badge-B_L-ZBbN.js";
 import "./PresenceAvatars-BkzMACtv.js";
 import { t as T } from "./InlinePopover-DFdI8hw1.js";
 import { t as E } from "./ActivityFeed-BvBfBfGZ.js";
