@@ -166,8 +166,22 @@ var N = class {
 	node;
 	dead = !1;
 	queued = !1;
+	active = !1;
+	onDocumentPointerDown = (e) => {
+		if (!this.active) return;
+		let t = e.target;
+		t && this.dom.contains(t) || this.setActive(!1);
+	};
+	onDocumentKeyDown = (e) => {
+		this.active && e.key === "Escape" && this.setActive(!1);
+	};
+	setActive(e) {
+		this.active !== e && (this.active = e, this.dom.setAttribute("data-diagram-active", String(e)), this.schedule());
+	}
 	constructor(e, t, n, r) {
-		this.view = t, this.getPos = n, this.options = r, this.node = e, this.dom = document.createElement("div"), this.dom.setAttribute("data-macro", T), this.host = document.createElement("div"), this.dom.appendChild(this.host), this.root = m(this.host), this.schedule();
+		this.view = t, this.getPos = n, this.options = r, this.node = e, this.dom = document.createElement("div"), this.dom.setAttribute("data-macro", T), this.dom.setAttribute("data-diagram-active", "false"), this.host = document.createElement("div"), this.dom.appendChild(this.host), this.root = m(this.host), this.dom.addEventListener("mousedown", () => {
+			this.view.editable && this.setActive(!0);
+		}), document.addEventListener("mousedown", this.onDocumentPointerDown, !0), document.addEventListener("keydown", this.onDocumentKeyDown, !0), this.schedule();
 	}
 	schedule() {
 		this.queued || this.dead || (this.queued = !0, queueMicrotask(() => {
@@ -181,13 +195,13 @@ var N = class {
 			source: t,
 			ydoc: e?.ydoc ?? null,
 			awareness: e?.awareness ?? null,
-			editable: this.view.editable,
+			editable: this.view.editable && this.active,
 			user: e?.user ?? {
 				name: "Anonymous",
 				color: "#3b82f6"
 			},
 			...e?.assetPath ? { assetPath: e.assetPath } : {},
-			...this.view.editable ? { onRemove: () => this.remove() } : {}
+			...this.view.editable && this.active ? { onRemove: () => this.remove() } : {}
 		}));
 	}
 	remove() {
@@ -209,7 +223,7 @@ var N = class {
 		return !0;
 	}
 	destroy() {
-		this.dead = !0;
+		this.dead = !0, document.removeEventListener("mousedown", this.onDocumentPointerDown, !0), document.removeEventListener("keydown", this.onDocumentKeyDown, !0);
 		let e = this.root;
 		queueMicrotask(() => e.unmount());
 	}

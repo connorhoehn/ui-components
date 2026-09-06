@@ -158,6 +158,40 @@ class DiagramMacroView implements NodeView {
 
     private queued = false;
 
+    /**
+     * Whether THIS block is the one being worked on.
+     *
+     * A diagram in a document is a picture until someone engages with it. It
+     * used to take its editability straight from the document's, so every
+     * diagram on the page mounted a full Excalidraw editor — measured on a
+     * real document: 36 diagram nodes, each with its own toolbar, palette and
+     * top bar rendered into the page. Excalidraw's chrome ends up in the
+     * document's own structure that way (twelve "Shapes" headings, in that
+     * document's outline), and the reader is handed a drawing application
+     * where they expected a drawing.
+     *
+     * Click to work on one, click away or press Escape to put it down.
+     */
+    private active = false;
+
+    private onDocumentPointerDown = (event: Event): void => {
+        if (!this.active) return;
+        const target = event.target as Node | null;
+        if (target && this.dom.contains(target)) return;
+        this.setActive(false);
+    };
+
+    private onDocumentKeyDown = (event: KeyboardEvent): void => {
+        if (this.active && event.key === 'Escape') this.setActive(false);
+    };
+
+    private setActive(next: boolean): void {
+        if (this.active === next) return;
+        this.active = next;
+        this.dom.setAttribute('data-diagram-active', String(next));
+        this.schedule();
+    }
+
     constructor(
         node: PmNode,
         private view: EditorView,
@@ -167,9 +201,20 @@ class DiagramMacroView implements NodeView {
         this.node = node;
         this.dom = document.createElement('div');
         this.dom.setAttribute('data-macro', DIAGRAM_MACRO_NAME);
+        this.dom.setAttribute('data-diagram-active', 'false');
         this.host = document.createElement('div');
         this.dom.appendChild(this.host);
         this.root = createRoot(this.host);
+
+        // `stopEvent` keeps ProseMirror out of this subtree, which also means
+        // it can never make a NodeSelection here — so activation cannot ride on
+        // selection and is handled directly.
+        this.dom.addEventListener('mousedown', () => {
+            if (this.view.editable) this.setActive(true);
+        });
+        document.addEventListener('mousedown', this.onDocumentPointerDown, true);
+        document.addEventListener('keydown', this.onDocumentKeyDown, true);
+
         this.schedule();
     }
 
@@ -205,10 +250,12 @@ class DiagramMacroView implements NodeView {
                 source,
                 ydoc: ctx?.ydoc ?? null,
                 awareness: ctx?.awareness ?? null,
-                editable: this.view.editable,
+                // The document being editable is permission; this block being
+                // active is intent. Both, or it renders as a picture.
+                editable: this.view.editable && this.active,
                 user: ctx?.user ?? { name: 'Anonymous', color: '#3b82f6' },
                 ...(ctx?.assetPath ? { assetPath: ctx.assetPath } : {}),
-                ...(this.view.editable ? { onRemove: () => this.remove() } : {}),
+                ...(this.view.editable && this.active ? { onRemove: () => this.remove() } : {}),
             }),
         );
     }
@@ -261,6 +308,8 @@ class DiagramMacroView implements NodeView {
         // its own update cycle. Unmounting inline logs a warning and can leave
         // the canvas' listeners attached.
         this.dead = true;
+        document.removeEventListener('mousedown', this.onDocumentPointerDown, true);
+        document.removeEventListener('keydown', this.onDocumentKeyDown, true);
         const root = this.root;
         queueMicrotask(() => root.unmount());
     }

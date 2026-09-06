@@ -120,6 +120,16 @@ async function run(fn: () => void): Promise<void> {
 
 const diagramHost = (e: Editor) => e.view.dom.querySelector('[data-macro="diagram"]');
 
+/**
+ * Engage with the block, the way a person does.
+ *
+ * A diagram in a document is a picture until someone clicks it: without this,
+ * every diagram on a page would mount a full Excalidraw editor, toolbar and
+ * all, into the reader's document.
+ */
+const activate = (e: Editor) =>
+    diagramHost(e)?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+
 describe('the diagram macro payload', () => {
     it('mints ids it can read back', () => {
         const id = newDiagramId();
@@ -246,6 +256,7 @@ describe('read-only', () => {
         // which is exactly the bug "hide the toolbar" would have shipped.
         const e = mount();
         await run(() => { e.commands.insertDiagram(ID); });
+        await run(() => { activate(e); });
         const canvas = () => diagramHost(e)?.querySelector('[data-testid="stub-excalidraw"]');
         expect(canvas()?.getAttribute('data-editable')).toBe('true');
         expect(diagramHost(e)?.querySelector('[data-testid$="-remove"]')).not.toBeNull();
@@ -268,9 +279,56 @@ describe('read-only', () => {
 });
 
 describe('removing a diagram', () => {
+    it('is a picture until someone engages with it', async () => {
+        const e = mount();
+        await run(() => { e.commands.insertDiagram(ID); });
+        const canvas = () => diagramHost(e)?.querySelector('[data-testid="stub-excalidraw"]');
+        // Inserted into an editable document, and still not an editor: no
+        // toolbar, no palette, nothing of Excalidraw's chrome in the page.
+        expect(canvas()?.getAttribute('data-editable')).toBe('false');
+        expect(diagramHost(e)?.getAttribute('data-diagram-active')).toBe('false');
+        expect(diagramHost(e)?.querySelector('[data-testid$="-remove"]')).toBeNull();
+
+        await run(() => { activate(e); });
+        expect(canvas()?.getAttribute('data-editable')).toBe('true');
+    });
+
+    it('puts the diagram down when the reader clicks away', async () => {
+        const e = mount();
+        await run(() => { e.commands.insertDiagram(ID); });
+        await run(() => { activate(e); });
+        expect(diagramHost(e)?.getAttribute('data-diagram-active')).toBe('true');
+
+        await run(() => {
+            document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        });
+        expect(diagramHost(e)?.getAttribute('data-diagram-active')).toBe('false');
+    });
+
+    it('puts it down on Escape too', async () => {
+        const e = mount();
+        await run(() => { e.commands.insertDiagram(ID); });
+        await run(() => { activate(e); });
+        await run(() => {
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        });
+        expect(diagramHost(e)?.getAttribute('data-diagram-active')).toBe('false');
+    });
+
+    it('never becomes editable inside a locked document', async () => {
+        const e = mount();
+        await run(() => { e.commands.insertDiagram(ID); });
+        await run(() => { e.setEditable(false); });
+        await run(() => { activate(e); });
+        expect(
+            diagramHost(e)?.querySelector('[data-testid="stub-excalidraw"]')?.getAttribute('data-editable'),
+        ).toBe('false');
+    });
+
     it('takes the block out of the document', async () => {
         const e = mount();
         await run(() => { e.commands.insertDiagram(ID); });
+        await run(() => { activate(e); });
         const remove = diagramHost(e)?.querySelector<HTMLButtonElement>('[data-testid$="-remove"]');
         expect(remove).not.toBeNull();
 
