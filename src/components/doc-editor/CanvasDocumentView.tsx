@@ -28,6 +28,7 @@ import type { XmlFragment } from 'yjs';
 import type * as Y from 'yjs';
 import { cn } from '../../lib/cn';
 import TiptapEditor from './TiptapEditor';
+import { DocumentRuler } from './DocumentRuler';
 import DocumentToolbar from './DocumentToolbar';
 import DocumentGutter, { type GutterItem } from './DocumentGutter';
 import Banner from '../shared/Banner';
@@ -144,6 +145,11 @@ export interface CanvasDocumentViewProps {
    */
   gutterVisible?: boolean;
   /**
+   * Show the ruler above the sheet. Default true — a page-shaped editor
+   * without one leaves its margins visible but unmeasurable.
+   */
+  showRuler?: boolean;
+  /**
    * Flips `gutterVisible`. Its absence means no toggle is offered at all,
    * which is the right default for a read-only embed with no place to store
    * the answer.
@@ -179,6 +185,7 @@ export default function CanvasDocumentView({
   gutterLead,
   onFocusGutterItem,
   gutterVisible = true,
+  showRuler = true,
   onToggleGutter,
   onEditorReady,
   'data-testid': testId = 'canvas-document',
@@ -293,6 +300,20 @@ export default function CanvasDocumentView({
               the page recentres across the full workspace instead of sitting
               left of centre to leave margin space for threads that are not
               being rendered. */}
+          {/* The ruler sits between the toolbar and the sheet, aligned to the
+              sheet, because that is the only position where it measures
+              anything. It is the one place the page's geometry is nameable:
+              without it the margins are visible but not measurable, and you
+              cannot find the same measure twice. */}
+          {showRuler && (
+            <DocumentRuler
+              className="pt-3"
+              // Shifted by half the gutter column so the ruler stays centred
+              // over the SHEET rather than over the row, which is wider than
+              // the sheet whenever a thread is open beside it.
+              style={showGutter ? { paddingRight: 280 + 24 } : undefined}
+            />
+          )}
           <div
             data-testid={`${testId}-page-row`}
             data-gutter={showGutter ? 'visible' : 'hidden'}

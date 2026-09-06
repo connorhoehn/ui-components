@@ -1,4 +1,5 @@
 import { Awareness } from 'y-protocols/awareness';
+import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { DragEvent as DragEvent_2 } from 'react';
 import { Editor } from '@tiptap/react';
@@ -60,7 +61,7 @@ declare interface AttachmentsPanelProps {
     editable: boolean;
 }
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, onToggleGutter, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, onToggleGutter, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -163,6 +164,11 @@ export declare interface CanvasDocumentViewProps {
      * host can own it.
      */
     gutterVisible?: boolean;
+    /**
+     * Show the ruler above the sheet. Default true — a page-shaped editor
+     * without one leaves its margins visible but unmeasurable.
+     */
+    showRuler?: boolean;
     /**
      * Flips `gutterVisible`. Its absence means no toggle is offered at all,
      * which is the right default for a read-only embed with no place to store
@@ -525,6 +531,26 @@ declare interface DocumentMeta {
     activeCallSessionId?: string;
 }
 
+export declare function DocumentRuler({ pageWidth, marginLeft, marginRight, zoom, className, style, 'data-testid': testId, }: DocumentRulerProps): JSX.Element;
+
+export declare interface DocumentRulerProps {
+    /** Page width in CSS px. Default 816 — US Letter at 96dpi. */
+    pageWidth?: number;
+    /** Left margin in CSS px. Default 96 — one inch. */
+    marginLeft?: number;
+    /** Right margin in CSS px. Default 96 — one inch. */
+    marginRight?: number;
+    /**
+     * Scale the page is displayed at, so the ruler tracks a zoomed page. 1 is
+     * 100%; the ruler multiplies every measure by it rather than being told a
+     * second set of numbers that could disagree with the first.
+     */
+    zoom?: number;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
 /**
  * Which authoring surface a new document opens in.
  *
@@ -824,6 +850,9 @@ export declare type ProposalCardStatus = 'none' | 'drafting' | 'ready' | 'applie
 export declare type ProposalConfidence = 'high' | 'medium' | 'low';
 
 export declare type ProposalKind = 'field' | 'prose';
+
+/** CSS pixels per inch at the canvas's 96dpi page scale. */
+export declare const PX_PER_INCH = 96;
 
 export declare function ReaderMode({ sections, participants, meta, commentCounts, sectionContentTexts, comments, getSectionFragment, ydoc, provider, }: ReaderModeProps): JSX.Element;
 

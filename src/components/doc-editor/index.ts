@@ -92,3 +92,6 @@ export type { VideoDockSlotProps } from './VideoDockSlot';
 // piece a margin card actually wants.
 export { default as CommentThreadNode } from './CommentThread';
 export type { CommentThreadNodeProps } from './CommentThread';
+
+export { DocumentRuler, PX_PER_INCH } from './DocumentRuler';
+export type { DocumentRulerProps } from './DocumentRuler';

@@ -190,6 +190,11 @@ declare interface CanvasDocumentViewProps {
      */
     gutterVisible?: boolean;
     /**
+     * Show the ruler above the sheet. Default true — a page-shaped editor
+     * without one leaves its margins visible but unmeasurable.
+     */
+    showRuler?: boolean;
+    /**
      * Flips `gutterVisible`. Its absence means no toggle is offered at all,
      * which is the right default for a read-only embed with no place to store
      * the answer.
