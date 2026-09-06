@@ -63,7 +63,11 @@ export interface StreamStageProps {
   title?: string;
   /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
   viewerCount?: number;
-  /** True while the stream is live — drives the LIVE badge. */
+  /**
+   * The caller's claim that this should be live. It is ANDed with what the
+   * player actually managed to do, so on the HLS path a claim alone will not
+   * light the badge — a composed playlist URL is not a broadcast.
+   */
   live?: boolean;
   /**
    * Chat to rotate over the video. Empty or omitted renders no ticker at all,
@@ -107,10 +111,21 @@ export function StreamStage({
     onError: onPlaybackError,
   });
 
+  // `live` is the CALLER'S CLAIM, not evidence. On the HLS path the caller
+  // typically knows only that it managed to compose a playlist URL — which is
+  // string concatenation, not a broadcast — so a channel that was provisioned
+  // once and has been idle ever since produced a black rectangle wearing a LIVE
+  // badge. Nothing about that display was true.
+  //
+  // The player is the only thing here that knows. So the claim is ANDed with
+  // it: still attaching, or failed, means not live. The realtime path is
+  // unaffected — its `stream` either has tracks or the caller does not pass it.
+  const playing = stream ? live : live && !hls.loading && !hls.error;
+
   return (
     <div
       data-testid={testId}
-      data-live={String(live)}
+      data-live={String(playing)}
       data-transport={stream ? 'realtime' : playlistUrl ? 'hls' : 'none'}
       // Always black, in both themes: letterbox bars around a video are black
       // everywhere video is watched, and a white stage in light mode makes the
@@ -138,6 +153,18 @@ export function StreamStage({
         </div>
       )}
 
+      {/* Connecting is its own state. Without it the stage is black from the
+          moment it mounts, so "about to play" and "there is nothing here" look
+          exactly the same for as long as the manifest takes. */}
+      {playlistUrl && !stream && hls.loading && !hls.error && (
+        <div
+          data-testid={`${testId}-connecting`}
+          className="absolute inset-0 flex items-center justify-center text-sm text-white/60"
+        >
+          Connecting…
+        </div>
+      )}
+
       {/* An unplayable stream says so. Before this the stage sat black and
           indistinguishable from a broadcast that had not started. */}
       {hls.error && (
@@ -150,9 +177,9 @@ export function StreamStage({
       )}
 
       {/* Top-left: identity. */}
-      {(title || live || viewerCount !== undefined) && (
+      {(title || playing || viewerCount !== undefined) && (
         <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2">
-          {live && (
+          {playing && (
             <span
               data-testid={`${testId}-live`}
               className="rounded bg-danger px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white"

@@ -70,6 +70,14 @@ export interface WrappedStreamStageProps
    * chrome. The stage renders playback errors itself; this is for the host's
    * larger surface (a banner, a retry).
    */
+  /**
+   * Transport-level status. `live` means different things per mode and neither
+   * is a promise that pixels are moving: realtime reports the subscriber's
+   * phase, near-realtime reports only that a playlist URL could be composed —
+   * the wrapper does not own the player, so it cannot know more than that. The
+   * LIVE badge is gated separately, inside StreamStage, on what playback
+   * actually did.
+   */
   onStatusChange?: (status: { mode: StreamMode; live: boolean; error: string | null }) => void;
 }
 

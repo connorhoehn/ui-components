@@ -701,10 +701,10 @@ function N({ stream: t = null, playlistUrl: n = null, onPlaybackError: r, title:
 	let y = a(null), b = A(y, t ? null : n, {
 		live: !0,
 		onError: r
-	});
+	}), S = t ? l : l && !b.loading && !b.error;
 	return /* @__PURE__ */ c("div", {
 		"data-testid": v,
-		"data-live": String(l),
+		"data-live": String(S),
 		"data-transport": t ? "realtime" : n ? "hls" : "none",
 		className: e("relative h-full w-full overflow-hidden rounded-lg bg-black", _),
 		children: [
@@ -724,15 +724,20 @@ function N({ stream: t = null, playlistUrl: n = null, onPlaybackError: r, title:
 				className: "flex h-full w-full items-center justify-center text-sm text-white/60",
 				children: g ?? "Waiting for the stream to start…"
 			}),
+			n && !t && b.loading && !b.error && /* @__PURE__ */ s("div", {
+				"data-testid": `${v}-connecting`,
+				className: "absolute inset-0 flex items-center justify-center text-sm text-white/60",
+				children: "Connecting…"
+			}),
 			b.error && /* @__PURE__ */ s("div", {
 				"data-testid": `${v}-error`,
 				className: "absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/80",
 				children: b.error
 			}),
-			(i || l || o !== void 0) && /* @__PURE__ */ c("div", {
+			(i || S || o !== void 0) && /* @__PURE__ */ c("div", {
 				className: "pointer-events-none absolute left-3 top-3 flex items-center gap-2",
 				children: [
-					l && /* @__PURE__ */ s("span", {
+					S && /* @__PURE__ */ s("span", {
 						"data-testid": `${v}-live`,
 						className: "rounded bg-danger px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white",
 						children: "Live"

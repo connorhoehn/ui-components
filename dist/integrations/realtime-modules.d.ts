@@ -1396,7 +1396,11 @@ declare interface StreamStageProps {
     title?: string;
     /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
     viewerCount?: number;
-    /** True while the stream is live — drives the LIVE badge. */
+    /**
+     * The caller's claim that this should be live. It is ANDed with what the
+     * player actually managed to do, so on the HLS path a claim alone will not
+     * light the badge — a composed playlist URL is not a broadcast.
+     */
     live?: boolean;
     /**
      * Chat to rotate over the video. Empty or omitted renders no ticker at all,
@@ -1850,6 +1854,14 @@ export declare interface WrappedStreamStageProps extends Omit<StreamStageProps, 
      * Reports transport state so a host can render its own connecting/failed
      * chrome. The stage renders playback errors itself; this is for the host's
      * larger surface (a banner, a retry).
+     */
+    /**
+     * Transport-level status. `live` means different things per mode and neither
+     * is a promise that pixels are moving: realtime reports the subscriber's
+     * phase, near-realtime reports only that a playlist URL could be composed —
+     * the wrapper does not own the player, so it cannot know more than that. The
+     * LIVE badge is gated separately, inside StreamStage, on what playback
+     * actually did.
      */
     onStatusChange?: (status: {
         mode: StreamMode;

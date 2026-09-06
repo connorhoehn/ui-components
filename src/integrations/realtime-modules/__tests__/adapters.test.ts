@@ -443,9 +443,14 @@ describe('activity ids are stable', () => {
 });
 
 describe('presence roster is people, not connections', () => {
-  const tab = (clientId: string, over: Record<string, unknown> = {}) => ({
+  const tab = (clientId: string, over: Record<string, unknown> = {}): RMPresenceEntry => ({
     clientId,
     status: 'online' as const,
+    channels: ['general'],
+    nodeId: 'node-1',
+    timestamp: TS,
+    lastSeen: TS,
+    lastHeartbeat: 0,
     metadata: { displayName: 'Alice', userId: 'user-alice', ...over },
   });
 
@@ -473,7 +478,7 @@ describe('presence roster is people, not connections', () => {
   // Anonymous presence has no userId; the connection is the best identity
   // available and must still produce one row per connection.
   it('falls back to the connection when there is no user', () => {
-    const anon = { clientId: 'conn-x', status: 'online' as const, metadata: { displayName: 'Guest' } };
+    const anon: RMPresenceEntry = { ...tab('conn-x'), metadata: { displayName: 'Guest' } };
     const roster = adaptPresenceRoster([anon, { ...anon, clientId: 'conn-y' }]);
     expect(roster).toHaveLength(2);
     expect(roster[0].id).toBe('conn-x');

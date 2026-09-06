@@ -9679,7 +9679,11 @@ export declare interface StreamStageProps {
     title?: string;
     /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
     viewerCount?: number;
-    /** True while the stream is live — drives the LIVE badge. */
+    /**
+     * The caller's claim that this should be live. It is ANDed with what the
+     * player actually managed to do, so on the HLS path a claim alone will not
+     * light the badge — a composed playlist URL is not a broadcast.
+     */
     live?: boolean;
     /**
      * Chat to rotate over the video. Empty or omitted renders no ticker at all,

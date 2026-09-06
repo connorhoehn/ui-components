@@ -79,13 +79,21 @@ describe('WrappedStreamStage — transport selection', () => {
     expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-transport', 'none');
   });
 
-  it('marks LIVE from the transport that is actually carrying the stream', () => {
+  // This used to assert that a composed playlist URL made the stage LIVE. It
+  // does not, and asserting it kept the bug in place: `ready` means only that
+  // a URL could be built out of a channelArn and a base URL, so an idle
+  // channel that was provisioned once rendered a black rectangle wearing a
+  // LIVE badge. The badge now waits for the player — see StreamStage.
+  it('does not call itself live on a composed URL alone', () => {
     mockHooks({ playlistUrl: 'u', ready: true });
-    const { rerender } = render(<WrappedStreamStage channelArn={ARN} />);
-    expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-live', 'true');
+    render(<WrappedStreamStage channelArn={ARN} />);
+    expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-transport', 'hls');
+    expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-live', 'false');
+  });
 
+  it('is not live while the realtime subscriber is still connecting', () => {
     mockHooks({ stream: null, phase: 'connecting' });
-    rerender(<WrappedStreamStage channelArn={ARN} mode="realtime" />);
+    render(<WrappedStreamStage channelArn={ARN} mode="realtime" />);
     expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-live', 'false');
   });
 
