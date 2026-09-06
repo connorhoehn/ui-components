@@ -161,34 +161,52 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
   const selected = types.find(t => t.id === selectedId);
 
   /**
-   * A diagram needs no document type — see the type picker below. So the submit
-   * guard cannot require one, or the button stays dead forever on a shape that
-   * never shows the control that would satisfy it.
+   * Which shapes a document type is REQUIRED for.
+   *
+   * Only `sections`: a type is what defines the sections a document starts
+   * with, so that shape cannot be made without one. A diagram is a whiteboard
+   * and has no type at all; a page is one continuous document, and a type only
+   * decorates it — supplying the icon and the chip the document list shows.
+   *
+   * This used to be `shape !== 'diagram'`, and the modal refused to open at all
+   * with zero types — a whole "Create New Document" dialog whose only control
+   * was Close, telling you to go define a type somewhere else first. Meanwhile
+   * the conversation surface has always created untyped documents happily, so
+   * the requirement was not even true of the product.
    */
-  const needsType = shape !== 'diagram';
+  const needsType = shape === 'sections';
+  const noTypesYet = types.length === 0 && !probing;
 
   const handleSubmit = () => {
     const trimmed = title.trim();
     if (!trimmed) return;
     if (needsType && !selected) return;
+    // A type decorates the row when there is one. Without it the chip still
+    // has to say something TRUE — a page with no type is a document, and the
+    // old code called it a "Diagram" because the only untyped shape used to be
+    // a whiteboard.
+    const typed = shape !== 'diagram' ? selected : undefined;
     onCreate({
       title: trimmed,
       // A stable label rather than a real type id: the document list renders
-      // this as the row's chip, and "Diagram" is the true answer to "what is
-      // this". Nothing downstream looks it up in the types table.
-      type: selected && needsType ? selected.name : 'Diagram',
+      // this as the row's chip. Nothing downstream looks it up in the types
+      // table.
+      type: shape === 'diagram' ? 'Diagram' : (typed ? typed.name : 'Document'),
       description: description.trim() || undefined,
-      ...(selected && needsType ? { icon: selected.icon, documentTypeId: selected.id } : { icon: '🖉' }),
+      icon: shape === 'diagram' ? '🖉' : (typed ? typed.icon : '📄'),
+      ...(typed ? { documentTypeId: typed.id } : {}),
       shape,
     });
     onClose();
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey && title.trim() && selected) handleSubmit();
-  };
+  // `selected` unconditionally would keep the button dead on exactly the
+  // shapes that never needed a type.
+  const canSubmit = !!title.trim() && (!needsType || !!selected);
 
-  const canSubmit = !!title.trim() && !!selected;
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey && canSubmit) handleSubmit();
+  };
 
   return (
     <Modal
@@ -224,23 +242,6 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
           {types.length === 0 && probing ? (
             <div className={cn('text-center px-4 py-8 border border-dashed border-border-field rounded-lg mb-5 text-text-tertiary')}>
               <div className={cn('text-[13px]')}>Loading document types…</div>
-            </div>
-          ) : types.length === 0 ? (
-            <div className={cn('text-center px-4 py-8 border border-dashed border-border-field rounded-lg mb-5 text-neutral')}>
-              <div className={cn('text-[40px] mb-3')}>📋</div>
-              <div className={cn('text-[15px] font-semibold mb-2 text-text-primary')}>
-                No document types defined yet
-              </div>
-              <div className={cn('text-[13px] text-text-tertiary max-w-xs mx-auto mb-4')}>
-                Document types define the sections and structure of your documents.
-                Create one first in <strong>☰ → Document Types</strong>.
-              </div>
-              <button
-                onClick={onClose}
-                className={cn('px-5 py-2 text-[13px] font-semibold bg-primary text-white border-none rounded-[7px] cursor-pointer font-[inherit]')}
-              >
-                Close
-              </button>
             </div>
           ) : (
             <>
@@ -298,12 +299,31 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                   create until one is picked. */}
               {shape !== 'diagram' && (
               <div className={cn('mb-5')}>
-                <div
-                  id={typeGroupLabelId}
-                  className={cn('block text-[13px] font-semibold text-text-secondary mb-2')}
-                >
-                  Document Type
+                <div className={cn('mb-2 flex items-baseline gap-1.5')}>
+                  <span
+                    id={typeGroupLabelId}
+                    className={cn('block text-[13px] font-semibold text-text-secondary')}
+                  >
+                    Document Type
+                  </span>
+                  {!needsType && (
+                    <span className={cn('text-[13px] font-normal text-text-tertiary')}>optional</span>
+                  )}
                 </div>
+
+                {/* Scoped to the control it is about. This used to replace the
+                    ENTIRE dialog, so a prerequisite for ONE shape locked out
+                    the other two — and the only button was Close. */}
+                {noTypesYet && (
+                  <div
+                    data-testid="no-document-types"
+                    className={cn('px-3.5 py-3 border border-dashed border-border-field rounded-lg text-[13px] text-text-tertiary')}
+                  >
+                    {needsType
+                      ? 'Sections come from a document type, and none are defined yet. Define one in ☰ → Document Types, or make a page instead — it needs no type.'
+                      : 'No document types yet. A page does not need one; define types in ☰ → Document Types when you want a reusable icon and structure.'}
+                  </div>
+                )}
                 <div
                   role="group"
                   aria-labelledby={typeGroupLabelId}
@@ -403,8 +423,11 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
           )}
         </div>
 
-        {/* Footer */}
-        {types.length > 0 && (
+        {/* Footer. Shown once the probe settles — the actions belong to the
+            form, not to whether any document types happen to exist. Hiding
+            them on zero types is what left the dialog with nothing but a
+            Close button. */}
+        {!(types.length === 0 && probing) && (
           <div className={cn('flex justify-end gap-2 px-6 py-4 border-t border-border bg-surface shrink-0')}>
             <button
               data-testid="new-doc-cancel"

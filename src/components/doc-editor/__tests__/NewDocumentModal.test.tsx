@@ -51,19 +51,57 @@ describe('NewDocumentModal', () => {
     expect(loadTypes).not.toHaveBeenCalled();
   });
 
-  it('open + zero types: shows empty-state fallback; Close fires onClose; no footer Cancel/Create', async () => {
+  // WAS: "zero types shows an empty-state fallback whose only control is
+  // Close." That behaviour was the bug. A document type defines the SECTIONS a
+  // document starts with, so only the `sections` shape needs one — a page is
+  // one continuous document and a diagram is a whiteboard. Blocking the whole
+  // dialog made a prerequisite for one shape lock out the other two, and left
+  // "Create New Document" with nothing to do but close. The conversation
+  // surface has always created untyped documents, so it was not even true.
+  it('open + zero types: still lets you create a page', async () => {
     loadTypes.mockReturnValue([]);
     serverTypes = [];
-    const onClose = vi.fn();
-    render(<NewDocumentModal open onClose={onClose} onCreate={vi.fn()} />);
-    // Only AFTER the server confirms there are none. While the probe is in
-    // flight the modal says "Loading document types…" — see the next test.
+    const onCreate = vi.fn();
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
     await act(async () => { await Promise.resolve(); });
-    expect(screen.getByText(/No document types defined yet/)).toBeInTheDocument();
-    expect(screen.queryByTestId('new-doc-submit')).toBeNull();
-    expect(screen.queryByTestId('new-doc-cancel')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
-    expect(onClose).toHaveBeenCalledTimes(1);
+
+    // The form is there, not a dead end.
+    expect(screen.getByTestId('new-doc-submit')).toBeInTheDocument();
+    expect(screen.getByTestId('new-doc-cancel')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notes' } });
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+
+    // And it is a document, not a "Diagram" — the old payload called every
+    // untyped document that, because a whiteboard used to be the only one.
+    expect(onCreate).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Notes', shape: 'page', type: 'Document', icon: '\u{1F4C4}',
+    }));
+    expect(onCreate.mock.calls[0][0]).not.toHaveProperty('documentTypeId');
+  });
+
+  it('open + zero types: says where types come from without blocking', async () => {
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    await act(async () => { await Promise.resolve(); });
+    expect(screen.getByTestId('no-document-types')).toHaveTextContent(/Document Types/);
+  });
+
+  // Sections ARE defined by a type, so that one shape genuinely cannot be
+  // created without one — and the copy points at the way out.
+  it('open + zero types: blocks only the shape that truly needs a type', async () => {
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    const onCreate = vi.fn();
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+    await act(async () => { await Promise.resolve(); });
+
+    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notes' } });
+    fireEvent.click(screen.getByTestId('doc-shape-sections'));
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+    expect(onCreate).not.toHaveBeenCalled();
+    expect(screen.getByTestId('no-document-types')).toHaveTextContent(/page instead/);
   });
 
   // THE BUG THIS PINS. The modal used to read localStorage and nothing else, so
@@ -368,14 +406,30 @@ describe('NewDocumentModal — a diagram needs no document type', () => {
     expect(meta.documentTypeId).toBeUndefined();
   });
 
-  it('still requires a type for Page and Sections', async () => {
-    // The relaxation must not leak to the shapes that DO have structure.
+  // WAS: "still requires a type for Page and Sections". Only SECTIONS is
+  // defined by a type — it is literally the list of sections a document starts
+  // with. A page is one continuous document and a type merely decorates it
+  // (icon + the chip the list shows), which is why the conversation surface
+  // has always created untyped pages.
+  it('requires a type for Sections only', async () => {
     const onCreate = vi.fn();
     loadTypes.mockReturnValue([]);          // no types available
     serverTypes = [];
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
     await act(async () => { await Promise.resolve(); });
-    // With zero types there is nothing to select, so Page cannot submit.
-    expect(screen.queryByTestId('new-doc-submit')).toBeNull();
+
+    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notes' } });
+
+    // Sections: refused, because there is no type to build them from.
+    fireEvent.click(screen.getByTestId('doc-shape-sections'));
+    expect(screen.getByTestId('new-doc-submit')).toBeDisabled();
+
+    // Page: allowed.
+    fireEvent.click(screen.getByTestId('doc-shape-page'));
+    expect(screen.getByTestId('new-doc-submit')).not.toBeDisabled();
+
+    // Diagram: allowed, as before.
+    fireEvent.click(screen.getByTestId('doc-shape-diagram'));
+    expect(screen.getByTestId('new-doc-submit')).not.toBeDisabled();
   });
 });
