@@ -97,6 +97,43 @@ describe('useApiCall', () => {
     expect(result.current.error).toBeNull();
   });
 
+  // Ported from the app's copy of this suite when that fork was deleted.
+  // The retry case above happens to leave error null, but nothing here
+  // pinned the plain execute path: a second, successful execute must clear
+  // the error left by the first.
+  it('a second successful execute clears the previous error', async () => {
+    const fn = vi.fn()
+      .mockRejectedValueOnce(new Error('first error'))
+      .mockResolvedValueOnce('ok');
+    const { result } = renderHook(() => useApiCall(fn));
+
+    await act(async () => {
+      await result.current.execute();
+    });
+    expect(result.current.error).toBe('first error');
+
+    await act(async () => {
+      await result.current.execute();
+    });
+    expect(result.current.error).toBeNull();
+  });
+
+  it('reset clears an error left by a failed execute', async () => {
+    const fn = vi.fn().mockRejectedValue(new Error('oops'));
+    const { result } = renderHook(() => useApiCall(fn));
+
+    await act(async () => {
+      await result.current.execute();
+    });
+    expect(result.current.error).toBe('oops');
+
+    act(() => {
+      result.current.reset();
+    });
+
+    expect(result.current.error).toBeNull();
+  });
+
   it('reset clears all state', async () => {
     const fn = vi.fn().mockResolvedValue({ id: 1 });
     const { result } = renderHook(() => useApiCall(fn));

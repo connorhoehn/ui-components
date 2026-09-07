@@ -57,4 +57,48 @@ describe('useClickOutside', () => {
     expect(handler).not.toHaveBeenCalled();
     document.body.removeChild(div);
   });
+  // ---------------------------------------------------------------------
+  // Ported from the app's copy of this suite when that fork was deleted.
+  // `enabled` toggling and listener teardown had no coverage here.
+  // ---------------------------------------------------------------------
+
+  it('re-attaches the listener when enabled flips from false to true', () => {
+    const handler = vi.fn();
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+
+    const { rerender } = renderHook(
+      ({ enabled }: { enabled: boolean }) => {
+        const ref = useRef<HTMLDivElement>(div);
+        useClickOutside(ref, handler, enabled);
+      },
+      { initialProps: { enabled: false } },
+    );
+
+    document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    expect(handler).not.toHaveBeenCalled();
+
+    rerender({ enabled: true });
+    document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    expect(handler).toHaveBeenCalledTimes(1);
+
+    document.body.removeChild(div);
+  });
+
+  it('removes the listener on unmount', () => {
+    const handler = vi.fn();
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+
+    const { unmount } = renderHook(() => {
+      const ref = useRef<HTMLDivElement>(div);
+      useClickOutside(ref, handler);
+    });
+
+    unmount();
+    document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+
+    expect(handler).not.toHaveBeenCalled();
+    document.body.removeChild(div);
+  });
 });

@@ -52,6 +52,22 @@ describe('usePrefersReducedMotion', () => {
     expect(result.current).toBe(true);
   });
 
+  // Ported from the app's copy of this test (frontend/src/hooks/__tests__)
+  // when that fork was deleted: the app covered the FALLING edge and the
+  // post-unmount case, which this suite did not.
+  it('updates back to false when the query fires with matches=false', () => {
+    const { mq, listeners } = mockMatchMedia(true);
+    const { result } = renderHook(() => usePrefersReducedMotion());
+    expect(result.current).toBe(true);
+
+    act(() => {
+      mq.matches = false;
+      listeners.forEach(fn => fn({ matches: false }));
+    });
+
+    expect(result.current).toBe(false);
+  });
+
   it('removes event listener on unmount', () => {
     const { mq } = mockMatchMedia(false);
     const removeSpy = vi.fn();
@@ -59,5 +75,18 @@ describe('usePrefersReducedMotion', () => {
     const { unmount } = renderHook(() => usePrefersReducedMotion());
     unmount();
     expect(removeSpy).toHaveBeenCalled();
+  });
+
+  it('does not update state after unmount', () => {
+    const { mq, listeners } = mockMatchMedia(false);
+    const { result, unmount } = renderHook(() => usePrefersReducedMotion());
+    unmount();
+
+    act(() => {
+      mq.matches = true;
+      listeners.forEach(fn => fn({ matches: true }));
+    });
+
+    expect(result.current).toBe(false);
   });
 });

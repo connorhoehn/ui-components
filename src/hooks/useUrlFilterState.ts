@@ -45,7 +45,7 @@ export function useUrlFilterState<T extends Record<string, string | undefined>>(
 
   const setFilter = useCallback(
     <K extends keyof T>(key: K, value: T[K]) => {
-      setSearchParams((prev: any) => {
+      setSearchParams((prev: URLSearchParams) => {
         const next = new URLSearchParams(prev);
         if (value === undefined || value === defaults[key]) {
           next.delete(String(key));
