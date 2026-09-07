@@ -209,10 +209,15 @@ describe('the shape gate itself', () => {
     expect(downloaded[0]!.text).toContain('Page text.');
   });
 
-  // Proof that the assertions above discriminate rather than passing by luck:
-  // `isCanvas: false` on a converted document is EXACTLY what
-  // `sections.length === 0` used to compute, and it reproduces the bug.
-  it('reproduces the old inference when the gate is wrong', () => {
+  // The export util now gates independently on `meta.schemaVersion`, so a
+  // caller passing the WRONG `isCanvas` can no longer ship pre-conversion
+  // content — it ships the title and nothing else. Loud enough to notice; the
+  // old failure was a plausible-looking file.
+  //
+  // The old-gate reproduction this used to provide now lives in
+  // src/utils/__tests__/documentExport.shapes.test.ts, against the raw gate
+  // rather than through the hook.
+  it('refuses to ship frozen sections even when the caller gets isCanvas wrong', () => {
     const ydoc = convertedDoc({
       body: '<paragraph>Written after converting.</paragraph>',
       frozenSections: FROZEN,
@@ -220,7 +225,7 @@ describe('the shape gate itself', () => {
     const { result } = mountActions(ydoc, false);
     result.current.handleExport('markdown');
 
-    expect(downloaded[0]!.text).toContain('Before the conversion');
+    expect(downloaded[0]!.text).not.toContain('Before the conversion');
     expect(downloaded[0]!.text).not.toContain('Written after converting.');
   });
 

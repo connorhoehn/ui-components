@@ -7,7 +7,8 @@
 
 import { render, screen } from '@testing-library/react';
 import { ChatPanel } from '../ChatPanel';
-import type { ChatMessage } from '../ChatPanel';
+// ChatMessage lives on the hook, not the panel — the panel consumes it.
+import type { ChatMessage } from '../../../hooks/useChat';
 
 const NOOP = () => {};
 

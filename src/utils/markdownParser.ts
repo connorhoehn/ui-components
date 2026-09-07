@@ -145,3 +145,167 @@ export function parseMarkdownToSections(markdown: string): ParsedDocument {
 
   return { meta, sections };
 }
+
+// ---------------------------------------------------------------------------
+// Canvas (page-shaped) parsing
+// ---------------------------------------------------------------------------
+//
+// `parseMarkdownToSections` produces the LEGACY shape. Writing its output into
+// a page-shaped document puts sections into `ydoc.getArray('sections')` — the
+// root that a canvas keeps frozen and never renders. The write succeeds, the
+// CRDT update goes out, and nothing appears on screen: "Load demo" (and every
+// AI-generated-document path built on it) looks like a dead button.
+//
+// A canvas has one continuous body, so markdown destined for it has to become
+// block XML, not sections.
+
+/** Escape text for embedding in the XML the fixture/Y.Xml parsers read. */
+function xmlEscape(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Convert markdown into the inner XML of a canvas body fragment.
+ *
+ * ## Node names are camelCase here, deliberately
+ *
+ * This is the WRITE side. ProseMirror's schema names the nodes `bulletList`,
+ * `taskList`, `codeBlock`, and a Y.XmlElement keeps whatever name it is
+ * constructed with — so the body has to be built with the camelCase spellings
+ * or the editor's binding will not recognise the nodes.
+ *
+ * The READ side is the opposite: `Y.XmlFragment.toString()` lowercases every
+ * name, so `canvasBodyToMarkdown` in `documentExport.ts` matches
+ * `<bulletlist>`. The asymmetry is real and both halves are load-bearing;
+ * making either side agree with the other breaks it.
+ */
+export function parseMarkdownToCanvasXml(markdown: string): string {
+  const text = markdown.replace(/\r\n/g, '\n');
+  const lines = text.split('\n');
+  const out: string[] = [];
+
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (line.trim() === '') {
+      i++;
+      continue;
+    }
+
+    // Fenced code block
+    if (/^```/.test(line.trim())) {
+      const body: string[] = [];
+      i++;
+      while (i < lines.length && !/^```/.test(lines[i].trim())) {
+        body.push(lines[i]);
+        i++;
+      }
+      i++; // consume the closing fence
+      out.push(`<codeBlock>${xmlEscape(body.join('\n'))}</codeBlock>`);
+      continue;
+    }
+
+    const heading = line.match(/^(#{1,6})\s+(.*)$/);
+    if (heading) {
+      out.push(
+        `<heading level="${heading[1].length}">${xmlEscape(heading[2].trim())}</heading>`,
+      );
+      i++;
+      continue;
+    }
+
+    if (/^(---|\*\*\*|___)\s*$/.test(line.trim())) {
+      out.push('<horizontalRule></horizontalRule>');
+      i++;
+      continue;
+    }
+
+    if (/^>\s?/.test(line)) {
+      const quoted: string[] = [];
+      while (i < lines.length && /^>\s?/.test(lines[i])) {
+        quoted.push(lines[i].replace(/^>\s?/, ''));
+        i++;
+      }
+      out.push(`<blockquote><paragraph>${xmlEscape(quoted.join(' ').trim())}</paragraph></blockquote>`);
+      continue;
+    }
+
+    // Task list — checked BEFORE the bullet list, since `- [ ] x` also matches
+    // the plain bullet pattern and would otherwise lose its checkbox.
+    if (TASK_LINE.test(line.trim())) {
+      const items: string[] = [];
+      while (i < lines.length && TASK_LINE.test(lines[i].trim())) {
+        const m = lines[i].trim().match(TASK_LINE)!;
+        const checked = m[1].toLowerCase() === 'x';
+        items.push(
+          `<taskItem checked="${checked}"><paragraph>${xmlEscape(m[2].trim())}</paragraph></taskItem>`,
+        );
+        i++;
+      }
+      out.push(`<taskList>${items.join('')}</taskList>`);
+      continue;
+    }
+
+    if (/^\s*[-*]\s+/.test(line)) {
+      const items: string[] = [];
+      while (
+        i < lines.length &&
+        /^\s*[-*]\s+/.test(lines[i]) &&
+        !TASK_LINE.test(lines[i].trim())
+      ) {
+        items.push(
+          `<listItem><paragraph>${xmlEscape(lines[i].replace(/^\s*[-*]\s+/, '').trim())}</paragraph></listItem>`,
+        );
+        i++;
+      }
+      out.push(`<bulletList>${items.join('')}</bulletList>`);
+      continue;
+    }
+
+    if (/^\s*\d+\.\s+/.test(line)) {
+      const items: string[] = [];
+      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+        items.push(
+          `<listItem><paragraph>${xmlEscape(lines[i].replace(/^\s*\d+\.\s+/, '').trim())}</paragraph></listItem>`,
+        );
+        i++;
+      }
+      out.push(`<orderedList>${items.join('')}</orderedList>`);
+      continue;
+    }
+
+    // Everything else is a paragraph, joined until the next blank line.
+    const para: string[] = [];
+    while (i < lines.length && lines[i].trim() !== '' && !isBlockStart(lines[i])) {
+      para.push(lines[i].trim());
+      i++;
+    }
+    if (para.length > 0) {
+      out.push(`<paragraph>${xmlEscape(para.join(' '))}</paragraph>`);
+    } else {
+      // Defensive: `isBlockStart` was true on the first line of the run, which
+      // every branch above should already have consumed. Advance rather than
+      // spin forever.
+      i++;
+    }
+  }
+
+  return out.join('');
+}
+
+/** Does this line open a block that is not a paragraph? */
+function isBlockStart(line: string): boolean {
+  return (
+    /^#{1,6}\s+/.test(line) ||
+    /^```/.test(line.trim()) ||
+    /^>\s?/.test(line) ||
+    /^\s*[-*]\s+/.test(line) ||
+    /^\s*\d+\.\s+/.test(line) ||
+    /^(---|\*\*\*|___)\s*$/.test(line.trim())
+  );
+}
