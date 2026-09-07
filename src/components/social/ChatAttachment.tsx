@@ -79,8 +79,14 @@ export interface AttachmentBubbleProps {
    * URL produced by an authenticated fetch). Falls back to `attachment.preview`
    * so the recipient sees the placeholder rather than a broken image while
    * the full-size fetch is in flight.
+   *
+   * `undefined` means "not resolved yet"; **`null` means it will not resolve**
+   * — the fetch failed, the row is gone, the viewer is not permitted. The two
+   * cannot be collapsed: with only `undefined` to work with, a picture that
+   * can never arrive says "Loading image…" for as long as the thread stays
+   * open, which is a promise the component has no way to keep.
    */
-  src?: string;
+  src?: string | null;
   /** Invoked when the viewer activates the attachment (open / download). */
   onOpen?: (attachment: ChatAttachment) => void;
   className?: string;
@@ -125,6 +131,16 @@ export function AttachmentBubble({ attachment, src, onOpen, className }: Attachm
                 !src && 'blur-[6px]',
               )}
             />
+          ) : src === null ? (
+            // Not a loading state. The name and size below still identify the
+            // file, and the row stays clickable — the picture is unavailable,
+            // the attachment is not.
+            <div
+              data-testid="attachment-bubble-unavailable"
+              className="flex h-24 w-40 items-center justify-center px-2 text-center text-xs text-[var(--color-text-tertiary)]"
+            >
+              Preview unavailable
+            </div>
           ) : (
             <div className="flex h-24 w-40 items-center justify-center text-xs text-[var(--color-text-tertiary)]">
               Loading image…

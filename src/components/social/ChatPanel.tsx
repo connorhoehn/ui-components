@@ -157,7 +157,7 @@ export interface ChatPanelProps {
    * object URL. Attachments with no resolved src fall back to their inline
    * preview.
    */
-  attachmentSrc?: (attachment: ChatAttachment) => string | undefined;
+  attachmentSrc?: (attachment: ChatAttachment) => string | null | undefined;
   /** Invoked when the viewer opens/downloads an attachment. */
   onOpenAttachment?: (attachment: ChatAttachment) => void;
   /** MIME/extension filter for drops and the picker. Defaults to everything. */

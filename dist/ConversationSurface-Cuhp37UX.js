@@ -471,6 +471,10 @@ function ie({ attachment: t, src: n, onOpen: r, className: i }) {
 				height: t.height,
 				"data-testid": "attachment-bubble-image",
 				className: e("block h-auto max-h-[320px] w-auto max-w-full object-contain", !n && "blur-[6px]")
+			}) : n === null ? /* @__PURE__ */ v("div", {
+				"data-testid": "attachment-bubble-unavailable",
+				className: "flex h-24 w-40 items-center justify-center px-2 text-center text-xs text-[var(--color-text-tertiary)]",
+				children: "Preview unavailable"
 			}) : /* @__PURE__ */ v("div", {
 				className: "flex h-24 w-40 items-center justify-center text-xs text-[var(--color-text-tertiary)]",
 				children: "Loading image…"

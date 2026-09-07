@@ -55,7 +55,7 @@ export interface WrappedChatPanelProps {
    * route is bearer-authenticated, so an `<img>` pointed at the raw URL 401s;
    * the host supplies an object URL (see useAttachmentSrc).
    */
-  attachmentSrc?: (attachment: ChatAttachment) => string | undefined;
+  attachmentSrc?: (attachment: ChatAttachment) => string | null | undefined;
   onOpenAttachment?: (attachment: ChatAttachment) => void;
   acceptFiles?: string;
   maxFileSize?: number;

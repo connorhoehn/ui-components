@@ -734,8 +734,14 @@ export declare interface AttachmentBubbleProps {
      * URL produced by an authenticated fetch). Falls back to `attachment.preview`
      * so the recipient sees the placeholder rather than a broken image while
      * the full-size fetch is in flight.
+     *
+     * `undefined` means "not resolved yet"; **`null` means it will not resolve**
+     * — the fetch failed, the row is gone, the viewer is not permitted. The two
+     * cannot be collapsed: with only `undefined` to work with, a picture that
+     * can never arrive says "Loading image…" for as long as the thread stays
+     * open, which is a promise the component has no way to keep.
      */
-    src?: string;
+    src?: string | null;
     /** Invoked when the viewer activates the attachment (open / download). */
     onOpen?: (attachment: ChatAttachment) => void;
     className?: string;
@@ -2310,7 +2316,7 @@ export declare interface ChatPanelProps {
      * object URL. Attachments with no resolved src fall back to their inline
      * preview.
      */
-    attachmentSrc?: (attachment: ChatAttachment) => string | undefined;
+    attachmentSrc?: (attachment: ChatAttachment) => string | null | undefined;
     /** Invoked when the viewer opens/downloads an attachment. */
     onOpenAttachment?: (attachment: ChatAttachment) => void;
     /** MIME/extension filter for drops and the picker. Defaults to everything. */
