@@ -241,6 +241,52 @@ describe('DocumentToolbar', () => {
     expect(calls.join('|')).toContain('unsetFontSize');
   });
 
+  it('hides the colour controls when the editor cannot set colours', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} />);
+    expect(screen.queryByTestId('document-toolbar-color')).toBeNull();
+    expect(screen.queryByTestId('document-toolbar-highlight-color')).toBeNull();
+  });
+
+  it('paints text a colour, and clears it back to the page ink', () => {
+    const { editor, calls } = makeEditor({}, ['setColor', 'unsetColor']);
+    render(<DocumentToolbar editor={editor} />);
+
+    // Closed, the palette is not occupying the bar.
+    expect(screen.queryByTestId('document-toolbar-color-menu')).toBeNull();
+
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-color'));
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-color-red'));
+    expect(calls.join('|')).toContain('setColor:["#c5221f"]');
+    // Picking closes it — a colour is a choice, not a palette you keep open.
+    expect(screen.queryByTestId('document-toolbar-color-menu')).toBeNull();
+
+    // "None" is a STATE, not a colour: it unsets, so the text goes back to the
+    // page's own ink rather than to some other explicit black.
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-color'));
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-color-none'));
+    expect(calls.join('|')).toContain('unsetColor');
+  });
+
+  it('highlights with a background colour', () => {
+    const { editor, calls } = makeEditor({}, ['setBackgroundColor', 'unsetBackgroundColor']);
+    render(<DocumentToolbar editor={editor} />);
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-highlight-color'));
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-highlight-color-yellow'));
+    expect(calls.join('|')).toContain('setBackgroundColor:["#fff475"]');
+  });
+
+  it('closes a colour palette on Escape without painting anything', () => {
+    const { editor, calls } = makeEditor({}, ['setColor', 'unsetColor']);
+    render(<DocumentToolbar editor={editor} />);
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-color'));
+    expect(screen.getByTestId('document-toolbar-color-menu')).toBeInTheDocument();
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByTestId('document-toolbar-color-menu')).toBeNull();
+    expect(calls.join('|')).not.toContain('setColor');
+  });
+
   // One button with a caret, the way Word and Google Docs do it — not four
   // always-visible toggles. Alignment is one setting with four values.
   it('opens the align menu once text-align is registered, and applies a choice', () => {

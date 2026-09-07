@@ -188,14 +188,17 @@ function alignLabel(align: Alignment): string {
  * currently in force and opens the choice on demand. It also buys back three
  * slots in a row that has to hold everything else a document needs.
  */
-function AlignMenu({
-  editor, current, testId,
-}: { editor: Editor; current: Alignment; testId: string }) {
+/**
+ * The open/closed half of a toolbar menu: shut on a click elsewhere or on Esc.
+ *
+ * Listeners are bound only while open, so a toolbar full of closed menus costs
+ * nothing. Extracted the moment there was a second menu — this is the part
+ * that gets forgotten when a control is copied, and a menu that will not close
+ * is worse than one that never opened.
+ */
+function useToolMenu() {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLSpanElement | null>(null);
-
-  // Close on anything that means "I am done here": a click elsewhere, or Esc.
-  // Bound while open only, so a toolbar with a closed menu costs nothing.
   useEffect(() => {
     if (!open) return;
     const onDown = (ev: MouseEvent) => {
@@ -209,6 +212,136 @@ function AlignMenu({
       document.removeEventListener('keydown', onKey);
     };
   }, [open]);
+  return { open, setOpen, wrapRef };
+}
+
+/**
+ * The colours a document offers, and nothing more.
+ *
+ * A full picker is a colour-management feature; a document needs a legible
+ * palette. Greys first because most real use is "make this quieter", then the
+ * hues, each dark enough to read as ink on white paper — the page is always
+ * white (that invariant is why a light palette here is safe in both themes).
+ */
+const SWATCHES = [
+  { value: '#202124', label: 'Black' },
+  { value: '#5f6368', label: 'Grey' },
+  { value: '#c5221f', label: 'Red' },
+  { value: '#e8710a', label: 'Orange' },
+  { value: '#188038', label: 'Green' },
+  { value: '#1967d2', label: 'Blue' },
+  { value: '#8430ce', label: 'Purple' },
+];
+
+/** Highlights are backgrounds, so they have to stay pale enough to read on. */
+const HIGHLIGHTS = [
+  { value: '#fff475', label: 'Yellow' },
+  { value: '#ccff90', label: 'Green' },
+  { value: '#a7ffeb', label: 'Teal' },
+  { value: '#cbf0f8', label: 'Blue' },
+  { value: '#fdcfe8', label: 'Pink' },
+  { value: '#e6c9a8', label: 'Brown' },
+];
+
+/**
+ * A swatch button that opens a palette — text colour and highlight are the
+ * same control with different paint and different commands.
+ */
+function ColorMenu({
+  editor, current, swatches, setCmd, unsetCmd, glyph, title, testId,
+}: {
+  editor: Editor;
+  current: string;
+  swatches: { value: string; label: string }[];
+  setCmd: string;
+  unsetCmd: string;
+  glyph: string;
+  title: string;
+  testId: string;
+}) {
+  const { open, setOpen, wrapRef } = useToolMenu();
+
+  const apply = (value: string | null) => {
+    const chain = editor.chain().focus() as never as Record<string, (v?: string) => { run: () => void }>;
+    // No colour is a STATE, not a colour: "None" unsets so the text goes back
+    // to the page's own ink rather than to some other explicit black.
+    if (value) chain[setCmd]!(value).run();
+    else chain[unsetCmd]!().run();
+    setOpen(false);
+  };
+
+  return (
+    <span ref={wrapRef} className="relative inline-flex">
+      <button
+        type="button"
+        data-testid={testId}
+        title={title}
+        aria-label={title}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onMouseDown={(ev) => { ev.preventDefault(); setOpen((v) => !v); }}
+        className={cn(
+          'inline-flex h-7 flex-col items-center justify-center gap-px px-1.5 rounded text-xs cursor-pointer border-none leading-none',
+          open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
+        )}
+      >
+        <span aria-hidden>{glyph}</span>
+        {/* The bar under the glyph is the colour currently in force — the same
+            way every word processor shows it, and the only way the button can
+            answer "what will this do" before you open it. */}
+        <span
+          aria-hidden
+          data-testid={`${testId}-current`}
+          className="h-[3px] w-3.5 rounded-sm border border-border"
+          style={{ background: current || 'transparent' }}
+        />
+      </button>
+
+      {open && (
+        <span
+          role="menu"
+          data-testid={`${testId}-menu`}
+          aria-label={title}
+          className="absolute left-0 top-full z-20 mt-1 grid w-[136px] grid-cols-4 gap-1 rounded-md border border-border bg-surface-panel p-1.5 shadow-lg"
+        >
+          <button
+            type="button"
+            role="menuitem"
+            data-testid={`${testId}-none`}
+            title="None"
+            aria-label="None"
+            onMouseDown={(ev) => { ev.preventDefault(); apply(null); }}
+            className="col-span-4 rounded px-1 py-0.5 text-left text-[11px] text-text-secondary hover:bg-surface-hover cursor-pointer border-none bg-transparent"
+          >
+            None
+          </button>
+          {swatches.map((c) => (
+            <button
+              key={c.value}
+              type="button"
+              role="menuitemradio"
+              aria-checked={c.value === current}
+              data-testid={`${testId}-${c.label.toLowerCase()}`}
+              title={c.label}
+              aria-label={c.label}
+              onMouseDown={(ev) => { ev.preventDefault(); apply(c.value); }}
+              className={cn(
+                'h-6 w-6 rounded cursor-pointer border',
+                c.value === current ? 'border-primary ring-1 ring-primary' : 'border-border',
+              )}
+              style={{ background: c.value }}
+            />
+          ))}
+        </span>
+      )}
+    </span>
+  );
+}
+
+function AlignMenu({
+  editor, current, testId,
+}: { editor: Editor; current: Alignment; testId: string }) {
+  const { open, setOpen, wrapRef } = useToolMenu();
 
   const apply = (align: Alignment) => {
     const chain = editor.chain().focus() as never as Record<string, (a: string) => { run: () => void }>;
@@ -384,12 +517,16 @@ export default function DocumentToolbar({
       // What the cursor is actually in, so the pickers show the truth rather
       // than resetting to their first option after every click. `getAttributes`
       // on an unregistered mark returns {}, so this is safe either way.
-      const style = e.getAttributes('textStyle') as { fontFamily?: string; fontSize?: string };
+      const style = e.getAttributes('textStyle') as {
+        fontFamily?: string; fontSize?: string; color?: string; backgroundColor?: string;
+      };
       return {
         block: currentBlock(e),
         flags,
         fontFamily: style.fontFamily ?? '',
         fontSize: style.fontSize ?? '',
+        color: style.color ?? '',
+        backgroundColor: style.backgroundColor ?? '',
       };
     },
   });
@@ -508,6 +645,31 @@ export default function DocumentToolbar({
       {LISTS.map((b) => (
         <ToolButton key={b.key} btn={b} editor={editor} active={state?.flags[b.key] ?? false} testId={`${testId}-${b.key}`} />
       ))}
+
+      {has(editor, 'setColor') && (
+        <ColorMenu
+          editor={editor}
+          current={state?.color ?? ''}
+          swatches={SWATCHES}
+          setCmd="setColor"
+          unsetCmd="unsetColor"
+          glyph="A"
+          title="Text colour"
+          testId={`${testId}-color`}
+        />
+      )}
+      {has(editor, 'setBackgroundColor') && (
+        <ColorMenu
+          editor={editor}
+          current={state?.backgroundColor ?? ''}
+          swatches={HIGHLIGHTS}
+          setCmd="setBackgroundColor"
+          unsetCmd="unsetBackgroundColor"
+          glyph="\u270E"
+          title="Highlight colour"
+          testId={`${testId}-highlight-color`}
+        />
+      )}
 
       {has(editor, 'toggleHighlight') && (
         <>
