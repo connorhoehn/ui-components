@@ -132,6 +132,23 @@ describe('CanvasDocumentView — a document that is already a canvas', () => {
     expect(paper.className).toMatch(/shadow-/);
   });
 
+  // Sticky chrome is only sticky if something under it actually scrolls.
+  //
+  // The workspace declared `overflow-y-auto`, a `sticky top-0` toolbar and a
+  // `sticky bottom-0` status bar, and with no height cap none of the three did
+  // anything: the workspace grew to the document's full length, the window
+  // scrolled instead, and the zoom control was left ~400px below the fold.
+  it('bounds the workspace to the viewport so its scroll is its own', () => {
+    renderView();
+    const workspace = screen.getByTestId('canvas-document-workspace');
+    expect(workspace.className).toContain('overflow-y-auto');
+    // A real height, not a class: the cap depends on where the view happens to
+    // sit in its host page, which only measurement knows.
+    expect(workspace.style.height).toMatch(/^\d+px$/);
+    expect(parseInt(workspace.style.height, 10)).toBeGreaterThan(0);
+    expect(parseInt(workspace.style.height, 10)).toBeLessThanOrEqual(window.innerHeight);
+  });
+
   // The document typography lives under `.doc-page`. Without the class the
   // base .ProseMirror rules apply: 13px and no heading scale, i.e. a form
   // field. The class IS the styling, so its absence is a silent regression.

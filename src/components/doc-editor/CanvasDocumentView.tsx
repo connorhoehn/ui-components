@@ -49,6 +49,9 @@ export interface CanvasUnsupportedForm {
   reason?: string;
 }
 
+/** Breathing room left below the workspace so the page does not run into the window edge. */
+const GUTTER_BELOW_WORKSPACE = 16;
+
 export interface CanvasDocumentViewProps {
   /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
   isCanvas: boolean;
@@ -235,6 +238,36 @@ export default function CanvasDocumentView({
     ro.observe(el);
     return () => ro.disconnect();
   }, [measurePaper, zoom]);
+  // The workspace has to OWN the scroll, or nothing in it can stick.
+  //
+  // It carried `overflow-y-auto` and a `sticky top-0` toolbar and a
+  // `sticky bottom-0` status bar, and not one of those did anything: with no
+  // height limit the workspace simply grew to the document's full length, so
+  // the WINDOW scrolled and the workspace never had a scrollport of its own.
+  // Measured on a one-paragraph page: document 1453px tall in a 950px window,
+  // zero scrollable elements, and the zoom control the user asked to have at
+  // the bottom sitting at y=1389 — four hundred pixels below the fold, only
+  // reachable by scrolling the whole app away.
+  //
+  // Capping the height here (rather than in the host page) keeps this working
+  // wherever the view is embedded: measure our own distance from the top of
+  // the viewport and take the rest of it.
+  const workspaceRef = useRef<HTMLDivElement | null>(null);
+  const [workspaceHeight, setWorkspaceHeight] = useState<number | null>(null);
+  useEffect(() => {
+    const el = workspaceRef.current;
+    if (!el || typeof window === 'undefined') return;
+    const measure = () => {
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      // A floor, so a cramped viewport degrades to "short document" rather
+      // than to a workspace with no room for a line of text in it.
+      setWorkspaceHeight(Math.max(320, window.innerHeight - top - GUTTER_BELOW_WORKSPACE));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [isCanvas, body]);
+
   const [converting, setConverting] = useState(false);
   const [convertError, setConvertError] = useState<string | null>(null);
   // Held so the toolbar can render in the chrome ABOVE the sheet rather than
@@ -305,9 +338,11 @@ export default function CanvasDocumentView({
         // surrounding surface, a white box on a white app is just a widget.
         <div
           data-testid={`${testId}-workspace`}
+          ref={workspaceRef}
           // `overflow-x-auto`: a page zoomed past the width of the workspace
           // has to be scrollable to, not squeezed into it.
           className="rounded-lg bg-workspace overflow-y-auto overflow-x-auto"
+          style={workspaceHeight === null ? undefined : { height: workspaceHeight }}
         >
           {/* Chrome, not paper: the toolbar is themed and goes dark, while the
               sheet below it stays white. Sticky so it survives scrolling a
