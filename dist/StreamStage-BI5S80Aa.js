@@ -713,58 +713,74 @@ function M({ messages: t, visibleCount: r = 3, rotateMs: a = 4200, window: o = 2
 //#region src/components/video/StreamStage.tsx
 var N = 1e4;
 function P({ stream: t = null, playlistUrl: n = null, onPlaybackError: i, title: l, viewerCount: u, live: d = !1, notStartedLabel: p, endedLabel: m, stallAfterMs: h = N, chatMessages: g, chatVisibleCount: _, chatRotateMs: v, muted: y = !0, controls: b, placeholder: S, className: C, "data-testid": w = "stream-stage" }) {
-	let T = a(null), E = A(T, t ? null : n, {
+	let [T, E] = o(y);
+	r(() => {
+		E(y);
+	}, [y]);
+	let D = a(null), O = A(D, t ? null : n, {
 		live: !0,
 		onError: i
-	}), D = t ? d : d && !E.loading && !E.error, O = a(!1);
-	(t || n) && (O.current = !0);
-	let k = O.current && !t && !n, [j, P] = o(!1);
+	}), k = t ? d : d && !O.loading && !O.error, j = a(!1);
+	(t || n) && (j.current = !0);
+	let P = j.current && !t && !n, [F, I] = o(!1);
 	return r(() => {
-		if (P(!1), !n || t || !E.loading || E.error) return;
-		let e = setTimeout(() => P(!0), h);
+		if (I(!1), !n || t || !O.loading || O.error) return;
+		let e = setTimeout(() => I(!0), h);
 		return () => clearTimeout(e);
 	}, [
 		n,
 		t,
-		E.loading,
-		E.error,
+		O.loading,
+		O.error,
 		h
 	]), /* @__PURE__ */ c("div", {
 		"data-testid": w,
-		"data-live": String(D),
+		"data-live": String(k),
 		"data-transport": t ? "realtime" : n ? "hls" : "none",
 		className: e("relative h-full w-full overflow-hidden rounded-lg bg-black", C),
 		children: [
 			t ? /* @__PURE__ */ s(x, {
 				stream: t,
-				muted: y,
+				muted: T,
 				className: "h-full w-full object-contain"
 			}) : n ? /* @__PURE__ */ s("video", {
-				ref: T,
+				ref: D,
 				"data-testid": `${w}-hls`,
 				autoPlay: !0,
 				playsInline: !0,
-				muted: y,
+				muted: T,
 				className: "h-full w-full object-contain"
 			}) : /* @__PURE__ */ s("div", {
-				"data-testid": k ? `${w}-ended` : `${w}-placeholder`,
+				"data-testid": P ? `${w}-ended` : `${w}-placeholder`,
 				className: "flex h-full w-full items-center justify-center text-sm text-white/60",
-				children: k ? m ?? "The broadcast has ended." : S ?? "Waiting for the stream to start…"
+				children: P ? m ?? "The broadcast has ended." : S ?? "Waiting for the stream to start…"
 			}),
-			n && !t && E.loading && !E.error && /* @__PURE__ */ s("div", {
-				"data-testid": j ? `${w}-not-started` : `${w}-connecting`,
+			n && !t && O.loading && !O.error && /* @__PURE__ */ s("div", {
+				"data-testid": F ? `${w}-not-started` : `${w}-connecting`,
 				className: "absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/60",
-				children: j ? p ?? "Nothing is being broadcast right now." : "Connecting…"
+				children: F ? p ?? "Nothing is being broadcast right now." : "Connecting…"
 			}),
-			E.error && /* @__PURE__ */ s("div", {
+			O.error && /* @__PURE__ */ s("div", {
 				"data-testid": `${w}-error`,
 				className: "absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/80",
-				children: E.error
+				children: O.error
 			}),
-			(l || D || u !== void 0) && /* @__PURE__ */ c("div", {
+			k && /* @__PURE__ */ c("button", {
+				type: "button",
+				"data-testid": `${w}-mute-toggle`,
+				"aria-label": T ? "Unmute" : "Mute",
+				"aria-pressed": T,
+				onClick: () => E((e) => !e),
+				className: e("absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer border-none transition-colors", T ? "bg-white text-black hover:bg-white/90" : "bg-black/50 text-white/80 hover:bg-black/70"),
+				children: [/* @__PURE__ */ s("span", {
+					"aria-hidden": !0,
+					children: T ? "🔇" : "🔊"
+				}), T ? "Unmute" : "Mute"]
+			}),
+			(l || k || u !== void 0) && /* @__PURE__ */ c("div", {
 				className: "pointer-events-none absolute left-3 top-3 flex items-center gap-2",
 				children: [
-					D && /* @__PURE__ */ s("span", {
+					k && /* @__PURE__ */ s("span", {
 						"data-testid": `${w}-live`,
 						className: "rounded bg-danger px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white",
 						children: "Live"

@@ -1440,7 +1440,11 @@ declare interface StreamStageProps {
     /** Forwarded to the ticker. */
     chatVisibleCount?: number;
     chatRotateMs?: number;
-    /** Muted by default: an autoplaying stream that makes noise is hostile. */
+    /**
+     * Whether the stream starts muted. Default true, and effectively mandatory:
+     * browsers refuse to autoplay audible media, so an unmuted stage would not
+     * start at all. The viewer can unmute from the stage itself.
+     */
     muted?: boolean;
     /** Controls rendered bottom-right, e.g. leave / mute / fullscreen. */
     controls?: ReactNode;

@@ -96,7 +96,11 @@ export interface StreamStageProps {
   /** Forwarded to the ticker. */
   chatVisibleCount?: number;
   chatRotateMs?: number;
-  /** Muted by default: an autoplaying stream that makes noise is hostile. */
+  /**
+   * Whether the stream starts muted. Default true, and effectively mandatory:
+   * browsers refuse to autoplay audible media, so an unmuted stage would not
+   * start at all. The viewer can unmute from the stage itself.
+   */
   muted?: boolean;
   /** Controls rendered bottom-right, e.g. leave / mute / fullscreen. */
   controls?: ReactNode;
@@ -119,12 +123,22 @@ export function StreamStage({
   chatMessages,
   chatVisibleCount,
   chatRotateMs,
-  muted = true,
+  muted: mutedInitial = true,
   controls,
   placeholder,
   className,
   'data-testid': testId = 'stream-stage',
 }: StreamStageProps) {
+  // Autoplay costs the sound, so the stage has to offer it back.
+  //
+  // A stream starts muted because no browser will autoplay audible media —
+  // correct, and it leaves the audience with a silent picture and no way to
+  // fix it. On an AUDIO-ONLY broadcast, which is what a call from a machine
+  // with a busy camera produces, muted means the viewer gets nothing at all:
+  // a black rectangle wearing a LIVE badge. Observed exactly that way.
+  const [muted, setMuted] = useState(mutedInitial);
+  useEffect(() => { setMuted(mutedInitial); }, [mutedInitial]);
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   // Only engaged on the HLS path; passing null keeps the hook inert when a
   // MediaStream is driving the stage.
@@ -225,6 +239,32 @@ export function StreamStage({
         >
           {hls.error}
         </div>
+      )}
+
+      {/* Sound, offered back.
+          
+          Prominent while muted and understated once not: a viewer who cannot
+          hear a live stream has no content at all, so the control has to read
+          as the next thing to do rather than as chrome. Only shown once
+          something is actually playing — an unmute button over a stage with
+          nothing on it is a button that does nothing. */}
+      {playing && (
+        <button
+          type="button"
+          data-testid={`${testId}-mute-toggle`}
+          aria-label={muted ? 'Unmute' : 'Mute'}
+          aria-pressed={muted}
+          onClick={() => setMuted((m) => !m)}
+          className={cn(
+            'absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer border-none transition-colors',
+            muted
+              ? 'bg-white text-black hover:bg-white/90'
+              : 'bg-black/50 text-white/80 hover:bg-black/70',
+          )}
+        >
+          <span aria-hidden>{muted ? '\u{1F507}' : '\u{1F50A}'}</span>
+          {muted ? 'Unmute' : 'Mute'}
+        </button>
       )}
 
       {/* Top-left: identity. */}

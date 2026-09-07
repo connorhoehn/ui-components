@@ -1,4 +1,4 @@
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { StreamStage } from '../StreamStage';
 import { StreamChatTicker } from '../StreamChatTicker';
@@ -101,5 +101,27 @@ describe('StreamChatTicker', () => {
   it('never eats a click meant for the video', () => {
     render(<StreamChatTicker messages={MSGS} />);
     expect(screen.getByTestId('stream-chat-ticker').className).toMatch(/pointer-events-none/);
+  });
+
+  // Autoplay costs the sound, so the stage has to offer it back. On an
+  // AUDIO-ONLY broadcast — what a call from a machine with a busy camera
+  // produces — muted means the viewer gets nothing at all: a black rectangle
+  // wearing a LIVE badge. Observed exactly that way.
+  it('offers the sound back once something is playing', () => {
+    render(<StreamStage stream={{} as MediaStream} live />);
+    const toggle = screen.getByTestId('stream-stage-mute-toggle');
+    expect(toggle).toHaveAttribute('aria-label', 'Unmute');
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(toggle);
+    expect(screen.getByTestId('stream-stage-mute-toggle')).toHaveAttribute('aria-label', 'Mute');
+    expect(screen.getByTestId('stream-stage-mute-toggle')).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('does not offer sound for a stage with nothing on it', () => {
+    // An unmute button over a stream that has not started is a button that
+    // does nothing.
+    render(<StreamStage />);
+    expect(screen.queryByTestId('stream-stage-mute-toggle')).toBeNull();
   });
 });
