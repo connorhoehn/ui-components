@@ -20,7 +20,7 @@
 // replacement for them — which is why every entry names its markdown
 // equivalent in the tooltip.
 
-import { useCallback, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useEditorState, type Editor } from '@tiptap/react';
 import { cn } from '../../lib/cn';
 import { Select } from '../forms/Select';
@@ -146,6 +146,105 @@ function ToolButton({
  * "identical to" sign. A triangle pointing left does not mean left-aligned
  * anywhere; it means play-in-reverse. Nothing in that row read as alignment.
  */
+const ALIGNMENTS = ['left', 'center', 'right', 'justify'] as const;
+type Alignment = (typeof ALIGNMENTS)[number];
+
+/** "Justify" is what every word processor calls it — never "align justify". */
+function alignLabel(align: Alignment): string {
+  return align === 'justify' ? 'Justify' : `Align ${align}`;
+}
+
+/**
+ * Alignment as ONE button with a caret, the way Word and Google Docs do it.
+ *
+ * Four always-visible toggles is not how a word processor spends toolbar
+ * width. Alignment is one setting with four values — a person picks a value,
+ * they do not toggle four independent switches — so the bar shows the value
+ * currently in force and opens the choice on demand. It also buys back three
+ * slots in a row that has to hold everything else a document needs.
+ */
+function AlignMenu({
+  editor, current, testId,
+}: { editor: Editor; current: Alignment; testId: string }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLSpanElement | null>(null);
+
+  // Close on anything that means "I am done here": a click elsewhere, or Esc.
+  // Bound while open only, so a toolbar with a closed menu costs nothing.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (ev: MouseEvent) => {
+      if (!wrapRef.current?.contains(ev.target as Node)) setOpen(false);
+    };
+    const onKey = (ev: KeyboardEvent) => { if (ev.key === 'Escape') setOpen(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const apply = (align: Alignment) => {
+    const chain = editor.chain().focus() as never as Record<string, (a: string) => { run: () => void }>;
+    chain['setTextAlign']!(align).run();
+    setOpen(false);
+  };
+
+  return (
+    <span ref={wrapRef} className="relative inline-flex">
+      <button
+        type="button"
+        data-testid={testId}
+        title={alignLabel(current)}
+        aria-label="Text alignment"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        // mousedown, not click: the editor loses its selection the moment
+        // focus moves, and the whole row already opens this way.
+        onMouseDown={(ev) => { ev.preventDefault(); setOpen((v) => !v); }}
+        className={cn(
+          'inline-flex items-center gap-0.5 h-7 px-1.5 rounded text-xs cursor-pointer border-none',
+          open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
+        )}
+      >
+        <AlignIcon align={current} />
+        <span aria-hidden className="text-[8px] leading-none">▾</span>
+      </button>
+
+      {open && (
+        <span
+          role="menu"
+          data-testid={`${testId}-menu`}
+          aria-label="Text alignment"
+          className="absolute left-0 top-full z-20 mt-1 inline-flex gap-0.5 rounded-md border border-border bg-surface-panel p-1 shadow-lg"
+        >
+          {ALIGNMENTS.map((align) => (
+            <button
+              key={align}
+              type="button"
+              role="menuitemradio"
+              aria-checked={align === current}
+              data-testid={`${testId}-${align}`}
+              title={alignLabel(align)}
+              aria-label={alignLabel(align)}
+              onMouseDown={(ev) => { ev.preventDefault(); apply(align); }}
+              className={cn(
+                'inline-flex h-7 w-7 items-center justify-center rounded cursor-pointer border-none',
+                align === current
+                  ? 'bg-primary text-white'
+                  : 'bg-transparent text-text-secondary hover:bg-surface-hover',
+              )}
+            >
+              <AlignIcon align={align} />
+            </button>
+          ))}
+        </span>
+      )}
+    </span>
+  );
+}
+
 function AlignIcon({ align }: { align: 'left' | 'center' | 'right' | 'justify' }) {
   // Long lines are full width; the short ones are the ragged edge, placed
   // opposite the side the text is anchored to. Justify has no ragged edge at
@@ -256,7 +355,7 @@ export default function DocumentToolbar({
       // Optional extensions — isActive on an unregistered mark is simply
       // false, so this is safe whether or not they are present.
       flags['highlight'] = e.isActive('highlight');
-      for (const a of ['left', 'center', 'right']) flags[`align-${a}`] = e.isActive({ textAlign: a });
+      for (const a of ALIGNMENTS) flags[`align-${a}`] = e.isActive({ textAlign: a });
       return { block: currentBlock(e), flags };
     },
   });
@@ -353,26 +452,11 @@ export default function DocumentToolbar({
       {has(editor, 'setTextAlign') && (
         <>
           <Divider />
-          {(['left', 'center', 'right', 'justify'] as const).map((align) => (
-            <ToolButton
-              key={align}
-              btn={{
-                key: `align-${align}`,
-                label: <AlignIcon align={align} />,
-                // Justify is not "align justify" in any word processor's
-                // wording, and it is the one of the four people hunt for.
-                hint: align === 'justify' ? 'Justify' : `Align ${align}`,
-                run: (e) => {
-                  const chain = e.chain().focus() as never as Record<string, (a: string) => { run: () => void }>;
-                  chain['setTextAlign']!(align).run();
-                },
-                active: (e) => e.isActive({ textAlign: align }),
-              }}
-              editor={editor}
-              active={state?.flags[`align-${align}`] ?? false}
-              testId={`${testId}-align-${align}`}
-            />
-          ))}
+          <AlignMenu
+            editor={editor}
+            current={ALIGNMENTS.find((a) => state?.flags[`align-${a}`]) ?? 'left'}
+            testId={`${testId}-align`}
+          />
         </>
       )}
 

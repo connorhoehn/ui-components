@@ -204,14 +204,37 @@ describe('DocumentToolbar', () => {
     expect(calls).toContain('toggleHighlight');
   });
 
-  it('shows the align group once text-align is registered', () => {
+  // One button with a caret, the way Word and Google Docs do it — not four
+  // always-visible toggles. Alignment is one setting with four values.
+  it('opens the align menu once text-align is registered, and applies a choice', () => {
     const { editor, calls } = makeEditor({}, ['setTextAlign']);
     render(<DocumentToolbar editor={editor} />);
-    for (const a of ['left', 'center', 'right']) {
+
+    // Closed: the four options are not occupying the bar.
+    expect(screen.queryByTestId('document-toolbar-align-menu')).toBeNull();
+    expect(screen.queryByTestId('document-toolbar-align-center')).toBeNull();
+
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-align'));
+    expect(screen.getByTestId('document-toolbar-align-menu')).toBeInTheDocument();
+    for (const a of ['left', 'center', 'right', 'justify']) {
       expect(screen.getByTestId(`document-toolbar-align-${a}`)).toBeInTheDocument();
     }
+
     fireEvent.mouseDown(screen.getByTestId('document-toolbar-align-center'));
     expect(calls.join('|')).toContain('setTextAlign:["center"]');
+    // Picking a value closes the menu — it is a choice, not a palette.
+    expect(screen.queryByTestId('document-toolbar-align-menu')).toBeNull();
+  });
+
+  it('closes the align menu on Escape without changing the alignment', () => {
+    const { editor, calls } = makeEditor({}, ['setTextAlign']);
+    render(<DocumentToolbar editor={editor} />);
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-align'));
+    expect(screen.getByTestId('document-toolbar-align-menu')).toBeInTheDocument();
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByTestId('document-toolbar-align-menu')).toBeNull();
+    expect(calls.join('|')).not.toContain('setTextAlign');
   });
 
   it('renders caller actions at the end of the bar', () => {
