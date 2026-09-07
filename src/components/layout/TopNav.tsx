@@ -60,14 +60,7 @@ function TopNavLink({
     'aria-disabled': item.disabled || undefined,
     'data-testid': `topnav-link-${item.to}`,
     className: cn(
-      // `self-stretch`, not `h-10`: this is a TAB, and its underline has to
-      // land on the bar's own bottom border. A 40px link centred in a taller
-      // bar leaves the `border-b-2` floating in mid-air — measured 12px above
-      // the bar's edge, with the `-mb-px` that is supposed to overlap that
-      // border doing nothing at all. Stretching to the bar's height makes the
-      // two meet whatever height the host gives the bar, and gives the tab a
-      // full-height hit target into the bargain.
-      'inline-flex items-center gap-1.5 px-3 self-stretch text-sm font-medium no-underline border-b-2 -mb-px transition-colors',
+      'inline-flex items-center gap-1.5 px-3 h-10 text-sm font-medium no-underline border-b-2 -mb-px transition-colors',
       active
         ? 'border-[var(--color-primary)] text-[var(--color-text-primary)]'
         : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
@@ -145,8 +138,7 @@ export function TopNav({
               aria-expanded={moreOpen}
               data-testid="topnav-more"
               className={cn(
-                // self-stretch for the same reason as the link above.
-                'inline-flex items-center gap-1.5 px-3 self-stretch text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer bg-transparent border-l-0 border-r-0 border-t-0',
+                'inline-flex items-center gap-1.5 px-3 h-10 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer bg-transparent border-l-0 border-r-0 border-t-0',
                 overflowActive
                   ? 'border-[var(--color-primary)] text-[var(--color-text-primary)]'
                   : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
