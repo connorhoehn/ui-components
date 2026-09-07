@@ -12,6 +12,9 @@ export const STATUS_KEYS: readonly StatusKey[] = [
   'pending',
   'running',
   'completed',
+  // Terminal and distinct from `completed` — a rejected approval must be
+  // filterable, or the only way to find one is to open every green run.
+  'rejected',
   'failed',
   'cancelled',
 ] as const;

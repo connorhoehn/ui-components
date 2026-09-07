@@ -1,7 +1,13 @@
-// frontend/src/api/pipelineRuns.ts
+// ui-components/src/api/pipelineRuns.ts
 //
 // API client for pipeline run history — replaces localStorage-only persistence
-// with DynamoDB-backed queries via social-api bridge.
+// with DynamoDB-backed queries via the platform-api bridge.
+//
+// NOTE: the wire shape is cast straight onto `PipelineRun` below WITHOUT
+// translating `status`. That is only safe because `PipelineRunSummary['status']`
+// in ../types/pipeline-contracts.ts covers every `RunStatus` — enforced at
+// compile time by `WireCarriesEveryRunStatus` in ../types/pipeline.ts. Do not
+// widen one union without the other.
 
 import type { PipelineRun } from '../types/pipeline';
 import type { PipelineRunDetailResponse } from '../types/pipeline-contracts';
@@ -82,8 +88,8 @@ export async function listPipelineRuns(
  * Same class as `listPipelineRuns` above (fixed in v2.92.0).
  *
  * Wire shape comes from `PipelineRunDetailResponse` in
- * frontend/src/types/pipeline-contracts.ts — kept in lockstep with
- * social-api/src/pipeline/http/contracts.ts.
+ * ../types/pipeline-contracts.ts — kept in lockstep with
+ * platform-api/src/pipeline/http/contracts.ts.
  */
 export async function getPipelineRun(
   pipelineId: string,

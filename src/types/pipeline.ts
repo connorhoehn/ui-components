@@ -7,6 +7,10 @@
 // Type-only module — no runtime code. Shared with backend via
 // type-only imports when distributed-core integration begins (Phase 3).
 
+// Type-only import, erased at build time — used solely by the run-status
+// compatibility guard further down.
+import type { PipelineRunSummary } from './pipeline-contracts';
+
 // ---------------------------------------------------------------------------
 // Node types and per-type config (discriminated union keyed on `type`)
 // ---------------------------------------------------------------------------
@@ -733,14 +737,52 @@ export interface PipelineDefinition {
 // Runtime (execution)
 // ---------------------------------------------------------------------------
 
+/**
+ * The status vocabulary every UI comparison site keys off. Canonical — it
+ * matches distributed-core's `RunStatus` and the backend's shared
+ * `PipelineRunStatus`, minus `stuck` (see below).
+ *
+ * Known gap: the backend can emit `stuck` (StuckRunDetector) and
+ * `interrupted` (orphan scan). Neither is modelled here, so both fall through
+ * to the `default` arm of every badge map and render as raw text. Adding them
+ * is a deliberate follow-up — it forces updates in `runsUtils.ts` (`StatusKey`
+ * / `STATUS_KEYS`), `RunsFilterBar.tsx` (`STATUS_LABEL`), and the exhaustive
+ * switch in `persistence/seedDemoData.ts`.
+ */
 export type RunStatus =
   | 'pending'
   | 'running'
   | 'awaiting_approval'
   | 'paused_at_breakpoint'
   | 'completed'
+  /**
+   * Terminal: an approval gate on the run was rejected. Distinct from
+   * `completed` on purpose — a rejected run used to be listed as a success,
+   * which made approve and reject look identical in the Runs list.
+   */
+  | 'rejected'
   | 'failed'
   | 'cancelled';
+
+// Compile-time guard: the wire union in `pipeline-contracts.ts` must be able
+// to carry every `RunStatus`. This is what makes a repeat of the
+// succeeded/completed split a build error rather than a silent UI bug — the
+// API client casts the wire shape onto `PipelineRun` without translating
+// status, so the two unions have to stay compatible.
+//
+// Type-only, so this file stays free of runtime code: if the wire union stops
+// covering some `RunStatus`, the alias resolves to `false`, which does not
+// satisfy the `extends true` constraint, and `tsc` errors here.
+//
+// The operands are wrapped in tuples deliberately. A bare
+// `RunStatus extends ... ? true : false` distributes over the union and
+// collapses to `never` when every member fails — and `never extends true` is
+// vacuously satisfied, so the guard would silently pass. Tuple-wrapping turns
+// off distribution and compares the unions as whole types.
+type AssertTrue<T extends true> = T;
+export type WireCarriesEveryRunStatus = AssertTrue<
+  [RunStatus] extends [PipelineRunSummary['status']] ? true : false
+>;
 
 export type StepStatus =
   | 'pending'

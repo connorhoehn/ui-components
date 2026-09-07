@@ -173,9 +173,20 @@ function withStep(
   return { ...run, steps: { ...run.steps, [stepId]: next } };
 }
 
-/** Terminal run states — a run in one of these can never move again. */
+/**
+ * Terminal run states — a run in one of these can never move again.
+ *
+ * `rejected` belongs here: a run whose approval gate was rejected settles
+ * there instead of `completed` (see `RunStatus` in types/pipeline.ts). Leaving
+ * it out let a late non-terminal event overwrite a settled rejected run.
+ */
 function isTerminalRunStatus(status: PipelineRun['status']): boolean {
-  return status === 'completed' || status === 'failed' || status === 'cancelled';
+  return (
+    status === 'completed' ||
+    status === 'rejected' ||
+    status === 'failed' ||
+    status === 'cancelled'
+  );
 }
 
 function trimRuns(runs: Record<string, PipelineRun>): Record<string, PipelineRun> {

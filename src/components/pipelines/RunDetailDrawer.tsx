@@ -35,6 +35,7 @@ function costColor(usd?: number): string {
 function statusBadgeTone(s: RunStatus): ChipTone {
   switch (s) {
     case 'completed':         return 'success';
+    case 'rejected':          return 'danger';
     case 'failed':            return 'danger';
     case 'cancelled':         return 'neutral';
     case 'running':           return 'info';
@@ -47,6 +48,7 @@ function statusBadgeTone(s: RunStatus): ChipTone {
 function statusLabel(s: RunStatus): string {
   switch (s) {
     case 'completed':         return 'Completed';
+    case 'rejected':          return 'Rejected';
     case 'failed':            return 'Failed';
     case 'cancelled':         return 'Cancelled';
     case 'running':           return 'Running';

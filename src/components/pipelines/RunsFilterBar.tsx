@@ -12,6 +12,7 @@ const STATUS_LABEL: Record<StatusKey, string> = {
   pending: 'Pending',
   running: 'Running',
   completed: 'Completed',
+  rejected: 'Rejected',
   failed: 'Failed',
   cancelled: 'Cancelled',
   paused_at_breakpoint: 'Paused',

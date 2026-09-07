@@ -177,6 +177,10 @@ function stepStatusForRun(runStatus: RunStatus, rand: () => number): StepStatus 
       return rand() < 0.6 ? 'completed' : 'cancelled';
     case 'running':
       return rand() < 0.7 ? 'completed' : 'running';
+    case 'rejected':
+      // Every step up to and including the approval gate ran; the branch
+      // beyond it never did.
+      return 'completed';
     case 'awaiting_approval':
       return 'completed';
     case 'pending':

@@ -22,6 +22,7 @@ function formatDelta(ms: number): string {
 function runStatusVariant(s: RunStatus): ChipTone {
   switch (s) {
     case 'completed':         return 'success';
+    case 'rejected':          return 'danger';
     case 'failed':            return 'danger';
     case 'cancelled':         return 'neutral';
     case 'awaiting_approval': return 'warning';

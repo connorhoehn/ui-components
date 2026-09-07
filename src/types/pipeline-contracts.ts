@@ -1,9 +1,9 @@
 // Pipeline HTTP contracts — frontend copy of
-// social-api/src/pipeline/http/contracts.ts. The two are kept in lockstep
+// platform-api/src/pipeline/http/contracts.ts. The two are kept in lockstep
 // so a backend wire change becomes a frontend compile error. When the
 // pipeline subsystem relocates into distributed-core, both copies are
 // replaced by a single import from the published types-only package
-// (see .planning/HANDOFF-distributed-core-social-api-absorption.md).
+// (see .planning/HANDOFF-distributed-core-platform-api-absorption.md).
 //
 // IMPORTANT — module-shaped artifact:
 //   This file is the public request/response shape for every pipeline HTTP
@@ -13,7 +13,7 @@
 //   that breaks the wire contract becomes a frontend compile error.
 //
 //   Constraints:
-//     - Zero framework imports (no Express, no social-api middleware, no
+//     - Zero framework imports (no Express, no platform-api middleware, no
 //       distributed-core internals). Plain TypeScript interfaces only.
 //     - Zero runtime side effects.
 //     - When PipelineModule moves into distributed-core, this file moves
@@ -21,7 +21,7 @@
 //       imports continues to compile across the relocation.
 //
 // Refs:
-//   - .planning/HANDOFF-distributed-core-social-api-absorption.md
+//   - .planning/HANDOFF-distributed-core-platform-api-absorption.md
 //     §"What 'module-shaped' actually means"
 
 // ---------------------------------------------------------------------------
@@ -30,7 +30,7 @@
 
 /**
  * Identity attached to every request handled by the pipeline router. The
- * host (social-api today, distributed-core later) populates this from its
+ * host (platform-api today, distributed-core later) populates this from its
  * own auth middleware and injects a getter into the router factory; the
  * route handlers themselves never speak to Cognito / IAM / etc.
  *
@@ -107,7 +107,37 @@ export interface PipelineRunsListQuery {
 export interface PipelineRunSummary {
   runId: string;
   pipelineId: string;
-  status: 'running' | 'succeeded' | 'failed' | 'canceled' | 'interrupted';
+  /**
+   * Canonical run status — the same vocabulary as `RunStatus` in
+   * `./pipeline.ts`, which every comparison site in this library already
+   * uses.
+   *
+   * This used to read `'running' | 'succeeded' | 'failed' | 'canceled' |
+   * 'interrupted'`, a second dialect that no component ever compared
+   * against. The runs list endpoint really did serve `succeeded` while the
+   * detail endpoint served `completed` for the same run, and because
+   * `src/api/pipelineRuns.ts` casts the wire shape straight to `PipelineRun`
+   * without translating status, that alias reached the UI — where the status
+   * filter (`components/pipelines/runsUtils.ts`) silently dropped it and the
+   * stats page never counted it. Backend now serves canonical spellings from
+   * both endpoints.
+   *
+   * `interrupted` is a platform-api-only lifecycle state (orphan scan) that
+   * is not part of `RunStatus`, so it stays spelled out here.
+   *
+   * Note: the backend can also emit `stuck` (StuckRunDetector), which neither
+   * this union nor `RunStatus` models yet — see the note in `pipeline.ts`.
+   */
+  status:
+    | 'pending'
+    | 'running'
+    | 'awaiting_approval'
+    | 'paused_at_breakpoint'
+    | 'completed'
+    | 'rejected'
+    | 'failed'
+    | 'cancelled'
+    | 'interrupted';
   startedAt: string;
   completedAt?: string;
   triggeredBy: {

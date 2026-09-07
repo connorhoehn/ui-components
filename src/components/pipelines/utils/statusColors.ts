@@ -7,6 +7,7 @@ export function statusChipVariant(
 ): { label: string; tone: ChipTone } {
   switch (status) {
     case 'completed':           return { label: 'Completed',        tone: 'success'  };
+    case 'rejected':            return { label: 'Rejected',         tone: 'danger'   };
     case 'failed':              return { label: 'Failed',           tone: 'danger'   };
     case 'cancelled':           return { label: 'Cancelled',        tone: 'neutral'  };
     case 'awaiting_approval':   return { label: 'Awaiting approval', tone: 'warning' };
