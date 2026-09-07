@@ -1323,3 +1323,21 @@
 /* ===========================================================================
    END: canvas pagination
    =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   StreamAudioOnly — the level meter on an audio-only broadcast.
+
+   Used ONLY where the level cannot be measured: no Web Audio, or the HLS path,
+   which is deliberately not tapped (`createMediaElementSource` inserts itself
+   into the audio path and can silence playback outright — not a risk worth
+   taking on the surface a whole audience is watching).
+
+   A meter pinned at zero reads as "this broadcast is silent", which is a
+   claim; a moving pattern reads as "audio, level unknown", which is the truth.
+   --------------------------------------------------------------------------- */
+@keyframes uic-audio-bar {
+  0%, 100% { height: 0.5rem; }
+  50%      { height: 2rem; }
+}
+.uic-audio-bar { animation: uic-audio-bar 900ms ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .uic-audio-bar { animation: none; } }

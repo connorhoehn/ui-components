@@ -112,3 +112,11 @@ export { default as DocumentFindBar } from './DocumentFindBar';
 export type { DocumentFindBarProps } from './DocumentFindBar';
 export { findMatches, nextMatchIndex } from './findMatches';
 export type { FindMatch } from './findMatches';
+
+// Google Docs' Editing / Suggesting / Viewing. Suggesting is a sub-state of
+// the editor surface, not a fourth view mode — a host that already has view
+// modes composes the two axes rather than adding one.
+export { SuggestionModeControl, SUGGESTION_AUTHORING_MODES } from './SuggestionModeControl';
+export type { SuggestionModeControlProps, SuggestionAuthoringMode } from './SuggestionModeControl';
+export { SuggestionCard } from './SuggestionCard';
+export type { SuggestionCardProps, SuggestionCardKind } from './SuggestionCard';
