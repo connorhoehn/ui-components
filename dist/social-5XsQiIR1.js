@@ -6,9 +6,9 @@ import { t as l } from "./Textarea-Dz4doxTv.js";
 import { n as u, t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./PresenceDot-3gBZGPvX.js";
 import { t as p } from "./Select-CqVokE2v.js";
-import { A as m, k as h } from "./ConversationSurface-DsePulJM.js";
+import { A as m, k as h } from "./ConversationSurface-CZK0rjKK.js";
 import { t as g } from "./rovingFocus-Bj5Y6kwY.js";
-import { n as _, t as v } from "./ReactionPickerPopover-moHezwrL.js";
+import { n as _, t as v } from "./ReactionPickerPopover-8eSV-aRw.js";
 import "./LinkDialog-DazAeDjI.js";
 import { useCallback as y, useEffect as b, useId as x, useMemo as S, useRef as C, useState as w } from "react";
 import { Fragment as T, jsx as E, jsxs as D } from "react/jsx-runtime";
@@ -410,50 +410,51 @@ function P({ idToken: t, onMessage: n }) {
 function F(e) {
 	return e.trim().toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 64);
 }
-function I({ people: e, onStartDm: t, onCreateChannel: n, onCancel: r, peopleError: i = null, busy: a = !1, className: o, "data-testid": c = "new-conversation" }) {
-	let [l, u] = w(""), f = C(null), p = S(() => {
-		let t = l.trim().toLowerCase();
+function I({ people: e, onStartDm: t, onCreateChannel: n, onCancel: r, peopleError: i = null, busy: a = !1, className: o, "data-testid": l = "new-conversation" }) {
+	let [u, f] = w(""), p = C(null), m = S(() => {
+		let t = u.trim().toLowerCase();
 		return t ? e.filter((e) => e.displayName.toLowerCase().includes(t)) : e;
-	}, [e, l]), m = F(l), h = !!n && m.length > 0;
+	}, [e, u]), h = F(u), g = !!n && h.length > 0;
 	return /* @__PURE__ */ D("div", {
-		"data-testid": c,
+		"data-testid": l,
 		className: s("flex flex-col gap-1 rounded-lg border border-border bg-surface p-2", o),
 		children: [/* @__PURE__ */ D("div", {
 			className: "flex items-center gap-1.5",
-			children: [/* @__PURE__ */ E("input", {
-				ref: f,
+			children: [/* @__PURE__ */ E(c, {
+				ref: p,
+				size: "sm",
 				autoFocus: !0,
-				value: l,
-				onChange: (e) => u(e.target.value),
+				value: u,
+				onChange: (e) => f(e.target.value),
 				onKeyDown: (e) => {
-					e.key === "Escape" && r?.(), e.key === "Enter" && (p.length === 1 ? t(p[0].userId) : p.length === 0 && h && n?.(m));
+					e.key === "Escape" && r?.(), e.key === "Enter" && (m.length === 1 ? t(m[0].userId) : m.length === 0 && g && n?.(h));
 				},
 				placeholder: "Search people, or name a new channel",
 				"aria-label": "Search people, or name a new channel",
-				"data-testid": `${c}-query`,
+				"data-testid": `${l}-query`,
 				disabled: a,
-				className: "min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary outline-none placeholder:text-text-tertiary focus:border-primary"
+				className: "min-w-0 flex-1"
 			}), r && /* @__PURE__ */ E("button", {
 				type: "button",
 				onClick: r,
 				disabled: a,
-				"data-testid": `${c}-cancel`,
+				"data-testid": `${l}-cancel`,
 				className: "rounded px-2 py-1 text-xs text-text-secondary hover:bg-surface-hover",
 				children: "Cancel"
 			})]
 		}), i ? /* @__PURE__ */ D("p", {
 			role: "alert",
-			"data-testid": `${c}-error`,
+			"data-testid": `${l}-error`,
 			className: "m-0 px-1 py-1.5 text-xs text-danger-fg",
 			children: ["Couldn’t load people. ", i]
 		}) : /* @__PURE__ */ D("ul", {
 			className: "m-0 flex max-h-64 list-none flex-col gap-0.5 overflow-y-auto p-0",
 			children: [
-				p.map((e) => /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
+				m.map((e) => /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
 					type: "button",
 					onClick: () => void t(e.userId),
 					disabled: a,
-					"data-testid": `${c}-person`,
+					"data-testid": `${l}-person`,
 					className: "flex w-full items-center gap-2 rounded px-1.5 py-1.5 text-left hover:bg-surface-hover",
 					children: [/* @__PURE__ */ E(d, {
 						name: e.displayName,
@@ -471,16 +472,16 @@ function I({ people: e, onStartDm: t, onCreateChannel: n, onCancel: r, peopleErr
 						})]
 					})]
 				}) }, e.userId)),
-				p.length === 0 && !h && /* @__PURE__ */ E("li", {
+				m.length === 0 && !g && /* @__PURE__ */ E("li", {
 					className: "px-1.5 py-2 text-xs text-text-secondary",
-					"data-testid": `${c}-empty`,
-					children: l.trim() ? "Nobody by that name." : "Nobody to talk to yet."
+					"data-testid": `${l}-empty`,
+					children: u.trim() ? "Nobody by that name." : "Nobody to talk to yet."
 				}),
-				h && /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
+				g && /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
 					type: "button",
-					onClick: () => void n?.(m),
+					onClick: () => void n?.(h),
 					disabled: a,
-					"data-testid": `${c}-create-channel`,
+					"data-testid": `${l}-create-channel`,
 					className: "flex w-full items-center gap-2 rounded px-1.5 py-1.5 text-left hover:bg-surface-hover",
 					children: [/* @__PURE__ */ E("span", {
 						"aria-hidden": !0,
@@ -490,7 +491,7 @@ function I({ people: e, onStartDm: t, onCreateChannel: n, onCancel: r, peopleErr
 						className: "min-w-0 truncate text-[13px] text-text-primary",
 						children: ["Create channel ", /* @__PURE__ */ D("span", {
 							className: "font-semibold",
-							children: ["#", m]
+							children: ["#", h]
 						})]
 					})]
 				}) })
