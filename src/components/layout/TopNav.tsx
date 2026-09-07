@@ -46,24 +46,54 @@ function defaultRenderLink(item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnc
 
 type AnchorPropsWithData = AnchorHTMLAttributes<HTMLAnchorElement> & Record<`data-${string}`, string | undefined>;
 
+/**
+ * How the active item is marked.
+ *
+ * `underline` is the tab-strip form: a 2px rule under the active item, sitting
+ * ON the strip's own bottom border. It is only correct where that border
+ * exists — the indicator and the rule are one continuous line, and the
+ * `-mb-px` below is what overlaps them.
+ *
+ * `pill` is for a nav that sits in a bar rather than on a strip. A header has
+ * its own bottom border, lower down and belonging to the header rather than to
+ * the tabs, so an underline indicator there hangs in mid-air: measured at 12px
+ * above the header rule, attached to nothing, which is what "the nav is not
+ * aligned" looks like. It is also shorter (h-8), which is what lets it centre
+ * on the same line as a wordmark and a status pill instead of overflowing the
+ * bar's content box by a pixel.
+ */
+export type NavTabsVariant = 'underline' | 'pill';
+
 function TopNavLink({
   item,
   active,
   renderLink,
+  variant = 'underline',
 }: {
   item: TopNavItem;
   active: boolean;
   renderLink: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+  variant?: NavTabsVariant;
 }) {
   const linkProps: AnchorPropsWithData = {
     'aria-current': active ? 'page' : undefined,
     'aria-disabled': item.disabled || undefined,
     'data-testid': `topnav-link-${item.to}`,
     className: cn(
-      'inline-flex items-center gap-1.5 px-3 h-10 text-sm font-medium no-underline border-b-2 -mb-px transition-colors',
-      active
-        ? 'border-[var(--color-primary)] text-[var(--color-text-primary)]'
-        : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
+      'inline-flex items-center gap-1.5 px-3 text-sm font-medium no-underline transition-colors',
+      variant === 'pill'
+        ? cn(
+            'h-8 rounded-md',
+            active
+              ? 'bg-[var(--color-surface-hover)] text-[var(--color-primary)]'
+              : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)]',
+          )
+        : cn(
+            'h-10 border-b-2 -mb-px',
+            active
+              ? 'border-[var(--color-primary)] text-[var(--color-text-primary)]'
+              : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
+          ),
       item.disabled && 'opacity-50 pointer-events-none',
     ),
     children: (
@@ -197,6 +227,9 @@ export interface NavTabsProps {
   className?: string;
   style?: CSSProperties;
   'aria-label'?: string;
+  /** See NavTabsVariant. `pill` also drops the strip's bottom border, since
+   *  there is no underline left for it to complete. */
+  variant?: NavTabsVariant;
 }
 
 /** Sub-section navigation: link-based underline tab strip (no state — consumer routes via activeHref). */
@@ -207,12 +240,14 @@ export function NavTabs({
   className,
   style,
   'aria-label': ariaLabel = 'Sub navigation',
+  variant = 'underline',
 }: NavTabsProps) {
   return (
     <nav
       aria-label={ariaLabel}
       className={cn(
-        'inline-flex items-center gap-1 border-b border-[var(--color-border)]',
+        'inline-flex items-center gap-1',
+        variant === 'underline' && 'border-b border-[var(--color-border)]',
         className,
       )}
       style={style}
@@ -223,6 +258,7 @@ export function NavTabs({
           item={item}
           active={isActive(activeHref, item.to)}
           renderLink={renderLink}
+          variant={variant}
         />
       ))}
     </nav>

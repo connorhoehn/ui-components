@@ -92,4 +92,40 @@ describe('NavTabs', () => {
     expect(screen.getByRole('navigation', { name: 'Sub navigation' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Components' }).getAttribute('aria-current')).toBe('page');
   });
+
+  // The underline indicator and the strip's own bottom rule are ONE line: the
+  // link's `-mb-px` overlaps them. Both have to be present for either to look
+  // deliberate.
+  it('underline variant puts the indicator on a rule that exists', () => {
+    render(<NavTabs items={ITEMS.slice(0, 3)} activeHref="/components" />);
+    const nav = screen.getByRole('navigation', { name: 'Sub navigation' });
+    expect(nav.className).toContain('border-b');
+    const active = screen.getByRole('link', { name: 'Components' });
+    expect(active.className).toContain('border-b-2');
+    expect(active.className).toContain('-mb-px');
+  });
+
+  // In a header there is no such rule — the header's own border belongs to the
+  // header and sits lower down, so an underline indicator hangs in mid-air.
+  // Measured in the app at 12px above the header rule, attached to nothing.
+  it('pill variant drops the rule AND the underline together', () => {
+    render(<NavTabs items={ITEMS.slice(0, 3)} activeHref="/components" variant="pill" />);
+    const nav = screen.getByRole('navigation', { name: 'Sub navigation' });
+    expect(nav.className).not.toContain('border-b');
+    const active = screen.getByRole('link', { name: 'Components' });
+    expect(active.className).not.toContain('border-b-2');
+    expect(active.className).not.toContain('-mb-px');
+    expect(active.className).toContain('rounded-md');
+    // h-8, not h-10: a 40px item overflows the content box of a 64px bar that
+    // has 12px padding and a 1px bottom border, which is what put the tabs
+    // half a pixel below the wordmark and the status pill.
+    expect(active.className).toContain('h-8');
+    expect(active.getAttribute('aria-current')).toBe('page');
+  });
+
+  it('pill variant still marks exactly one item current', () => {
+    render(<NavTabs items={ITEMS.slice(0, 3)} activeHref="/components" variant="pill" />);
+    const current = screen.getAllByRole('link').filter((a) => a.getAttribute('aria-current') === 'page');
+    expect(current).toHaveLength(1);
+  });
 });
