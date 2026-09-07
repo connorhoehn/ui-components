@@ -92,4 +92,19 @@ describe('NavTabs', () => {
     expect(screen.getByRole('navigation', { name: 'Sub navigation' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Components' }).getAttribute('aria-current')).toBe('page');
   });
+
+  // The underline is a TAB indicator: it has to land on the bar's own bottom
+  // border. A fixed-height link centred in a taller bar leaves it floating —
+  // measured 12px above the bar's edge, with the `-mb-px` meant to overlap
+  // that border doing nothing.
+  it('stretches each tab to the bar so its underline meets the bar edge', () => {
+    render(<TopNav items={[{ to: '/a', label: 'Alpha' }, { to: '/b', label: 'Beta' }]} activePath="/a" />);
+    const tab = screen.getByTestId('topnav-link-/a');
+    expect(tab.className).toContain('self-stretch');
+    // A fixed height would re-introduce the gap.
+    expect(tab.className).not.toMatch(/\bh-10\b/);
+    // Still the tab idiom: border on the bottom, pulled over the bar's border.
+    expect(tab.className).toContain('border-b-2');
+    expect(tab.className).toContain('-mb-px');
+  });
 });
