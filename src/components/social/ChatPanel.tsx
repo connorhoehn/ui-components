@@ -720,23 +720,32 @@ export function ChatPanel({
               const isMine =
                 !!currentUserId && (message as { userId?: string }).userId === currentUserId;
 
-              // A call notice is a RECORD, not somebody's words.
+              // A notice is a RECORD, not somebody's words.
               //
-              // Replying to one quotes "Call started" back at the channel,
-              // which says nothing; pinning one pins an event that already has
-              // its own place in the transcript and its own live/ended states.
-              // Neither action has a meaning here, and offering an action
-              // without a meaning is how a thread accumulates pins nobody
-              // chose.
+              // Replying to one quotes "Bob started a call" back at the
+              // channel, which says nothing; pinning one pins an event that
+              // already has its own place in the transcript and its own
+              // live/ended states. Offering an action with no meaning is how a
+              // thread fills up with pins nobody chose.
               //
-              // Reactions stay. People do react to "the call started", and
-              // that reads as a response to the EVENT rather than a claim
-              // about a message — which is exactly what it is.
+              // The test is `metadata.system`, which the gateway's
+              // `postSystemMessage` stamps on everything it posts on nobody's
+              // behalf — NOT the card `kind`. That distinction is load-bearing
+              // for documents, which arrive by two different routes and render
+              // as the SAME card:
               //
-              // Deliberately scoped to calls. A shared document is a message
-              // somebody chose to send, so replying to it and pinning it both
-              // mean what they normally mean.
-              const isActivityNotice = !!callRef;
+              //   • "Bob created Q3 Plan"  — posted by the server. A notice.
+              //   • "📄 Q3 Plan" + a link  — posted by a person through the
+              //     share picker. A message they chose to send, so replying to
+              //     it and pinning it mean exactly what they normally mean.
+              //
+              // Gating on `kind === 'document'` would have silenced both;
+              // gating on the call card alone would have left the auto-posted
+              // document notice replyable. Neither is right.
+              //
+              // Reactions stay. Reacting to "the call started" reads as a
+              // response to the EVENT, which is what it is.
+              const isActivityNotice = message.metadata?.system === true;
 
               // The quote, the message, its reactions — one unit. Rendering
               // them as siblings of the row would let a reaction drift away

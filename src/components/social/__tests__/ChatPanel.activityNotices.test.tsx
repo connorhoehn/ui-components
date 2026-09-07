@@ -22,10 +22,20 @@ function msg(overrides: Partial<ChatMessage> = {}): ChatMessage {
   } as ChatMessage;
 }
 
+// What the gateway's `postSystemMessage` actually emits: the card `kind`
+// PLUS `system: true`.
 const callNotice = msg({
   id: 'call-1',
-  content: 'Call started',
-  metadata: { kind: 'call', callId: 'c-1', live: false, participants: [] },
+  content: 'Bob Martinez started a call',
+  metadata: { system: true, kind: 'call', callId: 'c-1', live: false, participants: [] },
+});
+
+// The other thing `postSystemMessage` emits. Renders as the SAME document card
+// a person's share does, which is why the card kind cannot be the test.
+const documentNotice = msg({
+  id: 'doc-notice-1',
+  content: 'Bob Martinez created Q3 plan',
+  metadata: { system: true, kind: 'document', documentId: 'd-1', title: 'Q3 plan' },
 });
 
 const plain = msg({ id: 'plain-1', content: 'a normal message' });
@@ -43,7 +53,7 @@ function renderWith(messages: ChatMessage[]) {
   );
 }
 
-describe('interactions on a call notice', () => {
+describe('interactions on a system notice', () => {
   it('offers neither reply nor pin', () => {
     renderWith([callNotice]);
     expect(screen.queryByTestId('message-actions-reply')).toBeNull();
@@ -67,9 +77,18 @@ describe('interactions on a call notice', () => {
     expect(screen.getByTestId('message-actions-pin')).toBeInTheDocument();
   });
 
-  // Scoped to calls on purpose. A shared document is a message somebody chose
-  // to send, so replying to it and pinning it mean what they normally mean.
-  it('does not suppress anything on a shared document', () => {
+  // The auto-posted "X created a document" notice is a notice, even though it
+  // renders as the same card a person's share does.
+  it('suppresses reply and pin on a document NOTICE too', () => {
+    renderWith([documentNotice]);
+    expect(screen.queryByTestId('message-actions-reply')).toBeNull();
+    expect(screen.queryByTestId('message-actions-pin')).toBeNull();
+  });
+
+  // …and the other route to that same card is a message somebody chose to
+  // send, so it keeps everything. Gating on the card KIND would have silenced
+  // this one too.
+  it('does not suppress anything on a document a person shared', () => {
     renderWith([
       msg({
         id: 'doc-1',
