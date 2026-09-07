@@ -3744,6 +3744,7 @@ export declare function documentRefFromMetadata(metadata: Record<string, unknown
     documentId: string;
     title: string;
     icon?: string;
+    createdBy?: string;
 } | null;
 
 declare interface DocumentType_2 {

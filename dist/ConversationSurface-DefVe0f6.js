@@ -602,13 +602,15 @@ function ue(e) {
 	if (e.kind === "document" && typeof e.documentId == "string" && e.documentId) return {
 		documentId: e.documentId,
 		title: typeof e.title == "string" ? e.title : "",
-		icon: typeof e.icon == "string" ? e.icon : void 0
+		icon: typeof e.icon == "string" ? e.icon : void 0,
+		createdBy: typeof e.createdBy == "string" ? e.createdBy : void 0
 	};
 	let t = e.share;
 	return t && t.kind === "document" && typeof t.id == "string" && t.id ? {
 		documentId: t.id,
 		title: typeof t.title == "string" ? t.title : "",
-		icon: typeof t.icon == "string" ? t.icon : void 0
+		icon: typeof t.icon == "string" ? t.icon : void 0,
+		createdBy: typeof t.createdBy == "string" ? t.createdBy : void 0
 	} : null;
 }
 var de = {
@@ -750,7 +752,7 @@ function me({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers
 									documentId: c.documentId,
 									title: c.title || t.content,
 									icon: c.icon,
-									createdBy: (typeof t.metadata?.displayName == "string" ? t.metadata.displayName : void 0) ?? t.displayName,
+									createdBy: c.createdBy ?? (typeof t.metadata?.displayName == "string" ? t.metadata.displayName : void 0) ?? t.displayName,
 									editors: D?.(c.documentId) ?? [],
 									onOpen: ne
 								}) : i.length === 0 ? s : /* @__PURE__ */ y(_, { children: [(t.content || o) && s, i.map((e) => /* @__PURE__ */ v(ae, {

@@ -222,7 +222,7 @@ function formatTypingBanner(users: string[]): string {
  */
 export function documentRefFromMetadata(
   metadata: Record<string, unknown> | undefined,
-): { documentId: string; title: string; icon?: string } | null {
+): { documentId: string; title: string; icon?: string; createdBy?: string } | null {
   if (!metadata) return null;
 
   if (metadata.kind === 'document' && typeof metadata.documentId === 'string' && metadata.documentId) {
@@ -230,6 +230,7 @@ export function documentRefFromMetadata(
       documentId: metadata.documentId,
       title: typeof metadata.title === 'string' ? metadata.title : '',
       icon: typeof metadata.icon === 'string' ? metadata.icon : undefined,
+      createdBy: typeof metadata.createdBy === 'string' ? metadata.createdBy : undefined,
     };
   }
 
@@ -239,6 +240,9 @@ export function documentRefFromMetadata(
       documentId: share.id,
       title: typeof share.title === 'string' ? share.title : '',
       icon: typeof share.icon === 'string' ? share.icon : undefined,
+      // Who WROTE the document, which is not usually who shared it. See the
+      // card's fallback below for why this had to become a carried field.
+      createdBy: typeof share.createdBy === 'string' ? share.createdBy : undefined,
     };
   }
 
@@ -655,8 +659,17 @@ export function ChatPanel({
                   documentId={docRef.documentId}
                   title={docRef.title || message.content}
                   icon={docRef.icon}
+                  // The document's author when the share carries one, and only
+                  // then the message's sender.
+                  //
+                  // The card's label is "Created by", and this read the SENDER
+                  // — so sharing someone else's document into a thread
+                  // credited you with writing it. Verified: a document created
+                  // by one person, shared by another, rendered under the
+                  // sharer's name.
                   createdBy={
-                    (typeof message.metadata?.displayName === 'string'
+                    docRef.createdBy
+                    ?? (typeof message.metadata?.displayName === 'string'
                       ? message.metadata.displayName
                       : undefined)
                     ?? message.displayName
