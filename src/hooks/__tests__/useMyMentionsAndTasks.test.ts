@@ -206,3 +206,47 @@ describe('ordering', () => {
     expect(result.current[1].kind).toBe('task');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Page-shaped (canvas) documents
+// ---------------------------------------------------------------------------
+//
+// A canvas document has NO sections — its comments are anchored to text ranges
+// and filed under an empty section id. Walking `sections` to find mentions
+// therefore examined nothing, and My Items was permanently empty on exactly
+// the documents this product now creates. The failure was silent: an empty
+// panel is indistinguishable from "nobody mentioned you".
+describe('a document with no sections', () => {
+  it('still finds a mention filed under an empty section id', () => {
+    const comments = {
+      '': [makeThread('c1', '@Alice can you look at this line?', { userId: 'u-bob', displayName: 'Bob' })],
+    };
+    const { result } = renderHook(() =>
+      useMyMentionsAndTasks({ sections: [], comments, ...ME }),
+    );
+    expect(result.current).toHaveLength(1);
+    expect(result.current[0]).toMatchObject({ kind: 'mention', commentId: 'c1' });
+  });
+
+  it('leaves the section title empty rather than dropping the mention', () => {
+    const comments = {
+      'anchor-xyz': [makeThread('c2', 'ping @Alice', { userId: 'u-bob', displayName: 'Bob' })],
+    };
+    const { result } = renderHook(() =>
+      useMyMentionsAndTasks({ sections: [], comments, ...ME }),
+    );
+    expect(result.current).toHaveLength(1);
+    expect(result.current[0]).toMatchObject({ sectionId: 'anchor-xyz', sectionTitle: '' });
+  });
+
+  it('still titles a mention when the section DOES exist', () => {
+    const sections = [makeSection('s1')];
+    const comments = {
+      s1: [makeThread('c3', 'hey @Alice', { userId: 'u-bob', displayName: 'Bob' })],
+    };
+    const { result } = renderHook(() =>
+      useMyMentionsAndTasks({ sections, comments, ...ME }),
+    );
+    expect(result.current[0]).toMatchObject({ sectionTitle: 'Section s1' });
+  });
+});

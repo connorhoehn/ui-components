@@ -1068,14 +1068,13 @@ function V(e, t) {
 function H({ sections: e, comments: t, displayName: n, userId: r }) {
 	return i(() => {
 		let i = [], a = [];
-		for (let a of e) {
-			let e = t[a.id];
-			if (!e) continue;
-			let o = B(e);
-			for (let e of o) e.userId !== r && V(e.text, n) && i.push({
+		for (let [a, o] of Object.entries(t)) {
+			if (!o) continue;
+			let t = e.find((e) => e.id === a), s = B(o);
+			for (let e of s) e.userId !== r && V(e.text, n) && i.push({
 				kind: "mention",
-				sectionId: a.id,
-				sectionTitle: a.title,
+				sectionId: a,
+				sectionTitle: t?.title ?? "",
 				commentId: e.id,
 				authorName: e.displayName,
 				authorColor: e.color,

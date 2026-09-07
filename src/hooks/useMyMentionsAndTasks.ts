@@ -77,9 +77,16 @@ export function useMyMentionsAndTasks({
     const tasks: TaskAssignment[] = [];
 
     // --- Mentions ---
-    for (const section of sections) {
-      const threads = comments[section.id];
+    //
+    // Driven by the COMMENT MAP, not by the section list. A page-shaped
+    // (canvas) document has no sections at all — its comments are anchored to
+    // text ranges and filed under an empty section id — so walking `sections`
+    // examined nothing, and My Items was permanently empty on every canvas
+    // document. The section is looked up only for its TITLE, and its absence
+    // is not a reason to drop a comment that mentions you.
+    for (const [sectionId, threads] of Object.entries(comments)) {
       if (!threads) continue;
+      const section = sections.find((s) => s.id === sectionId);
 
       const allComments = flattenThreads(threads);
       for (const comment of allComments) {
@@ -89,8 +96,8 @@ export function useMyMentionsAndTasks({
         if (textMentionsUser(comment.text, displayName)) {
           mentions.push({
             kind: 'mention',
-            sectionId: section.id,
-            sectionTitle: section.title,
+            sectionId,
+            sectionTitle: section?.title ?? '',
             commentId: comment.id,
             authorName: comment.displayName,
             authorColor: comment.color,
