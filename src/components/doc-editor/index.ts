@@ -107,3 +107,8 @@ export { DocumentOwnership } from './DocumentOwnership';
 export type { DocumentOwnershipProps, DocumentPerson } from './DocumentOwnership';
 export { DocumentShareDialog, SHARE_ROLES } from './DocumentShareDialog';
 export type { DocumentShareDialogProps, ShareEntry, ShareRole, GeneralAccess } from './DocumentShareDialog';
+
+export { default as DocumentFindBar } from './DocumentFindBar';
+export type { DocumentFindBarProps } from './DocumentFindBar';
+export { findMatches, nextMatchIndex } from './findMatches';
+export type { FindMatch } from './findMatches';

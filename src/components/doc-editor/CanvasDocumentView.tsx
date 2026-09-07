@@ -38,6 +38,7 @@ import Banner from '../shared/Banner';
 import EmptyState from '../shared/EmptyState';
 import { Button } from '../ui/Button';
 import Chip from '../shared/Chip';
+import DocumentFindBar from './DocumentFindBar';
 
 /**
  * A form the ProseMirror schema could not express, surfaced rather than
@@ -268,6 +269,27 @@ export default function CanvasDocumentView({
     return () => window.removeEventListener('resize', measure);
   }, [isCanvas, body]);
 
+  // Cmd/Ctrl+F opens the document's own find, not the browser's.
+  //
+  // The browser's search cannot see a match below the fold in a virtualised or
+  // scrolled sheet, cannot count matches for you, and cannot replace. A word
+  // processor takes this shortcut over for exactly those reasons, and a person
+  // who wanted the browser's can still have it with Escape then Cmd+F again.
+  const [findOpen, setFindOpen] = useState(false);
+  useEffect(() => {
+    const onKey = (ev: KeyboardEvent) => {
+      if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === 'f') {
+        ev.preventDefault();
+        setFindOpen(true);
+      }
+    };
+    const el = workspaceRef.current;
+    // Bound to the workspace, not the window: two editors on one page must not
+    // both answer the same keystroke.
+    el?.addEventListener('keydown', onKey);
+    return () => el?.removeEventListener('keydown', onKey);
+  }, [isCanvas, body]);
+
   const [converting, setConverting] = useState(false);
   const [convertError, setConvertError] = useState<string | null>(null);
   // Held so the toolbar can render in the chrome ABOVE the sheet rather than
@@ -348,6 +370,16 @@ export default function CanvasDocumentView({
               sheet below it stays white. Sticky so it survives scrolling a
               long document, which is the only reason a document toolbar is
               useful at all. */}
+          {editable && editor && findOpen && (
+            <div className="sticky top-0 z-20">
+              <DocumentFindBar
+                editor={editor}
+                canReplace={editable}
+                onClose={() => { setFindOpen(false); editor.commands.focus(); }}
+                data-testid={`${testId}-find`}
+              />
+            </div>
+          )}
           {editable && editor && (
             <div
               data-testid={`${testId}-toolbar`}

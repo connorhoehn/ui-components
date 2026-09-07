@@ -411,6 +411,17 @@ declare interface DocumentEditorPageProps {
     onUndockVideo?: () => void;
 }
 
+export declare function DocumentFindBar({ editor, onClose, canReplace, 'data-testid': testId, }: DocumentFindBarProps): JSX.Element;
+
+export declare interface DocumentFindBarProps {
+    editor: Editor | null;
+    /** Closes the bar — Escape, or the × . */
+    onClose: () => void;
+    /** Hidden when the document cannot be edited; find still works. */
+    canReplace?: boolean;
+    'data-testid'?: string;
+}
+
 export declare function DocumentGutter({ items, lead, gap, estimatedHeight, onFocusItem, emptyLabel, 'data-testid': testId, }: DocumentGutterProps): JSX.Element;
 
 export declare interface DocumentGutterProps {
@@ -684,6 +695,29 @@ export declare function ExecutiveSummaryCard({ bullets, contentText, fragment, y
     provider?: CollaborationProvider | null;
 }): JSX.Element;
 
+/** A match, as a ProseMirror document range. */
+export declare interface FindMatch {
+    from: number;
+    to: number;
+}
+
+/**
+ * Every occurrence of `query`, in document order.
+ *
+ * Case-insensitive by default, the way a word processor's find is. An empty or
+ * whitespace-only query matches nothing rather than everything — the natural
+ * reading of "I have not typed anything yet", and it keeps the bar from
+ * selecting the whole document the moment it opens.
+ *
+ * Matches never span text nodes. A run split by a mark boundary — half a word
+ * in bold — is two nodes, and joining them would produce positions that do not
+ * address contiguous text. Word processors have the same limitation; it is
+ * invisible in practice and honest, which is better than a position that lies.
+ */
+export declare function findMatches(doc: TextWalkable | null | undefined, query: string, opts?: {
+    caseSensitive?: boolean;
+}): FindMatch[];
+
 export declare function FollowModeBar({ followingUserId, participants, onStopFollow, }: FollowModeBarProps): JSX.Element | null;
 
 declare interface FollowModeBarProps {
@@ -805,6 +839,15 @@ export declare interface NewDocumentModalProps {
         shape: DocumentShape;
     }) => void;
 }
+
+/**
+ * The match a person means by "next" from where the cursor is.
+ *
+ * Wraps, and treats the match the cursor is already sitting on as the current
+ * one rather than skipping past it — pressing Enter in a find bar should step
+ * from where you are, not from wherever the last search left off.
+ */
+export declare function nextMatchIndex(matches: readonly FindMatch[], cursorPos: number, direction?: 1 | -1): number;
 
 /**
  * The slice of a Tiptap editor this needs.
@@ -1312,6 +1355,14 @@ declare interface TaskListProps {
     onRemoveItem: (itemId: string) => void;
     /** When true, auto-focus the text input of the last item (reset after use). */
     focusLastItem?: MutableRefObject<boolean>;
+}
+
+/** The subset of a ProseMirror node this needs. Keeps the module editor-free. */
+declare interface TextWalkable {
+    descendants(fn: (node: {
+        isText?: boolean;
+        text?: string | null;
+    }, pos: number) => void): void;
 }
 
 export declare function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, extensions: extraExtensions, chrome, hideToolbar, onEditorReady, }: TiptapEditorProps): JSX.Element;
