@@ -3,8 +3,10 @@
 // Extracted from SimulatorPanel.tsx — the JSON payload editor section
 // (event type selector, JSON textarea, and seq input).
 
-import { useMemo } from 'react';
-import { cn } from '../../../lib/cn';
+import { useId, useMemo } from 'react';
+import { Input } from '../../forms/Input';
+import { Select } from '../../forms/Select';
+import { Textarea } from '../../forms/Textarea';
 import type { PipelineEventMap } from '../../../types/pipeline';
 
 // ---------------------------------------------------------------------------
@@ -70,65 +72,66 @@ export function EventPayloadEditor({
   seq,
   onSeqChange,
 }: EventPayloadEditorProps) {
+  const ids = useId();
+  const typeId = `${ids}-type`;
+  const payloadId = `${ids}-payload`;
+  const seqId = `${ids}-seq`;
+
   const eventOptions = useMemo(
-    () =>
-      EVENT_TYPES.map((t) => (
-        <option key={t} value={t}>
-          {t}
-        </option>
-      )),
+    () => EVENT_TYPES.map((t) => ({ value: t, label: t })),
     [],
   );
 
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <label className="block text-xs font-semibold text-text-primary mb-1">
+        <label
+          htmlFor={typeId}
+          className="block text-xs font-semibold text-text-primary mb-1"
+        >
           Event type
         </label>
-        <select
+        <Select
+          id={typeId}
           data-testid="sim-event-type"
           value={eventType}
           onChange={(e) => onEventTypeChange(e.target.value as EventKey)}
-          className={cn(
-            'w-full py-[7px] px-2 text-[13px] rounded-md',
-            'border border-border-emphasis bg-surface font-[inherit]',
-          )}
-        >
-          {eventOptions}
-        </select>
+          options={eventOptions}
+        />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-text-primary mb-1">
+        <label
+          htmlFor={payloadId}
+          className="block text-xs font-semibold text-text-primary mb-1"
+        >
           Payload (JSON)
         </label>
-        <textarea
+        <Textarea
+          id={payloadId}
           data-testid="sim-payload"
           value={payloadText}
           onChange={(e) => onPayloadChange(e.target.value)}
           spellCheck={false}
           rows={12}
-          className={cn(
-            'w-full p-2 text-xs font-mono rounded-md',
-            'border border-border-emphasis resize-y box-border',
-          )}
+          className="text-xs font-mono"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-text-primary mb-1">
+        <label
+          htmlFor={seqId}
+          className="block text-xs font-semibold text-text-primary mb-1"
+        >
           Seq (optional)
         </label>
-        <input
+        <Input
+          id={seqId}
           data-testid="sim-seq"
           type="number"
           value={seq}
           onChange={(e) => onSeqChange(e.target.value)}
-          className={cn(
-            'w-[120px] py-1.5 px-2 text-[13px] rounded-md',
-            'border border-border-emphasis font-[inherit]',
-          )}
+          className="w-[120px]"
         />
       </div>
     </div>

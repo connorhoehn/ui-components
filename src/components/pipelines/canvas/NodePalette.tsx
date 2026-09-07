@@ -27,6 +27,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { DragEvent } from 'react';
 import { cn } from '../../../lib/cn';
+import { Input } from '../../forms/Input';
 import { FilterChip } from '../../shared/FilterChip';
 import { categoryFor, type NodeCategory } from '../nodes/categories';
 import type { NodeType } from '../../../types/pipeline';
@@ -525,14 +526,14 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
       <div className="shrink-0 border-b border-border">
         {/* Search + compact toggle */}
         <div className="flex items-center gap-1.5 py-2.5 px-3">
-          <input
+          <Input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search nodes..."
             aria-label="Search nodes"
             data-testid="palette-search"
-            className="flex-1 min-w-0 border border-border-emphasis rounded-md py-1.5 px-2.5 text-[13px] font-[inherit] bg-surface-panel text-text-primary outline-none focus:border-info focus:ring-1 focus:ring-info placeholder:text-text-tertiary"
+            className="flex-1 min-w-0"
           />
           <button
             type="button"

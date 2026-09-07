@@ -14,6 +14,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '../../../lib/cn';
+import { Input } from '../../forms/Input';
 import { useBBoxAuthoring } from './useBBoxAuthoring';
 import type { AuthoringBBox } from '../../../types/pipeline';
 
@@ -439,9 +440,10 @@ export function BBoxAuthoringCanvas({
       >
         {/* Label */}
         {isEditing ? (
-          <input
+          <Input
             ref={labelInputRef}
             type="text"
+            size="sm"
             value={labelEdit.value}
             onChange={(e) => setLabelEdit((prev) => prev ? { ...prev, value: e.target.value } : null)}
             onBlur={commitLabel}
@@ -449,7 +451,8 @@ export function BBoxAuthoringCanvas({
               if (e.key === 'Enter') { e.preventDefault(); commitLabel(); }
               if (e.key === 'Escape') { e.preventDefault(); setLabelEdit(null); }
             }}
-            className="absolute -top-5 left-0 w-24 rounded border border-primary bg-white px-1 py-0 text-[10px] font-semibold text-primary shadow outline-none focus:ring-1 focus:ring-primary"
+            aria-label="Box label"
+            className="absolute -top-5 left-0 h-5 w-24 border-primary px-1 text-[10px] font-semibold text-primary shadow focus:border-primary focus:ring-primary/40"
             onClick={(e) => e.stopPropagation()}
           />
         ) : (

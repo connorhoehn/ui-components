@@ -7,6 +7,9 @@ export type { SelectProps, SelectSize, SelectOption, SelectOptionGroup } from '.
 export { Textarea } from './Textarea';
 export type { TextareaProps } from './Textarea';
 
+export { FileInput } from './FileInput';
+export type { FileInputProps } from './FileInput';
+
 export { JsonPathInput } from './JsonPathInput';
 export type { JsonPathInputProps, JsonPathSample } from './JsonPathInput';
 

@@ -43,6 +43,7 @@ import Link from '@tiptap/extension-link';
 import Suggestion from '@tiptap/suggestion';
 import type { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion';
 import { cn } from '../../lib/cn';
+import { FileInput } from '../forms/FileInput';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover } from './ReactionPickerPopover';
 import { ComposerAttachments, type StagedFile } from './ComposerAttachments';
@@ -522,17 +523,11 @@ export function RichChatComposer({
           {attachmentsEnabled && (
             <>
               {toolbarButton('Attach files', false, () => fileInput.current?.click(), <span>📎</span>)}
-              <input
+              <FileInput
                 ref={fileInput}
-                type="file"
                 multiple
-                hidden
                 data-testid={`${testId}-file-input`}
-                onChange={(e) => {
-                  stage(Array.from(e.target.files ?? []));
-                  // Cleared so picking the SAME file twice still fires change.
-                  e.target.value = '';
-                }}
+                onFiles={stage}
               />
             </>
           )}

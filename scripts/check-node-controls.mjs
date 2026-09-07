@@ -50,6 +50,13 @@ const BASELINE = {
   'forms/Checkbox.tsx': 1,
   'forms/Slider.tsx': 1,
   'forms/ColorInput.tsx': 1,
+  // The invisible file picker behind a styled trigger. Added 2026-09-07 after
+  // finding the same element hand-rolled three times (ChatPanel,
+  // RichChatComposer, FileUploadDrop), twice missing the aria-hidden/tabIndex
+  // pair and once missing the value reset that makes re-picking the SAME file
+  // fire change. A file input has no stylable surface, so this is the one place
+  // that plumbing should live.
+  'forms/FileInput.tsx': 1,
 
   // ---- shared/: composite primitives whose embedded control is their own
   // body (a picker's query field, a composer's message field). Fine as raw;
@@ -74,12 +81,9 @@ const BASELINE = {
   'shared/DataTable.tsx': 1, // built-in search field
   'shared/FileUploadDrop.tsx': 1, // invisible file input behind the drop zone
 
-  // ---- social/
-  // Hidden <input type="file"> driven by the composer's paperclip button —
-  // aria-hidden, tabIndex={-1}, `className="hidden"`. Same shape as
-  // FileUploadDrop's, directly above: a file picker has no stylable
-  // surface, so the affordance is the button and the input is plumbing.
-  'social/ChatPanel.tsx': 1,
+  // ---- social/: zero. ChatPanel's and RichChatComposer's paperclip file
+  // pickers were the last two, and they now reach forms/FileInput instead of
+  // each keeping their own copy of the same plumbing.
 
   // ---- identity/
   'identity/shared/CodeInput.tsx': 1, // OTP digit boxes — the primitive itself
@@ -90,27 +94,46 @@ const BASELINE = {
   // gradient, --progress fill var), not form controls.
   'video/RecordingPlayer.tsx': 2,
 
-  // ---- pipelines/ (unchanged from the 2026-08-20 widening)
-  // Terminal-styled dev inspector (Catppuccin palette); deliberately NOT the
-  // light form language — it reads as a debugger, because it is one.
+  // ---- pipelines/
+  // Terminal-styled dev inspector: every field is bg-code-bg / text-code-text /
+  // border-code-border / font-mono, i.e. the code pane's palette rather than the
+  // form language. Reads as a debugger, because it is one.
   'pipelines/context-inspector/ContextEditBuffer.tsx': 6,
-  // Dev-only simulator payload editor, same reasoning.
-  'pipelines/dev/EventPayloadEditor.tsx': 3,
-  // Invisible test hook (zero-size, tabIndex=-1) — not a user-facing control.
+  // Invisible test hook (zero-size, opacity-0, pointer-events-none,
+  // tabIndex={-1}) — the compare picker is driven by the row, not by this.
+  // Not a user-facing control, so there is nothing for a Checkbox to render.
   'pipelines/RunsTable.tsx': 1,
   // Invisible a11y range overlaid on the custom-drawn replay timeline;
   // a visible Slider track would double-draw the scrubber.
   'pipelines/replay/Scrubber.tsx': 1,
-  // Floating in-canvas label editor positioned over the drawn bbox.
-  'pipelines/vision/BBoxAuthoringCanvas.tsx': 1,
-  // Palette-toned search field (surface-panel bg, info focus ring) — the
-  // palette's own visual language, not the standard field chrome.
-  'pipelines/canvas/NodePalette.tsx': 1,
-  // Command-palette-style inline input inside the quick-insert popover.
+  // Command-palette input inside the quick-insert popover. It is autofocused
+  // for its whole lifetime, so Input's focus ring would be permanently lit —
+  // a persistent "this field is focused" halo on the only thing in the
+  // popover, which is noise rather than feedback. Deliberately outline-none.
   'pipelines/canvas/QuickInsertPopover.tsx': 1,
-  // Borderless inline-rename field in the editor top bar.
-  'pipelines/editor/EditorTopBar.tsx': 1,
 };
+
+//
+// 2026-09-07 audit of the entries above. Four came off the list because their
+// stated reason did not survive reading the code — worth recording, because a
+// baseline whose comments are wrong is worse than no baseline:
+//
+//   pipelines/canvas/NodePalette.tsx      "the palette's own visual language"
+//     — it was Input's md class string copied out character for character.
+//   pipelines/editor/EditorTopBar.tsx     "borderless inline-rename field"
+//     — it had `bg-surface border border-border-field rounded-md`.
+//   pipelines/dev/EventPayloadEditor.tsx  "terminal-styled, same reasoning"
+//     — generic bordered fields, and the textarea and seq input carried NO
+//       background token at all, so both were browser-default white in dark
+//       mode. Exactly the bug this ratchet exists to catch, filed as an excuse.
+//   pipelines/vision/BBoxAuthoringCanvas.tsx  "floating in-canvas label editor"
+//     — floating is true and preserved via className, but it hardcoded
+//       `bg-white`, the specific divergence named at the top of this file.
+//
+// social/ChatPanel.tsx also went to zero: it and RichChatComposer now share
+// forms/FileInput instead of each keeping a copy of the same hidden-input
+// plumbing.
+//
 
 /** Strip comments so a code sample in a doc comment isn't counted. */
 function stripComments(source) {

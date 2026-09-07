@@ -1341,3 +1341,258 @@
 }
 .uic-audio-bar { animation: uic-audio-bar 900ms ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .uic-audio-bar { animation: none; } }
+
+/* ===========================================================================
+   BEGIN: print — the document, on paper
+
+   Print is not an export. It writes no file, it has no serializer, and it is
+   also how most people get a PDF: "Save as PDF" in the browser's print dialog
+   is this stylesheet, rendered to a file instead of to a printer. So the
+   quality of the PDF this product produces IS the quality of these rules.
+
+   ## What is being printed
+
+   NOT the editor where it stands. The consuming app builds a detached sheet on
+   `beforeprint` and appends it to <body> as `#doc-print-root` — see
+   `buildPrintRoot` in the app's useDocumentActions.ts for why (the short
+   version: the live sheet sits inside an `overflow-y-auto` workspace with a
+   MEASURED pixel height, so printing it in place puts one screenful on the
+   paper and silently drops the rest; it also carries an inline `zoom` from the
+   status bar and `cqi` padding that means nothing against physical paper).
+
+   The built sheet is a bare `.doc-page > .doc-page__body` holding a clone of
+   the live `.ProseMirror`. It keeps the `.doc-page .ProseMirror` typography
+   above — the heading scale, the list indents, the tables, the images — and
+   inherits none of the screen geometry.
+
+   ## Geometry comes from the paper, not from the screen
+
+   The screen sheet is 816px wide with 96px of `cqi` padding, which is 8.5in
+   with 1in margins at 96dpi — it is IMITATING Letter. In print there is no
+   need to imitate: `@page` states the real thing, the sheet takes the full
+   printable area, and the margin is the printer's. The measure comes out the
+   same; it just stops being a pixel count a printer has no use for.
+
+   ## Backgrounds
+
+   `background: #fff` on html/body is load-bearing. The workspace's grey desk
+   (`bg-workspace`) is a recessed field for a sheet to float on; printed, it is
+   a full-bleed grey rectangle behind every page and a great deal of toner.
+   =========================================================================== */
+
+/* On screen the built sheet must not exist. It is appended to <body> for the
+   duration of one print and removed again, but a print interrupted at the wrong
+   moment can leave it behind, and a second copy of the document appearing under
+   the app would be a worse bug than not printing at all. */
+#doc-print-root { display: none; }
+
+@media print {
+  @page {
+    size: Letter;
+    margin: 1in;
+  }
+
+  /* Scoped to `.doc-printing`, which the app sets on <html> for exactly as long
+     as the built sheet is mounted. A CLASS rather than `:has(#doc-print-root)`
+     because this scope is load-bearing in the other direction: without it the
+     `body > *` rule below hides everything on every page in the app, and
+     printing a pipeline or a chat would produce a blank sheet. That failure
+     would only ever be found by a user, on paper, so it does not get to depend
+     on a selector's browser support. */
+  html.doc-printing,
+  html.doc-printing body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Everything that is not the sheet.
+     
+     ONE rule, by construction. The app root is a single <body> child, so this
+     takes the sidebar, the document header, the toolbar, the find bar, the
+     ruler, the comment gutter, the outline rail, the status bar and the
+     suggestion review pane with it — and every overlay that portals to <body>,
+     which is what the floating call widget and every dialog do. The point of
+     writing it this way rather than naming each one is that it keeps working
+     when the app grows a tenth panel, in a file nobody remembers to update. */
+  html.doc-printing body > *:not(#doc-print-root) { display: none !important; }
+
+  #doc-print-root {
+    display: block !important;
+    background: #fff;
+    color: #000;
+  }
+
+  #doc-print-root .doc-print-sheet {
+    display: block;
+    /* No width, no max-width, no min-height, no shadow: `@page` owns all four
+       now. `min-h-[1056px]` on paper would pad every document out to a second
+       blank sheet. */
+    width: auto;
+    max-width: none;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    background: #fff;
+    color: #000;
+    /* Points, not pixels — 12pt IS the sheet's 16px at 96dpi, so the printed
+       measure matches the screen's, but it is now stated in the unit the paper
+       is actually measured in. Leading tightens from 1.65 to 1.5: screen
+       leading is set for a backlit panel and reads loose on paper. */
+    font-size: 12pt;
+    line-height: 1.5;
+    /* Table header fills, code-block grounds and the tracked-change marks below
+       are information, not decoration, so they must survive the browser's
+       default "don't print backgrounds". */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  #doc-print-root .doc-page__body {
+    /* The screen margin was `11.76cqi` of an 816px sheet. There is no container
+       here and no need for one — `@page { margin: 1in }` is the same measure,
+       enforced by the printer on every page rather than only on the first. */
+    padding: 0;
+  }
+
+  /* The document's own name, when the page does not already open with it. */
+  #doc-print-root .doc-print-title {
+    font-size: 1.9em;
+    font-weight: 600;
+    line-height: 1.25;
+    margin: 0 0 0.6em;
+  }
+
+  /* Section-shaped documents: the task rows are rebuilt as a plain list,
+     because a printed <input type=checkbox> renders as an empty box in some
+     engines whatever its checked state — losing the one thing the reader
+     needed. The glyph carries the state instead. */
+  #doc-print-root .doc-print-tasks {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 0.9em;
+  }
+
+  /* -------------------------------------------------------------------------
+     Where the pages break.
+
+     Defaults put a heading alone at the foot of a page, split a two-row table
+     across a sheet, and orphan the last line of a paragraph. None of that is
+     visible on screen, which is why it survives until someone prints.
+     ---------------------------------------------------------------------- */
+  #doc-print-root .ProseMirror h1,
+  #doc-print-root .ProseMirror h2,
+  #doc-print-root .ProseMirror h3,
+  #doc-print-root .doc-print-title {
+    break-after: avoid-page;
+    break-inside: avoid-page;
+  }
+  #doc-print-root .ProseMirror p,
+  #doc-print-root .ProseMirror li,
+  #doc-print-root .ProseMirror blockquote {
+    orphans: 3;
+    widows: 3;
+  }
+  #doc-print-root .ProseMirror img,
+  #doc-print-root .ProseMirror pre,
+  #doc-print-root .ProseMirror blockquote {
+    break-inside: avoid;
+  }
+  /* A table taller than a page still has to break — forbidding it outright
+     would push a long table onto its own sheet and clip it. Repeating the
+     header row is what makes the continuation readable. */
+  #doc-print-root .ProseMirror table { break-inside: auto; }
+  #doc-print-root .ProseMirror thead { display: table-header-group; }
+  #doc-print-root .ProseMirror tr { break-inside: avoid; }
+  /* An image scaled to a screen column can be taller than the printable area,
+     and a break-inside:avoid box that does not fit is dropped onto a page of
+     its own and then clipped. */
+  #doc-print-root .ProseMirror img { max-width: 100%; max-height: 9in; }
+
+  /* -------------------------------------------------------------------------
+     Three kinds of mark that have no print meaning — and one that does.
+
+     1. COMMENT HIGHLIGHTS — the amber wash and underline are DROPPED; the text
+        under them prints as ordinary prose.
+
+        A comment is a conversation, and the conversation is not on the paper:
+        the gutter that holds the threads is excluded above, so a highlight
+        would be a mark pointing at a card the reader does not have. Worse, on
+        paper an amber wash is indistinguishable from a highlighter someone ran
+        over the sentence — it reads as emphasis the author did not write.
+        Resolved threads paint a dotted rule, which prints as a typo.
+
+     2. LIVE CURSORS — DROPPED, and removed from the clone outright (the label
+        is absolutely positioned, so hiding it in CSS alone still reserves the
+        box). A remote caret is a claim about who is looking at the document
+        right now. There is no "right now" on a sheet of paper.
+
+     3. SUGGESTIONS — KEPT, and printed as tracked changes.
+
+        This is the one that goes the other way, and deliberately. A tracked
+        insertion is CONTENT UNDER REVIEW: the entire point of printing a
+        document in suggestion mode is to take the proposed changes to a
+        meeting. Printing the accepted result instead would hand the reviewer a
+        page that silently claims the suggestions were agreed.
+
+        Colour alone will not carry it — a print is often greyscale, and
+        green-on-white and red-on-white reduce to the same grey. So insertions
+        keep their UNDERLINE and deletions keep their STRIKE-THROUGH, which are
+        the marks a copy-editor would use and which survive any printer.
+
+        The hover-only author tooltip goes: it is an interaction, and CSS
+        `content` from a `:hover` state cannot fire on paper anyway.
+
+        A reader who has chosen Word's "Simple Markup" view still gets the clean
+        read — the app copies the `suggestion-view-*` class onto the print root,
+        so those rules apply to the printed sheet exactly as they do on screen.
+     ---------------------------------------------------------------------- */
+  #doc-print-root .canvas-comment,
+  #doc-print-root .canvas-comment--open,
+  #doc-print-root .canvas-comment--active,
+  #doc-print-root .canvas-comment--resolved {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: inherit !important;
+    cursor: auto;
+  }
+
+  #doc-print-root [data-testid='remote-cursor'],
+  #doc-print-root [data-testid='remote-selection'],
+  #doc-print-root [data-remote-user] {
+    display: none !important;
+  }
+
+  #doc-print-root .suggestion--insert {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  #doc-print-root .suggestion--delete { text-decoration: line-through; }
+  #doc-print-root .suggestion--modify { border-bottom: 1px dashed currentColor; }
+  /* Focus ring on the suggestion the review panel has selected — a UI state,
+     not a property of the change. */
+  #doc-print-root .suggestion--active { outline: none; }
+  #doc-print-root .suggestion[data-suggestion-username]:hover::after { content: none; }
+
+  /* A placeholder is an invitation to type; the attribute is stripped from the
+     clone, and this covers any renderer that paints one from a class instead. */
+  #doc-print-root .is-empty::before,
+  #doc-print-root .ProseMirror-trailingBreak { content: none !important; display: none !important; }
+
+  /* No editing affordances survive onto the paper: a caret, a selection wash, a
+     resize handle and a spellcheck squiggle are all states of an editor. */
+  #doc-print-root .ProseMirror { caret-color: transparent; }
+  #doc-print-root .ProseMirror .column-resize-handle,
+  #doc-print-root .ProseMirror .selectedCell::after { display: none !important; }
+}
+
+/* ===========================================================================
+   END: print
+   =========================================================================== */

@@ -9,6 +9,7 @@ import type { ChatMessage } from '../../hooks/useChat';
 import { MessageRow } from './MessageRow';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
+import { FileInput } from '../forms/FileInput';
 import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
 import { MessageBody } from './MessageBody';
@@ -922,23 +923,16 @@ export function ChatPanel({
             >
               <PaperclipGlyph />
             </button>
-            <input
+            <FileInput
               ref={fileInputRef}
-              type="file"
               multiple
               accept={acceptFiles}
-              aria-hidden="true"
-              tabIndex={-1}
-              className="hidden"
-              onChange={(e) => {
-                const picked = Array.from(e.target.files ?? []);
+              onFiles={(picked) => {
                 const tooBig = maxFileSize ? picked.filter((f) => f.size > maxFileSize) : [];
                 if (tooBig.length > 0) {
                   onFileError?.(`Skipped ${tooBig.length} file(s) over the size limit.`);
                 }
                 handleFiles(picked.filter((f) => !tooBig.includes(f)));
-                // Reset so picking the same file twice still fires.
-                e.target.value = '';
               }}
             />
           </>

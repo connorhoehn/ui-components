@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { cn } from '../../../lib/cn';
+import { Input } from '../../forms/Input';
 import { useClickOutside } from '../hooks/useClickOutside';
 import { usePipelineEditor } from '../context/PipelineEditorContext';
 import { validatePipeline } from '../validation/validatePipeline';
@@ -243,7 +244,7 @@ export default function EditorTopBar({
       />
 
       {nameEditing ? (
-        <input
+        <Input
           ref={nameInputRef}
           value={nameDraft}
           onChange={(e) => setNameDraft(e.target.value)}
@@ -255,11 +256,8 @@ export default function EditorTopBar({
               setNameEditing(false);
             }
           }}
-          className={cn(
-            'px-2 py-1 text-sm font-bold text-text-primary',
-            'bg-surface border border-border-field rounded-md',
-            'font-inherit outline-none w-[260px]',
-          )}
+          aria-label="Pipeline name"
+          className="w-[260px] text-sm font-bold"
           data-testid="pipeline-name-input"
         />
       ) : (

@@ -24,6 +24,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 import { Avatar } from '../shared/Avatar';
 
 export interface NewConversationPerson {
@@ -93,8 +94,9 @@ export function NewConversationPanel({
       className={cn('flex flex-col gap-1 rounded-lg border border-border bg-surface p-2', className)}
     >
       <div className="flex items-center gap-1.5">
-        <input
+        <Input
           ref={inputRef}
+          size="sm"
           autoFocus
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -111,7 +113,7 @@ export function NewConversationPanel({
           aria-label="Search people, or name a new channel"
           data-testid={`${testId}-query`}
           disabled={busy}
-          className="min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary outline-none placeholder:text-text-tertiary focus:border-primary"
+          className="min-w-0 flex-1"
         />
         {onCancel && (
           <button
