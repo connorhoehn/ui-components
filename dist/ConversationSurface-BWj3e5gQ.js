@@ -110,20 +110,20 @@ var T = /* @__PURE__ */ new Set([
 	"A",
 	"SPAN"
 ]), E = /^(https?:|mailto:)/i;
-function D(e) {
+function ee(e) {
 	if (!e) return null;
 	let t = e.trim();
 	return t.startsWith("/") || t.startsWith("#") || E.test(t) ? t : null;
 }
-function O(e, t) {
+function D(e, t) {
 	if (e.nodeType === Node.TEXT_NODE) return e.textContent;
 	if (e.nodeType !== Node.ELEMENT_NODE) return null;
-	let n = e, r = Array.from(n.childNodes).map((e, n) => O(e, `${t}-${n}`));
+	let n = e, r = Array.from(n.childNodes).map((e, n) => D(e, `${t}-${n}`));
 	if (!T.has(n.tagName)) return /* @__PURE__ */ v("span", { children: r }, t);
 	switch (n.tagName) {
 		case "BR": return /* @__PURE__ */ v("br", {}, t);
 		case "A": {
-			let e = D(n.getAttribute("href"));
+			let e = ee(n.getAttribute("href"));
 			return e ? /* @__PURE__ */ v("a", {
 				href: e,
 				target: "_blank",
@@ -146,11 +146,11 @@ function O(e, t) {
 		}
 	}
 }
-var k = /```([\s\S]*?)```|`([^`\n]+)`/g;
-function A(e) {
+var O = /```([\s\S]*?)```|`([^`\n]+)`/g;
+function k(e) {
 	if (!e || e.indexOf("`") === -1) return e;
 	let t = [], n = 0, r;
-	for (k.lastIndex = 0; (r = k.exec(e)) !== null;) {
+	for (O.lastIndex = 0; (r = O.exec(e)) !== null;) {
 		r.index > n && t.push(e.slice(n, r.index));
 		let i = r[1];
 		if (i !== void 0) {
@@ -167,12 +167,12 @@ function A(e) {
 	}
 	return n < e.length && t.push(e.slice(n)), t.length === 1 && typeof t[0] == "string" ? t[0] : t;
 }
-function ee({ html: t, text: n, className: r, "data-testid": i = "message-body" }) {
+function A({ html: t, text: n, className: r, "data-testid": i = "message-body" }) {
 	let a = m(() => {
 		if (!t) return null;
 		let e = new DOMParser().parseFromString(t, "text/html");
-		return Array.from(e.body.childNodes).map((e, t) => O(e, `n${t}`));
-	}, [t]), o = m(() => A(n ?? ""), [n]);
+		return Array.from(e.body.childNodes).map((e, t) => D(e, `n${t}`));
+	}, [t]), o = m(() => k(n ?? ""), [n]);
 	return /* @__PURE__ */ v("div", {
 		"data-testid": i,
 		className: e("message-body", r),
@@ -201,7 +201,7 @@ function te({ documentId: t, title: n, icon: r, createdBy: i, editors: a = [], o
 					children: n || "Untitled"
 				}), /* @__PURE__ */ v("span", {
 					className: "truncate text-[11px] text-text-tertiary",
-					children: u ? `${j(a)} editing now` : i ? `Created by ${i}` : "Document"
+					children: u ? `${ne(a)} editing now` : i ? `Created by ${i}` : "Document"
 				})]
 			}),
 			u && /* @__PURE__ */ v("span", {
@@ -228,7 +228,7 @@ function te({ documentId: t, title: n, icon: r, createdBy: i, editors: a = [], o
 		]
 	});
 }
-function j(e) {
+function ne(e) {
 	let t = e.length, n = e.map((e) => e.displayName).filter(Boolean).slice(0, 2), r = t - n.length;
 	if (n.length === 0) return t === 1 ? "Someone is" : `${t} people are`;
 	if (r === 0) return n.length === 1 ? `${n[0]} is` : `${n[0]} and ${n[1]} are`;
@@ -237,19 +237,19 @@ function j(e) {
 }
 //#endregion
 //#region src/components/social/CallActivityCard.tsx
-function M(e) {
+function j(e) {
 	if (!Number.isFinite(e) || e < 0) return "";
 	let t = Math.round(e / 1e3), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60;
 	return n > 0 ? r > 0 ? `${n}h ${r}m` : `${n}h` : r > 0 ? i > 0 ? `${r}m ${i}s` : `${r}m` : `${i}s`;
 }
-function N(e, t) {
+function M(e, t) {
 	let n = e.length;
 	if (n === 0) return t ? "Nobody has joined yet" : "Nobody joined";
 	let r = e.map((e) => e.displayName).filter(Boolean).slice(0, 2), i = n - r.length, a = i === 1 ? "1 other" : `${i} others`, o;
 	return o = r.length === 0 ? n === 1 ? "Someone" : `${n} people` : i > 0 ? r.length === 1 ? `${r[0]} and ${a}` : `${r[0]}, ${r[1]} and ${a}` : r.length === 1 ? r[0] : `${r[0]} and ${r[1]}`, `${o} ${n === 1 ? t ? "is" : "was" : t ? "are" : "were"} in the call`;
 }
-function ne({ callId: t, startedBy: n, participants: r = [], live: i = !1, durationMs: a, audioOnly: o, onJoin: s, className: c, "data-testid": u = "call-activity-card" }) {
-	let d = !i && typeof a == "number" ? M(a) : "", f = o === void 0 ? "Call" : o ? "Audio call" : "Video call", p = i ? N(r, !0) : [n ? `${n} started a call` : "Call ended", d].filter(Boolean).join(" · ");
+function re({ callId: t, startedBy: n, participants: r = [], live: i = !1, durationMs: a, audioOnly: o, onJoin: s, className: c, "data-testid": u = "call-activity-card" }) {
+	let d = !i && typeof a == "number" ? j(a) : "", f = o === void 0 ? "Call" : o ? "Audio call" : "Video call", p = i ? M(r, !0) : [n ? `${n} started a call` : "Call ended", d].filter(Boolean).join(" · ");
 	return /* @__PURE__ */ y("div", {
 		"data-testid": u,
 		"data-call-id": t,
@@ -297,7 +297,7 @@ function ne({ callId: t, startedBy: n, participants: r = [], live: i = !1, durat
 }
 //#endregion
 //#region src/components/social/ReactionChips.tsx
-function P(e, t) {
+function N(e, t) {
 	let n = [], r = /* @__PURE__ */ new Map(), i = /* @__PURE__ */ new Set();
 	for (let a of e) {
 		let e = `${a.emoji} ${a.userId}`;
@@ -313,12 +313,12 @@ function P(e, t) {
 	}
 	return n.map((e) => r.get(e));
 }
-function F(e) {
+function P(e) {
 	let t = e.mine ? ["You", ...e.names] : [...e.names];
 	return t.length === 0 ? "" : t.length === 1 ? t[0] : t.length <= 3 ? `${t.slice(0, -1).join(", ")} and ${t[t.length - 1]}` : `${t.slice(0, 2).join(", ")} and ${t.length - 2} others`;
 }
-function I({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-testid": a = "reaction-chips" }) {
-	let o = m(() => P(t, n), [t, n]);
+function F({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-testid": a = "reaction-chips" }) {
+	let o = m(() => N(t, n), [t, n]);
 	return o.length === 0 ? null : /* @__PURE__ */ v("div", {
 		"data-testid": a,
 		className: e("mt-1 flex flex-wrap gap-1", i),
@@ -329,7 +329,7 @@ function I({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-te
 			"data-mine": String(t.mine),
 			"aria-pressed": t.mine,
 			"aria-label": `${t.emoji} ${t.count}${t.mine ? ", including you" : ""}`,
-			title: F(t),
+			title: P(t),
 			onClick: () => r(t.emoji),
 			className: e("flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-xs leading-none", t.mine ? "border-primary bg-primary-bg text-primary-fg" : "border-border bg-surface text-text-secondary hover:bg-surface-hover"),
 			children: [/* @__PURE__ */ v("span", {
@@ -344,12 +344,12 @@ function I({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-te
 }
 //#endregion
 //#region src/components/social/MessageActionBar.tsx
-var L = [
+var I = [
 	"👍",
 	"🎉",
 	"❤️"
 ];
-function R({ quickReactions: t = L, onReact: n, onOpenReactionPicker: r, onReply: i, onTogglePin: a, pinned: o = !1, onCopyLink: s, onEdit: c, onDelete: l, className: u, "data-testid": d = "message-actions" }) {
+function L({ quickReactions: t = I, onReact: n, onOpenReactionPicker: r, onReply: i, onTogglePin: a, pinned: o = !1, onCopyLink: s, onEdit: c, onDelete: l, className: u, "data-testid": d = "message-actions" }) {
 	let f = (e, t, n, r) => /* @__PURE__ */ v("button", {
 		type: "button",
 		"aria-label": e,
@@ -396,18 +396,18 @@ function R({ quickReactions: t = L, onReact: n, onOpenReactionPicker: r, onReply
 }
 //#endregion
 //#region src/components/social/QuoteBlock.tsx
-function z(e, t = 120) {
+function R(e, t = 120) {
 	let n = e.replace(/\s+/g, " ").trim();
 	if (n.length <= t) return n;
 	let r = n.slice(0, t), i = r.lastIndexOf(" ");
 	return `${(i > t * .6 ? r.slice(0, i) : r).trimEnd()}…`;
 }
-function B(e) {
+function z(e) {
 	if (!e) return "";
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? "" : `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}`;
 }
-function re({ quote: t, onJump: n, onDismiss: r, className: i, "data-testid": a = "quote-block" }) {
+function ie({ quote: t, onJump: n, onDismiss: r, className: i, "data-testid": a = "quote-block" }) {
 	let o = /* @__PURE__ */ y(_, { children: [/* @__PURE__ */ y("span", {
 		className: "flex items-baseline gap-2",
 		children: [/* @__PURE__ */ v("span", {
@@ -415,11 +415,11 @@ function re({ quote: t, onJump: n, onDismiss: r, className: i, "data-testid": a 
 			children: t.author
 		}), t.timestamp && /* @__PURE__ */ v("span", {
 			className: "shrink-0 text-[11px] tabular-nums text-text-tertiary",
-			children: B(t.timestamp)
+			children: z(t.timestamp)
 		})]
 	}), /* @__PURE__ */ v("span", {
 		className: "block truncate text-xs text-text-secondary",
-		children: z(t.text)
+		children: R(t.text)
 	})] });
 	return /* @__PURE__ */ y("div", {
 		"data-testid": a,
@@ -447,14 +447,14 @@ function re({ quote: t, onJump: n, onDismiss: r, className: i, "data-testid": a 
 }
 //#endregion
 //#region src/components/social/ChatAttachment.tsx
-function V(e) {
+function B(e) {
 	return typeof e.contentType == "string" && e.contentType.startsWith("image/");
 }
-function H(e) {
+function V(e) {
 	return !Number.isFinite(e) || e < 0 ? "" : e < 1024 ? `${e} B` : e < 1048576 ? `${(e / 1024).toFixed(1)} KB` : `${(e / 1048576).toFixed(1)} MB`;
 }
-function ie({ attachment: t, src: n, onOpen: r, className: i }) {
-	let a = V(t), o = n ?? t.preview;
+function ae({ attachment: t, src: n, onOpen: r, className: i }) {
+	let a = B(t), o = n ?? t.preview;
 	return a ? /* @__PURE__ */ y("div", {
 		"data-testid": "attachment-bubble",
 		"data-attachment-kind": "image",
@@ -486,7 +486,7 @@ function ie({ attachment: t, src: n, onOpen: r, className: i }) {
 				children: t.name
 			}), /* @__PURE__ */ v("span", {
 				className: "shrink-0 text-xs text-[var(--color-text-tertiary)]",
-				children: H(t.size)
+				children: V(t.size)
 			})]
 		})]
 	}) : /* @__PURE__ */ v("div", {
@@ -498,21 +498,21 @@ function ie({ attachment: t, src: n, onOpen: r, className: i }) {
 			onClick: r ? () => r(t) : void 0,
 			"aria-label": `Download ${t.name}`,
 			className: e("flex w-full min-w-0 items-center gap-2 rounded-lg border px-2.5 py-2 text-left", "border-[var(--color-border)] bg-[var(--color-surface-inset)]", "hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"),
-			children: [/* @__PURE__ */ v(oe, {}), /* @__PURE__ */ y("span", {
+			children: [/* @__PURE__ */ v(se, {}), /* @__PURE__ */ y("span", {
 				className: "flex min-w-0 flex-col",
 				children: [/* @__PURE__ */ v("span", {
 					className: "min-w-0 break-all text-sm text-[var(--color-text-primary)]",
 					children: t.name
 				}), /* @__PURE__ */ v("span", {
 					className: "text-xs text-[var(--color-text-tertiary)]",
-					children: H(t.size)
+					children: V(t.size)
 				})]
 			})]
 		})
 	});
 }
-function ae({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
-	let { size: a, transferred: o, phase: s } = t, c = a > 0 ? Math.min(100, Math.round(o / a * 100)) : 0, l = s === "failed" || s === "cancelled", u = s === "failed" ? t.error ?? "Upload failed" : s === "cancelled" ? "Cancelled" : s === "verifying" ? "Verifying…" : a > 0 ? `${c}%` : H(o);
+function oe({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
+	let { size: a, transferred: o, phase: s } = t, c = a > 0 ? Math.min(100, Math.round(o / a * 100)) : 0, l = s === "failed" || s === "cancelled", u = s === "failed" ? t.error ?? "Upload failed" : s === "cancelled" ? "Cancelled" : s === "verifying" ? "Verifying…" : a > 0 ? `${c}%` : V(o);
 	return /* @__PURE__ */ y("div", {
 		"data-testid": "transfer-bubble",
 		"data-transfer-phase": s,
@@ -525,7 +525,7 @@ function ae({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
 				"aria-hidden": "true",
 				"data-testid": "transfer-bubble-preview",
 				className: "h-9 w-9 shrink-0 rounded object-cover blur-[3px]"
-			}) : /* @__PURE__ */ v(oe, {}),
+			}) : /* @__PURE__ */ v(se, {}),
 			/* @__PURE__ */ y("div", {
 				className: "flex min-w-0 grow flex-col gap-1",
 				children: [
@@ -570,7 +570,7 @@ function ae({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
 		]
 	});
 }
-function oe() {
+function se() {
 	return /* @__PURE__ */ v("svg", {
 		width: "20",
 		height: "20",
@@ -587,17 +587,17 @@ function oe() {
 		})
 	});
 }
-function se(e, t = 64) {
+function ce(e, t = 64) {
 	return e.scrollHeight - e.scrollTop - e.clientHeight <= t;
 }
-function ce(e) {
+function le(e) {
 	if (e.length === 0) return "";
 	if (e.length === 1) return `${e[0]} is typing...`;
 	if (e.length === 2) return `${e[0]} and ${e[1]} are typing...`;
 	let t = e.length - 2;
 	return `${e[0]}, ${e[1]} and ${t} other${t > 1 ? "s" : ""} are typing...`;
 }
-function le(e) {
+function ue(e) {
 	if (!e) return null;
 	if (e.kind === "document" && typeof e.documentId == "string" && e.documentId) return {
 		documentId: e.documentId,
@@ -611,21 +611,21 @@ function le(e) {
 		icon: typeof t.icon == "string" ? t.icon : void 0
 	} : null;
 }
-var ue = {
+var de = {
 	attachments: "files",
 	html: "formatting",
 	mentions: "mentions",
 	replyTo: "the quoted reply"
 };
-function de(e) {
+function fe(e) {
 	if (!e || e._truncated !== !0) return null;
 	let t = (Array.isArray(e._droppedKeys) ? e._droppedKeys : []).filter((e) => typeof e == "string");
 	return {
 		droppedKeys: t,
-		labels: t.map((e) => ue[e] ?? e)
+		labels: t.map((e) => de[e] ?? e)
 	};
 }
-function fe(e) {
+function pe(e) {
 	if (!e || e.kind !== "call") return null;
 	let t = typeof e.callId == "string" ? e.callId : "";
 	if (!t) return null;
@@ -644,62 +644,62 @@ function fe(e) {
 		participants: n
 	};
 }
-function pe({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers: c = [], composer: l, currentUserId: m, reactionsFor: b, onToggleReaction: x, onReply: S, onTogglePin: C, pinnedMessageIds: T, onJumpToMessage: E, highlightedMessageId: D, documentEditors: O, callParticipants: k, onJoinCall: A, onOpenDocument: j, tone: M = "light", showHeader: N, fill: P, onLoadMore: F, hasMore: L, loadingMore: z = !1, onSendFiles: B, transfers: V = [], currentActor: H, onCancelTransfer: oe, attachmentSrc: ue, onOpenAttachment: pe, acceptFiles: he, maxFileSize: U, onFileError: W, emojis: G = f }) {
-	let K = M === "dark", q = o(), ge = N ?? !(q?.hasHeader ?? !1), J = P ?? q?.fillsHeight ?? !1, [Y, X] = g(""), Z = h(null), Q = h(null), _e = !!F && L !== !1, ve = h(null), ye = h(null), [be, xe] = g(!1), Se = !!B && !i, [Ce, we] = g(0), [Te, Ee] = g(!1), $ = h(!0), De = h(n.length), Oe = n.length + V.length, ke = h(null);
+function me({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers: c = [], composer: l, currentUserId: m, reactionsFor: b, onToggleReaction: x, onReply: S, onTogglePin: C, pinnedMessageIds: T, onJumpToMessage: E, highlightedMessageId: ee, documentEditors: D, callParticipants: O, onJoinCall: k, onOpenDocument: ne, tone: j = "light", showHeader: M, fill: N, onLoadMore: P, hasMore: I, loadingMore: R = !1, onSendFiles: z, transfers: B = [], currentActor: V, onCancelTransfer: se, attachmentSrc: de, onOpenAttachment: me, acceptFiles: ge, maxFileSize: H, onFileError: U, emojis: W = f }) {
+	let G = j === "dark", K = o(), _e = M ?? !(K?.hasHeader ?? !1), q = N ?? K?.fillsHeight ?? !1, [J, Y] = g(""), X = h(null), Z = h(null), ve = !!P && I !== !1, ye = h(null), be = h(null), [xe, Se] = g(!1), Ce = !!z && !i, [we, Q] = g(0), [Te, Ee] = g(!1), $ = h(!0), De = h(n.length), Oe = n.length + B.length, ke = h(null);
 	function Ae() {
-		let e = Z.current;
-		e && (e.scrollTop = e.scrollHeight, $.current = !0, we(0));
+		let e = X.current;
+		e && (e.scrollTop = e.scrollHeight, $.current = !0, Q(0));
 	}
 	function je() {
-		let e = Z.current;
+		let e = X.current;
 		if (!e) return;
-		let t = se(e);
-		$.current = t, t && we(0), Ee(e.scrollTop > 8);
+		let t = ce(e);
+		$.current = t, t && Q(0), Ee(e.scrollTop > 8);
 	}
 	p(() => {
-		let e = Z.current, t = De.current, n = Oe - t;
+		let e = X.current, t = De.current, n = Oe - t;
 		if (De.current = Oe, !e) return;
 		let r = ke.current;
 		if (r && n > 0) {
 			ke.current = null, e.scrollTop = r.scrollTop + (e.scrollHeight - r.scrollHeight);
 			return;
 		}
-		$.current ? (e.scrollTop = e.scrollHeight, we(0), Ee(e.scrollTop > 8)) : n > 0 && we((e) => e + n);
+		$.current ? (e.scrollTop = e.scrollHeight, Q(0), Ee(e.scrollTop > 8)) : n > 0 && Q((e) => e + n);
 	}, [Oe]);
 	function Me() {
-		let e = Z.current;
+		let e = X.current;
 		e && (ke.current = {
 			scrollHeight: e.scrollHeight,
 			scrollTop: e.scrollTop
-		}), F?.();
+		}), P?.();
 	}
 	p(() => () => {
-		Q.current && clearTimeout(Q.current);
+		Z.current && clearTimeout(Z.current);
 	}, []);
 	function Ne() {
-		let e = Y.trim();
-		!e || i || (Q.current && clearTimeout(Q.current), Q.current = null, a?.(!1), $.current = !0, r(e), X(""));
+		let e = J.trim();
+		!e || i || (Z.current && clearTimeout(Z.current), Z.current = null, a?.(!1), $.current = !0, r(e), Y(""));
 	}
 	function Pe(e) {
-		!Se || e.length === 0 || ($.current = !0, B?.(e));
+		!Ce || e.length === 0 || ($.current = !0, z?.(e));
 	}
 	function Fe(e) {
-		if (!Se) return;
+		if (!Ce) return;
 		let t = Array.from(e.clipboardData?.items ?? []).filter((e) => e.kind === "file").map((e) => e.getAsFile()).filter((e) => e !== null);
 		t.length !== 0 && (e.preventDefault(), Pe(t));
 	}
 	function Ie(e) {
-		X((t) => t + e), xe(!1);
+		Y((t) => t + e), Se(!1);
 	}
 	function Le(e) {
-		i || (a?.(!0), Q.current && clearTimeout(Q.current), Q.current = setTimeout(() => a?.(!1), 2e3)), e.key === "Enter" && !i && Y.trim() && Ne();
+		i || (a?.(!0), Z.current && clearTimeout(Z.current), Z.current = setTimeout(() => a?.(!1), 2e3)), e.key === "Enter" && !i && J.trim() && Ne();
 	}
 	let Re = /* @__PURE__ */ y("div", {
 		"data-testid": "chat-panel",
-		className: e(J ? "flex h-full min-h-0 flex-col px-3 pb-3 pt-2" : e("border rounded p-3 mt-4", K ? "border-white/10 bg-white/5" : "border-border")),
+		className: e(q ? "flex h-full min-h-0 flex-col px-3 pb-3 pt-2" : e("border rounded p-3 mt-4", G ? "border-white/10 bg-white/5" : "border-border")),
 		children: [
-			ge && /* @__PURE__ */ y("div", {
-				className: e("text-sm font-semibold mb-2 shrink-0", K ? "text-white/90" : "text-text-primary"),
+			_e && /* @__PURE__ */ y("div", {
+				className: e("text-sm font-semibold mb-2 shrink-0", G ? "text-white/90" : "text-text-primary"),
 				children: [
 					"Chat (",
 					n.length,
@@ -707,58 +707,58 @@ function pe({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers
 				]
 			}),
 			c.length > 0 && /* @__PURE__ */ v("div", {
-				className: e("text-xs italic mb-1 shrink-0", K ? "text-white/50" : "text-text-secondary"),
-				children: ce(c)
+				className: e("text-xs italic mb-1 shrink-0", G ? "text-white/50" : "text-text-secondary"),
+				children: le(c)
 			}),
 			/* @__PURE__ */ y("div", {
-				className: e("relative flex flex-col mb-2", J ? "min-h-0 flex-1" : ""),
+				className: e("relative flex flex-col mb-2", q ? "min-h-0 flex-1" : ""),
 				children: [/* @__PURE__ */ v("div", {
-					ref: Z,
+					ref: X,
 					onScroll: je,
 					"data-testid": "chat-panel-messages",
-					className: e("scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col", Te && "fade-top", J ? "min-h-0 flex-1" : "max-h-[200px]"),
+					className: e("scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col", Te && "fade-top", q ? "min-h-0 flex-1" : "max-h-[200px]"),
 					children: /* @__PURE__ */ y("div", {
 						className: "mt-auto",
 						children: [
-							_e && n.length > 0 && /* @__PURE__ */ v("div", {
+							ve && n.length > 0 && /* @__PURE__ */ v("div", {
 								className: "flex justify-center pb-1",
 								children: /* @__PURE__ */ v("button", {
 									type: "button",
 									"data-testid": "chat-panel-load-more",
 									onClick: Me,
-									disabled: z,
-									className: e("rounded px-2 py-1 text-xs disabled:opacity-60", K ? "text-white/70 hover:bg-white/10" : "text-text-secondary hover:bg-surface-hover"),
-									children: z ? "Loading…" : "Load earlier messages"
+									disabled: R,
+									className: e("rounded px-2 py-1 text-xs disabled:opacity-60", G ? "text-white/70 hover:bg-white/10" : "text-text-secondary hover:bg-surface-hover"),
+									children: R ? "Loading…" : "Load earlier messages"
 								})
 							}),
 							n.length === 0 ? /* @__PURE__ */ v("div", {
-								className: e("text-sm", K ? "text-white/40" : "text-text-secondary"),
+								className: e("text-sm", G ? "text-white/40" : "text-text-secondary"),
 								children: "No messages yet"
 							}) : n.map((t, n) => {
-								let r = t.displayName ?? t.clientId.slice(0, 8), i = t.attachments ?? [], a = t.metadata?.html, o = typeof a == "string" ? a : void 0, s = /* @__PURE__ */ v(ee, {
+								let r = t.displayName ?? t.clientId.slice(0, 8), i = t.attachments ?? [], a = t.metadata?.html, o = typeof a == "string" ? a : void 0, s = /* @__PURE__ */ v(A, {
 									html: o,
 									text: t.content
-								}), c = le(t.metadata), l = fe(t.metadata), u = de(t.metadata), d = l ? /* @__PURE__ */ v(ne, {
+								}), c = ue(t.metadata), l = pe(t.metadata), u = fe(t.metadata), d = l ? /* @__PURE__ */ v(re, {
 									callId: l.callId,
 									startedBy: (typeof t.metadata?.displayName == "string" ? t.metadata.displayName : void 0) ?? t.displayName,
-									participants: k?.(l.callId) ?? l.participants,
+									participants: O?.(l.callId) ?? l.participants,
 									live: l.live,
 									durationMs: l.durationMs,
 									audioOnly: l.audioOnly,
-									onJoin: A
+									onJoin: k
 								}) : c ? /* @__PURE__ */ v(te, {
 									documentId: c.documentId,
 									title: c.title || t.content,
 									icon: c.icon,
 									createdBy: (typeof t.metadata?.displayName == "string" ? t.metadata.displayName : void 0) ?? t.displayName,
-									editors: O?.(c.documentId) ?? [],
-									onOpen: j
-								}) : i.length === 0 ? s : /* @__PURE__ */ y(_, { children: [(t.content || o) && s, i.map((e) => /* @__PURE__ */ v(ie, {
+									editors: D?.(c.documentId) ?? [],
+									onOpen: ne
+								}) : i.length === 0 ? s : /* @__PURE__ */ y(_, { children: [(t.content || o) && s, i.map((e) => /* @__PURE__ */ v(ae, {
 									attachment: e,
-									src: ue?.(e),
-									onOpen: pe
-								}, e.id))] }), f = t.id ?? "", p = f && b ? b(f) : [], h = t.metadata?.replyTo, g = !!f && !!T?.has(f), N = !!m && t.userId === m, P = /* @__PURE__ */ y(_, { children: [
-									h && /* @__PURE__ */ v(re, {
+									src: de?.(e),
+									onOpen: me
+								}, e.id))] }), f = t.id ?? "", p = f && b ? b(f) : [], h = t.metadata?.replyTo, g = !!f && !!T?.has(f), M = !!m && t.userId === m, N = /* @__PURE__ */ y(_, { children: [
+									h && /* @__PURE__ */ v(ie, {
 										quote: h,
 										onJump: E,
 										className: "mb-1"
@@ -778,7 +778,7 @@ function pe({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers
 											u.labels.length > 0 ? `Too large to send: ${u.labels.join(", ")}` : "Part of this message was too large to send"
 										]
 									}),
-									p.length > 0 && m && x && /* @__PURE__ */ v(I, {
+									p.length > 0 && m && x && /* @__PURE__ */ v(F, {
 										reactions: p,
 										currentUserId: m,
 										onToggle: (e) => x(f, e)
@@ -787,16 +787,16 @@ function pe({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers
 								return /* @__PURE__ */ y("div", {
 									"data-testid": "chat-message",
 									"data-message-id": f || void 0,
-									className: e("group relative rounded-md", f && f === D && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
+									className: e("group relative rounded-md", f && f === ee && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
 									children: [/* @__PURE__ */ v(w, {
 										author: r,
-										content: P,
+										content: N,
 										timestamp: t.timestamp,
 										avatarUrl: t.avatarUrl,
-										tone: M,
-										mine: N
-									}), f && (x || S || C) && /* @__PURE__ */ v(R, {
-										className: e("absolute -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100", N ? "right-14" : "left-14"),
+										tone: j,
+										mine: M
+									}), f && (x || S || C) && /* @__PURE__ */ v(L, {
+										className: e("absolute -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100", M ? "right-14" : "left-14"),
 										onReact: x ? (e) => x(f, e) : void 0,
 										onReply: S ? () => S(t) : void 0,
 										onTogglePin: C ? () => C(t) : void 0,
@@ -804,27 +804,27 @@ function pe({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers
 									})]
 								}, t.id ?? n);
 							}),
-							V.map((e) => /* @__PURE__ */ v(w, {
+							B.map((e) => /* @__PURE__ */ v(w, {
 								author: e.actor,
 								timestamp: "",
-								tone: M,
-								content: /* @__PURE__ */ v(ae, {
+								tone: j,
+								content: /* @__PURE__ */ v(oe, {
 									transfer: e,
-									mine: !!H && e.actor === H,
-									onCancel: oe
+									mine: !!V && e.actor === V,
+									onCancel: se
 								})
 							}, e.transferId))
 						]
 					})
-				}), Ce > 0 && /* @__PURE__ */ y("button", {
+				}), we > 0 && /* @__PURE__ */ y("button", {
 					type: "button",
 					"data-testid": "chat-panel-new-messages",
 					onClick: Ae,
-					className: e("absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs shadow-md", K ? "bg-white/20 text-white" : "bg-primary text-white"),
+					className: e("absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs shadow-md", G ? "bg-white/20 text-white" : "bg-primary text-white"),
 					children: [
-						Ce,
+						we,
 						" new message",
-						Ce === 1 ? "" : "s",
+						we === 1 ? "" : "s",
 						" ↓"
 					]
 				})]
@@ -836,65 +836,65 @@ function pe({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers
 			}) : /* @__PURE__ */ y("div", {
 				className: "flex flex-row items-center gap-2 shrink-0",
 				children: [
-					B && /* @__PURE__ */ y(_, { children: [/* @__PURE__ */ v("button", {
+					z && /* @__PURE__ */ y(_, { children: [/* @__PURE__ */ v("button", {
 						type: "button",
 						"data-testid": "chat-panel-attach",
 						"aria-label": "Attach a file",
 						title: "Attach a file",
-						disabled: !Se,
-						onClick: () => ve.current?.click(),
-						className: e("shrink-0 rounded p-1.5 disabled:opacity-40", K ? "text-white/60 hover:bg-white/10" : "text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"),
-						children: /* @__PURE__ */ v(me, {})
+						disabled: !Ce,
+						onClick: () => ye.current?.click(),
+						className: e("shrink-0 rounded p-1.5 disabled:opacity-40", G ? "text-white/60 hover:bg-white/10" : "text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"),
+						children: /* @__PURE__ */ v(he, {})
 					}), /* @__PURE__ */ v("input", {
-						ref: ve,
+						ref: ye,
 						type: "file",
 						multiple: !0,
-						accept: he,
+						accept: ge,
 						"aria-hidden": "true",
 						tabIndex: -1,
 						className: "hidden",
 						onChange: (e) => {
-							let t = Array.from(e.target.files ?? []), n = U ? t.filter((e) => e.size > U) : [];
-							n.length > 0 && W?.(`Skipped ${n.length} file(s) over the size limit.`), Pe(t.filter((e) => !n.includes(e))), e.target.value = "";
+							let t = Array.from(e.target.files ?? []), n = H ? t.filter((e) => e.size > H) : [];
+							n.length > 0 && U?.(`Skipped ${n.length} file(s) over the size limit.`), Pe(t.filter((e) => !n.includes(e))), e.target.value = "";
 						}
 					})] }),
 					/* @__PURE__ */ v("button", {
-						ref: ye,
+						ref: be,
 						type: "button",
 						"data-testid": "chat-panel-emoji",
 						"aria-label": "Insert emoji",
-						"aria-expanded": be,
+						"aria-expanded": xe,
 						title: "Insert emoji",
 						disabled: i,
-						onClick: () => xe((e) => !e),
-						className: e("shrink-0 rounded p-1.5 text-base leading-none disabled:opacity-40", K ? "hover:bg-white/10" : "hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"),
+						onClick: () => Se((e) => !e),
+						className: e("shrink-0 rounded p-1.5 text-base leading-none disabled:opacity-40", G ? "hover:bg-white/10" : "hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"),
 						children: /* @__PURE__ */ v("span", {
 							"aria-hidden": "true",
 							children: "🙂"
 						})
 					}),
 					/* @__PURE__ */ v(u, {
-						open: be,
+						open: xe,
 						onSelect: Ie,
-						onClose: () => xe(!1),
-						triggerRef: ye,
-						emojis: G
+						onClose: () => Se(!1),
+						triggerRef: be,
+						emojis: W
 					}),
 					/* @__PURE__ */ v(s, {
 						size: "sm",
-						value: Y,
-						onChange: (e) => X(e.target.value),
+						value: J,
+						onChange: (e) => Y(e.target.value),
 						onKeyDown: Le,
 						onPaste: Fe,
 						disabled: i,
 						placeholder: i ? "Not connected" : "Type a message...",
-						className: e("flex-1 text-sm", K && "border-white/20 bg-white/10 text-white placeholder:text-white/35 focus:border-white/40 focus:bg-white/10 focus:ring-white/20")
+						className: e("flex-1 text-sm", G && "border-white/20 bg-white/10 text-white placeholder:text-white/35 focus:border-white/40 focus:bg-white/10 focus:ring-white/20")
 					}),
 					/* @__PURE__ */ v(t, {
 						variant: "primary",
 						size: "sm",
 						onClick: Ne,
-						disabled: i || !Y.trim(),
+						disabled: i || !J.trim(),
 						className: "text-sm px-3 shrink-0",
 						children: "Send"
 					})
@@ -902,17 +902,17 @@ function pe({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers
 			})
 		]
 	});
-	return B ? /* @__PURE__ */ v(d, {
+	return z ? /* @__PURE__ */ v(d, {
 		onFiles: Pe,
-		accept: he,
-		maxSize: U,
-		onError: W,
+		accept: ge,
+		maxSize: H,
+		onError: U,
 		disabled: i,
-		className: J ? "flex h-full min-h-0 flex-col" : void 0,
+		className: q ? "flex h-full min-h-0 flex-col" : void 0,
 		children: Re
 	}) : Re;
 }
-function me() {
+function he() {
 	return /* @__PURE__ */ v("svg", {
 		width: "18",
 		height: "18",
@@ -930,7 +930,7 @@ function me() {
 }
 //#endregion
 //#region src/components/social/PresencePanel.tsx
-function he({ users: e, currentClientId: t }) {
+function ge({ users: e, currentClientId: t }) {
 	return /* @__PURE__ */ y("div", {
 		className: "border border-border rounded p-3 font-mono",
 		children: [/* @__PURE__ */ y("div", {
@@ -972,7 +972,7 @@ function he({ users: e, currentClientId: t }) {
 }
 //#endregion
 //#region src/components/social/ChannelViews.tsx
-function U({ leading: e, title: t, meta: n, actions: r, onJump: i, jumpLabel: a, "data-testid": o, "data-unread": s }) {
+function H({ leading: e, title: t, meta: n, actions: r, onJump: i, jumpLabel: a, "data-testid": o, "data-unread": s }) {
 	let c = /* @__PURE__ */ y(_, { children: [/* @__PURE__ */ v("span", {
 		className: "shrink-0",
 		children: e
@@ -1006,7 +1006,7 @@ function U({ leading: e, title: t, meta: n, actions: r, onJump: i, jumpLabel: a,
 		})]
 	});
 }
-function W(e) {
+function U(e) {
 	if (!e) return "";
 	let t = new Date(e);
 	if (Number.isNaN(t.getTime())) return "";
@@ -1016,7 +1016,7 @@ function W(e) {
 		day: "numeric"
 	})} ${i}`;
 }
-function G({ children: t, empty: n, className: r, "data-testid": i }) {
+function W({ children: t, empty: n, className: r, "data-testid": i }) {
 	return /* @__PURE__ */ v("div", {
 		className: e("min-h-0 overflow-y-auto p-2", r),
 		"data-testid": i,
@@ -1026,8 +1026,8 @@ function G({ children: t, empty: n, className: r, "data-testid": i }) {
 		})
 	});
 }
-function K({ pins: e, onJump: t, onUnpin: n, className: i, "data-testid": a = "pinned-messages-panel" }) {
-	return /* @__PURE__ */ v(G, {
+function G({ pins: e, onJump: t, onUnpin: n, className: i, "data-testid": a = "pinned-messages-panel" }) {
+	return /* @__PURE__ */ v(W, {
 		empty: e.length === 0,
 		className: i,
 		"data-testid": a,
@@ -1035,7 +1035,7 @@ function K({ pins: e, onJump: t, onUnpin: n, className: i, "data-testid": a = "p
 			icon: "📌",
 			title: "Nothing pinned yet",
 			description: "Pin a message to keep it at the top of this channel for everyone."
-		}) : e.map((e) => /* @__PURE__ */ v(U, {
+		}) : e.map((e) => /* @__PURE__ */ v(H, {
 			"data-testid": "pinned-message",
 			leading: /* @__PURE__ */ v(c, {
 				name: e.author,
@@ -1045,7 +1045,7 @@ function K({ pins: e, onJump: t, onUnpin: n, className: i, "data-testid": a = "p
 			meta: [
 				e.author,
 				e.pinnedBy && `pinned by ${e.pinnedBy}`,
-				W(e.pinnedAt)
+				U(e.pinnedAt)
 			].filter(Boolean).join(" · "),
 			onJump: t ? () => t(e.messageId) : void 0,
 			jumpLabel: `Go to the pinned message from ${e.author}`,
@@ -1061,8 +1061,8 @@ function K({ pins: e, onJump: t, onUnpin: n, className: i, "data-testid": a = "p
 		}, e.messageId))
 	});
 }
-function q({ files: e, thumbnailSrc: t, onJump: n, className: i, "data-testid": a = "channel-files-panel" }) {
-	return /* @__PURE__ */ v(G, {
+function K({ files: e, thumbnailSrc: t, onJump: n, className: i, "data-testid": a = "channel-files-panel" }) {
+	return /* @__PURE__ */ v(W, {
 		empty: e.length === 0,
 		className: i,
 		"data-testid": a,
@@ -1071,8 +1071,8 @@ function q({ files: e, thumbnailSrc: t, onJump: n, className: i, "data-testid": 
 			title: "No files here yet",
 			description: "Drag a file into the conversation and it will show up in this list."
 		}) : e.map((e) => {
-			let r = t?.(e.attachment) ?? e.attachment.preview, i = V(e.attachment);
-			return /* @__PURE__ */ v(U, {
+			let r = t?.(e.attachment) ?? e.attachment.preview, i = B(e.attachment);
+			return /* @__PURE__ */ v(H, {
 				"data-testid": "channel-file",
 				leading: i && r ? /* @__PURE__ */ v("img", {
 					src: r,
@@ -1086,8 +1086,8 @@ function q({ files: e, thumbnailSrc: t, onJump: n, className: i, "data-testid": 
 				title: e.attachment.name,
 				meta: [
 					e.author,
-					H(e.attachment.size),
-					W(e.sentAt)
+					V(e.attachment.size),
+					U(e.sentAt)
 				].filter(Boolean).join(" · "),
 				onJump: n ? () => n(e.messageId) : void 0,
 				jumpLabel: `Go to the message with ${e.attachment.name}`
@@ -1095,8 +1095,8 @@ function q({ files: e, thumbnailSrc: t, onJump: n, className: i, "data-testid": 
 		})
 	});
 }
-function ge({ mentions: e, onJump: t, className: n, "data-testid": i = "mentions-panel" }) {
-	return /* @__PURE__ */ v(G, {
+function _e({ mentions: e, onJump: t, className: n, "data-testid": i = "mentions-panel" }) {
+	return /* @__PURE__ */ v(W, {
 		empty: e.length === 0,
 		className: n,
 		"data-testid": i,
@@ -1104,7 +1104,7 @@ function ge({ mentions: e, onJump: t, className: n, "data-testid": i = "mentions
 			icon: "@",
 			title: "No mentions",
 			description: "When somebody @-mentions you, it lands here."
-		}) : e.map((e) => /* @__PURE__ */ v(U, {
+		}) : e.map((e) => /* @__PURE__ */ v(H, {
 			"data-testid": "mention",
 			"data-unread": e.unread,
 			leading: /* @__PURE__ */ y("span", {
@@ -1121,26 +1121,26 @@ function ge({ mentions: e, onJump: t, className: n, "data-testid": i = "mentions
 			meta: [
 				e.author,
 				e.channelLabel ?? e.channel,
-				W(e.at)
+				U(e.at)
 			].filter(Boolean).join(" · "),
 			onJump: t ? () => t(e.channel, e.messageId) : void 0,
 			jumpLabel: `Go to the mention from ${e.author}`
 		}, `${e.channel}:${e.messageId}`))
 	});
 }
-function J(e) {
+function q(e) {
 	if (!e || e < 0) return "";
 	let t = Math.round(e / 1e3), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60, a = (e) => String(e).padStart(2, "0");
 	return n > 0 ? `${n}:${a(r)}:${a(i)}` : `${r}:${a(i)}`;
 }
-function Y(e) {
+function J(e) {
 	let t = (e.participants ?? []).map((e) => e.displayName).filter(Boolean);
 	if (t.length > 0) return t.length <= 3 ? t.join(", ") : `${t.slice(0, 2).join(", ")} and ${t.length - 2} others`;
 	let n = e.participantCount ?? 0;
 	return n > 0 ? `${n} ${n === 1 ? "person" : "people"}` : "";
 }
-function X({ recordings: e, onOpen: t, className: n, "data-testid": i = "channel-recordings-panel" }) {
-	return /* @__PURE__ */ v(G, {
+function Y({ recordings: e, onOpen: t, className: n, "data-testid": i = "channel-recordings-panel" }) {
+	return /* @__PURE__ */ v(W, {
 		empty: e.length === 0,
 		className: n,
 		"data-testid": i,
@@ -1150,7 +1150,7 @@ function X({ recordings: e, onOpen: t, className: n, "data-testid": i = "channel
 			description: "Calls recorded in this conversation show up here."
 		}) : e.map((e) => {
 			let n = e.playable === !1;
-			return /* @__PURE__ */ v(U, {
+			return /* @__PURE__ */ v(H, {
 				"data-testid": "channel-recording",
 				leading: e.thumbnailUrl ? /* @__PURE__ */ v("img", {
 					src: e.thumbnailUrl,
@@ -1161,15 +1161,15 @@ function X({ recordings: e, onOpen: t, className: n, "data-testid": i = "channel
 					className: "grid h-8 w-12 place-items-center rounded bg-surface-inset text-sm",
 					children: "🎥"
 				}),
-				title: [W(e.startedAt), J(e.durationMs)].filter(Boolean).join(" · ") || "Recording",
-				meta: n ? "Still being assembled" : Y(e),
+				title: [U(e.startedAt), q(e.durationMs)].filter(Boolean).join(" · ") || "Recording",
+				meta: n ? "Still being assembled" : J(e),
 				onJump: t && !n ? () => t(e.recordingId) : void 0,
 				jumpLabel: "Play this recording"
 			}, e.recordingId);
 		})
 	});
 }
-function Z({ documents: t, onOpen: n, onCreate: i, className: a, "data-testid": o = "channel-documents-panel" }) {
+function X({ documents: t, onOpen: n, onCreate: i, className: a, "data-testid": o = "channel-documents-panel" }) {
 	let s = i && /* @__PURE__ */ y("button", {
 		type: "button",
 		onClick: i,
@@ -1190,7 +1190,7 @@ function Z({ documents: t, onOpen: n, onCreate: i, className: a, "data-testid": 
 			description: "Documents written in this conversation stay with it."
 		}) : /* @__PURE__ */ v("ul", {
 			className: "m-0 flex list-none flex-col gap-0.5 p-0",
-			children: t.map((e) => /* @__PURE__ */ v(U, {
+			children: t.map((e) => /* @__PURE__ */ v(H, {
 				"data-testid": "channel-document",
 				leading: /* @__PURE__ */ v("span", {
 					"aria-hidden": !0,
@@ -1200,7 +1200,7 @@ function Z({ documents: t, onOpen: n, onCreate: i, className: a, "data-testid": 
 				title: e.title || "Untitled",
 				meta: [
 					e.createdBy,
-					W(e.updatedAt),
+					U(e.updatedAt),
 					e.activeEditors ? `${e.activeEditors} editing` : ""
 				].filter(Boolean).join(" · "),
 				onJump: n ? () => n(e.documentId) : void 0,
@@ -1211,14 +1211,14 @@ function Z({ documents: t, onOpen: n, onCreate: i, className: a, "data-testid": 
 }
 //#endregion
 //#region src/components/social/ConversationSurface.tsx
-var Q = [
+var Z = [
 	"chat",
 	"files",
 	"documents",
 	"pins",
 	"mentions",
 	"calls"
-], _e = {
+], ve = {
 	chat: "Chat",
 	files: "Files",
 	documents: "Documents",
@@ -1226,18 +1226,18 @@ var Q = [
 	mentions: "Mentions",
 	calls: "Calls"
 };
-function ve({ name: t, description: r, online: o, avatarUrl: s, features: c = Q, children: l, files: u = [], thumbnailSrc: d, documents: f = [], onOpenDocument: p, onCreateDocument: m, pins: h = [], onUnpin: b, mentions: x = [], onOpenMention: S, recordings: C = [], onOpenRecording: w, onJumpToMessage: T, onStartCall: E, onWatch: D, callInProgress: O = !1, headerActions: k, view: A, onViewChange: ee, className: te, "data-testid": j = "conversation-surface" }) {
-	let M = new Set(c), [N, ne] = g("chat"), P = A ?? N, F = M.has(P) ? P : c[0] ?? "chat", I = (e) => {
-		A === void 0 && ne(e), ee?.(e);
-	}, L = (e) => e || void 0, R = c.filter((e) => _e[e]).map((e) => ({
+function ye({ name: t, description: r, online: o, avatarUrl: s, features: c = Z, children: l, files: u = [], thumbnailSrc: d, documents: f = [], onOpenDocument: p, onCreateDocument: m, pins: h = [], onUnpin: b, mentions: x = [], onOpenMention: S, recordings: C = [], onOpenRecording: w, onJumpToMessage: T, onStartCall: E, callModeFixed: ee = !1, onWatch: D, callInProgress: O = !1, headerActions: k, view: A, onViewChange: te, className: ne, "data-testid": j = "conversation-surface" }) {
+	let M = new Set(c), [re, N] = g("chat"), P = A ?? re, F = M.has(P) ? P : c[0] ?? "chat", I = (e) => {
+		A === void 0 && N(e), te?.(e);
+	}, L = (e) => e || void 0, R = c.filter((e) => ve[e]).map((e) => ({
 		id: e,
-		label: _e[e],
+		label: ve[e],
 		badge: e === "files" ? L(u.length) : e === "documents" ? L(f.length) : e === "pins" ? L(h.length) : e === "calls" ? L(C.length) : e === "mentions" ? L(x.filter((e) => e.unread).length) : void 0
 	})), z = (e) => {
 		I("chat"), T?.(e);
 	};
 	return /* @__PURE__ */ y("section", {
-		className: e("flex min-w-0 flex-col", te),
+		className: e("flex min-w-0 flex-col", ne),
 		"data-testid": j,
 		children: [
 			/* @__PURE__ */ v(a, {
@@ -1255,20 +1255,27 @@ function ve({ name: t, description: r, online: o, avatarUrl: s, features: c = Q,
 					items: R
 				}) : void 0,
 				actions: E || D || k ? /* @__PURE__ */ y(_, { children: [
-					E && /* @__PURE__ */ y(_, { children: [/* @__PURE__ */ v(n, {
-						"aria-label": O ? "Join the call" : "Start an audio call",
-						title: O ? "Join the call" : "Audio call",
+					E && (ee ? /* @__PURE__ */ v(n, {
+						"aria-label": O ? "Join the call" : "Start a call",
+						title: O ? "Join the call" : "Start a call",
+						"data-testid": `${j}-call`,
+						variant: O ? "primary" : "ghost",
+						onClick: () => E(!1),
+						children: "📞"
+					}) : /* @__PURE__ */ y(_, { children: [/* @__PURE__ */ v(n, {
+						"aria-label": O ? "Join the call with audio" : "Start an audio call",
+						title: O ? "Join with audio" : "Audio call",
 						"data-testid": `${j}-audio-call`,
 						onClick: () => E(!0),
 						children: "📞"
 					}), /* @__PURE__ */ v(n, {
 						"aria-label": O ? "Join the call with video" : "Start a video call",
-						title: O ? "Join the call" : "Video call",
+						title: O ? "Join with video" : "Video call",
 						"data-testid": `${j}-video-call`,
 						variant: O ? "primary" : "ghost",
 						onClick: () => E(!1),
 						children: "🎥"
-					})] }),
+					})] })),
 					D && /* @__PURE__ */ v(n, {
 						"aria-label": "Watch the stream",
 						title: "Watch — near-realtime, scales to any audience",
@@ -1279,32 +1286,32 @@ function ve({ name: t, description: r, online: o, avatarUrl: s, features: c = Q,
 					k
 				] }) : void 0
 			}),
-			M.has("files") && F === "files" && /* @__PURE__ */ v(q, {
+			M.has("files") && F === "files" && /* @__PURE__ */ v(K, {
 				className: "min-h-0 flex-1",
 				files: u,
 				thumbnailSrc: d,
 				onJump: T ? z : void 0
 			}),
-			M.has("documents") && F === "documents" && /* @__PURE__ */ v(Z, {
+			M.has("documents") && F === "documents" && /* @__PURE__ */ v(X, {
 				className: "min-h-0 flex-1",
 				documents: f,
 				onOpen: p,
 				onCreate: m
 			}),
-			M.has("pins") && F === "pins" && /* @__PURE__ */ v(K, {
+			M.has("pins") && F === "pins" && /* @__PURE__ */ v(G, {
 				className: "min-h-0 flex-1",
 				pins: h,
 				onUnpin: b,
 				onJump: T ? z : void 0
 			}),
-			M.has("mentions") && F === "mentions" && /* @__PURE__ */ v(ge, {
+			M.has("mentions") && F === "mentions" && /* @__PURE__ */ v(_e, {
 				className: "min-h-0 flex-1",
 				mentions: x,
 				onJump: S ? (e, t) => {
 					I("chat"), S(e, t);
 				} : void 0
 			}),
-			M.has("calls") && F === "calls" && /* @__PURE__ */ v(X, {
+			M.has("calls") && F === "calls" && /* @__PURE__ */ v(Y, {
 				className: "min-h-0 flex-1",
 				recordings: C,
 				onOpen: w
@@ -1319,4 +1326,4 @@ function ve({ name: t, description: r, online: o, avatarUrl: s, features: c = Q,
 	});
 }
 //#endregion
-export { C as A, P as C, te as D, M as E, S as M, ee as O, F as S, N as T, V as _, ge as a, R as b, J as c, fe as d, le as f, H as g, ae as h, q as i, x as j, w as k, he as l, ie as m, ve as n, X as o, de as p, Z as r, K as s, Q as t, pe as u, re as v, ne as w, I as x, z as y };
+export { C as A, N as C, te as D, j as E, S as M, A as O, P as S, M as T, B as _, _e as a, L as b, q as c, pe as d, ue as f, V as g, oe as h, K as i, x as j, w as k, ge as l, ae as m, ye as n, Y as o, fe as p, X as r, G as s, Z as t, me as u, ie as v, re as w, F as x, R as y };

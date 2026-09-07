@@ -97,9 +97,21 @@ describe('calls', () => {
     expect(screen.queryByTestId('conversation-surface-audio-call')).toBeNull();
   });
 
-  it('says Join once a call is already running', () => {
+  it('says Join once a call is already running, and which kind', () => {
     render(<ConversationSurface name="Hank" onStartCall={vi.fn()} callInProgress />);
-    expect(screen.getByLabelText('Join the call')).toBeInTheDocument();
+    // Two controls that do different things need two labels. Both used to
+    // read "Join the call".
+    expect(screen.getByLabelText('Join the call with audio')).toBeInTheDocument();
+    expect(screen.getByLabelText('Join the call with video')).toBeInTheDocument();
+  });
+
+  it('offers ONE control when the mode is not the clicker\'s to choose', () => {
+    const onStartCall = vi.fn();
+    render(<ConversationSurface name="#room" onStartCall={onStartCall} callModeFixed />);
+    expect(screen.queryByTestId('conversation-surface-audio-call')).toBeNull();
+    expect(screen.queryByTestId('conversation-surface-video-call')).toBeNull();
+    fireEvent.click(screen.getByTestId('conversation-surface-call'));
+    expect(onStartCall).toHaveBeenCalledTimes(1);
   });
 });
 

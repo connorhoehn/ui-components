@@ -571,6 +571,16 @@ declare interface ConversationSurfaceProps {
     onWatch?: () => void;
     /** Someone here is already on a call, so the controls say Join. */
     callInProgress?: boolean;
+    /**
+     * This conversation's call mode is not the clicker's to choose.
+     *
+     * A room decides whether it is an audio room or a video room, and entering
+     * one does not get to redefine it — so the host ignores the `audioOnly`
+     * argument entirely. Two buttons then do exactly the same thing, and the
+     * one labelled "Audio call" starts a video call: a control that lies about
+     * what it does. Set this and a single control renders instead.
+     */
+    callModeFixed?: boolean;
     /** Extra header controls, to the right of the call buttons. */
     headerActions?: ReactNode;
     /** Controlled view. Omit to let the surface keep its own. */

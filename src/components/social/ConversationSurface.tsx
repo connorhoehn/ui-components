@@ -129,6 +129,16 @@ export interface ConversationSurfaceProps {
   onWatch?: () => void;
   /** Someone here is already on a call, so the controls say Join. */
   callInProgress?: boolean;
+  /**
+   * This conversation's call mode is not the clicker's to choose.
+   *
+   * A room decides whether it is an audio room or a video room, and entering
+   * one does not get to redefine it — so the host ignores the `audioOnly`
+   * argument entirely. Two buttons then do exactly the same thing, and the
+   * one labelled "Audio call" starts a video call: a control that lies about
+   * what it does. Set this and a single control renders instead.
+   */
+  callModeFixed?: boolean;
 
   /** Extra header controls, to the right of the call buttons. */
   headerActions?: ReactNode;
@@ -170,6 +180,7 @@ export function ConversationSurface({
   onOpenRecording,
   onJumpToMessage,
   onStartCall,
+  callModeFixed = false,
   onWatch,
   callInProgress = false,
   headerActions,
@@ -235,10 +246,27 @@ export function ConversationSurface({
           onStartCall || onWatch || headerActions ? (
             <>
               {onStartCall && (
+                callModeFixed ? (
+                  // One control, because there is one outcome. The argument is
+                  // passed for the host's signature only — it is ignored where
+                  // this flag is set.
+                  <IconButton
+                    aria-label={callInProgress ? 'Join the call' : 'Start a call'}
+                    title={callInProgress ? 'Join the call' : 'Start a call'}
+                    data-testid={`${testId}-call`}
+                    variant={callInProgress ? 'primary' : 'ghost'}
+                    onClick={() => onStartCall(false)}
+                  >
+                    📞
+                  </IconButton>
+                ) : (
                 <>
                   <IconButton
-                    aria-label={callInProgress ? 'Join the call' : 'Start an audio call'}
-                    title={callInProgress ? 'Join the call' : 'Audio call'}
+                    aria-label={callInProgress ? 'Join the call with audio' : 'Start an audio call'}
+                    // Distinct from the video control's. Both said "Join the
+                    // call", which made two buttons that do different things
+                    // indistinguishable to anyone reading the tooltip.
+                    title={callInProgress ? 'Join with audio' : 'Audio call'}
                     data-testid={`${testId}-audio-call`}
                     onClick={() => onStartCall(true)}
                   >
@@ -246,7 +274,7 @@ export function ConversationSurface({
                   </IconButton>
                   <IconButton
                     aria-label={callInProgress ? 'Join the call with video' : 'Start a video call'}
-                    title={callInProgress ? 'Join the call' : 'Video call'}
+                    title={callInProgress ? 'Join with video' : 'Video call'}
                     data-testid={`${testId}-video-call`}
                     variant={callInProgress ? 'primary' : 'ghost'}
                     onClick={() => onStartCall(false)}
@@ -254,6 +282,7 @@ export function ConversationSurface({
                     🎥
                   </IconButton>
                 </>
+                )
               )}
               {onWatch && (
                 <IconButton
