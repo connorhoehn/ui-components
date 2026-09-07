@@ -639,6 +639,12 @@ export default function DocumentToolbar({
       // false, so this is safe whether or not they are present.
       flags['highlight'] = e.isActive('highlight');
       flags['table'] = e.isActive('table');
+      // Which list item type the caret sits in, if any. Indent and outdent
+      // act on a LIST ITEM, and a task item is a different node from an
+      // ordinary one — sinking the wrong type is a no-op that looks like a
+      // dead button.
+      flags['inListItem'] = e.isActive('listItem') || e.isActive('taskItem');
+      flags['inTaskItem'] = e.isActive('taskItem');
       for (const a of ALIGNMENTS) flags[`align-${a}`] = e.isActive({ textAlign: a });
       // What the cursor is actually in, so the pickers show the truth rather
       // than resetting to their first option after every click. `getAttributes`
@@ -772,6 +778,43 @@ export default function DocumentToolbar({
         <ToolButton key={b.key} btn={b} editor={editor} active={state?.flags[b.key] ?? false} testId={`${testId}-${b.key}`} />
       ))}
 
+      {/* Indent and outdent, and ONLY inside a list.
+          A word processor offers these for paragraphs too, but this schema has
+          no paragraph indent — offering them everywhere would give two buttons
+          that quietly do nothing everywhere except a list, which is worse than
+          not offering them. They appear where they work, the way the table
+          edits do. */}
+      {has(editor, 'sinkListItem') && (state?.flags['inListItem'] ?? false) && (
+        <>
+          <ToolButton
+            btn={{
+              key: 'outdent', label: '⇤', hint: 'Outdent  Shift-Tab',
+              run: (e) => {
+                const item = state?.flags['inTaskItem'] ? 'taskItem' : 'listItem';
+                (e.chain().focus() as never as Record<string, (n: string) => { run: () => void }>)['liftListItem']!(item).run();
+              },
+              active: () => false,
+            }}
+            editor={editor}
+            active={false}
+            testId={`${testId}-outdent`}
+          />
+          <ToolButton
+            btn={{
+              key: 'indent', label: '⇥', hint: 'Indent  Tab',
+              run: (e) => {
+                const item = state?.flags['inTaskItem'] ? 'taskItem' : 'listItem';
+                (e.chain().focus() as never as Record<string, (n: string) => { run: () => void }>)['sinkListItem']!(item).run();
+              },
+              active: () => false,
+            }}
+            editor={editor}
+            active={false}
+            testId={`${testId}-indent`}
+          />
+        </>
+      )}
+
       {has(editor, 'setColor') && (
         <ColorMenu
           editor={editor}
@@ -844,6 +887,22 @@ export default function DocumentToolbar({
           testId={`${testId}-link`}
         />
       </span>
+      {has(editor, 'unsetAllMarks') && (
+        <ToolButton
+          btn={{
+            key: 'clear-formatting', label: '⌫', hint: 'Clear formatting',
+            // Marks AND block type, which is what "clear formatting" means in
+            // every word processor: a bolded heading becomes normal text, not
+            // an unbolded heading. `clearNodes` unwraps a list too — also
+            // correct, and also what people expect.
+            run: (e) => { e.chain().focus().unsetAllMarks().clearNodes().run(); },
+            active: () => false,
+          }}
+          editor={editor}
+          active={false}
+          testId={`${testId}-clear-formatting`}
+        />
+      )}
       <ToolButton
         btn={{
           key: 'hr', label: '—', hint: 'Divider  ---',
