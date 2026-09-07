@@ -21,6 +21,8 @@ export { Select } from './components/forms/Select';
 export type { SelectProps, SelectSize, SelectOption, SelectOptionGroup } from './components/forms/Select';
 export { Textarea } from './components/forms/Textarea';
 export type { TextareaProps } from './components/forms/Textarea';
+export { FileInput } from './components/forms/FileInput';
+export type { FileInputProps } from './components/forms/FileInput';
 export { JsonPathInput } from './components/forms/JsonPathInput';
 export type { JsonPathInputProps, JsonPathSample } from './components/forms/JsonPathInput';
 export { NumberInput } from './components/forms/NumberInput';

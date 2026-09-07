@@ -27,6 +27,7 @@ export default defineConfig({
         ingest: resolve(import.meta.dirname, 'src/components/ingest/index.ts'),
         observability: resolve(import.meta.dirname, 'src/components/observability/index.ts'),
         'doc-editor': resolve(import.meta.dirname, 'src/components/doc-editor/index.ts'),
+        'doc-types': resolve(import.meta.dirname, 'src/components/doc-types/index.ts'),
         diagram: resolve(import.meta.dirname, 'src/components/diagram/index.ts'),
         social: resolve(import.meta.dirname, 'src/components/social/index.ts'),
         // Separate entry so the tiptap optional peers stay OUT of the plain

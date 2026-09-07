@@ -18,10 +18,11 @@
 // (the library used to call `alert()`), and the accurate remote-first wording
 // on `idToken`.
 //
-// TO ACTUALLY SHIP THIS, someone who owns those files must add:
-//   vite.config.ts  -> 'doc-types': resolve(..., 'src/components/doc-types/index.ts')
-//   package.json    -> an "./doc-types" export block, mirroring "./doc-editor"
-// Until then this barrel is internal-only and the app's fork cannot be retired.
+// Shipped in 2.184.0: `doc-types` is a vite entry and package.json exports a
+// "./doc-types" subpath, so the app's fork under frontend/src/components/
+// doc-types can now be retired in favour of `@connorhoehn/ui-components/
+// doc-types`. Anything the fork does that the library does not is a missing
+// prop, not a reason to keep the copy.
 //
 // FieldDefinitionEditor is additionally imported directly by a test in the
 // human-owned shared/ directory
