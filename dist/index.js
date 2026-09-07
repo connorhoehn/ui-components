@@ -46,7 +46,7 @@ import { t as Xr } from "./Checkbox-DsS7fIUO.js";
 import { n as Zr, r as Qr, t as $r } from "./ReactionsOverlay-Ob1ecsgg.js";
 import { A as ei, C as ti, D as ni, E as ri, M as ii, O as ai, S as oi, T as si, _ as ci, a as li, b as ui, c as di, d as fi, f as pi, g as mi, h as hi, i as gi, j as _i, k as vi, l as yi, m as bi, n as xi, o as Si, p as Ci, r as wi, s as Ti, t as Ei, u as Di, v as Oi, w as ki, x as Ai, y as ji } from "./ConversationSurface-BSpS1200.js";
 import { t as Mi } from "./activationKey-CjbL3LUv.js";
-import { a as Ni, i as Pi } from "./renderers-BMmyBHnN.js";
+import { a as Ni, i as Pi } from "./renderers-BpscO-mw.js";
 import { n as Fi, r as Ii, t as Li } from "./EventStreamContext-CLzG8O5_.js";
 import { A as Ri, C as zi, J as Bi, M as Vi, T as Hi, X as Ui, Z as Wi, _ as Gi, b as Ki, c as qi, d as Ji, f as Yi, g as Xi, h as Zi, it as Qi, m as $i, n as ea, p as ta, q as na, rt as ra, t as ia, u as aa, v as oa, x as sa, y as ca, z as la } from "./services-DA0gJcWq.js";
 import { n as ua, t as da } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1286,7 +1286,7 @@ function Ic() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Lc = Ks(() => import("./DocumentEditorPage-Cc9ojXIA.js").then((e) => e.n));
+var Lc = Ks(() => import("./DocumentEditorPage-BIRBua0t.js").then((e) => e.n));
 function Rc({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

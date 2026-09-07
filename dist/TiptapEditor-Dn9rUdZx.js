@@ -156,6 +156,8 @@ function S({ cursors: e, editorView: t, containerEl: n }) {
 					if (f) {
 						let t = c === r ? l.left : 0, n = u === i ? f.left + 4 : s;
 						a.push(/* @__PURE__ */ o("div", {
+							"data-testid": "remote-selection",
+							"data-remote-user": e.name,
 							className: "absolute rounded-sm pointer-events-none opacity-[0.12] z-[5]",
 							style: {
 								top: d,
@@ -175,6 +177,8 @@ function S({ cursors: e, editorView: t, containerEl: n }) {
 			children: [
 				a,
 				/* @__PURE__ */ o("div", {
+					"data-testid": "remote-cursor",
+					"data-remote-user": e.name,
 					className: "absolute w-0.5 opacity-40 rounded-[1px] pointer-events-none z-10 [animation:cursorBlink_1.2s_ease-in-out_infinite]",
 					style: {
 						top: r.top,

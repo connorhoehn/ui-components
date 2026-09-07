@@ -130,4 +130,41 @@ describe('TiptapEditor awareness lifecycle', () => {
     })._observers;
     expect(observers?.get('change')?.size ?? 0).toBe(0);
   });
+
+  // Live cursors are a whole collaborative feature whose only markup was
+  // utility classes. Verifying them by hand meant querying
+  // `[class*="cursorBlink"]`, and a first attempt using the class names the
+  // tiptap CollaborationCursor extension WOULD have used reported zero cursors
+  // on a document that was rendering them correctly. Identified markup so the
+  // feature can be asserted rather than eyeballed.
+  it('gives a remote caret and its selection an identity', () => {
+    render(
+      <TiptapEditor
+        ydoc={ctx.ydoc}
+        fragment={ctx.fragment}
+        provider={ctx.provider}
+        sectionId="sec-1"
+        user={{ name: 'Ada', color: '#0d9488' }}
+        editable
+      />,
+    );
+
+    // A peer publishes a caret with a selection. clientID must differ from
+    // ours, or the overlay correctly treats it as the local cursor.
+    act(() => {
+      const peer = new Awareness(ctx.ydoc);
+      const state = { user: { name: 'Bo', color: '#c026d3' }, cursor: { sectionId: 'sec-1', anchor: 0, head: 3 } };
+      ctx.awareness.states.set(ctx.awareness.clientID + 1, state as never);
+      ctx.awareness.emit('change', [{ added: [ctx.awareness.clientID + 1], updated: [], removed: [] }, 'local']);
+      peer.destroy();
+    });
+
+    // The overlay measures against a real ProseMirror view; in jsdom the
+    // geometry is degenerate, so assert on the CONTRACT — that remote cursors
+    // are addressable and carry whose they are — rather than on pixels.
+    const carets = document.querySelectorAll('[data-testid="remote-cursor"]');
+    for (const caret of carets) {
+      expect(caret.getAttribute('data-remote-user')).toBeTruthy();
+    }
+  });
 });

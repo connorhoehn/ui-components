@@ -166,6 +166,8 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
                 selectionEls.push(
                   <div
                     key={`sel-${c.clientId}-${pos}`}
+                    data-testid="remote-selection"
+                    data-remote-user={c.name}
                     className="absolute rounded-sm pointer-events-none opacity-[0.12] z-[5]"
                     style={{
                       top: lineY,
@@ -187,8 +189,18 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
         return (
           <div key={c.clientId} className="pointer-events-none">
             {selectionEls}
-            {/* Cursor caret */}
+            {/* Cursor caret.
+                
+                Identified, because this is a whole collaborative feature whose
+                only markup is utility classes: verifying it meant querying
+                `[class*="cursorBlink"]`, and a first attempt using the class
+                names the tiptap extension WOULD have used reported zero
+                cursors on a document that was rendering them correctly. A
+                feature nothing can assert on is a feature that stops working
+                quietly. */}
             <div
+              data-testid="remote-cursor"
+              data-remote-user={c.name}
               className="absolute w-0.5 opacity-40 rounded-[1px] pointer-events-none z-10 [animation:cursorBlink_1.2s_ease-in-out_infinite]"
               style={{
                 top: coords.top,
