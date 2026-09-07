@@ -10,7 +10,7 @@ import { t as d } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as f } from "./Avatar-BzicCOft.js";
 import { t as p } from "./Select-CqVokE2v.js";
 import { t as m } from "./activationKey-CjbL3LUv.js";
-import { _ as h, c as g } from "./StreamStage-CK2n2FNx.js";
+import { _ as h, c as g } from "./StreamStage-DIhaO7MA.js";
 import { useCallback as _, useEffect as v, useImperativeHandle as y, useLayoutEffect as b, useMemo as x, useRef as S, useState as C } from "react";
 import { Fragment as w, jsx as T, jsxs as E } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx

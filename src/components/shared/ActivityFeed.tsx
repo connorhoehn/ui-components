@@ -71,9 +71,6 @@ interface ActivityRowProps {
 }
 
 function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
-  const truncSubject =
-    item.subject.length > 30 ? item.subject.slice(0, 28) + '…' : item.subject;
-
   return (
     <div
       className="uc-activity-row flex items-center gap-1.5 py-[3.5px] overflow-hidden min-w-0 transition-[opacity] duration-[380ms] ease-in-out"
@@ -102,11 +99,21 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
       )}
 
       {/* Subject */}
+      {/* Truncation is the LAYOUT's job, not this component's.
+          
+          A hard `slice(0, 28)` cut every subject to the same length whatever
+          the row was given: fine in the sidebar panel it was written for, and
+          absurd on the stream ticker over a 1052px video, where a viewer read
+          "Welcome everyone, thanks for…" — a third of a short sentence, in a
+          box with room to spare. The span already carries
+          overflow-hidden + text-ellipsis + min-w-0, so CSS truncates to
+          whatever width each caller actually has, and `title` still holds the
+          whole thing. */}
       <span
         className="text-[11px] text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0"
         title={item.subject}
       >
-        {truncSubject}
+        {item.subject}
       </span>
 
       {/* Timestamp */}

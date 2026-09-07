@@ -20,7 +20,6 @@ var l = [
 	.18
 ];
 function u({ item: e, opacity: n, dotColor: r }) {
-	let i = e.subject.length > 30 ? e.subject.slice(0, 28) + "…" : e.subject;
 	return /* @__PURE__ */ o("div", {
 		className: "uc-activity-row flex items-center gap-1.5 py-[3.5px] overflow-hidden min-w-0 transition-[opacity] duration-[380ms] ease-in-out",
 		style: { opacity: n },
@@ -48,7 +47,7 @@ function u({ item: e, opacity: n, dotColor: r }) {
 			/* @__PURE__ */ a("span", {
 				className: "text-[11px] text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0",
 				title: e.subject,
-				children: i
+				children: e.subject
 			}),
 			e.timeLabel && /* @__PURE__ */ a("span", {
 				className: "text-[10px] text-code-subtle shrink-0 whitespace-nowrap",

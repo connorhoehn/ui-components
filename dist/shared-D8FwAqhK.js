@@ -29,7 +29,7 @@ import { t as w } from "./PresenceDot-3gBZGPvX.js";
 import "./Badge-B_L-ZBbN.js";
 import "./PresenceAvatars-BkzMACtv.js";
 import { t as T } from "./InlinePopover-DFdI8hw1.js";
-import { t as E } from "./ActivityFeed-BvBfBfGZ.js";
+import { t as E } from "./ActivityFeed-C9KAtqCl.js";
 import "./Select-CqVokE2v.js";
 import "./Checkbox-DsS7fIUO.js";
 import { Children as D, createContext as O, isValidElement as k, useCallback as A, useContext as ee, useEffect as j, useId as M, useLayoutEffect as te, useMemo as N, useRef as P, useState as F } from "react";

@@ -81,4 +81,21 @@ describe('ActivityFeed', () => {
     act(() => vi.advanceTimersByTime(3000));
     expect(rowCount()).toBe(5);
   });
+
+  // A hard slice(0, 28) cut every subject to the same length whatever width
+  // the row had: fine in the sidebar it was written for, absurd on the stream
+  // ticker over a 1052px video, where a viewer read a third of a short
+  // sentence in a box with room to spare. CSS truncates to the width each
+  // caller actually has.
+  it('leaves a long subject intact for CSS to truncate', () => {
+    const long = 'Welcome everyone, thanks for watching the broadcast today';
+    render(<ActivityFeed items={[{ id: '1', actor: 'Bo', action: '', subject: long, kind: 'comment' }]} />);
+
+    const el = screen.getByTitle(long);
+    expect(el.textContent).toBe(long);
+    expect(el.textContent).not.toContain('…');
+    // The classes that make it the layout's decision.
+    expect(el.className).toContain('text-ellipsis');
+    expect(el.className).toContain('min-w-0');
+  });
 });
