@@ -42,13 +42,20 @@ export function useTrackStateBump(
     // for as long as anything else still holds the track.
     const attached = new Set<MediaStreamTrack>();
     const attach = (t: MediaStreamTrack) => {
+      // Guarded: hosts and tests both pass partial stand-ins for a MediaStream
+      // (`{}`, or an object with getVideoTracks() and nothing else). A tile
+      // that throws here takes the whole call surface down with it, which is a
+      // far worse outcome than not observing a track transition.
+      if (!t || typeof t.addEventListener !== 'function') return;
       if (attached.has(t)) return;
       attached.add(t);
       t.addEventListener('mute', onMute);
       t.addEventListener('unmute', onUnmute);
       t.addEventListener('ended', onEnded);
     };
-    for (const t of stream.getVideoTracks()) attach(t);
+    if (typeof stream.getVideoTracks === 'function') {
+      for (const t of stream.getVideoTracks()) attach(t);
+    }
     // Inbound WebRTC tracks arrive via `addtrack` AFTER mount and start in
     // `muted: true`. Without listeners on the new track, the eventual
     // unmute (when RTP packets actually decode) is never observed →
@@ -60,8 +67,11 @@ export function useTrackStateBump(
       setBump(n => n + 1);
     };
     const onRemove = () => setBump(n => n + 1);
-    stream.addEventListener('addtrack', onAdd);
-    stream.addEventListener('removetrack', onRemove);
+    const streamHasEvents = typeof stream.addEventListener === 'function';
+    if (streamHasEvents) {
+      stream.addEventListener('addtrack', onAdd);
+      stream.addEventListener('removetrack', onRemove);
+    }
     return () => {
       for (const t of attached) {
         t.removeEventListener('mute', onMute);
@@ -69,8 +79,10 @@ export function useTrackStateBump(
         t.removeEventListener('ended', onEnded);
       }
       attached.clear();
-      stream.removeEventListener('addtrack', onAdd);
-      stream.removeEventListener('removetrack', onRemove);
+      if (streamHasEvents) {
+        stream.removeEventListener('addtrack', onAdd);
+        stream.removeEventListener('removetrack', onRemove);
+      }
     };
   }, [stream, participantLabel]);
   return bump;

@@ -61,3 +61,54 @@ export const ChatPinned: Story = {
     chatVisibleCount: 4,
   },
 };
+
+// ---------------------------------------------------------------------------
+// The states a viewer can actually end up in.
+//
+// Everything below is a screen someone watching a broadcast has been shown for
+// real, and most of them used to be indistinguishable from each other: a black
+// rectangle, or a still frame, under a LIVE badge.
+// ---------------------------------------------------------------------------
+
+/**
+ * AUDIO-ONLY — the common case, not an edge one. A call published from a
+ * machine whose camera is busy carries audio and no video, and the stage used
+ * to render that literally.
+ */
+export const AudioOnly: Story = {
+  args: {
+    title: 'Incident bridge',
+    live: true,
+    audioOnly: true,
+    speakerName: 'Nora DaSilva',
+    viewerCount: 31,
+    muted: false,
+  },
+};
+
+/** The same broadcast while the viewer is still muted: the fix gets named. */
+export const AudioOnlyMuted: Story = {
+  args: { ...AudioOnly.args, muted: true },
+};
+
+/**
+ * NOTHING IS BEING BROADCAST. Where every "waiting" road ends — with or
+ * without a playlist. A stage that can sit on "Waiting for the stream…" with
+ * no exit is the failure this component keeps having to unlearn.
+ */
+export const NothingBeingBroadcast: Story = {
+  args: { title: 'Weekly standup', stallAfterMs: 1200 },
+};
+
+/** Wording the host owns, on the same bounded promise. */
+export const NotStartedHostWording: Story = {
+  args: {
+    title: 'All hands',
+    stallAfterMs: 1200,
+    notStartedLabel: 'The show starts at 8.',
+  },
+};
+
+// "The broadcast has ended." has no story: it is reachable only by HOLDING a
+// source and then losing it, per mount, which is the whole point of the
+// distinction. StreamStage.test.tsx drives that transition.

@@ -225,7 +225,17 @@ export type { IconProps } from './MediaIcons';
 
 // StreamStage — the composed surface a stream or call is WATCHED on: video,
 // identity badges, and chat rotating over the frame rather than beside it.
-export { StreamStage } from './StreamStage';
+export { StreamStage, streamIsAudioOnly } from './StreamStage';
 export type { StreamStageProps } from './StreamStage';
+// The stage's state machine, exported on its own: a host that renders its own
+// chrome around a stream still has to tell buffering from stalled from over,
+// and re-deriving that is how the two drift apart.
+export { streamStagePhase, stagePhaseIsLive, stagePhaseIsShowingLiveMedia } from './streamStagePhase';
+export type { StreamStagePhase, StreamStagePhaseInput } from './streamStagePhase';
+export { StreamAudioOnly } from './StreamAudioOnly';
+export type { StreamAudioOnlyProps } from './StreamAudioOnly';
+export { useHlsSource } from '../../lib/video/useHlsSource';
+export type { UseHlsSourceState, UseHlsSourceOptions, HlsPhase } from '../../lib/video/useHlsSource';
+export { useAudioLevel } from '../../lib/video/useAudioLevel';
 export { StreamChatTicker } from './StreamChatTicker';
 export type { StreamChatTickerProps, StreamChatMessage } from './StreamChatTicker';

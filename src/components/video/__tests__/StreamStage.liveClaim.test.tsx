@@ -63,7 +63,15 @@ describe('a claim of live, on the HLS path', () => {
   // A realtime MediaStream is evidence in itself — the caller could not have
   // produced one without a peer connection — so that path is untouched.
   it('leaves the realtime path alone', () => {
-    const stream = { getTracks: () => [], getVideoTracks: () => [], getAudioTracks: () => [] };
+    // A track in it, deliberately: an EMPTY MediaStream is a subscription that
+    // has not delivered anything, and the stage treats that as connecting —
+    // see 'a realtime stream that never delivers a track' below.
+    const track = { kind: 'audio', readyState: 'live', enabled: true, muted: false };
+    const stream = {
+      getTracks: () => [track],
+      getVideoTracks: () => [],
+      getAudioTracks: () => [track],
+    };
     hlsState.loading = true;
     render(<StreamStage live stream={stream as unknown as MediaStream} title="#room" />);
     expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-live', 'true');
