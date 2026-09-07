@@ -1,6 +1,7 @@
 import { Awareness } from 'y-protocols/awareness';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
+import { Doc } from 'yjs';
 import { DragEvent as DragEvent_2 } from 'react';
 import { Editor } from '@tiptap/react';
 import { JSX } from 'react';
@@ -60,6 +61,21 @@ declare interface AttachmentsPanelProps {
     documentId: string;
     editable: boolean;
 }
+
+/** The Y root holding a canvas body. Mirrors realtime-modules' `CANVAS_BODY_KEY`. */
+export declare const CANVAS_BODY_KEY = "body";
+
+/** `meta.schemaVersion` at or above this means the document is a page. */
+export declare const CANVAS_SCHEMA_VERSION = 2;
+
+/**
+ * The canvas body fragment, or null on a legacy document.
+ *
+ * Null rather than an empty fragment: `ydoc.getXmlFragment('body')` CREATES the
+ * root as a side effect, so handing a legacy document an empty body would write
+ * a canvas root onto it and make it look half-converted to the next reader.
+ */
+export declare function canvasBody(ydoc: Doc | null | undefined): XmlFragment | null;
 
 export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
@@ -236,6 +252,22 @@ export declare interface CanvasDocumentViewProps {
     onEditorReady?: (editor: Parameters<typeof DocumentToolbar>[0]['editor'] | null) => void;
     'data-testid'?: string;
 }
+
+/**
+ * The canvas body, as markdown.
+ *
+ * A page-shaped document keeps its content in ONE XmlFragment, not in
+ * `sections` — so an export built from `data.sections` produced a file with a
+ * title and nothing under it. Silently: you get a download, it opens, and your
+ * document is not in it.
+ *
+ * Structure is read from the node names rather than stripped out, because
+ * "Export Markdown" that flattens every heading and list into loose lines is
+ * only half an answer.
+ */
+export declare function canvasFragmentToMarkdown(frag: {
+    toString(): string;
+} | null | undefined): string;
 
 /**
  * A form the ProseMirror schema could not express, surfaced rather than
@@ -691,6 +723,13 @@ export declare interface DocumentStatusBarProps {
     'data-testid'?: string;
 }
 
+export declare interface DocumentTarget {
+    /** Legacy landmark: the section this item belongs to. Empty on a canvas. */
+    sectionId?: string | null;
+    /** Canvas landmark: the comment thread whose highlight sits in the page. */
+    commentId?: string | null;
+}
+
 export declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, onInsertImage, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 export declare interface DocumentToolbarProps {
@@ -744,6 +783,17 @@ export declare function ExecutiveSummaryCard({ bullets, contentText, fragment, y
     ydoc?: Y.Doc | null;
     provider?: CollaborationProvider | null;
 }): JSX.Element;
+
+/**
+ * The element a target points at, on whichever shape this document is.
+ *
+ * Section first: on a legacy document the section is the more specific answer,
+ * and a legacy comment carries a section id anyway. A canvas comment carries an
+ * empty section id by construction, so the fall-through is the canvas path —
+ * and a CONVERTED document, whose old comments still carry section ids that no
+ * longer render, falls through too rather than giving up at the first miss.
+ */
+export declare function findDocumentTarget(target: DocumentTarget, root?: ParentNode): HTMLElement | null;
 
 /** A match, as a ProseMirror document range. */
 export declare interface FindMatch {
@@ -817,6 +867,14 @@ export declare function HeaderBanner({ meta, participantCount, }: {
     participantCount: number;
 }): JSX.Element;
 
+/**
+ * True when the document is page-shaped.
+ *
+ * Deliberately takes a Y.Doc rather than a meta object so there is no way to
+ * call it with a stale snapshot of meta taken before a conversion.
+ */
+export declare function isCanvasDocument(ydoc: Doc | null | undefined): boolean;
+
 export declare function KeyDecisionsCard({ sections }: {
     sections: Section[];
 }): JSX.Element;
@@ -866,7 +924,18 @@ export declare function MyMentionsPanel({ items, onNavigateToSection, onClose, }
 
 declare interface MyMentionsPanelProps {
     items: MyItem[];
-    onNavigateToSection: (sectionId: string) => void;
+    /**
+     * Jump to the item in the document.
+     *
+     * `commentId` is not optional decoration — it is the ONLY landmark a canvas
+     * has. A page-shaped document renders no `#section-<id>` elements and files
+     * its comments under an EMPTY section id (they are anchored to a text range
+     * instead), so passing the section id alone meant every row here was inert on
+     * every page document: the row highlighted on hover and the click did
+     * nothing, with no error. See `./canvas/scrollToDocumentTarget`, which
+     * resolves whichever landmark the document in front of it actually has.
+     */
+    onNavigateToSection: (sectionId: string, commentId?: string) => void;
     onClose: () => void;
 }
 
@@ -1092,6 +1161,14 @@ declare interface ReaderModeProps {
 /** Walk the document once and collect its headings, in order. */
 export declare function readOutline(editor: OutlineEditorLike | null): OutlineEntry[];
 
+/**
+ * The raw schema version, or 0 when there is none.
+ *
+ * Zero rather than null: a legacy document has no version, and "no version" and
+ * "version 0" mean the same thing to every caller.
+ */
+export declare function readSchemaVersion(ydoc: Doc | null | undefined): number;
+
 export declare function relativeTime(iso: string): string;
 
 /** "no replies" / "1 reply" / "4 replies" — the count is the thread's weight. */
@@ -1129,6 +1206,15 @@ declare interface ReviewProgressProps {
     current: number;
     total: number;
 }
+
+/**
+ * Scroll to the target and flash it.
+ *
+ * Returns whether anything was found, so a caller can tell "navigated" from
+ * "there was nowhere to go" instead of assuming the former — which is how this
+ * failed silently for the whole life of the canvas.
+ */
+export declare function scrollToDocumentTarget(target: DocumentTarget, root?: ParentNode): boolean;
 
 declare interface Section {
     id: string;
@@ -1535,7 +1621,7 @@ declare interface TiptapEditorProps {
     onEditorReady?: (editor: ReturnType<typeof useEditor>) => void;
 }
 
-export declare function useDocumentActions({ documentId, userId, ws, updateMeta, addSection, exportJSON, getSectionFragment, comments, }: UseDocumentActionsArgs): {
+export declare function useDocumentActions({ documentId, userId, ws, updateMeta, addSection, exportJSON, getSectionFragment, getCanvasFragment, isCanvas, comments, }: UseDocumentActionsArgs): {
     demoLoaded: boolean;
     handleLoadDemo: () => void;
     handleClearDocument: () => void;
@@ -1553,6 +1639,24 @@ declare interface UseDocumentActionsArgs {
         sections: Section[];
     } | null;
     getSectionFragment: (sectionId: string) => XmlFragment | null;
+    /** The canvas body fragment, for page-shaped documents. Null on legacy ones. */
+    getCanvasFragment?: () => XmlFragment | null;
+    /**
+     * Whether this document is page-shaped (`meta.schemaVersion >= 2`).
+     *
+     * Do NOT infer this as `sections.length === 0`. That inference is WRONG on
+     * exactly the documents that matter most: converting a document does not
+     * clear the legacy roots — realtime-modules says so in as many words,
+     * "ydoc.getArray('sections') ← kept, frozen, never read at version >= 2" — so
+     * every CONVERTED document still has a full section array. The inference says
+     * "legacy", and Export writes out the pre-conversion content. You get a file,
+     * it opens, and everything typed on the page since the conversion is missing
+     * from it, with no error and no empty file to tip you off.
+     *
+     * The gate is the schema version and nothing else. `useIsCanvasDocument` in
+     * `./canvas/documentShape` computes it.
+     */
+    isCanvas?: boolean;
     comments: Record<string, CommentThread[]>;
 }
 
@@ -1582,6 +1686,15 @@ export declare interface UseFollowCursorOptions {
      */
     onLost?: () => void;
 }
+
+/**
+ * The shape, kept live.
+ *
+ * `meta` is a CRDT map: a collaborator converting the document flips this under
+ * us mid-session, and the editor has to swap paths when it does. Reading the
+ * value during render instead would latch whatever was true at mount.
+ */
+export declare function useIsCanvasDocument(ydoc: Doc | null | undefined): boolean;
 
 export declare function useSidebarPanels(options?: UseSidebarPanelsOptions): UseSidebarPanelsReturn;
 

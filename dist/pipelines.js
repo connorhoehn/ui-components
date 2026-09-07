@@ -21,7 +21,7 @@ import { t as N } from "./Select-CqVokE2v.js";
 import { t as ne } from "./Checkbox-DsS7fIUO.js";
 import { t as P } from "./activationKey-CjbL3LUv.js";
 import { n as F, r as re, t as ie } from "./EventStreamContext-CLzG8O5_.js";
-import { $ as ae, B as oe, C as se, D as ce, E as le, F as ue, G as de, H as fe, I as pe, J as me, K as he, L as ge, N as _e, O as ve, P as ye, R as be, S as xe, T as Se, U as Ce, V as we, W as Te, X as Ee, Y as De, Z as Oe, _ as ke, a as Ae, b as je, c as Me, d as Ne, et as Pe, f as Fe, g as Ie, i as Le, it as Re, j as ze, k as Be, l as Ve, m as He, n as Ue, nt as We, o as Ge, p as Ke, q as qe, r as Je, rt as Ye, s as Xe, t as Ze, tt as Qe, u as $e, v as et, w as I, y as tt, z as nt } from "./services-DA0gJcWq.js";
+import { $ as ae, B as oe, C as se, D as ce, E as le, F as ue, G as de, H as fe, I as pe, J as me, K as he, L as ge, N as _e, O as ve, P as ye, R as be, S as xe, T as Se, U as Ce, V as we, W as Te, X as Ee, Y as De, Z as Oe, _ as ke, a as Ae, b as je, c as Me, d as Ne, et as Pe, f as Fe, g as Ie, i as Le, it as Re, j as ze, k as Be, l as Ve, m as He, n as Ue, nt as We, o as Ge, p as Ke, q as qe, r as Je, rt as Ye, s as Xe, t as Ze, tt as Qe, u as $e, v as et, w as I, y as tt, z as nt } from "./services-DRFiqZwT.js";
 import { t as rt } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as it } from "./TraceTimeline-2C-0_L3C.js";
 import at, { createContext as ot, memo as st, useCallback as L, useContext as ct, useEffect as R, useId as lt, useMemo as z, useRef as B, useState as V } from "react";
@@ -14319,6 +14319,7 @@ function Uc(e) {
 function Wc(e) {
 	switch (e) {
 		case "completed": return "success";
+		case "rejected": return "danger";
 		case "failed": return "danger";
 		case "cancelled": return "neutral";
 		case "running": return "info";
@@ -14330,6 +14331,7 @@ function Wc(e) {
 function Gc(e) {
 	switch (e) {
 		case "completed": return "Completed";
+		case "rejected": return "Rejected";
 		case "failed": return "Failed";
 		case "cancelled": return "Cancelled";
 		case "running": return "Running";
@@ -14526,6 +14528,7 @@ function Zc(e) {
 function Qc(e) {
 	switch (e) {
 		case "completed": return "success";
+		case "rejected": return "danger";
 		case "failed": return "danger";
 		case "cancelled": return "neutral";
 		case "running": return "info";
@@ -14537,6 +14540,7 @@ function Qc(e) {
 function $c(e) {
 	switch (e) {
 		case "completed": return "Completed";
+		case "rejected": return "Rejected";
 		case "failed": return "Failed";
 		case "cancelled": return "Cancelled";
 		case "running": return "Running";
@@ -18235,6 +18239,7 @@ var cu = [
 	"pending",
 	"running",
 	"completed",
+	"rejected",
 	"failed",
 	"cancelled"
 ], lu = [
@@ -18303,6 +18308,7 @@ var _u = {
 	pending: "Pending",
 	running: "Running",
 	completed: "Completed",
+	rejected: "Rejected",
 	failed: "Failed",
 	cancelled: "Cancelled",
 	paused_at_breakpoint: "Paused"
@@ -18461,6 +18467,10 @@ function Cu(e) {
 		case "completed": return {
 			label: "Completed",
 			tone: "success"
+		};
+		case "rejected": return {
+			label: "Rejected",
+			tone: "danger"
 		};
 		case "failed": return {
 			label: "Failed",
@@ -20369,7 +20379,7 @@ function Sd({ pipelineId: e, runId: t }) {
 	let n = dt(), i = pe(), a = Se(), { definition: o } = i, [s, c] = V(null), [l, u] = V(null), [d, f] = V(0), p = L(() => f((e) => e + 1), []);
 	R(() => {
 		let n = !1;
-		return u(null), import("./services-DA0gJcWq.js").then((e) => e.Q).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
+		return u(null), import("./services-DRFiqZwT.js").then((e) => e.Q).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
 			!n && e && c(e);
 		})).catch((e) => {
 			n || u(e instanceof Error ? e.message : String(e));
@@ -21121,6 +21131,7 @@ function Fd(e) {
 function Id(e) {
 	switch (e) {
 		case "completed": return "success";
+		case "rejected": return "danger";
 		case "failed": return "danger";
 		case "cancelled": return "neutral";
 		case "awaiting_approval": return "warning";
@@ -21312,6 +21323,7 @@ function Vd(e) {
 function Hd(e) {
 	switch (e) {
 		case "completed": return "success";
+		case "rejected": return "danger";
 		case "failed": return "danger";
 		case "cancelled": return "neutral";
 		case "awaiting_approval": return "warning";

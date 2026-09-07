@@ -405,6 +405,8 @@ export declare interface Approver {
     value: string;
 }
 
+declare type AssertTrue<T extends true> = T;
+
 export declare interface AuditActor {
     type: 'admin' | 'user' | 'system';
     email?: string;
@@ -433,7 +435,7 @@ export declare interface AuditRecord {
 
 /**
  * Identity attached to every request handled by the pipeline router. The
- * host (social-api today, distributed-core later) populates this from its
+ * host (platform-api today, distributed-core later) populates this from its
  * own auth middleware and injects a getter into the router factory; the
  * route handlers themselves never speak to Cognito / IAM / etc.
  *
@@ -1634,7 +1636,28 @@ export declare interface PipelineRunsListResponse {
 export declare interface PipelineRunSummary {
     runId: string;
     pipelineId: string;
-    status: 'running' | 'succeeded' | 'failed' | 'canceled' | 'interrupted';
+    /**
+     * Canonical run status — the same vocabulary as `RunStatus` in
+     * `./pipeline.ts`, which every comparison site in this library already
+     * uses.
+     *
+     * This used to read `'running' | 'succeeded' | 'failed' | 'canceled' |
+     * 'interrupted'`, a second dialect that no component ever compared
+     * against. The runs list endpoint really did serve `succeeded` while the
+     * detail endpoint served `completed` for the same run, and because
+     * `src/api/pipelineRuns.ts` casts the wire shape straight to `PipelineRun`
+     * without translating status, that alias reached the UI — where the status
+     * filter (`components/pipelines/runsUtils.ts`) silently dropped it and the
+     * stats page never counted it. Backend now serves canonical spellings from
+     * both endpoints.
+     *
+     * `interrupted` is a platform-api-only lifecycle state (orphan scan) that
+     * is not part of `RunStatus`, so it stays spelled out here.
+     *
+     * Note: the backend can also emit `stuck` (StuckRunDetector), which neither
+     * this union nor `RunStatus` models yet — see the note in `pipeline.ts`.
+     */
+    status: 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'rejected' | 'failed' | 'cancelled' | 'interrupted';
     startedAt: string;
     completedAt?: string;
     triggeredBy: {
@@ -1762,7 +1785,25 @@ export declare interface RetryPolicy {
     backoffMultiplier: number;
 }
 
-export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
+/**
+ * The status vocabulary every UI comparison site keys off. Canonical — it
+ * matches distributed-core's `RunStatus` and the backend's shared
+ * `PipelineRunStatus`, minus `stuck` (see below).
+ *
+ * Known gap: the backend can emit `stuck` (StuckRunDetector) and
+ * `interrupted` (orphan scan). Neither is modelled here, so both fall through
+ * to the `default` arm of every badge map and render as raw text. Adding them
+ * is a deliberate follow-up — it forces updates in `runsUtils.ts` (`StatusKey`
+ * / `STATUS_KEYS`), `RunsFilterBar.tsx` (`STATUS_LABEL`), and the exhaustive
+ * switch in `persistence/seedDemoData.ts`.
+ */
+export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed'
+/**
+* Terminal: an approval gate on the run was rejected. Distinct from
+* `completed` on purpose — a rejected run used to be listed as a success,
+* which made approve and reject look identical in the Runs list.
+*/
+| 'rejected' | 'failed' | 'cancelled';
 
 export declare interface ScatterNodeData {
     type: 'scatter';
@@ -2141,6 +2182,10 @@ export declare interface ValidationResult {
 export declare type ViewMode = 'editor' | 'ack' | 'reader';
 
 export declare type WatermarkGravity = 'northwest' | 'north' | 'northeast' | 'west' | 'center' | 'east' | 'southwest' | 'south' | 'southeast';
+
+export declare type WireCarriesEveryRunStatus = AssertTrue<[
+RunStatus
+] extends [PipelineRunSummary['status']] ? true : false>;
 
 export { }
 

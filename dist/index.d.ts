@@ -725,6 +725,8 @@ export declare function ArtifactTile({ name, type, url }: {
     url?: string | null;
 }): JSX.Element;
 
+declare type AssertTrue<T extends true> = T;
+
 export declare function AttachmentBubble({ attachment, src, onOpen, className }: AttachmentBubbleProps): JSX.Element;
 
 export declare interface AttachmentBubbleProps {
@@ -839,7 +841,7 @@ export declare interface AuditRow {
 
 /**
  * Identity attached to every request handled by the pipeline router. The
- * host (social-api today, distributed-core later) populates this from its
+ * host (platform-api today, distributed-core later) populates this from its
  * own auth middleware and injects a getter into the router factory; the
  * route handlers themselves never speak to Cognito / IAM / etc.
  *
@@ -2203,6 +2205,9 @@ export declare interface ChatPanelProps {
      * The viewer, so their own reactions can be marked and their own messages
      * can offer edit/delete. Without it reactions render but cannot be toggled
      * meaningfully — "did I react?" is unanswerable.
+     *
+     * Also the identity that decides which in-flight `transfers` are the
+     * viewer's own (compared against `ChatTransfer.uploader`).
      */
     currentUserId?: string;
     /** Reactions on one message. Omit to render no reaction UI at all. */
@@ -2306,7 +2311,13 @@ export declare interface ChatPanelProps {
      * fully-formed out of nowhere.
      */
     transfers?: ChatTransfer[];
-    /** Identifies the viewer so their own transfers get the cancel affordance. */
+    /**
+     * The viewer's DISPLAY NAME. Legacy fallback for "whose transfer is this",
+     * used only when a transfer carries no `uploader` id. Prefer
+     * `currentUserId`: a display name is not an identity, and deciding ownership
+     * from it gave two participants named "Alex" a cancel button on each other's
+     * uploads.
+     */
     currentActor?: string;
     onCancelTransfer?: (transferId: string) => void;
     /**
@@ -2346,8 +2357,20 @@ declare interface ChatRoomProps {
 
 export declare interface ChatTransfer {
     transferId: string;
-    /** Who is sending. Rendered so a recipient knows whose file this is. */
+    /**
+     * Who is sending, for DISPLAY ONLY. A human-facing name is not an identity:
+     * two people can be called "Alex", and one person can rename themselves
+     * mid-transfer. Never decide ownership from this field — use `uploader`.
+     */
     actor: string;
+    /**
+     * Authed user id of the sender — the reliable identity for "is this mine".
+     * Mirrors realtime-modules' `ChannelTransfer.uploader`. Optional because
+     * hosts on older transports may not carry it; when it is absent the panel
+     * falls back to the display-name comparison, which is the pre-existing
+     * (wrong, but no worse than before) behaviour.
+     */
+    uploader?: string;
     name: string;
     size: number;
     transferred: number;
@@ -4651,8 +4674,8 @@ export declare function getPagesView(type: DocumentType_2): DocumentTypePage[];
  * Same class as `listPipelineRuns` above (fixed in v2.92.0).
  *
  * Wire shape comes from `PipelineRunDetailResponse` in
- * frontend/src/types/pipeline-contracts.ts — kept in lockstep with
- * social-api/src/pipeline/http/contracts.ts.
+ * ../types/pipeline-contracts.ts — kept in lockstep with
+ * platform-api/src/pipeline/http/contracts.ts.
  */
 export declare function getPipelineRun(pipelineId: string, runId: string): Promise<PipelineRun | null>;
 
@@ -4664,6 +4687,42 @@ export declare function getRenderer(sectionType: string | null | undefined, view
  * with rows newest-first.
  */
 export declare function getRunAuditLog(pipelineId: string, runId: string, filters?: AuditFilters): Promise<AuditPage>;
+
+export declare function GoLiveButton({ live, starting, onGoLive, onEndBroadcast, viewerCount, label, disabled, className, 'data-testid': testId, }: GoLiveButtonProps): JSX.Element;
+
+export declare interface GoLiveButtonProps {
+    /**
+     * Already broadcasting. The control stops being an action and becomes a
+     * status: a second "Go live" over a live broadcast is an offer to start
+     * something that is already running.
+     */
+    live?: boolean;
+    /** Between the click and the broadcast actually being up. */
+    starting?: boolean;
+    /**
+     * Start the broadcast AND announce it to the channel. See the header — the
+     * announcement is the half that makes it a broadcast rather than a call.
+     */
+    onGoLive?: () => void;
+    /**
+     * Ends it. Omitted while the product has not decided whether "stop
+     * broadcasting" is distinct from "leave the call" — with no handler the
+     * live state is a label, which is the truthful shape for now.
+     */
+    onEndBroadcast?: () => void;
+    /**
+     * Watchers, when known. Same contract as StreamStage: `null`/omitted is
+     * "nobody measured", a numeric 0 is a measured empty house. A broadcaster
+     * is the one person for whom the honest 0 is worth the discouragement — it
+     * is the difference between "nobody came" and "the counter is broken".
+     */
+    viewerCount?: number | null;
+    /** Replaces the resting wording, e.g. "Broadcast this room". */
+    label?: string;
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface GraphQueryNodeData {
     type: 'graph-query';
@@ -7689,7 +7748,28 @@ export declare interface PipelineRunsListResponse {
 export declare interface PipelineRunSummary {
     runId: string;
     pipelineId: string;
-    status: 'running' | 'succeeded' | 'failed' | 'canceled' | 'interrupted';
+    /**
+     * Canonical run status — the same vocabulary as `RunStatus` in
+     * `./pipeline.ts`, which every comparison site in this library already
+     * uses.
+     *
+     * This used to read `'running' | 'succeeded' | 'failed' | 'canceled' |
+     * 'interrupted'`, a second dialect that no component ever compared
+     * against. The runs list endpoint really did serve `succeeded` while the
+     * detail endpoint served `completed` for the same run, and because
+     * `src/api/pipelineRuns.ts` casts the wire shape straight to `PipelineRun`
+     * without translating status, that alias reached the UI — where the status
+     * filter (`components/pipelines/runsUtils.ts`) silently dropped it and the
+     * stats page never counted it. Backend now serves canonical spellings from
+     * both endpoints.
+     *
+     * `interrupted` is a platform-api-only lifecycle state (orphan scan) that
+     * is not part of `RunStatus`, so it stays spelled out here.
+     *
+     * Note: the backend can also emit `stuck` (StuckRunDetector), which neither
+     * this union nor `RunStatus` models yet — see the note in `pipeline.ts`.
+     */
+    status: 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'rejected' | 'failed' | 'cancelled' | 'interrupted';
     startedAt: string;
     completedAt?: string;
     triggeredBy: {
@@ -8810,7 +8890,25 @@ export declare interface RosterParticipant {
     handRaised?: boolean;
 }
 
-export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
+/**
+ * The status vocabulary every UI comparison site keys off. Canonical — it
+ * matches distributed-core's `RunStatus` and the backend's shared
+ * `PipelineRunStatus`, minus `stuck` (see below).
+ *
+ * Known gap: the backend can emit `stuck` (StuckRunDetector) and
+ * `interrupted` (orphan scan). Neither is modelled here, so both fall through
+ * to the `default` arm of every badge map and render as raw text. Adding them
+ * is a deliberate follow-up — it forces updates in `runsUtils.ts` (`StatusKey`
+ * / `STATUS_KEYS`), `RunsFilterBar.tsx` (`STATUS_LABEL`), and the exhaustive
+ * switch in `persistence/seedDemoData.ts`.
+ */
+export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed'
+/**
+* Terminal: an approval gate on the run was rejected. Distinct from
+* `completed` on purpose — a rejected run used to be listed as a success,
+* which made approve and reject look identical in the Runs list.
+*/
+| 'rejected' | 'failed' | 'cancelled';
 
 declare type SaveOutcome = {
     status: 'synced';
@@ -9959,11 +10057,19 @@ export declare interface StreamStageProps {
     /**
      * Watchers, when the number is KNOWN. Pass `null` (or omit) when it is not.
      *
-     * A count of 0 is treated as unknown and suppressed: the person reading it
-     * is themselves watching, so "0 watching" is refuted by the act of reading
-     * it — and 0 is exactly what an unmeasured gauge returns. Passing a real
-     * measured zero is therefore not expressible, on purpose; there is no
-     * audience for that number anyway.
+     * `null`/omitted and `0` are DIFFERENT claims and this component keeps them
+     * apart: null renders no badge at all ("nobody has told us"), and a numeric
+     * 0 renders "0 watching" ("somebody counted, and the answer was nobody").
+     *
+     * They were collapsed once — 0 was suppressed as if it were unknown — and
+     * that is the wrong way round for this codebase specifically. Viewer count
+     * here was STRUCTURALLY zero for a long time (the tracker had no callers at
+     * all, so every channel reported an empty house), and a visible "0 watching"
+     * is the only thing that distinguishes a working counter from a missing
+     * one. Suppressing the zero hides exactly the failure worth catching.
+     *
+     * So a caller must never turn "not told" into 0 to satisfy the type. Omit
+     * the prop instead — see WrappedStreamStage, which spreads it conditionally.
      */
     viewerCount?: number | null;
     /**
@@ -12772,6 +12878,10 @@ declare interface UseActivityBusReturn {
       value: WebSocketContextValue;
       children: ReactNode;
   }): JSX.Element;
+
+  export declare type WireCarriesEveryRunStatus = AssertTrue<[
+  RunStatus
+  ] extends [PipelineRunSummary['status']] ? true : false>;
 
   export declare function Wizard({ steps, activeKey, onStep, onFinish, finishLabel, className, 'data-testid': testId, }: WizardProps): JSX.Element;
 

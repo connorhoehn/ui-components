@@ -321,6 +321,9 @@ export declare interface ChatPanelProps {
      * The viewer, so their own reactions can be marked and their own messages
      * can offer edit/delete. Without it reactions render but cannot be toggled
      * meaningfully — "did I react?" is unanswerable.
+     *
+     * Also the identity that decides which in-flight `transfers` are the
+     * viewer's own (compared against `ChatTransfer.uploader`).
      */
     currentUserId?: string;
     /** Reactions on one message. Omit to render no reaction UI at all. */
@@ -424,7 +427,13 @@ export declare interface ChatPanelProps {
      * fully-formed out of nowhere.
      */
     transfers?: ChatTransfer[];
-    /** Identifies the viewer so their own transfers get the cancel affordance. */
+    /**
+     * The viewer's DISPLAY NAME. Legacy fallback for "whose transfer is this",
+     * used only when a transfer carries no `uploader` id. Prefer
+     * `currentUserId`: a display name is not an identity, and deciding ownership
+     * from it gave two participants named "Alex" a cancel button on each other's
+     * uploads.
+     */
     currentActor?: string;
     onCancelTransfer?: (transferId: string) => void;
     /**
@@ -464,8 +473,20 @@ declare interface ChatRoomProps {
 
 export declare interface ChatTransfer {
     transferId: string;
-    /** Who is sending. Rendered so a recipient knows whose file this is. */
+    /**
+     * Who is sending, for DISPLAY ONLY. A human-facing name is not an identity:
+     * two people can be called "Alex", and one person can rename themselves
+     * mid-transfer. Never decide ownership from this field — use `uploader`.
+     */
     actor: string;
+    /**
+     * Authed user id of the sender — the reliable identity for "is this mine".
+     * Mirrors realtime-modules' `ChannelTransfer.uploader`. Optional because
+     * hosts on older transports may not carry it; when it is absent the panel
+     * falls back to the display-name comparison, which is the pre-existing
+     * (wrong, but no worse than before) behaviour.
+     */
+    uploader?: string;
     name: string;
     size: number;
     transferred: number;

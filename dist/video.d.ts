@@ -627,6 +627,42 @@ export declare interface ExpandableCallWidgetProps {
     'data-testid'?: string;
 }
 
+export declare function GoLiveButton({ live, starting, onGoLive, onEndBroadcast, viewerCount, label, disabled, className, 'data-testid': testId, }: GoLiveButtonProps): JSX.Element;
+
+export declare interface GoLiveButtonProps {
+    /**
+     * Already broadcasting. The control stops being an action and becomes a
+     * status: a second "Go live" over a live broadcast is an offer to start
+     * something that is already running.
+     */
+    live?: boolean;
+    /** Between the click and the broadcast actually being up. */
+    starting?: boolean;
+    /**
+     * Start the broadcast AND announce it to the channel. See the header — the
+     * announcement is the half that makes it a broadcast rather than a call.
+     */
+    onGoLive?: () => void;
+    /**
+     * Ends it. Omitted while the product has not decided whether "stop
+     * broadcasting" is distinct from "leave the call" — with no handler the
+     * live state is a label, which is the truthful shape for now.
+     */
+    onEndBroadcast?: () => void;
+    /**
+     * Watchers, when known. Same contract as StreamStage: `null`/omitted is
+     * "nobody measured", a numeric 0 is a measured empty house. A broadcaster
+     * is the one person for whom the honest 0 is worth the discouragement — it
+     * is the difference between "nobody came" and "the counter is broken".
+     */
+    viewerCount?: number | null;
+    /** Replaces the resting wording, e.g. "Broadcast this room". */
+    label?: string;
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function gridCols(count: number): number;
 
 /**
@@ -1551,11 +1587,19 @@ export declare interface StreamStageProps {
     /**
      * Watchers, when the number is KNOWN. Pass `null` (or omit) when it is not.
      *
-     * A count of 0 is treated as unknown and suppressed: the person reading it
-     * is themselves watching, so "0 watching" is refuted by the act of reading
-     * it — and 0 is exactly what an unmeasured gauge returns. Passing a real
-     * measured zero is therefore not expressible, on purpose; there is no
-     * audience for that number anyway.
+     * `null`/omitted and `0` are DIFFERENT claims and this component keeps them
+     * apart: null renders no badge at all ("nobody has told us"), and a numeric
+     * 0 renders "0 watching" ("somebody counted, and the answer was nobody").
+     *
+     * They were collapsed once — 0 was suppressed as if it were unknown — and
+     * that is the wrong way round for this codebase specifically. Viewer count
+     * here was STRUCTURALLY zero for a long time (the tracker had no callers at
+     * all, so every channel reported an empty house), and a visible "0 watching"
+     * is the only thing that distinguishes a working counter from a missing
+     * one. Suppressing the zero hides exactly the failure worth catching.
+     *
+     * So a caller must never turn "not told" into 0 to satisfy the type. Omit
+     * the prop instead — see WrappedStreamStage, which spreads it conditionally.
      */
     viewerCount?: number | null;
     /**

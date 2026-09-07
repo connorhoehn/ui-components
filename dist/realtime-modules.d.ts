@@ -488,6 +488,9 @@ declare interface ChatPanelProps {
      * The viewer, so their own reactions can be marked and their own messages
      * can offer edit/delete. Without it reactions render but cannot be toggled
      * meaningfully — "did I react?" is unanswerable.
+     *
+     * Also the identity that decides which in-flight `transfers` are the
+     * viewer's own (compared against `ChatTransfer.uploader`).
      */
     currentUserId?: string;
     /** Reactions on one message. Omit to render no reaction UI at all. */
@@ -591,7 +594,13 @@ declare interface ChatPanelProps {
      * fully-formed out of nowhere.
      */
     transfers?: ChatTransfer[];
-    /** Identifies the viewer so their own transfers get the cancel affordance. */
+    /**
+     * The viewer's DISPLAY NAME. Legacy fallback for "whose transfer is this",
+     * used only when a transfer carries no `uploader` id. Prefer
+     * `currentUserId`: a display name is not an identity, and deciding ownership
+     * from it gave two participants named "Alex" a cancel button on each other's
+     * uploads.
+     */
     currentActor?: string;
     onCancelTransfer?: (transferId: string) => void;
     /**
@@ -622,8 +631,20 @@ declare interface ChatPanelProps {
 
 declare interface ChatTransfer {
     transferId: string;
-    /** Who is sending. Rendered so a recipient knows whose file this is. */
+    /**
+     * Who is sending, for DISPLAY ONLY. A human-facing name is not an identity:
+     * two people can be called "Alex", and one person can rename themselves
+     * mid-transfer. Never decide ownership from this field — use `uploader`.
+     */
     actor: string;
+    /**
+     * Authed user id of the sender — the reliable identity for "is this mine".
+     * Mirrors realtime-modules' `ChannelTransfer.uploader`. Optional because
+     * hosts on older transports may not carry it; when it is absent the panel
+     * falls back to the display-name comparison, which is the pre-existing
+     * (wrong, but no worse than before) behaviour.
+     */
+    uploader?: string;
     name: string;
     size: number;
     transferred: number;
@@ -1803,11 +1824,19 @@ declare interface StreamStageProps {
     /**
      * Watchers, when the number is KNOWN. Pass `null` (or omit) when it is not.
      *
-     * A count of 0 is treated as unknown and suppressed: the person reading it
-     * is themselves watching, so "0 watching" is refuted by the act of reading
-     * it — and 0 is exactly what an unmeasured gauge returns. Passing a real
-     * measured zero is therefore not expressible, on purpose; there is no
-     * audience for that number anyway.
+     * `null`/omitted and `0` are DIFFERENT claims and this component keeps them
+     * apart: null renders no badge at all ("nobody has told us"), and a numeric
+     * 0 renders "0 watching" ("somebody counted, and the answer was nobody").
+     *
+     * They were collapsed once — 0 was suppressed as if it were unknown — and
+     * that is the wrong way round for this codebase specifically. Viewer count
+     * here was STRUCTURALLY zero for a long time (the tracker had no callers at
+     * all, so every channel reported an empty house), and a visible "0 watching"
+     * is the only thing that distinguishes a working counter from a missing
+     * one. Suppressing the zero hides exactly the failure worth catching.
+     *
+     * So a caller must never turn "not told" into 0 to satisfy the type. Omit
+     * the prop instead — see WrappedStreamStage, which spreads it conditionally.
      */
     viewerCount?: number | null;
     /**

@@ -4084,4 +4084,48 @@ function vn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 	});
 }
 //#endregion
-export { U as $, Fe as A, be as B, Ge as C, Re as D, Be as E, Te as F, ve as G, we as H, ge as I, de as J, ye as K, _e as L, Ne as M, je as N, ze as O, De as P, V as Q, Oe as R, Ke as S, nt as T, Ce as U, xe as V, Ee as W, ie as X, se as Y, ne as Z, pt as _, an as a, j as at, rt as b, qt as c, Et as d, te as et, Ct as f, gt as g, _t as h, cn as i, N as it, Me as j, Le as k, Rt as l, vt as m, gn as n, R as nt, $t as o, O as ot, bt as p, he as q, pn as r, L as rt, Jt as s, vn as t, B as tt, Ot as u, ft as v, We as w, Ue as x, ct as y, Se as z };
+//#region src/components/video/GoLiveButton.tsx
+var yn = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium border-none transition-colors disabled:cursor-not-allowed disabled:opacity-50";
+function bn({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, viewerCount: a, label: o, disabled: s, className: c, "data-testid": l = "go-live" }) {
+	return t ? /* @__PURE__ */ E("div", {
+		"data-testid": l,
+		"data-live": "true",
+		className: e("inline-flex items-center gap-2", c),
+		children: [
+			/* @__PURE__ */ E("span", {
+				"data-testid": `${l}-status`,
+				className: e(yn, "bg-danger text-white"),
+				children: [/* @__PURE__ */ T("span", {
+					"aria-hidden": !0,
+					className: "h-1.5 w-1.5 rounded-full bg-white"
+				}), "You are live"]
+			}),
+			typeof a == "number" && Number.isFinite(a) && a >= 0 && /* @__PURE__ */ E("span", {
+				"data-testid": `${l}-viewers`,
+				className: "text-xs text-text-tertiary",
+				children: [a, " watching"]
+			}),
+			i && /* @__PURE__ */ T("button", {
+				type: "button",
+				"data-testid": `${l}-end`,
+				onClick: i,
+				className: e(yn, "cursor-pointer bg-surface-panel text-text-secondary hover:bg-surface-hover"),
+				children: "End broadcast"
+			})
+		]
+	}) : /* @__PURE__ */ E("button", {
+		type: "button",
+		"data-testid": l,
+		"data-live": "false",
+		disabled: s || n,
+		onClick: r,
+		title: "Start broadcasting this room and tell everyone in the channel",
+		className: e(yn, "cursor-pointer bg-danger text-white hover:opacity-90", c),
+		children: [/* @__PURE__ */ T("span", {
+			"aria-hidden": !0,
+			className: "h-1.5 w-1.5 rounded-full bg-white"
+		}), n ? "Going live…" : o ?? "Go live"]
+	});
+}
+//#endregion
+export { V as $, Le as A, Se as B, Ke as C, Be as D, nt as E, De as F, Ee as G, xe as H, Te as I, he as J, ve as K, ge as L, Me as M, Ne as N, Re as O, je as P, ne as Q, _e as R, Ue as S, We as T, we as U, be as V, Ce as W, se as X, de as Y, ie as Z, gt as _, cn as a, N as at, ct as b, Jt as c, Ot as d, U as et, Et as f, _t as g, vt as h, pn as i, L as it, Fe as j, ze as k, qt as l, bt as m, vn as n, B as nt, an as o, j as ot, Ct as p, ye as q, gn as r, R as rt, $t as s, O as st, bn as t, te as tt, Rt as u, pt as v, Ge as w, rt as x, ft as y, Oe as z };

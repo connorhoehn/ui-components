@@ -1308,7 +1308,7 @@ function Z(e, t, n) {
 	};
 }
 function Re(e) {
-	return e === "completed" || e === "failed" || e === "cancelled";
+	return e === "completed" || e === "rejected" || e === "failed" || e === "cancelled";
 }
 function ze(e) {
 	let t = Object.values(e);

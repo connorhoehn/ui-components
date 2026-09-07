@@ -2330,7 +2330,25 @@ declare interface RetryPolicy {
     backoffMultiplier: number;
 }
 
-declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
+/**
+ * The status vocabulary every UI comparison site keys off. Canonical — it
+ * matches distributed-core's `RunStatus` and the backend's shared
+ * `PipelineRunStatus`, minus `stuck` (see below).
+ *
+ * Known gap: the backend can emit `stuck` (StuckRunDetector) and
+ * `interrupted` (orphan scan). Neither is modelled here, so both fall through
+ * to the `default` arm of every badge map and render as raw text. Adding them
+ * is a deliberate follow-up — it forces updates in `runsUtils.ts` (`StatusKey`
+ * / `STATUS_KEYS`), `RunsFilterBar.tsx` (`STATUS_LABEL`), and the exhaustive
+ * switch in `persistence/seedDemoData.ts`.
+ */
+declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed'
+/**
+* Terminal: an approval gate on the run was rejected. Distinct from
+* `completed` on purpose — a rejected run used to be listed as a success,
+* which made approve and reject look identical in the Runs list.
+*/
+| 'rejected' | 'failed' | 'cancelled';
 
 export declare function SamplePills({ samples, onSelect, 'aria-label': ariaLabel, className, }: SamplePillsProps): JSX.Element | null;
 
