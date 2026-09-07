@@ -1949,7 +1949,7 @@ export declare interface ChannelFilesPanelProps {
      * back a resolved object URL. Falling back to the inline preview keeps the
      * thumbnail honest while the real bytes are still being fetched.
      */
-    thumbnailSrc?: (a: ChatAttachment) => string | undefined;
+    thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
     onJump?: (messageId: string) => void;
     className?: string;
     'data-testid'?: string;
@@ -3120,7 +3120,7 @@ export declare interface ConversationSurfaceProps {
     children?: ReactNode;
     files?: readonly ChannelFileItem[];
     /** Resolves a displayable image source; the download route is authenticated. */
-    thumbnailSrc?: (a: ChatAttachment) => string | undefined;
+    thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
     documents?: readonly ChannelDocumentItem[];
     onOpenDocument?: (documentId: string) => void;
     /** Omit for a viewer who may not create documents here. */

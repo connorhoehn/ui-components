@@ -90,7 +90,10 @@ export interface ConversationSurfaceProps {
 
   files?: readonly ChannelFileItem[];
   /** Resolves a displayable image source; the download route is authenticated. */
-  thumbnailSrc?: (a: ChatAttachment) => string | undefined;
+  // `null` is allowed and means the same as it does on
+  // AttachmentBubble.src: it will not resolve. Here the row simply
+  // falls back to the file glyph, which is already the honest answer.
+  thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
 
   documents?: readonly ChannelDocumentItem[];
   onOpenDocument?: (documentId: string) => void;

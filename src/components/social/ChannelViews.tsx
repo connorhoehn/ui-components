@@ -208,7 +208,10 @@ export interface ChannelFilesPanelProps {
    * back a resolved object URL. Falling back to the inline preview keeps the
    * thumbnail honest while the real bytes are still being fetched.
    */
-  thumbnailSrc?: (a: ChatAttachment) => string | undefined;
+  // `null` is allowed and means the same as it does on
+  // AttachmentBubble.src: it will not resolve. Here the row simply
+  // falls back to the file glyph, which is already the honest answer.
+  thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
   onJump?: (messageId: string) => void;
   className?: string;
   'data-testid'?: string;

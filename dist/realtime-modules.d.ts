@@ -538,7 +538,7 @@ declare interface ConversationSurfaceProps {
     children?: ReactNode;
     files?: readonly ChannelFileItem[];
     /** Resolves a displayable image source; the download route is authenticated. */
-    thumbnailSrc?: (a: ChatAttachment) => string | undefined;
+    thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
     documents?: readonly ChannelDocumentItem[];
     onOpenDocument?: (documentId: string) => void;
     /** Omit for a viewer who may not create documents here. */
