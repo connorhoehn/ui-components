@@ -485,14 +485,22 @@ export default function CanvasDocumentView({
             // screenshot check; darkSurfaceTokens (d) fails the build for it.
             ref={paperRef}
             data-testid={`${testId}-paper`}
-            // 96px is a 1in margin and right on a full-width sheet. On a
-            // narrow window it is most of the line: 816px of paper minus
-            // 192px of margin leaves the text in a column too thin to read,
-            // and the page still overflows. The margin scales with the
-            // viewport and reaches its proper inch when there is room for it.
+            // The margin is a PROPORTION of the page, not a viewport
+            // breakpoint: 11.76% is 96px on an 816px sheet, i.e. the 1in
+            // margin the page is imitating, and it stays a margin rather than
+            // becoming the page when the sheet is narrower than that.
+            //
+            // Breakpoints were the wrong axis. They answer how wide the
+            // WINDOW is, while the sheet's width comes from its CONTAINER —
+            // and those two part company the moment a rail opens beside it.
+            // Measured with My Items open at a 1173px window: `lg:px-[96px]`
+            // was in force, so a page squeezed to 441px spent 192px of it on
+            // margins and left a 249px column, which wrapped
+            // "Reviewers should be able to / comment on this sentence."
+            // mid-clause. The same page now keeps a 337px measure.
             style={zoom === 1 ? undefined : { zoom }}
             className={cn(
-              'doc-page min-h-[1056px] mx-auto bg-paper px-6 py-10 sm:px-12 sm:py-16 lg:px-[96px] lg:py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]',
+              'doc-page min-h-[1056px] mx-auto bg-paper px-[11.76%] py-10 sm:py-16 lg:py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]',
               // At 100% the sheet stays responsive: it gives way on a narrow
               // window rather than forcing a sideways scroll to read a
               // paragraph. Zoomed, it takes its true width and the workspace

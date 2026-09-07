@@ -138,6 +138,19 @@ describe('CanvasDocumentView — a document that is already a canvas', () => {
   // `sticky bottom-0` status bar, and with no height cap none of the three did
   // anything: the workspace grew to the document's full length, the window
   // scrolled instead, and the zoom control was left ~400px below the fold.
+  // The sheet's margin has to be a proportion of the SHEET. Viewport
+  // breakpoints answer the wrong question: the page's width comes from its
+  // container, and the two part company the moment a rail opens beside it. A
+  // page squeezed to 441px was still spending `lg:px-[96px]` — 192px of
+  // margin on 441px of paper, leaving a 249px column that wrapped mid-clause.
+  it('keeps the page margin proportional to the page, not the window', () => {
+    renderView();
+    const paper = screen.getByTestId('canvas-document-paper');
+    expect(paper.className).toMatch(/px-\[11\.76%\]/); // 96px on an 816px sheet
+    expect(paper.className).not.toMatch(/px-\[96px\]/);
+    expect(paper.className).not.toMatch(/sm:px-|lg:px-/);
+  });
+
   it('bounds the workspace to the viewport so its scroll is its own', () => {
     renderView();
     const workspace = screen.getByTestId('canvas-document-workspace');
