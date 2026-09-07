@@ -665,7 +665,7 @@ export default function DocumentToolbar({
           swatches={HIGHLIGHTS}
           setCmd="setBackgroundColor"
           unsetCmd="unsetBackgroundColor"
-          glyph="\u270E"
+          glyph={'\u270E'}
           title="Highlight colour"
           testId={`${testId}-highlight-color`}
         />

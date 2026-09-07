@@ -271,6 +271,9 @@ describe('DocumentToolbar', () => {
   it('highlights with a background colour', () => {
     const { editor, calls } = makeEditor({}, ['setBackgroundColor', 'unsetBackgroundColor']);
     render(<DocumentToolbar editor={editor} />);
+    // A JSX string attribute is a LITERAL — no escape processing — so a glyph
+    // written as glyph="\u270E" rendered those six characters into the bar.
+    expect(screen.getByTestId('document-toolbar-highlight-color').textContent).not.toContain('u270E');
     fireEvent.mouseDown(screen.getByTestId('document-toolbar-highlight-color'));
     fireEvent.mouseDown(screen.getByTestId('document-toolbar-highlight-color-yellow'));
     expect(calls.join('|')).toContain('setBackgroundColor:["#fff475"]');
