@@ -436,6 +436,26 @@ export default function CanvasDocumentView({
               (showGutter || showOutline) && 'gap-3 sm:gap-6',
             )}
           >
+          {/* A rail needs a counterweight, or the page is not what gets centred.
+              
+              The sheet centres itself with auto margins, which split whatever
+              the row has left AFTER the rails are laid out. With a rail on one
+              side only, "centred in the leftover" is not centred in the
+              workspace: measured at 1900px, the page sat at 520–1336 (centre
+              928) inside a workspace centred on 1080, and its comments were
+              stranded 212px to its right, against the far edge, rather than
+              beside the text they annotate.
+
+              An empty column of the same width on the opposite side makes the
+              row symmetric, so the page lands on the workspace's centre line
+              and the rail sits one gap from the paper. `flex-1 max-w` rather
+              than a fixed width: on a window too narrow to afford it the
+              spacer collapses instead of squeezing the page, which is the
+              same priority the row's padding already follows. */}
+          {showGutter && !showOutline && (
+            <div aria-hidden data-testid={`${testId}-rail-spacer`} className="flex-1 max-w-[280px]" />
+          )}
+
           {/* The outline is a COLUMN, not a floating pane: it takes its place
               in the row beside the sheet, the page moves over to make room,
               and closing it gives the width back. A pane that hovers over the
@@ -504,6 +524,12 @@ export default function CanvasDocumentView({
                 onFocusItem={onFocusGutterItem}
                 data-testid={`${testId}-gutter`}
               />
+            )}
+            {/* The same counterweight, mirrored: an outline on the left with
+                no gutter on the right pushes the page off-centre the other
+                way. */}
+            {showOutline && !showGutter && (
+              <div aria-hidden data-testid={`${testId}-rail-spacer`} className="flex-1 max-w-[280px]" />
             )}
           </div>
 
