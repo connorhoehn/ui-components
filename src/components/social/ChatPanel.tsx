@@ -720,6 +720,24 @@ export function ChatPanel({
               const isMine =
                 !!currentUserId && (message as { userId?: string }).userId === currentUserId;
 
+              // A call notice is a RECORD, not somebody's words.
+              //
+              // Replying to one quotes "Call started" back at the channel,
+              // which says nothing; pinning one pins an event that already has
+              // its own place in the transcript and its own live/ended states.
+              // Neither action has a meaning here, and offering an action
+              // without a meaning is how a thread accumulates pins nobody
+              // chose.
+              //
+              // Reactions stay. People do react to "the call started", and
+              // that reads as a response to the EVENT rather than a claim
+              // about a message — which is exactly what it is.
+              //
+              // Deliberately scoped to calls. A shared document is a message
+              // somebody chose to send, so replying to it and pinning it both
+              // mean what they normally mean.
+              const isActivityNotice = !!callRef;
+
               // The quote, the message, its reactions — one unit. Rendering
               // them as siblings of the row would let a reaction drift away
               // from the message it belongs to when the list reflows.
@@ -790,7 +808,7 @@ export function ChatPanel({
                     // stop being yours halfway up the thread.
                     mine={isMine}
                   />
-                  {messageId && (onToggleReaction || onReply || onTogglePin) && (
+                  {messageId && (onToggleReaction || (!isActivityNotice && (onReply || onTogglePin))) && (
                     <MessageActionBar
                       // Positioned against the MESSAGE COLUMN's left edge, not
                       // the row's right. Pinning it right put the controls for
@@ -818,8 +836,10 @@ export function ChatPanel({
                         isMine ? 'right-14' : 'left-14',
                       )}
                       onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
-                      onReply={onReply ? () => onReply(message) : undefined}
-                      onTogglePin={onTogglePin ? () => onTogglePin(message) : undefined}
+                      onReply={onReply && !isActivityNotice ? () => onReply(message) : undefined}
+                      onTogglePin={
+                        onTogglePin && !isActivityNotice ? () => onTogglePin(message) : undefined
+                      }
                       pinned={isPinned}
                     />
                   )}
