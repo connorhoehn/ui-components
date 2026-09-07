@@ -14,6 +14,16 @@ export interface BannerProps {
   variant?: BannerVariant;
   /** Bold prefix label shown before children. */
   title?: string;
+  /**
+   * How the title sits against the body.
+   *
+   * `inline` (default) is right across a page: a short title and a short
+   * message read as one line. It is wrong in a narrow column — in a 280px
+   * comment gutter the two children split the width and the body was left
+   * with 68px, about six characters per line, wrapping into a ragged tower.
+   * `stacked` puts the title above the body and gives each the full width.
+   */
+  layout?: 'inline' | 'stacked';
   onDismiss?: () => void;
   children?: ReactNode;
   className?: string;
@@ -22,7 +32,7 @@ export interface BannerProps {
 }
 
 export default function Banner({
-  variant = 'error', title, onDismiss, children, className, style,
+  variant = 'error', title, layout = 'inline', onDismiss, children, className, style,
   'data-testid': testId,
 }: BannerProps) {
   return (
@@ -31,14 +41,15 @@ export default function Banner({
       aria-live={variant === 'error' || variant === 'warning' ? 'assertive' : 'polite'}
       data-testid={testId}
       className={cn(
-        'px-3.5 py-2.5 rounded-lg text-[13px] flex items-center gap-2 border',
+        'px-3.5 py-2.5 rounded-lg text-[13px] flex gap-2 border',
+        layout === 'stacked' ? 'flex-col items-start gap-1' : 'items-center',
         VARIANT_CLASSES[variant],
         className,
       )}
       style={style}
     >
       {title && <strong>{title}</strong>}
-      <span className="flex-1">{children}</span>
+      <span className={layout === 'stacked' ? 'w-full' : 'flex-1'}>{children}</span>
       {onDismiss && (
         <button
           type="button"

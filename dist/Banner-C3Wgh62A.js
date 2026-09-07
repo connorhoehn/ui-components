@@ -7,22 +7,22 @@ var r = {
 	info: "bg-info-bg border-info-border text-info-fg",
 	success: "bg-success-bg border-success-border text-success-fg"
 };
-function i({ variant: i = "error", title: a, onDismiss: o, children: s, className: c, style: l, "data-testid": u }) {
+function i({ variant: i = "error", title: a, layout: o = "inline", onDismiss: s, children: c, className: l, style: u, "data-testid": d }) {
 	return /* @__PURE__ */ n("div", {
 		role: i === "error" || i === "warning" ? "alert" : "status",
 		"aria-live": i === "error" || i === "warning" ? "assertive" : "polite",
-		"data-testid": u,
-		className: e("px-3.5 py-2.5 rounded-lg text-[13px] flex items-center gap-2 border", r[i], c),
-		style: l,
+		"data-testid": d,
+		className: e("px-3.5 py-2.5 rounded-lg text-[13px] flex gap-2 border", o === "stacked" ? "flex-col items-start gap-1" : "items-center", r[i], l),
+		style: u,
 		children: [
 			a && /* @__PURE__ */ t("strong", { children: a }),
 			/* @__PURE__ */ t("span", {
-				className: "flex-1",
-				children: s
+				className: o === "stacked" ? "w-full" : "flex-1",
+				children: c
 			}),
-			o && /* @__PURE__ */ t("button", {
+			s && /* @__PURE__ */ t("button", {
 				type: "button",
-				onClick: o,
+				onClick: s,
 				"aria-label": "Dismiss",
 				className: "bg-transparent border-none text-current cursor-pointer text-base p-0 leading-none",
 				children: "×"

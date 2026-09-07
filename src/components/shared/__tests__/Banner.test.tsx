@@ -57,4 +57,24 @@ describe('Banner', () => {
     expect(screen.getByText('Alert!')).toBeInTheDocument();
     expect(screen.getByText('Body text')).toBeInTheDocument();
   });
+
+  // In a 280px comment gutter the title and body split the width and the body
+  // was left with 68px — about six characters per line, wrapping into a ragged
+  // tower. Inline stays the default because it is right across a page.
+  it('stacks the title above the body when asked', () => {
+    const { rerender } = render(<Banner title="Heads up">Body text</Banner>);
+    const inline = screen.getByText('Body text').parentElement!;
+    expect(inline.className).toContain('items-center');
+    expect(inline.className).not.toContain('flex-col');
+
+    rerender(<Banner title="Heads up" layout="stacked">Body text</Banner>);
+    const stacked = screen.getByText('Body text').parentElement!;
+    expect(stacked.className).toContain('flex-col');
+    expect(stacked.className).toContain('items-start');
+  });
+
+  it('gives a stacked body the full width rather than a flex share', () => {
+    render(<Banner title="Heads up" layout="stacked">Body text</Banner>);
+    expect(screen.getByText('Body text').className).toContain('w-full');
+  });
 });

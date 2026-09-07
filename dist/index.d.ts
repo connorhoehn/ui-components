@@ -968,12 +968,22 @@ export declare interface BadgeProps {
 
 export declare type BadgeVariant = 'count' | 'dot' | 'pulse';
 
-export declare function Banner({ variant, title, onDismiss, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
+export declare function Banner({ variant, title, layout, onDismiss, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
 
 export declare interface BannerProps {
     variant?: BannerVariant;
     /** Bold prefix label shown before children. */
     title?: string;
+    /**
+     * How the title sits against the body.
+     *
+     * `inline` (default) is right across a page: a short title and a short
+     * message read as one line. It is wrong in a narrow column — in a 280px
+     * comment gutter the two children split the width and the body was left
+     * with 68px, about six characters per line, wrapping into a ragged tower.
+     * `stacked` puts the title above the body and gives each the full width.
+     */
+    layout?: 'inline' | 'stacked';
     onDismiss?: () => void;
     children?: ReactNode;
     className?: string;
