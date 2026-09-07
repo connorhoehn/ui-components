@@ -938,7 +938,7 @@ function SnapZones({
   ];
 
   return (
-    <div className={cn(contained ? 'absolute z-[49]' : 'fixed z-[9998]', 'inset-0 pointer-events-none')}>
+    <div className={cn(contained ? 'absolute z-[49]' : 'fixed z-[10000]', 'inset-0 pointer-events-none')}>
       {corners.map(({ id, classes }) => (
         <div
           key={id}
@@ -1172,7 +1172,17 @@ export function CallWidget({
           // keep floating over the document from a viewport corner.
           pageDocked
             ? 'relative'
-            : [contained ? 'absolute z-50' : 'fixed z-[9999]', positionClasses],
+            // Above the modal layer (Modal defaults to 10000), not below it.
+            //
+            // The widget used to sit at 9999 — one under — so ANY dialog in
+            // the app buried the live call: the "End call" button was visible
+            // through the scrim and refused every click, because the backdrop
+            // was taking them. A modal is a task you are doing; a call is a
+            // connection you must always be able to end. The overlay half of
+            // this widget is pointer-events-none, so being on top costs a
+            // dialog nothing but the small square the dock occupies, and the
+            // dock can be dragged off it.
+            : [contained ? 'absolute z-50' : 'fixed z-[10001]', positionClasses],
           className,
         )}
         style={{

@@ -1964,7 +1964,7 @@ function et(e, t, n) {
 }
 function tt({ onSnap: t, contained: n }) {
 	return /* @__PURE__ */ T("div", {
-		className: e(n ? "absolute z-[49]" : "fixed z-[9998]", "inset-0 pointer-events-none"),
+		className: e(n ? "absolute z-[49]" : "fixed z-[10000]", "inset-0 pointer-events-none"),
 		children: [
 			{
 				id: "top-left",
@@ -2081,7 +2081,7 @@ function nt({ state: t, mode: n, participants: r, localParticipant: i, callerNam
 		"data-call-widget-mode": W,
 		"data-call-widget-mode-legacy": ze(W),
 		"data-call-dock-id": Y ? R : void 0,
-		className: e(Y ? "relative" : [V ? "absolute z-50" : "fixed z-[9999]", ge], U),
+		className: e(Y ? "relative" : [V ? "absolute z-50" : "fixed z-[10001]", ge], U),
 		style: {
 			transform: Y ? void 0 : `translate(${ce.x}px, ${ce.y}px)`,
 			transition: pe ? "transform 0.2s ease-out" : void 0,

@@ -114,4 +114,16 @@ describe('CallWidget — docking by dragging the widget body', () => {
 
     expect(onDockTo).not.toHaveBeenCalled();
   });
+
+  // A modal is a task you are doing; a call is a connection you must always be
+  // able to end. The widget sat at z-9999 and Modal defaults to 10000, so ANY
+  // dialog in the app buried the live call — "End call" was visible through
+  // the scrim and refused every click, the backdrop taking them instead.
+  it('docks above the modal layer', () => {
+    const dock = renderWidget(() => {});
+    const stacked = dock.closest('[class*="z-["]') ?? dock;
+    const z = /z-\[(\d+)\]/.exec(stacked.className.toString());
+    expect(z).not.toBeNull();
+    expect(Number(z![1])).toBeGreaterThan(10000); // Modal's default backdrop
+  });
 });
