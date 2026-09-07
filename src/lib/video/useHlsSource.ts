@@ -33,6 +33,9 @@ export interface UseHlsSourceState {
   loading: boolean;
 }
 
+/** Floor between recovery attempts, so a genuinely dead stream is not hammered. */
+const RELOAD_THROTTLE_MS = 3_000;
+
 export function useHlsSource(
   videoRef: RefObject<HTMLVideoElement | null>,
   playlistUrl: string | null | undefined,
@@ -44,6 +47,7 @@ export function useHlsSource(
   const hlsRef = useRef<any>(null);
   /** Whether THIS effect put a src on the element, so teardown only clears its own. */
   const nativeSrcRef = useRef(false);
+  const lastReloadRef = useRef(0);
 
   // Held in a ref so a caller passing an inline arrow does not re-key the
   // whole hls.js lifecycle on every parent render — the bug this file's
@@ -151,9 +155,36 @@ export function useHlsSource(
   useEffect(() => {
     const v = videoRef.current;
     if (!v || !playlistUrl) return;
-    // Already decoding — a re-attach to a warm element must not re-arm the wait.
-    if (v.readyState >= 2) { setLoading(false); return; }
+    // Already decoding — a re-attach to a warm element must not re-arm the
+    // wait. It must still SUBSCRIBE, though: this used to return early, which
+    // skipped the error and ended handlers below and left exactly the element
+    // that is playing without the recovery that keeps it playing.
+    if (v.readyState >= 2) setLoading(false);
     const started = () => setLoading(false);
+    // A live stream that "ends" has not ended — it restarted.
+    //
+    // The muxer writes `#EXT-X-ENDLIST` when a broadcast stops, and the same
+    // channel arn is reused when the next one starts. A viewer who loads the
+    // playlist inside that window reads the ENDLIST, hls.js calls
+    // endOfStream(), and the element sits at `ended` forever — while the
+    // server is serving a healthy live playlist again seconds later. Measured:
+    // stuck at 10.7s with the buffer frozen, against a playlist that had
+    // reached segment 36 and carried no ENDLIST at all.
+    //
+    // So on a LIVE source, `ended` is a prompt to go back and look again.
+    // Throttled rather than capped: a broadcaster can restart at any time, and
+    // a viewer who waited through the gap should be picked up when they do.
+    const reload = () => {
+      if (!live) return;
+      const now = Date.now();
+      if (now - lastReloadRef.current < RELOAD_THROTTLE_MS) return;
+      lastReloadRef.current = now;
+      try {
+        if (hlsRef.current) hlsRef.current.startLoad();
+        else if (nativeSrcRef.current) { v.src = playlistUrl; v.load(); }
+        void v.play().catch(() => { /* autoplay may refuse; the frame is still current */ });
+      } catch { /* recovery is best-effort */ }
+    };
     // The element's own verdict. A source it cannot decode leaves it at
     // NETWORK_NO_SOURCE with play() rejecting "no supported sources" — and
     // because `loading` had already cleared on an earlier `canplay`, the
@@ -163,11 +194,13 @@ export function useHlsSource(
     const events = ['loadeddata', 'playing', 'canplay'] as const;
     events.forEach((e) => v.addEventListener(e, started));
     v.addEventListener('error', failed);
+    v.addEventListener('ended', reload);
     return () => {
       events.forEach((e) => v.removeEventListener(e, started));
       v.removeEventListener('error', failed);
+      v.removeEventListener('ended', reload);
     };
-  }, [videoRef, playlistUrl]);
+  }, [videoRef, playlistUrl, live]);
 
   return { error, loading };
 }

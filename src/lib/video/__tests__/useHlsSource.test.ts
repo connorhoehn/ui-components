@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useRef } from 'react';
 import { useHlsSource } from '../useHlsSource';
@@ -83,5 +83,51 @@ describe('useHlsSource', () => {
     // The element's own verdict outranks anything it did before.
     act(() => { video.dispatchEvent(new Event('error')); });
     expect(result.current.error).toMatch(/could not be played/i);
+  });
+
+  it('goes back and looks again when a LIVE stream reports it ended', () => {
+    // The muxer writes #EXT-X-ENDLIST when a broadcast stops, and the next one
+    // reuses the same channel arn. A viewer who loads inside that window reads
+    // the ENDLIST, hls.js calls endOfStream(), and the element sits at `ended`
+    // forever — while the server serves a healthy live playlist again seconds
+    // later. Measured: stuck at 10.7s with a frozen buffer against a playlist
+    // that had reached segment 36 and carried no ENDLIST.
+    const video = fakeVideo(3);
+    const play = vi.fn(() => Promise.resolve());
+    video.play = play as unknown as HTMLVideoElement['play'];
+    const load = vi.fn();
+    video.load = load;
+    mountWith(video, 'https://example.test/master.m3u8');
+
+    act(() => { video.dispatchEvent(new Event('ended')); });
+    expect(play).toHaveBeenCalled();
+  });
+
+  it('does not chase `ended` on a stream that is not live', () => {
+    // A recording that finishes has genuinely finished.
+    const video = fakeVideo(3);
+    const play = vi.fn(() => Promise.resolve());
+    video.play = play as unknown as HTMLVideoElement['play'];
+    renderHook(() => {
+      const ref = useRef<HTMLVideoElement | null>(video);
+      return useHlsSource(ref, 'https://example.test/vod.m3u8', { live: false });
+    });
+
+    act(() => { video.dispatchEvent(new Event('ended')); });
+    expect(play).not.toHaveBeenCalled();
+  });
+
+  it('throttles recovery so a dead stream is not hammered', () => {
+    const video = fakeVideo(3);
+    const play = vi.fn(() => Promise.resolve());
+    video.play = play as unknown as HTMLVideoElement['play'];
+    mountWith(video, 'https://example.test/master.m3u8');
+
+    act(() => {
+      video.dispatchEvent(new Event('ended'));
+      video.dispatchEvent(new Event('ended'));
+      video.dispatchEvent(new Event('ended'));
+    });
+    expect(play).toHaveBeenCalledTimes(1);
   });
 });

@@ -617,10 +617,11 @@ function k({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCance
 }
 //#endregion
 //#region src/lib/video/useHlsSource.ts
-function A(e, t, n = {}) {
-	let { live: i = !1 } = n, [s, c] = o(null), [l, u] = o(!1), d = a(null), f = a(!1), p = a(n.onError);
+var A = 3e3;
+function j(e, t, n = {}) {
+	let { live: i = !1 } = n, [s, c] = o(null), [l, u] = o(!1), d = a(null), f = a(!1), p = a(0), m = a(n.onError);
 	return r(() => {
-		p.current = n.onError;
+		m.current = n.onError;
 	}, [n.onError]), r(() => {
 		let n = e.current;
 		if (!n || !t) return;
@@ -643,7 +644,7 @@ function A(e, t, n = {}) {
 					backBufferLength: 30
 				} : { enableWorker: !0 });
 				d.current = o, o.attachMedia(n), o.on(e.Events.MEDIA_ATTACHED, () => o.loadSource(t)), o.on(e.Events.ERROR, (e, t) => {
-					t?.fatal && (c(`HLS error: ${t.type}`), p.current?.(/* @__PURE__ */ Error(`HLS fatal: ${t.type}`)));
+					t?.fatal && (c(`HLS error: ${t.type}`), m.current?.(/* @__PURE__ */ Error(`HLS fatal: ${t.type}`)));
 				});
 			} catch (e) {
 				if (r) return;
@@ -665,37 +666,47 @@ function A(e, t, n = {}) {
 	]), r(() => {
 		let n = e.current;
 		if (!n || !t) return;
-		if (n.readyState >= 2) {
-			u(!1);
-			return;
-		}
-		let r = () => u(!1), i = () => c("This stream could not be played."), a = [
+		n.readyState >= 2 && u(!1);
+		let r = () => u(!1), a = () => {
+			if (!i) return;
+			let e = Date.now();
+			if (!(e - p.current < A)) {
+				p.current = e;
+				try {
+					d.current ? d.current.startLoad() : f.current && (n.src = t, n.load()), n.play().catch(() => {});
+				} catch {}
+			}
+		}, o = () => c("This stream could not be played."), s = [
 			"loadeddata",
 			"playing",
 			"canplay"
 		];
-		return a.forEach((e) => n.addEventListener(e, r)), n.addEventListener("error", i), () => {
-			a.forEach((e) => n.removeEventListener(e, r)), n.removeEventListener("error", i);
+		return s.forEach((e) => n.addEventListener(e, r)), n.addEventListener("error", o), n.addEventListener("ended", a), () => {
+			s.forEach((e) => n.removeEventListener(e, r)), n.removeEventListener("error", o), n.removeEventListener("ended", a);
 		};
-	}, [e, t]), {
+	}, [
+		e,
+		t,
+		i
+	]), {
 		error: s,
 		loading: l
 	};
 }
 //#endregion
 //#region src/components/video/StreamChatTicker.tsx
-function j(e) {
+function M(e) {
 	if (!e) return;
 	let t = new Date(e);
 	if (!Number.isNaN(t.getTime())) return `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}`;
 }
-function M({ messages: t, visibleCount: r = 3, rotateMs: a = 4200, window: o = 20, className: c, "data-testid": l = "stream-chat-ticker" }) {
+function N({ messages: t, visibleCount: r = 3, rotateMs: a = 4200, window: o = 20, className: c, "data-testid": l = "stream-chat-ticker" }) {
 	let u = i(() => t.slice(-o).reverse().map((e) => ({
 		id: e.id,
 		actor: e.displayName,
 		action: "",
 		subject: e.content,
-		timeLabel: j(e.timestamp),
+		timeLabel: M(e.timestamp),
 		kind: "comment"
 	})), [t, o]);
 	return u.length === 0 ? null : /* @__PURE__ */ s("div", {
@@ -711,18 +722,18 @@ function M({ messages: t, visibleCount: r = 3, rotateMs: a = 4200, window: o = 2
 }
 //#endregion
 //#region src/components/video/StreamStage.tsx
-var N = 1e4;
-function P({ stream: t = null, playlistUrl: n = null, onPlaybackError: i, title: l, viewerCount: u, live: d = !1, notStartedLabel: p, endedLabel: m, stallAfterMs: h = N, chatMessages: g, chatVisibleCount: _, chatRotateMs: v, muted: y = !0, controls: b, placeholder: S, className: C, "data-testid": w = "stream-stage" }) {
+var P = 1e4;
+function F({ stream: t = null, playlistUrl: n = null, onPlaybackError: i, title: l, viewerCount: u, live: d = !1, notStartedLabel: p, endedLabel: m, stallAfterMs: h = P, chatMessages: g, chatVisibleCount: _, chatRotateMs: v, muted: y = !0, controls: b, placeholder: S, className: C, "data-testid": w = "stream-stage" }) {
 	let [T, E] = o(y);
 	r(() => {
 		E(y);
 	}, [y]);
-	let D = a(null), O = A(D, t ? null : n, {
+	let D = a(null), O = j(D, t ? null : n, {
 		live: !0,
 		onError: i
-	}), k = t ? d : d && !O.loading && !O.error, j = a(!1);
-	(t || n) && (j.current = !0);
-	let P = j.current && !t && !n, [F, I] = o(!1);
+	}), k = t ? d : d && !O.loading && !O.error, A = a(!1);
+	(t || n) && (A.current = !0);
+	let M = A.current && !t && !n, [F, I] = o(!1);
 	return r(() => {
 		if (I(!1), !n || t || !O.loading || O.error) return;
 		let e = setTimeout(() => I(!0), h);
@@ -751,9 +762,9 @@ function P({ stream: t = null, playlistUrl: n = null, onPlaybackError: i, title:
 				muted: T,
 				className: "h-full w-full object-contain"
 			}) : /* @__PURE__ */ s("div", {
-				"data-testid": P ? `${w}-ended` : `${w}-placeholder`,
+				"data-testid": M ? `${w}-ended` : `${w}-placeholder`,
 				className: "flex h-full w-full items-center justify-center text-sm text-white/60",
-				children: P ? m ?? "The broadcast has ended." : S ?? "Waiting for the stream to start…"
+				children: M ? m ?? "The broadcast has ended." : S ?? "Waiting for the stream to start…"
 			}),
 			n && !t && O.loading && !O.error && /* @__PURE__ */ s("div", {
 				"data-testid": F ? `${w}-not-started` : `${w}-connecting`,
@@ -792,7 +803,7 @@ function P({ stream: t = null, playlistUrl: n = null, onPlaybackError: i, title:
 					u !== void 0 && /* @__PURE__ */ s(f, { count: u })
 				]
 			}),
-			g && g.length > 0 && /* @__PURE__ */ s(M, {
+			g && g.length > 0 && /* @__PURE__ */ s(N, {
 				messages: g,
 				visibleCount: _,
 				rotateMs: v,
@@ -807,4 +818,4 @@ function P({ stream: t = null, playlistUrl: n = null, onPlaybackError: i, title:
 	});
 }
 //#endregion
-export { l as _, D as a, x as c, v as d, h as f, f as g, m as h, O as i, b as l, p as m, M as n, w as o, g as p, k as r, C as s, P as t, y as u };
+export { l as _, D as a, x as c, v as d, h as f, f as g, m as h, O as i, b as l, p as m, N as n, w as o, g as p, k as r, C as s, F as t, y as u };
