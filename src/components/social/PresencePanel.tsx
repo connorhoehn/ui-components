@@ -5,6 +5,7 @@
 
 import type { PresenceUser } from '../../hooks/usePresence';
 import { identityToColor, identityToInitials } from '../../utils/identity';
+import { presenceColorKey } from './presenceIdentity';
 
 // ---------------------------------------------------------------------------
 // Component
@@ -31,8 +32,19 @@ export function PresencePanel({ users, currentClientId }: PresencePanelProps) {
       ) : (
         <div>
           {users.map((user) => {
+            // Hash the colour off the stable human id, never the per-WS
+            // clientId: one person with three tabs is three clientIds, and
+            // hashing those gave that one person three avatar colours in the
+            // same roster (UX audit 2026-08-25, "one human, five colours").
+            // `metadata.email` is absent on most rosters, so the old
+            // `email ?? clientId` was the clientId branch in practice.
             const color = identityToColor(
-              (user.metadata.email as string | undefined) ?? user.clientId
+              presenceColorKey(
+                (user.metadata.userId as string | undefined) ??
+                  (user.metadata.email as string | undefined),
+                user.metadata.displayName as string | undefined,
+                user.clientId,
+              )
             );
             const initials = identityToInitials(
               (user.metadata.displayName as string | undefined) ?? user.clientId.slice(0, 2)

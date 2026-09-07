@@ -207,8 +207,20 @@ export type TransferPhase =
 
 export interface ChatTransfer {
   transferId: string;
-  /** Who is sending. Rendered so a recipient knows whose file this is. */
+  /**
+   * Who is sending, for DISPLAY ONLY. A human-facing name is not an identity:
+   * two people can be called "Alex", and one person can rename themselves
+   * mid-transfer. Never decide ownership from this field — use `uploader`.
+   */
   actor: string;
+  /**
+   * Authed user id of the sender — the reliable identity for "is this mine".
+   * Mirrors realtime-modules' `ChannelTransfer.uploader`. Optional because
+   * hosts on older transports may not carry it; when it is absent the panel
+   * falls back to the display-name comparison, which is the pre-existing
+   * (wrong, but no worse than before) behaviour.
+   */
+  uploader?: string;
   name: string;
   size: number;
   transferred: number;
@@ -216,6 +228,31 @@ export interface ChatTransfer {
   contentType?: string;
   preview?: string;
   error?: string;
+}
+
+/**
+ * Decides whether an in-flight transfer belongs to the viewer.
+ *
+ * Identity first, name never. The old test was `transfer.actor ===
+ * currentActor` — a comparison of two DISPLAY NAMES — which handed each of two
+ * participants called "Alex" a cancel button on the other's upload, and moved
+ * ownership of a live transfer the moment somebody renamed themselves. When
+ * both sides carry an authed id we compare ids and STOP: we deliberately do
+ * not fall back to names on an id mismatch, because a fallback would
+ * reintroduce exactly the collision the id exists to rule out.
+ *
+ * The name comparison survives only for transfers that carry no id at all,
+ * where it is the only signal available. A transfer that DOES carry an
+ * `uploader` and a viewer who cannot be identified by id is answered "not
+ * mine" — the cancel button is withheld rather than offered to a guess.
+ */
+export function isOwnTransfer(
+  transfer: Pick<ChatTransfer, 'actor' | 'uploader'>,
+  currentUserId?: string,
+  currentActor?: string,
+): boolean {
+  if (transfer.uploader) return !!currentUserId && transfer.uploader === currentUserId;
+  return !!currentActor && transfer.actor === currentActor;
 }
 
 export interface TransferBubbleProps {

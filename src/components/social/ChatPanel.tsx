@@ -17,7 +17,13 @@ import { CallActivityCard, type CallActivityParticipant } from './CallActivityCa
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
 import { QuoteBlock } from './QuoteBlock';
-import { AttachmentBubble, TransferBubble, type ChatAttachment, type ChatTransfer } from './ChatAttachment';
+import {
+  AttachmentBubble,
+  TransferBubble,
+  isOwnTransfer,
+  type ChatAttachment,
+  type ChatTransfer,
+} from './ChatAttachment';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover, DEFAULT_PICKER_EMOJIS } from './ReactionPickerPopover';
 
@@ -46,6 +52,9 @@ export interface ChatPanelProps {
    * The viewer, so their own reactions can be marked and their own messages
    * can offer edit/delete. Without it reactions render but cannot be toggled
    * meaningfully — "did I react?" is unanswerable.
+   *
+   * Also the identity that decides which in-flight `transfers` are the
+   * viewer's own (compared against `ChatTransfer.uploader`).
    */
   currentUserId?: string;
   /** Reactions on one message. Omit to render no reaction UI at all. */
@@ -147,7 +156,13 @@ export interface ChatPanelProps {
    * fully-formed out of nowhere.
    */
   transfers?: ChatTransfer[];
-  /** Identifies the viewer so their own transfers get the cancel affordance. */
+  /**
+   * The viewer's DISPLAY NAME. Legacy fallback for "whose transfer is this",
+   * used only when a transfer carries no `uploader` id. Prefer
+   * `currentUserId`: a display name is not an identity, and deciding ownership
+   * from it gave two participants named "Alex" a cancel button on each other's
+   * uploads.
+   */
   currentActor?: string;
   onCancelTransfer?: (transferId: string) => void;
   /**
@@ -826,7 +841,12 @@ export function ChatPanel({
               content={
                 <TransferBubble
                   transfer={transfer}
-                  mine={!!currentActor && transfer.actor === currentActor}
+                  // Ownership is an ID question. `transfer.actor` is the
+                  // sender's DISPLAY NAME and is used above only to label the
+                  // row; comparing it to the viewer's name gave both people
+                  // called "Alex" a cancel button on the other's upload, and
+                  // moved ownership when either of them renamed.
+                  mine={isOwnTransfer(transfer, currentUserId, currentActor)}
                   onCancel={onCancelTransfer}
                 />
               }
