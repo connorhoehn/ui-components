@@ -295,4 +295,23 @@ describe('ChatPanel — composer slot', () => {
     render(<ChatPanel messages={[]} onSend={vi.fn()} />);
     expect(screen.queryByTestId('chat-panel-composer-slot')).toBeNull();
   });
+
+  // A channel with two messages in it rendered them against the top of the
+  // pane with ~450px of empty white between the last message and the composer.
+  it('anchors a short thread to the bottom of the pane', () => {
+    render(
+      <ChatPanel
+        messages={[msg({ clientId: 'a', content: 'hi' })]}
+        onSend={vi.fn()}
+        fill
+      />,
+    );
+    const list = screen.getByTestId('chat-panel-messages');
+    expect(list.className).toContain('flex-col');
+    // One wrapper carrying the auto top margin, so slack goes ABOVE the
+    // messages; an overflowing thread resolves it to zero and scrolls as usual.
+    const wrapper = list.firstElementChild as HTMLElement;
+    expect(wrapper.className).toContain('mt-auto');
+    expect(wrapper).toContainElement(screen.getByText('hi'));
+  });
 });

@@ -708,107 +708,110 @@ function pe({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers
 			}),
 			/* @__PURE__ */ y("div", {
 				className: e("relative flex flex-col mb-2", J ? "min-h-0 flex-1" : ""),
-				children: [/* @__PURE__ */ y("div", {
+				children: [/* @__PURE__ */ v("div", {
 					ref: Z,
 					onScroll: je,
 					"data-testid": "chat-panel-messages",
-					className: e("scrollbar-none overflow-y-auto overflow-x-hidden", Te && "fade-top", J ? "min-h-0 flex-1" : "max-h-[200px]"),
-					children: [
-						_e && n.length > 0 && /* @__PURE__ */ v("div", {
-							className: "flex justify-center pb-1",
-							children: /* @__PURE__ */ v("button", {
-								type: "button",
-								"data-testid": "chat-panel-load-more",
-								onClick: Me,
-								disabled: z,
-								className: e("rounded px-2 py-1 text-xs disabled:opacity-60", K ? "text-white/70 hover:bg-white/10" : "text-text-secondary hover:bg-surface-hover"),
-								children: z ? "Loading…" : "Load earlier messages"
-							})
-						}),
-						n.length === 0 ? /* @__PURE__ */ v("div", {
-							className: e("text-sm", K ? "text-white/40" : "text-text-secondary"),
-							children: "No messages yet"
-						}) : n.map((t, n) => {
-							let r = t.displayName ?? t.clientId.slice(0, 8), i = t.attachments ?? [], a = t.metadata?.html, o = typeof a == "string" ? a : void 0, s = /* @__PURE__ */ v(ee, {
-								html: o,
-								text: t.content
-							}), c = le(t.metadata), l = fe(t.metadata), u = de(t.metadata), d = l ? /* @__PURE__ */ v(ne, {
-								callId: l.callId,
-								startedBy: (typeof t.metadata?.displayName == "string" ? t.metadata.displayName : void 0) ?? t.displayName,
-								participants: k?.(l.callId) ?? l.participants,
-								live: l.live,
-								durationMs: l.durationMs,
-								audioOnly: l.audioOnly,
-								onJoin: A
-							}) : c ? /* @__PURE__ */ v(te, {
-								documentId: c.documentId,
-								title: c.title || t.content,
-								icon: c.icon,
-								createdBy: (typeof t.metadata?.displayName == "string" ? t.metadata.displayName : void 0) ?? t.displayName,
-								editors: O?.(c.documentId) ?? [],
-								onOpen: j
-							}) : i.length === 0 ? s : /* @__PURE__ */ y(_, { children: [(t.content || o) && s, i.map((e) => /* @__PURE__ */ v(ie, {
-								attachment: e,
-								src: ue?.(e),
-								onOpen: pe
-							}, e.id))] }), f = t.id ?? "", p = f && b ? b(f) : [], h = t.metadata?.replyTo, g = !!f && !!T?.has(f), N = !!m && t.userId === m, P = /* @__PURE__ */ y(_, { children: [
-								h && /* @__PURE__ */ v(re, {
-									quote: h,
-									onJump: E,
-									className: "mb-1"
-								}),
-								g && /* @__PURE__ */ v("span", {
-									className: "mb-0.5 block text-[11px] text-text-tertiary",
-									"data-testid": "pinned-marker",
-									children: "📌 Pinned"
-								}),
-								d,
-								u && /* @__PURE__ */ y("div", {
-									"data-testid": "message-truncated",
-									className: "mt-1 text-[11px] text-warning-fg",
-									children: [
-										"⚠",
-										" ",
-										u.labels.length > 0 ? `Too large to send: ${u.labels.join(", ")}` : "Part of this message was too large to send"
-									]
-								}),
-								p.length > 0 && m && x && /* @__PURE__ */ v(I, {
-									reactions: p,
-									currentUserId: m,
-									onToggle: (e) => x(f, e)
+					className: e("scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col", Te && "fade-top", J ? "min-h-0 flex-1" : "max-h-[200px]"),
+					children: /* @__PURE__ */ y("div", {
+						className: "mt-auto",
+						children: [
+							_e && n.length > 0 && /* @__PURE__ */ v("div", {
+								className: "flex justify-center pb-1",
+								children: /* @__PURE__ */ v("button", {
+									type: "button",
+									"data-testid": "chat-panel-load-more",
+									onClick: Me,
+									disabled: z,
+									className: e("rounded px-2 py-1 text-xs disabled:opacity-60", K ? "text-white/70 hover:bg-white/10" : "text-text-secondary hover:bg-surface-hover"),
+									children: z ? "Loading…" : "Load earlier messages"
 								})
-							] });
-							return /* @__PURE__ */ y("div", {
-								"data-testid": "chat-message",
-								"data-message-id": f || void 0,
-								className: e("group relative rounded-md", f && f === D && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
-								children: [/* @__PURE__ */ v(w, {
-									author: r,
-									content: P,
-									timestamp: t.timestamp,
-									avatarUrl: t.avatarUrl,
-									tone: M,
-									mine: N
-								}), f && (x || S || C) && /* @__PURE__ */ v(R, {
-									className: e("absolute -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100", N ? "right-14" : "left-14"),
-									onReact: x ? (e) => x(f, e) : void 0,
-									onReply: S ? () => S(t) : void 0,
-									onTogglePin: C ? () => C(t) : void 0,
-									pinned: g
-								})]
-							}, t.id ?? n);
-						}),
-						V.map((e) => /* @__PURE__ */ v(w, {
-							author: e.actor,
-							timestamp: "",
-							tone: M,
-							content: /* @__PURE__ */ v(ae, {
-								transfer: e,
-								mine: !!H && e.actor === H,
-								onCancel: oe
-							})
-						}, e.transferId))
-					]
+							}),
+							n.length === 0 ? /* @__PURE__ */ v("div", {
+								className: e("text-sm", K ? "text-white/40" : "text-text-secondary"),
+								children: "No messages yet"
+							}) : n.map((t, n) => {
+								let r = t.displayName ?? t.clientId.slice(0, 8), i = t.attachments ?? [], a = t.metadata?.html, o = typeof a == "string" ? a : void 0, s = /* @__PURE__ */ v(ee, {
+									html: o,
+									text: t.content
+								}), c = le(t.metadata), l = fe(t.metadata), u = de(t.metadata), d = l ? /* @__PURE__ */ v(ne, {
+									callId: l.callId,
+									startedBy: (typeof t.metadata?.displayName == "string" ? t.metadata.displayName : void 0) ?? t.displayName,
+									participants: k?.(l.callId) ?? l.participants,
+									live: l.live,
+									durationMs: l.durationMs,
+									audioOnly: l.audioOnly,
+									onJoin: A
+								}) : c ? /* @__PURE__ */ v(te, {
+									documentId: c.documentId,
+									title: c.title || t.content,
+									icon: c.icon,
+									createdBy: (typeof t.metadata?.displayName == "string" ? t.metadata.displayName : void 0) ?? t.displayName,
+									editors: O?.(c.documentId) ?? [],
+									onOpen: j
+								}) : i.length === 0 ? s : /* @__PURE__ */ y(_, { children: [(t.content || o) && s, i.map((e) => /* @__PURE__ */ v(ie, {
+									attachment: e,
+									src: ue?.(e),
+									onOpen: pe
+								}, e.id))] }), f = t.id ?? "", p = f && b ? b(f) : [], h = t.metadata?.replyTo, g = !!f && !!T?.has(f), N = !!m && t.userId === m, P = /* @__PURE__ */ y(_, { children: [
+									h && /* @__PURE__ */ v(re, {
+										quote: h,
+										onJump: E,
+										className: "mb-1"
+									}),
+									g && /* @__PURE__ */ v("span", {
+										className: "mb-0.5 block text-[11px] text-text-tertiary",
+										"data-testid": "pinned-marker",
+										children: "📌 Pinned"
+									}),
+									d,
+									u && /* @__PURE__ */ y("div", {
+										"data-testid": "message-truncated",
+										className: "mt-1 text-[11px] text-warning-fg",
+										children: [
+											"⚠",
+											" ",
+											u.labels.length > 0 ? `Too large to send: ${u.labels.join(", ")}` : "Part of this message was too large to send"
+										]
+									}),
+									p.length > 0 && m && x && /* @__PURE__ */ v(I, {
+										reactions: p,
+										currentUserId: m,
+										onToggle: (e) => x(f, e)
+									})
+								] });
+								return /* @__PURE__ */ y("div", {
+									"data-testid": "chat-message",
+									"data-message-id": f || void 0,
+									className: e("group relative rounded-md", f && f === D && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
+									children: [/* @__PURE__ */ v(w, {
+										author: r,
+										content: P,
+										timestamp: t.timestamp,
+										avatarUrl: t.avatarUrl,
+										tone: M,
+										mine: N
+									}), f && (x || S || C) && /* @__PURE__ */ v(R, {
+										className: e("absolute -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100", N ? "right-14" : "left-14"),
+										onReact: x ? (e) => x(f, e) : void 0,
+										onReply: S ? () => S(t) : void 0,
+										onTogglePin: C ? () => C(t) : void 0,
+										pinned: g
+									})]
+								}, t.id ?? n);
+							}),
+							V.map((e) => /* @__PURE__ */ v(w, {
+								author: e.actor,
+								timestamp: "",
+								tone: M,
+								content: /* @__PURE__ */ v(ae, {
+									transfer: e,
+									mine: !!H && e.actor === H,
+									onCancel: oe
+								})
+							}, e.transferId))
+						]
+					})
 				}), Ce > 0 && /* @__PURE__ */ y("button", {
 					type: "button",
 					"data-testid": "chat-panel-new-messages",

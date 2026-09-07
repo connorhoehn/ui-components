@@ -559,7 +559,7 @@ export function ChatPanel({
           onScroll={handleListScroll}
           data-testid="chat-panel-messages"
           className={cn(
-            'scrollbar-none overflow-y-auto overflow-x-hidden',
+            'scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col',
             // A long thread runs off the top edge with a hard cut. The mask
             // softens the oldest visible messages so the list reads as
             // continuing rather than as starting there.
@@ -572,6 +572,15 @@ export function ChatPanel({
             fills ? 'min-h-0 flex-1' : 'max-h-[200px]',
           )}
         >
+          {/* A short thread belongs at the BOTTOM of the pane, against the
+              composer, not stranded at the top with four hundred pixels of
+              empty white under it — which is what a channel with two messages
+              in it looked like. `mt-auto` on a single wrapper does that and
+              nothing else: with slack it pushes the content down, and once the
+              thread overflows the auto margin resolves to zero and the list
+              scrolls normally. (`justify-end` on the scroller itself would
+              make the oldest messages unreachable.) */}
+          <div className="mt-auto">
           {canLoadMore && messages.length > 0 && (
             <div className="flex justify-center pb-1">
               <button
@@ -810,6 +819,7 @@ export function ChatPanel({
               }
             />
           ))}
+          </div>
         </div>
         {unreadBelow > 0 && (
           <button
