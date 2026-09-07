@@ -204,6 +204,43 @@ describe('DocumentToolbar', () => {
     expect(calls).toContain('toggleHighlight');
   });
 
+  // Typeface and size, the two controls a word processor has that a rich-text
+  // widget does not. Absent unless the editor registers the commands: this
+  // toolbar is shared with pages that build a smaller extension set, and a
+  // control that cannot act is worse than an absent one.
+  it('hides the font controls when the editor cannot set fonts', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} />);
+    expect(screen.queryByTestId('document-toolbar-font-family')).toBeNull();
+    expect(screen.queryByTestId('document-toolbar-font-size')).toBeNull();
+  });
+
+  it('sets a typeface, and clears it back to the page default', () => {
+    const { editor, calls } = makeEditor({}, ['setFontFamily', 'unsetFontFamily']);
+    render(<DocumentToolbar editor={editor} />);
+    const picker = screen.getByTestId('document-toolbar-font-family');
+
+    fireEvent.change(picker, { target: { value: 'Georgia, "Times New Roman", serif' } });
+    expect(calls.join('|')).toContain('setFontFamily:["Georgia, \\"Times New Roman\\", serif"]');
+
+    // "Default" is the ABSENCE of a choice — it must unset, or a document
+    // could never get back to its own typography.
+    fireEvent.change(picker, { target: { value: '' } });
+    expect(calls.join('|')).toContain('unsetFontFamily');
+  });
+
+  it('sets a size in points, and clears it', () => {
+    const { editor, calls } = makeEditor({}, ['setFontSize', 'unsetFontSize']);
+    render(<DocumentToolbar editor={editor} />);
+    const picker = screen.getByTestId('document-toolbar-font-size');
+
+    fireEvent.change(picker, { target: { value: '18pt' } });
+    expect(calls.join('|')).toContain('setFontSize:["18pt"]');
+
+    fireEvent.change(picker, { target: { value: '' } });
+    expect(calls.join('|')).toContain('unsetFontSize');
+  });
+
   // One button with a caret, the way Word and Google Docs do it — not four
   // always-visible toggles. Alignment is one setting with four values.
   it('opens the align menu once text-align is registered, and applies a choice', () => {

@@ -51,6 +51,31 @@ export interface DocumentToolbarProps {
   'data-testid'?: string;
 }
 
+/**
+ * Typefaces a document can set, and their real stacks.
+ *
+ * Deliberately short and web-safe: a font a reader does not have is a font the
+ * document does not have, and a picker full of names that silently fall back
+ * to the same face is worse than five that are honestly different. "Default"
+ * is not a font — it clears the mark and lets the page's own typography
+ * through, which is what a document should look like unless someone chose
+ * otherwise.
+ */
+const FONT_OPTIONS = [
+  { value: '', label: 'Default' },
+  { value: 'Arial, Helvetica, sans-serif', label: 'Arial' },
+  { value: 'Georgia, "Times New Roman", serif', label: 'Georgia' },
+  { value: '"Times New Roman", Times, serif', label: 'Times New Roman' },
+  { value: '"Courier New", Courier, monospace', label: 'Courier New' },
+  { value: 'Verdana, Geneva, sans-serif', label: 'Verdana' },
+];
+
+/** The sizes a word processor offers, in points. */
+const SIZE_OPTIONS = [
+  { value: '', label: 'Size' },
+  ...[8, 9, 10, 11, 12, 14, 18, 24, 30, 36].map((pt) => ({ value: `${pt}pt`, label: String(pt) })),
+];
+
 /** Block types, in the order a document uses them. */
 const BLOCK_OPTIONS = [
   { value: 'paragraph', label: 'Normal text' },
@@ -356,7 +381,16 @@ export default function DocumentToolbar({
       // false, so this is safe whether or not they are present.
       flags['highlight'] = e.isActive('highlight');
       for (const a of ALIGNMENTS) flags[`align-${a}`] = e.isActive({ textAlign: a });
-      return { block: currentBlock(e), flags };
+      // What the cursor is actually in, so the pickers show the truth rather
+      // than resetting to their first option after every click. `getAttributes`
+      // on an unregistered mark returns {}, so this is safe either way.
+      const style = e.getAttributes('textStyle') as { fontFamily?: string; fontSize?: string };
+      return {
+        block: currentBlock(e),
+        flags,
+        fontFamily: style.fontFamily ?? '',
+        fontSize: style.fontSize ?? '',
+      };
     },
   });
 
@@ -422,6 +456,48 @@ export default function DocumentToolbar({
         onChange={(e) => setBlock(e.target.value)}
         className="w-[140px]"
       />
+
+      {/* Typeface and size, where a word processor puts them: between the
+          block-type picker and the character marks. Rendered only when the
+          editor has the commands — this toolbar is shared with pages that
+          register a smaller extension set, and a control that cannot act is
+          worse than an absent one. */}
+      {has(editor, 'setFontFamily') && (
+        <>
+          <Divider />
+          <Select
+            size="sm"
+            data-testid={`${testId}-font-family`}
+            aria-label="Font"
+            value={state?.fontFamily ?? ''}
+            options={FONT_OPTIONS}
+            onChange={(e) => {
+              const chain = editor.chain().focus() as never as Record<string, (v?: string) => { run: () => void }>;
+              // "Default" is the ABSENCE of a choice, so it unsets rather than
+              // setting some other family — otherwise a document could never
+              // get back to its own typography.
+              if (e.target.value) chain['setFontFamily']!(e.target.value).run();
+              else chain['unsetFontFamily']!().run();
+            }}
+            className="w-[130px]"
+          />
+        </>
+      )}
+      {has(editor, 'setFontSize') && (
+        <Select
+          size="sm"
+          data-testid={`${testId}-font-size`}
+          aria-label="Font size"
+          value={state?.fontSize ?? ''}
+          options={SIZE_OPTIONS}
+          onChange={(e) => {
+            const chain = editor.chain().focus() as never as Record<string, (v?: string) => { run: () => void }>;
+            if (e.target.value) chain['setFontSize']!(e.target.value).run();
+            else chain['unsetFontSize']!().run();
+          }}
+          className="w-[72px]"
+        />
+      )}
 
       <Divider />
       {MARKS.map((b) => (
