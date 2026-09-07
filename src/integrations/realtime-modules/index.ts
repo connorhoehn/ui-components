@@ -15,6 +15,7 @@ export type {
   RMReaction,
   RMActivityEvent,
   RMFileUploadState,
+  RMChannelTransfer,
   RMHangoutParticipant,
   RMHangoutSession,
   RMNotificationEntry,
@@ -47,6 +48,7 @@ export {
   adaptPresenceRoster,
   adaptReaction,
   adaptReactions,
+  adaptMessageReactions,
   adaptActivityEvent,
   adaptActivityEvents,
   adaptFileUploadState,
@@ -56,11 +58,11 @@ export {
   adaptNotification,
   adaptNotifications,
 } from './adapters';
-export type { FileUploadSummary } from './adapters';
+export type { FileUploadSummary, UIMessageReaction } from './adapters';
 
 // Wrapped components
 export { WrappedChatPanel } from './WrappedChatPanel';
-export type { WrappedChatPanelProps } from './WrappedChatPanel';
+export type { WrappedChatPanelProps, RMUsePinsReturn } from './WrappedChatPanel';
 
 export { WrappedPresencePanel } from './WrappedPresencePanel';
 export type { WrappedPresencePanelProps } from './WrappedPresencePanel';

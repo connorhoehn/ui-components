@@ -15,6 +15,7 @@ import type {
   RMFileUploadState,
   RMHangoutParticipant,
   RMNotificationEntry,
+  RMUseReactionsReturn,
 } from './types';
 
 import type { ChatMessage as UIChatMessage } from '../../hooks/useChat';
@@ -33,18 +34,75 @@ import type { NotificationItem as UINotificationItem } from '../../components/sh
 // realtime-modules ChatMessage.metadata?.avatarUrl → ChatMessage.avatarUrl
 // ---------------------------------------------------------------------------
 
+/** A string, or undefined. Metadata is sender-supplied and not a contract. */
+function str(v: unknown): string | undefined {
+  return typeof v === 'string' ? v : undefined;
+}
+
+/**
+ * The quote a reply answers, rebuilt rather than trusted.
+ *
+ * Everything else in `metadata` is text the renderer treats as text; this one
+ * is consumed STRUCTURALLY (author, text, jump target), so a malformed one is
+ * a render crash in every recipient's thread rather than a bad string — a
+ * remarkably cheap denial of service. Returns null for anything that names no
+ * message, because a quote with no jump target is a control that goes nowhere.
+ */
+function normalizeReplyTo(raw: unknown): Record<string, unknown> | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const rt = raw as Record<string, unknown>;
+  if (typeof rt.messageId !== 'string' || !rt.messageId) return null;
+  return {
+    messageId: rt.messageId,
+    author: str(rt.author) ?? 'Unknown',
+    text: str(rt.text) ?? '',
+    ...(str(rt.timestamp) ? { timestamp: rt.timestamp as string } : {}),
+  };
+}
+
 export function adaptChatMessage(msg: RMChatMessage): UIChatMessage {
   // Attachments ride in `metadata` because that is the field the chat wire
   // format already carries verbatim — which means a file shared today is
   // ordered, persisted and replayed by the exact same path as the text
   // around it, with no second stream to merge and no history migration.
+  //
+  // They arrive as whatever the sender put there, so treat them as untrusted
+  // and keep only entries that structurally look like one. `id` is checked as
+  // well as `url`: it is the correlation id shared with the sender's in-flight
+  // transfer and the React key for the row, so an entry without one renders a
+  // keyless bubble that can never be matched to the transfer it completed.
   const raw = msg.metadata?.attachments;
   const attachments = Array.isArray(raw)
     ? (raw.filter(
         (a): a is UIChatAttachment =>
-          !!a && typeof a === 'object' && typeof (a as UIChatAttachment).url === 'string',
+          !!a &&
+          typeof a === 'object' &&
+          typeof (a as UIChatAttachment).url === 'string' &&
+          typeof (a as UIChatAttachment).id === 'string',
       ))
     : undefined;
+
+  // The whole bag rides through. ChatPanel reads it for the things a
+  // transcript renders as objects rather than sentences — a document that
+  // was created, a call that happened, the rich `html` body, the `replyTo`
+  // quote, the truncation markers — and every one of those readers returns
+  // null on a message whose metadata was left behind. Pulling two fields
+  // out of the bag and discarding the rest meant a host using this adapter
+  // got a strictly worse thread than one that wired the hook up by hand.
+  //
+  // Pass-through is safe on VOLUME: the gateway already bounds metadata (key
+  // count and byte size) before it is stored or fanned out. What this layer
+  // owns is SHAPE, and exactly two fields are consumed structurally —
+  // `attachments`, filtered above, and `replyTo`, rebuilt below.
+  let metadata: Record<string, unknown> | undefined;
+  if (msg.metadata) {
+    const { replyTo: rawReplyTo, ...passthrough } = msg.metadata;
+    const out: Record<string, unknown> = { ...passthrough };
+    const replyTo = normalizeReplyTo(rawReplyTo);
+    if (replyTo) out.replyTo = replyTo;
+    metadata = Object.keys(out).length > 0 ? out : undefined;
+  }
+
   return {
     id: msg.id,
     clientId: msg.clientId,
@@ -55,17 +113,10 @@ export function adaptChatMessage(msg: RMChatMessage): UIChatMessage {
     ...(msg.userId ? { userId: msg.userId } : {}),
     content: msg.message,
     timestamp: msg.timestamp,
-    displayName: (msg.metadata?.displayName as string | undefined) ?? undefined,
-    avatarUrl: (msg.metadata?.avatarUrl as string | undefined) ?? undefined,
+    displayName: str(msg.metadata?.displayName),
+    avatarUrl: str(msg.metadata?.avatarUrl),
     ...(attachments && attachments.length > 0 ? { attachments } : {}),
-    // The whole bag rides through. ChatPanel reads it for the things a
-    // transcript renders as objects rather than sentences — a document that
-    // was created, a call that happened, the rich `html` body, the `replyTo`
-    // quote, the truncation markers — and every one of those readers returns
-    // null on a message whose metadata was left behind. Pulling two fields
-    // out of the bag and discarding the rest meant a host using this adapter
-    // got a strictly worse thread than one that wired the hook up by hand.
-    ...(msg.metadata ? { metadata: msg.metadata } : {}),
+    ...(metadata ? { metadata } : {}),
   };
 }
 
@@ -89,14 +140,18 @@ export function adaptPresenceEntry(entry: RMPresenceEntry): UIPresenceUser {
   // wants to do something to a PERSON — open the DM, start the call. A
   // clientId identifies a socket: it changes on every reconnect and there is
   // one per tab, so it cannot be looked up in any directory the host has.
-  const userId = entry.metadata?.userId;
+  const userId = str(entry.metadata?.userId);
   return {
-    id: typeof userId === 'string' && userId ? userId : entry.clientId,
-    name:
-      (entry.metadata?.displayName as string | undefined) ??
-      entry.clientId.slice(0, 12),
-    avatarUrl: (entry.metadata?.avatarUrl as string | undefined) ?? undefined,
+    id: userId || entry.clientId,
+    name: str(entry.metadata?.displayName) ?? entry.clientId.slice(0, 12),
+    avatarUrl: str(entry.metadata?.avatarUrl),
     online: entry.status !== 'offline',
+    // Presence has four states and PresenceAvatars has three dots. Collapsing
+    // `away` and `busy` into a plain green "online" was the whole difference
+    // between a roster and a list of names: someone who stepped away read as
+    // sitting right there. `idle` wins over `online` for the dot colour, which
+    // is exactly the amber these two statuses want.
+    ...(entry.status === 'away' || entry.status === 'busy' ? { idle: true } : {}),
   };
 }
 
@@ -105,24 +160,61 @@ export function adaptPresenceEntry(entry: RMPresenceEntry): UIPresenceUser {
  * the app open in two tabs arrived twice — two identical avatars side by side,
  * and a participant count that read one higher than the number of humans.
  *
- * First entry wins for name and avatar; online-ness is the OR across a
- * person's connections, because a stale tab must not be able to grey out
- * someone who is sitting right there in another one.
+ * Identity, name and avatar are MERGED across a person's sessions rather than
+ * taken from whichever row sorted first. A tab that has not published its
+ * metadata yet is a normal thing for a roster to contain, and letting it win
+ * showed a truncated clientId where a name the OTHER tab had already published
+ * belonged. Online-ness is likewise the OR across the connections: a stale tab
+ * must not grey out someone sitting right there in another one, and `idle`
+ * survives only while EVERY live session says so.
  */
 export function adaptPresenceRoster(roster: RMPresenceEntry[]): UIPresenceUser[] {
-  const byId = new Map<string, UIPresenceUser>();
+  interface Merged {
+    id: string;
+    /** From metadata, across ALL of the person's sessions. */
+    name?: string;
+    avatarUrl?: string;
+    fallbackName: string;
+    online: boolean;
+    /** True only while every session seen so far says away/busy. */
+    idle: boolean;
+  }
+  const byId = new Map<string, Merged>();
+
   for (const entry of roster) {
-    const adapted = adaptPresenceEntry(entry);
-    const existing = byId.get(adapted.id);
+    const id = str(entry.metadata?.userId) || entry.clientId;
+    const online = entry.status !== 'offline';
+    const idle = entry.status === 'away' || entry.status === 'busy';
+    const existing = byId.get(id);
     if (!existing) {
-      byId.set(adapted.id, adapted);
+      byId.set(id, {
+        id,
+        name: str(entry.metadata?.displayName),
+        avatarUrl: str(entry.metadata?.avatarUrl),
+        fallbackName: entry.clientId.slice(0, 12),
+        online,
+        idle,
+      });
       continue;
     }
-    if (adapted.online && !existing.online) {
-      byId.set(adapted.id, { ...existing, online: true });
-    }
+    // First non-empty wins per FIELD, not per row: a tab that has not
+    // published its metadata yet must not blank out a name the other tab
+    // already published.
+    existing.name ??= str(entry.metadata?.displayName);
+    existing.avatarUrl ??= str(entry.metadata?.avatarUrl);
+    existing.online = existing.online || online;
+    existing.idle = existing.idle && idle;
   }
-  return [...byId.values()];
+
+  return [...byId.values()].map((m) => ({
+    id: m.id,
+    name: m.name ?? m.fallbackName,
+    avatarUrl: m.avatarUrl,
+    online: m.online,
+    // Away only while nobody is actually here. `idle: false` and absent mean
+    // the same thing to PresenceAvatars, so only the true case is emitted.
+    ...(m.online && m.idle ? { idle: true } : {}),
+  }));
 }
 
 // ---------------------------------------------------------------------------
@@ -159,6 +251,49 @@ export function adaptReaction(reaction: RMReaction, index: number): UIEphemeralR
 
 export function adaptReactions(reactions: RMReaction[]): UIEphemeralReaction[] {
   return reactions.map(adaptReaction);
+}
+
+// ---------------------------------------------------------------------------
+// Message reactions
+//
+// A DIFFERENT feature from the floating overlay above, sharing one hook and
+// one wire type. The overlay renders a reaction as a moment that happened; a
+// reaction CHIP renders it as state on a message — grouped by emoji, counted,
+// and answering "did I react?".
+//
+// That question is answerable only from `userId`, which the mirror type did
+// not declare and this adapter therefore could not carry. The result was a
+// whole feature missing from the embed path with nothing failing: an embedder
+// wiring useReactions to ChatPanel got the confetti and never a chip.
+// ---------------------------------------------------------------------------
+
+/** One reaction as ChatPanel's `reactionsFor` wants it. */
+export interface UIMessageReaction {
+  emoji: string;
+  userId: string;
+  displayName?: string;
+}
+
+/**
+ * The reactions on one message, in ChatPanel's shape.
+ *
+ * `userId` falls back to `clientId` only when the server resolved no identity
+ * — imperfect (it changes on reconnect, so "did I react?" goes stale) but
+ * better than an empty string, which would make every anonymous reaction the
+ * same person's.
+ */
+export function adaptMessageReactions(
+  hook: RMUseReactionsReturn,
+  messageId: string,
+): UIMessageReaction[] {
+  const forTarget = hook.reactionsFor
+    ? hook.reactionsFor(messageId)
+    : hook.reactions.filter((r) => r.targetId === messageId);
+  return forTarget.map((r) => ({
+    emoji: r.emoji,
+    userId: r.userId ?? r.clientId,
+    displayName: r.displayName,
+  }));
 }
 
 // ---------------------------------------------------------------------------
@@ -273,6 +408,14 @@ export interface FileUploadSummary {
   status: RMFileUploadState['status'];
   downloadUrl?: string;
   error?: string;
+  /**
+   * The server-minted id, once there is one. Every channel-wide frame is
+   * keyed by this rather than by the client's `id`, so a caller reconciling
+   * its own upload against what the channel reports needs it carried.
+   */
+  transferId?: string;
+  /** Byte length, so a summary can render a size without re-reading the file. */
+  size?: number;
 }
 
 export function adaptFileUploadState(state: RMFileUploadState): FileUploadSummary {
@@ -283,6 +426,8 @@ export function adaptFileUploadState(state: RMFileUploadState): FileUploadSummar
     status: state.status,
     downloadUrl: state.downloadUrl,
     error: state.error,
+    transferId: state.transferId,
+    size: state.size,
   };
 }
 
@@ -299,28 +444,43 @@ export function adaptFileUploads(uploads: RMFileUploadState[]): FileUploadSummar
 //   clientId    → id
 //   displayName → displayName (with clientId fallback)
 //   audioOn     → isMuted (inverted)
-//   (no avatarUrl in RM type; taken from metadata if present)
 //   (isLocal must be set by the caller who knows their own clientId)
+//
+// `avatarUrl` has no source: realtime-modules' HangoutParticipant carries only
+// clientId/displayName/role/videoOn/audioOn/joinedAt. The comment here used to
+// claim it was "taken from metadata if present", which was never true and
+// there is no metadata field to take it from — a host that wants faces on
+// tiles has to resolve them from its own directory and pass them in.
+//
+// `videoOn` and `role` are deliberately dropped: HangoutLayoutParticipant has
+// no field for either. A camera-off tile is expressed by supplying no
+// `videoElement`, which the caller owns.
 // ---------------------------------------------------------------------------
 
 export function adaptHangoutParticipant(
   participant: RMHangoutParticipant,
   localClientId?: string | null,
+  /** Resolved by the host from its own directory — see the note above. */
+  avatarUrl?: string,
 ): HangoutLayoutParticipant {
   return {
     id: participant.clientId,
-    displayName:
-      participant.displayName ?? participant.clientId.slice(0, 12),
+    displayName: participant.displayName || participant.clientId.slice(0, 12),
     isMuted: !participant.audioOn,
     isLocal: localClientId != null ? participant.clientId === localClientId : undefined,
+    ...(avatarUrl ? { avatarUrl } : {}),
   };
 }
 
 export function adaptHangoutParticipants(
   participants: RMHangoutParticipant[],
   localClientId?: string | null,
+  /** clientId → avatar URL, resolved by the host. */
+  avatarUrls?: Record<string, string | undefined>,
 ): HangoutLayoutParticipant[] {
-  return participants.map((p) => adaptHangoutParticipant(p, localClientId));
+  return participants.map((p) =>
+    adaptHangoutParticipant(p, localClientId, avatarUrls?.[p.clientId]),
+  );
 }
 
 // ---------------------------------------------------------------------------
