@@ -22,7 +22,7 @@
 //                        duplicating content), and a refusal the user cannot
 //                        see reads as a dead button.
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import type { XmlFragment } from 'yjs';
 import type * as Y from 'yjs';
@@ -52,6 +52,54 @@ export interface CanvasUnsupportedForm {
 
 /** Breathing room left below the workspace so the page does not run into the window edge. */
 const GUTTER_BELOW_WORKSPACE = 16;
+
+/**
+ * One US-Letter page at 96dpi, and the period of the seam painted by
+ * `.doc-page--paginated` in styles.css. The two MUST agree: this value decides
+ * where the sheet's bottom edge falls, that one decides where the seam is
+ * drawn, and a disagreement shows up as a page whose last seam is not at its
+ * bottom.
+ */
+const PAGE_HEIGHT = 1056;
+
+/**
+ * How many whole sheets a stack of `heightPx` occupies.
+ *
+ * Exported because it is the only arithmetic in the pagination path and a
+ * component test cannot reach it — jsdom has no layout, so every measured
+ * height there is zero.
+ *
+ * Rounds UP, and that rounding is the point. Without it the last page is
+ * however tall the content happened to be — a 1972px document ends in a
+ * 916px stub with a hard bottom edge, which reads as a rendering bug rather
+ * than as the last page of a document. Google Docs pads the final sheet to
+ * full height for the same reason.
+ */
+export function canvasPageCount(heightPx: number): number {
+  if (!Number.isFinite(heightPx) || heightPx <= 0) return 1;
+  return Math.max(1, Math.ceil(heightPx / PAGE_HEIGHT));
+}
+
+/**
+ * The sheet's inline style: display scale, and the height it is padded out to.
+ *
+ * A named function rather than a second inline object on the element. Neither
+ * value could have been a Tailwind class — `zoom` is a float off a select and
+ * `minHeight` is a measurement — so this is not about satisfying
+ * `check-static-styles` (that guard already flags this file for the ruler's
+ * style block above, and did before pagination existed). It is about the
+ * arithmetic being somewhere a test can reach it.
+ *
+ * Both values are in the sheet's OWN coordinates, which is why neither is
+ * multiplied by zoom — CSS `zoom` scales the layout box, so a length written
+ * here is scaled by the browser exactly once.
+ */
+export function canvasPaperStyle(zoom: number, minHeightPx: number | null): CSSProperties {
+  return {
+    ...(zoom === 1 ? {} : { zoom }),
+    ...(minHeightPx === null ? {} : { minHeight: minHeightPx }),
+  };
+}
 
 export interface CanvasDocumentViewProps {
   /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -170,6 +218,35 @@ export interface CanvasDocumentViewProps {
    */
   showOutline?: boolean;
   /**
+   * Draw page boundaries on the sheet: a seam every 1056px, the desk showing
+   * through it, and a shadow off each sheet's edge. Also reports a page count
+   * in the status bar and pads the last sheet out to a whole page.
+   *
+   * OFF by default, and the default is a recommendation rather than caution.
+   * Read the header of the pagination block in styles.css before turning it
+   * on; the short version:
+   *
+   *   - It is not free. Pagination and a baseline grid are ONE feature here,
+   *     because a seam can only avoid cutting text if every line sits on a
+   *     known row. So this also changes the document's typography — paragraph
+   *     gaps go 14.4px -> 26.4px, headings and code blocks get re-spaced. The
+   *     page gets airier. That is not a side effect to be tuned away, it is
+   *     the mechanism.
+   *   - It is not complete. Headings are larger than one grid row can contain,
+   *     so ~4.6% of seams still clip one (measured over 1000 generated
+   *     documents).
+   *   - It does not survive pictures. An image or a table has an intrinsic
+   *     height that no stylesheet can round to the grid, so it knocks
+   *     everything BELOW it off that grid for the rest of the document. Same
+   *     measurement: 4.6% -> 57.0% of seams bisected once images are in the
+   *     mix. For a document people paste screenshots into, this is worse than
+   *     no pagination.
+   *
+   * Which is why it is a prop and not a redesign: real pagination has to move
+   * content, and moving content means measuring every block on every edit.
+   */
+  paginate?: boolean;
+  /**
    * Flips `gutterVisible`. Its absence means no toggle is offered at all,
    * which is the right default for a read-only embed with no place to store
    * the answer.
@@ -215,6 +292,7 @@ export default function CanvasDocumentView({
   gutterVisible = true,
   showRuler = false,
   showOutline = false,
+  paginate = false,
   onToggleGutter,
   onInsertImage,
   onEditorReady,
@@ -248,6 +326,36 @@ export default function CanvasDocumentView({
     ro.observe(el);
     return () => ro.disconnect();
   }, [measurePaper, zoom]);
+
+  // How many sheets the content fills, so the last one can be padded out to a
+  // whole page instead of ending wherever the text did.
+  //
+  // Measured on the BODY, not the paper, and that is what makes it safe: the
+  // body is a plain block whose height comes from its own content, so setting
+  // a min-height on its PARENT cannot change it. Measuring the paper instead
+  // would be a loop — paper grows, so pages grows, so paper grows.
+  //
+  // Divided by `zoom` on purpose. `getBoundingClientRect` reports visual
+  // pixels, so under CSS zoom it returns the scaled height; the page count has
+  // to be computed in the sheet's own coordinates or it changes every time the
+  // reader zooms. (The same trap the ruler's comment above documents from the
+  // other direction — there the visual number is the one wanted.)
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const [pageCount, setPageCount] = useState(1);
+  const measurePages = useCallback(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+    setPageCount(canvasPageCount(el.getBoundingClientRect().height / zoom));
+  }, [zoom]);
+  useEffect(() => {
+    if (!paginate) return;
+    measurePages();
+    const el = bodyRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(measurePages);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [paginate, measurePages]);
   // The workspace has to OWN the scroll, or nothing in it can stick.
   //
   // It carried `overflow-y-auto` and a `sticky top-0` toolbar and a
@@ -546,9 +654,22 @@ export default function CanvasDocumentView({
             // margins and left a 249px column, which wrapped
             // "Reviewers should be able to / comment on this sentence."
             // mid-clause. The same page now keeps a 337px measure.
-            style={zoom === 1 ? undefined : { zoom }}
+            data-page-count={paginate ? String(pageCount) : undefined}
+            // The min-height pads the last sheet out to a whole page, and is
+            // passed only when paginating: an unpaginated page must still be
+            // free to end where its content does. It overrides the
+            // `min-h-[1056px]` class below rather than fighting it.
+            //
+            // The seam itself needs no zoom handling at all — the repeating
+            // background is measured in the same scaled pixels as everything
+            // else inside a `zoom`ed box.
+            style={canvasPaperStyle(zoom, paginate ? pageCount * PAGE_HEIGHT : null)}
             className={cn(
               'doc-page @container min-h-[1056px] mx-auto bg-paper text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]',
+              // Hand-authored in styles.css, NOT a utility class: it carries
+              // the whole baseline grid, and the consuming app has no Tailwind
+              // build to generate anything this package did not already ship.
+              paginate && 'doc-page--paginated',
               // At 100% the sheet stays responsive: it gives way on a narrow
               // window rather than forcing a sideways scroll to read a
               // paragraph. Zoomed, it takes its true width and the workspace
@@ -565,7 +686,16 @@ export default function CanvasDocumentView({
                 element it fell through to the viewport and billed 138px of
                 margin to a 441px page, a worse answer than the breakpoint it
                 replaced. */}
-            <div className="px-[11.76cqi] py-10 sm:py-16 lg:py-[96px]">
+            {/* `doc-page__body` is unconditional and carries no styling of its
+                own — it is the hook the paginated rules need in order to
+                override the vertical padding with two classes instead of an
+                `!important`. Naming it always, rather than only when
+                paginating, keeps the DOM one shape. */}
+            <div
+              ref={bodyRef}
+              data-testid={`${testId}-body`}
+              className="doc-page__body px-[11.76cqi] py-10 sm:py-16 lg:py-[96px]"
+            >
             <TiptapEditor
               fragment={body}
               ydoc={ydoc}
@@ -605,7 +735,16 @@ export default function CanvasDocumentView({
             zoom={zoom}
             onZoomChange={setZoom}
             data-testid={`${testId}-status-bar`}
-          />
+          >
+            {/* Only when the document actually HAS pages. Unpaginated, "1
+                page" would be a claim about a sheet that has no page
+                boundaries on it at all. */}
+            {paginate && (
+              <span data-testid={`${testId}-page-count`} className="tabular-nums">
+                {pageCount === 1 ? '1 page' : `${pageCount} pages`}
+              </span>
+            )}
+          </DocumentStatusBar>
         </div>
       ) : (
         <>

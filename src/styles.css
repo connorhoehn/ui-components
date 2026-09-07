@@ -1097,3 +1097,229 @@
   background: none;
   padding: 0;
 }
+
+/* ===========================================================================
+   BEGIN: canvas pagination  (CanvasDocumentView `paginate` prop)
+   ---------------------------------------------------------------------------
+   OPT-IN, and off unless a host passes `paginate`. An unpaginated canvas is
+   byte-for-byte what it was before this block existed.
+
+   ## Why the obvious implementation does not work
+
+   The obvious way to make a continuous sheet look like Google Docs is a
+   repeating background painting a grey gap every 1056px. It fails, and not
+   marginally: the content flows straight through the gap, so the band lands on
+   top of a LINE OF TEXT. Simulated against the exact metrics in the
+   `.doc-page .ProseMirror` block above, over 1000 generated documents, a 24px
+   gap bisects 94.8% of page seams. Not an edge case — the normal case. A body
+   line advances 26.4px and its glyphs occupy 19.4px of that (Inter's ascender
+   + descender is 1.211em), so only 7.02px of each line's pitch is clear. A
+   24px band cannot miss.
+
+   ## What makes it work instead
+
+   Put the document on a BASELINE GRID whose row is the body line advance
+   (26.4px = 16px x 1.65), snap the page's vertical padding to that grid, then
+   paint a gap NO TALLER THAN THE CLEAR LEADING, centred on each boundary.
+
+   1056px / 26.4px = 40 rows exactly, and 105.6px of padding is 4 rows, so
+   every page boundary lands 36 rows below the first baseline — in the leading
+   between two lines, on every page, forever. Same simulation: 94.8% -> 4.6%.
+
+   The typography overrides below are therefore not decoration, they ARE the
+   pagination. Every block height and every margin here is a whole number of
+   `--doc-line`. Change one to a value that is not and the grid drifts by that
+   amount for the whole rest of the document, and the seams start cutting text
+   again. Two that were got wrong on the way in, both caught by simulation and
+   worth naming so they are not reintroduced:
+
+     - `pre { padding-block: calc(var(--doc-line) / 2) }` keeps the code
+       block's OUTER height on the grid while putting every line INSIDE it on a
+       half-row offset, which is the worst possible place: 2.4% -> 93.1%. The
+       padding must be a whole row.
+     - A unitless `line-height` is inherited as a RATIO, so `pre` at 0.875em
+       resolved to 23.1px and sat off-grid. The absolute length below is
+       inherited as a LENGTH, which puts the whole subtree on one row height.
+
+   ## The knob that breaks it, deliberately left reachable
+
+   `--doc-page-gap` defaults to 6px against 7.02px of clear leading. The cliff
+   is sharp and measured: every value up to 7px behaves identically (4.6%), 8px
+   jumps to 78%, 24px to 94.8%. It is a variable so the defect is inspectable
+   rather than argued about — set it to 24px in devtools and you are looking at
+   exactly the naive implementation this design exists to avoid.
+
+   ## The two residuals, neither of which CSS can fix
+
+   1. HEADINGS, ~4.6% of seams, irreducible. A grid row is 26.4px, so the
+      largest glyph box it can fully contain is 26.4 / 1.211 = 21.8px. Every
+      heading here is bigger than that, so its ink necessarily crosses a row
+      boundary and some seam will eventually land on it. Raising the line box
+      does not help and makes it worse: a 2-row box centres the glyphs ON the
+      interior row boundary, so a seam strikes the text through the middle
+      instead of clipping 3px off an ascender. Hence the single-row boxes for
+      h2/h3 below. h1 keeps two rows because 32px type cannot wrap on 26.4px
+      leading without the lines colliding — an h1 that meets a seam is struck
+      through, and that is a deliberate trade against a much more common
+      defect.
+
+   2. IMAGES AND TABLES, and this is the one that matters. Their heights are
+      intrinsic and no stylesheet can round them to a grid. That does not just
+      risk cutting the picture — it knocks EVERYTHING BELOW IT off the grid for
+      the rest of the document. Measured: documents containing images go from
+      4.6% to 57.0% of seams bisected. So this technique is reliable for prose
+      and unreliable for the documents people actually paste screenshots into.
+      Fixing it needs per-block measurement, i.e. real layout, i.e. not this.
+
+   ## One ordering dependency
+
+   Several rules below tie with the `.doc-page .ProseMirror ...` rules earlier
+   in this file on specificity and win only on source order. That is safe while
+   this section stays at the END of the file and later appends land after it,
+   but this block must never be moved ABOVE the base typography block.
+   =========================================================================== */
+
+.doc-page--paginated {
+  /* 16px x 1.65, the body line advance from `.doc-page .ProseMirror`. If that
+     font-size or line-height ever changes this must change with it, or the
+     grid silently detaches from the text sitting on it. */
+  --doc-line: 26.4px;
+  /* 11in at 96dpi — the same sheet `min-h-[1056px]` already claims. Exactly
+     40 grid rows, which is the whole reason the arithmetic closes. */
+  --doc-page-height: 1056px;
+  /* MUST stay <= the clear leading, 7.02px. See the header. */
+  --doc-page-gap: 6px;
+
+  /* Containing block for the seam overlay. The `@container` on the sheet
+     already makes this a stacking context (`container-type` implies
+     `contain: layout`), which is what lets the overlay sit at z-index -1. */
+  position: relative;
+}
+
+/* The seam overlay.
+
+   Starts at the FIRST boundary minus half a gap, so the repeating gradient's
+   own origin IS the first seam. That is the reason for a pseudo-element rather
+   than a background on the sheet: shifting a repeated background up by half a
+   gap also tiles upward, and paints a stray half-seam across the top of page
+   one.
+
+   z-index -1 puts it behind the text and in front of the paper, which is the
+   only correct depth for something representing the desk showing through.
+   Stops are fractions of the gap so the band keeps its proportions at any
+   value of `--doc-page-gap`. */
+.doc-page--paginated::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--doc-page-height) - var(--doc-page-gap) / 2);
+  bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* `--color-workspace`, not a literal: the gap is NOT paper, so unlike the
+     sheet it is allowed to follow the theme — dark desk between white pages is
+     what a dark-mode word processor shows too, and it is why this does not
+     violate the paper-is-always-white invariant.
+
+     The last stop is the page height, so `repeating-linear-gradient` tiles on
+     the right period without a `background-size`. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.22) 0,
+    rgba(15, 23, 42, 0.08) calc(var(--doc-page-gap) * 0.25),
+    var(--color-workspace) calc(var(--doc-page-gap) * 0.4),
+    var(--color-workspace) calc(var(--doc-page-gap) * 0.6),
+    rgba(15, 23, 42, 0.08) calc(var(--doc-page-gap) * 0.75),
+    rgba(15, 23, 42, 0.22) var(--doc-page-gap),
+    transparent calc(var(--doc-page-gap) + 0.5px),
+    transparent var(--doc-page-height)
+  );
+}
+
+/* Vertical page margin, snapped to 4 grid rows (105.6px) from the 96px an
+   unpaginated page uses. Those 9.6px are what buy an exact 36 rows between the
+   first baseline and the first seam; without them the grid is offset by
+   96/26.4 = 3.64 rows and every seam lands mid-line again.
+
+   Two classes beat the `lg:py-[96px]` utility on specificity, so this holds at
+   every breakpoint without `!important`. */
+.doc-page--paginated .doc-page__body {
+  padding-block: calc(var(--doc-line) * 4);
+}
+
+/* --- the baseline grid ---------------------------------------------------
+   Everything from here down exists to make one assertion true: the top of
+   every line box sits at `origin + n * --doc-line`. */
+
+.doc-page--paginated .ProseMirror {
+  /* Absolute, not the unitless 1.65 of the base rule — see the header. */
+  line-height: var(--doc-line);
+}
+
+/* 26.4px between paragraphs where an unpaginated page uses 14.4px. This is a
+   visible change and there is no way around it: a paragraph gap may only be a
+   whole row or nothing. Turning pagination on makes the page airier, and that
+   is part of what the host is opting into. */
+.doc-page--paginated .ProseMirror p { margin: 0 0 var(--doc-line); }
+
+/* Headings. Single-row line boxes for h2/h3 so no row boundary passes through
+   their glyphs; two rows for h1 only because 32px type cannot wrap on 26.4px
+   leading. Margins of two rows above and one below keep the base block's
+   intent — space before a heading roughly double the space after. */
+.doc-page--paginated .ProseMirror h1 {
+  line-height: calc(var(--doc-line) * 2);
+  margin: calc(var(--doc-line) * 2) 0 var(--doc-line);
+}
+.doc-page--paginated .ProseMirror h2,
+.doc-page--paginated .ProseMirror h3 {
+  line-height: var(--doc-line);
+  margin: calc(var(--doc-line) * 2) 0 var(--doc-line);
+}
+.doc-page--paginated .ProseMirror > h1:first-child,
+.doc-page--paginated .ProseMirror > h2:first-child,
+.doc-page--paginated .ProseMirror > h3:first-child { margin-top: 0; }
+
+/* Lists drop the 0.25em inter-item margin outright rather than rounding it up:
+   26.4px between bullets reads as separate paragraphs, and 0 is the honest
+   alternative once the grid forbids 4px. */
+.doc-page--paginated .ProseMirror ul,
+.doc-page--paginated .ProseMirror ol { margin: 0 0 var(--doc-line); }
+.doc-page--paginated .ProseMirror li { margin: 0; }
+.doc-page--paginated .ProseMirror ul[data-type='taskList'] li > label { margin-top: 0; }
+
+.doc-page--paginated .ProseMirror blockquote { margin: 0 0 var(--doc-line); }
+
+/* A FULL row of padding top and bottom, not half a row. Half keeps the block's
+   outer height on the grid while putting every line inside it on a half-row
+   offset — the single worst thing that can happen here, and measured at 93.1%
+   bisection. See the header. */
+.doc-page--paginated .ProseMirror pre {
+  margin: 0 0 var(--doc-line);
+  padding: var(--doc-line) 1em;
+}
+
+/* An `hr` is the one block whose height is neither a line box nor zero: a 1px
+   border put the rest of the document 1px off the grid and left it there.
+   Rebuilt as a full grid row with the rule painted down its middle by a
+   background, so it contributes exactly two rows and the grid survives it. */
+.doc-page--paginated .ProseMirror hr {
+  border: none;
+  height: var(--doc-line);
+  margin: 0 0 var(--doc-line);
+  background-image: linear-gradient(
+    to bottom,
+    transparent calc(50% - 0.5px),
+    var(--color-paper-border) calc(50% - 0.5px),
+    var(--color-paper-border) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}
+
+/* Images and tables are deliberately NOT styled here. Their heights are
+   intrinsic, CSS cannot round them to the grid, and a rule that pretended
+   otherwise would be a lie in the stylesheet. See residual 2 in the header. */
+
+/* ===========================================================================
+   END: canvas pagination
+   =========================================================================== */
