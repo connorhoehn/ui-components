@@ -4,13 +4,13 @@ import { t as n } from "./Button-wU9TwJvB.js";
 import { t as r } from "./Chip-YhQI5B9P.js";
 import { t as i } from "./overlayStack-BFH9XXvN.js";
 import { t as a } from "./Modal-CyoyiNKN.js";
-import { n as o, t as s } from "./PermissionDeniedCard-B9cc5d5O.js";
+import { n as o, t as s } from "./PermissionDeniedCard-cTIdYj-F.js";
 import { n as c, r as l, t as u } from "./focusTrap-CmWJlptm.js";
 import { t as d } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as f } from "./Avatar-BzicCOft.js";
 import { t as p } from "./Select-CqVokE2v.js";
 import { t as m } from "./activationKey-CjbL3LUv.js";
-import { _ as h, c as g } from "./StreamStage-DIhaO7MA.js";
+import { h, w as g } from "./StreamStage-sw9tObfp.js";
 import { useCallback as _, useEffect as v, useImperativeHandle as y, useLayoutEffect as b, useMemo as x, useRef as S, useState as C } from "react";
 import { Fragment as w, jsx as T, jsxs as E } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -275,7 +275,7 @@ function R({ participants: t, className: n, style: r }) {
 			gridTemplateColumns: `repeat(${a}, 1fr)`,
 			...r
 		},
-		children: t.map((e) => /* @__PURE__ */ T(h, {
+		children: t.map((e) => /* @__PURE__ */ T(g, {
 			id: e.id,
 			displayName: e.displayName,
 			avatarUrl: e.avatarUrl,
@@ -3049,7 +3049,7 @@ function Et({ chipLabel: t = "Tap to unmute", chipClassName: n, wrapperClassName
 	}, [l]);
 	return /* @__PURE__ */ E("div", {
 		className: e("relative h-full w-full", r),
-		children: [/* @__PURE__ */ T(g, {
+		children: [/* @__PURE__ */ T(h, {
 			...a,
 			videoRef: l,
 			onPlayStateChange: u
@@ -4006,7 +4006,7 @@ function vn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 	v(() => {
 		t && m(i);
 	}, [t, i]);
-	let h = f.includes(p) ? p : f[0] ?? null;
+	let g = f.includes(p) ? p : f[0] ?? null;
 	return /* @__PURE__ */ T(a, {
 		open: t,
 		onClose: n,
@@ -4036,7 +4036,7 @@ function vn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 				children: [l && /* @__PURE__ */ T("div", {
 					"data-testid": "call-settings-preview",
 					className: e("relative shrink-0 overflow-hidden bg-video-stage", "aspect-video w-full sm:aspect-auto sm:min-h-[320px] sm:w-[44%]"),
-					children: r ? /* @__PURE__ */ E(w, { children: [/* @__PURE__ */ T(g, {
+					children: r ? /* @__PURE__ */ E(w, { children: [/* @__PURE__ */ T(h, {
 						stream: r,
 						muted: !0,
 						className: "h-full w-full scale-x-[-1] object-cover"
@@ -4062,10 +4062,10 @@ function vn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 						children: f.map((t) => /* @__PURE__ */ T("button", {
 							type: "button",
 							role: "tab",
-							"aria-selected": t === h,
+							"aria-selected": t === g,
 							onClick: () => m(t),
 							"data-testid": `call-settings-tab-${t}`,
-							className: e("cursor-pointer rounded-t-md border-b-2 px-3 py-1.5 text-[13px] font-medium transition-colors", t === h ? "border-call-chrome-accent text-white" : "border-transparent text-white/60 hover:bg-white/5 hover:text-white/90"),
+							className: e("cursor-pointer rounded-t-md border-b-2 px-3 py-1.5 text-[13px] font-medium transition-colors", t === g ? "border-call-chrome-accent text-white" : "border-transparent text-white/60 hover:bg-white/5 hover:text-white/90"),
 							children: _n[t]
 						}, t))
 					}), /* @__PURE__ */ E("div", {
@@ -4073,9 +4073,9 @@ function vn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 						"data-testid": "call-settings-panel",
 						className: "min-h-0 flex-1 overflow-y-auto p-4 sm:max-h-[460px]",
 						children: [
-							h === "effects" ? o : null,
-							h === "people" ? s : null,
-							h === "chat" ? c : null
+							g === "effects" ? o : null,
+							g === "people" ? s : null,
+							g === "chat" ? c : null
 						]
 					})]
 				})]

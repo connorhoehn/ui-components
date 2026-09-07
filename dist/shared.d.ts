@@ -1535,6 +1535,42 @@ export declare interface LineSeries {
     color?: string;
 }
 
+export declare function LiveRegion({ message, politeness, atomic, throttleMs, role, 'data-testid': testId, }: LiveRegionProps): JSX.Element;
+
+export declare type LiveRegionPoliteness = 'polite' | 'assertive' | 'off';
+
+export declare interface LiveRegionProps {
+    /**
+     * What to announce. Announced whenever the string changes; set it to `''`
+     * to say nothing (an empty region is never spoken).
+     */
+    message: string;
+    /** @default 'polite' */
+    politeness?: LiveRegionPoliteness;
+    /**
+     * Announce the whole message rather than only the changed part.
+     * @default true — a partial diff of a status line is rarely intelligible.
+     */
+    atomic?: boolean;
+    /**
+     * Minimum gap between announcements, in ms. Messages arriving inside the
+     * window are coalesced and the latest one is announced when it closes.
+     * `0` disables throttling.
+     * @default 0
+     */
+    throttleMs?: number;
+    /**
+     * Landmark role. `status` (polite) and `alert` (assertive) carry their own
+     * implicit live semantics and are what most callers want; `log` suits an
+     * append-only feed. `none` renders the bare `aria-live` container — pick it
+     * when the page already has a `status`/`alert` element and a second one
+     * would make `getByRole` ambiguous.
+     * @default 'status'
+     */
+    role?: 'status' | 'alert' | 'log' | 'none';
+    'data-testid'?: string;
+}
+
 export declare function LoadingState({ label, description, spinnerSize, spinnerColor, testId, }: LoadingStateProps): JSX.Element;
 
 export declare interface LoadingStateProps {
@@ -2423,16 +2459,45 @@ export declare interface SkeletonCardProps {
     rounded?: 'md' | 'lg' | 'full';
 }
 
-export declare function Sparkline({ data, width, height, color }: SparklineProps): JSX.Element;
+export declare function SkipLink({ targetId, children, className, onSkip, }: SkipLinkProps): JSX.Element;
+
+export declare interface SkipLinkProps {
+    /**
+     * `id` of the element to jump to. That element needs `tabIndex={-1}` for
+     * the jump to move focus (not just the viewport) in every browser.
+     * @default 'main-content'
+     */
+    targetId?: string;
+    children?: ReactNode;
+    className?: string;
+    /** Called after the jump — use it to focus the target explicitly. */
+    onSkip?: () => void;
+}
+
+export declare function Sparkline({ data, width, height, color, baseline, }: SparklineProps): JSX.Element;
 
 export declare interface SparklineProps {
     data: number[];
     width?: number;
     height?: number;
     color?: string;
+    /**
+     * Where the bottom of the plot sits.
+     *
+     * - `'min'` (default) — the smallest sample is pinned to the bottom edge, so
+     *   the line always fills the box. Best for shape-of-the-change questions
+     *   ("is it wobbling?") where the absolute level doesn't matter.
+     * - `'zero'` — the bottom edge is 0 (or the series minimum, if any sample is
+     *   negative). Small variation around a large value then reads as the nearly
+     *   flat line it actually is. Use this for rates, counts and anything else
+     *   where magnitude carries meaning, otherwise [100, 101, 102] draws the same
+     *   dramatic climb as [0, 50, 100].
+     * - a number — pin the bottom edge to that value explicitly.
+     */
+    baseline?: 'min' | 'zero' | number;
 }
 
-export declare function Spinner({ size, color, className, style, 'aria-label': ariaLabel, 'data-testid': testId, }: SpinnerProps): JSX.Element;
+export declare function Spinner({ size, color, className, style, decorative, 'aria-label': ariaLabel, 'data-testid': testId, }: SpinnerProps): JSX.Element;
 
 export declare interface SpinnerProps {
     size?: SpinnerSize;
@@ -2440,6 +2505,13 @@ export declare interface SpinnerProps {
     color?: string;
     className?: string;
     style?: CSSProperties;
+    /**
+     * Purely visual — no role, no label, hidden from assistive technology.
+     * Set this whenever the spinner sits inside a container that already
+     * announces the wait (LoadingState does), otherwise the two live regions
+     * nest and the reader says "Loading" twice.
+     */
+    decorative?: boolean;
     'aria-label'?: string;
     'data-testid'?: string;
 }
@@ -3372,6 +3444,28 @@ export declare function useToast(): ToastContextValue;
  * notification is simply skipped rather than crashing the subtree.
  */
 export declare function useToastOptional(): ToastContextValue | null;
+
+/**
+ * The canonical visually-hidden clip. Not `display: none` and not
+ * `visibility: hidden` — both remove the node from the accessibility tree.
+ */
+export declare const VISUALLY_HIDDEN_STYLE: CSSProperties;
+
+/**
+ * Renders `children` for screen readers only.
+ *
+ *   <VisuallyHidden>Sorted ascending</VisuallyHidden>
+ */
+export declare function VisuallyHidden({ as: Tag, children, className, id, 'data-testid': testId, }: VisuallyHiddenProps): JSX.Element;
+
+export declare interface VisuallyHiddenProps {
+    /** Element to render. Defaults to `span`; use `div` inside block content. */
+    as?: ElementType;
+    children: ReactNode;
+    className?: string;
+    id?: string;
+    'data-testid'?: string;
+}
 
 export declare function Wizard({ steps, activeKey, onStep, onFinish, finishLabel, className, 'data-testid': testId, }: WizardProps): JSX.Element;
 

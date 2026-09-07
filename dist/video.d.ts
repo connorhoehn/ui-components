@@ -4,6 +4,7 @@ import { JSX } from 'react';
 import { MutableRefObject } from 'react';
 import { ReactNode } from 'react';
 import { Ref } from 'react';
+import { RefObject } from 'react';
 import { SVGProps } from 'react';
 
 export declare type AnyCallWidgetMode = CallWidgetMode | LegacyCallWidgetMode;
@@ -840,6 +841,26 @@ export declare interface HangoutSpotlightProps {
     style?: CSSProperties;
 }
 
+/**
+ * What the player is actually doing. Distinct states because they call for
+ * different words on screen and, more importantly, because "buffering",
+ * "stalled" and "over" were previously indistinguishable to a viewer — all
+ * three were a still frame under a LIVE badge.
+ */
+export declare type HlsPhase = 
+/** No source attached. */
+'idle'
+/** Source attached, no frame produced yet. */
+| 'connecting'
+/** Frames are advancing. */
+| 'playing'
+/** Was playing, briefly out of data. Normal at a live edge. */
+| 'buffering'
+/** Out of data long enough that something is wrong. */
+| 'stalled'
+/** Unplayable. `error` carries the wording. */
+| 'error';
+
 export declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'children'> {
     size?: number;
 }
@@ -1302,6 +1323,29 @@ export declare function ScreenShareOffIcon({ size, ...rest }: IconProps): JSX.El
  *  MediaEffectsTray. */
 export declare function SparklesIcon({ size, ...rest }: IconProps): JSX.Element;
 
+/**
+ * Whether the LIVE badge may be lit.
+ *
+ * The badge is the caller's claim ANDed with what the player managed to do —
+ * on the HLS path a caller typically knows only that it composed a playlist
+ * URL, which is string concatenation, not a broadcast. `buffering` counts: a
+ * momentary rebuffer at the live edge is still live. `stalled` does NOT: a
+ * frame that has not moved in eight seconds is a picture of the past, and
+ * calling it live is the most confident lie this component can tell.
+ *
+ * `idle` counts because the caller's claim is all anyone has yet and nothing
+ * contradicts it; once the grace period turns that into `not-started`, the
+ * badge goes out.
+ */
+export declare function stagePhaseIsLive(phase: StreamStagePhase): boolean;
+
+/**
+ * Whether the stage is showing a picture the viewer can trust as CURRENT.
+ * Everything else — connecting, buffering, stalled, error, empty — wants some
+ * words over it rather than a bare frame.
+ */
+export declare function stagePhaseIsShowingLiveMedia(phase: StreamStagePhase): boolean;
+
 export declare function StatsCard({ metrics, className, style }: StatsCardProps): JSX.Element;
 
 export declare interface StatsCardProps {
@@ -1334,6 +1378,28 @@ export declare interface StatusStripProps {
     className?: string;
     /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
+}
+
+export declare function StreamAudioOnly({ name, avatarUrl, level, active, muted, hint, className, 'data-testid': testId, }: StreamAudioOnlyProps): JSX.Element;
+
+export declare interface StreamAudioOnlyProps {
+    /** Who is talking. Renders an avatar and a name when known. */
+    name?: string;
+    /** Profile image for the speaker; falls back to initials. */
+    avatarUrl?: string;
+    /**
+     * Measured loudness, 0..1, or null when it cannot be measured. Null is not
+     * silence — see the file header.
+     */
+    level?: number | null;
+    /** Whether audio is actually reaching the viewer (playing AND not muted). */
+    active?: boolean;
+    /** Muted gets its own wording: the fix is one click away and worth naming. */
+    muted?: boolean;
+    /** Replaces the default explanation line. */
+    hint?: string;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare interface StreamChatMessage {
@@ -1374,6 +1440,17 @@ export declare interface StreamChatTickerProps {
  */
 export declare function streamHasUsableVideo(stream: MediaStream | undefined | null): boolean;
 
+/**
+ * A stream with audio and no usable picture.
+ *
+ * NOT the same as a stream with nothing in it: a MediaStream with no tracks at
+ * all is a failure, and putting a friendly "Audio only" card over it would be
+ * the same category of lie as the black rectangle it replaced. Exported
+ * because a host that already knows its publisher's shape can pass `audioOnly`
+ * directly instead of re-deriving this.
+ */
+export declare function streamIsAudioOnly(stream: MediaStream | null | undefined): boolean;
+
 export declare interface StreamMetrics {
     bitrateBps: number;
     fps: number;
@@ -1385,7 +1462,57 @@ export declare interface StreamMetrics {
     jitter?: number;
 }
 
-export declare function StreamStage({ stream, playlistUrl, onPlaybackError, title, viewerCount, live, notStartedLabel, endedLabel, stallAfterMs, chatMessages, chatVisibleCount, chatRotateMs, muted: mutedInitial, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
+export declare function StreamStage({ stream, playlistUrl, onPlaybackError, onRetry, title, viewerCount, live, audioOnly: audioOnlyProp, speakerName, speakerAvatarUrl, notStartedLabel, endedLabel, stallAfterMs, chatMessages, chatVisibleCount, chatRotateMs, muted: mutedInitial, allowFullscreen, showLatency, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
+
+export declare type StreamStagePhase = 
+/** No source yet, still inside the grace period. A normal pre-broadcast state. */
+'idle'
+/** No source, and long enough that promising one would be a lie. */
+| 'not-started'
+/** Had a source; it went away. The opposite message from `not-started`. */
+| 'ended'
+/** Source attached, no frame yet. */
+| 'connecting'
+/** Frames advancing. */
+| 'playing'
+/** Briefly out of data. Still live. */
+| 'buffering'
+/** Out of data long enough that the picture is a lie about the present. */
+| 'stalled'
+/** Unplayable. */
+| 'error';
+
+export declare function streamStagePhase({ hasStream, hasPlaylist, hadSource, graceExpired, streamHasTracks, hls, }: StreamStagePhaseInput): StreamStagePhase;
+
+export declare interface StreamStagePhaseInput {
+    hasStream: boolean;
+    /**
+     * Whether that MediaStream actually carries anything. `null` means the
+     * caller could not tell (a stand-in object, a stream without `getTracks`).
+     *
+     * WHEP hands over a stream BEFORE its tracks arrive — `addtrack` fires
+     * later — so an empty one is a subscription still being set up, or one that
+     * never will be. Either way it is not a picture, and calling it `playing`
+     * puts a LIVE badge over a black rectangle: the realtime spelling of the
+     * same lie the HLS path had.
+     */
+    streamHasTracks?: boolean | null;
+    hasPlaylist: boolean;
+    /** Whether this mount has EVER held a source. Distinguishes ended from not-started. */
+    hadSource: boolean;
+    /** Whether the stage has waited longer than it is willing to promise. */
+    graceExpired: boolean;
+    /**
+     * What the HLS player reports. `phase` is preferred; `error`/`loading` are
+     * the fallback so a caller (or a test double) that only has the old two-flag
+     * shape still resolves to the same answer.
+     */
+    hls?: {
+        phase?: HlsPhase;
+        error?: string | null;
+        loading?: boolean;
+    };
+}
 
 export declare interface StreamStageProps {
     /**
@@ -1401,6 +1528,12 @@ export declare interface StreamStageProps {
     playlistUrl?: string | null;
     /** Surfaced when HLS cannot play — an unsupported browser, a dead playlist. */
     onPlaybackError?: (err: Error) => void;
+    /**
+     * Called by the "Try again" control, in addition to the stage's own retry.
+     * Use it when recovery needs something the stage cannot do — re-issuing a
+     * signed playlist URL, re-subscribing over WHEP.
+     */
+    onRetry?: () => void;
     /** Replaces the default wording once a stream has failed to start. */
     notStartedLabel?: string;
     /**
@@ -1415,14 +1548,31 @@ export declare interface StreamStageProps {
     stallAfterMs?: number;
     /** Name of the stream or call, shown top-left. */
     title?: string;
-    /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
-    viewerCount?: number;
+    /**
+     * Watchers, when the number is KNOWN. Pass `null` (or omit) when it is not.
+     *
+     * A count of 0 is treated as unknown and suppressed: the person reading it
+     * is themselves watching, so "0 watching" is refuted by the act of reading
+     * it — and 0 is exactly what an unmeasured gauge returns. Passing a real
+     * measured zero is therefore not expressible, on purpose; there is no
+     * audience for that number anyway.
+     */
+    viewerCount?: number | null;
     /**
      * The caller's claim that this should be live. It is ANDed with what the
      * player actually managed to do, so on the HLS path a claim alone will not
      * light the badge — a composed playlist URL is not a broadcast.
      */
     live?: boolean;
+    /**
+     * Force the audio-only presentation on or off. Omitted, the stage works it
+     * out: no usable video track on the realtime path, `videoWidth === 0` on
+     * the HLS path.
+     */
+    audioOnly?: boolean;
+    /** Who is broadcasting. Gives an audio-only stream a face and a name. */
+    speakerName?: string;
+    speakerAvatarUrl?: string;
     /**
      * Chat to rotate over the video. Empty or omitted renders no ticker at all,
      * so a silent stream is not carrying an empty chat frame.
@@ -1437,6 +1587,14 @@ export declare interface StreamStageProps {
      * start at all. The viewer can unmute from the stage itself.
      */
     muted?: boolean;
+    /** Offer a fullscreen control. Default true; hidden where the API is absent. */
+    allowFullscreen?: boolean;
+    /**
+     * Show how far behind the live edge HLS playback is. Default true. HLS runs
+     * seconds behind by construction, and a viewer who does not know that reads
+     * the delay as a frozen stream.
+     */
+    showLatency?: boolean;
     /** Controls rendered bottom-right, e.g. leave / mute / fullscreen. */
     controls?: ReactNode;
     /** Shown centred when there is no stream. */
@@ -1565,6 +1723,8 @@ declare interface UseActiveSpeakerOptions {
     pollIntervalMs?: number;
 }
 
+export declare function useAudioLevel(stream: MediaStream | null | undefined): number | null;
+
 export declare function useCallWidgetPersistence({ persistKey, defaults, debounceMs, }: UseCallWidgetPersistenceOptions): {
     state: PersistedWidgetState;
     setState: (next: Partial<PersistedWidgetState>) => void;
@@ -1578,6 +1738,52 @@ export declare interface UseCallWidgetPersistenceOptions {
     defaults: PersistedWidgetState;
     /** Debounce window for writes. Default 200ms. */
     debounceMs?: number;
+}
+
+export declare function useHlsSource(videoRef: RefObject<HTMLVideoElement | null>, playlistUrl: string | null | undefined, opts?: UseHlsSourceOptions): UseHlsSourceState;
+
+export declare interface UseHlsSourceOptions {
+    /**
+     * Tune for a live edge rather than a recording.
+     *
+     * A live viewer wants to be near the broadcast, and a large back buffer on a
+     * stream someone leaves open for an hour is memory spent on video nobody
+     * will scrub back to. VOD wants the opposite — keep what was downloaded so
+     * seeking backwards is instant.
+     */
+    live?: boolean;
+    /**
+     * How long playback may fail to advance before it is called STALLED rather
+     * than buffering. Short enough that a viewer is not lied to for long, long
+     * enough that an ordinary rebuffer at the live edge is not an alarm.
+     */
+    stalledAfterMs?: number;
+    onError?: (err: Error) => void;
+}
+
+export declare interface UseHlsSourceState {
+    /** Human-readable failure, or null. Rendered by the player, not thrown. */
+    error: string | null;
+    /** True between attach and first data. Equivalent to `phase === 'connecting'`. */
+    loading: boolean;
+    /** The whole truth; prefer this over the two booleans above. */
+    phase: HlsPhase;
+    /**
+     * Whether the media has audio but no picture. `null` until the element has
+     * metadata — "not known yet" is not "there is video", and rendering an
+     * audio-only card over a video stream is its own lie.
+     */
+    audioOnly: boolean | null;
+    /**
+     * Seconds behind the live edge, or null when it cannot be measured. HLS runs
+     * seconds behind by construction; a viewer who is not told that concludes
+     * the stream is frozen.
+     */
+    latencySec: number | null;
+    /** Seek to the live edge. No-op when there is no source. */
+    seekToLive: () => void;
+    /** Tear the source down and attach it again from scratch. */
+    retry: () => void;
 }
 
 export declare function useMuteWhileTalking({ localStream, isMuted, threshold, triggerMs, cooldownMs, }: UseMuteWhileTalkingOptions): boolean;

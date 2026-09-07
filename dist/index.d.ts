@@ -4969,6 +4969,26 @@ export declare interface HangoutSpotlightProps {
     style?: CSSProperties;
 }
 
+/**
+ * What the player is actually doing. Distinct states because they call for
+ * different words on screen and, more importantly, because "buffering",
+ * "stalled" and "over" were previously indistinguishable to a viewer — all
+ * three were a still frame under a LIVE badge.
+ */
+export declare type HlsPhase = 
+/** No source attached. */
+'idle'
+/** Source attached, no frame produced yet. */
+| 'connecting'
+/** Frames are advancing. */
+| 'playing'
+/** Was playing, briefly out of data. Normal at a live edge. */
+| 'buffering'
+/** Out of data long enough that something is wrong. */
+| 'stalled'
+/** Unplayable. `error` carries the wording. */
+| 'error';
+
 export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, tone, size, className, ...rest }: IconButtonProps): JSX.Element;
 
 export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
@@ -5851,6 +5871,42 @@ export declare interface ListRunsResponse {
     nextCursor?: string;
 }
 
+export declare function LiveRegion({ message, politeness, atomic, throttleMs, role, 'data-testid': testId, }: LiveRegionProps): JSX.Element;
+
+export declare type LiveRegionPoliteness = 'polite' | 'assertive' | 'off';
+
+export declare interface LiveRegionProps {
+    /**
+     * What to announce. Announced whenever the string changes; set it to `''`
+     * to say nothing (an empty region is never spoken).
+     */
+    message: string;
+    /** @default 'polite' */
+    politeness?: LiveRegionPoliteness;
+    /**
+     * Announce the whole message rather than only the changed part.
+     * @default true — a partial diff of a status line is rarely intelligible.
+     */
+    atomic?: boolean;
+    /**
+     * Minimum gap between announcements, in ms. Messages arriving inside the
+     * window are coalesced and the latest one is announced when it closes.
+     * `0` disables throttling.
+     * @default 0
+     */
+    throttleMs?: number;
+    /**
+     * Landmark role. `status` (polite) and `alert` (assertive) carry their own
+     * implicit live semantics and are what most callers want; `log` suits an
+     * append-only feed. `none` renders the bare `aria-live` container — pick it
+     * when the page already has a `status`/`alert` element and a second one
+     * would make `getByRole` ambiguous.
+     * @default 'status'
+     */
+    role?: 'status' | 'alert' | 'log' | 'none';
+    'data-testid'?: string;
+}
+
 export declare interface LLMNodeData {
     type: 'llm';
     provider: LLMProvider;
@@ -6656,7 +6712,7 @@ export declare interface NavRailStackProps {
 export declare type NavRailTone = SurfaceTone;
 
 /** Sub-section navigation: link-based underline tab strip (no state — consumer routes via activeHref). */
-export declare function NavTabs({ items, activeHref, renderLink, className, style, 'aria-label': ariaLabel, }: NavTabsProps): JSX.Element;
+export declare function NavTabs({ items, activeHref, renderLink, className, style, 'aria-label': ariaLabel, variant, }: NavTabsProps): JSX.Element;
 
 export declare interface NavTabsProps {
     items: TopNavItem[];
@@ -6665,7 +6721,28 @@ export declare interface NavTabsProps {
     className?: string;
     style?: CSSProperties;
     'aria-label'?: string;
+    /** See NavTabsVariant. `pill` also drops the strip's bottom border, since
+     *  there is no underline left for it to complete. */
+    variant?: NavTabsVariant;
 }
+
+/**
+ * How the active item is marked.
+ *
+ * `underline` is the tab-strip form: a 2px rule under the active item, sitting
+ * ON the strip's own bottom border. It is only correct where that border
+ * exists — the indicator and the rule are one continuous line, and the
+ * `-mb-px` below is what overlaps them.
+ *
+ * `pill` is for a nav that sits in a bar rather than on a strip. A header has
+ * its own bottom border, lower down and belonging to the header rather than to
+ * the tabs, so an underline indicator there hangs in mid-air: measured at 12px
+ * above the header rule, attached to nothing, which is what "the nav is not
+ * aligned" looks like. It is also shorter (h-8), which is what lets it centre
+ * on the same line as a wordmark and a status pill instead of overflowing the
+ * bar's content box by a pixel.
+ */
+export declare type NavTabsVariant = 'underline' | 'pill';
 
 export declare type NetworkQuality = 'good' | 'medium' | 'poor' | 'dead';
 
@@ -9178,6 +9255,21 @@ export declare interface SkeletonCardProps {
     rounded?: 'md' | 'lg' | 'full';
 }
 
+export declare function SkipLink({ targetId, children, className, onSkip, }: SkipLinkProps): JSX.Element;
+
+export declare interface SkipLinkProps {
+    /**
+     * `id` of the element to jump to. That element needs `tabIndex={-1}` for
+     * the jump to move focus (not just the viewport) in every browser.
+     * @default 'main-content'
+     */
+    targetId?: string;
+    children?: ReactNode;
+    className?: string;
+    /** Called after the jump — use it to focus the target explicitly. */
+    onSkip?: () => void;
+}
+
 export declare const Slider: ForwardRefExoticComponent<SliderProps & RefAttributes<HTMLInputElement>>;
 
 export declare interface SliderProps {
@@ -9274,16 +9366,30 @@ export declare type SpanStatus = 'ok' | 'error' | 'unset';
  *  MediaEffectsTray. */
 export declare function SparklesIcon({ size, ...rest }: IconProps): JSX.Element;
 
-export declare function Sparkline({ data, width, height, color }: SparklineProps): JSX.Element;
+export declare function Sparkline({ data, width, height, color, baseline, }: SparklineProps): JSX.Element;
 
 export declare interface SparklineProps {
     data: number[];
     width?: number;
     height?: number;
     color?: string;
+    /**
+     * Where the bottom of the plot sits.
+     *
+     * - `'min'` (default) — the smallest sample is pinned to the bottom edge, so
+     *   the line always fills the box. Best for shape-of-the-change questions
+     *   ("is it wobbling?") where the absolute level doesn't matter.
+     * - `'zero'` — the bottom edge is 0 (or the series minimum, if any sample is
+     *   negative). Small variation around a large value then reads as the nearly
+     *   flat line it actually is. Use this for rates, counts and anything else
+     *   where magnitude carries meaning, otherwise [100, 101, 102] draws the same
+     *   dramatic climb as [0, 50, 100].
+     * - a number — pin the bottom edge to that value explicitly.
+     */
+    baseline?: 'min' | 'zero' | number;
 }
 
-export declare function Spinner({ size, color, className, style, 'aria-label': ariaLabel, 'data-testid': testId, }: SpinnerProps): JSX.Element;
+export declare function Spinner({ size, color, className, style, decorative, 'aria-label': ariaLabel, 'data-testid': testId, }: SpinnerProps): JSX.Element;
 
 export declare interface SpinnerProps {
     size?: SpinnerSize;
@@ -9291,6 +9397,13 @@ export declare interface SpinnerProps {
     color?: string;
     className?: string;
     style?: CSSProperties;
+    /**
+     * Purely visual — no role, no label, hidden from assistive technology.
+     * Set this whenever the spinner sits inside a container that already
+     * announces the wait (LoadingState does), otherwise the two live regions
+     * nest and the reader says "Loading" twice.
+     */
+    decorative?: boolean;
     'aria-label'?: string;
     'data-testid'?: string;
 }
@@ -9353,6 +9466,29 @@ export declare interface StackProps extends Omit<HTMLAttributes<HTMLElement>, 'c
     /** Render as something other than a `<div>` — `ul`, `section`, `label`, … */
     as?: ElementType;
 }
+
+/**
+ * Whether the LIVE badge may be lit.
+ *
+ * The badge is the caller's claim ANDed with what the player managed to do —
+ * on the HLS path a caller typically knows only that it composed a playlist
+ * URL, which is string concatenation, not a broadcast. `buffering` counts: a
+ * momentary rebuffer at the live edge is still live. `stalled` does NOT: a
+ * frame that has not moved in eight seconds is a picture of the past, and
+ * calling it live is the most confident lie this component can tell.
+ *
+ * `idle` counts because the caller's claim is all anyone has yet and nothing
+ * contradicts it; once the grace period turns that into `not-started`, the
+ * badge goes out.
+ */
+export declare function stagePhaseIsLive(phase: StreamStagePhase): boolean;
+
+/**
+ * Whether the stage is showing a picture the viewer can trust as CURRENT.
+ * Everything else — connecting, buffering, stalled, error, empty — wants some
+ * words over it rather than a bare frame.
+ */
+export declare function stagePhaseIsShowingLiveMedia(phase: StreamStagePhase): boolean;
 
 export declare function StatCard({ label, value, accent, danger, hint, title, delta, sparklineData, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
 
@@ -9651,6 +9787,28 @@ export declare interface StepExecution {
 
 export declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
 
+export declare function StreamAudioOnly({ name, avatarUrl, level, active, muted, hint, className, 'data-testid': testId, }: StreamAudioOnlyProps): JSX.Element;
+
+export declare interface StreamAudioOnlyProps {
+    /** Who is talking. Renders an avatar and a name when known. */
+    name?: string;
+    /** Profile image for the speaker; falls back to initials. */
+    avatarUrl?: string;
+    /**
+     * Measured loudness, 0..1, or null when it cannot be measured. Null is not
+     * silence — see the file header.
+     */
+    level?: number | null;
+    /** Whether audio is actually reaching the viewer (playing AND not muted). */
+    active?: boolean;
+    /** Muted gets its own wording: the fix is one click away and worth naming. */
+    muted?: boolean;
+    /** Replaces the default explanation line. */
+    hint?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface StreamChatMessage {
     id: string;
     /** Who sent it. */
@@ -9689,6 +9847,17 @@ export declare interface StreamChatTickerProps {
  */
 export declare function streamHasUsableVideo(stream: MediaStream | undefined | null): boolean;
 
+/**
+ * A stream with audio and no usable picture.
+ *
+ * NOT the same as a stream with nothing in it: a MediaStream with no tracks at
+ * all is a failure, and putting a friendly "Audio only" card over it would be
+ * the same category of lie as the black rectangle it replaced. Exported
+ * because a host that already knows its publisher's shape can pass `audioOnly`
+ * directly instead of re-deriving this.
+ */
+export declare function streamIsAudioOnly(stream: MediaStream | null | undefined): boolean;
+
 export declare interface StreamMetrics {
     bitrateBps: number;
     fps: number;
@@ -9700,7 +9869,57 @@ export declare interface StreamMetrics {
     jitter?: number;
 }
 
-export declare function StreamStage({ stream, playlistUrl, onPlaybackError, title, viewerCount, live, notStartedLabel, endedLabel, stallAfterMs, chatMessages, chatVisibleCount, chatRotateMs, muted: mutedInitial, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
+export declare function StreamStage({ stream, playlistUrl, onPlaybackError, onRetry, title, viewerCount, live, audioOnly: audioOnlyProp, speakerName, speakerAvatarUrl, notStartedLabel, endedLabel, stallAfterMs, chatMessages, chatVisibleCount, chatRotateMs, muted: mutedInitial, allowFullscreen, showLatency, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
+
+export declare type StreamStagePhase = 
+/** No source yet, still inside the grace period. A normal pre-broadcast state. */
+'idle'
+/** No source, and long enough that promising one would be a lie. */
+| 'not-started'
+/** Had a source; it went away. The opposite message from `not-started`. */
+| 'ended'
+/** Source attached, no frame yet. */
+| 'connecting'
+/** Frames advancing. */
+| 'playing'
+/** Briefly out of data. Still live. */
+| 'buffering'
+/** Out of data long enough that the picture is a lie about the present. */
+| 'stalled'
+/** Unplayable. */
+| 'error';
+
+export declare function streamStagePhase({ hasStream, hasPlaylist, hadSource, graceExpired, streamHasTracks, hls, }: StreamStagePhaseInput): StreamStagePhase;
+
+export declare interface StreamStagePhaseInput {
+    hasStream: boolean;
+    /**
+     * Whether that MediaStream actually carries anything. `null` means the
+     * caller could not tell (a stand-in object, a stream without `getTracks`).
+     *
+     * WHEP hands over a stream BEFORE its tracks arrive — `addtrack` fires
+     * later — so an empty one is a subscription still being set up, or one that
+     * never will be. Either way it is not a picture, and calling it `playing`
+     * puts a LIVE badge over a black rectangle: the realtime spelling of the
+     * same lie the HLS path had.
+     */
+    streamHasTracks?: boolean | null;
+    hasPlaylist: boolean;
+    /** Whether this mount has EVER held a source. Distinguishes ended from not-started. */
+    hadSource: boolean;
+    /** Whether the stage has waited longer than it is willing to promise. */
+    graceExpired: boolean;
+    /**
+     * What the HLS player reports. `phase` is preferred; `error`/`loading` are
+     * the fallback so a caller (or a test double) that only has the old two-flag
+     * shape still resolves to the same answer.
+     */
+    hls?: {
+        phase?: HlsPhase;
+        error?: string | null;
+        loading?: boolean;
+    };
+}
 
 export declare interface StreamStageProps {
     /**
@@ -9716,6 +9935,12 @@ export declare interface StreamStageProps {
     playlistUrl?: string | null;
     /** Surfaced when HLS cannot play — an unsupported browser, a dead playlist. */
     onPlaybackError?: (err: Error) => void;
+    /**
+     * Called by the "Try again" control, in addition to the stage's own retry.
+     * Use it when recovery needs something the stage cannot do — re-issuing a
+     * signed playlist URL, re-subscribing over WHEP.
+     */
+    onRetry?: () => void;
     /** Replaces the default wording once a stream has failed to start. */
     notStartedLabel?: string;
     /**
@@ -9730,14 +9955,31 @@ export declare interface StreamStageProps {
     stallAfterMs?: number;
     /** Name of the stream or call, shown top-left. */
     title?: string;
-    /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
-    viewerCount?: number;
+    /**
+     * Watchers, when the number is KNOWN. Pass `null` (or omit) when it is not.
+     *
+     * A count of 0 is treated as unknown and suppressed: the person reading it
+     * is themselves watching, so "0 watching" is refuted by the act of reading
+     * it — and 0 is exactly what an unmeasured gauge returns. Passing a real
+     * measured zero is therefore not expressible, on purpose; there is no
+     * audience for that number anyway.
+     */
+    viewerCount?: number | null;
     /**
      * The caller's claim that this should be live. It is ANDed with what the
      * player actually managed to do, so on the HLS path a claim alone will not
      * light the badge — a composed playlist URL is not a broadcast.
      */
     live?: boolean;
+    /**
+     * Force the audio-only presentation on or off. Omitted, the stage works it
+     * out: no usable video track on the realtime path, `videoWidth === 0` on
+     * the HLS path.
+     */
+    audioOnly?: boolean;
+    /** Who is broadcasting. Gives an audio-only stream a face and a name. */
+    speakerName?: string;
+    speakerAvatarUrl?: string;
     /**
      * Chat to rotate over the video. Empty or omitted renders no ticker at all,
      * so a silent stream is not carrying an empty chat frame.
@@ -9752,6 +9994,14 @@ export declare interface StreamStageProps {
      * start at all. The viewer can unmute from the stage itself.
      */
     muted?: boolean;
+    /** Offer a fullscreen control. Default true; hidden where the API is absent. */
+    allowFullscreen?: boolean;
+    /**
+     * Show how far behind the live edge HLS playback is. Default true. HLS runs
+     * seconds behind by construction, and a viewer who does not know that reads
+     * the delay as a frozen stream.
+     */
+    showLatency?: boolean;
     /** Controls rendered bottom-right, e.g. leave / mute / fullscreen. */
     controls?: ReactNode;
     /** Shown centred when there is no stream. */
@@ -10963,6 +11213,8 @@ declare interface UseActivityBusReturn {
   */
  export declare function useApiHealth(pollMs?: number): ApiHealthSnapshot;
 
+ export declare function useAudioLevel(stream: MediaStream | null | undefined): number | null;
+
  export declare function useAuth(): UseAuthReturn;
 
  declare interface UseAuthReturn extends AuthState {
@@ -11367,6 +11619,52 @@ declare interface UseActivityBusReturn {
      members: MemberItem[];
      loading: boolean;
      error: string | null;
+ }
+
+ export declare function useHlsSource(videoRef: RefObject<HTMLVideoElement | null>, playlistUrl: string | null | undefined, opts?: UseHlsSourceOptions): UseHlsSourceState;
+
+ export declare interface UseHlsSourceOptions {
+     /**
+      * Tune for a live edge rather than a recording.
+      *
+      * A live viewer wants to be near the broadcast, and a large back buffer on a
+      * stream someone leaves open for an hour is memory spent on video nobody
+      * will scrub back to. VOD wants the opposite — keep what was downloaded so
+      * seeking backwards is instant.
+      */
+     live?: boolean;
+     /**
+      * How long playback may fail to advance before it is called STALLED rather
+      * than buffering. Short enough that a viewer is not lied to for long, long
+      * enough that an ordinary rebuffer at the live edge is not an alarm.
+      */
+     stalledAfterMs?: number;
+     onError?: (err: Error) => void;
+ }
+
+ export declare interface UseHlsSourceState {
+     /** Human-readable failure, or null. Rendered by the player, not thrown. */
+     error: string | null;
+     /** True between attach and first data. Equivalent to `phase === 'connecting'`. */
+     loading: boolean;
+     /** The whole truth; prefer this over the two booleans above. */
+     phase: HlsPhase;
+     /**
+      * Whether the media has audio but no picture. `null` until the element has
+      * metadata — "not known yet" is not "there is video", and rendering an
+      * audio-only card over a video stream is its own lie.
+      */
+     audioOnly: boolean | null;
+     /**
+      * Seconds behind the live edge, or null when it cannot be measured. HLS runs
+      * seconds behind by construction; a viewer who is not told that concludes
+      * the stream is frozen.
+      */
+     latencySec: number | null;
+     /** Seek to the live edge. No-op when there is no source. */
+     seekToLive: () => void;
+     /** Tear the source down and attach it again from scratch. */
+     retry: () => void;
  }
 
  export declare function useIdentityAdmin(): UseIdentityAdminReturn;
@@ -12422,6 +12720,28 @@ declare interface UseActivityBusReturn {
       minHeight?: number;
       className?: string;
       children: React.ReactNode;
+      'data-testid'?: string;
+  }
+
+  /**
+   * The canonical visually-hidden clip. Not `display: none` and not
+   * `visibility: hidden` — both remove the node from the accessibility tree.
+   */
+  export declare const VISUALLY_HIDDEN_STYLE: CSSProperties;
+
+  /**
+   * Renders `children` for screen readers only.
+   *
+   *   <VisuallyHidden>Sorted ascending</VisuallyHidden>
+   */
+  export declare function VisuallyHidden({ as: Tag, children, className, id, 'data-testid': testId, }: VisuallyHiddenProps): JSX.Element;
+
+  export declare interface VisuallyHiddenProps {
+      /** Element to render. Defaults to `span`; use `div` inside block content. */
+      as?: ElementType;
+      children: ReactNode;
+      className?: string;
+      id?: string;
       'data-testid'?: string;
   }
 

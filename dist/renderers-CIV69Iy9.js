@@ -3,7 +3,7 @@ import { o as n, s as r } from "./useVideoSessions-CQvF7-8H.js";
 import { n as i, t as a } from "./useDocumentTypes-CrsHC24c.js";
 import { t as o } from "./cn-DhjIN-s0.js";
 import { t as s } from "./useEventCallback-Cwx9QVSi.js";
-import { t as c } from "./SelectableCard-BVSflqyL.js";
+import { n as c } from "./SegmentedControl-CQxKJF-Z.js";
 import { t as l } from "./Chip-YhQI5B9P.js";
 import { t as u } from "./Modal-CyoyiNKN.js";
 import { t as d } from "./Input-DLknWXri.js";

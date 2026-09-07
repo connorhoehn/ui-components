@@ -292,14 +292,14 @@ function h({ timestamp: i, type: a, summary: o, severity: s = "info", onClick: c
 }
 //#endregion
 //#region src/components/shared/Sparkline.tsx
-function g({ data: e, width: t = 80, height: r = 20, color: i = "var(--color-primary)" }) {
+function g({ data: e, width: t = 80, height: r = 20, color: i = "var(--color-primary)", baseline: a = "min" }) {
 	if (!e || e.length === 0) return /* @__PURE__ */ n("svg", {
 		width: t,
 		height: r,
 		"aria-hidden": "true"
 	});
-	let a = Math.min(...e), o = Math.max(...e) - a || 1, s = e.length > 1 ? t / (e.length - 1) : 0, c = e.map((e, t) => {
-		let n = t * s, i = r - (e - a) / o * r;
+	let o = Math.min(...e), s = a === "min" ? o : Math.min(a === "zero" ? 0 : a, o), c = s, l = Math.max(...e, s) - c || 1, u = e.length > 1 ? t / (e.length - 1) : 0, d = e.map((e, t) => {
+		let n = t * u, i = r - (e - c) / l * r;
 		return `${n.toFixed(2)},${i.toFixed(2)}`;
 	}).join(" ");
 	return /* @__PURE__ */ n("svg", {
@@ -313,7 +313,7 @@ function g({ data: e, width: t = 80, height: r = 20, color: i = "var(--color-pri
 			fill: "none",
 			stroke: i,
 			strokeWidth: 1.5,
-			points: c
+			points: d
 		})
 	});
 }

@@ -7,15 +7,17 @@ var i = {
 	md: "w-[20px] h-[20px]",
 	lg: "w-[28px] h-[28px]"
 };
-function a({ size: t = "md", color: r, className: a, style: o, "aria-label": s = "Loading", "data-testid": c }) {
-	let l = r ?? "var(--color-primary)";
+function a({ size: t = "md", color: r, className: a, style: o, decorative: s = !1, "aria-label": c = "Loading", "data-testid": l }) {
+	let u = r ?? "var(--color-primary)";
 	return /* @__PURE__ */ n("div", {
-		role: "status",
-		"aria-label": s,
-		"data-testid": c,
+		...s ? { "aria-hidden": !0 } : {
+			role: "status",
+			"aria-label": c
+		},
+		"data-testid": l,
 		className: e("inline-block rounded-full border-2 border-transparent animate-spin", i[t], a),
 		style: {
-			borderTopColor: l,
+			borderTopColor: u,
 			...o
 		}
 	});

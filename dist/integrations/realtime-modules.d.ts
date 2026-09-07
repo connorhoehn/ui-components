@@ -54,9 +54,23 @@ export declare function adaptFileUploads(uploads: RMFileUploadState[]): FileUplo
 
 export declare function adaptFileUploadState(state: RMFileUploadState): FileUploadSummary;
 
-export declare function adaptHangoutParticipant(participant: RMHangoutParticipant, localClientId?: string | null): HangoutLayoutParticipant;
+export declare function adaptHangoutParticipant(participant: RMHangoutParticipant, localClientId?: string | null, 
+/** Resolved by the host from its own directory — see the note above. */
+avatarUrl?: string): HangoutLayoutParticipant;
 
-export declare function adaptHangoutParticipants(participants: RMHangoutParticipant[], localClientId?: string | null): HangoutLayoutParticipant[];
+export declare function adaptHangoutParticipants(participants: RMHangoutParticipant[], localClientId?: string | null, 
+/** clientId → avatar URL, resolved by the host. */
+avatarUrls?: Record<string, string | undefined>): HangoutLayoutParticipant[];
+
+/**
+ * The reactions on one message, in ChatPanel's shape.
+ *
+ * `userId` falls back to `clientId` only when the server resolved no identity
+ * — imperfect (it changes on reconnect, so "did I react?" goes stale) but
+ * better than an empty string, which would make every anonymous reaction the
+ * same person's.
+ */
+export declare function adaptMessageReactions(hook: RMUseReactionsReturn, messageId: string): UIMessageReaction[];
 
 export declare function adaptNotification(n: RMNotificationEntry): NotificationItem;
 
@@ -69,9 +83,13 @@ export declare function adaptPresenceEntry(entry: RMPresenceEntry): PresenceUser
  * the app open in two tabs arrived twice — two identical avatars side by side,
  * and a participant count that read one higher than the number of humans.
  *
- * First entry wins for name and avatar; online-ness is the OR across a
- * person's connections, because a stale tab must not be able to grey out
- * someone who is sitting right there in another one.
+ * Identity, name and avatar are MERGED across a person's sessions rather than
+ * taken from whichever row sorted first. A tab that has not published its
+ * metadata yet is a normal thing for a roster to contain, and letting it win
+ * showed a truncated clientId where a name the OTHER tab had already published
+ * belonged. Online-ness is likewise the OR across the connections: a stale tab
+ * must not grey out someone sitting right there in another one, and `idle`
+ * survives only while EVERY live session says so.
  */
 export declare function adaptPresenceRoster(roster: RMPresenceEntry[]): PresenceUser[];
 
@@ -87,6 +105,12 @@ export declare const ALL_REALTIME_CAPABILITIES: readonly RealtimeCapabilityName[
  * as a one-line opt-in for the standard connection-resiliency UI.
  */
 export declare function applyNetworkShim(node: ReactNode, opts: NetworkShimOptions | undefined): ReactNode;
+
+declare interface CallActivityParticipant {
+    userId: string;
+    displayName?: string;
+    avatarUrl?: string;
+}
 
 declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -207,6 +231,35 @@ declare interface CanvasDocumentViewProps {
      * emptiness next to the thing you are reading.
      */
     showOutline?: boolean;
+    /**
+     * Draw page boundaries on the sheet: a seam every 1056px, the desk showing
+     * through it, and a shadow off each sheet's edge. Also reports a page count
+     * in the status bar and pads the last sheet out to a whole page.
+     *
+     * OFF by default, and the default is a recommendation rather than caution.
+     * Read the header of the pagination block in styles.css before turning it
+     * on; the short version:
+     *
+     *   - It is not free. Pagination and a baseline grid are ONE feature here,
+     *     because a seam can only avoid cutting text if every line sits on a
+     *     known row. So this also changes the document's typography — paragraph
+     *     gaps go 14.4px -> 26.4px, headings and code blocks get re-spaced. The
+     *     page gets airier. That is not a side effect to be tuned away, it is
+     *     the mechanism.
+     *   - It is not complete. Headings are larger than one grid row can contain,
+     *     so ~4.6% of seams still clip one (measured over 1000 generated
+     *     documents).
+     *   - It does not survive pictures. An image or a table has an intrinsic
+     *     height that no stylesheet can round to the grid, so it knocks
+     *     everything BELOW it off that grid for the rest of the document. Same
+     *     measurement: 4.6% -> 57.0% of seams bisected once images are in the
+     *     mix. For a document people paste screenshots into, this is worse than
+     *     no pagination.
+     *
+     * Which is why it is a prop and not a redesign: real pagination has to move
+     * content, and moving content means measuring every block on every edit.
+     */
+    paginate?: boolean;
     /**
      * Flips `gutterVisible`. Its absence means no toggle is offered at all,
      * which is the right default for a read-only embed with no place to store
@@ -414,6 +467,159 @@ declare interface ChatMessage {
     metadata?: Record<string, unknown>;
 }
 
+declare interface ChatPanelProps {
+    messages: ChatMessage[];
+    onSend: (content: string) => void;
+    /**
+     * Replaces the built-in input row entirely.
+     *
+     * The default composer is a plain field, which is the right default: it costs
+     * no rich-text dependency and suits a support widget or a log console. A host
+     * that wants formatting, @mentions, `:` emoji and staged attachments passes
+     * `RichChatComposer` here (from `ui-components/social/rich-composer`, which
+     * carries the tiptap peers) rather than this panel growing a second mode.
+     *
+     * When set, `onSend`, `onSendFiles`, `emojis` and the other composer-shaped
+     * props are NOT used for input — the slot owns sending. They still apply to
+     * the message list.
+     */
+    composer?: ReactNode;
+    /**
+     * The viewer, so their own reactions can be marked and their own messages
+     * can offer edit/delete. Without it reactions render but cannot be toggled
+     * meaningfully — "did I react?" is unanswerable.
+     */
+    currentUserId?: string;
+    /** Reactions on one message. Omit to render no reaction UI at all. */
+    reactionsFor?: (messageId: string) => readonly {
+        emoji: string;
+        userId: string;
+        displayName?: string;
+    }[];
+    /** Toggles the viewer's reaction. Presence of this enables the react controls. */
+    onToggleReaction?: (messageId: string, emoji: string) => void;
+    /** Starts a quote-reply. Presence of this enables the reply control. */
+    onReply?: (message: ChatMessage) => void;
+    /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
+    onTogglePin?: (message: ChatMessage) => void;
+    /** Message ids currently pinned in this channel. */
+    pinnedMessageIds?: ReadonlySet<string>;
+    /**
+     * Scrolls to a quoted original. Omit and quotes render as a record of what
+     * was said rather than a control that goes nowhere — which is the honest
+     * shape when the original is outside the loaded window.
+     */
+    onJumpToMessage?: (messageId: string) => void;
+    /**
+     * People currently editing a document, keyed by documentId. Feeds the
+     * document cards in the thread, which is where the difference between "a
+     * document exists" and "two people are in it right now" shows up.
+     */
+    documentEditors?: (documentId: string) => readonly DocumentActivityEditor[];
+    /**
+     * Who is in a call right now, keyed by callId. Overrides the participant
+     * list frozen into the message metadata, which is only a snapshot of the
+     * moment the event was written — people join a call after it starts, and a
+     * card showing the founding members while three more are inside is why you
+     * would not bother joining.
+     */
+    callParticipants?: (callId: string) => readonly CallActivityParticipant[];
+    /**
+     * Joins a live call from the thread. Omit when the viewer cannot join —
+     * the card then renders as a record rather than a dead button.
+     */
+    onJoinCall?: (callId: string) => void;
+    /** Opens a document announced in the thread. */
+    onOpenDocument?: (documentId: string) => void;
+    /**
+     * The message a jump just landed on. Highlighted so arriving somewhere in
+     * the middle of a transcript says WHICH message you were sent to — without
+     * it a jump scrolls and leaves you to guess. The caller clears it; the
+     * panel does not own a timer.
+     */
+    highlightedMessageId?: string | null;
+    disabled?: boolean;
+    onTyping?: (isTyping: boolean) => void;
+    typingUsers?: string[];
+    /** Surface the panel renders on. 'light' (default) keeps the theme
+     *  tokens; 'dark' swaps to white/alpha classes for dark call chrome
+     *  (e.g. inside a FloatingPanel next to the call widget) — without it
+     *  the message text renders dark-on-dark and disappears. Mirrors
+     *  InviteCandidateList's tone seam. */
+    tone?: 'light' | 'dark';
+    /** Render the panel's own "Chat (n)" heading.
+     *
+     *  Default: TRUE standalone — every consumer in this repo (the DMs
+     *  page's <SocialPanel>, <PanelsView>, <WrappedChatPanel>, the hook
+     *  demos) drops the panel into a plain container and relies on it to
+     *  name itself. Default FALSE inside a panel dock, which already names
+     *  the region with its tab bar — that is where "Chat" appeared twice,
+     *  ~40px apart. Pass it explicitly to override either way. */
+    showHeader?: boolean;
+    /** Fill the parent's height — the message list becomes the flexible
+     *  region and the composer sits on the bottom edge — instead of sizing
+     *  to a 200px-tall list inside a bordered card.
+     *
+     *  Default: FALSE standalone (the card is what the DMs page and the
+     *  demos expect), TRUE inside a dock, whose column has a definite
+     *  height that the body must match or leave a dead band behind. */
+    fill?: boolean;
+    /** Called when the reader asks for older messages. When present (and
+     *  `hasMore` is not false) a "Load earlier messages" button renders
+     *  above the first message. The panel preserves the reader's scroll
+     *  position across the prepend — growing the list must not yank the
+     *  viewport, which is the same bug class as the auto-scroll below. */
+    onLoadMore?: () => void;
+    /** Whether older messages exist. Defaults to true when `onLoadMore` is
+     *  given; pass false once the whole history is loaded to retire the button. */
+    hasMore?: boolean;
+    /** Show the load-more button in a pending state. */
+    loadingMore?: boolean;
+    /**
+     * Receives files the user dropped on the thread, pasted into the composer,
+     * or picked with the paperclip. When absent, every attachment affordance is
+     * suppressed — a panel wired to a transport with no upload service must not
+     * advertise one.
+     */
+    onSendFiles?: (files: File[]) => void;
+    /**
+     * Transfers currently in flight IN THIS CHANNEL — including other people's.
+     *
+     * This is the prop that makes the feature feel live rather than
+     * transactional. Rendering only your own uploads here would leave every
+     * other participant staring at an unchanged thread until a file appears
+     * fully-formed out of nowhere.
+     */
+    transfers?: ChatTransfer[];
+    /** Identifies the viewer so their own transfers get the cancel affordance. */
+    currentActor?: string;
+    onCancelTransfer?: (transferId: string) => void;
+    /**
+     * Resolves an attachment to a directly-renderable image source. The download
+     * route is bearer-authenticated, so an `<img src>` pointed at the raw URL
+     * 401s; the integration layer fetches with credentials and hands back an
+     * object URL. Attachments with no resolved src fall back to their inline
+     * preview.
+     */
+    attachmentSrc?: (attachment: ChatAttachment) => string | null | undefined;
+    /** Invoked when the viewer opens/downloads an attachment. */
+    onOpenAttachment?: (attachment: ChatAttachment) => void;
+    /** MIME/extension filter for drops and the picker. Defaults to everything. */
+    acceptFiles?: string;
+    /** Per-file byte cap enforced before the transfer starts. */
+    maxFileSize?: number;
+    /** Reports a rejected drop/paste so the host can surface it. */
+    onFileError?: (message: string) => void;
+    /**
+     * Emoji offered by the composer picker. Defaults to the library's full
+     * searchable set — deliberately NOT a short service-side catalog. A fixed
+     * server-blessed list is right for reactions that get aggregated and
+     * persisted; it is wrong for typing, where an emoji is just a character and
+     * an unavailable one reads as a missing feature.
+     */
+    emojis?: readonly string[];
+}
+
 declare interface ChatTransfer {
     transferId: string;
     /** Who is sending. Rendered so a recipient knows whose file this is. */
@@ -600,6 +806,12 @@ declare interface ConversationSurfaceProps {
  */
 export declare const DEFAULT_REALTIME_CAPABILITIES: RealtimeCapabilitySet;
 
+declare interface DocumentActivityEditor {
+    userId: string;
+    displayName?: string;
+    avatarUrl?: string;
+}
+
 declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, onInsertImage, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 declare interface DocumentToolbarProps {
@@ -656,6 +868,14 @@ export declare interface FileUploadSummary {
     status: RMFileUploadState['status'];
     downloadUrl?: string;
     error?: string;
+    /**
+     * The server-minted id, once there is one. Every channel-wide frame is
+     * keyed by this rather than by the client's `id`, so a caller reconciling
+     * its own upload against what the channel reports needs it carried.
+     */
+    transferId?: string;
+    /** Byte length, so a summary can render a size without re-reading the file. */
+    size?: number;
 }
 
 /** A thread plus where it wants to sit, in pixels from the page top. */
@@ -1093,6 +1313,31 @@ export declare interface RMCapabilityHookResult {
 /** The `enabled` map from realtime-modules' `useCapabilities`, restated. */
 export declare type RMCapabilityMap = Record<string, boolean>;
 
+/**
+ * A transfer moving through the channel right now — possibly somebody else's.
+ *
+ * `uploads` is the viewer's own outbox; this is the shared truth. Mirrors
+ * realtime-modules' ChannelTransfer.
+ */
+export declare interface RMChannelTransfer {
+    transferId: string;
+    /** Human-facing attribution, so a recipient reads "Ada is sending…". */
+    actor: string;
+    /** Authed user id of the sender — the reliable identity for "is this mine". */
+    uploader: string;
+    name: string;
+    size: number;
+    /** Bytes the SERVER has counted. Never a client's self-report. */
+    transferred: number;
+    phase: 'started' | 'transferring' | 'verifying' | 'complete' | 'failed' | 'cancelled';
+    contentType?: string;
+    preview?: string;
+    width?: number;
+    height?: number;
+    error?: string;
+    downloadUrl?: string;
+}
+
 /** Mirror of realtime-modules/src/client/types.ts ChatMessage */
 export declare interface RMChatMessage {
     id: string;
@@ -1141,6 +1386,14 @@ export declare interface RMFileUploadState {
     uploadUrl?: string;
     downloadUrl?: string;
     error?: string;
+    /**
+     * The SERVER's id for this transfer, once the gateway has minted one.
+     *
+     * Distinct from `id`, the client's own correlation id. Every channel-wide
+     * frame — progress, completion, cancellation — is keyed by this, so a
+     * caller matching its own upload to what the channel reports needs it.
+     */
+    transferId?: string;
 }
 
 /** Mirror of realtime-modules/src/client/useVideoHangout.ts HangoutParticipant */
@@ -1233,6 +1486,12 @@ export declare interface RMNotificationEntry {
     read?: boolean;
     channel?: string;
     payload?: Record<string, unknown>;
+    /** Optional CTA the host can render as a button or link. */
+    action?: {
+        label: string;
+        href?: string;
+        onClickEvent?: string;
+    };
 }
 
 /** Mirror of realtime-modules/src/client/types.ts PresenceEntry */
@@ -1260,6 +1519,25 @@ export declare interface RMReaction {
     position: unknown;
     metadata: Record<string, unknown>;
     timestamp: string;
+    /**
+     * The entity this reaction is ON — a messageId, an articleId, a commentId.
+     *
+     * Absent for a floating call reaction, which is addressed to the moment
+     * rather than to anything. Present for every reaction that AGGREGATES, and
+     * this mirror not declaring it is why the embed path could render the
+     * confetti but never a reaction chip: `reactionsFor(messageId)` has nothing
+     * to filter on when the field does not exist.
+     */
+    targetId?: string;
+    /**
+     * Stable owner id, stamped server-side from the connection's authenticated
+     * context (never from the frame). This — not `clientId`, which is a socket
+     * and changes on every reconnect — is what makes "you already reacted"
+     * answerable across a reload, so grouping and toggling both key on it.
+     */
+    userId?: string;
+    /** Owner's display name, stamped alongside `userId`. */
+    displayName?: string;
 }
 
 export declare interface RMRoom {
@@ -1333,16 +1611,36 @@ export declare interface RMUseCanvasDocumentReturn {
 
 export declare interface RMUseChatReturn {
     messages: RMChatMessage[];
-    sendMessage: (text: string) => void;
+    /**
+     * Post to the channel. `metadata` rides the message verbatim.
+     *
+     * This mirror used to declare a one-argument function, which typechecked
+     * against the real hook (fewer params always does) and quietly made the
+     * second one unreachable — so an embedded thread sent every message with no
+     * `displayName` and no `avatarUrl`, and every recipient saw an unnamed,
+     * faceless row. It is also where a reply's quote rides.
+     */
+    sendMessage: (text: string, metadata?: Record<string, unknown>) => void;
     loadHistory: (limit?: number) => void;
 }
 
 export declare interface RMUseFileUploadReturn {
     uploads: RMFileUploadState[];
+    /**
+     * Every transfer in flight in this channel, the viewer's own included.
+     *
+     * Optional only so a host on an older realtime-modules still typechecks.
+     * Without it a file someone else drags in is invisible until it has fully
+     * arrived and then materialises out of nowhere — which is the whole reason
+     * the shared list exists.
+     */
+    transfers?: RMChannelTransfer[];
     upload(file: File, opts?: {
         metadata?: Record<string, unknown>;
     }): Promise<RMFileUploadState>;
     cancel(id: string): void;
+    /** Cancel by the server-minted transfer id (what the UI renders). */
+    cancelTransfer?: (transferId: string) => void;
     removeCompleted(): void;
 }
 
@@ -1350,6 +1648,12 @@ export declare interface RMUseFileUploadReturn {
  * The shape of `useFileUpload(channel)` from realtime-modules, restated
  * structurally so this package keeps zero runtime dependency on it (the same
  * convention the other Wrapped* components follow).
+ *
+ * @deprecated Prefer `RMUseFileUploadReturn` from `./types`, which is the full
+ * hook shape. This narrower alias existed under the SAME NAME as that one, in
+ * the same folder, describing a different subset of the same hook — so which
+ * fields a caller was expected to supply depended on which file they happened
+ * to import from. Kept only so existing imports keep resolving.
  */
 declare interface RMUseFileUploadReturn_2 {
     transfers: ChatTransfer[];
@@ -1378,6 +1682,18 @@ export declare interface RMUseNotificationsReturn {
     clearAll: () => void;
 }
 
+/** What `usePins(channel)` from realtime-modules returns, restated. */
+export declare interface RMUsePinsReturn {
+    /** Ids only — what a message list needs to mark a message as pinned. */
+    pinnedIds: Set<string>;
+    pin: (input: {
+        messageId: string;
+        text: string;
+        author: string;
+    }) => Promise<void>;
+    unpin: (messageId: string) => Promise<void>;
+}
+
 export declare interface RMUsePresenceReturn {
     roster: RMPresenceEntry[];
     setStatus: (status: RMPresenceStatus) => void;
@@ -1386,7 +1702,30 @@ export declare interface RMUsePresenceReturn {
 
 export declare interface RMUseReactionsReturn {
     reactions: RMReaction[];
-    react: (emoji: string) => void;
+    /** Send an emoji reaction, optionally addressed to an entity. */
+    react: (emoji: string, opts?: {
+        targetId?: string;
+        metadata?: Record<string, unknown>;
+    }) => void;
+    /**
+     * The channel's reactions filtered to one target. Optional here because a
+     * host on an older realtime-modules has only `reactions` — read it through
+     * `adaptMessageReactions`, which falls back to filtering the list itself.
+     */
+    reactionsFor?: (targetId: string) => RMReaction[];
+    /** Take back your own reaction. Only targeted reactions are removable. */
+    unreact?: (emoji: string, opts?: {
+        targetId?: string;
+    }) => void;
+    /**
+     * React or un-react depending on whether `userId` already has this emoji on
+     * the target — what a reaction CHIP does, since a chip is a toggle and only
+     * the hook holds the list that decides which way it goes.
+     */
+    toggle?: (emoji: string, opts?: {
+        targetId?: string;
+        userId: string;
+    }) => void;
 }
 
 export declare interface RMUseRoomOccupancyReturn {
@@ -1441,6 +1780,12 @@ declare interface StreamStageProps {
     playlistUrl?: string | null;
     /** Surfaced when HLS cannot play — an unsupported browser, a dead playlist. */
     onPlaybackError?: (err: Error) => void;
+    /**
+     * Called by the "Try again" control, in addition to the stage's own retry.
+     * Use it when recovery needs something the stage cannot do — re-issuing a
+     * signed playlist URL, re-subscribing over WHEP.
+     */
+    onRetry?: () => void;
     /** Replaces the default wording once a stream has failed to start. */
     notStartedLabel?: string;
     /**
@@ -1455,14 +1800,31 @@ declare interface StreamStageProps {
     stallAfterMs?: number;
     /** Name of the stream or call, shown top-left. */
     title?: string;
-    /** Shown beside the title. Omit when the count is unknown rather than passing 0. */
-    viewerCount?: number;
+    /**
+     * Watchers, when the number is KNOWN. Pass `null` (or omit) when it is not.
+     *
+     * A count of 0 is treated as unknown and suppressed: the person reading it
+     * is themselves watching, so "0 watching" is refuted by the act of reading
+     * it — and 0 is exactly what an unmeasured gauge returns. Passing a real
+     * measured zero is therefore not expressible, on purpose; there is no
+     * audience for that number anyway.
+     */
+    viewerCount?: number | null;
     /**
      * The caller's claim that this should be live. It is ANDed with what the
      * player actually managed to do, so on the HLS path a claim alone will not
      * light the badge — a composed playlist URL is not a broadcast.
      */
     live?: boolean;
+    /**
+     * Force the audio-only presentation on or off. Omitted, the stage works it
+     * out: no usable video track on the realtime path, `videoWidth === 0` on
+     * the HLS path.
+     */
+    audioOnly?: boolean;
+    /** Who is broadcasting. Gives an audio-only stream a face and a name. */
+    speakerName?: string;
+    speakerAvatarUrl?: string;
     /**
      * Chat to rotate over the video. Empty or omitted renders no ticker at all,
      * so a silent stream is not carrying an empty chat frame.
@@ -1477,6 +1839,14 @@ declare interface StreamStageProps {
      * start at all. The viewer can unmute from the stage itself.
      */
     muted?: boolean;
+    /** Offer a fullscreen control. Default true; hidden where the API is absent. */
+    allowFullscreen?: boolean;
+    /**
+     * Show how far behind the live edge HLS playback is. Default true. HLS runs
+     * seconds behind by construction, and a viewer who does not know that reads
+     * the delay as a frozen stream.
+     */
+    showLatency?: boolean;
     /** Controls rendered bottom-right, e.g. leave / mute / fullscreen. */
     controls?: ReactNode;
     /** Shown centred when there is no stream. */
@@ -1543,6 +1913,13 @@ declare interface TiptapEditorProps {
 
 declare type TransferPhase = 'started' | 'transferring' | 'verifying' | 'complete' | 'failed' | 'cancelled';
 
+/** One reaction as ChatPanel's `reactionsFor` wants it. */
+export declare interface UIMessageReaction {
+    emoji: string;
+    userId: string;
+    displayName?: string;
+}
+
 /**
  * Read the effective capabilities.
  *
@@ -1589,7 +1966,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     legacyModel?: unknown;
 }
 
-export declare function WrappedChatPanel({ chat, presence, upload, currentActor, currentUserId, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, emojis, onReply, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -1602,7 +1979,24 @@ export declare interface WrappedChatPanelProps {
      * channel — including other participants'. Omit it and the panel shows no
      * attachment affordances at all.
      */
-    upload?: RMUseFileUploadReturn_2;
+    upload?: RMUseFileUploadReturn_2 | RMUseFileUploadReturn;
+    /**
+     * Return value of useReactions(channel). Supplying it turns on reaction
+     * chips: grouped, counted, and toggleable.
+     *
+     * Requires `currentUserId` to be meaningful — a chip is a toggle, and which
+     * way it goes depends on whether YOU already placed that emoji. Without the
+     * viewer's id the panel can render counts but cannot answer "did I react?",
+     * so the controls stay off rather than lying.
+     */
+    reactions?: RMUseReactionsReturn;
+    /**
+     * Return value of usePins(channel). Supplying it renders the pinned state on
+     * each message and offers the pin control. Omit it and pinning is absent
+     * rather than broken — which is the right shape for a call scratchpad, where
+     * there is no channel state for a pin to outlive.
+     */
+    pins?: RMUsePinsReturn;
     /** Identifies the viewer so their own transfers get a cancel button. */
     currentActor?: string;
     /**
@@ -1616,6 +2010,28 @@ export declare interface WrappedChatPanelProps {
      * to compare.
      */
     currentUserId?: string;
+    /**
+     * Stamped onto every message this viewer sends.
+     *
+     * The gateway does not invent a display name, so a message sent without one
+     * arrives at every recipient with no name and no face — and the sender
+     * cannot see that, because their own row is the one place the panel does not
+     * need it. `sendMetadata` merges on top for anything else the host wants to
+     * carry (a reply quote, a client tag).
+     */
+    displayName?: string;
+    avatarUrl?: string;
+    /** Extra metadata merged into every outgoing message. */
+    sendMetadata?: Record<string, unknown>;
+    /**
+     * Publish this viewer's typing state onto presence, so OTHER participants
+     * see the banner this component already knows how to render for them.
+     *
+     * Default true when `presence` is supplied: reading the roster's `isTyping`
+     * while never writing your own is the asymmetry that makes a typing
+     * indicator look broken to exactly one person in the conversation — you.
+     */
+    publishTyping?: boolean;
     /**
      * Resolves an attachment to a renderable image src. The gateway's download
      * route is bearer-authenticated, so an `<img>` pointed at the raw URL 401s;
@@ -1634,6 +2050,41 @@ export declare interface WrappedChatPanelProps {
     tone?: 'light' | 'dark';
     /** Forwarded to ChatPanel — fill the parent's height. */
     fill?: boolean;
+    /** Forwarded to ChatPanel — suppress its own "Chat (n)" heading when the
+     *  host already names the region. */
+    showHeader?: boolean;
+    /**
+     * Turn on "Load earlier messages", backed by `chat.loadHistory`.
+     *
+     * Off by default, because the paging below only makes sense against a
+     * gateway that HAS a history store, and a button that reloads the same
+     * twenty messages forever is worse than no button. Where history exists it
+     * is a straight drop of a feature the hook always had and this component
+     * never called — an embedded transcript began at whatever the join replayed
+     * and could not be scrolled back past it.
+     *
+     * `chat.loadHistory(limit)` REPLACES the window rather than prepending a
+     * page, so paging means asking for a bigger window each time — the same
+     * shape the app uses. A short answer means the start of the thread.
+     */
+    loadMoreHistory?: boolean;
+    /** Messages the gateway pushes on join (its CHAT_JOIN_HISTORY_LIMIT). */
+    joinHistoryLimit?: number;
+    /** How many more to ask for on each press. */
+    historyPageSize?: number;
+    /** Override the paging above entirely. */
+    onLoadMore?: () => void;
+    hasMore?: boolean;
+    loadingMore?: boolean;
+    composer?: ReactNode;
+    emojis?: readonly string[];
+    onReply?: (message: ChatMessage) => void;
+    onJumpToMessage?: (messageId: string) => void;
+    highlightedMessageId?: string | null;
+    documentEditors?: ChatPanelProps['documentEditors'];
+    callParticipants?: ChatPanelProps['callParticipants'];
+    onJoinCall?: (callId: string) => void;
+    onOpenDocument?: (documentId: string) => void;
     /**
      * Opt-in: wrap the rendered ChatPanel in a NetworkErrorBoundary +
      * ReconnectingShim using the supplied connection state and retry
@@ -1865,17 +2316,37 @@ export declare function WrappedNotificationCenter({ notifications, onItemClick, 
 export declare interface WrappedNotificationCenterProps extends Omit<NotificationCenterProps, 'items' | 'onItemClick' | 'onMarkAllRead' | 'onClearAll'> {
     /** Return value of useNotifications(channel?) from realtime-modules */
     notifications: RMUseNotificationsReturn;
-    /** Override item click handler (default: markAsRead on the clicked id) */
-    onItemClick?: (item: NotificationItem) => void;
+    /**
+     * Override item click handler (default: markAsRead on the clicked id).
+     *
+     * The SECOND argument is the original realtime-modules entry, and it is the
+     * reason this signature is not just `(item)`. `NotificationItem` has no
+     * field for `channel`, `payload` or `action`, so an adapted item cannot say
+     * where a notification points — which made click-to-navigate, the main thing
+     * a host does with a notification, impossible through this component. The
+     * entry is undefined only if the click arrives for an id the hook no longer
+     * holds.
+     */
+    onItemClick?: (item: NotificationItem, entry: RMNotificationEntry | undefined) => void;
 }
 
-export declare function WrappedPresencePanel({ presence, currentClientId, wrapWithNetworkShim, }: WrappedPresencePanelProps): JSX.Element;
+export declare function WrappedPresencePanel({ presence, currentClientId, perConnection, wrapWithNetworkShim, }: WrappedPresencePanelProps): JSX.Element;
 
 export declare interface WrappedPresencePanelProps {
     /** Return value of usePresence(channel) from realtime-modules */
     presence: RMUsePresenceReturn;
     /** The local user's clientId (from useGateway().clientId) */
     currentClientId: string | null;
+    /**
+     * Show one row per CONNECTION instead of one per person.
+     *
+     * The gateway keys presence by clientId — a per-WebSocket id — so a person
+     * with three tabs is three rows and every reconnect mints another. Rendering
+     * that raw is the "13 rows for 4 humans" bug, and it is the default this
+     * component used to have. Turn it on only for a diagnostic view where the
+     * sockets themselves are the subject.
+     */
+    perConnection?: boolean;
     /**
      * Opt-in: wrap the rendered PresencePanel in a NetworkErrorBoundary +
      * ReconnectingShim using the supplied connection state and retry

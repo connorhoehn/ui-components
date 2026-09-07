@@ -61,7 +61,7 @@ declare interface AttachmentsPanelProps {
     editable: boolean;
 }
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, showOutline, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -182,6 +182,35 @@ export declare interface CanvasDocumentViewProps {
      * emptiness next to the thing you are reading.
      */
     showOutline?: boolean;
+    /**
+     * Draw page boundaries on the sheet: a seam every 1056px, the desk showing
+     * through it, and a shadow off each sheet's edge. Also reports a page count
+     * in the status bar and pads the last sheet out to a whole page.
+     *
+     * OFF by default, and the default is a recommendation rather than caution.
+     * Read the header of the pagination block in styles.css before turning it
+     * on; the short version:
+     *
+     *   - It is not free. Pagination and a baseline grid are ONE feature here,
+     *     because a seam can only avoid cutting text if every line sits on a
+     *     known row. So this also changes the document's typography — paragraph
+     *     gaps go 14.4px -> 26.4px, headings and code blocks get re-spaced. The
+     *     page gets airier. That is not a side effect to be tuned away, it is
+     *     the mechanism.
+     *   - It is not complete. Headings are larger than one grid row can contain,
+     *     so ~4.6% of seams still clip one (measured over 1000 generated
+     *     documents).
+     *   - It does not survive pictures. An image or a table has an intrinsic
+     *     height that no stylesheet can round to the grid, so it knocks
+     *     everything BELOW it off that grid for the rest of the document. Same
+     *     measurement: 4.6% -> 57.0% of seams bisected once images are in the
+     *     mix. For a document people paste screenshots into, this is worse than
+     *     no pagination.
+     *
+     * Which is why it is a prop and not a redesign: real pagination has to move
+     * content, and moving content means measuring every block on every edit.
+     */
+    paginate?: boolean;
     /**
      * Flips `gutterVisible`. Its absence means no toggle is offered at all,
      * which is the right default for a read-only embed with no place to store
@@ -1322,6 +1351,73 @@ export declare type StandaloneTiptapProps = StandaloneTiptapBootstrapProps | Sta
 export declare interface StandaloneTiptapUser {
     name: string;
     color: string;
+}
+
+export declare const SUGGESTION_AUTHORING_MODES: {
+    value: SuggestionAuthoringMode;
+    label: string;
+    /** Shown as the control's title — the whole point is that people can tell them apart. */
+    hint: string;
+}[];
+
+/** What the reader's typing currently does. */
+export declare type SuggestionAuthoringMode = 'editing' | 'suggesting' | 'viewing';
+
+export declare function SuggestionCard({ kind, author, when, deletedText, insertedText, active, onFocus, onAccept, onReject, className, 'data-testid': testId, }: SuggestionCardProps): JSX.Element;
+
+/** What kind of change is being proposed. */
+export declare type SuggestionCardKind = 'insert' | 'delete' | 'replace' | 'modify';
+
+export declare interface SuggestionCardProps {
+    kind: SuggestionCardKind;
+    /** Display name of whoever proposed it. Never blank — see below. */
+    author: string;
+    /** When it was proposed, epoch ms. */
+    when?: number | null;
+    /** Text proposed for removal. */
+    deletedText?: string;
+    /** Text proposed for addition. */
+    insertedText?: string;
+    /** True for the suggestion the reader is currently sitting on. */
+    active?: boolean;
+    /** Scroll/select the change in the document. */
+    onFocus?: () => void;
+    /**
+     * Accept/reject. BOTH optional and BOTH hidden when absent — a reader without
+     * the authority to resolve a suggestion must not be shown buttons that do
+     * nothing, which is the failure this whole surface exists to remove.
+     */
+    onAccept?: () => void;
+    onReject?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function SuggestionModeControl({ mode, onModeChange, showViewing, openCount, disabled, className, 'data-testid': testId, }: SuggestionModeControlProps): JSX.Element;
+
+export declare interface SuggestionModeControlProps {
+    mode: SuggestionAuthoringMode;
+    onModeChange: (mode: SuggestionAuthoringMode) => void;
+    /**
+     * Hide the Viewing segment.
+     *
+     * For a host that has no read-only surface to switch to. Offering a segment
+     * that cannot be honoured is the exact failure this component exists to
+     * avoid, so it is opt-out rather than silently no-op.
+     */
+    showViewing?: boolean;
+    /**
+     * Suggestions currently open, shown beside the pill.
+     *
+     * Null (the default) renders no count at all — which is NOT the same as zero.
+     * A document whose suggestions have not been read yet must not claim there
+     * are none.
+     */
+    openCount?: number | null;
+    /** Read-only documents, finalized documents, a reader without permission. */
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function TableOfContents({ sections, focusedSectionId }: TableOfContentsProps): JSX.Element | null;
