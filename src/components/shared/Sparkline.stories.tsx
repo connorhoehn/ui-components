@@ -26,3 +26,13 @@ export const Wide: Story = {
 export const Empty: Story = {
   args: { data: [] },
 };
+
+/** Default min-based scaling stretches a 2% wobble across the whole box. */
+export const FlatSeriesMinBaseline: Story = {
+  args: { data: [100, 101, 102, 101, 100, 102, 101], width: 200 },
+};
+
+/** The same series with `baseline="zero"` — reads as the flat line it is. */
+export const FlatSeriesZeroBaseline: Story = {
+  args: { data: [100, 101, 102, 101, 100, 102, 101], width: 200, baseline: 'zero' },
+};

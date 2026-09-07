@@ -20,6 +20,13 @@ export interface SpinnerProps {
   color?: string;
   className?: string;
   style?: CSSProperties;
+  /**
+   * Purely visual — no role, no label, hidden from assistive technology.
+   * Set this whenever the spinner sits inside a container that already
+   * announces the wait (LoadingState does), otherwise the two live regions
+   * nest and the reader says "Loading" twice.
+   */
+  decorative?: boolean;
   'aria-label'?: string;
   'data-testid'?: string;
 }
@@ -29,14 +36,16 @@ export function Spinner({
   color,
   className,
   style,
+  decorative = false,
   'aria-label': ariaLabel = 'Loading',
   'data-testid': testId,
 }: SpinnerProps) {
   const arcColor = color ?? 'var(--color-primary)';
   return (
     <div
-      role="status"
-      aria-label={ariaLabel}
+      {...(decorative
+        ? { 'aria-hidden': true }
+        : { role: 'status', 'aria-label': ariaLabel })}
       data-testid={testId}
       className={cn(
         'inline-block rounded-full border-2 border-transparent animate-spin',

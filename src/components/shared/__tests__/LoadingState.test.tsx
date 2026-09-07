@@ -14,12 +14,15 @@ describe('LoadingState', () => {
     expect(root).toHaveAttribute('aria-live', 'polite');
   });
 
-  it('renders a spinner', () => {
-    render(<LoadingState />);
-    // Spinner uses role=status — when nested inside our outer role=status,
-    // both should be reachable by query.
-    const statusEls = screen.getAllByRole('status');
-    expect(statusEls.length).toBeGreaterThanOrEqual(2);
+  it('renders the spinner as decoration, not as a second live region', () => {
+    const { container } = render(<LoadingState />);
+    // The container is the live region. The spinner used to carry its own
+    // role=status + aria-label="Loading", so a screen reader announced the
+    // wait twice — once for the ring and once for the label beside it.
+    const spinner = container.querySelector('.animate-spin');
+    expect(spinner).toBeInTheDocument();
+    expect(spinner).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.getAllByRole('status')).toHaveLength(1);
   });
 
   it('renders a custom label', () => {

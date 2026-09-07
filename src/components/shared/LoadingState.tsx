@@ -35,7 +35,9 @@ function LoadingState({
         'text-text-secondary gap-3 p-8 font-[inherit]',
       )}
     >
-      <Spinner size={spinnerSize} color={spinnerColor} aria-label={label} />
+      {/* The container is the live region; a second one inside it would
+          make the reader announce the wait twice. */}
+      <Spinner size={spinnerSize} color={spinnerColor} decorative />
       <div className="text-[15px] font-medium text-text-primary">{label}</div>
       {description && (
         <div className="text-[13px] text-center max-w-[340px] text-text-secondary leading-normal">
