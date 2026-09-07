@@ -85,10 +85,6 @@ const BASELINE = {
   'identity/shared/CodeInput.tsx': 1, // OTP digit boxes — the primitive itself
   'identity/auth/LoginPage.tsx': 1, // <input type="hidden"> — not a control
 
-  // ---- typed-documents/
-  // Invisible file-input trigger behind the styled Bulk Import label.
-  'typed-documents/TypedDocumentsPage.tsx': 1,
-
   // ---- video/
   // Player-overlay seek + volume ranges: media chrome (white accent on a
   // gradient, --progress fill var), not form controls.
