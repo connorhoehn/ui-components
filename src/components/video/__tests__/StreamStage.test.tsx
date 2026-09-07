@@ -20,6 +20,34 @@ describe('StreamStage', () => {
     expect(screen.getByTestId('stream-stage-placeholder')).toBeInTheDocument();
   });
 
+  // "It ended" and "it has not started" look identical — an empty stage — and
+  // are opposite messages. Verified in the browser first: hanging up mid-watch
+  // left the audience reading "Waiting for the stream…" about a broadcast that
+  // was over.
+  it('says the broadcast ENDED when a playing stream goes away', () => {
+    const { rerender } = render(<StreamStage playlistUrl="https://example.test/master.m3u8" live />);
+    expect(screen.queryByTestId('stream-stage-ended')).toBeNull();
+
+    rerender(<StreamStage playlistUrl={null} live={false} />);
+    expect(screen.getByTestId('stream-stage-ended')).toHaveTextContent(/ended/i);
+    expect(screen.queryByTestId('stream-stage-placeholder')).toBeNull();
+  });
+
+  it('still says WAITING to someone who arrives after it is over', () => {
+    // Per mount: a viewer who never had a source here is waiting, not bereaved.
+    render(<StreamStage playlistUrl={null} placeholder="Waiting for the stream…" />);
+    expect(screen.getByTestId('stream-stage-placeholder')).toHaveTextContent('Waiting for the stream…');
+    expect(screen.queryByTestId('stream-stage-ended')).toBeNull();
+  });
+
+  it('takes the caller wording for the end of a broadcast', () => {
+    // jsdom has no MediaStream; the realtime path only needs a truthy object.
+    const stream = {} as MediaStream;
+    const { rerender } = render(<StreamStage stream={stream} live />);
+    rerender(<StreamStage stream={null} endedLabel="Alex ended the stream." />);
+    expect(screen.getByTestId('stream-stage-ended')).toHaveTextContent('Alex ended the stream.');
+  });
+
   it('marks itself live for the LIVE badge', () => {
     render(<StreamStage live title="Standup" />);
     expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-live', 'true');

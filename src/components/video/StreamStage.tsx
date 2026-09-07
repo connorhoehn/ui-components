@@ -68,6 +68,14 @@ export interface StreamStageProps {
   onPlaybackError?: (err: Error) => void;
   /** Replaces the default wording once a stream has failed to start. */
   notStartedLabel?: string;
+  /**
+   * Shown when a stream that WAS playing goes away — the broadcaster hung up.
+   *
+   * A distinct state from "not started". Both render an empty stage, but the
+   * placeholder tells the audience to keep waiting, which is the wrong thing
+   * to say about something that is over.
+   */
+  endedLabel?: ReactNode;
   /** How long to wait before saying so. Default 10s. */
   stallAfterMs?: number;
   /** Name of the stream or call, shown top-left. */
@@ -106,6 +114,7 @@ export function StreamStage({
   viewerCount,
   live = false,
   notStartedLabel,
+  endedLabel,
   stallAfterMs = STALL_AFTER_MS,
   chatMessages,
   chatVisibleCount,
@@ -143,6 +152,17 @@ export function StreamStage({
   // indefinitely, told nothing. After a grace period long enough for a real
   // manifest (a live one answers in a second or two), say the true thing
   // instead: there is nothing coming.
+  // "It ended" and "it has not started" look identical — an empty stage — and
+  // are opposite messages. Once this stage has had a source, losing it means
+  // the broadcast is over, and telling the audience to keep waiting for it is
+  // the one thing that is certainly wrong.
+  //
+  // Per MOUNT, deliberately: a viewer who opens the stage after a broadcast
+  // has finished never had a source here, and for them "waiting" is right.
+  const hadSource = useRef(false);
+  if (stream || playlistUrl) hadSource.current = true;
+  const ended = hadSource.current && !stream && !playlistUrl;
+
   const [stalled, setStalled] = useState(false);
   useEffect(() => {
     setStalled(false);
@@ -175,10 +195,12 @@ export function StreamStage({
         />
       ) : (
         <div
-          data-testid={`${testId}-placeholder`}
+          data-testid={ended ? `${testId}-ended` : `${testId}-placeholder`}
           className="flex h-full w-full items-center justify-center text-sm text-white/60"
         >
-          {placeholder ?? 'Waiting for the stream to start…'}
+          {ended
+            ? (endedLabel ?? 'The broadcast has ended.')
+            : (placeholder ?? 'Waiting for the stream to start…')}
         </div>
       )}
 

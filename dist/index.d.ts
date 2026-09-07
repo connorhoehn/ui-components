@@ -9674,7 +9674,7 @@ export declare interface StreamMetrics {
     jitter?: number;
 }
 
-export declare function StreamStage({ stream, playlistUrl, onPlaybackError, title, viewerCount, live, notStartedLabel, stallAfterMs, chatMessages, chatVisibleCount, chatRotateMs, muted, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
+export declare function StreamStage({ stream, playlistUrl, onPlaybackError, title, viewerCount, live, notStartedLabel, endedLabel, stallAfterMs, chatMessages, chatVisibleCount, chatRotateMs, muted, controls, placeholder, className, 'data-testid': testId, }: StreamStageProps): JSX.Element;
 
 export declare interface StreamStageProps {
     /**
@@ -9692,6 +9692,14 @@ export declare interface StreamStageProps {
     onPlaybackError?: (err: Error) => void;
     /** Replaces the default wording once a stream has failed to start. */
     notStartedLabel?: string;
+    /**
+     * Shown when a stream that WAS playing goes away — the broadcaster hung up.
+     *
+     * A distinct state from "not started". Both render an empty stage, but the
+     * placeholder tells the audience to keep waiting, which is the wrong thing
+     * to say about something that is over.
+     */
+    endedLabel?: ReactNode;
     /** How long to wait before saying so. Default 10s. */
     stallAfterMs?: number;
     /** Name of the stream or call, shown top-left. */
