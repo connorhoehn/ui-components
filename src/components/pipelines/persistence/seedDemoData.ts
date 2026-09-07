@@ -177,6 +177,10 @@ function stepStatusForRun(runStatus: RunStatus, rand: () => number): StepStatus 
       return rand() < 0.6 ? 'completed' : 'cancelled';
     case 'running':
       return rand() < 0.7 ? 'completed' : 'running';
+    case 'stuck':
+      // A stuck run is a RUNNING run nobody has heard from: the frontier step
+      // is still open, everything before it finished.
+      return rand() < 0.7 ? 'completed' : 'running';
     case 'rejected':
       // Every step up to and including the approval gate ran; the branch
       // beyond it never did.

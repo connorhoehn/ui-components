@@ -11,11 +11,11 @@ import { Checkbox } from '../forms/Checkbox';
 const STATUS_LABEL: Record<StatusKey, string> = {
   pending: 'Pending',
   running: 'Running',
+  stuck: 'Stuck',
   completed: 'Completed',
   rejected: 'Rejected',
   failed: 'Failed',
   cancelled: 'Cancelled',
-  paused_at_breakpoint: 'Paused',
 };
 
 const TRIGGER_LABEL: Record<TriggerKindKey, string> = {

@@ -179,6 +179,12 @@ function withStep(
  * `rejected` belongs here: a run whose approval gate was rejected settles
  * there instead of `completed` (see `RunStatus` in types/pipeline.ts). Leaving
  * it out let a late non-terminal event overwrite a settled rejected run.
+ *
+ * `stuck` deliberately does NOT belong here, and the direction matters both
+ * ways. Treating it as terminal would make this guard reject the real
+ * `completed` / `failed` / `cancelled` that arrives afterwards, so a run that
+ * merely went quiet could never recover on screen. Leaving it non-terminal is
+ * also what lets a resumed run walk straight back to `running`.
  */
 function isTerminalRunStatus(status: PipelineRun['status']): boolean {
   return (
@@ -193,11 +199,14 @@ function trimRuns(runs: Record<string, PipelineRun>): Record<string, PipelineRun
   const entries = Object.values(runs);
   if (entries.length <= MAX_RUNS_PER_PIPELINE) return runs;
   // Keep active runs and the newest completed runs. Oldest completed go first.
+  // `stuck` counts as active: the run is still open, it has just gone quiet,
+  // so it must not be evicted as if it were old history.
   const active = entries.filter((r) =>
     r.status === 'running' ||
     r.status === 'pending' ||
     r.status === 'awaiting_approval' ||
-    r.status === 'paused_at_breakpoint',
+    r.status === 'paused_at_breakpoint' ||
+    r.status === 'stuck',
   );
   const finished = entries
     .filter(
@@ -205,7 +214,8 @@ function trimRuns(runs: Record<string, PipelineRun>): Record<string, PipelineRun
         r.status !== 'running' &&
         r.status !== 'pending' &&
         r.status !== 'awaiting_approval' &&
-        r.status !== 'paused_at_breakpoint',
+        r.status !== 'paused_at_breakpoint' &&
+        r.status !== 'stuck',
     )
     .sort((a, b) => b.startedAt.localeCompare(a.startedAt));
   const keepFinished = finished.slice(
@@ -564,7 +574,9 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
             r.status === 'running' ||
             r.status === 'pending' ||
             r.status === 'awaiting_approval' ||
-            r.status === 'paused_at_breakpoint',
+            r.status === 'paused_at_breakpoint' ||
+            // Non-terminal: keep watching, a stuck run can still recover.
+            r.status === 'stuck',
         )
         .map((r) => r.id),
     [runs],

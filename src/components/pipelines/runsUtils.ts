@@ -3,21 +3,39 @@
 
 import type { PipelineRun, RunStatus } from '../../types/pipeline';
 
-// Filter chips intentionally exclude `awaiting_approval` — transitional state.
-export type StatusKey = Exclude<RunStatus, 'awaiting_approval'>;
+// Filter chips intentionally exclude the two "waiting on a human, by design"
+// states — `awaiting_approval` and `paused_at_breakpoint` are transitional and
+// were never offered as chips. Everything else in `RunStatus` MUST be listed in
+// `STATUS_KEYS` below; the guard under it makes that a compile error rather
+// than a status that silently disappears from the filter bar.
+export type StatusKey = Exclude<RunStatus, 'awaiting_approval' | 'paused_at_breakpoint'>;
 export type TriggerKindKey = 'manual' | 'scheduled' | 'webhook' | 'document';
 export type DateRangeKey = '24h' | '7d' | '30d' | 'all';
 
-export const STATUS_KEYS: readonly StatusKey[] = [
+export const STATUS_KEYS = [
   'pending',
   'running',
+  // Non-terminal, but the whole reason an operator opens this page — a run
+  // nobody has heard from has to be findable without scanning every "Running"
+  // row. See `RunStatus` in types/pipeline.ts.
+  'stuck',
   'completed',
   // Terminal and distinct from `completed` — a rejected approval must be
   // filterable, or the only way to find one is to open every green run.
   'rejected',
   'failed',
   'cancelled',
-] as const;
+] as const satisfies readonly StatusKey[];
+
+// Compile-time guard: every `StatusKey` must actually be listed above. Typing
+// `STATUS_KEYS` as `readonly StatusKey[]` (what it used to be) type-checks a
+// list that is MISSING members, which is exactly how a newly-added `RunStatus`
+// gets dropped from every filter without a single error. Tuple-wrapped for the
+// same non-distribution reason as `WireCarriesEveryRunStatus`.
+type AssertTrue<T extends true> = T;
+export type EveryStatusKeyIsFilterable = AssertTrue<
+  [StatusKey] extends [(typeof STATUS_KEYS)[number]] ? true : false
+>;
 
 export const TRIGGER_KIND_KEYS: readonly TriggerKindKey[] = [
   'manual',

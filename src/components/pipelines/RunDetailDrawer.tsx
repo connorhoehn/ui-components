@@ -41,6 +41,7 @@ function statusBadgeTone(s: RunStatus): ChipTone {
     case 'running':           return 'info';
     case 'pending':           return 'neutral';
     case 'awaiting_approval': return 'warning';
+    case 'stuck':             return 'warning';
     default:                  return 'neutral';
   }
 }
@@ -54,6 +55,7 @@ function statusLabel(s: RunStatus): string {
     case 'running':           return 'Running';
     case 'pending':           return 'Pending';
     case 'awaiting_approval': return 'Awaiting';
+    case 'stuck':             return 'Stuck';
     default:                  return s;
   }
 }

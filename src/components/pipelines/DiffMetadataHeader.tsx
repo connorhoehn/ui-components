@@ -26,6 +26,7 @@ function runStatusVariant(s: RunStatus): ChipTone {
     case 'failed':            return 'danger';
     case 'cancelled':         return 'neutral';
     case 'awaiting_approval': return 'warning';
+    case 'stuck':             return 'warning';
     case 'running':           return 'info';
     case 'pending':           return 'neutral';
     default:                  return 'neutral';

@@ -14,6 +14,7 @@ export function statusChipVariant(
     case 'running':             return { label: 'Running',          tone: 'info'     };
     case 'pending':             return { label: 'Pending',          tone: 'neutral'  };
     case 'paused_at_breakpoint': return { label: 'Paused',          tone: 'warning'  };
+    case 'stuck':               return { label: 'Stuck',            tone: 'warning'  };
     default:                    return { label: status,             tone: 'neutral'  };
   }
 }

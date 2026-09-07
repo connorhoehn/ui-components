@@ -119,6 +119,13 @@ export default function RunsTable({
       <tbody>
         {filtered.map((r, idx) => {
           const { tone: statusTone, label: statusLabel } = statusChipVariant(r.status);
+          // Two ways a run reads as stuck, and they must stay OR'd. The status
+          // itself is the newer signal (`RunStatus` now models `stuck`); the
+          // `running` + `stuckAt` pair is what a run looks like when only the
+          // timestamp has been folded in. Gating on `running` alone silently
+          // removed both the badge and the force-fail button the moment the
+          // status flipped — the operator's only escape hatch, gone.
+          const isStuck = r.status === 'stuck' || (r.status === 'running' && !!r.stuckAt);
           const isSelected = selected.has(r.id);
           const retries = countTotalRetries(r);
           // The row keeps a pointer-only onClick as a convenience. It
@@ -174,7 +181,10 @@ export default function RunsTable({
               </td>
               <td className="px-3 py-2.5 text-xs text-text-secondary">
                 <Chip tone={statusTone} aria-label={`Status: ${statusLabel}`}>{statusLabel}</Chip>
-                {r.status === 'running' && r.stuckAt && (
+                {/* The status chip already reads "Stuck" once the status has
+                    flipped — only badge the run while the chip still says
+                    "Running". */}
+                {isStuck && r.status !== 'stuck' && r.stuckAt && (
                   <Chip
                     tone="warning"
                     size="xs"
@@ -223,7 +233,7 @@ export default function RunsTable({
                 {r.id.slice(0, 8)}
               </td>
               <td className="px-3 py-2.5 text-xs text-text-secondary text-right" onClick={(e) => e.stopPropagation()}>
-                {r.status === 'running' && r.stuckAt && (
+                {isStuck && (
                   <button
                     type="button"
                     data-testid={`force-fail-${r.id}`}

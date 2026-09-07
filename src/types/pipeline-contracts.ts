@@ -122,11 +122,13 @@ export interface PipelineRunSummary {
    * stats page never counted it. Backend now serves canonical spellings from
    * both endpoints.
    *
-   * `interrupted` is a platform-api-only lifecycle state (orphan scan) that
-   * is not part of `RunStatus`, so it stays spelled out here.
+   * `interrupted` is a platform-api-only lifecycle state (orphan scan /
+   * force-fail outcome) that is not part of `RunStatus`, so it stays spelled
+   * out here.
    *
-   * Note: the backend can also emit `stuck` (StuckRunDetector), which neither
-   * this union nor `RunStatus` models yet — see the note in `pipeline.ts`.
+   * `stuck` IS part of `RunStatus` (distributed-core's StuckRunDetector emits
+   * `pipeline:run:stuck` for a run that has gone quiet); it must appear here
+   * too or `WireCarriesEveryRunStatus` in `pipeline.ts` fails to compile.
    */
   status:
     | 'pending'
@@ -137,6 +139,7 @@ export interface PipelineRunSummary {
     | 'rejected'
     | 'failed'
     | 'cancelled'
+    | 'stuck'
     | 'interrupted';
   startedAt: string;
   completedAt?: string;
