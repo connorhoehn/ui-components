@@ -31,7 +31,15 @@ export interface EditorSidebarManagerProps {
 
   // My items
   myItems: MyItem[];
-  onNavigateToSection: (sectionId: string) => void;
+  /**
+   * Jump to an item in the document.
+   *
+   * `commentId` is not optional decoration — it is the ONLY landmark a canvas
+   * has. A page-shaped document files its comments under an empty section id
+   * (they are anchored to a text range instead), so a handler that reads only
+   * the section id is inert on every page document.
+   */
+  onNavigateToSection: (sectionId: string, commentId?: string) => void;
 
   // Video history
   videoSessions: {
@@ -42,6 +50,16 @@ export interface EditorSidebarManagerProps {
 
   // Table of contents
   showTOC: boolean;
+  /**
+   * True when the document is page-shaped (`meta.schemaVersion >= 2`).
+   *
+   * The TOC links to `#section-<id>` anchors that only the section renderers
+   * emit. On a canvas those elements do not exist — the headings carry no ids
+   * at all — so the panel was a list of dead links, and on a CONVERTED document
+   * it listed the frozen pre-conversion headings, which is worse than empty.
+   * `DocumentOutline` + `useDocumentOutline` are the canvas equivalent.
+   */
+  isCanvas?: boolean;
   commentSidebarOpen: boolean;
   sections: Section[];
   focusedSectionId: string | null;
@@ -63,6 +81,7 @@ export default function EditorSidebarManager({
   onNavigateToSection,
   videoSessions,
   showTOC,
+  isCanvas = false,
   commentSidebarOpen,
   sections,
   focusedSectionId,
@@ -110,7 +129,7 @@ export default function EditorSidebarManager({
       )}
 
       {/* Table of contents — fixed bottom-right */}
-      {showTOC && !commentSidebarOpen && sections.length > 1 && mode === 'editor' && (
+      {!isCanvas && showTOC && !commentSidebarOpen && sections.length > 1 && mode === 'editor' && (
         <div className={cn(
           'fixed bottom-4 right-4 w-40 max-h-[280px] overflow-y-auto',
           'bg-surface border border-border rounded-[10px] px-3 py-2.5',

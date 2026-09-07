@@ -8,6 +8,15 @@
 // Layout container that composes sub-components:
 //   - ReaderSummary (HeaderBanner, ExecutiveSummaryCard)
 //   - ReaderSectionCard (KeyDecisionsCard, ActionItemsCard, SectionSummariesCard)
+//
+// ## Section-shaped documents only
+//
+// Everything here is derived from `sections`. A page-shaped document
+// (`meta.schemaVersion >= 2`) has none — its content is one `body` XmlFragment
+// — so this renders an empty shell on a canvas, and on a CONVERTED document it
+// renders the frozen pre-conversion sections as though they were the current
+// page. Neither raises anything. The caller gates on the shape before mounting
+// this; see EditorModeSwitch's `isCanvas` and ./canvas/documentShape.
 
 import type { XmlFragment } from 'yjs';
 import * as Y from 'yjs';

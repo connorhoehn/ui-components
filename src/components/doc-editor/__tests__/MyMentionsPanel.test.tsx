@@ -55,7 +55,9 @@ describe('MyMentionsPanel — row keyboard access', () => {
       key: 'Enter',
     });
 
-    expect(onNavigateToSection).toHaveBeenCalledWith('sec-1');
+    // The comment id rides along: it is the ONLY landmark a page-shaped
+    // document has, since a canvas files its comments under an empty section id.
+    expect(onNavigateToSection).toHaveBeenCalledWith('sec-1', 'c1');
   });
 
   it('navigates on Space and prevents the panel from scrolling', () => {
@@ -65,7 +67,9 @@ describe('MyMentionsPanel — row keyboard access', () => {
     const ev = createEvent.keyDown(row, { key: ' ' });
     fireEvent(row, ev);
 
-    expect(onNavigateToSection).toHaveBeenCalledWith('sec-1');
+    // The comment id rides along: it is the ONLY landmark a page-shaped
+    // document has, since a canvas files its comments under an empty section id.
+    expect(onNavigateToSection).toHaveBeenCalledWith('sec-1', 'c1');
     expect(ev.defaultPrevented).toBe(true);
   });
 

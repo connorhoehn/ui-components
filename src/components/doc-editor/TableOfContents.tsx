@@ -1,7 +1,25 @@
 // frontend/src/components/doc-editor/TableOfContents.tsx
 //
-// Mini table of contents sidebar that shows document sections as landmarks.
+// Mini table of contents sidebar that shows document SECTIONS as landmarks.
 // Highlights the currently visible section as the user scrolls.
+//
+// ## Legacy documents only
+//
+// Every entry here resolves through `getElementById('section-' + id)`, an
+// element only the section renderers emit (SectionBlock, ReaderSectionCard,
+// ReviewMode). A page-shaped document — `meta.schemaVersion >= 2` — renders one
+// continuous body with no section elements in it at all, so on a canvas this
+// panel is a list of links that scroll nowhere. On a CONVERTED document it is
+// worse than empty: the section array survives conversion frozen, so the panel
+// happily lists the pre-conversion headings as if they were the page.
+//
+// Do NOT try to infer the shape here from `sections.length` — the converted
+// case makes that inference backwards. The caller knows the shape and gates on
+// it (see EditorSidebarManager's `isCanvas`).
+//
+// The canvas equivalent is `DocumentOutline` + `useDocumentOutline`, which read
+// headings out of the ProseMirror document and address them by position rather
+// than by an id the page does not carry.
 
 import { useState, useEffect, useCallback } from 'react';
 import { cn } from '../../lib/cn';

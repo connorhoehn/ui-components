@@ -19,6 +19,8 @@ import { useMyMentionsAndTasks } from '../../hooks/useMyMentionsAndTasks';
 import { useVideoSessions } from '../../hooks/useVideoSessions';
 import { useDocumentActions } from './useDocumentActions';
 import { useSidebarPanels } from './useSidebarPanels';
+import { CANVAS_BODY_KEY, useIsCanvasDocument } from './canvas/documentShape';
+import { scrollToDocumentTarget } from './canvas/scrollToDocumentTarget';
 import { dedupeSectionsById, templateSectionId } from '../../hooks/templateSections';
 
 // ---------------------------------------------------------------------------
@@ -241,6 +243,17 @@ export function useDocumentEditorState({
     };
   }, [documentId, ws.connectionState, ws.sendMessage]);
 
+  /**
+   * Which shape this document is — the gate every section-deriving path below
+   * has to consult.
+   *
+   * Live, because a collaborator can convert the document mid-session. NOT
+   * `sections.length === 0`: a converted document keeps its section array,
+   * frozen and unread, so that inference reads a page as legacy. See
+   * ./canvas/documentShape.
+   */
+  const isCanvas = useIsCanvasDocument(ydoc);
+
   // Document actions (demo, clear, export)
   const { demoLoaded, handleLoadDemo, handleClearDocument, handleExport } = useDocumentActions({
     documentId,
@@ -250,6 +263,8 @@ export function useDocumentEditorState({
     addSection,
     exportJSON,
     getSectionFragment,
+    getCanvasFragment: () => (ydoc ? ydoc.getXmlFragment(CANVAS_BODY_KEY) : null),
+    isCanvas,
     comments,
   });
 
@@ -369,16 +384,21 @@ export function useDocumentEditorState({
     restRemoveItem(sectionId, itemId).catch(() => { /* social-api unavailable */ });
   }, [yjsRemoveItem, restRemoveItem]);
 
-  // Auto-focus first section on load
+  // Auto-focus first section on load.
+  //
+  // Skipped on a canvas: a converted document still HAS sections (frozen), so
+  // without the shape gate this focused — and broadcast over awareness — a
+  // section id that nothing on the page renders, which is how a follower ends
+  // up scrolling to a landmark that does not exist.
   useEffect(() => {
-    if (sections.length === 0 || focusedSectionId) return;
+    if (isCanvas || sections.length === 0 || focusedSectionId) return;
     const timer = setTimeout(() => {
       const firstId = sections[0].id;
       setFocusedSectionId(firstId);
       awareness.updateSection(firstId);
     }, 500);
     return () => clearTimeout(timer);
-  }, [sections, focusedSectionId, awareness]);
+  }, [isCanvas, sections, focusedSectionId, awareness]);
 
   // Section focus (awareness)
   const handleSectionFocus = useCallback((sectionId: string) => {
@@ -442,15 +462,19 @@ export function useDocumentEditorState({
   // My mentions & tasks
   const myItems = useMyMentionsAndTasks({ sections, comments, displayName, userId });
 
-  const handleNavigateToSection = useCallback((sectionId: string) => {
+  /**
+   * "Take me to that item" — on either shape.
+   *
+   * This was `getElementById('section-' + sectionId)` and nothing else. A
+   * canvas emits no section elements and files its comments under an EMPTY
+   * section id, so on every page-shaped document the lookup was
+   * `getElementById('section-')`, which is null, and clicking a row in My Items
+   * did nothing at all — no scroll, no error, no clue. The comment id is the
+   * canvas's landmark; see ./canvas/scrollToDocumentTarget.
+   */
+  const handleNavigateToSection = useCallback((sectionId: string, commentId?: string) => {
     setTimeout(() => {
-      const el = document.getElementById(`section-${sectionId}`);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.style.transition = 'box-shadow 0.3s ease';
-        el.style.boxShadow = '0 0 0 3px #3b82f640';
-        setTimeout(() => { el.style.boxShadow = ''; }, 2000);
-      }
+      scrollToDocumentTarget({ sectionId, commentId });
     }, 150);
   }, []);
 
@@ -628,6 +652,9 @@ export function useDocumentEditorState({
     sections,
     updateSection,
     getSectionFragment,
+    // Shape. Every section-deriving branch below the page consults this rather
+    // than the length of `sections`, which lies on a converted document.
+    isCanvas,
     // Per-section item load failures, keyed by sectionId. Passed through so a
     // section whose items failed to load can say so instead of rendering the
     // same empty state as a section that genuinely has none.

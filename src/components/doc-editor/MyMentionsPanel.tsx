@@ -14,7 +14,18 @@ import { onActivationKey } from '../../lib/activationKey';
 
 interface MyMentionsPanelProps {
   items: MyItem[];
-  onNavigateToSection: (sectionId: string) => void;
+  /**
+   * Jump to the item in the document.
+   *
+   * `commentId` is not optional decoration — it is the ONLY landmark a canvas
+   * has. A page-shaped document renders no `#section-<id>` elements and files
+   * its comments under an EMPTY section id (they are anchored to a text range
+   * instead), so passing the section id alone meant every row here was inert on
+   * every page document: the row highlighted on hover and the click did
+   * nothing, with no error. See `./canvas/scrollToDocumentTarget`, which
+   * resolves whichever landmark the document in front of it actually has.
+   */
+  onNavigateToSection: (sectionId: string, commentId?: string) => void;
   onClose: () => void;
 }
 
@@ -79,7 +90,12 @@ function MentionRow({
       </div>
       <div className={cn('flex-1 min-w-0')}>
         <div className={cn('text-[13px] text-text-primary overflow-hidden text-ellipsis whitespace-nowrap')}>{item.commentText}</div>
-        <div className={cn('text-[11px] text-text-tertiary mt-0.5')}>{item.sectionTitle}</div>
+        {/* A canvas document has no sections, so this is empty for most
+            documents now — and an empty label is a blank line of dead space
+            under every row, not a subtle omission. */}
+        {item.sectionTitle && (
+          <div className={cn('text-[11px] text-text-tertiary mt-0.5')}>{item.sectionTitle}</div>
+        )}
       </div>
       <div className={cn('text-[11px] text-text-tertiary shrink-0 mt-0.5')}>{formatRelativeTime(item.timestamp)}</div>
       <button
@@ -141,7 +157,10 @@ function TaskRow({
             {item.status}
           </span>
         </div>
-        <div className={cn('text-[11px] text-text-tertiary mt-0.5')}>{item.sectionTitle}</div>
+        {/* Same story as the mention row: no section, no caption. */}
+        {item.sectionTitle && (
+          <div className={cn('text-[11px] text-text-tertiary mt-0.5')}>{item.sectionTitle}</div>
+        )}
       </div>
       <button
         type="button"
@@ -238,7 +257,7 @@ export default function MyMentionsPanel({
             <MentionRow
               key={item.commentId}
               item={item}
-              onClick={() => onNavigateToSection(item.sectionId)}
+              onClick={() => onNavigateToSection(item.sectionId, item.commentId)}
               onDismiss={() => dismissItem(item.commentId)}
             />
           ) : (

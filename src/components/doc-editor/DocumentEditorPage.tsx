@@ -71,7 +71,12 @@ export default function DocumentEditorPage({
     onBack,
   });
 
-  const isEmpty = state.sections.length === 0 && !state.demoLoaded;
+  // "Empty" means the SECTION substrate is empty, which on a page-shaped
+  // document is always true and always irrelevant — its content lives in one
+  // body fragment. Without the shape gate, every canvas document rendered the
+  // "No document content yet / Load Demo Document" prompt over a page full of
+  // text, and loading the demo would have written legacy sections onto it.
+  const isEmpty = !state.isCanvas && state.sections.length === 0 && !state.demoLoaded;
 
   // ---- Video portal (single-mount for IVS session persistence) ----
   // The videoHost div is stable across renders — relocated via DOM appendChild
@@ -143,7 +148,10 @@ export default function DocumentEditorPage({
         isCallActive={!!state.meta?.activeCallSessionId}
         onClearDocument={state.handleClearDocument}
         onJumpToUser={state.handleJumpToUser}
-        sections={state.sections.map(s => ({ id: s.id, title: s.title }))}
+        // Empty on a canvas: the header's participant menu labels "who is
+        // where" by section, and a converted document's frozen sections would
+        // caption every collaborator with a heading that is not on the page.
+        sections={state.isCanvas ? [] : state.sections.map(s => ({ id: s.id, title: s.title }))}
         onToggleMyItems={state.handleToggleMyItems}
         myItemCount={state.myItems.length}
         commentCount={Object.values(state.comments).reduce((sum, threads) => sum + threads.length, 0)}
@@ -164,6 +172,7 @@ export default function DocumentEditorPage({
         <EditorModeSwitch
           mode={state.mode}
           isEmpty={isEmpty}
+          isCanvas={state.isCanvas}
           isFinalized={state.isFinalized}
           sections={state.sections}
           documentId={documentId}
@@ -220,6 +229,7 @@ export default function DocumentEditorPage({
         onNavigateToSection={state.handleNavigateToSection}
         videoSessions={state.videoSessions}
         showTOC={state.showTOC}
+        isCanvas={state.isCanvas}
         commentSidebarOpen={state.commentSidebarOpen}
         sections={state.sections}
         focusedSectionId={state.focusedSectionId}

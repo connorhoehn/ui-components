@@ -24,6 +24,17 @@ import { xmlFragmentToText } from './useDocumentEditorState';
 export interface EditorModeSwitchProps {
   mode: ViewMode;
   isEmpty: boolean;
+  /**
+   * True when the document is page-shaped (`meta.schemaVersion >= 2`).
+   *
+   * Everything this component routes to — SectionList, ReviewMode, ReaderMode,
+   * the per-section comment sidebar — is built out of `sections`, and a canvas
+   * has none. Rendered against a page they produced an empty pane and no error;
+   * against a CONVERTED page, worse, they rendered the frozen pre-conversion
+   * sections as though they were the document. Defaults to false so an existing
+   * host that has not been taught about shapes keeps the legacy behaviour.
+   */
+  isCanvas?: boolean;
   isFinalized: boolean;
   sections: Section[];
   documentId: string;
@@ -97,6 +108,7 @@ export interface EditorModeSwitchProps {
 export default function EditorModeSwitch({
   mode,
   isEmpty,
+  isCanvas = false,
   isFinalized,
   sections,
   documentId,
@@ -176,8 +188,29 @@ export default function EditorModeSwitch({
         </div>
       )}
 
+      {/* A page-shaped document has no sections to route to.
+
+          Said out loud rather than rendered as a blank pane. Every branch below
+          derives from `sections`, so on a canvas they all produced nothing at
+          all — no content, no error, no explanation — and the host had no way
+          to tell "this document is empty" from "this component cannot draw
+          this document". The page surface for a canvas is `CanvasDocumentView`,
+          which the host composes itself. */}
+      {isCanvas && (
+        <div
+          data-testid="canvas-not-section-routable"
+          className="text-center py-12 px-4 text-text-secondary"
+        >
+          <p className="text-[15px] mb-1">This is a page document.</p>
+          <p className="text-[13px] text-text-tertiary">
+            Section, review and reader views describe a sectioned document. Render a page with
+            CanvasDocumentView.
+          </p>
+        </div>
+      )}
+
       {/* Show demo loader when document is empty */}
-      {isEmpty && (
+      {!isCanvas && isEmpty && (
         <div className="text-center py-12 px-4 text-text-secondary">
           <p className="text-lg mb-4">
             No document content yet.
@@ -198,7 +231,7 @@ export default function EditorModeSwitch({
       )}
 
       {/* Editor mode — centered content with inline comment sidebar */}
-      {!isEmpty && mode === 'editor' && ydoc && (
+      {!isCanvas && !isEmpty && mode === 'editor' && ydoc && (
         <div ref={sectionListRef} className="flex gap-4 relative min-w-0">
 
           {/* Left: video sidebar spacer */}
@@ -292,7 +325,7 @@ export default function EditorModeSwitch({
       )}
 
       {/* Review (ack) mode */}
-      {!isEmpty && mode === 'ack' && ydoc && (
+      {!isCanvas && !isEmpty && mode === 'ack' && ydoc && (
         <ReviewMode
           sections={sections}
           participants={participants}
@@ -320,7 +353,7 @@ export default function EditorModeSwitch({
       )}
 
       {/* Reader mode */}
-      {!isEmpty && mode === 'reader' && ydoc && (
+      {!isCanvas && !isEmpty && mode === 'reader' && ydoc && (
         <ReaderMode
           sections={sections}
           participants={participants}

@@ -37,7 +37,26 @@ export { default as TaskItemRow } from './TaskItemRow';
 export { default as TaskList } from './TaskList';
 export { default as MyMentionsPanel } from './MyMentionsPanel';
 export { MentionDropdown } from './MentionDropdown';
-export { useDocumentActions } from './useDocumentActions';
+export { useDocumentActions, canvasFragmentToMarkdown } from './useDocumentActions';
+
+// ── Document shape: legacy sections vs. canvas page ──
+//
+// The one gate. A host that derives anything from `sections` needs this, and
+// needs it to be the SCHEMA VERSION rather than `sections.length === 0` — a
+// converted document keeps its section array, frozen, so the length check reads
+// a page as legacy and operates on pre-conversion content.
+export {
+  CANVAS_SCHEMA_VERSION,
+  CANVAS_BODY_KEY,
+  isCanvasDocument,
+  readSchemaVersion,
+  canvasBody,
+  useIsCanvasDocument,
+} from './canvas/documentShape';
+// "Take me to that", on either shape: a section element on a legacy document,
+// a `data-comment-id` highlight on a page.
+export { findDocumentTarget, scrollToDocumentTarget } from './canvas/scrollToDocumentTarget';
+export type { DocumentTarget } from './canvas/scrollToDocumentTarget';
 export { useSidebarPanels } from './useSidebarPanels';
 export { getInitials, relativeTime, countAllComments } from './CommentThread';
 export { KeyDecisionsCard, ActionItemsCard, SectionSummariesCard } from './ReaderSectionCard';
