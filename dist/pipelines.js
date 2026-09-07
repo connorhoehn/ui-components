@@ -21,7 +21,7 @@ import { t as N } from "./Select-CqVokE2v.js";
 import { t as ne } from "./Checkbox-DsS7fIUO.js";
 import { t as P } from "./activationKey-CjbL3LUv.js";
 import { n as F, r as re, t as ie } from "./EventStreamContext-CLzG8O5_.js";
-import { $ as ae, B as oe, C as se, D as ce, E as le, F as ue, G as de, H as fe, I as pe, J as me, K as he, L as ge, N as _e, O as ve, P as ye, R as be, S as xe, T as Se, U as Ce, V as we, W as Te, X as Ee, Y as De, Z as Oe, _ as ke, a as Ae, b as je, c as Me, d as Ne, et as Pe, f as Fe, g as Ie, i as Le, it as Re, j as ze, k as Be, l as Ve, m as He, n as Ue, nt as We, o as Ge, p as Ke, q as qe, r as Je, rt as Ye, s as Xe, t as Ze, tt as Qe, u as $e, v as et, w as I, y as tt, z as nt } from "./services-DRFiqZwT.js";
+import { $ as ae, B as oe, C as se, D as ce, E as le, F as ue, G as de, H as fe, I as pe, J as me, K as he, L as ge, N as _e, O as ve, P as ye, R as be, S as xe, T as Se, U as Ce, V as we, W as Te, X as Ee, Y as De, Z as Oe, _ as ke, a as Ae, b as je, c as Me, d as Ne, et as Pe, f as Fe, g as Ie, i as Le, it as Re, j as ze, k as Be, l as Ve, m as He, n as Ue, nt as We, o as Ge, p as Ke, q as qe, r as Je, rt as Ye, s as Xe, t as Ze, tt as Qe, u as $e, v as et, w as I, y as tt, z as nt } from "./services-D-dbQUh6.js";
 import { t as rt } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as it } from "./TraceTimeline-2C-0_L3C.js";
 import at, { createContext as ot, memo as st, useCallback as L, useContext as ct, useEffect as R, useId as lt, useMemo as z, useRef as B, useState as V } from "react";
@@ -14325,6 +14325,7 @@ function Wc(e) {
 		case "running": return "info";
 		case "pending": return "neutral";
 		case "awaiting_approval": return "warning";
+		case "stuck": return "warning";
 		default: return "neutral";
 	}
 }
@@ -14337,6 +14338,7 @@ function Gc(e) {
 		case "running": return "Running";
 		case "pending": return "Pending";
 		case "awaiting_approval": return "Awaiting";
+		case "stuck": return "Stuck";
 		default: return e;
 	}
 }
@@ -14534,6 +14536,7 @@ function Qc(e) {
 		case "running": return "info";
 		case "pending": return "neutral";
 		case "awaiting_approval": return "warning";
+		case "stuck": return "warning";
 		default: return "neutral";
 	}
 }
@@ -14546,6 +14549,7 @@ function $c(e) {
 		case "running": return "Running";
 		case "pending": return "Pending";
 		case "awaiting_approval": return "Awaiting";
+		case "stuck": return "Stuck";
 		default: return e;
 	}
 }
@@ -18238,6 +18242,7 @@ function su(e, t, n = 30, r = /* @__PURE__ */ new Date()) {
 var cu = [
 	"pending",
 	"running",
+	"stuck",
 	"completed",
 	"rejected",
 	"failed",
@@ -18307,11 +18312,11 @@ function gu(e) {
 var _u = {
 	pending: "Pending",
 	running: "Running",
+	stuck: "Stuck",
 	completed: "Completed",
 	rejected: "Rejected",
 	failed: "Failed",
-	cancelled: "Cancelled",
-	paused_at_breakpoint: "Paused"
+	cancelled: "Cancelled"
 }, vu = {
 	manual: "Manual",
 	scheduled: "Scheduled",
@@ -18496,6 +18501,10 @@ function Cu(e) {
 			label: "Paused",
 			tone: "warning"
 		};
+		case "stuck": return {
+			label: "Stuck",
+			tone: "warning"
+		};
 		default: return {
 			label: e,
 			tone: "neutral"
@@ -18573,10 +18582,10 @@ function Du({ filtered: e, selected: t, onSelectionChange: n, comparePair: i, on
 				children: e
 			}, `${e}-${t}`))]
 		}) }), /* @__PURE__ */ U("tbody", { children: e.map((e, n) => {
-			let { tone: d, label: f } = Cu(e.status), p = t.has(e.id), m = pu(e);
+			let { tone: d, label: f } = Cu(e.status), p = e.status === "stuck" || e.status === "running" && !!e.stuckAt, m = t.has(e.id), g = pu(e);
 			return /* @__PURE__ */ W("tr", {
 				"data-testid": `run-card-${e.id}`,
-				className: r("border-b border-border cursor-pointer hover:bg-surface-hover", p && "bg-surface-hover"),
+				className: r("border-b border-border cursor-pointer hover:bg-surface-hover", m && "bg-surface-hover"),
 				onClick: () => c(`/pipelines/${s}/runs/${e.id}`),
 				children: [
 					/* @__PURE__ */ W("td", {
@@ -18591,7 +18600,7 @@ function Du({ filtered: e, selected: t, onSelectionChange: n, comparePair: i, on
 							},
 							children: /* @__PURE__ */ U(ne, {
 								"data-testid": `run-select-${e.id}`,
-								checked: p,
+								checked: m,
 								onChange: () => {
 									let t = u.current;
 									u.current = !1, h(e.id, n, t);
@@ -18620,7 +18629,7 @@ function Du({ filtered: e, selected: t, onSelectionChange: n, comparePair: i, on
 								"aria-label": `Status: ${f}`,
 								children: f
 							}),
-							e.status === "running" && e.stuckAt && /* @__PURE__ */ U(w, {
+							p && e.status !== "stuck" && e.stuckAt && /* @__PURE__ */ U(w, {
 								tone: "warning",
 								size: "xs",
 								"data-testid": `run-stuck-badge-${e.id}`,
@@ -18643,10 +18652,10 @@ function Du({ filtered: e, selected: t, onSelectionChange: n, comparePair: i, on
 						children: ma(e.durationMs)
 					}),
 					/* @__PURE__ */ U("td", {
-						className: r("px-3 py-2.5 text-xs font-mono", m > 0 ? "text-text-primary" : "text-text-tertiary"),
+						className: r("px-3 py-2.5 text-xs font-mono", g > 0 ? "text-text-primary" : "text-text-tertiary"),
 						"data-testid": `run-retries-${e.id}`,
-						title: m > 0 ? `${m} retry attempts across this run` : "No retries — every step succeeded on first attempt",
-						children: m > 0 ? `×${m}` : "—"
+						title: g > 0 ? `${g} retry attempts across this run` : "No retries — every step succeeded on first attempt",
+						children: g > 0 ? `×${g}` : "—"
 					}),
 					/* @__PURE__ */ U("td", {
 						className: "px-3 py-2.5 text-xs text-text-secondary font-mono",
@@ -18665,7 +18674,7 @@ function Du({ filtered: e, selected: t, onSelectionChange: n, comparePair: i, on
 						className: "px-3 py-2.5 text-xs text-text-secondary text-right",
 						onClick: (e) => e.stopPropagation(),
 						children: [
-							e.status === "running" && e.stuckAt && /* @__PURE__ */ U("button", {
+							p && /* @__PURE__ */ U("button", {
 								type: "button",
 								"data-testid": `force-fail-${e.id}`,
 								onClick: async (t) => {
@@ -20379,7 +20388,7 @@ function Sd({ pipelineId: e, runId: t }) {
 	let n = dt(), i = pe(), a = Se(), { definition: o } = i, [s, c] = V(null), [l, u] = V(null), [d, f] = V(0), p = L(() => f((e) => e + 1), []);
 	R(() => {
 		let n = !1;
-		return u(null), import("./services-DRFiqZwT.js").then((e) => e.Q).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
+		return u(null), import("./services-D-dbQUh6.js").then((e) => e.Q).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
 			!n && e && c(e);
 		})).catch((e) => {
 			n || u(e instanceof Error ? e.message : String(e));
@@ -21135,6 +21144,7 @@ function Id(e) {
 		case "failed": return "danger";
 		case "cancelled": return "neutral";
 		case "awaiting_approval": return "warning";
+		case "stuck": return "warning";
 		case "running": return "info";
 		case "pending": return "neutral";
 		default: return "neutral";
@@ -21327,6 +21337,7 @@ function Hd(e) {
 		case "failed": return "danger";
 		case "cancelled": return "neutral";
 		case "awaiting_approval": return "warning";
+		case "stuck": return "warning";
 		case "running": return "info";
 		case "pending": return "neutral";
 		default: return "neutral";

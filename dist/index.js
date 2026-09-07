@@ -44,13 +44,13 @@ import { t as Qr } from "./ActivityFeed-C9KAtqCl.js";
 import { t as $r } from "./Select-CqVokE2v.js";
 import { t as ei } from "./Checkbox-DsS7fIUO.js";
 import { n as ti, r as ni, t as ri } from "./ReactionsOverlay-Ob1ecsgg.js";
-import { A as ii, C as ai, D as oi, E as si, M as ci, O as li, S as ui, T as di, _ as fi, a as pi, b as mi, c as hi, d as gi, f as _i, g as vi, h as yi, i as bi, j as xi, k as Si, l as Ci, m as wi, n as Ti, o as Ei, p as Di, r as Oi, s as ki, t as Ai, u as ji, v as Mi, w as Ni, x as Pi, y as Fi } from "./ConversationSurface-C_1yv6zL.js";
+import { A as ii, C as ai, D as oi, E as si, M as ci, O as li, S as ui, T as di, _ as fi, a as pi, b as mi, c as hi, d as gi, f as _i, g as vi, h as yi, i as bi, j as xi, k as Si, l as Ci, m as wi, n as Ti, o as Ei, p as Di, r as Oi, s as ki, t as Ai, u as ji, v as Mi, w as Ni, x as Pi, y as Fi } from "./ConversationSurface-DsePulJM.js";
 import { t as Ii } from "./activationKey-CjbL3LUv.js";
 import { a as Li, i as Ri } from "./renderers-B2c6fv2M.js";
 import { n as zi, r as Bi, t as Vi } from "./EventStreamContext-CLzG8O5_.js";
-import { A as Hi, C as Ui, J as Wi, M as Gi, T as Ki, X as qi, Z as Ji, _ as Yi, b as Xi, c as Zi, d as Qi, f as $i, g as ea, h as ta, it as na, m as ra, n as ia, p as aa, q as oa, rt as sa, t as ca, u as la, v as ua, x as da, y as fa, z as pa } from "./services-DRFiqZwT.js";
+import { A as Hi, C as Ui, J as Wi, M as Gi, T as Ki, X as qi, Z as Ji, _ as Yi, b as Xi, c as Zi, d as Qi, f as $i, g as ea, h as ta, it as na, m as ra, n as ia, p as aa, q as oa, rt as sa, t as ca, u as la, v as ua, x as da, y as fa, z as pa } from "./services-D-dbQUh6.js";
 import { n as ma, t as ha } from "./ObservabilityContext-DpoDrm3T.js";
-import { a as ga, c as _a, d as va, f as ya, h as ba, i as xa, l as Sa, m as Ca, n as wa, o as Ta, p as Ea, r as Da, s as Oa, t as ka, u as Aa } from "./social-fAb9mNCf.js";
+import { a as ga, c as _a, d as va, f as ya, h as ba, i as xa, l as Sa, m as Ca, n as wa, o as Ta, p as Ea, r as Da, s as Oa, t as ka, u as Aa } from "./social-6L0rvhSA.js";
 import { n as ja, r as Ma, t as Na } from "./ReactionPickerPopover-moHezwrL.js";
 import { i as Pa, n as Fa, r as Ia, t as La } from "./LinkDialog-DazAeDjI.js";
 import { $ as Ra, A as za, B as Ba, C as Va, D as Ha, E as Ua, F as Wa, G as Ga, H as Ka, I as qa, J as Ja, K as Ya, L as Xa, M as Za, N as Qa, O as $a, P as eo, Q as to, R as no, S as ro, T as io, U as ao, V as oo, W as so, X as co, Y as lo, Z as uo, _ as fo, a as po, at as mo, b as ho, c as go, d as _o, et as vo, f as yo, g as bo, h as xo, i as So, it as Co, j as wo, k as To, l as Eo, m as Do, n as Oo, nt as ko, o as Ao, ot as jo, p as Mo, q as No, r as Po, rt as Fo, s as Io, st as Lo, t as Ro, tt as zo, u as Bo, v as Vo, w as Ho, x as Uo, y as Wo, z as Go } from "./video-DzIRb6Wb.js";
@@ -1286,7 +1286,7 @@ function Jc() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Yc = ic(() => import("./DocumentEditorPage-B4ctfUDH.js").then((e) => e.n));
+var Yc = ic(() => import("./DocumentEditorPage-Da5gHE2T.js").then((e) => e.n));
 function Xc({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

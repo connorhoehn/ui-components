@@ -762,7 +762,7 @@ function he({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers
 									attachment: e,
 									src: fe?.(e),
 									onOpen: he
-								}, e.id))] }), f = t.id ?? "", p = f && b ? b(f) : [], h = t.metadata?.replyTo, g = !!f && !!T?.has(f), M = !!m && t.userId === m, N = /* @__PURE__ */ y(_, { children: [
+								}, e.id))] }), f = t.id ?? "", p = f && b ? b(f) : [], h = t.metadata?.replyTo, g = !!f && !!T?.has(f), M = !!m && t.userId === m, N = t.metadata?.system === !0, P = /* @__PURE__ */ y(_, { children: [
 									h && /* @__PURE__ */ v(ie, {
 										quote: h,
 										onJump: E,
@@ -795,16 +795,16 @@ function he({ messages: n, onSend: r, disabled: i = !1, onTyping: a, typingUsers
 									className: e("group relative rounded-md", f && f === ee && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
 									children: [/* @__PURE__ */ v(w, {
 										author: r,
-										content: N,
+										content: P,
 										timestamp: t.timestamp,
 										avatarUrl: t.avatarUrl,
 										tone: j,
 										mine: M
-									}), f && (x || S || C) && /* @__PURE__ */ v(L, {
+									}), f && (x || !N && (S || C)) && /* @__PURE__ */ v(L, {
 										className: e("absolute -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100", M ? "right-14" : "left-14"),
 										onReact: x ? (e) => x(f, e) : void 0,
-										onReply: S ? () => S(t) : void 0,
-										onTogglePin: C ? () => C(t) : void 0,
+										onReply: S && !N ? () => S(t) : void 0,
+										onTogglePin: C && !N ? () => C(t) : void 0,
 										pinned: g
 									})]
 								}, t.id ?? n);

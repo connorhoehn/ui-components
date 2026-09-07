@@ -1313,7 +1313,7 @@ function Re(e) {
 function ze(e) {
 	let t = Object.values(e);
 	if (t.length <= Fe) return e;
-	let n = t.filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint"), r = t.filter((e) => e.status !== "running" && e.status !== "pending" && e.status !== "awaiting_approval" && e.status !== "paused_at_breakpoint").sort((e, t) => t.startedAt.localeCompare(e.startedAt)).slice(0, Math.max(0, Fe - n.length)), i = [...n, ...r], a = {};
+	let n = t.filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint" || e.status === "stuck"), r = t.filter((e) => e.status !== "running" && e.status !== "pending" && e.status !== "awaiting_approval" && e.status !== "paused_at_breakpoint" && e.status !== "stuck").sort((e, t) => t.startedAt.localeCompare(e.startedAt)).slice(0, Math.max(0, Fe - n.length)), i = [...n, ...r], a = {};
 	for (let e of i) a[e.id] = e;
 	return a;
 }
@@ -1440,7 +1440,7 @@ function Be({ children: e }) {
 				[t.id]: t
 			};
 		});
-	}, []), I = m(() => Object.values(i).filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint").map((e) => e.id), [i]), L = m(() => ({
+	}, []), I = m(() => Object.values(i).filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint" || e.status === "stuck").map((e) => e.id), [i]), L = m(() => ({
 		runs: i,
 		activeRunIds: I,
 		triggerRun: b,

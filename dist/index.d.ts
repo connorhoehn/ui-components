@@ -7763,13 +7763,15 @@ export declare interface PipelineRunSummary {
      * stats page never counted it. Backend now serves canonical spellings from
      * both endpoints.
      *
-     * `interrupted` is a platform-api-only lifecycle state (orphan scan) that
-     * is not part of `RunStatus`, so it stays spelled out here.
+     * `interrupted` is a platform-api-only lifecycle state (orphan scan /
+     * force-fail outcome) that is not part of `RunStatus`, so it stays spelled
+     * out here.
      *
-     * Note: the backend can also emit `stuck` (StuckRunDetector), which neither
-     * this union nor `RunStatus` models yet — see the note in `pipeline.ts`.
+     * `stuck` IS part of `RunStatus` (distributed-core's StuckRunDetector emits
+     * `pipeline:run:stuck` for a run that has gone quiet); it must appear here
+     * too or `WireCarriesEveryRunStatus` in `pipeline.ts` fails to compile.
      */
-    status: 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'rejected' | 'failed' | 'cancelled' | 'interrupted';
+    status: 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'rejected' | 'failed' | 'cancelled' | 'stuck' | 'interrupted';
     startedAt: string;
     completedAt?: string;
     triggeredBy: {
@@ -8893,14 +8895,12 @@ export declare interface RosterParticipant {
 /**
  * The status vocabulary every UI comparison site keys off. Canonical — it
  * matches distributed-core's `RunStatus` and the backend's shared
- * `PipelineRunStatus`, minus `stuck` (see below).
+ * `PipelineRunStatus`.
  *
- * Known gap: the backend can emit `stuck` (StuckRunDetector) and
- * `interrupted` (orphan scan). Neither is modelled here, so both fall through
- * to the `default` arm of every badge map and render as raw text. Adding them
- * is a deliberate follow-up — it forces updates in `runsUtils.ts` (`StatusKey`
- * / `STATUS_KEYS`), `RunsFilterBar.tsx` (`STATUS_LABEL`), and the exhaustive
- * switch in `persistence/seedDemoData.ts`.
+ * Remaining gap: `interrupted` (platform-api's orphan scan / force-fail
+ * outcome) is still not modelled here. It is spelled out on the wire union in
+ * `pipeline-contracts.ts` instead, because it is a platform-api lifecycle
+ * state the executor kernel never produces.
  */
 export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed'
 /**
@@ -8908,7 +8908,30 @@ export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'p
 * `completed` on purpose — a rejected run used to be listed as a success,
 * which made approve and reject look identical in the Runs list.
 */
-| 'rejected' | 'failed' | 'cancelled';
+| 'rejected' | 'failed' | 'cancelled'
+/**
+* NOT terminal: the run is still open, it has just stopped reporting
+* progress. `StuckRunDetector` in distributed-core watches every run in
+* `running` / `awaiting_approval` and, after `intervalMs × stuckMultiplier`
+* (30 s by default) with no `pipeline:step:heartbeat` and no
+* `pipeline:llm:token`, publishes `pipeline:run:stuck` carrying the last
+* heartbeat time (`StuckRunDetector.ts`, `scan()`). The kernel does not stop
+* the run — it keeps executing and may still finish by itself — so this
+* means "nobody has heard from this run", not "this run has ended".
+* `PipelineRun.stuckAt` carries the timestamp.
+*
+* Terminal-ness matters here: the `completed` / `failed` / `cancelled` that
+* eventually arrives has to be allowed to overwrite it, and a late heartbeat
+* may simply resume progress. An operator who decides it will never recover
+* uses force-fail, which moves the run to the platform-api-only
+* `interrupted` state.
+*
+* NOTE for future editors: no straight quotes inside this comment. The
+* `unionMembers` reader in `scripts/check-types-sync.mjs` scrapes quoted
+* literals off the raw union text without stripping comments, so a quoted
+* word here is read as a bogus `RunStatus` member. Backticks only.
+*/
+| 'stuck';
 
 declare type SaveOutcome = {
     status: 'synced';
