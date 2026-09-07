@@ -125,11 +125,19 @@ export interface StreamStageProps {
   /**
    * Watchers, when the number is KNOWN. Pass `null` (or omit) when it is not.
    *
-   * A count of 0 is treated as unknown and suppressed: the person reading it
-   * is themselves watching, so "0 watching" is refuted by the act of reading
-   * it — and 0 is exactly what an unmeasured gauge returns. Passing a real
-   * measured zero is therefore not expressible, on purpose; there is no
-   * audience for that number anyway.
+   * `null`/omitted and `0` are DIFFERENT claims and this component keeps them
+   * apart: null renders no badge at all ("nobody has told us"), and a numeric
+   * 0 renders "0 watching" ("somebody counted, and the answer was nobody").
+   *
+   * They were collapsed once — 0 was suppressed as if it were unknown — and
+   * that is the wrong way round for this codebase specifically. Viewer count
+   * here was STRUCTURALLY zero for a long time (the tracker had no callers at
+   * all, so every channel reported an empty house), and a visible "0 watching"
+   * is the only thing that distinguishes a working counter from a missing
+   * one. Suppressing the zero hides exactly the failure worth catching.
+   *
+   * So a caller must never turn "not told" into 0 to satisfy the type. Omit
+   * the prop instead — see WrappedStreamStage, which spreads it conditionally.
    */
   viewerCount?: number | null;
   /**
@@ -545,7 +553,6 @@ export function StreamStage({
   );
 }
 
-/** A count is worth showing only when it is measured and non-zero. See the prop docs. */
 /**
  * `null`/`undefined` mean nobody measured; a numeric 0 means somebody did and
  * the answer was nobody.

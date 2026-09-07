@@ -239,3 +239,9 @@ export type { UseHlsSourceState, UseHlsSourceOptions, HlsPhase } from '../../lib
 export { useAudioLevel } from '../../lib/video/useAudioLevel';
 export { StreamChatTicker } from './StreamChatTicker';
 export type { StreamChatTickerProps, StreamChatMessage } from './StreamChatTicker';
+
+// The other end of the watch surface: STARTING a broadcast deliberately,
+// rather than a broadcast being the side effect of somebody starting a call.
+// Ships inert — hosts gate it behind their own flag. See the file header.
+export { GoLiveButton } from './GoLiveButton';
+export type { GoLiveButtonProps } from './GoLiveButton';
