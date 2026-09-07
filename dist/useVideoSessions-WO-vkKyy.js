@@ -1,19 +1,20 @@
 import { n as e, r as t } from "./useWebSocket-CGc0yRhM.js";
-import { useCallback as n, useEffect as r, useMemo as i, useRef as a, useState as o } from "react";
-import * as s from "yjs";
+import { n, t as r } from "./userDirectory-CyWbVxFq.js";
+import { useCallback as i, useEffect as a, useMemo as o, useRef as s, useState as c } from "react";
+import * as l from "yjs";
 //#region src/hooks/useIdleDetector.ts
-var c = 12e4, l = 500;
-function u(e = {}) {
-	let { timeoutMs: t = c } = e, [i, s] = o(!1), u = a(null), d = a(null), f = a(!1), p = n(() => {
-		u.current !== null && clearTimeout(u.current), f.current && (f.current = !1, s(!1)), u.current = setTimeout(() => {
-			f.current = !0, s(!0);
+var u = 12e4, d = 500;
+function f(e = {}) {
+	let { timeoutMs: t = u } = e, [n, r] = c(!1), o = s(null), l = s(null), f = s(!1), p = i(() => {
+		o.current !== null && clearTimeout(o.current), f.current && (f.current = !1, r(!1)), o.current = setTimeout(() => {
+			f.current = !0, r(!0);
 		}, t);
-	}, [t]), m = n(() => {
-		d.current === null && (d.current = setTimeout(() => {
-			d.current = null;
-		}, l), p());
+	}, [t]), m = i(() => {
+		l.current === null && (l.current = setTimeout(() => {
+			l.current = null;
+		}, d), p());
 	}, [p]);
-	return r(() => {
+	return a(() => {
 		let e = [
 			"mousemove",
 			"keydown",
@@ -24,27 +25,27 @@ function u(e = {}) {
 		for (let t of e) window.addEventListener(t, m, { passive: !0 });
 		return p(), () => {
 			for (let t of e) window.removeEventListener(t, m);
-			u.current !== null && clearTimeout(u.current), d.current !== null && clearTimeout(d.current);
+			o.current !== null && clearTimeout(o.current), l.current !== null && clearTimeout(l.current);
 		};
-	}, [m, p]), { isIdle: i };
+	}, [m, p]), { isIdle: n };
 }
 //#endregion
 //#region src/hooks/useAwarenessState.ts
-function d(e, t) {
-	let o = a({
+function p(e, t) {
+	let n = s({
 		...t,
 		name: t.displayName,
 		lastSeen: Date.now(),
 		idle: !1
-	}), s = a(e);
-	s.current = e;
-	let c = n(() => {
-		let e = s.current;
-		e?.awareness && (o.current.lastSeen = Date.now(), e.awareness.setLocalStateField("user", { ...o.current }));
+	}), r = s(e);
+	r.current = e;
+	let c = i(() => {
+		let e = r.current;
+		e?.awareness && (n.current.lastSeen = Date.now(), e.awareness.setLocalStateField("user", { ...n.current }));
 	}, []);
-	r(() => {
-		e?.awareness && (o.current = {
-			...o.current,
+	a(() => {
+		e?.awareness && (n.current = {
+			...n.current,
 			...t,
 			name: t.displayName,
 			lastSeen: Date.now()
@@ -57,102 +58,102 @@ function d(e, t) {
 		t.mode,
 		c
 	]);
-	let { isIdle: l } = u();
-	r(() => {
-		o.current.idle = l, c();
+	let { isIdle: l } = f();
+	a(() => {
+		n.current.idle = l, c();
 	}, [l, c]);
-	let d = n((e) => {
-		o.current.currentSectionId = e, c();
-	}, [c]), f = n((e) => {
-		o.current.mode = e, c();
-	}, [c]), p = n((e) => {
-		o.current.idle = e, c();
-	}, [c]), m = n((e, t) => {
-		o.current.name = e, o.current.color = t, c();
+	let u = i((e) => {
+		n.current.currentSectionId = e, c();
+	}, [c]), d = i((e) => {
+		n.current.mode = e, c();
+	}, [c]), p = i((e) => {
+		n.current.idle = e, c();
+	}, [c]), m = i((e, t) => {
+		n.current.name = e, n.current.color = t, c();
 	}, [c]);
-	return i(() => ({
-		updateSection: d,
-		updateMode: f,
+	return o(() => ({
+		updateSection: u,
+		updateMode: d,
 		updateIdle: p,
 		updateCursorInfo: m
 	}), [
+		u,
 		d,
-		f,
 		p,
 		m
 	]);
 }
 //#endregion
 //#region src/hooks/useAwareness.ts
-function f(e, t) {
-	let [n, a] = o([]), s = d(e, {
+function m(e, t) {
+	let [n, r] = c([]), i = p(e, {
 		userId: t.userId,
 		displayName: t.displayName,
 		color: t.color,
 		mode: t.mode,
 		currentSectionId: null
 	});
-	return r(() => {
+	return a(() => {
 		if (!e) {
-			a([]);
+			r([]);
 			return;
 		}
 		let t = "", n = () => {
-			let n = e.awareness.getStates(), r = [];
+			let n = e.awareness.getStates(), i = [];
 			n.forEach((t, n) => {
 				if (n === e.awareness.clientID) return;
-				let i = t.user;
-				i && r.push({
+				let r = t.user;
+				r && i.push({
 					clientId: String(n),
-					userId: i.userId ?? "",
-					displayName: i.displayName ?? "Anonymous",
-					color: i.color ?? "#3b82f6",
-					mode: i.mode === "ack" ? "reviewer" : i.mode === "reader" ? "reader" : "editor",
-					currentSectionId: i.currentSectionId ?? null,
-					lastSeen: i.lastSeen ?? Date.now(),
-					idle: i.idle ?? !1
+					userId: r.userId ?? "",
+					displayName: r.displayName ?? "Anonymous",
+					color: r.color ?? "#3b82f6",
+					mode: r.mode === "ack" ? "reviewer" : r.mode === "reader" ? "reader" : "editor",
+					currentSectionId: r.currentSectionId ?? null,
+					lastSeen: r.lastSeen ?? Date.now(),
+					idle: r.idle ?? !1
 				});
 			});
-			let i = /* @__PURE__ */ new Map();
-			for (let e of r) {
-				let t = e.userId || e.displayName || e.clientId, n = i.get(t);
-				(!n || (e.lastSeen ?? 0) > (n.lastSeen ?? 0)) && i.set(t, e);
+			let a = /* @__PURE__ */ new Map();
+			for (let e of i) {
+				let t = e.userId || e.displayName || e.clientId, n = a.get(t);
+				(!n || (e.lastSeen ?? 0) > (n.lastSeen ?? 0)) && a.set(t, e);
 			}
-			let o = Array.from(i.values()), s = o.map((e) => `${e.clientId}:${e.currentSectionId}:${e.mode}:${e.idle}`).join("|");
-			s !== t && (t = s, queueMicrotask(() => a(o)));
+			let o = Array.from(a.values()), s = o.map((e) => `${e.clientId}:${e.currentSectionId}:${e.mode}:${e.idle}`).join("|");
+			s !== t && (t = s, queueMicrotask(() => r(o)));
 		};
 		return e.awareness.on("change", n), n(), () => {
 			e.awareness.off("change", n);
 		};
-	}, [e]), i(() => ({
-		awareness: s,
+	}, [e]), o(() => ({
+		awareness: i,
 		participants: n
-	}), [s, n]);
+	}), [i, n]);
 }
 //#endregion
 //#region src/hooks/useDocumentMetadata.ts
-function p(e) {
+function h(e) {
 	let t = {};
 	return e.forEach((e, n) => {
 		t[n] = e;
 	}), t;
 }
-function m(e) {
-	let [t, i] = o(null);
-	return r(() => {
+function g(e) {
+	let [t, n] = c(null);
+	return a(() => {
 		if (!e) {
-			i(null);
+			n(null);
 			return;
 		}
-		let t = e.getMap("meta"), n = () => {
-			t.size > 0 && i(p(t));
+		let t = e.getMap("meta"), r = () => {
+			t.size > 0 && n(h(t));
 		};
-		return t.observe(n), n(), () => {
-			t.unobserve(n);
+		return t.observe(r), r(), () => {
+			t.unobserve(r);
 		};
 	}, [e]), {
 		meta: t,
-		updateMeta: n((t) => {
+		updateMeta: i((t) => {
 			if (!e) return;
 			let n = e.getMap("meta");
 			e.transact(() => {
@@ -163,35 +164,35 @@ function m(e) {
 }
 //#endregion
 //#region src/hooks/useSectionList.ts
-function h(e) {
+function _(e) {
 	let t = {};
 	return e.forEach((e, n) => {
 		t[n] = e;
 	}), t;
 }
-function g(e) {
+function v(e) {
 	let t = [];
 	return e.forEach((e) => {
-		t.push(h(e));
+		t.push(_(e));
 	}), t;
-}
-function _(e) {
-	let t = [];
-	return e.forEach((e) => {
-		let n = h(e), r = e.get("items");
-		n.items = r instanceof s.Array ? g(r) : [], t.push(n);
-	}), t;
-}
-function v(e, t) {
-	for (let [n, r] of Object.entries(t)) e.set(n, r);
 }
 function y(e) {
 	let t = [];
 	return e.forEach((e) => {
-		t.push(h(e));
+		let n = _(e), r = e.get("items");
+		n.items = r instanceof l.Array ? v(r) : [], t.push(n);
 	}), t;
 }
-function b(e) {
+function b(e, t) {
+	for (let [n, r] of Object.entries(t)) e.set(n, r);
+}
+function x(e) {
+	let t = [];
+	return e.forEach((e) => {
+		t.push(_(e));
+	}), t;
+}
+function S(e) {
 	let t = /* @__PURE__ */ new Map(), n = [];
 	for (let n of e) t.set(n.id, {
 		...n,
@@ -203,30 +204,30 @@ function b(e) {
 	}
 	return n;
 }
-function x(e) {
-	let [t, i] = o([]), [a, c] = o({});
-	r(() => {
+function C(e) {
+	let [t, n] = c([]), [r, o] = c({});
+	a(() => {
 		if (!e) {
-			i([]), c({});
+			n([]), o({});
 			return;
 		}
-		let t = e.getArray("sections"), n = null, r = () => {
-			n && clearTimeout(n), n = setTimeout(() => {
-				let e = _(t);
-				i(e);
-				let n = {};
+		let t = e.getArray("sections"), r = null, i = () => {
+			r && clearTimeout(r), r = setTimeout(() => {
+				let e = y(t);
+				n(e);
+				let r = {};
 				for (let e = 0; e < t.length; e++) {
-					let r = t.get(e), i = r.get("id"), a = r.get("comments");
-					a instanceof s.Array && (n[i] = b(y(a)));
+					let n = t.get(e), i = n.get("id"), a = n.get("comments");
+					a instanceof l.Array && (r[i] = S(x(a)));
 				}
-				c(n);
+				o(r);
 			}, 16);
 		};
-		return t.observeDeep(r), r(), () => {
-			n && clearTimeout(n), t.unobserveDeep(r);
+		return t.observeDeep(i), i(), () => {
+			r && clearTimeout(r), t.unobserveDeep(i);
 		};
 	}, [e]);
-	let l = n((t) => {
+	let s = i((t) => {
 		if (!e) return null;
 		let n = e.getArray("sections");
 		for (let e = 0; e < n.length; e++) {
@@ -237,60 +238,60 @@ function x(e) {
 			};
 		}
 		return null;
-	}, [e]), u = n((e, t) => {
-		let n = l(e);
+	}, [e]), u = i((e, t) => {
+		let n = s(e);
 		if (!n) return null;
 		let r = n.ySection.get("items");
-		if (!(r instanceof s.Array)) return null;
+		if (!(r instanceof l.Array)) return null;
 		for (let e = 0; e < r.length; e++) {
 			let n = r.get(e);
 			if (n.get("id") === t) return n;
 		}
 		return null;
-	}, [l]), d = n((t) => {
+	}, [s]), d = i((t) => {
 		if (!e) return null;
-		let n = l(t);
+		let n = s(t);
 		if (!n) return null;
 		let r = n.ySection.get("comments");
-		return r instanceof s.Array || (r = new s.Array(), n.ySection.set("comments", r)), r;
-	}, [e, l]), f = n((t) => {
+		return r instanceof l.Array || (r = new l.Array(), n.ySection.set("comments", r)), r;
+	}, [e, s]), f = i((t) => {
 		if (!e) return;
 		let n = e.getArray("sections");
 		e.transact(() => {
-			let e = new s.Map(), { items: r, ...i } = t;
-			v(e, i);
-			let a = new s.Array();
+			let e = new l.Map(), { items: r, ...i } = t;
+			b(e, i);
+			let a = new l.Array();
 			for (let e of r) {
-				let t = new s.Map();
-				v(t, e), a.push([t]);
+				let t = new l.Map();
+				b(t, e), a.push([t]);
 			}
 			e.set("items", a), n.push([e]);
 		});
-	}, [e]), p = n((t, n) => {
+	}, [e]), p = i((t, n) => {
 		if (!e) return;
-		let r = l(t);
+		let r = s(t);
 		r && e.transact(() => {
 			let { items: e, ...t } = n;
 			for (let [e, n] of Object.entries(t)) r.ySection.set(e, n);
 		});
-	}, [e, l]), m = n((t) => {
+	}, [e, s]), m = i((t) => {
 		if (!e) return;
-		let n = l(t);
+		let n = s(t);
 		if (!n) return;
 		let r = e.getArray("sections");
 		e.transact(() => {
 			r.delete(n.index, 1);
 		});
-	}, [e, l]), h = n((t, n) => {
+	}, [e, s]), h = i((t, n) => {
 		if (!e) return;
-		let r = l(t);
+		let r = s(t);
 		r && e.transact(() => {
 			let e = r.ySection.get("items");
-			e instanceof s.Array || (e = new s.Array(), r.ySection.set("items", e));
-			let t = new s.Map();
-			v(t, n), e.push([t]);
+			e instanceof l.Array || (e = new l.Array(), r.ySection.set("items", e));
+			let t = new l.Map();
+			b(t, n), e.push([t]);
 		});
-	}, [e, l]), g = n((t, n, r) => {
+	}, [e, s]), g = i((t, n, r) => {
 		if (!e) return;
 		let i = u(t, n);
 		i && e.transact(() => {
@@ -299,18 +300,18 @@ function x(e) {
 	}, [e, u]);
 	return {
 		sections: t,
-		comments: a,
+		comments: r,
 		addSection: f,
 		updateSection: p,
 		removeSection: m,
 		addItem: h,
 		updateItem: g,
-		removeItem: n((t, n) => {
+		removeItem: i((t, n) => {
 			if (!e) return;
-			let r = l(t);
+			let r = s(t);
 			if (!r) return;
 			let i = r.ySection.get("items");
-			if (i instanceof s.Array) {
+			if (i instanceof l.Array) {
 				for (let t = 0; t < i.length; t++) if (i.get(t).get("id") === n) {
 					e.transact(() => {
 						i.delete(t, 1);
@@ -318,40 +319,40 @@ function x(e) {
 					return;
 				}
 			}
-		}, [e, l]),
-		ackItem: n((e, t, n) => {
+		}, [e, s]),
+		ackItem: i((e, t, n) => {
 			g(e, t, {
 				status: "acked",
 				ackedBy: n,
 				ackedAt: (/* @__PURE__ */ new Date()).toISOString()
 			});
 		}, [g]),
-		rejectItem: n((e, t, n) => {
+		rejectItem: i((e, t, n) => {
 			g(e, t, {
 				status: "rejected",
 				ackedBy: n,
 				ackedAt: (/* @__PURE__ */ new Date()).toISOString()
 			});
 		}, [g]),
-		getSectionFragment: n((t) => {
-			let n = l(t);
+		getSectionFragment: i((t) => {
+			let n = s(t);
 			if (!n) return null;
 			let r = n.ySection.get("content");
-			return r instanceof s.XmlFragment ? r : (queueMicrotask(() => {
-				e && (n.ySection.get("content") instanceof s.XmlFragment || e.transact(() => {
-					n.ySection.set("content", new s.XmlFragment());
+			return r instanceof l.XmlFragment ? r : (queueMicrotask(() => {
+				e && (n.ySection.get("content") instanceof l.XmlFragment || e.transact(() => {
+					n.ySection.set("content", new l.XmlFragment());
 				}));
 			}), null);
-		}, [e, l]),
-		addComment: n((t, n) => {
+		}, [e, s]),
+		addComment: i((t, n) => {
 			e && e.transact(() => {
 				let e = d(t);
 				if (!e) return;
-				let r = new s.Map();
+				let r = new l.Map();
 				r.set("id", crypto.randomUUID()), r.set("text", n.text), r.set("userId", n.userId), r.set("displayName", n.displayName), r.set("color", n.color), r.set("timestamp", (/* @__PURE__ */ new Date()).toISOString()), r.set("parentCommentId", n.parentCommentId ?? null), e.push([r]);
 			});
 		}, [e, d]),
-		resolveThread: n((t, n, r) => {
+		resolveThread: i((t, n, r) => {
 			if (!e) return;
 			let i = d(t);
 			if (!i) return;
@@ -366,7 +367,7 @@ function x(e) {
 				}
 			}), a || console.warn(`resolveThread: comment ${n} not found in section ${t}`);
 		}, [e, d]),
-		unresolveThread: n((t, n) => {
+		unresolveThread: i((t, n) => {
 			if (!e) return;
 			let r = d(t);
 			if (!r) return;
@@ -385,85 +386,85 @@ function x(e) {
 }
 //#endregion
 //#region src/hooks/useDocumentExport.ts
-function S(e) {
+function w(e) {
 	let t = {};
 	return e.forEach((e, n) => {
 		t[n] = e;
 	}), t;
 }
-function C(e) {
-	let t = [];
-	return e.forEach((e) => {
-		t.push(S(e));
-	}), t;
-}
-function w(e) {
-	let t = [];
-	return e.forEach((e) => {
-		let n = S(e), r = e.get("items");
-		n.items = r instanceof s.Array ? C(r) : [], t.push(n);
-	}), t;
-}
 function T(e) {
-	return { exportJSON: n(() => {
+	let t = [];
+	return e.forEach((e) => {
+		t.push(w(e));
+	}), t;
+}
+function E(e) {
+	let t = [];
+	return e.forEach((e) => {
+		let n = w(e), r = e.get("items");
+		n.items = r instanceof l.Array ? T(r) : [], t.push(n);
+	}), t;
+}
+function D(e) {
+	return { exportJSON: i(() => {
 		if (!e) return null;
 		let t = e.getMap("meta");
 		if (t.size === 0) return null;
 		let n = e.getArray("sections");
 		return {
-			meta: S(t),
-			sections: w(n)
+			meta: w(t),
+			sections: E(n)
 		};
 	}, [e]) };
 }
 //#endregion
 //#region src/hooks/useCollaborativeDoc.ts
-function E(e) {
+function O(e) {
 	let t = {};
 	return e.forEach((e, n) => {
 		t[n] = e;
 	}), t;
 }
-function D(t) {
-	let { documentId: i, mode: a, ws: c, userId: l, displayName: u, color: d, onMessage: p } = t, { ydoc: h, provider: g, synced: _ } = e({
-		documentId: i,
-		ws: c,
-		onMessage: p
-	}), { meta: v, updateMeta: y } = m(h), b = x(h), { awareness: S, participants: C } = f(g, {
-		userId: l,
+function k(t) {
+	let { documentId: n, mode: r, ws: o, userId: s, displayName: u, color: d, onMessage: f } = t, { ydoc: p, provider: h, synced: _ } = e({
+		documentId: n,
+		ws: o,
+		onMessage: f
+	}), { meta: v, updateMeta: y } = g(p), b = C(p), { awareness: x, participants: S } = m(h, {
+		userId: s,
 		displayName: u,
 		color: d,
-		mode: a
-	}), { exportJSON: w } = T(h), [D, O] = o({});
-	r(() => {
-		if (!h) {
-			O({});
+		mode: r
+	}), { exportJSON: w } = D(p), [T, E] = c({});
+	a(() => {
+		if (!p) {
+			E({});
 			return;
 		}
-		let e = h.getMap("sectionReviews"), t = () => {
+		let e = p.getMap("sectionReviews"), t = () => {
 			let t = {};
 			e.forEach((e, n) => {
-				if (!(e instanceof s.Map)) return;
-				let r = E(e), i = n.split(":")[0];
+				if (!(e instanceof l.Map)) return;
+				let r = O(e), i = n.split(":")[0];
 				t[i] || (t[i] = []), t[i].push(r);
-			}), O(t);
+			}), E(t);
 		};
 		return e.observeDeep(t), t(), () => {
 			e.unobserveDeep(t);
 		};
-	}, [h]);
-	let k = n((e, t, n) => {
-		if (!h) return;
-		let r = h.getMap("sectionReviews"), i = `${e}:${l}`;
-		h.transact(() => {
-			let e = new s.Map();
-			e.set("userId", l), e.set("displayName", u), e.set("status", t), e.set("timestamp", (/* @__PURE__ */ new Date()).toISOString()), n && e.set("comment", n), r.set(i, e);
+	}, [p]);
+	let k = i((e, t, n) => {
+		if (!p) return;
+		let r = p.getMap("sectionReviews"), i = `${e}:${s}`;
+		p.transact(() => {
+			let e = new l.Map();
+			e.set("userId", s), e.set("displayName", u), e.set("status", t), e.set("timestamp", (/* @__PURE__ */ new Date()).toISOString()), n && e.set("comment", n), r.set(i, e);
 		});
 	}, [
-		h,
-		l,
+		p,
+		s,
 		u
-	]), A = n((e) => {
+	]), A = i((e) => {
 		console.warn("[useCollaborativeDoc] loadFromMarkdown is not implemented and does nothing.");
 	}, []);
 	return {
@@ -480,23 +481,23 @@ function D(t) {
 		ackItem: b.ackItem,
 		rejectItem: b.rejectItem,
 		getSectionFragment: b.getSectionFragment,
-		ydoc: h,
-		provider: g,
+		ydoc: p,
+		provider: h,
 		loadFromMarkdown: A,
 		exportJSON: w,
-		participants: C,
+		participants: S,
 		comments: b.comments,
 		addComment: b.addComment,
 		resolveThread: b.resolveThread,
 		unresolveThread: b.unresolveThread,
-		sectionReviews: D,
+		sectionReviews: T,
 		reviewSection: k,
-		awareness: S
+		awareness: x
 	};
 }
 //#endregion
 //#region src/hooks/useDocumentComments.ts
-function O(e) {
+function A(e) {
 	let t = /* @__PURE__ */ new Map(), n = [];
 	for (let n of e) t.set(n.id, {
 		...n,
@@ -508,47 +509,47 @@ function O(e) {
 	}
 	return n;
 }
-function k(e) {
+function j(e) {
 	return {
 		...e,
 		id: e.id ?? e.commentId ?? ""
 	};
 }
-function A(e) {
+function M(e) {
 	let t = /* @__PURE__ */ new Map();
 	for (let n of e) {
 		let e = n.sectionId ?? "__unknown";
 		t.has(e) || t.set(e, []), t.get(e).push(n);
 	}
 	let n = {};
-	for (let [e, r] of t) n[e] = O(r);
+	for (let [e, r] of t) n[e] = A(r);
 	return n;
 }
-function j(e) {
-	let { documentId: t, idToken: s, sendMessage: c, onMessage: l } = e, [u, d] = o([]), [f, p] = o(!1), m = a(c);
-	r(() => {
-		m.current = c;
-	}, [c]);
-	let h = a(t);
-	r(() => {
+function N(e) {
+	let { documentId: t, idToken: n, sendMessage: r, onMessage: l } = e, [u, d] = c([]), [f, p] = c(!1), m = s(r);
+	a(() => {
+		m.current = r;
+	}, [r]);
+	let h = s(t);
+	a(() => {
 		h.current = t;
 	}, [t]);
-	let g = i(() => {
+	let g = o(() => {
 		let e = { "Content-Type": "application/json" };
-		return s && (e.Authorization = `Bearer ${s}`), e;
-	}, [s]);
-	return r(() => {
-		!t || !s || (p(!0), fetch(`/api/documents/${t}/comments`, { headers: { Authorization: `Bearer ${s}` } }).then(async (e) => {
+		return n && (e.Authorization = `Bearer ${n}`), e;
+	}, [n]);
+	return a(() => {
+		!t || !n || (p(!0), fetch(`/api/documents/${t}/comments`, { headers: { Authorization: `Bearer ${n}` } }).then(async (e) => {
 			if (!e.ok) throw Error(`Failed to load comments (${e.status})`);
 			return e.json();
 		}).then((e) => {
-			d((e.comments ?? []).map((e) => k(e)));
+			d((e.comments ?? []).map((e) => j(e)));
 		}).catch((e) => {
 			console.warn("[useDocumentComments] fetch error:", e.message);
 		}).finally(() => {
 			p(!1);
 		}));
-	}, [t, s]), r(() => l((e) => {
+	}, [t, n]), a(() => l((e) => {
 		let t = e.type, n = e.payload;
 		if (!n) return;
 		let r = n.documentId;
@@ -556,7 +557,7 @@ function j(e) {
 			if (t === "doc:comment_added") {
 				let e = n.comment;
 				if (!e) return;
-				let t = k(e);
+				let t = j(e);
 				d((e) => e.some((e) => e.id === t.id) ? e : [...e, t]);
 				return;
 			}
@@ -584,59 +585,59 @@ function j(e) {
 			}
 		}
 	}), [l]), {
-		comments: i(() => A(u), [u]),
-		addComment: n(async (e, t, n) => {
-			if (!s) return;
-			let r = await fetch(`/api/documents/${h.current}/comments`, {
+		comments: o(() => M(u), [u]),
+		addComment: i(async (e, t, r) => {
+			if (!n) return;
+			let i = await fetch(`/api/documents/${h.current}/comments`, {
 				method: "POST",
 				headers: g,
 				body: JSON.stringify({
 					sectionId: e,
 					text: t,
-					...n ? { parentCommentId: n } : {}
+					...r ? { parentCommentId: r } : {}
 				})
 			});
-			if (!r.ok) throw Error(`Failed to add comment (${r.status})`);
-			let i = k((await r.json()).comment);
-			d((e) => e.some((e) => e.id === i.id) ? e : [...e, i]);
-		}, [s, g]),
-		resolveThread: n(async (e, t) => {
-			if (!s) return;
-			let n = await fetch(`/api/documents/${h.current}/comments/${t}`, {
+			if (!i.ok) throw Error(`Failed to add comment (${i.status})`);
+			let a = j((await i.json()).comment);
+			d((e) => e.some((e) => e.id === a.id) ? e : [...e, a]);
+		}, [n, g]),
+		resolveThread: i(async (e, t) => {
+			if (!n) return;
+			let r = await fetch(`/api/documents/${h.current}/comments/${t}`, {
 				method: "PATCH",
 				headers: g,
 				body: JSON.stringify({ resolved: !0 })
 			});
-			if (!n.ok) throw Error(`Failed to resolve thread (${n.status})`);
-			let r = await n.json();
+			if (!r.ok) throw Error(`Failed to resolve thread (${r.status})`);
+			let i = await r.json();
 			d((e) => e.map((e) => e.id === t ? {
 				...e,
 				resolved: !0,
-				resolvedBy: r.comment.resolvedBy,
-				resolvedAt: r.comment.resolvedAt
+				resolvedBy: i.comment.resolvedBy,
+				resolvedAt: i.comment.resolvedAt
 			} : e));
-		}, [s, g]),
-		unresolveThread: n(async (e, t) => {
-			if (!s) return;
-			let n = await fetch(`/api/documents/${h.current}/comments/${t}`, {
+		}, [n, g]),
+		unresolveThread: i(async (e, t) => {
+			if (!n) return;
+			let r = await fetch(`/api/documents/${h.current}/comments/${t}`, {
 				method: "PATCH",
 				headers: g,
 				body: JSON.stringify({ resolved: !1 })
 			});
-			if (!n.ok) throw Error(`Failed to unresolve thread (${n.status})`);
+			if (!r.ok) throw Error(`Failed to unresolve thread (${r.status})`);
 			d((e) => e.map((e) => e.id === t ? {
 				...e,
 				resolved: !1,
 				resolvedBy: void 0,
 				resolvedAt: void 0
 			} : e));
-		}, [s, g]),
+		}, [n, g]),
 		loading: f
 	};
 }
 //#endregion
 //#region src/hooks/useDocumentItems.ts
-function M(e) {
+function P(e) {
 	return {
 		id: e.id ?? e.itemId,
 		text: e.text ?? "",
@@ -656,29 +657,29 @@ function M(e) {
 		category: e.category
 	};
 }
-function N(e) {
-	let { documentId: t, sectionIds: s, idToken: c, sendMessage: l, onMessage: u } = e, [d, f] = o({}), [p, m] = o({}), [h, g] = o(!1), _ = a(l);
-	r(() => {
+function F(e) {
+	let { documentId: t, sectionIds: n, idToken: r, sendMessage: l, onMessage: u } = e, [d, f] = c({}), [p, m] = c({}), [h, g] = c(!1), _ = s(l);
+	a(() => {
 		_.current = l;
 	}, [l]);
-	let v = a(t);
-	r(() => {
+	let v = s(t);
+	a(() => {
 		v.current = t;
 	}, [t]);
-	let y = i(() => {
+	let y = o(() => {
 		let e = { "Content-Type": "application/json" };
-		return c && (e.Authorization = `Bearer ${c}`), e;
-	}, [c]), b = s.join(",");
-	return r(() => {
-		if (!t || !c || s.length === 0) return;
+		return r && (e.Authorization = `Bearer ${r}`), e;
+	}, [r]), b = n.join(",");
+	return a(() => {
+		if (!t || !r || n.length === 0) return;
 		g(!0);
-		let e = !1, n = s.map(async (e) => {
+		let e = !1, i = n.map(async (e) => {
 			try {
-				let n = await fetch(`/api/documents/${t}/sections/${e}/items`, { headers: { Authorization: `Bearer ${c}` } });
+				let n = await fetch(`/api/documents/${t}/sections/${e}/items`, { headers: { Authorization: `Bearer ${r}` } });
 				if (!n.ok) throw Error(`Failed to load items for section ${e} (${n.status})`);
 				return {
 					sectionId: e,
-					items: ((await n.json()).items ?? []).map(M),
+					items: ((await n.json()).items ?? []).map(P),
 					error: null
 				};
 			} catch (t) {
@@ -689,7 +690,7 @@ function N(e) {
 				};
 			}
 		});
-		return Promise.all(n).then((t) => {
+		return Promise.all(i).then((t) => {
 			if (e) return;
 			let n = {}, r = {};
 			for (let { sectionId: e, items: i, error: a } of t) n[e] = i, a && (r[e] = a);
@@ -701,9 +702,9 @@ function N(e) {
 		};
 	}, [
 		t,
-		c,
+		r,
 		b
-	]), r(() => u((e) => {
+	]), a(() => u((e) => {
 		let t = e.type, n = e.payload;
 		if (!n) return;
 		let r = n.documentId;
@@ -711,7 +712,7 @@ function N(e) {
 			if (t === "social:post" && n.type === "section:item:created") {
 				let e = n.sectionId, t = n.item;
 				if (!e || !t) return;
-				let r = M(t);
+				let r = P(t);
 				f((t) => {
 					let n = t[e] ?? [];
 					return n.some((e) => e.id === r.id) ? t : {
@@ -768,42 +769,42 @@ function N(e) {
 		}
 	}), [u]), {
 		items: d,
-		addItem: n(async (e, t) => {
-			if (!c) return;
+		addItem: i(async (e, t) => {
+			if (!r) return;
 			let n = await fetch(`/api/documents/${v.current}/sections/${e}/items`, {
 				method: "POST",
 				headers: y,
 				body: JSON.stringify(t)
 			});
 			if (!n.ok) throw Error(`Failed to add item (${n.status})`);
-			let r = M((await n.json()).item);
+			let i = P((await n.json()).item);
 			f((t) => {
 				let n = t[e] ?? [];
-				return n.some((e) => e.id === r.id) ? t : {
+				return n.some((e) => e.id === i.id) ? t : {
 					...t,
-					[e]: [...n, r]
+					[e]: [...n, i]
 				};
 			});
-		}, [c, y]),
-		updateItem: n(async (e, t, n) => {
-			if (!c) return;
-			let r = await fetch(`/api/documents/${v.current}/sections/${e}/items/${t}`, {
+		}, [r, y]),
+		updateItem: i(async (e, t, n) => {
+			if (!r) return;
+			let i = await fetch(`/api/documents/${v.current}/sections/${e}/items/${t}`, {
 				method: "PATCH",
 				headers: y,
 				body: JSON.stringify(n)
 			});
-			if (!r.ok) throw Error(`Failed to update item (${r.status})`);
-			let i = M((await r.json()).item);
+			if (!i.ok) throw Error(`Failed to update item (${i.status})`);
+			let a = P((await i.json()).item);
 			f((n) => {
 				let r = n[e];
 				return r ? {
 					...n,
-					[e]: r.map((e) => e.id === t ? i : e)
+					[e]: r.map((e) => e.id === t ? a : e)
 				} : n;
 			});
-		}, [c, y]),
-		removeItem: n(async (e, t) => {
-			if (!c) return;
+		}, [r, y]),
+		removeItem: i(async (e, t) => {
+			if (!r) return;
 			let n = await fetch(`/api/documents/${v.current}/sections/${e}/items/${t}`, {
 				method: "DELETE",
 				headers: y
@@ -816,30 +817,30 @@ function N(e) {
 					[e]: r.filter((e) => e.id !== t)
 				} : n;
 			});
-		}, [c, y]),
-		ackItem: n(async (e, t) => {
-			if (!c) return;
+		}, [r, y]),
+		ackItem: i(async (e, t) => {
+			if (!r) return;
 			let n = await fetch(`/api/documents/${v.current}/sections/${e}/items/${t}/ack`, {
 				method: "POST",
 				headers: y
 			});
 			if (!n.ok) throw Error(`Failed to acknowledge item (${n.status})`);
-			let r = M((await n.json()).item);
+			let i = P((await n.json()).item);
 			f((n) => {
-				let i = n[e];
-				return i ? {
+				let r = n[e];
+				return r ? {
 					...n,
-					[e]: i.map((e) => e.id === t ? r : e)
+					[e]: r.map((e) => e.id === t ? i : e)
 				} : n;
 			});
-		}, [c, y]),
+		}, [r, y]),
 		loading: h,
 		itemErrors: p
 	};
 }
 //#endregion
 //#region src/hooks/useDocumentReviews.ts
-function P(e) {
+function I(e) {
 	let t = {};
 	for (let n of e) {
 		let e = n.sectionId ?? "__unknown";
@@ -849,31 +850,31 @@ function P(e) {
 	}
 	return t;
 }
-function F(e) {
-	let { documentId: t, idToken: s, sendMessage: c, onMessage: l } = e, [u, d] = o({}), [f, p] = o(!1), m = a(c);
-	r(() => {
-		m.current = c;
-	}, [c]);
-	let h = a(t);
-	r(() => {
+function L(e) {
+	let { documentId: t, idToken: n, sendMessage: r, onMessage: l } = e, [u, d] = c({}), [f, p] = c(!1), m = s(r);
+	a(() => {
+		m.current = r;
+	}, [r]);
+	let h = s(t);
+	a(() => {
 		h.current = t;
 	}, [t]);
-	let g = i(() => {
+	let g = o(() => {
 		let e = { "Content-Type": "application/json" };
-		return s && (e.Authorization = `Bearer ${s}`), e;
-	}, [s]);
-	return r(() => {
-		!t || !s || (p(!0), fetch(`/api/documents/${t}/reviews`, { headers: { Authorization: `Bearer ${s}` } }).then(async (e) => {
+		return n && (e.Authorization = `Bearer ${n}`), e;
+	}, [n]);
+	return a(() => {
+		!t || !n || (p(!0), fetch(`/api/documents/${t}/reviews`, { headers: { Authorization: `Bearer ${n}` } }).then(async (e) => {
 			if (!e.ok) throw Error(`Failed to load reviews (${e.status})`);
 			return e.json();
 		}).then((e) => {
-			d(P(e.reviews ?? []));
+			d(I(e.reviews ?? []));
 		}).catch((e) => {
 			console.warn("[useDocumentReviews] fetch error:", e.message);
 		}).finally(() => {
 			p(!1);
 		}));
-	}, [t, s]), r(() => l((e) => {
+	}, [t, n]), a(() => l((e) => {
 		let t = e.type, n = e.payload;
 		if (!n) return;
 		let r = n.documentId;
@@ -891,159 +892,56 @@ function F(e) {
 		}
 	}), [l]), {
 		sectionReviews: u,
-		reviewSection: n(async (e, t, n) => {
-			if (!s) return;
-			let r = await fetch(`/api/documents/${h.current}/sections/${e}/reviews`, {
+		reviewSection: i(async (e, t, r) => {
+			if (!n) return;
+			let i = await fetch(`/api/documents/${h.current}/sections/${e}/reviews`, {
 				method: "POST",
 				headers: g,
 				body: JSON.stringify({
 					status: t,
-					...n === void 0 ? {} : { comment: n }
+					...r === void 0 ? {} : { comment: r }
 				})
 			});
-			if (!r.ok) throw Error(`Failed to submit review (${r.status})`);
-			let i = await r.json();
+			if (!i.ok) throw Error(`Failed to submit review (${i.status})`);
+			let a = await i.json();
 			d((t) => {
-				let n = t[e] ?? [], r = n.findIndex((e) => e.userId === i.review.userId), a = [...n];
-				return r >= 0 ? a[r] = i.review : a.push(i.review), {
+				let n = t[e] ?? [], r = n.findIndex((e) => e.userId === a.review.userId), i = [...n];
+				return r >= 0 ? i[r] = a.review : i.push(a.review), {
 					...t,
-					[e]: a
+					[e]: i
 				};
 			});
-		}, [s, g]),
+		}, [n, g]),
 		loading: f
 	};
 }
 //#endregion
-//#region src/data/userDirectory.ts
-var I = [
-	{
-		userId: "alice",
-		displayName: "Alice Chen",
-		email: "alice.chen@local.dev",
-		color: "#3b82f6"
-	},
-	{
-		userId: "bob",
-		displayName: "Bob Martinez",
-		email: "bob.martinez@local.dev",
-		color: "#ef4444"
-	},
-	{
-		userId: "carol",
-		displayName: "Carol Johnson",
-		email: "carol.johnson@local.dev",
-		color: "#8b5cf6"
-	},
-	{
-		userId: "dave",
-		displayName: "Dave Williams",
-		email: "dave.williams@local.dev",
-		color: "#f59e0b"
-	},
-	{
-		userId: "eve",
-		displayName: "Eve Thompson",
-		email: "eve.thompson@local.dev",
-		color: "#10b981"
-	},
-	{
-		userId: "frank",
-		displayName: "Frank Davis",
-		email: "frank.davis@local.dev",
-		color: "#ec4899"
-	},
-	{
-		userId: "grace",
-		displayName: "Grace Wilson",
-		email: "grace.wilson@local.dev",
-		color: "#6366f1"
-	},
-	{
-		userId: "hank",
-		displayName: "Hank Anderson",
-		email: "hank.anderson@local.dev",
-		color: "#14b8a6"
-	}
-], L = [
-	{
-		id: "grp-engineering",
-		name: "Engineering",
-		handle: "engineering",
-		memberIds: [
-			"alice",
-			"bob",
-			"dave",
-			"frank"
-		],
-		color: "#3b82f6"
-	},
-	{
-		id: "grp-design",
-		name: "Design",
-		handle: "design",
-		memberIds: ["carol", "eve"],
-		color: "#8b5cf6"
-	},
-	{
-		id: "grp-reviewers",
-		name: "Reviewers",
-		handle: "reviewers",
-		memberIds: [
-			"alice",
-			"carol",
-			"grace"
-		],
-		color: "#f59e0b"
-	},
-	{
-		id: "grp-everyone",
-		name: "Everyone",
-		handle: "everyone",
-		memberIds: [
-			"alice",
-			"bob",
-			"carol",
-			"dave",
-			"eve",
-			"frank",
-			"grace",
-			"hank"
-		],
-		color: "#6b7280"
-	}
-];
-function R(e) {
-	let t = e.toLowerCase();
-	return I.filter((e) => e.displayName.toLowerCase().includes(t) || e.email.toLowerCase().includes(t));
-}
-//#endregion
 //#region src/hooks/useMentionUsers.ts
-function z(e) {
-	return i(() => {
-		let t = /* @__PURE__ */ new Set(), n = [];
+function R(e) {
+	return o(() => {
+		let t = /* @__PURE__ */ new Set(), i = [];
 		for (let r of e) {
 			let e = r.userId || r.clientId;
 			if (t.has(e)) continue;
 			t.add(e);
-			let i = I.find((e) => e.displayName.toLowerCase() === r.displayName.toLowerCase() || e.displayName.split(" ")[0].toLowerCase() === r.displayName.split(" ")[0].toLowerCase());
-			n.push({
+			let a = n.find((e) => e.displayName.toLowerCase() === r.displayName.toLowerCase() || e.displayName.split(" ")[0].toLowerCase() === r.displayName.split(" ")[0].toLowerCase());
+			i.push({
 				userId: r.userId || r.clientId,
-				displayName: i?.displayName || r.displayName,
-				color: i?.color || r.color,
+				displayName: a?.displayName || r.displayName,
+				color: a?.color || r.color,
 				online: !0,
 				mode: r.mode,
 				type: "user"
 			});
 		}
-		for (let e of I) t.has(e.userId) || n.some((t) => t.displayName === e.displayName) || n.push({
+		for (let e of n) t.has(e.userId) || i.some((t) => t.displayName === e.displayName) || i.push({
 			userId: e.userId,
 			displayName: e.displayName,
 			color: e.color,
 			online: !1,
 			type: "user"
 		});
-		for (let e of L) n.push({
+		for (let e of r) i.push({
 			userId: e.id,
 			displayName: e.name,
 			color: e.color,
@@ -1051,27 +949,27 @@ function z(e) {
 			type: "group",
 			memberCount: e.memberIds.length
 		});
-		return n;
+		return i;
 	}, [e]);
 }
 //#endregion
 //#region src/hooks/useMyMentionsAndTasks.ts
-function B(e) {
+function z(e) {
 	let t = [];
-	for (let n of e) t.push(n), n.replies && n.replies.length > 0 && t.push(...B(n.replies));
+	for (let n of e) t.push(n), n.replies && n.replies.length > 0 && t.push(...z(n.replies));
 	return t;
 }
-function V(e, t) {
+function B(e, t) {
 	let n = t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 	return RegExp(`@${n}(?=\\s|$|[.!?,;:])`, "i").test(e);
 }
-function H({ sections: e, comments: t, displayName: n, userId: r }) {
-	return i(() => {
+function V({ sections: e, comments: t, displayName: n, userId: r }) {
+	return o(() => {
 		let i = [], a = [];
 		for (let [a, o] of Object.entries(t)) {
 			if (!o) continue;
-			let t = e.find((e) => e.id === a), s = B(o);
-			for (let e of s) e.userId !== r && V(e.text, n) && i.push({
+			let t = e.find((e) => e.id === a), s = z(o);
+			for (let e of s) e.userId !== r && B(e.text, n) && i.push({
 				kind: "mention",
 				sectionId: a,
 				sectionTitle: t?.title ?? "",
@@ -1104,7 +1002,7 @@ function H({ sections: e, comments: t, displayName: n, userId: r }) {
 }
 //#endregion
 //#region src/hooks/useVersionHistory.ts
-function U(e) {
+function H(e) {
 	let t = e.getArray("sections"), n = [];
 	for (let e = 0; e < t.length; e++) {
 		let r = t.get(e);
@@ -1132,14 +1030,14 @@ function U(e) {
 	}
 	return n;
 }
-function W(e) {
-	let { channel: i, sendMessage: c, onMessage: l } = e, [u, d] = o([]), [f, p] = o(!1), [m, h] = o(null), [g, _] = o(null), [v, y] = o(null), [b, x] = o(null), S = a(null), C = a(null), w = a(!1);
-	return r(() => l((e) => {
+function U(e) {
+	let { channel: n, sendMessage: r, onMessage: o } = e, [u, d] = c([]), [f, p] = c(!1), [m, h] = c(null), [g, _] = c(null), [v, y] = c(null), [b, x] = c(null), S = s(null), C = s(null), w = s(!1);
+	return a(() => o((e) => {
 		if (e.type === "error" && e.service === "crdt") {
 			p(!1);
 			return;
 		}
-		if (e.type === "crdt" && e.channel === i) switch (e.action) {
+		if (e.type === "crdt" && e.channel === n) switch (e.action) {
 			case "snapshotList": {
 				let t = e.snapshots;
 				d(t ?? []), p(!1);
@@ -1149,108 +1047,108 @@ function W(e) {
 				if (!e.version) break;
 				let n = e.update;
 				if (!n) break;
-				let r = new s.Doc({ gc: !1 }), i = t(n);
-				s.applyUpdate(r, i), w.current ? (w.current = !1, C.current && C.current.destroy(), C.current = r, y(U(r))) : (S.current && S.current.destroy(), S.current = r, h(r));
+				let r = new l.Doc({ gc: !1 }), i = t(n);
+				l.applyUpdate(r, i), w.current ? (w.current = !1, C.current && C.current.destroy(), C.current = r, y(H(r))) : (S.current && S.current.destroy(), S.current = r, h(r));
 				break;
 			}
 			case "versionSaved":
-				p(!0), c({
+				p(!0), r({
 					service: "crdt",
 					action: "listSnapshots",
-					channel: i,
+					channel: n,
 					limit: 20
 				});
 				break;
-			case "snapshotRestored": p(!0), c({
+			case "snapshotRestored": p(!0), r({
 				service: "crdt",
 				action: "listSnapshots",
-				channel: i,
+				channel: n,
 				limit: 20
 			});
 		}
 	}), [
-		i,
-		l,
-		c
-	]), r(() => () => {
+		n,
+		o,
+		r
+	]), a(() => () => {
 		S.current &&= (S.current.destroy(), null), C.current &&= (C.current.destroy(), null);
 	}, []), {
 		versions: u,
 		loading: f,
-		fetchVersions: n(() => {
-			p(!0), c({
+		fetchVersions: i(() => {
+			p(!0), r({
 				service: "crdt",
 				action: "listSnapshots",
-				channel: i,
+				channel: n,
 				limit: 20
 			});
-		}, [i, c]),
-		previewVersion: n((e) => {
-			_(e), c({
+		}, [n, r]),
+		previewVersion: i((e) => {
+			_(e), r({
 				service: "crdt",
 				action: "getSnapshotAtVersion",
-				channel: i,
+				channel: n,
 				timestamp: e
 			});
-		}, [i, c]),
-		restoreVersion: n((e) => {
-			c({
+		}, [n, r]),
+		restoreVersion: i((e) => {
+			r({
 				service: "crdt",
 				action: "restoreSnapshot",
-				channel: i,
+				channel: n,
 				timestamp: e
 			});
-		}, [i, c]),
+		}, [n, r]),
 		previewDoc: m,
 		previewTimestamp: g,
-		clearPreview: n(() => {
+		clearPreview: i(() => {
 			S.current &&= (S.current.destroy(), null), h(null), _(null);
 		}, []),
-		saveVersion: n((e) => {
-			c({
+		saveVersion: i((e) => {
+			r({
 				service: "crdt",
 				action: "saveVersion",
-				channel: i,
+				channel: n,
 				name: e
 			});
-		}, [i, c]),
-		extractSections: n((e) => U(e), []),
+		}, [n, r]),
+		extractSections: i((e) => H(e), []),
 		compareSections: v,
 		compareTimestamp: b,
-		compareVersion: n((e) => {
-			w.current = !0, x(e), c({
+		compareVersion: i((e) => {
+			w.current = !0, x(e), r({
 				service: "crdt",
 				action: "getSnapshotAtVersion",
-				channel: i,
+				channel: n,
 				timestamp: e
 			});
-		}, [i, c]),
-		clearCompare: n(() => {
+		}, [n, r]),
+		clearCompare: i(() => {
 			C.current &&= (C.current.destroy(), null), y(null), x(null);
 		}, [])
 	};
 }
 //#endregion
 //#region src/hooks/useVideoCall.ts
-function G(e) {
-	let { documentId: t, idToken: i, meta: s, updateMeta: c, sendMessage: l, displayName: u } = e, [d, f] = o("idle"), [p, m] = o(null), [h, g] = o(null), [_, v] = o(null), [y, b] = o(null), [x, S] = o(null), C = a(p);
-	r(() => {
+function W(e) {
+	let { documentId: t, idToken: n, meta: r, updateMeta: o, sendMessage: l, displayName: u } = e, [d, f] = c("idle"), [p, m] = c(null), [h, g] = c(null), [_, v] = c(null), [y, b] = c(null), [x, S] = c(null), C = s(p);
+	a(() => {
 		C.current = p;
-	}, [p]), r(() => {
+	}, [p]), a(() => {
 		let e = () => {
 			let e = C.current;
 			e && navigator.sendBeacon(`/api/video/sessions/${e}/end`, new Blob([JSON.stringify({ documentId: t })], { type: "application/json" }));
 		};
 		return window.addEventListener("beforeunload", e), () => window.removeEventListener("beforeunload", e);
 	}, []);
-	let w = !!s?.activeCallSessionId && !p, T = a(i);
-	r(() => {
-		T.current = i;
-	}, [i]);
-	let E = n(() => {
+	let w = !!r?.activeCallSessionId && !p, T = s(n);
+	a(() => {
+		T.current = n;
+	}, [n]);
+	let E = i(() => {
 		let e = T.current, t = { "Content-Type": "application/json" };
 		return e && (t.Authorization = `Bearer ${e}`), t;
-	}, []), D = n(async (e) => {
+	}, []), D = i(async (e) => {
 		f("joining"), S(null);
 		try {
 			let n = await fetch(`/api/video/sessions/${e}/join`, {
@@ -1263,7 +1161,7 @@ function G(e) {
 			});
 			if (!n.ok) {
 				let r = await n.json().catch(() => ({ error: "Join failed" })), i = n.status;
-				throw i === 404 || i === 410 ? (console.warn("[useVideoCall] Session", e, "no longer exists, clearing stale meta"), c({ activeCallSessionId: "" }), l({
+				throw i === 404 || i === 410 ? (console.warn("[useVideoCall] Session", e, "no longer exists, clearing stale meta"), o({ activeCallSessionId: "" }), l({
 					service: "crdt",
 					action: "updateDocumentMeta",
 					documentId: t,
@@ -1279,7 +1177,7 @@ function G(e) {
 		t,
 		u,
 		E,
-		c,
+		o,
 		l
 	]);
 	return {
@@ -1290,7 +1188,7 @@ function G(e) {
 		userId: y,
 		error: x,
 		hasActiveCall: w,
-		startCall: n(async () => {
+		startCall: i(async () => {
 			f("creating"), S(null);
 			try {
 				let e = await fetch("/api/video/sessions", {
@@ -1307,7 +1205,7 @@ function G(e) {
 				}
 				let n = (await e.json()).sessionId;
 				if (!await D(n)) return;
-				c({ activeCallSessionId: n }), l({
+				o({ activeCallSessionId: n }), l({
 					service: "crdt",
 					action: "updateDocumentMeta",
 					documentId: t,
@@ -1320,14 +1218,14 @@ function G(e) {
 			t,
 			u,
 			E,
-			c,
+			o,
 			l,
 			D
 		]),
-		joinCall: n(async (e) => {
+		joinCall: i(async (e) => {
 			await D(e);
 		}, [D]),
-		endCall: n(async () => {
+		endCall: i(async () => {
 			let e = C.current;
 			e && fetch(`/api/video/sessions/${e}/end`, {
 				method: "POST",
@@ -1335,7 +1233,7 @@ function G(e) {
 				body: JSON.stringify({ documentId: t })
 			}).catch((e) => {
 				console.error("[useVideoCall] Failed to end session on server:", e);
-			}), c({ activeCallSessionId: "" }), l({
+			}), o({ activeCallSessionId: "" }), l({
 				service: "crdt",
 				action: "updateDocumentMeta",
 				documentId: t,
@@ -1344,32 +1242,32 @@ function G(e) {
 		}, [
 			t,
 			E,
-			c,
+			o,
 			l
 		])
 	};
 }
 //#endregion
 //#region src/hooks/useVideoSessions.ts
-function K(e, t) {
-	let [r, i] = o([]), [a, s] = o(!1);
+function G(e, t) {
+	let [n, r] = c([]), [a, o] = c(!1);
 	return {
-		sessions: r,
+		sessions: n,
 		loading: a,
-		fetchSessions: n(async () => {
-			s(!0);
+		fetchSessions: i(async () => {
+			o(!0);
 			try {
 				let n = { "Content-Type": "application/json" };
 				t && (n.Authorization = `Bearer ${t}`);
-				let r = await fetch(`/api/video/sessions/document/${e}`, { headers: n });
-				if (!r.ok) return;
-				let a = await r.json();
-				i(a.sessions);
+				let i = await fetch(`/api/video/sessions/document/${e}`, { headers: n });
+				if (!i.ok) return;
+				let a = await i.json();
+				r(a.sessions);
 			} catch {} finally {
-				s(!1);
+				o(!1);
 			}
 		}, [e, t])
 	};
 }
 //#endregion
-export { u as _, z as a, F as c, D as d, T as f, d as g, f as h, H as i, N as l, m, G as n, I as o, x as p, W as r, R as s, K as t, j as u };
+export { R as a, N as c, C as d, g as f, f as h, V as i, k as l, p as m, W as n, L as o, m as p, U as r, F as s, G as t, D as u };

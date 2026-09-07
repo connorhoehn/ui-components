@@ -1,14 +1,15 @@
 import { t as e } from "./rolldown-runtime-Dy4uBu1J.js";
 import { r as t } from "./registry-DbX3MVAA.js";
 import { n } from "./IdentityContext-CQM1qwH6.js";
-import { a as r, c as i, d as a, i as o, l as s, n as c, r as l, t as u, u as d } from "./useVideoSessions-_k7Qd6OK.js";
+import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-WO-vkKyy.js";
 import { t as f } from "./useDocumentTypes-CrsHC24c.js";
 import { t as p } from "./cn-DhjIN-s0.js";
 import { t as m } from "./useEventCallback-Cwx9QVSi.js";
 import { t as h } from "./Input-DLknWXri.js";
 import { t as g } from "./Textarea-Dz4doxTv.js";
 import { t as _ } from "./activationKey-CjbL3LUv.js";
-import { i as v, t as y } from "./renderers-B2c6fv2M.js";
+import { t as v } from "./ErrorBoundary-B2aBpcsV.js";
+import { t as y } from "./renderers-CoOnJdXH.js";
 import { t as b } from "./TiptapEditor-Dn9rUdZx.js";
 import { t as x } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as S } from "./useActiveSpeaker-Dc9r75EE.js";
@@ -435,7 +436,7 @@ function we() {
 function Te(e) {
 	return e.toString().replace(/<\/?(paragraph|heading|blockquote|codeBlock|bulletList|orderedList|listItem|taskList|taskItem|horizontalRule|hardBreak|doc)[^>]*>/g, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim();
 }
-function Ee({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, color: m = "var(--color-info)", onMessage: h, activityPublish: g, isVideoDocked: _, onDockVideo: v, onUndockVideo: y, onBack: b }) {
+function Ee({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, color: m = "var(--color-info)", onMessage: h, activityPublish: g, isVideoDocked: _, onDockVideo: v, onUndockVideo: y, onBack: b }) {
 	let [x, S] = k(we), { showHistory: C, showMyItems: E, showVideoHistory: A, toggleHistory: j, toggleMyItems: M, toggleVideoHistory: N, closePanel: P } = ve(), [F, ee] = k(_ ?? !1), [te, ne] = k(typeof window < "u" ? window.innerWidth : 1400);
 	T(() => {
 		let e = () => ne(window.innerWidth);
@@ -462,27 +463,27 @@ function Ee({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, 
 		}, 50);
 		return () => clearTimeout(e);
 	}, [F, V]);
-	let [ue, de] = k(null), [fe, pe] = k(!1), [me, he] = k(null), { idToken: H } = n(), ge = u(e, H), { meta: U, sections: W, synced: G, updateMeta: K, addSection: ye, updateSection: be, addItem: Te, updateItem: Ee, removeItem: De, getSectionFragment: Oe, ydoc: q, provider: ke, exportJSON: Ae, participants: je, awareness: J } = a({
+	let [ue, de] = k(null), [fe, pe] = k(!1), [me, he] = k(null), { idToken: H } = n(), ge = d(e, H), { meta: U, sections: W, synced: G, updateMeta: K, addSection: ye, updateSection: be, addItem: Te, updateItem: Ee, removeItem: De, getSectionFragment: Oe, ydoc: q, provider: ke, exportJSON: Ae, participants: je, awareness: J } = o({
 		documentId: e,
 		mode: x,
 		ws: r,
-		userId: c,
+		userId: s,
 		displayName: p,
 		color: m,
 		onMessage: h
-	}), { comments: Me, addComment: Ne, resolveThread: Pe, unresolveThread: Fe } = d({
+	}), { comments: Me, addComment: Ne, resolveThread: Pe, unresolveThread: Fe } = i({
 		documentId: e,
 		idToken: H,
 		sendMessage: r.sendMessage,
 		onMessage: h,
 		connectionState: r.connectionState
-	}), { sectionReviews: Ie, reviewSection: Le } = i({
+	}), { sectionReviews: Ie, reviewSection: Le } = c({
 		documentId: e,
 		idToken: H,
 		sendMessage: r.sendMessage,
 		onMessage: h,
 		connectionState: r.connectionState
-	}), Re = D(() => W.map((e) => e.id), [W]), { items: ze, addItem: Be, updateItem: Ve, removeItem: He, itemErrors: Ue } = s({
+	}), Re = D(() => W.map((e) => e.id), [W]), { items: ze, addItem: Be, updateItem: Ve, removeItem: He, itemErrors: Ue } = u({
 		documentId: e,
 		sectionIds: Re,
 		idToken: H,
@@ -509,7 +510,7 @@ function Ee({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, 
 	]);
 	let Y = se(q), { demoLoaded: We, handleLoadDemo: Ge, handleClearDocument: Ke, handleExport: qe } = _e({
 		documentId: e,
-		userId: c,
+		userId: s,
 		ws: r,
 		updateMeta: K,
 		addSection: ye,
@@ -680,11 +681,11 @@ function Ee({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, 
 		p,
 		e,
 		U?.title
-	]), ut = o({
+	]), ut = a({
 		sections: W,
 		comments: Me,
 		displayName: p,
-		userId: c
+		userId: s
 	}), dt = w((e, t) => {
 		setTimeout(() => {
 			xe({
@@ -723,7 +724,7 @@ function Ee({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, 
 			title: U?.title || r.name,
 			sourceType: "notes",
 			sourceId: "",
-			createdBy: c,
+			createdBy: s,
 			createdByName: p,
 			createdAt: (/* @__PURE__ */ new Date()).toISOString(),
 			aiModel: "",
@@ -866,7 +867,7 @@ function Ee({ documentId: e, documentType: t, ws: r, userId: c, displayName: p, 
 		activityPublish: g,
 		displayName: p,
 		color: m,
-		userId: c,
+		userId: s,
 		documentId: e
 	};
 }
@@ -1491,8 +1492,8 @@ function qe({ stageToken: e, participantId: t, userId: n, onEndCall: r }) {
 		children: "Connecting to video..."
 	});
 }
-function Je({ documentId: e, userId: t, idToken: n, meta: r, updateMeta: i, sendMessage: a, onClose: o, onDockToSidebar: s, isDocked: l, onUndock: u, onCallEnd: d }) {
-	let { callState: f, stageToken: m, participantId: h, userId: g, error: _, hasActiveCall: v, startCall: y, joinCall: b, endCall: x } = c({
+function Je({ documentId: e, userId: t, idToken: n, meta: r, updateMeta: i, sendMessage: a, onClose: o, onDockToSidebar: c, isDocked: l, onUndock: u, onCallEnd: d }) {
+	let { callState: f, stageToken: m, participantId: h, userId: g, error: _, hasActiveCall: v, startCall: y, joinCall: b, endCall: x } = s({
 		documentId: e,
 		idToken: n,
 		meta: r,
@@ -1514,9 +1515,9 @@ function Je({ documentId: e, userId: t, idToken: n, meta: r, updateMeta: i, send
 			}), /* @__PURE__ */ M("div", {
 				className: p("flex items-center gap-0.5"),
 				children: [
-					s && !l && /* @__PURE__ */ j("button", {
+					c && !l && /* @__PURE__ */ j("button", {
 						type: "button",
-						onClick: s,
+						onClick: c,
 						title: "Dock to sidebar",
 						className: p("w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-transparent text-text-tertiary cursor-pointer text-xs leading-none p-0"),
 						children: "←"

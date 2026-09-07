@@ -1,0 +1,1457 @@
+import { a as e, o as t } from "./registry-DbX3MVAA.js";
+import { n, r } from "./userDirectory-CyWbVxFq.js";
+import { t as i } from "./cn-DhjIN-s0.js";
+import { t as a } from "./useEventCallback-Cwx9QVSi.js";
+import { t as o } from "./Input-DLknWXri.js";
+import { t as s } from "./Select-CqVokE2v.js";
+import { t as c } from "./Checkbox-DsS7fIUO.js";
+import { t as l } from "./TiptapEditor-Dn9rUdZx.js";
+import { useCallback as u, useEffect as d, useRef as f, useState as p } from "react";
+import { Fragment as m, jsx as h, jsxs as g } from "react/jsx-runtime";
+//#region src/renderers/tasks/definition.ts
+var _ = {
+	type: "tasks",
+	label: "Task List",
+	icon: "✅",
+	description: "Assignable action items with status tracking",
+	rendererKeys: {
+		editor: ["tasks:editor"],
+		ack: ["tasks:ack"],
+		reader: ["tasks:reader"]
+	},
+	rendererLabels: {
+		"tasks:editor": "Task Editor",
+		"tasks:ack": "Task Review",
+		"tasks:reader": "Task Reader"
+	}
+}, v = {
+	type: "rich-text",
+	label: "Rich Text",
+	icon: "📝",
+	description: "Formatted content with headings and lists",
+	rendererKeys: {
+		editor: ["rich-text:editor"],
+		ack: ["rich-text:ack"],
+		reader: ["rich-text:reader"]
+	},
+	rendererLabels: {
+		"rich-text:editor": "Rich Text Editor",
+		"rich-text:ack": "Rich Text Viewer",
+		"rich-text:reader": "Rich Text Viewer"
+	}
+}, y = {
+	type: "decisions",
+	label: "Decisions",
+	icon: "🎯",
+	description: "Decision log with rationale and context",
+	rendererKeys: {
+		editor: ["decisions:editor"],
+		ack: ["decisions:ack"],
+		reader: ["decisions:reader"]
+	},
+	rendererLabels: {
+		"decisions:editor": "Decisions Editor",
+		"decisions:ack": "Decisions Viewer",
+		"decisions:reader": "Decisions Viewer"
+	}
+}, b = {
+	type: "checklist",
+	label: "Checklist",
+	icon: "☑️",
+	description: "Simple yes/no checklist items",
+	rendererKeys: {
+		editor: ["checklist:editor"],
+		ack: ["checklist:ack"],
+		reader: ["checklist:reader"]
+	},
+	rendererLabels: {
+		"checklist:editor": "Checklist Editor",
+		"checklist:ack": "Checklist Viewer",
+		"checklist:reader": "Checklist Viewer"
+	}
+}, x = {
+	type: "file-upload",
+	label: "File Upload",
+	icon: "📎",
+	description: "Upload a file at edit time; download link in viewer",
+	rendererKeys: {
+		editor: ["file-upload:editor"],
+		ack: ["file-upload:ack"],
+		reader: ["file-upload:reader"]
+	},
+	rendererLabels: {
+		"file-upload:editor": "File Upload Editor",
+		"file-upload:ack": "File Upload Viewer",
+		"file-upload:reader": "File Upload Viewer"
+	}
+}, S = {
+	type: "diagram",
+	label: "Diagram",
+	icon: "▦",
+	description: "Embedded image or SVG (placeholder until upload pipeline lands)",
+	rendererKeys: {
+		editor: ["diagram:editor"],
+		ack: ["diagram:ack"],
+		reader: ["diagram:reader"]
+	},
+	rendererLabels: {
+		"diagram:editor": "Diagram Editor",
+		"diagram:ack": "Diagram Viewer",
+		"diagram:reader": "Diagram Viewer"
+	}
+}, C = {
+	type: "link-block",
+	label: "Link Block",
+	icon: "🔗",
+	description: "List of external links (label + url pairs)",
+	rendererKeys: {
+		editor: ["link-block:editor"],
+		ack: ["link-block:ack"],
+		reader: ["link-block:reader"]
+	},
+	rendererLabels: {
+		"link-block:editor": "Link Block Editor",
+		"link-block:ack": "Link Block Viewer",
+		"link-block:reader": "Link Block Viewer"
+	}
+}, w = /^(\d{4})-(\d{2})-(\d{2})$/;
+function T(e) {
+	if (typeof e != "string") return null;
+	let t = e.trim();
+	if (t === "") return null;
+	let n = w.exec(t);
+	if (n) {
+		let e = Number(n[1]), t = Number(n[2]), r = Number(n[3]);
+		if (t < 1 || t > 12 || r < 1 || r > 31) return null;
+		let i = new Date(e, t - 1, r);
+		return i.setFullYear(e, t - 1, r), i.getMonth() !== t - 1 || i.getDate() !== r ? null : i;
+	}
+	let r = new Date(t);
+	return Number.isNaN(r.getTime()) ? null : r;
+}
+function E(e = /* @__PURE__ */ new Date()) {
+	let t = new Date(e.getTime());
+	return t.setHours(0, 0, 0, 0), t;
+}
+function D(e, t = /* @__PURE__ */ new Date()) {
+	let n = T(e);
+	return n ? E(n).getTime() < E(t).getTime() : !1;
+}
+//#endregion
+//#region src/components/doc-editor/TaskItemRow.tsx
+var ee = {
+	pending: "var(--color-text-tertiary)",
+	acked: "var(--color-info)",
+	done: "var(--color-success)",
+	rejected: "var(--color-danger)"
+}, O = {
+	low: "var(--color-text-tertiary)",
+	medium: "var(--color-caution)",
+	high: "var(--color-danger)"
+}, te = {
+	start: "var(--color-success)",
+	stop: "var(--color-danger)",
+	continue: "var(--color-info)"
+};
+function ne(e) {
+	let t = T(e);
+	return t ? t.toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric"
+	}) : e;
+}
+function re(e) {
+	return D(e);
+}
+function k(e) {
+	return e.split(/\s+/).map((e) => e[0]).join("").toUpperCase().slice(0, 2);
+}
+function A({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, onDidAutoFocus: v }) {
+	let [y, b] = p(!1), [x, S] = p(""), [C, w] = p(0), T = f(null), E = f(null), D = f(null), A = () => {
+		a({ status: e.status === "done" ? "pending" : "done" });
+	}, j = e.assignee ? n.find((t) => t.displayName === e.assignee) : void 0, M = x.trim() ? r(x) : n, N = u(() => {
+		t && (S(""), w(0), b(!0));
+	}, [t]), P = u(() => {
+		b(!1), S(""), w(0);
+	}, []), F = u((e) => {
+		a({ assignee: e.displayName }), P();
+	}, [a, P]), I = u(() => {
+		a({ assignee: "" }), P();
+	}, [a, P]);
+	d(() => {
+		if (!y) return;
+		let e = (e) => {
+			T.current && !T.current.contains(e.target) && P();
+		};
+		return document.addEventListener("mousedown", e), () => document.removeEventListener("mousedown", e);
+	}, [y, P]), d(() => {
+		y && E.current && E.current.focus();
+	}, [y]), d(() => {
+		w(0);
+	}, [x]), d(() => {
+		_ && D.current && (D.current.focus(), v?.());
+	}, [_, v]);
+	let L = (e) => {
+		e.key === "Escape" ? P() : e.key === "ArrowDown" ? (e.preventDefault(), w((e) => Math.min(e + 1, M.length - 1))) : e.key === "ArrowUp" ? (e.preventDefault(), w((e) => Math.max(e - 1, 0))) : e.key === "Enter" && (e.preventDefault(), M[C] && F(M[C]));
+	}, R = e.dueDate && e.status !== "done" ? re(e.dueDate) : !1;
+	return /* @__PURE__ */ g("div", {
+		className: i("flex items-center gap-2 py-1.5 border-b border-border-subtle"),
+		children: [
+			/* @__PURE__ */ h("span", {
+				title: `Priority: ${e.priority}`,
+				className: i("w-2 h-2 rounded-full shrink-0"),
+				style: { background: O[e.priority] }
+			}),
+			/* @__PURE__ */ h(c, {
+				checked: e.status === "done",
+				onChange: A,
+				disabled: !t,
+				className: i("w-4 h-4", t ? "cursor-pointer" : "cursor-default")
+			}),
+			/* @__PURE__ */ h(o, {
+				ref: D,
+				"data-testid": `task-text-${e.id}`,
+				value: e.text,
+				onChange: (e) => a({ text: e.target.value }),
+				readOnly: !t,
+				className: i("flex-1 h-auto border-transparent bg-transparent px-1 py-0.5", e.status === "done" ? "line-through text-text-tertiary" : "text-text-primary")
+			}),
+			e.dueDate && /* @__PURE__ */ g("span", {
+				title: e.dueDate,
+				className: i("inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug border", R ? "bg-danger-bg text-danger-fg border-danger-border" : "bg-info-bg text-neutral border-info-border"),
+				children: [
+					R ? "⚠ " : "",
+					"Due: ",
+					ne(e.dueDate)
+				]
+			}),
+			e.category && /* @__PURE__ */ h("span", {
+				className: i("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap"),
+				style: { backgroundColor: te[e.category.toLowerCase()] ?? "var(--color-neutral)" },
+				children: e.category
+			}),
+			/* @__PURE__ */ g("div", {
+				ref: T,
+				className: i("relative"),
+				children: [/* @__PURE__ */ h("button", {
+					type: "button",
+					onClick: N,
+					title: e.assignee || "Unassigned",
+					className: i("inline-flex items-center justify-center h-6 rounded-xl font-semibold text-[11px] cursor-pointer leading-snug whitespace-nowrap", e.assignee ? "px-2 bg-primary-bg text-primary-fg border-none min-w-0" : "w-6 px-0 bg-surface text-text-tertiary border border-dashed border-border-emphasis"),
+					children: e.assignee ? /* @__PURE__ */ g(m, { children: [/* @__PURE__ */ h("span", {
+						className: i("w-[18px] h-[18px] rounded-full text-white inline-flex items-center justify-center text-[8px] font-bold shrink-0 leading-none"),
+						style: { background: j?.color ?? "var(--color-text-tertiary)" },
+						children: k(e.assignee)
+					}), /* @__PURE__ */ h("span", {
+						className: i("ml-1 text-[11px]"),
+						children: e.assignee.split(" ")[0]
+					})] }) : "+"
+				}), y && /* @__PURE__ */ g("div", {
+					className: i("absolute top-full left-0 mt-1 min-w-[180px] max-h-[200px] overflow-y-auto bg-surface border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] z-[1000] py-1"),
+					children: [
+						/* @__PURE__ */ h("div", {
+							className: i("px-2 py-1"),
+							children: /* @__PURE__ */ h(o, {
+								ref: E,
+								size: "sm",
+								value: x,
+								onChange: (e) => S(e.target.value),
+								onKeyDown: L,
+								placeholder: "Search users...",
+								className: i("text-[11px]")
+							})
+						}),
+						e.assignee && /* @__PURE__ */ g("button", {
+							type: "button",
+							onClick: I,
+							className: i("flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer bg-transparent border-none w-full text-left font-[inherit] text-text-primary"),
+							children: [/* @__PURE__ */ h("span", {
+								className: i("w-[22px] h-[22px] rounded-full bg-border-emphasis text-neutral inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"),
+								children: "--"
+							}), /* @__PURE__ */ h("span", {
+								className: i("text-neutral italic"),
+								children: "Unassigned"
+							})]
+						}),
+						M.map((e, t) => /* @__PURE__ */ g("button", {
+							type: "button",
+							onClick: () => F(e),
+							onMouseEnter: () => w(t),
+							className: i("flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-text-primary", t === C ? "bg-surface-hover" : "bg-transparent"),
+							children: [/* @__PURE__ */ h("span", {
+								className: i("w-[22px] h-[22px] rounded-full text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"),
+								style: { background: e.color },
+								children: k(e.displayName)
+							}), /* @__PURE__ */ h("span", { children: e.displayName })]
+						}, e.userId)),
+						M.length === 0 && /* @__PURE__ */ h("div", {
+							className: i("px-2.5 py-2 text-[11px] text-text-tertiary"),
+							children: "No users found"
+						})
+					]
+				})]
+			}),
+			/* @__PURE__ */ h(s, {
+				value: e.priority,
+				disabled: !t,
+				onChange: (e) => a({ priority: e.target.value }),
+				className: i("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
+				style: { backgroundColor: O[e.priority] },
+				title: `Priority: ${e.priority}`,
+				options: [
+					{
+						value: "low",
+						label: "low"
+					},
+					{
+						value: "medium",
+						label: "medium"
+					},
+					{
+						value: "high",
+						label: "high"
+					}
+				]
+			}),
+			/* @__PURE__ */ h(s, {
+				value: e.status,
+				disabled: !t,
+				onChange: (e) => a({ status: e.target.value }),
+				className: i("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
+				style: { backgroundColor: ee[e.status] },
+				title: `Status: ${e.status}`,
+				options: [
+					{
+						value: "pending",
+						label: "pending"
+					},
+					{
+						value: "acked",
+						label: "acked"
+					},
+					{
+						value: "done",
+						label: "done"
+					},
+					{
+						value: "rejected",
+						label: "rejected"
+					}
+				]
+			}),
+			t && /* @__PURE__ */ h("button", {
+				type: "button",
+				onClick: l,
+				title: "Remove task",
+				className: i("border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 rounded leading-none"),
+				children: "x"
+			})
+		]
+	});
+}
+//#endregion
+//#region src/components/doc-editor/TaskList.tsx
+function j({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastItem: a }) {
+	if (e.length === 0) return /* @__PURE__ */ h("div", {
+		className: i("text-text-tertiary text-[13px] italic py-2"),
+		children: "No tasks yet."
+	});
+	let o = a?.current ?? !1;
+	return /* @__PURE__ */ h("div", {
+		className: i("py-2"),
+		children: e.map((i, s) => /* @__PURE__ */ h(A, {
+			item: i,
+			editable: t,
+			onUpdate: (e) => n(i.id, e),
+			onRemove: () => r(i.id),
+			autoFocusText: o && s === e.length - 1,
+			onDidAutoFocus: o && s === e.length - 1 ? () => {
+				a && (a.current = !1);
+			} : void 0
+		}, i.id))
+	});
+}
+//#endregion
+//#region src/renderers/sectionItems.ts
+function M(e) {
+	let t = e.items;
+	return Array.isArray(t) ? t.filter((e) => e != null) : [];
+}
+//#endregion
+//#region src/renderers/default/DefaultRenderer.tsx
+function N({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
+	let d = M(e), p = f(!1);
+	return /* @__PURE__ */ g("div", { children: [
+		t && n && /* @__PURE__ */ h(l, {
+			fragment: t,
+			ydoc: n,
+			provider: r ?? null,
+			user: i ?? {
+				name: "Anonymous",
+				color: "#6b7280"
+			},
+			editable: a,
+			placeholder: e.placeholder ?? `Write ${e.type} content...`,
+			sectionId: e.id,
+			onUpdateCursorInfo: u
+		}),
+		(d.length > 0 || a) && /* @__PURE__ */ h(j, {
+			items: d,
+			editable: a,
+			onUpdateItem: (e, t) => s?.(e, t),
+			onRemoveItem: (e) => c?.(e),
+			focusLastItem: p
+		}),
+		a && /* @__PURE__ */ h("button", {
+			type: "button",
+			onClick: () => {
+				o?.({
+					text: "",
+					status: "pending",
+					assignee: "",
+					ackedBy: "",
+					ackedAt: "",
+					priority: "medium",
+					notes: ""
+				}), p.current = !0;
+			},
+			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
+			children: "+ Add item"
+		})
+	] });
+}
+//#endregion
+//#region src/renderers/rich-text/RichTextEditorRenderer.tsx
+function P({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
+	return !t || !n ? /* @__PURE__ */ h("div", {
+		className: "text-text-tertiary italic text-[13px] py-2",
+		children: "No content yet."
+	}) : /* @__PURE__ */ h(l, {
+		fragment: t,
+		ydoc: n,
+		provider: r ?? null,
+		user: i ?? {
+			name: "Anonymous",
+			color: "#6b7280"
+		},
+		editable: a,
+		placeholder: e.placeholder ?? "Write content...",
+		sectionId: e.id,
+		onUpdateCursorInfo: o
+	});
+}
+//#endregion
+//#region src/renderers/rich-text/RichTextReaderRenderer.tsx
+function F({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i }) {
+	return /* @__PURE__ */ g("div", { children: [t && n ? /* @__PURE__ */ h("div", {
+		className: "border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-text-primary leading-[1.6]",
+		children: /* @__PURE__ */ h(l, {
+			fragment: t,
+			ydoc: n,
+			provider: r ?? null,
+			user: {
+				name: "",
+				color: "#6b7280"
+			},
+			editable: !1,
+			sectionId: e.id
+		})
+	}) : /* @__PURE__ */ h("div", {
+		className: "text-text-tertiary italic text-[13px]",
+		children: "No content."
+	}), i && /* @__PURE__ */ h("button", {
+		type: "button",
+		onClick: () => i(e.id),
+		className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
+		children: "Edit in editor →"
+	})] });
+}
+//#endregion
+//#region src/renderers/tasks/TasksEditorRenderer.tsx
+function I({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
+	let a = M(e), o = f(!1);
+	return /* @__PURE__ */ g("div", {
+		className: "py-1",
+		children: [
+			a.length > 0 || t ? /* @__PURE__ */ h(j, {
+				items: a,
+				editable: t,
+				onUpdateItem: (e, t) => r?.(e, t),
+				onRemoveItem: (e) => i?.(e),
+				focusLastItem: o
+			}) : null,
+			a.length === 0 && !t && /* @__PURE__ */ h("p", {
+				className: "text-text-tertiary text-[13px] italic my-2",
+				children: "No items yet."
+			}),
+			t && /* @__PURE__ */ h("button", {
+				type: "button",
+				onClick: () => {
+					n?.({
+						text: "",
+						status: "pending",
+						assignee: "",
+						ackedBy: "",
+						ackedAt: "",
+						priority: "medium",
+						notes: ""
+					}), o.current = !0;
+				},
+				className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
+				children: "+ Add item"
+			})
+		]
+	});
+}
+//#endregion
+//#region src/renderers/tasks/TasksReaderRenderer.tsx
+var L = {
+	pending: {
+		label: "Pending",
+		color: "var(--color-warning-fg)",
+		bg: "var(--color-warning-bg)"
+	},
+	acked: {
+		label: "Acked",
+		color: "var(--color-info-fg)",
+		bg: "var(--color-info-bg)"
+	},
+	done: {
+		label: "Done",
+		color: "var(--color-success-fg)",
+		bg: "var(--color-success-bg)"
+	},
+	rejected: {
+		label: "Rejected",
+		color: "var(--color-danger-fg)",
+		bg: "var(--color-danger-bg)"
+	}
+}, R = {
+	high: "var(--color-danger)",
+	medium: "var(--color-caution)",
+	low: "var(--color-text-tertiary)"
+};
+function z(e) {
+	return D(e);
+}
+function ie(e) {
+	let t = T(e);
+	return t ? t.toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric"
+	}) : e;
+}
+function ae(e) {
+	return e.split(/\s+/).map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
+}
+function B({ item: e, onUpdateItem: t }) {
+	let [n, r] = p(!1), [a, o] = p(!1), s = n || a, c = L[e.status] ?? L.pending, l = R[e.priority] ?? R.medium, u = e.dueDate && e.status === "pending" ? z(e.dueDate) : !1, d = e.status === "done" || e.status === "acked";
+	return /* @__PURE__ */ g("div", {
+		onMouseEnter: () => r(!0),
+		onMouseLeave: () => r(!1),
+		onFocus: () => o(!0),
+		onBlur: (e) => {
+			e.currentTarget.contains(e.relatedTarget) || o(!1);
+		},
+		className: "flex items-center gap-2 py-1.5 border-b border-border-subtle",
+		style: { opacity: d ? .65 : 1 },
+		children: [
+			/* @__PURE__ */ h("span", {
+				title: `Priority: ${e.priority}`,
+				style: {
+					width: 7,
+					height: 7,
+					borderRadius: "50%",
+					background: l,
+					flexShrink: 0
+				}
+			}),
+			/* @__PURE__ */ h("button", {
+				type: "button",
+				title: `Status: ${e.status}${t ? " — click to toggle done" : ""}`,
+				onClick: () => {
+					if (!t) return;
+					let n = e.status === "done" ? "pending" : "done";
+					t(e.id, { status: n });
+				},
+				style: {
+					width: 18,
+					height: 18,
+					borderRadius: "50%",
+					border: `2px solid ${c.color}`,
+					background: d ? c.color : "transparent",
+					cursor: t ? "pointer" : "default",
+					flexShrink: 0,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					padding: 0
+				},
+				children: d && /* @__PURE__ */ h("svg", {
+					width: "9",
+					height: "9",
+					viewBox: "0 0 10 10",
+					fill: "none",
+					children: /* @__PURE__ */ h("polyline", {
+						points: "2,5 4,7.5 8,2.5",
+						stroke: "#fff",
+						strokeWidth: "1.8",
+						strokeLinecap: "round",
+						strokeLinejoin: "round"
+					})
+				})
+			}),
+			/* @__PURE__ */ h("span", {
+				className: i("flex-1 text-[13px] leading-[1.4]", d ? "text-text-tertiary line-through" : "text-text-primary"),
+				children: e.text || /* @__PURE__ */ h("span", {
+					className: "text-text-disabled italic",
+					children: "Untitled item"
+				})
+			}),
+			e.assignee && /* @__PURE__ */ h("span", {
+				title: e.assignee,
+				className: "w-[22px] h-[22px] rounded-full bg-primary-bg text-primary-fg text-[9px] font-bold flex items-center justify-center shrink-0",
+				children: ae(e.assignee)
+			}),
+			e.dueDate && /* @__PURE__ */ g("span", {
+				style: {
+					fontSize: 10,
+					fontWeight: 600,
+					padding: "1px 6px",
+					borderRadius: 10,
+					background: u ? "var(--color-danger-bg)" : "var(--color-info-bg)",
+					color: u ? "var(--color-danger)" : "var(--color-neutral)",
+					border: u ? "1px solid var(--color-danger-border)" : "1px solid var(--color-info-border)",
+					whiteSpace: "nowrap",
+					flexShrink: 0
+				},
+				children: [u ? "⚠ " : "", ie(e.dueDate)]
+			}),
+			t && s && /* @__PURE__ */ g("select", {
+				"aria-label": `Set status for ${e.text || "untitled item"}`,
+				value: e.status,
+				onChange: (n) => t(e.id, { status: n.target.value }),
+				onClick: (e) => e.stopPropagation(),
+				style: {
+					fontSize: 10,
+					padding: "1px 4px",
+					borderRadius: 6,
+					border: `1px solid ${c.color}`,
+					background: c.bg,
+					color: c.color,
+					fontWeight: 600,
+					cursor: "pointer",
+					outline: "none",
+					fontFamily: "inherit",
+					flexShrink: 0
+				},
+				children: [
+					/* @__PURE__ */ h("option", {
+						value: "pending",
+						children: "pending"
+					}),
+					/* @__PURE__ */ h("option", {
+						value: "acked",
+						children: "acked"
+					}),
+					/* @__PURE__ */ h("option", {
+						value: "done",
+						children: "done"
+					}),
+					/* @__PURE__ */ h("option", {
+						value: "rejected",
+						children: "rejected"
+					})
+				]
+			})
+		]
+	});
+}
+function V({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
+	let r = M(e);
+	if (r.length === 0) return /* @__PURE__ */ h("div", {
+		className: "text-text-tertiary italic text-[13px] py-1",
+		children: "No items."
+	});
+	let i = r.filter((e) => e.status === "done" || e.status === "acked"), a = r.filter((e) => e.status === "rejected"), o = r.filter((e) => !i.includes(e) && !a.includes(e));
+	return /* @__PURE__ */ g("div", { children: [
+		o.length > 0 && /* @__PURE__ */ h("div", {
+			className: "mb-1",
+			children: o.map((e) => /* @__PURE__ */ h(B, {
+				item: e,
+				onUpdateItem: t
+			}, e.id))
+		}),
+		i.length > 0 && /* @__PURE__ */ h("div", {
+			className: "mb-1",
+			children: i.map((e) => /* @__PURE__ */ h(B, {
+				item: e,
+				onUpdateItem: t
+			}, e.id))
+		}),
+		a.length > 0 && /* @__PURE__ */ h("div", { children: a.map((e) => /* @__PURE__ */ h(B, {
+			item: e,
+			onUpdateItem: t
+		}, e.id)) }),
+		n && /* @__PURE__ */ h("button", {
+			type: "button",
+			onClick: () => n(e.id),
+			className: "mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
+			children: "Edit in editor →"
+		})
+	] });
+}
+//#endregion
+//#region src/renderers/checklist/ChecklistEditorRenderer.tsx
+function oe({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
+	let c = f(null), l = e.status === "done", u = a(r);
+	return d(() => {
+		n && c.current && (c.current.focus(), u());
+	}, [n, u]), /* @__PURE__ */ g("div", {
+		className: "flex items-center gap-2 py-[5px] border-b border-border-subtle",
+		children: [
+			/* @__PURE__ */ h("input", {
+				type: "checkbox",
+				checked: l,
+				onChange: () => o({ status: l ? "pending" : "done" }),
+				disabled: !t,
+				className: i("w-[15px] h-[15px] accent-success shrink-0", t ? "cursor-pointer" : "cursor-default")
+			}),
+			/* @__PURE__ */ h("input", {
+				ref: c,
+				type: "text",
+				value: e.text,
+				onChange: (e) => o({ text: e.target.value }),
+				readOnly: !t,
+				placeholder: "Checklist item...",
+				className: i("flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5", l ? "text-text-tertiary line-through" : "text-text-primary")
+			}),
+			t && /* @__PURE__ */ h("button", {
+				type: "button",
+				onClick: s,
+				className: "border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 leading-none",
+				children: "×"
+			})
+		]
+	});
+}
+function se({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
+	let d = M(e), p = f(null), m = () => {
+		o && (p.current = d.length, o({
+			text: "",
+			status: "pending",
+			assignee: "",
+			ackedBy: "",
+			ackedAt: "",
+			priority: "medium",
+			notes: ""
+		}));
+	}, _ = p.current, v = _ !== null && d.length > _, y = d.length, b = d.filter((e) => e.status === "done").length;
+	return /* @__PURE__ */ g("div", { children: [
+		t && n && /* @__PURE__ */ h(l, {
+			fragment: t,
+			ydoc: n,
+			provider: r ?? null,
+			user: i ?? {
+				name: "Anonymous",
+				color: "#6b7280"
+			},
+			editable: a,
+			placeholder: e.placeholder ?? "Add notes or context...",
+			sectionId: e.id,
+			onUpdateCursorInfo: u
+		}),
+		y > 0 && /* @__PURE__ */ g("div", {
+			className: "text-[11px] text-neutral font-semibold mb-1.5",
+			children: [
+				b,
+				" / ",
+				y,
+				" done"
+			]
+		}),
+		/* @__PURE__ */ h("div", { children: d.map((e, t) => {
+			let n = t === d.length - 1, r = v && n;
+			return /* @__PURE__ */ h(oe, {
+				item: e,
+				editable: a,
+				autoFocus: r,
+				onDidAutoFocus: r ? () => {
+					p.current = null;
+				} : void 0,
+				onUpdate: (t) => s?.(e.id, t),
+				onRemove: () => c?.(e.id)
+			}, e.id);
+		}) }),
+		a && /* @__PURE__ */ h("button", {
+			type: "button",
+			onClick: m,
+			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
+			children: "+ Add item"
+		})
+	] });
+}
+//#endregion
+//#region src/renderers/checklist/ChecklistReaderRenderer.tsx
+function H({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, onNavigateToEditor: o }) {
+	let s = M(e), c = s.length, u = s.filter((e) => e.status === "done").length, d = c > 0 ? Math.round(u / c * 100) : 0;
+	return /* @__PURE__ */ g("div", { children: [
+		t && n && /* @__PURE__ */ h("div", {
+			className: "mb-2.5",
+			children: /* @__PURE__ */ h(l, {
+				fragment: t,
+				ydoc: n,
+				provider: r ?? null,
+				user: {
+					name: "",
+					color: "#6b7280"
+				},
+				editable: !1,
+				sectionId: e.id
+			})
+		}),
+		c > 0 && /* @__PURE__ */ g("div", {
+			className: "mb-2.5",
+			children: [/* @__PURE__ */ g("div", {
+				className: "flex justify-between mb-1",
+				children: [/* @__PURE__ */ g("span", {
+					className: "text-[11px] text-neutral font-semibold",
+					children: [
+						u,
+						" / ",
+						c,
+						" done"
+					]
+				}), /* @__PURE__ */ g("span", {
+					className: i("text-[11px] font-semibold", d === 100 ? "text-success-fg" : "text-neutral"),
+					children: [d, "%"]
+				})]
+			}), /* @__PURE__ */ h("div", {
+				className: "h-1 bg-border rounded-sm overflow-hidden",
+				children: /* @__PURE__ */ h("div", {
+					className: i("h-full rounded-sm transition-[width] duration-300", d === 100 ? "bg-success" : "bg-info"),
+					style: { width: `${d}%` }
+				})
+			})]
+		}),
+		c === 0 ? /* @__PURE__ */ h("div", {
+			className: "text-text-tertiary italic text-[13px]",
+			children: "No items."
+		}) : /* @__PURE__ */ h("div", { children: s.map((e) => {
+			let t = e.status === "done";
+			return /* @__PURE__ */ g("div", {
+				className: "flex items-center gap-2 py-[5px] border-b border-border-subtle",
+				children: [/* @__PURE__ */ h("input", {
+					type: "checkbox",
+					checked: t,
+					onChange: () => a?.(e.id, { status: t ? "pending" : "done" }),
+					className: i("w-3.5 h-3.5 accent-success shrink-0", a ? "cursor-pointer" : "cursor-default"),
+					readOnly: !a
+				}), /* @__PURE__ */ h("span", {
+					className: i("text-[13px] flex-1 leading-[1.4]", t ? "text-text-tertiary line-through" : "text-text-primary"),
+					children: e.text || /* @__PURE__ */ h("span", {
+						className: "text-text-disabled italic",
+						children: "Untitled"
+					})
+				})]
+			}, e.id);
+		}) }),
+		o && /* @__PURE__ */ h("button", {
+			type: "button",
+			onClick: () => o(e.id),
+			className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
+			children: "Edit in editor →"
+		})
+	] });
+}
+//#endregion
+//#region src/renderers/decisions/approvalSync.ts
+var U = {
+	acked: "approved",
+	done: "approved",
+	rejected: "rejected"
+};
+function W() {
+	return "";
+}
+function G() {
+	if (typeof window > "u") return null;
+	let e = window.location.pathname.match(/\/documents\/([^/?#]+)/);
+	return e ? e[1] : null;
+}
+function ce(e) {
+	return U[e] ?? null;
+}
+async function le(e) {
+	let t = e.documentId ?? G();
+	if (!t) return {
+		ok: !1,
+		error: "no documentId in URL"
+	};
+	try {
+		let n = { "Content-Type": "application/json" };
+		e.idToken && (n.Authorization = `Bearer ${e.idToken}`);
+		let r = await fetch(`${W()}/api/approvals`, {
+			method: "POST",
+			headers: n,
+			body: JSON.stringify({
+				documentId: t,
+				sectionId: e.sectionId,
+				decision: e.decision,
+				...e.reviewerName ? { reviewerName: e.reviewerName } : {},
+				...e.comment ? { comment: e.comment } : {}
+			})
+		});
+		return r.ok ? { ok: !0 } : {
+			ok: !1,
+			error: `POST failed: ${r.status}`
+		};
+	} catch (e) {
+		return {
+			ok: !1,
+			error: e.message
+		};
+	}
+}
+//#endregion
+//#region src/renderers/decisions/DecisionsEditorRenderer.tsx
+var K = {
+	pending: {
+		label: "Open",
+		icon: "○",
+		color: "var(--color-warning-fg)",
+		bg: "var(--color-warning-bg)"
+	},
+	acked: {
+		label: "Decided",
+		icon: "✓",
+		color: "var(--color-success-fg)",
+		bg: "var(--color-success-bg)"
+	},
+	done: {
+		label: "Decided",
+		icon: "✓",
+		color: "var(--color-success-fg)",
+		bg: "var(--color-success-bg)"
+	},
+	rejected: {
+		label: "Vetoed",
+		icon: "✕",
+		color: "var(--color-danger-fg)",
+		bg: "var(--color-danger-bg)"
+	}
+};
+function ue({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
+	let c = f(null), l = K[e.status] ?? K.pending, u = a(r);
+	return d(() => {
+		n && c.current && (c.current.focus(), u());
+	}, [n, u]), /* @__PURE__ */ g("div", {
+		className: "flex items-center gap-2 py-1.5 border-b border-border-subtle",
+		children: [
+			/* @__PURE__ */ h("span", {
+				className: "w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 select-none",
+				style: {
+					background: l.bg,
+					color: l.color
+				},
+				children: l.icon
+			}),
+			/* @__PURE__ */ h("input", {
+				ref: c,
+				type: "text",
+				value: e.text,
+				onChange: (e) => o({ text: e.target.value }),
+				readOnly: !t,
+				placeholder: "Describe the decision...",
+				className: i("flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5", e.status === "rejected" ? "text-text-tertiary line-through" : "text-text-primary")
+			}),
+			t && /* @__PURE__ */ g("select", {
+				value: e.status === "done" ? "acked" : e.status,
+				onChange: (e) => o({ status: e.target.value }),
+				className: "text-[10px] px-2 py-0.5 rounded-[10px] font-semibold cursor-pointer outline-none font-inherit shrink-0 appearance-none",
+				style: {
+					border: `1px solid ${l.color}`,
+					background: l.bg,
+					color: l.color
+				},
+				children: [
+					/* @__PURE__ */ h("option", {
+						value: "pending",
+						children: "Open"
+					}),
+					/* @__PURE__ */ h("option", {
+						value: "acked",
+						children: "Decided"
+					}),
+					/* @__PURE__ */ h("option", {
+						value: "rejected",
+						children: "Vetoed"
+					})
+				]
+			}),
+			t && /* @__PURE__ */ h("button", {
+				type: "button",
+				onClick: s,
+				className: "border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 leading-none",
+				children: "×"
+			})
+		]
+	});
+}
+function de({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
+	let d = M(e), p = f(null), m = () => {
+		o && (p.current = d.length, o({
+			text: "",
+			status: "pending",
+			assignee: "",
+			ackedBy: "",
+			ackedAt: "",
+			priority: "medium",
+			notes: ""
+		}));
+	}, _ = p.current, v = _ !== null && d.length > _;
+	return /* @__PURE__ */ g("div", { children: [
+		t && n && /* @__PURE__ */ h(l, {
+			fragment: t,
+			ydoc: n,
+			provider: r ?? null,
+			user: i ?? {
+				name: "Anonymous",
+				color: "#6b7280"
+			},
+			editable: a,
+			placeholder: e.placeholder ?? "Add context or background...",
+			sectionId: e.id,
+			onUpdateCursorInfo: u
+		}),
+		d.length === 0 && !a && /* @__PURE__ */ h("div", {
+			className: "text-text-tertiary italic text-[13px] py-1",
+			children: "No decisions yet."
+		}),
+		/* @__PURE__ */ h("div", { children: d.map((t, n) => {
+			let r = n === d.length - 1, o = v && r;
+			return /* @__PURE__ */ h(ue, {
+				item: t,
+				editable: a,
+				autoFocus: o,
+				onDidAutoFocus: o ? () => {
+					p.current = null;
+				} : void 0,
+				onUpdate: (n) => {
+					let r = t.status;
+					if (s?.(t.id, n), n.status && n.status !== r) {
+						let t = ce(n.status);
+						t && le({
+							sectionId: e.id,
+							decision: t,
+							reviewerName: i?.name
+						});
+					}
+				},
+				onRemove: () => c?.(t.id)
+			}, t.id);
+		}) }),
+		a && /* @__PURE__ */ h("button", {
+			type: "button",
+			onClick: m,
+			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
+			children: "+ Add decision"
+		})
+	] });
+}
+//#endregion
+//#region src/renderers/decisions/DecisionsReaderRenderer.tsx
+var q = {
+	pending: {
+		label: "Open",
+		icon: "○",
+		color: "var(--color-warning-fg)",
+		bg: "var(--color-warning-bg)"
+	},
+	acked: {
+		label: "Decided",
+		icon: "✓",
+		color: "var(--color-success-fg)",
+		bg: "var(--color-success-bg)"
+	},
+	done: {
+		label: "Decided",
+		icon: "✓",
+		color: "var(--color-success-fg)",
+		bg: "var(--color-success-bg)"
+	},
+	rejected: {
+		label: "Vetoed",
+		icon: "✕",
+		color: "var(--color-danger-fg)",
+		bg: "var(--color-danger-bg)"
+	}
+};
+function fe({ item: e }) {
+	let t = q[e.status] ?? q.pending;
+	return /* @__PURE__ */ g("div", {
+		className: "flex items-start gap-2 py-1.5 border-b border-border-subtle",
+		children: [
+			/* @__PURE__ */ h("span", {
+				className: "w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 select-none",
+				style: {
+					background: t.bg,
+					color: t.color
+				},
+				children: t.icon
+			}),
+			/* @__PURE__ */ h("span", {
+				className: i("flex-1 text-[13px] leading-[1.4]", e.status === "rejected" ? "text-text-tertiary line-through" : "text-text-primary"),
+				children: e.text || /* @__PURE__ */ h("span", {
+					className: "text-text-disabled italic",
+					children: "Untitled decision"
+				})
+			}),
+			/* @__PURE__ */ h("span", {
+				className: "text-[10px] font-semibold px-2 py-0.5 rounded-[10px] whitespace-nowrap shrink-0",
+				style: {
+					background: t.bg,
+					color: t.color
+				},
+				children: t.label
+			})
+		]
+	});
+}
+function J({ label: e, color: t, items: n }) {
+	return /* @__PURE__ */ g("div", {
+		className: "mb-2",
+		children: [/* @__PURE__ */ h("div", {
+			className: "text-[10px] font-bold uppercase tracking-[0.05em] mb-0.5",
+			style: { color: t },
+			children: e
+		}), n.map((e) => /* @__PURE__ */ h(fe, { item: e }, e.id))]
+	});
+}
+function Y({ section: e, onNavigateToEditor: t }) {
+	let n = M(e);
+	if (n.length === 0) return /* @__PURE__ */ h("div", {
+		className: "text-text-tertiary italic text-[13px] py-1",
+		children: "No decisions recorded."
+	});
+	let r = n.filter((e) => e.status === "acked" || e.status === "done"), i = n.filter((e) => e.status === "rejected"), a = n.filter((e) => !r.includes(e) && !i.includes(e));
+	return /* @__PURE__ */ g("div", { children: [
+		a.length > 0 && /* @__PURE__ */ h(J, {
+			label: "Open",
+			color: q.pending.color,
+			items: a
+		}),
+		r.length > 0 && /* @__PURE__ */ h(J, {
+			label: "Decided",
+			color: q.acked.color,
+			items: r
+		}),
+		i.length > 0 && /* @__PURE__ */ h(J, {
+			label: "Vetoed",
+			color: q.rejected.color,
+			items: i
+		}),
+		t && /* @__PURE__ */ h("button", {
+			type: "button",
+			onClick: () => t(e.id),
+			className: "mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
+			children: "Edit in editor →"
+		})
+	] });
+}
+//#endregion
+//#region src/renderers/file-upload/FileUploadEditorRenderer.tsx
+function pe(e) {
+	return e.metadata ?? {};
+}
+function me({ section: e, editable: t, onUpdateSection: n }) {
+	let r = pe(e), [a, o] = p(!1), s = (t) => {
+		o(!0);
+		let r = new FileReader();
+		r.onload = () => {
+			n?.({ metadata: {
+				...e.metadata ?? {},
+				fileName: t.name,
+				fileDataUrl: typeof r.result == "string" ? r.result : "",
+				fileSize: t.size
+			} }), o(!1);
+		}, r.onerror = () => o(!1), r.readAsDataURL(t);
+	};
+	return /* @__PURE__ */ h("div", {
+		"data-testid": `file-upload-editor-${e.id}`,
+		children: r.fileName ? /* @__PURE__ */ g("div", {
+			className: "flex items-center gap-2.5 px-3 py-2 rounded-md bg-surface-panel border border-border text-[13px]",
+			children: [
+				/* @__PURE__ */ h("span", {
+					className: "text-base",
+					children: "📎"
+				}),
+				/* @__PURE__ */ h("span", {
+					className: "flex-1 font-medium text-text-primary",
+					children: r.fileName
+				}),
+				typeof r.fileSize == "number" && /* @__PURE__ */ g("span", {
+					className: "text-[11px] text-text-tertiary",
+					children: [(r.fileSize / 1024).toFixed(1), " kB"]
+				}),
+				t && /* @__PURE__ */ h("button", {
+					type: "button",
+					"data-testid": `file-upload-remove-${e.id}`,
+					onClick: () => {
+						n?.({ metadata: {
+							...e.metadata ?? {},
+							fileName: void 0,
+							fileDataUrl: void 0,
+							fileSize: void 0
+						} });
+					},
+					className: "border-none bg-transparent text-danger-fg cursor-pointer text-sm px-1.5 py-0.5",
+					children: "×"
+				})
+			]
+		}) : /* @__PURE__ */ g("label", {
+			"data-testid": `file-upload-empty-${e.id}`,
+			className: i("block px-4 py-3.5 border border-dashed border-border-emphasis rounded-lg text-neutral text-[13px] text-center bg-surface-inset", t ? "cursor-pointer" : "cursor-default"),
+			children: [a ? "Reading file…" : e.placeholder ?? "Click to upload a file", /* @__PURE__ */ h("input", {
+				type: "file",
+				"data-testid": `file-upload-input-${e.id}`,
+				disabled: !t,
+				className: "hidden",
+				onChange: (e) => {
+					let t = e.target.files?.[0];
+					t && s(t);
+				}
+			})]
+		})
+	});
+}
+//#endregion
+//#region src/renderers/file-upload/FileUploadReaderRenderer.tsx
+function X({ section: e }) {
+	let t = e.metadata ?? {};
+	return t.fileName ? /* @__PURE__ */ g("div", {
+		"data-testid": `file-upload-reader-${e.id}`,
+		className: "flex items-center gap-2.5 px-3 py-2 rounded-md bg-surface-panel border border-border text-[13px]",
+		children: [
+			/* @__PURE__ */ h("span", {
+				className: "text-base",
+				children: "📎"
+			}),
+			/* @__PURE__ */ g("a", {
+				href: t.fileDataUrl ?? "#",
+				download: t.fileName,
+				"data-testid": `file-upload-link-${e.id}`,
+				className: "text-primary font-medium no-underline",
+				children: ["Download ", t.fileName]
+			}),
+			typeof t.fileSize == "number" && /* @__PURE__ */ g("span", {
+				className: "text-[11px] text-text-tertiary",
+				children: [
+					"(",
+					(t.fileSize / 1024).toFixed(1),
+					" kB)"
+				]
+			})
+		]
+	}) : /* @__PURE__ */ h("div", {
+		"data-testid": `file-upload-reader-empty-${e.id}`,
+		className: "text-text-tertiary text-[13px] italic",
+		children: "No file uploaded."
+	});
+}
+//#endregion
+//#region src/renderers/diagram/DiagramEditorRenderer.tsx
+function he({ section: e, editable: t, onUpdateSection: n }) {
+	let r = e.metadata ?? {}, [a, o] = p(!1), s = (t) => {
+		o(!0);
+		let i = new FileReader();
+		i.onload = () => {
+			n?.({ metadata: {
+				...e.metadata ?? {},
+				imageDataUrl: typeof i.result == "string" ? i.result : "",
+				alt: r.alt ?? t.name
+			} }), o(!1);
+		}, i.onerror = () => o(!1), i.readAsDataURL(t);
+	}, c = (t) => {
+		n?.({ metadata: {
+			...e.metadata ?? {},
+			alt: t
+		} });
+	};
+	return /* @__PURE__ */ h("div", {
+		"data-testid": `diagram-editor-${e.id}`,
+		children: r.imageDataUrl ? /* @__PURE__ */ g("div", {
+			className: "flex flex-col gap-2",
+			children: [/* @__PURE__ */ h("img", {
+				"data-testid": `diagram-image-${e.id}`,
+				src: r.imageDataUrl,
+				alt: r.alt ?? "",
+				className: "max-w-full max-h-[320px] rounded-md border border-border"
+			}), t && /* @__PURE__ */ g("div", {
+				className: "flex gap-2 items-center",
+				children: [/* @__PURE__ */ h("input", {
+					type: "text",
+					"data-testid": `diagram-alt-${e.id}`,
+					value: r.alt ?? "",
+					placeholder: "Alt text",
+					onChange: (e) => c(e.target.value),
+					className: "flex-1 px-2 py-1 text-xs border border-border-emphasis rounded"
+				}), /* @__PURE__ */ h("button", {
+					type: "button",
+					"data-testid": `diagram-remove-${e.id}`,
+					onClick: () => {
+						n?.({ metadata: {
+							...e.metadata ?? {},
+							imageDataUrl: void 0,
+							alt: void 0
+						} });
+					},
+					className: "bg-transparent border-none text-danger-fg cursor-pointer text-[13px]",
+					children: "Remove"
+				})]
+			})]
+		}) : /* @__PURE__ */ g("label", {
+			"data-testid": `diagram-empty-${e.id}`,
+			className: i("block px-4 py-3.5 border border-dashed border-border-emphasis rounded-lg text-neutral text-[13px] text-center bg-surface-inset", t ? "cursor-pointer" : "cursor-default"),
+			children: [a ? "Reading image…" : e.placeholder ?? "Upload an image (PNG / JPG / SVG)", /* @__PURE__ */ h("input", {
+				type: "file",
+				accept: "image/*",
+				"data-testid": `diagram-input-${e.id}`,
+				disabled: !t,
+				className: "hidden",
+				onChange: (e) => {
+					let t = e.target.files?.[0];
+					t && s(t);
+				}
+			})]
+		})
+	});
+}
+//#endregion
+//#region src/renderers/diagram/DiagramReaderRenderer.tsx
+function Z({ section: e }) {
+	let t = e.metadata ?? {};
+	return t.imageDataUrl ? /* @__PURE__ */ g("figure", {
+		"data-testid": `diagram-reader-${e.id}`,
+		className: "m-0",
+		children: [/* @__PURE__ */ h("img", {
+			src: t.imageDataUrl,
+			alt: t.alt ?? "",
+			className: "max-w-full max-h-[480px] rounded-md border border-border"
+		}), t.alt && /* @__PURE__ */ h("figcaption", {
+			className: "text-[11px] text-text-tertiary mt-1 text-center",
+			children: t.alt
+		})]
+	}) : /* @__PURE__ */ h("div", {
+		"data-testid": `diagram-reader-empty-${e.id}`,
+		className: "text-text-tertiary text-[13px] italic",
+		children: "No diagram uploaded."
+	});
+}
+//#endregion
+//#region src/renderers/link-block/LinkBlockEditorRenderer.tsx
+function Q(e) {
+	return typeof e == "object" && !!e;
+}
+function ge(e) {
+	let t = e.metadata ?? {};
+	return Array.isArray(t.links) ? t.links.filter(Q).map((e) => ({
+		label: typeof e.label == "string" ? e.label : "",
+		url: typeof e.url == "string" ? e.url : ""
+	})) : [];
+}
+function _e({ section: e, editable: t, onUpdateSection: n }) {
+	let r = ge(e), i = (t) => {
+		n?.({ metadata: {
+			...e.metadata ?? {},
+			links: t
+		} });
+	}, a = () => i([...r, {
+		label: "",
+		url: ""
+	}]), o = (e, t) => {
+		i(r.map((n, r) => r === e ? {
+			...n,
+			...t
+		} : n));
+	}, s = (e) => {
+		i(r.filter((t, n) => n !== e));
+	};
+	return /* @__PURE__ */ g("div", {
+		"data-testid": `link-block-editor-${e.id}`,
+		className: "flex flex-col gap-1.5",
+		children: [
+			r.length === 0 && /* @__PURE__ */ h("div", {
+				"data-testid": `link-block-empty-${e.id}`,
+				className: "text-text-tertiary text-xs italic py-1",
+				children: "No links yet."
+			}),
+			r.map((n, r) => /* @__PURE__ */ g("div", {
+				className: "flex items-center gap-1.5",
+				children: [
+					/* @__PURE__ */ h("input", {
+						type: "text",
+						"data-testid": `link-block-label-${e.id}-${r}`,
+						value: n.label,
+						placeholder: "Label",
+						onChange: (e) => o(r, { label: e.target.value }),
+						disabled: !t,
+						className: "flex-1 px-2 py-1 text-[13px] border border-border-emphasis rounded"
+					}),
+					/* @__PURE__ */ h("input", {
+						type: "url",
+						"data-testid": `link-block-url-${e.id}-${r}`,
+						value: n.url,
+						placeholder: "https://example.com",
+						onChange: (e) => o(r, { url: e.target.value }),
+						disabled: !t,
+						className: "flex-[2] px-2 py-1 text-[13px] border border-border-emphasis rounded"
+					}),
+					t && /* @__PURE__ */ h("button", {
+						type: "button",
+						"data-testid": `link-block-remove-${e.id}-${r}`,
+						onClick: () => s(r),
+						className: "border-none bg-transparent text-danger-fg cursor-pointer text-sm px-1.5 py-0.5",
+						children: "×"
+					})
+				]
+			}, r)),
+			t && /* @__PURE__ */ h("button", {
+				type: "button",
+				"data-testid": `link-block-add-${e.id}`,
+				onClick: a,
+				className: "self-start mt-1 px-3 py-1 text-xs bg-transparent border border-dashed border-border-emphasis text-primary rounded-md cursor-pointer",
+				children: "+ Add link"
+			})
+		]
+	});
+}
+//#endregion
+//#region src/renderers/link-block/LinkBlockReaderRenderer.tsx
+function ve(e) {
+	return typeof e == "object" && !!e && typeof e.url == "string";
+}
+function $({ section: e }) {
+	let t = e.metadata ?? {}, n = Array.isArray(t.links) ? t.links.filter((e) => ve(e) && e.url) : [];
+	return n.length === 0 ? /* @__PURE__ */ h("div", {
+		"data-testid": `link-block-reader-empty-${e.id}`,
+		className: "text-text-tertiary text-[13px] italic",
+		children: "No links."
+	}) : /* @__PURE__ */ h("ul", {
+		"data-testid": `link-block-reader-${e.id}`,
+		className: "list-none m-0 p-0 flex flex-col gap-1",
+		children: n.map((e, t) => /* @__PURE__ */ h("li", {
+			className: "text-[13px]",
+			children: /* @__PURE__ */ h("a", {
+				href: e.url,
+				target: "_blank",
+				rel: "noreferrer noopener",
+				className: "text-primary font-medium no-underline",
+				children: e.label || e.url
+			})
+		}, t))
+	});
+}
+e(_), e(v), e(y), e(b), e(x), e(S), e(C), t("*", "*", N), t("rich-text", "editor", P), t("rich-text", "ack", F), t("rich-text", "reader", F), t("tasks", "editor", I), t("tasks", "ack", V), t("tasks", "reader", V), t("checklist", "editor", se), t("checklist", "ack", H), t("checklist", "reader", H), t("decisions", "editor", de), t("decisions", "ack", Y), t("decisions", "reader", Y), t("file-upload", "editor", me), t("file-upload", "ack", X), t("file-upload", "reader", X), t("diagram", "editor", he), t("diagram", "ack", Z), t("diagram", "reader", Z), t("link-block", "editor", _e), t("link-block", "ack", $), t("link-block", "reader", $);
+//#endregion
+export { j as n, A as r, N as t };

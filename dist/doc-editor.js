@@ -12,10 +12,11 @@ import { t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./InlinePopover-DFdI8hw1.js";
 import { t as p } from "./Select-CqVokE2v.js";
 import { t as m } from "./activationKey-CjbL3LUv.js";
-import { a as h, n as g, r as _ } from "./renderers-B2c6fv2M.js";
-import { o as v, s as y, t as b } from "./VerdictChip-CKnsnKYd.js";
+import { n as h } from "./ErrorBoundary-B2aBpcsV.js";
+import { o as g, s as _, t as v } from "./VerdictChip-CKnsnKYd.js";
+import { n as y, r as b } from "./renderers-CoOnJdXH.js";
 import { n as x, t as S } from "./TiptapEditor-Dn9rUdZx.js";
-import { A as C, C as w, D as T, E, F as D, I as O, L as ee, M as te, N as k, O as A, P as j, R as ne, S as M, T as N, _ as P, a as F, b as I, c as re, d as L, f as R, g as z, h as B, i as V, j as H, k as ie, l as U, m as ae, o as oe, p as se, r as ce, s as le, t as ue, u as de, v as fe, w as pe, x as me, y as he, z as ge } from "./DocumentEditorPage-Da5gHE2T.js";
+import { A as C, C as w, D as T, E, F as D, I as O, L as ee, M as te, N as k, O as A, P as j, R as ne, S as M, T as N, _ as P, a as F, b as I, c as re, d as L, f as R, g as z, h as B, i as V, j as H, k as ie, l as U, m as ae, o as oe, p as se, r as ce, s as le, t as ue, u as de, v as fe, w as pe, x as me, y as he, z as ge } from "./DocumentEditorPage-MOxdlxyd.js";
 import { a as _e, c as ve, d as ye, f as be, i as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae } from "./CanvasDocumentView-8T6qf7rR.js";
 import { useCallback as W, useEffect as G, useImperativeHandle as je, useMemo as K, useRef as q, useState as J } from "react";
 import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
@@ -879,7 +880,7 @@ var dt = {
 	field: "Field change",
 	prose: "Body text"
 };
-function ft({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: c, targetReason: u, before: f, after: p, edits: m, rationale: h, draftError: g, author: _, category: x, path: S, locationHint: C, verdict: w, verdictStatus: T = "idle", verdictError: E, revision: D, onRereview: O, onAccept: ee, onReject: te, onRedraft: k, onReattach: A, onConfirmAttachment: j, className: ne, "data-testid": M = "proposal-card" }) {
+function ft({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: c, targetReason: u, before: f, after: p, edits: m, rationale: h, draftError: y, author: b, category: x, path: S, locationHint: C, verdict: w, verdictStatus: T = "idle", verdictError: E, revision: D, onRereview: O, onAccept: ee, onReject: te, onRedraft: k, onReattach: A, onConfirmAttachment: j, className: ne, "data-testid": M = "proposal-card" }) {
 	let [N, P] = J(!1), [F, I] = J(null), [re, L] = J(!1), [R, z] = J(""), B = i === "applied", V = i === "rejected", H = B || V;
 	async function ie() {
 		P(!0), I(null);
@@ -913,16 +914,16 @@ function ft({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 						"data-testid": `${M}-category`,
 						children: x ?? dt[t]
 					}),
-					_ && /* @__PURE__ */ Z("span", {
+					b && /* @__PURE__ */ Z("span", {
 						className: "flex min-w-0 items-center gap-1.5",
 						"data-testid": `${M}-requester`,
 						children: [/* @__PURE__ */ X(d, {
-							name: _.name,
+							name: b.name,
 							size: 18,
-							..._.avatarUrl ? { src: _.avatarUrl } : {}
+							...b.avatarUrl ? { src: b.avatarUrl } : {}
 						}), /* @__PURE__ */ X("span", {
 							className: "truncate text-xs text-text-secondary",
-							children: _.name
+							children: b.name
 						})]
 					}),
 					/* @__PURE__ */ X("span", { className: "flex-1" }),
@@ -970,7 +971,7 @@ function ft({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					"”"
 				]
 			}),
-			/* @__PURE__ */ X(v, {
+			/* @__PURE__ */ X(g, {
 				path: S ?? (c ? [c] : []),
 				...C ? { hint: C } : {},
 				"data-testid": `${M}-location`
@@ -990,16 +991,16 @@ function ft({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 				"data-testid": `${M}-drafting`,
 				children: "Drafting a proposal…"
 			}),
-			g && /* @__PURE__ */ X("div", {
+			y && /* @__PURE__ */ X("div", {
 				className: "rounded border border-warning-border bg-warning-bg px-2 py-1.5 text-xs text-warning-fg",
 				"data-testid": `${M}-draft-error`,
-				children: g
+				children: y
 			}),
-			i !== "drafting" && !g && U.length > 0 && /* @__PURE__ */ X(y, {
+			i !== "drafting" && !y && U.length > 0 && /* @__PURE__ */ X(_, {
 				pairs: U,
 				"data-testid": `${M}-diff`
 			}),
-			i !== "drafting" && /* @__PURE__ */ X(b, {
+			i !== "drafting" && /* @__PURE__ */ X(v, {
 				verdict: w,
 				status: T,
 				error: E,
@@ -1030,7 +1031,7 @@ function ft({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					/* @__PURE__ */ X(r, {
 						size: "sm",
 						variant: "primary",
-						disabled: N || i === "drafting" || !!g,
+						disabled: N || i === "drafting" || !!y,
 						onClick: ie,
 						"data-testid": `${M}-accept`,
 						children: N ? "Applying…" : t === "field" ? "Apply change" : "Add as suggestion"
@@ -1726,4 +1727,4 @@ function kt({ kind: e, author: t, when: r = null, deletedText: i = "", insertedT
 	});
 }
 //#endregion
-export { tt as AckMode, U as ActionItemsCard, st as ActivityFeed, M as AttachmentsPanel, j as CANVAS_BODY_KEY, D as CANVAS_SCHEMA_VERSION, ke as CanvasDocumentView, et as ChunkViewer, vt as CommentGhostPopover, P as CommentThreadNode, le as DiffViewer, ue as DocumentEditorPage, we as DocumentFindBar, _e as DocumentGutter, T as DocumentHeader, Be as DocumentListPage, be as DocumentOutline, xt as DocumentOwnership, Ee as DocumentRuler, wt as DocumentShareDialog, Ae as DocumentStatusBar, Oe as DocumentToolbar, x as EditorToolbar, R as ExecutiveSummaryCard, E as FollowModeBar, se as HeaderBanner, de as KeyDecisionsCard, me as MentionDropdown, F as MyMentionsPanel, h as NewDocumentModal, Ce as PX_PER_INCH, A as ParticipantAvatars, ft as ProposalCard, re as ReaderMode, B as ReviewMode, Je as ReviewProgress, Qe as ReviewableItem, St as SHARE_ROLES, $ as SUGGESTION_AUTHORING_MODES, pe as SectionBlock, z as SectionComments, w as SectionList, L as SectionSummariesCard, Ge as StandaloneTiptap, kt as SuggestionCard, Tt as SuggestionModeControl, ce as TableOfContents, _ as TaskItemRow, g as TaskList, S as TiptapEditor, oe as VersionHistoryPanel, N as VideoCallPanel, bt as VideoDockSlot, V as VideoHistoryPanel, pt as WorkItemRow, ye as ZOOM_STEPS, O as canvasBody, te as canvasFragmentToMarkdown, Ve as clientIdForUser, fe as countAllComments, ie as findDocumentTarget, De as findMatches, ae as generateSummaryBullets, he as getInitials, ee as isCanvasDocument, xe as nextMatchIndex, ve as readOutline, ne as readSchemaVersion, I as relativeTime, _t as replyLabel, C as scrollToDocumentTarget, Te as stackOffsets, k as useDocumentActions, Se as useDocumentOutline, He as useFollowCursor, ge as useIsCanvasDocument, H as useSidebarPanels };
+export { tt as AckMode, U as ActionItemsCard, st as ActivityFeed, M as AttachmentsPanel, j as CANVAS_BODY_KEY, D as CANVAS_SCHEMA_VERSION, ke as CanvasDocumentView, et as ChunkViewer, vt as CommentGhostPopover, P as CommentThreadNode, le as DiffViewer, ue as DocumentEditorPage, we as DocumentFindBar, _e as DocumentGutter, T as DocumentHeader, Be as DocumentListPage, be as DocumentOutline, xt as DocumentOwnership, Ee as DocumentRuler, wt as DocumentShareDialog, Ae as DocumentStatusBar, Oe as DocumentToolbar, x as EditorToolbar, R as ExecutiveSummaryCard, E as FollowModeBar, se as HeaderBanner, de as KeyDecisionsCard, me as MentionDropdown, F as MyMentionsPanel, h as NewDocumentModal, Ce as PX_PER_INCH, A as ParticipantAvatars, ft as ProposalCard, re as ReaderMode, B as ReviewMode, Je as ReviewProgress, Qe as ReviewableItem, St as SHARE_ROLES, $ as SUGGESTION_AUTHORING_MODES, pe as SectionBlock, z as SectionComments, w as SectionList, L as SectionSummariesCard, Ge as StandaloneTiptap, kt as SuggestionCard, Tt as SuggestionModeControl, ce as TableOfContents, b as TaskItemRow, y as TaskList, S as TiptapEditor, oe as VersionHistoryPanel, N as VideoCallPanel, bt as VideoDockSlot, V as VideoHistoryPanel, pt as WorkItemRow, ye as ZOOM_STEPS, O as canvasBody, te as canvasFragmentToMarkdown, Ve as clientIdForUser, fe as countAllComments, ie as findDocumentTarget, De as findMatches, ae as generateSummaryBullets, he as getInitials, ee as isCanvasDocument, xe as nextMatchIndex, ve as readOutline, ne as readSchemaVersion, I as relativeTime, _t as replyLabel, C as scrollToDocumentTarget, Te as stackOffsets, k as useDocumentActions, Se as useDocumentOutline, He as useFollowCursor, ge as useIsCanvasDocument, H as useSidebarPanels };

@@ -4300,6 +4300,18 @@ declare interface FieldTypeDefinition {
     rendererType?: string;
 }
 
+export declare const FileInput: ForwardRefExoticComponent<FileInputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface FileInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange' | 'value' | 'defaultValue'> {
+    /**
+     * Called with the picked files. Always an array (never a FileList), and never
+     * called with the raw event — the input resets itself immediately afterwards,
+     * so an event held past this callback would already be stale.
+     */
+    onFiles: (files: File[]) => void;
+    'data-testid'?: string;
+}
+
 export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, }: FileUploadDropProps): JSX.Element;
 
 export declare interface FileUploadDropProps {
