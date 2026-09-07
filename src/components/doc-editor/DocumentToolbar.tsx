@@ -351,6 +351,117 @@ function ColorMenu({
   );
 }
 
+/**
+ * The table control: one button that inserts, and — once the cursor is inside
+ * a table — the handful of edits a document actually needs.
+ *
+ * Google Docs puts these on a right-click menu, which is undiscoverable in a
+ * web app that already has a toolbar, and Confluence puts them on a floating
+ * bar that fights the comment gutter for the same margin. A menu on the bar is
+ * neither, and it can say plainly whether it will insert or edit.
+ *
+ * Every entry is a schema command that the extension registers. Nothing here
+ * is host knowledge, which is why — unlike the image button — this control
+ * needs no prop: `has(editor, 'insertTable')` is the whole gate.
+ */
+const TABLE_EDITS: { key: string; label: string; cmd: string }[] = [
+  { key: 'row-before', label: 'Insert row above', cmd: 'addRowBefore' },
+  { key: 'row-after', label: 'Insert row below', cmd: 'addRowAfter' },
+  { key: 'col-before', label: 'Insert column left', cmd: 'addColumnBefore' },
+  { key: 'col-after', label: 'Insert column right', cmd: 'addColumnAfter' },
+  { key: 'header-row', label: 'Toggle header row', cmd: 'toggleHeaderRow' },
+  { key: 'merge', label: 'Merge or split cells', cmd: 'mergeOrSplit' },
+  { key: 'del-row', label: 'Delete row', cmd: 'deleteRow' },
+  { key: 'del-col', label: 'Delete column', cmd: 'deleteColumn' },
+  { key: 'del-table', label: 'Delete table', cmd: 'deleteTable' },
+];
+
+function TableMenu({
+  editor, inTable, testId,
+}: { editor: Editor; inTable: boolean; testId: string }) {
+  const { open, setOpen, wrapRef } = useToolMenu();
+
+  const run = (cmd: string) => {
+    const chain = editor.chain().focus() as never as Record<string, () => { run: () => void }>;
+    chain[cmd]?.().run();
+    setOpen(false);
+  };
+
+  const insert = () => {
+    const chain = editor.chain().focus() as never as Record<
+      string,
+      (opts: { rows: number; cols: number; withHeaderRow: boolean }) => { run: () => void }
+    >;
+    // Three columns and a header row plus two body rows — the shape a person
+    // draws when asked for "a table", and the one that needs the fewest
+    // follow-up edits.
+    chain['insertTable']!({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    setOpen(false);
+  };
+
+  return (
+    <span ref={wrapRef} className="relative inline-flex">
+      <button
+        type="button"
+        data-testid={testId}
+        title={inTable ? 'Table' : 'Insert table'}
+        aria-label={inTable ? 'Table options' : 'Insert a table'}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        // mousedown, not click: the editor loses its selection the moment
+        // focus moves, and every command below acts on that selection.
+        onMouseDown={(ev) => { ev.preventDefault(); setOpen((v) => !v); }}
+        className={cn(
+          'inline-flex items-center gap-0.5 h-7 px-1.5 rounded text-xs cursor-pointer border-none',
+          open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
+        )}
+      >
+        <span aria-hidden>▦</span>
+        <span aria-hidden className="text-[8px] leading-none">▾</span>
+      </button>
+
+      {open && (
+        <span
+          role="menu"
+          data-testid={`${testId}-menu`}
+          aria-label="Table"
+          className="absolute left-0 top-full z-20 mt-1 flex min-w-[180px] flex-col rounded-md border border-border bg-surface-panel p-1 shadow-lg"
+        >
+          <button
+            type="button"
+            role="menuitem"
+            data-testid={`${testId}-insert`}
+            onMouseDown={(ev) => { ev.preventDefault(); insert(); }}
+            className="cursor-pointer rounded border-none bg-transparent px-2 py-1 text-left text-xs text-text-secondary hover:bg-surface-hover"
+          >
+            Insert table
+          </button>
+          {/* The edits appear only inside a table. Rendering them greyed out
+              would fill the menu with nine dead rows for the case that is
+              overwhelmingly common — no table under the cursor. */}
+          {inTable && (
+            <>
+              <span aria-hidden className="my-1 h-px bg-border" />
+              {TABLE_EDITS.map((e) => (
+                <button
+                  key={e.key}
+                  type="button"
+                  role="menuitem"
+                  data-testid={`${testId}-${e.key}`}
+                  onMouseDown={(ev) => { ev.preventDefault(); run(e.cmd); }}
+                  className="cursor-pointer rounded border-none bg-transparent px-2 py-1 text-left text-xs text-text-secondary hover:bg-surface-hover"
+                >
+                  {e.label}
+                </button>
+              ))}
+            </>
+          )}
+        </span>
+      )}
+    </span>
+  );
+}
+
 function AlignMenu({
   editor, current, testId,
 }: { editor: Editor; current: Alignment; testId: string }) {
@@ -527,6 +638,7 @@ export default function DocumentToolbar({
       // Optional extensions — isActive on an unregistered mark is simply
       // false, so this is safe whether or not they are present.
       flags['highlight'] = e.isActive('highlight');
+      flags['table'] = e.isActive('table');
       for (const a of ALIGNMENTS) flags[`align-${a}`] = e.isActive({ textAlign: a });
       // What the cursor is actually in, so the pickers show the truth rather
       // than resetting to their first option after every click. `getAttributes`
@@ -742,6 +854,13 @@ export default function DocumentToolbar({
         active={false}
         testId={`${testId}-hr`}
       />
+      {has(editor, 'insertTable') && (
+        <TableMenu
+          editor={editor}
+          inTable={state?.flags['table'] ?? false}
+          testId={`${testId}-table`}
+        />
+      )}
       {onInsertImage && has(editor, 'setImage') && (
         <ToolButton
           btn={{

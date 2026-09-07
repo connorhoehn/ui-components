@@ -754,6 +754,70 @@
    The selected outline uses `outline`, not `border`: a border changes the
    box's size, so clicking an image would nudge the text below it by 4px.
    --------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------
+   Tables.
+
+   `table-layout: fixed` is not cosmetic — it is what makes the column-resize
+   handles mean anything. With `auto`, the browser re-solves every column width
+   from the content on each keystroke, so a dragged column springs back and a
+   long word in one cell silently re-proportions the whole table.
+
+   The wrapper scrolls rather than the page. The extension renders a
+   `.tableWrapper` around every table; a five-column table on an 816px sheet is
+   wider than the text column, and without `overflow-x: auto` here it widens
+   the PAPER, which puts a horizontal scrollbar on the document itself. A table
+   may scroll; a document may not.
+   --------------------------------------------------------------------------- */
+.doc-page .ProseMirror .tableWrapper {
+  margin: 0.9em 0;
+  overflow-x: auto;
+}
+.doc-page .ProseMirror table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+}
+.doc-page .ProseMirror th,
+.doc-page .ProseMirror td {
+  border: 1px solid var(--color-paper-border);
+  padding: 0.4em 0.6em;
+  vertical-align: top;
+  /* Cells are the one place a long unbroken token must not be allowed to set
+     the width — see table-layout above. */
+  overflow-wrap: break-word;
+  position: relative;
+}
+.doc-page .ProseMirror th {
+  background: var(--color-paper-hover);
+  font-weight: 600;
+  text-align: left;
+}
+/* A paragraph inside a cell is layout, not a block break — same reasoning as
+   the list-item rule above. */
+.doc-page .ProseMirror th > p,
+.doc-page .ProseMirror td > p { margin: 0; }
+
+/* The extension's own selection + resize affordances, given colours. It ships
+   the classes and no styling, exactly like CommentHighlight. */
+.doc-page .ProseMirror .selectedCell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  pointer-events: none;
+}
+.doc-page .ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--color-primary);
+  pointer-events: none;
+}
+.doc-page .ProseMirror.resize-cursor { cursor: col-resize; }
+
 .doc-page .ProseMirror img {
   display: block;
   max-width: 100%;
