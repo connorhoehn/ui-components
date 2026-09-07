@@ -58,4 +58,30 @@ describe('useHlsSource', () => {
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
   });
+
+  it('does not trust canPlayType — hls.js decides, because Chromium lies', () => {
+    // Chromium answers canPlayType('application/vnd.apple.mpegurl') with
+    // "maybe" while being unable to play a playlist at all. Trusting it put
+    // the .m3u8 straight into video.src, and the element settled at
+    // NETWORK_NO_SOURCE with play() rejecting "no supported sources" — no
+    // playlist ever fetched, and the stage wearing a LIVE badge over it.
+    const video = fakeVideo();
+    video.canPlayType = () => 'maybe' as CanPlayTypeResult;
+    mountWith(video, 'https://example.test/master.m3u8');
+    // hls.js is loaded asynchronously, so the synchronous pass must NOT have
+    // already claimed the element for the native path.
+    expect(video.getAttribute('src')).toBeNull();
+  });
+
+  it('reports a source the element cannot play, whatever it managed earlier', () => {
+    const video = fakeVideo();
+    const { result } = mountWith(video, 'https://example.test/master.m3u8');
+    act(() => { video.dispatchEvent(new Event('canplay')); });
+    expect(result.current.loading).toBe(false);
+    expect(result.current.error).toBeNull();
+
+    // The element's own verdict outranks anything it did before.
+    act(() => { video.dispatchEvent(new Event('error')); });
+    expect(result.current.error).toMatch(/could not be played/i);
+  });
 });

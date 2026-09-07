@@ -618,16 +618,14 @@ function k({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCance
 //#endregion
 //#region src/lib/video/useHlsSource.ts
 function A(e, t, n = {}) {
-	let { live: i = !1 } = n, [s, c] = o(null), [l, u] = o(!1), d = a(null), f = a(n.onError);
+	let { live: i = !1 } = n, [s, c] = o(null), [l, u] = o(!1), d = a(null), f = a(!1), p = a(n.onError);
 	return r(() => {
-		f.current = n.onError;
+		p.current = n.onError;
 	}, [n.onError]), r(() => {
 		let n = e.current;
 		if (!n || !t) return;
-		if (c(null), u(!0), n.canPlayType("application/vnd.apple.mpegurl")) return n.src = t, () => {
-			n.removeAttribute("src"), n.load();
-		};
-		let r = !1;
+		c(null), u(!0);
+		let r = !1, a = () => n.canPlayType("application/vnd.apple.mpegurl") ? (n.src = t, f.current = !0, !0) : (c("HLS playback is not supported in this browser."), u(!1), !1);
 		return (async () => {
 			try {
 				let e = (await import(
@@ -636,20 +634,20 @@ function A(e, t, n = {}) {
 )).default;
 				if (r) return;
 				if (!e.isSupported()) {
-					c("HLS playback is not supported in this browser."), u(!1);
+					a();
 					return;
 				}
-				let a = new e(i ? {
+				let o = new e(i ? {
 					enableWorker: !0,
 					lowLatencyMode: !0,
 					backBufferLength: 30
 				} : { enableWorker: !0 });
-				d.current = a, a.attachMedia(n), a.on(e.Events.MEDIA_ATTACHED, () => a.loadSource(t)), a.on(e.Events.ERROR, (e, t) => {
-					t?.fatal && (c(`HLS error: ${t.type}`), f.current?.(/* @__PURE__ */ Error(`HLS fatal: ${t.type}`)));
+				d.current = o, o.attachMedia(n), o.on(e.Events.MEDIA_ATTACHED, () => o.loadSource(t)), o.on(e.Events.ERROR, (e, t) => {
+					t?.fatal && (c(`HLS error: ${t.type}`), p.current?.(/* @__PURE__ */ Error(`HLS fatal: ${t.type}`)));
 				});
 			} catch (e) {
 				if (r) return;
-				c(`Failed to load hls.js — install it in the consumer app: ${e?.message ?? e}`);
+				a() || c(`Failed to load hls.js — install it in the consumer app: ${e?.message ?? e}`);
 			}
 		})(), () => {
 			if (r = !0, d.current) {
@@ -658,6 +656,7 @@ function A(e, t, n = {}) {
 				} catch {}
 				d.current = null;
 			}
+			f.current && (f.current = !1, n.removeAttribute("src"), n.load());
 		};
 	}, [
 		e,
@@ -670,12 +669,14 @@ function A(e, t, n = {}) {
 			u(!1);
 			return;
 		}
-		let r = () => u(!1), i = [
+		let r = () => u(!1), i = () => c("This stream could not be played."), a = [
 			"loadeddata",
 			"playing",
 			"canplay"
 		];
-		return i.forEach((e) => n.addEventListener(e, r)), () => i.forEach((e) => n.removeEventListener(e, r));
+		return a.forEach((e) => n.addEventListener(e, r)), n.addEventListener("error", i), () => {
+			a.forEach((e) => n.removeEventListener(e, r)), n.removeEventListener("error", i);
+		};
 	}, [e, t]), {
 		error: s,
 		loading: l
