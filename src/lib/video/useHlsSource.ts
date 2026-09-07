@@ -102,5 +102,32 @@ export function useHlsSource(
     };
   }, [videoRef, playlistUrl, live]);
 
+  // `loading` means "this source has not produced a frame yet", and only the
+  // media element knows that.
+  //
+  // It used to be set true when a source was attached and cleared in exactly
+  // one place: the branch that gives up because the browser cannot play HLS.
+  // On both paths that actually work — native playback and hls.js — it stayed
+  // true forever. Everything downstream reads it as "not playing", so a
+  // genuinely live stream never got its LIVE badge or viewer count, and
+  // StreamStage's "Nothing is being broadcast right now." sat on top of
+  // decoding video. Confirmed in the browser: a face visible in the stage,
+  // under a caption saying nothing was being broadcast.
+  //
+  // A mid-stream rebuffer deliberately does NOT set it back. `waiting` fires
+  // routinely on a live edge, and answering it with "Connecting…" over a
+  // stream the viewer is already watching is worse than a moment of freeze.
+  // Only a new source starts the wait again.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v || !playlistUrl) return;
+    // Already decoding — a re-attach to a warm element must not re-arm the wait.
+    if (v.readyState >= 2) { setLoading(false); return; }
+    const started = () => setLoading(false);
+    const events = ['loadeddata', 'playing', 'canplay'] as const;
+    events.forEach((e) => v.addEventListener(e, started));
+    return () => events.forEach((e) => v.removeEventListener(e, started));
+  }, [videoRef, playlistUrl]);
+
   return { error, loading };
 }

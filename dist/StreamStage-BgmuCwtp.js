@@ -663,7 +663,20 @@ function A(e, t, n = {}) {
 		e,
 		t,
 		i
-	]), {
+	]), r(() => {
+		let n = e.current;
+		if (!n || !t) return;
+		if (n.readyState >= 2) {
+			u(!1);
+			return;
+		}
+		let r = () => u(!1), i = [
+			"loadeddata",
+			"playing",
+			"canplay"
+		];
+		return i.forEach((e) => n.addEventListener(e, r)), () => i.forEach((e) => n.removeEventListener(e, r));
+	}, [e, t]), {
 		error: s,
 		loading: l
 	};
