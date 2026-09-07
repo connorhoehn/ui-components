@@ -61,7 +61,7 @@ declare interface AttachmentsPanelProps {
     editable: boolean;
 }
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, showOutline, onToggleGutter, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, showOutline, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -188,6 +188,14 @@ export declare interface CanvasDocumentViewProps {
      * the answer.
      */
     onToggleGutter?: () => void;
+    /**
+     * Forwarded to the toolbar's image button. See DocumentToolbar's prop docs:
+     * the host owns the picker and the upload, this view only decides that the
+     * control belongs on the bar rather than in the host's `toolbarActions`
+     * slot, where it would sit beside presence instead of beside the other
+     * insert controls.
+     */
+    onInsertImage?: () => void;
     /**
      * Hands the live editor out once it exists (null while initialising).
      *
@@ -654,7 +662,7 @@ export declare interface DocumentStatusBarProps {
     'data-testid'?: string;
 }
 
-export declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+export declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, onInsertImage, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 export declare interface DocumentToolbarProps {
     editor: Editor | null;
@@ -678,6 +686,19 @@ export declare interface DocumentToolbarProps {
      * nothing visible, which reads as broken rather than as empty.
      */
     onToggleGutter?: () => void;
+    /**
+     * Asks the host to put a picture on the page.
+     *
+     * The toolbar deliberately does not own the file picker. Getting bytes into
+     * a document means an upload, and where those bytes go — which channel,
+     * which storage, which auth — is knowledge only the app has. What the
+     * library owns is the button, its place in the bar (beside the other insert
+     * controls, where a word processor puts it) and the fact that it appears at
+     * all only when the schema can hold an image: `setImage` absent means the
+     * editor was built without the extension, and a button that inserts a node
+     * the schema will reject is worse than no button.
+     */
+    onInsertImage?: () => void;
     'data-testid'?: string;
 }
 

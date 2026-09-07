@@ -15,7 +15,7 @@ import { a as m, n as h, r as g } from "./renderers-BpscO-mw.js";
 import { o as _, s as v, t as y } from "./VerdictChip-CKnsnKYd.js";
 import { n as b, t as x } from "./TiptapEditor-Dn9rUdZx.js";
 import { A as S, C, D as w, E as T, O as E, S as D, T as O, _ as k, a as ee, b as A, c as j, d as M, f as te, g as N, h as P, i as F, k as I, l as L, m as ne, o as R, p as z, r as re, s as B, t as V, u as H, v as U, w as W, x as ie, y as ae } from "./DocumentEditorPage-BIRBua0t.js";
-import { a as oe, c as se, d as ce, f as le, i as ue, l as de, m as fe, n as pe, o as me, p as he, r as ge, s as _e, t as ve, u as ye } from "./CanvasDocumentView-BZGM4mux.js";
+import { a as oe, c as se, d as ce, f as le, i as ue, l as de, m as fe, n as pe, o as me, p as he, r as ge, s as _e, t as ve, u as ye } from "./CanvasDocumentView-B8sDi12R.js";
 import { useCallback as G, useEffect as K, useImperativeHandle as be, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import * as xe from "yjs";

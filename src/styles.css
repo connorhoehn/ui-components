@@ -739,6 +739,34 @@
 .doc-page .ProseMirror .is-empty::before { color: var(--color-paper-ink-subtle); }
 
 /* ---------------------------------------------------------------------------
+   Pictures on the page.
+
+   `max-width: 100%` is the load-bearing rule: an image node carries the
+   uploaded file's intrinsic width, and a phone screenshot is 1170px against a
+   paper column of 816 minus margins. Without this the image pushes the sheet
+   wider than the paper and the whole page gains a horizontal scrollbar — the
+   one thing a document must never do.
+
+   `display: block` + auto margins is what a word processor's default
+   "centre" looks like, and it also stops the image from sitting on a text
+   baseline with a descender gap under it.
+
+   The selected outline uses `outline`, not `border`: a border changes the
+   box's size, so clicking an image would nudge the text below it by 4px.
+   --------------------------------------------------------------------------- */
+.doc-page .ProseMirror img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.9em auto;
+  border-radius: var(--radius-sm);
+}
+.doc-page .ProseMirror img.ProseMirror-selectednode {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
    Comment ghosts — the painted evidence that a discussion exists.
 
    The classes are realtime-modules' `CommentHighlight` contract; it decorates

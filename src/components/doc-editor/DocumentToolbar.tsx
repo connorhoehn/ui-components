@@ -48,6 +48,19 @@ export interface DocumentToolbarProps {
    * nothing visible, which reads as broken rather than as empty.
    */
   onToggleGutter?: () => void;
+  /**
+   * Asks the host to put a picture on the page.
+   *
+   * The toolbar deliberately does not own the file picker. Getting bytes into
+   * a document means an upload, and where those bytes go — which channel,
+   * which storage, which auth — is knowledge only the app has. What the
+   * library owns is the button, its place in the bar (beside the other insert
+   * controls, where a word processor puts it) and the fact that it appears at
+   * all only when the schema can hold an image: `setImage` absent means the
+   * editor was built without the extension, and a button that inserts a node
+   * the schema will reject is worse than no button.
+   */
+  onInsertImage?: () => void;
   'data-testid'?: string;
 }
 
@@ -491,6 +504,7 @@ export default function DocumentToolbar({
   commentCount = 0,
   gutterVisible = true,
   onToggleGutter,
+  onInsertImage,
   'data-testid': testId = 'document-toolbar',
 }: DocumentToolbarProps) {
   // Subscribes to the editor so the controls track the CURSOR, not just the
@@ -728,6 +742,18 @@ export default function DocumentToolbar({
         active={false}
         testId={`${testId}-hr`}
       />
+      {onInsertImage && has(editor, 'setImage') && (
+        <ToolButton
+          btn={{
+            key: 'image', label: '🖼', hint: 'Insert image',
+            run: () => { onInsertImage(); },
+            active: () => false,
+          }}
+          editor={editor}
+          active={false}
+          testId={`${testId}-image`}
+        />
+      )}
 
       {(onToggleGutter && commentCount > 0) || actions ? (
         <span className="ml-auto flex items-center gap-1">

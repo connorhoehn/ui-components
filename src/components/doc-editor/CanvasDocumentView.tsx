@@ -176,6 +176,14 @@ export interface CanvasDocumentViewProps {
    */
   onToggleGutter?: () => void;
   /**
+   * Forwarded to the toolbar's image button. See DocumentToolbar's prop docs:
+   * the host owns the picker and the upload, this view only decides that the
+   * control belongs on the bar rather than in the host's `toolbarActions`
+   * slot, where it would sit beside presence instead of beside the other
+   * insert controls.
+   */
+  onInsertImage?: () => void;
+  /**
    * Hands the live editor out once it exists (null while initialising).
    *
    * Not a convenience: `materialize()` needs the LIVE editor's ProseMirror
@@ -208,6 +216,7 @@ export default function CanvasDocumentView({
   showRuler = false,
   showOutline = false,
   onToggleGutter,
+  onInsertImage,
   onEditorReady,
   'data-testid': testId = 'canvas-document',
 }: CanvasDocumentViewProps) {
@@ -409,6 +418,7 @@ export default function CanvasDocumentView({
                   commentCount={commentCount}
                   gutterVisible={gutterVisible}
                   {...(onToggleGutter ? { onToggleGutter } : {})}
+                  {...(onInsertImage ? { onInsertImage } : {})}
                 />
               </div>
             </div>
