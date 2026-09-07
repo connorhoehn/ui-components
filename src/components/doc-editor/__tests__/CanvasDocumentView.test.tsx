@@ -150,9 +150,12 @@ describe('CanvasDocumentView — a document that is already a canvas', () => {
     // resolves against the containing block and so kept billing for the row's
     // full width on a squeezed page.
     expect(paper.className).toMatch(/@container/);
-    expect(paper.className).toMatch(/px-\[11\.76cqi\]/); // 96px on an 816px sheet
-    expect(paper.className).not.toMatch(/px-\[96px\]/);
-    expect(paper.className).not.toMatch(/sm:px-|lg:px-/);
+    // One level in: an element carrying `@container` is a container for its
+    // DESCENDANTS, not for itself, so `cqi` on the page element itself fell
+    // through to the viewport and billed 138px of margin to a 441px page.
+    const inner = paper.querySelector('.px-\\[11\\.76cqi\\]');
+    expect(inner).not.toBeNull(); // 11.76cqi = 96px on an 816px sheet
+    expect(paper.className).not.toMatch(/px-/);
   });
 
   it('bounds the workspace to the viewport so its scroll is its own', () => {

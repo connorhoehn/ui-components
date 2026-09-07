@@ -506,7 +506,7 @@ export default function CanvasDocumentView({
             // mid-clause. The same page now keeps a 337px measure.
             style={zoom === 1 ? undefined : { zoom }}
             className={cn(
-              'doc-page @container min-h-[1056px] mx-auto bg-paper px-[11.76cqi] py-10 sm:py-16 lg:py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]',
+              'doc-page @container min-h-[1056px] mx-auto bg-paper text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]',
               // At 100% the sheet stays responsive: it gives way on a narrow
               // window rather than forcing a sideways scroll to read a
               // paragraph. Zoomed, it takes its true width and the workspace
@@ -517,6 +517,13 @@ export default function CanvasDocumentView({
               zoom === 1 ? 'w-full max-w-[816px]' : 'w-[816px] shrink-0',
             )}
           >
+            {/* The margin lives one level IN, because `cqi` asks the nearest
+                ancestor container — an element carrying `@container` is a
+                container for its descendants, not for itself. On the page
+                element it fell through to the viewport and billed 138px of
+                margin to a 441px page, a worse answer than the breakpoint it
+                replaced. */}
+            <div className="px-[11.76cqi] py-10 sm:py-16 lg:py-[96px]">
             <TiptapEditor
               fragment={body}
               ydoc={ydoc}
@@ -530,6 +537,7 @@ export default function CanvasDocumentView({
               hideToolbar
               onEditorReady={(e) => { setEditor(e); onEditorReady?.(e); }}
             />
+            </div>
             </div>
             {showGutter && (
               <DocumentGutter
