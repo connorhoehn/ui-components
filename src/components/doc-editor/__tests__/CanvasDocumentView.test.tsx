@@ -146,7 +146,11 @@ describe('CanvasDocumentView — a document that is already a canvas', () => {
   it('keeps the page margin proportional to the page, not the window', () => {
     renderView();
     const paper = screen.getByTestId('canvas-document-paper');
-    expect(paper.className).toMatch(/px-\[11\.76%\]/); // 96px on an 816px sheet
+    // `cqi` (a percent of the page's OWN inline size), not `%` — which
+    // resolves against the containing block and so kept billing for the row's
+    // full width on a squeezed page.
+    expect(paper.className).toMatch(/@container/);
+    expect(paper.className).toMatch(/px-\[11\.76cqi\]/); // 96px on an 816px sheet
     expect(paper.className).not.toMatch(/px-\[96px\]/);
     expect(paper.className).not.toMatch(/sm:px-|lg:px-/);
   });

@@ -485,10 +485,16 @@ export default function CanvasDocumentView({
             // screenshot check; darkSurfaceTokens (d) fails the build for it.
             ref={paperRef}
             data-testid={`${testId}-paper`}
-            // The margin is a PROPORTION of the page, not a viewport
-            // breakpoint: 11.76% is 96px on an 816px sheet, i.e. the 1in
-            // margin the page is imitating, and it stays a margin rather than
-            // becoming the page when the sheet is narrower than that.
+            // The margin is a proportion of the PAGE — `cqi`, not `%`.
+            //
+            // Percentage padding resolves against the CONTAINING BLOCK's
+            // width, so on a squeezed page it kept billing for the row's full
+            // width and barely moved the measure (249px → 260px). `cqi` is a
+            // percent of this element's own inline size, which is the thing
+            // the margin belongs to; `@container` is what makes the page
+            // answer that question about itself. 11.76cqi is 96px on an 816px
+            // sheet — the 1in margin the page is imitating — and it stays a
+            // margin instead of becoming the page when the sheet is narrower.
             //
             // Breakpoints were the wrong axis. They answer how wide the
             // WINDOW is, while the sheet's width comes from its CONTAINER —
@@ -500,7 +506,7 @@ export default function CanvasDocumentView({
             // mid-clause. The same page now keeps a 337px measure.
             style={zoom === 1 ? undefined : { zoom }}
             className={cn(
-              'doc-page min-h-[1056px] mx-auto bg-paper px-[11.76%] py-10 sm:py-16 lg:py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]',
+              'doc-page @container min-h-[1056px] mx-auto bg-paper px-[11.76cqi] py-10 sm:py-16 lg:py-[96px] text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]',
               // At 100% the sheet stays responsive: it gives way on a narrow
               // window rather than forcing a sideways scroll to read a
               // paragraph. Zoomed, it takes its true width and the workspace
