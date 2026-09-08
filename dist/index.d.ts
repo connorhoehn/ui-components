@@ -1040,6 +1040,8 @@ export declare interface BoardColumnProps {
 
 export declare function BooleanEditorRenderer(props: SectionRendererProps): JSX.Element;
 
+export declare const booleanFieldType: FieldTypeDefinition;
+
 export declare function BooleanReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
 
 export declare const borderRadius: {
@@ -3427,6 +3429,8 @@ export declare interface DataTableProps<T> {
 }
 
 export declare function DateEditorRenderer(props: SectionRendererProps): JSX.Element;
+
+export declare const dateFieldType: FieldTypeDefinition;
 
 export declare function DateReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
 
@@ -7073,6 +7077,8 @@ export declare interface NotificationItem {
 
 export declare function NumberEditorRenderer(props: SectionRendererProps): JSX.Element;
 
+export declare const numberFieldType: FieldTypeDefinition;
+
 export declare const NumberInput: ForwardRefExoticComponent<NumberInputProps & RefAttributes<HTMLInputElement>>;
 
 export declare interface NumberInputProps {
@@ -10695,6 +10701,8 @@ export declare interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLT
 }
 
 export declare function TextEditorRenderer(props: SectionRendererProps): JSX.Element;
+
+export declare const textFieldType: FieldTypeDefinition;
 
 export declare function TextReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
 

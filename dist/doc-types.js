@@ -8,7 +8,7 @@ import { t as l } from "./Input-DLknWXri.js";
 import { t as u } from "./Textarea-Dz4doxTv.js";
 import { t as d } from "./Select-CqVokE2v.js";
 import { t as f } from "./Checkbox-DqN9RkXK.js";
-import { f as p, h as m, m as h, p as g } from "./renderers-BeXWg0si.js";
+import { _ as p, g as m, v as h, y as g } from "./renderers-ByVK8yPz.js";
 import { useEffect as _, useId as v, useMemo as y, useRef as b, useState as x } from "react";
 import { Fragment as S, jsx as C, jsxs as w } from "react/jsx-runtime";
 import { DndContext as T, KeyboardSensor as E, PointerSensor as D, closestCorners as O, useSensor as k, useSensors as A } from "@dnd-kit/core";
@@ -785,7 +785,7 @@ function Y({ cookbook: e, onPick: t, actionLabel: n, busy: r, cardPrefix: i, lay
 	});
 }
 function X({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearch: r = !1, idPrefix: i = "cookbooks", cardPrefix: a = "cookbook", layout: s = "fixed", gridHeightClassName: c = "max-h-[60vh]" }) {
-	let [u, d] = x(""), [f, m] = x("All"), g = b(null);
+	let [u, d] = x(""), [f, p] = x("All"), g = b(null);
 	_(() => {
 		if (!r) return;
 		let e = setTimeout(() => g.current?.focus(), 30);
@@ -801,14 +801,14 @@ function X({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearc
 				type: "button",
 				"data-testid": `${a}-cat-all`,
 				"aria-pressed": f === "All",
-				onClick: () => m("All"),
+				onClick: () => p("All"),
 				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit", f === "All" ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
 				children: "All"
-			}), p.map((e) => /* @__PURE__ */ C("button", {
+			}), m.map((e) => /* @__PURE__ */ C("button", {
 				type: "button",
 				"data-testid": `${a}-cat-${J(e)}`,
 				"aria-pressed": f === e,
-				onClick: () => m(e),
+				onClick: () => p(e),
 				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit", f === e ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
 				children: e
 			}, e))]
@@ -1168,4 +1168,4 @@ function ee({ idToken: e, onExportSchema: t } = {}) {
 	});
 }
 //#endregion
-export { p as COOKBOOK_CATEGORIES, X as CookbookPicker, Z as CookbooksModal, q as DocumentTypeWizard, ee as DocumentTypesPage, B as FieldDefinitionEditor, R as StepIndicator, z as WizardStepNavigation, g as documentTypeCookbooks, h as filterCookbooks, m as matchesCookbookQuery };
+export { m as COOKBOOK_CATEGORIES, X as CookbookPicker, Z as CookbooksModal, q as DocumentTypeWizard, ee as DocumentTypesPage, B as FieldDefinitionEditor, R as StepIndicator, z as WizardStepNavigation, p as documentTypeCookbooks, h as filterCookbooks, g as matchesCookbookQuery };
