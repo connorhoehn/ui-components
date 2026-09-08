@@ -2,23 +2,45 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Avatar-BzicCOft.js";
 import { t as n } from "./StatusDot-Bgx2zxgC.js";
 import { useCallback as r, useId as i, useMemo as a, useRef as o } from "react";
-import { jsx as s, jsxs as c } from "react/jsx-runtime";
+import { Fragment as s, jsx as c, jsxs as l } from "react/jsx-runtime";
+//#region src/components/shared/VisuallyHidden.tsx
+var u = {
+	position: "absolute",
+	width: "1px",
+	height: "1px",
+	padding: 0,
+	margin: "-1px",
+	overflow: "hidden",
+	clipPath: "inset(50%)",
+	whiteSpace: "nowrap",
+	border: 0
+};
+function d({ as: e = "span", children: t, className: n, id: r, "data-testid": i }) {
+	return /* @__PURE__ */ c(e, {
+		id: r,
+		"data-testid": i,
+		className: n,
+		style: u,
+		children: t
+	});
+}
+//#endregion
 //#region src/components/shared/Tabs.tsx
-var l = {
+var f = {
 	sm: "px-2.5 py-1 text-xs",
 	md: "px-3 py-1.5 text-sm"
 };
-function u(e) {
+function p(e) {
 	switch (e) {
 		case "underline": return "inline-flex items-center gap-1 border-b border-[var(--color-border)]";
 		case "pill": return "inline-flex items-center gap-1";
 		case "segmented": return "inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5";
 	}
 }
-function d(t, n, r) {
+function m(t, n, r) {
 	return t === "underline" ? e("-mb-px border-b-2 rounded-none", n ? "border-[var(--color-primary)] text-[var(--color-text-primary)]" : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]", r && "opacity-50 cursor-not-allowed hover:text-[var(--color-text-secondary)]") : t === "pill" ? e("rounded-full", n ? "bg-[var(--color-primary)] text-white" : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)]", r && "opacity-50 cursor-not-allowed hover:bg-transparent") : e("rounded-md", n ? "bg-surface shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]", r && "opacity-50 cursor-not-allowed hover:bg-transparent");
 }
-function f({ items: t, value: n, onValueChange: f, variant: p = "underline", size: m = "md", className: h, style: g, "aria-label": _, idPrefix: v }) {
+function h({ items: t, value: n, onValueChange: s, variant: u = "underline", size: d = "md", className: h, style: g, "aria-label": _, idPrefix: v }) {
 	let y = i(), b = v ?? y, x = o(/* @__PURE__ */ new Map()), S = a(() => t.filter((e) => !e.disabled).map((e) => e.id), [t]), C = r((e) => {
 		x.current.get(e)?.focus();
 	}, []), w = r((e, t) => {
@@ -41,28 +63,28 @@ function f({ items: t, value: n, onValueChange: f, variant: p = "underline", siz
 				break;
 			case "Enter":
 			case " ":
-				e.preventDefault(), f(t);
+				e.preventDefault(), s(t);
 				return;
 			default: return;
 		}
 		if (r !== null) {
 			e.preventDefault();
 			let t = S[r];
-			f(t), C(t);
+			s(t), C(t);
 		}
 	}, [
 		S,
-		f,
+		s,
 		C
 	]);
-	return /* @__PURE__ */ s("div", {
+	return /* @__PURE__ */ c("div", {
 		role: "tablist",
 		"aria-label": _,
-		className: e(u(p), h),
+		className: e(p(u), h),
 		style: g,
 		children: t.map((t) => {
 			let r = t.id === n;
-			return /* @__PURE__ */ c("button", {
+			return /* @__PURE__ */ l("button", {
 				ref: (e) => {
 					e ? x.current.set(t.id, e) : x.current.delete(t.id);
 				},
@@ -74,14 +96,14 @@ function f({ items: t, value: n, onValueChange: f, variant: p = "underline", siz
 				"aria-disabled": t.disabled || void 0,
 				tabIndex: r ? 0 : -1,
 				disabled: t.disabled,
-				onClick: () => !t.disabled && f(t.id),
+				onClick: () => !t.disabled && s(t.id),
 				onKeyDown: (e) => w(e, t.id),
-				className: e("inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer", l[m], d(p, r, !!t.disabled)),
+				className: e("inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer", f[d], m(u, r, !!t.disabled)),
 				children: [
 					t.icon,
-					/* @__PURE__ */ s("span", { children: t.label }),
-					t.badge !== void 0 && t.badge !== null && /* @__PURE__ */ s("span", {
-						className: e("ml-1 inline-flex items-center justify-center rounded-full px-1.5 min-w-[20px] text-[10px] font-semibold", r && p === "pill" ? "bg-white/20 text-white" : "bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)]"),
+					/* @__PURE__ */ c("span", { children: t.label }),
+					t.badge !== void 0 && t.badge !== null && /* @__PURE__ */ c("span", {
+						className: e("ml-1 inline-flex items-center justify-center rounded-full px-1.5 min-w-[20px] text-[10px] font-semibold", r && u === "pill" ? "bg-white/20 text-white" : "bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)]"),
 						children: t.badge
 					})
 				]
@@ -89,8 +111,8 @@ function f({ items: t, value: n, onValueChange: f, variant: p = "underline", siz
 		})
 	});
 }
-function p({ id: e, when: t, idPrefix: n, className: r, style: i, children: a }) {
-	return e === t ? /* @__PURE__ */ s("div", {
+function g({ id: e, when: t, idPrefix: n, className: r, style: i, children: a }) {
+	return e === t ? /* @__PURE__ */ c("div", {
 		role: "tabpanel",
 		id: n ? `${n}-panel-${e}` : void 0,
 		"aria-labelledby": n ? `${n}-tab-${e}` : void 0,
@@ -101,39 +123,80 @@ function p({ id: e, when: t, idPrefix: n, className: r, style: i, children: a })
 	}) : null;
 }
 //#endregion
+//#region src/components/shared/ThinkingDots.tsx
+function _({ size: t = "md", color: n, className: r }) {
+	let i = t === "sm" ? 4 : 6, a = n || "var(--color-text-tertiary, #94a3b8)";
+	return /* @__PURE__ */ l(s, { children: [/* @__PURE__ */ c("style", { children: "\n        @keyframes thinkDot {\n          0%, 80%, 100% { transform: scale(1); opacity: 0.4; }\n          40% { transform: scale(1.3); opacity: 1; }\n        }\n      " }), /* @__PURE__ */ c("span", {
+		className: e("inline-flex items-center gap-1", r),
+		children: [
+			0,
+			1,
+			2
+		].map((e) => /* @__PURE__ */ c("span", { style: {
+			width: i,
+			height: i,
+			borderRadius: "50%",
+			background: a,
+			display: "inline-block",
+			animation: `thinkDot 1.2s ease-in-out ${e * .2}s infinite`
+		} }, e))
+	})] });
+}
+//#endregion
+//#region src/components/shared/TypingIndicator.tsx
+function v(e) {
+	if (e.length === 0) return "";
+	if (e.length === 1) return `${e[0]} is typing…`;
+	if (e.length === 2) return `${e[0]} and ${e[1]} are typing…`;
+	let t = e.length - 2;
+	return `${e[0]}, ${e[1]} and ${t} other${t > 1 ? "s" : ""} are typing…`;
+}
+function y({ names: t, compact: n = !1, color: r, size: i = "sm", className: a, "data-testid": o = "typing-indicator" }) {
+	return t.length === 0 ? null : /* @__PURE__ */ l("span", {
+		role: "status",
+		"aria-live": "polite",
+		"data-testid": o,
+		className: e("inline-flex items-center gap-1.5 text-[12px] text-text-tertiary", a),
+		children: [/* @__PURE__ */ c(_, {
+			size: i,
+			color: r
+		}), !n && /* @__PURE__ */ c("span", { children: v(t) })]
+	});
+}
+//#endregion
 //#region src/components/shared/ChannelHeader.tsx
-function m({ name: r, memberCount: i, description: a, tabs: o, actions: l, avatarUrl: u, online: d, onMembersClick: f, className: p, "data-testid": m }) {
-	return /* @__PURE__ */ c("div", {
+function b({ name: r, memberCount: i, description: a, tabs: o, actions: s, avatarUrl: u, online: d, onMembersClick: f, className: p, "data-testid": m }) {
+	return /* @__PURE__ */ l("div", {
 		"data-testid": m,
 		className: e("flex items-center justify-between gap-4 px-6 py-3", "border-b border-[var(--color-border)] bg-[var(--color-surface)]", p),
 		children: [
-			/* @__PURE__ */ c("div", {
+			/* @__PURE__ */ l("div", {
 				className: "flex items-center gap-3 min-w-0",
-				children: [/* @__PURE__ */ c("div", {
+				children: [/* @__PURE__ */ l("div", {
 					className: "relative shrink-0",
-					children: [u ? /* @__PURE__ */ s("img", {
+					children: [u ? /* @__PURE__ */ c("img", {
 						src: u,
 						alt: r,
 						className: "w-9 h-9 rounded-full object-cover"
-					}) : /* @__PURE__ */ s(t, {
+					}) : /* @__PURE__ */ c(t, {
 						name: r,
 						size: 36
-					}), d !== void 0 && /* @__PURE__ */ s("span", {
+					}), d !== void 0 && /* @__PURE__ */ c("span", {
 						className: "absolute -bottom-0.5 -right-0.5",
-						children: /* @__PURE__ */ s(n, {
+						children: /* @__PURE__ */ c(n, {
 							color: d ? "var(--color-success)" : "var(--color-text-tertiary)",
 							size: "sm",
 							"aria-label": d ? "Online" : "Offline"
 						})
 					})]
-				}), /* @__PURE__ */ c("div", {
+				}), /* @__PURE__ */ l("div", {
 					className: "min-w-0 flex flex-col gap-0.5",
-					children: [/* @__PURE__ */ c("div", {
+					children: [/* @__PURE__ */ l("div", {
 						className: "flex items-center gap-2",
-						children: [/* @__PURE__ */ s("h2", {
+						children: [/* @__PURE__ */ c("h2", {
 							className: "text-[15px] font-semibold text-[var(--color-text-primary)] leading-tight truncate",
 							children: r
-						}), i !== void 0 && (f ? /* @__PURE__ */ c("button", {
+						}), i !== void 0 && (f ? /* @__PURE__ */ l("button", {
 							type: "button",
 							onClick: f,
 							"data-testid": "channel-header-members",
@@ -144,7 +207,7 @@ function m({ name: r, memberCount: i, description: a, tabs: o, actions: l, avata
 								" ",
 								i === 1 ? "member" : "members"
 							]
-						}) : /* @__PURE__ */ c("span", {
+						}) : /* @__PURE__ */ l("span", {
 							"data-testid": "channel-header-members",
 							className: "text-[11px] font-medium leading-none text-[var(--color-text-tertiary)]",
 							children: [
@@ -153,22 +216,22 @@ function m({ name: r, memberCount: i, description: a, tabs: o, actions: l, avata
 								i === 1 ? "member" : "members"
 							]
 						}))]
-					}), a && /* @__PURE__ */ s("p", {
+					}), a && /* @__PURE__ */ c("p", {
 						className: "text-[12px] text-[var(--color-text-tertiary)] truncate leading-tight",
 						children: a
 					})]
 				})]
 			}),
-			o && /* @__PURE__ */ s("div", {
+			o && /* @__PURE__ */ c("div", {
 				className: "flex min-w-0 flex-1 items-center overflow-x-auto",
 				children: o
 			}),
-			l && /* @__PURE__ */ s("div", {
+			s && /* @__PURE__ */ c("div", {
 				className: "flex items-center gap-2 shrink-0",
-				children: l
+				children: s
 			})
 		]
 	});
 }
 //#endregion
-export { p as n, f as r, m as t };
+export { g as a, d as c, _ as i, y as n, h as o, v as r, u as s, b as t };

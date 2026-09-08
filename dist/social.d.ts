@@ -573,7 +573,7 @@ export declare interface ConversationItem {
     live?: boolean;
 }
 
-export declare function ConversationList({ items, grouped, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+export declare function ConversationList({ items, grouped, sectionOrder, sortByRecency, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
 
 export declare interface ConversationListProps {
     items: ConversationItem[];
@@ -595,6 +595,25 @@ export declare interface ConversationListProps {
      * designed around.
      */
     grouped?: boolean;
+    /**
+     * Which group leads when `grouped`.
+     *
+     * `'channels-first'` (the default, and what every existing caller keeps) is
+     * the Slack shape and is right when channels are things you deliberately
+     * joined. `'dms-first'` is right on a surface whose subject is people: a DM
+     * is addressed to you personally and a channel is not, and on a rail with
+     * forty rooms in it that difference is the only thing keeping a new message
+     * from a colleague above the fold.
+     */
+    sectionOrder?: 'channels-first' | 'dms-first';
+    /**
+     * Sort rows most-recent-first within each group. Default TRUE.
+     *
+     * Off for a caller whose order already means something — a call's people
+     * list is in join order, and re-sorting it by "last message" would shuffle
+     * the participants of a live call every time somebody spoke.
+     */
+    sortByRecency?: boolean;
     tone?: 'light' | 'dark';
     className?: string;
     'data-testid'?: string;
@@ -609,7 +628,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, emptyLabel, header, footer, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, emptyLabel, header, footer, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -629,6 +648,11 @@ export declare interface ConversationRailProps {
      * the full-height case, where a forty-row flat mix stops being scannable.
      */
     grouped?: boolean;
+    /**
+     * Which group leads. Forwarded to ConversationList — `'dms-first'` on a
+     * surface whose subject is people rather than rooms.
+     */
+    sectionOrder?: 'channels-first' | 'dms-first';
     emptyLabel?: string;
     /** Above the shelf: a workspace switcher, a search field, a title. */
     header?: ReactNode;
@@ -763,6 +787,46 @@ export declare interface ConversationSurfaceProps {
     'data-testid'?: string;
 }
 
+/** Local calendar day of an ISO timestamp, as `YYYY-MM-DD`. Empty when unparseable. */
+export declare function dayKeyOf(isoString: string): string;
+
+/**
+ * How the boundary calls itself: `Today`, `Yesterday`, a weekday inside the
+ * last week, and an explicit date beyond that.
+ *
+ * "Today"/"Yesterday" are the words people actually use, and a bare weekday is
+ * unambiguous for six days and actively misleading on the seventh — "Monday"
+ * a week and a day ago is the wrong Monday — so the window stops at six.
+ *
+ * `now` is injectable because the whole point of this function is that it
+ * changes answer at midnight, which is not something a test can wait for.
+ */
+export declare function dayLabel(isoString: string, now?: Date): string;
+
+/**
+ * The line between one day of a transcript and the next.
+ *
+ * `role="separator"` rather than a heading: it divides the flow, it is not a
+ * section title you would navigate to, and a transcript with forty headings in
+ * it makes a screen reader's heading list useless. The accessible name carries
+ * the FULL date even though the visible text says "Today" — see
+ * `fullDateLabel`.
+ *
+ * The rule is horizontal and decorative, so it is drawn with borders on the
+ * flex children rather than an <hr>: an <hr> is itself a separator, and two
+ * nested separators is one announcement too many.
+ */
+export declare function DaySeparator({ timestamp, now, tone, className }: DaySeparatorProps): JSX.Element | null;
+
+export declare interface DaySeparatorProps {
+    /** ISO timestamp of the first message of the day this separator opens. */
+    timestamp: string;
+    /** Injectable clock, so "Today" is testable. */
+    now?: Date;
+    tone?: 'light' | 'dark';
+    className?: string;
+}
+
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
 /**
@@ -849,6 +913,19 @@ export declare function formatChatTime(isoString: string): string;
 /** "12:04" / "1:02:11" — a duration people read, not a millisecond count. */
 export declare function formatDuration(ms?: number): string;
 
+/**
+ * The unabbreviated date, for the separator's accessible name and for the
+ * `title` on a row's HH:MM.
+ *
+ * "Today" is a fine thing to READ and a poor thing to be told by a screen
+ * reader hours later in a saved transcript, so the announced name always
+ * carries the real date as well.
+ */
+export declare function fullDateLabel(isoString: string): string;
+
+/** Full local date AND time — the `title` of a row's truncated HH:MM. */
+export declare function fullTimestampLabel(isoString: string): string;
+
 /** Error received from the gateway (matches server error-codes.js format) */
 declare interface GatewayError {
     /** Standardized error code (e.g. AUTH_TOKEN_EXPIRED, AUTHZ_CHANNEL_DENIED) */
@@ -891,6 +968,19 @@ export declare function groupReactions(reactions: readonly MessageReaction[], cu
 export declare function isImageAttachment(a: {
     contentType?: string;
 }): boolean;
+
+/**
+ * Does a separator belong BETWEEN these two messages?
+ *
+ * `previous` is undefined for the first message in the list, which does get a
+ * separator: the top of a transcript is a day boundary too, and without one
+ * the oldest visible block is the only one on screen whose date is unstated.
+ *
+ * An unparseable timestamp never opens a new day. A malformed row is a data
+ * problem; inventing a date heading for it would turn it into a reading
+ * problem for every message under it.
+ */
+export declare function isNewDay(current: string, previous?: string): boolean;
 
 export declare function LinkDialog({ open, initialText, initialHref, onSubmit, onRemove, onClose, 'data-testid': testId, }: LinkDialogProps): JSX.Element;
 
@@ -1331,6 +1421,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1350,12 +1453,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1363,9 +1463,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -1392,26 +1502,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

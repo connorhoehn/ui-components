@@ -1,6 +1,6 @@
 import { t as e } from "../cn-DhjIN-s0.js";
 import { t } from "../Avatar-BzicCOft.js";
-import { i as n, n as r, r as i } from "../ReactionPickerPopover-8eSV-aRw.js";
+import { i as n, n as r, r as i } from "../ReactionPickerPopover-CcL-n6gt.js";
 import { i as a, r as o, t as s } from "../LinkDialog-DazAeDjI.js";
 import { forwardRef as c, useCallback as l, useEffect as u, useImperativeHandle as d, useMemo as f, useRef as p, useState as m } from "react";
 import { Fragment as h, jsx as g, jsxs as _ } from "react/jsx-runtime";
@@ -2315,7 +2315,7 @@ function xi({ onSend: t, onSearchPeople: o, allowAttachments: c = !1, allowEmoji
 		className: te,
 		children: /* @__PURE__ */ _("div", {
 			"data-testid": D,
-			className: "chat-composer rounded-lg border border-border bg-surface focus-within:border-primary",
+			className: "chat-composer rounded-lg border border-border bg-surface focus-within:border-primary focus-within:ring-2 focus-within:ring-primary",
 			children: [
 				/* @__PURE__ */ g(v, { editor: A }),
 				/* @__PURE__ */ g(hi, {
