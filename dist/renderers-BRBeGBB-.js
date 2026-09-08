@@ -4,12 +4,13 @@ import { t as i } from "./cn-DhjIN-s0.js";
 import { t as a } from "./useEventCallback-Cwx9QVSi.js";
 import { t as o } from "./Input-DLknWXri.js";
 import { t as s } from "./Select-CqVokE2v.js";
-import { t as c } from "./Checkbox-DqN9RkXK.js";
-import { t as l } from "./TiptapEditor-Dn9rUdZx.js";
-import { useCallback as u, useEffect as d, useRef as f, useState as p } from "react";
-import { Fragment as m, jsx as h, jsxs as g } from "react/jsx-runtime";
+import { t as c } from "./NumberInput-PlADgrip.js";
+import { t as l } from "./Checkbox-DqN9RkXK.js";
+import { t as u } from "./TiptapEditor-Dn9rUdZx.js";
+import { useCallback as d, useEffect as f, useRef as p, useState as m } from "react";
+import { Fragment as h, jsx as g, jsxs as _ } from "react/jsx-runtime";
 //#region src/components/doc-types/cookbooks/index.ts
-var _ = [
+var v = [
 	"General",
 	"Engineering",
 	"Operations",
@@ -19,7 +20,7 @@ var _ = [
 	"Finance",
 	"Legal"
 ];
-function v(e, t, n = {}) {
+function y(e, t, n = {}) {
 	return {
 		id: crypto.randomUUID(),
 		name: e,
@@ -31,584 +32,584 @@ function v(e, t, n = {}) {
 		rendererOverrides: {}
 	};
 }
-function y() {
+function b() {
 	return {
 		name: "Bug Report",
 		description: "Track bugs with severity, reproduction steps, and resolution notes.",
 		icon: "🐛",
 		fields: [
-			v("Title", "text", { required: !0 }),
-			v("Severity", "text", {
+			y("Title", "text", { required: !0 }),
+			y("Severity", "text", {
 				required: !0,
 				placeholder: "Critical / High / Medium / Low"
 			}),
-			v("Status", "text", {
+			y("Status", "text", {
 				required: !0,
 				placeholder: "Open / In Progress / Resolved / Won't Fix"
 			}),
-			v("Reported By", "text", { required: !0 }),
-			v("Reported Date", "date", { required: !0 }),
-			v("Assigned To", "text"),
-			v("Environment", "text", { placeholder: "Production / Staging / Development / Local" }),
-			v("Steps to Reproduce", "rich-text", {
+			y("Reported By", "text", { required: !0 }),
+			y("Reported Date", "date", { required: !0 }),
+			y("Assigned To", "text"),
+			y("Environment", "text", { placeholder: "Production / Staging / Development / Local" }),
+			y("Steps to Reproduce", "rich-text", {
 				required: !0,
 				placeholder: "Detailed steps to reproduce the issue..."
 			}),
-			v("Expected Behavior", "rich-text", {
+			y("Expected Behavior", "rich-text", {
 				required: !0,
 				placeholder: "What should happen..."
 			}),
-			v("Actual Behavior", "rich-text", {
+			y("Actual Behavior", "rich-text", {
 				required: !0,
 				placeholder: "What actually happens..."
 			}),
-			v("Screenshots / Evidence", "rich-text", { placeholder: "Paste screenshots or supporting evidence..." }),
-			v("Root Cause", "rich-text", {
+			y("Screenshots / Evidence", "rich-text", { placeholder: "Paste screenshots or supporting evidence..." }),
+			y("Root Cause", "rich-text", {
 				placeholder: "What caused the issue...",
 				defaultCollapsed: !0
 			}),
-			v("Resolution Notes", "rich-text", {
+			y("Resolution Notes", "rich-text", {
 				placeholder: "How the issue was resolved...",
 				defaultCollapsed: !0
 			})
 		]
 	};
 }
-function b() {
+function x() {
 	return {
 		name: "Employee Onboarding",
 		description: "New hire onboarding tasks, milestones, and equipment tracking.",
 		icon: "👋",
 		fields: [
-			v("Employee Name", "text", { required: !0 }),
-			v("Start Date", "date", { required: !0 }),
-			v("Department", "text", {
+			y("Employee Name", "text", { required: !0 }),
+			y("Start Date", "date", { required: !0 }),
+			y("Department", "text", {
 				required: !0,
 				placeholder: "Engineering / Product / Design / Sales / Marketing / Operations / HR / Finance"
 			}),
-			v("Manager", "text", { required: !0 }),
-			v("Role Title", "text", { required: !0 }),
-			v("Equipment Issued", "boolean"),
-			v("Accounts Created", "boolean"),
-			v("Orientation Complete", "boolean"),
-			v("First Week Goals", "rich-text", { placeholder: "Goals for the first week..." }),
-			v("30-Day Milestones", "rich-text", { placeholder: "What should be accomplished by day 30..." }),
-			v("60-Day Milestones", "rich-text", {
+			y("Manager", "text", { required: !0 }),
+			y("Role Title", "text", { required: !0 }),
+			y("Equipment Issued", "boolean"),
+			y("Accounts Created", "boolean"),
+			y("Orientation Complete", "boolean"),
+			y("First Week Goals", "rich-text", { placeholder: "Goals for the first week..." }),
+			y("30-Day Milestones", "rich-text", { placeholder: "What should be accomplished by day 30..." }),
+			y("60-Day Milestones", "rich-text", {
 				placeholder: "What should be accomplished by day 60...",
 				defaultCollapsed: !0
 			}),
-			v("90-Day Review Date", "date"),
-			v("Mentor Assigned", "text"),
-			v("Notes", "rich-text")
-		]
-	};
-}
-function x() {
-	return {
-		name: "Invoice",
-		description: "Track invoices with line items, amounts, and payment status.",
-		icon: "💰",
-		fields: [
-			v("Invoice Number", "text", {
-				required: !0,
-				placeholder: "INV-0001"
-			}),
-			v("Issue Date", "date", { required: !0 }),
-			v("Due Date", "date", { required: !0 }),
-			v("Status", "text", {
-				required: !0,
-				placeholder: "Draft / Sent / Paid / Overdue / Void"
-			}),
-			v("Client Name", "text", { required: !0 }),
-			v("Client Email", "text"),
-			v("Line Items", "rich-text", {
-				required: !0,
-				placeholder: "Description of goods or services..."
-			}),
-			v("Subtotal", "number", { required: !0 }),
-			v("Tax Rate (%)", "number"),
-			v("Tax Amount", "number"),
-			v("Total Amount", "number", { required: !0 }),
-			v("Currency", "text", {
-				required: !0,
-				placeholder: "USD / EUR / GBP / CAD / AUD"
-			}),
-			v("Payment Terms", "text", { placeholder: "Net 15 / Net 30 / Net 60 / Due on Receipt" }),
-			v("Payment Method", "text", { placeholder: "Wire / ACH / Check / Credit Card" }),
-			v("Notes", "rich-text"),
-			v("Paid Date", "date", { defaultCollapsed: !0 })
+			y("90-Day Review Date", "date"),
+			y("Mentor Assigned", "text"),
+			y("Notes", "rich-text")
 		]
 	};
 }
 function S() {
 	return {
-		name: "Meeting Notes",
-		description: "Capture agendas, discussion points, decisions, and action items.",
-		icon: "📝",
+		name: "Invoice",
+		description: "Track invoices with line items, amounts, and payment status.",
+		icon: "💰",
 		fields: [
-			v("Meeting Title", "text", { required: !0 }),
-			v("Date", "date", { required: !0 }),
-			v("Meeting Type", "text", {
+			y("Invoice Number", "text", {
 				required: !0,
-				placeholder: "Standup / Sprint Planning / Retro / 1:1 / All Hands / Design Review / Ad Hoc"
+				placeholder: "INV-0001"
 			}),
-			v("Attendees", "text", { placeholder: "Comma-separated names" }),
-			v("Facilitator", "text"),
-			v("Agenda", "rich-text", { placeholder: "Topics to cover..." }),
-			v("Discussion Notes", "rich-text", {
+			y("Issue Date", "date", { required: !0 }),
+			y("Due Date", "date", { required: !0 }),
+			y("Status", "text", {
 				required: !0,
-				placeholder: "Key discussion points..."
+				placeholder: "Draft / Sent / Paid / Overdue / Void"
 			}),
-			v("Action Items", "rich-text", { placeholder: "Who does what by when..." }),
-			v("Decisions Made", "rich-text", { placeholder: "Decisions reached during the meeting..." }),
-			v("Follow-Up Date", "date"),
-			v("Recording Link", "text", { placeholder: "URL to meeting recording" })
+			y("Client Name", "text", { required: !0 }),
+			y("Client Email", "text"),
+			y("Line Items", "rich-text", {
+				required: !0,
+				placeholder: "Description of goods or services..."
+			}),
+			y("Subtotal", "number", { required: !0 }),
+			y("Tax Rate (%)", "number"),
+			y("Tax Amount", "number"),
+			y("Total Amount", "number", { required: !0 }),
+			y("Currency", "text", {
+				required: !0,
+				placeholder: "USD / EUR / GBP / CAD / AUD"
+			}),
+			y("Payment Terms", "text", { placeholder: "Net 15 / Net 30 / Net 60 / Due on Receipt" }),
+			y("Payment Method", "text", { placeholder: "Wire / ACH / Check / Credit Card" }),
+			y("Notes", "rich-text"),
+			y("Paid Date", "date", { defaultCollapsed: !0 })
 		]
 	};
 }
 function C() {
 	return {
+		name: "Meeting Notes",
+		description: "Capture agendas, discussion points, decisions, and action items.",
+		icon: "📝",
+		fields: [
+			y("Meeting Title", "text", { required: !0 }),
+			y("Date", "date", { required: !0 }),
+			y("Meeting Type", "text", {
+				required: !0,
+				placeholder: "Standup / Sprint Planning / Retro / 1:1 / All Hands / Design Review / Ad Hoc"
+			}),
+			y("Attendees", "text", { placeholder: "Comma-separated names" }),
+			y("Facilitator", "text"),
+			y("Agenda", "rich-text", { placeholder: "Topics to cover..." }),
+			y("Discussion Notes", "rich-text", {
+				required: !0,
+				placeholder: "Key discussion points..."
+			}),
+			y("Action Items", "rich-text", { placeholder: "Who does what by when..." }),
+			y("Decisions Made", "rich-text", { placeholder: "Decisions reached during the meeting..." }),
+			y("Follow-Up Date", "date"),
+			y("Recording Link", "text", { placeholder: "URL to meeting recording" })
+		]
+	};
+}
+function w() {
+	return {
 		name: "Sales Lead",
 		description: "Track leads through the sales pipeline with deal values and follow-ups.",
 		icon: "💼",
 		fields: [
-			v("Contact Name", "text", { required: !0 }),
-			v("Company", "text", { required: !0 }),
-			v("Email", "text", {
+			y("Contact Name", "text", { required: !0 }),
+			y("Company", "text", { required: !0 }),
+			y("Email", "text", {
 				required: !0,
 				placeholder: "email@example.com"
 			}),
-			v("Phone", "text"),
-			v("Lead Source", "text", {
+			y("Phone", "text"),
+			y("Lead Source", "text", {
 				required: !0,
 				placeholder: "Inbound / Outbound / Referral / Event / Website / Cold Call"
 			}),
-			v("Stage", "text", {
+			y("Stage", "text", {
 				required: !0,
 				placeholder: "New / Contacted / Qualified / Proposal / Negotiation / Closed Won / Closed Lost"
 			}),
-			v("Deal Value", "number"),
-			v("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
-			v("Expected Close Date", "date"),
-			v("Last Contact Date", "date"),
-			v("Next Follow-Up", "date"),
-			v("Owner", "text"),
-			v("Notes", "rich-text"),
-			v("Lost Reason", "text", {
+			y("Deal Value", "number"),
+			y("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
+			y("Expected Close Date", "date"),
+			y("Last Contact Date", "date"),
+			y("Next Follow-Up", "date"),
+			y("Owner", "text"),
+			y("Notes", "rich-text"),
+			y("Lost Reason", "text", {
 				placeholder: "Price / Competitor / Timing / No Budget / No Response / Other",
 				defaultCollapsed: !0
 			})
 		]
 	};
 }
-function w() {
+function T() {
 	return {
 		name: "Incident Report",
 		description: "Document incidents with severity, timeline, root cause, and remediation.",
 		icon: "🚨",
 		fields: [
-			v("Incident Title", "text", { required: !0 }),
-			v("Severity", "text", {
+			y("Incident Title", "text", { required: !0 }),
+			y("Severity", "text", {
 				required: !0,
 				placeholder: "SEV1 / SEV2 / SEV3 / SEV4"
 			}),
-			v("Status", "text", {
+			y("Status", "text", {
 				required: !0,
 				placeholder: "Investigating / Identified / Monitoring / Resolved / Postmortem"
 			}),
-			v("Detected At", "date", { required: !0 }),
-			v("Resolved At", "date", { defaultCollapsed: !0 }),
-			v("Duration", "text", {
+			y("Detected At", "date", { required: !0 }),
+			y("Resolved At", "date", { defaultCollapsed: !0 }),
+			y("Duration", "text", {
 				defaultCollapsed: !0,
 				placeholder: "e.g. 2h 15m"
 			}),
-			v("Incident Commander", "text", { required: !0 }),
-			v("Services Affected", "text", { placeholder: "Comma-separated service names" }),
-			v("Customer Impact", "rich-text", {
+			y("Incident Commander", "text", { required: !0 }),
+			y("Services Affected", "text", { placeholder: "Comma-separated service names" }),
+			y("Customer Impact", "rich-text", {
 				required: !0,
 				placeholder: "Describe the user-facing impact..."
 			}),
-			v("Timeline", "rich-text", {
+			y("Timeline", "rich-text", {
 				required: !0,
 				placeholder: "Chronological sequence of events..."
 			}),
-			v("Root Cause", "rich-text", {
+			y("Root Cause", "rich-text", {
 				placeholder: "What caused the incident...",
 				defaultCollapsed: !0
 			}),
-			v("Remediation Steps", "rich-text", { placeholder: "Steps taken to resolve..." }),
-			v("Action Items", "rich-text", {
+			y("Remediation Steps", "rich-text", { placeholder: "Steps taken to resolve..." }),
+			y("Action Items", "rich-text", {
 				placeholder: "Follow-up tasks to prevent recurrence...",
 				defaultCollapsed: !0
 			}),
-			v("Lessons Learned", "rich-text", {
+			y("Lessons Learned", "rich-text", {
 				placeholder: "What we can do better next time...",
 				defaultCollapsed: !0
 			}),
-			v("Related Incidents", "text", { placeholder: "Links to related incident reports" })
+			y("Related Incidents", "text", { placeholder: "Links to related incident reports" })
 		]
 	};
 }
-function T() {
+function E() {
 	return {
 		name: "RFC / Technical Proposal",
 		description: "Request for comments with problem statement, proposed solution, and alternatives.",
 		icon: "📨",
 		fields: [
-			v("RFC Title", "text", { required: !0 }),
-			v("Author", "text", { required: !0 }),
-			v("Status", "text", {
+			y("RFC Title", "text", { required: !0 }),
+			y("Author", "text", { required: !0 }),
+			y("Status", "text", {
 				required: !0,
 				placeholder: "Draft / In Review / Accepted / Rejected / Superseded"
 			}),
-			v("Created Date", "date", { required: !0 }),
-			v("Decision Date", "date", { defaultCollapsed: !0 }),
-			v("Reviewers", "text", { placeholder: "Comma-separated reviewer names" }),
-			v("Problem Statement", "rich-text", {
+			y("Created Date", "date", { required: !0 }),
+			y("Decision Date", "date", { defaultCollapsed: !0 }),
+			y("Reviewers", "text", { placeholder: "Comma-separated reviewer names" }),
+			y("Problem Statement", "rich-text", {
 				required: !0,
 				placeholder: "What problem are we solving?"
 			}),
-			v("Proposed Solution", "rich-text", {
+			y("Proposed Solution", "rich-text", {
 				required: !0,
 				placeholder: "Detailed proposal..."
 			}),
-			v("Alternatives Considered", "rich-text", { placeholder: "Other approaches evaluated..." }),
-			v("Technical Design", "rich-text", { placeholder: "Architecture, data flow, API changes..." }),
-			v("Migration Plan", "rich-text", {
+			y("Alternatives Considered", "rich-text", { placeholder: "Other approaches evaluated..." }),
+			y("Technical Design", "rich-text", { placeholder: "Architecture, data flow, API changes..." }),
+			y("Migration Plan", "rich-text", {
 				placeholder: "How to roll out the change...",
 				defaultCollapsed: !0
 			}),
-			v("Risks", "rich-text", { placeholder: "Known risks and mitigations..." }),
-			v("Open Questions", "rich-text", { placeholder: "Unresolved questions for discussion..." }),
-			v("Decision", "rich-text", {
+			y("Risks", "rich-text", { placeholder: "Known risks and mitigations..." }),
+			y("Open Questions", "rich-text", { placeholder: "Unresolved questions for discussion..." }),
+			y("Decision", "rich-text", {
 				placeholder: "Final decision and rationale...",
 				defaultCollapsed: !0
 			}),
-			v("Superseded By", "text", {
+			y("Superseded By", "text", {
 				placeholder: "Link to successor RFC",
 				defaultCollapsed: !0
 			})
 		]
 	};
 }
-function E() {
+function D() {
 	return {
 		name: "Feature Request",
 		description: "Capture feature requests with user stories, priority, and effort estimates.",
 		icon: "💡",
 		fields: [
-			v("Feature Title", "text", { required: !0 }),
-			v("Requested By", "text", { required: !0 }),
-			v("Priority", "text", {
+			y("Feature Title", "text", { required: !0 }),
+			y("Requested By", "text", { required: !0 }),
+			y("Priority", "text", {
 				required: !0,
 				placeholder: "Critical / High / Medium / Low / Nice to Have"
 			}),
-			v("Status", "text", {
+			y("Status", "text", {
 				required: !0,
 				placeholder: "New / Under Review / Planned / In Progress / Shipped / Declined"
 			}),
-			v("Category", "text", { placeholder: "UX / Performance / Integration / New Capability / Infrastructure" }),
-			v("Target Release", "text"),
-			v("User Story", "rich-text", {
+			y("Category", "text", { placeholder: "UX / Performance / Integration / New Capability / Infrastructure" }),
+			y("Target Release", "text"),
+			y("User Story", "rich-text", {
 				required: !0,
 				placeholder: "As a [user], I want [goal] so that [benefit]"
 			}),
-			v("Problem Description", "rich-text", {
+			y("Problem Description", "rich-text", {
 				required: !0,
 				placeholder: "What problem does this solve?"
 			}),
-			v("Proposed Solution", "rich-text", { placeholder: "How should this work?" }),
-			v("Success Metrics", "rich-text", { placeholder: "How will we measure success?" }),
-			v("Effort Estimate", "text", { placeholder: "XS / S / M / L / XL" }),
-			v("Business Value", "text", { placeholder: "Revenue / Retention / Adoption / Compliance / Internal Efficiency" }),
-			v("Dependencies", "rich-text", { defaultCollapsed: !0 }),
-			v("Decline Reason", "rich-text", {
+			y("Proposed Solution", "rich-text", { placeholder: "How should this work?" }),
+			y("Success Metrics", "rich-text", { placeholder: "How will we measure success?" }),
+			y("Effort Estimate", "text", { placeholder: "XS / S / M / L / XL" }),
+			y("Business Value", "text", { placeholder: "Revenue / Retention / Adoption / Compliance / Internal Efficiency" }),
+			y("Dependencies", "rich-text", { defaultCollapsed: !0 }),
+			y("Decline Reason", "rich-text", {
 				placeholder: "Why was this declined?",
 				defaultCollapsed: !0
 			}),
-			v("Ship Date", "date", { defaultCollapsed: !0 })
+			y("Ship Date", "date", { defaultCollapsed: !0 })
 		]
 	};
 }
-function D() {
+function ee() {
 	return {
 		name: "Contract / Agreement",
 		description: "Track contracts with counterparty, terms, renewal dates, and status.",
 		icon: "📜",
 		fields: [
-			v("Contract Title", "text", { required: !0 }),
-			v("Contract Type", "text", {
+			y("Contract Title", "text", { required: !0 }),
+			y("Contract Type", "text", {
 				required: !0,
 				placeholder: "NDA / MSA / SOW / SLA / Employment / Vendor / Licensing / Other"
 			}),
-			v("Status", "text", {
+			y("Status", "text", {
 				required: !0,
 				placeholder: "Draft / In Review / Pending Signature / Active / Expired / Terminated"
 			}),
-			v("Counterparty", "text", { required: !0 }),
-			v("Effective Date", "date", { required: !0 }),
-			v("Expiration Date", "date"),
-			v("Auto-Renew", "boolean"),
-			v("Renewal Term", "text", {
+			y("Counterparty", "text", { required: !0 }),
+			y("Effective Date", "date", { required: !0 }),
+			y("Expiration Date", "date"),
+			y("Auto-Renew", "boolean"),
+			y("Renewal Term", "text", {
 				placeholder: "Monthly / Quarterly / Annual / Biennial",
 				defaultCollapsed: !0
 			}),
-			v("Contract Value", "number"),
-			v("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
-			v("Payment Terms", "text", { placeholder: "Net 15 / Net 30 / Net 60 / Upfront" }),
-			v("Internal Owner", "text", { required: !0 }),
-			v("Key Terms", "rich-text", { placeholder: "Important clauses and obligations..." }),
-			v("Termination Clause", "rich-text", { defaultCollapsed: !0 }),
-			v("Notes", "rich-text"),
-			v("Termination Date", "date", { defaultCollapsed: !0 }),
-			v("Termination Reason", "rich-text", {
+			y("Contract Value", "number"),
+			y("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
+			y("Payment Terms", "text", { placeholder: "Net 15 / Net 30 / Net 60 / Upfront" }),
+			y("Internal Owner", "text", { required: !0 }),
+			y("Key Terms", "rich-text", { placeholder: "Important clauses and obligations..." }),
+			y("Termination Clause", "rich-text", { defaultCollapsed: !0 }),
+			y("Notes", "rich-text"),
+			y("Termination Date", "date", { defaultCollapsed: !0 }),
+			y("Termination Reason", "rich-text", {
 				placeholder: "Why was this terminated?",
 				defaultCollapsed: !0
 			})
 		]
 	};
 }
-function O() {
+function te() {
 	return {
 		name: "Sprint Retrospective",
 		description: "Reflect on the sprint with what went well, what didn't, and action items.",
 		icon: "🔄",
 		fields: [
-			v("Sprint Name", "text", { required: !0 }),
-			v("Sprint Dates", "text", {
+			y("Sprint Name", "text", { required: !0 }),
+			y("Sprint Dates", "text", {
 				required: !0,
 				placeholder: "Jan 6 – Jan 17"
 			}),
-			v("Facilitator", "text"),
-			v("Team", "text", { required: !0 }),
-			v("Velocity", "number"),
-			v("Planned Points", "number"),
-			v("Completed Points", "number"),
-			v("What Went Well", "rich-text", {
+			y("Facilitator", "text"),
+			y("Team", "text", { required: !0 }),
+			y("Velocity", "number"),
+			y("Planned Points", "number"),
+			y("Completed Points", "number"),
+			y("What Went Well", "rich-text", {
 				required: !0,
 				placeholder: "Celebrate wins..."
 			}),
-			v("What Didn't Go Well", "rich-text", {
+			y("What Didn't Go Well", "rich-text", {
 				required: !0,
 				placeholder: "Identify pain points..."
 			}),
-			v("Start Doing", "rich-text", { placeholder: "New practices to adopt..." }),
-			v("Stop Doing", "rich-text", { placeholder: "Practices to drop..." }),
-			v("Continue Doing", "rich-text", { placeholder: "Practices to keep..." }),
-			v("Action Items", "rich-text", {
+			y("Start Doing", "rich-text", { placeholder: "New practices to adopt..." }),
+			y("Stop Doing", "rich-text", { placeholder: "Practices to drop..." }),
+			y("Continue Doing", "rich-text", { placeholder: "Practices to keep..." }),
+			y("Action Items", "rich-text", {
 				required: !0,
 				placeholder: "Specific follow-up tasks..."
 			}),
-			v("Action Item Owners", "text", { placeholder: "Comma-separated names" }),
-			v("Follow-Up Date", "date"),
-			v("Overall Sentiment", "text", {
+			y("Action Item Owners", "text", { placeholder: "Comma-separated names" }),
+			y("Follow-Up Date", "date"),
+			y("Overall Sentiment", "text", {
 				required: !0,
 				placeholder: "Great / Good / Mixed / Rough"
 			})
 		]
 	};
 }
-function k() {
+function O() {
 	return {
 		name: "Job Posting",
 		description: "Job listings with requirements, compensation, and hiring status.",
 		icon: "📋",
 		fields: [
-			v("Job Title", "text", { required: !0 }),
-			v("Department", "text", {
+			y("Job Title", "text", { required: !0 }),
+			y("Department", "text", {
 				required: !0,
 				placeholder: "Engineering / Product / Design / Sales / Marketing / Operations / HR / Finance / Legal"
 			}),
-			v("Location", "text", {
+			y("Location", "text", {
 				required: !0,
 				placeholder: "Remote / Hybrid / On-site"
 			}),
-			v("Office Location", "text", { defaultCollapsed: !0 }),
-			v("Employment Type", "text", {
+			y("Office Location", "text", { defaultCollapsed: !0 }),
+			y("Employment Type", "text", {
 				required: !0,
 				placeholder: "Full-time / Part-time / Contract / Intern"
 			}),
-			v("Level", "text", {
+			y("Level", "text", {
 				required: !0,
 				placeholder: "Junior / Mid / Senior / Staff / Principal / Director / VP"
 			}),
-			v("Status", "text", {
+			y("Status", "text", {
 				required: !0,
 				placeholder: "Draft / Open / On Hold / Filled / Closed"
 			}),
-			v("Hiring Manager", "text", { required: !0 }),
-			v("Salary Range Min", "number"),
-			v("Salary Range Max", "number"),
-			v("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
-			v("Job Description", "rich-text", {
+			y("Hiring Manager", "text", { required: !0 }),
+			y("Salary Range Min", "number"),
+			y("Salary Range Max", "number"),
+			y("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
+			y("Job Description", "rich-text", {
 				required: !0,
 				placeholder: "Role overview and responsibilities..."
 			}),
-			v("Requirements", "rich-text", {
+			y("Requirements", "rich-text", {
 				required: !0,
 				placeholder: "Must-have qualifications..."
 			}),
-			v("Nice to Have", "rich-text", { placeholder: "Preferred but not required..." }),
-			v("Benefits", "rich-text", { placeholder: "Compensation and perks..." }),
-			v("Posted Date", "date"),
-			v("Closing Date", "date"),
-			v("Filled By", "text", { defaultCollapsed: !0 }),
-			v("Filled Date", "date", { defaultCollapsed: !0 })
+			y("Nice to Have", "rich-text", { placeholder: "Preferred but not required..." }),
+			y("Benefits", "rich-text", { placeholder: "Compensation and perks..." }),
+			y("Posted Date", "date"),
+			y("Closing Date", "date"),
+			y("Filled By", "text", { defaultCollapsed: !0 }),
+			y("Filled Date", "date", { defaultCollapsed: !0 })
 		]
 	};
 }
-function A() {
+function ne() {
 	return {
 		name: "Vendor Evaluation",
 		description: "Evaluate vendors with scoring, compliance checks, and recommendations.",
 		icon: "🔍",
 		fields: [
-			v("Vendor Name", "text", { required: !0 }),
-			v("Category", "text", {
+			y("Vendor Name", "text", { required: !0 }),
+			y("Category", "text", {
 				required: !0,
 				placeholder: "SaaS / Infrastructure / Consulting / Hardware / Staffing / Other"
 			}),
-			v("Evaluation Status", "text", {
+			y("Evaluation Status", "text", {
 				required: !0,
 				placeholder: "Researching / In Trial / Evaluating / Approved / Rejected / Active Vendor"
 			}),
-			v("Evaluator", "text", { required: !0 }),
-			v("Evaluation Date", "date", { required: !0 }),
-			v("Website", "text"),
-			v("Primary Contact", "text"),
-			v("Annual Cost", "number"),
-			v("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
-			v("Contract Length", "text", { placeholder: "Monthly / Annual / Multi-Year" }),
-			v("Security Review Complete", "boolean"),
-			v("SOC2 Compliant", "boolean"),
-			v("GDPR Compliant", "boolean"),
-			v("Strengths", "rich-text", { placeholder: "Key advantages..." }),
-			v("Weaknesses", "rich-text", { placeholder: "Gaps and concerns..." }),
-			v("Integration Requirements", "rich-text", { placeholder: "Technical integration needs..." }),
-			v("Score (1–10)", "number"),
-			v("Recommendation", "rich-text", { placeholder: "Final recommendation..." }),
-			v("Rejection Reason", "rich-text", {
+			y("Evaluator", "text", { required: !0 }),
+			y("Evaluation Date", "date", { required: !0 }),
+			y("Website", "text"),
+			y("Primary Contact", "text"),
+			y("Annual Cost", "number"),
+			y("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
+			y("Contract Length", "text", { placeholder: "Monthly / Annual / Multi-Year" }),
+			y("Security Review Complete", "boolean"),
+			y("SOC2 Compliant", "boolean"),
+			y("GDPR Compliant", "boolean"),
+			y("Strengths", "rich-text", { placeholder: "Key advantages..." }),
+			y("Weaknesses", "rich-text", { placeholder: "Gaps and concerns..." }),
+			y("Integration Requirements", "rich-text", { placeholder: "Technical integration needs..." }),
+			y("Score (1–10)", "number"),
+			y("Recommendation", "rich-text", { placeholder: "Final recommendation..." }),
+			y("Rejection Reason", "rich-text", {
 				placeholder: "Why was this vendor rejected?",
 				defaultCollapsed: !0
 			})
 		]
 	};
 }
-function j() {
+function k() {
 	return {
 		name: "Project Status Report",
 		description: "Weekly project status with health indicators, accomplishments, and risks.",
 		icon: "📊",
 		fields: [
-			v("Project Name", "text", { required: !0 }),
-			v("Reporting Period", "text", {
+			y("Project Name", "text", { required: !0 }),
+			y("Reporting Period", "text", {
 				required: !0,
 				placeholder: "Week of Jan 6, 2025"
 			}),
-			v("Project Lead", "text", { required: !0 }),
-			v("Overall Status", "text", {
+			y("Project Lead", "text", { required: !0 }),
+			y("Overall Status", "text", {
 				required: !0,
 				placeholder: "On Track / At Risk / Blocked / Complete"
 			}),
-			v("Health: Scope", "text", {
+			y("Health: Scope", "text", {
 				required: !0,
 				placeholder: "Green / Yellow / Red"
 			}),
-			v("Health: Timeline", "text", {
+			y("Health: Timeline", "text", {
 				required: !0,
 				placeholder: "Green / Yellow / Red"
 			}),
-			v("Health: Budget", "text", {
+			y("Health: Budget", "text", {
 				required: !0,
 				placeholder: "Green / Yellow / Red"
 			}),
-			v("Percent Complete", "number"),
-			v("Summary", "rich-text", {
+			y("Percent Complete", "number"),
+			y("Summary", "rich-text", {
 				required: !0,
 				placeholder: "High-level status overview..."
 			}),
-			v("Accomplishments This Period", "rich-text", {
+			y("Accomplishments This Period", "rich-text", {
 				required: !0,
 				placeholder: "What was delivered..."
 			}),
-			v("Planned Next Period", "rich-text", {
+			y("Planned Next Period", "rich-text", {
 				required: !0,
 				placeholder: "What's coming up..."
 			}),
-			v("Risks & Issues", "rich-text", { placeholder: "Active risks and open issues..." }),
-			v("Blockers", "rich-text", {
+			y("Risks & Issues", "rich-text", { placeholder: "Active risks and open issues..." }),
+			y("Blockers", "rich-text", {
 				placeholder: "Blocking items requiring escalation...",
 				defaultCollapsed: !0
 			}),
-			v("Decisions Needed", "rich-text", { placeholder: "Pending decisions from stakeholders..." }),
-			v("Budget Spent", "number"),
-			v("Budget Remaining", "number"),
-			v("Target Completion Date", "date"),
-			v("Stakeholder Notes", "rich-text", { defaultCollapsed: !0 })
+			y("Decisions Needed", "rich-text", { placeholder: "Pending decisions from stakeholders..." }),
+			y("Budget Spent", "number"),
+			y("Budget Remaining", "number"),
+			y("Target Completion Date", "date"),
+			y("Stakeholder Notes", "rich-text", { defaultCollapsed: !0 })
 		]
 	};
 }
-function M() {
+function A() {
 	return {
 		name: "Change Request",
 		description: "Formalized change management with risk assessment and rollback plans.",
 		icon: "🔄",
 		fields: [
-			v("Change Title", "text", { required: !0 }),
-			v("Change ID", "text", {
+			y("Change Title", "text", { required: !0 }),
+			y("Change ID", "text", {
 				required: !0,
 				placeholder: "CR-0001"
 			}),
-			v("Requester", "text", { required: !0 }),
-			v("Request Date", "date", { required: !0 }),
-			v("Priority", "text", {
+			y("Requester", "text", { required: !0 }),
+			y("Request Date", "date", { required: !0 }),
+			y("Priority", "text", {
 				required: !0,
 				placeholder: "Emergency / High / Medium / Low"
 			}),
-			v("Status", "text", {
+			y("Status", "text", {
 				required: !0,
 				placeholder: "Submitted / Under Review / Approved / Scheduled / In Progress / Completed / Rolled Back / Rejected"
 			}),
-			v("Change Type", "text", {
+			y("Change Type", "text", {
 				required: !0,
 				placeholder: "Standard / Normal / Emergency"
 			}),
-			v("Systems Affected", "text", { placeholder: "Comma-separated system names" }),
-			v("Description of Change", "rich-text", {
+			y("Systems Affected", "text", { placeholder: "Comma-separated system names" }),
+			y("Description of Change", "rich-text", {
 				required: !0,
 				placeholder: "What is being changed and why..."
 			}),
-			v("Business Justification", "rich-text", {
+			y("Business Justification", "rich-text", {
 				required: !0,
 				placeholder: "Why this change is needed..."
 			}),
-			v("Risk Assessment", "text", {
+			y("Risk Assessment", "text", {
 				required: !0,
 				placeholder: "Low / Medium / High / Critical"
 			}),
-			v("Risk Mitigation", "rich-text", {
+			y("Risk Mitigation", "rich-text", {
 				placeholder: "Steps to reduce risk...",
 				defaultCollapsed: !0
 			}),
-			v("Rollback Plan", "rich-text", {
+			y("Rollback Plan", "rich-text", {
 				required: !0,
 				placeholder: "How to revert if something goes wrong..."
 			}),
-			v("Scheduled Date", "date", { defaultCollapsed: !0 }),
-			v("Implementation Notes", "rich-text", {
+			y("Scheduled Date", "date", { defaultCollapsed: !0 }),
+			y("Implementation Notes", "rich-text", {
 				placeholder: "Notes from the change window...",
 				defaultCollapsed: !0
 			}),
-			v("Approver", "text"),
-			v("Approval Date", "date", { defaultCollapsed: !0 }),
-			v("Post-Implementation Review", "rich-text", {
+			y("Approver", "text"),
+			y("Approval Date", "date", { defaultCollapsed: !0 }),
+			y("Post-Implementation Review", "rich-text", {
 				placeholder: "Review after the change is complete...",
 				defaultCollapsed: !0
 			})
 		]
 	};
 }
-var N = [
+var j = [
 	{
 		id: "meeting-notes",
 		name: "Meeting Notes",
@@ -621,7 +622,7 @@ var N = [
 			"action items",
 			"decisions"
 		],
-		build: S
+		build: C
 	},
 	{
 		id: "bug-report",
@@ -635,7 +636,7 @@ var N = [
 			"testing",
 			"defects"
 		],
-		build: y
+		build: b
 	},
 	{
 		id: "rfc",
@@ -649,7 +650,7 @@ var N = [
 			"architecture",
 			"design"
 		],
-		build: T
+		build: E
 	},
 	{
 		id: "sprint-retro",
@@ -663,7 +664,7 @@ var N = [
 			"retro",
 			"retrospective"
 		],
-		build: O
+		build: te
 	},
 	{
 		id: "incident-report",
@@ -677,7 +678,7 @@ var N = [
 			"sev",
 			"outage"
 		],
-		build: w
+		build: T
 	},
 	{
 		id: "vendor-evaluation",
@@ -691,7 +692,7 @@ var N = [
 			"evaluation",
 			"compliance"
 		],
-		build: A
+		build: ne
 	},
 	{
 		id: "change-request",
@@ -705,7 +706,7 @@ var N = [
 			"rollback",
 			"risk"
 		],
-		build: M
+		build: A
 	},
 	{
 		id: "feature-request",
@@ -719,7 +720,7 @@ var N = [
 			"backlog",
 			"user stories"
 		],
-		build: E
+		build: D
 	},
 	{
 		id: "status-report",
@@ -733,7 +734,7 @@ var N = [
 			"reporting",
 			"weekly"
 		],
-		build: j
+		build: k
 	},
 	{
 		id: "onboarding",
@@ -747,7 +748,7 @@ var N = [
 			"new hire",
 			"checklist"
 		],
-		build: b
+		build: x
 	},
 	{
 		id: "job-posting",
@@ -761,7 +762,7 @@ var N = [
 			"jobs",
 			"positions"
 		],
-		build: k
+		build: O
 	},
 	{
 		id: "sales-lead",
@@ -776,7 +777,7 @@ var N = [
 			"pipeline",
 			"deals"
 		],
-		build: C
+		build: w
 	},
 	{
 		id: "invoice",
@@ -790,7 +791,7 @@ var N = [
 			"payments",
 			"accounting"
 		],
-		build: x
+		build: S
 	},
 	{
 		id: "contract",
@@ -805,19 +806,19 @@ var N = [
 			"nda",
 			"sow"
 		],
-		build: D
+		build: ee
 	}
 ];
-function P(e, t) {
+function M(e, t) {
 	let n = t.trim().toLowerCase();
 	return !n || e.name.toLowerCase().includes(n) || e.description.toLowerCase().includes(n) || e.category.toLowerCase().includes(n) || e.tags.some((e) => e.toLowerCase().includes(n));
 }
-function F(e, t = "All") {
-	return N.filter((n) => (t === "All" || n.category === t) && P(n, e));
+function N(e, t = "All") {
+	return j.filter((n) => (t === "All" || n.category === t) && M(n, e));
 }
 //#endregion
 //#region src/renderers/tasks/definition.ts
-var I = {
+var re = {
 	type: "tasks",
 	label: "Task List",
 	icon: "✅",
@@ -832,7 +833,7 @@ var I = {
 		"tasks:ack": "Task Review",
 		"tasks:reader": "Task Reader"
 	}
-}, ee = {
+}, ie = {
 	type: "rich-text",
 	label: "Rich Text",
 	icon: "📝",
@@ -847,7 +848,7 @@ var I = {
 		"rich-text:ack": "Rich Text Viewer",
 		"rich-text:reader": "Rich Text Viewer"
 	}
-}, te = {
+}, ae = {
 	type: "decisions",
 	label: "Decisions",
 	icon: "🎯",
@@ -862,7 +863,7 @@ var I = {
 		"decisions:ack": "Decisions Viewer",
 		"decisions:reader": "Decisions Viewer"
 	}
-}, ne = {
+}, oe = {
 	type: "checklist",
 	label: "Checklist",
 	icon: "☑️",
@@ -877,7 +878,7 @@ var I = {
 		"checklist:ack": "Checklist Viewer",
 		"checklist:reader": "Checklist Viewer"
 	}
-}, re = {
+}, se = {
 	type: "file-upload",
 	label: "File Upload",
 	icon: "📎",
@@ -892,7 +893,7 @@ var I = {
 		"file-upload:ack": "File Upload Viewer",
 		"file-upload:reader": "File Upload Viewer"
 	}
-}, ie = {
+}, ce = {
 	type: "diagram",
 	label: "Diagram",
 	icon: "▦",
@@ -907,7 +908,7 @@ var I = {
 		"diagram:ack": "Diagram Viewer",
 		"diagram:reader": "Diagram Viewer"
 	}
-}, ae = {
+}, le = {
 	type: "link-block",
 	label: "Link Block",
 	icon: "🔗",
@@ -922,12 +923,72 @@ var I = {
 		"link-block:ack": "Link Block Viewer",
 		"link-block:reader": "Link Block Viewer"
 	}
-}, oe = /^(\d{4})-(\d{2})-(\d{2})$/;
-function L(e) {
+}, ue = {
+	type: "text",
+	label: "Text",
+	icon: "🔤",
+	description: "Single-line plain text — a name, a status, a reference",
+	rendererKeys: {
+		editor: ["text:editor"],
+		ack: ["text:ack"],
+		reader: ["text:reader"]
+	},
+	rendererLabels: {
+		"text:editor": "Text Field",
+		"text:ack": "Text Value",
+		"text:reader": "Text Value"
+	}
+}, de = {
+	type: "date",
+	label: "Date",
+	icon: "📅",
+	description: "A single calendar date (due date, start date, target date)",
+	rendererKeys: {
+		editor: ["date:editor"],
+		ack: ["date:ack"],
+		reader: ["date:reader"]
+	},
+	rendererLabels: {
+		"date:editor": "Date Picker",
+		"date:ack": "Date Value",
+		"date:reader": "Date Value"
+	}
+}, fe = {
+	type: "number",
+	label: "Number",
+	icon: "🔢",
+	description: "A numeric value (amount, score, points, percentage)",
+	rendererKeys: {
+		editor: ["number:editor"],
+		ack: ["number:ack"],
+		reader: ["number:reader"]
+	},
+	rendererLabels: {
+		"number:editor": "Number Field",
+		"number:ack": "Number Value",
+		"number:reader": "Number Value"
+	}
+}, pe = {
+	type: "boolean",
+	label: "Yes / No",
+	icon: "✅",
+	description: "A yes/no answer that can also be left unanswered",
+	rendererKeys: {
+		editor: ["boolean:editor"],
+		ack: ["boolean:ack"],
+		reader: ["boolean:reader"]
+	},
+	rendererLabels: {
+		"boolean:editor": "Yes / No Toggle",
+		"boolean:ack": "Yes / No Value",
+		"boolean:reader": "Yes / No Value"
+	}
+}, me = /^(\d{4})-(\d{2})-(\d{2})$/;
+function P(e) {
 	if (typeof e != "string") return null;
 	let t = e.trim();
 	if (t === "") return null;
-	let n = oe.exec(t);
+	let n = me.exec(t);
 	if (n) {
 		let e = Number(n[1]), t = Number(n[2]), r = Number(n[3]);
 		if (t < 1 || t > 12 || r < 1 || r > 31) return null;
@@ -937,86 +998,86 @@ function L(e) {
 	let r = new Date(t);
 	return Number.isNaN(r.getTime()) ? null : r;
 }
-function R(e = /* @__PURE__ */ new Date()) {
+function F(e = /* @__PURE__ */ new Date()) {
 	let t = new Date(e.getTime());
 	return t.setHours(0, 0, 0, 0), t;
 }
-function z(e, t = /* @__PURE__ */ new Date()) {
-	let n = L(e);
-	return n ? R(n).getTime() < R(t).getTime() : !1;
+function I(e, t = /* @__PURE__ */ new Date()) {
+	let n = P(e);
+	return n ? F(n).getTime() < F(t).getTime() : !1;
 }
 //#endregion
 //#region src/components/doc-editor/TaskItemRow.tsx
-var se = {
+var he = {
 	pending: "var(--color-text-tertiary)",
 	acked: "var(--color-info)",
 	done: "var(--color-success)",
 	rejected: "var(--color-danger)"
-}, B = {
+}, L = {
 	low: "var(--color-text-tertiary)",
 	medium: "var(--color-caution)",
 	high: "var(--color-danger)"
-}, ce = {
+}, ge = {
 	start: "var(--color-success)",
 	stop: "var(--color-danger)",
 	continue: "var(--color-info)"
 };
-function le(e) {
-	let t = L(e);
+function _e(e) {
+	let t = P(e);
 	return t ? t.toLocaleDateString("en-US", {
 		month: "short",
 		day: "numeric"
 	}) : e;
 }
-function ue(e) {
-	return z(e);
+function ve(e) {
+	return I(e);
 }
-function V(e) {
+function R(e) {
 	return e.split(/\s+/).map((e) => e[0]).join("").toUpperCase().slice(0, 2);
 }
-function H({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, onDidAutoFocus: v }) {
-	let [y, b] = p(!1), [x, S] = p(""), [C, w] = p(0), T = f(null), E = f(null), D = f(null), O = () => {
+function z({ item: e, editable: t, onUpdate: a, onRemove: c, autoFocusText: u, onDidAutoFocus: v }) {
+	let [y, b] = m(!1), [x, S] = m(""), [C, w] = m(0), T = p(null), E = p(null), D = p(null), ee = () => {
 		a({ status: e.status === "done" ? "pending" : "done" });
-	}, k = e.assignee ? n.find((t) => t.displayName === e.assignee) : void 0, A = x.trim() ? r(x) : n, j = u(() => {
+	}, te = e.assignee ? n.find((t) => t.displayName === e.assignee) : void 0, O = x.trim() ? r(x) : n, ne = d(() => {
 		t && (S(""), w(0), b(!0));
-	}, [t]), M = u(() => {
+	}, [t]), k = d(() => {
 		b(!1), S(""), w(0);
-	}, []), N = u((e) => {
-		a({ assignee: e.displayName }), M();
-	}, [a, M]), P = u(() => {
-		a({ assignee: "" }), M();
-	}, [a, M]);
-	d(() => {
+	}, []), A = d((e) => {
+		a({ assignee: e.displayName }), k();
+	}, [a, k]), j = d(() => {
+		a({ assignee: "" }), k();
+	}, [a, k]);
+	f(() => {
 		if (!y) return;
 		let e = (e) => {
-			T.current && !T.current.contains(e.target) && M();
+			T.current && !T.current.contains(e.target) && k();
 		};
 		return document.addEventListener("mousedown", e), () => document.removeEventListener("mousedown", e);
-	}, [y, M]), d(() => {
+	}, [y, k]), f(() => {
 		y && E.current && E.current.focus();
-	}, [y]), d(() => {
+	}, [y]), f(() => {
 		w(0);
-	}, [x]), d(() => {
-		_ && D.current && (D.current.focus(), v?.());
-	}, [_, v]);
-	let F = (e) => {
-		e.key === "Escape" ? M() : e.key === "ArrowDown" ? (e.preventDefault(), w((e) => Math.min(e + 1, A.length - 1))) : e.key === "ArrowUp" ? (e.preventDefault(), w((e) => Math.max(e - 1, 0))) : e.key === "Enter" && (e.preventDefault(), A[C] && N(A[C]));
-	}, I = e.dueDate && e.status !== "done" ? ue(e.dueDate) : !1;
-	return /* @__PURE__ */ g("div", {
+	}, [x]), f(() => {
+		u && D.current && (D.current.focus(), v?.());
+	}, [u, v]);
+	let M = (e) => {
+		e.key === "Escape" ? k() : e.key === "ArrowDown" ? (e.preventDefault(), w((e) => Math.min(e + 1, O.length - 1))) : e.key === "ArrowUp" ? (e.preventDefault(), w((e) => Math.max(e - 1, 0))) : e.key === "Enter" && (e.preventDefault(), O[C] && A(O[C]));
+	}, N = e.dueDate && e.status !== "done" ? ve(e.dueDate) : !1;
+	return /* @__PURE__ */ _("div", {
 		className: i("flex items-center gap-2 py-1.5 border-b border-border-subtle"),
 		children: [
-			/* @__PURE__ */ h("span", {
+			/* @__PURE__ */ g("span", {
 				title: `Priority: ${e.priority}`,
 				className: i("w-2 h-2 rounded-full shrink-0"),
-				style: { background: B[e.priority] }
+				style: { background: L[e.priority] }
 			}),
-			/* @__PURE__ */ h(c, {
+			/* @__PURE__ */ g(l, {
 				checked: e.status === "done",
-				onChange: O,
+				onChange: ee,
 				disabled: !t,
 				className: i("w-4 h-4", t ? "cursor-pointer" : "cursor-default")
 			}),
-			/* @__PURE__ */ h(o, {
+			/* @__PURE__ */ g(o, {
 				ref: D,
 				"data-testid": `task-text-${e.id}`,
 				value: e.text,
@@ -1024,87 +1085,87 @@ function H({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 				readOnly: !t,
 				className: i("flex-1 h-auto border-transparent bg-transparent px-1 py-0.5", e.status === "done" ? "line-through text-text-tertiary" : "text-text-primary")
 			}),
-			e.dueDate && /* @__PURE__ */ g("span", {
+			e.dueDate && /* @__PURE__ */ _("span", {
 				title: e.dueDate,
-				className: i("inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug border", I ? "bg-danger-bg text-danger-fg border-danger-border" : "bg-info-bg text-neutral border-info-border"),
+				className: i("inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug border", N ? "bg-danger-bg text-danger-fg border-danger-border" : "bg-info-bg text-neutral border-info-border"),
 				children: [
-					I ? "⚠ " : "",
+					N ? "⚠ " : "",
 					"Due: ",
-					le(e.dueDate)
+					_e(e.dueDate)
 				]
 			}),
-			e.category && /* @__PURE__ */ h("span", {
+			e.category && /* @__PURE__ */ g("span", {
 				className: i("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap"),
-				style: { backgroundColor: ce[e.category.toLowerCase()] ?? "var(--color-neutral)" },
+				style: { backgroundColor: ge[e.category.toLowerCase()] ?? "var(--color-neutral)" },
 				children: e.category
 			}),
-			/* @__PURE__ */ g("div", {
+			/* @__PURE__ */ _("div", {
 				ref: T,
 				className: i("relative"),
-				children: [/* @__PURE__ */ h("button", {
+				children: [/* @__PURE__ */ g("button", {
 					type: "button",
-					onClick: j,
+					onClick: ne,
 					title: e.assignee || "Unassigned",
 					className: i("inline-flex items-center justify-center h-6 rounded-xl font-semibold text-[11px] cursor-pointer leading-snug whitespace-nowrap", e.assignee ? "px-2 bg-primary-bg text-primary-fg border-none min-w-0" : "w-6 px-0 bg-surface text-text-tertiary border border-dashed border-border-emphasis"),
-					children: e.assignee ? /* @__PURE__ */ g(m, { children: [/* @__PURE__ */ h("span", {
+					children: e.assignee ? /* @__PURE__ */ _(h, { children: [/* @__PURE__ */ g("span", {
 						className: i("w-[18px] h-[18px] rounded-full text-white inline-flex items-center justify-center text-[8px] font-bold shrink-0 leading-none"),
-						style: { background: k?.color ?? "var(--color-text-tertiary)" },
-						children: V(e.assignee)
-					}), /* @__PURE__ */ h("span", {
+						style: { background: te?.color ?? "var(--color-text-tertiary)" },
+						children: R(e.assignee)
+					}), /* @__PURE__ */ g("span", {
 						className: i("ml-1 text-[11px]"),
 						children: e.assignee.split(" ")[0]
 					})] }) : "+"
-				}), y && /* @__PURE__ */ g("div", {
+				}), y && /* @__PURE__ */ _("div", {
 					className: i("absolute top-full left-0 mt-1 min-w-[180px] max-h-[200px] overflow-y-auto bg-surface border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] z-[1000] py-1"),
 					children: [
-						/* @__PURE__ */ h("div", {
+						/* @__PURE__ */ g("div", {
 							className: i("px-2 py-1"),
-							children: /* @__PURE__ */ h(o, {
+							children: /* @__PURE__ */ g(o, {
 								ref: E,
 								size: "sm",
 								value: x,
 								onChange: (e) => S(e.target.value),
-								onKeyDown: F,
+								onKeyDown: M,
 								placeholder: "Search users...",
 								className: i("text-[11px]")
 							})
 						}),
-						e.assignee && /* @__PURE__ */ g("button", {
+						e.assignee && /* @__PURE__ */ _("button", {
 							type: "button",
-							onClick: P,
+							onClick: j,
 							className: i("flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer bg-transparent border-none w-full text-left font-[inherit] text-text-primary"),
-							children: [/* @__PURE__ */ h("span", {
+							children: [/* @__PURE__ */ g("span", {
 								className: i("w-[22px] h-[22px] rounded-full bg-border-emphasis text-neutral inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"),
 								children: "--"
-							}), /* @__PURE__ */ h("span", {
+							}), /* @__PURE__ */ g("span", {
 								className: i("text-neutral italic"),
 								children: "Unassigned"
 							})]
 						}),
-						A.map((e, t) => /* @__PURE__ */ g("button", {
+						O.map((e, t) => /* @__PURE__ */ _("button", {
 							type: "button",
-							onClick: () => N(e),
+							onClick: () => A(e),
 							onMouseEnter: () => w(t),
 							className: i("flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-text-primary", t === C ? "bg-surface-hover" : "bg-transparent"),
-							children: [/* @__PURE__ */ h("span", {
+							children: [/* @__PURE__ */ g("span", {
 								className: i("w-[22px] h-[22px] rounded-full text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"),
 								style: { background: e.color },
-								children: V(e.displayName)
-							}), /* @__PURE__ */ h("span", { children: e.displayName })]
+								children: R(e.displayName)
+							}), /* @__PURE__ */ g("span", { children: e.displayName })]
 						}, e.userId)),
-						A.length === 0 && /* @__PURE__ */ h("div", {
+						O.length === 0 && /* @__PURE__ */ g("div", {
 							className: i("px-2.5 py-2 text-[11px] text-text-tertiary"),
 							children: "No users found"
 						})
 					]
 				})]
 			}),
-			/* @__PURE__ */ h(s, {
+			/* @__PURE__ */ g(s, {
 				value: e.priority,
 				disabled: !t,
 				onChange: (e) => a({ priority: e.target.value }),
 				className: i("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
-				style: { backgroundColor: B[e.priority] },
+				style: { backgroundColor: L[e.priority] },
 				title: `Priority: ${e.priority}`,
 				options: [
 					{
@@ -1121,12 +1182,12 @@ function H({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 					}
 				]
 			}),
-			/* @__PURE__ */ h(s, {
+			/* @__PURE__ */ g(s, {
 				value: e.status,
 				disabled: !t,
 				onChange: (e) => a({ status: e.target.value }),
 				className: i("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
-				style: { backgroundColor: se[e.status] },
+				style: { backgroundColor: he[e.status] },
 				title: `Status: ${e.status}`,
 				options: [
 					{
@@ -1147,9 +1208,9 @@ function H({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 					}
 				]
 			}),
-			t && /* @__PURE__ */ h("button", {
+			t && /* @__PURE__ */ g("button", {
 				type: "button",
-				onClick: l,
+				onClick: c,
 				title: "Remove task",
 				className: i("border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 rounded leading-none"),
 				children: "x"
@@ -1159,15 +1220,15 @@ function H({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 }
 //#endregion
 //#region src/components/doc-editor/TaskList.tsx
-function U({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastItem: a }) {
-	if (e.length === 0) return /* @__PURE__ */ h("div", {
+function B({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastItem: a }) {
+	if (e.length === 0) return /* @__PURE__ */ g("div", {
 		className: i("text-text-tertiary text-[13px] italic py-2"),
 		children: "No tasks yet."
 	});
 	let o = a?.current ?? !1;
-	return /* @__PURE__ */ h("div", {
+	return /* @__PURE__ */ g("div", {
 		className: i("py-2"),
-		children: e.map((i, s) => /* @__PURE__ */ h(H, {
+		children: e.map((i, s) => /* @__PURE__ */ g(z, {
 			item: i,
 			editable: t,
 			onUpdate: (e) => n(i.id, e),
@@ -1181,16 +1242,16 @@ function U({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastI
 }
 //#endregion
 //#region src/renderers/sectionItems.ts
-function W(e) {
+function V(e) {
 	let t = e.items;
 	return Array.isArray(t) ? t.filter((e) => e != null) : [];
 }
 //#endregion
 //#region src/renderers/default/DefaultRenderer.tsx
-function G({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
-	let d = W(e), p = f(!1);
-	return /* @__PURE__ */ g("div", { children: [
-		t && n && /* @__PURE__ */ h(l, {
+function ye({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
+	let d = V(e), f = p(!1);
+	return /* @__PURE__ */ _("div", { children: [
+		t && n && /* @__PURE__ */ g(u, {
 			fragment: t,
 			ydoc: n,
 			provider: r ?? null,
@@ -1201,16 +1262,16 @@ function G({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a
 			editable: a,
 			placeholder: e.placeholder ?? `Write ${e.type} content...`,
 			sectionId: e.id,
-			onUpdateCursorInfo: u
+			onUpdateCursorInfo: l
 		}),
-		(d.length > 0 || a) && /* @__PURE__ */ h(U, {
+		(d.length > 0 || a) && /* @__PURE__ */ g(B, {
 			items: d,
 			editable: a,
 			onUpdateItem: (e, t) => s?.(e, t),
 			onRemoveItem: (e) => c?.(e),
-			focusLastItem: p
+			focusLastItem: f
 		}),
-		a && /* @__PURE__ */ h("button", {
+		a && /* @__PURE__ */ g("button", {
 			type: "button",
 			onClick: () => {
 				o?.({
@@ -1221,7 +1282,7 @@ function G({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a
 					ackedAt: "",
 					priority: "medium",
 					notes: ""
-				}), p.current = !0;
+				}), f.current = !0;
 			},
 			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
 			children: "+ Add item"
@@ -1230,11 +1291,11 @@ function G({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextEditorRenderer.tsx
-function de({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
-	return !t || !n ? /* @__PURE__ */ h("div", {
+function be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
+	return !t || !n ? /* @__PURE__ */ g("div", {
 		className: "text-text-tertiary italic text-[13px] py-2",
 		children: "No content yet."
-	}) : /* @__PURE__ */ h(l, {
+	}) : /* @__PURE__ */ g(u, {
 		fragment: t,
 		ydoc: n,
 		provider: r ?? null,
@@ -1250,10 +1311,10 @@ function de({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextReaderRenderer.tsx
-function K({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i }) {
-	return /* @__PURE__ */ g("div", { children: [t && n ? /* @__PURE__ */ h("div", {
+function xe({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i }) {
+	return /* @__PURE__ */ _("div", { children: [t && n ? /* @__PURE__ */ g("div", {
 		className: "border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-text-primary leading-[1.6]",
-		children: /* @__PURE__ */ h(l, {
+		children: /* @__PURE__ */ g(u, {
 			fragment: t,
 			ydoc: n,
 			provider: r ?? null,
@@ -1264,10 +1325,10 @@ function K({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: 
 			editable: !1,
 			sectionId: e.id
 		})
-	}) : /* @__PURE__ */ h("div", {
+	}) : /* @__PURE__ */ g("div", {
 		className: "text-text-tertiary italic text-[13px]",
 		children: "No content."
-	}), i && /* @__PURE__ */ h("button", {
+	}), i && /* @__PURE__ */ g("button", {
 		type: "button",
 		onClick: () => i(e.id),
 		className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
@@ -1276,23 +1337,23 @@ function K({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: 
 }
 //#endregion
 //#region src/renderers/tasks/TasksEditorRenderer.tsx
-function fe({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
-	let a = W(e), o = f(!1);
-	return /* @__PURE__ */ g("div", {
+function Se({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
+	let a = V(e), o = p(!1);
+	return /* @__PURE__ */ _("div", {
 		className: "py-1",
 		children: [
-			a.length > 0 || t ? /* @__PURE__ */ h(U, {
+			a.length > 0 || t ? /* @__PURE__ */ g(B, {
 				items: a,
 				editable: t,
 				onUpdateItem: (e, t) => r?.(e, t),
 				onRemoveItem: (e) => i?.(e),
 				focusLastItem: o
 			}) : null,
-			a.length === 0 && !t && /* @__PURE__ */ h("p", {
+			a.length === 0 && !t && /* @__PURE__ */ g("p", {
 				className: "text-text-tertiary text-[13px] italic my-2",
 				children: "No items yet."
 			}),
-			t && /* @__PURE__ */ h("button", {
+			t && /* @__PURE__ */ g("button", {
 				type: "button",
 				onClick: () => {
 					n?.({
@@ -1313,7 +1374,7 @@ function fe({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveIt
 }
 //#endregion
 //#region src/renderers/tasks/TasksReaderRenderer.tsx
-var q = {
+var Ce = {
 	pending: {
 		label: "Pending",
 		color: "var(--color-warning-fg)",
@@ -1334,27 +1395,27 @@ var q = {
 		color: "var(--color-danger-fg)",
 		bg: "var(--color-danger-bg)"
 	}
-}, J = {
+}, we = {
 	high: "var(--color-danger)",
 	medium: "var(--color-caution)",
 	low: "var(--color-text-tertiary)"
 };
-function pe(e) {
-	return z(e);
+function Te(e) {
+	return I(e);
 }
-function me(e) {
-	let t = L(e);
+function Ee(e) {
+	let t = P(e);
 	return t ? t.toLocaleDateString("en-US", {
 		month: "short",
 		day: "numeric"
 	}) : e;
 }
-function he(e) {
+function De(e) {
 	return e.split(/\s+/).map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function Y({ item: e, onUpdateItem: t }) {
-	let [n, r] = p(!1), [a, o] = p(!1), s = n || a, c = q[e.status] ?? q.pending, l = J[e.priority] ?? J.medium, u = e.dueDate && e.status === "pending" ? pe(e.dueDate) : !1, d = e.status === "done" || e.status === "acked";
-	return /* @__PURE__ */ g("div", {
+function H({ item: e, onUpdateItem: t }) {
+	let [n, r] = m(!1), [a, o] = m(!1), s = n || a, c = Ce[e.status] ?? Ce.pending, l = we[e.priority] ?? we.medium, u = e.dueDate && e.status === "pending" ? Te(e.dueDate) : !1, d = e.status === "done" || e.status === "acked";
+	return /* @__PURE__ */ _("div", {
 		onMouseEnter: () => r(!0),
 		onMouseLeave: () => r(!1),
 		onFocus: () => o(!0),
@@ -1364,7 +1425,7 @@ function Y({ item: e, onUpdateItem: t }) {
 		className: "flex items-center gap-2 py-1.5 border-b border-border-subtle",
 		style: { opacity: d ? .65 : 1 },
 		children: [
-			/* @__PURE__ */ h("span", {
+			/* @__PURE__ */ g("span", {
 				title: `Priority: ${e.priority}`,
 				style: {
 					width: 7,
@@ -1374,7 +1435,7 @@ function Y({ item: e, onUpdateItem: t }) {
 					flexShrink: 0
 				}
 			}),
-			/* @__PURE__ */ h("button", {
+			/* @__PURE__ */ g("button", {
 				type: "button",
 				title: `Status: ${e.status}${t ? " — click to toggle done" : ""}`,
 				onClick: () => {
@@ -1395,12 +1456,12 @@ function Y({ item: e, onUpdateItem: t }) {
 					justifyContent: "center",
 					padding: 0
 				},
-				children: d && /* @__PURE__ */ h("svg", {
+				children: d && /* @__PURE__ */ g("svg", {
 					width: "9",
 					height: "9",
 					viewBox: "0 0 10 10",
 					fill: "none",
-					children: /* @__PURE__ */ h("polyline", {
+					children: /* @__PURE__ */ g("polyline", {
 						points: "2,5 4,7.5 8,2.5",
 						stroke: "#fff",
 						strokeWidth: "1.8",
@@ -1409,19 +1470,19 @@ function Y({ item: e, onUpdateItem: t }) {
 					})
 				})
 			}),
-			/* @__PURE__ */ h("span", {
+			/* @__PURE__ */ g("span", {
 				className: i("flex-1 text-[13px] leading-[1.4]", d ? "text-text-tertiary line-through" : "text-text-primary"),
-				children: e.text || /* @__PURE__ */ h("span", {
+				children: e.text || /* @__PURE__ */ g("span", {
 					className: "text-text-disabled italic",
 					children: "Untitled item"
 				})
 			}),
-			e.assignee && /* @__PURE__ */ h("span", {
+			e.assignee && /* @__PURE__ */ g("span", {
 				title: e.assignee,
 				className: "w-[22px] h-[22px] rounded-full bg-primary-bg text-primary-fg text-[9px] font-bold flex items-center justify-center shrink-0",
-				children: he(e.assignee)
+				children: De(e.assignee)
 			}),
-			e.dueDate && /* @__PURE__ */ g("span", {
+			e.dueDate && /* @__PURE__ */ _("span", {
 				style: {
 					fontSize: 10,
 					fontWeight: 600,
@@ -1433,9 +1494,9 @@ function Y({ item: e, onUpdateItem: t }) {
 					whiteSpace: "nowrap",
 					flexShrink: 0
 				},
-				children: [u ? "⚠ " : "", me(e.dueDate)]
+				children: [u ? "⚠ " : "", Ee(e.dueDate)]
 			}),
-			t && s && /* @__PURE__ */ g("select", {
+			t && s && /* @__PURE__ */ _("select", {
 				"aria-label": `Set status for ${e.text || "untitled item"}`,
 				value: e.status,
 				onChange: (n) => t(e.id, { status: n.target.value }),
@@ -1454,19 +1515,19 @@ function Y({ item: e, onUpdateItem: t }) {
 					flexShrink: 0
 				},
 				children: [
-					/* @__PURE__ */ h("option", {
+					/* @__PURE__ */ g("option", {
 						value: "pending",
 						children: "pending"
 					}),
-					/* @__PURE__ */ h("option", {
+					/* @__PURE__ */ g("option", {
 						value: "acked",
 						children: "acked"
 					}),
-					/* @__PURE__ */ h("option", {
+					/* @__PURE__ */ g("option", {
 						value: "done",
 						children: "done"
 					}),
-					/* @__PURE__ */ h("option", {
+					/* @__PURE__ */ g("option", {
 						value: "rejected",
 						children: "rejected"
 					})
@@ -1475,33 +1536,33 @@ function Y({ item: e, onUpdateItem: t }) {
 		]
 	});
 }
-function ge({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
-	let r = W(e);
-	if (r.length === 0) return /* @__PURE__ */ h("div", {
+function Oe({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
+	let r = V(e);
+	if (r.length === 0) return /* @__PURE__ */ g("div", {
 		className: "text-text-tertiary italic text-[13px] py-1",
 		children: "No items."
 	});
 	let i = r.filter((e) => e.status === "done" || e.status === "acked"), a = r.filter((e) => e.status === "rejected"), o = r.filter((e) => !i.includes(e) && !a.includes(e));
-	return /* @__PURE__ */ g("div", { children: [
-		o.length > 0 && /* @__PURE__ */ h("div", {
+	return /* @__PURE__ */ _("div", { children: [
+		o.length > 0 && /* @__PURE__ */ g("div", {
 			className: "mb-1",
-			children: o.map((e) => /* @__PURE__ */ h(Y, {
+			children: o.map((e) => /* @__PURE__ */ g(H, {
 				item: e,
 				onUpdateItem: t
 			}, e.id))
 		}),
-		i.length > 0 && /* @__PURE__ */ h("div", {
+		i.length > 0 && /* @__PURE__ */ g("div", {
 			className: "mb-1",
-			children: i.map((e) => /* @__PURE__ */ h(Y, {
+			children: i.map((e) => /* @__PURE__ */ g(H, {
 				item: e,
 				onUpdateItem: t
 			}, e.id))
 		}),
-		a.length > 0 && /* @__PURE__ */ h("div", { children: a.map((e) => /* @__PURE__ */ h(Y, {
+		a.length > 0 && /* @__PURE__ */ g("div", { children: a.map((e) => /* @__PURE__ */ g(H, {
 			item: e,
 			onUpdateItem: t
 		}, e.id)) }),
-		n && /* @__PURE__ */ h("button", {
+		n && /* @__PURE__ */ g("button", {
 			type: "button",
 			onClick: () => n(e.id),
 			className: "mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
@@ -1511,21 +1572,21 @@ function ge({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
 }
 //#endregion
 //#region src/renderers/checklist/ChecklistEditorRenderer.tsx
-function _e({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
-	let c = f(null), l = e.status === "done", u = a(r);
-	return d(() => {
+function ke({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
+	let c = p(null), l = e.status === "done", u = a(r);
+	return f(() => {
 		n && c.current && (c.current.focus(), u());
-	}, [n, u]), /* @__PURE__ */ g("div", {
+	}, [n, u]), /* @__PURE__ */ _("div", {
 		className: "flex items-center gap-2 py-[5px] border-b border-border-subtle",
 		children: [
-			/* @__PURE__ */ h("input", {
+			/* @__PURE__ */ g("input", {
 				type: "checkbox",
 				checked: l,
 				onChange: () => o({ status: l ? "pending" : "done" }),
 				disabled: !t,
 				className: i("w-[15px] h-[15px] accent-success shrink-0", t ? "cursor-pointer" : "cursor-default")
 			}),
-			/* @__PURE__ */ h("input", {
+			/* @__PURE__ */ g("input", {
 				ref: c,
 				type: "text",
 				value: e.text,
@@ -1534,7 +1595,7 @@ function _e({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 				placeholder: "Checklist item...",
 				className: i("flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5", l ? "text-text-tertiary line-through" : "text-text-primary")
 			}),
-			t && /* @__PURE__ */ h("button", {
+			t && /* @__PURE__ */ g("button", {
 				type: "button",
 				onClick: s,
 				className: "border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 leading-none",
@@ -1543,9 +1604,9 @@ function _e({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 		]
 	});
 }
-function ve({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
-	let d = W(e), p = f(null), m = () => {
-		o && (p.current = d.length, o({
+function Ae({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
+	let d = V(e), f = p(null), m = () => {
+		o && (f.current = d.length, o({
 			text: "",
 			status: "pending",
 			assignee: "",
@@ -1554,9 +1615,9 @@ function ve({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 			priority: "medium",
 			notes: ""
 		}));
-	}, _ = p.current, v = _ !== null && d.length > _, y = d.length, b = d.filter((e) => e.status === "done").length;
-	return /* @__PURE__ */ g("div", { children: [
-		t && n && /* @__PURE__ */ h(l, {
+	}, h = f.current, v = h !== null && d.length > h, y = d.length, b = d.filter((e) => e.status === "done").length;
+	return /* @__PURE__ */ _("div", { children: [
+		t && n && /* @__PURE__ */ g(u, {
 			fragment: t,
 			ydoc: n,
 			provider: r ?? null,
@@ -1567,9 +1628,9 @@ function ve({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 			editable: a,
 			placeholder: e.placeholder ?? "Add notes or context...",
 			sectionId: e.id,
-			onUpdateCursorInfo: u
+			onUpdateCursorInfo: l
 		}),
-		y > 0 && /* @__PURE__ */ g("div", {
+		y > 0 && /* @__PURE__ */ _("div", {
 			className: "text-[11px] text-neutral font-semibold mb-1.5",
 			children: [
 				b,
@@ -1578,20 +1639,20 @@ function ve({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 				" done"
 			]
 		}),
-		/* @__PURE__ */ h("div", { children: d.map((e, t) => {
+		/* @__PURE__ */ g("div", { children: d.map((e, t) => {
 			let n = t === d.length - 1, r = v && n;
-			return /* @__PURE__ */ h(_e, {
+			return /* @__PURE__ */ g(ke, {
 				item: e,
 				editable: a,
 				autoFocus: r,
 				onDidAutoFocus: r ? () => {
-					p.current = null;
+					f.current = null;
 				} : void 0,
 				onUpdate: (t) => s?.(e.id, t),
 				onRemove: () => c?.(e.id)
 			}, e.id);
 		}) }),
-		a && /* @__PURE__ */ h("button", {
+		a && /* @__PURE__ */ g("button", {
 			type: "button",
 			onClick: m,
 			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
@@ -1601,12 +1662,12 @@ function ve({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/checklist/ChecklistReaderRenderer.tsx
-function ye({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, onNavigateToEditor: o }) {
-	let s = W(e), c = s.length, u = s.filter((e) => e.status === "done").length, d = c > 0 ? Math.round(u / c * 100) : 0;
-	return /* @__PURE__ */ g("div", { children: [
-		t && n && /* @__PURE__ */ h("div", {
+function je({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, onNavigateToEditor: o }) {
+	let s = V(e), c = s.length, l = s.filter((e) => e.status === "done").length, d = c > 0 ? Math.round(l / c * 100) : 0;
+	return /* @__PURE__ */ _("div", { children: [
+		t && n && /* @__PURE__ */ g("div", {
 			className: "mb-2.5",
-			children: /* @__PURE__ */ h(l, {
+			children: /* @__PURE__ */ g(u, {
 				fragment: t,
 				ydoc: n,
 				provider: r ?? null,
@@ -1618,53 +1679,53 @@ function ye({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, on
 				sectionId: e.id
 			})
 		}),
-		c > 0 && /* @__PURE__ */ g("div", {
+		c > 0 && /* @__PURE__ */ _("div", {
 			className: "mb-2.5",
-			children: [/* @__PURE__ */ g("div", {
+			children: [/* @__PURE__ */ _("div", {
 				className: "flex justify-between mb-1",
-				children: [/* @__PURE__ */ g("span", {
+				children: [/* @__PURE__ */ _("span", {
 					className: "text-[11px] text-neutral font-semibold",
 					children: [
-						u,
+						l,
 						" / ",
 						c,
 						" done"
 					]
-				}), /* @__PURE__ */ g("span", {
+				}), /* @__PURE__ */ _("span", {
 					className: i("text-[11px] font-semibold", d === 100 ? "text-success-fg" : "text-neutral"),
 					children: [d, "%"]
 				})]
-			}), /* @__PURE__ */ h("div", {
+			}), /* @__PURE__ */ g("div", {
 				className: "h-1 bg-border rounded-sm overflow-hidden",
-				children: /* @__PURE__ */ h("div", {
+				children: /* @__PURE__ */ g("div", {
 					className: i("h-full rounded-sm transition-[width] duration-300", d === 100 ? "bg-success" : "bg-info"),
 					style: { width: `${d}%` }
 				})
 			})]
 		}),
-		c === 0 ? /* @__PURE__ */ h("div", {
+		c === 0 ? /* @__PURE__ */ g("div", {
 			className: "text-text-tertiary italic text-[13px]",
 			children: "No items."
-		}) : /* @__PURE__ */ h("div", { children: s.map((e) => {
+		}) : /* @__PURE__ */ g("div", { children: s.map((e) => {
 			let t = e.status === "done";
-			return /* @__PURE__ */ g("div", {
+			return /* @__PURE__ */ _("div", {
 				className: "flex items-center gap-2 py-[5px] border-b border-border-subtle",
-				children: [/* @__PURE__ */ h("input", {
+				children: [/* @__PURE__ */ g("input", {
 					type: "checkbox",
 					checked: t,
 					onChange: () => a?.(e.id, { status: t ? "pending" : "done" }),
 					className: i("w-3.5 h-3.5 accent-success shrink-0", a ? "cursor-pointer" : "cursor-default"),
 					readOnly: !a
-				}), /* @__PURE__ */ h("span", {
+				}), /* @__PURE__ */ g("span", {
 					className: i("text-[13px] flex-1 leading-[1.4]", t ? "text-text-tertiary line-through" : "text-text-primary"),
-					children: e.text || /* @__PURE__ */ h("span", {
+					children: e.text || /* @__PURE__ */ g("span", {
 						className: "text-text-disabled italic",
 						children: "Untitled"
 					})
 				})]
 			}, e.id);
 		}) }),
-		o && /* @__PURE__ */ h("button", {
+		o && /* @__PURE__ */ g("button", {
 			type: "button",
 			onClick: () => o(e.id),
 			className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
@@ -1674,24 +1735,24 @@ function ye({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, on
 }
 //#endregion
 //#region src/renderers/decisions/approvalSync.ts
-var be = {
+var Me = {
 	acked: "approved",
 	done: "approved",
 	rejected: "rejected"
 };
-function xe() {
+function Ne() {
 	return "";
 }
-function Se() {
+function Pe() {
 	if (typeof window > "u") return null;
 	let e = window.location.pathname.match(/\/documents\/([^/?#]+)/);
 	return e ? e[1] : null;
 }
-function Ce(e) {
-	return be[e] ?? null;
+function Fe(e) {
+	return Me[e] ?? null;
 }
-async function we(e) {
-	let t = e.documentId ?? Se();
+async function Ie(e) {
+	let t = e.documentId ?? Pe();
 	if (!t) return {
 		ok: !1,
 		error: "no documentId in URL"
@@ -1699,7 +1760,7 @@ async function we(e) {
 	try {
 		let n = { "Content-Type": "application/json" };
 		e.idToken && (n.Authorization = `Bearer ${e.idToken}`);
-		let r = await fetch(`${xe()}/api/approvals`, {
+		let r = await fetch(`${Ne()}/api/approvals`, {
 			method: "POST",
 			headers: n,
 			body: JSON.stringify({
@@ -1723,7 +1784,7 @@ async function we(e) {
 }
 //#endregion
 //#region src/renderers/decisions/DecisionsEditorRenderer.tsx
-var Te = {
+var Le = {
 	pending: {
 		label: "Open",
 		icon: "○",
@@ -1749,14 +1810,14 @@ var Te = {
 		bg: "var(--color-danger-bg)"
 	}
 };
-function Ee({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
-	let c = f(null), l = Te[e.status] ?? Te.pending, u = a(r);
-	return d(() => {
+function Re({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
+	let c = p(null), l = Le[e.status] ?? Le.pending, u = a(r);
+	return f(() => {
 		n && c.current && (c.current.focus(), u());
-	}, [n, u]), /* @__PURE__ */ g("div", {
+	}, [n, u]), /* @__PURE__ */ _("div", {
 		className: "flex items-center gap-2 py-1.5 border-b border-border-subtle",
 		children: [
-			/* @__PURE__ */ h("span", {
+			/* @__PURE__ */ g("span", {
 				className: "w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 select-none",
 				style: {
 					background: l.bg,
@@ -1764,7 +1825,7 @@ function Ee({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 				},
 				children: l.icon
 			}),
-			/* @__PURE__ */ h("input", {
+			/* @__PURE__ */ g("input", {
 				ref: c,
 				type: "text",
 				value: e.text,
@@ -1773,7 +1834,7 @@ function Ee({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 				placeholder: "Describe the decision...",
 				className: i("flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5", e.status === "rejected" ? "text-text-tertiary line-through" : "text-text-primary")
 			}),
-			t && /* @__PURE__ */ g("select", {
+			t && /* @__PURE__ */ _("select", {
 				value: e.status === "done" ? "acked" : e.status,
 				onChange: (e) => o({ status: e.target.value }),
 				className: "text-[10px] px-2 py-0.5 rounded-[10px] font-semibold cursor-pointer outline-none font-inherit shrink-0 appearance-none",
@@ -1783,21 +1844,21 @@ function Ee({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 					color: l.color
 				},
 				children: [
-					/* @__PURE__ */ h("option", {
+					/* @__PURE__ */ g("option", {
 						value: "pending",
 						children: "Open"
 					}),
-					/* @__PURE__ */ h("option", {
+					/* @__PURE__ */ g("option", {
 						value: "acked",
 						children: "Decided"
 					}),
-					/* @__PURE__ */ h("option", {
+					/* @__PURE__ */ g("option", {
 						value: "rejected",
 						children: "Vetoed"
 					})
 				]
 			}),
-			t && /* @__PURE__ */ h("button", {
+			t && /* @__PURE__ */ g("button", {
 				type: "button",
 				onClick: s,
 				className: "border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 leading-none",
@@ -1806,9 +1867,9 @@ function Ee({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 		]
 	});
 }
-function De({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
-	let d = W(e), p = f(null), m = () => {
-		o && (p.current = d.length, o({
+function ze({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
+	let d = V(e), f = p(null), m = () => {
+		o && (f.current = d.length, o({
 			text: "",
 			status: "pending",
 			assignee: "",
@@ -1817,9 +1878,9 @@ function De({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 			priority: "medium",
 			notes: ""
 		}));
-	}, _ = p.current, v = _ !== null && d.length > _;
-	return /* @__PURE__ */ g("div", { children: [
-		t && n && /* @__PURE__ */ h(l, {
+	}, h = f.current, v = h !== null && d.length > h;
+	return /* @__PURE__ */ _("div", { children: [
+		t && n && /* @__PURE__ */ g(u, {
 			fragment: t,
 			ydoc: n,
 			provider: r ?? null,
@@ -1830,26 +1891,26 @@ function De({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 			editable: a,
 			placeholder: e.placeholder ?? "Add context or background...",
 			sectionId: e.id,
-			onUpdateCursorInfo: u
+			onUpdateCursorInfo: l
 		}),
-		d.length === 0 && !a && /* @__PURE__ */ h("div", {
+		d.length === 0 && !a && /* @__PURE__ */ g("div", {
 			className: "text-text-tertiary italic text-[13px] py-1",
 			children: "No decisions yet."
 		}),
-		/* @__PURE__ */ h("div", { children: d.map((t, n) => {
+		/* @__PURE__ */ g("div", { children: d.map((t, n) => {
 			let r = n === d.length - 1, o = v && r;
-			return /* @__PURE__ */ h(Ee, {
+			return /* @__PURE__ */ g(Re, {
 				item: t,
 				editable: a,
 				autoFocus: o,
 				onDidAutoFocus: o ? () => {
-					p.current = null;
+					f.current = null;
 				} : void 0,
 				onUpdate: (n) => {
 					let r = t.status;
 					if (s?.(t.id, n), n.status && n.status !== r) {
-						let t = Ce(n.status);
-						t && we({
+						let t = Fe(n.status);
+						t && Ie({
 							sectionId: e.id,
 							decision: t,
 							reviewerName: i?.name
@@ -1859,7 +1920,7 @@ function De({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 				onRemove: () => c?.(t.id)
 			}, t.id);
 		}) }),
-		a && /* @__PURE__ */ h("button", {
+		a && /* @__PURE__ */ g("button", {
 			type: "button",
 			onClick: m,
 			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
@@ -1869,7 +1930,7 @@ function De({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/decisions/DecisionsReaderRenderer.tsx
-var X = {
+var U = {
 	pending: {
 		label: "Open",
 		icon: "○",
@@ -1895,12 +1956,12 @@ var X = {
 		bg: "var(--color-danger-bg)"
 	}
 };
-function Oe({ item: e }) {
-	let t = X[e.status] ?? X.pending;
-	return /* @__PURE__ */ g("div", {
+function Be({ item: e }) {
+	let t = U[e.status] ?? U.pending;
+	return /* @__PURE__ */ _("div", {
 		className: "flex items-start gap-2 py-1.5 border-b border-border-subtle",
 		children: [
-			/* @__PURE__ */ h("span", {
+			/* @__PURE__ */ g("span", {
 				className: "w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 select-none",
 				style: {
 					background: t.bg,
@@ -1908,14 +1969,14 @@ function Oe({ item: e }) {
 				},
 				children: t.icon
 			}),
-			/* @__PURE__ */ h("span", {
+			/* @__PURE__ */ g("span", {
 				className: i("flex-1 text-[13px] leading-[1.4]", e.status === "rejected" ? "text-text-tertiary line-through" : "text-text-primary"),
-				children: e.text || /* @__PURE__ */ h("span", {
+				children: e.text || /* @__PURE__ */ g("span", {
 					className: "text-text-disabled italic",
 					children: "Untitled decision"
 				})
 			}),
-			/* @__PURE__ */ h("span", {
+			/* @__PURE__ */ g("span", {
 				className: "text-[10px] font-semibold px-2 py-0.5 rounded-[10px] whitespace-nowrap shrink-0",
 				style: {
 					background: t.bg,
@@ -1926,40 +1987,40 @@ function Oe({ item: e }) {
 		]
 	});
 }
-function Z({ label: e, color: t, items: n }) {
-	return /* @__PURE__ */ g("div", {
+function W({ label: e, color: t, items: n }) {
+	return /* @__PURE__ */ _("div", {
 		className: "mb-2",
-		children: [/* @__PURE__ */ h("div", {
+		children: [/* @__PURE__ */ g("div", {
 			className: "text-[10px] font-bold uppercase tracking-[0.05em] mb-0.5",
 			style: { color: t },
 			children: e
-		}), n.map((e) => /* @__PURE__ */ h(Oe, { item: e }, e.id))]
+		}), n.map((e) => /* @__PURE__ */ g(Be, { item: e }, e.id))]
 	});
 }
-function Q({ section: e, onNavigateToEditor: t }) {
-	let n = W(e);
-	if (n.length === 0) return /* @__PURE__ */ h("div", {
+function Ve({ section: e, onNavigateToEditor: t }) {
+	let n = V(e);
+	if (n.length === 0) return /* @__PURE__ */ g("div", {
 		className: "text-text-tertiary italic text-[13px] py-1",
 		children: "No decisions recorded."
 	});
 	let r = n.filter((e) => e.status === "acked" || e.status === "done"), i = n.filter((e) => e.status === "rejected"), a = n.filter((e) => !r.includes(e) && !i.includes(e));
-	return /* @__PURE__ */ g("div", { children: [
-		a.length > 0 && /* @__PURE__ */ h(Z, {
+	return /* @__PURE__ */ _("div", { children: [
+		a.length > 0 && /* @__PURE__ */ g(W, {
 			label: "Open",
-			color: X.pending.color,
+			color: U.pending.color,
 			items: a
 		}),
-		r.length > 0 && /* @__PURE__ */ h(Z, {
+		r.length > 0 && /* @__PURE__ */ g(W, {
 			label: "Decided",
-			color: X.acked.color,
+			color: U.acked.color,
 			items: r
 		}),
-		i.length > 0 && /* @__PURE__ */ h(Z, {
+		i.length > 0 && /* @__PURE__ */ g(W, {
 			label: "Vetoed",
-			color: X.rejected.color,
+			color: U.rejected.color,
 			items: i
 		}),
-		t && /* @__PURE__ */ h("button", {
+		t && /* @__PURE__ */ g("button", {
 			type: "button",
 			onClick: () => t(e.id),
 			className: "mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
@@ -1969,11 +2030,11 @@ function Q({ section: e, onNavigateToEditor: t }) {
 }
 //#endregion
 //#region src/renderers/file-upload/FileUploadEditorRenderer.tsx
-function ke(e) {
+function He(e) {
 	return e.metadata ?? {};
 }
-function Ae({ section: e, editable: t, onUpdateSection: n }) {
-	let r = ke(e), [a, o] = p(!1), s = (t) => {
+function Ue({ section: e, editable: t, onUpdateSection: n }) {
+	let r = He(e), [a, o] = m(!1), s = (t) => {
 		o(!0);
 		let r = new FileReader();
 		r.onload = () => {
@@ -1985,24 +2046,24 @@ function Ae({ section: e, editable: t, onUpdateSection: n }) {
 			} }), o(!1);
 		}, r.onerror = () => o(!1), r.readAsDataURL(t);
 	};
-	return /* @__PURE__ */ h("div", {
+	return /* @__PURE__ */ g("div", {
 		"data-testid": `file-upload-editor-${e.id}`,
-		children: r.fileName ? /* @__PURE__ */ g("div", {
+		children: r.fileName ? /* @__PURE__ */ _("div", {
 			className: "flex items-center gap-2.5 px-3 py-2 rounded-md bg-surface-panel border border-border text-[13px]",
 			children: [
-				/* @__PURE__ */ h("span", {
+				/* @__PURE__ */ g("span", {
 					className: "text-base",
 					children: "📎"
 				}),
-				/* @__PURE__ */ h("span", {
+				/* @__PURE__ */ g("span", {
 					className: "flex-1 font-medium text-text-primary",
 					children: r.fileName
 				}),
-				typeof r.fileSize == "number" && /* @__PURE__ */ g("span", {
+				typeof r.fileSize == "number" && /* @__PURE__ */ _("span", {
 					className: "text-[11px] text-text-tertiary",
 					children: [(r.fileSize / 1024).toFixed(1), " kB"]
 				}),
-				t && /* @__PURE__ */ h("button", {
+				t && /* @__PURE__ */ g("button", {
 					type: "button",
 					"data-testid": `file-upload-remove-${e.id}`,
 					onClick: () => {
@@ -2017,10 +2078,10 @@ function Ae({ section: e, editable: t, onUpdateSection: n }) {
 					children: "×"
 				})
 			]
-		}) : /* @__PURE__ */ g("label", {
+		}) : /* @__PURE__ */ _("label", {
 			"data-testid": `file-upload-empty-${e.id}`,
 			className: i("block px-4 py-3.5 border border-dashed border-border-emphasis rounded-lg text-neutral text-[13px] text-center bg-surface-inset", t ? "cursor-pointer" : "cursor-default"),
-			children: [a ? "Reading file…" : e.placeholder ?? "Click to upload a file", /* @__PURE__ */ h("input", {
+			children: [a ? "Reading file…" : e.placeholder ?? "Click to upload a file", /* @__PURE__ */ g("input", {
 				type: "file",
 				"data-testid": `file-upload-input-${e.id}`,
 				disabled: !t,
@@ -2035,24 +2096,24 @@ function Ae({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/file-upload/FileUploadReaderRenderer.tsx
-function je({ section: e }) {
+function We({ section: e }) {
 	let t = e.metadata ?? {};
-	return t.fileName ? /* @__PURE__ */ g("div", {
+	return t.fileName ? /* @__PURE__ */ _("div", {
 		"data-testid": `file-upload-reader-${e.id}`,
 		className: "flex items-center gap-2.5 px-3 py-2 rounded-md bg-surface-panel border border-border text-[13px]",
 		children: [
-			/* @__PURE__ */ h("span", {
+			/* @__PURE__ */ g("span", {
 				className: "text-base",
 				children: "📎"
 			}),
-			/* @__PURE__ */ g("a", {
+			/* @__PURE__ */ _("a", {
 				href: t.fileDataUrl ?? "#",
 				download: t.fileName,
 				"data-testid": `file-upload-link-${e.id}`,
 				className: "text-primary font-medium no-underline",
 				children: ["Download ", t.fileName]
 			}),
-			typeof t.fileSize == "number" && /* @__PURE__ */ g("span", {
+			typeof t.fileSize == "number" && /* @__PURE__ */ _("span", {
 				className: "text-[11px] text-text-tertiary",
 				children: [
 					"(",
@@ -2061,7 +2122,7 @@ function je({ section: e }) {
 				]
 			})
 		]
-	}) : /* @__PURE__ */ h("div", {
+	}) : /* @__PURE__ */ g("div", {
 		"data-testid": `file-upload-reader-empty-${e.id}`,
 		className: "text-text-tertiary text-[13px] italic",
 		children: "No file uploaded."
@@ -2069,8 +2130,8 @@ function je({ section: e }) {
 }
 //#endregion
 //#region src/renderers/diagram/DiagramEditorRenderer.tsx
-function Me({ section: e, editable: t, onUpdateSection: n }) {
-	let r = e.metadata ?? {}, [a, o] = p(!1), s = (t) => {
+function Ge({ section: e, editable: t, onUpdateSection: n }) {
+	let r = e.metadata ?? {}, [a, o] = m(!1), s = (t) => {
 		o(!0);
 		let i = new FileReader();
 		i.onload = () => {
@@ -2086,25 +2147,25 @@ function Me({ section: e, editable: t, onUpdateSection: n }) {
 			alt: t
 		} });
 	};
-	return /* @__PURE__ */ h("div", {
+	return /* @__PURE__ */ g("div", {
 		"data-testid": `diagram-editor-${e.id}`,
-		children: r.imageDataUrl ? /* @__PURE__ */ g("div", {
+		children: r.imageDataUrl ? /* @__PURE__ */ _("div", {
 			className: "flex flex-col gap-2",
-			children: [/* @__PURE__ */ h("img", {
+			children: [/* @__PURE__ */ g("img", {
 				"data-testid": `diagram-image-${e.id}`,
 				src: r.imageDataUrl,
 				alt: r.alt ?? "",
 				className: "max-w-full max-h-[320px] rounded-md border border-border"
-			}), t && /* @__PURE__ */ g("div", {
+			}), t && /* @__PURE__ */ _("div", {
 				className: "flex gap-2 items-center",
-				children: [/* @__PURE__ */ h("input", {
+				children: [/* @__PURE__ */ g("input", {
 					type: "text",
 					"data-testid": `diagram-alt-${e.id}`,
 					value: r.alt ?? "",
 					placeholder: "Alt text",
 					onChange: (e) => c(e.target.value),
 					className: "flex-1 px-2 py-1 text-xs border border-border-emphasis rounded"
-				}), /* @__PURE__ */ h("button", {
+				}), /* @__PURE__ */ g("button", {
 					type: "button",
 					"data-testid": `diagram-remove-${e.id}`,
 					onClick: () => {
@@ -2118,10 +2179,10 @@ function Me({ section: e, editable: t, onUpdateSection: n }) {
 					children: "Remove"
 				})]
 			})]
-		}) : /* @__PURE__ */ g("label", {
+		}) : /* @__PURE__ */ _("label", {
 			"data-testid": `diagram-empty-${e.id}`,
 			className: i("block px-4 py-3.5 border border-dashed border-border-emphasis rounded-lg text-neutral text-[13px] text-center bg-surface-inset", t ? "cursor-pointer" : "cursor-default"),
-			children: [a ? "Reading image…" : e.placeholder ?? "Upload an image (PNG / JPG / SVG)", /* @__PURE__ */ h("input", {
+			children: [a ? "Reading image…" : e.placeholder ?? "Upload an image (PNG / JPG / SVG)", /* @__PURE__ */ g("input", {
 				type: "file",
 				accept: "image/*",
 				"data-testid": `diagram-input-${e.id}`,
@@ -2137,20 +2198,20 @@ function Me({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/diagram/DiagramReaderRenderer.tsx
-function Ne({ section: e }) {
+function Ke({ section: e }) {
 	let t = e.metadata ?? {};
-	return t.imageDataUrl ? /* @__PURE__ */ g("figure", {
+	return t.imageDataUrl ? /* @__PURE__ */ _("figure", {
 		"data-testid": `diagram-reader-${e.id}`,
 		className: "m-0",
-		children: [/* @__PURE__ */ h("img", {
+		children: [/* @__PURE__ */ g("img", {
 			src: t.imageDataUrl,
 			alt: t.alt ?? "",
 			className: "max-w-full max-h-[480px] rounded-md border border-border"
-		}), t.alt && /* @__PURE__ */ h("figcaption", {
+		}), t.alt && /* @__PURE__ */ g("figcaption", {
 			className: "text-[11px] text-text-tertiary mt-1 text-center",
 			children: t.alt
 		})]
-	}) : /* @__PURE__ */ h("div", {
+	}) : /* @__PURE__ */ g("div", {
 		"data-testid": `diagram-reader-empty-${e.id}`,
 		className: "text-text-tertiary text-[13px] italic",
 		children: "No diagram uploaded."
@@ -2158,18 +2219,18 @@ function Ne({ section: e }) {
 }
 //#endregion
 //#region src/renderers/link-block/LinkBlockEditorRenderer.tsx
-function Pe(e) {
+function qe(e) {
 	return typeof e == "object" && !!e;
 }
-function Fe(e) {
+function Je(e) {
 	let t = e.metadata ?? {};
-	return Array.isArray(t.links) ? t.links.filter(Pe).map((e) => ({
+	return Array.isArray(t.links) ? t.links.filter(qe).map((e) => ({
 		label: typeof e.label == "string" ? e.label : "",
 		url: typeof e.url == "string" ? e.url : ""
 	})) : [];
 }
-function Ie({ section: e, editable: t, onUpdateSection: n }) {
-	let r = Fe(e), i = (t) => {
+function Ye({ section: e, editable: t, onUpdateSection: n }) {
+	let r = Je(e), i = (t) => {
 		n?.({ metadata: {
 			...e.metadata ?? {},
 			links: t
@@ -2185,19 +2246,19 @@ function Ie({ section: e, editable: t, onUpdateSection: n }) {
 	}, s = (e) => {
 		i(r.filter((t, n) => n !== e));
 	};
-	return /* @__PURE__ */ g("div", {
+	return /* @__PURE__ */ _("div", {
 		"data-testid": `link-block-editor-${e.id}`,
 		className: "flex flex-col gap-1.5",
 		children: [
-			r.length === 0 && /* @__PURE__ */ h("div", {
+			r.length === 0 && /* @__PURE__ */ g("div", {
 				"data-testid": `link-block-empty-${e.id}`,
 				className: "text-text-tertiary text-xs italic py-1",
 				children: "No links yet."
 			}),
-			r.map((n, r) => /* @__PURE__ */ g("div", {
+			r.map((n, r) => /* @__PURE__ */ _("div", {
 				className: "flex items-center gap-1.5",
 				children: [
-					/* @__PURE__ */ h("input", {
+					/* @__PURE__ */ g("input", {
 						type: "text",
 						"data-testid": `link-block-label-${e.id}-${r}`,
 						value: n.label,
@@ -2206,7 +2267,7 @@ function Ie({ section: e, editable: t, onUpdateSection: n }) {
 						disabled: !t,
 						className: "flex-1 px-2 py-1 text-[13px] border border-border-emphasis rounded"
 					}),
-					/* @__PURE__ */ h("input", {
+					/* @__PURE__ */ g("input", {
 						type: "url",
 						"data-testid": `link-block-url-${e.id}-${r}`,
 						value: n.url,
@@ -2215,7 +2276,7 @@ function Ie({ section: e, editable: t, onUpdateSection: n }) {
 						disabled: !t,
 						className: "flex-[2] px-2 py-1 text-[13px] border border-border-emphasis rounded"
 					}),
-					t && /* @__PURE__ */ h("button", {
+					t && /* @__PURE__ */ g("button", {
 						type: "button",
 						"data-testid": `link-block-remove-${e.id}-${r}`,
 						onClick: () => s(r),
@@ -2224,7 +2285,7 @@ function Ie({ section: e, editable: t, onUpdateSection: n }) {
 					})
 				]
 			}, r)),
-			t && /* @__PURE__ */ h("button", {
+			t && /* @__PURE__ */ g("button", {
 				type: "button",
 				"data-testid": `link-block-add-${e.id}`,
 				onClick: a,
@@ -2236,21 +2297,21 @@ function Ie({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/link-block/LinkBlockReaderRenderer.tsx
-function Le(e) {
+function Xe(e) {
 	return typeof e == "object" && !!e && typeof e.url == "string";
 }
-function $({ section: e }) {
-	let t = e.metadata ?? {}, n = Array.isArray(t.links) ? t.links.filter((e) => Le(e) && e.url) : [];
-	return n.length === 0 ? /* @__PURE__ */ h("div", {
+function Ze({ section: e }) {
+	let t = e.metadata ?? {}, n = Array.isArray(t.links) ? t.links.filter((e) => Xe(e) && e.url) : [];
+	return n.length === 0 ? /* @__PURE__ */ g("div", {
 		"data-testid": `link-block-reader-empty-${e.id}`,
 		className: "text-text-tertiary text-[13px] italic",
 		children: "No links."
-	}) : /* @__PURE__ */ h("ul", {
+	}) : /* @__PURE__ */ g("ul", {
 		"data-testid": `link-block-reader-${e.id}`,
 		className: "list-none m-0 p-0 flex flex-col gap-1",
-		children: n.map((e, t) => /* @__PURE__ */ h("li", {
+		children: n.map((e, t) => /* @__PURE__ */ g("li", {
 			className: "text-[13px]",
-			children: /* @__PURE__ */ h("a", {
+			children: /* @__PURE__ */ g("a", {
 				href: e.url,
 				target: "_blank",
 				rel: "noreferrer noopener",
@@ -2260,6 +2321,273 @@ function $({ section: e }) {
 		}, t))
 	});
 }
-e(I), e(ee), e(te), e(ne), e(re), e(ie), e(ae), t("*", "*", G), t("rich-text", "editor", de), t("rich-text", "ack", K), t("rich-text", "reader", K), t("tasks", "editor", fe), t("tasks", "ack", ge), t("tasks", "reader", ge), t("checklist", "editor", ve), t("checklist", "ack", ye), t("checklist", "reader", ye), t("decisions", "editor", De), t("decisions", "ack", Q), t("decisions", "reader", Q), t("file-upload", "editor", Ae), t("file-upload", "ack", je), t("file-upload", "reader", je), t("diagram", "editor", Me), t("diagram", "ack", Ne), t("diagram", "reader", Ne), t("link-block", "editor", Ie), t("link-block", "ack", $), t("link-block", "reader", $);
 //#endregion
-export { N as a, _ as i, U as n, F as o, H as r, P as s, G as t };
+//#region src/renderers/scalarValue.ts
+var G = "value";
+function Qe(e) {
+	return e.metadata ?? {};
+}
+function K(e) {
+	return Qe(e)[G];
+}
+function $e(e) {
+	let t = K(e);
+	return typeof t == "string" ? t : "";
+}
+function et(e) {
+	let t = K(e);
+	if (typeof t == "number") return Number.isFinite(t) ? t : void 0;
+	if (typeof t == "string" && t.trim() !== "") {
+		let e = Number(t);
+		if (Number.isFinite(e)) return e;
+	}
+}
+function q(e) {
+	let t = K(e);
+	return typeof t == "boolean" ? t : void 0;
+}
+var tt = /^(\d{4}-\d{2}-\d{2})/;
+function nt(e) {
+	let t = K(e);
+	if (typeof t != "string") return "";
+	let n = tt.exec(t.trim());
+	return n ? n[1] : "";
+}
+function J(e, t) {
+	let n = { ...Qe(e) };
+	return t === void 0 ? delete n[G] : n[G] = t, { metadata: n };
+}
+function rt(e) {
+	let t = /* @__PURE__ */ new Date(`${e}T00:00:00Z`);
+	return Number.isNaN(t.getTime()) ? e : t.toLocaleDateString(void 0, {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+		timeZone: "UTC"
+	});
+}
+function it(e) {
+	return e.toLocaleString(void 0, { maximumFractionDigits: 20 });
+}
+function at(e) {
+	if (!e) return "";
+	try {
+		return e.toString().replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+	} catch {
+		return "";
+	}
+}
+//#endregion
+//#region src/renderers/LegacyProseNote.tsx
+function Y({ sectionId: e, fragment: t }) {
+	let n = at(t);
+	return n ? /* @__PURE__ */ _("div", {
+		"data-testid": `scalar-legacy-note-${e}`,
+		className: "mt-1.5 text-[12px] text-text-tertiary break-words",
+		children: [
+			/* @__PURE__ */ g("span", {
+				className: "font-medium",
+				children: "Earlier draft:"
+			}),
+			" ",
+			n
+		]
+	}) : null;
+}
+//#endregion
+//#region src/renderers/text/TextReaderRenderer.tsx
+function X({ section: e, fragment: t }) {
+	let n = $e(e);
+	return n.trim() === "" ? /* @__PURE__ */ _("div", { children: [/* @__PURE__ */ g("div", {
+		"data-testid": `text-field-empty-${e.id}`,
+		className: "text-text-tertiary italic text-[13px]",
+		children: "Not set."
+	}), /* @__PURE__ */ g(Y, {
+		sectionId: e.id,
+		fragment: t
+	})] }) : /* @__PURE__ */ g("div", {
+		"data-testid": `text-field-reader-${e.id}`,
+		className: "text-[13px] text-text-primary leading-[1.5] break-words",
+		children: n
+	});
+}
+//#endregion
+//#region src/renderers/text/TextEditorRenderer.tsx
+function ot(e) {
+	let { section: t, editable: n, fragment: r, onUpdateSection: i } = e;
+	if (!n) return /* @__PURE__ */ g(X, { ...e });
+	let a = $e(t);
+	return /* @__PURE__ */ _("div", {
+		"data-testid": `text-field-editor-${t.id}`,
+		children: [/* @__PURE__ */ g(o, {
+			"data-testid": `text-field-input-${t.id}`,
+			value: a,
+			"aria-label": t.title,
+			placeholder: t.placeholder || "Enter text…",
+			onChange: (e) => i?.(J(t, e.target.value || void 0))
+		}), a === "" && /* @__PURE__ */ g(Y, {
+			sectionId: t.id,
+			fragment: r
+		})]
+	});
+}
+//#endregion
+//#region src/renderers/date/DateReaderRenderer.tsx
+function Z({ section: e, fragment: t }) {
+	let n = nt(e);
+	return n ? /* @__PURE__ */ g("time", {
+		"data-testid": `date-field-reader-${e.id}`,
+		dateTime: n,
+		className: "text-[13px] text-text-primary font-medium tabular-nums",
+		children: rt(n)
+	}) : /* @__PURE__ */ _("div", { children: [/* @__PURE__ */ g("div", {
+		"data-testid": `date-field-empty-${e.id}`,
+		className: "text-text-tertiary italic text-[13px]",
+		children: "No date set."
+	}), /* @__PURE__ */ g(Y, {
+		sectionId: e.id,
+		fragment: t
+	})] });
+}
+//#endregion
+//#region src/renderers/date/DateEditorRenderer.tsx
+function st(e) {
+	let { section: t, editable: n, fragment: r, onUpdateSection: i } = e;
+	if (!n) return /* @__PURE__ */ g(Z, { ...e });
+	let a = nt(t);
+	return /* @__PURE__ */ _("div", {
+		"data-testid": `date-field-editor-${t.id}`,
+		children: [/* @__PURE__ */ _("div", {
+			className: "flex items-center gap-2",
+			children: [
+				/* @__PURE__ */ g("div", {
+					className: "max-w-xs",
+					children: /* @__PURE__ */ g(o, {
+						type: "date",
+						"data-testid": `date-field-input-${t.id}`,
+						value: a,
+						"aria-label": t.title,
+						onChange: (e) => i?.(J(t, e.target.value || void 0))
+					})
+				}),
+				a ? /* @__PURE__ */ g("span", {
+					"data-testid": `date-field-formatted-${t.id}`,
+					className: "text-[12px] text-text-tertiary tabular-nums",
+					children: rt(a)
+				}) : /* @__PURE__ */ g("span", {
+					"data-testid": `date-field-hint-${t.id}`,
+					className: "text-[12px] text-text-tertiary italic",
+					children: t.placeholder || "No date set"
+				}),
+				a && /* @__PURE__ */ g("button", {
+					type: "button",
+					"data-testid": `date-field-clear-${t.id}`,
+					onClick: () => i?.(J(t, void 0)),
+					className: "bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0 font-inherit",
+					children: "Clear"
+				})
+			]
+		}), !a && /* @__PURE__ */ g(Y, {
+			sectionId: t.id,
+			fragment: r
+		})]
+	});
+}
+//#endregion
+//#region src/renderers/number/NumberReaderRenderer.tsx
+function Q({ section: e, fragment: t }) {
+	let n = et(e);
+	return n === void 0 ? /* @__PURE__ */ _("div", { children: [/* @__PURE__ */ g("div", {
+		"data-testid": `number-field-empty-${e.id}`,
+		className: "text-text-tertiary italic text-[13px]",
+		children: "No value."
+	}), /* @__PURE__ */ g(Y, {
+		sectionId: e.id,
+		fragment: t
+	})] }) : /* @__PURE__ */ g("div", {
+		"data-testid": `number-field-reader-${e.id}`,
+		className: "text-[13px] text-text-primary font-medium tabular-nums",
+		children: it(n)
+	});
+}
+//#endregion
+//#region src/renderers/number/NumberEditorRenderer.tsx
+function ct(e) {
+	let { section: t, editable: n, fragment: r, onUpdateSection: i } = e;
+	if (!n) return /* @__PURE__ */ g(Q, { ...e });
+	let a = et(t);
+	return /* @__PURE__ */ _("div", {
+		"data-testid": `number-field-editor-${t.id}`,
+		children: [/* @__PURE__ */ g("div", {
+			className: "max-w-xs",
+			children: /* @__PURE__ */ g(c, {
+				"data-testid": `number-field-input-${t.id}`,
+				value: a,
+				"aria-label": t.title,
+				placeholder: t.placeholder || "Enter a number…",
+				onChange: (e) => i?.(J(t, e)),
+				onClear: () => i?.(J(t, void 0))
+			})
+		}), a === void 0 && /* @__PURE__ */ g(Y, {
+			sectionId: t.id,
+			fragment: r
+		})]
+	});
+}
+//#endregion
+//#region src/renderers/boolean/BooleanReaderRenderer.tsx
+function $({ section: e, fragment: t }) {
+	let n = q(e);
+	return n === void 0 ? /* @__PURE__ */ _("div", { children: [/* @__PURE__ */ g("div", {
+		"data-testid": `boolean-field-empty-${e.id}`,
+		className: "text-text-tertiary italic text-[13px]",
+		children: "Not answered."
+	}), /* @__PURE__ */ g(Y, {
+		sectionId: e.id,
+		fragment: t
+	})] }) : /* @__PURE__ */ g("div", {
+		"data-testid": `boolean-field-reader-${e.id}`,
+		className: i("text-[13px] font-medium", n ? "text-success-fg" : "text-text-secondary"),
+		children: n ? "✓ Yes" : "✗ No"
+	});
+}
+//#endregion
+//#region src/renderers/boolean/BooleanEditorRenderer.tsx
+function lt(e) {
+	let { section: t, editable: n, fragment: r, onUpdateSection: a } = e;
+	if (!n) return /* @__PURE__ */ g($, { ...e });
+	let o = q(t);
+	return /* @__PURE__ */ _("div", {
+		"data-testid": `boolean-field-editor-${t.id}`,
+		children: [/* @__PURE__ */ _("div", {
+			className: "flex items-center gap-2",
+			children: [
+				/* @__PURE__ */ g(l, {
+					"data-testid": `boolean-field-input-${t.id}`,
+					checked: o === !0,
+					indeterminate: o === void 0,
+					"aria-label": t.title,
+					onChange: (e) => a?.(J(t, e))
+				}),
+				/* @__PURE__ */ g("span", {
+					"data-testid": `boolean-field-status-${t.id}`,
+					className: i("text-[13px]", o === void 0 ? "text-text-tertiary italic" : o ? "text-success-fg font-medium" : "text-text-secondary font-medium"),
+					children: o === void 0 ? t.placeholder || "Not answered" : o ? "Yes" : "No"
+				}),
+				o !== void 0 && /* @__PURE__ */ g("button", {
+					type: "button",
+					"data-testid": `boolean-field-clear-${t.id}`,
+					onClick: () => a?.(J(t, void 0)),
+					className: "bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0 font-inherit",
+					children: "Clear"
+				})
+			]
+		}), o === void 0 && /* @__PURE__ */ g(Y, {
+			sectionId: t.id,
+			fragment: r
+		})]
+	});
+}
+e(re), e(ie), e(ae), e(oe), e(se), e(ce), e(le), e(ue), e(de), e(fe), e(pe), t("*", "*", ye), t("rich-text", "editor", be), t("rich-text", "ack", xe), t("rich-text", "reader", xe), t("tasks", "editor", Se), t("tasks", "ack", Oe), t("tasks", "reader", Oe), t("checklist", "editor", Ae), t("checklist", "ack", je), t("checklist", "reader", je), t("decisions", "editor", ze), t("decisions", "ack", Ve), t("decisions", "reader", Ve), t("file-upload", "editor", Ue), t("file-upload", "ack", We), t("file-upload", "reader", We), t("diagram", "editor", Ge), t("diagram", "ack", Ke), t("diagram", "reader", Ke), t("link-block", "editor", Ye), t("link-block", "ack", Ze), t("link-block", "reader", Ze), t("text", "editor", ot), t("text", "ack", X), t("text", "reader", X), t("date", "editor", st), t("date", "ack", Z), t("date", "reader", Z), t("number", "editor", ct), t("number", "ack", Q), t("number", "reader", Q), t("boolean", "editor", lt), t("boolean", "ack", $), t("boolean", "reader", $), t("checkbox", "editor", lt), t("checkbox", "ack", $), t("checkbox", "reader", $);
+//#endregion
+export { j as a, v as i, B as n, N as o, z as r, M as s, ye as t };

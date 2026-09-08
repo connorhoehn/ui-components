@@ -216,9 +216,10 @@ export declare interface CanvasDocumentViewProps {
      */
     showOutline?: boolean;
     /**
-     * Draw page boundaries on the sheet: a seam every 1056px, the desk showing
-     * through it, and a page count in the status bar. Also pads the last sheet
-     * out to a whole page, and moves content so that no seam cuts it.
+     * Draw page boundaries on the sheet: a 24px band of desk every 1056px with
+     * a one-inch margin of white on each side of it, and a page count in the
+     * status bar. Also pads the last sheet out to a whole page, and moves
+     * content so that nothing lands on a boundary or in a margin.
      *
      * ON by default, which is a reversal — so here is what changed.
      *
@@ -244,6 +245,30 @@ export declare interface CanvasDocumentViewProps {
      * feature: the typography still moves when this is on. Paragraph gaps go
      * 14.4px -> 26.4px and headings and code blocks are re-spaced, so the page
      * gets airier. That is the mechanism, not a side effect.
+     *
+     * ## Every page has margins now, and it costs about a third more sheets
+     *
+     * This used to protect a hairline. Interior pages had no top or bottom
+     * margin at all — page one had its inch and page one alone, and everywhere
+     * else the text ran down to the boundary and started again straight below
+     * it. The flow now reserves the same inch on both sides of every boundary
+     * and moves anything that would reach into it, prose included: measured over
+     * 1500 generated documents, 0 of 11,619 prose margins and 0 of 13,800 mixed
+     * ones carry ink.
+     *
+     * Two consequences a host should know about before turning this on.
+     *
+     *   - SHEETS. 211.2px of every 1056 is margin, and a paragraph that can no
+     *     longer flow through a boundary leaves a ragged page bottom on top of
+     *     that. Same corpus: 1.30x the pages. `pageCount` and "Page 3 of 7"
+     *     report the new number, which is the honest one — it is the number of
+     *     sheets this document would occupy.
+     *   - RAGGED BOTTOMS. Google Docs breaks a paragraph across a page and fills
+     *     the sheet; this cannot, because a paragraph is one block box in a
+     *     continuous flow and no CSS inserts two inches of dead space into the
+     *     middle of one. A page therefore ends after its last whole paragraph.
+     *
+     * Both are in `canvas/pageFlow.ts` under "## Why every page has margins".
      *
      * Hosts that want the endless sheet — a preview pane, an embed with no room
      * for page furniture — can still pass `false`, and get back exactly the
@@ -540,8 +565,9 @@ export declare interface DocumentGutterProps {
      * as a whole and not to a line of it. That does push the thread cards down
      * by its height, which is the honest tradeoff: a call and a comment cannot
      * both own the same strip of margin, and Google Docs resolves it the same
-     * way. Anchoring is not yet driven by real positions here anyway — see the
-     * note at the top of this file.
+     * way — and it does cost real precision now that the offsets ARE real
+     * positions, because every card below the lead sits that much lower than the
+     * line it annotates.
      */
     lead?: ReactNode;
     /** Minimum vertical gap between two cards. */
@@ -1978,6 +2004,16 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
         };
     }
 }

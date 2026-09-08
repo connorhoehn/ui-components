@@ -1,6 +1,6 @@
 import "./ToastProvider-BKjV21G4.js";
 import { t as e } from "./cn-DhjIN-s0.js";
-import "./DetailSection-CiIO-hyL.js";
+import "./DetailSection-DD8ayw5R.js";
 import { t } from "./Button-wU9TwJvB.js";
 import { t as n } from "./Card-DWAlG4MZ.js";
 import "./FormField-BpwfwG7t.js";
@@ -31,6 +31,7 @@ import "./PresenceAvatars-BkzMACtv.js";
 import { t as T } from "./InlinePopover-DFdI8hw1.js";
 import { t as E } from "./ActivityFeed-C9KAtqCl.js";
 import "./Select-CqVokE2v.js";
+import "./NumberInput-PlADgrip.js";
 import "./Checkbox-DqN9RkXK.js";
 import { Children as D, createContext as O, isValidElement as k, useCallback as A, useContext as ee, useEffect as j, useId as M, useLayoutEffect as te, useMemo as N, useRef as P, useState as F } from "react";
 import { Fragment as I, jsx as L, jsxs as R } from "react/jsx-runtime";
