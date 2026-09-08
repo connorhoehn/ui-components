@@ -12,14 +12,43 @@
 // precisely because Switch could not express that.
 
 import { forwardRef, useEffect, useRef } from 'react';
+import type { ChangeEvent, MouseEvent } from 'react';
 import { cn } from '../../lib/cn';
+
+const NO_MODIFIERS: CheckboxModifiers = {
+  shiftKey: false, metaKey: false, ctrlKey: false, altKey: false,
+};
+
+/** Modifier keys held during the click that toggled a checkbox. */
+export interface CheckboxModifiers {
+  shiftKey: boolean;
+  metaKey: boolean;
+  ctrlKey: boolean;
+  altKey: boolean;
+}
 
 export interface CheckboxProps {
   id?: string;
   /** Form field name, for label association and form submission. */
   name?: string;
   checked: boolean;
-  onChange: (checked: boolean) => void;
+  /**
+   * The new checked state, and the modifier keys held while it changed.
+   *
+   * `shiftKey` is the reason for the second argument: "tick this one" and
+   * "tick everything from the last one to this one" are the same control with
+   * shift held, and a callback carrying only the boolean cannot express the
+   * second. Callers with a shift-select list therefore hand-rolled a native
+   * <input type="checkbox"> — which is how a pipelines table ended up styling
+   * itself with `accent-[var(--color-accent-solid)]`, a token that does not
+   * exist. Existing callers taking one parameter are unaffected.
+   *
+   * The modifiers come from the CLICK, not the change event: a change event
+   * carries no modifier state at all. Keyboard activation (space) also emits a
+   * click, so it arrives here with every modifier false, which is correct —
+   * there is no shift-space range-select convention on a checkbox.
+   */
+  onChange: (checked: boolean, modifiers: CheckboxModifiers) => void;
   /**
    * Mixed state — "some but not all selected". Rendered natively (the dash),
    * exposed to AT via aria-checked="mixed". Clicking a mixed checkbox
@@ -69,6 +98,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     },
     forwardedRef,
   ) {
+    const modifiersRef = useRef<CheckboxModifiers>(NO_MODIFIERS);
     const innerRef = useRef<HTMLInputElement | null>(null);
 
     // `indeterminate` is a DOM property, not an attribute — the only way to
@@ -94,9 +124,25 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
         aria-checked={indeterminate ? 'mixed' : undefined}
-        onChange={(e) => onChange(e.target.checked)}
-        onClick={onClick}
-        onKeyDown={onKeyDown}
+        // The click runs before the change and is the only one of the two
+        // that knows which modifiers were held, so it is recorded here and
+        // read a moment later. Reset to all-false first so a keyboard toggle
+        // never inherits the modifiers of a previous mouse click.
+        onClick={(e: MouseEvent<HTMLInputElement>) => {
+          modifiersRef.current = {
+            shiftKey: e.shiftKey, metaKey: e.metaKey,
+            ctrlKey: e.ctrlKey, altKey: e.altKey,
+          };
+          onClick?.(e);
+        }}
+        onKeyDown={(e) => {
+          // A keyboard toggle must not inherit the modifiers of whatever mouse
+          // click happened last.
+          modifiersRef.current = NO_MODIFIERS;
+          onKeyDown?.(e);
+        }}
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          onChange(e.target.checked, modifiersRef.current)}
         className={cn(
           'w-3.5 h-3.5 accent-primary cursor-pointer disabled:cursor-not-allowed',
           className,

@@ -100,7 +100,16 @@ describe('dark-surface token hygiene', () => {
     const defined = definedColorTokens();
     const offenders = new Set<string>();
     for (const file of sourceFiles(SRC)) {
-      const src = readFileSync(file, 'utf8');
+      // Strip comments, exactly as (b) above does and for the same reason:
+      // a token named in prose is not a token the browser resolves. Without
+      // this, the most useful comment anyone can write about a dead token —
+      // naming it, so the next reader can search for it — is the one thing
+      // that puts the file on this list. Which is precisely what happened:
+      // Checkbox's doc comment cites `accent-[var(--color-accent-solid)]` to
+      // explain why a caller must NOT use it.
+      const src = readFileSync(file, 'utf8')
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/(^|[^:])\/\/.*$/gm, '$1');
       for (const m of src.matchAll(/var\((--color-[a-z0-9-]+)/gi)) {
         if (!defined.has(m[1]!)) offenders.add(relative(process.cwd(), file));
       }

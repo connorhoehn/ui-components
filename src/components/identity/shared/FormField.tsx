@@ -82,7 +82,12 @@ export function FormField({
           <Checkbox
             name={name}
             checked={Boolean(value)}
-            onChange={onChange}
+            // Adapted, not forwarded. Checkbox reports
+            // `(checked, modifiers)` so a range-select can read the click's
+            // shift key; FormField's own contract is `onChange(value)` and a
+            // silently widened callback would hand every consumer of this
+            // component an argument its type never promised.
+            onChange={(checked) => onChange(checked)}
             disabled={disabled}
             aria-describedby={describedById}
           />

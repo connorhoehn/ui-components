@@ -9,7 +9,21 @@ describe('Checkbox', () => {
     const onChange = vi.fn();
     render(<Checkbox checked={false} onChange={onChange} aria-label="Row" />);
     fireEvent.click(box());
-    expect(onChange).toHaveBeenCalledWith(true);
+    expect(onChange.mock.calls[0][0]).toBe(true);
+  });
+
+  it('hands over the modifiers too, so a range-select can read them', () => {
+    // "tick this one" and "tick everything from the last one to this one" are
+    // the same control with shift held. A callback carrying only the boolean
+    // cannot express the second, which is why callers with a shift-select list
+    // used to hand-roll a native <input type="checkbox"> instead.
+    const onChange = vi.fn();
+    render(<Checkbox checked={false} onChange={onChange} aria-label="Row" />);
+    fireEvent.click(box(), { shiftKey: true });
+
+    const [checked, modifiers] = onChange.mock.calls[0];
+    expect(checked).toBe(true);
+    expect(modifiers.shiftKey).toBe(true);
   });
 
   it('sets the indeterminate DOM property', () => {
