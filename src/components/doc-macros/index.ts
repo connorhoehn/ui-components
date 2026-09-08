@@ -88,3 +88,25 @@ export {
     retractHitlEdit,
 } from './hitlText';
 export type { HitlCallout, HitlOption, HitlDraft } from './hitlText';
+
+// The recorded choice. Same registry, same one-range-per-edit rule. Unlike
+// HITL it has NO second reader outside the document — nothing polls a decision
+// — so there is no mirror, no busy state and no retract path. See
+// `DECISION_QUERYABILITY`, which says that where the HITL note says the
+// opposite.
+export { DecisionMacro, decisionRenderer } from './DecisionMacro';
+export type { DecisionMacroOptions } from './DecisionMacro';
+export { DecisionBlock } from './DecisionBlock';
+export type { DecisionBlockProps } from './DecisionBlock';
+export {
+    DECISION_MACRO_NAME,
+    DECISION_QUERYABILITY,
+    DECISION_STATUSES,
+    readDecision,
+    acceptsDecision,
+    decisionMacroText,
+    setDecisionStatusEdit,
+    attributeDecisionEdit,
+    supersedeDecisionEdit,
+} from './decisionText';
+export type { Decision, DecisionDraft, DecisionStatus } from './decisionText';
