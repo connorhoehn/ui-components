@@ -1147,13 +1147,30 @@
        resolved to 23.1px and sat off-grid. The absolute length below is
        inherited as a LENGTH, which puts the whole subtree on one row height.
 
-   ## The knob that breaks it, deliberately left reachable
+   ## Every page has margins, and that is what freed the gap
 
-   `--doc-page-gap` defaults to 6px against 7.02px of clear leading. The cliff
-   is sharp and measured: every value up to 7px behaves identically (4.6%), 8px
-   jumps to 78%, 24px to 94.8%. It is a variable so the defect is inspectable
-   rather than argued about — set it to 24px in devtools and you are looking at
-   exactly the naive implementation this design exists to avoid.
+   The rules above keep a HAIRLINE off the type. They were never enough to make
+   the sheet look like a stack of pages, because on an interior boundary the
+   text ran down to the line from above and started again immediately below it:
+   page one had a one-inch margin and page one alone. `canvas/pageFlow.ts` now
+   reserves that same inch at the top and bottom of every page and moves any
+   block that would reach into it — see "## Why every page has margins" there
+   for the two things it costs.
+
+   That is also why `--doc-page-gap` is 24px here and was 6px for most of this
+   feature's life. 6px was a constraint, not a design: text flowed through the
+   boundary, a body line leaves 7.02px of clear leading, and the cliff was sharp
+   and measured — every value up to 7px behaved identically (4.6% of boundaries
+   bisected), 8px jumped to 78%, 24px to 94.8%. With margins, no ink comes
+   within 105.6px of a boundary in either direction, so the band is free to be
+   what it depicts: the desk between two sheets, with the darkest stop at each
+   sheet's own edge so it reads as a shadow rather than as a stripe.
+
+   The gap is painted INSIDE the 1056px period rather than added to it, so it
+   spends 12px of each margin and the page stays exactly 40 grid rows. A gap
+   that added height would detach every seam below it from the grid.
+
+   Keep this value in step with `DOC_PAGE_GAP` in `canvas/pageFlow.ts`.
 
    ## The two residuals CSS cannot fix, and who fixes them
 
@@ -1213,8 +1230,10 @@
   /* 11in at 96dpi — the same sheet `min-h-[1056px]` already claims. Exactly
      40 grid rows, which is the whole reason the arithmetic closes. */
   --doc-page-height: 1056px;
-  /* MUST stay <= the clear leading, 7.02px. See the header. */
-  --doc-page-gap: 6px;
+  /* The desk between two sheets. Safe at this width only because the flow
+     reserves a one-inch margin on both sides of every boundary — see the
+     header. Must match `DOC_PAGE_GAP` in canvas/pageFlow.ts. */
+  --doc-page-gap: 24px;
 
   /* Containing block for the seam overlay. The `@container` on the sheet
      already makes this a stacking context (`container-type` implies
@@ -1231,9 +1250,7 @@
    one.
 
    z-index -1 puts it behind the text and in front of the paper, which is the
-   only correct depth for something representing the desk showing through.
-   Stops are fractions of the gap so the band keeps its proportions at any
-   value of `--doc-page-gap`. */
+   only correct depth for something representing the desk showing through. */
 .doc-page--paginated::before {
   content: '';
   position: absolute;
@@ -1249,14 +1266,23 @@
      violate the paper-is-always-white invariant.
 
      The last stop is the page height, so `repeating-linear-gradient` tiles on
-     the right period without a `background-size`. */
+     the right period without a `background-size`.
+
+     Stops are FRACTIONS of the gap so the band keeps its proportions at any
+     value of `--doc-page-gap`, and the fractions are chosen so the desk wins:
+     the shadow fades out over the first and last eighth, leaving three
+     quarters of the band as clear workspace. At the 6px this used to be, the
+     shadows were nearly the whole band and it read as a rule with a highlight
+     — correct for a hairline, wrong for a gap between two sheets. At 24px the
+     page edges get 3px of shadow each and 18px of desk shows between them,
+     which is what a stack of pages looks like. */
   background-image: repeating-linear-gradient(
     to bottom,
     rgba(15, 23, 42, 0.22) 0,
-    rgba(15, 23, 42, 0.08) calc(var(--doc-page-gap) * 0.25),
-    var(--color-workspace) calc(var(--doc-page-gap) * 0.4),
-    var(--color-workspace) calc(var(--doc-page-gap) * 0.6),
-    rgba(15, 23, 42, 0.08) calc(var(--doc-page-gap) * 0.75),
+    rgba(15, 23, 42, 0.08) calc(var(--doc-page-gap) * 0.125),
+    var(--color-workspace) calc(var(--doc-page-gap) * 0.25),
+    var(--color-workspace) calc(var(--doc-page-gap) * 0.75),
+    rgba(15, 23, 42, 0.08) calc(var(--doc-page-gap) * 0.875),
     rgba(15, 23, 42, 0.22) var(--doc-page-gap),
     transparent calc(var(--doc-page-gap) + 0.5px),
     transparent var(--doc-page-height)
@@ -1504,6 +1530,43 @@
     list-style: none;
     padding-left: 0;
     margin: 0 0 0.9em;
+  }
+
+  /* -------------------------------------------------------------------------
+     The screen's page breaks are NOT the printer's. Undo them.
+
+     `useCanvasPageFlow` paginates the screen by writing an inline `margin-top`
+     on top-level blocks — that is how an image gets pushed clear of a page
+     boundary and how every page gets its bottom margin. The app prints a CLONE
+     of that subtree (`normalizeProseForPrint`), and `cloneNode` brings inline
+     styles with it, so every one of those pushes arrives on the paper as dead
+     space — on top of the `@page` pagination the printer is doing for itself,
+     which breaks in different places because the printable area is a different
+     height. The two page models compound instead of agreeing.
+
+     It was survivable while a push was rare and a few pixels wide. It is not
+     now: with a margin on every page, close to every boundary pushes a block,
+     by up to a whole text area. A three-page document could print as six, half
+     of them blank.
+
+     `--doc-natural-gap` is written by the same code, on the same element, and
+     holds the gap the block would have had with no pagination at all. So this
+     restores the unpaginated spacing and nothing else. The selector matches
+     the inline margin rather than a data attribute on purpose — the attribute
+     would be one more thing for ProseMirror to drop on a redraw, and the
+     inline style is the thing actually being undone.
+
+     Residual, stated rather than hidden: the restored gap is the SCREEN's
+     collapsed gap in px, and the printed sheet deliberately uses a different
+     scale (12pt / 1.5 leading, and the unpaginated block margins). So a pushed
+     paragraph prints with a slightly wider gap above it than an unpushed one —
+     26.4px against 14.4px, once per page boundary. Removing 800px of dead
+     space at the cost of 12px of extra leading is the right trade; making it
+     exact would mean restating the whole heading scale here, where it would
+     drift.
+     ---------------------------------------------------------------------- */
+  #doc-print-root .ProseMirror > [style*='margin-top'] {
+    margin-top: var(--doc-natural-gap, 0px) !important;
   }
 
   /* -------------------------------------------------------------------------

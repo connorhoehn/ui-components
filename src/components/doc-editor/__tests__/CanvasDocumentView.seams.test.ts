@@ -194,21 +194,54 @@ function layout(blocks: SimBlock[], pushes: number[]): { ink: Array<[number, num
   return { ink, height: y };
 }
 
-/** Seams in content coordinates, and whether each one lands on ink. */
-function scoreSeams(ink: Array<[number, number]>, height: number): { seams: number; bisected: number } {
+/**
+ * The band this design shipped with before pages had margins: 6px, chosen to
+ * fit inside the 7.02px of clear leading a body line leaves. The baselines
+ * below are scored against it because it is the band they were measured with —
+ * scoring the pre-margin model against the 24px gap the post-margin one paints
+ * would be comparing two different questions and calling it a regression.
+ */
+const HAIRLINE = 6;
+
+/**
+ * How far an h2's glyphs overflow their own line box: 24px of Inter ink is
+ * 29.06px tall in a 26.4px single-row box, so 1.33px of ascender sits above the
+ * box and 1.33px of descender below it. This is residual 1 in the styles.css
+ * header — the irreducible one, the reason the flow treats headings as
+ * unsplittable at all — and it is why the margin score below allows this much
+ * slack. A heading whose BOX starts exactly at the top of the text area is
+ * correctly placed; its ink starting 1.33px higher is a property of the type,
+ * not of the pagination, and Google Docs does the same thing. Anything deeper
+ * than this into a margin is a real invasion.
+ */
+const INK_OVERSHOOT = Math.max(0, -inkBand(24, DOC_LINE)[0]);
+
+/**
+ * Page boundaries in content coordinates, and whether each one lands on ink.
+ *
+ * `reach` is how far from the boundary counts as a hit. Two values are used:
+ * half the painted gap (does the band cut the type?) and the full page margin
+ * (is there ink in the margin at all?). The second is the strictly harder
+ * question and the one the margins exist to answer.
+ */
+function scoreSeams(
+  ink: Array<[number, number]>,
+  height: number,
+  reach: number,
+): { seams: number; bisected: number } {
   const pages = Math.max(1, Math.ceil((DOC_CONTENT_TOP * 2 + height) / DOC_PAGE_HEIGHT));
   let seams = 0;
   let bisected = 0;
   for (let k = 1; k < pages; k += 1) {
     const s = k * DOC_PAGE_HEIGHT - DOC_CONTENT_TOP;
-    const band: [number, number] = [s - DOC_PAGE_GAP / 2, s + DOC_PAGE_GAP / 2];
+    const band: [number, number] = [s - reach, s + reach];
     seams += 1;
     if (ink.some(([a, b]) => b - band[0] > 0.05 && band[1] - a > 0.05)) bisected += 1;
   }
   return { seams, bisected };
 }
 
-function run(table: Array<[Kind, number]>, withFlow: boolean, seed: number) {
+function run(table: Array<[Kind, number]>, withFlow: boolean, seed: number, reach: number) {
   const r = rng(seed);
   let seams = 0;
   let bisected = 0;
@@ -220,7 +253,7 @@ function run(table: Array<[Kind, number]>, withFlow: boolean, seed: number) {
       ? flowCanvasPages(blocks).pushes
       : new Array<number>(blocks.length).fill(0);
     const { ink, height } = layout(blocks, pushes);
-    const s = scoreSeams(ink, height);
+    const s = scoreSeams(ink, height, reach);
     seams += s.seams;
     bisected += s.bisected;
   }
@@ -232,7 +265,7 @@ describe('page seams, simulated against the paginated stylesheet metrics', () =>
     // ~4.6%: h2/h3 ink overflows its single-row line box by 1.33px each side,
     // and h1 puts an interior row boundary through the middle of its glyphs.
     // No stylesheet can fix this, which is why the flow moves the heading.
-    const before = report('prose, grid only', run(PROSE, false, 7));
+    const before = report('prose, grid only', run(PROSE, false, 7, HAIRLINE / 2));
     expect(before.seams).toBeGreaterThan(500);
     // Wider than the 4.6% in the styles.css header, and deliberately so: that
     // figure came from a corpus whose heading density this generator does not
@@ -245,33 +278,59 @@ describe('page seams, simulated against the paginated stylesheet metrics', () =>
   it('reproduces the collapse the baseline grid alone suffers on pictures', () => {
     // ~57%: an image's intrinsic height knocks every line below it off the
     // grid, and stays off for the rest of the document.
-    const before = report('mixed, grid only', run(MIXED, false, 11));
+    const before = report('mixed, grid only', run(MIXED, false, 11, HAIRLINE / 2));
     expect(before.rate).toBeGreaterThan(0.35);
   });
 
   it('cuts nothing once the flow runs, prose or pictures', () => {
+    // Scored against the band that is actually PAINTED, which is now 24px
+    // rather than 6px. A 24px band is the one the styles.css header names as
+    // bisecting 94.8% of boundaries under the old model — it is safe here only
+    // because of the margins the next test measures.
     for (const [name, table, seed] of [['prose', PROSE, 7], ['mixed', MIXED, 11]] as const) {
-      const after = report(`${name}, grid + flow`, run(table, true, seed));
+      const after = report(`${name}, grid + flow`, run(table, true, seed, DOC_PAGE_GAP / 2));
       expect(after.seams, `${name}: no seams were exercised`).toBeGreaterThan(500);
       expect(after.bisected, `${name}: ${after.bisected}/${after.seams} seams bisected`).toBe(0);
     }
   });
 
-  it('does not pay for it in pages', () => {
-    // The flow buys clean seams with whitespace, and whitespace costs sheets.
-    // The guard is that it stays a rounding error rather than a reflow: more
-    // than about a page in eight would mean the pushes are fighting each other.
+  it('puts no ink in a page margin, on any page', () => {
+    // The assertion the whole margin change exists for, and it is a much
+    // stronger one than "the painted band misses the type": nothing may come
+    // within an inch of a boundary from either side. Under the pre-margin flow
+    // this scores near 100% by construction — that model filled the page to
+    // the boundary on purpose.
+    for (const [name, table, seed] of [['prose', PROSE, 7], ['mixed', MIXED, 11]] as const) {
+      const after = report(`${name}, margins`, run(table, true, seed, DOC_CONTENT_TOP - INK_OVERSHOOT));
+      expect(after.seams, `${name}: no boundaries were exercised`).toBeGreaterThan(400);
+      expect(after.bisected, `${name}: ${after.bisected}/${after.seams} margins invaded`).toBe(0);
+    }
+  });
+
+  it('costs about a third more sheets, and no more', () => {
+    // Margins are 211.2px of every 1056, and a paragraph that can no longer
+    // flow through a boundary leaves a ragged page bottom on top of that.
+    // Measured: 1.30x. The guard is not that it is cheap — it is not — but
+    // that the two known costs account for all of it. Anything approaching
+    // 1.5x would mean pushes are fighting each other or a block class is
+    // being moved that should not be.
     const r = rng(23);
     let plain = 0;
+    let hairline = 0;
     let flowed = 0;
     for (let d = 0; d < ITERATIONS; d += 1) {
       const blocks = makeDocument(MIXED, r);
       const zero = layout(blocks, new Array(blocks.length).fill(0));
       plain += Math.ceil((DOC_CONTENT_TOP * 2 + zero.height) / DOC_PAGE_HEIGHT);
+      hairline += flowCanvasPages(blocks, { pageMargin: 0 }).pageCount;
       flowed += flowCanvasPages(blocks).pageCount;
     }
     expect(flowed).toBeGreaterThanOrEqual(plain);
-    expect(flowed / plain).toBeLessThan(1.13);
+    expect(flowed / plain).toBeGreaterThan(1.2);
+    expect(flowed / plain).toBeLessThan(1.42);
+    // And the bill belongs to the margins, not to the seam avoidance that was
+    // already there: without them the flow is still nearly free.
+    expect(hairline / plain).toBeLessThan(1.13);
   });
 
   it('leaves a prose document exactly where the grid already put it', () => {

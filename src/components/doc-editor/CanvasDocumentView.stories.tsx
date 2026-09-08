@@ -421,11 +421,16 @@ const LONG = (n: number) =>
  * The document pagination was built for: pictures, a table, headings, code and
  * paragraphs long enough to cross a seam.
  *
- * Scroll to each grey band. Nothing is cut — the pictures and the table have
- * moved down to whole pages, headings travel with the text they introduce, and
- * the paragraphs that DO run through a seam do it in the leading between two
- * lines. Turn the `paginate` control off in the toolbar below and the same
- * document becomes one endless sheet.
+ * Scroll to each grey band. The thing to look at is the WHITE either side of
+ * it: every page has a one-inch margin top and bottom, the same one the first
+ * page has always had, and nothing is allowed into it. Pictures, tables,
+ * headings and whole paragraphs move down to the next page rather than run to
+ * the boundary — so a page ends after its last complete paragraph, which is
+ * why some of them end raggedly. That is the trade the margins cost; see the
+ * `paginate` prop doc.
+ *
+ * Turn the `paginate` control off in the toolbar below and the same document
+ * becomes one endless sheet.
  */
 export const Paginated: Story = {
   args: { isCanvas: true, body: null, ydoc: null as never, provider: null, paginate: true, ...BASE },

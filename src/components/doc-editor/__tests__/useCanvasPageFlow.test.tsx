@@ -185,6 +185,50 @@ describe('useCanvasPageFlow', () => {
     expect(view.result.current.pageCount).toBe(1);
   });
 
+  it('records the unpaginated gap beside every push, so print can undo it', () => {
+    // The app prints a CLONE of this subtree, and a clone carries inline
+    // styles — so without this the screen's pushes land on the paper as dead
+    // space, compounding with the printer's own page breaks. The print
+    // stylesheet restores `--doc-natural-gap`; this is the half that has to be
+    // written, and it has to be the gap the block would have had with NO
+    // pagination, not the gap it ended up with.
+    const built = sheet([
+      { tag: 'p', height: 30 * DOC_LINE, gap: 0 },
+      { tag: 'img', height: 300, gap: 14.4 },
+    ]);
+    const { result } = mount(built);
+    act(() => { result.current.remeasure(); });
+
+    const push = Number.parseFloat(built.els[1]!.style.marginTop);
+    const natural = Number.parseFloat(built.els[1]!.style.getPropertyValue('--doc-natural-gap'));
+    expect(natural).toBeCloseTo(14.4, 6);
+    // And it is a component OF the margin written, not a replacement for it —
+    // restoring it must remove the push and nothing else.
+    expect(push).toBeGreaterThan(natural);
+
+    // The block the flow left alone carries neither.
+    expect(built.els[0]!.style.getPropertyValue('--doc-natural-gap')).toBe('');
+  });
+
+  it('takes the recorded gap back off when pagination is turned off', () => {
+    const built = sheet([
+      { tag: 'p', height: 30 * DOC_LINE, gap: 0 },
+      { tag: 'img', height: 300, gap: 14.4 },
+    ]);
+    const paperRef = { current: built.paper as HTMLElement | null };
+    const bodyRef = { current: built.body as HTMLElement | null };
+    const view = renderHook(
+      ({ on }: { on: boolean }) => useCanvasPageFlow(on, paperRef, bodyRef, 1),
+      { initialProps: { on: true } },
+    );
+    act(() => { view.result.current.remeasure(); });
+    expect(built.els[1]!.style.getPropertyValue('--doc-natural-gap')).not.toBe('');
+    act(() => { view.rerender({ on: false }); });
+    // A leftover custom property with no margin beside it is harmless on
+    // screen and a lie in a print clone.
+    expect(built.els[1]!.style.getPropertyValue('--doc-natural-gap')).toBe('');
+  });
+
   it('runs itself once on mount without being asked', async () => {
     const built = sheet([
       { tag: 'p', height: 30 * DOC_LINE, gap: 0 },

@@ -19,10 +19,19 @@
 // props. That split is what makes the stacking testable without mounting an
 // editor.
 //
-// Anchors themselves should be Y.js relative positions, not offsets or
-// character indexes: a collaborator typing above your comment must move it,
-// not orphan it. `CommentData` has no anchor field yet, which is the gap
-// between this component and a persisted gutter.
+// Anchors themselves are Y.js relative positions, not offsets or character
+// indexes: a collaborator typing above your comment must move it, not orphan
+// it. That used to be a wish written here — "`CommentData` has no anchor field
+// yet, which is the gap between this component and a persisted gutter" — and it
+// is no longer true. `adapters/tiptap/canvas/anchors.ts` in realtime-modules
+// stores the relative position and `resolveAnchor` rebases it against the
+// current document; the app's `useCanvasGutterItems` resolves it to a pixel
+// offset with `coordsAtPos` and passes it here as `top`. A comment whose text
+// was DELETED resolves to null and is reported as orphaned rather than
+// positioned at 0, which is the case the offsets model could not express.
+//
+// None of that changes this component's contract: it still receives an offset
+// and still refuses to invent one.
 
 import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
@@ -47,8 +56,9 @@ export interface DocumentGutterProps {
    * as a whole and not to a line of it. That does push the thread cards down
    * by its height, which is the honest tradeoff: a call and a comment cannot
    * both own the same strip of margin, and Google Docs resolves it the same
-   * way. Anchoring is not yet driven by real positions here anyway — see the
-   * note at the top of this file.
+   * way — and it does cost real precision now that the offsets ARE real
+   * positions, because every card below the lead sits that much lower than the
+   * line it annotates.
    */
   lead?: ReactNode;
   /** Minimum vertical gap between two cards. */

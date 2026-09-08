@@ -104,6 +104,7 @@ export function applyCanvasPageFlow(
     if (want === round(applied.get(el) ?? 0)) continue;
     if (want === 0) {
       el.style.marginTop = '';
+      el.style.removeProperty('--doc-natural-gap');
       applied.delete(el);
       continue;
     }
@@ -114,7 +115,16 @@ export function applyCanvasPageFlow(
     // the larger of the two by construction.
     const prev = blocks[i - 1];
     const gap = i === 0 ? blocks[0]!.top : blocks[i]!.top - (prev!.top + prev!.height);
-    el.style.marginTop = `${round(Math.max(0, gap) + want)}px`;
+    const natural = round(Math.max(0, gap));
+    // Recorded beside the margin so PRINT can undo it. The app prints a CLONE
+    // of this subtree, and `cloneNode` brings inline styles with it — so
+    // without this, every push the screen applied lands on the paper as dead
+    // space, on top of the printer's own pagination. That was survivable while
+    // pushes were rare and small; with page margins nearly every boundary
+    // pushes a block, by up to a whole text area. See the rule keyed on
+    // `[style*="margin-top"]` in the print block of styles.css.
+    el.style.setProperty('--doc-natural-gap', `${natural}px`);
+    el.style.marginTop = `${round(natural + want)}px`;
     applied.set(el, want);
   }
 
@@ -169,6 +179,7 @@ export function useCanvasPageFlow(
     for (const el of blocksOf(body)) {
       if (applied.has(el)) {
         el.style.marginTop = '';
+        el.style.removeProperty('--doc-natural-gap');
         applied.delete(el);
       }
     }

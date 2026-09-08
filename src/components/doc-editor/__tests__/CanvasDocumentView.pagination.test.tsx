@@ -212,14 +212,28 @@ describe('the baseline grid the seam depends on', () => {
     expect(GAP).toBe(DOC_PAGE_GAP);
   });
 
-  it('keeps the gap inside the clear leading', () => {
-    // The measured constraint, and the one worth guarding: a body line
-    // advances LINE px and its glyphs occupy 1.211em of that (Inter's ascender
-    // plus descender). What is left is the only space a seam may occupy.
-    // Simulated: every gap up to the leading bisects 4.6% of seams, and the
-    // very next pixel jumps to 78%.
+  it('keeps the gap inside the page margin, not inside the clear leading', () => {
+    // The constraint this feature shipped with was the CLEAR LEADING: a body
+    // line advances LINE px and its glyphs occupy 1.211em of it, so 7.02px was
+    // all a seam could have without landing on type. Simulated, every gap up
+    // to the leading bisected 4.6% of seams and the very next pixel jumped to
+    // 78%.
+    //
+    // That constraint is gone, because what it protected against is gone: text
+    // no longer flows through a boundary at all. Every page now has a
+    // DOC_CONTENT_TOP margin and `flowCanvasPages` keeps ink out of it, so the
+    // band is bounded by the margin instead — it is painted INSIDE the page
+    // period, so each half of it spends margin, and a gap that ate the margin
+    // would be drawing the desk over the page.
+    //
+    // Asserted in both directions on purpose. The lower bound is the design:
+    // 6px between two sheets reads as a rule, not as a gap, and the only
+    // reason it was ever 6px was the constraint above.
     const clearLeading = LINE - 16 * 1.211;
-    expect(GAP).toBeLessThanOrEqual(clearLeading);
+    expect(GAP).toBeGreaterThan(clearLeading);
+    // A quarter of the margin, at most. At 24px against 105.6px the white
+    // margin either side of the desk is still 93.6px — 0.975in of the inch.
+    expect(GAP / 2).toBeLessThanOrEqual(DOC_CONTENT_TOP / 4);
   });
 
   it('gives every block a height and margin that is a whole number of rows', () => {
@@ -234,5 +248,42 @@ describe('the baseline grid the seam depends on', () => {
     // And no division of the row at all, which is the same error spelled the
     // other way round.
     expect(section).not.toMatch(/var\(--doc-line\)\s*\/\s*[0-9]/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The screen's page model must not reach the paper.
+//
+// The printed sheet is a CLONE of the live prose, and a clone carries inline
+// styles — including the `margin-top` pushes this feature writes. Left in
+// place they compound with the printer's own `@page` breaks, which fall
+// somewhere else because the printable area is a different height, and a
+// three-page document prints as six with half of them blank. This is the
+// stylesheet half of the fix; the hook half is in useCanvasPageFlow.test.tsx.
+// ---------------------------------------------------------------------------
+describe('the print sheet undoes the screen pagination', () => {
+  const css = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8');
+  const begin = css.indexOf('BEGIN: print');
+  const end = css.indexOf('END: print');
+  expect(begin, 'the print section is missing from styles.css').toBeGreaterThan(-1);
+  const section = css
+    .slice(css.indexOf('*/', begin) + 2, css.lastIndexOf('/*', end))
+    .replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('restores the unpaginated gap on every pushed block', () => {
+    // Matched loosely on whitespace, exactly on the two things that carry the
+    // meaning: the selector has to find the inline margin the hook writes, and
+    // the value has to be the custom property the hook writes beside it.
+    const rule = section.match(
+      /#doc-print-root \.ProseMirror > \[style\*=['"]margin-top['"]\]\s*\{([^}]*)\}/,
+    );
+    expect(rule, 'no rule neutralises the pagination pushes on paper').not.toBeNull();
+    expect(rule![1]).toMatch(/margin-top:\s*var\(--doc-natural-gap,\s*0px\)\s*!important/);
+  });
+
+  it('states a page size and a margin of its own', () => {
+    // The printer paginates; the screen's 1056px sheet means nothing here.
+    expect(css.slice(begin, end)).toMatch(/@page\s*\{[^}]*size:\s*Letter/);
+    expect(css.slice(begin, end)).toMatch(/@page\s*\{[^}]*margin:\s*1in/);
   });
 });

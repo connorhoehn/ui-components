@@ -29,12 +29,56 @@
 //      height now costs at most 26.4px of extra leading UNDER it instead of
 //      corrupting the grid for everything that follows.
 //
-//   2. AVOID THE SEAM. A block that must not be cut — an image, a table, a
-//      rule, a heading, a code block that fits — is pushed to the next page
-//      when a seam would fall inside it. Blocks that MAY be cut (paragraphs,
-//      lists, quotes) are left to flow, and get orphan/widow control instead:
-//      a single stranded first or last line is pushed over rather than left
-//      alone on a page.
+//   2. STAY OUT OF THE PAGE MARGIN. Every page has a top and a bottom margin,
+//      and no block may put ink in one. A block that would reach into the
+//      bottom margin is pushed to the top of the next page's text area.
+//
+// Job 2 used to be narrower — "do not let a HAIRLINE seam cut an image" — and
+// the `pageMargin` option still expresses that older model at 0. What changed
+// and why is under "## Why every page has margins" below.
+//
+// ## Why every page has margins
+//
+// The first version of this module protected a HAIRLINE. Pages were 1056px
+// apart, a 6px band was painted on each boundary, and the job was to keep that
+// band out of anything it must not cut. It succeeded — 0.0% of seams bisected —
+// and still did not look like a page, because on an interior boundary the text
+// ran straight down to the band from above and started again straight below it.
+// Page one had a 1in margin at the top and page one alone; every other page
+// had none, top or bottom. A sheet of paper with type hard against its edges is
+// not a sheet of paper, and "Page 3 of 7" in the status bar was making a claim
+// the page itself did not support.
+//
+// So the boundary is no longer a line, it is a BAND: `pageMargin` px of white
+// on each side of it, matching the margin the first page already has. Nothing
+// may put ink there. In content coordinates the band around boundary k is
+// [k*pageHeight - contentTop - margin, k*pageHeight - contentTop + margin], and
+// with the default margin (= `contentTop`, one inch) that is exactly
+// [k*pageHeight - 2*contentTop, k*pageHeight] — so a pushed block lands on
+// content coordinate k*pageHeight, which is 40k whole grid rows. The margins
+// cost nothing in grid drift; a page holds 32 rows instead of 40.
+//
+// ### What it costs, stated plainly
+//
+// Two things, and the second is the one worth arguing about.
+//
+//   1. Sheets. 211.2px of every 1056 is now margin, so a document needs about
+//      25% more pages, plus whatever the second cost adds.
+//
+//   2. RAGGED PAGE BOTTOMS. A paragraph may no longer flow through a boundary,
+//      because the half above it would sit in the bottom margin. It is pushed
+//      whole instead, so a page ends where its last complete paragraph ends
+//      rather than on a fixed last line. Google Docs does not do this — it
+//      breaks the paragraph and fills the page — and it cannot be imitated
+//      here: a paragraph is one block box in a continuous flow, and there is no
+//      CSS that inserts two inches of dead space into the middle of one. The
+//      choice is a ragged bottom or ink in the margin, and a ragged bottom is
+//      what a page looks like when the typesetter kept blocks together.
+//
+// A block TALLER than one page's text area is the exception: it cannot be
+// pushed anywhere that helps, so it flows through the margin and the boundary
+// cuts it. That is the honest degradation, and it is why `usable` is checked
+// before every push rather than after.
 //
 // Kept free of the DOM on purpose. Everything here is arithmetic over measured
 // numbers, which is the only way it can be tested — jsdom has no layout engine,
@@ -64,8 +108,19 @@ export const DOC_PAGE_HEIGHT = 1056;
  */
 export const DOC_CONTENT_TOP = DOC_LINE * 4;
 
-/** The painted gap, `--doc-page-gap`. A pushed block clears more than half of it. */
-export const DOC_PAGE_GAP = 6;
+/**
+ * The painted gap between two sheets, `--doc-page-gap`. Must match the value in
+ * styles.css — this one decides how far a push has to clear the boundary, that
+ * one decides how wide the band is drawn.
+ *
+ * It was 6px, and 6px was a constraint rather than a design: text flowed
+ * through the boundary, a body line leaves only 7.02px of clear leading, and a
+ * band wider than that landed on the type (measured: 7px behaves like 6px, 8px
+ * bisects 78% of boundaries, 24px bisects 94.8%). Now that every page has
+ * margins, no ink comes within `pageMargin` of a boundary at all and the gap is
+ * free to be what it represents: the desk between two sheets.
+ */
+export const DOC_PAGE_GAP = 24;
 
 /** Below the smallest measurement worth acting on. Guards float noise, not layout. */
 const EPS = 0.01;
@@ -114,6 +169,25 @@ export interface CanvasFlowOptions {
   pageHeight?: number;
   contentTop?: number;
   line?: number;
+  /**
+   * White space reserved at the top and bottom of EVERY page, in document
+   * pixels. Defaults to `contentTop` — the one-inch margin the first page has
+   * always had, now given to the other pages too.
+   *
+   * Two values are meaningful and everything between them behaves sensibly:
+   *
+   *   contentTop  every page is a page. What ships.
+   *   0           the pre-margin model: the boundary is a hairline, blocks are
+   *               only moved to stop that hairline CUTTING them, and a
+   *               paragraph is allowed to flow straight through it with
+   *               orphan/widow control. Kept because it is the thing the
+   *               margins are an argument against, and an argument you cannot
+   *               run is an assertion — `pageFlow.test.ts` runs both.
+   *
+   * Must be a whole number of grid rows, and `pageHeight - 2 * pageMargin`
+   * must be too, or the grid drifts by the remainder on every page.
+   */
+  pageMargin?: number;
   /**
    * How far below a seam a pushed block starts, before the grid snap.
    *
@@ -175,30 +249,48 @@ export function flowCanvasPages(
   const pageHeight = options.pageHeight ?? DOC_PAGE_HEIGHT;
   const contentTop = options.contentTop ?? DOC_CONTENT_TOP;
   const line = options.line ?? DOC_LINE;
-  const edge = options.edgeClearance ?? DOC_PAGE_GAP / 2 + 0.5;
-  const clearance = options.seamClearance ?? DOC_PAGE_GAP / 2 + 1;
+  const margin = Math.max(0, options.pageMargin ?? contentTop);
   const keep = options.keepLines ?? 2;
+  // Both clearances exist to keep a block a hair clear of a HAIRLINE boundary.
+  // A margin is already two orders of magnitude more clearance than either
+  // asks for, so once there is one they contribute nothing and are clamped
+  // away — leaving them in would push a block a few pixels PAST the top of the
+  // text area and then the grid snap would spend a whole row correcting it.
+  const edge = Math.max(0, (options.edgeClearance ?? DOC_PAGE_GAP / 2 + 0.5) - margin);
+  const clearance = Math.max(0, (options.seamClearance ?? DOC_PAGE_GAP / 2 + 1) - margin);
 
   const pushes = new Array<number>(blocks.length).fill(0);
   if (!(pageHeight > 0) || !(line > 0) || blocks.length === 0) {
     return { pushes, pageCount: 1, contentHeight: 0 };
   }
 
-  // The first seam strictly below content coordinate `c`. Seams live in PAPER
-  // coordinates at whole multiples of the page height; `contentTop` is the
-  // only thing standing between the two frames.
-  const nextSeam = (c: number): number => {
-    const k = Math.floor((c + contentTop) / pageHeight) + 1;
-    return k * pageHeight - contentTop;
+  // The first forbidden band that is not already entirely ABOVE content
+  // coordinate `c`: [bottom margin of one page, top margin of the next].
+  // Boundaries live in PAPER coordinates at whole multiples of the page height;
+  // `contentTop` is the only thing standing between the two frames.
+  //
+  // Selected by the band's BOTTOM edge, not by the boundary itself, and that is
+  // the whole subtlety. A block sitting 10px past a boundary has cleared the
+  // boundary and is still in the top margin of the page below it — asking for
+  // "the next boundary strictly below c" skips straight past the band the block
+  // is standing in and reports the page as clean. That was a real bug: it left
+  // ink in 9.5% of margins while every seam-bisection score read zero.
+  //
+  // At `margin` 0 the band collapses to a point and this reduces exactly to
+  // "the next boundary strictly below c" — the hairline seam the pre-margin
+  // model protected, with the overlap test below degenerating to "does the
+  // boundary fall strictly inside the block".
+  const bandAt = (c: number): [number, number] => {
+    const k = Math.floor((c + contentTop - margin) / pageHeight) + 1;
+    const s = k * pageHeight - contentTop;
+    return [s - margin, s + margin];
   };
 
-  // What one sheet can actually hold for a block that was pushed onto it: the
-  // page, less the clearance the push spends below the seam above and the
-  // clearance the block claims above the seam below. Using the full page here
-  // is how a nearly-page-tall image gets pushed onto a fresh sheet only to
-  // cross the NEXT seam — one push per block, so the check has to be right the
-  // first time.
-  const usable = pageHeight - clearance - edge;
+  // What one page's text area can actually hold. Using the full page here is
+  // how a nearly-page-tall image gets pushed onto a fresh sheet only to run
+  // into the NEXT boundary — one push per block, so the check has to be right
+  // the first time.
+  const usable = pageHeight - 2 * margin - clearance - edge;
 
   let shift = 0;
   let bottom = 0;
@@ -224,32 +316,41 @@ export function flowCanvasPages(
       : b.height;
     // Unsplittable blocks claim `edge` px outside their box on both sides; a
     // paragraph's line boxes already inset their own ink further than that, so
-    // prose is judged on the box alone and nothing reflows for a seam that was
-    // always going to land in the leading.
+    // prose is judged on the box alone and nothing reflows for a boundary that
+    // was always going to land in the leading. With margins `edge` is 0 and
+    // the distinction stops mattering.
     const lo = b.splittable ? top : top - edge;
     const hi = b.splittable ? top + reach : top + reach + edge;
-    const seam = nextSeam(lo);
-    const crosses = seam > lo + EPS && seam < hi - EPS;
+    const [bandLo, bandHi] = bandAt(lo);
+    const crosses = bandLo < hi - EPS && bandHi > lo + EPS;
 
     if (crosses) {
-      if (!b.splittable) {
-        // Move it whole, but only if a whole sheet can hold it. A picture
-        // taller than the page has to be cut by SOMETHING; cutting it at the
-        // seam is better than an empty page followed by the same cut.
+      // Everything moves whole once there are margins, prose included: a
+      // paragraph that flowed through the band would put its middle lines in
+      // the margin, which is the defect the margins exist to remove. Without
+      // margins only the blocks that must not be CUT are moved.
+      const moveWhole = !b.splittable || margin > EPS;
+      if (moveWhole) {
+        // Only if a whole page can hold it. A picture — or a forty-line
+        // paragraph — taller than the text area has to be cut by SOMETHING,
+        // and cutting it at the boundary is better than an empty page followed
+        // by the same cut.
         if (reach <= usable + EPS) {
-          move(seam + clearance - top);
+          move(bandHi + clearance - top);
           if (b.onGrid) move(gridSnap(top, line));
         }
       } else {
         // Orphans and widows, counted in whole lines. `height / line` is exact
         // for every block the paginated stylesheet sizes, which is every block
-        // that reaches this branch.
+        // that reaches this branch. Reachable only at `pageMargin: 0`: with a
+        // margin, a block that fits has been moved whole and a block that does
+        // not fit has nowhere to put its stranded line either.
         const lines = Math.max(1, Math.round(b.height / line));
-        const before = Math.max(0, Math.floor((seam - top) / line + EPS));
+        const before = Math.max(0, Math.floor((bandLo - top) / line + EPS));
         const after = lines - before;
         if (before > 0 && before < keep && b.height <= usable + EPS) {
           // Too few lines before the break to be worth leaving there.
-          move(seam + clearance - top);
+          move(bandHi + clearance - top);
           if (b.onGrid) move(gridSnap(top, line));
         } else if (after > 0 && after < keep && before - (keep - after) >= keep) {
           // Enough lines above to afford sending another one over.
@@ -270,19 +371,26 @@ export function flowCanvasPages(
 }
 
 /**
- * Which page a point in content coordinates falls on, 1-based.
+ * Which page a point on the SHEET falls on, 1-based.
+ *
+ * PAPER coordinates — measured from the top edge of the paper, not from the
+ * first line's box — because the caller's input is a scroll offset against the
+ * sheet and the pages are whole multiples of the page height from that edge.
+ * (`flowCanvasPages` works in content coordinates instead; `contentTop` is the
+ * conversion, and mixing the two here would report the wrong page for the first
+ * inch of every sheet.)
  *
  * Used for "Page 3 of 7": the reader's position is a scroll offset, not a
  * block, so this cannot come out of the flow result.
  */
 export function canvasPageAt(
-  contentY: number,
+  paperY: number,
   pageCount: number,
   options: Pick<CanvasFlowOptions, 'pageHeight'> = {},
 ): number {
   const pageHeight = options.pageHeight ?? DOC_PAGE_HEIGHT;
   if (!(pageHeight > 0)) return 1;
-  const page = Math.floor(contentY / pageHeight) + 1;
+  const page = Math.floor(paperY / pageHeight) + 1;
   return Math.min(Math.max(1, page), Math.max(1, pageCount));
 }
 
