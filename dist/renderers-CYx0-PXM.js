@@ -6,7 +6,7 @@ import { t as o } from "./Input-DLknWXri.js";
 import { t as s } from "./Select-CqVokE2v.js";
 import { t as c } from "./NumberInput-PlADgrip.js";
 import { t as l } from "./Checkbox-DqN9RkXK.js";
-import { t as u } from "./TiptapEditor-Dn9rUdZx.js";
+import { t as u } from "./TiptapEditor-fzwphhi7.js";
 import { useCallback as d, useEffect as f, useRef as p, useState as m } from "react";
 import { Fragment as h, jsx as g, jsxs as _ } from "react/jsx-runtime";
 //#region src/components/doc-types/cookbooks/index.ts
@@ -1248,10 +1248,10 @@ function B(e) {
 }
 //#endregion
 //#region src/renderers/default/DefaultRenderer.tsx
-function be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
-	let d = B(e), f = p(!1);
+function be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l, extensions: d, editorComponent: f }) {
+	let m = f ?? u, h = B(e), v = p(!1);
 	return /* @__PURE__ */ _("div", { children: [
-		t && n && /* @__PURE__ */ g(u, {
+		t && n && /* @__PURE__ */ g(m, {
 			fragment: t,
 			ydoc: n,
 			provider: r ?? null,
@@ -1262,14 +1262,15 @@ function be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 			editable: a,
 			placeholder: e.placeholder ?? `Write ${e.type} content...`,
 			sectionId: e.id,
-			onUpdateCursorInfo: l
+			onUpdateCursorInfo: l,
+			extensions: d
 		}),
-		(d.length > 0 || a) && /* @__PURE__ */ g(z, {
-			items: d,
+		(h.length > 0 || a) && /* @__PURE__ */ g(z, {
+			items: h,
 			editable: a,
 			onUpdateItem: (e, t) => s?.(e, t),
 			onRemoveItem: (e) => c?.(e),
-			focusLastItem: f
+			focusLastItem: v
 		}),
 		a && /* @__PURE__ */ g("button", {
 			type: "button",
@@ -1282,20 +1283,20 @@ function be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 					ackedAt: "",
 					priority: "medium",
 					notes: ""
-				}), f.current = !0;
+				}), v.current = !0;
 			},
-			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
+			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer",
 			children: "+ Add item"
 		})
 	] });
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextEditorRenderer.tsx
-function xe({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
+function xe({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o, extensions: s, editorComponent: c }) {
 	return !t || !n ? /* @__PURE__ */ g("div", {
 		className: "text-text-tertiary italic text-[13px] py-2",
 		children: "No content yet."
-	}) : /* @__PURE__ */ g(u, {
+	}) : /* @__PURE__ */ g(c ?? u, {
 		fragment: t,
 		ydoc: n,
 		provider: r ?? null,
@@ -1306,15 +1307,16 @@ function xe({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 		editable: a,
 		placeholder: e.placeholder ?? "Write content...",
 		sectionId: e.id,
-		onUpdateCursorInfo: o
+		onUpdateCursorInfo: o,
+		extensions: s
 	});
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextReaderRenderer.tsx
-function Se({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i }) {
+function Se({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i, extensions: a, editorComponent: o }) {
 	return /* @__PURE__ */ _("div", { children: [t && n ? /* @__PURE__ */ g("div", {
 		className: "border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-text-primary leading-[1.6]",
-		children: /* @__PURE__ */ g(u, {
+		children: /* @__PURE__ */ g(o ?? u, {
 			fragment: t,
 			ydoc: n,
 			provider: r ?? null,
@@ -1323,7 +1325,8 @@ function Se({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor:
 				color: "#6b7280"
 			},
 			editable: !1,
-			sectionId: e.id
+			sectionId: e.id,
+			extensions: a
 		})
 	}) : /* @__PURE__ */ g("div", {
 		className: "text-text-tertiary italic text-[13px]",
@@ -1331,7 +1334,7 @@ function Se({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor:
 	}), i && /* @__PURE__ */ g("button", {
 		type: "button",
 		onClick: () => i(e.id),
-		className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
+		className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0",
 		children: "Edit in editor →"
 	})] });
 }
@@ -1366,7 +1369,7 @@ function Ce({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveIt
 						notes: ""
 					}), o.current = !0;
 				},
-				className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
+				className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer",
 				children: "+ Add item"
 			})
 		]
@@ -1565,7 +1568,7 @@ function ke({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
 		n && /* @__PURE__ */ g("button", {
 			type: "button",
 			onClick: () => n(e.id),
-			className: "mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
+			className: "mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0",
 			children: "Edit in editor →"
 		})
 	] });
@@ -1593,7 +1596,7 @@ function Ae({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 				onChange: (e) => o({ text: e.target.value }),
 				readOnly: !t,
 				placeholder: "Checklist item...",
-				className: i("flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5", l ? "text-text-tertiary line-through" : "text-text-primary")
+				className: i("flex-1 border-none outline-none text-sm bg-transparent px-1 py-0.5", l ? "text-text-tertiary line-through" : "text-text-primary")
 			}),
 			t && /* @__PURE__ */ g("button", {
 				type: "button",
@@ -1604,9 +1607,9 @@ function Ae({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 		]
 	});
 }
-function je({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
-	let d = B(e), f = p(null), m = () => {
-		o && (f.current = d.length, o({
+function je({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l, extensions: d, editorComponent: f }) {
+	let m = f ?? u, h = B(e), v = p(null), y = () => {
+		o && (v.current = h.length, o({
 			text: "",
 			status: "pending",
 			assignee: "",
@@ -1615,9 +1618,9 @@ function je({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 			priority: "medium",
 			notes: ""
 		}));
-	}, h = f.current, v = h !== null && d.length > h, y = d.length, b = d.filter((e) => e.status === "done").length;
+	}, b = v.current, x = b !== null && h.length > b, S = h.length, C = h.filter((e) => e.status === "done").length;
 	return /* @__PURE__ */ _("div", { children: [
-		t && n && /* @__PURE__ */ g(u, {
+		t && n && /* @__PURE__ */ g(m, {
 			fragment: t,
 			ydoc: n,
 			provider: r ?? null,
@@ -1628,25 +1631,26 @@ function je({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 			editable: a,
 			placeholder: e.placeholder ?? "Add notes or context...",
 			sectionId: e.id,
-			onUpdateCursorInfo: l
+			onUpdateCursorInfo: l,
+			extensions: d
 		}),
-		y > 0 && /* @__PURE__ */ _("div", {
+		S > 0 && /* @__PURE__ */ _("div", {
 			className: "text-[11px] text-neutral font-semibold mb-1.5",
 			children: [
-				b,
+				C,
 				" / ",
-				y,
+				S,
 				" done"
 			]
 		}),
-		/* @__PURE__ */ g("div", { children: d.map((e, t) => {
-			let n = t === d.length - 1, r = v && n;
+		/* @__PURE__ */ g("div", { children: h.map((e, t) => {
+			let n = t === h.length - 1, r = x && n;
 			return /* @__PURE__ */ g(Ae, {
 				item: e,
 				editable: a,
 				autoFocus: r,
 				onDidAutoFocus: r ? () => {
-					f.current = null;
+					v.current = null;
 				} : void 0,
 				onUpdate: (t) => s?.(e.id, t),
 				onRemove: () => c?.(e.id)
@@ -1654,20 +1658,20 @@ function je({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 		}) }),
 		a && /* @__PURE__ */ g("button", {
 			type: "button",
-			onClick: m,
-			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
+			onClick: y,
+			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer",
 			children: "+ Add item"
 		})
 	] });
 }
 //#endregion
 //#region src/renderers/checklist/ChecklistReaderRenderer.tsx
-function Me({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, onNavigateToEditor: o }) {
-	let s = B(e), c = s.length, l = s.filter((e) => e.status === "done").length, d = c > 0 ? Math.round(l / c * 100) : 0;
+function Me({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, onNavigateToEditor: o, extensions: s, editorComponent: c }) {
+	let l = c ?? u, d = B(e), f = d.length, p = d.filter((e) => e.status === "done").length, m = f > 0 ? Math.round(p / f * 100) : 0;
 	return /* @__PURE__ */ _("div", { children: [
 		t && n && /* @__PURE__ */ g("div", {
 			className: "mb-2.5",
-			children: /* @__PURE__ */ g(u, {
+			children: /* @__PURE__ */ g(l, {
 				fragment: t,
 				ydoc: n,
 				provider: r ?? null,
@@ -1676,37 +1680,38 @@ function Me({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, on
 					color: "#6b7280"
 				},
 				editable: !1,
-				sectionId: e.id
+				sectionId: e.id,
+				extensions: s
 			})
 		}),
-		c > 0 && /* @__PURE__ */ _("div", {
+		f > 0 && /* @__PURE__ */ _("div", {
 			className: "mb-2.5",
 			children: [/* @__PURE__ */ _("div", {
 				className: "flex justify-between mb-1",
 				children: [/* @__PURE__ */ _("span", {
 					className: "text-[11px] text-neutral font-semibold",
 					children: [
-						l,
+						p,
 						" / ",
-						c,
+						f,
 						" done"
 					]
 				}), /* @__PURE__ */ _("span", {
-					className: i("text-[11px] font-semibold", d === 100 ? "text-success-fg" : "text-neutral"),
-					children: [d, "%"]
+					className: i("text-[11px] font-semibold", m === 100 ? "text-success-fg" : "text-neutral"),
+					children: [m, "%"]
 				})]
 			}), /* @__PURE__ */ g("div", {
 				className: "h-1 bg-border rounded-sm overflow-hidden",
 				children: /* @__PURE__ */ g("div", {
-					className: i("h-full rounded-sm transition-[width] duration-300", d === 100 ? "bg-success" : "bg-info"),
-					style: { width: `${d}%` }
+					className: i("h-full rounded-sm transition-[width] duration-300", m === 100 ? "bg-success" : "bg-info"),
+					style: { width: `${m}%` }
 				})
 			})]
 		}),
-		c === 0 ? /* @__PURE__ */ g("div", {
+		f === 0 ? /* @__PURE__ */ g("div", {
 			className: "text-text-tertiary italic text-[13px]",
 			children: "No items."
-		}) : /* @__PURE__ */ g("div", { children: s.map((e) => {
+		}) : /* @__PURE__ */ g("div", { children: d.map((e) => {
 			let t = e.status === "done";
 			return /* @__PURE__ */ _("div", {
 				className: "flex items-center gap-2 py-[5px] border-b border-border-subtle",
@@ -1728,7 +1733,7 @@ function Me({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, on
 		o && /* @__PURE__ */ g("button", {
 			type: "button",
 			onClick: () => o(e.id),
-			className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
+			className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0",
 			children: "Edit in editor →"
 		})
 	] });
@@ -1832,12 +1837,12 @@ function ze({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 				onChange: (e) => o({ text: e.target.value }),
 				readOnly: !t,
 				placeholder: "Describe the decision...",
-				className: i("flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5", e.status === "rejected" ? "text-text-tertiary line-through" : "text-text-primary")
+				className: i("flex-1 border-none outline-none text-sm bg-transparent px-1 py-0.5", e.status === "rejected" ? "text-text-tertiary line-through" : "text-text-primary")
 			}),
 			t && /* @__PURE__ */ _("select", {
 				value: e.status === "done" ? "acked" : e.status,
 				onChange: (e) => o({ status: e.target.value }),
-				className: "text-[10px] px-2 py-0.5 rounded-[10px] font-semibold cursor-pointer outline-none font-inherit shrink-0 appearance-none",
+				className: "text-[10px] px-2 py-0.5 rounded-[10px] font-semibold cursor-pointer outline-none shrink-0 appearance-none",
 				style: {
 					border: `1px solid ${l.color}`,
 					background: l.bg,
@@ -1867,9 +1872,9 @@ function ze({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 		]
 	});
 }
-function Be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
-	let d = B(e), f = p(null), m = () => {
-		o && (f.current = d.length, o({
+function Be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l, extensions: d, editorComponent: f }) {
+	let m = f ?? u, h = B(e), v = p(null), y = () => {
+		o && (v.current = h.length, o({
 			text: "",
 			status: "pending",
 			assignee: "",
@@ -1878,9 +1883,9 @@ function Be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 			priority: "medium",
 			notes: ""
 		}));
-	}, h = f.current, v = h !== null && d.length > h;
+	}, b = v.current, x = b !== null && h.length > b;
 	return /* @__PURE__ */ _("div", { children: [
-		t && n && /* @__PURE__ */ g(u, {
+		t && n && /* @__PURE__ */ g(m, {
 			fragment: t,
 			ydoc: n,
 			provider: r ?? null,
@@ -1891,20 +1896,21 @@ function Be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 			editable: a,
 			placeholder: e.placeholder ?? "Add context or background...",
 			sectionId: e.id,
-			onUpdateCursorInfo: l
+			onUpdateCursorInfo: l,
+			extensions: d
 		}),
-		d.length === 0 && !a && /* @__PURE__ */ g("div", {
+		h.length === 0 && !a && /* @__PURE__ */ g("div", {
 			className: "text-text-tertiary italic text-[13px] py-1",
 			children: "No decisions yet."
 		}),
-		/* @__PURE__ */ g("div", { children: d.map((t, n) => {
-			let r = n === d.length - 1, o = v && r;
+		/* @__PURE__ */ g("div", { children: h.map((t, n) => {
+			let r = n === h.length - 1, o = x && r;
 			return /* @__PURE__ */ g(ze, {
 				item: t,
 				editable: a,
 				autoFocus: o,
 				onDidAutoFocus: o ? () => {
-					f.current = null;
+					v.current = null;
 				} : void 0,
 				onUpdate: (n) => {
 					let r = t.status;
@@ -1922,8 +1928,8 @@ function Be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 		}) }),
 		a && /* @__PURE__ */ g("button", {
 			type: "button",
-			onClick: m,
-			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
+			onClick: y,
+			className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer",
 			children: "+ Add decision"
 		})
 	] });
@@ -2023,7 +2029,7 @@ function He({ section: e, onNavigateToEditor: t }) {
 		t && /* @__PURE__ */ g("button", {
 			type: "button",
 			onClick: () => t(e.id),
-			className: "mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
+			className: "mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0",
 			children: "Edit in editor →"
 		})
 	] });
@@ -2483,7 +2489,7 @@ function ct(e) {
 					type: "button",
 					"data-testid": `date-field-clear-${t.id}`,
 					onClick: () => i?.(q(t, void 0)),
-					className: "bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0 font-inherit",
+					className: "bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0",
 					children: "Clear"
 				})
 			]
@@ -2578,7 +2584,7 @@ function $(e) {
 					type: "button",
 					"data-testid": `boolean-field-clear-${t.id}`,
 					onClick: () => a?.(q(t, void 0)),
-					className: "bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0 font-inherit",
+					className: "bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0",
 					children: "Clear"
 				})
 			]

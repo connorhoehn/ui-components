@@ -47,6 +47,19 @@ export interface DocumentShareDialogProps {
   onInvite?: (query: string) => void;
   /** Copy a link to the document. */
   onCopyLink?: () => void;
+  /**
+   * One line explaining a limit the reader would otherwise discover by being
+   * wrong — most usefully, that this host cannot yet SAVE what the dialog
+   * shows.
+   *
+   * The header says this component renders an answer someone else computed
+   * and lies if the host lies. That is the correct division of labour and it
+   * leaves a gap: a host with no persistence can omit `onChangeRole` to make
+   * the roles read-only, but then the reader sees a permissions dialog that
+   * simply refuses to work and is told nothing. Withholding a control is
+   * honest; withholding the reason is not.
+   */
+  notice?: string;
   'data-testid'?: string;
 }
 
@@ -68,6 +81,7 @@ export function DocumentShareDialog({
   onChangeRole,
   onInvite,
   onCopyLink,
+  notice,
   'data-testid': testId = 'document-share-dialog',
 }: DocumentShareDialogProps) {
   const [query, setQuery] = useState('');
@@ -102,6 +116,15 @@ export function DocumentShareDialog({
               Invite
             </Button>
           </div>
+        )}
+
+        {notice && (
+            <p
+                className="m-0 rounded border border-border-emphasis bg-surface-inset px-2.5 py-1.5 text-xs leading-snug text-text-secondary"
+                data-testid={`${testId}-notice`}
+            >
+                {notice}
+            </p>
         )}
 
         <div className="flex flex-col gap-1" data-testid={`${testId}-people`}>

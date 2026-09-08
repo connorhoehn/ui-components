@@ -761,7 +761,7 @@ export declare interface DocumentRulerProps {
  */
 export declare type DocumentShape = 'page' | 'sections' | 'diagram';
 
-export declare function DocumentShareDialog({ open, onClose, documentTitle, people, generalAccess, orgName, onChangeGeneralAccess, onChangeRole, onInvite, onCopyLink, 'data-testid': testId, }: DocumentShareDialogProps): JSX.Element;
+export declare function DocumentShareDialog({ open, onClose, documentTitle, people, generalAccess, orgName, onChangeGeneralAccess, onChangeRole, onInvite, onCopyLink, notice, 'data-testid': testId, }: DocumentShareDialogProps): JSX.Element;
 
 export declare interface DocumentShareDialogProps {
     open: boolean;
@@ -778,6 +778,19 @@ export declare interface DocumentShareDialogProps {
     onInvite?: (query: string) => void;
     /** Copy a link to the document. */
     onCopyLink?: () => void;
+    /**
+     * One line explaining a limit the reader would otherwise discover by being
+     * wrong — most usefully, that this host cannot yet SAVE what the dialog
+     * shows.
+     *
+     * The header says this component renders an answer someone else computed
+     * and lies if the host lies. That is the correct division of labour and it
+     * leaves a gap: a host with no persistence can omit `onChangeRole` to make
+     * the roles read-only, but then the reader sees a permissions dialog that
+     * simply refuses to work and is told nothing. Withholding a control is
+     * honest; withholding the reason is not.
+     */
+    notice?: string;
     'data-testid'?: string;
 }
 
@@ -2023,16 +2036,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -2046,6 +2049,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

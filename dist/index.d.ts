@@ -9240,6 +9240,33 @@ export declare interface Section {
     placeholder?: string;
 }
 
+declare type SectionEditorComponent = React.ComponentType<SectionEditorProps>;
+
+/**
+ * The contract a renderer needs from a collaborative rich-text editor — the
+ * subset of `TiptapEditorProps` that the section renderers actually pass.
+ *
+ * It exists so `editorComponent` below can be typed without dragging in the
+ * whole of the library's own editor. The library's `TiptapEditor` satisfies
+ * it, and so does the editor a host already ships (realtime-modules'
+ * `adapters/tiptap` export, for one).
+ */
+declare interface SectionEditorProps {
+    fragment: XmlFragment;
+    ydoc: Y.Doc;
+    provider: CollaborationProvider | null;
+    user: {
+        name: string;
+        color: string;
+    };
+    editable?: boolean;
+    placeholder?: string;
+    sectionId?: string;
+    onUpdateCursorInfo?: (name: string, color: string) => void;
+    /** Extra Tiptap extensions appended to the editor's built-in set. */
+    extensions?: readonly unknown[];
+}
+
 export declare function SectionLabel({ children, as: As, className, 'data-testid': testId, }: SectionLabelProps): JSX.Element;
 
 export declare interface SectionLabelProps {
@@ -9276,6 +9303,33 @@ declare interface SectionRendererProps {
     commentCount?: number;
     onOpenComments?: (sectionId: string) => void;
     onNavigateToEditor?: (sectionId: string) => void;
+    /**
+     * Extra Tiptap extensions for the rich-text editor this section mounts.
+     *
+     * Suggestion/track-changes mode is the reason this exists: the host builds a
+     * per-section extension array (`suggestions.extensionsFor(section.id)`) and
+     * the renderer is the only thing between that array and the editor. Without
+     * a passthrough a host had no way to reach the editor at all, which is one
+     * of the two reasons a consumer had to fork this directory.
+     *
+     * Read only when the editor is CONSTRUCTED (extensions are schema-affecting),
+     * so pass a stable array — a fresh literal every render rebuilds the editor
+     * on every keystroke.
+     */
+    extensions?: readonly unknown[];
+    /**
+     * The rich-text editor component to mount, instead of the library's own.
+     *
+     * Hosts that already ship a Tiptap build (realtime-modules'
+     * `adapters/tiptap`) must not get a SECOND one: two `@tiptap/*` instances in
+     * one page means two ProseMirror schemas and two undo stacks, and the
+     * versions drift independently. Injecting the host's editor removes that
+     * whole class of drift rather than chasing it one config key at a time.
+     *
+     * Defaults to the library's `TiptapEditor` when omitted, so nothing that
+     * renders today changes.
+     */
+    editorComponent?: SectionEditorComponent;
 }
 
 /** Per-section review status (DocuSign-style acknowledgement). */
@@ -13189,16 +13243,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -13212,6 +13256,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

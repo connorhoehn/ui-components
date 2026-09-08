@@ -12,12 +12,12 @@ import { t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./InlinePopover-DFdI8hw1.js";
 import { t as p } from "./Select-CqVokE2v.js";
 import { t as m } from "./activationKey-CjbL3LUv.js";
-import { d as h, u as g } from "./renderers-ByVK8yPz.js";
-import { n as _ } from "./ErrorBoundary-DXMuqQ3U.js";
+import { d as h, u as g } from "./renderers-CYx0-PXM.js";
+import { n as _ } from "./ErrorBoundary-CaThrOI-.js";
 import { o as v, s as y, t as b } from "./VerdictChip-CKnsnKYd.js";
-import { n as x, t as S } from "./TiptapEditor-Dn9rUdZx.js";
-import { A as C, C as w, D as T, E, F as D, I as O, L as ee, M as te, N as k, O as A, P as j, R as ne, S as M, T as N, _ as P, a as F, b as I, c as re, d as L, f as R, g as z, h as B, i as V, j as H, k as ie, l as U, m as ae, o as oe, p as se, r as ce, s as le, t as ue, u as de, v as fe, w as pe, x as me, y as he, z as ge } from "./DocumentEditorPage--vwX6tDL.js";
-import { a as _e, c as ve, d as ye, f as be, h as xe, i as Se, l as Ce, m as we, n as Te, o as Ee, p as De, r as Oe, s as ke, t as Ae, u as je } from "./CanvasDocumentView-DljmgkZ5.js";
+import { n as x, t as S } from "./TiptapEditor-fzwphhi7.js";
+import { A as C, C as w, D as T, E, F as D, I as O, L as ee, M as te, N as k, O as A, P as j, R as ne, S as M, T as N, _ as P, a as F, b as I, c as re, d as L, f as R, g as z, h as B, i as V, j as H, k as ie, l as U, m as ae, o as oe, p as se, r as ce, s as le, t as ue, u as de, v as fe, w as pe, x as me, y as he, z as ge } from "./DocumentEditorPage-DSX2NT1A.js";
+import { a as _e, c as ve, d as ye, f as be, h as xe, i as Se, l as Ce, m as we, n as Te, o as Ee, p as De, r as Oe, s as ke, t as Ae, u as je } from "./CanvasDocumentView-S13mp2Rv.js";
 import { useCallback as W, useEffect as G, useImperativeHandle as Me, useMemo as K, useRef as q, useState as J } from "react";
 import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
 import * as Ne from "yjs";
@@ -1496,10 +1496,10 @@ var Ct = [
 	"org-edit": (e) => `Anyone at ${e} can edit`,
 	"link-view": () => "Anyone with the link can view"
 };
-function Tt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: l, onInvite: u, onCopyLink: f, "data-testid": p = "document-share-dialog" }) {
-	let [m, h] = J(""), g = () => {
-		let e = m.trim();
-		!e || !u || (u(e), h(""));
+function Tt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: l, onInvite: u, onCopyLink: f, notice: p, "data-testid": m = "document-share-dialog" }) {
+	let [h, g] = J(""), _ = () => {
+		let e = h.trim();
+		!e || !u || (u(e), g(""));
 	};
 	return /* @__PURE__ */ X(c, {
 		open: e,
@@ -1508,34 +1508,39 @@ function Tt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 		maxWidth: 460,
 		children: /* @__PURE__ */ Z("div", {
 			className: "flex flex-col gap-4",
-			"data-testid": p,
+			"data-testid": m,
 			children: [
 				u && /* @__PURE__ */ Z("div", {
 					className: "flex gap-2",
 					children: [/* @__PURE__ */ X("input", {
-						value: m,
-						onChange: (e) => h(e.target.value),
+						value: h,
+						onChange: (e) => g(e.target.value),
 						onKeyDown: (e) => {
-							e.key === "Enter" && g();
+							e.key === "Enter" && _();
 						},
 						placeholder: "Add people by name or email",
 						"aria-label": "Add people",
-						"data-testid": `${p}-invite-input`,
+						"data-testid": `${m}-invite-input`,
 						className: "min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary"
 					}), /* @__PURE__ */ X(r, {
 						size: "sm",
-						onClick: g,
-						disabled: !m.trim(),
-						"data-testid": `${p}-invite`,
+						onClick: _,
+						disabled: !h.trim(),
+						"data-testid": `${m}-invite`,
 						children: "Invite"
 					})]
 				}),
+				p && /* @__PURE__ */ X("p", {
+					className: "m-0 rounded border border-border-emphasis bg-surface-inset px-2.5 py-1.5 text-xs leading-snug text-text-secondary",
+					"data-testid": `${m}-notice`,
+					children: p
+				}),
 				/* @__PURE__ */ X("div", {
 					className: "flex flex-col gap-1",
-					"data-testid": `${p}-people`,
+					"data-testid": `${m}-people`,
 					children: i.map((e) => /* @__PURE__ */ Z("div", {
 						className: "flex items-center gap-2",
-						"data-testid": `${p}-person`,
+						"data-testid": `${m}-person`,
 						children: [
 							/* @__PURE__ */ X(d, {
 								name: e.displayName,
@@ -1548,13 +1553,13 @@ function Tt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 							}),
 							e.role === "owner" || !l ? /* @__PURE__ */ X("span", {
 								className: "text-xs text-text-tertiary",
-								"data-testid": `${p}-role-static`,
+								"data-testid": `${m}-role-static`,
 								children: e.role === "owner" ? "Owner" : e.role
 							}) : /* @__PURE__ */ X("select", {
 								value: e.role,
 								onChange: (t) => l(e.userId, t.target.value),
 								"aria-label": `Access for ${e.displayName}`,
-								"data-testid": `${p}-role`,
+								"data-testid": `${m}-role`,
 								className: "rounded border border-border bg-surface px-1 py-0.5 text-xs text-text-secondary",
 								children: Ct.filter((e) => e !== "owner").map((e) => /* @__PURE__ */ X("option", {
 									value: e,
@@ -1574,7 +1579,7 @@ function Tt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						onChange: (e) => s?.(e.target.value),
 						disabled: !s,
 						"aria-label": "General access",
-						"data-testid": `${p}-general-access`,
+						"data-testid": `${m}-general-access`,
 						className: "rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary disabled:opacity-60",
 						children: Object.keys(wt).map((e) => /* @__PURE__ */ X("option", {
 							value: e,
@@ -1588,12 +1593,12 @@ function Tt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						variant: "secondary",
 						size: "sm",
 						onClick: f,
-						"data-testid": `${p}-copy-link`,
+						"data-testid": `${m}-copy-link`,
 						children: "Copy link"
 					}) : /* @__PURE__ */ X("span", {}), /* @__PURE__ */ X(r, {
 						size: "sm",
 						onClick: t,
-						"data-testid": `${p}-done`,
+						"data-testid": `${m}-done`,
 						children: "Done"
 					})]
 				})

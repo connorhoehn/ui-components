@@ -212,7 +212,10 @@ function S({ cursors: e, editorView: t, containerEl: n }) {
 }
 function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, placeholder: T = "Start typing...", sectionId: E, onUpdateCursorInfo: D, extensions: O, chrome: k = "card", hideToolbar: A = !1, onEditorReady: j }) {
 	let M = r(() => [
-		d.configure({ history: !1 }),
+		d.configure({
+			history: !1,
+			undoRedo: !1
+		}),
 		f,
 		p.configure({ nested: !0 }),
 		m.configure({ placeholder: T }),
