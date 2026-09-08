@@ -1502,6 +1502,7 @@ function wt({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: 
 					}), /* @__PURE__ */ h(r, {
 						size: "sm",
 						variant: "secondary",
+						className: "shrink-0 whitespace-nowrap",
 						disabled: l.trim() === "",
 						onClick: () => {
 							o(l.trim()), u("");

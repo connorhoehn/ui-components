@@ -728,6 +728,29 @@
    paragraph it follows. */
 .doc-page .ProseMirror p { margin: 0 0 0.9em; }
 
+/* ── A macro node view is a WIDGET, not prose ──────────────────────────────
+ *
+ * The rhythm rules above are written for authored text and they reach inside
+ * every macro card, because a node view's internal DOM is still a descendant
+ * of `.ProseMirror`. Measured on a decision card: its `<p className="m-0">`
+ * computed `margin-bottom: 26.4px`, because `.doc-page .ProseMirror p` is two
+ * classes plus an element and `m-0` is one class. The card's own `gap-2`
+ * became a 76px chasm between the claim and its rationale.
+ *
+ * This is not a decision-block problem — it applies to every renderer
+ * registered on `macro`, so action items and HITL callouts had it too and
+ * nobody had measured them. `[data-macro]` is the node view's own wrapper
+ * attribute, which makes this the one place to say "the document's typography
+ * stops here".
+ *
+ * Scoped to block-level rhythm only. Font, colour and size still inherit,
+ * because a card SHOULD look like it belongs to the page it sits in — it is
+ * the vertical spacing, and only that, which is meant for paragraphs.
+ * ======================================================================== */
+.doc-page .ProseMirror [data-macro] :is(p, ul, ol, li, h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
 .doc-page .ProseMirror h1,
 .doc-page .ProseMirror h2,
 .doc-page .ProseMirror h3 {

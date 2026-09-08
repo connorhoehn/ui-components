@@ -160,9 +160,13 @@ export function DecisionBlock({
                             onChange={(e) => setRefDraft(e.target.value)}
                             data-testid={`${testId}-superseded-input`}
                         />
+                        {/* `shrink-0`: the Input takes the row, and without
+                            this the button was squeezed to 82px and wrapped
+                            mid-word — "Recor / d" — measured in the browser. */}
                         <Button
                             size="sm"
                             variant="secondary"
+                            className="shrink-0 whitespace-nowrap"
                             disabled={refDraft.trim() === ''}
                             onClick={() => { onSupersededBy(refDraft.trim()); setRefDraft(''); }}
                         >
