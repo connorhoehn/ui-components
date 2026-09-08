@@ -31,7 +31,7 @@ import "./PresenceAvatars-BkzMACtv.js";
 import { t as T } from "./InlinePopover-DFdI8hw1.js";
 import { t as E } from "./ActivityFeed-C9KAtqCl.js";
 import "./Select-CqVokE2v.js";
-import "./Checkbox-DsS7fIUO.js";
+import "./Checkbox-DqN9RkXK.js";
 import { Children as D, createContext as O, isValidElement as k, useCallback as A, useContext as ee, useEffect as j, useId as M, useLayoutEffect as te, useMemo as N, useRef as P, useState as F } from "react";
 import { Fragment as I, jsx as L, jsxs as R } from "react/jsx-runtime";
 import { Command as z } from "cmdk";
@@ -4548,11 +4548,8 @@ function lr({ content: t, children: n, placement: r = "top", openDelay: i = 350,
 		role: "tooltip",
 		id: h,
 		"data-testid": c,
-		className: e("pointer-events-none max-w-xs rounded-md border border-border bg-surface px-2 py-1 text-xs text-text-primary shadow-lg", s),
-		style: {
-			...d,
-			zIndex: 9500
-		},
+		className: e("pointer-events-none z-[9500] max-w-xs rounded-md border border-border bg-surface px-2 py-1 text-xs text-text-primary shadow-lg", s),
+		style: d,
 		children: t
 	}), document.body)] });
 }

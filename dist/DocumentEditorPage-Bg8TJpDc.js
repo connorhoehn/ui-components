@@ -1,15 +1,15 @@
 import { t as e } from "./rolldown-runtime-Dy4uBu1J.js";
 import { r as t } from "./registry-DbX3MVAA.js";
 import { n } from "./IdentityContext-CQM1qwH6.js";
-import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-WO-vkKyy.js";
-import { t as f } from "./useDocumentTypes-CrsHC24c.js";
+import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-D8GZZ1Wf.js";
+import { t as f } from "./useDocumentTypes-BUXMPyPU.js";
 import { t as p } from "./cn-DhjIN-s0.js";
 import { t as m } from "./useEventCallback-Cwx9QVSi.js";
 import { t as h } from "./Input-DLknWXri.js";
 import { t as g } from "./Textarea-Dz4doxTv.js";
 import { t as _ } from "./activationKey-CjbL3LUv.js";
-import { t as v } from "./ErrorBoundary-B2aBpcsV.js";
-import { t as y } from "./renderers-CoOnJdXH.js";
+import { t as v } from "./renderers-BWCqIYQU.js";
+import { t as y } from "./ErrorBoundary-DOd9gyc8.js";
 import { t as b } from "./TiptapEditor-Dn9rUdZx.js";
 import { t as x } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as S } from "./useActiveSpeaker-Dc9r75EE.js";
@@ -1622,7 +1622,7 @@ function $e({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 	let [C, w] = k(e.collapsed), T = () => {
 		let e = !C;
 		w(e), s({ collapsed: e });
-	}, E = t(e.sectionType ?? e.type, "editor") ?? y, D = d && d.length > 0, O = D ? d[0].color || "#3b82f6" : "transparent", [A, N] = k(!1);
+	}, E = t(e.sectionType ?? e.type, "editor") ?? v, D = d && d.length > 0, O = D ? d[0].color || "#3b82f6" : "transparent", [A, N] = k(!1);
 	return /* @__PURE__ */ M("div", {
 		id: `section-${e.id}`,
 		"data-testid": `section-block-${e.id}`,
@@ -1698,7 +1698,7 @@ function $e({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 			}),
 			!C && /* @__PURE__ */ j("div", {
 				className: p("p-3.5"),
-				children: /* @__PURE__ */ j(v, {
+				children: /* @__PURE__ */ j(y, {
 					name: `section:${e.id}`,
 					children: /* @__PURE__ */ j(E, {
 						section: e,

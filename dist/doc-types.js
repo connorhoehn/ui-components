@@ -1,81 +1,81 @@
 import { n as e, t } from "./registry-DbX3MVAA.js";
 import { i as n, n as r, r as i } from "./documentType-rRZpKWbO.js";
-import { r as a } from "./useDocumentTypes-CrsHC24c.js";
+import { i as a } from "./useDocumentTypes-BUXMPyPU.js";
 import { t as o } from "./cn-DhjIN-s0.js";
 import { t as s } from "./Modal-CyoyiNKN.js";
 import { t as c } from "./EmptyState-ClmWoqCb.js";
 import { t as l } from "./Input-DLknWXri.js";
 import { t as u } from "./Textarea-Dz4doxTv.js";
 import { t as d } from "./Select-CqVokE2v.js";
-import { t as f } from "./Checkbox-DsS7fIUO.js";
-import "./renderers-CoOnJdXH.js";
-import { useEffect as p, useId as m, useMemo as h, useRef as g, useState as _ } from "react";
-import { Fragment as v, jsx as y, jsxs as b } from "react/jsx-runtime";
-import { DndContext as x, KeyboardSensor as S, PointerSensor as C, closestCorners as w, useSensor as T, useSensors as E } from "@dnd-kit/core";
-import { SortableContext as D, arrayMove as O, sortableKeyboardCoordinates as k, useSortable as A, verticalListSortingStrategy as j } from "@dnd-kit/sortable";
-import { CSS as M } from "@dnd-kit/utilities";
+import { t as f } from "./Checkbox-DqN9RkXK.js";
+import { a as p, i as m, o as h, s as g } from "./renderers-BWCqIYQU.js";
+import { useEffect as _, useId as v, useMemo as y, useRef as b, useState as x } from "react";
+import { Fragment as S, jsx as C, jsxs as w } from "react/jsx-runtime";
+import { DndContext as T, KeyboardSensor as E, PointerSensor as D, closestCorners as O, useSensor as k, useSensors as A } from "@dnd-kit/core";
+import { SortableContext as j, arrayMove as M, sortableKeyboardCoordinates as N, useSortable as P, verticalListSortingStrategy as F } from "@dnd-kit/sortable";
+import { CSS as I } from "@dnd-kit/utilities";
 //#region src/components/doc-types/WizardStepNavigation.tsx
-var N = [
+var L = [
 	"Basic Info",
 	"Sections",
 	"View Modes"
 ];
-function P({ step: e, total: t }) {
-	return /* @__PURE__ */ y("div", {
+function R({ step: e, total: t }) {
+	return /* @__PURE__ */ C("div", {
 		className: "flex items-center gap-0 mb-7",
 		children: Array.from({ length: t }, (n, r) => {
 			let i = r + 1, a = i === e, s = i < e;
-			return /* @__PURE__ */ b("div", {
+			return /* @__PURE__ */ w("div", {
 				className: "flex items-center",
 				children: [
-					/* @__PURE__ */ y("div", {
+					/* @__PURE__ */ C("div", {
 						className: o("w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-bold", s && "bg-primary text-white border-2 border-transparent", a && "bg-accent-bg text-accent-fg border-2 border-primary", !s && !a && "bg-surface-hover text-text-tertiary border-2 border-transparent"),
 						children: s ? "✓" : i
 					}),
-					/* @__PURE__ */ y("span", {
+					/* @__PURE__ */ C("span", {
 						className: o("ml-1.5 text-xs whitespace-nowrap", a ? "font-semibold text-text-primary" : "font-normal text-text-tertiary"),
-						children: N[r]
+						children: L[r]
 					}),
-					i < t && /* @__PURE__ */ y("div", { className: "w-8 h-px bg-border mx-2.5 shrink-0" })
+					i < t && /* @__PURE__ */ C("div", { className: "w-8 h-px bg-border mx-2.5 shrink-0" })
 				]
 			}, i);
 		})
 	});
 }
-function F({ step: e, totalSteps: t, canAdvance: n, isEditing: r, onCancel: i, onBack: a, onNext: s, onExportSchema: c, exportError: l }) {
-	return /* @__PURE__ */ b("div", {
+function z({ step: e, totalSteps: t, canAdvance: n, isEditing: r, onCancel: i, onBack: a, onNext: s, onExportSchema: c, exportError: l }) {
+	return /* @__PURE__ */ w("div", {
 		className: "flex items-center justify-between pt-4 border-t border-border mt-4 shrink-0",
-		children: [/* @__PURE__ */ b("div", {
+		children: [/* @__PURE__ */ w("div", {
 			className: "flex gap-2",
 			children: [
-				/* @__PURE__ */ y("button", {
+				/* @__PURE__ */ C("button", {
 					type: "button",
 					onClick: i,
 					className: "px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-transparent border-none text-neutral",
 					children: "Cancel"
 				}),
-				c && /* @__PURE__ */ y("button", {
+				c && /* @__PURE__ */ C("button", {
 					type: "button",
 					onClick: c,
 					title: "Download JSON Schema",
 					className: "px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-text-primary border border-border-field",
 					children: "Export Schema"
 				}),
-				l && /* @__PURE__ */ y("div", {
+				l && /* @__PURE__ */ C("div", {
 					"data-testid": "export-schema-error",
 					role: "alert",
 					className: "text-danger-fg text-[13px] self-center",
 					children: l
 				})
 			]
-		}), /* @__PURE__ */ b("div", {
+		}), /* @__PURE__ */ w("div", {
 			className: "flex gap-2",
-			children: [e > 1 && /* @__PURE__ */ y("button", {
+			children: [e > 1 && /* @__PURE__ */ C("button", {
 				type: "button",
 				onClick: a,
 				className: "px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-surface text-text-primary border border-border-field",
 				children: "← Back"
-			}), /* @__PURE__ */ y("button", {
+			}), /* @__PURE__ */ C("button", {
 				type: "button",
 				"data-testid": "wizard-next",
 				onClick: s,
@@ -88,14 +88,14 @@ function F({ step: e, totalSteps: t, canAdvance: n, isEditing: r, onCancel: i, o
 }
 //#endregion
 //#region src/components/doc-types/FieldDefinitionEditor.tsx
-function I({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemove: c, onMoveUp: u, onMoveDown: f, onToggleRequired: p, onToggleCollapsed: m }) {
+function B({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemove: c, onMoveUp: u, onMoveDown: f, onToggleRequired: p, onToggleCollapsed: m }) {
 	let h = t(n.sectionType), g = e(), _ = n.name.trim() || `Section ${r + 1}`;
-	return /* @__PURE__ */ b("div", {
+	return /* @__PURE__ */ w("div", {
 		className: "flex items-center gap-2 py-2 px-2.5 rounded-lg bg-surface-panel border border-border mb-1.5",
 		children: [
-			/* @__PURE__ */ b("div", {
+			/* @__PURE__ */ w("div", {
 				className: "flex flex-col gap-px shrink-0",
-				children: [/* @__PURE__ */ y("button", {
+				children: [/* @__PURE__ */ C("button", {
 					type: "button",
 					disabled: r === 0,
 					onClick: u,
@@ -103,7 +103,7 @@ function I({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 					"aria-label": `Move ${n.name} up`,
 					className: o("px-1 py-px text-[10px] leading-none font-semibold rounded-[7px] font-inherit border-none bg-transparent", r === 0 ? "text-neutral opacity-50 cursor-not-allowed" : "text-neutral cursor-pointer"),
 					children: "▲"
-				}), /* @__PURE__ */ y("button", {
+				}), /* @__PURE__ */ C("button", {
 					type: "button",
 					disabled: r === i - 1,
 					onClick: f,
@@ -113,11 +113,11 @@ function I({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 					children: "▼"
 				})]
 			}),
-			/* @__PURE__ */ y("span", {
+			/* @__PURE__ */ C("span", {
 				className: "text-base shrink-0",
 				children: h?.icon ?? "📄"
 			}),
-			/* @__PURE__ */ y(l, {
+			/* @__PURE__ */ C(l, {
 				"aria-label": `${_} name`,
 				"data-testid": `field-name-${n.id}`,
 				size: "sm",
@@ -125,7 +125,7 @@ function I({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 				onChange: (e) => a(e.target.value),
 				className: "flex-1 min-w-0 bg-transparent border-transparent focus:border-accent-border focus:bg-surface"
 			}),
-			/* @__PURE__ */ y(d, {
+			/* @__PURE__ */ C(d, {
 				"aria-label": `${_} type`,
 				"data-testid": `field-type-${n.id}`,
 				size: "sm",
@@ -137,7 +137,7 @@ function I({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 					label: e.label
 				}))
 			}),
-			/* @__PURE__ */ y("button", {
+			/* @__PURE__ */ C("button", {
 				type: "button",
 				onClick: p,
 				"data-testid": `field-required-${n.id}`,
@@ -145,7 +145,7 @@ function I({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 				className: o("px-2 py-[3px] text-[11px] font-semibold rounded-[7px] font-inherit shrink-0 cursor-pointer", n.required ? "bg-accent-bg text-accent-fg border border-accent-border" : "bg-surface-panel text-text-tertiary border border-border"),
 				children: "Required"
 			}),
-			/* @__PURE__ */ y("button", {
+			/* @__PURE__ */ C("button", {
 				type: "button",
 				onClick: m,
 				"data-testid": `field-collapsed-${n.id}`,
@@ -153,7 +153,7 @@ function I({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 				className: o("px-2 py-[3px] text-[11px] font-semibold rounded-[7px] font-inherit shrink-0 cursor-pointer", n.defaultCollapsed ? "bg-success-bg text-success-fg border border-success-border" : "bg-surface-panel text-text-tertiary border border-border"),
 				children: "Collapsed"
 			}),
-			/* @__PURE__ */ y("button", {
+			/* @__PURE__ */ C("button", {
 				type: "button",
 				onClick: c,
 				"data-testid": `field-remove-${n.id}`,
@@ -166,19 +166,19 @@ function I({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 }
 //#endregion
 //#region src/components/doc-types/DocumentTypeWizard.tsx
-function L({ name: e, setName: t, description: n, setDescription: r }) {
-	let i = m();
-	return /* @__PURE__ */ b("div", {
+function V({ name: e, setName: t, description: n, setDescription: r }) {
+	let i = v();
+	return /* @__PURE__ */ w("div", {
 		className: "flex flex-col gap-5",
-		children: [/* @__PURE__ */ b("div", { children: [/* @__PURE__ */ b("label", {
+		children: [/* @__PURE__ */ w("div", { children: [/* @__PURE__ */ w("label", {
 			htmlFor: `${i}-name`,
 			className: "block text-xs font-semibold text-text-primary mb-[5px] tracking-wide",
-			children: ["Name ", /* @__PURE__ */ y("span", {
+			children: ["Name ", /* @__PURE__ */ C("span", {
 				"aria-hidden": "true",
 				className: "text-danger-fg",
 				children: "*"
 			})]
-		}), /* @__PURE__ */ y(l, {
+		}), /* @__PURE__ */ C(l, {
 			id: `${i}-name`,
 			"aria-required": "true",
 			"data-testid": "name-input",
@@ -187,11 +187,11 @@ function L({ name: e, setName: t, description: n, setDescription: r }) {
 			placeholder: "e.g. Sprint Planning, Retrospective, Meeting Notes…",
 			maxLength: 80,
 			autoFocus: !0
-		})] }), /* @__PURE__ */ b("div", { children: [/* @__PURE__ */ y("label", {
+		})] }), /* @__PURE__ */ w("div", { children: [/* @__PURE__ */ C("label", {
 			htmlFor: `${i}-description`,
 			className: "block text-xs font-semibold text-text-primary mb-[5px] tracking-wide",
 			children: "Description"
-		}), /* @__PURE__ */ y(u, {
+		}), /* @__PURE__ */ C(u, {
 			id: `${i}-description`,
 			"data-testid": "description-input",
 			className: "min-h-[72px] resize-y",
@@ -202,22 +202,22 @@ function L({ name: e, setName: t, description: n, setDescription: r }) {
 		})] })]
 	});
 }
-function R({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i, movePage: a, removePage: s, renamePage: c, pages: u, fieldsById: d, renderRow: f, moveSectionToPage: p }) {
-	let { attributes: m, listeners: h, setNodeRef: g, transform: _, transition: v, isDragging: x } = A({ id: e.id }), S = {
-		transform: M.Transform.toString(_),
+function H({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i, movePage: a, removePage: s, renamePage: c, pages: u, fieldsById: d, renderRow: f, moveSectionToPage: p }) {
+	let { attributes: m, listeners: h, setNodeRef: g, transform: _, transition: v, isDragging: y } = P({ id: e.id }), b = {
+		transform: I.Transform.toString(_),
 		transition: v,
-		opacity: x ? .5 : 1
+		opacity: y ? .5 : 1
 	};
-	return /* @__PURE__ */ y("div", {
+	return /* @__PURE__ */ C("div", {
 		ref: g,
-		style: S,
+		style: b,
 		"data-testid": `wizard-page-${e.id}`,
-		children: /* @__PURE__ */ b("div", {
+		children: /* @__PURE__ */ w("div", {
 			className: o("bg-surface border rounded-[10px] p-4 mb-3", r ? "bg-accent-bg border-accent-border" : "border-border"),
-			children: [/* @__PURE__ */ b("div", {
+			children: [/* @__PURE__ */ w("div", {
 				className: "flex items-center gap-2 mb-2.5",
 				children: [
-					/* @__PURE__ */ y("button", {
+					/* @__PURE__ */ C("button", {
 						type: "button",
 						"data-testid": `page-drag-handle-${e.id}`,
 						...m,
@@ -226,7 +226,7 @@ function R({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 						title: "Drag to reorder pages",
 						children: "⋮⋮"
 					}),
-					/* @__PURE__ */ y("button", {
+					/* @__PURE__ */ C("button", {
 						type: "button",
 						"data-testid": `page-up-${e.id}`,
 						disabled: t === 0,
@@ -234,7 +234,7 @@ function R({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 						className: o("px-1.5 py-0.5 text-[11px] font-semibold rounded-[7px] font-inherit border-none bg-transparent", t === 0 ? "text-neutral opacity-50 cursor-not-allowed" : "text-neutral cursor-pointer"),
 						children: "▲"
 					}),
-					/* @__PURE__ */ y("button", {
+					/* @__PURE__ */ C("button", {
 						type: "button",
 						"data-testid": `page-down-${e.id}`,
 						disabled: t === n - 1,
@@ -242,11 +242,11 @@ function R({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 						className: o("px-1.5 py-0.5 text-[11px] font-semibold rounded-[7px] font-inherit border-none bg-transparent", t === n - 1 ? "text-neutral opacity-50 cursor-not-allowed" : "text-neutral cursor-pointer"),
 						children: "▼"
 					}),
-					/* @__PURE__ */ b("span", {
+					/* @__PURE__ */ w("span", {
 						className: "text-xs font-semibold text-text-tertiary min-w-14",
 						children: ["Page ", t + 1]
 					}),
-					/* @__PURE__ */ y(l, {
+					/* @__PURE__ */ C(l, {
 						"aria-label": `Page ${t + 1} title`,
 						"data-testid": `page-title-${e.id}`,
 						size: "sm",
@@ -256,7 +256,7 @@ function R({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 						onChange: (t) => c(e.id, t.target.value),
 						onFocus: () => i(e.id)
 					}),
-					/* @__PURE__ */ y("button", {
+					/* @__PURE__ */ C("button", {
 						type: "button",
 						"data-testid": `page-remove-${e.id}`,
 						disabled: n <= 1,
@@ -266,16 +266,16 @@ function R({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 						children: "✕"
 					})
 				]
-			}), e.sectionIds.length === 0 ? /* @__PURE__ */ y("div", {
+			}), e.sectionIds.length === 0 ? /* @__PURE__ */ C("div", {
 				"data-testid": `page-empty-${e.id}`,
 				className: "py-3 px-2 text-text-tertiary text-xs italic",
 				children: "No sections on this page yet — click the page header to make it active, then pick a section type."
-			}) : /* @__PURE__ */ y(D, {
+			}) : /* @__PURE__ */ C(j, {
 				items: e.sectionIds,
-				strategy: j,
-				children: /* @__PURE__ */ y("div", {
+				strategy: F,
+				children: /* @__PURE__ */ C("div", {
 					"data-testid": `page-sections-${e.id}`,
-					children: e.sectionIds.map((t, n) => d.get(t) ? /* @__PURE__ */ y(z, {
+					children: e.sectionIds.map((t, n) => d.get(t) ? /* @__PURE__ */ C(U, {
 						sectionId: t,
 						page: e,
 						idx: n,
@@ -288,18 +288,18 @@ function R({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 		})
 	});
 }
-function z({ sectionId: e, page: t, idx: n, pages: r, renderRow: i, moveSectionToPage: a }) {
-	let { attributes: o, listeners: s, setNodeRef: c, transform: l, transition: u, isDragging: f } = A({ id: e }), p = {
-		transform: M.Transform.toString(l),
+function U({ sectionId: e, page: t, idx: n, pages: r, renderRow: i, moveSectionToPage: a }) {
+	let { attributes: o, listeners: s, setNodeRef: c, transform: l, transition: u, isDragging: f } = P({ id: e }), p = {
+		transform: I.Transform.toString(l),
 		transition: u,
 		opacity: f ? .4 : 1
 	};
-	return /* @__PURE__ */ b("div", {
+	return /* @__PURE__ */ w("div", {
 		ref: c,
 		style: p,
 		className: "flex items-center gap-1.5",
 		children: [
-			/* @__PURE__ */ y("button", {
+			/* @__PURE__ */ C("button", {
 				type: "button",
 				"data-testid": `section-drag-handle-${e}`,
 				...o,
@@ -308,11 +308,11 @@ function z({ sectionId: e, page: t, idx: n, pages: r, renderRow: i, moveSectionT
 				title: "Drag to reorder sections (or drop on another page)",
 				children: "⋮⋮"
 			}),
-			/* @__PURE__ */ y("div", {
+			/* @__PURE__ */ C("div", {
 				className: "flex-1",
 				children: i(e, t, n)
 			}),
-			r.length > 1 && /* @__PURE__ */ y(d, {
+			r.length > 1 && /* @__PURE__ */ C(d, {
 				"data-testid": `section-move-page-${e}`,
 				size: "sm",
 				className: "w-auto text-[11px]",
@@ -327,9 +327,9 @@ function z({ sectionId: e, page: t, idx: n, pages: r, renderRow: i, moveSectionT
 		]
 	});
 }
-function B({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setPageConfig: s }) {
-	let [c, l] = _(i[0]?.id ?? "page-default");
-	p(() => {
+function W({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setPageConfig: s }) {
+	let [c, l] = x(i[0]?.id ?? "page-default");
+	_(() => {
 		i.length > 0 && !i.find((e) => e.id === c) && l(i[0].id);
 	}, [i, c]);
 	let u = (e) => {
@@ -343,12 +343,12 @@ function B({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setP
 			...t,
 			...n
 		} : t));
-	}, m = (e) => {
+	}, p = (e) => {
 		r(t.filter((t) => t.id !== e)), a(i.map((t) => ({
 			...t,
 			sectionIds: t.sectionIds.filter((t) => t !== e)
 		})));
-	}, h = (e, t, n) => {
+	}, m = (e, t, n) => {
 		a(i.map((r) => {
 			if (r.id !== e) return r;
 			let i = r.sectionIds.indexOf(t), a = i + n;
@@ -359,7 +359,7 @@ function B({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setP
 				sectionIds: o
 			};
 		}));
-	}, g = (e, t, n) => {
+	}, h = (e, t, n) => {
 		t !== n && a(i.map((r) => r.id === t ? {
 			...r,
 			sectionIds: r.sectionIds.filter((t) => t !== e)
@@ -367,36 +367,36 @@ function B({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setP
 			...r,
 			sectionIds: [...r.sectionIds, e]
 		} : r));
-	}, v = (e, t) => {
+	}, g = (e, t) => {
 		let n = i.findIndex((t) => t.id === e), r = n + t;
 		if (n < 0 || r < 0 || r >= i.length) return;
 		let o = [...i];
 		[o[n], o[r]] = [o[r], o[n]], a(o);
-	}, A = () => {
+	}, v = () => {
 		let e = `page-${typeof crypto < "u" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2, 10)}`;
 		a([...i, {
 			id: e,
 			sectionIds: []
 		}]), l(e);
-	}, M = (e, t) => {
+	}, y = (e, t) => {
 		a(i.map((n) => n.id === e ? {
 			...n,
 			title: t || void 0
 		} : n));
-	}, N = (e) => {
+	}, b = (e) => {
 		if (i.length <= 1) return;
 		let t = i.find((t) => t.id === e)?.sectionIds ?? [], n = i.filter((t) => t.id !== e);
 		t.length > 0 && n.length > 0 && (n[0] = {
 			...n[0],
 			sectionIds: [...n[0].sectionIds, ...t]
 		}), a(n), c === e && l(n[0]?.id ?? "");
-	}, P = new Map(t.map((e) => [e.id, e])), F = i.length === 1, L = (e) => {
+	}, S = new Map(t.map((e) => [e.id, e])), P = i.length === 1, I = (e) => {
 		if (i.some((t) => t.id === e)) return e;
 		for (let t of i) if (t.sectionIds.includes(e)) return t.id;
-	}, z = E(T(C, { activationConstraint: { distance: 5 } }), T(S, { coordinateGetter: k })), B = (e) => {
+	}, L = A(k(D, { activationConstraint: { distance: 5 } }), k(E, { coordinateGetter: N })), R = (e) => {
 		let { active: t, over: n } = e;
 		if (!n) return;
-		let r = String(t.id), o = String(n.id), s = L(r), c = L(o);
+		let r = String(t.id), o = String(n.id), s = I(r), c = I(o);
 		!s || !c || s !== c && (i.some((e) => e.id === r) || a(i.map((e) => e.id === s ? {
 			...e,
 			sectionIds: e.sectionIds.filter((e) => e !== r)
@@ -404,27 +404,27 @@ function B({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setP
 			...e,
 			sectionIds: [...e.sectionIds, r]
 		} : e)));
-	}, V = (e) => {
+	}, z = (e) => {
 		let { active: t, over: n } = e;
 		if (!n) return;
 		let r = String(t.id), o = String(n.id);
 		if (i.some((e) => e.id === r) && i.some((e) => e.id === o)) {
 			let e = i.findIndex((e) => e.id === r), t = i.findIndex((e) => e.id === o);
-			e !== -1 && t !== -1 && e !== t && a(O(i, e, t));
+			e !== -1 && t !== -1 && e !== t && a(M(i, e, t));
 			return;
 		}
-		let s = L(r);
+		let s = I(r);
 		if (!s) return;
 		let c = i.find((e) => e.id === s);
 		if (!c) return;
 		let l = c.sectionIds.indexOf(r), u = c.sectionIds.indexOf(o);
 		l !== -1 && u !== -1 && l !== u && a(i.map((e) => e.id === s ? {
 			...e,
-			sectionIds: O(e.sectionIds, l, u)
+			sectionIds: M(e.sectionIds, l, u)
 		} : e));
-	}, H = (e, t, n) => {
-		let r = P.get(e);
-		return r ? /* @__PURE__ */ y(I, {
+	}, V = (e, t, n) => {
+		let r = S.get(e);
+		return r ? /* @__PURE__ */ C(B, {
 			field: r,
 			index: n,
 			total: t.sectionIds.length,
@@ -433,104 +433,104 @@ function B({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setP
 				sectionType: e,
 				rendererOverrides: {}
 			}),
-			onRemove: () => m(r.id),
-			onMoveUp: () => h(t.id, r.id, -1),
-			onMoveDown: () => h(t.id, r.id, 1),
+			onRemove: () => p(r.id),
+			onMoveUp: () => m(t.id, r.id, -1),
+			onMoveDown: () => m(t.id, r.id, 1),
 			onToggleRequired: () => d(r.id, { required: !r.required }),
 			onToggleCollapsed: () => d(r.id, { defaultCollapsed: !r.defaultCollapsed })
 		}, r.id) : null;
 	};
-	return /* @__PURE__ */ b("div", {
+	return /* @__PURE__ */ w("div", {
 		className: "flex gap-5 items-start",
-		children: [/* @__PURE__ */ b("div", {
+		children: [/* @__PURE__ */ w("div", {
 			className: "flex-1 min-w-0",
 			children: [
-				/* @__PURE__ */ b("div", {
+				/* @__PURE__ */ w("div", {
 					className: "text-xs font-semibold text-text-primary mb-2.5 tracking-wide",
-					children: ["SECTIONS ", t.length > 0 && /* @__PURE__ */ b("span", {
+					children: ["SECTIONS ", t.length > 0 && /* @__PURE__ */ w("span", {
 						className: "text-primary",
 						children: [
 							"(",
 							t.length,
-							F ? "" : ` across ${i.length} pages`,
+							P ? "" : ` across ${i.length} pages`,
 							")"
 						]
 					})]
 				}),
-				F ? t.length === 0 ? /* @__PURE__ */ b("div", {
+				P ? t.length === 0 ? /* @__PURE__ */ w("div", {
 					className: "bg-surface border border-dashed border-border rounded-[10px] text-center py-8 px-4 text-text-tertiary text-[13px]",
-					children: [/* @__PURE__ */ y("div", {
+					children: [/* @__PURE__ */ C("div", {
 						className: "text-[28px] mb-2",
 						children: "📋"
 					}), "No sections yet — pick a section type →"]
-				}) : /* @__PURE__ */ y("div", {
+				}) : /* @__PURE__ */ C("div", {
 					"data-testid": "fields-list",
-					children: i[0].sectionIds.map((e, t) => H(e, i[0], t))
-				}) : /* @__PURE__ */ y(x, {
-					sensors: z,
-					collisionDetection: w,
-					onDragOver: B,
-					onDragEnd: V,
-					children: /* @__PURE__ */ y(D, {
+					children: i[0].sectionIds.map((e, t) => V(e, i[0], t))
+				}) : /* @__PURE__ */ C(T, {
+					sensors: L,
+					collisionDetection: O,
+					onDragOver: R,
+					onDragEnd: z,
+					children: /* @__PURE__ */ C(j, {
 						items: i.map((e) => e.id),
-						strategy: j,
-						children: i.map((e, t) => /* @__PURE__ */ y(R, {
+						strategy: F,
+						children: i.map((e, t) => /* @__PURE__ */ C(H, {
 							page: e,
 							pageIdx: t,
 							totalPages: i.length,
 							isActive: e.id === c,
 							setActivePageId: l,
-							movePage: v,
-							removePage: N,
-							renamePage: M,
+							movePage: g,
+							removePage: b,
+							renamePage: y,
 							pages: i,
-							fieldsById: P,
-							renderRow: H,
-							moveSectionToPage: g
+							fieldsById: S,
+							renderRow: V,
+							moveSectionToPage: h
 						}, e.id))
 					})
 				}),
-				/* @__PURE__ */ y("button", {
+				/* @__PURE__ */ C("button", {
 					type: "button",
 					"data-testid": "add-page",
-					onClick: A,
+					onClick: v,
 					className: "mt-2 text-xs px-3 py-1.5 font-semibold rounded-md font-inherit border border-dashed border-accent-border bg-transparent text-primary cursor-pointer",
 					children: "+ Add Page"
 				}),
-				i.length > 1 && /* @__PURE__ */ y("div", {
+				i.length > 1 && /* @__PURE__ */ C("div", {
 					"data-testid": "page-config-toc",
 					className: "mt-4 p-2.5 bg-surface-panel rounded-md text-[13px]",
-					children: /* @__PURE__ */ b("label", {
+					children: /* @__PURE__ */ w("label", {
 						className: "flex items-center gap-2 cursor-pointer",
-						children: [/* @__PURE__ */ y(f, {
+						children: [/* @__PURE__ */ C(f, {
 							checked: o.showTableOfContents,
 							onChange: (e) => s({
 								...o,
 								showTableOfContents: e
 							})
-						}), /* @__PURE__ */ y("span", { children: "Show table of contents (multi-page documents only)" })]
+						}), /* @__PURE__ */ C("span", { children: "Show table of contents (multi-page documents only)" })]
 					})
 				})
 			]
-		}), /* @__PURE__ */ b("div", {
+		}), /* @__PURE__ */ w("div", {
 			className: "w-[220px] shrink-0",
-			children: [/* @__PURE__ */ y("div", {
+			children: [/* @__PURE__ */ C("div", {
 				className: "text-xs font-semibold text-text-primary mb-2.5 tracking-wide",
 				children: "SECTION TYPES"
-			}), /* @__PURE__ */ y("div", {
+			}), /* @__PURE__ */ C("div", {
 				className: "flex flex-col gap-1.5",
-				children: e().map((e) => /* @__PURE__ */ b("button", {
+				children: e().map((e) => /* @__PURE__ */ w("button", {
 					"data-testid": `add-field-${e.type}`,
 					type: "button",
 					onClick: () => u(e.type),
 					className: "flex items-center gap-2.5 py-2.5 px-3 rounded-lg w-full bg-surface border border-border cursor-pointer text-left font-inherit transition-colors hover:border-accent-border hover:bg-accent-bg",
-					children: [/* @__PURE__ */ y("span", {
+					children: [/* @__PURE__ */ C("span", {
 						className: "text-xl shrink-0",
 						children: e.icon
-					}), /* @__PURE__ */ b("div", { children: [/* @__PURE__ */ y("div", {
+					}), /* @__PURE__ */ w("div", { children: [/* @__PURE__ */ C("div", {
 						className: "text-[13px] font-semibold text-text-primary",
 						children: e.label
-					}), /* @__PURE__ */ y("div", {
+					}), /* @__PURE__ */ C("div", {
 						className: "text-[11px] text-text-tertiary mt-px",
 						children: e.description
 					})] })]
@@ -539,25 +539,25 @@ function B({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setP
 		})]
 	});
 }
-function V({ field: e, mode: n, onToggleHidden: r, onOverrideChange: i }) {
+function G({ field: e, mode: n, onToggleHidden: r, onOverrideChange: i }) {
 	let a = (e.hiddenInModes ?? []).includes(n), s = t(e.sectionType), c = s?.rendererKeys[n] ?? [], l = (e.rendererOverrides ?? {})[n] ?? c[0] ?? "";
-	return /* @__PURE__ */ y("td", {
+	return /* @__PURE__ */ C("td", {
 		className: "p-[10px_12px] align-top",
-		children: /* @__PURE__ */ b("div", {
+		children: /* @__PURE__ */ w("div", {
 			className: "flex flex-col gap-1.5",
 			children: [
-				/* @__PURE__ */ b("label", {
+				/* @__PURE__ */ w("label", {
 					className: "flex items-center gap-1.5 cursor-pointer select-none",
-					children: [/* @__PURE__ */ y(f, {
+					children: [/* @__PURE__ */ C(f, {
 						"data-testid": `visibility-${e.id}-${n}`,
 						checked: !a,
 						onChange: r
-					}), /* @__PURE__ */ y("span", {
+					}), /* @__PURE__ */ C("span", {
 						className: o("text-xs", a ? "text-text-tertiary" : "text-text-primary"),
 						children: a ? "Hidden" : "Visible"
 					})]
 				}),
-				!a && c.length > 0 && /* @__PURE__ */ y(d, {
+				!a && c.length > 0 && /* @__PURE__ */ C(d, {
 					"aria-label": `${e.name} renderer in ${n} mode`,
 					"data-testid": `renderer-${e.id}-${n}`,
 					size: "sm",
@@ -569,7 +569,7 @@ function V({ field: e, mode: n, onToggleHidden: r, onOverrideChange: i }) {
 						label: s?.rendererLabels[e] ?? e
 					}))
 				}),
-				!a && c.length === 0 && /* @__PURE__ */ y("span", {
+				!a && c.length === 0 && /* @__PURE__ */ C("span", {
 					className: "text-[11px] text-text-tertiary",
 					children: "Default renderer"
 				})
@@ -577,7 +577,7 @@ function V({ field: e, mode: n, onToggleHidden: r, onOverrideChange: i }) {
 		})
 	});
 }
-function H({ fields: e, setFields: n }) {
+function K({ fields: e, setFields: n }) {
 	let r = [
 		"editor",
 		"ack",
@@ -601,46 +601,46 @@ function H({ fields: e, setFields: n }) {
 			[n]: r
 		} });
 	};
-	return e.length === 0 ? /* @__PURE__ */ y("div", {
+	return e.length === 0 ? /* @__PURE__ */ C("div", {
 		className: "bg-surface border border-border rounded-[10px] text-center py-10 px-4 text-text-tertiary",
 		children: "No fields defined — go back to Step 2 and add some fields first."
-	}) : /* @__PURE__ */ b("div", {
+	}) : /* @__PURE__ */ w("div", {
 		className: "overflow-x-auto",
-		children: [/* @__PURE__ */ y("p", {
+		children: [/* @__PURE__ */ C("p", {
 			className: "text-[13px] text-neutral mb-4",
 			children: "Configure which view modes each field appears in and which renderer to use."
-		}), /* @__PURE__ */ b("table", {
+		}), /* @__PURE__ */ w("table", {
 			className: "w-full border-collapse text-[13px]",
-			children: [/* @__PURE__ */ y("thead", { children: /* @__PURE__ */ b("tr", {
+			children: [/* @__PURE__ */ C("thead", { children: /* @__PURE__ */ w("tr", {
 				className: "bg-surface-panel",
-				children: [/* @__PURE__ */ y("th", {
+				children: [/* @__PURE__ */ C("th", {
 					className: "p-[10px_12px] text-left font-semibold text-text-primary border-b-2 border-border whitespace-nowrap",
 					children: "Field"
-				}), r.map((e) => /* @__PURE__ */ y("th", {
+				}), r.map((e) => /* @__PURE__ */ C("th", {
 					className: "p-[10px_12px] text-left font-semibold text-text-primary border-b-2 border-border min-w-[130px]",
 					children: i[e]
 				}, e))]
-			}) }), /* @__PURE__ */ y("tbody", { children: e.map((e, n) => {
+			}) }), /* @__PURE__ */ C("tbody", { children: e.map((e, n) => {
 				let i = t(e.sectionType);
-				return /* @__PURE__ */ b("tr", {
+				return /* @__PURE__ */ w("tr", {
 					className: o("border-b border-border-subtle", n % 2 == 0 ? "bg-surface" : "bg-surface-inset"),
-					children: [/* @__PURE__ */ y("td", {
+					children: [/* @__PURE__ */ C("td", {
 						className: "p-[10px_12px] align-middle",
-						children: /* @__PURE__ */ b("div", {
+						children: /* @__PURE__ */ w("div", {
 							className: "flex items-center gap-[7px]",
 							children: [
-								/* @__PURE__ */ y("span", { children: i?.icon }),
-								/* @__PURE__ */ y("span", {
+								/* @__PURE__ */ C("span", { children: i?.icon }),
+								/* @__PURE__ */ C("span", {
 									className: "font-medium text-text-primary",
 									children: e.name
 								}),
-								e.required && /* @__PURE__ */ y("span", {
+								e.required && /* @__PURE__ */ C("span", {
 									className: "text-[10px] bg-accent-bg text-accent-fg px-[5px] py-px rounded",
 									children: "required"
 								})
 							]
 						})
-					}), r.map((t) => /* @__PURE__ */ y(V, {
+					}), r.map((t) => /* @__PURE__ */ C(G, {
 						field: e,
 						mode: t,
 						onToggleHidden: () => s(e.id, t),
@@ -651,16 +651,16 @@ function H({ fields: e, setFields: n }) {
 		})]
 	});
 }
-function U({ initialType: e, onSave: t, onCancel: n, idToken: a, onExportSchema: o }) {
-	let [s, c] = _(e ? 2 : 1), [l, u] = _(e?.name ?? ""), [d, f] = _(e?.description ?? ""), p = e?.icon ?? "📄", [m, h] = _(e?.fields ?? []), [g, v] = _(() => e ? i(e) : [{
+function q({ initialType: e, onSave: t, onCancel: n, idToken: a, onExportSchema: o }) {
+	let [s, c] = x(e ? 2 : 1), [l, u] = x(e?.name ?? ""), [d, f] = x(e?.description ?? ""), p = e?.icon ?? "📄", [m, h] = x(e?.fields ?? []), [g, _] = x(() => e ? i(e) : [{
 		id: "page-default",
 		sectionIds: []
-	}]), [x, S] = _(() => e ? r(e) : { showTableOfContents: !1 }), [C, w] = _(""), [T, E] = _(""), D = () => s !== 1 || l.trim().length > 0, O = () => {
+	}]), [v, y] = x(() => e ? r(e) : { showTableOfContents: !1 }), [b, S] = x(""), [T, E] = x(""), D = () => s !== 1 || l.trim().length > 0, O = () => {
 		if (s === 1 && !l.trim()) {
-			w("Name is required");
+			S("Name is required");
 			return;
 		}
-		w(""), s < 3 ? c((e) => e + 1) : k();
+		S(""), s < 3 ? c((e) => e + 1) : k();
 	}, k = () => {
 		t({
 			name: l.trim(),
@@ -668,46 +668,46 @@ function U({ initialType: e, onSave: t, onCancel: n, idToken: a, onExportSchema:
 			icon: p,
 			fields: m,
 			pages: g,
-			pageConfig: x
+			pageConfig: v
 		});
 	};
-	return /* @__PURE__ */ b("div", {
+	return /* @__PURE__ */ w("div", {
 		className: "flex flex-col h-full",
 		children: [
-			/* @__PURE__ */ y(P, {
+			/* @__PURE__ */ C(R, {
 				step: s,
 				total: 3
 			}),
-			/* @__PURE__ */ b("div", {
+			/* @__PURE__ */ w("div", {
 				className: "flex-1 overflow-y-auto pr-1",
 				children: [
-					s === 1 && /* @__PURE__ */ y(L, {
+					s === 1 && /* @__PURE__ */ C(V, {
 						name: l,
 						setName: (e) => {
-							u(e), e.trim() && w("");
+							u(e), e.trim() && S("");
 						},
 						description: d,
 						setDescription: f
 					}),
-					s === 2 && /* @__PURE__ */ y(B, {
+					s === 2 && /* @__PURE__ */ C(W, {
 						fields: m,
 						setFields: h,
 						pages: g,
-						setPages: v,
-						pageConfig: x,
-						setPageConfig: S
+						setPages: _,
+						pageConfig: v,
+						setPageConfig: y
 					}),
-					s === 3 && /* @__PURE__ */ y(H, {
+					s === 3 && /* @__PURE__ */ C(K, {
 						fields: m,
 						setFields: h
 					}),
-					C && /* @__PURE__ */ y("div", {
+					b && /* @__PURE__ */ C("div", {
 						className: "text-danger-fg text-[13px] mt-2",
-						children: C
+						children: b
 					})
 				]
 			}),
-			/* @__PURE__ */ y(F, {
+			/* @__PURE__ */ C(z, {
 				step: s,
 				totalSteps: 3,
 				canAdvance: D(),
@@ -738,880 +738,123 @@ function U({ initialType: e, onSave: t, onCancel: n, idToken: a, onExportSchema:
 	});
 }
 //#endregion
-//#region src/components/doc-types/cookbooks/index.ts
-var W = [
-	"General",
-	"Engineering",
-	"Operations",
-	"Product",
-	"People",
-	"Sales & CRM",
-	"Finance",
-	"Legal"
-];
-function G(e, t, n = {}) {
-	return {
-		id: crypto.randomUUID(),
-		name: e,
-		sectionType: t,
-		required: n.required ?? !1,
-		defaultCollapsed: n.defaultCollapsed ?? !1,
-		placeholder: n.placeholder ?? "",
-		hiddenInModes: n.hiddenInModes ?? [],
-		rendererOverrides: {}
-	};
+//#region src/components/doc-types/cookbooks/CookbookPicker.tsx
+function J(e) {
+	return e.toLowerCase().replace(/[^a-z]/g, "-");
 }
-function K() {
-	return {
-		name: "Bug Report",
-		description: "Track bugs with severity, reproduction steps, and resolution notes.",
-		icon: "🐛",
-		fields: [
-			G("Title", "text", { required: !0 }),
-			G("Severity", "text", {
-				required: !0,
-				placeholder: "Critical / High / Medium / Low"
-			}),
-			G("Status", "text", {
-				required: !0,
-				placeholder: "Open / In Progress / Resolved / Won't Fix"
-			}),
-			G("Reported By", "text", { required: !0 }),
-			G("Reported Date", "date", { required: !0 }),
-			G("Assigned To", "text"),
-			G("Environment", "text", { placeholder: "Production / Staging / Development / Local" }),
-			G("Steps to Reproduce", "rich-text", {
-				required: !0,
-				placeholder: "Detailed steps to reproduce the issue..."
-			}),
-			G("Expected Behavior", "rich-text", {
-				required: !0,
-				placeholder: "What should happen..."
-			}),
-			G("Actual Behavior", "rich-text", {
-				required: !0,
-				placeholder: "What actually happens..."
-			}),
-			G("Screenshots / Evidence", "rich-text", { placeholder: "Paste screenshots or supporting evidence..." }),
-			G("Root Cause", "rich-text", {
-				placeholder: "What caused the issue...",
-				defaultCollapsed: !0
-			}),
-			G("Resolution Notes", "rich-text", {
-				placeholder: "How the issue was resolved...",
-				defaultCollapsed: !0
-			})
-		]
-	};
-}
-function q() {
-	return {
-		name: "Employee Onboarding",
-		description: "New hire onboarding tasks, milestones, and equipment tracking.",
-		icon: "👋",
-		fields: [
-			G("Employee Name", "text", { required: !0 }),
-			G("Start Date", "date", { required: !0 }),
-			G("Department", "text", {
-				required: !0,
-				placeholder: "Engineering / Product / Design / Sales / Marketing / Operations / HR / Finance"
-			}),
-			G("Manager", "text", { required: !0 }),
-			G("Role Title", "text", { required: !0 }),
-			G("Equipment Issued", "boolean"),
-			G("Accounts Created", "boolean"),
-			G("Orientation Complete", "boolean"),
-			G("First Week Goals", "rich-text", { placeholder: "Goals for the first week..." }),
-			G("30-Day Milestones", "rich-text", { placeholder: "What should be accomplished by day 30..." }),
-			G("60-Day Milestones", "rich-text", {
-				placeholder: "What should be accomplished by day 60...",
-				defaultCollapsed: !0
-			}),
-			G("90-Day Review Date", "date"),
-			G("Mentor Assigned", "text"),
-			G("Notes", "rich-text")
-		]
-	};
-}
-function J() {
-	return {
-		name: "Invoice",
-		description: "Track invoices with line items, amounts, and payment status.",
-		icon: "💰",
-		fields: [
-			G("Invoice Number", "text", {
-				required: !0,
-				placeholder: "INV-0001"
-			}),
-			G("Issue Date", "date", { required: !0 }),
-			G("Due Date", "date", { required: !0 }),
-			G("Status", "text", {
-				required: !0,
-				placeholder: "Draft / Sent / Paid / Overdue / Void"
-			}),
-			G("Client Name", "text", { required: !0 }),
-			G("Client Email", "text"),
-			G("Line Items", "rich-text", {
-				required: !0,
-				placeholder: "Description of goods or services..."
-			}),
-			G("Subtotal", "number", { required: !0 }),
-			G("Tax Rate (%)", "number"),
-			G("Tax Amount", "number"),
-			G("Total Amount", "number", { required: !0 }),
-			G("Currency", "text", {
-				required: !0,
-				placeholder: "USD / EUR / GBP / CAD / AUD"
-			}),
-			G("Payment Terms", "text", { placeholder: "Net 15 / Net 30 / Net 60 / Due on Receipt" }),
-			G("Payment Method", "text", { placeholder: "Wire / ACH / Check / Credit Card" }),
-			G("Notes", "rich-text"),
-			G("Paid Date", "date", { defaultCollapsed: !0 })
-		]
-	};
-}
-function Y() {
-	return {
-		name: "Meeting Notes",
-		description: "Capture agendas, discussion points, decisions, and action items.",
-		icon: "📝",
-		fields: [
-			G("Meeting Title", "text", { required: !0 }),
-			G("Date", "date", { required: !0 }),
-			G("Meeting Type", "text", {
-				required: !0,
-				placeholder: "Standup / Sprint Planning / Retro / 1:1 / All Hands / Design Review / Ad Hoc"
-			}),
-			G("Attendees", "text", { placeholder: "Comma-separated names" }),
-			G("Facilitator", "text"),
-			G("Agenda", "rich-text", { placeholder: "Topics to cover..." }),
-			G("Discussion Notes", "rich-text", {
-				required: !0,
-				placeholder: "Key discussion points..."
-			}),
-			G("Action Items", "rich-text", { placeholder: "Who does what by when..." }),
-			G("Decisions Made", "rich-text", { placeholder: "Decisions reached during the meeting..." }),
-			G("Follow-Up Date", "date"),
-			G("Recording Link", "text", { placeholder: "URL to meeting recording" })
-		]
-	};
-}
-function X() {
-	return {
-		name: "Sales Lead",
-		description: "Track leads through the sales pipeline with deal values and follow-ups.",
-		icon: "💼",
-		fields: [
-			G("Contact Name", "text", { required: !0 }),
-			G("Company", "text", { required: !0 }),
-			G("Email", "text", {
-				required: !0,
-				placeholder: "email@example.com"
-			}),
-			G("Phone", "text"),
-			G("Lead Source", "text", {
-				required: !0,
-				placeholder: "Inbound / Outbound / Referral / Event / Website / Cold Call"
-			}),
-			G("Stage", "text", {
-				required: !0,
-				placeholder: "New / Contacted / Qualified / Proposal / Negotiation / Closed Won / Closed Lost"
-			}),
-			G("Deal Value", "number"),
-			G("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
-			G("Expected Close Date", "date"),
-			G("Last Contact Date", "date"),
-			G("Next Follow-Up", "date"),
-			G("Owner", "text"),
-			G("Notes", "rich-text"),
-			G("Lost Reason", "text", {
-				placeholder: "Price / Competitor / Timing / No Budget / No Response / Other",
-				defaultCollapsed: !0
-			})
-		]
-	};
-}
-function Z() {
-	return {
-		name: "Incident Report",
-		description: "Document incidents with severity, timeline, root cause, and remediation.",
-		icon: "🚨",
-		fields: [
-			G("Incident Title", "text", { required: !0 }),
-			G("Severity", "text", {
-				required: !0,
-				placeholder: "SEV1 / SEV2 / SEV3 / SEV4"
-			}),
-			G("Status", "text", {
-				required: !0,
-				placeholder: "Investigating / Identified / Monitoring / Resolved / Postmortem"
-			}),
-			G("Detected At", "date", { required: !0 }),
-			G("Resolved At", "date", { defaultCollapsed: !0 }),
-			G("Duration", "text", {
-				defaultCollapsed: !0,
-				placeholder: "e.g. 2h 15m"
-			}),
-			G("Incident Commander", "text", { required: !0 }),
-			G("Services Affected", "text", { placeholder: "Comma-separated service names" }),
-			G("Customer Impact", "rich-text", {
-				required: !0,
-				placeholder: "Describe the user-facing impact..."
-			}),
-			G("Timeline", "rich-text", {
-				required: !0,
-				placeholder: "Chronological sequence of events..."
-			}),
-			G("Root Cause", "rich-text", {
-				placeholder: "What caused the incident...",
-				defaultCollapsed: !0
-			}),
-			G("Remediation Steps", "rich-text", { placeholder: "Steps taken to resolve..." }),
-			G("Action Items", "rich-text", {
-				placeholder: "Follow-up tasks to prevent recurrence...",
-				defaultCollapsed: !0
-			}),
-			G("Lessons Learned", "rich-text", {
-				placeholder: "What we can do better next time...",
-				defaultCollapsed: !0
-			}),
-			G("Related Incidents", "text", { placeholder: "Links to related incident reports" })
-		]
-	};
-}
-function ee() {
-	return {
-		name: "RFC / Technical Proposal",
-		description: "Request for comments with problem statement, proposed solution, and alternatives.",
-		icon: "📨",
-		fields: [
-			G("RFC Title", "text", { required: !0 }),
-			G("Author", "text", { required: !0 }),
-			G("Status", "text", {
-				required: !0,
-				placeholder: "Draft / In Review / Accepted / Rejected / Superseded"
-			}),
-			G("Created Date", "date", { required: !0 }),
-			G("Decision Date", "date", { defaultCollapsed: !0 }),
-			G("Reviewers", "text", { placeholder: "Comma-separated reviewer names" }),
-			G("Problem Statement", "rich-text", {
-				required: !0,
-				placeholder: "What problem are we solving?"
-			}),
-			G("Proposed Solution", "rich-text", {
-				required: !0,
-				placeholder: "Detailed proposal..."
-			}),
-			G("Alternatives Considered", "rich-text", { placeholder: "Other approaches evaluated..." }),
-			G("Technical Design", "rich-text", { placeholder: "Architecture, data flow, API changes..." }),
-			G("Migration Plan", "rich-text", {
-				placeholder: "How to roll out the change...",
-				defaultCollapsed: !0
-			}),
-			G("Risks", "rich-text", { placeholder: "Known risks and mitigations..." }),
-			G("Open Questions", "rich-text", { placeholder: "Unresolved questions for discussion..." }),
-			G("Decision", "rich-text", {
-				placeholder: "Final decision and rationale...",
-				defaultCollapsed: !0
-			}),
-			G("Superseded By", "text", {
-				placeholder: "Link to successor RFC",
-				defaultCollapsed: !0
-			})
-		]
-	};
-}
-function te() {
-	return {
-		name: "Feature Request",
-		description: "Capture feature requests with user stories, priority, and effort estimates.",
-		icon: "💡",
-		fields: [
-			G("Feature Title", "text", { required: !0 }),
-			G("Requested By", "text", { required: !0 }),
-			G("Priority", "text", {
-				required: !0,
-				placeholder: "Critical / High / Medium / Low / Nice to Have"
-			}),
-			G("Status", "text", {
-				required: !0,
-				placeholder: "New / Under Review / Planned / In Progress / Shipped / Declined"
-			}),
-			G("Category", "text", { placeholder: "UX / Performance / Integration / New Capability / Infrastructure" }),
-			G("Target Release", "text"),
-			G("User Story", "rich-text", {
-				required: !0,
-				placeholder: "As a [user], I want [goal] so that [benefit]"
-			}),
-			G("Problem Description", "rich-text", {
-				required: !0,
-				placeholder: "What problem does this solve?"
-			}),
-			G("Proposed Solution", "rich-text", { placeholder: "How should this work?" }),
-			G("Success Metrics", "rich-text", { placeholder: "How will we measure success?" }),
-			G("Effort Estimate", "text", { placeholder: "XS / S / M / L / XL" }),
-			G("Business Value", "text", { placeholder: "Revenue / Retention / Adoption / Compliance / Internal Efficiency" }),
-			G("Dependencies", "rich-text", { defaultCollapsed: !0 }),
-			G("Decline Reason", "rich-text", {
-				placeholder: "Why was this declined?",
-				defaultCollapsed: !0
-			}),
-			G("Ship Date", "date", { defaultCollapsed: !0 })
-		]
-	};
-}
-function ne() {
-	return {
-		name: "Contract / Agreement",
-		description: "Track contracts with counterparty, terms, renewal dates, and status.",
-		icon: "📜",
-		fields: [
-			G("Contract Title", "text", { required: !0 }),
-			G("Contract Type", "text", {
-				required: !0,
-				placeholder: "NDA / MSA / SOW / SLA / Employment / Vendor / Licensing / Other"
-			}),
-			G("Status", "text", {
-				required: !0,
-				placeholder: "Draft / In Review / Pending Signature / Active / Expired / Terminated"
-			}),
-			G("Counterparty", "text", { required: !0 }),
-			G("Effective Date", "date", { required: !0 }),
-			G("Expiration Date", "date"),
-			G("Auto-Renew", "boolean"),
-			G("Renewal Term", "text", {
-				placeholder: "Monthly / Quarterly / Annual / Biennial",
-				defaultCollapsed: !0
-			}),
-			G("Contract Value", "number"),
-			G("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
-			G("Payment Terms", "text", { placeholder: "Net 15 / Net 30 / Net 60 / Upfront" }),
-			G("Internal Owner", "text", { required: !0 }),
-			G("Key Terms", "rich-text", { placeholder: "Important clauses and obligations..." }),
-			G("Termination Clause", "rich-text", { defaultCollapsed: !0 }),
-			G("Notes", "rich-text"),
-			G("Termination Date", "date", { defaultCollapsed: !0 }),
-			G("Termination Reason", "rich-text", {
-				placeholder: "Why was this terminated?",
-				defaultCollapsed: !0
-			})
-		]
-	};
-}
-function re() {
-	return {
-		name: "Sprint Retrospective",
-		description: "Reflect on the sprint with what went well, what didn't, and action items.",
-		icon: "🔄",
-		fields: [
-			G("Sprint Name", "text", { required: !0 }),
-			G("Sprint Dates", "text", {
-				required: !0,
-				placeholder: "Jan 6 – Jan 17"
-			}),
-			G("Facilitator", "text"),
-			G("Team", "text", { required: !0 }),
-			G("Velocity", "number"),
-			G("Planned Points", "number"),
-			G("Completed Points", "number"),
-			G("What Went Well", "rich-text", {
-				required: !0,
-				placeholder: "Celebrate wins..."
-			}),
-			G("What Didn't Go Well", "rich-text", {
-				required: !0,
-				placeholder: "Identify pain points..."
-			}),
-			G("Start Doing", "rich-text", { placeholder: "New practices to adopt..." }),
-			G("Stop Doing", "rich-text", { placeholder: "Practices to drop..." }),
-			G("Continue Doing", "rich-text", { placeholder: "Practices to keep..." }),
-			G("Action Items", "rich-text", {
-				required: !0,
-				placeholder: "Specific follow-up tasks..."
-			}),
-			G("Action Item Owners", "text", { placeholder: "Comma-separated names" }),
-			G("Follow-Up Date", "date"),
-			G("Overall Sentiment", "text", {
-				required: !0,
-				placeholder: "Great / Good / Mixed / Rough"
-			})
-		]
-	};
-}
-function ie() {
-	return {
-		name: "Job Posting",
-		description: "Job listings with requirements, compensation, and hiring status.",
-		icon: "📋",
-		fields: [
-			G("Job Title", "text", { required: !0 }),
-			G("Department", "text", {
-				required: !0,
-				placeholder: "Engineering / Product / Design / Sales / Marketing / Operations / HR / Finance / Legal"
-			}),
-			G("Location", "text", {
-				required: !0,
-				placeholder: "Remote / Hybrid / On-site"
-			}),
-			G("Office Location", "text", { defaultCollapsed: !0 }),
-			G("Employment Type", "text", {
-				required: !0,
-				placeholder: "Full-time / Part-time / Contract / Intern"
-			}),
-			G("Level", "text", {
-				required: !0,
-				placeholder: "Junior / Mid / Senior / Staff / Principal / Director / VP"
-			}),
-			G("Status", "text", {
-				required: !0,
-				placeholder: "Draft / Open / On Hold / Filled / Closed"
-			}),
-			G("Hiring Manager", "text", { required: !0 }),
-			G("Salary Range Min", "number"),
-			G("Salary Range Max", "number"),
-			G("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
-			G("Job Description", "rich-text", {
-				required: !0,
-				placeholder: "Role overview and responsibilities..."
-			}),
-			G("Requirements", "rich-text", {
-				required: !0,
-				placeholder: "Must-have qualifications..."
-			}),
-			G("Nice to Have", "rich-text", { placeholder: "Preferred but not required..." }),
-			G("Benefits", "rich-text", { placeholder: "Compensation and perks..." }),
-			G("Posted Date", "date"),
-			G("Closing Date", "date"),
-			G("Filled By", "text", { defaultCollapsed: !0 }),
-			G("Filled Date", "date", { defaultCollapsed: !0 })
-		]
-	};
-}
-function ae() {
-	return {
-		name: "Vendor Evaluation",
-		description: "Evaluate vendors with scoring, compliance checks, and recommendations.",
-		icon: "🔍",
-		fields: [
-			G("Vendor Name", "text", { required: !0 }),
-			G("Category", "text", {
-				required: !0,
-				placeholder: "SaaS / Infrastructure / Consulting / Hardware / Staffing / Other"
-			}),
-			G("Evaluation Status", "text", {
-				required: !0,
-				placeholder: "Researching / In Trial / Evaluating / Approved / Rejected / Active Vendor"
-			}),
-			G("Evaluator", "text", { required: !0 }),
-			G("Evaluation Date", "date", { required: !0 }),
-			G("Website", "text"),
-			G("Primary Contact", "text"),
-			G("Annual Cost", "number"),
-			G("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
-			G("Contract Length", "text", { placeholder: "Monthly / Annual / Multi-Year" }),
-			G("Security Review Complete", "boolean"),
-			G("SOC2 Compliant", "boolean"),
-			G("GDPR Compliant", "boolean"),
-			G("Strengths", "rich-text", { placeholder: "Key advantages..." }),
-			G("Weaknesses", "rich-text", { placeholder: "Gaps and concerns..." }),
-			G("Integration Requirements", "rich-text", { placeholder: "Technical integration needs..." }),
-			G("Score (1–10)", "number"),
-			G("Recommendation", "rich-text", { placeholder: "Final recommendation..." }),
-			G("Rejection Reason", "rich-text", {
-				placeholder: "Why was this vendor rejected?",
-				defaultCollapsed: !0
-			})
-		]
-	};
-}
-function oe() {
-	return {
-		name: "Project Status Report",
-		description: "Weekly project status with health indicators, accomplishments, and risks.",
-		icon: "📊",
-		fields: [
-			G("Project Name", "text", { required: !0 }),
-			G("Reporting Period", "text", {
-				required: !0,
-				placeholder: "Week of Jan 6, 2025"
-			}),
-			G("Project Lead", "text", { required: !0 }),
-			G("Overall Status", "text", {
-				required: !0,
-				placeholder: "On Track / At Risk / Blocked / Complete"
-			}),
-			G("Health: Scope", "text", {
-				required: !0,
-				placeholder: "Green / Yellow / Red"
-			}),
-			G("Health: Timeline", "text", {
-				required: !0,
-				placeholder: "Green / Yellow / Red"
-			}),
-			G("Health: Budget", "text", {
-				required: !0,
-				placeholder: "Green / Yellow / Red"
-			}),
-			G("Percent Complete", "number"),
-			G("Summary", "rich-text", {
-				required: !0,
-				placeholder: "High-level status overview..."
-			}),
-			G("Accomplishments This Period", "rich-text", {
-				required: !0,
-				placeholder: "What was delivered..."
-			}),
-			G("Planned Next Period", "rich-text", {
-				required: !0,
-				placeholder: "What's coming up..."
-			}),
-			G("Risks & Issues", "rich-text", { placeholder: "Active risks and open issues..." }),
-			G("Blockers", "rich-text", {
-				placeholder: "Blocking items requiring escalation...",
-				defaultCollapsed: !0
-			}),
-			G("Decisions Needed", "rich-text", { placeholder: "Pending decisions from stakeholders..." }),
-			G("Budget Spent", "number"),
-			G("Budget Remaining", "number"),
-			G("Target Completion Date", "date"),
-			G("Stakeholder Notes", "rich-text", { defaultCollapsed: !0 })
-		]
-	};
-}
-function se() {
-	return {
-		name: "Change Request",
-		description: "Formalized change management with risk assessment and rollback plans.",
-		icon: "🔄",
-		fields: [
-			G("Change Title", "text", { required: !0 }),
-			G("Change ID", "text", {
-				required: !0,
-				placeholder: "CR-0001"
-			}),
-			G("Requester", "text", { required: !0 }),
-			G("Request Date", "date", { required: !0 }),
-			G("Priority", "text", {
-				required: !0,
-				placeholder: "Emergency / High / Medium / Low"
-			}),
-			G("Status", "text", {
-				required: !0,
-				placeholder: "Submitted / Under Review / Approved / Scheduled / In Progress / Completed / Rolled Back / Rejected"
-			}),
-			G("Change Type", "text", {
-				required: !0,
-				placeholder: "Standard / Normal / Emergency"
-			}),
-			G("Systems Affected", "text", { placeholder: "Comma-separated system names" }),
-			G("Description of Change", "rich-text", {
-				required: !0,
-				placeholder: "What is being changed and why..."
-			}),
-			G("Business Justification", "rich-text", {
-				required: !0,
-				placeholder: "Why this change is needed..."
-			}),
-			G("Risk Assessment", "text", {
-				required: !0,
-				placeholder: "Low / Medium / High / Critical"
-			}),
-			G("Risk Mitigation", "rich-text", {
-				placeholder: "Steps to reduce risk...",
-				defaultCollapsed: !0
-			}),
-			G("Rollback Plan", "rich-text", {
-				required: !0,
-				placeholder: "How to revert if something goes wrong..."
-			}),
-			G("Scheduled Date", "date", { defaultCollapsed: !0 }),
-			G("Implementation Notes", "rich-text", {
-				placeholder: "Notes from the change window...",
-				defaultCollapsed: !0
-			}),
-			G("Approver", "text"),
-			G("Approval Date", "date", { defaultCollapsed: !0 }),
-			G("Post-Implementation Review", "rich-text", {
-				placeholder: "Review after the change is complete...",
-				defaultCollapsed: !0
-			})
-		]
-	};
-}
-var Q = [
-	{
-		id: "meeting-notes",
-		name: "Meeting Notes",
-		description: "Capture agendas, discussion points, decisions, and action items.",
-		icon: "📝",
-		category: "General",
-		tags: [
-			"meetings",
-			"notes",
-			"action items",
-			"decisions"
-		],
-		build: Y
-	},
-	{
-		id: "bug-report",
-		name: "Bug Report",
-		description: "Track bugs with severity, reproduction steps, and resolution notes.",
-		icon: "🐛",
-		category: "Engineering",
-		tags: [
-			"bugs",
-			"qa",
-			"testing",
-			"defects"
-		],
-		build: K
-	},
-	{
-		id: "rfc",
-		name: "RFC / Technical Proposal",
-		description: "Request for comments with problem statement, proposed solution, and alternatives.",
-		icon: "📨",
-		category: "Engineering",
-		tags: [
-			"rfc",
-			"proposal",
-			"architecture",
-			"design"
-		],
-		build: ee
-	},
-	{
-		id: "sprint-retro",
-		name: "Sprint Retrospective",
-		description: "Reflect on the sprint with what went well, what didn't, and action items.",
-		icon: "🔄",
-		category: "Engineering",
-		tags: [
-			"agile",
-			"sprint",
-			"retro",
-			"retrospective"
-		],
-		build: re
-	},
-	{
-		id: "incident-report",
-		name: "Incident Report",
-		description: "Document incidents with severity, timeline, root cause, and remediation.",
-		icon: "🚨",
-		category: "Operations",
-		tags: [
-			"incidents",
-			"postmortem",
-			"sev",
-			"outage"
-		],
-		build: Z
-	},
-	{
-		id: "vendor-evaluation",
-		name: "Vendor Evaluation",
-		description: "Evaluate vendors with scoring, compliance checks, and recommendations.",
-		icon: "🔍",
-		category: "Operations",
-		tags: [
-			"vendors",
-			"procurement",
-			"evaluation",
-			"compliance"
-		],
-		build: ae
-	},
-	{
-		id: "change-request",
-		name: "Change Request",
-		description: "Formalized change management with risk assessment and rollback plans.",
-		icon: "🔄",
-		category: "Operations",
-		tags: [
-			"change",
-			"itil",
-			"rollback",
-			"risk"
-		],
-		build: se
-	},
-	{
-		id: "feature-request",
-		name: "Feature Request",
-		description: "Capture feature requests with user stories, priority, and effort estimates.",
-		icon: "💡",
-		category: "Product",
-		tags: [
-			"features",
-			"product",
-			"backlog",
-			"user stories"
-		],
-		build: te
-	},
-	{
-		id: "status-report",
-		name: "Project Status Report",
-		description: "Weekly project status with health indicators, accomplishments, and risks.",
-		icon: "📊",
-		category: "Product",
-		tags: [
-			"status",
-			"project",
-			"reporting",
-			"weekly"
-		],
-		build: oe
-	},
-	{
-		id: "onboarding",
-		name: "Employee Onboarding",
-		description: "New hire onboarding tasks, milestones, and equipment tracking.",
-		icon: "👋",
-		category: "People",
-		tags: [
-			"onboarding",
-			"hr",
-			"new hire",
-			"checklist"
-		],
-		build: q
-	},
-	{
-		id: "job-posting",
-		name: "Job Posting",
-		description: "Job listings with requirements, compensation, and hiring status.",
-		icon: "📋",
-		category: "People",
-		tags: [
-			"hiring",
-			"recruiting",
-			"jobs",
-			"positions"
-		],
-		build: ie
-	},
-	{
-		id: "sales-lead",
-		name: "Sales Lead",
-		description: "Track leads through the sales pipeline with deal values and follow-ups.",
-		icon: "💼",
-		category: "Sales & CRM",
-		tags: [
-			"sales",
-			"crm",
-			"leads",
-			"pipeline",
-			"deals"
-		],
-		build: X
-	},
-	{
-		id: "invoice",
-		name: "Invoice",
-		description: "Track invoices with line items, amounts, and payment status.",
-		icon: "💰",
-		category: "Finance",
-		tags: [
-			"invoices",
-			"billing",
-			"payments",
-			"accounting"
-		],
-		build: J
-	},
-	{
-		id: "contract",
-		name: "Contract / Agreement",
-		description: "Track contracts with counterparty, terms, renewal dates, and status.",
-		icon: "📜",
-		category: "Legal",
-		tags: [
-			"contracts",
-			"legal",
-			"agreements",
-			"nda",
-			"sow"
-		],
-		build: ne
-	}
-];
-//#endregion
-//#region src/components/doc-types/CookbooksModal.tsx
-function ce({ cookbook: e, onPick: t }) {
-	return /* @__PURE__ */ b("div", {
-		"data-testid": `cookbook-card-${e.id}`,
-		className: "flex flex-col gap-2 w-[220px] min-h-[200px] p-3.5 bg-surface border border-border rounded-[10px] font-inherit",
+function Y({ cookbook: e, onPick: t, actionLabel: n, busy: r, cardPrefix: i, layout: a }) {
+	return /* @__PURE__ */ w("div", {
+		"data-testid": `${i}-card-${e.id}`,
+		className: o("flex flex-col gap-2 min-h-[200px] p-3.5 bg-surface border border-border rounded-[10px] font-inherit", a === "fixed" && "w-[220px]"),
 		children: [
-			/* @__PURE__ */ b("div", {
+			/* @__PURE__ */ w("div", {
 				className: "flex items-center gap-2.5",
-				children: [/* @__PURE__ */ y("span", {
+				children: [/* @__PURE__ */ C("span", {
 					className: "text-2xl",
 					"aria-hidden": !0,
 					children: e.icon
-				}), /* @__PURE__ */ y("div", {
+				}), /* @__PURE__ */ C("div", {
 					className: "text-sm font-bold text-text-primary overflow-hidden text-ellipsis",
 					children: e.name
 				})]
 			}),
-			/* @__PURE__ */ y("div", {
+			/* @__PURE__ */ C("div", {
 				className: "text-[11px] text-text-tertiary flex gap-2",
-				children: /* @__PURE__ */ y("span", { children: e.category })
+				children: /* @__PURE__ */ C("span", { children: e.category })
 			}),
-			/* @__PURE__ */ y("div", {
+			/* @__PURE__ */ C("div", {
 				className: "text-xs text-text-secondary leading-[1.4] flex-1",
 				children: e.description
 			}),
-			e.tags.length > 0 && /* @__PURE__ */ y("div", {
+			e.tags.length > 0 && /* @__PURE__ */ C("div", {
 				className: "flex flex-wrap gap-1",
-				children: e.tags.map((e) => /* @__PURE__ */ y("span", {
+				children: e.tags.map((e) => /* @__PURE__ */ C("span", {
 					className: "text-[10px] font-semibold py-0.5 px-1.5 rounded bg-surface-hover text-text-secondary lowercase",
 					children: e
 				}, e))
 			}),
-			/* @__PURE__ */ y("button", {
+			/* @__PURE__ */ C("button", {
 				type: "button",
-				"data-testid": `cookbook-use-${e.id}`,
+				"data-testid": `${i}-use-${e.id}`,
 				onClick: () => t(e),
-				className: "mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit",
-				children: "Install"
+				disabled: r,
+				className: o("mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-white border-none rounded-md font-inherit", r ? "opacity-60 cursor-not-allowed" : "cursor-pointer"),
+				children: n
 			})
 		]
 	});
 }
-function $({ open: e, onClose: t, onCreated: n, createType: r }) {
-	let [i, a] = _(""), [c, u] = _("All"), [d, f] = _(!1), [m, v] = _(null), x = g(null);
-	p(() => {
-		if (!e) return;
-		a(""), u("All");
-		let t = setTimeout(() => x.current?.focus(), 30);
-		return () => clearTimeout(t);
-	}, [e]);
-	let S = h(() => {
-		let e = Q;
-		c !== "All" && (e = e.filter((e) => e.category === c));
-		let t = i.trim().toLowerCase();
-		return t && (e = e.filter((e) => e.name.toLowerCase().includes(t) || e.description.toLowerCase().includes(t) || e.tags.some((e) => e.toLowerCase().includes(t)) || e.category.toLowerCase().includes(t))), e;
-	}, [i, c]), C = async (e) => {
-		if (!d) {
-			f(!0), v(null);
-			try {
-				let i = await r(e.build());
-				if (i.status === "rejected") {
-					v(i.error);
-					return;
-				}
-				t(), n(i.type.id);
-			} catch (e) {
-				v(e instanceof Error ? e.message : String(e));
-			} finally {
-				f(!1);
-			}
-		}
-	};
-	return /* @__PURE__ */ b(s, {
+function X({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearch: r = !1, idPrefix: i = "cookbooks", cardPrefix: a = "cookbook", layout: s = "fixed", gridHeightClassName: c = "max-h-[60vh]" }) {
+	let [u, d] = x(""), [f, p] = x("All"), g = b(null);
+	_(() => {
+		if (!r) return;
+		let e = setTimeout(() => g.current?.focus(), 30);
+		return () => clearTimeout(e);
+	}, [r]);
+	let v = y(() => h(u, f), [u, f]);
+	return /* @__PURE__ */ w(S, { children: [
+		/* @__PURE__ */ w("div", {
+			role: "group",
+			"aria-label": "Filter by category",
+			className: "flex flex-wrap gap-1.5 mb-2.5",
+			children: [/* @__PURE__ */ C("button", {
+				type: "button",
+				"data-testid": `${a}-cat-all`,
+				"aria-pressed": f === "All",
+				onClick: () => p("All"),
+				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit", f === "All" ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
+				children: "All"
+			}), m.map((e) => /* @__PURE__ */ C("button", {
+				type: "button",
+				"data-testid": `${a}-cat-${J(e)}`,
+				"aria-pressed": f === e,
+				onClick: () => p(e),
+				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit", f === e ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
+				children: e
+			}, e))]
+		}),
+		/* @__PURE__ */ C(l, {
+			ref: g,
+			type: "search",
+			"data-testid": `${i}-search`,
+			"aria-label": "Search cookbooks",
+			placeholder: "Search cookbooks...",
+			value: u,
+			onChange: (e) => d(e.target.value),
+			onKeyDown: (n) => {
+				n.key === "Enter" && !t && v.length > 0 && (n.preventDefault(), e(v[0]));
+			},
+			className: "mb-3.5"
+		}),
+		v.length === 0 ? /* @__PURE__ */ w("div", {
+			"data-testid": `${i}-empty`,
+			className: "text-center py-8 text-[13px] text-text-tertiary",
+			children: [
+				"No cookbooks match \"",
+				u,
+				"\"."
+			]
+		}) : /* @__PURE__ */ C("div", {
+			"data-testid": `${i}-grid`,
+			className: o("grid gap-3 overflow-y-auto p-1", s === "fixed" ? "grid-cols-[repeat(3,220px)] justify-center" : "grid-cols-[repeat(auto-fill,minmax(210px,1fr))]", c),
+			children: v.map((r) => /* @__PURE__ */ C(Y, {
+				cookbook: r,
+				onPick: e,
+				actionLabel: n,
+				busy: t,
+				cardPrefix: a,
+				layout: s
+			}, r.id))
+		})
+	] });
+}
+//#endregion
+//#region src/components/doc-types/CookbooksModal.tsx
+function Z({ open: e, onClose: t, onCreated: n, createType: r }) {
+	let [i, a] = x(!1), [o, c] = x(null);
+	return _(() => {
+		e && c(null);
+	}, [e]), /* @__PURE__ */ w(s, {
 		open: e,
 		onClose: t,
 		title: "Document type cookbooks",
@@ -1619,93 +862,65 @@ function $({ open: e, onClose: t, onCreated: n, createType: r }) {
 		backdropTestId: "cookbooks-modal",
 		rawChildren: !0,
 		children: [
-			/* @__PURE__ */ y("div", {
+			/* @__PURE__ */ C("div", {
 				className: "text-[13px] text-text-secondary mb-3",
 				children: "Install a prebuilt document type. You can customize the fields after installing."
 			}),
-			/* @__PURE__ */ b("div", {
-				role: "group",
-				"aria-label": "Filter by category",
-				className: "flex flex-wrap gap-1.5 mb-2.5",
-				children: [/* @__PURE__ */ y("button", {
-					type: "button",
-					"data-testid": "cookbook-cat-all",
-					"aria-pressed": c === "All",
-					onClick: () => u("All"),
-					className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit", c === "All" ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
-					children: "All"
-				}), W.map((e) => /* @__PURE__ */ y("button", {
-					type: "button",
-					"data-testid": `cookbook-cat-${e.toLowerCase().replace(/[^a-z]/g, "-")}`,
-					"aria-pressed": c === e,
-					onClick: () => u(e),
-					className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit", c === e ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
-					children: e
-				}, e))]
-			}),
-			/* @__PURE__ */ y(l, {
-				ref: x,
-				type: "search",
-				"data-testid": "cookbooks-search",
-				"aria-label": "Search cookbooks",
-				placeholder: "Search cookbooks...",
-				value: i,
-				onChange: (e) => a(e.target.value),
-				onKeyDown: (e) => {
-					e.key === "Enter" && S.length > 0 && (e.preventDefault(), C(S[0]));
-				},
-				className: "mb-3.5"
-			}),
-			m && /* @__PURE__ */ b("div", {
+			o && /* @__PURE__ */ w("div", {
 				"data-testid": "cookbooks-save-error",
 				role: "alert",
 				className: "mb-3 rounded border border-danger-border bg-danger-bg px-3 py-2 text-[13px] text-danger-fg",
-				children: ["Couldn’t create that type: ", m]
+				children: ["Couldn’t create that type: ", o]
 			}),
-			S.length === 0 ? /* @__PURE__ */ b("div", {
-				"data-testid": "cookbooks-empty",
-				className: "text-center py-8 text-[13px] text-text-tertiary",
-				children: [
-					"No cookbooks match \"",
-					i,
-					"\"."
-				]
-			}) : /* @__PURE__ */ y("div", {
-				"data-testid": "cookbooks-grid",
-				className: "grid grid-cols-[repeat(3,220px)] gap-3 justify-center max-h-[60vh] overflow-y-auto p-1",
-				children: S.map((e) => /* @__PURE__ */ y(ce, {
-					cookbook: e,
-					onPick: C
-				}, e.id))
+			/* @__PURE__ */ C(X, {
+				onPick: async (e) => {
+					if (!i) {
+						a(!0), c(null);
+						try {
+							let i = await r(e.build());
+							if (i.status === "rejected") {
+								c(i.error);
+								return;
+							}
+							t(), n(i.type.id);
+						} catch (e) {
+							c(e instanceof Error ? e.message : String(e));
+						} finally {
+							a(!1);
+						}
+					}
+				},
+				busy: i,
+				autoFocusSearch: !0
 			})
 		]
 	});
 }
 //#endregion
 //#region src/components/doc-types/DocumentTypesPage.tsx
-function le({ typeName: e, onConfirm: t, onCancel: n }) {
-	return /* @__PURE__ */ b(s, {
+function Q({ typeName: e, onConfirm: t, onCancel: n }) {
+	return /* @__PURE__ */ w(s, {
 		open: !0,
 		onClose: n,
 		maxWidth: 380,
 		backdropTestId: "delete-modal",
-		footer: /* @__PURE__ */ b(v, { children: [/* @__PURE__ */ y("button", {
+		footer: /* @__PURE__ */ w(S, { children: [/* @__PURE__ */ C("button", {
 			"data-testid": "cancel-delete",
 			onClick: n,
 			className: "py-[7px] px-[18px] text-[13px] font-semibold bg-surface border border-border-field rounded-[7px] cursor-pointer font-inherit",
 			children: "Cancel"
-		}), /* @__PURE__ */ y("button", {
+		}), /* @__PURE__ */ C("button", {
 			"data-testid": "confirm-delete",
 			onClick: t,
 			className: "py-[7px] px-[18px] text-[13px] font-semibold bg-danger text-white border-none rounded-[7px] cursor-pointer font-inherit",
 			children: "Delete"
 		})] }),
-		children: [/* @__PURE__ */ y("div", {
+		children: [/* @__PURE__ */ C("div", {
 			className: "text-base font-semibold text-text-primary mb-2.5",
 			children: "Delete document type?"
-		}), /* @__PURE__ */ b("p", {
+		}), /* @__PURE__ */ w("p", {
 			className: "text-[13px] text-neutral m-0",
-			children: [/* @__PURE__ */ b("strong", { children: [
+			children: [/* @__PURE__ */ w("strong", { children: [
 				"\"",
 				e,
 				"\""
@@ -1713,21 +928,21 @@ function le({ typeName: e, onConfirm: t, onCancel: n }) {
 		})]
 	});
 }
-function ue({ type: e, active: t, onSelect: n, onDeleteRequest: r }) {
-	return /* @__PURE__ */ b("div", {
+function $({ type: e, active: t, onSelect: n, onDeleteRequest: r }) {
+	return /* @__PURE__ */ w("div", {
 		"data-testid": `type-item-${e.id}`,
 		className: o("flex items-center gap-2 py-2 px-2.5 rounded-[7px] mb-0.5 transition-colors", t ? "bg-accent-bg border border-accent-border" : "bg-transparent border border-transparent"),
 		children: [
-			/* @__PURE__ */ y("span", {
+			/* @__PURE__ */ C("span", {
 				className: "text-lg shrink-0",
 				children: e.icon
 			}),
-			/* @__PURE__ */ b("div", {
+			/* @__PURE__ */ w("div", {
 				className: "flex-1 min-w-0",
-				children: [/* @__PURE__ */ y("div", {
+				children: [/* @__PURE__ */ C("div", {
 					className: "text-[13px] font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap",
 					children: e.name
-				}), /* @__PURE__ */ b("div", {
+				}), /* @__PURE__ */ w("div", {
 					className: "text-[11px] text-text-tertiary",
 					children: [
 						e.fields.length,
@@ -1736,14 +951,14 @@ function ue({ type: e, active: t, onSelect: n, onDeleteRequest: r }) {
 					]
 				})]
 			}),
-			/* @__PURE__ */ y("button", {
+			/* @__PURE__ */ C("button", {
 				"data-testid": `edit-type-${e.id}`,
 				onClick: n,
 				title: "Edit type",
 				className: o("border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit hover:bg-accent-bg hover:text-accent-fg", t ? "bg-accent-border text-accent-fg" : "bg-transparent text-text-tertiary"),
 				children: "Edit"
 			}),
-			/* @__PURE__ */ y("button", {
+			/* @__PURE__ */ C("button", {
 				"data-testid": `delete-type-${e.id}`,
 				onClick: (e) => {
 					e.stopPropagation(), r();
@@ -1755,22 +970,22 @@ function ue({ type: e, active: t, onSelect: n, onDeleteRequest: r }) {
 		]
 	});
 }
-function de({ idToken: e, onExportSchema: t } = {}) {
-	let { types: n, source: r, error: i, createType: s, updateType: l, deleteType: u } = a({ idToken: e }), [d, f] = _("idle"), [p, m] = _(null), [h, g] = _(null), [v, x] = _(!1), [S, C] = _(null), w = p ? n.find((e) => e.id === p) : void 0, T = () => {
-		m(null), f("create"), C(null);
-	}, E = (e) => {
-		m(e.id), f("edit"), C(null);
-	}, D = async (e) => {
+function ee({ idToken: e, onExportSchema: t } = {}) {
+	let { types: n, source: r, error: i, createType: s, updateType: l, deleteType: u } = a({ idToken: e }), [d, f] = x("idle"), [p, m] = x(null), [h, g] = x(null), [_, v] = x(!1), [y, b] = x(!1), [S, T] = x(null), E = p ? n.find((e) => e.id === p) : void 0, D = () => {
+		m(null), f("create"), T(null);
+	}, O = (e) => {
+		m(e.id), f("edit"), T(null);
+	}, k = async (e) => {
 		let t = d === "edit" && p ? "updated" : "created", n = d === "edit" && p ? await l(p, e) : await s(e);
 		if (n.status === "rejected") {
-			C({
+			T({
 				text: `"${e.name}" NOT saved — server rejected it (${n.error})`,
 				key: Date.now(),
 				tone: "error"
 			});
 			return;
 		}
-		C(n.status === "synced" ? {
+		T(n.status === "synced" ? {
 			text: `"${e.name}" ${t} — synced`,
 			key: Date.now(),
 			tone: "success"
@@ -1779,15 +994,15 @@ function de({ idToken: e, onExportSchema: t } = {}) {
 			key: Date.now(),
 			tone: "offline"
 		}), f("idle"), m(null);
-	}, O = () => {
+	}, A = () => {
 		f("idle"), m(null);
-	}, k = (e) => {
+	}, j = (e) => {
 		g(e);
-	}, A = async () => {
+	}, M = async () => {
 		if (!h) return;
 		let e = n.find((e) => e.id === h), t = await u(h);
 		if (t.status === "rejected") {
-			C({
+			T({
 				text: `"${e?.name ?? h}" NOT deleted — server rejected it (${t.error})`,
 				key: Date.now(),
 				tone: "error"
@@ -1795,58 +1010,89 @@ function de({ idToken: e, onExportSchema: t } = {}) {
 			return;
 		}
 		p === h && (f("idle"), m(null)), g(null);
-	}, j = () => {
+	}, N = () => {
 		g(null);
-	}, M = (e) => {
-		m(e), f("edit"), C(null);
-	}, N = h ? n.find((e) => e.id === h) : null;
-	return /* @__PURE__ */ b("div", {
+	}, P = (e) => {
+		m(e), f("edit"), T(null);
+	}, F = async (e) => {
+		if (!y) {
+			b(!0), T(null);
+			try {
+				let t = e.build(), n = await s(t);
+				T(n.status === "rejected" ? {
+					text: `"${t.name}" NOT added — server rejected it (${n.error})`,
+					key: Date.now(),
+					tone: "error"
+				} : n.status === "synced" ? {
+					text: `"${t.name}" added — ready to use`,
+					key: Date.now(),
+					tone: "success"
+				} : {
+					text: `"${t.name}" added — offline (saved locally, server unreachable)`,
+					key: Date.now(),
+					tone: "offline"
+				});
+			} catch (t) {
+				T({
+					text: `"${e.name}" NOT added — ${t instanceof Error ? t.message : String(t)}`,
+					key: Date.now(),
+					tone: "error"
+				});
+			} finally {
+				b(!1);
+			}
+		}
+	}, I = h ? n.find((e) => e.id === h) : null;
+	return /* @__PURE__ */ w("div", {
 		className: "flex h-full overflow-hidden font-inherit",
 		children: [
-			/* @__PURE__ */ b("div", {
+			/* @__PURE__ */ w("div", {
 				className: "w-[264px] shrink-0 border-r border-border flex flex-col overflow-hidden bg-surface-inset",
 				children: [
-					/* @__PURE__ */ b("div", {
+					/* @__PURE__ */ w("div", {
 						className: "py-3.5 px-4 border-b border-border flex flex-col gap-2.5",
-						children: [/* @__PURE__ */ y("span", {
+						children: [/* @__PURE__ */ C("span", {
 							className: "text-[13px] font-bold text-text-primary",
 							children: "Document Types"
-						}), /* @__PURE__ */ b("div", {
+						}), /* @__PURE__ */ w("div", {
 							className: "flex gap-1.5",
-							children: [/* @__PURE__ */ y("button", {
+							children: [/* @__PURE__ */ C("button", {
 								"data-testid": "cookbooks-btn",
-								onClick: () => x(!0),
-								className: "py-[5px] px-3 text-xs font-semibold bg-surface text-primary border border-primary rounded-md cursor-pointer font-inherit whitespace-nowrap",
-								children: "Cookbooks"
-							}), /* @__PURE__ */ y("button", {
-								"data-testid": "create-type-btn",
-								onClick: T,
+								onClick: () => v(!0),
+								title: "Browse the ready-made document types",
 								className: "py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit whitespace-nowrap",
-								children: "+ New"
+								children: "Known types"
+							}), /* @__PURE__ */ C("button", {
+								"data-testid": "create-type-btn",
+								onClick: D,
+								title: "Build a document type field by field",
+								className: "py-[5px] px-3 text-xs font-medium bg-transparent text-text-secondary border border-border rounded-md cursor-pointer font-inherit whitespace-nowrap",
+								children: "From scratch"
 							})]
 						})]
 					}),
-					/* @__PURE__ */ y("div", {
+					/* @__PURE__ */ C("div", {
 						className: "flex-1 overflow-y-auto p-2",
 						"data-testid": "type-list",
-						children: n.length === 0 ? /* @__PURE__ */ b("div", {
+						children: n.length === 0 ? /* @__PURE__ */ w("div", {
 							className: "py-8 px-4 flex flex-col items-center gap-2",
-							children: [/* @__PURE__ */ y("div", {
+							children: [/* @__PURE__ */ C("div", {
 								className: "text-text-tertiary text-[13px]",
 								children: "No types yet."
-							}), /* @__PURE__ */ y("button", {
-								onClick: T,
+							}), /* @__PURE__ */ C("button", {
+								"data-testid": "empty-browse-types-btn",
+								onClick: () => v(!0),
 								className: "bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2 font-inherit",
-								children: "Create one →"
+								children: "Browse known types →"
 							})]
-						}) : n.map((e) => /* @__PURE__ */ y(ue, {
+						}) : n.map((e) => /* @__PURE__ */ C($, {
 							type: e,
 							active: p === e.id,
-							onSelect: () => E(e),
-							onDeleteRequest: () => k(e.id)
+							onSelect: () => O(e),
+							onDeleteRequest: () => j(e.id)
 						}, e.id))
 					}),
-					r === "cache" && /* @__PURE__ */ b("div", {
+					r === "cache" && /* @__PURE__ */ w("div", {
 						"data-testid": "types-offline-notice",
 						className: "py-2 px-3.5 border-t border-warning-border bg-warning-bg text-xs text-warning-fg font-medium",
 						children: [
@@ -1855,7 +1101,7 @@ function de({ idToken: e, onExportSchema: t } = {}) {
 							")"
 						]
 					}),
-					S && /* @__PURE__ */ b("div", {
+					S && /* @__PURE__ */ w("div", {
 						"data-testid": "save-message",
 						className: o("py-2 px-3.5 border-t text-xs font-medium", S.tone === "success" && "border-success-border bg-success-bg text-success-fg", S.tone === "offline" && "border-warning-border bg-warning-bg text-warning-fg", S.tone === "error" && "border-danger-border bg-danger-bg text-danger-fg"),
 						children: [
@@ -1866,38 +1112,60 @@ function de({ idToken: e, onExportSchema: t } = {}) {
 					}, S.key)
 				]
 			}),
-			/* @__PURE__ */ b("div", {
+			/* @__PURE__ */ w("div", {
 				className: "flex-1 overflow-y-auto py-7 px-9",
 				"data-testid": "right-panel",
-				children: [d === "idle" && /* @__PURE__ */ y(c, {
-					testId: "idle-panel",
-					actionTestId: "idle-create-btn",
-					icon: "📋",
-					title: n.length > 0 ? "Select a type to edit" : "No document types yet",
-					body: n.length > 0 ? "Choose a type from the list to edit its fields and view modes." : "Document types define the structure and fields for your documents.",
-					actionLabel: n.length > 0 ? void 0 : "+ Create Document Type",
-					onAction: n.length > 0 ? void 0 : T
-				}), (d === "create" || d === "edit") && /* @__PURE__ */ y(U, {
-					initialType: w,
+				children: [d === "idle" && /* @__PURE__ */ w("div", {
+					"data-testid": "known-types-panel",
+					className: "flex flex-col gap-4",
+					children: [/* @__PURE__ */ C(c, {
+						testId: "idle-panel",
+						className: "min-h-0 p-0 gap-1",
+						icon: "📋",
+						title: n.length > 0 ? "Select a type to edit" : "No document types yet",
+						description: n.length > 0 ? "Choose a type from the list to edit its fields — or add another known type below." : "Start from a known type below. It installs as your own type, and you can change any of it afterwards.",
+						action: /* @__PURE__ */ C("button", {
+							"data-testid": "idle-create-btn",
+							onClick: D,
+							className: "px-3.5 py-2 text-[13px] font-medium bg-transparent text-text-secondary border border-border rounded-lg cursor-pointer font-inherit",
+							children: "Build a type from scratch"
+						})
+					}), /* @__PURE__ */ w("div", {
+						className: "border-t border-border pt-4",
+						children: [/* @__PURE__ */ C("div", {
+							className: "text-[13px] font-bold text-text-primary mb-2",
+							children: "Known types"
+						}), /* @__PURE__ */ C(X, {
+							onPick: F,
+							busy: y,
+							actionLabel: "Add this type",
+							idPrefix: "type-starters",
+							cardPrefix: "type-starter",
+							layout: "fluid",
+							gridHeightClassName: "max-h-none"
+						})]
+					})]
+				}), (d === "create" || d === "edit") && /* @__PURE__ */ C(q, {
+					initialType: E,
 					idToken: e,
-					onSave: D,
-					onCancel: O,
+					onSave: k,
+					onCancel: A,
 					onExportSchema: t
 				}, p ?? "create")]
 			}),
-			h && N && /* @__PURE__ */ y(le, {
-				typeName: N.name,
-				onConfirm: A,
-				onCancel: j
+			h && I && /* @__PURE__ */ C(Q, {
+				typeName: I.name,
+				onConfirm: M,
+				onCancel: N
 			}),
-			/* @__PURE__ */ y($, {
-				open: v,
-				onClose: () => x(!1),
-				onCreated: M,
+			/* @__PURE__ */ C(Z, {
+				open: _,
+				onClose: () => v(!1),
+				onCreated: P,
 				createType: s
 			})
 		]
 	});
 }
 //#endregion
-export { W as COOKBOOK_CATEGORIES, $ as CookbooksModal, U as DocumentTypeWizard, de as DocumentTypesPage, I as FieldDefinitionEditor, P as StepIndicator, F as WizardStepNavigation, Q as documentTypeCookbooks };
+export { m as COOKBOOK_CATEGORIES, X as CookbookPicker, Z as CookbooksModal, q as DocumentTypeWizard, ee as DocumentTypesPage, B as FieldDefinitionEditor, R as StepIndicator, z as WizardStepNavigation, p as documentTypeCookbooks, h as filterCookbooks, g as matchesCookbookQuery };

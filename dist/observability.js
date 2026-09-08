@@ -9,7 +9,7 @@ import { n as l, r as u, t as d } from "./CardHeader-C-7rFLKD.js";
 import { t as f } from "./Input-DLknWXri.js";
 import { t as p } from "./StatusDot-Bgx2zxgC.js";
 import { t as m } from "./Select-CqVokE2v.js";
-import { t as h } from "./Checkbox-DsS7fIUO.js";
+import { t as h } from "./Checkbox-DqN9RkXK.js";
 import { t as g } from "./activationKey-CjbL3LUv.js";
 import { n as _ } from "./EventStreamContext-CLzG8O5_.js";
 import { n as v, r as y } from "./ObservabilityContext-DpoDrm3T.js";

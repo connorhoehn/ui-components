@@ -4,6 +4,35 @@ export declare const COOKBOOK_CATEGORIES: CookbookCategory[];
 
 export declare type CookbookCategory = 'Engineering' | 'Operations' | 'People' | 'Sales & CRM' | 'Product' | 'Finance' | 'Legal' | 'General';
 
+export declare function CookbookPicker({ onPick, busy, actionLabel, autoFocusSearch, idPrefix, cardPrefix, layout, gridHeightClassName, }: CookbookPickerProps): JSX.Element;
+
+export declare interface CookbookPickerProps {
+    /** Fired with the chosen cookbook. Persistence is the caller's business. */
+    onPick: (cookbook: DocumentTypeCookbook) => void;
+    /** Disables every action while an install is in flight. */
+    busy?: boolean;
+    /** Label on each card's action button. Default `Install`. */
+    actionLabel?: string;
+    /** Focus the search box shortly after mount. Default `false`. */
+    autoFocusSearch?: boolean;
+    /**
+     * Testid stem for the search box, grid and empty state (`<prefix>-search`,
+     * `-grid`, `-empty`). Defaults to `cookbooks`, which is what the modal's
+     * existing specs address — a second mount of this picker on the same screen
+     * MUST pass its own prefix or those selectors match twice.
+     */
+    idPrefix?: string;
+    /** Testid stem for the per-card ids (`<prefix>-card-<id>`, `-use-<id>`, `-cat-<slug>`). */
+    cardPrefix?: string;
+    /**
+     * `fixed` keeps the modal's original three 220px columns; `fluid` fills the
+     * width it is given, which is what the Document Types page needs.
+     */
+    layout?: 'fixed' | 'fluid';
+    /** Height cap on the scrolling grid. Default `max-h-[60vh]`. */
+    gridHeightClassName?: string;
+}
+
 export declare function CookbooksModal({ open, onClose, onCreated, createType, }: CookbooksModalProps): JSX.Element;
 
 declare interface CookbooksModalProps {
@@ -139,6 +168,24 @@ export declare interface FieldDefinitionEditorProps {
     onToggleRequired: () => void;
     onToggleCollapsed: () => void;
 }
+
+/** Cookbooks in catalogue order, filtered by category then query. */
+export declare function filterCookbooks(query: string, category?: CookbookCategory | 'All'): DocumentTypeCookbook[];
+
+/**
+ * Does this cookbook answer to `query`?
+ *
+ * One predicate, shared by every surface that offers the cookbooks — the
+ * gallery on the Document Types page and the starting-point picker in the New
+ * Document modal. They used to filter with two hand-written copies of the same
+ * four `.includes()` calls, which is how "retro" came to match in one place
+ * and not the other.
+ *
+ * Matches on name, description, tags and category so the words a person
+ * actually types ("retro", "postmortem", "hiring") land on the right template
+ * even when they are nowhere in its title.
+ */
+export declare function matchesCookbookQuery(cookbook: DocumentTypeCookbook, query: string): boolean;
 
 declare type SaveOutcome = {
     status: 'synced';

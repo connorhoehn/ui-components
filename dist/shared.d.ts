@@ -373,12 +373,36 @@ export declare interface ChatComposerProps {
 
 export declare const Checkbox: ForwardRefExoticComponent<CheckboxProps & RefAttributes<HTMLInputElement>>;
 
+/** Modifier keys held during the click that toggled a checkbox. */
+declare interface CheckboxModifiers {
+    shiftKey: boolean;
+    metaKey: boolean;
+    ctrlKey: boolean;
+    altKey: boolean;
+}
+
 export declare interface CheckboxProps {
     id?: string;
     /** Form field name, for label association and form submission. */
     name?: string;
     checked: boolean;
-    onChange: (checked: boolean) => void;
+    /**
+     * The new checked state, and the modifier keys held while it changed.
+     *
+     * `shiftKey` is the reason for the second argument: "tick this one" and
+     * "tick everything from the last one to this one" are the same control with
+     * shift held, and a callback carrying only the boolean cannot express the
+     * second. Callers with a shift-select list therefore hand-rolled a native
+     * <input type="checkbox"> — which is how a pipelines table ended up styling
+     * itself with `accent-[var(--color-accent-solid)]`, a token that does not
+     * exist. Existing callers taking one parameter are unaffected.
+     *
+     * The modifiers come from the CLICK, not the change event: a change event
+     * carries no modifier state at all. Keyboard activation (space) also emits a
+     * click, so it arrives here with every modifier false, which is correct —
+     * there is no shift-space range-select convention on a checkbox.
+     */
+    onChange: (checked: boolean, modifiers: CheckboxModifiers) => void;
     /**
      * Mixed state — "some but not all selected". Rendered natively (the dash),
      * exposed to AT via aria-checked="mixed". Clicking a mixed checkbox

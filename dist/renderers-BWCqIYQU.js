@@ -4,12 +4,820 @@ import { t as i } from "./cn-DhjIN-s0.js";
 import { t as a } from "./useEventCallback-Cwx9QVSi.js";
 import { t as o } from "./Input-DLknWXri.js";
 import { t as s } from "./Select-CqVokE2v.js";
-import { t as c } from "./Checkbox-DsS7fIUO.js";
+import { t as c } from "./Checkbox-DqN9RkXK.js";
 import { t as l } from "./TiptapEditor-Dn9rUdZx.js";
 import { useCallback as u, useEffect as d, useRef as f, useState as p } from "react";
 import { Fragment as m, jsx as h, jsxs as g } from "react/jsx-runtime";
+//#region src/components/doc-types/cookbooks/index.ts
+var _ = [
+	"General",
+	"Engineering",
+	"Operations",
+	"Product",
+	"People",
+	"Sales & CRM",
+	"Finance",
+	"Legal"
+];
+function v(e, t, n = {}) {
+	return {
+		id: crypto.randomUUID(),
+		name: e,
+		sectionType: t,
+		required: n.required ?? !1,
+		defaultCollapsed: n.defaultCollapsed ?? !1,
+		placeholder: n.placeholder ?? "",
+		hiddenInModes: n.hiddenInModes ?? [],
+		rendererOverrides: {}
+	};
+}
+function y() {
+	return {
+		name: "Bug Report",
+		description: "Track bugs with severity, reproduction steps, and resolution notes.",
+		icon: "🐛",
+		fields: [
+			v("Title", "text", { required: !0 }),
+			v("Severity", "text", {
+				required: !0,
+				placeholder: "Critical / High / Medium / Low"
+			}),
+			v("Status", "text", {
+				required: !0,
+				placeholder: "Open / In Progress / Resolved / Won't Fix"
+			}),
+			v("Reported By", "text", { required: !0 }),
+			v("Reported Date", "date", { required: !0 }),
+			v("Assigned To", "text"),
+			v("Environment", "text", { placeholder: "Production / Staging / Development / Local" }),
+			v("Steps to Reproduce", "rich-text", {
+				required: !0,
+				placeholder: "Detailed steps to reproduce the issue..."
+			}),
+			v("Expected Behavior", "rich-text", {
+				required: !0,
+				placeholder: "What should happen..."
+			}),
+			v("Actual Behavior", "rich-text", {
+				required: !0,
+				placeholder: "What actually happens..."
+			}),
+			v("Screenshots / Evidence", "rich-text", { placeholder: "Paste screenshots or supporting evidence..." }),
+			v("Root Cause", "rich-text", {
+				placeholder: "What caused the issue...",
+				defaultCollapsed: !0
+			}),
+			v("Resolution Notes", "rich-text", {
+				placeholder: "How the issue was resolved...",
+				defaultCollapsed: !0
+			})
+		]
+	};
+}
+function b() {
+	return {
+		name: "Employee Onboarding",
+		description: "New hire onboarding tasks, milestones, and equipment tracking.",
+		icon: "👋",
+		fields: [
+			v("Employee Name", "text", { required: !0 }),
+			v("Start Date", "date", { required: !0 }),
+			v("Department", "text", {
+				required: !0,
+				placeholder: "Engineering / Product / Design / Sales / Marketing / Operations / HR / Finance"
+			}),
+			v("Manager", "text", { required: !0 }),
+			v("Role Title", "text", { required: !0 }),
+			v("Equipment Issued", "boolean"),
+			v("Accounts Created", "boolean"),
+			v("Orientation Complete", "boolean"),
+			v("First Week Goals", "rich-text", { placeholder: "Goals for the first week..." }),
+			v("30-Day Milestones", "rich-text", { placeholder: "What should be accomplished by day 30..." }),
+			v("60-Day Milestones", "rich-text", {
+				placeholder: "What should be accomplished by day 60...",
+				defaultCollapsed: !0
+			}),
+			v("90-Day Review Date", "date"),
+			v("Mentor Assigned", "text"),
+			v("Notes", "rich-text")
+		]
+	};
+}
+function x() {
+	return {
+		name: "Invoice",
+		description: "Track invoices with line items, amounts, and payment status.",
+		icon: "💰",
+		fields: [
+			v("Invoice Number", "text", {
+				required: !0,
+				placeholder: "INV-0001"
+			}),
+			v("Issue Date", "date", { required: !0 }),
+			v("Due Date", "date", { required: !0 }),
+			v("Status", "text", {
+				required: !0,
+				placeholder: "Draft / Sent / Paid / Overdue / Void"
+			}),
+			v("Client Name", "text", { required: !0 }),
+			v("Client Email", "text"),
+			v("Line Items", "rich-text", {
+				required: !0,
+				placeholder: "Description of goods or services..."
+			}),
+			v("Subtotal", "number", { required: !0 }),
+			v("Tax Rate (%)", "number"),
+			v("Tax Amount", "number"),
+			v("Total Amount", "number", { required: !0 }),
+			v("Currency", "text", {
+				required: !0,
+				placeholder: "USD / EUR / GBP / CAD / AUD"
+			}),
+			v("Payment Terms", "text", { placeholder: "Net 15 / Net 30 / Net 60 / Due on Receipt" }),
+			v("Payment Method", "text", { placeholder: "Wire / ACH / Check / Credit Card" }),
+			v("Notes", "rich-text"),
+			v("Paid Date", "date", { defaultCollapsed: !0 })
+		]
+	};
+}
+function S() {
+	return {
+		name: "Meeting Notes",
+		description: "Capture agendas, discussion points, decisions, and action items.",
+		icon: "📝",
+		fields: [
+			v("Meeting Title", "text", { required: !0 }),
+			v("Date", "date", { required: !0 }),
+			v("Meeting Type", "text", {
+				required: !0,
+				placeholder: "Standup / Sprint Planning / Retro / 1:1 / All Hands / Design Review / Ad Hoc"
+			}),
+			v("Attendees", "text", { placeholder: "Comma-separated names" }),
+			v("Facilitator", "text"),
+			v("Agenda", "rich-text", { placeholder: "Topics to cover..." }),
+			v("Discussion Notes", "rich-text", {
+				required: !0,
+				placeholder: "Key discussion points..."
+			}),
+			v("Action Items", "rich-text", { placeholder: "Who does what by when..." }),
+			v("Decisions Made", "rich-text", { placeholder: "Decisions reached during the meeting..." }),
+			v("Follow-Up Date", "date"),
+			v("Recording Link", "text", { placeholder: "URL to meeting recording" })
+		]
+	};
+}
+function C() {
+	return {
+		name: "Sales Lead",
+		description: "Track leads through the sales pipeline with deal values and follow-ups.",
+		icon: "💼",
+		fields: [
+			v("Contact Name", "text", { required: !0 }),
+			v("Company", "text", { required: !0 }),
+			v("Email", "text", {
+				required: !0,
+				placeholder: "email@example.com"
+			}),
+			v("Phone", "text"),
+			v("Lead Source", "text", {
+				required: !0,
+				placeholder: "Inbound / Outbound / Referral / Event / Website / Cold Call"
+			}),
+			v("Stage", "text", {
+				required: !0,
+				placeholder: "New / Contacted / Qualified / Proposal / Negotiation / Closed Won / Closed Lost"
+			}),
+			v("Deal Value", "number"),
+			v("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
+			v("Expected Close Date", "date"),
+			v("Last Contact Date", "date"),
+			v("Next Follow-Up", "date"),
+			v("Owner", "text"),
+			v("Notes", "rich-text"),
+			v("Lost Reason", "text", {
+				placeholder: "Price / Competitor / Timing / No Budget / No Response / Other",
+				defaultCollapsed: !0
+			})
+		]
+	};
+}
+function w() {
+	return {
+		name: "Incident Report",
+		description: "Document incidents with severity, timeline, root cause, and remediation.",
+		icon: "🚨",
+		fields: [
+			v("Incident Title", "text", { required: !0 }),
+			v("Severity", "text", {
+				required: !0,
+				placeholder: "SEV1 / SEV2 / SEV3 / SEV4"
+			}),
+			v("Status", "text", {
+				required: !0,
+				placeholder: "Investigating / Identified / Monitoring / Resolved / Postmortem"
+			}),
+			v("Detected At", "date", { required: !0 }),
+			v("Resolved At", "date", { defaultCollapsed: !0 }),
+			v("Duration", "text", {
+				defaultCollapsed: !0,
+				placeholder: "e.g. 2h 15m"
+			}),
+			v("Incident Commander", "text", { required: !0 }),
+			v("Services Affected", "text", { placeholder: "Comma-separated service names" }),
+			v("Customer Impact", "rich-text", {
+				required: !0,
+				placeholder: "Describe the user-facing impact..."
+			}),
+			v("Timeline", "rich-text", {
+				required: !0,
+				placeholder: "Chronological sequence of events..."
+			}),
+			v("Root Cause", "rich-text", {
+				placeholder: "What caused the incident...",
+				defaultCollapsed: !0
+			}),
+			v("Remediation Steps", "rich-text", { placeholder: "Steps taken to resolve..." }),
+			v("Action Items", "rich-text", {
+				placeholder: "Follow-up tasks to prevent recurrence...",
+				defaultCollapsed: !0
+			}),
+			v("Lessons Learned", "rich-text", {
+				placeholder: "What we can do better next time...",
+				defaultCollapsed: !0
+			}),
+			v("Related Incidents", "text", { placeholder: "Links to related incident reports" })
+		]
+	};
+}
+function T() {
+	return {
+		name: "RFC / Technical Proposal",
+		description: "Request for comments with problem statement, proposed solution, and alternatives.",
+		icon: "📨",
+		fields: [
+			v("RFC Title", "text", { required: !0 }),
+			v("Author", "text", { required: !0 }),
+			v("Status", "text", {
+				required: !0,
+				placeholder: "Draft / In Review / Accepted / Rejected / Superseded"
+			}),
+			v("Created Date", "date", { required: !0 }),
+			v("Decision Date", "date", { defaultCollapsed: !0 }),
+			v("Reviewers", "text", { placeholder: "Comma-separated reviewer names" }),
+			v("Problem Statement", "rich-text", {
+				required: !0,
+				placeholder: "What problem are we solving?"
+			}),
+			v("Proposed Solution", "rich-text", {
+				required: !0,
+				placeholder: "Detailed proposal..."
+			}),
+			v("Alternatives Considered", "rich-text", { placeholder: "Other approaches evaluated..." }),
+			v("Technical Design", "rich-text", { placeholder: "Architecture, data flow, API changes..." }),
+			v("Migration Plan", "rich-text", {
+				placeholder: "How to roll out the change...",
+				defaultCollapsed: !0
+			}),
+			v("Risks", "rich-text", { placeholder: "Known risks and mitigations..." }),
+			v("Open Questions", "rich-text", { placeholder: "Unresolved questions for discussion..." }),
+			v("Decision", "rich-text", {
+				placeholder: "Final decision and rationale...",
+				defaultCollapsed: !0
+			}),
+			v("Superseded By", "text", {
+				placeholder: "Link to successor RFC",
+				defaultCollapsed: !0
+			})
+		]
+	};
+}
+function E() {
+	return {
+		name: "Feature Request",
+		description: "Capture feature requests with user stories, priority, and effort estimates.",
+		icon: "💡",
+		fields: [
+			v("Feature Title", "text", { required: !0 }),
+			v("Requested By", "text", { required: !0 }),
+			v("Priority", "text", {
+				required: !0,
+				placeholder: "Critical / High / Medium / Low / Nice to Have"
+			}),
+			v("Status", "text", {
+				required: !0,
+				placeholder: "New / Under Review / Planned / In Progress / Shipped / Declined"
+			}),
+			v("Category", "text", { placeholder: "UX / Performance / Integration / New Capability / Infrastructure" }),
+			v("Target Release", "text"),
+			v("User Story", "rich-text", {
+				required: !0,
+				placeholder: "As a [user], I want [goal] so that [benefit]"
+			}),
+			v("Problem Description", "rich-text", {
+				required: !0,
+				placeholder: "What problem does this solve?"
+			}),
+			v("Proposed Solution", "rich-text", { placeholder: "How should this work?" }),
+			v("Success Metrics", "rich-text", { placeholder: "How will we measure success?" }),
+			v("Effort Estimate", "text", { placeholder: "XS / S / M / L / XL" }),
+			v("Business Value", "text", { placeholder: "Revenue / Retention / Adoption / Compliance / Internal Efficiency" }),
+			v("Dependencies", "rich-text", { defaultCollapsed: !0 }),
+			v("Decline Reason", "rich-text", {
+				placeholder: "Why was this declined?",
+				defaultCollapsed: !0
+			}),
+			v("Ship Date", "date", { defaultCollapsed: !0 })
+		]
+	};
+}
+function D() {
+	return {
+		name: "Contract / Agreement",
+		description: "Track contracts with counterparty, terms, renewal dates, and status.",
+		icon: "📜",
+		fields: [
+			v("Contract Title", "text", { required: !0 }),
+			v("Contract Type", "text", {
+				required: !0,
+				placeholder: "NDA / MSA / SOW / SLA / Employment / Vendor / Licensing / Other"
+			}),
+			v("Status", "text", {
+				required: !0,
+				placeholder: "Draft / In Review / Pending Signature / Active / Expired / Terminated"
+			}),
+			v("Counterparty", "text", { required: !0 }),
+			v("Effective Date", "date", { required: !0 }),
+			v("Expiration Date", "date"),
+			v("Auto-Renew", "boolean"),
+			v("Renewal Term", "text", {
+				placeholder: "Monthly / Quarterly / Annual / Biennial",
+				defaultCollapsed: !0
+			}),
+			v("Contract Value", "number"),
+			v("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
+			v("Payment Terms", "text", { placeholder: "Net 15 / Net 30 / Net 60 / Upfront" }),
+			v("Internal Owner", "text", { required: !0 }),
+			v("Key Terms", "rich-text", { placeholder: "Important clauses and obligations..." }),
+			v("Termination Clause", "rich-text", { defaultCollapsed: !0 }),
+			v("Notes", "rich-text"),
+			v("Termination Date", "date", { defaultCollapsed: !0 }),
+			v("Termination Reason", "rich-text", {
+				placeholder: "Why was this terminated?",
+				defaultCollapsed: !0
+			})
+		]
+	};
+}
+function O() {
+	return {
+		name: "Sprint Retrospective",
+		description: "Reflect on the sprint with what went well, what didn't, and action items.",
+		icon: "🔄",
+		fields: [
+			v("Sprint Name", "text", { required: !0 }),
+			v("Sprint Dates", "text", {
+				required: !0,
+				placeholder: "Jan 6 – Jan 17"
+			}),
+			v("Facilitator", "text"),
+			v("Team", "text", { required: !0 }),
+			v("Velocity", "number"),
+			v("Planned Points", "number"),
+			v("Completed Points", "number"),
+			v("What Went Well", "rich-text", {
+				required: !0,
+				placeholder: "Celebrate wins..."
+			}),
+			v("What Didn't Go Well", "rich-text", {
+				required: !0,
+				placeholder: "Identify pain points..."
+			}),
+			v("Start Doing", "rich-text", { placeholder: "New practices to adopt..." }),
+			v("Stop Doing", "rich-text", { placeholder: "Practices to drop..." }),
+			v("Continue Doing", "rich-text", { placeholder: "Practices to keep..." }),
+			v("Action Items", "rich-text", {
+				required: !0,
+				placeholder: "Specific follow-up tasks..."
+			}),
+			v("Action Item Owners", "text", { placeholder: "Comma-separated names" }),
+			v("Follow-Up Date", "date"),
+			v("Overall Sentiment", "text", {
+				required: !0,
+				placeholder: "Great / Good / Mixed / Rough"
+			})
+		]
+	};
+}
+function k() {
+	return {
+		name: "Job Posting",
+		description: "Job listings with requirements, compensation, and hiring status.",
+		icon: "📋",
+		fields: [
+			v("Job Title", "text", { required: !0 }),
+			v("Department", "text", {
+				required: !0,
+				placeholder: "Engineering / Product / Design / Sales / Marketing / Operations / HR / Finance / Legal"
+			}),
+			v("Location", "text", {
+				required: !0,
+				placeholder: "Remote / Hybrid / On-site"
+			}),
+			v("Office Location", "text", { defaultCollapsed: !0 }),
+			v("Employment Type", "text", {
+				required: !0,
+				placeholder: "Full-time / Part-time / Contract / Intern"
+			}),
+			v("Level", "text", {
+				required: !0,
+				placeholder: "Junior / Mid / Senior / Staff / Principal / Director / VP"
+			}),
+			v("Status", "text", {
+				required: !0,
+				placeholder: "Draft / Open / On Hold / Filled / Closed"
+			}),
+			v("Hiring Manager", "text", { required: !0 }),
+			v("Salary Range Min", "number"),
+			v("Salary Range Max", "number"),
+			v("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
+			v("Job Description", "rich-text", {
+				required: !0,
+				placeholder: "Role overview and responsibilities..."
+			}),
+			v("Requirements", "rich-text", {
+				required: !0,
+				placeholder: "Must-have qualifications..."
+			}),
+			v("Nice to Have", "rich-text", { placeholder: "Preferred but not required..." }),
+			v("Benefits", "rich-text", { placeholder: "Compensation and perks..." }),
+			v("Posted Date", "date"),
+			v("Closing Date", "date"),
+			v("Filled By", "text", { defaultCollapsed: !0 }),
+			v("Filled Date", "date", { defaultCollapsed: !0 })
+		]
+	};
+}
+function A() {
+	return {
+		name: "Vendor Evaluation",
+		description: "Evaluate vendors with scoring, compliance checks, and recommendations.",
+		icon: "🔍",
+		fields: [
+			v("Vendor Name", "text", { required: !0 }),
+			v("Category", "text", {
+				required: !0,
+				placeholder: "SaaS / Infrastructure / Consulting / Hardware / Staffing / Other"
+			}),
+			v("Evaluation Status", "text", {
+				required: !0,
+				placeholder: "Researching / In Trial / Evaluating / Approved / Rejected / Active Vendor"
+			}),
+			v("Evaluator", "text", { required: !0 }),
+			v("Evaluation Date", "date", { required: !0 }),
+			v("Website", "text"),
+			v("Primary Contact", "text"),
+			v("Annual Cost", "number"),
+			v("Currency", "text", { placeholder: "USD / EUR / GBP / CAD" }),
+			v("Contract Length", "text", { placeholder: "Monthly / Annual / Multi-Year" }),
+			v("Security Review Complete", "boolean"),
+			v("SOC2 Compliant", "boolean"),
+			v("GDPR Compliant", "boolean"),
+			v("Strengths", "rich-text", { placeholder: "Key advantages..." }),
+			v("Weaknesses", "rich-text", { placeholder: "Gaps and concerns..." }),
+			v("Integration Requirements", "rich-text", { placeholder: "Technical integration needs..." }),
+			v("Score (1–10)", "number"),
+			v("Recommendation", "rich-text", { placeholder: "Final recommendation..." }),
+			v("Rejection Reason", "rich-text", {
+				placeholder: "Why was this vendor rejected?",
+				defaultCollapsed: !0
+			})
+		]
+	};
+}
+function j() {
+	return {
+		name: "Project Status Report",
+		description: "Weekly project status with health indicators, accomplishments, and risks.",
+		icon: "📊",
+		fields: [
+			v("Project Name", "text", { required: !0 }),
+			v("Reporting Period", "text", {
+				required: !0,
+				placeholder: "Week of Jan 6, 2025"
+			}),
+			v("Project Lead", "text", { required: !0 }),
+			v("Overall Status", "text", {
+				required: !0,
+				placeholder: "On Track / At Risk / Blocked / Complete"
+			}),
+			v("Health: Scope", "text", {
+				required: !0,
+				placeholder: "Green / Yellow / Red"
+			}),
+			v("Health: Timeline", "text", {
+				required: !0,
+				placeholder: "Green / Yellow / Red"
+			}),
+			v("Health: Budget", "text", {
+				required: !0,
+				placeholder: "Green / Yellow / Red"
+			}),
+			v("Percent Complete", "number"),
+			v("Summary", "rich-text", {
+				required: !0,
+				placeholder: "High-level status overview..."
+			}),
+			v("Accomplishments This Period", "rich-text", {
+				required: !0,
+				placeholder: "What was delivered..."
+			}),
+			v("Planned Next Period", "rich-text", {
+				required: !0,
+				placeholder: "What's coming up..."
+			}),
+			v("Risks & Issues", "rich-text", { placeholder: "Active risks and open issues..." }),
+			v("Blockers", "rich-text", {
+				placeholder: "Blocking items requiring escalation...",
+				defaultCollapsed: !0
+			}),
+			v("Decisions Needed", "rich-text", { placeholder: "Pending decisions from stakeholders..." }),
+			v("Budget Spent", "number"),
+			v("Budget Remaining", "number"),
+			v("Target Completion Date", "date"),
+			v("Stakeholder Notes", "rich-text", { defaultCollapsed: !0 })
+		]
+	};
+}
+function M() {
+	return {
+		name: "Change Request",
+		description: "Formalized change management with risk assessment and rollback plans.",
+		icon: "🔄",
+		fields: [
+			v("Change Title", "text", { required: !0 }),
+			v("Change ID", "text", {
+				required: !0,
+				placeholder: "CR-0001"
+			}),
+			v("Requester", "text", { required: !0 }),
+			v("Request Date", "date", { required: !0 }),
+			v("Priority", "text", {
+				required: !0,
+				placeholder: "Emergency / High / Medium / Low"
+			}),
+			v("Status", "text", {
+				required: !0,
+				placeholder: "Submitted / Under Review / Approved / Scheduled / In Progress / Completed / Rolled Back / Rejected"
+			}),
+			v("Change Type", "text", {
+				required: !0,
+				placeholder: "Standard / Normal / Emergency"
+			}),
+			v("Systems Affected", "text", { placeholder: "Comma-separated system names" }),
+			v("Description of Change", "rich-text", {
+				required: !0,
+				placeholder: "What is being changed and why..."
+			}),
+			v("Business Justification", "rich-text", {
+				required: !0,
+				placeholder: "Why this change is needed..."
+			}),
+			v("Risk Assessment", "text", {
+				required: !0,
+				placeholder: "Low / Medium / High / Critical"
+			}),
+			v("Risk Mitigation", "rich-text", {
+				placeholder: "Steps to reduce risk...",
+				defaultCollapsed: !0
+			}),
+			v("Rollback Plan", "rich-text", {
+				required: !0,
+				placeholder: "How to revert if something goes wrong..."
+			}),
+			v("Scheduled Date", "date", { defaultCollapsed: !0 }),
+			v("Implementation Notes", "rich-text", {
+				placeholder: "Notes from the change window...",
+				defaultCollapsed: !0
+			}),
+			v("Approver", "text"),
+			v("Approval Date", "date", { defaultCollapsed: !0 }),
+			v("Post-Implementation Review", "rich-text", {
+				placeholder: "Review after the change is complete...",
+				defaultCollapsed: !0
+			})
+		]
+	};
+}
+var N = [
+	{
+		id: "meeting-notes",
+		name: "Meeting Notes",
+		description: "Capture agendas, discussion points, decisions, and action items.",
+		icon: "📝",
+		category: "General",
+		tags: [
+			"meetings",
+			"notes",
+			"action items",
+			"decisions"
+		],
+		build: S
+	},
+	{
+		id: "bug-report",
+		name: "Bug Report",
+		description: "Track bugs with severity, reproduction steps, and resolution notes.",
+		icon: "🐛",
+		category: "Engineering",
+		tags: [
+			"bugs",
+			"qa",
+			"testing",
+			"defects"
+		],
+		build: y
+	},
+	{
+		id: "rfc",
+		name: "RFC / Technical Proposal",
+		description: "Request for comments with problem statement, proposed solution, and alternatives.",
+		icon: "📨",
+		category: "Engineering",
+		tags: [
+			"rfc",
+			"proposal",
+			"architecture",
+			"design"
+		],
+		build: T
+	},
+	{
+		id: "sprint-retro",
+		name: "Sprint Retrospective",
+		description: "Reflect on the sprint with what went well, what didn't, and action items.",
+		icon: "🔄",
+		category: "Engineering",
+		tags: [
+			"agile",
+			"sprint",
+			"retro",
+			"retrospective"
+		],
+		build: O
+	},
+	{
+		id: "incident-report",
+		name: "Incident Report",
+		description: "Document incidents with severity, timeline, root cause, and remediation.",
+		icon: "🚨",
+		category: "Operations",
+		tags: [
+			"incidents",
+			"postmortem",
+			"sev",
+			"outage"
+		],
+		build: w
+	},
+	{
+		id: "vendor-evaluation",
+		name: "Vendor Evaluation",
+		description: "Evaluate vendors with scoring, compliance checks, and recommendations.",
+		icon: "🔍",
+		category: "Operations",
+		tags: [
+			"vendors",
+			"procurement",
+			"evaluation",
+			"compliance"
+		],
+		build: A
+	},
+	{
+		id: "change-request",
+		name: "Change Request",
+		description: "Formalized change management with risk assessment and rollback plans.",
+		icon: "🔄",
+		category: "Operations",
+		tags: [
+			"change",
+			"itil",
+			"rollback",
+			"risk"
+		],
+		build: M
+	},
+	{
+		id: "feature-request",
+		name: "Feature Request",
+		description: "Capture feature requests with user stories, priority, and effort estimates.",
+		icon: "💡",
+		category: "Product",
+		tags: [
+			"features",
+			"product",
+			"backlog",
+			"user stories"
+		],
+		build: E
+	},
+	{
+		id: "status-report",
+		name: "Project Status Report",
+		description: "Weekly project status with health indicators, accomplishments, and risks.",
+		icon: "📊",
+		category: "Product",
+		tags: [
+			"status",
+			"project",
+			"reporting",
+			"weekly"
+		],
+		build: j
+	},
+	{
+		id: "onboarding",
+		name: "Employee Onboarding",
+		description: "New hire onboarding tasks, milestones, and equipment tracking.",
+		icon: "👋",
+		category: "People",
+		tags: [
+			"onboarding",
+			"hr",
+			"new hire",
+			"checklist"
+		],
+		build: b
+	},
+	{
+		id: "job-posting",
+		name: "Job Posting",
+		description: "Job listings with requirements, compensation, and hiring status.",
+		icon: "📋",
+		category: "People",
+		tags: [
+			"hiring",
+			"recruiting",
+			"jobs",
+			"positions"
+		],
+		build: k
+	},
+	{
+		id: "sales-lead",
+		name: "Sales Lead",
+		description: "Track leads through the sales pipeline with deal values and follow-ups.",
+		icon: "💼",
+		category: "Sales & CRM",
+		tags: [
+			"sales",
+			"crm",
+			"leads",
+			"pipeline",
+			"deals"
+		],
+		build: C
+	},
+	{
+		id: "invoice",
+		name: "Invoice",
+		description: "Track invoices with line items, amounts, and payment status.",
+		icon: "💰",
+		category: "Finance",
+		tags: [
+			"invoices",
+			"billing",
+			"payments",
+			"accounting"
+		],
+		build: x
+	},
+	{
+		id: "contract",
+		name: "Contract / Agreement",
+		description: "Track contracts with counterparty, terms, renewal dates, and status.",
+		icon: "📜",
+		category: "Legal",
+		tags: [
+			"contracts",
+			"legal",
+			"agreements",
+			"nda",
+			"sow"
+		],
+		build: D
+	}
+];
+function P(e, t) {
+	let n = t.trim().toLowerCase();
+	return !n || e.name.toLowerCase().includes(n) || e.description.toLowerCase().includes(n) || e.category.toLowerCase().includes(n) || e.tags.some((e) => e.toLowerCase().includes(n));
+}
+function F(e, t = "All") {
+	return N.filter((n) => (t === "All" || n.category === t) && P(n, e));
+}
+//#endregion
 //#region src/renderers/tasks/definition.ts
-var _ = {
+var I = {
 	type: "tasks",
 	label: "Task List",
 	icon: "✅",
@@ -24,7 +832,7 @@ var _ = {
 		"tasks:ack": "Task Review",
 		"tasks:reader": "Task Reader"
 	}
-}, v = {
+}, ee = {
 	type: "rich-text",
 	label: "Rich Text",
 	icon: "📝",
@@ -39,7 +847,7 @@ var _ = {
 		"rich-text:ack": "Rich Text Viewer",
 		"rich-text:reader": "Rich Text Viewer"
 	}
-}, y = {
+}, te = {
 	type: "decisions",
 	label: "Decisions",
 	icon: "🎯",
@@ -54,7 +862,7 @@ var _ = {
 		"decisions:ack": "Decisions Viewer",
 		"decisions:reader": "Decisions Viewer"
 	}
-}, b = {
+}, ne = {
 	type: "checklist",
 	label: "Checklist",
 	icon: "☑️",
@@ -69,7 +877,7 @@ var _ = {
 		"checklist:ack": "Checklist Viewer",
 		"checklist:reader": "Checklist Viewer"
 	}
-}, x = {
+}, re = {
 	type: "file-upload",
 	label: "File Upload",
 	icon: "📎",
@@ -84,7 +892,7 @@ var _ = {
 		"file-upload:ack": "File Upload Viewer",
 		"file-upload:reader": "File Upload Viewer"
 	}
-}, S = {
+}, ie = {
 	type: "diagram",
 	label: "Diagram",
 	icon: "▦",
@@ -99,7 +907,7 @@ var _ = {
 		"diagram:ack": "Diagram Viewer",
 		"diagram:reader": "Diagram Viewer"
 	}
-}, C = {
+}, ae = {
 	type: "link-block",
 	label: "Link Block",
 	icon: "🔗",
@@ -114,12 +922,12 @@ var _ = {
 		"link-block:ack": "Link Block Viewer",
 		"link-block:reader": "Link Block Viewer"
 	}
-}, w = /^(\d{4})-(\d{2})-(\d{2})$/;
-function T(e) {
+}, oe = /^(\d{4})-(\d{2})-(\d{2})$/;
+function L(e) {
 	if (typeof e != "string") return null;
 	let t = e.trim();
 	if (t === "") return null;
-	let n = w.exec(t);
+	let n = oe.exec(t);
 	if (n) {
 		let e = Number(n[1]), t = Number(n[2]), r = Number(n[3]);
 		if (t < 1 || t > 12 || r < 1 || r > 31) return null;
@@ -129,82 +937,82 @@ function T(e) {
 	let r = new Date(t);
 	return Number.isNaN(r.getTime()) ? null : r;
 }
-function E(e = /* @__PURE__ */ new Date()) {
+function R(e = /* @__PURE__ */ new Date()) {
 	let t = new Date(e.getTime());
 	return t.setHours(0, 0, 0, 0), t;
 }
-function D(e, t = /* @__PURE__ */ new Date()) {
-	let n = T(e);
-	return n ? E(n).getTime() < E(t).getTime() : !1;
+function z(e, t = /* @__PURE__ */ new Date()) {
+	let n = L(e);
+	return n ? R(n).getTime() < R(t).getTime() : !1;
 }
 //#endregion
 //#region src/components/doc-editor/TaskItemRow.tsx
-var ee = {
+var se = {
 	pending: "var(--color-text-tertiary)",
 	acked: "var(--color-info)",
 	done: "var(--color-success)",
 	rejected: "var(--color-danger)"
-}, O = {
+}, B = {
 	low: "var(--color-text-tertiary)",
 	medium: "var(--color-caution)",
 	high: "var(--color-danger)"
-}, te = {
+}, ce = {
 	start: "var(--color-success)",
 	stop: "var(--color-danger)",
 	continue: "var(--color-info)"
 };
-function ne(e) {
-	let t = T(e);
+function le(e) {
+	let t = L(e);
 	return t ? t.toLocaleDateString("en-US", {
 		month: "short",
 		day: "numeric"
 	}) : e;
 }
-function re(e) {
-	return D(e);
+function ue(e) {
+	return z(e);
 }
-function k(e) {
+function V(e) {
 	return e.split(/\s+/).map((e) => e[0]).join("").toUpperCase().slice(0, 2);
 }
-function A({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, onDidAutoFocus: v }) {
-	let [y, b] = p(!1), [x, S] = p(""), [C, w] = p(0), T = f(null), E = f(null), D = f(null), A = () => {
+function H({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, onDidAutoFocus: v }) {
+	let [y, b] = p(!1), [x, S] = p(""), [C, w] = p(0), T = f(null), E = f(null), D = f(null), O = () => {
 		a({ status: e.status === "done" ? "pending" : "done" });
-	}, j = e.assignee ? n.find((t) => t.displayName === e.assignee) : void 0, M = x.trim() ? r(x) : n, N = u(() => {
+	}, k = e.assignee ? n.find((t) => t.displayName === e.assignee) : void 0, A = x.trim() ? r(x) : n, j = u(() => {
 		t && (S(""), w(0), b(!0));
-	}, [t]), P = u(() => {
+	}, [t]), M = u(() => {
 		b(!1), S(""), w(0);
-	}, []), F = u((e) => {
-		a({ assignee: e.displayName }), P();
-	}, [a, P]), I = u(() => {
-		a({ assignee: "" }), P();
-	}, [a, P]);
+	}, []), N = u((e) => {
+		a({ assignee: e.displayName }), M();
+	}, [a, M]), P = u(() => {
+		a({ assignee: "" }), M();
+	}, [a, M]);
 	d(() => {
 		if (!y) return;
 		let e = (e) => {
-			T.current && !T.current.contains(e.target) && P();
+			T.current && !T.current.contains(e.target) && M();
 		};
 		return document.addEventListener("mousedown", e), () => document.removeEventListener("mousedown", e);
-	}, [y, P]), d(() => {
+	}, [y, M]), d(() => {
 		y && E.current && E.current.focus();
 	}, [y]), d(() => {
 		w(0);
 	}, [x]), d(() => {
 		_ && D.current && (D.current.focus(), v?.());
 	}, [_, v]);
-	let L = (e) => {
-		e.key === "Escape" ? P() : e.key === "ArrowDown" ? (e.preventDefault(), w((e) => Math.min(e + 1, M.length - 1))) : e.key === "ArrowUp" ? (e.preventDefault(), w((e) => Math.max(e - 1, 0))) : e.key === "Enter" && (e.preventDefault(), M[C] && F(M[C]));
-	}, R = e.dueDate && e.status !== "done" ? re(e.dueDate) : !1;
+	let F = (e) => {
+		e.key === "Escape" ? M() : e.key === "ArrowDown" ? (e.preventDefault(), w((e) => Math.min(e + 1, A.length - 1))) : e.key === "ArrowUp" ? (e.preventDefault(), w((e) => Math.max(e - 1, 0))) : e.key === "Enter" && (e.preventDefault(), A[C] && N(A[C]));
+	}, I = e.dueDate && e.status !== "done" ? ue(e.dueDate) : !1;
 	return /* @__PURE__ */ g("div", {
 		className: i("flex items-center gap-2 py-1.5 border-b border-border-subtle"),
 		children: [
 			/* @__PURE__ */ h("span", {
 				title: `Priority: ${e.priority}`,
 				className: i("w-2 h-2 rounded-full shrink-0"),
-				style: { background: O[e.priority] }
+				style: { background: B[e.priority] }
 			}),
 			/* @__PURE__ */ h(c, {
 				checked: e.status === "done",
-				onChange: A,
+				onChange: O,
 				disabled: !t,
 				className: i("w-4 h-4", t ? "cursor-pointer" : "cursor-default")
 			}),
@@ -218,16 +1026,16 @@ function A({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 			}),
 			e.dueDate && /* @__PURE__ */ g("span", {
 				title: e.dueDate,
-				className: i("inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug border", R ? "bg-danger-bg text-danger-fg border-danger-border" : "bg-info-bg text-neutral border-info-border"),
+				className: i("inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug border", I ? "bg-danger-bg text-danger-fg border-danger-border" : "bg-info-bg text-neutral border-info-border"),
 				children: [
-					R ? "⚠ " : "",
+					I ? "⚠ " : "",
 					"Due: ",
-					ne(e.dueDate)
+					le(e.dueDate)
 				]
 			}),
 			e.category && /* @__PURE__ */ h("span", {
 				className: i("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap"),
-				style: { backgroundColor: te[e.category.toLowerCase()] ?? "var(--color-neutral)" },
+				style: { backgroundColor: ce[e.category.toLowerCase()] ?? "var(--color-neutral)" },
 				children: e.category
 			}),
 			/* @__PURE__ */ g("div", {
@@ -235,13 +1043,13 @@ function A({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 				className: i("relative"),
 				children: [/* @__PURE__ */ h("button", {
 					type: "button",
-					onClick: N,
+					onClick: j,
 					title: e.assignee || "Unassigned",
 					className: i("inline-flex items-center justify-center h-6 rounded-xl font-semibold text-[11px] cursor-pointer leading-snug whitespace-nowrap", e.assignee ? "px-2 bg-primary-bg text-primary-fg border-none min-w-0" : "w-6 px-0 bg-surface text-text-tertiary border border-dashed border-border-emphasis"),
 					children: e.assignee ? /* @__PURE__ */ g(m, { children: [/* @__PURE__ */ h("span", {
 						className: i("w-[18px] h-[18px] rounded-full text-white inline-flex items-center justify-center text-[8px] font-bold shrink-0 leading-none"),
-						style: { background: j?.color ?? "var(--color-text-tertiary)" },
-						children: k(e.assignee)
+						style: { background: k?.color ?? "var(--color-text-tertiary)" },
+						children: V(e.assignee)
 					}), /* @__PURE__ */ h("span", {
 						className: i("ml-1 text-[11px]"),
 						children: e.assignee.split(" ")[0]
@@ -256,14 +1064,14 @@ function A({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 								size: "sm",
 								value: x,
 								onChange: (e) => S(e.target.value),
-								onKeyDown: L,
+								onKeyDown: F,
 								placeholder: "Search users...",
 								className: i("text-[11px]")
 							})
 						}),
 						e.assignee && /* @__PURE__ */ g("button", {
 							type: "button",
-							onClick: I,
+							onClick: P,
 							className: i("flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer bg-transparent border-none w-full text-left font-[inherit] text-text-primary"),
 							children: [/* @__PURE__ */ h("span", {
 								className: i("w-[22px] h-[22px] rounded-full bg-border-emphasis text-neutral inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"),
@@ -273,18 +1081,18 @@ function A({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 								children: "Unassigned"
 							})]
 						}),
-						M.map((e, t) => /* @__PURE__ */ g("button", {
+						A.map((e, t) => /* @__PURE__ */ g("button", {
 							type: "button",
-							onClick: () => F(e),
+							onClick: () => N(e),
 							onMouseEnter: () => w(t),
 							className: i("flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-text-primary", t === C ? "bg-surface-hover" : "bg-transparent"),
 							children: [/* @__PURE__ */ h("span", {
 								className: i("w-[22px] h-[22px] rounded-full text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"),
 								style: { background: e.color },
-								children: k(e.displayName)
+								children: V(e.displayName)
 							}), /* @__PURE__ */ h("span", { children: e.displayName })]
 						}, e.userId)),
-						M.length === 0 && /* @__PURE__ */ h("div", {
+						A.length === 0 && /* @__PURE__ */ h("div", {
 							className: i("px-2.5 py-2 text-[11px] text-text-tertiary"),
 							children: "No users found"
 						})
@@ -296,7 +1104,7 @@ function A({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 				disabled: !t,
 				onChange: (e) => a({ priority: e.target.value }),
 				className: i("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
-				style: { backgroundColor: O[e.priority] },
+				style: { backgroundColor: B[e.priority] },
 				title: `Priority: ${e.priority}`,
 				options: [
 					{
@@ -318,7 +1126,7 @@ function A({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 				disabled: !t,
 				onChange: (e) => a({ status: e.target.value }),
 				className: i("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
-				style: { backgroundColor: ee[e.status] },
+				style: { backgroundColor: se[e.status] },
 				title: `Status: ${e.status}`,
 				options: [
 					{
@@ -351,7 +1159,7 @@ function A({ item: e, editable: t, onUpdate: a, onRemove: l, autoFocusText: _, o
 }
 //#endregion
 //#region src/components/doc-editor/TaskList.tsx
-function j({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastItem: a }) {
+function U({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastItem: a }) {
 	if (e.length === 0) return /* @__PURE__ */ h("div", {
 		className: i("text-text-tertiary text-[13px] italic py-2"),
 		children: "No tasks yet."
@@ -359,7 +1167,7 @@ function j({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastI
 	let o = a?.current ?? !1;
 	return /* @__PURE__ */ h("div", {
 		className: i("py-2"),
-		children: e.map((i, s) => /* @__PURE__ */ h(A, {
+		children: e.map((i, s) => /* @__PURE__ */ h(H, {
 			item: i,
 			editable: t,
 			onUpdate: (e) => n(i.id, e),
@@ -373,14 +1181,14 @@ function j({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastI
 }
 //#endregion
 //#region src/renderers/sectionItems.ts
-function M(e) {
+function W(e) {
 	let t = e.items;
 	return Array.isArray(t) ? t.filter((e) => e != null) : [];
 }
 //#endregion
 //#region src/renderers/default/DefaultRenderer.tsx
-function N({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
-	let d = M(e), p = f(!1);
+function G({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
+	let d = W(e), p = f(!1);
 	return /* @__PURE__ */ g("div", { children: [
 		t && n && /* @__PURE__ */ h(l, {
 			fragment: t,
@@ -395,7 +1203,7 @@ function N({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a
 			sectionId: e.id,
 			onUpdateCursorInfo: u
 		}),
-		(d.length > 0 || a) && /* @__PURE__ */ h(j, {
+		(d.length > 0 || a) && /* @__PURE__ */ h(U, {
 			items: d,
 			editable: a,
 			onUpdateItem: (e, t) => s?.(e, t),
@@ -422,7 +1230,7 @@ function N({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextEditorRenderer.tsx
-function P({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
+function de({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
 	return !t || !n ? /* @__PURE__ */ h("div", {
 		className: "text-text-tertiary italic text-[13px] py-2",
 		children: "No content yet."
@@ -442,7 +1250,7 @@ function P({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextReaderRenderer.tsx
-function F({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i }) {
+function K({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i }) {
 	return /* @__PURE__ */ g("div", { children: [t && n ? /* @__PURE__ */ h("div", {
 		className: "border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-text-primary leading-[1.6]",
 		children: /* @__PURE__ */ h(l, {
@@ -468,12 +1276,12 @@ function F({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: 
 }
 //#endregion
 //#region src/renderers/tasks/TasksEditorRenderer.tsx
-function I({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
-	let a = M(e), o = f(!1);
+function fe({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
+	let a = W(e), o = f(!1);
 	return /* @__PURE__ */ g("div", {
 		className: "py-1",
 		children: [
-			a.length > 0 || t ? /* @__PURE__ */ h(j, {
+			a.length > 0 || t ? /* @__PURE__ */ h(U, {
 				items: a,
 				editable: t,
 				onUpdateItem: (e, t) => r?.(e, t),
@@ -505,7 +1313,7 @@ function I({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveIte
 }
 //#endregion
 //#region src/renderers/tasks/TasksReaderRenderer.tsx
-var L = {
+var q = {
 	pending: {
 		label: "Pending",
 		color: "var(--color-warning-fg)",
@@ -526,26 +1334,26 @@ var L = {
 		color: "var(--color-danger-fg)",
 		bg: "var(--color-danger-bg)"
 	}
-}, R = {
+}, J = {
 	high: "var(--color-danger)",
 	medium: "var(--color-caution)",
 	low: "var(--color-text-tertiary)"
 };
-function z(e) {
-	return D(e);
+function pe(e) {
+	return z(e);
 }
-function ie(e) {
-	let t = T(e);
+function me(e) {
+	let t = L(e);
 	return t ? t.toLocaleDateString("en-US", {
 		month: "short",
 		day: "numeric"
 	}) : e;
 }
-function ae(e) {
+function he(e) {
 	return e.split(/\s+/).map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function B({ item: e, onUpdateItem: t }) {
-	let [n, r] = p(!1), [a, o] = p(!1), s = n || a, c = L[e.status] ?? L.pending, l = R[e.priority] ?? R.medium, u = e.dueDate && e.status === "pending" ? z(e.dueDate) : !1, d = e.status === "done" || e.status === "acked";
+function Y({ item: e, onUpdateItem: t }) {
+	let [n, r] = p(!1), [a, o] = p(!1), s = n || a, c = q[e.status] ?? q.pending, l = J[e.priority] ?? J.medium, u = e.dueDate && e.status === "pending" ? pe(e.dueDate) : !1, d = e.status === "done" || e.status === "acked";
 	return /* @__PURE__ */ g("div", {
 		onMouseEnter: () => r(!0),
 		onMouseLeave: () => r(!1),
@@ -611,7 +1419,7 @@ function B({ item: e, onUpdateItem: t }) {
 			e.assignee && /* @__PURE__ */ h("span", {
 				title: e.assignee,
 				className: "w-[22px] h-[22px] rounded-full bg-primary-bg text-primary-fg text-[9px] font-bold flex items-center justify-center shrink-0",
-				children: ae(e.assignee)
+				children: he(e.assignee)
 			}),
 			e.dueDate && /* @__PURE__ */ g("span", {
 				style: {
@@ -625,7 +1433,7 @@ function B({ item: e, onUpdateItem: t }) {
 					whiteSpace: "nowrap",
 					flexShrink: 0
 				},
-				children: [u ? "⚠ " : "", ie(e.dueDate)]
+				children: [u ? "⚠ " : "", me(e.dueDate)]
 			}),
 			t && s && /* @__PURE__ */ g("select", {
 				"aria-label": `Set status for ${e.text || "untitled item"}`,
@@ -667,8 +1475,8 @@ function B({ item: e, onUpdateItem: t }) {
 		]
 	});
 }
-function V({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
-	let r = M(e);
+function ge({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
+	let r = W(e);
 	if (r.length === 0) return /* @__PURE__ */ h("div", {
 		className: "text-text-tertiary italic text-[13px] py-1",
 		children: "No items."
@@ -677,19 +1485,19 @@ function V({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
 	return /* @__PURE__ */ g("div", { children: [
 		o.length > 0 && /* @__PURE__ */ h("div", {
 			className: "mb-1",
-			children: o.map((e) => /* @__PURE__ */ h(B, {
+			children: o.map((e) => /* @__PURE__ */ h(Y, {
 				item: e,
 				onUpdateItem: t
 			}, e.id))
 		}),
 		i.length > 0 && /* @__PURE__ */ h("div", {
 			className: "mb-1",
-			children: i.map((e) => /* @__PURE__ */ h(B, {
+			children: i.map((e) => /* @__PURE__ */ h(Y, {
 				item: e,
 				onUpdateItem: t
 			}, e.id))
 		}),
-		a.length > 0 && /* @__PURE__ */ h("div", { children: a.map((e) => /* @__PURE__ */ h(B, {
+		a.length > 0 && /* @__PURE__ */ h("div", { children: a.map((e) => /* @__PURE__ */ h(Y, {
 			item: e,
 			onUpdateItem: t
 		}, e.id)) }),
@@ -703,7 +1511,7 @@ function V({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
 }
 //#endregion
 //#region src/renderers/checklist/ChecklistEditorRenderer.tsx
-function oe({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
+function _e({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
 	let c = f(null), l = e.status === "done", u = a(r);
 	return d(() => {
 		n && c.current && (c.current.focus(), u());
@@ -735,8 +1543,8 @@ function oe({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 		]
 	});
 }
-function se({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
-	let d = M(e), p = f(null), m = () => {
+function ve({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
+	let d = W(e), p = f(null), m = () => {
 		o && (p.current = d.length, o({
 			text: "",
 			status: "pending",
@@ -772,7 +1580,7 @@ function se({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 		}),
 		/* @__PURE__ */ h("div", { children: d.map((e, t) => {
 			let n = t === d.length - 1, r = v && n;
-			return /* @__PURE__ */ h(oe, {
+			return /* @__PURE__ */ h(_e, {
 				item: e,
 				editable: a,
 				autoFocus: r,
@@ -793,8 +1601,8 @@ function se({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/checklist/ChecklistReaderRenderer.tsx
-function H({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, onNavigateToEditor: o }) {
-	let s = M(e), c = s.length, u = s.filter((e) => e.status === "done").length, d = c > 0 ? Math.round(u / c * 100) : 0;
+function ye({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, onNavigateToEditor: o }) {
+	let s = W(e), c = s.length, u = s.filter((e) => e.status === "done").length, d = c > 0 ? Math.round(u / c * 100) : 0;
 	return /* @__PURE__ */ g("div", { children: [
 		t && n && /* @__PURE__ */ h("div", {
 			className: "mb-2.5",
@@ -866,24 +1674,24 @@ function H({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, onN
 }
 //#endregion
 //#region src/renderers/decisions/approvalSync.ts
-var U = {
+var be = {
 	acked: "approved",
 	done: "approved",
 	rejected: "rejected"
 };
-function W() {
+function xe() {
 	return "";
 }
-function G() {
+function Se() {
 	if (typeof window > "u") return null;
 	let e = window.location.pathname.match(/\/documents\/([^/?#]+)/);
 	return e ? e[1] : null;
 }
-function ce(e) {
-	return U[e] ?? null;
+function Ce(e) {
+	return be[e] ?? null;
 }
-async function le(e) {
-	let t = e.documentId ?? G();
+async function we(e) {
+	let t = e.documentId ?? Se();
 	if (!t) return {
 		ok: !1,
 		error: "no documentId in URL"
@@ -891,7 +1699,7 @@ async function le(e) {
 	try {
 		let n = { "Content-Type": "application/json" };
 		e.idToken && (n.Authorization = `Bearer ${e.idToken}`);
-		let r = await fetch(`${W()}/api/approvals`, {
+		let r = await fetch(`${xe()}/api/approvals`, {
 			method: "POST",
 			headers: n,
 			body: JSON.stringify({
@@ -915,7 +1723,7 @@ async function le(e) {
 }
 //#endregion
 //#region src/renderers/decisions/DecisionsEditorRenderer.tsx
-var K = {
+var Te = {
 	pending: {
 		label: "Open",
 		icon: "○",
@@ -941,8 +1749,8 @@ var K = {
 		bg: "var(--color-danger-bg)"
 	}
 };
-function ue({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
-	let c = f(null), l = K[e.status] ?? K.pending, u = a(r);
+function Ee({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
+	let c = f(null), l = Te[e.status] ?? Te.pending, u = a(r);
 	return d(() => {
 		n && c.current && (c.current.focus(), u());
 	}, [n, u]), /* @__PURE__ */ g("div", {
@@ -998,8 +1806,8 @@ function ue({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 		]
 	});
 }
-function de({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
-	let d = M(e), p = f(null), m = () => {
+function De({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: u }) {
+	let d = W(e), p = f(null), m = () => {
 		o && (p.current = d.length, o({
 			text: "",
 			status: "pending",
@@ -1030,7 +1838,7 @@ function de({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 		}),
 		/* @__PURE__ */ h("div", { children: d.map((t, n) => {
 			let r = n === d.length - 1, o = v && r;
-			return /* @__PURE__ */ h(ue, {
+			return /* @__PURE__ */ h(Ee, {
 				item: t,
 				editable: a,
 				autoFocus: o,
@@ -1040,8 +1848,8 @@ function de({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 				onUpdate: (n) => {
 					let r = t.status;
 					if (s?.(t.id, n), n.status && n.status !== r) {
-						let t = ce(n.status);
-						t && le({
+						let t = Ce(n.status);
+						t && we({
 							sectionId: e.id,
 							decision: t,
 							reviewerName: i?.name
@@ -1061,7 +1869,7 @@ function de({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/decisions/DecisionsReaderRenderer.tsx
-var q = {
+var X = {
 	pending: {
 		label: "Open",
 		icon: "○",
@@ -1087,8 +1895,8 @@ var q = {
 		bg: "var(--color-danger-bg)"
 	}
 };
-function fe({ item: e }) {
-	let t = q[e.status] ?? q.pending;
+function Oe({ item: e }) {
+	let t = X[e.status] ?? X.pending;
 	return /* @__PURE__ */ g("div", {
 		className: "flex items-start gap-2 py-1.5 border-b border-border-subtle",
 		children: [
@@ -1118,37 +1926,37 @@ function fe({ item: e }) {
 		]
 	});
 }
-function J({ label: e, color: t, items: n }) {
+function Z({ label: e, color: t, items: n }) {
 	return /* @__PURE__ */ g("div", {
 		className: "mb-2",
 		children: [/* @__PURE__ */ h("div", {
 			className: "text-[10px] font-bold uppercase tracking-[0.05em] mb-0.5",
 			style: { color: t },
 			children: e
-		}), n.map((e) => /* @__PURE__ */ h(fe, { item: e }, e.id))]
+		}), n.map((e) => /* @__PURE__ */ h(Oe, { item: e }, e.id))]
 	});
 }
-function Y({ section: e, onNavigateToEditor: t }) {
-	let n = M(e);
+function Q({ section: e, onNavigateToEditor: t }) {
+	let n = W(e);
 	if (n.length === 0) return /* @__PURE__ */ h("div", {
 		className: "text-text-tertiary italic text-[13px] py-1",
 		children: "No decisions recorded."
 	});
 	let r = n.filter((e) => e.status === "acked" || e.status === "done"), i = n.filter((e) => e.status === "rejected"), a = n.filter((e) => !r.includes(e) && !i.includes(e));
 	return /* @__PURE__ */ g("div", { children: [
-		a.length > 0 && /* @__PURE__ */ h(J, {
+		a.length > 0 && /* @__PURE__ */ h(Z, {
 			label: "Open",
-			color: q.pending.color,
+			color: X.pending.color,
 			items: a
 		}),
-		r.length > 0 && /* @__PURE__ */ h(J, {
+		r.length > 0 && /* @__PURE__ */ h(Z, {
 			label: "Decided",
-			color: q.acked.color,
+			color: X.acked.color,
 			items: r
 		}),
-		i.length > 0 && /* @__PURE__ */ h(J, {
+		i.length > 0 && /* @__PURE__ */ h(Z, {
 			label: "Vetoed",
-			color: q.rejected.color,
+			color: X.rejected.color,
 			items: i
 		}),
 		t && /* @__PURE__ */ h("button", {
@@ -1161,11 +1969,11 @@ function Y({ section: e, onNavigateToEditor: t }) {
 }
 //#endregion
 //#region src/renderers/file-upload/FileUploadEditorRenderer.tsx
-function pe(e) {
+function ke(e) {
 	return e.metadata ?? {};
 }
-function me({ section: e, editable: t, onUpdateSection: n }) {
-	let r = pe(e), [a, o] = p(!1), s = (t) => {
+function Ae({ section: e, editable: t, onUpdateSection: n }) {
+	let r = ke(e), [a, o] = p(!1), s = (t) => {
 		o(!0);
 		let r = new FileReader();
 		r.onload = () => {
@@ -1227,7 +2035,7 @@ function me({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/file-upload/FileUploadReaderRenderer.tsx
-function X({ section: e }) {
+function je({ section: e }) {
 	let t = e.metadata ?? {};
 	return t.fileName ? /* @__PURE__ */ g("div", {
 		"data-testid": `file-upload-reader-${e.id}`,
@@ -1261,7 +2069,7 @@ function X({ section: e }) {
 }
 //#endregion
 //#region src/renderers/diagram/DiagramEditorRenderer.tsx
-function he({ section: e, editable: t, onUpdateSection: n }) {
+function Me({ section: e, editable: t, onUpdateSection: n }) {
 	let r = e.metadata ?? {}, [a, o] = p(!1), s = (t) => {
 		o(!0);
 		let i = new FileReader();
@@ -1329,7 +2137,7 @@ function he({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/diagram/DiagramReaderRenderer.tsx
-function Z({ section: e }) {
+function Ne({ section: e }) {
 	let t = e.metadata ?? {};
 	return t.imageDataUrl ? /* @__PURE__ */ g("figure", {
 		"data-testid": `diagram-reader-${e.id}`,
@@ -1350,18 +2158,18 @@ function Z({ section: e }) {
 }
 //#endregion
 //#region src/renderers/link-block/LinkBlockEditorRenderer.tsx
-function Q(e) {
+function Pe(e) {
 	return typeof e == "object" && !!e;
 }
-function ge(e) {
+function Fe(e) {
 	let t = e.metadata ?? {};
-	return Array.isArray(t.links) ? t.links.filter(Q).map((e) => ({
+	return Array.isArray(t.links) ? t.links.filter(Pe).map((e) => ({
 		label: typeof e.label == "string" ? e.label : "",
 		url: typeof e.url == "string" ? e.url : ""
 	})) : [];
 }
-function _e({ section: e, editable: t, onUpdateSection: n }) {
-	let r = ge(e), i = (t) => {
+function Ie({ section: e, editable: t, onUpdateSection: n }) {
+	let r = Fe(e), i = (t) => {
 		n?.({ metadata: {
 			...e.metadata ?? {},
 			links: t
@@ -1428,11 +2236,11 @@ function _e({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/link-block/LinkBlockReaderRenderer.tsx
-function ve(e) {
+function Le(e) {
 	return typeof e == "object" && !!e && typeof e.url == "string";
 }
 function $({ section: e }) {
-	let t = e.metadata ?? {}, n = Array.isArray(t.links) ? t.links.filter((e) => ve(e) && e.url) : [];
+	let t = e.metadata ?? {}, n = Array.isArray(t.links) ? t.links.filter((e) => Le(e) && e.url) : [];
 	return n.length === 0 ? /* @__PURE__ */ h("div", {
 		"data-testid": `link-block-reader-empty-${e.id}`,
 		className: "text-text-tertiary text-[13px] italic",
@@ -1452,6 +2260,6 @@ function $({ section: e }) {
 		}, t))
 	});
 }
-e(_), e(v), e(y), e(b), e(x), e(S), e(C), t("*", "*", N), t("rich-text", "editor", P), t("rich-text", "ack", F), t("rich-text", "reader", F), t("tasks", "editor", I), t("tasks", "ack", V), t("tasks", "reader", V), t("checklist", "editor", se), t("checklist", "ack", H), t("checklist", "reader", H), t("decisions", "editor", de), t("decisions", "ack", Y), t("decisions", "reader", Y), t("file-upload", "editor", me), t("file-upload", "ack", X), t("file-upload", "reader", X), t("diagram", "editor", he), t("diagram", "ack", Z), t("diagram", "reader", Z), t("link-block", "editor", _e), t("link-block", "ack", $), t("link-block", "reader", $);
+e(I), e(ee), e(te), e(ne), e(re), e(ie), e(ae), t("*", "*", G), t("rich-text", "editor", de), t("rich-text", "ack", K), t("rich-text", "reader", K), t("tasks", "editor", fe), t("tasks", "ack", ge), t("tasks", "reader", ge), t("checklist", "editor", ve), t("checklist", "ack", ye), t("checklist", "reader", ye), t("decisions", "editor", De), t("decisions", "ack", Q), t("decisions", "reader", Q), t("file-upload", "editor", Ae), t("file-upload", "ack", je), t("file-upload", "reader", je), t("diagram", "editor", Me), t("diagram", "ack", Ne), t("diagram", "reader", Ne), t("link-block", "editor", Ie), t("link-block", "ack", $), t("link-block", "reader", $);
 //#endregion
-export { j as n, A as r, N as t };
+export { N as a, _ as i, U as n, F as o, H as r, P as s, G as t };

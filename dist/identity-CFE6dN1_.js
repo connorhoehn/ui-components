@@ -11,7 +11,7 @@ import { t as _ } from "./EmptyState-ClmWoqCb.js";
 import { t as v } from "./Input-DLknWXri.js";
 import { t as y } from "./Textarea-Dz4doxTv.js";
 import { t as b } from "./Select-CqVokE2v.js";
-import { t as x } from "./Checkbox-DsS7fIUO.js";
+import { t as x } from "./Checkbox-DqN9RkXK.js";
 import { t as S } from "./rovingFocus-Bj5Y6kwY.js";
 import { useCallback as C, useEffect as w, useId as T, useMemo as E, useRef as D, useState as O } from "react";
 import { Fragment as k, jsx as A, jsxs as j } from "react/jsx-runtime";
@@ -257,7 +257,7 @@ function F({ label: e, name: t, type: n = "text", value: r, onChange: i, error: 
 					children: [/* @__PURE__ */ A(x, {
 						name: t,
 						checked: !!r,
-						onChange: i,
+						onChange: (e) => i(e),
 						disabled: u,
 						"aria-describedby": n
 					}), /* @__PURE__ */ j("span", {
