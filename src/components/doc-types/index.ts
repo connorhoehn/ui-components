@@ -43,9 +43,17 @@ export type { FieldDefinitionEditorProps } from './FieldDefinitionEditor';
 
 export { default as CookbooksModal } from './CookbooksModal';
 
+// The gallery itself, without the dialog around it. Extracted so the Document
+// Types page can LEAD with the ready-made types instead of hiding them behind a
+// button next to the field-by-field wizard.
+export { CookbookPicker } from './cookbooks/CookbookPicker';
+export type { CookbookPickerProps } from './cookbooks/CookbookPicker';
+
 export {
   documentTypeCookbooks,
   COOKBOOK_CATEGORIES,
+  matchesCookbookQuery,
+  filterCookbooks,
 } from './cookbooks';
 export type {
   CookbookCategory,

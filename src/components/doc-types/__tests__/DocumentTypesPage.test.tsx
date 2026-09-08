@@ -249,3 +249,62 @@ describe('DocumentTypesPage — cookbooks modal', () => {
     expect(screen.getByTestId('wizard-name').textContent).toBe('From cookbook');
   });
 });
+
+// ── The known types are the page, the wizard is the escape hatch ────────
+//
+// The fourteen prebuilt types lived behind a "Cookbooks" button sitting next to
+// a louder "+ New" that opened a three-step field editor. These pin the swap:
+// the gallery IS the idle panel, and building a type by hand is a secondary
+// action that still works.
+describe('DocumentTypesPage — leading with known types', () => {
+  it('renders the known-type gallery in the idle panel, not just in a modal', () => {
+    render(<DocumentTypesPage />);
+    expect(screen.getByTestId('known-types-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('type-starters-grid')).toBeInTheDocument();
+    expect(screen.getByTestId('type-starter-card-sprint-retro')).toBeInTheDocument();
+    // Its ids are its own — the modal's `cookbooks-*` selectors must still
+    // resolve to exactly one node when it opens.
+    expect(screen.queryByTestId('cookbooks-grid')).toBeNull();
+  });
+
+  it('shows the gallery next to an existing type too', () => {
+    mocks.hookReturn.types = [makeType('t1', 'Briefs')];
+    render(<DocumentTypesPage />);
+    expect(screen.getByText('Select a type to edit')).toBeInTheDocument();
+    expect(screen.getByTestId('type-starters-grid')).toBeInTheDocument();
+  });
+
+  it('installs a picked type and says so, WITHOUT dropping into the wizard', async () => {
+    render(<DocumentTypesPage />);
+    fireEvent.click(screen.getByTestId('type-starter-use-meeting-notes'));
+
+    await waitFor(() => expect(mocks.hookReturn.createType).toHaveBeenCalledTimes(1));
+    expect(mocks.hookReturn.createType.mock.calls[0][0].name).toBe('Meeting Notes');
+    const banner = await screen.findByTestId('save-message');
+    expect(banner.textContent).toContain('added');
+    // The point of a ready-made type is not having to edit its fields.
+    expect(screen.queryByTestId('wizard-mock')).toBeNull();
+  });
+
+  it('reports a rejected install instead of claiming the type exists', async () => {
+    mocks.hookReturn.createType.mockResolvedValue({ status: 'rejected', error: 'duplicate name' });
+    render(<DocumentTypesPage />);
+    fireEvent.click(screen.getByTestId('type-starter-use-invoice'));
+    const banner = await screen.findByTestId('save-message');
+    expect(banner.textContent).toContain('NOT added');
+    expect(banner.textContent).toContain('duplicate name');
+  });
+
+  it('keeps the from-scratch wizard one click away', () => {
+    render(<DocumentTypesPage />);
+    fireEvent.click(screen.getByTestId('idle-create-btn'));
+    expect(screen.getByTestId('wizard-mode').textContent).toBe('create');
+  });
+
+  it('points the empty sidebar at the gallery rather than the wizard', () => {
+    render(<DocumentTypesPage />);
+    fireEvent.click(screen.getByTestId('empty-browse-types-btn'));
+    expect(screen.getByTestId('cookbooks-mock')).toBeInTheDocument();
+    expect(screen.queryByTestId('wizard-mock')).toBeNull();
+  });
+});

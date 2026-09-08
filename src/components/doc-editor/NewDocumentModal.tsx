@@ -1,29 +1,45 @@
-// frontend/src/components/doc-editor/NewDocumentModal.tsx
+// ui-components/src/components/doc-editor/NewDocumentModal.tsx
 //
 // Modal for creating a new document.
 //
-// ## Why there is a shape question here
+// ## What this dialog asks, and what it used to ask
 //
-// There are two authoring surfaces, and both are wanted. A `page` is one
-// continuous document — the Google-Docs/Confluence shape, and the one the
-// canvas editor renders. `sections` is the older shape: an ordered list of
-// section forms, which is what makes the product usable as a todo creator or a
-// notepad. Neither is being phased out.
+// It used to ask you to answer a schema question first: pick a SHAPE, then pick
+// a document TYPE — and if you had no types, go define one field by field on
+// another page and come back. That is the Drupal bargain, and the fourteen
+// ready-made types that would have answered the question for you were parked
+// behind a "Cookbooks" button on that other page.
 //
-// The question is asked at CREATION because that is the only moment it is
-// cheap. Afterwards, changing shape means migrating real content, which is a
-// separate, reviewable operation (see the bulk migration surface in the app).
+// Now the first thing in the dialog is a search box over every known starting
+// point: fourteen prebuilt types, whatever types you have of your own, and the
+// three blanks. Type "retro", press Enter, and you are writing a Sprint
+// Retrospective with its sections already there. Nobody is asked to define a
+// content type before writing anything.
 //
-// `page` is preselected: it is the norm for new work. `sections` stays one
-// click away, on purpose.
+// A type picked here is a STARTING POINT, not a schema: it seeds sections and
+// sets the icon, and everything in the document stays editable afterwards.
+//
+// ## Why there is still a shape question
+//
+// There are two authoring surfaces and both are wanted. A `page` is one
+// continuous document — the Google-Docs/Confluence shape the canvas editor
+// renders. `sections` is an ordered list of section forms, which is what makes
+// the product usable as a todo creator or a notepad, and it is the shape a
+// document type's fields actually materialise into. `diagram` is a whiteboard.
+// Neither is being phased out, so all three are ordinary options in the
+// gallery rather than a separate question asked before it.
 //
 // The word `schemaVersion` deliberately does not appear in the UI. It is the
-// implementation of the choice, not the choice — a person picking here is
-// choosing between a continuous page and a set of section forms.
+// implementation of the choice, not the choice.
 
-import { useState, useEffect, useId, useRef } from 'react';
-import { loadTypes, refreshTypesFromServer } from '../../hooks/useDocumentTypes';
+import { useState, useEffect, useId, useRef, useMemo } from 'react';
+import { loadTypes, persistTypes, refreshTypesFromServer } from '../../hooks/useDocumentTypes';
 import type { DocumentType } from '../../types/documentType';
+import {
+  documentTypeCookbooks,
+  matchesCookbookQuery,
+  type DocumentTypeCookbook,
+} from '../doc-types/cookbooks';
 import Modal from '../shared/Modal';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
@@ -62,12 +78,14 @@ export interface NewDocumentModalProps {
   }) => void;
 }
 
-/** The two shapes, with the words a person picking between them needs. */
+/** The three blanks, with the words a person picking between them needs. */
 const SHAPES: ReadonlyArray<{
   id: DocumentShape;
   icon: string;
   name: string;
   description: string;
+  /** Extra words the search box should match on. */
+  keywords: string[];
 }> = [
   {
     id: 'page',
@@ -75,6 +93,7 @@ const SHAPES: ReadonlyArray<{
     name: 'Page',
     description:
       'One continuous document. Headings, paragraphs, lists and tables flow down a single sheet — like Google Docs or Confluence.',
+    keywords: ['blank', 'empty', 'doc', 'document', 'write'],
   },
   {
     id: 'sections',
@@ -82,6 +101,7 @@ const SHAPES: ReadonlyArray<{
     name: 'Sections',
     description:
       'A structured set of section forms — task lists, decisions and notes, each in its own box. Better as a todo creator or a notepad.',
+    keywords: ['blank', 'todo', 'tasks', 'notepad', 'form'],
   },
   {
     id: 'diagram',
@@ -89,8 +109,77 @@ const SHAPES: ReadonlyArray<{
     name: 'Diagram',
     description:
       'A whiteboard. Shapes, arrows and text on an infinite canvas, drawn with others in real time — opens full width with the sidebar out of the way.',
+    keywords: ['blank', 'whiteboard', 'canvas', 'draw', 'sketch'],
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Starting points
+// ---------------------------------------------------------------------------
+
+/**
+ * One thing a new document can start from. A blank is a bare shape, a `type` is
+ * one of the user's own document types, a `cookbook` is one of the fourteen
+ * that ship with the product.
+ */
+type Starter =
+  | { kind: 'blank'; shape: DocumentShape }
+  | { kind: 'type'; type: DocumentType }
+  | { kind: 'cookbook'; cookbook: DocumentTypeCookbook };
+
+function matchesBlank(shape: (typeof SHAPES)[number], query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return (
+    shape.name.toLowerCase().includes(q) ||
+    shape.description.toLowerCase().includes(q) ||
+    shape.keywords.some((k) => k.includes(q))
+  );
+}
+
+function matchesType(type: DocumentType, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return (
+    type.name.toLowerCase().includes(q) ||
+    (type.description ?? '').toLowerCase().includes(q)
+  );
+}
+
+/**
+ * Make sure a cookbook exists as a real document type, and return it.
+ *
+ * ## Why this writes to the cache and not to the server
+ *
+ * The editor populates a new document's sections by looking the type up BY NAME
+ * (`DocumentEditorPage`'s template effect), cache first. So the one thing that
+ * must have happened by the time we hand the document off is a cache entry —
+ * anything slower and the document opens empty, which is the whole failure this
+ * flow exists to avoid.
+ *
+ * The upload is not skipped, it is delegated: `refreshTypesFromServer` already
+ * uploads every unmarked cache-only type it finds (that is the remote-first
+ * migration), and this modal calls it on every open. So the type syncs on its
+ * own, idempotently, without a second write path here that could disagree with
+ * the hook's.
+ *
+ * Matched by name so picking "Meeting Notes" twice does not install it twice.
+ */
+export function ensureCookbookType(cookbook: DocumentTypeCookbook): DocumentType {
+  const built = cookbook.build();
+  const cached = loadTypes();
+  const existing = cached.find((t) => t.name.toLowerCase() === built.name.toLowerCase());
+  if (existing) return existing;
+  const now = new Date().toISOString();
+  const created: DocumentType = {
+    ...built,
+    id: crypto.randomUUID(),
+    createdAt: now,
+    updatedAt: now,
+  };
+  persistTypes([...cached, created]);
+  return created;
+}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -110,17 +199,28 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
    */
   const [probing, setProbing] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  /** Which of the fourteen is picked, if any. Wins over `selectedId`. */
+  const [cookbookId, setCookbookId] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
   const [title, setTitle] = useState('');
+  /**
+   * Once someone types a title, picking a different starting point must not
+   * overwrite it. Without this the gallery silently ate the title people had
+   * already written.
+   */
+  const [titleTouched, setTitleTouched] = useState(false);
   const [description, setDescription] = useState('');
-  // Canvas preselected — see the file header.
+  // Page preselected — see the file header.
   const [shape, setShape] = useState<DocumentShape>('page');
+  const searchRef = useRef<HTMLInputElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   // Ids that tie each visible label to the control it names. Before these,
   // the association was purely visual: focusing the title field announced
   // only its placeholder.
   const uid = useId();
-  const shapeGroupLabelId = `${uid}-shape-label`;
+  const blankGroupLabelId = `${uid}-blank-label`;
   const typeGroupLabelId = `${uid}-type-label`;
+  const cookbookGroupLabelId = `${uid}-cookbook-label`;
   const titleFieldId = `${uid}-title`;
   const descriptionFieldId = `${uid}-description`;
 
@@ -133,7 +233,10 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     const loaded = loadTypes();
     setTypes(loaded);
     setSelectedId(loaded[0]?.id ?? null);
+    setCookbookId(null);
+    setQuery('');
     setTitle('');
+    setTitleTouched(false);
     setDescription('');
     setShape('page');
 
@@ -152,13 +255,29 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
       .finally(() => { if (!cancelled) setProbing(false); });
     // Cleared on close: an uncancelled focus lands on a hidden input and
     // steals focus back from whatever the user moved to.
-    const t = setTimeout(() => titleRef.current?.focus(), 50);
+    const t = setTimeout(() => searchRef.current?.focus(), 50);
     return () => { cancelled = true; clearTimeout(t); };
   }, [open]);
+
+  const visibleBlanks = useMemo(
+    () => SHAPES.filter((s) => matchesBlank(s, query)),
+    [query],
+  );
+  const visibleTypes = useMemo(
+    () => types.filter((t) => matchesType(t, query)),
+    [types, query],
+  );
+  const visibleCookbooks = useMemo(
+    () => documentTypeCookbooks.filter((c) => matchesCookbookQuery(c, query)),
+    [query],
+  );
 
   if (!open) return null;
 
   const selected = types.find(t => t.id === selectedId);
+  const pickedCookbook = cookbookId
+    ? documentTypeCookbooks.find((c) => c.id === cookbookId)
+    : undefined;
 
   /**
    * Which shapes a document type is REQUIRED for.
@@ -173,39 +292,152 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
    * was Close, telling you to go define a type somewhere else first. Meanwhile
    * the conversation surface has always created untyped documents happily, so
    * the requirement was not even true of the product.
+   *
+   * A cookbook counts: it becomes a real type the moment it is used.
    */
   const needsType = shape === 'sections';
+  const hasStarterType = !!pickedCookbook || !!selected;
   const noTypesYet = types.length === 0 && !probing;
+  /**
+   * Say "you have no types" only when it still MATTERS. With a known type
+   * picked, the sections requirement is already met, and repeating the
+   * prerequisite under a satisfied choice reads as a refusal.
+   */
+  const showNoTypesNote = noTypesYet && !pickedCookbook;
+  const nothingMatches =
+    visibleBlanks.length === 0 && visibleTypes.length === 0 && visibleCookbooks.length === 0;
 
-  const handleSubmit = () => {
-    const trimmed = title.trim();
+  /**
+   * The starting point currently in force.
+   *
+   * A cookbook wins outright. Otherwise a type still only DECORATES the chosen
+   * shape, which is why it does not displace the blank — that orthogonality is
+   * load-bearing for the "typed page" the document list renders with an icon.
+   */
+  const currentStarter: Starter = pickedCookbook
+    ? { kind: 'cookbook', cookbook: pickedCookbook }
+    : selected && shape !== 'diagram'
+      ? { kind: 'type', type: selected }
+      : { kind: 'blank', shape };
+
+  const applyStarter = (s: Starter) => {
+    if (s.kind === 'cookbook') {
+      setCookbookId(s.cookbook.id);
+      // A cookbook's fields ARE sections; on a page they would materialise
+      // into nothing, so picking one picks the shape that shows them.
+      setShape('sections');
+      if (!titleTouched) setTitle(s.cookbook.name);
+      return;
+    }
+    setCookbookId(null);
+    if (s.kind === 'blank') {
+      setShape(s.shape);
+    } else {
+      setSelectedId(s.type.id);
+    }
+    // Clear a title we ourselves put there, so switching away from a cookbook
+    // does not leave its name behind on an unrelated document.
+    if (!titleTouched) setTitle('');
+  };
+
+  /** Shape a starter creates, independent of React state settling. */
+  const shapeFor = (s: Starter): DocumentShape =>
+    s.kind === 'cookbook' ? 'sections' : s.kind === 'blank' ? s.shape : shape;
+
+  /**
+   * Hand the finished meta to the host.
+   *
+   * Takes the starter and title as ARGUMENTS rather than reading state: the
+   * Enter-in-search path selects and submits in one keystroke, and a state read
+   * there would see the previous render's values.
+   */
+  const emit = (starter: Starter, rawTitle: string, shapeIn: DocumentShape) => {
+    const trimmed = rawTitle.trim();
     if (!trimmed) return;
-    if (needsType && !selected) return;
-    // A type decorates the row when there is one. Without it the chip still
-    // has to say something TRUE — a page with no type is a document, and the
-    // old code called it a "Diagram" because the only untyped shape used to be
-    // a whiteboard.
-    const typed = shape !== 'diagram' ? selected : undefined;
-    onCreate({
-      title: trimmed,
-      // A stable label rather than a real type id: the document list renders
-      // this as the row's chip. Nothing downstream looks it up in the types
-      // table.
-      type: shape === 'diagram' ? 'Diagram' : (typed ? typed.name : 'Document'),
-      description: description.trim() || undefined,
-      icon: shape === 'diagram' ? '🖉' : (typed ? typed.icon : '📄'),
-      ...(typed ? { documentTypeId: typed.id } : {}),
-      shape,
-    });
+    const desc = description.trim() || undefined;
+
+    if (starter.kind === 'cookbook') {
+      const dt = ensureCookbookType(starter.cookbook);
+      onCreate({
+        title: trimmed,
+        type: dt.name,
+        description: desc,
+        icon: dt.icon,
+        documentTypeId: dt.id,
+        // The editor materialises a type's fields only into sections.
+        shape: 'sections',
+      });
+    } else if (starter.kind === 'type' && shapeIn !== 'diagram') {
+      onCreate({
+        // A stable label rather than a real type id: the document list renders
+        // this as the row's chip, and the editor resolves the template by it.
+        title: trimmed,
+        type: starter.type.name,
+        description: desc,
+        icon: starter.type.icon,
+        documentTypeId: starter.type.id,
+        shape: shapeIn,
+      });
+    } else {
+      // Untyped. The chip still has to say something TRUE — a page with no type
+      // is a document, and the old code called it a "Diagram" because the only
+      // untyped shape used to be a whiteboard.
+      onCreate({
+        title: trimmed,
+        type: shapeIn === 'diagram' ? 'Diagram' : 'Document',
+        description: desc,
+        icon: shapeIn === 'diagram' ? '🖉' : '📄',
+        shape: shapeIn,
+      });
+    }
     onClose();
   };
 
   // `selected` unconditionally would keep the button dead on exactly the
   // shapes that never needed a type.
-  const canSubmit = !!title.trim() && (!needsType || !!selected);
+  const canSubmit = !!title.trim() && (!needsType || hasStarterType);
+
+  const handleSubmit = () => {
+    if (!canSubmit) return;
+    emit(currentStarter, title, shapeFor(currentStarter));
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && canSubmit) handleSubmit();
+  };
+
+  /**
+   * Enter in the search box: take the top match and go.
+   *
+   * "Type retro, press Enter, be writing" is the whole point of the box. When
+   * the top match supplies a title of its own (a cookbook does; a blank does
+   * not) the document is created on the spot; otherwise the match is selected
+   * and focus moves to the one field still missing.
+   */
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    e.preventDefault();
+    // The dialog body submits on Enter too; without this the same keystroke
+    // would be handled twice.
+    e.stopPropagation();
+
+    const top: Starter | undefined =
+      visibleCookbooks.length > 0 && query.trim()
+        ? { kind: 'cookbook', cookbook: visibleCookbooks[0] }
+        : visibleBlanks.length > 0
+          ? { kind: 'blank', shape: visibleBlanks[0].id }
+          : visibleTypes.length > 0
+            ? { kind: 'type', type: visibleTypes[0] }
+            : undefined;
+    if (!top) return;
+
+    applyStarter(top);
+    const nextTitle = title.trim() || (top.kind === 'cookbook' ? top.cookbook.name : '');
+    if (!nextTitle) {
+      titleRef.current?.focus();
+      return;
+    }
+    emit(top, nextTitle, shapeFor(top));
   };
 
   return (
@@ -213,7 +445,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
       open={open}
       onClose={onClose}
       ariaLabel="Create New Document"
-      maxWidth={560}
+      maxWidth={720}
       zIndex={10000}
       rawChildren
       backdropStyle={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }}
@@ -227,110 +459,173 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     >
       <div onKeyDown={handleKeyDown} className="contents">
         {/* Header */}
-        <h2 className={cn('m-0 px-6 pt-6 pb-4 text-lg font-bold text-text-primary shrink-0')}>
+        <h2 className={cn('m-0 px-6 pt-6 pb-2 text-lg font-bold text-text-primary shrink-0')}>
           Create New Document
         </h2>
 
-        {/* Scrollable body */}
-        <div className={cn('flex-1 overflow-y-auto px-6 min-h-0')}>
+        {/* Search over every starting point. First control in the dialog and
+            the one that gets focus, because typing three letters is faster
+            than reading seventeen cards. */}
+        <div className={cn('px-6 pb-3 shrink-0')}>
+          <Input
+            ref={searchRef}
+            type="search"
+            data-testid="new-doc-search"
+            aria-label="Search document types"
+            placeholder="What are you writing? Try “retro”, “bug”, “invoice”…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+          />
+          <div className={cn('mt-1.5 text-[11px] text-text-tertiary')}>
+            Start from a ready-made type — Enter takes the first match. Everything in it
+            stays editable afterwards.
+          </div>
+        </div>
 
-          {/* No types defined yet */}
-          {/* Still asking the server. NOT the empty state: claiming no types
-              exist while the request is in flight is a confident wrong answer,
-              and its call to action creates duplicates of types the user
-              already has. */}
-          {types.length === 0 && probing ? (
-            <div className={cn('text-center px-4 py-8 border border-dashed border-border-field rounded-lg mb-5 text-text-tertiary')}>
-              <div className={cn('text-[13px]')}>Loading document types…</div>
+        {/* Scrollable gallery */}
+        <div className={cn('flex-1 overflow-y-auto px-6 min-h-0')} data-testid="new-doc-starters">
+
+          {/* Blanks */}
+          {visibleBlanks.length > 0 && (
+            <div className={cn('mb-5')}>
+              <div
+                id={blankGroupLabelId}
+                className={cn('block text-[13px] font-semibold text-text-secondary mb-2')}
+              >
+                Start blank
+              </div>
+              <div
+                role="group"
+                aria-labelledby={blankGroupLabelId}
+                className={cn('grid grid-cols-3 gap-2')}
+              >
+                {visibleBlanks.map((s) => (
+                  <SelectableCard
+                    key={s.id}
+                    padding="md"
+                    selected={!pickedCookbook && shape === s.id}
+                    onSelect={() => applyStarter({ kind: 'blank', shape: s.id })}
+                    data-testid={`doc-shape-${s.id}`}
+                  >
+                    <div className={cn('flex items-center gap-2')}>
+                      <span className={cn('text-xl shrink-0')} aria-hidden="true">
+                        {s.icon}
+                      </span>
+                      <span className={cn('text-sm font-semibold text-text-primary')}>
+                        {s.name}
+                      </span>
+                      {s.id === 'page' && (
+                        <Chip tone="info" size="xs">
+                          Default
+                        </Chip>
+                      )}
+                    </div>
+                    <div className={cn('mt-1 text-[11px] leading-snug text-neutral')}>
+                      {s.description}
+                    </div>
+                  </SelectableCard>
+                ))}
+              </div>
             </div>
-          ) : (
-            <>
-              {/* Shape picker — the first and biggest decision, so it comes
-                  first. SelectableCard rather than a hand-rolled pressed
-                  button: it carries the selected chrome, aria-pressed and the
-                  focus ring that every hand-rolled picker in this repo lost. */}
-              <div className={cn('mb-5')}>
-                <div
-                  id={shapeGroupLabelId}
-                  className={cn('block text-[13px] font-semibold text-text-secondary mb-2')}
-                >
-                  How is this document written?
-                </div>
-                <div
-                  role="group"
-                  aria-labelledby={shapeGroupLabelId}
-                  className={cn('grid grid-cols-2 gap-2')}
-                >
-                  {SHAPES.map((s) => (
+          )}
+
+          {/* The fourteen. This is the front door: a person who has never seen
+              the app can pick one and be writing something structured without
+              defining a single field. */}
+          {visibleCookbooks.length > 0 && (
+            <div className={cn('mb-5')}>
+              <div
+                id={cookbookGroupLabelId}
+                className={cn('block text-[13px] font-semibold text-text-secondary mb-2')}
+              >
+                Known types
+              </div>
+              <div
+                role="group"
+                aria-labelledby={cookbookGroupLabelId}
+                className={cn('grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2')}
+              >
+                {visibleCookbooks.map((c) => {
+                  const isSelected = cookbookId === c.id;
+                  return (
                     <SelectableCard
-                      key={s.id}
+                      key={c.id}
                       padding="md"
-                      selected={shape === s.id}
-                      onSelect={() => setShape(s.id)}
-                      data-testid={`doc-shape-${s.id}`}
+                      selected={isSelected}
+                      onSelect={() => applyStarter({ kind: 'cookbook', cookbook: c })}
+                      data-testid={`starter-cookbook-${c.id}`}
                     >
                       <div className={cn('flex items-center gap-2')}>
-                        <span className={cn('text-xl shrink-0')} aria-hidden="true">
-                          {s.icon}
-                        </span>
+                        <span className={cn('text-xl shrink-0')} aria-hidden="true">{c.icon}</span>
                         <span className={cn('text-sm font-semibold text-text-primary')}>
-                          {s.name}
+                          {c.name}
                         </span>
-                        {s.id === 'page' && (
-                          <Chip tone="info" size="xs">
-                            Default
-                          </Chip>
-                        )}
                       </div>
-                      <div className={cn('mt-1 text-[11px] leading-snug text-neutral')}>
-                        {s.description}
+                      <div className={cn('mt-1 text-[11px] leading-snug text-neutral line-clamp-2')}>
+                        {c.description}
+                      </div>
+                      <div className={cn('mt-1 text-[11px] text-text-tertiary')}>
+                        {c.category}
                       </div>
                     </SelectableCard>
-                  ))}
-                </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* The user's own types — NOT offered for a diagram.
+
+              A document type defines the sections and structure a document
+              starts with. A whiteboard has neither, so asking is offering a
+              choice that does not apply to what is being made. */}
+          {shape !== 'diagram' && (visibleTypes.length > 0 || showNoTypesNote || (types.length === 0 && probing)) && (
+            <div className={cn('mb-5')}>
+              <div className={cn('mb-2 flex items-baseline gap-1.5')}>
+                <span
+                  id={typeGroupLabelId}
+                  className={cn('block text-[13px] font-semibold text-text-secondary')}
+                >
+                  Your document types
+                </span>
+                {!needsType && (
+                  <span className={cn('text-[13px] font-normal text-text-tertiary')}>optional</span>
+                )}
               </div>
 
-              {/* Type picker — NOT for a diagram.
-
-                  A document type defines the sections and structure a document
-                  starts with; every card here says "Sets the icon and type". A
-                  whiteboard has neither, so asking is offering a choice that
-                  does not apply to what is being made — and then refusing to
-                  create until one is picked. */}
-              {shape !== 'diagram' && (
-              <div className={cn('mb-5')}>
-                <div className={cn('mb-2 flex items-baseline gap-1.5')}>
-                  <span
-                    id={typeGroupLabelId}
-                    className={cn('block text-[13px] font-semibold text-text-secondary')}
-                  >
-                    Document Type
-                  </span>
-                  {!needsType && (
-                    <span className={cn('text-[13px] font-normal text-text-tertiary')}>optional</span>
-                  )}
+              {/* Still asking the server. NOT the empty state: claiming no
+                  types exist while the request is in flight is a confident
+                  wrong answer, and its call to action creates duplicates of
+                  types the user already has. */}
+              {types.length === 0 && probing && (
+                <div className={cn('px-3.5 py-3 border border-dashed border-border-field rounded-lg text-[13px] text-text-tertiary')}>
+                  Loading document types…
                 </div>
+              )}
 
-                {/* Scoped to the control it is about. This used to replace the
-                    ENTIRE dialog, so a prerequisite for ONE shape locked out
-                    the other two — and the only button was Close. */}
-                {noTypesYet && (
-                  <div
-                    data-testid="no-document-types"
-                    className={cn('px-3.5 py-3 border border-dashed border-border-field rounded-lg text-[13px] text-text-tertiary')}
-                  >
-                    {needsType
-                      ? 'Sections come from a document type, and none are defined yet. Define one in ☰ → Document Types, or make a page instead — it needs no type.'
-                      : 'No document types yet. A page does not need one; define types in ☰ → Document Types when you want a reusable icon and structure.'}
-                  </div>
-                )}
+              {/* Scoped to the control it is about. This used to replace the
+                  ENTIRE dialog, so a prerequisite for ONE shape locked out
+                  the other two — and the only button was Close. */}
+              {showNoTypesNote && (
+                <div
+                  data-testid="no-document-types"
+                  className={cn('px-3.5 py-3 border border-dashed border-border-field rounded-lg text-[13px] text-text-tertiary')}
+                >
+                  {needsType
+                    ? 'Sections come from a document type. Pick a known type above, or make a page instead — it needs no type.'
+                    : 'None of your own yet. Pick a known type above, or define one in ☰ → Document Types.'}
+                </div>
+              )}
+
+              {visibleTypes.length > 0 && (
                 <div
                   role="group"
                   aria-labelledby={typeGroupLabelId}
-                  className={cn('grid grid-cols-2 gap-2')}
+                  className={cn('grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2')}
                 >
-                  {types.map((t) => {
-                    const isSelected = selectedId === t.id;
+                  {visibleTypes.map((t) => {
+                    const isSelected = !pickedCookbook && selectedId === t.id;
                     return (
                       <button
                         key={t.id}
@@ -339,7 +634,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                         // Selection was signalled only by colour and a "✓"
                         // glyph; aria-pressed exposes it to screen readers.
                         aria-pressed={isSelected}
-                        onClick={() => setSelectedId(t.id)}
+                        onClick={() => applyStarter({ kind: 'type', type: t })}
                         className={cn(
                           'flex items-center gap-2.5 min-h-[72px] px-3.5 py-2.5 rounded-lg cursor-pointer text-left relative font-[inherit] transition-[background,border-color] duration-[120ms]',
                           isSelected ? 'bg-info-bg border-2 border-info' : 'bg-surface border-2 border-border hover:bg-surface-panel',
@@ -378,77 +673,91 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                     );
                   })}
                 </div>
-                </div>
               )}
+            </div>
+          )}
 
-              {/* Title */}
-              <div className={cn('mb-4')}>
-                <label
-                  htmlFor={titleFieldId}
-                  className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}
-                >
-                  Title <span className={cn('text-danger-fg')} aria-hidden="true">*</span>
-                </label>
-                <Input
-                  ref={titleRef}
-                  id={titleFieldId}
-                  required
-                  aria-required="true"
-                  data-testid="new-doc-title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder={selected ? `e.g. Q2 ${selected.name}` : 'Document title…'}
-                />
-              </div>
-
-              {/* Description */}
-              <div className={cn('mb-5')}>
-                <label
-                  htmlFor={descriptionFieldId}
-                  className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}
-                >
-                  Description <span className={cn('text-text-tertiary font-normal')}>(optional)</span>
-                </label>
-                <Textarea
-                  id={descriptionFieldId}
-                  data-testid="new-doc-description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Brief description of this document…"
-                  rows={3}
-                  className={cn('resize-y')}
-                />
-              </div>
-            </>
+          {nothingMatches && (
+            <div
+              data-testid="new-doc-no-matches"
+              className={cn('text-center py-8 text-[13px] text-text-tertiary')}
+            >
+              Nothing matches “{query}”. Clear the search to see every starting point.
+            </div>
           )}
         </div>
 
-        {/* Footer. Shown once the probe settles — the actions belong to the
-            form, not to whether any document types happen to exist. Hiding
-            them on zero types is what left the dialog with nothing but a
-            Close button. */}
-        {!(types.length === 0 && probing) && (
-          <div className={cn('flex justify-end gap-2 px-6 py-4 border-t border-border bg-surface shrink-0')}>
-            <button
-              data-testid="new-doc-cancel"
-              onClick={onClose}
-              className={cn('px-4 py-2 text-sm font-medium border border-border rounded-lg bg-surface text-text-secondary cursor-pointer font-[inherit]')}
+        {/* Title + description live BELOW the gallery and outside its scroll
+            box: the gallery is seventeen cards tall, and a title field that
+            scrolls away is a title field people cannot find. */}
+        <div className={cn('shrink-0 border-t border-border px-6 pt-4 pb-3')}>
+          <div className={cn('mb-3')}>
+            <label
+              htmlFor={titleFieldId}
+              className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}
             >
-              Cancel
-            </button>
-            <button
-              data-testid="new-doc-submit"
-              onClick={handleSubmit}
-              disabled={!canSubmit}
-              className={cn(
-                'px-5 py-2 text-sm font-semibold border-none rounded-lg text-white font-[inherit]',
-                canSubmit ? 'bg-info cursor-pointer' : 'bg-neutral cursor-not-allowed',
-              )}
-            >
-              Create Document
-            </button>
+              Title <span className={cn('text-danger-fg')} aria-hidden="true">*</span>
+            </label>
+            <Input
+              ref={titleRef}
+              id={titleFieldId}
+              required
+              aria-required="true"
+              data-testid="new-doc-title"
+              value={title}
+              onChange={(e) => { setTitle(e.target.value); setTitleTouched(true); }}
+              placeholder={
+                pickedCookbook
+                  ? `e.g. ${pickedCookbook.name}`
+                  : selected
+                    ? `e.g. Q2 ${selected.name}`
+                    : 'Document title…'
+              }
+            />
           </div>
-        )}
+
+          <div>
+            <label
+              htmlFor={descriptionFieldId}
+              className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}
+            >
+              Description <span className={cn('text-text-tertiary font-normal')}>(optional)</span>
+            </label>
+            <Textarea
+              id={descriptionFieldId}
+              data-testid="new-doc-description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Brief description of this document…"
+              rows={2}
+              className={cn('resize-y')}
+            />
+          </div>
+        </div>
+
+        {/* Footer. Always present — the actions belong to the form, not to
+            whether any document types happen to exist. Hiding them on zero
+            types is what left the dialog with nothing but a Close button. */}
+        <div className={cn('flex justify-end gap-2 px-6 py-4 border-t border-border bg-surface shrink-0')}>
+          <button
+            data-testid="new-doc-cancel"
+            onClick={onClose}
+            className={cn('px-4 py-2 text-sm font-medium border border-border rounded-lg bg-surface text-text-secondary cursor-pointer font-[inherit]')}
+          >
+            Cancel
+          </button>
+          <button
+            data-testid="new-doc-submit"
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            className={cn(
+              'px-5 py-2 text-sm font-semibold border-none rounded-lg text-white font-[inherit]',
+              canSubmit ? 'bg-info cursor-pointer' : 'bg-neutral cursor-not-allowed',
+            )}
+          >
+            Create Document
+          </button>
+        </div>
       </div>
     </Modal>
   );

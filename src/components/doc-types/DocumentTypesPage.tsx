@@ -1,10 +1,23 @@
 // frontend/src/components/doc-types/DocumentTypesPage.tsx
 //
 // Master-detail page for document type management.
-// Left sidebar: list of existing types + New button.
-// Right panel: wizard (create or edit mode) or empty/idle state.
+// Left sidebar: list of existing types + the two ways to add one.
+// Right panel: the gallery of known types (idle) or the wizard (create/edit).
 // State machine: idle → create → idle  |  idle → edit → idle
 // Delete flows through a confirmation modal.
+//
+// ## Why the wizard is no longer what this page leads with
+//
+// Defining a content type field by field before you may write anything is the
+// Drupal bargain, and almost nobody wants to make it. Fourteen usable types
+// already ship in `cookbooks/`, and they were reachable only through a button
+// sitting NEXT TO the wizard — the good path nested inside the path we want
+// taken last.
+//
+// So the idle panel now IS the gallery: pick a known type, it installs, and the
+// sidebar has it a second later. Building one from scratch is still here, one
+// click away, as the escape hatch it always should have been. Types are
+// starting points, not schemas to get right up front.
 
 import { useState } from 'react';
 import { cn } from '../../lib/cn';
@@ -14,6 +27,8 @@ import type { DocumentType } from '../../types/documentType';
 import Modal from '../shared/Modal';
 import EmptyState from '../shared/EmptyState';
 import CookbooksModal from './CookbooksModal';
+import { CookbookPicker } from './cookbooks/CookbookPicker';
+import type { DocumentTypeCookbook } from './cookbooks';
 
 /**
  * The two things this page needs from its host. Both are OPTIONAL and both
@@ -158,6 +173,8 @@ export function DocumentTypesPage({ idToken, onExportSchema }: DocumentTypesPage
   const [editingId, setEditingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [cookbooksOpen, setCookbooksOpen] = useState(false);
+  /** True while a known type picked from the idle gallery is being installed. */
+  const [installing, setInstalling] = useState(false);
   // tone drives the banner styling: success, offline (amber) or failure (red).
   // The old `syncSuffix` effect appended "— synced"/"— offline" AFTER the fact
   // to a banner that had already claimed success; with a write-through hook the
@@ -248,6 +265,40 @@ export function DocumentTypesPage({ idToken, onExportSchema }: DocumentTypesPage
     setSaveMessage(null);
   };
 
+  /**
+   * Install a known type from the idle gallery.
+   *
+   * Deliberately does NOT open the wizard afterwards, unlike the modal path.
+   * The point of picking a ready-made type is that you do not have to edit
+   * fields; dropping the person into the field editor anyway would put the
+   * wizard back at the centre of the page it was just moved off. The new type
+   * appears in the sidebar, where Edit is one click away if they want it.
+   */
+  const handleInstallKnownType = async (cookbook: DocumentTypeCookbook) => {
+    if (installing) return; // a second click while in flight installs it twice
+    setInstalling(true);
+    setSaveMessage(null);
+    try {
+      const built = cookbook.build();
+      const outcome = await createType(built);
+      setSaveMessage(
+        outcome.status === 'rejected'
+          ? { text: `"${built.name}" NOT added — server rejected it (${outcome.error})`, key: Date.now(), tone: 'error' }
+          : outcome.status === 'synced'
+            ? { text: `"${built.name}" added — ready to use`, key: Date.now(), tone: 'success' }
+            : { text: `"${built.name}" added — offline (saved locally, server unreachable)`, key: Date.now(), tone: 'offline' },
+      );
+    } catch (err) {
+      setSaveMessage({
+        text: `"${cookbook.name}" NOT added — ${err instanceof Error ? err.message : String(err)}`,
+        key: Date.now(),
+        tone: 'error',
+      });
+    } finally {
+      setInstalling(false);
+    }
+  };
+
   const confirmDeleteType = confirmDeleteId
     ? types.find(t => t.id === confirmDeleteId)
     : null;
@@ -269,20 +320,27 @@ export function DocumentTypesPage({ idToken, onExportSchema }: DocumentTypesPage
           <span className="text-[13px] font-bold text-text-primary">
             Document Types
           </span>
+          {/* Primary is the LIBRARY, not the wizard. These two swapped
+              styling on 2026-09-07: "+ New" opened a three-step field editor
+              and was the loudest thing on the page, while the fourteen ready
+              types hid behind a word ("Cookbooks") that says nothing about
+              what it does. */}
           <div className="flex gap-1.5">
             <button
               data-testid="cookbooks-btn"
               onClick={() => setCookbooksOpen(true)}
-              className="py-[5px] px-3 text-xs font-semibold bg-surface text-primary border border-primary rounded-md cursor-pointer font-inherit whitespace-nowrap"
+              title="Browse the ready-made document types"
+              className="py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit whitespace-nowrap"
             >
-              Cookbooks
+              Known types
             </button>
             <button
               data-testid="create-type-btn"
               onClick={handleCreateClick}
-              className="py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit whitespace-nowrap"
+              title="Build a document type field by field"
+              className="py-[5px] px-3 text-xs font-medium bg-transparent text-text-secondary border border-border rounded-md cursor-pointer font-inherit whitespace-nowrap"
             >
-              + New
+              From scratch
             </button>
           </div>
         </div>
@@ -292,11 +350,14 @@ export function DocumentTypesPage({ idToken, onExportSchema }: DocumentTypesPage
           {types.length === 0 ? (
             <div className="py-8 px-4 flex flex-col items-center gap-2">
               <div className="text-text-tertiary text-[13px]">No types yet.</div>
+              {/* Points at the gallery, not the wizard — picking a ready type
+                  is the shorter road to a first type by a long way. */}
               <button
-                onClick={handleCreateClick}
+                data-testid="empty-browse-types-btn"
+                onClick={() => setCookbooksOpen(true)}
                 className="bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2 font-inherit"
               >
-                Create one →
+                Browse known types →
               </button>
             </div>
           ) : (
@@ -342,17 +403,47 @@ export function DocumentTypesPage({ idToken, onExportSchema }: DocumentTypesPage
       {/* -- Right panel -- */}
       <div className="flex-1 overflow-y-auto py-7 px-9" data-testid="right-panel">
         {mode === 'idle' && (
-          <EmptyState
-            testId="idle-panel"
-            actionTestId="idle-create-btn"
-            icon="📋"
-            title={types.length > 0 ? 'Select a type to edit' : 'No document types yet'}
-            body={types.length > 0
-              ? 'Choose a type from the list to edit its fields and view modes.'
-              : 'Document types define the structure and fields for your documents.'}
-            actionLabel={types.length > 0 ? undefined : '+ Create Document Type'}
-            onAction={types.length > 0 ? undefined : handleCreateClick}
-          />
+          <div data-testid="known-types-panel" className="flex flex-col gap-4">
+            {/* Compact: this used to be a 220px-tall centred card that WAS the
+                whole panel. It is now a caption on the gallery below it. */}
+            <EmptyState
+              testId="idle-panel"
+              className="min-h-0 p-0 gap-1"
+              icon="📋"
+              title={types.length > 0 ? 'Select a type to edit' : 'No document types yet'}
+              description={types.length > 0
+                ? 'Choose a type from the list to edit its fields — or add another known type below.'
+                : 'Start from a known type below. It installs as your own type, and you can change any of it afterwards.'}
+              action={
+                <button
+                  data-testid="idle-create-btn"
+                  onClick={handleCreateClick}
+                  className="px-3.5 py-2 text-[13px] font-medium bg-transparent text-text-secondary border border-border rounded-lg cursor-pointer font-inherit"
+                >
+                  Build a type from scratch
+                </button>
+              }
+            />
+
+            <div className="border-t border-border pt-4">
+              <div className="text-[13px] font-bold text-text-primary mb-2">
+                Known types
+              </div>
+              {/* Its own testid prefixes: the Cookbooks modal renders the same
+                  picker, and two `cookbooks-grid` nodes on one screen is a
+                  strict-mode selector collision in every spec that addresses
+                  it. */}
+              <CookbookPicker
+                onPick={handleInstallKnownType}
+                busy={installing}
+                actionLabel="Add this type"
+                idPrefix="type-starters"
+                cardPrefix="type-starter"
+                layout="fluid"
+                gridHeightClassName="max-h-none"
+              />
+            </div>
+          </div>
         )}
 
         {(mode === 'create' || mode === 'edit') && (

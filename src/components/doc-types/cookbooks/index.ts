@@ -622,3 +622,41 @@ export const documentTypeCookbooks: DocumentTypeCookbook[] = [
     build: buildContract,
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Search
+// ---------------------------------------------------------------------------
+
+/**
+ * Does this cookbook answer to `query`?
+ *
+ * One predicate, shared by every surface that offers the cookbooks — the
+ * gallery on the Document Types page and the starting-point picker in the New
+ * Document modal. They used to filter with two hand-written copies of the same
+ * four `.includes()` calls, which is how "retro" came to match in one place
+ * and not the other.
+ *
+ * Matches on name, description, tags and category so the words a person
+ * actually types ("retro", "postmortem", "hiring") land on the right template
+ * even when they are nowhere in its title.
+ */
+export function matchesCookbookQuery(cookbook: DocumentTypeCookbook, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return (
+    cookbook.name.toLowerCase().includes(q) ||
+    cookbook.description.toLowerCase().includes(q) ||
+    cookbook.category.toLowerCase().includes(q) ||
+    cookbook.tags.some((tag) => tag.toLowerCase().includes(q))
+  );
+}
+
+/** Cookbooks in catalogue order, filtered by category then query. */
+export function filterCookbooks(
+  query: string,
+  category: CookbookCategory | 'All' = 'All',
+): DocumentTypeCookbook[] {
+  return documentTypeCookbooks.filter(
+    (c) => (category === 'All' || c.category === category) && matchesCookbookQuery(c, query),
+  );
+}

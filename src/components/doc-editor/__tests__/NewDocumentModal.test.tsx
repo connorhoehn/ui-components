@@ -4,6 +4,12 @@ import NewDocumentModal from '../NewDocumentModal';
 import type { DocumentType, DocumentTypeField } from '../../../types/documentType';
 
 const loadTypes = vi.fn<() => DocumentType[]>();
+/**
+ * The modal writes a picked cookbook straight into the offline cache — that is
+ * what makes the editor able to resolve its sections a moment later. See
+ * `ensureCookbookType`.
+ */
+const persistTypes = vi.fn<(types: DocumentType[]) => void>();
 
 // `refreshTypesFromServer` is what makes the modal reconcile a cold cache with
 // the server. It defaults to echoing the cache so existing cases behave as
@@ -11,6 +17,7 @@ const loadTypes = vi.fn<() => DocumentType[]>();
 let serverTypes: DocumentType[] | null = null;
 vi.mock('../../../hooks/useDocumentTypes', () => ({
   loadTypes: () => loadTypes(),
+  persistTypes: (types: DocumentType[]) => persistTypes(types),
   refreshTypesFromServer: async () => ({
     ok: true as const,
     types: serverTypes ?? loadTypes(),
@@ -39,6 +46,7 @@ function mkType(over: Partial<DocumentType> = {}): DocumentType {
 
 beforeEach(() => {
   loadTypes.mockReset();
+  persistTypes.mockReset();
   vi.useFakeTimers();
 });
 afterEach(() => { vi.useRealTimers(); });
@@ -148,12 +156,17 @@ describe('NewDocumentModal', () => {
     expect(screen.getByTestId('new-doc-title')).toBeInTheDocument();
   });
 
-  it('auto-focuses the title input ~50ms after open', () => {
+  // The SEARCH box, not the title: the first thing to do in this dialog is
+  // say what you are writing, and the answer to that picks a starting point
+  // (and often the title with it).
+  it('auto-focuses the search box ~50ms after open', () => {
     loadTypes.mockReturnValue([mkType()]);
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
-    expect(document.activeElement).not.toBe(screen.getByTestId('new-doc-title'));
+    // Modal's focus trap already lands on the first focusable element, which
+    // is now this box — so the assertion is that the deferred focus AGREES
+    // with it rather than yanking focus into the title field 50ms later.
     act(() => { vi.advanceTimersByTime(60); });
-    expect(document.activeElement).toBe(screen.getByTestId('new-doc-title'));
+    expect(document.activeElement).toBe(screen.getByTestId('new-doc-search'));
   });
 
   it('clicking another type-grid card switches selection (✓ moves)', () => {
@@ -331,7 +344,7 @@ describe('NewDocumentModal — accessibility wiring', () => {
   it('names the document-type picker as a labelled group', () => {
     loadTypes.mockReturnValue([mkType()]);
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
-    expect(screen.getByRole('group', { name: 'Document Type' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Your document types' })).toBeInTheDocument();
   });
 });
 
@@ -379,12 +392,12 @@ describe('NewDocumentModal — a diagram needs no document type', () => {
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
     await act(async () => { await Promise.resolve(); });
 
-    expect(screen.getByText('Document Type')).toBeInTheDocument();
+    expect(screen.getByText('Your document types')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Diagram'));
-    expect(screen.queryByText('Document Type')).toBeNull();
+    expect(screen.queryByText('Your document types')).toBeNull();
     // and back again — the picker is hidden, not destroyed
     fireEvent.click(screen.getByText('Page'));
-    expect(screen.getByText('Document Type')).toBeInTheDocument();
+    expect(screen.getByText('Your document types')).toBeInTheDocument();
   });
 
   it('creates a diagram with only a title', async () => {
@@ -431,5 +444,161 @@ describe('NewDocumentModal — a diagram needs no document type', () => {
     // Diagram: allowed, as before.
     fireEvent.click(screen.getByTestId('doc-shape-diagram'));
     expect(screen.getByTestId('new-doc-submit')).not.toBeDisabled();
+  });
+});
+
+// ── The known-type front door ───────────────────────────────────────────
+//
+// The fourteen prebuilt types used to be reachable only from a "Cookbooks"
+// button on the Document Types page, i.e. the shortest path to a structured
+// document ran THROUGH the field-by-field wizard we want people to need least.
+// These pin the new shape of that: the types are in the create dialog, they are
+// searchable, and picking one asks nobody to define a schema.
+describe('NewDocumentModal — starting from a known type', () => {
+  it('offers the prebuilt types even when the user has none of their own', async () => {
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    await act(async () => { await Promise.resolve(); });
+
+    expect(screen.getByTestId('starter-cookbook-sprint-retro')).toBeInTheDocument();
+    expect(screen.getByTestId('starter-cookbook-bug-report')).toBeInTheDocument();
+    expect(screen.getByTestId('starter-cookbook-invoice')).toBeInTheDocument();
+  });
+
+  it('searches across name, tags and category', async () => {
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    await act(async () => { await Promise.resolve(); });
+
+    // "retro" is in the retrospective's name AND its tags; "postmortem" is
+    // only in the incident report's tags, which is exactly the word someone
+    // would type for it.
+    fireEvent.change(screen.getByTestId('new-doc-search'), { target: { value: 'retro' } });
+    expect(screen.getByTestId('starter-cookbook-sprint-retro')).toBeInTheDocument();
+    expect(screen.queryByTestId('starter-cookbook-invoice')).toBeNull();
+
+    fireEvent.change(screen.getByTestId('new-doc-search'), { target: { value: 'postmortem' } });
+    expect(screen.getByTestId('starter-cookbook-incident-report')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByTestId('new-doc-search'), { target: { value: 'zzzz' } });
+    expect(screen.getByTestId('new-doc-no-matches')).toBeInTheDocument();
+  });
+
+  // THE TEN-SECOND PATH. Three keystrokes and Enter, no title typed, no schema
+  // defined, and the document that comes out has the retro's sections.
+  it('type "retro" + Enter creates the retrospective outright', async () => {
+    const onCreate = vi.fn();
+    const onClose = vi.fn();
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={onClose} onCreate={onCreate} />);
+    await act(async () => { await Promise.resolve(); });
+
+    const search = screen.getByTestId('new-doc-search');
+    fireEvent.change(search, { target: { value: 'retro' } });
+    fireEvent.keyDown(search, { key: 'Enter' });
+
+    expect(onCreate).toHaveBeenCalledTimes(1);
+    const meta = onCreate.mock.calls[0][0];
+    expect(meta).toMatchObject({
+      title: 'Sprint Retrospective',
+      type: 'Sprint Retrospective',
+      // Sections is where a type's fields actually materialise; on a page they
+      // would render as nothing at all.
+      shape: 'sections',
+    });
+    expect(typeof meta.documentTypeId).toBe('string');
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  // The document editor resolves a template from the type CACHE, by name. If
+  // the cookbook never lands there, the document opens empty — which is the
+  // one failure this whole path exists to prevent.
+  it('installs the picked cookbook into the type cache, fields and all', async () => {
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    await act(async () => { await Promise.resolve(); });
+
+    fireEvent.click(screen.getByTestId('starter-cookbook-bug-report'));
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+
+    expect(persistTypes).toHaveBeenCalledTimes(1);
+    const written = persistTypes.mock.calls[0][0];
+    expect(written).toHaveLength(1);
+    expect(written[0].name).toBe('Bug Report');
+    expect(written[0].fields.length).toBeGreaterThan(3);
+    expect(written[0].id).toEqual(expect.any(String));
+  });
+
+  it('reuses a type of the same name instead of installing a duplicate', async () => {
+    const onCreate = vi.fn();
+    const already = mkType({ id: 'already-here', name: 'Bug Report', icon: '🐛' });
+    loadTypes.mockReturnValue([already]);
+    serverTypes = [already];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+    await act(async () => { await Promise.resolve(); });
+
+    fireEvent.click(screen.getByTestId('starter-cookbook-bug-report'));
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+
+    expect(persistTypes).not.toHaveBeenCalled();
+    expect(onCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ documentTypeId: 'already-here', type: 'Bug Report' }),
+    );
+  });
+
+  it('fills the title from the picked type, but never over one you typed', async () => {
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    await act(async () => { await Promise.resolve(); });
+
+    fireEvent.click(screen.getByTestId('starter-cookbook-meeting-notes'));
+    expect(screen.getByTestId('new-doc-title')).toHaveValue('Meeting Notes');
+
+    // Switching starters re-fills, because the title is still ours.
+    fireEvent.click(screen.getByTestId('starter-cookbook-invoice'));
+    expect(screen.getByTestId('new-doc-title')).toHaveValue('Invoice');
+
+    // Once the user writes their own, it is theirs.
+    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'March billing' } });
+    fireEvent.click(screen.getByTestId('starter-cookbook-meeting-notes'));
+    expect(screen.getByTestId('new-doc-title')).toHaveValue('March billing');
+  });
+
+  // Sections used to be flatly impossible without a type of your own, and the
+  // dialog said so. A known type IS a type the moment it is used.
+  it('a known type satisfies the sections requirement with zero types of your own', async () => {
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    await act(async () => { await Promise.resolve(); });
+
+    fireEvent.click(screen.getByTestId('doc-shape-sections'));
+    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notes' } });
+    expect(screen.getByTestId('new-doc-submit')).toBeDisabled();
+
+    fireEvent.click(screen.getByTestId('starter-cookbook-meeting-notes'));
+    expect(screen.getByTestId('new-doc-submit')).not.toBeDisabled();
+  });
+
+  it('picking a blank clears a known type, and vice versa', async () => {
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    await act(async () => { await Promise.resolve(); });
+
+    fireEvent.click(screen.getByTestId('starter-cookbook-meeting-notes'));
+    expect(screen.getByTestId('starter-cookbook-meeting-notes')).toHaveAttribute('aria-pressed', 'true');
+    // The shape card must not ALSO look picked just because a cookbook forced
+    // the sections shape.
+    expect(screen.getByTestId('doc-shape-sections')).toHaveAttribute('aria-pressed', 'false');
+
+    fireEvent.click(screen.getByTestId('doc-shape-page'));
+    expect(screen.getByTestId('starter-cookbook-meeting-notes')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('doc-shape-page')).toHaveAttribute('aria-pressed', 'true');
   });
 });
