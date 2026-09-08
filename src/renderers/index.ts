@@ -123,6 +123,24 @@ registerRenderer('checkbox', 'editor', BooleanEditorRenderer);
 registerRenderer('checkbox', 'ack',    BooleanReaderRenderer);
 registerRenderer('checkbox', 'reader', BooleanReaderRenderer);
 
+// The scalar renderers themselves, not only the registry that holds them.
+//
+// The consuming app keeps its OWN copy of `registry.ts` — byte-identical to
+// this one — and its own registration list, so registering these here reaches
+// nothing it renders. Without exporting the components, its only options were
+// to copy them (a fifth fork of this directory) or to leave 151 of the
+// fourteen starter types' 219 fields rendering as prose boxes. Exported so the
+// app can register the LIBRARY's components into its own registry, which is
+// one step toward retiring that fork rather than widening it.
+export { default as TextEditorRenderer } from './text/TextEditorRenderer';
+export { default as TextReaderRenderer } from './text/TextReaderRenderer';
+export { default as DateEditorRenderer } from './date/DateEditorRenderer';
+export { default as DateReaderRenderer } from './date/DateReaderRenderer';
+export { default as NumberEditorRenderer } from './number/NumberEditorRenderer';
+export { default as NumberReaderRenderer } from './number/NumberReaderRenderer';
+export { default as BooleanEditorRenderer } from './boolean/BooleanEditorRenderer';
+export { default as BooleanReaderRenderer } from './boolean/BooleanReaderRenderer';
+
 export {
   registerRenderer,
   getRenderer,
