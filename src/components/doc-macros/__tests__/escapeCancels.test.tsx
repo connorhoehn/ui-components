@@ -18,7 +18,7 @@ import { readActionItems } from '../actionItemsText';
 
 const SOURCE = ['items:', '  - text: Ada', '    status: todo'].join('\n');
 
-function mount(onTextChange: (id: string, text: string) => void) {
+function mount(onTextChange: (index: number, text: string) => void) {
   const items = readActionItems(SOURCE)!;
   return render(
     <ActionItemsBlock
@@ -54,7 +54,7 @@ describe('Escape cancels an action item edit', () => {
     await userEvent.type(input, 'x');
     await userEvent.tab();
 
-    expect(onTextChange).toHaveBeenCalledWith(expect.anything(), 'Adax');
+    expect(onTextChange).toHaveBeenCalledWith(0, 'Adax');
   });
 
   it('commits on Enter', async () => {
@@ -66,7 +66,7 @@ describe('Escape cancels an action item edit', () => {
     await userEvent.type(input, '!');
     await userEvent.keyboard('{Enter}');
 
-    expect(onTextChange).toHaveBeenCalledWith(expect.anything(), 'Ada!');
+    expect(onTextChange).toHaveBeenCalledWith(0, 'Ada!');
   });
 
   it('leaves the text alone when nothing was typed', async () => {

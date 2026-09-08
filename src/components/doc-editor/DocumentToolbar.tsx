@@ -195,7 +195,12 @@ function ToolButton({
       type="button"
       data-testid={testId}
       title={btn.hint}
-      aria-label={btn.hint}
+      // The NAME, not the hint. A hint is written for the eye — "Bold  **text**"
+      // — and a screen reader says it literally: "Bold star star text star
+      // star". The markdown half belongs in the tooltip, where it teaches the
+      // shortcut, and the accessible name is the plain verb. Split on the
+      // double space the hints already use to separate the two.
+      aria-label={btn.hint.split('  ')[0]}
       // Toggles, so the state is announced rather than left to colour alone.
       aria-pressed={active}
       {...activate(() => btn.run(editor))}

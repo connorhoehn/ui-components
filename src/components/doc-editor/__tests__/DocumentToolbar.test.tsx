@@ -576,6 +576,18 @@ describe('DocumentToolbar — the comment-gutter toggle', () => {
     expect(calls.filter((c) => c === 'toggleBold')).toHaveLength(1);
   });
 
+  // A tooltip teaches the markdown shortcut; an accessible name should not read
+  // it out. "Bold  **text**" was the aria-label as well as the title, so a
+  // screen reader announced "Bold star star text star star" for the B button.
+  it('names a button for a screen reader without reading the markdown at it', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} />);
+    const bold = screen.getByTestId('document-toolbar-bold');
+    expect(bold).toHaveAttribute('aria-label', 'Bold');
+    expect(bold).toHaveAttribute('title', 'Bold  **text**');
+    expect(screen.getByTestId('document-toolbar-taskList')).toHaveAttribute('aria-label', 'Task list');
+  });
+
   it('opens a menu from the keyboard', () => {
     const { editor } = makeEditor({}, ['setTextAlign']);
     render(<DocumentToolbar editor={editor} />);

@@ -236,6 +236,14 @@ describe('entry points and their transitive optional peers', () => {
     }
 
     const TIPTAP = [
+      // `@tiptap/core` joined this list when `TiptapEditor` began registering
+      // `CanvasLineSpacing`, which is an `Extension.create` and so imports the
+      // base class from core. It is a DELIBERATE growth and a nominal one: core
+      // is not an extra install for anyone, because every other name below
+      // already depends on it (`@tiptap/react`, `@tiptap/starter-kit` and the
+      // extensions all list it as a hard dependency), so no import path gained
+      // a package it did not already have on disk.
+      '@tiptap/core',
       '@tiptap/extension-collaboration', '@tiptap/extension-placeholder',
       '@tiptap/extension-task-item', '@tiptap/extension-task-list',
       '@tiptap/react', '@tiptap/starter-kit', '@tiptap/y-tiptap',

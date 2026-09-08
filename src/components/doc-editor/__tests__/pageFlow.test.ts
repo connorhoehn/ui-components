@@ -225,3 +225,96 @@ describe('canvasPageAt', () => {
     expect(canvasPageAt(DOC_PAGE_HEIGHT * 40, 0)).toBe(1);
   });
 });
+
+// ── Line spacing ──────────────────────────────────────────────────────────
+//
+// `canvasLineSpacing.ts` lets a paragraph opt out of the baseline grid: its
+// line box becomes 1.5 or 2 GRID ROWS instead of one. Double stays on the grid
+// by construction; 1.5 does not, and the argument for shipping it anyway is
+// entirely about this module — `flowCanvasPages` snaps every on-grid block's
+// top before it does anything else, so the drift is corrected at the very next
+// paragraph and never accumulates.
+//
+// The line-box heights are not invented here. Measured in Chromium on a live
+// page-shaped document, against the real paginated stylesheet:
+//
+//   single   line-height 26.4px   0 of 7 test paragraphs off the grid
+//   1.15     line-height 30.36px  7 of 7 off the grid          <- not shipped
+//   1.5      line-height 39.6px   4 of 7 off, always by exactly half a row
+//   double   line-height 52.8px   0 of 7 off the grid
+//
+// which is the whole reason 1.15 is not on the menu: it misses the grid on
+// essentially every paragraph, so every paragraph would be followed by an
+// arbitrary fraction of a row of make-up space.
+const SPACING = { single: DOC_LINE, oneAndAHalf: DOC_LINE * 1.5, double: DOC_LINE * 2 };
+
+/**
+ * The natural geometry of a run of paragraphs at one spacing.
+ *
+ * A paragraph's own margin is one grid row — `.doc-page--paginated .ProseMirror
+ * p { margin: 0 0 var(--doc-line) }` — and the flow measures border boxes with
+ * the margins as the gaps between them, so the margin lands in the next block's
+ * `top` rather than in this one's height.
+ */
+const runOfParagraphs = (lineCounts: readonly number[], lineBox: number): CanvasBlock[] => {
+  const blocks: CanvasBlock[] = [];
+  let top = 0;
+  for (const lines of lineCounts) {
+    blocks.push({ top, height: lines * lineBox, splittable: true, onGrid: true });
+    top += lines * lineBox + DOC_LINE;
+  }
+  return blocks;
+};
+
+/** Where each block actually ended up, after the flow's pushes. */
+const finalTops = (blocks: readonly CanvasBlock[]): number[] => {
+  const { pushes } = flowCanvasPages(blocks);
+  let shift = 0;
+  return blocks.map((b, i) => { shift += pushes[i] ?? 0; return b.top + shift; });
+};
+
+describe('line spacing', () => {
+  // The mix matters: 3 and 5 lines at 1.5 rows land half a row off, 4 and 6
+  // land on it. A run of only even paragraphs would pass without the snap.
+  const MIXED = [3, 4, 5, 6, 3, 7, 4, 5, 6, 3, 5, 4] as const;
+
+  it('puts every paragraph back on the grid after a 1.5-spaced one', () => {
+    for (const top of finalTops(runOfParagraphs(MIXED, SPACING.oneAndAHalf))) {
+      expect(offGrid(top)).toBeLessThan(0.01);
+    }
+  });
+
+  // A page tall enough that nothing ever meets a seam, so every push in the
+  // result is a GRID SNAP and nothing else. Mixing the two in one assertion is
+  // how the first version of this test read a 211.2px page move as an
+  // eight-row grid correction.
+  const NO_SEAMS = { pageHeight: 1e6 };
+
+  it('charges at most one row of make-up space per paragraph', () => {
+    const { pushes } = flowCanvasPages(runOfParagraphs(MIXED, SPACING.oneAndAHalf), NO_SEAMS);
+    for (const p of pushes) expect(p).toBeLessThanOrEqual(DOC_LINE + 0.01);
+    // And it really is half a row it is correcting — 13.2px, not float noise.
+    expect(pushes.some((p) => Math.abs(p - DOC_LINE / 2) < 0.01)).toBe(true);
+  });
+
+  it('leaves double spacing on the grid with nothing to correct', () => {
+    const { pushes } = flowCanvasPages(runOfParagraphs(MIXED, SPACING.double), NO_SEAMS);
+    expect(pushes.every((p) => p === 0)).toBe(true);
+  });
+
+  it('costs the pages the leading costs, and no more', () => {
+    const pages = (lineBox: number) => flowCanvasPages(runOfParagraphs(MIXED, lineBox)).pageCount;
+    const single = pages(SPACING.single);
+    const oneAndAHalf = pages(SPACING.oneAndAHalf);
+    const double = pages(SPACING.double);
+
+    // 55 wrapped lines of prose. The numbers are asserted rather than merely
+    // ordered because "line spacing made the document five times longer" is a
+    // real failure mode and an ordering check would not catch it: a page holds
+    // 32 rows of text once every page has its inch of margin, so 1.5x the
+    // leading is ~1.5x the pages and not more.
+    expect(single).toBe(3);
+    expect(oneAndAHalf).toBe(4);
+    expect(double).toBe(5);
+  });
+});
