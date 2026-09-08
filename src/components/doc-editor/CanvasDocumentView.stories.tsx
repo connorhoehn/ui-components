@@ -399,3 +399,81 @@ export const WithUnsupportedContent: Story = {
     );
   },
 };
+
+/**
+ * A picture that is 260px tall, in a paragraph-shaped world.
+ *
+ * Story fixtures need real intrinsic heights to exercise pagination — that is
+ * the whole defect the flow exists to fix — and a fixture that fetched one
+ * would be a story that only works online.
+ */
+const plate = (height: number, fill: string) =>
+  `<img src="data:image/svg+xml;utf8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="560" height="${height}"><rect width="100%" height="100%" fill="${fill}"/></svg>`,
+  )}" width="560" height="${height}" alt="" />`;
+
+const LONG = (n: number) =>
+  `<p>${Array.from({ length: n }, (_, i) =>
+    `Sentence ${i + 1} of a paragraph long enough to run across a page boundary, which is exactly where a seam has to be able to fall without striking a line of type.`,
+  ).join(' ')}</p>`;
+
+/**
+ * The document pagination was built for: pictures, a table, headings, code and
+ * paragraphs long enough to cross a seam.
+ *
+ * Scroll to each grey band. Nothing is cut — the pictures and the table have
+ * moved down to whole pages, headings travel with the text they introduce, and
+ * the paragraphs that DO run through a seam do it in the leading between two
+ * lines. Turn the `paginate` control off in the toolbar below and the same
+ * document becomes one endless sheet.
+ */
+export const Paginated: Story = {
+  args: { isCanvas: true, body: null, ydoc: null as never, provider: null, paginate: true, ...BASE },
+  render: (args) => {
+    const { ydoc, provider, body } = useFixture();
+    const onEditorReady = useSeed(
+      [
+        '<h1>Quarterly platform review</h1>',
+        LONG(9),
+        '<h2>Throughput</h2>',
+        plate(260, '#7c9cd6'),
+        LONG(7),
+        '<h2>Latency by region</h2>',
+        '<table><tr><th>Region</th><th>p50</th><th>p95</th></tr>',
+        ...['us-east', 'us-west', 'eu-central', 'ap-south', 'sa-east'].map(
+          (r) => `<tr><td>${r}</td><td>41ms</td><td>318ms</td></tr>`,
+        ),
+        '</table>',
+        LONG(11),
+        '<h3>The cache stampede, again</h3>',
+        '<pre><code>cache.set(key, value, ttl + jitter(0, 300))\nmetrics.count("cache.write")\n// and eight more lines that must not be sliced\n</code></pre>',
+        plate(410, '#8fb98f'),
+        LONG(14),
+        '<h2>Next quarter</h2>',
+        LONG(6),
+        plate(180, '#d6a97c'),
+        LONG(9),
+      ].join('\n'),
+      body,
+    );
+    return (
+      <CanvasDocumentView
+        {...args}
+        isCanvas
+        body={body}
+        ydoc={ydoc}
+        provider={provider}
+        onEditorReady={onEditorReady as never}
+      />
+    );
+  },
+};
+
+/**
+ * The same document as one continuous sheet — what every host got before the
+ * flow existed, and what a preview pane or a read-only embed may still want.
+ */
+export const Unpaginated: Story = {
+  ...Paginated,
+  args: { ...Paginated.args, paginate: false },
+};

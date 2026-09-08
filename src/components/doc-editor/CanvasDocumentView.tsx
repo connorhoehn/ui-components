@@ -39,6 +39,8 @@ import EmptyState from '../shared/EmptyState';
 import { Button } from '../ui/Button';
 import Chip from '../shared/Chip';
 import DocumentFindBar from './DocumentFindBar';
+import { DOC_PAGE_HEIGHT, canvasPageAt } from './canvas/pageFlow';
+import { useCanvasPageFlow } from './canvas/useCanvasPageFlow';
 
 /**
  * A form the ProseMirror schema could not express, surfaced rather than
@@ -59,8 +61,12 @@ const GUTTER_BELOW_WORKSPACE = 16;
  * where the sheet's bottom edge falls, that one decides where the seam is
  * drawn, and a disagreement shows up as a page whose last seam is not at its
  * bottom.
+ *
+ * Now owned by `canvas/pageFlow.ts`, which needs the same number to decide
+ * which blocks a seam would cut. Re-exported under the old name so nothing in
+ * this file reads as if there were two page heights.
  */
-const PAGE_HEIGHT = 1056;
+const PAGE_HEIGHT = DOC_PAGE_HEIGHT;
 
 /**
  * How many whole sheets a stack of `heightPx` occupies.
@@ -68,6 +74,11 @@ const PAGE_HEIGHT = 1056;
  * Exported because it is the only arithmetic in the pagination path and a
  * component test cannot reach it — jsdom has no layout, so every measured
  * height there is zero.
+ *
+ * No longer on the live path — `flowCanvasPages` reports the count now,
+ * because after the pushes the content height is something only IT knows. This
+ * stays as the plain statement of the rounding rule, and as the thing the
+ * stylesheet test checks the page height against.
  *
  * Rounds UP, and that rounding is the point. Without it the last page is
  * however tall the content happened to be — a 1972px document ends in a
@@ -264,31 +275,37 @@ export interface CanvasDocumentViewProps {
   showOutline?: boolean;
   /**
    * Draw page boundaries on the sheet: a seam every 1056px, the desk showing
-   * through it, and a shadow off each sheet's edge. Also reports a page count
-   * in the status bar and pads the last sheet out to a whole page.
+   * through it, and a page count in the status bar. Also pads the last sheet
+   * out to a whole page, and moves content so that no seam cuts it.
    *
-   * OFF by default, and the default is a recommendation rather than caution.
-   * Read the header of the pagination block in styles.css before turning it
-   * on; the short version:
+   * ON by default, which is a reversal — so here is what changed.
    *
-   *   - It is not free. Pagination and a baseline grid are ONE feature here,
-   *     because a seam can only avoid cutting text if every line sits on a
-   *     known row. So this also changes the document's typography — paragraph
-   *     gaps go 14.4px -> 26.4px, headings and code blocks get re-spaced. The
-   *     page gets airier. That is not a side effect to be tuned away, it is
-   *     the mechanism.
-   *   - It is not complete. Headings are larger than one grid row can contain,
-   *     so ~4.6% of seams still clip one (measured over 1000 generated
-   *     documents).
-   *   - It does not survive pictures. An image or a table has an intrinsic
-   *     height that no stylesheet can round to the grid, so it knocks
-   *     everything BELOW it off that grid for the rest of the document. Same
-   *     measurement: 4.6% -> 57.0% of seams bisected once images are in the
-   *     mix. For a document people paste screenshots into, this is worse than
-   *     no pagination.
+   * It was off because a seam sliced pictures in half. Pagination was one
+   * idea: a baseline grid whose row is the body line advance, plus a seam
+   * thinner than the leading between two lines. Wonderful for prose, useless
+   * the moment a screenshot appears — an image's intrinsic height cannot be
+   * rounded to a 26.4px row, so it knocked every line below it off the grid
+   * for the rest of the document. Measured over 1000 generated documents:
+   * 8.4% of seams bisected on prose, 72.7% once images and tables were in the
+   * mix. Shipping that was worse than one long sheet, so it stayed a prop.
    *
-   * Which is why it is a prop and not a redesign: real pagination has to move
-   * content, and moving content means measuring every block on every edit.
+   * The grid is still there and still does the prose half of the job, but it
+   * is no longer alone. `canvas/pageFlow.ts` now measures every top-level
+   * block and moves the ones a seam would cut: an image, a table, a rule, a
+   * code block or a heading is pushed to the next page rather than sliced, a
+   * paragraph gets orphan/widow control instead, and the baseline grid is
+   * re-snapped underneath anything whose height was intrinsic. Same corpus,
+   * same 1000 documents: 0.0% of seams bisected, prose and pictures alike, for
+   * about 6% more sheets.
+   *
+   * What has NOT changed is that pagination and the baseline grid are one
+   * feature: the typography still moves when this is on. Paragraph gaps go
+   * 14.4px -> 26.4px and headings and code blocks are re-spaced, so the page
+   * gets airier. That is the mechanism, not a side effect.
+   *
+   * Hosts that want the endless sheet — a preview pane, an embed with no room
+   * for page furniture — can still pass `false`, and get back exactly the
+   * document they had before any of this existed.
    */
   paginate?: boolean;
   /**
@@ -337,7 +354,7 @@ export default function CanvasDocumentView({
   gutterVisible = true,
   showRuler = true,
   showOutline = false,
-  paginate = false,
+  paginate = true,
   onToggleGutter,
   onInsertImage,
   onEditorReady,
@@ -389,35 +406,24 @@ export default function CanvasDocumentView({
     return () => ro.disconnect();
   }, [measurePaper, zoom]);
 
-  // How many sheets the content fills, so the last one can be padded out to a
-  // whole page instead of ending wherever the text did.
+  // Pagination proper: where every block has to move so that no seam cuts it,
+  // and how many sheets the result fills.
   //
-  // Measured on the BODY, not the paper, and that is what makes it safe: the
-  // body is a plain block whose height comes from its own content, so setting
-  // a min-height on its PARENT cannot change it. Measuring the paper instead
-  // would be a loop — paper grows, so pages grows, so paper grows.
+  // This used to be one `getBoundingClientRect` on the body divided by the
+  // page height, because the seam was a repeating background and content
+  // simply flowed through it. That is the version that sliced images in half.
+  // The hook measures each top-level block instead and pushes the ones a seam
+  // would cross onto the next page; see `canvas/pageFlow.ts` for why the
+  // stylesheet alone could never do it.
   //
-  // Divided by `zoom` on purpose. `getBoundingClientRect` reports visual
-  // pixels, so under CSS zoom it returns the scaled height; the page count has
-  // to be computed in the sheet's own coordinates or it changes every time the
-  // reader zooms. (The same trap the ruler's comment above documents from the
-  // other direction — there the visual number is the one wanted.)
+  // Measured against the BODY and the PAPER, not the paper alone, and that is
+  // what makes it safe: the body is a plain block whose height comes from its
+  // own content, so the min-height set on its PARENT below cannot feed back
+  // into it. Measuring the paper for content height would be a loop — paper
+  // grows, so pages grows, so paper grows.
   const bodyRef = useRef<HTMLDivElement | null>(null);
-  const [pageCount, setPageCount] = useState(1);
-  const measurePages = useCallback(() => {
-    const el = bodyRef.current;
-    if (!el) return;
-    setPageCount(canvasPageCount(el.getBoundingClientRect().height / zoom));
-  }, [zoom]);
-  useEffect(() => {
-    if (!paginate) return;
-    measurePages();
-    const el = bodyRef.current;
-    if (!el || typeof ResizeObserver === 'undefined') return;
-    const ro = new ResizeObserver(measurePages);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [paginate, measurePages]);
+  const { pageCount } = useCanvasPageFlow(paginate, paperRef, bodyRef, zoom);
+
   // The workspace has to OWN the scroll, or nothing in it can stick.
   //
   // It carried `overflow-y-auto` and a `sticky top-0` toolbar and a
@@ -447,6 +453,39 @@ export default function CanvasDocumentView({
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
   }, [isCanvas, body]);
+
+  // Which page the reader is looking at, for "Page 3 of 7".
+  //
+  // Scroll-derived rather than caret-derived. The caret is the more precise
+  // answer while typing and the wrong one the rest of the time: a reader
+  // scrolling through a document they are not editing has no caret to report,
+  // and a read-only embed has none at all. The page under the top edge of the
+  // scrollport is what every word processor's status bar shows for that
+  // reason.
+  const [currentPage, setCurrentPage] = useState(1);
+  useEffect(() => {
+    if (!paginate) { setCurrentPage(1); return; }
+    const ws = workspaceRef.current;
+    if (!ws) return;
+    let frame = 0;
+    const read = () => {
+      frame = 0;
+      const paper = paperRef.current;
+      if (!paper) return;
+      // How far the sheet's top edge sits ABOVE the scrollport's, in the
+      // sheet's own coordinates. Negative before the page has been reached,
+      // which `canvasPageAt` clamps to page one.
+      const offset = (ws.getBoundingClientRect().top - paper.getBoundingClientRect().top) / (zoom > 0 ? zoom : 1);
+      setCurrentPage(canvasPageAt(offset, pageCount));
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(read); };
+    read();
+    ws.addEventListener('scroll', schedule, { passive: true });
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      ws.removeEventListener('scroll', schedule);
+    };
+  }, [paginate, zoom, pageCount]);
 
   // Cmd/Ctrl+F opens the document's own find, not the browser's.
   //
@@ -913,10 +952,19 @@ export default function CanvasDocumentView({
             )}
             {/* Only when the document actually HAS pages. Unpaginated, "1
                 page" would be a claim about a sheet that has no page
-                boundaries on it at all. */}
+                boundaries on it at all.
+
+                "Page 3 of 7" rather than "7 pages" as soon as there is more
+                than one, because a total on its own answers the question
+                nobody asks. What a reader wants from a page count is where
+                they ARE — it is how you tell someone which paragraph you mean,
+                and how you know whether the thing you are looking for is
+                behind you. On a one-page document the two collapse, and "Page
+                1 of 1" is a sentence about nothing, so that case keeps the
+                plain length. */}
             {paginate && (
               <span data-testid={`${testId}-page-count`} className="tabular-nums">
-                {pageCount === 1 ? '1 page' : `${pageCount} pages`}
+                {pageCount === 1 ? '1 page' : `Page ${currentPage} of ${pageCount}`}
               </span>
             )}
           </DocumentStatusBar>

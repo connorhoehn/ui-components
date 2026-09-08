@@ -19,6 +19,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useEffect } from 'react';
 import * as Y from 'yjs';
 import CanvasDocumentView, { canvasPageCount, canvasPaperStyle } from '../CanvasDocumentView';
+import { DOC_CONTENT_TOP, DOC_LINE, DOC_PAGE_GAP, DOC_PAGE_HEIGHT } from '../canvas/pageFlow';
 
 // Same stub as the sibling suite, and for the same reason: a real ProseMirror
 // view is not what this file is testing. The empty dep array is load-bearing —
@@ -91,8 +92,19 @@ describe('canvasPaperStyle', () => {
 });
 
 describe('CanvasDocumentView pagination', () => {
-  it('is off unless asked for', () => {
+  // The default FLIPPED once `canvas/pageFlow.ts` stopped seams cutting
+  // pictures. A host that says nothing now gets pages; see the prop's doc
+  // comment for the measurement that decided it.
+  it('is on unless refused', () => {
     renderView();
+    const paper = screen.getByTestId('canvas-document-paper');
+    expect(paper.className).toContain('doc-page--paginated');
+    expect(paper).toHaveAttribute('data-page-count', '1');
+    expect(screen.getByTestId('canvas-document-page-count')).toBeInTheDocument();
+  });
+
+  it('is off when refused', () => {
+    renderView({ paginate: false });
     const paper = screen.getByTestId('canvas-document-paper');
     expect(paper.className).not.toContain('doc-page--paginated');
     expect(paper).not.toHaveAttribute('data-page-count');
@@ -102,7 +114,7 @@ describe('CanvasDocumentView pagination', () => {
   });
 
   it('leaves the sheet free to end where its content does when off', () => {
-    renderView();
+    renderView({ paginate: false });
     // The `min-h-[1056px]` class still applies; what must NOT appear is an
     // inline minHeight pinning the sheet to a whole number of pages.
     expect(screen.getByTestId('canvas-document-paper').style.minHeight).toBe('');
@@ -184,6 +196,20 @@ describe('the baseline grid the seam depends on', () => {
     expect(m).not.toBeNull();
     const rows = Number(m![1]);
     expect(rows).toBe(Math.round(rows));
+    // And it is the exact offset `pageFlow.ts` converts paper coordinates by.
+    // The flow measures block tops from the SHEET's top edge, so if this
+    // padding and DOC_CONTENT_TOP ever part company every block is judged
+    // against a seam that is somewhere else.
+    expect(rows * LINE).toBe(DOC_CONTENT_TOP);
+  });
+
+  it('agrees with the constants the flow reasons from', () => {
+    // Three numbers live in two places by necessity — CSS draws the seam, TS
+    // decides what must not touch it. This is the only thing keeping them
+    // one number each.
+    expect(LINE).toBe(DOC_LINE);
+    expect(PAGE).toBe(DOC_PAGE_HEIGHT);
+    expect(GAP).toBe(DOC_PAGE_GAP);
   });
 
   it('keeps the gap inside the clear leading', () => {

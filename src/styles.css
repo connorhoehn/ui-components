@@ -1101,8 +1101,14 @@
 /* ===========================================================================
    BEGIN: canvas pagination  (CanvasDocumentView `paginate` prop)
    ---------------------------------------------------------------------------
-   OPT-IN, and off unless a host passes `paginate`. An unpaginated canvas is
+   ON unless a host passes `paginate={false}`, in which case a canvas is
    byte-for-byte what it was before this block existed.
+
+   HALF the feature. This stylesheet puts the document on a baseline grid and
+   paints a seam thin enough to fall between two lines; `canvas/pageFlow.ts`
+   measures every top-level block and MOVES the ones a seam would still cut.
+   Neither half is sufficient — read the `## The two residuals` note near the
+   bottom of this header for which defect belongs to which.
 
    ## Why the obvious implementation does not work
 
@@ -1149,27 +1155,47 @@
    rather than argued about — set it to 24px in devtools and you are looking at
    exactly the naive implementation this design exists to avoid.
 
-   ## The two residuals, neither of which CSS can fix
+   ## The two residuals CSS cannot fix, and who fixes them
 
-   1. HEADINGS, ~4.6% of seams, irreducible. A grid row is 26.4px, so the
-      largest glyph box it can fully contain is 26.4 / 1.211 = 21.8px. Every
-      heading here is bigger than that, so its ink necessarily crosses a row
-      boundary and some seam will eventually land on it. Raising the line box
-      does not help and makes it worse: a 2-row box centres the glyphs ON the
-      interior row boundary, so a seam strikes the text through the middle
-      instead of clipping 3px off an ascender. Hence the single-row boxes for
-      h2/h3 below. h1 keeps two rows because 32px type cannot wrap on 26.4px
-      leading without the lines colliding — an h1 that meets a seam is struck
-      through, and that is a deliberate trade against a much more common
-      defect.
+   Both are now handled in `canvas/pageFlow.ts`, which measures the laid-out
+   page and pushes blocks down. They are documented here anyway, because the
+   rules below are written the way they are IN ORDER to leave that module a
+   grid it can trust.
 
-   2. IMAGES AND TABLES, and this is the one that matters. Their heights are
-      intrinsic and no stylesheet can round them to a grid. That does not just
-      risk cutting the picture — it knocks EVERYTHING BELOW IT off the grid for
-      the rest of the document. Measured: documents containing images go from
-      4.6% to 57.0% of seams bisected. So this technique is reliable for prose
-      and unreliable for the documents people actually paste screenshots into.
-      Fixing it needs per-block measurement, i.e. real layout, i.e. not this.
+   1. HEADINGS. A grid row is 26.4px, so the largest glyph box it can fully
+      contain is 26.4 / 1.211 = 21.8px. Every heading here is bigger than that,
+      so its ink necessarily crosses a row boundary and some seam will
+      eventually land on it. Raising the line box does not help and makes it
+      worse: a 2-row box centres the glyphs ON the interior row boundary, so a
+      seam strikes the text through the middle instead of clipping 3px off an
+      ascender. Hence the single-row boxes for h2/h3 below; h1 keeps two rows
+      because 32px type cannot wrap on 26.4px leading without the lines
+      colliding. The FLOW then treats every heading as unsplittable and pushes
+      it to the next page rather than letting a seam meet it — which also fixes
+      the older defect of a heading stranded at the foot of a page, since it is
+      kept with the first line of what follows.
+
+   2. IMAGES AND TABLES, and this is the one that mattered. Their heights are
+      intrinsic and no stylesheet can round them to a grid. That did not just
+      risk cutting the picture — it knocked EVERYTHING BELOW IT off the grid
+      for the rest of the document. Measured over 1000 generated documents:
+      8.4% of seams bisected on prose, 72.7% once images and tables were in the
+      mix. The flow re-snaps the grid under any block whose height was
+      intrinsic, and moves the picture itself clear of the seam; the same
+      corpus scores 0.0% either way. That is why the default could flip.
+
+   Which is also why images and tables are deliberately NOT given heights or
+   margins in whole rows further down. Faking a grid alignment they cannot have
+   would put a lie in the stylesheet AND deprive the flow of the honest
+   geometry it re-snaps from.
+
+   ## One thing here is written by JavaScript
+
+   `useCanvasPageFlow` sets an inline `margin-top` on individual top-level
+   children of `.ProseMirror` — the pushes. It reads the natural gap first and
+   writes `gap + push`, so it never has to fight a rule in this file, but a
+   rule that made a block's top margin depend on a sibling selector could still
+   surprise it. Keep the block margins here simple.
 
    ## One ordering dependency
 
@@ -1318,7 +1344,8 @@
 
 /* Images and tables are deliberately NOT styled here. Their heights are
    intrinsic, CSS cannot round them to the grid, and a rule that pretended
-   otherwise would be a lie in the stylesheet. See residual 2 in the header. */
+   otherwise would be a lie in the stylesheet. `canvas/pageFlow.ts` moves them
+   instead and re-snaps the grid underneath. See residual 2 in the header. */
 
 /* ===========================================================================
    END: canvas pagination
