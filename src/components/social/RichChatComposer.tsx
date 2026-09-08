@@ -33,7 +33,7 @@
 // Enter sends, Shift+Enter is a newline — the chat convention, and the opposite
 // of the document convention, which is why the composer owns this keymap.
 
-import { useCallback, useMemo, useRef, useState, type ReactNode, type Ref } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type Ref } from 'react';
 import { useEditor, EditorContent, ReactRenderer } from '@tiptap/react';
 import { Extension, type Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
@@ -182,6 +182,11 @@ export function RichChatComposer({
 
   const attachmentsEnabled = allowAttachments && !disabled;
 
+  // The placeholder as of this render, for the extension to read. See the
+  // `useEditor` deps: the extension list must not change when the text does.
+  const placeholderRef = useRef(placeholder);
+  placeholderRef.current = placeholder;
+
   const extensions = useMemo(() => {
     const list: unknown[] = [
       StarterKit.configure({
@@ -196,7 +201,10 @@ export function RichChatComposer({
         // applied to a mark that may or may not have been the one in use.
         link: false,
       }),
-      Placeholder.configure({ placeholder }),
+      // Read through a ref, so a host that changes the placeholder does not
+      // change the extension list. See the `useEditor` deps below: rebuilding
+      // the editor is what THREW AWAY the draft.
+      Placeholder.configure({ placeholder: () => placeholderRef.current }),
       Link.configure({
         openOnClick: false,
         // Typing or pasting a URL marks it automatically, which is what every
@@ -354,7 +362,10 @@ export function RichChatComposer({
     }
 
     return list as never;
-  }, [placeholder, onSearchPeople]);
+    // `placeholder` is deliberately NOT a dependency — it is read through
+    // `placeholderRef` above precisely so it can change without rebuilding.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onSearchPeople]);
 
   const editor = useEditor(
     {
@@ -368,10 +379,31 @@ export function RichChatComposer({
         },
       },
     },
-    // Read at creation only, so the editor is rebuilt when they change — a
-    // stale closure here would search an old directory.
-    [extensions, disabled],
+    // ONLY `extensions`, which now changes only when the mention directory
+    // does — a stale closure there would search an old directory.
+    //
+    // `disabled` and `placeholder` used to be in here (placeholder via
+    // `extensions`), and every flip of either DESTROYED THE DRAFT: useEditor
+    // treats its dep array like a key, so it tore the editor down and built a
+    // new empty one. Two ways that showed up in a real product. Clicking
+    // "Reply" on a message changed the placeholder to "Reply to Alice…" and
+    // erased the half-written message the reply was about to be. And a host
+    // that disabled the composer while its socket was down — the obvious way
+    // to stop sends vanishing into a shut socket — erased whatever was being
+    // typed at the moment the connection dropped, which is the worst possible
+    // moment to lose it.
+    //
+    // Both are now applied to the LIVING editor: the placeholder through a ref
+    // the extension reads on every render, `editable` through the effect
+    // below. Adding either back here reintroduces both bugs silently — nothing
+    // fails, the words simply go.
+    [extensions],
   );
+
+  // `editable` on the editor we already have, rather than a new editor.
+  useEffect(() => {
+    editor?.setEditable(!disabled);
+  }, [editor, disabled]);
 
   // Files alone are a valid message: dragging in a screenshot and pressing send
   // without typing is the common case.
