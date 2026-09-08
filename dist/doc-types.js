@@ -1807,7 +1807,7 @@ function de({ idToken: e, onExportSchema: t } = {}) {
 				className: "w-[264px] shrink-0 border-r border-border flex flex-col overflow-hidden bg-surface-inset",
 				children: [
 					/* @__PURE__ */ b("div", {
-						className: "py-3.5 px-4 border-b border-border flex items-center justify-between",
+						className: "py-3.5 px-4 border-b border-border flex flex-col gap-2.5",
 						children: [/* @__PURE__ */ y("span", {
 							className: "text-[13px] font-bold text-text-primary",
 							children: "Document Types"
@@ -1816,12 +1816,12 @@ function de({ idToken: e, onExportSchema: t } = {}) {
 							children: [/* @__PURE__ */ y("button", {
 								"data-testid": "cookbooks-btn",
 								onClick: () => x(!0),
-								className: "py-[5px] px-3 text-xs font-semibold bg-surface text-primary border border-primary rounded-md cursor-pointer font-inherit",
+								className: "py-[5px] px-3 text-xs font-semibold bg-surface text-primary border border-primary rounded-md cursor-pointer font-inherit whitespace-nowrap",
 								children: "Cookbooks"
 							}), /* @__PURE__ */ y("button", {
 								"data-testid": "create-type-btn",
 								onClick: T,
-								className: "py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit",
+								className: "py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit whitespace-nowrap",
 								children: "+ New"
 							})]
 						})]
