@@ -81,7 +81,7 @@ export { HangoutSpotlight, useStableActiveSpeaker } from './HangoutSpotlight';
 export type { HangoutSpotlightProps } from './HangoutSpotlight';
 
 export { CallStartedBanner } from './CallStartedBanner';
-export type { CallStartedBannerProps, CallStartedBannerMode } from './CallStartedBanner';
+export type { CallStartedBannerProps, CallStartedBannerMode, CallStartedBannerMedia } from './CallStartedBanner';
 
 export { RecordingPlayer } from './RecordingPlayer';
 export type { RecordingPlayerProps } from './RecordingPlayer';

@@ -9,6 +9,7 @@
 
 import { type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import TechnicalDetails from '../shared/TechnicalDetails';
 import type { TranscriptStatus } from './TranscriptPanel';
 
 export interface SummaryPanelProps {
@@ -20,7 +21,10 @@ export interface SummaryPanelProps {
   renderMarkdown?: (md: string) => ReactNode;
   /** Optional title above the panel. Defaults to "Summary". */
   title?: string;
+  /** Written for a person — see TranscriptPanel.errorMessage. */
   errorMessage?: string;
+  /** The raw internal text behind it, shown behind a disclosure. */
+  errorDetail?: string | null;
   pendingMessage?: string;
   idleState?: ReactNode;
   className?: string;
@@ -32,6 +36,7 @@ export function SummaryPanel({
   renderMarkdown,
   title = 'Summary',
   errorMessage,
+  errorDetail,
   pendingMessage,
   idleState,
   className,
@@ -70,6 +75,7 @@ export function SummaryPanel({
         <div className="text-sm text-text-secondary">
           {errorMessage ?? 'Summary generation failed.'}
         </div>
+        <TechnicalDetails text={errorDetail} className="mt-2" />
       </section>
     );
   }

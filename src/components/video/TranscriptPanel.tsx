@@ -9,6 +9,7 @@
 
 import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import TechnicalDetails from '../shared/TechnicalDetails';
 import { onActivationKey } from '../../lib/activationKey';
 
 export interface TranscriptSegment {
@@ -38,8 +39,14 @@ export interface TranscriptPanelProps {
   onSeek?: (timeMs: number) => void;
   /** Optional title above the panel. Defaults to "Transcript". */
   title?: string;
-  /** Surface the failure message when status === 'failed'. */
+  /** Surface the failure message when status === 'failed'. Write it for a
+   *  person: this panel is on a page end users open, so queue names and
+   *  transport-library prefixes belong in `errorDetail`, not here. */
   errorMessage?: string;
+  /** The raw internal text behind `errorMessage`, revealed behind a
+   *  "Show technical details" disclosure. Omit when there is nothing more
+   *  to show than the message itself. */
+  errorDetail?: string | null;
   /** When status is processing/pending, surface what phase. */
   pendingMessage?: string;
   /** Render-prop slot for the empty/idle state. */
@@ -72,6 +79,7 @@ export function TranscriptPanel({
   onSeek,
   title = 'Transcript',
   errorMessage,
+  errorDetail,
   pendingMessage,
   idleState,
   className,
@@ -136,6 +144,7 @@ export function TranscriptPanel({
         <div className="text-sm text-text-secondary">
           {errorMessage ?? 'Transcript generation failed. Reach out to support if this persists.'}
         </div>
+        <TechnicalDetails text={errorDetail} className="mt-2" />
       </section>
     );
   }

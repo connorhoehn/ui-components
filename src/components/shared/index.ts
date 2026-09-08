@@ -29,6 +29,8 @@ export { default as CapabilityDeniedFallback } from './CapabilityDeniedFallback'
 export * from './CapabilityDeniedFallback';
 export { default as ErrorState } from './ErrorState';
 export * from './ErrorState';
+export { default as TechnicalDetails } from './TechnicalDetails';
+export * from './TechnicalDetails';
 export { default as LoadingState } from './LoadingState';
 export * from './LoadingState';
 export { default as FormField } from './FormField';

@@ -5,6 +5,10 @@ import { cn } from '../../lib/cn';
 
 export type CallStartedBannerMode = 'started' | 'calling';
 
+/** What the caller asked for. Not the same axis as `mode` (who is being
+ *  addressed) — this is what answering will actually turn on. */
+export type CallStartedBannerMedia = 'audio' | 'video';
+
 export interface CallStartedBannerProps {
   /** Display name of the user who started / is making the call. */
   callerName: string;
@@ -21,6 +25,14 @@ export interface CallStartedBannerProps {
    *     calls where the recipient is specifically targeted.
    */
   mode?: CallStartedBannerMode;
+  /**
+   * What the caller invited you to. Renders as "Audio call" / "Video call"
+   * on the banner's second line, so answering is an informed choice rather
+   * than a surprise: a person who accepts an audio call should not find
+   * their camera live. Omit when the invite carries no media intent — the
+   * banner then says nothing about it rather than guessing.
+   */
+  media?: CallStartedBannerMedia;
   /** Click handler for the "Join" action. */
   onJoin?: () => void;
   /** Click handler for the dismiss / decline action. Banner self-hides
@@ -50,6 +62,7 @@ export function CallStartedBanner({
   callerAvatarUrl,
   context,
   mode = 'started',
+  media,
   onJoin,
   onDismiss,
   autoExpireSec = 30,
@@ -77,12 +90,19 @@ export function CallStartedBanner({
 
   if (!visible) return null;
 
+  // One subtitle line, not two: the media label and the channel context
+  // both answer "where am I going?", and stacking them pushes the banner
+  // taller than the toast stack budget.
+  const mediaLabel = media === 'audio' ? 'Audio call' : media === 'video' ? 'Video call' : null;
+  const subtitle = [mediaLabel, context].filter(Boolean).join(' · ');
+
   return (
     <div
       role="status"
       aria-live="polite"
       data-testid="incoming-call-toast"
       data-call-mode={mode}
+      data-call-media={media}
       data-caller-name={callerName}
       className={cn(
         'flex items-center gap-3 px-3 py-2 rounded-lg shadow-lg',
@@ -99,7 +119,11 @@ export function CallStartedBanner({
         <p className="text-sm font-semibold m-0 truncate">
           {mode === 'calling' ? `${callerName} is calling you` : `${callerName} started a call`}
         </p>
-        {context && <p className="text-xs text-white/60 m-0 truncate">{context}</p>}
+        {subtitle && (
+          <p className="text-xs text-white/60 m-0 truncate" data-testid="incoming-call-subtitle">
+            {subtitle}
+          </p>
+        )}
       </div>
 
       <div className="flex items-center gap-2">
