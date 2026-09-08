@@ -13,7 +13,7 @@ import { t as l } from "./overlayStack-BFH9XXvN.js";
 import { t as u } from "./Modal-CyoyiNKN.js";
 import "./ConfirmDialog-Cd8NZEXi.js";
 import { t as d } from "./EmptyState-ClmWoqCb.js";
-import { n as f } from "./PermissionDeniedCard-cTIdYj-F.js";
+import { n as f } from "./PermissionDeniedCard-_tOyQ7zf.js";
 import { n as p, t as m } from "./CardHeader-C-7rFLKD.js";
 import { i as h, n as g, r as _, t as v } from "./focusTrap-CmWJlptm.js";
 import "./SkeletonCard-CGe8XFPB.js";

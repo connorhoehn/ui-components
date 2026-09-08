@@ -59,7 +59,7 @@ export declare interface ActionItem {
     due: string | null;
 }
 
-export declare function ActionItemsBlock({ items, editable, onToggle, onTextChange, onRemoveItem, onAddItem, onRemove, 'data-testid': testId, }: ActionItemsBlockProps): JSX.Element;
+export declare function ActionItemsBlock({ items, editable, onToggle, onTextChange, onRemoveItem, onAddItem, onRemove, people, onAssign, 'data-testid': testId, }: ActionItemsBlockProps): JSX.Element;
 
 export declare interface ActionItemsBlockProps {
     items: readonly ActionItem[];
@@ -71,10 +71,44 @@ export declare interface ActionItemsBlockProps {
     onAddItem?: () => void;
     /** Takes the whole block off the page. Omitted when not editable. */
     onRemove?: () => void;
+    /**
+     * Who an item can be assigned to.
+     *
+     * The format has carried `assignee:` since it was written and this block
+     * has always DISPLAYED it — an `@ana` chip — with nothing anywhere able to
+     * SET it. So an action item created on a canvas could never be assigned,
+     * and the inbox's Tasks lane could never be filled from the document shape
+     * this product is moving to. Meanwhile Data Types ships a built-in whose
+     * own description is "Task List — ASSIGNABLE action items with status
+     * tracking", and the HITL callout next door has had a working picker all
+     * along.
+     *
+     * Omitted renders no picker, which is right for a host with no directory:
+     * a control listing nobody is worse than none.
+     */
+    people?: readonly AssignablePerson[];
+    /** Only ever called with an id from `people`, or `''` to unassign. */
+    onAssign?: (index: number, assigneeId: string) => void;
     'data-testid'?: string;
 }
 
-export declare const ActionItemsMacro: Extension<any, MacroRendererStorage>;
+export declare const ActionItemsMacro: Extension<ActionItemsMacroOptions, any>;
+
+export declare interface ActionItemsMacroOptions {
+    /**
+     * Who an item can be assigned to. `id` is the AUTH SUBJECT, because that
+     * is what `/api/items/mine` queries on — a display name here is what once
+     * left that endpoint unable to find a single assigned item.
+     *
+     * Read through a getter for the same reason `HitlMacroOptions.people` is:
+     * a roster arrives after the editor is built and changes while it is open,
+     * and an extension configured once must not freeze the first list it saw.
+     *
+     * Omitted renders no picker, which is the right answer for a host with no
+     * directory: a control listing nobody is worse than no control.
+     */
+    people?: () => readonly AssignablePerson[];
+}
 
 /**
  * The macro body for a checklist — byte-identical to what the chassis
@@ -94,7 +128,7 @@ export declare function actionItemsMacroText(items: readonly {
  * Exported so a host can register it into a `MacroRenderers` list directly
  * instead of adding the extension — the two are equivalent.
  */
-export declare function actionItemsRenderer(): MacroRenderer;
+export declare function actionItemsRenderer(options?: ActionItemsMacroOptions): MacroRenderer;
 
 /**
  * The edit that appends a pending item.
@@ -122,6 +156,19 @@ export declare function answerHitlEdit(source: string, params: {
     by?: string;
     at?: string;
 }): TextRangeEdit | null;
+
+/**
+ * One candidate assignee.
+ *
+ * Same shape as `HitlPerson`, and for the same load-bearing reason: `id` is
+ * the AUTH SUBJECT, because that is what `/api/items/mine` queries on. Writing
+ * a display name here is what once left that endpoint unable to find a single
+ * assigned item. The name is a label and is never written into the body.
+ */
+export declare interface AssignablePerson {
+    id: string;
+    name: string;
+}
 
 /**
  * The edit that records who decided, and when.
@@ -1229,6 +1276,21 @@ export declare function readHitl(source: string): HitlCallout | null;
 export declare function readTypedField(source: string): TypedField | null;
 
 /**
+ * Repaints every macro block in an editor.
+ *
+ * A node view only redraws when its own TEXT changes, which is right for a
+ * payload and wrong for everything a renderer reads from OUTSIDE the document
+ * — a roster, a clock, the signed-in user. Those arrive after the editor is
+ * built and change while it is open, and without this a control that depends
+ * on one (the action-item assignee picker is the first) never appears until
+ * somebody happens to edit that block.
+ *
+ * Returns false when this editor has no macro renderers at all, so a caller
+ * can tell "nothing to repaint" from "repainted nothing".
+ */
+export declare function refreshMacroViews(view: EditorView): boolean;
+
+/**
  * The edit that removes one item — its lines AND the break that separated them
  * from their neighbour, so nothing is left behind that would reparse
  * differently.
@@ -1238,6 +1300,21 @@ export declare function readTypedField(source: string): TypedField | null;
  * block would come back as merge damage rather than as an empty checklist.
  */
 export declare function removeItemEdit(source: string, index: number): TextRangeEdit | null;
+
+/**
+ * The edit that takes one key OFF one item — the exact inverse of
+ * `insertionFor`, and the only honest way to say "unassigned".
+ *
+ * Writing `assignee: ''` would say something different: the item HAS an
+ * assignee whose id is the empty string, which renders as a `@` chip pointing
+ * at nobody and matches nobody's inbox. Absent is what unassigned means in this
+ * format, so unassigning has to remove the line.
+ *
+ * Returns `null` when the key is not there (nothing to do) and when it is the
+ * item's only entry, which would leave a bare `-` marker that reparses as a
+ * null item — merge damage rather than an empty field.
+ */
+export declare function removeItemKeyEdit(source: string, index: number, key: string): TextRangeEdit | null;
 
 export declare type ResolvedTheme = 'light' | 'dark';
 
@@ -1427,19 +1504,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1459,9 +1523,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -1472,6 +1539,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

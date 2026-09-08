@@ -1440,7 +1440,11 @@ export declare function callSidePanelToggleTestId(tab: CallSidePanelTab): string
  * Auto-dismisses after `autoExpireSec` seconds (default 30) to avoid
  * stale-banner spam if the call is over by the time the recipient looks.
  */
-export declare function CallStartedBanner({ callerName, callerAvatarUrl, context, mode, onJoin, onDismiss, autoExpireSec, className, style, }: CallStartedBannerProps): JSX.Element | null;
+export declare function CallStartedBanner({ callerName, callerAvatarUrl, context, mode, media, onJoin, onDismiss, autoExpireSec, className, style, }: CallStartedBannerProps): JSX.Element | null;
+
+/** What the caller asked for. Not the same axis as `mode` (who is being
+ *  addressed) — this is what answering will actually turn on. */
+export declare type CallStartedBannerMedia = 'audio' | 'video';
 
 export declare type CallStartedBannerMode = 'started' | 'calling';
 
@@ -1460,6 +1464,14 @@ export declare interface CallStartedBannerProps {
      *     calls where the recipient is specifically targeted.
      */
     mode?: CallStartedBannerMode;
+    /**
+     * What the caller invited you to. Renders as "Audio call" / "Video call"
+     * on the banner's second line, so answering is an informed choice rather
+     * than a surprise: a person who accepts an audio call should not find
+     * their camera live. Omit when the invite carries no media intent — the
+     * banner then says nothing about it rather than guessing.
+     */
+    media?: CallStartedBannerMedia;
     /** Click handler for the "Join" action. */
     onJoin?: () => void;
     /** Click handler for the dismiss / decline action. Banner self-hides
@@ -10690,7 +10702,7 @@ export declare interface SuggestionCardProps {
     'data-testid'?: string;
 }
 
-export declare function SummaryPanel({ status, markdown, renderMarkdown, title, errorMessage, pendingMessage, idleState, className, }: SummaryPanelProps): JSX.Element;
+export declare function SummaryPanel({ status, markdown, renderMarkdown, title, errorMessage, errorDetail, pendingMessage, idleState, className, }: SummaryPanelProps): JSX.Element;
 
 export declare interface SummaryPanelProps {
     status: TranscriptStatus;
@@ -10701,7 +10713,10 @@ export declare interface SummaryPanelProps {
     renderMarkdown?: (md: string) => ReactNode;
     /** Optional title above the panel. Defaults to "Summary". */
     title?: string;
+    /** Written for a person — see TranscriptPanel.errorMessage. */
     errorMessage?: string;
+    /** The raw internal text behind it, shown behind a disclosure. */
+    errorDetail?: string | null;
     pendingMessage?: string;
     idleState?: ReactNode;
     className?: string;
@@ -10936,6 +10951,21 @@ export declare function TasksEditorRenderer({ section, editable, onAddItem, onUp
 export declare const tasksFieldType: FieldTypeDefinition;
 
 export declare function TasksReaderRenderer({ section, onUpdateItem, onNavigateToEditor }: SectionRendererProps): JSX.Element;
+
+export declare function TechnicalDetails({ text, label, hideLabel, defaultOpen, className, testId, }: TechnicalDetailsProps): JSX.Element | null;
+
+export declare interface TechnicalDetailsProps {
+    /** The raw text. Rendered verbatim. Nothing renders when empty. */
+    text?: string | null;
+    /** Trigger copy, collapsed state. Default "Show technical details". */
+    label?: string;
+    /** Trigger copy, expanded state. Default "Hide technical details". */
+    hideLabel?: string;
+    /** Start expanded. Default false — the point is that it stays out of the way. */
+    defaultOpen?: boolean;
+    className?: string;
+    testId?: string;
+}
 
 declare const TERMINAL_DECISIONS: {
     readonly acked: "approved";
@@ -11497,7 +11527,7 @@ export declare interface TranscriptOverlayProps {
     className?: string;
 }
 
-export declare function TranscriptPanel({ status, segments, currentTimeMs, onSeek, title, errorMessage, pendingMessage, idleState, className, }: TranscriptPanelProps): JSX.Element;
+export declare function TranscriptPanel({ status, segments, currentTimeMs, onSeek, title, errorMessage, errorDetail, pendingMessage, idleState, className, }: TranscriptPanelProps): JSX.Element;
 
 export declare interface TranscriptPanelProps {
     status: TranscriptStatus;
@@ -11509,8 +11539,14 @@ export declare interface TranscriptPanelProps {
     onSeek?: (timeMs: number) => void;
     /** Optional title above the panel. Defaults to "Transcript". */
     title?: string;
-    /** Surface the failure message when status === 'failed'. */
+    /** Surface the failure message when status === 'failed'. Write it for a
+     *  person: this panel is on a page end users open, so queue names and
+     *  transport-library prefixes belong in `errorDetail`, not here. */
     errorMessage?: string;
+    /** The raw internal text behind `errorMessage`, revealed behind a
+     *  "Show technical details" disclosure. Omit when there is nothing more
+     *  to show than the message itself. */
+    errorDetail?: string | null;
     /** When status is processing/pending, surface what phase. */
     pendingMessage?: string;
     /** Render-prop slot for the empty/idle state. */
@@ -13440,19 +13476,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -13472,9 +13495,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -13485,6 +13511,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
