@@ -5,7 +5,7 @@ import { t } from "./Button-wU9TwJvB.js";
 import { t as n } from "./Card-DWAlG4MZ.js";
 import "./FormField-BpwfwG7t.js";
 import "./IconButton-C3DMtvSx.js";
-import "./SegmentedControl-CQxKJF-Z.js";
+import "./SegmentedControl-pVesnE3W.js";
 import "./Banner-C3Wgh62A.js";
 import "./Chart-DUoOhhMu.js";
 import { c as r, f as i, l as a, p as o, s, t as c } from "./Chip-YhQI5B9P.js";

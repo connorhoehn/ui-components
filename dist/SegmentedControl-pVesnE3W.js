@@ -23,10 +23,11 @@ var a = {
 	sm: "px-2.5 py-1 text-xs",
 	md: "px-3 py-1.5 text-sm"
 }, o = "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]", s = "bg-surface shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]";
-function c({ options: r, value: i, onChange: c, size: l = "md", className: u }) {
+function c({ options: r, value: i, onChange: c, size: l = "md", "aria-label": u, className: d }) {
 	return /* @__PURE__ */ t("div", {
 		role: "group",
-		className: e("inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5", u),
+		"aria-label": u,
+		className: e("inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5", d),
 		children: r.map((t) => {
 			let r = t.value === i;
 			return /* @__PURE__ */ n("button", {

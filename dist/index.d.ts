@@ -9434,13 +9434,23 @@ export declare interface SectionReview {
 /** Specialized section renderer type — extends beyond the base `type` for richer UIs. */
 export declare type SectionType = 'tasks' | 'rich-text' | 'decisions' | 'timeline' | 'checklist' | 'rating' | 'voting';
 
-export declare function SegmentedControl({ options, value, onChange, size, className, }: SegmentedControlProps): JSX.Element;
+export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, className, }: SegmentedControlProps): JSX.Element;
 
 export declare interface SegmentedControlProps {
     options: SegmentOption[];
     value: string;
     onChange: (value: string) => void;
     size?: 'sm' | 'md';
+    /**
+     * What the whole group is FOR.
+     *
+     * `role="group"` with no name announces as a bare "group", so a reader
+     * arriving at Editing / Suggesting / Viewing is told three unrelated toggle
+     * buttons rather than one setting with three values. Optional because every
+     * existing caller sits under a heading that already says it; new callers on
+     * a bare toolbar should pass it.
+     */
+    'aria-label'?: string;
     className?: string;
 }
 
@@ -13340,19 +13350,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -13372,19 +13369,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -13395,6 +13385,16 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -13421,6 +13421,16 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

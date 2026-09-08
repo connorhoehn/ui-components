@@ -7,31 +7,31 @@ import { Fragment as h, jsx as g, jsxs as _ } from "react/jsx-runtime";
 import { EditorContent as v, ReactRenderer as y, useEditor as b } from "@tiptap/react";
 import x from "@tiptap/starter-kit";
 import S from "@tiptap/extension-placeholder";
-import { Extension as C, InputRule as w, Mark as T, PasteRule as ee, combineTransactionSteps as te, escapeForRegEx as E, findChildrenInRange as D, getAttributes as ne, getChangedRanges as re, getMarksBetween as ie, markInputRule as ae, markPasteRule as oe, mergeAttributes as se } from "@tiptap/core";
-import { Plugin as O, PluginKey as k } from "@tiptap/pm/state";
-import ce from "@tiptap/extension-mention";
-import { Decoration as le, DecorationSet as ue } from "@tiptap/pm/view";
+import { Extension as C, InputRule as w, Mark as T, PasteRule as E, combineTransactionSteps as ee, escapeForRegEx as te, findChildrenInRange as D, getAttributes as ne, getChangedRanges as re, getMarksBetween as ie, markInputRule as ae, markPasteRule as oe, mergeAttributes as se } from "@tiptap/core";
+import { Plugin as ce, PluginKey as O } from "@tiptap/pm/state";
+import le from "@tiptap/extension-mention";
+import { Decoration as ue, DecorationSet as de } from "@tiptap/pm/view";
 //#region ../../../Users/connorhoehn/Projects/ui-components/node_modules/linkifyjs/dist/linkify.mjs
-var de = "aaa1rp3bb0ott3vie4c1le2ogado5udhabi7c0ademy5centure6ountant0s9o1tor4d0s1ult4e0g1ro2tna4f0l1rica5g0akhan5ency5i0g1rbus3force5tel5kdn3l0ibaba4pay4lfinanz6state5y2sace3tom5m0azon4ericanexpress7family11x2fam3ica3sterdam8nalytics7droid5quan4z2o0l2partments8p0le4q0uarelle8r0ab1mco4chi3my2pa2t0e3s0da2ia2sociates9t0hleta5torney7u0ction5di0ble3o3spost5thor3o0s4w0s2x0a2z0ure5ba0by2idu3namex4d1k2r0celona5laycard4s5efoot5gains6seball5ketball8uhaus5yern5b0c1t1va3cg1n2d1e0ats2uty4er2rlin4st0buy5t2f1g1h0arti5i0ble3d1ke2ng0o3o1z2j1lack0friday9ockbuster8g1omberg7ue3m0s1w2n0pparibas9o0ats3ehringer8fa2m1nd2o0k0ing5sch2tik2on4t1utique6x2r0adesco6idgestone9oadway5ker3ther5ussels7s1t1uild0ers6siness6y1zz3v1w1y1z0h3ca0b1fe2l0l1vinklein9m0era3p2non3petown5ital0one8r0avan4ds2e0er0s4s2sa1e1h1ino4t0ering5holic7ba1n1re3c1d1enter4o1rn3f0a1d2g1h0anel2nel4rity4se2t2eap3intai5ristmas6ome4urch5i0priani6rcle4sco3tadel4i0c2y3k1l0aims4eaning6ick2nic1que6othing5ud3ub0med6m1n1o0ach3des3ffee4llege4ogne5m0mbank4unity6pany2re3uter5sec4ndos3struction8ulting7tact3ractors9oking4l1p2rsica5untry4pon0s4rses6pa2r0edit0card4union9icket5own3s1uise0s6u0isinella9v1w1x1y0mru3ou3z2dad1nce3ta1e1ing3sun4y2clk3ds2e0al0er2s3gree4livery5l1oitte5ta3mocrat6ntal2ist5si0gn4v2hl2iamonds6et2gital5rect0ory7scount3ver5h2y2j1k1m1np2o0cs1tor4g1mains5t1wnload7rive4tv2ubai3pont4rban5vag2r2z2earth3t2c0o2deka3u0cation8e1g1mail3erck5nergy4gineer0ing9terprises10pson4quipment8r0icsson6ni3s0q1tate5t1u0rovision8s2vents5xchange6pert3osed4ress5traspace10fage2il1rwinds6th3mily4n0s2rm0ers5shion4t3edex3edback6rrari3ero6i0delity5o2lm2nal1nce1ial7re0stone6mdale6sh0ing5t0ness6j1k1lickr3ghts4r2orist4wers5y2m1o0o0d1tball6rd1ex2sale4um3undation8x2r0ee1senius7l1ogans4ntier7tr2ujitsu5n0d2rniture7tbol5yi3ga0l0lery3o1up4me0s3p1rden4y2b0iz3d0n2e0a1nt0ing5orge5f1g0ee3h1i0ft0s3ves2ing5l0ass3e1obal2o4m0ail3bh2o1x2n1odaddy5ld0point6f2odyear5g0le4p1t1v2p1q1r0ainger5phics5tis4een3ipe3ocery4up4s1t1u0cci3ge2ide2tars5ru3w1y2hair2mburg5ngout5us3bo2dfc0bank7ealth0care8lp1sinki6re1mes5iphop4samitsu7tachi5v2k0t2m1n1ockey4ldings5iday5medepot5goods5s0ense7nda3rse3spital5t0ing5t0els3mail5use3w2r1sbc3t1u0ghes5yatt3undai7ibm2cbc2e1u2d1e0ee3fm2kano4l1m0amat4db2mo0bilien9n0c1dustries8finiti5o2g1k1stitute6urance4e4t0ernational10uit4vestments10o1piranga7q1r0ish4s0maili5t0anbul7t0au2v3jaguar4va3cb2e0ep2tzt3welry6io2ll2m0p2nj2o0bs1urg4t1y2p0morgan6rs3uegos4niper7kaufen5ddi3e0rryhotels6properties14fh2g1h1i0a1ds2m1ndle4tchen5wi3m1n1oeln3matsu5sher5p0mg2n2r0d1ed3uokgroup8w1y0oto4z2la0caixa5mborghini8er3nd0rover6xess5salle5t0ino3robe5w0yer5b1c1ds2ease3clerc5frak4gal2o2xus4gbt3i0dl2fe0insurance9style7ghting6ke2lly3mited4o2ncoln4k2ve1ing5k1lc1p2oan0s3cker3us3l1ndon4tte1o3ve3pl0financial11r1s1t0d0a3u0ndbeck6xe1ury5v1y2ma0drid4if1son4keup4n0agement7go3p1rket0ing3s4riott5shalls7ttel5ba2c0kinsey7d1e0d0ia3et2lbourne7me1orial6n0u2rck0msd7g1h1iami3crosoft7l1ni1t2t0subishi9k1l0b1s2m0a2n1o0bi0le4da2e1i1m1nash3ey2ster5rmon3tgage6scow4to0rcycles9v0ie4p1q1r1s0d2t0n1r2u0seum3ic4v1w1x1y1z2na0b1goya4me2vy3ba2c1e0c1t0bank4flix4work5ustar5w0s2xt0direct7us4f0l2g0o2hk2i0co2ke1on3nja3ssan1y5l1o0kia3rton4w0ruz3tv4p1r0a1w2tt2u1yc2z2obi1server7ffice5kinawa6layan0group9lo3m0ega4ne1g1l0ine5oo2pen3racle3nge4g0anic5igins6saka4tsuka4t2vh3pa0ge2nasonic7ris2s1tners4s1y3y2ccw3e0t2f0izer5g1h0armacy6d1ilips5one2to0graphy6s4ysio5ics1tet2ures6d1n0g1k2oneer5zza4k1l0ace2y0station9umbing5s3m1n0c2ohl2ker3litie5rn2st3r0axi3ess3ime3o0d0uctions8f1gressive8mo2perties3y5tection8u0dential9s1t1ub2w0c2y2qa1pon3uebec3st5racing4dio4e0ad1lestate6tor2y4cipes5d0umbrella9hab3ise0n3t2liance6n0t0als5pair3ort3ublican8st0aurant8view0s5xroth6ich0ardli6oh3l1o1p2o0cks3deo3gers4om3s0vp3u0gby3hr2n2w0e2yukyu6sa0arland6fe0ty4kura4le1on3msclub4ung5ndvik0coromant12ofi4p1rl2s1ve2xo3b0i1s2c0b1haeffler7midt4olarships8ol3ule3warz5ience5ot3d1e0arch3t2cure1ity6ek2lect4ner3rvices6ven3w1x0y3fr2g1h0angrila6rp3ell3ia1ksha5oes2p0ping5uji3w3i0lk2na1gles5te3j1k0i0n2y0pe4l0ing4m0art3ile4n0cf3o0ccer3ial4ftbank4ware6hu2lar2utions7ng1y2y2pa0ce3ort2t3r0l2s1t0ada2ples4r1tebank4farm7c0group6ockholm6rage3e3ream4udio2y3yle4u0cks3pplies3y2ort5rf1gery5zuki5v1watch4iss4x1y0dney4stems6z2tab1ipei4lk2obao4rget4tamotors6r2too4x0i3c0i2d0k2eam2ch0nology8l1masek5nnis4va3f1g1h0d1eater2re6iaa2ckets5enda4ps2res2ol4j0maxx4x2k0maxx5l1m0all4n1o0day3kyo3ols3p1ray3shiba5tal3urs3wn2yota3s3r0ade1ing4ining5vel0ers0insurance16ust3v2t1ube2i1nes3shu4v0s2w1z2ua1bank3s2g1k1nicom3versity8o2ol2ps2s1y1z2va0cations7na1guard7c1e0gas3ntures6risign5mögensberater2ung14sicherung10t2g1i0ajes4deo3g1king4llas4n1p1rgin4sa1ion4va1o3laanderen9n1odka3lvo3te1ing3o2yage5u2wales2mart4ter4ng0gou5tch0es6eather0channel12bcam3er2site5d0ding5ibo2r3f1hoswho6ien2ki2lliamhill9n0dows4e1ners6me2oodside6rk0s2ld3w2s1tc1f3xbox3erox4ihuan4n2xx2yz3yachts4hoo3maxun5ndex5e1odobashi7ga2kohama6u0tube6t1un3za0ppos4ra3ero3ip2m1one3uerich6w2", fe = "ελ1υ2бг1ел3дети4ею2католик6ом3мкд2он1сква6онлайн5рг3рус2ф2сайт3рб3укр3қаз3հայ3ישראל5קום3ابوظبي5رامكو5لاردن4بحرين5جزائر5سعودية6عليان5مغرب5مارات5یران5بارت2زار4يتك3ھارت5تونس4سودان3رية5شبكة4عراق2ب2مان4فلسطين6قطر3كاثوليك6وم3مصر2ليسيا5وريتانيا7قع4همراه5پاکستان7ڀارت4कॉम3नेट3भारत0म्3ोत5संगठन5বাংলা5ভারত2ৰত4ਭਾਰਤ4ભારત4ଭାରତ4இந்தியா6லங்கை6சிங்கப்பூர்11భారత్5ಭಾರತ4ഭാരതം5ලංකා4คอม3ไทย3ລາວ3გე2みんな3アマゾン4クラウド4グーグル4コム2ストア3セール3ファッション6ポイント4世界2中信1国1國1文网3亚马逊3企业2佛山2信息2健康2八卦2公司1益2台湾1灣2商城1店1标2嘉里0大酒店5在线2大拿2天主教3娱乐2家電2广东2微博2慈善2我爱你3手机2招聘2政务1府2新加坡2闻2时尚2書籍2机构2淡马锡3游戏2澳門2点看2移动2组织机构4网址1店1站1络2联通2谷歌2购物2通販2集团2電訊盈科4飞利浦3食品2餐厅2香格里拉3港2닷넷1컴2삼성2한국2", pe = "numeric", A = "ascii", me = "alpha", he = "asciinumeric", ge = "alphanumeric", _e = "domain", ve = "emoji", j = "scheme", ye = "slashscheme", be = "whitespace";
-function xe(e, t) {
+var fe = "aaa1rp3bb0ott3vie4c1le2ogado5udhabi7c0ademy5centure6ountant0s9o1tor4d0s1ult4e0g1ro2tna4f0l1rica5g0akhan5ency5i0g1rbus3force5tel5kdn3l0ibaba4pay4lfinanz6state5y2sace3tom5m0azon4ericanexpress7family11x2fam3ica3sterdam8nalytics7droid5quan4z2o0l2partments8p0le4q0uarelle8r0ab1mco4chi3my2pa2t0e3s0da2ia2sociates9t0hleta5torney7u0ction5di0ble3o3spost5thor3o0s4w0s2x0a2z0ure5ba0by2idu3namex4d1k2r0celona5laycard4s5efoot5gains6seball5ketball8uhaus5yern5b0c1t1va3cg1n2d1e0ats2uty4er2rlin4st0buy5t2f1g1h0arti5i0ble3d1ke2ng0o3o1z2j1lack0friday9ockbuster8g1omberg7ue3m0s1w2n0pparibas9o0ats3ehringer8fa2m1nd2o0k0ing5sch2tik2on4t1utique6x2r0adesco6idgestone9oadway5ker3ther5ussels7s1t1uild0ers6siness6y1zz3v1w1y1z0h3ca0b1fe2l0l1vinklein9m0era3p2non3petown5ital0one8r0avan4ds2e0er0s4s2sa1e1h1ino4t0ering5holic7ba1n1re3c1d1enter4o1rn3f0a1d2g1h0anel2nel4rity4se2t2eap3intai5ristmas6ome4urch5i0priani6rcle4sco3tadel4i0c2y3k1l0aims4eaning6ick2nic1que6othing5ud3ub0med6m1n1o0ach3des3ffee4llege4ogne5m0mbank4unity6pany2re3uter5sec4ndos3struction8ulting7tact3ractors9oking4l1p2rsica5untry4pon0s4rses6pa2r0edit0card4union9icket5own3s1uise0s6u0isinella9v1w1x1y0mru3ou3z2dad1nce3ta1e1ing3sun4y2clk3ds2e0al0er2s3gree4livery5l1oitte5ta3mocrat6ntal2ist5si0gn4v2hl2iamonds6et2gital5rect0ory7scount3ver5h2y2j1k1m1np2o0cs1tor4g1mains5t1wnload7rive4tv2ubai3pont4rban5vag2r2z2earth3t2c0o2deka3u0cation8e1g1mail3erck5nergy4gineer0ing9terprises10pson4quipment8r0icsson6ni3s0q1tate5t1u0rovision8s2vents5xchange6pert3osed4ress5traspace10fage2il1rwinds6th3mily4n0s2rm0ers5shion4t3edex3edback6rrari3ero6i0delity5o2lm2nal1nce1ial7re0stone6mdale6sh0ing5t0ness6j1k1lickr3ghts4r2orist4wers5y2m1o0o0d1tball6rd1ex2sale4um3undation8x2r0ee1senius7l1ogans4ntier7tr2ujitsu5n0d2rniture7tbol5yi3ga0l0lery3o1up4me0s3p1rden4y2b0iz3d0n2e0a1nt0ing5orge5f1g0ee3h1i0ft0s3ves2ing5l0ass3e1obal2o4m0ail3bh2o1x2n1odaddy5ld0point6f2odyear5g0le4p1t1v2p1q1r0ainger5phics5tis4een3ipe3ocery4up4s1t1u0cci3ge2ide2tars5ru3w1y2hair2mburg5ngout5us3bo2dfc0bank7ealth0care8lp1sinki6re1mes5iphop4samitsu7tachi5v2k0t2m1n1ockey4ldings5iday5medepot5goods5s0ense7nda3rse3spital5t0ing5t0els3mail5use3w2r1sbc3t1u0ghes5yatt3undai7ibm2cbc2e1u2d1e0ee3fm2kano4l1m0amat4db2mo0bilien9n0c1dustries8finiti5o2g1k1stitute6urance4e4t0ernational10uit4vestments10o1piranga7q1r0ish4s0maili5t0anbul7t0au2v3jaguar4va3cb2e0ep2tzt3welry6io2ll2m0p2nj2o0bs1urg4t1y2p0morgan6rs3uegos4niper7kaufen5ddi3e0rryhotels6properties14fh2g1h1i0a1ds2m1ndle4tchen5wi3m1n1oeln3matsu5sher5p0mg2n2r0d1ed3uokgroup8w1y0oto4z2la0caixa5mborghini8er3nd0rover6xess5salle5t0ino3robe5w0yer5b1c1ds2ease3clerc5frak4gal2o2xus4gbt3i0dl2fe0insurance9style7ghting6ke2lly3mited4o2ncoln4k2ve1ing5k1lc1p2oan0s3cker3us3l1ndon4tte1o3ve3pl0financial11r1s1t0d0a3u0ndbeck6xe1ury5v1y2ma0drid4if1son4keup4n0agement7go3p1rket0ing3s4riott5shalls7ttel5ba2c0kinsey7d1e0d0ia3et2lbourne7me1orial6n0u2rck0msd7g1h1iami3crosoft7l1ni1t2t0subishi9k1l0b1s2m0a2n1o0bi0le4da2e1i1m1nash3ey2ster5rmon3tgage6scow4to0rcycles9v0ie4p1q1r1s0d2t0n1r2u0seum3ic4v1w1x1y1z2na0b1goya4me2vy3ba2c1e0c1t0bank4flix4work5ustar5w0s2xt0direct7us4f0l2g0o2hk2i0co2ke1on3nja3ssan1y5l1o0kia3rton4w0ruz3tv4p1r0a1w2tt2u1yc2z2obi1server7ffice5kinawa6layan0group9lo3m0ega4ne1g1l0ine5oo2pen3racle3nge4g0anic5igins6saka4tsuka4t2vh3pa0ge2nasonic7ris2s1tners4s1y3y2ccw3e0t2f0izer5g1h0armacy6d1ilips5one2to0graphy6s4ysio5ics1tet2ures6d1n0g1k2oneer5zza4k1l0ace2y0station9umbing5s3m1n0c2ohl2ker3litie5rn2st3r0axi3ess3ime3o0d0uctions8f1gressive8mo2perties3y5tection8u0dential9s1t1ub2w0c2y2qa1pon3uebec3st5racing4dio4e0ad1lestate6tor2y4cipes5d0umbrella9hab3ise0n3t2liance6n0t0als5pair3ort3ublican8st0aurant8view0s5xroth6ich0ardli6oh3l1o1p2o0cks3deo3gers4om3s0vp3u0gby3hr2n2w0e2yukyu6sa0arland6fe0ty4kura4le1on3msclub4ung5ndvik0coromant12ofi4p1rl2s1ve2xo3b0i1s2c0b1haeffler7midt4olarships8ol3ule3warz5ience5ot3d1e0arch3t2cure1ity6ek2lect4ner3rvices6ven3w1x0y3fr2g1h0angrila6rp3ell3ia1ksha5oes2p0ping5uji3w3i0lk2na1gles5te3j1k0i0n2y0pe4l0ing4m0art3ile4n0cf3o0ccer3ial4ftbank4ware6hu2lar2utions7ng1y2y2pa0ce3ort2t3r0l2s1t0ada2ples4r1tebank4farm7c0group6ockholm6rage3e3ream4udio2y3yle4u0cks3pplies3y2ort5rf1gery5zuki5v1watch4iss4x1y0dney4stems6z2tab1ipei4lk2obao4rget4tamotors6r2too4x0i3c0i2d0k2eam2ch0nology8l1masek5nnis4va3f1g1h0d1eater2re6iaa2ckets5enda4ps2res2ol4j0maxx4x2k0maxx5l1m0all4n1o0day3kyo3ols3p1ray3shiba5tal3urs3wn2yota3s3r0ade1ing4ining5vel0ers0insurance16ust3v2t1ube2i1nes3shu4v0s2w1z2ua1bank3s2g1k1nicom3versity8o2ol2ps2s1y1z2va0cations7na1guard7c1e0gas3ntures6risign5mögensberater2ung14sicherung10t2g1i0ajes4deo3g1king4llas4n1p1rgin4sa1ion4va1o3laanderen9n1odka3lvo3te1ing3o2yage5u2wales2mart4ter4ng0gou5tch0es6eather0channel12bcam3er2site5d0ding5ibo2r3f1hoswho6ien2ki2lliamhill9n0dows4e1ners6me2oodside6rk0s2ld3w2s1tc1f3xbox3erox4ihuan4n2xx2yz3yachts4hoo3maxun5ndex5e1odobashi7ga2kohama6u0tube6t1un3za0ppos4ra3ero3ip2m1one3uerich6w2", pe = "ελ1υ2бг1ел3дети4ею2католик6ом3мкд2он1сква6онлайн5рг3рус2ф2сайт3рб3укр3қаз3հայ3ישראל5קום3ابوظبي5رامكو5لاردن4بحرين5جزائر5سعودية6عليان5مغرب5مارات5یران5بارت2زار4يتك3ھارت5تونس4سودان3رية5شبكة4عراق2ب2مان4فلسطين6قطر3كاثوليك6وم3مصر2ليسيا5وريتانيا7قع4همراه5پاکستان7ڀارت4कॉम3नेट3भारत0म्3ोत5संगठन5বাংলা5ভারত2ৰত4ਭਾਰਤ4ભારત4ଭାରତ4இந்தியா6லங்கை6சிங்கப்பூர்11భారత్5ಭಾರತ4ഭാരതം5ලංකා4คอม3ไทย3ລາວ3გე2みんな3アマゾン4クラウド4グーグル4コム2ストア3セール3ファッション6ポイント4世界2中信1国1國1文网3亚马逊3企业2佛山2信息2健康2八卦2公司1益2台湾1灣2商城1店1标2嘉里0大酒店5在线2大拿2天主教3娱乐2家電2广东2微博2慈善2我爱你3手机2招聘2政务1府2新加坡2闻2时尚2書籍2机构2淡马锡3游戏2澳門2点看2移动2组织机构4网址1店1站1络2联通2谷歌2购物2通販2集团2電訊盈科4飞利浦3食品2餐厅2香格里拉3港2닷넷1컴2삼성2한국2", k = "numeric", me = "ascii", he = "alpha", A = "asciinumeric", j = "alphanumeric", ge = "domain", _e = "emoji", ve = "scheme", ye = "slashscheme", M = "whitespace";
+function be(e, t) {
 	return e in t || (t[e] = []), t[e];
 }
-function Se(e, t, n) {
-	t[pe] && (t[he] = !0, t[ge] = !0), t[A] && (t[he] = !0, t[me] = !0), t[he] && (t[ge] = !0), t[me] && (t[ge] = !0), t[ge] && (t[_e] = !0), t[ve] && (t[_e] = !0);
+function xe(e, t, n) {
+	t[k] && (t[A] = !0, t[j] = !0), t[me] && (t[A] = !0, t[he] = !0), t[A] && (t[j] = !0), t[he] && (t[j] = !0), t[j] && (t[ge] = !0), t[_e] && (t[ge] = !0);
 	for (let r in t) {
-		let t = xe(r, n);
+		let t = be(r, n);
 		t.indexOf(e) < 0 && t.push(e);
 	}
 }
-function Ce(e, t) {
+function Se(e, t) {
 	let n = {};
 	for (let r in t) t[r].indexOf(e) >= 0 && (n[r] = !0);
 	return n;
 }
-function M(e = null) {
+function N(e = null) {
 	this.j = {}, this.jr = [], this.jd = null, this.t = e;
 }
-M.groups = {}, M.prototype = {
+N.groups = {}, N.prototype = {
 	accepts() {
 		return !!this.t;
 	},
@@ -51,9 +51,9 @@ M.groups = {}, M.prototype = {
 		for (let i = 0; i < e.length; i++) this.tt(e[i], t, n, r);
 	},
 	tr(e, t, n, r) {
-		r ||= M.groups;
+		r ||= N.groups;
 		let i;
-		return t && t.j ? i = t : (i = new M(t), n && r && Se(t, n, r)), this.jr.push([e, i]), i;
+		return t && t.j ? i = t : (i = new N(t), n && r && xe(t, n, r)), this.jr.push([e, i]), i;
 	},
 	ts(e, t, n, r) {
 		let i = this, a = e.length;
@@ -62,113 +62,113 @@ M.groups = {}, M.prototype = {
 		return i.tt(e[a - 1], t, n, r);
 	},
 	tt(e, t, n, r) {
-		r ||= M.groups;
+		r ||= N.groups;
 		let i = this;
 		if (t && t.j) return i.j[e] = t, t;
 		let a = t, o, s = i.go(e);
-		return s ? (o = new M(), Object.assign(o.j, s.j), o.jr.push.apply(o.jr, s.jr), o.jd = s.jd, o.t = s.t) : o = new M(), a && (r && (o.t && typeof o.t == "string" ? Se(a, Object.assign(Ce(o.t, r), n), r) : n && Se(a, n, r)), o.t = a), i.j[e] = o, o;
+		return s ? (o = new N(), Object.assign(o.j, s.j), o.jr.push.apply(o.jr, s.jr), o.jd = s.jd, o.t = s.t) : o = new N(), a && (r && (o.t && typeof o.t == "string" ? xe(a, Object.assign(Se(o.t, r), n), r) : n && xe(a, n, r)), o.t = a), i.j[e] = o, o;
 	}
 };
-var N = (e, t, n, r, i) => e.ta(t, n, r, i), P = (e, t, n, r, i) => e.tr(t, n, r, i), we = (e, t, n, r, i) => e.ts(t, n, r, i), F = (e, t, n, r, i) => e.tt(t, n, r, i), I = "WORD", Te = "UWORD", Ee = "ASCIINUMERICAL", De = "ALPHANUMERICAL", Oe = "LOCALHOST", ke = "TLD", Ae = "UTLD", je = "SCHEME", Me = "SLASH_SCHEME", Ne = "NUM", Pe = "WS", Fe = "NL", Ie = "OPENBRACE", Le = "CLOSEBRACE", Re = "OPENBRACKET", ze = "CLOSEBRACKET", Be = "OPENPAREN", Ve = "CLOSEPAREN", He = "OPENANGLEBRACKET", Ue = "CLOSEANGLEBRACKET", We = "FULLWIDTHLEFTPAREN", Ge = "FULLWIDTHRIGHTPAREN", Ke = "LEFTCORNERBRACKET", qe = "RIGHTCORNERBRACKET", Je = "LEFTWHITECORNERBRACKET", Ye = "RIGHTWHITECORNERBRACKET", Xe = "FULLWIDTHLESSTHAN", Ze = "FULLWIDTHGREATERTHAN", Qe = "AMPERSAND", $e = "APOSTROPHE", et = "ASTERISK", L = "AT", tt = "BACKSLASH", nt = "BACKTICK", rt = "CARET", R = "COLON", it = "COMMA", at = "DOLLAR", z = "DOT", ot = "EQUALS", st = "EXCLAMATION", B = "HYPHEN", ct = "PERCENT", lt = "PIPE", ut = "PLUS", dt = "POUND", ft = "QUERY", pt = "QUOTE", mt = "FULLWIDTHMIDDLEDOT", ht = "SEMI", V = "SLASH", gt = "TILDE", _t = "UNDERSCORE", vt = "EMOJI", yt = "SYM", bt = /*#__PURE__*/ Object.freeze({
+var P = (e, t, n, r, i) => e.ta(t, n, r, i), F = (e, t, n, r, i) => e.tr(t, n, r, i), Ce = (e, t, n, r, i) => e.ts(t, n, r, i), I = (e, t, n, r, i) => e.tt(t, n, r, i), L = "WORD", we = "UWORD", Te = "ASCIINUMERICAL", Ee = "ALPHANUMERICAL", De = "LOCALHOST", Oe = "TLD", ke = "UTLD", Ae = "SCHEME", je = "SLASH_SCHEME", Me = "NUM", Ne = "WS", Pe = "NL", Fe = "OPENBRACE", Ie = "CLOSEBRACE", Le = "OPENBRACKET", Re = "CLOSEBRACKET", ze = "OPENPAREN", Be = "CLOSEPAREN", Ve = "OPENANGLEBRACKET", He = "CLOSEANGLEBRACKET", Ue = "FULLWIDTHLEFTPAREN", We = "FULLWIDTHRIGHTPAREN", Ge = "LEFTCORNERBRACKET", Ke = "RIGHTCORNERBRACKET", qe = "LEFTWHITECORNERBRACKET", Je = "RIGHTWHITECORNERBRACKET", Ye = "FULLWIDTHLESSTHAN", Xe = "FULLWIDTHGREATERTHAN", Ze = "AMPERSAND", Qe = "APOSTROPHE", $e = "ASTERISK", R = "AT", et = "BACKSLASH", tt = "BACKTICK", nt = "CARET", rt = "COLON", it = "COMMA", at = "DOLLAR", z = "DOT", ot = "EQUALS", st = "EXCLAMATION", B = "HYPHEN", ct = "PERCENT", lt = "PIPE", ut = "PLUS", dt = "POUND", ft = "QUERY", pt = "QUOTE", mt = "FULLWIDTHMIDDLEDOT", ht = "SEMI", V = "SLASH", gt = "TILDE", _t = "UNDERSCORE", vt = "EMOJI", yt = "SYM", bt = /*#__PURE__*/ Object.freeze({
 	__proto__: null,
-	ALPHANUMERICAL: De,
-	AMPERSAND: Qe,
-	APOSTROPHE: $e,
-	ASCIINUMERICAL: Ee,
-	ASTERISK: et,
-	AT: L,
-	BACKSLASH: tt,
-	BACKTICK: nt,
-	CARET: rt,
-	CLOSEANGLEBRACKET: Ue,
-	CLOSEBRACE: Le,
-	CLOSEBRACKET: ze,
-	CLOSEPAREN: Ve,
-	COLON: R,
+	ALPHANUMERICAL: Ee,
+	AMPERSAND: Ze,
+	APOSTROPHE: Qe,
+	ASCIINUMERICAL: Te,
+	ASTERISK: $e,
+	AT: R,
+	BACKSLASH: et,
+	BACKTICK: tt,
+	CARET: nt,
+	CLOSEANGLEBRACKET: He,
+	CLOSEBRACE: Ie,
+	CLOSEBRACKET: Re,
+	CLOSEPAREN: Be,
+	COLON: rt,
 	COMMA: it,
 	DOLLAR: at,
 	DOT: z,
 	EMOJI: vt,
 	EQUALS: ot,
 	EXCLAMATION: st,
-	FULLWIDTHGREATERTHAN: Ze,
-	FULLWIDTHLEFTPAREN: We,
-	FULLWIDTHLESSTHAN: Xe,
+	FULLWIDTHGREATERTHAN: Xe,
+	FULLWIDTHLEFTPAREN: Ue,
+	FULLWIDTHLESSTHAN: Ye,
 	FULLWIDTHMIDDLEDOT: mt,
-	FULLWIDTHRIGHTPAREN: Ge,
+	FULLWIDTHRIGHTPAREN: We,
 	HYPHEN: B,
-	LEFTCORNERBRACKET: Ke,
-	LEFTWHITECORNERBRACKET: Je,
-	LOCALHOST: Oe,
-	NL: Fe,
-	NUM: Ne,
-	OPENANGLEBRACKET: He,
-	OPENBRACE: Ie,
-	OPENBRACKET: Re,
-	OPENPAREN: Be,
+	LEFTCORNERBRACKET: Ge,
+	LEFTWHITECORNERBRACKET: qe,
+	LOCALHOST: De,
+	NL: Pe,
+	NUM: Me,
+	OPENANGLEBRACKET: Ve,
+	OPENBRACE: Fe,
+	OPENBRACKET: Le,
+	OPENPAREN: ze,
 	PERCENT: ct,
 	PIPE: lt,
 	PLUS: ut,
 	POUND: dt,
 	QUERY: ft,
 	QUOTE: pt,
-	RIGHTCORNERBRACKET: qe,
-	RIGHTWHITECORNERBRACKET: Ye,
-	SCHEME: je,
+	RIGHTCORNERBRACKET: Ke,
+	RIGHTWHITECORNERBRACKET: Je,
+	SCHEME: Ae,
 	SEMI: ht,
 	SLASH: V,
-	SLASH_SCHEME: Me,
+	SLASH_SCHEME: je,
 	SYM: yt,
 	TILDE: gt,
-	TLD: ke,
+	TLD: Oe,
 	UNDERSCORE: _t,
-	UTLD: Ae,
-	UWORD: Te,
-	WORD: I,
-	WS: Pe
+	UTLD: ke,
+	UWORD: we,
+	WORD: L,
+	WS: Ne
 }), H = /[a-z]/, xt = /\p{L}/u, St = /\p{Emoji}/u, U = /\d/, Ct = /\s/, wt = "\r", Tt = "\n", Et = "️", Dt = "‍", Ot = "￼", kt = null, At = null;
 function jt(e = []) {
 	let t = {};
-	M.groups = t;
-	let n = new M();
-	kt ??= Pt(de), At ??= Pt(fe), F(n, "'", $e), F(n, "{", Ie), F(n, "}", Le), F(n, "[", Re), F(n, "]", ze), F(n, "(", Be), F(n, ")", Ve), F(n, "<", He), F(n, ">", Ue), F(n, "（", We), F(n, "）", Ge), F(n, "「", Ke), F(n, "」", qe), F(n, "『", Je), F(n, "』", Ye), F(n, "＜", Xe), F(n, "＞", Ze), F(n, "&", Qe), F(n, "*", et), F(n, "@", L), F(n, "`", nt), F(n, "^", rt), F(n, ":", R), F(n, ",", it), F(n, "$", at), F(n, ".", z), F(n, "=", ot), F(n, "!", st), F(n, "-", B), F(n, "%", ct), F(n, "|", lt), F(n, "+", ut), F(n, "#", dt), F(n, "?", ft), F(n, "\"", pt), F(n, "/", V), F(n, ";", ht), F(n, "~", gt), F(n, "_", _t), F(n, "\\", tt), F(n, "・", mt);
-	let r = P(n, U, Ne, { [pe]: !0 });
-	P(r, U, r);
-	let i = P(r, H, Ee, { [he]: !0 }), a = P(r, xt, De, { [ge]: !0 }), o = P(n, H, I, { [A]: !0 });
-	P(o, U, i), P(o, H, o), P(i, U, i), P(i, H, i);
-	let s = P(n, xt, Te, { [me]: !0 });
-	P(s, H), P(s, U, a), P(s, xt, s), P(a, U, a), P(a, H), P(a, xt, a);
-	let c = F(n, Tt, Fe, { [be]: !0 }), l = F(n, wt, Pe, { [be]: !0 }), u = P(n, Ct, Pe, { [be]: !0 });
-	F(n, Ot, u), F(l, Tt, c), F(l, Ot, u), P(l, Ct, u), F(u, wt), F(u, Tt), P(u, Ct, u), F(u, Ot, u);
-	let d = P(n, St, vt, { [ve]: !0 });
-	F(d, "#"), P(d, St, d), F(d, Et, d);
-	let f = F(d, Dt);
-	F(f, "#"), P(f, St, d);
+	N.groups = t;
+	let n = new N();
+	kt ??= Pt(fe), At ??= Pt(pe), I(n, "'", Qe), I(n, "{", Fe), I(n, "}", Ie), I(n, "[", Le), I(n, "]", Re), I(n, "(", ze), I(n, ")", Be), I(n, "<", Ve), I(n, ">", He), I(n, "（", Ue), I(n, "）", We), I(n, "「", Ge), I(n, "」", Ke), I(n, "『", qe), I(n, "』", Je), I(n, "＜", Ye), I(n, "＞", Xe), I(n, "&", Ze), I(n, "*", $e), I(n, "@", R), I(n, "`", tt), I(n, "^", nt), I(n, ":", rt), I(n, ",", it), I(n, "$", at), I(n, ".", z), I(n, "=", ot), I(n, "!", st), I(n, "-", B), I(n, "%", ct), I(n, "|", lt), I(n, "+", ut), I(n, "#", dt), I(n, "?", ft), I(n, "\"", pt), I(n, "/", V), I(n, ";", ht), I(n, "~", gt), I(n, "_", _t), I(n, "\\", et), I(n, "・", mt);
+	let r = F(n, U, Me, { [k]: !0 });
+	F(r, U, r);
+	let i = F(r, H, Te, { [A]: !0 }), a = F(r, xt, Ee, { [j]: !0 }), o = F(n, H, L, { [me]: !0 });
+	F(o, U, i), F(o, H, o), F(i, U, i), F(i, H, i);
+	let s = F(n, xt, we, { [he]: !0 });
+	F(s, H), F(s, U, a), F(s, xt, s), F(a, U, a), F(a, H), F(a, xt, a);
+	let c = I(n, Tt, Pe, { [M]: !0 }), l = I(n, wt, Ne, { [M]: !0 }), u = F(n, Ct, Ne, { [M]: !0 });
+	I(n, Ot, u), I(l, Tt, c), I(l, Ot, u), F(l, Ct, u), I(u, wt), I(u, Tt), F(u, Ct, u), I(u, Ot, u);
+	let d = F(n, St, vt, { [_e]: !0 });
+	I(d, "#"), F(d, St, d), I(d, Et, d);
+	let f = I(d, Dt);
+	I(f, "#"), F(f, St, d);
 	let p = [[H, o], [U, i]], m = [
 		[H, null],
 		[xt, s],
 		[U, a]
 	];
-	for (let e = 0; e < kt.length; e++) W(n, kt[e], ke, I, p);
-	for (let e = 0; e < At.length; e++) W(n, At[e], Ae, Te, m);
-	Se(ke, {
+	for (let e = 0; e < kt.length; e++) W(n, kt[e], Oe, L, p);
+	for (let e = 0; e < At.length; e++) W(n, At[e], ke, we, m);
+	xe(Oe, {
 		tld: !0,
 		ascii: !0
-	}, t), Se(Ae, {
+	}, t), xe(ke, {
 		utld: !0,
 		alpha: !0
-	}, t), W(n, "file", je, I, p), W(n, "mailto", je, I, p), W(n, "http", Me, I, p), W(n, "https", Me, I, p), W(n, "ftp", Me, I, p), W(n, "ftps", Me, I, p), Se(je, {
+	}, t), W(n, "file", Ae, L, p), W(n, "mailto", Ae, L, p), W(n, "http", je, L, p), W(n, "https", je, L, p), W(n, "ftp", je, L, p), W(n, "ftps", je, L, p), xe(Ae, {
 		scheme: !0,
 		ascii: !0
-	}, t), Se(Me, {
+	}, t), xe(je, {
 		slashscheme: !0,
 		ascii: !0
 	}, t), e = e.sort((e, t) => e[0] > t[0] ? 1 : -1);
 	for (let t = 0; t < e.length; t++) {
-		let r = e[t][0], i = e[t][1] ? { [j]: !0 } : { [ye]: !0 };
-		r.indexOf("-") >= 0 ? i[_e] = !0 : H.test(r) ? U.test(r) ? i[he] = !0 : i[A] = !0 : i[pe] = !0, we(n, r, r, i);
+		let r = e[t][0], i = e[t][1] ? { [ve]: !0 } : { [ye]: !0 };
+		r.indexOf("-") >= 0 ? i[ge] = !0 : H.test(r) ? U.test(r) ? i[A] = !0 : i[me] = !0 : i[k] = !0, Ce(n, r, r, i);
 	}
-	return we(n, "localhost", Oe, { ascii: !0 }), n.jd = new M(yt), {
+	return Ce(n, "localhost", De, { ascii: !0 }), n.jd = new N(yt), {
 		start: n,
 		tokens: Object.assign({ groups: t }, bt)
 	};
@@ -199,9 +199,9 @@ function W(e, t, n, r, i) {
 	let a, o = t.length;
 	for (let n = 0; n < o - 1; n++) {
 		let o = t[n];
-		e.j[o] ? a = e.j[o] : (a = new M(r), a.jr = i.slice(), e.j[o] = a), e = a;
+		e.j[o] ? a = e.j[o] : (a = new N(r), a.jr = i.slice(), e.j[o] = a), e = a;
 	}
-	return a = new M(n), a.jr = i.slice(), e.j[t[o - 1]] = a, a;
+	return a = new N(n), a.jr = i.slice(), e.j[t[o - 1]] = a, a;
 }
 function Pt(e) {
 	let t = [], n = [], r = 0;
@@ -342,21 +342,21 @@ var Bt = zt("email", {
 	},
 	hasProtocol() {
 		let e = this.tk;
-		return e.length >= 2 && e[0].t !== Oe && e[1].t === R;
+		return e.length >= 2 && e[0].t !== De && e[1].t === rt;
 	}
-}), G = (e) => new M(e);
+}), G = (e) => new N(e);
 function Wt({ groups: e }) {
 	let t = e.domain.concat([
-		Qe,
+		Ze,
+		$e,
+		R,
 		et,
-		L,
 		tt,
 		nt,
-		rt,
 		at,
 		ot,
 		B,
-		Ne,
+		Me,
 		ct,
 		lt,
 		ut,
@@ -366,8 +366,8 @@ function Wt({ groups: e }) {
 		gt,
 		_t
 	]), n = [
-		$e,
-		R,
+		Qe,
+		rt,
 		it,
 		z,
 		st,
@@ -375,34 +375,34 @@ function Wt({ groups: e }) {
 		ft,
 		pt,
 		ht,
+		Ve,
 		He,
-		Ue,
+		Fe,
 		Ie,
+		Re,
 		Le,
 		ze,
-		Re,
 		Be,
-		Ve,
+		Ue,
 		We,
 		Ge,
 		Ke,
 		qe,
 		Je,
 		Ye,
-		Xe,
-		Ze
+		Xe
 	], r = [
+		Ze,
 		Qe,
 		$e,
 		et,
 		tt,
 		nt,
-		rt,
 		at,
 		ot,
 		B,
+		Fe,
 		Ie,
-		Le,
 		ct,
 		lt,
 		ut,
@@ -412,51 +412,51 @@ function Wt({ groups: e }) {
 		yt,
 		gt,
 		_t
-	], i = G(), a = F(i, gt);
-	N(a, r, a), N(a, e.domain, a);
+	], i = G(), a = I(i, gt);
+	P(a, r, a), P(a, e.domain, a);
 	let o = G(), s = G(), c = G();
-	N(i, e.domain, o), N(i, e.scheme, s), N(i, e.slashscheme, c), N(o, r, a), N(o, e.domain, o);
-	let l = F(o, L);
-	F(a, L, l), F(s, L, l), F(c, L, l);
-	let u = F(a, z);
-	N(u, r, a), N(u, e.domain, a);
+	P(i, e.domain, o), P(i, e.scheme, s), P(i, e.slashscheme, c), P(o, r, a), P(o, e.domain, o);
+	let l = I(o, R);
+	I(a, R, l), I(s, R, l), I(c, R, l);
+	let u = I(a, z);
+	P(u, r, a), P(u, e.domain, a);
 	let d = G();
-	N(l, e.domain, d), N(d, e.domain, d);
-	let f = F(d, z);
-	N(f, e.domain, d);
+	P(l, e.domain, d), P(d, e.domain, d);
+	let f = I(d, z);
+	P(f, e.domain, d);
 	let p = G(Bt);
-	N(f, e.tld, p), N(f, e.utld, p), F(l, Oe, p);
-	let m = F(d, B);
-	F(m, B, m), N(m, e.domain, d), N(p, e.domain, d), F(p, z, f), F(p, B, m);
-	let h = F(o, B), g = F(o, z);
-	F(h, B, h), N(h, e.domain, o), N(g, r, a), N(g, e.domain, o);
+	P(f, e.tld, p), P(f, e.utld, p), I(l, De, p);
+	let m = I(d, B);
+	I(m, B, m), P(m, e.domain, d), P(p, e.domain, d), I(p, z, f), I(p, B, m);
+	let h = I(o, B), g = I(o, z);
+	I(h, B, h), P(h, e.domain, o), P(g, r, a), P(g, e.domain, o);
 	let _ = G(Ut);
-	N(g, e.tld, _), N(g, e.utld, _), N(_, e.domain, o), N(_, r, a), F(_, z, g), F(_, B, h), F(_, L, l);
-	let v = F(_, R), y = G(Ut);
-	N(v, e.numeric, y);
+	P(g, e.tld, _), P(g, e.utld, _), P(_, e.domain, o), P(_, r, a), I(_, z, g), I(_, B, h), I(_, R, l);
+	let v = I(_, rt), y = G(Ut);
+	P(v, e.numeric, y);
 	let b = G(Ut), x = G();
-	N(b, t, b), N(b, n, x), N(x, t, b), N(x, n, x), F(_, V, b), F(y, V, b);
-	let S = F(s, R), C = F(F(F(c, R), V), V);
-	N(s, e.domain, o), F(s, z, g), F(s, B, h), N(c, e.domain, o), F(c, z, g), F(c, B, h), N(S, e.domain, b), F(S, V, b), F(S, ft, b), N(C, e.domain, b), N(C, t, b), F(C, V, b);
+	P(b, t, b), P(b, n, x), P(x, t, b), P(x, n, x), I(_, V, b), I(y, V, b);
+	let S = I(s, rt), C = I(I(I(c, rt), V), V);
+	P(s, e.domain, o), I(s, z, g), I(s, B, h), P(c, e.domain, o), I(c, z, g), I(c, B, h), P(S, e.domain, b), I(S, V, b), I(S, ft, b), P(C, e.domain, b), P(C, t, b), I(C, V, b);
 	let w = [
-		[Ie, Le],
-		[Re, ze],
-		[Be, Ve],
-		[He, Ue],
-		[We, Ge],
-		[Ke, qe],
-		[Je, Ye],
-		[Xe, Ze]
+		[Fe, Ie],
+		[Le, Re],
+		[ze, Be],
+		[Ve, He],
+		[Ue, We],
+		[Ge, Ke],
+		[qe, Je],
+		[Ye, Xe]
 	];
 	for (let e = 0; e < w.length; e++) {
-		let [r, i] = w[e], a = F(b, r);
-		F(x, r, a);
+		let [r, i] = w[e], a = I(b, r);
+		I(x, r, a);
 		let o = G(Ut);
-		N(a, t, o);
+		P(a, t, o);
 		let s = G();
-		N(a, n, s), F(a, i, b), N(o, t, o), N(o, n, s), N(s, t, o), N(s, n, s), F(o, i, b), F(s, i, b);
+		P(a, n, s), I(a, i, b), P(o, t, o), P(o, n, s), P(s, t, o), P(s, n, s), I(o, i, b), I(s, i, b);
 	}
-	return F(i, Oe, _), F(i, Fe, Ht), {
+	return I(i, De, _), I(i, Pe, Ht), {
 		start: i,
 		tokens: bt
 	};
@@ -489,7 +489,7 @@ var qt = typeof console < "u" && console && console.warn || (() => {}), Jt = "un
 	initialized: !1
 };
 function Yt() {
-	return M.groups = {}, K.scanner = null, K.parser = null, K.tokenQueue = [], K.pluginQueue = [], K.customSchemes = [], K.initialized = !1, K;
+	return N.groups = {}, K.scanner = null, K.parser = null, K.tokenQueue = [], K.pluginQueue = [], K.customSchemes = [], K.initialized = !1, K;
 }
 function Xt(e, t = !1) {
 	if (K.initialized && qt(`linkifyjs: already initialized - will not register custom scheme "${e}" ${Jt}`), !/^[0-9a-z]+(-[0-9a-z]+)*$/.test(e)) throw Error("linkifyjs: incorrect scheme format.\n1. Must only contain digits, lowercase ASCII letters or \"-\"\n2. Cannot start or end with \"-\"\n3. \"-\" cannot repeat");
@@ -528,12 +528,12 @@ function an(e) {
 	return e.length === 1 ? e[0].isLink : e.length === 3 && e[1].isLink ? ["()", "[]"].includes(e[0].value + e[2].value) : !1;
 }
 function on(e) {
-	return new O({
-		key: new k("autolink"),
+	return new ce({
+		key: new O("autolink"),
 		appendTransaction: (t, n, r) => {
 			let i = t.some((e) => e.docChanged) && !n.doc.eq(r.doc), a = t.some((e) => e.getMeta("preventAutolink"));
 			if (!i || a) return;
-			let { tr: o } = r, s = te(n.doc, [...t]);
+			let { tr: o } = r, s = ee(n.doc, [...t]);
 			if (re(s).forEach(({ newRange: t }) => {
 				let n = D(r.doc, t, (e) => e.isTextblock), i, a;
 				if (n.length > 1) i = n[0], a = r.doc.textBetween(i.pos, i.pos + i.node.nodeSize, void 0, " ");
@@ -562,8 +562,8 @@ function on(e) {
 	});
 }
 function sn(e) {
-	return new O({
-		key: new k("handleClickLink"),
+	return new ce({
+		key: new O("handleClickLink"),
 		props: { handleClick: (t, n, r) => {
 			if (r.button !== 0 || !t.editable) return !1;
 			let i = null;
@@ -661,7 +661,7 @@ function _n(e) {
 		type: e.type,
 		getAttributes: hn
 	});
-	return new ee({
+	return new E({
 		find: t.find,
 		handler: (e) => {
 			let n = t.handler(e);
@@ -670,8 +670,8 @@ function _n(e) {
 	});
 }
 function vn(e) {
-	return new O({
-		key: new k("handlePasteLink"),
+	return new ce({
+		key: new O("handlePasteLink"),
 		props: { handlePaste: (t, n, r) => {
 			let { shouldAutoLink: i } = e, { state: a } = t, { selection: o } = a, { empty: s } = o;
 			if (s) return !1;
@@ -1590,7 +1590,7 @@ var Jr = Qn, Yr = Yn, Xr = (e, t, n) => {
 //#endregion
 //#region ../../../Users/connorhoehn/Projects/ui-components/node_modules/@tiptap/suggestion/dist/index.js
 function Zr(e) {
-	let { char: t, allowSpaces: n, allowToIncludeChar: r, allowedPrefixes: i, startOfLine: a, $position: o } = e, s = n && !r, c = E(t), l = RegExp(`\\s${c}$`), u = a ? "^" : "", d = r ? "" : c, f = RegExp(s ? `${u}${c}.*?(?=\\s${d}|$)` : `${u}(?:^)?${c}[^\\s${d}]*`, "gm"), p = o.nodeBefore?.isText && o.nodeBefore.text;
+	let { char: t, allowSpaces: n, allowToIncludeChar: r, allowedPrefixes: i, startOfLine: a, $position: o } = e, s = n && !r, c = te(t), l = RegExp(`\\s${c}$`), u = a ? "^" : "", d = r ? "" : c, f = RegExp(s ? `${u}${c}.*?(?=\\s${d}|$)` : `${u}(?:^)?${c}[^\\s${d}]*`, "gm"), p = o.nodeBefore?.isText && o.nodeBefore.text;
 	if (!p) return null;
 	let m = o.pos - p.length, h = Array.from(p.matchAll(f)).pop();
 	if (!h || h.input === void 0 || h.index === void 0) return null;
@@ -1663,7 +1663,7 @@ function ri({ pluginKey: e, decorationTag: t, decorationClass: n, decorationCont
 			let { active: o, range: s, decorationId: c, query: l } = e.getState(a);
 			if (!o) return null;
 			let u = !l?.length, d = [n];
-			return u && d.push(i), ue.create(a.doc, [le.inline(s.from, s.to, {
+			return u && d.push(i), de.create(a.doc, [ue.inline(s.from, s.to, {
 				nodeName: t,
 				class: d.join(" "),
 				"data-decoration-id": c || void 0,
@@ -1850,10 +1850,10 @@ function li({ editor: e, pluginKey: t, items: n, renderer: r, minQueryLength: i,
 			var b, x;
 			let S = t.getState(d), C = t.getState(n.state);
 			if (!S || !C) return;
-			let w = null, T = S.query !== C.query, ee = S.text !== C.text, te = S.range.from !== C.range.from || S.range.to !== C.range.to, E = T || ee || te;
+			let w = null, T = S.query !== C.query, E = S.text !== C.text, ee = S.range.from !== C.range.from || S.range.to !== C.range.to, te = T || E || ee;
 			if (!S.active && C.active) w = "started";
 			else if (S.active && !C.active) w = "stopped";
-			else if (C.active && E) w = "updated";
+			else if (C.active && te) w = "updated";
 			else return;
 			let D = w === "stopped" ? S : C, ne = n.dom.querySelector(`[data-decoration-id="${D.decorationId}"]`), re = m(n, ne), ie = i === 0 || (D.query ? D.query.length >= i : !1), ae = (w === "started" || w === "updated") && ie;
 			if (g = {
@@ -1926,28 +1926,28 @@ function li({ editor: e, pluginKey: t, items: n, renderer: r, minQueryLength: i,
 		}
 	};
 }
-var ui = new k("suggestion");
-function di({ pluginKey: e = ui, editor: t, char: n = "@", allowSpaces: r = !1, allowToIncludeChar: i = !1, allowedPrefixes: a = [" "], startOfLine: o = !1, decorationTag: s = "span", decorationClass: c = "suggestion", decorationContent: l = "", decorationEmptyClass: u = "is-empty", command: d = () => null, items: f = () => [], minQueryLength: p = 0, debounce: m = 0, initialItems: h, placement: g = "bottom-start", offset: _ = {}, container: v, flip: y = !0, floatingUi: b, dismissOnOutsideClick: x = !0, render: S = () => ({}), allow: C = () => !0, findSuggestionMatch: w = Zr, shouldShow: T, shouldResetDismissed: ee }) {
-	let te = S?.(), E = r && !i, D = (n, r) => ei(t, n, r, e);
+var ui = new O("suggestion");
+function di({ pluginKey: e = ui, editor: t, char: n = "@", allowSpaces: r = !1, allowToIncludeChar: i = !1, allowedPrefixes: a = [" "], startOfLine: o = !1, decorationTag: s = "span", decorationClass: c = "suggestion", decorationContent: l = "", decorationEmptyClass: u = "is-empty", command: d = () => null, items: f = () => [], minQueryLength: p = 0, debounce: m = 0, initialItems: h, placement: g = "bottom-start", offset: _ = {}, container: v, flip: y = !0, floatingUi: b, dismissOnOutsideClick: x = !0, render: S = () => ({}), allow: C = () => !0, findSuggestionMatch: w = Zr, shouldShow: T, shouldResetDismissed: E }) {
+	let ee = S?.(), te = r && !i, D = (n, r) => ei(t, n, r, e);
 	function ne(e) {
 		return ti({
 			...e,
 			editor: t,
-			shouldResetDismissed: ee,
-			effectiveAllowSpaces: E
+			shouldResetDismissed: E,
+			effectiveAllowSpaces: te
 		});
 	}
 	let re = (t) => ni({
 		view: t,
 		pluginKeyRef: e
 	});
-	return new O({
+	return new ce({
 		key: e,
 		view: () => li({
 			editor: t,
 			pluginKey: e,
 			items: f,
-			renderer: te,
+			renderer: ee,
 			minQueryLength: p,
 			debounce: m,
 			initialItems: h,
@@ -1964,7 +1964,7 @@ function di({ pluginKey: e = ui, editor: t, char: n = "@", allowSpaces: r = !1, 
 		state: ii({
 			editor: t,
 			char: n,
-			effectiveAllowSpaces: E,
+			effectiveAllowSpaces: te,
 			allowToIncludeChar: i,
 			allowedPrefixes: a,
 			startOfLine: o,
@@ -1980,7 +1980,7 @@ function di({ pluginKey: e = ui, editor: t, char: n = "@", allowSpaces: r = !1, 
 			decorationClass: c,
 			decorationContent: l,
 			decorationEmptyClass: u,
-			renderer: te,
+			renderer: ee,
 			dispatchExit: re
 		})
 	});
@@ -2157,19 +2157,21 @@ function yi(e) {
 	}), n;
 }
 var bi = 0;
-function xi({ onSend: t, onSearchPeople: o, allowAttachments: c = !1, allowEmoji: u = !1, onRequestLink: d, placeholder: w = "Write a message…", disabled: T = !1, toolbarExtras: ee, className: te, "data-testid": E = "rich-chat-composer" }) {
-	let D = p(() => {}), ne = p(() => {}), re = p(null), ie = p(null), [ae, oe] = m(!1), [se, O] = m({
+function xi({ onSend: t, onSearchPeople: o, allowAttachments: c = !1, allowEmoji: d = !1, onRequestLink: w, placeholder: T = "Write a message…", disabled: E = !1, toolbarExtras: ee, className: te, "data-testid": D = "rich-chat-composer" }) {
+	let ne = p(() => {}), re = p(() => {}), ie = p(null), ae = p(null), [oe, se] = m(!1), [ce, O] = m({
 		open: !1,
 		href: "",
 		text: ""
-	}), [k, le] = m([]), [ue, de] = m(!0), fe = c && !T, pe = f(() => {
+	}), [ue, de] = m([]), [fe, pe] = m(!0), k = c && !E, me = p(T);
+	me.current = T;
+	let he = f(() => {
 		let e = [
 			x.configure({
 				heading: !1,
 				horizontalRule: !1,
 				link: !1
 			}),
-			S.configure({ placeholder: w }),
+			S.configure({ placeholder: () => me.current }),
 			yn.configure({
 				openOnClick: !1,
 				autolink: !0,
@@ -2215,14 +2217,14 @@ function xi({ onSend: t, onSearchPeople: o, allowAttachments: c = !1, allowEmoji
 				name: "chatComposerKeymap",
 				addKeyboardShortcuts() {
 					return {
-						Enter: () => (D.current(), !0),
-						"Mod-k": () => (ne.current(), !0),
+						Enter: () => (ne.current(), !0),
+						"Mod-k": () => (re.current(), !0),
 						"Shift-Enter": ({ editor: e }) => e.commands.setHardBreak()
 					};
 				}
 			})
 		];
-		return o && e.push(ce.configure({
+		return o && e.push(le.configure({
 			HTMLAttributes: { class: "mention" },
 			suggestion: {
 				char: "@",
@@ -2247,15 +2249,19 @@ function xi({ onSend: t, onSearchPeople: o, allowAttachments: c = !1, allowEmoji
 				}
 			}
 		})), e;
-	}, [w, o]), A = b({
-		extensions: pe,
-		editable: !T,
-		onUpdate: ({ editor: e }) => de(e.isEmpty),
+	}, [o]), A = b({
+		extensions: he,
+		editable: !E,
+		onUpdate: ({ editor: e }) => pe(e.isEmpty),
 		editorProps: { attributes: {
 			class: "chat-composer-input",
-			"data-testid": `${E}-input`
+			"data-testid": `${D}-input`
 		} }
-	}, [pe, T]), me = !T && (!ue || k.length > 0), he = l(() => {
+	}, [he]);
+	u(() => {
+		A?.setEditable(!E);
+	}, [A, E]);
+	let j = !E && (!fe || ue.length > 0), ge = l(() => {
 		if (!A) return;
 		let { from: e, to: t } = A.state.selection;
 		O({
@@ -2263,7 +2269,7 @@ function xi({ onSend: t, onSearchPeople: o, allowAttachments: c = !1, allowEmoji
 			href: A.getAttributes("link").href ?? "",
 			text: A.state.doc.textBetween(e, t)
 		});
-	}, [A]), ge = l(({ href: e, text: t }) => {
+	}, [A]), _e = l(({ href: e, text: t }) => {
 		if (!A) return;
 		let n = A.chain().focus(), { empty: r } = A.state.selection;
 		r ? n.insertContent(`<a href="${e}">${t || e}</a>`).run() : t ? n.insertContent(`<a href="${e}">${t}</a>`).run() : n.setLink({ href: e }).run(), O({
@@ -2271,32 +2277,32 @@ function xi({ onSend: t, onSearchPeople: o, allowAttachments: c = !1, allowEmoji
 			href: "",
 			text: ""
 		});
-	}, [A]), _e = l(() => {
-		!A || !me || (t({
+	}, [A]), ve = l(() => {
+		!A || !j || (t({
 			html: A.isEmpty ? "" : A.getHTML(),
 			text: A.getText(),
 			mentions: yi(A),
-			files: k.map((e) => e.file)
-		}), A.commands.clearContent(!0), le([]), de(!0));
+			files: ue.map((e) => e.file)
+		}), A.commands.clearContent(!0), de([]), pe(!0));
 	}, [
 		A,
-		me,
+		j,
 		t,
-		k
+		ue
 	]);
-	D.current = _e, ne.current = he;
-	let ve = l((e) => {
-		!fe || e.length === 0 || le((t) => [...t, ...e.map((e) => ({
+	ne.current = ve, re.current = ge;
+	let ye = l((e) => {
+		!k || e.length === 0 || de((t) => [...t, ...e.map((e) => ({
 			id: `staged-${bi++}`,
 			file: e
 		}))]);
-	}, [fe]), j = (t, n, r, i, a) => /* @__PURE__ */ g("button", {
+	}, [k]), M = (t, n, r, i, a) => /* @__PURE__ */ g("button", {
 		ref: a,
 		type: "button",
 		"aria-label": t,
 		"aria-pressed": n,
 		title: t,
-		disabled: T,
+		disabled: E,
 		onMouseDown: (e) => {
 			e.preventDefault(), r();
 		},
@@ -2304,31 +2310,31 @@ function xi({ onSend: t, onSearchPeople: o, allowAttachments: c = !1, allowEmoji
 		children: i
 	}, t);
 	return /* @__PURE__ */ g(i, {
-		onFiles: ve,
-		disabled: !fe,
+		onFiles: ye,
+		disabled: !k,
 		className: te,
 		children: /* @__PURE__ */ _("div", {
-			"data-testid": E,
+			"data-testid": D,
 			className: "chat-composer rounded-lg border border-border bg-surface focus-within:border-primary",
 			children: [
 				/* @__PURE__ */ g(v, { editor: A }),
 				/* @__PURE__ */ g(hi, {
-					files: k,
-					disabled: T,
-					onRemove: (e) => le((t) => t.filter((t) => t.id !== e))
+					files: ue,
+					disabled: E,
+					onRemove: (e) => de((t) => t.filter((t) => t.id !== e))
 				}),
 				/* @__PURE__ */ _("div", {
 					className: "flex items-center gap-0.5 border-t border-border px-1.5 py-1",
 					children: [
 						A && [
-							j("Bold", A.isActive("bold"), () => A.chain().focus().toggleBold().run(), /* @__PURE__ */ g("b", { children: "B" })),
-							j("Italic", A.isActive("italic"), () => A.chain().focus().toggleItalic().run(), /* @__PURE__ */ g("i", { children: "I" })),
-							j("Strikethrough", A.isActive("strike"), () => A.chain().focus().toggleStrike().run(), /* @__PURE__ */ g("s", { children: "S" })),
-							j("Code", A.isActive("code"), () => A.chain().focus().toggleCode().run(), /* @__PURE__ */ g("span", {
+							M("Bold", A.isActive("bold"), () => A.chain().focus().toggleBold().run(), /* @__PURE__ */ g("b", { children: "B" })),
+							M("Italic", A.isActive("italic"), () => A.chain().focus().toggleItalic().run(), /* @__PURE__ */ g("i", { children: "I" })),
+							M("Strikethrough", A.isActive("strike"), () => A.chain().focus().toggleStrike().run(), /* @__PURE__ */ g("s", { children: "S" })),
+							M("Code", A.isActive("code"), () => A.chain().focus().toggleCode().run(), /* @__PURE__ */ g("span", {
 								className: "font-mono text-[11px]",
 								children: "<>"
 							})),
-							j(A.isActive("link") ? "Edit link" : "Add link", A.isActive("link"), () => he(), /* @__PURE__ */ g("span", {
+							M(A.isActive("link") ? "Edit link" : "Add link", A.isActive("link"), () => ge(), /* @__PURE__ */ g("span", {
 								"aria-hidden": !0,
 								children: "🔗"
 							})),
@@ -2336,52 +2342,52 @@ function xi({ onSend: t, onSearchPeople: o, allowAttachments: c = !1, allowEmoji
 								"aria-hidden": !0,
 								className: "mx-1 h-4 w-px bg-border"
 							}, "sep1"),
-							j("Bulleted list", A.isActive("bulletList"), () => A.chain().focus().toggleBulletList().run(), /* @__PURE__ */ g("span", { children: "•" })),
-							j("Numbered list", A.isActive("orderedList"), () => A.chain().focus().toggleOrderedList().run(), /* @__PURE__ */ g("span", {
+							M("Bulleted list", A.isActive("bulletList"), () => A.chain().focus().toggleBulletList().run(), /* @__PURE__ */ g("span", { children: "•" })),
+							M("Numbered list", A.isActive("orderedList"), () => A.chain().focus().toggleOrderedList().run(), /* @__PURE__ */ g("span", {
 								className: "text-[11px]",
 								children: "1."
 							})),
-							j("Quote", A.isActive("blockquote"), () => A.chain().focus().toggleBlockquote().run(), /* @__PURE__ */ g("span", { children: "❝" }))
+							M("Quote", A.isActive("blockquote"), () => A.chain().focus().toggleBlockquote().run(), /* @__PURE__ */ g("span", { children: "❝" }))
 						],
-						(u || fe) && /* @__PURE__ */ g("span", {
+						(d || k) && /* @__PURE__ */ g("span", {
 							"aria-hidden": !0,
 							className: "mx-1 h-4 w-px bg-border"
 						}),
-						u && A && /* @__PURE__ */ _("span", {
+						d && A && /* @__PURE__ */ _("span", {
 							className: "relative",
-							children: [j("Emoji", ae, () => oe((e) => !e), /* @__PURE__ */ g("span", { children: "🙂" }), ie), /* @__PURE__ */ g(r, {
-								open: ae,
-								triggerRef: ie,
-								onClose: () => oe(!1),
+							children: [M("Emoji", oe, () => se((e) => !e), /* @__PURE__ */ g("span", { children: "🙂" }), ae), /* @__PURE__ */ g(r, {
+								open: oe,
+								triggerRef: ae,
+								onClose: () => se(!1),
 								onSelect: (e) => {
-									A.chain().focus().insertContent(e).run(), oe(!1);
+									A.chain().focus().insertContent(e).run(), se(!1);
 								}
 							})]
 						}),
-						fe && /* @__PURE__ */ _(h, { children: [j("Attach files", !1, () => re.current?.click(), /* @__PURE__ */ g("span", { children: "📎" })), /* @__PURE__ */ g(n, {
-							ref: re,
+						k && /* @__PURE__ */ _(h, { children: [M("Attach files", !1, () => ie.current?.click(), /* @__PURE__ */ g("span", { children: "📎" })), /* @__PURE__ */ g(n, {
+							ref: ie,
 							multiple: !0,
-							"data-testid": `${E}-file-input`,
-							onFiles: ve
+							"data-testid": `${D}-file-input`,
+							onFiles: ye
 						})] }),
 						ee,
 						/* @__PURE__ */ g("button", {
 							type: "button",
-							onClick: _e,
-							disabled: !me,
-							"data-testid": `${E}-send`,
+							onClick: ve,
+							disabled: !j,
+							"data-testid": `${D}-send`,
 							className: "ml-auto rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40",
 							children: "Send"
 						})
 					]
 				}),
 				/* @__PURE__ */ g(s, {
-					open: se.open,
-					initialHref: se.href,
-					initialText: se.text,
-					onSubmit: (e) => ge(d ? {
+					open: ce.open,
+					initialHref: ce.href,
+					initialText: ce.text,
+					onSubmit: (e) => _e(w ? {
 						...e,
-						href: d(e.text) ?? e.href
+						href: w(e.text) ?? e.href
 					} : e),
 					onRemove: () => {
 						A?.chain().focus().unsetLink().run(), O({

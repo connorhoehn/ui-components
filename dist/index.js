@@ -14,12 +14,12 @@ import { a as ze, i as Be, n as Ve, r as He, t as Ue } from "./ToastProvider-BKj
 import { t as H } from "./cn-DhjIN-s0.js";
 import { t as We } from "./useEventCallback-Cwx9QVSi.js";
 import { a as Ge, c as Ke, d as qe, f as Je, h as Ye, i as Xe, l as Ze, m as Qe, n as $e, o as et, p as tt, r as nt, s as rt, t as it, u as at } from "./DetailSection-DD8ayw5R.js";
-import { $ as ot, A as st, B as ct, C as lt, Ct as ut, D as dt, Dt as ft, E as pt, Et as mt, F as ht, G as gt, H as _t, I as vt, J as yt, K as bt, L as xt, M as St, N as Ct, O as wt, Ot as Tt, P as Et, Q as Dt, R as Ot, S as kt, St as At, T as jt, Tt as Mt, U as Nt, V as Pt, W as Ft, X as It, Y as Lt, Z as Rt, _ as zt, _t as Bt, a as Vt, at as Ht, b as Ut, bt as Wt, c as Gt, ct as Kt, d as qt, dt as Jt, et as Yt, f as Xt, ft as Zt, g as Qt, gt as $t, h as en, ht as tn, i as nn, it as rn, j as an, k as on, l as sn, lt as cn, m as ln, mt as un, n as dn, nt as fn, o as pn, ot as mn, p as hn, pt as gn, q as _n, r as vn, rt as yn, s as bn, st as xn, t as Sn, tt as Cn, u as wn, ut as Tn, v as En, vt as Dn, w as On, wt as kn, x as An, xt as jn, y as Mn, yt as Nn, z as Pn } from "./shared-BlGKiwiY.js";
+import { $ as ot, A as st, B as ct, C as lt, Ct as ut, D as dt, Dt as ft, E as pt, Et as mt, F as ht, G as gt, H as _t, I as vt, J as yt, K as bt, L as xt, M as St, N as Ct, O as wt, Ot as Tt, P as Et, Q as Dt, R as Ot, S as kt, St as At, T as jt, Tt as Mt, U as Nt, V as Pt, W as Ft, X as It, Y as Lt, Z as Rt, _ as zt, _t as Bt, a as Vt, at as Ht, b as Ut, bt as Wt, c as Gt, ct as Kt, d as qt, dt as Jt, et as Yt, f as Xt, ft as Zt, g as Qt, gt as $t, h as en, ht as tn, i as nn, it as rn, j as an, k as on, l as sn, lt as cn, m as ln, mt as un, n as dn, nt as fn, o as pn, ot as mn, p as hn, pt as gn, q as _n, r as vn, rt as yn, s as bn, st as xn, t as Sn, tt as Cn, u as wn, ut as Tn, v as En, vt as Dn, w as On, wt as kn, x as An, xt as jn, y as Mn, yt as Nn, z as Pn } from "./shared-CVjsT4_N.js";
 import { t as U } from "./Button-wU9TwJvB.js";
 import { t as Fn } from "./Card-DWAlG4MZ.js";
 import { a as In, c as Ln, i as Rn, l as zn, n as Bn, o as Vn, r as Hn, s as Un, t as Wn } from "./FormField-BpwfwG7t.js";
 import { t as Gn } from "./IconButton-C3DMtvSx.js";
-import { n as Kn, t as qn } from "./SegmentedControl-CQxKJF-Z.js";
+import { n as Kn, t as qn } from "./SegmentedControl-pVesnE3W.js";
 import { t as Jn } from "./Banner-C3Wgh62A.js";
 import { n as Yn, r as Xn, t as Zn } from "./Chart-DUoOhhMu.js";
 import { a as Qn, c as $n, d as er, f as tr, i as nr, l as rr, m as ir, n as ar, o as or, p as sr, r as cr, s as lr, t as ur, u as dr } from "./Chip-YhQI5B9P.js";
@@ -49,7 +49,7 @@ import { n as ti, r as ni, t as ri } from "./ReactionsOverlay-Ob1ecsgg.js";
 import { A as ii, C as ai, D as oi, E as si, M as ci, O as li, S as ui, T as di, _ as fi, a as pi, b as mi, c as hi, d as gi, f as _i, g as vi, h as yi, i as bi, j as xi, k as Si, l as Ci, m as wi, n as Ti, o as Ei, p as Di, r as Oi, s as ki, t as Ai, u as ji, v as Mi, w as Ni, x as Pi, y as Fi } from "./ConversationSurface-_obNFN1T.js";
 import { t as Ii } from "./activationKey-CjbL3LUv.js";
 import { B as Li, C as Ri, D as zi, E as Bi, F as Vi, I as Hi, L as Ui, M as Wi, N as Gi, O as Ki, P as qi, R as Ji, S as Yi, T as Xi, V as Zi, _ as Qi, a as $i, b as ea, c as ta, d as na, f as ra, g as ia, h as aa, i as oa, j as sa, l as ca, m as la, n as ua, o as da, p as fa, r as pa, s as ma, t as ha, u as ga, v as _a, w as va, x as ya, y as ba, z as xa } from "./renderers-9QJtVt3f.js";
-import { n as Sa, t as Ca } from "./ErrorBoundary--K3M6gyv.js";
+import { n as Sa, t as Ca } from "./ErrorBoundary-CntzpCzp.js";
 import { n as wa, r as Ta, t as Ea } from "./EventStreamContext-CLzG8O5_.js";
 import { A as Da, C as Oa, J as ka, M as Aa, T as ja, X as Ma, Z as Na, _ as Pa, b as Fa, c as Ia, d as La, f as Ra, g as za, h as Ba, it as Va, m as Ha, n as Ua, p as Wa, q as Ga, rt as Ka, t as qa, u as Ja, v as Ya, x as Xa, y as Za, z as Qa } from "./services-D-dbQUh6.js";
 import { n as $a, t as eo } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1289,7 +1289,7 @@ function Il() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Ll = Kc(() => import("./DocumentEditorPage-CwYnjwMQ.js").then((e) => e.n));
+var Ll = Kc(() => import("./DocumentEditorPage-Co7Q5a0a.js").then((e) => e.n));
 function Rl({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
