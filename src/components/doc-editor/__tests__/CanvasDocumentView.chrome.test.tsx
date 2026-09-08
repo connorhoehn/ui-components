@@ -9,7 +9,13 @@ import { render, screen, fireEvent, act, cleanup } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useEffect } from 'react';
 import * as Y from 'yjs';
-import CanvasDocumentView, { ZOOM_STORAGE_KEY, readStoredZoom } from '../CanvasDocumentView';
+import CanvasDocumentView, {
+  ZOOM_STORAGE_KEY,
+  readStoredZoom,
+  readStoredZoomSetting,
+  canvasRowChrome,
+} from '../CanvasDocumentView';
+import { ZOOM_FIT } from '../DocumentStatusBar';
 
 /** The listeners the view has subscribed, so a test can fire them. */
 let listeners: Record<string, Array<() => void>> = {};
@@ -270,5 +276,91 @@ describe('CanvasDocumentView — the status bar counts the selection too', () =>
     liveEditor!.state.selection = { from: 5, to: 5, empty: true };
     emit('selectionUpdate');
     expect(screen.queryByTestId('canvas-document-selected-word-count')).toBeNull();
+  });
+});
+
+
+// ── Fit width ────────────────────────────────────────────────────────────────
+//
+// jsdom has no layout, so the SCALE this produces cannot be tested here — every
+// `clientWidth` is zero. What can be tested is the arithmetic it is derived
+// from, and the fact that the choice survives a reload as a rule rather than as
+// the number the rule happened to give.
+describe('fit width', () => {
+  // The row is three children whenever either rail is open — a lone rail is
+  // balanced by a counterweight spacer — so it pays for two gaps either way.
+  // Charging one was what left the fitted sheet 24px too wide.
+  it('charges two gaps for a single rail, not one', () => {
+    expect(canvasRowChrome(true, false, false)).toBe(48 + 280 + 48);
+    expect(canvasRowChrome(false, true, false)).toBe(48 + 220 + 48);
+  });
+
+  it('charges both rails and still only two gaps when both are open', () => {
+    expect(canvasRowChrome(true, true, false)).toBe(48 + 280 + 220 + 48);
+  });
+
+  // No rail, no gap: the row does not set `gap-*` at all in that case.
+  it('charges nothing but padding on a bare page', () => {
+    expect(canvasRowChrome(false, false, false)).toBe(48);
+    expect(canvasRowChrome(false, false, true)).toBe(16);
+  });
+
+  it('follows the row down to its narrow padding and gap', () => {
+    expect(canvasRowChrome(true, false, true)).toBe(16 + 280 + 24);
+  });
+
+  // Remembering the PERCENTAGE would freeze a fit taken in one window and
+  // replay it in another, which is not a fit at all.
+  it('remembers the rule, not the scale it produced', () => {
+    window.localStorage.setItem(ZOOM_STORAGE_KEY, ZOOM_FIT);
+    expect(readStoredZoomSetting()).toBe(ZOOM_FIT);
+    // Callers that only ever wanted a number still get one.
+    expect(readStoredZoom()).toBe(1);
+  });
+
+  it('leaves a stored scale a scale', () => {
+    window.localStorage.setItem(ZOOM_STORAGE_KEY, '1.25');
+    expect(readStoredZoomSetting()).toBe(1.25);
+  });
+
+  it('writes the rule back when the reader picks it', () => {
+    renderView();
+    fireEvent.change(screen.getByTestId('canvas-document-status-bar-zoom'), {
+      target: { value: ZOOM_FIT },
+    });
+    expect(window.localStorage.getItem(ZOOM_STORAGE_KEY)).toBe(ZOOM_FIT);
+    expect(screen.getByTestId('canvas-document-status-bar-zoom')).toHaveValue(ZOOM_FIT);
+  });
+});
+
+// ── The ruler is laid out by the page row's own algorithm ────────────────────
+//
+// It used to centre itself over the workspace and subtract a rail's width in
+// padding, which is a PREDICTION — and the page row's counterweight collapses
+// when the window is tight, so the prediction was wrong exactly when it
+// mattered (measured: a 12px offset at 150% with the gutter open). Mirroring
+// the row is what makes the two incapable of disagreeing; asserting the same
+// rail children is how that stays true.
+describe('the ruler row mirrors the page row', () => {
+  const railClasses = (testId: string) =>
+    [...screen.getByTestId(testId).children].map((c) => c.className);
+
+  it('carries a counterweight opposite a lone gutter, exactly as the page row does', () => {
+    renderView({ gutterItems: [{ id: 'c1', top: 0, content: <span>thread</span> }] });
+    const page = railClasses('canvas-document-page-row');
+    const ruler = railClasses('canvas-document-ruler-row');
+    expect(page).toHaveLength(3);
+    expect(ruler).toHaveLength(3);
+    expect(ruler[0]).toContain('flex-1');
+    expect(ruler[0]).toContain('max-w-[280px]');
+    expect(page[0]).toContain('flex-1');
+    expect(ruler[2]).toContain('w-[280px]');
+    expect(page[2]).toContain('w-[280px]');
+  });
+
+  it('collapses to the sheet alone when no rail is open', () => {
+    renderView();
+    expect(railClasses('canvas-document-ruler-row')).toHaveLength(1);
+    expect(railClasses('canvas-document-page-row')).toHaveLength(1);
   });
 });

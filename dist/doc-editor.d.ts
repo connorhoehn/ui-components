@@ -781,13 +781,25 @@ export declare interface DocumentShareDialogProps {
     'data-testid'?: string;
 }
 
-export declare function DocumentStatusBar({ wordCount, zoom, onZoomChange, children, className, 'data-testid': testId, }: DocumentStatusBarProps): JSX.Element;
+export declare function DocumentStatusBar({ wordCount, zoom, onZoomChange, fitActive, onFitWidth, children, className, 'data-testid': testId, }: DocumentStatusBarProps): JSX.Element;
 
 export declare interface DocumentStatusBarProps {
     /** Document length. Null when unknown — renders nothing rather than "0 words". */
     wordCount?: number | null;
     zoom?: number;
     onZoomChange?: (zoom: number) => void;
+    /**
+     * True while the sheet is tracking the workspace width. The control then
+     * reads "Fit width" rather than the percentage that rule currently produces
+     * — the percentage is an output, and showing it as the selection invites the
+     * reader to think they chose it.
+     */
+    fitActive?: boolean;
+    /**
+     * Offered only when the host can actually do it — it needs to know how much
+     * room the sheet has, which this bar does not. Absent, no Fit option renders.
+     */
+    onFitWidth?: () => void;
     /** Anything else the host wants along the bar (a save state, a page count). */
     children?: ReactNode;
     className?: string;
@@ -1976,6 +1988,16 @@ export declare interface WorkItemRowProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/**
+ * The select value that means "keep the sheet as wide as the space allows".
+ *
+ * A sentinel string rather than a number because fit width is not a scale, it
+ * is a RULE about one: the resulting percentage changes when the window does,
+ * when a rail opens, when the sidebar collapses. Storing the number it happens
+ * to produce would freeze the answer and quietly stop fitting.
+ */
+export declare const ZOOM_FIT = "fit";
 
 /**
  * The scales worth offering. The useful ones are few and the one that matters

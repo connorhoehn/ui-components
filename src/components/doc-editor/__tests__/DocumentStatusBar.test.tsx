@@ -4,7 +4,7 @@
 
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { DocumentStatusBar } from '../DocumentStatusBar';
+import { DocumentStatusBar, ZOOM_FIT } from '../DocumentStatusBar';
 
 afterEach(cleanup);
 
@@ -51,5 +51,54 @@ describe('DocumentStatusBar', () => {
   it('keeps an off-preset scale rather than snapping it', () => {
     render(<DocumentStatusBar zoom={1.1} onZoomChange={vi.fn()} />);
     expect(screen.getByTestId('document-status-bar-zoom')).toHaveValue('1.1');
+  });
+
+  // Fit width — the setting a laptop actually uses, and the one Google Docs
+  // has. Offered only when the host can compute it, because this bar has no
+  // idea how much room the sheet has.
+  describe('fit width', () => {
+    it('offers nothing to fit to when the host cannot do it', () => {
+      render(<DocumentStatusBar zoom={1} onZoomChange={vi.fn()} />);
+      expect(screen.queryByRole('option', { name: 'Fit width' })).toBeNull();
+    });
+
+    it('asks the host to fit rather than reporting a scale', () => {
+      const onFitWidth = vi.fn();
+      const onZoomChange = vi.fn();
+      render(<DocumentStatusBar zoom={1} onZoomChange={onZoomChange} onFitWidth={onFitWidth} />);
+      fireEvent.change(screen.getByTestId('document-status-bar-zoom'), {
+        target: { value: ZOOM_FIT },
+      });
+      expect(onFitWidth).toHaveBeenCalledTimes(1);
+      // The percentage is the host's business — a NaN here is what you get
+      // from parsing the sentinel as a number.
+      expect(onZoomChange).not.toHaveBeenCalled();
+    });
+
+    it('reads as the rule, not as the percentage the rule produced', () => {
+      render(
+        <DocumentStatusBar zoom={1.47} fitActive onZoomChange={vi.fn()} onFitWidth={vi.fn()} />,
+      );
+      expect(screen.getByTestId('document-status-bar-zoom')).toHaveValue(ZOOM_FIT);
+    });
+
+    // The fitted scale changes as the window is dragged; listing it put a
+    // preset in the menu that appeared, moved and vanished with the mouse.
+    it('does not add the fitted scale to the presets', () => {
+      render(
+        <DocumentStatusBar zoom={1.47} fitActive onZoomChange={vi.fn()} onFitWidth={vi.fn()} />,
+      );
+      expect(screen.queryByRole('option', { name: '147%' })).toBeNull();
+      expect(screen.getByRole('option', { name: '150%' })).toBeInTheDocument();
+    });
+
+    it('still leaves a fixed scale selectable while fitting', () => {
+      const onZoomChange = vi.fn();
+      render(
+        <DocumentStatusBar zoom={1.47} fitActive onZoomChange={onZoomChange} onFitWidth={vi.fn()} />,
+      );
+      fireEvent.change(screen.getByTestId('document-status-bar-zoom'), { target: { value: '1' } });
+      expect(onZoomChange).toHaveBeenCalledWith(1);
+    });
   });
 });

@@ -30,7 +30,7 @@ import { cn } from '../../lib/cn';
 import TiptapEditor from './TiptapEditor';
 import { DocumentRuler } from './DocumentRuler';
 import { DocumentOutline } from './DocumentOutline';
-import { DocumentStatusBar } from './DocumentStatusBar';
+import { DocumentStatusBar, ZOOM_FIT } from './DocumentStatusBar';
 import { useDocumentOutline, useDocumentWordCount } from './useDocumentOutline';
 import DocumentToolbar from './DocumentToolbar';
 import DocumentGutter, { type GutterItem } from './DocumentGutter';
@@ -67,6 +67,53 @@ const GUTTER_BELOW_WORKSPACE = 16;
  * this file reads as if there were two page heights.
  */
 const PAGE_HEIGHT = DOC_PAGE_HEIGHT;
+
+/** The other half of the same sheet: 8.5in at 96dpi. */
+const PAGE_WIDTH = 816;
+
+/**
+ * The page row's own horizontal padding, both sides, at each of its two widths
+ * (`px-2` and `sm:px-6`). Fit width has to subtract exactly what the row will
+ * spend, or the "fitted" sheet overflows by that much and the workspace grows a
+ * horizontal scrollbar at the one setting whose whole promise is that it does
+ * not need one.
+ */
+const ROW_PADDING_X = { base: 16, sm: 48 } as const;
+/** Tailwind's `sm`. */
+const SM_BREAKPOINT = 640;
+/** The row's `gap-3 sm:gap-6`, which it only sets when a rail is present. */
+const ROW_GAP = { base: 12, sm: 24 } as const;
+/** Rail widths, mirroring the page row's own classes. */
+const GUTTER_RAIL = 280;
+const OUTLINE_RAIL = 220;
+
+/**
+ * What the page row spends on everything that is not the sheet.
+ *
+ * The gaps are counted separately from the rails and that is not a detail: the
+ * row is three children whenever EITHER rail is open, because a lone rail is
+ * balanced by a counterweight spacer, so it pays for two gaps either way. The
+ * spacer's own width is not charged — at the fitted scale it has nothing left
+ * to take and collapses to zero, which is what keeps this arithmetic and the
+ * row's own layout agreeing. Charging one gap instead of two is what left the
+ * "fitted" sheet 24px too wide, eating the row's right padding.
+ */
+export function canvasRowChrome(
+  showGutter: boolean,
+  showOutline: boolean,
+  narrow: boolean,
+): number {
+  const padding = narrow ? ROW_PADDING_X.base : ROW_PADDING_X.sm;
+  const gap = narrow ? ROW_GAP.base : ROW_GAP.sm;
+  const rails = (showGutter ? GUTTER_RAIL : 0) + (showOutline ? OUTLINE_RAIL : 0);
+  const gaps = showGutter || showOutline ? gap * 2 : 0;
+  return padding + rails + gaps;
+}
+
+/** The bounds a display scale may take, shared by the store reader and fit width. */
+const MIN_ZOOM = 0.25;
+const MAX_ZOOM = 4;
+const clampZoom = (z: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z));
 
 /**
  * How many whole sheets a stack of `heightPx` occupies.
@@ -122,12 +169,29 @@ export const ZOOM_STORAGE_KEY = 'uic:canvas-document:zoom';
  * drives zoom past the presets still gets its value back.
  */
 export function readStoredZoom(): number {
+  const setting = readStoredZoomSetting();
+  return setting === ZOOM_FIT ? 1 : setting;
+}
+
+/**
+ * The remembered zoom SETTING — a scale, or the fit-width rule.
+ *
+ * Fit width has to survive a reload like any other choice, and it cannot be
+ * remembered as the percentage it produced: the window it fitted is not
+ * necessarily the window it comes back to, and a "fit" that is really a frozen
+ * 183% is worse than no fit at all. So the rule itself is what is stored.
+ *
+ * `readStoredZoom` stays as it was — a number, always — because callers outside
+ * this file only ever wanted a scale.
+ */
+export function readStoredZoomSetting(): number | typeof ZOOM_FIT {
   if (typeof window === 'undefined') return 1;
   try {
     const raw = window.localStorage.getItem(ZOOM_STORAGE_KEY);
     if (raw === null) return 1;
+    if (raw === ZOOM_FIT) return ZOOM_FIT;
     const n = Number(raw);
-    return Number.isFinite(n) && n >= 0.25 && n <= 4 ? n : 1;
+    return Number.isFinite(n) && n >= MIN_ZOOM && n <= MAX_ZOOM ? n : 1;
   } catch {
     return 1;
   }
@@ -399,14 +463,89 @@ export default function CanvasDocumentView({
   //
   // ONE key, not one per document, for the same reason: the preference is
   // about eyesight and screen size, which do not change per document.
-  const [zoom, setZoomState] = useState(readStoredZoom);
-  const setZoom = useCallback((next: number) => {
-    setZoomState(next);
-    // Storage throws outright in some privacy modes rather than returning
-    // null, and a zoom control that takes the page down is worse than one that
-    // forgets. Failing to remember is the correct degradation.
+  const commentCount = gutterItems?.length ?? 0;
+  // Two conditions, not one: there has to be something to show, AND the gutter
+  // has to be switched on. Splitting them is what lets the toolbar keep
+  // reporting the count while the column itself is gone.
+  // A docked call keeps the gutter open on its own. Without this the call
+  // would vanish the moment a document had no comments, which is most of them.
+  const showGutter = (commentCount > 0 || !!gutterLead) && gutterVisible;
+
+  // Hoisted above the zoom block below, which has to charge fit width for the
+  // rails before it can resolve a scale — and `zoom` is a dependency of nearly
+  // everything after it. All three inputs are props, so nothing is lost by
+  // deriving it here.
+
+  const [zoomSetting, setZoomSetting] = useState<number | typeof ZOOM_FIT>(readStoredZoomSetting);
+  // Storage throws outright in some privacy modes rather than returning
+  // null, and a zoom control that takes the page down is worse than one that
+  // forgets. Failing to remember is the correct degradation.
+  const rememberZoom = useCallback((next: number | typeof ZOOM_FIT) => {
     try { window.localStorage.setItem(ZOOM_STORAGE_KEY, String(next)); } catch { /* not remembered */ }
   }, []);
+  const setZoom = useCallback((next: number) => {
+    setZoomSetting(next);
+    rememberZoom(next);
+  }, [rememberZoom]);
+  const setFitWidth = useCallback(() => {
+    setZoomSetting(ZOOM_FIT);
+    rememberZoom(ZOOM_FIT);
+  }, [rememberZoom]);
+
+  // The workspace owns the scroll and therefore owns the width the sheet has to
+  // fit INTO. Declared here rather than beside its height measurement further
+  // down because fit width needs it before `zoom` is resolved, and `zoom` is a
+  // dependency of nearly everything below.
+  const workspaceRef = useRef<HTMLDivElement | null>(null);
+
+  // Fit width: a rule, re-evaluated, not a number chosen once.
+  //
+  // Google Docs has this and it is the setting a laptop actually uses — an
+  // 816px sheet in a 1300px workspace wastes a third of the screen at 100%, and
+  // the fixed presets step straight past the one scale that would use it
+  // (125% is too small, 150% overflows and starts a sideways scroll). What the
+  // reader wants is "as big as it goes", which is a function of the window.
+  //
+  // Charging for the rails but not for the counterweight spacer is deliberate
+  // and self-consistent: at the fitted scale the sheet takes every pixel the
+  // row has left, so the `flex-1 max-w-[280px]` counterweight collapses to
+  // nothing anyway — and if it were charged for, the sheet would be sized for a
+  // column that then vanishes and the page would sit off-centre by half of it.
+  const [fitZoom, setFitZoom] = useState(1);
+  useEffect(() => {
+    const el = workspaceRef.current;
+    if (!el) return;
+    const measure = () => {
+      const narrow = window.innerWidth < SM_BREAKPOINT;
+      const available = el.clientWidth - canvasRowChrome(showGutter, showOutline, narrow);
+      // Floored to a whole percent, and floored rather than rounded. The raw
+      // ratio changes on every scrollbar appearing and disappearing, and an
+      // unrounded zoom re-lays-out the whole document for a third of a pixel;
+      // a percent is below the threshold where anyone could see the difference
+      // and above the one where it thrashes. Rounding UP could put the sheet a
+      // pixel wider than the room it was measured for, which starts the
+      // sideways scroll this setting exists to remove — so it never rounds up.
+      setFitZoom(clampZoom(Math.floor((available / PAGE_WIDTH) * 100) / 100));
+    };
+    measure();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', measure);
+      return () => window.removeEventListener('resize', measure);
+    }
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+    // `isCanvas`/`body` for the same reason the height measurement below takes
+    // them: the workspace does not exist until the document is known to be a
+    // canvas, so the first run of this effect finds a null ref. Without them
+    // fit width sat at its 1.0 default forever on any document that arrived
+    // after mount — which is every document, since the Y.Doc loads
+    // asynchronously. Verified: reloading with the setting stored as `fit` gave
+    // an 816px sheet in a 1576px workspace.
+  }, [showGutter, showOutline, isCanvas, body]);
+
+  const zoom = zoomSetting === ZOOM_FIT ? fitZoom : zoomSetting;
+  const fitActive = zoomSetting === ZOOM_FIT;
 
   // The ruler measures the sheet by MEASURING it, not by predicting it.
   //
@@ -463,7 +602,6 @@ export default function CanvasDocumentView({
   // Capping the height here (rather than in the host page) keeps this working
   // wherever the view is embedded: measure our own distance from the top of
   // the viewport and take the rest of it.
-  const workspaceRef = useRef<HTMLDivElement | null>(null);
   const [workspaceHeight, setWorkspaceHeight] = useState<number | null>(null);
   useEffect(() => {
     const el = workspaceRef.current;
@@ -588,14 +726,6 @@ export default function CanvasDocumentView({
       editor.off('update', refresh);
     };
   }, [editor]);
-
-  const commentCount = gutterItems?.length ?? 0;
-  // Two conditions, not one: there has to be something to show, AND the gutter
-  // has to be switched on. Splitting them is what lets the toolbar keep
-  // reporting the count while the column itself is gone.
-  // A docked call keeps the gutter open on its own. Without this the call
-  // would vanish the moment a document had no comments, which is most of them.
-  const showGutter = (commentCount > 0 || !!gutterLead) && gutterVisible;
 
   const handleConvert = async () => {
     if (!onConvert || converting) return; // a second click races the first
@@ -752,7 +882,34 @@ export default function CanvasDocumentView({
               without it the margins are visible but not measurable, and you
               cannot find the same measure twice. */}
           {showRuler && (
-            <DocumentRuler
+            // A ROW WITH THE SAME SHAPE AS THE PAGE ROW, not a padded strip.
+            //
+            // The ruler used to centre itself over the workspace and subtract a
+            // rail's width in padding to compensate — which is a PREDICTION of
+            // where the sheet will land, and it is wrong exactly when the
+            // window is small enough for the prediction to matter. The page
+            // row's counterweight is `flex-1 max-w-[280px]`: it COLLAPSES when
+            // the row cannot afford it, and the sheet slides over by half of
+            // whatever it gave up, while the ruler's fixed padding did not
+            // move. Measured on a 1728px window at 150% with the gutter open:
+            // the sheet ran 152→1376 and the ruler track 140→1364, a 12px lie
+            // on top of everything else the ruler was already saying.
+            //
+            // Mirroring the row instead means the two are laid out by the same
+            // algorithm on the same free space, so they cannot disagree —
+            // whatever the rails do, they do it to both.
+            <div
+              data-testid={`${testId}-ruler-row`}
+              className={cn(
+                'flex px-2 sm:px-6 pt-3',
+                (showGutter || showOutline) && 'gap-3 sm:gap-6',
+              )}
+            >
+              {showGutter && !showOutline && (
+                <div aria-hidden className="flex-1 max-w-[280px]" />
+              )}
+              {showOutline && <div aria-hidden className="w-[220px] shrink-0" />}
+              <DocumentRuler
               // DOCUMENT pixels, all three of them, with `zoom` handed over
               // separately — the ruler owns the one conversion to screen px.
               //
@@ -776,21 +933,19 @@ export default function CanvasDocumentView({
               marginLeft={96}
               marginRight={96}
               zoom={zoom}
-              // Same horizontal padding as the page row below, so the two
-              // share a left edge once the workspace scrolls — without it the
-              // ruler starts 24px left of the paper it is measuring.
-              className="pt-3 px-2 sm:px-6"
-              // Shifted by half the gutter column so the ruler stays centred
-              // over the SHEET rather than over the row, which is wider than
-              // the sheet whenever a thread is open beside it.
-              // Centred over the SHEET, not the row: each open column shifts
-              // the sheet, and a ruler that measured the row would be off by
-              // half a column the moment either one appeared.
-              style={{
-                ...(showGutter ? { paddingRight: 280 + 24 } : {}),
-                ...(showOutline ? { paddingLeft: 220 + 24 } : {}),
-              }}
+              // The sheet's own slot in the row: auto margins to centre it in
+              // whatever the rails leave, a fixed width so it is the same box
+              // the paper is. The width is the MEASURED paper width — already
+              // in screen pixels — so the two match even when the sheet is
+              // clamped narrower than a letter page.
+              className="mx-auto shrink-0"
+              style={paperWidth === null ? undefined : { width: paperWidth }}
             />
+              {showGutter && <div aria-hidden className="w-[280px] shrink-0" />}
+              {showOutline && !showGutter && (
+                <div aria-hidden className="flex-1 max-w-[280px]" />
+              )}
+            </div>
           )}
           <div
             data-testid={`${testId}-page-row`}
@@ -965,6 +1120,8 @@ export default function CanvasDocumentView({
             wordCount={wordCount}
             zoom={zoom}
             onZoomChange={setZoom}
+            fitActive={fitActive}
+            onFitWidth={setFitWidth}
             data-testid={`${testId}-status-bar`}
           >
             {/* Only while something IS selected. A standing "0 selected"
@@ -988,7 +1145,25 @@ export default function CanvasDocumentView({
                 1 of 1" is a sentence about nothing, so that case keeps the
                 plain length. */}
             {paginate && (
-              <span data-testid={`${testId}-page-count`} className="tabular-nums">
+              <span
+                data-testid={`${testId}-page-count`}
+                className="tabular-nums"
+                // Named as an ESTIMATE, in the one place a reader can ask.
+                //
+                // The screen and the printer do not paginate the same way and
+                // cannot be made to: `pageFlow` pushes a whole block past a
+                // seam rather than slicing an image or orphaning a line, while
+                // a printer splits a paragraph wherever the sheet ends. On this
+                // corpus the screen model runs about 1.3x the printed count,
+                // and that gap is the price of not cutting a figure in half —
+                // it is not a bug to fix by making the screen split paragraphs.
+                //
+                // What IS a bug is a bare number that reads as the printed
+                // length. A tooltip, not a visible "~", because the count's
+                // main job is navigation ("the table is on page 4"), for which
+                // it is exact — the screen is the thing being navigated.
+                title="Approximate. Pages are counted as this view lays them out, and a printed copy may run shorter — the screen never splits a paragraph or an image across a page break."
+              >
                 {pageCount === 1 ? '1 page' : `Page ${currentPage} of ${pageCount}`}
               </span>
             )}

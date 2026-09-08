@@ -119,7 +119,7 @@ export { DocumentOutline } from './DocumentOutline';
 export type { DocumentOutlineProps, OutlineEntry } from './DocumentOutline';
 export { useDocumentOutline, readOutline } from './useDocumentOutline';
 
-export { DocumentStatusBar, ZOOM_STEPS } from './DocumentStatusBar';
+export { DocumentStatusBar, ZOOM_STEPS, ZOOM_FIT } from './DocumentStatusBar';
 export type { DocumentStatusBarProps } from './DocumentStatusBar';
 
 export { DocumentOwnership } from './DocumentOwnership';

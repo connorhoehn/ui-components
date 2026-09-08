@@ -237,6 +237,23 @@
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.18);
 
   --font-code: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
+
+  /* The DOCUMENT face, deliberately not the app's.
+   *
+   * `system-ui` is the app's chrome font — on a Mac it is the same SF the
+   * toolbar, the sidebar and every button are set in, so a page set in it reads
+   * as one more panel of the application rather than as a sheet of paper. A
+   * word processor's default face is a printing face, and the whole reason its
+   * page looks like a page is that the prose is visibly NOT the UI.
+   *
+   * Arial because that is the default the reference product ships, so a
+   * document written here and one written there set to the same measure. The
+   * fallbacks are the same metric family, so a machine without Arial gets the
+   * same line breaks rather than a different document.
+   *
+   * Only the PAGE takes it (`.doc-page` below). The compact section editors and
+   * the chat composer keep the UI font: they are widgets, not paper. */
+  --font-paper: Arial, "Helvetica Neue", Helvetica, "Liberation Sans", sans-serif;
 }
 
 /* ── Dark palette ─────────────────────────────────────────────────────
@@ -663,6 +680,13 @@
    and painting it here would reintroduce exactly the themed-ink-on-fixed-paper
    bug the token block above exists to prevent.
    --------------------------------------------------------------------------- */
+.doc-page {
+  /* Set on the PAGE, not on `.ProseMirror`, so everything the sheet contains —
+     prose, macro chrome, a comment highlight's tooltip — is in one face, and so
+     the toolbar's "Default" font option means the same thing as no font at all. */
+  font-family: var(--font-paper, Arial, "Helvetica Neue", Helvetica, sans-serif);
+}
+
 .doc-page .ProseMirror {
   font-size: 16px;
   line-height: 1.65;
@@ -670,6 +694,26 @@
   /* A document wraps like prose. `pre-wrap` from the widget rules would
      preserve every run of spaces the user's paste happened to carry. */
   white-space: normal;
+
+  /* THE MARGIN IS THE PAGE'S, AND THE EDITOR MAY NOT ADD TO IT.
+   *
+   * The consuming app paints `.ProseMirror` as a small rounded card —
+   * `padding: 12px 14px; border-radius: 6px` — which is right for the inline
+   * section editors it was written for and wrong on a sheet of paper: it insets
+   * the text a further 14px INSIDE the one-inch margin the page just laid out.
+   *
+   * Measured in the browser on a US Letter page at 150%: the text column came
+   * out 596px where the page's own margins define 624px (6.5in), and the first
+   * character sat 110 document px from the paper's edge instead of 96. The
+   * ruler above draws its margin markers at the page's figures, so it was
+   * pointing at a column the text did not occupy — 22 document px out, which is
+   * most of a quarter inch and the one thing a ruler exists not to do.
+   *
+   * Two classes beats the app's one, so this wins without an `!important`.
+   * Background is left alone deliberately: the app paints paper there to keep
+   * dark-mode ink legible, and the sheet under it is the same white. */
+  padding: 0;
+  border-radius: 0;
 }
 
 /* Plain block margins, NOT a `> * + *` sibling rule. That rule looks tidier
