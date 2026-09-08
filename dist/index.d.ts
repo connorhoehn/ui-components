@@ -1038,6 +1038,10 @@ export declare interface BoardColumnProps {
     'data-testid'?: string;
 }
 
+export declare function BooleanEditorRenderer(props: SectionRendererProps): JSX.Element;
+
+export declare function BooleanReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
+
 export declare const borderRadius: {
     readonly sm: string;
     readonly md: string;
@@ -3421,6 +3425,10 @@ export declare interface DataTableProps<T> {
     className?: string;
     'data-testid'?: string;
 }
+
+export declare function DateEditorRenderer(props: SectionRendererProps): JSX.Element;
+
+export declare function DateReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
 
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
@@ -7063,6 +7071,8 @@ export declare interface NotificationItem {
     category?: string;
 }
 
+export declare function NumberEditorRenderer(props: SectionRendererProps): JSX.Element;
+
 export declare const NumberInput: ForwardRefExoticComponent<NumberInputProps & RefAttributes<HTMLInputElement>>;
 
 export declare interface NumberInputProps {
@@ -7110,6 +7120,8 @@ export declare interface NumberInputProps {
     required?: boolean;
     'data-testid'?: string;
 }
+
+export declare function NumberReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
 
 declare type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
@@ -10681,6 +10693,10 @@ export declare interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLT
     invalid?: boolean;
     'data-testid'?: string;
 }
+
+export declare function TextEditorRenderer(props: SectionRendererProps): JSX.Element;
+
+export declare function TextReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
 
 declare interface TextSelectionData {
     start: number;

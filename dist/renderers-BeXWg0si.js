@@ -998,44 +998,44 @@ function P(e) {
 	let r = new Date(t);
 	return Number.isNaN(r.getTime()) ? null : r;
 }
-function F(e = /* @__PURE__ */ new Date()) {
+function he(e = /* @__PURE__ */ new Date()) {
 	let t = new Date(e.getTime());
 	return t.setHours(0, 0, 0, 0), t;
 }
-function I(e, t = /* @__PURE__ */ new Date()) {
+function F(e, t = /* @__PURE__ */ new Date()) {
 	let n = P(e);
-	return n ? F(n).getTime() < F(t).getTime() : !1;
+	return n ? he(n).getTime() < he(t).getTime() : !1;
 }
 //#endregion
 //#region src/components/doc-editor/TaskItemRow.tsx
-var he = {
+var ge = {
 	pending: "var(--color-text-tertiary)",
 	acked: "var(--color-info)",
 	done: "var(--color-success)",
 	rejected: "var(--color-danger)"
-}, L = {
+}, I = {
 	low: "var(--color-text-tertiary)",
 	medium: "var(--color-caution)",
 	high: "var(--color-danger)"
-}, ge = {
+}, _e = {
 	start: "var(--color-success)",
 	stop: "var(--color-danger)",
 	continue: "var(--color-info)"
 };
-function _e(e) {
+function ve(e) {
 	let t = P(e);
 	return t ? t.toLocaleDateString("en-US", {
 		month: "short",
 		day: "numeric"
 	}) : e;
 }
-function ve(e) {
-	return I(e);
+function ye(e) {
+	return F(e);
 }
-function R(e) {
+function L(e) {
 	return e.split(/\s+/).map((e) => e[0]).join("").toUpperCase().slice(0, 2);
 }
-function z({ item: e, editable: t, onUpdate: a, onRemove: c, autoFocusText: u, onDidAutoFocus: v }) {
+function R({ item: e, editable: t, onUpdate: a, onRemove: c, autoFocusText: u, onDidAutoFocus: v }) {
 	let [y, b] = m(!1), [x, S] = m(""), [C, w] = m(0), T = p(null), E = p(null), D = p(null), ee = () => {
 		a({ status: e.status === "done" ? "pending" : "done" });
 	}, te = e.assignee ? n.find((t) => t.displayName === e.assignee) : void 0, O = x.trim() ? r(x) : n, ne = d(() => {
@@ -1062,14 +1062,14 @@ function z({ item: e, editable: t, onUpdate: a, onRemove: c, autoFocusText: u, o
 	}, [u, v]);
 	let M = (e) => {
 		e.key === "Escape" ? k() : e.key === "ArrowDown" ? (e.preventDefault(), w((e) => Math.min(e + 1, O.length - 1))) : e.key === "ArrowUp" ? (e.preventDefault(), w((e) => Math.max(e - 1, 0))) : e.key === "Enter" && (e.preventDefault(), O[C] && A(O[C]));
-	}, N = e.dueDate && e.status !== "done" ? ve(e.dueDate) : !1;
+	}, N = e.dueDate && e.status !== "done" ? ye(e.dueDate) : !1;
 	return /* @__PURE__ */ _("div", {
 		className: i("flex items-center gap-2 py-1.5 border-b border-border-subtle"),
 		children: [
 			/* @__PURE__ */ g("span", {
 				title: `Priority: ${e.priority}`,
 				className: i("w-2 h-2 rounded-full shrink-0"),
-				style: { background: L[e.priority] }
+				style: { background: I[e.priority] }
 			}),
 			/* @__PURE__ */ g(l, {
 				checked: e.status === "done",
@@ -1091,12 +1091,12 @@ function z({ item: e, editable: t, onUpdate: a, onRemove: c, autoFocusText: u, o
 				children: [
 					N ? "⚠ " : "",
 					"Due: ",
-					_e(e.dueDate)
+					ve(e.dueDate)
 				]
 			}),
 			e.category && /* @__PURE__ */ g("span", {
 				className: i("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap"),
-				style: { backgroundColor: ge[e.category.toLowerCase()] ?? "var(--color-neutral)" },
+				style: { backgroundColor: _e[e.category.toLowerCase()] ?? "var(--color-neutral)" },
 				children: e.category
 			}),
 			/* @__PURE__ */ _("div", {
@@ -1110,7 +1110,7 @@ function z({ item: e, editable: t, onUpdate: a, onRemove: c, autoFocusText: u, o
 					children: e.assignee ? /* @__PURE__ */ _(h, { children: [/* @__PURE__ */ g("span", {
 						className: i("w-[18px] h-[18px] rounded-full text-white inline-flex items-center justify-center text-[8px] font-bold shrink-0 leading-none"),
 						style: { background: te?.color ?? "var(--color-text-tertiary)" },
-						children: R(e.assignee)
+						children: L(e.assignee)
 					}), /* @__PURE__ */ g("span", {
 						className: i("ml-1 text-[11px]"),
 						children: e.assignee.split(" ")[0]
@@ -1150,7 +1150,7 @@ function z({ item: e, editable: t, onUpdate: a, onRemove: c, autoFocusText: u, o
 							children: [/* @__PURE__ */ g("span", {
 								className: i("w-[22px] h-[22px] rounded-full text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"),
 								style: { background: e.color },
-								children: R(e.displayName)
+								children: L(e.displayName)
 							}), /* @__PURE__ */ g("span", { children: e.displayName })]
 						}, e.userId)),
 						O.length === 0 && /* @__PURE__ */ g("div", {
@@ -1165,7 +1165,7 @@ function z({ item: e, editable: t, onUpdate: a, onRemove: c, autoFocusText: u, o
 				disabled: !t,
 				onChange: (e) => a({ priority: e.target.value }),
 				className: i("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
-				style: { backgroundColor: L[e.priority] },
+				style: { backgroundColor: I[e.priority] },
 				title: `Priority: ${e.priority}`,
 				options: [
 					{
@@ -1187,7 +1187,7 @@ function z({ item: e, editable: t, onUpdate: a, onRemove: c, autoFocusText: u, o
 				disabled: !t,
 				onChange: (e) => a({ status: e.target.value }),
 				className: i("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
-				style: { backgroundColor: he[e.status] },
+				style: { backgroundColor: ge[e.status] },
 				title: `Status: ${e.status}`,
 				options: [
 					{
@@ -1220,7 +1220,7 @@ function z({ item: e, editable: t, onUpdate: a, onRemove: c, autoFocusText: u, o
 }
 //#endregion
 //#region src/components/doc-editor/TaskList.tsx
-function B({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastItem: a }) {
+function z({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastItem: a }) {
 	if (e.length === 0) return /* @__PURE__ */ g("div", {
 		className: i("text-text-tertiary text-[13px] italic py-2"),
 		children: "No tasks yet."
@@ -1228,7 +1228,7 @@ function B({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastI
 	let o = a?.current ?? !1;
 	return /* @__PURE__ */ g("div", {
 		className: i("py-2"),
-		children: e.map((i, s) => /* @__PURE__ */ g(z, {
+		children: e.map((i, s) => /* @__PURE__ */ g(R, {
 			item: i,
 			editable: t,
 			onUpdate: (e) => n(i.id, e),
@@ -1242,14 +1242,14 @@ function B({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastI
 }
 //#endregion
 //#region src/renderers/sectionItems.ts
-function V(e) {
+function B(e) {
 	let t = e.items;
 	return Array.isArray(t) ? t.filter((e) => e != null) : [];
 }
 //#endregion
 //#region src/renderers/default/DefaultRenderer.tsx
-function ye({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
-	let d = V(e), f = p(!1);
+function be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
+	let d = B(e), f = p(!1);
 	return /* @__PURE__ */ _("div", { children: [
 		t && n && /* @__PURE__ */ g(u, {
 			fragment: t,
@@ -1264,7 +1264,7 @@ function ye({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 			sectionId: e.id,
 			onUpdateCursorInfo: l
 		}),
-		(d.length > 0 || a) && /* @__PURE__ */ g(B, {
+		(d.length > 0 || a) && /* @__PURE__ */ g(z, {
 			items: d,
 			editable: a,
 			onUpdateItem: (e, t) => s?.(e, t),
@@ -1291,7 +1291,7 @@ function ye({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextEditorRenderer.tsx
-function be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
+function xe({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
 	return !t || !n ? /* @__PURE__ */ g("div", {
 		className: "text-text-tertiary italic text-[13px] py-2",
 		children: "No content yet."
@@ -1311,7 +1311,7 @@ function be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextReaderRenderer.tsx
-function xe({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i }) {
+function Se({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i }) {
 	return /* @__PURE__ */ _("div", { children: [t && n ? /* @__PURE__ */ g("div", {
 		className: "border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-text-primary leading-[1.6]",
 		children: /* @__PURE__ */ g(u, {
@@ -1337,12 +1337,12 @@ function xe({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor:
 }
 //#endregion
 //#region src/renderers/tasks/TasksEditorRenderer.tsx
-function Se({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
-	let a = V(e), o = p(!1);
+function Ce({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
+	let a = B(e), o = p(!1);
 	return /* @__PURE__ */ _("div", {
 		className: "py-1",
 		children: [
-			a.length > 0 || t ? /* @__PURE__ */ g(B, {
+			a.length > 0 || t ? /* @__PURE__ */ g(z, {
 				items: a,
 				editable: t,
 				onUpdateItem: (e, t) => r?.(e, t),
@@ -1374,7 +1374,7 @@ function Se({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveIt
 }
 //#endregion
 //#region src/renderers/tasks/TasksReaderRenderer.tsx
-var Ce = {
+var we = {
 	pending: {
 		label: "Pending",
 		color: "var(--color-warning-fg)",
@@ -1395,26 +1395,26 @@ var Ce = {
 		color: "var(--color-danger-fg)",
 		bg: "var(--color-danger-bg)"
 	}
-}, we = {
+}, Te = {
 	high: "var(--color-danger)",
 	medium: "var(--color-caution)",
 	low: "var(--color-text-tertiary)"
 };
-function Te(e) {
-	return I(e);
-}
 function Ee(e) {
+	return F(e);
+}
+function De(e) {
 	let t = P(e);
 	return t ? t.toLocaleDateString("en-US", {
 		month: "short",
 		day: "numeric"
 	}) : e;
 }
-function De(e) {
+function Oe(e) {
 	return e.split(/\s+/).map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function H({ item: e, onUpdateItem: t }) {
-	let [n, r] = m(!1), [a, o] = m(!1), s = n || a, c = Ce[e.status] ?? Ce.pending, l = we[e.priority] ?? we.medium, u = e.dueDate && e.status === "pending" ? Te(e.dueDate) : !1, d = e.status === "done" || e.status === "acked";
+function V({ item: e, onUpdateItem: t }) {
+	let [n, r] = m(!1), [a, o] = m(!1), s = n || a, c = we[e.status] ?? we.pending, l = Te[e.priority] ?? Te.medium, u = e.dueDate && e.status === "pending" ? Ee(e.dueDate) : !1, d = e.status === "done" || e.status === "acked";
 	return /* @__PURE__ */ _("div", {
 		onMouseEnter: () => r(!0),
 		onMouseLeave: () => r(!1),
@@ -1480,7 +1480,7 @@ function H({ item: e, onUpdateItem: t }) {
 			e.assignee && /* @__PURE__ */ g("span", {
 				title: e.assignee,
 				className: "w-[22px] h-[22px] rounded-full bg-primary-bg text-primary-fg text-[9px] font-bold flex items-center justify-center shrink-0",
-				children: De(e.assignee)
+				children: Oe(e.assignee)
 			}),
 			e.dueDate && /* @__PURE__ */ _("span", {
 				style: {
@@ -1494,7 +1494,7 @@ function H({ item: e, onUpdateItem: t }) {
 					whiteSpace: "nowrap",
 					flexShrink: 0
 				},
-				children: [u ? "⚠ " : "", Ee(e.dueDate)]
+				children: [u ? "⚠ " : "", De(e.dueDate)]
 			}),
 			t && s && /* @__PURE__ */ _("select", {
 				"aria-label": `Set status for ${e.text || "untitled item"}`,
@@ -1536,8 +1536,8 @@ function H({ item: e, onUpdateItem: t }) {
 		]
 	});
 }
-function Oe({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
-	let r = V(e);
+function ke({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
+	let r = B(e);
 	if (r.length === 0) return /* @__PURE__ */ g("div", {
 		className: "text-text-tertiary italic text-[13px] py-1",
 		children: "No items."
@@ -1546,19 +1546,19 @@ function Oe({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
 	return /* @__PURE__ */ _("div", { children: [
 		o.length > 0 && /* @__PURE__ */ g("div", {
 			className: "mb-1",
-			children: o.map((e) => /* @__PURE__ */ g(H, {
+			children: o.map((e) => /* @__PURE__ */ g(V, {
 				item: e,
 				onUpdateItem: t
 			}, e.id))
 		}),
 		i.length > 0 && /* @__PURE__ */ g("div", {
 			className: "mb-1",
-			children: i.map((e) => /* @__PURE__ */ g(H, {
+			children: i.map((e) => /* @__PURE__ */ g(V, {
 				item: e,
 				onUpdateItem: t
 			}, e.id))
 		}),
-		a.length > 0 && /* @__PURE__ */ g("div", { children: a.map((e) => /* @__PURE__ */ g(H, {
+		a.length > 0 && /* @__PURE__ */ g("div", { children: a.map((e) => /* @__PURE__ */ g(V, {
 			item: e,
 			onUpdateItem: t
 		}, e.id)) }),
@@ -1572,7 +1572,7 @@ function Oe({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
 }
 //#endregion
 //#region src/renderers/checklist/ChecklistEditorRenderer.tsx
-function ke({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
+function Ae({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
 	let c = p(null), l = e.status === "done", u = a(r);
 	return f(() => {
 		n && c.current && (c.current.focus(), u());
@@ -1604,8 +1604,8 @@ function ke({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 		]
 	});
 }
-function Ae({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
-	let d = V(e), f = p(null), m = () => {
+function je({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
+	let d = B(e), f = p(null), m = () => {
 		o && (f.current = d.length, o({
 			text: "",
 			status: "pending",
@@ -1641,7 +1641,7 @@ function Ae({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 		}),
 		/* @__PURE__ */ g("div", { children: d.map((e, t) => {
 			let n = t === d.length - 1, r = v && n;
-			return /* @__PURE__ */ g(ke, {
+			return /* @__PURE__ */ g(Ae, {
 				item: e,
 				editable: a,
 				autoFocus: r,
@@ -1662,8 +1662,8 @@ function Ae({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/checklist/ChecklistReaderRenderer.tsx
-function je({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, onNavigateToEditor: o }) {
-	let s = V(e), c = s.length, l = s.filter((e) => e.status === "done").length, d = c > 0 ? Math.round(l / c * 100) : 0;
+function Me({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, onNavigateToEditor: o }) {
+	let s = B(e), c = s.length, l = s.filter((e) => e.status === "done").length, d = c > 0 ? Math.round(l / c * 100) : 0;
 	return /* @__PURE__ */ _("div", { children: [
 		t && n && /* @__PURE__ */ g("div", {
 			className: "mb-2.5",
@@ -1735,24 +1735,24 @@ function je({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: a, on
 }
 //#endregion
 //#region src/renderers/decisions/approvalSync.ts
-var Me = {
+var Ne = {
 	acked: "approved",
 	done: "approved",
 	rejected: "rejected"
 };
-function Ne() {
+function Pe() {
 	return "";
 }
-function Pe() {
+function Fe() {
 	if (typeof window > "u") return null;
 	let e = window.location.pathname.match(/\/documents\/([^/?#]+)/);
 	return e ? e[1] : null;
 }
-function Fe(e) {
-	return Me[e] ?? null;
+function Ie(e) {
+	return Ne[e] ?? null;
 }
-async function Ie(e) {
-	let t = e.documentId ?? Pe();
+async function Le(e) {
+	let t = e.documentId ?? Fe();
 	if (!t) return {
 		ok: !1,
 		error: "no documentId in URL"
@@ -1760,7 +1760,7 @@ async function Ie(e) {
 	try {
 		let n = { "Content-Type": "application/json" };
 		e.idToken && (n.Authorization = `Bearer ${e.idToken}`);
-		let r = await fetch(`${Ne()}/api/approvals`, {
+		let r = await fetch(`${Pe()}/api/approvals`, {
 			method: "POST",
 			headers: n,
 			body: JSON.stringify({
@@ -1784,7 +1784,7 @@ async function Ie(e) {
 }
 //#endregion
 //#region src/renderers/decisions/DecisionsEditorRenderer.tsx
-var Le = {
+var Re = {
 	pending: {
 		label: "Open",
 		icon: "○",
@@ -1810,8 +1810,8 @@ var Le = {
 		bg: "var(--color-danger-bg)"
 	}
 };
-function Re({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
-	let c = p(null), l = Le[e.status] ?? Le.pending, u = a(r);
+function ze({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o, onRemove: s }) {
+	let c = p(null), l = Re[e.status] ?? Re.pending, u = a(r);
 	return f(() => {
 		n && c.current && (c.current.focus(), u());
 	}, [n, u]), /* @__PURE__ */ _("div", {
@@ -1867,8 +1867,8 @@ function Re({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: o
 		]
 	});
 }
-function ze({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
-	let d = V(e), f = p(null), m = () => {
+function Be({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
+	let d = B(e), f = p(null), m = () => {
 		o && (f.current = d.length, o({
 			text: "",
 			status: "pending",
@@ -1899,7 +1899,7 @@ function ze({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 		}),
 		/* @__PURE__ */ g("div", { children: d.map((t, n) => {
 			let r = n === d.length - 1, o = v && r;
-			return /* @__PURE__ */ g(Re, {
+			return /* @__PURE__ */ g(ze, {
 				item: t,
 				editable: a,
 				autoFocus: o,
@@ -1909,8 +1909,8 @@ function ze({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 				onUpdate: (n) => {
 					let r = t.status;
 					if (s?.(t.id, n), n.status && n.status !== r) {
-						let t = Fe(n.status);
-						t && Ie({
+						let t = Ie(n.status);
+						t && Le({
 							sectionId: e.id,
 							decision: t,
 							reviewerName: i?.name
@@ -1930,7 +1930,7 @@ function ze({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/decisions/DecisionsReaderRenderer.tsx
-var U = {
+var H = {
 	pending: {
 		label: "Open",
 		icon: "○",
@@ -1956,8 +1956,8 @@ var U = {
 		bg: "var(--color-danger-bg)"
 	}
 };
-function Be({ item: e }) {
-	let t = U[e.status] ?? U.pending;
+function Ve({ item: e }) {
+	let t = H[e.status] ?? H.pending;
 	return /* @__PURE__ */ _("div", {
 		className: "flex items-start gap-2 py-1.5 border-b border-border-subtle",
 		children: [
@@ -1987,37 +1987,37 @@ function Be({ item: e }) {
 		]
 	});
 }
-function W({ label: e, color: t, items: n }) {
+function U({ label: e, color: t, items: n }) {
 	return /* @__PURE__ */ _("div", {
 		className: "mb-2",
 		children: [/* @__PURE__ */ g("div", {
 			className: "text-[10px] font-bold uppercase tracking-[0.05em] mb-0.5",
 			style: { color: t },
 			children: e
-		}), n.map((e) => /* @__PURE__ */ g(Be, { item: e }, e.id))]
+		}), n.map((e) => /* @__PURE__ */ g(Ve, { item: e }, e.id))]
 	});
 }
-function Ve({ section: e, onNavigateToEditor: t }) {
-	let n = V(e);
+function He({ section: e, onNavigateToEditor: t }) {
+	let n = B(e);
 	if (n.length === 0) return /* @__PURE__ */ g("div", {
 		className: "text-text-tertiary italic text-[13px] py-1",
 		children: "No decisions recorded."
 	});
 	let r = n.filter((e) => e.status === "acked" || e.status === "done"), i = n.filter((e) => e.status === "rejected"), a = n.filter((e) => !r.includes(e) && !i.includes(e));
 	return /* @__PURE__ */ _("div", { children: [
-		a.length > 0 && /* @__PURE__ */ g(W, {
+		a.length > 0 && /* @__PURE__ */ g(U, {
 			label: "Open",
-			color: U.pending.color,
+			color: H.pending.color,
 			items: a
 		}),
-		r.length > 0 && /* @__PURE__ */ g(W, {
+		r.length > 0 && /* @__PURE__ */ g(U, {
 			label: "Decided",
-			color: U.acked.color,
+			color: H.acked.color,
 			items: r
 		}),
-		i.length > 0 && /* @__PURE__ */ g(W, {
+		i.length > 0 && /* @__PURE__ */ g(U, {
 			label: "Vetoed",
-			color: U.rejected.color,
+			color: H.rejected.color,
 			items: i
 		}),
 		t && /* @__PURE__ */ g("button", {
@@ -2030,11 +2030,11 @@ function Ve({ section: e, onNavigateToEditor: t }) {
 }
 //#endregion
 //#region src/renderers/file-upload/FileUploadEditorRenderer.tsx
-function He(e) {
+function Ue(e) {
 	return e.metadata ?? {};
 }
-function Ue({ section: e, editable: t, onUpdateSection: n }) {
-	let r = He(e), [a, o] = m(!1), s = (t) => {
+function We({ section: e, editable: t, onUpdateSection: n }) {
+	let r = Ue(e), [a, o] = m(!1), s = (t) => {
 		o(!0);
 		let r = new FileReader();
 		r.onload = () => {
@@ -2096,7 +2096,7 @@ function Ue({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/file-upload/FileUploadReaderRenderer.tsx
-function We({ section: e }) {
+function Ge({ section: e }) {
 	let t = e.metadata ?? {};
 	return t.fileName ? /* @__PURE__ */ _("div", {
 		"data-testid": `file-upload-reader-${e.id}`,
@@ -2130,7 +2130,7 @@ function We({ section: e }) {
 }
 //#endregion
 //#region src/renderers/diagram/DiagramEditorRenderer.tsx
-function Ge({ section: e, editable: t, onUpdateSection: n }) {
+function Ke({ section: e, editable: t, onUpdateSection: n }) {
 	let r = e.metadata ?? {}, [a, o] = m(!1), s = (t) => {
 		o(!0);
 		let i = new FileReader();
@@ -2198,7 +2198,7 @@ function Ge({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/diagram/DiagramReaderRenderer.tsx
-function Ke({ section: e }) {
+function qe({ section: e }) {
 	let t = e.metadata ?? {};
 	return t.imageDataUrl ? /* @__PURE__ */ _("figure", {
 		"data-testid": `diagram-reader-${e.id}`,
@@ -2219,18 +2219,18 @@ function Ke({ section: e }) {
 }
 //#endregion
 //#region src/renderers/link-block/LinkBlockEditorRenderer.tsx
-function qe(e) {
+function Je(e) {
 	return typeof e == "object" && !!e;
 }
-function Je(e) {
+function Ye(e) {
 	let t = e.metadata ?? {};
-	return Array.isArray(t.links) ? t.links.filter(qe).map((e) => ({
+	return Array.isArray(t.links) ? t.links.filter(Je).map((e) => ({
 		label: typeof e.label == "string" ? e.label : "",
 		url: typeof e.url == "string" ? e.url : ""
 	})) : [];
 }
-function Ye({ section: e, editable: t, onUpdateSection: n }) {
-	let r = Je(e), i = (t) => {
+function Xe({ section: e, editable: t, onUpdateSection: n }) {
+	let r = Ye(e), i = (t) => {
 		n?.({ metadata: {
 			...e.metadata ?? {},
 			links: t
@@ -2297,11 +2297,11 @@ function Ye({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/link-block/LinkBlockReaderRenderer.tsx
-function Xe(e) {
+function Ze(e) {
 	return typeof e == "object" && !!e && typeof e.url == "string";
 }
-function Ze({ section: e }) {
-	let t = e.metadata ?? {}, n = Array.isArray(t.links) ? t.links.filter((e) => Xe(e) && e.url) : [];
+function Qe({ section: e }) {
+	let t = e.metadata ?? {}, n = Array.isArray(t.links) ? t.links.filter((e) => Ze(e) && e.url) : [];
 	return n.length === 0 ? /* @__PURE__ */ g("div", {
 		"data-testid": `link-block-reader-empty-${e.id}`,
 		className: "text-text-tertiary text-[13px] italic",
@@ -2323,41 +2323,41 @@ function Ze({ section: e }) {
 }
 //#endregion
 //#region src/renderers/scalarValue.ts
-var G = "value";
-function Qe(e) {
+var W = "value";
+function $e(e) {
 	return e.metadata ?? {};
 }
-function K(e) {
-	return Qe(e)[G];
-}
-function $e(e) {
-	let t = K(e);
-	return typeof t == "string" ? t : "";
+function G(e) {
+	return $e(e)[W];
 }
 function et(e) {
-	let t = K(e);
+	let t = G(e);
+	return typeof t == "string" ? t : "";
+}
+function tt(e) {
+	let t = G(e);
 	if (typeof t == "number") return Number.isFinite(t) ? t : void 0;
 	if (typeof t == "string" && t.trim() !== "") {
 		let e = Number(t);
 		if (Number.isFinite(e)) return e;
 	}
 }
-function q(e) {
-	let t = K(e);
+function K(e) {
+	let t = G(e);
 	return typeof t == "boolean" ? t : void 0;
 }
-var tt = /^(\d{4}-\d{2}-\d{2})/;
-function nt(e) {
-	let t = K(e);
+var nt = /^(\d{4}-\d{2}-\d{2})/;
+function rt(e) {
+	let t = G(e);
 	if (typeof t != "string") return "";
-	let n = tt.exec(t.trim());
+	let n = nt.exec(t.trim());
 	return n ? n[1] : "";
 }
-function J(e, t) {
-	let n = { ...Qe(e) };
-	return t === void 0 ? delete n[G] : n[G] = t, { metadata: n };
+function q(e, t) {
+	let n = { ...$e(e) };
+	return t === void 0 ? delete n[W] : n[W] = t, { metadata: n };
 }
-function rt(e) {
+function it(e) {
 	let t = /* @__PURE__ */ new Date(`${e}T00:00:00Z`);
 	return Number.isNaN(t.getTime()) ? e : t.toLocaleDateString(void 0, {
 		year: "numeric",
@@ -2366,10 +2366,10 @@ function rt(e) {
 		timeZone: "UTC"
 	});
 }
-function it(e) {
+function at(e) {
 	return e.toLocaleString(void 0, { maximumFractionDigits: 20 });
 }
-function at(e) {
+function ot(e) {
 	if (!e) return "";
 	try {
 		return e.toString().replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
@@ -2379,8 +2379,8 @@ function at(e) {
 }
 //#endregion
 //#region src/renderers/LegacyProseNote.tsx
-function Y({ sectionId: e, fragment: t }) {
-	let n = at(t);
+function J({ sectionId: e, fragment: t }) {
+	let n = ot(t);
 	return n ? /* @__PURE__ */ _("div", {
 		"data-testid": `scalar-legacy-note-${e}`,
 		className: "mt-1.5 text-[12px] text-text-tertiary break-words",
@@ -2396,13 +2396,13 @@ function Y({ sectionId: e, fragment: t }) {
 }
 //#endregion
 //#region src/renderers/text/TextReaderRenderer.tsx
-function X({ section: e, fragment: t }) {
-	let n = $e(e);
+function Y({ section: e, fragment: t }) {
+	let n = et(e);
 	return n.trim() === "" ? /* @__PURE__ */ _("div", { children: [/* @__PURE__ */ g("div", {
 		"data-testid": `text-field-empty-${e.id}`,
 		className: "text-text-tertiary italic text-[13px]",
 		children: "Not set."
-	}), /* @__PURE__ */ g(Y, {
+	}), /* @__PURE__ */ g(J, {
 		sectionId: e.id,
 		fragment: t
 	})] }) : /* @__PURE__ */ g("div", {
@@ -2413,10 +2413,10 @@ function X({ section: e, fragment: t }) {
 }
 //#endregion
 //#region src/renderers/text/TextEditorRenderer.tsx
-function ot(e) {
+function st(e) {
 	let { section: t, editable: n, fragment: r, onUpdateSection: i } = e;
-	if (!n) return /* @__PURE__ */ g(X, { ...e });
-	let a = $e(t);
+	if (!n) return /* @__PURE__ */ g(Y, { ...e });
+	let a = et(t);
 	return /* @__PURE__ */ _("div", {
 		"data-testid": `text-field-editor-${t.id}`,
 		children: [/* @__PURE__ */ g(o, {
@@ -2424,8 +2424,8 @@ function ot(e) {
 			value: a,
 			"aria-label": t.title,
 			placeholder: t.placeholder || "Enter text…",
-			onChange: (e) => i?.(J(t, e.target.value || void 0))
-		}), a === "" && /* @__PURE__ */ g(Y, {
+			onChange: (e) => i?.(q(t, e.target.value || void 0))
+		}), a === "" && /* @__PURE__ */ g(J, {
 			sectionId: t.id,
 			fragment: r
 		})]
@@ -2433,28 +2433,28 @@ function ot(e) {
 }
 //#endregion
 //#region src/renderers/date/DateReaderRenderer.tsx
-function Z({ section: e, fragment: t }) {
-	let n = nt(e);
+function X({ section: e, fragment: t }) {
+	let n = rt(e);
 	return n ? /* @__PURE__ */ g("time", {
 		"data-testid": `date-field-reader-${e.id}`,
 		dateTime: n,
 		className: "text-[13px] text-text-primary font-medium tabular-nums",
-		children: rt(n)
+		children: it(n)
 	}) : /* @__PURE__ */ _("div", { children: [/* @__PURE__ */ g("div", {
 		"data-testid": `date-field-empty-${e.id}`,
 		className: "text-text-tertiary italic text-[13px]",
 		children: "No date set."
-	}), /* @__PURE__ */ g(Y, {
+	}), /* @__PURE__ */ g(J, {
 		sectionId: e.id,
 		fragment: t
 	})] });
 }
 //#endregion
 //#region src/renderers/date/DateEditorRenderer.tsx
-function st(e) {
+function ct(e) {
 	let { section: t, editable: n, fragment: r, onUpdateSection: i } = e;
-	if (!n) return /* @__PURE__ */ g(Z, { ...e });
-	let a = nt(t);
+	if (!n) return /* @__PURE__ */ g(X, { ...e });
+	let a = rt(t);
 	return /* @__PURE__ */ _("div", {
 		"data-testid": `date-field-editor-${t.id}`,
 		children: [/* @__PURE__ */ _("div", {
@@ -2467,13 +2467,13 @@ function st(e) {
 						"data-testid": `date-field-input-${t.id}`,
 						value: a,
 						"aria-label": t.title,
-						onChange: (e) => i?.(J(t, e.target.value || void 0))
+						onChange: (e) => i?.(q(t, e.target.value || void 0))
 					})
 				}),
 				a ? /* @__PURE__ */ g("span", {
 					"data-testid": `date-field-formatted-${t.id}`,
 					className: "text-[12px] text-text-tertiary tabular-nums",
-					children: rt(a)
+					children: it(a)
 				}) : /* @__PURE__ */ g("span", {
 					"data-testid": `date-field-hint-${t.id}`,
 					className: "text-[12px] text-text-tertiary italic",
@@ -2482,12 +2482,12 @@ function st(e) {
 				a && /* @__PURE__ */ g("button", {
 					type: "button",
 					"data-testid": `date-field-clear-${t.id}`,
-					onClick: () => i?.(J(t, void 0)),
+					onClick: () => i?.(q(t, void 0)),
 					className: "bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0 font-inherit",
 					children: "Clear"
 				})
 			]
-		}), !a && /* @__PURE__ */ g(Y, {
+		}), !a && /* @__PURE__ */ g(J, {
 			sectionId: t.id,
 			fragment: r
 		})]
@@ -2495,27 +2495,27 @@ function st(e) {
 }
 //#endregion
 //#region src/renderers/number/NumberReaderRenderer.tsx
-function Q({ section: e, fragment: t }) {
-	let n = et(e);
+function Z({ section: e, fragment: t }) {
+	let n = tt(e);
 	return n === void 0 ? /* @__PURE__ */ _("div", { children: [/* @__PURE__ */ g("div", {
 		"data-testid": `number-field-empty-${e.id}`,
 		className: "text-text-tertiary italic text-[13px]",
 		children: "No value."
-	}), /* @__PURE__ */ g(Y, {
+	}), /* @__PURE__ */ g(J, {
 		sectionId: e.id,
 		fragment: t
 	})] }) : /* @__PURE__ */ g("div", {
 		"data-testid": `number-field-reader-${e.id}`,
 		className: "text-[13px] text-text-primary font-medium tabular-nums",
-		children: it(n)
+		children: at(n)
 	});
 }
 //#endregion
 //#region src/renderers/number/NumberEditorRenderer.tsx
-function ct(e) {
+function lt(e) {
 	let { section: t, editable: n, fragment: r, onUpdateSection: i } = e;
-	if (!n) return /* @__PURE__ */ g(Q, { ...e });
-	let a = et(t);
+	if (!n) return /* @__PURE__ */ g(Z, { ...e });
+	let a = tt(t);
 	return /* @__PURE__ */ _("div", {
 		"data-testid": `number-field-editor-${t.id}`,
 		children: [/* @__PURE__ */ g("div", {
@@ -2525,10 +2525,10 @@ function ct(e) {
 				value: a,
 				"aria-label": t.title,
 				placeholder: t.placeholder || "Enter a number…",
-				onChange: (e) => i?.(J(t, e)),
-				onClear: () => i?.(J(t, void 0))
+				onChange: (e) => i?.(q(t, e)),
+				onClear: () => i?.(q(t, void 0))
 			})
-		}), a === void 0 && /* @__PURE__ */ g(Y, {
+		}), a === void 0 && /* @__PURE__ */ g(J, {
 			sectionId: t.id,
 			fragment: r
 		})]
@@ -2536,13 +2536,13 @@ function ct(e) {
 }
 //#endregion
 //#region src/renderers/boolean/BooleanReaderRenderer.tsx
-function $({ section: e, fragment: t }) {
-	let n = q(e);
+function Q({ section: e, fragment: t }) {
+	let n = K(e);
 	return n === void 0 ? /* @__PURE__ */ _("div", { children: [/* @__PURE__ */ g("div", {
 		"data-testid": `boolean-field-empty-${e.id}`,
 		className: "text-text-tertiary italic text-[13px]",
 		children: "Not answered."
-	}), /* @__PURE__ */ g(Y, {
+	}), /* @__PURE__ */ g(J, {
 		sectionId: e.id,
 		fragment: t
 	})] }) : /* @__PURE__ */ g("div", {
@@ -2553,10 +2553,10 @@ function $({ section: e, fragment: t }) {
 }
 //#endregion
 //#region src/renderers/boolean/BooleanEditorRenderer.tsx
-function lt(e) {
+function $(e) {
 	let { section: t, editable: n, fragment: r, onUpdateSection: a } = e;
-	if (!n) return /* @__PURE__ */ g($, { ...e });
-	let o = q(t);
+	if (!n) return /* @__PURE__ */ g(Q, { ...e });
+	let o = K(t);
 	return /* @__PURE__ */ _("div", {
 		"data-testid": `boolean-field-editor-${t.id}`,
 		children: [/* @__PURE__ */ _("div", {
@@ -2567,7 +2567,7 @@ function lt(e) {
 					checked: o === !0,
 					indeterminate: o === void 0,
 					"aria-label": t.title,
-					onChange: (e) => a?.(J(t, e))
+					onChange: (e) => a?.(q(t, e))
 				}),
 				/* @__PURE__ */ g("span", {
 					"data-testid": `boolean-field-status-${t.id}`,
@@ -2577,17 +2577,17 @@ function lt(e) {
 				o !== void 0 && /* @__PURE__ */ g("button", {
 					type: "button",
 					"data-testid": `boolean-field-clear-${t.id}`,
-					onClick: () => a?.(J(t, void 0)),
+					onClick: () => a?.(q(t, void 0)),
 					className: "bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0 font-inherit",
 					children: "Clear"
 				})
 			]
-		}), o === void 0 && /* @__PURE__ */ g(Y, {
+		}), o === void 0 && /* @__PURE__ */ g(J, {
 			sectionId: t.id,
 			fragment: r
 		})]
 	});
 }
-e(re), e(ie), e(ae), e(oe), e(se), e(ce), e(le), e(ue), e(de), e(fe), e(pe), t("*", "*", ye), t("rich-text", "editor", be), t("rich-text", "ack", xe), t("rich-text", "reader", xe), t("tasks", "editor", Se), t("tasks", "ack", Oe), t("tasks", "reader", Oe), t("checklist", "editor", Ae), t("checklist", "ack", je), t("checklist", "reader", je), t("decisions", "editor", ze), t("decisions", "ack", Ve), t("decisions", "reader", Ve), t("file-upload", "editor", Ue), t("file-upload", "ack", We), t("file-upload", "reader", We), t("diagram", "editor", Ge), t("diagram", "ack", Ke), t("diagram", "reader", Ke), t("link-block", "editor", Ye), t("link-block", "ack", Ze), t("link-block", "reader", Ze), t("text", "editor", ot), t("text", "ack", X), t("text", "reader", X), t("date", "editor", st), t("date", "ack", Z), t("date", "reader", Z), t("number", "editor", ct), t("number", "ack", Q), t("number", "reader", Q), t("boolean", "editor", lt), t("boolean", "ack", $), t("boolean", "reader", $), t("checkbox", "editor", lt), t("checkbox", "ack", $), t("checkbox", "reader", $);
+e(re), e(ie), e(ae), e(oe), e(se), e(ce), e(le), e(ue), e(de), e(fe), e(pe), t("*", "*", be), t("rich-text", "editor", xe), t("rich-text", "ack", Se), t("rich-text", "reader", Se), t("tasks", "editor", Ce), t("tasks", "ack", ke), t("tasks", "reader", ke), t("checklist", "editor", je), t("checklist", "ack", Me), t("checklist", "reader", Me), t("decisions", "editor", Be), t("decisions", "ack", He), t("decisions", "reader", He), t("file-upload", "editor", We), t("file-upload", "ack", Ge), t("file-upload", "reader", Ge), t("diagram", "editor", Ke), t("diagram", "ack", qe), t("diagram", "reader", qe), t("link-block", "editor", Xe), t("link-block", "ack", Qe), t("link-block", "reader", Qe), t("text", "editor", st), t("text", "ack", Y), t("text", "reader", Y), t("date", "editor", ct), t("date", "ack", X), t("date", "reader", X), t("number", "editor", lt), t("number", "ack", Z), t("number", "reader", Z), t("boolean", "editor", $), t("boolean", "ack", Q), t("boolean", "reader", Q), t("checkbox", "editor", $), t("checkbox", "ack", Q), t("checkbox", "reader", Q);
 //#endregion
-export { j as a, v as i, B as n, N as o, z as r, M as s, ye as t };
+export { ct as a, Y as c, R as d, v as f, M as h, Z as i, be as l, N as m, Q as n, X as o, j as p, lt as r, st as s, $ as t, z as u };
