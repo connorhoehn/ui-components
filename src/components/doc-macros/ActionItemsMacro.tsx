@@ -54,12 +54,14 @@ import {
     addItemEdit,
     readActionItems,
     removeItemEdit,
+    removeItemKeyEdit,
+    setItemKeyEdit,
     setItemTextEdit,
     toggleItemEdit,
     type ActionItem,
     type TextRangeEdit,
 } from './actionItemsText';
-import { ActionItemsBlock } from './ActionItemsBlock';
+import { ActionItemsBlock, type AssignablePerson } from './ActionItemsBlock';
 
 declare module '@tiptap/core' {
     // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -75,16 +77,41 @@ declare module '@tiptap/core' {
 // The node view
 // ---------------------------------------------------------------------------
 
+export interface ActionItemsMacroOptions {
+    /**
+     * Who an item can be assigned to. `id` is the AUTH SUBJECT, because that
+     * is what `/api/items/mine` queries on — a display name here is what once
+     * left that endpoint unable to find a single assigned item.
+     *
+     * Read through a getter for the same reason `HitlMacroOptions.people` is:
+     * a roster arrives after the editor is built and changes while it is open,
+     * and an extension configured once must not freeze the first list it saw.
+     *
+     * Omitted renders no picker, which is the right answer for a host with no
+     * directory: a control listing nobody is worse than no control.
+     */
+    people?: () => readonly AssignablePerson[];
+}
+
 class ActionItemsView extends ReactMacroView {
     private items: ActionItem[];
 
-    constructor(ctx: MacroViewContext, items: ActionItem[]) {
+    constructor(
+        ctx: MacroViewContext,
+        items: ActionItem[],
+        private readonly options: ActionItemsMacroOptions = {},
+    ) {
         super(ctx, ACTION_ITEMS_MACRO_NAME);
         this.items = items;
         this.schedule();
     }
 
     protected element() {
+        // An EMPTY roster is the same answer as no roster: a picker whose only
+        // choice is "unassigned" says there is nobody to assign to, when the
+        // truth is that the directory has not loaded. `refreshMacroViews`
+        // is how the host brings the picker in once it has.
+        const people = this.options.people?.() ?? [];
         return (
             <ActionItemsBlock
                 items={this.items}
@@ -95,6 +122,22 @@ class ActionItemsView extends ReactMacroView {
                 }
                 onRemoveItem={(i) => this.apply(removeItemEdit(this.node.textContent, i))}
                 onAddItem={() => this.apply(addItemEdit(this.node.textContent, ''))}
+                {...(people.length ? { people } : {})}
+                {...(people.length
+                    ? {
+                        // One range over the item's own `assignee:` line,
+                        // exactly as ticking is one range over `status:` —
+                        // never a payload rewrite. Unassigning REMOVES the key
+                        // rather than blanking it, because absent is what this
+                        // format means by unassigned.
+                        onAssign: (i: number, id: string) =>
+                            this.apply(
+                                id
+                                    ? setItemKeyEdit(this.node.textContent, i, 'assignee', id)
+                                    : removeItemKeyEdit(this.node.textContent, i, 'assignee'),
+                            ),
+                    }
+                    : {})}
                 {...(this.editable ? { onRemove: () => this.removeBlock() } : {})}
             />
         );
@@ -143,7 +186,7 @@ class ActionItemsView extends ReactMacroView {
  * Exported so a host can register it into a `MacroRenderers` list directly
  * instead of adding the extension — the two are equivalent.
  */
-export function actionItemsRenderer(): MacroRenderer {
+export function actionItemsRenderer(options: ActionItemsMacroOptions = {}): MacroRenderer {
     return {
         macroName: ACTION_ITEMS_MACRO_NAME,
         // Cheap enough to run on every transaction, and it is the route back:
@@ -152,7 +195,7 @@ export function actionItemsRenderer(): MacroRenderer {
         accepts: (node) => readActionItems(node.textContent) !== null,
         create: (ctx: MacroViewContext) => {
             const items = readActionItems(ctx.node.textContent);
-            return items ? new ActionItemsView(ctx, items) : null;
+            return items ? new ActionItemsView(ctx, items, options) : null;
         },
     };
 }
@@ -161,8 +204,12 @@ export function actionItemsRenderer(): MacroRenderer {
 // The extension
 // ---------------------------------------------------------------------------
 
-export const ActionItemsMacro = Extension.create({
+export const ActionItemsMacro = Extension.create<ActionItemsMacroOptions>({
     name: 'actionItemsMacro',
+
+    addOptions() {
+        return {};
+    },
 
     addStorage: macroRendererStorage,
 
@@ -197,7 +244,7 @@ export const ActionItemsMacro = Extension.create({
     },
 
     addProseMirrorPlugins(): Plugin[] {
-        return macroRendererPlugins(this.editor, this.name, actionItemsRenderer());
+        return macroRendererPlugins(this.editor, this.name, actionItemsRenderer(this.options));
     },
 });
 

@@ -33,6 +33,7 @@ export {
     macroRendererPlugins,
     macroNodeViewPlugin,
     hostsMacroNodeViews,
+    refreshMacroViews,
 } from './registry';
 export type {
     MacroRenderer,
@@ -51,8 +52,9 @@ export type { MacroRenderersOptions } from './MacroRenderers';
 
 // The first renderer registered through the registry.
 export { ActionItemsMacro, actionItemsRenderer } from './ActionItemsMacro';
+export type { ActionItemsMacroOptions } from './ActionItemsMacro';
 export { ActionItemsBlock } from './ActionItemsBlock';
-export type { ActionItemsBlockProps } from './ActionItemsBlock';
+export type { ActionItemsBlockProps, AssignablePerson } from './ActionItemsBlock';
 export {
     ACTION_ITEMS_MACRO_NAME,
     STATUS_DONE,
@@ -64,6 +66,7 @@ export {
     setItemTextEdit,
     addItemEdit,
     removeItemEdit,
+    removeItemKeyEdit,
     yamlScalar,
 } from './actionItemsText';
 export type { ActionItem, TextRangeEdit } from './actionItemsText';

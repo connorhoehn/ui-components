@@ -290,10 +290,39 @@ function fallbackView(node: PmNode, renderer: MacroRenderer | undefined): MacroN
     return nodeView;
 }
 
+/**
+ * The live node views of one editor, hung off the plugin so a host can reach
+ * them. See `refreshMacroViews`.
+ */
+interface MacroViewsPlugin extends Plugin {
+    macroViews?: Set<MacroNodeView>;
+}
+
+/**
+ * Repaints every macro block in an editor.
+ *
+ * A node view only redraws when its own TEXT changes, which is right for a
+ * payload and wrong for everything a renderer reads from OUTSIDE the document
+ * — a roster, a clock, the signed-in user. Those arrive after the editor is
+ * built and change while it is open, and without this a control that depends
+ * on one (the action-item assignee picker is the first) never appears until
+ * somebody happens to edit that block.
+ *
+ * Returns false when this editor has no macro renderers at all, so a caller
+ * can tell "nothing to repaint" from "repainted nothing".
+ */
+export function refreshMacroViews(view: EditorView): boolean {
+    const plugin = macroRenderersPluginKey.get(view.state) as MacroViewsPlugin | undefined;
+    const live = plugin?.macroViews;
+    if (!live) return false;
+    live.forEach((v) => v.refresh?.());
+    return true;
+}
+
 export function macroNodeViewPlugin(registry: MacroRendererRegistry): Plugin {
     const live = new Set<MacroNodeView>();
 
-    return new Plugin({
+    const plugin: MacroViewsPlugin = new Plugin({
         key: macroRenderersPluginKey,
         props: {
             nodeViews: {
@@ -336,6 +365,8 @@ export function macroNodeViewPlugin(registry: MacroRendererRegistry): Plugin {
             };
         },
     });
+    plugin.macroViews = live;
+    return plugin;
 }
 
 /**

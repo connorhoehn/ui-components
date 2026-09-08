@@ -12,6 +12,8 @@ import {
     addItemEdit,
     readActionItems,
     removeItemEdit,
+    removeItemKeyEdit,
+    setItemKeyEdit,
     setItemTextEdit,
     toggleItemEdit,
     yamlScalar,
@@ -174,6 +176,73 @@ describe('adding, removing and retitling', () => {
     it('refuses a multi-line title rather than writing a broken block scalar', () => {
         expect(setItemTextEdit(CHASSIS_BODY, 0, 'two\nlines')).toBeNull();
         expect(yamlScalar('two\nlines')).toBeNull();
+    });
+});
+
+describe('assigning', () => {
+    it('inserts `assignee` where sortKeys would have put it', () => {
+        // `assignee` sorts before `status`, so it lands on the marker line and
+        // pushes the rest of the item down — the body stays byte-identical to
+        // what the chassis would emit for the same data.
+        expect(apply(CHASSIS_BODY, setItemKeyEdit(CHASSIS_BODY, 0, 'assignee', 'bob'))).toBe(
+            [
+                'items:',
+                '  - assignee: bob',
+                '    status: pending',
+                '    text: ship it',
+                '  - assignee: ana',
+                "    due: '2026-09-10'",
+                '    status: done',
+                '    text: wire it',
+            ].join('\n'),
+        );
+    });
+
+    it('reassigns by replacing the scalar alone', () => {
+        const edit = setItemKeyEdit(CHASSIS_BODY, 1, 'assignee', 'bob');
+        expect(CHASSIS_BODY.slice(edit!.from, edit!.to)).toBe('ana');
+        expect(readActionItems(apply(CHASSIS_BODY, edit))?.[1]!.assignee).toBe('bob');
+    });
+
+    it('unassigning REMOVES the key, so nothing reads as assigned to nobody', () => {
+        // The item's first line carries the `- ` marker, so the line survives
+        // and the next key moves up onto it.
+        expect(apply(CHASSIS_BODY, removeItemKeyEdit(CHASSIS_BODY, 1, 'assignee'))).toBe(
+            [
+                'items:',
+                '  - status: pending',
+                '    text: ship it',
+                "  - due: '2026-09-10'",
+                '    status: done',
+                '    text: wire it',
+            ].join('\n'),
+        );
+        expect(
+            readActionItems(apply(CHASSIS_BODY, removeItemKeyEdit(CHASSIS_BODY, 1, 'assignee')))?.[1]!
+                .assignee,
+        ).toBeNull();
+    });
+
+    it('removes a continuation line together with its own break', () => {
+        expect(apply(CHASSIS_BODY, removeItemKeyEdit(CHASSIS_BODY, 1, 'due'))).toBe(
+            [
+                'items:',
+                '  - status: pending',
+                '    text: ship it',
+                '  - assignee: ana',
+                '    status: done',
+                '    text: wire it',
+            ].join('\n'),
+        );
+    });
+
+    it('is a no-op when there is no such key', () => {
+        expect(removeItemKeyEdit(CHASSIS_BODY, 0, 'assignee')).toBeNull();
+    });
+
+    it('refuses to strip an item down to a bare marker', () => {
+        const source = ['items:', '  - text: only'].join('\n');
+        expect(removeItemKeyEdit(source, 0, 'text')).toBeNull();
     });
 });
 

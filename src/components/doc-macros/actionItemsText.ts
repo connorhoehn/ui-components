@@ -333,6 +333,44 @@ export function setItemKeyEdit(
     return insertionFor(item, key, scalar);
 }
 
+/**
+ * The edit that takes one key OFF one item — the exact inverse of
+ * `insertionFor`, and the only honest way to say "unassigned".
+ *
+ * Writing `assignee: ''` would say something different: the item HAS an
+ * assignee whose id is the empty string, which renders as a `@` chip pointing
+ * at nobody and matches nobody's inbox. Absent is what unassigned means in this
+ * format, so unassigning has to remove the line.
+ *
+ * Returns `null` when the key is not there (nothing to do) and when it is the
+ * item's only entry, which would leave a bare `-` marker that reparses as a
+ * null item — merge damage rather than an empty field.
+ */
+export function removeItemKeyEdit(source: string, index: number, key: string): TextRangeEdit | null {
+    const body = parseBody(source);
+    const item = body?.items[index];
+    if (!item) return null;
+    const entry = entryOf(item, key);
+    if (!entry || item.entries.length < 2) return null;
+
+    const position = item.entries.indexOf(entry);
+    if (position === 0) {
+        // The item marker lives on this line, so the line itself has to stay.
+        // Cut from just past the marker to the same column of the next entry's
+        // line, which pulls that key up onto the marker — precisely what
+        // `insertionFor` does in reverse.
+        const next = item.entries[1]!;
+        return {
+            from: entry.lineStart + ITEM_INDENT.length,
+            to: next.lineStart + ITEM_INDENT.length,
+            insert: '',
+        };
+    }
+    // A continuation line: take it and the break that put it on its own line.
+    const previous = item.entries[position - 1]!;
+    return { from: previous.lineEnd, to: entry.lineEnd, insert: '' };
+}
+
 /** Ticking, as an edit. `pending` <-> `done`, four characters. */
 export function toggleItemEdit(source: string, index: number): TextRangeEdit | null {
     const items = readActionItems(source);

@@ -28,11 +28,25 @@
 // records as one change.
 
 import { useEffect, useRef } from 'react';
+import { Select } from '../forms/Select';
 import { useDraft } from './useDraft';
 import { Button } from '../ui/Button';
 import { Input } from '../forms/Input';
 import { cn } from '../../lib/cn';
 import type { ActionItem } from './actionItemsText';
+
+/**
+ * One candidate assignee.
+ *
+ * Same shape as `HitlPerson`, and for the same load-bearing reason: `id` is
+ * the AUTH SUBJECT, because that is what `/api/items/mine` queries on. Writing
+ * a display name here is what once left that endpoint unable to find a single
+ * assigned item. The name is a label and is never written into the body.
+ */
+export interface AssignablePerson {
+    id: string;
+    name: string;
+}
 
 export interface ActionItemsBlockProps {
     items: readonly ActionItem[];
@@ -44,6 +58,24 @@ export interface ActionItemsBlockProps {
     onAddItem?: () => void;
     /** Takes the whole block off the page. Omitted when not editable. */
     onRemove?: () => void;
+    /**
+     * Who an item can be assigned to.
+     *
+     * The format has carried `assignee:` since it was written and this block
+     * has always DISPLAYED it — an `@ana` chip — with nothing anywhere able to
+     * SET it. So an action item created on a canvas could never be assigned,
+     * and the inbox's Tasks lane could never be filled from the document shape
+     * this product is moving to. Meanwhile Data Types ships a built-in whose
+     * own description is "Task List — ASSIGNABLE action items with status
+     * tracking", and the HITL callout next door has had a working picker all
+     * along.
+     *
+     * Omitted renders no picker, which is right for a host with no directory:
+     * a control listing nobody is worse than none.
+     */
+    people?: readonly AssignablePerson[];
+    /** Only ever called with an id from `people`, or `''` to unassign. */
+    onAssign?: (index: number, assigneeId: string) => void;
     'data-testid'?: string;
 }
 
@@ -89,13 +121,54 @@ function ItemCheckbox({
     );
 }
 
+/**
+ * Who this item is for.
+ *
+ * An assignee the directory has never heard of is kept as an option of its own
+ * rather than silently reset to nobody by the first render — the body is the
+ * record, and a picker is not entitled to rewrite it because this client's
+ * roster happens to be short. Same rule as the HITL callout's picker.
+ */
+function AssignPicker({
+    value,
+    people,
+    onAssign,
+    testId,
+}: {
+    value: string | null;
+    people: readonly AssignablePerson[];
+    onAssign: (id: string) => void;
+    testId: string;
+}) {
+    const current = value ?? '';
+    const known = people.some((p) => p.id === current);
+    return (
+        <Select
+            size="sm"
+            data-testid={`${testId}-assign`}
+            aria-label="Assign this action item"
+            value={current}
+            onChange={(e) => onAssign(e.target.value)}
+            options={[
+                { value: '', label: 'unassigned' },
+                ...(current && !known ? [{ value: current, label: `for ${current}` }] : []),
+                ...people.map((p) => ({ value: p.id, label: `for ${p.name}` })),
+            ]}
+        />
+    );
+}
+
 /** `assignee` and `due`, shown only when the payload carries them. */
-function ItemMeta({ item, testId }: { item: ActionItem; testId: string }) {
+function ItemMeta({
+    item,
+    testId,
+    hideAssignee = false,
+}: { item: ActionItem; testId: string; hideAssignee?: boolean }) {
     const chip =
         'rounded-sm border border-border bg-surface px-1.5 py-px text-[11px] text-text-secondary';
     return (
         <>
-            {item.assignee ? (
+            {item.assignee && !hideAssignee ? (
                 <span data-testid={`${testId}-assignee`} className={chip}>
                     @{item.assignee}
                 </span>
@@ -203,6 +276,8 @@ export function ActionItemsBlock({
     onRemoveItem,
     onAddItem,
     onRemove,
+    people,
+    onAssign,
     'data-testid': testId = 'action-items',
 }: ActionItemsBlockProps) {
     const done = items.filter((i) => i.done).length;
@@ -265,7 +340,23 @@ export function ActionItemsBlock({
                                         testId={rowId}
                                     />
                                     <div className="flex shrink-0 items-center gap-1 pt-0.5">
-                                        <ItemMeta item={item} testId={rowId} />
+                                        {/* The picker replaces the static chip
+                                            while editing — two controls for one
+                                            fact would be a choice nobody should
+                                            have to make. */}
+                                        {editable && people && onAssign ? (
+                                            <AssignPicker
+                                                value={item.assignee}
+                                                people={people}
+                                                onAssign={(id) => onAssign(item.index, id)}
+                                                testId={rowId}
+                                            />
+                                        ) : null}
+                                        <ItemMeta
+                                            item={item}
+                                            testId={rowId}
+                                            hideAssignee={Boolean(editable && people && onAssign)}
+                                        />
                                         {editable ? (
                                             <Button
                                                 variant="ghost"
