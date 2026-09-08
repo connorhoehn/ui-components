@@ -597,6 +597,165 @@ describe('DocumentToolbar — the comment-gutter toggle', () => {
     fireEvent.click(screen.getByTestId('document-toolbar-align-center'), { detail: 0 });
     expect(screen.queryByTestId('document-toolbar-align-menu')).toBeNull();
   });
+
+  // ── Menu semantics ─────────────────────────────────────────────────────
+  //
+  // Opening a menu from the keyboard is not the same as being able to USE one.
+  // Measured on a live page-shaped document with the align menu open and the
+  // trigger focused: ArrowDown, ArrowUp, ArrowRight, Home, End and a printable
+  // key ALL left `document.activeElement` on `document-toolbar-align` — every
+  // one of them, on all four menus. `aria-activedescendant` was null
+  // throughout and no trigger carried `aria-controls`. Tab reached the items,
+  // because they are ordinary buttons, so the menus were usable and not
+  // correct: a screen-reader user told "menu, expanded" got a menu whose only
+  // navigation was the one a menu exists to replace.
+  //
+  // The assertions below are on `document.activeElement` rather than on a
+  // class or an attribute, because "the roving cursor moved" is a claim about
+  // focus and nothing else can stand in for it.
+
+  /** Opens a menu the way a keyboard does, and returns the item elements. */
+  function openAlign() {
+    const { editor, calls } = makeEditor({}, ['setTextAlign']);
+    render(<DocumentToolbar editor={editor} />);
+    const trigger = screen.getByTestId('document-toolbar-align');
+    trigger.focus();
+    fireEvent.click(trigger, { detail: 0 });
+    return { trigger, menu: screen.getByTestId('document-toolbar-align-menu'), calls };
+  }
+
+  it('moves the roving cursor into the menu when it opens from the keyboard', () => {
+    openAlign();
+    // Left is the alignment in force in the stand-in, so it is the entry
+    // point: a value menu opens on the value you already have.
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-align-left'));
+  });
+
+  it('walks the items with the arrow keys, on both axes', () => {
+    const { menu } = openAlign();
+
+    fireEvent.keyDown(menu, { key: 'ArrowDown' });
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-align-center'));
+    // The align menu is drawn as a ROW, so right has to mean the same as down.
+    fireEvent.keyDown(menu, { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-align-right'));
+    fireEvent.keyDown(menu, { key: 'ArrowUp' });
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-align-center'));
+  });
+
+  it('wraps at both ends rather than stopping', () => {
+    const { menu } = openAlign();
+    fireEvent.keyDown(menu, { key: 'ArrowUp' });
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-align-justify'));
+    fireEvent.keyDown(menu, { key: 'ArrowDown' });
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-align-left'));
+  });
+
+  it('jumps to the ends with Home and End', () => {
+    const { menu } = openAlign();
+    fireEvent.keyDown(menu, { key: 'End' });
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-align-justify'));
+    fireEvent.keyDown(menu, { key: 'Home' });
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-align-left'));
+  });
+
+  it('finds an item by typing its name', () => {
+    const { menu } = openAlign();
+    // The items draw an ICON, so typeahead has to read the accessible name —
+    // "Justify" is what a person types looking for the last one.
+    fireEvent.keyDown(menu, { key: 'j' });
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-align-justify'));
+  });
+
+  it('returns focus to the trigger on Escape, having changed nothing', () => {
+    const { trigger, calls } = openAlign();
+    expect(document.activeElement).not.toBe(trigger);
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(screen.queryByTestId('document-toolbar-align-menu')).toBeNull();
+    // The whole point of Escape: focus does not fall to `body`, and the menu
+    // did not apply the item it happened to be sitting on.
+    expect(document.activeElement).toBe(trigger);
+    expect(calls).not.toContain('setTextAlign:["center"]');
+  });
+
+  it('returns focus to the trigger after a keyboard choice', () => {
+    const { trigger, menu, calls } = openAlign();
+    fireEvent.keyDown(menu, { key: 'ArrowDown' });
+    fireEvent.click(document.activeElement!, { detail: 0 });
+
+    expect(calls).toContain('setTextAlign:["center"]');
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  // A mouse click must NOT pull focus into the panel. Every control in this
+  // bar suppresses the default on `mousedown` so the editor keeps the
+  // selection the command acts on, and focusing an item would undo exactly
+  // that on the way in.
+  it('leaves focus alone when the menu is opened with the mouse', () => {
+    const { editor } = makeEditor({}, ['setTextAlign']);
+    render(<DocumentToolbar editor={editor} />);
+    const before = document.activeElement;
+
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-align'));
+    expect(screen.getByTestId('document-toolbar-align-menu')).toBeInTheDocument();
+    expect(document.activeElement).toBe(before);
+  });
+
+  it('opens downward from the trigger with ArrowDown, and upward with ArrowUp', () => {
+    const { editor } = makeEditor({}, ['setLineSpacing']);
+    render(<DocumentToolbar editor={editor} />);
+    const trigger = screen.getByTestId('document-toolbar-line-spacing');
+
+    trigger.focus();
+    fireEvent.keyDown(trigger, { key: 'ArrowUp' });
+    expect(screen.getByTestId('document-toolbar-line-spacing-menu')).toBeInTheDocument();
+    expect((document.activeElement as HTMLElement).getAttribute('data-testid'))
+      .toBe('document-toolbar-line-spacing-2');
+  });
+
+  it('names the panel it controls and the item the cursor is on', () => {
+    const { trigger, menu } = openAlign();
+    expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    // The trigger points at the panel, and the panel says which item is
+    // current — the two halves an AT needs to follow a roving cursor.
+    expect(trigger.getAttribute('aria-controls')).toBe(menu.id);
+    expect(menu.getAttribute('aria-activedescendant'))
+      .toBe(screen.getByTestId('document-toolbar-align-left').id);
+
+    fireEvent.keyDown(menu, { key: 'ArrowDown' });
+    expect(menu.getAttribute('aria-activedescendant'))
+      .toBe(screen.getByTestId('document-toolbar-align-center').id);
+  });
+
+  // Roving tabindex, so Tab leaves the menu instead of walking it. Without
+  // this every item is a tab stop and the menu is a submenu of the toolbar,
+  // which is the shape it had before and the reason it read as a list of
+  // buttons rather than as one control.
+  it('keeps exactly one item in the tab order', () => {
+    const { menu } = openAlign();
+    const items = Array.from(menu.querySelectorAll('[role^="menuitem"]'));
+    expect(items.filter((i) => i.getAttribute('tabindex') === '0')).toHaveLength(1);
+    expect(items).toHaveLength(4);
+  });
+
+  // The table menu is the one whose item COUNT changes — nine edits appear
+  // when the caret enters a table — which is why navigation reads the DOM
+  // rather than an index registered at render time.
+  it('walks the table menu at both of its lengths', () => {
+    const { editor } = makeEditor({ table: true }, ['insertTable', 'addRowAfter', 'deleteTable']);
+    render(<DocumentToolbar editor={editor} />);
+    const trigger = screen.getByTestId('document-toolbar-table');
+    trigger.focus();
+    fireEvent.click(trigger, { detail: 0 });
+
+    const menu = screen.getByTestId('document-toolbar-table-menu');
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-table-insert'));
+    fireEvent.keyDown(menu, { key: 'End' });
+    expect(document.activeElement).toBe(screen.getByTestId('document-toolbar-table-del-table'));
+  });
 });
 
 

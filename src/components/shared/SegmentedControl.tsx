@@ -12,6 +12,16 @@ export interface SegmentedControlProps {
   value: string;
   onChange: (value: string) => void;
   size?: 'sm' | 'md';
+  /**
+   * What the whole group is FOR.
+   *
+   * `role="group"` with no name announces as a bare "group", so a reader
+   * arriving at Editing / Suggesting / Viewing is told three unrelated toggle
+   * buttons rather than one setting with three values. Optional because every
+   * existing caller sits under a heading that already says it; new callers on
+   * a bare toolbar should pass it.
+   */
+  'aria-label'?: string;
   className?: string;
 }
 
@@ -31,11 +41,13 @@ export function SegmentedControl({
   value,
   onChange,
   size = 'md',
+  'aria-label': ariaLabel,
   className,
 }: SegmentedControlProps) {
   return (
     <div
       role="group"
+      aria-label={ariaLabel}
       className={cn(
         'inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5',
         className,

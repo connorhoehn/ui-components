@@ -187,8 +187,17 @@ export function DecisionBlock({
                                 size="sm"
                                 variant={s === decision.status ? 'primary' : 'secondary'}
                                 aria-pressed={s === decision.status}
-                                disabled={s === decision.status}
-                                onClick={() => onStatusChange(s)}
+                                // NOT `disabled`. Measured by tabbing through a
+                                // proposed decision on a live document: three
+                                // buttons, never four — the current status was
+                                // out of the tab order, so the one control that
+                                // says which state the decision is IN could not
+                                // be reached, and `aria-pressed` on a disabled
+                                // button is not announced either. It is a
+                                // four-value toggle group; the value in force is
+                                // the most important of the four to be able to
+                                // land on. Re-picking it is a no-op instead.
+                                onClick={() => { if (s !== decision.status) onStatusChange(s); }}
                                 data-testid={`${testId}-set-${s}`}
                             >
                                 {STATUS_META[s].label}

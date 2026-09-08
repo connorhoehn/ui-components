@@ -365,3 +365,34 @@ export function macroRendererPlugins(
     for (const renderer of renderers) registry.register(renderer);
     return hostsMacroNodeViews(editor, extensionName) ? [macroNodeViewPlugin(registry)] : [];
 }
+
+/**
+ * What each macro is CALLED, for the group a screen reader lands in.
+ *
+ * A name, not a description: the card already carries its own heading, its
+ * status chip and its prose, and browse mode reads all of that. What was
+ * missing was the boundary — where the block starts, where it ends, and what
+ * kind of thing it is — so this is the one string that has to be right.
+ *
+ * Keyed by macro name and NOT by extension, because the label belongs to the
+ * payload: a host that registers `hitlRenderer()` directly, without
+ * `HitlMacro`, must still get "Decision required".
+ *
+ * An unknown macro falls back to its own name rather than to "macro". A
+ * renderer this build has never heard of is exactly the case where the raw
+ * name is the only honest thing to say.
+ */
+const MACRO_GROUP_LABELS: Readonly<Record<string, string>> = {
+    'action-items': 'Action items',
+    // Not "HITL" — an initialism nobody says out loud, and a screen reader
+    // spells it. What the block DOES is ask a person to decide.
+    hitl: 'Decision required',
+    decision: 'Decision',
+    field: 'Field',
+    diagram: 'Diagram',
+};
+
+/** The accessible name for a macro block's `role="group"`. */
+export function macroGroupLabel(macroName: string): string {
+    return MACRO_GROUP_LABELS[macroName] ?? macroName;
+}

@@ -101,7 +101,20 @@ class DecisionView extends ReactMacroView {
     ) {
         super(ctx, DECISION_MACRO_NAME);
         this.decision = decision;
+        this.name(decision);
         this.schedule();
+    }
+
+    /**
+     * "Decision, accepted: use Postgres" — the group name a reader lands on.
+     *
+     * The bare macro label says "Decision" for all of them, which is no help
+     * on a page holding four. Status leads the claim because it is the
+     * question actually being asked of a decision record: is this still in
+     * force? The visible card says the same thing in the same order.
+     */
+    private name(decision: Decision): void {
+        this.setAccessibleName(`Decision, ${decision.status}: ${decision.decision}`);
     }
 
     protected element() {
@@ -159,7 +172,7 @@ class DecisionView extends ReactMacroView {
         const changed = node.textContent !== this.node.textContent;
         this.node = node;
         this.decision = decision;
-        if (changed) this.schedule();
+        if (changed) { this.name(decision); this.schedule(); }
         return true;
     }
 

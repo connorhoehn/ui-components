@@ -95,6 +95,12 @@ export function SuggestionModeControl({
         options={options}
         value={mode}
         size="sm"
+        // Measured on a live document: the three segments announced as
+        // "Editing, toggle button, pressed" inside an unnamed group, so a
+        // reader was told what they had pressed and never that the three are
+        // one question. The name is the question the control answers — it is
+        // the same one the header comment argues this component exists to ask.
+        aria-label="What your typing does"
         onChange={(next) => {
           // The cast is safe: `options` is derived from the union above, so the
           // control can only ever hand back one of its own values.

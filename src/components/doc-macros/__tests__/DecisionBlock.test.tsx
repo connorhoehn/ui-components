@@ -82,13 +82,27 @@ describe('DecisionBlock', () => {
         expect(screen.queryByTestId('decision-block-superseded-input')).toBeNull();
     });
 
-    it('offers every status but the current one, which is pressed and inert', async () => {
+    // The status in force is pressed and inert — and REACHABLE.
+    //
+    // This used to assert `disabled === true`, which was the defect written
+    // down as an invariant: `disabled` takes an element out of the tab order,
+    // so the one control that says which state the decision is in could never
+    // be landed on, and `aria-pressed` on a disabled button is not announced
+    // either. Measured by tabbing a proposed decision on a live document:
+    // three status buttons, never four. Inert now means the handler declines,
+    // not that the browser refuses to focus it.
+    it('offers every status, and the current one is pressed, reachable and inert', async () => {
         const onStatusChange = vi.fn();
         render(<DecisionBlock decision={base} editable onStatusChange={onStatusChange} />);
 
         const current = screen.getByTestId('decision-block-set-accepted');
         expect(current.getAttribute('aria-pressed')).toBe('true');
-        expect((current as HTMLButtonElement).disabled).toBe(true);
+        expect((current as HTMLButtonElement).disabled).toBe(false);
+        current.focus();
+        expect(document.activeElement).toBe(current);
+
+        await userEvent.click(current);
+        expect(onStatusChange).not.toHaveBeenCalled();
 
         await userEvent.click(screen.getByTestId('decision-block-set-superseded'));
         expect(onStatusChange).toHaveBeenCalledWith('superseded');

@@ -20,7 +20,10 @@
 // replacement for them — which is why every entry names its markdown
 // equivalent in the tooltip.
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  useCallback, useEffect, useId, useLayoutEffect, useRef, useState,
+  type KeyboardEvent as ReactKeyboardEvent, type ReactNode, type RefObject,
+} from 'react';
 import { useEditorState, type Editor } from '@tiptap/react';
 import { cn } from '../../lib/cn';
 import { Select } from '../forms/Select';
@@ -187,6 +190,18 @@ function activate(run: () => void): {
   };
 }
 
+/**
+ * The focus ring every menu item wears.
+ *
+ * The UA default is an `outline: auto 1px` drawn on the element's own edge,
+ * which is fine on a text row and invisible on a 24px square filled edge to
+ * edge with the colour it names. A ring is drawn OUTSIDE the box, so it reads
+ * on paint as well as on panel. `focus-visible`, not `focus`, so a mouse click
+ * does not leave a ring behind — which is also why this cannot be an inline
+ * style: `:focus-visible` has no inline form.
+ */
+const MENU_ITEM_RING = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
+
 function ToolButton({
   btn, editor, testId, active,
 }: { btn: MarkButton; editor: Editor; testId: string; active: boolean }) {
@@ -240,30 +255,252 @@ function alignLabel(align: Alignment): string {
  * slots in a row that has to hold everything else a document needs.
  */
 /**
- * The open/closed half of a toolbar menu: shut on a click elsewhere or on Esc.
+ * A toolbar menu, with the semantics a menu is supposed to have.
  *
- * Listeners are bound only while open, so a toolbar full of closed menus costs
- * nothing. Extracted the moment there was a second menu — this is the part
- * that gets forgotten when a control is copied, and a menu that will not close
- * is worse than one that never opened.
+ * The previous version of this hook was five lines: an `open` boolean, a
+ * click-outside listener and an Escape listener. That was enough to make the
+ * menus USABLE — Tab reached the items because they are ordinary buttons, and
+ * Escape shut the panel — and not enough to make them a MENU. Measured on a
+ * live page-shaped document, with the align menu open and the trigger focused:
+ * ArrowDown, ArrowUp, ArrowRight, Home, End and a printable key all left
+ * `document.activeElement` on `document-toolbar-align`. Nothing moved. The
+ * same for colour, table and line spacing — `aria-activedescendant` was null
+ * throughout and the trigger carried no `aria-controls`. A screen-reader user
+ * told "menu, collapsed/expanded" got a menu they could only walk with Tab,
+ * which is precisely the interaction a menu exists to replace.
+ *
+ * What this adds, and why each piece:
+ *
+ *   * **Roving focus over real DOM focus**, not a virtual cursor. It is what
+ *     the APG menu-button pattern specifies, it needs no per-item wiring
+ *     beyond an id, and it keeps the focus RING on the item the user is on —
+ *     `aria-activedescendant` alone moves the announcement and leaves the
+ *     highlight behind. `aria-activedescendant` is set on the menu as well, so
+ *     the relationship is exposed either way an AT chooses to read it.
+ *   * **Navigation reads the DOM, ids come from React.** The table menu grows
+ *     nine rows when the caret enters a table, so an index-keyed registry
+ *     would have to be rebuilt on every selection change. Querying
+ *     `[role^="menuitem"]` inside the menu is always in document order and
+ *     always current; React still owns the id and the tabindex, so nothing
+ *     mutates attributes behind its back.
+ *   * **Focus moves into the menu only on a KEYBOARD open.** A mouse open must
+ *     not touch focus: every control here runs `preventDefault` on `mousedown`
+ *     precisely so the editor keeps the selection the command acts on, and
+ *     pulling focus into the panel would undo that on the way in. The
+ *     discriminator is the same `ev.detail === 0` the buttons already use —
+ *     see `activate` — and it is deliberately not duplicated by hand.
+ *   * **Tab closes and moves on.** The trigger is focused first and the
+ *     default is NOT prevented, so the browser continues from the trigger to
+ *     the next toolbar control instead of dropping focus on `body` when the
+ *     menu unmounts under it.
+ *   * **A focus that lands outside closes the menu.** With roving tabindex
+ *     every item is `tabIndex=-1` until the menu is entered from the keyboard,
+ *     so Tab from a mouse-opened trigger skips the panel entirely — and a
+ *     mousedown-only outside listener would have left it hanging open behind
+ *     the control the user just moved to.
  */
-function useToolMenu() {
+interface ToolMenu {
+  open: boolean;
+  /**
+   * Shut the menu after a choice.
+   *
+   * Focus goes back to the trigger only when it was inside the menu to begin
+   * with — the keyboard path. On the mouse path focus is still in the EDITOR,
+   * where `chain().focus()` just put it, and pulling it onto the trigger would
+   * blur the document the command was run against.
+   */
+  close: () => void;
+  wrapRef: RefObject<HTMLSpanElement | null>;
+  /** Spread on the trigger button. Carries the `activate` handler pair. */
+  triggerProps: {
+    ref: RefObject<HTMLButtonElement | null>;
+    'aria-haspopup': 'menu';
+    'aria-expanded': boolean;
+    'aria-controls'?: string;
+    onMouseDown: (ev: { preventDefault: () => void }) => void;
+    onClick: (ev: { detail: number }) => void;
+    onKeyDown: (ev: ReactKeyboardEvent) => void;
+  };
+  /** Spread on the `role="menu"` container. */
+  menuProps: {
+    ref: (el: HTMLElement | null) => void;
+    id: string;
+    role: 'menu';
+    tabIndex: -1;
+    'aria-activedescendant'?: string;
+    onKeyDown: (ev: ReactKeyboardEvent) => void;
+  };
+  /** Spread on each item. `key` must be unique within the menu. */
+  itemProps: (key: string) => { id: string; tabIndex: 0 | -1 };
+}
+
+/** How long a typeahead buffer stays open. Word and Docs both sit near here. */
+const TYPEAHEAD_MS = 700;
+
+function useToolMenu(): ToolMenu {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLSpanElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLElement | null>(null);
+  const menuId = useId();
+  // The item the roving cursor is on, by DOM id. Null means "the menu is open
+  // but has not been entered" — the state a mouse open leaves it in.
+  const [activeId, setActiveId] = useState<string | null>(null);
+  // Set when a keyboard open asks for an entry point the menu has not rendered
+  // yet; resolved against the real items in a layout effect below.
+  const [entry, setEntry] = useState<'first' | 'last' | null>(null);
+  const typed = useRef({ buf: '', at: 0 });
+
+  const items = useCallback(
+    () => (menuRef.current
+      ? Array.from(menuRef.current.querySelectorAll<HTMLElement>('[role^="menuitem"]'))
+      : []),
+    [],
+  );
+
+  const shut = useCallback((focusTrigger: boolean) => {
+    setOpen(false);
+    setActiveId(null);
+    setEntry(null);
+    if (focusTrigger) triggerRef.current?.focus();
+  }, []);
+
+  const close = useCallback(() => {
+    shut(!!(document.activeElement && wrapRef.current?.contains(document.activeElement)));
+  }, [shut]);
+
+  // Close on a click elsewhere, on Escape from anywhere, and on focus landing
+  // outside. Bound only while open, so a bar full of closed menus costs
+  // nothing. Escape lives here rather than on the menu because a mouse-opened
+  // menu leaves focus in the EDITOR, and Escape has to shut it from there too.
   useEffect(() => {
     if (!open) return;
-    const onDown = (ev: MouseEvent) => {
-      if (!wrapRef.current?.contains(ev.target as Node)) setOpen(false);
+    const inside = (n: Node | null) => !!(n && wrapRef.current?.contains(n));
+    const onDown = (ev: MouseEvent) => { if (!inside(ev.target as Node)) shut(false); };
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.key !== 'Escape') return;
+      // Focus goes back to the trigger only if it was in the menu to begin
+      // with. Yanking it out of the editor would be worse than leaving it.
+      shut(inside(document.activeElement));
     };
-    const onKey = (ev: KeyboardEvent) => { if (ev.key === 'Escape') setOpen(false); };
+    const onFocusIn = (ev: FocusEvent) => { if (!inside(ev.target as Node)) shut(false); };
     document.addEventListener('mousedown', onDown);
     document.addEventListener('keydown', onKey);
+    document.addEventListener('focusin', onFocusIn);
     return () => {
       document.removeEventListener('mousedown', onDown);
       document.removeEventListener('keydown', onKey);
+      document.removeEventListener('focusin', onFocusIn);
     };
-  }, [open]);
-  return { open, setOpen, wrapRef };
+  }, [open, shut]);
+
+  // A keyboard open asked for the first or the last item; the menu has now
+  // rendered, so resolve it. `aria-checked` wins over "first" — landing on the
+  // value already in force is what every value menu does, and it is the only
+  // entry point that tells you what the current setting IS.
+  useLayoutEffect(() => {
+    if (!open || entry === null) return;
+    const list = items();
+    if (list.length === 0) return;
+    const checked = list.find((el) => el.getAttribute('aria-checked') === 'true');
+    const target = entry === 'last' ? list[list.length - 1] : (checked ?? list[0]);
+    setActiveId(target?.id ?? null);
+    setEntry(null);
+  }, [open, entry, items]);
+
+  // React sets tabIndex in the same commit that this reads, so the item is
+  // focusable by the time it is focused.
+  useEffect(() => {
+    if (!open || !activeId) return;
+    document.getElementById(activeId)?.focus();
+  }, [open, activeId]);
+
+  const navigate = useCallback((ev: ReactKeyboardEvent): void => {
+    const list = items();
+    if (list.length === 0) return;
+    const idx = list.findIndex((el) => el.id === activeId);
+    const to = (next: number) => {
+      ev.preventDefault();
+      const el = list[(next + list.length) % list.length];
+      if (el) setActiveId(el.id);
+    };
+
+    switch (ev.key) {
+      // Both axes, both menus: this bar holds a 4x2 colour grid and three
+      // vertical lists, and a person reaches for whichever arrow points along
+      // the shape they can see.
+      case 'ArrowDown': case 'ArrowRight': return to(idx < 0 ? 0 : idx + 1);
+      case 'ArrowUp': case 'ArrowLeft': return to(idx < 0 ? list.length - 1 : idx - 1);
+      case 'Home': return to(0);
+      case 'End': return to(list.length - 1);
+      // Focus the trigger BEFORE closing and let the default run: the browser
+      // then continues from a live element instead of from one that unmounts.
+      case 'Tab': triggerRef.current?.focus(); shut(false); return;
+      // The button's own activation handles these — see `activate`.
+      case 'Enter': case ' ': return;
+      default: break;
+    }
+
+    if (ev.key.length !== 1 || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+    const now = Date.now();
+    const buf = (now - typed.current.at < TYPEAHEAD_MS ? typed.current.buf : '') + ev.key.toLowerCase();
+    typed.current = { buf, at: now };
+    // The accessible name, not the glyph: the align and spacing items draw an
+    // icon or a number, and "Justify" is what a person types looking for it.
+    const name = (el: HTMLElement) => (el.getAttribute('aria-label') || el.textContent || '').trim().toLowerCase();
+    // From the item AFTER the cursor, wrapping — so repeating a letter walks
+    // the matches rather than sticking on the first.
+    const order = [...list.slice(idx + 1), ...list.slice(0, idx + 1)];
+    const hit = order.find((el) => name(el).startsWith(buf));
+    if (hit) { ev.preventDefault(); setActiveId(hit.id); }
+  }, [activeId, items, shut]);
+
+  const onTriggerKeyDown = useCallback((ev: ReactKeyboardEvent): void => {
+    if (open) { navigate(ev); return; }
+    if (ev.key === 'ArrowDown') { ev.preventDefault(); setOpen(true); setEntry('first'); return; }
+    if (ev.key === 'ArrowUp') { ev.preventDefault(); setOpen(true); setEntry('last'); }
+  }, [open, navigate]);
+
+  return {
+    open,
+    close,
+    wrapRef,
+    triggerProps: {
+      ref: triggerRef,
+      'aria-haspopup': 'menu',
+      'aria-expanded': open,
+      // Only while the panel exists: pointing at an id that is not in the
+      // document is an authoring error, not a hint.
+      ...(open ? { 'aria-controls': menuId } : {}),
+      // The same two-handler shape every control in this bar uses, and the
+      // same `ev.detail === 0` discriminator — a mouse click carries the click
+      // count, a click synthesised from Enter or Space carries 0. The keyboard
+      // path additionally asks for the menu to be ENTERED; the mouse path must
+      // not touch focus at all, or the selection the command acts on is gone.
+      onMouseDown: (ev) => { ev.preventDefault(); setOpen((v) => !v); setActiveId(null); },
+      onClick: (ev) => {
+        if (ev.detail !== 0) return;
+        setOpen((v) => {
+          if (v) { setActiveId(null); return false; }
+          setEntry('first');
+          return true;
+        });
+      },
+      onKeyDown: onTriggerKeyDown,
+    },
+    menuProps: {
+      ref: (el) => { menuRef.current = el; },
+      id: menuId,
+      role: 'menu',
+      tabIndex: -1,
+      ...(activeId ? { 'aria-activedescendant': activeId } : {}),
+      onKeyDown: navigate,
+    },
+    itemProps: (key: string) => {
+      const id = `${menuId}${key}`;
+      return { id, tabIndex: activeId === id ? 0 : -1 };
+    },
+  };
 }
 
 /**
@@ -310,7 +547,7 @@ function ColorMenu({
   title: string;
   testId: string;
 }) {
-  const { open, setOpen, wrapRef } = useToolMenu();
+  const { open, close, wrapRef, triggerProps, menuProps, itemProps } = useToolMenu();
 
   const apply = (value: string | null) => {
     const chain = editor.chain().focus() as never as Record<string, (v?: string) => { run: () => void }>;
@@ -318,7 +555,7 @@ function ColorMenu({
     // to the page's own ink rather than to some other explicit black.
     if (value) chain[setCmd]!(value).run();
     else chain[unsetCmd]!().run();
-    setOpen(false);
+    close();
   };
 
   return (
@@ -328,9 +565,7 @@ function ColorMenu({
         data-testid={testId}
         title={title}
         aria-label={title}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        {...activate(() => setOpen((v) => !v))}
+        {...triggerProps}
         className={cn(
           'inline-flex h-7 flex-col items-center justify-center gap-px px-1.5 rounded text-xs cursor-pointer border-none leading-none',
           open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
@@ -350,7 +585,7 @@ function ColorMenu({
 
       {open && (
         <span
-          role="menu"
+          {...menuProps}
           data-testid={`${testId}-menu`}
           aria-label={title}
           className="absolute left-0 top-full z-20 mt-1 grid w-[136px] grid-cols-4 gap-1 rounded-md border border-border bg-surface-panel p-1.5 shadow-lg"
@@ -358,11 +593,15 @@ function ColorMenu({
           <button
             type="button"
             role="menuitem"
+            {...itemProps('none')}
             data-testid={`${testId}-none`}
             title="None"
             aria-label="None"
             {...activate(() => apply(null))}
-            className="col-span-4 rounded px-1 py-0.5 text-left text-[11px] text-text-secondary hover:bg-surface-hover cursor-pointer border-none bg-transparent"
+            className={cn(
+              'col-span-4 rounded px-1 py-0.5 text-left text-[11px] text-text-secondary hover:bg-surface-hover cursor-pointer border-none bg-transparent',
+              MENU_ITEM_RING,
+            )}
           >
             None
           </button>
@@ -372,12 +611,20 @@ function ColorMenu({
               type="button"
               role="menuitemradio"
               aria-checked={c.value === current}
+              {...itemProps(c.value)}
               data-testid={`${testId}-${c.label.toLowerCase()}`}
               title={c.label}
               aria-label={c.label}
               {...activate(() => apply(c.value))}
               className={cn(
                 'h-6 w-6 rounded cursor-pointer border',
+                // The ring sits OUTSIDE the swatch, which is the whole reason
+                // it is a ring and not an outline here: the square is filled
+                // edge to edge with the colour it names, and a 1px UA outline
+                // drawn on that edge is the one place a focus indicator cannot
+                // be seen. `ring-offset-1` buys it a gap on the panel.
+                MENU_ITEM_RING,
+                'focus-visible:ring-offset-1',
                 c.value === current ? 'border-primary ring-1 ring-primary' : 'border-border',
               )}
               style={{ background: c.value }}
@@ -417,12 +664,12 @@ const TABLE_EDITS: { key: string; label: string; cmd: string }[] = [
 function TableMenu({
   editor, inTable, testId,
 }: { editor: Editor; inTable: boolean; testId: string }) {
-  const { open, setOpen, wrapRef } = useToolMenu();
+  const { open, close, wrapRef, triggerProps, menuProps, itemProps } = useToolMenu();
 
   const run = (cmd: string) => {
     const chain = editor.chain().focus() as never as Record<string, () => { run: () => void }>;
     chain[cmd]?.().run();
-    setOpen(false);
+    close();
   };
 
   const insert = () => {
@@ -434,7 +681,7 @@ function TableMenu({
     // draws when asked for "a table", and the one that needs the fewest
     // follow-up edits.
     chain['insertTable']!({ rows: 3, cols: 3, withHeaderRow: true }).run();
-    setOpen(false);
+    close();
   };
 
   return (
@@ -444,9 +691,7 @@ function TableMenu({
         data-testid={testId}
         title={inTable ? 'Table' : 'Insert table'}
         aria-label={inTable ? 'Table options' : 'Insert a table'}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        {...activate(() => setOpen((v) => !v))}
+        {...triggerProps}
         className={cn(
           'inline-flex items-center gap-0.5 h-7 px-1.5 rounded text-xs cursor-pointer border-none',
           open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
@@ -458,7 +703,7 @@ function TableMenu({
 
       {open && (
         <span
-          role="menu"
+          {...menuProps}
           data-testid={`${testId}-menu`}
           aria-label="Table"
           className="absolute left-0 top-full z-20 mt-1 flex min-w-[180px] flex-col rounded-md border border-border bg-surface-panel p-1 shadow-lg"
@@ -466,9 +711,13 @@ function TableMenu({
           <button
             type="button"
             role="menuitem"
+            {...itemProps('insert')}
             data-testid={`${testId}-insert`}
             {...activate(insert)}
-            className="cursor-pointer rounded border-none bg-transparent px-2 py-1 text-left text-xs text-text-secondary hover:bg-surface-hover"
+            className={cn(
+              'cursor-pointer rounded border-none bg-transparent px-2 py-1 text-left text-xs text-text-secondary hover:bg-surface-hover',
+              MENU_ITEM_RING,
+            )}
           >
             Insert table
           </button>
@@ -483,9 +732,13 @@ function TableMenu({
                   key={e.key}
                   type="button"
                   role="menuitem"
+                  {...itemProps(e.key)}
                   data-testid={`${testId}-${e.key}`}
                   {...activate(() => run(e.cmd))}
-                  className="cursor-pointer rounded border-none bg-transparent px-2 py-1 text-left text-xs text-text-secondary hover:bg-surface-hover"
+                  className={cn(
+                    'cursor-pointer rounded border-none bg-transparent px-2 py-1 text-left text-xs text-text-secondary hover:bg-surface-hover',
+                    MENU_ITEM_RING,
+                  )}
                 >
                   {e.label}
                 </button>
@@ -501,12 +754,12 @@ function TableMenu({
 function AlignMenu({
   editor, current, testId,
 }: { editor: Editor; current: Alignment; testId: string }) {
-  const { open, setOpen, wrapRef } = useToolMenu();
+  const { open, close, wrapRef, triggerProps, menuProps, itemProps } = useToolMenu();
 
   const apply = (align: Alignment) => {
     const chain = editor.chain().focus() as never as Record<string, (a: string) => { run: () => void }>;
     chain['setTextAlign']!(align).run();
-    setOpen(false);
+    close();
   };
 
   return (
@@ -516,9 +769,7 @@ function AlignMenu({
         data-testid={testId}
         title={alignLabel(current)}
         aria-label="Text alignment"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        {...activate(() => setOpen((v) => !v))}
+        {...triggerProps}
         className={cn(
           'inline-flex items-center gap-0.5 h-7 px-1.5 rounded text-xs cursor-pointer border-none',
           open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
@@ -530,7 +781,7 @@ function AlignMenu({
 
       {open && (
         <span
-          role="menu"
+          {...menuProps}
           data-testid={`${testId}-menu`}
           aria-label="Text alignment"
           className="absolute left-0 top-full z-20 mt-1 inline-flex gap-0.5 rounded-md border border-border bg-surface-panel p-1 shadow-lg"
@@ -541,12 +792,14 @@ function AlignMenu({
               type="button"
               role="menuitemradio"
               aria-checked={align === current}
+              {...itemProps(align)}
               data-testid={`${testId}-${align}`}
               title={alignLabel(align)}
               aria-label={alignLabel(align)}
               {...activate(() => apply(align))}
               className={cn(
                 'inline-flex h-7 w-7 items-center justify-center rounded cursor-pointer border-none',
+                MENU_ITEM_RING,
                 align === current
                   ? 'bg-primary text-white'
                   : 'bg-transparent text-text-secondary hover:bg-surface-hover',
@@ -575,12 +828,12 @@ function AlignMenu({
 function LineSpacingMenu({
   editor, current, testId,
 }: { editor: Editor; current: LineSpacing; testId: string }) {
-  const { open, setOpen, wrapRef } = useToolMenu();
+  const { open, close, wrapRef, triggerProps, menuProps, itemProps } = useToolMenu();
 
   const apply = (spacing: LineSpacing) => {
     const chain = editor.chain().focus() as never as Record<string, (v: string) => { run: () => void }>;
     chain['setLineSpacing']!(spacing).run();
-    setOpen(false);
+    close();
   };
 
   return (
@@ -590,9 +843,7 @@ function LineSpacingMenu({
         data-testid={testId}
         title={`Line spacing: ${LINE_SPACING_LABELS[current]}`}
         aria-label="Line spacing"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        {...activate(() => setOpen((v) => !v))}
+        {...triggerProps}
         className={cn(
           'inline-flex items-center gap-0.5 h-7 px-1.5 rounded text-xs cursor-pointer border-none',
           open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
@@ -604,7 +855,7 @@ function LineSpacingMenu({
 
       {open && (
         <span
-          role="menu"
+          {...menuProps}
           data-testid={`${testId}-menu`}
           aria-label="Line spacing"
           className="absolute left-0 top-full z-20 mt-1 flex min-w-[110px] flex-col rounded-md border border-border bg-surface-panel p-1 shadow-lg"
@@ -615,12 +866,14 @@ function LineSpacingMenu({
               type="button"
               role="menuitemradio"
               aria-checked={spacing === current}
+              {...itemProps(spacing)}
               data-testid={`${testId}-${spacing.replace('.', '-')}`}
               title={LINE_SPACING_LABELS[spacing]}
               aria-label={LINE_SPACING_LABELS[spacing]}
               {...activate(() => apply(spacing))}
               className={cn(
                 'cursor-pointer rounded border-none px-2 py-1 text-left text-xs',
+                MENU_ITEM_RING,
                 spacing === current
                   ? 'bg-primary text-white'
                   : 'bg-transparent text-text-secondary hover:bg-surface-hover',
