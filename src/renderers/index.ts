@@ -11,6 +11,10 @@ import checklistDef from './checklist/definition';
 import fileUploadDef from './file-upload/definition';
 import diagramDef from './diagram/definition';
 import linkBlockDef from './link-block/definition';
+import textDef from './text/definition';
+import dateDef from './date/definition';
+import numberDef from './number/definition';
+import booleanDef from './boolean/definition';
 
 import DefaultRenderer from './default/DefaultRenderer';
 import RichTextEditorRenderer from './rich-text/RichTextEditorRenderer';
@@ -27,6 +31,14 @@ import DiagramEditorRenderer from './diagram/DiagramEditorRenderer';
 import DiagramReaderRenderer from './diagram/DiagramReaderRenderer';
 import LinkBlockEditorRenderer from './link-block/LinkBlockEditorRenderer';
 import LinkBlockReaderRenderer from './link-block/LinkBlockReaderRenderer';
+import TextEditorRenderer from './text/TextEditorRenderer';
+import TextReaderRenderer from './text/TextReaderRenderer';
+import DateEditorRenderer from './date/DateEditorRenderer';
+import DateReaderRenderer from './date/DateReaderRenderer';
+import NumberEditorRenderer from './number/NumberEditorRenderer';
+import NumberReaderRenderer from './number/NumberReaderRenderer';
+import BooleanEditorRenderer from './boolean/BooleanEditorRenderer';
+import BooleanReaderRenderer from './boolean/BooleanReaderRenderer';
 
 // Field type definitions (metadata + renderer key manifests)
 registerFieldType(tasksDef);
@@ -39,6 +51,14 @@ registerFieldType(checklistDef);
 registerFieldType(fileUploadDef);
 registerFieldType(diagramDef);
 registerFieldType(linkBlockDef);
+// The scalar field types. The 14 shipped cookbooks declare 151 fields across
+// these four — text (100), date (28), number (16), boolean (7) — and every one
+// of them resolved to '*' -> DefaultRenderer, i.e. a rich-text note box, until
+// these registrations landed. An Invoice due date was a paragraph.
+registerFieldType(textDef);
+registerFieldType(dateDef);
+registerFieldType(numberDef);
+registerFieldType(booleanDef);
 
 // Renderer components per (sectionType × viewMode)
 registerRenderer('*', '*', DefaultRenderer);
@@ -71,6 +91,25 @@ registerRenderer('diagram', 'reader', DiagramReaderRenderer);
 registerRenderer('link-block', 'editor', LinkBlockEditorRenderer);
 registerRenderer('link-block', 'ack',    LinkBlockReaderRenderer);
 registerRenderer('link-block', 'reader', LinkBlockReaderRenderer);
+
+// Scalar fields. The editor renderers fall back to their own reader when
+// `editable` is false, because a finalized document still resolves through the
+// ':editor' entry (EditorModeSwitch passes editable={!isFinalized}).
+registerRenderer('text', 'editor', TextEditorRenderer);
+registerRenderer('text', 'ack',    TextReaderRenderer);
+registerRenderer('text', 'reader', TextReaderRenderer);
+
+registerRenderer('date', 'editor', DateEditorRenderer);
+registerRenderer('date', 'ack',    DateReaderRenderer);
+registerRenderer('date', 'reader', DateReaderRenderer);
+
+registerRenderer('number', 'editor', NumberEditorRenderer);
+registerRenderer('number', 'ack',    NumberReaderRenderer);
+registerRenderer('number', 'reader', NumberReaderRenderer);
+
+registerRenderer('boolean', 'editor', BooleanEditorRenderer);
+registerRenderer('boolean', 'ack',    BooleanReaderRenderer);
+registerRenderer('boolean', 'reader', BooleanReaderRenderer);
 
 export {
   registerRenderer,

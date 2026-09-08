@@ -27,6 +27,14 @@ import TasksEditorRenderer from '../tasks/TasksEditorRenderer';
 import TasksReaderRenderer from '../tasks/TasksReaderRenderer';
 import DecisionsEditorRenderer from '../decisions/DecisionsEditorRenderer';
 import DecisionsReaderRenderer from '../decisions/DecisionsReaderRenderer';
+import TextEditorRenderer from '../text/TextEditorRenderer';
+import TextReaderRenderer from '../text/TextReaderRenderer';
+import DateEditorRenderer from '../date/DateEditorRenderer';
+import DateReaderRenderer from '../date/DateReaderRenderer';
+import NumberEditorRenderer from '../number/NumberEditorRenderer';
+import NumberReaderRenderer from '../number/NumberReaderRenderer';
+import BooleanEditorRenderer from '../boolean/BooleanEditorRenderer';
+import BooleanReaderRenderer from '../boolean/BooleanReaderRenderer';
 
 const mkSection = (over: Partial<Section> = {}): Section => ({
   id: 's1', type: 'custom', title: 'S', collapsed: false, items: [], ...over,
@@ -353,5 +361,116 @@ describe('decisions: a decision recorded in the editor lands in the right reader
     // "Vetoed" appears twice: the group header and the per-row badge.
     expect(screen.getAllByText('Vetoed')).toHaveLength(2);
     expect(screen.queryByText('Open')).not.toBeInTheDocument();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Scalar fields — text / date / number / boolean
+//
+// Same closed loop: drive the real control, apply the patch the editor emits,
+// render the reader from the resulting section. A rename of the metadata key
+// on one side (value -> text, say) leaves both per-type suites green and every
+// real Invoice showing "No date set".
+// ---------------------------------------------------------------------------
+
+describe('scalar fields: what the editor stores is what the reader shows', () => {
+  it('text round-trips a typed answer, and clearing returns the empty state', () => {
+    let section = mkSection({ sectionType: 'text', title: 'Severity' });
+    const onUpdateSection = (patch: Partial<Section>) => { section = applyPatch(section, patch); };
+
+    const editor = render(
+      <TextEditorRenderer section={section} viewMode="editor" editable onUpdateSection={onUpdateSection} />,
+    );
+    fireEvent.change(screen.getByTestId('text-field-input-s1'), { target: { value: 'Critical' } });
+    editor.unmount();
+
+    const reader = render(<TextReaderRenderer section={section} viewMode="reader" editable={false} />);
+    expect(screen.getByTestId('text-field-reader-s1')).toHaveTextContent('Critical');
+    reader.unmount();
+
+    const editor2 = render(
+      <TextEditorRenderer section={section} viewMode="editor" editable onUpdateSection={onUpdateSection} />,
+    );
+    fireEvent.change(screen.getByTestId('text-field-input-s1'), { target: { value: '' } });
+    editor2.unmount();
+
+    render(<TextReaderRenderer section={section} viewMode="reader" editable={false} />);
+    expect(screen.getByTestId('text-field-empty-s1')).toBeInTheDocument();
+  });
+
+  it('date round-trips a picked date, and Clear returns the empty state', () => {
+    let section = mkSection({ sectionType: 'date', title: 'Due Date' });
+    const onUpdateSection = (patch: Partial<Section>) => { section = applyPatch(section, patch); };
+
+    const editor = render(
+      <DateEditorRenderer section={section} viewMode="editor" editable onUpdateSection={onUpdateSection} />,
+    );
+    fireEvent.change(screen.getByTestId('date-field-input-s1'), { target: { value: '2026-03-04' } });
+    editor.unmount();
+
+    const reader = render(<DateReaderRenderer section={section} viewMode="reader" editable={false} />);
+    expect(screen.getByTestId('date-field-reader-s1')).toHaveAttribute('datetime', '2026-03-04');
+    reader.unmount();
+
+    const editor2 = render(
+      <DateEditorRenderer section={section} viewMode="editor" editable onUpdateSection={onUpdateSection} />,
+    );
+    fireEvent.click(screen.getByTestId('date-field-clear-s1'));
+    editor2.unmount();
+
+    render(<DateReaderRenderer section={section} viewMode="reader" editable={false} />);
+    expect(screen.getByTestId('date-field-empty-s1')).toBeInTheDocument();
+  });
+
+  it('number round-trips a typed amount, and emptying returns the empty state', () => {
+    let section = mkSection({ sectionType: 'number', title: 'Deal Value' });
+    const onUpdateSection = (patch: Partial<Section>) => { section = applyPatch(section, patch); };
+
+    const editor = render(
+      <NumberEditorRenderer section={section} viewMode="editor" editable onUpdateSection={onUpdateSection} />,
+    );
+    fireEvent.change(screen.getByTestId('number-field-input-s1'), { target: { value: '2500' } });
+    editor.unmount();
+
+    const reader = render(<NumberReaderRenderer section={section} viewMode="reader" editable={false} />);
+    expect(screen.getByTestId('number-field-reader-s1')).toHaveTextContent('2,500');
+    reader.unmount();
+
+    const editor2 = render(
+      <NumberEditorRenderer section={section} viewMode="editor" editable onUpdateSection={onUpdateSection} />,
+    );
+    fireEvent.change(screen.getByTestId('number-field-input-s1'), { target: { value: '' } });
+    editor2.unmount();
+
+    render(<NumberReaderRenderer section={section} viewMode="reader" editable={false} />);
+    expect(screen.getByTestId('number-field-empty-s1')).toBeInTheDocument();
+  });
+
+  it('boolean round-trips unanswered -> Yes -> No -> unanswered', () => {
+    let section = mkSection({ sectionType: 'boolean', title: 'SOC2 Compliant' });
+    const onUpdateSection = (patch: Partial<Section>) => { section = applyPatch(section, patch); };
+    const drive = () => render(
+      <BooleanEditorRenderer section={section} viewMode="editor" editable onUpdateSection={onUpdateSection} />,
+    );
+
+    let editor = drive();
+    fireEvent.click(screen.getByTestId('boolean-field-input-s1'));
+    editor.unmount();
+    let reader = render(<BooleanReaderRenderer section={section} viewMode="reader" editable={false} />);
+    expect(screen.getByTestId('boolean-field-reader-s1')).toHaveTextContent('Yes');
+    reader.unmount();
+
+    editor = drive();
+    fireEvent.click(screen.getByTestId('boolean-field-input-s1'));
+    editor.unmount();
+    reader = render(<BooleanReaderRenderer section={section} viewMode="reader" editable={false} />);
+    expect(screen.getByTestId('boolean-field-reader-s1')).toHaveTextContent('No');
+    reader.unmount();
+
+    editor = drive();
+    fireEvent.click(screen.getByTestId('boolean-field-clear-s1'));
+    editor.unmount();
+    render(<BooleanReaderRenderer section={section} viewMode="reader" editable={false} />);
+    expect(screen.getByTestId('boolean-field-empty-s1')).toBeInTheDocument();
   });
 });

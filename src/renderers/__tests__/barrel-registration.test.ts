@@ -44,6 +44,14 @@ import DiagramEditorRenderer from '../diagram/DiagramEditorRenderer';
 import DiagramReaderRenderer from '../diagram/DiagramReaderRenderer';
 import LinkBlockEditorRenderer from '../link-block/LinkBlockEditorRenderer';
 import LinkBlockReaderRenderer from '../link-block/LinkBlockReaderRenderer';
+import TextEditorRenderer from '../text/TextEditorRenderer';
+import TextReaderRenderer from '../text/TextReaderRenderer';
+import DateEditorRenderer from '../date/DateEditorRenderer';
+import DateReaderRenderer from '../date/DateReaderRenderer';
+import NumberEditorRenderer from '../number/NumberEditorRenderer';
+import NumberReaderRenderer from '../number/NumberReaderRenderer';
+import BooleanEditorRenderer from '../boolean/BooleanEditorRenderer';
+import BooleanReaderRenderer from '../boolean/BooleanReaderRenderer';
 
 /** Every (sectionType, viewMode) the barrel is contracted to serve. */
 const EXPECTED: Array<[string, ViewMode, unknown]> = [
@@ -68,10 +76,25 @@ const EXPECTED: Array<[string, ViewMode, unknown]> = [
   ['link-block', 'editor', LinkBlockEditorRenderer],
   ['link-block', 'ack', LinkBlockReaderRenderer],
   ['link-block', 'reader', LinkBlockReaderRenderer],
+  ['text', 'editor', TextEditorRenderer],
+  ['text', 'ack', TextReaderRenderer],
+  ['text', 'reader', TextReaderRenderer],
+  ['date', 'editor', DateEditorRenderer],
+  ['date', 'ack', DateReaderRenderer],
+  ['date', 'reader', DateReaderRenderer],
+  ['number', 'editor', NumberEditorRenderer],
+  ['number', 'ack', NumberReaderRenderer],
+  ['number', 'reader', NumberReaderRenderer],
+  ['boolean', 'editor', BooleanEditorRenderer],
+  ['boolean', 'ack', BooleanReaderRenderer],
+  ['boolean', 'reader', BooleanReaderRenderer],
 ];
 
 const SHIPPED_TYPES = [
   'tasks', 'rich-text', 'decisions', 'checklist', 'file-upload', 'diagram', 'link-block',
+  // The scalar field types the cookbooks actually declare. Before these
+  // registered, 151 of the 219 cookbook fields fell through to DefaultRenderer.
+  'text', 'date', 'number', 'boolean',
 ] as const;
 
 const VIEW_MODES: ViewMode[] = ['editor', 'ack', 'reader'];
