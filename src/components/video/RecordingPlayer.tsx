@@ -1,14 +1,47 @@
-// RecordingPlayer — HLS playback shell for VOD-style DVR playlists.
+// RecordingPlayer — playback shell for recordings, HLS or progressive.
 //
-// Detects native HLS support (Safari) and uses `<video src>` directly.
-// Otherwise dynamic-imports hls.js so we don't bloat the lib bundle.
-// Consumers pass a playlist URL (typically from `useLVSHlsPlayer`) and
-// get standard playback chrome: play/pause, scrubber, volume, speed,
-// fullscreen.
+// Consumers pass a URL (an HLS playlist from `useLVSHlsPlayer`, or a plain
+// media file — the recordings API hands out `.mp4`) and get standard playback
+// chrome: play/pause, scrubber, volume, speed, fullscreen.
+//
+// ## Why the source decides, and not the browser
+//
+// This used to branch on `canPlayType('application/vnd.apple.mpegurl')` alone:
+// truthy meant native `<video src>`, falsy meant dynamic-import hls.js. That is
+// the right question to ask about a PLAYLIST and the wrong one to ask about a
+// file, and the recordings API sends files.
+//
+//   Chromium answers "maybe" to that probe and cannot actually play HLS, so an
+//   .mp4 took the native branch and worked — by accident, off a wrong answer.
+//   Firefox answers "" and the same .mp4 went to hls.js, which was handed a
+//   container it does not parse, and failed.
+//
+// So a share link — the one surface built for people outside the org, who are
+// the least likely to be on the browser we happened to test — was broken on
+// Firefox while looking fine here.
+//
+// Now: an explicit `.m3u8` is HLS, an explicit progressive container is not,
+// and anything ambiguous keeps the old probe-first behaviour rather than
+// guessing. hls.js is still only imported when it is actually needed.
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
 import { Select } from '../forms/Select';
+
+/**
+ * What kind of source a URL names, by extension.
+ *
+ * `'unknown'` is a real answer and not a failure: a signed or extensionless
+ * URL gets the previous behaviour rather than a guess, because guessing wrong
+ * in either direction breaks playback silently. Query strings and fragments
+ * are stripped first — a signed `.m3u8?X-Amz-...` is still a playlist.
+ */
+export function sourceKind(url: string): 'hls' | 'progressive' | 'unknown' {
+  const path = url.split('#')[0].split('?')[0].toLowerCase();
+  if (path.endsWith('.m3u8')) return 'hls';
+  if (/\.(mp4|m4v|mov|webm|ogv|ogg|m4a|mp3|wav|aac)$/.test(path)) return 'progressive';
+  return 'unknown';
+}
 
 export interface RecordingPlayerProps {
   playlistUrl: string | null;
@@ -69,7 +102,10 @@ export function RecordingPlayer({
     setError(null);
     setIsLoading(true);
 
-    if (v.canPlayType('application/vnd.apple.mpegurl')) {
+    // Progressive files play natively in every target browser; handing one to
+    // hls.js is what broke Firefox. A playlist still needs the probe.
+    if (sourceKind(playlistUrl) === 'progressive'
+        || v.canPlayType('application/vnd.apple.mpegurl')) {
       v.src = playlistUrl;
       return () => { v.removeAttribute('src'); v.load(); };
     }
