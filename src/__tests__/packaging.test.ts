@@ -263,18 +263,28 @@ describe('entry points and their transitive optional peers', () => {
       'doc-editor': { static: [...TIPTAP, 'yjs'].sort(), dynamic: ['amazon-ivs-web-broadcast'] },
       // The root barrel re-exports nearly everything, so it needs nearly
       // everything. That is expected — subpaths are how a consumer opts out.
-      // The tiptap peers moved static -> DYNAMIC here in 2.187.0, and that is
-      // the good direction: a static optional peer breaks the import itself
-      // for every consumer of the barrel, installed or not, while a dynamic
-      // one only fails if the feature actually runs. `import { Button } from
-      // '@connorhoehnslalom/ui-components'` no longer needs seven tiptap
-      // packages on disk. Pinned rather than celebrated — if they drift back
-      // to static, this goes red and someone has to say why.
+      // The tiptap peers are STATIC here, and that is a real cost: importing
+      // `Button` from the root barrel needs seven tiptap packages on disk,
+      // because `src/index.ts` re-exports `./renderers` and
+      // `DefaultRenderer.tsx` imports `TiptapEditor` at module scope. The
+      // chain is index.js -> renderers-*.js -> TiptapEditor-*.js.
+      //
+      // This entry briefly claimed the opposite. In 2.187.0 it was changed to
+      // list them as dynamic, with a comment congratulating the move — but the
+      // walker had been run against a dist built one release earlier, so the
+      // "improvement" was a reading of a stale artifact and no such change ever
+      // happened. Verified afterwards by walking BOTH the 2.187.0 and 2.188.0
+      // dists from `git archive`: identical static path in each.
+      //
+      // The honest fix, if anyone wants it, is to stop re-exporting the
+      // renderers from the root barrel or to make DefaultRenderer's editor a
+      // dynamic import. Until then this pins the truth.
       index: {
         static: [
+          ...TIPTAP,
           'amazon-cognito-identity-js', 'cmdk', 'react-markdown', 'react-router', 'recharts', 'remark-gfm', 'yjs',
         ].sort(),
-        dynamic: [...TIPTAP, 'amazon-ivs-web-broadcast'].sort(),
+        dynamic: ['amazon-ivs-web-broadcast'],
       },
     };
 

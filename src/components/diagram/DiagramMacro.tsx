@@ -22,8 +22,29 @@
 //
 // The cost is that a node view registered on `macro` sees EVERY macro, so it
 // has to reproduce the default `<pre><code>` rendering for the ones it does not
-// draw. That is `plainMacroView` below, and it is a faithful copy of
-// `MacroNode.renderHTML`.
+// draw. That is `plainMacroView`, a faithful copy of `MacroNode.renderHTML`.
+//
+// ## Why the node view no longer lives in this file
+//
+// It used to. This extension carried `props.nodeViews.macro` itself, drew a
+// diagram when `macroName === 'diagram'`, and fell back to `plainMacroView` for
+// everything else. That works for exactly one renderer: a second extension
+// registering the same way is a second plugin claiming the same node name, and
+// ProseMirror keeps only the last `nodeViews[macro]` it is given — so whichever
+// extension happened to sort later would silently blank the other's blocks. No
+// error, no warning, just a page where half the tools stopped drawing.
+//
+// So the node view moved to `../doc-macros/registry.ts`, which owns the one
+// `macro` node view for the whole editor and dispatches it by macro NAME. This
+// file now contributes a `MacroRenderer` like any other tool. Nothing about the
+// two arguments above changed — read `registry.ts`'s header, it carries them
+// forward verbatim, and `ActionItemsMacro.tsx` is what a second renderer looks
+// like.
+//
+// An editor that registers ONLY this extension is unaffected: with no other
+// declared renderer, `macroRendererPlugins` elects this one the host and the
+// plugin it returns is the same plugin, built from a registry holding only the
+// diagram.
 //
 // ## Why the node view is hand-built rather than `ReactNodeViewRenderer`
 //
@@ -54,19 +75,26 @@
 //      be taken off the page.
 //
 // The flag is read from the LIVE `EditorView.editable` and re-broadcast when it
-// changes (see the plugin view at the bottom), so flipping a document to
-// read-only mid-session reaches a diagram that is already on screen. Reading it
-// once at construction would have left an editable canvas sitting inside a
-// page that had just been locked.
+// changes (the plugin view in `registry.ts`, which now does this for every
+// renderer rather than only for diagrams), so flipping a document to read-only
+// mid-session reaches a diagram that is already on screen. Reading it once at
+// construction would have left an editable canvas sitting inside a page that
+// had just been locked.
 
 import { createElement } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
 import { Extension } from '@tiptap/core';
-import { Plugin, PluginKey } from '@tiptap/pm/state';
-import type { EditorView, NodeView } from '@tiptap/pm/view';
+import { PluginKey, type Plugin } from '@tiptap/pm/state';
 import type { Node as PmNode } from '@tiptap/pm/model';
 import type { AwarenessLike } from '@connorhoehn/realtime-modules/adapters/excalidraw';
 import DiagramBlockRenderer, { type DiagramBlockUser } from './DiagramBlockRenderer';
+import { ReactMacroView } from '../doc-macros/ReactMacroView';
+import {
+    macroRendererPlugins,
+    macroRendererStorage,
+    type MacroRenderer,
+    type MacroRendererStorage,
+    type MacroViewContext,
+} from '../doc-macros/registry';
 import {
     DIAGRAM_MACRO_NAME,
     MACRO_NODE_NAME,
@@ -98,6 +126,11 @@ export interface DiagramMacroOptions {
     getContext: () => DiagramMacroContext | null;
 }
 
+/**
+ * @deprecated The `macro` node view is now the registry's single plugin, keyed
+ * by `macroRenderersPluginKey`. This key no longer belongs to any plugin and is
+ * kept only so a pinned consumer that imports it keeps compiling.
+ */
 export const diagramMacroPluginKey = new PluginKey('diagramMacro');
 
 declare module '@tiptap/core' {
@@ -114,32 +147,10 @@ declare module '@tiptap/core' {
 }
 
 // ---------------------------------------------------------------------------
-// The default macro rendering, for every macro that is not a diagram
-// ---------------------------------------------------------------------------
-
-/**
- * `pre[data-macro] > code`, holding the macro's literal YAML.
- *
- * A faithful copy of `MacroNode.renderHTML`. Registering a node view on `macro`
- * takes over rendering for ALL macros — action items, decisions, fields — so
- * anything this view does not draw has to come out looking exactly as it did
- * before this extension existed.
- */
-function plainMacroView(node: PmNode): NodeView {
-    const dom = document.createElement('pre');
-    dom.setAttribute('data-macro', String(node.attrs.macroName ?? 'unknown'));
-    const contentDOM = document.createElement('code');
-    dom.appendChild(contentDOM);
-    return { dom, contentDOM };
-}
-
-// ---------------------------------------------------------------------------
 // The diagram node view
 // ---------------------------------------------------------------------------
 
-class DiagramMacroView implements NodeView {
-    dom: HTMLElement;
-
+class DiagramMacroView extends ReactMacroView {
     // Deliberately NO contentDOM. The macro's text is `id: <uuid>` — a
     // reference, not prose — and rendering it beside the canvas would put an
     // editable YAML line inside the user's picture. With no contentDOM,
@@ -147,16 +158,10 @@ class DiagramMacroView implements NodeView {
     // `stopEvent` below are mandatory rather than optional: without them,
     // Excalidraw's own DOM churn reads to ProseMirror as the user editing the
     // document.
-
-    private root: Root;
-
-    private host: HTMLElement;
-
-    private node: PmNode;
-
-    private dead = false;
-
-    private queued = false;
+    //
+    // `dom`, the React root, the microtask paint and the deferred unmount all
+    // come from `ReactMacroView` — read that file for why none of the four is
+    // optional. What is left here is the part that is actually about diagrams.
 
     /**
      * Whether THIS block is the one being worked on.
@@ -171,6 +176,11 @@ class DiagramMacroView implements NodeView {
      * where they expected a drawing.
      *
      * Click to work on one, click away or press Escape to put it down.
+     *
+     * Deliberately NOT promoted to `ReactMacroView`. It pays for a cost only
+     * Excalidraw has; a checklist is cheap and should be tickable on sight, and
+     * making every macro demand a click first would be ceremony borrowed from
+     * someone else's problem.
      */
     private active = false;
 
@@ -193,24 +203,17 @@ class DiagramMacroView implements NodeView {
     }
 
     constructor(
-        node: PmNode,
-        private view: EditorView,
-        private getPos: () => number | undefined,
+        ctx: MacroViewContext,
         private options: DiagramMacroOptions,
     ) {
-        this.node = node;
-        this.dom = document.createElement('div');
-        this.dom.setAttribute('data-macro', DIAGRAM_MACRO_NAME);
+        super(ctx, DIAGRAM_MACRO_NAME);
         this.dom.setAttribute('data-diagram-active', 'false');
-        this.host = document.createElement('div');
-        this.dom.appendChild(this.host);
-        this.root = createRoot(this.host);
 
         // `stopEvent` keeps ProseMirror out of this subtree, which also means
         // it can never make a NodeSelection here — so activation cannot ride on
         // selection and is handled directly.
         this.dom.addEventListener('mousedown', () => {
-            if (this.view.editable) this.setActive(true);
+            if (this.editable) this.setActive(true);
         });
         document.addEventListener('mousedown', this.onDocumentPointerDown, true);
         document.addEventListener('keydown', this.onDocumentKeyDown, true);
@@ -218,65 +221,28 @@ class DiagramMacroView implements NodeView {
         this.schedule();
     }
 
-    /**
-     * Paints on a microtask, never synchronously.
-     *
-     * ProseMirror builds node views from inside `EditorView`'s construction,
-     * and `@tiptap/react` constructs the view from inside React's own work —
-     * so a synchronous `root.render()` here is a nested update during a render
-     * phase, which React reports as *"Render methods should be a pure function
-     * of props and state"*. Verified in the browser: the warning appears on
-     * every page that holds a diagram, and disappears when the paint is
-     * deferred by one microtask.
-     *
-     * Coalesced, because a single transaction can call `update()` more than
-     * once and each paint mounts an Excalidraw canvas.
-     */
-    private schedule(): void {
-        if (this.queued || this.dead) return;
-        this.queued = true;
-        queueMicrotask(() => {
-            this.queued = false;
-            if (!this.dead) this.render();
+    protected element() {
+        const ctx = this.options.getContext();
+        const source = this.node.textContent;
+        return createElement(DiagramBlockRenderer, {
+            diagramId: readDiagramId(source),
+            source,
+            ydoc: ctx?.ydoc ?? null,
+            awareness: ctx?.awareness ?? null,
+            // The document being editable is permission; this block being
+            // active is intent. Both, or it renders as a picture.
+            editable: this.editable && this.active,
+            user: ctx?.user ?? { name: 'Anonymous', color: '#3b82f6' },
+            ...(ctx?.assetPath ? { assetPath: ctx.assetPath } : {}),
+            ...(this.editable && this.active ? { onRemove: () => this.removeBlock() } : {}),
         });
     }
 
-    private render(): void {
-        const ctx = this.options.getContext();
-        const source = this.node.textContent;
-        this.root.render(
-            createElement(DiagramBlockRenderer, {
-                diagramId: readDiagramId(source),
-                source,
-                ydoc: ctx?.ydoc ?? null,
-                awareness: ctx?.awareness ?? null,
-                // The document being editable is permission; this block being
-                // active is intent. Both, or it renders as a picture.
-                editable: this.view.editable && this.active,
-                user: ctx?.user ?? { name: 'Anonymous', color: '#3b82f6' },
-                ...(ctx?.assetPath ? { assetPath: ctx.assetPath } : {}),
-                ...(this.view.editable && this.active ? { onRemove: () => this.remove() } : {}),
-            }),
-        );
-    }
-
-    /**
-     * Takes the block off the page.
-     *
-     * The only way out: with no contentDOM and `stopEvent` swallowing clicks,
-     * ProseMirror can never make a NodeSelection here, so neither a click nor a
-     * backspace can delete this block. `Remove` is that missing gesture.
-     */
-    private remove(): void {
-        const pos = this.getPos();
-        if (pos === undefined) return;
-        this.view.dispatch(this.view.state.tr.delete(pos, pos + this.node.nodeSize));
-    }
-
-    /** Called by the plugin view when `EditorView.editable` flips. */
-    refresh(): void {
-        this.schedule();
-    }
+    // `removeBlock` (from the base class) is how the block leaves the page, and
+    // the Remove button is the only gesture that reaches it: with no contentDOM
+    // and `stopEvent` swallowing clicks, ProseMirror can never make a
+    // NodeSelection here, so neither a click nor a backspace can delete this
+    // block.
 
     update(node: PmNode): boolean {
         // A macro that stopped being a diagram is a different block; returning
@@ -303,23 +269,32 @@ class DiagramMacroView implements NodeView {
     }
 
     destroy(): void {
-        // Deferred: React refuses to unmount a root synchronously from inside a
-        // render or a commit, and ProseMirror destroys node views from inside
-        // its own update cycle. Unmounting inline logs a warning and can leave
-        // the canvas' listeners attached.
-        this.dead = true;
         document.removeEventListener('mousedown', this.onDocumentPointerDown, true);
         document.removeEventListener('keydown', this.onDocumentKeyDown, true);
-        const root = this.root;
-        queueMicrotask(() => root.unmount());
+        super.destroy();
     }
 }
+
+/**
+ * The diagram renderer.
+ *
+ * Exported so a host can drop it straight into `MacroRenderers.configure({
+ * renderers: [...] })` instead of registering this extension. The two are
+ * equivalent; the extension additionally brings `insertDiagram`.
+ */
+export function diagramRenderer(options: DiagramMacroOptions): MacroRenderer {
+    return {
+        macroName: DIAGRAM_MACRO_NAME,
+        create: (ctx: MacroViewContext) => new DiagramMacroView(ctx, options),
+    };
+}
+
 
 // ---------------------------------------------------------------------------
 // The extension
 // ---------------------------------------------------------------------------
 
-export const DiagramMacro = Extension.create<DiagramMacroOptions>({
+export const DiagramMacro = Extension.create<DiagramMacroOptions, MacroRendererStorage>({
     name: 'diagramMacro',
 
     addOptions() {
@@ -352,45 +327,14 @@ export const DiagramMacro = Extension.create<DiagramMacroOptions>({
         };
     },
 
-    addProseMirrorPlugins() {
-        const options = this.options;
-        const live = new Set<DiagramMacroView>();
+    addStorage: macroRendererStorage,
 
-        return [
-            new Plugin({
-                key: diagramMacroPluginKey,
-                props: {
-                    nodeViews: {
-                        [MACRO_NODE_NAME]: (node, view, getPos) => {
-                            if (node.attrs.macroName !== DIAGRAM_MACRO_NAME) {
-                                return plainMacroView(node);
-                            }
-                            const nodeView = new DiagramMacroView(node, view, getPos, options);
-                            live.add(nodeView);
-                            const destroy = nodeView.destroy.bind(nodeView);
-                            nodeView.destroy = () => {
-                                live.delete(nodeView);
-                                destroy();
-                            };
-                            return nodeView;
-                        },
-                    },
-                },
-                // The editable broadcast. `EditorView.setProps` runs plugin
-                // views on every update, which is the only hook that fires when
-                // a host flips `editable` without touching the document.
-                view: (editorView) => {
-                    let editable = editorView.editable;
-                    return {
-                        update: (updated) => {
-                            if (updated.editable === editable) return;
-                            editable = updated.editable;
-                            live.forEach((v) => v.refresh());
-                        },
-                    };
-                },
-            }),
-        ];
+    addProseMirrorPlugins(): Plugin[] {
+        // One line, and it is the whole registration: the diagram's renderer
+        // goes into this editor's registry, and the shared `macro` node view
+        // comes back only if no other extension is already hosting it. See
+        // `../doc-macros/registry.ts`.
+        return macroRendererPlugins(this.editor, this.name, diagramRenderer(this.options));
     },
 });
 

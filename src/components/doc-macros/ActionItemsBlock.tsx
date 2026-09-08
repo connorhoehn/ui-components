@@ -1,0 +1,297 @@
+// ui-components/src/components/doc-macros/ActionItemsBlock.tsx
+//
+// A `macro:action-items` fence, drawn as a checklist.
+//
+// Presentation only — it is handed items and four callbacks, and never touches
+// the document. Every callback goes back through `ActionItemsMacro`'s node
+// view, which turns it into a minimal text edit on the macro's YAML body. That
+// separation is what keeps this file testable without a ProseMirror editor,
+// and it is why there is no local "checked" state here: the tick is not UI
+// state that later syncs, it IS the document, read back through the node.
+//
+// ## Colours
+//
+// Chrome tokens (`bg-surface-inset`, `border-border`, `text-text-*`), the same
+// family `DiagramBlockRenderer` uses, NOT the `--color-paper-*` family. Both
+// halves of a chrome pair flip together in dark mode, so the block stays
+// legible; the paper family is theme-INVARIANT white and is reserved for the
+// page's own prose surface, where a themed ink would go white-on-white. A macro
+// block is a tool sitting on the page, not the page.
+//
+// ## Item text
+//
+// Committed on blur and on Enter, never per keystroke. A controlled input fed
+// from `node.textContent` would be re-seeded by our own dispatch on every
+// character — the caret jumps to the end mid-word, and two people typing in the
+// same item fight over the whole scalar instead of merging. On commit it is one
+// minimal edit, which is what the CRDT wants and what the suggestion fork
+// records as one change.
+
+import { useEffect, useRef, useState } from 'react';
+import { Button } from '../ui/Button';
+import { Input } from '../forms/Input';
+import { cn } from '../../lib/cn';
+import type { ActionItem } from './actionItemsText';
+
+export interface ActionItemsBlockProps {
+    items: readonly ActionItem[];
+    /** False renders the checklist as a read-only list — no ticking, no edits. */
+    editable?: boolean;
+    onToggle?: (index: number) => void;
+    onTextChange?: (index: number, text: string) => void;
+    onRemoveItem?: (index: number) => void;
+    onAddItem?: () => void;
+    /** Takes the whole block off the page. Omitted when not editable. */
+    onRemove?: () => void;
+    'data-testid'?: string;
+}
+
+/**
+ * The tick target.
+ *
+ * `role="checkbox"` on a button rather than an `<input type="checkbox">`: a
+ * form control inside a ProseMirror node view has to fight the editor for its
+ * own change events, and this needs none of what a form control brings. The
+ * ARIA role and `aria-checked` carry the whole semantic to a screen reader.
+ */
+function ItemCheckbox({
+    item,
+    editable,
+    onToggle,
+    testId,
+}: {
+    item: ActionItem;
+    editable: boolean;
+    onToggle?: () => void;
+    testId: string;
+}) {
+    return (
+        <button
+            type="button"
+            role="checkbox"
+            aria-checked={item.done}
+            aria-label={item.text || 'Untitled action item'}
+            disabled={!editable}
+            data-testid={testId}
+            data-status={item.status || 'none'}
+            onClick={onToggle}
+            className={cn(
+                'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] leading-none transition-colors',
+                item.done
+                    ? 'border-success-border bg-success text-white'
+                    : 'border-border-emphasis bg-surface',
+                editable ? 'cursor-pointer hover:border-primary' : 'cursor-default',
+            )}
+        >
+            {item.done ? '✓' : ''}
+        </button>
+    );
+}
+
+/** `assignee` and `due`, shown only when the payload carries them. */
+function ItemMeta({ item, testId }: { item: ActionItem; testId: string }) {
+    const chip =
+        'rounded-sm border border-border bg-surface px-1.5 py-px text-[11px] text-text-secondary';
+    return (
+        <>
+            {item.assignee ? (
+                <span data-testid={`${testId}-assignee`} className={chip}>
+                    @{item.assignee}
+                </span>
+            ) : null}
+            {item.due ? (
+                <span data-testid={`${testId}-due`} className={chip}>
+                    due {item.due}
+                </span>
+            ) : null}
+            {/* A status this package does not know is SHOWN, not normalised —
+                the block is a view of the file, and quietly relabelling
+                someone's `blocked` as pending would be a lie about it. */}
+            {item.status !== '' && item.status !== 'pending' && item.status !== 'done' ? (
+                <span data-testid={`${testId}-status`} className={chip}>
+                    {item.status}
+                </span>
+            ) : null}
+        </>
+    );
+}
+
+function ItemText({
+    item,
+    editable,
+    onTextChange,
+    testId,
+}: {
+    item: ActionItem;
+    editable: boolean;
+    onTextChange?: (text: string) => void;
+    testId: string;
+}) {
+    const [draft, setDraft] = useState(item.text);
+    const focused = useRef(false);
+
+    // Re-seed from the document, but never while the user is in the field —
+    // that is the caret-jump this component exists to avoid. A remote edit to
+    // an item somebody is typing in lands when they leave it.
+    useEffect(() => {
+        if (!focused.current) setDraft(item.text);
+    }, [item.text]);
+
+    if (!editable) {
+        return (
+            <span
+                data-testid={`${testId}-text`}
+                className={cn(
+                    'min-w-0 flex-1 text-[13px] leading-5',
+                    item.done ? 'text-text-tertiary line-through' : 'text-text-primary',
+                )}
+            >
+                {item.text || <span className="text-text-tertiary">Untitled action item</span>}
+            </span>
+        );
+    }
+
+    const commit = () => {
+        if (draft !== item.text) onTextChange?.(draft);
+    };
+
+    return (
+        <Input
+            size="sm"
+            data-testid={`${testId}-text`}
+            value={draft}
+            placeholder="Untitled action item"
+            aria-label="Action item text"
+            onChange={(e) => setDraft(e.target.value)}
+            onFocus={() => {
+                focused.current = true;
+            }}
+            onBlur={() => {
+                focused.current = false;
+                commit();
+            }}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    commit();
+                    (e.target as HTMLElement).blur();
+                } else if (e.key === 'Escape') {
+                    setDraft(item.text);
+                    (e.target as HTMLElement).blur();
+                }
+            }}
+            className={cn(
+                'min-w-0 flex-1 border-transparent bg-transparent hover:border-border',
+                item.done && 'text-text-tertiary line-through',
+            )}
+        />
+    );
+}
+
+export function ActionItemsBlock({
+    items,
+    editable = false,
+    onToggle,
+    onTextChange,
+    onRemoveItem,
+    onAddItem,
+    onRemove,
+    'data-testid': testId = 'action-items',
+}: ActionItemsBlockProps) {
+    const done = items.filter((i) => i.done).length;
+
+    return (
+        <div data-testid={testId} className="my-3">
+            <div className="flex items-center justify-between gap-2 rounded-t-md border border-b-0 border-border bg-surface-inset px-2.5 py-1">
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
+                    Action items
+                </span>
+                <div className="flex items-center gap-2">
+                    <span
+                        data-testid={`${testId}-progress`}
+                        className="text-[11px] tabular-nums text-text-tertiary"
+                    >
+                        {done} of {items.length} done
+                    </span>
+                    {editable && onRemove ? (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            data-testid={`${testId}-remove`}
+                            onClick={onRemove}
+                        >
+                            Remove
+                        </Button>
+                    ) : null}
+                </div>
+            </div>
+
+            <div className="rounded-b-md border border-border bg-surface px-2.5 py-2">
+                {items.length === 0 ? (
+                    <p
+                        data-testid={`${testId}-empty`}
+                        className="px-0.5 py-1 text-[13px] text-text-tertiary"
+                    >
+                        No action items yet.
+                    </p>
+                ) : (
+                    <ul className="m-0 flex list-none flex-col gap-1 p-0">
+                        {items.map((item) => {
+                            const rowId = `${testId}-item-${item.index}`;
+                            return (
+                                <li
+                                    key={item.index}
+                                    data-testid={rowId}
+                                    data-done={String(item.done)}
+                                    className="flex items-start gap-2"
+                                >
+                                    <ItemCheckbox
+                                        item={item}
+                                        editable={editable}
+                                        onToggle={() => onToggle?.(item.index)}
+                                        testId={`${rowId}-toggle`}
+                                    />
+                                    <ItemText
+                                        item={item}
+                                        editable={editable}
+                                        onTextChange={(text) => onTextChange?.(item.index, text)}
+                                        testId={rowId}
+                                    />
+                                    <div className="flex shrink-0 items-center gap-1 pt-0.5">
+                                        <ItemMeta item={item} testId={rowId} />
+                                        {editable ? (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                aria-label="Remove action item"
+                                                data-testid={`${rowId}-remove`}
+                                                onClick={() => onRemoveItem?.(item.index)}
+                                            >
+                                                ✕
+                                            </Button>
+                                        ) : null}
+                                    </div>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
+
+                {editable ? (
+                    <div className="pt-1.5">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            data-testid={`${testId}-add`}
+                            onClick={onAddItem}
+                        >
+                            + Add item
+                        </Button>
+                    </div>
+                ) : null}
+            </div>
+        </div>
+    );
+}
+
+export default ActionItemsBlock;

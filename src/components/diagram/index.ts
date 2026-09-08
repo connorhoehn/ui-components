@@ -15,8 +15,19 @@ export { DiagramPresenceBar } from './DiagramPresenceBar';
 export type { DiagramPresenceBarProps } from './DiagramPresenceBar';
 
 // The canvas half: a `macro:diagram` fence, drawn in the page.
-export { DiagramMacro, diagramMacroPluginKey } from './DiagramMacro';
+export { DiagramMacro, diagramRenderer, diagramMacroPluginKey } from './DiagramMacro';
 export type { DiagramMacroContext, DiagramMacroOptions } from './DiagramMacro';
+
+// The document-macro system the diagram is now one citizen of: the registry
+// that owns the single `macro` node view, and every renderer registered
+// through it (action items today, an agent -> human hand-off next).
+//
+// Published from here rather than from a `./doc-macros` subpath of its own
+// because this entry already externalises `@tiptap/core` and the
+// `prosemirror-*` graph and already carries the canvas macro half — a new
+// subpath needs `vite.config.ts` and `package.json` changes this work does not
+// own. See `../doc-macros/index.ts`.
+export * from '../doc-macros';
 export {
     DIAGRAM_MACRO_NAME,
     MACRO_NODE_NAME,
