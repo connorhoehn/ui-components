@@ -144,16 +144,31 @@ describe('NewDocumentModal', () => {
     expect(screen.getByText('Cached Type')).toBeInTheDocument();
   });
 
-  it('open + types: first type is selected by default (✓ marker) and title input is rendered', () => {
+  it('opens with NO type selected — a shape is not a type', () => {
+    // This test used to be called "first type is selected by default" and
+    // asserted the ✓ on `type-option-a`. That default is what made every
+    // document a Bug Report: the `Page (Default)` tile and whichever type
+    // sorted first were both `aria-pressed="true"` from first render, and a
+    // type beats a bare shape on submit — so opening the dialog, typing a
+    // title and pressing Create produced a Bug Report nobody asked for.
+    // Measured on a 173-document list: all 25 rows of page one read
+    // "Bug Report".
     const a = mkType({ id: 'a', name: 'Alpha' });
     const b = mkType({ id: 'b', name: 'Beta' });
     loadTypes.mockReturnValue([a, b]);
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
-    const first = screen.getByTestId('type-option-a');
-    expect(first.textContent).toContain('✓');
-    const second = screen.getByTestId('type-option-b');
-    expect(second.textContent).not.toContain('✓');
+    expect(screen.getByTestId('type-option-a').textContent).not.toContain('✓');
+    expect(screen.getByTestId('type-option-b').textContent).not.toContain('✓');
+    expect(screen.getByTestId('type-option-a').getAttribute('aria-pressed')).toBe('false');
     expect(screen.getByTestId('new-doc-title')).toBeInTheDocument();
+  });
+
+  it('marks a type once it is actually chosen', () => {
+    const a = mkType({ id: 'a', name: 'Alpha' });
+    loadTypes.mockReturnValue([a]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('type-option-a'));
+    expect(screen.getByTestId('type-option-a').getAttribute('aria-pressed')).toBe('true');
   });
 
   // The SEARCH box, not the title: the first thing to do in this dialog is
@@ -199,12 +214,15 @@ describe('NewDocumentModal', () => {
     render(<NewDocumentModal open onClose={onClose} onCreate={onCreate} />);
     fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: '  Q2 review  ' } });
     fireEvent.click(screen.getByTestId('new-doc-submit'));
+    // A title and nothing else makes a PLAIN PAGE. This used to assert
+    // `documentTypeId: 'mn'` and the Meeting Notes icon, because the first
+    // installed type was auto-selected on open — which is how every document
+    // in the system ended up typed as whatever sorted first.
     expect(onCreate).toHaveBeenCalledWith({
       title: 'Q2 review',
-      type: 'Meeting Notes',
+      type: 'Document',
       description: undefined,
-      icon: '📝',
-      documentTypeId: 'mn',
+      icon: '📄',
       shape: 'page',
     });
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -281,13 +299,30 @@ describe('NewDocumentModal — page vs sections', () => {
   });
 
   it('reports the chosen shape on create', () => {
+    // Sections REQUIRES a type — `needsType = shape === 'sections'` — because
+    // a sectioned document with no type has no sections to show. That rule
+    // predates this test and was invisible while a type was auto-selected on
+    // open; now the type has to be picked, which is the honest sequence.
+    const onCreate = vi.fn();
+    const t = mkType();
+    loadTypes.mockReturnValue([t]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+    fireEvent.click(screen.getByTestId('doc-shape-sections'));
+    fireEvent.click(screen.getByTestId(`type-option-${t.id}`));
+    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notepad' } });
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+    expect(onCreate).toHaveBeenCalledWith(expect.objectContaining({ shape: 'sections' }));
+  });
+
+  it('will not submit Sections without a type, and says so rather than silently doing nothing', () => {
     const onCreate = vi.fn();
     loadTypes.mockReturnValue([mkType()]);
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
     fireEvent.click(screen.getByTestId('doc-shape-sections'));
     fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notepad' } });
+    expect(screen.getByTestId('new-doc-submit')).toBeDisabled();
     fireEvent.click(screen.getByTestId('new-doc-submit'));
-    expect(onCreate).toHaveBeenCalledWith(expect.objectContaining({ shape: 'sections' }));
+    expect(onCreate).not.toHaveBeenCalled();
   });
 
   it('resets to Page each time the modal opens', () => {
@@ -330,7 +365,14 @@ describe('NewDocumentModal — accessibility wiring', () => {
   it('exposes the selected document type via aria-pressed', () => {
     loadTypes.mockReturnValue([mkType(), mkType({ id: 'brief', name: 'Brief' })]);
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
-    // Selection used to be conveyed by colour and a "✓" glyph alone.
+    // Selection used to be conveyed by colour and a "✓" glyph alone. Nothing
+    // is selected until something is clicked — the auto-selection this test
+    // relied on is what typed every document as whatever sorted first.
+    expect(screen.getByTestId('type-option-meeting-notes')).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+    fireEvent.click(screen.getByTestId('type-option-meeting-notes'));
     expect(screen.getByTestId('type-option-meeting-notes')).toHaveAttribute(
       'aria-pressed',
       'true',

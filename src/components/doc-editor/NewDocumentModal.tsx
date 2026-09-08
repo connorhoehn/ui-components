@@ -257,7 +257,18 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     // Types page believed none existed.
     const loaded = loadTypes();
     setTypes(loaded);
-    setSelectedId(loaded[0]?.id ?? null);
+    // NOT `loaded[0]?.id`. Auto-selecting the first installed type made every
+    // document a Bug Report: the tile for `Page (Default)` and the tile for
+    // whichever type happened to sort first were BOTH `aria-pressed="true"`
+    // from first render, and a type beats a bare shape on submit. So a person
+    // who opened the dialog, typed a title and pressed Create got a Bug Report
+    // they never asked for — and clicking "Page" did not clear it, because a
+    // shape and a type are independent choices. Measured on a 173-document
+    // list: all 25 rows of page one read "Bug Report".
+    //
+    // No type is the honest default. It is what "Page (Default)" promises, and
+    // it is the only way to make a plain page at all.
+    setSelectedId(null);
     setCookbookId(null);
     setQuery('');
     setTitle('');
@@ -275,7 +286,11 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
         // stale one.
         const next = res.ok ? res.types : res.cached;
         setTypes(next);
-        setSelectedId((cur) => (cur && next.some((t) => t.id === cur) ? cur : next[0]?.id ?? null));
+        // Keep a choice the person made, drop one that no longer exists, and
+        // never invent one — the same reason as above, applied to the async
+        // reconcile that would otherwise re-select the first type a beat after
+        // the dialog painted.
+        setSelectedId((cur) => (cur && next.some((t) => t.id === cur) ? cur : null));
       })
       .finally(() => { if (!cancelled) setProbing(false); });
     // Cleared on close: an uncancelled focus lands on a hidden input and
