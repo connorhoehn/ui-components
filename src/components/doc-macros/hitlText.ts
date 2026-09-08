@@ -166,6 +166,42 @@ export const HITL_QUERYABILITY =
     'sentinel section is the queryable mirror. The row can carry the question, the ' +
     'addressee and the answer; it cannot carry the options or the expiry.';
 
+/**
+ * WHICH SIDE WINS WHEN THE BODY AND THE ROW DISAGREE.
+ *
+ * Two stores, no transaction between them (there is no server-side Y.Doc), so
+ * they CAN disagree and the only dishonest answer is to not have decided. The
+ * rule is not "newest wins" — it is per-field, because the two halves are
+ * authoritative about different things:
+ *
+ *   THE BODY OWNS THE ASK.  The question, the addressee, the options and the
+ *   expiry live in the document and are projected OUT to the row by whoever
+ *   has the page open. A row whose text or assignee drifts is corrected from
+ *   the body, never the other way round: the body is what a person reads and
+ *   what a foreign tool round-trips.
+ *
+ *   THE ROW OWNS WHETHER AN ANSWER STUCK.  It is the only half a person can
+ *   reach without opening the page, and the only half the asker polls. So an
+ *   answer written in the page is PROVISIONAL until the row accepts it — if
+ *   the mirror refuses, the document edit is retracted and the card says why
+ *   (`retractHitlEdit`, and `HitlMacro`'s header).
+ *
+ *   AN ANSWERED ROW FILLS AN UNANSWERED BODY.  That is the whole point of
+ *   answering from an inbox, and it is how a page catches up after being
+ *   answered while nobody had it open.
+ *
+ *   AN ANSWERED BODY IS NEVER OVERWRITTEN BY THE ROW.  Not even when the two
+ *   answers differ. Two different recorded answers means one of them was
+ *   accepted by something that acted on it, and silently replacing the text a
+ *   person can see is how a document stops being evidence. The disagreement is
+ *   REPORTED to the host instead — see `onAnswered`'s contract — and left on
+ *   screen for a human.
+ */
+export const HITL_CONVERGENCE =
+    'The body owns the ask and is projected to the row; the row owns whether an ' +
+    'answer stuck. An answered row fills an unanswered body; an answered body is ' +
+    'never overwritten, only reported.';
+
 /** The sentinel section a page-shaped document files macro rows under. */
 export const HITL_SENTINEL_SECTION = '_macro';
 
@@ -610,4 +646,116 @@ export function hitlMacroText(draft: HitlDraft): string {
 
     rows.push(`question: ${scalar(draft.question)}`);
     return rows.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// Addressing — the other single-range edit, and the one the mirror depends on
+// ---------------------------------------------------------------------------
+
+/**
+ * Where a top-level key this body does not have yet goes, alphabetically —
+ * matching `sortKeys: true`, so a body the chassis wrote stays a body it would
+ * write.
+ *
+ * The same arithmetic `answerInsertion` does, generalised to one key. It is not
+ * shared with that function because the answer trio inserts three lines as one
+ * range and this inserts one; folding them together would make the contiguity
+ * argument in `answerRange` harder to read than it already is.
+ */
+function keyInsertion(body: ParsedBody, key: string, scalar: string): TextRangeEdit {
+    const after = body.entries.find((e) => e.key > key);
+    if (after) {
+        return { from: after.lineStart, to: after.lineStart, insert: `${key}: ${scalar}\n` };
+    }
+    return { from: body.end, to: body.end, insert: `\n${key}: ${scalar}` };
+}
+
+/** The whole line one entry occupies, plus the break that separates it. */
+function lineRange(body: ParsedBody, entry: Entry): { from: number; to: number } {
+    if (entry.lineEnd < body.end) return { from: entry.lineStart, to: entry.lineEnd + 1 };
+    // Nothing follows: take the LEADING break instead, so what is left has no
+    // trailing blank line. A body whose only line is this one cannot happen —
+    // `question` is required and sorts after `assignee` — but the guard costs
+    // one comparison and a negative offset would corrupt the document.
+    if (entry.lineStart === 0) return { from: 0, to: entry.lineEnd };
+    return { from: entry.lineStart - 1, to: entry.lineEnd };
+}
+
+/**
+ * The edit that changes who a callout is addressed to — ONE range, always.
+ *
+ * Three shapes, and they are all one range on purpose (see this file's header
+ * on why answering is): the scalar alone when the key is already there, a whole
+ * inserted line in sorted position when it is not, and the line plus its break
+ * when the new addressee is nobody.
+ *
+ * Readdressing matters more here than it would on any other key, because
+ * `assignee` is the ONLY field the cross-document query is keyed on: a callout
+ * addressed to the wrong person is invisible to the right one. See
+ * `HITL_QUERYABILITY`.
+ *
+ * Returns `null` when there is nothing to do, or when the body is not one this
+ * file will write back to.
+ */
+export function setHitlAssigneeEdit(source: string, assignee: string): TextRangeEdit | null {
+    const body = parseBody(source);
+    if (!body) return null;
+    if (!valueOf(body, 'question')) return null;
+
+    const existing = body.entries.find((e) => e.key === 'assignee');
+    if (assignee === '') {
+        if (!existing) return null;
+        const range = lineRange(body, existing);
+        return { from: range.from, to: range.to, insert: '' };
+    }
+
+    const scalar = yamlScalar(assignee);
+    if (scalar === null) return null;
+    if (existing) {
+        if (existing.scalar.value === assignee) return null;
+        return { from: existing.scalar.from, to: existing.scalar.to, insert: scalar };
+    }
+    return keyInsertion(body, 'assignee', scalar);
+}
+
+// ---------------------------------------------------------------------------
+// The mirror row
+// ---------------------------------------------------------------------------
+
+/**
+ * The fields a section-item row carries for one callout — the whole of what
+ * `HITL_QUERYABILITY` says is visible outside the page, in one place so the
+ * document half and the host half cannot disagree about it.
+ *
+ * `itemId` IS the callout's `id`. That identity is the join: the inbox row a
+ * person answers and the block in the body are the same callout because they
+ * share it, and a callout with no id gets no row at all (see below).
+ *
+ * `assigneeId`, not `assignee`. The row's `assignee` is a human LABEL and the
+ * cross-document query is keyed on the IDENTITY; a callout carries only the
+ * identity, so writing it into the label field would produce a row that renders
+ * a Cognito sub at a reader AND — because a host that later set a real label
+ * would overwrite it — a row that silently stopped being findable. A host that
+ * knows the person's name is free to add the label beside this.
+ *
+ * Returns `null` for a callout no row can be keyed on: no id, or addressed to
+ * nobody. Both are legal in a body and both are invisible outside it — an
+ * unaddressed question is one the answer endpoint refuses on purpose, and a row
+ * for it would sit in nobody's inbox forever.
+ */
+export interface HitlMirrorRow {
+    itemId: string;
+    text: string;
+    assigneeId: string;
+    category: typeof HITL_ITEM_CATEGORY;
+}
+
+export function hitlMirrorRow(callout: HitlCallout): HitlMirrorRow | null {
+    if (!callout.id || !callout.assignee || !callout.question) return null;
+    return {
+        itemId: callout.id,
+        text: callout.question,
+        assigneeId: callout.assignee,
+        category: HITL_ITEM_CATEGORY,
+    };
 }

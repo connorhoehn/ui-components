@@ -25,6 +25,7 @@ import Text from '@tiptap/extension-text';
 import { ReplaceStep } from '@tiptap/pm/transform';
 import { HitlMacro, type HitlMacroOptions } from '../HitlMacro';
 import { readHitl } from '../hitlText';
+import type { HitlCallout } from '../hitlText';
 
 const LocalMacro = Node.create({
     name: 'macro',
@@ -300,5 +301,118 @@ describe('the mirror', () => {
         });
         expect(readHitl(body(e))?.answer).toBe('ship it');
         expect(testId(e, 'hitl-failure')).toBeNull();
+    });
+});
+
+// ---------------------------------------------------------------------------
+// The mirror, in both directions
+// ---------------------------------------------------------------------------
+
+describe('projecting the ask onto the row', () => {
+    it('fires once for a callout already in the document when it opens', async () => {
+        const changed: HitlCallout[] = [];
+        await run(() => {
+            mount({ onCalloutChanged: (c) => changed.push(c) }, WAITING);
+        });
+        expect(changed).toHaveLength(1);
+        expect(changed[0]).toMatchObject({ id: 'hitl-1', assignee: 'dev-bob', question: 'Ship now?' });
+    });
+
+    it('fires again when the callout is readdressed, and not on an unrelated edit', async () => {
+        const changed: HitlCallout[] = [];
+        let e!: Editor;
+        await run(() => {
+            e = mount(
+                {
+                    onCalloutChanged: (c) => changed.push(c),
+                    people: () => [{ id: 'dev-alice', name: 'Alice' }],
+                },
+                WAITING,
+            );
+        });
+        expect(changed).toHaveLength(1);
+
+        const select = testId(e, 'hitl-assign') as HTMLSelectElement;
+        expect(select).not.toBeNull();
+        await run(() => {
+            select.value = 'dev-alice';
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+        expect(readHitl(body(e))?.assignee).toBe('dev-alice');
+        expect(changed).toHaveLength(2);
+        expect(changed[1]).toMatchObject({ assignee: 'dev-alice' });
+
+        // Typing in a paragraph outside the block moves no mirrored field.
+        await run(() => {
+            e.commands.insertContentAt(e.state.doc.content.size, '<p>hello</p>');
+        });
+        expect(changed).toHaveLength(2);
+    });
+
+    it('draws no picker at all when the host declared no directory', async () => {
+        let e!: Editor;
+        await run(() => {
+            e = mount({}, WAITING);
+        });
+        expect(testId(e, 'hitl-assign')).toBeNull();
+        expect(testId(e, 'hitl-assignee')?.textContent).toContain('dev-bob');
+    });
+});
+
+describe('answerHitl — an answer that arrived from the inbox', () => {
+    it('applies the same single ReplaceStep an in-page answer makes', async () => {
+        let e!: Editor;
+        await run(() => {
+            e = mount({}, WAITING);
+        });
+        const steps: unknown[] = [];
+        e.on('transaction', ({ transaction }) => steps.push(...transaction.steps));
+
+        let ok = false;
+        await run(() => {
+            ok = e.commands.answerHitl({
+                id: 'hitl-1',
+                answer: 'ship it',
+                answeredBy: 'dev-bob',
+                answeredAt: '1970-01-01T00:00:00.000Z',
+            });
+        });
+
+        expect(ok).toBe(true);
+        expect(steps).toHaveLength(1);
+        expect(steps[0]).toBeInstanceOf(ReplaceStep);
+        expect(readHitl(body(e))).toMatchObject({
+            answer: 'ship it',
+            answeredBy: 'dev-bob',
+            answeredAt: '1970-01-01T00:00:00.000Z',
+        });
+        expect(testId(e, 'hitl')?.getAttribute('data-phase')).toBe('answered');
+    });
+
+    it('refuses to overwrite an answer the body already carries', async () => {
+        let e!: Editor;
+        await run(() => {
+            e = mount({}, ['answer: hold', 'answeredBy: dev-bob', ...WAITING.split('\n')].join('\n'));
+        });
+        let ok = true;
+        await run(() => {
+            ok = e.commands.answerHitl({ id: 'hitl-1', answer: 'ship it' });
+        });
+        expect(ok).toBe(false);
+        expect(readHitl(body(e))?.answer).toBe('hold');
+    });
+
+    it('refuses an id no callout on the page carries', async () => {
+        let e!: Editor;
+        await run(() => {
+            e = mount({}, WAITING);
+        });
+        let ok = true;
+        await run(() => {
+            ok = e.commands.answerHitl({ id: 'hitl-somewhere-else', answer: 'ship it' });
+        });
+        expect(ok).toBe(false);
+        expect(readHitl(body(e))?.answer).toBeNull();
     });
 });

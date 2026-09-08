@@ -47,7 +47,16 @@ import { useState } from 'react';
 import Chip from '../shared/Chip';
 import { Button } from '../ui/Button';
 import { Textarea } from '../forms/Textarea';
+import { Select } from '../forms/Select';
 import { hitlExpired, type HitlCallout } from './hitlText';
+
+/** One candidate addressee: the identity the row is keyed on, and its label. */
+export interface HitlPerson {
+    /** The auth subject written into `assignee:`. */
+    id: string;
+    /** What a reader sees. Never written into the body — see `hitlMirrorRow`. */
+    name: string;
+}
 
 export interface HitlBlockProps {
     callout: HitlCallout;
@@ -71,6 +80,24 @@ export interface HitlBlockProps {
      * believes they unblocked something.
      */
     failure?: string | null;
+    /**
+     * Who this callout may be addressed to, as identity + label.
+     *
+     * Empty (or absent) draws no picker at all, which is the honest rendering
+     * of "this surface has no directory": a control listing nobody would
+     * suggest the addressee is unchangeable when it is only unknown.
+     */
+    people?: readonly HitlPerson[];
+    /**
+     * Readdresses the callout. Only ever called with an id from `people`, or
+     * `''` to address it to nobody.
+     *
+     * Load-bearing rather than cosmetic: `assignee` is the ONLY field the
+     * cross-document query is keyed on, so a callout stuck on the wrong
+     * addressee is invisible to the person who should answer it and answerable
+     * by nobody — the answer endpoint refuses everyone but the addressee.
+     */
+    onAssign?: (assignee: string) => void;
     /** Takes a recorded answer back. Omitted when it cannot be done in one edit. */
     onRetract?: () => void;
     /** Takes the whole block off the page. Omitted when not editable. */
@@ -140,6 +167,55 @@ function OptionButton({
     );
 }
 
+/**
+ * Who is being asked, and how to change it.
+ *
+ * A `Select` rather than a chip with an edit affordance behind it, because
+ * readdressing is the one edit on this card that has to be discoverable
+ * WITHOUT the reader knowing it exists: a callout addressed to the wrong
+ * person is not visibly wrong from the page — it is wrong in somebody else's
+ * inbox, where nobody is looking.
+ *
+ * "Nobody" is a real option and is offered as one. It is not a null state to
+ * be tidied away: an unaddressed callout is refused by the answer endpoint on
+ * purpose, and a picker that could not express it would make "addressed to
+ * everybody" the only way back out of a mistaken assignment.
+ */
+function AssigneePicker({
+    value,
+    people,
+    disabled,
+    onAssign,
+    testId,
+}: {
+    value: string;
+    people: readonly HitlPerson[];
+    disabled: boolean;
+    onAssign: (assignee: string) => void;
+    testId: string;
+}) {
+    // An addressee the directory has never heard of is kept as an option of
+    // its own rather than silently reset to nobody by the first render: the
+    // body is the record, and a picker is not entitled to rewrite it just
+    // because this client's roster is short.
+    const known = people.some((p) => p.id === value);
+    return (
+        <Select
+            size="sm"
+            data-testid={`${testId}-assign`}
+            aria-label="Who is being asked"
+            value={value}
+            disabled={disabled}
+            onChange={(e) => onAssign(e.target.value)}
+            options={[
+                { value: '', label: 'unassigned' },
+                ...(value && !known ? [{ value, label: `for ${value}` }] : []),
+                ...people.map((p) => ({ value: p.id, label: `for ${p.name}` })),
+            ]}
+        />
+    );
+}
+
 /** The free-prose composer, for a callout that declared no options. */
 function ProseAnswer({
     onAnswer,
@@ -192,6 +268,8 @@ export function HitlBlock({
     onAnswer,
     busy = false,
     failure = null,
+    people,
+    onAssign,
     onRetract,
     onRemove,
     'data-testid': testId = 'hitl',
@@ -201,6 +279,13 @@ export function HitlBlock({
     // The gate, in one place. `onAnswer` alone is not enough: an expired
     // callout must draw nothing even when the host passed a handler.
     const canAnswer = phase === 'waiting' && editable && Boolean(onAnswer);
+    // Readdressing is offered only while the callout is still waiting. An
+    // answered one is a record — moving its addressee afterwards would make the
+    // attribution on screen disagree with who was actually asked — and an
+    // expired one is addressed to somebody who stopped waiting, so pointing it
+    // at a new person would be handing them a question that reaches nobody.
+    const canAssign =
+        phase === 'waiting' && editable && Boolean(onAssign) && (people?.length ?? 0) > 0;
 
     return (
         <div data-testid={testId} data-phase={phase} className="my-3">
@@ -249,7 +334,15 @@ export function HitlBlock({
                     {/* Who is being asked. Named only when the callout names
                         somebody — "addressed to nobody" is a real state and is
                         shown as one rather than as a blank chip. */}
-                    {callout.assignee ? (
+                    {canAssign ? (
+                        <AssigneePicker
+                            value={callout.assignee}
+                            people={people ?? []}
+                            disabled={busy}
+                            onAssign={(next) => onAssign?.(next)}
+                            testId={testId}
+                        />
+                    ) : callout.assignee ? (
                         <Chip tone="neutral" size="xs" data-testid={`${testId}-assignee`}>
                             for {callout.assignee}
                         </Chip>

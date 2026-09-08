@@ -75,10 +75,11 @@ export type { ActionItem, TextRangeEdit } from './actionItemsText';
 export { HitlMacro, hitlRenderer } from './HitlMacro';
 export type { HitlMacroOptions, HitlAnsweredEvent, HitlMirrorResult } from './HitlMacro';
 export { HitlBlock, hitlPhase } from './HitlBlock';
-export type { HitlBlockProps } from './HitlBlock';
+export type { HitlBlockProps, HitlPerson } from './HitlBlock';
 export {
     HITL_MACRO_NAME,
     HITL_QUERYABILITY,
+    HITL_CONVERGENCE,
     HITL_SENTINEL_SECTION,
     HITL_ITEM_CATEGORY,
     readHitl,
@@ -86,8 +87,10 @@ export {
     hitlMacroText,
     answerHitlEdit,
     retractHitlEdit,
+    setHitlAssigneeEdit,
+    hitlMirrorRow,
 } from './hitlText';
-export type { HitlCallout, HitlOption, HitlDraft } from './hitlText';
+export type { HitlCallout, HitlOption, HitlDraft, HitlMirrorRow } from './hitlText';
 
 // The recorded choice. Same registry, same one-range-per-edit rule. Unlike
 // HITL it has NO second reader outside the document — nothing polls a decision

@@ -11,8 +11,10 @@ import {
     answerHitlEdit,
     hitlExpired,
     hitlMacroText,
+    hitlMirrorRow,
     readHitl,
     retractHitlEdit,
+    setHitlAssigneeEdit,
 } from '../hitlText';
 import type { TextRangeEdit } from '../actionItemsText';
 
@@ -248,5 +250,92 @@ describe('writing a fresh callout', () => {
     it('writes a consequence-free choice in the scalar shorthand', () => {
         const text = hitlMacroText({ question: 'x', options: [{ value: 'hold' }] });
         expect(text).toBe('options:\n  - hold\nquestion: x');
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Readdressing — the other single-range edit
+// ---------------------------------------------------------------------------
+
+/** Applies an edit the way a node view would, so a result is comparable bytes. */
+function applyEdit(source: string, edit: TextRangeEdit | null): string {
+    if (!edit) return source;
+    return source.slice(0, edit.from) + edit.insert + source.slice(edit.to);
+}
+
+describe('setHitlAssigneeEdit', () => {
+    it('replaces the scalar alone when the key is already there', () => {
+        const source = 'assignee: dev-bob\nquestion: Ship now?';
+        const edit = setHitlAssigneeEdit(source, 'dev-alice');
+        expect(source.slice(edit!.from, edit!.to)).toBe('dev-bob');
+        expect(applyEdit(source, edit)).toBe('assignee: dev-alice\nquestion: Ship now?');
+    });
+
+    it('inserts a whole line where `sortKeys` would have put it', () => {
+        // Between `askedBy` and `blocks`, and before `question` — the position
+        // the chassis serializer emits, so a readdressed body stays a body it
+        // would have written.
+        const source = 'askedBy: agent\nblocks: the release\nquestion: Ship now?';
+        const next = applyEdit(source, setHitlAssigneeEdit(source, 'dev-bob'));
+        expect(next).toBe('askedBy: agent\nassignee: dev-bob\nblocks: the release\nquestion: Ship now?');
+        expect(readHitl(next)?.assignee).toBe('dev-bob');
+    });
+
+    it('appends when nothing sorts after it', () => {
+        const source = 'askedBy: agent';
+        // No `question`, so this body is not one the block draws — and the edit
+        // is declined rather than written into something it cannot read back.
+        expect(setHitlAssigneeEdit(source, 'dev-bob')).toBeNull();
+    });
+
+    it('takes the whole line and its break when the new addressee is nobody', () => {
+        const source = 'askedBy: agent\nassignee: dev-bob\nquestion: Ship now?';
+        const next = applyEdit(source, setHitlAssigneeEdit(source, ''));
+        expect(next).toBe('askedBy: agent\nquestion: Ship now?');
+        expect(readHitl(next)?.assignee).toBe('');
+    });
+
+    it('is one contiguous range, always', () => {
+        for (const [source, to] of [
+            ['assignee: dev-bob\nquestion: q', 'dev-alice'],
+            ['askedBy: a\nquestion: q', 'dev-alice'],
+            ['assignee: dev-bob\nquestion: q', ''],
+        ] as const) {
+            const edit = setHitlAssigneeEdit(source, to)!;
+            expect(edit.to).toBeGreaterThanOrEqual(edit.from);
+            expect(edit.from).toBeGreaterThanOrEqual(0);
+            expect(readHitl(applyEdit(source, edit))).not.toBeNull();
+        }
+    });
+
+    it('does nothing when the addressee is already right, and never for a body it cannot read', () => {
+        expect(setHitlAssigneeEdit('assignee: dev-bob\nquestion: q', 'dev-bob')).toBeNull();
+        expect(setHitlAssigneeEdit('question: q\nmeta:\n  nested: 1', 'dev-bob')).toBeNull();
+        // Nobody, and nobody was already the answer.
+        expect(setHitlAssigneeEdit('question: q', '')).toBeNull();
+    });
+});
+
+// ---------------------------------------------------------------------------
+// The mirror row
+// ---------------------------------------------------------------------------
+
+describe('hitlMirrorRow', () => {
+    it('keys the row on the callout id and addresses it by IDENTITY', () => {
+        const callout = readHitl('assignee: dev-bob\nid: hitl-1\nquestion: Ship now?')!;
+        expect(hitlMirrorRow(callout)).toEqual({
+            itemId: 'hitl-1',
+            text: 'Ship now?',
+            assigneeId: 'dev-bob',
+            category: 'hitl',
+        });
+    });
+
+    it('refuses a callout no row can be keyed on or addressed to', () => {
+        // No id: nothing to join the row and the block on.
+        expect(hitlMirrorRow(readHitl('assignee: dev-bob\nquestion: q')!)).toBeNull();
+        // Addressed to nobody: the answer endpoint refuses everyone, so the row
+        // would sit in no inbox forever.
+        expect(hitlMirrorRow(readHitl('id: hitl-1\nquestion: q')!)).toBeNull();
     });
 });

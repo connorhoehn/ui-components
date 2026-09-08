@@ -58,11 +58,12 @@ import {
     hitlMacroText,
     readHitl,
     retractHitlEdit,
+    setHitlAssigneeEdit,
     type HitlCallout,
     type HitlDraft,
 } from './hitlText';
 import type { TextRangeEdit } from './actionItemsText';
-import { HitlBlock, hitlPhase } from './HitlBlock';
+import { HitlBlock, hitlPhase, type HitlPerson } from './HitlBlock';
 
 declare module '@tiptap/core' {
     // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -70,6 +71,22 @@ declare module '@tiptap/core' {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }
@@ -113,6 +130,42 @@ export interface HitlMacroOptions {
      * or `{ ok: false }` RETRACTS the document edit — see the file header.
      */
     onAnswered?: (event: HitlAnsweredEvent) => void | Promise<HitlMirrorResult | void>;
+    /**
+     * Who this page may address a callout to. Read through a getter for the
+     * same reason `answeredBy` is: a roster arrives after the editor is built
+     * and changes while it is open, and an extension configured once must not
+     * freeze the first answer it got.
+     *
+     * Absent draws no picker — see `HitlBlock`'s `people`.
+     */
+    people?: () => readonly HitlPerson[];
+    /**
+     * The callout's QUERYABLE fields changed, so the host's row should be
+     * brought in line with them: on insert, on a readdress, and whenever a peer
+     * changes either through the CRDT.
+     *
+     * This is the body -> row half of `HITL_CONVERGENCE`, and it fires on every
+     * client that has the page open rather than only on the one that made the
+     * change — a projection maintained by one designated client would stop
+     * being maintained the moment that client closed the tab. The host is
+     * expected to make the write idempotent; `hitlMirrorRow` is what it should
+     * write.
+     *
+     * Fired only when a MIRRORED field actually moved (id, question, addressee,
+     * and whether an answer is recorded), never on ordinary typing elsewhere in
+     * the block.
+     */
+    onCalloutChanged?: (callout: HitlCallout) => void;
+}
+
+/** The mirrored fields, as one comparable string. */
+function mirrorSignature(callout: HitlCallout): string {
+    return [
+        callout.id,
+        callout.assignee,
+        callout.question,
+        callout.answer === null ? '' : 'answered',
+    ].join('\u0000');
 }
 
 function resolveIdentity(source: HitlMacroOptions['answeredBy']): string {
@@ -131,6 +184,9 @@ class HitlView extends ReactMacroView {
 
     private failure: string | null = null;
 
+    /** The mirrored fields as of the last projection. See `onCalloutChanged`. */
+    private signature: string;
+
     constructor(
         ctx: MacroViewContext,
         callout: HitlCallout,
@@ -138,6 +194,12 @@ class HitlView extends ReactMacroView {
     ) {
         super(ctx, HITL_MACRO_NAME);
         this.callout = callout;
+        this.signature = mirrorSignature(callout);
+        // On CREATION, not only on change: a view is built for a callout that
+        // was just inserted here AND for one that arrived over the CRDT or was
+        // already in the document when it opened. All three need the row to
+        // exist, and only the first of them is an edit anybody made.
+        this.options.onCalloutChanged?.(callout);
         this.schedule();
     }
 
@@ -157,6 +219,8 @@ class HitlView extends ReactMacroView {
                 failure={this.failure}
                 {...(this.options.now ? { now: this.options.now() } : {})}
                 onAnswer={(answer) => this.answer(answer)}
+                {...(this.options.people ? { people: this.options.people() } : {})}
+                onAssign={(assignee) => this.assign(assignee)}
                 {...(retractable ? { onRetract: () => this.retract() } : {})}
                 {...(this.editable ? { onRemove: () => this.removeBlock() } : {})}
             />
@@ -227,6 +291,20 @@ class HitlView extends ReactMacroView {
         this.apply(retractHitlEdit(this.node.textContent));
     }
 
+    /**
+     * Readdresses the callout.
+     *
+     * No mirror round trip and no optimistic-then-retract dance, unlike
+     * answering: the row does not own the addressee, the body does. The write
+     * that follows is the ordinary projection every open client makes — it
+     * lands through `update()` below, from the CRDT change this edit produces,
+     * so a peer's readdress reprojects on their machine too.
+     */
+    private assign(assignee: string): void {
+        if (this.busy) return;
+        this.apply(setHitlAssigneeEdit(this.node.textContent, assignee));
+    }
+
     update(node: PmNode): boolean {
         if (node.type !== this.node.type) return false;
         if (node.attrs.macroName !== HITL_MACRO_NAME) return false;
@@ -244,6 +322,13 @@ class HitlView extends ReactMacroView {
         // describes the state.
         if (changed && callout.answer !== null) this.failure = null;
         if (changed) this.schedule();
+        // The projection, from whatever moved the body — this client's own
+        // readdress, a peer's, or an answer arriving over the CRDT.
+        const signature = mirrorSignature(callout);
+        if (signature !== this.signature) {
+            this.signature = signature;
+            this.options.onCalloutChanged?.(callout);
+        }
         return true;
     }
 
@@ -315,6 +400,64 @@ export const HitlMacro = Extension.create<HitlMacroOptions>({
                         // paragraph on normalise, so it never reaches the file.
                         { type: 'paragraph' },
                     ]);
+                },
+
+            /**
+             * The inbox -> document half of `HITL_CONVERGENCE`.
+             *
+             * Scans for the callout carrying `id` and applies the same single
+             * range `answerHitlEdit` computes for an in-page answer, so a
+             * remote answer merges, undoes and shows up in the suggestion fork
+             * exactly like one typed here — there is no second write path and
+             * no second serialiser.
+             *
+             * Refuses an already-answered body rather than replacing it. Two
+             * recorded answers means one of them was acted on, and quietly
+             * overwriting the text on screen is how a document stops being
+             * evidence; the host is told `false` and reports the disagreement.
+             */
+            answerHitl:
+                (params) =>
+                ({ state, tr, dispatch }) => {
+                    const macro = state.schema.nodes[MACRO_NODE_NAME];
+                    if (!macro) return false;
+                    if (!params.id || !params.answer) return false;
+
+                    let applied = false;
+                    state.doc.descendants((node, pos) => {
+                        if (applied) return false;
+                        if (node.type !== macro) return undefined;
+                        if (node.attrs.macroName !== HITL_MACRO_NAME) return false;
+                        const callout = readHitl(node.textContent);
+                        if (!callout || callout.id !== params.id) return false;
+                        // Found it, so stop walking either way — a second
+                        // callout with the same id is a document that is
+                        // already broken and answering both would compound it.
+                        if (callout.answer !== null) return false;
+                        const edit = answerHitlEdit(node.textContent, {
+                            answer: params.answer,
+                            ...(params.answeredAt ? { at: params.answeredAt } : {}),
+                            ...(params.answeredBy ? { by: params.answeredBy } : {}),
+                        });
+                        if (!edit) return false;
+                        applied = true;
+                        if (dispatch) {
+                            // `pos + 1` skips the macro node's opening token,
+                            // the same arithmetic `ReactMacroView.replaceText`
+                            // does — offsets are into `node.textContent`.
+                            const base = pos + 1;
+                            if (edit.insert === '') tr.delete(base + edit.from, base + edit.to);
+                            else {
+                                tr.replaceWith(
+                                    base + edit.from,
+                                    base + edit.to,
+                                    state.schema.text(edit.insert),
+                                );
+                            }
+                        }
+                        return false;
+                    });
+                    return applied;
                 },
         };
     },
