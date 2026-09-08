@@ -928,7 +928,7 @@ function Q({ typeName: e, onConfirm: t, onCancel: n }) {
 		})]
 	});
 }
-function $({ type: e, active: t, onSelect: n, onDeleteRequest: r }) {
+function $({ type: e, active: t, onSelect: n, onDeleteRequest: r, onCreateDocument: i }) {
 	return /* @__PURE__ */ w("div", {
 		"data-testid": `type-item-${e.id}`,
 		className: o("flex items-center gap-2 py-2 px-2.5 rounded-[7px] mb-0.5 transition-colors", t ? "bg-accent-bg border border-accent-border" : "bg-transparent border border-transparent"),
@@ -951,6 +951,15 @@ function $({ type: e, active: t, onSelect: n, onDeleteRequest: r }) {
 					]
 				})]
 			}),
+			i && /* @__PURE__ */ C("button", {
+				"data-testid": `new-doc-from-type-${e.id}`,
+				onClick: (e) => {
+					e.stopPropagation(), i();
+				},
+				title: `Start a new ${e.name}`,
+				className: "border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit bg-transparent text-primary hover:bg-accent-bg hover:text-accent-fg",
+				children: "New"
+			}),
 			/* @__PURE__ */ C("button", {
 				"data-testid": `edit-type-${e.id}`,
 				onClick: n,
@@ -970,22 +979,22 @@ function $({ type: e, active: t, onSelect: n, onDeleteRequest: r }) {
 		]
 	});
 }
-function ee({ idToken: e, onExportSchema: t } = {}) {
-	let { types: n, source: r, error: i, createType: s, updateType: l, deleteType: u } = a({ idToken: e }), [d, f] = x("idle"), [p, m] = x(null), [h, g] = x(null), [_, v] = x(!1), [y, b] = x(!1), [S, T] = x(null), E = p ? n.find((e) => e.id === p) : void 0, D = () => {
-		m(null), f("create"), T(null);
-	}, O = (e) => {
-		m(e.id), f("edit"), T(null);
-	}, k = async (e) => {
-		let t = d === "edit" && p ? "updated" : "created", n = d === "edit" && p ? await l(p, e) : await s(e);
+function ee({ idToken: e, onExportSchema: t, onCreateDocument: n } = {}) {
+	let { types: r, source: i, error: s, createType: l, updateType: u, deleteType: d } = a({ idToken: e }), [f, p] = x("idle"), [m, h] = x(null), [g, _] = x(null), [v, y] = x(!1), [b, S] = x(!1), [T, E] = x(null), D = m ? r.find((e) => e.id === m) : void 0, O = () => {
+		h(null), p("create"), E(null);
+	}, k = (e) => {
+		h(e.id), p("edit"), E(null);
+	}, A = async (e) => {
+		let t = f === "edit" && m ? "updated" : "created", n = f === "edit" && m ? await u(m, e) : await l(e);
 		if (n.status === "rejected") {
-			T({
+			E({
 				text: `"${e.name}" NOT saved — server rejected it (${n.error})`,
 				key: Date.now(),
 				tone: "error"
 			});
 			return;
 		}
-		T(n.status === "synced" ? {
+		E(n.status === "synced" ? {
 			text: `"${e.name}" ${t} — synced`,
 			key: Date.now(),
 			tone: "success"
@@ -993,33 +1002,33 @@ function ee({ idToken: e, onExportSchema: t } = {}) {
 			text: `"${e.name}" ${t} — offline (saved locally, server unreachable)`,
 			key: Date.now(),
 			tone: "offline"
-		}), f("idle"), m(null);
-	}, A = () => {
-		f("idle"), m(null);
-	}, j = (e) => {
-		g(e);
-	}, M = async () => {
-		if (!h) return;
-		let e = n.find((e) => e.id === h), t = await u(h);
+		}), p("idle"), h(null);
+	}, j = () => {
+		p("idle"), h(null);
+	}, M = (e) => {
+		_(e);
+	}, N = async () => {
+		if (!g) return;
+		let e = r.find((e) => e.id === g), t = await d(g);
 		if (t.status === "rejected") {
-			T({
-				text: `"${e?.name ?? h}" NOT deleted — server rejected it (${t.error})`,
+			E({
+				text: `"${e?.name ?? g}" NOT deleted — server rejected it (${t.error})`,
 				key: Date.now(),
 				tone: "error"
-			}), g(null);
+			}), _(null);
 			return;
 		}
-		p === h && (f("idle"), m(null)), g(null);
-	}, N = () => {
-		g(null);
-	}, P = (e) => {
-		m(e), f("edit"), T(null);
-	}, F = async (e) => {
-		if (!y) {
-			b(!0), T(null);
+		m === g && (p("idle"), h(null)), _(null);
+	}, P = () => {
+		_(null);
+	}, F = (e) => {
+		h(e), p("edit"), E(null);
+	}, I = async (e) => {
+		if (!b) {
+			S(!0), E(null);
 			try {
-				let t = e.build(), n = await s(t);
-				T(n.status === "rejected" ? {
+				let t = e.build(), n = await l(t);
+				E(n.status === "rejected" ? {
 					text: `"${t.name}" NOT added — server rejected it (${n.error})`,
 					key: Date.now(),
 					tone: "error"
@@ -1033,16 +1042,16 @@ function ee({ idToken: e, onExportSchema: t } = {}) {
 					tone: "offline"
 				});
 			} catch (t) {
-				T({
+				E({
 					text: `"${e.name}" NOT added — ${t instanceof Error ? t.message : String(t)}`,
 					key: Date.now(),
 					tone: "error"
 				});
 			} finally {
-				b(!1);
+				S(!1);
 			}
 		}
-	}, I = h ? n.find((e) => e.id === h) : null;
+	}, L = g ? r.find((e) => e.id === g) : null;
 	return /* @__PURE__ */ w("div", {
 		className: "flex h-full overflow-hidden font-inherit",
 		children: [
@@ -1058,13 +1067,13 @@ function ee({ idToken: e, onExportSchema: t } = {}) {
 							className: "flex gap-1.5",
 							children: [/* @__PURE__ */ C("button", {
 								"data-testid": "cookbooks-btn",
-								onClick: () => v(!0),
+								onClick: () => y(!0),
 								title: "Browse the ready-made document types",
 								className: "py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit whitespace-nowrap",
 								children: "Known types"
 							}), /* @__PURE__ */ C("button", {
 								"data-testid": "create-type-btn",
-								onClick: D,
+								onClick: O,
 								title: "Build a document type field by field",
 								className: "py-[5px] px-3 text-xs font-medium bg-transparent text-text-secondary border border-border rounded-md cursor-pointer font-inherit whitespace-nowrap",
 								children: "From scratch"
@@ -1074,59 +1083,60 @@ function ee({ idToken: e, onExportSchema: t } = {}) {
 					/* @__PURE__ */ C("div", {
 						className: "flex-1 overflow-y-auto p-2",
 						"data-testid": "type-list",
-						children: n.length === 0 ? /* @__PURE__ */ w("div", {
+						children: r.length === 0 ? /* @__PURE__ */ w("div", {
 							className: "py-8 px-4 flex flex-col items-center gap-2",
 							children: [/* @__PURE__ */ C("div", {
 								className: "text-text-tertiary text-[13px]",
 								children: "No types yet."
 							}), /* @__PURE__ */ C("button", {
 								"data-testid": "empty-browse-types-btn",
-								onClick: () => v(!0),
+								onClick: () => y(!0),
 								className: "bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2 font-inherit",
 								children: "Browse known types →"
 							})]
-						}) : n.map((e) => /* @__PURE__ */ C($, {
+						}) : r.map((e) => /* @__PURE__ */ C($, {
 							type: e,
-							active: p === e.id,
-							onSelect: () => O(e),
-							onDeleteRequest: () => j(e.id)
+							active: m === e.id,
+							onSelect: () => k(e),
+							onDeleteRequest: () => M(e.id),
+							onCreateDocument: n ? () => n(e) : void 0
 						}, e.id))
 					}),
-					r === "cache" && /* @__PURE__ */ w("div", {
+					i === "cache" && /* @__PURE__ */ w("div", {
 						"data-testid": "types-offline-notice",
 						className: "py-2 px-3.5 border-t border-warning-border bg-warning-bg text-xs text-warning-fg font-medium",
 						children: [
 							"⚠ Offline — showing cached types (",
-							i ?? "server unreachable",
+							s ?? "server unreachable",
 							")"
 						]
 					}),
-					S && /* @__PURE__ */ w("div", {
+					T && /* @__PURE__ */ w("div", {
 						"data-testid": "save-message",
-						className: o("py-2 px-3.5 border-t text-xs font-medium", S.tone === "success" && "border-success-border bg-success-bg text-success-fg", S.tone === "offline" && "border-warning-border bg-warning-bg text-warning-fg", S.tone === "error" && "border-danger-border bg-danger-bg text-danger-fg"),
+						className: o("py-2 px-3.5 border-t text-xs font-medium", T.tone === "success" && "border-success-border bg-success-bg text-success-fg", T.tone === "offline" && "border-warning-border bg-warning-bg text-warning-fg", T.tone === "error" && "border-danger-border bg-danger-bg text-danger-fg"),
 						children: [
-							S.tone === "error" ? "✗" : "✓",
+							T.tone === "error" ? "✗" : "✓",
 							" ",
-							S.text
+							T.text
 						]
-					}, S.key)
+					}, T.key)
 				]
 			}),
 			/* @__PURE__ */ w("div", {
 				className: "flex-1 overflow-y-auto py-7 px-9",
 				"data-testid": "right-panel",
-				children: [d === "idle" && /* @__PURE__ */ w("div", {
+				children: [f === "idle" && /* @__PURE__ */ w("div", {
 					"data-testid": "known-types-panel",
 					className: "flex flex-col gap-4",
 					children: [/* @__PURE__ */ C(c, {
 						testId: "idle-panel",
 						className: "min-h-0 p-0 gap-1",
 						icon: "📋",
-						title: n.length > 0 ? "Select a type to edit" : "No document types yet",
-						description: n.length > 0 ? "Choose a type from the list to edit its fields — or add another known type below." : "Start from a known type below. It installs as your own type, and you can change any of it afterwards.",
+						title: r.length > 0 ? "Select a type to edit" : "No document types yet",
+						description: r.length > 0 ? "Choose a type from the list to edit its fields — or add another known type below." : "Start from a known type below. It installs as your own type, and you can change any of it afterwards.",
 						action: /* @__PURE__ */ C("button", {
 							"data-testid": "idle-create-btn",
-							onClick: D,
+							onClick: O,
 							className: "px-3.5 py-2 text-[13px] font-medium bg-transparent text-text-secondary border border-border rounded-lg cursor-pointer font-inherit",
 							children: "Build a type from scratch"
 						})
@@ -1136,8 +1146,8 @@ function ee({ idToken: e, onExportSchema: t } = {}) {
 							className: "text-[13px] font-bold text-text-primary mb-2",
 							children: "Known types"
 						}), /* @__PURE__ */ C(X, {
-							onPick: F,
-							busy: y,
+							onPick: I,
+							busy: b,
 							actionLabel: "Add this type",
 							idPrefix: "type-starters",
 							cardPrefix: "type-starter",
@@ -1145,24 +1155,24 @@ function ee({ idToken: e, onExportSchema: t } = {}) {
 							gridHeightClassName: "max-h-none"
 						})]
 					})]
-				}), (d === "create" || d === "edit") && /* @__PURE__ */ C(q, {
-					initialType: E,
+				}), (f === "create" || f === "edit") && /* @__PURE__ */ C(q, {
+					initialType: D,
 					idToken: e,
-					onSave: k,
-					onCancel: A,
+					onSave: A,
+					onCancel: j,
 					onExportSchema: t
-				}, p ?? "create")]
+				}, m ?? "create")]
 			}),
-			h && I && /* @__PURE__ */ C(Q, {
-				typeName: I.name,
-				onConfirm: M,
-				onCancel: N
+			g && L && /* @__PURE__ */ C(Q, {
+				typeName: L.name,
+				onConfirm: N,
+				onCancel: P
 			}),
 			/* @__PURE__ */ C(Z, {
-				open: _,
-				onClose: () => v(!1),
-				onCreated: P,
-				createType: s
+				open: v,
+				onClose: () => y(!1),
+				onCreated: F,
+				createType: l
 			})
 		]
 	});

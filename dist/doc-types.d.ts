@@ -103,7 +103,7 @@ declare interface DocumentTypePageConfig {
     showTableOfContents: boolean;
 }
 
-export declare function DocumentTypesPage({ idToken, onExportSchema }?: DocumentTypesPageProps): JSX.Element;
+export declare function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }?: DocumentTypesPageProps): JSX.Element;
 
 /**
  * The two things this page needs from its host. Both are OPTIONAL and both
@@ -129,6 +129,14 @@ export declare interface DocumentTypesPageProps {
      * a download. Rejecting surfaces the reason inline in the wizard.
      */
     onExportSchema?: (type: DocumentType_2) => Promise<void>;
+    /**
+     * Start a document of this type, from the page where the type lives.
+     *
+     * Absent hides the action entirely. An embedder with no creation route
+     * should not be shown a button that cannot do anything — the same rule the
+     * document header applies to "Share to #room".
+     */
+    onCreateDocument?: (type: DocumentType_2) => void;
 }
 
 export declare function DocumentTypeWizard({ initialType, onSave, onCancel, idToken, onExportSchema, }: DocumentTypeWizardProps): JSX.Element;
