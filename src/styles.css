@@ -1596,3 +1596,31 @@
 /* ===========================================================================
    END: print
    =========================================================================== */
+
+/* ===========================================================================
+   Menu overflow
+
+   A dropdown whose contents are generated per-account grows without bound. The
+   document editor's ⋯ menu renders one row per conversation you belong to, and
+   on a dozen rooms it measured 989px inside a 932px viewport: Print, all three
+   Exports and Clear Document were below the fold, unreachable, with no
+   scrollbar to suggest they existed at all.
+
+   Tailwind's own `max-h-[min(70vh,32rem)]` cannot fix this from an app file:
+   the app has no Tailwind build and loads this compiled sheet, so an arbitrary
+   value the LIBRARY never emitted renders nothing. Hence a named class.
+
+   `uic-menu-scroll` bounds a whole menu. `uic-menu-group-scroll` bounds one
+   group inside it, so the fixed actions below stay pinned instead of scrolling
+   away behind the generated ones.
+   =========================================================================== */
+
+.uic-menu-scroll {
+  max-height: min(70vh, 32rem);
+  overflow-y: auto;
+}
+
+.uic-menu-group-scroll {
+  max-height: min(32vh, 14rem);
+  overflow-y: auto;
+}

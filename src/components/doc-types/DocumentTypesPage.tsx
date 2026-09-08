@@ -261,8 +261,11 @@ export function DocumentTypesPage({ idToken, onExportSchema }: DocumentTypesPage
 
       {/* -- Left sidebar -- */}
       <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-hidden bg-surface-inset">
-        {/* Header */}
-        <div className="py-3.5 px-4 border-b border-border flex items-center justify-between">
+        {/* Header. Stacked rather than a single row: the sidebar is 264px, and
+            "Document Types" plus both buttons does not fit on one line at that
+            width -- side by side, the title wrapped to two lines and "+ New"
+            broke between the plus and the word. */}
+        <div className="py-3.5 px-4 border-b border-border flex flex-col gap-2.5">
           <span className="text-[13px] font-bold text-text-primary">
             Document Types
           </span>
@@ -270,14 +273,14 @@ export function DocumentTypesPage({ idToken, onExportSchema }: DocumentTypesPage
             <button
               data-testid="cookbooks-btn"
               onClick={() => setCookbooksOpen(true)}
-              className="py-[5px] px-3 text-xs font-semibold bg-surface text-primary border border-primary rounded-md cursor-pointer font-inherit"
+              className="py-[5px] px-3 text-xs font-semibold bg-surface text-primary border border-primary rounded-md cursor-pointer font-inherit whitespace-nowrap"
             >
               Cookbooks
             </button>
             <button
               data-testid="create-type-btn"
               onClick={handleCreateClick}
-              className="py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit"
+              className="py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit whitespace-nowrap"
             >
               + New
             </button>
