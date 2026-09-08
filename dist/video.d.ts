@@ -877,6 +877,50 @@ export declare interface HangoutSpotlightProps {
     style?: CSSProperties;
 }
 
+export declare interface HlsFailure {
+    kind: HlsFailureKind;
+    /** HTTP status behind it, when there was one. */
+    status: number | null;
+    /**
+     * The developer's account — hls.js's type/details, the missing-peer hint.
+     * For a console, a `data-` attribute or a bug report. NEVER for a viewer;
+     * that is what `error` is, and the two are deliberately different strings.
+     */
+    detail: string;
+    /**
+     * Whether attaching the same URL again could plausibly succeed. False for a
+     * browser that cannot play HLS — a "Try again" there is a button that can
+     * never work, which is worse than no button.
+     */
+    retryable: boolean;
+}
+
+/**
+ * What KIND of thing went wrong, in terms a viewer's sentence can be built
+ * from. hls.js's own vocabulary (`networkError`, `manifestLoadError`) is a
+ * developer's, and it was reaching the screen: a room whose broadcast was not
+ * producing rendered "HLS error: networkError" over the video — jargon, and
+ * wrong, because the network was fine and there was simply nothing to play.
+ *
+ * The distinction that matters is the one the SERVER already makes and the
+ * player was throwing away: a 503 saying "no active producers" is not a
+ * network failure and not a bug, it is an empty channel.
+ */
+export declare type HlsFailureKind = 
+/** The server answered, and its answer was that nothing is being broadcast. */
+'no-broadcast'
+/** The playlist could not be fetched at all — DNS, offline, CORS, timeout. */
+| 'network'
+/** The server answered, and its answer was that IT is broken. */
+| 'server'
+/** Bytes arrived and could not be decoded. */
+| 'media'
+/** This browser cannot play the stream at all. Retrying can never help. */
+| 'unsupported' | 'other';
+
+/** The viewer's sentence for a failure. Exported so a host can re-word it. */
+export declare function hlsFailureText(failure: HlsFailure | null | undefined): string | null;
+
 /**
  * What the player is actually doing. Distinct states because they call for
  * different words on screen and, more importantly, because "buffering",
@@ -900,6 +944,13 @@ export declare type HlsPhase =
 export declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'children'> {
     size?: number;
 }
+
+/**
+ * `null`/`undefined` mean nobody measured; a numeric 0 means somebody did and
+ * the answer was nobody. Negative is nonsense from a broken source, and is
+ * treated as unmeasured rather than shown.
+ */
+export declare function isKnownViewerCount(count: number | null | undefined): count is number;
 
 /**
  * @deprecated Pre-2.106 spelling. 'docked' is now 'window'; everything
@@ -1568,6 +1619,10 @@ export declare interface StreamStageProps {
      * Called by the "Try again" control, in addition to the stage's own retry.
      * Use it when recovery needs something the stage cannot do — re-issuing a
      * signed playlist URL, re-subscribing over WHEP.
+     *
+     * It is also the ONLY thing that can offer a way back from `ended`: there is
+     * no playlist left to re-attach there, so the stage's own retry could not
+     * succeed and no button is drawn without this.
      */
     onRetry?: () => void;
     /** Replaces the default wording once a stream has failed to start. */
@@ -1806,8 +1861,13 @@ export declare interface UseHlsSourceOptions {
 }
 
 export declare interface UseHlsSourceState {
-    /** Human-readable failure, or null. Rendered by the player, not thrown. */
+    /**
+     * What to SHOW a viewer when playback failed, or null. Plain language, no
+     * hls.js vocabulary, no status codes — see `failure.detail` for those.
+     */
     error: string | null;
+    /** The same failure, classified, for logging and for deciding on a retry. */
+    failure: HlsFailure | null;
     /** True between attach and first data. Equivalent to `phase === 'connecting'`. */
     loading: boolean;
     /** The whole truth; prefer this over the two booleans above. */
@@ -1947,10 +2007,14 @@ export declare interface VideoPlayerSource {
     sizeBytes?: number;
 }
 
-export declare function ViewerCount({ count, className, style }: ViewerCountProps): JSX.Element;
+export declare function ViewerCount({ count, className, style, 'data-testid': testId, }: ViewerCountProps): JSX.Element | null;
 
 export declare interface ViewerCountProps {
-    count: number;
+    /**
+     * Watchers, when the number is KNOWN. Pass `null` (or omit) when it is not —
+     * the badge then renders nothing rather than claiming an audience of zero.
+     */
+    count?: number | null;
     /**
      * Positioning / spacing classes from the caller. Prefer this over `style`:
      * callers overlaying the badge on a player had no className seam, so they
@@ -1959,6 +2023,7 @@ export declare interface ViewerCountProps {
     className?: string;
     /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
+    'data-testid'?: string;
 }
 
 export { }

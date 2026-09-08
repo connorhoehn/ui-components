@@ -18,7 +18,7 @@ import { n as p, t as m } from "./CardHeader-C-7rFLKD.js";
 import { i as h, n as g, r as _, t as v } from "./focusTrap-CmWJlptm.js";
 import "./SkeletonCard-CGe8XFPB.js";
 import "./FileUploadDrop-BRRQBXdS.js";
-import "./ChannelHeader-DB1RPq43.js";
+import "./ChannelHeader-DMJDs8u5.js";
 import "./DockedPanelContext-pH9A5z1h.js";
 import { t as y } from "./Input-DLknWXri.js";
 import { t as b } from "./Textarea-Dz4doxTv.js";

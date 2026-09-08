@@ -216,11 +216,28 @@ declare interface CanvasDocumentViewProps {
     /**
      * Show the ruler above the sheet.
      *
-     * OFF by default. Zoomed, its inches stop being the DOCUMENT's inches: the
-     * ruler scales with the sheet, so at 150% one marked inch is an inch and a
-     * half of screen and the numbers no longer mean anything you could measure
-     * a margin with. Left in place, off, until the measure it should show is
-     * settled.
+     * ON by default, which is a reversal — so here is what changed.
+     *
+     * It was off because the ruler lied when zoomed. Its geometry scaled with
+     * the sheet but its tick grid did not: `ticksFor` stepped and labelled with
+     * a hard 96px inch while being handed screen pixels, so at 150% it drew a
+     * label every two thirds of a document inch and called the first one "1".
+     * That is worse than no ruler, and no default could fix it.
+     *
+     * It no longer does. The ruler now takes DOCUMENT pixels plus `zoom` and
+     * makes the one conversion itself, so an inch mark sits at `96 * zoom`
+     * screen px and is still labelled 1. The label sequence is a property of the
+     * page, identical at every scale — verified in the browser at 50%, 100% and
+     * 150%: same eight labels, margin markers within a pixel of the sheet's own
+     * text edges at all three.
+     *
+     * Zoom persisting across reloads is what settles the default. A reader who
+     * once picked 150% now stays there, so "the zoomed case" is not a transient
+     * state to be tolerated — for that reader it is every session. A ruler that
+     * is correct there is worth having on; one that was not had to be hidden.
+     *
+     * Hosts with no room for it — a read-only embed, a preview pane — can still
+     * pass `false`.
      */
     showRuler?: boolean;
     /**
@@ -796,6 +813,33 @@ declare interface ConversationSurfaceProps {
      * disabled control.
      */
     onWatch?: () => void;
+    /**
+     * What the watch control SAYS. Default "Watch".
+     *
+     * It used to say nothing: a bare 👁 whose entire explanation lived in a
+     * `title`. A tooltip is not a label — it never appears on a touch device,
+     * plenty of screen readers do not announce it, and an eye glyph is ambiguous
+     * even to someone who does hover it ("preview"? "visibility"? "seen by"?).
+     * The word is now on the button; this prop is for a product that calls it
+     * something else — "Watch live", "Join as audience", "View the stream".
+     */
+    watchLabel?: string;
+    /**
+     * The longer version, for the tooltip and the accessible description: what
+     * is on the other side of the control. Defaults to the joining-vs-watching
+     * distinction, which is the thing a first-time viewer cannot guess.
+     */
+    watchHint?: string;
+    /**
+     * How many people are already watching, when that is KNOWN.
+     *
+     * `null`/omitted and `0` are different claims and this keeps them apart:
+     * omitted renders no number (nobody measured), a numeric 0 renders "0"
+     * (somebody counted and the answer was nobody). Never pass 0 to stand in
+     * for "not measured" — upstream `getViewerCount` returns `null` for that,
+     * and a channel that has never been measured must not claim an audience.
+     */
+    watchViewerCount?: number | null;
     /** Someone here is already on a call, so the controls say Join. */
     callInProgress?: boolean;
     /**
@@ -1805,6 +1849,10 @@ declare interface StreamStageProps {
      * Called by the "Try again" control, in addition to the stage's own retry.
      * Use it when recovery needs something the stage cannot do — re-issuing a
      * signed playlist URL, re-subscribing over WHEP.
+     *
+     * It is also the ONLY thing that can offer a way back from `ended`: there is
+     * no playlist left to re-attach there, so the stage's own retry could not
+     * succeed and no button is drawn without this.
      */
     onRetry?: () => void;
     /** Replaces the default wording once a stream has failed to start. */

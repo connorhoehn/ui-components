@@ -105,9 +105,15 @@ function f(e) {
 }
 //#endregion
 //#region src/components/video/ViewerCount.tsx
-function p({ count: t, className: n, style: r }) {
-	let i = t >= 1e3 ? `${(t / 1e3).toFixed(1)}K` : `${t}`;
+function p(e) {
+	return typeof e == "number" && Number.isFinite(e) && e >= 0;
+}
+function m({ count: t, className: n, style: r, "data-testid": i = "viewer-count" }) {
+	if (!p(t)) return null;
+	let a = t >= 1e3 ? `${(t / 1e3).toFixed(1)}K` : `${t}`;
 	return /* @__PURE__ */ l("div", {
+		"data-testid": i,
+		"data-viewers": t,
 		className: e("inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-black/70 text-white text-xs font-medium", n),
 		style: r,
 		children: [/* @__PURE__ */ l("svg", {
@@ -115,6 +121,8 @@ function p({ count: t, className: n, style: r }) {
 			height: "12",
 			viewBox: "0 0 12 12",
 			fill: "none",
+			"aria-hidden": "true",
+			focusable: "false",
 			children: [/* @__PURE__ */ c("circle", {
 				cx: "6",
 				cy: "4",
@@ -127,28 +135,28 @@ function p({ count: t, className: n, style: r }) {
 				strokeWidth: "1.2",
 				strokeLinecap: "round"
 			})]
-		}), /* @__PURE__ */ l("span", { children: [i, " watching"] })]
+		}), /* @__PURE__ */ l("span", { children: [a, " watching"] })]
 	});
 }
 //#endregion
 //#region src/components/video/HangoutGrid.tsx
-function m({ participants: t, localParticipant: n = null, activeSpeakerId: r = null, onParticipantClick: i, fillParent: o = !1, pipWidth: s = 96, className: d, style: f }) {
-	let p = t.length, m = !!n && p === 0, g = !!n && p >= 2, _ = !!n && p === 1, v = a(() => {
+function h({ participants: t, localParticipant: n = null, activeSpeakerId: r = null, onParticipantClick: i, fillParent: o = !1, pipWidth: s = 96, className: d, style: f }) {
+	let p = t.length, m = !!n && p === 0, h = !!n && p >= 2, _ = !!n && p === 1, v = a(() => {
 		if (m && n) return [{
 			...n,
 			isLocal: !0
 		}];
 		let e = [...t];
-		return g && n && e.push({
+		return h && n && e.push({
 			...n,
 			isLocal: !0
 		}), e;
 	}, [
 		t,
 		m,
-		g,
+		h,
 		n
-	]), y = h(v.length), b = Math.max(1, Math.ceil(v.length / y));
+	]), y = g(v.length), b = Math.max(1, Math.ceil(v.length / y));
 	return /* @__PURE__ */ l("div", {
 		className: e("relative grid gap-1 bg-video-stage rounded-lg overflow-hidden", o && "h-full w-full", d),
 		style: {
@@ -187,17 +195,17 @@ function m({ participants: t, localParticipant: n = null, activeSpeakerId: r = n
 		]
 	});
 }
-function h(e) {
+function g(e) {
 	return e <= 1 ? 1 : e === 2 || e <= 4 ? 2 : e <= 9 ? 3 : 4;
 }
 //#endregion
 //#region src/components/video/HangoutSpotlight.tsx
-function g({ participants: t, localParticipant: n = null, spotlightContent: r, spotlightContentLabel: i, activeSpeakerId: o = null, speakerHysteresisMs: s = 750, onParticipantClick: d, fillParent: f = !1, filmstripTileWidth: p = 128, className: m, style: h }) {
-	let g = _(o, s), v = a(() => t.find((e) => e.screenElement) || (n && n.screenElement ? {
+function _({ participants: t, localParticipant: n = null, spotlightContent: r, spotlightContentLabel: i, activeSpeakerId: o = null, speakerHysteresisMs: s = 750, onParticipantClick: d, fillParent: f = !1, filmstripTileWidth: p = 128, className: m, style: h }) {
+	let g = v(o, s), _ = a(() => t.find((e) => e.screenElement) || (n && n.screenElement ? {
 		...n,
 		isLocal: !0
 	} : null), [t, n]), y = a(() => {
-		let e = r || v ? null : g, i = t.filter((t) => t.id !== e);
+		let e = r || _ ? null : g, i = t.filter((t) => t.id !== e);
 		return n && i.push({
 			...n,
 			isLocal: !0
@@ -207,9 +215,9 @@ function g({ participants: t, localParticipant: n = null, spotlightContent: r, s
 		g,
 		n,
 		r,
-		v
+		_
 	]), b = (g ? t.find((e) => e.id === g) ?? null : null) ?? t[0] ?? n ?? null, x, S, C = null;
-	return r ? (x = "screen", S = i ?? b?.displayName ?? "", C = r) : v ? (x = "screen", S = v.displayName, C = v.screenElement) : b ? (x = "camera", S = b.displayName, C = /* @__PURE__ */ c(u, {
+	return r ? (x = "screen", S = i ?? b?.displayName ?? "", C = r) : _ ? (x = "screen", S = _.displayName, C = _.screenElement) : b ? (x = "camera", S = b.displayName, C = /* @__PURE__ */ c(u, {
 		id: b.id,
 		displayName: b.displayName,
 		avatarUrl: b.avatarUrl,
@@ -246,7 +254,7 @@ function g({ participants: t, localParticipant: n = null, spotlightContent: r, s
 		})]
 	});
 }
-function _(e, t) {
+function v(e, t) {
 	let [n, r] = s(e ?? null);
 	return i(() => {
 		let i = e ?? null;
@@ -265,10 +273,10 @@ function _(e, t) {
 }
 //#endregion
 //#region src/components/video/HangoutLayout.tsx
-var v = 10;
-function y({ participants: e, localParticipant: t = null, mode: n = "auto", activeSpeakerId: r = null, speakerHysteresisMs: i = 750, spotlightContent: a, spotlightContentLabel: o, onParticipantClick: s, fillParent: l = !1, pipWidth: u, filmstripTileWidth: d, className: f, style: p }) {
-	let h = e.length + +!!t, _ = e.some((e) => e.screenElement) || !!(t && t.screenElement);
-	return (a || _ || n === "auto" && h >= v ? "spotlight" : n) === "spotlight" ? /* @__PURE__ */ c(g, {
+var y = 10;
+function b({ participants: e, localParticipant: t = null, mode: n = "auto", activeSpeakerId: r = null, speakerHysteresisMs: i = 750, spotlightContent: a, spotlightContentLabel: o, onParticipantClick: s, fillParent: l = !1, pipWidth: u, filmstripTileWidth: d, className: f, style: p }) {
+	let m = e.length + +!!t, g = e.some((e) => e.screenElement) || !!(t && t.screenElement);
+	return (a || g || n === "auto" && m >= y ? "spotlight" : n) === "spotlight" ? /* @__PURE__ */ c(_, {
 		participants: e,
 		localParticipant: t,
 		spotlightContent: a,
@@ -280,7 +288,7 @@ function y({ participants: e, localParticipant: t = null, mode: n = "auto", acti
 		filmstripTileWidth: d,
 		className: f,
 		style: p
-	}) : /* @__PURE__ */ c(m, {
+	}) : /* @__PURE__ */ c(h, {
 		participants: e,
 		localParticipant: t,
 		activeSpeakerId: r,
@@ -293,7 +301,7 @@ function y({ participants: e, localParticipant: t = null, mode: n = "auto", acti
 }
 //#endregion
 //#region src/lib/video/useTrackStateBump.ts
-function b(e, t) {
+function x(e, t) {
 	let [n, r] = s(0);
 	return i(() => {
 		if (!e) return;
@@ -320,14 +328,14 @@ function b(e, t) {
 		};
 	}, [e, t]), n;
 }
-function x(e) {
+function S(e) {
 	if (!e) return !1;
 	let t = e.getVideoTracks();
 	return t.length !== 0 && t.some((e) => e.readyState === "live" && e.enabled && !e.muted);
 }
 //#endregion
 //#region src/components/video/StreamVideo.tsx
-function S({ stream: e, muted: t = !1, videoRef: n, className: r = "h-full w-full object-cover", onPlayStateChange: a }) {
+function C({ stream: e, muted: t = !1, videoRef: n, className: r = "h-full w-full object-cover", onPlayStateChange: a }) {
 	let s = o(null), l = o(a);
 	return l.current = a, i(() => {
 		let t = s.current;
@@ -373,7 +381,7 @@ function S({ stream: e, muted: t = !1, videoRef: n, className: r = "h-full w-ful
 }
 //#endregion
 //#region src/components/video/RemoteTileSlot.tsx
-function C({ stream: e }) {
+function w({ stream: e }) {
 	let t = o(null);
 	return i(() => {
 		let n = t.current;
@@ -395,21 +403,21 @@ function C({ stream: e }) {
 		"data-testid": "remote-tile-hidden-audio"
 	});
 }
-function w({ stream: e, displayName: n, cameraOn: r, avatarSize: i = 96 }) {
-	b(e, n);
-	let a = x(e);
+function T({ stream: e, displayName: n, cameraOn: r, avatarSize: i = 96 }) {
+	x(e, n);
+	let a = S(e);
 	return !r || !a || !e ? /* @__PURE__ */ l("div", {
 		className: "flex items-center justify-center w-full h-full bg-[var(--color-surface-inset,#0f172a)]",
 		"data-testid": "remote-tile-avatar-branch",
 		children: [/* @__PURE__ */ c(t, {
 			name: n,
 			size: i
-		}), e && /* @__PURE__ */ c(C, { stream: e })]
-	}) : /* @__PURE__ */ c(S, { stream: e });
+		}), e && /* @__PURE__ */ c(w, { stream: e })]
+	}) : /* @__PURE__ */ c(C, { stream: e });
 }
 //#endregion
 //#region src/components/video/ReconnectingBanner.tsx
-function T({ show: e, label: t = "Reconnecting…" }) {
+function E({ show: e, label: t = "Reconnecting…" }) {
 	return e ? /* @__PURE__ */ c("div", {
 		"data-testid": "hangout-reconnecting-banner",
 		className: "pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full bg-warning/95 px-3 py-1.5 text-xs font-medium text-white shadow-lg whitespace-nowrap",
@@ -420,7 +428,7 @@ function T({ show: e, label: t = "Reconnecting…" }) {
 }
 //#endregion
 //#region src/components/video/MediaEffectsTray.tsx
-function E({ label: t, active: n, disabled: r, compact: i, onClick: a, thumbUrl: o, "data-testid": s }) {
+function D({ label: t, active: n, disabled: r, compact: i, onClick: a, thumbUrl: o, "data-testid": s }) {
 	return /* @__PURE__ */ l("button", {
 		type: "button",
 		onClick: a,
@@ -436,7 +444,7 @@ function E({ label: t, active: n, disabled: r, compact: i, onClick: a, thumbUrl:
 		}), t]
 	});
 }
-function D({ label: t, compact: n, children: r }) {
+function O({ label: t, compact: n, children: r }) {
 	return /* @__PURE__ */ l("section", {
 		className: e("flex flex-col", n ? "gap-1.5" : "gap-2"),
 		children: [/* @__PURE__ */ c("h3", {
@@ -448,17 +456,17 @@ function D({ label: t, compact: n, children: r }) {
 		})]
 	});
 }
-function O({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, backgroundMode: a, activeBackgroundUrl: o, onSelectBackground: s, faceSprites: u, activeFaceSpriteId: d, onSelectFaceSprite: f, disabled: p = !1, compact: m = !1, className: h, "data-testid": g }) {
+function k({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, backgroundMode: a, activeBackgroundUrl: o, onSelectBackground: s, faceSprites: u, activeFaceSpriteId: d, onSelectFaceSprite: f, disabled: p = !1, compact: m = !1, className: h, "data-testid": g }) {
 	return /* @__PURE__ */ l("div", {
 		"data-testid": g,
 		className: e("flex flex-col text-white", m ? "gap-3 rounded-xl border border-call-chrome-border bg-call-chrome p-3" : "gap-4", h),
 		children: [
-			/* @__PURE__ */ c(D, {
+			/* @__PURE__ */ c(O, {
 				label: "Filters",
 				compact: m,
 				children: t.map((e) => {
 					let t = e.id === n;
-					return /* @__PURE__ */ c(E, {
+					return /* @__PURE__ */ c(D, {
 						label: e.label,
 						active: t,
 						disabled: p,
@@ -468,11 +476,11 @@ function O({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 					}, e.id);
 				})
 			}),
-			/* @__PURE__ */ l(D, {
+			/* @__PURE__ */ l(O, {
 				label: "Background",
 				compact: m,
 				children: [
-					/* @__PURE__ */ c(E, {
+					/* @__PURE__ */ c(D, {
 						label: "None",
 						active: a === "none",
 						disabled: p,
@@ -480,7 +488,7 @@ function O({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 						onClick: () => s("none", null),
 						"data-testid": "effects-bg-none"
 					}),
-					/* @__PURE__ */ c(E, {
+					/* @__PURE__ */ c(D, {
 						label: "Blur",
 						active: a === "blur",
 						disabled: p,
@@ -490,7 +498,7 @@ function O({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 					}),
 					i.map((e) => {
 						let t = a === "image" && o === e.url;
-						return /* @__PURE__ */ c(E, {
+						return /* @__PURE__ */ c(D, {
 							label: e.label,
 							active: t,
 							disabled: p,
@@ -502,10 +510,10 @@ function O({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 					})
 				]
 			}),
-			/* @__PURE__ */ l(D, {
+			/* @__PURE__ */ l(O, {
 				label: "Face FX",
 				compact: m,
-				children: [/* @__PURE__ */ c(E, {
+				children: [/* @__PURE__ */ c(D, {
 					label: "None",
 					active: d === null,
 					disabled: p,
@@ -514,7 +522,7 @@ function O({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 					"data-testid": "effects-face-none"
 				}), u.map((e) => {
 					let t = e.id === d;
-					return /* @__PURE__ */ c(E, {
+					return /* @__PURE__ */ c(D, {
 						label: e.label,
 						active: t,
 						disabled: p,
@@ -529,15 +537,15 @@ function O({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 }
 //#endregion
 //#region src/components/video/MediaEffectsPreviewPanel.tsx
-function k(e, t) {
+function A(e, t) {
 	return (...n) => {
 		e && t(...n);
 	};
 }
-function ee({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCancel: a, filters: o, activeFilterId: s, onSelectFilter: u, backgrounds: d, backgroundMode: f, activeBackgroundUrl: p, onSelectBackground: m, faceSprites: h, activeFaceSpriteId: g, onSelectFaceSprite: _, disabled: v = !1, title: y = "Video effects", applyLabel: b = "Apply", className: x, "data-testid": C = "media-effects-preview-panel" }) {
-	let w = (e) => k(t, e), T = t && r && !v;
+function j({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCancel: a, filters: o, activeFilterId: s, onSelectFilter: u, backgrounds: d, backgroundMode: f, activeBackgroundUrl: p, onSelectBackground: m, faceSprites: h, activeFaceSpriteId: g, onSelectFaceSprite: _, disabled: v = !1, title: y = "Video effects", applyLabel: b = "Apply", className: x, "data-testid": S = "media-effects-preview-panel" }) {
+	let w = (e) => A(t, e), T = t && r && !v;
 	return /* @__PURE__ */ l("section", {
-		"data-testid": C,
+		"data-testid": S,
 		"data-preview-active": t ? "true" : "false",
 		"data-preview-dirty": r ? "true" : "false",
 		"aria-label": y,
@@ -549,7 +557,7 @@ function ee({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCanc
 				children: [n ? /* @__PURE__ */ c("div", {
 					"data-testid": "media-effects-preview-video",
 					className: "h-full w-full",
-					children: /* @__PURE__ */ c(S, {
+					children: /* @__PURE__ */ c(C, {
 						stream: n,
 						muted: !0,
 						className: "h-full w-full scale-x-[-1] object-cover"
@@ -573,7 +581,7 @@ function ee({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCanc
 				className: "m-0 rounded-lg bg-white/10 px-3 py-2 text-[12px] leading-snug text-white/80",
 				children: t ? `This preview is private. Nobody else in the call can see these effects until you choose ${b}.` : "Preview is not running, so these controls are read-only. Nothing here is shared with the call."
 			}),
-			/* @__PURE__ */ c(O, {
+			/* @__PURE__ */ c(k, {
 				"data-testid": "media-effects-preview-tray",
 				disabled: v || !t,
 				filters: o,
@@ -617,26 +625,75 @@ function ee({ previewActive: t, previewStream: n, isDirty: r, onApply: i, onCanc
 }
 //#endregion
 //#region src/lib/video/useHlsSource.ts
-var te = 3e3, A = 1e3, j = 1500, M = 8e3, N = .5;
-function P(e, t, n = {}) {
-	let { live: a = !1, stalledAfterMs: c = M } = n, [l, u] = s(null), [d, f] = s(!1), [p, m] = s(!1), [h, g] = s(!1), [_, v] = s(null), [y, b] = s(null), [x, S] = s(0), C = o(null), w = o(!1), T = o(0), E = o(n.onError);
+var ee = {
+	"no-broadcast": "This broadcast is not running right now.",
+	network: "Cannot reach the broadcast — check your connection.",
+	server: "Something went wrong on our side.",
+	media: "This stream could not be played.",
+	unsupported: "This browser cannot play this broadcast.",
+	other: "This stream could not be played."
+};
+function M(e) {
+	return e ? ee[e.kind] : null;
+}
+function N(e) {
+	let t = typeof e?.response?.code == "number" ? e.response.code : null, n = [
+		e?.details,
+		e?.type,
+		t ? `HTTP ${t}` : null
+	].filter(Boolean).join(" / ") || "unknown hls.js error";
+	return e?.type === "mediaError" ? {
+		kind: "media",
+		status: t,
+		detail: n,
+		retryable: !0
+	} : e?.type === "networkError" || t !== null ? t === 404 || t === 410 || t === 503 ? {
+		kind: "no-broadcast",
+		status: t,
+		detail: n,
+		retryable: !0
+	} : t === null ? {
+		kind: "network",
+		status: t,
+		detail: n,
+		retryable: !0
+	} : {
+		kind: "server",
+		status: t,
+		detail: n,
+		retryable: !0
+	} : {
+		kind: "other",
+		status: t,
+		detail: n,
+		retryable: !0
+	};
+}
+var P = 3e3, te = 1e3, F = 1500, I = 8e3, L = .5;
+function ne(e, t, n = {}) {
+	let { live: a = !1, stalledAfterMs: c = I } = n, [l, u] = s(null), d = M(l), [f, p] = s(!1), [m, h] = s(!1), [g, _] = s(!1), [v, y] = s(null), [b, x] = s(null), [S, C] = s(0), w = o(null), T = o(!1), E = o(0), D = o(n.onError);
 	i(() => {
-		E.current = n.onError;
+		D.current = n.onError;
 	}, [n.onError]);
-	let D = r(() => {
-		u(null), m(!1), g(!1), S((e) => e + 1);
-	}, []), O = r(() => {
+	let O = r(() => {
+		u(null), h(!1), _(!1), C((e) => e + 1);
+	}, []), k = r(() => {
 		let t = e.current;
 		if (t) try {
-			let e = C.current, n = e && typeof e.liveSyncPosition == "number" && Number.isFinite(e.liveSyncPosition) ? e.liveSyncPosition : t.seekable && t.seekable.length > 0 ? t.seekable.end(t.seekable.length - 1) : null;
+			let e = w.current, n = e && typeof e.liveSyncPosition == "number" && Number.isFinite(e.liveSyncPosition) ? e.liveSyncPosition : t.seekable && t.seekable.length > 0 ? t.seekable.end(t.seekable.length - 1) : null;
 			n !== null && (t.currentTime = n), t.play?.().catch(() => {});
 		} catch {}
 	}, [e]);
 	return i(() => {
 		let n = e.current;
 		if (!n || !t) return;
-		u(null), f(!0), v(null), b(null);
-		let r = !1, i = () => n.canPlayType("application/vnd.apple.mpegurl") ? (n.src = t, w.current = !0, !0) : (u("HLS playback is not supported in this browser."), f(!1), !1);
+		u(null), p(!0), y(null), x(null);
+		let r = !1, i = () => n.canPlayType("application/vnd.apple.mpegurl") ? (n.src = t, T.current = !0, !0) : (u({
+			kind: "unsupported",
+			status: null,
+			detail: "no MSE (hls.js isSupported() false) and canPlayType() rejects application/vnd.apple.mpegurl",
+			retryable: !1
+		}), p(!1), !1);
 		return (async () => {
 			try {
 				let e = (await import(
@@ -653,46 +710,59 @@ function P(e, t, n = {}) {
 					lowLatencyMode: !0,
 					backBufferLength: 30
 				} : { enableWorker: !0 });
-				C.current = o, o.attachMedia(n), o.on(e.Events.MEDIA_ATTACHED, () => o.loadSource(t)), o.on(e.Events.ERROR, (e, t) => {
-					t?.fatal && (u(`HLS error: ${t.type}`), E.current?.(/* @__PURE__ */ Error(`HLS fatal: ${t.type}`)));
+				w.current = o, o.attachMedia(n), o.on(e.Events.MEDIA_ATTACHED, () => o.loadSource(t)), o.on(e.Events.ERROR, (e, n) => {
+					if (n?.fatal) {
+						let e = N(n);
+						u(e), console.error("[useHlsSource] playback failed:", e.kind, e.detail, t), D.current?.(/* @__PURE__ */ Error(`HLS fatal: ${e.detail}`));
+					}
 				});
 			} catch (e) {
 				if (r) return;
-				i() || u(`Failed to load hls.js — install it in the consumer app: ${e?.message ?? e}`);
+				i() || u({
+					kind: "unsupported",
+					status: null,
+					detail: `hls.js failed to load — install it in the consumer app: ${e?.message ?? e}`,
+					retryable: !1
+				});
 			}
 		})(), () => {
-			if (r = !0, C.current) {
+			if (r = !0, w.current) {
 				try {
-					C.current.destroy();
+					w.current.destroy();
 				} catch {}
-				C.current = null;
+				w.current = null;
 			}
-			w.current && (w.current = !1, n.removeAttribute("src"), n.load());
+			T.current && (T.current = !1, n.removeAttribute("src"), n.load());
 		};
 	}, [
 		e,
 		t,
 		a,
-		x
+		S
 	]), i(() => {
 		let n = e.current;
 		if (!n || !t) return;
-		n.readyState >= 2 && f(!1);
+		n.readyState >= 2 && p(!1);
 		let r = () => {
-			n.readyState < 1 || v(n.videoWidth === 0 && n.videoHeight === 0);
+			n.readyState < 1 || y(n.videoWidth === 0 && n.videoHeight === 0);
 		}, i = () => {
-			f(!1), r();
+			p(!1), r();
 		}, o = () => {
 			if (!a) return;
-			m(!0);
+			h(!0);
 			let e = Date.now();
-			if (!(e - T.current < te)) {
-				T.current = e;
+			if (!(e - E.current < P)) {
+				E.current = e;
 				try {
-					C.current ? C.current.startLoad() : w.current && (n.src = t, n.load()), n.play().catch(() => {});
+					w.current ? w.current.startLoad() : T.current && (n.src = t, n.load()), n.play().catch(() => {});
 				} catch {}
 			}
-		}, s = () => m(!0), c = () => u("This stream could not be played."), l = [
+		}, s = () => h(!0), c = () => u({
+			kind: "media",
+			status: null,
+			detail: `<video> error event; networkState=${n.networkState} readyState=${n.readyState}`,
+			retryable: !0
+		}), l = [
 			"loadeddata",
 			"playing",
 			"canplay"
@@ -704,58 +774,59 @@ function P(e, t, n = {}) {
 		e,
 		t,
 		a,
-		x
+		S
 	]), i(() => {
 		if (!t) {
-			m(!1), g(!1), b(null);
+			h(!1), _(!1), x(null);
 			return;
 		}
 		let n = e.current;
 		if (!n) return;
 		let r = NaN, i = Date.now(), a = () => {
-			let e = null, t = C.current;
+			let e = null, t = w.current;
 			if (t && typeof t.latency == "number" && Number.isFinite(t.latency) && t.latency > 0) e = t.latency;
 			else if (n.seekable && n.seekable.length > 0) {
 				let t = n.seekable.end(n.seekable.length - 1);
 				Number.isFinite(t) && (e = Math.max(0, t - n.currentTime));
 			}
-			b((t) => {
+			x((t) => {
 				if (e === null) return t === null ? t : null;
 				let n = Math.round(e * 10) / 10;
-				return t !== null && Math.abs(t - n) < N ? t : n;
+				return t !== null && Math.abs(t - n) < L ? t : n;
 			});
 		}, o = setInterval(() => {
 			a();
 			let e = Date.now(), t = n.currentTime;
 			if (t !== r) {
-				r = t, i = e, m(!1), g(!1);
+				r = t, i = e, h(!1), _(!1);
 				return;
 			}
 			if (!(!n.paused || n.ended)) return;
 			let o = e - i;
-			o >= c ? g(!0) : o >= j && m(!0);
-		}, A);
+			o >= c ? _(!0) : o >= F && h(!0);
+		}, te);
 		return () => clearInterval(o);
 	}, [
 		e,
 		t,
 		a,
-		x,
+		S,
 		c
 	]), {
-		error: l,
-		loading: d,
-		phase: t ? l ? "error" : d ? "connecting" : h ? "stalled" : p ? "buffering" : "playing" : "idle",
-		audioOnly: _,
-		latencySec: y,
-		seekToLive: O,
-		retry: D
+		error: d,
+		failure: l,
+		loading: f,
+		phase: t ? d ? "error" : f ? "connecting" : g ? "stalled" : m ? "buffering" : "playing" : "idle",
+		audioOnly: v,
+		latencySec: b,
+		seekToLive: k,
+		retry: O
 	};
 }
 //#endregion
 //#region src/lib/video/useAudioLevel.ts
-var F = 80, I = .6;
-function ne(e) {
+var R = 80, z = .6;
+function re(e) {
 	let [t, n] = s(null), r = o(0);
 	return i(() => {
 		if (r.current = 0, n(null), !e || typeof e.getAudioTracks != "function" || e.getAudioTracks().length === 0) return;
@@ -779,9 +850,9 @@ function ne(e) {
 				let n = (s[t] - 128) / 128;
 				e += n * n;
 			}
-			let t = Math.sqrt(e / s.length), a = Math.min(1, t * 3.5), c = Math.max(a, r.current * I);
+			let t = Math.sqrt(e / s.length), a = Math.min(1, t * 3.5), c = Math.max(a, r.current * z);
 			r.current = c, n(c);
-		}, F);
+		}, R);
 		return () => {
 			clearInterval(c);
 			try {
@@ -798,13 +869,13 @@ function ne(e) {
 }
 //#endregion
 //#region src/components/video/StreamAudioOnly.tsx
-var L = [
+var ie = [
 	.55,
 	.8,
 	1,
 	.8,
 	.55
-], R = [
+], B = [
 	"h-1",
 	"h-1.5",
 	"h-2",
@@ -813,24 +884,24 @@ var L = [
 	"h-6",
 	"h-8",
 	"h-10"
-], z = [
+], V = [
 	"h-2",
 	"h-4",
 	"h-6",
 	"h-4",
 	"h-2"
-], re = [
+], ae = [
 	"[animation-delay:0ms]",
 	"[animation-delay:110ms]",
 	"[animation-delay:220ms]",
 	"[animation-delay:330ms]",
 	"[animation-delay:440ms]"
 ];
-function B(e, t) {
+function H(e, t) {
 	let n = Math.max(0, Math.min(1, e * t));
-	return R[Math.min(R.length - 1, Math.round(n * (R.length - 1)))];
+	return B[Math.min(B.length - 1, Math.round(n * (B.length - 1)))];
 }
-function ie({ name: n, avatarUrl: r, level: i = null, active: a = !1, muted: o = !1, hint: s, className: u, "data-testid": d = "stream-audio-only" }) {
+function oe({ name: n, avatarUrl: r, level: i = null, active: a = !1, muted: o = !1, hint: s, className: u, "data-testid": d = "stream-audio-only" }) {
 	let f = typeof i == "number" && a, p = s ?? (o ? "Audio only — unmute to hear it." : a ? "Audio only — there is no picture on this broadcast." : "Audio only.");
 	return /* @__PURE__ */ l("div", {
 		"data-testid": d,
@@ -862,14 +933,14 @@ function ie({ name: n, avatarUrl: r, level: i = null, active: a = !1, muted: o =
 				"data-testid": `${d}-meter`,
 				"aria-hidden": !0,
 				className: "flex h-10 items-end gap-1",
-				children: L.map((t, n) => /* @__PURE__ */ c("span", { className: e("w-1.5 rounded-full transition-[height] duration-100", a ? "bg-white/80" : "bg-white/25", !f && a && ["uic-audio-bar", re[n]], f ? B(i, t) : z[n]) }, n))
+				children: ie.map((t, n) => /* @__PURE__ */ c("span", { className: e("w-1.5 rounded-full transition-[height] duration-100", a ? "bg-white/80" : "bg-white/25", !f && a && ["uic-audio-bar", ae[n]], f ? H(i, t) : V[n]) }, n))
 			})
 		]
 	});
 }
 //#endregion
 //#region src/components/video/streamStagePhase.ts
-function ae({ hasStream: e, hasPlaylist: t, hadSource: n, graceExpired: r, streamHasTracks: i = null, hls: a }) {
+function se({ hasStream: e, hasPlaylist: t, hadSource: n, graceExpired: r, streamHasTracks: i = null, hls: a }) {
 	if (e) return i === !1 ? r ? "not-started" : "connecting" : "playing";
 	if (t) {
 		let e = a?.phase ?? (a?.error ? "error" : a?.loading ? "connecting" : "playing");
@@ -877,26 +948,26 @@ function ae({ hasStream: e, hasPlaylist: t, hadSource: n, graceExpired: r, strea
 	}
 	return n ? "ended" : r ? "not-started" : "idle";
 }
-function oe(e) {
+function ce(e) {
 	return e === "playing" || e === "buffering" || e === "idle";
 }
-function V(e) {
+function U(e) {
 	return e === "playing";
 }
 //#endregion
 //#region src/components/video/StreamChatTicker.tsx
-function se(e) {
+function W(e) {
 	if (!e) return;
 	let t = new Date(e);
 	if (!Number.isNaN(t.getTime())) return `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}`;
 }
-function H({ messages: t, visibleCount: r = 3, rotateMs: i = 4200, window: o = 20, className: s, "data-testid": l = "stream-chat-ticker" }) {
+function le({ messages: t, visibleCount: r = 3, rotateMs: i = 4200, window: o = 20, className: s, "data-testid": l = "stream-chat-ticker" }) {
 	let u = a(() => t.slice(-o).reverse().map((e) => ({
 		id: e.id,
 		actor: e.displayName,
 		action: "",
 		subject: e.content,
-		timeLabel: se(e.timestamp),
+		timeLabel: W(e.timestamp),
 		kind: "comment"
 	})), [t, o]);
 	return u.length === 0 ? null : /* @__PURE__ */ c("div", {
@@ -912,45 +983,47 @@ function H({ messages: t, visibleCount: r = 3, rotateMs: i = 4200, window: o = 2
 }
 //#endregion
 //#region src/components/video/StreamStage.tsx
-var ce = 1e4;
-function U(e) {
-	return !e || typeof e.getVideoTracks != "function" || typeof e.getAudioTracks != "function" || e.getAudioTracks().length === 0 ? !1 : !x(e);
+var ue = 1e4;
+function de(e) {
+	return !e || typeof e.getVideoTracks != "function" || typeof e.getAudioTracks != "function" || e.getAudioTracks().length === 0 ? !1 : !S(e);
 }
-var W = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer border-none transition-colors";
-function G({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetry: d, title: f, viewerCount: m, live: h = !1, audioOnly: g, speakerName: _, speakerAvatarUrl: v, notStartedLabel: y, endedLabel: x, stallAfterMs: C = ce, chatMessages: w, chatVisibleCount: T, chatRotateMs: E, muted: D = !0, allowFullscreen: O = !0, showLatency: k = !0, controls: ee, placeholder: te, className: A, "data-testid": j = "stream-stage" }) {
-	let [M, N] = s(D);
+var G = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer border-none transition-colors";
+function K({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetry: d, title: f, viewerCount: h, live: g = !1, audioOnly: _, speakerName: v, speakerAvatarUrl: y, notStartedLabel: b, endedLabel: S, stallAfterMs: w = ue, chatMessages: T, chatVisibleCount: E, chatRotateMs: D, muted: O = !0, allowFullscreen: k = !0, showLatency: A = !0, controls: j, placeholder: ee, className: M, "data-testid": N = "stream-stage" }) {
+	let [P, te] = s(O);
 	i(() => {
-		N(D);
-	}, [D]);
-	let F = o(null), I = o(null), L = P(I, t ? null : n, {
+		te(O);
+	}, [O]);
+	let F = o(null), I = o(null), L = ne(I, t ? null : n, {
 		live: !0,
 		onError: u
 	}), R = o(!1);
 	(t || n) && (R.current = !0);
-	let z = b(t && typeof t.getVideoTracks == "function" ? t : null, f ?? "stream"), re = a(() => U(t), [t, z]), B = a(() => t && typeof t.getTracks == "function" ? t.getTracks().length > 0 : null, [t, z]), V = !!t && B !== !1 || !!n && !L.loading, [se, G] = s(!1);
+	let z = x(t && typeof t.getVideoTracks == "function" ? t : null, f ?? "stream"), ie = a(() => de(t), [t, z]), B = a(() => t && typeof t.getTracks == "function" ? t.getTracks().length > 0 : null, [t, z]), V = !!t && B !== !1 || !!n && !L.loading, [ae, H] = s(!1);
 	i(() => {
-		if (G(!1), V || L.error) return;
-		let e = setTimeout(() => G(!0), C);
+		if (H(!1), V || L.error) return;
+		let e = setTimeout(() => H(!0), w);
 		return () => clearTimeout(e);
 	}, [
 		V,
 		L.error,
-		C
+		w
 	]);
-	let J = ae({
+	let U = se({
 		hasStream: !!t,
 		streamHasTracks: B,
 		hasPlaylist: !!n,
 		hadSource: R.current,
-		graceExpired: se,
+		graceExpired: ae,
 		hls: L
-	}), Y = h && oe(J), ue = t ? re : L.audioOnly === !0, X = (g ?? ue) && (J === "playing" || J === "buffering" || J === "stalled"), de = ne(X && t ? t : null), [Z, fe] = s(!1);
+	}), W = L.failure ?? null, K = o(!1);
+	U === "playing" && (K.current = !0);
+	let Y = U === "error" && W?.kind === "no-broadcast" ? K.current ? "ended" : "not-started" : U, X = g && ce(Y), fe = t ? ie : L.audioOnly === !0, pe = (_ ?? fe) && (Y === "playing" || Y === "buffering" || Y === "stalled"), me = re(pe && t ? t : null), [Z, he] = s(!1);
 	i(() => {
 		if (typeof document > "u") return;
-		let e = () => fe(document.fullscreenElement === F.current);
+		let e = () => he(document.fullscreenElement === F.current);
 		return document.addEventListener("fullscreenchange", e), () => document.removeEventListener("fullscreenchange", e);
 	}, []);
-	let pe = r(() => {
+	let ge = r(() => {
 		let e = F.current;
 		if (e) try {
 			if (typeof document < "u" && document.fullscreenElement) {
@@ -960,64 +1033,71 @@ function G({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetr
 			let t = (e.requestFullscreen ?? e.webkitRequestFullscreen ?? e.msRequestFullscreen)?.call(e);
 			t && typeof t.catch == "function" && t.catch(() => {});
 		} catch {}
-	}, []), me = typeof document < "u" && document.fullscreenEnabled !== !1 && typeof Element < "u" && !!(Element.prototype.requestFullscreen ?? Element.prototype.webkitRequestFullscreen), he = L.retry, Q = r(() => {
-		he?.(), d?.();
-	}, [he, d]), ge = !!(t || n), $ = !!n && !t, _e = ge && J !== "error" && J !== "not-started" && J !== "ended";
+	}, []), _e = typeof document < "u" && document.fullscreenEnabled !== !1 && typeof Element < "u" && !!(Element.prototype.requestFullscreen ?? Element.prototype.webkitRequestFullscreen), ve = L.retry, Q = r(() => {
+		ve?.(), d?.();
+	}, [ve, d]), ye = !!(t || n), be = !!n && !t, $ = ye && Y !== "error" && Y !== "not-started" && Y !== "ended", xe = $ || !!j, Se = !W || W.retryable, Ce = (be || !!d) && Se, we = W?.kind === "no-broadcast" ? "Check again" : "Try again";
 	return /* @__PURE__ */ l("div", {
 		ref: F,
-		"data-testid": j,
-		"data-live": String(Y),
-		"data-phase": J,
-		"data-audio-only": String(X),
+		"data-testid": N,
+		"data-live": String(X),
+		"data-phase": Y,
+		"data-audio-only": String(pe),
 		"data-transport": t ? "realtime" : n ? "hls" : "none",
-		className: e("relative h-full w-full overflow-hidden rounded-lg bg-black", A),
+		"data-error-kind": W?.kind,
+		"data-error-detail": W?.detail,
+		className: e("relative h-full w-full overflow-hidden rounded-lg bg-black", M),
 		children: [
-			t ? /* @__PURE__ */ c(S, {
+			t ? /* @__PURE__ */ c(C, {
 				stream: t,
-				muted: M,
+				muted: P,
 				className: "h-full w-full object-contain"
 			}) : n ? /* @__PURE__ */ c("video", {
 				ref: I,
-				"data-testid": `${j}-hls`,
+				"data-testid": `${N}-hls`,
 				autoPlay: !0,
 				playsInline: !0,
-				muted: M,
+				muted: P,
 				className: "h-full w-full object-contain"
 			}) : null,
-			X && /* @__PURE__ */ c(ie, {
-				"data-testid": `${j}-audio-only`,
-				name: _,
-				avatarUrl: v,
-				level: de,
-				active: J !== "stalled" && !M,
-				muted: M
+			pe && /* @__PURE__ */ c(oe, {
+				"data-testid": `${N}-audio-only`,
+				name: v,
+				avatarUrl: y,
+				level: me,
+				active: Y !== "stalled" && !P,
+				muted: P
 			}),
-			J === "idle" && /* @__PURE__ */ c(K, {
-				testId: `${j}-placeholder`,
-				children: te ?? "Waiting for the stream to start…"
+			Y === "idle" && /* @__PURE__ */ c(q, {
+				testId: `${N}-placeholder`,
+				children: ee ?? "Waiting for the stream to start…"
 			}),
-			J === "ended" && /* @__PURE__ */ c(K, {
-				testId: `${j}-ended`,
-				children: x ?? "The broadcast has ended."
-			}),
-			J === "not-started" && /* @__PURE__ */ l(K, {
-				testId: `${j}-not-started`,
-				children: [/* @__PURE__ */ c("span", { children: y ?? "Nothing is being broadcast right now." }), ($ || d) && /* @__PURE__ */ c(q, {
-					testId: `${j}-retry`,
+			Y === "ended" && /* @__PURE__ */ l(q, {
+				testId: `${N}-ended`,
+				children: [/* @__PURE__ */ c("span", { children: S ?? "The broadcast has ended." }), d && /* @__PURE__ */ c(J, {
+					testId: `${N}-retry`,
+					label: "Check again",
 					onClick: Q
 				})]
 			}),
-			J === "connecting" && /* @__PURE__ */ c(K, {
-				testId: `${j}-connecting`,
+			Y === "not-started" && /* @__PURE__ */ l(q, {
+				testId: `${N}-not-started`,
+				children: [/* @__PURE__ */ c("span", { children: b ?? "Nothing is being broadcast right now." }), Ce && /* @__PURE__ */ c(J, {
+					testId: `${N}-retry`,
+					label: we,
+					onClick: Q
+				})]
+			}),
+			Y === "connecting" && /* @__PURE__ */ c(q, {
+				testId: `${N}-connecting`,
 				children: "Connecting…"
 			}),
-			J === "buffering" && /* @__PURE__ */ c("div", {
-				"data-testid": `${j}-buffering`,
+			Y === "buffering" && /* @__PURE__ */ c("div", {
+				"data-testid": `${N}-buffering`,
 				className: "pointer-events-none absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-black/70 px-3 py-1 text-xs font-medium text-white/90",
 				children: "Buffering…"
 			}),
-			J === "stalled" && /* @__PURE__ */ l(K, {
-				testId: `${j}-stalled`,
+			Y === "stalled" && /* @__PURE__ */ l(q, {
+				testId: `${N}-stalled`,
 				dim: !0,
 				children: [
 					/* @__PURE__ */ c("span", { children: "The stream has stopped responding." }),
@@ -1025,25 +1105,26 @@ function G({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetr
 						className: "text-xs text-white/60",
 						children: "The picture below is the last frame that arrived."
 					}),
-					/* @__PURE__ */ c(q, {
-						testId: `${j}-retry`,
+					Ce && /* @__PURE__ */ c(J, {
+						testId: `${N}-retry`,
 						onClick: Q
 					})
 				]
 			}),
-			J === "error" && /* @__PURE__ */ l(K, {
-				testId: `${j}-error`,
+			Y === "error" && /* @__PURE__ */ l(q, {
+				testId: `${N}-error`,
 				dim: !0,
-				children: [/* @__PURE__ */ c("span", { children: L.error ?? "This stream could not be played." }), /* @__PURE__ */ c(q, {
-					testId: `${j}-retry`,
+				children: [/* @__PURE__ */ c("span", { children: L.error ?? "This stream could not be played." }), Ce && /* @__PURE__ */ c(J, {
+					testId: `${N}-retry`,
+					label: we,
 					onClick: Q
 				})]
 			}),
-			(f || Y || le(m)) && /* @__PURE__ */ l("div", {
+			(f || X || p(h)) && /* @__PURE__ */ l("div", {
 				className: "pointer-events-none absolute left-3 top-3 flex items-center gap-2",
 				children: [
-					Y && /* @__PURE__ */ c("span", {
-						"data-testid": `${j}-live`,
+					X && /* @__PURE__ */ c("span", {
+						"data-testid": `${N}-live`,
 						className: "rounded bg-danger px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white",
 						children: "Live"
 					}),
@@ -1051,76 +1132,74 @@ function G({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetr
 						className: "truncate text-sm font-medium text-white drop-shadow",
 						children: f
 					}),
-					le(m) && /* @__PURE__ */ c(p, { count: m })
+					p(h) && /* @__PURE__ */ c(m, { count: h })
 				]
 			}),
-			w && w.length > 0 && /* @__PURE__ */ c(H, {
-				messages: w,
-				visibleCount: T,
-				rotateMs: E,
+			T && T.length > 0 && /* @__PURE__ */ c(le, {
+				messages: T,
+				visibleCount: E,
+				rotateMs: D,
 				className: "absolute bottom-3 left-3",
-				"data-testid": `${j}-chat`
+				"data-testid": `${N}-chat`
 			}),
-			_e && /* @__PURE__ */ l("div", {
+			xe && /* @__PURE__ */ l("div", {
+				"data-testid": `${N}-controls`,
 				className: "absolute bottom-3 right-3 z-10 flex items-center gap-2",
 				children: [
-					$ && k && (J === "playing" || J === "buffering") && /* @__PURE__ */ c("button", {
+					$ && be && A && (Y === "playing" || Y === "buffering") && /* @__PURE__ */ c("button", {
 						type: "button",
-						"data-testid": `${j}-latency`,
+						"data-testid": `${N}-latency`,
 						onClick: () => L.seekToLive?.(),
 						title: "This broadcast is delivered over HLS, a few seconds behind the source. Click to jump to the live edge.",
 						"aria-label": "Jump to the live edge",
-						className: e(W, "bg-black/50 text-white/80 hover:bg-black/70"),
+						className: e(G, "bg-black/50 text-white/80 hover:bg-black/70"),
 						children: typeof L.latencySec == "number" && Number.isFinite(L.latencySec) ? `${Math.max(1, Math.round(L.latencySec))}s behind` : "Behind live"
 					}),
-					Y && /* @__PURE__ */ l("button", {
+					$ && X && /* @__PURE__ */ l("button", {
 						type: "button",
-						"data-testid": `${j}-mute-toggle`,
-						"aria-label": M ? "Unmute" : "Mute",
-						"aria-pressed": M,
-						onClick: () => N((e) => !e),
-						className: e(W, M ? "bg-white text-black hover:bg-white/90" : "bg-black/50 text-white/80 hover:bg-black/70"),
+						"data-testid": `${N}-mute-toggle`,
+						"aria-label": P ? "Unmute" : "Mute",
+						"aria-pressed": P,
+						onClick: () => te((e) => !e),
+						className: e(G, P ? "bg-white text-black hover:bg-white/90" : "bg-black/50 text-white/80 hover:bg-black/70"),
 						children: [/* @__PURE__ */ c("span", {
 							"aria-hidden": !0,
-							children: M ? "🔇" : "🔊"
-						}), M ? "Unmute" : "Mute"]
+							children: P ? "🔇" : "🔊"
+						}), P ? "Unmute" : "Mute"]
 					}),
-					O && me && /* @__PURE__ */ l("button", {
+					$ && k && _e && /* @__PURE__ */ l("button", {
 						type: "button",
-						"data-testid": `${j}-fullscreen`,
+						"data-testid": `${N}-fullscreen`,
 						"aria-label": Z ? "Exit full screen" : "Full screen",
 						"aria-pressed": Z,
-						onClick: pe,
-						className: e(W, "bg-black/50 text-white/80 hover:bg-black/70"),
+						onClick: ge,
+						className: e(G, "bg-black/50 text-white/80 hover:bg-black/70"),
 						children: [/* @__PURE__ */ c("span", {
 							"aria-hidden": !0,
 							children: Z ? "↙" : "↗"
 						}), Z ? "Exit" : "Full screen"]
 					}),
-					ee
+					j
 				]
 			})
 		]
 	});
 }
-function le(e) {
-	return typeof e == "number" && Number.isFinite(e) && e >= 0;
-}
-function K({ testId: t, dim: n, children: r }) {
+function q({ testId: t, dim: n, children: r }) {
 	return /* @__PURE__ */ c("div", {
 		"data-testid": t,
 		className: e("absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 px-6 text-center text-sm text-white/70", n && "bg-black/60"),
 		children: r
 	});
 }
-function q({ testId: t, onClick: n }) {
+function J({ testId: t, label: n = "Try again", onClick: r }) {
 	return /* @__PURE__ */ c("button", {
 		type: "button",
 		"data-testid": t,
-		onClick: n,
-		className: e(W, "bg-white text-black hover:bg-white/90"),
-		children: "Try again"
+		onClick: r,
+		className: e(G, "bg-white text-black hover:bg-white/90"),
+		children: n
 	});
 }
 //#endregion
-export { p as C, h as S, b as _, V as a, _ as b, ne as c, k as d, O as f, x as g, S as h, oe as i, P as l, w as m, U as n, ae as o, T as p, H as r, ie as s, G as t, ee as u, y as v, u as w, m as x, g as y };
+export { g as C, u as E, h as S, p as T, S as _, U as a, _ as b, re as c, j as d, A as f, C as g, T as h, ce as i, M as l, E as m, de as n, se as o, k as p, le as r, oe as s, K as t, ne as u, x as v, m as w, v as x, b as y };

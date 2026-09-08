@@ -10,9 +10,9 @@ import { n as l, r as u, t as d } from "../Badge-B_L-ZBbN.js";
 import { t as f } from "../PresenceAvatars-BkzMACtv.js";
 import { t as p } from "../ActivityFeed-C9KAtqCl.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
-import { l as _, n as v, t as y, u as b } from "../ConversationSurface-CZK0rjKK.js";
-import { f as x, h as S, m as C, p as w, t as T, u as E, v as D } from "../StreamStage-sw9tObfp.js";
-import { t as ee } from "../CanvasDocumentView-TsUu6E3Z.js";
+import { l as _, n as v, t as y, u as b } from "../ConversationSurface-_obNFN1T.js";
+import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-C7HhqIax.js";
+import { t as ee } from "../CanvasDocumentView-BAstSzF8.js";
 import { Component as te, createContext as ne, useCallback as O, useContext as re, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";
 import { Fragment as N, jsx as P, jsxs as F } from "react/jsx-runtime";
 import { useRoomOccupancy as ie } from "@connorhoehn/realtime-modules/client/hangout-rooms";
@@ -1014,7 +1014,7 @@ function Ge({ hangoutRooms: e, subscribeRoomsIndex: t, occupancyFor: n, particip
 //#endregion
 //#region src/integrations/realtime-modules/WrappedMediaEffectsTray.tsx
 function Ke({ controller: e, ...t }) {
-	return /* @__PURE__ */ P(x, {
+	return /* @__PURE__ */ P(T, {
 		filters: e.filters.map(({ id: e, label: t }) => ({
 			id: e,
 			label: t
@@ -1069,7 +1069,7 @@ function qe({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
 	}, u = () => {
 		o.current = !1;
 	};
-	return /* @__PURE__ */ P(E, {
+	return /* @__PURE__ */ P(x, {
 		...i,
 		previewActive: c !== null,
 		previewStream: s,
@@ -1228,7 +1228,7 @@ function rt({ channelArn: e, excludeParticipantId: t, getAuthToken: n, baseUrl: 
 		s,
 		o.error,
 		i
-	]), /* @__PURE__ */ P(T, {
+	]), /* @__PURE__ */ P(E, {
 		...a,
 		live: s,
 		stream: o.stream,
@@ -1251,7 +1251,7 @@ function it({ channelArn: e, playbackToken: t, baseUrl: n, onStatusChange: r, ..
 			live: a.ready,
 			error: null
 		});
-	}, [a.ready, r]), /* @__PURE__ */ P(T, {
+	}, [a.ready, r]), /* @__PURE__ */ P(E, {
 		...i,
 		live: a.ready,
 		playlistUrl: a.playlistUrl,

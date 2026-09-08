@@ -133,17 +133,26 @@ function m({ name: r, memberCount: i, description: a, tabs: o, actions: l, avata
 						children: [/* @__PURE__ */ s("h2", {
 							className: "text-[15px] font-semibold text-[var(--color-text-primary)] leading-tight truncate",
 							children: r
-						}), i !== void 0 && /* @__PURE__ */ c("button", {
+						}), i !== void 0 && (f ? /* @__PURE__ */ c("button", {
 							type: "button",
 							onClick: f,
-							disabled: !f,
-							className: e("text-[11px] font-medium text-[var(--color-text-tertiary)]", "bg-transparent border-none p-0 leading-none", f && "cursor-pointer hover:text-[var(--color-text-secondary)]", !f && "cursor-default"),
+							"data-testid": "channel-header-members",
+							"aria-label": `${i} ${i === 1 ? "member" : "members"} — open the member list`,
+							className: e("text-[11px] font-medium text-[var(--color-text-tertiary)]", "bg-transparent border-none p-0 leading-none", "cursor-pointer hover:text-[var(--color-text-secondary)]"),
 							children: [
 								i,
 								" ",
 								i === 1 ? "member" : "members"
 							]
-						})]
+						}) : /* @__PURE__ */ c("span", {
+							"data-testid": "channel-header-members",
+							className: "text-[11px] font-medium leading-none text-[var(--color-text-tertiary)]",
+							children: [
+								i,
+								" ",
+								i === 1 ? "member" : "members"
+							]
+						}))]
 					}), a && /* @__PURE__ */ s("p", {
 						className: "text-[12px] text-[var(--color-text-tertiary)] truncate leading-tight",
 						children: a

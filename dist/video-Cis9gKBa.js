@@ -10,7 +10,7 @@ import { t as d } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as f } from "./Avatar-BzicCOft.js";
 import { t as p } from "./Select-CqVokE2v.js";
 import { t as m } from "./activationKey-CjbL3LUv.js";
-import { h, w as g } from "./StreamStage-sw9tObfp.js";
+import { E as h, g } from "./StreamStage-C7HhqIax.js";
 import { useCallback as _, useEffect as v, useImperativeHandle as y, useLayoutEffect as b, useMemo as x, useRef as S, useState as C } from "react";
 import { Fragment as w, jsx as T, jsxs as E } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -275,7 +275,7 @@ function R({ participants: t, className: n, style: r }) {
 			gridTemplateColumns: `repeat(${a}, 1fr)`,
 			...r
 		},
-		children: t.map((e) => /* @__PURE__ */ T(g, {
+		children: t.map((e) => /* @__PURE__ */ T(h, {
 			id: e.id,
 			displayName: e.displayName,
 			avatarUrl: e.avatarUrl,
@@ -3049,7 +3049,7 @@ function Et({ chipLabel: t = "Tap to unmute", chipClassName: n, wrapperClassName
 	}, [l]);
 	return /* @__PURE__ */ E("div", {
 		className: e("relative h-full w-full", r),
-		children: [/* @__PURE__ */ T(h, {
+		children: [/* @__PURE__ */ T(g, {
 			...a,
 			videoRef: l,
 			onPlayStateChange: u
@@ -4006,7 +4006,7 @@ function vn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 	v(() => {
 		t && m(i);
 	}, [t, i]);
-	let g = f.includes(p) ? p : f[0] ?? null;
+	let h = f.includes(p) ? p : f[0] ?? null;
 	return /* @__PURE__ */ T(a, {
 		open: t,
 		onClose: n,
@@ -4036,7 +4036,7 @@ function vn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 				children: [l && /* @__PURE__ */ T("div", {
 					"data-testid": "call-settings-preview",
 					className: e("relative shrink-0 overflow-hidden bg-video-stage", "aspect-video w-full sm:aspect-auto sm:min-h-[320px] sm:w-[44%]"),
-					children: r ? /* @__PURE__ */ E(w, { children: [/* @__PURE__ */ T(h, {
+					children: r ? /* @__PURE__ */ E(w, { children: [/* @__PURE__ */ T(g, {
 						stream: r,
 						muted: !0,
 						className: "h-full w-full scale-x-[-1] object-cover"
@@ -4062,10 +4062,10 @@ function vn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 						children: f.map((t) => /* @__PURE__ */ T("button", {
 							type: "button",
 							role: "tab",
-							"aria-selected": t === g,
+							"aria-selected": t === h,
 							onClick: () => m(t),
 							"data-testid": `call-settings-tab-${t}`,
-							className: e("cursor-pointer rounded-t-md border-b-2 px-3 py-1.5 text-[13px] font-medium transition-colors", t === g ? "border-call-chrome-accent text-white" : "border-transparent text-white/60 hover:bg-white/5 hover:text-white/90"),
+							className: e("cursor-pointer rounded-t-md border-b-2 px-3 py-1.5 text-[13px] font-medium transition-colors", t === h ? "border-call-chrome-accent text-white" : "border-transparent text-white/60 hover:bg-white/5 hover:text-white/90"),
 							children: _n[t]
 						}, t))
 					}), /* @__PURE__ */ E("div", {
@@ -4073,9 +4073,9 @@ function vn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 						"data-testid": "call-settings-panel",
 						className: "min-h-0 flex-1 overflow-y-auto p-4 sm:max-h-[460px]",
 						children: [
-							g === "effects" ? o : null,
-							g === "people" ? s : null,
-							g === "chat" ? c : null
+							h === "effects" ? o : null,
+							h === "people" ? s : null,
+							h === "chat" ? c : null
 						]
 					})]
 				})]
@@ -4085,8 +4085,8 @@ function vn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 }
 //#endregion
 //#region src/components/video/GoLiveButton.tsx
-var yn = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium border-none transition-colors disabled:cursor-not-allowed disabled:opacity-50";
-function bn({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, viewerCount: a, label: o, disabled: s, className: c, "data-testid": l = "go-live" }) {
+var yn = "Start broadcasting this room and tell everyone in the channel", bn = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium border-none transition-colors disabled:cursor-not-allowed disabled:opacity-50";
+function xn({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, viewerCount: a, label: o, disabled: s, className: c, "data-testid": l = "go-live" }) {
 	return t ? /* @__PURE__ */ E("div", {
 		"data-testid": l,
 		"data-live": "true",
@@ -4094,7 +4094,8 @@ function bn({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, vi
 		children: [
 			/* @__PURE__ */ E("span", {
 				"data-testid": `${l}-status`,
-				className: e(yn, "bg-danger text-white"),
+				role: "status",
+				className: e(bn, "bg-danger text-white"),
 				children: [/* @__PURE__ */ T("span", {
 					"aria-hidden": !0,
 					className: "h-1.5 w-1.5 rounded-full bg-white"
@@ -4109,7 +4110,7 @@ function bn({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, vi
 				type: "button",
 				"data-testid": `${l}-end`,
 				onClick: i,
-				className: e(yn, "cursor-pointer bg-surface-panel text-text-secondary hover:bg-surface-hover"),
+				className: e(bn, "cursor-pointer bg-surface-panel text-text-secondary hover:bg-surface-hover"),
 				children: "End broadcast"
 			})
 		]
@@ -4119,8 +4120,9 @@ function bn({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, vi
 		"data-live": "false",
 		disabled: s || n,
 		onClick: r,
-		title: "Start broadcasting this room and tell everyone in the channel",
-		className: e(yn, "cursor-pointer bg-danger text-white hover:opacity-90", c),
+		title: yn,
+		"aria-label": n ? "Going live…" : `${o ?? "Go live"} — ${yn.toLowerCase()}`,
+		className: e(bn, "cursor-pointer bg-danger text-white hover:opacity-90", c),
 		children: [/* @__PURE__ */ T("span", {
 			"aria-hidden": !0,
 			className: "h-1.5 w-1.5 rounded-full bg-white"
@@ -4128,4 +4130,4 @@ function bn({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, vi
 	});
 }
 //#endregion
-export { V as $, Le as A, Se as B, Ke as C, Be as D, nt as E, De as F, Ee as G, xe as H, Te as I, he as J, ve as K, ge as L, Me as M, Ne as N, Re as O, je as P, ne as Q, _e as R, Ue as S, We as T, we as U, be as V, Ce as W, se as X, de as Y, ie as Z, gt as _, cn as a, N as at, ct as b, Jt as c, Ot as d, U as et, Et as f, _t as g, vt as h, pn as i, L as it, Fe as j, ze as k, qt as l, bt as m, vn as n, B as nt, an as o, j as ot, Ct as p, ye as q, gn as r, R as rt, $t as s, O as st, bn as t, te as tt, Rt as u, pt as v, Ge as w, rt as x, ft as y, Oe as z };
+export { V as $, Le as A, Se as B, Ke as C, Be as D, nt as E, De as F, Ee as G, xe as H, Te as I, he as J, ve as K, ge as L, Me as M, Ne as N, Re as O, je as P, ne as Q, _e as R, Ue as S, We as T, we as U, be as V, Ce as W, se as X, de as Y, ie as Z, gt as _, cn as a, N as at, ct as b, Jt as c, Ot as d, U as et, Et as f, _t as g, vt as h, pn as i, L as it, Fe as j, ze as k, qt as l, bt as m, vn as n, B as nt, an as o, j as ot, Ct as p, ye as q, gn as r, R as rt, $t as s, O as st, xn as t, te as tt, Rt as u, pt as v, Ge as w, rt as x, ft as y, Oe as z };

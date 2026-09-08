@@ -663,7 +663,7 @@ export declare interface ConversationShelfProps {
     'data-testid'?: string;
 }
 
-export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
+export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
 
 export declare interface ConversationSurfaceProps {
     /** Channel name, or the people in a DM. */
@@ -715,6 +715,33 @@ export declare interface ConversationSurfaceProps {
      * disabled control.
      */
     onWatch?: () => void;
+    /**
+     * What the watch control SAYS. Default "Watch".
+     *
+     * It used to say nothing: a bare 👁 whose entire explanation lived in a
+     * `title`. A tooltip is not a label — it never appears on a touch device,
+     * plenty of screen readers do not announce it, and an eye glyph is ambiguous
+     * even to someone who does hover it ("preview"? "visibility"? "seen by"?).
+     * The word is now on the button; this prop is for a product that calls it
+     * something else — "Watch live", "Join as audience", "View the stream".
+     */
+    watchLabel?: string;
+    /**
+     * The longer version, for the tooltip and the accessible description: what
+     * is on the other side of the control. Defaults to the joining-vs-watching
+     * distinction, which is the thing a first-time viewer cannot guess.
+     */
+    watchHint?: string;
+    /**
+     * How many people are already watching, when that is KNOWN.
+     *
+     * `null`/omitted and `0` are different claims and this keeps them apart:
+     * omitted renders no number (nobody measured), a numeric 0 renders "0"
+     * (somebody counted and the answer was nobody). Never pass 0 to stand in
+     * for "not measured" — upstream `getViewerCount` returns `null` for that,
+     * and a channel that has never been measured must not claim an audience.
+     */
+    watchViewerCount?: number | null;
     /** Someone here is already on a call, so the controls say Join. */
     callInProgress?: boolean;
     /**

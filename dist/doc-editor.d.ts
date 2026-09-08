@@ -183,11 +183,28 @@ export declare interface CanvasDocumentViewProps {
     /**
      * Show the ruler above the sheet.
      *
-     * OFF by default. Zoomed, its inches stop being the DOCUMENT's inches: the
-     * ruler scales with the sheet, so at 150% one marked inch is an inch and a
-     * half of screen and the numbers no longer mean anything you could measure
-     * a margin with. Left in place, off, until the measure it should show is
-     * settled.
+     * ON by default, which is a reversal — so here is what changed.
+     *
+     * It was off because the ruler lied when zoomed. Its geometry scaled with
+     * the sheet but its tick grid did not: `ticksFor` stepped and labelled with
+     * a hard 96px inch while being handed screen pixels, so at 150% it drew a
+     * label every two thirds of a document inch and called the first one "1".
+     * That is worse than no ruler, and no default could fix it.
+     *
+     * It no longer does. The ruler now takes DOCUMENT pixels plus `zoom` and
+     * makes the one conversion itself, so an inch mark sits at `96 * zoom`
+     * screen px and is still labelled 1. The label sequence is a property of the
+     * page, identical at every scale — verified in the browser at 50%, 100% and
+     * 150%: same eight labels, margin markers within a pixel of the sheet's own
+     * text edges at all three.
+     *
+     * Zoom persisting across reloads is what settles the default. A reader who
+     * once picked 150% now stays there, so "the zoomed case" is not a transient
+     * state to be tolerated — for that reader it is every session. A ruler that
+     * is correct there is worth having on; one that was not had to be hidden.
+     *
+     * Hosts with no room for it — a read-only embed, a preview pane — can still
+     * pass `false`.
      */
     showRuler?: boolean;
     /**
@@ -480,7 +497,7 @@ declare interface DocumentEditorPageProps {
     onUndockVideo?: () => void;
 }
 
-export declare function DocumentFindBar({ editor, onClose, canReplace, 'data-testid': testId, }: DocumentFindBarProps): JSX.Element;
+export declare function DocumentFindBar({ editor, onClose, canReplace, focusNonce, className, 'data-testid': testId, }: DocumentFindBarProps): JSX.Element;
 
 export declare interface DocumentFindBarProps {
     editor: Editor | null;
@@ -488,6 +505,21 @@ export declare interface DocumentFindBarProps {
     onClose: () => void;
     /** Hidden when the document cannot be edited; find still works. */
     canReplace?: boolean;
+    /**
+     * Bump to pull focus back into the query field and select what is in it.
+     *
+     * This is what makes a SECOND Cmd/Ctrl+F do something. With the bar already
+     * open the host's shortcut handler has nothing left to change — `findOpen`
+     * is already true — so the keystroke read as dead while the caret stayed in
+     * the document. A monotonic token is the smallest thing that can say "focus
+     * again" without the parent holding a ref into this component; selecting the
+     * existing text is the word-processor behaviour, so the next keystroke
+     * starts a new search instead of appending to the last one.
+     *
+     * Mount focuses regardless — the effect runs on the initial value too.
+     */
+    focusNonce?: number;
+    className?: string;
     'data-testid'?: string;
 }
 
@@ -664,16 +696,23 @@ export declare interface DocumentPerson {
 export declare function DocumentRuler({ pageWidth, marginLeft, marginRight, zoom, className, style, 'data-testid': testId, }: DocumentRulerProps): JSX.Element;
 
 export declare interface DocumentRulerProps {
-    /** Page width in CSS px. Default 816 — US Letter at 96dpi. */
+    /**
+     * Page width in DOCUMENT px — 816 is US Letter at 96dpi, and stays 816 at
+     * every zoom. Pass a measured width divided by `zoom`, never the measured
+     * width itself.
+     */
     pageWidth?: number;
-    /** Left margin in CSS px. Default 96 — one inch. */
+    /** Left margin in DOCUMENT px. Default 96 — one inch. */
     marginLeft?: number;
-    /** Right margin in CSS px. Default 96 — one inch. */
+    /** Right margin in DOCUMENT px. Default 96 — one inch. */
     marginRight?: number;
     /**
-     * Scale the page is displayed at, so the ruler tracks a zoomed page. 1 is
-     * 100%; the ruler multiplies every measure by it rather than being told a
-     * second set of numbers that could disagree with the first.
+     * Scale the page is displayed at. 1 is 100%.
+     *
+     * The ruler multiplies every measure by it — geometry AND the inch grid —
+     * rather than being told a second set of numbers that could disagree with
+     * the first. This is what keeps a label honest when the page is zoomed: an
+     * inch mark moves to `96 * zoom` screen px and is still labelled 1.
      */
     zoom?: number;
     className?: string;
