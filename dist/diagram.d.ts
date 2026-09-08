@@ -435,6 +435,21 @@ export declare const FIELD_TYPES: readonly ["text", "date", "number", "boolean"]
 
 export declare function FieldBlock({ field, editable, onValueChange, onLabelChange, onTypeChange, onRemove, testId, }: FieldBlockProps): JSX.Element;
 
+/**
+ * An in-progress edit of one control, held in BOTH state and a ref.
+ *
+ * `null` means "follow the document": a draft exists only while somebody is
+ * typing into this row and is dropped on commit or cancel, so a value changed
+ * by a collaborator lands immediately in every row nobody is holding and never
+ * yanks the characters out from under one they are.
+ *
+ * The ref is not redundant. Escape must cancel, and cancelling is `set(null)`
+ * followed by `blur()` — but `blur` fires SYNCHRONOUSLY, before React has
+ * re-rendered, so the blur handler's closure still sees the abandoned draft and
+ * commits exactly what Escape was pressed to discard. Measured: typing "x" into
+ * "Ada" and pressing Escape wrote "Adax". The ref is what the handlers read;
+ * the state is only what the input renders.
+ */
 export declare interface FieldBlockProps {
     field: TypedField;
     /** False in read/print, and for a reader without write access. */
@@ -1227,6 +1242,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1246,12 +1274,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1269,29 +1294,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

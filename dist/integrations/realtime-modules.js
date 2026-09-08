@@ -12,7 +12,7 @@ import { t as p } from "../ActivityFeed-C9KAtqCl.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
 import { l as _, n as v, t as y, u as b } from "../ConversationSurface-_obNFN1T.js";
 import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-d9JKcXlp.js";
-import { t as ee } from "../CanvasDocumentView-B5MdpvUt.js";
+import { t as ee } from "../CanvasDocumentView-Dw9naoFp.js";
 import { Component as te, createContext as ne, useCallback as O, useContext as re, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";
 import { Fragment as N, jsx as P, jsxs as F } from "react/jsx-runtime";
 import { useRoomOccupancy as ie } from "@connorhoehn/realtime-modules/client/hangout-rooms";
@@ -597,7 +597,7 @@ function Pe({ capability: e, loading: t, fallback: n, children: r }) {
 function Fe({ slug: e, name: t, participantId: n, occupancy: r, subscribeRoomsIndex: i, onClick: a, onContextMenu: o, onOpenConversation: s, kebab: c, className: l, "data-testid": u = "room-row" }) {
 	let p = ie(i ? e : null, { subscribeRoomsIndex: i }), h = i ? p.occupancy ?? null : r ?? null, g = h?.count ?? 0, _ = h?.members ?? [], v = A(() => n ? _.some((e) => e.participantId === n) : !1, [_, n]), y = v, b = A(() => _.slice(0, 3).map((e) => ({
 		id: e.participantId,
-		name: e.displayName ?? e.userId,
+		name: e.displayName || e.userId,
 		online: !0
 	})), [_]), x = null;
 	g > 1 ? x = /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ P(f, {
