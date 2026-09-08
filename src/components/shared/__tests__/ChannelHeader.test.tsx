@@ -56,3 +56,32 @@ describe('ChannelHeader', () => {
     expect(img).toHaveAttribute('src', 'https://example.com/avatar.png');
   });
 });
+
+
+// A fact about the channel is not a control.
+//
+// The member count rendered a DISABLED <button> whenever no handler was
+// supplied, which a screen reader announces as "12 members, button, dimmed" —
+// a broken control rather than a number. It is a number.
+describe('ChannelHeader — the member count', () => {
+  it('is static text when there is nowhere to go', () => {
+    render(<ChannelHeader name="general" memberCount={12} />);
+    expect(screen.getByTestId('channel-header-members').tagName).toBe('SPAN');
+    expect(screen.queryByRole('button', { name: /member/i })).toBeNull();
+  });
+
+  it('is a button, named for what it opens, when there is', () => {
+    render(<ChannelHeader name="general" memberCount={12} onMembersClick={() => {}} />);
+    const el = screen.getByTestId('channel-header-members');
+    expect(el.tagName).toBe('BUTTON');
+    expect(el.getAttribute('aria-label')).toMatch(/^12 members —/);
+  });
+
+  it('reads the same either way', () => {
+    const { unmount } = render(<ChannelHeader name="general" memberCount={1} />);
+    expect(screen.getByTestId('channel-header-members')).toHaveTextContent('1 member');
+    unmount();
+    render(<ChannelHeader name="general" memberCount={1} onMembersClick={() => {}} />);
+    expect(screen.getByTestId('channel-header-members')).toHaveTextContent('1 member');
+  });
+});

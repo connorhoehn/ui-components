@@ -163,6 +163,55 @@ export const CallInProgress: Story = {
   ),
 };
 
+/**
+ * The mass-audience option, said out loud.
+ *
+ * Watching and joining are different products of the same room: joining costs
+ * a peer connection per head, watching is near-realtime and a CDN carries it
+ * to any audience. That choice used to be offered as a bare 👁 with its whole
+ * explanation in a `title` — invisible on touch, unannounced by plenty of
+ * screen readers, and ambiguous even to someone hovering it.
+ */
+export const Watchable: Story = {
+  render: () => (
+    <ConversationSurface
+      className="flex-1"
+      name="#all-hands"
+      description="Quarterly review"
+      features={['chat', 'calls']}
+      onStartCall={() => {}}
+      onWatch={() => {}}
+    >
+      <ChatPanel fill showHeader={false} messages={MESSAGES} onSend={() => {}} />
+    </ConversationSurface>
+  ),
+};
+
+/**
+ * With an audience already measured, and the product's own word for it.
+ *
+ * The count follows the same rule as everywhere else on this path: a numeric
+ * 0 is a measured empty house and renders; `null`/omitted is "nobody measured"
+ * and renders nothing, because a channel that has never been counted must not
+ * claim an audience.
+ */
+export const WatchableWithAudience: Story = {
+  render: () => (
+    <ConversationSurface
+      className="flex-1"
+      name="#all-hands"
+      description="Quarterly review"
+      features={['chat', 'calls']}
+      onStartCall={() => {}}
+      onWatch={() => {}}
+      watchLabel="Watch live"
+      watchViewerCount={128}
+    >
+      <ChatPanel fill showHeader={false} messages={MESSAGES} onSend={() => {}} />
+    </ConversationSurface>
+  ),
+};
+
 /** Every view, with nothing in it yet — what a brand-new channel looks like. */
 export const NothingYet: Story = {
   render: () => {

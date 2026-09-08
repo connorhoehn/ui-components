@@ -16,9 +16,25 @@ export const Small: Story = {
   args: { count: 42 },
 };
 
-/** Nobody watching yet. */
+/**
+ * A MEASURED empty house. Shown, not swallowed: viewer count in this codebase
+ * was structurally zero for a long time (the tracker had no callers at all),
+ * so a visible "0 watching" is the only thing that tells a broadcaster the
+ * counter works rather than being absent.
+ */
 export const Zero: Story = {
   args: { count: 0 },
+};
+
+/**
+ * NEVER MEASURED — renders nothing at all.
+ *
+ * Upstream `getViewerCount` returns `null` when it cannot measure, and a
+ * channel nobody has counted must not claim an audience of zero. The story
+ * renders an empty frame on purpose; that IS the component's answer.
+ */
+export const Unknown: Story = {
+  args: { count: null },
 };
 
 /** At 1000+ the badge switches to one-decimal thousands ("12.4K"). */

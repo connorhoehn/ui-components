@@ -67,6 +67,8 @@ export interface GoLiveButtonProps {
   'data-testid'?: string;
 }
 
+const WHAT_IT_DOES = 'Start broadcasting this room and tell everyone in the channel';
+
 const PILL =
   'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium ' +
   'border-none transition-colors disabled:cursor-not-allowed disabled:opacity-50';
@@ -89,8 +91,13 @@ export function GoLiveButton({
         data-live="true"
         className={cn('inline-flex items-center gap-2', className)}
       >
+        {/* Announced, not merely repainted. Pressing "Go live" REPLACES the
+            button with this pill, so a screen-reader user loses the element
+            they were on and, without a live region, is told nothing about
+            what happened. `role="status"` reads the new state out. */}
         <span
           data-testid={`${testId}-status`}
+          role="status"
           className={cn(PILL, 'bg-danger text-white')}
         >
           {/* A dot that is present whether or not the animation CSS is — the
@@ -131,7 +138,16 @@ export function GoLiveButton({
       // Said in full, because the click has two consequences and one of them
       // is public. "Go live" alone reads as a preview toggle; a control that
       // posts to a channel has to admit it before it is pressed, not after.
-      title="Start broadcasting this room and tell everyone in the channel"
+      //
+      // In the accessible name as well as the tooltip: a `title` is not
+      // announced by every screen reader, and a touch user never sees one at
+      // all — so the half of this control's meaning that matters most was
+      // reaching only the people who hover. The visible text leads, so
+      // "press Go live" still works as a spoken instruction.
+      title={WHAT_IT_DOES}
+      aria-label={
+        starting ? 'Going live…' : `${label ?? 'Go live'} — ${WHAT_IT_DOES.toLowerCase()}`
+      }
       className={cn(PILL, 'cursor-pointer bg-danger text-white hover:opacity-90', className)}
     >
       <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-white" />

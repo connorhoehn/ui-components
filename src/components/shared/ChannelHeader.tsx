@@ -96,20 +96,34 @@ export function ChannelHeader({
             <h2 className="text-[15px] font-semibold text-[var(--color-text-primary)] leading-tight truncate">
               {name}
             </h2>
+            {/* A button only when there is somewhere to go.
+                Without a handler this rendered a DISABLED button, which a
+                screen reader announces as "12 members, button, dimmed" — a
+                control that is broken rather than a fact about the channel.
+                It is a fact about the channel; static text says so. */}
             {memberCount !== undefined && (
-              <button
-                type="button"
-                onClick={onMembersClick}
-                disabled={!onMembersClick}
-                className={cn(
-                  'text-[11px] font-medium text-[var(--color-text-tertiary)]',
-                  'bg-transparent border-none p-0 leading-none',
-                  onMembersClick && 'cursor-pointer hover:text-[var(--color-text-secondary)]',
-                  !onMembersClick && 'cursor-default',
-                )}
-              >
-                {memberCount} {memberCount === 1 ? 'member' : 'members'}
-              </button>
+              onMembersClick ? (
+                <button
+                  type="button"
+                  onClick={onMembersClick}
+                  data-testid="channel-header-members"
+                  aria-label={`${memberCount} ${memberCount === 1 ? 'member' : 'members'} — open the member list`}
+                  className={cn(
+                    'text-[11px] font-medium text-[var(--color-text-tertiary)]',
+                    'bg-transparent border-none p-0 leading-none',
+                    'cursor-pointer hover:text-[var(--color-text-secondary)]',
+                  )}
+                >
+                  {memberCount} {memberCount === 1 ? 'member' : 'members'}
+                </button>
+              ) : (
+                <span
+                  data-testid="channel-header-members"
+                  className="text-[11px] font-medium leading-none text-[var(--color-text-tertiary)]"
+                >
+                  {memberCount} {memberCount === 1 ? 'member' : 'members'}
+                </span>
+              )
             )}
           </div>
           {description && (

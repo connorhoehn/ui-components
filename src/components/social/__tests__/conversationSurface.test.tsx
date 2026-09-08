@@ -178,3 +178,100 @@ describe('ConversationSurface — watch', () => {
     expect(screen.getByTestId('conversation-surface-audio-call')).toBeInTheDocument();
   });
 });
+
+// The control used to be a bare 👁 with its entire meaning in a `title`.
+// A tooltip never appears on a touch device and plenty of screen readers do
+// not announce it, so for those users the third button in the header row was
+// an unexplained eye between a telephone and a camera.
+describe('ConversationSurface — the watch control says what it is', () => {
+  it('carries the word on the button, not only in a tooltip', () => {
+    render(<ConversationSurface name="#all-hands" onWatch={vi.fn()} />);
+    expect(screen.getByTestId('conversation-surface-watch')).toHaveTextContent('Watch');
+  });
+
+  // The emoji is decoration. A screen reader that read it would announce
+  // "eye", which is not what the button does.
+  it('is named by the word and not the glyph', () => {
+    render(<ConversationSurface name="#all-hands" onWatch={vi.fn()} />);
+    const btn = screen.getByRole('button', { name: /^Watch$/ });
+    expect(btn).toBe(screen.getByTestId('conversation-surface-watch'));
+  });
+
+  it('lets the product call it something else', () => {
+    render(<ConversationSurface name="#all-hands" onWatch={vi.fn()} watchLabel="Join as audience" />);
+    expect(screen.getByTestId('conversation-surface-watch')).toHaveTextContent('Join as audience');
+    expect(screen.getByRole('button', { name: 'Join as audience' })).toBeInTheDocument();
+  });
+
+  it('still reads sensibly when the host passes no label at all', () => {
+    render(<ConversationSurface name="#all-hands" onWatch={vi.fn()} />);
+    const btn = screen.getByTestId('conversation-surface-watch');
+    expect(btn).toHaveAttribute('title');
+    expect(btn.getAttribute('title')).toMatch(/without joining/i);
+  });
+
+  it('lets the host replace the explanation', () => {
+    render(
+      <ConversationSurface name="#all-hands" onWatch={vi.fn()} watchHint="Ships to the CDN." />,
+    );
+    expect(screen.getByTestId('conversation-surface-watch')).toHaveAttribute(
+      'title',
+      'Ships to the CDN.',
+    );
+  });
+
+  // Same contract as StreamStage and GoLiveButton: null is "nobody measured",
+  // a numeric 0 is a measured empty house. A channel that has never been
+  // measured must not claim an audience of zero.
+  it('says nothing about the audience when nobody measured it', () => {
+    render(<ConversationSurface name="#all-hands" onWatch={vi.fn()} />);
+    expect(screen.queryByTestId('conversation-surface-watch-count')).toBeNull();
+  });
+
+  it('says nothing about the audience for an explicit null', () => {
+    render(<ConversationSurface name="#all-hands" onWatch={vi.fn()} watchViewerCount={null} />);
+    expect(screen.queryByTestId('conversation-surface-watch-count')).toBeNull();
+  });
+
+  it('shows a measured zero', () => {
+    render(<ConversationSurface name="#all-hands" onWatch={vi.fn()} watchViewerCount={0} />);
+    expect(screen.getByTestId('conversation-surface-watch-count')).toHaveTextContent('0');
+  });
+
+  it('puts a known audience in the accessible name too', () => {
+    render(<ConversationSurface name="#all-hands" onWatch={vi.fn()} watchViewerCount={42} />);
+    expect(screen.getByRole('button', { name: 'Watch — 42 watching' })).toBeInTheDocument();
+  });
+});
+
+// The other two controls in the same row. Verified rather than churned:
+// they already have distinct, state-aware accessible names.
+describe('ConversationSurface — the rest of the header row', () => {
+  it('names the two call controls differently from each other', () => {
+    render(<ConversationSurface name="#all-hands" onStartCall={vi.fn()} onWatch={vi.fn()} />);
+    expect(screen.getByRole('button', { name: 'Start an audio call' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Start a video call' })).toBeInTheDocument();
+  });
+
+  it('says join rather than start once a call is running', () => {
+    render(<ConversationSurface name="#all-hands" onStartCall={vi.fn()} callInProgress />);
+    expect(screen.getByRole('button', { name: 'Join the call with audio' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Join the call with video' })).toBeInTheDocument();
+  });
+
+  it('offers one control, honestly named, where the room fixes the mode', () => {
+    render(<ConversationSurface name="#all-hands" onStartCall={vi.fn()} callModeFixed />);
+    expect(screen.getByRole('button', { name: 'Start a call' })).toBeInTheDocument();
+    expect(screen.queryByTestId('conversation-surface-audio-call')).toBeNull();
+  });
+
+  // Three adjacent controls, three different accessible names, none of them
+  // the emoji they render.
+  it('leaves no control in the row named by its glyph', () => {
+    render(<ConversationSurface name="#all-hands" onStartCall={vi.fn()} onWatch={vi.fn()} />);
+    for (const b of screen.getAllByRole('button')) {
+      const name = b.getAttribute('aria-label') ?? b.textContent ?? '';
+      expect(name).toMatch(/[a-z]/i);
+    }
+  });
+});

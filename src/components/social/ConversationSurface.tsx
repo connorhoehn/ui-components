@@ -35,6 +35,7 @@ import { useState, type ReactNode } from 'react';
 import { ChannelHeader } from '../shared/ChannelHeader';
 import { Tabs, type TabItem } from '../shared/Tabs';
 import { IconButton } from '../ui/IconButton';
+import { Button } from '../ui/Button';
 import {
   ChannelFilesPanel,
   ChannelDocumentsPanel,
@@ -130,6 +131,33 @@ export interface ConversationSurfaceProps {
    * disabled control.
    */
   onWatch?: () => void;
+  /**
+   * What the watch control SAYS. Default "Watch".
+   *
+   * It used to say nothing: a bare 👁 whose entire explanation lived in a
+   * `title`. A tooltip is not a label — it never appears on a touch device,
+   * plenty of screen readers do not announce it, and an eye glyph is ambiguous
+   * even to someone who does hover it ("preview"? "visibility"? "seen by"?).
+   * The word is now on the button; this prop is for a product that calls it
+   * something else — "Watch live", "Join as audience", "View the stream".
+   */
+  watchLabel?: string;
+  /**
+   * The longer version, for the tooltip and the accessible description: what
+   * is on the other side of the control. Defaults to the joining-vs-watching
+   * distinction, which is the thing a first-time viewer cannot guess.
+   */
+  watchHint?: string;
+  /**
+   * How many people are already watching, when that is KNOWN.
+   *
+   * `null`/omitted and `0` are different claims and this keeps them apart:
+   * omitted renders no number (nobody measured), a numeric 0 renders "0"
+   * (somebody counted and the answer was nobody). Never pass 0 to stand in
+   * for "not measured" — upstream `getViewerCount` returns `null` for that,
+   * and a channel that has never been measured must not claim an audience.
+   */
+  watchViewerCount?: number | null;
   /** Someone here is already on a call, so the controls say Join. */
   callInProgress?: boolean;
   /**
@@ -185,6 +213,9 @@ export function ConversationSurface({
   onStartCall,
   callModeFixed = false,
   onWatch,
+  watchLabel,
+  watchHint,
+  watchViewerCount,
   callInProgress = false,
   headerActions,
   view: controlledView,
@@ -288,14 +319,13 @@ export function ConversationSurface({
                 )
               )}
               {onWatch && (
-                <IconButton
-                  aria-label="Watch the stream"
-                  title="Watch — near-realtime, scales to any audience"
-                  data-testid={`${testId}-watch`}
+                <WatchButton
+                  testId={`${testId}-watch`}
+                  label={watchLabel}
+                  hint={watchHint}
+                  viewerCount={watchViewerCount}
                   onClick={onWatch}
-                >
-                  👁
-                </IconButton>
+                />
               )}
               {headerActions}
             </>
@@ -361,5 +391,70 @@ export function ConversationSurface({
     </section>
   );
 }
+
+/**
+ * The watch affordance, in words.
+ *
+ * Beside two emoji call buttons, a third emoji is not a third choice — it is a
+ * third thing to guess at. Watching is also the option that needs explaining:
+ * calling is a verb everyone already has, while "watch instead of join" is a
+ * capacity decision this product invented. So this one is labelled and the
+ * call pair is not; the asymmetry is the point, and it doubles as the visual
+ * separator that tells three adjacent glyphs apart.
+ *
+ * The glyph stays, `aria-hidden`, as decoration. The accessible name is the
+ * visible text (plus the audience when it is known), so speech and sight agree
+ * — which is also what lets "click Watch" work as a spoken instruction.
+ */
+function WatchButton({
+  testId,
+  label,
+  hint,
+  viewerCount,
+  onClick,
+}: {
+  testId: string;
+  label?: string;
+  hint?: string;
+  viewerCount?: number | null;
+  onClick: () => void;
+}) {
+  const text = label ?? 'Watch';
+  // `null`/omitted is "nobody measured"; a numeric 0 is a measured empty
+  // house. Only the second one is a number worth showing.
+  const known =
+    typeof viewerCount === 'number' && Number.isFinite(viewerCount) && viewerCount >= 0;
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      data-testid={testId}
+      onClick={onClick}
+      title={hint ?? DEFAULT_WATCH_HINT}
+      aria-label={known ? `${text} — ${viewerCount} watching` : text}
+      className="inline-flex h-8 items-center gap-1.5"
+    >
+      <span aria-hidden>👁</span>
+      <span>{text}</span>
+      {known && (
+        <span
+          data-testid={`${testId}-count`}
+          aria-hidden
+          className="rounded-full bg-surface-hover px-1.5 text-[11px] font-medium text-text-secondary"
+        >
+          {viewerCount}
+        </span>
+      )}
+    </Button>
+  );
+}
+
+/**
+ * Said in full because the choice is not obvious: joining costs a peer
+ * connection per head and puts you in the room; watching is near-realtime and
+ * scales to any audience, and you are not on camera.
+ */
+const DEFAULT_WATCH_HINT =
+  'Watch without joining — near-realtime, scales to any audience, and you are not on camera.';
 
 export default ConversationSurface;

@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.186.0",
+  "version": "2.187.0",
   "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
@@ -151,6 +151,9 @@
   },
   "peerDependencies": {
     "@connorhoehn/realtime-modules": ">=0.17.0 <1",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@excalidraw/excalidraw": "^0.18.0",
     "@tiptap/core": "^3.0.0",
     "@tiptap/extension-collaboration": "^3.22.3",
@@ -179,6 +182,15 @@
   },
   "peerDependenciesMeta": {
     "@connorhoehn/realtime-modules": {
+      "optional": true
+    },
+    "@dnd-kit/core": {
+      "optional": true
+    },
+    "@dnd-kit/sortable": {
+      "optional": true
+    },
+    "@dnd-kit/utilities": {
       "optional": true
     },
     "@excalidraw/excalidraw": {

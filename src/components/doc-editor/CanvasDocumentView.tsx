@@ -94,6 +94,34 @@ export function canvasPageCount(heightPx: number): number {
  * multiplied by zoom — CSS `zoom` scales the layout box, so a length written
  * here is scaled by the browser exactly once.
  */
+/**
+ * Where the reader's display scale is remembered. Namespaced to this package
+ * so a host's own keys cannot collide with it.
+ */
+export const ZOOM_STORAGE_KEY = 'uic:canvas-document:zoom';
+
+/**
+ * The remembered zoom, or 100%.
+ *
+ * Range-checked rather than trusted: localStorage is a string store that
+ * anything on the origin can write, and a NaN or a 40x would go straight into
+ * a CSS `zoom` and render a page nobody can read or recover from — the control
+ * that would fix it is at the bottom of a workspace that no longer fits on the
+ * screen. The bounds are wider than ZOOM_STEPS on purpose, so a host that
+ * drives zoom past the presets still gets its value back.
+ */
+export function readStoredZoom(): number {
+  if (typeof window === 'undefined') return 1;
+  try {
+    const raw = window.localStorage.getItem(ZOOM_STORAGE_KEY);
+    if (raw === null) return 1;
+    const n = Number(raw);
+    return Number.isFinite(n) && n >= 0.25 && n <= 4 ? n : 1;
+  } catch {
+    return 1;
+  }
+}
+
 export function canvasPaperStyle(zoom: number, minHeightPx: number | null): CSSProperties {
   return {
     ...(zoom === 1 ? {} : { zoom }),
@@ -202,11 +230,28 @@ export interface CanvasDocumentViewProps {
   /**
    * Show the ruler above the sheet.
    *
-   * OFF by default. Zoomed, its inches stop being the DOCUMENT's inches: the
-   * ruler scales with the sheet, so at 150% one marked inch is an inch and a
-   * half of screen and the numbers no longer mean anything you could measure
-   * a margin with. Left in place, off, until the measure it should show is
-   * settled.
+   * ON by default, which is a reversal — so here is what changed.
+   *
+   * It was off because the ruler lied when zoomed. Its geometry scaled with
+   * the sheet but its tick grid did not: `ticksFor` stepped and labelled with
+   * a hard 96px inch while being handed screen pixels, so at 150% it drew a
+   * label every two thirds of a document inch and called the first one "1".
+   * That is worse than no ruler, and no default could fix it.
+   *
+   * It no longer does. The ruler now takes DOCUMENT pixels plus `zoom` and
+   * makes the one conversion itself, so an inch mark sits at `96 * zoom`
+   * screen px and is still labelled 1. The label sequence is a property of the
+   * page, identical at every scale — verified in the browser at 50%, 100% and
+   * 150%: same eight labels, margin markers within a pixel of the sheet's own
+   * text edges at all three.
+   *
+   * Zoom persisting across reloads is what settles the default. A reader who
+   * once picked 150% now stays there, so "the zoomed case" is not a transient
+   * state to be tolerated — for that reader it is every session. A ruler that
+   * is correct there is worth having on; one that was not had to be hidden.
+   *
+   * Hosts with no room for it — a read-only embed, a preview pane — can still
+   * pass `false`.
    */
   showRuler?: boolean;
   /**
@@ -290,7 +335,7 @@ export default function CanvasDocumentView({
   gutterLead,
   onFocusGutterItem,
   gutterVisible = true,
-  showRuler = false,
+  showRuler = true,
   showOutline = false,
   paginate = false,
   onToggleGutter,
@@ -302,7 +347,24 @@ export default function CanvasDocumentView({
   // the LAYOUT box, so the workspace scrolls the right distance and the sheet
   // reserves the space it visually occupies. A transform would paint a larger
   // page over an unchanged 816x1056 hole in the layout.
-  const [zoom, setZoom] = useState(1);
+  //
+  // Remembered, because zoom is a property of the READER, not of the document.
+  // Someone who works at 125% because 100% is too small for their screen wants
+  // 125% on the next document too, and on this one after a refresh; a scale
+  // that resets to 100% on every navigation makes the control something you
+  // re-set rather than something you set. Every word processor persists it for
+  // that reason.
+  //
+  // ONE key, not one per document, for the same reason: the preference is
+  // about eyesight and screen size, which do not change per document.
+  const [zoom, setZoomState] = useState(readStoredZoom);
+  const setZoom = useCallback((next: number) => {
+    setZoomState(next);
+    // Storage throws outright in some privacy modes rather than returning
+    // null, and a zoom control that takes the page down is worse than one that
+    // forgets. Failing to remember is the correct degradation.
+    try { window.localStorage.setItem(ZOOM_STORAGE_KEY, String(next)); } catch { /* not remembered */ }
+  }, []);
 
   // The ruler measures the sheet by MEASURING it, not by predicting it.
   //
@@ -393,11 +455,18 @@ export default function CanvasDocumentView({
   // processor takes this shortcut over for exactly those reasons, and a person
   // who wanted the browser's can still have it with Escape then Cmd+F again.
   const [findOpen, setFindOpen] = useState(false);
+  // Bumped on every Cmd/Ctrl+F, not only the one that opens the bar. With the
+  // bar already open `setFindOpen(true)` is a no-op and the shortcut read as
+  // dead — the caret stayed in the document while the browser's own find had
+  // been suppressed, which is the worst of both. See DocumentFindBar's
+  // `focusNonce`.
+  const [findFocusNonce, setFindFocusNonce] = useState(0);
   useEffect(() => {
     const onKey = (ev: KeyboardEvent) => {
       if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === 'f') {
         ev.preventDefault();
         setFindOpen(true);
+        setFindFocusNonce((n) => n + 1);
       }
     };
     const el = workspaceRef.current;
@@ -417,6 +486,44 @@ export default function CanvasDocumentView({
   // so there is nothing in the rendered page to address it by.
   const outline = useDocumentOutline(editor as Parameters<typeof useDocumentOutline>[0]);
   const wordCount = useDocumentWordCount(editor as Parameters<typeof useDocumentWordCount>[0]);
+
+  // How much of that is SELECTED.
+  //
+  // The document total alone answers the wrong question most of the time.
+  // Anyone writing to a length selects the section they are working on and
+  // asks how long THAT is — an abstract, a summary, the part that has to fit
+  // on one slide — which is why every word processor reports the selection
+  // alongside the document and why Docs writes it as "12 of 350 words".
+  //
+  // Listens to `selectionUpdate` as well as `update`: a selection changes
+  // without the document changing at all, so an `update`-only subscription
+  // (which is all `useDocumentWordCount` needs) would report a count that only
+  // refreshed when you typed.
+  //
+  // `textBetween` with a block separator, not `textContent`: without one, the
+  // last word of a paragraph and the first of the next fuse into a single word
+  // and every multi-paragraph selection reads one short per boundary.
+  const [selectedWords, setSelectedWords] = useState(0);
+  useEffect(() => {
+    if (!editor) { setSelectedWords(0); return; }
+    const refresh = () => {
+      // Defensive for the same reason readOutline is: during initialisation
+      // the host holds an editor that has no state yet, and a word count is
+      // the last thing that should be able to take the page down.
+      const sel = editor.state?.selection;
+      if (!sel || sel.empty) { setSelectedWords(0); return; }
+      const text = editor.state.doc.textBetween(sel.from, sel.to, ' ', ' ');
+      setSelectedWords(text.trim().split(/\s+/).filter(Boolean).length);
+    };
+    refresh();
+    if (typeof editor.on !== 'function' || typeof editor.off !== 'function') return;
+    editor.on('selectionUpdate', refresh);
+    editor.on('update', refresh);
+    return () => {
+      editor.off('selectionUpdate', refresh);
+      editor.off('update', refresh);
+    };
+  }, [editor]);
 
   const commentCount = gutterItems?.length ?? 0;
   // Two conditions, not one: there has to be something to show, AND the gutter
@@ -486,21 +593,36 @@ export default function CanvasDocumentView({
           {/* Chrome, not paper: the toolbar is themed and goes dark, while the
               sheet below it stays white. Sticky so it survives scrolling a
               long document, which is the only reason a document toolbar is
-              useful at all. */}
-          {editable && editor && findOpen && (
-            <div className="sticky top-0 z-20">
-              <DocumentFindBar
-                editor={editor}
-                canReplace={editable}
-                onClose={() => { setFindOpen(false); editor.commands.focus(); }}
-                data-testid={`${testId}-find`}
-              />
-            </div>
-          )}
+              useful at all.
+
+              Find lives INSIDE this same sticky block, under the toolbar,
+              rather than in a sticky block of its own.
+
+              It had one: `sticky top-0 z-20` over the toolbar's `sticky top-0
+              z-10`. Two elements claiming the same offset in the same
+              scrollport do not stack, they collide — measured in the browser
+              at scrollTop 300, both occupied y=40..81 and the higher z-index
+              won, so opening find DELETED the toolbar from the screen. That is
+              backwards for the thing find is mostly used for: you search for a
+              word in order to format it, and every formatting control had just
+              gone.
+
+              Stacked rather than floated, and the width is the reason. Docs
+              floats find because its box is a narrow find-only field —
+              replace is a separate dialog. This bar carries find AND replace
+              inline and measures ~600px, so floating it over the sheet's
+              top-right would sit across the first two lines of the page. The
+              brief rules that out, and reserving a strip so it does not cover
+              them is stacking with extra machinery. So it takes a row: the
+              toolbar stays whole, nothing is covered, and the card treatment
+              (right-aligned, bordered, shadowed, floating on the workspace
+              grey rather than spanning the chrome) keeps it reading as a find
+              box rather than as a second toolbar. The cost is one ~44px shift
+              of the sheet on open, which does not recur while searching. */}
           {editable && editor && (
+            <div data-testid={`${testId}-toolbar`} className="sticky top-0 z-20">
             <div
-              data-testid={`${testId}-toolbar`}
-              className="sticky top-0 z-10 border-b border-border bg-surface-panel"
+              className="border-b border-border bg-surface-panel"
             >
               {/* Full workspace width, NOT the sheet's 816px.
 
@@ -530,6 +652,25 @@ export default function CanvasDocumentView({
                 />
               </div>
             </div>
+            {findOpen && (
+              // `bg-workspace`, and opaque on purpose: this row is stuck to
+              // the top of the scrollport, so the document passes UNDER it.
+              // A transparent row would show text sliding through the gap
+              // beside the card.
+              <div
+                data-testid={`${testId}-find-row`}
+                className="flex justify-end bg-workspace px-3 pb-2 pt-2"
+              >
+                <DocumentFindBar
+                  editor={editor}
+                  canReplace={editable}
+                  focusNonce={findFocusNonce}
+                  onClose={() => { setFindOpen(false); editor.commands.focus(); }}
+                  data-testid={`${testId}-find`}
+                />
+              </div>
+            )}
+            </div>
           )}
           {/* Status, not formatting: zoom and length describe the document and
               the view of it rather than acting on a selection, so they sit
@@ -548,11 +689,29 @@ export default function CanvasDocumentView({
               cannot find the same measure twice. */}
           {showRuler && (
             <DocumentRuler
-              // Measured, so a clamped page and its ruler agree. Margins still
-              // scale with zoom: CSS `zoom` scales the sheet's padding too.
-              {...(paperWidth ? { pageWidth: paperWidth } : {})}
-              marginLeft={96 * zoom}
-              marginRight={96 * zoom}
+              // DOCUMENT pixels, all three of them, with `zoom` handed over
+              // separately — the ruler owns the one conversion to screen px.
+              //
+              // `paperWidth` is a `getBoundingClientRect` width, so it is
+              // already scaled; dividing by zoom puts it back on the page's
+              // own grid. Exactly the round trip `measurePages` makes for the
+              // page count, and for the same reason: a measurement is in
+              // visual pixels, and an inch is not.
+              //
+              // Measuring rather than assuming 816 is still what makes a
+              // CLAMPED page agree with its ruler — at 100% the sheet is
+              // `w-full max-w-[816px]` and a narrow workspace makes it
+              // narrower than a letter page.
+              //
+              // The margins are the plain one-inch figure now, NOT `96 * zoom`:
+              // pre-scaling them here is what left the tick grid measuring in
+              // screen pixels while the labels counted document inches, so a
+              // 150% page grew eleven inch labels and put "1" two thirds of an
+              // inch from the margin.
+              {...(paperWidth ? { pageWidth: paperWidth / zoom } : {})}
+              marginLeft={96}
+              marginRight={96}
+              zoom={zoom}
               // Same horizontal padding as the page row below, so the two
               // share a left edge once the workspace scrolls — without it the
               // ruler starts 24px left of the paper it is measuring.
@@ -744,6 +903,14 @@ export default function CanvasDocumentView({
             onZoomChange={setZoom}
             data-testid={`${testId}-status-bar`}
           >
+            {/* Only while something IS selected. A standing "0 selected"
+                would be a permanent line of chrome reporting the absence of a
+                thing, next to a total that already covers that case. */}
+            {selectedWords > 0 && (
+              <span data-testid={`${testId}-selected-word-count`} className="tabular-nums">
+                {selectedWords === 1 ? '1 selected' : `${selectedWords.toLocaleString()} selected`}
+              </span>
+            )}
             {/* Only when the document actually HAS pages. Unpaginated, "1
                 page" would be a claim about a sheet that has no page
                 boundaries on it at all. */}

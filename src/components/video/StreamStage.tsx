@@ -50,6 +50,14 @@
 //                                  or one that was never going to start
 //   "0 watching"                   was an unmeasured counter, while someone
 //                                  was demonstrably watching
+//   "HLS error: networkError"      was a 503 saying "no active producers" —
+//                                  hls.js's enum name, shown to a stranger,
+//                                  and blaming a network that was fine
+//
+// The last of those is why the failure a viewer reads is built from
+// `hls.failure.kind`, never from `hls.failure.detail`: the classification is
+// the library's job, the sentence is the viewer's, and the hls.js vocabulary
+// lives on `data-error-detail` and in the console where it belongs.
 //
 // The phase machine in `streamStagePhase.ts` is where those are told apart,
 // and `data-phase` on the root element is the whole answer in one attribute.
@@ -60,7 +68,7 @@ import { useHlsSource } from '../../lib/video/useHlsSource';
 import { useAudioLevel } from '../../lib/video/useAudioLevel';
 import { useTrackStateBump, streamHasUsableVideo } from '../../lib/video/useTrackStateBump';
 import { StreamVideo } from './StreamVideo';
-import { ViewerCount } from './ViewerCount';
+import { ViewerCount, isKnownViewerCount } from './ViewerCount';
 import { StreamAudioOnly } from './StreamAudioOnly';
 import { streamStagePhase, stagePhaseIsLive, type StreamStagePhase } from './streamStagePhase';
 
@@ -106,6 +114,10 @@ export interface StreamStageProps {
    * Called by the "Try again" control, in addition to the stage's own retry.
    * Use it when recovery needs something the stage cannot do — re-issuing a
    * signed playlist URL, re-subscribing over WHEP.
+   *
+   * It is also the ONLY thing that can offer a way back from `ended`: there is
+   * no playlist left to re-attach there, so the stage's own retry could not
+   * succeed and no button is drawn without this.
    */
   onRetry?: () => void;
   /** Replaces the default wording once a stream has failed to start. */
@@ -279,7 +291,7 @@ export function StreamStage({
     return () => clearTimeout(timer);
   }, [settled, hls.error, stallAfterMs]);
 
-  const phase: StreamStagePhase = streamStagePhase({
+  const rawPhase: StreamStagePhase = streamStagePhase({
     hasStream: Boolean(stream),
     streamHasTracks,
     hasPlaylist: Boolean(playlistUrl),
@@ -287,6 +299,27 @@ export function StreamStage({
     graceExpired,
     hls,
   });
+
+  // A packager that answers "no active producers" has not FAILED — it has
+  // told us the channel is empty, which is the same fact the grace timeout
+  // discovers the slow way. One fact, one appearance: route it to the state
+  // that already says so, instead of a second red error that means the same
+  // thing in different words.
+  //
+  // The classification stays visible on `data-error-kind` for anyone
+  // debugging; it is only the VIEWER who is spared the distinction.
+  const failure = hls.failure ?? null;
+  // Whether THIS viewer ever saw the broadcast run. `hadSource` cannot answer
+  // that on the HLS path — a playlist URL exists from mount — so an empty
+  // channel and a finished one are the same 503 without it. With it, someone
+  // who was watching when it stopped is told it ended, and someone who arrived
+  // to an empty channel is told nothing is on.
+  const everPlayed = useRef(false);
+  if (rawPhase === 'playing') everPlayed.current = true;
+  const phase: StreamStagePhase =
+    rawPhase === 'error' && failure?.kind === 'no-broadcast'
+      ? (everPlayed.current ? 'ended' : 'not-started')
+      : rawPhase;
   const playing = live && stagePhaseIsLive(phase);
 
   const detectedAudioOnly = stream ? streamAudioOnly : hls.audioOnly === true;
@@ -337,11 +370,25 @@ export function StreamStage({
 
   const hasSource = Boolean(stream || playlistUrl);
   const onHls = Boolean(playlistUrl) && !stream;
-  // No controls over a stage that is only carrying a message. A Full screen
-  // button on "Nothing is being broadcast right now." is an offer to enlarge
-  // an apology.
-  const showControlRow =
+  // No STAGE chrome over a stage that is only carrying a message. A Full
+  // screen button on "Nothing is being broadcast right now." is an offer to
+  // enlarge an apology.
+  const showStageChrome =
     hasSource && phase !== 'error' && phase !== 'not-started' && phase !== 'ended';
+  // …but the HOST's controls are a different thing, and hiding them here was
+  // a trap: `controls` is where the Leave button lives, so a broadcast that
+  // ended took away the only way out of the stage it left behind. A viewer
+  // must always be able to leave whatever they are looking at.
+  const showControlRow = showStageChrome || Boolean(controls);
+
+  // Whether pressing "Try again" could plausibly change anything. A browser
+  // with no HLS support is the case where it certainly cannot, and a control
+  // that can never succeed is worse than no control.
+  const retryable = failure ? failure.retryable : true;
+  const canRetry = (onHls || Boolean(onRetry)) && retryable;
+  // "Try again" is for something that went wrong. Nothing went wrong with an
+  // empty channel — you are looking again to see whether it filled up.
+  const retryLabel = failure?.kind === 'no-broadcast' ? 'Check again' : 'Try again';
 
   return (
     <div
@@ -351,6 +398,12 @@ export function StreamStage({
       data-phase={phase}
       data-audio-only={String(isAudioOnly)}
       data-transport={stream ? 'realtime' : playlistUrl ? 'hls' : 'none'}
+      // The developer's copy of what went wrong. hls.js's vocabulary and the
+      // HTTP status live HERE and in the console — never in the sentence a
+      // viewer reads. ("HLS error: networkError" was on screen for a room
+      // whose broadcast simply was not producing.)
+      data-error-kind={failure?.kind}
+      data-error-detail={failure?.detail}
       // Always black, in both themes: letterbox bars around a video are black
       // everywhere video is watched, and a white stage in light mode makes the
       // frame edges glow. This is one of the few surfaces that should not
@@ -396,7 +449,14 @@ export function StreamStage({
 
       {phase === 'ended' && (
         <StageMessage testId={`${testId}-ended`}>
-          {endedLabel ?? 'The broadcast has ended.'}
+          <span>{endedLabel ?? 'The broadcast has ended.'}</span>
+          {/* Only where the HOST can actually go and look — re-signing a URL,
+              re-subscribing. The stage's own HLS retry cannot help here: there
+              is no playlist left to re-attach, so a button wired to it would
+              be one that can never succeed. */}
+          {onRetry && (
+            <RetryButton testId={`${testId}-retry`} label="Check again" onClick={retry} />
+          )}
         </StageMessage>
       )}
 
@@ -406,7 +466,9 @@ export function StreamStage({
       {phase === 'not-started' && (
         <StageMessage testId={`${testId}-not-started`}>
           <span>{notStartedLabel ?? 'Nothing is being broadcast right now.'}</span>
-          {(onHls || onRetry) && <RetryButton testId={`${testId}-retry`} onClick={retry} />}
+          {canRetry && (
+            <RetryButton testId={`${testId}-retry`} label={retryLabel} onClick={retry} />
+          )}
         </StageMessage>
       )}
 
@@ -437,7 +499,7 @@ export function StreamStage({
           <span className="text-xs text-white/60">
             The picture below is the last frame that arrived.
           </span>
-          <RetryButton testId={`${testId}-retry`} onClick={retry} />
+          {canRetry && <RetryButton testId={`${testId}-retry`} onClick={retry} />}
         </StageMessage>
       )}
 
@@ -445,8 +507,12 @@ export function StreamStage({
           indistinguishable from a broadcast that had not started. */}
       {phase === 'error' && (
         <StageMessage testId={`${testId}-error`} dim>
+          {/* `hls.error` is the VIEWER's sentence — useHlsSource keeps the
+              hls.js enum and the HTTP status in `failure.detail` instead. */}
           <span>{hls.error ?? 'This stream could not be played.'}</span>
-          <RetryButton testId={`${testId}-retry`} onClick={retry} />
+          {canRetry && (
+            <RetryButton testId={`${testId}-retry`} label={retryLabel} onClick={retry} />
+          )}
         </StageMessage>
       )}
 
@@ -485,13 +551,16 @@ export function StreamStage({
           bottom-3 right-3 and drew on top of each other for any host that
           passed both. */}
       {showControlRow && (
-        <div className="absolute bottom-3 right-3 z-10 flex items-center gap-2">
+        <div
+          data-testid={`${testId}-controls`}
+          className="absolute bottom-3 right-3 z-10 flex items-center gap-2"
+        >
           {/* How far behind live, and the way back to it.
 
               HLS is seconds behind by construction. A viewer who is not told
               that reads the delay as a frozen stream — the same misreading
               that makes a stalled stream and a working one look alike. */}
-          {onHls && showLatency && (phase === 'playing' || phase === 'buffering') && (
+          {showStageChrome && onHls && showLatency && (phase === 'playing' || phase === 'buffering') && (
             <button
               type="button"
               data-testid={`${testId}-latency`}
@@ -513,7 +582,7 @@ export function StreamStage({
               has to read as the next thing to do rather than as chrome. Only
               shown once something is actually playing — an unmute button over
               a stage with nothing on it is a button that does nothing. */}
-          {playing && (
+          {showStageChrome && playing && (
             <button
               type="button"
               data-testid={`${testId}-mute-toggle`}
@@ -532,7 +601,7 @@ export function StreamStage({
             </button>
           )}
 
-          {allowFullscreen && fullscreenSupported && (
+          {showStageChrome && allowFullscreen && fullscreenSupported && (
             <button
               type="button"
               data-testid={`${testId}-fullscreen`}
@@ -551,20 +620,6 @@ export function StreamStage({
       )}
     </div>
   );
-}
-
-/**
- * `null`/`undefined` mean nobody measured; a numeric 0 means somebody did and
- * the answer was nobody.
- *
- * `> 0` collapsed those two back together, which is the exact conflation the
- * nullable type was introduced to end — and it silently deleted the honest
- * case. Viewer count was once STRUCTURALLY zero here (the tracker had no
- * callers at all), so "0 watching" being visible is what tells a broadcaster
- * the number is being computed rather than missing.
- */
-function isKnownViewerCount(count: number | null | undefined): count is number {
-  return typeof count === 'number' && Number.isFinite(count) && count >= 0;
 }
 
 function StageMessage({
@@ -590,7 +645,17 @@ function StageMessage({
   );
 }
 
-function RetryButton({ testId, onClick }: { testId: string; onClick: () => void }) {
+function RetryButton({
+  testId,
+  label = 'Try again',
+  onClick,
+}: {
+  testId: string;
+  /** What the press actually attempts. "Try again" over an empty channel is
+      an offer to fix something that is not broken; "Check again" is true. */
+  label?: string;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"
@@ -598,7 +663,7 @@ function RetryButton({ testId, onClick }: { testId: string; onClick: () => void 
       onClick={onClick}
       className={cn(PILL, 'bg-white text-black hover:bg-white/90')}
     >
-      Try again
+      {label}
     </button>
   );
 }

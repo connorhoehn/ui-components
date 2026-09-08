@@ -35,7 +35,7 @@ export type {
 export { StatusStrip } from './StatusStrip';
 export type { StatusStripProps } from './StatusStrip';
 
-export { ViewerCount } from './ViewerCount';
+export { ViewerCount, isKnownViewerCount } from './ViewerCount';
 export type { ViewerCountProps } from './ViewerCount';
 
 export { CallWidget } from './CallWidget';
@@ -234,8 +234,14 @@ export { streamStagePhase, stagePhaseIsLive, stagePhaseIsShowingLiveMedia } from
 export type { StreamStagePhase, StreamStagePhaseInput } from './streamStagePhase';
 export { StreamAudioOnly } from './StreamAudioOnly';
 export type { StreamAudioOnlyProps } from './StreamAudioOnly';
-export { useHlsSource } from '../../lib/video/useHlsSource';
-export type { UseHlsSourceState, UseHlsSourceOptions, HlsPhase } from '../../lib/video/useHlsSource';
+export { useHlsSource, hlsFailureText } from '../../lib/video/useHlsSource';
+export type {
+  UseHlsSourceState,
+  UseHlsSourceOptions,
+  HlsPhase,
+  HlsFailure,
+  HlsFailureKind,
+} from '../../lib/video/useHlsSource';
 export { useAudioLevel } from '../../lib/video/useAudioLevel';
 export { StreamChatTicker } from './StreamChatTicker';
 export type { StreamChatTickerProps, StreamChatMessage } from './StreamChatTicker';

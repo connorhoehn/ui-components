@@ -20,6 +20,21 @@ export interface DocumentFindBarProps {
   onClose: () => void;
   /** Hidden when the document cannot be edited; find still works. */
   canReplace?: boolean;
+  /**
+   * Bump to pull focus back into the query field and select what is in it.
+   *
+   * This is what makes a SECOND Cmd/Ctrl+F do something. With the bar already
+   * open the host's shortcut handler has nothing left to change — `findOpen`
+   * is already true — so the keystroke read as dead while the caret stayed in
+   * the document. A monotonic token is the smallest thing that can say "focus
+   * again" without the parent holding a ref into this component; selecting the
+   * existing text is the word-processor behaviour, so the next keystroke
+   * starts a new search instead of appending to the last one.
+   *
+   * Mount focuses regardless — the effect runs on the initial value too.
+   */
+  focusNonce?: number;
+  className?: string;
   'data-testid'?: string;
 }
 
@@ -27,6 +42,8 @@ export function DocumentFindBar({
   editor,
   onClose,
   canReplace = true,
+  focusNonce = 0,
+  className,
   'data-testid': testId = 'find-bar',
 }: DocumentFindBarProps) {
   const [query, setQuery] = useState('');
@@ -36,8 +53,14 @@ export function DocumentFindBar({
 
   // Opening the bar should put the caret in it — the next thing anyone does is
   // type, and a find bar you have to click into is a find bar that cost you a
-  // click every time.
-  useEffect(() => { inputRef.current?.focus(); }, []);
+  // click every time. Keyed on `focusNonce` so a repeat Cmd/Ctrl+F comes back
+  // here too; `select()` so that keystroke replaces the previous term.
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.focus();
+    el.select();
+  }, [focusNonce]);
 
   // Recomputed from the LIVE document, so a match list never outlives the text
   // it points into: replacing shifts every later position, and a stale list
@@ -97,7 +120,16 @@ export function DocumentFindBar({
       data-testid={testId}
       role="search"
       aria-label="Find in document"
-      className="flex items-center gap-1.5 border-b border-border bg-surface-panel px-3 py-1.5"
+      // A CARD, not a full-bleed bar. A bar spanning the chrome reads as a
+      // second toolbar stacked on the first — the same misreading the page
+      // toolbar's own comment records from when it wrapped onto two rows.
+      // Word processors draw find as a small box that visibly belongs to the
+      // view rather than to the document, so it gets a border, a radius and a
+      // shadow and lets its container decide where it sits.
+      className={cn(
+        'flex items-center gap-1.5 rounded-lg border border-border bg-surface-panel px-3 py-1.5 shadow-lg',
+        className,
+      )}
       onKeyDown={onKeyDown}
     >
       <input

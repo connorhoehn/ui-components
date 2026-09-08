@@ -263,12 +263,18 @@ describe('entry points and their transitive optional peers', () => {
       'doc-editor': { static: [...TIPTAP, 'yjs'].sort(), dynamic: ['amazon-ivs-web-broadcast'] },
       // The root barrel re-exports nearly everything, so it needs nearly
       // everything. That is expected — subpaths are how a consumer opts out.
+      // The tiptap peers moved static -> DYNAMIC here in 2.187.0, and that is
+      // the good direction: a static optional peer breaks the import itself
+      // for every consumer of the barrel, installed or not, while a dynamic
+      // one only fails if the feature actually runs. `import { Button } from
+      // '@connorhoehnslalom/ui-components'` no longer needs seven tiptap
+      // packages on disk. Pinned rather than celebrated — if they drift back
+      // to static, this goes red and someone has to say why.
       index: {
         static: [
-          ...TIPTAP,
           'amazon-cognito-identity-js', 'cmdk', 'react-markdown', 'react-router', 'recharts', 'remark-gfm', 'yjs',
         ].sort(),
-        dynamic: ['amazon-ivs-web-broadcast'],
+        dynamic: [...TIPTAP, 'amazon-ivs-web-broadcast'].sort(),
       },
     };
 

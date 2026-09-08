@@ -69,9 +69,107 @@ export type HlsPhase =
   /** Unplayable. `error` carries the wording. */
   | 'error';
 
+/**
+ * What KIND of thing went wrong, in terms a viewer's sentence can be built
+ * from. hls.js's own vocabulary (`networkError`, `manifestLoadError`) is a
+ * developer's, and it was reaching the screen: a room whose broadcast was not
+ * producing rendered "HLS error: networkError" over the video — jargon, and
+ * wrong, because the network was fine and there was simply nothing to play.
+ *
+ * The distinction that matters is the one the SERVER already makes and the
+ * player was throwing away: a 503 saying "no active producers" is not a
+ * network failure and not a bug, it is an empty channel.
+ */
+export type HlsFailureKind =
+  /** The server answered, and its answer was that nothing is being broadcast. */
+  | 'no-broadcast'
+  /** The playlist could not be fetched at all — DNS, offline, CORS, timeout. */
+  | 'network'
+  /** The server answered, and its answer was that IT is broken. */
+  | 'server'
+  /** Bytes arrived and could not be decoded. */
+  | 'media'
+  /** This browser cannot play the stream at all. Retrying can never help. */
+  | 'unsupported'
+  | 'other';
+
+export interface HlsFailure {
+  kind: HlsFailureKind;
+  /** HTTP status behind it, when there was one. */
+  status: number | null;
+  /**
+   * The developer's account — hls.js's type/details, the missing-peer hint.
+   * For a console, a `data-` attribute or a bug report. NEVER for a viewer;
+   * that is what `error` is, and the two are deliberately different strings.
+   */
+  detail: string;
+  /**
+   * Whether attaching the same URL again could plausibly succeed. False for a
+   * browser that cannot play HLS — a "Try again" there is a button that can
+   * never work, which is worse than no button.
+   */
+  retryable: boolean;
+}
+
+/**
+ * The viewer-facing sentence for each kind.
+ *
+ * `no-broadcast` deliberately does not guess between "hasn't started yet" and
+ * "has already ended". A 503 from the packager says neither; it says there is
+ * no producer. So the wording is the one thing that is true either way.
+ */
+const FAILURE_TEXT: Record<HlsFailureKind, string> = {
+  'no-broadcast': 'This broadcast is not running right now.',
+  network: 'Cannot reach the broadcast — check your connection.',
+  server: 'Something went wrong on our side.',
+  media: 'This stream could not be played.',
+  unsupported: 'This browser cannot play this broadcast.',
+  other: 'This stream could not be played.',
+};
+
+/** The viewer's sentence for a failure. Exported so a host can re-word it. */
+export function hlsFailureText(failure: HlsFailure | null | undefined): string | null {
+  return failure ? FAILURE_TEXT[failure.kind] : null;
+}
+
+/**
+ * Classify an hls.js fatal ERROR payload.
+ *
+ * `data.response.code` is the HTTP status of the request that failed, and it
+ * is the whole difference between the three things that look identical to
+ * hls.js: 404/503/410 is an empty or finished channel, another 5xx is a
+ * wedged backend, and no status at all is a genuine transport failure.
+ */
+function classifyHlsError(data: any): HlsFailure {
+  const status: number | null =
+    typeof data?.response?.code === 'number' ? data.response.code : null;
+  const detail = [data?.details, data?.type, status ? `HTTP ${status}` : null]
+    .filter(Boolean)
+    .join(' / ') || 'unknown hls.js error';
+
+  if (data?.type === 'mediaError') return { kind: 'media', status, detail, retryable: true };
+  if (data?.type === 'networkError' || status !== null) {
+    // 503 is what the packager answers with "no active producers in channel",
+    // and 404 is the same situation before the channel exists at all.
+    if (status === 404 || status === 410 || status === 503) {
+      return { kind: 'no-broadcast', status, detail, retryable: true };
+    }
+    // Any other answered request means the server spoke and was wrong; only a
+    // request that got no answer at all is the viewer's network.
+    if (status !== null) return { kind: 'server', status, detail, retryable: true };
+    return { kind: 'network', status, detail, retryable: true };
+  }
+  return { kind: 'other', status, detail, retryable: true };
+}
+
 export interface UseHlsSourceState {
-  /** Human-readable failure, or null. Rendered by the player, not thrown. */
+  /**
+   * What to SHOW a viewer when playback failed, or null. Plain language, no
+   * hls.js vocabulary, no status codes — see `failure.detail` for those.
+   */
   error: string | null;
+  /** The same failure, classified, for logging and for deciding on a retry. */
+  failure: HlsFailure | null;
   /** True between attach and first data. Equivalent to `phase === 'connecting'`. */
   loading: boolean;
   /** The whole truth; prefer this over the two booleans above. */
@@ -111,7 +209,11 @@ export function useHlsSource(
   opts: UseHlsSourceOptions = {},
 ): UseHlsSourceState {
   const { live = false, stalledAfterMs = STALLED_AFTER_MS } = opts;
-  const [error, setError] = useState<string | null>(null);
+  const [failure, setFailure] = useState<HlsFailure | null>(null);
+  // The viewer's sentence is DERIVED, never stored: there is one failure and
+  // two audiences for it, and keeping them as one string is how hls.js's
+  // enum name ended up on a stranger's screen.
+  const error = hlsFailureText(failure);
   const [loading, setLoading] = useState(false);
   const [buffering, setBuffering] = useState(false);
   const [stalled, setStalled] = useState(false);
@@ -135,7 +237,7 @@ export function useHlsSource(
   useEffect(() => { onErrorRef.current = opts.onError; }, [opts.onError]);
 
   const retry = useCallback(() => {
-    setError(null);
+    setFailure(null);
     setBuffering(false);
     setStalled(false);
     setAttempt((n) => n + 1);
@@ -165,7 +267,7 @@ export function useHlsSource(
   useEffect(() => {
     const v = videoRef.current;
     if (!v || !playlistUrl) return;
-    setError(null);
+    setFailure(null);
     setLoading(true);
     setAudioOnly(null);
     setLatencySec(null);
@@ -187,7 +289,13 @@ export function useHlsSource(
     // isSupported() is false).
     const useNative = () => {
       if (!v.canPlayType('application/vnd.apple.mpegurl')) {
-        setError('HLS playback is not supported in this browser.');
+        setFailure({
+          kind: 'unsupported',
+          status: null,
+          detail: 'no MSE (hls.js isSupported() false) and canPlayType() rejects application/vnd.apple.mpegurl',
+          // Nothing about a second attempt changes the browser.
+          retryable: false,
+        });
         setLoading(false);
         return false;
       }
@@ -217,8 +325,12 @@ export function useHlsSource(
         hls.on(Hls.Events.MEDIA_ATTACHED, () => hls.loadSource(playlistUrl));
         hls.on(Hls.Events.ERROR, (_evt: unknown, data: any) => {
           if (data?.fatal) {
-            setError(`HLS error: ${data.type}`);
-            onErrorRef.current?.(new Error(`HLS fatal: ${data.type}`));
+            const f = classifyHlsError(data);
+            setFailure(f);
+            // The detail stays for whoever is debugging — just not on screen.
+            // eslint-disable-next-line no-console
+            console.error('[useHlsSource] playback failed:', f.kind, f.detail, playlistUrl);
+            onErrorRef.current?.(new Error(`HLS fatal: ${f.detail}`));
           }
         });
       } catch (e: any) {
@@ -226,7 +338,12 @@ export function useHlsSource(
         // No hls.js in the consumer app — native is the only thing left, and
         // on Safari it is the right answer anyway.
         if (!useNative()) {
-          setError(`Failed to load hls.js — install it in the consumer app: ${e?.message ?? e}`);
+          setFailure({
+            kind: 'unsupported',
+            status: null,
+            detail: `hls.js failed to load — install it in the consumer app: ${e?.message ?? e}`,
+            retryable: false,
+          });
         }
       }
     })();
@@ -322,7 +439,13 @@ export function useHlsSource(
     // because `loading` had already cleared on an earlier `canplay`, the
     // stage went on claiming LIVE over a frame that never moved. Whatever
     // else is true, a media element with no source is not playing.
-    const failed = () => setError('This stream could not be played.');
+    const failed = () =>
+      setFailure({
+        kind: 'media',
+        status: null,
+        detail: `<video> error event; networkState=${v.networkState} readyState=${v.readyState}`,
+        retryable: true,
+      });
     const events = ['loadeddata', 'playing', 'canplay'] as const;
     events.forEach((e) => v.addEventListener(e, started));
     v.addEventListener('loadedmetadata', probeTracks);
@@ -408,5 +531,5 @@ export function useHlsSource(
             ? 'buffering'
             : 'playing';
 
-  return { error, loading, phase, audioOnly, latencySec, seekToLive, retry };
+  return { error, failure, loading, phase, audioOnly, latencySec, seekToLive, retry };
 }

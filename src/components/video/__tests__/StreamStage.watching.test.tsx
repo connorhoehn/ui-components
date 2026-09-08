@@ -8,10 +8,12 @@
 
 import { render, screen, cleanup, fireEvent, act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { HlsPhase } from '../../../lib/video/useHlsSource';
+import type { HlsFailure, HlsPhase } from '../../../lib/video/useHlsSource';
+import { hlsFailureText } from '../../../lib/video/useHlsSource';
 
 const hlsState = {
   error: null as string | null,
+  failure: null as HlsFailure | null,
   loading: false,
   phase: 'playing' as HlsPhase,
   audioOnly: null as boolean | null,
@@ -19,7 +21,10 @@ const hlsState = {
   seekToLive: vi.fn(),
   retry: vi.fn(),
 };
-vi.mock('../../../lib/video/useHlsSource', () => ({
+// Only the HOOK is replaced. `hlsFailureText` stays real, because the point
+// of these tests is that the viewer's sentence is the one the library builds.
+vi.mock('../../../lib/video/useHlsSource', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../../lib/video/useHlsSource')>()),
   useHlsSource: () => hlsState,
 }));
 
@@ -30,6 +35,7 @@ const PLAYLIST = 'http://lvs.local/api/channels/ch-1/hls/master.m3u8';
 afterEach(cleanup);
 beforeEach(() => {
   hlsState.error = null;
+  hlsState.failure = null;
   hlsState.loading = false;
   hlsState.phase = 'playing';
   hlsState.audioOnly = null;
@@ -318,5 +324,182 @@ describe('fullscreen', () => {
     Element.prototype.requestFullscreen = vi.fn(() => Promise.resolve()) as unknown as Element['requestFullscreen'];
     render(<StreamStage />);
     expect(screen.queryByTestId('stream-stage-fullscreen')).toBeNull();
+  });
+});
+
+
+/** Put the stage in the failure the real hook would report for `kind`. */
+function failWith(kind: HlsFailure['kind'], status: number | null, detail: string) {
+  const failure: HlsFailure = {
+    kind,
+    status,
+    detail,
+    retryable: kind !== 'unsupported',
+  };
+  hlsState.phase = 'error';
+  hlsState.failure = failure;
+  hlsState.error = hlsFailureText(failure);
+}
+
+// What a viewer is told when the broadcast will not play.
+//
+// Observed live: clicking Watch on a room whose broadcast was not producing
+// rendered "HLS error: networkError" on the black stage. That is hls.js's own
+// enum name — it means nothing to a viewer, and here it was also WRONG: the
+// network was fine, the packager answered 503 "no active producers in
+// channel". Three different things (empty channel, dead network, wedged
+// backend) had one indistinguishable, jargon-shaped appearance.
+describe('what a failure SAYS to someone watching', () => {
+  const jargon = /hls|networkError|mediaError|manifest|HTTP|50\d|40\d/;
+
+  it('turns a 503 "no active producers" into the state that already means that', () => {
+    failWith('no-broadcast', 503, 'manifestLoadError / networkError / HTTP 503');
+    render(<StreamStage live playlistUrl={PLAYLIST} />);
+    // One fact, one appearance: the same words the grace timeout produces.
+    expect(screen.getByTestId('stream-stage-not-started')).toHaveTextContent(
+      'Nothing is being broadcast right now.',
+    );
+    expect(screen.queryByTestId('stream-stage-error')).toBeNull();
+    expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-phase', 'not-started');
+    // …and the badge goes out with it.
+    expect(screen.getByTestId('stream-stage')).toHaveAttribute('data-live', 'false');
+  });
+
+  // Same 503, two different viewers. `hadSource` cannot tell them apart on
+  // this path — a playlist URL exists from mount — so the stage remembers
+  // whether THIS viewer ever saw it run.
+  it('tells someone who was watching that it ended', () => {
+    const { rerender } = render(<StreamStage live playlistUrl={PLAYLIST} />);
+    expect(screen.getByTestId('stream-stage-live')).toBeInTheDocument();
+    failWith('no-broadcast', 503, 'manifestLoadError / networkError / HTTP 503');
+    rerender(<StreamStage live playlistUrl={PLAYLIST} />);
+    expect(screen.getByTestId('stream-stage-ended')).toBeInTheDocument();
+    expect(screen.queryByTestId('stream-stage-not-started')).toBeNull();
+  });
+
+  it('says the connection when there was no answer at all', () => {
+    failWith('network', null, 'manifestLoadTimeOut / networkError');
+    render(<StreamStage live playlistUrl={PLAYLIST} />);
+    expect(screen.getByTestId('stream-stage-error')).toHaveTextContent(
+      /cannot reach the broadcast/i,
+    );
+  });
+
+  it('owns a 500 rather than blaming the viewer for it', () => {
+    failWith('server', 500, 'manifestLoadError / networkError / HTTP 500');
+    render(<StreamStage live playlistUrl={PLAYLIST} />);
+    expect(screen.getByTestId('stream-stage-error')).toHaveTextContent(/on our side/i);
+  });
+
+  it('never puts an hls.js enum or a status code in front of a viewer', () => {
+    for (const [kind, status] of [
+      ['no-broadcast', 503],
+      ['network', null],
+      ['server', 500],
+      ['media', null],
+      ['unsupported', null],
+      ['other', null],
+    ] as const) {
+      failWith(kind, status, 'manifestLoadError / networkError / HTTP 503');
+      const { unmount } = render(<StreamStage live playlistUrl={PLAYLIST} />);
+      expect(screen.getByTestId('stream-stage').textContent ?? '').not.toMatch(jargon);
+      unmount();
+    }
+  });
+
+  // The detail is not thrown away — it moves off the screen and onto the DOM,
+  // where whoever is debugging can still find it.
+  it('keeps the developer detail on the element', () => {
+    failWith('no-broadcast', 503, 'manifestLoadError / networkError / HTTP 503');
+    render(<StreamStage live playlistUrl={PLAYLIST} />);
+    const root = screen.getByTestId('stream-stage');
+    expect(root).toHaveAttribute('data-error-kind', 'no-broadcast');
+    expect(root.getAttribute('data-error-detail')).toContain('HTTP 503');
+  });
+});
+
+// A control that can never succeed is worse than no control.
+describe('what "try again" promises', () => {
+  it('offers to look again, not to fix something, at an empty channel', () => {
+    failWith('no-broadcast', 503, 'manifestLoadError / networkError / HTTP 503');
+    render(<StreamStage live playlistUrl={PLAYLIST} />);
+    expect(screen.getByTestId('stream-stage-retry')).toHaveTextContent('Check again');
+  });
+
+  it('still says try again for something that genuinely broke', () => {
+    failWith('server', 500, 'manifestLoadError / networkError / HTTP 500');
+    render(<StreamStage live playlistUrl={PLAYLIST} />);
+    expect(screen.getByTestId('stream-stage-retry')).toHaveTextContent('Try again');
+  });
+
+  // Nothing about pressing a button twice gives a browser Media Source
+  // Extensions.
+  it('offers nothing at all where a retry cannot possibly work', () => {
+    failWith('unsupported', null, 'no MSE and canPlayType() rejects the playlist');
+    render(<StreamStage live playlistUrl={PLAYLIST} />);
+    expect(screen.getByTestId('stream-stage-error')).toBeInTheDocument();
+    expect(screen.queryByTestId('stream-stage-retry')).toBeNull();
+  });
+
+  // An ended broadcast has no playlist left to re-attach, so the stage's own
+  // retry is meaningless — but a host that can go and look again may say so.
+  it('says nothing about retrying an ended broadcast the host cannot recheck', async () => {
+    const { rerender } = render(<StreamStage live playlistUrl={PLAYLIST} stallAfterMs={20} />);
+    rerender(<StreamStage playlistUrl={null} stallAfterMs={20} />);
+    await act(async () => { await new Promise((r) => setTimeout(r, 40)); });
+    expect(screen.getByTestId('stream-stage-ended')).toBeInTheDocument();
+    expect(screen.queryByTestId('stream-stage-retry')).toBeNull();
+  });
+
+  it('offers to re-check an ended broadcast when the host can', async () => {
+    const onRetry = vi.fn();
+    const { rerender } = render(
+      <StreamStage live playlistUrl={PLAYLIST} onRetry={onRetry} stallAfterMs={20} />,
+    );
+    rerender(<StreamStage playlistUrl={null} onRetry={onRetry} stallAfterMs={20} />);
+    await act(async () => { await new Promise((r) => setTimeout(r, 40)); });
+    fireEvent.click(screen.getByTestId('stream-stage-retry'));
+    expect(onRetry).toHaveBeenCalled();
+  });
+});
+
+// The stage's own chrome and the HOST's controls are different things, and
+// collapsing them took away the only way out: `controls` is where the Leave
+// button lives, so a broadcast that ended left the viewer looking at "The
+// broadcast has ended." with nothing to press.
+describe('the way out survives every dead end', () => {
+  const leave = <button data-testid="leave">Leave</button>;
+
+  it('keeps the host controls when the broadcast ends', async () => {
+    const { rerender } = render(
+      <StreamStage live playlistUrl={PLAYLIST} controls={leave} stallAfterMs={20} />,
+    );
+    rerender(<StreamStage playlistUrl={null} controls={leave} stallAfterMs={20} />);
+    await act(async () => { await new Promise((r) => setTimeout(r, 40)); });
+    expect(screen.getByTestId('stream-stage-ended')).toBeInTheDocument();
+    expect(screen.getByTestId('leave')).toBeInTheDocument();
+  });
+
+  it('keeps them on a stage that never had a source', async () => {
+    render(<StreamStage controls={leave} stallAfterMs={20} />);
+    expect(screen.getByTestId('leave')).toBeInTheDocument();
+    await screen.findByTestId('stream-stage-not-started');
+    expect(screen.getByTestId('leave')).toBeInTheDocument();
+  });
+
+  it('keeps them through a playback failure', () => {
+    failWith('server', 500, 'manifestLoadError / networkError / HTTP 500');
+    render(<StreamStage live playlistUrl={PLAYLIST} controls={leave} />);
+    expect(screen.getByTestId('leave')).toBeInTheDocument();
+  });
+
+  // …without bringing the stage's own chrome along. A Full screen button on
+  // an apology is an offer to enlarge it.
+  it('does not bring the stage chrome with them', async () => {
+    Element.prototype.requestFullscreen = vi.fn(() => Promise.resolve()) as unknown as Element['requestFullscreen'];
+    render(<StreamStage controls={leave} stallAfterMs={20} />);
+    await screen.findByTestId('stream-stage-not-started');
+    expect(screen.queryByTestId('stream-stage-fullscreen')).toBeNull();
+    expect(screen.queryByTestId('stream-stage-mute-toggle')).toBeNull();
   });
 });

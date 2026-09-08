@@ -98,6 +98,13 @@ export default defineConfig({
         '@tiptap/pm/transform', '@tiptap/pm/keymap', '@tiptap/pm/commands',
         '@tiptap/y-tiptap',
         'recharts',
+        // Optional peers since 2.187.0. They were externalised but only
+        // devDependencies, which was harmless while nothing imported them from
+        // dist — `doc-types` was not a build entry until 2.184.0, so
+        // DocumentTypeWizard's drag-and-drop never shipped. The moment it did,
+        // a consumer importing `./doc-types` got ERR_MODULE_NOT_FOUND for
+        // three packages npm had never been told to install. Optional, not
+        // required: only the doc-types entry needs them.
         '@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities',
         'lib0',
         'amazon-cognito-identity-js',

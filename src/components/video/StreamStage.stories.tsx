@@ -109,6 +109,36 @@ export const NotStartedHostWording: Story = {
   },
 };
 
+/**
+ * A LEAVE control, on a stage with nothing on it.
+ *
+ * `controls` is the host's, and it is where the way out lives. It used to be
+ * hidden together with the stage's own chrome on every message state, so a
+ * broadcast that ended took the Leave button with it and left the viewer
+ * looking at "The broadcast has ended." with nothing to press. The stage's
+ * own chrome still stays away — a Full screen button on an apology is an
+ * offer to enlarge it.
+ */
+export const NothingBeingBroadcastWithAWayOut: Story = {
+  args: {
+    title: 'Weekly standup',
+    stallAfterMs: 1200,
+    controls: (
+      <button type="button" className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-black">
+        Leave
+      </button>
+    ),
+  },
+};
+
 // "The broadcast has ended." has no story: it is reachable only by HOLDING a
 // source and then losing it, per mount, which is the whole point of the
 // distinction. StreamStage.test.tsx drives that transition.
+//
+// Nor do the FAILURE states, for the same reason: they are what the player
+// reports, not what a prop sets. What they say is pinned in
+// StreamStage.watching.test.tsx — a 503 "no active producers" becomes
+// "Nothing is being broadcast right now.", a dead transport becomes "Cannot
+// reach the broadcast — check your connection.", a 500 becomes "Something
+// went wrong on our side.", and hls.js's own `networkError` never appears on
+// screen at all (it lives on `data-error-detail`).

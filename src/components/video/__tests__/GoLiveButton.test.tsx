@@ -67,3 +67,31 @@ describe('GoLiveButton', () => {
     expect(onEnd).toHaveBeenCalledTimes(1);
   });
 });
+
+
+// A tooltip is not a label. It never appears on a touch device, plenty of
+// screen readers do not announce it, and "Go live" alone reads as a preview
+// toggle — while the press also POSTS to a channel.
+describe('GoLiveButton — the consequence is not hidden in a tooltip', () => {
+  it('says both halves in the accessible name, visible text first', () => {
+    render(<GoLiveButton onGoLive={() => {}} />);
+    const btn = screen.getByTestId('go-live');
+    expect(btn.getAttribute('aria-label')).toMatch(/^Go live —/);
+    expect(btn.getAttribute('aria-label')).toMatch(/tell everyone in the channel/i);
+  });
+
+  it('keeps the host wording at the front of the name', () => {
+    render(<GoLiveButton onGoLive={() => {}} label="Broadcast this room" />);
+    expect(screen.getByTestId('go-live').getAttribute('aria-label')).toMatch(
+      /^Broadcast this room —/,
+    );
+  });
+
+  // Pressing it REPLACES the button with a status pill, so the element the
+  // user was on disappears. Without a live region they are told nothing.
+  it('announces the state it becomes', () => {
+    render(<GoLiveButton live />);
+    expect(screen.getByTestId('go-live-status')).toHaveAttribute('role', 'status');
+    expect(screen.getByRole('status')).toHaveTextContent('You are live');
+  });
+});
