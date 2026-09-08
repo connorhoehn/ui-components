@@ -1,9 +1,9 @@
 // What the "Go live" control CLAIMS, and whether it is true.
 //
-// The control is a prototype for an unanswered product question, so the tests
-// are about the two things that must not be wrong regardless of how that
-// question is settled: it must not offer to start something that is already
-// running, and it must not invent an audience figure.
+// Broadcasting has three states and only two of them are obvious. The third —
+// the call is up and NOTHING is being broadcast — looks exactly like success
+// from the broadcaster's chair and is completely silent from the audience's,
+// so it gets as much of this file as the happy path does.
 
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -56,8 +56,9 @@ describe('GoLiveButton', () => {
     expect(screen.getByTestId('go-live-viewers')).toHaveTextContent('7 watching');
   });
 
-  // Ending a broadcast is a separate, undecided question — with no handler the
-  // live state is a label, not a half-wired control.
+  // Ending a broadcast may not be distinct from leaving the call, and only the
+  // host knows. With no handler there is no End button — but there is a way to
+  // say where the real one is, which beats both a dead button and silence.
   it('offers no way to end a broadcast unless the host supplies one', () => {
     const { rerender } = render(<GoLiveButton live />);
     expect(screen.queryByTestId('go-live-end')).toBeNull();
@@ -66,8 +67,53 @@ describe('GoLiveButton', () => {
     fireEvent.click(screen.getByTestId('go-live-end'));
     expect(onEnd).toHaveBeenCalledTimes(1);
   });
+
+  it('says where the stop control is when it owns no button', () => {
+    const { rerender } = render(
+      <GoLiveButton live streamReady endHint="Hang up in the call window to end it." />,
+    );
+    expect(screen.getByTestId('go-live-hint')).toHaveTextContent('Hang up in the call window');
+
+    // With a real End button the hint would be a second, worse answer to a
+    // question the control has already answered.
+    rerender(
+      <GoLiveButton
+        live
+        streamReady
+        endHint="Hang up in the call window to end it."
+        onEndBroadcast={() => {}}
+      />,
+    );
+    expect(screen.queryByTestId('go-live-hint')).toBeNull();
+  });
 });
 
+// The state that used to report itself as success. "On a call" and "being
+// watched" are different facts that fail separately: LVS can be unreachable,
+// or simply not publishing yet, while the call itself is perfectly fine.
+describe('GoLiveButton — a call with no stream is not a broadcast', () => {
+  it('refuses to say "You are live" when nothing is being broadcast', () => {
+    render(<GoLiveButton live streamReady={false} />);
+    const pill = screen.getByTestId('go-live-status');
+    expect(pill).not.toHaveTextContent(/you are live/i);
+    expect(pill).toHaveTextContent(/no stream yet/i);
+    expect(screen.getByTestId('go-live')).toHaveAttribute('data-stream', 'pending');
+    expect(screen.getByTestId('go-live-hint')).toHaveTextContent(/nobody can watch yet/i);
+  });
+
+  // A 0 next to "no stream yet" reads as an audience verdict — "nobody came" —
+  // when the truth is that there is nothing for anyone to come to.
+  it('does not report an audience for a stream that does not exist', () => {
+    render(<GoLiveButton live streamReady={false} viewerCount={0} />);
+    expect(screen.queryByTestId('go-live-viewers')).toBeNull();
+  });
+
+  it('claims nothing either way when nobody checked', () => {
+    render(<GoLiveButton live />);
+    expect(screen.getByTestId('go-live')).toHaveAttribute('data-stream', 'unknown');
+    expect(screen.getByTestId('go-live-status')).toHaveTextContent(/you are live/i);
+  });
+});
 
 // A tooltip is not a label. It never appears on a touch device, plenty of
 // screen readers do not announce it, and "Go live" alone reads as a preview
@@ -87,11 +133,56 @@ describe('GoLiveButton — the consequence is not hidden in a tooltip', () => {
     );
   });
 
+  // "The channel" is vaguer than a product can afford to be about a message it
+  // is going to post on your behalf.
+  it('names the audience it is about to post to', () => {
+    render(<GoLiveButton onGoLive={() => {}} channelName="#design" />);
+    expect(screen.getByTestId('go-live').getAttribute('aria-label')).toMatch(/#design/);
+    expect(screen.getByTestId('go-live-hint')).toHaveTextContent(
+      'Starts a broadcast in #design and tells everyone there.',
+    );
+  });
+
+  // Visible to everyone, not just to whoever hovers. This is the sentence that
+  // makes the press an informed one.
+  it('states the cost on screen before the click', () => {
+    render(<GoLiveButton onGoLive={() => {}} />);
+    expect(screen.getByTestId('go-live-hint')).toHaveTextContent('tells everyone there');
+  });
+
+  it('admits the wait instead of looking inert', () => {
+    render(<GoLiveButton starting />);
+    expect(screen.getByTestId('go-live')).toHaveTextContent('Going live…');
+    expect(screen.getByTestId('go-live-hint')).toHaveTextContent(/takes a few seconds/i);
+  });
+
   // Pressing it REPLACES the button with a status pill, so the element the
   // user was on disappears. Without a live region they are told nothing.
   it('announces the state it becomes', () => {
     render(<GoLiveButton live />);
     expect(screen.getByTestId('go-live-status')).toHaveAttribute('role', 'status');
     expect(screen.getByRole('status')).toHaveTextContent('You are live');
+  });
+});
+
+// A start that fails and silently reverts the button is indistinguishable from
+// a click that never registered — so the person presses it again.
+describe('GoLiveButton — failure says something true', () => {
+  it('shows the reason as an alert, with the button offered again', () => {
+    render(
+      <GoLiveButton
+        onGoLive={() => {}}
+        error="Check no other app is using your camera, then try again."
+      />,
+    );
+    const alert = screen.getByTestId('go-live-error');
+    expect(alert).toHaveAttribute('role', 'alert');
+    expect(alert).toHaveTextContent('no other app is using your camera');
+    expect(screen.getByTestId('go-live')).not.toBeDisabled();
+  });
+
+  it('carries no stale failure into a live broadcast', () => {
+    render(<GoLiveButton live streamReady error="something went wrong earlier" />);
+    expect(screen.queryByTestId('go-live-error')).toBeNull();
   });
 });
