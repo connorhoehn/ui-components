@@ -10,6 +10,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CookbookPicker } from '../cookbooks/CookbookPicker';
+import { DocumentTypesPage } from '../DocumentTypesPage';
 
 const P = { idPrefix: 'p', cardPrefix: 'c' } as const;
 
@@ -70,5 +71,40 @@ describe('CookbookPicker installed state', () => {
     const btn = screen.getByTestId('c-installed-meeting-notes') as HTMLButtonElement;
     expect(btn.textContent).toBe('Added');
     expect(btn.disabled).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The installed-type row
+// ---------------------------------------------------------------------------
+
+describe('an installed type whose name does not fit', () => {
+  it('keeps the full name reachable when the row ellipsises it', async () => {
+    // Measured in the sidebar: the name box is 70px, "Sprint Retrospective"
+    // needs 127, so it rendered "Sprint Re…" with no title, no tooltip, and
+    // no other place the name appears. Three buttons and a field count share
+    // the row, so widening it is not the answer — making the full name
+    // recoverable is.
+    vi.stubGlobal('fetch', vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        items: [{
+          typeId: 'srv-retro',
+          name: 'Sprint Retrospective',
+          description: 'Reflect on the sprint',
+          icon: '🔄',
+          fields: [],
+        }],
+      }),
+    })));
+
+    render(<DocumentTypesPage idToken="t" />);
+
+    const name = await screen.findByTitle('Sprint Retrospective');
+    // The title must be the WHOLE name, never the truncated render.
+    expect(name.textContent).toBe('Sprint Retrospective');
+    expect(name.getAttribute('title')).not.toMatch(/…/);
+    vi.unstubAllGlobals();
   });
 });

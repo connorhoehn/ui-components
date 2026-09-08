@@ -142,7 +142,16 @@ function TypeListItem({
     >
       <span className="text-lg shrink-0">{type.icon}</span>
       <div className="flex-1 min-w-0">
-        <div className="text-[13px] font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
+        {/* `title` because this ellipsises constantly and the row is the only
+            place the name appears. Measured in the sidebar: the name box is
+            70px, "Meeting Notes" needs 90 and "Sprint Retrospective" needs 127
+            — so it read "Sprint Re…" with no way to recover the rest. Three
+            buttons and a field count share this row, so widening it is not the
+            answer; making the full name reachable is. */}
+        <div
+          title={type.name}
+          className="text-[13px] font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"
+        >
           {type.name}
         </div>
         <div className="text-[11px] text-text-tertiary">
