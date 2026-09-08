@@ -35,6 +35,18 @@ export declare function acceptsDecision(source: string): boolean;
  */
 export declare function acceptsField(source: string): boolean;
 
+/**
+ * The `category` a section-item row carries so it is recognisably an action
+ * item rather than a mirrored callout.
+ *
+ * The inbox splits one query on this field: `hitl` rows are decisions and
+ * everything else is a task, so the value matters less than its NOT being
+ * `hitl` — a to-do that arrived with an Acknowledge button where an agent was
+ * waiting for an answer would retire the row for the person and leave the
+ * agent parked.
+ */
+export declare const ACTION_ITEM_CATEGORY = "action-item";
+
 /** The `macro:<name>` discriminator for a checklist. */
 export declare const ACTION_ITEMS_MACRO_NAME = "action-items";
 
@@ -42,6 +54,16 @@ export declare const ACTION_ITEMS_MACRO_NAME = "action-items";
 export declare interface ActionItem {
     /** Position in `items`, 0-based. */
     index: number;
+    /**
+     * The `id:` scalar, or `null`.
+     *
+     * The JOIN KEY, and the reason it exists: an index is not an identity. An
+     * item mirrored into a queryable row has to be findable again after
+     * somebody inserts a line above it, and `items[2]` stops naming the same
+     * work the moment they do. Absent until something needs the item to be
+     * addressable — see `ensureItemIdEdit`.
+     */
+    id: string | null;
     /** The `text:` scalar. `''` when the item has no text yet. */
     text: string;
     /**
@@ -58,6 +80,40 @@ export declare interface ActionItem {
     assignee: string | null;
     due: string | null;
 }
+
+/**
+ * What one action item looks like to something that has never opened the
+ * document — the whole of it, in one place, so the document half and the host
+ * half cannot disagree about what is visible outside the page.
+ *
+ * The same problem `HitlMirrorRow` solves and for the same reason: a checklist
+ * lives in a Y.Doc, there is no server-side Y.Doc, and scanning every document
+ * for assigned work is O(all documents) of CRDT sync to draw one list. So the
+ * body keeps the record and a row carries the queryable half.
+ *
+ * `assigneeId`, not a name: the cross-document query is keyed on the auth
+ * subject. `dueDate` rather than `due`, because that is what the row field is
+ * called and a rename here would silently drop every deadline.
+ */
+export declare interface ActionItemMirrorRow {
+    itemId: string;
+    text: string;
+    assigneeId: string;
+    category: typeof ACTION_ITEM_CATEGORY;
+    dueDate: string | null;
+    /** Terminal work. The row's status follows the tick, so a finished item
+     *  leaves the assignee's inbox instead of nagging them forever. */
+    done: boolean;
+}
+
+/**
+ * The row for one item, or `null` when there is nothing anybody could query.
+ *
+ * Three ways to be unmirrorable, all legal in a body: no id (nothing to key
+ * on), nobody assigned (a row in nobody's inbox), and no text (a row that says
+ * nothing to the person who finds it).
+ */
+export declare function actionItemMirrorRow(item: ActionItem): ActionItemMirrorRow | null;
 
 export declare function ActionItemsBlock({ items, editable, onToggle, onTextChange, onRemoveItem, onAddItem, onRemove, people, onAssign, 'data-testid': testId, }: ActionItemsBlockProps): JSX.Element;
 
@@ -108,6 +164,22 @@ export declare interface ActionItemsMacroOptions {
      * directory: a control listing nobody is worse than no control.
      */
     people?: () => readonly AssignablePerson[];
+    /**
+     * An item's QUERYABLE fields changed, so the host's row should be brought
+     * in line with them: on insert, on a reassignment, on a tick, and whenever
+     * a peer changes any of them through the CRDT.
+     *
+     * Fires on every client that has the page open, which is why a host's
+     * write has to be idempotent — a projection maintained by one designated
+     * client would stop being maintained the moment that client closed the
+     * tab. `ActionItemsMacroOptions` says nothing about how the row is stored;
+     * see `actionItemMirrorRow` for what is in it and why an unassigned or
+     * unidentified item produces nothing at all.
+     *
+     * Omitted means document-only, which is honest: with no host reading the
+     * rows, nothing outside the page is out of step with the body.
+     */
+    onItemChanged?: (row: ActionItemMirrorRow) => void;
 }
 
 /**
@@ -456,6 +528,21 @@ export declare interface DiagramUser {
     color: string;
 }
 
+/**
+ * Gives one item an `id`, if it has none — the edit that makes it addressable.
+ *
+ * Minted lazily rather than at insert, and that is the whole design: an id in
+ * every checklist would put a UUID in front of every reader of the exported
+ * markdown for the sake of items nothing outside the page will ever ask about.
+ * An item becomes addressable when somebody assigns it, which is also the
+ * moment a row is worth writing.
+ *
+ * `mint` is injected so a caller can make the id deterministic; the default is
+ * `crypto.randomUUID` where it exists, falling back to a time-plus-random
+ * string for a JSDOM-shaped environment that has no WebCrypto.
+ */
+export declare function ensureItemIdEdit(source: string, index: number, mint?: () => string): TextRangeEdit | null;
+
 /** Props of the lazily-loaded canvas — always fully resolved by this point. */
 export declare interface ExcalidrawCanvasProps extends SharedDiagramProps {
     ydoc: Y.Doc | null;
@@ -695,7 +782,7 @@ export declare const HITL_MACRO_NAME = "hitl";
  */
 export declare const HITL_QUERYABILITY: string;
 
-/** The sentinel section a page-shaped document files macro rows under. */
+/** @deprecated Use `MACRO_ITEM_SENTINEL_SECTION` — the sentinel is not HITL's. */
 export declare const HITL_SENTINEL_SECTION = "_macro";
 
 /** The answer, as the host's mirror needs to address it. */
@@ -972,6 +1059,16 @@ export declare function hostsMacroNodeViews(editor: MacroEditorLike, extensionNa
 
 /** True for an id this module would have minted — hex groups and dashes only. */
 export declare function isDiagramId(value: string): boolean;
+
+/**
+ * The sentinel section a page-shaped document files macro rows under.
+ *
+ * Shared by every macro that mirrors itself, not just callouts — a canvas page
+ * has no sections at all, so all of them need the same fake one to be
+ * addressable. `HITL_SENTINEL_SECTION` is the older name, kept because it is
+ * what the shipped hosts import.
+ */
+export declare const MACRO_ITEM_SENTINEL_SECTION = "_macro";
 
 /**
  * The ProseMirror node name a macro occupies.
@@ -1504,6 +1601,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1523,12 +1633,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1546,9 +1653,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -1575,16 +1682,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
