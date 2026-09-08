@@ -88,6 +88,12 @@ const EXPECTED: Array<[string, ViewMode, unknown]> = [
   ['boolean', 'editor', BooleanEditorRenderer],
   ['boolean', 'ack', BooleanReaderRenderer],
   ['boolean', 'reader', BooleanReaderRenderer],
+  // `checkbox` is the SAME renderer under the name the rest of the codebase
+  // emits — see the alias block in index.ts. Listed here so the straggler
+  // check treats it as intended rather than as a half-landed registration.
+  ['checkbox', 'editor', BooleanEditorRenderer],
+  ['checkbox', 'ack', BooleanReaderRenderer],
+  ['checkbox', 'reader', BooleanReaderRenderer],
 ];
 
 const SHIPPED_TYPES = [
@@ -196,5 +202,24 @@ describe('renderers barrel — re-import is idempotent', () => {
     // every section would resolve to DefaultRenderer.
     expect(getRenderer('tasks', 'editor')).not.toBe(DefaultRenderer);
     expect(getRenderer('diagram', 'reader')).not.toBe(DefaultRenderer);
+  });
+});
+
+// `checkbox` and `boolean` are the same section type under two names, and
+// `checkbox` is the one the rest of the codebase emits: `useTypedDocuments`
+// lists it, `documentTypeApiAdapter` maps it both ways, and
+// `scaffoldPrerequisites` returns it for a boolean field. Registering only
+// `boolean` left every server-derived and scaffolded boolean falling through
+// to DefaultRenderer — a prose box, which is what these renderers exist to
+// remove.
+describe('checkbox is an alias for boolean, not a gap', () => {
+  it.each(['editor', 'ack', 'reader'] as const)('resolves the same renderer in %s mode', (mode) => {
+    const viaBoolean = getRenderer('boolean', mode);
+    const viaCheckbox = getRenderer('checkbox', mode);
+    expect(viaCheckbox).toBe(viaBoolean);
+  });
+
+  it('does not fall through to the wildcard', () => {
+    expect(getRenderer('checkbox', 'editor')).not.toBe(getRenderer('a-type-nobody-registered', 'editor'));
   });
 });

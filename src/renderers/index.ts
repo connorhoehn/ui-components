@@ -111,6 +111,18 @@ registerRenderer('boolean', 'editor', BooleanEditorRenderer);
 registerRenderer('boolean', 'ack',    BooleanReaderRenderer);
 registerRenderer('boolean', 'reader', BooleanReaderRenderer);
 
+// `checkbox` is the SAME thing, and it is the name the rest of the codebase
+// already uses: `useTypedDocuments` lists it as a section type,
+// `documentTypeApiAdapter` maps it in both directions, and
+// `scaffoldPrerequisites` emits it for a boolean field. Registering only
+// `boolean` would have left every server-derived and scaffolded boolean
+// falling through to DefaultRenderer — a prose box — which is the exact defect
+// these renderers exist to remove. Aliasing here rather than renaming three
+// emitters keeps documents that already carry `checkbox` working.
+registerRenderer('checkbox', 'editor', BooleanEditorRenderer);
+registerRenderer('checkbox', 'ack',    BooleanReaderRenderer);
+registerRenderer('checkbox', 'reader', BooleanReaderRenderer);
+
 export {
   registerRenderer,
   getRenderer,
