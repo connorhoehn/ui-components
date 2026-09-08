@@ -54,6 +54,14 @@ export interface DocumentTypesPageProps {
    * a download. Rejecting surfaces the reason inline in the wizard.
    */
   onExportSchema?: (type: DocumentType) => Promise<void>;
+  /**
+   * Start a document of this type, from the page where the type lives.
+   *
+   * Absent hides the action entirely. An embedder with no creation route
+   * should not be shown a button that cannot do anything — the same rule the
+   * document header applies to "Share to #room".
+   */
+  onCreateDocument?: (type: DocumentType) => void;
 }
 
 type Mode = 'idle' | 'create' | 'edit';
@@ -114,11 +122,13 @@ function TypeListItem({
   active,
   onSelect,
   onDeleteRequest,
+  onCreateDocument,
 }: {
   type: DocumentType;
   active: boolean;
   onSelect: () => void;
   onDeleteRequest: () => void;
+  onCreateDocument?: () => void;
 }) {
   return (
     <div
@@ -139,6 +149,22 @@ function TypeListItem({
           {type.fields.length} field{type.fields.length !== 1 ? 's' : ''}
         </div>
       </div>
+      {/* Use the type, from the place you installed it.
+          Until this existed, the row offered only Edit and Delete: you could
+          add "Bug Report" here and then had to leave for the documents list and
+          search for it again to write one. Absent rather than disabled when the
+          host passes no handler — an embedder with no creation route should not
+          show a button that does nothing. */}
+      {onCreateDocument && (
+        <button
+          data-testid={`new-doc-from-type-${type.id}`}
+          onClick={(e) => { e.stopPropagation(); onCreateDocument(); }}
+          title={`Start a new ${type.name}`}
+          className="border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit bg-transparent text-primary hover:bg-accent-bg hover:text-accent-fg"
+        >
+          New
+        </button>
+      )}
       <button
         data-testid={`edit-type-${type.id}`}
         onClick={onSelect}
@@ -166,7 +192,7 @@ function TypeListItem({
 // Main page
 // ---------------------------------------------------------------------------
 
-export function DocumentTypesPage({ idToken, onExportSchema }: DocumentTypesPageProps = {}) {
+export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }: DocumentTypesPageProps = {}) {
   const { types, source, error, createType, updateType, deleteType } = useDocumentTypes({ idToken });
 
   const [mode, setMode] = useState<Mode>('idle');
@@ -368,6 +394,7 @@ export function DocumentTypesPage({ idToken, onExportSchema }: DocumentTypesPage
                 active={editingId === type.id}
                 onSelect={() => handleTypeSelect(type)}
                 onDeleteRequest={() => handleDeleteRequest(type.id)}
+                onCreateDocument={onCreateDocument ? () => onCreateDocument(type) : undefined}
               />
             ))
           )}

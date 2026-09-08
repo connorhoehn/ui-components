@@ -308,3 +308,41 @@ describe('DocumentTypesPage — leading with known types', () => {
     expect(screen.queryByTestId('wizard-mock')).toBeNull();
   });
 });
+
+// Installing a type and then being unable to use it is the gap this closes.
+// Before, a row offered Edit and Delete only: you added "Bug Report" here and
+// had to leave for the documents list and search for it again to write one.
+describe('starting a document from an installed type', () => {
+  it('offers New per row, and hands back the type it belongs to', async () => {
+    const onCreateDocument = vi.fn();
+    mocks.hookReturn.types = [makeType('t1', 'Bug Report'), makeType('t2', 'Invoice')];
+    render(<DocumentTypesPage onCreateDocument={onCreateDocument} />);
+
+    const bug = await screen.findByTestId('new-doc-from-type-t1');
+    fireEvent.click(bug);
+
+    expect(onCreateDocument).toHaveBeenCalledTimes(1);
+    expect(onCreateDocument.mock.calls[0][0]).toMatchObject({ id: 't1', name: 'Bug Report' });
+  });
+
+  it('does not select the row it was clicked in', async () => {
+    // The row is a select target; New must not also open the editor for it,
+    // or creating a document silently changes what the page is editing.
+    const onCreateDocument = vi.fn();
+    mocks.hookReturn.types = [makeType('t1', 'Bug Report')];
+    render(<DocumentTypesPage onCreateDocument={onCreateDocument} />);
+
+    fireEvent.click(await screen.findByTestId('new-doc-from-type-t1'));
+    expect(screen.queryByTestId('type-editor')).toBeNull();
+  });
+
+  it('renders no New button when the host cannot create documents', async () => {
+    // Absent, not disabled — an embedder with no creation route should not be
+    // shown a control that cannot work.
+    mocks.hookReturn.types = [makeType('t1', 'Bug Report')];
+    render(<DocumentTypesPage />);
+
+    await screen.findByTestId('type-item-t1');
+    expect(screen.queryByTestId('new-doc-from-type-t1')).toBeNull();
+  });
+});
