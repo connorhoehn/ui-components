@@ -1,8 +1,8 @@
 import { a as e, t } from "./registry-DbX3MVAA.js";
 import { n, t as r } from "./fieldType-CGXsQUaC.js";
 import { n as i } from "./IdentityContext-CQM1qwH6.js";
-import "./useVideoSessions-WO-vkKyy.js";
-import "./useWebSocket-CGc0yRhM.js";
+import "./useVideoSessions-D8GZZ1Wf.js";
+import "./useWebSocket-Cmv4zMFO.js";
 import "./useSocialProfile-5S1qyvsv.js";
 import "./useSyncConflicts-z_Fo2YIM.js";
 import "./useDocumentTypes-BUXMPyPU.js";

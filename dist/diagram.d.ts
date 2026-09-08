@@ -572,6 +572,39 @@ export declare function formatFieldNumber(n: number): string;
 /** What the reader sees when the block is not editable. `''` when unanswered. */
 export declare function formatFieldValue(field: TypedField): string;
 
+/**
+ * WHICH SIDE WINS WHEN THE BODY AND THE ROW DISAGREE.
+ *
+ * Two stores, no transaction between them (there is no server-side Y.Doc), so
+ * they CAN disagree and the only dishonest answer is to not have decided. The
+ * rule is not "newest wins" — it is per-field, because the two halves are
+ * authoritative about different things:
+ *
+ *   THE BODY OWNS THE ASK.  The question, the addressee, the options and the
+ *   expiry live in the document and are projected OUT to the row by whoever
+ *   has the page open. A row whose text or assignee drifts is corrected from
+ *   the body, never the other way round: the body is what a person reads and
+ *   what a foreign tool round-trips.
+ *
+ *   THE ROW OWNS WHETHER AN ANSWER STUCK.  It is the only half a person can
+ *   reach without opening the page, and the only half the asker polls. So an
+ *   answer written in the page is PROVISIONAL until the row accepts it — if
+ *   the mirror refuses, the document edit is retracted and the card says why
+ *   (`retractHitlEdit`, and `HitlMacro`'s header).
+ *
+ *   AN ANSWERED ROW FILLS AN UNANSWERED BODY.  That is the whole point of
+ *   answering from an inbox, and it is how a page catches up after being
+ *   answered while nobody had it open.
+ *
+ *   AN ANSWERED BODY IS NEVER OVERWRITTEN BY THE ROW.  Not even when the two
+ *   answers differ. Two different recorded answers means one of them was
+ *   accepted by something that acted on it, and silently replacing the text a
+ *   person can see is how a document stops being evidence. The disagreement is
+ *   REPORTED to the host instead — see `onAnswered`'s contract — and left on
+ *   screen for a human.
+ */
+export declare const HITL_CONVERGENCE: string;
+
 /** The `category` a section-item row carries so it is recognisably a callout. */
 export declare const HITL_ITEM_CATEGORY = "hitl";
 
@@ -631,7 +664,7 @@ export declare interface HitlAnsweredEvent {
     callout: HitlCallout;
 }
 
-export declare function HitlBlock({ callout, editable, now, onAnswer, busy, failure, onRetract, onRemove, 'data-testid': testId, }: HitlBlockProps): JSX.Element;
+export declare function HitlBlock({ callout, editable, now, onAnswer, busy, failure, people, onAssign, onRetract, onRemove, 'data-testid': testId, }: HitlBlockProps): JSX.Element;
 
 export declare interface HitlBlockProps {
     callout: HitlCallout;
@@ -655,6 +688,24 @@ export declare interface HitlBlockProps {
      * believes they unblocked something.
      */
     failure?: string | null;
+    /**
+     * Who this callout may be addressed to, as identity + label.
+     *
+     * Empty (or absent) draws no picker at all, which is the honest rendering
+     * of "this surface has no directory": a control listing nobody would
+     * suggest the addressee is unchangeable when it is only unknown.
+     */
+    people?: readonly HitlPerson[];
+    /**
+     * Readdresses the callout. Only ever called with an id from `people`, or
+     * `''` to address it to nobody.
+     *
+     * Load-bearing rather than cosmetic: `assignee` is the ONLY field the
+     * cross-document query is keyed on, so a callout stuck on the wrong
+     * addressee is invisible to the person who should answer it and answerable
+     * by nobody — the answer endpoint refuses everyone but the addressee.
+     */
+    onAssign?: (assignee: string) => void;
     /** Takes a recorded answer back. Omitted when it cannot be done in one edit. */
     onRetract?: () => void;
     /** Takes the whole block off the page. Omitted when not editable. */
@@ -751,6 +802,32 @@ export declare interface HitlMacroOptions {
      * or `{ ok: false }` RETRACTS the document edit — see the file header.
      */
     onAnswered?: (event: HitlAnsweredEvent) => void | Promise<HitlMirrorResult | void>;
+    /**
+     * Who this page may address a callout to. Read through a getter for the
+     * same reason `answeredBy` is: a roster arrives after the editor is built
+     * and changes while it is open, and an extension configured once must not
+     * freeze the first answer it got.
+     *
+     * Absent draws no picker — see `HitlBlock`'s `people`.
+     */
+    people?: () => readonly HitlPerson[];
+    /**
+     * The callout's QUERYABLE fields changed, so the host's row should be
+     * brought in line with them: on insert, on a readdress, and whenever a peer
+     * changes either through the CRDT.
+     *
+     * This is the body -> row half of `HITL_CONVERGENCE`, and it fires on every
+     * client that has the page open rather than only on the one that made the
+     * change — a projection maintained by one designated client would stop
+     * being maintained the moment that client closed the tab. The host is
+     * expected to make the write idempotent; `hitlMirrorRow` is what it should
+     * write.
+     *
+     * Fired only when a MIRRORED field actually moved (id, question, addressee,
+     * and whether an answer is recorded), never on ordinary typing elsewhere in
+     * the block.
+     */
+    onCalloutChanged?: (callout: HitlCallout) => void;
 }
 
 /**
@@ -773,6 +850,36 @@ export declare interface HitlMirrorResult {
 }
 
 /**
+ * The fields a section-item row carries for one callout — the whole of what
+ * `HITL_QUERYABILITY` says is visible outside the page, in one place so the
+ * document half and the host half cannot disagree about it.
+ *
+ * `itemId` IS the callout's `id`. That identity is the join: the inbox row a
+ * person answers and the block in the body are the same callout because they
+ * share it, and a callout with no id gets no row at all (see below).
+ *
+ * `assigneeId`, not `assignee`. The row's `assignee` is a human LABEL and the
+ * cross-document query is keyed on the IDENTITY; a callout carries only the
+ * identity, so writing it into the label field would produce a row that renders
+ * a Cognito sub at a reader AND — because a host that later set a real label
+ * would overwrite it — a row that silently stopped being findable. A host that
+ * knows the person's name is free to add the label beside this.
+ *
+ * Returns `null` for a callout no row can be keyed on: no id, or addressed to
+ * nobody. Both are legal in a body and both are invisible outside it — an
+ * unaddressed question is one the answer endpoint refuses on purpose, and a row
+ * for it would sit in nobody's inbox forever.
+ */
+export declare interface HitlMirrorRow {
+    itemId: string;
+    text: string;
+    assigneeId: string;
+    category: typeof HITL_ITEM_CATEGORY;
+}
+
+export declare function hitlMirrorRow(callout: HitlCallout): HitlMirrorRow | null;
+
+/**
  * One answer the callout offers, and what taking it does.
  *
  * `then` is the half that makes this more than a labelled button: a person
@@ -784,6 +891,14 @@ export declare interface HitlOption {
     value: string;
     /** What happens if it is. `''` when unstated. */
     then: string;
+}
+
+/** One candidate addressee: the identity the row is keyed on, and its label. */
+export declare interface HitlPerson {
+    /** The auth subject written into `assignee:`. */
+    id: string;
+    /** What a reader sees. Never written into the body — see `hitlMirrorRow`. */
+    name: string;
 }
 
 /** What the card is, in one word — and the only place that decides it. */
@@ -1123,6 +1238,24 @@ export declare function setFieldTypeEdit(source: string, type: FieldType): TextR
 export declare function setFieldValueEdit(source: string, value: string | undefined): TextRangeEdit | null;
 
 /**
+ * The edit that changes who a callout is addressed to — ONE range, always.
+ *
+ * Three shapes, and they are all one range on purpose (see this file's header
+ * on why answering is): the scalar alone when the key is already there, a whole
+ * inserted line in sorted position when it is not, and the line plus its break
+ * when the new addressee is nobody.
+ *
+ * Readdressing matters more here than it would on any other key, because
+ * `assignee` is the ONLY field the cross-document query is keyed on: a callout
+ * addressed to the wrong person is invisible to the right one. See
+ * `HITL_QUERYABILITY`.
+ *
+ * Returns `null` when there is nothing to do, or when the body is not one this
+ * file will write back to.
+ */
+export declare function setHitlAssigneeEdit(source: string, assignee: string): TextRangeEdit | null;
+
+/**
  * The edit that sets one key on one item, or `null` when there is nothing to
  * do (or the body is not editable).
  *
@@ -1274,26 +1407,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -1307,6 +1420,42 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }

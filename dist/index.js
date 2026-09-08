@@ -2,10 +2,10 @@ import { a as e, i as t, n, o as r, r as i, t as a } from "./registry-DbX3MVAA.j
 import { i as o, n as s, r as c, t as l } from "./documentType-rRZpKWbO.js";
 import { n as u, t as d } from "./fieldType-CGXsQUaC.js";
 import "./types.js";
-import { A as f, C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as x, c as S, d as C, f as w, g as T, h as E, i as ee, k as D, l as O, m as te, n as k, o as A, p as ne, r as re, s as ie, t as ae, u as j, v as M, w as oe, x as se, y as ce } from "./hooks-BOapOPJn.js";
+import { A as f, C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as x, c as S, d as C, f as w, g as T, h as E, i as ee, k as D, l as O, m as te, n as k, o as A, p as ne, r as re, s as ie, t as ae, u as j, v as M, w as oe, x as se, y as ce } from "./hooks-llVDCPk2.js";
 import { n as le, r as ue, t as N } from "./IdentityContext-CQM1qwH6.js";
-import { a as P, c as F, d as de, f as fe, h as I, i as pe, l as me, m as he, n as ge, o as _e, p as ve, r as L, s as ye, t as be, u as xe } from "./useVideoSessions-WO-vkKyy.js";
-import { n as Se, t as Ce } from "./useWebSocket-CGc0yRhM.js";
+import { a as P, c as F, d as de, f as fe, h as I, i as pe, l as me, m as he, n as ge, o as _e, p as ve, r as L, s as ye, t as be, u as xe } from "./useVideoSessions-D8GZZ1Wf.js";
+import { n as Se, t as Ce } from "./useWebSocket-Cmv4zMFO.js";
 import { a as we, i as Te, n as R, o as Ee, r as De, t as z } from "./useSocialProfile-5S1qyvsv.js";
 import { a as Oe, c as ke, i as Ae, l as je, n as B, o as Me, r as V, s as Ne, t as Pe, u as Fe } from "./useSyncConflicts-z_Fo2YIM.js";
 import { i as Ie } from "./useDocumentTypes-BUXMPyPU.js";
@@ -1289,7 +1289,7 @@ function Il() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Ll = Kc(() => import("./DocumentEditorPage-DYBq2iT-.js").then((e) => e.n));
+var Ll = Kc(() => import("./DocumentEditorPage-CwYnjwMQ.js").then((e) => e.n));
 function Rl({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

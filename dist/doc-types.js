@@ -950,6 +950,7 @@ function $({ type: e, active: t, onSelect: n, onDeleteRequest: r, onCreateDocume
 			/* @__PURE__ */ w("div", {
 				className: "flex-1 min-w-0",
 				children: [/* @__PURE__ */ C("div", {
+					title: e.name,
 					className: "text-[13px] font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap",
 					children: e.name
 				}), /* @__PURE__ */ w("div", {

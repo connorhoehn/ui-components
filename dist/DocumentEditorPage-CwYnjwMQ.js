@@ -1,7 +1,7 @@
 import { t as e } from "./rolldown-runtime-Dy4uBu1J.js";
 import { r as t } from "./registry-DbX3MVAA.js";
 import { n } from "./IdentityContext-CQM1qwH6.js";
-import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-WO-vkKyy.js";
+import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-D8GZZ1Wf.js";
 import { t as f } from "./useDocumentTypes-BUXMPyPU.js";
 import { t as p } from "./cn-DhjIN-s0.js";
 import { t as m } from "./useEventCallback-Cwx9QVSi.js";
