@@ -24,13 +24,38 @@
 // There are two authoring surfaces and both are wanted. A `page` is one
 // continuous document — the Google-Docs/Confluence shape the canvas editor
 // renders. `sections` is an ordered list of section forms, which is what makes
-// the product usable as a todo creator or a notepad, and it is the shape a
-// document type's fields actually materialise into. `diagram` is a whiteboard.
+// the product usable as a todo creator or a notepad. `diagram` is a whiteboard.
 // Neither is being phased out, so all three are ordinary options in the
 // gallery rather than a separate question asked before it.
 //
 // The word `schemaVersion` deliberately does not appear in the UI. It is the
 // implementation of the choice, not the choice.
+//
+// ## The shape and the starting point are two ORTHOGONAL questions
+//
+// They did not used to be. Picking any of the fourteen silently forced the
+// shape to `sections`:
+//
+//     // A cookbook's fields ARE sections; on a page they would materialise
+//     // into nothing, so picking one picks the shape that shows them.
+//     setShape('sections');
+//
+// The reasoning was honest and was true when it was written. It has expired.
+// `macro:field` ships now, so a cookbook's fields DO have a page
+// representation — a run of field blocks that draws as a small property list —
+// and the host seeds exactly that when it is handed `{ shape: 'page',
+// documentTypeId }`. See `documentTypeCanvasModel.ts` in the app.
+//
+// Even while it was true it was the wrong interaction. It made a control move
+// under the user with no explanation: you chose Page, you chose Bug Report, and
+// all three shape cards went unpressed without a word about why. So the two
+// questions are now genuinely independent — picking a type never changes your
+// shape, and picking Page or Sections never discards your type.
+//
+// The one coupling left is `diagram`, and it is a real one rather than an
+// implementation detail: a whiteboard has no document type at all, so the two
+// choices cannot both stand. Picking a type moves off Diagram, and picking
+// Diagram drops the type. Nothing else does either.
 
 import { useState, useEffect, useId, useRef, useMemo } from 'react';
 import { loadTypes, persistTypes, refreshTypesFromServer } from '../../hooks/useDocumentTypes';
@@ -323,26 +348,46 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
   const applyStarter = (s: Starter) => {
     if (s.kind === 'cookbook') {
       setCookbookId(s.cookbook.id);
-      // A cookbook's fields ARE sections; on a page they would materialise
-      // into nothing, so picking one picks the shape that shows them.
-      setShape('sections');
+      // The shape is NOT touched. Both surfaces can show a type's fields now —
+      // sections materialise them as section forms, a page as field macros —
+      // so there is nothing left to decide on the user's behalf. The single
+      // exception is a whiteboard, which has no document type at all: a type
+      // picked while Diagram is selected moves to Page, the default.
+      if (shape === 'diagram') setShape('page');
       if (!titleTouched) setTitle(s.cookbook.name);
       return;
     }
-    setCookbookId(null);
     if (s.kind === 'blank') {
       setShape(s.shape);
-    } else {
-      setSelectedId(s.type.id);
+      // Picking a SHAPE keeps your type — that is the whole point of the two
+      // questions being separate. Diagram is the exception, for the reason
+      // above.
+      if (s.shape === 'diagram') {
+        setCookbookId(null);
+        if (!titleTouched) setTitle('');
+      }
+      return;
     }
+    setCookbookId(null);
+    setSelectedId(s.type.id);
     // Clear a title we ourselves put there, so switching away from a cookbook
     // does not leave its name behind on an unrelated document.
     if (!titleTouched) setTitle('');
   };
 
-  /** Shape a starter creates, independent of React state settling. */
+  /**
+   * Shape a starter creates, independent of React state settling.
+   *
+   * A cookbook no longer names a shape of its own: it inherits whatever is
+   * selected, except on a whiteboard, where `applyStarter` has just moved to
+   * Page and this has to agree without waiting for the re-render.
+   */
   const shapeFor = (s: Starter): DocumentShape =>
-    s.kind === 'cookbook' ? 'sections' : s.kind === 'blank' ? s.shape : shape;
+    s.kind === 'blank'
+      ? s.shape
+      : shape === 'diagram'
+        ? 'page'
+        : shape;
 
   /**
    * Hand the finished meta to the host.
@@ -364,8 +409,12 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
         description: desc,
         icon: dt.icon,
         documentTypeId: dt.id,
-        // The editor materialises a type's fields only into sections.
-        shape: 'sections',
+        // Whatever shape the person actually chose. This used to be a hardcoded
+        // `'sections'` — the other half of the silent override described in the
+        // file header. On `page` the host reads `documentTypeId` and seeds the
+        // fields as blocks; on `sections` it materialises them as section forms
+        // exactly as before, so no legacy behaviour moves.
+        shape: shapeIn,
       });
     } else if (starter.kind === 'type' && shapeIn !== 'diagram') {
       onCreate({
@@ -489,11 +538,14 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
           {/* Blanks */}
           {visibleBlanks.length > 0 && (
             <div className={cn('mb-5')}>
+              {/* "Start blank" was only ever true when nothing else was
+                  picked, and it is now routinely false: this row is the SHAPE,
+                  and a type below can fill any of the first two. */}
               <div
                 id={blankGroupLabelId}
                 className={cn('block text-[13px] font-semibold text-text-secondary mb-2')}
               >
-                Start blank
+                Shape
               </div>
               <div
                 role="group"
@@ -504,7 +556,11 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                   <SelectableCard
                     key={s.id}
                     padding="md"
-                    selected={!pickedCookbook && shape === s.id}
+                    // The shape stays pressed with a type picked. It used to go
+                    // unpressed the moment a cookbook was chosen, which left
+                    // all three cards reading `aria-pressed="false"` — a shape
+                    // question with no visible answer.
+                    selected={shape === s.id}
                     onSelect={() => applyStarter({ kind: 'blank', shape: s.id })}
                     data-testid={`doc-shape-${s.id}`}
                   >
@@ -535,11 +591,24 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
               defining a single field. */}
           {visibleCookbooks.length > 0 && (
             <div className={cn('mb-5')}>
-              <div
-                id={cookbookGroupLabelId}
-                className={cn('block text-[13px] font-semibold text-text-secondary mb-2')}
-              >
-                Known types
+              <div className={cn('mb-2')}>
+                <div
+                  id={cookbookGroupLabelId}
+                  className={cn('block text-[13px] font-semibold text-text-secondary')}
+                >
+                  Known types
+                </div>
+                {/* Says what the chosen shape will DO with the type, because
+                    the shape no longer changes when you pick one — so the
+                    answer has to be readable rather than inferred from a
+                    control moving. */}
+                <div className={cn('text-[11px] text-text-tertiary')} data-testid="starter-shape-note">
+                  {shape === 'diagram'
+                    ? 'Picking one switches to Page — a whiteboard has no document type.'
+                    : shape === 'sections'
+                      ? 'Its fields become sections, one form each.'
+                      : 'Its fields become blocks on the page — typed values, headings and checklists.'}
+                </div>
               </div>
               <div
                 role="group"
@@ -650,15 +719,17 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                               {t.description}
                             </div>
                           )}
-                          {/* A page does not get the type's sections created
-                              for it — it starts as a blank sheet — so the
-                              section count would be a promise this flow does
-                              not keep. The type still sets the icon, the type
-                              name and anything keyed off it downstream. */}
+                          {/* The same fields, counted in whatever the chosen
+                              shape will actually call them. A page used to say
+                              "Sets the icon and type", because a page really
+                              did start as a blank sheet; it now opens with one
+                              block per field, so promising the count is a
+                              promise this flow keeps. A diagram has no type at
+                              all, and this branch is not rendered for one. */}
                           <div className={cn('text-[11px] text-text-tertiary mt-0.5')}>
                             {shape === 'sections'
                               ? `${t.fields.length} section${t.fields.length !== 1 ? 's' : ''}`
-                              : 'Sets the icon and type'}
+                              : `${t.fields.length} block${t.fields.length !== 1 ? 's' : ''}`}
                           </div>
                         </div>
                         {isSelected && (

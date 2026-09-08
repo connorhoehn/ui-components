@@ -505,9 +505,11 @@ describe('NewDocumentModal — starting from a known type', () => {
     expect(meta).toMatchObject({
       title: 'Sprint Retrospective',
       type: 'Sprint Retrospective',
-      // Sections is where a type's fields actually materialise; on a page they
-      // would render as nothing at all.
-      shape: 'sections',
+      // The DEFAULT shape, untouched by the type. It used to be forced to
+      // `sections` here, back when a type's fields had no page representation;
+      // `macro:field` gave them one, and the host now seeds the retro's fields
+      // as blocks. Nothing about picking a type changes the shape any more.
+      shape: 'page',
     });
     expect(typeof meta.documentTypeId).toBe('string');
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -585,20 +587,80 @@ describe('NewDocumentModal — starting from a known type', () => {
     expect(screen.getByTestId('new-doc-submit')).not.toBeDisabled();
   });
 
-  it('picking a blank clears a known type, and vice versa', async () => {
+  // The shape and the type are two independent questions, and this pins that
+  // they stay independent. The old behaviour — picking a type forced
+  // `sections`, and picking any shape discarded the type — made both controls
+  // move under the user, and left all three shape cards reading
+  // `aria-pressed="false"` with no shape visibly chosen at all.
+  it('a type and a shape are chosen independently, and both stay chosen', async () => {
     loadTypes.mockReturnValue([]);
     serverTypes = [];
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
     await act(async () => { await Promise.resolve(); });
 
+    // Page is the default and picking a type does not move it.
     fireEvent.click(screen.getByTestId('starter-cookbook-meeting-notes'));
     expect(screen.getByTestId('starter-cookbook-meeting-notes')).toHaveAttribute('aria-pressed', 'true');
-    // The shape card must not ALSO look picked just because a cookbook forced
-    // the sections shape.
+    expect(screen.getByTestId('doc-shape-page')).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByTestId('doc-shape-sections')).toHaveAttribute('aria-pressed', 'false');
 
+    // And switching shape keeps the type.
+    fireEvent.click(screen.getByTestId('doc-shape-sections'));
+    expect(screen.getByTestId('starter-cookbook-meeting-notes')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('doc-shape-sections')).toHaveAttribute('aria-pressed', 'true');
+
     fireEvent.click(screen.getByTestId('doc-shape-page'));
-    expect(screen.getByTestId('starter-cookbook-meeting-notes')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('starter-cookbook-meeting-notes')).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByTestId('doc-shape-page')).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  // Diagram is the ONE real coupling: a whiteboard has no document type, so the
+  // two choices genuinely cannot both stand. It resolves in both directions
+  // rather than leaving an incoherent pair selected.
+  it('diagram and a type cannot both stand, in either direction', async () => {
+    const onCreate = vi.fn();
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+    await act(async () => { await Promise.resolve(); });
+
+    fireEvent.click(screen.getByTestId('starter-cookbook-meeting-notes'));
+    fireEvent.click(screen.getByTestId('doc-shape-diagram'));
+    expect(screen.getByTestId('starter-cookbook-meeting-notes')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('doc-shape-diagram')).toHaveAttribute('aria-pressed', 'true');
+
+    // And back: a type picked on a whiteboard moves to Page, the default.
+    fireEvent.click(screen.getByTestId('starter-cookbook-meeting-notes'));
+    expect(screen.getByTestId('doc-shape-diagram')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('doc-shape-page')).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+    expect(onCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ shape: 'page', type: 'Meeting Notes' }),
+    );
+  });
+
+  // The shape a typed create reports is the shape the person chose, both ways.
+  // The `sections` half is the legacy path and must not have moved: legacy
+  // documents are section-shaped and `canvas-shape-blind-spot` is real.
+  it('a known type creates on whichever shape is selected', async () => {
+    const onCreate = vi.fn();
+    loadTypes.mockReturnValue([]);
+    serverTypes = [];
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+    await act(async () => { await Promise.resolve(); });
+
+    fireEvent.click(screen.getByTestId('starter-cookbook-bug-report'));
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+    expect(onCreate.mock.calls[0][0]).toMatchObject({ shape: 'page', type: 'Bug Report' });
+    expect(typeof onCreate.mock.calls[0][0].documentTypeId).toBe('string');
+
+    // `onClose` is a spy here, so the dialog is still standing and still holds
+    // the same type — which is the point: switching shape and submitting again
+    // is all it takes to get the other surface.
+    onCreate.mockClear();
+    fireEvent.click(screen.getByTestId('doc-shape-sections'));
+    fireEvent.click(screen.getByTestId('new-doc-submit'));
+    expect(onCreate.mock.calls[0][0]).toMatchObject({ shape: 'sections', type: 'Bug Report' });
   });
 });
