@@ -55,6 +55,11 @@ export interface ConversationRailProps {
    * the full-height case, where a forty-row flat mix stops being scannable.
    */
   grouped?: boolean;
+  /**
+   * Which group leads. Forwarded to ConversationList — `'dms-first'` on a
+   * surface whose subject is people rather than rooms.
+   */
+  sectionOrder?: 'channels-first' | 'dms-first';
   emptyLabel?: string;
   /** Above the shelf: a workspace switcher, a search field, a title. */
   header?: ReactNode;
@@ -71,6 +76,7 @@ export function ConversationRail({
   onSelect,
   onNewChat,
   grouped = true,
+  sectionOrder = 'channels-first',
   emptyLabel,
   header,
   footer,
@@ -100,6 +106,7 @@ export function ConversationRail({
       <ConversationList
         items={conversations}
         grouped={grouped}
+        sectionOrder={sectionOrder}
         // A shelf selection means no conversation is open, so no row is
         // active — passing the last-opened channel here is how a rail ends up
         // highlighting two things at once.

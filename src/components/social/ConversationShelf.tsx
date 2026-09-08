@@ -65,6 +65,7 @@ export function ConversationShelf({
               aria-current={active ? 'true' : undefined}
               className={cn(
                 'flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset',
                 'hover:bg-surface-hover',
                 active && 'bg-surface-hover',
               )}

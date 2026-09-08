@@ -111,7 +111,7 @@ export function AttachmentBubble({ attachment, src, onOpen, className }: Attachm
             'block max-w-full overflow-hidden rounded-lg border text-left',
             'border-[var(--color-border)] bg-[var(--color-surface-inset)]',
             onOpen ? 'cursor-zoom-in' : 'cursor-default',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           )}
         >
           {shown ? (
@@ -173,7 +173,7 @@ export function AttachmentBubble({ attachment, src, onOpen, className }: Attachm
           'flex w-full min-w-0 items-center gap-2 rounded-lg border px-2.5 py-2 text-left',
           'border-[var(--color-border)] bg-[var(--color-surface-inset)]',
           'hover:bg-[var(--color-surface-hover)]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
         )}
       >
         <FileGlyph />
@@ -359,7 +359,7 @@ export function TransferBubble({ transfer, mine = false, onCancel, className }: 
           className={cn(
             'shrink-0 rounded px-1.5 py-0.5 text-xs',
             'text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-hover)]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           )}
         >
           ✕

@@ -98,6 +98,7 @@ export function ReactionsBar({
           data-mine={r.mine ? 'true' : 'false'}
           className={cn(
             'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs leading-none transition-colors',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
             r.mine
               ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/15 text-[var(--color-text-primary)]'
               : 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)]/60 hover:text-[var(--color-text-primary)]',
@@ -120,6 +121,7 @@ export function ReactionsBar({
           data-testid="reactions-bar-add"
           className={cn(
             'inline-flex items-center justify-center rounded-full border border-dashed border-[var(--color-border)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
             'h-6 min-w-6 px-1.5 text-xs text-[var(--color-text-secondary)] transition-colors',
             !disabled && 'hover:border-[var(--color-primary)] hover:text-[var(--color-text-primary)]',
             disabled && 'opacity-50 cursor-not-allowed',

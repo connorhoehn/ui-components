@@ -4,7 +4,7 @@
 // with an input field and Send button. Displays message author as
 // displayName when available, falling back to the first 8 chars of clientId.
 
-import { useState, useRef, useEffect, type ClipboardEvent, type ReactNode } from 'react';
+import { Fragment, useState, useRef, useEffect, type ClipboardEvent, type ReactNode } from 'react';
 import type { ChatMessage } from '../../hooks/useChat';
 import { MessageRow } from './MessageRow';
 import { cn } from '../../lib/cn';
@@ -27,6 +27,10 @@ import {
 } from './ChatAttachment';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover, DEFAULT_PICKER_EMOJIS } from './ReactionPickerPopover';
+import { DaySeparator } from './DaySeparator';
+import { isNewDay } from './dayBoundary';
+import { TypingIndicator } from '../shared/TypingIndicator';
+import { VISUALLY_HIDDEN_STYLE } from '../shared/VisuallyHidden';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -208,13 +212,19 @@ export function isPinnedToBottom(
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Formats a list of typing user names for display. */
-function formatTypingBanner(users: string[]): string {
-  if (users.length === 0) return '';
-  if (users.length === 1) return `${users[0]} is typing...`;
-  if (users.length === 2) return `${users[0]} and ${users[1]} are typing...`;
-  const others = users.length - 2;
-  return `${users[0]}, ${users[1]} and ${others} other${others > 1 ? 's' : ''} are typing...`;
+/**
+ * What a screen reader is told when a message arrives.
+ *
+ * Deliberately NOT the message body verbatim past a short prefix: an
+ * announcement interrupts whatever the user is reading, and a 900-character
+ * paste read aloud in full is a denial of service on their attention. The
+ * name and the opening clause are enough to decide whether to go and read it;
+ * the transcript itself is right there.
+ */
+export function announcementFor(author: string, content: string, limit = 120): string {
+  const body = content.replace(/\s+/g, ' ').trim();
+  if (!body) return `${author} sent a message`;
+  return `${author}: ${body.length > limit ? `${body.slice(0, limit)}…` : body}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -425,6 +435,43 @@ export function ChatPanel({
   // to the reader's position instead of being read as new traffic.
   const prependRef = useRef<{ scrollHeight: number; scrollTop: number } | null>(null);
 
+  // ── New-message announcement ────────────────────────────────────────
+  // Measured before this existed: a peer's message arrived, the transcript
+  // grew, and NOTHING on the page changed that a screen reader would read —
+  // there was no live region anywhere inside the panel. A sighted user sees
+  // the thread move; a screen-reader user was simply never told.
+  const [announcement, setAnnouncement] = useState('');
+  const lastAnnouncedRef = useRef<string | null>(null);
+  const announcedOnceRef = useRef(false);
+  const announceSeqRef = useRef(0);
+  useEffect(() => {
+    const latest = messages[messages.length - 1];
+    if (!latest) return;
+    const key = latest.id ?? `${latest.timestamp}:${latest.clientId}:${latest.content}`;
+    // The first render SEEDS without speaking. Opening a thread that already
+    // has twenty messages of history is not "a message arrived", and reading
+    // the newest of them out would misreport when it was said.
+    if (!announcedOnceRef.current) {
+      announcedOnceRef.current = true;
+      lastAnnouncedRef.current = key;
+      return;
+    }
+    if (key === lastAnnouncedRef.current) return;
+    lastAnnouncedRef.current = key;
+    // Your own send already had your attention, and it is the one message you
+    // are certain to know about.
+    if (currentUserId && latest.userId === currentUserId) return;
+    announceSeqRef.current += 1;
+    // A live region fires on text CHANGE. Two identical messages in a row
+    // ("ok", "ok") produce identical strings and the second would be silent,
+    // so an alternating zero-width space keeps the content genuinely
+    // different without changing a single spoken word.
+    const pad = announceSeqRef.current % 2 === 0 ? '​' : '';
+    setAnnouncement(
+      announcementFor(latest.displayName ?? latest.clientId.slice(0, 8), latest.content) + pad,
+    );
+  }, [messages, currentUserId]);
+
   function scrollToBottom() {
     const el = listRef.current;
     if (!el) return;
@@ -529,13 +576,24 @@ export function ChatPanel({
     setEmojiOpen(false);
   }
 
+  /**
+   * Broadcast "typing", reset the 2s idle timer.
+   *
+   * Split out of `handleKeyDown` so the COMPOSER SLOT gets it too. It used to
+   * live only on the built-in `<Input>`, which meant `onTyping` was silently
+   * inert for every host that passes its own composer — and passing one is
+   * the normal case for a rich composer. A prop that does nothing depending
+   * on an unrelated prop is worse than a missing prop: the wiring looks done.
+   */
+  function noteTyping() {
+    if (disabled) return;
+    onTyping?.(true);
+    if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
+    typingTimerRef.current = setTimeout(() => onTyping?.(false), 2000);
+  }
+
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (!disabled) {
-      // Broadcast typing; reset 2s idle timer.
-      onTyping?.(true);
-      if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
-      typingTimerRef.current = setTimeout(() => onTyping?.(false), 2000);
-    }
+    noteTyping();
     if (e.key === 'Enter' && !disabled && inputValue.trim()) {
       handleSend();
     }
@@ -562,12 +620,36 @@ export function ChatPanel({
         </div>
       )}
 
-      {/* Typing banner */}
+      {/* Typing banner. The shared TypingIndicator rather than a private copy
+          of the same sentence: it is the one that carries
+          `role="status" aria-live="polite"`, so a screen-reader user hears
+          "Carol is typing…" instead of watching nothing happen. The two
+          implementations had also already drifted — the private one wrote
+          "typing..." where the shared one writes "typing…". */}
       {typingUsers.length > 0 && (
-        <div className={cn('text-xs italic mb-1 shrink-0', dark ? 'text-white/50' : 'text-text-secondary')}>
-          {formatTypingBanner(typingUsers)}
-        </div>
+        <TypingIndicator
+          names={typingUsers}
+          className={cn('mb-1 shrink-0 italic', dark ? 'text-white/50' : 'text-text-secondary')}
+        />
       )}
+
+      {/* The only thing on this panel that SPEAKS. Visually hidden, never
+          focusable, one sentence per arriving message. It is kept outside the
+          scroller on purpose: a live region that is also the thing being
+          scrolled gets its announcements confused with its own reflow. */}
+      <span
+        // The library's canonical clip rather than `sr-only`: a host that does
+        // not run Tailwind over the library renders an `sr-only` span as
+        // ordinary text, and this one would paint every incoming message
+        // twice. See VisuallyHidden — the constant is exported for exactly
+        // the cases (role, aria-live) the component cannot carry.
+        style={VISUALLY_HIDDEN_STYLE}
+        role="status"
+        aria-live="polite"
+        data-testid="chat-panel-announcer"
+      >
+        {announcement}
+      </span>
 
       {/* Message list — the flexible region when filling, so the composer
           stays on the bottom edge and the slack goes to the messages.
@@ -578,8 +660,27 @@ export function ChatPanel({
           ref={listRef}
           onScroll={handleListScroll}
           data-testid="chat-panel-messages"
+          // A scrolling region with no name and no tab stop is, to a keyboard
+          // user, a part of the page that does not exist: measured before this
+          // change, the transcript was not among the 120 tab stops on the
+          // Messages page, so there was no way to scroll back through it
+          // without a pointer. `tabIndex={0}` makes it a stop; the label says
+          // what was landed on.
+          //
+          // `role="log"` types the region correctly, and `aria-live="off"`
+          // then suppresses its IMPLICIT polite announcement. That pairing is
+          // deliberate: role=log would otherwise announce every mutation,
+          // including the 50 rows a `Load earlier messages` prepend inserts —
+          // a screen reader reading half an hour of backlog because the user
+          // asked to see it. New traffic is announced instead by the
+          // dedicated status region below, which speaks once per message.
+          role="log"
+          aria-live="off"
+          aria-label="Message history"
+          tabIndex={0}
           className={cn(
             'scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset rounded',
             // A long thread runs off the top edge with a hard cut. The mask
             // softens the oldest visible messages so the list reads as
             // continuing rather than as starting there.
@@ -610,6 +711,7 @@ export function ChatPanel({
                 disabled={loadingMore}
                 className={cn(
                   'rounded px-2 py-1 text-xs disabled:opacity-60',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                   dark
                     ? 'text-white/70 hover:bg-white/10'
                     : 'text-text-secondary hover:bg-surface-hover',
@@ -787,9 +889,19 @@ export function ChatPanel({
                 </>
               );
 
+              // A date heading opens each new local day — including the first
+              // message on screen, whose date is otherwise stated nowhere.
+              // Keyed off the PREVIOUS message rather than a running variable
+              // so a `Load earlier messages` prepend recomputes correctly:
+              // the boundary is a property of a pair, not of iteration order.
+              const daySeparator = isNewDay(message.timestamp, messages[index - 1]?.timestamp) ? (
+                <DaySeparator key={`day:${message.timestamp}:${index}`} timestamp={message.timestamp} tone={tone} />
+              ) : null;
+
               return (
+                <Fragment key={message.id ?? index}>
+                {daySeparator}
                 <div
-                  key={message.id ?? index}
                   data-testid="chat-message"
                   data-message-id={messageId || undefined}
                   // `group` drives the hover reveal; `focus-within` is what
@@ -854,6 +966,7 @@ export function ChatPanel({
                     />
                   )}
                 </div>
+                </Fragment>
               );
             })
           )}
@@ -891,6 +1004,7 @@ export function ChatPanel({
             onClick={scrollToBottom}
             className={cn(
               'absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs shadow-md',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
               dark ? 'bg-white/20 text-white' : 'bg-primary text-white',
             )}
           >
@@ -901,7 +1015,16 @@ export function ChatPanel({
 
       {/* Input row — or whatever the host put in its place. */}
       {composer ? (
-        <div className="shrink-0" data-testid="chat-panel-composer-slot">{composer}</div>
+        <div
+          className="shrink-0"
+          data-testid="chat-panel-composer-slot"
+          // Capture, so a slot composer that stops propagation on its own
+          // keydowns (ProseMirror keymaps routinely do) is still observed.
+          // The panel never READS the key — it only learns that one happened.
+          onKeyDownCapture={onTyping ? noteTyping : undefined}
+        >
+          {composer}
+        </div>
       ) : (
       <div className="flex flex-row items-center gap-2 shrink-0">
         {onSendFiles && (
@@ -918,7 +1041,7 @@ export function ChatPanel({
                 dark
                   ? 'text-white/60 hover:bg-white/10'
                   : 'text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-hover)]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
               )}
             >
               <PaperclipGlyph />
@@ -950,7 +1073,7 @@ export function ChatPanel({
           className={cn(
             'shrink-0 rounded p-1.5 text-base leading-none disabled:opacity-40',
             dark ? 'hover:bg-white/10' : 'hover:bg-[var(--color-surface-hover)]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           )}
         >
           <span aria-hidden="true">🙂</span>

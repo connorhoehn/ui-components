@@ -128,6 +128,35 @@ export function ReactionPickerPopover({
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
+  /**
+   * Where focus goes when this closes.
+   *
+   * It used to go NOWHERE: closing unmounts the whole subtree (`if (!open)
+   * return null` below), and the focused search input went with it, so a
+   * keyboard user who picked an emoji — or pressed Escape — was dropped onto
+   * `<body>` and had to Tab in from the top of the document to get back to the
+   * message they had just reacted to. Escape especially: the whole contract of
+   * Escape is "put me back where I was".
+   *
+   * The element is captured at OPEN time rather than read from `triggerRef` at
+   * close time, because not every caller passes a trigger ref (it is optional,
+   * and it exists for positioning, not for focus).
+   */
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (open) {
+      const active = document.activeElement;
+      returnFocusRef.current = active instanceof HTMLElement ? active : null;
+      return;
+    }
+    const back = returnFocusRef.current ?? triggerRef?.current ?? null;
+    returnFocusRef.current = null;
+    // `isConnected`: the row a reaction was picked on can be re-keyed by the
+    // re-render the reaction itself causes, and focusing a detached node
+    // silently does nothing while looking like it worked.
+    if (back?.isConnected) back.focus();
+  }, [open, triggerRef]);
+
   const handleSelect = useCallback(
     (emoji: string) => {
       onSelect(emoji);

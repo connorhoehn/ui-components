@@ -503,7 +503,17 @@ export function RichChatComposer({
     >
       <div
         data-testid={testId}
-        className="chat-composer rounded-lg border border-border bg-surface focus-within:border-primary"
+        // A 1px border colour change was the composer's ONLY focus signal —
+        // measured in the browser, the contenteditable itself computes
+        // `outline-style: none` (`.ProseMirror:focus` in the library
+        // stylesheet clears it deliberately, because an outline on a
+        // scrolling text box is drawn in the wrong place). A ring on the
+        // WRAPPER is the affordance that belongs to a text field: it survives
+        // the inner scroll and it is the same shape as every other focus ring
+        // in the list. `focus-within` rather than `focus-visible` on purpose —
+        // a text box showing that it has the caret after a click is correct,
+        // not noise.
+        className="chat-composer rounded-lg border border-border bg-surface focus-within:border-primary focus-within:ring-2 focus-within:ring-primary"
       >
         <EditorContent editor={editor} />
 

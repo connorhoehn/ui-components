@@ -107,12 +107,12 @@ describe('ChatPanel', () => {
 
   it('formats the typing banner for a single user', () => {
     render(<ChatPanel messages={[]} onSend={vi.fn()} typingUsers={['Alice']} />);
-    expect(screen.getByText('Alice is typing...')).toBeInTheDocument();
+    expect(screen.getByText('Alice is typing…')).toBeInTheDocument();
   });
 
   it('formats the typing banner for two users', () => {
     render(<ChatPanel messages={[]} onSend={vi.fn()} typingUsers={['Alice', 'Bob']} />);
-    expect(screen.getByText('Alice and Bob are typing...')).toBeInTheDocument();
+    expect(screen.getByText('Alice and Bob are typing…')).toBeInTheDocument();
   });
 
   it('formats the typing banner for three or more users', () => {
@@ -123,14 +123,14 @@ describe('ChatPanel', () => {
         typingUsers={['Alice', 'Bob', 'Carol', 'Dave']}
       />
     );
-    expect(screen.getByText('Alice, Bob and 2 others are typing...')).toBeInTheDocument();
+    expect(screen.getByText('Alice, Bob and 2 others are typing…')).toBeInTheDocument();
   });
 
   it('uses singular "other" when exactly three users are typing', () => {
     render(
       <ChatPanel messages={[]} onSend={vi.fn()} typingUsers={['Alice', 'Bob', 'Carol']} />
     );
-    expect(screen.getByText('Alice, Bob and 1 other are typing...')).toBeInTheDocument();
+    expect(screen.getByText('Alice, Bob and 1 other are typing…')).toBeInTheDocument();
   });
 
   it('does not render the typing banner when no users are typing', () => {
@@ -249,7 +249,9 @@ describe('ChatPanel — dark tone', () => {
 
   it('typing banner is tone-aware', () => {
     render(<ChatPanel tone="dark" messages={[]} onSend={vi.fn()} typingUsers={['Alice']} />);
-    expect(screen.getByText('Alice is typing...').className).toContain('text-white/50');
+    // The tone class lands on the shared TypingIndicator's own element (the
+    // one carrying role=status), not on the inner text span it wraps.
+    expect(screen.getByTestId('typing-indicator').className).toContain('text-white/50');
   });
 
   it('styles the input for dark chrome and keeps the Send Button primitive', () => {

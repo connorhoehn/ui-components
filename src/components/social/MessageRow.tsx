@@ -5,6 +5,7 @@
 import type { ReactNode } from 'react';
 import { Avatar } from '../shared/Avatar';
 import { cn } from '../../lib/cn';
+import { fullTimestampLabel } from './dayBoundary';
 
 export interface MessageRowProps {
   /** Display name shown next to the message; required even for anonymous rows (use a fallback). */
@@ -107,12 +108,19 @@ export function MessageRow({
               </span>
             )}
             {time && (
-              <span
+              // A real <time>, and a title carrying the full local date.
+              // HH:MM alone cannot say WHICH day, and the day separators
+              // above only state it once per block — this is what answers
+              // the question for one specific row without adding a second
+              // date to every line of the transcript.
+              <time
                 data-testid="message-row-time"
+                dateTime={timestamp}
+                title={fullTimestampLabel(timestamp)}
                 className={cn('text-xs shrink-0', dark ? 'text-white/40' : 'text-text-tertiary')}
               >
                 {time}
-              </span>
+              </time>
             )}
           </div>
         )}

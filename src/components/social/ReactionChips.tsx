@@ -97,6 +97,7 @@ export function ReactionChips({
           onClick={() => onToggle(g.emoji)}
           className={cn(
             'flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-xs leading-none',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
             g.mine
               ? 'border-primary bg-primary-bg text-primary-fg'
               : 'border-border bg-surface text-text-secondary hover:bg-surface-hover',

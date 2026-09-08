@@ -40,6 +40,9 @@ export interface MessageActionBarProps {
 
 const DEFAULT_QUICK = ['👍', '🎉', '❤️'] as const;
 
+const FOCUS_RING =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
+
 export function MessageActionBar({
   quickReactions = DEFAULT_QUICK,
   onReact,
@@ -61,7 +64,11 @@ export function MessageActionBar({
       title={label}
       data-testid={`${testId}-${key}`}
       onClick={onClick}
-      className="grid h-6 w-6 place-items-center rounded text-xs leading-none text-text-secondary hover:bg-surface-hover hover:text-text-primary"
+      // The bar reveals itself on :focus-visible (see ChatPanel), but the
+      // BUTTON inside it had no focus style of its own — so a keyboard user
+      // could see the bar appear and not which of its five controls they were
+      // on. That is the case the reveal exists for.
+      className={`grid h-6 w-6 place-items-center rounded text-xs leading-none text-text-secondary hover:bg-surface-hover hover:text-text-primary ${FOCUS_RING}`}
     >
       {glyph}
     </button>

@@ -95,16 +95,18 @@ describe('grouping the rail', () => {
 
   it('puts every row under the right heading', () => {
     render(<ConversationList items={rows} onSelect={vi.fn()} grouped />);
-    // Walked as DOM children rather than by role: the headings are
-    // aria-hidden on purpose — the rows carry the semantics, and a heading
-    // announced between them would just be noise.
-    const list = screen.getByRole('list');
-    const order = [...list.children].map((li) =>
-      li.getAttribute('data-testid') === 'conversation-section'
-        ? li.textContent
-        : li.querySelector('[data-testid="conversation-row"]')?.getAttribute('data-channel'),
-    );
-    expect(order).toEqual(['Channels', 'general', 'room:asdf', 'Direct messages', 'chat:dm:a:b']);
+    // One <ul> per group, each NAMED. The visible heading stays aria-hidden
+    // because the list beside it already carries the same name — but the
+    // boundary itself is now something an assistive technology can read,
+    // which it was not when the heading was the only marker and was hidden.
+    const channels = screen.getByRole('list', { name: 'Channels' });
+    const directs = screen.getByRole('list', { name: 'Direct messages' });
+    const channelsOf = (list: HTMLElement) =>
+      [...list.querySelectorAll('[data-testid="conversation-row"]')].map((r) =>
+        r.getAttribute('data-channel'),
+      );
+    expect(channelsOf(channels)).toEqual(['general', 'room:asdf']);
+    expect(channelsOf(directs)).toEqual(['chat:dm:a:b']);
   });
 
   // A heading with nothing under it promises content that is not there.
@@ -120,8 +122,18 @@ describe('grouping the rail', () => {
     expect(sections()).toEqual([]);
   });
 
-  it('keeps one list, so there is one scroll container and one tab order', () => {
-    render(<ConversationList items={rows} onSelect={vi.fn()} grouped />);
-    expect(screen.getAllByRole('list')).toHaveLength(1);
+  it('keeps ONE scroll container across the groups', () => {
+    // The rule this was protecting is still the rule — a rail that scrolls
+    // its channels and its DMs independently is two panes pretending to be
+    // one. What changed is that the scroll container is now the wrapper
+    // rather than the single <ul>, so each group can carry its own name.
+    const { container } = render(<ConversationList items={rows} onSelect={vi.fn()} grouped />);
+    const scrollers = [...container.querySelectorAll('*')].filter((el) =>
+      el.className && typeof el.className === 'string' && el.className.includes('overflow-y-auto'),
+    );
+    expect(scrollers).toHaveLength(1);
+    for (const list of screen.getAllByRole('list')) {
+      expect(scrollers[0].contains(list)).toBe(true);
+    }
   });
 });
