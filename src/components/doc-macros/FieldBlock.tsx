@@ -46,6 +46,7 @@
 // page had eaten their answer.
 
 import { useCallback, useRef, useState } from 'react';
+import { useDraft } from './useDraft';
 import Chip from '../shared/Chip';
 import { Input } from '../forms/Input';
 import { Select } from '../forms/Select';
@@ -90,16 +91,6 @@ const MISMATCH: Record<FieldType, string> = {
  * "Ada" and pressing Escape wrote "Adax". The ref is what the handlers read;
  * the state is only what the input renders.
  */
-function useDraft(): [string | null, (next: string | null) => void, () => string | null] {
-    const [value, setValue] = useState<string | null>(null);
-    const ref = useRef<string | null>(null);
-    const set = useCallback((next: string | null) => {
-        ref.current = next;
-        setValue(next);
-    }, []);
-    return [value, set, useCallback(() => ref.current, [])];
-}
-
 export interface FieldBlockProps {
     field: TypedField;
     /** False in read/print, and for a reader without write access. */
@@ -121,8 +112,8 @@ export function FieldBlock({
     onRemove,
     testId = 'field-block',
 }: FieldBlockProps) {
-    const [labelDraft, setLabelDraft, readLabelDraft] = useDraft();
-    const [valueDraft, setValueDraft, readValueDraft] = useDraft();
+    const [labelDraft, setLabelDraft, readLabelDraft] = useDraft<string | null>(null);
+    const [valueDraft, setValueDraft, readValueDraft] = useDraft<string | null>(null);
 
     const state = field.value === undefined ? 'empty' : field.valid ? 'set' : 'invalid';
 

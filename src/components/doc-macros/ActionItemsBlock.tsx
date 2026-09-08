@@ -27,7 +27,8 @@
 // minimal edit, which is what the CRDT wants and what the suggestion fork
 // records as one change.
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useDraft } from './useDraft';
 import { Button } from '../ui/Button';
 import { Input } from '../forms/Input';
 import { cn } from '../../lib/cn';
@@ -127,7 +128,7 @@ function ItemText({
     onTextChange?: (text: string) => void;
     testId: string;
 }) {
-    const [draft, setDraft] = useState(item.text);
+    const [draft, setDraft, readDraft] = useDraft(item.text);
     const focused = useRef(false);
 
     // Re-seed from the document, but never while the user is in the field —
@@ -151,8 +152,14 @@ function ItemText({
         );
     }
 
+    // Reads the draft through the ref, not the closure. Escape restores the
+    // original and then blurs, and blur fires SYNCHRONOUSLY — before React has
+    // applied the restore — so a closure read here commits exactly what Escape
+    // discarded. Measured: typing `x` into `Ada` and pressing Escape wrote
+    // `Adax`. See `useDraft`.
     const commit = () => {
-        if (draft !== item.text) onTextChange?.(draft);
+        const current = readDraft();
+        if (current !== item.text) onTextChange?.(current);
     };
 
     return (
