@@ -115,7 +115,18 @@ export function HangoutRoomRow({
     () =>
       members.slice(0, 3).map((m) => ({
         id: m.participantId,
-        name: m.displayName ?? m.userId,
+        // `||`, not `??`. The gateway writes `displayName: ''` — not
+        // undefined — whenever a membership record is touched by a signal
+        // that carries no identity, and `'' ?? x` is `''`. So this fallback
+        // never fired, `Avatar` got an empty name, and every face in the
+        // sidebar's room row rendered `?` (Avatar.tsx: `if (!trimmed)
+        // return '?'`). An empty string is not a name.
+        //
+        // The blanking itself is fixed upstream in realtime-modules'
+        // RoomService (the record merges now instead of being replaced);
+        // this stays because a nameless member is a thing this row should
+        // survive, not a thing it should render a question mark for.
+        name: m.displayName || m.userId,
         online: true,
       })),
     [members],
