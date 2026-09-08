@@ -10,7 +10,7 @@ const meta: Meta<typeof PersonHoverCard> = {
   component: PersonHoverCard,
   decorators: [
     (Story) => (
-      <div style={{ padding: 80, maxWidth: 560 }}>
+      <div className="max-w-[560px] p-20">
         <Story />
       </div>
     ),
@@ -43,7 +43,7 @@ export const InProse: Story = {
     ),
   },
   render: (args) => (
-    <p style={{ fontSize: 14, lineHeight: 1.7 }}>
+    <p className="text-sm leading-[1.7]">
       Run by <PersonHoverCard {...args} /> — the card opens on hover after a
       beat, and on focus immediately.
     </p>

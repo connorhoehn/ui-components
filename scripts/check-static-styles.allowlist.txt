@@ -118,3 +118,21 @@ src/components/compute/components/PaneTreeView.tsx  # split ratio -> flex-basis 
 src/components/social/ChatAttachment.tsx  # upload progress bar width — a percentage of transferred bytes
 src/components/compute/components/ComputeDock.tsx  # status colour from SHELL_STATUS, pane visibility, and the user-dragged dock height
 src/components/doc-editor/DocumentGutter.tsx  # thread offsets from anchor collision-resolution + measured card heights; the geometry IS the state
+
+# --- shared/ + social/ sweep (2026-09-07) ----------------------------------
+# The 14 flagged shared/ + social/ files were reviewed one at a time against the
+# "convert vs keep" heuristic. Nine were static literals and were CONVERTED
+# (all seven .stories.tsx decorators/harnesses, plus Tooltip's `zIndex: 9500`,
+# which is now `z-[9500]` on the class list with only the measured position
+# left inline). The five below are the genuine keeps.
+src/components/shared/DetailHeader.tsx     # width: asideWidth — public prop, px number (same case as SettingsLayout)
+src/components/shared/MasterDetail.tsx     # width: compact ? compactWidth : railWidth — two public props switched by state
+src/components/shared/TreeView.tsx         # paddingLeft: depth * 14 + 8 — nesting arithmetic, unbounded depth
+# The two below are NOT merely dynamic — the inline style IS the accessibility
+# contract. Both files carry a header comment explaining it: this library is
+# consumed by hosts that never run Tailwind over their bundle, where a utility
+# class is inert. As a class, VisuallyHidden renders its screen-reader text
+# visibly, and SkipLink becomes either permanently visible or permanently
+# unreachable. Converting these is a silent a11y regression, not a cleanup.
+src/components/shared/VisuallyHidden.tsx   # VISUALLY_HIDDEN_STYLE clip rect must survive a host with no CSS pipeline
+src/components/shared/SkipLink.tsx         # hidden/visible focus swap, same reason (imports VISUALLY_HIDDEN_STYLE)

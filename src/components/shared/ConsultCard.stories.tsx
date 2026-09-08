@@ -6,7 +6,7 @@ const meta = {
   component: ConsultCard,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
-  decorators: [(Story) => <div style={{ width: 480 }}><Story /></div>],
+  decorators: [(Story) => <div className="w-[480px]"><Story /></div>],
 } satisfies Meta<typeof ConsultCard>;
 
 export default meta;

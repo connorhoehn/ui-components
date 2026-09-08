@@ -16,7 +16,7 @@ const PEOPLE = [
 const meta: Meta<typeof RichChatComposer> = {
   title: 'Social/RichChatComposer',
   component: RichChatComposer,
-  decorators: [(Story) => <div style={{ padding: 24, maxWidth: 640 }}><Story /></div>],
+  decorators: [(Story) => <div className="max-w-[640px] p-6"><Story /></div>],
 };
 export default meta;
 
@@ -25,7 +25,7 @@ type Story = StoryObj<typeof RichChatComposer>;
 function Harness(props: Partial<React.ComponentProps<typeof RichChatComposer>>) {
   const [sent, setSent] = useState<ComposedMessage | null>(null);
   return (
-    <div style={{ display: 'grid', gap: 12 }}>
+    <div className="grid gap-3">
       <RichChatComposer
         allowAttachments
         allowEmoji
@@ -41,16 +41,15 @@ function Harness(props: Partial<React.ComponentProps<typeof RichChatComposer>>) 
         {...props}
       />
       {sent && (
-        <div style={{ display: 'grid', gap: 6 }}>
-          <div style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>last sent</div>
+        <div className="grid gap-1.5">
+          <div className="text-[11px] text-text-tertiary">last sent</div>
           {/* The HTML is rendered, not printed: that is the only way to see
               whether bold, lists and mention chips actually survived. */}
           <div
-            className="ProseMirror"
-            style={{ border: '1px solid var(--color-border)', borderRadius: 6, padding: 8, minHeight: 0 }}
+            className="ProseMirror min-h-0 rounded-md border border-border p-2"
             dangerouslySetInnerHTML={{ __html: sent.html || '<em>(no text)</em>' }}
           />
-          <pre style={{ fontSize: 11, background: 'var(--color-surface-inset)', padding: 8, borderRadius: 6, margin: 0 }}>
+          <pre className="m-0 rounded-md bg-surface-inset p-2 text-[11px]">
             {JSON.stringify(
               {
                 mentions: sent.mentions.map((m) => `${m.label} <${m.id}>`),

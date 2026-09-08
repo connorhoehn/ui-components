@@ -136,10 +136,13 @@ export function Tooltip({
             id={tooltipId}
             data-testid={testId}
             className={cn(
-              'pointer-events-none max-w-xs rounded-md border border-border bg-surface px-2 py-1 text-xs text-text-primary shadow-lg',
+              'pointer-events-none z-[9500] max-w-xs rounded-md border border-border bg-surface px-2 py-1 text-xs text-text-primary shadow-lg',
               className,
             )}
-            style={{ ...position, zIndex: 9500 }}
+            // Position only — placement is measured from the trigger's
+            // getBoundingClientRect at open time and cannot be a class. The
+            // stacking order was a static literal and is now `z-[9500]`.
+            style={position}
           >
             {content}
           </div>,

@@ -49,7 +49,7 @@ export const Interactive: Story = {
   render: () => {
     const [selected, setSelected] = useState<string | null>(DIMENSIONS[0].id);
     return (
-      <div style={{ height: 420 }}>
+      <div className="h-[420px]">
         <MasterDetail
           items={DIMENSIONS}
           keyOf={(d) => d.id}
@@ -95,7 +95,7 @@ export const Interactive: Story = {
 export const Empty: Story = {
   args: { ...baseArgs, items: [] },
   render: () => (
-    <div style={{ height: 300 }}>
+    <div className="h-[300px]">
       <MasterDetail
         items={[]}
         keyOf={(d: Dimension) => d.id}

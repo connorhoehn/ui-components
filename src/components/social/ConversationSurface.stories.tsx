@@ -72,7 +72,7 @@ const meta: Meta<typeof ConversationSurface> = {
   component: ConversationSurface,
   decorators: [
     (Story) => (
-      <div style={{ height: 560, display: 'flex', border: '1px solid var(--color-border)', borderRadius: 8, overflow: 'hidden' }}>
+      <div className="flex h-[560px] overflow-hidden rounded-lg border border-border">
         <Story />
       </div>
     ),

@@ -14,7 +14,7 @@ const meta: Meta<typeof CallActivityCard> = {
   component: CallActivityCard,
   decorators: [
     (Story) => (
-      <div style={{ maxWidth: 520, padding: 16 }}>
+      <div className="max-w-[520px] p-4">
         <Story />
       </div>
     ),

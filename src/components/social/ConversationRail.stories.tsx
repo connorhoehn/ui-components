@@ -96,15 +96,7 @@ const meta: Meta<typeof ConversationRail> = {
   component: ConversationRail,
   decorators: [
     (Story) => (
-      <div
-        style={{
-          height: 560,
-          display: 'flex',
-          border: '1px solid var(--color-border)',
-          borderRadius: 8,
-          overflow: 'hidden',
-        }}
-      >
+      <div className="flex h-[560px] overflow-hidden rounded-lg border border-border">
         <Story />
       </div>
     ),
@@ -190,16 +182,7 @@ export const WithHeaderAndFooter: Story = {
 export const WholeApp: StoryObj = {
   decorators: [
     (Story) => (
-      <div
-        style={{
-          height: 560,
-          display: 'flex',
-          width: '100%',
-          border: '1px solid var(--color-border)',
-          borderRadius: 8,
-          overflow: 'hidden',
-        }}
-      >
+      <div className="flex h-[560px] w-full overflow-hidden rounded-lg border border-border">
         <Story />
       </div>
     ),
