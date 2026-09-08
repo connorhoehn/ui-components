@@ -67,3 +67,24 @@ export {
     yamlScalar,
 } from './actionItemsText';
 export type { ActionItem, TextRangeEdit } from './actionItemsText';
+
+// The agent -> human hand-off. Same registry, same one-range-per-edit rule;
+// the difference is that a HITL answer has a SECOND reader outside the
+// document, which is what `HitlMacroOptions.onAnswered` and
+// `HITL_QUERYABILITY` are about.
+export { HitlMacro, hitlRenderer } from './HitlMacro';
+export type { HitlMacroOptions, HitlAnsweredEvent, HitlMirrorResult } from './HitlMacro';
+export { HitlBlock, hitlPhase } from './HitlBlock';
+export type { HitlBlockProps } from './HitlBlock';
+export {
+    HITL_MACRO_NAME,
+    HITL_QUERYABILITY,
+    HITL_SENTINEL_SECTION,
+    HITL_ITEM_CATEGORY,
+    readHitl,
+    hitlExpired,
+    hitlMacroText,
+    answerHitlEdit,
+    retractHitlEdit,
+} from './hitlText';
+export type { HitlCallout, HitlOption, HitlDraft } from './hitlText';
