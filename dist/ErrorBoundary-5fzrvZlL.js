@@ -101,11 +101,15 @@ function h({ open: e, onClose: l, onCreate: h }) {
 		shape: M
 	}, X = (e) => {
 		if (e.kind === "cookbook") {
-			C(e.cookbook.id), N("sections"), O || D(e.cookbook.name);
+			C(e.cookbook.id), M === "diagram" && N("page"), O || D(e.cookbook.name);
 			return;
 		}
-		C(null), e.kind === "blank" ? N(e.shape) : x(e.type.id), O || D("");
-	}, Z = (e) => e.kind === "cookbook" ? "sections" : e.kind === "blank" ? e.shape : M, Q = (e, t, n) => {
+		if (e.kind === "blank") {
+			N(e.shape), e.shape === "diagram" && (C(null), O || D(""));
+			return;
+		}
+		C(null), x(e.type.id), O || D("");
+	}, Z = (e) => e.kind === "blank" ? e.shape : M === "diagram" ? "page" : M, Q = (e, t, n) => {
 		let r = t.trim();
 		if (!r) return;
 		let i = A.trim() || void 0;
@@ -117,7 +121,7 @@ function h({ open: e, onClose: l, onCreate: h }) {
 				description: i,
 				icon: t.icon,
 				documentTypeId: t.id,
-				shape: "sections"
+				shape: n
 			});
 		} else e.kind === "type" && n !== "diagram" ? h({
 			title: r,
@@ -216,14 +220,14 @@ function h({ open: e, onClose: l, onCreate: h }) {
 							children: [/* @__PURE__ */ p("div", {
 								id: L,
 								className: r("block text-[13px] font-semibold text-text-secondary mb-2"),
-								children: "Start blank"
+								children: "Shape"
 							}), /* @__PURE__ */ p("div", {
 								role: "group",
 								"aria-labelledby": L,
 								className: r("grid grid-cols-3 gap-2"),
 								children: H.map((e) => /* @__PURE__ */ m(i, {
 									padding: "md",
-									selected: !K && M === e.id,
+									selected: M === e.id,
 									onSelect: () => X({
 										kind: "blank",
 										shape: e.id
@@ -256,10 +260,17 @@ function h({ open: e, onClose: l, onCreate: h }) {
 						}),
 						W.length > 0 && /* @__PURE__ */ m("div", {
 							className: r("mb-5"),
-							children: [/* @__PURE__ */ p("div", {
-								id: z,
-								className: r("block text-[13px] font-semibold text-text-secondary mb-2"),
-								children: "Known types"
+							children: [/* @__PURE__ */ m("div", {
+								className: r("mb-2"),
+								children: [/* @__PURE__ */ p("div", {
+									id: z,
+									className: r("block text-[13px] font-semibold text-text-secondary"),
+									children: "Known types"
+								}), /* @__PURE__ */ p("div", {
+									className: r("text-[11px] text-text-tertiary"),
+									"data-testid": "starter-shape-note",
+									children: M === "diagram" ? "Picking one switches to Page — a whiteboard has no document type." : M === "sections" ? "Its fields become sections, one form each." : "Its fields become blocks on the page — typed values, headings and checklists."
+								})]
 							}), /* @__PURE__ */ p("div", {
 								role: "group",
 								"aria-labelledby": z,
@@ -355,7 +366,7 @@ function h({ open: e, onClose: l, onCreate: h }) {
 														}),
 														/* @__PURE__ */ p("div", {
 															className: r("text-[11px] text-text-tertiary mt-0.5"),
-															children: M === "sections" ? `${e.fields.length} section${e.fields.length === 1 ? "" : "s"}` : "Sets the icon and type"
+															children: M === "sections" ? `${e.fields.length} section${e.fields.length === 1 ? "" : "s"}` : `${e.fields.length} block${e.fields.length === 1 ? "" : "s"}`
 														})
 													]
 												}),

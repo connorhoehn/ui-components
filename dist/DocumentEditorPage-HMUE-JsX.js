@@ -9,7 +9,7 @@ import { t as h } from "./Input-DLknWXri.js";
 import { t as g } from "./Textarea-Dz4doxTv.js";
 import { t as _ } from "./activationKey-CjbL3LUv.js";
 import { O as v } from "./renderers-9QJtVt3f.js";
-import { t as y } from "./ErrorBoundary-CntzpCzp.js";
+import { t as y } from "./ErrorBoundary-5fzrvZlL.js";
 import { t as b } from "./TiptapEditor-Kdj65m6g.js";
 import { t as x } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as S } from "./useActiveSpeaker-Dc9r75EE.js";
