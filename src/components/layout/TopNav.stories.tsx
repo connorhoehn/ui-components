@@ -64,3 +64,51 @@ export const SubNav: Story = {
   ),
   args: { items: ITEMS },
 };
+
+/**
+ * The pattern the two variants exist for: a primary row in the 53px header
+ * (`pill`) and a section row in the content column under it (`underline`).
+ *
+ * The rows do NOT share a left edge and cannot — the header is anchored to the
+ * window, the section strip to the content column, and the content column
+ * moves when a sidebar collapses. What makes them read as a pair instead is
+ * everything else: one item box (h-9 / px-3 / gap-1), one type scale, and an
+ * active treatment that is unmistakably louder on the row above.
+ */
+export const StackedRows: Story = {
+  render: () => (
+    <div className="min-w-[640px]">
+      <div className="flex h-[53px] items-center gap-4 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-6">
+        <strong className="shrink-0">UI Components</strong>
+        <NavTabs
+          items={[
+            { label: 'Previews', to: '/previews' },
+            { label: 'Social', to: '/social', badge: 3 },
+            { label: 'Documents', to: '/documents' },
+            { label: 'Pipelines', to: '/pipelines' },
+          ]}
+          activeHref="/documents"
+          aria-label="Primary"
+          variant="pill"
+          className="shrink-0"
+        />
+      </div>
+      <div className="border-b border-[var(--color-border)] bg-[var(--color-surface)] px-8">
+        <NavTabs
+          items={[
+            { label: 'Documents', to: '/documents' },
+            { label: 'Document Types', to: '/document-types' },
+            { label: 'Data Types', to: '/field-types' },
+          ]}
+          activeHref="/documents"
+          aria-label="Documents"
+          className="border-b-0"
+        />
+      </div>
+      <div className="bg-[var(--color-surface-panel)] p-8 text-sm text-[var(--color-text-secondary)]">
+        Page content starts here.
+      </div>
+    </div>
+  ),
+  args: { items: ITEMS },
+};

@@ -33,6 +33,17 @@ export interface SearchInputProps {
   style?: React.CSSProperties;
   autoFocus?: boolean;
   'aria-label'?: string;
+  /**
+   * Addresses the `<input>` itself, not the wrapper.
+   *
+   * Without it a caller who needs to drive this field from a test had no way
+   * to name it: `className` lands on the wrapper, and the accessible name is
+   * the placeholder, which changes whenever the copy does. The app's document
+   * list ended up wrapping SearchInput in a bare div purely to hang a testid
+   * on it — a hand-rolled element around a library component, which is the
+   * shape this library exists to remove.
+   */
+  'data-testid'?: string;
 }
 
 const TONE = {
@@ -62,6 +73,7 @@ function SearchInput({
   style,
   autoFocus,
   'aria-label': ariaLabel,
+  'data-testid': testId,
 }: SearchInputProps) {
   const palette = TONE[tone] ?? TONE.surface;
   return (
@@ -102,6 +114,7 @@ function SearchInput({
         // identical to the words the user saw, instead of inventing a second
         // wording that can drift from it.
         aria-label={ariaLabel ?? placeholder ?? 'Search'}
+        data-testid={testId}
         className={cn(
           'w-full pl-8 pr-7 py-1.5 text-sm rounded-md border focus:outline-none focus:ring-2 transition-colors',
           palette.field,

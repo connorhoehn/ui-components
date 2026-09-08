@@ -49,20 +49,42 @@ type AnchorPropsWithData = AnchorHTMLAttributes<HTMLAnchorElement> & Record<`dat
 /**
  * How the active item is marked.
  *
- * `underline` is the tab-strip form: a 2px rule under the active item, sitting
- * ON the strip's own bottom border. It is only correct where that border
- * exists — the indicator and the rule are one continuous line, and the
- * `-mb-px` below is what overlaps them.
+ * The two variants are a HIERARCHY, not two interchangeable looks. Apps stack
+ * them: a primary row in the header (`pill`) and a section row under it
+ * (`underline`). Which one you pick says which row the reader is meant to read
+ * first.
  *
- * `pill` is for a nav that sits in a bar rather than on a strip. A header has
- * its own bottom border, lower down and belonging to the header rather than to
- * the tabs, so an underline indicator there hangs in mid-air: measured at 12px
- * above the header rule, attached to nothing, which is what "the nav is not
- * aligned" looks like. It is also shorter (h-8), which is what lets it centre
- * on the same line as a wordmark and a status pill instead of overflowing the
- * bar's content box by a pixel.
+ * `pill` is the PRIMARY form, for a nav sitting in a bar rather than on a
+ * strip. Active is a filled tint (`--color-primary-bg` / `--color-primary-fg`)
+ * plus semibold — a block of brand colour roughly 90x36, which is what makes
+ * it the loudest thing in the row. It also carries no bottom border: a header
+ * owns its own rule, lower down, so an underline indicator there hangs in
+ * mid-air (measured at 12px above the header rule, attached to nothing), which
+ * is exactly what "the nav is not aligned" looks like.
+ *
+ * `underline` is the SECONDARY form: a 2px rule under the active item, sitting
+ * ON the strip's own bottom border. Indicator and rule are one continuous
+ * line — the `-mb-px` below is what overlaps them — so it is only correct
+ * where that border exists. Against a filled pill it reads as a hairline:
+ * same brand colour, ~1/18th of the area.
  */
 export type NavTabsVariant = 'underline' | 'pill';
+
+/**
+ * The item box, shared by BOTH variants.
+ *
+ * Same height, same padding, same gap, so two stacked rows keep one vertical
+ * rhythm and one 28px label-to-label step (px-3 + gap-1 + px-3). They used to
+ * disagree — h-8 in the header against h-10 in the section strip — which made
+ * the SECOND row the taller of the two and inverted the hierarchy the variants
+ * are supposed to express.
+ *
+ * h-9 (36px) rather than h-10, because the app shells here publish a 53px
+ * header (`--app-shell-header-h`); 36px is the tallest item that centres
+ * inside its 52px content box with a whole number of pixels either side.
+ */
+const NAV_ITEM_BASE =
+  'inline-flex h-9 items-center gap-1.5 px-3 text-sm no-underline transition-colors';
 
 function TopNavLink({
   item,
@@ -80,16 +102,20 @@ function TopNavLink({
     'aria-disabled': item.disabled || undefined,
     'data-testid': `topnav-link-${item.to}`,
     className: cn(
-      'inline-flex items-center gap-1.5 px-3 text-sm font-medium no-underline transition-colors',
+      NAV_ITEM_BASE,
       variant === 'pill'
         ? cn(
-            'h-8 rounded-md',
+            'rounded-md',
             active
-              ? 'bg-[var(--color-surface-hover)] text-[var(--color-primary)]'
-              : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)]',
+              ? // Filled, not a colour swap. `text-primary on surface-hover`
+                // was the same weight as an inactive item with the cursor over
+                // it, so the primary row had no state a reader could find
+                // without hunting.
+                'font-semibold bg-[var(--color-primary-bg)] text-[var(--color-primary-fg)]'
+              : 'font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)]',
           )
         : cn(
-            'h-10 border-b-2 -mb-px',
+            'font-medium border-b-2 -mb-px',
             active
               ? 'border-[var(--color-primary)] text-[var(--color-text-primary)]'
               : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
@@ -168,7 +194,10 @@ export function TopNav({
               aria-expanded={moreOpen}
               data-testid="topnav-more"
               className={cn(
-                'inline-flex items-center gap-1.5 px-3 h-10 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer bg-transparent border-l-0 border-r-0 border-t-0',
+                // Same item box as the links it overflows, or "More" sits a
+                // few pixels taller than the tabs it belongs to.
+                NAV_ITEM_BASE,
+                'font-medium border-b-2 -mb-px cursor-pointer bg-transparent border-l-0 border-r-0 border-t-0',
                 overflowActive
                   ? 'border-[var(--color-primary)] text-[var(--color-text-primary)]'
                   : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',

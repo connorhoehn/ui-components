@@ -553,8 +553,33 @@ function AlignIcon({ align }: { align: 'left' | 'center' | 'right' | 'justify' }
   );
 }
 
+/**
+ * A group boundary.
+ *
+ * `bg-border-emphasis`, not `bg-border`, and this is the whole fix: the bar
+ * sits on `--color-surface-panel` (#f8fafc) and `--color-border` is #e2e8f0 —
+ * a four-percent luminance step that is not visible on a screen. Seven of
+ * these were already in the row and the toolbar still read as one
+ * undifferentiated run of thirty controls, because a divider nobody can see is
+ * not a divider. #cbd5e1 on #f8fafc reads; in dark mode the pair is #475569 on
+ * #0f172a, which reads too.
+ *
+ * `mx-1.5` against the row's own `gap-0.5`: 2px between siblings inside a
+ * group, 14px across a boundary. The RATIO is what makes the groups legible —
+ * a visible line with the same spacing either side of it still reads as one
+ * long row with decoration in it.
+ *
+ * `data-divider` so a test can count the groups without depending on how the
+ * line is painted.
+ */
 function Divider() {
-  return <span aria-hidden className="mx-1 h-5 w-px self-center bg-border" />;
+  return (
+    <span
+      aria-hidden
+      data-divider="true"
+      className="mx-1.5 h-5 w-px shrink-0 self-center bg-border-emphasis"
+    />
+  );
 }
 
 /**
@@ -815,6 +840,17 @@ export default function DocumentToolbar({
         </>
       )}
 
+      {/* One COLOUR group: ink, highlight paint, and the highlight toggle.
+          The toggle used to carry its own divider and stand alone, which put a
+          boundary between two controls that do the same job to the same text
+          and none between the lists and the palettes. The condition is the
+          union of the three so the boundary appears with whichever of them the
+          host's extension set actually registers, and never leaves a dangling
+          line in front of nothing. */}
+      {(has(editor, 'setColor') ||
+        has(editor, 'setBackgroundColor') ||
+        has(editor, 'toggleHighlight')) && <Divider />}
+
       {has(editor, 'setColor') && (
         <ColorMenu
           editor={editor}
@@ -842,7 +878,6 @@ export default function DocumentToolbar({
 
       {has(editor, 'toggleHighlight') && (
         <>
-          <Divider />
           <ToolButton
             btn={{
               key: 'highlight', label: '🖍', hint: 'Highlight',
@@ -867,6 +902,9 @@ export default function DocumentToolbar({
         </>
       )}
 
+      {/* INSERT: link, rule, table, image — the things that put something new
+          on the page, as opposed to everything left of here, which restyles
+          what is already there. */}
       <Divider />
       <span ref={linkAnchor} className="inline-flex">
         <ToolButton
@@ -887,22 +925,6 @@ export default function DocumentToolbar({
           testId={`${testId}-link`}
         />
       </span>
-      {has(editor, 'unsetAllMarks') && (
-        <ToolButton
-          btn={{
-            key: 'clear-formatting', label: '⌫', hint: 'Clear formatting',
-            // Marks AND block type, which is what "clear formatting" means in
-            // every word processor: a bolded heading becomes normal text, not
-            // an unbolded heading. `clearNodes` unwraps a list too — also
-            // correct, and also what people expect.
-            run: (e) => { e.chain().focus().unsetAllMarks().clearNodes().run(); },
-            active: () => false,
-          }}
-          editor={editor}
-          active={false}
-          testId={`${testId}-clear-formatting`}
-        />
-      )}
       <ToolButton
         btn={{
           key: 'hr', label: '—', hint: 'Divider  ---',
@@ -931,6 +953,31 @@ export default function DocumentToolbar({
           active={false}
           testId={`${testId}-image`}
         />
+      )}
+
+      {/* Clear formatting sits LAST, alone behind its own boundary, which is
+          where Word and Google Docs both put it. It used to be wedged between
+          the link and the horizontal rule, in the middle of the insert group —
+          a destructive command inside a run of additive ones, one slip away
+          from stripping a paragraph you meant to add a table to. */}
+      {has(editor, 'unsetAllMarks') && (
+        <>
+          <Divider />
+          <ToolButton
+            btn={{
+              key: 'clear-formatting', label: '⌫', hint: 'Clear formatting',
+              // Marks AND block type, which is what "clear formatting" means in
+              // every word processor: a bolded heading becomes normal text, not
+              // an unbolded heading. `clearNodes` unwraps a list too — also
+              // correct, and also what people expect.
+              run: (e) => { e.chain().focus().unsetAllMarks().clearNodes().run(); },
+              active: () => false,
+            }}
+            editor={editor}
+            active={false}
+            testId={`${testId}-clear-formatting`}
+          />
+        </>
       )}
 
       {(onToggleGutter && commentCount > 0) || actions ? (

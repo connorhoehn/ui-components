@@ -104,6 +104,25 @@ export function Toolbar({
 
   const onKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+    // A text field owns these four keys. Roving focus used to take them
+    // unconditionally, so pressing Left to fix a typo in a SearchInput inside
+    // a Toolbar jumped focus to the next button instead of moving the caret,
+    // and Home/End left the field entirely rather than going to the ends of
+    // the value. Callers worked around it by not using Toolbar around a
+    // filter row at all, which is the wrong lesson: the roving pattern is for
+    // moving BETWEEN controls, and inside an editable one there is nothing to
+    // move between. Tab still leaves the field, which is how a keyboard user
+    // exits it anyway.
+    const target = e.target as HTMLElement | null;
+    if (
+      target &&
+      (target.isContentEditable ||
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT')
+    ) {
+      return;
+    }
     const root = ref.current;
     if (!root) return;
     const items = Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE));

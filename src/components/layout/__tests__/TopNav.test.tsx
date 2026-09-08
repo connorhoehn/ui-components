@@ -116,10 +116,6 @@ describe('NavTabs', () => {
     expect(active.className).not.toContain('border-b-2');
     expect(active.className).not.toContain('-mb-px');
     expect(active.className).toContain('rounded-md');
-    // h-8, not h-10: a 40px item overflows the content box of a 64px bar that
-    // has 12px padding and a 1px bottom border, which is what put the tabs
-    // half a pixel below the wordmark and the status pill.
-    expect(active.className).toContain('h-8');
     expect(active.getAttribute('aria-current')).toBe('page');
   });
 
@@ -127,5 +123,43 @@ describe('NavTabs', () => {
     render(<NavTabs items={ITEMS.slice(0, 3)} activeHref="/components" variant="pill" />);
     const current = screen.getAllByRole('link').filter((a) => a.getAttribute('aria-current') === 'page');
     expect(current).toHaveLength(1);
+  });
+
+  // Apps stack these two: a primary row in the header (pill) and a section row
+  // under it (underline). They only read as one control if the item BOX is the
+  // same — same height, same padding, same gap. It used to be h-8 against
+  // h-10, so the second row stood 4px taller than the first.
+  it('both variants render the same item box', () => {
+    const { unmount } = render(<NavTabs items={ITEMS.slice(0, 3)} variant="pill" />);
+    const pill = screen.getByRole('link', { name: 'Home' }).className;
+    unmount();
+    render(<NavTabs items={ITEMS.slice(0, 3)} variant="underline" />);
+    const underline = screen.getByRole('link', { name: 'Home' }).className;
+    for (const box of ['h-9', 'px-3', 'gap-1.5', 'text-sm']) {
+      expect(pill).toContain(box);
+      expect(underline).toContain(box);
+    }
+    // ...and neither carries the other's height, which is the regression this
+    // guards: twMerge would keep whichever came last.
+    expect(pill).not.toContain('h-8');
+    expect(pill).not.toContain('h-10');
+    expect(underline).not.toContain('h-10');
+  });
+
+  // The hierarchy the variants exist to express: the primary row's active item
+  // is a FILLED tint, the secondary row's is a hairline. Same brand colour,
+  // ~18x the area. If the pill ever goes back to a bare colour swap the two
+  // rows read as equals again.
+  it('pill marks active with a filled tint; underline with a hairline', () => {
+    const { unmount } = render(<NavTabs items={ITEMS.slice(0, 3)} activeHref="/components" variant="pill" />);
+    const pill = screen.getByRole('link', { name: 'Components' }).className;
+    expect(pill).toContain('bg-[var(--color-primary-bg)]');
+    expect(pill).toContain('font-semibold');
+    unmount();
+    render(<NavTabs items={ITEMS.slice(0, 3)} activeHref="/components" variant="underline" />);
+    const underline = screen.getByRole('link', { name: 'Components' }).className;
+    expect(underline).not.toContain('bg-[var(--color-primary-bg)]');
+    expect(underline).toContain('border-b-2');
+    expect(underline).toContain('font-medium');
   });
 });

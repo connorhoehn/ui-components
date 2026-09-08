@@ -581,8 +581,16 @@ export default function CanvasDocumentView({
             // scrolled back to once it overflows — its leading edge is simply
             // unreachable. Auto margins centre the same way and collapse
             // correctly when there is no room to spare.
+            // Less air above the sheet when the ruler is on, because the
+            // ruler is PART OF THE PAGE's chrome, not part of the workspace.
+            // With the row's own `sm:py-8` it sat 32px of grey away from the
+            // thing it measures and read as an unrelated strip belonging to
+            // the toolbar above it; every word processor draws it a few pixels
+            // clear of the paper's top edge. Bottom padding is untouched — the
+            // page still needs room to end in.
             className={cn(
-              'flex py-4 px-2 sm:py-8 sm:px-6',
+              'flex px-2 pb-4 sm:px-6 sm:pb-8',
+              showRuler ? 'pt-2 sm:pt-3' : 'pt-4 sm:pt-8',
               (showGutter || showOutline) && 'gap-3 sm:gap-6',
             )}
           >

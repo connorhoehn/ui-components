@@ -75,6 +75,70 @@ describe('DocumentToolbar', () => {
     expect(container.textContent).toBe('');
   });
 
+  /**
+   * Group boundaries.
+   *
+   * The bar holds roughly thirty controls, and without visible boundaries it
+   * reads as one undifferentiated run — which is exactly what it did while the
+   * dividers were painted in `bg-border` (#e2e8f0) on `bg-surface-panel`
+   * (#f8fafc), a step too small to see. These assert the STRUCTURE, not the
+   * paint: that boundaries exist, that no group is empty, and that the two
+   * regroupings below stay put.
+   */
+  describe('group boundaries', () => {
+    const dividers = (el: HTMLElement) => Array.from(el.querySelectorAll('[data-divider]'));
+
+    it('separates the controls into groups', () => {
+      const { editor } = makeEditor();
+      render(<DocumentToolbar editor={editor} />);
+      // undo/redo │ block │ marks │ lists │ insert │ clear-formatting
+      expect(dividers(screen.getByTestId('document-toolbar')).length).toBeGreaterThanOrEqual(4);
+    });
+
+    // A divider with nothing after it is a line pointing at empty space, and
+    // this toolbar renders half its groups conditionally on the host's
+    // extension set — so every boundary has to be gated on the group it opens.
+    it('never leaves a dangling divider', () => {
+      const { editor } = makeEditor();
+      const { container } = render(<DocumentToolbar editor={editor} />);
+      const bar = screen.getByTestId('document-toolbar');
+      for (const d of dividers(bar)) {
+        expect(d.nextElementSibling).not.toBeNull();
+        expect(d.nextElementSibling?.hasAttribute('data-divider')).toBe(false);
+      }
+      expect(container).toBeTruthy();
+    });
+
+    // Ink, highlight paint and the highlight toggle are one question about the
+    // same text. The toggle used to stand behind its own divider while the two
+    // palettes had none in front of them at all.
+    it('keeps the colour controls in one group', () => {
+      const { editor } = makeEditor({}, [
+        'setColor', 'unsetColor', 'setBackgroundColor', 'unsetBackgroundColor', 'toggleHighlight',
+      ]);
+      render(<DocumentToolbar editor={editor} />);
+      const color = screen.getByTestId('document-toolbar-color');
+      const highlight = screen.getByTestId('document-toolbar-highlight');
+      const between = dividers(screen.getByTestId('document-toolbar')).filter(
+        (d) =>
+          color.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_FOLLOWING &&
+          highlight.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_PRECEDING,
+      );
+      expect(between).toHaveLength(0);
+    });
+
+    // Clear formatting is destructive and used to sit between the link and the
+    // horizontal rule, in the middle of the additive insert group.
+    it('puts clear formatting last, behind its own boundary', () => {
+      const { editor } = makeEditor({}, ['unsetAllMarks', 'clearNodes']);
+      render(<DocumentToolbar editor={editor} />);
+      const clear = screen.getByTestId('document-toolbar-clear-formatting');
+      const hr = screen.getByTestId('document-toolbar-hr');
+      expect(hr.compareDocumentPosition(clear) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(clear.previousElementSibling?.hasAttribute('data-divider')).toBe(true);
+    });
+  });
+
   it('is exposed as a toolbar to assistive tech', () => {
     const { editor } = makeEditor();
     render(<DocumentToolbar editor={editor} />);
