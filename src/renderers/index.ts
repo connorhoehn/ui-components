@@ -132,6 +132,16 @@ registerRenderer('checkbox', 'reader', BooleanReaderRenderer);
 // fourteen starter types' 219 fields rendering as prose boxes. Exported so the
 // app can register the LIBRARY's components into its own registry, which is
 // one step toward retiring that fork rather than widening it.
+// …and their field-type DEFINITIONS, which carry the label, icon and
+// description. The renderer components alone were not enough: an app that
+// registers them into its own registry still has `getFieldType('date')`
+// returning undefined, so a section chip cannot name itself and a data-types
+// screen cannot list what exists. Both were true after 2.191.0.
+export { default as textFieldType } from './text/definition';
+export { default as dateFieldType } from './date/definition';
+export { default as numberFieldType } from './number/definition';
+export { default as booleanFieldType } from './boolean/definition';
+
 export { default as TextEditorRenderer } from './text/TextEditorRenderer';
 export { default as TextReaderRenderer } from './text/TextReaderRenderer';
 export { default as DateEditorRenderer } from './date/DateEditorRenderer';
