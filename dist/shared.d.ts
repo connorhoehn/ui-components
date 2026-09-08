@@ -2319,7 +2319,7 @@ export declare interface ScoreBarGaugeProps {
     className?: string;
 }
 
-export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): default_2.JSX.Element;
+export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, style, autoFocus, 'aria-label': ariaLabel, 'data-testid': testId, }: SearchInputProps): default_2.JSX.Element;
 
 export declare interface SearchInputProps {
     value: string;
@@ -2343,6 +2343,17 @@ export declare interface SearchInputProps {
     style?: default_2.CSSProperties;
     autoFocus?: boolean;
     'aria-label'?: string;
+    /**
+     * Addresses the `<input>` itself, not the wrapper.
+     *
+     * Without it a caller who needs to drive this field from a test had no way
+     * to name it: `className` lands on the wrapper, and the accessible name is
+     * the placeholder, which changes whenever the copy does. The app's document
+     * list ended up wrapping SearchInput in a bare div purely to hang a testid
+     * on it — a hand-rolled element around a library component, which is the
+     * shape this library exists to remove.
+     */
+    'data-testid'?: string;
 }
 
 /** @see SurfaceTone — which colour family the field paints in. */

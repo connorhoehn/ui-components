@@ -6801,18 +6801,24 @@ export declare interface NavTabsProps {
 /**
  * How the active item is marked.
  *
- * `underline` is the tab-strip form: a 2px rule under the active item, sitting
- * ON the strip's own bottom border. It is only correct where that border
- * exists — the indicator and the rule are one continuous line, and the
- * `-mb-px` below is what overlaps them.
+ * The two variants are a HIERARCHY, not two interchangeable looks. Apps stack
+ * them: a primary row in the header (`pill`) and a section row under it
+ * (`underline`). Which one you pick says which row the reader is meant to read
+ * first.
  *
- * `pill` is for a nav that sits in a bar rather than on a strip. A header has
- * its own bottom border, lower down and belonging to the header rather than to
- * the tabs, so an underline indicator there hangs in mid-air: measured at 12px
- * above the header rule, attached to nothing, which is what "the nav is not
- * aligned" looks like. It is also shorter (h-8), which is what lets it centre
- * on the same line as a wordmark and a status pill instead of overflowing the
- * bar's content box by a pixel.
+ * `pill` is the PRIMARY form, for a nav sitting in a bar rather than on a
+ * strip. Active is a filled tint (`--color-primary-bg` / `--color-primary-fg`)
+ * plus semibold — a block of brand colour roughly 90x36, which is what makes
+ * it the loudest thing in the row. It also carries no bottom border: a header
+ * owns its own rule, lower down, so an underline indicator there hangs in
+ * mid-air (measured at 12px above the header rule, attached to nothing), which
+ * is exactly what "the nav is not aligned" looks like.
+ *
+ * `underline` is the SECONDARY form: a 2px rule under the active item, sitting
+ * ON the strip's own bottom border. Indicator and rule are one continuous
+ * line — the `-mb-px` below is what overlaps them — so it is only correct
+ * where that border exists. Against a filled pill it reads as a hairline:
+ * same brand colour, ~1/18th of the area.
  */
 export declare type NavTabsVariant = 'underline' | 'pill';
 
@@ -9037,7 +9043,7 @@ export declare interface SearchAuditFilters extends AuditFilters {
  */
 export declare function searchEmoji(query: string, list?: readonly EmojiShortcode[], limit?: number): EmojiShortcode[];
 
-export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): default_2.JSX.Element;
+export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, style, autoFocus, 'aria-label': ariaLabel, 'data-testid': testId, }: SearchInputProps): default_2.JSX.Element;
 
 export declare interface SearchInputProps {
     value: string;
@@ -9061,6 +9067,17 @@ export declare interface SearchInputProps {
     style?: default_2.CSSProperties;
     autoFocus?: boolean;
     'aria-label'?: string;
+    /**
+     * Addresses the `<input>` itself, not the wrapper.
+     *
+     * Without it a caller who needs to drive this field from a test had no way
+     * to name it: `className` lands on the wrapper, and the accessible name is
+     * the placeholder, which changes whenever the copy does. The app's document
+     * list ended up wrapping SearchInput in a bare div purely to hang a testid
+     * on it — a hand-rolled element around a library component, which is the
+     * shape this library exists to remove.
+     */
+    'data-testid'?: string;
 }
 
 /** @see SurfaceTone — which colour family the field paints in. */

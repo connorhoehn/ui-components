@@ -1892,14 +1892,14 @@ var J = {
 		clear: "text-code-muted hover:text-code-text hover:bg-code-raised"
 	}
 };
-function pt({ value: t, onChange: n, placeholder: r, onClear: i, tone: a = "surface", className: o, inputClassName: s, style: c, autoFocus: l, "aria-label": u }) {
-	let d = J[a] ?? J.surface;
+function pt({ value: t, onChange: n, placeholder: r, onClear: i, tone: a = "surface", className: o, inputClassName: s, style: c, autoFocus: l, "aria-label": u, "data-testid": d }) {
+	let f = J[a] ?? J.surface;
 	return /* @__PURE__ */ R("div", {
 		className: e("relative inline-flex items-center", o),
 		style: c,
 		children: [
 			/* @__PURE__ */ R("svg", {
-				className: e("absolute left-3 w-3.5 h-3.5 pointer-events-none", d.icon),
+				className: e("absolute left-3 w-3.5 h-3.5 pointer-events-none", f.icon),
 				viewBox: "0 0 16 16",
 				fill: "none",
 				"aria-hidden": "true",
@@ -1923,14 +1923,15 @@ function pt({ value: t, onChange: n, placeholder: r, onClear: i, tone: a = "surf
 				placeholder: r ?? "Search…",
 				autoFocus: l,
 				"aria-label": u ?? r ?? "Search",
-				className: e("w-full pl-8 pr-7 py-1.5 text-sm rounded-md border focus:outline-none focus:ring-2 transition-colors", d.field, s)
+				"data-testid": d,
+				className: e("w-full pl-8 pr-7 py-1.5 text-sm rounded-md border focus:outline-none focus:ring-2 transition-colors", f.field, s)
 			}),
 			t && /* @__PURE__ */ L("button", {
 				type: "button",
 				onClick: () => {
 					n(""), i?.();
 				},
-				className: e("absolute right-2 p-0.5 rounded", d.clear),
+				className: e("absolute right-2 p-0.5 rounded", f.clear),
 				"aria-label": "Clear search",
 				children: /* @__PURE__ */ L("svg", {
 					width: "12",
@@ -3305,12 +3306,14 @@ function pn({ children: t, end: n, tone: r = "surface", size: i = "sm", sticky: 
 			"Home",
 			"End"
 		].includes(e.key)) return;
-		let t = d.current;
-		if (!t) return;
-		let n = Array.from(t.querySelectorAll(fn));
-		if (n.length === 0) return;
-		let r = n.indexOf(document.activeElement), i;
-		i = e.key === "Home" ? 0 : e.key === "End" ? n.length - 1 : r < 0 ? 0 : (r + (e.key === "ArrowRight" ? 1 : -1) + n.length) % n.length, n[i]?.focus(), e.preventDefault();
+		let t = e.target;
+		if (t && (t.isContentEditable || t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
+		let n = d.current;
+		if (!n) return;
+		let r = Array.from(n.querySelectorAll(fn));
+		if (r.length === 0) return;
+		let i = r.indexOf(document.activeElement), a;
+		a = e.key === "Home" ? 0 : e.key === "End" ? r.length - 1 : i < 0 ? 0 : (i + (e.key === "ArrowRight" ? 1 : -1) + r.length) % r.length, r[a]?.focus(), e.preventDefault();
 	}, []);
 	return /* @__PURE__ */ R("div", {
 		ref: d,

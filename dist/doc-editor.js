@@ -17,7 +17,7 @@ import { o as g, s as _, t as v } from "./VerdictChip-CKnsnKYd.js";
 import { n as y, r as b } from "./renderers-CoOnJdXH.js";
 import { n as x, t as S } from "./TiptapEditor-Dn9rUdZx.js";
 import { A as C, C as w, D as T, E, F as D, I as O, L as ee, M as te, N as k, O as A, P as j, R as ne, S as M, T as N, _ as P, a as F, b as I, c as re, d as L, f as R, g as z, h as B, i as V, j as H, k as ie, l as U, m as ae, o as oe, p as se, r as ce, s as le, t as ue, u as de, v as fe, w as pe, x as me, y as he, z as ge } from "./DocumentEditorPage-MOxdlxyd.js";
-import { a as _e, c as ve, d as ye, f as be, i as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae } from "./CanvasDocumentView-8T6qf7rR.js";
+import { a as _e, c as ve, d as ye, f as be, i as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae } from "./CanvasDocumentView-TsUu6E3Z.js";
 import { useCallback as W, useEffect as G, useImperativeHandle as je, useMemo as K, useRef as q, useState as J } from "react";
 import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
 import * as Me from "yjs";
