@@ -64,6 +64,16 @@ export interface TextRangeEdit {
 export interface ActionItem {
     /** Position in `items`, 0-based. */
     index: number;
+    /**
+     * The `id:` scalar, or `null`.
+     *
+     * The JOIN KEY, and the reason it exists: an index is not an identity. An
+     * item mirrored into a queryable row has to be findable again after
+     * somebody inserts a line above it, and `items[2]` stops naming the same
+     * work the moment they do. Absent until something needs the item to be
+     * addressable — see `ensureItemIdEdit`.
+     */
+    id: string | null;
     /** The `text:` scalar. `''` when the item has no text yet. */
     text: string;
     /**
@@ -87,6 +97,18 @@ export const STATUS_PENDING = 'pending';
 
 /** The `macro:<name>` discriminator for a checklist. */
 export const ACTION_ITEMS_MACRO_NAME = 'action-items';
+
+/**
+ * The `category` a section-item row carries so it is recognisably an action
+ * item rather than a mirrored callout.
+ *
+ * The inbox splits one query on this field: `hitl` rows are decisions and
+ * everything else is a task, so the value matters less than its NOT being
+ * `hitl` — a to-do that arrived with an Acknowledge button where an agent was
+ * waiting for an answer would retire the row for the person and leave the
+ * agent parked.
+ */
+export const ACTION_ITEM_CATEGORY = 'action-item';
 
 // ---------------------------------------------------------------------------
 // Reading
@@ -253,6 +275,7 @@ export function readActionItems(source: string): ActionItem[] | null {
         const status = entryOf(item, 'status')?.scalar.value ?? '';
         return {
             index,
+            id: entryOf(item, 'id')?.scalar.value ?? null,
             text: entryOf(item, 'text')?.scalar.value ?? '',
             status,
             done: status === STATUS_DONE,
@@ -369,6 +392,85 @@ export function removeItemKeyEdit(source: string, index: number, key: string): T
     // A continuation line: take it and the break that put it on its own line.
     const previous = item.entries[position - 1]!;
     return { from: previous.lineEnd, to: entry.lineEnd, insert: '' };
+}
+
+/**
+ * Gives one item an `id`, if it has none — the edit that makes it addressable.
+ *
+ * Minted lazily rather than at insert, and that is the whole design: an id in
+ * every checklist would put a UUID in front of every reader of the exported
+ * markdown for the sake of items nothing outside the page will ever ask about.
+ * An item becomes addressable when somebody assigns it, which is also the
+ * moment a row is worth writing.
+ *
+ * `mint` is injected so a caller can make the id deterministic; the default is
+ * `crypto.randomUUID` where it exists, falling back to a time-plus-random
+ * string for a JSDOM-shaped environment that has no WebCrypto.
+ */
+export function ensureItemIdEdit(
+    source: string,
+    index: number,
+    mint: () => string = defaultItemId,
+): TextRangeEdit | null {
+    const body = parseBody(source);
+    const item = body?.items[index];
+    if (!item) return null;
+    if (entryOf(item, 'id')) return null; // already addressable
+    return setItemKeyEdit(source, index, 'id', mint());
+}
+
+function defaultItemId(): string {
+    const c = (globalThis as { crypto?: { randomUUID?: () => string } }).crypto;
+    if (c?.randomUUID) return c.randomUUID();
+    return `ai-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+// ---------------------------------------------------------------------------
+// The mirror row
+// ---------------------------------------------------------------------------
+
+/**
+ * What one action item looks like to something that has never opened the
+ * document — the whole of it, in one place, so the document half and the host
+ * half cannot disagree about what is visible outside the page.
+ *
+ * The same problem `HitlMirrorRow` solves and for the same reason: a checklist
+ * lives in a Y.Doc, there is no server-side Y.Doc, and scanning every document
+ * for assigned work is O(all documents) of CRDT sync to draw one list. So the
+ * body keeps the record and a row carries the queryable half.
+ *
+ * `assigneeId`, not a name: the cross-document query is keyed on the auth
+ * subject. `dueDate` rather than `due`, because that is what the row field is
+ * called and a rename here would silently drop every deadline.
+ */
+export interface ActionItemMirrorRow {
+    itemId: string;
+    text: string;
+    assigneeId: string;
+    category: typeof ACTION_ITEM_CATEGORY;
+    dueDate: string | null;
+    /** Terminal work. The row's status follows the tick, so a finished item
+     *  leaves the assignee's inbox instead of nagging them forever. */
+    done: boolean;
+}
+
+/**
+ * The row for one item, or `null` when there is nothing anybody could query.
+ *
+ * Three ways to be unmirrorable, all legal in a body: no id (nothing to key
+ * on), nobody assigned (a row in nobody's inbox), and no text (a row that says
+ * nothing to the person who finds it).
+ */
+export function actionItemMirrorRow(item: ActionItem): ActionItemMirrorRow | null {
+    if (!item.id || !item.assignee || !item.text) return null;
+    return {
+        itemId: item.id,
+        text: item.text,
+        assigneeId: item.assignee,
+        category: ACTION_ITEM_CATEGORY,
+        dueDate: item.due,
+        done: item.done,
+    };
 }
 
 /** Ticking, as an edit. `pending` <-> `done`, four characters. */

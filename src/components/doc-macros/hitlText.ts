@@ -202,8 +202,18 @@ export const HITL_CONVERGENCE =
     'answer stuck. An answered row fills an unanswered body; an answered body is ' +
     'never overwritten, only reported.';
 
-/** The sentinel section a page-shaped document files macro rows under. */
-export const HITL_SENTINEL_SECTION = '_macro';
+/**
+ * The sentinel section a page-shaped document files macro rows under.
+ *
+ * Shared by every macro that mirrors itself, not just callouts — a canvas page
+ * has no sections at all, so all of them need the same fake one to be
+ * addressable. `HITL_SENTINEL_SECTION` is the older name, kept because it is
+ * what the shipped hosts import.
+ */
+export const MACRO_ITEM_SENTINEL_SECTION = '_macro';
+
+/** @deprecated Use `MACRO_ITEM_SENTINEL_SECTION` — the sentinel is not HITL's. */
+export const HITL_SENTINEL_SECTION = MACRO_ITEM_SENTINEL_SECTION;
 
 /** The `category` a section-item row carries so it is recognisably a callout. */
 export const HITL_ITEM_CATEGORY = 'hitl';

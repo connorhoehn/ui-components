@@ -57,6 +57,9 @@ export { ActionItemsBlock } from './ActionItemsBlock';
 export type { ActionItemsBlockProps, AssignablePerson } from './ActionItemsBlock';
 export {
     ACTION_ITEMS_MACRO_NAME,
+    ACTION_ITEM_CATEGORY,
+    actionItemMirrorRow,
+    ensureItemIdEdit,
     STATUS_DONE,
     STATUS_PENDING,
     readActionItems,
@@ -69,7 +72,7 @@ export {
     removeItemKeyEdit,
     yamlScalar,
 } from './actionItemsText';
-export type { ActionItem, TextRangeEdit } from './actionItemsText';
+export type { ActionItem, ActionItemMirrorRow, TextRangeEdit } from './actionItemsText';
 
 // The agent -> human hand-off. Same registry, same one-range-per-edit rule;
 // the difference is that a HITL answer has a SECOND reader outside the
@@ -81,6 +84,7 @@ export { HitlBlock, hitlPhase } from './HitlBlock';
 export type { HitlBlockProps, HitlPerson } from './HitlBlock';
 export {
     HITL_MACRO_NAME,
+    MACRO_ITEM_SENTINEL_SECTION,
     HITL_QUERYABILITY,
     HITL_CONVERGENCE,
     HITL_SENTINEL_SECTION,

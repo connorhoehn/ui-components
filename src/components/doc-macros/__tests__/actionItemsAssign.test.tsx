@@ -19,7 +19,7 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
 import { ReplaceStep } from '@tiptap/pm/transform';
 import { ActionItemsMacro, type ActionItemsMacroOptions } from '../ActionItemsMacro';
-import { readActionItems } from '../actionItemsText';
+import { readActionItems, type ActionItemMirrorRow } from '../actionItemsText';
 import { refreshMacroViews } from '../registry';
 
 const LocalMacro = Node.create({
@@ -103,6 +103,77 @@ async function pick(e: Editor, value: string): Promise<void> {
     });
 }
 
+describe('the mirror seam', () => {
+    it('reports a row the moment an item becomes assigned, and mints its id', async () => {
+        const rows: ActionItemMirrorRow[] = [];
+        let e!: Editor;
+        await run(() => {
+            e = mount({ people: () => PEOPLE, onItemChanged: (r) => rows.push(r) }, BODY);
+        });
+        // Nothing to query yet: unassigned work is invisible outside the page
+        // by design, not by omission.
+        expect(rows).toHaveLength(0);
+
+        await pick(e, 'bob');
+
+        expect(rows).toHaveLength(1);
+        expect(rows[0]).toMatchObject({
+            text: 'ship it',
+            assigneeId: 'bob',
+            category: 'action-item',
+            done: false,
+        });
+        // An index is not an identity — inserting a line above this item must
+        // not move somebody else's row onto it.
+        expect(rows[0]!.itemId).toBeTruthy();
+        expect(readActionItems(body(e))?.[0]!.id).toBe(rows[0]!.itemId);
+    });
+
+    it('keeps the id when the item is unassigned and reassigned', async () => {
+        const rows: ActionItemMirrorRow[] = [];
+        let e!: Editor;
+        await run(() => {
+            e = mount({ people: () => PEOPLE, onItemChanged: (r) => rows.push(r) }, BODY);
+        });
+        await pick(e, 'bob');
+        const first = readActionItems(body(e))?.[0]!.id;
+        await pick(e, '');
+        await pick(e, 'ana');
+        // Re-minting would orphan the row that already carries the old id.
+        expect(readActionItems(body(e))?.[0]!.id).toBe(first);
+        expect(rows[rows.length - 1]).toMatchObject({ itemId: first!, assigneeId: 'ana' });
+    });
+
+    it('follows a tick, so finished work leaves the inbox', async () => {
+        const rows: ActionItemMirrorRow[] = [];
+        let e!: Editor;
+        await run(() => {
+            e = mount(
+                { people: () => PEOPLE, onItemChanged: (r) => rows.push(r) },
+                ['items:', '  - assignee: ana', '    id: item-1', '    status: pending', '    text: ship it'].join('\n'),
+            );
+        });
+        expect(rows[0]).toMatchObject({ itemId: 'item-1', done: false });
+        await run(() => {
+            (testId(e, 'action-items-item-0-toggle') as HTMLElement).click();
+        });
+        expect(rows[rows.length - 1]).toMatchObject({ itemId: 'item-1', done: true });
+    });
+
+    it('says nothing about an item nobody could query', async () => {
+        const rows: ActionItemMirrorRow[] = [];
+        await run(() => {
+            // Assigned but untitled: a row that says nothing to whoever finds
+            // it. Legal in a body, useless outside one.
+            mount(
+                { onItemChanged: (r) => rows.push(r) },
+                ['items:', '  - assignee: ana', '    id: item-1', '    status: pending'].join('\n'),
+            );
+        });
+        expect(rows).toHaveLength(0);
+    });
+});
+
 describe('the assignee picker', () => {
     it('is drawn only when the host supplied a directory', async () => {
         let bare!: Editor;
@@ -143,7 +214,7 @@ describe('the assignee picker', () => {
         expect(select.options.length).toBe(3);
     });
 
-    it('assigns in a single ReplaceStep', async () => {
+    it('assigns in single ReplaceSteps — one per key, never a payload rewrite', async () => {
         let e!: Editor;
         await run(() => {
             e = mount({ people: () => PEOPLE }, BODY);
@@ -153,11 +224,21 @@ describe('the assignee picker', () => {
 
         await pick(e, 'bob');
 
-        expect(steps).toHaveLength(1);
-        expect(steps[0]).toBeInstanceOf(ReplaceStep);
+        // Two, because this item had no `id` yet and assigning is what makes
+        // it addressable. Each is still ONE range over one scalar — which is
+        // what merges, undoes and marks as a suggestion cleanly.
+        expect(steps).toHaveLength(2);
+        expect(steps.every((s) => s instanceof ReplaceStep)).toBe(true);
+
         expect(readActionItems(body(e))?.[0]!.assignee).toBe('bob');
         // Untouched: assigning is not a payload rewrite.
         expect(readActionItems(body(e))?.[0]).toMatchObject({ text: 'ship it', done: false });
+
+        // Reassigning an item that is already addressable is one.
+        steps.length = 0;
+        await pick(e, 'ana');
+        expect(steps).toHaveLength(1);
+        expect(readActionItems(body(e))?.[0]!.assignee).toBe('ana');
     });
 
     it('unassigns by removing the key, not by blanking it', async () => {

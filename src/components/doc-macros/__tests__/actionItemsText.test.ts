@@ -48,9 +48,18 @@ const apply = (source: string, edit: TextRangeEdit | null): string =>
 describe('reading a checklist', () => {
     it('reads the bytes the chassis writes', () => {
         expect(readActionItems(CHASSIS_BODY)).toEqual([
-            { index: 0, text: 'ship it', status: 'pending', done: false, assignee: null, due: null },
+            {
+                index: 0,
+                id: null,
+                text: 'ship it',
+                status: 'pending',
+                done: false,
+                assignee: null,
+                due: null,
+            },
             {
                 index: 1,
+                id: null,
                 text: 'wire it',
                 status: 'done',
                 done: true,

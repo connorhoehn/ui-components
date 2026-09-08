@@ -50,8 +50,10 @@ import {
 } from './registry';
 import {
     ACTION_ITEMS_MACRO_NAME,
+    actionItemMirrorRow,
     actionItemsMacroText,
     addItemEdit,
+    ensureItemIdEdit,
     readActionItems,
     removeItemEdit,
     removeItemKeyEdit,
@@ -59,6 +61,7 @@ import {
     setItemTextEdit,
     toggleItemEdit,
     type ActionItem,
+    type ActionItemMirrorRow,
     type TextRangeEdit,
 } from './actionItemsText';
 import { ActionItemsBlock, type AssignablePerson } from './ActionItemsBlock';
@@ -91,6 +94,22 @@ export interface ActionItemsMacroOptions {
      * directory: a control listing nobody is worse than no control.
      */
     people?: () => readonly AssignablePerson[];
+    /**
+     * An item's QUERYABLE fields changed, so the host's row should be brought
+     * in line with them: on insert, on a reassignment, on a tick, and whenever
+     * a peer changes any of them through the CRDT.
+     *
+     * Fires on every client that has the page open, which is why a host's
+     * write has to be idempotent — a projection maintained by one designated
+     * client would stop being maintained the moment that client closed the
+     * tab. `ActionItemsMacroOptions` says nothing about how the row is stored;
+     * see `actionItemMirrorRow` for what is in it and why an unassigned or
+     * unidentified item produces nothing at all.
+     *
+     * Omitted means document-only, which is honest: with no host reading the
+     * rows, nothing outside the page is out of step with the body.
+     */
+    onItemChanged?: (row: ActionItemMirrorRow) => void;
 }
 
 class ActionItemsView extends ReactMacroView {
@@ -103,7 +122,24 @@ class ActionItemsView extends ReactMacroView {
     ) {
         super(ctx, ACTION_ITEMS_MACRO_NAME);
         this.items = items;
+        this.report();
         this.schedule();
+    }
+
+    /**
+     * Tells the host about every item something outside the page could query.
+     *
+     * Called on the body, not on the interaction, so a change a PEER made
+     * through the CRDT projects exactly like a local one — the row has to
+     * follow the document whoever moved it.
+     */
+    private report(): void {
+        const onItemChanged = this.options.onItemChanged;
+        if (!onItemChanged) return;
+        for (const item of this.items) {
+            const row = actionItemMirrorRow(item);
+            if (row) onItemChanged(row);
+        }
     }
 
     protected element() {
@@ -130,17 +166,36 @@ class ActionItemsView extends ReactMacroView {
                         // never a payload rewrite. Unassigning REMOVES the key
                         // rather than blanking it, because absent is what this
                         // format means by unassigned.
-                        onAssign: (i: number, id: string) =>
-                            this.apply(
-                                id
-                                    ? setItemKeyEdit(this.node.textContent, i, 'assignee', id)
-                                    : removeItemKeyEdit(this.node.textContent, i, 'assignee'),
-                            ),
+                        onAssign: (i: number, id: string) => this.assign(i, id),
                     }
                     : {})}
                 {...(this.editable ? { onRemove: () => this.removeBlock() } : {})}
             />
         );
+    }
+
+    /**
+     * Assigning, which is one edit or two.
+     *
+     * The second is the id, and it is minted HERE rather than at insert
+     * because this is the moment the item becomes something a person has to
+     * find from outside the document (see `ensureItemIdEdit`). The two are
+     * dispatched in sequence and the second reads the text the first produced
+     * — composing two ranges against the same pre-edit body corrupts the
+     * payload, which is the trap `DecisionMacro` documents.
+     *
+     * Unassigning REMOVES the key rather than blanking it, because absent is
+     * what this format means by unassigned. The id is left where it is: the
+     * item was addressable once and may be again, and re-minting would orphan
+     * whatever row already carries the old one.
+     */
+    private assign(index: number, assigneeId: string): void {
+        if (!assigneeId) {
+            this.apply(removeItemKeyEdit(this.node.textContent, index, 'assignee'));
+            return;
+        }
+        this.apply(ensureItemIdEdit(this.node.textContent, index));
+        this.apply(setItemKeyEdit(this.node.textContent, index, 'assignee', assigneeId));
     }
 
     /** Every mutation is one range of the macro's own text. */
@@ -160,7 +215,10 @@ class ActionItemsView extends ReactMacroView {
         const changed = node.textContent !== this.node.textContent;
         this.node = node;
         this.items = items;
-        if (changed) this.schedule();
+        if (changed) {
+            this.report();
+            this.schedule();
+        }
         return true;
     }
 
