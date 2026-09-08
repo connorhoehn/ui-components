@@ -25,6 +25,7 @@ import { useEditorState, type Editor } from '@tiptap/react';
 import { cn } from '../../lib/cn';
 import { Select } from '../forms/Select';
 import LinkPopover from './LinkPopover';
+import { LINE_SPACINGS, LINE_SPACING_LABELS, type LineSpacing } from './canvasLineSpacing';
 
 export interface DocumentToolbarProps {
   editor: Editor | null;
@@ -154,6 +155,38 @@ const LISTS: MarkButton[] = [
   { key: 'taskList', label: '☑', hint: 'Task list  - [ ] item', run: (e) => { e.chain().focus().toggleTaskList().run(); }, active: (e) => e.isActive('taskList') },
 ];
 
+/**
+ * The handlers every control in this bar needs, and the reason there are two.
+ *
+ * `onMouseDown` + `preventDefault` is the load-bearing half: the editor loses
+ * its selection the moment focus moves to a button, and every command here acts
+ * on that selection. Suppressing the default before focus moves is what keeps
+ * "select three words, press B" working.
+ *
+ * It is also, on its own, why NOTHING IN THIS TOOLBAR WORKED FROM A KEYBOARD.
+ * A button activated with Enter or Space fires `click` and no `mousedown` at
+ * all, so a person tabbing to Bold and pressing Enter got silence. Measured on
+ * a live page-shaped document before this was added: `isActive('bold')` was
+ * false after Enter, false after Space, and true after a mouse click — the same
+ * for the align, colour and table menus, which never opened. Twenty-four of the
+ * bar's twenty-seven focusable controls were dead; the three that worked were
+ * the native `<select>`s.
+ *
+ * `ev.detail === 0` is what separates the two paths. A mouse click carries the
+ * click count in `detail`; a click the browser synthesises from a keypress on a
+ * focused button carries 0. So the `onClick` below runs for keyboard activation
+ * only and never doubles a mouse click, which a naive `onClick` would.
+ */
+function activate(run: () => void): {
+  onMouseDown: (ev: { preventDefault: () => void }) => void;
+  onClick: (ev: { detail: number }) => void;
+} {
+  return {
+    onMouseDown: (ev) => { ev.preventDefault(); run(); },
+    onClick: (ev) => { if (ev.detail === 0) run(); },
+  };
+}
+
 function ToolButton({
   btn, editor, testId, active,
 }: { btn: MarkButton; editor: Editor; testId: string; active: boolean }) {
@@ -165,7 +198,7 @@ function ToolButton({
       aria-label={btn.hint}
       // Toggles, so the state is announced rather than left to colour alone.
       aria-pressed={active}
-      onMouseDown={(ev) => { ev.preventDefault(); btn.run(editor); }}
+      {...activate(() => btn.run(editor))}
       className={cn(
         'min-w-7 h-7 px-1.5 rounded text-xs font-semibold cursor-pointer border-none',
         active ? 'bg-primary text-white' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
@@ -292,7 +325,7 @@ function ColorMenu({
         aria-label={title}
         aria-haspopup="menu"
         aria-expanded={open}
-        onMouseDown={(ev) => { ev.preventDefault(); setOpen((v) => !v); }}
+        {...activate(() => setOpen((v) => !v))}
         className={cn(
           'inline-flex h-7 flex-col items-center justify-center gap-px px-1.5 rounded text-xs cursor-pointer border-none leading-none',
           open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
@@ -323,7 +356,7 @@ function ColorMenu({
             data-testid={`${testId}-none`}
             title="None"
             aria-label="None"
-            onMouseDown={(ev) => { ev.preventDefault(); apply(null); }}
+            {...activate(() => apply(null))}
             className="col-span-4 rounded px-1 py-0.5 text-left text-[11px] text-text-secondary hover:bg-surface-hover cursor-pointer border-none bg-transparent"
           >
             None
@@ -337,7 +370,7 @@ function ColorMenu({
               data-testid={`${testId}-${c.label.toLowerCase()}`}
               title={c.label}
               aria-label={c.label}
-              onMouseDown={(ev) => { ev.preventDefault(); apply(c.value); }}
+              {...activate(() => apply(c.value))}
               className={cn(
                 'h-6 w-6 rounded cursor-pointer border',
                 c.value === current ? 'border-primary ring-1 ring-primary' : 'border-border',
@@ -408,9 +441,7 @@ function TableMenu({
         aria-label={inTable ? 'Table options' : 'Insert a table'}
         aria-haspopup="menu"
         aria-expanded={open}
-        // mousedown, not click: the editor loses its selection the moment
-        // focus moves, and every command below acts on that selection.
-        onMouseDown={(ev) => { ev.preventDefault(); setOpen((v) => !v); }}
+        {...activate(() => setOpen((v) => !v))}
         className={cn(
           'inline-flex items-center gap-0.5 h-7 px-1.5 rounded text-xs cursor-pointer border-none',
           open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
@@ -431,7 +462,7 @@ function TableMenu({
             type="button"
             role="menuitem"
             data-testid={`${testId}-insert`}
-            onMouseDown={(ev) => { ev.preventDefault(); insert(); }}
+            {...activate(insert)}
             className="cursor-pointer rounded border-none bg-transparent px-2 py-1 text-left text-xs text-text-secondary hover:bg-surface-hover"
           >
             Insert table
@@ -448,7 +479,7 @@ function TableMenu({
                   type="button"
                   role="menuitem"
                   data-testid={`${testId}-${e.key}`}
-                  onMouseDown={(ev) => { ev.preventDefault(); run(e.cmd); }}
+                  {...activate(() => run(e.cmd))}
                   className="cursor-pointer rounded border-none bg-transparent px-2 py-1 text-left text-xs text-text-secondary hover:bg-surface-hover"
                 >
                   {e.label}
@@ -482,9 +513,7 @@ function AlignMenu({
         aria-label="Text alignment"
         aria-haspopup="menu"
         aria-expanded={open}
-        // mousedown, not click: the editor loses its selection the moment
-        // focus moves, and the whole row already opens this way.
-        onMouseDown={(ev) => { ev.preventDefault(); setOpen((v) => !v); }}
+        {...activate(() => setOpen((v) => !v))}
         className={cn(
           'inline-flex items-center gap-0.5 h-7 px-1.5 rounded text-xs cursor-pointer border-none',
           open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
@@ -510,7 +539,7 @@ function AlignMenu({
               data-testid={`${testId}-${align}`}
               title={alignLabel(align)}
               aria-label={alignLabel(align)}
-              onMouseDown={(ev) => { ev.preventDefault(); apply(align); }}
+              {...activate(() => apply(align))}
               className={cn(
                 'inline-flex h-7 w-7 items-center justify-center rounded cursor-pointer border-none',
                 align === current
@@ -524,6 +553,99 @@ function AlignMenu({
         </span>
       )}
     </span>
+  );
+}
+
+/**
+ * Line spacing, beside alignment — the two paragraph-shape controls, together,
+ * as in every word processor.
+ *
+ * The values are multiples of the paper's GRID ROW rather than of the font
+ * size, and 1.15 is deliberately absent; both decisions, and what they cost the
+ * baseline grid, are argued in `canvasLineSpacing.ts`. The short version is
+ * that Tiptap's own `setLineHeight` is an inline mark measured in em, so on
+ * this paper "Double" would render at 1.21x the paper's leading and knock the
+ * page grid out by 5.6px a line.
+ */
+function LineSpacingMenu({
+  editor, current, testId,
+}: { editor: Editor; current: LineSpacing; testId: string }) {
+  const { open, setOpen, wrapRef } = useToolMenu();
+
+  const apply = (spacing: LineSpacing) => {
+    const chain = editor.chain().focus() as never as Record<string, (v: string) => { run: () => void }>;
+    chain['setLineSpacing']!(spacing).run();
+    setOpen(false);
+  };
+
+  return (
+    <span ref={wrapRef} className="relative inline-flex">
+      <button
+        type="button"
+        data-testid={testId}
+        title={`Line spacing: ${LINE_SPACING_LABELS[current]}`}
+        aria-label="Line spacing"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        {...activate(() => setOpen((v) => !v))}
+        className={cn(
+          'inline-flex items-center gap-0.5 h-7 px-1.5 rounded text-xs cursor-pointer border-none',
+          open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
+        )}
+      >
+        <LineSpacingIcon />
+        <span aria-hidden className="text-[8px] leading-none">▾</span>
+      </button>
+
+      {open && (
+        <span
+          role="menu"
+          data-testid={`${testId}-menu`}
+          aria-label="Line spacing"
+          className="absolute left-0 top-full z-20 mt-1 flex min-w-[110px] flex-col rounded-md border border-border bg-surface-panel p-1 shadow-lg"
+        >
+          {LINE_SPACINGS.map((spacing) => (
+            <button
+              key={spacing}
+              type="button"
+              role="menuitemradio"
+              aria-checked={spacing === current}
+              data-testid={`${testId}-${spacing.replace('.', '-')}`}
+              title={LINE_SPACING_LABELS[spacing]}
+              aria-label={LINE_SPACING_LABELS[spacing]}
+              {...activate(() => apply(spacing))}
+              className={cn(
+                'cursor-pointer rounded border-none px-2 py-1 text-left text-xs',
+                spacing === current
+                  ? 'bg-primary text-white'
+                  : 'bg-transparent text-text-secondary hover:bg-surface-hover',
+              )}
+            >
+              {LINE_SPACING_LABELS[spacing]}
+            </button>
+          ))}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/**
+ * Three lines with a double-headed arrow beside them — the glyph Word and Docs
+ * both use, and the only one that says "the gap between the lines" rather than
+ * "the lines".
+ */
+function LineSpacingIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false">
+      {[2.5, 7, 11.5].map((y) => (
+        <rect key={y} x="5.5" y={y} width="8" height="1.4" rx="0.7" fill="currentColor" />
+      ))}
+      {/* The arrow: a stem down the left with a head at each end. */}
+      <rect x="2.2" y="2.5" width="1.2" height="10.4" rx="0.6" fill="currentColor" />
+      <path d="M2.8 1.4 L4.6 4 L1 4 Z" fill="currentColor" />
+      <path d="M2.8 14 L4.6 11.4 L1 11.4 Z" fill="currentColor" />
+    </svg>
   );
 }
 
@@ -671,6 +793,10 @@ export default function DocumentToolbar({
       flags['inListItem'] = e.isActive('listItem') || e.isActive('taskItem');
       flags['inTaskItem'] = e.isActive('taskItem');
       for (const a of ALIGNMENTS) flags[`align-${a}`] = e.isActive({ textAlign: a });
+      // The caret's paragraph spacing. `getAttributes` on a node the schema
+      // does not have returns {}, so an editor without the extension reads as
+      // the default rather than throwing.
+      const spacing = (e.getAttributes('paragraph') as { lineSpacing?: string }).lineSpacing;
       // What the cursor is actually in, so the pickers show the truth rather
       // than resetting to their first option after every click. `getAttributes`
       // on an unregistered mark returns {}, so this is safe either way.
@@ -684,6 +810,9 @@ export default function DocumentToolbar({
         fontSize: style.fontSize ?? '',
         color: style.color ?? '',
         backgroundColor: style.backgroundColor ?? '',
+        lineSpacing: (LINE_SPACINGS as readonly string[]).includes(spacing ?? '')
+          ? (spacing as LineSpacing)
+          : ('1' as LineSpacing),
       };
     },
   });
@@ -891,15 +1020,24 @@ export default function DocumentToolbar({
         </>
       )}
 
+      {(has(editor, 'setTextAlign') || has(editor, 'setLineSpacing')) && <Divider />}
       {has(editor, 'setTextAlign') && (
-        <>
-          <Divider />
-          <AlignMenu
-            editor={editor}
-            current={ALIGNMENTS.find((a) => state?.flags[`align-${a}`]) ?? 'left'}
-            testId={`${testId}-align`}
-          />
-        </>
+        <AlignMenu
+          editor={editor}
+          current={ALIGNMENTS.find((a) => state?.flags[`align-${a}`]) ?? 'left'}
+          testId={`${testId}-align`}
+        />
+      )}
+      {/* Line spacing sits with alignment rather than with the character
+          marks: both change the SHAPE of a paragraph, and neither changes the
+          letters. It is the last main-bar control Google Docs had and this one
+          did not. */}
+      {has(editor, 'setLineSpacing') && (
+        <LineSpacingMenu
+          editor={editor}
+          current={state?.lineSpacing ?? '1'}
+          testId={`${testId}-line-spacing`}
+        />
       )}
 
       {/* INSERT: link, rule, table, image — the things that put something new

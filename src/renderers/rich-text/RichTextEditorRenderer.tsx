@@ -4,7 +4,7 @@
 // Wraps TiptapEditor — no task list.
 
 import type { SectionRendererProps } from '../types';
-import TiptapEditor from '../../components/doc-editor/TiptapEditor';
+import DefaultTiptapEditor from '../../components/doc-editor/TiptapEditor';
 
 export default function RichTextEditorRenderer({
   section,
@@ -14,7 +14,10 @@ export default function RichTextEditorRenderer({
   user,
   editable,
   onUpdateCursorInfo,
+  extensions,
+  editorComponent,
 }: SectionRendererProps) {
+  const Editor = editorComponent ?? DefaultTiptapEditor;
   if (!fragment || !ydoc) {
     return (
       <div className="text-text-tertiary italic text-[13px] py-2">
@@ -24,7 +27,7 @@ export default function RichTextEditorRenderer({
   }
 
   return (
-    <TiptapEditor
+    <Editor
       fragment={fragment}
       ydoc={ydoc}
       provider={provider ?? null}
@@ -33,6 +36,7 @@ export default function RichTextEditorRenderer({
       placeholder={section.placeholder ?? 'Write content...'}
       sectionId={section.id}
       onUpdateCursorInfo={onUpdateCursorInfo}
+      extensions={extensions}
     />
   );
 }

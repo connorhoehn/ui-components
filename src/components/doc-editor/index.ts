@@ -6,6 +6,18 @@ export { default as DocumentHeader } from './DocumentHeader';
 export type { DocumentHeaderCallVariant } from './DocumentHeader';
 export { default as EditorToolbar } from './EditorToolbar';
 export { default as TiptapEditor } from './TiptapEditor';
+// Line spacing, in grid rows rather than in em — `TiptapEditor` registers it,
+// so a host gets the command for free; exported for the rare consumer building
+// its own editor on this paper.
+export {
+  CanvasLineSpacing,
+  LINE_SPACINGS,
+  LINE_SPACING_LABELS,
+  isLineSpacing,
+  parseLineSpacing,
+  lineSpacingAttributes,
+} from './canvasLineSpacing';
+export type { LineSpacing, CanvasLineSpacingOptions } from './canvasLineSpacing';
 export { default as useFollowCursor, clientIdForUser } from './useFollowCursor';
 export type { UseFollowCursorOptions } from './useFollowCursor';
 export { default as StandaloneTiptap } from './StandaloneTiptap';

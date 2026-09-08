@@ -186,3 +186,48 @@ describe('GoLiveButton — failure says something true', () => {
     expect(screen.queryByTestId('go-live-error')).toBeNull();
   });
 });
+
+// The claim "you are live" is a claim about OTHER PEOPLE. It must not outlive
+// the connection that would carry the broadcast to them.
+//
+// Observed 2026-09-08, driving a real broadcast: the broadcaster's context was
+// taken offline mid-broadcast and the pill read "You are live · 1 watching" for
+// the full 30s the drop lasted, while the audience side had already switched to
+// "The stream has stopped responding." `streamReady` could not catch it — hosts
+// latch it true at first publish and stop re-asking.
+describe('GoLiveButton — a dropped broadcaster is not live', () => {
+  it('retires the confident pill while the transport is retrying', () => {
+    render(<GoLiveButton live streamReady connection="unstable" />);
+    const status = screen.getByTestId('go-live-status');
+    expect(status).not.toHaveTextContent(/you are live/i);
+    expect(status).toHaveTextContent(/reconnecting/i);
+    expect(screen.getByTestId('go-live')).toHaveAttribute('data-connection', 'unstable');
+  });
+
+  it('says plainly that nothing is going out when the transport is down', () => {
+    render(<GoLiveButton live streamReady connection="offline" />);
+    expect(screen.getByTestId('go-live-status')).toHaveTextContent(/offline — nobody is receiving/i);
+    expect(screen.getByTestId('go-live-hint')).toHaveTextContent(/connection dropped/i);
+  });
+
+  // A count measured before the drop describes an audience that is no longer
+  // receiving anything. Showing it beside a broken connection reads as "1
+  // person is watching this right now", which is the specific false thing.
+  it('drops the audience figure rather than reporting a stale one', () => {
+    render(<GoLiveButton live streamReady connection="offline" viewerCount={1} />);
+    expect(screen.queryByTestId('go-live-viewers')).toBeNull();
+  });
+
+  it('still says "You are live" when the connection is fine', () => {
+    render(<GoLiveButton live streamReady connection="online" viewerCount={1} />);
+    expect(screen.getByTestId('go-live-status')).toHaveTextContent(/you are live/i);
+    expect(screen.getByTestId('go-live-viewers')).toHaveTextContent('1 watching');
+  });
+
+  // Defaulting matters: every existing caller omits the prop and none of them
+  // meant "assume broken".
+  it('assumes a healthy connection when the host does not say', () => {
+    render(<GoLiveButton live streamReady />);
+    expect(screen.getByTestId('go-live-status')).toHaveTextContent(/you are live/i);
+  });
+});

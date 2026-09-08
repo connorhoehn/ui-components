@@ -22,12 +22,13 @@ import { ySyncPluginKey, absolutePositionToRelativePosition, relativePositionToA
 // time, permanently and without restoring it, to swallow a Tiptap
 // "extension-collaboration" compat warning. That patched the console of any
 // app that merely imported this file. It was also unnecessary:
-// `StarterKit.configure({ history: false })` below is the documented fix for
-// that warning, and with the patch removed the editor mounts with a real
-// Y.Doc + Collaboration extension in tests and emits nothing. Removed in
-// v2.81.0 — if the warning ever returns, configure the extension, don't
-// patch the host's console.
+// `StarterKit.configure({ history: false, undoRedo: false })` below is the
+// documented fix for that warning, and with the patch removed the editor
+// mounts with a real Y.Doc + Collaboration extension in tests and emits
+// nothing. Removed in v2.81.0 — if the warning ever returns, configure the
+// extension, don't patch the host's console.
 import EditorToolbar from './EditorToolbar';
+import { CanvasLineSpacing } from './canvasLineSpacing';
 import { cn } from '../../lib/cn';
 
 /** Minimal provider shape needed by awareness. */
@@ -258,10 +259,28 @@ export default function TiptapEditor({
 }: TiptapEditorProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const extensions = useMemo(() => [
-    StarterKit.configure({ history: false } as any),
+    // `history` was StarterKit's v2 key for the undo/redo sub-extension; v3
+    // RENAMED it to `undoRedo`, and an unknown key is ignored in silence. So
+    // `{ history: false }` alone stopped disabling anything the moment this
+    // package moved to @tiptap/starter-kit v3, leaving a live ProseMirror undo
+    // stack running alongside the Y.js one — two histories fighting over the
+    // same document, which is exactly what Collaboration requires you not to
+    // have. Both keys are passed so the config is correct on either major.
+    StarterKit.configure({ history: false, undoRedo: false } as any),
     TaskList,
     TaskItem.configure({ nested: true }),
     Placeholder.configure({ placeholder: placeholderText }),
+    // Line spacing, as a paragraph attribute measured in grid rows.
+    //
+    // Registered HERE rather than being left to the host's `extensions` prop
+    // because its unit is `--doc-line`, and `--doc-line` is this package's:
+    // it is declared in `styles.css` and every value the extension can write
+    // is a multiple of the paper's own row. An extension whose meaning is
+    // defined by a stylesheet the host does not own has no business being the
+    // host's to remember to register. It is also why it is safe on the section
+    // editors that share this component — the `1.65em` fallback in
+    // `canvasLineSpacing.ts` covers a page with no grid on it.
+    CanvasLineSpacing,
     Collaboration.configure({ document: ydoc, fragment }),
     // Appended last so a caller's extension can override a built-in's keymap
     // without being able to remove Collaboration.

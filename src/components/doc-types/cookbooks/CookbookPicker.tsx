@@ -31,6 +31,24 @@ export interface CookbookPickerProps {
   busy?: boolean;
   /** Label on each card's action button. Default `Install`. */
   actionLabel?: string;
+  /**
+   * Names of types the host ALREADY has, lower-cased by the host or not — the
+   * comparison here is case- and whitespace-insensitive.
+   *
+   * Opt-in, because "installed" only means something on the types ADMIN page.
+   * The same picker also opens the new-document dialog, where you are starting
+   * a document rather than installing a type and every cookbook is a valid
+   * choice however many you have already used.
+   *
+   * Measured before this existed: the admin page offered "Add this type" for
+   * all fourteen cookbooks including the three already installed, and clicking
+   * one produced a SECOND type with the same name, same icon and same field
+   * count — indistinguishable from the first in the type list, the create
+   * dialog and the document chip.
+   */
+  installedNames?: readonly string[];
+  /** Fired instead of `onPick` when an installed cookbook's card is actioned. */
+  onOpenInstalled?: (cookbook: DocumentTypeCookbook) => void;
   /** Focus the search box shortly after mount. Default `false`. */
   autoFocusSearch?: boolean;
   /**
@@ -66,6 +84,8 @@ function CookbookCard({
   busy,
   cardPrefix,
   layout,
+  installed,
+  onOpenInstalled,
 }: {
   cookbook: DocumentTypeCookbook;
   onPick: (c: DocumentTypeCookbook) => void;
@@ -73,12 +93,14 @@ function CookbookCard({
   busy: boolean;
   cardPrefix: string;
   layout: 'fixed' | 'fluid';
+  installed: boolean;
+  onOpenInstalled?: ((c: DocumentTypeCookbook) => void) | undefined;
 }) {
   return (
     <div
       data-testid={`${cardPrefix}-card-${cookbook.id}`}
       className={cn(
-        'flex flex-col gap-2 min-h-[200px] p-3.5 bg-surface border border-border rounded-[10px] font-inherit',
+        'flex flex-col gap-2 min-h-[200px] p-3.5 bg-surface border border-border rounded-[10px]',
         layout === 'fixed' && 'w-[220px]',
       )}
     >
@@ -106,18 +128,36 @@ function CookbookCard({
           ))}
         </div>
       )}
-      <button
-        type="button"
-        data-testid={`${cardPrefix}-use-${cookbook.id}`}
-        onClick={() => onPick(cookbook)}
-        disabled={busy}
-        className={cn(
-          'mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-white border-none rounded-md font-inherit',
-          busy ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer',
-        )}
-      >
-        {actionLabel}
-      </button>
+      {/* An installed cookbook offers the way TO it, not a second copy of it.
+          Disabling would say "no" without saying where the first one went. */}
+      {installed ? (
+        <button
+          type="button"
+          data-testid={`${cardPrefix}-installed-${cookbook.id}`}
+          onClick={onOpenInstalled ? () => onOpenInstalled(cookbook) : undefined}
+          disabled={busy || !onOpenInstalled}
+          aria-label={`${cookbook.name} is already added`}
+          className={cn(
+            'mt-auto py-1.5 px-2.5 text-xs font-semibold rounded-md border border-border bg-surface-inset text-text-secondary',
+            busy || !onOpenInstalled ? 'cursor-default' : 'cursor-pointer hover:text-text-primary',
+          )}
+        >
+          {onOpenInstalled ? 'Added · Open' : 'Added'}
+        </button>
+      ) : (
+        <button
+          type="button"
+          data-testid={`${cardPrefix}-use-${cookbook.id}`}
+          onClick={() => onPick(cookbook)}
+          disabled={busy}
+          className={cn(
+            'mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-white border-none rounded-md',
+            busy ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer',
+          )}
+        >
+          {actionLabel}
+        </button>
+      )}
     </div>
   );
 }
@@ -135,7 +175,15 @@ export function CookbookPicker({
   cardPrefix = 'cookbook',
   layout = 'fixed',
   gridHeightClassName = 'max-h-[60vh]',
+  installedNames,
+  onOpenInstalled,
 }: CookbookPickerProps) {
+  // Case- and whitespace-insensitive, because the host's stored name came from
+  // a text field a person typed into and the cookbook's is a literal.
+  const installedSet = useMemo(
+    () => new Set((installedNames ?? []).map((n) => n.trim().toLowerCase())),
+    [installedNames],
+  );
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<CookbookCategory | 'All'>('All');
   const searchRef = useRef<HTMLInputElement>(null);
@@ -174,7 +222,7 @@ export function CookbookPicker({
           aria-pressed={activeCategory === 'All'}
           onClick={() => setActiveCategory('All')}
           className={cn(
-            'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit',
+            'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer',
             activeCategory === 'All'
               ? 'bg-primary text-white'
               : 'bg-surface-hover text-text-secondary',
@@ -190,7 +238,7 @@ export function CookbookPicker({
             aria-pressed={activeCategory === cat}
             onClick={() => setActiveCategory(cat)}
             className={cn(
-              'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit',
+              'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer',
               activeCategory === cat
                 ? 'bg-primary text-white'
                 : 'bg-surface-hover text-text-secondary',
@@ -240,6 +288,8 @@ export function CookbookPicker({
               busy={busy}
               cardPrefix={cardPrefix}
               layout={layout}
+              installed={installedSet.has(cookbook.name.trim().toLowerCase())}
+              onOpenInstalled={onOpenInstalled}
             />
           ))}
         </div>

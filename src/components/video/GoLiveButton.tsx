@@ -84,6 +84,29 @@ export interface GoLiveButtonProps {
    */
   streamReady?: boolean;
   /**
+   * The broadcaster's OWN connection, while live.
+   *
+   * `streamReady` answers "did this broadcast ever reach anybody" and it
+   * latches: hosts derive it from a session record that stops being re-asked
+   * once it is true. So it catches a broadcast that never came up and is
+   * silent about one that stops halfway — which is the failure the person
+   * presenting is least able to notice on their own, because their own
+   * preview keeps playing from their own camera.
+   *
+   * Observed: a broadcaster whose network dropped mid-broadcast was shown
+   * "You are live · 1 watching" for the full 30s the drop lasted, while the
+   * audience was already being told the stream had stopped responding.
+   *
+   *   'online'   — nothing is wrong, or nobody is watching the connection.
+   *   'unstable' — the transport is retrying. Media may not be going out.
+   *   'offline'  — the transport is down. Nothing is going out.
+   *
+   * Anything but `online` retires the confident pill. The claim "you are
+   * live" is a claim about OTHER PEOPLE, and it must not outlive the
+   * connection that would carry it to them.
+   */
+  connection?: 'online' | 'unstable' | 'offline';
+  /**
    * Who gets told, named — e.g. `#design`. The social consequence of the
    * press is the half people underestimate, and "the channel" is vaguer than
    * the product can afford to be about a message it is going to post.
@@ -122,6 +145,7 @@ export function GoLiveButton({
   onEndBroadcast,
   viewerCount,
   streamReady,
+  connection = 'online',
   channelName,
   error,
   endHint,
@@ -134,13 +158,19 @@ export function GoLiveButton({
     // The call is up and nothing is going out. Said plainly, because the
     // broadcaster is the only person who can do anything about it and the
     // audience side of this failure is silent — a viewer just sees no invite.
-    const dark = streamReady === false;
+    // Two different ways of not really being live, and the connection one
+    // wins: a broadcaster whose transport is down has a more urgent problem
+    // than one whose stream never published, and saying both at once says
+    // neither.
+    const cut = connection !== 'online';
+    const dark = cut || streamReady === false;
     return (
       <div className={cn('flex flex-col gap-1', className)}>
         <div
           data-testid={testId}
           data-live="true"
           data-stream={streamReady === undefined ? 'unknown' : streamReady ? 'ready' : 'pending'}
+          data-connection={connection}
           className="inline-flex items-center gap-2"
         >
           {/* Announced, not merely repainted. Pressing "Go live" REPLACES the
@@ -159,7 +189,13 @@ export function GoLiveButton({
               aria-hidden
               className={cn('h-1.5 w-1.5 rounded-full', dark ? 'bg-warning-fg' : 'bg-white')}
             />
-            {dark ? 'On the call — no stream yet' : 'You are live'}
+            {cut
+              ? (connection === 'offline'
+                ? 'You are offline — nobody is receiving this'
+                : 'Reconnecting — your audience may not be receiving this')
+              : dark
+                ? 'On the call — no stream yet'
+                : 'You are live'}
           </span>
           {/* A measured zero is shown, not swallowed. See the prop docs: the
               broadcaster is the one person who needs to know the difference
@@ -187,9 +223,13 @@ export function GoLiveButton({
         </div>
         {(dark || (!onEndBroadcast && endHint)) && (
           <span data-testid={`${testId}-hint`} className={HINT}>
-            {dark
-              ? 'Nobody can watch yet — the stream has not started.'
-              : endHint}
+            {cut
+              ? (connection === 'offline'
+                ? 'Your connection dropped. The broadcast resumes if it comes back.'
+                : 'Your connection is unstable. What you see locally is not what they see.')
+              : dark
+                ? 'Nobody can watch yet — the stream has not started.'
+                : endHint}
           </span>
         )}
       </div>

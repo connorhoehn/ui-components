@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup, act } from '@testing-library/react';
+import { render, screen, fireEvent, createEvent, cleanup, act } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import DocumentToolbar from '../DocumentToolbar';
 
@@ -48,7 +48,12 @@ function makeEditor(active: Record<string, unknown> = {}, optional: string[] = [
     chain: () => chain,
     // The link popover reads the current href to prefill itself when editing
     // an existing link.
-    getAttributes: (name: string) => (name === 'link' ? { href: state['linkHref'] ?? '' } : {}),
+    getAttributes: (name: string) => {
+      if (name === 'link') return { href: state['linkHref'] ?? '' };
+      // The line-spacing menu reads the caret's paragraph attributes.
+      if (name === 'paragraph') return { lineSpacing: state['lineSpacing'] };
+      return {};
+    },
     isActive: (name: string, attrs?: Record<string, unknown>) => {
       const key = attrs ? `${name}:${JSON.stringify(attrs)}` : name;
       return Boolean(state[key]);
@@ -214,15 +219,31 @@ describe('DocumentToolbar', () => {
     expect(screen.getByTestId('document-toolbar-taskList')).toHaveAttribute('title', expect.stringContaining('- [ ]'));
   });
 
-  // mouseDown, not click: a click would blur the editor first and collapse
-  // the selection the command is supposed to act on.
-  it('acts on mouseDown so the selection survives', () => {
+  // mouseDown, not click, FOR THE MOUSE: a click would blur the editor first
+  // and collapse the selection the command is supposed to act on.
+  //
+  // This test used to assert `fireEvent.click(...)` produced NOTHING, and that
+  // assertion was the defect written down as an invariant. jsdom's bare
+  // `click` carries `detail: 0`, which is exactly the shape of a click the
+  // browser synthesises from Enter or Space on a focused button — so what the
+  // old test pinned was "the keyboard does not work here", and it did not:
+  // measured on a live document, bold stayed off through Enter and through
+  // Space and came on only with a real mouse click. The invariant that
+  // actually matters is the one below: the mouse path still goes through
+  // mousedown, and it runs the command once, not twice.
+  it('acts on mouseDown so the selection survives, and runs once per mouse click', () => {
     const { editor, calls } = makeEditor();
     render(<DocumentToolbar editor={editor} />);
-    fireEvent.click(screen.getByTestId('document-toolbar-bold'));
-    expect(calls).toEqual([]);
-    fireEvent.mouseDown(screen.getByTestId('document-toolbar-bold'));
+    const bold = screen.getByTestId('document-toolbar-bold');
+
+    const down = createEvent.mouseDown(bold);
+    fireEvent(bold, down);
+    expect(down.defaultPrevented).toBe(true);
     expect(calls).toContain('toggleBold');
+
+    // The click the browser sends after that mousedown must not repeat it.
+    fireEvent.click(bold, { detail: 1 });
+    expect(calls.filter((c) => c === 'toggleBold')).toHaveLength(1);
   });
 
   // The regression this file exists for. Reading editor.isActive() inline
@@ -469,6 +490,100 @@ describe('DocumentToolbar — the comment-gutter toggle', () => {
     const toggle = screen.getByTestId(TOGGLE);
     const extra = screen.getByTestId('extra');
     expect(toggle.compareDocumentPosition(extra) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  // ── Line spacing ───────────────────────────────────────────────────────
+  //
+  // The last main-bar control Google Docs had and this toolbar did not. The
+  // trap it walked into is worth pinning: Tiptap's `TextStyleKit` already
+  // registers a `setLineHeight`, so a naive implementation would have wired the
+  // menu to a command that writes an INLINE SPAN measured in em — 1.21x the
+  // paper's leading for "Double", and off the baseline grid. These assert the
+  // toolbar drives `setLineSpacing`, the block attribute in grid rows, instead.
+
+  it('hides line spacing when the extension is absent', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} />);
+    expect(screen.queryByTestId('document-toolbar-line-spacing')).toBeNull();
+  });
+
+  it('opens the line-spacing menu and applies a choice', () => {
+    const { editor, calls } = makeEditor({}, ['setLineSpacing']);
+    render(<DocumentToolbar editor={editor} />);
+
+    expect(screen.queryByTestId('document-toolbar-line-spacing-menu')).toBeNull();
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-line-spacing'));
+    expect(screen.getByTestId('document-toolbar-line-spacing-menu')).toBeInTheDocument();
+
+    // The three the paper's grid can hold. 1.15 is deliberately not offered —
+    // see canvasLineSpacing.ts.
+    for (const key of ['1', '1-5', '2']) {
+      expect(screen.getByTestId(`document-toolbar-line-spacing-${key}`)).toBeInTheDocument();
+    }
+    expect(screen.queryByTestId('document-toolbar-line-spacing-1-15')).toBeNull();
+
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-line-spacing-1-5'));
+    expect(calls).toContain('setLineSpacing:["1.5"]');
+    // NOT the Tiptap built-in, which is the whole point.
+    expect(calls.some((c) => c.startsWith('setLineHeight'))).toBe(false);
+    expect(screen.queryByTestId('document-toolbar-line-spacing-menu')).toBeNull();
+  });
+
+  it('shows the spacing the caret is actually in', () => {
+    const { editor, moveCursor } = makeEditor({}, ['setLineSpacing']);
+    render(<DocumentToolbar editor={editor} />);
+
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-line-spacing'));
+    expect(screen.getByTestId('document-toolbar-line-spacing-1')).toHaveAttribute('aria-checked', 'true');
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    act(() => { moveCursor({ lineSpacing: '2' }); });
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-line-spacing'));
+    expect(screen.getByTestId('document-toolbar-line-spacing-2')).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByTestId('document-toolbar-line-spacing-1')).toHaveAttribute('aria-checked', 'false');
+  });
+
+  // ── Keyboard activation ────────────────────────────────────────────────
+  //
+  // Every control in this bar handles `mousedown` and calls `preventDefault`,
+  // because that is the only way the editor keeps its selection while a button
+  // runs. For most of this toolbar's life that was the ONLY handler, which made
+  // the whole bar dead to the keyboard: Enter and Space on a focused button
+  // fire `click` and no `mousedown` at all. Measured on a live document before
+  // the fix — bold stayed off through Enter and Space, and came on with a mouse
+  // click.
+  //
+  // A keyboard-synthesised click carries `detail: 0`; a mouse click carries the
+  // click count. Both directions are asserted, because an `onClick` that
+  // ignored `detail` would fix the keyboard and toggle bold twice per mouse
+  // click.
+
+  it('runs a command when a focused button is activated by keyboard', () => {
+    const { editor, calls } = makeEditor();
+    render(<DocumentToolbar editor={editor} />);
+
+    fireEvent.click(screen.getByTestId('document-toolbar-bold'), { detail: 0 });
+    expect(calls).toContain('toggleBold');
+  });
+
+  it('does not double-run a mouse click', () => {
+    const { editor, calls } = makeEditor();
+    render(<DocumentToolbar editor={editor} />);
+
+    const bold = screen.getByTestId('document-toolbar-bold');
+    fireEvent.mouseDown(bold);
+    fireEvent.click(bold, { detail: 1 });
+    expect(calls.filter((c) => c === 'toggleBold')).toHaveLength(1);
+  });
+
+  it('opens a menu from the keyboard', () => {
+    const { editor } = makeEditor({}, ['setTextAlign']);
+    render(<DocumentToolbar editor={editor} />);
+
+    fireEvent.click(screen.getByTestId('document-toolbar-align'), { detail: 0 });
+    expect(screen.getByTestId('document-toolbar-align-menu')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('document-toolbar-align-center'), { detail: 0 });
+    expect(screen.queryByTestId('document-toolbar-align-menu')).toBeNull();
   });
 });
 

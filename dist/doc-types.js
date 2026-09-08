@@ -8,7 +8,7 @@ import { t as l } from "./Input-DLknWXri.js";
 import { t as u } from "./Textarea-Dz4doxTv.js";
 import { t as d } from "./Select-CqVokE2v.js";
 import { t as f } from "./Checkbox-DqN9RkXK.js";
-import { _ as p, g as m, v as h, y as g } from "./renderers-CYx0-PXM.js";
+import { G as p, H as m, U as h, W as g } from "./renderers-9QJtVt3f.js";
 import { useEffect as _, useId as v, useMemo as y, useRef as b, useState as x } from "react";
 import { Fragment as S, jsx as C, jsxs as w } from "react/jsx-runtime";
 import { DndContext as T, KeyboardSensor as E, PointerSensor as D, closestCorners as O, useSensor as k, useSensors as A } from "@dnd-kit/core";
@@ -742,10 +742,10 @@ function q({ initialType: e, onSave: t, onCancel: n, idToken: a, onExportSchema:
 function J(e) {
 	return e.toLowerCase().replace(/[^a-z]/g, "-");
 }
-function Y({ cookbook: e, onPick: t, actionLabel: n, busy: r, cardPrefix: i, layout: a }) {
+function Y({ cookbook: e, onPick: t, actionLabel: n, busy: r, cardPrefix: i, layout: a, installed: s, onOpenInstalled: c }) {
 	return /* @__PURE__ */ w("div", {
 		"data-testid": `${i}-card-${e.id}`,
-		className: o("flex flex-col gap-2 min-h-[200px] p-3.5 bg-surface border border-border rounded-[10px] font-inherit", a === "fixed" && "w-[220px]"),
+		className: o("flex flex-col gap-2 min-h-[200px] p-3.5 bg-surface border border-border rounded-[10px]", a === "fixed" && "w-[220px]"),
 		children: [
 			/* @__PURE__ */ w("div", {
 				className: "flex items-center gap-2.5",
@@ -773,25 +773,33 @@ function Y({ cookbook: e, onPick: t, actionLabel: n, busy: r, cardPrefix: i, lay
 					children: e
 				}, e))
 			}),
-			/* @__PURE__ */ C("button", {
+			s ? /* @__PURE__ */ C("button", {
+				type: "button",
+				"data-testid": `${i}-installed-${e.id}`,
+				onClick: c ? () => c(e) : void 0,
+				disabled: r || !c,
+				"aria-label": `${e.name} is already added`,
+				className: o("mt-auto py-1.5 px-2.5 text-xs font-semibold rounded-md border border-border bg-surface-inset text-text-secondary", r || !c ? "cursor-default" : "cursor-pointer hover:text-text-primary"),
+				children: c ? "Added · Open" : "Added"
+			}) : /* @__PURE__ */ C("button", {
 				type: "button",
 				"data-testid": `${i}-use-${e.id}`,
 				onClick: () => t(e),
 				disabled: r,
-				className: o("mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-white border-none rounded-md font-inherit", r ? "opacity-60 cursor-not-allowed" : "cursor-pointer"),
+				className: o("mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-white border-none rounded-md", r ? "opacity-60 cursor-not-allowed" : "cursor-pointer"),
 				children: n
 			})
 		]
 	});
 }
-function X({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearch: r = !1, idPrefix: i = "cookbooks", cardPrefix: a = "cookbook", layout: s = "fixed", gridHeightClassName: c = "max-h-[60vh]" }) {
-	let [u, d] = x(""), [f, p] = x("All"), g = b(null);
+function X({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearch: r = !1, idPrefix: i = "cookbooks", cardPrefix: a = "cookbook", layout: s = "fixed", gridHeightClassName: c = "max-h-[60vh]", installedNames: u, onOpenInstalled: d }) {
+	let f = y(() => new Set((u ?? []).map((e) => e.trim().toLowerCase())), [u]), [p, h] = x(""), [v, T] = x("All"), E = b(null);
 	_(() => {
 		if (!r) return;
-		let e = setTimeout(() => g.current?.focus(), 30);
+		let e = setTimeout(() => E.current?.focus(), 30);
 		return () => clearTimeout(e);
 	}, [r]);
-	let v = y(() => h(u, f), [u, f]);
+	let D = y(() => g(p, v), [p, v]);
 	return /* @__PURE__ */ w(S, { children: [
 		/* @__PURE__ */ w("div", {
 			role: "group",
@@ -800,50 +808,52 @@ function X({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearc
 			children: [/* @__PURE__ */ C("button", {
 				type: "button",
 				"data-testid": `${a}-cat-all`,
-				"aria-pressed": f === "All",
-				onClick: () => p("All"),
-				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit", f === "All" ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
+				"aria-pressed": v === "All",
+				onClick: () => T("All"),
+				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer", v === "All" ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
 				children: "All"
 			}), m.map((e) => /* @__PURE__ */ C("button", {
 				type: "button",
 				"data-testid": `${a}-cat-${J(e)}`,
-				"aria-pressed": f === e,
-				onClick: () => p(e),
-				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit", f === e ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
+				"aria-pressed": v === e,
+				onClick: () => T(e),
+				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer", v === e ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
 				children: e
 			}, e))]
 		}),
 		/* @__PURE__ */ C(l, {
-			ref: g,
+			ref: E,
 			type: "search",
 			"data-testid": `${i}-search`,
 			"aria-label": "Search cookbooks",
 			placeholder: "Search cookbooks...",
-			value: u,
-			onChange: (e) => d(e.target.value),
+			value: p,
+			onChange: (e) => h(e.target.value),
 			onKeyDown: (n) => {
-				n.key === "Enter" && !t && v.length > 0 && (n.preventDefault(), e(v[0]));
+				n.key === "Enter" && !t && D.length > 0 && (n.preventDefault(), e(D[0]));
 			},
 			className: "mb-3.5"
 		}),
-		v.length === 0 ? /* @__PURE__ */ w("div", {
+		D.length === 0 ? /* @__PURE__ */ w("div", {
 			"data-testid": `${i}-empty`,
 			className: "text-center py-8 text-[13px] text-text-tertiary",
 			children: [
 				"No cookbooks match \"",
-				u,
+				p,
 				"\"."
 			]
 		}) : /* @__PURE__ */ C("div", {
 			"data-testid": `${i}-grid`,
 			className: o("grid gap-3 overflow-y-auto p-1", s === "fixed" ? "grid-cols-[repeat(3,220px)] justify-center" : "grid-cols-[repeat(auto-fill,minmax(210px,1fr))]", c),
-			children: v.map((r) => /* @__PURE__ */ C(Y, {
+			children: D.map((r) => /* @__PURE__ */ C(Y, {
 				cookbook: r,
 				onPick: e,
 				actionLabel: n,
 				busy: t,
 				cardPrefix: a,
-				layout: s
+				layout: s,
+				installed: f.has(r.name.trim().toLowerCase()),
+				onOpenInstalled: d
 			}, r.id))
 		})
 	] });
@@ -907,12 +917,12 @@ function Q({ typeName: e, onConfirm: t, onCancel: n }) {
 		footer: /* @__PURE__ */ w(S, { children: [/* @__PURE__ */ C("button", {
 			"data-testid": "cancel-delete",
 			onClick: n,
-			className: "py-[7px] px-[18px] text-[13px] font-semibold bg-surface border border-border-field rounded-[7px] cursor-pointer font-inherit",
+			className: "py-[7px] px-[18px] text-[13px] font-semibold bg-surface border border-border-field rounded-[7px] cursor-pointer",
 			children: "Cancel"
 		}), /* @__PURE__ */ C("button", {
 			"data-testid": "confirm-delete",
 			onClick: t,
-			className: "py-[7px] px-[18px] text-[13px] font-semibold bg-danger text-white border-none rounded-[7px] cursor-pointer font-inherit",
+			className: "py-[7px] px-[18px] text-[13px] font-semibold bg-danger text-white border-none rounded-[7px] cursor-pointer",
 			children: "Delete"
 		})] }),
 		children: [/* @__PURE__ */ C("div", {
@@ -957,14 +967,14 @@ function $({ type: e, active: t, onSelect: n, onDeleteRequest: r, onCreateDocume
 					e.stopPropagation(), i();
 				},
 				title: `Start a new ${e.name}`,
-				className: "border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit bg-transparent text-primary hover:bg-accent-bg hover:text-accent-fg",
+				className: "border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold bg-transparent text-primary hover:bg-accent-bg hover:text-accent-fg",
 				children: "New"
 			}),
 			/* @__PURE__ */ C("button", {
 				"data-testid": `edit-type-${e.id}`,
 				onClick: n,
 				title: "Edit type",
-				className: o("border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit hover:bg-accent-bg hover:text-accent-fg", t ? "bg-accent-border text-accent-fg" : "bg-transparent text-text-tertiary"),
+				className: o("border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold hover:bg-accent-bg hover:text-accent-fg", t ? "bg-accent-border text-accent-fg" : "bg-transparent text-text-tertiary"),
 				children: "Edit"
 			}),
 			/* @__PURE__ */ C("button", {
@@ -1053,7 +1063,7 @@ function ee({ idToken: e, onExportSchema: t, onCreateDocument: n } = {}) {
 		}
 	}, L = g ? r.find((e) => e.id === g) : null;
 	return /* @__PURE__ */ w("div", {
-		className: "flex h-full overflow-hidden font-inherit",
+		className: "flex h-full overflow-hidden",
 		children: [
 			/* @__PURE__ */ w("div", {
 				className: "w-[264px] shrink-0 border-r border-border flex flex-col overflow-hidden bg-surface-inset",
@@ -1069,13 +1079,13 @@ function ee({ idToken: e, onExportSchema: t, onCreateDocument: n } = {}) {
 								"data-testid": "cookbooks-btn",
 								onClick: () => y(!0),
 								title: "Browse the ready-made document types",
-								className: "py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit whitespace-nowrap",
+								className: "py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer whitespace-nowrap",
 								children: "Known types"
 							}), /* @__PURE__ */ C("button", {
 								"data-testid": "create-type-btn",
 								onClick: O,
 								title: "Build a document type field by field",
-								className: "py-[5px] px-3 text-xs font-medium bg-transparent text-text-secondary border border-border rounded-md cursor-pointer font-inherit whitespace-nowrap",
+								className: "py-[5px] px-3 text-xs font-medium bg-transparent text-text-secondary border border-border rounded-md cursor-pointer whitespace-nowrap",
 								children: "From scratch"
 							})]
 						})]
@@ -1091,7 +1101,7 @@ function ee({ idToken: e, onExportSchema: t, onCreateDocument: n } = {}) {
 							}), /* @__PURE__ */ C("button", {
 								"data-testid": "empty-browse-types-btn",
 								onClick: () => y(!0),
-								className: "bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2 font-inherit",
+								className: "bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2",
 								children: "Browse known types →"
 							})]
 						}) : r.map((e) => /* @__PURE__ */ C($, {
@@ -1137,7 +1147,7 @@ function ee({ idToken: e, onExportSchema: t, onCreateDocument: n } = {}) {
 						action: /* @__PURE__ */ C("button", {
 							"data-testid": "idle-create-btn",
 							onClick: O,
-							className: "px-3.5 py-2 text-[13px] font-medium bg-transparent text-text-secondary border border-border rounded-lg cursor-pointer font-inherit",
+							className: "px-3.5 py-2 text-[13px] font-medium bg-transparent text-text-secondary border border-border rounded-lg cursor-pointer",
 							children: "Build a type from scratch"
 						})
 					}), /* @__PURE__ */ w("div", {
@@ -1152,7 +1162,12 @@ function ee({ idToken: e, onExportSchema: t, onCreateDocument: n } = {}) {
 							idPrefix: "type-starters",
 							cardPrefix: "type-starter",
 							layout: "fluid",
-							gridHeightClassName: "max-h-none"
+							gridHeightClassName: "max-h-none",
+							installedNames: r.map((e) => e.name),
+							onOpenInstalled: (e) => {
+								let t = r.find((t) => t.name.trim().toLowerCase() === e.name.trim().toLowerCase());
+								t && (h(t.id), p("edit"));
+							}
 						})]
 					})]
 				}), (f === "create" || f === "edit") && /* @__PURE__ */ C(q, {
@@ -1178,4 +1193,4 @@ function ee({ idToken: e, onExportSchema: t, onCreateDocument: n } = {}) {
 	});
 }
 //#endregion
-export { m as COOKBOOK_CATEGORIES, X as CookbookPicker, Z as CookbooksModal, q as DocumentTypeWizard, ee as DocumentTypesPage, B as FieldDefinitionEditor, R as StepIndicator, z as WizardStepNavigation, p as documentTypeCookbooks, h as filterCookbooks, g as matchesCookbookQuery };
+export { m as COOKBOOK_CATEGORIES, X as CookbookPicker, Z as CookbooksModal, q as DocumentTypeWizard, ee as DocumentTypesPage, B as FieldDefinitionEditor, R as StepIndicator, z as WizardStepNavigation, h as documentTypeCookbooks, g as filterCookbooks, p as matchesCookbookQuery };

@@ -1,7 +1,7 @@
 import { cn } from '../../lib/cn';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
-import TiptapEditor from '../../components/doc-editor/TiptapEditor';
+import DefaultTiptapEditor from '../../components/doc-editor/TiptapEditor';
 import { sectionItems } from '../sectionItems';
 
 export default function ChecklistReaderRenderer({
@@ -11,7 +11,10 @@ export default function ChecklistReaderRenderer({
   provider,
   onUpdateItem,
   onNavigateToEditor,
+  extensions,
+  editorComponent,
 }: SectionRendererProps) {
+  const Editor = editorComponent ?? DefaultTiptapEditor;
   const items = sectionItems(section);
   const total = items.length;
   const doneCount = items.filter(i => i.status === 'done').length;
@@ -21,13 +24,14 @@ export default function ChecklistReaderRenderer({
     <div>
       {fragment && ydoc && (
         <div className="mb-2.5">
-          <TiptapEditor
+          <Editor
             fragment={fragment}
             ydoc={ydoc}
             provider={provider ?? null}
             user={{ name: '', color: '#6b7280' }}
             editable={false}
             sectionId={section.id}
+            extensions={extensions}
           />
         </div>
       )}
@@ -78,7 +82,7 @@ export default function ChecklistReaderRenderer({
         <button
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
-          className="mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit"
+          className="mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0"
         >
           Edit in editor →
         </button>

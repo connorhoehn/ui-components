@@ -3,7 +3,7 @@ import { cn } from '../../lib/cn';
 import { useEventCallback } from '../../hooks/useEventCallback';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
-import TiptapEditor from '../../components/doc-editor/TiptapEditor';
+import DefaultTiptapEditor from '../../components/doc-editor/TiptapEditor';
 import { postApproval, mapStatusToDecision } from './approvalSync';
 import { sectionItems } from '../sectionItems';
 
@@ -55,7 +55,7 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
         readOnly={!editable}
         placeholder="Describe the decision..."
         className={cn(
-          'flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5',
+          'flex-1 border-none outline-none text-sm bg-transparent px-1 py-0.5',
           item.status === 'rejected' ? 'text-text-tertiary line-through' : 'text-text-primary',
         )}
       />
@@ -64,7 +64,7 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
         <select
           value={item.status === 'done' ? 'acked' : item.status}
           onChange={(e) => onUpdate({ status: e.target.value as TaskItem['status'] })}
-          className="text-[10px] px-2 py-0.5 rounded-[10px] font-semibold cursor-pointer outline-none font-inherit shrink-0 appearance-none"
+          className="text-[10px] px-2 py-0.5 rounded-[10px] font-semibold cursor-pointer outline-none shrink-0 appearance-none"
           style={{
             border: `1px solid ${meta.color}`,
             background: meta.bg,
@@ -101,7 +101,10 @@ export default function DecisionsEditorRenderer({
   onUpdateItem,
   onRemoveItem,
   onUpdateCursorInfo,
+  extensions,
+  editorComponent,
 }: SectionRendererProps) {
+  const Editor = editorComponent ?? DefaultTiptapEditor;
   const items = sectionItems(section);
   // See the matching comment in ChecklistEditorRenderer: focus the new row only
   // once the list has really grown, so an absent or async `onAddItem` cannot
@@ -120,7 +123,7 @@ export default function DecisionsEditorRenderer({
   return (
     <div>
       {fragment && ydoc && (
-        <TiptapEditor
+        <Editor
           fragment={fragment}
           ydoc={ydoc}
           provider={provider ?? null}
@@ -129,6 +132,7 @@ export default function DecisionsEditorRenderer({
           placeholder={section.placeholder ?? 'Add context or background...'}
           sectionId={section.id}
           onUpdateCursorInfo={onUpdateCursorInfo}
+          extensions={extensions}
         />
       )}
 
@@ -174,7 +178,7 @@ export default function DecisionsEditorRenderer({
         <button
           type="button"
           onClick={handleAdd}
-          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit"
+          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer"
         >
           + Add decision
         </button>

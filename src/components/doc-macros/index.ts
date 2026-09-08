@@ -110,3 +110,35 @@ export {
     supersedeDecisionEdit,
 } from './decisionText';
 export type { Decision, DecisionDraft, DecisionStatus } from './decisionText';
+
+// One named, typed value — the third of the three citizens `MacroNode`'s
+// header names, and the last one. Unlike the three above it, this one is NOT a
+// card: a field carries one fact, and a bordered panel around "Owner: Ada"
+// would be furniture around a single word. It is also the only renderer whose
+// reader can be WRONG about its own payload and still draw — an invalid value
+// is shown and flagged rather than refused, because the write side already
+// makes one impossible and a fence is not a repairable state. See
+// `fieldText.ts`'s header for both arguments.
+export { FieldMacro, fieldRenderer } from './FieldMacro';
+export { FieldBlock } from './FieldBlock';
+export type { FieldBlockProps } from './FieldBlock';
+export {
+    FIELD_MACRO_NAME,
+    FIELD_QUERYABILITY,
+    FIELD_TYPES,
+    readTypedField,
+    acceptsField,
+    fitsFieldType,
+    fieldMacroText,
+    fieldScalar,
+    fieldNumber,
+    fieldBoolean,
+    fieldDate,
+    formatFieldDate,
+    formatFieldNumber,
+    formatFieldValue,
+    setFieldValueEdit,
+    setFieldLabelEdit,
+    setFieldTypeEdit,
+} from './fieldText';
+export type { TypedField, FieldDraft, FieldType } from './fieldText';

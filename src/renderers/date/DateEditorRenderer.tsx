@@ -53,7 +53,7 @@ export default function DateEditorRenderer(props: SectionRendererProps) {
             type="button"
             data-testid={`date-field-clear-${section.id}`}
             onClick={() => onUpdateSection?.(setScalarPatch(section, undefined))}
-            className="bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0 font-inherit"
+            className="bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0"
           >
             Clear
           </button>

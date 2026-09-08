@@ -627,7 +627,7 @@ export declare interface ExpandableCallWidgetProps {
     'data-testid'?: string;
 }
 
-export declare function GoLiveButton({ live, starting, onGoLive, onEndBroadcast, viewerCount, streamReady, channelName, error, endHint, label, disabled, className, 'data-testid': testId, }: GoLiveButtonProps): JSX.Element;
+export declare function GoLiveButton({ live, starting, onGoLive, onEndBroadcast, viewerCount, streamReady, connection, channelName, error, endHint, label, disabled, className, 'data-testid': testId, }: GoLiveButtonProps): JSX.Element;
 
 export declare interface GoLiveButtonProps {
     /**
@@ -667,6 +667,29 @@ export declare interface GoLiveButtonProps {
      * stream is not, which this control must never render as "You are live".
      */
     streamReady?: boolean;
+    /**
+     * The broadcaster's OWN connection, while live.
+     *
+     * `streamReady` answers "did this broadcast ever reach anybody" and it
+     * latches: hosts derive it from a session record that stops being re-asked
+     * once it is true. So it catches a broadcast that never came up and is
+     * silent about one that stops halfway — which is the failure the person
+     * presenting is least able to notice on their own, because their own
+     * preview keeps playing from their own camera.
+     *
+     * Observed: a broadcaster whose network dropped mid-broadcast was shown
+     * "You are live · 1 watching" for the full 30s the drop lasted, while the
+     * audience was already being told the stream had stopped responding.
+     *
+     *   'online'   — nothing is wrong, or nobody is watching the connection.
+     *   'unstable' — the transport is retrying. Media may not be going out.
+     *   'offline'  — the transport is down. Nothing is going out.
+     *
+     * Anything but `online` retires the confident pill. The claim "you are
+     * live" is a claim about OTHER PEOPLE, and it must not outlive the
+     * connection that would carry it to them.
+     */
+    connection?: 'online' | 'unstable' | 'offline';
     /**
      * Who gets told, named — e.g. `#design`. The social consequence of the
      * press is the half people underestimate, and "the channel" is vaguer than
@@ -2057,6 +2080,25 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -2093,6 +2135,16 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

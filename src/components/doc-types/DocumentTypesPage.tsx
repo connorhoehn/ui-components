@@ -89,14 +89,14 @@ function DeleteConfirmModal({
         <button
           data-testid="cancel-delete"
           onClick={onCancel}
-          className="py-[7px] px-[18px] text-[13px] font-semibold bg-surface border border-border-field rounded-[7px] cursor-pointer font-inherit"
+          className="py-[7px] px-[18px] text-[13px] font-semibold bg-surface border border-border-field rounded-[7px] cursor-pointer"
         >
           Cancel
         </button>
         <button
           data-testid="confirm-delete"
           onClick={onConfirm}
-          className="py-[7px] px-[18px] text-[13px] font-semibold bg-danger text-white border-none rounded-[7px] cursor-pointer font-inherit"
+          className="py-[7px] px-[18px] text-[13px] font-semibold bg-danger text-white border-none rounded-[7px] cursor-pointer"
         >
           Delete
         </button>
@@ -160,7 +160,7 @@ function TypeListItem({
           data-testid={`new-doc-from-type-${type.id}`}
           onClick={(e) => { e.stopPropagation(); onCreateDocument(); }}
           title={`Start a new ${type.name}`}
-          className="border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit bg-transparent text-primary hover:bg-accent-bg hover:text-accent-fg"
+          className="border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold bg-transparent text-primary hover:bg-accent-bg hover:text-accent-fg"
         >
           New
         </button>
@@ -170,7 +170,7 @@ function TypeListItem({
         onClick={onSelect}
         title="Edit type"
         className={cn(
-          'border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit hover:bg-accent-bg hover:text-accent-fg',
+          'border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold hover:bg-accent-bg hover:text-accent-fg',
           active ? 'bg-accent-border text-accent-fg' : 'bg-transparent text-text-tertiary',
         )}
       >
@@ -334,7 +334,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
   // ---------------------------------------------------------------------------
 
   return (
-    <div className="flex h-full overflow-hidden font-inherit">
+    <div className="flex h-full overflow-hidden">
 
       {/* -- Left sidebar -- */}
       <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-hidden bg-surface-inset">
@@ -356,7 +356,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
               data-testid="cookbooks-btn"
               onClick={() => setCookbooksOpen(true)}
               title="Browse the ready-made document types"
-              className="py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit whitespace-nowrap"
+              className="py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer whitespace-nowrap"
             >
               Known types
             </button>
@@ -364,7 +364,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
               data-testid="create-type-btn"
               onClick={handleCreateClick}
               title="Build a document type field by field"
-              className="py-[5px] px-3 text-xs font-medium bg-transparent text-text-secondary border border-border rounded-md cursor-pointer font-inherit whitespace-nowrap"
+              className="py-[5px] px-3 text-xs font-medium bg-transparent text-text-secondary border border-border rounded-md cursor-pointer whitespace-nowrap"
             >
               From scratch
             </button>
@@ -381,7 +381,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
               <button
                 data-testid="empty-browse-types-btn"
                 onClick={() => setCookbooksOpen(true)}
-                className="bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2 font-inherit"
+                className="bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2"
               >
                 Browse known types →
               </button>
@@ -445,7 +445,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
                 <button
                   data-testid="idle-create-btn"
                   onClick={handleCreateClick}
-                  className="px-3.5 py-2 text-[13px] font-medium bg-transparent text-text-secondary border border-border rounded-lg cursor-pointer font-inherit"
+                  className="px-3.5 py-2 text-[13px] font-medium bg-transparent text-text-secondary border border-border rounded-lg cursor-pointer"
                 >
                   Build a type from scratch
                 </button>
@@ -460,6 +460,13 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
                   picker, and two `cookbooks-grid` nodes on one screen is a
                   strict-mode selector collision in every spec that addresses
                   it. */}
+              {/* `installedNames` is what stops this page offering a type you
+                  already have. Measured before it existed: all fourteen
+                  cookbooks showed "Add this type" including the three already
+                  installed, and clicking one produced a SECOND type with the
+                  same name, icon and field count — indistinguishable from the
+                  first in this list, in the create dialog, and on every
+                  document's type chip. */}
               <CookbookPicker
                 onPick={handleInstallKnownType}
                 busy={installing}
@@ -468,6 +475,15 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
                 cardPrefix="type-starter"
                 layout="fluid"
                 gridHeightClassName="max-h-none"
+                installedNames={types.map((t) => t.name)}
+                onOpenInstalled={(cookbook) => {
+                  // Take them to the one they already have rather than
+                  // refusing without saying where it went.
+                  const existing = types.find(
+                    (t) => t.name.trim().toLowerCase() === cookbook.name.trim().toLowerCase(),
+                  );
+                  if (existing) { setEditingId(existing.id); setMode('edit'); }
+                }}
               />
             </div>
           </div>

@@ -4,7 +4,7 @@ export declare const COOKBOOK_CATEGORIES: CookbookCategory[];
 
 export declare type CookbookCategory = 'Engineering' | 'Operations' | 'People' | 'Sales & CRM' | 'Product' | 'Finance' | 'Legal' | 'General';
 
-export declare function CookbookPicker({ onPick, busy, actionLabel, autoFocusSearch, idPrefix, cardPrefix, layout, gridHeightClassName, }: CookbookPickerProps): JSX.Element;
+export declare function CookbookPicker({ onPick, busy, actionLabel, autoFocusSearch, idPrefix, cardPrefix, layout, gridHeightClassName, installedNames, onOpenInstalled, }: CookbookPickerProps): JSX.Element;
 
 export declare interface CookbookPickerProps {
     /** Fired with the chosen cookbook. Persistence is the caller's business. */
@@ -13,6 +13,24 @@ export declare interface CookbookPickerProps {
     busy?: boolean;
     /** Label on each card's action button. Default `Install`. */
     actionLabel?: string;
+    /**
+     * Names of types the host ALREADY has, lower-cased by the host or not — the
+     * comparison here is case- and whitespace-insensitive.
+     *
+     * Opt-in, because "installed" only means something on the types ADMIN page.
+     * The same picker also opens the new-document dialog, where you are starting
+     * a document rather than installing a type and every cookbook is a valid
+     * choice however many you have already used.
+     *
+     * Measured before this existed: the admin page offered "Add this type" for
+     * all fourteen cookbooks including the three already installed, and clicking
+     * one produced a SECOND type with the same name, same icon and same field
+     * count — indistinguishable from the first in the type list, the create
+     * dialog and the document chip.
+     */
+    installedNames?: readonly string[];
+    /** Fired instead of `onPick` when an installed cookbook's card is actioned. */
+    onOpenInstalled?: (cookbook: DocumentTypeCookbook) => void;
     /** Focus the search box shortly after mount. Default `false`. */
     autoFocusSearch?: boolean;
     /**
@@ -245,6 +263,25 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -281,6 +318,16 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

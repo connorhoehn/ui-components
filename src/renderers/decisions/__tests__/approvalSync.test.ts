@@ -7,11 +7,14 @@ import {
   mapStatusToDecision,
   readDocumentIdFromUrl,
   postApproval,
+  setApprovalApiBase,
+  getApprovalApiBase,
 } from '../approvalSync';
 
 afterEach(() => {
   vi.unstubAllGlobals();
   window.history.replaceState(null, '', '/');
+  setApprovalApiBase(null);
 });
 
 describe('mapStatusToDecision', () => {
@@ -86,5 +89,58 @@ describe('postApproval', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
     const out = await postApproval({ sectionId: 's1', decision: 'approved', documentId: 'd' });
     expect(out).toEqual({ ok: false, error: 'offline' });
+  });
+});
+
+
+// Where the request goes.
+//
+// This module used to bake in ONE env var name, `VITE_SOCIAL_API_URL`. A host
+// whose backend is configured under any other name resolved an empty base and
+// posted to its own origin, where nothing answers — and `postApproval`
+// swallows failures by design, so the only symptom was an approval log that
+// never filled up. That was one of the four differences keeping a consumer on
+// its own copy of this directory.
+describe('approval API base', () => {
+  it('is same-origin when nothing is configured', () => {
+    expect(getApprovalApiBase()).toBe('');
+  });
+
+  it('takes an explicit override from the host', () => {
+    setApprovalApiBase('https://api.example.test');
+    expect(getApprovalApiBase()).toBe('https://api.example.test');
+  });
+
+  it('accepts a getter, for a host that resolves its base lazily', () => {
+    let current = 'https://one.test';
+    setApprovalApiBase(() => current);
+    expect(getApprovalApiBase()).toBe('https://one.test');
+    current = 'https://two.test';
+    expect(getApprovalApiBase()).toBe('https://two.test');
+  });
+
+  it('falls back to the environment when the override is cleared', () => {
+    setApprovalApiBase('https://api.example.test');
+    setApprovalApiBase(null);
+    expect(getApprovalApiBase()).toBe('');
+  });
+
+  it('prefixes the POST with the configured base', async () => {
+    const f = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    vi.stubGlobal('fetch', f);
+    setApprovalApiBase('https://api.example.test');
+    await postApproval({ sectionId: 's1', decision: 'approved', documentId: 'd' });
+    expect(String(f.mock.calls[0][0])).toBe('https://api.example.test/api/approvals');
+  });
+
+  it('lets a single call override the configured base', async () => {
+    const f = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    vi.stubGlobal('fetch', f);
+    setApprovalApiBase('https://api.example.test');
+    await postApproval({
+      sectionId: 's1', decision: 'approved', documentId: 'd',
+      baseUrl: 'https://other.test',
+    });
+    expect(String(f.mock.calls[0][0])).toBe('https://other.test/api/approvals');
   });
 });

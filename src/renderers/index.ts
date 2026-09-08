@@ -142,6 +142,18 @@ export { default as dateFieldType } from './date/definition';
 export { default as numberFieldType } from './number/definition';
 export { default as booleanFieldType } from './boolean/definition';
 
+// …and the other SEVEN definitions, for the same reason. Exporting only the
+// four scalars meant a host building its own registry could name a `date`
+// section but not a `tasks` one, so a chip or a data-types screen showed a
+// blank label for the four oldest section types in the library.
+export { default as tasksFieldType } from './tasks/definition';
+export { default as richTextFieldType } from './rich-text/definition';
+export { default as decisionsFieldType } from './decisions/definition';
+export { default as checklistFieldType } from './checklist/definition';
+export { default as fileUploadFieldType } from './file-upload/definition';
+export { default as diagramFieldType } from './diagram/definition';
+export { default as linkBlockFieldType } from './link-block/definition';
+
 export { default as TextEditorRenderer } from './text/TextEditorRenderer';
 export { default as TextReaderRenderer } from './text/TextReaderRenderer';
 export { default as DateEditorRenderer } from './date/DateEditorRenderer';
@@ -150,6 +162,64 @@ export { default as NumberEditorRenderer } from './number/NumberEditorRenderer';
 export { default as NumberReaderRenderer } from './number/NumberReaderRenderer';
 export { default as BooleanEditorRenderer } from './boolean/BooleanEditorRenderer';
 export { default as BooleanReaderRenderer } from './boolean/BooleanReaderRenderer';
+
+// EVERY OTHER RENDERER COMPONENT, and the fallback.
+//
+// Until now the four scalar pairs above were the only renderer components that
+// left this module, while the fifteen that predate them — and
+// `DefaultRenderer`, the `*:*` fallback the whole resolution chain ends at —
+// were reachable only through `getRenderer()`, i.e. only through THIS module's
+// registry.
+//
+// That is what made an incremental migration impossible for a host that keeps
+// its own copy of `registry.ts`. It could not swap one section type at a time,
+// because it could not name a single one of the library's components to
+// register; its only options were to adopt this barrel's registry wholesale or
+// to keep a private copy of every renderer. A fork of this directory was the
+// rational choice, and stayed rational as long as these exports were missing.
+// With them present a host can register the library's `tasks` renderers today
+// and leave the rest of its own in place.
+export { default as DefaultRenderer } from './default/DefaultRenderer';
+export { default as RichTextEditorRenderer } from './rich-text/RichTextEditorRenderer';
+export { default as RichTextReaderRenderer } from './rich-text/RichTextReaderRenderer';
+export { default as TasksEditorRenderer } from './tasks/TasksEditorRenderer';
+export { default as TasksReaderRenderer } from './tasks/TasksReaderRenderer';
+export { default as ChecklistEditorRenderer } from './checklist/ChecklistEditorRenderer';
+export { default as ChecklistReaderRenderer } from './checklist/ChecklistReaderRenderer';
+export { default as DecisionsEditorRenderer } from './decisions/DecisionsEditorRenderer';
+export { default as DecisionsReaderRenderer } from './decisions/DecisionsReaderRenderer';
+export { default as FileUploadEditorRenderer } from './file-upload/FileUploadEditorRenderer';
+export { default as FileUploadReaderRenderer } from './file-upload/FileUploadReaderRenderer';
+export { default as DiagramEditorRenderer } from './diagram/DiagramEditorRenderer';
+export { default as DiagramReaderRenderer } from './diagram/DiagramReaderRenderer';
+export { default as LinkBlockEditorRenderer } from './link-block/LinkBlockEditorRenderer';
+export { default as LinkBlockReaderRenderer } from './link-block/LinkBlockReaderRenderer';
+
+// The props contract every one of them takes, so a host can type its own
+// renderer against it — and the editor-injection contract, without which
+// `editorComponent` cannot be named from outside.
+export type {
+  SectionRendererProps,
+  SectionRenderer,
+  SectionEditorProps,
+  SectionEditorComponent,
+} from './types';
+
+// The approvals sync the decisions editor performs, so a host can point it at
+// its own API instead of inheriting this library's env-var naming.
+export {
+  setApprovalApiBase,
+  getApprovalApiBase,
+  postApproval,
+  mapStatusToDecision,
+  readDocumentIdFromUrl,
+} from './decisions/approvalSync';
+export type {
+  ApprovalApiBase,
+  ApprovalDecision,
+  PostApprovalArgs,
+  TerminalRendererStatus,
+} from './decisions/approvalSync';
 
 export {
   registerRenderer,

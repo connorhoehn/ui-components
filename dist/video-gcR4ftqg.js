@@ -10,7 +10,7 @@ import { t as d } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as f } from "./Avatar-BzicCOft.js";
 import { t as p } from "./Select-CqVokE2v.js";
 import { t as m } from "./activationKey-CjbL3LUv.js";
-import { E as h, g } from "./StreamStage-C7HhqIax.js";
+import { E as h, g } from "./StreamStage-d9JKcXlp.js";
 import { useCallback as _, useEffect as v, useImperativeHandle as y, useLayoutEffect as b, useMemo as x, useRef as S, useState as C } from "react";
 import { Fragment as w, jsx as T, jsxs as E } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -4093,73 +4093,74 @@ function bn(e) {
 	return `Start broadcasting this room and tell everyone in ${e ?? "the channel"}`;
 }
 var xn = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium border-none transition-colors disabled:cursor-not-allowed disabled:opacity-50", Sn = "text-xs text-text-tertiary";
-function Cn({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, viewerCount: a, streamReady: o, channelName: s, error: c, endHint: l, label: u, disabled: d, className: f, "data-testid": p = "go-live" }) {
+function Cn({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, viewerCount: a, streamReady: o, connection: s = "online", channelName: c, error: l, endHint: u, label: d, disabled: f, className: p, "data-testid": m = "go-live" }) {
 	if (t) {
-		let t = o === !1;
+		let t = s !== "online", n = t || o === !1;
 		return /* @__PURE__ */ E("div", {
-			className: e("flex flex-col gap-1", f),
+			className: e("flex flex-col gap-1", p),
 			children: [/* @__PURE__ */ E("div", {
-				"data-testid": p,
+				"data-testid": m,
 				"data-live": "true",
 				"data-stream": o === void 0 ? "unknown" : o ? "ready" : "pending",
+				"data-connection": s,
 				className: "inline-flex items-center gap-2",
 				children: [
 					/* @__PURE__ */ E("span", {
-						"data-testid": `${p}-status`,
+						"data-testid": `${m}-status`,
 						role: "status",
-						className: e(xn, t ? "bg-warning-bg text-warning-fg" : "bg-danger text-white"),
+						className: e(xn, n ? "bg-warning-bg text-warning-fg" : "bg-danger text-white"),
 						children: [/* @__PURE__ */ T("span", {
 							"aria-hidden": !0,
-							className: e("h-1.5 w-1.5 rounded-full", t ? "bg-warning-fg" : "bg-white")
-						}), t ? "On the call — no stream yet" : "You are live"]
+							className: e("h-1.5 w-1.5 rounded-full", n ? "bg-warning-fg" : "bg-white")
+						}), t ? s === "offline" ? "You are offline — nobody is receiving this" : "Reconnecting — your audience may not be receiving this" : n ? "On the call — no stream yet" : "You are live"]
 					}),
-					!t && typeof a == "number" && Number.isFinite(a) && a >= 0 && /* @__PURE__ */ E("span", {
-						"data-testid": `${p}-viewers`,
+					!n && typeof a == "number" && Number.isFinite(a) && a >= 0 && /* @__PURE__ */ E("span", {
+						"data-testid": `${m}-viewers`,
 						className: Sn,
 						children: [a, " watching"]
 					}),
 					i && /* @__PURE__ */ T("button", {
 						type: "button",
-						"data-testid": `${p}-end`,
+						"data-testid": `${m}-end`,
 						onClick: i,
 						className: e(xn, "cursor-pointer bg-surface-panel text-text-secondary hover:bg-surface-hover"),
 						children: "End broadcast"
 					})
 				]
-			}), (t || !i && l) && /* @__PURE__ */ T("span", {
-				"data-testid": `${p}-hint`,
+			}), (n || !i && u) && /* @__PURE__ */ T("span", {
+				"data-testid": `${m}-hint`,
 				className: Sn,
-				children: t ? "Nobody can watch yet — the stream has not started." : l
+				children: t ? s === "offline" ? "Your connection dropped. The broadcast resumes if it comes back." : "Your connection is unstable. What you see locally is not what they see." : n ? "Nobody can watch yet — the stream has not started." : u
 			})]
 		});
 	}
 	return /* @__PURE__ */ E("div", {
-		className: e("flex flex-col gap-1", f),
+		className: e("flex flex-col gap-1", p),
 		children: [
 			/* @__PURE__ */ E("button", {
 				type: "button",
-				"data-testid": p,
+				"data-testid": m,
 				"data-live": "false",
-				disabled: d || n,
+				disabled: f || n,
 				onClick: r,
-				title: bn(s),
-				"aria-label": n ? "Going live…" : `${u ?? "Go live"} — ${bn(s).toLowerCase()}`,
+				title: bn(c),
+				"aria-label": n ? "Going live…" : `${d ?? "Go live"} — ${bn(c).toLowerCase()}`,
 				className: e(xn, "cursor-pointer bg-danger text-white hover:opacity-90"),
 				children: [/* @__PURE__ */ T("span", {
 					"aria-hidden": !0,
 					className: "h-1.5 w-1.5 rounded-full bg-white"
-				}), n ? "Going live…" : u ?? "Go live"]
+				}), n ? "Going live…" : d ?? "Go live"]
 			}),
 			/* @__PURE__ */ T("span", {
-				"data-testid": `${p}-hint`,
+				"data-testid": `${m}-hint`,
 				className: Sn,
-				children: n ? "Connecting — this takes a few seconds." : `Starts a broadcast in ${s ?? "this channel"} and tells everyone there.`
+				children: n ? "Connecting — this takes a few seconds." : `Starts a broadcast in ${c ?? "this channel"} and tells everyone there.`
 			}),
-			c && /* @__PURE__ */ T("span", {
-				"data-testid": `${p}-error`,
+			l && /* @__PURE__ */ T("span", {
+				"data-testid": `${m}-error`,
 				role: "alert",
 				className: "text-xs text-danger-fg",
-				children: c
+				children: l
 			})
 		]
 	});

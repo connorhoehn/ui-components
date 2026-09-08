@@ -52,7 +52,7 @@ export default function BooleanEditorRenderer(props: SectionRendererProps) {
             type="button"
             data-testid={`boolean-field-clear-${section.id}`}
             onClick={() => onUpdateSection?.(setScalarPatch(section, undefined))}
-            className="bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0 font-inherit"
+            className="bg-transparent border-none text-[12px] text-text-tertiary cursor-pointer p-0"
           >
             Clear
           </button>

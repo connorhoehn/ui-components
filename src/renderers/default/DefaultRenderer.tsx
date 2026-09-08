@@ -5,7 +5,7 @@
 
 import { useRef } from 'react';
 import type { SectionRendererProps } from '../types';
-import TiptapEditor from '../../components/doc-editor/TiptapEditor';
+import DefaultTiptapEditor from '../../components/doc-editor/TiptapEditor';
 import TaskList from '../../components/doc-editor/TaskList';
 import { sectionItems } from '../sectionItems';
 
@@ -20,7 +20,10 @@ export default function DefaultRenderer({
   onUpdateItem,
   onRemoveItem,
   onUpdateCursorInfo,
+  extensions,
+  editorComponent,
 }: SectionRendererProps) {
+  const Editor = editorComponent ?? DefaultTiptapEditor;
   const items = sectionItems(section);
   const focusLastItemRef = useRef(false);
 
@@ -32,7 +35,7 @@ export default function DefaultRenderer({
   return (
     <div>
       {fragment && ydoc && (
-        <TiptapEditor
+        <Editor
           fragment={fragment}
           ydoc={ydoc}
           provider={provider ?? null}
@@ -41,6 +44,7 @@ export default function DefaultRenderer({
           placeholder={section.placeholder ?? `Write ${section.type} content...`}
           sectionId={section.id}
           onUpdateCursorInfo={onUpdateCursorInfo}
+          extensions={extensions}
         />
       )}
       {(items.length > 0 || editable) && (
@@ -56,7 +60,7 @@ export default function DefaultRenderer({
         <button
           type="button"
           onClick={handleAddItem}
-          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit"
+          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer"
         >
           + Add item
         </button>

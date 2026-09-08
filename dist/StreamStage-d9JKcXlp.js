@@ -633,10 +633,10 @@ var ee = {
 	unsupported: "This browser cannot play this broadcast.",
 	other: "This stream could not be played."
 };
-function M(e) {
+function te(e) {
 	return e ? ee[e.kind] : null;
 }
-function N(e) {
+function M(e) {
 	let t = typeof e?.response?.code == "number" ? e.response.code : null, n = [
 		e?.details,
 		e?.type,
@@ -669,9 +669,9 @@ function N(e) {
 		retryable: !0
 	};
 }
-var P = 3e3, te = 1e3, F = 1500, I = 8e3, L = .5;
-function ne(e, t, n = {}) {
-	let { live: a = !1, stalledAfterMs: c = I } = n, [l, u] = s(null), d = M(l), [f, p] = s(!1), [m, h] = s(!1), [g, _] = s(!1), [v, y] = s(null), [b, x] = s(null), [S, C] = s(0), w = o(null), T = o(!1), E = o(0), D = o(n.onError);
+var N = 3e3, ne = 1e3, P = 1500, F = 8e3, I = .5;
+function re(e, t, n = {}) {
+	let { live: a = !1, stalledAfterMs: c = F } = n, [l, u] = s(null), d = te(l), [f, p] = s(!1), [m, h] = s(!1), [g, _] = s(!1), [v, y] = s(null), [b, x] = s(null), [S, C] = s(0), w = o(null), T = o(!1), E = o(0), D = o(n.onError);
 	i(() => {
 		D.current = n.onError;
 	}, [n.onError]);
@@ -712,7 +712,7 @@ function ne(e, t, n = {}) {
 				} : { enableWorker: !0 });
 				w.current = o, o.attachMedia(n), o.on(e.Events.MEDIA_ATTACHED, () => o.loadSource(t)), o.on(e.Events.ERROR, (e, n) => {
 					if (n?.fatal) {
-						let e = N(n);
+						let e = M(n);
 						u(e), console.error("[useHlsSource] playback failed:", e.kind, e.detail, t), D.current?.(/* @__PURE__ */ Error(`HLS fatal: ${e.detail}`));
 					}
 				});
@@ -751,7 +751,7 @@ function ne(e, t, n = {}) {
 			if (!a) return;
 			h(!0);
 			let e = Date.now();
-			if (!(e - E.current < P)) {
+			if (!(e - E.current < N)) {
 				E.current = e;
 				try {
 					w.current ? w.current.startLoad() : T.current && (n.src = t, n.load()), n.play().catch(() => {});
@@ -792,7 +792,7 @@ function ne(e, t, n = {}) {
 			x((t) => {
 				if (e === null) return t === null ? t : null;
 				let n = Math.round(e * 10) / 10;
-				return t !== null && Math.abs(t - n) < L ? t : n;
+				return t !== null && Math.abs(t - n) < I ? t : n;
 			});
 		}, o = setInterval(() => {
 			a();
@@ -803,8 +803,8 @@ function ne(e, t, n = {}) {
 			}
 			if (!(!n.paused || n.ended)) return;
 			let o = e - i;
-			o >= c ? _(!0) : o >= F && h(!0);
-		}, te);
+			o >= c ? _(!0) : o >= P && h(!0);
+		}, ne);
 		return () => clearInterval(o);
 	}, [
 		e,
@@ -825,8 +825,8 @@ function ne(e, t, n = {}) {
 }
 //#endregion
 //#region src/lib/video/useAudioLevel.ts
-var R = 80, z = .6;
-function re(e) {
+var L = 80, R = .6;
+function ie(e) {
 	let [t, n] = s(null), r = o(0);
 	return i(() => {
 		if (r.current = 0, n(null), !e || typeof e.getAudioTracks != "function" || e.getAudioTracks().length === 0) return;
@@ -850,9 +850,9 @@ function re(e) {
 				let n = (s[t] - 128) / 128;
 				e += n * n;
 			}
-			let t = Math.sqrt(e / s.length), a = Math.min(1, t * 3.5), c = Math.max(a, r.current * z);
+			let t = Math.sqrt(e / s.length), a = Math.min(1, t * 3.5), c = Math.max(a, r.current * R);
 			r.current = c, n(c);
-		}, R);
+		}, L);
 		return () => {
 			clearInterval(c);
 			try {
@@ -869,13 +869,13 @@ function re(e) {
 }
 //#endregion
 //#region src/components/video/StreamAudioOnly.tsx
-var ie = [
+var ae = [
 	.55,
 	.8,
 	1,
 	.8,
 	.55
-], B = [
+], z = [
 	"h-1",
 	"h-1.5",
 	"h-2",
@@ -884,24 +884,24 @@ var ie = [
 	"h-6",
 	"h-8",
 	"h-10"
-], V = [
+], B = [
 	"h-2",
 	"h-4",
 	"h-6",
 	"h-4",
 	"h-2"
-], ae = [
+], oe = [
 	"[animation-delay:0ms]",
 	"[animation-delay:110ms]",
 	"[animation-delay:220ms]",
 	"[animation-delay:330ms]",
 	"[animation-delay:440ms]"
 ];
-function H(e, t) {
+function V(e, t) {
 	let n = Math.max(0, Math.min(1, e * t));
-	return B[Math.min(B.length - 1, Math.round(n * (B.length - 1)))];
+	return z[Math.min(z.length - 1, Math.round(n * (z.length - 1)))];
 }
-function oe({ name: n, avatarUrl: r, level: i = null, active: a = !1, muted: o = !1, hint: s, className: u, "data-testid": d = "stream-audio-only" }) {
+function se({ name: n, avatarUrl: r, level: i = null, active: a = !1, muted: o = !1, hint: s, className: u, "data-testid": d = "stream-audio-only" }) {
 	let f = typeof i == "number" && a, p = s ?? (o ? "Audio only — unmute to hear it." : a ? "Audio only — there is no picture on this broadcast." : "Audio only.");
 	return /* @__PURE__ */ l("div", {
 		"data-testid": d,
@@ -933,14 +933,14 @@ function oe({ name: n, avatarUrl: r, level: i = null, active: a = !1, muted: o =
 				"data-testid": `${d}-meter`,
 				"aria-hidden": !0,
 				className: "flex h-10 items-end gap-1",
-				children: ie.map((t, n) => /* @__PURE__ */ c("span", { className: e("w-1.5 rounded-full transition-[height] duration-100", a ? "bg-white/80" : "bg-white/25", !f && a && ["uic-audio-bar", ae[n]], f ? H(i, t) : V[n]) }, n))
+				children: ae.map((t, n) => /* @__PURE__ */ c("span", { className: e("w-1.5 rounded-full transition-[height] duration-100", a ? "bg-white/80" : "bg-white/25", !f && a && ["uic-audio-bar", oe[n]], f ? V(i, t) : B[n]) }, n))
 			})
 		]
 	});
 }
 //#endregion
 //#region src/components/video/streamStagePhase.ts
-function se({ hasStream: e, hasPlaylist: t, hadSource: n, graceExpired: r, streamHasTracks: i = null, hls: a }) {
+function ce({ hasStream: e, hasPlaylist: t, hadSource: n, graceExpired: r, streamHasTracks: i = null, hls: a }) {
 	if (e) return i === !1 ? r ? "not-started" : "connecting" : "playing";
 	if (t) {
 		let e = a?.phase ?? (a?.error ? "error" : a?.loading ? "connecting" : "playing");
@@ -948,26 +948,26 @@ function se({ hasStream: e, hasPlaylist: t, hadSource: n, graceExpired: r, strea
 	}
 	return n ? "ended" : r ? "not-started" : "idle";
 }
-function ce(e) {
+function le(e) {
 	return e === "playing" || e === "buffering" || e === "idle";
 }
-function U(e) {
+function H(e) {
 	return e === "playing";
 }
 //#endregion
 //#region src/components/video/StreamChatTicker.tsx
-function W(e) {
+function U(e) {
 	if (!e) return;
 	let t = new Date(e);
 	if (!Number.isNaN(t.getTime())) return `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}`;
 }
-function le({ messages: t, visibleCount: r = 3, rotateMs: i = 4200, window: o = 20, className: s, "data-testid": l = "stream-chat-ticker" }) {
+function ue({ messages: t, visibleCount: r = 3, rotateMs: i = 4200, window: o = 20, className: s, "data-testid": l = "stream-chat-ticker" }) {
 	let u = a(() => t.slice(-o).reverse().map((e) => ({
 		id: e.id,
 		actor: e.displayName,
 		action: "",
 		subject: e.content,
-		timeLabel: W(e.timestamp),
+		timeLabel: U(e.timestamp),
 		kind: "comment"
 	})), [t, o]);
 	return u.length === 0 ? null : /* @__PURE__ */ c("div", {
@@ -983,48 +983,48 @@ function le({ messages: t, visibleCount: r = 3, rotateMs: i = 4200, window: o = 
 }
 //#endregion
 //#region src/components/video/StreamStage.tsx
-var ue = 1e4;
-function de(e) {
+var de = 1e4;
+function fe(e) {
 	return !e || typeof e.getVideoTracks != "function" || typeof e.getAudioTracks != "function" || e.getAudioTracks().length === 0 ? !1 : !S(e);
 }
-var G = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer border-none transition-colors";
-function K({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetry: d, title: f, viewerCount: h, live: g = !1, audioOnly: _, speakerName: v, speakerAvatarUrl: y, notStartedLabel: b, endedLabel: S, stallAfterMs: w = ue, chatMessages: T, chatVisibleCount: E, chatRotateMs: D, muted: O = !0, allowFullscreen: k = !0, showLatency: A = !0, controls: j, placeholder: ee, className: M, "data-testid": N = "stream-stage" }) {
-	let [P, te] = s(O);
+var W = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer border-none transition-colors";
+function pe({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetry: d, title: f, viewerCount: h, live: g = !1, audioOnly: _, speakerName: v, speakerAvatarUrl: y, notStartedLabel: b, endedLabel: S, stallAfterMs: w = de, chatMessages: T, chatVisibleCount: E, chatRotateMs: D, muted: O = !0, allowFullscreen: k = !0, showLatency: A = !0, controls: j, placeholder: ee, className: te, "data-testid": M = "stream-stage" }) {
+	let [N, ne] = s(O);
 	i(() => {
-		te(O);
+		ne(O);
 	}, [O]);
-	let F = o(null), I = o(null), L = ne(I, t ? null : n, {
+	let P = o(null), F = o(null), I = re(F, t ? null : n, {
 		live: !0,
 		onError: u
-	}), R = o(!1);
-	(t || n) && (R.current = !0);
-	let z = x(t && typeof t.getVideoTracks == "function" ? t : null, f ?? "stream"), ie = a(() => de(t), [t, z]), B = a(() => t && typeof t.getTracks == "function" ? t.getTracks().length > 0 : null, [t, z]), V = !!t && B !== !1 || !!n && !L.loading, [ae, H] = s(!1);
+	}), L = o(!1);
+	(t || n) && (L.current = !0);
+	let R = x(t && typeof t.getVideoTracks == "function" ? t : null, f ?? "stream"), ae = a(() => fe(t), [t, R]), z = a(() => t && typeof t.getTracks == "function" ? t.getTracks().length > 0 : null, [t, R]), B = !!t && z !== !1 || !!n && !I.loading, [oe, V] = s(!1);
 	i(() => {
-		if (H(!1), V || L.error) return;
-		let e = setTimeout(() => H(!0), w);
+		if (V(!1), B || I.error) return;
+		let e = setTimeout(() => V(!0), w);
 		return () => clearTimeout(e);
 	}, [
-		V,
-		L.error,
+		B,
+		I.error,
 		w
 	]);
-	let U = se({
+	let H = ce({
 		hasStream: !!t,
-		streamHasTracks: B,
+		streamHasTracks: z,
 		hasPlaylist: !!n,
-		hadSource: R.current,
-		graceExpired: ae,
-		hls: L
-	}), W = L.failure ?? null, K = o(!1);
-	U === "playing" && (K.current = !0);
-	let Y = U === "error" && W?.kind === "no-broadcast" ? K.current ? "ended" : "not-started" : U, X = g && ce(Y), fe = t ? ie : L.audioOnly === !0, pe = (_ ?? fe) && (Y === "playing" || Y === "buffering" || Y === "stalled"), me = re(pe && t ? t : null), [Z, he] = s(!1);
+		hadSource: L.current,
+		graceExpired: oe,
+		hls: I
+	}), U = I.failure ?? null, pe = o(!1);
+	H === "playing" && (pe.current = !0);
+	let q = H === "error" && U?.kind === "no-broadcast" ? pe.current ? "ended" : "not-started" : H, J = q === "ended" ? H === "ended" ? "withdrawn" : "stopped" : null, Y = g && le(q), me = t ? ae : I.audioOnly === !0, he = (_ ?? me) && (q === "playing" || q === "buffering" || q === "stalled"), ge = ie(he && t ? t : null), [X, _e] = s(!1);
 	i(() => {
 		if (typeof document > "u") return;
-		let e = () => he(document.fullscreenElement === F.current);
+		let e = () => _e(document.fullscreenElement === P.current);
 		return document.addEventListener("fullscreenchange", e), () => document.removeEventListener("fullscreenchange", e);
 	}, []);
-	let ge = r(() => {
-		let e = F.current;
+	let ve = r(() => {
+		let e = P.current;
 		if (e) try {
 			if (typeof document < "u" && document.fullscreenElement) {
 				document.exitFullscreen?.();
@@ -1033,71 +1033,83 @@ function K({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetr
 			let t = (e.requestFullscreen ?? e.webkitRequestFullscreen ?? e.msRequestFullscreen)?.call(e);
 			t && typeof t.catch == "function" && t.catch(() => {});
 		} catch {}
-	}, []), _e = typeof document < "u" && document.fullscreenEnabled !== !1 && typeof Element < "u" && !!(Element.prototype.requestFullscreen ?? Element.prototype.webkitRequestFullscreen), ve = L.retry, Q = r(() => {
-		ve?.(), d?.();
-	}, [ve, d]), ye = !!(t || n), be = !!n && !t, $ = ye && Y !== "error" && Y !== "not-started" && Y !== "ended", xe = $ || !!j, Se = !W || W.retryable, Ce = (be || !!d) && Se, we = W?.kind === "no-broadcast" ? "Check again" : "Try again";
+	}, []), ye = typeof document < "u" && document.fullscreenEnabled !== !1 && typeof Element < "u" && !!(Element.prototype.requestFullscreen ?? Element.prototype.webkitRequestFullscreen), be = I.retry, Z = r(() => {
+		be?.(), d?.();
+	}, [be, d]), xe = !!(t || n), Se = !!n && !t, Q = xe && q !== "error" && q !== "not-started" && q !== "ended", Ce = Q || !!j, we = !U || U.retryable, $ = (Se || !!d) && we, Te = U?.kind === "no-broadcast" ? "Check again" : "Try again";
 	return /* @__PURE__ */ l("div", {
-		ref: F,
-		"data-testid": N,
-		"data-live": String(X),
-		"data-phase": Y,
-		"data-audio-only": String(pe),
+		ref: P,
+		"data-testid": M,
+		"data-live": String(Y),
+		"data-phase": q,
+		"data-audio-only": String(he),
 		"data-transport": t ? "realtime" : n ? "hls" : "none",
-		"data-error-kind": W?.kind,
-		"data-error-detail": W?.detail,
-		className: e("relative h-full w-full overflow-hidden rounded-lg bg-black", M),
+		"data-error-kind": U?.kind,
+		"data-error-detail": U?.detail,
+		className: e("relative h-full w-full overflow-hidden rounded-lg bg-black", te),
 		children: [
 			t ? /* @__PURE__ */ c(C, {
 				stream: t,
-				muted: P,
+				muted: N,
 				className: "h-full w-full object-contain"
 			}) : n ? /* @__PURE__ */ c("video", {
-				ref: I,
-				"data-testid": `${N}-hls`,
+				ref: F,
+				"data-testid": `${M}-hls`,
 				autoPlay: !0,
 				playsInline: !0,
-				muted: P,
+				muted: N,
 				className: "h-full w-full object-contain"
 			}) : null,
-			pe && /* @__PURE__ */ c(oe, {
-				"data-testid": `${N}-audio-only`,
+			he && /* @__PURE__ */ c(se, {
+				"data-testid": `${M}-audio-only`,
 				name: v,
 				avatarUrl: y,
-				level: me,
-				active: Y !== "stalled" && !P,
-				muted: P
+				level: ge,
+				active: q !== "stalled" && !N,
+				muted: N
 			}),
-			Y === "idle" && /* @__PURE__ */ c(q, {
-				testId: `${N}-placeholder`,
+			q === "idle" && /* @__PURE__ */ c(G, {
+				testId: `${M}-placeholder`,
 				children: ee ?? "Waiting for the stream to start…"
 			}),
-			Y === "ended" && /* @__PURE__ */ l(q, {
-				testId: `${N}-ended`,
-				children: [/* @__PURE__ */ c("span", { children: S ?? "The broadcast has ended." }), d && /* @__PURE__ */ c(J, {
-					testId: `${N}-retry`,
-					label: "Check again",
-					onClick: Q
+			q === "ended" && /* @__PURE__ */ l(G, {
+				testId: `${M}-ended`,
+				"data-ended-reason": J,
+				children: [
+					/* @__PURE__ */ c("span", { children: S ?? (J === "withdrawn" ? "The broadcast has ended." : "The stream stopped.") }),
+					J === "stopped" && !S && /* @__PURE__ */ c("span", {
+						className: "text-xs text-white/60",
+						children: "Nothing is arriving from the broadcaster right now — they may be reconnecting."
+					}),
+					J === "stopped" ? $ && /* @__PURE__ */ c(K, {
+						testId: `${M}-retry`,
+						label: "Try again",
+						onClick: Z
+					}) : d && /* @__PURE__ */ c(K, {
+						testId: `${M}-retry`,
+						label: "Check again",
+						onClick: Z
+					})
+				]
+			}),
+			q === "not-started" && /* @__PURE__ */ l(G, {
+				testId: `${M}-not-started`,
+				children: [/* @__PURE__ */ c("span", { children: b ?? "Nothing is being broadcast right now." }), $ && /* @__PURE__ */ c(K, {
+					testId: `${M}-retry`,
+					label: Te,
+					onClick: Z
 				})]
 			}),
-			Y === "not-started" && /* @__PURE__ */ l(q, {
-				testId: `${N}-not-started`,
-				children: [/* @__PURE__ */ c("span", { children: b ?? "Nothing is being broadcast right now." }), Ce && /* @__PURE__ */ c(J, {
-					testId: `${N}-retry`,
-					label: we,
-					onClick: Q
-				})]
-			}),
-			Y === "connecting" && /* @__PURE__ */ c(q, {
-				testId: `${N}-connecting`,
+			q === "connecting" && /* @__PURE__ */ c(G, {
+				testId: `${M}-connecting`,
 				children: "Connecting…"
 			}),
-			Y === "buffering" && /* @__PURE__ */ c("div", {
-				"data-testid": `${N}-buffering`,
+			q === "buffering" && /* @__PURE__ */ c("div", {
+				"data-testid": `${M}-buffering`,
 				className: "pointer-events-none absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-black/70 px-3 py-1 text-xs font-medium text-white/90",
 				children: "Buffering…"
 			}),
-			Y === "stalled" && /* @__PURE__ */ l(q, {
-				testId: `${N}-stalled`,
+			q === "stalled" && /* @__PURE__ */ l(G, {
+				testId: `${M}-stalled`,
 				dim: !0,
 				children: [
 					/* @__PURE__ */ c("span", { children: "The stream has stopped responding." }),
@@ -1105,26 +1117,26 @@ function K({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetr
 						className: "text-xs text-white/60",
 						children: "The picture below is the last frame that arrived."
 					}),
-					Ce && /* @__PURE__ */ c(J, {
-						testId: `${N}-retry`,
-						onClick: Q
+					$ && /* @__PURE__ */ c(K, {
+						testId: `${M}-retry`,
+						onClick: Z
 					})
 				]
 			}),
-			Y === "error" && /* @__PURE__ */ l(q, {
-				testId: `${N}-error`,
+			q === "error" && /* @__PURE__ */ l(G, {
+				testId: `${M}-error`,
 				dim: !0,
-				children: [/* @__PURE__ */ c("span", { children: L.error ?? "This stream could not be played." }), Ce && /* @__PURE__ */ c(J, {
-					testId: `${N}-retry`,
-					label: we,
-					onClick: Q
+				children: [/* @__PURE__ */ c("span", { children: I.error ?? "This stream could not be played." }), $ && /* @__PURE__ */ c(K, {
+					testId: `${M}-retry`,
+					label: Te,
+					onClick: Z
 				})]
 			}),
-			(f || X || p(h)) && /* @__PURE__ */ l("div", {
+			(f || Y || p(h)) && /* @__PURE__ */ l("div", {
 				className: "pointer-events-none absolute left-3 top-3 flex items-center gap-2",
 				children: [
-					X && /* @__PURE__ */ c("span", {
-						"data-testid": `${N}-live`,
+					Y && /* @__PURE__ */ c("span", {
+						"data-testid": `${M}-live`,
 						className: "rounded bg-danger px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white",
 						children: "Live"
 					}),
@@ -1135,49 +1147,49 @@ function K({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetr
 					p(h) && /* @__PURE__ */ c(m, { count: h })
 				]
 			}),
-			T && T.length > 0 && /* @__PURE__ */ c(le, {
+			T && T.length > 0 && /* @__PURE__ */ c(ue, {
 				messages: T,
 				visibleCount: E,
 				rotateMs: D,
 				className: "absolute bottom-3 left-3",
-				"data-testid": `${N}-chat`
+				"data-testid": `${M}-chat`
 			}),
-			xe && /* @__PURE__ */ l("div", {
-				"data-testid": `${N}-controls`,
+			Ce && /* @__PURE__ */ l("div", {
+				"data-testid": `${M}-controls`,
 				className: "absolute bottom-3 right-3 z-10 flex items-center gap-2",
 				children: [
-					$ && be && A && (Y === "playing" || Y === "buffering") && /* @__PURE__ */ c("button", {
+					Q && Se && A && (q === "playing" || q === "buffering") && /* @__PURE__ */ c("button", {
 						type: "button",
-						"data-testid": `${N}-latency`,
-						onClick: () => L.seekToLive?.(),
+						"data-testid": `${M}-latency`,
+						onClick: () => I.seekToLive?.(),
 						title: "This broadcast is delivered over HLS, a few seconds behind the source. Click to jump to the live edge.",
 						"aria-label": "Jump to the live edge",
-						className: e(G, "bg-black/50 text-white/80 hover:bg-black/70"),
-						children: typeof L.latencySec == "number" && Number.isFinite(L.latencySec) ? `${Math.max(1, Math.round(L.latencySec))}s behind` : "Behind live"
+						className: e(W, "bg-black/50 text-white/80 hover:bg-black/70"),
+						children: typeof I.latencySec == "number" && Number.isFinite(I.latencySec) ? `${Math.max(1, Math.round(I.latencySec))}s behind` : "Behind live"
 					}),
-					$ && X && /* @__PURE__ */ l("button", {
+					Q && Y && /* @__PURE__ */ l("button", {
 						type: "button",
-						"data-testid": `${N}-mute-toggle`,
-						"aria-label": P ? "Unmute" : "Mute",
-						"aria-pressed": P,
-						onClick: () => te((e) => !e),
-						className: e(G, P ? "bg-white text-black hover:bg-white/90" : "bg-black/50 text-white/80 hover:bg-black/70"),
+						"data-testid": `${M}-mute-toggle`,
+						"aria-label": N ? "Unmute" : "Mute",
+						"aria-pressed": N,
+						onClick: () => ne((e) => !e),
+						className: e(W, N ? "bg-white text-black hover:bg-white/90" : "bg-black/50 text-white/80 hover:bg-black/70"),
 						children: [/* @__PURE__ */ c("span", {
 							"aria-hidden": !0,
-							children: P ? "🔇" : "🔊"
-						}), P ? "Unmute" : "Mute"]
+							children: N ? "🔇" : "🔊"
+						}), N ? "Unmute" : "Mute"]
 					}),
-					$ && k && _e && /* @__PURE__ */ l("button", {
+					Q && k && ye && /* @__PURE__ */ l("button", {
 						type: "button",
-						"data-testid": `${N}-fullscreen`,
-						"aria-label": Z ? "Exit full screen" : "Full screen",
-						"aria-pressed": Z,
-						onClick: ge,
-						className: e(G, "bg-black/50 text-white/80 hover:bg-black/70"),
+						"data-testid": `${M}-fullscreen`,
+						"aria-label": X ? "Exit full screen" : "Full screen",
+						"aria-pressed": X,
+						onClick: ve,
+						className: e(W, "bg-black/50 text-white/80 hover:bg-black/70"),
 						children: [/* @__PURE__ */ c("span", {
 							"aria-hidden": !0,
-							children: Z ? "↙" : "↗"
-						}), Z ? "Exit" : "Full screen"]
+							children: X ? "↙" : "↗"
+						}), X ? "Exit" : "Full screen"]
 					}),
 					j
 				]
@@ -1185,21 +1197,22 @@ function K({ stream: t = null, playlistUrl: n = null, onPlaybackError: u, onRetr
 		]
 	});
 }
-function q({ testId: t, dim: n, children: r }) {
+function G({ testId: t, dim: n, children: r, "data-ended-reason": i }) {
 	return /* @__PURE__ */ c("div", {
 		"data-testid": t,
+		"data-ended-reason": i ?? void 0,
 		className: e("absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 px-6 text-center text-sm text-white/70", n && "bg-black/60"),
 		children: r
 	});
 }
-function J({ testId: t, label: n = "Try again", onClick: r }) {
+function K({ testId: t, label: n = "Try again", onClick: r }) {
 	return /* @__PURE__ */ c("button", {
 		type: "button",
 		"data-testid": t,
 		onClick: r,
-		className: e(G, "bg-white text-black hover:bg-white/90"),
+		className: e(W, "bg-white text-black hover:bg-white/90"),
 		children: n
 	});
 }
 //#endregion
-export { g as C, u as E, h as S, p as T, S as _, U as a, _ as b, re as c, j as d, A as f, C as g, T as h, ce as i, M as l, E as m, de as n, se as o, k as p, le as r, oe as s, K as t, ne as u, x as v, m as w, v as x, b as y };
+export { g as C, u as E, h as S, p as T, S as _, H as a, _ as b, ie as c, j as d, A as f, C as g, T as h, le as i, te as l, E as m, fe as n, ce as o, k as p, ue as r, se as s, pe as t, re as u, x as v, m as w, v as x, b as y };

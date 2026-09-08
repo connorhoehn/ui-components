@@ -9,8 +9,9 @@ import p from "@tiptap/extension-task-item";
 import m from "@tiptap/extension-placeholder";
 import h from "@tiptap/extension-collaboration";
 import { absolutePositionToRelativePosition as g, relativePositionToAbsolutePosition as _, ySyncPluginKey as v } from "@tiptap/y-tiptap";
+import { Extension as y } from "@tiptap/core";
 //#region src/components/doc-editor/EditorToolbar.tsx
-var y = [
+var b = [
 	{
 		label: "B",
 		action: (e) => {
@@ -103,10 +104,10 @@ var y = [
 		isActive: () => !1
 	}
 ];
-function b({ editor: t }) {
+function x({ editor: t }) {
 	return t ? /* @__PURE__ */ o("div", {
 		className: e("flex flex-wrap gap-1 px-2 py-1.5 border-b border-border bg-surface-panel rounded-t-lg"),
-		children: y.map((n) => {
+		children: b.map((n) => {
 			let r = n.isActive(t);
 			return /* @__PURE__ */ o("button", {
 				type: "button",
@@ -119,8 +120,54 @@ function b({ editor: t }) {
 	}) : null;
 }
 //#endregion
+//#region src/components/doc-editor/canvasLineSpacing.ts
+var S = [
+	"1",
+	"1.5",
+	"2"
+], C = {
+	1: "Single",
+	"1.5": "1.5",
+	2: "Double"
+};
+function w(e) {
+	return typeof e == "string" && S.includes(e);
+}
+function T(e) {
+	return w(e) ? e : null;
+}
+function E(e) {
+	let t = T(e);
+	return !t || t === "1" ? {} : {
+		"data-line-spacing": t,
+		style: `line-height: calc(var(--doc-line, 1.65em) * ${t})`
+	};
+}
+var D = y.create({
+	name: "canvasLineSpacing",
+	addOptions() {
+		return { types: ["paragraph"] };
+	},
+	addGlobalAttributes() {
+		return [{
+			types: this.options.types,
+			attributes: { lineSpacing: {
+				default: null,
+				parseHTML: (e) => T(e.getAttribute("data-line-spacing")),
+				renderHTML: (e) => E(e.lineSpacing)
+			} }
+		}];
+	},
+	addCommands() {
+		return {
+			setLineSpacing: (e) => ({ commands: t }) => w(e) ? e === "1" ? t.unsetLineSpacing() : this.options.types.map((n) => t.updateAttributes(n, { lineSpacing: e })).some(Boolean) : !1,
+			unsetLineSpacing: () => ({ commands: e }) => this.options.types.map((t) => e.resetAttributes(t, "lineSpacing")).some(Boolean)
+		};
+	}
+});
+//#endregion
 //#region src/components/doc-editor/TiptapEditor.tsx
-function x(e, t, n) {
+function O(e, t, n) {
 	try {
 		if (t < 0 || t > e.state.doc.content.size) return null;
 		let r = e.coordsAtPos(t), i = (n || e.dom).getBoundingClientRect();
@@ -133,10 +180,10 @@ function x(e, t, n) {
 		return null;
 	}
 }
-function S({ cursors: e, editorView: t, containerEl: n }) {
+function k({ cursors: e, editorView: t, containerEl: n }) {
 	return t ? /* @__PURE__ */ o(a, { children: e.map((e) => {
 		if (e.head == null) return null;
-		let r = x(t, e.head, n);
+		let r = O(t, e.head, n);
 		if (!r) return null;
 		let i = e.name.split(" ").map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2) || e.name.slice(0, 2).toUpperCase(), a = [];
 		if (e.anchor != null && e.anchor !== e.head) {
@@ -144,15 +191,15 @@ function S({ cursors: e, editorView: t, containerEl: n }) {
 			try {
 				let s = t.dom.offsetWidth, c = r;
 				for (; c <= i;) {
-					let l = x(t, c, n);
+					let l = O(t, c, n);
 					if (!l) break;
 					let u = c, d = l.top;
 					for (let e = c + 1; e <= i; e++) {
-						let r = x(t, e, n);
+						let r = O(t, e, n);
 						if (!r || Math.abs(r.top - d) > 2) break;
 						u = e;
 					}
-					let f = x(t, u, n);
+					let f = O(t, u, n);
 					if (f) {
 						let t = c === r ? l.left : 0, n = u === i ? f.left + 4 : s;
 						a.push(/* @__PURE__ */ o("div", {
@@ -210,15 +257,16 @@ function S({ cursors: e, editorView: t, containerEl: n }) {
 		}, e.clientId);
 	}) }) : null;
 }
-function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, placeholder: T = "Start typing...", sectionId: E, onUpdateCursorInfo: D, extensions: O, chrome: k = "card", hideToolbar: A = !1, onEditorReady: j }) {
-	let M = r(() => [
+function A({ fragment: a, ydoc: y, provider: b, user: S, editable: C = !0, placeholder: w = "Start typing...", sectionId: T, onUpdateCursorInfo: E, extensions: O, chrome: A = "card", hideToolbar: j = !1, onEditorReady: M }) {
+	let N = r(() => [
 		d.configure({
 			history: !1,
 			undoRedo: !1
 		}),
 		f,
 		p.configure({ nested: !0 }),
-		m.configure({ placeholder: T }),
+		m.configure({ placeholder: w }),
+		D,
 		h.configure({
 			document: y,
 			fragment: a
@@ -228,37 +276,37 @@ function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, place
 		y,
 		a,
 		O
-	]), N = u({
-		extensions: M,
-		editable: w
-	}, [M]);
+	]), P = u({
+		extensions: N,
+		editable: C
+	}, [N]);
 	n(() => {
-		!N || N.isDestroyed || N.isEditable !== w && N.setEditable(w);
-	}, [N, w]);
-	let [P, F] = i([]), [I, L] = i(null);
+		!P || P.isDestroyed || P.isEditable !== C && P.setEditable(C);
+	}, [P, C]);
+	let [F, I] = i([]), [L, R] = i(null);
 	n(() => {
-		if (D) D(C.name, C.color);
-		else if (x?.awareness) {
-			let e = x.awareness.getLocalState()?.user || {};
-			x.awareness.setLocalStateField("user", {
+		if (E) E(S.name, S.color);
+		else if (b?.awareness) {
+			let e = b.awareness.getLocalState()?.user || {};
+			b.awareness.setLocalStateField("user", {
 				...e,
-				name: C.name,
-				color: C.color
+				name: S.name,
+				color: S.color
 			});
 		}
 	}, [
-		x,
-		C,
-		D
+		b,
+		S,
+		E
 	]);
-	let R = t(() => {
-		if (!x?.awareness || !N?.view) return;
-		let e = x.awareness.getStates(), t = x.awareness.clientID, n = [];
+	let z = t(() => {
+		if (!b?.awareness || !P?.view) return;
+		let e = b.awareness.getStates(), t = b.awareness.clientID, n = [];
 		e.forEach((e, r) => {
 			if (r === t) return;
 			let i = e.user;
-			if (!(!i || !e.cursor) && !(E && e.cursor.sectionId !== E)) try {
-				let t = v.getState(N.view.state);
+			if (!(!i || !e.cursor) && !(T && e.cursor.sectionId !== T)) try {
+				let t = v.getState(P.view.state);
 				if (!t?.type || !t?.binding?.mapping) return;
 				let a = _(t.doc, t.type, c.createRelativePositionFromJSON(e.cursor.anchor), t.binding.mapping), o = _(t.doc, t.type, c.createRelativePositionFromJSON(e.cursor.head), t.binding.mapping);
 				n.push({
@@ -269,55 +317,55 @@ function C({ fragment: a, ydoc: y, provider: x, user: C, editable: w = !0, place
 					head: o
 				});
 			} catch {}
-		}), F(n);
+		}), I(n);
 	}, [
-		x,
-		N,
-		E
+		b,
+		P,
+		T
 	]);
 	n(() => {
-		if (!N?.view || !x?.awareness) return;
+		if (!P?.view || !b?.awareness) return;
 		let e = () => {
 			try {
-				let e = v.getState(N.view.state);
+				let e = v.getState(P.view.state);
 				if (!e?.type || !e?.binding?.mapping) return;
-				let { anchor: t, head: n } = N.view.state.selection, r = g(t, e.type, e.binding.mapping), i = g(n, e.type, e.binding.mapping);
-				x.awareness.setLocalStateField("cursor", {
+				let { anchor: t, head: n } = P.view.state.selection, r = g(t, e.type, e.binding.mapping), i = g(n, e.type, e.binding.mapping);
+				b.awareness.setLocalStateField("cursor", {
 					anchor: r,
 					head: i,
-					sectionId: E
+					sectionId: T
 				});
 			} catch {}
 		};
-		return N.on("selectionUpdate", e), e(), () => {
-			N.off("selectionUpdate", e), x.awareness.setLocalStateField("cursor", null);
+		return P.on("selectionUpdate", e), e(), () => {
+			P.off("selectionUpdate", e), b.awareness.setLocalStateField("cursor", null);
 		};
 	}, [
-		N,
-		x,
-		E
+		P,
+		b,
+		T
 	]), n(() => {
-		if (!x?.awareness) return;
-		let e = () => R();
-		return x.awareness.on("change", e), () => {
-			x.awareness.off("change", e);
+		if (!b?.awareness) return;
+		let e = () => z();
+		return b.awareness.on("change", e), () => {
+			b.awareness.off("change", e);
 		};
-	}, [x, R]);
-	let z = k === "none";
+	}, [b, z]);
+	let B = A === "none";
 	return n(() => {
-		j?.(N);
-	}, [N]), /* @__PURE__ */ s("div", {
-		className: e(!z && w ? "border border-border rounded-lg overflow-hidden relative" : "relative"),
-		children: [w && !A && /* @__PURE__ */ o(b, { editor: N }), /* @__PURE__ */ s("div", {
-			ref: L,
-			className: e("relative", z ? "leading-relaxed" : "px-4 py-3 text-sm leading-relaxed text-text-primary"),
-			children: [/* @__PURE__ */ o(l, { editor: N }), /* @__PURE__ */ o(S, {
-				cursors: P,
-				editorView: N?.view,
-				containerEl: I
+		M?.(P);
+	}, [P]), /* @__PURE__ */ s("div", {
+		className: e(!B && C ? "border border-border rounded-lg overflow-hidden relative" : "relative"),
+		children: [C && !j && /* @__PURE__ */ o(x, { editor: P }), /* @__PURE__ */ s("div", {
+			ref: R,
+			className: e("relative", B ? "leading-relaxed" : "px-4 py-3 text-sm leading-relaxed text-text-primary"),
+			children: [/* @__PURE__ */ o(l, { editor: P }), /* @__PURE__ */ o(k, {
+				cursors: F,
+				editorView: P?.view,
+				containerEl: L
 			})]
 		})]
 	});
 }
 //#endregion
-export { b as n, C as t };
+export { w as a, x as c, C as i, D as n, E as o, S as r, T as s, A as t };

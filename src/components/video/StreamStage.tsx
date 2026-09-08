@@ -320,6 +320,29 @@ export function StreamStage({
     rawPhase === 'error' && failure?.kind === 'no-broadcast'
       ? (everPlayed.current ? 'ended' : 'not-started')
       : rawPhase;
+
+  // WHY the stage is empty, which is a different question from whether it is.
+  //
+  // Two roads reach `ended` and only one of them is an ending:
+  //
+  //   withdrawn  — the host took the source away. `streamStagePhase` returned
+  //                `ended` on its own because the playlist is gone, and the
+  //                only thing that removes it is the session going away. A
+  //                deliberate stop.
+  //   stopped    — the playlist is STILL attached and the packager answered
+  //                "no active producers". The broadcaster's publish stopped
+  //                reaching the server. A crashed tab, a dropped network and a
+  //                clean hang-up are the same 503 here, so this branch does
+  //                not know that the broadcast ended — it only knows the
+  //                stream stopped arriving.
+  //
+  // They used to share the sentence "The broadcast has ended.", which turned
+  // every broadcaster-side failure into a decision the broadcaster never made
+  // and sent the audience away from a stream that was about to come back.
+  // `useHlsSource` deliberately refuses this guess (its `no-broadcast` copy is
+  // neutral on purpose); rewriting the phase here threw that neutrality away.
+  const endedReason: 'withdrawn' | 'stopped' | null =
+    phase !== 'ended' ? null : rawPhase === 'ended' ? 'withdrawn' : 'stopped';
   const playing = live && stagePhaseIsLive(phase);
 
   const detectedAudioOnly = stream ? streamAudioOnly : hls.audioOnly === true;
@@ -448,15 +471,39 @@ export function StreamStage({
       )}
 
       {phase === 'ended' && (
-        <StageMessage testId={`${testId}-ended`}>
-          <span>{endedLabel ?? 'The broadcast has ended.'}</span>
-          {/* Only where the HOST can actually go and look — re-signing a URL,
-              re-subscribing. The stage's own HLS retry cannot help here: there
-              is no playlist left to re-attach, so a button wired to it would
-              be one that can never succeed. */}
-          {onRetry && (
-            <RetryButton testId={`${testId}-retry`} label="Check again" onClick={retry} />
+        <StageMessage testId={`${testId}-ended`} data-ended-reason={endedReason}>
+          {/* An explicit `endedLabel` still wins — a host that KNOWS the
+              broadcast was ended (it watched the session close) may say so. */}
+          <span>
+            {endedLabel
+              ?? (endedReason === 'withdrawn'
+                ? 'The broadcast has ended.'
+                : 'The stream stopped.')}
+          </span>
+          {/* The second line exists only for the case we cannot call: it tells
+              the viewer the truth (nothing is arriving) and that waiting is a
+              reasonable thing to do, instead of sending them away from a
+              broadcast whose author is reconnecting. */}
+          {endedReason === 'stopped' && !endedLabel && (
+            <span className="text-xs text-white/60">
+              Nothing is arriving from the broadcaster right now — they may be
+              reconnecting.
+            </span>
           )}
+          {/* Only where the HOST can actually go and look — re-signing a URL,
+              re-subscribing. On the `withdrawn` road the stage's own HLS retry
+              cannot help: there is no playlist left to re-attach, so a button
+              wired to it would be one that can never succeed. On the `stopped`
+              road the playlist IS still attached, so the stage can genuinely
+              retry it and the button is offered whether or not the host
+              supplied one. */}
+          {endedReason === 'stopped'
+            ? canRetry && (
+              <RetryButton testId={`${testId}-retry`} label="Try again" onClick={retry} />
+            )
+            : onRetry && (
+              <RetryButton testId={`${testId}-retry`} label="Check again" onClick={retry} />
+            )}
         </StageMessage>
       )}
 
@@ -626,15 +673,20 @@ function StageMessage({
   testId,
   dim,
   children,
+  'data-ended-reason': endedReason,
 }: {
   testId: string;
   /** Wash the frame behind, for states where the frame itself is misleading. */
   dim?: boolean;
   children: ReactNode;
+  /** Why the stage is empty, for tests and for anyone debugging a report of
+   *  "it said the broadcast ended and it hadn't". Never rendered. */
+  'data-ended-reason'?: string | null;
 }) {
   return (
     <div
       data-testid={testId}
+      data-ended-reason={endedReason ?? undefined}
       className={cn(
         'absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 px-6 text-center text-sm text-white/70',
         dim && 'bg-black/60',

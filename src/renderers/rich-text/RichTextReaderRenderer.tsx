@@ -4,7 +4,7 @@
 // Shows read-only Tiptap content with a jump-to-editor link.
 
 import type { SectionRendererProps } from '../types';
-import TiptapEditor from '../../components/doc-editor/TiptapEditor';
+import DefaultTiptapEditor from '../../components/doc-editor/TiptapEditor';
 
 export default function RichTextReaderRenderer({
   section,
@@ -12,20 +12,24 @@ export default function RichTextReaderRenderer({
   ydoc,
   provider,
   onNavigateToEditor,
+  extensions,
+  editorComponent,
 }: SectionRendererProps) {
+  const Editor = editorComponent ?? DefaultTiptapEditor;
   const hasContent = !!fragment && !!ydoc;
 
   return (
     <div>
       {hasContent ? (
         <div className="border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-text-primary leading-[1.6]">
-          <TiptapEditor
+          <Editor
             fragment={fragment}
             ydoc={ydoc}
             provider={provider ?? null}
             user={{ name: '', color: '#6b7280' }}
             editable={false}
             sectionId={section.id}
+            extensions={extensions}
           />
         </div>
       ) : (
@@ -36,7 +40,7 @@ export default function RichTextReaderRenderer({
         <button
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
-          className="mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit"
+          className="mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0"
         >
           Edit in editor →
         </button>

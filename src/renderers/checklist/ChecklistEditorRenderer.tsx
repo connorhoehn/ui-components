@@ -3,7 +3,7 @@ import { cn } from '../../lib/cn';
 import { useEventCallback } from '../../hooks/useEventCallback';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
-import TiptapEditor from '../../components/doc-editor/TiptapEditor';
+import DefaultTiptapEditor from '../../components/doc-editor/TiptapEditor';
 import { sectionItems } from '../sectionItems';
 
 interface RowProps {
@@ -48,7 +48,7 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
         readOnly={!editable}
         placeholder="Checklist item..."
         className={cn(
-          'flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5',
+          'flex-1 border-none outline-none text-sm bg-transparent px-1 py-0.5',
           done ? 'text-text-tertiary line-through' : 'text-text-primary',
         )}
       />
@@ -76,7 +76,10 @@ export default function ChecklistEditorRenderer({
   onUpdateItem,
   onRemoveItem,
   onUpdateCursorInfo,
+  extensions,
+  editorComponent,
 }: SectionRendererProps) {
+  const Editor = editorComponent ?? DefaultTiptapEditor;
   const items = sectionItems(section);
   // Item count recorded when "+ Add item" was pressed, or null when no add is
   // outstanding. Focus moves to the last row only once the list has actually
@@ -107,7 +110,7 @@ export default function ChecklistEditorRenderer({
   return (
     <div>
       {fragment && ydoc && (
-        <TiptapEditor
+        <Editor
           fragment={fragment}
           ydoc={ydoc}
           provider={provider ?? null}
@@ -116,6 +119,7 @@ export default function ChecklistEditorRenderer({
           placeholder={section.placeholder ?? 'Add notes or context...'}
           sectionId={section.id}
           onUpdateCursorInfo={onUpdateCursorInfo}
+          extensions={extensions}
         />
       )}
 
@@ -147,7 +151,7 @@ export default function ChecklistEditorRenderer({
         <button
           type="button"
           onClick={handleAdd}
-          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit"
+          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer"
         >
           + Add item
         </button>

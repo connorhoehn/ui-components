@@ -663,6 +663,11 @@ export declare interface ApplicationPoolFormPageProps {
  */
 export declare function applyPatch(pipelineId: string, runId: string, stepId: string, patch: ContextPatch, appliedBy?: string): Promise<PatchResult>;
 
+/** A string, or a getter for a host that resolves its base URL lazily. */
+export declare type ApprovalApiBase = string | (() => string);
+
+export declare type ApprovalDecision = typeof TERMINAL_DECISIONS[TerminalRendererStatus];
+
 export declare interface ApprovalNodeData {
     type: 'approval';
     approvers: Approver[];
@@ -2448,6 +2453,12 @@ export declare interface CheckboxProps {
     'data-testid'?: string;
 }
 
+export declare function ChecklistEditorRenderer({ section, fragment, ydoc, provider, user, editable, onAddItem, onUpdateItem, onRemoveItem, onUpdateCursorInfo, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
+
+export declare const checklistFieldType: FieldTypeDefinition;
+
+export declare function ChecklistReaderRenderer({ section, fragment, ydoc, provider, onUpdateItem, onNavigateToEditor, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
+
 export declare function Chip({ tone, palette, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
 
 /**
@@ -3434,9 +3445,17 @@ export declare const dateFieldType: FieldTypeDefinition;
 
 export declare function DateReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
 
+export declare function DecisionsEditorRenderer({ section, fragment, ydoc, provider, user, editable, onAddItem, onUpdateItem, onRemoveItem, onUpdateCursorInfo, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
+
+export declare const decisionsFieldType: FieldTypeDefinition;
+
+export declare function DecisionsReaderRenderer({ section, onNavigateToEditor }: SectionRendererProps): JSX.Element;
+
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
 export declare const DEFAULT_PIPELINE_ICONS: string[];
+
+export declare function DefaultRenderer({ section, fragment, ydoc, provider, user, editable, onAddItem, onUpdateItem, onRemoveItem, onUpdateCursorInfo, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
 
 declare type DeleteOutcome = {
     status: 'synced';
@@ -3518,6 +3537,12 @@ export declare interface DiagnosticsPageProps {
     onRefresh: () => void;
     loading?: boolean;
 }
+
+export declare function DiagramEditorRenderer({ section, editable, onUpdateSection, }: SectionRendererProps): JSX.Element;
+
+export declare const diagramFieldType: FieldTypeDefinition;
+
+export declare function DiagramReaderRenderer({ section }: SectionRendererProps): JSX.Element;
 
 export declare interface DiffAnnotation {
     /** Path as it appears in the diff (new side). */
@@ -4392,6 +4417,12 @@ export declare interface FileUploadDropProps {
     'data-testid'?: string;
 }
 
+export declare function FileUploadEditorRenderer({ section, editable, onUpdateSection, }: SectionRendererProps): JSX.Element;
+
+export declare const fileUploadFieldType: FieldTypeDefinition;
+
+export declare function FileUploadReaderRenderer({ section }: SectionRendererProps): JSX.Element;
+
 /**
  * Height the region should take: everything from its own top edge down to
  * the bottom of the window, minus `bottomGap`, never below `minHeight`.
@@ -4704,6 +4735,8 @@ export declare type GeometricOpRotate = {
     trimAfter?: boolean;
 };
 
+export declare function getApprovalApiBase(): string;
+
 /**
  * Maps an event type prefix to a category for filter UIs.
  * Used by ExecutionLog + Observability EventsPage to group filters.
@@ -4763,7 +4796,7 @@ export declare function getRenderer(sectionType: string | null | undefined, view
  */
 export declare function getRunAuditLog(pipelineId: string, runId: string, filters?: AuditFilters): Promise<AuditPage>;
 
-export declare function GoLiveButton({ live, starting, onGoLive, onEndBroadcast, viewerCount, streamReady, channelName, error, endHint, label, disabled, className, 'data-testid': testId, }: GoLiveButtonProps): JSX.Element;
+export declare function GoLiveButton({ live, starting, onGoLive, onEndBroadcast, viewerCount, streamReady, connection, channelName, error, endHint, label, disabled, className, 'data-testid': testId, }: GoLiveButtonProps): JSX.Element;
 
 export declare interface GoLiveButtonProps {
     /**
@@ -4803,6 +4836,29 @@ export declare interface GoLiveButtonProps {
      * stream is not, which this control must never render as "You are live".
      */
     streamReady?: boolean;
+    /**
+     * The broadcaster's OWN connection, while live.
+     *
+     * `streamReady` answers "did this broadcast ever reach anybody" and it
+     * latches: hosts derive it from a session record that stops being re-asked
+     * once it is true. So it catches a broadcast that never came up and is
+     * silent about one that stops halfway — which is the failure the person
+     * presenting is least able to notice on their own, because their own
+     * preview keeps playing from their own camera.
+     *
+     * Observed: a broadcaster whose network dropped mid-broadcast was shown
+     * "You are live · 1 watching" for the full 30s the drop lasted, while the
+     * audience was already being told the stream had stopped responding.
+     *
+     *   'online'   — nothing is wrong, or nobody is watching the connection.
+     *   'unstable' — the transport is retrying. Media may not be going out.
+     *   'offline'  — the transport is down. Nothing is going out.
+     *
+     * Anything but `online` retires the confident pill. The claim "you are
+     * live" is a claim about OTHER PEOPLE, and it must not outlive the
+     * connection that would carry it to them.
+     */
+    connection?: 'online' | 'unstable' | 'offline';
     /**
      * Who gets told, named — e.g. `#design`. The social consequence of the
      * press is the half people underestimate, and "the channel" is vaguer than
@@ -6020,6 +6076,12 @@ export declare interface LineSeries {
     color?: string;
 }
 
+export declare function LinkBlockEditorRenderer({ section, editable, onUpdateSection, }: SectionRendererProps): JSX.Element;
+
+export declare const linkBlockFieldType: FieldTypeDefinition;
+
+export declare function LinkBlockReaderRenderer({ section }: SectionRendererProps): JSX.Element;
+
 export declare function LinkDialog({ open, initialText, initialHref, onSubmit, onRemove, onClose, 'data-testid': testId, }: LinkDialogProps): JSX.Element;
 
 export declare interface LinkDialogProps {
@@ -6254,6 +6316,8 @@ export declare interface MappingRule {
     /** Priority when multiple rules match — higher wins. */
     priority: number;
 }
+
+export declare function mapStatusToDecision(status: string): ApprovalDecision | null;
 
 export declare function MarkdownView({ markdown, className, 'data-testid': testId }: MarkdownViewProps): JSX.Element;
 
@@ -8116,6 +8180,24 @@ export declare interface PoolStats {
     poolName: string;
 }
 
+export declare function postApproval(args: PostApprovalArgs): Promise<{
+    ok: boolean;
+    error?: string;
+}>;
+
+export declare interface PostApprovalArgs {
+    sectionId: string;
+    decision: ApprovalDecision;
+    reviewerName?: string;
+    comment?: string;
+    /** Override for tests; production reads from window.location. */
+    documentId?: string | null;
+    /** Optional bearer token. Dev (SKIP_AUTH=true) accepts unauthenticated. */
+    idToken?: string | null;
+    /** Per-call override of the API base; falls back to `getApprovalApiBase()`. */
+    baseUrl?: string;
+}
+
 export declare function PostFeed({ idToken, roomId, onMessage }: PostFeedProps): JSX.Element;
 
 declare interface PostFeedProps {
@@ -8713,6 +8795,8 @@ export declare interface ReactionSummary {
     mine?: boolean;
 }
 
+export declare function readDocumentIdFromUrl(): string | null;
+
 export declare function ReconnectingBanner({ show, label }: ReconnectingBannerProps): JSX.Element | null;
 
 export declare interface ReconnectingBannerProps {
@@ -8992,6 +9076,12 @@ export declare interface ReviewThreadProps {
     'data-testid'?: string;
 }
 
+export declare function RichTextEditorRenderer({ section, fragment, ydoc, provider, user, editable, onUpdateCursorInfo, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
+
+export declare const richTextFieldType: FieldTypeDefinition;
+
+export declare function RichTextReaderRenderer({ section, fragment, ydoc, provider, onNavigateToEditor, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
+
 declare interface RoomItem {
     roomId: string;
     channelId: string;
@@ -9240,7 +9330,7 @@ export declare interface Section {
     placeholder?: string;
 }
 
-declare type SectionEditorComponent = React.ComponentType<SectionEditorProps>;
+export declare type SectionEditorComponent = React.ComponentType<SectionEditorProps>;
 
 /**
  * The contract a renderer needs from a collaborative rich-text editor — the
@@ -9251,7 +9341,7 @@ declare type SectionEditorComponent = React.ComponentType<SectionEditorProps>;
  * it, and so does the editor a host already ships (realtime-modules'
  * `adapters/tiptap` export, for one).
  */
-declare interface SectionEditorProps {
+export declare interface SectionEditorProps {
     fragment: XmlFragment;
     ydoc: Y.Doc;
     provider: CollaborationProvider | null;
@@ -9280,9 +9370,9 @@ export declare interface SectionLabelProps {
     'data-testid'?: string;
 }
 
-declare type SectionRenderer = React.ComponentType<SectionRendererProps>;
+export declare type SectionRenderer = React.ComponentType<SectionRendererProps>;
 
-declare interface SectionRendererProps {
+export declare interface SectionRendererProps {
     section: Section;
     viewMode: ViewMode;
     editable: boolean;
@@ -9410,6 +9500,12 @@ export declare interface SessionMessage extends GatewayMessage {
     sessionToken: string;
     restored: boolean;
 }
+
+/**
+ * Point the approvals sync at a host's own API. Pass `null` to fall back to
+ * the environment. Call once at startup, before any decision is finalized.
+ */
+export declare function setApprovalApiBase(base: ApprovalApiBase | null): void;
 
 export declare function SettingsLayout({ title, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
 
@@ -10735,8 +10831,22 @@ export declare interface TaskItem {
     category?: string;
 }
 
+export declare function TasksEditorRenderer({ section, editable, onAddItem, onUpdateItem, onRemoveItem, }: SectionRendererProps): JSX.Element;
+
+export declare const tasksFieldType: FieldTypeDefinition;
+
+export declare function TasksReaderRenderer({ section, onUpdateItem, onNavigateToEditor }: SectionRendererProps): JSX.Element;
+
+declare const TERMINAL_DECISIONS: {
+    readonly acked: "approved";
+    readonly done: "approved";
+    readonly rejected: "rejected";
+};
+
 /** Alias kept for clarity in contexts where "terminal log" reads better. */
 export declare const TerminalLog: typeof LogStream;
+
+export declare type TerminalRendererStatus = keyof typeof TERMINAL_DECISIONS;
 
 export declare const Textarea: ForwardRefExoticComponent<TextareaProps & RefAttributes<HTMLTextAreaElement>>;
 
@@ -13230,6 +13340,25 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -13266,6 +13395,16 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
