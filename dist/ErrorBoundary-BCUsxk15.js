@@ -74,12 +74,12 @@ function h({ open: e, onClose: l, onCreate: h }) {
 	ne(() => {
 		if (!e) return;
 		let r = n();
-		_(r), x(r[0]?.id ?? null), C(null), T(""), D(""), k(!1), j(""), N("page");
+		_(r), x(null), C(null), T(""), D(""), k(!1), j(""), N("page");
 		let i = !1;
 		y(!0), t().then((e) => {
 			if (i) return;
 			let t = e.ok ? e.types : e.cached;
-			_(t), x((e) => e && t.some((t) => t.id === e) ? e : t[0]?.id ?? null);
+			_(t), x((e) => e && t.some((t) => t.id === e) ? e : null);
 		}).finally(() => {
 			i || y(!1);
 		});

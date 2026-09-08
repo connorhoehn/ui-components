@@ -49,7 +49,7 @@ import { n as ti, r as ni, t as ri } from "./ReactionsOverlay-Ob1ecsgg.js";
 import { A as ii, C as ai, D as oi, E as si, F as ci, I as li, L as ui, M as di, N as fi, O as pi, P as mi, R as hi, S as gi, T as _i, _ as vi, a as yi, b as bi, c as xi, d as Si, f as Ci, g as wi, h as Ti, i as Ei, j as Di, k as Oi, l as ki, m as Ai, n as ji, o as Mi, p as Ni, r as Pi, s as Fi, t as Ii, u as Li, v as Ri, w as zi, x as Bi, y as Vi } from "./ConversationSurface-CZGBp_Gz.js";
 import { t as Hi } from "./activationKey-CjbL3LUv.js";
 import { B as Ui, C as Wi, D as Gi, E as Ki, F as qi, I as Ji, L as Yi, M as Xi, N as Zi, O as Qi, P as $i, R as ea, S as ta, T as na, V as ra, _ as ia, a as aa, b as oa, c as sa, d as ca, f as la, g as ua, h as da, i as fa, j as pa, l as ma, m as ha, n as ga, o as _a, p as va, r as ya, s as ba, t as xa, u as Sa, v as Ca, w as wa, x as Ta, y as Ea, z as Da } from "./renderers-9QJtVt3f.js";
-import { n as Oa, t as ka } from "./ErrorBoundary-5fzrvZlL.js";
+import { n as Oa, t as ka } from "./ErrorBoundary-BCUsxk15.js";
 import { n as Aa, r as ja, t as Ma } from "./EventStreamContext-CLzG8O5_.js";
 import { A as Na, C as Pa, J as Fa, M as Ia, T as La, X as Ra, Z as za, _ as Ba, b as Va, c as Ha, d as Ua, f as Wa, g as Ga, h as Ka, it as qa, m as Ja, n as Ya, p as Xa, q as Za, rt as Qa, t as $a, u as eo, v as to, x as no, y as ro, z as io } from "./services-D-dbQUh6.js";
 import { n as ao, t as oo } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1289,7 +1289,7 @@ function Hl() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Ul = Qc(() => import("./DocumentEditorPage-HMUE-JsX.js").then((e) => e.n));
+var Ul = Qc(() => import("./DocumentEditorPage-CKI7n3rO.js").then((e) => e.n));
 function Wl({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
