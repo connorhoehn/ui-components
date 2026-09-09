@@ -75,6 +75,8 @@ export interface ComposerCommand {
   hint?: string;
   /** True when the command cannot run right now (no document open); the bar says why via `hint`. */
   disabled?: boolean;
+  /** The long form, shown as a tooltip on the bar: what will happen, step by step. */
+  description?: string;
 }
 
 /** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
@@ -219,6 +221,16 @@ export function RichChatComposer({
   const commandsRef = useRef(commands);
   commandsRef.current = commands;
   const [activeCommand, setActiveCommand] = useState<ComposerCommand | null>(null);
+  // The bar follows the DRAFT, not the render: re-derive whenever the host's
+  // commands change (a document opened beside the chat), never clear on time.
+  useEffect(() => {
+    const e = editorRef.current;
+    if (!e) return;
+    const hit = matchComposerCommand(e.getText(), commands);
+    setActiveCommand((prev) => (prev?.trigger === hit?.trigger && prev?.disabled === hit?.disabled ? prev : hit));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [commands]);
+  const editorRef = useRef<{ getText: () => string } | null>(null);
 
   const extensions = useMemo(() => {
     const list: unknown[] = [
@@ -406,6 +418,7 @@ export function RichChatComposer({
       editable: !disabled,
       onUpdate: ({ editor: e }) => {
         setEmpty(e.isEmpty);
+        editorRef.current = e;
         const hit = matchComposerCommand(e.getText(), commandsRef.current);
         setActiveCommand((prev) => (prev?.trigger === hit?.trigger ? prev : hit));
       },
@@ -561,13 +574,13 @@ export function RichChatComposer({
         {activeCommand && (
           <div
             role="status"
+            title={activeCommand.description ?? activeCommand.hint ?? activeCommand.label}
             data-testid={`${testId}-command`}
             className={cn(
               'flex items-center gap-1.5 rounded-t-lg px-2 py-1 text-[11px]',
               activeCommand.disabled ? 'bg-warning-bg text-warning-fg' : 'bg-info-bg text-info-fg',
             )}
           >
-            <span aria-hidden="true">🪄</span>
             <span className="font-mono">{activeCommand.trigger}</span>
             <span className="font-medium">{activeCommand.label}</span>
             {activeCommand.hint && <span className="min-w-0 truncate opacity-80">— {activeCommand.hint}</span>}

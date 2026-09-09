@@ -772,10 +772,11 @@ export function ChatPanel({
                 <AgentRunCard
                   runId={agentRef.runId}
                   instruction={agentRef.instruction || message.content.replace(/^\/doc\s*/i, '')}
+                  command={agentRef.command}
                   agentName={agentRef.agentName}
                   requestedBy={message.displayName}
                   status={agentRunStatus?.(agentRef.runId)}
-                  onOpenDocument={onOpenDocument ? () => onOpenDocument(agentRef.documentId) : undefined}
+                  onOpenDocument={onOpenDocument && agentRef.documentId ? () => onOpenDocument(agentRef.documentId) : undefined}
                   onOpenRun={onOpenRun}
                 />
               ) : callRef ? (

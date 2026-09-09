@@ -34,6 +34,8 @@ declare interface ComposerCommand {
     hint?: string;
     /** True when the command cannot run right now (no document open); the bar says why via `hint`. */
     disabled?: boolean;
+    /** The long form, shown as a tooltip on the bar: what will happen, step by step. */
+    description?: string;
 }
 
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];

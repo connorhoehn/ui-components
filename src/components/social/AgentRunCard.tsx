@@ -26,6 +26,8 @@ export interface AgentRunCardProps {
   /** The agent carrying it out, e.g. "Haiku". */
   agentName: string;
   requestedBy?: string;
+  /** The command this run is — `/doc`, `recording`, `transcribe`. Shown in mono before the instruction. */
+  command?: string;
   status?: AgentRunStatus;
   /** Open the document the edit went into. */
   onOpenDocument?: () => void;
@@ -43,7 +45,7 @@ const STEPS: Array<{ phase: AgentRunPhase | 'running'; label: string }> = [
 
 const ORDER: Record<AgentRunPhase, number> = { received: 0, running: 1, completed: 2, failed: 2 };
 
-export function AgentRunCard({ runId, instruction, agentName, requestedBy, status, onOpenDocument, onOpenRun, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
+export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
   const phase = status?.phase ?? 'received';
   const at = ORDER[phase];
   const tone = phase === 'failed' ? 'danger' : phase === 'completed' ? 'success' : 'info';
@@ -56,12 +58,12 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, statu
       data-testid={testId}
       data-phase={phase}
       data-run-id={runId}
-      title={requestedBy ? `${requestedBy} asked ${agentName} to edit the document` : `${agentName} is editing the document`}
+      title={requestedBy ? `${requestedBy} asked ${agentName}: ${instruction}` : `${agentName}: ${instruction}`}
     >
       <div className="flex min-w-0 items-center gap-1.5">
         <span aria-hidden="true" className="shrink-0">🪄</span>
         <span className="min-w-0 flex-1 truncate text-text-primary" data-testid={`${testId}-instruction`}>
-          <span className="font-mono text-text-tertiary">/doc</span> {instruction}
+          <span className="font-mono text-text-tertiary">{command}</span> {instruction}
         </span>
         <Chip size="xs" tone={tone} data-testid={`${testId}-phase`}>{phaseLabel}</Chip>
       </div>
@@ -105,16 +107,18 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, statu
 /** Reads a `/doc` command message's metadata; null for anything else. */
 export function agentRunRefFromMetadata(
   metadata: Record<string, unknown> | undefined,
-): { runId: string; documentId: string; instruction: string; agentName: string; pipelineId?: string } | null {
+): { runId: string; documentId: string; instruction: string; agentName: string; pipelineId?: string; command: string } | null {
   if (!metadata || metadata.kind !== 'agent-run') return null;
   const runId = typeof metadata.runId === 'string' ? metadata.runId : '';
+  // A document is what /doc acts on; a recording or transcription run has none.
   const documentId = typeof metadata.documentId === 'string' ? metadata.documentId : '';
-  if (!runId || !documentId) return null;
+  if (!runId) return null;
   return {
     runId,
     documentId,
     instruction: typeof metadata.instruction === 'string' ? metadata.instruction : '',
     agentName: typeof metadata.agentName === 'string' && metadata.agentName ? metadata.agentName : 'Agent',
+    command: typeof metadata.command === 'string' && metadata.command ? metadata.command : '/doc',
     ...(typeof metadata.pipelineId === 'string' ? { pipelineId: metadata.pipelineId } : {}),
   };
 }

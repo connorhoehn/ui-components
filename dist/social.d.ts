@@ -23,7 +23,7 @@ declare interface ActivityPanelProps {
     connectionState: ConnectionState;
 }
 
-export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, status, onOpenDocument, onOpenRun, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
+export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
 
 export declare interface AgentRunCardProps {
     runId: string;
@@ -31,6 +31,8 @@ export declare interface AgentRunCardProps {
     /** The agent carrying it out, e.g. "Haiku". */
     agentName: string;
     requestedBy?: string;
+    /** The command this run is — `/doc`, `recording`, `transcribe`. Shown in mono before the instruction. */
+    command?: string;
     status?: AgentRunStatus;
     /** Open the document the edit went into. */
     onOpenDocument?: () => void;
@@ -49,6 +51,7 @@ export declare function agentRunRefFromMetadata(metadata: Record<string, unknown
     instruction: string;
     agentName: string;
     pipelineId?: string;
+    command: string;
 } | null;
 
 export declare interface AgentRunStatus {
@@ -565,6 +568,8 @@ export declare interface ComposerCommand {
     hint?: string;
     /** True when the command cannot run right now (no document open); the bar says why via `hint`. */
     disabled?: boolean;
+    /** The long form, shown as a tooltip on the bar: what will happen, step by step. */
+    description?: string;
 }
 
 declare type ConnectionState = 'connected' | 'connecting' | 'disconnected';
@@ -1529,16 +1534,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -1575,9 +1570,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -1598,9 +1593,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

@@ -27,8 +27,9 @@ describe('AgentRunCard', () => {
   });
 
   it('reads only agent-run metadata that names a run and a document', () => {
-    expect(agentRunRefFromMetadata({ kind: 'agent-run', runId: 'r', documentId: 'd', instruction: 'i', agentName: 'Haiku' })).toEqual({ runId: 'r', documentId: 'd', instruction: 'i', agentName: 'Haiku' });
-    expect(agentRunRefFromMetadata({ kind: 'agent-run', runId: 'r' })).toBeNull();
+    expect(agentRunRefFromMetadata({ kind: 'agent-run', runId: 'r', documentId: 'd', instruction: 'i', agentName: 'Haiku' })).toEqual({ runId: 'r', documentId: 'd', instruction: 'i', agentName: 'Haiku', command: '/doc' });
+    expect(agentRunRefFromMetadata({ kind: 'agent-run', runId: 'r', command: 'recording' })).toMatchObject({ runId: 'r', documentId: '', command: 'recording' });
+    expect(agentRunRefFromMetadata({ kind: 'agent-run' })).toBeNull();
     expect(agentRunRefFromMetadata({ kind: 'document', documentId: 'd' })).toBeNull();
   });
 });

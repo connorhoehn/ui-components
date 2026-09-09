@@ -6,10 +6,10 @@ import { t as l } from "./Textarea-Dz4doxTv.js";
 import { n as u, t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./PresenceDot-3gBZGPvX.js";
 import { t as p } from "./Select-CqVokE2v.js";
-import { M as m, j as h } from "./ConversationSurface-8LIToWQp.js";
+import { M as m, j as h } from "./ConversationSurface-0xbQYFnB.js";
 import { t as g } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as _, t as v } from "./ReactionPickerPopover-CcL-n6gt.js";
-import "./RichChatComposer-FJ69X6py.js";
+import "./RichChatComposer-DsYSFHH1.js";
 import { useCallback as y, useEffect as b, useId as x, useMemo as S, useRef as C, useState as w } from "react";
 import { Fragment as T, jsx as E, jsxs as D } from "react/jsx-runtime";
 //#region src/components/social/SocialPanel.tsx
