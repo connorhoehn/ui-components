@@ -140,8 +140,8 @@ function pe(e) {
 }
 //#endregion
 //#region src/components/doc-macros/registry.ts
-var S = "macro", C = "macroRenderers", me = new re(C);
-function he(e = []) {
+var S = "macro", me = "macroRenderers", he = new re(me);
+function ge(e = []) {
 	let t = /* @__PURE__ */ new Map();
 	for (let n of e) t.set(n.macroName, n);
 	return {
@@ -156,31 +156,31 @@ function he(e = []) {
 		}
 	};
 }
-function w() {
+function C() {
 	return { macroRenderer: !0 };
 }
-var ge = /* @__PURE__ */ new WeakMap();
-function _e(e) {
-	let t = e.extensionManager ?? e, n = ge.get(t);
-	return n || (n = he(), ge.set(t, n)), n;
-}
-function ve(e, t) {
-	let n = e.extensionManager?.extensions ?? [], r = e.extensionStorage ?? {}, i = n.map((e) => e.name).filter((e) => r[e]?.macroRenderer);
-	return i.includes("macroRenderers") ? t === C : i.length === 0 || i[0] === t;
+var _e = /* @__PURE__ */ new WeakMap();
+function ve(e) {
+	let t = e.extensionManager ?? e, n = _e.get(t);
+	return n || (n = ge(), _e.set(t, n)), n;
 }
 function ye(e, t) {
+	let n = e.extensionManager?.extensions ?? [], r = e.extensionStorage ?? {}, i = n.map((e) => e.name).filter((e) => r[e]?.macroRenderer);
+	return i.includes("macroRenderers") ? t === me : i.length === 0 || i[0] === t;
+}
+function be(e, t) {
 	let n = pe(e), r = t?.accepts;
 	if (!r) return n;
 	let i = e;
 	return n.update = (e) => e.type !== i.type || e.attrs.macroName !== i.attrs.macroName || r.call(t, e) ? !1 : (i = e, !0), n;
 }
-function be(e) {
-	let t = me.get(e.state)?.macroViews;
+function xe(e) {
+	let t = he.get(e.state)?.macroViews;
 	return t ? (t.forEach((e) => e.refresh?.()), !0) : !1;
 }
-function xe(e) {
+function Se(e) {
 	let t = /* @__PURE__ */ new Set(), n = new ne({
-		key: me,
+		key: he,
 		props: { nodeViews: { [S]: (n, r, i) => {
 			let a = String(n.attrs.macroName ?? "unknown"), o = e.get(a);
 			if (!o) return pe(n);
@@ -189,7 +189,7 @@ function xe(e) {
 				view: r,
 				getPos: i
 			}) : null;
-			if (!s) return ye(n, o);
+			if (!s) return be(n, o);
 			t.add(s);
 			let c = s.destroy?.bind(s);
 			return s.destroy = () => {
@@ -205,30 +205,30 @@ function xe(e) {
 	});
 	return n.macroViews = t, n;
 }
-function T(e, t, ...n) {
-	let r = _e(e);
+function w(e, t, ...n) {
+	let r = ve(e);
 	for (let e of n) r.register(e);
-	return ve(e, t) ? [xe(r)] : [];
+	return ye(e, t) ? [Se(r)] : [];
 }
-var Se = {
+var Ce = {
 	"action-items": "Action items",
 	hitl: "Decision required",
 	decision: "Decision",
 	field: "Field",
 	diagram: "Diagram"
 };
-function Ce(e) {
-	return Se[e] ?? e;
+function we(e) {
+	return Ce[e] ?? e;
 }
 //#endregion
 //#region src/components/doc-macros/ReactMacroView.ts
-function we(e) {
+function Te(e) {
 	if (!(e instanceof HTMLElement)) return !1;
 	if (e.isContentEditable) return !0;
 	let t = e.tagName;
 	return t === "INPUT" || t === "TEXTAREA" || t === "SELECT";
 }
-var E = class {
+var T = class {
 	dom;
 	node;
 	view;
@@ -238,11 +238,11 @@ var E = class {
 	dead = !1;
 	queued = !1;
 	constructor(e, t) {
-		this.node = e.node, this.view = e.view, this.getPos = e.getPos, this.dom = document.createElement("div"), this.dom.setAttribute("data-macro", t), this.dom.setAttribute("role", "group"), this.dom.setAttribute("aria-label", Ce(t)), this.dom.setAttribute("tabindex", "-1"), this.dom.addEventListener("keydown", this.onEscape), this.host = document.createElement("div"), this.dom.appendChild(this.host), this.root = ae(this.host);
+		this.node = e.node, this.view = e.view, this.getPos = e.getPos, this.dom = document.createElement("div"), this.dom.setAttribute("data-macro", t), this.dom.setAttribute("role", "group"), this.dom.setAttribute("aria-label", we(t)), this.dom.setAttribute("tabindex", "-1"), this.dom.addEventListener("keydown", this.onEscape), this.host = document.createElement("div"), this.dom.appendChild(this.host), this.root = ae(this.host);
 	}
 	onEscape = (e) => {
 		if (e.key === "Escape") {
-			if (we(e.target) && e.target !== this.dom) {
+			if (Te(e.target) && e.target !== this.dom) {
 				e.stopPropagation(), this.dom.focus();
 				return;
 			}
@@ -294,29 +294,29 @@ var E = class {
 		let e = this.root;
 		queueMicrotask(() => e.unmount());
 	}
-}, D = "diagram", Te = "macro";
-function Ee() {
+}, E = "diagram", Ee = "macro";
+function De() {
 	let e = globalThis.crypto;
 	if (typeof e?.randomUUID == "function") return e.randomUUID();
 	let t = "";
 	for (let e = 0; e < 32; e += 1) (e === 8 || e === 12 || e === 16 || e === 20) && (t += "-"), t += Math.floor(Math.random() * 16).toString(16);
 	return t;
 }
-function De(e) {
+function Oe(e) {
 	return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(e);
 }
-function Oe(e) {
+function ke(e) {
 	return `id: ${e}`;
 }
-function ke(e) {
+function Ae(e) {
 	let t = /^id:[ \t]*(?:"([^"\n]*)"|'([^'\n]*)'|([^\s#]+))[ \t]*$/m.exec(e);
 	if (!t) return null;
 	let n = t[1] ?? t[2] ?? t[3] ?? "";
-	return De(n) ? n : null;
+	return Oe(n) ? n : null;
 }
 //#endregion
 //#region src/components/diagram/DiagramMacro.tsx
-var Ae = new re("diagramMacro"), je = class extends E {
+var je = new re("diagramMacro"), Me = class extends T {
 	options;
 	active = !1;
 	onDocumentPointerDown = (e) => {
@@ -331,14 +331,14 @@ var Ae = new re("diagramMacro"), je = class extends E {
 		this.active !== e && (this.active = e, this.dom.setAttribute("data-diagram-active", String(e)), this.schedule());
 	}
 	constructor(e, t) {
-		super(e, D), this.options = t, this.dom.setAttribute("data-diagram-active", "false"), this.dom.addEventListener("mousedown", () => {
+		super(e, E), this.options = t, this.dom.setAttribute("data-diagram-active", "false"), this.dom.addEventListener("mousedown", () => {
 			this.editable && this.setActive(!0);
 		}), document.addEventListener("mousedown", this.onDocumentPointerDown, !0), document.addEventListener("keydown", this.onDocumentKeyDown, !0), this.schedule();
 	}
 	element() {
 		let e = this.options.getContext(), t = this.node.textContent;
 		return f(fe, {
-			diagramId: ke(t),
+			diagramId: Ae(t),
 			source: t,
 			ydoc: e?.ydoc ?? null,
 			awareness: e?.awareness ?? null,
@@ -366,42 +366,42 @@ var Ae = new re("diagramMacro"), je = class extends E {
 		document.removeEventListener("mousedown", this.onDocumentPointerDown, !0), document.removeEventListener("keydown", this.onDocumentKeyDown, !0), super.destroy();
 	}
 };
-function Me(e) {
+function Ne(e) {
 	return {
-		macroName: D,
-		create: (t) => new je(t, e)
+		macroName: E,
+		create: (t) => new Me(t, e)
 	};
 }
-var Ne = x.create({
+var Pe = x.create({
 	name: "diagramMacro",
 	addOptions() {
 		return { getContext: () => null };
 	},
 	addCommands() {
 		return { insertDiagram: (e) => ({ state: t, commands: n }) => t.schema.nodes.macro ? n.insertContent([{
-			type: Te,
-			attrs: { macroName: D },
+			type: Ee,
+			attrs: { macroName: E },
 			content: [{
 				type: "text",
-				text: Oe(e ?? Ee())
+				text: ke(e ?? De())
 			}]
 		}, { type: "paragraph" }]) : !1 };
 	},
-	addStorage: w,
+	addStorage: C,
 	addProseMirrorPlugins() {
-		return T(this.editor, this.name, Me(this.options));
+		return w(this.editor, this.name, Ne(this.options));
 	}
-}), Pe = x.create({
-	name: C,
+}), Fe = x.create({
+	name: me,
 	addOptions() {
 		return { renderers: [] };
 	},
-	addStorage: w,
+	addStorage: C,
 	addProseMirrorPlugins() {
-		return T(this.editor, this.name, ...this.options.renderers);
+		return w(this.editor, this.name, ...this.options.renderers);
 	}
-}), Fe = "done", O = "pending", k = "action-items", Ie = "action-item", Le = /^([A-Za-z][A-Za-z0-9_-]*):/, Re = "  - ", A = "    ";
-function ze(e) {
+}), Ie = /^([A-Za-z][A-Za-z0-9_-]*):/, Le = "  - ", D = "    ";
+function Re(e) {
 	let t = [], n = 0;
 	for (;;) {
 		let r = e.indexOf("\n", n);
@@ -415,7 +415,7 @@ function ze(e) {
 		}), n = r + 1;
 	}
 }
-function Be(e) {
+function ze(e) {
 	if (e.length >= 2 && e.startsWith("'") && e.endsWith("'")) return e.slice(1, -1).replace(/''/g, "'");
 	if (e.length >= 2 && e.startsWith("\"") && e.endsWith("\"")) try {
 		return JSON.parse(e);
@@ -424,14 +424,14 @@ function Be(e) {
 	}
 	return e.startsWith("'") || e.startsWith("\"") || /(^|\s)#/.test(e) ? null : e;
 }
-function Ve(e, t, n) {
-	let r = Le.exec(e.slice(n));
+function Be(e, t, n) {
+	let r = Ie.exec(e.slice(n));
 	if (!r) return null;
 	let i = n + r[0].length;
 	for (; i < e.length && (e[i] === " " || e[i] === "	");) i += 1;
 	let a = e.length;
 	for (; a > i && (e[a - 1] === " " || e[a - 1] === "	");) --a;
-	let o = Be(e.slice(i, a));
+	let o = ze(e.slice(i, a));
 	return o === null ? null : {
 		key: r[1],
 		keyEnd: t + n + r[0].length,
@@ -444,181 +444,196 @@ function Ve(e, t, n) {
 		lineEnd: t + e.length
 	};
 }
-function j(e) {
-	let t = ze(e), n = 0;
-	for (; n < t.length && t[n].text.trim() === "";) n += 1;
-	let r = t[n];
-	if (!r) return null;
-	let i = Ve(r.text, r.start, 0);
-	if (!i || i.key !== "items" || i.scalar.value !== "" && i.scalar.value !== "[]") return null;
-	n += 1;
-	let a = [], o = i.lineEnd;
-	for (; n < t.length; n += 1) {
-		let e = t[n];
+function O(e, t) {
+	let n = Re(e), r = 0;
+	for (; r < n.length && n[r].text.trim() === "";) r += 1;
+	let i = n[r];
+	if (!i) return null;
+	let a = Be(i.text, i.start, 0);
+	if (!a || a.key !== t || a.scalar.value !== "" && a.scalar.value !== "[]") return null;
+	r += 1;
+	let o = [], s = a.lineEnd;
+	for (; r < n.length; r += 1) {
+		let e = n[r];
 		if (e.text.trim() !== "") {
-			if (e.text.startsWith(Re)) {
-				let t = Ve(e.text, e.start, 4);
+			if (e.text.startsWith("  - ")) {
+				let t = Be(e.text, e.start, 4);
 				if (!t) return null;
-				a.push({
+				o.push({
 					entries: [t],
 					lineStart: e.start,
 					lineEnd: t.lineEnd
 				});
-			} else if (e.text.startsWith(A)) {
-				let t = a[a.length - 1];
+			} else if (e.text.startsWith("    ")) {
+				let t = o[o.length - 1];
 				if (!t) return null;
-				let n = Ve(e.text, e.start, 4);
+				let n = Be(e.text, e.start, 4);
 				if (!n || t.entries.some((e) => e.key === n.key)) return null;
 				t.entries.push(n), t.lineEnd = n.lineEnd;
 			} else return null;
-			o = a[a.length - 1].lineEnd;
+			s = o[o.length - 1].lineEnd;
 		}
 	}
-	return a.length > 0 && i.scalar.value === "[]" ? null : {
-		items: a,
-		list: i,
-		listEnd: o
+	return o.length > 0 && a.scalar.value === "[]" ? null : {
+		items: o,
+		list: a,
+		listEnd: s
 	};
 }
-function M(e, t) {
+function k(e, t) {
 	return e.entries.find((e) => e.key === t);
 }
-function N(e) {
-	let t = j(e);
-	return t ? t.items.map((e, t) => {
-		let n = M(e, "status")?.scalar.value ?? "";
-		return {
-			index: t,
-			id: M(e, "id")?.scalar.value ?? null,
-			text: M(e, "text")?.scalar.value ?? "",
-			status: n,
-			done: n === Fe,
-			assignee: M(e, "assignee")?.scalar.value ?? null,
-			due: M(e, "due")?.scalar.value ?? null
-		};
-	}) : null;
-}
-function P(e) {
+function A(e) {
 	return e.includes("\n") ? null : e !== "" && /^[A-Za-z][A-Za-z0-9 _.()/-]*$/.test(e) && !e.endsWith(" ") && !/^(true|false|null|yes|no|on|off|y|n)$/i.test(e) ? e : `'${e.replace(/'/g, "''")}'`;
 }
-function He(e, t, n) {
+function Ve(e, t, n) {
 	let r = e.entries.find((e) => e.key > t);
 	if (r) {
 		let e = r.lineStart + 4;
 		return {
 			from: e,
 			to: e,
-			insert: `${t}: ${n}\n${A}`
+			insert: `${t}: ${n}\n${D}`
 		};
 	}
 	let i = e.entries[e.entries.length - 1];
 	return {
 		from: i.lineEnd,
 		to: i.lineEnd,
-		insert: `\n${A}${t}: ${n}`
+		insert: `\n${D}${t}: ${n}`
 	};
 }
-function F(e, t, n, r) {
-	let i = j(e)?.items[t];
-	if (!i) return null;
-	let a = P(r);
-	if (a === null) return null;
-	let o = M(i, n);
-	return o ? o.scalar.value === r ? null : {
-		from: o.scalar.from,
-		to: o.scalar.to,
-		insert: a
-	} : He(i, n, a);
+function j(e, t, n, r, i) {
+	let a = O(e, t)?.items[n];
+	if (!a) return null;
+	let o = A(i);
+	if (o === null) return null;
+	let s = k(a, r);
+	return s ? s.scalar.value === i ? null : {
+		from: s.scalar.from,
+		to: s.scalar.to,
+		insert: o
+	} : Ve(a, r, o);
 }
-function Ue(e, t, n) {
-	let r = j(e)?.items[t];
-	if (!r) return null;
-	let i = M(r, n);
-	if (!i || r.entries.length < 2) return null;
-	let a = r.entries.indexOf(i);
-	if (a === 0) {
-		let e = r.entries[1];
+function He(e, t, n, r) {
+	let i = O(e, t)?.items[n];
+	if (!i) return null;
+	let a = k(i, r);
+	if (!a || i.entries.length < 2) return null;
+	let o = i.entries.indexOf(a);
+	if (o === 0) {
+		let e = i.entries[1];
 		return {
-			from: i.lineStart + 4,
+			from: a.lineStart + 4,
 			to: e.lineStart + 4,
 			insert: ""
 		};
 	}
 	return {
-		from: r.entries[a - 1].lineEnd,
-		to: i.lineEnd,
+		from: i.entries[o - 1].lineEnd,
+		to: a.lineEnd,
 		insert: ""
 	};
 }
-function We(e, t, n = Ge) {
-	let r = j(e)?.items[t];
-	return !r || M(r, "id") ? null : F(e, t, "id", n());
+function Ue(e, t, n) {
+	let r = O(e, t), i = r?.items[n];
+	if (!r || !i) return null;
+	if (r.items.length === 1) return {
+		from: r.list.keyEnd,
+		to: r.listEnd,
+		insert: " []"
+	};
+	let a = r.items[n + 1];
+	return a ? {
+		from: i.lineStart,
+		to: a.lineStart,
+		insert: ""
+	} : {
+		from: i.lineStart - 1,
+		to: r.listEnd,
+		insert: ""
+	};
 }
-function Ge() {
+function We(e, t, n) {
+	let r = O(e, t);
+	if (!r || n.length === 0) return null;
+	let i = n.map(([, e]) => A(e));
+	if (i.some((e) => e === null)) return null;
+	let a = n.map(([e], t) => `${t === 0 ? Le : D}${e}: ${i[t]}`).join("\n");
+	return r.items.length === 0 ? {
+		from: r.list.keyEnd,
+		to: r.listEnd,
+		insert: `\n${a}`
+	} : {
+		from: r.listEnd,
+		to: r.listEnd,
+		insert: `\n${a}`
+	};
+}
+//#endregion
+//#region src/components/doc-macros/actionItemsText.ts
+var M = "items", Ge = (e) => O(e, M), Ke = "done", qe = "pending", N = "action-items", Je = "action-item";
+function P(e, t, n, r) {
+	return j(e, M, t, n, r);
+}
+function Ye(e, t, n) {
+	return He(e, M, t, n);
+}
+function F(e) {
+	let t = Ge(e);
+	return t ? t.items.map((e, t) => {
+		let n = k(e, "status")?.scalar.value ?? "";
+		return {
+			index: t,
+			id: k(e, "id")?.scalar.value ?? null,
+			text: k(e, "text")?.scalar.value ?? "",
+			status: n,
+			done: n === Ke,
+			assignee: k(e, "assignee")?.scalar.value ?? null,
+			due: k(e, "due")?.scalar.value ?? null
+		};
+	}) : null;
+}
+function Xe(e, t, n = Ze) {
+	let r = Ge(e)?.items[t];
+	return !r || k(r, "id") ? null : P(e, t, "id", n());
+}
+function Ze() {
 	let e = globalThis.crypto;
 	return e?.randomUUID ? e.randomUUID() : `ai-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
-function Ke(e) {
+function Qe(e) {
 	return !e.id || !e.assignee || !e.text ? null : {
 		itemId: e.id,
 		text: e.text,
 		assigneeId: e.assignee,
-		category: Ie,
+		category: Je,
 		dueDate: e.due,
 		done: e.done
 	};
 }
-function qe(e, t) {
-	let n = N(e)?.[t];
-	return n ? F(e, t, "status", n.done ? O : Fe) : null;
+function $e(e, t) {
+	let n = F(e)?.[t];
+	return n ? P(e, t, "status", n.done ? qe : Ke) : null;
 }
-function Je(e, t, n) {
-	return F(e, t, "text", n);
+function et(e, t, n) {
+	return P(e, t, "text", n);
 }
-function Ye(e, t) {
-	let n = j(e), r = n?.items[t];
-	if (!n || !r) return null;
-	if (n.items.length === 1) return {
-		from: n.list.keyEnd,
-		to: n.listEnd,
-		insert: " []"
-	};
-	let i = n.items[t + 1];
-	return i ? {
-		from: r.lineStart,
-		to: i.lineStart,
-		insert: ""
-	} : {
-		from: r.lineStart - 1,
-		to: n.listEnd,
-		insert: ""
-	};
+function tt(e, t) {
+	return Ue(e, M, t);
 }
-function Xe(e, t) {
-	let n = j(e);
-	if (!n) return null;
-	let r = P(t);
-	if (r === null) return null;
-	let i = `${Re}status: ${O}\n${A}text: ${r}`;
-	return n.items.length === 0 ? {
-		from: n.list.keyEnd,
-		to: n.listEnd,
-		insert: `\n${i}`
-	} : {
-		from: n.listEnd,
-		to: n.listEnd,
-		insert: `\n${i}`
-	};
+function nt(e, t) {
+	return We(e, M, [["status", qe], ["text", t]]);
 }
-function Ze(e) {
+function rt(e) {
 	return e.length === 0 ? "items: []" : ["items:", ...e.map((e) => {
 		let t = [];
-		return e.assignee && t.push(["assignee", e.assignee]), e.due && t.push(["due", e.due]), t.push(["status", e.status ?? "pending"]), t.push(["text", e.text]), t.map(([e, t], n) => `${n === 0 ? Re : A}${e}: ${P(t) ?? "''"}`).join("\n");
+		return e.assignee && t.push(["assignee", e.assignee]), e.due && t.push(["due", e.due]), t.push(["status", e.status ?? "pending"]), t.push(["text", e.text]), t.map(([e, t], n) => `${n === 0 ? Le : D}${e}: ${A(t) ?? "''"}`).join("\n");
 	})].join("\n");
 }
 //#endregion
 //#region src/components/doc-macros/useDraft.ts
-function Qe(e) {
+function I(e) {
 	let [t, n] = _(e), r = g(e);
 	return [
 		t,
@@ -630,7 +645,7 @@ function Qe(e) {
 }
 //#endregion
 //#region src/components/doc-macros/ActionItemsBlock.tsx
-function $e({ item: e, editable: t, onToggle: r, testId: i }) {
+function it({ item: e, editable: t, onToggle: r, testId: i }) {
 	return /* @__PURE__ */ y("button", {
 		type: "button",
 		role: "checkbox",
@@ -644,7 +659,7 @@ function $e({ item: e, editable: t, onToggle: r, testId: i }) {
 		children: e.done ? "✓" : ""
 	});
 }
-function et({ value: e, people: t, onAssign: n, testId: r }) {
+function at({ value: e, people: t, onAssign: n, testId: r }) {
 	let i = e ?? "", a = t.some((e) => e.id === i);
 	return /* @__PURE__ */ y(s, {
 		size: "sm",
@@ -668,8 +683,8 @@ function et({ value: e, people: t, onAssign: n, testId: r }) {
 		]
 	});
 }
-var tt = /^\d{4}-\d{2}-\d{2}$/;
-function nt({ value: e, onDue: t, testId: n }) {
+var ot = /^\d{4}-\d{2}-\d{2}$/;
+function st({ value: e, onDue: t, testId: n }) {
 	let [i, o] = _(!1);
 	return !e && !i ? /* @__PURE__ */ y(r, {
 		variant: "ghost",
@@ -690,7 +705,7 @@ function nt({ value: e, onDue: t, testId: n }) {
 		className: "w-[122px] border-transparent bg-transparent tabular-nums hover:border-border"
 	});
 }
-function rt({ item: e, testId: t, hideAssignee: n = !1, hideDue: r = !1 }) {
+function ct({ item: e, testId: t, hideAssignee: n = !1, hideDue: r = !1 }) {
 	let i = "rounded-sm border border-border bg-surface px-1.5 py-px text-[11px] text-text-secondary";
 	return /* @__PURE__ */ b(v, { children: [
 		e.assignee && !n ? /* @__PURE__ */ b("span", {
@@ -710,8 +725,8 @@ function rt({ item: e, testId: t, hideAssignee: n = !1, hideDue: r = !1 }) {
 		}) : null
 	] });
 }
-function it({ item: e, editable: t, onTextChange: r, testId: i }) {
-	let [o, s, c] = Qe(e.text), l = g(!1);
+function lt({ item: e, editable: t, onTextChange: r, testId: i }) {
+	let [o, s, c] = I(e.text), l = g(!1);
 	if (h(() => {
 		l.current || s(e.text);
 	}, [e.text]), !t) return /* @__PURE__ */ y("span", {
@@ -745,7 +760,7 @@ function it({ item: e, editable: t, onTextChange: r, testId: i }) {
 		className: n("min-w-0 flex-1 border-transparent bg-transparent hover:border-border", e.done && "text-text-tertiary line-through")
 	});
 }
-function at({ items: e, editable: t = !1, onToggle: n, onTextChange: i, onRemoveItem: a, onAddItem: o, onRemove: s, people: c, onAssign: l, onDue: u, "data-testid": d = "action-items" }) {
+function ut({ items: e, editable: t = !1, onToggle: n, onTextChange: i, onRemoveItem: a, onAddItem: o, onRemove: s, people: c, onAssign: l, onDue: u, "data-testid": d = "action-items" }) {
 	let f = e.filter((e) => e.done).length;
 	return /* @__PURE__ */ b("div", {
 		"data-testid": d,
@@ -789,13 +804,13 @@ function at({ items: e, editable: t = !1, onToggle: n, onTextChange: i, onRemove
 						"data-done": String(e.done),
 						className: "flex items-start gap-2",
 						children: [
-							/* @__PURE__ */ y($e, {
+							/* @__PURE__ */ y(it, {
 								item: e,
 								editable: t,
 								onToggle: () => n?.(e.index),
 								testId: `${o}-toggle`
 							}),
-							/* @__PURE__ */ y(it, {
+							/* @__PURE__ */ y(lt, {
 								item: e,
 								editable: t,
 								onTextChange: (t) => i?.(e.index, t),
@@ -804,22 +819,22 @@ function at({ items: e, editable: t = !1, onToggle: n, onTextChange: i, onRemove
 							/* @__PURE__ */ b("div", {
 								className: "flex shrink-0 items-center gap-1 pt-0.5",
 								children: [
-									t && c && l ? /* @__PURE__ */ y(et, {
+									t && c && l ? /* @__PURE__ */ y(at, {
 										value: e.assignee,
 										people: c,
 										onAssign: (t) => l(e.index, t),
 										testId: o
 									}) : null,
-									t && u && (e.due === null || tt.test(e.due)) ? /* @__PURE__ */ y(nt, {
+									t && u && (e.due === null || ot.test(e.due)) ? /* @__PURE__ */ y(st, {
 										value: e.due ?? "",
 										onDue: (t) => u(e.index, t),
 										testId: o
 									}) : null,
-									/* @__PURE__ */ y(rt, {
+									/* @__PURE__ */ y(ct, {
 										item: e,
 										testId: o,
 										hideAssignee: !!(t && c && l),
-										hideDue: !!(t && u && (e.due === null || tt.test(e.due)))
+										hideDue: !!(t && u && (e.due === null || ot.test(e.due)))
 									}),
 									t ? /* @__PURE__ */ y(r, {
 										variant: "ghost",
@@ -849,28 +864,28 @@ function at({ items: e, editable: t = !1, onToggle: n, onTextChange: i, onRemove
 }
 //#endregion
 //#region src/components/doc-macros/ActionItemsMacro.tsx
-var ot = class extends E {
+var dt = class extends T {
 	options;
 	items;
 	constructor(e, t, n = {}) {
-		super(e, k), this.options = n, this.items = t, this.report(), this.schedule();
+		super(e, N), this.options = n, this.items = t, this.report(), this.schedule();
 	}
 	report() {
 		let e = this.options.onItemChanged;
 		if (e) for (let t of this.items) {
-			let n = Ke(t);
+			let n = Qe(t);
 			n && e(n);
 		}
 	}
 	element() {
 		let e = this.options.people?.() ?? [];
-		return /* @__PURE__ */ y(at, {
+		return /* @__PURE__ */ y(ut, {
 			items: this.items,
 			editable: this.editable,
-			onToggle: (e) => this.apply(qe(this.node.textContent, e)),
-			onTextChange: (e, t) => this.apply(Je(this.node.textContent, e, t)),
-			onRemoveItem: (e) => this.apply(Ye(this.node.textContent, e)),
-			onAddItem: () => this.apply(Xe(this.node.textContent, "")),
+			onToggle: (e) => this.apply($e(this.node.textContent, e)),
+			onTextChange: (e, t) => this.apply(et(this.node.textContent, e, t)),
+			onRemoveItem: (e) => this.apply(tt(this.node.textContent, e)),
+			onAddItem: () => this.apply(nt(this.node.textContent, "")),
 			...e.length ? { people: e } : {},
 			...e.length ? { onAssign: (e, t) => this.assign(e, t) } : {},
 			...this.editable ? { onDue: (e, t) => this.due(e, t) } : {},
@@ -879,20 +894,20 @@ var ot = class extends E {
 	}
 	assign(e, t) {
 		if (!t) {
-			this.apply(Ue(this.node.textContent, e, "assignee"));
+			this.apply(Ye(this.node.textContent, e, "assignee"));
 			return;
 		}
-		this.apply(We(this.node.textContent, e)), this.apply(F(this.node.textContent, e, "assignee", t));
+		this.apply(Xe(this.node.textContent, e)), this.apply(P(this.node.textContent, e, "assignee", t));
 	}
 	due(e, t) {
-		this.apply(t ? F(this.node.textContent, e, "due", t) : Ue(this.node.textContent, e, "due"));
+		this.apply(t ? P(this.node.textContent, e, "due", t) : Ye(this.node.textContent, e, "due"));
 	}
 	apply(e) {
 		e && this.replaceText(e.from, e.to, e.insert);
 	}
 	update(e) {
 		if (e.type !== this.node.type || e.attrs.macroName !== "action-items") return !1;
-		let t = N(e.textContent);
+		let t = F(e.textContent);
 		if (!t) return !1;
 		let n = e.textContent !== this.node.textContent;
 		return this.node = e, this.items = t, n && (this.report(), this.schedule()), !0;
@@ -904,29 +919,29 @@ var ot = class extends E {
 		return !0;
 	}
 };
-function st(e = {}) {
+function ft(e = {}) {
 	return {
-		macroName: k,
-		accepts: (e) => N(e.textContent) !== null,
+		macroName: N,
+		accepts: (e) => F(e.textContent) !== null,
 		create: (t) => {
-			let n = N(t.node.textContent);
-			return n ? new ot(t, n, e) : null;
+			let n = F(t.node.textContent);
+			return n ? new dt(t, n, e) : null;
 		}
 	};
 }
-var ct = x.create({
+var pt = x.create({
 	name: "actionItemsMacro",
 	addOptions() {
 		return {};
 	},
-	addStorage: w,
+	addStorage: C,
 	addCommands() {
 		return { insertActionItems: (e) => ({ state: t, commands: n }) => {
 			if (!t.schema.nodes.macro) return !1;
-			let r = Ze((e ?? [""]).map((e) => ({ text: e })));
+			let r = rt((e ?? [""]).map((e) => ({ text: e })));
 			return n.insertContent([{
 				type: S,
-				attrs: { macroName: k },
+				attrs: { macroName: N },
 				content: [{
 					type: "text",
 					text: r
@@ -935,14 +950,14 @@ var ct = x.create({
 		} };
 	},
 	addProseMirrorPlugins() {
-		return T(this.editor, this.name, st(this.options));
+		return w(this.editor, this.name, ft(this.options));
 	}
-}), I = "hitl", lt = "The body is the record; a section-item row keyed on `id` under the `_macro` sentinel section is the queryable mirror. The row can carry the question, the addressee and the answer; it cannot carry the options or the expiry.", ut = "The body owns the ask and is projected to the row; the row owns whether an answer stuck. An answered row fills an unanswered body; an answered body is never overwritten, only reported.", dt = "_macro", ft = dt, pt = "hitl", mt = /^([A-Za-z][A-Za-z0-9_-]*):/, L = "  - ", ht = "    ", gt = /* @__PURE__ */ new Set(["then", "value"]), _t = [
+}), L = "hitl", mt = "The body is the record; a section-item row keyed on `id` under the `_macro` sentinel section is the queryable mirror. The row can carry the question, the addressee and the answer; it cannot carry the options or the expiry.", ht = "The body owns the ask and is projected to the row; the row owns whether an answer stuck. An answered row fills an unanswered body; an answered body is never overwritten, only reported.", gt = "_macro", _t = gt, vt = "hitl", yt = /^([A-Za-z][A-Za-z0-9_-]*):/, R = "  - ", bt = "    ", xt = /* @__PURE__ */ new Set(["then", "value"]), St = [
 	"answer",
 	"answeredAt",
 	"answeredBy"
-], vt = "answeredBy";
-function yt(e) {
+], Ct = "answeredBy";
+function wt(e) {
 	let t = [], n = 0;
 	for (;;) {
 		let r = e.indexOf("\n", n);
@@ -956,7 +971,7 @@ function yt(e) {
 		}), n = r + 1;
 	}
 }
-function bt(e) {
+function Tt(e) {
 	if (e.length >= 2 && e.startsWith("'") && e.endsWith("'")) return e.slice(1, -1).replace(/''/g, "'");
 	if (e.length >= 2 && e.startsWith("\"") && e.endsWith("\"")) try {
 		return JSON.parse(e);
@@ -965,14 +980,14 @@ function bt(e) {
 	}
 	return e.startsWith("'") || e.startsWith("\"") || /(^|\s)#/.test(e) ? null : e;
 }
-function xt(e, t, n) {
-	let r = mt.exec(e.slice(n));
+function Et(e, t, n) {
+	let r = yt.exec(e.slice(n));
 	if (!r) return null;
 	let i = n + r[0].length;
 	for (; i < e.length && (e[i] === " " || e[i] === "	");) i += 1;
 	let a = e.length;
 	for (; a > i && (e[a - 1] === " " || e[a - 1] === "	");) --a;
-	let o = bt(e.slice(i, a));
+	let o = Tt(e.slice(i, a));
 	return o === null ? null : {
 		key: r[1],
 		keyEnd: t + n + r[0].length,
@@ -985,15 +1000,15 @@ function xt(e, t, n) {
 		lineEnd: t + e.length
 	};
 }
-function R(e) {
-	let t = yt(e), n = [], r = [], i = /* @__PURE__ */ new Set(), a = !1, o = 0;
+function z(e) {
+	let t = wt(e), n = [], r = [], i = /* @__PURE__ */ new Set(), a = !1, o = 0;
 	for (let e of t) {
 		if (e.text.trim() === "") continue;
-		if (e.text.startsWith(L)) {
+		if (e.text.startsWith(R)) {
 			if (!a) return null;
-			let t = e.text.slice(4), n = xt(e.text, e.start, 4);
+			let t = e.text.slice(4), n = Et(e.text, e.start, 4);
 			if (n) {
-				if (!gt.has(n.key)) return null;
+				if (!xt.has(n.key)) return null;
 				r.push({
 					entries: [n],
 					scalar: null,
@@ -1001,7 +1016,7 @@ function R(e) {
 					lineEnd: n.lineEnd
 				});
 			} else {
-				let n = bt(t.trim());
+				let n = Tt(t.trim());
 				if (n === null || n === "") return null;
 				r.push({
 					entries: [],
@@ -1010,16 +1025,16 @@ function R(e) {
 					lineEnd: e.start + e.text.length
 				});
 			}
-		} else if (e.text.startsWith(ht)) {
+		} else if (e.text.startsWith(bt)) {
 			if (!a) return null;
 			let t = r[r.length - 1];
 			if (!t || t.scalar !== null) return null;
-			let n = xt(e.text, e.start, 4);
-			if (!n || !gt.has(n.key) || t.entries.some((e) => e.key === n.key)) return null;
+			let n = Et(e.text, e.start, 4);
+			if (!n || !xt.has(n.key) || t.entries.some((e) => e.key === n.key)) return null;
 			t.entries.push(n), t.lineEnd = n.lineEnd;
 		} else if (e.text.startsWith(" ") || e.text.startsWith("	")) return null;
 		else {
-			let t = xt(e.text, e.start, 0);
+			let t = Et(e.text, e.start, 0);
 			if (!t || i.has(t.key)) return null;
 			if (i.add(t.key), n.push(t), t.key === "options") {
 				if (t.scalar.value !== "" && t.scalar.value !== "[]") return null;
@@ -1036,13 +1051,13 @@ function R(e) {
 		end: o
 	};
 }
-function z(e, t) {
+function B(e, t) {
 	return e.entries.find((e) => e.key === t)?.scalar.value ?? "";
 }
-function B(e) {
-	let t = R(e);
+function V(e) {
+	let t = z(e);
 	if (!t) return null;
-	let n = z(t, "question");
+	let n = B(t, "question");
 	if (!n) return null;
 	let r = [];
 	for (let e of t.options) {
@@ -1062,28 +1077,28 @@ function B(e) {
 	}
 	let i = t.entries.find((e) => e.key === "answer");
 	return {
-		id: z(t, "id"),
+		id: B(t, "id"),
 		question: n,
-		context: z(t, "context"),
-		askedBy: z(t, "askedBy"),
-		assignee: z(t, "assignee"),
-		blocks: z(t, "blocks"),
-		expiresAt: z(t, "expiresAt") || null,
+		context: B(t, "context"),
+		askedBy: B(t, "askedBy"),
+		assignee: B(t, "assignee"),
+		blocks: B(t, "blocks"),
+		expiresAt: B(t, "expiresAt") || null,
 		options: r,
 		answer: i ? i.scalar.value : null,
-		answeredBy: z(t, "answeredBy"),
-		answeredAt: z(t, "answeredAt")
+		answeredBy: B(t, "answeredBy"),
+		answeredAt: B(t, "answeredAt")
 	};
 }
-function St(e, t = Date.now()) {
+function Dt(e, t = Date.now()) {
 	if (!e.expiresAt) return !1;
 	let n = Date.parse(e.expiresAt);
 	return Number.isFinite(n) && n <= t;
 }
-function Ct(e) {
+function Ot(e) {
 	let t = [];
 	if (e.entries.forEach((e, n) => {
-		_t.includes(e.key) && t.push(n);
+		St.includes(e.key) && t.push(n);
 	}), t.length === 0) return null;
 	for (let e = 1; e < t.length; e += 1) if (t[e] !== t[e - 1] + 1) return null;
 	let n = e.entries[t[0]], r = e.entries[t[t.length - 1]];
@@ -1092,8 +1107,8 @@ function Ct(e) {
 		to: r.lineEnd
 	};
 }
-function wt(e, t) {
-	let n = e.entries.find((e) => e.key > vt);
+function kt(e, t) {
+	let n = e.entries.find((e) => e.key > Ct);
 	return n ? {
 		from: n.lineStart,
 		to: n.lineStart,
@@ -1104,33 +1119,33 @@ function wt(e, t) {
 		insert: `\n${t}`
 	};
 }
-function Tt(e, t) {
-	let n = R(e);
-	if (!n || !z(n, "question")) return null;
-	let r = P(t.answer);
+function At(e, t) {
+	let n = z(e);
+	if (!n || !B(n, "question")) return null;
+	let r = A(t.answer);
 	if (r === null || t.answer === "") return null;
 	let i = [`answer: ${r}`];
 	if (t.at) {
-		let e = P(t.at);
+		let e = A(t.at);
 		if (e === null) return null;
 		i.push(`answeredAt: ${e}`);
 	}
 	if (t.by) {
-		let e = P(t.by);
+		let e = A(t.by);
 		if (e === null) return null;
 		i.push(`answeredBy: ${e}`);
 	}
-	let a = i.join("\n"), o = Ct(n);
+	let a = i.join("\n"), o = Ot(n);
 	return o ? e.slice(o.from, o.to) === a ? null : {
 		from: o.from,
 		to: o.to,
 		insert: a
-	} : n.entries.some((e) => _t.includes(e.key)) ? null : wt(n, a);
+	} : n.entries.some((e) => St.includes(e.key)) ? null : kt(n, a);
 }
-function Et(e) {
-	let t = R(e);
+function jt(e) {
+	let t = z(e);
 	if (!t) return null;
-	let n = Ct(t);
+	let n = Ot(t);
 	return n ? n.to < t.end ? {
 		from: n.from,
 		to: n.to + 1,
@@ -1141,8 +1156,8 @@ function Et(e) {
 		insert: ""
 	} : null;
 }
-function Dt(e) {
-	let t = [], n = (e) => P(e) ?? "''", r = [
+function Mt(e) {
+	let t = [], n = (e) => A(e) ?? "''", r = [
 		["askedBy", e.askedBy],
 		["assignee", e.assignee],
 		["blocks", e.blocks],
@@ -1154,11 +1169,11 @@ function Dt(e) {
 	let i = e.options ?? [];
 	if (i.length > 0) {
 		t.push("options:");
-		for (let e of i) typeof e == "string" ? t.push(`${L}${n(e)}`) : e.then ? (t.push(`${L}then: ${n(e.then)}`), t.push(`${ht}value: ${n(e.value)}`)) : t.push(`${L}${n(e.value)}`);
+		for (let e of i) typeof e == "string" ? t.push(`${R}${n(e)}`) : e.then ? (t.push(`${R}then: ${n(e.then)}`), t.push(`${bt}value: ${n(e.value)}`)) : t.push(`${R}${n(e.value)}`);
 	}
 	return t.push(`question: ${n(e.question)}`), t.join("\n");
 }
-function Ot(e, t, n) {
+function Nt(e, t, n) {
 	let r = e.entries.find((e) => e.key > t);
 	return r ? {
 		from: r.lineStart,
@@ -1170,7 +1185,7 @@ function Ot(e, t, n) {
 		insert: `\n${t}: ${n}`
 	};
 }
-function kt(e, t) {
+function Pt(e, t) {
 	return t.lineEnd < e.end ? {
 		from: t.lineStart,
 		to: t.lineEnd + 1
@@ -1182,40 +1197,40 @@ function kt(e, t) {
 		to: t.lineEnd
 	};
 }
-function At(e, t) {
-	let n = R(e);
-	if (!n || !z(n, "question")) return null;
+function Ft(e, t) {
+	let n = z(e);
+	if (!n || !B(n, "question")) return null;
 	let r = n.entries.find((e) => e.key === "assignee");
 	if (t === "") {
 		if (!r) return null;
-		let e = kt(n, r);
+		let e = Pt(n, r);
 		return {
 			from: e.from,
 			to: e.to,
 			insert: ""
 		};
 	}
-	let i = P(t);
+	let i = A(t);
 	return i === null ? null : r ? r.scalar.value === t ? null : {
 		from: r.scalar.from,
 		to: r.scalar.to,
 		insert: i
-	} : Ot(n, "assignee", i);
+	} : Nt(n, "assignee", i);
 }
-function jt(e) {
+function It(e) {
 	return !e.id || !e.assignee || !e.question ? null : {
 		itemId: e.id,
 		text: e.question,
 		assigneeId: e.assignee,
-		category: pt
+		category: vt
 	};
 }
 //#endregion
 //#region src/components/doc-macros/HitlBlock.tsx
-function V(e, t) {
-	return e.answer === null ? St(e, t) ? "expired" : "waiting" : "answered";
+function Lt(e, t) {
+	return e.answer === null ? Dt(e, t) ? "expired" : "waiting" : "answered";
 }
-var Mt = {
+var Rt = {
 	waiting: {
 		label: "agent waiting",
 		tone: "warning"
@@ -1228,8 +1243,8 @@ var Mt = {
 		label: "expired",
 		tone: "neutral"
 	}
-}, Nt = "text-[10px] font-semibold uppercase tracking-wide text-text-tertiary select-none";
-function Pt({ option: e, disabled: t, onPick: n, testId: i }) {
+}, zt = "text-[10px] font-semibold uppercase tracking-wide text-text-tertiary select-none";
+function Bt({ option: e, disabled: t, onPick: n, testId: i }) {
 	return /* @__PURE__ */ b("div", {
 		className: "flex min-w-0 flex-col gap-0.5",
 		children: [/* @__PURE__ */ y(r, {
@@ -1246,7 +1261,7 @@ function Pt({ option: e, disabled: t, onPick: n, testId: i }) {
 		}) : null]
 	});
 }
-function Ft({ value: e, people: t, disabled: n, onAssign: r, testId: i }) {
+function Vt({ value: e, people: t, disabled: n, onAssign: r, testId: i }) {
 	let a = t.some((t) => t.id === e);
 	return /* @__PURE__ */ y(s, {
 		size: "sm",
@@ -1271,7 +1286,7 @@ function Ft({ value: e, people: t, disabled: n, onAssign: r, testId: i }) {
 		]
 	});
 }
-function It({ onAnswer: e, busy: t, testId: n }) {
+function Ht({ onAnswer: e, busy: t, testId: n }) {
 	let [i, a] = _(""), s = i.trim().length > 0 && !t, c = () => {
 		s && (e(i.trim()), a(""));
 	};
@@ -1300,8 +1315,8 @@ function It({ onAnswer: e, busy: t, testId: n }) {
 		})]
 	});
 }
-function Lt({ callout: e, editable: t = !1, now: n, onAnswer: a, busy: o = !1, failure: s = null, people: c, onAssign: l, onRetract: u, onRemove: d, "data-testid": f = "hitl" }) {
-	let p = V(e, n), m = Mt[p], h = p === "waiting" && t && !!a, ee = p === "waiting" && t && !!l && (c?.length ?? 0) > 0;
+function Ut({ callout: e, editable: t = !1, now: n, onAnswer: a, busy: o = !1, failure: s = null, people: c, onAssign: l, onRetract: u, onRemove: d, "data-testid": f = "hitl" }) {
+	let p = Lt(e, n), m = Rt[p], h = p === "waiting" && t && !!a, ee = p === "waiting" && t && !!l && (c?.length ?? 0) > 0;
 	return /* @__PURE__ */ b("div", {
 		"data-testid": f,
 		"data-phase": p,
@@ -1350,7 +1365,7 @@ function Lt({ callout: e, editable: t = !1, now: n, onAnswer: a, busy: o = !1, f
 							"data-testid": `${f}-asked-by`,
 							children: [e.askedBy, " asked"]
 						}) : null,
-						ee ? /* @__PURE__ */ y(Ft, {
+						ee ? /* @__PURE__ */ y(Vt, {
 							value: e.assignee,
 							people: c ?? [],
 							disabled: o,
@@ -1383,7 +1398,7 @@ function Lt({ callout: e, editable: t = !1, now: n, onAnswer: a, busy: o = !1, f
 					className: "flex flex-col gap-1",
 					children: [
 						/* @__PURE__ */ b("span", {
-							className: Nt,
+							className: zt,
 							children: [
 								"Answer",
 								e.answeredBy ? ` — ${e.answeredBy}` : "",
@@ -1421,14 +1436,14 @@ function Lt({ callout: e, editable: t = !1, now: n, onAnswer: a, busy: o = !1, f
 				h && e.options.length > 0 ? /* @__PURE__ */ y("div", {
 					"data-testid": `${f}-options`,
 					className: "flex flex-wrap items-start gap-2 pt-0.5",
-					children: e.options.map((e, t) => /* @__PURE__ */ y(Pt, {
+					children: e.options.map((e, t) => /* @__PURE__ */ y(Bt, {
 						option: e,
 						disabled: o,
 						onPick: () => a?.(e.value),
 						testId: `${f}-option-${t}`
 					}, `${e.value}:${t}`))
 				}) : null,
-				h && e.options.length === 0 ? /* @__PURE__ */ y(It, {
+				h && e.options.length === 0 ? /* @__PURE__ */ y(Ht, {
 					onAnswer: (e) => a?.(e),
 					busy: o,
 					testId: f
@@ -1444,7 +1459,7 @@ function Lt({ callout: e, editable: t = !1, now: n, onAnswer: a, busy: o = !1, f
 }
 //#endregion
 //#region src/components/doc-macros/HitlMacro.tsx
-function Rt(e) {
+function Wt(e) {
 	return [
 		e.id,
 		e.assignee,
@@ -1452,21 +1467,21 @@ function Rt(e) {
 		e.answer === null ? "" : "answered"
 	].join("\0");
 }
-function zt(e) {
+function Gt(e) {
 	return typeof e == "function" ? e() ?? "" : e ?? "";
 }
-var Bt = class extends E {
+var Kt = class extends T {
 	options;
 	callout;
 	busy = !1;
 	failure = null;
 	signature;
 	constructor(e, t, n) {
-		super(e, I), this.options = n, this.callout = t, this.signature = Rt(t), this.options.onCalloutChanged?.(t), this.schedule();
+		super(e, L), this.options = n, this.callout = t, this.signature = Wt(t), this.options.onCalloutChanged?.(t), this.schedule();
 	}
 	element() {
-		let e = this.callout.answer !== null && this.editable && Et(this.node.textContent) !== null;
-		return /* @__PURE__ */ y(Lt, {
+		let e = this.callout.answer !== null && this.editable && jt(this.node.textContent) !== null;
+		return /* @__PURE__ */ y(Ut, {
 			callout: this.callout,
 			editable: this.editable,
 			busy: this.busy,
@@ -1483,8 +1498,8 @@ var Bt = class extends E {
 		return e ? this.replaceText(e.from, e.to, e.insert) : !1;
 	}
 	answer(e) {
-		if (V(this.callout, this.options.now?.()) !== "waiting" || this.busy) return;
-		let t = this.callout, n = new Date(this.options.now?.() ?? Date.now()).toISOString(), r = zt(this.options.answeredBy), i = Tt(this.node.textContent, {
+		if (Lt(this.callout, this.options.now?.()) !== "waiting" || this.busy) return;
+		let t = this.callout, n = new Date(this.options.now?.() ?? Date.now()).toISOString(), r = Gt(this.options.answeredBy), i = At(this.node.textContent, {
 			answer: e,
 			at: n,
 			...r ? { by: r } : {}
@@ -1506,18 +1521,18 @@ var Bt = class extends E {
 		Promise.resolve(a).then((e) => o(e && e.ok === !1 ? e.message ?? "The answer was not recorded." : null), (e) => o(e instanceof Error ? `The answer was not recorded: ${e.message}` : "The answer was not recorded."));
 	}
 	retract() {
-		this.apply(Et(this.node.textContent));
+		this.apply(jt(this.node.textContent));
 	}
 	assign(e) {
-		this.busy || this.apply(At(this.node.textContent, e));
+		this.busy || this.apply(Ft(this.node.textContent, e));
 	}
 	update(e) {
 		if (e.type !== this.node.type || e.attrs.macroName !== "hitl") return !1;
-		let t = B(e.textContent);
+		let t = V(e.textContent);
 		if (!t) return !1;
 		let n = e.textContent !== this.node.textContent;
 		this.node = e, this.callout = t, n && t.answer !== null && (this.failure = null), n && this.schedule();
-		let r = Rt(t);
+		let r = Wt(t);
 		return r !== this.signature && (this.signature = r, this.options.onCalloutChanged?.(t)), !0;
 	}
 	ignoreMutation() {
@@ -1527,30 +1542,30 @@ var Bt = class extends E {
 		return !0;
 	}
 };
-function Vt(e = {}) {
+function qt(e = {}) {
 	return {
-		macroName: I,
-		accepts: (e) => B(e.textContent) !== null,
+		macroName: L,
+		accepts: (e) => V(e.textContent) !== null,
 		create: (t) => {
-			let n = B(t.node.textContent);
-			return n ? new Bt(t, n, e) : null;
+			let n = V(t.node.textContent);
+			return n ? new Kt(t, n, e) : null;
 		}
 	};
 }
-var Ht = x.create({
+var Jt = x.create({
 	name: "hitlMacro",
 	addOptions() {
 		return {};
 	},
-	addStorage: w,
+	addStorage: C,
 	addCommands() {
 		return {
 			insertHitl: (e) => ({ state: t, commands: n }) => !t.schema.nodes.macro || !e.question ? !1 : n.insertContent([{
 				type: S,
-				attrs: { macroName: I },
+				attrs: { macroName: L },
 				content: [{
 					type: "text",
-					text: Dt(e)
+					text: Mt(e)
 				}]
 			}, { type: "paragraph" }]),
 			answerHitl: (e) => ({ state: t, tr: n, dispatch: r }) => {
@@ -1561,9 +1576,9 @@ var Ht = x.create({
 					if (a) return !1;
 					if (o.type !== i) return;
 					if (o.attrs.macroName !== "hitl") return !1;
-					let c = B(o.textContent);
+					let c = V(o.textContent);
 					if (!c || c.id !== e.id || c.answer !== null) return !1;
-					let l = Tt(o.textContent, {
+					let l = At(o.textContent, {
 						answer: e.answer,
 						...e.answeredAt ? { at: e.answeredAt } : {},
 						...e.answeredBy ? { by: e.answeredBy } : {}
@@ -1579,15 +1594,15 @@ var Ht = x.create({
 		};
 	},
 	addProseMirrorPlugins() {
-		return T(this.editor, this.name, Vt(this.options));
+		return w(this.editor, this.name, qt(this.options));
 	}
-}), H = "decision", Ut = [
+}), H = "decision", Yt = [
 	"proposed",
 	"accepted",
 	"rejected",
 	"superseded"
-], Wt = new Set(Ut), Gt = "The body is the record and there is no mirror: nothing polls a decision, so unlike a HITL callout it has no second store to keep honest.", Kt = /^([A-Za-z][A-Za-z0-9_-]*):/, U = "  - ";
-function qt(e) {
+], Xt = new Set(Yt), Zt = "The body is the record and there is no mirror: nothing polls a decision, so unlike a HITL callout it has no second store to keep honest.", Qt = /^([A-Za-z][A-Za-z0-9_-]*):/, U = "  - ";
+function $t(e) {
 	let t = e.trim();
 	return t === "" ? "" : t === "|" || t === ">" || t.startsWith("|") || t.startsWith(">") ? null : t.startsWith("'") ? t.length < 2 || !t.endsWith("'") ? null : t.slice(1, -1).replace(/''/g, "'") : t.startsWith("\"") ? t.length < 2 || !t.endsWith("\"") ? null : t.slice(1, -1).replace(/\\"/g, "\"") : t;
 }
@@ -1600,15 +1615,15 @@ function W(e) {
 			continue;
 		}
 		if (i && a.startsWith(U)) {
-			let e = qt(a.slice(4));
+			let e = $t(a.slice(4));
 			if (e === null) return null;
 			n.push(e);
 			continue;
 		}
-		let s = Kt.exec(a);
+		let s = Qt.exec(a);
 		if (!s) return null;
 		i = s[1] === "alternatives";
-		let c = a.slice(s[0].length), l = qt(c);
+		let c = a.slice(s[0].length), l = $t(c);
 		if (l === null) return null;
 		let u = c.length - c.trimStart().length;
 		t.push({
@@ -1635,7 +1650,7 @@ function K(e) {
 	let n = G(t, "decision");
 	if (!n) return null;
 	let r = G(t, "status");
-	return r !== "" && !Wt.has(r) ? null : {
+	return r !== "" && !Xt.has(r) ? null : {
 		decision: n,
 		status: r || "proposed",
 		rationale: G(t, "rationale"),
@@ -1646,10 +1661,10 @@ function K(e) {
 		id: G(t, "id")
 	};
 }
-function Jt(e) {
+function en(e) {
 	return K(e) !== null;
 }
-function Yt(e, t, n) {
+function tn(e, t, n) {
 	let r = e.entries.find((e) => e.key > t && e.key !== "alternatives");
 	if (r) return {
 		from: r.lineStart,
@@ -1668,31 +1683,31 @@ function Yt(e, t, n) {
 	};
 }
 function q(e, t, n) {
-	let r = P(n);
+	let r = A(n);
 	if (r === null) return null;
 	let i = e.entries.find((e) => e.key === t);
 	return i ? e.entries.filter((e) => e.key === t).length > 1 || i.value === n ? null : {
 		from: i.valueFrom,
 		to: i.valueTo,
 		insert: r
-	} : Yt(e, t, r);
+	} : tn(e, t, r);
 }
-function Xt(e, t) {
+function nn(e, t) {
 	let n = W(e);
-	return !n || !G(n, "decision") || !Wt.has(t) ? null : q(n, "status", t);
+	return !n || !G(n, "decision") || !Xt.has(t) ? null : q(n, "status", t);
 }
-function Zt(e, t) {
+function rn(e, t) {
 	let n = W(e);
 	return n ? t.by ? q(n, "decidedBy", t.by) : t.at ? q(n, "decidedAt", t.at) : null : null;
 }
-function Qt(e, t) {
+function an(e, t) {
 	let n = W(e);
 	return !n || !G(n, "decision") ? null : q(n, "supersededBy", t);
 }
-function $t(e) {
+function on(e) {
 	let t = [], n = (e, n) => {
 		if (!n) return;
-		let r = P(n);
+		let r = A(n);
 		r !== null && t.push(`${e}: ${r}`);
 	};
 	n("decidedAt", e.decidedAt), n("decidedBy", e.decidedBy), n("decision", e.decision), n("id", e.id), n("rationale", e.rationale), n("status", e.status ?? "proposed");
@@ -1700,7 +1715,7 @@ function $t(e) {
 	if (r.length > 0) {
 		t.push("alternatives:");
 		for (let e of r) {
-			let n = P(e);
+			let n = A(e);
 			n !== null && t.push(`${U}${n}`.replace(U, U));
 		}
 	}
@@ -1708,7 +1723,7 @@ function $t(e) {
 }
 //#endregion
 //#region src/components/doc-macros/DecisionBlock.tsx
-var en = {
+var sn = {
 	proposed: {
 		label: "Proposed",
 		tone: "info",
@@ -1730,8 +1745,8 @@ var en = {
 		hint: "Was in force, replaced"
 	}
 };
-function tn({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: o, onRemove: s, testId: c = "decision-block" }) {
-	let [l, u] = _(""), d = en[e.status], f = e.status === "rejected";
+function cn({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: o, onRemove: s, testId: c = "decision-block" }) {
+	let [l, u] = _(""), d = sn[e.status], f = e.status === "rejected";
 	return /* @__PURE__ */ b("div", {
 		"data-testid": c,
 		"data-status": e.status,
@@ -1823,7 +1838,7 @@ function tn({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: 
 					role: "group",
 					"aria-label": "Decision status",
 					className: "flex flex-wrap items-center gap-1 border-t border-border pt-2",
-					children: Ut.map((t) => /* @__PURE__ */ y(r, {
+					children: Yt.map((t) => /* @__PURE__ */ y(r, {
 						size: "sm",
 						variant: t === e.status ? "primary" : "secondary",
 						"aria-pressed": t === e.status,
@@ -1831,7 +1846,7 @@ function tn({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: 
 							t !== e.status && n(t);
 						},
 						"data-testid": `${c}-set-${t}`,
-						children: en[t].label
+						children: sn[t].label
 					}, t))
 				})
 			]
@@ -1840,14 +1855,14 @@ function tn({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: 
 }
 //#endregion
 //#region src/components/doc-macros/DecisionMacro.tsx
-function nn(e) {
+function ln(e) {
 	return typeof e == "function" ? e() ?? "" : e ?? "";
 }
-function rn(e) {
+function un(e) {
 	let t = new Date(e), n = (e) => String(e).padStart(2, "0");
 	return `${t.getFullYear()}-${n(t.getMonth() + 1)}-${n(t.getDate())}`;
 }
-var an = class extends E {
+var dn = class extends T {
 	options;
 	decision;
 	constructor(e, t, n) {
@@ -1857,7 +1872,7 @@ var an = class extends E {
 		this.setAccessibleName(`Decision, ${e.status}: ${e.decision}`);
 	}
 	element() {
-		return /* @__PURE__ */ y(tn, {
+		return /* @__PURE__ */ y(cn, {
 			decision: this.decision,
 			editable: this.editable,
 			...this.editable ? { onStatusChange: (e) => this.setStatus(e) } : {},
@@ -1869,12 +1884,12 @@ var an = class extends E {
 		return e ? this.replaceText(e.from, e.to, e.insert) : !1;
 	}
 	setStatus(e) {
-		if (!this.apply(Xt(this.node.textContent, e))) return;
-		let t = nn(this.options.decidedBy);
-		t && this.apply(Zt(this.node.textContent, { by: t })), this.apply(Zt(this.node.textContent, { at: rn(this.options.now?.() ?? Date.now()) }));
+		if (!this.apply(nn(this.node.textContent, e))) return;
+		let t = ln(this.options.decidedBy);
+		t && this.apply(rn(this.node.textContent, { by: t })), this.apply(rn(this.node.textContent, { at: un(this.options.now?.() ?? Date.now()) }));
 	}
 	setSupersededBy(e) {
-		this.apply(Qt(this.node.textContent, e));
+		this.apply(an(this.node.textContent, e));
 	}
 	update(e) {
 		if (e.type !== this.node.type || e.attrs.macroName !== "decision") return !1;
@@ -1890,42 +1905,42 @@ var an = class extends E {
 		return !0;
 	}
 };
-function on(e = {}) {
+function fn(e = {}) {
 	return {
 		macroName: H,
 		accepts: (e) => K(e.textContent) !== null,
 		create: (t) => {
 			let n = K(t.node.textContent);
-			return n ? new an(t, n, e) : null;
+			return n ? new dn(t, n, e) : null;
 		}
 	};
 }
-var sn = x.create({
+var pn = x.create({
 	name: "decisionMacro",
 	addOptions() {
 		return {};
 	},
-	addStorage: w,
+	addStorage: C,
 	addCommands() {
 		return { insertDecision: (e) => ({ state: t, commands: n }) => !t.schema.nodes.macro || !e.decision ? !1 : n.insertContent([{
 			type: S,
 			attrs: { macroName: H },
 			content: [{
 				type: "text",
-				text: $t(e)
+				text: on(e)
 			}]
 		}, { type: "paragraph" }]) };
 	},
 	addProseMirrorPlugins() {
-		return T(this.editor, this.name, on(this.options));
+		return w(this.editor, this.name, fn(this.options));
 	}
-}), J = "field", cn = [
+}), J = "field", mn = [
 	"text",
 	"date",
 	"number",
 	"boolean"
-], ln = new Set(cn), un = "The body is the record and there is no mirror. A field index, if one is ever wanted, is a scan over document bodies — not a write-through that can go stale and misreport a real number.", dn = /^([A-Za-z][A-Za-z0-9_-]*):/;
-function fn(e) {
+], hn = new Set(mn), gn = "The body is the record and there is no mirror. A field index, if one is ever wanted, is a scan over document bodies — not a write-through that can go stale and misreport a real number.", _n = /^([A-Za-z][A-Za-z0-9_-]*):/;
+function vn(e) {
 	let t = e.trim();
 	return t === "" ? "" : t.startsWith("|") || t.startsWith(">") ? null : t.startsWith("'") ? t.length < 2 || !t.endsWith("'") ? null : t.slice(1, -1).replace(/''/g, "'") : t.startsWith("\"") ? t.length < 2 || !t.endsWith("\"") ? null : t.slice(1, -1).replace(/\\"/g, "\"") : t;
 }
@@ -1934,9 +1949,9 @@ function Y(e) {
 	for (let r of e.split("\n")) {
 		let e = n, i = n + r.length;
 		if (n = i + 1, r.trim() === "") continue;
-		let a = dn.exec(r);
+		let a = _n.exec(r);
 		if (!a) return null;
-		let o = r.slice(a[0].length), s = fn(o);
+		let o = r.slice(a[0].length), s = vn(o);
 		if (s === null) return null;
 		let c = o.length - o.trimStart().length;
 		t.push({
@@ -1956,7 +1971,7 @@ function Y(e) {
 function X(e, t) {
 	return e.entries.find((e) => e.key === t);
 }
-function Z(e) {
+function yn(e) {
 	for (let t of [
 		"label",
 		"type",
@@ -1964,52 +1979,52 @@ function Z(e) {
 	]) if (e.entries.filter((e) => e.key === t).length > 1) return !0;
 	return !1;
 }
-var pn = /^\d{4}-\d{2}-\d{2}$/;
-function Q(e, t) {
+var bn = /^\d{4}-\d{2}-\d{2}$/;
+function xn(e, t) {
 	switch (e) {
 		case "text": return !0;
 		case "boolean": return t === "true" || t === "false";
 		case "number": return t.trim() !== "" && Number.isFinite(Number(t));
 		case "date": {
-			if (!pn.test(t)) return !1;
+			if (!bn.test(t)) return !1;
 			let e = /* @__PURE__ */ new Date(`${t}T00:00:00Z`);
 			return !Number.isNaN(e.getTime()) && e.toISOString().slice(0, 10) === t;
 		}
 	}
 }
-function $(e) {
+function Z(e) {
 	let t = Y(e);
-	if (!t || Z(t)) return null;
+	if (!t || yn(t)) return null;
 	let n = X(t, "label")?.value ?? "";
 	if (!n) return null;
 	let r = X(t, "type")?.value ?? "";
-	if (r !== "" && !ln.has(r)) return null;
+	if (r !== "" && !hn.has(r)) return null;
 	let i = r || "text", a = X(t, "value")?.value;
 	return {
 		label: n,
 		type: i,
 		value: a,
-		valid: a === void 0 || Q(i, a)
+		valid: a === void 0 || xn(i, a)
 	};
 }
-function mn(e) {
-	return $(e) !== null;
+function Sn(e) {
+	return Z(e) !== null;
 }
-function hn(e) {
+function Cn(e) {
 	if (e.value === void 0 || e.type !== "number" || e.value.trim() === "") return;
 	let t = Number(e.value);
 	return Number.isFinite(t) ? t : void 0;
 }
-function gn(e) {
+function wn(e) {
 	if (e.value !== void 0 && e.type === "boolean") {
 		if (e.value === "true") return !0;
 		if (e.value === "false") return !1;
 	}
 }
-function _n(e) {
-	return e.value === void 0 || e.type !== "date" ? "" : Q("date", e.value) ? e.value : "";
+function Tn(e) {
+	return e.value === void 0 || e.type !== "date" ? "" : xn("date", e.value) ? e.value : "";
 }
-function vn(e) {
+function En(e) {
 	let t = /* @__PURE__ */ new Date(`${e}T00:00:00Z`);
 	return Number.isNaN(t.getTime()) ? e : t.toLocaleDateString(void 0, {
 		year: "numeric",
@@ -2018,26 +2033,26 @@ function vn(e) {
 		timeZone: "UTC"
 	});
 }
-function yn(e) {
+function Dn(e) {
 	return e.toLocaleString(void 0, { maximumFractionDigits: 20 });
 }
-function bn(e) {
+function On(e) {
 	if (e.value === void 0) return "";
 	if (!e.valid) return e.value;
 	switch (e.type) {
-		case "date": return vn(e.value);
+		case "date": return En(e.value);
 		case "number": {
-			let t = hn(e);
-			return t === void 0 ? e.value : yn(t);
+			let t = Cn(e);
+			return t === void 0 ? e.value : Dn(t);
 		}
 		case "boolean": return e.value === "true" ? "Yes" : "No";
 		case "text": return e.value;
 	}
 }
-function xn(e, t) {
-	return Q(e, t) ? e === "boolean" ? t : e === "number" ? t.trim() : P(t) : P(t);
+function kn(e, t) {
+	return xn(e, t) ? e === "boolean" ? t : e === "number" ? t.trim() : A(t) : A(t);
 }
-function Sn(e, t, n) {
+function An(e, t, n) {
 	let r = e.entries.find((e) => e.key > t);
 	return r ? {
 		from: r.lineStart,
@@ -2049,16 +2064,16 @@ function Sn(e, t, n) {
 		insert: `\n${t}: ${n}`
 	};
 }
-function Cn(e, t, n, r) {
+function jn(e, t, n, r) {
 	if (r === null) return null;
 	let i = X(e, t);
 	return i ? i.value === n ? null : {
 		from: i.valueFrom,
 		to: i.valueTo,
 		insert: r
-	} : Sn(e, t, r);
+	} : An(e, t, r);
 }
-function wn(e, t) {
+function Mn(e, t) {
 	return t.lineEnd < e.end ? {
 		from: t.lineStart,
 		to: t.lineEnd + 1,
@@ -2069,47 +2084,47 @@ function wn(e, t) {
 		insert: ""
 	};
 }
-function Tn(e, t) {
+function Nn(e, t) {
 	let n = Y(e);
-	if (!n || Z(n) || !X(n, "label")?.value) return null;
+	if (!n || yn(n) || !X(n, "label")?.value) return null;
 	let r = X(n, "value");
-	if (t === void 0) return r ? wn(n, r) : null;
+	if (t === void 0) return r ? Mn(n, r) : null;
 	let i = X(n, "type")?.value ?? "";
-	return i !== "" && !ln.has(i) ? null : Cn(n, "value", t, xn(i || "text", t));
+	return i !== "" && !hn.has(i) ? null : jn(n, "value", t, kn(i || "text", t));
 }
-function En(e, t) {
+function Pn(e, t) {
 	let n = Y(e);
-	return !n || Z(n) || !X(n, "label")?.value || t.trim() === "" ? null : Cn(n, "label", t, P(t));
+	return !n || yn(n) || !X(n, "label")?.value || t.trim() === "" ? null : jn(n, "label", t, A(t));
 }
-function Dn(e, t) {
+function Fn(e, t) {
 	let n = Y(e);
-	return !n || Z(n) || !X(n, "label")?.value || !ln.has(t) ? null : Cn(n, "type", t, t);
+	return !n || yn(n) || !X(n, "label")?.value || !hn.has(t) ? null : jn(n, "type", t, t);
 }
-function On(e) {
-	let t = e.type ?? "text", n = [`label: ${P(e.label) ?? P(e.label.split("\n")[0] ?? "") ?? "''"}`, `type: ${t}`];
+function In(e) {
+	let t = e.type ?? "text", n = [`label: ${A(e.label) ?? A(e.label.split("\n")[0] ?? "") ?? "''"}`, `type: ${t}`];
 	if (e.value !== void 0) {
-		let r = xn(t, e.value);
+		let r = kn(t, e.value);
 		r !== null && n.push(`value: ${r}`);
 	}
 	return n.join("\n");
 }
 //#endregion
 //#region src/components/doc-macros/FieldBlock.tsx
-var kn = {
+var Ln = {
 	text: "Text",
 	date: "Date",
 	number: "Number",
 	boolean: "Yes / no"
-}, An = {
+}, Rn = {
 	text: "not text",
 	date: "not a date",
 	number: "not a number",
 	boolean: "not yes / no"
 };
-function jn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, onTypeChange: o, onRemove: l, testId: u = "field-block" }) {
-	let [d, f, p] = Qe(null), [m, h, ee] = Qe(null), g = e.value === void 0 ? "empty" : e.valid ? "set" : "invalid";
+function zn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, onTypeChange: o, onRemove: l, testId: u = "field-block" }) {
+	let [d, f, p] = I(null), [m, h, ee] = I(null), g = e.value === void 0 ? "empty" : e.valid ? "set" : "invalid";
 	if (!t) {
-		let t = bn(e);
+		let t = On(e);
 		return /* @__PURE__ */ b("div", {
 			"data-testid": u,
 			"data-field-type": e.type,
@@ -2134,7 +2149,7 @@ function jn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 					tone: "warning",
 					size: "xs",
 					"data-testid": `${u}-invalid`,
-					children: An[e.type]
+					children: Rn[e.type]
 				})
 			]
 		});
@@ -2160,7 +2175,7 @@ function jn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 			...x(v, () => h(null))
 		});
 		if (e.type === "boolean") {
-			let t = gn(e);
+			let t = wn(e);
 			return /* @__PURE__ */ b("span", {
 				className: "flex items-center gap-1.5",
 				children: [/* @__PURE__ */ y(c, {
@@ -2176,7 +2191,7 @@ function jn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 			});
 		}
 		if (e.type === "date") {
-			let t = _n(e);
+			let t = Tn(e);
 			return /* @__PURE__ */ b("span", {
 				className: "flex items-center gap-2",
 				children: [/* @__PURE__ */ y(a, {
@@ -2190,7 +2205,7 @@ function jn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 				}), t && /* @__PURE__ */ y("span", {
 					"data-testid": `${u}-formatted`,
 					className: "text-[12px] tabular-nums text-text-tertiary",
-					children: vn(t)
+					children: En(t)
 				})]
 			});
 		}
@@ -2228,7 +2243,7 @@ function jn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 				tone: "warning",
 				size: "xs",
 				"data-testid": `${u}-invalid`,
-				children: An[e.type]
+				children: Rn[e.type]
 			}),
 			e.value !== void 0 && /* @__PURE__ */ y("button", {
 				type: "button",
@@ -2243,9 +2258,9 @@ function jn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 				"data-testid": `${u}-type`,
 				className: "w-[7.5rem]",
 				value: e.type,
-				options: cn.map((e) => ({
+				options: mn.map((e) => ({
 					value: e,
-					label: kn[e]
+					label: Ln[e]
 				})),
 				onChange: (e) => o?.(e.target.value)
 			}),
@@ -2263,19 +2278,19 @@ function jn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 }
 //#endregion
 //#region src/components/doc-macros/FieldMacro.tsx
-var Mn = class extends E {
+var Bn = class extends T {
 	field;
 	constructor(e, t) {
 		super(e, J), this.field = t, this.schedule();
 	}
 	element() {
-		return /* @__PURE__ */ y(jn, {
+		return /* @__PURE__ */ y(zn, {
 			field: this.field,
 			editable: this.editable,
 			...this.editable ? {
-				onValueChange: (e) => this.apply(Tn(this.node.textContent, e)),
-				onLabelChange: (e) => this.apply(En(this.node.textContent, e)),
-				onTypeChange: (e) => this.apply(Dn(this.node.textContent, e)),
+				onValueChange: (e) => this.apply(Nn(this.node.textContent, e)),
+				onLabelChange: (e) => this.apply(Pn(this.node.textContent, e)),
+				onTypeChange: (e) => this.apply(Fn(this.node.textContent, e)),
 				onRemove: () => this.removeBlock()
 			} : {}
 		});
@@ -2285,7 +2300,7 @@ var Mn = class extends E {
 	}
 	update(e) {
 		if (e.type !== this.node.type || e.attrs.macroName !== "field") return !1;
-		let t = $(e.textContent);
+		let t = Z(e.textContent);
 		if (!t) return !1;
 		let n = e.textContent !== this.node.textContent;
 		return this.node = e, this.field = t, n && this.schedule(), !0;
@@ -2297,32 +2312,258 @@ var Mn = class extends E {
 		return !0;
 	}
 };
-function Nn() {
+function Vn() {
 	return {
 		macroName: J,
-		accepts: (e) => $(e.textContent) !== null,
+		accepts: (e) => Z(e.textContent) !== null,
 		create: (e) => {
-			let t = $(e.node.textContent);
-			return t ? new Mn(e, t) : null;
+			let t = Z(e.node.textContent);
+			return t ? new Bn(e, t) : null;
 		}
 	};
 }
-var Pn = x.create({
+var Hn = x.create({
 	name: "fieldMacro",
-	addStorage: w,
+	addStorage: C,
 	addCommands() {
 		return { insertField: (e) => ({ state: t, commands: n }) => !t.schema.nodes.macro || !e.label || e.label.trim() === "" ? !1 : n.insertContent([{
 			type: S,
 			attrs: { macroName: J },
 			content: [{
 				type: "text",
-				text: On(e)
+				text: In(e)
 			}]
 		}, { type: "paragraph" }]) };
 	},
 	addProseMirrorPlugins() {
-		return T(this.editor, this.name, Nn());
+		return w(this.editor, this.name, Vn());
+	}
+}), Q = "links", Un = "links", Wn = [
+	"http:",
+	"https:",
+	"mailto:"
+];
+function Gn(e) {
+	let t = e.trim();
+	if (!t) return null;
+	let n = /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(t) ? t : t.startsWith("//") ? null : `https://${t}`;
+	if (n === null) return null;
+	try {
+		let e = new URL(n);
+		return Wn.includes(e.protocol) ? e.href : null;
+	} catch {
+		return null;
+	}
+}
+function $(e) {
+	let t = O(e, Q);
+	return t ? t.items.map((e, t) => ({
+		index: t,
+		label: k(e, "label")?.scalar.value ?? "",
+		url: k(e, "url")?.scalar.value ?? ""
+	})) : null;
+}
+function Kn(e, t, n) {
+	return j(e, Q, t, "label", n);
+}
+function qn(e, t, n) {
+	return j(e, Q, t, "url", n);
+}
+function Jn(e, t) {
+	return Ue(e, Q, t);
+}
+function Yn(e, t = "", n = "") {
+	return We(e, Q, [["label", t], ["url", n]]);
+}
+function Xn(e) {
+	return e.length === 0 ? "links: []" : ["links:", ...e.map((e) => [["label", e.label ?? ""], ["url", e.url ?? ""]].map(([e, t], n) => `${n === 0 ? "  - " : "    "}${e}: ${A(t) ?? "''"}`).join("\n"))].join("\n");
+}
+//#endregion
+//#region src/components/doc-macros/LinksBlock.tsx
+function Zn({ value: e, placeholder: t, ariaLabel: r, onCommit: i, testId: o, className: s }) {
+	let [c, l, u] = I(e), d = g(!1);
+	h(() => {
+		d.current || l(e);
+	}, [e]);
+	let f = () => {
+		let t = u();
+		t !== e && i(t);
+	};
+	return /* @__PURE__ */ y(a, {
+		size: "sm",
+		"data-testid": o,
+		value: c,
+		placeholder: t,
+		"aria-label": r,
+		onChange: (e) => l(e.target.value),
+		onFocus: () => {
+			d.current = !0;
+		},
+		onBlur: () => {
+			d.current = !1, f();
+		},
+		onKeyDown: (t) => {
+			t.key === "Enter" ? (t.preventDefault(), f(), t.target.blur()) : t.key === "Escape" && (l(e), t.target.blur());
+		},
+		className: n("border-transparent bg-transparent hover:border-border", s)
+	});
+}
+function Qn({ row: e, testId: t }) {
+	let n = Gn(e.url), r = e.label || e.url || "Untitled link";
+	return n ? /* @__PURE__ */ y("a", {
+		"data-testid": `${t}-anchor`,
+		href: n,
+		target: "_blank",
+		rel: "noopener noreferrer",
+		className: "text-[13px] leading-5 text-info underline decoration-info/40 underline-offset-2 hover:decoration-info",
+		children: r
+	}) : /* @__PURE__ */ b("span", {
+		"data-testid": `${t}-text`,
+		className: "text-[13px] leading-5 text-text-primary",
+		children: [r, e.url ? /* @__PURE__ */ y("span", {
+			className: "ml-1.5 text-[11px] text-text-tertiary",
+			children: e.url
+		}) : null]
+	});
+}
+function $n({ rows: e, editable: t = !1, onLabelChange: n, onUrlChange: i, onRemoveRow: a, onAddRow: o, onRemove: s, "data-testid": c = "links" }) {
+	return /* @__PURE__ */ b("div", {
+		"data-testid": c,
+		className: "my-3",
+		children: [/* @__PURE__ */ b("div", {
+			className: "flex items-center justify-between gap-2 rounded-t-md border border-b-0 border-border bg-surface-inset px-2.5 py-1",
+			children: [/* @__PURE__ */ y("span", {
+				className: "text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
+				children: "Links"
+			}), t && s ? /* @__PURE__ */ y(r, {
+				variant: "ghost",
+				size: "sm",
+				"data-testid": `${c}-remove`,
+				onClick: s,
+				children: "Remove"
+			}) : null]
+		}), /* @__PURE__ */ b("div", {
+			className: "rounded-b-md border border-border bg-surface px-2.5 py-2",
+			children: [e.length === 0 ? /* @__PURE__ */ y("p", {
+				"data-testid": `${c}-empty`,
+				className: "px-0.5 py-1 text-[13px] text-text-tertiary",
+				children: "No links yet."
+			}) : /* @__PURE__ */ y("ul", {
+				className: "m-0 flex list-none flex-col gap-1 p-0",
+				children: e.map((e) => {
+					let o = `${c}-row-${e.index}`;
+					return /* @__PURE__ */ y("li", {
+						"data-testid": o,
+						className: "flex items-center gap-2",
+						children: t ? /* @__PURE__ */ b(v, { children: [
+							/* @__PURE__ */ y(Zn, {
+								value: e.label,
+								placeholder: "Label",
+								ariaLabel: "Link label",
+								testId: `${o}-label`,
+								onCommit: (t) => n?.(e.index, t),
+								className: "w-[34%] min-w-0"
+							}),
+							/* @__PURE__ */ y(Zn, {
+								value: e.url,
+								placeholder: "https://",
+								ariaLabel: "Link URL",
+								testId: `${o}-url`,
+								onCommit: (t) => i?.(e.index, t),
+								className: "min-w-0 flex-1 font-mono text-[11px]"
+							}),
+							/* @__PURE__ */ y(r, {
+								variant: "ghost",
+								size: "sm",
+								"aria-label": "Remove link",
+								"data-testid": `${o}-remove`,
+								onClick: () => a?.(e.index),
+								children: "✕"
+							})
+						] }) : /* @__PURE__ */ y(Qn, {
+							row: e,
+							testId: o
+						})
+					}, e.index);
+				})
+			}), t ? /* @__PURE__ */ y("div", {
+				className: "pt-1.5",
+				children: /* @__PURE__ */ y(r, {
+					variant: "ghost",
+					size: "sm",
+					"data-testid": `${c}-add`,
+					onClick: o,
+					children: "+ Add link"
+				})
+			}) : null]
+		})]
+	});
+}
+//#endregion
+//#region src/components/doc-macros/LinksMacro.tsx
+var er = class extends T {
+	rows;
+	constructor(e, t) {
+		super(e, Un), this.rows = t, this.schedule();
+	}
+	element() {
+		return /* @__PURE__ */ y($n, {
+			rows: this.rows,
+			editable: this.editable,
+			onLabelChange: (e, t) => this.apply(Kn(this.node.textContent, e, t)),
+			onUrlChange: (e, t) => this.apply(qn(this.node.textContent, e, t)),
+			onRemoveRow: (e) => this.apply(Jn(this.node.textContent, e)),
+			onAddRow: () => this.apply(Yn(this.node.textContent)),
+			...this.editable ? { onRemove: () => this.removeBlock() } : {}
+		});
+	}
+	apply(e) {
+		e && this.replaceText(e.from, e.to, e.insert);
+	}
+	update(e) {
+		if (e.type !== this.node.type || e.attrs.macroName !== "links") return !1;
+		let t = $(e.textContent);
+		if (!t) return !1;
+		let n = e.textContent !== this.node.textContent;
+		return this.node = e, this.rows = t, n && this.schedule(), !0;
+	}
+	ignoreMutation() {
+		return !0;
+	}
+	stopEvent() {
+		return !0;
+	}
+};
+function tr() {
+	return {
+		macroName: Un,
+		accepts: (e) => $(e.textContent) !== null,
+		create: (e) => {
+			let t = $(e.node.textContent);
+			return t ? new er(e, t) : null;
+		}
+	};
+}
+var nr = x.create({
+	name: "linksMacro",
+	addStorage: C,
+	addCommands() {
+		return { insertLinks: (e) => ({ state: t, commands: n }) => {
+			if (!t.schema.nodes.macro) return !1;
+			let r = Xn(e ?? [{}]);
+			return n.insertContent([{
+				type: S,
+				attrs: { macroName: Un },
+				content: [{
+					type: "text",
+					text: r
+				}]
+			}, { type: "paragraph" }]);
+		} };
+	},
+	addProseMirrorPlugins() {
+		return w(this.editor, this.name, tr());
 	}
 });
 //#endregion
-export { k as ACTION_ITEMS_MACRO_NAME, Ie as ACTION_ITEM_CATEGORY, at as ActionItemsBlock, ct as ActionItemsMacro, le as CollaborativeExcalidraw, H as DECISION_MACRO_NAME, Gt as DECISION_QUERYABILITY, Ut as DECISION_STATUSES, D as DIAGRAM_MACRO_NAME, tn as DecisionBlock, sn as DecisionMacro, fe as DiagramBlockRenderer, Ne as DiagramMacro, l as DiagramPresenceBar, J as FIELD_MACRO_NAME, un as FIELD_QUERYABILITY, cn as FIELD_TYPES, jn as FieldBlock, Pn as FieldMacro, ut as HITL_CONVERGENCE, pt as HITL_ITEM_CATEGORY, I as HITL_MACRO_NAME, lt as HITL_QUERYABILITY, ft as HITL_SENTINEL_SECTION, Lt as HitlBlock, Ht as HitlMacro, dt as MACRO_ITEM_SENTINEL_SECTION, Te as MACRO_NODE_NAME, C as MACRO_RENDERERS_NAME, Pe as MacroRenderers, E as ReactMacroView, Fe as STATUS_DONE, O as STATUS_PENDING, Jt as acceptsDecision, mn as acceptsField, Ke as actionItemMirrorRow, Ze as actionItemsMacroText, st as actionItemsRenderer, Xe as addItemEdit, Tt as answerHitlEdit, Zt as attributeDecisionEdit, he as createMacroRendererRegistry, $t as decisionMacroText, on as decisionRenderer, Ae as diagramMacroPluginKey, Oe as diagramMacroText, Me as diagramRenderer, We as ensureItemIdEdit, gn as fieldBoolean, _n as fieldDate, On as fieldMacroText, hn as fieldNumber, Nn as fieldRenderer, xn as fieldScalar, Q as fitsFieldType, vn as formatFieldDate, yn as formatFieldNumber, bn as formatFieldValue, St as hitlExpired, Dt as hitlMacroText, jt as hitlMirrorRow, V as hitlPhase, Vt as hitlRenderer, ve as hostsMacroNodeViews, De as isDiagramId, xe as macroNodeViewPlugin, T as macroRendererPlugins, w as macroRendererStorage, _e as macroRenderersFor, me as macroRenderersPluginKey, Ee as newDiagramId, pe as plainMacroView, N as readActionItems, K as readDecision, ke as readDiagramId, B as readHitl, $ as readTypedField, be as refreshMacroViews, Ye as removeItemEdit, Ue as removeItemKeyEdit, Et as retractHitlEdit, Xt as setDecisionStatusEdit, En as setFieldLabelEdit, Dn as setFieldTypeEdit, Tn as setFieldValueEdit, At as setHitlAssigneeEdit, F as setItemKeyEdit, Je as setItemTextEdit, Qt as supersedeDecisionEdit, qe as toggleItemEdit, u as useResolvedTheme, P as yamlScalar };
+export { N as ACTION_ITEMS_MACRO_NAME, Je as ACTION_ITEM_CATEGORY, ut as ActionItemsBlock, pt as ActionItemsMacro, le as CollaborativeExcalidraw, H as DECISION_MACRO_NAME, Zt as DECISION_QUERYABILITY, Yt as DECISION_STATUSES, E as DIAGRAM_MACRO_NAME, cn as DecisionBlock, pn as DecisionMacro, fe as DiagramBlockRenderer, Pe as DiagramMacro, l as DiagramPresenceBar, J as FIELD_MACRO_NAME, gn as FIELD_QUERYABILITY, mn as FIELD_TYPES, zn as FieldBlock, Hn as FieldMacro, ht as HITL_CONVERGENCE, vt as HITL_ITEM_CATEGORY, L as HITL_MACRO_NAME, mt as HITL_QUERYABILITY, _t as HITL_SENTINEL_SECTION, Ut as HitlBlock, Jt as HitlMacro, Un as LINKS_MACRO_NAME, $n as LinksBlock, nr as LinksMacro, gt as MACRO_ITEM_SENTINEL_SECTION, Ee as MACRO_NODE_NAME, me as MACRO_RENDERERS_NAME, Fe as MacroRenderers, T as ReactMacroView, Ke as STATUS_DONE, qe as STATUS_PENDING, en as acceptsDecision, Sn as acceptsField, Qe as actionItemMirrorRow, rt as actionItemsMacroText, ft as actionItemsRenderer, nt as addItemEdit, Yn as addLinkEdit, We as addListItemEdit, At as answerHitlEdit, rn as attributeDecisionEdit, ge as createMacroRendererRegistry, on as decisionMacroText, fn as decisionRenderer, je as diagramMacroPluginKey, ke as diagramMacroText, Ne as diagramRenderer, Xe as ensureItemIdEdit, wn as fieldBoolean, Tn as fieldDate, In as fieldMacroText, Cn as fieldNumber, Vn as fieldRenderer, kn as fieldScalar, xn as fitsFieldType, En as formatFieldDate, Dn as formatFieldNumber, On as formatFieldValue, Dt as hitlExpired, Mt as hitlMacroText, It as hitlMirrorRow, Lt as hitlPhase, qt as hitlRenderer, ye as hostsMacroNodeViews, Oe as isDiagramId, Gn as linkHref, Xn as linksMacroText, tr as linksRenderer, Se as macroNodeViewPlugin, w as macroRendererPlugins, C as macroRendererStorage, ve as macroRenderersFor, he as macroRenderersPluginKey, De as newDiagramId, O as parseListBody, pe as plainMacroView, F as readActionItems, K as readDecision, Ae as readDiagramId, V as readHitl, $ as readLinks, Z as readTypedField, xe as refreshMacroViews, tt as removeItemEdit, Ye as removeItemKeyEdit, Jn as removeLinkEdit, Ue as removeListItemEdit, He as removeListItemKeyEdit, jt as retractHitlEdit, nn as setDecisionStatusEdit, Pn as setFieldLabelEdit, Fn as setFieldTypeEdit, Nn as setFieldValueEdit, Ft as setHitlAssigneeEdit, P as setItemKeyEdit, et as setItemTextEdit, Kn as setLinkLabelEdit, qn as setLinkUrlEdit, j as setListItemKeyEdit, an as supersedeDecisionEdit, $e as toggleItemEdit, u as useResolvedTheme, A as yamlScalar };

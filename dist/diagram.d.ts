@@ -225,6 +225,27 @@ export declare function actionItemsRenderer(options?: ActionItemsMacroOptions): 
 export declare function addItemEdit(source: string, text: string): TextRangeEdit | null;
 
 /**
+ * The edit that appends a row.
+ *
+ * Both keys are always written, even empty, so the row has two entries from
+ * the start: `removeListItemKeyEdit` declines to strip an item's only entry
+ * (it would leave a bare `-` marker), and a row that began with one key would
+ * therefore be uneditable in one direction.
+ */
+export declare function addLinkEdit(source: string, label?: string, url?: string): TextRangeEdit | null;
+
+/**
+ * The edit that appends one item, given its keys in the order they should be
+ * written — which callers supply already sorted, because `sortKeys: true` is
+ * what the chassis dumps.
+ *
+ * Also the path back from `<listKey>: []` to a block list: the range then
+ * starts at the list key's colon and swallows the empty flow sequence, which
+ * keeps this a single range rather than two edits a CRDT would have to order.
+ */
+export declare function addListItemEdit(source: string, listKey: string, pairs: readonly (readonly [string, string])[]): TextRangeEdit | null;
+
+/**
  * The edit that answers a callout — ONE range, always.
  *
  * Replaces an existing answer where one is already recorded and can be
@@ -555,6 +576,17 @@ export declare interface DiagramUser {
  * string for a JSDOM-shaped environment that has no WebCrypto.
  */
 export declare function ensureItemIdEdit(source: string, index: number, mint?: () => string): TextRangeEdit | null;
+
+declare interface Entry {
+    key: string;
+    /** Offset one past the `:` that ends the key. */
+    keyEnd: number;
+    scalar: Scalar;
+    /** Offset of the first character of the line holding this entry. */
+    lineStart: number;
+    /** Offset of the newline ending this line, or the end of the source. */
+    lineEnd: number;
+}
 
 /** Props of the lazily-loaded canvas — always fully resolved by this point. */
 export declare interface ExcalidrawCanvasProps extends SharedDiagramProps {
@@ -1074,6 +1106,63 @@ export declare function hostsMacroNodeViews(editor: MacroEditorLike, extensionNa
 export declare function isDiagramId(value: string): boolean;
 
 /**
+ * The `href` a row may be given, or `null` when it must render as text.
+ *
+ * A bare `example.com/x` is accepted and promoted to `https://` — a person
+ * typing a link into a field means a link, and refusing it over a missing
+ * scheme would be pedantry that shows them plain grey text instead.
+ */
+export declare function linkHref(url: string): string | null;
+
+/** One row of the list. */
+export declare interface LinkRow {
+    /** Position in `links`, 0-based. */
+    index: number;
+    /** The `label:` scalar. `''` when the row has none. */
+    label: string;
+    /** The `url:` scalar VERBATIM — not validated. See `linkHref`. */
+    url: string;
+}
+
+/** The `macro:<name>` discriminator for a reference list. */
+export declare const LINKS_MACRO_NAME = "links";
+
+export declare function LinksBlock({ rows, editable, onLabelChange, onUrlChange, onRemoveRow, onAddRow, onRemove, 'data-testid': testId, }: LinksBlockProps): JSX.Element;
+
+export declare interface LinksBlockProps {
+    rows: readonly LinkRow[];
+    /** False renders the list as anchors only — no editing. */
+    editable?: boolean;
+    onLabelChange?: (index: number, label: string) => void;
+    onUrlChange?: (index: number, url: string) => void;
+    onRemoveRow?: (index: number) => void;
+    onAddRow?: () => void;
+    /** Takes the whole block off the page. Omitted when not editable. */
+    onRemove?: () => void;
+    'data-testid'?: string;
+}
+
+export declare const LinksMacro: Extension<any, MacroRendererStorage>;
+
+/**
+ * The macro body for a reference list — byte-identical to what the chassis
+ * serializer writes between the fences, with no trailing newline (the closing
+ * fence supplies the final break).
+ */
+export declare function linksMacroText(rows: readonly {
+    label?: string;
+    url?: string;
+}[]): string;
+
+/**
+ * The renderer.
+ *
+ * Exported so a host can register it into a `MacroRenderers` list directly
+ * instead of adding the extension — the two are equivalent.
+ */
+export declare function linksRenderer(): MacroRenderer;
+
+/**
  * The sentinel section a page-shaped document files macro rows under.
  *
  * Shared by every macro that mirrors itself, not just callouts — a canvas page
@@ -1239,10 +1328,33 @@ export declare interface MacroViewContext {
  */
 export declare function newDiagramId(): string;
 
+declare interface ParsedBody {
+    items: RawItem[];
+    /** The list entry. Its scalar is `[]` for an empty list, `''` otherwise. */
+    list: Entry;
+    /**
+     * Offset one past the last item's last line — or one past the list key
+     * itself when the list is empty. Everything an edit may replace ends here.
+     */
+    listEnd: number;
+}
+
+/**
+ * The list a macro body describes, or `null` when the body is not a shape this
+ * module can edit safely.
+ */
+export declare function parseListBody(source: string, listKey: string): ParsedBody | null;
+
 declare type Phase = 'waiting' | 'answered' | 'expired';
 
 /** `pre[data-macro] > code` — the macro's YAML, editable as text. */
 export declare function plainMacroView(node: Node_2): NodeView;
+
+declare interface RawItem {
+    entries: Entry[];
+    lineStart: number;
+    lineEnd: number;
+}
 
 export declare abstract class ReactMacroView implements MacroNodeView {
     /** The node view's outer element. `data-macro` is set for the caller. */
@@ -1376,6 +1488,12 @@ export declare function readDiagramId(source: string): string | null;
 export declare function readHitl(source: string): HitlCallout | null;
 
 /**
+ * The list a macro body describes, or `null` when the body is not the shape
+ * this renderer edits — in which case the node view shows the fence.
+ */
+export declare function readLinks(source: string): LinkRow[] | null;
+
+/**
  * Parse a field body, or `null` when this is not one we can draw.
  *
  * `label:` is required — an unnamed value is not a field, it is a number lying
@@ -1412,19 +1530,39 @@ export declare function refreshMacroViews(view: EditorView): boolean;
 export declare function removeItemEdit(source: string, index: number): TextRangeEdit | null;
 
 /**
+ * The edit that takes one key OFF one item, and the only honest way to say
+ * "unassigned": writing `assignee: ''` would say the item HAS an assignee
+ * whose id is the empty string, which matches nobody's inbox.
+ */
+export declare function removeItemKeyEdit(source: string, index: number, key: string): TextRangeEdit | null;
+
+/** The edit that removes one row. Removing the last writes `links: []`. */
+export declare function removeLinkEdit(source: string, index: number): TextRangeEdit | null;
+
+/**
+ * The edit that removes one item — its lines AND the break that separated them
+ * from their neighbour, so nothing is left behind that would reparse
+ * differently.
+ *
+ * Removing the last remaining item writes `<listKey>: []` rather than a bare
+ * key, because a bare key parses as `null`, not as an empty list: the block
+ * would come back as merge damage rather than as an empty list.
+ */
+export declare function removeListItemEdit(source: string, listKey: string, index: number): TextRangeEdit | null;
+
+/**
  * The edit that takes one key OFF one item — the exact inverse of
- * `insertionFor`, and the only honest way to say "unassigned".
+ * `insertionFor`, and the only honest way to say a field is not there.
  *
  * Writing `assignee: ''` would say something different: the item HAS an
- * assignee whose id is the empty string, which renders as a `@` chip pointing
- * at nobody and matches nobody's inbox. Absent is what unassigned means in this
- * format, so unassigning has to remove the line.
+ * assignee whose id is the empty string, which renders as a chip pointing at
+ * nobody and matches nobody's inbox. Absent is what unset means in this format.
  *
  * Returns `null` when the key is not there (nothing to do) and when it is the
  * item's only entry, which would leave a bare `-` marker that reparses as a
  * null item — merge damage rather than an empty field.
  */
-export declare function removeItemKeyEdit(source: string, index: number, key: string): TextRangeEdit | null;
+export declare function removeListItemKeyEdit(source: string, listKey: string, index: number, key: string): TextRangeEdit | null;
 
 export declare type ResolvedTheme = 'light' | 'dark';
 
@@ -1433,6 +1571,14 @@ export declare type ResolvedTheme = 'light' | 'dark';
  * separated them from their neighbour, so what is left reparses identically.
  */
 export declare function retractHitlEdit(source: string): TextRangeEdit | null;
+
+declare interface Scalar {
+    value: string;
+    /** Offset of the first character of the value, in the macro's text. */
+    from: number;
+    /** Offset one past the last character of the value. */
+    to: number;
+}
 
 /**
  * The edit that moves a decision to a new status.
@@ -1494,6 +1640,18 @@ export declare function setFieldValueEdit(source: string, value: string | undefi
  */
 export declare function setHitlAssigneeEdit(source: string, assignee: string): TextRangeEdit | null;
 
+/** The edit that sets one key on one action item. */
+export declare function setItemKeyEdit(source: string, index: number, key: string, value: string): TextRangeEdit | null;
+
+/** Retitling, as an edit. */
+export declare function setItemTextEdit(source: string, index: number, text: string): TextRangeEdit | null;
+
+/** Retitling one row, as an edit. */
+export declare function setLinkLabelEdit(source: string, index: number, label: string): TextRangeEdit | null;
+
+/** Repointing one row, as an edit. Stored verbatim; safety is at render. */
+export declare function setLinkUrlEdit(source: string, index: number, url: string): TextRangeEdit | null;
+
 /**
  * The edit that sets one key on one item, or `null` when there is nothing to
  * do (or the body is not editable).
@@ -1502,10 +1660,7 @@ export declare function setHitlAssigneeEdit(source: string, assignee: string): T
  * it inserts a whole line in the position `sortKeys` would have put it, so the
  * body stays byte-identical to what the chassis would emit.
  */
-export declare function setItemKeyEdit(source: string, index: number, key: string, value: string): TextRangeEdit | null;
-
-/** Retitling, as an edit. */
-export declare function setItemTextEdit(source: string, index: number, text: string): TextRangeEdit | null;
+export declare function setListItemKeyEdit(source: string, listKey: string, index: number, key: string, value: string): TextRangeEdit | null;
 
 export declare interface SharedDiagramProps {
     /**
@@ -1604,8 +1759,7 @@ export declare function useResolvedTheme(ref: RefObject<Element | null>): Resolv
  * reading, single-quoted (with `''` for an embedded quote) otherwise. js-yaml
  * would leave more of these plain, and that divergence is harmless — an
  * exported file is re-dumped from the PARSED data by the chassis, so what
- * matters is that these bytes parse back to the same string, which is what
- * `actionItemsText.test.ts` asserts.
+ * matters is that these bytes parse back to the same string.
  */
 export declare function yamlScalar(value: string): string | null;
 
@@ -1656,16 +1810,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -1695,6 +1839,29 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
