@@ -267,7 +267,7 @@ export function FieldBlock({
                 type={field.type === 'number' ? 'number' : 'text'}
                 aria-label={field.label}
                 data-testid={`${testId}-input`}
-                className={field.type === 'number' ? 'w-[8rem]' : 'w-[13rem]'}
+                className={`${field.type === 'number' ? 'w-[8rem]' : 'w-[13rem]'} !border-transparent !bg-transparent !shadow-none hover:!border-border focus:!border-border`}
                 placeholder="Not set"
                 value={draftedValue}
                 onChange={(e) => setValueDraft(e.target.value)}
@@ -282,13 +282,18 @@ export function FieldBlock({
             data-testid={testId}
             data-field-type={field.type}
             data-field-state={state}
-            className="my-1 flex flex-wrap items-center gap-x-2 gap-y-1"
+            // A property row that reads like the read-only one — "Title   Not
+            // set" — and edits in place. The label and value are inputs drawn
+            // as text until hovered or focused; the type picker and remove
+            // control appear with the row's hover/focus, so seven fields read
+            // as seven lines of a document, not a seven-row form.
+            className="group my-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md -mx-1 px-1 hover:bg-surface-hover/60 focus-within:bg-surface-hover/60"
         >
             <Input
                 size="sm"
                 aria-label="Field name"
                 data-testid={`${testId}-label-input`}
-                className="w-[9rem] font-medium"
+                className="w-[9rem] font-medium !border-transparent !bg-transparent !shadow-none text-text-secondary hover:!border-border focus:!border-border"
                 value={labelDraft ?? field.label}
                 onChange={(e) => setLabelDraft(e.target.value)}
                 onBlur={commitLabel}
@@ -324,7 +329,7 @@ export function FieldBlock({
                 size="sm"
                 aria-label="Field type"
                 data-testid={`${testId}-type`}
-                className="w-[7.5rem]"
+                className="w-[7.5rem] opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100"
                 value={field.type}
                 options={FIELD_TYPES.map((t) => ({ value: t, label: TYPE_LABELS[t] }))}
                 onChange={(e) => onTypeChange?.(e.target.value as FieldType)}
@@ -338,7 +343,7 @@ export function FieldBlock({
                     aria-label="Remove this field"
                     data-testid={`${testId}-remove`}
                     onClick={onRemove}
-                    className="rounded px-1 text-[13px] leading-none text-text-tertiary hover:text-danger-fg"
+                    className="rounded px-1 text-[13px] leading-none text-text-tertiary opacity-0 transition-opacity hover:text-danger-fg group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100"
                 >
                     ✕
                 </button>

@@ -17,7 +17,7 @@ import { n as f } from "./PermissionDeniedCard-CjNsV-qD.js";
 import { n as p, t as m } from "./CardHeader-C-7rFLKD.js";
 import { i as h, n as g, r as _, t as v } from "./focusTrap-CmWJlptm.js";
 import "./SkeletonCard-CGe8XFPB.js";
-import { c as y, i as b, s as x } from "./ChannelHeader-oAzX0935.js";
+import { c as y, i as b, s as x } from "./ChannelHeader-DEd48bLe.js";
 import "./FileUploadDrop-BRRQBXdS.js";
 import "./DockedPanelContext-pH9A5z1h.js";
 import { t as S } from "./Input-DLknWXri.js";

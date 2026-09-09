@@ -2216,7 +2216,7 @@ function Bn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 			type: e.type === "number" ? "number" : "text",
 			"aria-label": e.label,
 			"data-testid": `${u}-input`,
-			className: e.type === "number" ? "w-[8rem]" : "w-[13rem]",
+			className: `${e.type === "number" ? "w-[8rem]" : "w-[13rem]"} !border-transparent !bg-transparent !shadow-none hover:!border-border focus:!border-border`,
 			placeholder: "Not set",
 			value: S,
 			onChange: (e) => h(e.target.value),
@@ -2228,13 +2228,13 @@ function Bn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 		"data-testid": u,
 		"data-field-type": e.type,
 		"data-field-state": ee,
-		className: "my-1 flex flex-wrap items-center gap-x-2 gap-y-1",
+		className: "group my-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md -mx-1 px-1 hover:bg-surface-hover/60 focus-within:bg-surface-hover/60",
 		children: [
 			/* @__PURE__ */ b(a, {
 				size: "sm",
 				"aria-label": "Field name",
 				"data-testid": `${u}-label-input`,
-				className: "w-[9rem] font-medium",
+				className: "w-[9rem] font-medium !border-transparent !bg-transparent !shadow-none text-text-secondary hover:!border-border focus:!border-border",
 				value: d ?? e.label,
 				onChange: (e) => f(e.target.value),
 				onBlur: _,
@@ -2258,7 +2258,7 @@ function Bn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 				size: "sm",
 				"aria-label": "Field type",
 				"data-testid": `${u}-type`,
-				className: "w-[7.5rem]",
+				className: "w-[7.5rem] opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100",
 				value: e.type,
 				options: hn.map((e) => ({
 					value: e,
@@ -2272,7 +2272,7 @@ function Bn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 				"aria-label": "Remove this field",
 				"data-testid": `${u}-remove`,
 				onClick: l,
-				className: "rounded px-1 text-[13px] leading-none text-text-tertiary hover:text-danger-fg",
+				className: "rounded px-1 text-[13px] leading-none text-text-tertiary opacity-0 transition-opacity hover:text-danger-fg group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100",
 				children: "✕"
 			})
 		]

@@ -244,6 +244,8 @@ declare interface CanvasDocumentViewProps {
     toolbarDensity?: 'full' | 'compact';
     /** The word-count / zoom bar along the bottom. Off for an embedded pane. */
     showStatusBar?: boolean;
+    /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
+    zoomMode?: 'remembered' | 'fit';
     /**
      * Show the outline column beside the page.
      *

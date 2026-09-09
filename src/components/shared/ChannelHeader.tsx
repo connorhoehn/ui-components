@@ -63,7 +63,7 @@ export function ChannelHeader({
     <div
       data-testid={testId}
       className={cn(
-        'flex items-center justify-between gap-4 px-6 py-3',
+        'flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-6 py-3',
         'border-b border-[var(--color-border)] bg-[var(--color-surface)]',
         className,
       )}
@@ -137,14 +137,14 @@ export function ChannelHeader({
       {/* Middle: the channel's other views. Allowed to shrink and scroll
           rather than push the name or the actions off the bar. */}
       {tabs && (
-        <div className="flex min-w-0 flex-1 items-center overflow-x-auto">
+        <div className="flex min-w-[14rem] flex-1 items-center overflow-x-auto">
           {tabs}
         </div>
       )}
 
       {/* Right: actions */}
       {actions && (
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           {actions}
         </div>
       )}

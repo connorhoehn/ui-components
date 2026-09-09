@@ -268,3 +268,6 @@ export { EmbeddedCallPanel } from './EmbeddedCallPanel';
 export type { EmbeddedCallPanelProps } from './EmbeddedCallPanel';
 export { AudioPlayer, formatAudioTime } from './AudioPlayer';
 export type { AudioPlayerProps } from './AudioPlayer';
+// One-line in-call notices with an inline action; the widget-scale answer to a page Banner.
+export { CallNoticePill } from './CallNoticePill';
+export type { CallNoticePillProps } from './CallNoticePill';

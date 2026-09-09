@@ -333,6 +333,8 @@ export interface CanvasDocumentViewProps {
   toolbarDensity?: 'full' | 'compact';
   /** The word-count / zoom bar along the bottom. Off for an embedded pane. */
   showStatusBar?: boolean;
+  /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
+  zoomMode?: 'remembered' | 'fit';
   /**
    * Show the outline column beside the page.
    *
@@ -448,6 +450,7 @@ export default function CanvasDocumentView({
   showRuler = true,
   toolbarDensity = 'full',
   showStatusBar = true,
+  zoomMode = 'remembered',
   showOutline = false,
   paginate = true,
   onToggleGutter,
@@ -482,7 +485,8 @@ export default function CanvasDocumentView({
   // everything after it. All three inputs are props, so nothing is lost by
   // deriving it here.
 
-  const [zoomSetting, setZoomSetting] = useState<number | typeof ZOOM_FIT>(readStoredZoomSetting);
+  const [storedZoomSetting, setZoomSetting] = useState<number | typeof ZOOM_FIT>(readStoredZoomSetting);
+  const zoomSetting = zoomMode === 'fit' ? ZOOM_FIT : storedZoomSetting;
   // Storage throws outright in some privacy modes rather than returning
   // null, and a zoom control that takes the page down is worse than one that
   // forgets. Failing to remember is the correct degradation.

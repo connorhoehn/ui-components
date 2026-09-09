@@ -4645,4 +4645,27 @@ function Bn({ title: t, subtitle: n, durationSeconds: r, live: i = !0, onPopOut:
 	});
 }
 //#endregion
-export { Ae as $, tt as A, Ve as B, Et as C, ft as D, vt as E, Ye as F, Fe as G, Me as H, qe as I, Ie as J, Le as K, Ge as L, dt as M, Xe as N, $e as O, Je as P, je as Q, He as R, Dt as S, St as T, Ce as U, Pe as V, we as W, De as X, Re as Y, Oe as Z, Rt as _, Pn as a, me as at, At as b, Dn as c, H as ct, _n as d, V as dt, Ne as et, $ as f, B as ft, Jt as g, M as gt, rn as h, F as ht, Fn as i, ve as it, et as j, nt as k, Tn as l, W as lt, an as m, L as mt, Rn as n, Ee as nt, Nn as o, de as ot, un as p, z as pt, ke as q, Ln as r, Se as rt, jn as s, oe as st, Bn as t, Te as tt, Sn as u, G as ut, It as v, Ct as w, Ot as x, Nt as y, Ue as z };
+//#region src/components/video/CallNoticePill.tsx
+var Vn = {
+	warning: "bg-warning/95 text-white",
+	error: "bg-danger/95 text-white",
+	info: "bg-black/70 text-white"
+};
+function Hn({ show: t, tone: n = "warning", message: r, actions: i, className: a, "data-testid": o = "call-notice" }) {
+	return t ? /* @__PURE__ */ A("div", {
+		role: "status",
+		"aria-live": "polite",
+		"data-testid": o,
+		"data-tone": n,
+		className: e("pointer-events-auto absolute left-1/2 top-3 z-30 flex max-w-[calc(100%-1rem)] -translate-x-1/2 items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium shadow-lg", Vn[n], a),
+		children: [/* @__PURE__ */ k("span", {
+			className: "min-w-0 truncate",
+			children: r
+		}), i && /* @__PURE__ */ k("span", {
+			className: "flex shrink-0 items-center gap-1",
+			children: i
+		})]
+	}) : null;
+}
+//#endregion
+export { je as $, nt as A, Ue as B, Dt as C, vt as D, St as E, Je as F, we as G, Pe as H, Ye as I, ke as J, Fe as K, qe as L, et as M, dt as N, ft as O, Xe as P, Oe as Q, Ge as R, Ot as S, Ct as T, Me as U, Ve as V, Ce as W, Re as X, Ie as Y, De as Z, Jt as _, M as _t, Fn as a, ve as at, Nt as b, jn as c, oe as ct, Sn as d, G as dt, Ae as et, _n as f, V as ft, rn as g, F as gt, an as h, L as ht, Ln as i, Se as it, tt as j, $e as k, Dn as l, H as lt, un as m, z as mt, Bn as n, Te as nt, Pn as o, me as ot, $ as p, B as pt, Le as q, Rn as r, Ee as rt, Nn as s, de as st, Hn as t, Ne as tt, Tn as u, W as ut, Rt as v, Et as w, At as x, It as y, He as z };
