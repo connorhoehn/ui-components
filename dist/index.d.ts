@@ -2665,7 +2665,7 @@ declare interface CollapsedIconStripProps {
     onObservability: () => void;
 }
 
-export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): default_2.JSX.Element;
+export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, 'data-testid': testId, }: CollapsibleSectionProps): default_2.JSX.Element;
 
 export declare interface CollapsibleSectionProps {
     /**
@@ -2683,6 +2683,8 @@ export declare interface CollapsibleSectionProps {
     className?: string;
     /** If provided, the open state is persisted to localStorage under this key. */
     storageKey?: string;
+    /** Lands on the header button — the thing tests and contrast probes read. */
+    'data-testid'?: string;
 }
 
 export declare function CollapsibleSidebar({ connectionState, onDisconnect, onReconnect, onCollapse, presenceUsers, currentClientId, currentChannel, activityEvents, userId, documents, onOpenDocument, pipelines, onOpenPipeline, onSeeAllPipelines, videoSlot, }: CollapsibleSidebarProps): JSX.Element;
@@ -13732,16 +13734,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -13768,9 +13760,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -13788,9 +13790,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -13798,12 +13803,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

@@ -78,7 +78,7 @@ export declare const CANVAS_SCHEMA_VERSION = 2;
  */
 export declare function canvasBody(ydoc: Doc | null | undefined): XmlFragment | null;
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -208,6 +208,10 @@ export declare interface CanvasDocumentViewProps {
      * pass `false`.
      */
     showRuler?: boolean;
+    /** Forwarded to the toolbar: `compact` for a document shown inside something else. */
+    toolbarDensity?: 'full' | 'compact';
+    /** The word-count / zoom bar along the bottom. Off for an embedded pane. */
+    showStatusBar?: boolean;
     /**
      * Show the outline column beside the page.
      *
@@ -843,7 +847,7 @@ export declare interface DocumentTarget {
     commentId?: string | null;
 }
 
-export declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, onInsertImage, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+export declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, onInsertImage, density, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 export declare interface DocumentToolbarProps {
     editor: Editor | null;
@@ -880,6 +884,13 @@ export declare interface DocumentToolbarProps {
      * the schema will reject is worse than no button.
      */
     onInsertImage?: () => void;
+    /**
+     * `compact` is the toolbar for a document shown INSIDE something else — a
+     * chat's side pane, a card. Undo/redo, the inline marks, lists and link;
+     * no typefaces, colours, alignment, tables or images. Those still exist
+     * (the full page has them), they are just not what a reading pane is for.
+     */
+    density?: 'full' | 'compact';
     'data-testid'?: string;
 }
 
@@ -2114,16 +2125,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -2150,9 +2151,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -2170,9 +2181,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -2180,12 +2194,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

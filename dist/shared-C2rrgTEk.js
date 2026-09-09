@@ -1809,34 +1809,35 @@ function lt(e, t) {
 		return t;
 	}
 }
-function ut({ title: t, defaultOpen: n = !1, badge: r, children: i, className: a, storageKey: o }) {
-	let [s, c] = I(() => lt(o, n)), l = N(), u = F(null), d = F(null);
+function ut({ title: t, defaultOpen: n = !1, badge: r, children: i, className: a, storageKey: o, "data-testid": s }) {
+	let [c, l] = I(() => lt(o, n)), u = N(), d = F(null), f = F(null);
 	return M(() => {
 		if (o && !(typeof window > "u")) try {
-			window.localStorage.setItem(o, String(s));
+			window.localStorage.setItem(o, String(c));
 		} catch {}
-	}, [s, o]), /* @__PURE__ */ z("div", {
+	}, [c, o]), /* @__PURE__ */ z("div", {
 		className: e("border border-[var(--color-border)] rounded-lg overflow-hidden", a),
 		children: [/* @__PURE__ */ z("button", {
 			type: "button",
-			ref: u,
+			ref: d,
+			"data-testid": s,
 			className: "w-full flex items-center justify-between px-4 py-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] transition-colors text-left",
 			onClick: () => {
-				if (s) {
+				if (c) {
 					let e = typeof document > "u" ? null : document.activeElement;
-					e && d.current?.contains(e) && u.current?.focus();
+					e && f.current?.contains(e) && d.current?.focus();
 				}
-				c((e) => !e);
+				l((e) => !e);
 			},
-			"aria-expanded": s,
-			"aria-controls": l,
+			"aria-expanded": c,
+			"aria-controls": u,
 			children: [/* @__PURE__ */ R("span", {
 				className: "text-sm font-semibold text-[var(--color-text-primary)]",
 				children: t
 			}), /* @__PURE__ */ z("div", {
 				className: "flex items-center gap-2",
 				children: [r, /* @__PURE__ */ R("svg", {
-					className: e("w-4 h-4 text-[var(--color-text-tertiary)] transition-transform", s && "rotate-180"),
+					className: e("w-4 h-4 text-[var(--color-text-tertiary)] transition-transform", c && "rotate-180"),
 					viewBox: "0 0 16 16",
 					fill: "none",
 					"aria-hidden": "true",
@@ -1849,9 +1850,9 @@ function ut({ title: t, defaultOpen: n = !1, badge: r, children: i, className: a
 					})
 				})]
 			})]
-		}), s && /* @__PURE__ */ R("div", {
-			id: l,
-			ref: d,
+		}), c && /* @__PURE__ */ R("div", {
+			id: u,
+			ref: f,
 			className: "border-t border-[var(--color-border)] bg-surface",
 			children: i
 		})]

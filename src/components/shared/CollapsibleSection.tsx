@@ -23,6 +23,8 @@ export interface CollapsibleSectionProps {
   className?: string;
   /** If provided, the open state is persisted to localStorage under this key. */
   storageKey?: string;
+  /** Lands on the header button — the thing tests and contrast probes read. */
+  'data-testid'?: string;
 }
 
 function readStoredOpen(storageKey: string | undefined, fallback: boolean): boolean {
@@ -46,6 +48,7 @@ function CollapsibleSection({
   children,
   className,
   storageKey,
+  'data-testid': testId,
 }: CollapsibleSectionProps) {
   const [open, setOpen] = useState<boolean>(() =>
     readStoredOpen(storageKey, defaultOpen),
@@ -90,6 +93,7 @@ function CollapsibleSection({
       <button
         type="button"
         ref={headerRef}
+        data-testid={testId}
         className="w-full flex items-center justify-between px-4 py-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] transition-colors text-left"
         onClick={toggle}
         aria-expanded={open}

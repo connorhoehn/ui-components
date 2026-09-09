@@ -329,6 +329,10 @@ export interface CanvasDocumentViewProps {
    * pass `false`.
    */
   showRuler?: boolean;
+  /** Forwarded to the toolbar: `compact` for a document shown inside something else. */
+  toolbarDensity?: 'full' | 'compact';
+  /** The word-count / zoom bar along the bottom. Off for an embedded pane. */
+  showStatusBar?: boolean;
   /**
    * Show the outline column beside the page.
    *
@@ -442,6 +446,8 @@ export default function CanvasDocumentView({
   onFocusGutterItem,
   gutterVisible = true,
   showRuler = true,
+  toolbarDensity = 'full',
+  showStatusBar = true,
   showOutline = false,
   paginate = true,
   onToggleGutter,
@@ -834,6 +840,7 @@ export default function CanvasDocumentView({
                   not. */}
               <div className="w-full px-3">
                 <DocumentToolbar
+                  density={toolbarDensity}
                   editor={editor}
                   actions={toolbarActions}
                   // Passed even when the gutter is hidden — that is precisely
@@ -1115,6 +1122,7 @@ export default function CanvasDocumentView({
 
           {/* Sticky along the bottom edge of the workspace: a status bar that
               scrolls away with the page stops being a status bar. */}
+          {showStatusBar && (
           <DocumentStatusBar
             className="sticky bottom-0 z-10"
             wordCount={wordCount}
@@ -1168,6 +1176,7 @@ export default function CanvasDocumentView({
               </span>
             )}
           </DocumentStatusBar>
+          )}
         </div>
       ) : (
         <>

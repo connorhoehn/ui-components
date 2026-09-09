@@ -65,6 +65,13 @@ export interface DocumentToolbarProps {
    * the schema will reject is worse than no button.
    */
   onInsertImage?: () => void;
+  /**
+   * `compact` is the toolbar for a document shown INSIDE something else — a
+   * chat's side pane, a card. Undo/redo, the inline marks, lists and link;
+   * no typefaces, colours, alignment, tables or images. Those still exist
+   * (the full page has them), they are just not what a reading pane is for.
+   */
+  density?: 'full' | 'compact';
   'data-testid'?: string;
 }
 
@@ -1033,6 +1040,7 @@ export default function DocumentToolbar({
   gutterVisible = true,
   onToggleGutter,
   onInsertImage,
+  density = 'full',
   'data-testid': testId = 'document-toolbar',
 }: DocumentToolbarProps) {
   // Subscribes to the editor so the controls track the CURSOR, not just the
@@ -1115,6 +1123,7 @@ export default function DocumentToolbar({
       data-testid={testId}
       role="toolbar"
       aria-label="Document formatting"
+      data-density={density}
       className="flex flex-wrap items-center gap-0.5 px-2 py-1.5"
     >
       {/* Undo/redo live leftmost, as in every writing tool. With Collaboration
@@ -1139,6 +1148,7 @@ export default function DocumentToolbar({
         active={false}
         testId={`${testId}-redo`}
       />
+      {density === 'full' && (<>
       <Divider />
 
       <Select
@@ -1192,6 +1202,7 @@ export default function DocumentToolbar({
           className="w-[72px]"
         />
       )}
+      </>)}
 
       <Divider />
       {MARKS.map((b) => (
@@ -1203,6 +1214,7 @@ export default function DocumentToolbar({
         <ToolButton key={b.key} btn={b} editor={editor} active={state?.flags[b.key] ?? false} testId={`${testId}-${b.key}`} />
       ))}
 
+      {density === 'full' && (<>
       {/* Indent and outdent, and ONLY inside a list.
           A word processor offers these for paragraphs too, but this schema has
           no paragraph indent — offering them everywhere would give two buttons
@@ -1314,6 +1326,8 @@ export default function DocumentToolbar({
       {/* INSERT: link, rule, table, image — the things that put something new
           on the page, as opposed to everything left of here, which restyles
           what is already there. */}
+      </>)}
+
       <Divider />
       <span ref={linkAnchor} className="inline-flex">
         <ToolButton
@@ -1334,6 +1348,7 @@ export default function DocumentToolbar({
           testId={`${testId}-link`}
         />
       </span>
+      {density === 'full' && (<>
       <ToolButton
         btn={{
           key: 'hr', label: '—', hint: 'Divider  ---',
@@ -1388,6 +1403,8 @@ export default function DocumentToolbar({
           />
         </>
       )}
+
+      </>)}
 
       {(onToggleGutter && commentCount > 0) || actions ? (
         <span className="ml-auto flex items-center gap-1">

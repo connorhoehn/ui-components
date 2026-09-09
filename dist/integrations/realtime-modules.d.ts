@@ -240,6 +240,10 @@ declare interface CanvasDocumentViewProps {
      * pass `false`.
      */
     showRuler?: boolean;
+    /** Forwarded to the toolbar: `compact` for a document shown inside something else. */
+    toolbarDensity?: 'full' | 'compact';
+    /** The word-count / zoom bar along the bottom. Off for an embedded pane. */
+    showStatusBar?: boolean;
     /**
      * Show the outline column beside the page.
      *
@@ -914,7 +918,7 @@ declare interface DocumentActivityEditor {
     avatarUrl?: string;
 }
 
-declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, onInsertImage, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, onInsertImage, density, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 declare interface DocumentToolbarProps {
     editor: Editor | null;
@@ -951,6 +955,13 @@ declare interface DocumentToolbarProps {
      * the schema will reject is worse than no button.
      */
     onInsertImage?: () => void;
+    /**
+     * `compact` is the toolbar for a document shown INSIDE something else — a
+     * chat's side pane, a card. Undo/redo, the inline marks, lists and link;
+     * no typefaces, colours, alignment, tables or images. Those still exist
+     * (the full page has them), they are just not what a reading pane is for.
+     */
+    density?: 'full' | 'compact';
     'data-testid'?: string;
 }
 
