@@ -2,7 +2,7 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Button-cRZd1Oud.js";
 import { t as n } from "./IconButton-C3DMtvSx.js";
 import { t as r } from "./EmptyState-ClmWoqCb.js";
-import { n as i, o as a, s as o, t as s } from "./ChannelHeader-xIK3pV-1.js";
+import { n as i, o as a, s as o, t as s } from "./ChannelHeader-Ciy4_sDu.js";
 import { n as c } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as l } from "./Input-DLknWXri.js";
 import { t as u } from "./Avatar-BzicCOft.js";

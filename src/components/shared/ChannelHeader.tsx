@@ -63,7 +63,7 @@ export function ChannelHeader({
     <div
       data-testid={testId}
       className={cn(
-        'flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-6 py-3',
+        '@container flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-6 py-3',
         'border-b border-[var(--color-border)] bg-[var(--color-surface)]',
         className,
       )}
@@ -138,7 +138,9 @@ export function ChannelHeader({
           narrow for identity + tabs + actions on one line, the tabs (and the
           actions after them) wrap onto a second line under the name. */}
       {tabs && (
-        <div className="flex min-w-fit flex-1 items-center">
+        // Narrow bar (a chat pane beside a document): the tabs take a full row
+        // of their own UNDER the name, and the actions stay up beside the name.
+        <div className="flex min-w-fit flex-1 items-center @max-3xl:order-last @max-3xl:basis-full">
           {tabs}
         </div>
       )}

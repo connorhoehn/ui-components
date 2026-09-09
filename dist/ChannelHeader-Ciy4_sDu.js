@@ -168,7 +168,7 @@ function y({ names: t, compact: n = !1, color: r, size: i = "sm", className: a, 
 function b({ name: r, memberCount: i, description: a, tabs: o, actions: s, avatarUrl: u, online: d, onMembersClick: f, className: p, "data-testid": m }) {
 	return /* @__PURE__ */ l("div", {
 		"data-testid": m,
-		className: e("flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-6 py-3", "border-b border-[var(--color-border)] bg-[var(--color-surface)]", p),
+		className: e("@container flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-6 py-3", "border-b border-[var(--color-border)] bg-[var(--color-surface)]", p),
 		children: [
 			/* @__PURE__ */ l("div", {
 				className: "flex items-center gap-3 min-w-0",
@@ -223,7 +223,7 @@ function b({ name: r, memberCount: i, description: a, tabs: o, actions: s, avata
 				})]
 			}),
 			o && /* @__PURE__ */ c("div", {
-				className: "flex min-w-fit flex-1 items-center",
+				className: "flex min-w-fit flex-1 items-center @max-3xl:order-last @max-3xl:basis-full",
 				children: o
 			}),
 			s && /* @__PURE__ */ c("div", {
