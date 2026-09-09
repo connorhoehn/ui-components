@@ -25,7 +25,7 @@ function a({ variant: a = "primary", size: o = "md", tone: s = "surface", disabl
 	return /* @__PURE__ */ t("button", {
 		type: d,
 		disabled: c,
-		className: e("font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out", (r[s] ?? n)[a], i[o], c && "opacity-50 cursor-not-allowed", !c && "cursor-pointer", l && "w-full", f),
+		className: e("whitespace-nowrap font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out", (r[s] ?? n)[a], i[o], c && "opacity-50 cursor-not-allowed", !c && "cursor-pointer", l && "w-full", f),
 		...p,
 		children: u
 	});

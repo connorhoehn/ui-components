@@ -1,7 +1,7 @@
 import { t as e } from "../cn-DhjIN-s0.js";
 import { t } from "../Avatar-BzicCOft.js";
 import { i as n, n as r, r as i } from "../ReactionPickerPopover-CcL-n6gt.js";
-import { i as a, r as o, t as s } from "../LinkDialog-DazAeDjI.js";
+import { i as a, r as o, t as s } from "../LinkDialog-CrsjMUnR.js";
 import { forwardRef as c, useCallback as l, useEffect as u, useImperativeHandle as d, useMemo as f, useRef as p, useState as m } from "react";
 import { Fragment as h, jsx as g, jsxs as _ } from "react/jsx-runtime";
 import { EditorContent as v, ReactRenderer as y, useEditor as b } from "@tiptap/react";

@@ -1,6 +1,6 @@
 import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-DhjIN-s0.js";
-import { t as r } from "./Button-wU9TwJvB.js";
+import { t as r } from "./Button-cRZd1Oud.js";
 import { t as i } from "./Chip-YhQI5B9P.js";
 import { t as a } from "./Input-DLknWXri.js";
 import { t as o } from "./Textarea-Dz4doxTv.js";
@@ -693,6 +693,7 @@ function ct({ value: e, onDue: t, testId: n }) {
 		"aria-label": "Set a due date",
 		"data-testid": `${n}-due-add`,
 		onClick: () => o(!0),
+		className: "whitespace-nowrap",
 		children: "+ due"
 	}) : /* @__PURE__ */ b(a, {
 		type: "date",
@@ -769,10 +770,10 @@ function dt({ items: e, editable: t = !1, onToggle: n, onTextChange: i, onRemove
 		children: [/* @__PURE__ */ x("div", {
 			className: "flex items-center justify-between gap-2 rounded-t-md border border-b-0 border-border bg-surface-inset px-2.5 py-1",
 			children: [/* @__PURE__ */ b("span", {
-				className: "text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
+				className: "whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
 				children: "Action items"
 			}), /* @__PURE__ */ x("div", {
-				className: "flex items-center gap-2",
+				className: "flex shrink-0 items-center gap-2",
 				children: [/* @__PURE__ */ x("span", {
 					"data-testid": `${d}-progress`,
 					className: "text-[11px] tabular-nums text-text-tertiary",
@@ -1244,7 +1245,7 @@ var zt = {
 		label: "expired",
 		tone: "neutral"
 	}
-}, Bt = "text-[10px] font-semibold uppercase tracking-wide text-text-tertiary select-none";
+}, Bt = "whitespace-nowrap text-[10px] font-semibold uppercase tracking-wide text-text-tertiary select-none";
 function Vt({ option: e, disabled: t, onPick: n, testId: i }) {
 	return /* @__PURE__ */ x("div", {
 		className: "flex min-w-0 flex-col gap-0.5",
@@ -1326,7 +1327,7 @@ function Wt({ callout: e, editable: t = !1, now: n, onAnswer: a, busy: o = !1, f
 			className: "flex items-center gap-2 rounded-t-md border border-b-0 border-border bg-surface-inset px-2.5 py-1",
 			children: [
 				/* @__PURE__ */ b("span", {
-					className: "text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
+					className: "whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
 					children: "Agent asks"
 				}),
 				/* @__PURE__ */ b(i, {
@@ -1756,7 +1757,7 @@ function ln({ decision: e, editable: t = !1, onStatusChange: n, onSupersededBy: 
 			className: "flex items-center gap-2 rounded-t-md border border-b-0 border-border bg-surface-inset px-2.5 py-1",
 			children: [
 				/* @__PURE__ */ b("span", {
-					className: "text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
+					className: "whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
 					children: "Decision"
 				}),
 				/* @__PURE__ */ b(i, {
@@ -2434,7 +2435,7 @@ function tr({ rows: e, editable: t = !1, onLabelChange: n, onUrlChange: i, onRem
 		children: [/* @__PURE__ */ x("div", {
 			className: "flex items-center justify-between gap-2 rounded-t-md border border-b-0 border-border bg-surface-inset px-2.5 py-1",
 			children: [/* @__PURE__ */ b("span", {
-				className: "text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
+				className: "whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
 				children: "Links"
 			}), t && s ? /* @__PURE__ */ b(r, {
 				variant: "ghost",
