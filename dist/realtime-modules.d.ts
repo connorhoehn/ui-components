@@ -97,6 +97,16 @@ export declare function adaptReaction(reaction: RMReaction, index: number): Ephe
 
 export declare function adaptReactions(reactions: RMReaction[]): EphemeralReaction[];
 
+declare type AgentRunPhase = 'received' | 'running' | 'completed' | 'failed';
+
+declare interface AgentRunStatus {
+    phase: AgentRunPhase;
+    /** The step in flight, when known — "Reading the document", "Planning the edit". */
+    stepLabel?: string;
+    /** A sentence about the outcome — "Renamed to …", the failure. */
+    detail?: string;
+}
+
 export declare const ALL_REALTIME_CAPABILITIES: readonly RealtimeCapabilityName[];
 
 /**
@@ -581,6 +591,13 @@ declare interface ChatPanelProps {
      * would not bother joining.
      */
     callParticipants?: (callId: string) => readonly CallActivityParticipant[];
+    /**
+     * Where a `/doc` command's pipeline run is, keyed by runId. The message
+     * metadata only knows the run was started; the card shows it moving.
+     */
+    agentRunStatus?: (runId: string) => AgentRunStatus | undefined;
+    /** Open the run in the pipeline UI from an agent-run card. */
+    onOpenRun?: (runId: string) => void;
     /**
      * Joins a live call from the thread. Omit when the viewer cannot join —
      * the card then renders as a record rather than a dead button.

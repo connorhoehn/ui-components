@@ -15,6 +15,7 @@ import { Button } from '../ui/Button';
 import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { CallActivityCard, type CallActivityParticipant } from './CallActivityCard';
+import { AgentRunCard, agentRunRefFromMetadata, type AgentRunStatus } from './AgentRunCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
 import { QuoteBlock } from './QuoteBlock';
@@ -92,6 +93,13 @@ export interface ChatPanelProps {
    * would not bother joining.
    */
   callParticipants?: (callId: string) => readonly CallActivityParticipant[];
+  /**
+   * Where a `/doc` command's pipeline run is, keyed by runId. The message
+   * metadata only knows the run was started; the card shows it moving.
+   */
+  agentRunStatus?: (runId: string) => AgentRunStatus | undefined;
+  /** Open the run in the pipeline UI from an agent-run card. */
+  onOpenRun?: (runId: string) => void;
   /**
    * Joins a live call from the thread. Omit when the viewer cannot join —
    * the card then renders as a record rather than a dead button.
@@ -383,6 +391,8 @@ export function ChatPanel({
   highlightedMessageId,
   documentEditors,
   callParticipants,
+  agentRunStatus,
+  onOpenRun,
   onJoinCall,
   onOpenDocument,
   tone = 'light',
@@ -748,6 +758,7 @@ export function ChatPanel({
               // (notification previews, the conversation list) but the thread
               // shows the thing itself.
               const docRef = documentRefFromMetadata(message.metadata);
+              const agentRef = agentRunRefFromMetadata(message.metadata);
 
               // Same rule for a call: the event IS the call, so the card
               // replaces the text. Unlike a document, a call CHANGES while
@@ -757,7 +768,17 @@ export function ChatPanel({
               const callRef = callRefFromMetadata(message.metadata);
               const truncation = truncationFromMetadata(message.metadata);
 
-              const body = callRef ? (
+              const body = agentRef ? (
+                <AgentRunCard
+                  runId={agentRef.runId}
+                  instruction={agentRef.instruction || message.content.replace(/^\/doc\s*/i, '')}
+                  agentName={agentRef.agentName}
+                  requestedBy={message.displayName}
+                  status={agentRunStatus?.(agentRef.runId)}
+                  onOpenDocument={onOpenDocument ? () => onOpenDocument(agentRef.documentId) : undefined}
+                  onOpenRun={onOpenRun}
+                />
+              ) : callRef ? (
                 <CallActivityCard
                   callId={callRef.callId}
                   startedBy={

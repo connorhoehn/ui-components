@@ -137,3 +137,5 @@ export type { ConversationShelfItem, ConversationShelfProps } from './Conversati
 // cannot end up with two highlighted rows and one pane.
 export { ConversationRail } from './ConversationRail';
 export type { ConversationRailProps, RailSelection } from './ConversationRail';
+export { AgentRunCard, agentRunRefFromMetadata } from './AgentRunCard';
+export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase } from './AgentRunCard';

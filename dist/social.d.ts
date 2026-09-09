@@ -23,6 +23,42 @@ declare interface ActivityPanelProps {
     connectionState: ConnectionState;
 }
 
+export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, status, onOpenDocument, onOpenRun, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
+
+export declare interface AgentRunCardProps {
+    runId: string;
+    instruction: string;
+    /** The agent carrying it out, e.g. "Haiku". */
+    agentName: string;
+    requestedBy?: string;
+    status?: AgentRunStatus;
+    /** Open the document the edit went into. */
+    onOpenDocument?: () => void;
+    /** Open the run in the pipeline UI. */
+    onOpenRun?: (runId: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type AgentRunPhase = 'received' | 'running' | 'completed' | 'failed';
+
+/** Reads a `/doc` command message's metadata; null for anything else. */
+export declare function agentRunRefFromMetadata(metadata: Record<string, unknown> | undefined): {
+    runId: string;
+    documentId: string;
+    instruction: string;
+    agentName: string;
+    pipelineId?: string;
+} | null;
+
+export declare interface AgentRunStatus {
+    phase: AgentRunPhase;
+    /** The step in flight, when known — "Reading the document", "Planning the edit". */
+    stepLabel?: string;
+    /** A sentence about the outcome — "Renamed to …", the failure. */
+    detail?: string;
+}
+
 export declare const ALL_CONVERSATION_FEATURES: readonly ConversationFeature[];
 
 export declare function AttachmentBubble({ attachment, src, onOpen, className }: AttachmentBubbleProps): JSX.Element;
@@ -298,7 +334,7 @@ declare interface ChatMessage {
     metadata?: Record<string, unknown>;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -360,6 +396,13 @@ export declare interface ChatPanelProps {
      * would not bother joining.
      */
     callParticipants?: (callId: string) => readonly CallActivityParticipant[];
+    /**
+     * Where a `/doc` command's pipeline run is, keyed by runId. The message
+     * metadata only knows the run was started; the card shows it moving.
+     */
+    agentRunStatus?: (runId: string) => AgentRunStatus | undefined;
+    /** Open the run in the pipeline UI from an agent-run card. */
+    onOpenRun?: (runId: string) => void;
     /**
      * Joins a live call from the thread. Omit when the viewer cannot join —
      * the card then renders as a record rather than a dead button.
@@ -1440,25 +1483,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -1472,42 +1496,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -1541,9 +1541,52 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
