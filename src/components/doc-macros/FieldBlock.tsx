@@ -236,19 +236,36 @@ export function FieldBlock({
         }
         if (field.type === 'date') {
             const iso = fieldDate(field);
+            // A text field that expects YYYY-MM-DD, not <input type="date">:
+            // the browser's date widget is a different control in every
+            // browser and none of them take the document's typography. A
+            // complete date commits as it is typed (a picker's one discrete
+            // value, kept); a partial one waits for blur or Enter.
+            const dateDraft = valueDraft ?? iso;
+            const commitDate = () => {
+                const next = readValueDraft();
+                setValueDraft(null);
+                if (next === null || next === iso) return;
+                onValueChange?.(next.trim() === '' ? undefined : next.trim());
+            };
             return (
                 <span className="flex items-center gap-2">
                     <Input
                         size="sm"
-                        type="date"
+                        type="text"
+                        inputMode="numeric"
                         aria-label={field.label}
                         data-testid={`${testId}-date-input`}
-                        className="w-[9.5rem]"
-                        value={iso}
-                        // Committed immediately, unlike text and number: a date
-                        // picker emits one discrete value with no intermediate
-                        // half-typed state worth protecting.
-                        onChange={(e) => onValueChange?.(e.target.value || undefined)}
+                        className="w-[9.5rem] !border-transparent !bg-transparent !shadow-none tabular-nums hover:!border-border focus:!border-border"
+                        placeholder="YYYY-MM-DD"
+                        value={dateDraft}
+                        onChange={(e) => {
+                            const v = e.target.value;
+                            if (v === '' || /^\d{4}-\d{2}-\d{2}$/.test(v)) { setValueDraft(null); onValueChange?.(v || undefined); }
+                            else setValueDraft(v);
+                        }}
+                        onBlur={commitDate}
+                        {...keys(commitDate, () => setValueDraft(null))}
                     />
                     {iso && (
                         <span
