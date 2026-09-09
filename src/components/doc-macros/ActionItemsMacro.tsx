@@ -169,6 +169,7 @@ class ActionItemsView extends ReactMacroView {
                         onAssign: (i: number, id: string) => this.assign(i, id),
                     }
                     : {})}
+                {...(this.editable ? { onDue: (i: number, due: string) => this.due(i, due) } : {})}
                 {...(this.editable ? { onRemove: () => this.removeBlock() } : {})}
             />
         );
@@ -196,6 +197,28 @@ class ActionItemsView extends ReactMacroView {
         }
         this.apply(ensureItemIdEdit(this.node.textContent, index));
         this.apply(setItemKeyEdit(this.node.textContent, index, 'assignee', assigneeId));
+    }
+
+    /**
+     * The date the item is wanted by — one edit, never two.
+     *
+     * Deliberately does NOT mint an id the way assigning does. A due date is
+     * not what makes an item addressable: `actionItemMirrorRow` returns null
+     * for an unassigned item however precise its deadline, because a row is
+     * something a PERSON finds in their inbox and nobody owns unassigned work.
+     * An item that is already assigned already has its id, so the deadline
+     * reaches the row on the very next report either way; an item that is not
+     * would be spending a UUID on a row that will never be written.
+     *
+     * Clearing REMOVES the key, for the same reason unassigning does: `due: ''`
+     * says this item is wanted by the empty string.
+     */
+    private due(index: number, due: string): void {
+        this.apply(
+            due
+                ? setItemKeyEdit(this.node.textContent, index, 'due', due)
+                : removeItemKeyEdit(this.node.textContent, index, 'due'),
+        );
     }
 
     /** Every mutation is one range of the macro's own text. */

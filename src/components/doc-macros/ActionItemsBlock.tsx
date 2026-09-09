@@ -27,7 +27,7 @@
 // minimal edit, which is what the CRDT wants and what the suggestion fork
 // records as one change.
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Select } from '../forms/Select';
 import { useDraft } from './useDraft';
 import { Button } from '../ui/Button';
@@ -76,6 +76,19 @@ export interface ActionItemsBlockProps {
     people?: readonly AssignablePerson[];
     /** Only ever called with an id from `people`, or `''` to unassign. */
     onAssign?: (index: number, assigneeId: string) => void;
+    /**
+     * Sets `due:` on one item, or clears it with `''`.
+     *
+     * Same gap the assignee had: the format has always carried `due:` and this
+     * block has always drawn the chip, with nothing able to write one. A
+     * deadline that can only be typed by hand-editing the fence is a deadline
+     * nobody sets, and `ActionItemMirrorRow.dueDate` — already projected into
+     * the inbox row — was therefore always null.
+     *
+     * Omitted renders the chip and no control, which is what a read-only view
+     * wants.
+     */
+    onDue?: (index: number, due: string) => void;
     'data-testid'?: string;
 }
 
@@ -158,12 +171,69 @@ function AssignPicker({
     );
 }
 
+/**
+ * The date this item is wanted by.
+ *
+ * Quiet until it is used: an empty `<input type="date">` on every row draws a
+ * `mm/dd/yyyy` placeholder next to every unscheduled item, which is most of
+ * them, so an unset due date is a small ghost button that becomes the field on
+ * click. That is view state, not document state — the value itself is read
+ * from the node on every render, like everything else here.
+ *
+ * A `due` the picker cannot represent (`next friday`, say, written by hand or
+ * by some other tool) is left as a chip rather than offered in a date field
+ * that would render it blank and then quietly overwrite it on the next change.
+ * Same rule as the assignee picker's unknown id: the body is the record.
+ */
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+function DuePicker({
+    value,
+    onDue,
+    testId,
+}: {
+    value: string;
+    onDue: (due: string) => void;
+    testId: string;
+}) {
+    const [open, setOpen] = useState(false);
+
+    if (!value && !open) {
+        return (
+            <Button
+                variant="ghost"
+                size="sm"
+                aria-label="Set a due date"
+                data-testid={`${testId}-due-add`}
+                onClick={() => setOpen(true)}
+            >
+                + due
+            </Button>
+        );
+    }
+
+    return (
+        <Input
+            type="date"
+            size="sm"
+            autoFocus={open && !value}
+            data-testid={`${testId}-due-set`}
+            aria-label="Due date"
+            value={value}
+            onChange={(e) => onDue(e.target.value)}
+            onBlur={() => setOpen(false)}
+            className="w-[122px] border-transparent bg-transparent tabular-nums hover:border-border"
+        />
+    );
+}
+
 /** `assignee` and `due`, shown only when the payload carries them. */
 function ItemMeta({
     item,
     testId,
     hideAssignee = false,
-}: { item: ActionItem; testId: string; hideAssignee?: boolean }) {
+    hideDue = false,
+}: { item: ActionItem; testId: string; hideAssignee?: boolean; hideDue?: boolean }) {
     const chip =
         'rounded-sm border border-border bg-surface px-1.5 py-px text-[11px] text-text-secondary';
     return (
@@ -173,7 +243,7 @@ function ItemMeta({
                     @{item.assignee}
                 </span>
             ) : null}
-            {item.due ? (
+            {item.due && !hideDue ? (
                 <span data-testid={`${testId}-due`} className={chip}>
                     due {item.due}
                 </span>
@@ -278,6 +348,7 @@ export function ActionItemsBlock({
     onRemove,
     people,
     onAssign,
+    onDue,
     'data-testid': testId = 'action-items',
 }: ActionItemsBlockProps) {
     const done = items.filter((i) => i.done).length;
@@ -352,10 +423,22 @@ export function ActionItemsBlock({
                                                 testId={rowId}
                                             />
                                         ) : null}
+                                        {editable && onDue && (item.due === null || ISO_DATE.test(item.due)) ? (
+                                            <DuePicker
+                                                value={item.due ?? ''}
+                                                onDue={(due) => onDue(item.index, due)}
+                                                testId={rowId}
+                                            />
+                                        ) : null}
                                         <ItemMeta
                                             item={item}
                                             testId={rowId}
                                             hideAssignee={Boolean(editable && people && onAssign)}
+                                            hideDue={Boolean(
+                                                editable &&
+                                                    onDue &&
+                                                    (item.due === null || ISO_DATE.test(item.due)),
+                                            )}
                                         />
                                         {editable ? (
                                             <Button

@@ -224,8 +224,13 @@ describe('the action-items block', () => {
                 ),
             );
         });
+        // No directory was configured, so the assignee stays a chip; the date
+        // is editable without one, so it is the field that carries it. Two
+        // controls for one fact would be a choice nobody should have to make.
         expect(testId(e, 'action-items-item-0-assignee')?.textContent).toBe('@ana');
-        expect(testId(e, 'action-items-item-0-due')?.textContent).toBe('due 2026-09-10');
+        expect((testId(e, 'action-items-item-0-due-set') as HTMLInputElement).value).toBe(
+            '2026-09-10',
+        );
     });
 
     it('shows an unfamiliar status rather than pretending it is pending', async () => {
