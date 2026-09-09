@@ -139,7 +139,19 @@ interface MarkButton {
  * user cannot tell the difference between "unsupported" and "broken".
  */
 function has(editor: Editor, command: string): boolean {
-  return typeof (editor.commands as unknown as Record<string, unknown>)[command] === 'function';
+  // A DESTROYED editor still satisfies `Editor | null`, and Tiptap's
+  // `commands` getter dereferences a command manager that is gone by then —
+  // "Cannot read properties of null (reading 'commands')", thrown from inside
+  // Tiptap while the toolbar was only asking whether a button exists. It
+  // happens when a document changes shape while its page is mounted (a
+  // sections document seeded into a canvas), which tears one editor down while
+  // the toolbar still holds it for a render.
+  if (editor.isDestroyed) return false;
+  try {
+    return typeof (editor.commands as unknown as Record<string, unknown>)[command] === 'function';
+  } catch {
+    return false;
+  }
 }
 
 // Underline and Link need no extra dependency — StarterKit v3 already bundles
@@ -1079,7 +1091,7 @@ export default function DocumentToolbar({
   const [linkOpen, setLinkOpen] = useState(false);
 
   const setBlock = useCallback((value: string) => {
-    if (!editor) return;
+    if (!editor || editor.isDestroyed) return;
     const chain = editor.chain().focus();
     switch (value) {
       case 'heading1': chain.setNode('heading', { level: 1 }).run(); break;
@@ -1095,7 +1107,8 @@ export default function DocumentToolbar({
 
   // Rendering nothing while the editor boots keeps every handler below able to
   // assume a live editor, instead of guarding each one.
-  if (!editor) return null;
+  // Destroyed counts as absent: see `has`.
+  if (!editor || editor.isDestroyed) return null;
 
   return (
     <div
