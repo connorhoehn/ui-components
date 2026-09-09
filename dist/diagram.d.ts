@@ -115,7 +115,7 @@ export declare interface ActionItemMirrorRow {
  */
 export declare function actionItemMirrorRow(item: ActionItem): ActionItemMirrorRow | null;
 
-export declare function ActionItemsBlock({ items, editable, onToggle, onTextChange, onRemoveItem, onAddItem, onRemove, people, onAssign, 'data-testid': testId, }: ActionItemsBlockProps): JSX.Element;
+export declare function ActionItemsBlock({ items, editable, onToggle, onTextChange, onRemoveItem, onAddItem, onRemove, people, onAssign, onDue, 'data-testid': testId, }: ActionItemsBlockProps): JSX.Element;
 
 export declare interface ActionItemsBlockProps {
     items: readonly ActionItem[];
@@ -145,6 +145,19 @@ export declare interface ActionItemsBlockProps {
     people?: readonly AssignablePerson[];
     /** Only ever called with an id from `people`, or `''` to unassign. */
     onAssign?: (index: number, assigneeId: string) => void;
+    /**
+     * Sets `due:` on one item, or clears it with `''`.
+     *
+     * Same gap the assignee had: the format has always carried `due:` and this
+     * block has always drawn the chip, with nothing able to write one. A
+     * deadline that can only be typed by hand-editing the fence is a deadline
+     * nobody sets, and `ActionItemMirrorRow.dueDate` — already projected into
+     * the inbox row — was therefore always null.
+     *
+     * Omitted renders the chip and no control, which is what a read-only view
+     * wants.
+     */
+    onDue?: (index: number, due: string) => void;
     'data-testid'?: string;
 }
 
@@ -1633,16 +1646,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -1682,6 +1685,16 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
