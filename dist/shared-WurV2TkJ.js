@@ -4040,7 +4040,7 @@ function qn(e) {
 function Jn({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSelect: o, renderTrailing: s, dragEnabled: c, dragRef: l, dropTarget: u, setDropTarget: d, onDrop: f, testId: p, focusedId: m, setFocusedId: h }) {
 	let g = r.has(t.id), _ = t.children.length > 0, v = t.id === a, y = u?.id === t.id;
 	return /* @__PURE__ */ z("div", { children: [/* @__PURE__ */ z("div", {
-		draggable: c && !t.disabled,
+		draggable: c && !t.disabled && t.status !== "pending",
 		onDragStart: (e) => {
 			t.disabled || (e.dataTransfer.setData("text/plain", t.id), e.dataTransfer.effectAllowed = "move", l.current = { id: t.id });
 		},
@@ -4069,11 +4069,13 @@ function Jn({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSel
 		"aria-selected": v,
 		"aria-disabled": t.disabled,
 		"aria-level": n + 1,
+		"aria-busy": t.status === "pending" || void 0,
+		"data-status": t.status,
 		..._ ? { "aria-expanded": g } : {},
 		tabIndex: m === t.id ? 0 : -1,
 		onFocus: () => h(t.id),
 		"data-testid": `${p}-row-${t.id}`,
-		className: e("group flex cursor-pointer items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors", v ? "border-primary bg-surface-hover font-semibold text-text-primary" : "border-transparent text-text-secondary hover:bg-surface-hover", t.disabled && "cursor-not-allowed opacity-50", y && u?.position === "into" && "ring-1 ring-inset ring-primary", y && u?.position === "before" && "shadow-[inset_0_2px_0_0_var(--color-primary)]", y && u?.position === "after" && "shadow-[inset_0_-2px_0_0_var(--color-primary)]"),
+		className: e("group flex cursor-pointer items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors", v ? "border-primary bg-surface-hover font-semibold text-text-primary" : "border-transparent text-text-secondary hover:bg-surface-hover", t.disabled && "cursor-not-allowed opacity-50", t.status === "pending" && "pointer-events-none opacity-50", t.status === "moved" && "bg-success/10", y && u?.position === "into" && "ring-1 ring-inset ring-primary", y && u?.position === "before" && "shadow-[inset_0_2px_0_0_var(--color-primary)]", y && u?.position === "after" && "shadow-[inset_0_-2px_0_0_var(--color-primary)]"),
 		style: { paddingLeft: n * 14 + 8 },
 		children: [
 			_ ? /* @__PURE__ */ R("button", {
