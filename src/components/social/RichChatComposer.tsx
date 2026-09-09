@@ -66,6 +66,27 @@ export interface ComposedMessage {
   files: File[];
 }
 
+export interface ComposerCommand {
+  /** The leading token, e.g. `/doc`. Matched case-insensitively at the start of the draft. */
+  trigger: string;
+  /** What it does — "Edit the open document with Haiku". */
+  label: string;
+  /** A second clause: what it needs, or what will happen. */
+  hint?: string;
+  /** True when the command cannot run right now (no document open); the bar says why via `hint`. */
+  disabled?: boolean;
+}
+
+/** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
+export function matchComposerCommand(draft: string, commands: readonly ComposerCommand[] | undefined): ComposerCommand | null {
+  if (!commands || commands.length === 0) return null;
+  const text = draft.trimStart().toLowerCase();
+  return commands.find((c) => {
+    const t = c.trigger.toLowerCase();
+    return text === t || text.startsWith(`${t} `) || text.startsWith(`${t}\n`);
+  }) ?? null;
+}
+
 export interface RichChatComposerProps {
   onSend: (message: ComposedMessage) => void;
   /**
@@ -94,6 +115,13 @@ export interface RichChatComposerProps {
   onRequestLink?: (selectedText: string) => string | null | undefined;
   placeholder?: string;
   disabled?: boolean;
+  /**
+   * Slash commands the host understands. While the draft starts with one, the
+   * composer says so — a bar naming the command above the text and a
+   * different border — so a person typing `/doc rename…` knows before Send
+   * that this is an instruction to an agent, not a message to the room.
+   */
+  commands?: ComposerCommand[];
   /** Rendered between the formatting controls and the send button. */
   toolbarExtras?: ReactNode;
   className?: string;
@@ -157,6 +185,7 @@ export function RichChatComposer({
   allowEmoji = false,
   onRequestLink,
   placeholder = 'Write a message…',
+  commands,
   disabled = false,
   toolbarExtras,
   className,
@@ -186,6 +215,10 @@ export function RichChatComposer({
   // `useEditor` deps: the extension list must not change when the text does.
   const placeholderRef = useRef(placeholder);
   placeholderRef.current = placeholder;
+  // Same idea: the editor is built once, the commands are read live.
+  const commandsRef = useRef(commands);
+  commandsRef.current = commands;
+  const [activeCommand, setActiveCommand] = useState<ComposerCommand | null>(null);
 
   const extensions = useMemo(() => {
     const list: unknown[] = [
@@ -371,7 +404,11 @@ export function RichChatComposer({
     {
       extensions,
       editable: !disabled,
-      onUpdate: ({ editor: e }) => setEmpty(e.isEmpty),
+      onUpdate: ({ editor: e }) => {
+        setEmpty(e.isEmpty);
+        const hit = matchComposerCommand(e.getText(), commandsRef.current);
+        setActiveCommand((prev) => (prev?.trigger === hit?.trigger ? prev : hit));
+      },
       editorProps: {
         attributes: {
           class: 'chat-composer-input',
@@ -513,8 +550,29 @@ export function RichChatComposer({
         // in the list. `focus-within` rather than `focus-visible` on purpose —
         // a text box showing that it has the caret after a click is correct,
         // not noise.
-        className="chat-composer rounded-lg border border-border bg-surface focus-within:border-primary focus-within:ring-2 focus-within:ring-primary"
+        data-command={activeCommand?.trigger}
+        className={cn(
+          'chat-composer rounded-lg border bg-surface focus-within:ring-2',
+          activeCommand
+            ? (activeCommand.disabled ? 'border-warning focus-within:border-warning focus-within:ring-warning' : 'border-info focus-within:border-info focus-within:ring-info')
+            : 'border-border focus-within:border-primary focus-within:ring-primary',
+        )}
       >
+        {activeCommand && (
+          <div
+            role="status"
+            data-testid={`${testId}-command`}
+            className={cn(
+              'flex items-center gap-1.5 rounded-t-lg px-2 py-1 text-[11px]',
+              activeCommand.disabled ? 'bg-warning-bg text-warning-fg' : 'bg-info-bg text-info-fg',
+            )}
+          >
+            <span aria-hidden="true">🪄</span>
+            <span className="font-mono">{activeCommand.trigger}</span>
+            <span className="font-medium">{activeCommand.label}</span>
+            {activeCommand.hint && <span className="min-w-0 truncate opacity-80">— {activeCommand.hint}</span>}
+          </div>
+        )}
         <EditorContent editor={editor} />
 
         <ComposerAttachments

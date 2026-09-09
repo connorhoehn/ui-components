@@ -3,13 +3,13 @@ import { useCallback as t, useEffect as n, useMemo as r, useState as i } from "r
 import { Fragment as a, jsx as o, jsxs as s } from "react/jsx-runtime";
 import * as c from "yjs";
 import { EditorContent as l, useEditor as u } from "@tiptap/react";
-import d from "@tiptap/starter-kit";
-import f from "@tiptap/extension-task-list";
-import p from "@tiptap/extension-task-item";
-import m from "@tiptap/extension-placeholder";
-import h from "@tiptap/extension-collaboration";
-import { absolutePositionToRelativePosition as g, relativePositionToAbsolutePosition as _, ySyncPluginKey as v } from "@tiptap/y-tiptap";
-import { Extension as y } from "@tiptap/core";
+import { Extension as d } from "@tiptap/core";
+import f from "@tiptap/starter-kit";
+import p from "@tiptap/extension-placeholder";
+import m from "@tiptap/extension-task-list";
+import h from "@tiptap/extension-task-item";
+import g from "@tiptap/extension-collaboration";
+import { absolutePositionToRelativePosition as _, relativePositionToAbsolutePosition as v, ySyncPluginKey as y } from "@tiptap/y-tiptap";
 //#region src/components/doc-editor/EditorToolbar.tsx
 var b = [
 	{
@@ -143,7 +143,7 @@ function E(e) {
 		style: `line-height: calc(var(--doc-line, 1.65em) * ${t})`
 	};
 }
-var D = y.create({
+var D = d.create({
 	name: "canvasLineSpacing",
 	addOptions() {
 		return { types: ["paragraph"] };
@@ -257,23 +257,23 @@ function k({ cursors: e, editorView: t, containerEl: n }) {
 		}, e.clientId);
 	}) }) : null;
 }
-function A({ fragment: a, ydoc: y, provider: b, user: S, editable: C = !0, placeholder: w = "Start typing...", sectionId: T, onUpdateCursorInfo: E, extensions: O, chrome: A = "card", hideToolbar: j = !1, onEditorReady: M }) {
+function A({ fragment: a, ydoc: d, provider: b, user: S, editable: C = !0, placeholder: w = "Start typing...", sectionId: T, onUpdateCursorInfo: E, extensions: O, chrome: A = "card", hideToolbar: j = !1, onEditorReady: M }) {
 	let N = r(() => [
-		d.configure({
+		f.configure({
 			history: !1,
 			undoRedo: !1
 		}),
-		f,
-		p.configure({ nested: !0 }),
-		m.configure({ placeholder: w }),
+		m,
+		h.configure({ nested: !0 }),
+		p.configure({ placeholder: w }),
 		D,
-		h.configure({
-			document: y,
+		g.configure({
+			document: d,
 			fragment: a
 		}),
 		...O ?? []
 	], [
-		y,
+		d,
 		a,
 		O
 	]), P = u({
@@ -306,9 +306,9 @@ function A({ fragment: a, ydoc: y, provider: b, user: S, editable: C = !0, place
 			if (r === t) return;
 			let i = e.user;
 			if (!(!i || !e.cursor) && !(T && e.cursor.sectionId !== T)) try {
-				let t = v.getState(P.view.state);
+				let t = y.getState(P.view.state);
 				if (!t?.type || !t?.binding?.mapping) return;
-				let a = _(t.doc, t.type, c.createRelativePositionFromJSON(e.cursor.anchor), t.binding.mapping), o = _(t.doc, t.type, c.createRelativePositionFromJSON(e.cursor.head), t.binding.mapping);
+				let a = v(t.doc, t.type, c.createRelativePositionFromJSON(e.cursor.anchor), t.binding.mapping), o = v(t.doc, t.type, c.createRelativePositionFromJSON(e.cursor.head), t.binding.mapping);
 				n.push({
 					clientId: r,
 					name: i.name || `User ${r}`,
@@ -327,9 +327,9 @@ function A({ fragment: a, ydoc: y, provider: b, user: S, editable: C = !0, place
 		if (!P?.view || !b?.awareness) return;
 		let e = () => {
 			try {
-				let e = v.getState(P.view.state);
+				let e = y.getState(P.view.state);
 				if (!e?.type || !e?.binding?.mapping) return;
-				let { anchor: t, head: n } = P.view.state.selection, r = g(t, e.type, e.binding.mapping), i = g(n, e.type, e.binding.mapping);
+				let { anchor: t, head: n } = P.view.state.selection, r = _(t, e.type, e.binding.mapping), i = _(n, e.type, e.binding.mapping);
 				b.awareness.setLocalStateField("cursor", {
 					anchor: r,
 					head: i,

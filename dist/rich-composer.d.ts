@@ -25,6 +25,17 @@ export declare interface ComposerAttachmentsProps {
     'data-testid'?: string;
 }
 
+declare interface ComposerCommand {
+    /** The leading token, e.g. `/doc`. Matched case-insensitively at the start of the draft. */
+    trigger: string;
+    /** What it does — "Edit the open document with Haiku". */
+    label: string;
+    /** A second clause: what it needs, or what will happen. */
+    hint?: string;
+    /** True when the command cannot run right now (no document open); the bar says why via `hint`. */
+    disabled?: boolean;
+}
+
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
 
 export declare interface EmojiShortcode {
@@ -76,7 +87,7 @@ export declare interface MentionSuggestionsProps {
     }) => void;
 }
 
-export declare function RichChatComposer({ onSend, onSearchPeople, allowAttachments, allowEmoji, onRequestLink, placeholder, disabled, toolbarExtras, className, 'data-testid': testId, }: RichChatComposerProps): JSX.Element;
+export declare function RichChatComposer({ onSend, onSearchPeople, allowAttachments, allowEmoji, onRequestLink, placeholder, commands, disabled, toolbarExtras, className, 'data-testid': testId, }: RichChatComposerProps): JSX.Element;
 
 export declare interface RichChatComposerProps {
     onSend: (message: ComposedMessage) => void;
@@ -106,6 +117,13 @@ export declare interface RichChatComposerProps {
     onRequestLink?: (selectedText: string) => string | null | undefined;
     placeholder?: string;
     disabled?: boolean;
+    /**
+     * Slash commands the host understands. While the draft starts with one, the
+     * composer says so — a bar naming the command above the text and a
+     * different border — so a person typing `/doc rename…` knows before Send
+     * that this is an instruction to an agent, not a message to the room.
+     */
+    commands?: ComposerCommand[];
     /** Rendered between the formatting controls and the send button. */
     toolbarExtras?: ReactNode;
     className?: string;

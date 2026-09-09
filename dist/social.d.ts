@@ -556,6 +556,17 @@ declare interface CommentThreadProps {
     onMessage: OnMessageFn_5;
 }
 
+export declare interface ComposerCommand {
+    /** The leading token, e.g. `/doc`. Matched case-insensitively at the start of the draft. */
+    trigger: string;
+    /** What it does — "Edit the open document with Haiku". */
+    label: string;
+    /** A second clause: what it needs, or what will happen. */
+    hint?: string;
+    /** True when the command cannot run right now (no document open); the bar says why via `hint`. */
+    disabled?: boolean;
+}
+
 declare type ConnectionState = 'connected' | 'connecting' | 'disconnected';
 
 /** The views a conversation can offer. `chat` is the transcript itself. */
@@ -1064,6 +1075,9 @@ export declare interface LinkDialogValue {
     text: string;
 }
 
+/** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
+export declare function matchComposerCommand(draft: string, commands: readonly ComposerCommand[] | undefined): ComposerCommand | null;
+
 export declare function MessageActionBar({ quickReactions, onReact, onOpenReactionPicker, onReply, onTogglePin, pinned, onCopyLink, onEdit, onDelete, className, 'data-testid': testId, }: MessageActionBarProps): JSX.Element;
 
 export declare interface MessageActionBarProps {
@@ -1515,6 +1529,26 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -1541,9 +1575,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -1557,26 +1591,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

@@ -14,10 +14,12 @@ describe('AgentRunCard', () => {
     expect(states()).toEqual(['active', 'pending', 'pending']);
     rerender(<AgentRunCard runId="r1" instruction="x" agentName="Haiku" status={{ phase: 'running', stepLabel: 'Planning the edit' }} />);
     expect(states()).toEqual(['done', 'active', 'pending']);
-    expect(screen.getByTestId('agent-run-card-steps')).toHaveTextContent('Planning the edit');
+    expect(screen.getByTestId('agent-run-card-detail')).toHaveTextContent('Haiku — Planning the edit');
     rerender(<AgentRunCard runId="r1" instruction="x" agentName="Haiku" status={{ phase: 'completed', detail: 'Renamed to Q3 audit' }} />);
     expect(states()).toEqual(['done', 'done', 'done']);
     expect(screen.getByTestId('agent-run-card-detail')).toHaveTextContent('Renamed to Q3 audit');
+    // Two lines: the command row and the status row.
+    expect(screen.getByTestId('agent-run-card').children).toHaveLength(2);
     rerender(<AgentRunCard runId="r1" instruction="x" agentName="Haiku" status={{ phase: 'failed', detail: 'gateway unreachable' }} onOpenRun={onOpenRun} />);
     expect(states()).toEqual(['done', 'done', 'failed']);
     fireEvent.click(screen.getByTestId('agent-run-card-open-run'));

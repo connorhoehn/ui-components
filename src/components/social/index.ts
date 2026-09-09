@@ -139,3 +139,5 @@ export { ConversationRail } from './ConversationRail';
 export type { ConversationRailProps, RailSelection } from './ConversationRail';
 export { AgentRunCard, agentRunRefFromMetadata } from './AgentRunCard';
 export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase } from './AgentRunCard';
+export type { ComposerCommand } from './RichChatComposer';
+export { matchComposerCommand } from './RichChatComposer';

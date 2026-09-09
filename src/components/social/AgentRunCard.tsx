@@ -9,7 +9,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
-import { Button } from '../ui/Button';
 
 export type AgentRunPhase = 'received' | 'running' | 'completed' | 'failed';
 
@@ -48,63 +47,57 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, statu
   const phase = status?.phase ?? 'received';
   const at = ORDER[phase];
   const tone = phase === 'failed' ? 'danger' : phase === 'completed' ? 'success' : 'info';
+  const phaseLabel = phase === 'failed' ? 'Failed' : phase === 'completed' ? 'Updated' : phase === 'running' ? 'Processing' : 'Received';
+  // Two lines, no more: the command, and where the run is. A command in a
+  // conversation is a small thing that happened, not a panel.
   return (
     <div
-      className={cn('flex w-full max-w-[36rem] flex-col gap-2 rounded-lg border border-border bg-surface px-3 py-2', className)}
+      className={cn('flex w-full max-w-[36rem] flex-col gap-0.5 rounded-md border border-border bg-surface px-2 py-1 text-left text-[12px]', className)}
       data-testid={testId}
       data-phase={phase}
       data-run-id={runId}
+      title={requestedBy ? `${requestedBy} asked ${agentName} to edit the document` : `${agentName} is editing the document`}
     >
-      <div className="flex items-start gap-2">
-        <span aria-hidden="true" className="mt-0.5 text-base">🪄</span>
-        <div className="min-w-0 flex-1">
-          <div className="text-[13px] text-text-primary" data-testid={`${testId}-instruction`}>
-            <span className="font-mono text-text-tertiary">/doc</span> {instruction}
-          </div>
-          <div className="text-[12px] text-text-secondary">
-            {requestedBy ? `${requestedBy} asked ` : ''}<span className="font-medium text-text-primary">{agentName}</span> to edit the document
-          </div>
-        </div>
-        <Chip size="xs" tone={tone} data-testid={`${testId}-phase`}>
-          {phase === 'failed' ? 'Failed' : phase === 'completed' ? 'Updated' : phase === 'running' ? 'Processing' : 'Received'}
-        </Chip>
+      <div className="flex min-w-0 items-center gap-1.5">
+        <span aria-hidden="true" className="shrink-0">🪄</span>
+        <span className="min-w-0 flex-1 truncate text-text-primary" data-testid={`${testId}-instruction`}>
+          <span className="font-mono text-text-tertiary">/doc</span> {instruction}
+        </span>
+        <Chip size="xs" tone={tone} data-testid={`${testId}-phase`}>{phaseLabel}</Chip>
       </div>
-
-      {/* The pipeline, in three beats. The step in flight names itself. */}
-      <ol className="m-0 flex list-none items-center gap-1 p-0 text-[11px]" aria-label="Run progress" data-testid={`${testId}-steps`}>
-        {STEPS.map((s, i) => {
-          const done = phase === 'failed' ? i < at : i < at || (i === at && phase === 'completed');
-          const active = i === at && phase !== 'completed' && phase !== 'failed';
-          const failedHere = phase === 'failed' && i === at;
-          return (
-            <li key={s.phase} className="flex items-center gap-1" data-state={failedHere ? 'failed' : done ? 'done' : active ? 'active' : 'pending'}>
-              {i > 0 && <span aria-hidden="true" className="mx-0.5 h-px w-4 bg-border" />}
-              <span
-                aria-hidden="true"
-                className={cn(
-                  'inline-block h-2 w-2 rounded-full',
-                  failedHere ? 'bg-danger' : done ? 'bg-success' : active ? 'animate-pulse bg-info' : 'bg-border',
-                )}
-              />
-              <span className={cn(done || active || failedHere ? 'text-text-primary' : 'text-text-tertiary')}>
-                {failedHere ? 'Failed' : s.label}
-                {active && status?.stepLabel ? <span className="text-text-tertiary"> — {status.stepLabel}</span> : null}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
-
-      {status?.detail && (
-        <p className={cn('m-0 text-[12px]', phase === 'failed' ? 'text-danger' : 'text-text-secondary')} data-testid={`${testId}-detail`}>{status.detail}</p>
-      )}
-
-      {(onOpenDocument || onOpenRun) && (
-        <div className="flex items-center gap-1">
-          {onOpenDocument && <Button variant="ghost" size="sm" onClick={onOpenDocument} data-testid={`${testId}-open-document`}>Open document</Button>}
-          {onOpenRun && <Button variant="ghost" size="sm" onClick={() => onOpenRun(runId)} data-testid={`${testId}-open-run`}>View run</Button>}
-        </div>
-      )}
+      <div className="flex min-w-0 items-center gap-1.5 text-[11px] text-text-secondary">
+        <ol className="m-0 flex shrink-0 list-none items-center gap-1 p-0" aria-label="Run progress" data-testid={`${testId}-steps`}>
+          {STEPS.map((s, i) => {
+            const done = phase === 'failed' ? i < at : i < at || (i === at && phase === 'completed');
+            const active = i === at && phase !== 'completed' && phase !== 'failed';
+            const failedHere = phase === 'failed' && i === at;
+            return (
+              <li key={s.phase} className="flex items-center" title={s.label} data-state={failedHere ? 'failed' : done ? 'done' : active ? 'active' : 'pending'}>
+                <span
+                  aria-hidden="true"
+                  className={cn('inline-block h-1.5 w-1.5 rounded-full', failedHere ? 'bg-danger' : done ? 'bg-success' : active ? 'animate-pulse bg-info' : 'bg-border')}
+                />
+                <span className="sr-only">{failedHere ? 'Failed' : s.label}</span>
+              </li>
+            );
+          })}
+        </ol>
+        <span className="min-w-0 flex-1 truncate" data-testid={`${testId}-detail`}>
+          {phase === 'running'
+            ? (status?.stepLabel ? `${agentName} — ${status.stepLabel}` : `${agentName} is working via the pipeline`)
+            : status?.detail ?? (phase === 'received' ? 'Received' : phaseLabel)}
+        </span>
+        {onOpenRun && (
+          <button type="button" onClick={() => onOpenRun(runId)} className="shrink-0 text-text-tertiary underline-offset-2 hover:text-text-primary hover:underline" data-testid={`${testId}-open-run`}>
+            run
+          </button>
+        )}
+        {onOpenDocument && (
+          <button type="button" onClick={onOpenDocument} className="shrink-0 text-text-tertiary underline-offset-2 hover:text-text-primary hover:underline" data-testid={`${testId}-open-document`}>
+            document
+          </button>
+        )}
+      </div>
     </div>
   );
 }
