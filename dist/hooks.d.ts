@@ -726,6 +726,28 @@ declare interface MappingRule {
     priority: number;
 }
 
+export declare interface MediaDeviceOption {
+    deviceId: string;
+    label: string;
+    kind: MediaDeviceKind;
+}
+
+declare interface MediaDevices_2 {
+    microphones: MediaDeviceOption[];
+    cameras: MediaDeviceOption[];
+    speakers: MediaDeviceOption[];
+    /** True until the first enumeration has answered. */
+    loading: boolean;
+    /** False where `enumerateDevices` does not exist (insecure context, SSR). */
+    supported: boolean;
+    /** False where the browser cannot route audio to a chosen output. */
+    canSelectSpeaker: boolean;
+    /** True when at least one device came back without a label — permission not yet granted. */
+    labelsHidden: boolean;
+    refresh: () => Promise<void>;
+}
+export { MediaDevices_2 as MediaDevices }
+
 declare interface MemberItem {
     groupId: string;
     userId: string;
@@ -1838,6 +1860,8 @@ declare interface UseActivityBusReturn {
      skip: (itemId: string) => Promise<void>;
  }
 
+ export declare function useMediaDevices(): MediaDevices_2;
+
  /**
   * Aggregate mention-able users from awareness (online) + user directory (offline) + groups.
   * Online users appear first, then offline users, then groups.
@@ -2227,6 +2251,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2246,12 +2283,42 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2288,49 +2355,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

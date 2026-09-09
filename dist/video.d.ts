@@ -141,7 +141,7 @@ export declare interface CallParticipantStripProps {
     style?: CSSProperties;
 }
 
-export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, effectsContent, peopleContent, chatContent, showPreview, title, className, }: CallSettingsDialogProps): JSX.Element;
+export declare function CallSettingsDialog({ open, onClose, previewStream, initialTab, devicesContent, effectsContent, peopleContent, chatContent, showPreview, title, className, }: CallSettingsDialogProps): JSX.Element;
 
 export declare interface CallSettingsDialogProps {
     open: boolean;
@@ -153,6 +153,9 @@ export declare interface CallSettingsDialogProps {
     /** Tab shown each time the dialog opens. Ignored (falls back to the
      *  first available tab) when that tab's slot is missing. */
     initialTab?: CallSettingsTab;
+    /** "Devices" tab body — e.g. a <DeviceSettingsPanel/> wired to the
+     *  consumer's device preferences. Omit to hide the tab. */
+    devicesContent?: ReactNode;
     /** "Effects" tab body — e.g. a <MediaEffectsTray/> wired to the
      *  consumer's effects engine. Omit to hide the tab. */
     effectsContent?: ReactNode;
@@ -176,7 +179,7 @@ export declare interface CallSettingsDialogProps {
     className?: string;
 }
 
-export declare type CallSettingsTab = 'effects' | 'people' | 'chat';
+export declare type CallSettingsTab = 'devices' | 'effects' | 'people' | 'chat';
 
 export declare function CallSidePanel({ tabs, activeTab, onTabChange, mode, open, onClose, title, children, widthClassName, className, 'data-testid': testId, }: CallSidePanelProps): JSX.Element | null;
 
@@ -546,6 +549,24 @@ export declare interface CircularIconToggleProps extends Omit<ButtonHTMLAttribut
 export declare type CircularIconToggleSize = 'sm' | 'md' | 'lg';
 
 export declare type CircularIconToggleTone = 'neutral' | 'danger';
+
+export declare interface DevicePreferences {
+    microphoneId?: string;
+    cameraId?: string;
+    speakerId?: string;
+}
+
+export declare function DeviceSettingsPanel({ value, onChange, showCamera, children, 'data-testid': testId, }: DeviceSettingsPanelProps): JSX.Element;
+
+export declare interface DeviceSettingsPanelProps {
+    value: DevicePreferences;
+    onChange: (next: DevicePreferences) => void;
+    /** Hide the camera row for an audio-only call. */
+    showCamera?: boolean;
+    /** Extra rows the host wants under the pickers (a level meter, a note). */
+    children?: ReactNode;
+    'data-testid'?: string;
+}
 
 export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, inline, onModeChange, persistKey, apiRef, defaultCorner, expandable, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, zIndex, className, 'data-testid': rootTestId, }: ExpandableCallWidgetProps): JSX.Element;
 
@@ -2101,6 +2122,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2120,12 +2154,42 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2162,49 +2226,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
