@@ -57,7 +57,10 @@ describe('reading', () => {
 describe('editing', () => {
     it('offers the typed control for the declared type', async () => {
         render(<FieldBlock field={DATE} editable />);
-        expect(screen.getByTestId('field-block-date-input').getAttribute('type')).toBe('date');
+        // A text field that expects YYYY-MM-DD — the browser's own date widget
+        // is a different control in every browser and never took the document's type.
+        expect(screen.getByTestId('field-block-date-input').getAttribute('type')).toBe('text');
+        expect(screen.getByTestId('field-block-date-input').getAttribute('placeholder')).toBe('YYYY-MM-DD');
         expect(screen.getByTestId('field-block-formatted').textContent).toMatch(/Nov 1, 2026/);
     });
 
