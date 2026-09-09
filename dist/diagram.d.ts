@@ -11,6 +11,9 @@ import { ReactElement } from 'react';
 import { RefObject } from 'react';
 import type * as Y from 'yjs';
 
+/** True when a node's text is an attachment body we would draw. */
+export declare function acceptsAttachment(source: string): boolean;
+
 /**
  * True when a node's text is a decision body we would draw.
  *
@@ -275,6 +278,80 @@ export declare interface AssignablePerson {
     id: string;
     name: string;
 }
+
+export declare interface Attachment {
+    /** Original filename. User content — shown, never used as a path. */
+    name: string;
+    /** Bytes, or `null` when the body does not say. */
+    size: number | null;
+    /** Declared MIME type, or `''`. Picks a layout; is never trusted. */
+    type: string;
+    /** Where the bytes are, VERBATIM. */
+    url: string;
+}
+
+/** The `macro:<name>` discriminator for a file. */
+export declare const ATTACHMENT_MACRO_NAME = "attachment";
+
+export declare function AttachmentBlock({ attachment, editable, href, onOpen, previewSrc, onRemove, 'data-testid': testId, }: AttachmentBlockProps): JSX.Element;
+
+export declare interface AttachmentBlockProps {
+    attachment: Attachment;
+    /** False hides the Remove control. Opening is never gated on it. */
+    editable?: boolean;
+    /** A directly-followable URL. Ignored when `onOpen` is given. */
+    href?: string | null;
+    /** The host opens it with credentials. Wins over `href`. */
+    onOpen?: () => void;
+    /**
+     * A renderable `src` for an image attachment — an object URL the host
+     * resolved, or `null` while it has not / could not. Only consulted when
+     * `type` is `image/*`.
+     */
+    previewSrc?: string | null;
+    onRemove?: () => void;
+    'data-testid'?: string;
+}
+
+export declare interface AttachmentDraft {
+    name: string;
+    size?: number;
+    type?: string;
+    url: string;
+}
+
+/**
+ * The `href` a reader may follow directly, or `null` when the host must
+ * resolve it (a hosted upload) or when it is unsafe (anything `linkHref`
+ * refuses). Callers check `isHostedUpload` first to tell the two apart.
+ */
+export declare function attachmentHref(a: Attachment): string | null;
+
+export declare const AttachmentMacro: Extension<AttachmentMacroOptions, any>;
+
+export declare interface AttachmentMacroOptions {
+    /**
+     * Show the file to the reader, with whatever credentials the host has.
+     * Called for hosted uploads always, and for absolute URLs too when given —
+     * the host may prefer its own viewer to a new tab.
+     */
+    open?: (attachment: Attachment) => void;
+    /**
+     * A renderable `src` for an image attachment, or `null` when it cannot be
+     * had. Only asked for `image/*`. The host owns the object URL's lifetime;
+     * the view never revokes what it did not create.
+     */
+    resolve?: (attachment: Attachment) => Promise<string | null>;
+}
+
+/**
+ * The macro body for a file — alphabetical keys, because `sortKeys: true` is
+ * what the chassis dumps, and no trailing newline (the closing fence supplies
+ * it). `size:` is written plain: js-yaml leaves an integer bare.
+ */
+export declare function attachmentMacroText(draft: AttachmentDraft): string;
+
+export declare function attachmentRenderer(options?: AttachmentMacroOptions): MacroRenderer;
 
 /**
  * The edit that records who decided, and when.
@@ -729,6 +806,8 @@ export declare type FieldType = (typeof FIELD_TYPES)[number];
  */
 export declare function fitsFieldType(type: FieldType, value: string): boolean;
 
+export declare function formatBytes(bytes: number): string;
+
 /**
  * `YYYY-MM-DD` → `Nov 1, 2026` in the reader's locale.
  *
@@ -1105,6 +1184,14 @@ export declare function hostsMacroNodeViews(editor: MacroEditorLike, extensionNa
 /** True for an id this module would have minted — hex groups and dashes only. */
 export declare function isDiagramId(value: string): boolean;
 
+/** True for an `url:` the host must fetch with credentials rather than link. */
+export declare function isHostedUpload(url: string): boolean;
+
+/** True when the card should try to show the file rather than name it. */
+export declare function isImageAttachment(a: {
+    type: string;
+}): boolean;
+
 /**
  * The `href` a row may be given, or `null` when it must render as text.
  *
@@ -1452,6 +1539,16 @@ export declare abstract class ReactMacroView implements MacroNodeView {
 export declare function readActionItems(source: string): ActionItem[] | null;
 
 /**
+ * Parse an attachment body, or `null` when this is not one we can draw.
+ *
+ * `name:` and `url:` are required — a card with no name is a mystery box and
+ * one with no URL is a name lying on the floor. `size:` must be a non-negative
+ * integer when present; a body that says `size: large` is declined rather than
+ * shown as "NaN B".
+ */
+export declare function readAttachment(source: string): Attachment | null;
+
+/**
  * Parse a decision body, or `null` when this is not one we can draw.
  *
  * `decision:` is required — a card with no claim on it is not a decision — and
@@ -1744,6 +1841,9 @@ export declare interface TypedField {
     valid: boolean;
 }
 
+/** The prefix a host-resolved upload carries. */
+export declare const UPLOAD_PATH_PREFIX = "/api/uploads/";
+
 /**
  * The theme currently in force for `ref`'s subtree, kept live.
  *
@@ -1800,9 +1900,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1836,9 +1936,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -1856,12 +1969,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

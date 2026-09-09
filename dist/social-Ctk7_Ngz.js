@@ -6,7 +6,7 @@ import { t as l } from "./Textarea-Dz4doxTv.js";
 import { n as u, t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./PresenceDot-3gBZGPvX.js";
 import { t as p } from "./Select-CqVokE2v.js";
-import { A as m, j as h } from "./ConversationSurface-CZGBp_Gz.js";
+import { A as m, k as h } from "./ConversationSurface-DSHcZvEE.js";
 import { t as g } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as _, t as v } from "./ReactionPickerPopover-CcL-n6gt.js";
 import "./LinkDialog-DazAeDjI.js";
@@ -505,7 +505,7 @@ function L(e, t) {
 	let n = e.lastMessageAt ? Date.parse(e.lastMessageAt) : NaN, r = t.lastMessageAt ? Date.parse(t.lastMessageAt) : NaN, i = Number.isNaN(n) ? null : n, a = Number.isNaN(r) ? null : r;
 	return i === null && a === null ? 0 : i === null ? 1 : a === null ? -1 : a - i;
 }
-function R({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sortByRecency: r = !0, activeChannel: i, onSelect: a, onNewChat: o, emptyLabel: c = "No conversations yet", tone: l = "light", className: p, "data-testid": m }) {
+function R({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sortByRecency: r = !0, activeChannel: i, onSelect: a, onNewChat: o, emptyLabel: c = "No conversations yet", tone: l = "light", className: p, "data-testid": h }) {
 	let g = l === "dark", _ = r ? [...e].sort(L) : e, v = [];
 	if (t) {
 		let e = (e) => (e.kind ?? (e.peers.length > 1 ? "group" : "dm")) === "channel", t = _.filter(e), r = _.filter((t) => !e(t)), i = {
@@ -556,7 +556,7 @@ function R({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sort
 	}
 	return /* @__PURE__ */ D("div", {
 		className: s("flex min-h-0 flex-col gap-1", p),
-		"data-testid": m,
+		"data-testid": h,
 		children: [o && /* @__PURE__ */ D("button", {
 			type: "button",
 			onClick: o,
@@ -584,7 +584,7 @@ function R({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sort
 				className: "m-0 flex list-none flex-col gap-0.5 p-0",
 				"aria-label": e.label,
 				children: e.items.map((e) => {
-					let t = e.channel === i, n = e.channel === O, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), o = r === "channel", c = r === "group", l = e.peers[0], p = o ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), m = e.lastMessageAt ? h(e.lastMessageAt) : "", _ = e.unreadCount ?? 0, v = !!e.mentioned, y = !!e.live;
+					let t = e.channel === i, n = e.channel === O, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), o = r === "channel", c = r === "group", l = e.peers[0], p = o ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), h = e.lastMessageAt ? m(e.lastMessageAt) : "", _ = e.unreadCount ?? 0, v = !!e.mentioned, y = !!e.live;
 					return /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
 						type: "button",
 						onClick: () => a(e.channel),
@@ -629,10 +629,10 @@ function R({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sort
 									children: [/* @__PURE__ */ E("span", {
 										className: s("min-w-0 flex-1 truncate text-[13px]", _ > 0 ? "font-semibold" : "font-medium", g ? "text-white" : "text-text-primary"),
 										children: p
-									}), m && /* @__PURE__ */ E("span", {
+									}), h && /* @__PURE__ */ E("span", {
 										className: s("shrink-0 text-[11px] tabular-nums", g ? "text-white/50" : "text-text-tertiary"),
 										"data-testid": "conversation-time",
-										children: m
+										children: h
 									})]
 								}), e.lastMessagePreview && /* @__PURE__ */ E("span", {
 									className: s("truncate text-[12px]", g ? "text-white/60" : "text-text-secondary"),
@@ -1053,7 +1053,7 @@ function ee({ author: e, avatarUrl: t, mine: n = !1, messages: r, className: i }
 		"data-author": e,
 		"data-row-count": r.length,
 		className: s("flex flex-col", i),
-		children: r.map((r, i) => /* @__PURE__ */ E(m, {
+		children: r.map((r, i) => /* @__PURE__ */ E(h, {
 			author: e,
 			content: r.content,
 			timestamp: r.timestamp,
