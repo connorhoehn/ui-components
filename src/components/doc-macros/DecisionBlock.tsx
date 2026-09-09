@@ -79,7 +79,7 @@ export function DecisionBlock({
     return (
         <div data-testid={testId} data-status={decision.status} className="my-3">
             <div className="flex items-center gap-2 rounded-t-md border border-b-0 border-border bg-surface-inset px-2.5 py-1">
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
+                <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
                     Decision
                 </span>
                 <Chip tone={meta.tone} size="sm" data-testid={`${testId}-status`}>

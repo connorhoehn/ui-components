@@ -73,7 +73,9 @@ export function Button({
       type={type}
       disabled={disabled}
       className={cn(
-        'font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
+        // A caption never breaks mid-word: a narrow flex parent turned
+        // "Remove" into "Rem / ove" (measured, in a 430px document pane).
+        'whitespace-nowrap font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
         (TONE[tone] ?? variantClasses)[variant],
         sizeClasses[size],
         disabled && 'opacity-50 cursor-not-allowed',

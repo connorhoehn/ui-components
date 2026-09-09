@@ -206,6 +206,7 @@ function DuePicker({
                 aria-label="Set a due date"
                 data-testid={`${testId}-due-add`}
                 onClick={() => setOpen(true)}
+                className="whitespace-nowrap"
             >
                 + due
             </Button>
@@ -356,10 +357,10 @@ export function ActionItemsBlock({
     return (
         <div data-testid={testId} className="my-3">
             <div className="flex items-center justify-between gap-2 rounded-t-md border border-b-0 border-border bg-surface-inset px-2.5 py-1">
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
+                <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
                     Action items
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center gap-2">
                     <span
                         data-testid={`${testId}-progress`}
                         className="text-[11px] tabular-nums text-text-tertiary"

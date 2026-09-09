@@ -123,7 +123,7 @@ const PHASE_CHIP: Record<Phase, { label: string; tone: 'warning' | 'success' | '
 };
 
 const LABEL =
-    'text-[10px] font-semibold uppercase tracking-wide text-text-tertiary select-none';
+    'whitespace-nowrap text-[10px] font-semibold uppercase tracking-wide text-text-tertiary select-none';
 
 /**
  * One declared choice.
@@ -290,7 +290,7 @@ export function HitlBlock({
     return (
         <div data-testid={testId} data-phase={phase} className="my-3">
             <div className="flex items-center gap-2 rounded-t-md border border-b-0 border-border bg-surface-inset px-2.5 py-1">
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
+                <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
                     Agent asks
                 </span>
                 <Chip
