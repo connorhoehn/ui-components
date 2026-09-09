@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import Modal from '../shared/Modal';
 import { Button } from '../ui/Button';
 import { useAudioRecorder } from '../../hooks/useAudioRecorder';
+import { AudioPlayer } from './AudioPlayer';
 
 export interface VoicemailRecorderProps {
   open: boolean;
@@ -89,8 +90,7 @@ export function VoicemailRecorder({ open, onClose, recipientName, getStream, onS
           {clock(rec.elapsedMs)}<span className="text-base text-text-tertiary"> / {clock(maxSeconds * 1000)}</span>
         </div>
         {rec.state === 'recorded' && rec.url && (
-          // eslint-disable-next-line jsx-a11y/media-has-caption -- a voice message has no caption track
-          <audio controls src={rec.url} className="w-full" data-testid={`${testId}-preview`} />
+          <AudioPlayer src={rec.url} durationHint={rec.elapsedMs / 1000} className="w-full" data-testid={`${testId}-preview`} />
         )}
         {sendError && <p className="m-0 text-sm text-danger" role="alert">{sendError}</p>}
       </div>

@@ -88,6 +88,12 @@ export interface ConversationSurfaceProps {
 
   /** The transcript and its composer. Owned by the caller. */
   children?: ReactNode;
+  /**
+   * Something live to look at while you talk — the call happening in this
+   * conversation, a stream. Sits above the transcript on the Chat view and
+   * scrolls with nothing; the transcript keeps its own scroll below.
+   */
+  canvas?: ReactNode;
 
   files?: readonly ChannelFileItem[];
   /** Resolves a displayable image source; the download route is authenticated. */
@@ -198,6 +204,7 @@ export function ConversationSurface({
   avatarUrl,
   features = ALL_CONVERSATION_FEATURES,
   children,
+  canvas,
   files = [],
   thumbnailSrc,
   documents = [],
@@ -384,8 +391,9 @@ export function ConversationSurface({
         // remounting a transcript re-joins its channel, which refetches
         // history and loses the scroll position every time somebody glances
         // at the file list.
-        <div className="min-h-0 flex-1" data-testid={`${testId}-chat`} hidden={view !== 'chat'}>
-          {children}
+        <div className="flex min-h-0 flex-1 flex-col" data-testid={`${testId}-chat`} hidden={view !== 'chat'}>
+          {canvas && <div className="shrink-0 px-3 pt-3" data-testid={`${testId}-canvas`}>{canvas}</div>}
+          <div className="min-h-0 flex-1">{children}</div>
         </div>
       )}
     </section>

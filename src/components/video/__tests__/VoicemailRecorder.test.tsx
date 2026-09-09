@@ -45,7 +45,9 @@ describe('VoicemailRecorder', () => {
     await waitFor(() => expect(screen.getByTestId('voicemail-recorder').dataset.state).toBe('recorded'));
     // The microphone is released the moment recording stops, not on close.
     expect(stopTrack).toHaveBeenCalled();
-    expect((screen.getByTestId('voicemail-recorder-preview') as HTMLAudioElement).src).toContain('blob:preview');
+    expect((screen.getByTestId('voicemail-recorder-preview-element') as HTMLAudioElement).src).toContain('blob:preview');
+    // The library player, not the browser's: no native controls anywhere.
+    expect(screen.getByTestId('voicemail-recorder-preview-element').hasAttribute('controls')).toBe(false);
 
     fireEvent.click(screen.getByTestId('voicemail-recorder-send'));
     await waitFor(() => expect(onSend).toHaveBeenCalledTimes(1));
@@ -85,10 +87,10 @@ describe('AuthedAudio', () => {
     render(<AuthedAudio src="/api/vm/1/audio" getAuthToken={() => 'tok'} onFirstPlay={onFirstPlay} />);
     expect(fetchMock).not.toHaveBeenCalled();
     fireEvent.click(screen.getByTestId('authed-audio-load'));
-    await waitFor(() => expect(screen.getByTestId('authed-audio')).toBeTruthy());
+    await waitFor(() => expect(screen.getByTestId('authed-audio-element')).toBeTruthy());
     expect((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].headers).toEqual({ Authorization: 'Bearer tok' });
-    expect((screen.getByTestId('authed-audio') as HTMLAudioElement).src).toContain('blob:preview');
-    await act(async () => { fireEvent.play(screen.getByTestId('authed-audio')); fireEvent.play(screen.getByTestId('authed-audio')); });
+    expect((screen.getByTestId('authed-audio-element') as HTMLAudioElement).src).toContain('blob:preview');
+    await act(async () => { fireEvent.play(screen.getByTestId('authed-audio-element')); fireEvent.play(screen.getByTestId('authed-audio-element')); });
     expect(onFirstPlay).toHaveBeenCalledTimes(1);
   });
 });

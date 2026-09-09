@@ -9,6 +9,22 @@ import { SVGProps } from 'react';
 
 export declare type AnyCallWidgetMode = CallWidgetMode | LegacyCallWidgetMode;
 
+export declare function AudioPlayer({ src, autoPlay, onFirstPlay, onEnded, durationHint, size, className, 'data-testid': testId }: AudioPlayerProps): JSX.Element;
+
+export declare interface AudioPlayerProps {
+    src: string;
+    autoPlay?: boolean;
+    /** Fires once, the first time playback starts — "mark as listened". */
+    onFirstPlay?: () => void;
+    onEnded?: () => void;
+    /** Length to show before metadata arrives, in seconds. */
+    durationHint?: number;
+    /** `sm` fits a table row. */
+    size?: 'sm' | 'md';
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function AuthedAudio({ src, getAuthToken, onFirstPlay, eager, className, 'data-testid': testId }: AuthedAudioProps): JSX.Element;
 
 export declare interface AuthedAudioProps {
@@ -581,6 +597,29 @@ export declare interface DeviceSettingsPanelProps {
     'data-testid'?: string;
 }
 
+export declare function EmbeddedCallPanel({ title, subtitle, durationSeconds, live, onPopOut, popOutLabel, children, controls, stage, className, 'data-testid': testId, }: EmbeddedCallPanelProps): JSX.Element;
+
+export declare interface EmbeddedCallPanelProps {
+    /** What this call is — a room name, "Alice & Bob", a channel. */
+    title: ReactNode;
+    /** "3 in call", "Live" — the second thing worth knowing. */
+    subtitle?: ReactNode;
+    durationSeconds?: number;
+    /** Shows the live dot. Default true — an embedded call that is not live is not shown. */
+    live?: boolean;
+    /** Take the call back out into its floating window. Omitted → no button. */
+    onPopOut?: () => void;
+    popOutLabel?: string;
+    /** The tile area: HangoutLayout / CallParticipantStrip / a stream player. Fills a 16:9 stage. */
+    children: ReactNode;
+    /** MediaControlsBar or equivalent, rendered under the stage. */
+    controls?: ReactNode;
+    /** Stage aspect. `video` keeps 16:9; `audio` is a short strip for an audio-only call. */
+    stage?: 'video' | 'audio';
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode: defaultModeProp, inline, onModeChange, persistKey, apiRef, defaultCorner, expandable, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, zIndex, className, 'data-testid': rootTestId, }: ExpandableCallWidgetProps): JSX.Element;
 
 export declare interface ExpandableCallWidgetHandle {
@@ -672,6 +711,8 @@ export declare interface ExpandableCallWidgetProps {
      *  also stamped by <CallWidget>, so it is not a unique handle. */
     'data-testid'?: string;
 }
+
+export declare function formatAudioTime(seconds: number): string;
 
 export declare function GoLiveButton({ live, starting, onGoLive, onEndBroadcast, viewerCount, streamReady, connection, channelName, error, endHint, label, disabled, className, 'data-testid': testId, }: GoLiveButtonProps): JSX.Element;
 
@@ -1253,6 +1294,8 @@ declare interface ParticipantWithStreams {
     streams: MediaStream[];
 }
 
+export declare function PauseIcon({ size, ...rest }: IconProps): JSX.Element;
+
 /**
  * Modes that survive a reload. Canonical vocabulary ('window', not the
  * pre-2.106 'docked') — see ./callWidgetMode. The value written to
@@ -1291,6 +1334,11 @@ export declare interface PlaybackReactionsLayerProps {
 }
 
 export declare type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
+
+export declare function PlayIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/** Arrow leaving a box: "take this out of here" (pop out of a dock). */
+export declare function PopOutIcon({ size, ...rest }: IconProps): JSX.Element;
 
 declare interface PreJoinLocalIdentity {
     /** Display name shown on the avatar tile when the camera is off. */
@@ -2150,19 +2198,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2182,9 +2217,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -2212,19 +2250,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -2244,6 +2269,29 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

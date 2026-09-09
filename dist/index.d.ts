@@ -754,6 +754,22 @@ export declare interface AttachmentBubbleProps {
     className?: string;
 }
 
+export declare function AudioPlayer({ src, autoPlay, onFirstPlay, onEnded, durationHint, size, className, 'data-testid': testId }: AudioPlayerProps): JSX.Element;
+
+export declare interface AudioPlayerProps {
+    src: string;
+    autoPlay?: boolean;
+    /** Fires once, the first time playback starts — "mark as listened". */
+    onFirstPlay?: () => void;
+    onEnded?: () => void;
+    /** Length to show before metadata arrives, in seconds. */
+    durationHint?: number;
+    /** `sm` fits a table row. */
+    size?: 'sm' | 'md';
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface AudioRecorder {
     state: AudioRecorderState;
     /** Wall time recorded so far (live while recording, final once recorded). */
@@ -3244,7 +3260,7 @@ export declare interface ConversationShelfProps {
     'data-testid'?: string;
 }
 
-export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
+export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, canvas, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
 
 export declare interface ConversationSurfaceProps {
     /** Channel name, or the people in a DM. */
@@ -3263,6 +3279,12 @@ export declare interface ConversationSurfaceProps {
     features?: readonly ConversationFeature[];
     /** The transcript and its composer. Owned by the caller. */
     children?: ReactNode;
+    /**
+     * Something live to look at while you talk — the call happening in this
+     * conversation, a stream. Sits above the transcript on the Chat view and
+     * scrolls with nothing; the transcript keeps its own scroll below.
+     */
+    canvas?: ReactNode;
     files?: readonly ChannelFileItem[];
     /** Resolves a displayable image source; the download route is authenticated. */
     thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
@@ -4181,6 +4203,29 @@ export declare interface EmailTemplateListPageProps {
     loading?: boolean;
 }
 
+export declare function EmbeddedCallPanel({ title, subtitle, durationSeconds, live, onPopOut, popOutLabel, children, controls, stage, className, 'data-testid': testId, }: EmbeddedCallPanelProps): JSX.Element;
+
+export declare interface EmbeddedCallPanelProps {
+    /** What this call is — a room name, "Alice & Bob", a channel. */
+    title: ReactNode;
+    /** "3 in call", "Live" — the second thing worth knowing. */
+    subtitle?: ReactNode;
+    durationSeconds?: number;
+    /** Shows the live dot. Default true — an embedded call that is not live is not shown. */
+    live?: boolean;
+    /** Take the call back out into its floating window. Omitted → no button. */
+    onPopOut?: () => void;
+    popOutLabel?: string;
+    /** The tile area: HangoutLayout / CallParticipantStrip / a stream player. Fills a 16:9 stage. */
+    children: ReactNode;
+    /** MediaControlsBar or equivalent, rendered under the stage. */
+    controls?: ReactNode;
+    /** Stage aspect. `video` keeps 16:9; `audio` is a short strip for an audio-only call. */
+    stage?: 'video' | 'audio';
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
 
 export declare interface EmojiShortcode {
@@ -4702,6 +4747,8 @@ export declare interface ForkNodeData {
     branchCount: number;
     branchLabels?: string[];
 }
+
+export declare function formatAudioTime(seconds: number): string;
 
 export declare function formatBytes(bytes: number): string;
 
@@ -7563,6 +7610,8 @@ export declare class PatchValidationRejectedError extends Error {
     constructor(reason: string, result?: PatchResult);
 }
 
+export declare function PauseIcon({ size, ...rest }: IconProps): JSX.Element;
+
 export declare function PermissionDeniedCard({ kind, state, message, onRetry, retryLabel, icon, className, 'data-testid': testId, }: PermissionDeniedCardProps): JSX.Element;
 
 export declare interface PermissionDeniedCardProps {
@@ -8316,6 +8365,8 @@ export declare interface PlaybackReactionsLayerProps {
 
 export declare type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
 
+export declare function PlayIcon({ size, ...rest }: IconProps): JSX.Element;
+
 export declare interface PolicyNodeData {
     type: 'policy';
     policyStoreId: string;
@@ -8386,6 +8437,9 @@ export declare interface PoolStats {
     poolId: string;
     poolName: string;
 }
+
+/** Arrow leaving a box: "take this out of here" (pop out of a dock). */
+export declare function PopOutIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare function postApproval(args: PostApprovalArgs): Promise<{
     ok: boolean;
@@ -13646,19 +13700,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -13678,9 +13719,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -13708,19 +13752,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -13740,6 +13771,29 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

@@ -7,6 +7,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '../ui/Button';
+import { AudioPlayer } from './AudioPlayer';
 
 export interface AuthedAudioProps {
   src: string;
@@ -54,14 +55,13 @@ export function AuthedAudio({ src, getAuthToken, onFirstPlay, eager = false, cla
     return <Button variant="ghost" size="sm" onClick={() => { setState('idle'); setWanted(false); setTimeout(() => setWanted(true), 0); }} data-testid={`${testId}-error`}>Couldn’t load — retry</Button>;
   }
   return (
-    // eslint-disable-next-line jsx-a11y/media-has-caption -- a voice message has no caption track
-    <audio
-      controls
-      autoPlay
+    <AudioPlayer
       src={url}
+      autoPlay
+      size="sm"
       className={className}
       data-testid={testId}
-      onPlay={() => { if (!playedRef.current) { playedRef.current = true; onFirstPlay?.(); } }}
+      onFirstPlay={() => { if (!playedRef.current) { playedRef.current = true; onFirstPlay?.(); } }}
     />
   );
 }

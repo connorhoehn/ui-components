@@ -2132,39 +2132,16 @@ var at = {
 			})
 		]
 	});
-}), st = l(function({ value: e, onChange: t, min: n = 0, max: r = 100, step: a = 1, "aria-label": o, readout: s = !0, disabled: c = !1, className: l, "data-testid": u }, d) {
-	let f = p(), m = typeof s == "function" ? s(e) : String(e);
-	return /* @__PURE__ */ y("div", {
-		className: i("flex items-center gap-2", l),
-		children: [/* @__PURE__ */ v("input", {
-			ref: d,
-			id: f,
-			type: "range",
-			min: n,
-			max: r,
-			step: a,
-			value: e,
-			disabled: c,
-			"aria-label": o,
-			onChange: (e) => t(parseFloat(e.target.value)),
-			className: "flex-1 accent-primary cursor-pointer disabled:cursor-not-allowed",
-			"data-testid": u
-		}), s !== !1 && /* @__PURE__ */ v("output", {
-			htmlFor: f,
-			className: "text-xs text-text-secondary tabular-nums min-w-[2.5rem] text-right",
-			children: m
-		})]
-	});
-}), ct = {
+}), st = {
 	sm: "w-16",
 	md: "w-32",
 	lg: "w-48"
-}, lt = {
+}, ct = {
 	square: "aspect-square",
 	video: "aspect-video",
 	auto: ""
 };
-function ut() {
+function lt() {
 	return /* @__PURE__ */ y("svg", {
 		xmlns: "http://www.w3.org/2000/svg",
 		viewBox: "0 0 24 24",
@@ -2193,11 +2170,11 @@ function ut() {
 		]
 	});
 }
-function dt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded: a = !1, fallback: o, loading: s = "lazy", className: c, "data-testid": l }) {
+function ut({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded: a = !1, fallback: o, loading: s = "lazy", className: c, "data-testid": l }) {
 	let [u, d] = g("loading");
 	return /* @__PURE__ */ y("div", {
 		"data-testid": l,
-		className: i("relative overflow-hidden bg-surface-hover", ct[n], r !== "auto" && lt[r], a ? "rounded-full" : "rounded-md", c),
+		className: i("relative overflow-hidden bg-surface-hover", st[n], r !== "auto" && ct[r], a ? "rounded-full" : "rounded-md", c),
 		children: [
 			u === "loading" && /* @__PURE__ */ v("div", {
 				"aria-hidden": "true",
@@ -2205,7 +2182,7 @@ function dt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded
 			}),
 			u === "error" && /* @__PURE__ */ v("div", {
 				className: "absolute inset-0 flex items-center justify-center bg-surface-hover",
-				children: o ?? /* @__PURE__ */ v(ut, {})
+				children: o ?? /* @__PURE__ */ v(lt, {})
 			}),
 			/* @__PURE__ */ v("img", {
 				src: e,
@@ -2220,10 +2197,10 @@ function dt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded
 }
 //#endregion
 //#region src/components/image/GenerativeImagePreview.tsx
-function ft(e) {
+function dt(e) {
 	return e < 60 ? `${e}s` : `${Math.floor(e / 60)}m ${e % 60}s`;
 }
-function pt({ startedAt: e }) {
+function ft({ startedAt: e }) {
 	let [t, n] = g(() => Math.max(0, Math.floor((Date.now() - e) / 1e3)));
 	return f(() => {
 		let t = () => n(Math.max(0, Math.floor((Date.now() - e) / 1e3)));
@@ -2233,10 +2210,10 @@ function pt({ startedAt: e }) {
 	}, [e]), /* @__PURE__ */ v("span", {
 		"data-testid": "generative-image-preview-elapsed",
 		className: "absolute bottom-1 right-1 rounded bg-black/60 px-1.5 py-0.5 font-mono text-[10px] leading-none text-white/90",
-		children: ft(t)
+		children: dt(t)
 	});
 }
-function mt({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
+function pt({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
 	let s = r(), c = h(e), [l, u] = g(!1);
 	return c.current !== e && (c.current = e, e === "done" && !s && u(!0)), f(() => {
 		if (!l) return;
@@ -2261,7 +2238,7 @@ function mt({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
 				className: i("absolute inset-0 flex items-center justify-center", "text-[11px] font-medium tracking-wide text-neutral select-none"),
 				children: "✦ synthesizing"
 			}),
-			a !== void 0 && /* @__PURE__ */ v(pt, { startedAt: a })
+			a !== void 0 && /* @__PURE__ */ v(ft, { startedAt: a })
 		] }) : t ? /* @__PURE__ */ v("img", {
 			src: t,
 			alt: n,
@@ -2276,26 +2253,26 @@ function mt({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
 //#endregion
 //#region src/components/pipelines/services/PipelineEditorServicesContext.tsx
 var $ = c(null);
-function ht({ services: e, children: t }) {
+function mt({ services: e, children: t }) {
 	return /* @__PURE__ */ v($.Provider, {
 		value: e,
 		children: t
 	});
 }
-function gt() {
+function ht() {
 	let e = d($);
 	if (!e) throw Error("useImageUrl must be called inside <PipelineEditorServicesProvider>. The host editor (e.g. wsg PipelineEditorPage) is responsible for mounting it with its own getImageUrl implementation.");
 	return e.getImageUrl;
 }
-function _t() {
+function gt() {
 	return d($)?.getImageUrl ?? null;
 }
-function vt() {
+function _t() {
 	let e = d($);
 	if (!e) throw Error("usePipelineEditorServices must be called inside <PipelineEditorServicesProvider>.");
 	return e;
 }
-function yt(e) {
+function vt(e) {
 	let t = d($)?.nodeVocabulary?.[e];
 	return m(() => ({
 		label: (e, n) => t?.labels?.[e] ?? n,
@@ -2303,22 +2280,22 @@ function yt(e) {
 		placeholder: (e, n) => t?.placeholders?.[e] ?? n
 	}), [t]);
 }
-function bt(e, t) {
+function yt(e, t) {
 	let n = d($)?.modelOptions?.[e];
 	return m(() => n ?? t, [n, t]);
 }
-function xt() {
+function bt() {
 	let e = d($)?.modelOptions;
 	return m(() => (t, n) => e?.[t] ?? n, [e]);
 }
-function St() {
+function xt() {
 	let e = d($)?.webhookRelay;
 	return m(() => ({
 		enabled: e?.enabled ?? !1,
 		publicUrlBase: e?.publicUrlBase
 	}), [e?.enabled, e?.publicUrlBase]);
 }
-function Ct() {
+function St() {
 	let e = d($)?.executableNodeTypes;
 	return m(() => {
 		if (!e) return () => !0;
@@ -2327,4 +2304,4 @@ function Ct() {
 	}, [e]);
 }
 //#endregion
-export { A as $, je as A, me as B, Be as C, We as D, Ge as E, Se as F, ie as G, he as H, Ce as I, U as J, ae as K, ve as L, De as M, we as N, Ne as O, X as P, M as Q, ge as R, Je as S, He as T, re as U, _e as V, K as W, P as X, W as Y, N as Z, Ze as _, bt as a, et as b, vt as c, dt as d, j as et, st as f, tt as g, it as h, Ct as i, x as it, Ae as j, Pe as k, St as l, rt as m, gt as n, O as nt, xt as o, ot as p, H as q, _t as r, b as rt, yt as s, ht as t, k as tt, mt as u, Xe as v, Ke as w, Ye as x, $e as y, pe as z };
+export { j as $, Ae as A, _e as B, Ke as C, Ne as D, We as E, Ce as F, ae as G, re as H, ve as I, W as J, H as K, ge as L, we as M, X as N, Pe as O, Se as P, A as Q, pe as R, Be as S, Ge as T, K as U, he as V, ie as W, N as X, P as Y, M as Z, Xe as _, yt as a, Ye as b, _t as c, ut as d, k as et, ot as f, Ze as g, tt as h, St as i, De as j, je as k, xt as l, it as m, ht as n, b as nt, bt as o, rt as p, U as q, gt as r, x as rt, vt as s, mt as t, O as tt, pt as u, $e as v, He as w, Je as x, et as y, me as z };

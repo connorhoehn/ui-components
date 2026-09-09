@@ -219,8 +219,7 @@ export {
   SparklesIcon,
   MoreHorizontalIcon,
   UserPlusIcon,
-  UsersIcon,
-} from './MediaIcons';
+  UsersIcon, PlayIcon, PauseIcon, PopOutIcon } from './MediaIcons';
 export type { IconProps } from './MediaIcons';
 
 // StreamStage — the composed surface a stream or call is WATCHED on: video,
@@ -262,3 +261,10 @@ export { VoicemailRecorder } from './VoicemailRecorder';
 export type { VoicemailRecorderProps } from './VoicemailRecorder';
 export { AuthedAudio } from './AuthedAudio';
 export type { AuthedAudioProps } from './AuthedAudio';
+// A call as a block in another layout (document gutter, chat canvas), and a
+// themed audio player — the two pieces that used to be a clipped floating
+// window and a native <audio controls>.
+export { EmbeddedCallPanel } from './EmbeddedCallPanel';
+export type { EmbeddedCallPanelProps } from './EmbeddedCallPanel';
+export { AudioPlayer, formatAudioTime } from './AudioPlayer';
+export type { AudioPlayerProps } from './AudioPlayer';
