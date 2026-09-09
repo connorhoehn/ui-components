@@ -151,6 +151,17 @@ export interface ConversationListProps {
    * the participants of a live call every time somebody spoke.
    */
   sortByRecency?: boolean;
+  /**
+   * Show at most this many rows per group, with a "Show N more" row after
+   * them that expands the group in place (and "Show less" to fold it back).
+   *
+   * A rail is a place to find the conversation you want, and past a handful
+   * of rows the eye stops scanning and starts reading. With recency sorting
+   * on, the cut keeps the most recent; the open conversation is always kept
+   * visible so the highlight never sits inside the folded part. Unset shows
+   * everything, which is what every existing caller gets.
+   */
+  maxVisible?: number;
   tone?: 'light' | 'dark';
   className?: string;
   'data-testid'?: string;
@@ -161,6 +172,7 @@ export function ConversationList({
   grouped = false,
   sectionOrder = 'channels-first',
   sortByRecency = true,
+  maxVisible,
   activeChannel,
   onSelect,
   onNewChat,
@@ -213,7 +225,30 @@ export function ConversationList({
   // which is what a list of destinations should do); what changes is that
   // only ONE of them is in the tab order at a time and Up/Down move between
   // them. Tab now enters the list once and leaves once.
-  const rows = sections.flatMap((section) => section.items);
+  // Top-k per group. Expansion is per section and lives here: the caller
+  // asked for a cap, not for a second piece of state to carry around.
+  const [expandedSections, setExpandedSections] = useState<ReadonlySet<string>>(() => new Set());
+  const visibleSections = sections.map((section) => {
+    const capped = maxVisible !== undefined && maxVisible >= 0 && section.items.length > maxVisible;
+    if (!capped || expandedSections.has(section.label)) {
+      return { ...section, shown: section.items, hidden: 0, capped };
+    }
+    let shown = section.items.slice(0, maxVisible);
+    const active = activeChannel ? section.items.find((i) => i.channel === activeChannel) : undefined;
+    if (active && !shown.includes(active)) {
+      shown = maxVisible === 0 ? [active] : [...shown.slice(0, -1), active];
+    }
+    return { ...section, shown, hidden: section.items.length - shown.length, capped };
+  });
+  const toggleSection = (label: string) =>
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      return next;
+    });
+
+  const rows = visibleSections.flatMap((section) => section.shown);
   const listRef = useRef<HTMLDivElement>(null);
   const [rovingChannel, setRovingChannel] = useState<string | null>(null);
   // The cursor starts on the OPEN conversation, so tabbing into the rail lands
@@ -316,7 +351,7 @@ export function ConversationList({
           onKeyDown={handleListKeyDown}
           className="m-0 flex min-h-0 flex-col overflow-y-auto p-0"
         >
-          {sections.map((section) => (
+          {visibleSections.map((section) => (
             <div key={section.label}>
               {section.heading && (
                 <p
@@ -336,7 +371,7 @@ export function ConversationList({
                 className="m-0 flex list-none flex-col gap-0.5 p-0"
                 aria-label={section.label}
               >
-          {section.items.map((item) => {
+          {section.shown.map((item) => {
             const isActive = item.channel === activeChannel;
             const isCursor = item.channel === cursorChannel;
             const kind = item.kind ?? (item.peers.length > 1 ? 'group' : 'dm');
@@ -492,6 +527,23 @@ export function ConversationList({
             );
           })}
               </ul>
+              {section.capped && (
+                <button
+                  type="button"
+                  onClick={() => toggleSection(section.label)}
+                  aria-expanded={section.hidden === 0}
+                  data-testid="conversation-show-more"
+                  className={cn(
+                    'mt-0.5 flex w-full cursor-pointer items-center rounded-lg px-2 py-1 text-left text-[12px] font-medium',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset',
+                    dark
+                      ? 'text-white/60 hover:bg-white/10 hover:text-white'
+                      : 'text-text-tertiary hover:bg-surface-hover hover:text-text-primary',
+                  )}
+                >
+                  {section.hidden > 0 ? `Show ${section.hidden} more` : 'Show less'}
+                </button>
+              )}
             </div>
           ))}
         </div>

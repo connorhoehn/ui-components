@@ -60,6 +60,8 @@ export interface ConversationRailProps {
    * surface whose subject is people rather than rooms.
    */
   sectionOrder?: 'channels-first' | 'dms-first';
+  /** Forwarded to the list: rows per group before a "Show N more" row. */
+  maxVisible?: number;
   emptyLabel?: string;
   /** Above the shelf: a workspace switcher, a search field, a title. */
   header?: ReactNode;
@@ -77,6 +79,7 @@ export function ConversationRail({
   onNewChat,
   grouped = true,
   sectionOrder = 'channels-first',
+  maxVisible,
   emptyLabel,
   header,
   footer,
@@ -107,6 +110,7 @@ export function ConversationRail({
         items={conversations}
         grouped={grouped}
         sectionOrder={sectionOrder}
+        maxVisible={maxVisible}
         // A shelf selection means no conversation is open, so no row is
         // active — passing the last-opened channel here is how a rail ends up
         // highlighting two things at once.

@@ -209,3 +209,51 @@ describe('a live call', () => {
     expect(screen.getAllByTestId('conversation-live')).toHaveLength(1);
   });
 });
+
+// Top-k: a rail past a handful of rows is read, not scanned.
+describe('ConversationList maxVisible', () => {
+  const many: ConversationItem[] = Array.from({ length: 7 }, (_, i) => ({
+    channel: `chat:dm:me:p${i}`,
+    peers: [{ userId: `p${i}`, displayName: `Person ${i}` }],
+    lastMessageAt: new Date(2026, 0, 1 + i).toISOString(),
+  }));
+
+  it('shows the most recent rows and folds the rest behind one button', () => {
+    render(<ConversationList items={many} onSelect={onSelect} maxVisible={3} />);
+    expect(screen.getAllByTestId('conversation-row')).toHaveLength(3);
+    // Recency first: the newest three, not the first three in the array.
+    expect(screen.getByText('Person 6')).toBeInTheDocument();
+    expect(screen.queryByText('Person 0')).toBeNull();
+    const more = screen.getByTestId('conversation-show-more');
+    expect(more).toHaveTextContent('Show 4 more');
+    fireEvent.click(more);
+    expect(screen.getAllByTestId('conversation-row')).toHaveLength(7);
+    expect(more).toHaveTextContent('Show less');
+    fireEvent.click(more);
+    expect(screen.getAllByTestId('conversation-row')).toHaveLength(3);
+  });
+
+  it('keeps the open conversation visible even when it is old', () => {
+    render(
+      <ConversationList items={many} onSelect={onSelect} maxVisible={3} activeChannel="chat:dm:me:p0" />,
+    );
+    expect(screen.getAllByTestId('conversation-row')).toHaveLength(3);
+    expect(screen.getByText('Person 0')).toBeInTheDocument();
+    expect(screen.getByTestId('conversation-show-more')).toHaveTextContent('Show 4 more');
+  });
+
+  it('renders no button when the list fits', () => {
+    render(<ConversationList items={many.slice(0, 3)} onSelect={onSelect} maxVisible={3} />);
+    expect(screen.queryByTestId('conversation-show-more')).toBeNull();
+  });
+
+  it('caps each group on its own when grouped', () => {
+    const withChannels: ConversationItem[] = [
+      ...many,
+      ...['general', 'random', 'dev'].map((name) => ({ channel: `chat:${name}`, kind: 'channel' as const, name, peers: [] })),
+    ];
+    render(<ConversationList items={withChannels} onSelect={onSelect} grouped maxVisible={2} />);
+    expect(screen.getAllByTestId('conversation-row')).toHaveLength(4);
+    expect(screen.getAllByTestId('conversation-show-more')).toHaveLength(2);
+  });
+});

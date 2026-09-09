@@ -505,10 +505,10 @@ function L(e, t) {
 	let n = e.lastMessageAt ? Date.parse(e.lastMessageAt) : NaN, r = t.lastMessageAt ? Date.parse(t.lastMessageAt) : NaN, i = Number.isNaN(n) ? null : n, a = Number.isNaN(r) ? null : r;
 	return i === null && a === null ? 0 : i === null ? 1 : a === null ? -1 : a - i;
 }
-function R({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sortByRecency: r = !0, activeChannel: i, onSelect: a, onNewChat: o, emptyLabel: c = "No conversations yet", tone: l = "light", className: p, "data-testid": h }) {
-	let g = l === "dark", _ = r ? [...e].sort(L) : e, v = [];
+function R({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sortByRecency: r = !0, maxVisible: i, activeChannel: a, onSelect: o, onNewChat: c, emptyLabel: l = "No conversations yet", tone: p = "light", className: h, "data-testid": g }) {
+	let _ = p === "dark", v = r ? [...e].sort(L) : e, y = [];
 	if (t) {
-		let e = (e) => (e.kind ?? (e.peers.length > 1 ? "group" : "dm")) === "channel", t = _.filter(e), r = _.filter((t) => !e(t)), i = {
+		let e = (e) => (e.kind ?? (e.peers.length > 1 ? "group" : "dm")) === "channel", t = v.filter(e), r = v.filter((t) => !e(t)), i = {
 			heading: "Channels",
 			label: "Channels",
 			items: t
@@ -517,155 +517,184 @@ function R({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sort
 			label: "Direct messages",
 			items: r
 		}, o = n === "dms-first" ? [a, i] : [i, a];
-		for (let e of o) e.items.length > 0 && v.push(e);
-	} else v.push({
+		for (let e of o) e.items.length > 0 && y.push(e);
+	} else y.push({
 		label: "Conversations",
-		items: _
+		items: v
 	});
-	let y = v.flatMap((e) => e.items), x = C(null), [S, T] = w(null), O = (S && y.some((e) => e.channel === S) ? S : null) ?? (i && y.some((e) => e.channel === i) ? i : null) ?? y[0]?.channel ?? null, k = C(null);
+	let [x, S] = w(() => /* @__PURE__ */ new Set()), T = y.map((e) => {
+		let t = i !== void 0 && i >= 0 && e.items.length > i;
+		if (!t || x.has(e.label)) return {
+			...e,
+			shown: e.items,
+			hidden: 0,
+			capped: t
+		};
+		let n = e.items.slice(0, i), r = a ? e.items.find((e) => e.channel === a) : void 0;
+		return r && !n.includes(r) && (n = i === 0 ? [r] : [...n.slice(0, -1), r]), {
+			...e,
+			shown: n,
+			hidden: e.items.length - n.length,
+			capped: t
+		};
+	}), O = (e) => S((t) => {
+		let n = new Set(t);
+		return n.has(e) ? n.delete(e) : n.add(e), n;
+	}), k = T.flatMap((e) => e.shown), A = C(null), [j, M] = w(null), N = (j && k.some((e) => e.channel === j) ? j : null) ?? (a && k.some((e) => e.channel === a) ? a : null) ?? k[0]?.channel ?? null, P = C(null);
 	b(() => {
-		let e = k.current;
+		let e = P.current;
 		if (!e) return;
-		k.current = null;
-		let t = x.current?.querySelector(`[data-testid="conversation-row"][data-channel="${CSS.escape(e)}"]`);
+		P.current = null;
+		let t = A.current?.querySelector(`[data-testid="conversation-row"][data-channel="${CSS.escape(e)}"]`);
 		t?.focus(), t?.scrollIntoView({ block: "nearest" });
 	});
-	function A(e) {
-		let t = Math.max(0, Math.min(y.length - 1, e)), n = y[t];
-		!n || n.channel === O || (k.current = n.channel, T(n.channel));
+	function F(e) {
+		let t = Math.max(0, Math.min(k.length - 1, e)), n = k[t];
+		!n || n.channel === N || (P.current = n.channel, M(n.channel));
 	}
-	function j(e) {
-		if (y.length === 0) return;
-		let t = y.findIndex((e) => e.channel === O), n = t < 0 ? 0 : t;
+	function I(e) {
+		if (k.length === 0) return;
+		let t = k.findIndex((e) => e.channel === N), n = t < 0 ? 0 : t;
 		switch (e.key) {
 			case "ArrowDown":
-				A(n + 1);
+				F(n + 1);
 				break;
 			case "ArrowUp":
-				A(n - 1);
+				F(n - 1);
 				break;
 			case "Home":
-				A(0);
+				F(0);
 				break;
 			case "End":
-				A(y.length - 1);
+				F(k.length - 1);
 				break;
 			default: return;
 		}
 		e.preventDefault();
 	}
 	return /* @__PURE__ */ D("div", {
-		className: s("flex min-h-0 flex-col gap-1", p),
-		"data-testid": h,
-		children: [o && /* @__PURE__ */ D("button", {
+		className: s("flex min-h-0 flex-col gap-1", h),
+		"data-testid": g,
+		children: [c && /* @__PURE__ */ D("button", {
 			type: "button",
-			onClick: o,
+			onClick: c,
 			"data-testid": "conversation-new-chat",
-			className: s("flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[13px] font-medium", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset", g ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"),
+			className: s("flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[13px] font-medium", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset", _ ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"),
 			children: [/* @__PURE__ */ E("span", {
 				"aria-hidden": "true",
-				className: s("grid h-6 w-6 place-items-center rounded-full border border-dashed text-sm leading-none", g ? "border-white/30" : "border-border"),
+				className: s("grid h-6 w-6 place-items-center rounded-full border border-dashed text-sm leading-none", _ ? "border-white/30" : "border-border"),
 				children: "+"
 			}), "New chat"]
 		}), e.length === 0 ? /* @__PURE__ */ E("p", {
-			className: s("m-0 px-2 py-1.5 text-[13px]", g ? "text-white/60" : "text-text-secondary"),
+			className: s("m-0 px-2 py-1.5 text-[13px]", _ ? "text-white/60" : "text-text-secondary"),
 			"data-testid": "conversation-empty",
-			children: c
+			children: l
 		}) : /* @__PURE__ */ E("div", {
-			ref: x,
-			onKeyDown: j,
+			ref: A,
+			onKeyDown: I,
 			className: "m-0 flex min-h-0 flex-col overflow-y-auto p-0",
-			children: v.map((e) => /* @__PURE__ */ D("div", { children: [e.heading && /* @__PURE__ */ E("p", {
-				"data-testid": "conversation-section",
-				"aria-hidden": !0,
-				className: s("m-0 px-2 pb-0.5 pt-3 text-[11px] font-semibold uppercase tracking-wide", g ? "text-white/40" : "text-text-tertiary"),
-				children: e.heading
-			}), /* @__PURE__ */ E("ul", {
-				className: "m-0 flex list-none flex-col gap-0.5 p-0",
-				"aria-label": e.label,
-				children: e.items.map((e) => {
-					let t = e.channel === i, n = e.channel === O, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), o = r === "channel", c = r === "group", l = e.peers[0], p = o ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), h = e.lastMessageAt ? m(e.lastMessageAt) : "", _ = e.unreadCount ?? 0, v = !!e.mentioned, y = !!e.live;
-					return /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
-						type: "button",
-						onClick: () => a(e.channel),
-						onFocus: () => T(e.channel),
-						"data-testid": "conversation-row",
-						"data-channel": e.channel,
-						"data-active": t ? "true" : "false",
-						"aria-current": t ? "true" : void 0,
-						tabIndex: n ? 0 : -1,
-						className: s("flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset", g ? "hover:bg-white/10" : "hover:bg-surface-hover", t && (g ? "bg-white/10" : "bg-surface-hover")),
-						children: [
-							o ? /* @__PURE__ */ E("span", {
-								"aria-hidden": "true",
-								"data-testid": "conversation-channel-glyph",
-								className: s("grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[15px] font-semibold leading-none", g ? "bg-white/10 text-white/70" : "bg-surface-inset text-text-secondary"),
-								children: "#"
-							}) : c ? /* @__PURE__ */ E(u, {
-								size: 28,
-								maxVisible: 2,
-								items: e.peers.map((e) => ({
-									name: e.displayName,
-									color: e.color,
-									src: e.avatarUrl
-								}))
-							}) : l ? /* @__PURE__ */ D("span", {
-								className: "relative inline-flex shrink-0",
-								children: [/* @__PURE__ */ E(d, {
-									name: l.displayName,
-									color: l.color,
-									src: l.avatarUrl,
-									size: 28
-								}), l.online !== void 0 && /* @__PURE__ */ E(f, {
-									state: l.online ? "online" : "offline",
-									pulse: !1,
-									className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", g ? "ring-call-chrome" : "ring-surface")
-								})]
-							}) : null,
-							/* @__PURE__ */ D("span", {
-								className: "flex min-w-0 flex-1 flex-col",
-								children: [/* @__PURE__ */ D("span", {
-									className: "flex items-baseline gap-2",
-									children: [/* @__PURE__ */ E("span", {
-										className: s("min-w-0 flex-1 truncate text-[13px]", _ > 0 ? "font-semibold" : "font-medium", g ? "text-white" : "text-text-primary"),
-										children: p
-									}), h && /* @__PURE__ */ E("span", {
-										className: s("shrink-0 text-[11px] tabular-nums", g ? "text-white/50" : "text-text-tertiary"),
-										"data-testid": "conversation-time",
-										children: h
+			children: T.map((e) => /* @__PURE__ */ D("div", { children: [
+				e.heading && /* @__PURE__ */ E("p", {
+					"data-testid": "conversation-section",
+					"aria-hidden": !0,
+					className: s("m-0 px-2 pb-0.5 pt-3 text-[11px] font-semibold uppercase tracking-wide", _ ? "text-white/40" : "text-text-tertiary"),
+					children: e.heading
+				}),
+				/* @__PURE__ */ E("ul", {
+					className: "m-0 flex list-none flex-col gap-0.5 p-0",
+					"aria-label": e.label,
+					children: e.shown.map((e) => {
+						let t = e.channel === a, n = e.channel === N, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", c = r === "group", l = e.peers[0], p = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), h = e.lastMessageAt ? m(e.lastMessageAt) : "", g = e.unreadCount ?? 0, v = !!e.mentioned, y = !!e.live;
+						return /* @__PURE__ */ E("li", { children: /* @__PURE__ */ D("button", {
+							type: "button",
+							onClick: () => o(e.channel),
+							onFocus: () => M(e.channel),
+							"data-testid": "conversation-row",
+							"data-channel": e.channel,
+							"data-active": t ? "true" : "false",
+							"aria-current": t ? "true" : void 0,
+							tabIndex: n ? 0 : -1,
+							className: s("flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset", _ ? "hover:bg-white/10" : "hover:bg-surface-hover", t && (_ ? "bg-white/10" : "bg-surface-hover")),
+							children: [
+								i ? /* @__PURE__ */ E("span", {
+									"aria-hidden": "true",
+									"data-testid": "conversation-channel-glyph",
+									className: s("grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[15px] font-semibold leading-none", _ ? "bg-white/10 text-white/70" : "bg-surface-inset text-text-secondary"),
+									children: "#"
+								}) : c ? /* @__PURE__ */ E(u, {
+									size: 28,
+									maxVisible: 2,
+									items: e.peers.map((e) => ({
+										name: e.displayName,
+										color: e.color,
+										src: e.avatarUrl
+									}))
+								}) : l ? /* @__PURE__ */ D("span", {
+									className: "relative inline-flex shrink-0",
+									children: [/* @__PURE__ */ E(d, {
+										name: l.displayName,
+										color: l.color,
+										src: l.avatarUrl,
+										size: 28
+									}), l.online !== void 0 && /* @__PURE__ */ E(f, {
+										state: l.online ? "online" : "offline",
+										pulse: !1,
+										className: s("absolute -bottom-0.5 -right-0.5 rounded-full ring-2", _ ? "ring-call-chrome" : "ring-surface")
 									})]
-								}), e.lastMessagePreview && /* @__PURE__ */ E("span", {
-									className: s("truncate text-[12px]", g ? "text-white/60" : "text-text-secondary"),
-									"data-testid": "conversation-preview",
-									children: e.lastMessagePreview
-								})]
-							}),
-							y && /* @__PURE__ */ D("span", {
-								"data-testid": "conversation-live",
-								"aria-label": "Call in progress",
-								title: "Call in progress",
-								className: "inline-flex shrink-0 items-center gap-1 rounded-full bg-danger px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wide text-white",
-								children: [/* @__PURE__ */ E("span", {
-									"aria-hidden": !0,
-									className: "h-1.5 w-1.5 rounded-full bg-white"
-								}), "Live"]
-							}),
-							v && /* @__PURE__ */ E("span", {
-								"data-testid": "conversation-mention",
-								"aria-label": "You were mentioned",
-								title: "You were mentioned",
-								className: "grid h-5 w-5 shrink-0 place-items-center rounded-full bg-danger text-[11px] font-bold leading-none text-white",
-								children: "@"
-							}),
-							_ > 0 && /* @__PURE__ */ E("span", {
-								"data-testid": "conversation-unread",
-								className: "grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold leading-none text-white",
-								children: _ > 99 ? "99+" : _
-							})
-						]
-					}) }, e.channel);
+								}) : null,
+								/* @__PURE__ */ D("span", {
+									className: "flex min-w-0 flex-1 flex-col",
+									children: [/* @__PURE__ */ D("span", {
+										className: "flex items-baseline gap-2",
+										children: [/* @__PURE__ */ E("span", {
+											className: s("min-w-0 flex-1 truncate text-[13px]", g > 0 ? "font-semibold" : "font-medium", _ ? "text-white" : "text-text-primary"),
+											children: p
+										}), h && /* @__PURE__ */ E("span", {
+											className: s("shrink-0 text-[11px] tabular-nums", _ ? "text-white/50" : "text-text-tertiary"),
+											"data-testid": "conversation-time",
+											children: h
+										})]
+									}), e.lastMessagePreview && /* @__PURE__ */ E("span", {
+										className: s("truncate text-[12px]", _ ? "text-white/60" : "text-text-secondary"),
+										"data-testid": "conversation-preview",
+										children: e.lastMessagePreview
+									})]
+								}),
+								y && /* @__PURE__ */ D("span", {
+									"data-testid": "conversation-live",
+									"aria-label": "Call in progress",
+									title: "Call in progress",
+									className: "inline-flex shrink-0 items-center gap-1 rounded-full bg-danger px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wide text-white",
+									children: [/* @__PURE__ */ E("span", {
+										"aria-hidden": !0,
+										className: "h-1.5 w-1.5 rounded-full bg-white"
+									}), "Live"]
+								}),
+								v && /* @__PURE__ */ E("span", {
+									"data-testid": "conversation-mention",
+									"aria-label": "You were mentioned",
+									title: "You were mentioned",
+									className: "grid h-5 w-5 shrink-0 place-items-center rounded-full bg-danger text-[11px] font-bold leading-none text-white",
+									children: "@"
+								}),
+								g > 0 && /* @__PURE__ */ E("span", {
+									"data-testid": "conversation-unread",
+									className: "grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold leading-none text-white",
+									children: g > 99 ? "99+" : g
+								})
+							]
+						}) }, e.channel);
+					})
+				}),
+				e.capped && /* @__PURE__ */ E("button", {
+					type: "button",
+					onClick: () => O(e.label),
+					"aria-expanded": e.hidden === 0,
+					"data-testid": "conversation-show-more",
+					className: s("mt-0.5 flex w-full cursor-pointer items-center rounded-lg px-2 py-1 text-left text-[12px] font-medium", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset", _ ? "text-white/60 hover:bg-white/10 hover:text-white" : "text-text-tertiary hover:bg-surface-hover hover:text-text-primary"),
+					children: e.hidden > 0 ? `Show ${e.hidden} more` : "Show less"
 				})
-			})] }, e.label))
+			] }, e.label))
 		})]
 	});
 }
@@ -2441,8 +2470,8 @@ function Ce({ idToken: e, rooms: n, createGroupRoom: r, onRoomSelect: i, roomsLo
 function we() {
 	return "";
 }
-var Q = 50;
-function Te(e) {
+var Te = 50;
+function Q(e) {
 	let t = e.detail;
 	switch (e.eventType) {
 		case "social.room.join": return {
@@ -2569,7 +2598,7 @@ function Oe({ idToken: e, sendMessage: t, onMessage: n, connectionState: r }) {
 			eventType: t.eventType,
 			timestamp: t.timestamp,
 			detail: t.detail
-		}, ...e].slice(0, Q));
+		}, ...e].slice(0, Te));
 	}), [n]), {
 		items: i,
 		loading: s,
@@ -2616,7 +2645,7 @@ function ke({ idToken: e, sendMessage: t, onMessage: n, connectionState: r }) {
 			className: "py-10 text-center text-text-tertiary text-sm",
 			children: "No activity yet"
 		}) : /* @__PURE__ */ E("div", { children: i.map((e, t) => {
-			let { icon: n, text: r } = Te(e);
+			let { icon: n, text: r } = Q(e);
 			return /* @__PURE__ */ D("div", {
 				className: s("flex flex-row items-center gap-2 py-2", t < i.length - 1 && "border-b border-surface-hover"),
 				children: [
@@ -2739,14 +2768,14 @@ function $({ items: e, activeId: t, onSelect: n, className: r, "data-testid": i 
 }
 //#endregion
 //#region src/components/social/ConversationRail.tsx
-function je({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, onNewChat: i, grouped: a = !0, sectionOrder: o = "channels-first", emptyLabel: c, header: l, footer: u, className: d, "data-testid": f = "conversation-rail" }) {
+function je({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, onNewChat: i, grouped: a = !0, sectionOrder: o = "channels-first", maxVisible: c, emptyLabel: l, header: u, footer: d, className: f, "data-testid": p = "conversation-rail" }) {
 	return /* @__PURE__ */ D("aside", {
-		"data-testid": f,
-		className: s("flex min-h-0 w-80 shrink-0 flex-col border-r border-border bg-surface", d),
+		"data-testid": p,
+		className: s("flex min-h-0 w-80 shrink-0 flex-col border-r border-border bg-surface", f),
 		children: [
-			l && /* @__PURE__ */ E("div", {
+			u && /* @__PURE__ */ E("div", {
 				className: "shrink-0",
-				children: l
+				children: u
 			}),
 			e.length > 0 && /* @__PURE__ */ E($, {
 				items: e,
@@ -2756,25 +2785,26 @@ function je({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, 
 					id: e
 				}),
 				className: "shrink-0 px-2 pt-2",
-				"data-testid": `${f}-shelf`
+				"data-testid": `${p}-shelf`
 			}),
 			/* @__PURE__ */ E(R, {
 				items: t,
 				grouped: a,
 				sectionOrder: o,
+				maxVisible: c,
 				activeChannel: n?.kind === "conversation" ? n.channel : null,
 				onSelect: (e) => r({
 					kind: "conversation",
 					channel: e
 				}),
 				onNewChat: i,
-				emptyLabel: c,
+				emptyLabel: l,
 				className: "min-h-0 flex-1 overflow-y-auto p-2",
-				"data-testid": `${f}-list`
+				"data-testid": `${p}-list`
 			}),
-			u && /* @__PURE__ */ E("div", {
+			d && /* @__PURE__ */ E("div", {
 				className: "shrink-0",
-				children: u
+				children: d
 			})
 		]
 	});

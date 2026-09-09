@@ -573,7 +573,7 @@ export declare interface ConversationItem {
     live?: boolean;
 }
 
-export declare function ConversationList({ items, grouped, sectionOrder, sortByRecency, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+export declare function ConversationList({ items, grouped, sectionOrder, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
 
 export declare interface ConversationListProps {
     items: ConversationItem[];
@@ -614,6 +614,17 @@ export declare interface ConversationListProps {
      * the participants of a live call every time somebody spoke.
      */
     sortByRecency?: boolean;
+    /**
+     * Show at most this many rows per group, with a "Show N more" row after
+     * them that expands the group in place (and "Show less" to fold it back).
+     *
+     * A rail is a place to find the conversation you want, and past a handful
+     * of rows the eye stops scanning and starts reading. With recency sorting
+     * on, the cut keeps the most recent; the open conversation is always kept
+     * visible so the highlight never sits inside the folded part. Unset shows
+     * everything, which is what every existing caller gets.
+     */
+    maxVisible?: number;
     tone?: 'light' | 'dark';
     className?: string;
     'data-testid'?: string;
@@ -628,7 +639,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, emptyLabel, header, footer, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, maxVisible, emptyLabel, header, footer, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -653,6 +664,8 @@ export declare interface ConversationRailProps {
      * surface whose subject is people rather than rooms.
      */
     sectionOrder?: 'channels-first' | 'dms-first';
+    /** Forwarded to the list: rows per group before a "Show N more" row. */
+    maxVisible?: number;
     emptyLabel?: string;
     /** Above the shelf: a workspace switcher, a search field, a title. */
     header?: ReactNode;
@@ -1421,19 +1434,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1453,42 +1453,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -1525,6 +1495,49 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
