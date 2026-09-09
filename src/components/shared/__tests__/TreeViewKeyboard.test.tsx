@@ -87,3 +87,30 @@ describe('TreeView keyboard', () => {
     expect(onToggle).toHaveBeenCalledWith('b', true);
   });
 });
+
+describe('TreeView row status', () => {
+  it('draws a pending move translucent, inert and busy; a landed one tinted', () => {
+    render(
+      <TreeView
+        nodes={[
+          { id: 'p', title: 'Pending', parentId: null, status: 'pending' },
+          { id: 'm', title: 'Moved', parentId: null, status: 'moved' },
+          { id: 'n', title: 'Plain', parentId: null },
+        ]}
+        selectedId={null}
+        onSelect={() => {}}
+        onReorder={() => {}}
+      />,
+    );
+    const pending = row('p');
+    expect(pending.getAttribute('aria-busy')).toBe('true');
+    expect(pending.className).toContain('opacity-50');
+    expect(pending.className).toContain('pointer-events-none');
+    // Not a drag source while in flight.
+    expect(pending.getAttribute('draggable')).toBe('false');
+    expect(row('m').getAttribute('data-status')).toBe('moved');
+    expect(row('m').className).toContain('bg-success/10');
+    expect(row('n').hasAttribute('aria-busy')).toBe(false);
+    expect(row('n').getAttribute('draggable')).toBe('true');
+  });
+});

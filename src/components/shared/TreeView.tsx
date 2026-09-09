@@ -37,6 +37,13 @@ export interface TreeNode {
   badge?: ReactNode;
   meta?: string;
   disabled?: boolean;
+  /**
+   * What is happening to this row right now, for a move the host has sent and
+   * not yet heard back about. `pending` draws the row translucent and inert
+   * (`aria-busy`); `moved` flashes it as landed. The host clears both — the
+   * tree has no idea when a server answered.
+   */
+  status?: 'pending' | 'moved';
 }
 
 export type TreeDropPosition = 'before' | 'after' | 'into';
@@ -165,7 +172,7 @@ function TreeRow({
   return (
     <div>
       <div
-        draggable={dragEnabled && !entry.disabled}
+        draggable={dragEnabled && !entry.disabled && entry.status !== 'pending'}
         onDragStart={(event) => {
           if (entry.disabled) return;
           event.dataTransfer.setData('text/plain', entry.id);
@@ -203,6 +210,8 @@ function TreeRow({
         aria-selected={isSelected}
         aria-disabled={entry.disabled}
         aria-level={depth + 1}
+        aria-busy={entry.status === 'pending' || undefined}
+        data-status={entry.status}
         {...(hasChildren ? { 'aria-expanded': isExpanded } : {})}
         // Roving tabindex (WAI-ARIA tree pattern): exactly one row is in the
         // tab order — the focused one, else the selected one, else the first —
@@ -216,6 +225,12 @@ function TreeRow({
             ? 'border-primary bg-surface-hover font-semibold text-text-primary'
             : 'border-transparent text-text-secondary hover:bg-surface-hover',
           entry.disabled && 'cursor-not-allowed opacity-50',
+          // A move in flight: still on screen where it will land, but
+          // visibly not there yet, and not a drop target or a drag source.
+          entry.status === 'pending' && 'pointer-events-none opacity-50',
+          // Landed. `transition-colors` above fades the tint back out when
+          // the host clears the status.
+          entry.status === 'moved' && 'bg-success/10',
           isDropTarget && dropTarget?.position === 'into' && 'ring-1 ring-inset ring-primary',
           isDropTarget && dropTarget?.position === 'before' && 'shadow-[inset_0_2px_0_0_var(--color-primary)]',
           isDropTarget && dropTarget?.position === 'after' && 'shadow-[inset_0_-2px_0_0_var(--color-primary)]',
