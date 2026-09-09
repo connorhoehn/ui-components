@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.221.0",
+  "version": "2.222.0",
   "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
