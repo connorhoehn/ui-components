@@ -4447,6 +4447,23 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
+export declare function ExplorerLayout({ rail, children, aside, railWidth, panePadding, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+
+export declare interface ExplorerLayoutProps {
+    /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
+    rail: ReactNode;
+    /** The main pane. */
+    children: ReactNode;
+    /** Optional right-hand context bar. Stacks below the pane under `2xl`, sits beside it at `2xl` and up. */
+    aside?: ReactNode;
+    /** Rail width. `md` is the 300px agentcore measured against; `sm` is 240px for a shallower tree. */
+    railWidth?: 'sm' | 'md';
+    /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
+    panePadding?: 'none' | 'md';
+    className?: string;
+    'data-testid'?: string;
+}
+
 declare interface FieldTypeDefinition {
     /** Unique key — matches SectionType for built-ins; UUID for user-defined types */
     type: string;
@@ -11607,7 +11624,7 @@ export declare interface TreeNode {
     disabled?: boolean;
 }
 
-export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, onReorder, renderTrailing, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
+export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, expanded: controlledExpanded, onToggle, onReorder, renderTrailing, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
 
 export declare interface TreeViewProps {
     nodes: TreeNode[];
@@ -11615,6 +11632,15 @@ export declare interface TreeViewProps {
     onSelect: (id: string) => void;
     /** Node ids expanded on first render. Ancestors of `selectedId` auto-expand. */
     defaultExpanded?: string[];
+    /**
+     * Controlled expansion. When given, the tree renders exactly these ids open
+     * and reports every caret click and ArrowLeft/ArrowRight through `onToggle`
+     * instead of keeping its own set — for a host that persists expansion or
+     * drives it from a URL. Ancestors of `selectedId` are still auto-opened,
+     * reported through `onToggle` as well.
+     */
+    expanded?: string[];
+    onToggle?: (id: string, expanded: boolean) => void;
     /** Enables HTML5 drag-and-drop reorder/reparent when provided. */
     onReorder?: (id: string, targetParentId: string | null, position: number) => void;
     /** Trailing slot per row — count chip, badge, menu button. */
@@ -13476,19 +13502,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -13508,9 +13521,55 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -13544,42 +13603,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
