@@ -67,3 +67,5 @@ export { useWebSocket } from './useWebSocket';
 export { useYjsDoc } from './useYjsDoc';
 
 export { useEventCallback } from './useEventCallback';
+export { useMediaDevices } from './useMediaDevices';
+export type { MediaDevices, MediaDeviceOption } from './useMediaDevices';

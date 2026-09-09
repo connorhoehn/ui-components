@@ -25,7 +25,7 @@ import { cn } from '../../lib/cn';
 import Modal from '../shared/Modal';
 import { StreamVideo } from './StreamVideo';
 
-export type CallSettingsTab = 'effects' | 'people' | 'chat';
+export type CallSettingsTab = 'devices' | 'effects' | 'people' | 'chat';
 
 export interface CallSettingsDialogProps {
   open: boolean;
@@ -40,6 +40,9 @@ export interface CallSettingsDialogProps {
    *  first available tab) when that tab's slot is missing. */
   initialTab?: CallSettingsTab;
 
+  /** "Devices" tab body — e.g. a <DeviceSettingsPanel/> wired to the
+   *  consumer's device preferences. Omit to hide the tab. */
+  devicesContent?: ReactNode;
   /** "Effects" tab body — e.g. a <MediaEffectsTray/> wired to the
    *  consumer's effects engine. Omit to hide the tab. */
   effectsContent?: ReactNode;
@@ -66,6 +69,7 @@ export interface CallSettingsDialogProps {
 }
 
 const TAB_LABELS: Record<CallSettingsTab, string> = {
+  devices: 'Devices',
   effects: 'Effects',
   people: 'People',
   chat: 'Chat',
@@ -76,6 +80,7 @@ export function CallSettingsDialog({
   onClose,
   previewStream,
   initialTab = 'effects',
+  devicesContent,
   effectsContent,
   peopleContent,
   chatContent,
@@ -85,6 +90,7 @@ export function CallSettingsDialog({
 }: CallSettingsDialogProps) {
   // A tab only exists when its slot was provided.
   const available: CallSettingsTab[] = [
+    ...(devicesContent != null ? (['devices'] as const) : []),
     ...(effectsContent != null ? (['effects'] as const) : []),
     ...(peopleContent != null ? (['people'] as const) : []),
     ...(chatContent != null ? (['chat'] as const) : []),
@@ -205,6 +211,7 @@ export function CallSettingsDialog({
               data-testid="call-settings-panel"
               className="min-h-0 flex-1 overflow-y-auto p-4 sm:max-h-[460px]"
             >
+              {activeTab === 'devices' ? devicesContent : null}
               {activeTab === 'effects' ? effectsContent : null}
               {activeTab === 'people' ? peopleContent : null}
               {activeTab === 'chat' ? chatContent : null}

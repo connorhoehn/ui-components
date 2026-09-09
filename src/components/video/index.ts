@@ -251,3 +251,8 @@ export type { StreamChatTickerProps, StreamChatMessage } from './StreamChatTicke
 // Ships inert — hosts gate it behind their own flag. See the file header.
 export { GoLiveButton } from './GoLiveButton';
 export type { GoLiveButtonProps } from './GoLiveButton';
+
+// Which microphone, camera and speaker a call uses — the Devices tab of
+// CallSettingsDialog. The host owns and applies the chosen ids.
+export { DeviceSettingsPanel } from './DeviceSettingsPanel';
+export type { DeviceSettingsPanelProps, DevicePreferences } from './DeviceSettingsPanel';
