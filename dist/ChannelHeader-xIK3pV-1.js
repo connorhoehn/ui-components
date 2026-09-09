@@ -223,7 +223,7 @@ function b({ name: r, memberCount: i, description: a, tabs: o, actions: s, avata
 				})]
 			}),
 			o && /* @__PURE__ */ c("div", {
-				className: "flex min-w-[14rem] flex-1 items-center overflow-x-auto",
+				className: "flex min-w-fit flex-1 items-center",
 				children: o
 			}),
 			s && /* @__PURE__ */ c("div", {

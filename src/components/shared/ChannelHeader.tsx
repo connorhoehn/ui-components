@@ -134,10 +134,11 @@ export function ChannelHeader({
         </div>
       </div>
 
-      {/* Middle: the channel's other views. Allowed to shrink and scroll
-          rather than push the name or the actions off the bar. */}
+      {/* Middle: the channel's other views. Never clipped: when the bar is too
+          narrow for identity + tabs + actions on one line, the tabs (and the
+          actions after them) wrap onto a second line under the name. */}
       {tabs && (
-        <div className="flex min-w-[14rem] flex-1 items-center overflow-x-auto">
+        <div className="flex min-w-fit flex-1 items-center">
           {tabs}
         </div>
       )}
