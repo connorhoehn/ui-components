@@ -48,6 +48,22 @@ declare interface ApiHealthSnapshot {
 
 declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
 
+export declare interface AudioRecorder {
+    state: AudioRecorderState;
+    /** Wall time recorded so far (live while recording, final once recorded). */
+    elapsedMs: number;
+    blob: Blob | null;
+    /** Object URL for `blob`, for a preview player. Revoked on reset/unmount. */
+    url: string | null;
+    mimeType: string | null;
+    error: string | null;
+    start: () => Promise<void>;
+    stop: () => void;
+    reset: () => void;
+}
+
+export declare type AudioRecorderState = 'idle' | 'starting' | 'recording' | 'recorded' | 'error';
+
 declare interface AuditActor {
     type: 'admin' | 'user' | 'system';
     email?: string;
@@ -830,6 +846,9 @@ declare interface PasswordPolicy {
     requireSymbols: boolean;
 }
 
+/** The first container this browser can record, or `undefined` for its default. */
+export declare function pickRecordingMimeType(preferred?: string): string | undefined;
+
 declare interface PipelineDefSummary {
     id: string;
     name: string;
@@ -1187,6 +1206,18 @@ declare interface UseActivityBusReturn {
   * "degraded" before the first response.
   */
  export declare function useApiHealth(pollMs?: number): ApiHealthSnapshot;
+
+ export declare function useAudioRecorder({ getStream, maxMs, mimeType, audioBitsPerSecond }: UseAudioRecorderOptions): AudioRecorder;
+
+ export declare interface UseAudioRecorderOptions {
+     /** How to get a microphone — the host owns device preferences and constraints. */
+     getStream: () => Promise<MediaStream>;
+     /** Recording stops itself here. */
+     maxMs?: number;
+     /** Preferred container; falls back through what the browser can encode. */
+     mimeType?: string;
+     audioBitsPerSecond?: number;
+ }
 
  export declare function useAuth(): UseAuthReturn;
 
@@ -2251,6 +2282,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2270,12 +2314,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2286,6 +2327,29 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -2322,39 +2386,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

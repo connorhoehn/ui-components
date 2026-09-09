@@ -754,6 +754,22 @@ export declare interface AttachmentBubbleProps {
     className?: string;
 }
 
+export declare interface AudioRecorder {
+    state: AudioRecorderState;
+    /** Wall time recorded so far (live while recording, final once recorded). */
+    elapsedMs: number;
+    blob: Blob | null;
+    /** Object URL for `blob`, for a preview player. Revoked on reset/unmount. */
+    url: string | null;
+    mimeType: string | null;
+    error: string | null;
+    start: () => Promise<void>;
+    stop: () => void;
+    reset: () => void;
+}
+
+export declare type AudioRecorderState = 'idle' | 'starting' | 'recording' | 'recorded' | 'error';
+
 export declare interface AuditActor {
     type: 'admin' | 'user' | 'system';
     email?: string;
@@ -857,6 +873,19 @@ export declare interface AuditRow {
 export declare interface AuthContext {
     userId: string;
     scopes?: readonly string[];
+}
+
+export declare function AuthedAudio({ src, getAuthToken, onFirstPlay, eager, className, 'data-testid': testId }: AuthedAudioProps): JSX.Element;
+
+export declare interface AuthedAudioProps {
+    src: string;
+    getAuthToken: () => string | null | Promise<string | null>;
+    /** Fires once, when playback first starts — "mark as listened". */
+    onFirstPlay?: () => void;
+    /** Fetch immediately rather than on the Play click. */
+    eager?: boolean;
+    className?: string;
+    'data-testid'?: string;
 }
 
 /**
@@ -7630,6 +7659,9 @@ export declare interface PersonHoverCardProps {
 
 export declare function PhoneOffIcon({ size, ...rest }: IconProps): JSX.Element;
 
+/** The first container this browser can record, or `undefined` for its default. */
+export declare function pickRecordingMimeType(preferred?: string): string | undefined;
+
 export declare interface PinnedMessageItem {
     messageId: string;
     /** Who wrote the message. */
@@ -11939,6 +11971,18 @@ declare interface UseActivityBusReturn {
 
  export declare function useAudioLevel(stream: MediaStream | null | undefined): number | null;
 
+ export declare function useAudioRecorder({ getStream, maxMs, mimeType, audioBitsPerSecond }: UseAudioRecorderOptions): AudioRecorder;
+
+ export declare interface UseAudioRecorderOptions {
+     /** How to get a microphone — the host owns device preferences and constraints. */
+     getStream: () => Promise<MediaStream>;
+     /** Recording stops itself here. */
+     maxMs?: number;
+     /** Preferred container; falls back through what the browser can encode. */
+     mimeType?: string;
+     audioBitsPerSecond?: number;
+ }
+
  export declare function useAuth(): UseAuthReturn;
 
  declare interface UseAuthReturn extends AuthState {
@@ -13481,6 +13525,21 @@ declare interface UseActivityBusReturn {
       'data-testid'?: string;
   }
 
+  export declare function VoicemailRecorder({ open, onClose, recipientName, getStream, onSend, maxSeconds, 'data-testid': testId }: VoicemailRecorderProps): JSX.Element;
+
+  export declare interface VoicemailRecorderProps {
+      open: boolean;
+      onClose: () => void;
+      /** Who the message is for — the title. */
+      recipientName: string;
+      /** Microphone access, with whatever device preference the host applies. */
+      getStream: () => Promise<MediaStream>;
+      /** Deliver the message. Reject to keep the dialog open with the error shown. */
+      onSend: (blob: Blob, durationMs: number, mimeType: string) => Promise<void>;
+      maxSeconds?: number;
+      'data-testid'?: string;
+  }
+
   export declare type WatermarkGravity = 'northwest' | 'north' | 'northeast' | 'west' | 'center' | 'east' | 'southwest' | 'south' | 'southeast';
 
   /** Host declaration of inbound webhook delivery. See `webhookRelay`. */
@@ -13587,6 +13646,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -13606,12 +13678,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -13622,6 +13691,29 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -13658,39 +13750,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

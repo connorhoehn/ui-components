@@ -9,6 +9,19 @@ import { SVGProps } from 'react';
 
 export declare type AnyCallWidgetMode = CallWidgetMode | LegacyCallWidgetMode;
 
+export declare function AuthedAudio({ src, getAuthToken, onFirstPlay, eager, className, 'data-testid': testId }: AuthedAudioProps): JSX.Element;
+
+export declare interface AuthedAudioProps {
+    src: string;
+    getAuthToken: () => string | null | Promise<string | null>;
+    /** Fires once, when playback first starts — "mark as listened". */
+    onFirstPlay?: () => void;
+    /** Fetch immediately rather than on the Play click. */
+    eager?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function AutoplayGate({ chipLabel, chipClassName, wrapperClassName, onPlayStateChange, ...streamProps }: AutoplayGateProps): JSX.Element;
 
 export declare interface AutoplayGateProps extends StreamVideoProps {
@@ -2117,7 +2130,35 @@ export declare interface ViewerCountProps {
     'data-testid'?: string;
 }
 
+export declare function VoicemailRecorder({ open, onClose, recipientName, getStream, onSend, maxSeconds, 'data-testid': testId }: VoicemailRecorderProps): JSX.Element;
+
+export declare interface VoicemailRecorderProps {
+    open: boolean;
+    onClose: () => void;
+    /** Who the message is for — the title. */
+    recipientName: string;
+    /** Microphone access, with whatever device preference the host applies. */
+    getStream: () => Promise<MediaStream>;
+    /** Deliver the message. Reject to keep the dialog open with the error shown. */
+    onSend: (blob: Blob, durationMs: number, mimeType: string) => Promise<void>;
+    maxSeconds?: number;
+    'data-testid'?: string;
+}
+
 export { }
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
 
 
 declare module '@tiptap/core' {
@@ -2141,12 +2182,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2157,6 +2195,29 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -2193,39 +2254,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

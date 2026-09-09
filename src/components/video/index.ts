@@ -256,3 +256,9 @@ export type { GoLiveButtonProps } from './GoLiveButton';
 // CallSettingsDialog. The host owns and applies the chosen ids.
 export { DeviceSettingsPanel } from './DeviceSettingsPanel';
 export type { DeviceSettingsPanelProps, DevicePreferences } from './DeviceSettingsPanel';
+// Voicemail: record a message when nobody answers, and play one back from a
+// protected source. Storage and endpoints are the host's.
+export { VoicemailRecorder } from './VoicemailRecorder';
+export type { VoicemailRecorderProps } from './VoicemailRecorder';
+export { AuthedAudio } from './AuthedAudio';
+export type { AuthedAudioProps } from './AuthedAudio';

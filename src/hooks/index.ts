@@ -69,3 +69,5 @@ export { useYjsDoc } from './useYjsDoc';
 export { useEventCallback } from './useEventCallback';
 export { useMediaDevices } from './useMediaDevices';
 export type { MediaDevices, MediaDeviceOption } from './useMediaDevices';
+export { useAudioRecorder, pickRecordingMimeType } from './useAudioRecorder';
+export type { AudioRecorder, AudioRecorderState, UseAudioRecorderOptions } from './useAudioRecorder';
