@@ -4075,7 +4075,7 @@ function Jn({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSel
 		tabIndex: m === t.id ? 0 : -1,
 		onFocus: () => h(t.id),
 		"data-testid": `${p}-row-${t.id}`,
-		className: e("group flex cursor-pointer items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors", v ? "border-primary bg-surface-hover font-semibold text-text-primary" : "border-transparent text-text-secondary hover:bg-surface-hover", t.disabled && "cursor-not-allowed opacity-50", t.status === "pending" && "pointer-events-none opacity-50", t.status === "moved" && "bg-success/10", y && u?.position === "into" && "ring-1 ring-inset ring-primary", y && u?.position === "before" && "shadow-[inset_0_2px_0_0_var(--color-primary)]", y && u?.position === "after" && "shadow-[inset_0_-2px_0_0_var(--color-primary)]"),
+		className: e("group flex items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors", c && !t.disabled ? "cursor-grab active:cursor-grabbing" : "cursor-pointer", v ? "border-primary bg-surface-hover font-semibold text-text-primary" : "border-transparent text-text-secondary hover:bg-surface-hover", t.disabled && "cursor-not-allowed opacity-50", t.status === "pending" && "pointer-events-none opacity-50", t.status === "moved" && "bg-success/10", y && u?.position === "into" && "ring-1 ring-inset ring-primary", y && u?.position === "before" && "shadow-[inset_0_2px_0_0_var(--color-primary)]", y && u?.position === "after" && "shadow-[inset_0_-2px_0_0_var(--color-primary)]"),
 		style: { paddingLeft: n * 14 + 8 },
 		children: [
 			_ ? /* @__PURE__ */ R("button", {
