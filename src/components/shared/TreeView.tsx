@@ -220,7 +220,10 @@ function TreeRow({
         onFocus={() => setFocusedId(entry.id)}
         data-testid={`${testId}-row-${entry.id}`}
         className={cn(
-          'group flex cursor-pointer items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors',
+          'group flex items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors',
+          // A row you can pick up says so before you try. Only when the host
+          // wired a drop target: a grab cursor over an immovable row is a lie.
+          dragEnabled && !entry.disabled ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
           isSelected
             ? 'border-primary bg-surface-hover font-semibold text-text-primary'
             : 'border-transparent text-text-secondary hover:bg-surface-hover',
