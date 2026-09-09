@@ -9986,6 +9986,26 @@ export declare interface SpinnerProps {
 
 export declare type SpinnerSize = 'sm' | 'md' | 'lg';
 
+export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
+
+export declare interface SplitPaneProps {
+    primary: ReactNode;
+    /** The second pane. `null` renders only the primary, no divider. */
+    secondary: ReactNode | null;
+    /** Primary pane width as a fraction of the whole, 0–1. Default 0.55. */
+    defaultRatio?: number;
+    /** Controlled ratio; when given, `onRatioChange` must move it. */
+    ratio?: number;
+    onRatioChange?: (ratio: number) => void;
+    /** Smallest each pane may get, in px. Defaults 280 / 360. */
+    minPrimaryPx?: number;
+    minSecondaryPx?: number;
+    /** Names the divider for assistive tech, e.g. "Resize conversation and document". */
+    dividerLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** Vertical flex column with a scale gap. */
 export declare function Stack({ children, gap, align, justify, wrap, as: As, className, ...rest }: StackProps): JSX.Element;
 
@@ -13509,19 +13529,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -13541,9 +13548,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -13551,9 +13561,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -13587,9 +13597,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -13597,9 +13607,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
