@@ -4,6 +4,13 @@
 // border; a fixed 20px leading slot holds the caret when a row has children
 // so a leaf row's title starts at the same x as a directory row's.
 //
+// Keyboard: the WAI-ARIA tree pattern, built in. One row carries the tab stop
+// (roving tabindex), ArrowUp/Down/Home/End walk the VISIBLE rows, ArrowRight
+// opens a directory (or steps into it), ArrowLeft closes one (or steps up to
+// the parent), Enter/Space select. Every row carries `aria-level` and a
+// directory row `aria-expanded`. Two consuming apps had bolted this on from
+// outside by reading the rendered DOM back; it belongs here.
+//
 // Drag-to-reorder is optional (`onReorder`) and deliberately minimal: no
 // visual drop-position line, just a highlighted target row and a computed
 // {before, after, into} based on pointer position within it. Good enough for
@@ -16,6 +23,7 @@ import {
   useRef,
   useState,
   type DragEvent,
+  type KeyboardEvent,
   type MutableRefObject,
   type ReactNode,
 } from 'react';
@@ -39,6 +47,15 @@ export interface TreeViewProps {
   onSelect: (id: string) => void;
   /** Node ids expanded on first render. Ancestors of `selectedId` auto-expand. */
   defaultExpanded?: string[];
+  /**
+   * Controlled expansion. When given, the tree renders exactly these ids open
+   * and reports every caret click and ArrowLeft/ArrowRight through `onToggle`
+   * instead of keeping its own set — for a host that persists expansion or
+   * drives it from a URL. Ancestors of `selectedId` are still auto-opened,
+   * reported through `onToggle` as well.
+   */
+  expanded?: string[];
+  onToggle?: (id: string, expanded: boolean) => void;
   /** Enables HTML5 drag-and-drop reorder/reparent when provided. */
   onReorder?: (id: string, targetParentId: string | null, position: number) => void;
   /** Trailing slot per row — count chip, badge, menu button. */
@@ -61,6 +78,11 @@ function buildTree(nodes: TreeNode[]): Entry[] {
     else roots.push(entry);
   });
   return roots;
+}
+
+/** `CSS.escape` where it exists (jsdom has it; older engines do not). */
+function cssEscape(value: string): string {
+  return typeof CSS !== 'undefined' && typeof CSS.escape === 'function' ? CSS.escape(value) : value;
 }
 
 function ancestorIds(nodes: TreeNode[], selectedId: string | null): Set<string> {
@@ -116,6 +138,8 @@ function TreeRow({
   setDropTarget,
   onDrop,
   testId,
+  focusedId,
+  setFocusedId,
 }: {
   entry: Entry;
   depth: number;
@@ -130,6 +154,8 @@ function TreeRow({
   setDropTarget: (v: { id: string; position: TreeDropPosition } | null) => void;
   onDrop: (targetId: string, position: TreeDropPosition) => void;
   testId: string;
+  focusedId: string | null;
+  setFocusedId: (id: string) => void;
 }) {
   const isExpanded = expanded.has(entry.id);
   const hasChildren = entry.children.length > 0;
@@ -176,6 +202,13 @@ function TreeRow({
         role="treeitem"
         aria-selected={isSelected}
         aria-disabled={entry.disabled}
+        aria-level={depth + 1}
+        {...(hasChildren ? { 'aria-expanded': isExpanded } : {})}
+        // Roving tabindex (WAI-ARIA tree pattern): exactly one row is in the
+        // tab order — the focused one, else the selected one, else the first —
+        // and the arrow keys move between VISIBLE rows. Tab leaves the tree.
+        tabIndex={focusedId === entry.id ? 0 : -1}
+        onFocus={() => setFocusedId(entry.id)}
         data-testid={`${testId}-row-${entry.id}`}
         className={cn(
           'group flex cursor-pointer items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors',
@@ -229,10 +262,25 @@ function TreeRow({
             setDropTarget={setDropTarget}
             onDrop={onDrop}
             testId={testId}
+            focusedId={focusedId}
+            setFocusedId={setFocusedId}
           />
         ))}
     </div>
   );
+}
+
+/** The rows a reader can see, top to bottom — what the arrow keys walk. */
+function visibleIds(tree: Entry[], expanded: Set<string>): string[] {
+  const out: string[] = [];
+  const walk = (entries: Entry[]) => {
+    for (const e of entries) {
+      out.push(e.id);
+      if (expanded.has(e.id) && e.children.length > 0) walk(e.children);
+    }
+  };
+  walk(tree);
+  return out;
 }
 
 export function TreeView({
@@ -240,20 +288,37 @@ export function TreeView({
   selectedId,
   onSelect,
   defaultExpanded,
+  expanded: controlledExpanded,
+  onToggle,
   onReorder,
   renderTrailing,
   className,
   'data-testid': testId = 'tree-view',
 }: TreeViewProps) {
   const tree = useMemo(() => buildTree(nodes), [nodes]);
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(defaultExpanded ?? []));
+  const [ownExpanded, setExpanded] = useState<Set<string>>(() => new Set(defaultExpanded ?? []));
+  const isControlled = controlledExpanded !== undefined;
+  const expanded = useMemo(
+    () => (isControlled ? new Set(controlledExpanded) : ownExpanded),
+    [isControlled, controlledExpanded, ownExpanded],
+  );
+  // The row in the tab order. `null` until something is focused, in which case
+  // the selected row (else the first) takes it — see `tabTargetId`.
+  const [focusedId, setFocusedId] = useState<string | null>(null);
   const dragRef = useRef<DragState | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const [dropTarget, setDropTarget] = useState<{ id: string; position: TreeDropPosition } | null>(null);
   const nodesById = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
 
   useEffect(() => {
     const ancestors = ancestorIds(nodes, selectedId);
     if (ancestors.size === 0) return;
+    if (isControlled) {
+      ancestors.forEach((id) => {
+        if (!controlledExpanded!.includes(id)) onToggle?.(id, true);
+      });
+      return;
+    }
     setExpanded((prev) => {
       let changed = false;
       const next = new Set(prev);
@@ -265,15 +330,84 @@ export function TreeView({
       });
       return changed ? next : prev;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, selectedId]);
 
-  const toggle = (id: string) => {
+  const setOpen = (id: string, open: boolean) => {
+    onToggle?.(id, open);
+    if (isControlled) return;
     setExpanded((prev) => {
+      if (prev.has(id) === open) return prev;
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (open) next.add(id);
+      else next.delete(id);
       return next;
     });
+  };
+  const toggle = (id: string) => setOpen(id, !expanded.has(id));
+
+  // Which row carries tabIndex=0 when nothing has been focused yet.
+  const visible = useMemo(() => visibleIds(tree, expanded), [tree, expanded]);
+  const tabTargetId =
+    focusedId && visible.includes(focusedId)
+      ? focusedId
+      : selectedId && visible.includes(selectedId)
+        ? selectedId
+        : (visible[0] ?? null);
+
+  const focusRow = (id: string | null) => {
+    if (!id) return;
+    setFocusedId(id);
+    const root = rootRef.current;
+    root?.querySelector<HTMLElement>(`[data-testid="${testId}-row-${cssEscape(id)}"]`)?.focus();
+  };
+
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const row = (event.target as HTMLElement).closest<HTMLElement>('[role="treeitem"]');
+    if (!row) return;
+    const prefix = `${testId}-row-`;
+    const id = (row.getAttribute('data-testid') ?? '').slice(prefix.length);
+    if (!id || !nodesById.has(id)) return;
+    const index = visible.indexOf(id);
+    const node = nodesById.get(id)!;
+    const hasChildren = nodes.some((n) => n.parentId === id);
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        focusRow(visible[Math.min(index + 1, visible.length - 1)] ?? null);
+        return;
+      case 'ArrowUp':
+        event.preventDefault();
+        focusRow(visible[Math.max(index - 1, 0)] ?? null);
+        return;
+      case 'Home':
+        event.preventDefault();
+        focusRow(visible[0] ?? null);
+        return;
+      case 'End':
+        event.preventDefault();
+        focusRow(visible[visible.length - 1] ?? null);
+        return;
+      case 'ArrowRight':
+        event.preventDefault();
+        if (hasChildren && !expanded.has(id)) setOpen(id, true);
+        // Already open: the first child is the very next visible row.
+        else if (hasChildren) focusRow(visible[index + 1] ?? null);
+        return;
+      case 'ArrowLeft':
+        event.preventDefault();
+        if (hasChildren && expanded.has(id)) setOpen(id, false);
+        else focusRow(node.parentId);
+        return;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        if (!node.disabled) onSelect(id);
+        if (hasChildren) toggle(id);
+        return;
+      default:
+    }
   };
 
   const handleDrop = (targetId: string, position: TreeDropPosition) => {
@@ -303,7 +437,13 @@ export function TreeView({
   if (nodes.length === 0) return null;
 
   return (
-    <div role="tree" className={cn('flex flex-col', className)} data-testid={testId}>
+    <div
+      ref={rootRef}
+      role="tree"
+      className={cn('flex flex-col', className)}
+      data-testid={testId}
+      onKeyDown={onKeyDown}
+    >
       {tree.map((entry) => (
         <TreeRow
           key={entry.id}
@@ -320,6 +460,8 @@ export function TreeView({
           setDropTarget={setDropTarget}
           onDrop={handleDrop}
           testId={testId}
+          focusedId={tabTargetId}
+          setFocusedId={setFocusedId}
         />
       ))}
     </div>

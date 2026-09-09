@@ -22,3 +22,5 @@ export { DocsTopNav } from './DocsTopNav';
 export type { DocsTopNavProps } from './DocsTopNav';
 export { ViewportFillRegion, fillHeight } from './ViewportFillRegion';
 export type { ViewportFillRegionProps } from './ViewportFillRegion';
+export { ExplorerLayout } from './ExplorerLayout';
+export type { ExplorerLayoutProps } from './ExplorerLayout';
