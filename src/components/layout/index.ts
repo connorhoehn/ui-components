@@ -24,3 +24,5 @@ export { ViewportFillRegion, fillHeight } from './ViewportFillRegion';
 export type { ViewportFillRegionProps } from './ViewportFillRegion';
 export { ExplorerLayout } from './ExplorerLayout';
 export type { ExplorerLayoutProps } from './ExplorerLayout';
+export { SplitPane } from './SplitPane';
+export type { SplitPaneProps } from './SplitPane';
