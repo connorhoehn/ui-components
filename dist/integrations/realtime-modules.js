@@ -12,7 +12,7 @@ import { t as p } from "../ActivityFeed-C9KAtqCl.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
 import { l as _, n as v, t as y, u as b } from "../ConversationSurface-B5BMw_Y-.js";
 import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-d9JKcXlp.js";
-import { t as ee } from "../CanvasDocumentView-NsAhlvuV.js";
+import { t as ee } from "../CanvasDocumentView-BYWl5SUJ.js";
 import { Component as te, createContext as ne, useCallback as O, useContext as re, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";
 import { Fragment as N, jsx as P, jsxs as F } from "react/jsx-runtime";
 import { useRoomOccupancy as ie } from "@connorhoehn/realtime-modules/client/hangout-rooms";
