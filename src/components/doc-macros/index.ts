@@ -152,3 +152,34 @@ export {
     setFieldTypeEdit,
 } from './fieldText';
 export type { TypedField, FieldDraft, FieldType } from './fieldText';
+
+// The reference list — the fifth citizen, and the one that closes the last
+// implemented SECTION renderer with no page representation (`link-block`).
+// Structurally the simplest of the five: no lifecycle, nobody addressed,
+// nothing queryable, no host seam. Its one load-bearing rule lives in
+// `linkHref`: a `url:` scalar arrives from files and agents and becomes an
+// `href`, so every scheme but http/https/mailto renders as text.
+export { LinksMacro, linksRenderer } from './LinksMacro';
+export { LinksBlock } from './LinksBlock';
+export type { LinksBlockProps } from './LinksBlock';
+export {
+    LINKS_MACRO_NAME,
+    linkHref,
+    readLinks,
+    linksMacroText,
+    setLinkLabelEdit,
+    setLinkUrlEdit,
+    addLinkEdit,
+    removeLinkEdit,
+} from './linksText';
+export type { LinkRow } from './linksText';
+
+// The list arithmetic both plural macros share. Exported so a sixth citizen
+// with the same `<key>:` block-sequence shape does not copy it a third time.
+export {
+    parseListBody,
+    addListItemEdit,
+    removeListItemEdit,
+    setListItemKeyEdit,
+    removeListItemKeyEdit,
+} from './macroListText';
