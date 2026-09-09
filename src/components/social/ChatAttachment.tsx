@@ -27,6 +27,7 @@
 // construction rather than by branching.
 
 import { cn } from '../../lib/cn';
+import { formatBytes } from '../../lib/formatBytes';
 
 // ---------------------------------------------------------------------------
 // Types — the cross-repo attachment contract
@@ -61,12 +62,7 @@ export function isImageAttachment(a: { contentType?: string }): boolean {
   return typeof a.contentType === 'string' && a.contentType.startsWith('image/');
 }
 
-export function formatBytes(bytes: number): string {
-  if (!Number.isFinite(bytes) || bytes < 0) return '';
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
+export { formatBytes } from '../../lib/formatBytes';
 
 // ---------------------------------------------------------------------------
 // AttachmentBubble — a landed attachment

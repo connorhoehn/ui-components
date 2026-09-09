@@ -183,3 +183,27 @@ export {
     setListItemKeyEdit,
     removeListItemKeyEdit,
 } from './macroListText';
+
+// The file card — the sixth citizen, and the one that closes the LAST section
+// type with no page form (`file-upload`, which never had a section
+// implementation either). The body carries a REFERENCE, never bytes, and the
+// whole difficulty is on the host side: the bytes sit behind the reader's
+// credentials and a node view has none, so `AttachmentMacroOptions.open` and
+// `.resolve` are how a host lends them. Without them the card degrades to an
+// anchor (absolute URL) or to text (hosted upload) — never to nothing.
+export { AttachmentMacro, attachmentRenderer } from './AttachmentMacro';
+export type { AttachmentMacroOptions } from './AttachmentMacro';
+export { AttachmentBlock } from './AttachmentBlock';
+export type { AttachmentBlockProps } from './AttachmentBlock';
+export {
+    ATTACHMENT_MACRO_NAME,
+    UPLOAD_PATH_PREFIX,
+    readAttachment,
+    acceptsAttachment,
+    attachmentHref,
+    attachmentMacroText,
+    isHostedUpload,
+    isImageAttachment,
+} from './attachmentText';
+export type { Attachment, AttachmentDraft } from './attachmentText';
+export { formatBytes } from '../../lib/formatBytes';
