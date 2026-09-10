@@ -198,6 +198,9 @@ export declare interface AdminDashboardPageProps {
     loading?: boolean;
 }
 
+/** The dot class for a step status — shared with RunSummaryPanel so the two timelines read the same. */
+export declare const AGENT_RUN_STEP_DOT: Record<AgentRunStepStatus, string>;
+
 export declare interface AgentDefinition {
     id: string;
     name: string;
@@ -3906,6 +3909,25 @@ export declare interface CreatePoolInput {
     settings?: Partial<PoolSettings>;
 }
 
+/** One line for a host: `renderers={{ run: createRunPanelRenderer({ load, onOpenFull }) }}`. */
+export declare function createRunPanelRenderer(options: CreateRunPanelRendererOptions): ChatSidePanelRenderer;
+
+export declare interface CreateRunPanelRendererOptions {
+    /** Fetches the run. Called on open, and again every `refreshMs` while the run is not terminal; a throw on open becomes the error state. */
+    load: (panel: ChatSidePanelRef) => Promise<RunPanelData>;
+    /** The footer's primary action: the full run page. */
+    onOpenFull: (panel: ChatSidePanelRef, data: RunPanelData) => void;
+    /** The footer's secondary action, offered when the run knows its conversation. */
+    onOpenChat?: (panel: ChatSidePanelRef, data: RunPanelData) => void;
+    /** "Open beside the chat" on the document row. */
+    onOpenDocument?: (documentId: string) => void;
+    /** Open the finished run's result — a panel, a document, a link. */
+    onOpenResult?: (result: AgentRunResult) => void;
+    /** Re-load interval while the run is running / awaiting. Default 2000; `0` disables. */
+    refreshMs?: number;
+    'data-testid'?: string;
+}
+
 export declare interface CreateUserInput {
     email: string;
     password?: string;
@@ -6869,6 +6891,9 @@ export declare function isNewDay(current: string, previous?: string): boolean;
 
 export declare function isPeopleGraphData(data: GraphPanelData): data is GraphPanelPeopleData;
 
+/** A run that is still moving — the panel keeps re-reading it. */
+export declare function isRunPanelLive(status: RunPanelStatus): boolean;
+
 export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType;
 
 export declare type JoinMergeStrategy = 'deep-merge' | 'array-collect' | 'last-writer-wins';
@@ -8256,6 +8281,12 @@ export declare interface PageSectionProps {
 export declare function parseChatCommand<C extends ComposerCommand = ChatCommand>(text: string, commands: readonly C[] | undefined): {
     command: C;
     argumentText: string;
+} | null;
+
+/** The two halves of a run panel id, split at the first `:`; null when either half is missing. */
+export declare function parseRunPanelId(id: string): {
+    pipelineId: string;
+    runId: string;
 } | null;
 
 /** Parse unified git diff output. Exported for tests and for hosts that need
@@ -10212,6 +10243,53 @@ export declare interface RosterParticipant {
     handRaised?: boolean;
 }
 
+export declare function RunPanelBody({ panel, api, options }: RunPanelBodyProps): ReactNode;
+
+declare interface RunPanelBodyProps {
+    panel: ChatSidePanelRef;
+    api: ChatSidePanelApi;
+    options: CreateRunPanelRendererOptions;
+}
+
+/** What the condensed panel shows. The host builds it from the run snapshot and the pipeline definition. */
+export declare interface RunPanelData {
+    pipelineId: string;
+    runId: string;
+    /** "Call transcription", not `call-transcription`. Falls back to the id. */
+    pipelineName?: string;
+    /** The chat command that started the run — `/doc`, `/summarize`. */
+    command?: string;
+    /** What the person asked for, in their words. */
+    instruction?: string;
+    status: RunPanelStatus;
+    /** ISO timestamps. */
+    startedAt?: string;
+    completedAt?: string;
+    /** Why it failed, when it did. */
+    error?: string;
+    steps: AgentRunStep[];
+    /** What the run changed, in the document-ops vocabulary. */
+    ops?: AgentRunOp[];
+    /** The document the run worked on, when it worked on one. */
+    document?: {
+        id: string;
+        title?: string;
+        snippet?: string;
+    };
+    /** What a finished run produced, when it is something a reader can open. */
+    result?: AgentRunResult;
+    /** The conversation the run's card was posted in, when known. */
+    channel?: string;
+    /** The card's message id in that conversation, when known. */
+    messageId?: string;
+}
+
+/** `<pipelineId>:<runId>` — the panel id for a run. */
+export declare function runPanelId(pipelineId: string, runId: string): string;
+
+/** The run's status, in the card's phase vocabulary (mirrors realtime-modules' `PipelineRunPhase`). */
+export declare type RunPanelStatus = AgentRunPhase;
+
 /**
  * The status vocabulary every UI comparison site keys off. Canonical — it
  * matches distributed-core's `RunStatus` and the backend's shared
@@ -10252,6 +10330,20 @@ export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'p
 * word here is read as a bogus `RunStatus` member. Backticks only.
 */
 | 'stuck';
+
+/** The condensed run, given its data. `createRunPanelRenderer` wraps it with loading, error and refresh. */
+export declare function RunSummaryPanel({ data, onOpenFull, onOpenChat, onOpenDocument, onOpenResult, className, 'data-testid': testId }: RunSummaryPanelProps): JSX.Element;
+
+export declare interface RunSummaryPanelProps {
+    data: RunPanelData;
+    onOpenFull: () => void;
+    /** Offered only when the run knows its conversation. */
+    onOpenChat?: () => void;
+    onOpenDocument?: (documentId: string) => void;
+    onOpenResult?: (result: AgentRunResult) => void;
+    className?: string;
+    'data-testid'?: string;
+}
 
 declare type SaveOutcome = {
     status: 'synced';
@@ -14560,6 +14652,25 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -14573,18 +14684,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -14618,6 +14720,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -14631,39 +14743,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
