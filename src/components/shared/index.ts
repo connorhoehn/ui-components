@@ -232,6 +232,27 @@ export type { DropdownMenuProps, DropdownMenuSection, DropdownMenuItem } from '.
 export { StatusPill } from './StatusPill';
 export type { StatusPillProps, StatusPillState, StatusPillSize } from './StatusPill';
 
+// NodeCard sits beside StatusPill because it is built out of it — the file is
+// `pipelines/nodes/NodeCard.tsx` for historical reasons, but it imports only
+// react, `cn`, `Card` and `StatusPill`, and nothing about it is specific to a
+// pipeline.
+//
+// Until now it was reachable ONLY from the root barrel, and the root barrel
+// statically needs seven @tiptap packages (see the `index` entry in
+// `src/__tests__/packaging.test.ts`, and the note there about `./renderers`).
+// So a consumer that wanted a graph node — the aws-agentcore portal's canary
+// experiment nodes, seven of them, all hand-rolled out of raw divs — had to
+// choose between installing a rich-text editor it never renders and not using
+// the component. It chose the latter, which is how the gap ends up filed in
+// that repo's ui-components-queue.md rather than fixed here.
+//
+// Exported from `/shared` rather than `/pipelines`: `/pipelines` is frozen
+// public API (v2.33.0) and carries @xyflow/react + react-router as static
+// peers, none of which a presentational card should cost. It adds no peer to
+// `/shared` — StatusPill is already here and Card imports nothing.
+export { NodeCard } from '../pipelines/nodes/NodeCard';
+export type { NodeCardProps } from '../pipelines/nodes/NodeCard';
+
 // Semantic tone scale — the library-wide branding surface. Components resolve
 // tinted colours through these; consumers rebrand by overriding the matching
 // CSS variables (--color-{tone}, -bg, -fg, -border).
