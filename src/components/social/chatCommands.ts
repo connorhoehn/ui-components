@@ -68,8 +68,13 @@ export type ChatCommandOutcome =
    * The command started a pipeline run. The host posts an `agent-run` message
    * whose metadata is `{ kind: 'agent-run', command, instruction, runId,
    * pipelineId, ...card }`, and the thread shows an AgentRunCard for it.
+   *
+   * `visibility: 'private'` asks the host NOT to post: the card is shown to
+   * the person who ran the command alone (ChatPanel's `localMessages`), and
+   * they decide whether it goes into the conversation once the run has
+   * produced something worth sharing. Default `'shared'`.
    */
-  | { kind: 'run'; runId: string; pipelineId: string; card: Record<string, unknown>; echo?: string }
+  | { kind: 'run'; runId: string; pipelineId: string; card: Record<string, unknown>; echo?: string; visibility?: 'shared' | 'private' }
   /** The command opened something beside the conversation, immediately. */
   | { kind: 'panel'; panel: ChatSidePanelRef; echo?: string }
   /** The command's whole result is a message in the thread. */

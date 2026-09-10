@@ -9,7 +9,7 @@ export {
   callRefFromMetadata,
   truncationFromMetadata,
 } from './ChatPanel';
-export type { ChatPanelProps } from './ChatPanel';
+export type { ChatPanelProps, LocalChatMessage } from './ChatPanel';
 export { MessageRow, formatChatTime } from './MessageRow';
 export { DaySeparator } from './DaySeparator';
 export type { DaySeparatorProps } from './DaySeparator';

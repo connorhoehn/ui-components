@@ -37,8 +37,36 @@ import { VISUALLY_HIDDEN_STYLE } from '../shared/VisuallyHidden';
 // Types
 // ---------------------------------------------------------------------------
 
+/**
+ * A message that exists only in THIS viewer's thread — never sent, never
+ * stored, gone on reload. The shape a `visibility: 'private'` command outcome
+ * takes while its owner decides whether to post it: the card shows the run
+ * moving (its `metadata` goes through the same `agent-run` reader as a real
+ * message, so `agentRunStatus`, Open and Approve all work), a subdued note
+ * says nobody else can see it, and `actions` are what the owner can do about
+ * that — post it, dismiss it.
+ */
+export interface LocalChatMessage {
+  id: string;
+  /** ISO. Decides where in the thread the message sits. */
+  timestamp: string;
+  displayName: string;
+  content: string;
+  metadata: Record<string, unknown>;
+  actions?: Array<{ id: string; label: string; onSelect: () => void; primary?: boolean }>;
+  /** Replaces the default "Only you can see this". */
+  note?: string;
+}
+
 export interface ChatPanelProps {
   messages: ChatMessage[];
+  /**
+   * Viewer-only messages, rendered in timeline order among `messages` (by
+   * timestamp) with a note that nobody else sees them and their `actions` as
+   * small buttons under the card. The host owns them: ChatPanel never sends,
+   * stores or removes one.
+   */
+  localMessages?: LocalChatMessage[];
   onSend: (content: string) => void;
   /**
    * Replaces the built-in input row entirely.
@@ -388,8 +416,40 @@ export function callRefFromMetadata(
   };
 }
 
+type TimelineEntry =
+  | { kind: 'message'; message: ChatMessage }
+  | { kind: 'local'; local: LocalChatMessage };
+
+function timelineTimestamp(entry: TimelineEntry | undefined): string | undefined {
+  if (!entry) return undefined;
+  return entry.kind === 'message' ? entry.message.timestamp : entry.local.timestamp;
+}
+
+/**
+ * Sent messages in the order given; each local message slotted in after the
+ * last row that is not newer than it. Local messages with equal or unparsable
+ * timestamps keep their given order.
+ */
+function mergeTimeline(messages: readonly ChatMessage[], localMessages: readonly LocalChatMessage[]): TimelineEntry[] {
+  const entries: TimelineEntry[] = messages.map((message) => ({ kind: 'message', message }));
+  if (localMessages.length === 0) return entries;
+  const locals = [...localMessages].sort((a, b) => (Date.parse(a.timestamp) || 0) - (Date.parse(b.timestamp) || 0));
+  for (const local of locals) {
+    const t = Date.parse(local.timestamp);
+    let at = entries.length;
+    while (at > 0 && !Number.isNaN(t)) {
+      const prev = Date.parse(timelineTimestamp(entries[at - 1]) ?? '');
+      if (!(prev > t)) break;
+      at -= 1;
+    }
+    entries.splice(at, 0, { kind: 'local', local });
+  }
+  return entries;
+}
+
 export function ChatPanel({
   messages,
+  localMessages = [],
   onSend,
   disabled = false,
   onTyping,
@@ -443,6 +503,10 @@ export function ChatPanel({
   const emojiTriggerRef = useRef<HTMLButtonElement>(null);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const attachmentsEnabled = !!onSendFiles && !disabled;
+  // Sent messages keep the order they arrived in; a local message is slotted
+  // in after the last row that is not newer than it. The list is not sorted
+  // wholesale — the server's order is the truth for what it sent.
+  const timeline = mergeTimeline(messages, localMessages);
 
   // ── Scroll ownership ────────────────────────────────────────────────
   // The old effect slammed scrollTop to scrollHeight on EVERY length
@@ -457,7 +521,7 @@ export function ChatPanel({
   // An arriving transfer grows the list exactly like an arriving message, so
   // it participates in the same scroll-ownership rule: follow the live edge
   // if the reader is already there, never yank them if they are not.
-  const rowCount = messages.length + transfers.length;
+  const rowCount = messages.length + localMessages.length + transfers.length;
   // Set while a load-more prepend is in flight so the growth is restored
   // to the reader's position instead of being read as new traffic.
   const prependRef = useRef<{ scrollHeight: number; scrollTop: number } | null>(null);
@@ -748,12 +812,87 @@ export function ChatPanel({
               </button>
             </div>
           )}
-          {messages.length === 0 ? (
+          {timeline.length === 0 ? (
             <div className={cn('text-sm', dark ? 'text-white/40' : 'text-text-secondary')}>
               No messages yet
             </div>
           ) : (
-            messages.map((message, index) => {
+            timeline.map((entry, index) => {
+              const previousTimestamp = timelineTimestamp(timeline[index - 1]);
+              const entryTimestamp = entry.kind === 'message' ? entry.message.timestamp : entry.local.timestamp;
+              // A date heading opens each new local day — including the first
+              // row on screen, whose date is otherwise stated nowhere. Keyed
+              // off the PREVIOUS row rather than a running variable so a
+              // `Load earlier messages` prepend recomputes correctly: the
+              // boundary is a property of a pair, not of iteration order.
+              const daySeparator = isNewDay(entryTimestamp, previousTimestamp) ? (
+                <DaySeparator key={`day:${entryTimestamp}:${index}`} timestamp={entryTimestamp} tone={tone} />
+              ) : null;
+
+              if (entry.kind === 'local') {
+                const local = entry.local;
+                const localRef = agentRunRefFromMetadata(local.metadata);
+                return (
+                  <Fragment key={`local:${local.id}`}>
+                    {daySeparator}
+                    <div data-testid="chat-local-message" data-local-message-id={local.id} className="rounded-md">
+                      <MessageRow
+                        author={local.displayName}
+                        timestamp={local.timestamp}
+                        tone={tone}
+                        // A local message is the viewer's by definition.
+                        mine
+                        content={
+                          <>
+                            {localRef ? (
+                              <AgentRunCard
+                                runId={localRef.runId}
+                                instruction={localRef.instruction || local.content}
+                                command={localRef.command}
+                                agentName={localRef.agentName}
+                                requestedBy={local.displayName}
+                                status={agentRunStatus?.(localRef.runId)}
+                                onOpenDocument={onOpenDocument && localRef.documentId ? () => onOpenDocument(localRef.documentId) : undefined}
+                                onOpenRun={onOpenRun}
+                                result={localRef.result}
+                                onOpenResult={onOpenResult}
+                                onDecide={onDecideRun}
+                                suggestion={localRef.suggestionKey ? { key: localRef.suggestionKey, ...(localRef.documentId ? { documentId: localRef.documentId } : {}) } : undefined}
+                                onReview={onReviewRun}
+                              />
+                            ) : (
+                              <MessageBody text={local.content} />
+                            )}
+                            <div
+                              data-testid="chat-local-message-note"
+                              className={cn('mt-1 text-[11px] italic', dark ? 'text-white/50' : 'text-text-tertiary')}
+                            >
+                              {local.note ?? 'Only you can see this'}
+                            </div>
+                            {local.actions && local.actions.length > 0 && (
+                              <div className="mt-1.5 flex flex-wrap gap-1.5" data-testid="chat-local-message-actions">
+                                {local.actions.map((action) => (
+                                  <Button
+                                    key={action.id}
+                                    type="button"
+                                    size="sm"
+                                    variant={action.primary ? 'primary' : 'ghost'}
+                                    onClick={action.onSelect}
+                                  >
+                                    {action.label}
+                                  </Button>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        }
+                      />
+                    </div>
+                  </Fragment>
+                );
+              }
+
+              const { message } = entry;
               const author = message.displayName ?? message.clientId.slice(0, 8);
               const files = message.attachments ?? [];
               // Attachments render INSIDE the row's content slot rather than as
@@ -935,15 +1074,6 @@ export function ChatPanel({
                   )}
                 </>
               );
-
-              // A date heading opens each new local day — including the first
-              // message on screen, whose date is otherwise stated nowhere.
-              // Keyed off the PREVIOUS message rather than a running variable
-              // so a `Load earlier messages` prepend recomputes correctly:
-              // the boundary is a property of a pair, not of iteration order.
-              const daySeparator = isNewDay(message.timestamp, messages[index - 1]?.timestamp) ? (
-                <DaySeparator key={`day:${message.timestamp}:${index}`} timestamp={message.timestamp} tone={tone} />
-              ) : null;
 
               return (
                 <Fragment key={message.id ?? index}>
