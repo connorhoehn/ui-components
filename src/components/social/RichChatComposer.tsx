@@ -51,6 +51,7 @@ import { LinkDialog } from './LinkDialog';
 import { MentionSuggestions, type MentionCandidate } from './MentionSuggestions';
 import { EmojiSuggestions } from './EmojiSuggestions';
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
+import { matchComposerCommand, type ComposerCommand } from './composerCommands';
 
 export type { MentionCandidate };
 
@@ -66,28 +67,11 @@ export interface ComposedMessage {
   files: File[];
 }
 
-export interface ComposerCommand {
-  /** The leading token, e.g. `/doc`. Matched case-insensitively at the start of the draft. */
-  trigger: string;
-  /** What it does — "Edit the open document with Haiku". */
-  label: string;
-  /** A second clause: what it needs, or what will happen. */
-  hint?: string;
-  /** True when the command cannot run right now (no document open); the bar says why via `hint`. */
-  disabled?: boolean;
-  /** The long form, shown as a tooltip on the bar: what will happen, step by step. */
-  description?: string;
-}
-
-/** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
-export function matchComposerCommand(draft: string, commands: readonly ComposerCommand[] | undefined): ComposerCommand | null {
-  if (!commands || commands.length === 0) return null;
-  const text = draft.trimStart().toLowerCase();
-  return commands.find((c) => {
-    const t = c.trigger.toLowerCase();
-    return text === t || text.startsWith(`${t} `) || text.startsWith(`${t}\n`);
-  }) ?? null;
-}
+// Both live in `./composerCommands`, which imports nothing. They are re-exported
+// here so `social/RichChatComposer` keeps its existing surface, but the barrel
+// must import them from that module rather than this one — see the header there.
+export type { ComposerCommand };
+export { matchComposerCommand };
 
 export interface RichChatComposerProps {
   onSend: (message: ComposedMessage) => void;

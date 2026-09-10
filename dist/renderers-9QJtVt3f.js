@@ -6,7 +6,7 @@ import { t as o } from "./Input-DLknWXri.js";
 import { t as s } from "./Select-CqVokE2v.js";
 import { t as c } from "./NumberInput-PlADgrip.js";
 import { t as l } from "./Checkbox-DqN9RkXK.js";
-import { t as u } from "./TiptapEditor-C8c0tT6p.js";
+import { t as u } from "./TiptapEditor-Kdj65m6g.js";
 import { useCallback as d, useEffect as f, useRef as p, useState as m } from "react";
 import { Fragment as h, jsx as g, jsxs as _ } from "react/jsx-runtime";
 //#region src/components/doc-types/cookbooks/index.ts

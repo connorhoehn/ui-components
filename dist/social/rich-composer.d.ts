@@ -25,6 +25,7 @@ export declare interface ComposerAttachmentsProps {
     'data-testid'?: string;
 }
 
+/** One entry in a composer's slash-command menu. */
 declare interface ComposerCommand {
     /** The leading token, e.g. `/doc`. Matched case-insensitively at the start of the draft. */
     trigger: string;

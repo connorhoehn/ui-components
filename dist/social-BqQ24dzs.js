@@ -9,7 +9,7 @@ import { t as p } from "./Select-CqVokE2v.js";
 import { M as m, j as h } from "./ConversationSurface-B5SYIWuv.js";
 import { t as g } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as _, t as v } from "./ReactionPickerPopover-CcL-n6gt.js";
-import "./RichChatComposer-C3U1VVB8.js";
+import "./composerCommands-DTvlwW9m.js";
 import { useCallback as y, useEffect as b, useId as x, useMemo as S, useRef as C, useState as w } from "react";
 import { Fragment as T, jsx as E, jsxs as D } from "react/jsx-runtime";
 //#region src/components/social/SocialPanel.tsx

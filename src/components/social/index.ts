@@ -139,5 +139,10 @@ export { ConversationRail } from './ConversationRail';
 export type { ConversationRailProps, RailSelection } from './ConversationRail';
 export { AgentRunCard, agentRunRefFromMetadata } from './AgentRunCard';
 export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase } from './AgentRunCard';
-export type { ComposerCommand } from './RichChatComposer';
-export { matchComposerCommand } from './RichChatComposer';
+// From `./composerCommands`, NOT `./RichChatComposer`. Both symbols are
+// tiptap-free, but importing them from the composer module pulls that module —
+// and its static @tiptap imports — into every consumer of this barrel, which is
+// precisely what the note above forbids. A type-only export would be erased;
+// `matchComposerCommand` is a runtime binding and is not.
+export type { ComposerCommand } from './composerCommands';
+export { matchComposerCommand } from './composerCommands';
