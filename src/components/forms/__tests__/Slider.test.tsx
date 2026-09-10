@@ -43,3 +43,13 @@ describe('Slider', () => {
     expect(screen.getByLabelText('Temperature')).toBe(track());
   });
 });
+
+// The export this component was missing: reachable from `/shared`, not only
+// from the root barrel (which drags seven @tiptap packages in with it).
+import { Slider as SliderFromShared } from '../../shared';
+
+describe('Slider reachability', () => {
+  it('is the same component when imported from the shared barrel', () => {
+    expect(SliderFromShared).toBe(Slider);
+  });
+});

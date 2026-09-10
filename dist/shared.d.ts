@@ -2587,6 +2587,27 @@ export declare interface SkipLinkProps {
     onSkip?: () => void;
 }
 
+export declare const Slider: ForwardRefExoticComponent<SliderProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface SliderProps {
+    value: number;
+    onChange: (value: number) => void;
+    min?: number;
+    max?: number;
+    step?: number;
+    /** Accessible name. Required when no visible label is wired up. */
+    'aria-label'?: string;
+    /**
+     * Show the current value beside the track. Pass a formatter to control how
+     * it reads (units, decimal places); `true` uses the raw number.
+     * @default true
+     */
+    readout?: boolean | ((value: number) => string);
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function Sparkline({ data, width, height, color, baseline, }: SparklineProps): JSX.Element;
 
 export declare interface SparklineProps {
@@ -3765,9 +3786,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3785,9 +3806,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

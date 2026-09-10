@@ -305,6 +305,13 @@ export { Textarea } from '../forms/Textarea';
 export type { TextareaProps } from '../forms/Textarea';
 export { NumberInput } from '../forms/NumberInput';
 export type { NumberInputProps } from '../forms/NumberInput';
+// Slider sits with its siblings above. Input, Select, Textarea and NumberInput
+// all reach consumers through this barrel; Slider was reachable ONLY from the
+// root, which statically needs seven @tiptap packages — so a consumer wanting a
+// range control had to install a rich-text editor. It imports react and `cn`
+// and nothing else, exactly like the rest of this group.
+export { Slider } from '../forms/Slider';
+export type { SliderProps } from '../forms/Slider';
 export { Checkbox } from '../forms/Checkbox';
 export type { CheckboxProps } from '../forms/Checkbox';
 export { RadioGroup } from '../forms/RadioGroup';

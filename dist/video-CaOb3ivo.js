@@ -12,9 +12,9 @@ import { n as f, r as p, t as m } from "./focusTrap-CmWJlptm.js";
 import { t as h } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as g } from "./Avatar-BzicCOft.js";
 import { t as _ } from "./Select-CqVokE2v.js";
-import { t as v } from "./activationKey-CjbL3LUv.js";
-import { E as y, g as b } from "./StreamStage-d9JKcXlp.js";
-import { t as x } from "./Slider-DcvH0VI1.js";
+import { t as v } from "./Slider-DcvH0VI1.js";
+import { t as y } from "./activationKey-CjbL3LUv.js";
+import { E as b, g as x } from "./StreamStage-d9JKcXlp.js";
 import { useCallback as S, useEffect as C, useImperativeHandle as w, useLayoutEffect as ee, useMemo as T, useRef as E, useState as D } from "react";
 import { Fragment as O, jsx as k, jsxs as A } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -279,7 +279,7 @@ function re({ participants: t, className: n, style: r }) {
 			gridTemplateColumns: `repeat(${a}, 1fr)`,
 			...r
 		},
-		children: t.map((e) => /* @__PURE__ */ k(y, {
+		children: t.map((e) => /* @__PURE__ */ k(b, {
 			id: e.id,
 			displayName: e.displayName,
 			avatarUrl: e.avatarUrl,
@@ -1814,7 +1814,7 @@ function st({ state: t, mode: n, duration: r, isMuted: i, callerName: a, onToggl
 		role: c ? "button" : void 0,
 		tabIndex: c ? 0 : void 0,
 		"aria-label": c ? "Expand call widget" : void 0,
-		onKeyDown: c ? v(c) : void 0,
+		onKeyDown: c ? y(c) : void 0,
 		children: [
 			/* @__PURE__ */ k("span", { className: e("w-2 h-2 rounded-full shrink-0", t === "active" ? "bg-success animate-pulse" : "bg-warning animate-pulse") }),
 			/* @__PURE__ */ k("div", {
@@ -2843,7 +2843,7 @@ function Et({ status: t, segments: n, currentTimeMs: r, onSeek: i, title: a = "T
 					"data-seg-index": n,
 					className: e("rounded-md px-3 py-2 transition-colors", r ? "bg-surface-emphasis ring-1 ring-primary" : "hover:bg-surface-hover", o && "cursor-pointer"),
 					onClick: o ? () => i(t.startMs) : void 0,
-					onKeyDown: o ? v(() => i(t.startMs)) : void 0,
+					onKeyDown: o ? y(() => i(t.startMs)) : void 0,
 					role: o ? "button" : void 0,
 					tabIndex: o ? 0 : void 0,
 					"aria-label": o ? `Seek to ${wt(t.startMs)} — ${t.speakerLabel}` : void 0,
@@ -3125,7 +3125,7 @@ function It({ chipLabel: t = "Tap to unmute", chipClassName: n, wrapperClassName
 	}, [l]);
 	return /* @__PURE__ */ A("div", {
 		className: e("relative h-full w-full", r),
-		children: [/* @__PURE__ */ k(b, {
+		children: [/* @__PURE__ */ k(x, {
 			...a,
 			videoRef: l,
 			onPlayStateChange: u
@@ -4130,7 +4130,7 @@ function kn({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 				children: [u && /* @__PURE__ */ k("div", {
 					"data-testid": "call-settings-preview",
 					className: e("relative shrink-0 overflow-hidden bg-video-stage", "aspect-video w-full sm:aspect-auto sm:min-h-[320px] sm:w-[44%]"),
-					children: r ? /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(b, {
+					children: r ? /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(x, {
 						stream: r,
 						muted: !0,
 						className: "h-full w-full scale-x-[-1] object-cover"
@@ -4378,10 +4378,10 @@ function Ln({ src: t, autoPlay: n = !1, onFirstPlay: r, onEnded: i, durationHint
 	let _ = () => {
 		let e = l.current;
 		e && (u ? e.pause() : e.play().catch(() => d(!1)));
-	}, v = (e) => {
+	}, y = (e) => {
 		let t = l.current;
 		t && (t.currentTime = e, p(e));
-	}, y = m > 0 ? m : Math.max(f, 1);
+	}, b = m > 0 ? m : Math.max(f, 1);
 	return /* @__PURE__ */ A("div", {
 		className: e("flex min-w-0 items-center gap-2", o === "sm" ? "text-xs" : "text-sm", s),
 		"data-testid": c,
@@ -4426,13 +4426,13 @@ function Ln({ src: t, autoPlay: n = !1, onFirstPlay: r, onEnded: i, durationHint
 				"data-testid": `${c}-time`,
 				children: In(f)
 			}),
-			/* @__PURE__ */ k(x, {
+			/* @__PURE__ */ k(v, {
 				"aria-label": "Seek",
 				min: 0,
-				max: y,
+				max: b,
 				step: .1,
-				value: Math.min(f, y),
-				onChange: v,
+				value: Math.min(f, b),
+				onChange: y,
 				className: "min-w-[96px] flex-1",
 				"data-testid": `${c}-scrubber`
 			}),

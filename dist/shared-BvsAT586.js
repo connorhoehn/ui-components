@@ -34,6 +34,7 @@ import { t as k } from "./InlinePopover-DFdI8hw1.js";
 import { t as ee } from "./ActivityFeed-C9KAtqCl.js";
 import "./Select-CqVokE2v.js";
 import "./NumberInput-PlADgrip.js";
+import "./Slider-DcvH0VI1.js";
 import "./Checkbox-DqN9RkXK.js";
 import { Children as A, createContext as te, isValidElement as ne, useCallback as j, useContext as re, useEffect as M, useId as N, useLayoutEffect as ie, useMemo as P, useRef as F, useState as I } from "react";
 import { Fragment as L, jsx as R, jsxs as z } from "react/jsx-runtime";
