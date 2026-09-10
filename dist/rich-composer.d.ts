@@ -32,6 +32,12 @@ export declare interface CommandSuggestionsProps {
     command: (item: CommandSuggestionItem) => void;
     /** The listbox's accessible name. */
     label?: string;
+    /**
+     * The whole draft, for the command menu only. When it equals the
+     * highlighted row's `code` exactly, Enter is not a pick — see the note at
+     * the top.
+     */
+    draft?: string;
 }
 
 /** What the composer hands back on send. */
