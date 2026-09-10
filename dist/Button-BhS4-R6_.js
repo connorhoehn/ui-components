@@ -21,12 +21,13 @@ var n = {
 	md: "px-4 py-2 text-sm",
 	lg: "px-5 py-2.5 text-sm"
 };
-function a({ variant: a = "primary", size: o = "md", tone: s = "surface", disabled: c = !1, fullWidth: l = !1, children: u, type: d = "button", className: f, ...p }) {
+function a({ variant: a = "primary", size: o = "md", tone: s = "surface", disabled: c = !1, fullWidth: l = !1, children: u, type: d = "button", className: f, ref: p, ...m }) {
 	return /* @__PURE__ */ t("button", {
+		ref: p,
 		type: d,
 		disabled: c,
 		className: e("whitespace-nowrap font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out", (r[s] ?? n)[a], i[o], c && "opacity-50 cursor-not-allowed", !c && "cursor-pointer", l && "w-full", f),
-		...p,
+		...m,
 		children: u
 	});
 }

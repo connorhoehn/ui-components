@@ -178,3 +178,27 @@ describe('Table primitives', () => {
     expect(screen.getByRole('cell').className).toContain('font-bold');
   });
 });
+
+describe('Button ref', () => {
+  it('gives the caller its underlying button', () => {
+    const ref = createRef<HTMLButtonElement>();
+    render(<Button ref={ref}>Go</Button>);
+    expect(ref.current).toBe(screen.getByRole('button', { name: 'Go' }));
+    expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+  });
+
+  // A menu trigger must be re-focusable after its panel closes; that is the
+  // whole reason this prop exists.
+  it('can be focused through the ref', () => {
+    const ref = createRef<HTMLButtonElement>();
+    render(<Button ref={ref}>Menu</Button>);
+    ref.current?.focus();
+    expect(document.activeElement).toBe(ref.current);
+  });
+
+  it('does not leak a `ref` attribute onto the DOM', () => {
+    const ref = createRef<HTMLButtonElement>();
+    render(<Button ref={ref}>x</Button>);
+    expect(screen.getByRole('button').hasAttribute('ref')).toBe(false);
+  });
+});

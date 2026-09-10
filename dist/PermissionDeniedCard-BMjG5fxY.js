@@ -1,5 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { t } from "./Button-cRZd1Oud.js";
+import { t } from "./Button-BhS4-R6_.js";
 import { useEffect as n, useId as r, useState as i } from "react";
 import { jsx as a, jsxs as o } from "react/jsx-runtime";
 //#region src/components/shared/TechnicalDetails.tsx

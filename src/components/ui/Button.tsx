@@ -2,7 +2,7 @@
 //
 // Shared button component with consistent variants.
 
-import { type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { type ButtonHTMLAttributes, type ReactNode, type Ref } from 'react';
 import { cn } from '../../lib/cn';
 import type { SurfaceTone } from '../shared/tones';
 
@@ -12,6 +12,19 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 export type ButtonTone = SurfaceTone;
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+  /**
+   * The underlying `<button>`.
+   *
+   * Same shape and same reason as `StackProps.ref` (2.233.0): a plain prop, not
+   * `forwardRef`, because React 19 — our only supported peer — passes `ref`
+   * through as an ordinary prop.
+   *
+   * A menu trigger has to be re-focusable when its panel closes, and a consumer
+   * with no way to hold that node keeps a raw `<button>` instead of using this
+   * component. That is exactly what the aws-agentcore portal's masquerade menu
+   * did.
+   */
+  ref?: Ref<HTMLButtonElement>;
   variant?: ButtonVariant;
   size?: ButtonSize;
   /**
@@ -66,10 +79,12 @@ export function Button({
   children,
   type = 'button',
   className,
+  ref,
   ...rest
 }: ButtonProps) {
   return (
     <button
+      ref={ref}
       type={type}
       disabled={disabled}
       className={cn(

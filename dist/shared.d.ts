@@ -216,9 +216,22 @@ export declare interface BreadcrumbsProps {
     'data-testid'?: string;
 }
 
-export declare function Button({ variant, size, tone, disabled, fullWidth, children, type, className, ...rest }: ButtonProps): JSX.Element;
+export declare function Button({ variant, size, tone, disabled, fullWidth, children, type, className, ref, ...rest }: ButtonProps): JSX.Element;
 
 export declare interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+    /**
+     * The underlying `<button>`.
+     *
+     * Same shape and same reason as `StackProps.ref` (2.233.0): a plain prop, not
+     * `forwardRef`, because React 19 — our only supported peer — passes `ref`
+     * through as an ordinary prop.
+     *
+     * A menu trigger has to be re-focusable when its panel closes, and a consumer
+     * with no way to hold that node keeps a raw `<button>` instead of using this
+     * component. That is exactly what the aws-agentcore portal's masquerade menu
+     * did.
+     */
+    ref?: Ref<HTMLButtonElement>;
     variant?: ButtonVariant;
     size?: ButtonSize;
     /**
@@ -3718,19 +3731,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3743,6 +3743,19 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3786,9 +3799,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3816,12 +3832,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

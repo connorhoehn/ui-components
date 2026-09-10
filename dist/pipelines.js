@@ -4,7 +4,7 @@ import { a as t, n } from "./ToastProvider-BKjV21G4.js";
 import { t as r } from "./cn-DhjIN-s0.js";
 import { t as i } from "./useEventCallback-Cwx9QVSi.js";
 import { a, c as o, f as s, i as c, l, o as u, p as d, r as f, s as p, t as m, u as h } from "./DetailSection-DD8ayw5R.js";
-import { t as g } from "./Button-cRZd1Oud.js";
+import { t as g } from "./Button-BhS4-R6_.js";
 import { t as _ } from "./IconButton-C3DMtvSx.js";
 import { t as v } from "./Banner-C3Wgh62A.js";
 import { n as y, t as b } from "./Chart-DUoOhhMu.js";
