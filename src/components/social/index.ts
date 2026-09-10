@@ -141,3 +141,46 @@ export { AgentRunCard, agentRunRefFromMetadata } from './AgentRunCard';
 export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase, AgentRunDecision } from './AgentRunCard';
 export type { ComposerCommand, ComposerCommandArgument, ComposerArgumentItem } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
+export type { AgentRunResult } from './AgentRunCard';
+export { agentRunResultFromMetadata } from './AgentRunCard';
+
+// Chat commands — the registry behind the composer's slash menu. A host (or a
+// plugin nested inside it) registers a command whose `run` calls its own
+// route; the outcome decides what the thread shows. Side panels are the
+// "open beside the chat" half of the same story. See CHAT_COMMANDS.md.
+export {
+  chatCommandsToComposer,
+  parseChatCommand,
+  isChatCommandInScope,
+  chatCommandScopeHint,
+  chatChannelKindOf,
+  sidePanelToSearch,
+  sidePanelFromSearch,
+} from './chatCommands';
+export type {
+  ChatCommand,
+  ChatCommandContext,
+  ChatCommandScopeContext,
+  ChatCommandOutcome,
+  ChatCommandScope,
+  ChatChannelKind,
+  ChatSidePanelRef,
+} from './chatCommands';
+export { ChatCommandProvider, useChatCommands, useRegisterChatCommands, useRunChatCommand, mergeChatCommands } from './ChatCommandProvider';
+export type { ChatCommandProviderProps, ChatCommandRunContext } from './ChatCommandProvider';
+export {
+  ChatSidePanelProvider,
+  useChatSidePanelRenderer,
+  useChatSidePanelRenderers,
+  ChatSidePanelFrame,
+  ChatSidePanel,
+  chatSidePanelKindLabel,
+} from './ChatSidePanelRegistry';
+export type {
+  ChatSidePanelProviderProps,
+  ChatSidePanelRenderer,
+  ChatSidePanelRenderers,
+  ChatSidePanelApi,
+  ChatSidePanelFrameProps,
+  ChatSidePanelProps,
+} from './ChatSidePanelRegistry';

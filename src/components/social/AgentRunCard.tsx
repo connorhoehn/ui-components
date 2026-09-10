@@ -10,14 +10,28 @@
 
 import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
+import type { ChatSidePanelRef } from './chatCommands';
 import { Button } from '../ui/Button';
 
 export type AgentRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'rejected' | 'failed';
 
 export type AgentRunDecision = 'approve' | 'reject';
 
+/**
+ * What a finished run produced, when it produced something a reader can open:
+ * a side panel (a search graph, a trace), the document it edited, or a link.
+ * Read from the message's metadata (`result`) when the run is posted done, or
+ * from the live status while the card is watching it.
+ */
+export type AgentRunResult =
+  | { kind: 'panel'; panel: ChatSidePanelRef }
+  | { kind: 'document'; documentId: string }
+  | { kind: 'link'; href: string; label?: string };
+
 export interface AgentRunStatus {
   phase: AgentRunPhase;
+  /** The outcome to open, once `phase === 'completed'`. */
+  result?: AgentRunResult;
   /** The step in flight, when known — "Reading the document", "Planning the edit", "Retrying — attempt 2". */
   stepLabel?: string;
   /** A sentence about the outcome — "Renamed to …", the failure, why approval is needed. */
@@ -39,6 +53,10 @@ export interface AgentRunCardProps {
   onOpenDocument?: () => void;
   /** Open the run in the pipeline UI. */
   onOpenRun?: (runId: string) => void;
+  /** The result carried in the message's metadata; `status.result` wins when both are set. */
+  result?: AgentRunResult;
+  /** Open the finished run's result — a panel beside the chat, the document, a link. The action renders only when this is given. */
+  onOpenResult?: (result: AgentRunResult) => void;
   /** Approve or reject a run that is waiting; the buttons render only when this is given. */
   onDecide?: (runId: string, decision: AgentRunDecision) => void;
   className?: string;
@@ -55,8 +73,13 @@ const STEPS: Array<{ phase: AgentRunPhase | 'running'; label: string }> = [
 const ORDER: Record<AgentRunPhase, number> = { received: 0, running: 1, awaiting_approval: 1, completed: 2, rejected: 2, failed: 2 };
 const PHASE_LABEL: Record<AgentRunPhase, string> = { received: 'Received', running: 'Processing', awaiting_approval: 'Needs approval', completed: 'Updated', rejected: 'Rejected', failed: 'Failed' };
 
-export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, onDecide, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
+export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
   const phase = status?.phase ?? 'received';
+  // The result is only openable once the run is done; before that it is a promise, not a link.
+  const outcome = phase === 'completed' ? status?.result ?? result : undefined;
+  const resultLabel = outcome?.kind === 'link' && outcome.label ? outcome.label : 'Open';
+  // A document result IS the document link — do not show the same destination twice.
+  const showDocument = onOpenDocument && !(outcome?.kind === 'document' && onOpenResult);
   const at = ORDER[phase];
   const ended = phase === 'failed' || phase === 'rejected';
   const tone = ended ? 'danger' : phase === 'completed' ? 'success' : phase === 'awaiting_approval' ? 'warning' : 'info';
@@ -111,12 +134,22 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
             <Button size="sm" variant="ghost" className="!px-2 !py-0 text-[11px] leading-5" onClick={() => onDecide(runId, 'reject')} data-testid={`${testId}-reject`}>Reject</Button>
           </span>
         )}
+        {outcome && onOpenResult && (
+          <button type="button" onClick={() => onOpenResult(outcome)} className="shrink-0 font-medium text-info underline-offset-2 hover:underline" data-testid={`${testId}-open-result`} data-result-kind={outcome.kind}>
+            {resultLabel}
+          </button>
+        )}
+        {outcome?.kind === 'link' && !onOpenResult && (
+          <a href={outcome.href} target="_blank" rel="noopener noreferrer" className="shrink-0 font-medium text-info underline-offset-2 hover:underline" data-testid={`${testId}-open-result`} data-result-kind="link">
+            {resultLabel}
+          </a>
+        )}
         {onOpenRun && (
           <button type="button" onClick={() => onOpenRun(runId)} className="shrink-0 text-text-tertiary underline-offset-2 hover:text-text-primary hover:underline" data-testid={`${testId}-open-run`}>
             run
           </button>
         )}
-        {onOpenDocument && (
+        {showDocument && (
           <button type="button" onClick={onOpenDocument} className="shrink-0 text-text-tertiary underline-offset-2 hover:text-text-primary hover:underline" data-testid={`${testId}-open-document`}>
             document
           </button>
@@ -129,12 +162,13 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
 /** Reads a `/doc` command message's metadata; null for anything else. */
 export function agentRunRefFromMetadata(
   metadata: Record<string, unknown> | undefined,
-): { runId: string; documentId: string; instruction: string; agentName: string; pipelineId?: string; command: string } | null {
+): { runId: string; documentId: string; instruction: string; agentName: string; pipelineId?: string; command: string; result?: AgentRunResult } | null {
   if (!metadata || metadata.kind !== 'agent-run') return null;
   const runId = typeof metadata.runId === 'string' ? metadata.runId : '';
   // A document is what /doc acts on; a recording or transcription run has none.
   const documentId = typeof metadata.documentId === 'string' ? metadata.documentId : '';
   if (!runId) return null;
+  const result = agentRunResultFromMetadata(metadata.result);
   return {
     runId,
     documentId,
@@ -142,7 +176,31 @@ export function agentRunRefFromMetadata(
     agentName: typeof metadata.agentName === 'string' && metadata.agentName ? metadata.agentName : 'Agent',
     command: typeof metadata.command === 'string' && metadata.command ? metadata.command : '/doc',
     ...(typeof metadata.pipelineId === 'string' ? { pipelineId: metadata.pipelineId } : {}),
+    ...(result ? { result } : {}),
   };
+}
+
+/** Reads a run result out of untrusted metadata; null for anything malformed. */
+export function agentRunResultFromMetadata(value: unknown): AgentRunResult | null {
+  if (!value || typeof value !== 'object') return null;
+  const r = value as Record<string, unknown>;
+  if (r.kind === 'document' && typeof r.documentId === 'string' && r.documentId) return { kind: 'document', documentId: r.documentId };
+  if (r.kind === 'link' && typeof r.href === 'string' && r.href) {
+    return { kind: 'link', href: r.href, ...(typeof r.label === 'string' && r.label ? { label: r.label } : {}) };
+  }
+  if (r.kind === 'panel' && r.panel && typeof r.panel === 'object') {
+    const p = r.panel as Record<string, unknown>;
+    if (typeof p.kind !== 'string' || !p.kind || typeof p.id !== 'string' || !p.id) return null;
+    const panel: ChatSidePanelRef = { kind: p.kind, id: p.id };
+    if (typeof p.title === 'string' && p.title) panel.title = p.title;
+    if (p.params && typeof p.params === 'object') {
+      const params: Record<string, string> = {};
+      for (const [k, v] of Object.entries(p.params as Record<string, unknown>)) if (typeof v === 'string') params[k] = v;
+      panel.params = params;
+    }
+    return { kind: 'panel', panel };
+  }
+  return null;
 }
 
 export default AgentRunCard;
