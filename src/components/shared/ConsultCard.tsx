@@ -37,8 +37,19 @@ export interface ConsultCardProps {
   onAnswer?: (answer: string) => void;
   answerPlaceholder?: string;
   busy?: boolean;
-  /** Extra footer content, e.g. a link to the session. */
+  /**
+   * Extra footer content, e.g. a link to the session. Rendered in EVERY
+   * state: beside the send button while answerable, on its own row when the
+   * card is pending but has no `onAnswer` — the one state where this is the
+   * card's only affordance, and the one state where it used to be dropped.
+   */
   footer?: ReactNode;
+  /**
+   * Draw no frame of its own — no border, radius, padding or background — for
+   * a card sitting inside a list group that already supplies them. The
+   * pending signal stays on the "agent waiting" chip.
+   */
+  flush?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -62,6 +73,7 @@ export function ConsultCard({
   answerPlaceholder = 'Answer the agent — it is waiting on this…',
   busy = false,
   footer,
+  flush = false,
   className,
   'data-testid': testId,
 }: ConsultCardProps) {
@@ -78,9 +90,10 @@ export function ConsultCard({
     <section
       data-testid={testId}
       className={cn(
-        'rounded-lg border bg-surface p-3.5 flex flex-col gap-2.5 min-w-0',
+        'flex flex-col gap-2.5 min-w-0',
         // A pending consult is a blocked machine; the border says so quietly.
-        status === 'pending' ? 'border-warning/50' : 'border-border',
+        !flush && 'rounded-lg border bg-surface p-3.5',
+        !flush && (status === 'pending' ? 'border-warning/50' : 'border-border'),
         className,
       )}
     >
@@ -138,7 +151,7 @@ export function ConsultCard({
         </div>
       )}
 
-      {status !== 'pending' && footer && (
+      {(status !== 'pending' || !onAnswer) && footer && (
         <div className="flex items-center gap-2">{footer}</div>
       )}
     </section>

@@ -26,6 +26,13 @@ import type { SurfaceTone } from './tones';
 /** @see SurfaceTone — which colour family the empty state paints in. */
 export type EmptyStateTone = SurfaceTone;
 
+/**
+ * `md` is the page-body block (220px minimum, 52px glyph). `sm` is for a
+ * lane or list group that is one of several on the page: no minimum height,
+ * a 28px glyph and a 14px title, so three empty lanes fit above the fold.
+ */
+export type EmptyStateSize = 'md' | 'sm';
+
 const TONE = {
   surface: {
     container: 'text-text-tertiary',
@@ -122,31 +129,34 @@ export interface EmptyStateProps {
    * small for the 220px block, reach for `InlinePlaceholder`.
    */
   className?: string;
+  /** Block scale. Default `md`. See `EmptyStateSize`. */
+  size?: EmptyStateSize;
 }
 
 function EmptyState({
   icon, title, body, description, actionLabel, onAction, action, actions,
   testId = 'empty-state', actionTestId = 'empty-state-action',
-  tone = 'surface', className,
+  tone = 'surface', className, size = 'md',
 }: EmptyStateProps) {
   const resolvedDescription = description ?? body;
   const palette: Palette = TONE[tone] ?? TONE.surface;
+  const small = size === 'sm';
   return (
     <div
       data-testid={testId}
       className={cn(
-        'flex flex-col items-center justify-center min-h-[220px]',
-        'gap-2 p-8 font-[inherit]',
+        'flex flex-col items-center justify-center font-[inherit]',
+        small ? 'gap-1 px-4 py-6' : 'min-h-[220px] gap-2 p-8',
         palette.container,
         className,
       )}
     >
       {icon && (
         typeof icon === 'string'
-          ? <div className="text-[52px] mb-2">{icon}</div>
-          : <div className="mb-2">{icon}</div>
+          ? <div className={cn(small ? 'text-[28px] mb-1 leading-none' : 'text-[52px] mb-2')} aria-hidden="true">{icon}</div>
+          : <div className={small ? 'mb-1' : 'mb-2'}>{icon}</div>
       )}
-      <div className={cn('text-[17px] font-semibold', palette.title)}>{title}</div>
+      <div className={cn(small ? 'text-[14px] font-semibold' : 'text-[17px] font-semibold', palette.title)}>{title}</div>
       {resolvedDescription && (
         <div className={cn('text-[13px] text-center max-w-[340px] leading-normal', palette.description)}>
           {resolvedDescription}
