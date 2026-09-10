@@ -15,6 +15,15 @@
 // starts with, or an argument search that came back empty — and a person who
 // types `/shrug` and presses Enter must send the message, not watch Enter do
 // nothing. So an empty list gives every key back to the editor.
+//
+// ## Enter on a fully typed trigger sends
+//
+// The command menu is also handed the draft. When the draft IS the
+// highlighted row's trigger — `/summarize` typed out, nothing after it — a
+// pick would only re-insert `/summarize ` and demand a second Enter, so Enter
+// is given back to the editor and the composer's keymap sends. Tab still
+// completes, which is how you get the argument menu for a command that
+// takes one.
 
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { cn } from '../../lib/cn';
@@ -39,14 +48,39 @@ export interface CommandSuggestionsProps {
   command: (item: CommandSuggestionItem) => void;
   /** The listbox's accessible name. */
   label?: string;
+  /**
+   * The whole draft, for the command menu only. When it equals the
+   * highlighted row's `code` exactly, Enter is not a pick — see the note at
+   * the top.
+   */
+  draft?: string;
 }
 
 export interface CommandSuggestionsHandle {
   onKeyDown: (props: { event: KeyboardEvent }) => boolean;
 }
 
+/** True when the draft, trimmed, is the row's trigger and nothing else. */
+function isExactlyTyped(item: CommandSuggestionItem | undefined, draft: string | undefined): boolean {
+  if (!item?.code || draft === undefined) return false;
+  return draft.trim().toLowerCase() === item.code.toLowerCase();
+}
+
+// A server-listed command that only sent a trigger arrives with its trigger
+// as the label; the row would read `/search  /search`. Its description is the
+// only words it has, so that takes the label slot — and the hint slot does
+// not repeat it.
+function rowTitle(item: CommandSuggestionItem): string {
+  if (item.code && item.label === item.code && item.description) return item.description;
+  return item.label;
+}
+function rowHint(item: CommandSuggestionItem): string | undefined {
+  if (item.hint && item.hint === rowTitle(item)) return undefined;
+  return item.hint;
+}
+
 export const CommandSuggestions = forwardRef<CommandSuggestionsHandle, CommandSuggestionsProps>(
-  function CommandSuggestions({ items, command, label = 'Commands' }, ref) {
+  function CommandSuggestions({ items, command, label = 'Commands', draft }, ref) {
     const [selected, setSelected] = useState(0);
 
     // A narrowing query can leave the cursor past the end of the list.
@@ -69,6 +103,7 @@ export const CommandSuggestions = forwardRef<CommandSuggestionsHandle, CommandSu
           setSelected((i) => (i + 1) % items.length);
           return true;
         }
+        if (event.key === 'Enter' && isExactlyTyped(items[selected], draft)) return false;
         if (event.key === 'Enter' || event.key === 'Tab') {
           choose(selected);
           return true;
@@ -112,9 +147,9 @@ export const CommandSuggestions = forwardRef<CommandSuggestionsHandle, CommandSu
               {!item.code && item.icon && (
                 <span aria-hidden className="shrink-0 text-base leading-none">{item.icon}</span>
               )}
-              <span className="min-w-0 flex-1 truncate text-text-primary">{item.label}</span>
-              {item.hint && (
-                <span className="shrink-0 max-w-[45%] truncate text-xs text-text-tertiary">{item.hint}</span>
+              <span className="min-w-0 flex-1 truncate text-text-primary">{rowTitle(item)}</span>
+              {rowHint(item) && (
+                <span className="shrink-0 max-w-[45%] truncate text-xs text-text-tertiary">{rowHint(item)}</span>
               )}
             </button>
           ))}

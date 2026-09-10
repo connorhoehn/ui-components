@@ -227,14 +227,17 @@ type SuggestionMenuRef = { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } 
  * for a debounced argument search it would blank the menu on every keystroke,
  * so the last list stays up until the new one lands.
  */
-function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean) {
+function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, sendWhenExact = false) {
   let renderer: ReactRenderer | null = null;
   let lastItems: CommandSuggestionItem[] = [];
   const menu = mountSuggestionMenu();
   const withItems = (props: SuggestionProps<CommandSuggestionItem>) => {
-    if (keepItemsWhileLoading && props.loading) return { ...props, items: lastItems, label };
+    // The command menu also gets the draft: a fully typed trigger plus Enter
+    // sends rather than re-inserting the trigger (see CommandSuggestions).
+    const draft = sendWhenExact ? { draft: props.editor.getText() } : {};
+    if (keepItemsWhileLoading && props.loading) return { ...props, items: lastItems, label, ...draft };
     lastItems = props.items;
-    return { ...props, label };
+    return { ...props, label, ...draft };
   };
   return {
     onStart: (props: SuggestionProps<CommandSuggestionItem>) => {
@@ -448,7 +451,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               command: ({ editor: e, range, props }) => {
                 e.chain().focus().deleteRange(range).insertContent(`${props.id} `).run();
               },
-              render: () => commandMenuRenderer('Commands', false),
+              render: () => commandMenuRenderer('Commands', false, true),
             }),
           ];
         },

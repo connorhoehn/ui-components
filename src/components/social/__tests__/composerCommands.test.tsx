@@ -107,6 +107,23 @@ describe('RichChatComposer `/` menu', () => {
     await waitFor(() => expect(screen.queryByTestId('command-suggestions')).toBeNull());
   });
 
+  it('sends on Enter when the draft is exactly the highlighted trigger, while Tab still completes', async () => {
+    const { type, key, text, onSend } = setup();
+    type('/shrug');
+    await waitFor(() => expect(screen.getAllByTestId('command-option')).toHaveLength(1));
+    key('Enter');
+    expect(onSend).toHaveBeenCalledTimes(1);
+    expect(onSend.mock.calls[0][0]).toMatchObject({ text: '/shrug', command: { trigger: '/shrug' } });
+    expect(text()).toBe('');
+    await waitFor(() => expect(screen.queryByTestId('command-suggestions')).toBeNull());
+
+    type('/shrug');
+    await waitFor(() => expect(screen.getAllByTestId('command-option')).toHaveLength(1));
+    key('Tab');
+    expect(text()).toBe('/shrug ');
+    expect(onSend).toHaveBeenCalledTimes(1);
+  });
+
   it('does not open mid-message, and Enter with an empty menu still sends', async () => {
     const { type, key, onSend } = setup();
     type('hello /doc');
@@ -183,6 +200,39 @@ describe('CommandSuggestions', () => {
     const { container } = render(<CommandSuggestions ref={ref} items={[]} command={vi.fn()} />);
     expect(container.firstChild).toBeNull();
     expect(ref.current!.onKeyDown({ event: new KeyboardEvent('keydown', { key: 'Enter' }) })).toBe(false);
+  });
+
+  it('gives Enter back to the editor when the draft is exactly the highlighted trigger, but Tab still picks', () => {
+    const command = vi.fn();
+    const ref = createRef<CommandSuggestionsHandle>();
+    const items = [{ id: '/summarize', code: '/summarize', label: 'Summarise' }];
+    const { rerender } = render(<CommandSuggestions ref={ref} items={items} command={command} draft="/summarize" />);
+    expect(ref.current!.onKeyDown({ event: new KeyboardEvent('keydown', { key: 'Enter' }) })).toBe(false);
+    expect(command).not.toHaveBeenCalled();
+    expect(ref.current!.onKeyDown({ event: new KeyboardEvent('keydown', { key: 'Tab' }) })).toBe(true);
+    expect(command).toHaveBeenCalledTimes(1);
+    // A partial draft is still a pick. Case and whitespace do not matter for the exact one.
+    rerender(<CommandSuggestions ref={ref} items={items} command={command} draft="/summ" />);
+    expect(ref.current!.onKeyDown({ event: new KeyboardEvent('keydown', { key: 'Enter' }) })).toBe(true);
+    expect(command).toHaveBeenCalledTimes(2);
+    rerender(<CommandSuggestions ref={ref} items={items} command={command} draft=" /Summarize " />);
+    expect(ref.current!.onKeyDown({ event: new KeyboardEvent('keydown', { key: 'Enter' }) })).toBe(false);
+  });
+
+  it('shows the description in the label slot for a row whose label is just its trigger', () => {
+    render(
+      <CommandSuggestions
+        items={[
+          { id: '/search', code: '/search', label: '/search', hint: 'Find people by what they know', description: 'Find people by what they know' },
+          { id: '/doc', code: '/doc', label: 'Edit', hint: 'with Haiku', description: 'Long form for doc' },
+        ]}
+        command={vi.fn()}
+      />,
+    );
+    const [search, doc] = screen.getAllByRole('option');
+    // Trigger once, the words once — not `/search /search Find people…`.
+    expect(search.textContent).toBe('/searchFind people by what they know');
+    expect(doc.textContent).toBe('/docEditwith Haiku');
   });
 
   it('shows the highlighted row description and commits on mousedown', () => {
