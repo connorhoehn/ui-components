@@ -266,7 +266,7 @@ export declare interface AgentNodeData {
 
 export declare type AgentProtocol = 'a2a' | 'direct';
 
-export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
+export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
 
 export declare interface AgentRunCardProps {
     runId: string;
@@ -287,6 +287,10 @@ export declare interface AgentRunCardProps {
     onOpenResult?: (result: AgentRunResult) => void;
     /** Approve or reject a run that is waiting; the buttons render only when this is given. */
     onDecide?: (runId: string, decision: AgentRunDecision) => void;
+    /** The suggestions carried in the message's metadata; `status.suggestion` wins when both are set. */
+    suggestion?: Pick<AgentRunSuggestion, 'key' | 'documentId'>;
+    /** Accept or reject a finished edit that landed as suggestions; the buttons render only when this is given. */
+    onReview?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -304,6 +308,7 @@ export declare function agentRunRefFromMetadata(metadata: Record<string, unknown
     pipelineId?: string;
     command: string;
     result?: AgentRunResult;
+    suggestionKey?: string;
 } | null;
 
 /**
@@ -327,6 +332,19 @@ export declare type AgentRunResult = {
 /** Reads a run result out of untrusted metadata; null for anything malformed. */
 export declare function agentRunResultFromMetadata(value: unknown): AgentRunResult | null;
 
+/** Who accepted or rejected the suggestions, and when. Mirrors realtime-modules' `PipelineRunStatus.review`. */
+export declare interface AgentRunReview {
+    decision: AgentRunReviewDecision;
+    /** The reviewer's id. */
+    by: string;
+    byName?: string;
+    /** ISO timestamp. */
+    at: string;
+}
+
+/** What a reviewer does with an edit that landed as suggestions. */
+export declare type AgentRunReviewDecision = 'accept' | 'reject';
+
 export declare interface AgentRunStatus {
     phase: AgentRunPhase;
     /** The outcome to open, once `phase === 'completed'`. */
@@ -337,6 +355,23 @@ export declare interface AgentRunStatus {
     detail?: string;
     /** The approval step a decision goes to, while `phase === 'awaiting_approval'`. */
     approvalStepId?: string;
+    /** Set when a completed edit landed as suggestions rather than changes; the card offers Accept / Reject until `review` is set. */
+    suggestion?: AgentRunSuggestion;
+    /** Set once someone accepted or rejected the suggestions. */
+    review?: AgentRunReview;
+}
+
+/**
+ * The suggestions a finished edit left in the document, waiting for a
+ * reviewer. Mirrors realtime-modules' `PipelineRunStatus.suggestion` — keep
+ * the field names.
+ */
+export declare interface AgentRunSuggestion {
+    /** The suggestion key the changes were tagged with; the review resolves everything under it. */
+    key: string;
+    documentId?: string;
+    /** How many changes were suggested. */
+    applied: number;
 }
 
 export declare type AgentStatus = 'healthy' | 'degraded' | 'offline' | 'deploying';
@@ -2463,7 +2498,7 @@ export declare interface ChatMessage {
     metadata?: Record<string, unknown>;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -2536,6 +2571,8 @@ export declare interface ChatPanelProps {
     onOpenResult?: (result: AgentRunResult) => void;
     /** Approve or reject a run whose card says it is waiting for approval. */
     onDecideRun?: (runId: string, decision: AgentRunDecision) => void;
+    /** Accept or reject the suggestions a finished agent edit left in the document. */
+    onReviewRun?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
     /**
      * Joins a live call from the thread. Omit when the viewer cannot join —
      * the card then renders as a record rather than a dead button.
@@ -3749,6 +3786,30 @@ export declare interface CreateEmailTemplateInput {
     htmlBody: string;
     textBody: string;
     variables?: string[];
+}
+
+/** One line for an embedder: `renderers={{ graph: createGraphPanelRenderer({ load }) }}`. */
+export declare function createGraphPanelRenderer(options: CreateGraphPanelRendererOptions): ChatSidePanelRenderer;
+
+export declare interface CreateGraphPanelRendererOptions {
+    /** Fetches what the panel shows. Called once per panel (kind + id); a throw becomes the error state. */
+    load: (panel: ChatSidePanelRef) => Promise<GraphPanelData>;
+    onOpenPerson?: (id: string, ctx: {
+        panel: ChatSidePanelRef;
+        api: ChatSidePanelApi;
+    }) => void;
+    onMessagePerson?: (id: string, ctx: {
+        panel: ChatSidePanelRef;
+        api: ChatSidePanelApi;
+    }) => void;
+    /** Node picked in a raw nodes/edges graph. */
+    onSelectNode?: (node: GraphNode, ctx: {
+        panel: ChatSidePanelRef;
+        api: ChatSidePanelApi;
+    }) => void;
+    /** Pixel height of the graph area. */
+    graphHeight?: number;
+    'data-testid'?: string;
 }
 
 export declare interface CreateGroupInput {
@@ -5472,6 +5533,97 @@ export declare interface GoLiveButtonProps {
     'data-testid'?: string;
 }
 
+/**
+ * The node the radial layout puts in the middle: the one whose `group` is
+ * `'center'`, else the node with the strictly highest weight, else none.
+ * "Strictly" matters: a graph with no weights has no centre rather than an
+ * arbitrary one.
+ */
+export declare function graphCenterNode(nodes: GraphNode[]): GraphNode | null;
+
+export declare interface GraphEdge {
+    from: string;
+    to: string;
+    label?: string;
+    /** Scales the stroke width. */
+    weight?: number;
+}
+
+/** The token classes for a group, by its legend position. Exported so PeopleGraph's list can match the graph. */
+export declare function graphGroupPalette(group: string | undefined, groups: string[]): {
+    fill: string;
+    bg: string;
+};
+
+/** Groups in first-appearance order, the centre bucket excluded; undefined groups collapse to ''. */
+export declare function graphGroups(nodes: GraphNode[]): string[];
+
+export declare type GraphLayout = 'radial' | 'grid' | 'force';
+
+export declare interface GraphLayoutSize {
+    width: number;
+    height: number;
+    /** Space kept clear of the edges so a node's circle and label fit. */
+    padding?: number;
+}
+
+export declare interface GraphNode {
+    id: string;
+    label: string;
+    /** Shown on hover (`<title>`) and, for the centre node, under the label. */
+    sublabel?: string;
+    /**
+     * Colour / legend bucket. `'center'` is special: the radial layout puts that
+     * node in the middle and the legend leaves it out.
+     */
+    group?: string;
+    /** Relative importance; scales the node radius and picks the radial centre when no node is `'center'`. */
+    weight?: number;
+    avatarUrl?: string;
+    /** Overrides the group colour with any CSS colour. */
+    color?: string;
+}
+
+export declare function GraphPanelBody({ panel, api, options }: GraphPanelBodyProps): ReactNode;
+
+declare interface GraphPanelBodyProps {
+    panel: ChatSidePanelRef;
+    api: ChatSidePanelApi;
+    options: CreateGraphPanelRendererOptions;
+}
+
+export declare type GraphPanelData = GraphPanelNodesData | GraphPanelPeopleData;
+
+export declare interface GraphPanelNodesData {
+    title?: string;
+    nodes: GraphNode[];
+    edges: GraphEdge[];
+    layout?: GraphLayout;
+}
+
+export declare interface GraphPanelPeopleData {
+    title?: string;
+    people: GraphPerson[];
+    query?: string;
+}
+
+export declare interface GraphPerson {
+    id: string;
+    name: string;
+    title?: string;
+    avatarUrl?: string;
+    tags?: string[];
+    /** Relevance to the query; scales the node. */
+    score?: number;
+}
+
+export declare interface GraphPoint {
+    x: number;
+    y: number;
+}
+
+export declare type GraphPositions = Map<string, GraphPoint>;
+
 export declare interface GraphQueryNodeData {
     type: 'graph-query';
     graphId: string;
@@ -6605,6 +6757,8 @@ export declare function isKnownViewerCount(count: number | null | undefined): co
  */
 export declare function isNewDay(current: string, previous?: string): boolean;
 
+export declare function isPeopleGraphData(data: GraphPanelData): data is GraphPanelPeopleData;
+
 export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType;
 
 export declare type JoinMergeStrategy = 'deep-merge' | 'array-collect' | 'last-writer-wins';
@@ -6696,6 +6850,8 @@ export declare interface KPIGridProps {
 
 /** Alias kept for diagrams better described as a stack of horizontal layers. */
 export declare const LayerStack: typeof StackDiagram;
+
+export declare function layoutGraph(nodes: GraphNode[], edges: GraphEdge[], layout: GraphLayout, size: GraphLayoutSize): GraphPositions;
 
 /**
  * @deprecated Pre-2.106 spelling. 'docked' is now 'window'; everything
@@ -7002,6 +7158,12 @@ export declare interface MasterDetailProps<T> {
 export declare function matchComposerCommand(draft: string, commands: readonly ComposerCommand[] | undefined): ComposerCommand | null;
 
 export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
+
+/**
+ * The tag that explains why this person is here: the first tag the query
+ * mentions (or that mentions the query), else the person's first tag.
+ */
+export declare function matchingTag(person: GraphPerson, query: string | undefined): string | undefined;
 
 export declare interface McpToolNodeData {
     type: 'mcp-tool';
@@ -7746,6 +7908,9 @@ export declare interface NewConversationPerson {
     hint?: string;
 }
 
+/** The logical drawing width; the SVG scales it to whatever width it is given. */
+export declare const NODE_GRAPH_VIEW_WIDTH = 480;
+
 export declare function NodeCard({ icon, label, subtitle, status, statusLabel, body, selected, accentClass, className, onClick, }: NodeCardProps): JSX.Element;
 
 export declare interface NodeCardProps {
@@ -7768,6 +7933,20 @@ export declare interface NodeCardProps {
 }
 
 export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData | ImageResizeNodeData | ImageTransformNodeData | ImageFormatConvertNodeData | ImageSharpenNodeData | ImageWatermarkNodeData | ImageCropNodeData | ImageAdjustBwNodeData | ImageAdjustLayerNodeData | ImageDimensionsNodeData | ImageUpscaleNodeData | ImageVisionAnalyzeNodeData | ImageVisionClassifyNodeData | ImageVisionDescribeNodeData | ImageVisionTagNodeData | ImageVisionExtractTextNodeData | ImageGenerateNodeData | ImageVariationNodeData | ImageEditPromptNodeData;
+
+export declare function NodeGraph({ nodes, edges, layout, selectedId, onSelect, height, className, 'data-testid': testId, }: NodeGraphProps): JSX.Element;
+
+export declare interface NodeGraphProps {
+    nodes: GraphNode[];
+    edges: GraphEdge[];
+    layout?: GraphLayout;
+    selectedId?: string | null;
+    onSelect?: (node: GraphNode) => void;
+    /** Pixel height of the drawing; the width follows the container. */
+    height?: number;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter' | 'image:resize' | 'image:transform' | 'image:format-convert' | 'image:sharpen' | 'image:watermark' | 'image:crop' | 'image:adjust-bw' | 'image:adjust-layer' | 'image:dimensions' | 'image:upscale' | 'image:vision-analyze' | 'image:vision-classify' | 'image:vision-describe' | 'image:vision-tag' | 'image:vision-extract-text' | 'image:generate' | 'image:variation' | 'image:edit-prompt';
 
@@ -8040,6 +8219,28 @@ export declare class PatchValidationRejectedError extends Error {
 }
 
 export declare function PauseIcon({ size, ...rest }: IconProps): JSX.Element;
+
+export declare const PEOPLE_GRAPH_QUERY_NODE_ID = "__query__";
+
+export declare function PeopleGraph({ people, query, onOpenPerson, onMessagePerson, graphHeight, className, 'data-testid': testId, }: PeopleGraphProps): JSX.Element;
+
+export declare interface PeopleGraphProps {
+    people: GraphPerson[];
+    /** What the people were found for; becomes the centre node. */
+    query?: string;
+    onOpenPerson?: (id: string) => void;
+    onMessagePerson?: (id: string) => void;
+    /** Pixel height of the graph area. */
+    graphHeight?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** The nodes and edges PeopleGraph draws; exported so a host can test or reuse the mapping. */
+export declare function peopleToGraph(people: GraphPerson[], query: string | undefined): {
+    nodes: GraphNode[];
+    edges: GraphEdge[];
+};
 
 export declare function PermissionDeniedCard({ kind, state, message, onRetry, retryLabel, icon, className, 'data-testid': testId, }: PermissionDeniedCardProps): JSX.Element;
 
@@ -14247,32 +14448,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -14306,9 +14504,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

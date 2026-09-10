@@ -119,6 +119,19 @@ declare type AgentRunResult = {
     label?: string;
 };
 
+/** Who accepted or rejected the suggestions, and when. Mirrors realtime-modules' `PipelineRunStatus.review`. */
+declare interface AgentRunReview {
+    decision: AgentRunReviewDecision;
+    /** The reviewer's id. */
+    by: string;
+    byName?: string;
+    /** ISO timestamp. */
+    at: string;
+}
+
+/** What a reviewer does with an edit that landed as suggestions. */
+declare type AgentRunReviewDecision = 'accept' | 'reject';
+
 declare interface AgentRunStatus {
     phase: AgentRunPhase;
     /** The outcome to open, once `phase === 'completed'`. */
@@ -129,6 +142,23 @@ declare interface AgentRunStatus {
     detail?: string;
     /** The approval step a decision goes to, while `phase === 'awaiting_approval'`. */
     approvalStepId?: string;
+    /** Set when a completed edit landed as suggestions rather than changes; the card offers Accept / Reject until `review` is set. */
+    suggestion?: AgentRunSuggestion;
+    /** Set once someone accepted or rejected the suggestions. */
+    review?: AgentRunReview;
+}
+
+/**
+ * The suggestions a finished edit left in the document, waiting for a
+ * reviewer. Mirrors realtime-modules' `PipelineRunStatus.suggestion` — keep
+ * the field names.
+ */
+declare interface AgentRunSuggestion {
+    /** The suggestion key the changes were tagged with; the review resolves everything under it. */
+    key: string;
+    documentId?: string;
+    /** How many changes were suggested. */
+    applied: number;
 }
 
 export declare const ALL_REALTIME_CAPABILITIES: readonly RealtimeCapabilityName[];
@@ -626,6 +656,8 @@ declare interface ChatPanelProps {
     onOpenResult?: (result: AgentRunResult) => void;
     /** Approve or reject a run whose card says it is waiting for approval. */
     onDecideRun?: (runId: string, decision: AgentRunDecision) => void;
+    /** Accept or reject the suggestions a finished agent edit left in the document. */
+    onReviewRun?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
     /**
      * Joins a live call from the thread. Omit when the viewer cannot join —
      * the card then renders as a record rather than a dead button.

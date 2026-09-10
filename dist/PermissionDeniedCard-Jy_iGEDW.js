@@ -44,45 +44,23 @@ function s({ text: t, label: s = "Show technical details", hideLabel: c = "Hide 
 	}) : null;
 }
 //#endregion
-//#region src/components/shared/Spinner.tsx
-var c = {
-	sm: "w-[14px] h-[14px]",
-	md: "w-[20px] h-[20px]",
-	lg: "w-[28px] h-[28px]"
-};
-function l({ size: t = "md", color: n, className: r, style: i, decorative: o = !1, "aria-label": s = "Loading", "data-testid": l }) {
-	let u = n ?? "var(--color-primary)";
-	return /* @__PURE__ */ a("div", {
-		...o ? { "aria-hidden": !0 } : {
-			role: "status",
-			"aria-label": s
-		},
-		"data-testid": l,
-		className: e("inline-block rounded-full border-2 border-transparent animate-spin", c[t], r),
-		style: {
-			borderTopColor: u,
-			...i
-		}
-	});
-}
-//#endregion
 //#region src/components/shared/PermissionDeniedCard.tsx
-var u = {
+var c = {
 	camera: "Camera",
 	microphone: "Microphone",
 	screen: "Screen sharing"
-}, d = {
-	denied: (e) => `${u[e]} access blocked`,
-	blocked: (e) => `${u[e]} is in use`,
+}, l = {
+	denied: (e) => `${c[e]} access blocked`,
+	blocked: (e) => `${c[e]} is in use`,
 	"no-device": (e) => e === "screen" ? "Screen sharing not supported" : `No ${e} detected`,
-	unavailable: (e) => `${u[e]} unavailable`
-}, f = {
-	denied: (e) => `${u[e]} access was blocked. Click the icon in your browser's address bar to allow it.`,
-	blocked: (e) => `${u[e]} is being used by another application. Close other tabs or apps using it and try again.`,
+	unavailable: (e) => `${c[e]} unavailable`
+}, u = {
+	denied: (e) => `${c[e]} access was blocked. Click the icon in your browser's address bar to allow it.`,
+	blocked: (e) => `${c[e]} is being used by another application. Close other tabs or apps using it and try again.`,
 	"no-device": (e) => `No ${e === "screen" ? "screen sharing capability" : e} was found on this device.`,
 	unavailable: () => "This browser doesn't support the requested device access."
 };
-function p({ kind: e }) {
+function d({ kind: e }) {
 	return e === "camera" ? /* @__PURE__ */ o("svg", {
 		width: "20",
 		height: "20",
@@ -171,26 +149,26 @@ function p({ kind: e }) {
 		]
 	});
 }
-function m({ kind: n, state: r, message: i, onRetry: s, retryLabel: c = "Try again", icon: l, className: u, "data-testid": m }) {
+function f({ kind: n, state: r, message: i, onRetry: s, retryLabel: c = "Try again", icon: f, className: p, "data-testid": m }) {
 	return /* @__PURE__ */ o("div", {
 		"data-testid": m,
 		"data-permission-kind": n,
 		"data-permission-state": r,
-		className: e("flex flex-col items-center text-center gap-3 p-6 max-w-sm", u),
+		className: e("flex flex-col items-center text-center gap-3 p-6 max-w-sm", p),
 		role: "status",
 		"aria-live": "polite",
 		children: [
 			/* @__PURE__ */ a("div", {
 				className: "h-10 w-10 rounded-full bg-warning-bg text-warning-fg grid place-items-center",
-				children: l ?? /* @__PURE__ */ a(p, { kind: n })
+				children: f ?? /* @__PURE__ */ a(d, { kind: n })
 			}),
 			/* @__PURE__ */ a("div", {
 				className: "text-base font-semibold text-text-primary",
-				children: (d[r] ?? d.unavailable)(n)
+				children: (l[r] ?? l.unavailable)(n)
 			}),
 			/* @__PURE__ */ a("p", {
 				className: "text-xs text-text-secondary",
-				children: i ?? (f[r] ?? f.unavailable)(n)
+				children: i ?? (u[r] ?? u.unavailable)(n)
 			}),
 			s && /* @__PURE__ */ a(t, {
 				variant: "ghost",
@@ -202,4 +180,4 @@ function m({ kind: n, state: r, message: i, onRetry: s, retryLabel: c = "Try aga
 	});
 }
 //#endregion
-export { l as n, s as r, m as t };
+export { s as n, f as t };

@@ -6,7 +6,8 @@ import { t as a } from "./IconButton-C3DMtvSx.js";
 import { t as o } from "./Chip-YhQI5B9P.js";
 import { t as s } from "./overlayStack-BFH9XXvN.js";
 import { t as c } from "./Modal-CyoyiNKN.js";
-import { n as l, r as u, t as d } from "./PermissionDeniedCard-CjNsV-qD.js";
+import { n as l, t as u } from "./PermissionDeniedCard-Jy_iGEDW.js";
+import { t as d } from "./Spinner-CLcq5z8N.js";
 import { n as f, r as p, t as m } from "./focusTrap-CmWJlptm.js";
 import { t as h } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as g } from "./Avatar-BzicCOft.js";
@@ -2756,7 +2757,7 @@ function Tt(e) {
 	for (let n = 0; n < e.length; n++) t = t * 31 + e.charCodeAt(n) | 0;
 	return Math.abs(t) % 360;
 }
-function Et({ status: t, segments: n, currentTimeMs: r, onSeek: i, title: a = "Transcript", errorMessage: o, errorDetail: s, pendingMessage: c, idleState: l, className: d }) {
+function Et({ status: t, segments: n, currentTimeMs: r, onSeek: i, title: a = "Transcript", errorMessage: o, errorDetail: s, pendingMessage: c, idleState: u, className: d }) {
 	let f = E(null), p = T(() => {
 		if (!n || r == null) return -1;
 		for (let e = 0; e < n.length; e++) {
@@ -2779,7 +2780,7 @@ function Et({ status: t, segments: n, currentTimeMs: r, onSeek: i, title: a = "T
 			children: a
 		}), /* @__PURE__ */ k("div", {
 			className: "text-sm text-text-tertiary",
-			children: l ?? "Transcription was not enabled for this recording."
+			children: u ?? "Transcription was not enabled for this recording."
 		})]
 	}) : t === "pending" || t === "processing" ? /* @__PURE__ */ A("section", {
 		className: e("rounded-lg border border-border bg-surface p-4", d),
@@ -2811,7 +2812,7 @@ function Et({ status: t, segments: n, currentTimeMs: r, onSeek: i, title: a = "T
 				className: "text-sm text-text-secondary",
 				children: o ?? "Transcript generation failed. Reach out to support if this persists."
 			}),
-			/* @__PURE__ */ k(u, {
+			/* @__PURE__ */ k(l, {
 				text: s,
 				className: "mt-2"
 			})
@@ -2867,9 +2868,9 @@ function Et({ status: t, segments: n, currentTimeMs: r, onSeek: i, title: a = "T
 }
 //#endregion
 //#region src/components/video/SummaryPanel.tsx
-function Dt({ status: t, markdown: n, renderMarkdown: r, title: i = "Summary", errorMessage: a, errorDetail: o, pendingMessage: s, idleState: c, className: l }) {
+function Dt({ status: t, markdown: n, renderMarkdown: r, title: i = "Summary", errorMessage: a, errorDetail: o, pendingMessage: s, idleState: c, className: u }) {
 	return t === "idle" ? /* @__PURE__ */ A("section", {
-		className: e("rounded-lg border border-border bg-surface p-4", l),
+		className: e("rounded-lg border border-border bg-surface p-4", u),
 		children: [/* @__PURE__ */ k("header", {
 			className: "text-sm font-medium text-text-secondary mb-2",
 			children: i
@@ -2878,7 +2879,7 @@ function Dt({ status: t, markdown: n, renderMarkdown: r, title: i = "Summary", e
 			children: c ?? "No summary generated for this recording."
 		})]
 	}) : t === "pending" || t === "processing" ? /* @__PURE__ */ A("section", {
-		className: e("rounded-lg border border-border bg-surface p-4", l),
+		className: e("rounded-lg border border-border bg-surface p-4", u),
 		children: [/* @__PURE__ */ A("header", {
 			className: "text-sm font-medium text-text-secondary mb-2 flex items-center gap-2",
 			children: [/* @__PURE__ */ k("span", { children: i }), /* @__PURE__ */ k("span", {
@@ -2890,7 +2891,7 @@ function Dt({ status: t, markdown: n, renderMarkdown: r, title: i = "Summary", e
 			children: s ?? "Generating summary from the transcript. This typically completes within a minute of transcription finishing."
 		})]
 	}) : t === "failed" ? /* @__PURE__ */ A("section", {
-		className: e("rounded-lg border border-danger-border bg-surface p-4", l),
+		className: e("rounded-lg border border-danger-border bg-surface p-4", u),
 		children: [
 			/* @__PURE__ */ A("header", {
 				className: "text-sm font-medium text-danger mb-2",
@@ -2900,13 +2901,13 @@ function Dt({ status: t, markdown: n, renderMarkdown: r, title: i = "Summary", e
 				className: "text-sm text-text-secondary",
 				children: a ?? "Summary generation failed."
 			}),
-			/* @__PURE__ */ k(u, {
+			/* @__PURE__ */ k(l, {
 				text: o,
 				className: "mt-2"
 			})
 		]
 	}) : !n || n.trim().length === 0 ? /* @__PURE__ */ A("section", {
-		className: e("rounded-lg border border-border bg-surface p-4", l),
+		className: e("rounded-lg border border-border bg-surface p-4", u),
 		children: [/* @__PURE__ */ k("header", {
 			className: "text-sm font-medium text-text-secondary mb-2",
 			children: i
@@ -2915,7 +2916,7 @@ function Dt({ status: t, markdown: n, renderMarkdown: r, title: i = "Summary", e
 			children: "No summary content was generated."
 		})]
 	}) : /* @__PURE__ */ A("section", {
-		className: e("rounded-lg border border-border bg-surface flex flex-col", l),
+		className: e("rounded-lg border border-border bg-surface flex flex-col", u),
 		children: [/* @__PURE__ */ k("header", {
 			className: "text-sm font-medium text-text-secondary px-4 py-3 border-b border-border",
 			children: i
@@ -3719,7 +3720,7 @@ function hn(e, t, n) {
 function gn(e) {
 	return e === "denied" ? "denied" : e === "blocked" ? "blocked" : e === "no-device" ? "no-device" : e === "unavailable" ? "unavailable" : null;
 }
-function _n({ channelName: t, localIdentity: n, previewStream: r, permission: a, permissionMessage: o, audioEnabled: s, videoEnabled: c, onToggleAudio: u, onToggleVideo: f, onRetryPermission: p, participants: m, readyState: h, readyLoading: _ = !1, effectsSlot: v, onJoin: y, onCancel: b, joinLabel: x, joinDisabled: S, subtitleOverride: w, className: ee, "data-testid": T }) {
+function _n({ channelName: t, localIdentity: n, previewStream: r, permission: a, permissionMessage: o, audioEnabled: s, videoEnabled: c, onToggleAudio: l, onToggleVideo: f, onRetryPermission: p, participants: m, readyState: h, readyLoading: _ = !1, effectsSlot: v, onJoin: y, onCancel: b, joinLabel: x, joinDisabled: S, subtitleOverride: w, className: ee, "data-testid": T }) {
 	let D = E(null);
 	C(() => {
 		D.current && r && (D.current.srcObject = r);
@@ -3787,11 +3788,11 @@ function _n({ channelName: t, localIdentity: n, previewStream: r, permission: a,
 							})),
 							a === "pending" && /* @__PURE__ */ k("div", {
 								className: "absolute inset-0 grid place-items-center",
-								children: /* @__PURE__ */ k(l, { size: "lg" })
+								children: /* @__PURE__ */ k(d, { size: "lg" })
 							}),
 							j && /* @__PURE__ */ k("div", {
 								className: "absolute inset-0 grid place-items-center bg-surface-panel/95",
-								children: /* @__PURE__ */ k(d, {
+								children: /* @__PURE__ */ k(u, {
 									kind: "camera",
 									state: j,
 									message: o,
@@ -3805,7 +3806,7 @@ function _n({ channelName: t, localIdentity: n, previewStream: r, permission: a,
 						className: "mt-4 flex items-center justify-center gap-3",
 						children: [/* @__PURE__ */ k($, {
 							on: s,
-							onClick: u,
+							onClick: l,
 							disabled: !O,
 							"aria-label": s ? "Mute mic before joining" : "Unmute mic before joining",
 							title: s ? "Mute mic before joining" : "Unmute mic before joining",
@@ -3877,7 +3878,7 @@ function _n({ channelName: t, localIdentity: n, previewStream: r, permission: a,
 function vn({ participants: e, loading: t }) {
 	return t ? /* @__PURE__ */ A("div", {
 		className: "flex items-center gap-2 text-xs text-neutral",
-		children: [/* @__PURE__ */ k(l, { size: "sm" }), " Checking room…"]
+		children: [/* @__PURE__ */ k(d, { size: "sm" }), " Checking room…"]
 	}) : !e || e.length === 0 ? null : /* @__PURE__ */ A("div", {
 		className: "flex flex-col gap-2",
 		children: [/* @__PURE__ */ k("div", {

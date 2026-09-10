@@ -23,7 +23,7 @@ declare interface ActivityPanelProps {
     connectionState: ConnectionState;
 }
 
-export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
+export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
 
 export declare interface AgentRunCardProps {
     runId: string;
@@ -44,6 +44,10 @@ export declare interface AgentRunCardProps {
     onOpenResult?: (result: AgentRunResult) => void;
     /** Approve or reject a run that is waiting; the buttons render only when this is given. */
     onDecide?: (runId: string, decision: AgentRunDecision) => void;
+    /** The suggestions carried in the message's metadata; `status.suggestion` wins when both are set. */
+    suggestion?: Pick<AgentRunSuggestion, 'key' | 'documentId'>;
+    /** Accept or reject a finished edit that landed as suggestions; the buttons render only when this is given. */
+    onReview?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -61,6 +65,7 @@ export declare function agentRunRefFromMetadata(metadata: Record<string, unknown
     pipelineId?: string;
     command: string;
     result?: AgentRunResult;
+    suggestionKey?: string;
 } | null;
 
 /**
@@ -84,6 +89,19 @@ export declare type AgentRunResult = {
 /** Reads a run result out of untrusted metadata; null for anything malformed. */
 export declare function agentRunResultFromMetadata(value: unknown): AgentRunResult | null;
 
+/** Who accepted or rejected the suggestions, and when. Mirrors realtime-modules' `PipelineRunStatus.review`. */
+export declare interface AgentRunReview {
+    decision: AgentRunReviewDecision;
+    /** The reviewer's id. */
+    by: string;
+    byName?: string;
+    /** ISO timestamp. */
+    at: string;
+}
+
+/** What a reviewer does with an edit that landed as suggestions. */
+export declare type AgentRunReviewDecision = 'accept' | 'reject';
+
 export declare interface AgentRunStatus {
     phase: AgentRunPhase;
     /** The outcome to open, once `phase === 'completed'`. */
@@ -94,6 +112,23 @@ export declare interface AgentRunStatus {
     detail?: string;
     /** The approval step a decision goes to, while `phase === 'awaiting_approval'`. */
     approvalStepId?: string;
+    /** Set when a completed edit landed as suggestions rather than changes; the card offers Accept / Reject until `review` is set. */
+    suggestion?: AgentRunSuggestion;
+    /** Set once someone accepted or rejected the suggestions. */
+    review?: AgentRunReview;
+}
+
+/**
+ * The suggestions a finished edit left in the document, waiting for a
+ * reviewer. Mirrors realtime-modules' `PipelineRunStatus.suggestion` — keep
+ * the field names.
+ */
+export declare interface AgentRunSuggestion {
+    /** The suggestion key the changes were tagged with; the review resolves everything under it. */
+    key: string;
+    documentId?: string;
+    /** How many changes were suggested. */
+    applied: number;
 }
 
 export declare const ALL_CONVERSATION_FEATURES: readonly ConversationFeature[];
@@ -489,7 +524,7 @@ declare interface ChatMessage {
     metadata?: Record<string, unknown>;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -562,6 +597,8 @@ export declare interface ChatPanelProps {
     onOpenResult?: (result: AgentRunResult) => void;
     /** Approve or reject a run whose card says it is waiting for approval. */
     onDecideRun?: (runId: string, decision: AgentRunDecision) => void;
+    /** Accept or reject the suggestions a finished agent edit left in the document. */
+    onReviewRun?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
     /**
      * Joins a live call from the thread. Omit when the viewer cannot join —
      * the card then renders as a record rather than a dead button.
@@ -1858,32 +1895,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -1917,9 +1951,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
