@@ -260,6 +260,8 @@ describe('entry points and their transitive optional peers', () => {
       // nothing until a hangout actually starts.
       'video-ivs': { static: [], dynamic: ['amazon-ivs-web-broadcast'] },
       social: { static: ['cmdk'], dynamic: [] },
+      // The whole point of the graph subpath: SVG only, no layout library.
+      graph: { static: [], dynamic: [] },
       agents: { static: ['@xyflow/react'], dynamic: [] },
       // react-markdown + remark-gfm power MarkdownView (real `dependencies`,
       // same footing as cmdk — npm installs them for the consumer).

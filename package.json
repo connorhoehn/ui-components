@@ -60,6 +60,11 @@
       "import": "./dist/social.js",
       "require": "./dist/social.cjs"
     },
+    "./graph": {
+      "types": "./dist/graph.d.ts",
+      "import": "./dist/graph.js",
+      "require": "./dist/graph.cjs"
+    },
     "./social/rich-composer": {
       "types": "./dist/social/rich-composer.d.ts",
       "import": "./dist/social/rich-composer.js",

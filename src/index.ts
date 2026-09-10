@@ -10,6 +10,7 @@ export * from './components/video';
 export * from './components/identity';
 export * from './components/change-review';
 export * from './components/inbox';
+export * from './components/graph';
 export * from './styles';
 export * from './theme';
 export * from './api';

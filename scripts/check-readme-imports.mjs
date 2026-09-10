@@ -23,6 +23,7 @@ const BARREL = {
   '/hooks': 'src/hooks/index.ts',
   '/identity': 'src/components/identity/index.ts',
   '/social': 'src/components/social/index.ts',
+  '/graph': 'src/components/graph/index.ts',
   '/video': 'src/video.ts',
   '/agents': 'src/components/agents/index.ts',
   '/pipelines': 'src/components/pipelines/index.ts',

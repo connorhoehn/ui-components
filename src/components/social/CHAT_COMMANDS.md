@@ -2,16 +2,17 @@
 
 A `ChatCommand` is a composer slash command plus `run` (what sending it does) and `scope`
 (where it is offered). Providers nest and MERGE, so a plugin adds `/search` beside the app's
-`/doc`. The library owns the card and the side-panel frame; the host owns the pipeline route
-and the panel body. All of it is tiptap-free (`ui-components/social`).
+`/doc`. The library owns the card, the side-panel frame AND the graph body; the host owns the
+pipeline route and the `load` that turns a panel ref into data. All of it is tiptap-free
+(`ui-components/social` + `ui-components/graph`).
 
 ```tsx
 import {
   ChatCommandProvider, ChatSidePanelProvider, ChatSidePanel,
   useChatCommands, useRunChatCommand, chatCommandsToComposer,
-  sidePanelToSearch, sidePanelFromSearch,
-  type ChatCommand, type ChatSidePanelRenderers,
+  sidePanelToSearch, sidePanelFromSearch, type ChatCommand,
 } from '@connorhoehn/ui-components/social';
+import { createGraphPanelRenderer } from '@connorhoehn/ui-components/graph';
 
 // 1. The command. `run` calls the plugin's own pipeline route; the app posts the agent-run message.
 const search: ChatCommand = {
@@ -33,9 +34,17 @@ const search: ChatCommand = {
   },
 };
 
-// 2. The panel body for kind `graph`. The frame (title, Open full page, close) is the library's.
-const renderers: ChatSidePanelRenderers = {
-  graph: (panel, api) => <PeopleGraph graphId={panel.id} onTitle={api.setTitle} onPick={() => api.close()} />,
+// 2. The panel body for kind `graph` — one line. `load` answers with EITHER
+//    { title?, people: [{ id, name, title?, avatarUrl?, tags?, score? }], query }  → PeopleGraph
+//    (query in the middle, people around it, edges labelled by the matching tag, a list with
+//    Message / Open), OR { title?, nodes, edges, layout? } → a plain NodeGraph. Loading shows a
+//    skeleton, a throw shows an InlineAlert with "Try again", `title` replaces the frame header.
+const renderers = {
+  graph: createGraphPanelRenderer({
+    load: async (panel) => (await fetch(`/api/people-graph/${panel.id}`)).json(),
+    onOpenPerson: (id, { api }) => { api.close(); navigate(`/people/${id}`); },
+    onMessagePerson: (id) => openDm(id),
+  }),
 };
 
 // 3. Nest under the app's providers; both layers merge, later wins by trigger / kind.
@@ -60,3 +69,6 @@ The conversation page (already in the app) does the rest:
   finished edit whose status carries `suggestion` offers Accept / Reject on the card until `review` names who decided.
 - URL: `sidePanelToSearch(panel, location.search)` / `sidePanelFromSearch(location.search)` —
   documents stay `?doc=<id>`, everything else is `?panel=<kind>:<id>` (+ `panel.<key>` params).
+- Outside a chat: `<NodeGraph nodes edges layout="radial|grid|force" selectedId onSelect />` and
+  `<PeopleGraph people query onOpenPerson onMessagePerson />` are plain components from
+  `ui-components/graph`; layouts are deterministic, pan by drag, zoom by wheel, Enter selects.
