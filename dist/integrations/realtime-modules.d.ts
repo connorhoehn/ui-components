@@ -97,14 +97,38 @@ export declare function adaptReaction(reaction: RMReaction, index: number): Ephe
 
 export declare function adaptReactions(reactions: RMReaction[]): EphemeralReaction[];
 
-declare type AgentRunPhase = 'received' | 'running' | 'completed' | 'failed';
+declare type AgentRunDecision = 'approve' | 'reject';
+
+declare type AgentRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'rejected' | 'failed';
+
+/**
+ * What a finished run produced, when it produced something a reader can open:
+ * a side panel (a search graph, a trace), the document it edited, or a link.
+ * Read from the message's metadata (`result`) when the run is posted done, or
+ * from the live status while the card is watching it.
+ */
+declare type AgentRunResult = {
+    kind: 'panel';
+    panel: ChatSidePanelRef;
+} | {
+    kind: 'document';
+    documentId: string;
+} | {
+    kind: 'link';
+    href: string;
+    label?: string;
+};
 
 declare interface AgentRunStatus {
     phase: AgentRunPhase;
-    /** The step in flight, when known — "Reading the document", "Planning the edit". */
+    /** The outcome to open, once `phase === 'completed'`. */
+    result?: AgentRunResult;
+    /** The step in flight, when known — "Reading the document", "Planning the edit", "Retrying — attempt 2". */
     stepLabel?: string;
-    /** A sentence about the outcome — "Renamed to …", the failure. */
+    /** A sentence about the outcome — "Renamed to …", the failure, why approval is needed. */
     detail?: string;
+    /** The approval step a decision goes to, while `phase === 'awaiting_approval'`. */
+    approvalStepId?: string;
 }
 
 export declare const ALL_REALTIME_CAPABILITIES: readonly RealtimeCapabilityName[];
@@ -598,6 +622,10 @@ declare interface ChatPanelProps {
     agentRunStatus?: (runId: string) => AgentRunStatus | undefined;
     /** Open the run in the pipeline UI from an agent-run card. */
     onOpenRun?: (runId: string) => void;
+    /** Open what a finished agent run produced — a side panel, a document, a link. */
+    onOpenResult?: (result: AgentRunResult) => void;
+    /** Approve or reject a run whose card says it is waiting for approval. */
+    onDecideRun?: (runId: string, decision: AgentRunDecision) => void;
     /**
      * Joins a live call from the thread. Omit when the viewer cannot join —
      * the card then renders as a record rather than a dead button.
@@ -698,6 +726,21 @@ declare interface ChatPanelProps {
      * an unavailable one reads as a missing feature.
      */
     emojis?: readonly string[];
+}
+
+/**
+ * Something open BESIDE the conversation — a document, a search-result graph,
+ * a run's trace. `kind` selects a renderer (see ChatSidePanelRegistry); `id`
+ * is what that renderer opens. The library reserves `kind: 'document'` for the
+ * `?doc=` URL form; every other kind is the host's.
+ */
+declare interface ChatSidePanelRef {
+    kind: string;
+    id: string;
+    /** A first guess at the header; a renderer may replace it once it knows more. */
+    title?: string;
+    /** Extra state the renderer needs — a query, a tab. Round-trips through the URL. */
+    params?: Record<string, string>;
 }
 
 declare interface ChatTransfer {

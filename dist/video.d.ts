@@ -610,7 +610,7 @@ export declare interface DeviceSettingsPanelProps {
     'data-testid'?: string;
 }
 
-export declare function EmbeddedCallPanel({ title, subtitle, durationSeconds, live, onPopOut, popOutLabel, children, controls, stage, className, 'data-testid': testId, }: EmbeddedCallPanelProps): JSX.Element;
+export declare function EmbeddedCallPanel({ title, subtitle, durationSeconds, live, recording, onPopOut, popOutLabel, children, controls, stage, className, 'data-testid': testId, }: EmbeddedCallPanelProps): JSX.Element;
 
 export declare interface EmbeddedCallPanelProps {
     /** What this call is — a room name, "Alice & Bob", a channel. */
@@ -620,6 +620,12 @@ export declare interface EmbeddedCallPanelProps {
     durationSeconds?: number;
     /** Shows the live dot. Default true — an embedded call that is not live is not shown. */
     live?: boolean;
+    /**
+     * Whether this call records. `armed` = it will (a room with recording on, a
+     * DM both people opted into) but nothing is written yet; `active` = writing
+     * now. Omitted or neither → no chip, which is the "not recorded" statement.
+     */
+    recording?: RecordingChipState;
     /** Take the call back out into its floating window. Omitted → no button. */
     onPopOut?: () => void;
     popOutLabel?: string;
@@ -975,12 +981,8 @@ export declare interface HangoutRoomHeaderProps {
     'data-testid'?: string;
 }
 
-export declare interface HangoutRoomHeaderRecording {
-    /** Whether recording is armed for this room. When false, no pill is rendered. */
-    armed: boolean;
-    /** Whether the recording is actively writing (someone is publishing). */
-    active: boolean;
-}
+/** Same two states as RecordingChip; kept as a named alias for existing consumers. */
+export declare type HangoutRoomHeaderRecording = RecordingChipState;
 
 export declare function HangoutSpotlight({ participants, localParticipant, spotlightContent, spotlightContentLabel, activeSpeakerId, speakerHysteresisMs, onParticipantClick, fillParent, filmstripTileWidth, className, style, }: HangoutSpotlightProps): JSX.Element;
 
@@ -1451,6 +1453,27 @@ export declare interface ReconnectingBannerProps {
     show: boolean;
     /** Optional label override. Default: "Reconnecting…". */
     label?: string;
+}
+
+export declare const RECORDING_CHIP_TITLES: {
+    readonly active: "Recording — saved to /recordings when the call ends";
+    readonly armed: "Recording armed — will start once the call is under way";
+};
+
+export declare function RecordingChip({ armed, active, titles, className, 'data-testid': testId, }: RecordingChipProps): JSX.Element | null;
+
+export declare interface RecordingChipProps extends RecordingChipState {
+    /** Overrides the default hover copy for each state. */
+    titles?: Partial<Record<'armed' | 'active', string>>;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface RecordingChipState {
+    /** Recording is on for this call — it will record, or is recording. */
+    armed: boolean;
+    /** Bytes are being written right now. Implies armed. */
+    active: boolean;
 }
 
 export declare function RecordingList({ recordings, selectedId, onSelect, loading, emptyState, renderActions, className, }: RecordingListProps): JSX.Element;
@@ -2253,9 +2276,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2289,32 +2335,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

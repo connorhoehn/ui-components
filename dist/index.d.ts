@@ -266,7 +266,7 @@ export declare interface AgentNodeData {
 
 export declare type AgentProtocol = 'a2a' | 'direct';
 
-export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
+export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
 
 export declare interface AgentRunCardProps {
     runId: string;
@@ -281,11 +281,19 @@ export declare interface AgentRunCardProps {
     onOpenDocument?: () => void;
     /** Open the run in the pipeline UI. */
     onOpenRun?: (runId: string) => void;
+    /** The result carried in the message's metadata; `status.result` wins when both are set. */
+    result?: AgentRunResult;
+    /** Open the finished run's result — a panel beside the chat, the document, a link. The action renders only when this is given. */
+    onOpenResult?: (result: AgentRunResult) => void;
+    /** Approve or reject a run that is waiting; the buttons render only when this is given. */
+    onDecide?: (runId: string, decision: AgentRunDecision) => void;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare type AgentRunPhase = 'received' | 'running' | 'completed' | 'failed';
+export declare type AgentRunDecision = 'approve' | 'reject';
+
+export declare type AgentRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'rejected' | 'failed';
 
 /** Reads a `/doc` command message's metadata; null for anything else. */
 export declare function agentRunRefFromMetadata(metadata: Record<string, unknown> | undefined): {
@@ -295,14 +303,40 @@ export declare function agentRunRefFromMetadata(metadata: Record<string, unknown
     agentName: string;
     pipelineId?: string;
     command: string;
+    result?: AgentRunResult;
 } | null;
+
+/**
+ * What a finished run produced, when it produced something a reader can open:
+ * a side panel (a search graph, a trace), the document it edited, or a link.
+ * Read from the message's metadata (`result`) when the run is posted done, or
+ * from the live status while the card is watching it.
+ */
+export declare type AgentRunResult = {
+    kind: 'panel';
+    panel: ChatSidePanelRef;
+} | {
+    kind: 'document';
+    documentId: string;
+} | {
+    kind: 'link';
+    href: string;
+    label?: string;
+};
+
+/** Reads a run result out of untrusted metadata; null for anything malformed. */
+export declare function agentRunResultFromMetadata(value: unknown): AgentRunResult | null;
 
 export declare interface AgentRunStatus {
     phase: AgentRunPhase;
-    /** The step in flight, when known — "Reading the document", "Planning the edit". */
+    /** The outcome to open, once `phase === 'completed'`. */
+    result?: AgentRunResult;
+    /** The step in flight, when known — "Reading the document", "Planning the edit", "Retrying — attempt 2". */
     stepLabel?: string;
-    /** A sentence about the outcome — "Renamed to …", the failure. */
+    /** A sentence about the outcome — "Renamed to …", the failure, why approval is needed. */
     detail?: string;
+    /** The approval step a decision goes to, while `phase === 'awaiting_approval'`. */
+    approvalStepId?: string;
 }
 
 export declare type AgentStatus = 'healthy' | 'degraded' | 'offline' | 'deploying';
@@ -1217,7 +1251,7 @@ export declare const CALL_DOCK_ROW_HEIGHT = "h-[480px]";
 /** Video-column width with the dock open — it GROWS, it is not pinned. */
 export declare const CALL_STAGE_DOCKED_WIDTH = "w-[480px]";
 
-export declare function CallActivityCard({ callId, startedBy, participants, live, durationMs, audioOnly, onJoin, className, 'data-testid': testId, }: CallActivityCardProps): JSX.Element;
+export declare function CallActivityCard({ callId, startedBy, participants, live, durationMs, audioOnly, recorded, notRecordedReason, lobbyName, onJoin, className, 'data-testid': testId, }: CallActivityCardProps): JSX.Element;
 
 export declare interface CallActivityCardProps {
     callId: string;
@@ -1245,6 +1279,21 @@ export declare interface CallActivityCardProps {
      * unqualified "Call" is the true statement.
      */
     audioOnly?: boolean;
+    /**
+     * Whether the call was recorded — and UNDEFINED when the record does not
+     * say, in which case the card says nothing about it. Only `false` produces
+     * a note: a recording that exists announces itself in the thread as its own
+     * card, so "Recorded" here would say it twice.
+     */
+    recorded?: boolean;
+    /**
+     * Why it was not recorded, as the platform-api decision code:
+     * `room-setting-off`, `dm-not-opted-in:<userIds>`, … See
+     * `describeNotRecorded` for the words each one becomes.
+     */
+    notRecordedReason?: string;
+    /** The call's lobby (`room:design`, `dm:a:b`) — names the room in the note. */
+    lobbyName?: string;
     /**
      * Joins the call. Ignored once `live` is false — a call that ended has
      * nothing to join, and the button would be a dead control. Omit it when the
@@ -1400,6 +1449,9 @@ export declare function callRefFromMetadata(metadata: Record<string, unknown> | 
     live: boolean;
     durationMs?: number;
     audioOnly?: boolean;
+    recorded?: boolean;
+    notRecordedReason?: string;
+    lobbyName?: string;
     participants: CallActivityParticipant[];
 } | null;
 
@@ -2204,6 +2256,106 @@ export declare interface ChatAttachment {
  *  panel (CallSidePanel) or the settings dialog's Chat tab. */
 export declare function ChatBubbleIcon({ size, ...rest }: IconProps): JSX.Element;
 
+export declare type ChatChannelKind = 'room' | 'dm';
+
+/** Room or DM for a channel, from the host's word first and the gateway's prefix second. */
+export declare function chatChannelKindOf(ctx: Pick<ChatCommandScopeContext, 'channel' | 'channelKind'>): ChatChannelKind;
+
+export declare interface ChatCommand extends ComposerCommand {
+    /** What sending the command does. Errors propagate to the host, which toasts. */
+    run: (ctx: ChatCommandContext) => Promise<ChatCommandOutcome>;
+    /** When the command is offered. Default `'always'`. Out of scope, it is listed disabled with a hint that says why. */
+    scope?: ChatCommandScope;
+    /** Overrides the hint shown while the command is out of scope. */
+    disabledHint?: string;
+}
+
+/** What a command sees when it runs, and what a scope sees when it decides. */
+export declare interface ChatCommandContext {
+    channel: string;
+    /**
+     * Room or direct message, when the host knows. Without it, the `room`/`dm`
+     * scopes fall back to the gateway's `chat:dm:`/`chat:dmg:` prefixes.
+     */
+    channelKind?: ChatChannelKind;
+    user: {
+        id: string;
+        displayName: string;
+    };
+    idToken: string | null;
+    /** The whole draft as sent, trigger included. */
+    text: string;
+    /** The text after the trigger, trimmed — the instruction, the query. */
+    argumentText: string;
+    /** The row picked from the command's argument menu, when there was one. */
+    argument?: ComposerArgumentItem;
+    sidePanel: {
+        current: ChatSidePanelRef | null;
+        open: (panel: ChatSidePanelRef) => void;
+        close: () => void;
+    };
+    toast?: (message: string, opts?: {
+        type?: 'info' | 'success' | 'error';
+    }) => void;
+    navigate?: (path: string) => void;
+}
+
+export declare type ChatCommandOutcome = 
+/**
+* The command started a pipeline run. The host posts an `agent-run` message
+* whose metadata is `{ kind: 'agent-run', command, instruction, runId,
+* pipelineId, ...card }`, and the thread shows an AgentRunCard for it.
+*/
+    {
+    kind: 'run';
+    runId: string;
+    pipelineId: string;
+    card: Record<string, unknown>;
+    echo?: string;
+}
+/** The command opened something beside the conversation, immediately. */
+| {
+    kind: 'panel';
+    panel: ChatSidePanelRef;
+    echo?: string;
+}
+/** The command's whole result is a message in the thread. */
+| {
+    kind: 'message';
+    text: string;
+    metadata?: Record<string, unknown>;
+}
+/** The command did its work out of band (a toast, a navigation). */
+| {
+    kind: 'none';
+};
+
+export declare function ChatCommandProvider({ commands, children }: ChatCommandProviderProps): JSX.Element;
+
+export declare interface ChatCommandProviderProps {
+    /** This layer's commands. Merged over any provider above; overrides by trigger. */
+    commands?: readonly ChatCommand[];
+    children: ReactNode;
+}
+
+/** Everything `run` needs except the draft, which the runner parses. */
+export declare type ChatCommandRunContext = Omit<ChatCommandContext, 'text' | 'argumentText'>;
+
+export declare type ChatCommandScope = 'always' | 'document-open' | 'room' | 'dm' | ((ctx: ChatCommandScopeContext) => boolean);
+
+/** The context a scope decides on: everything but the draft, which does not exist yet. */
+export declare type ChatCommandScopeContext = Omit<ChatCommandContext, 'text' | 'argumentText' | 'argument'>;
+
+/** Why a command is disabled right now, in the words the composer's bar shows. */
+export declare function chatCommandScopeHint(command: Pick<ChatCommand, 'scope' | 'disabledHint' | 'hint'>): string;
+
+/**
+ * The composer's view of the registry: every command, in registry order,
+ * with out-of-scope ones disabled and their hint replaced by the reason. The
+ * composer never sees `run` or `scope`.
+ */
+export declare function chatCommandsToComposer(commands: readonly ChatCommand[], ctx: ChatCommandScopeContext): ComposerCommand[];
+
 /**
  * Chat input with send button. Stateless — value/onChange controlled by parent.
  *
@@ -2311,7 +2463,7 @@ export declare interface ChatMessage {
     metadata?: Record<string, unknown>;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -2380,6 +2532,10 @@ export declare interface ChatPanelProps {
     agentRunStatus?: (runId: string) => AgentRunStatus | undefined;
     /** Open the run in the pipeline UI from an agent-run card. */
     onOpenRun?: (runId: string) => void;
+    /** Open what a finished agent run produced — a side panel, a document, a link. */
+    onOpenResult?: (result: AgentRunResult) => void;
+    /** Approve or reject a run whose card says it is waiting for approval. */
+    onDecideRun?: (runId: string, decision: AgentRunDecision) => void;
     /**
      * Joins a live call from the thread. Omit when the viewer cannot join —
      * the card then renders as a record rather than a dead button.
@@ -2490,6 +2646,81 @@ declare interface ChatRoomProps {
     roomName: string;
     onMessage: OnMessageFn_9;
 }
+
+/**
+ * Looks the panel's renderer up and shows it inside the frame. With no
+ * renderer for the kind the frame still opens — with an empty state that names
+ * the kind, so a missing registration is a visible bug, not a blank split.
+ */
+export declare function ChatSidePanel({ panel, onClose, onOpenFullPage, className, 'data-testid': testId }: ChatSidePanelProps): JSX.Element;
+
+export declare interface ChatSidePanelApi {
+    close: () => void;
+    /** Present when the host gave the panel a full-page destination. */
+    openFullPage?: () => void;
+    /** Replaces the frame's title once the body knows the real one (the live document title). */
+    setTitle: (title: string | null) => void;
+}
+
+/**
+ * The chrome around anything open beside a conversation: one header row with
+ * the title on the left and the way out on the right, and a body that fills
+ * the rest and scrolls on its own.
+ */
+export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
+
+export declare interface ChatSidePanelFrameProps {
+    title: string;
+    /** A second clause under the title — "12 results", "Edited by Grace". */
+    subtitle?: string;
+    onClose: () => void;
+    /** Renders "Open full page" when given. */
+    onOpenFullPage?: () => void;
+    /** Extra header controls, placed before "Open full page". */
+    actions?: ReactNode;
+    children: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** Sentence-cases a kind for the header when the ref carries no title: `agent-trace` → `Agent trace`. */
+export declare function chatSidePanelKindLabel(kind: string): string;
+
+export declare interface ChatSidePanelProps {
+    panel: ChatSidePanelRef;
+    onClose: () => void;
+    /** Where the panel goes full-page, when it can. Receives the ref so one handler serves every kind. */
+    onOpenFullPage?: (panel: ChatSidePanelRef) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function ChatSidePanelProvider({ renderers, children }: ChatSidePanelProviderProps): JSX.Element;
+
+export declare interface ChatSidePanelProviderProps {
+    /** This layer's renderers by kind. Merged over any provider above; overrides by kind. */
+    renderers?: ChatSidePanelRenderers;
+    children: ReactNode;
+}
+
+/**
+ * Something open BESIDE the conversation — a document, a search-result graph,
+ * a run's trace. `kind` selects a renderer (see ChatSidePanelRegistry); `id`
+ * is what that renderer opens. The library reserves `kind: 'document'` for the
+ * `?doc=` URL form; every other kind is the host's.
+ */
+export declare interface ChatSidePanelRef {
+    kind: string;
+    id: string;
+    /** A first guess at the header; a renderer may replace it once it knows more. */
+    title?: string;
+    /** Extra state the renderer needs — a query, a tab. Round-trips through the URL. */
+    params?: Record<string, string>;
+}
+
+export declare type ChatSidePanelRenderer = (panel: ChatSidePanelRef, api: ChatSidePanelApi) => ReactNode;
+
+export declare type ChatSidePanelRenderers = Record<string, ChatSidePanelRenderer>;
 
 export declare interface ChatTransfer {
     transferId: string;
@@ -4332,7 +4563,7 @@ export declare interface EmailTemplateListPageProps {
     loading?: boolean;
 }
 
-export declare function EmbeddedCallPanel({ title, subtitle, durationSeconds, live, onPopOut, popOutLabel, children, controls, stage, className, 'data-testid': testId, }: EmbeddedCallPanelProps): JSX.Element;
+export declare function EmbeddedCallPanel({ title, subtitle, durationSeconds, live, recording, onPopOut, popOutLabel, children, controls, stage, className, 'data-testid': testId, }: EmbeddedCallPanelProps): JSX.Element;
 
 export declare interface EmbeddedCallPanelProps {
     /** What this call is — a room name, "Alice & Bob", a channel. */
@@ -4342,6 +4573,12 @@ export declare interface EmbeddedCallPanelProps {
     durationSeconds?: number;
     /** Shows the live dot. Default true — an embedded call that is not live is not shown. */
     live?: boolean;
+    /**
+     * Whether this call records. `armed` = it will (a room with recording on, a
+     * DM both people opted into) but nothing is written yet; `active` = writing
+     * now. Omitted or neither → no chip, which is the "not recorded" statement.
+     */
+    recording?: RecordingChipState;
     /** Take the call back out into its floating window. Omitted → no button. */
     onPopOut?: () => void;
     popOutLabel?: string;
@@ -5489,12 +5726,8 @@ export declare interface HangoutRoomHeaderProps {
     'data-testid'?: string;
 }
 
-export declare interface HangoutRoomHeaderRecording {
-    /** Whether recording is armed for this room. When false, no pill is rendered. */
-    armed: boolean;
-    /** Whether the recording is actively writing (someone is publishing). */
-    active: boolean;
-}
+/** Same two states as RecordingChip; kept as a named alias for existing consumers. */
+export declare type HangoutRoomHeaderRecording = RecordingChipState;
 
 export declare function HangoutSpotlight({ participants, localParticipant, spotlightContent, spotlightContentLabel, activeSpeakerId, speakerHysteresisMs, onParticipantClick, fillParent, filmstripTileWidth, className, style, }: HangoutSpotlightProps): JSX.Element;
 
@@ -6345,6 +6578,9 @@ export declare interface InviteToCallDialogProps {
     shareLink?: string;
 }
 
+/** True when `command` is offered in `ctx`. */
+export declare function isChatCommandInScope(command: Pick<ChatCommand, 'scope'>, ctx: ChatCommandScopeContext): boolean;
+
 export declare function isImageAttachment(a: {
     contentType?: string;
 }): boolean;
@@ -6936,6 +7172,9 @@ declare interface MentionUser {
     type: 'user' | 'group';
     memberCount?: number;
 }
+
+/** Later commands win by trigger (case-insensitive); the first occurrence keeps its position. */
+export declare function mergeChatCommands(...layers: ReadonlyArray<readonly ChatCommand[] | undefined>): ChatCommand[];
 
 export declare function MessageActionBar({ quickReactions, onReact, onOpenReactionPicker, onReply, onTogglePin, pinned, onCopyLink, onEdit, onDelete, className, 'data-testid': testId, }: MessageActionBarProps): JSX.Element;
 
@@ -7679,6 +7918,12 @@ export declare interface PageSectionProps {
     children: ReactNode;
     className?: string;
 }
+
+/** The command a sent draft addresses and its argument, or null when the draft is plain text. */
+export declare function parseChatCommand<C extends ComposerCommand = ChatCommand>(text: string, commands: readonly C[] | undefined): {
+    command: C;
+    argumentText: string;
+} | null;
 
 /** Parse unified git diff output. Exported for tests and for hosts that need
  *  the file list without rendering. */
@@ -9250,6 +9495,27 @@ export declare interface ReconnectingBannerProps {
     label?: string;
 }
 
+export declare const RECORDING_CHIP_TITLES: {
+    readonly active: "Recording — saved to /recordings when the call ends";
+    readonly armed: "Recording armed — will start once the call is under way";
+};
+
+export declare function RecordingChip({ armed, active, titles, className, 'data-testid': testId, }: RecordingChipProps): JSX.Element | null;
+
+export declare interface RecordingChipProps extends RecordingChipState {
+    /** Overrides the default hover copy for each state. */
+    titles?: Partial<Record<'armed' | 'active', string>>;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface RecordingChipState {
+    /** Recording is on for this call — it will record, or is recording. */
+    armed: boolean;
+    /** Bytes are being written right now. Implies armed. */
+    active: boolean;
+}
+
 export declare function RecordingList({ recordings, selectedId, onSelect, loading, emptyState, renderActions, className, }: RecordingListProps): JSX.Element;
 
 export declare interface RecordingListItem {
@@ -10122,6 +10388,16 @@ export declare interface SidebarSectionProps {
     /** Test id (defaults to "sidebar-section"). */
     'data-testid'?: string;
 }
+
+/** Reads the panel a query string names, `doc` first; null when it names none. */
+export declare function sidePanelFromSearch(search: string | URLSearchParams | undefined): ChatSidePanelRef | null;
+
+/**
+ * Writes `panel` into `search` (an existing query string, or nothing) and
+ * returns the new params. `null` closes: it removes `doc`, `panel` and every
+ * `panel.*` entry.
+ */
+export declare function sidePanelToSearch(panel: ChatSidePanelRef | null, search?: string | URLSearchParams): URLSearchParams;
 
 export declare interface SignoffEntry {
     name: string;
@@ -12284,6 +12560,9 @@ declare interface UseActivityBusReturn {
 
  export declare function useChat(options: UseChatOptions): UseChatReturn;
 
+ /** Every command in scope of the nearest provider; `[]` outside one. */
+ export declare function useChatCommands(): ChatCommand[];
+
  declare interface UseChatOptions {
      sendMessage: (msg: Record<string, unknown>) => void;
      onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
@@ -12296,6 +12575,12 @@ declare interface UseActivityBusReturn {
      messages: ChatMessage[];
      send: (content: string) => void;
  }
+
+ /** The renderer for `kind`, or null when nothing above registered one. */
+ export declare function useChatSidePanelRenderer(kind: string): ChatSidePanelRenderer | null;
+
+ /** Every renderer visible here, by kind; `{}` outside a provider. */
+ export declare function useChatSidePanelRenderers(): ChatSidePanelRenderers;
 
  /**
   * Invoke `onClickOutside` when a mousedown occurs outside the ref element.
@@ -13154,6 +13439,13 @@ declare interface UseActivityBusReturn {
  }
 
  /**
+  * Adds `commands` to the nearest provider while the caller is mounted. Pass a
+  * stable array (module-level or memoised): a new array each render is a
+  * re-registration each render.
+  */
+ export declare function useRegisterChatCommands(commands: readonly ChatCommand[] | undefined): void;
+
+ /**
   * Register a command into the active CommandPaletteProvider for the lifetime
   * of the calling component. Registers on mount, unregisters on unmount.
   *
@@ -13289,6 +13581,13 @@ declare interface UseActivityBusReturn {
   *  call side-panel dock. Distinct from UserPlusIcon, which means "invite
   *  someone new" rather than "show who is here". */
  export declare function UsersIcon({ size, ...rest }: IconProps): JSX.Element;
+
+ /**
+  * Runs the command a sent draft names. Resolves `null` when the draft is plain
+  * text (send it as a message); throws when the command is out of scope or its
+  * `run` rejects — the host toasts and keeps the draft.
+  */
+ export declare function useRunChatCommand(): (text: string, ctx: ChatCommandRunContext) => Promise<ChatCommandOutcome | null>;
 
  export declare function useSectionList(ydoc: Y.Doc | null): UseSectionListReturn;
 
@@ -13948,9 +14247,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -13984,32 +14306,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

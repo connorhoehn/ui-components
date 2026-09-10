@@ -2136,7 +2136,7 @@ var vi = u(function({ items: n, command: r }, i) {
 	let c = t[a]?.description;
 	return /* @__PURE__ */ y("div", {
 		"data-testid": "command-suggestions",
-		className: "w-72 rounded-lg border border-border bg-surface py-1 shadow-lg",
+		className: "w-[26rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface py-1 shadow-lg",
 		children: [/* @__PURE__ */ v("div", {
 			role: "listbox",
 			"aria-label": r,
@@ -2166,7 +2166,7 @@ var vi = u(function({ items: n, command: r }, i) {
 						children: t.label
 					}),
 					t.hint && /* @__PURE__ */ v("span", {
-						className: "shrink-0 max-w-[40%] truncate text-xs text-text-tertiary",
+						className: "shrink-0 max-w-[45%] truncate text-xs text-text-tertiary",
 						children: t.hint
 					})
 				]
