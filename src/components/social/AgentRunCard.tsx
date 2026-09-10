@@ -84,6 +84,10 @@ export interface AgentRunOp {
   text?: string;
   /** The block the op acted on, zero-based. */
   index?: number;
+  /** The block an `appendBlock`/`insertBlock` added — 'paragraph' | 'heading' | 'horizontalRule'. */
+  kind?: string;
+  /** A heading's level (1–6). */
+  level?: number;
 }
 
 /**
@@ -184,7 +188,11 @@ export function describeAgentRunOp(op: AgentRunOp): string {
   switch (op.op) {
     case 'setTitle': return `Renamed to “${clip(text)}”`;
     case 'appendBlock':
-    case 'insertBlock': return `Added: “${clip(text)}”`;
+    case 'insertBlock':
+      // A divider has no text to quote, and a heading reads better named as one.
+      if (op.kind === 'horizontalRule') return 'Added a divider';
+      if (op.kind === 'heading') return text.trim() ? `Added heading “${clip(text)}”` : 'Added an empty heading';
+      return text.trim() ? `Added: “${clip(text)}”` : 'Added an empty block';
     case 'replaceBlock': return `Rewrote block ${blockNo(op.index)}`;
     case 'deleteBlock': return `Removed block ${blockNo(op.index)}`;
     case 'appendMacro': return text ? `Added a ${clip(text, 40)}` : 'Added a macro';

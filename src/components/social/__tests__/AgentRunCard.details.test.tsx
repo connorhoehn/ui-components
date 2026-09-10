@@ -107,6 +107,14 @@ describe('AgentRunCard details', () => {
     expect(describeAgentRunOp({ op: 'setDocumentType', text: 'Runbook' })).toBe('Type: Runbook');
     expect(describeAgentRunOp({ op: 'skip', text: 'The second paragraph already says this.' })).toBe('The second paragraph already says this.');
     expect(describeAgentRunOp({ op: 'insertBlock', text: 'Short' })).toBe('Added: “Short”');
+    // A block's kind names what was added when there is no text worth quoting.
+    expect(describeAgentRunOp({ op: 'appendBlock', kind: 'horizontalRule' })).toBe('Added a divider');
+    expect(describeAgentRunOp({ op: 'insertBlock', kind: 'horizontalRule', index: 2, text: '' })).toBe('Added a divider');
+    expect(describeAgentRunOp({ op: 'appendBlock', kind: 'heading', level: 2, text: 'Rollout plan' })).toBe('Added heading “Rollout plan”');
+    expect(describeAgentRunOp({ op: 'insertBlock', kind: 'heading', text: '   ' })).toBe('Added an empty heading');
+    expect(describeAgentRunOp({ op: 'appendBlock', kind: 'paragraph', text: 'A paragraph' })).toBe('Added: “A paragraph”');
+    expect(describeAgentRunOp({ op: 'appendBlock', kind: 'paragraph' })).toBe('Added an empty block');
+    expect(describeAgentRunOp({ op: 'appendBlock', text: '' })).toBe('Added an empty block');
     expect(describeAgentRunOp({ op: 'somethingNew' })).toBe('somethingNew');
   });
 
