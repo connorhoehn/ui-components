@@ -2340,6 +2340,11 @@ export declare type ChatCommandOutcome =
 * The command started a pipeline run. The host posts an `agent-run` message
 * whose metadata is `{ kind: 'agent-run', command, instruction, runId,
 * pipelineId, ...card }`, and the thread shows an AgentRunCard for it.
+*
+* `visibility: 'private'` asks the host NOT to post: the card is shown to
+* the person who ran the command alone (ChatPanel's `localMessages`), and
+* they decide whether it goes into the conversation once the run has
+* produced something worth sharing. Default `'shared'`.
 */
     {
     kind: 'run';
@@ -2347,6 +2352,7 @@ export declare type ChatCommandOutcome =
     pipelineId: string;
     card: Record<string, unknown>;
     echo?: string;
+    visibility?: 'shared' | 'private';
 }
 /** The command opened something beside the conversation, immediately. */
 | {
@@ -2498,10 +2504,17 @@ export declare interface ChatMessage {
     metadata?: Record<string, unknown>;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
+    /**
+     * Viewer-only messages, rendered in timeline order among `messages` (by
+     * timestamp) with a note that nobody else sees them and their `actions` as
+     * small buttons under the card. The host owns them: ChatPanel never sends,
+     * stores or removes one.
+     */
+    localMessages?: LocalChatMessage[];
     onSend: (content: string) => void;
     /**
      * Replaces the built-in input row entirely.
@@ -7009,6 +7022,32 @@ export declare interface LoadingStateProps {
     spinnerSize?: SpinnerSize;
     spinnerColor?: string;
     testId?: string;
+}
+
+/**
+ * A message that exists only in THIS viewer's thread — never sent, never
+ * stored, gone on reload. The shape a `visibility: 'private'` command outcome
+ * takes while its owner decides whether to post it: the card shows the run
+ * moving (its `metadata` goes through the same `agent-run` reader as a real
+ * message, so `agentRunStatus`, Open and Approve all work), a subdued note
+ * says nobody else can see it, and `actions` are what the owner can do about
+ * that — post it, dismiss it.
+ */
+export declare interface LocalChatMessage {
+    id: string;
+    /** ISO. Decides where in the thread the message sits. */
+    timestamp: string;
+    displayName: string;
+    content: string;
+    metadata: Record<string, unknown>;
+    actions?: Array<{
+        id: string;
+        label: string;
+        onSelect: () => void;
+        primary?: boolean;
+    }>;
+    /** Replaces the default "Only you can see this". */
+    note?: string;
 }
 
 declare interface LogEntry {
@@ -14438,6 +14477,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -14458,19 +14507,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -14504,12 +14546,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

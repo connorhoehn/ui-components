@@ -587,6 +587,13 @@ declare interface ChatMessage {
 
 declare interface ChatPanelProps {
     messages: ChatMessage[];
+    /**
+     * Viewer-only messages, rendered in timeline order among `messages` (by
+     * timestamp) with a note that nobody else sees them and their `actions` as
+     * small buttons under the card. The host owns them: ChatPanel never sends,
+     * stores or removes one.
+     */
+    localMessages?: LocalChatMessage[];
     onSend: (content: string) => void;
     /**
      * Replaces the built-in input row entirely.
@@ -1193,6 +1200,32 @@ export declare interface HangoutRoomsSectionProps {
         open: boolean;
         onClose: () => void;
     }) => React.ReactNode;
+}
+
+/**
+ * A message that exists only in THIS viewer's thread — never sent, never
+ * stored, gone on reload. The shape a `visibility: 'private'` command outcome
+ * takes while its owner decides whether to post it: the card shows the run
+ * moving (its `metadata` goes through the same `agent-run` reader as a real
+ * message, so `agentRunStatus`, Open and Approve all work), a subdued note
+ * says nobody else can see it, and `actions` are what the owner can do about
+ * that — post it, dismiss it.
+ */
+declare interface LocalChatMessage {
+    id: string;
+    /** ISO. Decides where in the thread the message sits. */
+    timestamp: string;
+    displayName: string;
+    content: string;
+    metadata: Record<string, unknown>;
+    actions?: Array<{
+        id: string;
+        label: string;
+        onSelect: () => void;
+        primary?: boolean;
+    }>;
+    /** Replaces the default "Only you can see this". */
+    note?: string;
 }
 
 declare interface MediaEffectsBackgroundOption {
