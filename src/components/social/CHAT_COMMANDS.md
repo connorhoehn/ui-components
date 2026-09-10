@@ -71,6 +71,11 @@ The conversation page (already in the app) does the rest:
   `ChatPanel` renders those as 📄 chips under the text and opens them through its `onOpenDocument`.
 - Suggestions: `ChatPanel onReviewRun={(runId, decision, { key, documentId }) => reviewSuggestions(...)}` — a
   finished edit whose status carries `suggestion` offers Accept / Reject on the card until `review` names who decided.
+- A run beside the chat: `renderers={{ run: createRunPanelRenderer({ load, onOpenFull, onOpenChat }) }}` — the
+  condensed read-only run (`RunSummaryPanel`: status, steps, what changed, document/result, error) for
+  `?panel=run:<pipelineId>:<runId>` (`runPanelId` / `parseRunPanelId`). `load` answers `RunPanelData`; the body
+  re-loads every 2s while the run is running/awaiting. The footer is "Open full run" and, when the data names a
+  `channel`, "Open chat". `ChatPanel onOpenRun` should open this panel, not leave the conversation.
 - URL: `sidePanelToSearch(panel, location.search)` / `sidePanelFromSearch(location.search)` —
   documents stay `?doc=<id>`, everything else is `?panel=<kind>:<id>` (+ `panel.<key>` params).
 - Outside a chat: `<NodeGraph nodes edges layout="radial|grid|force" selectedId onSelect />` and

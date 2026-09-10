@@ -143,12 +143,17 @@ export type { ConversationShelfItem, ConversationShelfProps } from './Conversati
 // cannot end up with two highlighted rows and one pane.
 export { ConversationRail } from './ConversationRail';
 export type { ConversationRailProps, RailSelection } from './ConversationRail';
-export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, agentRunTimings } from './AgentRunCard';
+export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, agentRunTimings, AGENT_RUN_STEP_DOT } from './AgentRunCard';
 export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview, AgentRunDetails, AgentRunStep, AgentRunStepStatus, AgentRunOp } from './AgentRunCard';
 export type { ComposerCommand, ComposerCommandArgument, ComposerArgumentItem } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
 export type { AgentRunResult } from './AgentRunCard';
 export { agentRunResultFromMetadata } from './AgentRunCard';
+
+// RunSummaryPanel — a run, condensed and read-only, beside a chat. The side-panel
+// body for kind `run`: `renderers={{ run: createRunPanelRenderer({ load, onOpenFull }) }}`.
+export { RunSummaryPanel, RunPanelBody, createRunPanelRenderer, runPanelId, parseRunPanelId, isRunPanelLive } from './RunSummaryPanel';
+export type { RunPanelData, RunPanelStatus, RunSummaryPanelProps, CreateRunPanelRendererOptions } from './RunSummaryPanel';
 
 // Chat commands — the registry behind the composer's slash menu. A host (or a
 // plugin nested inside it) registers a command whose `run` calls its own

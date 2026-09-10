@@ -218,7 +218,8 @@ export function agentRunTimings(details: Pick<AgentRunDetails, 'startedAt' | 'co
 }
 
 // The step dots reuse the tone vocabulary of the three-beat progress row above.
-const STEP_DOT: Record<AgentRunStepStatus, string> = {
+/** The dot class for a step status — shared with RunSummaryPanel so the two timelines read the same. */
+export const AGENT_RUN_STEP_DOT: Record<AgentRunStepStatus, string> = {
   pending: 'bg-border',
   running: 'animate-pulse bg-info',
   completed: 'bg-success',
@@ -400,7 +401,7 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
             <ol className="m-0 flex list-none flex-col gap-0.5 p-0 text-[11px]" aria-label="Steps" data-testid={`${testId}-details-steps`}>
               {steps.map((step) => (
                 <li key={step.id} className="flex items-center gap-1.5" data-step-id={step.id} data-status={step.status}>
-                  <span aria-hidden="true" className={cn('inline-block h-1.5 w-1.5 shrink-0 rounded-full', STEP_DOT[step.status] ?? STEP_DOT.pending)} />
+                  <span aria-hidden="true" className={cn('inline-block h-1.5 w-1.5 shrink-0 rounded-full', AGENT_RUN_STEP_DOT[step.status] ?? AGENT_RUN_STEP_DOT.pending)} />
                   <span className={cn('min-w-0 truncate', step.status === 'failed' ? 'text-danger' : step.status === 'skipped' ? 'text-text-tertiary line-through' : step.status === 'running' ? 'text-text-primary' : 'text-text-secondary')}>{step.label}</span>
                 </li>
               ))}
