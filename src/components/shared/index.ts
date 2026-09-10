@@ -229,6 +229,9 @@ export { DropdownMenu } from './DropdownMenu';
 export type { DropdownMenuProps, DropdownMenuSection, DropdownMenuItem } from './DropdownMenu';
 
 // ── Status primitives (Phase 5) ──
+export { Link } from './Link';
+export type { LinkProps } from './Link';
+
 export { StatusPill } from './StatusPill';
 export type { StatusPillProps, StatusPillState, StatusPillSize } from './StatusPill';
 
