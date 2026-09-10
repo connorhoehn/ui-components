@@ -7,10 +7,11 @@ var n = {
 	md: "p-6",
 	lg: "p-8"
 };
-function r({ children: r, padding: i = "none", className: a, ...o }) {
+function r({ children: r, padding: i = "none", className: a, ref: o, ...s }) {
 	return /* @__PURE__ */ t("div", {
+		ref: o,
 		className: e("border border-border rounded-lg bg-surface overflow-hidden", n[i], a),
-		...o,
+		...s,
 		children: r
 	});
 }

@@ -1,7 +1,7 @@
 import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Button-cRZd1Oud.js";
-import { t as i } from "./Card-DWAlG4MZ.js";
+import { t as i } from "./Card-RQCeAPNU.js";
 import { t as a } from "./IconButton-C3DMtvSx.js";
 import { t as o } from "./SegmentedControl-pVesnE3W.js";
 import { t as s } from "./Chip-YhQI5B9P.js";

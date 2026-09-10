@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 import { render, screen } from '@testing-library/react';
 import { Stack, Inline } from '../Stack';
 
@@ -82,5 +83,39 @@ describe('Inline', () => {
     render(<Inline><span>a</span><span>b</span></Inline>);
     expect(screen.getByText('a')).toBeInTheDocument();
     expect(screen.getByText('b')).toBeInTheDocument();
+  });
+});
+
+describe('Stack/Inline ref', () => {
+  // The reason this prop exists: anything that follows its own output needs a
+  // real node to read and set `scrollTop` on. A consumer with no ref has to
+  // hand-roll a forwardRef wrapper around a bare <div> and loses the primitive.
+  it('gives Stack the underlying node', () => {
+    const ref = createRef<HTMLElement>();
+    render(<Stack ref={ref} data-testid="s">x</Stack>);
+    expect(ref.current).toBe(screen.getByTestId('s'));
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
+
+  it('gives Inline the underlying node', () => {
+    const ref = createRef<HTMLElement>();
+    render(<Inline ref={ref} data-testid="i">x</Inline>);
+    expect(ref.current).toBe(screen.getByTestId('i'));
+  });
+
+  // The ref must follow `as`, not silently keep handing back a div — that is
+  // exactly the lie `forwardRef<HTMLDivElement, …>` would have baked in.
+  it('follows the `as` element', () => {
+    const ref = createRef<HTMLElement>();
+    render(<Stack as="ul" ref={ref} data-testid="u"><li>x</li></Stack>);
+    expect(ref.current).toBeInstanceOf(HTMLUListElement);
+    expect(ref.current).toBe(screen.getByTestId('u'));
+  });
+
+  // A ref is not a DOM attribute; React must consume it rather than spread it.
+  it('does not leak a `ref` attribute onto the DOM', () => {
+    const ref = createRef<HTMLElement>();
+    render(<Stack ref={ref} data-testid="s">x</Stack>);
+    expect(screen.getByTestId('s').hasAttribute('ref')).toBe(false);
   });
 });

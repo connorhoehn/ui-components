@@ -1814,7 +1814,7 @@ export declare interface CaptionLine {
 /** CC / captions glyph — the live-captions affordance. */
 export declare function CaptionsIcon({ size, ...rest }: IconProps): JSX.Element;
 
-export declare function Card({ children, padding, className, ...rest }: CardProps): JSX.Element;
+export declare function Card({ children, padding, className, ref, ...rest }: CardProps): JSX.Element;
 
 export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): default_2.JSX.Element;
 
@@ -1834,6 +1834,12 @@ export declare type CardPadding = 'none' | 'sm' | 'md' | 'lg';
 export declare interface CardProps extends HTMLAttributes<HTMLDivElement> {
     children?: ReactNode;
     padding?: CardPadding;
+    /**
+     * The underlying `<div>`. A plain prop, not `forwardRef` — see the note on
+     * `StackProps.ref`; React 19 passes `ref` through as an ordinary prop and
+     * this card is not polymorphic, so the type is exact.
+     */
+    ref?: Ref<HTMLDivElement>;
 }
 
 export declare function CatalogGrid({ children, columns, dense, className, style, 'data-testid': testId, }: CatalogGridProps): JSX.Element;
@@ -6106,7 +6112,7 @@ export declare function injectThemeVars(tokens: ThemeTokens): string;
  * of chips is how a toolbar overflows its container on a narrow window, and
  * every consumer that hand-rolled this wrote `flexWrap: 'wrap'` anyway.
  */
-export declare function Inline({ children, gap, align, justify, wrap, as: As, className, ...rest }: StackProps): JSX.Element;
+export declare function Inline({ children, gap, align, justify, wrap, as: As, className, ref, ...rest }: StackProps): JSX.Element;
 
 export declare function InlineAlert({ tone, palette, children, onDismiss, className }: InlineAlertProps): default_2.JSX.Element;
 
@@ -10327,7 +10333,7 @@ export declare interface SplitPaneProps {
 }
 
 /** Vertical flex column with a scale gap. */
-export declare function Stack({ children, gap, align, justify, wrap, as: As, className, ...rest }: StackProps): JSX.Element;
+export declare function Stack({ children, gap, align, justify, wrap, as: As, className, ref, ...rest }: StackProps): JSX.Element;
 
 export declare type StackAlign = 'start' | 'center' | 'end' | 'baseline' | 'stretch';
 
@@ -10381,6 +10387,28 @@ export declare interface StackProps extends Omit<HTMLAttributes<HTMLElement>, 'c
     wrap?: boolean;
     /** Render as something other than a `<div>` — `ul`, `section`, `label`, … */
     as?: ElementType;
+    /**
+     * The underlying DOM node.
+     *
+     * A plain prop rather than `forwardRef` deliberately. The forms primitives in
+     * this library use `forwardRef` because they wrap one fixed element, but
+     * these two are polymorphic: `forwardRef<T, P>` fixes the instance type at
+     * the call site and would either pin every `Stack` to `HTMLDivElement` — a
+     * lie the moment you pass `as="ul"` — or force consumers to cast. React 19
+     * (our only supported peer, `^19.0.0`) passes `ref` through as an ordinary
+     * prop, so the polymorphic typing survives.
+     *
+     * Typed as `HTMLElement` for the same reason. A consumer holding a
+     * `useRef<HTMLDivElement>(null)` still assigns cleanly, and one that passed
+     * `as="ul"` is not told it has a div.
+     *
+     * Anything that follows its own output needs this: reading and setting
+     * `scrollTop` on a log tail, measuring a row, focusing a region. Without it a
+     * consumer cannot use a layout primitive at all there and hand-rolls a
+     * nine-line `forwardRef` wrapper around a bare `<div>` — which is exactly
+     * what the aws-agentcore portal did in `components/ScrollRegion.tsx`.
+     */
+    ref?: Ref<HTMLElement>;
 }
 
 /**
@@ -13878,6 +13906,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -13897,12 +13938,45 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }
@@ -13930,58 +14004,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
         };
     }
 }

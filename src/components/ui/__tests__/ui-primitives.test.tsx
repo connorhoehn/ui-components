@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Button } from '../Button';
 import { Card } from '../Card';
@@ -56,6 +57,19 @@ describe('Card', () => {
   it('accepts extra className', () => {
     const { container } = render(<Card className="custom-class">Content</Card>);
     expect(container.firstChild).toHaveClass('custom-class');
+  });
+
+  it('gives the caller its underlying node', () => {
+    const ref = createRef<HTMLDivElement>();
+    const { container } = render(<Card ref={ref}>Content</Card>);
+    expect(ref.current).toBe(container.firstChild);
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
+
+  it('does not leak a `ref` attribute onto the DOM', () => {
+    const ref = createRef<HTMLDivElement>();
+    const { container } = render(<Card ref={ref}>Content</Card>);
+    expect((container.firstChild as HTMLElement).hasAttribute('ref')).toBe(false);
   });
 });
 

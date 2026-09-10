@@ -18,7 +18,7 @@
 // out the same kind of thing land on the same spacing without coordinating —
 // which is exactly what "12px here, 10px there, 14px over there" cost us.
 
-import { type ElementType, type HTMLAttributes, type ReactNode } from 'react';
+import { type ElementType, type HTMLAttributes, type ReactNode, type Ref } from 'react';
 import { cn } from '../../lib/cn';
 
 /** Spacing scale. Matches Tailwind's 4px base: xs=6, sm=8, md=12, lg=16, xl=24. */
@@ -38,6 +38,28 @@ export interface StackProps extends Omit<HTMLAttributes<HTMLElement>, 'children'
   wrap?: boolean;
   /** Render as something other than a `<div>` — `ul`, `section`, `label`, … */
   as?: ElementType;
+  /**
+   * The underlying DOM node.
+   *
+   * A plain prop rather than `forwardRef` deliberately. The forms primitives in
+   * this library use `forwardRef` because they wrap one fixed element, but
+   * these two are polymorphic: `forwardRef<T, P>` fixes the instance type at
+   * the call site and would either pin every `Stack` to `HTMLDivElement` — a
+   * lie the moment you pass `as="ul"` — or force consumers to cast. React 19
+   * (our only supported peer, `^19.0.0`) passes `ref` through as an ordinary
+   * prop, so the polymorphic typing survives.
+   *
+   * Typed as `HTMLElement` for the same reason. A consumer holding a
+   * `useRef<HTMLDivElement>(null)` still assigns cleanly, and one that passed
+   * `as="ul"` is not told it has a div.
+   *
+   * Anything that follows its own output needs this: reading and setting
+   * `scrollTop` on a log tail, measuring a row, focusing a region. Without it a
+   * consumer cannot use a layout primitive at all there and hand-rolls a
+   * nine-line `forwardRef` wrapper around a bare `<div>` — which is exactly
+   * what the aws-agentcore portal did in `components/ScrollRegion.tsx`.
+   */
+  ref?: Ref<HTMLElement>;
 }
 
 // Written out in full so Tailwind's source scanner sees every class. A
@@ -82,10 +104,10 @@ function flexClasses(
 
 /** Vertical flex column with a scale gap. */
 export function Stack({
-  children, gap, align, justify, wrap = false, as: As = 'div', className, ...rest
+  children, gap, align, justify, wrap = false, as: As = 'div', className, ref, ...rest
 }: StackProps) {
   return (
-    <As className={cn(flexClasses('col', { gap, align, justify, wrap }), className)} {...rest}>
+    <As ref={ref} className={cn(flexClasses('col', { gap, align, justify, wrap }), className)} {...rest}>
       {children}
     </As>
   );
@@ -97,10 +119,10 @@ export function Stack({
  * every consumer that hand-rolled this wrote `flexWrap: 'wrap'` anyway.
  */
 export function Inline({
-  children, gap = 'sm', align = 'center', justify, wrap = true, as: As = 'div', className, ...rest
+  children, gap = 'sm', align = 'center', justify, wrap = true, as: As = 'div', className, ref, ...rest
 }: StackProps) {
   return (
-    <As className={cn(flexClasses('row', { gap, align, justify, wrap }), className)} {...rest}>
+    <As ref={ref} className={cn(flexClasses('row', { gap, align, justify, wrap }), className)} {...rest}>
       {children}
     </As>
   );

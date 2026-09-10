@@ -2,7 +2,7 @@ import "./ToastProvider-BKjV21G4.js";
 import { t as e } from "./cn-DhjIN-s0.js";
 import "./DetailSection-DD8ayw5R.js";
 import { t } from "./Button-cRZd1Oud.js";
-import { t as n } from "./Card-DWAlG4MZ.js";
+import { t as n } from "./Card-RQCeAPNU.js";
 import "./FormField-BpwfwG7t.js";
 import "./IconButton-C3DMtvSx.js";
 import "./SegmentedControl-pVesnE3W.js";
@@ -62,27 +62,29 @@ var oe = {
 function H(t, { gap: n = "md", align: r, justify: i, wrap: a }) {
 	return e("flex", t === "col" ? "flex-col" : "flex-row", oe[n], r ? se[r] : void 0, i ? ce[i] : void 0, a ? "flex-wrap" : void 0);
 }
-function le({ children: t, gap: n, align: r, justify: i, wrap: a = !1, as: o = "div", className: s, ...c }) {
+function le({ children: t, gap: n, align: r, justify: i, wrap: a = !1, as: o = "div", className: s, ref: c, ...l }) {
 	return /* @__PURE__ */ R(o, {
+		ref: c,
 		className: e(H("col", {
 			gap: n,
 			align: r,
 			justify: i,
 			wrap: a
 		}), s),
-		...c,
+		...l,
 		children: t
 	});
 }
-function ue({ children: t, gap: n = "sm", align: r = "center", justify: i, wrap: a = !0, as: o = "div", className: s, ...c }) {
+function ue({ children: t, gap: n = "sm", align: r = "center", justify: i, wrap: a = !0, as: o = "div", className: s, ref: c, ...l }) {
 	return /* @__PURE__ */ R(o, {
+		ref: c,
 		className: e(H("row", {
 			gap: n,
 			align: r,
 			justify: i,
 			wrap: a
 		}), s),
-		...c,
+		...l,
 		children: t
 	});
 }
