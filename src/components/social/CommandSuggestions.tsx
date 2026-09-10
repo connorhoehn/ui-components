@@ -84,7 +84,7 @@ export const CommandSuggestions = forwardRef<CommandSuggestionsHandle, CommandSu
     return (
       <div
         data-testid="command-suggestions"
-        className="w-72 rounded-lg border border-border bg-surface py-1 shadow-lg"
+        className="w-[26rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface py-1 shadow-lg"
       >
         <div role="listbox" aria-label={label} className="max-h-56 overflow-y-auto">
           {items.map((item, i) => (
@@ -114,7 +114,7 @@ export const CommandSuggestions = forwardRef<CommandSuggestionsHandle, CommandSu
               )}
               <span className="min-w-0 flex-1 truncate text-text-primary">{item.label}</span>
               {item.hint && (
-                <span className="shrink-0 max-w-[40%] truncate text-xs text-text-tertiary">{item.hint}</span>
+                <span className="shrink-0 max-w-[45%] truncate text-xs text-text-tertiary">{item.hint}</span>
               )}
             </button>
           ))}
