@@ -9,7 +9,7 @@ import { t as p } from "./Input-DLknWXri.js";
 import { t as m } from "./Textarea-Dz4doxTv.js";
 import { n as h, t as g } from "./Avatar-BzicCOft.js";
 import { t as _ } from "./Select-CqVokE2v.js";
-import { M as v, N as y } from "./ConversationSurface-CaZtc9vB.js";
+import { I as v, L as y } from "./ConversationSurface-CWCOJtjv.js";
 import { t as b } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as x, t as S } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as C, t as w } from "./composerCommands-2lcV365k.js";

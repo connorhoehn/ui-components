@@ -50,6 +50,11 @@ export declare interface ComposedMessage {
     mentions: MentionCandidate[];
     /** Files staged in the composer, sent WITH the message. */
     files: File[];
+    /** Every document the sender referenced with `#`, de-duplicated, in document order. Absent when there are none. */
+    documents?: Array<{
+        id: string;
+        label: string;
+    }>;
     /**
      * Set when the draft starts with a known command trigger. `argument` is the
      * item picked from the argument menu, present only when the pick was made
@@ -122,6 +127,33 @@ export declare interface ComposerCommandArgument {
  * separator is kept, so callers replacing the argument know its exact extent.
  */
 export declare function composerCommandArgumentText(draft: string, command: ComposerCommand): string;
+
+export declare interface DocumentCandidate {
+    /** Stable identity — this is what travels in the message, not the label. */
+    id: string;
+    /** The document's title. */
+    label: string;
+    /** Shown under the title, e.g. the folder or who last edited it. */
+    hint?: string;
+    /** The document's own icon, when it has one; 📄 otherwise. */
+    icon?: string;
+}
+
+export declare const DocumentSuggestions: ForwardRefExoticComponent<DocumentSuggestionsProps & RefAttributes<DocumentSuggestionsHandle>>;
+
+export declare interface DocumentSuggestionsHandle {
+    onKeyDown: (props: {
+        event: KeyboardEvent;
+    }) => boolean;
+}
+
+export declare interface DocumentSuggestionsProps {
+    items: DocumentCandidate[];
+    command: (item: {
+        id: string;
+        label: string;
+    }) => void;
+}
 
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
 
@@ -200,6 +232,12 @@ export declare interface RichChatComposerProps {
      * rather than filter a preloaded array. Omit to disable mentions entirely.
      */
     onSearchPeople?: (query: string) => MentionCandidate[] | Promise<MentionCandidate[]>;
+    /**
+     * Resolves the `#` menu — the documents a message can refer to. Omit to
+     * disable document references entirely. Read live, like `onSearchPeople`:
+     * a new function identity does not rebuild the editor.
+     */
+    onSearchDocuments?: (query: string) => DocumentCandidate[] | Promise<DocumentCandidate[]>;
     /**
      * Enables attachments. False means this deployment has no file capability and
      * every attachment affordance disappears — not a disabled paperclip, which

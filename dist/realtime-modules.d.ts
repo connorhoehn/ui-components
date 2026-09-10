@@ -99,6 +99,37 @@ export declare function adaptReactions(reactions: RMReaction[]): EphemeralReacti
 
 declare type AgentRunDecision = 'approve' | 'reject';
 
+/**
+ * What the expanded card shows. Populated by realtime-modules' run hook from
+ * the run's steps and the edit it applied — keep the field names.
+ */
+declare interface AgentRunDetails {
+    steps?: AgentRunStep[];
+    ops?: AgentRunOp[];
+    document?: {
+        id: string;
+        title?: string;
+        snippet?: string;
+    };
+    /** ISO timestamps. */
+    startedAt?: string;
+    completedAt?: string;
+    error?: string;
+}
+
+/**
+ * One edit the agent made, in the document-ops vocabulary the pipeline emits
+ * (`setTitle`, `appendBlock`, `replaceBlock`, …). The card turns each into a
+ * sentence; an op it does not know is shown by name.
+ */
+declare interface AgentRunOp {
+    op: string;
+    /** The new title, the block's text, the macro's name, the type's name, or a skip's reason — whichever the op carries. */
+    text?: string;
+    /** The block the op acted on, zero-based. */
+    index?: number;
+}
+
 declare type AgentRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'rejected' | 'failed';
 
 /**
@@ -136,6 +167,14 @@ declare interface AgentRunStatus {
     phase: AgentRunPhase;
     /** The outcome to open, once `phase === 'completed'`. */
     result?: AgentRunResult;
+    /**
+     * Set when the run completed but changed nothing — the model declined the
+     * instruction. The badge reads "No change" and `detail` carries the reason,
+     * so a declined run and a landed edit stop looking identical.
+     */
+    noop?: boolean;
+    /** Everything the expanded card shows: steps, ops, the document, timings. */
+    details?: AgentRunDetails;
     /** The step in flight, when known — "Reading the document", "Planning the edit", "Retrying — attempt 2". */
     stepLabel?: string;
     /** A sentence about the outcome — "Renamed to …", the failure, why approval is needed. */
@@ -147,6 +186,15 @@ declare interface AgentRunStatus {
     /** Set once someone accepted or rejected the suggestions. */
     review?: AgentRunReview;
 }
+
+declare interface AgentRunStep {
+    id: string;
+    label: string;
+    status: AgentRunStepStatus;
+}
+
+/** One step of the run, for the expanded timeline. Mirrors realtime-modules' step status vocabulary — keep the names. */
+declare type AgentRunStepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'awaiting';
 
 /**
  * The suggestions a finished edit left in the document, waiting for a

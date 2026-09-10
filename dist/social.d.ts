@@ -23,7 +23,7 @@ declare interface ActivityPanelProps {
     connectionState: ConnectionState;
 }
 
-export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
+export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, documentTitle, defaultExpanded, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
 
 export declare interface AgentRunCardProps {
     runId: string;
@@ -48,11 +48,46 @@ export declare interface AgentRunCardProps {
     suggestion?: Pick<AgentRunSuggestion, 'key' | 'documentId'>;
     /** Accept or reject a finished edit that landed as suggestions; the buttons render only when this is given. */
     onReview?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
+    /** The document's title as the message carried it; the expanded document row falls back to it when the live details have none. */
+    documentTitle?: string;
+    /** Start expanded. The default is the two-line card; the details are a click away. */
+    defaultExpanded?: boolean;
     className?: string;
     'data-testid'?: string;
 }
 
 export declare type AgentRunDecision = 'approve' | 'reject';
+
+/**
+ * What the expanded card shows. Populated by realtime-modules' run hook from
+ * the run's steps and the edit it applied — keep the field names.
+ */
+export declare interface AgentRunDetails {
+    steps?: AgentRunStep[];
+    ops?: AgentRunOp[];
+    document?: {
+        id: string;
+        title?: string;
+        snippet?: string;
+    };
+    /** ISO timestamps. */
+    startedAt?: string;
+    completedAt?: string;
+    error?: string;
+}
+
+/**
+ * One edit the agent made, in the document-ops vocabulary the pipeline emits
+ * (`setTitle`, `appendBlock`, `replaceBlock`, …). The card turns each into a
+ * sentence; an op it does not know is shown by name.
+ */
+export declare interface AgentRunOp {
+    op: string;
+    /** The new title, the block's text, the macro's name, the type's name, or a skip's reason — whichever the op carries. */
+    text?: string;
+    /** The block the op acted on, zero-based. */
+    index?: number;
+}
 
 export declare type AgentRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'rejected' | 'failed';
 
@@ -60,6 +95,7 @@ export declare type AgentRunPhase = 'received' | 'running' | 'awaiting_approval'
 export declare function agentRunRefFromMetadata(metadata: Record<string, unknown> | undefined): {
     runId: string;
     documentId: string;
+    documentTitle?: string;
     instruction: string;
     agentName: string;
     pipelineId?: string;
@@ -106,6 +142,14 @@ export declare interface AgentRunStatus {
     phase: AgentRunPhase;
     /** The outcome to open, once `phase === 'completed'`. */
     result?: AgentRunResult;
+    /**
+     * Set when the run completed but changed nothing — the model declined the
+     * instruction. The badge reads "No change" and `detail` carries the reason,
+     * so a declined run and a landed edit stop looking identical.
+     */
+    noop?: boolean;
+    /** Everything the expanded card shows: steps, ops, the document, timings. */
+    details?: AgentRunDetails;
     /** The step in flight, when known — "Reading the document", "Planning the edit", "Retrying — attempt 2". */
     stepLabel?: string;
     /** A sentence about the outcome — "Renamed to …", the failure, why approval is needed. */
@@ -117,6 +161,15 @@ export declare interface AgentRunStatus {
     /** Set once someone accepted or rejected the suggestions. */
     review?: AgentRunReview;
 }
+
+export declare interface AgentRunStep {
+    id: string;
+    label: string;
+    status: AgentRunStepStatus;
+}
+
+/** One step of the run, for the expanded timeline. Mirrors realtime-modules' step status vocabulary — keep the names. */
+export declare type AgentRunStepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'awaiting';
 
 /**
  * The suggestions a finished edit left in the document, waiting for a
@@ -130,6 +183,9 @@ export declare interface AgentRunSuggestion {
     /** How many changes were suggested. */
     applied: number;
 }
+
+/** "started 21:44 · 80s" — whichever halves the timestamps allow. */
+export declare function agentRunTimings(details: Pick<AgentRunDetails, 'startedAt' | 'completedAt'> | undefined): string | null;
 
 export declare const ALL_CONVERSATION_FEATURES: readonly ConversationFeature[];
 
@@ -1226,6 +1282,9 @@ export declare interface DaySeparatorProps {
 
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
+/** One op as a sentence. Exported for the tests and for hosts that render a run outside the card. */
+export declare function describeAgentRunOp(op: AgentRunOp): string;
+
 /**
  * Names, not ids, and never more than two before it starts counting.
  *
@@ -1264,6 +1323,19 @@ export declare interface DocumentActivityEditor {
     avatarUrl?: string;
 }
 
+export declare function DocumentChip({ documentId, label, icon, onOpen, className, 'data-testid': testId }: DocumentChipProps): JSX.Element;
+
+export declare interface DocumentChipProps {
+    documentId: string;
+    label: string;
+    /** The document's own icon, when the reference carried one. */
+    icon?: string;
+    /** Open the document — beside the chat, or wherever the host puts documents. */
+    onOpen?: (documentId: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /**
  * A document referenced by a message, whichever way it got there.
  *
@@ -1285,6 +1357,18 @@ export declare function documentRefFromMetadata(metadata: Record<string, unknown
     icon?: string;
     createdBy?: string;
 } | null;
+
+/**
+ * The documents a message REFERS to — the composer's `#Roadmap` chips, carried
+ * as `metadata.documents: [{ id, label }]`. Distinct from documentRefFromMetadata,
+ * which is a document ARRIVING in the thread: a reference sits under the words,
+ * an arrival replaces them. Malformed entries are dropped, duplicates collapse.
+ */
+export declare function documentRefsFromMetadata(metadata: Record<string, unknown> | undefined): Array<{
+    id: string;
+    label: string;
+    icon?: string;
+}>;
 
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
 
@@ -1892,6 +1976,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1911,12 +2008,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -1927,6 +2031,29 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -1953,49 +2080,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
