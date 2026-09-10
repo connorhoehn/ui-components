@@ -62,6 +62,30 @@ describe('RichChatComposer keeps its editor (and so its draft)', () => {
     expect(editorNode()).toBe(before);
   });
 
+  it('through a new onCommand handler and a commands list whose argument search changed', () => {
+    // Both are read through refs by the `/` and argument menus; a host that
+    // recreates them per render (an inline arrow, a search closed over the
+    // latest document index) must not lose the draft.
+    const { rerender } = render(
+      <RichChatComposer
+        onSend={vi.fn()}
+        onCommand={() => {}}
+        commands={[{ trigger: '/doc', label: 'Edit', argument: { search: () => [] } }]}
+        data-testid="composer"
+      />,
+    );
+    const before = editorNode();
+    rerender(
+      <RichChatComposer
+        onSend={vi.fn()}
+        onCommand={() => {}}
+        commands={[{ trigger: '/doc', label: 'Edit', argument: { search: () => [{ id: 'd', label: 'D' }] } }]}
+        data-testid="composer"
+      />,
+    );
+    expect(editorNode()).toBe(before);
+  });
+
   it('through being disabled and re-enabled', () => {
     const { rerender } = render(<RichChatComposer onSend={vi.fn()} data-testid="composer" />);
     const before = editorNode();

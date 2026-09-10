@@ -21,10 +21,14 @@
 //
 // Everything here is a first-class export, not a deep path into src.
 
-export { RichChatComposer } from './RichChatComposer';
+export { RichChatComposer, matchComposerCommand, composerCommandArgumentText } from './RichChatComposer';
 export type {
   RichChatComposerProps,
+  RichChatComposerHandle,
   ComposedMessage,
+  ComposerCommand,
+  ComposerCommandArgument,
+  ComposerArgumentItem,
   MentionCandidate,
 } from './RichChatComposer';
 
@@ -33,6 +37,9 @@ export type { MentionSuggestionsProps, MentionSuggestionsHandle } from './Mentio
 
 export { EmojiSuggestions } from './EmojiSuggestions';
 export type { EmojiSuggestionsProps, EmojiSuggestionsHandle } from './EmojiSuggestions';
+
+export { CommandSuggestions } from './CommandSuggestions';
+export type { CommandSuggestionsProps, CommandSuggestionsHandle, CommandSuggestionItem } from './CommandSuggestions';
 
 // Staged-attachment chips and the emoji shortcode table are re-exported here
 // too, so a host building on the composer has one import path rather than two.

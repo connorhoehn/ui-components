@@ -1,30 +1,40 @@
-// src/components/social/composerCommands.ts
+// composerCommands.ts — the slash-command vocabulary and the two pure matchers.
 //
-// The slash-command vocabulary, kept deliberately apart from the composer that
-// renders it.
-//
-// WHY THIS FILE EXISTS. `RichChatComposer.tsx` statically imports
-// `@tiptap/react`, `@tiptap/pm/state`, `@tiptap/extension-mention` and friends
-// — all OPTIONAL peers. `social/index.ts` carries a long comment explaining
-// that the composer must therefore never be re-exported from that barrel,
-// because doing so puts tiptap in the import graph of every consumer of
-// `ui-components/social`, including hosts that only wanted `ConversationList`
-// or `ChatPanel`.
-//
-// The type and the matcher below were defined inside the composer, and the
-// barrel re-exported *them* — which pulls the whole module just the same. A
-// type export is erased at build time and costs nothing, but
-// `matchComposerCommand` is a runtime binding, so the barrel dragged tiptap in
-// through a seven-line pure string function. The aws-agentcore portal hit this
-// as `"Plugin" is not exported by "__vite-optional-peer-dep:@tiptap/pm/state"`
-// on a plain `vite build`, having imported nothing but `ChatPanel`.
-//
-// Neither symbol needs tiptap, React, or the DOM. They live here so the barrel
-// can export them from a module that costs a consumer nothing, and the rule the
-// barrel already documents stays true instead of being true only of the
-// component's name.
+// Deliberately tiptap-free: the `social` barrel re-exports these so a host can
+// describe its commands and test a draft against them without pulling the
+// editor (and its optional @tiptap peers) into a bundle that never renders one.
+// RichChatComposer imports and re-exports them so the rich-composer subpath
+// keeps its public surface.
 
-/** One entry in a composer's slash-command menu. */
+export interface ComposerArgumentItem {
+  /** Stable identity — this is what travels to the host, not the label. */
+  id: string;
+  label: string;
+  /** Shown on the right of the row: where it lives, who owns it. */
+  hint?: string;
+  /** A glyph for the row, e.g. `📄`. */
+  icon?: string;
+}
+
+export interface ComposerCommandArgument {
+  /** Shown in the status bar while the argument is empty — "type a document name". */
+  placeholder?: string;
+  /**
+   * Resolves the argument menu from the text after the trigger. A promise is
+   * supported (and debounced ~120ms) so a host can hit an index rather than
+   * filter a preloaded array; the previous list stays up while a new one is
+   * in flight.
+   */
+  search: (query: string) => ComposerArgumentItem[] | Promise<ComposerArgumentItem[]>;
+  /**
+   * What picking a row does. `'execute'` clears the draft and calls
+   * `onCommand` — the pick WAS the message. `'insert'` (the default) writes the
+   * label into the draft so the person can keep typing, and the pick travels
+   * on send as `ComposedMessage.command.argument`.
+   */
+  onPick?: (item: ComposerArgumentItem) => 'execute' | 'insert';
+}
+
 export interface ComposerCommand {
   /** The leading token, e.g. `/doc`. Matched case-insensitively at the start of the draft. */
   trigger: string;
@@ -36,6 +46,8 @@ export interface ComposerCommand {
   disabled?: boolean;
   /** The long form, shown as a tooltip on the bar: what will happen, step by step. */
   description?: string;
+  /** What the command acts on, offered as a second menu once the trigger is typed. */
+  argument?: ComposerCommandArgument;
 }
 
 /** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
@@ -46,4 +58,13 @@ export function matchComposerCommand(draft: string, commands: readonly ComposerC
     const t = c.trigger.toLowerCase();
     return text === t || text.startsWith(`${t} `) || text.startsWith(`${t}\n`);
   }) ?? null;
+}
+
+/**
+ * The text after a matched command's trigger and its one separator:
+ * `/doc Roadmap` → `Roadmap`, `/doc` → ``. Leading whitespace beyond the
+ * separator is kept, so callers replacing the argument know its exact extent.
+ */
+export function composerCommandArgumentText(draft: string, command: ComposerCommand): string {
+  return draft.trimStart().slice(command.trigger.length).replace(/^[ \n]/, '');
 }

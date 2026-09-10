@@ -1,7 +1,38 @@
+import { Editor } from '@tiptap/core';
 import { ForwardRefExoticComponent } from 'react';
 import { JSX } from 'react';
 import { ReactNode } from 'react';
 import { RefAttributes } from 'react';
+
+/** One row. Both a command and a command's argument fit this shape. */
+export declare interface CommandSuggestionItem {
+    /** Stable key. For a command, its trigger. */
+    id: string;
+    /** The typed token, rendered in mono — `/doc`. */
+    code?: string;
+    /** A glyph rendered where the token would be, for argument rows. */
+    icon?: string;
+    label: string;
+    /** A second clause on the right: what it needs, or where it lives. */
+    hint?: string;
+    /** The long form, shown under the list for the highlighted row only. */
+    description?: string;
+}
+
+export declare const CommandSuggestions: ForwardRefExoticComponent<CommandSuggestionsProps & RefAttributes<CommandSuggestionsHandle>>;
+
+export declare interface CommandSuggestionsHandle {
+    onKeyDown: (props: {
+        event: KeyboardEvent;
+    }) => boolean;
+}
+
+export declare interface CommandSuggestionsProps {
+    items: CommandSuggestionItem[];
+    command: (item: CommandSuggestionItem) => void;
+    /** The listbox's accessible name. */
+    label?: string;
+}
 
 /** What the composer hands back on send. */
 export declare interface ComposedMessage {
@@ -13,6 +44,26 @@ export declare interface ComposedMessage {
     mentions: MentionCandidate[];
     /** Files staged in the composer, sent WITH the message. */
     files: File[];
+    /**
+     * Set when the draft starts with a known command trigger. `argument` is the
+     * item picked from the argument menu, present only when the pick was made
+     * in THIS draft and its label is still in the text — an edited-away label
+     * means the person changed their mind, and the host should read `text`.
+     */
+    command?: {
+        trigger: string;
+        argument?: ComposerArgumentItem;
+    };
+}
+
+export declare interface ComposerArgumentItem {
+    /** Stable identity — this is what travels to the host, not the label. */
+    id: string;
+    label: string;
+    /** Shown on the right of the row: where it lives, who owns it. */
+    hint?: string;
+    /** A glyph for the row, e.g. `📄`. */
+    icon?: string;
 }
 
 export declare function ComposerAttachments({ files, onRemove, disabled, className, 'data-testid': testId, }: ComposerAttachmentsProps): JSX.Element | null;
@@ -25,8 +76,7 @@ export declare interface ComposerAttachmentsProps {
     'data-testid'?: string;
 }
 
-/** One entry in a composer's slash-command menu. */
-declare interface ComposerCommand {
+export declare interface ComposerCommand {
     /** The leading token, e.g. `/doc`. Matched case-insensitively at the start of the draft. */
     trigger: string;
     /** What it does — "Edit the open document with Haiku". */
@@ -37,7 +87,35 @@ declare interface ComposerCommand {
     disabled?: boolean;
     /** The long form, shown as a tooltip on the bar: what will happen, step by step. */
     description?: string;
+    /** What the command acts on, offered as a second menu once the trigger is typed. */
+    argument?: ComposerCommandArgument;
 }
+
+export declare interface ComposerCommandArgument {
+    /** Shown in the status bar while the argument is empty — "type a document name". */
+    placeholder?: string;
+    /**
+     * Resolves the argument menu from the text after the trigger. A promise is
+     * supported (and debounced ~120ms) so a host can hit an index rather than
+     * filter a preloaded array; the previous list stays up while a new one is
+     * in flight.
+     */
+    search: (query: string) => ComposerArgumentItem[] | Promise<ComposerArgumentItem[]>;
+    /**
+     * What picking a row does. `'execute'` clears the draft and calls
+     * `onCommand` — the pick WAS the message. `'insert'` (the default) writes the
+     * label into the draft so the person can keep typing, and the pick travels
+     * on send as `ComposedMessage.command.argument`.
+     */
+    onPick?: (item: ComposerArgumentItem) => 'execute' | 'insert';
+}
+
+/**
+ * The text after a matched command's trigger and its one separator:
+ * `/doc Roadmap` → `Roadmap`, `/doc` → ``. Leading whitespace beyond the
+ * separator is kept, so callers replacing the argument know its exact extent.
+ */
+export declare function composerCommandArgumentText(draft: string, command: ComposerCommand): string;
 
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
 
@@ -63,6 +141,9 @@ export declare interface EmojiSuggestionsProps {
         emoji: string;
     }) => void;
 }
+
+/** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
+export declare function matchComposerCommand(draft: string, commands: readonly ComposerCommand[] | undefined): ComposerCommand | null;
 
 export declare interface MentionCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
@@ -90,10 +171,24 @@ export declare interface MentionSuggestionsProps {
     }) => void;
 }
 
-export declare function RichChatComposer({ onSend, onSearchPeople, allowAttachments, allowEmoji, onRequestLink, placeholder, commands, disabled, toolbarExtras, className, 'data-testid': testId, }: RichChatComposerProps): JSX.Element;
+export declare const RichChatComposer: ForwardRefExoticComponent<RichChatComposerProps & RefAttributes<RichChatComposerHandle>>;
+
+/** What a host can do to the composer from outside — focus it, prefill it. */
+export declare interface RichChatComposerHandle {
+    /** The live tiptap editor, or null before mount. */
+    readonly editor: Editor | null;
+    focus: () => void;
+    /** Inserts plain text at the caret, as if typed. */
+    insertText: (text: string) => void;
+}
 
 export declare interface RichChatComposerProps {
     onSend: (message: ComposedMessage) => void;
+    /**
+     * Called when a command argument is picked with `onPick` → `'execute'`. The
+     * draft has already been cleared; nothing goes through `onSend`.
+     */
+    onCommand?: (command: ComposerCommand, argument: ComposerArgumentItem) => void;
     /**
      * Resolves the @ menu. A promise is supported so a host can hit a directory
      * rather than filter a preloaded array. Omit to disable mentions entirely.

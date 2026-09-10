@@ -2937,7 +2937,16 @@ declare interface CommentThreadProps {
     onMessage: OnMessageFn;
 }
 
-/** One entry in a composer's slash-command menu. */
+export declare interface ComposerArgumentItem {
+    /** Stable identity — this is what travels to the host, not the label. */
+    id: string;
+    label: string;
+    /** Shown on the right of the row: where it lives, who owns it. */
+    hint?: string;
+    /** A glyph for the row, e.g. `📄`. */
+    icon?: string;
+}
+
 export declare interface ComposerCommand {
     /** The leading token, e.g. `/doc`. Matched case-insensitively at the start of the draft. */
     trigger: string;
@@ -2949,7 +2958,35 @@ export declare interface ComposerCommand {
     disabled?: boolean;
     /** The long form, shown as a tooltip on the bar: what will happen, step by step. */
     description?: string;
+    /** What the command acts on, offered as a second menu once the trigger is typed. */
+    argument?: ComposerCommandArgument;
 }
+
+export declare interface ComposerCommandArgument {
+    /** Shown in the status bar while the argument is empty — "type a document name". */
+    placeholder?: string;
+    /**
+     * Resolves the argument menu from the text after the trigger. A promise is
+     * supported (and debounced ~120ms) so a host can hit an index rather than
+     * filter a preloaded array; the previous list stays up while a new one is
+     * in flight.
+     */
+    search: (query: string) => ComposerArgumentItem[] | Promise<ComposerArgumentItem[]>;
+    /**
+     * What picking a row does. `'execute'` clears the draft and calls
+     * `onCommand` — the pick WAS the message. `'insert'` (the default) writes the
+     * label into the draft so the person can keep typing, and the pick travels
+     * on send as `ComposedMessage.command.argument`.
+     */
+    onPick?: (item: ComposerArgumentItem) => 'execute' | 'insert';
+}
+
+/**
+ * The text after a matched command's trigger and its one separator:
+ * `/doc Roadmap` → `Roadmap`, `/doc` → ``. Leading whitespace beyond the
+ * separator is kept, so callers replacing the argument know its exact extent.
+ */
+export declare function composerCommandArgumentText(draft: string, command: ComposerCommand): string;
 
 export declare interface ComposerSuggestion {
     id: string;
@@ -13841,19 +13878,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -13873,6 +13897,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -13883,12 +13930,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -13906,9 +13950,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -13935,16 +13982,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

@@ -642,5 +642,8 @@ function f(e, t) {
 		return n === t || n.startsWith(`${t} `) || n.startsWith(`${t}\n`);
 	}) ?? null;
 }
+function p(e, t) {
+	return e.trimStart().slice(t.trigger.length).replace(/^[ \n]/, "");
+}
 //#endregion
-export { l as a, c as i, d as n, u as r, f as t };
+export { c as a, u as i, f as n, l as o, d as r, p as t };

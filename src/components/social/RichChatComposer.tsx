@@ -32,10 +32,33 @@
 //
 // Enter sends, Shift+Enter is a newline — the chat convention, and the opposite
 // of the document convention, which is why the composer owns this keymap.
+//
+// ## Slash commands are two menus, not a parser
+//
+// `/` at the very start of the draft opens a menu of the host's commands; once
+// a command with an `argument` is in place, a second menu offers what it acts
+// on (`/doc Roa…` → the documents called Roadmap). Both are Suggestion plugins
+// like `:` and `@`, so arrow keys, Enter/Tab and Escape behave identically in
+// all four menus. A `/` anywhere else is a slash — "and/or" opens nothing.
+//
+// Disabled commands are NOT listed. The status bar already explains a disabled
+// command (in warning colours, with its hint) to anyone who types it out, and a
+// menu that offers rows which cannot be picked teaches people to distrust it.
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type Ref } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type Ref,
+} from 'react';
 import { useEditor, EditorContent, ReactRenderer } from '@tiptap/react';
 import { Extension, type Editor } from '@tiptap/core';
+import { PluginKey } from '@tiptap/pm/state';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Mention from '@tiptap/extension-mention';
@@ -50,8 +73,8 @@ import { ComposerAttachments, type StagedFile } from './ComposerAttachments';
 import { LinkDialog } from './LinkDialog';
 import { MentionSuggestions, type MentionCandidate } from './MentionSuggestions';
 import { EmojiSuggestions } from './EmojiSuggestions';
+import { CommandSuggestions, type CommandSuggestionItem } from './CommandSuggestions';
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
-import { matchComposerCommand, type ComposerCommand } from './composerCommands';
 
 export type { MentionCandidate };
 
@@ -65,16 +88,36 @@ export interface ComposedMessage {
   mentions: MentionCandidate[];
   /** Files staged in the composer, sent WITH the message. */
   files: File[];
+  /**
+   * Set when the draft starts with a known command trigger. `argument` is the
+   * item picked from the argument menu, present only when the pick was made
+   * in THIS draft and its label is still in the text — an edited-away label
+   * means the person changed their mind, and the host should read `text`.
+   */
+  command?: { trigger: string; argument?: ComposerArgumentItem };
 }
 
-// Both live in `./composerCommands`, which imports nothing. They are re-exported
-// here so `social/RichChatComposer` keeps its existing surface, but the barrel
-// must import them from that module rather than this one — see the header there.
-export type { ComposerCommand };
-export { matchComposerCommand };
+/** One thing a command can act on — a document, a room, a person. */
+export type { ComposerArgumentItem, ComposerCommandArgument, ComposerCommand } from './composerCommands';
+export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
+import { matchComposerCommand, composerCommandArgumentText, type ComposerArgumentItem, type ComposerCommandArgument, type ComposerCommand } from './composerCommands';
+
+/** What a host can do to the composer from outside — focus it, prefill it. */
+export interface RichChatComposerHandle {
+  /** The live tiptap editor, or null before mount. */
+  readonly editor: Editor | null;
+  focus: () => void;
+  /** Inserts plain text at the caret, as if typed. */
+  insertText: (text: string) => void;
+}
 
 export interface RichChatComposerProps {
   onSend: (message: ComposedMessage) => void;
+  /**
+   * Called when a command argument is picked with `onPick` → `'execute'`. The
+   * draft has already been cleared; nothing goes through `onSend`.
+   */
+  onCommand?: (command: ComposerCommand, argument: ComposerArgumentItem) => void;
   /**
    * Resolves the @ menu. A promise is supported so a host can hit a directory
    * rather than filter a preloaded array. Omit to disable mentions entirely.
@@ -164,8 +207,64 @@ function collectMentions(editor: Editor): MentionCandidate[] {
 
 let stagedSeq = 0;
 
-export function RichChatComposer({
+// Each Suggestion plugin needs its own key. Two plugins sharing the default
+// `SuggestionPluginKey` make ProseMirror throw at construction ("Adding
+// different instances of a keyed plugin"), which the emoji plugin only avoids
+// because Mention ships a key of its own.
+const commandSuggestionKey = new PluginKey('commandSuggestion');
+const argumentSuggestionKey = new PluginKey('commandArgumentSuggestion');
+
+/** A menu's imperative surface, as ReactRenderer exposes it through `ref`. */
+type SuggestionMenuRef = { onKeyDown?: (p: SuggestionKeyDownProps) => boolean } | null;
+
+/**
+ * The `render` for both command menus. Shared because the two differ only in
+ * what fills the rows; the mount, the keyboard hand-off and the teardown are
+ * identical to the `:` and `@` menus above.
+ *
+ * `keepItemsWhileLoading`: the plugin hands `items: []` with `loading: true`
+ * before every fetch. For the synchronous command list that gap is invisible;
+ * for a debounced argument search it would blank the menu on every keystroke,
+ * so the last list stays up until the new one lands.
+ */
+function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean) {
+  let renderer: ReactRenderer | null = null;
+  let lastItems: CommandSuggestionItem[] = [];
+  const menu = mountSuggestionMenu();
+  const withItems = (props: SuggestionProps<CommandSuggestionItem>) => {
+    if (keepItemsWhileLoading && props.loading) return { ...props, items: lastItems, label };
+    lastItems = props.items;
+    return { ...props, label };
+  };
+  return {
+    onStart: (props: SuggestionProps<CommandSuggestionItem>) => {
+      lastItems = [];
+      renderer = new ReactRenderer(CommandSuggestions, { props: withItems(props), editor: props.editor });
+      menu.attach(renderer.element as HTMLElement);
+      menu.place(props.clientRect?.());
+    },
+    onUpdate: (props: SuggestionProps<CommandSuggestionItem>) => {
+      renderer?.updateProps(withItems(props));
+      menu.place(props.clientRect?.());
+    },
+    onKeyDown: (props: SuggestionKeyDownProps) => {
+      if (props.event.key === 'Escape') {
+        menu.detach();
+        return true;
+      }
+      return (renderer?.ref as SuggestionMenuRef)?.onKeyDown?.(props) ?? false;
+    },
+    onExit: () => {
+      menu.detach();
+      renderer?.destroy();
+      renderer = null;
+    },
+  };
+}
+
+export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatComposerProps>(function RichChatComposer({
   onSend,
+  onCommand,
   onSearchPeople,
   allowAttachments = false,
   allowEmoji = false,
@@ -176,7 +275,7 @@ export function RichChatComposer({
   toolbarExtras,
   className,
   'data-testid': testId = 'rich-chat-composer',
-}: RichChatComposerProps) {
+}, ref) {
   // The Enter keymap is built once, but `send` is recreated every render.
   // Reading it through a ref is what lets the extension stay stable without
   // capturing a stale closure over the staged files.
@@ -210,7 +309,16 @@ export function RichChatComposer({
   const onSearchPeopleRef = useRef(onSearchPeople);
   onSearchPeopleRef.current = onSearchPeople;
   const hasSearchPeople = !!onSearchPeople;
+  const onCommandRef = useRef(onCommand);
+  onCommandRef.current = onCommand;
+  // The argument picked from the menu in this draft, if any. A ref, not state:
+  // the Suggestion plugin reads it inside ProseMirror's state transitions,
+  // where a React state value would be one render stale. Cleared on send and
+  // whenever the draft is cleared.
+  const argPickRef = useRef<{ trigger: string; item: ComposerArgumentItem } | null>(null);
   const [activeCommand, setActiveCommand] = useState<ComposerCommand | null>(null);
+  // Whether the active command's argument is still blank, for the status bar.
+  const [argumentEmpty, setArgumentEmpty] = useState(true);
   // The bar follows the DRAFT, not the render: re-derive whenever the host's
   // commands change (a document opened beside the chat), never clear on time.
   useEffect(() => {
@@ -314,6 +422,100 @@ export function RichChatComposer({
           ];
         },
       }),
+      // `/` command menu. Priority 101 for the same reason as the emoji menu:
+      // Enter must reach this plugin before the composer's keymap sends.
+      Extension.create({
+        name: 'commandSuggestion',
+        priority: 101,
+        addProseMirrorPlugins() {
+          return [
+            Suggestion<CommandSuggestionItem, CommandSuggestionItem>({
+              pluginKey: commandSuggestionKey,
+              editor: this.editor,
+              char: '/',
+              // Only at the very start of the draft. A `/` after any text is
+              // punctuation ("and/or", a URL path, a date), and a menu popping
+              // mid-sentence is the fastest way to make people avoid the key.
+              allow: ({ state, range }) => state.doc.textBetween(0, range.from, '\n', '\0').trim() === '',
+              items: ({ query }) => {
+                const q = query.toLowerCase();
+                return (commandsRef.current ?? [])
+                  .filter((c) => !c.disabled && c.trigger.slice(1).toLowerCase().startsWith(q))
+                  .map((c) => ({ id: c.trigger, code: c.trigger, label: c.label, hint: c.hint, description: c.description }));
+              },
+              // The trigger plus its separator, so the argument menu (below)
+              // can open on the very next keystroke.
+              command: ({ editor: e, range, props }) => {
+                e.chain().focus().deleteRange(range).insertContent(`${props.id} `).run();
+              },
+              render: () => commandMenuRenderer('Commands', false),
+            }),
+          ];
+        },
+      }),
+      // The argument menu: `/doc Roa` offers the documents called Roadmap.
+      //
+      // A Suggestion plugin with a custom matcher rather than a hand-rolled
+      // popup, so it inherits the caret positioning, the keyboard hand-off and
+      // the Escape/dismissed bookkeeping the other three menus have. The match
+      // is "the caret is in the first block, after a known trigger that has an
+      // `argument`, and past the separator"; the range is the argument text,
+      // which is what a pick replaces.
+      Extension.create({
+        name: 'commandArgumentSuggestion',
+        priority: 101,
+        addProseMirrorPlugins() {
+          return [
+            Suggestion<CommandSuggestionItem, CommandSuggestionItem>({
+              pluginKey: argumentSuggestionKey,
+              editor: this.editor,
+              // Every keystroke re-runs the search; a promise-backed one gets
+              // 120ms of quiet first. The previous list stays up meanwhile —
+              // see `commandMenuRenderer`.
+              debounce: 120,
+              findSuggestionMatch: ({ $position }) => {
+                // First top-level block only; a command draft is one line.
+                if ($position.depth !== 1 || $position.index(0) !== 0) return null;
+                const before = $position.parent.textBetween(0, $position.parentOffset, undefined, '\0');
+                const cmd = matchComposerCommand(before, commandsRef.current);
+                if (!cmd?.argument) return null;
+                const argStart = before.length - before.trimStart().length + cmd.trigger.length + 1;
+                // `/doc` with the caret right after it belongs to the `/` menu.
+                if ($position.parentOffset < argStart) return null;
+                const rest = before.slice(argStart);
+                // Once something has been picked and its label is intact, the
+                // menu stays away: reopening it over the label would offer the
+                // pick that was just made.
+                const pick = argPickRef.current;
+                if (pick && pick.trigger === cmd.trigger && rest.includes(pick.item.label)) return null;
+                return {
+                  range: { from: $position.start() + argStart, to: $position.pos },
+                  query: rest.trimStart(),
+                  text: rest,
+                };
+              },
+              items: async ({ editor: e, query }) => {
+                const cmd = matchComposerCommand(e.getText(), commandsRef.current);
+                return (await cmd?.argument?.search(query)) ?? [];
+              },
+              command: ({ editor: e, range, props: item }) => {
+                const cmd = matchComposerCommand(e.getText(), commandsRef.current);
+                if (!cmd?.argument) return;
+                const picked: ComposerArgumentItem = { id: item.id, label: item.label, hint: item.hint, icon: item.icon };
+                if ((cmd.argument.onPick?.(picked) ?? 'insert') === 'execute') {
+                  argPickRef.current = null;
+                  e.commands.clearContent(true);
+                  onCommandRef.current?.(cmd, picked);
+                  return;
+                }
+                argPickRef.current = { trigger: cmd.trigger, item: picked };
+                e.chain().focus().deleteRange(range).insertContent(`${picked.label} `).run();
+              },
+              render: () => commandMenuRenderer('Arguments', true),
+            }),
+          ];
+        },
+      }),
       // Enter is handled HERE, in the ProseMirror keymap, not as a React
       // onKeyDown on the wrapper.
       //
@@ -411,8 +613,12 @@ export function RichChatComposer({
       onUpdate: ({ editor: e }) => {
         setEmpty(e.isEmpty);
         editorRef.current = e;
-        const hit = matchComposerCommand(e.getText(), commandsRef.current);
+        const text = e.getText();
+        const hit = matchComposerCommand(text, commandsRef.current);
         setActiveCommand((prev) => (prev?.trigger === hit?.trigger ? prev : hit));
+        setArgumentEmpty(!hit || composerCommandArgumentText(text, hit).trim() === '');
+        // A pick belongs to the command it was made for.
+        if (argPickRef.current && argPickRef.current.trigger !== hit?.trigger) argPickRef.current = null;
       },
       editorProps: {
         attributes: {
@@ -480,12 +686,26 @@ export function RichChatComposer({
 
   const send = useCallback(() => {
     if (!editor || !canSend) return;
+    const text = editor.getText();
+    const cmd = matchComposerCommand(text, commandsRef.current);
+    const pick = argPickRef.current;
+    let command: ComposedMessage['command'];
+    if (cmd) {
+      command = { trigger: cmd.trigger };
+      // Only a pick made for THIS command whose label survived editing counts;
+      // otherwise the host reads the free text after the trigger.
+      if (pick && pick.trigger === cmd.trigger && composerCommandArgumentText(text, cmd).includes(pick.item.label)) {
+        command.argument = pick.item;
+      }
+    }
     onSend({
       html: editor.isEmpty ? '' : editor.getHTML(),
-      text: editor.getText(),
+      text,
       mentions: collectMentions(editor),
       files: staged.map((s) => s.file),
+      ...(command ? { command } : {}),
     });
+    argPickRef.current = null;
     editor.commands.clearContent(true);
     setStaged([]);
     setEmpty(true);
@@ -493,6 +713,22 @@ export function RichChatComposer({
 
   sendRef.current = send;
   linkRef.current = openLinkDialog;
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      get editor() {
+        return editor;
+      },
+      focus: () => {
+        editor?.commands.focus();
+      },
+      insertText: (text: string) => {
+        editor?.chain().focus().insertContent(text).run();
+      },
+    }),
+    [editor],
+  );
 
   const stage = useCallback(
     (files: File[]) => {
@@ -575,7 +811,15 @@ export function RichChatComposer({
           >
             <span className="font-mono">{activeCommand.trigger}</span>
             <span className="font-medium">{activeCommand.label}</span>
-            {activeCommand.hint && <span className="min-w-0 truncate opacity-80">— {activeCommand.hint}</span>}
+            {/* While the argument is blank the bar says what to type next;
+                once something is there, the hint returns. */}
+            {argumentEmpty && activeCommand.argument?.placeholder ? (
+              <span data-testid={`${testId}-command-placeholder`} className="min-w-0 truncate italic opacity-80">
+                — {activeCommand.argument.placeholder}
+              </span>
+            ) : (
+              activeCommand.hint && <span className="min-w-0 truncate opacity-80">— {activeCommand.hint}</span>
+            )}
           </div>
         )}
         <EditorContent editor={editor} />
@@ -668,6 +912,6 @@ export function RichChatComposer({
       </div>
     </ChatDropZone>
   );
-}
+});
 
 export default RichChatComposer;
