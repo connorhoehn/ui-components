@@ -3,7 +3,8 @@ import { t } from "./Button-BhS4-R6_.js";
 import { t as n } from "./Chip-YhQI5B9P.js";
 import { t as r } from "./Input-DLknWXri.js";
 import { t as i } from "./Avatar-BzicCOft.js";
-import { o as a, s as o, t as s } from "./VerdictChip-CKnsnKYd.js";
+import { t as a } from "./ChangeDiff-CzO8zCc-.js";
+import { o, t as s } from "./VerdictChip-DHZkoA2O.js";
 import { Children as c, useState as l } from "react";
 import { Fragment as u, jsx as d, jsxs as f } from "react/jsx-runtime";
 //#region src/components/change-review/ChangeReviewList.tsx
@@ -149,7 +150,7 @@ function m({ category: c, author: p, path: m = [], locationHint: h, pairs: g, be
 					"”"
 				]
 			}),
-			/* @__PURE__ */ d(a, {
+			/* @__PURE__ */ d(o, {
 				path: m,
 				...h ? { hint: h } : {},
 				"data-testid": `${N}-location`
@@ -158,7 +159,7 @@ function m({ category: c, author: p, path: m = [], locationHint: h, pairs: g, be
 				className: "rounded border border-warning-border bg-warning-bg px-2 py-1.5 text-xs text-warning-fg",
 				"data-testid": `${N}-draft-error`,
 				children: E
-			}) : /* @__PURE__ */ d(o, {
+			}) : /* @__PURE__ */ d(a, {
 				pairs: g,
 				..._ ? { beforeLabel: _ } : {},
 				...v ? { afterLabel: v } : {},

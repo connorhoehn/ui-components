@@ -229,6 +229,14 @@ export { DropdownMenu } from './DropdownMenu';
 export type { DropdownMenuProps, DropdownMenuSection, DropdownMenuItem } from './DropdownMenu';
 
 // ── Status primitives (Phase 5) ──
+// ChangeDiff imports `cn` and nothing else, but was reachable only from the
+// root barrel — which statically needs seven @tiptap packages. Third instance
+// of that defect after NodeCard (2.239.0) and Slider (2.241.0); its sibling
+// DiffViewer was already exported here, which is what made the asymmetry
+// visible.
+export { ChangeDiff } from '../change-review/ChangeDiff';
+export type { ChangeDiffProps, ChangeDiffPair } from '../change-review/ChangeDiff';
+
 export { Link } from './Link';
 export type { LinkProps } from './Link';
 

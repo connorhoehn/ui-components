@@ -10,11 +10,12 @@ import { t as l } from "./Input-DLknWXri.js";
 import { t as u } from "./Textarea-Dz4doxTv.js";
 import { t as d } from "./Avatar-BzicCOft.js";
 import { t as f } from "./InlinePopover-DFdI8hw1.js";
-import { t as p } from "./Select-CqVokE2v.js";
-import { t as m } from "./activationKey-CjbL3LUv.js";
-import { A as h, k as g } from "./renderers-9QJtVt3f.js";
-import { n as _ } from "./ErrorBoundary-BCUsxk15.js";
-import { o as v, s as y, t as b } from "./VerdictChip-CKnsnKYd.js";
+import { t as p } from "./ChangeDiff-CzO8zCc-.js";
+import { t as m } from "./Select-CqVokE2v.js";
+import { t as h } from "./activationKey-CjbL3LUv.js";
+import { A as g, k as _ } from "./renderers-9QJtVt3f.js";
+import { n as v } from "./ErrorBoundary-BCUsxk15.js";
+import { o as y, t as b } from "./VerdictChip-DHZkoA2O.js";
 import { a as x, c as S, i as C, n as w, o as T, r as E, s as ee, t as D } from "./TiptapEditor-Kdj65m6g.js";
 import { A as te, C as ne, D as O, E as k, F as A, I as re, L as j, M, N, O as P, P as F, R as ie, S as I, T as L, _ as R, a as z, b as B, c as V, d as H, f as U, g as ae, h as oe, i as se, j as ce, k as le, l as ue, m as de, o as fe, p as pe, r as me, s as he, t as ge, u as _e, v as ve, w as ye, x as be, y as xe, z as Se } from "./DocumentEditorPage-BVf4dJgY.js";
 import { a as Ce, c as we, d as Te, f as Ee, h as De, i as Oe, l as ke, m as Ae, n as je, o as Me, p as Ne, r as Pe, s as Fe, t as Ie, u as Le } from "./CanvasDocumentView-a3eqZ59c.js";
@@ -121,7 +122,7 @@ function Ke({ users: e, onClickUser: t }) {
 	});
 }
 function qe({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i, onDeleteDocument: a, onJumpToUser: o, hideHeader: s }) {
-	let [c, l] = J(!1), [u, d] = J(null), [f, p] = J(null), [h, g] = J(1), v = Math.max(1, Math.ceil(e.length / 10)), y = Math.min(h, v), b = K(() => {
+	let [c, l] = J(!1), [u, d] = J(null), [f, p] = J(null), [m, g] = J(1), _ = Math.max(1, Math.ceil(e.length / 10)), y = Math.min(m, _), b = K(() => {
 		let t = (y - 1) * 10;
 		return e.slice(t, t + 10);
 	}, [e, y]), x = W((e, t, n) => {
@@ -159,7 +160,7 @@ function qe({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 						tabIndex: 0,
 						"aria-label": `Open ${e.title}`,
 						onClick: () => r(e.id),
-						onKeyDown: m(() => r(e.id)),
+						onKeyDown: h(() => r(e.id)),
 						onMouseEnter: () => d(e.id),
 						onMouseLeave: () => d(null),
 						onFocus: () => p(e.id),
@@ -241,19 +242,19 @@ function qe({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 							"Page ",
 							y,
 							" of ",
-							v
+							_
 						]
 					}),
 					/* @__PURE__ */ X("button", {
 						"data-testid": "pagination-next",
-						disabled: y >= v,
-						onClick: () => g((e) => Math.min(v, e + 1)),
-						className: n("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md", y >= v ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-surface text-text-secondary cursor-pointer"),
+						disabled: y >= _,
+						onClick: () => g((e) => Math.min(_, e + 1)),
+						className: n("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md", y >= _ ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-surface text-text-secondary cursor-pointer"),
 						children: "Next"
 					})
 				]
 			}),
-			/* @__PURE__ */ X(_, {
+			/* @__PURE__ */ X(v, {
 				open: c,
 				onClose: () => l(!1),
 				onCreate: i
@@ -880,7 +881,7 @@ var vt = {
 	field: "Field change",
 	prose: "Body text"
 };
-function yt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: c, targetReason: u, before: f, after: p, edits: m, rationale: h, draftError: g, author: _, category: x, path: S, locationHint: C, verdict: w, verdictStatus: T = "idle", verdictError: E, revision: ee, onRereview: D, onAccept: te, onReject: ne, onRedraft: O, onReattach: k, onConfirmAttachment: A, className: re, "data-testid": j = "proposal-card" }) {
+function yt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: c, targetReason: u, before: f, after: m, edits: h, rationale: g, draftError: _, author: v, category: x, path: S, locationHint: C, verdict: w, verdictStatus: T = "idle", verdictError: E, revision: ee, onRereview: D, onAccept: te, onReject: ne, onRedraft: O, onReattach: k, onConfirmAttachment: A, className: re, "data-testid": j = "proposal-card" }) {
 	let [M, N] = J(!1), [P, F] = J(null), [ie, I] = J(!1), [L, R] = J(""), z = i === "applied", B = i === "rejected", V = z || B;
 	async function H() {
 		N(!0), F(null);
@@ -896,9 +897,9 @@ function yt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 			N(!1);
 		}
 	}
-	let U = t === "prose" ? m ?? [] : [{
+	let U = t === "prose" ? h ?? [] : [{
 		before: f ?? "",
-		after: p ?? ""
+		after: m ?? ""
 	}];
 	return /* @__PURE__ */ Z("div", {
 		"data-testid": j,
@@ -914,16 +915,16 @@ function yt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 						"data-testid": `${j}-category`,
 						children: x ?? vt[t]
 					}),
-					_ && /* @__PURE__ */ Z("span", {
+					v && /* @__PURE__ */ Z("span", {
 						className: "flex min-w-0 items-center gap-1.5",
 						"data-testid": `${j}-requester`,
 						children: [/* @__PURE__ */ X(d, {
-							name: _.name,
+							name: v.name,
 							size: 18,
-							..._.avatarUrl ? { src: _.avatarUrl } : {}
+							...v.avatarUrl ? { src: v.avatarUrl } : {}
 						}), /* @__PURE__ */ X("span", {
 							className: "truncate text-xs text-text-secondary",
-							children: _.name
+							children: v.name
 						})]
 					}),
 					/* @__PURE__ */ X("span", { className: "flex-1" }),
@@ -971,7 +972,7 @@ function yt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					"”"
 				]
 			}),
-			/* @__PURE__ */ X(v, {
+			/* @__PURE__ */ X(y, {
 				path: S ?? (c ? [c] : []),
 				...C ? { hint: C } : {},
 				"data-testid": `${j}-location`
@@ -981,9 +982,9 @@ function yt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 				children: [u && /* @__PURE__ */ X(_t, {
 					label: "Why",
 					children: u
-				}), h && /* @__PURE__ */ X(_t, {
+				}), g && /* @__PURE__ */ X(_t, {
 					label: "Rationale",
-					children: h
+					children: g
 				})]
 			}),
 			i === "drafting" && /* @__PURE__ */ X("div", {
@@ -991,12 +992,12 @@ function yt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 				"data-testid": `${j}-drafting`,
 				children: "Drafting a proposal…"
 			}),
-			g && /* @__PURE__ */ X("div", {
+			_ && /* @__PURE__ */ X("div", {
 				className: "rounded border border-warning-border bg-warning-bg px-2 py-1.5 text-xs text-warning-fg",
 				"data-testid": `${j}-draft-error`,
-				children: g
+				children: _
 			}),
-			i !== "drafting" && !g && U.length > 0 && /* @__PURE__ */ X(y, {
+			i !== "drafting" && !_ && U.length > 0 && /* @__PURE__ */ X(p, {
 				pairs: U,
 				"data-testid": `${j}-diff`
 			}),
@@ -1031,7 +1032,7 @@ function yt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					/* @__PURE__ */ X(r, {
 						size: "sm",
 						variant: "primary",
-						disabled: M || i === "drafting" || !!g,
+						disabled: M || i === "drafting" || !!_,
 						onClick: H,
 						"data-testid": `${j}-accept`,
 						children: M ? "Applying…" : t === "field" ? "Apply change" : "Add as suggestion"
@@ -1117,8 +1118,8 @@ function yt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 }
 //#endregion
 //#region src/components/doc-editor/WorkItemRow.tsx
-function bt({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason: c, contextSplit: l, drafting: u = !1, draftError: d, candidates: f, sections: m, onPropose: h, onAttach: g, onDismiss: _, className: v, "data-testid": y = `work-item-${e}` }) {
-	let b = [...f ?? []].sort((e, t) => t.score - e.score), x = new Set(b.map((e) => e.sectionId)), S = m.filter((e) => !x.has(e.id));
+function bt({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason: c, contextSplit: l, drafting: u = !1, draftError: d, candidates: f, sections: p, onPropose: h, onAttach: g, onDismiss: _, className: v, "data-testid": y = `work-item-${e}` }) {
+	let b = [...f ?? []].sort((e, t) => t.score - e.score), x = new Set(b.map((e) => e.sectionId)), S = p.filter((e) => !x.has(e.id));
 	return /* @__PURE__ */ X(i, {
 		padding: "sm",
 		className: v,
@@ -1197,7 +1198,7 @@ function bt({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason:
 					children: [/* @__PURE__ */ X("span", {
 						className: "text-[11px] uppercase tracking-wide text-text-tertiary",
 						children: "Or file it under"
-					}), /* @__PURE__ */ X(p, {
+					}), /* @__PURE__ */ X(m, {
 						size: "sm",
 						value: "",
 						placeholder: "Choose a section…",
@@ -1733,4 +1734,4 @@ function It({ kind: e, author: t, when: r = null, deletedText: i = "", insertedT
 	});
 }
 //#endregion
-export { ct as AckMode, ue as ActionItemsCard, mt as ActivityFeed, I as AttachmentsPanel, F as CANVAS_BODY_KEY, A as CANVAS_SCHEMA_VERSION, Ie as CanvasDocumentView, w as CanvasLineSpacing, st as ChunkViewer, Tt as CommentGhostPopover, R as CommentThreadNode, he as DiffViewer, ge as DocumentEditorPage, je as DocumentFindBar, Ce as DocumentGutter, O as DocumentHeader, qe as DocumentListPage, Ne as DocumentOutline, Ot as DocumentOwnership, Ae as DocumentRuler, jt as DocumentShareDialog, Le as DocumentStatusBar, Fe as DocumentToolbar, S as EditorToolbar, U as ExecutiveSummaryCard, k as FollowModeBar, pe as HeaderBanner, _e as KeyDecisionsCard, E as LINE_SPACINGS, C as LINE_SPACING_LABELS, be as MentionDropdown, z as MyMentionsPanel, _ as NewDocumentModal, De as PX_PER_INCH, P as ParticipantAvatars, yt as ProposalCard, V as ReaderMode, oe as ReviewMode, tt as ReviewProgress, at as ReviewableItem, kt as SHARE_ROLES, $ as SUGGESTION_AUTHORING_MODES, ye as SectionBlock, ae as SectionComments, ne as SectionList, H as SectionSummariesCard, Qe as StandaloneTiptap, It as SuggestionCard, Mt as SuggestionModeControl, me as TableOfContents, h as TaskItemRow, g as TaskList, D as TiptapEditor, fe as VersionHistoryPanel, L as VideoCallPanel, Dt as VideoDockSlot, se as VideoHistoryPanel, bt as WorkItemRow, Te as ZOOM_FIT, Ee as ZOOM_STEPS, re as canvasBody, M as canvasFragmentToMarkdown, Je as clientIdForUser, ve as countAllComments, le as findDocumentTarget, Pe as findMatches, de as generateSummaryBullets, xe as getInitials, j as isCanvasDocument, x as isLineSpacing, T as lineSpacingAttributes, Oe as nextMatchIndex, ee as parseLineSpacing, we as readOutline, ie as readSchemaVersion, B as relativeTime, wt as replyLabel, te as scrollToDocumentTarget, Me as stackOffsets, N as useDocumentActions, ke as useDocumentOutline, Ye as useFollowCursor, Se as useIsCanvasDocument, ce as useSidebarPanels };
+export { ct as AckMode, ue as ActionItemsCard, mt as ActivityFeed, I as AttachmentsPanel, F as CANVAS_BODY_KEY, A as CANVAS_SCHEMA_VERSION, Ie as CanvasDocumentView, w as CanvasLineSpacing, st as ChunkViewer, Tt as CommentGhostPopover, R as CommentThreadNode, he as DiffViewer, ge as DocumentEditorPage, je as DocumentFindBar, Ce as DocumentGutter, O as DocumentHeader, qe as DocumentListPage, Ne as DocumentOutline, Ot as DocumentOwnership, Ae as DocumentRuler, jt as DocumentShareDialog, Le as DocumentStatusBar, Fe as DocumentToolbar, S as EditorToolbar, U as ExecutiveSummaryCard, k as FollowModeBar, pe as HeaderBanner, _e as KeyDecisionsCard, E as LINE_SPACINGS, C as LINE_SPACING_LABELS, be as MentionDropdown, z as MyMentionsPanel, v as NewDocumentModal, De as PX_PER_INCH, P as ParticipantAvatars, yt as ProposalCard, V as ReaderMode, oe as ReviewMode, tt as ReviewProgress, at as ReviewableItem, kt as SHARE_ROLES, $ as SUGGESTION_AUTHORING_MODES, ye as SectionBlock, ae as SectionComments, ne as SectionList, H as SectionSummariesCard, Qe as StandaloneTiptap, It as SuggestionCard, Mt as SuggestionModeControl, me as TableOfContents, g as TaskItemRow, _ as TaskList, D as TiptapEditor, fe as VersionHistoryPanel, L as VideoCallPanel, Dt as VideoDockSlot, se as VideoHistoryPanel, bt as WorkItemRow, Te as ZOOM_FIT, Ee as ZOOM_STEPS, re as canvasBody, M as canvasFragmentToMarkdown, Je as clientIdForUser, ve as countAllComments, le as findDocumentTarget, Pe as findMatches, de as generateSummaryBullets, xe as getInitials, j as isCanvasDocument, x as isLineSpacing, T as lineSpacingAttributes, Oe as nextMatchIndex, ee as parseLineSpacing, we as readOutline, ie as readSchemaVersion, B as relativeTime, wt as replyLabel, te as scrollToDocumentTarget, Me as stackOffsets, N as useDocumentActions, ke as useDocumentOutline, Ye as useFollowCursor, Se as useIsCanvasDocument, ce as useSidebarPanels };
