@@ -709,7 +709,7 @@ export declare type ConnectionPillTone = SurfaceTone;
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
-export declare function ConsultCard({ question, context, origin, askedAt, status, answer, answeredBy, onAnswer, answerPlaceholder, busy, footer, className, 'data-testid': testId, }: ConsultCardProps): JSX.Element;
+export declare function ConsultCard({ question, context, origin, askedAt, status, answer, answeredBy, onAnswer, answerPlaceholder, busy, footer, flush, className, 'data-testid': testId, }: ConsultCardProps): JSX.Element;
 
 export declare interface ConsultCardProps {
     /** The agent's question. */
@@ -727,8 +727,19 @@ export declare interface ConsultCardProps {
     onAnswer?: (answer: string) => void;
     answerPlaceholder?: string;
     busy?: boolean;
-    /** Extra footer content, e.g. a link to the session. */
+    /**
+     * Extra footer content, e.g. a link to the session. Rendered in EVERY
+     * state: beside the send button while answerable, on its own row when the
+     * card is pending but has no `onAnswer` — the one state where this is the
+     * card's only affordance, and the one state where it used to be dropped.
+     */
     footer?: ReactNode;
+    /**
+     * Draw no frame of its own — no border, radius, padding or background — for
+     * a card sitting inside a list group that already supplies them. The
+     * pending signal stays on the "agent waiting" chip.
+     */
+    flush?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -1001,7 +1012,7 @@ export declare interface DropdownMenuSection {
     items: DropdownMenuItem[];
 }
 
-export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, }: EmptyStateProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateAction {
     /** Visible label on the action button or link. */
@@ -1068,7 +1079,16 @@ export declare interface EmptyStateProps {
      * small for the 220px block, reach for `InlinePlaceholder`.
      */
     className?: string;
+    /** Block scale. Default `md`. See `EmptyStateSize`. */
+    size?: EmptyStateSize;
 }
+
+/**
+ * `md` is the page-body block (220px minimum, 52px glyph). `sm` is for a
+ * lane or list group that is one of several on the page: no minimum height,
+ * a 28px glyph and a 14px title, so three empty lanes fit above the fold.
+ */
+export declare type EmptyStateSize = 'md' | 'sm';
 
 /** @see SurfaceTone — which colour family the empty state paints in. */
 export declare type EmptyStateTone = SurfaceTone;
@@ -3677,6 +3697,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -3693,16 +3723,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

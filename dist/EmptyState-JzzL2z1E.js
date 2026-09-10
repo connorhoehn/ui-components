@@ -28,37 +28,38 @@ var i = {
 		copyDone: "text-code-green border-code-green/50"
 	}
 };
-function a({ icon: t, title: a, body: s, description: c, actionLabel: l, onAction: u, action: d, actions: f, testId: p = "empty-state", actionTestId: m = "empty-state-action", tone: h = "surface", className: g }) {
-	let _ = c ?? s, v = i[h] ?? i.surface;
+function a({ icon: t, title: a, body: s, description: c, actionLabel: l, onAction: u, action: d, actions: f, testId: p = "empty-state", actionTestId: m = "empty-state-action", tone: h = "surface", className: g, size: _ = "md" }) {
+	let v = c ?? s, y = i[h] ?? i.surface, b = _ === "sm";
 	return /* @__PURE__ */ r("div", {
 		"data-testid": p,
-		className: e("flex flex-col items-center justify-center min-h-[220px]", "gap-2 p-8 font-[inherit]", v.container, g),
+		className: e("flex flex-col items-center justify-center font-[inherit]", b ? "gap-1 px-4 py-6" : "min-h-[220px] gap-2 p-8", y.container, g),
 		children: [
 			t && (typeof t == "string" ? /* @__PURE__ */ n("div", {
-				className: "text-[52px] mb-2",
+				className: e(b ? "text-[28px] mb-1 leading-none" : "text-[52px] mb-2"),
+				"aria-hidden": "true",
 				children: t
 			}) : /* @__PURE__ */ n("div", {
-				className: "mb-2",
+				className: b ? "mb-1" : "mb-2",
 				children: t
 			})),
 			/* @__PURE__ */ n("div", {
-				className: e("text-[17px] font-semibold", v.title),
+				className: e(b ? "text-[14px] font-semibold" : "text-[17px] font-semibold", y.title),
 				children: a
 			}),
-			_ && /* @__PURE__ */ n("div", {
-				className: e("text-[13px] text-center max-w-[340px] leading-normal", v.description),
-				children: _
+			v && /* @__PURE__ */ n("div", {
+				className: e("text-[13px] text-center max-w-[340px] leading-normal", y.description),
+				children: v
 			}),
 			f && f.length > 0 ? /* @__PURE__ */ n(o, {
 				actions: f,
-				palette: v
+				palette: y
 			}) : d ? /* @__PURE__ */ n("div", {
 				className: "mt-2.5",
 				children: d
 			}) : l && u && /* @__PURE__ */ n("button", {
 				"data-testid": m,
 				onClick: u,
-				className: e("mt-2.5 px-[22px] py-[9px] text-sm font-semibold", "border-none rounded-lg cursor-pointer font-[inherit]", v.cta),
+				className: e("mt-2.5 px-[22px] py-[9px] text-sm font-semibold", "border-none rounded-lg cursor-pointer font-[inherit]", y.cta),
 				children: l
 			})
 		]

@@ -11,7 +11,7 @@ import { n as y, t as b } from "./Chart-DUoOhhMu.js";
 import { a as x, n as S, t as C } from "./Chip-YhQI5B9P.js";
 import { t as w } from "./Modal-CyoyiNKN.js";
 import { t as T } from "./ConfirmDialog-Cd8NZEXi.js";
-import { t as E } from "./EmptyState-ClmWoqCb.js";
+import { t as E } from "./EmptyState-JzzL2z1E.js";
 import { i as D, t as ee } from "./focusTrap-CmWJlptm.js";
 import { t as O } from "./SkeletonCard-CGe8XFPB.js";
 import { n as k, t as te } from "./FileUploadDrop-BRRQBXdS.js";
@@ -19508,12 +19508,13 @@ function $u({ stepId: e, step: t, index: n, nodeType: i, nodeConfig: a, onRetryF
 						children: [
 							n + 1,
 							". ",
-							i
+							typeof a?.label == "string" && a.label.trim() ? a.label : i
 						]
 					}),
 					/* @__PURE__ */ U("span", {
 						className: "text-[11px] font-mono text-text-tertiary",
-						children: e.slice(0, 8)
+						title: `${i} · ${e}`,
+						children: typeof a?.label == "string" && a.label.trim() ? i : e.slice(0, 8)
 					}),
 					t.durationMs != null && /* @__PURE__ */ U("span", {
 						className: "text-[11px] text-text-tertiary ml-auto",

@@ -3108,7 +3108,7 @@ export declare interface ConsentPageProps {
     logoUrl?: string;
 }
 
-export declare function ConsultCard({ question, context, origin, askedAt, status, answer, answeredBy, onAnswer, answerPlaceholder, busy, footer, className, 'data-testid': testId, }: ConsultCardProps): JSX.Element;
+export declare function ConsultCard({ question, context, origin, askedAt, status, answer, answeredBy, onAnswer, answerPlaceholder, busy, footer, flush, className, 'data-testid': testId, }: ConsultCardProps): JSX.Element;
 
 export declare interface ConsultCardProps {
     /** The agent's question. */
@@ -3126,8 +3126,19 @@ export declare interface ConsultCardProps {
     onAnswer?: (answer: string) => void;
     answerPlaceholder?: string;
     busy?: boolean;
-    /** Extra footer content, e.g. a link to the session. */
+    /**
+     * Extra footer content, e.g. a link to the session. Rendered in EVERY
+     * state: beside the send button while answerable, on its own row when the
+     * card is pending but has no `onAnswer` — the one state where this is the
+     * card's only affordance, and the one state where it used to be dropped.
+     */
     footer?: ReactNode;
+    /**
+     * Draw no frame of its own — no border, radius, padding or background — for
+     * a card sitting inside a list group that already supplies them. The
+     * pending signal stays on the "agent waiting" chip.
+     */
+    flush?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -4310,7 +4321,7 @@ export declare interface EmojiShortcode {
     keywords?: readonly string[];
 }
 
-export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, }: EmptyStateProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateAction {
     /** Visible label on the action button or link. */
@@ -4377,7 +4388,16 @@ export declare interface EmptyStateProps {
      * small for the 220px block, reach for `InlinePlaceholder`.
      */
     className?: string;
+    /** Block scale. Default `md`. See `EmptyStateSize`. */
+    size?: EmptyStateSize;
 }
+
+/**
+ * `md` is the page-body block (220px minimum, 52px glyph). `sm` is for a
+ * lane or list group that is one of several on the page: no minimum height,
+ * a 28px glyph and a 14px title, so three empty lanes fit above the fold.
+ */
+export declare type EmptyStateSize = 'md' | 'sm';
 
 /** @see SurfaceTone — which colour family the empty state paints in. */
 export declare type EmptyStateTone = SurfaceTone;
@@ -5910,6 +5930,49 @@ export declare interface ImageWatermarkNodeData {
     opacity?: number;
     offsetX?: number;
     offsetY?: number;
+}
+
+export declare function InboxSection({ title, count, countTone, hint, action, empty, footer, headingLevel, children, className, 'data-testid': testId, }: InboxSectionProps): JSX.Element;
+
+export declare interface InboxSectionEmpty {
+    /** A small glyph above the title. An emoji string is fine. */
+    icon?: ReactNode;
+    /** One line: "No decisions waiting". */
+    title: string;
+    /** The hint under it: what would appear here, and when. */
+    body?: string;
+    /** Lands on the empty-state container. Default `<section testid>-empty`. */
+    testId?: string;
+}
+
+export declare interface InboxSectionProps {
+    title: string;
+    /** How many rows the lane holds. Drawn in the header beside the title. */
+    count: number;
+    /** Tone of the count chip. `warning` for a lane whose rows block something. */
+    countTone?: ChipTone;
+    /** Quiet qualifier after the count — "newest blockage first". */
+    hint?: ReactNode;
+    /** Right-aligned control in the header. */
+    action?: ReactNode;
+    /** What the lane says instead of rows when `count` is 0. */
+    empty?: InboxSectionEmpty;
+    /** A note under the rows — a horizon, a caveat. Not drawn when empty. */
+    footer?: ReactNode;
+    /** Heading level of the title. Default `2`: one lane, one landmark heading. */
+    headingLevel?: 2 | 3;
+    /** The rows, as `InboxSectionRow`s. */
+    children?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** One row of an `InboxSection`. The group draws the frame and the rule. */
+export declare function InboxSectionRow({ children, className, ...rest }: InboxSectionRowProps): JSX.Element;
+
+export declare interface InboxSectionRowProps extends HTMLAttributes<HTMLLIElement> {
+    children: ReactNode;
+    'data-testid'?: string;
 }
 
 declare interface IngestAuditEntry {
@@ -13845,6 +13908,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -13861,16 +13934,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

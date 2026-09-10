@@ -3,7 +3,7 @@ import { i as n, n as r, r as i } from "./documentType-rRZpKWbO.js";
 import { i as a } from "./useDocumentTypes-BUXMPyPU.js";
 import { t as o } from "./cn-DhjIN-s0.js";
 import { t as s } from "./Modal-CyoyiNKN.js";
-import { t as c } from "./EmptyState-ClmWoqCb.js";
+import { t as c } from "./EmptyState-JzzL2z1E.js";
 import { t as l } from "./Input-DLknWXri.js";
 import { t as u } from "./Textarea-Dz4doxTv.js";
 import { t as d } from "./Select-CqVokE2v.js";

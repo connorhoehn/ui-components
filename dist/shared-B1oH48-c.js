@@ -12,7 +12,7 @@ import { c as r, f as i, l as a, p as o, s, t as c } from "./Chip-YhQI5B9P.js";
 import { t as l } from "./overlayStack-BFH9XXvN.js";
 import { t as u } from "./Modal-CyoyiNKN.js";
 import "./ConfirmDialog-Cd8NZEXi.js";
-import { t as d } from "./EmptyState-ClmWoqCb.js";
+import { t as d } from "./EmptyState-JzzL2z1E.js";
 import { n as f } from "./PermissionDeniedCard-CjNsV-qD.js";
 import { n as p, t as m } from "./CardHeader-C-7rFLKD.js";
 import { i as h, n as g, r as _, t as v } from "./focusTrap-CmWJlptm.js";
@@ -26,7 +26,7 @@ import { n as w, t as T } from "./Avatar-BzicCOft.js";
 import { i as E } from "./FloatingPanel-CVnSIFM0.js";
 import "./StatusDot-Bgx2zxgC.js";
 import { t as D } from "./PresenceDot-3gBZGPvX.js";
-import "./Badge-B_L-ZBbN.js";
+import "./Badge-NPe_5OA9.js";
 import "./PresenceAvatars-BkzMACtv.js";
 import { t as O } from "./InlinePopover-DFdI8hw1.js";
 import { t as k } from "./ActivityFeed-C9KAtqCl.js";
@@ -1232,14 +1232,14 @@ var Je = {
 	expired: "neutral",
 	withdrawn: "neutral"
 };
-function Ye({ question: n, context: r, origin: i = [], askedAt: a, status: o, answer: s, answeredBy: l, onAnswer: u, answerPlaceholder: d = "Answer the agent — it is waiting on this…", busy: f = !1, footer: p, className: m, "data-testid": h }) {
-	let [g, _] = I(""), v = g.trim().length > 0 && !f;
-	function y() {
-		!v || !u || (u(g.trim()), _(""));
+function Ye({ question: n, context: r, origin: i = [], askedAt: a, status: o, answer: s, answeredBy: l, onAnswer: u, answerPlaceholder: d = "Answer the agent — it is waiting on this…", busy: f = !1, footer: p, flush: m = !1, className: h, "data-testid": g }) {
+	let [_, v] = I(""), y = _.trim().length > 0 && !f;
+	function b() {
+		!y || !u || (u(_.trim()), v(""));
 	}
 	return /* @__PURE__ */ z("section", {
-		"data-testid": h,
-		className: e("rounded-lg border bg-surface p-3.5 flex flex-col gap-2.5 min-w-0", o === "pending" ? "border-warning/50" : "border-border", m),
+		"data-testid": g,
+		className: e("flex flex-col gap-2.5 min-w-0", !m && "rounded-lg border bg-surface p-3.5", !m && (o === "pending" ? "border-warning/50" : "border-border"), h),
 		children: [
 			/* @__PURE__ */ z("div", {
 				className: "flex items-center gap-2 min-w-0",
@@ -1289,13 +1289,13 @@ function Ye({ question: n, context: r, origin: i = [], askedAt: a, status: o, an
 			o === "pending" && u && /* @__PURE__ */ z("div", {
 				className: "flex flex-col gap-2",
 				children: [/* @__PURE__ */ R(C, {
-					value: g,
-					onChange: (e) => _(e.target.value),
+					value: _,
+					onChange: (e) => v(e.target.value),
 					placeholder: d,
 					rows: 2,
 					disabled: f,
 					onKeyDown: (e) => {
-						e.key === "Enter" && (e.metaKey || e.ctrlKey) && (e.preventDefault(), y());
+						e.key === "Enter" && (e.metaKey || e.ctrlKey) && (e.preventDefault(), b());
 					}
 				}), /* @__PURE__ */ z("div", {
 					className: "flex items-center gap-2",
@@ -1304,14 +1304,14 @@ function Ye({ question: n, context: r, origin: i = [], askedAt: a, status: o, an
 						/* @__PURE__ */ R("span", { className: "flex-1" }),
 						/* @__PURE__ */ R(t, {
 							size: "sm",
-							onClick: y,
-							disabled: !v,
+							onClick: b,
+							disabled: !y,
 							children: f ? "Sending…" : "Send answer"
 						})
 					]
 				})]
 			}),
-			o !== "pending" && p && /* @__PURE__ */ R("div", {
+			(o !== "pending" || !u) && p && /* @__PURE__ */ R("div", {
 				className: "flex items-center gap-2",
 				children: p
 			})
