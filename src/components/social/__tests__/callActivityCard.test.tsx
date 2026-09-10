@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { CallActivityCard, describeParticipants, formatCallDuration } from '../CallActivityCard';
+import { CallActivityCard, describeNotRecorded, describeParticipants, formatCallDuration } from '../CallActivityCard';
 
 afterEach(cleanup);
 
@@ -181,5 +181,50 @@ describe('callRefFromMetadata', () => {
     });
     expect(ref?.durationMs).toBe(90_000);
     expect(ref?.audioOnly).toBe(true);
+  });
+});
+
+describe('describeNotRecorded', () => {
+  it('names the room and who can fix it', () => {
+    expect(describeNotRecorded('room-setting-off', 'room:design'))
+      .toBe('Not recorded — recording is off for #design; a room admin can turn it on under Manage #design.');
+  });
+
+  it('still explains the room rule when the lobby is unknown', () => {
+    expect(describeNotRecorded('room-setting-off')).toMatch(/^Not recorded — recording is off for this room/);
+  });
+
+  it('tells both people what to turn on for a DM', () => {
+    expect(describeNotRecorded('dm-not-opted-in:u2', 'dm:u1:u2'))
+      .toBe("Not recorded — both people must turn on 'Record my DM calls' in their profile.");
+  });
+
+  it('falls back to the plain statement for a code it does not know', () => {
+    expect(describeNotRecorded('something-new')).toBe('Not recorded.');
+    expect(describeNotRecorded(undefined)).toBe('Not recorded.');
+  });
+});
+
+describe('CallActivityCard — recording note', () => {
+  it('says why an ended call was not recorded', () => {
+    render(<CallActivityCard callId="c" recorded={false} notRecordedReason="room-setting-off" lobbyName="room:design" />);
+    expect(screen.getByTestId('call-activity-card-not-recorded')).toHaveTextContent('recording is off for #design');
+  });
+
+  it('says nothing when the record does not say', () => {
+    render(<CallActivityCard callId="c" />);
+    expect(screen.queryByTestId('call-activity-card-not-recorded')).not.toBeInTheDocument();
+  });
+
+  // The recording announces itself as its own card when it lands.
+  it('says nothing when the call was recorded', () => {
+    render(<CallActivityCard callId="c" recorded />);
+    expect(screen.queryByTestId('call-activity-card-not-recorded')).not.toBeInTheDocument();
+  });
+
+  // Live, the chip in the call chrome owns this statement.
+  it('holds the note while the call is still going', () => {
+    render(<CallActivityCard callId="c" live recorded={false} notRecordedReason="dm-not-opted-in:u2" />);
+    expect(screen.queryByTestId('call-activity-card-not-recorded')).not.toBeInTheDocument();
   });
 });

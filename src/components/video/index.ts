@@ -266,6 +266,9 @@ export type { AuthedAudioProps } from './AuthedAudio';
 // window and a native <audio controls>.
 export { EmbeddedCallPanel } from './EmbeddedCallPanel';
 export type { EmbeddedCallPanelProps } from './EmbeddedCallPanel';
+
+export { RecordingChip, RECORDING_CHIP_TITLES } from './RecordingChip';
+export type { RecordingChipProps, RecordingChipState } from './RecordingChip';
 export { AudioPlayer, formatAudioTime } from './AudioPlayer';
 export type { AudioPlayerProps } from './AudioPlayer';
 // One-line in-call notices with an inline action; the widget-scale answer to a page Banner.

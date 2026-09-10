@@ -12,6 +12,7 @@ import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
 import { PopOutIcon } from './MediaIcons';
+import { RecordingChip, type RecordingChipState } from './RecordingChip';
 
 export interface EmbeddedCallPanelProps {
   /** What this call is — a room name, "Alice & Bob", a channel. */
@@ -21,6 +22,12 @@ export interface EmbeddedCallPanelProps {
   durationSeconds?: number;
   /** Shows the live dot. Default true — an embedded call that is not live is not shown. */
   live?: boolean;
+  /**
+   * Whether this call records. `armed` = it will (a room with recording on, a
+   * DM both people opted into) but nothing is written yet; `active` = writing
+   * now. Omitted or neither → no chip, which is the "not recorded" statement.
+   */
+  recording?: RecordingChipState;
   /** Take the call back out into its floating window. Omitted → no button. */
   onPopOut?: () => void;
   popOutLabel?: string;
@@ -41,7 +48,7 @@ function clock(total: number): string {
 }
 
 export function EmbeddedCallPanel({
-  title, subtitle, durationSeconds, live = true, onPopOut, popOutLabel = 'Pop the call out', children, controls,
+  title, subtitle, durationSeconds, live = true, recording, onPopOut, popOutLabel = 'Pop the call out', children, controls,
   stage = 'video', className, 'data-testid': testId = 'embedded-call-panel',
 }: EmbeddedCallPanelProps) {
   return (
@@ -54,6 +61,9 @@ export function EmbeddedCallPanel({
       <header className="flex min-w-0 items-center gap-2 px-3 py-2">
         {live && <span aria-hidden="true" className="inline-block h-2 w-2 shrink-0 animate-pulse rounded-full bg-success" />}
         <span className="min-w-0 flex-1 truncate text-sm font-semibold" data-testid={`${testId}-title`}>{title}</span>
+        {recording && (
+          <RecordingChip armed={recording.armed} active={recording.active} className="shrink-0" data-testid={`${testId}-recording`} />
+        )}
         {subtitle && <span className="shrink-0 text-xs text-white/60" data-testid={`${testId}-subtitle`}>{subtitle}</span>}
         {durationSeconds !== undefined && (
           <span className="shrink-0 font-mono text-xs tabular-nums text-white/80" data-testid={`${testId}-duration`}>{clock(durationSeconds)}</span>
