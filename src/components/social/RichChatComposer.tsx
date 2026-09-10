@@ -21,6 +21,15 @@
 // mentions that rendered as plain text — the failure this note exists to stop
 // recurring.
 //
+// ## `#` is the same idea for documents
+//
+// "See #Roadmap" is a reference, and a reference typed as text is a search the
+// reader has to run. So `#` opens a document menu (`onSearchDocuments`) and the
+// pick is a second Mention node, `docref`, carrying the document id; the send
+// lists them in `ComposedMessage.documents` and the panel renders them as
+// chips that open the document. Only a `#` at a word start opens the menu —
+// `issue#42` is a word, not a trigger.
+//
 // ## Attachments wait for the message
 //
 // Files used to be handed to the host the moment they were dropped, so they
@@ -72,11 +81,12 @@ import { ReactionPickerPopover } from './ReactionPickerPopover';
 import { ComposerAttachments, type StagedFile } from './ComposerAttachments';
 import { LinkDialog } from './LinkDialog';
 import { MentionSuggestions, type MentionCandidate } from './MentionSuggestions';
+import { DocumentSuggestions, type DocumentCandidate } from './DocumentSuggestions';
 import { EmojiSuggestions } from './EmojiSuggestions';
 import { CommandSuggestions, type CommandSuggestionItem } from './CommandSuggestions';
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
 
-export type { MentionCandidate };
+export type { MentionCandidate, DocumentCandidate };
 
 /** What the composer hands back on send. */
 export interface ComposedMessage {
@@ -88,6 +98,8 @@ export interface ComposedMessage {
   mentions: MentionCandidate[];
   /** Files staged in the composer, sent WITH the message. */
   files: File[];
+  /** Every document the sender referenced with `#`, de-duplicated, in document order. Absent when there are none. */
+  documents?: Array<{ id: string; label: string }>;
   /**
    * Set when the draft starts with a known command trigger. `argument` is the
    * item picked from the argument menu, present only when the pick was made
@@ -123,6 +135,12 @@ export interface RichChatComposerProps {
    * rather than filter a preloaded array. Omit to disable mentions entirely.
    */
   onSearchPeople?: (query: string) => MentionCandidate[] | Promise<MentionCandidate[]>;
+  /**
+   * Resolves the `#` menu — the documents a message can refer to. Omit to
+   * disable document references entirely. Read live, like `onSearchPeople`:
+   * a new function identity does not rebuild the editor.
+   */
+  onSearchDocuments?: (query: string) => DocumentCandidate[] | Promise<DocumentCandidate[]>;
   /**
    * Enables attachments. False means this deployment has no file capability and
    * every attachment affordance disappears — not a disabled paperclip, which
@@ -191,12 +209,12 @@ function mountSuggestionMenu() {
   };
 }
 
-/** Collects mention nodes in document order, de-duplicated by id. */
-function collectMentions(editor: Editor): MentionCandidate[] {
+/** Collects the atoms of one node type in document order, de-duplicated by id. */
+function collectRefs(editor: Editor, typeName: string): Array<{ id: string; label: string }> {
   const seen = new Set<string>();
-  const out: MentionCandidate[] = [];
+  const out: Array<{ id: string; label: string }> = [];
   editor.state.doc.descendants((node) => {
-    if (node.type.name !== 'mention') return;
+    if (node.type.name !== typeName) return;
     const id = String(node.attrs.id ?? '');
     if (!id || seen.has(id)) return;
     seen.add(id);
@@ -204,6 +222,37 @@ function collectMentions(editor: Editor): MentionCandidate[] {
   });
   return out;
 }
+
+/** Collects mention nodes in document order, de-duplicated by id. */
+function collectMentions(editor: Editor): MentionCandidate[] {
+  return collectRefs(editor, 'mention');
+}
+
+/** Collects `#` document references the same way. */
+function collectDocuments(editor: Editor): Array<{ id: string; label: string }> {
+  return collectRefs(editor, 'docref');
+}
+
+/**
+ * A `#` opens the document menu only at a word start. The Suggestion plugin's
+ * default prefix rule already refuses `issue#42`; this states the rule where
+ * the extension is configured, so a future `allowedPrefixes` change cannot
+ * silently turn every hashtag-in-a-word into a menu.
+ */
+function docrefAtWordStart({ state, range }: { state: { doc: { resolve: (pos: number) => { parentOffset: number; parent: { textBetween: (from: number, to: number, blockSeparator?: string, leafText?: string) => string } } } }; range: { from: number } }): boolean {
+  const $pos = state.doc.resolve(range.from);
+  if ($pos.parentOffset === 0) return true;
+  const before = $pos.parent.textBetween($pos.parentOffset - 1, $pos.parentOffset, undefined, '\0');
+  return before === '' || /[\s\0(\[{"'“‘]/.test(before);
+}
+
+/**
+ * The `#` document reference: Mention again, under another name, so it is a
+ * separate node type (its own class, its own collector) with the same atom
+ * behaviour — one backspace removes the whole chip.
+ */
+const DocRef = Mention.extend({ name: 'docref' });
+const docrefSuggestionKey = new PluginKey('docrefSuggestion');
 
 let stagedSeq = 0;
 
@@ -269,6 +318,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   onSend,
   onCommand,
   onSearchPeople,
+  onSearchDocuments,
   allowAttachments = false,
   allowEmoji = false,
   onRequestLink,
@@ -312,6 +362,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const onSearchPeopleRef = useRef(onSearchPeople);
   onSearchPeopleRef.current = onSearchPeople;
   const hasSearchPeople = !!onSearchPeople;
+  const onSearchDocumentsRef = useRef(onSearchDocuments);
+  onSearchDocumentsRef.current = onSearchDocuments;
+  const hasSearchDocuments = !!onSearchDocuments;
   const onCommandRef = useRef(onCommand);
   onCommandRef.current = onCommand;
   // The argument picked from the menu in this draft, if any. A ref, not state:
@@ -601,13 +654,57 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       );
     }
 
+    if (hasSearchDocuments) {
+      list.push(
+        DocRef.configure({
+          // `docref`, painted beside `mention` in the stylesheet.
+          HTMLAttributes: { class: 'docref' },
+          renderText: ({ node }) => `#${node.attrs.label ?? node.attrs.id}`,
+          renderHTML: ({ options, node }) => ['span', options.HTMLAttributes, `#${node.attrs.label ?? node.attrs.id}`],
+          suggestion: {
+            char: '#',
+            // Its own key: Mention's default key is already taken by the `@` plugin.
+            pluginKey: docrefSuggestionKey,
+            allow: docrefAtWordStart,
+            items: ({ query }: { query: string }) => onSearchDocumentsRef.current?.(query) ?? [],
+            render: () => {
+              let renderer: ReactRenderer | null = null;
+              const menu = mountSuggestionMenu();
+              return {
+                onStart: (props: SuggestionProps) => {
+                  renderer = new ReactRenderer(DocumentSuggestions, { props, editor: props.editor });
+                  menu.attach(renderer.element as HTMLElement);
+                  menu.place(props.clientRect?.());
+                },
+                onUpdate: (props: SuggestionProps) => {
+                  renderer?.updateProps(props);
+                  menu.place(props.clientRect?.());
+                },
+                onKeyDown: (props: SuggestionKeyDownProps) => {
+                  if (props.event.key === 'Escape') {
+                    menu.detach();
+                    return true;
+                  }
+                  return (renderer?.ref as SuggestionMenuRef)?.onKeyDown?.(props) ?? false;
+                },
+                onExit: () => {
+                  menu.detach();
+                  renderer?.destroy();
+                },
+              };
+            },
+          },
+        }),
+      );
+    }
+
     return list as never;
-    // `placeholder`, `commands` and `onSearchPeople` are deliberately NOT
-    // dependencies — each is read through a ref above precisely so it can
-    // change without rebuilding the editor. Only whether mentions exist at
-    // all changes the extension list.
+    // `placeholder`, `commands`, `onSearchPeople` and `onSearchDocuments` are
+    // deliberately NOT dependencies — each is read through a ref above
+    // precisely so it can change without rebuilding the editor. Only whether
+    // mentions or document references exist at all changes the extension list.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasSearchPeople]);
+  }, [hasSearchPeople, hasSearchDocuments]);
 
   const editor = useEditor(
     {
@@ -630,8 +727,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         },
       },
     },
-    // ONLY `extensions`, which now changes only when the mention directory
-    // does — a stale closure there would search an old directory.
+    // ONLY `extensions`, which now changes only when mentions or document
+    // references are switched on or off.
     //
     // `disabled` and `placeholder` used to be in here (placeholder via
     // `extensions`), and every flip of either DESTROYED THE DRAFT: useEditor
@@ -701,11 +798,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         command.argument = pick.item;
       }
     }
+    const documents = collectDocuments(editor);
     onSend({
       html: editor.isEmpty ? '' : editor.getHTML(),
       text,
       mentions: collectMentions(editor),
       files: staged.map((s) => s.file),
+      ...(documents.length > 0 ? { documents } : {}),
       ...(command ? { command } : {}),
     });
     argPickRef.current = null;

@@ -14,6 +14,7 @@ import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
 import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
+import { DocumentChip } from './DocumentChip';
 import { CallActivityCard, type CallActivityParticipant } from './CallActivityCard';
 import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunResult, type AgentRunReviewDecision, type AgentRunStatus, type AgentRunSuggestion } from './AgentRunCard';
 import { ReactionChips } from './ReactionChips';
@@ -315,6 +316,32 @@ export function documentRefFromMetadata(
   }
 
   return null;
+}
+
+/**
+ * The documents a message REFERS to — the composer's `#Roadmap` chips, carried
+ * as `metadata.documents: [{ id, label }]`. Distinct from documentRefFromMetadata,
+ * which is a document ARRIVING in the thread: a reference sits under the words,
+ * an arrival replaces them. Malformed entries are dropped, duplicates collapse.
+ */
+export function documentRefsFromMetadata(
+  metadata: Record<string, unknown> | undefined,
+): Array<{ id: string; label: string; icon?: string }> {
+  if (!metadata || !Array.isArray(metadata.documents)) return [];
+  const seen = new Set<string>();
+  const out: Array<{ id: string; label: string; icon?: string }> = [];
+  for (const raw of metadata.documents) {
+    if (!raw || typeof raw !== 'object') continue;
+    const d = raw as Record<string, unknown>;
+    if (typeof d.id !== 'string' || !d.id || seen.has(d.id)) continue;
+    seen.add(d.id);
+    out.push({
+      id: d.id,
+      label: typeof d.label === 'string' && d.label ? d.label : d.id,
+      ...(typeof d.icon === 'string' && d.icon ? { icon: d.icon } : {}),
+    });
+  }
+  return out;
 }
 
 /**
@@ -853,6 +880,7 @@ export function ChatPanel({
                                 requestedBy={local.displayName}
                                 status={agentRunStatus?.(localRef.runId)}
                                 onOpenDocument={onOpenDocument && localRef.documentId ? () => onOpenDocument(localRef.documentId) : undefined}
+                                documentTitle={localRef.documentTitle}
                                 onOpenRun={onOpenRun}
                                 result={localRef.result}
                                 onOpenResult={onOpenResult}
@@ -923,6 +951,9 @@ export function ChatPanel({
               // rather than the transcript swapping rows underneath a reader.
               const callRef = callRefFromMetadata(message.metadata);
               const truncation = truncationFromMetadata(message.metadata);
+              // `#Roadmap` in the text stays words; the chips under it are the
+              // same documents as things you can open.
+              const docRefs = documentRefsFromMetadata(message.metadata);
 
               const body = agentRef ? (
                 <AgentRunCard
@@ -933,6 +964,7 @@ export function ChatPanel({
                   requestedBy={message.displayName}
                   status={agentRunStatus?.(agentRef.runId)}
                   onOpenDocument={onOpenDocument && agentRef.documentId ? () => onOpenDocument(agentRef.documentId) : undefined}
+                  documentTitle={agentRef.documentTitle}
                   onOpenRun={onOpenRun}
                   result={agentRef.result}
                   onOpenResult={onOpenResult}
@@ -1054,6 +1086,13 @@ export function ChatPanel({
                     </span>
                   )}
                   {body}
+                  {docRefs.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1" data-testid="chat-message-docrefs">
+                      {docRefs.map((d) => (
+                        <DocumentChip key={d.id} documentId={d.id} label={d.label} icon={d.icon} onOpen={onOpenDocument} />
+                      ))}
+                    </div>
+                  )}
                   {truncation && (
                     <div
                       data-testid="message-truncated"

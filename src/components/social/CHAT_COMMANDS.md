@@ -65,6 +65,10 @@ The conversation page (already in the app) does the rest:
 - Side pane: `ChatPanel onOpenResult={(r) => r.kind === 'panel' && openPanel(r.panel)}` and
   `<ChatSidePanel panel={panel} onClose={close} onOpenFullPage={(p) => navigate(`/graph/${p.id}`)} />`
   in the same `SplitPane` slot the `?doc=` document uses.
+- `#` documents: `RichChatComposer onSearchDocuments={(q) => searchDocuments(q)}` (from `social/rich-composer`;
+  `DocumentCandidate = { id, label, hint?, icon? }`) opens a document menu at any word-start `#`; the pick is a
+  `docref` atom and `onSend` carries `documents: [{ id, label }]` — put it on the message as `metadata.documents`.
+  `ChatPanel` renders those as 📄 chips under the text and opens them through its `onOpenDocument`.
 - Suggestions: `ChatPanel onReviewRun={(runId, decision, { key, documentId }) => reviewSuggestions(...)}` — a
   finished edit whose status carries `suggestion` offers Accept / Reject on the card until `review` names who decided.
 - URL: `sidePanelToSearch(panel, location.search)` / `sidePanelFromSearch(location.search)` —

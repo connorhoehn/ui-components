@@ -6,6 +6,7 @@ export { default as SocialTabContent } from './SocialTabContent';
 export {
   ChatPanel,
   documentRefFromMetadata,
+  documentRefsFromMetadata,
   callRefFromMetadata,
   truncationFromMetadata,
 } from './ChatPanel';
@@ -122,6 +123,11 @@ export type { ConversationFeature, ConversationSurfaceProps } from './Conversati
 export { DocumentActivityCard } from './DocumentActivityCard';
 export type { DocumentActivityCardProps, DocumentActivityEditor } from './DocumentActivityCard';
 
+// DocumentChip — a `#Document` reference under a message, from the composer's
+// `#` menu. Tiptap-free, like the card above.
+export { DocumentChip } from './DocumentChip';
+export type { DocumentChipProps } from './DocumentChip';
+
 // CallActivityCard — the same idea for calls: live it is an invitation, ended
 // it is a record, and it is one component so the transcript does not swap
 // rows underneath a reader as the call ends.
@@ -137,8 +143,8 @@ export type { ConversationShelfItem, ConversationShelfProps } from './Conversati
 // cannot end up with two highlighted rows and one pane.
 export { ConversationRail } from './ConversationRail';
 export type { ConversationRailProps, RailSelection } from './ConversationRail';
-export { AgentRunCard, agentRunRefFromMetadata } from './AgentRunCard';
-export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview } from './AgentRunCard';
+export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, agentRunTimings } from './AgentRunCard';
+export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview, AgentRunDetails, AgentRunStep, AgentRunStepStatus, AgentRunOp } from './AgentRunCard';
 export type { ComposerCommand, ComposerCommandArgument, ComposerArgumentItem } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
 export type { AgentRunResult } from './AgentRunCard';

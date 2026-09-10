@@ -46,18 +46,25 @@ describe('RichChatComposer keeps its editor (and so its draft)', () => {
     expect(editorNode()).toBe(before);
   });
 
-  it('through a new people-search function and a new commands list', () => {
+  it('through a new people-search function, a new document-search function and a new commands list', () => {
     // Hosts derive `onSearchPeople` from a presence-driven directory, so it is a
-    // NEW function every few seconds; `commands` is a memo that re-derives when
-    // a document opens beside the chat. Either used to rebuild the editor —
-    // the words being typed vanished on a timer. Verified in the browser
-    // before this test existed.
+    // NEW function every few seconds; `onSearchDocuments` closes over the
+    // latest document index the same way; `commands` is a memo that re-derives
+    // when a document opens beside the chat. Any of them used to rebuild the
+    // editor — the words being typed vanished on a timer. Verified in the
+    // browser before this test existed.
     const { rerender } = render(
-      <RichChatComposer onSend={vi.fn()} onSearchPeople={() => []} commands={[{ trigger: '/doc', label: 'Edit' }]} data-testid="composer" />,
+      <RichChatComposer onSend={vi.fn()} onSearchPeople={() => []} onSearchDocuments={() => []} commands={[{ trigger: '/doc', label: 'Edit' }]} data-testid="composer" />,
     );
     const before = editorNode();
     rerender(
-      <RichChatComposer onSend={vi.fn()} onSearchPeople={() => [{ id: 'u', label: 'U' }]} commands={[{ trigger: '/doc', label: 'Edit' }, { trigger: '/open', label: 'Open' }]} data-testid="composer" />,
+      <RichChatComposer
+        onSend={vi.fn()}
+        onSearchPeople={() => [{ id: 'u', label: 'U' }]}
+        onSearchDocuments={() => [{ id: 'd', label: 'D' }]}
+        commands={[{ trigger: '/doc', label: 'Edit' }, { trigger: '/open', label: 'Open' }]}
+        data-testid="composer"
+      />,
     );
     expect(editorNode()).toBe(before);
   });

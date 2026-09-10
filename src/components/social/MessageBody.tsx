@@ -79,11 +79,18 @@ function toReact(node: Node, key: string): ReactNode {
       );
     }
     case 'SPAN': {
-      // The only span that keeps a class is a mention chip — that is how the
-      // stylesheet paints it, and it carries the id the sender picked.
+      // The only spans that keep a class are the composer's chips — a
+      // mention or a `#` document reference — that is how the stylesheet
+      // paints them, and each carries the id the sender picked.
       const isMention = el.classList.contains('mention');
+      const isDocRef = !isMention && el.classList.contains('docref');
       return (
-        <span key={key} className={isMention ? 'mention' : undefined} data-mention-id={isMention ? el.getAttribute('data-id') ?? undefined : undefined}>
+        <span
+          key={key}
+          className={isMention ? 'mention' : isDocRef ? 'docref' : undefined}
+          data-mention-id={isMention ? el.getAttribute('data-id') ?? undefined : undefined}
+          data-document-id={isDocRef ? el.getAttribute('data-id') ?? undefined : undefined}
+        >
           {children}
         </span>
       );

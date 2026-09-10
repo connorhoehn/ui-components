@@ -30,10 +30,14 @@ export type {
   ComposerCommandArgument,
   ComposerArgumentItem,
   MentionCandidate,
+  DocumentCandidate,
 } from './RichChatComposer';
 
 export { MentionSuggestions } from './MentionSuggestions';
 export type { MentionSuggestionsProps, MentionSuggestionsHandle } from './MentionSuggestions';
+
+export { DocumentSuggestions } from './DocumentSuggestions';
+export type { DocumentSuggestionsProps, DocumentSuggestionsHandle } from './DocumentSuggestions';
 
 export { EmojiSuggestions } from './EmojiSuggestions';
 export type { EmojiSuggestionsProps, EmojiSuggestionsHandle } from './EmojiSuggestions';

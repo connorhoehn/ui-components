@@ -652,7 +652,8 @@
   font-size: 0.9em;
 }
 
-.ProseMirror .mention {
+.ProseMirror .mention,
+.ProseMirror .docref {
   color: var(--color-primary-fg);
   font-weight: 600;
   background: var(--color-primary-bg);
