@@ -134,10 +134,10 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
           {step.status}
         </span>
         <span className="text-[13px] font-semibold text-text-primary">
-          {index + 1}. {nodeType}
+          {index + 1}. {typeof nodeConfig?.label === 'string' && nodeConfig.label.trim() ? nodeConfig.label : nodeType}
         </span>
-        <span className="text-[11px] font-mono text-text-tertiary">
-          {stepId.slice(0, 8)}
+        <span className="text-[11px] font-mono text-text-tertiary" title={`${nodeType} · ${stepId}`}>
+          {typeof nodeConfig?.label === 'string' && nodeConfig.label.trim() ? nodeType : stepId.slice(0, 8)}
         </span>
         {step.durationMs != null && (
           <span className="text-[11px] text-text-tertiary ml-auto">

@@ -220,6 +220,12 @@ export function RichChatComposer({
   // Same idea: the editor is built once, the commands are read live.
   const commandsRef = useRef(commands);
   commandsRef.current = commands;
+  // And the people search. Hosts derive it from a presence-driven directory,
+  // so its identity changes every few seconds; as an extension dependency that
+  // rebuilt the editor — and the words being typed vanished on a timer.
+  const onSearchPeopleRef = useRef(onSearchPeople);
+  onSearchPeopleRef.current = onSearchPeople;
+  const hasSearchPeople = !!onSearchPeople;
   const [activeCommand, setActiveCommand] = useState<ComposerCommand | null>(null);
   // The bar follows the DRAFT, not the render: re-derive whenever the host's
   // commands change (a document opened beside the chat), never clear on time.
@@ -355,14 +361,14 @@ export function RichChatComposer({
       }),
     ];
 
-    if (onSearchPeople) {
+    if (hasSearchPeople) {
       list.push(
         Mention.configure({
           // `mention`, matching the stylesheet. See the note at the top.
           HTMLAttributes: { class: 'mention' },
           suggestion: {
             char: '@',
-            items: ({ query }: { query: string }) => onSearchPeople(query),
+            items: ({ query }: { query: string }) => onSearchPeopleRef.current?.(query) ?? [],
             render: () => {
               let renderer: ReactRenderer | null = null;
               const menu = mountSuggestionMenu();
@@ -407,10 +413,12 @@ export function RichChatComposer({
     }
 
     return list as never;
-    // `placeholder` is deliberately NOT a dependency — it is read through
-    // `placeholderRef` above precisely so it can change without rebuilding.
+    // `placeholder`, `commands` and `onSearchPeople` are deliberately NOT
+    // dependencies — each is read through a ref above precisely so it can
+    // change without rebuilding the editor. Only whether mentions exist at
+    // all changes the extension list.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onSearchPeople]);
+  }, [hasSearchPeople]);
 
   const editor = useEditor(
     {
