@@ -15,7 +15,7 @@ import { Button } from '../ui/Button';
 import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { CallActivityCard, type CallActivityParticipant } from './CallActivityCard';
-import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunResult, type AgentRunStatus } from './AgentRunCard';
+import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunResult, type AgentRunReviewDecision, type AgentRunStatus, type AgentRunSuggestion } from './AgentRunCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
 import { QuoteBlock } from './QuoteBlock';
@@ -104,6 +104,8 @@ export interface ChatPanelProps {
   onOpenResult?: (result: AgentRunResult) => void;
   /** Approve or reject a run whose card says it is waiting for approval. */
   onDecideRun?: (runId: string, decision: AgentRunDecision) => void;
+  /** Accept or reject the suggestions a finished agent edit left in the document. */
+  onReviewRun?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
   /**
    * Joins a live call from the thread. Omit when the viewer cannot join —
    * the card then renders as a record rather than a dead button.
@@ -407,6 +409,7 @@ export function ChatPanel({
   onOpenRun,
   onOpenResult,
   onDecideRun,
+  onReviewRun,
   onJoinCall,
   onOpenDocument,
   tone = 'light',
@@ -795,6 +798,8 @@ export function ChatPanel({
                   result={agentRef.result}
                   onOpenResult={onOpenResult}
                   onDecide={onDecideRun}
+                  suggestion={agentRef.suggestionKey ? { key: agentRef.suggestionKey, ...(agentRef.documentId ? { documentId: agentRef.documentId } : {}) } : undefined}
+                  onReview={onReviewRun}
                 />
               ) : callRef ? (
                 <CallActivityCard

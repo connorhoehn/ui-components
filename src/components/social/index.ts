@@ -138,7 +138,7 @@ export type { ConversationShelfItem, ConversationShelfProps } from './Conversati
 export { ConversationRail } from './ConversationRail';
 export type { ConversationRailProps, RailSelection } from './ConversationRail';
 export { AgentRunCard, agentRunRefFromMetadata } from './AgentRunCard';
-export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase, AgentRunDecision } from './AgentRunCard';
+export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview } from './AgentRunCard';
 export type { ComposerCommand, ComposerCommandArgument, ComposerArgumentItem } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
 export type { AgentRunResult } from './AgentRunCard';

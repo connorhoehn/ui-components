@@ -56,5 +56,7 @@ The conversation page (already in the app) does the rest:
 - Side pane: `ChatPanel onOpenResult={(r) => r.kind === 'panel' && openPanel(r.panel)}` and
   `<ChatSidePanel panel={panel} onClose={close} onOpenFullPage={(p) => navigate(`/graph/${p.id}`)} />`
   in the same `SplitPane` slot the `?doc=` document uses.
+- Suggestions: `ChatPanel onReviewRun={(runId, decision, { key, documentId }) => reviewSuggestions(...)}` — a
+  finished edit whose status carries `suggestion` offers Accept / Reject on the card until `review` names who decided.
 - URL: `sidePanelToSearch(panel, location.search)` / `sidePanelFromSearch(location.search)` —
   documents stay `?doc=<id>`, everything else is `?panel=<kind>:<id>` (+ `panel.<key>` params).

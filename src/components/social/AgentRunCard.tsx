@@ -6,7 +6,9 @@
 // is — received, running through the pipeline (with the current step),
 // waiting for someone to approve a big edit (with Approve / Reject right
 // here), done, rejected or failed — so the pipeline is visible without
-// leaving the conversation.
+// leaving the conversation. An edit that landed as suggestions rather than
+// changes is done but not decided, so the finished card offers Accept /
+// Reject and, once someone has decided, says who.
 
 import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
@@ -16,6 +18,32 @@ import { Button } from '../ui/Button';
 export type AgentRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'rejected' | 'failed';
 
 export type AgentRunDecision = 'approve' | 'reject';
+
+/** What a reviewer does with an edit that landed as suggestions. */
+export type AgentRunReviewDecision = 'accept' | 'reject';
+
+/**
+ * The suggestions a finished edit left in the document, waiting for a
+ * reviewer. Mirrors realtime-modules' `PipelineRunStatus.suggestion` — keep
+ * the field names.
+ */
+export interface AgentRunSuggestion {
+  /** The suggestion key the changes were tagged with; the review resolves everything under it. */
+  key: string;
+  documentId?: string;
+  /** How many changes were suggested. */
+  applied: number;
+}
+
+/** Who accepted or rejected the suggestions, and when. Mirrors realtime-modules' `PipelineRunStatus.review`. */
+export interface AgentRunReview {
+  decision: AgentRunReviewDecision;
+  /** The reviewer's id. */
+  by: string;
+  byName?: string;
+  /** ISO timestamp. */
+  at: string;
+}
 
 /**
  * What a finished run produced, when it produced something a reader can open:
@@ -38,6 +66,10 @@ export interface AgentRunStatus {
   detail?: string;
   /** The approval step a decision goes to, while `phase === 'awaiting_approval'`. */
   approvalStepId?: string;
+  /** Set when a completed edit landed as suggestions rather than changes; the card offers Accept / Reject until `review` is set. */
+  suggestion?: AgentRunSuggestion;
+  /** Set once someone accepted or rejected the suggestions. */
+  review?: AgentRunReview;
 }
 
 export interface AgentRunCardProps {
@@ -59,6 +91,10 @@ export interface AgentRunCardProps {
   onOpenResult?: (result: AgentRunResult) => void;
   /** Approve or reject a run that is waiting; the buttons render only when this is given. */
   onDecide?: (runId: string, decision: AgentRunDecision) => void;
+  /** The suggestions carried in the message's metadata; `status.suggestion` wins when both are set. */
+  suggestion?: Pick<AgentRunSuggestion, 'key' | 'documentId'>;
+  /** Accept or reject a finished edit that landed as suggestions; the buttons render only when this is given. */
+  onReview?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
   className?: string;
   'data-testid'?: string;
 }
@@ -73,8 +109,12 @@ const STEPS: Array<{ phase: AgentRunPhase | 'running'; label: string }> = [
 const ORDER: Record<AgentRunPhase, number> = { received: 0, running: 1, awaiting_approval: 1, completed: 2, rejected: 2, failed: 2 };
 const PHASE_LABEL: Record<AgentRunPhase, string> = { received: 'Received', running: 'Processing', awaiting_approval: 'Needs approval', completed: 'Updated', rejected: 'Rejected', failed: 'Failed' };
 
-export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
+export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
   const phase = status?.phase ?? 'received';
+  // Suggestions are only reviewable once the run is done — before that there is nothing in the document yet.
+  const suggestion = phase === 'completed' ? status?.suggestion ?? suggestionProp : undefined;
+  const review = phase === 'completed' ? status?.review : undefined;
+  const reviewable = Boolean(suggestion) && !review;
   // The result is only openable once the run is done; before that it is a promise, not a link.
   const outcome = phase === 'completed' ? status?.result ?? result : undefined;
   const resultLabel = outcome?.kind === 'link' && outcome.label ? outcome.label : 'Open';
@@ -82,8 +122,11 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
   const showDocument = onOpenDocument && !(outcome?.kind === 'document' && onOpenResult);
   const at = ORDER[phase];
   const ended = phase === 'failed' || phase === 'rejected';
-  const tone = ended ? 'danger' : phase === 'completed' ? 'success' : phase === 'awaiting_approval' ? 'warning' : 'info';
-  const phaseLabel = PHASE_LABEL[phase];
+  // A reviewed edit is settled either way; a rejection of suggestions is not a failed run, so it stays neutral.
+  const tone = ended ? 'danger' : review ? (review.decision === 'accept' ? 'success' : 'neutral') : phase === 'completed' ? (suggestion ? 'warning' : 'success') : phase === 'awaiting_approval' ? 'warning' : 'info';
+  const phaseLabel = review ? 'Reviewed' : reviewable ? 'Suggested' : PHASE_LABEL[phase];
+  const reviewer = review ? review.byName ?? review.by : undefined;
+  const reviewDetail = review ? `${review.decision === 'accept' ? 'Accepted' : 'Rejected'} by ${reviewer}` : undefined;
   const awaiting = phase === 'awaiting_approval';
   // Two lines, no more: the command, and where the run is. A command in a
   // conversation is a small thing that happened, not a panel.
@@ -119,13 +162,20 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
             );
           })}
         </ol>
-        <span className="min-w-0 flex-1 truncate" data-testid={`${testId}-detail`}>
+        <span className={cn('min-w-0 flex-1 truncate', review && (review.decision === 'accept' ? 'text-success' : 'text-text-tertiary'))} data-testid={`${testId}-detail`} data-review={review?.decision}>
           {phase === 'running'
             ? (status?.stepLabel ? `${agentName} — ${status.stepLabel}` : `${agentName} is working via the pipeline`)
             : awaiting
               ? `Waiting for approval${status?.detail ? ` — ${status.detail}` : ''}`
-              : status?.detail ?? (phase === 'received' ? 'Received' : phaseLabel)}
+              : reviewDetail ?? status?.detail ?? (reviewable && status?.suggestion ? `${status.suggestion.applied} ${status.suggestion.applied === 1 ? 'change' : 'changes'} suggested` : phase === 'received' ? 'Received' : phaseLabel)}
         </span>
+        {reviewable && suggestion && onReview && (
+          // The same inline pair as approval: accepting the suggestions is the next thing to do.
+          <span className="flex shrink-0 items-center gap-1" data-testid={`${testId}-review`}>
+            <Button size="sm" variant="primary" className="!px-2 !py-0 text-[11px] leading-5" onClick={() => onReview(runId, 'accept', { key: suggestion.key, ...(suggestion.documentId ? { documentId: suggestion.documentId } : {}) })} data-testid={`${testId}-accept`}>Accept</Button>
+            <Button size="sm" variant="ghost" className="!px-2 !py-0 text-[11px] leading-5" onClick={() => onReview(runId, 'reject', { key: suggestion.key, ...(suggestion.documentId ? { documentId: suggestion.documentId } : {}) })} data-testid={`${testId}-reject-review`}>Reject</Button>
+          </span>
+        )}
         {awaiting && onDecide && (
           // Inline, small, on the status line: the decision is the next thing
           // to do and the card is still two lines tall.
@@ -162,7 +212,7 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
 /** Reads a `/doc` command message's metadata; null for anything else. */
 export function agentRunRefFromMetadata(
   metadata: Record<string, unknown> | undefined,
-): { runId: string; documentId: string; instruction: string; agentName: string; pipelineId?: string; command: string; result?: AgentRunResult } | null {
+): { runId: string; documentId: string; instruction: string; agentName: string; pipelineId?: string; command: string; result?: AgentRunResult; suggestionKey?: string } | null {
   if (!metadata || metadata.kind !== 'agent-run') return null;
   const runId = typeof metadata.runId === 'string' ? metadata.runId : '';
   // A document is what /doc acts on; a recording or transcription run has none.
@@ -177,6 +227,8 @@ export function agentRunRefFromMetadata(
     command: typeof metadata.command === 'string' && metadata.command ? metadata.command : '/doc',
     ...(typeof metadata.pipelineId === 'string' ? { pipelineId: metadata.pipelineId } : {}),
     ...(result ? { result } : {}),
+    // An edit posted as suggestions names the key so the card can offer the review even before a live status arrives.
+    ...(typeof metadata.suggestionKey === 'string' && metadata.suggestionKey ? { suggestionKey: metadata.suggestionKey } : {}),
   };
 }
 
