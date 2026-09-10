@@ -15,7 +15,7 @@ import { Button } from '../ui/Button';
 import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { CallActivityCard, type CallActivityParticipant } from './CallActivityCard';
-import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunStatus } from './AgentRunCard';
+import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunResult, type AgentRunStatus } from './AgentRunCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
 import { QuoteBlock } from './QuoteBlock';
@@ -100,6 +100,8 @@ export interface ChatPanelProps {
   agentRunStatus?: (runId: string) => AgentRunStatus | undefined;
   /** Open the run in the pipeline UI from an agent-run card. */
   onOpenRun?: (runId: string) => void;
+  /** Open what a finished agent run produced — a side panel, a document, a link. */
+  onOpenResult?: (result: AgentRunResult) => void;
   /** Approve or reject a run whose card says it is waiting for approval. */
   onDecideRun?: (runId: string, decision: AgentRunDecision) => void;
   /**
@@ -403,6 +405,7 @@ export function ChatPanel({
   callParticipants,
   agentRunStatus,
   onOpenRun,
+  onOpenResult,
   onDecideRun,
   onJoinCall,
   onOpenDocument,
@@ -789,6 +792,8 @@ export function ChatPanel({
                   status={agentRunStatus?.(agentRef.runId)}
                   onOpenDocument={onOpenDocument && agentRef.documentId ? () => onOpenDocument(agentRef.documentId) : undefined}
                   onOpenRun={onOpenRun}
+                  result={agentRef.result}
+                  onOpenResult={onOpenResult}
                   onDecide={onDecideRun}
                 />
               ) : callRef ? (

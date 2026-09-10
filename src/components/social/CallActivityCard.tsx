@@ -63,6 +63,21 @@ export interface CallActivityCardProps {
    */
   audioOnly?: boolean;
   /**
+   * Whether the call was recorded — and UNDEFINED when the record does not
+   * say, in which case the card says nothing about it. Only `false` produces
+   * a note: a recording that exists announces itself in the thread as its own
+   * card, so "Recorded" here would say it twice.
+   */
+  recorded?: boolean;
+  /**
+   * Why it was not recorded, as the platform-api decision code:
+   * `room-setting-off`, `dm-not-opted-in:<userIds>`, … See
+   * `describeNotRecorded` for the words each one becomes.
+   */
+  notRecordedReason?: string;
+  /** The call's lobby (`room:design`, `dm:a:b`) — names the room in the note. */
+  lobbyName?: string;
+  /**
    * Joins the call. Ignored once `live` is false — a call that ended has
    * nothing to join, and the button would be a dead control. Omit it when the
    * viewer may not join, rather than rendering it disabled.
@@ -117,6 +132,29 @@ export function describeParticipants(
   return `${subject} ${verb} in the call`;
 }
 
+/**
+ * The one-line reason a call was not recorded, in words a person can act on.
+ *
+ * The codes are platform-api's `recording.reason` vocabulary. Each maps to
+ * what the person can DO about it — turn the room setting on, or opt in on
+ * their profile — because "not recorded" alone sends them looking for a
+ * setting they cannot name. An unknown code still gets the plain statement:
+ * saying nothing would read as "recorded", which is the one thing it is not.
+ */
+export function describeNotRecorded(reason: string | undefined, lobbyName?: string): string {
+  const code = reason ?? '';
+  if (code === 'room-setting-off') {
+    const slug = lobbyName?.startsWith('room:') ? lobbyName.slice('room:'.length) : '';
+    return slug
+      ? `Not recorded — recording is off for #${slug}; a room admin can turn it on under Manage #${slug}.`
+      : 'Not recorded — recording is off for this room; a room admin can turn it on.';
+  }
+  if (code.startsWith('dm-not-opted-in')) {
+    return "Not recorded — both people must turn on 'Record my DM calls' in their profile.";
+  }
+  return 'Not recorded.';
+}
+
 export function CallActivityCard({
   callId,
   startedBy,
@@ -124,6 +162,9 @@ export function CallActivityCard({
   live = false,
   durationMs,
   audioOnly,
+  recorded,
+  notRecordedReason,
+  lobbyName,
   onJoin,
   className,
   'data-testid': testId = 'call-activity-card',
@@ -166,6 +207,13 @@ export function CallActivityCard({
           {live ? `${kindLabel} in progress` : kindLabel}
         </span>
         <span className="truncate text-[11px] text-text-tertiary">{detail}</span>
+        {/* Only once the call is over: while it is live the chip in the call
+            chrome owns this statement, and a note here would lag it. */}
+        {!live && recorded === false && (
+          <span className="truncate text-[11px] text-text-tertiary" data-testid={`${testId}-not-recorded`}>
+            {describeNotRecorded(notRecordedReason, lobbyName)}
+          </span>
+        )}
       </span>
 
       {participants.length > 0 && (

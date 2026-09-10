@@ -16,6 +16,7 @@
 
 import type { ReactNode } from 'react';
 import Chip, { type ChipTone } from '../shared/Chip';
+import { RecordingChip, type RecordingChipState } from './RecordingChip';
 import { cn } from '../../lib/cn';
 
 export type HangoutPhase =
@@ -26,12 +27,8 @@ export type HangoutPhase =
   | 'ended'
   | 'failed';
 
-export interface HangoutRoomHeaderRecording {
-  /** Whether recording is armed for this room. When false, no pill is rendered. */
-  armed: boolean;
-  /** Whether the recording is actively writing (someone is publishing). */
-  active: boolean;
-}
+/** Same two states as RecordingChip; kept as a named alias for existing consumers. */
+export type HangoutRoomHeaderRecording = RecordingChipState;
 
 export interface HangoutRoomHeaderProps {
   channelName: string;
@@ -105,18 +102,12 @@ export function HangoutRoomHeader({
           <div className="text-xs text-neutral mt-0.5 flex items-center gap-2 flex-wrap">
             {subtitle && <span>{subtitle}</span>}
             {recording?.armed && (
-              <Chip
-                tone={recording.active ? 'danger' : 'neutral'}
-                size="xs"
-                uppercase
-                dot={recording.active ? 'pulse' : 'static'}
-                title={recording.active
-                  ? 'Recording — saved to /recordings when the call ends'
-                  : 'Recording armed — will start when someone joins'}
+              <RecordingChip
+                armed={recording.armed}
+                active={recording.active}
+                titles={{ armed: 'Recording armed — will start when someone joins' }}
                 data-testid="hangout-room-header-recording"
-              >
-                Rec
-              </Chip>
+              />
             )}
             {elapsedLabel && (
               <Chip
