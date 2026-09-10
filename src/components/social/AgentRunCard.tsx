@@ -3,21 +3,27 @@
 // The message IS the command; the card replaces the text the way a document
 // share or a call does. It tells the reader three things in order: the
 // instruction, who is carrying it out (an agent, named), and where the run
-// is — received, running through the pipeline (with the current step), done
-// or failed — so the pipeline is visible without leaving the conversation.
+// is — received, running through the pipeline (with the current step),
+// waiting for someone to approve a big edit (with Approve / Reject right
+// here), done, rejected or failed — so the pipeline is visible without
+// leaving the conversation.
 
-import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
+import { Button } from '../ui/Button';
 
-export type AgentRunPhase = 'received' | 'running' | 'completed' | 'failed';
+export type AgentRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'rejected' | 'failed';
+
+export type AgentRunDecision = 'approve' | 'reject';
 
 export interface AgentRunStatus {
   phase: AgentRunPhase;
-  /** The step in flight, when known — "Reading the document", "Planning the edit". */
+  /** The step in flight, when known — "Reading the document", "Planning the edit", "Retrying — attempt 2". */
   stepLabel?: string;
-  /** A sentence about the outcome — "Renamed to …", the failure. */
+  /** A sentence about the outcome — "Renamed to …", the failure, why approval is needed. */
   detail?: string;
+  /** The approval step a decision goes to, while `phase === 'awaiting_approval'`. */
+  approvalStepId?: string;
 }
 
 export interface AgentRunCardProps {
@@ -33,6 +39,8 @@ export interface AgentRunCardProps {
   onOpenDocument?: () => void;
   /** Open the run in the pipeline UI. */
   onOpenRun?: (runId: string) => void;
+  /** Approve or reject a run that is waiting; the buttons render only when this is given. */
+  onDecide?: (runId: string, decision: AgentRunDecision) => void;
   className?: string;
   'data-testid'?: string;
 }
@@ -43,13 +51,17 @@ const STEPS: Array<{ phase: AgentRunPhase | 'running'; label: string }> = [
   { phase: 'completed', label: 'Updated' },
 ];
 
-const ORDER: Record<AgentRunPhase, number> = { received: 0, running: 1, completed: 2, failed: 2 };
+// The approval wait is a beat inside "processing"; a rejection ends the run where a failure would.
+const ORDER: Record<AgentRunPhase, number> = { received: 0, running: 1, awaiting_approval: 1, completed: 2, rejected: 2, failed: 2 };
+const PHASE_LABEL: Record<AgentRunPhase, string> = { received: 'Received', running: 'Processing', awaiting_approval: 'Needs approval', completed: 'Updated', rejected: 'Rejected', failed: 'Failed' };
 
-export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
+export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, onDecide, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
   const phase = status?.phase ?? 'received';
   const at = ORDER[phase];
-  const tone = phase === 'failed' ? 'danger' : phase === 'completed' ? 'success' : 'info';
-  const phaseLabel = phase === 'failed' ? 'Failed' : phase === 'completed' ? 'Updated' : phase === 'running' ? 'Processing' : 'Received';
+  const ended = phase === 'failed' || phase === 'rejected';
+  const tone = ended ? 'danger' : phase === 'completed' ? 'success' : phase === 'awaiting_approval' ? 'warning' : 'info';
+  const phaseLabel = PHASE_LABEL[phase];
+  const awaiting = phase === 'awaiting_approval';
   // Two lines, no more: the command, and where the run is. A command in a
   // conversation is a small thing that happened, not a panel.
   return (
@@ -70,16 +82,16 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
       <div className="flex min-w-0 items-center gap-1.5 text-[11px] text-text-secondary">
         <ol className="m-0 flex shrink-0 list-none items-center gap-1 p-0" aria-label="Run progress" data-testid={`${testId}-steps`}>
           {STEPS.map((s, i) => {
-            const done = phase === 'failed' ? i < at : i < at || (i === at && phase === 'completed');
-            const active = i === at && phase !== 'completed' && phase !== 'failed';
-            const failedHere = phase === 'failed' && i === at;
+            const done = ended ? i < at : i < at || (i === at && phase === 'completed');
+            const active = i === at && phase !== 'completed' && !ended;
+            const failedHere = ended && i === at;
             return (
               <li key={s.phase} className="flex items-center" title={s.label} data-state={failedHere ? 'failed' : done ? 'done' : active ? 'active' : 'pending'}>
                 <span
                   aria-hidden="true"
-                  className={cn('inline-block h-1.5 w-1.5 rounded-full', failedHere ? 'bg-danger' : done ? 'bg-success' : active ? 'animate-pulse bg-info' : 'bg-border')}
+                  className={cn('inline-block h-1.5 w-1.5 rounded-full', failedHere ? 'bg-danger' : done ? 'bg-success' : active ? (awaiting ? 'bg-warning' : 'animate-pulse bg-info') : 'bg-border')}
                 />
-                <span className="sr-only">{failedHere ? 'Failed' : s.label}</span>
+                <span className="sr-only">{failedHere ? phaseLabel : s.label}</span>
               </li>
             );
           })}
@@ -87,8 +99,18 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
         <span className="min-w-0 flex-1 truncate" data-testid={`${testId}-detail`}>
           {phase === 'running'
             ? (status?.stepLabel ? `${agentName} — ${status.stepLabel}` : `${agentName} is working via the pipeline`)
-            : status?.detail ?? (phase === 'received' ? 'Received' : phaseLabel)}
+            : awaiting
+              ? `Waiting for approval${status?.detail ? ` — ${status.detail}` : ''}`
+              : status?.detail ?? (phase === 'received' ? 'Received' : phaseLabel)}
         </span>
+        {awaiting && onDecide && (
+          // Inline, small, on the status line: the decision is the next thing
+          // to do and the card is still two lines tall.
+          <span className="flex shrink-0 items-center gap-1" data-testid={`${testId}-decide`}>
+            <Button size="sm" variant="primary" className="!px-2 !py-0 text-[11px] leading-5" onClick={() => onDecide(runId, 'approve')} data-testid={`${testId}-approve`}>Approve</Button>
+            <Button size="sm" variant="ghost" className="!px-2 !py-0 text-[11px] leading-5" onClick={() => onDecide(runId, 'reject')} data-testid={`${testId}-reject`}>Reject</Button>
+          </span>
+        )}
         {onOpenRun && (
           <button type="button" onClick={() => onOpenRun(runId)} className="shrink-0 text-text-tertiary underline-offset-2 hover:text-text-primary hover:underline" data-testid={`${testId}-open-run`}>
             run

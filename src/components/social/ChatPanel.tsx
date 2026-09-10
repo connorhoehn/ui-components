@@ -15,7 +15,7 @@ import { Button } from '../ui/Button';
 import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { CallActivityCard, type CallActivityParticipant } from './CallActivityCard';
-import { AgentRunCard, agentRunRefFromMetadata, type AgentRunStatus } from './AgentRunCard';
+import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunStatus } from './AgentRunCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
 import { QuoteBlock } from './QuoteBlock';
@@ -100,6 +100,8 @@ export interface ChatPanelProps {
   agentRunStatus?: (runId: string) => AgentRunStatus | undefined;
   /** Open the run in the pipeline UI from an agent-run card. */
   onOpenRun?: (runId: string) => void;
+  /** Approve or reject a run whose card says it is waiting for approval. */
+  onDecideRun?: (runId: string, decision: AgentRunDecision) => void;
   /**
    * Joins a live call from the thread. Omit when the viewer cannot join —
    * the card then renders as a record rather than a dead button.
@@ -341,6 +343,9 @@ export function callRefFromMetadata(
   live: boolean;
   durationMs?: number;
   audioOnly?: boolean;
+  recorded?: boolean;
+  notRecordedReason?: string;
+  lobbyName?: string;
   participants: CallActivityParticipant[];
 } | null {
   if (!metadata || metadata.kind !== 'call') return null;
@@ -370,6 +375,11 @@ export function callRefFromMetadata(
     // Tri-state: absent means the record does not say, and the card renders
     // an unqualified "Call" rather than guessing which kind it was.
     audioOnly: typeof metadata.audioOnly === 'boolean' ? metadata.audioOnly : undefined,
+    // Same tri-state: a record written before recording decisions were
+    // stamped says nothing, and the card must not read that as "recorded".
+    recorded: typeof metadata.recorded === 'boolean' ? metadata.recorded : undefined,
+    notRecordedReason: typeof metadata.notRecordedReason === 'string' ? metadata.notRecordedReason : undefined,
+    lobbyName: typeof metadata.lobbyName === 'string' ? metadata.lobbyName : undefined,
     participants,
   };
 }
@@ -393,6 +403,7 @@ export function ChatPanel({
   callParticipants,
   agentRunStatus,
   onOpenRun,
+  onDecideRun,
   onJoinCall,
   onOpenDocument,
   tone = 'light',
@@ -778,6 +789,7 @@ export function ChatPanel({
                   status={agentRunStatus?.(agentRef.runId)}
                   onOpenDocument={onOpenDocument && agentRef.documentId ? () => onOpenDocument(agentRef.documentId) : undefined}
                   onOpenRun={onOpenRun}
+                  onDecide={onDecideRun}
                 />
               ) : callRef ? (
                 <CallActivityCard
@@ -792,6 +804,9 @@ export function ChatPanel({
                   live={callRef.live}
                   durationMs={callRef.durationMs}
                   audioOnly={callRef.audioOnly}
+                  recorded={callRef.recorded}
+                  notRecordedReason={callRef.notRecordedReason}
+                  lobbyName={callRef.lobbyName}
                   onJoin={onJoinCall}
                 />
               ) : docRef ? (
