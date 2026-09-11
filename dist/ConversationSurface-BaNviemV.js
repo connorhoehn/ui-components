@@ -427,7 +427,7 @@ function le(e) {
 	switch (e.op) {
 		case "setTitle": return `Renamed to “${K(t)}”`;
 		case "appendBlock":
-		case "insertBlock": return `Added: “${K(t)}”`;
+		case "insertBlock": return e.kind === "horizontalRule" ? "Added a divider" : e.kind === "heading" ? t.trim() ? `Added heading “${K(t)}”` : "Added an empty heading" : t.trim() ? `Added: “${K(t)}”` : "Added an empty block";
 		case "replaceBlock": return `Rewrote block ${ce(e.index)}`;
 		case "deleteBlock": return `Removed block ${ce(e.index)}`;
 		case "appendMacro": return t ? `Added a ${K(t, 40)}` : "Added a macro";

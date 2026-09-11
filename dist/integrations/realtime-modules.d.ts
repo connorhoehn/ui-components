@@ -128,6 +128,10 @@ declare interface AgentRunOp {
     text?: string;
     /** The block the op acted on, zero-based. */
     index?: number;
+    /** The block an `appendBlock`/`insertBlock` added — 'paragraph' | 'heading' | 'horizontalRule'. */
+    kind?: string;
+    /** A heading's level (1–6). */
+    level?: number;
 }
 
 declare type AgentRunPhase = 'received' | 'running' | 'awaiting_approval' | 'completed' | 'rejected' | 'failed';

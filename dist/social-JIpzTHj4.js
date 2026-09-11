@@ -12,7 +12,7 @@ import { t as g } from "./Textarea-Dz4doxTv.js";
 import { n as _, t as v } from "./Avatar-BzicCOft.js";
 import { t as y } from "./InlineAlert-Myf3oJZf.js";
 import { t as b } from "./Select-CqVokE2v.js";
-import { A as x, L as S, R as C, T as w, k as T } from "./ConversationSurface-CMrSfIsB.js";
+import { A as x, L as S, R as C, T as w, k as T } from "./ConversationSurface-BaNviemV.js";
 import { t as E } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as D, t as O } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as k, t as A } from "./composerCommands-DXer0id_.js";
