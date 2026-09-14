@@ -51,14 +51,6 @@ export interface ExplorerLayoutProps {
   onToggleRail?: () => void;
   /** What the rail holds, for the controls' accessible names. Default "the list". */
   railLabel?: string;
-  /**
-   * How much of the row the aside takes when it sits beside the pane. `md`
-   * (256px) is a feed; `lg` (480px) is a conversation you are typing into.
-   * Controlled, like the rail.
-   */
-  asideWidth?: 'md' | 'lg';
-  /** Present, the aside gets a widen/narrow control. */
-  onToggleAsideWidth?: () => void;
   /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
   panePadding?: 'none' | 'md';
   className?: string;
@@ -70,22 +62,8 @@ const RAIL_WIDTH: Record<NonNullable<ExplorerLayoutProps['railWidth']>, string> 
   md: 'w-[300px]',
 };
 
-const ASIDE_WIDTH: Record<NonNullable<ExplorerLayoutProps['asideWidth']>, string> = {
-  md: '2xl:w-64',
-  lg: '2xl:w-[30rem]',
-};
-
-/** A chevron pointing left (fold) or right (unfold), or the widen / narrow pair. */
-function Glyph({ kind }: { kind: 'fold' | 'unfold' | 'widen' | 'narrow' }) {
-  if (kind === 'widen' || kind === 'narrow') {
-    return (
-      <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-        {kind === 'widen'
-          ? <path d="M6 4 2 8l4 4M10 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
-          : <path d="M2 4l4 4-4 4M14 4l-4 4 4 4" strokeLinecap="round" strokeLinejoin="round" />}
-      </svg>
-    );
-  }
+/** A chevron pointing left (fold) or right (unfold). */
+function Glyph({ kind }: { kind: 'fold' | 'unfold' }) {
   return (
     <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
       {kind === 'fold'
@@ -103,8 +81,6 @@ export function ExplorerLayout({
   railCollapsed = false,
   onToggleRail,
   railLabel = 'the list',
-  asideWidth = 'md',
-  onToggleAsideWidth,
   panePadding = 'md',
   className,
   'data-testid': testId = 'explorer-layout',
@@ -137,15 +113,15 @@ export function ExplorerLayout({
           data-collapsed="false"
           aria-label="Explorer"
           className={cn(
-            'relative h-full flex-shrink-0 overflow-y-auto border-r border-border bg-surface-panel',
+            'flex h-full flex-shrink-0 flex-col border-r border-border bg-surface-panel',
             RAIL_WIDTH[railWidth],
           )}
         >
           {onToggleRail && (
-            // Over the rail's top-right corner rather than in a row of its
-            // own: a header the rail does not otherwise have would cost the
-            // list a line.
-            <div className="absolute right-1 top-1 z-10">
+            // A row of the rail's own for the fold control — the same height
+            // and inset as every other header row — so it never sits over the
+            // first section's heading.
+            <div className="flex h-9 shrink-0 items-center justify-end border-b border-border px-1.5" data-testid={`${testId}-rail-header`}>
               <IconButton
                 aria-label={`Hide ${railLabel}`}
                 title={`Hide ${railLabel}`}
@@ -157,7 +133,7 @@ export function ExplorerLayout({
               />
             </div>
           )}
-          {rail}
+          <div className="min-h-0 flex-1 overflow-y-auto">{rail}</div>
         </nav>
       )}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col 2xl:flex-row">
@@ -171,32 +147,14 @@ export function ExplorerLayout({
           {children}
         </div>
         {aside ? (
-          <aside
+          // The aside owns its own width and chrome (a ContextColumn, or any
+          // block the host wants beside the pane); this only places it.
+          <div
             data-testid={`${testId}-aside`}
-            data-width={asideWidth}
-            className={cn(
-              'flex min-h-0 flex-col border-t border-border bg-surface-panel 2xl:flex-shrink-0 2xl:border-l 2xl:border-t-0',
-              ASIDE_WIDTH[asideWidth],
-            )}
+            className="flex min-h-0 border-t border-border 2xl:flex-shrink-0 2xl:border-t-0"
           >
-            {onToggleAsideWidth && (
-              // Its own slim row, not a corner overlay: whatever the host puts
-              // first in the column — a heading, a conversation's header — has
-              // its top-left corner to itself.
-              <div className="hidden h-7 shrink-0 items-center justify-end px-1 2xl:flex">
-                <IconButton
-                  aria-label={asideWidth === 'lg' ? 'Narrow the side column' : 'Widen the side column'}
-                  title={asideWidth === 'lg' ? 'Narrow the side column' : 'Widen the side column'}
-                  size="sm"
-                  variant="ghost"
-                  icon={<Glyph kind={asideWidth === 'lg' ? 'narrow' : 'widen'} />}
-                  onClick={onToggleAsideWidth}
-                  data-testid={`${testId}-aside-width`}
-                />
-              </div>
-            )}
-            <div className="min-h-0 flex-1 2xl:overflow-y-auto">{aside}</div>
-          </aside>
+            {aside}
+          </div>
         ) : null}
       </div>
     </div>

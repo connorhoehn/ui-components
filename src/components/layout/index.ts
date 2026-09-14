@@ -26,3 +26,5 @@ export { ExplorerLayout } from './ExplorerLayout';
 export type { ExplorerLayoutProps } from './ExplorerLayout';
 export { SplitPane } from './SplitPane';
 export type { SplitPaneProps } from './SplitPane';
+export { ContextColumn } from './ContextColumn';
+export type { ContextColumnProps, ContextColumnPanel, ContextColumnState } from './ContextColumn';

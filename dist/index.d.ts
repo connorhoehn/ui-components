@@ -3607,6 +3607,34 @@ export declare interface ConsultCardProps {
     'data-testid'?: string;
 }
 
+export declare function ContextColumn({ state, onStateChange, panels, children, label, className, 'data-testid': testId, }: ContextColumnProps): JSX.Element;
+
+export declare interface ContextColumnPanel {
+    id: string;
+    /** Shown as the strip icon's tooltip and accessible name. */
+    label: string;
+    icon: ReactNode;
+    /** Unread or pending count, shown on the strip icon. */
+    badge?: number;
+    /** Called when the strip icon is pressed, after the column opens. */
+    onOpen?: () => void;
+}
+
+export declare interface ContextColumnProps {
+    state: ContextColumnState;
+    onStateChange: (next: ContextColumnState) => void;
+    /** What the strip shows while collapsed. Order is the strip's order. */
+    panels: ContextColumnPanel[];
+    /** The stacked panels, when open or wide. */
+    children?: ReactNode;
+    /** Accessible name of the column. Default "Side column". */
+    label?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type ContextColumnState = 'collapsed' | 'open' | 'wide';
+
 export declare type ContextPatch = ContextPatchMerge | ContextPatchJsonPatch;
 
 export declare interface ContextPatchJsonPatch {
@@ -5190,7 +5218,7 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-export declare function ExplorerLayout({ rail, children, aside, railWidth, railCollapsed, onToggleRail, railLabel, asideWidth, onToggleAsideWidth, panePadding, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+export declare function ExplorerLayout({ rail, children, aside, railWidth, railCollapsed, onToggleRail, railLabel, panePadding, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
 
 export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -5212,14 +5240,6 @@ export declare interface ExplorerLayoutProps {
     onToggleRail?: () => void;
     /** What the rail holds, for the controls' accessible names. Default "the list". */
     railLabel?: string;
-    /**
-     * How much of the row the aside takes when it sits beside the pane. `md`
-     * (256px) is a feed; `lg` (480px) is a conversation you are typing into.
-     * Controlled, like the rail.
-     */
-    asideWidth?: 'md' | 'lg';
-    /** Present, the aside gets a widen/narrow control. */
-    onToggleAsideWidth?: () => void;
     /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
     panePadding?: 'none' | 'md';
     className?: string;
@@ -14770,9 +14790,42 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -14799,39 +14852,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

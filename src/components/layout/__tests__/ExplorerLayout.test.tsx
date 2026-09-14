@@ -13,7 +13,8 @@ describe('ExplorerLayout', () => {
     );
     const rail = screen.getByTestId('explorer-layout-rail');
     expect(rail.tagName).toBe('NAV');
-    expect(rail.className).toContain('overflow-y-auto');
+    // The rail scrolls its list in an inner container; its header row, when present, stays put.
+    expect(rail.querySelector('.overflow-y-auto')).not.toBeNull();
     expect(rail.className).toContain('w-[300px]');
     expect(screen.getByTestId('explorer-layout-pane').className).toContain('overflow-y-auto');
     expect(screen.getByTestId('explorer-layout-aside').tagName).toBe('ASIDE');
