@@ -91,7 +91,7 @@ export function CallTileRow({
         data-variant="floating"
         data-tile-count={tiles.length}
       >
-        <div className="flex max-w-full items-end gap-3 overflow-x-auto px-2 pb-1" data-testid={`${testId}-tiles`}>
+        <div className="flex max-w-full items-end gap-2 bg-transparent" data-testid={`${testId}-tiles`}>
           {tiles.map((p) =>
             p.videoElement ? (
               <ParticipantTile
@@ -104,7 +104,14 @@ export function CallTileRow({
                 isSpeaking={p.id === activeSpeakerId}
                 videoElement={p.videoElement}
                 {...(onParticipantClick ? { onClick: () => onParticipantClick(p.id) } : {})}
-                className={cn('shrink-0 rounded-xl shadow-lg ring-1 ring-black/10', p.id === activeSpeakerId && 'shadow-success/40')}
+                // Every card the same: one rounded frame, one shadow, the
+                // media filling it edge to edge. The speaking state is the
+                // ring's colour, never a different frame — two people on one
+                // row must look like two of the same thing.
+                className={cn(
+                  'shrink-0 rounded-xl !border-0 shadow-lg ring-2 [&_video]:h-full [&_video]:w-full [&_video]:object-cover [&>*:first-child]:h-full [&>*:first-child]:w-full',
+                  p.id === activeSpeakerId ? 'ring-success' : 'ring-white/80',
+                )}
                 style={{ width: tileWidth }}
               />
             ) : (
@@ -119,7 +126,7 @@ export function CallTileRow({
         </div>
         {controls && (
           <div
-            className="flex items-center rounded-full bg-black/55 px-1.5 py-1 shadow-md backdrop-blur-sm transition-opacity duration-150 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100"
+            className="flex items-center rounded-full bg-black/60 px-1 py-0.5 shadow-md backdrop-blur-sm transition-opacity duration-150 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 [&_button]:!h-9 [&_button]:!w-9"
             data-testid={`${testId}-controls`}
           >
             {controls}

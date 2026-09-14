@@ -2322,7 +2322,7 @@ function ft({ participants: t, localParticipant: n, activeSpeakerId: r, tileWidt
 		"data-variant": "floating",
 		"data-tile-count": f.length,
 		children: [/* @__PURE__ */ k("div", {
-			className: "flex max-w-full items-end gap-3 overflow-x-auto px-2 pb-1",
+			className: "flex max-w-full items-end gap-2 bg-transparent",
 			"data-testid": `${d}-tiles`,
 			children: f.map((t) => t.videoElement ? /* @__PURE__ */ k(b, {
 				id: t.id,
@@ -2333,7 +2333,7 @@ function ft({ participants: t, localParticipant: n, activeSpeakerId: r, tileWidt
 				isSpeaking: t.id === r,
 				videoElement: t.videoElement,
 				...s ? { onClick: () => s(t.id) } : {},
-				className: e("shrink-0 rounded-xl shadow-lg ring-1 ring-black/10", t.id === r && "shadow-success/40"),
+				className: e("shrink-0 rounded-xl !border-0 shadow-lg ring-2 [&_video]:h-full [&_video]:w-full [&_video]:object-cover [&>*:first-child]:h-full [&>*:first-child]:w-full", t.id === r ? "ring-success" : "ring-white/80"),
 				style: { width: i }
 			}, t.id) : /* @__PURE__ */ k(pt, {
 				participant: t,
@@ -2341,7 +2341,7 @@ function ft({ participants: t, localParticipant: n, activeSpeakerId: r, tileWidt
 				...s ? { onClick: () => s(t.id) } : {}
 			}, t.id))
 		}), a && /* @__PURE__ */ k("div", {
-			className: "flex items-center rounded-full bg-black/55 px-1.5 py-1 shadow-md backdrop-blur-sm transition-opacity duration-150 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100",
+			className: "flex items-center rounded-full bg-black/60 px-1 py-0.5 shadow-md backdrop-blur-sm transition-opacity duration-150 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 [&_button]:!h-9 [&_button]:!w-9",
 			"data-testid": `${d}-controls`,
 			children: a
 		})]
