@@ -149,12 +149,12 @@ export function ExplorerLayout({
         {aside ? (
           // The aside owns its own width and chrome (a ContextColumn, or any
           // block the host wants beside the pane); this only places it.
-          <div
+          <aside
             data-testid={`${testId}-aside`}
             className="flex min-h-0 border-t border-border 2xl:flex-shrink-0 2xl:border-t-0"
           >
             {aside}
-          </div>
+          </aside>
         ) : null}
       </div>
     </div>

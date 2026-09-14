@@ -84,7 +84,8 @@ export function ContextColumn({
 }: ContextColumnProps) {
   if (state === 'collapsed') {
     return (
-      <aside
+      <div
+        role="group"
         aria-label={label}
         data-testid={testId}
         data-state="collapsed"
@@ -118,13 +119,14 @@ export function ContextColumn({
             ) : null}
           </div>
         ))}
-      </aside>
+      </div>
     );
   }
 
   const wide = state === 'wide';
   return (
-    <aside
+    <div
+      role="group"
       aria-label={label}
       data-testid={testId}
       data-state={state}
@@ -155,7 +157,7 @@ export function ContextColumn({
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto" data-testid={`${testId}-panels`}>
         {children}
       </div>
-    </aside>
+    </div>
   );
 }
 

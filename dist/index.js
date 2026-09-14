@@ -2474,7 +2474,7 @@ function kd({ rail: e, children: t, aside: n, railWidth: r = "md", railCollapsed
 				"data-testid": `${l}-pane`,
 				className: B("flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto bg-surface", s === "md" && "px-8 py-6"),
 				children: t
-			}), n ? /* @__PURE__ */ Y("div", {
+			}), n ? /* @__PURE__ */ Y("aside", {
 				"data-testid": `${l}-aside`,
 				className: "flex min-h-0 border-t border-border 2xl:flex-shrink-0 2xl:border-t-0",
 				children: n
@@ -2611,7 +2611,8 @@ function Pd({ wide: e }) {
 	});
 }
 function Fd({ state: e, onStateChange: t, panels: n, children: r, label: i = "Side column", className: a, "data-testid": o = "context-column" }) {
-	if (e === "collapsed") return /* @__PURE__ */ X("aside", {
+	if (e === "collapsed") return /* @__PURE__ */ X("div", {
+		role: "group",
 		"aria-label": i,
 		"data-testid": o,
 		"data-state": "collapsed",
@@ -2657,7 +2658,8 @@ function Fd({ state: e, onStateChange: t, panels: n, children: r, label: i = "Si
 		]
 	});
 	let s = e === "wide";
-	return /* @__PURE__ */ X("aside", {
+	return /* @__PURE__ */ X("div", {
+		role: "group",
 		"aria-label": i,
 		"data-testid": o,
 		"data-state": e,
