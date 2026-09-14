@@ -2492,9 +2492,9 @@ function kd({ rail: e, children: t, aside: n, railWidth: r = "md", railCollapsed
 			}), n ? /* @__PURE__ */ Z("aside", {
 				"data-testid": `${d}-aside`,
 				"data-width": s,
-				className: H("relative min-h-0 border-t border-border bg-surface-panel 2xl:flex-shrink-0 2xl:overflow-y-auto 2xl:border-l 2xl:border-t-0", Dd[s]),
+				className: H("flex min-h-0 flex-col border-t border-border bg-surface-panel 2xl:flex-shrink-0 2xl:border-l 2xl:border-t-0", Dd[s]),
 				children: [c && /* @__PURE__ */ X("div", {
-					className: "absolute left-1 top-1 z-10 hidden 2xl:block",
+					className: "hidden h-7 shrink-0 items-center justify-end px-1 2xl:flex",
 					children: /* @__PURE__ */ X(Vn, {
 						"aria-label": s === "lg" ? "Narrow the side column" : "Widen the side column",
 						title: s === "lg" ? "Narrow the side column" : "Widen the side column",
@@ -2504,7 +2504,10 @@ function kd({ rail: e, children: t, aside: n, railWidth: r = "md", railCollapsed
 						onClick: c,
 						"data-testid": `${d}-aside-width`
 					})
-				}), n]
+				}), /* @__PURE__ */ X("div", {
+					className: "min-h-0 flex-1 2xl:overflow-y-auto",
+					children: n
+				})]
 			}) : null]
 		})]
 	});

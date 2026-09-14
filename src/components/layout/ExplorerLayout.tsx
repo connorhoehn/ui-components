@@ -175,12 +175,15 @@ export function ExplorerLayout({
             data-testid={`${testId}-aside`}
             data-width={asideWidth}
             className={cn(
-              'relative min-h-0 border-t border-border bg-surface-panel 2xl:flex-shrink-0 2xl:overflow-y-auto 2xl:border-l 2xl:border-t-0',
+              'flex min-h-0 flex-col border-t border-border bg-surface-panel 2xl:flex-shrink-0 2xl:border-l 2xl:border-t-0',
               ASIDE_WIDTH[asideWidth],
             )}
           >
             {onToggleAsideWidth && (
-              <div className="absolute left-1 top-1 z-10 hidden 2xl:block">
+              // Its own slim row, not a corner overlay: whatever the host puts
+              // first in the column — a heading, a conversation's header — has
+              // its top-left corner to itself.
+              <div className="hidden h-7 shrink-0 items-center justify-end px-1 2xl:flex">
                 <IconButton
                   aria-label={asideWidth === 'lg' ? 'Narrow the side column' : 'Widen the side column'}
                   title={asideWidth === 'lg' ? 'Narrow the side column' : 'Widen the side column'}
@@ -192,7 +195,7 @@ export function ExplorerLayout({
                 />
               </div>
             )}
-            {aside}
+            <div className="min-h-0 flex-1 2xl:overflow-y-auto">{aside}</div>
           </aside>
         ) : null}
       </div>
