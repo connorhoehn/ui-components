@@ -584,7 +584,6 @@ function Yt(e) {
 		icon: "⚙",
 		subtitle: i,
 		state: s,
-		nodeType: i,
 		body: /* @__PURE__ */ W("span", {
 			"data-testid": "server-step-label",
 			children: [n.label ?? i, n.optional ? /* @__PURE__ */ U("span", {

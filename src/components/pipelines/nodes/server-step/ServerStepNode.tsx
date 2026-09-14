@@ -61,7 +61,10 @@ export default function ServerStepNode(props: NodeProps<ServerStepFlowNode>) {
       icon="⚙"
       subtitle={kind}
       state={state}
-      nodeType={kind}
+      // No `nodeType`: BaseNode uses it to mark a kind the HOST's executor has
+      // no handler for ("Preview — no executor"). A server step is by
+      // definition executed elsewhere, so that badge would be a lie on every
+      // one of them.
       body={
         <span data-testid="server-step-label">
           {data.label ?? kind}
