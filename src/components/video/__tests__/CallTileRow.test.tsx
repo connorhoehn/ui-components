@@ -29,8 +29,10 @@ describe('CallTileRow', () => {
 
   it('reports which tile was clicked', () => {
     const onClick = vi.fn();
-    render(<CallTileRow participants={[p('a', 'Ada')]} onParticipantClick={onClick} />);
+    render(<CallTileRow participants={[p('a', 'Ada', { videoElement: <video /> }), p('b', 'Bob')]} onParticipantClick={onClick} />);
     fireEvent.click(screen.getByTestId('remote-tile'));
+    fireEvent.click(screen.getByTestId('remote-bubble'));
+    expect(onClick).toHaveBeenCalledWith('b');
     expect(onClick).toHaveBeenCalledWith('a');
   });
 
