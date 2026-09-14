@@ -30,44 +30,40 @@
 // components into the `./diagram` chunk that Excalidraw is already lazy-loaded
 // out of.
 import { PresenceAvatars, type PresenceUser } from '../shared/PresenceAvatars';
+import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
 import { cn } from '../../lib/cn';
 import type { DiagramCollaborator } from '@connorhoehn/realtime-modules/adapters/excalidraw';
+import type { DiagramPresenceActions, DiagramPresencePerson } from './types';
 
 export interface DiagramPresenceBarProps {
-    /**
-     * Everyone on the board, local user included — i.e.
-     * `useCollaborativeDiagram(...).participants`.
-     */
     participants: DiagramCollaborator[];
-    /** Avatar diameter in px. */
     size?: number;
+    /**
+     * What a reader can do with each person. With any of these the bar is a
+     * button: click it and every OTHER person on the diagram is listed with
+     * the actions the host backs. Without them it is a roster.
+     */
+    actions?: DiagramPresenceActions;
+    /** Whose viewport the reader is following, so the menu can offer to stop. */
+    followingUserId?: string | null;
     className?: string;
     'data-testid'?: string;
 }
 
+const PILL_CLASS =
+    'pointer-events-auto flex items-center gap-2 rounded-full border border-border bg-surface-panel/95 px-2.5 py-1.5 shadow-sm backdrop-blur';
+
 export function DiagramPresenceBar({
     participants,
     size = 26,
+    actions,
+    followingUserId = null,
     className,
     'data-testid': testId = 'diagram-presence',
 }: DiagramPresenceBarProps) {
     const users: PresenceUser[] = participants.map((p) => ({
-        // The avatar key must be the SAME identifier across surfaces or the
-        // hover card and Follow action address a different person than the one
-        // under the mouse. Stable identity first; the per-socket clientId is
-        // only for genuinely anonymous sessions.
         id: p.userId || p.clientId,
         name: p.isSelf ? `${p.displayName} (you)` : p.displayName,
-        // Taken from presence, never re-hashed here: the host derives it once
-        // (identityToColor) so a person is one colour across the roster, the
-        // document carets and the presence list.
-        //
-        // It does NOT match the cursor Excalidraw draws on the canvas, and
-        // cannot be made to. Excalidraw 0.18 ignores `collaborator.color`
-        // outright — `getClientColor` is
-        //   `hsl(hashToInteger(collaborator.id ?? socketId) % 37 * 10, 100%, 83%)`
-        // — a pastel derived from the id with no way in. So this roster is the
-        // authoritative colour surface, and the canvas cursor is Excalidraw's.
         color: p.color,
         online: true,
         detail: p.isSelf
@@ -77,19 +73,63 @@ export function DiagramPresenceBar({
               : 'viewing',
     }));
 
-    return (
-        <div
-            data-testid={testId}
-            data-participant-count={participants.length}
-            className={cn(
-                'pointer-events-auto flex items-center gap-2 rounded-full border border-border bg-surface-panel/95 px-2.5 py-1.5 shadow-sm backdrop-blur',
-                className,
-            )}
-        >
+    const face = (
+        <>
             <PresenceAvatars users={users} maxVisible={6} size={size} />
             <span className="pr-0.5 text-[11px] font-medium tabular-nums text-text-secondary">
                 {participants.length}
             </span>
+        </>
+    );
+
+    // The menu lists the OTHER people: there is nothing to message yourself
+    // about, and following your own viewport is a no-op with a name.
+    const others = participants.filter((p) => !p.isSelf);
+    const hasActions = !!actions && !!(actions.onMessage || actions.onCall || actions.onFollow);
+
+    if (!hasActions || others.length === 0) {
+        return (
+            <div
+                data-testid={testId}
+                data-participant-count={participants.length}
+                className={cn(PILL_CLASS, className)}
+            >
+                {face}
+            </div>
+        );
+    }
+
+    const sections: DropdownMenuSection[] = others.map((p) => {
+        const person: DiagramPresencePerson = {
+            userId: p.userId || p.clientId,
+            clientId: p.clientId,
+            displayName: p.displayName,
+            color: p.color,
+        };
+        const following = followingUserId != null && (followingUserId === p.userId || followingUserId === p.clientId);
+        return {
+            label: `${p.displayName} · ${p.pointer ? 'drawing' : 'viewing'}`,
+            items: [
+                ...(actions!.onMessage ? [{ label: 'Message', onSelect: () => actions!.onMessage!(person) }] : []),
+                ...(actions!.onCall ? [{ label: 'Call', onSelect: () => actions!.onCall!(person) }] : []),
+                ...(actions!.onFollow
+                    ? [{ label: following ? 'Stop following' : 'Follow', active: following, onSelect: () => actions!.onFollow!(person) }]
+                    : []),
+            ],
+        };
+    });
+
+    return (
+        <div data-testid={testId} data-participant-count={participants.length} className={cn('pointer-events-auto', className)}>
+            <DropdownMenu
+                trigger={face}
+                triggerLabel={`People on this diagram (${participants.length})`}
+                triggerTitle="Who is here — message, call or follow them"
+                triggerClassName={cn(PILL_CLASS, 'text-inherit')}
+                align="end"
+                sections={sections}
+                data-testid={`${testId}-menu`}
+            />
         </div>
     );
 }

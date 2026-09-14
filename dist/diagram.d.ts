@@ -609,18 +609,41 @@ export declare const diagramMacroPluginKey: PluginKey<any>;
  */
 export declare function diagramMacroText(id: string): string;
 
-export declare function DiagramPresenceBar({ participants, size, className, 'data-testid': testId, }: DiagramPresenceBarProps): JSX.Element;
+/**
+ * What a reader can do with a person on the presence bar. Absent, the bar
+ * is a roster and nothing more; present, the bar opens a menu of the people
+ * on it with these actions per person. Each is optional so a host offers
+ * only what it can back — a host with no calling offers no Call.
+ */
+export declare interface DiagramPresenceActions {
+    onMessage?: (person: DiagramPresencePerson) => void;
+    onCall?: (person: DiagramPresencePerson) => void;
+    onFollow?: (person: DiagramPresencePerson) => void;
+}
+
+export declare function DiagramPresenceBar({ participants, size, actions, followingUserId, className, 'data-testid': testId, }: DiagramPresenceBarProps): JSX.Element;
 
 export declare interface DiagramPresenceBarProps {
-    /**
-     * Everyone on the board, local user included — i.e.
-     * `useCollaborativeDiagram(...).participants`.
-     */
     participants: DiagramCollaborator[];
-    /** Avatar diameter in px. */
     size?: number;
+    /**
+     * What a reader can do with each person. With any of these the bar is a
+     * button: click it and every OTHER person on the diagram is listed with
+     * the actions the host backs. Without them it is a roster.
+     */
+    actions?: DiagramPresenceActions;
+    /** Whose viewport the reader is following, so the menu can offer to stop. */
+    followingUserId?: string | null;
     className?: string;
     'data-testid'?: string;
+}
+
+/** One person on the diagram's presence bar, as handed to an action. */
+export declare interface DiagramPresencePerson {
+    userId: string;
+    clientId: string;
+    displayName: string;
+    color: string;
 }
 
 /**
@@ -1791,6 +1814,8 @@ export declare interface SharedDiagramProps {
      * Null (the default) leaves the viewport under local control.
      */
     followUserId?: string | null;
+    /** Social actions for the people on the presence bar. See DiagramPresenceActions. */
+    presenceActions?: DiagramPresenceActions;
 }
 
 /** The status a tick sets, and the one un-ticking restores. */
@@ -1900,16 +1925,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -1939,6 +1954,16 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

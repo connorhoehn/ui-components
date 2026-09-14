@@ -48,6 +48,7 @@ export default function ExcalidrawCanvas({
     assetPath,
     onSceneChange,
     followUserId = null,
+    presenceActions,
 }: ExcalidrawCanvasProps) {
     const hostRef = useRef<HTMLDivElement | null>(null);
     const theme = useResolvedTheme(hostRef);
@@ -322,7 +323,7 @@ export default function ExcalidrawCanvas({
                 stack, and pointer-events-none on the wrapper means the strip
                 never eats a drag that starts underneath it. */}
             <div className="pointer-events-none absolute right-2 top-20 z-[5] flex justify-end">
-                <DiagramPresenceBar participants={participants} />
+                <DiagramPresenceBar participants={participants} actions={presenceActions} followingUserId={followUserId} />
             </div>
 
             <Excalidraw

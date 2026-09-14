@@ -48,3 +48,4 @@ export type {
     CollaborativeExcalidrawBootstrapProps,
     ExcalidrawCanvasProps,
 } from './types';
+export type { DiagramPresenceActions, DiagramPresencePerson } from './types';

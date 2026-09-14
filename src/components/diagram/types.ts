@@ -14,6 +14,26 @@ export interface DiagramUser {
     color: string;
 }
 
+/** One person on the diagram's presence bar, as handed to an action. */
+export interface DiagramPresencePerson {
+    userId: string;
+    clientId: string;
+    displayName: string;
+    color: string;
+}
+
+/**
+ * What a reader can do with a person on the presence bar. Absent, the bar
+ * is a roster and nothing more; present, the bar opens a menu of the people
+ * on it with these actions per person. Each is optional so a host offers
+ * only what it can back — a host with no calling offers no Call.
+ */
+export interface DiagramPresenceActions {
+    onMessage?: (person: DiagramPresencePerson) => void;
+    onCall?: (person: DiagramPresencePerson) => void;
+    onFollow?: (person: DiagramPresencePerson) => void;
+}
+
 export interface SharedDiagramProps {
     /**
      * Which diagram this is within its Y.Doc.
@@ -46,6 +66,8 @@ export interface SharedDiagramProps {
      * Null (the default) leaves the viewport under local control.
      */
     followUserId?: string | null;
+    /** Social actions for the people on the presence bar. See DiagramPresenceActions. */
+    presenceActions?: DiagramPresenceActions;
 }
 
 /** Props of the lazily-loaded canvas — always fully resolved by this point. */
