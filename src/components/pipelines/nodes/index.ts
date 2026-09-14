@@ -8,6 +8,7 @@ import LLMNode from './llm/LLMNode';
 import TransformNode from './transform/TransformNode';
 import ConditionNode from './condition/ConditionNode';
 import ActionNode from './action/ActionNode';
+import ServerStepNode from './server-step/ServerStepNode';
 import ForkNode from './fork/ForkNode';
 import JoinNode from './join/JoinNode';
 import ApprovalNode from './approval/ApprovalNode';
@@ -47,6 +48,7 @@ export {
   TransformNode,
   ConditionNode,
   ActionNode,
+  ServerStepNode,
   ForkNode,
   JoinNode,
   ApprovalNode,
