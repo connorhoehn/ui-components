@@ -401,7 +401,7 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
-export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
+export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
 
 export declare interface CallTileRowProps {
     participants: HangoutLayoutParticipant[];
@@ -415,6 +415,15 @@ export declare interface CallTileRowProps {
     /** A short label at the row's start — the room, or who is on the call. */
     title?: ReactNode;
     onParticipantClick?: (id: string) => void;
+    /**
+     * `floating` (default): the tiles stand on their own over the page —
+     * rounded, shadowed, no bar behind them — with the controls centred
+     * beneath. A row of people over a diagram should look like people over a
+     * diagram, not like a panel someone laid along the bottom edge. `bar`
+     * keeps them in one dark strip with the controls at the end, for a dock
+     * that is itself a panel.
+     */
+    variant?: 'floating' | 'bar';
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;
@@ -2285,9 +2294,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -2308,9 +2317,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -2344,9 +2353,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -2354,9 +2363,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

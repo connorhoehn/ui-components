@@ -13,6 +13,7 @@ describe('CallTileRow', () => {
         activeSpeakerId="b"
         tileWidth={120}
         title="standup"
+        variant="bar"
         controls={<button type="button">Leave</button>}
       />,
     );
@@ -31,5 +32,14 @@ describe('CallTileRow', () => {
     render(<CallTileRow participants={[p('a', 'Ada')]} onParticipantClick={onClick} />);
     fireEvent.click(screen.getByTestId('remote-tile'));
     expect(onClick).toHaveBeenCalledWith('a');
+  });
+
+  it('floats by default: no bar behind the tiles, controls centred beneath', () => {
+    render(<CallTileRow participants={[p('a', 'Ada')]} controls={<button type="button">Leave</button>} />);
+    const row = screen.getByTestId('call-tile-row');
+    expect(row.getAttribute('data-variant')).toBe('floating');
+    expect(row.className).not.toContain('bg-video-stage');
+    expect(screen.getByTestId('remote-tile').className).toContain('rounded-xl');
+    expect(screen.getByTestId('call-tile-row-controls')).toBeInTheDocument();
   });
 });

@@ -2300,40 +2300,58 @@ function dt({ state: t, mode: n, participants: r, localParticipant: i, callerNam
 }
 //#endregion
 //#region src/components/video/CallTileRow.tsx
-function ft({ participants: t, localParticipant: n, activeSpeakerId: r, tileWidth: i = 144, controls: a, title: o, onParticipantClick: s, className: c, style: l, "data-testid": u = "call-tile-row" }) {
-	let d = n ? [...t, n] : t;
-	return /* @__PURE__ */ A("div", {
-		className: e("flex w-full min-w-0 items-center gap-2 rounded-xl bg-video-stage p-2 text-white shadow-md", c),
-		style: l,
+function ft({ participants: t, localParticipant: n, activeSpeakerId: r, tileWidth: i = 144, controls: a, title: o, onParticipantClick: s, variant: c = "floating", className: l, style: u, "data-testid": d = "call-tile-row" }) {
+	let f = n ? [...t, n] : t, p = f.map((t) => /* @__PURE__ */ k(b, {
+		id: t.id,
+		displayName: t.displayName,
+		...t.avatarUrl ? { avatarUrl: t.avatarUrl } : {},
+		isMuted: t.isMuted,
+		isLocal: t.isLocal,
+		isSpeaking: t.id === r,
+		videoElement: t.videoElement,
+		...s ? { onClick: () => s(t.id) } : {},
+		className: e("shrink-0", c === "floating" && "rounded-xl shadow-lg ring-1 ring-black/10"),
+		style: { width: i }
+	}, t.id)), m = typeof o == "string" ? `Call: ${o}` : "Call";
+	return c === "floating" ? /* @__PURE__ */ A("div", {
+		className: e("flex w-full min-w-0 flex-col items-center gap-2", l),
+		style: u,
 		role: "group",
-		"aria-label": typeof o == "string" ? `Call: ${o}` : "Call",
-		"data-testid": u,
-		"data-tile-count": d.length,
+		"aria-label": m,
+		"data-testid": d,
+		"data-variant": "floating",
+		"data-tile-count": f.length,
+		children: [/* @__PURE__ */ k("div", {
+			className: "flex max-w-full items-center gap-3 overflow-x-auto px-2 pb-1",
+			"data-testid": `${d}-tiles`,
+			children: p
+		}), a && /* @__PURE__ */ k("div", {
+			className: "flex items-center rounded-full bg-black/55 px-1.5 py-1 shadow-md backdrop-blur-sm",
+			"data-testid": `${d}-controls`,
+			children: a
+		})]
+	}) : /* @__PURE__ */ A("div", {
+		className: e("flex w-full min-w-0 items-center gap-2 rounded-xl bg-video-stage p-2 text-white shadow-md", l),
+		style: u,
+		role: "group",
+		"aria-label": m,
+		"data-testid": d,
+		"data-variant": "bar",
+		"data-tile-count": f.length,
 		children: [
 			o && /* @__PURE__ */ k("span", {
 				className: "max-w-[10rem] shrink-0 truncate px-1 text-xs font-semibold text-white/80",
-				"data-testid": `${u}-title`,
+				"data-testid": `${d}-title`,
 				children: o
 			}),
 			/* @__PURE__ */ k("div", {
 				className: "flex min-w-0 flex-1 items-center gap-2 overflow-x-auto",
-				"data-testid": `${u}-tiles`,
-				children: d.map((e) => /* @__PURE__ */ k(b, {
-					id: e.id,
-					displayName: e.displayName,
-					...e.avatarUrl ? { avatarUrl: e.avatarUrl } : {},
-					isMuted: e.isMuted,
-					isLocal: e.isLocal,
-					isSpeaking: e.id === r,
-					videoElement: e.videoElement,
-					...s ? { onClick: () => s(e.id) } : {},
-					className: "shrink-0",
-					style: { width: i }
-				}, e.id))
+				"data-testid": `${d}-tiles`,
+				children: p
 			}),
 			a && /* @__PURE__ */ k("div", {
 				className: "flex shrink-0 items-center",
-				"data-testid": `${u}-controls`,
+				"data-testid": `${d}-controls`,
 				children: a
 			})
 		]

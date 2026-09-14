@@ -27,6 +27,15 @@ export interface CallTileRowProps {
   /** A short label at the row's start — the room, or who is on the call. */
   title?: ReactNode;
   onParticipantClick?: (id: string) => void;
+  /**
+   * `floating` (default): the tiles stand on their own over the page —
+   * rounded, shadowed, no bar behind them — with the controls centred
+   * beneath. A row of people over a diagram should look like people over a
+   * diagram, not like a panel someone laid along the bottom edge. `bar`
+   * keeps them in one dark strip with the controls at the end, for a dock
+   * that is itself a panel.
+   */
+  variant?: 'floating' | 'bar';
   className?: string;
   style?: CSSProperties;
   'data-testid'?: string;
@@ -40,18 +49,60 @@ export function CallTileRow({
   controls,
   title,
   onParticipantClick,
+  variant = 'floating',
   className,
   style,
   'data-testid': testId = 'call-tile-row',
 }: CallTileRowProps) {
   const tiles = localParticipant ? [...participants, localParticipant] : participants;
+  const tileNodes = tiles.map((p) => (
+    <ParticipantTile
+      key={p.id}
+      id={p.id}
+      displayName={p.displayName}
+      {...(p.avatarUrl ? { avatarUrl: p.avatarUrl } : {})}
+      isMuted={p.isMuted}
+      isLocal={p.isLocal}
+      isSpeaking={p.id === activeSpeakerId}
+      videoElement={p.videoElement}
+      {...(onParticipantClick ? { onClick: () => onParticipantClick(p.id) } : {})}
+      className={cn('shrink-0', variant === 'floating' && 'rounded-xl shadow-lg ring-1 ring-black/10')}
+      style={{ width: tileWidth }}
+    />
+  ));
+  const ariaLabel = typeof title === 'string' ? `Call: ${title}` : 'Call';
+
+  if (variant === 'floating') {
+    return (
+      <div
+        className={cn('flex w-full min-w-0 flex-col items-center gap-2', className)}
+        style={style}
+        role="group"
+        aria-label={ariaLabel}
+        data-testid={testId}
+        data-variant="floating"
+        data-tile-count={tiles.length}
+      >
+        <div className="flex max-w-full items-center gap-3 overflow-x-auto px-2 pb-1" data-testid={`${testId}-tiles`}>
+          {tileNodes}
+        </div>
+        {controls && (
+          <div className="flex items-center rounded-full bg-black/55 px-1.5 py-1 shadow-md backdrop-blur-sm" data-testid={`${testId}-controls`}>
+            {controls}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn('flex w-full min-w-0 items-center gap-2 rounded-xl bg-video-stage p-2 text-white shadow-md', className)}
       style={style}
       role="group"
-      aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call'}
+      aria-label={ariaLabel}
       data-testid={testId}
+      data-variant="bar"
       data-tile-count={tiles.length}
     >
       {title && (
@@ -60,21 +111,7 @@ export function CallTileRow({
         </span>
       )}
       <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto" data-testid={`${testId}-tiles`}>
-        {tiles.map((p) => (
-          <ParticipantTile
-            key={p.id}
-            id={p.id}
-            displayName={p.displayName}
-            {...(p.avatarUrl ? { avatarUrl: p.avatarUrl } : {})}
-            isMuted={p.isMuted}
-            isLocal={p.isLocal}
-            isSpeaking={p.id === activeSpeakerId}
-            videoElement={p.videoElement}
-            {...(onParticipantClick ? { onClick: () => onParticipantClick(p.id) } : {})}
-            className="shrink-0"
-            style={{ width: tileWidth }}
-          />
-        ))}
+        {tileNodes}
       </div>
       {controls && <div className="flex shrink-0 items-center" data-testid={`${testId}-controls`}>{controls}</div>}
     </div>
