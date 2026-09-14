@@ -117,6 +117,8 @@ export type {
 // from a broken path.
 export { default as VideoDockSlot } from './VideoDockSlot';
 export type { VideoDockSlotProps } from './VideoDockSlot';
+export { default as FloatingDockBar } from './FloatingDockBar';
+export type { FloatingDockBarProps } from './FloatingDockBar';
 
 // The single-thread renderer, for hosting one thread in a gutter card.
 // SectionComments is the whole panel (header + composer + list); this is the

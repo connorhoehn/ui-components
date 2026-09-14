@@ -1433,8 +1433,24 @@ function Dt({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 	});
 }
 //#endregion
+//#region src/components/doc-editor/FloatingDockBar.tsx
+function Ot({ docked: e, label: t = "Call, along the bottom of the page", bottomOffset: r = 16, className: i, children: a, "data-testid": o = "floating-dock-bar" }) {
+	return e ? /* @__PURE__ */ X("div", {
+		className: n("pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4", i),
+		style: { bottom: r },
+		role: "region",
+		"aria-label": t,
+		"data-testid": o,
+		children: /* @__PURE__ */ X("div", {
+			className: "pointer-events-auto w-full max-w-5xl",
+			"data-testid": `${o}-body`,
+			children: a
+		})
+	}) : null;
+}
+//#endregion
 //#region src/components/doc-editor/DocumentOwnership.tsx
-function Ot({ owner: e, collaborators: t = [], maxAvatars: r = 3, onShare: i, className: a, "data-testid": o = "document-ownership" }) {
+function kt({ owner: e, collaborators: t = [], maxAvatars: r = 3, onShare: i, className: a, "data-testid": o = "document-ownership" }) {
 	if (!e) return null;
 	let s = t.slice(0, r), c = t.length - s.length;
 	return /* @__PURE__ */ Z("span", {
@@ -1486,18 +1502,18 @@ function Ot({ owner: e, collaborators: t = [], maxAvatars: r = 3, onShare: i, cl
 }
 //#endregion
 //#region src/components/doc-editor/DocumentShareDialog.tsx
-var kt = [
+var At = [
 	"owner",
 	"editor",
 	"commenter",
 	"viewer"
-], At = {
+], jt = {
 	restricted: () => "Restricted — only people added here",
 	"org-view": (e) => `Anyone at ${e} can view`,
 	"org-edit": (e) => `Anyone at ${e} can edit`,
 	"link-view": () => "Anyone with the link can view"
 };
-function jt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: l, onInvite: u, onCopyLink: f, notice: p, "data-testid": m = "document-share-dialog" }) {
+function Mt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: l, onInvite: u, onCopyLink: f, notice: p, "data-testid": m = "document-share-dialog" }) {
 	let [h, g] = J(""), _ = () => {
 		let e = h.trim();
 		!e || !u || (u(e), g(""));
@@ -1562,7 +1578,7 @@ function jt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 								"aria-label": `Access for ${e.displayName}`,
 								"data-testid": `${m}-role`,
 								className: "rounded border border-border bg-surface px-1 py-0.5 text-xs text-text-secondary",
-								children: kt.filter((e) => e !== "owner").map((e) => /* @__PURE__ */ X("option", {
+								children: At.filter((e) => e !== "owner").map((e) => /* @__PURE__ */ X("option", {
 									value: e,
 									children: e
 								}, e))
@@ -1582,9 +1598,9 @@ function jt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						"aria-label": "General access",
 						"data-testid": `${m}-general-access`,
 						className: "rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary disabled:opacity-60",
-						children: Object.keys(At).map((e) => /* @__PURE__ */ X("option", {
+						children: Object.keys(jt).map((e) => /* @__PURE__ */ X("option", {
 							value: e,
-							children: At[e](o)
+							children: jt[e](o)
 						}, e))
 					})]
 				}),
@@ -1626,7 +1642,7 @@ var $ = [
 		hint: "Read the document without changing it."
 	}
 ];
-function Mt({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: a = !1, className: s, "data-testid": c = "suggestion-mode-control" }) {
+function Nt({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: a = !1, className: s, "data-testid": c = "suggestion-mode-control" }) {
 	let l = $.filter((e) => r || e.value !== "viewing").map((e) => ({
 		label: e.label,
 		value: e.value
@@ -1654,24 +1670,24 @@ function Mt({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionCard.tsx
-var Nt = {
+var Pt = {
 	insert: "Insertion",
 	delete: "Deletion",
 	replace: "Replacement",
 	modify: "Formatting"
-}, Pt = {
+}, Ft = {
 	insert: "bg-success-bg text-success-fg",
 	delete: "bg-danger-bg text-danger-fg",
 	replace: "bg-caution-bg text-caution-fg",
 	modify: "bg-info-bg text-info-fg"
 };
-function Ft(e) {
+function It(e) {
 	return new Date(e).toLocaleTimeString([], {
 		hour: "numeric",
 		minute: "2-digit"
 	});
 }
-function It({ kind: e, author: t, when: r = null, deletedText: i = "", insertedText: a = "", active: o = !1, onFocus: s, onAccept: c, onReject: l, className: u, "data-testid": d = "suggestion-card" }) {
+function Lt({ kind: e, author: t, when: r = null, deletedText: i = "", insertedText: a = "", active: o = !1, onFocus: s, onAccept: c, onReject: l, className: u, "data-testid": d = "suggestion-card" }) {
 	let f = t.trim() === "" ? "Unknown author" : t;
 	return /* @__PURE__ */ Z("div", {
 		"data-testid": d,
@@ -1683,9 +1699,9 @@ function It({ kind: e, author: t, when: r = null, deletedText: i = "", insertedT
 				className: "flex items-center gap-2",
 				children: [
 					/* @__PURE__ */ X("span", {
-						className: n("rounded px-1.5 py-0.5 text-xs font-medium", Pt[e]),
+						className: n("rounded px-1.5 py-0.5 text-xs font-medium", Ft[e]),
 						"data-testid": `${d}-kind`,
-						children: Nt[e]
+						children: Pt[e]
 					}),
 					/* @__PURE__ */ X("span", {
 						className: "truncate text-xs text-text-secondary",
@@ -1694,7 +1710,7 @@ function It({ kind: e, author: t, when: r = null, deletedText: i = "", insertedT
 					}),
 					r !== null && /* @__PURE__ */ X("span", {
 						className: "ml-auto text-xs tabular-nums text-text-tertiary",
-						children: Ft(r)
+						children: It(r)
 					})
 				]
 			}),
@@ -1734,4 +1750,4 @@ function It({ kind: e, author: t, when: r = null, deletedText: i = "", insertedT
 	});
 }
 //#endregion
-export { ct as AckMode, ue as ActionItemsCard, mt as ActivityFeed, I as AttachmentsPanel, F as CANVAS_BODY_KEY, A as CANVAS_SCHEMA_VERSION, Ie as CanvasDocumentView, w as CanvasLineSpacing, st as ChunkViewer, Tt as CommentGhostPopover, R as CommentThreadNode, he as DiffViewer, ge as DocumentEditorPage, je as DocumentFindBar, Ce as DocumentGutter, O as DocumentHeader, qe as DocumentListPage, Ne as DocumentOutline, Ot as DocumentOwnership, Ae as DocumentRuler, jt as DocumentShareDialog, Le as DocumentStatusBar, Fe as DocumentToolbar, S as EditorToolbar, U as ExecutiveSummaryCard, k as FollowModeBar, pe as HeaderBanner, _e as KeyDecisionsCard, E as LINE_SPACINGS, C as LINE_SPACING_LABELS, be as MentionDropdown, z as MyMentionsPanel, v as NewDocumentModal, De as PX_PER_INCH, P as ParticipantAvatars, yt as ProposalCard, V as ReaderMode, oe as ReviewMode, tt as ReviewProgress, at as ReviewableItem, kt as SHARE_ROLES, $ as SUGGESTION_AUTHORING_MODES, ye as SectionBlock, ae as SectionComments, ne as SectionList, H as SectionSummariesCard, Qe as StandaloneTiptap, It as SuggestionCard, Mt as SuggestionModeControl, me as TableOfContents, g as TaskItemRow, _ as TaskList, D as TiptapEditor, fe as VersionHistoryPanel, L as VideoCallPanel, Dt as VideoDockSlot, se as VideoHistoryPanel, bt as WorkItemRow, Te as ZOOM_FIT, Ee as ZOOM_STEPS, re as canvasBody, M as canvasFragmentToMarkdown, Je as clientIdForUser, ve as countAllComments, le as findDocumentTarget, Pe as findMatches, de as generateSummaryBullets, xe as getInitials, j as isCanvasDocument, x as isLineSpacing, T as lineSpacingAttributes, Oe as nextMatchIndex, ee as parseLineSpacing, we as readOutline, ie as readSchemaVersion, B as relativeTime, wt as replyLabel, te as scrollToDocumentTarget, Me as stackOffsets, N as useDocumentActions, ke as useDocumentOutline, Ye as useFollowCursor, Se as useIsCanvasDocument, ce as useSidebarPanels };
+export { ct as AckMode, ue as ActionItemsCard, mt as ActivityFeed, I as AttachmentsPanel, F as CANVAS_BODY_KEY, A as CANVAS_SCHEMA_VERSION, Ie as CanvasDocumentView, w as CanvasLineSpacing, st as ChunkViewer, Tt as CommentGhostPopover, R as CommentThreadNode, he as DiffViewer, ge as DocumentEditorPage, je as DocumentFindBar, Ce as DocumentGutter, O as DocumentHeader, qe as DocumentListPage, Ne as DocumentOutline, kt as DocumentOwnership, Ae as DocumentRuler, Mt as DocumentShareDialog, Le as DocumentStatusBar, Fe as DocumentToolbar, S as EditorToolbar, U as ExecutiveSummaryCard, Ot as FloatingDockBar, k as FollowModeBar, pe as HeaderBanner, _e as KeyDecisionsCard, E as LINE_SPACINGS, C as LINE_SPACING_LABELS, be as MentionDropdown, z as MyMentionsPanel, v as NewDocumentModal, De as PX_PER_INCH, P as ParticipantAvatars, yt as ProposalCard, V as ReaderMode, oe as ReviewMode, tt as ReviewProgress, at as ReviewableItem, At as SHARE_ROLES, $ as SUGGESTION_AUTHORING_MODES, ye as SectionBlock, ae as SectionComments, ne as SectionList, H as SectionSummariesCard, Qe as StandaloneTiptap, Lt as SuggestionCard, Nt as SuggestionModeControl, me as TableOfContents, g as TaskItemRow, _ as TaskList, D as TiptapEditor, fe as VersionHistoryPanel, L as VideoCallPanel, Dt as VideoDockSlot, se as VideoHistoryPanel, bt as WorkItemRow, Te as ZOOM_FIT, Ee as ZOOM_STEPS, re as canvasBody, M as canvasFragmentToMarkdown, Je as clientIdForUser, ve as countAllComments, le as findDocumentTarget, Pe as findMatches, de as generateSummaryBullets, xe as getInitials, j as isCanvasDocument, x as isLineSpacing, T as lineSpacingAttributes, Oe as nextMatchIndex, ee as parseLineSpacing, we as readOutline, ie as readSchemaVersion, B as relativeTime, wt as replyLabel, te as scrollToDocumentTarget, Me as stackOffsets, N as useDocumentActions, ke as useDocumentOutline, Ye as useFollowCursor, Se as useIsCanvasDocument, ce as useSidebarPanels };

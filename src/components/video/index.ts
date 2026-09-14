@@ -70,6 +70,8 @@ export type {
 
 export { ParticipantTile } from './ParticipantTile';
 export type { ParticipantTileProps } from './ParticipantTile';
+export { CallTileRow } from './CallTileRow';
+export type { CallTileRowProps } from './CallTileRow';
 
 export { HangoutLayout } from './HangoutLayout';
 export type { HangoutLayoutProps, HangoutLayoutParticipant, HangoutMode } from './HangoutLayout';

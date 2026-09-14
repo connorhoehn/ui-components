@@ -1786,6 +1786,25 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
+export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
+
+export declare interface CallTileRowProps {
+    participants: HangoutLayoutParticipant[];
+    /** The viewer's own tile — drawn last, at the controls' side, where a mirror belongs. */
+    localParticipant?: HangoutLayoutParticipant | null;
+    activeSpeakerId?: string | null;
+    /** Width of one tile; tiles keep 16:9. Default 144. */
+    tileWidth?: number;
+    /** The call's controls (mute, camera, leave, pop-out…), rendered at the row's end. */
+    controls?: ReactNode;
+    /** A short label at the row's start — the room, or who is on the call. */
+    title?: ReactNode;
+    onParticipantClick?: (id: string) => void;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
 export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, displayMode, minimized: minimizedProp, sidePanelTabs, activeSidePanelTab, onSidePanelTabChange, sidePanelWidthClassName, dockTargets, activeDockId, onDockTo, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
 
 /** Canonical display mode for any call surface. */
@@ -14656,6 +14675,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -14675,12 +14707,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -14688,9 +14717,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -14724,29 +14766,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -14757,9 +14776,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
