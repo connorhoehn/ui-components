@@ -5163,7 +5163,7 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-export declare function ExplorerLayout({ rail, children, aside, railWidth, panePadding, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+export declare function ExplorerLayout({ rail, children, aside, railWidth, railCollapsed, onToggleRail, railLabel, asideWidth, onToggleAsideWidth, panePadding, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
 
 export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -5174,6 +5174,25 @@ export declare interface ExplorerLayoutProps {
     aside?: ReactNode;
     /** Rail width. `md` is the 300px agentcore measured against; `sm` is 240px for a shallower tree. */
     railWidth?: 'sm' | 'md';
+    /**
+     * The rail folded to a strip with one control that brings it back. For a
+     * surface that wants the width — a diagram, a wide table — the list of
+     * documents is worth giving up for a while. Controlled: the host owns the
+     * state (and typically remembers it).
+     */
+    railCollapsed?: boolean;
+    /** Present, the rail gets a fold control and the strip an unfold control. */
+    onToggleRail?: () => void;
+    /** What the rail holds, for the controls' accessible names. Default "the list". */
+    railLabel?: string;
+    /**
+     * How much of the row the aside takes when it sits beside the pane. `md`
+     * (256px) is a feed; `lg` (480px) is a conversation you are typing into.
+     * Controlled, like the rail.
+     */
+    asideWidth?: 'md' | 'lg';
+    /** Present, the aside gets a widen/narrow control. */
+    onToggleAsideWidth?: () => void;
     /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
     panePadding?: 'none' | 'md';
     className?: string;
@@ -14692,19 +14711,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -14724,9 +14730,45 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -14763,29 +14805,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
