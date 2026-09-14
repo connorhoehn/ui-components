@@ -423,6 +423,33 @@ export declare interface ChatAttachment {
     preview?: string;
 }
 
+export declare interface ChatBubble {
+    id: string;
+    author: string;
+    avatarUrl?: string;
+    color?: string;
+    /** Plain text. The host strips markup; this component never renders HTML. */
+    text: string;
+    /** Where it came from — the room — for the small caption. */
+    channelLabel?: string;
+}
+
+export declare function ChatBubbleStack({ bubbles, onOpen, onDismiss, dismissAfterMs, max, className, 'data-testid': testId, }: ChatBubbleStackProps): JSX.Element | null;
+
+export declare interface ChatBubbleStackProps {
+    bubbles: ChatBubble[];
+    /** The reader clicked a bubble: open the conversation there. */
+    onOpen: (id: string) => void;
+    /** A bubble timed out or was dismissed. */
+    onDismiss: (id: string) => void;
+    /** How long a bubble stays. Default 8 s. */
+    dismissAfterMs?: number;
+    /** At most this many on screen; older ones go first. Default 3. */
+    max?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare type ChatChannelKind = 'room' | 'dm';
 
 /** Room or DM for a channel, from the host's word first and the gateway's prefix second. */
@@ -2114,22 +2141,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2173,9 +2187,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

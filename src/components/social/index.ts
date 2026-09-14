@@ -195,3 +195,5 @@ export type {
   ChatSidePanelFrameProps,
   ChatSidePanelProps,
 } from './ChatSidePanelRegistry';
+export { ChatBubbleStack } from './ChatBubbleStack';
+export type { ChatBubble, ChatBubbleStackProps } from './ChatBubbleStack';

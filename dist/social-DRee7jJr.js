@@ -3366,4 +3366,65 @@ function kt({ panel: e, onClose: t, onOpenFullPage: n, className: r, "data-testi
 	});
 }
 //#endregion
-export { Fe as A, nt as C, Qe as D, $e as E, me as F, W as I, oe as L, Se as M, ge as N, Ze as O, he as P, ae as R, rt as S, et as T, gt as _, Et as a, st as b, _t as c, St as d, K as f, ft as g, q as h, Ot as i, De as j, We as k, yt as l, dt as m, Dt as n, wt as o, J as p, Ct as r, vt as s, kt as t, xt as u, ht as v, tt as w, lt as x, ct as y, ie as z };
+//#region src/components/social/ChatBubbleStack.tsx
+function At({ bubble: e, onOpen: t, onDismiss: n, dismissAfterMs: r }) {
+	return P(() => {
+		let e = setTimeout(n, r);
+		return () => clearTimeout(e);
+	}, [e.id, r]), /* @__PURE__ */ V("div", {
+		role: "status",
+		className: "pointer-events-auto flex w-80 max-w-[calc(100vw-2rem)] items-start gap-2.5 rounded-xl border border-border bg-surface p-3 shadow-lg",
+		"data-testid": "chat-bubble",
+		"data-bubble-id": e.id,
+		children: [/* @__PURE__ */ V("button", {
+			type: "button",
+			className: "flex min-w-0 flex-1 items-start gap-2.5 border-none bg-transparent p-0 text-left cursor-pointer",
+			onClick: t,
+			"aria-label": `Open the conversation: ${e.author} said ${e.text}`,
+			children: [/* @__PURE__ */ B(v, {
+				name: e.author,
+				size: 28,
+				...e.avatarUrl ? { src: e.avatarUrl } : {},
+				...e.color ? { color: e.color } : {}
+			}), /* @__PURE__ */ V("span", {
+				className: "min-w-0 flex-1",
+				children: [/* @__PURE__ */ V("span", {
+					className: "flex items-baseline gap-1.5",
+					children: [/* @__PURE__ */ B("span", {
+						className: "truncate text-[12px] font-semibold text-text-primary",
+						children: e.author
+					}), e.channelLabel && /* @__PURE__ */ B("span", {
+						className: "truncate text-[11px] text-text-tertiary",
+						children: e.channelLabel
+					})]
+				}), /* @__PURE__ */ B("span", {
+					className: "line-clamp-3 text-[13px] leading-snug text-text-primary",
+					children: e.text
+				})]
+			})]
+		}), /* @__PURE__ */ B("button", {
+			type: "button",
+			className: "shrink-0 border-none bg-transparent p-0.5 text-text-tertiary hover:text-text-primary cursor-pointer",
+			"aria-label": "Dismiss",
+			onClick: n,
+			"data-testid": "chat-bubble-dismiss",
+			children: "✕"
+		})]
+	});
+}
+function jt({ bubbles: e, onOpen: t, onDismiss: n, dismissAfterMs: r = 8e3, max: i = 3, className: a, "data-testid": o = "chat-bubble-stack" }) {
+	let c = e.slice(-i);
+	return c.length === 0 ? null : /* @__PURE__ */ B("div", {
+		className: s("pointer-events-none fixed bottom-4 right-4 z-[60] flex flex-col items-end gap-2", a),
+		"data-testid": o,
+		"aria-live": "polite",
+		children: c.map((e) => /* @__PURE__ */ B(At, {
+			bubble: e,
+			dismissAfterMs: r,
+			onOpen: () => t(e.id),
+			onDismiss: () => n(e.id)
+		}, e.id))
+	});
+}
+//#endregion
+export { We as A, ie as B, rt as C, $e as D, et as E, he as F, me as I, W as L, De as M, Se as N, Qe as O, ge as P, oe as R, lt as S, tt as T, ft as _, Ot as a, ct as b, vt as c, xt as d, St as f, q as g, dt as h, Ct as i, Fe as j, Ze as k, _t as l, J as m, kt as n, Et as o, K as p, Dt as r, wt as s, jt as t, yt as u, gt as v, nt as w, st as x, ht as y, ae as z };
