@@ -15,6 +15,7 @@ describe('FloatingDockBar', () => {
     expect(bar.className).toContain('fixed');
     expect(bar.style.bottom).toBe('24px');
     expect(screen.getByTestId('floating-dock-bar-body').className).toContain('pointer-events-auto');
+    expect(screen.getByTestId('floating-dock-bar-body').className).not.toContain('w-full');
     expect(screen.getByText('row')).toBeInTheDocument();
   });
 });

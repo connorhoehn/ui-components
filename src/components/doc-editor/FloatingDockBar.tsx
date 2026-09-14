@@ -47,7 +47,10 @@ export default function FloatingDockBar({
       aria-label={label}
       data-testid={testId}
     >
-      <div className="pointer-events-auto w-full max-w-5xl" data-testid={`${testId}-body`}>
+      {/* Only what is IN the bar takes the pointer: the body is as wide as its
+          content, so the page's own bottom edge — a canvas's zoom control,
+          a scrollbar — stays clickable either side of the people. */}
+      <div className="pointer-events-auto flex max-w-full justify-center" data-testid={`${testId}-body`}>
         {children}
       </div>
     </div>

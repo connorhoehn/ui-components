@@ -35,11 +35,22 @@ describe('CallTileRow', () => {
   });
 
   it('floats by default: no bar behind the tiles, controls centred beneath', () => {
-    render(<CallTileRow participants={[p('a', 'Ada')]} controls={<button type="button">Leave</button>} />);
+    render(
+      <CallTileRow
+        participants={[p('a', 'Ada', { videoElement: <video data-testid="ada-video" /> }), p('b', 'Bob', { isMuted: true })]}
+        localParticipant={p('me', 'Me', { isLocal: true })}
+        controls={<button type="button">Leave</button>}
+      />,
+    );
     const row = screen.getByTestId('call-tile-row');
     expect(row.getAttribute('data-variant')).toBe('floating');
     expect(row.className).not.toContain('bg-video-stage');
+    expect(row.className).toContain('w-fit');
+    // Camera on: a rounded video card. Camera off: an avatar bubble, muted mark and all.
     expect(screen.getByTestId('remote-tile').className).toContain('rounded-xl');
-    expect(screen.getByTestId('call-tile-row-controls')).toBeInTheDocument();
+    expect(screen.getByTestId('remote-bubble').getAttribute('data-is-muted')).toBe('true');
+    expect(screen.getByTestId('local-bubble').getAttribute('aria-label')).toBe('Me (you)');
+    // Controls are there for hover/focus, not painted over the page by default.
+    expect(screen.getByTestId('call-tile-row-controls').className).toContain('opacity-0');
   });
 });

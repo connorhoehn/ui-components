@@ -1442,7 +1442,7 @@ function Ot({ docked: e, label: t = "Call, along the bottom of the page", bottom
 		"aria-label": t,
 		"data-testid": o,
 		children: /* @__PURE__ */ X("div", {
-			className: "pointer-events-auto w-full max-w-5xl",
+			className: "pointer-events-auto flex max-w-full justify-center",
 			"data-testid": `${o}-body`,
 			children: a
 		})

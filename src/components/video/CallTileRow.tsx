@@ -7,12 +7,20 @@
 // page for width. The stage, spotlight and filmstrip of HangoutLayout are
 // for a surface the call owns; this is for one it visits.
 //
+// Floating (the default) is not a bar with the background removed. Each
+// person is their own card: a video tile when their camera is on, a small
+// avatar bubble when it is off — a dark rectangle for someone you cannot see
+// says nothing a bubble does not, at four times the size. The row is as wide
+// as the people in it, so one person over a diagram is one small tile, and
+// the controls stay out of the way until the pointer is on the row.
+//
 // Purely presentational, like ParticipantTile: the host hands in the same
 // HangoutLayoutParticipant rows it hands the grid.
 
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { ParticipantTile } from './ParticipantTile';
+import { Avatar } from '../shared/Avatar';
 import type { HangoutLayoutParticipant } from './HangoutLayoutTypes';
 
 export interface CallTileRowProps {
@@ -75,7 +83,7 @@ export function CallTileRow({
   if (variant === 'floating') {
     return (
       <div
-        className={cn('flex w-full min-w-0 flex-col items-center gap-2', className)}
+        className={cn('group/row flex w-fit max-w-full min-w-0 flex-col items-center gap-2', className)}
         style={style}
         role="group"
         aria-label={ariaLabel}
@@ -83,11 +91,37 @@ export function CallTileRow({
         data-variant="floating"
         data-tile-count={tiles.length}
       >
-        <div className="flex max-w-full items-center gap-3 overflow-x-auto px-2 pb-1" data-testid={`${testId}-tiles`}>
-          {tileNodes}
+        <div className="flex max-w-full items-end gap-3 overflow-x-auto px-2 pb-1" data-testid={`${testId}-tiles`}>
+          {tiles.map((p) =>
+            p.videoElement ? (
+              <ParticipantTile
+                key={p.id}
+                id={p.id}
+                displayName={p.displayName}
+                {...(p.avatarUrl ? { avatarUrl: p.avatarUrl } : {})}
+                isMuted={p.isMuted}
+                isLocal={p.isLocal}
+                isSpeaking={p.id === activeSpeakerId}
+                videoElement={p.videoElement}
+                {...(onParticipantClick ? { onClick: () => onParticipantClick(p.id) } : {})}
+                className={cn('shrink-0 rounded-xl shadow-lg ring-1 ring-black/10', p.id === activeSpeakerId && 'shadow-success/40')}
+                style={{ width: tileWidth }}
+              />
+            ) : (
+              <AvatarBubble
+                key={p.id}
+                participant={p}
+                speaking={p.id === activeSpeakerId}
+                {...(onParticipantClick ? { onClick: () => onParticipantClick(p.id) } : {})}
+              />
+            ),
+          )}
         </div>
         {controls && (
-          <div className="flex items-center rounded-full bg-black/55 px-1.5 py-1 shadow-md backdrop-blur-sm" data-testid={`${testId}-controls`}>
+          <div
+            className="flex items-center rounded-full bg-black/55 px-1.5 py-1 shadow-md backdrop-blur-sm transition-opacity duration-150 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100"
+            data-testid={`${testId}-controls`}
+          >
             {controls}
           </div>
         )}
@@ -114,6 +148,41 @@ export function CallTileRow({
         {tileNodes}
       </div>
       {controls && <div className="flex shrink-0 items-center" data-testid={`${testId}-controls`}>{controls}</div>}
+    </div>
+  );
+}
+
+/**
+ * A person whose camera is off: a bubble, the size of a presence avatar,
+ * with the speaking ring and the mute mark a tile would carry. The name is
+ * the tooltip and the accessible name — a label under a 44px circle is
+ * wider than the circle.
+ */
+function AvatarBubble({ participant: p, speaking, onClick }: { participant: HangoutLayoutParticipant; speaking: boolean; onClick?: () => void }) {
+  const label = `${p.displayName}${p.isLocal ? ' (you)' : ''}${p.isMuted ? ', muted' : ''}`;
+  return (
+    <div
+      className={cn(
+        'relative shrink-0 rounded-full shadow-lg ring-2 transition-shadow',
+        speaking ? 'ring-success' : 'ring-white/70',
+        onClick && 'cursor-pointer',
+      )}
+      title={label}
+      aria-label={label}
+      role={onClick ? 'button' : 'img'}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); } : undefined}
+      data-testid={p.isLocal ? 'local-bubble' : 'remote-bubble'}
+      data-peer-id={p.id}
+      data-is-muted={p.isMuted ? 'true' : 'false'}
+    >
+      <Avatar name={p.displayName} size={44} {...(p.avatarUrl ? { src: p.avatarUrl } : {})} />
+      {p.isMuted && (
+        <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-danger text-[9px] text-white ring-2 ring-white" aria-hidden="true">
+          ✕
+        </span>
+      )}
     </div>
   );
 }
