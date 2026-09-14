@@ -216,3 +216,29 @@ describe('InviteCandidateList', () => {
     ).not.toBeNull();
   });
 });
+
+describe('InviteCandidateList — a selection never outlives the invite', () => {
+  const bob = { userId: 'bob', name: 'Bob Martinez' };
+
+  it('clears the selection the moment the invite is sent', () => {
+    const onInvite = vi.fn();
+    render(<InviteCandidateList candidates={[bob]} onInvite={onInvite} />);
+    fireEvent.click(screen.getByText('Bob Martinez'));
+    expect(screen.getByTestId('invite-to-call-confirm').textContent).toContain('1 person');
+    fireEvent.click(screen.getByTestId('invite-to-call-confirm'));
+    expect(onInvite).toHaveBeenCalledWith(['bob']);
+    expect(screen.getByTestId('invite-to-call-confirm').textContent).not.toContain('1 person');
+  });
+
+  it('drops a picked person from the selection once they are already on the call', () => {
+    const onInvite = vi.fn();
+    const { rerender } = render(<InviteCandidateList candidates={[bob]} onInvite={onInvite} />);
+    fireEvent.click(screen.getByText('Bob Martinez'));
+    expect(screen.getByTestId('invite-to-call-confirm').textContent).toContain('1 person');
+    // Bob joined: his row is now "already in call" and nobody else is online.
+    rerender(<InviteCandidateList candidates={[{ ...bob, alreadyInCall: true }]} onInvite={onInvite} />);
+    expect(screen.getByTestId('invite-to-call-everyone-here')).toBeInTheDocument();
+    expect(screen.getByTestId('invite-to-call-confirm').textContent).not.toContain('1 person');
+    expect(screen.getByTestId('invite-to-call-confirm')).toBeDisabled();
+  });
+});

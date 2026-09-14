@@ -161,6 +161,25 @@ export function InviteCandidateList({
         [candidates],
     );
 
+    // A selection only ever names people who can still be invited. The one
+    // this existed for: pick Bob, ring him, he joins — his row flips to
+    // "already on this call" and the list says everyone is here, but the
+    // button still read "Invite 1 person" because the picked id lived on in
+    // state. Prune on every candidate change, not just on the reset key.
+    useEffect(() => {
+        setSelected((prev) => {
+            if (prev.size === 0) return prev;
+            const keep = new Set(invitable.map((c) => c.userId));
+            let changed = false;
+            const next = new Set<string>();
+            for (const id of prev) {
+                if (keep.has(id)) next.add(id);
+                else changed = true;
+            }
+            return changed ? next : prev;
+        });
+    }, [invitable]);
+
     // Search narrows what renders; it never touches the selection, so a
     // person picked before typing stays picked while filtered out.
     const visible = useMemo(() => {
@@ -353,7 +372,13 @@ export function InviteCandidateList({
         <Button
             variant="primary"
             size="md"
-            onClick={() => { void onInvite([...selected]); }}
+            // The ring went out: the picker starts over. Left selected, the
+            // same people were one click from being rung twice.
+            onClick={() => {
+                const ids = [...selected];
+                setSelected(new Set());
+                void onInvite(ids);
+            }}
             disabled={loading || count === 0}
             data-autofocus
             data-testid="invite-to-call-confirm"
