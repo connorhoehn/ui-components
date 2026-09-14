@@ -3607,26 +3607,28 @@ export declare interface ConsultCardProps {
     'data-testid'?: string;
 }
 
-export declare function ContextColumn({ state, onStateChange, panels, children, label, className, 'data-testid': testId, }: ContextColumnProps): JSX.Element;
+export declare function ContextColumn({ state, onStateChange, panels, activeId, onActivate, label, className, 'data-testid': testId, }: ContextColumnProps): JSX.Element | null;
 
 export declare interface ContextColumnPanel {
     id: string;
-    /** Shown as the strip icon's tooltip and accessible name. */
+    /** The tab's text and the strip icon's accessible name. */
     label: string;
     icon: ReactNode;
-    /** Unread or pending count, shown on the strip icon. */
+    /** Unread or pending count, shown on the tab and the strip icon. */
     badge?: number;
-    /** Called when the strip icon is pressed, after the column opens. */
-    onOpen?: () => void;
+    /** What the panel shows while it is the active one. */
+    content: ReactNode;
 }
 
 export declare interface ContextColumnProps {
     state: ContextColumnState;
     onStateChange: (next: ContextColumnState) => void;
-    /** What the strip shows while collapsed. Order is the strip's order. */
+    /** In tab order. Empty renders nothing at all. */
     panels: ContextColumnPanel[];
-    /** The stacked panels, when open or wide. */
-    children?: ReactNode;
+    /** Which panel is showing. Unknown or absent falls back to the first. */
+    activeId?: string | null;
+    /** A tab or a strip icon was pressed. */
+    onActivate: (id: string) => void;
     /** Accessible name of the column. Default "Side column". */
     label?: string;
     className?: string;
@@ -14758,6 +14760,25 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -14771,18 +14792,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -14816,16 +14828,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -14836,9 +14838,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -14856,12 +14861,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
