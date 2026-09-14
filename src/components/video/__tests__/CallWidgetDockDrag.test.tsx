@@ -109,56 +109,21 @@ describe('CallWidget — dock drag source', () => {
 });
 
 describe('CallWidget — "Move to…" menu (the keyboard path)', () => {
-  it('lists every target and reports the chosen one', () => {
-    const onDockTo = vi.fn();
-    renderWidget({ dockTargets: TARGETS, onDockTo });
-
-    fireEvent.click(screen.getByTestId('call-dock-menu-button'));
-
-    const items = screen.getAllByRole('menuitem');
-    expect(items.map((i) => i.textContent)).toEqual([TARGETS[0].label, TARGETS[1].label]);
-
-    fireEvent.click(items[1]);
-    expect(onDockTo).toHaveBeenCalledWith('gutter-2');
-    // Choosing closes it — the menu is a one-shot move, not a panel.
-    expect(screen.queryByTestId('call-dock-menu')).toBeNull();
-  });
-
-  it('offers Pop out only while docked, and pops out with null', () => {
-    const onDockTo = vi.fn();
-    const { rerender } = renderWidget({ dockTargets: TARGETS, onDockTo });
-
-    fireEvent.click(screen.getByTestId('call-dock-menu-button'));
-    expect(screen.queryByTestId('call-dock-pop-out')).toBeNull();
-    fireEvent.click(screen.getByTestId('call-dock-menu-button'));
-
-    rerender(
-      <CallWidget
-        state="active"
-        mode="audio"
-        participants={[]}
-        dockTargets={TARGETS}
-        activeDockId="gutter-1"
-        onDockTo={onDockTo}
-      />,
-    );
-
-    fireEvent.click(screen.getByTestId('call-dock-menu-button'));
-    fireEvent.click(screen.getByTestId('call-dock-pop-out'));
-    expect(onDockTo).toHaveBeenCalledWith(null);
-  });
-
-  it('closes on Escape', () => {
+  it('never offers a menu of destinations: the places are on the page', () => {
     renderWidget({ dockTargets: TARGETS, onDockTo: vi.fn() });
-
-    fireEvent.click(screen.getByTestId('call-dock-menu-button'));
-    fireEvent.keyDown(screen.getByTestId('call-dock-menu'), { key: 'Escape' });
-
-    expect(screen.queryByTestId('call-dock-menu')).toBeNull();
+    expect(screen.queryByTestId('call-dock-menu-button')).toBeNull();
   });
-});
 
-describe('CallWidget — docked widget belongs to the page', () => {
+  it('tells the page when a free-drag starts and ends', () => {
+    const onDragStateChange = vi.fn();
+    renderWidget({ dockTargets: TARGETS, onDockTo: vi.fn(), onDragStateChange });
+    onDragStateChange.mockClear();
+    freeDrag(screen.getByTestId('call-widget-title'), 40, 40);
+    expect(onDragStateChange).toHaveBeenLastCalledWith(true);
+    fireEvent.mouseUp(document);
+    expect(onDragStateChange).toHaveBeenLastCalledWith(false);
+  });
+
   it('does not free-drag while docked', () => {
     renderWidget({ dockTargets: TARGETS, activeDockId: 'gutter-1' });
     const widget = screen.getByTestId('call-widget');

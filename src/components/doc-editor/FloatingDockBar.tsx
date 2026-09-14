@@ -11,13 +11,35 @@
 //
 // Only a host. The row inside (CallTileRow) is the host's to portal in, the
 // same way VideoDockSlot takes the live widget as children.
+//
+// How the call gets here: by being DRAGGED. While the widget is being moved
+// the host passes `ghost`, and the bar draws a dashed band along the bottom
+// edge that names itself; the widget's pointer-drag hit-tests
+// `data-call-dock-target` on release and docks. A menu of destinations was
+// the first version and the operator was right that it is the wrong shape —
+// a place on the page should be found by moving the thing toward it.
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
 export interface FloatingDockBarProps {
-  /** True while the caller has portaled the live call into `children`. Nothing renders otherwise. */
+  /** True while the caller has portaled the live call into `children`. */
   docked: boolean;
+  /**
+   * True while the call is being DRAGGED somewhere. Not docked here, the bar
+   * shows a ghost of itself — a dashed band along the bottom edge, named —
+   * so the reader can see where the call would land and let go over it.
+   * Nothing renders when neither `docked` nor `ghost`.
+   */
+  ghost?: boolean;
+  /**
+   * The dock id the widget's pointer-drag hit-tests for. Published on the
+   * ghost as `data-call-dock-target`, which is what the widget reads on
+   * release; the ghost lights up while the widget is over it.
+   */
+  dockId?: string;
+  /** What the ghost says. */
+  ghostLabel?: string;
   /** Names the region for screen readers. */
   label?: string;
   /** Distance from the bottom edge, in px. Default 16. */
@@ -29,12 +51,40 @@ export interface FloatingDockBarProps {
 
 export default function FloatingDockBar({
   docked,
+  ghost = false,
+  dockId,
+  ghostLabel = 'Drop the call here',
   label = 'Call, along the bottom of the page',
   bottomOffset = 16,
   className,
   children,
   'data-testid': testId = 'floating-dock-bar',
 }: FloatingDockBarProps) {
+  if (!docked && ghost && dockId) {
+    return (
+      <div
+        className={cn('pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4', className)}
+        style={{ bottom: bottomOffset }}
+        data-testid={`${testId}-ghost`}
+      >
+        {/* Wide enough that a dragged widget overlaps it without aiming; the
+            hit-test picks the target with the most overlap, so a generous
+            band beats a precise one. */}
+        <div
+          className={cn(
+            'pointer-events-auto flex h-28 w-full max-w-3xl items-center justify-center rounded-2xl border-2 border-dashed',
+            'border-primary/40 bg-primary/5 text-sm font-medium text-text-secondary backdrop-blur-[2px] transition-colors duration-150',
+            'data-[pointer-over=true]:border-primary data-[pointer-over=true]:bg-primary/15 data-[pointer-over=true]:text-text-primary',
+          )}
+          data-call-dock-target={dockId}
+          role="region"
+          aria-label={ghostLabel}
+        >
+          {ghostLabel}
+        </div>
+      </div>
+    );
+  }
   if (!docked) return null;
   return (
     // The outer band spans the viewport width and lets clicks through; only

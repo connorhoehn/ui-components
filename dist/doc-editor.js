@@ -1434,17 +1434,28 @@ function Dt({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 }
 //#endregion
 //#region src/components/doc-editor/FloatingDockBar.tsx
-function Ot({ docked: e, label: t = "Call, along the bottom of the page", bottomOffset: r = 16, className: i, children: a, "data-testid": o = "floating-dock-bar" }) {
-	return e ? /* @__PURE__ */ X("div", {
-		className: n("pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4", i),
-		style: { bottom: r },
+function Ot({ docked: e, ghost: t = !1, dockId: r, ghostLabel: i = "Drop the call here", label: a = "Call, along the bottom of the page", bottomOffset: o = 16, className: s, children: c, "data-testid": l = "floating-dock-bar" }) {
+	return !e && t && r ? /* @__PURE__ */ X("div", {
+		className: n("pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4", s),
+		style: { bottom: o },
+		"data-testid": `${l}-ghost`,
+		children: /* @__PURE__ */ X("div", {
+			className: n("pointer-events-auto flex h-28 w-full max-w-3xl items-center justify-center rounded-2xl border-2 border-dashed", "border-primary/40 bg-primary/5 text-sm font-medium text-text-secondary backdrop-blur-[2px] transition-colors duration-150", "data-[pointer-over=true]:border-primary data-[pointer-over=true]:bg-primary/15 data-[pointer-over=true]:text-text-primary"),
+			"data-call-dock-target": r,
+			role: "region",
+			"aria-label": i,
+			children: i
+		})
+	}) : e ? /* @__PURE__ */ X("div", {
+		className: n("pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4", s),
+		style: { bottom: o },
 		role: "region",
-		"aria-label": t,
-		"data-testid": o,
+		"aria-label": a,
+		"data-testid": l,
 		children: /* @__PURE__ */ X("div", {
 			className: "pointer-events-auto flex max-w-full justify-center",
-			"data-testid": `${o}-body`,
-			children: a
+			"data-testid": `${l}-body`,
+			children: c
 		})
 	}) : null;
 }

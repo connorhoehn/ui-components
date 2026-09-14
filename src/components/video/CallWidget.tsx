@@ -238,6 +238,14 @@ export interface CallWidgetProps {
   activeDockId?: string | null;
   /** Fires with the destination slot id, or null to pop back out. */
   onDockTo?: (id: string | null) => void;
+  /**
+   * Fires when a free-drag of the widget starts and ends. A page uses it to
+   * show the places the call could land — a ghost of a dock along its bottom
+   * edge — only while the reader is actually moving the call toward one.
+   * The drop itself is the pointer-drag hit-test on `data-call-dock-target`;
+   * this is only the cue.
+   */
+  onDragStateChange?: (dragging: boolean) => void;
   /** Arbitrary `data-*` attributes to spread onto the root element.
    *  Lets callers (e.g. HangoutOverlay) attach e2e-friendly testids and
    *  lobby/callId metadata without an extra wrapper div that would
@@ -993,6 +1001,7 @@ export function CallWidget({
   dockTargets,
   activeDockId = null,
   onDockTo,
+  onDragStateChange,
   position = 'bottom-right',
   contained = false,
   draggable = true,
@@ -1029,7 +1038,6 @@ export function CallWidget({
   // Docked, the PAGE owns where the widget sits. Free-drag would fight the
   // slot it was just dropped into, so it is off until the call pops out.
   const freeDragEnabled = draggable && !pageDocked;
-  const [pageDockMenuOpen, setPageDockMenuOpen] = useState(false);
 
   // The call this widget is showing, when the host stamped one. `dataAttrs`
   // is already where hosts put lobby/call metadata, so the drop side gets an
@@ -1075,6 +1083,14 @@ export function CallWidget({
 
   const { offset, handleMouseDown, resetOffset, snapToCorner, isDragging, isAnimating, hasMoved, widgetRef } =
     useDrag(freeDragEnabled, handleDockOver, handlePointerDock);
+  // Tell the page. Held in a ref so a host passing a fresh arrow function
+  // each render does not re-fire the cue on every render of the widget.
+  const onDragStateChangeRef = useRef(onDragStateChange);
+  onDragStateChangeRef.current = onDragStateChange;
+  useEffect(() => {
+    onDragStateChangeRef.current?.(isDragging);
+  }, [isDragging]);
+
   // Filter undefined values so `data-x="undefined"` never leaks.
   const extraDataAttrs: Record<string, string | number> = {};
   if (dataAttrs) {
@@ -1253,83 +1269,11 @@ export function CallWidget({
                 </span>
               </div>
               <div className="flex items-center gap-1">
-                {pageDockAvailable && (
-                  <div className="relative">
-                    <button
-                      type="button"
-                      // Without this the click's mousedown starts a free-drag
-                      // and the menu opens mid-gesture.
-                      onMouseDown={(e) => e.stopPropagation()}
-                      onClick={() => setPageDockMenuOpen((open) => !open)}
-                      className={cn(
-                        'w-5 h-5 flex items-center justify-center border-none bg-transparent cursor-pointer rounded transition-colors',
-                        pageDockMenuOpen ? 'text-white' : 'text-white/40 hover:text-white/80',
-                      )}
-                      aria-haspopup="menu"
-                      aria-expanded={pageDockMenuOpen}
-                      aria-label="Move call to"
-                      title="Move call to…"
-                      data-testid="call-dock-menu-button"
-                    >
-                      {icons.dockTo}
-                    </button>
-                    {pageDockMenuOpen && (
-                      <div
-                        role="menu"
-                        aria-label="Move call to"
-                        data-testid="call-dock-menu"
-                        // Theme-invariant chrome tokens, not surface-*: this
-                        // panel sits ON the call card and its labels are
-                        // white-on-dark. See --color-call-chrome in styles.css.
-                        className="absolute right-0 top-6 z-10 min-w-[170px] overflow-hidden rounded-lg border border-call-chrome-border bg-call-chrome py-1 shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
-                        onMouseDown={(e) => e.stopPropagation()}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Escape') setPageDockMenuOpen(false);
-                        }}
-                      >
-                        {pageDockTargets.map((target) => {
-                          const current = target.id === activeDockId;
-                          return (
-                            <button
-                              key={target.id}
-                              type="button"
-                              role="menuitem"
-                              aria-current={current || undefined}
-                              className="flex w-full items-center gap-2 border-none bg-transparent px-3 py-1.5 text-left text-xs text-white/80 cursor-pointer hover:bg-white/10 transition-colors"
-                              onClick={() => {
-                                setPageDockMenuOpen(false);
-                                onDockTo?.(target.id);
-                              }}
-                            >
-                              <span className="truncate">{target.label}</span>
-                              {current && (
-                                <span className="ml-auto text-call-chrome-accent" aria-hidden>
-                                  ●
-                                </span>
-                              )}
-                            </button>
-                          );
-                        })}
-                        {/* Only an escape route once there is something to
-                            escape from — a floating call is already popped out. */}
-                        {pageDocked && (
-                          <button
-                            type="button"
-                            role="menuitem"
-                            className="mt-1 flex w-full items-center border-t border-call-chrome-border bg-transparent px-3 pb-1 pt-2 text-left text-xs text-white/80 cursor-pointer hover:bg-white/10 transition-colors"
-                            data-testid="call-dock-pop-out"
-                            onClick={() => {
-                              setPageDockMenuOpen(false);
-                              onDockTo?.(null);
-                            }}
-                          >
-                            Pop out
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
+                {/* No "move to…" menu. The places a call can go are on the
+                    page; the reader finds one by dragging the widget toward
+                    it, and the page shows a ghost of each while the drag is
+                    on. A list of destinations named places the reader could
+                    not see, and the operator was right to send it back. */}
                 {hasMoved && (
                   <button
                     type="button"

@@ -18,4 +18,21 @@ describe('FloatingDockBar', () => {
     expect(screen.getByTestId('floating-dock-bar-body').className.split(' ')).not.toContain('w-full');
     expect(screen.getByText('row')).toBeInTheDocument();
   });
+
+  it('while the call is being dragged, shows a ghost band that the widget can land on', () => {
+    render(<FloatingDockBar docked={false} ghost dockId="doc-bottom" ghostLabel="Drop the call here" />);
+    const ghost = screen.getByTestId('floating-dock-bar-ghost');
+    const target = ghost.querySelector('[data-call-dock-target="doc-bottom"]');
+    expect(target).not.toBeNull();
+    expect(target!.textContent).toBe('Drop the call here');
+    expect(target!.className).toContain('border-dashed');
+  });
+
+  it('shows no ghost without a drag, and no ghost once docked', () => {
+    const { container, rerender } = render(<FloatingDockBar docked={false} ghost={false} dockId="doc-bottom" />);
+    expect(container.firstChild).toBeNull();
+    rerender(<FloatingDockBar docked ghost dockId="doc-bottom"><span>row</span></FloatingDockBar>);
+    expect(screen.queryByTestId('floating-dock-bar-ghost')).toBeNull();
+    expect(screen.getByText('row')).toBeInTheDocument();
+  });
 });

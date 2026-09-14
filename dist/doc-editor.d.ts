@@ -944,11 +944,26 @@ export declare function findMatches(doc: TextWalkable | null | undefined, query:
     caseSensitive?: boolean;
 }): FindMatch[];
 
-export declare function FloatingDockBar({ docked, label, bottomOffset, className, children, 'data-testid': testId, }: FloatingDockBarProps): JSX.Element | null;
+export declare function FloatingDockBar({ docked, ghost, dockId, ghostLabel, label, bottomOffset, className, children, 'data-testid': testId, }: FloatingDockBarProps): JSX.Element | null;
 
 export declare interface FloatingDockBarProps {
-    /** True while the caller has portaled the live call into `children`. Nothing renders otherwise. */
+    /** True while the caller has portaled the live call into `children`. */
     docked: boolean;
+    /**
+     * True while the call is being DRAGGED somewhere. Not docked here, the bar
+     * shows a ghost of itself — a dashed band along the bottom edge, named —
+     * so the reader can see where the call would land and let go over it.
+     * Nothing renders when neither `docked` nor `ghost`.
+     */
+    ghost?: boolean;
+    /**
+     * The dock id the widget's pointer-drag hit-tests for. Published on the
+     * ghost as `data-call-dock-target`, which is what the widget reads on
+     * release; the ghost lights up while the widget is over it.
+     */
+    dockId?: string;
+    /** What the ghost says. */
+    ghostLabel?: string;
     /** Names the region for screen readers. */
     label?: string;
     /** Distance from the bottom edge, in px. Default 16. */
@@ -2141,9 +2156,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -2151,9 +2166,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -2187,16 +2202,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -2213,6 +2218,16 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
