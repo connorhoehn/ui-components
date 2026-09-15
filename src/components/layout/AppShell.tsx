@@ -4,15 +4,27 @@
 // Composes ToastProvider + optional slots into a structured chrome layout.
 // Presentational — all logic lives in the caller's props.
 
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { ToastProvider } from '../shared/ToastProvider';
 import { cn } from '../../lib/cn';
 
 export interface AppShellProps {
   /** Slot: full-height left sidebar (CollapsibleSidebar etc.) */
   sidebar?: ReactNode;
-  /** Slot: fixed top header bar */
+  /**
+   * Slot: the header row's content. The shell draws the row itself — a
+   * flex row of `headerHeight`, padded, bordered, sticky — so its height is
+   * pinned rather than derived from the tallest control in it. Every offset
+   * below (the sidebar's top, the body's minimum height) reads that one
+   * number, so a taller control can never move the anchors.
+   */
   header: ReactNode;
+  /**
+   * Slot: a second row of chrome under the header — a section band. Sticky
+   * with the header, full window width, and the sidebar hangs beneath both.
+   * Rendered only when present; its height counts only then.
+   */
+  subheader?: ReactNode;
   /** Page content */
   children: ReactNode;
   /** Slot: override default ToastProvider region (pass null to suppress) */
@@ -31,6 +43,24 @@ export interface AppShellProps {
   className?: string;
   /** Width of the sidebar slot in px (default 260) */
   sidebarWidth?: number;
+  /** The header row's height in px (default 53). Also published as `--app-shell-header-h`. */
+  headerHeight?: number;
+  /** The subheader row's height in px (default 36), counted only when `subheader` is present. */
+  subheaderHeight?: number;
+  /**
+   * Left inset of the subheader's content in px, so its tabs can share a
+   * left edge with the header's own nav rather than with whatever the
+   * sidebar's width happens to be. Default: the header's padding.
+   */
+  subheaderInset?: number;
+  /** Padding around the routed page. `none` for a full-bleed surface. Default `md`. */
+  contentPadding?: 'none' | 'md';
+  /** Classes for the sidebar column — its padding when open vs folded, say. */
+  sidebarClassName?: string;
+  /** Accessible name of the sidebar landmark. Default "App sidebar". */
+  sidebarLabel?: string;
+  sidebarTestId?: string;
+  subheaderTestId?: string;
 }
 
 function LoadingOverlay({ children }: { children?: ReactNode }) {
@@ -57,6 +87,7 @@ function LoadingOverlay({ children }: { children?: ReactNode }) {
 export function AppShell({
   sidebar,
   header,
+  subheader,
   children,
   toastRegion,
   loading,
@@ -64,12 +95,51 @@ export function AppShell({
   commandPalette,
   className,
   sidebarWidth = 260,
+  headerHeight = 53,
+  subheaderHeight = 36,
+  subheaderInset,
+  contentPadding = 'md',
+  sidebarClassName,
+  sidebarLabel = 'App sidebar',
+  sidebarTestId = 'app-sidebar',
+  subheaderTestId = 'app-subheader',
 }: AppShellProps) {
+  // The one derivation. The sidebar's top and the body's minimum height both
+  // read `--app-shell-chrome-h`; nothing below hard-codes a pixel of chrome.
+  const chromeHeight = headerHeight + (subheader ? subheaderHeight : 0);
+  const vars = {
+    '--app-shell-header-h': `${headerHeight}px`,
+    '--app-shell-chrome-h': `${chromeHeight}px`,
+  } as CSSProperties;
   const inner = (
-    <div className={cn('relative min-h-screen font-sans bg-[var(--color-surface-panel)]', className)}>
-      {/* Header — sticky, full-width */}
+    <div
+      className={cn('relative min-h-screen font-sans bg-[var(--color-surface-panel)] text-[var(--color-text-primary)]', className)}
+      style={vars}
+      data-chrome-height={chromeHeight}
+    >
+      {/* Chrome — sticky, full-width: the header row, the section band, the
+          degraded banner. One block, so the two nav rows read as one piece of
+          chrome sitting on the page. */}
       <div className="sticky top-0 z-50">
-        {header}
+        <div
+          className="flex items-center gap-4 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-6"
+          style={{ height: headerHeight }}
+          data-testid="app-shell-header"
+        >
+          {header}
+        </div>
+        {subheader && (
+          <div
+            className="border-b border-[var(--color-border)] bg-[var(--color-surface)]"
+            // Border included in the height: the tabs' own indicator overlaps
+            // this rule, so the row is exactly `subheaderHeight` and not one
+            // more — measured, a 1px seam between band and sidebar otherwise.
+            style={{ height: subheaderHeight, paddingLeft: subheaderInset, paddingRight: '1.5rem', boxSizing: 'border-box' }}
+            data-testid={subheaderTestId}
+          >
+            {subheader}
+          </div>
+        )}
         {apiDegraded && (
           <div className="border-b border-[var(--color-border)]">
             {apiDegraded}
@@ -78,22 +148,34 @@ export function AppShell({
       </div>
 
       {/* Body */}
-      <div className="flex min-h-[calc(100vh-var(--app-shell-header-h,53px))]">
+      <div className="flex min-h-[calc(100vh-var(--app-shell-chrome-h))]">
         {sidebar && (
-          <aside
-            className="shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col fixed top-[var(--app-shell-header-h,53px)] left-0 bottom-0 overflow-y-auto overflow-x-hidden z-40"
-            style={{ width: sidebarWidth }}
+          <nav
+            role="navigation"
+            aria-label={sidebarLabel}
+            data-testid={sidebarTestId}
+            className={cn(
+              'fixed left-0 bottom-0 z-40 box-border flex shrink-0 flex-col overflow-y-auto overflow-x-hidden border-r border-[var(--color-border)] bg-[var(--color-surface)] transition-[width,padding] duration-200',
+              sidebarClassName,
+            )}
+            style={{ width: sidebarWidth, top: 'var(--app-shell-chrome-h)' }}
           >
             {sidebar}
-          </aside>
+          </nav>
         )}
 
         {/* Main content — offset by sidebar when present */}
         <main
-          className="flex-1 flex flex-col min-h-0"
-          style={sidebar ? { marginLeft: sidebarWidth } : undefined}
+          className="relative z-[1] flex min-h-0 flex-1 flex-col bg-[var(--color-surface-panel)]"
+          style={sidebar ? { marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` } : undefined}
         >
-          {children}
+          <div
+            className={cn('flex min-h-0 flex-1 flex-col', contentPadding === 'md' ? 'gap-4 px-8 pb-6 pt-4' : 'gap-0 p-0')}
+            data-testid="app-shell-content"
+            data-padding={contentPadding}
+          >
+            {children}
+          </div>
         </main>
       </div>
 
