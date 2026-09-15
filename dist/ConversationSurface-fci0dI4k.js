@@ -1280,10 +1280,6 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 					")"
 				]
 			}),
-			d.length > 0 && /* @__PURE__ */ C(a, {
-				names: d,
-				className: e("mb-1 shrink-0 italic", q ? "text-white/50" : "text-text-secondary")
-			}),
 			/* @__PURE__ */ C("span", {
 				style: s,
 				role: "status",
@@ -1499,6 +1495,10 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 						" ↓"
 					]
 				})]
+			}),
+			d.length > 0 && /* @__PURE__ */ C(a, {
+				names: d,
+				className: e("mb-1 mt-1 shrink-0 italic", q ? "text-white/50" : "text-text-secondary")
 			}),
 			f ? /* @__PURE__ */ C("div", {
 				className: "shrink-0",

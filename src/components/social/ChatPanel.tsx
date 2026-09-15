@@ -744,13 +744,6 @@ export function ChatPanel({
           "Carol is typing…" instead of watching nothing happen. The two
           implementations had also already drifted — the private one wrote
           "typing..." where the shared one writes "typing…". */}
-      {typingUsers.length > 0 && (
-        <TypingIndicator
-          names={typingUsers}
-          className={cn('mb-1 shrink-0 italic', dark ? 'text-white/50' : 'text-text-secondary')}
-        />
-      )}
-
       {/* The only thing on this panel that SPEAKS. Visually hidden, never
           focusable, one sentence per arriving message. It is kept outside the
           scroller on purpose: a live region that is also the thing being
@@ -1228,6 +1221,16 @@ export function ChatPanel({
           </button>
         )}
       </div>
+
+      {/* "Carol is typing…" sits between the thread and the composer — where
+          the reply is about to appear — not at the top of the pane, where
+          on an empty channel it stood alone under the header. */}
+      {typingUsers.length > 0 && (
+        <TypingIndicator
+          names={typingUsers}
+          className={cn('mb-1 mt-1 shrink-0 italic', dark ? 'text-white/50' : 'text-text-secondary')}
+        />
+      )}
 
       {/* Input row — or whatever the host put in its place. */}
       {composer ? (
