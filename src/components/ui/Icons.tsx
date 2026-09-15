@@ -80,3 +80,13 @@ export function HistoryIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A page with a folded corner: a document, a file. */
+export function DocumentIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M9.5 2H4.5A1.5 1.5 0 0 0 3 3.5v9A1.5 1.5 0 0 0 4.5 14h7a1.5 1.5 0 0 0 1.5-1.5V5.5z" />
+      <path d="M9.5 2v3.5H13M6 9h4M6 11.5h4" />
+    </svg>
+  );
+}

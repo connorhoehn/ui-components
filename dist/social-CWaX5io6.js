@@ -14,7 +14,7 @@ import { n as C, t as w } from "./Avatar-BzicCOft.js";
 import { t as T } from "./InlineAlert-Myf3oJZf.js";
 import { t as E } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as D } from "./Select-CqVokE2v.js";
-import { A as O, L as k, R as A, T as j, k as M } from "./ConversationSurface-fci0dI4k.js";
+import { A as O, L as k, R as A, T as j, k as M } from "./ConversationSurface-BjtKI2Sw.js";
 import { t as N } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as P, t as F } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as I, t as ee } from "./composerCommands-DXer0id_.js";

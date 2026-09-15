@@ -322,7 +322,7 @@ function W(e, t) {
 	let r = e.map((e) => e.displayName).filter(Boolean).slice(0, 2), i = n - r.length, a = i === 1 ? "1 other" : `${i} others`, o;
 	return o = r.length === 0 ? n === 1 ? "Someone" : `${n} people` : i > 0 ? r.length === 1 ? `${r[0]} and ${a}` : `${r[0]}, ${r[1]} and ${a}` : r.length === 1 ? r[0] : `${r[0]} and ${r[1]}`, `${o} ${n === 1 ? t ? "is" : "was" : t ? "are" : "were"} in the call`;
 }
-function re(e, t) {
+function G(e, t) {
 	let n = e ?? "";
 	if (n === "room-setting-off") {
 		let e = t?.startsWith("room:") ? t.slice(5) : "";
@@ -330,7 +330,7 @@ function re(e, t) {
 	}
 	return n.startsWith("dm-not-opted-in") ? "Not recorded — both people must turn on 'Record my DM calls' in their profile." : "Not recorded.";
 }
-function ie({ callId: t, startedBy: n, participants: r = [], live: i = !1, durationMs: a, audioOnly: o, recorded: s, notRecordedReason: c, lobbyName: l, onJoin: u, className: d, "data-testid": p = "call-activity-card" }) {
+function re({ callId: t, startedBy: n, participants: r = [], live: i = !1, durationMs: a, audioOnly: o, recorded: s, notRecordedReason: c, lobbyName: l, onJoin: u, className: d, "data-testid": p = "call-activity-card" }) {
 	let m = !i && typeof a == "number" ? U(a) : "", h = o === void 0 ? "Call" : o ? "Audio call" : "Video call", g = i ? W(r, !0) : [n ? `${n} started a call` : "Call ended", m].filter(Boolean).join(" · ");
 	return /* @__PURE__ */ w("div", {
 		"data-testid": p,
@@ -357,7 +357,7 @@ function ie({ callId: t, startedBy: n, participants: r = [], live: i = !1, durat
 					!i && s === !1 && /* @__PURE__ */ C("span", {
 						className: "truncate text-[11px] text-text-tertiary",
 						"data-testid": `${p}-not-recorded`,
-						children: re(c, l)
+						children: G(c, l)
 					})
 				]
 			}),
@@ -387,7 +387,7 @@ function ie({ callId: t, startedBy: n, participants: r = [], live: i = !1, durat
 }
 //#endregion
 //#region src/components/social/AgentRunCard.tsx
-var ae = [
+var ie = [
 	{
 		phase: "received",
 		label: "Received"
@@ -400,21 +400,21 @@ var ae = [
 		phase: "completed",
 		label: "Updated"
 	}
-], oe = {
+], ae = {
 	received: 0,
 	running: 1,
 	awaiting_approval: 1,
 	completed: 2,
 	rejected: 2,
 	failed: 2
-}, se = {
+}, oe = {
 	received: "Received",
 	running: "Processing",
 	awaiting_approval: "Needs approval",
 	completed: "Updated",
 	rejected: "Rejected",
 	failed: "Failed"
-}, G = 6;
+}, se = 6;
 function K(e, t = 60) {
 	let n = e.trim().replace(/\s+/g, " ");
 	return n.length > t ? `${n.slice(0, t - 1).trimEnd()}…` : n;
@@ -466,7 +466,7 @@ var pe = {
 	awaiting: "bg-warning"
 };
 function me({ runId: i, instruction: a, agentName: o, requestedBy: s, command: c = "/doc", status: l, onOpenDocument: u, onOpenRun: d, result: f, onOpenResult: p, onDecide: m, suggestion: h, onReview: g, documentTitle: _, defaultExpanded: ee = !1, className: v, "data-testid": y = "agent-run-card" }) {
-	let b = l?.phase ?? "received", [S, T] = x(ee), E = b === "completed" ? l?.suggestion ?? h : void 0, D = b === "completed" ? l?.review : void 0, O = !!E && !D, k = b === "completed" && l?.noop === !0, A = b === "completed" ? l?.result ?? f : void 0, j = A?.kind === "link" && A.label ? A.label : "Open", M = u && !(A?.kind === "document" && p), N = oe[b], P = b === "failed" || b === "rejected", te = P ? "danger" : D ? D.decision === "accept" ? "success" : "neutral" : k ? "warning" : b === "completed" ? E ? "warning" : "success" : b === "awaiting_approval" ? "warning" : "info", F = D ? "Reviewed" : O ? "Suggested" : k ? "No change" : se[b], I = D ? D.byName ?? D.by : void 0, L = D ? `${D.decision === "accept" ? "Accepted" : "Rejected"} by ${I}` : void 0, R = b === "awaiting_approval", ne = b === "running" ? l?.stepLabel ? `${o} — ${l.stepLabel}` : `${o} is working via the pipeline` : R ? `Waiting for approval${l?.detail ? ` — ${l.detail}` : ""}` : L ?? l?.detail ?? (O && l?.suggestion ? `${l.suggestion.applied} ${l.suggestion.applied === 1 ? "change" : "changes"} suggested` : b === "received" ? "Received" : F), z = l?.details, B = z?.ops ?? [], V = z?.steps ?? [], H = z?.document?.title || _ || "Document", U = !!z?.document || !!u, W = z?.error ?? (b === "failed" ? l?.detail : void 0), re = fe(z), ie = `${y}-details-${i}`;
+	let b = l?.phase ?? "received", [S, T] = x(ee), E = b === "completed" ? l?.suggestion ?? h : void 0, D = b === "completed" ? l?.review : void 0, O = !!E && !D, k = b === "completed" && l?.noop === !0, A = b === "completed" ? l?.result ?? f : void 0, j = A?.kind === "link" && A.label ? A.label : "Open", M = u && !(A?.kind === "document" && p), N = ae[b], P = b === "failed" || b === "rejected", te = P ? "danger" : D ? D.decision === "accept" ? "success" : "neutral" : k ? "warning" : b === "completed" ? E ? "warning" : "success" : b === "awaiting_approval" ? "warning" : "info", F = D ? "Reviewed" : O ? "Suggested" : k ? "No change" : oe[b], I = D ? D.byName ?? D.by : void 0, L = D ? `${D.decision === "accept" ? "Accepted" : "Rejected"} by ${I}` : void 0, R = b === "awaiting_approval", ne = b === "running" ? l?.stepLabel ? `${o} — ${l.stepLabel}` : `${o} is working via the pipeline` : R ? `Waiting for approval${l?.detail ? ` — ${l.detail}` : ""}` : L ?? l?.detail ?? (O && l?.suggestion ? `${l.suggestion.applied} ${l.suggestion.applied === 1 ? "change" : "changes"} suggested` : b === "received" ? "Received" : F), z = l?.details, B = z?.ops ?? [], V = z?.steps ?? [], H = z?.document?.title || _ || "Document", U = !!z?.document || !!u, W = z?.error ?? (b === "failed" ? l?.detail : void 0), G = fe(z), re = `${y}-details-${i}`;
 	return /* @__PURE__ */ w("div", {
 		className: e("flex w-full max-w-[36rem] cursor-default flex-col gap-0.5 rounded-md border border-border bg-surface px-2 py-1 text-left text-[12px]", v),
 		"data-testid": y,
@@ -508,7 +508,7 @@ function me({ runId: i, instruction: a, agentName: o, requestedBy: s, command: c
 						size: "sm",
 						"aria-label": S ? "Hide details" : "Show details",
 						"aria-expanded": S,
-						"aria-controls": S ? ie : void 0,
+						"aria-controls": S ? re : void 0,
 						onClick: () => T((e) => !e),
 						className: "!h-5 !w-5 shrink-0 text-[10px] text-text-tertiary",
 						"data-testid": `${y}-toggle`,
@@ -527,7 +527,7 @@ function me({ runId: i, instruction: a, agentName: o, requestedBy: s, command: c
 						className: "m-0 flex shrink-0 list-none items-center gap-1 p-0",
 						"aria-label": "Run progress",
 						"data-testid": `${y}-steps`,
-						children: ae.map((t, n) => {
+						children: ie.map((t, n) => {
 							let r = P ? n < N : n < N || n === N && b === "completed", i = n === N && b !== "completed" && !P, a = P && n === N;
 							return /* @__PURE__ */ w("li", {
 								className: "flex items-center",
@@ -628,7 +628,7 @@ function me({ runId: i, instruction: a, agentName: o, requestedBy: s, command: c
 				]
 			}),
 			S && /* @__PURE__ */ w("div", {
-				id: ie,
+				id: re,
 				className: "mt-1 flex flex-col gap-2 border-t border-border pt-1.5",
 				"data-testid": `${y}-details`,
 				children: [
@@ -671,19 +671,19 @@ function me({ runId: i, instruction: a, agentName: o, requestedBy: s, command: c
 							}),
 							/* @__PURE__ */ C("ul", {
 								className: "m-0 mt-0.5 list-none p-0 text-[11px] text-text-secondary",
-								children: B.slice(0, G).map((e, t) => /* @__PURE__ */ C("li", {
+								children: B.slice(0, se).map((e, t) => /* @__PURE__ */ C("li", {
 									className: "truncate",
 									"data-op": e.op,
 									title: e.text,
 									children: le(e)
 								}, t))
 							}),
-							B.length > G && /* @__PURE__ */ w("div", {
+							B.length > se && /* @__PURE__ */ w("div", {
 								className: "text-[11px] text-text-tertiary",
 								"data-testid": `${y}-details-more-ops`,
 								children: [
 									"+",
-									B.length - G,
+									B.length - se,
 									" more"
 								]
 							})
@@ -728,10 +728,10 @@ function me({ runId: i, instruction: a, agentName: o, requestedBy: s, command: c
 								"data-testid": `${y}-details-open-result`,
 								children: j
 							}),
-							re && /* @__PURE__ */ C("span", {
+							G && /* @__PURE__ */ C("span", {
 								className: "ml-auto min-w-0 truncate",
 								"data-testid": `${y}-details-timings`,
-								children: re
+								children: G
 							})
 						]
 					})
@@ -806,11 +806,11 @@ function _e(e, t) {
 	}
 	return n.map((e) => r.get(e));
 }
-function q(e) {
+function ve(e) {
 	let t = e.mine ? ["You", ...e.names] : [...e.names];
 	return t.length === 0 ? "" : t.length === 1 ? t[0] : t.length <= 3 ? `${t.slice(0, -1).join(", ")} and ${t[t.length - 1]}` : `${t.slice(0, 2).join(", ")} and ${t.length - 2} others`;
 }
-function ve({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-testid": a = "reaction-chips" }) {
+function ye({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-testid": a = "reaction-chips" }) {
 	let o = y(() => _e(t, n), [t, n]);
 	return o.length === 0 ? null : /* @__PURE__ */ C("div", {
 		"data-testid": a,
@@ -822,7 +822,7 @@ function ve({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-t
 			"data-mine": String(t.mine),
 			"aria-pressed": t.mine,
 			"aria-label": `${t.emoji} ${t.count}${t.mine ? ", including you" : ""}`,
-			title: q(t),
+			title: ve(t),
 			onClick: () => r(t.emoji),
 			className: e("flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-xs leading-none", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", t.mine ? "border-primary bg-primary-bg text-primary-fg" : "border-border bg-surface text-text-secondary hover:bg-surface-hover"),
 			children: [/* @__PURE__ */ C("span", {
@@ -837,12 +837,12 @@ function ve({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-t
 }
 //#endregion
 //#region src/components/social/MessageActionBar.tsx
-var ye = [
+var q = [
 	"👍",
 	"🎉",
 	"❤️"
 ], be = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
-function xe({ quickReactions: t = ye, onReact: n, onOpenReactionPicker: r, onReply: i, onTogglePin: a, pinned: o = !1, onCopyLink: s, onEdit: c, onDelete: l, className: u, "data-testid": d = "message-actions" }) {
+function xe({ quickReactions: t = q, onReact: n, onOpenReactionPicker: r, onReply: i, onTogglePin: a, pinned: o = !1, onCopyLink: s, onEdit: c, onDelete: l, className: u, "data-testid": d = "message-actions" }) {
 	let f = (e, t, n, r) => /* @__PURE__ */ C("button", {
 		type: "button",
 		"aria-label": e,
@@ -940,11 +940,11 @@ function we({ quote: t, onJump: n, onDismiss: r, className: i, "data-testid": a 
 }
 //#endregion
 //#region src/components/social/ChatAttachment.tsx
-function Te(e) {
+function J(e) {
 	return typeof e.contentType == "string" && e.contentType.startsWith("image/");
 }
-function Ee({ attachment: t, src: n, onOpen: r, className: i }) {
-	let a = Te(t), o = n ?? t.preview;
+function Te({ attachment: t, src: n, onOpen: r, className: i }) {
+	let a = J(t), o = n ?? t.preview;
 	return a ? /* @__PURE__ */ w("div", {
 		"data-testid": "attachment-bubble",
 		"data-attachment-kind": "image",
@@ -988,7 +988,7 @@ function Ee({ attachment: t, src: n, onOpen: r, className: i }) {
 			onClick: r ? () => r(t) : void 0,
 			"aria-label": `Download ${t.name}`,
 			className: e("flex w-full min-w-0 items-center gap-2 rounded-lg border px-2.5 py-2 text-left", "border-[var(--color-border)] bg-[var(--color-surface-inset)]", "hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
-			children: [/* @__PURE__ */ C(J, {}), /* @__PURE__ */ w("span", {
+			children: [/* @__PURE__ */ C(Oe, {}), /* @__PURE__ */ w("span", {
 				className: "flex min-w-0 flex-col",
 				children: [/* @__PURE__ */ C("span", {
 					className: "min-w-0 break-all text-sm text-[var(--color-text-primary)]",
@@ -1001,10 +1001,10 @@ function Ee({ attachment: t, src: n, onOpen: r, className: i }) {
 		})
 	});
 }
-function De(e, t, n) {
+function Ee(e, t, n) {
 	return e.uploader ? !!t && e.uploader === t : !!n && e.actor === n;
 }
-function Oe({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
+function De({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
 	let { size: a, transferred: o, phase: s } = t, c = a > 0 ? Math.min(100, Math.round(o / a * 100)) : 0, l = s === "failed" || s === "cancelled", u = s === "failed" ? t.error ?? "Upload failed" : s === "cancelled" ? "Cancelled" : s === "verifying" ? "Verifying…" : a > 0 ? `${c}%` : _(o);
 	return /* @__PURE__ */ w("div", {
 		"data-testid": "transfer-bubble",
@@ -1018,7 +1018,7 @@ function Oe({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
 				"aria-hidden": "true",
 				"data-testid": "transfer-bubble-preview",
 				className: "h-9 w-9 shrink-0 rounded object-cover blur-[3px]"
-			}) : /* @__PURE__ */ C(J, {}),
+			}) : /* @__PURE__ */ C(Oe, {}),
 			/* @__PURE__ */ w("div", {
 				className: "flex min-w-0 grow flex-col gap-1",
 				children: [
@@ -1063,7 +1063,7 @@ function Oe({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
 		]
 	});
 }
-function J() {
+function Oe() {
 	return /* @__PURE__ */ C("svg", {
 		width: "20",
 		height: "20",
@@ -1146,21 +1146,21 @@ function Ne(e) {
 	}
 	return n;
 }
-var Y = {
+var Pe = {
 	attachments: "files",
 	html: "formatting",
 	mentions: "mentions",
 	replyTo: "the quoted reply"
 };
-function Pe(e) {
+function Fe(e) {
 	if (!e || e._truncated !== !0) return null;
 	let t = (Array.isArray(e._droppedKeys) ? e._droppedKeys : []).filter((e) => typeof e == "string");
 	return {
 		droppedKeys: t,
-		labels: t.map((e) => Y[e] ?? e)
+		labels: t.map((e) => Pe[e] ?? e)
 	};
 }
-function Fe(e) {
+function Ie(e) {
 	if (!e || e.kind !== "call") return null;
 	let t = typeof e.callId == "string" ? e.callId : "";
 	if (!t) return null;
@@ -1182,10 +1182,10 @@ function Fe(e) {
 		participants: n
 	};
 }
-function Ie(e) {
+function Le(e) {
 	if (e) return e.kind === "message" ? e.message.timestamp : e.local.timestamp;
 }
-function Le(e, t) {
+function Re(e, t) {
 	let n = e.map((e) => ({
 		kind: "message",
 		message: e
@@ -1194,7 +1194,7 @@ function Le(e, t) {
 	let r = [...t].sort((e, t) => (Date.parse(e.timestamp) || 0) - (Date.parse(t.timestamp) || 0));
 	for (let e of r) {
 		let t = Date.parse(e.timestamp), r = n.length;
-		for (; r > 0 && !Number.isNaN(t) && Date.parse(Ie(n[r - 1]) ?? "") > t;) --r;
+		for (; r > 0 && !Number.isNaN(t) && Date.parse(Le(n[r - 1]) ?? "") > t;) --r;
 		n.splice(r, 0, {
 			kind: "local",
 			local: e
@@ -1202,44 +1202,44 @@ function Le(e, t) {
 	}
 	return n;
 }
-function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, onTyping: c, typingUsers: d = [], composer: f, currentUserId: _, reactionsFor: y, onToggleReaction: T, onReply: E, onTogglePin: D, pinnedMessageIds: O, onJumpToMessage: A, highlightedMessageId: j, documentEditors: M, callParticipants: N, agentRunStatus: te, onOpenRun: F, onOpenResult: I, onDecideRun: L, onReviewRun: R, onJoinCall: ne, onOpenDocument: V, tone: U = "light", showHeader: W, fill: re, onLoadMore: ae, hasMore: oe, loadingMore: se = !1, onSendFiles: G, transfers: K = [], currentActor: ce, onCancelTransfer: le, attachmentSrc: ue, onOpenAttachment: de, acceptFiles: fe, maxFileSize: pe, onFileError: ge, emojis: _e = g }) {
-	let q = U === "dark", ye = l(), be = W ?? !(ye?.hasHeader ?? !1), Se = re ?? ye?.fillsHeight ?? !1, [Ce, Te] = x(""), J = b(null), Y = b(null), Re = !!ae && oe !== !1, Be = b(null), Ve = b(null), [X, Z] = x(!1), Q = !!G && !o, He = Le(n, r), [Ue, We] = x(0), [Ge, Ke] = x(!1), $ = b(!0), qe = b(n.length), Je = n.length + r.length + K.length, Ye = b(null), [Xe, Ze] = x(""), Qe = b(null), $e = b(!1), et = b(0);
+function Y({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, onTyping: c, typingUsers: d = [], emptyState: f, composer: _, currentUserId: y, reactionsFor: T, onToggleReaction: E, onReply: D, onTogglePin: O, pinnedMessageIds: A, onJumpToMessage: j, highlightedMessageId: M, documentEditors: N, callParticipants: te, agentRunStatus: F, onOpenRun: I, onOpenResult: L, onDecideRun: R, onReviewRun: ne, onJoinCall: V, onOpenDocument: U, tone: W = "light", showHeader: G, fill: ie, onLoadMore: ae, hasMore: oe, loadingMore: se = !1, onSendFiles: K, transfers: ce = [], currentActor: le, onCancelTransfer: ue, attachmentSrc: de, onOpenAttachment: fe, acceptFiles: pe, maxFileSize: ge, onFileError: _e, emojis: ve = g }) {
+	let q = W === "dark", be = l(), Se = G ?? !(be?.hasHeader ?? !1), Ce = ie ?? be?.fillsHeight ?? !1, [J, Oe] = x(""), Pe = b(null), Y = b(null), Be = !!ae && oe !== !1, Ve = b(null), X = b(null), [Z, Q] = x(!1), He = !!K && !o, Ue = Re(n, r), [We, Ge] = x(0), [Ke, qe] = x(!1), $ = b(!0), Je = b(n.length), Ye = n.length + r.length + ce.length, Xe = b(null), [Ze, Qe] = x(""), $e = b(null), et = b(!1), tt = b(0);
 	v(() => {
 		let e = n[n.length - 1];
 		if (!e) return;
 		let t = e.id ?? `${e.timestamp}:${e.clientId}:${e.content}`;
-		if (!$e.current) {
-			$e.current = !0, Qe.current = t;
+		if (!et.current) {
+			et.current = !0, $e.current = t;
 			return;
 		}
-		if (t === Qe.current || (Qe.current = t, _ && e.userId === _)) return;
-		et.current += 1;
-		let r = et.current % 2 == 0 ? "​" : "";
-		Ze(je(e.displayName ?? e.clientId.slice(0, 8), e.content) + r);
-	}, [n, _]);
-	function tt() {
-		let e = J.current;
-		e && (e.scrollTop = e.scrollHeight, $.current = !0, We(0));
-	}
+		if (t === $e.current || ($e.current = t, y && e.userId === y)) return;
+		tt.current += 1;
+		let r = tt.current % 2 == 0 ? "​" : "";
+		Qe(je(e.displayName ?? e.clientId.slice(0, 8), e.content) + r);
+	}, [n, y]);
 	function nt() {
-		let e = J.current;
+		let e = Pe.current;
+		e && (e.scrollTop = e.scrollHeight, $.current = !0, Ge(0));
+	}
+	function rt() {
+		let e = Pe.current;
 		if (!e) return;
 		let t = Ae(e);
-		$.current = t, t && We(0), Ke(e.scrollTop > 8);
+		$.current = t, t && Ge(0), qe(e.scrollTop > 8);
 	}
 	v(() => {
-		let e = J.current, t = qe.current, n = Je - t;
-		if (qe.current = Je, !e) return;
-		let r = Ye.current;
+		let e = Pe.current, t = Je.current, n = Ye - t;
+		if (Je.current = Ye, !e) return;
+		let r = Xe.current;
 		if (r && n > 0) {
-			Ye.current = null, e.scrollTop = r.scrollTop + (e.scrollHeight - r.scrollHeight);
+			Xe.current = null, e.scrollTop = r.scrollTop + (e.scrollHeight - r.scrollHeight);
 			return;
 		}
-		$.current ? (e.scrollTop = e.scrollHeight, We(0), Ke(e.scrollTop > 8)) : n > 0 && We((e) => e + n);
-	}, [Je]);
-	function rt() {
-		let e = J.current;
-		e && (Ye.current = {
+		$.current ? (e.scrollTop = e.scrollHeight, Ge(0), qe(e.scrollTop > 8)) : n > 0 && Ge((e) => e + n);
+	}, [Ye]);
+	function it() {
+		let e = Pe.current;
+		e && (Xe.current = {
 			scrollHeight: e.scrollHeight,
 			scrollTop: e.scrollTop
 		}), ae?.();
@@ -1247,32 +1247,32 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 	v(() => () => {
 		Y.current && clearTimeout(Y.current);
 	}, []);
-	function it() {
-		let e = Ce.trim();
-		!e || o || (Y.current && clearTimeout(Y.current), Y.current = null, c?.(!1), $.current = !0, i(e), Te(""));
-	}
-	function at(e) {
-		!Q || e.length === 0 || ($.current = !0, G?.(e));
+	function at() {
+		let e = J.trim();
+		!e || o || (Y.current && clearTimeout(Y.current), Y.current = null, c?.(!1), $.current = !0, i(e), Oe(""));
 	}
 	function ot(e) {
-		if (!Q) return;
-		let t = Array.from(e.clipboardData?.items ?? []).filter((e) => e.kind === "file").map((e) => e.getAsFile()).filter((e) => e !== null);
-		t.length !== 0 && (e.preventDefault(), at(t));
+		!He || e.length === 0 || ($.current = !0, K?.(e));
 	}
 	function st(e) {
-		Te((t) => t + e), Z(!1);
+		if (!He) return;
+		let t = Array.from(e.clipboardData?.items ?? []).filter((e) => e.kind === "file").map((e) => e.getAsFile()).filter((e) => e !== null);
+		t.length !== 0 && (e.preventDefault(), ot(t));
 	}
-	function ct() {
+	function ct(e) {
+		Oe((t) => t + e), Q(!1);
+	}
+	function lt() {
 		o || (c?.(!0), Y.current && clearTimeout(Y.current), Y.current = setTimeout(() => c?.(!1), 2e3));
 	}
-	function lt(e) {
-		ct(), e.key === "Enter" && !o && Ce.trim() && it();
+	function ut(e) {
+		lt(), e.key === "Enter" && !o && J.trim() && at();
 	}
-	let ut = /* @__PURE__ */ w("div", {
+	let dt = /* @__PURE__ */ w("div", {
 		"data-testid": "chat-panel",
-		className: e(Se ? "flex h-full min-h-0 flex-col px-3 pb-3 pt-2" : e("border rounded p-3 mt-4", q ? "border-white/10 bg-white/5" : "border-border")),
+		className: e(Ce ? "flex h-full min-h-0 flex-col px-3 pb-3 pt-2" : e("border rounded p-3 mt-4", q ? "border-white/10 bg-white/5" : "border-border")),
 		children: [
-			be && /* @__PURE__ */ w("div", {
+			Se && /* @__PURE__ */ w("div", {
 				className: e("text-sm font-semibold mb-2 shrink-0", q ? "text-white/90" : "text-text-primary"),
 				children: [
 					"Chat (",
@@ -1285,40 +1285,40 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 				role: "status",
 				"aria-live": "polite",
 				"data-testid": "chat-panel-announcer",
-				children: Xe
+				children: Ze
 			}),
 			/* @__PURE__ */ w("div", {
-				className: e("relative flex flex-col mb-2", Se ? "min-h-0 flex-1" : ""),
+				className: e("relative flex flex-col mb-2", Ce ? "min-h-0 flex-1" : ""),
 				children: [/* @__PURE__ */ C("div", {
-					ref: J,
-					onScroll: nt,
+					ref: Pe,
+					onScroll: rt,
 					"data-testid": "chat-panel-messages",
 					role: "log",
 					"aria-live": "off",
 					"aria-label": "Message history",
 					tabIndex: 0,
-					className: e("scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset rounded", Ge && "fade-top", Se ? "min-h-0 flex-1" : "max-h-[200px]"),
+					className: e("scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset rounded", Ke && "fade-top", Ce ? "min-h-0 flex-1" : "max-h-[200px]"),
 					children: /* @__PURE__ */ w("div", {
 						className: "mt-auto",
 						children: [
-							Re && n.length > 0 && /* @__PURE__ */ C("div", {
+							Be && n.length > 0 && /* @__PURE__ */ C("div", {
 								className: "flex justify-center pb-1",
 								children: /* @__PURE__ */ C("button", {
 									type: "button",
 									"data-testid": "chat-panel-load-more",
-									onClick: rt,
+									onClick: it,
 									disabled: se,
 									className: e("rounded px-2 py-1 text-xs disabled:opacity-60", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", q ? "text-white/70 hover:bg-white/10" : "text-text-secondary hover:bg-surface-hover"),
 									children: se ? "Loading…" : "Load earlier messages"
 								})
 							}),
-							He.length === 0 ? /* @__PURE__ */ C("div", {
+							Ue.length === 0 ? f ?? /* @__PURE__ */ C("div", {
 								className: e("text-sm", q ? "text-white/40" : "text-text-secondary"),
 								children: "No messages yet"
-							}) : He.map((n, r) => {
-								let i = Ie(He[r - 1]), a = n.kind === "message" ? n.message.timestamp : n.local.timestamp, o = k(a, i) ? /* @__PURE__ */ C(ke, {
+							}) : Ue.map((n, r) => {
+								let i = Le(Ue[r - 1]), a = n.kind === "message" ? n.message.timestamp : n.local.timestamp, o = k(a, i) ? /* @__PURE__ */ C(ke, {
 									timestamp: a,
-									tone: U
+									tone: W
 								}, `day:${a}:${r}`) : null;
 								if (n.kind === "local") {
 									let r = n.local, i = he(r.metadata);
@@ -1329,7 +1329,7 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 										children: /* @__PURE__ */ C(P, {
 											author: r.displayName,
 											timestamp: r.timestamp,
-											tone: U,
+											tone: W,
 											mine: !0,
 											content: /* @__PURE__ */ w(S, { children: [
 												i ? /* @__PURE__ */ C(me, {
@@ -1338,18 +1338,18 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 													command: i.command,
 													agentName: i.agentName,
 													requestedBy: r.displayName,
-													status: te?.(i.runId),
-													onOpenDocument: V && i.documentId ? () => V(i.documentId) : void 0,
+													status: F?.(i.runId),
+													onOpenDocument: U && i.documentId ? () => U(i.documentId) : void 0,
 													documentTitle: i.documentTitle,
-													onOpenRun: F,
+													onOpenRun: I,
 													result: i.result,
-													onOpenResult: I,
-													onDecide: L,
+													onOpenResult: L,
+													onDecide: R,
 													suggestion: i.suggestionKey ? {
 														key: i.suggestionKey,
 														...i.documentId ? { documentId: i.documentId } : {}
 													} : void 0,
-													onReview: R
+													onReview: ne
 												}) : /* @__PURE__ */ C(z, { text: r.content }),
 												/* @__PURE__ */ C("div", {
 													"data-testid": "chat-local-message-note",
@@ -1374,66 +1374,66 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 								let { message: s } = n, c = s.displayName ?? s.clientId.slice(0, 8), l = s.attachments ?? [], u = s.metadata?.html, d = typeof u == "string" ? u : void 0, f = /* @__PURE__ */ C(z, {
 									html: d,
 									text: s.content
-								}), p = Me(s.metadata), m = he(s.metadata), h = Fe(s.metadata), g = Pe(s.metadata), v = Ne(s.metadata), b = m ? /* @__PURE__ */ C(me, {
+								}), p = Me(s.metadata), m = he(s.metadata), h = Ie(s.metadata), g = Fe(s.metadata), _ = Ne(s.metadata), v = m ? /* @__PURE__ */ C(me, {
 									runId: m.runId,
 									instruction: m.instruction || s.content.replace(/^\/doc\s*/i, ""),
 									command: m.command,
 									agentName: m.agentName,
 									requestedBy: s.displayName,
-									status: te?.(m.runId),
-									onOpenDocument: V && m.documentId ? () => V(m.documentId) : void 0,
+									status: F?.(m.runId),
+									onOpenDocument: U && m.documentId ? () => U(m.documentId) : void 0,
 									documentTitle: m.documentTitle,
-									onOpenRun: F,
+									onOpenRun: I,
 									result: m.result,
-									onOpenResult: I,
-									onDecide: L,
+									onOpenResult: L,
+									onDecide: R,
 									suggestion: m.suggestionKey ? {
 										key: m.suggestionKey,
 										...m.documentId ? { documentId: m.documentId } : {}
 									} : void 0,
-									onReview: R
-								}) : h ? /* @__PURE__ */ C(ie, {
+									onReview: ne
+								}) : h ? /* @__PURE__ */ C(re, {
 									callId: h.callId,
 									startedBy: (typeof s.metadata?.displayName == "string" ? s.metadata.displayName : void 0) ?? s.displayName,
-									participants: N?.(h.callId) ?? h.participants,
+									participants: te?.(h.callId) ?? h.participants,
 									live: h.live,
 									durationMs: h.durationMs,
 									audioOnly: h.audioOnly,
 									recorded: h.recorded,
 									notRecordedReason: h.notRecordedReason,
 									lobbyName: h.lobbyName,
-									onJoin: ne
+									onJoin: V
 								}) : p ? /* @__PURE__ */ C(B, {
 									documentId: p.documentId,
 									title: p.title || s.content,
 									icon: p.icon,
 									createdBy: p.createdBy ?? (typeof s.metadata?.displayName == "string" ? s.metadata.displayName : void 0) ?? s.displayName,
-									editors: M?.(p.documentId) ?? [],
-									onOpen: V
-								}) : l.length === 0 ? f : /* @__PURE__ */ w(S, { children: [(s.content || d) && f, l.map((e) => /* @__PURE__ */ C(Ee, {
+									editors: N?.(p.documentId) ?? [],
+									onOpen: U
+								}) : l.length === 0 ? f : /* @__PURE__ */ w(S, { children: [(s.content || d) && f, l.map((e) => /* @__PURE__ */ C(Te, {
 									attachment: e,
-									src: ue?.(e),
-									onOpen: de
-								}, e.id))] }), x = s.id ?? "", W = x && y ? y(x) : [], re = s.metadata?.replyTo, ae = !!x && !!O?.has(x), oe = !!_ && s.userId === _, se = s.metadata?.system === !0, G = /* @__PURE__ */ w(S, { children: [
-									re && /* @__PURE__ */ C(we, {
-										quote: re,
-										onJump: A,
+									src: de?.(e),
+									onOpen: fe
+								}, e.id))] }), b = s.id ?? "", x = b && T ? T(b) : [], G = s.metadata?.replyTo, ie = !!b && !!A?.has(b), ae = !!y && s.userId === y, oe = s.metadata?.system === !0, se = /* @__PURE__ */ w(S, { children: [
+									G && /* @__PURE__ */ C(we, {
+										quote: G,
+										onJump: j,
 										className: "mb-1"
 									}),
-									ae && /* @__PURE__ */ C("span", {
+									ie && /* @__PURE__ */ C("span", {
 										className: "mb-0.5 block text-[11px] text-text-tertiary",
 										"data-testid": "pinned-marker",
 										children: "📌 Pinned"
 									}),
-									b,
-									v.length > 0 && /* @__PURE__ */ C("div", {
+									v,
+									_.length > 0 && /* @__PURE__ */ C("div", {
 										className: "mt-1 flex flex-wrap gap-1",
 										"data-testid": "chat-message-docrefs",
-										children: v.map((e) => /* @__PURE__ */ C(H, {
+										children: _.map((e) => /* @__PURE__ */ C(H, {
 											documentId: e.id,
 											label: e.label,
 											icon: e.icon,
-											onOpen: V
+											onOpen: U
 										}, e.id))
 									}),
 									g && /* @__PURE__ */ w("div", {
@@ -1445,53 +1445,53 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 											g.labels.length > 0 ? `Too large to send: ${g.labels.join(", ")}` : "Part of this message was too large to send"
 										]
 									}),
-									W.length > 0 && _ && T && /* @__PURE__ */ C(ve, {
-										reactions: W,
-										currentUserId: _,
-										onToggle: (e) => T(x, e)
+									x.length > 0 && y && E && /* @__PURE__ */ C(ye, {
+										reactions: x,
+										currentUserId: y,
+										onToggle: (e) => E(b, e)
 									})
 								] });
 								return /* @__PURE__ */ w(ee, { children: [o, /* @__PURE__ */ w("div", {
 									"data-testid": "chat-message",
-									"data-message-id": x || void 0,
-									className: e("group relative rounded-md", x && x === j && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
+									"data-message-id": b || void 0,
+									className: e("group relative rounded-md", b && b === M && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
 									children: [/* @__PURE__ */ C(P, {
 										author: c,
-										content: G,
+										content: se,
 										timestamp: s.timestamp,
 										avatarUrl: s.avatarUrl,
-										tone: U,
-										mine: oe
-									}), x && (T || !se && (E || D)) && /* @__PURE__ */ C(xe, {
-										className: e("absolute -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100", oe ? "right-14" : "left-14"),
-										onReact: T ? (e) => T(x, e) : void 0,
-										onReply: E && !se ? () => E(s) : void 0,
-										onTogglePin: D && !se ? () => D(s) : void 0,
-										pinned: ae
+										tone: W,
+										mine: ae
+									}), b && (E || !oe && (D || O)) && /* @__PURE__ */ C(xe, {
+										className: e("absolute -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100", ae ? "right-14" : "left-14"),
+										onReact: E ? (e) => E(b, e) : void 0,
+										onReply: D && !oe ? () => D(s) : void 0,
+										onTogglePin: O && !oe ? () => O(s) : void 0,
+										pinned: ie
 									})]
 								})] }, s.id ?? r);
 							}),
-							K.map((e) => /* @__PURE__ */ C(P, {
+							ce.map((e) => /* @__PURE__ */ C(P, {
 								author: e.actor,
 								timestamp: "",
-								tone: U,
-								content: /* @__PURE__ */ C(Oe, {
+								tone: W,
+								content: /* @__PURE__ */ C(De, {
 									transfer: e,
-									mine: De(e, _, ce),
-									onCancel: le
+									mine: Ee(e, y, le),
+									onCancel: ue
 								})
 							}, e.transferId))
 						]
 					})
-				}), Ue > 0 && /* @__PURE__ */ w("button", {
+				}), We > 0 && /* @__PURE__ */ w("button", {
 					type: "button",
 					"data-testid": "chat-panel-new-messages",
-					onClick: tt,
+					onClick: nt,
 					className: e("absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs shadow-md", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", q ? "bg-white/20 text-white" : "bg-primary text-white"),
 					children: [
-						Ue,
+						We,
 						" new message",
-						Ue === 1 ? "" : "s",
+						We === 1 ? "" : "s",
 						" ↓"
 					]
 				})]
@@ -1500,41 +1500,41 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 				names: d,
 				className: e("mb-1 mt-1 shrink-0 italic", q ? "text-white/50" : "text-text-secondary")
 			}),
-			f ? /* @__PURE__ */ C("div", {
+			_ ? /* @__PURE__ */ C("div", {
 				className: "shrink-0",
 				"data-testid": "chat-panel-composer-slot",
-				onKeyDownCapture: c ? ct : void 0,
-				children: f
+				onKeyDownCapture: c ? lt : void 0,
+				children: _
 			}) : /* @__PURE__ */ w("div", {
 				className: "flex flex-row items-center gap-2 shrink-0",
 				children: [
-					G && /* @__PURE__ */ w(S, { children: [/* @__PURE__ */ C("button", {
+					K && /* @__PURE__ */ w(S, { children: [/* @__PURE__ */ C("button", {
 						type: "button",
 						"data-testid": "chat-panel-attach",
 						"aria-label": "Attach a file",
 						title: "Attach a file",
-						disabled: !Q,
-						onClick: () => Be.current?.click(),
+						disabled: !He,
+						onClick: () => Ve.current?.click(),
 						className: e("shrink-0 rounded p-1.5 disabled:opacity-40", q ? "text-white/60 hover:bg-white/10" : "text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
 						children: /* @__PURE__ */ C(ze, {})
 					}), /* @__PURE__ */ C(p, {
-						ref: Be,
+						ref: Ve,
 						multiple: !0,
-						accept: fe,
+						accept: pe,
 						onFiles: (e) => {
-							let t = pe ? e.filter((e) => e.size > pe) : [];
-							t.length > 0 && ge?.(`Skipped ${t.length} file(s) over the size limit.`), at(e.filter((e) => !t.includes(e)));
+							let t = ge ? e.filter((e) => e.size > ge) : [];
+							t.length > 0 && _e?.(`Skipped ${t.length} file(s) over the size limit.`), ot(e.filter((e) => !t.includes(e)));
 						}
 					})] }),
 					/* @__PURE__ */ C("button", {
-						ref: Ve,
+						ref: X,
 						type: "button",
 						"data-testid": "chat-panel-emoji",
 						"aria-label": "Insert emoji",
-						"aria-expanded": X,
+						"aria-expanded": Z,
 						title: "Insert emoji",
 						disabled: o,
-						onClick: () => Z((e) => !e),
+						onClick: () => Q((e) => !e),
 						className: e("shrink-0 rounded p-1.5 text-base leading-none disabled:opacity-40", q ? "hover:bg-white/10" : "hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
 						children: /* @__PURE__ */ C("span", {
 							"aria-hidden": "true",
@@ -1542,18 +1542,18 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 						})
 					}),
 					/* @__PURE__ */ C(m, {
-						open: X,
-						onSelect: st,
-						onClose: () => Z(!1),
-						triggerRef: Ve,
-						emojis: _e
+						open: Z,
+						onSelect: ct,
+						onClose: () => Q(!1),
+						triggerRef: X,
+						emojis: ve
 					}),
 					/* @__PURE__ */ C(u, {
 						size: "sm",
-						value: Ce,
-						onChange: (e) => Te(e.target.value),
-						onKeyDown: lt,
-						onPaste: ot,
+						value: J,
+						onChange: (e) => Oe(e.target.value),
+						onKeyDown: ut,
+						onPaste: st,
 						disabled: o,
 						placeholder: o ? "Not connected" : "Type a message...",
 						className: e("flex-1 text-sm", q && "border-white/20 bg-white/10 text-white placeholder:text-white/35 focus:border-white/40 focus:bg-white/10 focus:ring-white/20")
@@ -1561,8 +1561,8 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 					/* @__PURE__ */ C(t, {
 						variant: "primary",
 						size: "sm",
-						onClick: it,
-						disabled: o || !Ce.trim(),
+						onClick: at,
+						disabled: o || !J.trim(),
 						className: "text-sm px-3 shrink-0",
 						children: "Send"
 					})
@@ -1570,15 +1570,15 @@ function Re({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 			})
 		]
 	});
-	return G ? /* @__PURE__ */ C(h, {
-		onFiles: at,
-		accept: fe,
-		maxSize: pe,
-		onError: ge,
+	return K ? /* @__PURE__ */ C(h, {
+		onFiles: ot,
+		accept: pe,
+		maxSize: ge,
+		onError: _e,
 		disabled: o,
-		className: Se ? "flex h-full min-h-0 flex-col" : void 0,
-		children: ut
-	}) : ut;
+		className: Ce ? "flex h-full min-h-0 flex-col" : void 0,
+		children: dt
+	}) : dt;
 }
 function ze() {
 	return /* @__PURE__ */ C("svg", {
@@ -1744,7 +1744,7 @@ function Ue({ files: e, thumbnailSrc: t, onJump: n, className: r, "data-testid":
 			title: "No files here yet",
 			description: "Drag a file into the conversation and it will show up in this list."
 		}) : e.map((e) => {
-			let r = t?.(e.attachment) ?? e.attachment.preview, i = Te(e.attachment);
+			let r = t?.(e.attachment) ?? e.attachment.preview, i = J(e.attachment);
 			return /* @__PURE__ */ C(X, {
 				"data-testid": "channel-file",
 				leading: i && r ? /* @__PURE__ */ C("img", {
@@ -1812,7 +1812,7 @@ function Ke(e) {
 	let n = e.participantCount ?? 0;
 	return n > 0 ? `${n} ${n === 1 ? "person" : "people"}` : "";
 }
-function $({ recordings: e, onOpen: t, className: n, "data-testid": r = "channel-recordings-panel" }) {
+function qe({ recordings: e, onOpen: t, className: n, "data-testid": r = "channel-recordings-panel" }) {
 	return /* @__PURE__ */ C(Q, {
 		empty: e.length === 0,
 		className: n,
@@ -1842,7 +1842,7 @@ function $({ recordings: e, onOpen: t, className: n, "data-testid": r = "channel
 		})
 	});
 }
-function qe({ documents: t, onOpen: n, onCreate: r, className: a, "data-testid": o = "channel-documents-panel" }) {
+function $({ documents: t, onOpen: n, onCreate: r, className: a, "data-testid": o = "channel-documents-panel" }) {
 	let s = r && /* @__PURE__ */ w("button", {
 		type: "button",
 		onClick: r,
@@ -1965,7 +1965,7 @@ function Xe({ name: t, description: r, online: i, avatarUrl: a, features: s = Je
 				thumbnailSrc: f,
 				onJump: T ? W : void 0
 			}),
-			L.has("documents") && B === "documents" && /* @__PURE__ */ C(qe, {
+			L.has("documents") && B === "documents" && /* @__PURE__ */ C($, {
 				className: "min-h-0 flex-1",
 				documents: p,
 				onOpen: m,
@@ -1984,7 +1984,7 @@ function Xe({ name: t, description: r, online: i, avatarUrl: a, features: s = Je
 					V("chat"), v(e, t);
 				} : void 0
 			}),
-			L.has("calls") && B === "calls" && /* @__PURE__ */ C($, {
+			L.has("calls") && B === "calls" && /* @__PURE__ */ C(qe, {
 				className: "min-h-0 flex-1",
 				recordings: y,
 				onOpen: b
@@ -2032,4 +2032,4 @@ function Ze({ testId: e, label: n, hint: r, viewerCount: i, onClick: a }) {
 }
 var Qe = "Watch without joining — near-realtime, scales to any audience, and you are not on camera.";
 //#endregion
-export { le as A, A as B, q as C, he as D, me as E, B as F, D as G, M as H, z as I, P as L, W as M, U as N, ge as O, H as P, N as R, ve as S, pe as T, k as U, j as V, E as W, Oe as _, We as a, Se as b, Ge as c, Fe as d, Me as f, Ee as g, ke as h, Ue as i, ie as j, fe as k, Ve as l, Pe as m, Xe as n, $ as o, Ne as p, qe as r, He as s, Je as t, Re as u, Te as v, _e as w, xe as x, we as y, O as z };
+export { le as A, A as B, ve as C, he as D, me as E, B as F, D as G, M as H, z as I, P as L, W as M, U as N, ge as O, H as P, N as R, ye as S, pe as T, k as U, j as V, E as W, De as _, We as a, Se as b, Ge as c, Ie as d, Me as f, Te as g, ke as h, Ue as i, re as j, fe as k, Ve as l, Fe as m, Xe as n, qe as o, Ne as p, $ as r, He as s, Je as t, Y as u, J as v, _e as w, xe as x, we as y, O as z };

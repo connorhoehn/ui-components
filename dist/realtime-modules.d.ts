@@ -734,6 +734,13 @@ declare interface ChatPanelProps {
     disabled?: boolean;
     onTyping?: (isTyping: boolean) => void;
     typingUsers?: string[];
+    /**
+     * What stands where the thread will be while there is none: an intro
+     * ("This is the start of your conversation with Carol"), not the bare
+     * "No messages yet" line. Sits where the first message will land, so the
+     * eye is already in the right place.
+     */
+    emptyState?: ReactNode;
     /** Surface the panel renders on. 'light' (default) keeps the theme
      *  tokens; 'dark' swaps to white/alpha classes for dark call chrome
      *  (e.g. inside a FloatingPanel next to the call widget) — without it
