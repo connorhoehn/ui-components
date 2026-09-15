@@ -2194,6 +2194,15 @@ var yt = {
 		group: "navigate"
 	},
 	{
+		command: "leave-pane",
+		leaderKey: "q",
+		key: "Escape",
+		shift: !0,
+		label: "⇧esc",
+		description: "Leave the focused pane for the prompt bar — the keyboard way out of a terminal",
+		group: "navigate"
+	},
+	{
 		command: "toggle-broadcast",
 		leaderKey: "s",
 		key: "b",
@@ -3131,6 +3140,9 @@ function Ht({ open: t, onClose: r, focusComputerId: i = null, variant: a = "over
 				I(!0);
 				return;
 			case "focus-composer":
+				B.current?.focus();
+				return;
+			case "leave-pane":
 				B.current?.focus();
 				return;
 			case "focus-rail": {

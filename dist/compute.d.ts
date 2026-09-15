@@ -752,7 +752,7 @@ export declare interface LabChooserProps {
     chrome?: ChromeTone;
 }
 
-export declare type LabCommand = 'focus-left' | 'focus-right' | 'focus-up' | 'focus-down' | 'split-right' | 'split-down' | 'close-pane' | 'zoom-pane' | 'next-kind' | 'jump' | 'toggle-broadcast' | 'focus-composer' | 'focus-rail' | 'help' | 'exit';
+export declare type LabCommand = 'focus-left' | 'focus-right' | 'focus-up' | 'focus-down' | 'split-right' | 'split-down' | 'close-pane' | 'zoom-pane' | 'next-kind' | 'jump' | 'toggle-broadcast' | 'focus-composer' | 'focus-rail' | 'leave-pane' | 'help' | 'exit';
 
 /** Look up a chord's display label, for a button's tooltip. */
 export declare function labelFor(keymap: readonly KeyBinding[], command: LabCommand): string | null;
@@ -1672,9 +1672,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -1688,6 +1688,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -1721,29 +1731,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
