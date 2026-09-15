@@ -39,6 +39,22 @@ describe('StepAttempts', () => {
     expect(screen.getByText('boom')).toBeInTheDocument();
   });
 
+  it('counts an attempt with an EMPTY error as the failure it is', () => {
+    // A thrown value with no message (an AggregateError from a refused
+    // connection) produced three attempts with `error: ''`, and the history
+    // read "succeeded on attempt 3 after 0 failures" over a step that failed.
+    render(
+      <StepAttempts
+        attempts={[
+          attempt({ attemptNumber: 1, durationMs: 150, error: '', retryAfterMs: 1500 }),
+          attempt({ attemptNumber: 2, durationMs: 150, error: '' }),
+        ]}
+      />,
+    );
+    expect(screen.getByText('2 attempts, all failed')).toBeInTheDocument();
+    expect(screen.getAllByText('Failed without a message')).toHaveLength(2);
+  });
+
   it('shows the error and errorCategory of an earlier failed attempt', () => {
     render(
       <StepAttempts

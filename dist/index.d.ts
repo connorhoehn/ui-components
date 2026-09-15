@@ -868,13 +868,25 @@ export declare interface Approver {
  * AppShell wraps its children in a ToastProvider by default.
  * Pass `toastRegion={null}` to opt out (e.g. parent already has one).
  */
-export declare function AppShell({ sidebar, header, children, toastRegion, loading, apiDegraded, commandPalette, className, sidebarWidth, }: AppShellProps): JSX.Element;
+export declare function AppShell({ sidebar, header, subheader, children, toastRegion, loading, apiDegraded, commandPalette, className, sidebarWidth, headerHeight, subheaderHeight, subheaderInset, contentPadding, sidebarClassName, sidebarLabel, sidebarTestId, subheaderTestId, }: AppShellProps): JSX.Element;
 
 export declare interface AppShellProps {
     /** Slot: full-height left sidebar (CollapsibleSidebar etc.) */
     sidebar?: ReactNode;
-    /** Slot: fixed top header bar */
+    /**
+     * Slot: the header row's content. The shell draws the row itself — a
+     * flex row of `headerHeight`, padded, bordered, sticky — so its height is
+     * pinned rather than derived from the tallest control in it. Every offset
+     * below (the sidebar's top, the body's minimum height) reads that one
+     * number, so a taller control can never move the anchors.
+     */
     header: ReactNode;
+    /**
+     * Slot: a second row of chrome under the header — a section band. Sticky
+     * with the header, full window width, and the sidebar hangs beneath both.
+     * Rendered only when present; its height counts only then.
+     */
+    subheader?: ReactNode;
     /** Page content */
     children: ReactNode;
     /** Slot: override default ToastProvider region (pass null to suppress) */
@@ -893,6 +905,24 @@ export declare interface AppShellProps {
     className?: string;
     /** Width of the sidebar slot in px (default 260) */
     sidebarWidth?: number;
+    /** The header row's height in px (default 53). Also published as `--app-shell-header-h`. */
+    headerHeight?: number;
+    /** The subheader row's height in px (default 36), counted only when `subheader` is present. */
+    subheaderHeight?: number;
+    /**
+     * Left inset of the subheader's content in px, so its tabs can share a
+     * left edge with the header's own nav rather than with whatever the
+     * sidebar's width happens to be. Default: the header's padding.
+     */
+    subheaderInset?: number;
+    /** Padding around the routed page. `none` for a full-bleed surface. Default `md`. */
+    contentPadding?: 'none' | 'md';
+    /** Classes for the sidebar column — its padding when open vs folded, say. */
+    sidebarClassName?: string;
+    /** Accessible name of the sidebar landmark. Default "App sidebar". */
+    sidebarLabel?: string;
+    sidebarTestId?: string;
+    subheaderTestId?: string;
 }
 
 export declare function ArtifactTile({ name, type, url }: {
@@ -14917,28 +14947,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -14972,9 +14983,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -14982,9 +14996,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -15002,12 +15016,28 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

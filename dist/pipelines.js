@@ -19071,7 +19071,7 @@ var Nu = {
 	UnknownError: "neutral"
 };
 function Pu(e) {
-	return typeof e.error == "string" && e.error.length > 0;
+	return e.error != null;
 }
 function Fu({ attempt: e, isLast: t }) {
 	let n = Pu(e), i = n ? "danger" : "success", a = e.errorCategory == null ? "neutral" : Nu[e.errorCategory] ?? "neutral";
@@ -19114,7 +19114,7 @@ function Fu({ attempt: e, isLast: t }) {
 					children: e.errorCategory
 				}) }), /* @__PURE__ */ U("div", {
 					className: "rounded-md border border-danger-border bg-danger-bg px-2.5 py-1.5 text-[11px] font-mono whitespace-pre-wrap break-words text-danger-fg",
-					children: e.error
+					children: e.error || "Failed without a message"
 				})]
 			}),
 			e.retryAfterMs != null && /* @__PURE__ */ W("div", {

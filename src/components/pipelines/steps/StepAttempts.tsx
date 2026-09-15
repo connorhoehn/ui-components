@@ -54,8 +54,12 @@ const CATEGORY_TONE: Record<ErrorCategory, ChipTone> = {
 };
 
 /** An attempt failed iff it carries an error; everything else succeeded. */
+// An attempt that failed carries an `error` — even an empty one. A thrown
+// value with no message (an AggregateError from a refused connection) used to
+// make three failures read as three successes, and the whole history as
+// "succeeded on attempt 3 after 0 failures" over a step that never did.
 function isFailed(attempt: StepAttempt): boolean {
-  return typeof attempt.error === 'string' && attempt.error.length > 0;
+  return attempt.error != null;
 }
 
 function AttemptRow({
@@ -113,7 +117,7 @@ function AttemptRow({
             </div>
           )}
           <div className="rounded-md border border-danger-border bg-danger-bg px-2.5 py-1.5 text-[11px] font-mono whitespace-pre-wrap break-words text-danger-fg">
-            {attempt.error}
+            {attempt.error || 'Failed without a message'}
           </div>
         </div>
       )}
