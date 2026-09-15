@@ -310,6 +310,10 @@ export function ComputerLab({
         case 'next-kind': cycleActiveKind(); return;
         case 'jump': setShowChooser(true); return;
         case 'focus-composer': composerRef.current?.focus(); return;
+        // Same landing as focus-composer, different reason for existing: this
+        // one is the advertised exit from a pane that eats Tab and Escape.
+        // The lab listens in the capture phase, so it fires from inside xterm.
+        case 'leave-pane': composerRef.current?.focus(); return;
         // One key cycles the three focus regions: panes → computers list →
         // agents list → panes. The rail's rows already carry a roving
         // tabindex, so landing on the row marked tabindex=0 (the active one)

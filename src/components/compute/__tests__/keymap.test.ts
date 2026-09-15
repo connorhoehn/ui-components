@@ -35,6 +35,14 @@ describe('matchBinding', () => {
     expect(matchBinding(DEFAULT_KEYMAP, press({ key: 'Escape', metaKey: true }))).toBeNull();
   });
 
+  it('binds shift+escape to leave-pane and leaves plain escape to the shell', () => {
+    // A terminal consumes Tab and Escape, so a keyboard user needs one chord
+    // a shell never wants; plain Escape must still be the lab's own `exit`
+    // (and, inside a pane, whatever is running there).
+    expect(matchBinding(DEFAULT_KEYMAP, press({ key: 'Escape', shiftKey: true }))).toBe('leave-pane');
+    expect(matchBinding(DEFAULT_KEYMAP, press({ key: 'Escape' }))).toBe('exit');
+  });
+
   it('returns null for anything unbound', () => {
     expect(matchBinding(DEFAULT_KEYMAP, press({ key: 'q', metaKey: true }))).toBeNull();
     expect(matchBinding(DEFAULT_KEYMAP, press({ key: 'a' }))).toBeNull();

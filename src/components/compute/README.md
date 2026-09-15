@@ -74,6 +74,7 @@ from what actually reaches us.
 | `⌘⇧E` | next pane kind (shell, tail, …) | `e` |
 | `⌘K` | fuzzy jump to a computer or pane | `w` |
 | `⌘⇧L` | jump to the prompt bar | `:` |
+| `⇧esc` | leave the focused pane for the prompt bar — the keyboard way out of a terminal, which eats Tab and Escape | `q` |
 | `⌘⇧B` | broadcast the prompt to every pane | `s` |
 | `⌘/` | show these shortcuts | `?` |
 | `esc` | leave the lab | `d` |

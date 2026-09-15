@@ -572,6 +572,42 @@ describe('watching from the activity list', () => {
 // panes. One key rather than a chord per list, because "get me to the rail"
 // is one question and a second press is cheaper to learn than a second chord.
 
+describe('leave-pane', () => {
+  // The trap this exists for: a shell eats Tab and Escape, so once focus is
+  // inside a pane a keyboard user has no way to the prompt bar. ⇧esc must
+  // work FROM the pane — the lab listens in the capture phase precisely so a
+  // terminal cannot swallow it first.
+  it('shift+escape from inside a pane lands on the prompt bar', async () => {
+    const focused: string[] = [];
+    render(
+      <ComputeProvider client={stubClient()} canManage useFixtures={false} pollIntervalMs={0}
+        paneKinds={[{
+          id: 'probe', label: 'probe',
+          render: ({ computer, registerPane }) => {
+            /* eslint-disable react-hooks/rules-of-hooks */
+            const ref = useRef<HTMLDivElement>(null);
+            useEffect(() => {
+              registerPane({ focus: () => { focused.push(computer.label); ref.current?.focus(); } });
+              return () => registerPane(null);
+            }, [registerPane, computer.label]);
+            /* eslint-enable react-hooks/rules-of-hooks */
+            return <div ref={ref} tabIndex={-1} data-testid="probe-pane">{computer.label}</div>;
+          },
+        }]}>
+        <ComputerLab open onClose={() => {}} />
+      </ComputeProvider>,
+    );
+    await summary(/1 pane$/);
+    const pane = await screen.findByTestId('probe-pane');
+    pane.focus();
+    expect(document.activeElement).toBe(pane);
+
+    press('Escape', { shiftKey: true });
+    const composer = await screen.findByPlaceholderText(/instruction for/);
+    expect(document.activeElement).toBe(composer);
+  });
+});
+
 describe('focus-rail', () => {
   // The probe must move REAL focus, not only record the call — the Esc
   // layering reads document.activeElement, and a probe that records without

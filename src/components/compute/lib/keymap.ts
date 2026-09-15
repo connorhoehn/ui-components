@@ -46,6 +46,7 @@ export type LabCommand =
   | 'toggle-broadcast'
   | 'focus-composer'
   | 'focus-rail'
+  | 'leave-pane'
   | 'help'
   | 'exit';
 
@@ -122,6 +123,12 @@ export const DEFAULT_KEYMAP: readonly KeyBinding[] = [
   // (view-source is ⌘⌥U); leader `r` for rail.
   { command: 'focus-rail', leaderKey: 'r', key: 'u', meta: true, shift: true, label: '⌘⇧U', description: 'Focus the rail — again for the agents list, again back to the panes', group: 'navigate' },
 
+  // The keyboard's way OUT of a terminal. A shell consumes Tab (completion)
+  // and Escape (vim, readline), so a keyboard user who tabbed into a pane had
+  // no exit at all — WCAG 2.1.2, No Keyboard Trap. ⇧esc is what a shell never
+  // wants, and it lands on the prompt bar because that is the control the
+  // lab exists for; from there Tab walks the chrome as usual.
+  { command: 'leave-pane', leaderKey: 'q', key: 'Escape', shift: true, label: '⇧esc', description: 'Leave the focused pane for the prompt bar — the keyboard way out of a terminal', group: 'navigate' },
   { command: 'toggle-broadcast', leaderKey: 's', key: 'b', meta: true, shift: true, label: '⌘⇧B', description: 'Send the prompt bar to every pane at once', group: 'lab' },
   { command: 'help', leaderKey: '?', key: '/', meta: true, label: '⌘/', description: 'Show these shortcuts', group: 'lab' },
   { command: 'exit', leaderKey: 'd', key: 'Escape', label: 'esc', description: 'Leave the lab', group: 'lab' },
