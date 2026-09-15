@@ -5,6 +5,7 @@ export * from '../ui/Card';
 export * from '../ui/Table';
 export * from '../ui/PageSection';
 export * from '../ui/IconButton';
+export * from '../ui/Icons';
 export * from '../ui/Stack';
 export * from '../ui/SelectableCard';
 
