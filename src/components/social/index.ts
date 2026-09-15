@@ -197,3 +197,5 @@ export type {
 } from './ChatSidePanelRegistry';
 export { ChatBubbleStack } from './ChatBubbleStack';
 export type { ChatBubble, ChatBubbleStackProps } from './ChatBubbleStack';
+export { ConversationStart } from './ConversationStart';
+export type { ConversationStartProps, ConversationStartDestination, ConversationStartReceipt } from './ConversationStart';

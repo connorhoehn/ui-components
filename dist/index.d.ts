@@ -3839,6 +3839,46 @@ export declare interface ConversationShelfProps {
     'data-testid'?: string;
 }
 
+export declare function ConversationStart({ title, body, onStart, startLabel, rooms, onAddToRoom, people, onShareWith, busy, receipt, 'data-testid': testId, }: ConversationStartProps): JSX.Element;
+
+export declare interface ConversationStartDestination {
+    /** The host's key for the destination — a channel, a user id. */
+    id: string;
+    /** What to call it: `#design`, `Hank Anderson`. */
+    label: string;
+    icon?: ReactNode;
+}
+
+export declare interface ConversationStartProps {
+    /** Default "No conversation yet". */
+    title?: string;
+    /** Default names the three choices. */
+    body?: string;
+    /** Present, the primary control: make a new conversation about this. */
+    onStart?: () => void;
+    /** Default "Start a conversation". */
+    startLabel?: string;
+    /** Conversations that already exist. Empty: the control is disabled, not hidden — it still says the choice exists. */
+    rooms?: readonly ConversationStartDestination[];
+    onAddToRoom?: (id: string) => void;
+    /** People it could be sent to. */
+    people?: readonly ConversationStartDestination[];
+    onShareWith?: (id: string) => void;
+    /** Something is in flight — every control waits. */
+    busy?: boolean;
+    /** What the last attempt did, above the controls. */
+    receipt?: ConversationStartReceipt | null;
+    'data-testid'?: string;
+}
+
+export declare interface ConversationStartReceipt {
+    tone: 'success' | 'error';
+    text: string;
+    /** An optional way onward — "Open the chat" after sending to a person. */
+    actionLabel?: string;
+    onAction?: () => void;
+}
+
 export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, canvas, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
 
 export declare interface ConversationSurfaceProps {
@@ -14814,6 +14854,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -14844,48 +14910,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
