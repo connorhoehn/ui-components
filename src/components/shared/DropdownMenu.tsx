@@ -32,12 +32,23 @@ export interface DropdownMenuItem {
   danger?: boolean;
   /** Fires on click / Enter; the menu closes afterwards. */
   onSelect: () => void;
+  /** Right-aligned hint after the label — a shortcut (`⌘P`), a count. */
+  trailing?: ReactNode;
+  /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
+  'data-testid'?: string;
 }
 
 export interface DropdownMenuSection {
   /** Optional uppercase section heading. */
   label?: string;
   items: DropdownMenuItem[];
+  /**
+   * The group scrolls in place (`uic-menu-group-scroll`) so the sections
+   * after it stay put. For a generated list — one row per room — that would
+   * otherwise push the fixed actions below the fold.
+   */
+  scroll?: boolean;
+  'data-testid'?: string;
 }
 
 export interface DropdownMenuProps {
@@ -132,10 +143,19 @@ export function DropdownMenu({
           role="menu"
           aria-label={triggerLabel}
           onKeyDown={onMenuKeyDown}
-          className="py-1"
+          // Bounded by the viewport and scrolling, never clipped: a menu taller
+          // than the window used to lose everything past the fold with no
+          // scrollbar to say it existed.
+          className="py-1 uic-menu-scroll"
         >
           {sections.map((section, sIdx) => (
-            <div key={sIdx} role="group" aria-label={section.label}>
+            <div
+              key={sIdx}
+              role="group"
+              aria-label={section.label}
+              className={section.scroll ? 'uic-menu-group-scroll' : undefined}
+              data-testid={section['data-testid']}
+            >
               {sIdx > 0 && (
                 <div role="separator" className="my-1 border-t border-[var(--color-border)]" />
               )}
@@ -154,6 +174,7 @@ export function DropdownMenu({
                     item.onSelect();
                     close();
                   }}
+                  data-testid={item['data-testid']}
                   className={cn(
                     'flex items-center gap-2.5 w-full text-left px-3.5 py-2',
                     'text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100',
@@ -169,7 +190,10 @@ export function DropdownMenu({
                       {item.icon}
                     </span>
                   )}
-                  {item.label}
+                  <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                  {item.trailing !== undefined && (
+                    <span className="shrink-0 text-xs text-[var(--color-text-tertiary)]" aria-hidden="true">{item.trailing}</span>
+                  )}
                 </button>
               ))}
             </div>

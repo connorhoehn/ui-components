@@ -41,10 +41,12 @@ function c({ trigger: c, triggerLabel: l = "Open menu", triggerTitle: u, trigger
 			role: "menu",
 			"aria-label": l,
 			onKeyDown: x,
-			className: "py-1",
+			className: "py-1 uic-menu-scroll",
 			children: p.map((t, n) => /* @__PURE__ */ s("div", {
 				role: "group",
 				"aria-label": t.label,
+				className: t.scroll ? "uic-menu-group-scroll" : void 0,
+				"data-testid": t["data-testid"],
 				children: [
 					n > 0 && /* @__PURE__ */ o("div", {
 						role: "separator",
@@ -61,12 +63,24 @@ function c({ trigger: c, triggerLabel: l = "Open menu", triggerTitle: u, trigger
 						onClick: () => {
 							t.onSelect(), b();
 						},
+						"data-testid": t["data-testid"],
 						className: e("flex items-center gap-2.5 w-full text-left px-3.5 py-2", "text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100", t.danger ? "text-danger-fg bg-transparent hover:bg-danger-bg" : t.active ? "font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]" : "font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]"),
-						children: [t.icon && /* @__PURE__ */ o("span", {
-							className: "shrink-0 text-base leading-none",
-							"aria-hidden": "true",
-							children: t.icon
-						}), t.label]
+						children: [
+							t.icon && /* @__PURE__ */ o("span", {
+								className: "shrink-0 text-base leading-none",
+								"aria-hidden": "true",
+								children: t.icon
+							}),
+							/* @__PURE__ */ o("span", {
+								className: "min-w-0 flex-1 truncate",
+								children: t.label
+							}),
+							t.trailing !== void 0 && /* @__PURE__ */ o("span", {
+								className: "shrink-0 text-xs text-[var(--color-text-tertiary)]",
+								"aria-hidden": "true",
+								children: t.trailing
+							})
+						]
 					}, n))
 				]
 			}, n))

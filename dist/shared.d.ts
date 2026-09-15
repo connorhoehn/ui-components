@@ -415,6 +415,9 @@ export declare interface ChatComposerProps {
     submitAriaLabel?: string;
 }
 
+/** A speech bubble: a conversation, a comment. */
+export declare function ChatIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare const Checkbox: ForwardRefExoticComponent<CheckboxProps & RefAttributes<HTMLInputElement>>;
 
 /** Modifier keys held during the click that toggled a checkbox. */
@@ -476,6 +479,11 @@ export declare interface CheckboxProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** A chevron. `dir` is where it points. */
+export declare function ChevronIcon({ size, dir, ...rest }: GlyphProps & {
+    dir?: 'up' | 'down' | 'left' | 'right';
+}): JSX.Element;
 
 export declare function Chip({ tone, palette, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
 
@@ -562,6 +570,9 @@ export declare interface ChoiceRowProps {
     busy?: boolean;
     'data-testid'?: string;
 }
+
+/** An X: "close", "dismiss". */
+export declare function CloseIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /**
  * `TONE_SOFT` in the code family. One background for all tones — the code
@@ -1070,6 +1081,10 @@ export declare interface DropdownMenuItem {
     danger?: boolean;
     /** Fires on click / Enter; the menu closes afterwards. */
     onSelect: () => void;
+    /** Right-aligned hint after the label — a shortcut (`⌘P`), a count. */
+    trailing?: ReactNode;
+    /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
+    'data-testid'?: string;
 }
 
 export declare interface DropdownMenuProps {
@@ -1098,6 +1113,13 @@ export declare interface DropdownMenuSection {
     /** Optional uppercase section heading. */
     label?: string;
     items: DropdownMenuItem[];
+    /**
+     * The group scrolls in place (`uic-menu-group-scroll`) so the sections
+     * after it stay put. For a generated list — one row per room — that would
+     * otherwise push the fixed actions below the fold.
+     */
+    scroll?: boolean;
+    'data-testid'?: string;
 }
 
 export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size, }: EmptyStateProps): JSX.Element;
@@ -1477,6 +1499,9 @@ export declare interface GlyphProps extends Omit<SVGProps<SVGSVGElement>, 'child
     /** Rendered size in px. Default 16 — sized for an `IconButton size="sm"`. */
     size?: number;
 }
+
+/** A clock: history, "when". */
+export declare function HistoryIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, tone, size, className, ...rest }: IconButtonProps): JSX.Element;
 
@@ -2619,6 +2644,9 @@ export declare interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelec
 }
 
 export declare type SelectSize = 'sm' | 'md';
+
+/** A tray with an arrow out of it: "share", "post this somewhere". */
+export declare function ShareIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps): JSX.Element;
 
@@ -3849,12 +3877,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }
@@ -3882,25 +3923,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3908,9 +3933,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

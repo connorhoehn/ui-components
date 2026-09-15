@@ -2604,6 +2604,9 @@ export declare interface ChatDropZoneProps {
     className?: string;
 }
 
+/** A speech bubble: a conversation, a comment. */
+export declare function ChatIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare interface ChatMessage {
     id?: string;
     clientId: string;
@@ -3010,6 +3013,11 @@ export declare const checklistFieldType: FieldTypeDefinition;
 
 export declare function ChecklistReaderRenderer({ section, fragment, ydoc, provider, onUpdateItem, onNavigateToEditor, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
 
+/** A chevron. `dir` is where it points. */
+export declare function ChevronIcon({ size, dir, ...rest }: GlyphProps & {
+    dir?: 'up' | 'down' | 'left' | 'right';
+}): JSX.Element;
+
 export declare function Chip({ tone, palette, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
 
 /**
@@ -3118,6 +3126,9 @@ export declare interface CircularIconToggleProps extends Omit<ButtonHTMLAttribut
 export declare type CircularIconToggleSize = 'sm' | 'md' | 'lg';
 
 export declare type CircularIconToggleTone = 'neutral' | 'danger';
+
+/** An X: "close", "dismiss". */
+export declare function CloseIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /**
  * `TONE_SOFT` in the code family. One background for all tones — the code
@@ -4870,6 +4881,10 @@ export declare interface DropdownMenuItem {
     danger?: boolean;
     /** Fires on click / Enter; the menu closes afterwards. */
     onSelect: () => void;
+    /** Right-aligned hint after the label — a shortcut (`⌘P`), a count. */
+    trailing?: ReactNode;
+    /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
+    'data-testid'?: string;
 }
 
 export declare interface DropdownMenuProps {
@@ -4898,6 +4913,13 @@ export declare interface DropdownMenuSection {
     /** Optional uppercase section heading. */
     label?: string;
     items: DropdownMenuItem[];
+    /**
+     * The group scrolls in place (`uic-menu-group-scroll`) so the sections
+     * after it stay put. For a generated list — one row per room — that would
+     * otherwise push the fixed actions below the fold.
+     */
+    scroll?: boolean;
+    'data-testid'?: string;
 }
 
 export declare interface EmailTemplate {
@@ -6277,6 +6299,9 @@ export declare interface HangoutSpotlightProps {
     className?: string;
     style?: CSSProperties;
 }
+
+/** A clock: history, "when". */
+export declare function HistoryIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare interface HlsFailure {
     kind: HlsFailureKind;
@@ -11002,6 +11027,9 @@ export declare const shadows: {
     readonly xl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)";
 };
 
+/** A tray with an arrow out of it: "share", "post this somewhere". */
+export declare function ShareIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps): JSX.Element;
 
 export declare interface ShortcutsHelpProps {
@@ -14918,12 +14946,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }
@@ -14951,25 +14992,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -14977,9 +15002,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
