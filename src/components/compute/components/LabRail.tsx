@@ -178,12 +178,17 @@ export function LabRail({
           <span className="text-[11px] font-mono text-code-raised">new</span>
         )}
         <span className="flex-1" />
+        {/* It opens the keyboard reference, so it says so — a button
+            labelled "menu" that opens "Keyboard shortcuts" read as two
+            different things in the audit that found it. */}
         <button
           type="button"
           onClick={onOpenMenu}
+          aria-label="Keyboard shortcuts"
+          title="Keyboard shortcuts"
           className="text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer p-0 hover:text-code-text"
         >
-          menu
+          keys
         </button>
       </div>
 

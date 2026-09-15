@@ -12,7 +12,7 @@ import { n as f, r as p, t as m } from "./focusTrap-CmWJlptm.js";
 import { t as h } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as g } from "./Avatar-BzicCOft.js";
 import { t as _ } from "./Select-CqVokE2v.js";
-import { t as v } from "./Slider-DcvH0VI1.js";
+import { t as v } from "./Slider-CUwLSARC.js";
 import { t as y } from "./activationKey-CjbL3LUv.js";
 import { E as b, g as x } from "./StreamStage-d9JKcXlp.js";
 import { useCallback as S, useEffect as C, useImperativeHandle as w, useLayoutEffect as ee, useMemo as T, useRef as E, useState as D } from "react";

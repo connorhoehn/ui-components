@@ -62,7 +62,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
         disabled={disabled}
         aria-label={ariaLabel}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="flex-1 accent-primary cursor-pointer disabled:cursor-not-allowed"
+        className="flex-1 w-full min-w-0 accent-primary cursor-pointer disabled:cursor-not-allowed"
         data-testid={testId}
       />
       {readout !== false && (

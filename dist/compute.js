@@ -2531,8 +2531,10 @@ function Ft({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 					/* @__PURE__ */ S("button", {
 						type: "button",
 						onClick: l,
+						"aria-label": "Keyboard shortcuts",
+						title: "Keyboard shortcuts",
 						className: "text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer p-0 hover:text-code-text",
-						children: "menu"
+						children: "keys"
 					})
 				]
 			}),

@@ -17,7 +17,7 @@ var a = t(function({ value: t, onChange: a, min: o = 0, max: s = 100, step: c = 
 			disabled: d,
 			"aria-label": l,
 			onChange: (e) => a(parseFloat(e.target.value)),
-			className: "flex-1 accent-primary cursor-pointer disabled:cursor-not-allowed",
+			className: "flex-1 w-full min-w-0 accent-primary cursor-pointer disabled:cursor-not-allowed",
 			"data-testid": p
 		}), u !== !1 && /* @__PURE__ */ r("output", {
 			htmlFor: h,

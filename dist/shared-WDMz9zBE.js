@@ -16,7 +16,7 @@ import "./ConfirmDialog-Cd8NZEXi.js";
 import { t as p } from "./EmptyState-JzzL2z1E.js";
 import "./PermissionDeniedCard-BMjG5fxY.js";
 import { t as m } from "./Spinner-CLcq5z8N.js";
-import { n as h, t as g } from "./CardHeader-C-7rFLKD.js";
+import { n as h, t as g } from "./CardHeader-gV2Grsqb.js";
 import { i as _, n as v, r as y, t as b } from "./focusTrap-CmWJlptm.js";
 import "./SkeletonCard-CGe8XFPB.js";
 import { c as x, i as S, s as C } from "./ChannelHeader-C0n2KYEb.js";
@@ -37,7 +37,7 @@ import "./DropdownMenu-Claynsfu.js";
 import "./ChangeDiff-CzO8zCc-.js";
 import "./Select-CqVokE2v.js";
 import "./NumberInput-PlADgrip.js";
-import "./Slider-DcvH0VI1.js";
+import "./Slider-CUwLSARC.js";
 import "./Checkbox-DqN9RkXK.js";
 import { Children as j, createContext as ee, isValidElement as te, useCallback as M, useContext as ne, useEffect as N, useId as P, useLayoutEffect as re, useMemo as F, useRef as I, useState as L } from "react";
 import { Fragment as R, jsx as z, jsxs as B } from "react/jsx-runtime";
@@ -1824,52 +1824,58 @@ function ft(e, t) {
 		return t;
 	}
 }
-function pt({ title: t, defaultOpen: n = !1, badge: r, children: i, className: a, storageKey: o, "data-testid": s }) {
-	let [c, l] = L(() => ft(o, n)), u = P(), d = I(null), f = I(null);
+function pt({ title: t, defaultOpen: n = !1, badge: r, actions: i, children: a, className: o, storageKey: s, "data-testid": c }) {
+	let [l, u] = L(() => ft(s, n)), d = P(), f = I(null), p = I(null);
 	return N(() => {
-		if (o && !(typeof window > "u")) try {
-			window.localStorage.setItem(o, String(c));
+		if (s && !(typeof window > "u")) try {
+			window.localStorage.setItem(s, String(l));
 		} catch {}
-	}, [c, o]), /* @__PURE__ */ B("div", {
-		className: e("border border-[var(--color-border)] rounded-lg overflow-hidden", a),
-		children: [/* @__PURE__ */ B("button", {
-			type: "button",
-			ref: d,
-			"data-testid": s,
-			className: "w-full flex items-center justify-between px-4 py-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] transition-colors text-left",
-			onClick: () => {
-				if (c) {
-					let e = typeof document > "u" ? null : document.activeElement;
-					e && f.current?.contains(e) && d.current?.focus();
-				}
-				l((e) => !e);
-			},
-			"aria-expanded": c,
-			"aria-controls": u,
-			children: [/* @__PURE__ */ z("span", {
-				className: "text-sm font-semibold text-[var(--color-text-primary)]",
-				children: t
-			}), /* @__PURE__ */ B("div", {
-				className: "flex items-center gap-2",
-				children: [r, /* @__PURE__ */ z("svg", {
-					className: e("w-4 h-4 text-[var(--color-text-tertiary)] transition-transform", c && "rotate-180"),
-					viewBox: "0 0 16 16",
-					fill: "none",
-					"aria-hidden": "true",
-					children: /* @__PURE__ */ z("path", {
-						d: "M4 6l4 4 4-4",
-						stroke: "currentColor",
-						strokeWidth: "1.5",
-						strokeLinecap: "round",
-						strokeLinejoin: "round"
-					})
+	}, [l, s]), /* @__PURE__ */ B("div", {
+		className: e("border border-[var(--color-border)] rounded-lg overflow-hidden", o),
+		children: [/* @__PURE__ */ B("div", {
+			className: "flex items-stretch bg-[var(--color-surface)]",
+			children: [/* @__PURE__ */ B("button", {
+				type: "button",
+				ref: f,
+				"data-testid": c,
+				className: "flex-1 min-w-0 flex items-center justify-between px-4 py-3 bg-transparent hover:bg-[var(--color-surface-hover)] transition-colors text-left",
+				onClick: () => {
+					if (l) {
+						let e = typeof document > "u" ? null : document.activeElement;
+						e && p.current?.contains(e) && f.current?.focus();
+					}
+					u((e) => !e);
+				},
+				"aria-expanded": l,
+				"aria-controls": d,
+				children: [/* @__PURE__ */ z("span", {
+					className: "text-sm font-semibold text-[var(--color-text-primary)]",
+					children: t
+				}), /* @__PURE__ */ B("div", {
+					className: "flex items-center gap-2",
+					children: [r, /* @__PURE__ */ z("svg", {
+						className: e("w-4 h-4 text-[var(--color-text-tertiary)] transition-transform", l && "rotate-180"),
+						viewBox: "0 0 16 16",
+						fill: "none",
+						"aria-hidden": "true",
+						children: /* @__PURE__ */ z("path", {
+							d: "M4 6l4 4 4-4",
+							stroke: "currentColor",
+							strokeWidth: "1.5",
+							strokeLinecap: "round",
+							strokeLinejoin: "round"
+						})
+					})]
 				})]
+			}), i && /* @__PURE__ */ z("div", {
+				className: "flex items-center gap-2 pr-4 shrink-0",
+				children: i
 			})]
-		}), c && /* @__PURE__ */ z("div", {
-			id: u,
-			ref: f,
+		}), l && /* @__PURE__ */ z("div", {
+			id: d,
+			ref: p,
 			className: "border-t border-[var(--color-border)] bg-surface",
-			children: i
+			children: a
 		})]
 	});
 }

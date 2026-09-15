@@ -319,9 +319,9 @@ function g({ data: e, width: t = 80, height: r = 20, color: i = "var(--color-pri
 }
 //#endregion
 //#region src/components/shared/CardHeader.tsx
-function _({ title: t, subtitle: i, meta: a, action: o, className: s }) {
+function _({ title: t, subtitle: i, meta: a, action: o, inset: s = !1, className: c }) {
 	return /* @__PURE__ */ r("div", {
-		className: e("flex items-center justify-between gap-4", s),
+		className: e("flex items-center justify-between gap-4", s && "px-3.5 pt-3 pb-2.5 border-b border-[var(--color-border)]", c),
 		children: [/* @__PURE__ */ r("div", {
 			className: "min-w-0",
 			children: [/* @__PURE__ */ r("div", {

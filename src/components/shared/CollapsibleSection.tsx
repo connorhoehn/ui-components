@@ -19,6 +19,13 @@ export interface CollapsibleSectionProps {
   defaultOpen?: boolean;
   /** Optional element rendered on the right side of the header (e.g. a count chip). */
   badge?: React.ReactNode;
+  /**
+   * Interactive controls for the header row — a Terminate button, a menu.
+   * Rendered BESIDE the header button, never inside it: the header is a
+   * `<button>`, and a button inside a button is invalid HTML that React
+   * warns about on every render. `badge` stays for inert content.
+   */
+  actions?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
   /** If provided, the open state is persisted to localStorage under this key. */
@@ -45,6 +52,7 @@ function CollapsibleSection({
   title,
   defaultOpen = false,
   badge,
+  actions,
   children,
   className,
   storageKey,
@@ -90,11 +98,12 @@ function CollapsibleSection({
         className,
       )}
     >
+      <div className="flex items-stretch bg-[var(--color-surface)]">
       <button
         type="button"
         ref={headerRef}
         data-testid={testId}
-        className="w-full flex items-center justify-between px-4 py-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] transition-colors text-left"
+        className="flex-1 min-w-0 flex items-center justify-between px-4 py-3 bg-transparent hover:bg-[var(--color-surface-hover)] transition-colors text-left"
         onClick={toggle}
         aria-expanded={open}
         aria-controls={bodyId}
@@ -123,6 +132,10 @@ function CollapsibleSection({
           </svg>
         </div>
       </button>
+      {actions && (
+        <div className="flex items-center gap-2 pr-4 shrink-0">{actions}</div>
+      )}
+      </div>
       {open && (
         <div id={bodyId} ref={bodyRef} className="border-t border-[var(--color-border)] bg-surface">
           {children}

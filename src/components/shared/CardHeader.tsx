@@ -15,12 +15,25 @@ export interface CardHeaderProps {
   meta?: React.ReactNode;
   /** Right-aligned action area (buttons, menus). */
   action?: React.ReactNode;
+  /**
+   * The header owns its own gutter and bottom rule. For a `Card padding="none"`
+   * host — one with a full-bleed footer or edge-to-edge rows — where the card
+   * is not padding the header for it; without this the title hangs on the
+   * card's top-left edge.
+   */
+  inset?: boolean;
   className?: string;
 }
 
-function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps) {
+function CardHeader({ title, subtitle, meta, action, inset = false, className }: CardHeaderProps) {
   return (
-    <div className={cn('flex items-center justify-between gap-4', className)}>
+    <div
+      className={cn(
+        'flex items-center justify-between gap-4',
+        inset && 'px-3.5 pt-3 pb-2.5 border-b border-[var(--color-border)]',
+        className,
+      )}
+    >
       <div className="min-w-0">
         <div className="flex items-center gap-2 min-w-0">
           <h3 className="text-sm font-semibold text-[var(--color-text-primary)] truncate">

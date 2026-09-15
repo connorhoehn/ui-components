@@ -19,7 +19,7 @@ import { t as A } from "./Input-DLknWXri.js";
 import { t as j } from "./Textarea-Dz4doxTv.js";
 import { t as M } from "./Select-CqVokE2v.js";
 import { t as N } from "./NumberInput-PlADgrip.js";
-import { t as P } from "./Slider-DcvH0VI1.js";
+import { t as P } from "./Slider-CUwLSARC.js";
 import { t as ne } from "./Checkbox-DqN9RkXK.js";
 import { t as re } from "./activationKey-CjbL3LUv.js";
 import { n as F, r as ie, t as ae } from "./EventStreamContext-CLzG8O5_.js";

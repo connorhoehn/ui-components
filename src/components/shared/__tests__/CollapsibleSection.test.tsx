@@ -102,4 +102,18 @@ describe('CollapsibleSection — focus handoff on close', () => {
     expect(bodyId).toBeTruthy();
     expect(document.getElementById(bodyId as string)).not.toBeNull();
   });
+
+  it('renders actions beside the header button, never inside it', () => {
+    render(
+      <CollapsibleSection title="Session" actions={<button type="button">Terminate</button>}>
+        body
+      </CollapsibleSection>,
+    );
+    const header = screen.getByRole('button', { name: /Session/ });
+    const terminate = screen.getByRole('button', { name: 'Terminate' });
+    expect(header.contains(terminate)).toBe(false);
+    // The action does not toggle the section.
+    fireEvent.click(terminate);
+    expect(header).toHaveAttribute('aria-expanded', 'false');
+  });
 });

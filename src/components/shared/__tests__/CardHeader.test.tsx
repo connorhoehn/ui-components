@@ -26,4 +26,11 @@ describe('CardHeader', () => {
     expect(screen.getByTestId('meta')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
   });
+
+  it('inset gives the header its own gutter and rule for a padding="none" card', () => {
+    const { container, rerender } = render(<CardHeader title="T" />);
+    expect(container.firstElementChild).not.toHaveClass('border-b');
+    rerender(<CardHeader title="T" inset />);
+    expect(container.firstElementChild).toHaveClass('px-3.5', 'border-b');
+  });
 });

@@ -52,4 +52,9 @@ describe('Slider reachability', () => {
   it('is the same component when imported from the shared barrel', () => {
     expect(SliderFromShared).toBe(Slider);
   });
+
+  it('the range input takes the wrapper\'s width rather than the browser\'s intrinsic one', () => {
+    render(<Slider value={1} onChange={() => {}} aria-label="Temperature" className="w-20" />);
+    expect(screen.getByRole('slider', { name: 'Temperature' })).toHaveClass('w-full', 'min-w-0');
+  });
 });

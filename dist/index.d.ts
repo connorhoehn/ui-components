@@ -2045,7 +2045,7 @@ export declare function CaptionsIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare function Card({ children, padding, className, ref, ...rest }: CardProps): JSX.Element;
 
-export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): default_2.JSX.Element;
+export declare function CardHeader({ title, subtitle, meta, action, inset, className }: CardHeaderProps): default_2.JSX.Element;
 
 export declare interface CardHeaderProps {
     title: string;
@@ -2055,6 +2055,13 @@ export declare interface CardHeaderProps {
     meta?: default_2.ReactNode;
     /** Right-aligned action area (buttons, menus). */
     action?: default_2.ReactNode;
+    /**
+     * The header owns its own gutter and bottom rule. For a `Card padding="none"`
+     * host — one with a full-bleed footer or edge-to-edge rows — where the card
+     * is not padding the header for it; without this the title hangs on the
+     * card's top-left edge.
+     */
+    inset?: boolean;
     className?: string;
 }
 
@@ -3241,7 +3248,7 @@ declare interface CollapsedIconStripProps {
     onObservability: () => void;
 }
 
-export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, 'data-testid': testId, }: CollapsibleSectionProps): default_2.JSX.Element;
+export declare function CollapsibleSection({ title, defaultOpen, badge, actions, children, className, storageKey, 'data-testid': testId, }: CollapsibleSectionProps): default_2.JSX.Element;
 
 export declare interface CollapsibleSectionProps {
     /**
@@ -3255,6 +3262,13 @@ export declare interface CollapsibleSectionProps {
     defaultOpen?: boolean;
     /** Optional element rendered on the right side of the header (e.g. a count chip). */
     badge?: default_2.ReactNode;
+    /**
+     * Interactive controls for the header row — a Terminate button, a menu.
+     * Rendered BESIDE the header button, never inside it: the header is a
+     * `<button>`, and a button inside a button is invalid HTML that React
+     * warns about on every render. `badge` stays for inert content.
+     */
+    actions?: default_2.ReactNode;
     children: default_2.ReactNode;
     className?: string;
     /** If provided, the open state is persisted to localStorage under this key. */
@@ -15024,6 +15038,26 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -15047,9 +15081,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -15076,26 +15110,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
