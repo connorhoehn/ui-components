@@ -22,4 +22,28 @@ describe('ExplorerLayout — folding the rail, widening the aside', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Show the documents list' }));
     expect(onToggleRail).toHaveBeenCalledTimes(2);
   });
+
+  it('titles the rail in the header row, with the rail\'s own actions beside the fold control', () => {
+    render(
+      <ExplorerLayout
+        rail={<span>rail</span>}
+        railTitle="Documents"
+        railActions={<button type="button">new</button>}
+        onToggleRail={() => {}}
+        railLabel="the documents list"
+      >
+        pane
+      </ExplorerLayout>,
+    );
+    const header = screen.getByTestId('explorer-layout-rail-header');
+    expect(screen.getByRole('heading', { name: 'Documents' })).toBeInTheDocument();
+    expect(header).toContainElement(screen.getByRole('button', { name: 'new' }));
+    expect(header).toContainElement(screen.getByRole('button', { name: 'Hide the documents list' }));
+  });
+
+  it('draws the header row for a title alone — no fold control needed', () => {
+    render(<ExplorerLayout rail={<span>rail</span>} railTitle="Documents">pane</ExplorerLayout>);
+    expect(screen.getByTestId('explorer-layout-rail-header')).toBeInTheDocument();
+    expect(screen.queryByTestId('explorer-layout-rail-fold')).toBeNull();
+  });
 });

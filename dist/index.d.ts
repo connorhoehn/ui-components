@@ -5220,7 +5220,7 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-export declare function ExplorerLayout({ rail, children, aside, railWidth, railCollapsed, onToggleRail, railLabel, panePadding, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+export declare function ExplorerLayout({ rail, children, aside, railWidth, railCollapsed, onToggleRail, railLabel, railTitle, railActions, panePadding, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
 
 export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -5242,6 +5242,20 @@ export declare interface ExplorerLayoutProps {
     onToggleRail?: () => void;
     /** What the rail holds, for the controls' accessible names. Default "the list". */
     railLabel?: string;
+    /**
+     * The rail's name, in its header row — the same row the fold control sits
+     * in, so the rail is titled the way a `ContextColumn` on the other side is
+     * (its tabs live in the same h-9 row). Without it the row holds only the
+     * fold control, which reads as a stray button over the first section.
+     */
+    railTitle?: string;
+    /**
+     * Controls that belong to the rail as a whole — "new item", a filter —
+     * placed in the header row between the title and the fold control. The
+     * rail's own actions are not page chrome; putting them in a band above the
+     * frame left them at the window's inset while the rail sat flush below.
+     */
+    railActions?: ReactNode;
     /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
     panePadding?: 'none' | 'md';
     className?: string;
@@ -14792,16 +14806,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -14838,6 +14842,26 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -14854,16 +14878,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

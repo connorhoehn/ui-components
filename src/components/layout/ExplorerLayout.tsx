@@ -51,6 +51,20 @@ export interface ExplorerLayoutProps {
   onToggleRail?: () => void;
   /** What the rail holds, for the controls' accessible names. Default "the list". */
   railLabel?: string;
+  /**
+   * The rail's name, in its header row — the same row the fold control sits
+   * in, so the rail is titled the way a `ContextColumn` on the other side is
+   * (its tabs live in the same h-9 row). Without it the row holds only the
+   * fold control, which reads as a stray button over the first section.
+   */
+  railTitle?: string;
+  /**
+   * Controls that belong to the rail as a whole — "new item", a filter —
+   * placed in the header row between the title and the fold control. The
+   * rail's own actions are not page chrome; putting them in a band above the
+   * frame left them at the window's inset while the rail sat flush below.
+   */
+  railActions?: ReactNode;
   /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
   panePadding?: 'none' | 'md';
   className?: string;
@@ -81,6 +95,8 @@ export function ExplorerLayout({
   railCollapsed = false,
   onToggleRail,
   railLabel = 'the list',
+  railTitle,
+  railActions,
   panePadding = 'md',
   className,
   'data-testid': testId = 'explorer-layout',
@@ -117,20 +133,30 @@ export function ExplorerLayout({
             RAIL_WIDTH[railWidth],
           )}
         >
-          {onToggleRail && (
-            // A row of the rail's own for the fold control — the same height
-            // and inset as every other header row — so it never sits over the
-            // first section's heading.
-            <div className="flex h-9 shrink-0 items-center justify-end border-b border-border px-1.5" data-testid={`${testId}-rail-header`}>
-              <IconButton
-                aria-label={`Hide ${railLabel}`}
-                title={`Hide ${railLabel}`}
-                size="sm"
-                variant="ghost"
-                icon={<Glyph kind="fold" />}
-                onClick={onToggleRail}
-                data-testid={`${testId}-rail-fold`}
-              />
+          {(railTitle || railActions || onToggleRail) && (
+            // A row of the rail's own — the same height as every other header
+            // row, the title inset to the sections' text edge — so the fold
+            // control never sits over the first section's heading.
+            <div className="flex h-9 shrink-0 items-center gap-1 border-b border-border pl-3.5 pr-1.5" data-testid={`${testId}-rail-header`}>
+              {railTitle ? (
+                <h2 className="m-0 min-w-0 flex-1 truncate text-[12px] font-semibold text-text-primary" data-testid={`${testId}-rail-title`}>
+                  {railTitle}
+                </h2>
+              ) : (
+                <span className="flex-1" />
+              )}
+              {railActions}
+              {onToggleRail && (
+                <IconButton
+                  aria-label={`Hide ${railLabel}`}
+                  title={`Hide ${railLabel}`}
+                  size="sm"
+                  variant="ghost"
+                  icon={<Glyph kind="fold" />}
+                  onClick={onToggleRail}
+                  data-testid={`${testId}-rail-fold`}
+                />
+              )}
             </div>
           )}
           <div className="min-h-0 flex-1 overflow-y-auto">{rail}</div>
