@@ -1168,7 +1168,7 @@ export declare interface ConversationShelfProps {
     'data-testid'?: string;
 }
 
-export declare function ConversationStart({ title, body, onStart, startLabel, rooms, onAddToRoom, people, onShareWith, busy, receipt, 'data-testid': testId, }: ConversationStartProps): JSX.Element;
+export declare function ConversationStart({ title, body, onStart, startLabel, startDescription, rooms, onAddToRoom, people, onShareWith, busy, receipt, searchAbove, 'data-testid': testId, }: ConversationStartProps): JSX.Element;
 
 export declare interface ConversationStartDestination {
     /** The host's key for the destination — a channel, a user id. */
@@ -1183,20 +1183,24 @@ export declare interface ConversationStartProps {
     title?: string;
     /** Default names the three choices. */
     body?: string;
-    /** Present, the primary control: make a new conversation about this. */
+    /** Present, the first row: make a new conversation about this. */
     onStart?: () => void;
     /** Default "Start a conversation". */
     startLabel?: string;
-    /** Conversations that already exist. Empty: the control is disabled, not hidden — it still says the choice exists. */
+    /** What starting makes. Default "A new room, named after this page". */
+    startDescription?: string;
+    /** Conversations that already exist. Empty: the row is disabled, not hidden — it still says the choice exists. */
     rooms?: readonly ConversationStartDestination[];
     onAddToRoom?: (id: string) => void;
     /** People it could be sent to. */
     people?: readonly ConversationStartDestination[];
     onShareWith?: (id: string) => void;
-    /** Something is in flight — every control waits. */
+    /** Something is in flight — every row waits. */
     busy?: boolean;
-    /** What the last attempt did, above the controls. */
+    /** What the last attempt did, under the intro. */
     receipt?: ConversationStartReceipt | null;
+    /** Lists longer than this get a search box. Default 6. */
+    searchAbove?: number;
     'data-testid'?: string;
 }
 
@@ -2171,6 +2175,49 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -2190,49 +2237,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

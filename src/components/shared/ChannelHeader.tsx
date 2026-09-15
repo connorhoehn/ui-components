@@ -43,6 +43,12 @@ export interface ChannelHeaderProps {
   online?: boolean;
   /** Called when member-count area is clicked */
   onMembersClick?: () => void;
+  /**
+   * `sm` for a narrow column (a conversation beside a document): one row that
+   * never wraps, a 28px avatar, the description dropped. The default `md` is
+   * the full-width bar over a chat pane.
+   */
+  size?: 'md' | 'sm';
   className?: string;
   'data-testid'?: string;
 }
@@ -56,29 +62,33 @@ export function ChannelHeader({
   avatarUrl,
   online,
   onMembersClick,
+  size = 'md',
   className,
   'data-testid': testId,
 }: ChannelHeaderProps) {
+  const small = size === 'sm';
   return (
     <div
       data-testid={testId}
+      data-size={size}
       className={cn(
-        '@container flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-6 py-3',
+        '@container flex items-center justify-between',
+        small ? 'flex-nowrap gap-x-2 px-3 py-2' : 'flex-wrap gap-x-4 gap-y-1 px-6 py-3',
         'border-b border-[var(--color-border)] bg-[var(--color-surface)]',
         className,
       )}
     >
       {/* Left: avatar + name + status */}
-      <div className="flex items-center gap-3 min-w-0">
+      <div className={cn('flex min-w-0 items-center', small ? 'gap-2' : 'gap-3')}>
         <div className="relative shrink-0">
           {avatarUrl ? (
             <img
               src={avatarUrl}
               alt={name}
-              className="w-9 h-9 rounded-full object-cover"
+              className={small ? 'h-7 w-7 rounded-full object-cover' : 'w-9 h-9 rounded-full object-cover'}
             />
           ) : (
-            <Avatar name={name} size={36} />
+            <Avatar name={name} size={small ? 28 : 36} />
           )}
           {online !== undefined && (
             <span className="absolute -bottom-0.5 -right-0.5">
@@ -93,7 +103,7 @@ export function ChannelHeader({
 
         <div className="min-w-0 flex flex-col gap-0.5">
           <div className="flex items-center gap-2">
-            <h2 className="text-[15px] font-semibold text-[var(--color-text-primary)] leading-tight truncate">
+            <h2 className={cn('font-semibold text-[var(--color-text-primary)] leading-tight truncate', small ? 'text-[13px]' : 'text-[15px]')}>
               {name}
             </h2>
             {/* A button only when there is somewhere to go.
@@ -126,7 +136,7 @@ export function ChannelHeader({
               )
             )}
           </div>
-          {description && (
+          {description && !small && (
             <p className="text-[12px] text-[var(--color-text-tertiary)] truncate leading-tight">
               {description}
             </p>

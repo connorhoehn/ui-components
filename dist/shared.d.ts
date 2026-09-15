@@ -339,7 +339,7 @@ export declare interface ChangeDiffProps {
     'data-testid'?: string;
 }
 
-export declare function ChannelHeader({ name, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
+export declare function ChannelHeader({ name, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, size, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
 
 export declare interface ChannelHeaderProps {
     /** Display name of the channel or user */
@@ -362,6 +362,12 @@ export declare interface ChannelHeaderProps {
     online?: boolean;
     /** Called when member-count area is clicked */
     onMembersClick?: () => void;
+    /**
+     * `sm` for a narrow column (a conversation beside a document): one row that
+     * never wraps, a 28px avatar, the description dropped. The default `md` is
+     * the full-width bar over a chat pane.
+     */
+    size?: 'md' | 'sm';
     className?: string;
     'data-testid'?: string;
 }
@@ -512,6 +518,50 @@ export declare interface ChipProps {
 
 /** @see Tone — the library-wide semantic tone scale. */
 export declare type ChipTone = ToneOrAlias;
+
+/** The list. Rows divide themselves; the list draws the outer rule. */
+export declare function ChoiceList({ children, className, 'data-testid': testId }: ChoiceListProps): JSX.Element;
+
+export declare interface ChoiceListProps {
+    children: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** One target inside an open disclosure: indented under the row's glyph. */
+export declare function ChoiceOption({ icon, label, onSelect, disabled, 'data-testid': testId }: ChoiceOptionProps): JSX.Element;
+
+export declare interface ChoiceOptionProps {
+    icon?: ReactNode;
+    label: string;
+    onSelect: () => void;
+    disabled?: boolean;
+    'data-testid'?: string;
+}
+
+export declare function ChoiceRow({ icon, title, description, onSelect, children, open: openProp, onOpenChange, disabled, disabledReason, busy, 'data-testid': testId, }: ChoiceRowProps): JSX.Element;
+
+export declare interface ChoiceRowProps {
+    icon?: ReactNode;
+    title: string;
+    /** One line: what choosing this does. */
+    description?: string;
+    /** An action row: pressing it does the thing. */
+    onSelect?: () => void;
+    /**
+     * A disclosure row: pressing it opens `children` beneath. Controlled when
+     * `open` is given, otherwise the row keeps its own state.
+     */
+    children?: ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    disabled?: boolean;
+    /** Why it is disabled, as the row's tooltip. */
+    disabledReason?: string;
+    /** The row is doing what it was asked; it reads as pressed and takes no more presses. */
+    busy?: boolean;
+    'data-testid'?: string;
+}
 
 /**
  * `TONE_SOFT` in the code family. One background for all tones — the code
@@ -3789,6 +3839,49 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3808,49 +3901,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

@@ -102,47 +102,25 @@ function m({ children: t, as: n = "span", className: r, "data-testid": i }) {
 	});
 }
 //#endregion
-//#region src/components/shared/InlinePlaceholder.tsx
-var h = {
-	xs: "text-[11px] gap-2",
-	sm: "text-[13px] gap-3"
-}, g = {
-	start: "justify-start text-left",
-	center: "justify-center text-center"
-}, _ = {
-	surface: "text-text-tertiary",
-	code: "text-code-raised"
-};
-function v({ children: t, action: n, size: r = "xs", align: i = "start", tone: a = "surface", className: o, "data-testid": l = "inline-placeholder" }) {
-	return /* @__PURE__ */ c("div", {
-		"data-testid": l,
-		className: e("flex items-center flex-wrap leading-normal", h[r] ?? h.xs, g[i] ?? g.start, _[a] ?? _.surface, o),
-		children: [/* @__PURE__ */ s("span", { children: t }), n != null && /* @__PURE__ */ s("span", {
-			className: "shrink-0",
-			children: n
-		})]
-	});
-}
-//#endregion
 //#region src/components/shared/FloatingPanel.tsx
-var y = [
+var h = [
 	"top-left",
 	"top-right",
 	"left-center",
 	"right-center",
 	"bottom-left",
 	"bottom-right"
-], b = 2, x = 16, ee = 24, te = 180, ne = 12, S = 0;
+], g = 2, _ = 16, ee = 24, te = 180, ne = 12, v = 0;
 function re() {
-	return S += 1, S;
+	return v += 1, v;
 }
 function ie() {
-	return S;
+	return v;
 }
-function C(e) {
-	return typeof e == "string" && y.includes(e);
+function y(e) {
+	return typeof e == "string" && h.includes(e);
 }
-function w(e) {
+function b(e) {
 	return typeof e == "number" && Number.isFinite(e);
 }
 function ae(e) {
@@ -151,12 +129,12 @@ function ae(e) {
 		let t = window.localStorage.getItem(e);
 		if (!t) return null;
 		let n = JSON.parse(t);
-		return !n || typeof n != "object" ? null : n.v === 2 ? !C(n.anchor) || !w(n.dx) || !w(n.dy) ? null : {
+		return !n || typeof n != "object" ? null : n.v === 2 ? !y(n.anchor) || !b(n.dx) || !b(n.dy) ? null : {
 			kind: "anchor",
 			anchor: n.anchor,
 			dx: n.dx,
 			dy: n.dy
-		} : n.v === 1 && w(n.x) && w(n.y) ? {
+		} : n.v === 1 && b(n.x) && b(n.y) ? {
 			kind: "raw",
 			x: n.x,
 			y: n.y
@@ -165,10 +143,10 @@ function ae(e) {
 		return null;
 	}
 }
-function T(e, t, n, r) {
+function x(e, t, n, r) {
 	try {
 		let i = {
-			v: b,
+			v: g,
 			anchor: t,
 			dx: Math.round(n),
 			dy: Math.round(r)
@@ -176,23 +154,23 @@ function T(e, t, n, r) {
 		window.localStorage.setItem(e, JSON.stringify(i));
 	} catch {}
 }
-function E(e, t, n) {
+function S(e, t, n) {
 	if (typeof window > "u") return {
-		x,
-		y: x
+		x: _,
+		y: _
 	};
-	let r = Math.max(x, window.innerWidth - t - x), i = Math.max(x, window.innerHeight - n - x), a = Math.max(x, Math.round((window.innerHeight - n) / 2));
+	let r = Math.max(_, window.innerWidth - t - _), i = Math.max(_, window.innerHeight - n - _), a = Math.max(_, Math.round((window.innerHeight - n) / 2));
 	switch (e) {
 		case "top-left": return {
-			x,
-			y: x
+			x: _,
+			y: _
 		};
 		case "top-right": return {
 			x: r,
-			y: x
+			y: _
 		};
 		case "left-center": return {
-			x,
+			x: _,
 			y: a
 		};
 		case "right-center": return {
@@ -200,7 +178,7 @@ function E(e, t, n) {
 			y: a
 		};
 		case "bottom-left": return {
-			x,
+			x: _,
 			y: i
 		};
 		default: return {
@@ -209,25 +187,25 @@ function E(e, t, n) {
 		};
 	}
 }
-function D(e, t, n, r) {
-	let i = Math.max(x, window.innerWidth - n - x), a = Math.max(x, window.innerHeight - r - x);
+function C(e, t, n, r) {
+	let i = Math.max(_, window.innerWidth - n - _), a = Math.max(_, window.innerHeight - r - _);
 	return {
-		x: Math.min(Math.max(e, x), i),
-		y: Math.min(Math.max(t, x), a)
+		x: Math.min(Math.max(e, _), i),
+		y: Math.min(Math.max(t, _), a)
 	};
 }
-function O(e, t, n, r, i, a) {
+function w(e, t, n, r, i, a) {
 	let o = null, s = Infinity;
 	for (let c of i) {
-		let i = E(c, n, r), l = i.x - e, u = i.y - t;
+		let i = S(c, n, r), l = i.x - e, u = i.y - t;
 		if (a !== void 0 && (Math.abs(l) > a || Math.abs(u) > a)) continue;
 		let d = l * l + u * u;
 		d < s && (s = d, o = c);
 	}
 	return o;
 }
-function k({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "right-center", persistKey: h, snapEnabled: g = !0, snapThreshold: _ = ee, snapAnchors: v = y, onSnap: b, baseZIndex: x = 9999, widthClassName: S = "w-80", heightClassName: C = "h-[28rem]", tone: w = "dark", zIndexClassName: k = "z-[9999]", className: A, "data-testid": j = "floating-panel" }) {
-	let M = w === "dark", N = i(null), [P, F] = a(null), I = i(P);
+function T({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "right-center", persistKey: g, snapEnabled: _ = !0, snapThreshold: v = ee, snapAnchors: y = h, onSnap: b, baseZIndex: T = 9999, widthClassName: E = "w-80", heightClassName: D = "h-[28rem]", tone: O = "dark", zIndexClassName: k = "z-[9999]", className: A, "data-testid": j = "floating-panel" }) {
+	let M = O === "dark", N = i(null), [P, F] = a(null), I = i(P);
 	I.current = P;
 	let [L, R] = a(!1), [z, B] = a(null), V = i(null);
 	V.current = z;
@@ -235,25 +213,25 @@ function k({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 	K.current = G;
 	let q = i(null), J = i(m);
 	J.current = m;
-	let Y = i(h);
-	Y.current = h;
+	let Y = i(g);
+	Y.current = g;
 	let X = i({
-		snapEnabled: g,
-		snapThreshold: _,
-		snapAnchors: v,
+		snapEnabled: _,
+		snapThreshold: v,
+		snapAnchors: y,
 		onSnap: b
 	});
 	X.current = {
-		snapEnabled: g,
-		snapThreshold: _,
-		snapAnchors: v,
+		snapEnabled: _,
+		snapThreshold: v,
+		snapAnchors: y,
 		onSnap: b
 	};
 	let Z = t((e, t, n, r) => {
 		let i = Y.current;
 		if (!i) return;
-		let a = O(e, t, n, r, y) ?? "top-left", o = E(a, n, r);
-		T(i, a, e - o.x, t - o.y);
+		let a = w(e, t, n, r, h) ?? "top-left", o = S(a, n, r);
+		x(i, a, e - o.x, t - o.y);
 	}, []), Q = t(() => {
 		(K.current === null || K.current !== ie()) && oe(re());
 	}, []);
@@ -264,20 +242,20 @@ function k({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 		let { width: t, height: n } = e.getBoundingClientRect(), r = Y.current, i = r ? ae(r) : null;
 		if (i) {
 			if (i.kind === "anchor") {
-				let e = E(i.anchor, t, n);
-				F(D(e.x + i.dx, e.y + i.dy, t, n));
+				let e = S(i.anchor, t, n);
+				F(C(e.x + i.dx, e.y + i.dy, t, n));
 				return;
 			}
-			let e = D(i.x, i.y, t, n);
+			let e = C(i.x, i.y, t, n);
 			F(e), Z(e.x, e.y, t, n);
 			return;
 		}
 		let a = J.current;
 		if (typeof a == "object") {
-			F(D(a.x, a.y, t, n));
+			F(C(a.x, a.y, t, n));
 			return;
 		}
-		F(E(a, t, n));
+		F(S(a, t, n));
 	}, [u, Z]);
 	let se = t((e) => {
 		if (e.pointerType === "mouse" && e.button !== 0) return;
@@ -301,10 +279,10 @@ function k({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 		let e = (e) => {
 			let t = q.current;
 			if (!t) return;
-			let n = D(t.baseX + (e.clientX - t.pointerX), t.baseY + (e.clientY - t.pointerY), t.width, t.height);
+			let n = C(t.baseX + (e.clientX - t.pointerX), t.baseY + (e.clientY - t.pointerY), t.width, t.height);
 			F(n);
 			let { snapEnabled: r, snapThreshold: i, snapAnchors: a } = X.current;
-			B(r ? O(n.x, n.y, t.width, t.height, a, i) : null);
+			B(r ? w(n.x, n.y, t.width, t.height, a, i) : null);
 		}, t = () => {
 			let e = q.current;
 			q.current = null, R(!1);
@@ -312,10 +290,10 @@ function k({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 			B(null);
 			let n = e?.width ?? 0, r = e?.height ?? 0;
 			if (t && e) {
-				let e = E(t, n, r);
+				let e = S(t, n, r);
 				F(e), U(!0), W.current && clearTimeout(W.current), W.current = setTimeout(() => U(!1), te);
 				let i = Y.current;
-				i && T(i, t, 0, 0), X.current.onSnap?.(t);
+				i && x(i, t, 0, 0), X.current.onSnap?.(t);
 				return;
 			}
 			let i = I.current;
@@ -338,20 +316,20 @@ function k({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 		let n = N.current, r = I.current;
 		if (!n || !r) return;
 		e.preventDefault();
-		let i = n.getBoundingClientRect(), a = e.shiftKey ? 1 : ne, o = D(r.x + t[0] * a, r.y + t[1] * a, i.width, i.height);
+		let i = n.getBoundingClientRect(), a = e.shiftKey ? 1 : ne, o = C(r.x + t[0] * a, r.y + t[1] * a, i.width, i.height);
 		F(o), Z(o.x, o.y, i.width, i.height);
 	}, [Z]);
 	if (!u) return null;
-	let $ = z ? E(z, N.current?.offsetWidth ?? 0, N.current?.offsetHeight ?? 0) : null;
+	let $ = z ? S(z, N.current?.offsetWidth ?? 0, N.current?.offsetHeight ?? 0) : null;
 	return l(/* @__PURE__ */ c(o, { children: [z && $ && /* @__PURE__ */ s("div", {
 		"aria-hidden": "true",
 		"data-testid": "floating-panel-snap-target",
 		"data-anchor": z,
-		className: e("fixed pointer-events-none rounded-2xl border-2 border-dashed", S, C, k, M ? "border-white/30 bg-white/5" : "border-border-focus bg-info-bg/40"),
+		className: e("fixed pointer-events-none rounded-2xl border-2 border-dashed", E, D, k, M ? "border-white/30 bg-white/5" : "border-border-focus bg-info-bg/40"),
 		style: {
 			left: $.x,
 			top: $.y,
-			zIndex: x - 1
+			zIndex: T - 1
 		}
 	}), /* @__PURE__ */ c("div", {
 		ref: N,
@@ -362,7 +340,7 @@ function k({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 		"data-snapping": H ? "true" : void 0,
 		onPointerDownCapture: Q,
 		onFocusCapture: Q,
-		className: e("fixed flex flex-col rounded-2xl border overflow-hidden backdrop-blur-sm", S, C, k, H && "transition-[left,top] duration-150 ease-out", M ? "bg-call-chrome border-call-chrome-border shadow-[0_8px_32px_rgba(0,0,0,0.4)]" : "bg-surface-panel border-border shadow-lg", A),
+		className: e("fixed flex flex-col rounded-2xl border overflow-hidden backdrop-blur-sm", E, D, k, H && "transition-[left,top] duration-150 ease-out", M ? "bg-call-chrome border-call-chrome-border shadow-[0_8px_32px_rgba(0,0,0,0.4)]" : "bg-surface-panel border-border shadow-lg", A),
 		style: {
 			...P ? {
 				left: P.x,
@@ -372,7 +350,7 @@ function k({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 				top: -9999,
 				visibility: "hidden"
 			},
-			...G === null ? null : { zIndex: x + G }
+			...G === null ? null : { zIndex: T + G }
 		},
 		children: [/* @__PURE__ */ c("div", {
 			"data-testid": "floating-panel-header",
@@ -423,4 +401,4 @@ function k({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 	})] }), document.body);
 }
 //#endregion
-export { m as a, v as i, k as n, p as o, E as r, d as s, y as t };
+export { p as a, m as i, T as n, d as o, S as r, h as t };

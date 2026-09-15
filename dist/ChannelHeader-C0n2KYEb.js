@@ -165,22 +165,24 @@ function y({ names: t, compact: n = !1, color: r, size: i = "sm", className: a, 
 }
 //#endregion
 //#region src/components/shared/ChannelHeader.tsx
-function b({ name: r, memberCount: i, description: a, tabs: o, actions: s, avatarUrl: u, online: d, onMembersClick: f, className: p, "data-testid": m }) {
+function b({ name: r, memberCount: i, description: a, tabs: o, actions: s, avatarUrl: u, online: d, onMembersClick: f, size: p = "md", className: m, "data-testid": h }) {
+	let g = p === "sm";
 	return /* @__PURE__ */ l("div", {
-		"data-testid": m,
-		className: e("@container flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-6 py-3", "border-b border-[var(--color-border)] bg-[var(--color-surface)]", p),
+		"data-testid": h,
+		"data-size": p,
+		className: e("@container flex items-center justify-between", g ? "flex-nowrap gap-x-2 px-3 py-2" : "flex-wrap gap-x-4 gap-y-1 px-6 py-3", "border-b border-[var(--color-border)] bg-[var(--color-surface)]", m),
 		children: [
 			/* @__PURE__ */ l("div", {
-				className: "flex items-center gap-3 min-w-0",
+				className: e("flex min-w-0 items-center", g ? "gap-2" : "gap-3"),
 				children: [/* @__PURE__ */ l("div", {
 					className: "relative shrink-0",
 					children: [u ? /* @__PURE__ */ c("img", {
 						src: u,
 						alt: r,
-						className: "w-9 h-9 rounded-full object-cover"
+						className: g ? "h-7 w-7 rounded-full object-cover" : "w-9 h-9 rounded-full object-cover"
 					}) : /* @__PURE__ */ c(t, {
 						name: r,
-						size: 36
+						size: g ? 28 : 36
 					}), d !== void 0 && /* @__PURE__ */ c("span", {
 						className: "absolute -bottom-0.5 -right-0.5",
 						children: /* @__PURE__ */ c(n, {
@@ -194,7 +196,7 @@ function b({ name: r, memberCount: i, description: a, tabs: o, actions: s, avata
 					children: [/* @__PURE__ */ l("div", {
 						className: "flex items-center gap-2",
 						children: [/* @__PURE__ */ c("h2", {
-							className: "text-[15px] font-semibold text-[var(--color-text-primary)] leading-tight truncate",
+							className: e("font-semibold text-[var(--color-text-primary)] leading-tight truncate", g ? "text-[13px]" : "text-[15px]"),
 							children: r
 						}), i !== void 0 && (f ? /* @__PURE__ */ l("button", {
 							type: "button",
@@ -216,7 +218,7 @@ function b({ name: r, memberCount: i, description: a, tabs: o, actions: s, avata
 								i === 1 ? "member" : "members"
 							]
 						}))]
-					}), a && /* @__PURE__ */ c("p", {
+					}), a && !g && /* @__PURE__ */ c("p", {
 						className: "text-[12px] text-[var(--color-text-tertiary)] truncate leading-tight",
 						children: a
 					})]

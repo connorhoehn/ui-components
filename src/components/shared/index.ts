@@ -368,3 +368,5 @@ export { MarkdownView } from './MarkdownView';
 export type { MarkdownViewProps } from './MarkdownView';
 export { Tooltip } from './Tooltip';
 export type { TooltipProps, TooltipPlacement } from './Tooltip';
+export { ChoiceList, ChoiceRow, ChoiceOption } from './ChoiceList';
+export type { ChoiceListProps, ChoiceRowProps, ChoiceOptionProps } from './ChoiceList';
