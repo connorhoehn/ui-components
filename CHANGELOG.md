@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.281.1] — 2026-09-16
+
+### Added — `./social`
+
+- **`ChatPanel.alignOwnMessages`** (default true, so nothing changes for
+  existing callers). A channel wants it false: Teams left-aligns every post in
+  a channel, author and avatar and all, and only a 1:1 chat puts yours on the
+  right. With `threaded` on, the right-aligned treatment actively fights the
+  thread — the rail marking "these replies belong to that post" runs down the
+  far left while your own reply sits at the far right, and the two stop
+  looking related. Alignment only; ownership still decides Edit and Delete.
+
+---
+
 ## [2.281.0] — 2026-09-16
 
 ### Added — `./social`

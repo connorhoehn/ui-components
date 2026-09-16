@@ -777,6 +777,18 @@ declare interface ChatPanelProps {
      * exactly as it does with this off.
      */
     threaded?: boolean;
+    /**
+     * Draw your own messages right-aligned in their own bubble. True by
+     * default, which is what a two-person chat wants.
+     *
+     * A CHANNEL does not: Teams left-aligns every post in a channel, author and
+     * avatar and all, and only a 1:1 chat puts yours on the right. With
+     * threading on, the right-aligned treatment actively fights the thread —
+     * the rail marking "these replies belong to that post" runs down the far
+     * left while your reply sits at the far right, and the two stop looking
+     * related at all.
+     */
+    alignOwnMessages?: boolean;
     disabled?: boolean;
     onTyping?: (isTyping: boolean) => void;
     typingUsers?: string[];

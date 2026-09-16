@@ -305,3 +305,38 @@ describe('ChatPanel threading', () => {
     expect(rail.className).not.toContain('border-border');
   });
 });
+
+describe('ChatPanel own-message alignment', () => {
+  it('right-aligns your own message by default, the way a two-person chat wants', () => {
+    render(<ChatPanel messages={[msg('m1', 'mine', { userId: 'eve' })]} onSend={vi.fn()} currentUserId="eve" />);
+    const row = screen.getByText('mine').closest('[data-mine]');
+    expect(row?.getAttribute('data-mine')).toBe('true');
+  });
+
+  it('leaves it in line when the host says not to align it — a channel post is a post', () => {
+    render(
+      <ChatPanel
+        messages={[msg('m1', 'mine', { userId: 'eve' })]}
+        onSend={vi.fn()}
+        currentUserId="eve"
+        alignOwnMessages={false}
+      />,
+    );
+    const row = screen.getByText('mine').closest('[data-mine]');
+    expect(row?.getAttribute('data-mine')).toBe('false');
+  });
+
+  it('still lets you edit and delete it — alignment is not ownership', () => {
+    const onEditMessage = vi.fn();
+    render(
+      <ChatPanel
+        messages={[msg('m1', 'mine', { userId: 'eve' })]}
+        onSend={vi.fn()}
+        currentUserId="eve"
+        alignOwnMessages={false}
+        onEditMessage={onEditMessage}
+      />,
+    );
+    expect(screen.getByLabelText('Edit message')).toBeTruthy();
+  });
+});
