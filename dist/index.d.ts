@@ -2428,6 +2428,8 @@ export declare interface ChannelMentionsPanelProps {
     'data-testid'?: string;
 }
 
+export declare type ChannelPrivacy = 'standard' | 'private';
+
 export declare interface ChannelRecordingItem {
     recordingId: string;
     /** ISO-8601 of when the call started. */
@@ -4237,6 +4239,24 @@ export declare interface ConversationSurfaceProps {
     'data-testid'?: string;
 }
 
+export declare function CreateChannelDialog({ open, teamName, busy, onCreate, onClose, 'data-testid': testId, }: CreateChannelDialogProps): JSX.Element;
+
+export declare interface CreateChannelDialogInput {
+    name: string;
+    description?: string;
+    privacy: ChannelPrivacy;
+}
+
+export declare interface CreateChannelDialogProps {
+    open: boolean;
+    teamName: string;
+    busy?: boolean;
+    /** Reject with a reason (e.g. a duplicate name) and it shows inline. */
+    onCreate: (input: CreateChannelDialogInput) => Promise<void> | void;
+    onClose: () => void;
+    'data-testid'?: string;
+}
+
 export declare interface CreateClientInput {
     clientName: string;
     poolId: string;
@@ -4314,6 +4334,23 @@ export declare interface CreateRunPanelRendererOptions {
     onOpenResult?: (result: AgentRunResult) => void;
     /** Re-load interval while the run is running / awaiting. Default 2000; `0` disables. */
     refreshMs?: number;
+    'data-testid'?: string;
+}
+
+export declare function CreateTeamDialog({ open, busy, onCreate, onClose, 'data-testid': testId, }: CreateTeamDialogProps): JSX.Element;
+
+export declare interface CreateTeamDialogInput {
+    name: string;
+    description?: string;
+    visibility: TeamVisibility;
+}
+
+export declare interface CreateTeamDialogProps {
+    open: boolean;
+    busy?: boolean;
+    /** Reject with a reason (e.g. a name already taken) and it shows inline. */
+    onCreate: (input: CreateTeamDialogInput) => Promise<void> | void;
+    onClose: () => void;
     'data-testid'?: string;
 }
 
@@ -7740,6 +7777,9 @@ export declare interface LocalChatMessage {
     /** Replaces the default "Only you can see this". */
     note?: string;
 }
+
+/** A padlock: "private", "restricted to specific people". */
+export declare function LockIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 declare interface LogEntry {
     id: string;
@@ -12824,6 +12864,46 @@ export declare const tasksFieldType: FieldTypeDefinition;
 
 export declare function TasksReaderRenderer({ section, onUpdateItem, onNavigateToEditor }: SectionRendererProps): JSX.Element;
 
+export declare interface TeamChannelItem {
+    channel: string;
+    name: string;
+    unreadCount?: number;
+    mentioned?: boolean;
+    muted?: boolean;
+    private?: boolean;
+    live?: boolean;
+}
+
+export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onCreateTeam, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
+
+export declare interface TeamChannelTreeProps {
+    teams: readonly TeamTreeItem[];
+    activeChannel?: string | null;
+    onSelectChannel: (channel: string) => void;
+    /** Controls expansion when given; the tree keeps its own state when absent. */
+    onToggleTeam?: (teamId: string, expanded: boolean) => void;
+    /** "Add channel" in the team's ⋯ menu. */
+    onCreateChannel?: (teamId: string) => void;
+    /** "Manage team" in the team's ⋯ menu. */
+    onManageTeam?: (teamId: string) => void;
+    /** "Leave team" in the team's ⋯ menu. */
+    onLeaveTeam?: (teamId: string) => void;
+    /** Footer "Join or create a team" action. */
+    onCreateTeam?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface TeamTreeItem {
+    teamId: string;
+    name: string;
+    avatarUrl?: string;
+    channels: readonly TeamChannelItem[];
+    expanded?: boolean;
+}
+
+export declare type TeamVisibility = 'org' | 'private';
+
 export declare function TechnicalDetails({ text, label, hideLabel, defaultOpen, className, testId, }: TechnicalDetailsProps): JSX.Element | null;
 
 export declare interface TechnicalDetailsProps {
@@ -15446,19 +15526,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -15478,6 +15545,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -15488,9 +15568,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -15498,9 +15578,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -15534,22 +15627,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

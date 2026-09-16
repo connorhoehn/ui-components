@@ -114,9 +114,21 @@ function C({ size: e = 16, ...t }) {
 		]
 	});
 }
+function w({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [/* @__PURE__ */ l("rect", {
+			x: "3.5",
+			y: "7.5",
+			width: "9",
+			height: "6",
+			rx: "1.2"
+		}), /* @__PURE__ */ l("path", { d: "M5.5 7.5V5.5a2.5 2.5 0 0 1 5 0v2" })]
+	});
+}
 //#endregion
 //#region src/components/shared/PresenceAvatars.tsx
-var w = {
+var T = {
 	editor: {
 		glyph: "✏",
 		label: "Editing"
@@ -130,13 +142,13 @@ var w = {
 		label: "Viewing"
 	}
 };
-function T(e) {
+function E(e) {
 	return e.idle === !0 ? "#f59e0b" : e.online === !1 ? "var(--color-text-tertiary)" : e.online === !0 ? "#22c55e" : null;
 }
-function E(e) {
+function D(e) {
 	if (e) return /^#[0-9a-fA-F]{6}$/.test(e) ? `${e}99` : (/^#[0-9a-fA-F]{8}$/.test(e), e);
 }
-function D({ user: t, isFollowing: n, onFollow: r, children: i }) {
+function O({ user: t, isFollowing: n, onFollow: r, children: i }) {
 	let [c, d] = s(!1), f = o(null), p = () => {
 		f.current &&= (clearTimeout(f.current), null), d(!0);
 	}, m = () => {
@@ -184,14 +196,14 @@ function D({ user: t, isFollowing: n, onFollow: r, children: i }) {
 		})]
 	});
 }
-function O({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserClick: s, onFollowUser: d, followingUserId: f = null, className: p }) {
+function k({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserClick: s, onFollowUser: d, followingUserId: f = null, className: p }) {
 	let m = r.slice(0, i), h = r.length - m.length, g = -(a * .3), _ = Math.max(1, Math.round(a * .07)), v = Math.max(10, Math.round(a * .42));
 	return /* @__PURE__ */ u("div", {
 		className: e("inline-flex items-center", p),
 		role: "list",
 		"aria-label": "Online users",
 		children: [m.map((e, r) => {
-			let i = T(e), o = e.idle === !0, p = o ? E(e.color) : e.color, m = o && !e.color ? .6 : void 0, h = e.mode ? w[e.mode] : null, y = [e.name];
+			let i = E(e), o = e.idle === !0, p = o ? D(e.color) : e.color, m = o && !e.color ? .6 : void 0, h = e.mode ? T[e.mode] : null, y = [e.name];
 			o ? y.push("Away") : h && y.push(h.label);
 			let b = y.join(" — "), x = {
 				"data-testid": "presence-avatar",
@@ -242,7 +254,7 @@ function O({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 					children: h.glyph
 				})
 			] }), C = { marginLeft: r > 0 ? g : 0 };
-			return ((t) => d ? /* @__PURE__ */ l(D, {
+			return ((t) => d ? /* @__PURE__ */ l(O, {
 				user: e,
 				isFollowing: f === e.id,
 				onFollow: d,
@@ -286,7 +298,7 @@ function O({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 }
 //#endregion
 //#region src/components/shared/DropdownMenu.tsx
-function k({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, triggerClassName: d, triggerTabIndex: f, triggerTestId: p, align: m = "start", sections: h, className: g, "data-testid": _ = "dropdown-menu" }) {
+function A({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, triggerClassName: d, triggerTabIndex: f, triggerTestId: p, align: m = "start", sections: h, className: g, "data-testid": _ = "dropdown-menu" }) {
 	let [v, y] = s(!1), b = o(null), x = o(null), S = i(() => y(!1), []), C = i((e) => {
 		if (![
 			"ArrowDown",
@@ -341,7 +353,7 @@ function k({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 						className: "px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
-					e.items.map((e, t) => /* @__PURE__ */ l(N, {
+					e.items.map((e, t) => /* @__PURE__ */ l(P, {
 						item: e,
 						close: S,
 						testId: _
@@ -351,11 +363,11 @@ function k({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 		})
 	})] });
 }
-var A = "flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100";
-function j(e, t = !1) {
+var j = "flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100";
+function M(e, t = !1) {
 	return e.danger ? "text-danger-fg bg-transparent hover:bg-danger-bg" : e.active || t ? "font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]" : "font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]";
 }
-function M({ item: e }) {
+function N({ item: e }) {
 	return /* @__PURE__ */ u(c, { children: [
 		e.checked === void 0 ? e.icon ? /* @__PURE__ */ l("span", {
 			className: "flex w-4 shrink-0 items-center justify-center text-base leading-none text-[var(--color-text-secondary)]",
@@ -388,7 +400,7 @@ function M({ item: e }) {
 		})
 	] });
 }
-function N({ item: t, close: n, testId: i }) {
+function P({ item: t, close: n, testId: i }) {
 	let [d, f] = s(!1), p = o(null), m = o(null), h = o(null), g = () => {
 		h.current &&= (clearTimeout(h.current), null);
 	}, _ = () => {
@@ -409,8 +421,8 @@ function N({ item: t, close: n, testId: i }) {
 			(e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") && (e.preventDefault(), f(!0), setTimeout(() => m.current?.querySelector("[role=\"menuitem\"],[role=\"menuitemcheckbox\"]")?.focus(), 0));
 		},
 		"data-testid": t["data-testid"],
-		className: e(A, j(t, d)),
-		children: /* @__PURE__ */ l(M, { item: t })
+		className: e(j, M(t, d)),
+		children: /* @__PURE__ */ l(N, { item: t })
 	}), /* @__PURE__ */ l(r, {
 		trigger: p,
 		open: d,
@@ -443,7 +455,7 @@ function N({ item: t, close: n, testId: i }) {
 						className: "px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
-					e.items.map((e, t) => /* @__PURE__ */ l(N, {
+					e.items.map((e, t) => /* @__PURE__ */ l(P, {
 						item: e,
 						close: n,
 						testId: i
@@ -460,9 +472,9 @@ function N({ item: t, close: n, testId: i }) {
 			t.onSelect?.(), n();
 		},
 		"data-testid": t["data-testid"],
-		className: e(A, j(t)),
-		children: /* @__PURE__ */ l(M, { item: t })
+		className: e(j, M(t)),
+		children: /* @__PURE__ */ l(N, { item: t })
 	});
 }
 //#endregion
-export { g as a, b as c, f as d, y as f, m as i, _ as l, x as m, O as n, p as o, h as p, C as r, v as s, k as t, S as u };
+export { g as a, b as c, S as d, f, x as h, m as i, _ as l, h as m, k as n, p as o, y as p, C as r, v as s, A as t, w as u };

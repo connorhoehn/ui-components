@@ -146,3 +146,13 @@ export function BellMutedIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A padlock: "private", "restricted to specific people". */
+export function LockIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="3.5" y="7.5" width="9" height="6" rx="1.2" />
+      <path d="M5.5 7.5V5.5a2.5 2.5 0 0 1 5 0v2" />
+    </svg>
+  );
+}

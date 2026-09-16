@@ -215,3 +215,12 @@ export { MembershipNotice, describeMembership, describeMembershipHistory } from 
 export type { MembershipNoticeProps, MembershipRef, MembershipHistory, MembershipHistoryMode } from './MembershipNotice';
 export { MembersPanel } from './MembersPanel';
 export type { MembersPanelProps, ChatMember } from './MembersPanel';
+
+// Teams → Channels — the signature Teams rail tree, and the two "create"
+// dialogs that hang off its ⋯ menus.
+export { TeamChannelTree } from './TeamChannelTree';
+export type { TeamChannelTreeProps, TeamTreeItem, TeamChannelItem } from './TeamChannelTree';
+export { CreateChannelDialog } from './CreateChannelDialog';
+export type { CreateChannelDialogProps, CreateChannelDialogInput, ChannelPrivacy } from './CreateChannelDialog';
+export { CreateTeamDialog } from './CreateTeamDialog';
+export type { CreateTeamDialogProps, CreateTeamDialogInput, TeamVisibility } from './CreateTeamDialog';
