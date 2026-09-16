@@ -1604,6 +1604,20 @@ export declare interface CallingStatusPillProps {
     label: string;
 }
 
+export declare function CallInterruptedNotice({ show, title, description, actions, className, 'data-testid': testId, }: CallInterruptedNoticeProps): JSX.Element | null;
+
+export declare interface CallInterruptedNoticeProps {
+    show: boolean;
+    /** Names the moment in two or three words, e.g. "Call disconnected". */
+    title: ReactNode;
+    /** One line: what happened, and what the actions below will do about it. */
+    description: ReactNode;
+    /** The buttons. Rendered in a centred row under the description. */
+    actions?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare type CallMode = 'audio' | 'video';
 
 export declare function CallNoticePill({ show, tone, message, actions, className, 'data-testid': testId }: CallNoticePillProps): JSX.Element | null;
@@ -16225,22 +16239,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -16258,9 +16259,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -16294,9 +16298,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

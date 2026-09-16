@@ -4601,4 +4601,28 @@ function er({ show: t, tone: n = "warning", message: r, actions: i, className: a
 	}) : null;
 }
 //#endregion
-export { me as $, wt as A, qe as B, Rt as C, jt as D, Pt as E, tt as F, He as G, Ke as H, et as I, Ne as J, Be as K, $e as L, mt as M, ft as N, At as O, Qe as P, fe as Q, dt as R, Vt as S, Ft as T, We as U, Je as V, Ve as W, Te as X, ke as Y, be as Z, pn as _, qn as a, re as at, Kt as b, Un as c, Pn as d, ge as et, kn as f, vn as g, $ as h, Yn as i, ie as it, bt as j, Tt as k, zn as l, Dn as m, Qn as n, le as nt, Kn as o, q as ot, An as p, Le as q, Xn as r, ce as rt, Gn as s, er as t, de as tt, Ln as u, fn as v, It as w, Wt as x, nn as y, Ye as z };
+//#region src/components/video/CallInterruptedNotice.tsx
+function tr({ show: t, title: n, description: r, actions: i, className: a, "data-testid": o = "call-interrupted-notice" }) {
+	return t ? /* @__PURE__ */ G("div", {
+		role: "alert",
+		"aria-live": "assertive",
+		"data-testid": o,
+		className: e("pointer-events-auto absolute left-1/2 top-1/2 z-30 w-[min(22rem,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2", "rounded-xl px-4 py-4 text-center shadow-2xl", "border border-call-chrome-border bg-call-chrome text-white", a),
+		children: [
+			/* @__PURE__ */ W("p", {
+				className: "m-0 text-sm font-semibold",
+				children: n
+			}),
+			/* @__PURE__ */ W("p", {
+				className: "m-0 mt-1 text-xs leading-relaxed text-white/70",
+				children: r
+			}),
+			i && /* @__PURE__ */ W("div", {
+				className: "mt-3 flex flex-wrap items-center justify-center gap-2",
+				children: i
+			})
+		]
+	}) : null;
+}
+//#endregion
+export { fe as $, Tt as A, Ye as B, Vt as C, Pt as D, Ft as E, Qe as F, Ve as G, Je as H, tt as I, Le as J, He as K, et as L, bt as M, mt as N, jt as O, ft as P, be as Q, $e as R, Wt as S, It as T, Ke as U, qe as V, We as W, ke as X, Ne as Y, Te as Z, vn as _, Yn as a, ie as at, nn as b, Gn as c, Ln as d, me as et, Pn as f, $ as g, Dn as h, Xn as i, ce as it, wt as j, At as k, Un as l, An as m, er as n, de as nt, qn as o, re as ot, kn as p, Be as q, Qn as r, le as rt, Kn as s, q as st, tr as t, ge as tt, zn as u, pn as v, Rt as w, Kt as x, fn as y, dt as z };

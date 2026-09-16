@@ -278,3 +278,7 @@ export type { AudioPlayerProps } from './AudioPlayer';
 // One-line in-call notices with an inline action; the widget-scale answer to a page Banner.
 export { CallNoticePill } from './CallNoticePill';
 export type { CallNoticePillProps } from './CallNoticePill';
+// The same notice at card scale, for the failure the pill cannot say in one
+// truncating line: terminal, user-resolved, and owed an explanation.
+export { CallInterruptedNotice } from './CallInterruptedNotice';
+export type { CallInterruptedNoticeProps } from './CallInterruptedNotice';

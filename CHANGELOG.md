@@ -6,6 +6,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.294.0] — 2026-09-16
+
+### Added — `./video`
+
+- **`CallInterruptedNotice`, for the call that stopped and will not start
+  itself again.** `CallNoticePill` is one truncating line, and that is the
+  right shape for "Reconnecting…" — transient, self-resolving, not worth
+  covering a tile for. Hosts were using it for terminal failure too, where
+  every one of those properties is false: the call is gone until someone acts,
+  there are two actions with different consequences, and the person cannot
+  choose between them without knowing what happened. The pill could only ever
+  say "Call disconnected", because a second sentence hits its own `truncate`
+  and gets clipped — which is worse than absent, since a half-sentence about a
+  broken call reads as a second bug.
+
+  So this is the same notice at card scale: a centred card over the stage the
+  way Teams and Zoom both stage this, with a title, one line of cause, and the
+  actions underneath. It is `role="alert"`, not the pill's `role="status"` — a
+  polite region is queued behind whatever the screen reader is already saying
+  and may be dropped entirely, which turns a dead call into silence. Not
+  `alertdialog`: that contract obliges us to trap focus, and taking the control
+  bar away from someone who only wanted to hang up is the wrong trade.
+
+  Copy is consumer-supplied. "The call failed" is several different sentences
+  depending on what the host actually knows — exhausted ICE retries, a revoked
+  token, a room closed underneath you — and baking one of them in makes the
+  other two lie. The card paints in `--color-call-chrome` rather than the host
+  theme, because the stage it sits on is dark in both.
+
+---
+
 ## [2.293.0] — 2026-09-16
 
 ### Fixed — `./social`
