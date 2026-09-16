@@ -120,6 +120,7 @@ export function InlinePopover({
 }: InlinePopoverProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<CSSProperties | null>(null);
+  const clampedRef = useRef(false);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   // Escape/Tab belong to the top layer only. See lib/overlayStack.ts for why
   // the `e.stopPropagation()` below cannot achieve this on its own.
@@ -131,6 +132,7 @@ export function InlinePopover({
     const el = trigger.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
+    clampedRef.current = false;
     setPosition(computePosition(rect, placement, offset));
   }, [trigger, placement, offset]);
 
@@ -141,6 +143,49 @@ export function InlinePopover({
     }
     recompute();
   }, [open, recompute]);
+
+  // Second pass, once the panel has a measured size: keep it on screen. A
+  // 380px form hanging off a team row near the bottom of a rail would
+  // otherwise run past the fold with its buttons below it. Corrections are
+  // written as explicit top/left, which also retires the bottom-end
+  // transform — the measured rect already includes it.
+  useLayoutEffect(() => {
+    if (!open || !position) return;
+    // One correction per anchor-derived position, or the correction's own
+    // re-render would measure and correct again forever.
+    if (clampedRef.current) return;
+    clampedRef.current = true;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    if (r.width === 0 && r.height === 0) return;
+    const margin = 8;
+    const maxH = window.innerHeight - margin * 2;
+    let top = r.top;
+    let left = r.left;
+    let changed = false;
+    if (r.height > maxH) {
+      top = margin;
+      changed = true;
+    } else if (r.bottom > window.innerHeight - margin) {
+      top = window.innerHeight - margin - r.height;
+      changed = true;
+    }
+    if (top < margin) {
+      top = margin;
+      changed = true;
+    }
+    if (r.right > window.innerWidth - margin) {
+      left = Math.max(margin, window.innerWidth - margin - r.width);
+      changed = true;
+    }
+    if (left < margin) {
+      left = margin;
+      changed = true;
+    }
+    if (!changed) return;
+    setPosition({ position: 'fixed', top, left, maxHeight: maxH, overflowY: 'auto' });
+  }, [open, position]);
 
   useEffect(() => {
     if (!open) return;

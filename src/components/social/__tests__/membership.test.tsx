@@ -42,7 +42,7 @@ describe('AddToChatDialog', () => {
     fireEvent.click(screen.getByTestId('add-to-chat-dialog-unpick-carol'));
     expect(screen.queryByTestId('add-to-chat-dialog-picked')).toBeNull();
     fireEvent.click(screen.getByTestId('add-to-chat-dialog-person-carol'));
-    fireEvent.click(screen.getByTestId('add-to-chat-dialog-history-days-button'));
+    fireEvent.click(screen.getByTestId('add-to-chat-dialog-history-days'));
     const days = screen.getByTestId('add-to-chat-dialog-days') as HTMLInputElement;
     expect(days.value).toBe('7');
     fireEvent.change(days, { target: { value: '30' } });
@@ -55,7 +55,7 @@ describe('AddToChatDialog', () => {
     const onClose = vi.fn();
     render(<AddToChatDialog open conversationName="#design" people={PEOPLE} onAdd={onAdd} onClose={onClose} />);
     fireEvent.click(screen.getByTestId('add-to-chat-dialog-person-dave'));
-    fireEvent.click(screen.getByTestId('add-to-chat-dialog-history-all-button'));
+    fireEvent.click(screen.getByTestId('add-to-chat-dialog-history-all'));
     fireEvent.click(screen.getByTestId('add-to-chat-dialog-add'));
     await waitFor(() => expect(screen.getByTestId('add-to-chat-dialog-error').textContent).toBe('only owners may add people'));
     expect(onClose).not.toHaveBeenCalled();

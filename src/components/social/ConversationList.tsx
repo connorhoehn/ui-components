@@ -18,6 +18,7 @@ import { Avatar, AvatarGroup } from '../shared/Avatar';
 import { PresenceDot } from '../shared/PresenceDot';
 import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
 import { BellMutedIcon, PinIcon } from '../ui/Icons';
+import { RailSectionHeader, type RailSectionAction } from './RailSectionHeader';
 import { formatChatTime } from './MessageRow';
 
 /**
@@ -164,6 +165,13 @@ export interface ConversationListProps {
    */
   sectionOrder?: 'channels-first' | 'dms-first';
   /**
+   * Trailing buttons on a section's heading, keyed by the section's name —
+   * 'Channels', 'Direct messages', 'Pinned'. A + on the Channels heading is
+   * where people look for "make a new one"; a "new" button parked somewhere
+   * else is a button nobody finds.
+   */
+  sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
+  /**
    * Sort rows most-recent-first within each group. Default TRUE.
    *
    * Off for a caller whose order already means something — a call's people
@@ -204,6 +212,7 @@ export function ConversationList({
   items,
   grouped = false,
   sectionOrder = 'channels-first',
+  sectionActions,
   sortByRecency = true,
   maxVisible,
   activeChannel,
@@ -402,18 +411,12 @@ export function ConversationList({
           {visibleSections.map((section) => (
             <div key={section.label}>
               {section.heading && (
-                <p
+                <RailSectionHeader
+                  label={section.heading}
+                  dark={dark}
+                  actions={sectionActions?.[section.label] ?? []}
                   data-testid="conversation-section"
-                  // Presentational: the <ul> below carries the same name, and
-                  // a heading announced on top of it is the label twice.
-                  aria-hidden
-                  className={cn(
-                    'm-0 px-2 pb-0.5 pt-3 text-[11px] font-semibold uppercase tracking-wide',
-                    dark ? 'text-white/40' : 'text-text-tertiary',
-                  )}
-                >
-                  {section.heading}
-                </p>
+                />
               )}
               <ul
                 className="m-0 flex list-none flex-col gap-0.5 p-0"

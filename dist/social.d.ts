@@ -3,6 +3,32 @@ import { JSX } from 'react';
 import { ReactNode } from 'react';
 import { RefObject } from 'react';
 
+export declare function ActivePeopleGrid({ people, maxVisible, onSelectPerson, onShowAll, emptyLabel, className, 'data-testid': testId, }: ActivePeopleGridProps): JSX.Element;
+
+export declare interface ActivePeopleGridProps {
+    people: readonly ActivePerson[];
+    /** Beyond this many, the rest collapse into a "+N" tile. Default 8. */
+    maxVisible?: number;
+    /** Clicking a tile — the host opens a chat with them. */
+    onSelectPerson?: (userId: string) => void;
+    /** Clicking the "+N" tile. Without it, the tile is inert text rather than a button. */
+    onShowAll?: () => void;
+    emptyLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ActivePerson {
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+    /** What they are doing right now — "In a call", "Editing the roadmap". A tooltip, and a small glyph on the bubble. */
+    activity?: string;
+    /** In a live call right now: the bubble gets a ring and the tile a small live marker. */
+    inCall?: boolean;
+    status?: 'online' | 'busy' | 'away';
+}
+
 declare interface ActivityEvent {
     id: string;
     eventType: string;
@@ -23,7 +49,7 @@ declare interface ActivityPanelProps {
     connectionState: ConnectionState;
 }
 
-export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, onAdd, onClose, 'data-testid': testId, historyChoice, }: AddToChatDialogProps): JSX.Element;
+export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, anchor, placement, onAdd, onClose, 'data-testid': testId, historyChoice, }: AddToChatDialogProps): JSX.Element;
 
 export declare interface AddToChatDialogProps {
     open: boolean;
@@ -33,6 +59,9 @@ export declare interface AddToChatDialogProps {
     people: readonly AddToChatPerson[];
     preselectedIds?: readonly string[];
     busy?: boolean;
+    /** The control that opened it. The popover hangs off this; without it, it centres. */
+    anchor?: RefObject<HTMLElement | null> | null;
+    placement?: InlinePopoverPlacement;
     /** Resolves when the server has them; rejects with a reason to show. */
     onAdd: (userIds: string[], history: MembershipHistory) => Promise<void> | void;
     /**
@@ -1135,7 +1164,7 @@ export declare interface ConversationItem {
     muted?: boolean;
 }
 
-export declare function ConversationList({ items, grouped, sectionOrder, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+export declare function ConversationList({ items, grouped, sectionOrder, sectionActions, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
 
 export declare interface ConversationListProps {
     items: ConversationItem[];
@@ -1168,6 +1197,13 @@ export declare interface ConversationListProps {
      * from a colleague above the fold.
      */
     sectionOrder?: 'channels-first' | 'dms-first';
+    /**
+     * Trailing buttons on a section's heading, keyed by the section's name —
+     * 'Channels', 'Direct messages', 'Pinned'. A + on the Channels heading is
+     * where people look for "make a new one"; a "new" button parked somewhere
+     * else is a button nobody finds.
+     */
+    sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
     /**
      * Sort rows most-recent-first within each group. Default TRUE.
      *
@@ -1214,7 +1250,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -1259,6 +1295,20 @@ export declare interface ConversationRailProps {
     onTogglePin?: (channel: string, next: boolean) => void;
     onToggleMute?: (channel: string, next: boolean) => void;
     onMarkUnread?: (channel: string) => void;
+    /**
+     * Opts into the Teams/Slack "shrink to an icon strip" toggle. Off by
+     * default, so every existing caller keeps its always-expanded rail with no
+     * behaviour change.
+     */
+    collapsible?: boolean;
+    /**
+     * Whether the rail is currently the narrow icon strip. The rail does not
+     * own this — the host decides, typically from a piece of state it
+     * persists, and hears about a change through `onToggleCollapse`.
+     */
+    collapsed?: boolean;
+    /** Fires with the state the host should switch to when the toggle is used. */
+    onToggleCollapse?: (next: boolean) => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -1268,7 +1318,12 @@ export declare function ConversationShelf({ items, activeId, onSelect, className
 export declare interface ConversationShelfItem {
     id: string;
     label: string;
-    /** Emoji or glyph. Kept short — this rail is narrow by design. */
+    /**
+     * A glyph component from `ui/Icons` (e.g. `<ActivityIcon />`), rendered in a
+     * fixed-size box so every row's label starts at the same x. Avoid emoji —
+     * they render as a fixed system glyph and do not take the theme's colour,
+     * so an urgent shelf item and a quiet one end up looking the same.
+     */
     icon?: ReactNode;
     /** Unread/waiting count. Zero renders no badge rather than a "0". */
     count?: number;
@@ -1445,7 +1500,7 @@ export declare interface ConversationSurfaceProps {
     'data-testid'?: string;
 }
 
-export declare function CreateChannelDialog({ open, teamName, busy, onCreate, onClose, 'data-testid': testId, }: CreateChannelDialogProps): JSX.Element;
+export declare function CreateChannelDialog({ open, teamName, busy, anchor, placement, onCreate, onClose, 'data-testid': testId, }: CreateChannelDialogProps): JSX.Element;
 
 export declare interface CreateChannelDialogInput {
     name: string;
@@ -1457,6 +1512,9 @@ export declare interface CreateChannelDialogProps {
     open: boolean;
     teamName: string;
     busy?: boolean;
+    /** The control that opened it. The popover hangs off this; without it, it centres. */
+    anchor?: RefObject<HTMLElement | null> | null;
+    placement?: InlinePopoverPlacement;
     /** Reject with a reason (e.g. a duplicate name) and it shows inline. */
     onCreate: (input: CreateChannelDialogInput) => Promise<void> | void;
     onClose: () => void;
@@ -1482,7 +1540,7 @@ export declare interface CreateRunPanelRendererOptions {
     'data-testid'?: string;
 }
 
-export declare function CreateTeamDialog({ open, busy, onCreate, onClose, 'data-testid': testId, }: CreateTeamDialogProps): JSX.Element;
+export declare function CreateTeamDialog({ open, busy, anchor, placement, onCreate, onClose, 'data-testid': testId, }: CreateTeamDialogProps): JSX.Element;
 
 export declare interface CreateTeamDialogInput {
     name: string;
@@ -1493,6 +1551,9 @@ export declare interface CreateTeamDialogInput {
 export declare interface CreateTeamDialogProps {
     open: boolean;
     busy?: boolean;
+    /** The control that opened it. The popover hangs off this; without it, it centres. */
+    anchor?: RefObject<HTMLElement | null> | null;
+    placement?: InlinePopoverPlacement;
     /** Reject with a reason (e.g. a name already taken) and it shows inline. */
     onCreate: (input: CreateTeamDialogInput) => Promise<void> | void;
     onClose: () => void;
@@ -1728,6 +1789,8 @@ export declare interface InlineMessageEditorProps {
     onCancel: () => void;
     'data-testid'?: string;
 }
+
+declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
 
 /** True when `command` is offered in `ctx`. */
 export declare function isChatCommandInScope(command: Pick<ChatCommand, 'scope'>, ctx: ChatCommandScopeContext): boolean;
@@ -2095,6 +2158,34 @@ export declare interface QuotedMessage {
     text: string;
 }
 
+export declare interface RailSectionAction {
+    /** The accessible name and the tooltip — "Create a channel", not "+". */
+    label: string;
+    /** Defaults to a plus. */
+    icon?: ReactNode;
+    /** Receives the button itself, so an anchored popover can point at it. */
+    onClick: (trigger: HTMLElement) => void;
+    'data-testid'?: string;
+}
+
+export declare function RailSectionHeader({ label, actions, presentational, dark, className, 'data-testid': testId, }: RailSectionHeaderProps): JSX.Element;
+
+export declare interface RailSectionHeaderProps {
+    label: string;
+    /** Right-aligned, in order. Usually one +. */
+    actions?: readonly RailSectionAction[];
+    /**
+     * The heading names the list that follows, and that list already carries
+     * the same name — announcing both is the label twice. Sections whose list
+     * is NOT separately named should pass false.
+     */
+    presentational?: boolean;
+    /** Light-on-dark, for a rail sitting on call chrome. */
+    dark?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /**
  * What the rail currently points at. One value, because one pane.
  */
@@ -2404,7 +2495,7 @@ export declare interface TeamChannelItem {
     live?: boolean;
 }
 
-export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onCreateTeam, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
+export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onCreateTeam, heading, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
 
 export declare interface TeamChannelTreeProps {
     teams: readonly TeamTreeItem[];
@@ -2412,14 +2503,20 @@ export declare interface TeamChannelTreeProps {
     onSelectChannel: (channel: string) => void;
     /** Controls expansion when given; the tree keeps its own state when absent. */
     onToggleTeam?: (teamId: string, expanded: boolean) => void;
-    /** "Add channel" in the team's ⋯ menu. */
-    onCreateChannel?: (teamId: string) => void;
+    /**
+     * The + on a team row. Receives the button itself so the host can hang the
+     * create form off it — beside the team it is creating in, not centred over
+     * the whole app.
+     */
+    onCreateChannel?: (teamId: string, trigger: HTMLElement) => void;
     /** "Manage team" in the team's ⋯ menu. */
     onManageTeam?: (teamId: string) => void;
     /** "Leave team" in the team's ⋯ menu. */
     onLeaveTeam?: (teamId: string) => void;
-    /** Footer "Join or create a team" action. */
-    onCreateTeam?: () => void;
+    /** The + on the "Teams" heading. Receives the button, for the same reason. */
+    onCreateTeam?: (trigger: HTMLElement) => void;
+    /** Hides the "Teams" heading for a host that draws its own. */
+    heading?: string | false;
     className?: string;
     'data-testid'?: string;
 }
@@ -2567,12 +2664,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -2590,9 +2684,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -2600,9 +2694,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

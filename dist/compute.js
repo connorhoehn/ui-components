@@ -2,7 +2,7 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Chip-BENLwTlq.js";
 import { a as n, i as r, n as i, o as a } from "./FloatingPanel-CclkXzq4.js";
 import { t as o } from "./StatusDot-Bgx2zxgC.js";
-import { t as s } from "./InlinePopover-DFdI8hw1.js";
+import { t as s } from "./InlinePopover-D25AtkYZ.js";
 import { t as c } from "./InlinePlaceholder-51dbPRGn.js";
 import { Fragment as l, createContext as u, forwardRef as d, useCallback as f, useContext as p, useEffect as m, useImperativeHandle as h, useLayoutEffect as g, useMemo as _, useRef as v, useState as y, useSyncExternalStore as b } from "react";
 import { Fragment as x, jsx as S, jsxs as C } from "react/jsx-runtime";

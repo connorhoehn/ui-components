@@ -1,13 +1,14 @@
-import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CreateChannelDialog } from '../CreateChannelDialog';
 
 afterEach(cleanup);
 
 describe('CreateChannelDialog', () => {
-  it('titles itself with the team name', () => {
+  it('names the team it is creating in, under the title', () => {
     render(<CreateChannelDialog open teamName="Design" onCreate={vi.fn()} onClose={vi.fn()} />);
-    expect(screen.getByText('Create a channel in Design')).toBeInTheDocument();
+    expect(screen.getByText('Create a channel')).toBeInTheDocument();
+    expect(screen.getByText('Design')).toBeInTheDocument();
   });
 
   it('disables Create until a name is typed, then creates it', async () => {
@@ -37,7 +38,7 @@ describe('CreateChannelDialog', () => {
     render(<CreateChannelDialog open teamName="Design" onCreate={onCreate} onClose={vi.fn()} />);
     fireEvent.change(screen.getByTestId('create-channel-dialog-name'), { target: { value: 'Roadmap' } });
     fireEvent.change(screen.getByTestId('create-channel-dialog-description'), { target: { value: '  Q3 planning  ' } });
-    fireEvent.click(screen.getByTestId('create-channel-dialog-privacy-private-button'));
+    fireEvent.click(screen.getByTestId('create-channel-dialog-privacy-private'));
     fireEvent.click(screen.getByTestId('create-channel-dialog-create'));
     await waitFor(() =>
       expect(onCreate).toHaveBeenCalledWith({ name: 'Roadmap', description: 'Q3 planning', privacy: 'private' }),
@@ -65,16 +66,16 @@ describe('CreateChannelDialog', () => {
     expect(screen.getByTestId('create-channel-dialog-cancel')).toBeInTheDocument();
   });
 
-  it('the privacy choices are real radios, one selected', () => {
+  it('privacy is one named group with exactly one segment pressed', () => {
     render(<CreateChannelDialog open teamName="Design" onCreate={vi.fn()} onClose={vi.fn()} />);
-    const radios = screen.getAllByRole('radio');
-    expect(radios).toHaveLength(2);
-    const checked = radios.filter((r) => r.getAttribute('aria-checked') === 'true');
-    expect(checked).toHaveLength(1);
-    expect(screen.getByTestId('create-channel-dialog-privacy-standard-button').getAttribute('aria-checked')).toBe('true');
-    fireEvent.click(screen.getByTestId('create-channel-dialog-privacy-private-button'));
-    expect(screen.getByTestId('create-channel-dialog-privacy-private-button').getAttribute('aria-checked')).toBe('true');
-    expect(screen.getByTestId('create-channel-dialog-privacy-standard-button').getAttribute('aria-checked')).toBe('false');
+    const group = screen.getByRole('group', { name: 'Channel privacy' });
+    const segments = within(group).getAllByRole('button');
+    expect(segments).toHaveLength(2);
+    expect(segments.filter((b) => b.getAttribute('aria-pressed') === 'true')).toHaveLength(1);
+    expect(screen.getByTestId('create-channel-dialog-privacy-standard').getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByTestId('create-channel-dialog-privacy-private'));
+    expect(screen.getByTestId('create-channel-dialog-privacy-private').getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByTestId('create-channel-dialog-privacy-standard').getAttribute('aria-pressed')).toBe('false');
   });
 
   it('resets its fields each time it opens', () => {

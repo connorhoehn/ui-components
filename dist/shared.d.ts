@@ -56,6 +56,9 @@ export declare interface ActivityFeedProps {
     className?: string;
 }
 
+/** A lightning bolt: activity, "things are happening". */
+export declare function ActivityIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
 
 export declare function ArtifactTile({ name, type, url }: {
@@ -63,6 +66,9 @@ export declare function ArtifactTile({ name, type, url }: {
     type?: string;
     url?: string | null;
 }): JSX.Element;
+
+/** An @ sign: mentions, "someone named you". */
+export declare function AtIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function Avatar({ name, size, initials: initialsProp, color, src, className, style, title, }: AvatarProps): JSX.Element;
 
@@ -2360,6 +2366,44 @@ export declare function PlusIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** A box with an arrow leaving its corner: "open this in its own view". */
 export declare function PopOutIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** A field in a PopoverForm: a small label over its control, tightly. */
+export declare function PopoverField({ label, hint, children, 'data-testid': testId, }: {
+    label: string;
+    hint?: string;
+    children: ReactNode;
+    'data-testid'?: string;
+}): JSX.Element;
+
+export declare function PopoverForm({ open, anchor, placement, title, subtitle, icon, submitLabel, submitTestId, submitDisabled, busy, error, onSubmit, onClose, width, children, 'data-testid': testId, }: PopoverFormProps): JSX.Element | null;
+
+export declare interface PopoverFormProps {
+    open: boolean;
+    /** What it opens beside. Without one it centres, which is the fallback, not the intent. */
+    anchor?: RefObject<HTMLElement | null> | null;
+    placement?: InlinePopoverPlacement;
+    /** A word or two. "Create a channel", not "Create a new channel in this team". */
+    title: string;
+    /** The context line under it — the team a channel is going into, say. */
+    subtitle?: string;
+    /** A small mark to the left of the title: a team avatar, a glyph. */
+    icon?: ReactNode;
+    submitLabel: string;
+    /** Overrides the submit button's testid, for hosts whose suites name it. */
+    submitTestId?: string;
+    submitDisabled?: boolean;
+    busy?: boolean;
+    /** The server's refusal, shown in place. The footer does not move when it appears. */
+    error?: string | null;
+    onSubmit: () => void;
+    onClose: () => void;
+    /** How wide the panel sits. 'md' (320px) by default — a name fits, a paragraph does not. */
+    width?: PopoverFormWidth;
+    children: ReactNode;
+    'data-testid'?: string;
+}
+
+export declare type PopoverFormWidth = 'sm' | 'md' | 'lg';
+
 export declare function PresenceAvatars({ users, maxVisible, size, onMoreClick, onUserClick, onFollowUser, followingUserId, className, }: PresenceAvatarsProps): JSX.Element;
 
 export declare interface PresenceAvatarsProps {
@@ -2700,7 +2744,7 @@ export declare interface SectionLabelProps {
     'data-testid'?: string;
 }
 
-export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, className, }: SegmentedControlProps): JSX.Element;
+export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, disabled, fullWidth, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
 
 export declare interface SegmentedControlProps {
     options: SegmentOption[];
@@ -2717,7 +2761,12 @@ export declare interface SegmentedControlProps {
      * a bare toolbar should pass it.
      */
     'aria-label'?: string;
+    /** Every segment disabled — used while a form that owns it is saving. */
+    disabled?: boolean;
+    /** Stretch the group and share its width equally between the segments. */
+    fullWidth?: boolean;
     className?: string;
+    'data-testid'?: string;
 }
 
 export declare interface SegmentOption {
@@ -4079,12 +4128,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -4102,9 +4148,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -4112,9 +4158,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

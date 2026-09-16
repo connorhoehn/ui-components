@@ -2,6 +2,7 @@ import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ConversationShelf } from '../ConversationShelf';
 import { ConversationList } from '../ConversationList';
+import { ActivityIcon } from '../../ui/Icons';
 
 afterEach(cleanup);
 
@@ -42,6 +43,26 @@ describe('ConversationShelf', () => {
   it('renders nothing at all when there is no shelf to draw', () => {
     const { container } = render(<ConversationShelf items={[]} onSelect={vi.fn()} />);
     expect(container.firstChild).toBeNull();
+  });
+
+  // No icon supplied is not an error state — it is a neutral dot in the same
+  // fixed box the icon would have used, not a bare bullet character.
+  it('falls back to a neutral dot rather than a bullet glyph when no icon is set', () => {
+    const { container } = render(
+      <ConversationShelf items={[{ id: 'general', label: 'general' }]} onSelect={vi.fn()} />,
+    );
+    expect(container.textContent).not.toContain('•');
+    expect(container.querySelector('.rounded-full.bg-current')).toBeInTheDocument();
+  });
+
+  it('accepts a stroked glyph component in place of an emoji', () => {
+    render(
+      <ConversationShelf
+        items={[{ id: 'activity', label: 'Activity', icon: <ActivityIcon /> }]}
+        onSelect={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('conversation-shelf-activity').querySelector('svg')).toBeInTheDocument();
   });
 });
 

@@ -227,6 +227,8 @@ export { Badge } from './Badge';
 export type { BadgeProps, BadgeVariant, BadgeColor } from './Badge';
 export { default as InlinePlaceholder } from './InlinePlaceholder';
 export type { InlinePlaceholderProps, InlinePlaceholderTone } from './InlinePlaceholder';
+export { PopoverForm, PopoverField } from './PopoverForm';
+export type { PopoverFormProps, PopoverFormWidth } from './PopoverForm';
 export { InlinePopover } from './InlinePopover';
 export type { InlinePopoverProps, InlinePopoverPlacement } from './InlinePopover';
 export { FloatingPanel, FLOATING_PANEL_ANCHORS, resolveAnchorPosition } from './FloatingPanel';

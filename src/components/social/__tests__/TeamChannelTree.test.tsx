@@ -104,24 +104,47 @@ describe('TeamChannelTree', () => {
   });
 
   it('renders the ⋯ menu only with the handlers given, each item wired to its handler', () => {
-    const onCreateChannel = vi.fn();
     const onManageTeam = vi.fn();
     render(
       <TeamChannelTree
         teams={TEAMS}
         onSelectChannel={vi.fn()}
-        onCreateChannel={onCreateChannel}
         onManageTeam={onManageTeam}
       />,
     );
     fireEvent.click(screen.getByTestId('team-channel-tree-team-t1-menu'));
     const menu = within(screen.getByTestId('team-channel-tree-team-t1-menu-panel'));
-    expect(menu.getByTestId('team-channel-tree-team-t1-menu-add-channel')).toBeInTheDocument();
     expect(menu.getByTestId('team-channel-tree-team-t1-menu-manage')).toBeInTheDocument();
     expect(menu.queryByTestId('team-channel-tree-team-t1-menu-leave')).toBeNull();
+    fireEvent.click(menu.getByTestId('team-channel-tree-team-t1-menu-manage'));
+    expect(onManageTeam).toHaveBeenCalledWith('t1');
+  });
 
-    fireEvent.click(menu.getByTestId('team-channel-tree-team-t1-menu-add-channel'));
-    expect(onCreateChannel).toHaveBeenCalledWith('t1');
+  it('creates a channel from a + on the team row, and hands back the button to anchor to', () => {
+    const onCreateChannel = vi.fn();
+    render(<TeamChannelTree teams={TEAMS} onSelectChannel={vi.fn()} onCreateChannel={onCreateChannel} />);
+    const plus = screen.getByTestId('team-channel-tree-team-t1-add-channel');
+    expect(plus.getAttribute('aria-label')).toBe('Create a channel in Design');
+    fireEvent.click(plus);
+    expect(onCreateChannel).toHaveBeenCalledWith('t1', plus);
+  });
+
+  it('creating a channel does not also open or close the team', () => {
+    const onToggleTeam = vi.fn();
+    render(
+      <TeamChannelTree teams={TEAMS} onSelectChannel={vi.fn()} onToggleTeam={onToggleTeam} onCreateChannel={vi.fn()} />,
+    );
+    fireEvent.click(screen.getByTestId('team-channel-tree-team-t1-add-channel'));
+    expect(onToggleTeam).not.toHaveBeenCalled();
+  });
+
+  it('creates a team from the + on the Teams heading', () => {
+    const onCreateTeam = vi.fn();
+    render(<TeamChannelTree teams={TEAMS} onSelectChannel={vi.fn()} onCreateTeam={onCreateTeam} />);
+    const plus = screen.getByTestId('team-channel-tree-create-team');
+    expect(plus.getAttribute('aria-label')).toBe('Create a team');
+    fireEvent.click(plus);
+    expect(onCreateTeam).toHaveBeenCalledWith(plus);
   });
 
   it('omits the ⋯ menu entirely when no team-menu handler is given', () => {

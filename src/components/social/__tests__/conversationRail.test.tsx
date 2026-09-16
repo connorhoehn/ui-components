@@ -107,3 +107,79 @@ describe('ConversationRail composition', () => {
     expect(onNewChat).toHaveBeenCalled();
   });
 });
+
+describe('ConversationRail collapse', () => {
+  // Off by default: a caller that never heard of this feature gets the exact
+  // rail it always got.
+  it('renders no collapse button when collapsible is not set', () => {
+    setup();
+    expect(screen.queryByTestId('conversation-rail-collapse')).toBeNull();
+  });
+
+  it('toggles through onToggleCollapse rather than owning the state itself', () => {
+    const onToggleCollapse = vi.fn();
+    setup({ collapsible: true, collapsed: false, onToggleCollapse });
+
+    const button = screen.getByTestId('conversation-rail-collapse');
+    expect(button).toHaveAttribute('aria-expanded', 'true');
+    expect(button).toHaveAccessibleName('Collapse the sidebar');
+
+    fireEvent.click(button);
+    expect(onToggleCollapse).toHaveBeenCalledWith(true);
+
+    // The rail does not remember — the button's own label and aria-expanded
+    // only change once the host feeds `collapsed` back in.
+    expect(screen.getByTestId('conversation-rail')).toHaveClass('w-80');
+  });
+
+  it('names the button for the expand direction once collapsed', () => {
+    const onToggleCollapse = vi.fn();
+    setup({ collapsible: true, collapsed: true, onToggleCollapse });
+
+    const button = screen.getByTestId('conversation-rail-collapse');
+    expect(button).toHaveAttribute('aria-expanded', 'false');
+    expect(button).toHaveAccessibleName('Expand the sidebar');
+
+    fireEvent.click(button);
+    expect(onToggleCollapse).toHaveBeenCalledWith(false);
+  });
+
+  it('shrinks to a narrow icon strip and hides the header, list and footer', () => {
+    setup({
+      collapsible: true,
+      collapsed: true,
+      header: <div>Acme workspace</div>,
+      footer: <div>Signed in as Grace</div>,
+    });
+
+    expect(screen.getByTestId('conversation-rail')).toHaveClass('w-14');
+    expect(screen.queryByText('Acme workspace')).toBeNull();
+    expect(screen.queryByText('Signed in as Grace')).toBeNull();
+    expect(screen.queryByTestId('conversation-rail-list')).toBeNull();
+    expect(screen.queryByTestId('conversation-rail-shelf')).toBeNull();
+  });
+
+  it('still lets you pick a shelf destination from the collapsed strip, named for assistive tech', () => {
+    const onSelect = vi.fn();
+    setup({ collapsible: true, collapsed: true, onSelect });
+
+    const mentionsIcon = screen.getByTestId('conversation-rail-collapsed-shelf-mentions');
+    expect(mentionsIcon).toHaveAccessibleName('Mentions');
+
+    fireEvent.click(mentionsIcon);
+    expect(onSelect).toHaveBeenCalledWith({ kind: 'shelf', id: 'mentions' });
+  });
+
+  it('keeps the active shelf destination visibly selected while collapsed', () => {
+    setup({ collapsible: true, collapsed: true, selected: { kind: 'shelf', id: 'mentions' } });
+    expect(screen.getByTestId('conversation-rail-collapsed-shelf-mentions'))
+      .toHaveAttribute('data-active', 'true');
+  });
+
+  it('is a no-op combination when collapsed is set without collapsible', () => {
+    setup({ collapsed: true });
+    expect(screen.getByTestId('conversation-rail')).toHaveClass('w-80');
+    expect(screen.queryByTestId('conversation-rail-collapse')).toBeNull();
+    expect(screen.getByTestId('conversation-rail-shelf')).toBeInTheDocument();
+  });
+});

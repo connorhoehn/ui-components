@@ -1,15 +1,15 @@
-// CreateTeamDialog — Teams' "Create a team" modal: a name, an optional
-// description, and org-wide-vs-private. Same shape as CreateChannelDialog
-// one level up the hierarchy — `onCreate` may reject (a name already taken)
+// CreateTeamDialog — "Create a team" as a popover at the + that asked for it.
+// Same shape as CreateChannelDialog one level up the hierarchy: a name, a
+// sentence, and who can join. `onCreate` may reject (a name already taken)
 // and the reason shows in place without moving the footer.
 
-import { useEffect, useState } from 'react';
-import Modal from '../shared/Modal';
-import FormField from '../shared/FormField';
-import { ChoiceList, ChoiceRow } from '../shared/ChoiceList';
+import { useEffect, useState, type RefObject } from 'react';
+import { PopoverForm, PopoverField } from '../shared/PopoverForm';
+import SegmentedControl from '../shared/SegmentedControl';
+import type { InlinePopoverPlacement } from '../shared/InlinePopover';
 import { Input } from '../forms/Input';
 import { Textarea } from '../forms/Textarea';
-import { Button } from '../ui/Button';
+import { LockIcon } from '../ui/Icons';
 
 export type TeamVisibility = 'org' | 'private';
 
@@ -22,6 +22,9 @@ export interface CreateTeamDialogInput {
 export interface CreateTeamDialogProps {
   open: boolean;
   busy?: boolean;
+  /** The control that opened it. The popover hangs off this; without it, it centres. */
+  anchor?: RefObject<HTMLElement | null> | null;
+  placement?: InlinePopoverPlacement;
   /** Reject with a reason (e.g. a name already taken) and it shows inline. */
   onCreate: (input: CreateTeamDialogInput) => Promise<void> | void;
   onClose: () => void;
@@ -30,9 +33,16 @@ export interface CreateTeamDialogProps {
 
 const NAME_MAX = 80;
 
+const VISIBILITY_OPTIONS = [
+  { label: 'Org-wide', value: 'org' },
+  { label: 'Private', value: 'private', icon: <LockIcon size={12} /> },
+];
+
 export function CreateTeamDialog({
   open,
   busy = false,
+  anchor,
+  placement = 'bottom-end',
   onCreate,
   onClose,
   'data-testid': testId = 'create-team-dialog',
@@ -74,84 +84,61 @@ export function CreateTeamDialog({
   };
 
   return (
-    <Modal
+    <PopoverForm
       open={open}
-      onClose={onClose}
+      anchor={anchor}
+      placement={placement}
       title="Create a team"
-      maxWidth={480}
-      footer={
-        <>
-          <Button variant="secondary" size="sm" onClick={onClose} disabled={inert} data-testid={`${testId}-cancel`}>
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => void create()}
-            disabled={!canCreate}
-            data-testid={`${testId}-create`}
-          >
-            {saving ? 'Creating…' : 'Create'}
-          </Button>
-        </>
-      }
+      subtitle="A team gets a General channel to start"
+      submitLabel="Create"
+      submitTestId={`${testId}-create`}
+      submitDisabled={!canCreate}
+      busy={inert}
+      error={error}
+      onSubmit={() => void create()}
+      onClose={onClose}
+      data-testid={testId}
     >
-      <div className="flex flex-col gap-3 text-sm" data-testid={testId}>
-        <FormField label="Team name" required data-testid={`${testId}-name-field`}>
-          {(wiring) => (
-            <Input
-              {...wiring}
-              data-autofocus
-              value={name}
-              maxLength={NAME_MAX}
-              disabled={inert}
-              onChange={(e) => setName(e.target.value)}
-              data-testid={`${testId}-name`}
-            />
-          )}
-        </FormField>
+      <PopoverField label="Name" data-testid={`${testId}-name-field`}>
+        <Input
+          size="sm"
+          value={name}
+          maxLength={NAME_MAX}
+          disabled={inert}
+          placeholder="e.g. Design"
+          onChange={(e) => setName(e.target.value)}
+          data-testid={`${testId}-name`}
+        />
+      </PopoverField>
 
-        <FormField label="Description" hint="Let people know what this team is for.">
-          {(wiring) => (
-            <Textarea
-              {...wiring}
-              value={description}
-              rows={2}
-              disabled={inert}
-              onChange={(e) => setDescription(e.target.value)}
-              data-testid={`${testId}-description`}
-            />
-          )}
-        </FormField>
+      <PopoverField label="Description" data-testid={`${testId}-description-field`}>
+        <Textarea
+          value={description}
+          rows={2}
+          disabled={inert}
+          placeholder="What does this team work on?"
+          onChange={(e) => setDescription(e.target.value)}
+          data-testid={`${testId}-description`}
+        />
+      </PopoverField>
 
-        <div className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">Visibility</div>
-        <ChoiceList data-testid={`${testId}-visibility`}>
-          <ChoiceRow
-            title="Anyone in the org can join"
-            selected={visibility === 'org'}
-            onSelect={() => setVisibility('org')}
-            disabled={inert}
-            data-testid={`${testId}-visibility-org`}
-          />
-          <ChoiceRow
-            title="Private — people need an invitation"
-            selected={visibility === 'private'}
-            onSelect={() => setVisibility('private')}
-            disabled={inert}
-            data-testid={`${testId}-visibility-private`}
-          />
-        </ChoiceList>
-
-        {/* Reserved height: the error appears without moving the footer. */}
-        <div className="min-h-[1.125rem]">
-          {error && (
-            <p className="m-0 text-xs text-danger-fg" role="alert" data-testid={`${testId}-error`}>
-              {error}
-            </p>
-          )}
-        </div>
-      </div>
-    </Modal>
+      <PopoverField
+        label="Who can join"
+        hint={visibility === 'private' ? 'People need an invitation.' : 'Anyone in the org can join.'}
+        data-testid={`${testId}-visibility-field`}
+      >
+        <SegmentedControl
+          size="sm"
+          fullWidth
+          disabled={inert}
+          aria-label="Team visibility"
+          options={VISIBILITY_OPTIONS}
+          value={visibility}
+          onChange={(v) => setVisibility(v as TeamVisibility)}
+          data-testid={`${testId}-visibility`}
+        />
+      </PopoverField>
+    </PopoverForm>
   );
 }
 

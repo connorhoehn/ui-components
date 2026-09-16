@@ -3,25 +3,25 @@ import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Button-BhS4-R6_.js";
 import { t as i } from "./Card-RQCeAPNU.js";
 import { t as a } from "./IconButton-C3DMtvSx.js";
-import { t as o } from "./SegmentedControl-pVesnE3W.js";
-import { t as s } from "./Banner-C3Wgh62A.js";
-import { t as c } from "./Chip-BENLwTlq.js";
-import { t as l } from "./Modal-CyoyiNKN.js";
-import { t as u } from "./EmptyState-JzzL2z1E.js";
-import { t as d } from "./Input-DLknWXri.js";
-import { t as f } from "./Textarea-Dz4doxTv.js";
-import { t as p } from "./Avatar-BzicCOft.js";
+import { t as o } from "./Banner-C3Wgh62A.js";
+import { t as s } from "./Chip-BENLwTlq.js";
+import { t as c } from "./Modal-CyoyiNKN.js";
+import { t as l } from "./EmptyState-JzzL2z1E.js";
+import { t as u } from "./Input-DLknWXri.js";
+import { t as d } from "./Textarea-Dz4doxTv.js";
+import { t as f } from "./Avatar-BzicCOft.js";
+import { t as p } from "./SegmentedControl-18MqeMsn.js";
 import { t as m } from "./CardHeader-CsPhVpCm.js";
-import { t as h } from "./InlinePopover-DFdI8hw1.js";
+import { t as h } from "./InlinePopover-D25AtkYZ.js";
 import { t as g } from "./ChangeDiff-CzO8zCc-.js";
 import { t as _ } from "./Select-CqVokE2v.js";
 import { t as v } from "./activationKey-CjbL3LUv.js";
 import { A as y, k as b } from "./renderers-9QJtVt3f.js";
-import { n as x } from "./ErrorBoundary-BfONRH1K.js";
+import { n as x } from "./ErrorBoundary-B8XtFqCN.js";
 import { o as S, t as C } from "./VerdictChip-h9KAEWjC.js";
 import { a as w, c as T, i as E, n as ee, o as D, r as te, s as ne, t as O } from "./TiptapEditor-Kdj65m6g.js";
-import { A as k, C as A, D as re, E as j, F as M, I as N, L as P, M as F, N as ie, O as I, P as L, R as ae, S as R, T as z, _ as B, a as oe, b as V, c as se, d as ce, f as le, g as ue, h as de, i as fe, j as pe, k as me, l as he, m as ge, o as _e, p as ve, r as ye, s as be, t as xe, u as Se, v as Ce, w as we, x as Te, y as Ee, z as De } from "./DocumentEditorPage-Cr9Kqtby.js";
-import { a as Oe, c as ke, d as Ae, f as je, h as Me, i as Ne, l as Pe, m as Fe, n as Ie, o as Le, p as Re, r as ze, s as Be, t as Ve, u as He } from "./CanvasDocumentView-4iJ6YqKA.js";
+import { A as k, C as A, D as re, E as j, F as M, I as N, L as P, M as F, N as ie, O as I, P as L, R as ae, S as R, T as z, _ as B, a as oe, b as V, c as se, d as ce, f as le, g as ue, h as de, i as fe, j as pe, k as me, l as he, m as ge, o as _e, p as ve, r as ye, s as be, t as xe, u as Se, v as Ce, w as we, x as Te, y as Ee, z as De } from "./DocumentEditorPage-Ca2MCK9F.js";
+import { a as Oe, c as ke, d as Ae, f as je, h as Me, i as Ne, l as Pe, m as Fe, n as Ie, o as Le, p as Re, r as ze, s as Be, t as Ve, u as He } from "./CanvasDocumentView-BkP5mFI6.js";
 import { useCallback as H, useEffect as U, useImperativeHandle as Ue, useMemo as W, useRef as G, useState as K } from "react";
 import { Fragment as q, jsx as J, jsxs as Y } from "react/jsx-runtime";
 import * as We from "yjs";
@@ -419,7 +419,7 @@ var st = {
 	text: "var(--color-text-secondary)"
 };
 function ut({ item: e, onAck: t, onReject: r }) {
-	let [i, a] = K(!1), [o, s] = K(""), [c, l] = K("none"), u = G(e.status), d = st[e.status] ?? lt, p = ct[e.priority] ?? "var(--color-neutral)", [m, h] = K(!1), g = G(null);
+	let [i, a] = K(!1), [o, s] = K(""), [c, l] = K("none"), u = G(e.status), f = st[e.status] ?? lt, p = ct[e.priority] ?? "var(--color-neutral)", [m, h] = K(!1), g = G(null);
 	U(() => () => {
 		g.current && clearTimeout(g.current);
 	}, []), U(() => {
@@ -453,8 +453,8 @@ function ut({ item: e, onAck: t, onReject: r }) {
 					/* @__PURE__ */ J("span", {
 						className: n("inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full ml-2"),
 						style: {
-							background: d.bg,
-							color: d.text
+							background: f.bg,
+							color: f.text
 						},
 						children: e.status
 					}),
@@ -527,7 +527,7 @@ function ut({ item: e, onAck: t, onReject: r }) {
 				]
 			}), i && /* @__PURE__ */ Y("div", {
 				className: n("mt-2"),
-				children: [/* @__PURE__ */ J(f, {
+				children: [/* @__PURE__ */ J(d, {
 					value: o,
 					onChange: (e) => s(e.target.value),
 					onKeyDown: (e) => {
@@ -884,7 +884,7 @@ var Ct = {
 	field: "Field change",
 	prose: "Body text"
 };
-function wt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: s, targetReason: l, before: u, after: f, edits: m, rationale: h, draftError: _, author: v, category: y, path: b, locationHint: x, verdict: w, verdictStatus: T = "idle", verdictError: E, revision: ee, onRereview: D, onAccept: te, onReject: ne, onRedraft: O, onReattach: k, onConfirmAttachment: A, className: re, "data-testid": j = "proposal-card" }) {
+function wt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: c, targetReason: l, before: d, after: p, edits: m, rationale: h, draftError: _, author: v, category: y, path: b, locationHint: x, verdict: w, verdictStatus: T = "idle", verdictError: E, revision: ee, onRereview: D, onAccept: te, onReject: ne, onRedraft: O, onReattach: k, onConfirmAttachment: A, className: re, "data-testid": j = "proposal-card" }) {
 	let [M, N] = K(!1), [P, F] = K(null), [ie, I] = K(!1), [L, ae] = K(""), R = i === "applied", z = i === "rejected", B = R || z;
 	async function oe() {
 		N(!0), F(null);
@@ -901,8 +901,8 @@ function wt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 		}
 	}
 	let V = t === "prose" ? m ?? [] : [{
-		before: u ?? "",
-		after: f ?? ""
+		before: d ?? "",
+		after: p ?? ""
 	}];
 	return /* @__PURE__ */ Y("div", {
 		"data-testid": j,
@@ -921,7 +921,7 @@ function wt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					v && /* @__PURE__ */ Y("span", {
 						className: "flex min-w-0 items-center gap-1.5",
 						"data-testid": `${j}-requester`,
-						children: [/* @__PURE__ */ J(p, {
+						children: [/* @__PURE__ */ J(f, {
 							name: v.name,
 							size: 18,
 							...v.avatarUrl ? { src: v.avatarUrl } : {}
@@ -931,36 +931,36 @@ function wt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 						})]
 					}),
 					/* @__PURE__ */ J("span", { className: "flex-1" }),
-					/* @__PURE__ */ J(c, {
+					/* @__PURE__ */ J(s, {
 						tone: "info",
 						size: "sm",
 						uppercase: !0,
 						"data-testid": `${j}-author`,
 						children: "AI proposal"
 					}),
-					/* @__PURE__ */ J(c, {
+					/* @__PURE__ */ J(s, {
 						tone: xt[a],
 						size: "sm",
 						children: bt[a]
 					}),
-					o === "healed" && /* @__PURE__ */ J(c, {
+					o === "healed" && /* @__PURE__ */ J(s, {
 						tone: "caution",
 						size: "sm",
 						"data-testid": `${j}-healed`,
 						children: "Re-found by quote — check this"
 					}),
-					o === "author_only" && /* @__PURE__ */ J(c, {
+					o === "author_only" && /* @__PURE__ */ J(s, {
 						tone: "neutral",
 						size: "sm",
 						children: "Only you can see this"
 					}),
-					R && /* @__PURE__ */ J(c, {
+					R && /* @__PURE__ */ J(s, {
 						tone: "success",
 						size: "sm",
 						"data-testid": `${j}-applied`,
 						children: "Applied"
 					}),
-					z && /* @__PURE__ */ J(c, {
+					z && /* @__PURE__ */ J(s, {
 						tone: "neutral",
 						size: "sm",
 						children: "Rejected"
@@ -976,7 +976,7 @@ function wt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 				]
 			}),
 			/* @__PURE__ */ J(S, {
-				path: b ?? (s ? [s] : []),
+				path: b ?? (c ? [c] : []),
 				...x ? { hint: x } : {},
 				"data-testid": `${j}-location`
 			}),
@@ -1090,7 +1090,7 @@ function wt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 						htmlFor: `${j}-reason`,
 						children: "Why? (optional — helps the next draft)"
 					}),
-					/* @__PURE__ */ J(d, {
+					/* @__PURE__ */ J(u, {
 						id: `${j}-reason`,
 						size: "sm",
 						value: L,
@@ -1121,7 +1121,7 @@ function wt({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 }
 //#endregion
 //#region src/components/doc-editor/WorkItemRow.tsx
-function Tt({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason: s, contextSplit: l, drafting: u = !1, draftError: d, candidates: f, sections: p, onPropose: m, onAttach: h, onDismiss: g, className: v, "data-testid": y = `work-item-${e}` }) {
+function Tt({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason: c, contextSplit: l, drafting: u = !1, draftError: d, candidates: f, sections: p, onPropose: m, onAttach: h, onDismiss: g, className: v, "data-testid": y = `work-item-${e}` }) {
 	let b = [...f ?? []].sort((e, t) => t.score - e.score), x = new Set(b.map((e) => e.sectionId)), S = p.filter((e) => !x.has(e.id));
 	return /* @__PURE__ */ J(i, {
 		padding: "sm",
@@ -1133,12 +1133,12 @@ function Tt({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason:
 			children: [
 				/* @__PURE__ */ Y("div", {
 					className: "flex flex-wrap items-center gap-1.5",
-					children: [/* @__PURE__ */ J(c, {
+					children: [/* @__PURE__ */ J(s, {
 						tone: a ? "neutral" : "success",
 						size: "sm",
 						uppercase: !0,
 						children: a ? "Unplaced" : o ?? "Placed"
-					}), l && /* @__PURE__ */ J(c, {
+					}), l && /* @__PURE__ */ J(s, {
 						tone: "caution",
 						size: "sm",
 						"data-testid": `${y}-split`,
@@ -1153,9 +1153,9 @@ function Tt({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason:
 						"”"
 					]
 				}),
-				s && /* @__PURE__ */ J("p", {
+				c && /* @__PURE__ */ J("p", {
 					className: "text-xs text-text-tertiary",
-					children: s
+					children: c
 				}),
 				d && /* @__PURE__ */ J("div", {
 					className: n("rounded border border-warning-border bg-warning-bg", "px-2 py-1.5 text-xs text-warning-fg"),
@@ -1228,8 +1228,8 @@ function Ot(e) {
 function Z(e) {
 	return e <= 0 ? "No replies" : e === 1 ? "1 reply" : `${e} replies`;
 }
-function kt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: o, onResolve: s, ref: l, "data-testid": u = "comment-ghost" }) {
-	let [d, f] = K(null), m = G(null), g = G(null), _ = G(null);
+function kt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: o, onResolve: c, ref: l, "data-testid": u = "comment-ghost" }) {
+	let [d, p] = K(null), m = G(null), g = G(null), _ = G(null);
 	_.current = d;
 	let v = W(() => {
 		let t = /* @__PURE__ */ new Map();
@@ -1240,11 +1240,11 @@ function kt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 	let b = H(() => {
 		g.current !== null && (clearTimeout(g.current), g.current = null);
 	}, []), x = H(() => {
-		b(), f(null);
+		b(), p(null);
 	}, [b]), S = H((e, n, r) => {
 		if (b(), !y.current.has(e)) return;
 		let i = n ?? t?.current?.querySelector(`[data-comment-id="${Ot(e)}"]`) ?? null;
-		i instanceof HTMLElement && (m.current = i, f({
+		i instanceof HTMLElement && (m.current = i, p({
 			id: e,
 			via: r
 		}));
@@ -1313,7 +1313,7 @@ function kt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 				/* @__PURE__ */ Y("div", {
 					className: "flex items-center gap-2",
 					children: [
-						/* @__PURE__ */ J(p, {
+						/* @__PURE__ */ J(f, {
 							name: T.author,
 							size: 20,
 							color: T.color
@@ -1326,7 +1326,7 @@ function kt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 							className: "text-[11px] text-text-tertiary",
 							children: V(T.timestamp)
 						}),
-						T.resolved && /* @__PURE__ */ J(c, {
+						T.resolved && /* @__PURE__ */ J(s, {
 							tone: "success",
 							size: "xs",
 							children: "Resolved"
@@ -1355,10 +1355,10 @@ function kt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 							onClick: E(o),
 							"data-testid": `${u}-open`,
 							children: "Open thread"
-						}), s && !T.resolved && /* @__PURE__ */ J(r, {
+						}), c && !T.resolved && /* @__PURE__ */ J(r, {
 							size: "sm",
 							variant: "ghost",
-							onClick: E(s),
+							onClick: E(c),
 							"data-testid": `${u}-resolve`,
 							children: "Resolve"
 						})]
@@ -1490,7 +1490,7 @@ function Pt({ mode: e, reason: t, className: r, "data-testid": i = "document-mod
 		"aria-label": t ? `${a}. ${t}` : a,
 		"data-testid": i,
 		"data-mode": e,
-		children: /* @__PURE__ */ J(c, {
+		children: /* @__PURE__ */ J(s, {
 			tone: o,
 			size: "sm",
 			className: "rounded-full px-2.5",
@@ -1509,7 +1509,7 @@ function Ft({ owner: e, collaborators: t = [], maxAvatars: r = 3, onShare: i, cl
 		children: [
 			/* @__PURE__ */ Y("span", {
 				className: "inline-flex items-center gap-1.5",
-				children: [/* @__PURE__ */ J(p, {
+				children: [/* @__PURE__ */ J(f, {
 					name: e.displayName,
 					size: 20,
 					...e.avatarUrl ? { src: e.avatarUrl } : {}
@@ -1528,7 +1528,7 @@ function Ft({ owner: e, collaborators: t = [], maxAvatars: r = 3, onShare: i, cl
 				children: [s.map((e, t) => /* @__PURE__ */ J("span", {
 					className: n("inline-flex rounded-full ring-2 ring-surface", t > 0 && "-ml-1.5"),
 					title: e.displayName,
-					children: /* @__PURE__ */ J(p, {
+					children: /* @__PURE__ */ J(f, {
 						name: e.displayName,
 						size: 20,
 						...e.avatarUrl ? { src: e.avatarUrl } : {}
@@ -1563,12 +1563,12 @@ var It = [
 	"org-edit": (e) => `Anyone at ${e} can edit`,
 	"link-view": () => "Anyone with the link can view"
 };
-function Rt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: c, onInvite: u, onCopyLink: d, notice: f, "data-testid": m = "document-share-dialog" }) {
+function Rt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: l, onInvite: u, onCopyLink: d, notice: p, "data-testid": m = "document-share-dialog" }) {
 	let [h, g] = K(""), _ = () => {
 		let e = h.trim();
 		!e || !u || (u(e), g(""));
 	};
-	return /* @__PURE__ */ J(l, {
+	return /* @__PURE__ */ J(c, {
 		open: e,
 		onClose: t,
 		title: n ? `Share “${n}”` : "Share",
@@ -1597,10 +1597,10 @@ function Rt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						children: "Invite"
 					})]
 				}),
-				f && /* @__PURE__ */ J("p", {
+				p && /* @__PURE__ */ J("p", {
 					className: "m-0 rounded border border-border-emphasis bg-surface-inset px-2.5 py-1.5 text-xs leading-snug text-text-secondary",
 					"data-testid": `${m}-notice`,
-					children: f
+					children: p
 				}),
 				/* @__PURE__ */ J("div", {
 					className: "flex flex-col gap-1",
@@ -1609,7 +1609,7 @@ function Rt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						className: "flex items-center gap-2",
 						"data-testid": `${m}-person`,
 						children: [
-							/* @__PURE__ */ J(p, {
+							/* @__PURE__ */ J(f, {
 								name: e.displayName,
 								size: 26,
 								...e.avatarUrl ? { src: e.avatarUrl } : {}
@@ -1618,13 +1618,13 @@ function Rt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 								className: "min-w-0 flex-1 truncate text-sm text-text-primary",
 								children: e.displayName
 							}),
-							e.role === "owner" || !c ? /* @__PURE__ */ J("span", {
+							e.role === "owner" || !l ? /* @__PURE__ */ J("span", {
 								className: "text-xs text-text-tertiary",
 								"data-testid": `${m}-role-static`,
 								children: e.role === "owner" ? "Owner" : e.role
 							}) : /* @__PURE__ */ J("select", {
 								value: e.role,
-								onChange: (t) => c(e.userId, t.target.value),
+								onChange: (t) => l(e.userId, t.target.value),
 								"aria-label": `Access for ${e.displayName}`,
 								"data-testid": `${m}-role`,
 								className: "rounded border border-border bg-surface px-1 py-0.5 text-xs text-text-secondary",
@@ -1692,18 +1692,18 @@ var Q = [
 		hint: "Read the document without changing it."
 	}
 ];
-function zt({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: a = !1, className: s, "data-testid": c = "suggestion-mode-control" }) {
-	let l = Q.filter((e) => r || e.value !== "viewing").map((e) => ({
+function zt({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: a = !1, className: o, "data-testid": s = "suggestion-mode-control" }) {
+	let c = Q.filter((e) => r || e.value !== "viewing").map((e) => ({
 		label: e.label,
 		value: e.value
-	})), u = Q.find((t) => t.value === e);
+	})), l = Q.find((t) => t.value === e);
 	return /* @__PURE__ */ Y("div", {
-		"data-testid": c,
+		"data-testid": s,
 		"data-mode": e,
-		title: u?.hint,
-		className: n("inline-flex items-center gap-2", a && "pointer-events-none opacity-50", s),
-		children: [/* @__PURE__ */ J(o, {
-			options: l,
+		title: l?.hint,
+		className: n("inline-flex items-center gap-2", a && "pointer-events-none opacity-50", o),
+		children: [/* @__PURE__ */ J(p, {
+			options: c,
 			value: e,
 			size: "sm",
 			"aria-label": "What your typing does",
@@ -1712,7 +1712,7 @@ function zt({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 				r !== e && t(r);
 			}
 		}), i !== null && i > 0 && /* @__PURE__ */ J("span", {
-			"data-testid": `${c}-count`,
+			"data-testid": `${s}-count`,
 			className: "rounded-full bg-surface-inset px-2 py-0.5 text-xs tabular-nums text-text-secondary",
 			children: i === 1 ? "1 suggestion" : `${i} suggestions`
 		})]
@@ -1755,7 +1755,7 @@ function Ut({ lines: e, tone: t, testId: r }) {
 		})]
 	});
 }
-function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: f, onReject: m, className: h, "data-testid": g = "suggestion-card" }) {
+function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: p, onReject: m, className: h, "data-testid": g = "suggestion-card" }) {
 	let _ = t.trim() === "" ? "Unknown author" : t, v = c && c.length > 0 ? c : s ? [s] : [], y = l && l.length > 0 ? l : o ? [o] : [], b = v.length > 0 || y.length > 0;
 	return /* @__PURE__ */ Y("div", {
 		"data-testid": g,
@@ -1766,7 +1766,7 @@ function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 			/* @__PURE__ */ Y("div", {
 				className: "flex items-center gap-2",
 				children: [
-					/* @__PURE__ */ J(p, {
+					/* @__PURE__ */ J(f, {
 						name: _,
 						size: 20
 					}),
@@ -1807,7 +1807,7 @@ function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 					testId: `${g}-inserted`
 				})]
 			}),
-			(d || f || m) && /* @__PURE__ */ Y("div", {
+			(d || p || m) && /* @__PURE__ */ Y("div", {
 				className: "flex items-center justify-end gap-1.5",
 				children: [
 					d && /* @__PURE__ */ J(r, {
@@ -1825,10 +1825,10 @@ function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 						"data-testid": `${g}-reject`,
 						children: "Reject"
 					}),
-					f && /* @__PURE__ */ J(r, {
+					p && /* @__PURE__ */ J(r, {
 						variant: "primary",
 						size: "sm",
-						onClick: f,
+						onClick: p,
 						"data-testid": `${g}-accept`,
 						children: "Accept"
 					})
@@ -1839,15 +1839,15 @@ function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionReviewList.tsx
-function Gt({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: l = null, headerExtra: d, emptyTitle: f = "No suggestions", emptyBody: p = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: g = "card", className: _, "data-testid": v = "suggestion-review-list" }) {
-	let y = e > 0 && (a || o), b = y || d ? /* @__PURE__ */ Y("span", {
+function Gt({ count: e, children: t, onAcceptAll: a, onRejectAll: c, error: u = null, headerExtra: d, emptyTitle: f = "No suggestions", emptyBody: p = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: g = "card", className: _, "data-testid": v = "suggestion-review-list" }) {
+	let y = e > 0 && (a || c), b = y || d ? /* @__PURE__ */ Y("span", {
 		className: "flex items-center gap-1.5",
 		children: [
 			d,
-			y && o && /* @__PURE__ */ J(r, {
+			y && c && /* @__PURE__ */ J(r, {
 				variant: "ghost",
 				size: "sm",
-				onClick: o,
+				onClick: c,
 				"data-testid": `${v}-reject-all`,
 				children: "Reject all"
 			}),
@@ -1859,15 +1859,15 @@ function Gt({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: l = 
 				children: "Accept all"
 			})
 		]
-	}) : void 0, x = /* @__PURE__ */ Y(q, { children: [l && /* @__PURE__ */ J("div", {
+	}) : void 0, x = /* @__PURE__ */ Y(q, { children: [u && /* @__PURE__ */ J("div", {
 		className: n("pt-2", g === "card" && "px-3"),
-		children: /* @__PURE__ */ J(s, {
+		children: /* @__PURE__ */ J(o, {
 			variant: "error",
 			layout: "stacked",
 			"data-testid": `${v}-error`,
-			children: l
+			children: u
 		})
-	}), e === 0 ? /* @__PURE__ */ J(u, {
+	}), e === 0 ? /* @__PURE__ */ J(l, {
 		size: "sm",
 		title: f,
 		body: p,
@@ -1898,7 +1898,7 @@ function Gt({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: l = 
 		"data-testid": v,
 		children: [/* @__PURE__ */ J(m, {
 			title: h,
-			meta: /* @__PURE__ */ J(c, {
+			meta: /* @__PURE__ */ J(s, {
 				tone: "neutral",
 				size: "xs",
 				mono: !0,

@@ -156,3 +156,22 @@ export function LockIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A lightning bolt: activity, "things are happening". */
+export function ActivityIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M8.5 2 4 9h3.2l-.7 5L12 7H8.8z" />
+    </svg>
+  );
+}
+
+/** An @ sign: mentions, "someone named you". */
+export function AtIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="8" cy="8.3" r="2.8" />
+      <path d="M10.8 8.3v.9a1.9 1.9 0 0 0 3.7 0V8a6.5 6.5 0 1 0-2.8 5.4" />
+    </svg>
+  );
+}

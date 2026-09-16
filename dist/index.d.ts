@@ -104,6 +104,32 @@ export declare const activeNavItemClassName = "block px-[14px] py-2 border-l-[3p
 
 export declare const activeNavItemStyle: CSSProperties;
 
+export declare function ActivePeopleGrid({ people, maxVisible, onSelectPerson, onShowAll, emptyLabel, className, 'data-testid': testId, }: ActivePeopleGridProps): JSX.Element;
+
+export declare interface ActivePeopleGridProps {
+    people: readonly ActivePerson[];
+    /** Beyond this many, the rest collapse into a "+N" tile. Default 8. */
+    maxVisible?: number;
+    /** Clicking a tile — the host opens a chat with them. */
+    onSelectPerson?: (userId: string) => void;
+    /** Clicking the "+N" tile. Without it, the tile is inert text rather than a button. */
+    onShowAll?: () => void;
+    emptyLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ActivePerson {
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+    /** What they are doing right now — "In a call", "Editing the roadmap". A tooltip, and a small glyph on the bubble. */
+    activity?: string;
+    /** In a live call right now: the bubble gets a ring and the tile a small live marker. */
+    inCall?: boolean;
+    status?: 'online' | 'busy' | 'away';
+}
+
 declare interface ActiveSync {
     sourceId: string;
     sourceName: string;
@@ -156,6 +182,9 @@ export declare interface ActivityFeedProps {
     className?: string;
 }
 
+/** A lightning bolt: activity, "things are happening". */
+export declare function ActivityIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
 
 export declare function ActivityPanel({ idToken, sendMessage, onMessage, connectionState }: ActivityPanelProps): JSX.Element;
@@ -167,7 +196,7 @@ declare interface ActivityPanelProps {
     connectionState: ConnectionState_4;
 }
 
-export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, onAdd, onClose, 'data-testid': testId, historyChoice, }: AddToChatDialogProps): JSX.Element;
+export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, anchor, placement, onAdd, onClose, 'data-testid': testId, historyChoice, }: AddToChatDialogProps): JSX.Element;
 
 export declare interface AddToChatDialogProps {
     open: boolean;
@@ -177,6 +206,9 @@ export declare interface AddToChatDialogProps {
     people: readonly AddToChatPerson[];
     preselectedIds?: readonly string[];
     busy?: boolean;
+    /** The control that opened it. The popover hangs off this; without it, it centres. */
+    anchor?: RefObject<HTMLElement | null> | null;
+    placement?: InlinePopoverPlacement;
     /** Resolves when the server has them; rejects with a reason to show. */
     onAdd: (userIds: string[], history: MembershipHistory) => Promise<void> | void;
     /**
@@ -965,6 +997,9 @@ export declare function ArtifactTile({ name, type, url }: {
 }): JSX.Element;
 
 declare type AssertTrue<T extends true> = T;
+
+/** An @ sign: mentions, "someone named you". */
+export declare function AtIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function AttachmentBubble({ attachment, src, onOpen, className }: AttachmentBubbleProps): JSX.Element;
 
@@ -3935,7 +3970,7 @@ export declare interface ConversationItem {
     muted?: boolean;
 }
 
-export declare function ConversationList({ items, grouped, sectionOrder, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+export declare function ConversationList({ items, grouped, sectionOrder, sectionActions, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
 
 export declare interface ConversationListProps {
     items: ConversationItem[];
@@ -3968,6 +4003,13 @@ export declare interface ConversationListProps {
      * from a colleague above the fold.
      */
     sectionOrder?: 'channels-first' | 'dms-first';
+    /**
+     * Trailing buttons on a section's heading, keyed by the section's name —
+     * 'Channels', 'Direct messages', 'Pinned'. A + on the Channels heading is
+     * where people look for "make a new one"; a "new" button parked somewhere
+     * else is a button nobody finds.
+     */
+    sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
     /**
      * Sort rows most-recent-first within each group. Default TRUE.
      *
@@ -4014,7 +4056,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -4059,6 +4101,20 @@ export declare interface ConversationRailProps {
     onTogglePin?: (channel: string, next: boolean) => void;
     onToggleMute?: (channel: string, next: boolean) => void;
     onMarkUnread?: (channel: string) => void;
+    /**
+     * Opts into the Teams/Slack "shrink to an icon strip" toggle. Off by
+     * default, so every existing caller keeps its always-expanded rail with no
+     * behaviour change.
+     */
+    collapsible?: boolean;
+    /**
+     * Whether the rail is currently the narrow icon strip. The rail does not
+     * own this — the host decides, typically from a piece of state it
+     * persists, and hears about a change through `onToggleCollapse`.
+     */
+    collapsed?: boolean;
+    /** Fires with the state the host should switch to when the toggle is used. */
+    onToggleCollapse?: (next: boolean) => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -4068,7 +4124,12 @@ export declare function ConversationShelf({ items, activeId, onSelect, className
 export declare interface ConversationShelfItem {
     id: string;
     label: string;
-    /** Emoji or glyph. Kept short — this rail is narrow by design. */
+    /**
+     * A glyph component from `ui/Icons` (e.g. `<ActivityIcon />`), rendered in a
+     * fixed-size box so every row's label starts at the same x. Avoid emoji —
+     * they render as a fixed system glyph and do not take the theme's colour,
+     * so an urgent shelf item and a quiet one end up looking the same.
+     */
     icon?: ReactNode;
     /** Unread/waiting count. Zero renders no badge rather than a "0". */
     count?: number;
@@ -4245,7 +4306,7 @@ export declare interface ConversationSurfaceProps {
     'data-testid'?: string;
 }
 
-export declare function CreateChannelDialog({ open, teamName, busy, onCreate, onClose, 'data-testid': testId, }: CreateChannelDialogProps): JSX.Element;
+export declare function CreateChannelDialog({ open, teamName, busy, anchor, placement, onCreate, onClose, 'data-testid': testId, }: CreateChannelDialogProps): JSX.Element;
 
 export declare interface CreateChannelDialogInput {
     name: string;
@@ -4257,6 +4318,9 @@ export declare interface CreateChannelDialogProps {
     open: boolean;
     teamName: string;
     busy?: boolean;
+    /** The control that opened it. The popover hangs off this; without it, it centres. */
+    anchor?: RefObject<HTMLElement | null> | null;
+    placement?: InlinePopoverPlacement;
     /** Reject with a reason (e.g. a duplicate name) and it shows inline. */
     onCreate: (input: CreateChannelDialogInput) => Promise<void> | void;
     onClose: () => void;
@@ -4343,7 +4407,7 @@ export declare interface CreateRunPanelRendererOptions {
     'data-testid'?: string;
 }
 
-export declare function CreateTeamDialog({ open, busy, onCreate, onClose, 'data-testid': testId, }: CreateTeamDialogProps): JSX.Element;
+export declare function CreateTeamDialog({ open, busy, anchor, placement, onCreate, onClose, 'data-testid': testId, }: CreateTeamDialogProps): JSX.Element;
 
 export declare interface CreateTeamDialogInput {
     name: string;
@@ -4354,6 +4418,9 @@ export declare interface CreateTeamDialogInput {
 export declare interface CreateTeamDialogProps {
     open: boolean;
     busy?: boolean;
+    /** The control that opened it. The popover hangs off this; without it, it centres. */
+    anchor?: RefObject<HTMLElement | null> | null;
+    placement?: InlinePopoverPlacement;
     /** Reject with a reason (e.g. a name already taken) and it shows inline. */
     onCreate: (input: CreateTeamDialogInput) => Promise<void> | void;
     onClose: () => void;
@@ -9948,6 +10015,44 @@ export declare interface PoolStats {
 /** A box with an arrow leaving its corner: "open this in its own view". */
 export declare function PopOutIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** A field in a PopoverForm: a small label over its control, tightly. */
+export declare function PopoverField({ label, hint, children, 'data-testid': testId, }: {
+    label: string;
+    hint?: string;
+    children: ReactNode;
+    'data-testid'?: string;
+}): JSX.Element;
+
+export declare function PopoverForm({ open, anchor, placement, title, subtitle, icon, submitLabel, submitTestId, submitDisabled, busy, error, onSubmit, onClose, width, children, 'data-testid': testId, }: PopoverFormProps): JSX.Element | null;
+
+export declare interface PopoverFormProps {
+    open: boolean;
+    /** What it opens beside. Without one it centres, which is the fallback, not the intent. */
+    anchor?: RefObject<HTMLElement | null> | null;
+    placement?: InlinePopoverPlacement;
+    /** A word or two. "Create a channel", not "Create a new channel in this team". */
+    title: string;
+    /** The context line under it — the team a channel is going into, say. */
+    subtitle?: string;
+    /** A small mark to the left of the title: a team avatar, a glyph. */
+    icon?: ReactNode;
+    submitLabel: string;
+    /** Overrides the submit button's testid, for hosts whose suites name it. */
+    submitTestId?: string;
+    submitDisabled?: boolean;
+    busy?: boolean;
+    /** The server's refusal, shown in place. The footer does not move when it appears. */
+    error?: string | null;
+    onSubmit: () => void;
+    onClose: () => void;
+    /** How wide the panel sits. 'md' (320px) by default — a name fits, a paragraph does not. */
+    width?: PopoverFormWidth;
+    children: ReactNode;
+    'data-testid'?: string;
+}
+
+export declare type PopoverFormWidth = 'sm' | 'md' | 'lg';
+
 export declare function postApproval(args: PostApprovalArgs): Promise<{
     ok: boolean;
     error?: string;
@@ -10302,6 +10407,34 @@ export declare interface RailLayoutProps {
 
 /** One titled block in the rail. Sections divide themselves. */
 export declare function RailSection({ title, children, className }: RailSectionProps): JSX.Element;
+
+export declare interface RailSectionAction {
+    /** The accessible name and the tooltip — "Create a channel", not "+". */
+    label: string;
+    /** Defaults to a plus. */
+    icon?: ReactNode;
+    /** Receives the button itself, so an anchored popover can point at it. */
+    onClick: (trigger: HTMLElement) => void;
+    'data-testid'?: string;
+}
+
+export declare function RailSectionHeader({ label, actions, presentational, dark, className, 'data-testid': testId, }: RailSectionHeaderProps): JSX.Element;
+
+export declare interface RailSectionHeaderProps {
+    label: string;
+    /** Right-aligned, in order. Usually one +. */
+    actions?: readonly RailSectionAction[];
+    /**
+     * The heading names the list that follows, and that list already carries
+     * the same name — announcing both is the label twice. Sections whose list
+     * is NOT separately named should pass false.
+     */
+    presentational?: boolean;
+    /** Light-on-dark, for a rail sitting on call chrome. */
+    dark?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface RailSectionProps {
     title: string;
@@ -11382,7 +11515,7 @@ export declare interface SectionReview {
 /** Specialized section renderer type — extends beyond the base `type` for richer UIs. */
 export declare type SectionType = 'tasks' | 'rich-text' | 'decisions' | 'timeline' | 'checklist' | 'rating' | 'voting';
 
-export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, className, }: SegmentedControlProps): JSX.Element;
+export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, disabled, fullWidth, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
 
 export declare interface SegmentedControlProps {
     options: SegmentOption[];
@@ -11399,7 +11532,12 @@ export declare interface SegmentedControlProps {
      * a bare toolbar should pass it.
      */
     'aria-label'?: string;
+    /** Every segment disabled — used while a form that owns it is saving. */
+    disabled?: boolean;
+    /** Stretch the group and share its width equally between the segments. */
+    fullWidth?: boolean;
     className?: string;
+    'data-testid'?: string;
 }
 
 export declare interface SegmentOption {
@@ -12887,7 +13025,7 @@ export declare interface TeamChannelItem {
     live?: boolean;
 }
 
-export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onCreateTeam, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
+export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onCreateTeam, heading, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
 
 export declare interface TeamChannelTreeProps {
     teams: readonly TeamTreeItem[];
@@ -12895,14 +13033,20 @@ export declare interface TeamChannelTreeProps {
     onSelectChannel: (channel: string) => void;
     /** Controls expansion when given; the tree keeps its own state when absent. */
     onToggleTeam?: (teamId: string, expanded: boolean) => void;
-    /** "Add channel" in the team's ⋯ menu. */
-    onCreateChannel?: (teamId: string) => void;
+    /**
+     * The + on a team row. Receives the button itself so the host can hang the
+     * create form off it — beside the team it is creating in, not centred over
+     * the whole app.
+     */
+    onCreateChannel?: (teamId: string, trigger: HTMLElement) => void;
     /** "Manage team" in the team's ⋯ menu. */
     onManageTeam?: (teamId: string) => void;
     /** "Leave team" in the team's ⋯ menu. */
     onLeaveTeam?: (teamId: string) => void;
-    /** Footer "Join or create a team" action. */
-    onCreateTeam?: () => void;
+    /** The + on the "Teams" heading. Receives the button, for the same reason. */
+    onCreateTeam?: (trigger: HTMLElement) => void;
+    /** Hides the "Teams" heading for a host that draws its own. */
+    heading?: string | false;
     className?: string;
     'data-testid'?: string;
 }
@@ -15607,12 +15751,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -15630,9 +15771,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -15640,9 +15781,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

@@ -22,7 +22,12 @@ export interface SegmentedControlProps {
    * a bare toolbar should pass it.
    */
   'aria-label'?: string;
+  /** Every segment disabled — used while a form that owns it is saving. */
+  disabled?: boolean;
+  /** Stretch the group and share its width equally between the segments. */
+  fullWidth?: boolean;
   className?: string;
+  'data-testid'?: string;
 }
 
 const SIZE_CLASSES: Record<'sm' | 'md', string> = {
@@ -42,14 +47,19 @@ export function SegmentedControl({
   onChange,
   size = 'md',
   'aria-label': ariaLabel,
+  disabled = false,
+  fullWidth = false,
   className,
+  'data-testid': testId,
 }: SegmentedControlProps) {
   return (
     <div
       role="group"
       aria-label={ariaLabel}
+      data-testid={testId}
       className={cn(
-        'inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5',
+        fullWidth ? 'flex w-full items-center' : 'inline-flex items-center',
+        'rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5',
         className,
       )}
     >
@@ -61,8 +71,12 @@ export function SegmentedControl({
             type="button"
             onClick={() => onChange(option.value)}
             aria-pressed={active}
+            disabled={disabled}
+            data-testid={testId ? `${testId}-${option.value}` : undefined}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-md font-medium transition-all cursor-pointer',
+              'inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-all cursor-pointer',
+              fullWidth && 'flex-1',
+              disabled && 'cursor-not-allowed opacity-60',
               SIZE_CLASSES[size],
               active ? ACTIVE_CLASSES : INACTIVE_CLASSES,
             )}

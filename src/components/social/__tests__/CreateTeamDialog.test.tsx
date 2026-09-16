@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CreateTeamDialog } from '../CreateTeamDialog';
 
@@ -39,7 +39,7 @@ describe('CreateTeamDialog', () => {
     render(<CreateTeamDialog open onCreate={onCreate} onClose={vi.fn()} />);
     fireEvent.change(screen.getByTestId('create-team-dialog-name'), { target: { value: 'Product' } });
     fireEvent.change(screen.getByTestId('create-team-dialog-description'), { target: { value: '  Cross-functional  ' } });
-    fireEvent.click(screen.getByTestId('create-team-dialog-visibility-private-button'));
+    fireEvent.click(screen.getByTestId('create-team-dialog-visibility-private'));
     fireEvent.click(screen.getByTestId('create-team-dialog-create'));
     await waitFor(() =>
       expect(onCreate).toHaveBeenCalledWith({ name: 'Product', description: 'Cross-functional', visibility: 'private' }),
@@ -66,16 +66,16 @@ describe('CreateTeamDialog', () => {
     expect(screen.getByTestId('create-team-dialog-cancel')).toBeInTheDocument();
   });
 
-  it('the visibility choices are real radios, one selected', () => {
+  it('visibility is one named group with exactly one segment pressed', () => {
     render(<CreateTeamDialog open onCreate={vi.fn()} onClose={vi.fn()} />);
-    const radios = screen.getAllByRole('radio');
-    expect(radios).toHaveLength(2);
-    const checked = radios.filter((r) => r.getAttribute('aria-checked') === 'true');
-    expect(checked).toHaveLength(1);
-    expect(screen.getByTestId('create-team-dialog-visibility-org-button').getAttribute('aria-checked')).toBe('true');
-    fireEvent.click(screen.getByTestId('create-team-dialog-visibility-private-button'));
-    expect(screen.getByTestId('create-team-dialog-visibility-private-button').getAttribute('aria-checked')).toBe('true');
-    expect(screen.getByTestId('create-team-dialog-visibility-org-button').getAttribute('aria-checked')).toBe('false');
+    const group = screen.getByRole('group', { name: 'Team visibility' });
+    const segments = within(group).getAllByRole('button');
+    expect(segments).toHaveLength(2);
+    expect(segments.filter((b) => b.getAttribute('aria-pressed') === 'true')).toHaveLength(1);
+    expect(screen.getByTestId('create-team-dialog-visibility-org').getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByTestId('create-team-dialog-visibility-private'));
+    expect(screen.getByTestId('create-team-dialog-visibility-private').getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByTestId('create-team-dialog-visibility-org').getAttribute('aria-pressed')).toBe('false');
   });
 
   it('resets its fields each time it opens', () => {

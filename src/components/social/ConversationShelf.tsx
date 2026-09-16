@@ -18,7 +18,12 @@ import { cn } from '../../lib/cn';
 export interface ConversationShelfItem {
   id: string;
   label: string;
-  /** Emoji or glyph. Kept short — this rail is narrow by design. */
+  /**
+   * A glyph component from `ui/Icons` (e.g. `<ActivityIcon />`), rendered in a
+   * fixed-size box so every row's label starts at the same x. Avoid emoji —
+   * they render as a fixed system glyph and do not take the theme's colour,
+   * so an urgent shelf item and a quiet one end up looking the same.
+   */
   icon?: ReactNode;
   /** Unread/waiting count. Zero renders no badge rather than a "0". */
   count?: number;
@@ -72,9 +77,15 @@ export function ConversationShelf({
             >
               <span
                 aria-hidden
-                className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-inset text-[13px]"
+                className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-inset"
               >
-                {item.icon ?? '•'}
+                {/* Fixed 16px inner box: every row's label starts at the same
+                    x no matter what the icon draws, and the fallback below
+                    sits in the identical box rather than a differently-sized
+                    glyph of its own. */}
+                <span className="grid h-4 w-4 shrink-0 place-items-center text-text-secondary">
+                  {item.icon ?? <span className="h-1.5 w-1.5 rounded-full bg-current" />}
+                </span>
               </span>
               <span
                 className={cn(

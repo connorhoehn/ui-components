@@ -1,15 +1,19 @@
-// CreateChannelDialog — Teams' "Create a channel" modal: a name, an
-// optional description, and standard-vs-private. `onCreate` may reject
-// (a duplicate name, a server refusal) and the reason shows in place,
-// without moving the footer buttons underneath it.
+// CreateChannelDialog — Teams' "Create a channel", as a popover at the button
+// that asked for it rather than a slab in the middle of the screen.
+//
+// Creating a channel is a small act: a name, maybe a sentence, and who can
+// see it. Teams and Slack keep it narrow, keep the team visible behind it,
+// and anchor it to the ⋯ you just clicked. `onCreate` may reject (a duplicate
+// name, a server refusal) and the reason shows in place, without moving the
+// footer buttons out from under the cursor.
 
-import { useEffect, useState } from 'react';
-import Modal from '../shared/Modal';
-import FormField from '../shared/FormField';
-import { ChoiceList, ChoiceRow } from '../shared/ChoiceList';
+import { useEffect, useState, type RefObject } from 'react';
+import { PopoverForm, PopoverField } from '../shared/PopoverForm';
+import SegmentedControl from '../shared/SegmentedControl';
+import type { InlinePopoverPlacement } from '../shared/InlinePopover';
 import { Input } from '../forms/Input';
 import { Textarea } from '../forms/Textarea';
-import { Button } from '../ui/Button';
+import { LockIcon } from '../ui/Icons';
 
 export type ChannelPrivacy = 'standard' | 'private';
 
@@ -23,6 +27,9 @@ export interface CreateChannelDialogProps {
   open: boolean;
   teamName: string;
   busy?: boolean;
+  /** The control that opened it. The popover hangs off this; without it, it centres. */
+  anchor?: RefObject<HTMLElement | null> | null;
+  placement?: InlinePopoverPlacement;
   /** Reject with a reason (e.g. a duplicate name) and it shows inline. */
   onCreate: (input: CreateChannelDialogInput) => Promise<void> | void;
   onClose: () => void;
@@ -31,10 +38,17 @@ export interface CreateChannelDialogProps {
 
 const NAME_MAX = 80;
 
+const PRIVACY_OPTIONS = [
+  { label: 'Standard', value: 'standard' },
+  { label: 'Private', value: 'private', icon: <LockIcon size={12} /> },
+];
+
 export function CreateChannelDialog({
   open,
   teamName,
   busy = false,
+  anchor,
+  placement = 'right',
   onCreate,
   onClose,
   'data-testid': testId = 'create-channel-dialog',
@@ -45,7 +59,7 @@ export function CreateChannelDialog({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Re-seed on every open: a dialog that remembers the last channel you typed
+  // Re-seed on every open: a form that remembers the last channel you typed
   // would offer to create it again in the next team you open this in.
   useEffect(() => {
     if (!open) return;
@@ -78,84 +92,62 @@ export function CreateChannelDialog({
   };
 
   return (
-    <Modal
+    <PopoverForm
       open={open}
+      anchor={anchor}
+      placement={placement}
+      icon={<span className="text-[13px] font-semibold leading-none">#</span>}
+      title="Create a channel"
+      subtitle={teamName}
+      submitLabel="Create"
+      submitTestId={`${testId}-create`}
+      submitDisabled={!canCreate}
+      busy={inert}
+      error={error}
+      onSubmit={() => void create()}
       onClose={onClose}
-      title={`Create a channel in ${teamName}`}
-      maxWidth={480}
-      footer={
-        <>
-          <Button variant="secondary" size="sm" onClick={onClose} disabled={inert} data-testid={`${testId}-cancel`}>
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => void create()}
-            disabled={!canCreate}
-            data-testid={`${testId}-create`}
-          >
-            {saving ? 'Creating…' : 'Create'}
-          </Button>
-        </>
-      }
+      data-testid={testId}
     >
-      <div className="flex flex-col gap-3 text-sm" data-testid={testId}>
-        <FormField label="Channel name" required data-testid={`${testId}-name-field`}>
-          {(wiring) => (
-            <Input
-              {...wiring}
-              data-autofocus
-              value={name}
-              maxLength={NAME_MAX}
-              disabled={inert}
-              onChange={(e) => setName(e.target.value)}
-              data-testid={`${testId}-name`}
-            />
-          )}
-        </FormField>
+      <PopoverField label="Name" data-testid={`${testId}-name-field`}>
+        <Input
+          size="sm"
+          value={name}
+          maxLength={NAME_MAX}
+          disabled={inert}
+          placeholder="e.g. design-reviews"
+          onChange={(e) => setName(e.target.value)}
+          data-testid={`${testId}-name`}
+        />
+      </PopoverField>
 
-        <FormField label="Description" hint="Let people know what this channel is for.">
-          {(wiring) => (
-            <Textarea
-              {...wiring}
-              value={description}
-              rows={2}
-              disabled={inert}
-              onChange={(e) => setDescription(e.target.value)}
-              data-testid={`${testId}-description`}
-            />
-          )}
-        </FormField>
+      <PopoverField label="Description" data-testid={`${testId}-description-field`}>
+        <Textarea
+          value={description}
+          rows={2}
+          disabled={inert}
+          placeholder="What is this channel for?"
+          onChange={(e) => setDescription(e.target.value)}
+          data-testid={`${testId}-description`}
+        />
+      </PopoverField>
 
-        <div className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">Privacy</div>
-        <ChoiceList data-testid={`${testId}-privacy`}>
-          <ChoiceRow
-            title="Standard — everyone on the team has access"
-            selected={privacy === 'standard'}
-            onSelect={() => setPrivacy('standard')}
-            disabled={inert}
-            data-testid={`${testId}-privacy-standard`}
-          />
-          <ChoiceRow
-            title="Private — only specific teammates"
-            selected={privacy === 'private'}
-            onSelect={() => setPrivacy('private')}
-            disabled={inert}
-            data-testid={`${testId}-privacy-private`}
-          />
-        </ChoiceList>
-
-        {/* Reserved height: the error appears without moving the footer. */}
-        <div className="min-h-[1.125rem]">
-          {error && (
-            <p className="m-0 text-xs text-danger-fg" role="alert" data-testid={`${testId}-error`}>
-              {error}
-            </p>
-          )}
-        </div>
-      </div>
-    </Modal>
+      <PopoverField
+        label="Privacy"
+        hint={privacy === 'private' ? 'Only people you add can see it.' : 'Everyone on the team can see it.'}
+        data-testid={`${testId}-privacy-field`}
+      >
+        <SegmentedControl
+          size="sm"
+          fullWidth
+          disabled={inert}
+          aria-label="Channel privacy"
+          options={PRIVACY_OPTIONS}
+          value={privacy}
+          onChange={(v) => setPrivacy(v as ChannelPrivacy)}
+          data-testid={`${testId}-privacy`}
+        />
+      </PopoverField>
+    </PopoverForm>
   );
 }
 

@@ -15,6 +15,7 @@ import { cn } from '../../lib/cn';
 import { Avatar } from '../shared/Avatar';
 import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
 import { ChevronIcon, LockIcon, PlusIcon } from '../ui/Icons';
+import { RailSectionHeader } from './RailSectionHeader';
 
 export interface TeamChannelItem {
   channel: string;
@@ -40,14 +41,20 @@ export interface TeamChannelTreeProps {
   onSelectChannel: (channel: string) => void;
   /** Controls expansion when given; the tree keeps its own state when absent. */
   onToggleTeam?: (teamId: string, expanded: boolean) => void;
-  /** "Add channel" in the team's ⋯ menu. */
-  onCreateChannel?: (teamId: string) => void;
+  /**
+   * The + on a team row. Receives the button itself so the host can hang the
+   * create form off it — beside the team it is creating in, not centred over
+   * the whole app.
+   */
+  onCreateChannel?: (teamId: string, trigger: HTMLElement) => void;
   /** "Manage team" in the team's ⋯ menu. */
   onManageTeam?: (teamId: string) => void;
   /** "Leave team" in the team's ⋯ menu. */
   onLeaveTeam?: (teamId: string) => void;
-  /** Footer "Join or create a team" action. */
-  onCreateTeam?: () => void;
+  /** The + on the "Teams" heading. Receives the button, for the same reason. */
+  onCreateTeam?: (trigger: HTMLElement) => void;
+  /** Hides the "Teams" heading for a host that draws its own. */
+  heading?: string | false;
   className?: string;
   'data-testid'?: string;
 }
@@ -70,6 +77,7 @@ export function TeamChannelTree({
   onManageTeam,
   onLeaveTeam,
   onCreateTeam,
+  heading = 'Teams',
   className,
   'data-testid': testId = 'team-channel-tree',
 }: TeamChannelTreeProps) {
@@ -183,29 +191,46 @@ export function TeamChannelTree({
     }
   };
 
+  // The heading sits OUTSIDE role="tree": a tree's children have to be
+  // treeitems, and a stray <div> in there makes a reader announce a phantom
+  // item before the first team.
   return (
-    <div
-      ref={rootRef}
-      role="tree"
-      aria-label="Teams"
-      className={cn('flex flex-col gap-0.5', className)}
-      data-testid={testId}
-      onKeyDown={onKeyDown}
-    >
+    <div className={cn('flex flex-col', className)}>
+      {heading !== false && (
+        <RailSectionHeader
+          label={heading}
+          presentational={false}
+          className="pt-2"
+          actions={
+            onCreateTeam
+              ? [{
+                  label: 'Create a team',
+                  onClick: (trigger) => onCreateTeam(trigger),
+                  'data-testid': `${testId}-create-team`,
+                }]
+              : []
+          }
+          data-testid={`${testId}-heading`}
+        />
+      )}
+      <div
+        ref={rootRef}
+        role="tree"
+        aria-label={heading === false ? 'Teams' : undefined}
+        aria-labelledby={undefined}
+        className="flex flex-col gap-0.5"
+        data-testid={testId}
+        onKeyDown={onKeyDown}
+      >
       {teams.map((team) => {
         const expanded = isExpanded(team);
         const teamRowId = `team:${team.teamId}`;
         const isCursor = tabTargetId === teamRowId;
 
+        // "Add channel" is NOT in here. It used to be, and a create action
+        // two clicks deep behind a ⋯ that only appears on hover is one people
+        // report as missing — this user did. It is a visible + on the row now.
         const menuItems: DropdownMenuItem[] = [];
-        if (onCreateChannel) {
-          menuItems.push({
-            label: 'Add channel',
-            icon: <PlusIcon size={14} />,
-            onSelect: () => onCreateChannel(team.teamId),
-            'data-testid': `${testId}-team-${team.teamId}-menu-add-channel`,
-          });
-        }
         if (onManageTeam) {
           menuItems.push({
             label: 'Manage team',
@@ -247,6 +272,28 @@ export function TeamChannelTree({
               <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-text-primary">
                 {team.name}
               </span>
+              {onCreateChannel && (
+                <button
+                  type="button"
+                  title={`Create a channel in ${team.name}`}
+                  aria-label={`Create a channel in ${team.name}`}
+                  tabIndex={isCursor ? 0 : -1}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCreateChannel(team.teamId, e.currentTarget);
+                  }}
+                  data-testid={`${testId}-team-${team.teamId}-add-channel`}
+                  className={cn(
+                    'grid h-6 w-6 shrink-0 cursor-pointer place-items-center rounded-md border-none bg-transparent p-0',
+                    'text-text-secondary hover:bg-surface-hover hover:text-text-primary',
+                    'opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100',
+                    '[@media(hover:none)]:opacity-100',
+                    'focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                  )}
+                >
+                  <PlusIcon size={14} />
+                </button>
+              )}
               {menuItems.length > 0 && (
                 <span
                   onClick={(e) => e.stopPropagation()}
@@ -352,21 +399,7 @@ export function TeamChannelTree({
         );
       })}
 
-      {onCreateTeam && (
-        <button
-          type="button"
-          onClick={onCreateTeam}
-          data-testid={`${testId}-create-team`}
-          className={cn(
-            'mt-1 flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] font-medium',
-            'text-text-secondary hover:bg-surface-hover hover:text-text-primary',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset',
-          )}
-        >
-          <PlusIcon size={14} />
-          Join or create a team
-        </button>
-      )}
+      </div>
     </div>
   );
 }

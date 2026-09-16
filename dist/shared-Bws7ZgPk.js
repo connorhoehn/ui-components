@@ -5,9 +5,9 @@ import { t } from "./Button-BhS4-R6_.js";
 import { t as n } from "./Card-RQCeAPNU.js";
 import "./DataTable-E4dOUgO7.js";
 import "./IconButton-C3DMtvSx.js";
-import "./DropdownMenu-BBCntmP4.js";
-import { n as r, r as i } from "./SearchInput-B-r0inFw.js";
-import "./SegmentedControl-pVesnE3W.js";
+import "./DropdownMenu-Ciq-YLFG.js";
+import { a as r, i } from "./PopoverForm-DHjrX-Np.js";
+import "./SelectableCard-BVSflqyL.js";
 import "./Banner-C3Wgh62A.js";
 import "./Chart-DUoOhhMu.js";
 import { c as a, f as o, l as s, p as c, s as l, t as u } from "./Chip-BENLwTlq.js";
@@ -29,10 +29,11 @@ import { t as w } from "./Textarea-Dz4doxTv.js";
 import { n as T, t as E } from "./Avatar-BzicCOft.js";
 import "./FloatingPanel-CclkXzq4.js";
 import "./StatusDot-Bgx2zxgC.js";
+import "./SegmentedControl-18MqeMsn.js";
 import "./InlineAlert-Myf3oJZf.js";
 import { t as D } from "./CardHeader-CsPhVpCm.js";
 import "./Badge-Fdgqmkuz.js";
-import { t as O } from "./InlinePopover-DFdI8hw1.js";
+import { t as O } from "./InlinePopover-D25AtkYZ.js";
 import { t as k } from "./ActivityFeed-C9KAtqCl.js";
 import { t as ee } from "./InlinePlaceholder-51dbPRGn.js";
 import "./ChangeDiff-CzO8zCc-.js";
@@ -1641,7 +1642,7 @@ function ot({ value: t, max: n = 100, color: r, size: i = "md", label: a, showRa
 }
 //#endregion
 //#region src/components/shared/UserChip.tsx
-function st({ name: t, label: n, avatarSize: i = 20, avatarColor: a, presence: o, onClick: s, className: c, style: l, title: u, "data-testid": d = "user-chip" }) {
+function st({ name: t, label: n, avatarSize: r = 20, avatarColor: a, presence: o, onClick: s, className: c, style: l, title: u, "data-testid": d = "user-chip" }) {
 	return /* @__PURE__ */ R(s ? "button" : "span", {
 		type: s ? "button" : void 0,
 		onClick: s,
@@ -1652,14 +1653,14 @@ function st({ name: t, label: n, avatarSize: i = 20, avatarColor: a, presence: o
 		children: [
 			/* @__PURE__ */ L(E, {
 				name: t,
-				size: i,
+				size: r,
 				color: a
 			}),
 			/* @__PURE__ */ L("span", {
 				className: "font-medium leading-none",
 				children: n ?? t
 			}),
-			o && /* @__PURE__ */ L(r, {
+			o && /* @__PURE__ */ L(i, {
 				state: o,
 				size: "xs"
 			})
@@ -3664,7 +3665,7 @@ function Fn({ items: t, frameless: n = !1, className: r, "aria-label": i, "data-
 }
 //#endregion
 //#region src/components/shared/PersonHoverCard.tsx
-function In({ person: t, children: n, actions: i, details: a, interactiveChild: o = !1, openDelay: s = 450, closeDelay: c = 250, className: l, "data-testid": u = "person-hover-card" }) {
+function In({ person: t, children: n, actions: r, details: a, interactiveChild: o = !1, openDelay: s = 450, closeDelay: c = 250, className: l, "data-testid": u = "person-hover-card" }) {
 	let d = P(null), [f, p] = F(!1), m = P(null), h = A(() => {
 		m.current &&= (clearTimeout(m.current), null);
 	}, []);
@@ -3720,7 +3721,7 @@ function In({ person: t, children: n, actions: i, details: a, interactiveChild: 
 								children: [/* @__PURE__ */ L("span", {
 									className: "truncate text-sm font-semibold text-text-primary",
 									children: t.displayName
-								}), t.online !== void 0 && /* @__PURE__ */ L(r, { state: t.online ? "online" : "offline" })]
+								}), t.online !== void 0 && /* @__PURE__ */ L(i, { state: t.online ? "online" : "offline" })]
 							}),
 							t.title && /* @__PURE__ */ L("div", {
 								className: "truncate text-xs text-text-secondary",
@@ -3751,9 +3752,9 @@ function In({ person: t, children: n, actions: i, details: a, interactiveChild: 
 					className: "mt-2 border-t border-border pt-2",
 					children: a
 				}),
-				i && /* @__PURE__ */ L("div", {
+				r && /* @__PURE__ */ L("div", {
 					className: "mt-3 flex items-center gap-2",
-					children: i
+					children: r
 				})
 			]
 		})
@@ -4429,15 +4430,15 @@ function cr({ content: t, children: n, placement: r = "top", openDelay: i = 350,
 }
 //#endregion
 //#region src/components/shared/Text.tsx
-function lr({ as: e = "span", className: t, title: n, children: r, wrap: a = !1, ...o }) {
-	return /* @__PURE__ */ L(i, {
+function lr({ as: e = "span", className: t, title: n, children: i, wrap: a = !1, ...o }) {
+	return /* @__PURE__ */ L(r, {
 		as: e,
 		gap: "none",
 		wrap: a,
 		className: t,
 		title: n,
 		...o,
-		children: r
+		children: i
 	});
 }
 var ur = lr;

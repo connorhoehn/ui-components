@@ -218,6 +218,10 @@ export type { MembersPanelProps, ChatMember } from './MembersPanel';
 
 // Teams → Channels — the signature Teams rail tree, and the two "create"
 // dialogs that hang off its ⋯ menus.
+export { RailSectionHeader } from './RailSectionHeader';
+export type { RailSectionHeaderProps, RailSectionAction } from './RailSectionHeader';
+export { ActivePeopleGrid } from './ActivePeopleGrid';
+export type { ActivePeopleGridProps, ActivePerson } from './ActivePeopleGrid';
 export { TeamChannelTree } from './TeamChannelTree';
 export type { TeamChannelTreeProps, TeamTreeItem, TeamChannelItem } from './TeamChannelTree';
 export { CreateChannelDialog } from './CreateChannelDialog';

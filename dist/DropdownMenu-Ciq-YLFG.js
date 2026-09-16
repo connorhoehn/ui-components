@@ -1,7 +1,7 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Avatar-BzicCOft.js";
 import { t as n } from "./StatusDot-Bgx2zxgC.js";
-import { t as r } from "./InlinePopover-DFdI8hw1.js";
+import { t as r } from "./InlinePopover-D25AtkYZ.js";
 import { useCallback as i, useEffect as a, useRef as o, useState as s } from "react";
 import { Fragment as c, jsx as l, jsxs as u } from "react/jsx-runtime";
 //#region src/components/ui/Icons.tsx
@@ -126,9 +126,25 @@ function w({ size: e = 16, ...t }) {
 		}), /* @__PURE__ */ l("path", { d: "M5.5 7.5V5.5a2.5 2.5 0 0 1 5 0v2" })]
 	});
 }
+function T({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ l("svg", {
+		...d(e, t),
+		children: /* @__PURE__ */ l("path", { d: "M8.5 2 4 9h3.2l-.7 5L12 7H8.8z" })
+	});
+}
+function E({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [/* @__PURE__ */ l("circle", {
+			cx: "8",
+			cy: "8.3",
+			r: "2.8"
+		}), /* @__PURE__ */ l("path", { d: "M10.8 8.3v.9a1.9 1.9 0 0 0 3.7 0V8a6.5 6.5 0 1 0-2.8 5.4" })]
+	});
+}
 //#endregion
 //#region src/components/shared/PresenceAvatars.tsx
-var T = {
+var D = {
 	editor: {
 		glyph: "✏",
 		label: "Editing"
@@ -142,13 +158,13 @@ var T = {
 		label: "Viewing"
 	}
 };
-function E(e) {
+function O(e) {
 	return e.idle === !0 ? "#f59e0b" : e.online === !1 ? "var(--color-text-tertiary)" : e.online === !0 ? "#22c55e" : null;
 }
-function D(e) {
+function k(e) {
 	if (e) return /^#[0-9a-fA-F]{6}$/.test(e) ? `${e}99` : (/^#[0-9a-fA-F]{8}$/.test(e), e);
 }
-function O({ user: t, isFollowing: n, onFollow: r, children: i }) {
+function A({ user: t, isFollowing: n, onFollow: r, children: i }) {
 	let [c, d] = s(!1), f = o(null), p = () => {
 		f.current &&= (clearTimeout(f.current), null), d(!0);
 	}, m = () => {
@@ -196,14 +212,14 @@ function O({ user: t, isFollowing: n, onFollow: r, children: i }) {
 		})]
 	});
 }
-function k({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserClick: s, onFollowUser: d, followingUserId: f = null, className: p }) {
+function j({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserClick: s, onFollowUser: d, followingUserId: f = null, className: p }) {
 	let m = r.slice(0, i), h = r.length - m.length, g = -(a * .3), _ = Math.max(1, Math.round(a * .07)), v = Math.max(10, Math.round(a * .42));
 	return /* @__PURE__ */ u("div", {
 		className: e("inline-flex items-center", p),
 		role: "list",
 		"aria-label": "Online users",
 		children: [m.map((e, r) => {
-			let i = E(e), o = e.idle === !0, p = o ? D(e.color) : e.color, m = o && !e.color ? .6 : void 0, h = e.mode ? T[e.mode] : null, y = [e.name];
+			let i = O(e), o = e.idle === !0, p = o ? k(e.color) : e.color, m = o && !e.color ? .6 : void 0, h = e.mode ? D[e.mode] : null, y = [e.name];
 			o ? y.push("Away") : h && y.push(h.label);
 			let b = y.join(" — "), x = {
 				"data-testid": "presence-avatar",
@@ -254,7 +270,7 @@ function k({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 					children: h.glyph
 				})
 			] }), C = { marginLeft: r > 0 ? g : 0 };
-			return ((t) => d ? /* @__PURE__ */ l(O, {
+			return ((t) => d ? /* @__PURE__ */ l(A, {
 				user: e,
 				isFollowing: f === e.id,
 				onFollow: d,
@@ -298,7 +314,7 @@ function k({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 }
 //#endregion
 //#region src/components/shared/DropdownMenu.tsx
-function A({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, triggerClassName: d, triggerTabIndex: f, triggerTestId: p, align: m = "start", sections: h, className: g, "data-testid": _ = "dropdown-menu" }) {
+function M({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, triggerClassName: d, triggerTabIndex: f, triggerTestId: p, align: m = "start", sections: h, className: g, "data-testid": _ = "dropdown-menu" }) {
 	let [v, y] = s(!1), b = o(null), x = o(null), S = i(() => y(!1), []), C = i((e) => {
 		if (![
 			"ArrowDown",
@@ -353,7 +369,7 @@ function A({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 						className: "px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
-					e.items.map((e, t) => /* @__PURE__ */ l(P, {
+					e.items.map((e, t) => /* @__PURE__ */ l(I, {
 						item: e,
 						close: S,
 						testId: _
@@ -363,11 +379,11 @@ function A({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 		})
 	})] });
 }
-var j = "flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100";
-function M(e, t = !1) {
+var N = "flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100";
+function P(e, t = !1) {
 	return e.danger ? "text-danger-fg bg-transparent hover:bg-danger-bg" : e.active || t ? "font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]" : "font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]";
 }
-function N({ item: e }) {
+function F({ item: e }) {
 	return /* @__PURE__ */ u(c, { children: [
 		e.checked === void 0 ? e.icon ? /* @__PURE__ */ l("span", {
 			className: "flex w-4 shrink-0 items-center justify-center text-base leading-none text-[var(--color-text-secondary)]",
@@ -400,7 +416,7 @@ function N({ item: e }) {
 		})
 	] });
 }
-function P({ item: t, close: n, testId: i }) {
+function I({ item: t, close: n, testId: i }) {
 	let [d, f] = s(!1), p = o(null), m = o(null), h = o(null), g = () => {
 		h.current &&= (clearTimeout(h.current), null);
 	}, _ = () => {
@@ -421,8 +437,8 @@ function P({ item: t, close: n, testId: i }) {
 			(e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") && (e.preventDefault(), f(!0), setTimeout(() => m.current?.querySelector("[role=\"menuitem\"],[role=\"menuitemcheckbox\"]")?.focus(), 0));
 		},
 		"data-testid": t["data-testid"],
-		className: e(j, M(t, d)),
-		children: /* @__PURE__ */ l(N, { item: t })
+		className: e(N, P(t, d)),
+		children: /* @__PURE__ */ l(F, { item: t })
 	}), /* @__PURE__ */ l(r, {
 		trigger: p,
 		open: d,
@@ -455,7 +471,7 @@ function P({ item: t, close: n, testId: i }) {
 						className: "px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
-					e.items.map((e, t) => /* @__PURE__ */ l(P, {
+					e.items.map((e, t) => /* @__PURE__ */ l(I, {
 						item: e,
 						close: n,
 						testId: i
@@ -472,9 +488,9 @@ function P({ item: t, close: n, testId: i }) {
 			t.onSelect?.(), n();
 		},
 		"data-testid": t["data-testid"],
-		className: e(j, M(t)),
-		children: /* @__PURE__ */ l(N, { item: t })
+		className: e(N, P(t)),
+		children: /* @__PURE__ */ l(F, { item: t })
 	});
 }
 //#endregion
-export { g as a, b as c, S as d, f, x as h, m as i, _ as l, h as m, k as n, p as o, y as p, C as r, v as s, A as t, w as u };
+export { x as _, C as a, p as c, _ as d, w as f, h as g, y as h, E as i, v as l, f as m, j as n, m as o, S as p, T as r, g as s, M as t, b as u };
