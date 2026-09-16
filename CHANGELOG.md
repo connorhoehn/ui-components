@@ -6,6 +6,119 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.279.0] — 2026-09-16
+
+### Changed — `./video`
+
+- **`HangoutPreJoinShell` redesigned as a Teams/Zoom green room.** The old
+  screen said the same sentence three times — a modal title, the shell's own
+  header, and the right rail all naming the channel and repeating "Everyone in
+  #X will be told" — around a ~200px preview, with the mic and camera as two
+  loose circles floating below the frame and no way to choose a microphone,
+  speaker or camera at all. That last one is the main thing a pre-join screen
+  is for.
+
+  Now: one heading block (optional `eyebrow`, the channel name, ONE subtitle),
+  a hero 16:9 stage with the mic/camera/gear controls riding on the preview
+  itself, and a right column carrying who is already here, the primary Join
+  and a quiet Cancel. The component's own `<header>` is gone.
+
+  New props, all optional and additive: `eyebrow`, `devicesSlot` (given = the
+  stage bar gets a gear that swaps the roster card for the host's device
+  pickers), `devicesOpen` / `onToggleDevices` for a controlled panel, and
+  `secondaryActions` for Teams' "other join options" row. Every existing prop
+  keeps its name and meaning, and every existing testid still resolves.
+
+  The shell stays a controlled-render shell: it does not call `getUserMedia`
+  and does not enumerate devices. `DeviceSettingsPanel` is what hosts put in
+  `devicesSlot`.
+
+### Added — `./video`
+
+- **`SettingsGearIcon`** in `MediaIcons`, so the gear is shared rather than
+  redefined per surface.
+
+---
+
+## [2.278.2] — 2026-09-16
+
+### Changed — `./social`
+
+- **`MembersPanel.onAdd` receives the button that was pressed**, so a host can
+  open its people picker beside it instead of centred. The empty state's
+  action has no element to give and passes `undefined`, which hosts should
+  read as "fall back to centred" rather than pointing a popover at nothing.
+
+---
+
+## [2.278.1] — 2026-09-16
+
+### Added — `./social`
+
+- **`ConversationList.onStartCall`** puts "Call" and "Video call" in a
+  conversation row's ⋯ menu. A conversation you can open is one you can call
+  into, and making people open it first to find the call button is a step for
+  nothing. `ConversationRail` forwards it, along with `sectionActions`.
+
+### Added — `./ui`
+
+- **`PhoneIcon`, `VideoCallIcon`**. Named apart from `video/MediaIcons`'
+  `VideoIcon`, which is a call CONTROL rather than a "start one" glyph.
+
+---
+
+## [2.278.0] — 2026-09-16
+
+### Added — `./shared`
+
+- **`PopoverForm` + `PopoverField`**: a compact form that opens AT the control
+  that asked for it. The alternative, and what this replaces at three call
+  sites, is a centred modal — a dimmed screen and a 480px slab to collect
+  three fields, which loses the context you were pointing at. The shell owns
+  the chrome (header, reserved error line, footer, submit-on-Enter,
+  Escape-to-close) so every one of these reads the same; callers bring only
+  their fields. Falls back to a narrow centred overlay only when the host has
+  nothing to anchor to.
+
+### Added — `./social`
+
+- **`RailSectionHeader`**: the one heading row every rail section uses, with
+  its create action ON the heading. Each section had been growing its own
+  heading inline at its own inset, and a rail whose four headings sit at three
+  different left edges reads as broken even when each section is fine.
+  "Add channel" behind a ⋯ that only appears on hover is an action people
+  report as missing.
+- **`ActivePeopleGrid`**: who is around, as bubble avatars, four per row.
+- **`ConversationList.sectionActions`**, keyed by section name.
+- **`ConversationRail.collapsible` / `collapsed` / `onToggleCollapse`**: a 56px
+  icon strip, with the shelf still pickable. The rail does not remember the
+  state; the host does.
+
+### Fixed — `./shared`
+
+- **`InlinePopover` keeps its panel on screen.** A 380px form hanging off a row
+  near the bottom of a rail ran past the fold with its buttons below it. The
+  correction runs once per anchor-derived position — measuring and correcting
+  on every render is an infinite loop, and in jsdom (every rect zero) it is an
+  immediate one.
+- **`ConversationRail.beforeList`** now shares the `px-2` inset of the shelf
+  above it and the list below it.
+
+### Changed — `./shared`, `./social`
+
+- **`SegmentedControl`** gains `disabled`, `fullWidth` and `data-testid`. A
+  two-value choice as segments is about a third of the height of two stacked
+  radio rows, which is what makes these forms fit in a popover.
+- **`ConversationShelf`** renders its icon in a fixed 16px box so every label
+  starts at the same x, and the fallback is a neutral dot rather than a
+  bullet. Emoji are discouraged in the prop docs: they do not take the theme's
+  colour.
+- **`TeamChannelTree`**: a "Teams" heading with a +, and a visible + per team
+  row; both hand the button back for anchoring. The heading sits outside
+  `role="tree"` — a stray `<div>` in there announces as a phantom item.
+
+---
+
 ## [2.277.2] — 2026-09-16
 
 ### Fixed — `./shared`

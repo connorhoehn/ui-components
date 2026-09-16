@@ -952,11 +952,14 @@ export declare type HangoutMode = 'auto' | 'spotlight';
 
 export declare type HangoutPhase = 'idle' | 'joining' | 'joined' | 'reconnecting' | 'ended' | 'failed';
 
-export declare function HangoutPreJoinShell({ channelName, localIdentity, previewStream, permission, permissionMessage, audioEnabled, videoEnabled, onToggleAudio, onToggleVideo, onRetryPermission, participants, readyState, readyLoading, effectsSlot, onJoin, onCancel, joinLabel, joinDisabled, subtitleOverride, className, 'data-testid': testId, }: HangoutPreJoinShellProps): JSX.Element;
+/** MediaIcons carries no gear, and this shell is the only caller that wants one. */
+export declare function HangoutPreJoinShell({ channelName, eyebrow, localIdentity, previewStream, permission, permissionMessage, audioEnabled, videoEnabled, onToggleAudio, onToggleVideo, onRetryPermission, participants, readyState, readyLoading, effectsSlot, devicesSlot, devicesOpen, onToggleDevices, secondaryActions, onJoin, onCancel, joinLabel, joinDisabled, subtitleOverride, className, 'data-testid': testId, }: HangoutPreJoinShellProps): JSX.Element;
 
 export declare interface HangoutPreJoinShellProps {
-    /** Channel display name surfaced at the top of the shell. */
+    /** Channel display name — the title of the one heading block. */
     channelName: string;
+    /** Small uppercase line above the title — "Before you go live". */
+    eyebrow?: string;
     /** When set, the camera-off preview renders a Meet/Teams-style identity
      *  tile (avatar + display name) instead of the bare "Camera off" text.
      *  Backward-compatible — omitted = legacy text fallback, so existing
@@ -980,11 +983,19 @@ export declare interface HangoutPreJoinShellProps {
     /** When true, render a small spinner above the roster instead of the
      *  participant list — for the "/ready not yet fetched" phase. */
     readyLoading?: boolean;
-    /** Rendered in the green room between the camera preview (with its
-     *  mic/cam pre-flight toggles) and the Join controls. Intended for
-     *  <MediaEffectsTray> so users can pick filters / background / face FX
-     *  before joining. Omitted = rendering is unchanged. */
+    /** Rendered under the camera stage, above the Join controls. Intended
+     *  for <MediaEffectsTray> so users can pick filters / background / face
+     *  FX before joining. Omitted = rendering is unchanged. */
     effectsSlot?: ReactNode;
+    /** Contents of the Device settings panel — typically a
+     *  <DeviceSettingsPanel>. Given = the stage bar gets a gear. The shell
+     *  never enumerates devices itself; it only opens and closes the panel. */
+    devicesSlot?: ReactNode;
+    /** Controlled device panel. Uncontrolled (own state, closed) when omitted. */
+    devicesOpen?: boolean;
+    onToggleDevices?: (next: boolean) => void;
+    /** A row under the primary button — Teams' "Other join options". */
+    secondaryActions?: ReactNode;
     /** Called when the user clicks Join. Carries the pre-flight intent so
      *  the consumer can spawn the publisher in the desired mute state. */
     onJoin: (intent: {
@@ -997,8 +1008,7 @@ export declare interface HangoutPreJoinShellProps {
     joinLabel?: string;
     /** Force-disable the Join button even when permission is granted. */
     joinDisabled?: boolean;
-    /** Show a custom subtitle in the right-rail. Overrides the auto-
-     *  computed "N people are in this call" copy. */
+    /** Replace the auto-computed "N people are in this call" subtitle. */
     subtitleOverride?: string;
     className?: string;
     'data-testid'?: string;
@@ -2320,59 +2330,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -2392,6 +2349,59 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

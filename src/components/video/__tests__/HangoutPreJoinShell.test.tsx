@@ -19,10 +19,47 @@ function baseProps(overrides: Partial<HangoutPreJoinShellProps> = {}): HangoutPr
 }
 
 describe('HangoutPreJoinShell', () => {
-  it('renders the channel name + Cancel button', () => {
+  it('renders the channel name exactly once, in the heading block', () => {
     render(<HangoutPreJoinShell {...baseProps()} />);
-    expect(screen.getByText('test-room')).toBeInTheDocument();
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
+    expect(screen.getAllByText('test-room')).toHaveLength(1);
+    expect(screen.getByTestId('prejoin-title')).toHaveTextContent('test-room');
+  });
+
+  it('renders the optional eyebrow above the title', () => {
+    render(<HangoutPreJoinShell {...baseProps({ eyebrow: 'Before you go live' })} />);
+    const eyebrow = screen.getByText('Before you go live');
+    const title = screen.getByTestId('prejoin-title');
+    expect(
+      eyebrow.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('renders no eyebrow when the prop is omitted', () => {
+    render(<HangoutPreJoinShell {...baseProps()} />);
+    expect(screen.queryByText('Before you go live')).not.toBeInTheDocument();
+  });
+
+  it('renders the subtitle exactly once — never repeated in the join column', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({
+          readyState: 'ready',
+          participants: [
+            { participantId: 'alice-123', ready: true },
+            { participantId: 'bob-456', ready: true },
+          ],
+        })}
+      />,
+    );
+    expect(screen.getAllByText('2 people are in this call')).toHaveLength(1);
+    expect(screen.getByTestId('prejoin-subtitle')).toHaveTextContent(
+      '2 people are in this call',
+    );
+  });
+
+  it('renders no "Ready to join?" second heading', () => {
+    render(<HangoutPreJoinShell {...baseProps()} />);
+    expect(screen.queryByText(/Ready to join/i)).not.toBeInTheDocument();
   });
 
   it('shows the Join button enabled when permission is granted', () => {
@@ -76,7 +113,7 @@ describe('HangoutPreJoinShell', () => {
 
   it('renders "You\'ll be the first" subtitle on empty readyState', () => {
     render(<HangoutPreJoinShell {...baseProps({ readyState: 'empty' })} />);
-    expect(screen.getAllByText(/first one in this room/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/first one in this room/i)).toHaveLength(1);
   });
 
   it('renders N-people copy + roster on ready readyState', () => {
@@ -91,7 +128,7 @@ describe('HangoutPreJoinShell', () => {
         })}
       />,
     );
-    expect(screen.getAllByText(/2 people are in this call/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/2 people are in this call/)).toHaveLength(1);
     expect(screen.getByText('alice-12')).toBeInTheDocument();
     expect(screen.getByText('bob-456')).toBeInTheDocument();
     expect(screen.getByText('live')).toBeInTheDocument();
@@ -144,7 +181,7 @@ describe('HangoutPreJoinShell', () => {
         {...baseProps({ subtitleOverride: 'CUSTOM SUBTITLE' })}
       />,
     );
-    expect(screen.getAllByText('CUSTOM SUBTITLE').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('CUSTOM SUBTITLE')).toHaveLength(1);
   });
 
   it('shows readyLoading spinner instead of roster when readyLoading=true', () => {
@@ -157,21 +194,19 @@ describe('HangoutPreJoinShell', () => {
         })}
       />,
     );
-    expect(screen.getAllByText(/Checking room/).length).toBeGreaterThan(0);
+    // The subtitle owns "Checking room…"; the roster says something else,
+    // so the same sentence never appears twice on screen.
+    expect(screen.getAllByText(/Checking room/)).toHaveLength(1);
+    expect(screen.getByText(/Finding people/)).toBeInTheDocument();
     expect(screen.queryByText('alice')).not.toBeInTheDocument();
   });
 
-  it('fires onCancel from header Cancel button', () => {
+  it('fires onCancel from the single Cancel action beside Join', () => {
     const onCancel = vi.fn();
     render(<HangoutPreJoinShell {...baseProps({ onCancel })} />);
-    fireEvent.click(screen.getByText('Cancel'));
-    expect(onCancel).toHaveBeenCalled();
-  });
-
-  it('fires onCancel from "Back to rooms" link', () => {
-    const onCancel = vi.fn();
-    render(<HangoutPreJoinShell {...baseProps({ onCancel })} />);
-    fireEvent.click(screen.getByText('Back to rooms'));
+    // One Cancel only — the old header bar carried a second one.
+    expect(screen.getAllByText('Cancel')).toHaveLength(1);
+    fireEvent.click(screen.getByTestId('prejoin-cancel'));
     expect(onCancel).toHaveBeenCalled();
   });
 
@@ -319,5 +354,158 @@ describe('HangoutPreJoinShell', () => {
     expect(
       slot.compareDocumentPosition(join) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
+  });
+  // ── device settings (Teams-style gear on the stage bar) ────────────────
+  // The shell never enumerates devices — `devicesSlot` arrives whole. The
+  // gear only exists when there is something for it to open.
+
+  it('renders no gear when devicesSlot is omitted', () => {
+    render(<HangoutPreJoinShell {...baseProps()} />);
+    expect(screen.queryByTestId('prejoin-devices-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('prejoin-devices-panel')).not.toBeInTheDocument();
+  });
+
+  it('renders the gear, closed, when devicesSlot is provided', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({ devicesSlot: <div data-testid="my-devices">pickers</div> })}
+      />,
+    );
+    const gear = screen.getByTestId('prejoin-devices-toggle');
+    expect(gear).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.queryByTestId('prejoin-devices-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('my-devices')).not.toBeInTheDocument();
+  });
+
+  it('opens and closes the device panel from the gear (uncontrolled)', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({ devicesSlot: <div data-testid="my-devices">pickers</div> })}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('prejoin-devices-toggle'));
+    const panel = screen.getByTestId('prejoin-devices-panel');
+    expect(panel).toBeInTheDocument();
+    expect(screen.getByText('Device settings')).toBeInTheDocument();
+    expect(screen.getByTestId('my-devices')).toBeInTheDocument();
+    expect(screen.getByTestId('prejoin-devices-toggle')).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(screen.getByTestId('prejoin-devices-toggle'));
+    expect(screen.queryByTestId('prejoin-devices-panel')).not.toBeInTheDocument();
+  });
+
+  it('closes the device panel from its own close button', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({ devicesSlot: <div data-testid="my-devices">pickers</div> })}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('prejoin-devices-toggle'));
+    fireEvent.click(screen.getByTestId('prejoin-devices-close'));
+    expect(screen.queryByTestId('prejoin-devices-panel')).not.toBeInTheDocument();
+  });
+
+  it('keeps the Join button rendered while the device panel is open', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({ devicesSlot: <div>pickers</div> })}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('prejoin-devices-toggle'));
+    const panel = screen.getByTestId('prejoin-devices-panel');
+    const join = screen.getByTestId('prejoin-join-button');
+    expect(join).toBeInTheDocument();
+    expect(
+      panel.compareDocumentPosition(join) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('lets devicesOpen drive the panel and reports through onToggleDevices', () => {
+    const onToggleDevices = vi.fn();
+    const { rerender } = render(
+      <HangoutPreJoinShell
+        {...baseProps({
+          devicesSlot: <div data-testid="my-devices">pickers</div>,
+          devicesOpen: false,
+          onToggleDevices,
+        })}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('prejoin-devices-toggle'));
+    expect(onToggleDevices).toHaveBeenCalledWith(true);
+    // Controlled: the prop, not the click, decides what renders.
+    expect(screen.queryByTestId('prejoin-devices-panel')).not.toBeInTheDocument();
+
+    rerender(
+      <HangoutPreJoinShell
+        {...baseProps({
+          devicesSlot: <div data-testid="my-devices">pickers</div>,
+          devicesOpen: true,
+          onToggleDevices,
+        })}
+      />,
+    );
+    expect(screen.getByTestId('prejoin-devices-panel')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('prejoin-devices-close'));
+    expect(onToggleDevices).toHaveBeenLastCalledWith(false);
+  });
+
+  it('ignores devicesOpen when there is no devicesSlot to show', () => {
+    render(<HangoutPreJoinShell {...baseProps({ devicesOpen: true })} />);
+    expect(screen.queryByTestId('prejoin-devices-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('prejoin-devices-toggle')).not.toBeInTheDocument();
+  });
+
+  it('swaps the roster for the device panel, then restores it on close', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({
+          readyState: 'ready',
+          participants: [{ participantId: 'alice-123', ready: true }],
+          devicesSlot: <div>pickers</div>,
+        })}
+      />,
+    );
+    expect(screen.getByText('alice-12')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('prejoin-devices-toggle'));
+    expect(screen.queryByText('alice-12')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('prejoin-devices-close'));
+    expect(screen.getByText('alice-12')).toBeInTheDocument();
+  });
+
+  // ── secondaryActions ───────────────────────────────────────────────────
+
+  it('renders secondaryActions between Join and Cancel', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({
+          secondaryActions: <button type="button">Other join options</button>,
+        })}
+      />,
+    );
+    const join = screen.getByTestId('prejoin-join-button');
+    const extra = screen.getByTestId('prejoin-secondary-actions');
+    const cancel = screen.getByTestId('prejoin-cancel');
+    expect(
+      join.compareDocumentPosition(extra) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      extra.compareDocumentPosition(cancel) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('renders no secondaryActions wrapper when the prop is omitted', () => {
+    render(<HangoutPreJoinShell {...baseProps()} />);
+    expect(screen.queryByTestId('prejoin-secondary-actions')).not.toBeInTheDocument();
+  });
+
+  // ── the toggles live on the stage, not loose below it ──────────────────
+
+  it('places the mic/cam toggles inside the preview stage', () => {
+    const { container } = render(<HangoutPreJoinShell {...baseProps()} />);
+    const stage = container.querySelector('.aspect-video');
+    expect(stage).not.toBeNull();
+    expect(stage!.contains(screen.getByTestId('prejoin-toggle-audio'))).toBe(true);
+    expect(stage!.contains(screen.getByTestId('prejoin-toggle-video'))).toBe(true);
   });
 });

@@ -127,3 +127,49 @@ export const Interactive: Story = {
     );
   },
 };
+
+/** The Teams arrangement in full: an eyebrow over the one title, and a gear on
+ *  the stage that swaps the roster card for the host's device pickers. The
+ *  slot is the host's — the shell never enumerates devices itself. */
+export const WithDeviceSettings: Story = {
+  args: {
+    permission: 'granted',
+    audioEnabled: true,
+    videoEnabled: true,
+    readyState: 'ready',
+    participants: ROSTER,
+    localIdentity: { displayName: 'Morgan Reyes' },
+  },
+  render: (args) => {
+    const [open, setOpen] = useState(true);
+    return (
+      <HangoutPreJoinShell
+        {...args}
+        eyebrow="Before you go live"
+        devicesOpen={open}
+        onToggleDevices={setOpen}
+        devicesSlot={
+          <div className="flex flex-col gap-2 text-sm text-text-secondary">
+            <label className="flex flex-col gap-1">
+              Microphone
+              <select className="h-8 rounded-md border border-border bg-surface px-2 text-[13px]">
+                <option>MacBook Pro Microphone</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-1">
+              Camera
+              <select className="h-8 rounded-md border border-border bg-surface px-2 text-[13px]">
+                <option>FaceTime HD Camera</option>
+              </select>
+            </label>
+          </div>
+        }
+        secondaryActions={
+          <button type="button" className="text-xs text-neutral hover:text-text-primary">
+            Other join options
+          </button>
+        }
+      />
+    );
+  },
+};
