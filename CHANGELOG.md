@@ -6,6 +6,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.283.0] — 2026-09-16
+
+### Added — `./social`
+
+- **`TeamChannelTree` favourites.** The flat Channels and Direct messages rows
+  could be pinned and lifted into a Pinned group; a team and its channels
+  could not be favourited at all. `TeamTreeItem.pinned` / `onTogglePinTeam`
+  and `TeamChannelItem.pinned` / `onTogglePinChannel` fix that, with the same
+  pin glyph the flat rows use so one visual language means one thing in both
+  halves of the rail. Pinned sort first, stably, at both levels.
+
+  A pinned channel stays inside its team. The tree is a hierarchy, and
+  lifting a channel out of it into a flat group inside the tree would be a
+  second, contradictory structure — the rail's Pinned group is the host's
+  business, not this component's.
+
+### Changed — `./social`
+
+- **The last message no longer sits flush against the composer.** It ended
+  with its reactions and its Reply control touching the input's top edge;
+  Teams and Slack both leave a clear band there. Not decoration — the newest
+  message is the one you are reading while you type a reply, and a line of
+  text hard against a focused input reads as part of the input.
+- **A threaded channel's posts are separated rather than grouped.** With the
+  foot Reply control under every root, consecutive posts from one person
+  stopped collapsing into a run — correctly, since a post in a channel is a
+  thread starter and Teams keeps consecutive posts separate for that reason.
+  But our rows did not LOOK like separate posts, so the repetition read as
+  noise rather than as structure. Threaded mode now gives each post air and a
+  hairline, borrowed from the day separator's own vocabulary. The flat path is
+  untouched: a DM is a conversation, not a list of posts.
+
+---
+
 ## [2.282.0] — 2026-09-16
 
 ### Changed — `./social`

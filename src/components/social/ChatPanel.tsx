@@ -1620,6 +1620,50 @@ export function ChatPanel({
         ? previousGroup.root
         : undefined;
     const rootNode = renderTimelineEntry(group.root, index, previousTimestamp, previousRoot);
+
+    /**
+     * Air, and a hairline, between one post and the next. Threaded mode only.
+     *
+     * A post in a channel is a thread STARTER — its own small conversation
+     * with its own reply control — so consecutive posts by one person stay
+     * separate rows with separate heads, which is right (see `continuesRun`
+     * and the `previousRoot` note above). What was wrong was the rhythm: the
+     * same tight rows a DM uses, with a Reply link appended, so that correct
+     * repetition read as noise instead of as structure. Teams answers this
+     * with space, not with grouping.
+     *
+     * Air does most of the work, and the hairline is here because air alone
+     * stops scaling: two one-line posts 24px apart are obviously two things,
+     * two posts that are each a root plus five replies and a rail are not —
+     * and the rail that would have marked the end of the first is indented
+     * away from the left margin, exactly where the next post's name appears.
+     *
+     * ONE top border. No background, no radius, no shadow, no side or bottom
+     * edges — a box on four sides is what turns a channel into a stack of CRM
+     * cards, and this is the day separator's own vocabulary (a hairline
+     * sibling between blocks) at the lightest weight the tokens have.
+     *
+     * Not `role="separator"`: DaySeparator takes that role for the divisions
+     * worth announcing, and a channel that says "separator" between every post
+     * gives a screen-reader user forty announcements carrying no information
+     * the rows do not already carry.
+     */
+    const rootTimestamp = timelineTimestamp(group.root) ?? '';
+    const boundary =
+      // A day divider IS the boundary where it falls; drawing both stacks two
+      // rules with three pixels between them. `isNewDay` is also true for the
+      // first row, which is what keeps a rule off the top of the transcript.
+      index > 0 && !isNewDay(rootTimestamp, previousTimestamp) ? (
+        <div
+          aria-hidden="true"
+          data-testid="chat-post-boundary"
+          className={cn(
+            'mt-3 border-t pt-3',
+            dark ? 'border-white/10' : 'border-border-subtle',
+          )}
+        />
+      ) : null;
+
     // Hover-only reply was the whole discoverability problem: a reader who
     // never happens to hover a row never learns the channel is threaded, and
     // keeps answering with new top-level posts — the flat river threading was
@@ -1627,7 +1671,19 @@ export function ChatPanel({
     // a thread you can answer", and it matters MOST on a root with no replies
     // yet, since that is the post a first reply has to start from.
     const replyTarget = threadReplyTarget(group.root);
-    if (group.replies.length === 0 && !replyTarget) return rootNode;
+    if (group.replies.length === 0 && !replyTarget) {
+      // Still a post, so it still gets the separation — a channel where only
+      // the posts with replies are set apart would say that a post nobody
+      // answered is a lesser kind of thing.
+      return boundary ? (
+        <Fragment key={`post:${entryId(group.root) ?? index}`}>
+          {boundary}
+          {rootNode}
+        </Fragment>
+      ) : (
+        rootNode
+      );
+    }
 
     const rootId = entryId(group.root) ?? '';
     const rootMessage = group.root.kind === 'message' ? group.root.message : undefined;
@@ -1643,7 +1699,9 @@ export function ChatPanel({
     const hiddenAuthors = [...new Set(group.replies.slice(visible.length).map(entryAuthor))].slice(0, 3);
 
     return (
-      <div key={`thread:${rootId || index}`} data-testid="chat-thread" data-thread-root={rootId || undefined}>
+      <Fragment key={`post:${rootId || index}`}>
+      {boundary}
+      <div data-testid="chat-thread" data-thread-root={rootId || undefined}>
         {rootNode}
         {group.replies.length > 0 && (
         <div
@@ -1695,6 +1753,12 @@ export function ChatPanel({
           // Below the last reply AND below the "N more replies" control, so it
           // reads as the end of the thread rather than as one more reply.
           //
+          // It is also the last thing INSIDE the post's block: `mt-0.5` holds
+          // it against the post above while the next post's boundary opens
+          // with `mt-3` and a rule. Six times the gap on the far side is what
+          // keeps it reading as this post's closing line rather than as a
+          // control floating in the space between two posts.
+          //
           // `border-l border-transparent` rather than a bare `pl-*`: it puts
           // this on the exact box model the rail above uses, so the word lines
           // up with the replies' text to the pixel whether or not a rail is
@@ -1742,6 +1806,7 @@ export function ChatPanel({
           </div>
         )}
       </div>
+      </Fragment>
     );
   }
 
@@ -1840,7 +1905,13 @@ export function ChatPanel({
               thread overflows the auto margin resolves to zero and the list
               scrolls normally. (`justify-end` on the scroller itself would
               make the oldest messages unreachable.) */}
-          <div className="mt-auto">
+          {/* `pb-4`: the last message used to sit flush against the composer,
+              with its reactions and its Reply control touching the input's top
+              edge. Teams and Slack both leave a clear band there, and it is
+              not decoration — the newest message is the one you are reading
+              while you type a reply, and a line of text hard against a focused
+              input reads as part of the input. */}
+          <div className="mt-auto pb-4">
           {canLoadMore && messages.length > 0 && (
             <div className="flex justify-center pb-1">
               <button

@@ -624,6 +624,118 @@ describe('ChatPanel author runs', () => {
   });
 });
 
+describe('ChatPanel post rhythm', () => {
+  function at(minutes: number): string {
+    return new Date(Date.UTC(2026, 8, 16, 9, minutes, 0)).toISOString();
+  }
+
+  /** Three posts by one person, a minute apart — the case that read as noise. */
+  const posts = [
+    msg('p1', 'Are we shipping Friday?', { timestamp: at(0) }),
+    msg('p2', 'Also, standup moved to 10', { timestamp: at(1) }),
+    msg('p3', 'And the audit doc is up', { timestamp: at(2) }),
+  ];
+
+  function heads(): number {
+    return screen.getAllByTestId('message-row-author').length;
+  }
+
+  it('keeps consecutive posts separate, each with its own head and its own reply', () => {
+    render(<ChatPanel threaded messages={posts} onSend={vi.fn()} onReply={vi.fn()} />);
+    // A post is a thread starter, so three posts stay three posts — no run
+    // collapsing here however close together they were sent.
+    expect(heads()).toBe(3);
+    expect(screen.getAllByTestId('chat-thread-reply')).toHaveLength(3);
+    for (const id of ['p1', 'p2', 'p3']) {
+      expect(rowOf(id).getAttribute('data-continues')).toBeNull();
+      expect(rowOf(id).querySelector('[data-testid="message-row-time"]')).toBeTruthy();
+    }
+  });
+
+  it('separates each post from the one above it, but not the first', () => {
+    render(<ChatPanel threaded messages={posts} onSend={vi.fn()} onReply={vi.fn()} />);
+    // Two gaps between three posts. Nothing above the first — a rule across
+    // the top of the transcript separates the channel from nothing.
+    const rules = screen.getAllByTestId('chat-post-boundary');
+    expect(rules).toHaveLength(2);
+    expect(
+      rules[0].compareDocumentPosition(rowOf('p1')) & Node.DOCUMENT_POSITION_PRECEDING,
+    ).toBeTruthy();
+    // Decorative: it divides the flow and says nothing a row does not already
+    // say, so it stays out of the accessibility tree.
+    expect(rules[0].getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('puts the reply control inside its own post, above the next boundary', () => {
+    render(<ChatPanel threaded messages={posts} onSend={vi.fn()} onReply={vi.fn()} />);
+    const replies = screen.getAllByTestId('chat-thread-reply');
+    const rules = screen.getAllByTestId('chat-post-boundary');
+    // The first post's Reply comes before the rule that opens the second post,
+    // so it closes its own block rather than floating in the gap.
+    expect(
+      replies[0].compareDocumentPosition(rules[0]) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('separates a post that has no replies just like one that does', () => {
+    const answered = msg('p0', 'Yes', {
+      timestamp: at(1),
+      displayName: 'Eve',
+      userId: 'eve',
+      replyTo: { messageId: 'p1', author: 'Carol', text: 'Are we shipping Friday?' },
+    });
+    render(
+      <ChatPanel threaded messages={[posts[0], answered, posts[1]]} onSend={vi.fn()} onReply={vi.fn()} />,
+    );
+    // A post nobody answered is not a lesser kind of thing.
+    expect(screen.getAllByTestId('chat-post-boundary')).toHaveLength(1);
+  });
+
+  it('separates posts even when the host passes no reply handler', () => {
+    render(<ChatPanel threaded messages={posts} onSend={vi.fn()} />);
+    expect(screen.queryByTestId('chat-thread-reply')).toBeNull();
+    expect(screen.getAllByTestId('chat-post-boundary')).toHaveLength(2);
+  });
+
+  it('lets the day divider be the boundary where one falls', () => {
+    const nextDay = msg('p9', 'morning', {
+      timestamp: new Date(Date.UTC(2026, 8, 18, 9, 0, 0)).toISOString(),
+    });
+    render(<ChatPanel threaded messages={[posts[0], nextDay]} onSend={vi.fn()} onReply={vi.fn()} />);
+    // Two days, two day separators, and no post rule stacked three pixels
+    // under either of them.
+    expect(screen.getAllByTestId('chat-day-separator')).toHaveLength(2);
+    expect(screen.queryByTestId('chat-post-boundary')).toBeNull();
+  });
+
+  it('still groups replies inside a thread', () => {
+    const answers = ['r1', 'r2'].map((id, i) =>
+      msg(id, `answer ${i + 1}`, {
+        timestamp: at(i + 1),
+        displayName: 'Eve',
+        userId: 'eve',
+        replyTo: { messageId: 'p1', author: 'Carol', text: 'Are we shipping Friday?' },
+      }),
+    );
+    render(<ChatPanel threaded messages={[posts[0], ...answers]} onSend={vi.fn()} onReply={vi.fn()} />);
+    // Inside one post the replies are a conversation, so a run of them from
+    // one person still collapses.
+    expect(rowOf('r1').getAttribute('data-continues')).toBeNull();
+    expect(rowOf('r2').getAttribute('data-continues')).toBe('true');
+    // The separation is a between-posts rhythm; it never lands inside a thread.
+    expect(screen.getByTestId('chat-thread-replies').querySelectorAll('[data-testid="chat-post-boundary"]')).toHaveLength(0);
+  });
+
+  it('leaves a non-threaded list exactly as tight as it was', () => {
+    render(<ChatPanel messages={posts} onSend={vi.fn()} onReply={vi.fn()} />);
+    // A DM is a conversation, not a list of posts: no separation, and the run
+    // still collapses to one head.
+    expect(screen.queryByTestId('chat-post-boundary')).toBeNull();
+    expect(heads()).toBe(1);
+    expect(rowOf('p3').getAttribute('data-continues')).toBe('true');
+  });
+});
+
 describe('ChatPanel own-message alignment', () => {
   it('right-aligns your own message by default, the way a two-person chat wants', () => {
     render(<ChatPanel messages={[msg('m1', 'mine', { userId: 'eve' })]} onSend={vi.fn()} currentUserId="eve" />);

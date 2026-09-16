@@ -179,4 +179,130 @@ describe('TeamChannelTree', () => {
     fireEvent.keyDown(teamRow, { key: ' ' });
     expect(teamRow.getAttribute('aria-expanded')).toBe('true');
   });
+
+  describe('pinning', () => {
+    it('sorts pinned teams before unpinned ones, keeping order within each group', () => {
+      const teams: TeamTreeItem[] = [
+        { teamId: 'a', name: 'Alpha', channels: [] },
+        { teamId: 'b', name: 'Beta', pinned: true, channels: [] },
+        { teamId: 'c', name: 'Gamma', channels: [] },
+        { teamId: 'd', name: 'Delta', pinned: true, channels: [] },
+      ];
+      render(<TeamChannelTree teams={teams} onSelectChannel={vi.fn()} />);
+      const order = Array.from(
+        screen.getByTestId('team-channel-tree').querySelectorAll('[aria-level="1"]'),
+      ).map((el) => el.getAttribute('data-row-id'));
+      // b and d (pinned) come first, in the order they were given; a and c
+      // (unpinned) follow, also in the order they were given — a stable sort.
+      expect(order).toEqual(['team:b', 'team:d', 'team:a', 'team:c']);
+    });
+
+    it('sorts a pinned channel first within its team, without lifting it out of the team', () => {
+      const teams: TeamTreeItem[] = [
+        {
+          teamId: 't1',
+          name: 'Design',
+          expanded: true,
+          channels: [
+            { channel: 'general', name: 'General' },
+            { channel: 'reviews', name: 'Reviews', pinned: true },
+            { channel: 'standup', name: 'Standup' },
+          ],
+        },
+      ];
+      render(<TeamChannelTree teams={teams} onSelectChannel={vi.fn()} />);
+      const order = Array.from(
+        screen.getByTestId('team-channel-tree').querySelectorAll('[aria-level="2"]'),
+      ).map((el) => el.getAttribute('data-row-id'));
+      expect(order).toEqual(['channel:reviews', 'channel:general', 'channel:standup']);
+      // Still a level-2 treeitem under its team — not lifted into a flat group.
+      expect(screen.getByTestId('team-channel-tree-channel-reviews').getAttribute('aria-level')).toBe('2');
+    });
+
+    it('shows the same pin glyph the flat rail rows use, on both a pinned team and a pinned channel', () => {
+      const teams: TeamTreeItem[] = [
+        {
+          teamId: 't1',
+          name: 'Design',
+          pinned: true,
+          expanded: true,
+          channels: [{ channel: 'general', name: 'General', pinned: true }],
+        },
+      ];
+      render(<TeamChannelTree teams={teams} onSelectChannel={vi.fn()} />);
+      expect(screen.getByTestId('team-channel-tree-team-t1-pinned')).toBeInTheDocument();
+      expect(screen.getByTestId('team-channel-tree-channel-general-pinned')).toBeInTheDocument();
+    });
+
+    it('offers Pin/Unpin in the team menu, wired to onTogglePinTeam with the next state', () => {
+      const onTogglePinTeam = vi.fn();
+      const { rerender } = render(
+        <TeamChannelTree teams={TEAMS} onSelectChannel={vi.fn()} onTogglePinTeam={onTogglePinTeam} />,
+      );
+      fireEvent.click(screen.getByTestId('team-channel-tree-team-t1-menu'));
+      let menu = within(screen.getByTestId('team-channel-tree-team-t1-menu-panel'));
+      expect(menu.getByTestId('team-channel-tree-team-t1-menu-pin').textContent).toContain('Pin');
+      fireEvent.click(menu.getByTestId('team-channel-tree-team-t1-menu-pin'));
+      expect(onTogglePinTeam).toHaveBeenCalledWith('t1', true);
+
+      const pinned = TEAMS.map((t) => (t.teamId === 't1' ? { ...t, pinned: true } : t));
+      rerender(<TeamChannelTree teams={pinned} onSelectChannel={vi.fn()} onTogglePinTeam={onTogglePinTeam} />);
+      fireEvent.click(screen.getByTestId('team-channel-tree-team-t1-menu'));
+      menu = within(screen.getByTestId('team-channel-tree-team-t1-menu-panel'));
+      expect(menu.getByTestId('team-channel-tree-team-t1-menu-pin').textContent).toContain('Unpin');
+      fireEvent.click(menu.getByTestId('team-channel-tree-team-t1-menu-pin'));
+      expect(onTogglePinTeam).toHaveBeenCalledWith('t1', false);
+    });
+
+    it('toggles a channel pin, reporting (channel, true) then (channel, false)', () => {
+      const onTogglePinChannel = vi.fn();
+      const { rerender } = render(
+        <TeamChannelTree teams={TEAMS} onSelectChannel={vi.fn()} onTogglePinChannel={onTogglePinChannel} />,
+      );
+      fireEvent.click(screen.getByTestId('team-channel-tree-channel-general-pin-toggle'));
+      expect(onTogglePinChannel).toHaveBeenCalledWith('general', true);
+
+      const pinned = TEAMS.map((t) =>
+        t.teamId !== 't1'
+          ? t
+          : { ...t, channels: t.channels.map((c) => (c.channel === 'general' ? { ...c, pinned: true } : c)) },
+      );
+      rerender(<TeamChannelTree teams={pinned} onSelectChannel={vi.fn()} onTogglePinChannel={onTogglePinChannel} />);
+      fireEvent.click(screen.getByTestId('team-channel-tree-channel-general-pin-toggle'));
+      expect(onTogglePinChannel).toHaveBeenCalledWith('general', false);
+    });
+
+    it('offers no pin affordance at all when the pin handlers are absent, even alongside other handlers', () => {
+      const onManageTeam = vi.fn();
+      render(<TeamChannelTree teams={TEAMS} onSelectChannel={vi.fn()} onManageTeam={onManageTeam} />);
+      fireEvent.click(screen.getByTestId('team-channel-tree-team-t1-menu'));
+      const menu = within(screen.getByTestId('team-channel-tree-team-t1-menu-panel'));
+      expect(menu.queryByTestId('team-channel-tree-team-t1-menu-pin')).toBeNull();
+      expect(screen.queryByTestId('team-channel-tree-channel-general-pin-toggle')).toBeNull();
+    });
+
+    it('keeps keyboard navigation walking the same on-screen rows with pin controls present', () => {
+      const onSelectChannel = vi.fn();
+      const teamsWithPins = TEAMS.map((t) =>
+        t.teamId === 't1'
+          ? { ...t, channels: t.channels.map((c) => (c.channel === 'reviews' ? { ...c, pinned: true } : c)) }
+          : t,
+      );
+      render(
+        <TeamChannelTree
+          teams={teamsWithPins}
+          onSelectChannel={onSelectChannel}
+          onTogglePinTeam={vi.fn()}
+          onTogglePinChannel={vi.fn()}
+        />,
+      );
+      const teamRow = screen.getByTestId('team-channel-tree-team-t1');
+      fireEvent.keyDown(teamRow, { key: 'ArrowDown' });
+      // "reviews" was pinned, so it now leads t1's channels on screen — and
+      // that's the row Down should land on, matching the visible order.
+      expect(document.activeElement?.getAttribute('data-row-id')).toBe('channel:reviews');
+      fireEvent.keyDown(document.activeElement as HTMLElement, { key: 'ArrowDown' });
+      expect(document.activeElement?.getAttribute('data-row-id')).toBe('channel:general');
+    });
+  });
 });

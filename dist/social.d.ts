@@ -2538,9 +2538,11 @@ export declare interface TeamChannelItem {
     muted?: boolean;
     private?: boolean;
     live?: boolean;
+    /** Pinned WITHIN its team — see `onTogglePinChannel` on the tree props. */
+    pinned?: boolean;
 }
 
-export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onCreateTeam, heading, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
+export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onTogglePinTeam, onTogglePinChannel, onCreateTeam, heading, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
 
 export declare interface TeamChannelTreeProps {
     teams: readonly TeamTreeItem[];
@@ -2558,6 +2560,23 @@ export declare interface TeamChannelTreeProps {
     onManageTeam?: (teamId: string) => void;
     /** "Leave team" in the team's ⋯ menu. */
     onLeaveTeam?: (teamId: string) => void;
+    /**
+     * "Pin" / "Unpin" in the team's ⋯ menu — same language as `ConversationList`'s
+     * `onTogglePin`. Pinned teams sort before unpinned ones (stable within each
+     * group; see the sort below).
+     */
+    onTogglePinTeam?: (teamId: string, next: boolean) => void;
+    /**
+     * Pin / unpin one channel inside its team. Unlike a team's ⋯ menu, a channel
+     * row has no menu today, so this is offered as a single hover-revealed
+     * button rather than opening a `DropdownMenu` for one action — see the
+     * render below for why. A pinned channel sorts before its unpinned siblings
+     * but stays inside its team: the tree is a hierarchy, and lifting a channel
+     * out into a flat "Pinned" group would be a second structure fighting the
+     * first. A flat, cross-team Pinned group (if the host wants one) is the
+     * host's business, built from this same `pinned` field.
+     */
+    onTogglePinChannel?: (channel: string, next: boolean) => void;
     /** The + on the "Teams" heading. Receives the button, for the same reason. */
     onCreateTeam?: (trigger: HTMLElement) => void;
     /** Hides the "Teams" heading for a host that draws its own. */
@@ -2572,6 +2591,8 @@ export declare interface TeamTreeItem {
     avatarUrl?: string;
     channels: readonly TeamChannelItem[];
     expanded?: boolean;
+    /** Pinned among the other teams — see `onTogglePinTeam` on the tree props. */
+    pinned?: boolean;
 }
 
 export declare type TeamVisibility = 'org' | 'private';
@@ -2673,6 +2694,26 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -2712,29 +2753,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
