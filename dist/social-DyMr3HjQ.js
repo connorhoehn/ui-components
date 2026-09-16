@@ -3,7 +3,7 @@ import { n as o } from "./ToastProvider-BKjV21G4.js";
 import { t as s } from "./cn-DhjIN-s0.js";
 import { t as c } from "./Button-BhS4-R6_.js";
 import { t as l } from "./IconButton-C3DMtvSx.js";
-import { a as u, c as d } from "./DropdownMenu-BRjC3-Go.js";
+import { a as u, l as d } from "./DropdownMenu-irr-BYQp.js";
 import { i as f, n as p, r as m, t as h } from "./SearchInput-B-r0inFw.js";
 import { t as g } from "./Banner-C3Wgh62A.js";
 import { t as _ } from "./Chip-BENLwTlq.js";
@@ -18,7 +18,7 @@ import { t as E } from "./InlineAlert-Myf3oJZf.js";
 import { t as D } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as O } from "./Select-CqVokE2v.js";
 import { n as k, r as A, t as j } from "./ChoiceList-CaZ4rZrS.js";
-import { D as M, G as N, M as P, W as F, j as I } from "./ConversationSurface-B-3lZrKe.js";
+import { G as M, K as N, M as P, N as F, O as I } from "./ConversationSurface-DU_T9uZa.js";
 import { t as ee } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as te, t as ne } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as re, t as ie } from "./composerCommands-DXer0id_.js";
@@ -1094,7 +1094,7 @@ function Te({ author: e, avatarUrl: t, mine: n = !1, messages: r, className: i }
 		"data-author": e,
 		"data-row-count": r.length,
 		className: s("flex flex-col", i),
-		children: r.map((r, i) => /* @__PURE__ */ W(F, {
+		children: r.map((r, i) => /* @__PURE__ */ W(M, {
 			author: e,
 			content: r.content,
 			timestamp: r.timestamp,
@@ -2855,7 +2855,7 @@ function ht(e) {
 	return e.kind === "link" ? e.label ?? "Open link" : e.kind === "panel" ? e.panel.title ? `Open ${e.panel.title}` : "Open result" : "Open beside the chat";
 }
 function gt({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenResult: i, className: a, "data-testid": o = "run-summary-panel" }) {
-	let { status: l } = e, u = e.pipelineName || e.pipelineId, d = I({
+	let { status: l } = e, u = e.pipelineName || e.pipelineId, d = P({
 		startedAt: e.startedAt,
 		completedAt: e.completedAt
 	}), f = e.ops ?? [], p = e.result && i && !(e.result.kind === "document" && e.document && r), m = e.document?.title || "Document", h = l === "failed" ? e.error || "The run failed" : void 0;
@@ -2924,7 +2924,7 @@ function gt({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenRe
 								}),
 								/* @__PURE__ */ W("span", {
 									"aria-hidden": "true",
-									className: s("relative mt-[5px] inline-block h-[7px] w-[7px] shrink-0 rounded-full", M[t.status] ?? M.pending)
+									className: s("relative mt-[5px] inline-block h-[7px] w-[7px] shrink-0 rounded-full", I[t.status] ?? I.pending)
 								}),
 								/* @__PURE__ */ G("span", {
 									className: "flex min-w-0 flex-1 items-baseline justify-between gap-2",
@@ -2953,7 +2953,7 @@ function gt({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenRe
 								className: "truncate",
 								"data-op": e.op,
 								title: e.text,
-								children: P(e)
+								children: F(e)
 							}, t))
 						}),
 						f.length > q && /* @__PURE__ */ G("div", {

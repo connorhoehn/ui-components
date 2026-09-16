@@ -43,6 +43,8 @@ export interface MessageRowProps {
    *  the message text renders dark-on-dark and disappears. Mirrors
    *  InviteCandidateList's tone seam. */
   tone?: 'light' | 'dark';
+  /** ISO: when the text was last changed. Renders "(edited)" after the time. */
+  editedAt?: string;
   className?: string;
 }
 
@@ -69,6 +71,7 @@ export function MessageRow({
   mine = false,
   footer,
   tone = 'light',
+  editedAt,
   className,
 }: MessageRowProps) {
   const dark = tone === 'dark';
@@ -121,6 +124,15 @@ export function MessageRow({
               >
                 {time}
               </time>
+            )}
+            {editedAt && (
+              <span
+                data-testid="message-row-edited"
+                title={`Edited ${fullTimestampLabel(editedAt)}`}
+                className={cn('text-[11px] shrink-0', dark ? 'text-white/40' : 'text-text-tertiary')}
+              >
+                (edited)
+              </span>
             )}
           </div>
         )}

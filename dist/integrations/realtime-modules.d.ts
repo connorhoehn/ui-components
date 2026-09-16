@@ -635,6 +635,10 @@ declare interface ChatMessage {
      * are the readers that turn this back into something typed.
      */
     metadata?: Record<string, unknown>;
+    /** ISO: the author changed the text after sending. Rendered as "(edited)". */
+    editedAt?: string;
+    /** ISO: the author (or a moderator) removed it. The row keeps its place and says so. */
+    deletedAt?: string;
 }
 
 declare interface ChatPanelProps {
@@ -682,6 +686,15 @@ declare interface ChatPanelProps {
     onReply?: (message: ChatMessage) => void;
     /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
     onTogglePin?: (message: ChatMessage) => void;
+    /**
+     * Change the text of one of the viewer's own messages. Present, the hover
+     * bar offers Edit on own, undeleted, plain messages (never on cards or
+     * notices) and the bubble becomes an editor in place. Resolves once the
+     * server has it — the edited message arrives through the live frame.
+     */
+    onEditMessage?: (message: ChatMessage, text: string) => Promise<void> | void;
+    /** Remove one of the viewer's own messages, after a confirm. Same gate as `onEditMessage`. */
+    onDeleteMessage?: (message: ChatMessage) => Promise<void> | void;
     /** Message ids currently pinned in this channel. */
     pinnedMessageIds?: ReadonlySet<string>;
     /**

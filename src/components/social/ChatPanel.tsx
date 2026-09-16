@@ -21,6 +21,8 @@ import { MembershipNotice, type MembershipRef, type MembershipHistory } from './
 import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunResult, type AgentRunReviewDecision, type AgentRunStatus, type AgentRunSuggestion } from './AgentRunCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
+import { InlineMessageEditor } from './InlineMessageEditor';
+import ConfirmDialog from '../shared/ConfirmDialog';
 import { QuoteBlock } from './QuoteBlock';
 import {
   AttachmentBubble,
@@ -102,6 +104,15 @@ export interface ChatPanelProps {
   onReply?: (message: ChatMessage) => void;
   /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
   onTogglePin?: (message: ChatMessage) => void;
+  /**
+   * Change the text of one of the viewer's own messages. Present, the hover
+   * bar offers Edit on own, undeleted, plain messages (never on cards or
+   * notices) and the bubble becomes an editor in place. Resolves once the
+   * server has it — the edited message arrives through the live frame.
+   */
+  onEditMessage?: (message: ChatMessage, text: string) => Promise<void> | void;
+  /** Remove one of the viewer's own messages, after a confirm. Same gate as `onEditMessage`. */
+  onDeleteMessage?: (message: ChatMessage) => Promise<void> | void;
   /** Message ids currently pinned in this channel. */
   pinnedMessageIds?: ReadonlySet<string>;
   /**
@@ -606,6 +617,8 @@ export function ChatPanel({
   onToggleReaction,
   onReply,
   onTogglePin,
+  onEditMessage,
+  onDeleteMessage,
   pinnedMessageIds,
   onJumpToMessage,
   highlightedMessageId,
@@ -642,6 +655,10 @@ export function ChatPanel({
   onFileError,
   emojis = DEFAULT_PICKER_EMOJIS,
 }: ChatPanelProps) {
+  // Which own message is being edited in place, and which one is waiting on
+  // the delete confirm. One at a time each; Teams does the same.
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const dark = tone === 'dark';
   // A surrounding dock already draws the header and hands down a definite
   // height; explicit props still win. See DockedPanelContext.
@@ -1219,6 +1236,11 @@ export function ChatPanel({
               // Reactions stay. Reacting to "the call started" reads as a
               // response to the EVENT, which is what it is.
               const isActivityNotice = message.metadata?.system === true;
+              const isDeleted = !!message.deletedAt || message.metadata?.deleted === true;
+              const isCard = !!(agentRef || recordingRef || callRef || docRef || membershipRef);
+              // Own, plain, still there: the only messages a person may edit or delete.
+              const canEditDelete = isMine && !isDeleted && !isActivityNotice && !isCard && !!messageId;
+              const editing = canEditDelete && !!onEditMessage && editingId === messageId;
 
               // The quote, the message, its reactions — one unit. Rendering
               // them as siblings of the row would let a reaction drift away
@@ -1237,15 +1259,23 @@ export function ChatPanel({
                       📌 Pinned
                     </span>
                   )}
-                  {body}
-                  {docRefs.length > 0 && (
+                  {isDeleted ? (
+                    <span className="italic text-text-tertiary" data-testid="message-deleted">This message was deleted.</span>
+                  ) : editing ? (
+                    <InlineMessageEditor
+                      initialText={message.content}
+                      onSave={async (text) => { await onEditMessage!(message, text); setEditingId(null); }}
+                      onCancel={() => setEditingId(null)}
+                    />
+                  ) : body}
+                  {!isDeleted && docRefs.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-1" data-testid="chat-message-docrefs">
                       {docRefs.map((d) => (
                         <DocumentChip key={d.id} documentId={d.id} label={d.label} icon={d.icon} onOpen={onOpenDocument} />
                       ))}
                     </div>
                   )}
-                  {truncation && (
+                  {!isDeleted && truncation && (
                     <div
                       data-testid="message-truncated"
                       className="mt-1 text-[11px] text-warning-fg"
@@ -1256,7 +1286,7 @@ export function ChatPanel({
                         : 'Part of this message was too large to send'}
                     </div>
                   )}
-                  {reactions.length > 0 && currentUserId && onToggleReaction && (
+                  {!isDeleted && reactions.length > 0 && currentUserId && onToggleReaction && (
                     <ReactionChips
                       reactions={reactions}
                       currentUserId={currentUserId}
@@ -1303,6 +1333,7 @@ export function ChatPanel({
                     author={author}
                     content={withInteractions}
                     timestamp={message.timestamp}
+                    editedAt={isDeleted ? undefined : message.editedAt}
                     avatarUrl={message.avatarUrl}
                     tone={tone}
                     // Own messages flip side and take a tinted bubble. Matched
@@ -1312,7 +1343,7 @@ export function ChatPanel({
                     // stop being yours halfway up the thread.
                     mine={isMine}
                   />
-                  {messageId && (onToggleReaction || (!isActivityNotice && (onReply || onTogglePin))) && (
+                  {messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (!isActivityNotice && (onReply || onTogglePin))) && (
                     <MessageActionBar
                       // Top-RIGHT of the row, the way Slack and Teams place
                       // it, and the hovered row is tinted so the bar and the
@@ -1340,6 +1371,8 @@ export function ChatPanel({
                         onTogglePin && !isActivityNotice ? () => onTogglePin(message) : undefined
                       }
                       pinned={!!message.id && !!pinnedMessageIds?.has(message.id)}
+                      onEdit={canEditDelete && onEditMessage ? () => setEditingId(messageId) : undefined}
+                      onDelete={canEditDelete && onDeleteMessage ? () => setDeletingId(messageId) : undefined}
                     />
                   )}
                 </div>
@@ -1348,6 +1381,21 @@ export function ChatPanel({
             })
           )}
 
+          {onDeleteMessage && (
+            <ConfirmDialog
+              open={deletingId !== null}
+              tone="destructive"
+              title="Delete this message?"
+              body="It will be removed for everyone in this conversation."
+              confirmLabel="Delete"
+              onCancel={() => setDeletingId(null)}
+              onConfirm={() => {
+                const target = messages.find((m) => m.id === deletingId);
+                setDeletingId(null);
+                if (target) void onDeleteMessage(target);
+              }}
+            />
+          )}
           {/* In-flight transfers sit at the live edge, below every settled
               message. They are not messages yet — the message is written when
               the bytes land — but they occupy the place the message will take,

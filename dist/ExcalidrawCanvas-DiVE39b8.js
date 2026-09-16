@@ -1,5 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { n as t, t as n } from "./useResolvedTheme-DB9Sqp4E.js";
+import { n as t, t as n } from "./useResolvedTheme-6q3MgtPr.js";
 import { useCallback as r, useEffect as i, useMemo as a, useRef as o, useState as s } from "react";
 import { jsx as c, jsxs as l } from "react/jsx-runtime";
 import { CaptureUpdateAction as u, Excalidraw as d, reconcileElements as f } from "@excalidraw/excalidraw";

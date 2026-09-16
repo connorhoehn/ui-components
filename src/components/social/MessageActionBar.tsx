@@ -17,6 +17,7 @@
 // caller's decision — different products have different vocabularies.
 
 import { cn } from '../../lib/cn';
+import { EditIcon, TrashIcon } from '../ui/Icons';
 
 export interface MessageActionBarProps {
   /** Emoji offered inline. Keep it short; the picker covers the rest. */
@@ -92,8 +93,8 @@ export function MessageActionBar({
       {onReply && btn('Reply', onReply, <span aria-hidden>↩</span>, 'reply')}
       {onTogglePin && btn(pinned ? 'Unpin' : 'Pin to channel', onTogglePin, <span aria-hidden>📌</span>, 'pin')}
       {onCopyLink && btn('Copy link to message', onCopyLink, <span aria-hidden>🔗</span>, 'copy-link')}
-      {onEdit && btn('Edit', onEdit, <span aria-hidden>✎</span>, 'edit')}
-      {onDelete && btn('Delete', onDelete, <span aria-hidden>🗑</span>, 'delete')}
+      {onEdit && btn('Edit message', onEdit, <EditIcon size={13} />, 'edit')}
+      {onDelete && btn('Delete message', onDelete, <TrashIcon size={13} />, 'delete')}
     </div>
   );
 }

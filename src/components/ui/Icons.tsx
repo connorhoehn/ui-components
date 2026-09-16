@@ -101,3 +101,25 @@ export function PopOutIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A pencil: "change this". */
+export function EditIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M11.5 2.5 13.5 4.5 5.5 12.5H3.5V10.5z" />
+      <path d="M10 4l2 2" />
+    </svg>
+  );
+}
+
+/** A bin: "remove this". */
+export function TrashIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M3 4.5h10" />
+      <path d="M6.5 4.5V3h3v1.5" />
+      <path d="M4.5 4.5 5 13h6l.5-8.5" />
+      <path d="M7 7v4M9 7v4" />
+    </svg>
+  );
+}

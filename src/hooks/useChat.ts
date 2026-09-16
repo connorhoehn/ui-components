@@ -60,6 +60,10 @@ export interface ChatMessage {
    * are the readers that turn this back into something typed.
    */
   metadata?: Record<string, unknown>;
+  /** ISO: the author changed the text after sending. Rendered as "(edited)". */
+  editedAt?: string;
+  /** ISO: the author (or a moderator) removed it. The row keeps its place and says so. */
+  deletedAt?: string;
 }
 
 export interface UseChatOptions {

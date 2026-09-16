@@ -209,6 +209,8 @@ export type { ConversationStartProps, ConversationStartDestination, Conversation
 // Membership — who is in a conversation, and the Teams-style way to change it.
 export { AddToChatDialog, HISTORY_DAYS_DEFAULT, HISTORY_DAYS_MIN, HISTORY_DAYS_MAX } from './AddToChatDialog';
 export type { AddToChatDialogProps, AddToChatPerson } from './AddToChatDialog';
+export { InlineMessageEditor } from './InlineMessageEditor';
+export type { InlineMessageEditorProps } from './InlineMessageEditor';
 export { MembershipNotice, describeMembership, describeMembershipHistory } from './MembershipNotice';
 export type { MembershipNoticeProps, MembershipRef, MembershipHistory, MembershipHistoryMode } from './MembershipNotice';
 export { MembersPanel } from './MembersPanel';

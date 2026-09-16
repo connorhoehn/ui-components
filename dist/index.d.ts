@@ -2733,9 +2733,13 @@ export declare interface ChatMessage {
      * are the readers that turn this back into something typed.
      */
     metadata?: Record<string, unknown>;
+    /** ISO: the author changed the text after sending. Rendered as "(edited)". */
+    editedAt?: string;
+    /** ISO: the author (or a moderator) removed it. The row keeps its place and says so. */
+    deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -2782,6 +2786,15 @@ export declare interface ChatPanelProps {
     onReply?: (message: ChatMessage) => void;
     /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
     onTogglePin?: (message: ChatMessage) => void;
+    /**
+     * Change the text of one of the viewer's own messages. Present, the hover
+     * bar offers Edit on own, undeleted, plain messages (never on cards or
+     * notices) and the bubble becomes an editor in place. Resolves once the
+     * server has it — the edited message arrives through the live frame.
+     */
+    onEditMessage?: (message: ChatMessage, text: string) => Promise<void> | void;
+    /** Remove one of the viewer's own messages, after a confirm. Same gate as `onEditMessage`. */
+    onDeleteMessage?: (message: ChatMessage) => Promise<void> | void;
     /** Message ids currently pinned in this channel. */
     pinnedMessageIds?: ReadonlySet<string>;
     /**
@@ -5094,6 +5107,9 @@ export declare interface DropdownMenuSection {
     'data-testid'?: string;
 }
 
+/** A pencil: "change this". */
+export declare function EditIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare interface EmailTemplate {
     templateId: string;
     name: string;
@@ -7093,6 +7109,16 @@ export declare interface InlineAlertProps {
 
 export declare type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
 
+export declare function InlineMessageEditor({ initialText, onSave, onCancel, 'data-testid': testId }: InlineMessageEditorProps): JSX.Element;
+
+export declare interface InlineMessageEditorProps {
+    initialText: string;
+    /** Resolves once the server has the new text; rejects with a reason to show. */
+    onSave: (text: string) => Promise<void> | void;
+    onCancel: () => void;
+    'data-testid'?: string;
+}
+
 /**
  * Inline pipeline definition shipped on a trigger request. Optional: when
  * absent, the server resolves the definition from its persistent store.
@@ -8101,7 +8127,7 @@ export declare interface MessageReaction {
     displayName?: string;
 }
 
-export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, tone, className, }: MessageRowProps): JSX.Element;
+export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, tone, editedAt, className, }: MessageRowProps): JSX.Element;
 
 export declare interface MessageRowProps {
     /** Display name shown next to the message; required even for anonymous rows (use a fallback). */
@@ -8139,6 +8165,8 @@ export declare interface MessageRowProps {
      *  the message text renders dark-on-dark and disappears. Mirrors
      *  InviteCandidateList's tone seam. */
     tone?: 'light' | 'dark';
+    /** ISO: when the text was last changed. Renders "(edited)" after the time. */
+    editedAt?: string;
     className?: string;
 }
 
@@ -13365,6 +13393,9 @@ export declare interface TransformNodeData {
 
 export declare type TransformType = 'jsonpath' | 'template' | 'javascript';
 
+/** A bin: "remove this". */
+export declare function TrashIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare type TreeDropPosition = 'before' | 'after' | 'into';
 
 export declare interface TreeNode {
@@ -15346,9 +15377,52 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -15375,49 +15449,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
