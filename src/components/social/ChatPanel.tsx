@@ -609,6 +609,71 @@ export interface ForwardedFrom {
   timestamp?: string;
 }
 
+/**
+ * "Forwarded from #design — Hank Anderson", from the metadata.
+ *
+ * The visible half of the marker, and — with a colon on the end, see
+ * `forwardAttributionLine` — a byte-for-byte reproduction of the line a host
+ * writes into the forwarded message's `content`. Exported so a host composes
+ * its bodies with THIS function instead of its own copy of the sentence: the
+ * two agreeing is what lets the panel recognise its own prefix, and a host
+ * that rewords its copy silently loses the de-duplication below.
+ */
+export function forwardOriginLabel(from: ForwardedFrom): string {
+  const where = from.channelLabel?.trim() || from.channel || 'another conversation';
+  return `Forwarded from ${where} — ${from.author}`;
+}
+
+/** The exact first line of a forwarded message's body. See above. */
+export function forwardAttributionLine(from: ForwardedFrom): string {
+  return `${forwardOriginLabel(from)}:`;
+}
+
+/**
+ * Say the origin ONCE.
+ *
+ * The attribution is deliberately written into `content` (see `ForwardedFrom`)
+ * so a client with no idea what `forwardedFrom` means still shows whose words
+ * these are. A client that DOES understand it then had the same sentence
+ * twice — once in the marker, once as the body's first line.
+ *
+ * So: when the body begins with exactly the line this metadata would have
+ * produced, the marker takes the origin over and the body renders without the
+ * prefix. When it does not, nothing is touched and the marker falls back to a
+ * bare "Forwarded" badge — the body is already saying where it came from, in
+ * whatever words it has, and the panel must not say it a second time.
+ *
+ * Three ways it declines to strip, all of which land on the same safe result:
+ *
+ *   * NOT OURS. Somebody can type "Forwarded from the old thread — Bob:"
+ *     themselves, and a forwarded body can begin with anything. The test is
+ *     equality against the string generated from THIS message's metadata, not
+ *     a pattern that matches the shape of one.
+ *   * NOTHING LEFT. A pathological origin (a room and a name that together
+ *     exceed the wire's message cap) makes the attribution the entire body.
+ *     Stripping it would render an empty bubble, so it stays.
+ *   * A RICH BODY. `metadata.html` is rendered INSTEAD of the plain text, so
+ *     trimming the text would change nothing visible — and reaching into the
+ *     markup to find the sentence is a second, guessier parser over
+ *     attacker-controlled HTML. This is the edited-forward case in practice:
+ *     a fresh forward carries no html, and the edit path sends html to match
+ *     the new text. An edit that rewrote the words has already made the body
+ *     something other than the original anyway.
+ */
+export function withoutForwardAttribution(
+  content: string,
+  from: ForwardedFrom | null,
+  hasRichBody: boolean,
+): { body: string; stripped: boolean } {
+  if (!from || hasRichBody) return { body: content, stripped: false };
+  const prefix = `${forwardAttributionLine(from)}\n`;
+  if (!content.startsWith(prefix)) return { body: content, stripped: false };
+  const rest = content.slice(prefix.length);
+  // Never render a message down to nothing.
+  if (!rest.trim()) return { body: content, stripped: false };
+  return { body: rest, stripped: true };
+}
+
 /** Reads `metadata.forwardedFrom`, tolerating anything that is not the shape. */
 export function forwardedFromMetadata(
   metadata: Record<string, unknown> | undefined,
@@ -1761,7 +1826,12 @@ export function ChatPanel({
   // because a message body is attacker-controlled text.
   const rich = message.metadata?.html;
   const richHtml = typeof rich === 'string' ? rich : undefined;
-  const text = <MessageBody html={richHtml} text={message.content} />;
+  // Read here rather than beside the other row flags below, because the body
+  // depends on it: a forwarded message's first line is the attribution, and
+  // the marker renders it instead so it is not said twice.
+  const forwarded = forwardedFromMetadata(message.metadata);
+  const forwardBody = withoutForwardAttribution(message.content, forwarded, !!richHtml);
+  const text = <MessageBody html={richHtml} text={forwardBody.body} />;
 
   // A document event is not a message with a document mentioned in
   // it — it IS the document, so the card replaces the text rather
@@ -1950,13 +2020,6 @@ export function ChatPanel({
     && !isCard
     && files.length === 0
     && !!message.content.trim();
-  // Already a forward — the marker, not the words. See `ForwardedFrom`: the
-  // attribution the reader needs is in `content`, written there by whoever
-  // posted the forward so it survives a client that never heard of this
-  // field. Repeating it here would print the same sentence twice; what the
-  // text cannot do is LOOK different from someone having typed it, which is
-  // all this adds.
-  const forwarded = forwardedFromMetadata(message.metadata);
   const editing = canEditDelete && !!onEditMessage && editingId === messageId;
 
   // The quote, the message, its reactions — one unit. Rendering
@@ -1975,17 +2038,22 @@ export function ChatPanel({
         <span
           className="mb-0.5 block text-[11px] text-text-tertiary"
           data-testid="forwarded-marker"
-          // The one thing the body's own attribution line cannot say: WHEN the
-          // original was said. A forward carries its own timestamp on the row
-          // — the moment it was relocated — so without this the transcript
-          // dates somebody's words to whenever a third party moved them.
+          // The one thing neither the marker nor the body can say in words:
+          // WHEN the original was said. A forward carries its own timestamp on
+          // the row — the moment it was relocated — so without this the
+          // transcript dates somebody's words to whenever a third party moved
+          // them.
           title={[
-            `Forwarded from ${forwarded.channelLabel || forwarded.channel || 'another conversation'}`,
-            forwarded.author,
+            forwardOriginLabel(forwarded),
             forwarded.timestamp ? fullTimestampLabel(forwarded.timestamp) : '',
           ].filter(Boolean).join(' · ')}
         >
-          <ForwardIcon size={11} /> Forwarded
+          {/* Verbose ONLY when it took the sentence over from the body. If the
+              body still carries its own attribution — not ours to strip, or a
+              rich body we do not rewrite — this is a badge and nothing more,
+              because the origin must appear exactly once. */}
+          <span aria-hidden>↪</span>{' '}
+          {forwardBody.stripped ? forwardOriginLabel(forwarded) : 'Forwarded'}
         </span>
       )}
       {isPinned && (

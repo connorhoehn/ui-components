@@ -15,6 +15,14 @@
 // the document with "Open beside the chat", what changed op by op, the steps
 // as a mini timeline, and the run's timings — so "what did it actually do?"
 // is answered in the thread rather than in the pipeline UI.
+//
+// The card is width-aware of ITSELF (`@container`), because it renders both in
+// a document's ~267px conversation column and in the far wider main chat. When
+// the status row cannot seat everything, it sheds in a fixed order: the two
+// "open" links go first (the disclosure still reaches both), then the sentence
+// takes a line of its own so the decision buttons keep their full size. The
+// decision buttons are never the thing that gives way — they are the only part
+// of the card that asks the reader to do something.
 
 import { useState, type MouseEvent } from 'react';
 import { cn } from '../../lib/cn';
@@ -172,6 +180,15 @@ const PHASE_LABEL: Record<AgentRunPhase, string> = { received: 'Received', runni
 /** The most ops the expanded card lists before "+N more". */
 const MAX_OPS = 6;
 
+// The status row's text controls are underlined AT REST, not on hover. They
+// were flat tertiary text that only underlined under the pointer, so nothing
+// marked them as pressable until you were already on one.
+const ROW_LINK = 'shrink-0 whitespace-nowrap underline underline-offset-2';
+// …and the two "open" links are the first thing to go when the card is narrow:
+// a reader in a 267px column keeps the decision buttons, and reaches the run
+// and the document through the disclosure instead.
+const ROW_LINK_WIDE_ONLY = `${ROW_LINK} hidden text-text-tertiary hover:text-text-primary @md:inline`;
+
 function clip(text: string, max = 60): string {
   const t = text.trim().replace(/\s+/g, ' ');
   return t.length > max ? `${t.slice(0, max - 1).trimEnd()}…` : t;
@@ -273,6 +290,12 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
   const error = details?.error ?? (phase === 'failed' ? status?.detail : undefined);
   const timings = agentRunTimings(details);
   const detailsId = `${testId}-details-${runId}`;
+  // Does the status row carry anything that must keep its full size? Only then
+  // is the width worth spending a second line on: a plain "Updated" card in a
+  // narrow column should stay exactly as short as it is today.
+  const hasRowActions = Boolean(
+    (reviewable && suggestion && onReview) || (awaiting && onDecide) || (outcome && onOpenResult) || (outcome?.kind === 'link' && !onOpenResult),
+  );
 
   // Clicking the card toggles it — but not a click on one of its buttons or
   // links, which already do something.
@@ -286,7 +309,11 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
   // panel — the panel is a click away, inside the same card.
   return (
     <div
-      className={cn('flex w-full max-w-[36rem] cursor-default flex-col gap-0.5 rounded-md border border-border bg-surface px-2 py-1 text-left text-[12px]', className)}
+      // `@container`: the same card sits in a document's ~267px conversation
+      // column and in the ~576px main chat, so the status row has to re-rank
+      // itself by the CARD's width, not the viewport's — a media query would
+      // read the window and get the narrow column wrong every time.
+      className={cn('@container flex w-full max-w-[36rem] cursor-default flex-col gap-0.5 rounded-md border border-border bg-surface px-2 py-1 text-left text-[12px]', className)}
       data-testid={testId}
       data-phase={phase}
       data-run-id={runId}
@@ -311,33 +338,48 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
           icon={<span aria-hidden="true" className={cn('inline-block transition-transform duration-150', expanded && 'rotate-90')}>▶</span>}
         />
       </div>
-      <div className="flex min-w-0 items-center gap-1.5 text-[11px] text-text-secondary">
-        <ol className="m-0 flex shrink-0 list-none items-center gap-1 p-0" aria-label="Run progress" data-testid={`${testId}-steps`}>
-          {STEPS.map((s, i) => {
-            const done = ended ? i < at : i < at || (i === at && phase === 'completed');
-            const active = i === at && phase !== 'completed' && !ended;
-            const failedHere = ended && i === at;
-            return (
-              <li key={s.phase} className="flex items-center" title={s.label} data-state={failedHere ? 'failed' : done ? 'done' : active ? 'active' : 'pending'}>
-                <span
-                  aria-hidden="true"
-                  className={cn('inline-block h-1.5 w-1.5 rounded-full', failedHere ? 'bg-danger' : done ? (noop && i === at ? 'bg-warning' : 'bg-success') : active ? (awaiting ? 'bg-warning' : 'animate-pulse bg-info') : 'bg-border')}
-                />
-                <span className="sr-only">{failedHere ? phaseLabel : s.label}</span>
-              </li>
-            );
-          })}
-        </ol>
-        <span
-          className={cn('min-w-0 flex-1 truncate', review && (review.decision === 'accept' ? 'text-success' : 'text-text-tertiary'), phase === 'failed' && 'text-danger', noop && 'text-warning-fg')}
-          data-testid={`${testId}-detail`}
-          data-review={review?.decision}
-          // The full sentence on hover: the line truncates, and a declined
-          // run's reason or a failure's message is exactly what gets cut.
-          title={status?.detail}
-        >
-          {detailText}
-        </span>
+      {/* The status row is the one row that can run out of room: progress, what
+          happened, a decision pair and two ways out, all competing for the
+          267px of a document's conversation column. Its ranking, narrowest
+          first: the decision buttons never shrink and never hide (they are the
+          thing a person must act on), the sentence truncates (and gets the
+          whole line to itself once anything shares the row with it), and the
+          two "open" links are dropped below `@md` — the disclosure below leads
+          to both of those destinations, so nothing becomes unreachable. */}
+      <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-text-secondary">
+        {/* Progress and the sentence travel as one block so the wrap can never
+            separate the dots from what they are describing. `basis-full` gives
+            that block its own line while there is something to wrap below it;
+            `@sm:basis-0` hands the row back to a single line once the card is
+            wide enough to seat everything. */}
+        <div className={cn('flex min-w-0 grow items-center gap-1.5', hasRowActions && 'basis-full @sm:basis-0')}>
+          <ol className="m-0 flex shrink-0 list-none items-center gap-1 p-0" aria-label="Run progress" data-testid={`${testId}-steps`}>
+            {STEPS.map((s, i) => {
+              const done = ended ? i < at : i < at || (i === at && phase === 'completed');
+              const active = i === at && phase !== 'completed' && !ended;
+              const failedHere = ended && i === at;
+              return (
+                <li key={s.phase} className="flex items-center" title={s.label} data-state={failedHere ? 'failed' : done ? 'done' : active ? 'active' : 'pending'}>
+                  <span
+                    aria-hidden="true"
+                    className={cn('inline-block h-1.5 w-1.5 rounded-full', failedHere ? 'bg-danger' : done ? (noop && i === at ? 'bg-warning' : 'bg-success') : active ? (awaiting ? 'bg-warning' : 'animate-pulse bg-info') : 'bg-border')}
+                  />
+                  <span className="sr-only">{failedHere ? phaseLabel : s.label}</span>
+                </li>
+              );
+            })}
+          </ol>
+          <span
+            className={cn('min-w-0 flex-1 truncate', review && (review.decision === 'accept' ? 'text-success' : 'text-text-tertiary'), phase === 'failed' && 'text-danger', noop && 'text-warning-fg')}
+            data-testid={`${testId}-detail`}
+            data-review={review?.decision}
+            // The full sentence on hover: the line truncates, and a declined
+            // run's reason or a failure's message is exactly what gets cut.
+            title={status?.detail}
+          >
+            {detailText}
+          </span>
+        </div>
         {reviewable && suggestion && onReview && (
           // The same inline pair as approval: accepting the suggestions is the next thing to do.
           <span className="flex shrink-0 items-center gap-1" data-testid={`${testId}-review`}>
@@ -353,24 +395,27 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
             <Button size="sm" variant="ghost" className="!px-2 !py-0 text-[11px] leading-5" onClick={() => onDecide(runId, 'reject')} data-testid={`${testId}-reject`}>Reject</Button>
           </span>
         )}
+        {/* The run's own outcome, not navigation — it stays at every width.
+            It is one short word and there is nowhere else to reach a panel or
+            an external link from the collapsed card. */}
         {outcome && onOpenResult && (
-          <button type="button" onClick={() => onOpenResult(outcome)} className="shrink-0 font-medium text-info underline-offset-2 hover:underline" data-testid={`${testId}-open-result`} data-result-kind={outcome.kind}>
+          <button type="button" onClick={() => onOpenResult(outcome)} className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-open-result`} data-result-kind={outcome.kind}>
             {resultLabel}
           </button>
         )}
         {outcome?.kind === 'link' && !onOpenResult && (
-          <a href={outcome.href} target="_blank" rel="noopener noreferrer" className="shrink-0 font-medium text-info underline-offset-2 hover:underline" data-testid={`${testId}-open-result`} data-result-kind="link">
+          <a href={outcome.href} target="_blank" rel="noopener noreferrer" className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-open-result`} data-result-kind="link">
             {resultLabel}
           </a>
         )}
         {onOpenRun && (
-          <button type="button" onClick={() => onOpenRun(runId)} className="shrink-0 text-text-tertiary underline-offset-2 hover:text-text-primary hover:underline" data-testid={`${testId}-open-run`}>
-            run
+          <button type="button" onClick={() => onOpenRun(runId)} className={ROW_LINK_WIDE_ONLY} data-testid={`${testId}-open-run`}>
+            Open run
           </button>
         )}
         {showDocument && (
-          <button type="button" onClick={onOpenDocument} className="shrink-0 text-text-tertiary underline-offset-2 hover:text-text-primary hover:underline" data-testid={`${testId}-open-document`}>
-            document
+          <button type="button" onClick={onOpenDocument} className={ROW_LINK_WIDE_ONLY} data-testid={`${testId}-open-document`}>
+            Open document
           </button>
         )}
       </div>
@@ -419,13 +464,16 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
             <div className="text-[11px] text-danger" data-testid={`${testId}-details-error`}>{error}</div>
           )}
           <div className="flex min-w-0 items-center gap-2 text-[11px] text-text-tertiary">
+            {/* Named apart from the status row's "Open run": both are on screen
+                at once on an expanded wide card, and two controls announcing
+                the same words is a coin-toss for anyone moving by control. */}
             {onOpenRun && (
-              <button type="button" onClick={() => onOpenRun(runId)} className="shrink-0 underline-offset-2 hover:text-text-primary hover:underline" data-testid={`${testId}-details-open-run`}>
-                Open run
+              <button type="button" onClick={() => onOpenRun(runId)} className={cn(ROW_LINK, 'hover:text-text-primary')} data-testid={`${testId}-details-open-run`}>
+                Open run in the pipeline
               </button>
             )}
             {outcome && onOpenResult && (
-              <button type="button" onClick={() => onOpenResult(outcome)} className="shrink-0 font-medium text-info underline-offset-2 hover:underline" data-testid={`${testId}-details-open-result`}>
+              <button type="button" onClick={() => onOpenResult(outcome)} className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-details-open-result`}>
                 {resultLabel}
               </button>
             )}

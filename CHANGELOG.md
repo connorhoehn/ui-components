@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.290.0] — 2026-09-16
+
+### Changed — `./social`
+
+- **A forwarded message says where it came from once.** The marker and the
+  body were both saying it. The body keeps the sentence on the wire, because
+  an old build, a notification preview and the conversation-list preview have
+  no access to the metadata and would otherwise say nothing about whose words
+  these are — so the panel strips it at RENDER time and lets the marker carry
+  the origin instead. It strips only the exact line this message's own
+  metadata would have produced, never a pattern: a person can type "Forwarded
+  from…" themselves, and a forward of a forward keeps the inner one as the
+  body's own words. Where it declines — the attribution is the whole body, or
+  the message renders from `metadata.html` — the marker stays a bare badge, so
+  the two halves can never both say it.
+
+- **`AgentRunCard` is width-aware of itself.** The same card sits in a
+  document's ~267px conversation and in a wide chat column; at the narrow end
+  a progress row, an instruction, a status chip, a disclosure, two decision
+  buttons and two links were competing for one line, leaving "1 …" and a pair
+  of bare words. It is a `@container` now: the links drop below `@md` (the
+  disclosure already offers both routes, so nothing becomes unreachable), the
+  instruction takes a full line, and the decision buttons never shrink or
+  hide, because they are the only part of the card asking for an action.
+
+- **"run" and "document" became "Open run" and "Open document"**, underlined
+  at rest. They were bare nouns styled as text that only underlined on hover —
+  they did not say what they did, did not look like controls, and gave a
+  screen-reader user a one-word name with no verb.
+
+---
+
 ## [2.289.1] — 2026-09-16
 
 ### Fixed — `./social`, `./ui`

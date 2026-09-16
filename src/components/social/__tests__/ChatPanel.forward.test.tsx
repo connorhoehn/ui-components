@@ -10,7 +10,13 @@
 
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ChatPanel, forwardedFromMetadata } from '../ChatPanel';
+import {
+  ChatPanel,
+  forwardAttributionLine,
+  forwardOriginLabel,
+  forwardedFromMetadata,
+  withoutForwardAttribution,
+} from '../ChatPanel';
 // ChatMessage lives on the hook, not the panel — the panel consumes it.
 import type { ChatMessage } from '../../../hooks/useChat';
 
@@ -157,12 +163,22 @@ describe('a message that IS a forward', () => {
     expect(screen.getByTestId('forwarded-marker')).toBeInTheDocument();
   });
 
-  // The whole degradation story: the attribution is in the TEXT, so a client
-  // that has never heard of `forwardedFrom` still shows whose words these are.
-  it('says where it came from in the body, not only in metadata', () => {
+  // The whole degradation story: the attribution is in the STORED text, so a
+  // client that has never heard of `forwardedFrom` still shows whose words
+  // these are. Asserted on the message, not on the render — the render is
+  // exactly what the next test is about.
+  it('keeps the attribution in the stored content for clients that cannot read metadata', () => {
+    expect(forward.content.startsWith('Forwarded from #design — Hank Anderson:')).toBe(true);
+  });
+
+  // The taste rule: the marker and the body were both saying it.
+  it('says where it came from ONCE — in the marker, not again in the body', () => {
     renderPanel([forward]);
-    expect(screen.getByText(/Forwarded from #design — Hank Anderson/)).toBeInTheDocument();
-    expect(screen.getByText(/the upload path is live/)).toBeInTheDocument();
+    expect(screen.getByTestId('forwarded-marker'))
+      .toHaveTextContent('Forwarded from #design — Hank Anderson');
+    const body = screen.getByTestId('message-body');
+    expect(body).toHaveTextContent('the upload path is live');
+    expect(body).not.toHaveTextContent('Forwarded from');
   });
 
   // `replyTo` would have nested the forward under the original whenever the
@@ -193,5 +209,123 @@ describe('forwardedFromMetadata', () => {
     expect(forwardedFromMetadata({ forwardedFrom: { author: 'Hank' } })).toBeNull();
     expect(forwardedFromMetadata({ forwardedFrom: 'yes' as unknown as Record<string, unknown> })).toBeNull();
     expect(forwardedFromMetadata(undefined)).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Saying the origin exactly once
+// ---------------------------------------------------------------------------
+
+const ORIGIN = {
+  messageId: 'm-orig',
+  channel: 'room:general',
+  channelLabel: '#general',
+  author: 'Carol Johnson',
+};
+
+describe('withoutForwardAttribution', () => {
+  const line = forwardAttributionLine(ORIGIN);
+
+  it('reproduces the line a host writes, so the panel can recognise its own', () => {
+    expect(line).toBe('Forwarded from #general — Carol Johnson:');
+    expect(forwardOriginLabel(ORIGIN)).toBe('Forwarded from #general — Carol Johnson');
+  });
+
+  it('takes the prefix off a body it generated', () => {
+    const out = withoutForwardAttribution(`${line}\nunmuted probe`, ORIGIN, false);
+    expect(out).toEqual({ body: 'unmuted probe', stripped: true });
+  });
+
+  // A person can legitimately type a sentence like this. Equality against the
+  // string THIS metadata would produce, never a pattern that matches its shape.
+  it('leaves a body that merely looks similar completely alone', () => {
+    for (const body of [
+      'Forwarded from #general - Carol Johnson:\nnot an em dash',
+      'Forwarded from #General — Carol Johnson:\nwrong case',
+      'Forwarded from #general — Carol Johnson\nno colon',
+      'I am forwarding this: Forwarded from #general — Carol Johnson:\nnot at the start',
+      'Forwarded from #platform — Carol Johnson:\nanother origin entirely',
+    ]) {
+      expect(withoutForwardAttribution(body, ORIGIN, false)).toEqual({ body, stripped: false });
+    }
+  });
+
+  // A forward of a forward: the OUTER metadata names #watercooler, so the
+  // inner line belongs to the body and is not this panel's to remove.
+  it('only ever strips the line belonging to this message metadata', () => {
+    const inner = `Forwarded from #general — Carol Johnson:\nunmuted probe`;
+    const outerLine = forwardAttributionLine({ ...ORIGIN, channelLabel: '#watercooler', author: 'Ada Lovelace' });
+    const out = withoutForwardAttribution(`${outerLine}\n${inner}`, { ...ORIGIN, channelLabel: '#watercooler', author: 'Ada Lovelace' }, false);
+    expect(out.stripped).toBe(true);
+    expect(out.body).toBe(inner);
+  });
+
+  // The pathological origin — a room and a name that together fill the wire's
+  // message budget — makes the attribution the whole body.
+  it('never renders a message down to nothing', () => {
+    expect(withoutForwardAttribution(line, ORIGIN, false).stripped).toBe(false);
+    expect(withoutForwardAttribution(`${line}\n   `, ORIGIN, false).stripped).toBe(false);
+  });
+
+  // `metadata.html` renders INSTEAD of the plain text, so trimming the text
+  // would change nothing visible — and re-finding the sentence inside
+  // attacker-controlled markup is a second, guessier parser.
+  it('does not touch a body that renders from html', () => {
+    const body = `${line}\nunmuted probe`;
+    expect(withoutForwardAttribution(body, ORIGIN, true)).toEqual({ body, stripped: false });
+  });
+
+  it('does nothing at all to a message that is not a forward', () => {
+    expect(withoutForwardAttribution('hello', null, false)).toEqual({ body: 'hello', stripped: false });
+  });
+});
+
+describe('an edited forward', () => {
+  const line = forwardAttributionLine(ORIGIN);
+  const edited = (over: Partial<ChatMessage>) => msg({
+    id: 'fwd-edited',
+    displayName: 'Ada Lovelace',
+    editedAt: new Date('2026-09-07T12:05:00Z').toISOString(),
+    metadata: { forwardedFrom: ORIGIN },
+    ...over,
+  } as Partial<ChatMessage>);
+
+  // The edit path sends html to match the new text, and the panel renders the
+  // html over the plain text. The words have to survive that.
+  it('still renders its words when the edit sent a rich body', () => {
+    renderPanel([edited({
+      content: `${line}\nrewritten by Ada`,
+      metadata: { forwardedFrom: ORIGIN, html: '<p>rewritten by Ada</p>' },
+    })]);
+    expect(screen.getByTestId('message-body')).toHaveTextContent('rewritten by Ada');
+  });
+
+  // Nothing is stripped there, so the marker must not add a second copy of a
+  // sentence the body may still be carrying.
+  it('falls back to a bare badge when it did not take the sentence over', () => {
+    renderPanel([edited({
+      content: `${line}\nrewritten by Ada`,
+      metadata: { forwardedFrom: ORIGIN, html: '<p>rewritten by Ada</p>' },
+    })]);
+    expect(screen.getByTestId('forwarded-marker')).toHaveTextContent('Forwarded');
+    expect(screen.getByTestId('forwarded-marker')).not.toHaveTextContent('#general');
+  });
+
+  // An edit that rewrote the prefix away leaves an ordinary message that
+  // happens to know where it came from. It renders whole.
+  it('renders in full when the edit removed the prefix', () => {
+    renderPanel([edited({ content: 'actually, ignore this' })]);
+    expect(screen.getByTestId('message-body')).toHaveTextContent('actually, ignore this');
+    expect(screen.getByTestId('forwarded-marker')).toHaveTextContent('Forwarded');
+  });
+
+  // The common edit: the prefix kept, the words changed. Still ours to strip.
+  it('still says the origin once when the edit kept the prefix', () => {
+    renderPanel([edited({ content: `${line}\ncorrected: eve should NOT be notified` })]);
+    expect(screen.getByTestId('forwarded-marker'))
+      .toHaveTextContent('Forwarded from #general — Carol Johnson');
+    const body = screen.getByTestId('message-body');
+    expect(body).toHaveTextContent('corrected: eve should NOT be notified');
+    expect(body).not.toHaveTextContent('Forwarded from');
   });
 });
