@@ -90,3 +90,14 @@ export function DocumentIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A box with an arrow leaving its corner: "open this in its own view". */
+export function PopOutIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M7 3H4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V9" />
+      <path d="M9.5 2.5H13.5V6.5" />
+      <path d="M13.5 2.5 7.5 8.5" />
+    </svg>
+  );
+}

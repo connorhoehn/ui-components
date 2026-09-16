@@ -11,7 +11,6 @@ import Modal from '../shared/Modal';
 import FormField from '../shared/FormField';
 import { ChoiceList, ChoiceRow } from '../shared/ChoiceList';
 import { Button } from '../ui/Button';
-import { cn } from '../../lib/cn';
 
 export type RecordingExpiryChoice = '30d' | '90d' | '365d' | 'never' | 'custom';
 
@@ -124,14 +123,14 @@ export function RecordingExpiryDialog({
         </>
       }
     >
-      <div className="flex flex-col gap-3 text-sm" data-testid={testId}>
+      <div className="flex min-h-[19rem] flex-col gap-3 text-sm" data-testid={testId}>
         <p className="m-0 text-text-secondary" data-testid={`${testId}-current`}>{current}</p>
         <ChoiceList data-testid={`${testId}-choices`}>
           {PRESETS.map((p) => (
             <ChoiceRow
               key={p.id}
               title={p.title}
-              icon={<span className={cn('text-sm', choice === p.id ? 'text-primary' : 'text-transparent')}>✓</span>}
+              selected={choice === p.id}
               onSelect={() => setChoice(p.id)}
               disabled={busy}
               data-testid={`${testId}-choice-${p.id}`}

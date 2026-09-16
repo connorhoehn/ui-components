@@ -43,3 +43,13 @@ describe('RecordingExpiryDialog', () => {
     expect((screen.getByTestId('recording-expiry-dialog-save') as HTMLButtonElement).disabled).toBe(true);
   });
 });
+
+describe('RecordingExpiryDialog rows', () => {
+  it('are radios, one checked', () => {
+    render(<RecordingExpiryDialog open expiresAt={null} onSave={vi.fn()} onClose={vi.fn()} />);
+    const radios = screen.getAllByRole('radio');
+    expect(radios).toHaveLength(5);
+    expect(radios.filter((r) => r.getAttribute('aria-checked') === 'true')).toHaveLength(1);
+    expect(screen.getByTestId('recording-expiry-dialog-choice-never-button').getAttribute('aria-checked')).toBe('true');
+  });
+});

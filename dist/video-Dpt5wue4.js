@@ -14,7 +14,7 @@ import { t as g } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as _ } from "./Avatar-BzicCOft.js";
 import { t as v } from "./Select-CqVokE2v.js";
 import { t as y } from "./Slider-CUwLSARC.js";
-import { r as b, t as x } from "./ChoiceList-CPLmop3u.js";
+import { r as b, t as x } from "./ChoiceList-CaZ4rZrS.js";
 import { t as S } from "./activationKey-CjbL3LUv.js";
 import { E as C, g as w } from "./StreamStage-d9JKcXlp.js";
 import { useCallback as T, useEffect as E, useImperativeHandle as D, useLayoutEffect as O, useMemo as k, useRef as A, useState as j } from "react";
@@ -2848,82 +2848,79 @@ function Nt(e, t, n = Date.now()) {
 		return Number.isNaN(e.getTime()) ? void 0 : e.toISOString();
 	}
 }
-function Pt({ open: t, expiresAt: n, onSave: r, onClose: a, title: o = "Recording expiry", "data-testid": s = "recording-expiry-dialog" }) {
-	let [l, u] = j(n === null ? "never" : "custom"), [d, p] = j(n ? Mt(Date.parse(n)) : ""), [m, h] = j(!1), [g, _] = j(null);
+function Pt({ open: e, expiresAt: t, onSave: n, onClose: r, title: a = "Recording expiry", "data-testid": o = "recording-expiry-dialog" }) {
+	let [s, l] = j(t === null ? "never" : "custom"), [u, d] = j(t ? Mt(Date.parse(t)) : ""), [p, m] = j(!1), [h, g] = j(null);
 	E(() => {
-		t && (u(n === null ? "never" : "custom"), p(n ? Mt(Date.parse(n)) : ""), _(null), h(!1));
-	}, [t, n]);
-	let v = k(() => Nt(l, d), [l, d]), y = typeof v == "string" && Date.parse(v) < Date.now() + 36e5, S = v !== void 0 && !y && !m, C = n === null ? "This recording does not expire." : n ? `Set to expire ${jt(n)}.` : "No expiry is recorded.", w = async () => {
-		if (v !== void 0) {
-			h(!0), _(null);
+		e && (l(t === null ? "never" : "custom"), d(t ? Mt(Date.parse(t)) : ""), g(null), m(!1));
+	}, [e, t]);
+	let _ = k(() => Nt(s, u), [s, u]), v = typeof _ == "string" && Date.parse(_) < Date.now() + 36e5, y = _ !== void 0 && !v && !p, S = t === null ? "This recording does not expire." : t ? `Set to expire ${jt(t)}.` : "No expiry is recorded.", C = async () => {
+		if (_ !== void 0) {
+			m(!0), g(null);
 			try {
-				await r(v), a();
+				await n(_), r();
 			} catch (e) {
-				_(e instanceof Error ? e.message : String(e)), h(!1);
+				g(e instanceof Error ? e.message : String(e)), m(!1);
 			}
 		}
 	};
 	return /* @__PURE__ */ N(c, {
-		open: t,
-		onClose: a,
-		title: o,
+		open: e,
+		onClose: r,
+		title: a,
 		maxWidth: 440,
 		footer: /* @__PURE__ */ P(M, { children: [/* @__PURE__ */ N(i, {
 			variant: "secondary",
 			size: "sm",
-			onClick: a,
-			disabled: m,
-			"data-testid": `${s}-cancel`,
+			onClick: r,
+			disabled: p,
+			"data-testid": `${o}-cancel`,
 			children: "Cancel"
 		}), /* @__PURE__ */ N(i, {
 			variant: "primary",
 			size: "sm",
-			onClick: () => void w(),
-			disabled: !S,
-			"data-testid": `${s}-save`,
-			children: m ? "Saving…" : "Save"
+			onClick: () => void C(),
+			disabled: !y,
+			"data-testid": `${o}-save`,
+			children: p ? "Saving…" : "Save"
 		})] }),
 		children: /* @__PURE__ */ P("div", {
-			className: "flex flex-col gap-3 text-sm",
-			"data-testid": s,
+			className: "flex min-h-[19rem] flex-col gap-3 text-sm",
+			"data-testid": o,
 			children: [
 				/* @__PURE__ */ N("p", {
 					className: "m-0 text-text-secondary",
-					"data-testid": `${s}-current`,
-					children: C
+					"data-testid": `${o}-current`,
+					children: S
 				}),
 				/* @__PURE__ */ N(x, {
-					"data-testid": `${s}-choices`,
-					children: At.map((t) => /* @__PURE__ */ N(b, {
-						title: t.title,
-						icon: /* @__PURE__ */ N("span", {
-							className: e("text-sm", l === t.id ? "text-primary" : "text-transparent"),
-							children: "✓"
-						}),
-						onSelect: () => u(t.id),
-						disabled: m,
-						"data-testid": `${s}-choice-${t.id}`
-					}, t.id))
+					"data-testid": `${o}-choices`,
+					children: At.map((e) => /* @__PURE__ */ N(b, {
+						title: e.title,
+						selected: s === e.id,
+						onSelect: () => l(e.id),
+						disabled: p,
+						"data-testid": `${o}-choice-${e.id}`
+					}, e.id))
 				}),
-				l === "custom" && /* @__PURE__ */ N(f, {
+				s === "custom" && /* @__PURE__ */ N(f, {
 					label: "Expires on",
 					hint: "At the end of that day, your local time.",
-					...y ? { error: "Pick a date at least an hour from now." } : {},
+					...v ? { error: "Pick a date at least an hour from now." } : {},
 					children: (e) => /* @__PURE__ */ N("input", {
 						...e,
 						type: "date",
-						value: d,
+						value: u,
 						min: Mt(Date.now()),
-						onChange: (e) => p(e.target.value),
+						onChange: (e) => d(e.target.value),
 						className: "rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-text-primary",
-						"data-testid": `${s}-date`
+						"data-testid": `${o}-date`
 					})
 				}),
-				g && /* @__PURE__ */ N("p", {
+				h && /* @__PURE__ */ N("p", {
 					className: "m-0 text-xs text-danger-fg",
 					role: "alert",
-					"data-testid": `${s}-error`,
-					children: g
+					"data-testid": `${o}-error`,
+					children: h
 				})
 			]
 		})

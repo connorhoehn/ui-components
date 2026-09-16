@@ -17,7 +17,8 @@ import { formatCallDuration } from './CallActivityCard';
 import { cn } from '../../lib/cn';
 
 /** Where the recording is on its way to being watchable. */
-export type RecordingStage = 'saving' | 'transcribing' | 'summarizing' | 'ready' | 'failed';
+/** `gone`: the recording no longer exists — expired or removed — so the card is the record of a thing that was. */
+export type RecordingStage = 'saving' | 'transcribing' | 'summarizing' | 'ready' | 'failed' | 'gone';
 
 export interface RecordingParticipant {
   id: string;
@@ -69,6 +70,7 @@ const STAGE: Record<RecordingStage, { state: StatusPillState; label: string }> =
   summarizing: { state: 'pending', label: 'Summarizing' },
   ready: { state: 'success', label: 'Ready to watch' },
   failed: { state: 'error', label: 'Could not be processed' },
+  gone: { state: 'neutral', label: 'No longer available' },
 };
 
 function formatWhen(iso: string | undefined): string {
@@ -146,7 +148,8 @@ export function RecordingActivityCard({
   'data-testid': testId = 'recording-activity-card',
 }: RecordingActivityCardProps) {
   const total = participantCount ?? participants.length;
-  const playable = stage !== 'saving' && stage !== 'failed' && !!onOpen;
+  const gone = stage === 'gone';
+  const playable = stage !== 'saving' && stage !== 'failed' && !gone && !!onOpen;
   const open = () => { onOpen?.(recordingId); };
   const duration = durationMs != null && durationMs > 0 ? formatCallDuration(durationMs) : '';
   const when = formatWhen(startedAt);
@@ -156,9 +159,9 @@ export function RecordingActivityCard({
   const items: DropdownMenuItem[] = [
     ...(onOpen && playable ? [{ 'data-testid': `${testId}-menu-open`, label: 'Open', onSelect: open }] : []),
     ...(onOpenTranscript && transcriptReady ? [{ 'data-testid': `${testId}-menu-transcript`, label: 'Transcript', onSelect: () => onOpenTranscript(recordingId) }] : []),
-    ...(onCopyLink ? [{ 'data-testid': `${testId}-menu-copy-link`, label: 'Copy link', onSelect: () => onCopyLink(recordingId) }] : []),
-    ...(onShare ? [{ 'data-testid': `${testId}-menu-share`, label: 'Share…', description: 'A link that works outside this conversation', onSelect: () => onShare(recordingId) }] : []),
-    ...(onTogglePin ? [{ 'data-testid': `${testId}-menu-pin`, label: pinned ? 'Unpin' : 'Pin', onSelect: () => onTogglePin(recordingId) }] : []),
+    ...(onCopyLink && !gone ? [{ 'data-testid': `${testId}-menu-copy-link`, label: 'Copy link', onSelect: () => onCopyLink(recordingId) }] : []),
+    ...(onShare && !gone ? [{ 'data-testid': `${testId}-menu-share`, label: 'Share…', description: 'A link that works outside this conversation', onSelect: () => onShare(recordingId) }] : []),
+    ...(onTogglePin && !gone ? [{ 'data-testid': `${testId}-menu-pin`, label: pinned ? 'Unpin' : 'Pin', onSelect: () => onTogglePin(recordingId) }] : []),
     ...(onDownload && playable ? [{ 'data-testid': `${testId}-menu-download`, label: 'Download', onSelect: () => onDownload(recordingId) }] : []),
   ];
   const sections: DropdownMenuSection[] = items.length ? [{ items, 'data-testid': `${testId}-menu-items` }] : [];
@@ -238,7 +241,7 @@ export function RecordingActivityCard({
           )}
         </div>
       </div>
-      {expiresAt && stage !== 'failed' && (
+      {expiresAt && stage !== 'failed' && !gone && (
         <div className="flex items-center justify-between gap-2 border-t border-warning-border bg-warning-bg px-3 py-1.5 text-xs text-warning-fg" data-testid={`${testId}-expiry`}>
           <span>Set to expire {formatDate(expiresAt)}</span>
           {onManageExpiry && (

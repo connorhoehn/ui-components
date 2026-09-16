@@ -52,6 +52,11 @@ export interface ChoiceRowProps {
   disabledReason?: string;
   /** The row is doing what it was asked; it reads as pressed and takes no more presses. */
   busy?: boolean;
+  /**
+   * One of several: the row is a radio (`role="radio"`, `aria-checked`) and a
+   * selection mark leads it in place of the icon tile. Undefined for an action row.
+   */
+  selected?: boolean;
   'data-testid'?: string;
 }
 
@@ -66,8 +71,10 @@ export function ChoiceRow({
   disabled = false,
   disabledReason,
   busy = false,
+  selected,
   'data-testid': testId = 'choice-row',
 }: ChoiceRowProps) {
+  const radio = selected !== undefined;
   const [openState, setOpenState] = useState(false);
   const disclosure = children !== undefined;
   const open = openProp ?? openState;
@@ -80,6 +87,8 @@ export function ChoiceRow({
     <div role="listitem" data-testid={testId} data-open={disclosure ? String(open) : undefined}>
       <button
         type="button"
+        role={radio ? 'radio' : undefined}
+        aria-checked={radio ? selected : undefined}
         disabled={inert}
         title={disabled ? disabledReason : undefined}
         aria-expanded={disclosure ? open : undefined}
@@ -92,7 +101,15 @@ export function ChoiceRow({
         )}
         data-testid={`${testId}-button`}
       >
-        {icon ? <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-panel text-text-secondary ring-1 ring-border" aria-hidden="true">{icon}</span> : null}
+        {radio ? (
+          <span
+            aria-hidden="true"
+            data-testid={`${testId}-mark`}
+            className={cn('flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2', selected ? 'border-primary' : 'border-border')}
+          >
+            {selected && <span className="h-2 w-2 rounded-full bg-primary" />}
+          </span>
+        ) : icon ? <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-panel text-text-secondary ring-1 ring-border" aria-hidden="true">{icon}</span> : null}
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="truncate text-[13px] font-semibold text-text-primary">{title}</span>
           {description ? <span className="truncate text-[12px] text-text-secondary">{description}</span> : null}

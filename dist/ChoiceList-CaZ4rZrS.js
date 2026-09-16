@@ -25,25 +25,32 @@ function a({ open: t }) {
 		})
 	});
 }
-function o({ icon: i, title: o, description: s, onSelect: c, children: l, open: u, onOpenChange: d, disabled: f = !1, disabledReason: p, busy: m = !1, "data-testid": h = "choice-row" }) {
-	let [g, _] = t(!1), v = l !== void 0, y = u ?? g, b = (e) => {
-		u === void 0 && _(e), d?.(e);
+function o({ icon: i, title: o, description: s, onSelect: c, children: l, open: u, onOpenChange: d, disabled: f = !1, disabledReason: p, busy: m = !1, selected: h, "data-testid": g = "choice-row" }) {
+	let _ = h !== void 0, [v, y] = t(!1), b = l !== void 0, x = u ?? v, S = (e) => {
+		u === void 0 && y(e), d?.(e);
 	};
 	return /* @__PURE__ */ r("div", {
 		role: "listitem",
-		"data-testid": h,
-		"data-open": v ? String(y) : void 0,
+		"data-testid": g,
+		"data-open": b ? String(x) : void 0,
 		children: [/* @__PURE__ */ r("button", {
 			type: "button",
+			role: _ ? "radio" : void 0,
+			"aria-checked": _ ? h : void 0,
 			disabled: f || m,
 			title: f ? p : void 0,
-			"aria-expanded": v ? y : void 0,
+			"aria-expanded": b ? x : void 0,
 			"aria-busy": m || void 0,
-			onClick: () => v ? b(!y) : c?.(),
-			className: e("flex w-full cursor-pointer items-center gap-3 border-none bg-transparent px-4 py-3 text-left font-[inherit] transition-colors", "hover:bg-surface-hover disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent", y && "bg-surface-hover"),
-			"data-testid": `${h}-button`,
+			onClick: () => b ? S(!x) : c?.(),
+			className: e("flex w-full cursor-pointer items-center gap-3 border-none bg-transparent px-4 py-3 text-left font-[inherit] transition-colors", "hover:bg-surface-hover disabled:cursor-default disabled:opacity-50 disabled:hover:bg-transparent", x && "bg-surface-hover"),
+			"data-testid": `${g}-button`,
 			children: [
-				i ? /* @__PURE__ */ n("span", {
+				_ ? /* @__PURE__ */ n("span", {
+					"aria-hidden": "true",
+					"data-testid": `${g}-mark`,
+					className: e("flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2", h ? "border-primary" : "border-border"),
+					children: h && /* @__PURE__ */ n("span", { className: "h-2 w-2 rounded-full bg-primary" })
+				}) : i ? /* @__PURE__ */ n("span", {
 					className: "flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-panel text-text-secondary ring-1 ring-border",
 					"aria-hidden": "true",
 					children: i
@@ -58,11 +65,11 @@ function o({ icon: i, title: o, description: s, onSelect: c, children: l, open: 
 						children: s
 					}) : null]
 				}),
-				v ? /* @__PURE__ */ n(a, { open: y }) : null
+				b ? /* @__PURE__ */ n(a, { open: x }) : null
 			]
-		}), v && y ? /* @__PURE__ */ n("div", {
+		}), b && x ? /* @__PURE__ */ n("div", {
 			className: "border-t border-border bg-surface pb-1",
-			"data-testid": `${h}-panel`,
+			"data-testid": `${g}-panel`,
 			children: l
 		}) : null]
 	});

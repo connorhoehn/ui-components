@@ -1616,7 +1616,8 @@ declare interface RecordingParticipant {
 }
 
 /** Where the recording is on its way to being watchable. */
-declare type RecordingStage = 'saving' | 'transcribing' | 'summarizing' | 'ready' | 'failed';
+/** `gone`: the recording no longer exists — expired or removed — so the card is the record of a thing that was. */
+declare type RecordingStage = 'saving' | 'transcribing' | 'summarizing' | 'ready' | 'failed' | 'gone';
 
 export declare interface ResolvedCapabilities {
     /** declared ∩ provisioned — what may actually render. */

@@ -101,3 +101,15 @@ describe('ChatPanel recording card', () => {
     expect(screen.getByTestId('recording-activity-card-transcript')).toBeTruthy();
   });
 });
+
+describe('RecordingActivityCard gone', () => {
+  it('is a record, not a button, with no expiry and no share', () => {
+    const onOpen = vi.fn();
+    render(<RecordingActivityCard recordingId="r1" stage="gone" expiresAt="2030-01-01T00:00:00Z" onOpen={onOpen} onShare={vi.fn()} onCopyLink={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('recording-activity-card-thumb'));
+    expect(onOpen).not.toHaveBeenCalled();
+    expect(screen.getByTestId('recording-activity-card-stage').textContent).toMatch(/No longer available/);
+    expect(screen.queryByTestId('recording-activity-card-expiry')).toBeNull();
+    expect(screen.queryByLabelText('More options')).toBeNull();
+  });
+});
