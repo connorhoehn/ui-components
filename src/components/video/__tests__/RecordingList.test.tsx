@@ -107,8 +107,10 @@ describe('RecordingList', () => {
       rec({ id: 'missing' }),
     ];
     render(<RecordingList recordings={items} onSelect={() => {}} />);
-    expect(screen.getByText('4 👥')).toBeInTheDocument();
-    expect(screen.queryByText('0 👥')).not.toBeInTheDocument();
+    // Asserted on the badge's accessible description rather than on "4 👥":
+    // the emoji was an ICON standing next to the count, and it is a glyph now.
+    expect(screen.getByTitle('4 people in this call')).toBeInTheDocument();
+    expect(screen.queryByTitle(/0 (person|people) in this call/)).not.toBeInTheDocument();
   });
 
   it('uses label as the title and a small line below for the start time when label is set', () => {

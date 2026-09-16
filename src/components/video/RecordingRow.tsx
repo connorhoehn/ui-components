@@ -3,6 +3,7 @@
 
 import type { KeyboardEvent, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { UsersIcon } from './MediaIcons';
 
 export type RecordingStatus = 'ready' | 'processing' | 'failed';
 
@@ -149,8 +150,16 @@ export function RecordingRow({
           {label ?? formatStart(startIso)}
         </span>
         {typeof participantCount === 'number' && participantCount > 0 && (
-          <span className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-[var(--color-text-secondary)] shrink-0">
-            {participantCount} 👥
+          <span
+            className="inline-flex shrink-0 items-center gap-1 rounded bg-white/5 px-1.5 py-0.5 text-xs text-[var(--color-text-secondary)]"
+            // The count is the content; the little pair of silhouettes is an
+            // icon, and an emoji icon here ignores the theme and renders
+            // differently on every platform — the same reason the rest of the
+            // chrome stopped using them.
+            title={`${participantCount} ${participantCount === 1 ? 'person' : 'people'} in this call`}
+          >
+            {participantCount}
+            <UsersIcon size={12} />
           </span>
         )}
       </div>

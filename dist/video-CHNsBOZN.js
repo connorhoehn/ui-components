@@ -2760,8 +2760,9 @@ function Ot({ id: t, startIso: n, durationSec: r, participantCount: i, thumbnail
 					className: "text-sm font-medium text-[var(--color-text-primary)] truncate",
 					children: o ?? Et(n)
 				}), typeof i == "number" && i > 0 && /* @__PURE__ */ P("span", {
-					className: "text-xs px-1.5 py-0.5 rounded bg-white/5 text-[var(--color-text-secondary)] shrink-0",
-					children: [i, " 👥"]
+					className: "inline-flex shrink-0 items-center gap-1 rounded bg-white/5 px-1.5 py-0.5 text-xs text-[var(--color-text-secondary)]",
+					title: `${i} ${i === 1 ? "person" : "people"} in this call`,
+					children: [i, /* @__PURE__ */ N(Fe, { size: 12 })]
 				})]
 			}),
 			o && /* @__PURE__ */ N("div", {
