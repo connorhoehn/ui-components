@@ -1096,10 +1096,20 @@ export declare interface DropdownMenuItem {
     active?: boolean;
     /** Style this item as destructive. */
     danger?: boolean;
-    /** Fires on click / Enter; the menu closes afterwards. */
-    onSelect: () => void;
+    /** Fires on click / Enter; the menu closes afterwards. Not needed on a row with a `submenu`. */
+    onSelect?: () => void;
     /** Right-aligned hint after the label — a shortcut (`⌘P`), a count. */
     trailing?: ReactNode;
+    /** A second, quieter line under the label. */
+    description?: string;
+    /** A setting that is on: a check leads the row (menuitemcheckbox). */
+    checked?: boolean;
+    /**
+     * A flyout of further choices, opened from this row — "Share to ›",
+     * "Download as ›". Opens on hover, click or ArrowRight; the row itself
+     * runs no `onSelect`.
+     */
+    submenu?: DropdownMenuSection[];
     /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
     'data-testid'?: string;
 }
@@ -3884,12 +3894,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3900,16 +3907,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3943,9 +3940,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

@@ -11,14 +11,9 @@
 // dismiss, focus capture/restore, Tab cycling); adds menu semantics
 // (role="menu"/"menuitem") and ArrowUp/ArrowDown/Home/End focus movement.
 
-import {
-  useCallback,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type ReactNode,
-} from 'react';
+import { useCallback, useRef, useState, type KeyboardEvent, type ReactNode, useEffect } from 'react';
 import { InlinePopover } from './InlinePopover';
+import { ChevronIcon } from '../ui/Icons';
 import { cn } from '../../lib/cn';
 
 export interface DropdownMenuItem {
@@ -30,10 +25,20 @@ export interface DropdownMenuItem {
   active?: boolean;
   /** Style this item as destructive. */
   danger?: boolean;
-  /** Fires on click / Enter; the menu closes afterwards. */
-  onSelect: () => void;
+  /** Fires on click / Enter; the menu closes afterwards. Not needed on a row with a `submenu`. */
+  onSelect?: () => void;
   /** Right-aligned hint after the label — a shortcut (`⌘P`), a count. */
   trailing?: ReactNode;
+  /** A second, quieter line under the label. */
+  description?: string;
+  /** A setting that is on: a check leads the row (menuitemcheckbox). */
+  checked?: boolean;
+  /**
+   * A flyout of further choices, opened from this row — "Share to ›",
+   * "Download as ›". Opens on hover, click or ArrowRight; the row itself
+   * runs no `onSelect`.
+   */
+  submenu?: DropdownMenuSection[];
   /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
   'data-testid'?: string;
 }
@@ -165,36 +170,127 @@ export function DropdownMenu({
                 </div>
               )}
               {section.items.map((item, iIdx) => (
-                <button
-                  key={iIdx}
-                  type="button"
-                  role="menuitem"
-                  aria-current={item.active || undefined}
-                  onClick={() => {
-                    item.onSelect();
-                    close();
-                  }}
-                  data-testid={item['data-testid']}
-                  className={cn(
-                    'flex items-center gap-2.5 w-full text-left px-3.5 py-2',
-                    'text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100',
-                    item.danger
-                      ? 'text-danger-fg bg-transparent hover:bg-danger-bg'
-                      : item.active
-                        ? 'font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]'
-                        : 'font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]',
-                  )}
-                >
-                  {item.icon && (
-                    <span className="shrink-0 text-base leading-none" aria-hidden="true">
-                      {item.icon}
-                    </span>
-                  )}
-                  <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                  {item.trailing !== undefined && (
-                    <span className="shrink-0 text-xs text-[var(--color-text-tertiary)]" aria-hidden="true">{item.trailing}</span>
-                  )}
-                </button>
+                <MenuRow key={iIdx} item={item} close={close} testId={testId} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </InlinePopover>
+    </>
+  );
+}
+
+
+const ROW_CLASS = 'flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100';
+
+function rowTone(item: DropdownMenuItem, open = false): string {
+  if (item.danger) return 'text-danger-fg bg-transparent hover:bg-danger-bg';
+  if (item.active || open) return 'font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]';
+  return 'font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]';
+}
+
+function RowBody({ item }: { item: DropdownMenuItem }) {
+  return (
+    <>
+      {item.checked !== undefined ? (
+        <span className="flex w-4 shrink-0 items-center justify-center text-[var(--color-text-secondary)]" aria-hidden="true">
+          {item.checked ? '✓' : ''}
+        </span>
+      ) : item.icon ? (
+        <span className="flex w-4 shrink-0 items-center justify-center text-base leading-none text-[var(--color-text-secondary)]" aria-hidden="true">
+          {item.icon}
+        </span>
+      ) : null}
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="truncate">{item.label}</span>
+        {item.description && (
+          <span className="truncate text-xs font-normal text-[var(--color-text-tertiary)]">{item.description}</span>
+        )}
+      </span>
+      {item.trailing !== undefined && (
+        <span className="shrink-0 text-xs text-[var(--color-text-tertiary)]" aria-hidden="true">{item.trailing}</span>
+      )}
+      {item.submenu && <ChevronIcon dir="right" size={14} className="shrink-0 text-[var(--color-text-tertiary)]" />}
+    </>
+  );
+}
+
+/** One row; a row with a `submenu` opens a flyout beside itself. */
+function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () => void; testId: string }) {
+  const [open, setOpen] = useState(false);
+  const rowRef = useRef<HTMLButtonElement | null>(null);
+  const flyRef = useRef<HTMLDivElement | null>(null);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hold = () => { if (leaveTimer.current) { clearTimeout(leaveTimer.current); leaveTimer.current = null; } };
+  const leave = () => { hold(); leaveTimer.current = setTimeout(() => setOpen(false), 180); };
+  useEffect(() => () => hold(), []);
+
+  if (!item.submenu) {
+    return (
+      <button
+        type="button"
+        role={item.checked !== undefined ? 'menuitemcheckbox' : 'menuitem'}
+        aria-checked={item.checked !== undefined ? item.checked : undefined}
+        aria-current={item.active || undefined}
+        onClick={() => { item.onSelect?.(); close(); }}
+        data-testid={item['data-testid']}
+        className={cn(ROW_CLASS, rowTone(item))}
+      >
+        <RowBody item={item} />
+      </button>
+    );
+  }
+
+  const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setOpen(true);
+      setTimeout(() => flyRef.current?.querySelector<HTMLElement>('[role="menuitem"],[role="menuitemcheckbox"]')?.focus(), 0);
+    }
+  };
+  return (
+    <>
+      <button
+        ref={rowRef}
+        type="button"
+        role="menuitem"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onMouseEnter={() => { hold(); setOpen(true); }}
+        onMouseLeave={leave}
+        onClick={() => setOpen((v) => !v)}
+        onKeyDown={onKeyDown}
+        data-testid={item['data-testid']}
+        className={cn(ROW_CLASS, rowTone(item, open))}
+      >
+        <RowBody item={item} />
+      </button>
+      <InlinePopover
+        trigger={rowRef}
+        open={open}
+        onClose={() => setOpen(false)}
+        placement="right"
+        offset={2}
+        className="min-w-[200px] p-0 overflow-hidden rounded-lg"
+        data-testid={`${testId}-submenu`}
+      >
+        <div
+          ref={flyRef}
+          role="menu"
+          aria-label={item.label}
+          className="py-1 uic-menu-scroll"
+          onMouseEnter={hold}
+          onMouseLeave={leave}
+          onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); setOpen(false); rowRef.current?.focus(); } }}
+        >
+          {item.submenu.map((section, sIdx) => (
+            <div key={sIdx} role="group" aria-label={section.label} className={section.scroll ? 'uic-menu-group-scroll' : undefined} data-testid={section['data-testid']}>
+              {sIdx > 0 && <div role="separator" className="my-1 border-t border-[var(--color-border)]" />}
+              {section.label && (
+                <div className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">{section.label}</div>
+              )}
+              {section.items.map((sub, i) => (
+                <MenuRow key={i} item={sub} close={close} testId={testId} />
               ))}
             </div>
           ))}
