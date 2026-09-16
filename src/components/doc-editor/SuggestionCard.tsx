@@ -28,11 +28,11 @@ const KIND_LABEL: Record<SuggestionCardKind, string> = {
   modify: 'Formatted',
 };
 
-const KIND_CLASS: Record<SuggestionCardKind, string> = {
-  insert: 'bg-success-bg text-success-fg',
-  delete: 'bg-danger-bg text-danger-fg',
-  replace: 'bg-caution-bg text-caution-fg',
-  modify: 'bg-info-bg text-info-fg',
+const KIND_TEXT: Record<SuggestionCardKind, string> = {
+  insert: 'text-success-fg',
+  delete: 'text-danger-fg',
+  replace: 'text-caution-fg',
+  modify: 'text-info-fg',
 };
 
 /** Lines shown before the card folds the rest behind a count. */
@@ -76,21 +76,29 @@ function Lines({ lines, tone, testId }: { lines: readonly string[]; tone: 'inser
   const shown = lines.slice(0, MAX_LINES);
   const Tag = tone === 'insert' ? 'ins' : 'del';
   return (
-    <div className="flex flex-col gap-0.5" data-testid={testId}>
+    <div
+      className={cn(
+        // A quiet rule in the change's colour beside plain text — the text
+        // stays the document's own text, readable at length, not a row of
+        // tinted pills.
+        'flex flex-col gap-1 border-l-2 pl-2.5',
+        tone === 'insert' ? 'border-success-fg' : 'border-danger-fg',
+      )}
+      data-testid={testId}
+    >
       {shown.map((line, i) => (
         <Tag
           key={i}
-          title={line}
           className={cn(
-            'block truncate rounded px-1.5 py-0.5 text-[13px] leading-snug no-underline',
-            tone === 'insert' ? 'bg-success-bg text-success-fg' : 'bg-danger-bg text-danger-fg line-through',
+            'block whitespace-pre-line text-[13px] leading-relaxed no-underline',
+            tone === 'insert' ? 'text-text-primary' : 'text-text-secondary line-through',
           )}
         >
           {line}
         </Tag>
       ))}
       {lines.length > MAX_LINES && (
-        <span className="px-1.5 text-xs text-text-tertiary">and {lines.length - MAX_LINES} more</span>
+        <span className="text-xs text-text-tertiary">and {lines.length - MAX_LINES} more</span>
       )}
     </div>
   );
@@ -124,7 +132,7 @@ export function SuggestionCard({
       data-kind={kind}
       data-active={active ? 'true' : 'false'}
       className={cn(
-        'flex flex-col gap-2 border-b border-border px-3 py-2.5 text-sm last:border-b-0',
+        'flex flex-col gap-2.5 border-b border-border px-4 py-3 text-sm last:border-b-0',
         active && 'bg-surface-inset',
         className,
       )}
@@ -138,7 +146,7 @@ export function SuggestionCard({
           <span className="shrink-0 text-xs tabular-nums text-text-tertiary">{formatWhen(when)}</span>
         )}
         <span
-          className={cn('ml-auto shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium', KIND_CLASS[kind])}
+          className={cn('ml-auto shrink-0 text-[11px] font-medium', KIND_TEXT[kind])}
           data-testid={`${testId}-kind`}
         >
           {KIND_LABEL[kind]}

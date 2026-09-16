@@ -1690,10 +1690,10 @@ var Rt = {
 	replace: "Replaced",
 	modify: "Formatted"
 }, zt = {
-	insert: "bg-success-bg text-success-fg",
-	delete: "bg-danger-bg text-danger-fg",
-	replace: "bg-caution-bg text-caution-fg",
-	modify: "bg-info-bg text-info-fg"
+	insert: "text-success-fg",
+	delete: "text-danger-fg",
+	replace: "text-caution-fg",
+	modify: "text-info-fg"
 }, $ = 6;
 function Bt(e) {
 	return new Date(e).toLocaleTimeString([], {
@@ -1704,14 +1704,13 @@ function Bt(e) {
 function Vt({ lines: e, tone: t, testId: r }) {
 	let i = e.slice(0, $), a = t === "insert" ? "ins" : "del";
 	return /* @__PURE__ */ Y("div", {
-		className: "flex flex-col gap-0.5",
+		className: n("flex flex-col gap-1 border-l-2 pl-2.5", t === "insert" ? "border-success-fg" : "border-danger-fg"),
 		"data-testid": r,
 		children: [i.map((e, r) => /* @__PURE__ */ J(a, {
-			title: e,
-			className: n("block truncate rounded px-1.5 py-0.5 text-[13px] leading-snug no-underline", t === "insert" ? "bg-success-bg text-success-fg" : "bg-danger-bg text-danger-fg line-through"),
+			className: n("block whitespace-pre-line text-[13px] leading-relaxed no-underline", t === "insert" ? "text-text-primary" : "text-text-secondary line-through"),
 			children: e
 		}, r)), e.length > $ && /* @__PURE__ */ Y("span", {
-			className: "px-1.5 text-xs text-text-tertiary",
+			className: "text-xs text-text-tertiary",
 			children: [
 				"and ",
 				e.length - $,
@@ -1726,7 +1725,7 @@ function Ht({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 		"data-testid": g,
 		"data-kind": e,
 		"data-active": u ? "true" : "false",
-		className: n("flex flex-col gap-2 border-b border-border px-3 py-2.5 text-sm last:border-b-0", u && "bg-surface-inset", h),
+		className: n("flex flex-col gap-2.5 border-b border-border px-4 py-3 text-sm last:border-b-0", u && "bg-surface-inset", h),
 		children: [
 			/* @__PURE__ */ Y("div", {
 				className: "flex items-center gap-2",
@@ -1745,7 +1744,7 @@ function Ht({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 						children: Bt(i)
 					}),
 					/* @__PURE__ */ J("span", {
-						className: n("ml-auto shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium", zt[e]),
+						className: n("ml-auto shrink-0 text-[11px] font-medium", zt[e]),
 						"data-testid": `${g}-kind`,
 						children: Rt[e]
 					})
