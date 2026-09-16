@@ -88,13 +88,15 @@ describe('the hover action bar', () => {
     expect(bar.className).not.toContain('focus-within:opacity-100');
   });
 
-  // Pinned right, the controls for "asdasdf" sat hundreds of pixels from the
-  // word they act on, with another message's bar directly above them.
-  it('sits beside the message, not against the far edge', () => {
+  // Top right of the row, lifted into the gap above it — never over the
+  // author line — with the hovered row tinted so bar and message read as one.
+  it('sits at the top right of the row, off the author line', () => {
     render(<ChatPanel messages={[msg]} onSend={vi.fn()} onReply={vi.fn()} />);
     const bar = screen.getByTestId('message-actions');
-    expect(bar.className).toContain('left-14');
-    expect(bar.className).not.toContain('right-2');
+    expect(bar.className).toContain('right-3');
+    expect(bar.className).toContain('-top-3');
+    expect(bar.className).not.toContain('left-14');
+    expect(screen.getByTestId('chat-message').className).toContain('hover:bg-surface-hover');
   });
 });
 
