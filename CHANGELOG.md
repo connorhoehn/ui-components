@@ -6,6 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.285.0] — 2026-09-16
+
+### Added — `./social`
+
+- **`ChatPanel.readReceipts` / `readReceiptsEnabled`** — the "Seen" line.
+  Backed by realtime-modules 0.50.0, whose receipt is a CURSOR per person per
+  channel rather than a row per message: "has Carol seen message M" is
+  `readAt >= M.timestamp`, and when a specific message was read is a question
+  the model cannot answer and the UI does not pretend to.
+
+  It renders under the viewer's own most recent message and nowhere else. A
+  tick beside forty messages is noise; one line saying how far your words got
+  is the information. Two people: "Seen". More: "Seen by 3" with up to three
+  avatars, names in a title and in a visually-hidden tail. Nobody yet: nothing
+  at all, because an empty state here is silence. Receipts off (the server
+  keeps none in an open or large channel): nothing ever, not even a greyed
+  hint — a channel without receipts should look like one that never had them.
+
+  Not a live region. The line sits in a list that is already
+  `aria-live="off"`, so it is in reading order at the foot of your message but
+  never pushed: cursors move several times a minute in a busy chat, and each
+  move would interrupt whatever is being read to announce a number that
+  changed by one.
+
+---
+
 ## [2.284.0] — 2026-09-16
 
 ### Added — `./social`

@@ -834,6 +834,36 @@ declare interface ChatPanelProps {
     /** Show the load-more button in a pending state. */
     loadingMore?: boolean;
     /**
+     * Who has read up to where in this channel. Cursors, not per-message records.
+     *
+     * One entry PER PERSON, not per message: `readAt` is how far that person has
+     * read, so "has Carol seen message M" is `readAt >= M.timestamp` and nothing
+     * finer is knowable. There is no per-message record on the server and there
+     * is not going to be one, which is why this panel draws a single line under
+     * your newest message rather than a tick beside every message — a tick per
+     * message would be asserting a fact the data does not contain.
+     *
+     * The viewer's own cursor may be in here; it is filtered out. Reading your
+     * own message is not a receipt.
+     */
+    readReceipts?: readonly {
+        userId: string;
+        displayName?: string;
+        readAt: string;
+    }[];
+    /**
+     * False when the server does not keep receipts here. Default true.
+     *
+     * The server keeps them only where the roster is small and nameable — a DM,
+     * or a closed channel of at most twenty — and reports them off everywhere
+     * else. That is a privacy decision, not a loading state, so `false` renders
+     * NOTHING: no greyed hint, no "receipts are off in large channels" note. A
+     * channel where receipts are off looks like a channel that never had them,
+     * because an explanation is itself a signal that somebody's reading is being
+     * tracked somewhere.
+     */
+    readReceiptsEnabled?: boolean;
+    /**
      * Receives files the user dropped on the thread, pasted into the composer,
      * or picked with the paperclip. When absent, every attachment affordance is
      * suppressed — a panel wired to a transport with no upload service must not

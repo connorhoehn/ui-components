@@ -254,6 +254,34 @@ export interface ChatPanelProps {
   /** Show the load-more button in a pending state. */
   loadingMore?: boolean;
 
+  // ── Read receipts ─────────────────────────────────────────────────────
+  /**
+   * Who has read up to where in this channel. Cursors, not per-message records.
+   *
+   * One entry PER PERSON, not per message: `readAt` is how far that person has
+   * read, so "has Carol seen message M" is `readAt >= M.timestamp` and nothing
+   * finer is knowable. There is no per-message record on the server and there
+   * is not going to be one, which is why this panel draws a single line under
+   * your newest message rather than a tick beside every message — a tick per
+   * message would be asserting a fact the data does not contain.
+   *
+   * The viewer's own cursor may be in here; it is filtered out. Reading your
+   * own message is not a receipt.
+   */
+  readReceipts?: readonly { userId: string; displayName?: string; readAt: string }[];
+  /**
+   * False when the server does not keep receipts here. Default true.
+   *
+   * The server keeps them only where the roster is small and nameable — a DM,
+   * or a closed channel of at most twenty — and reports them off everywhere
+   * else. That is a privacy decision, not a loading state, so `false` renders
+   * NOTHING: no greyed hint, no "receipts are off in large channels" note. A
+   * channel where receipts are off looks like a channel that never had them,
+   * because an explanation is itself a signal that somebody's reading is being
+   * tracked somewhere.
+   */
+  readReceiptsEnabled?: boolean;
+
   // ── Attachments ───────────────────────────────────────────────────────
   /**
    * Receives files the user dropped on the thread, pasted into the composer,
@@ -822,6 +850,80 @@ function continuesRun(previous: TimelineEntry | undefined, entry: TimelineEntry)
   return now >= then && now - then <= RUN_WINDOW_MS;
 }
 
+/** One person's read cursor. Named off the prop so it cannot drift from it. */
+type ChatReadReceipt = NonNullable<ChatPanelProps['readReceipts']>[number];
+
+/**
+ * The people whose cursor has passed a message sent at `sentAt`.
+ *
+ * `>=` rather than `>` because a cursor is stamped when the message is
+ * displayed, and a message read the instant it landed can carry the same
+ * millisecond as the send. Strict `>` would drop exactly the fastest reader,
+ * which is the one case the sender is watching for.
+ *
+ * The viewer is filtered out here rather than at the call site: every use of
+ * this list — the count, the avatars, the names — is wrong if their own cursor
+ * is in it, so there is no version of the question that wants it included.
+ */
+function readersSince(
+  receipts: readonly ChatReadReceipt[],
+  viewerId: string,
+  sentAt: string,
+): ChatReadReceipt[] {
+  const sent = Date.parse(sentAt);
+  // An unparsable send time makes the comparison meaningless, and a receipt
+  // line that appears on garbage timestamps is worse than none.
+  if (!Number.isFinite(sent)) return [];
+  return receipts.filter((receipt) => {
+    if (receipt.userId === viewerId) return false;
+    const read = Date.parse(receipt.readAt);
+    return Number.isFinite(read) && read >= sent;
+  });
+}
+
+/** The name to show for a reader. The id is a poor label, but it beats blank. */
+function receiptLabel(receipt: ChatReadReceipt): string {
+  return receipt.displayName || receipt.userId;
+}
+
+/**
+ * How many people OTHER than the viewer have left a trace in this channel.
+ *
+ * This is how "is this a two-person conversation" gets answered, and it has to
+ * be inferred: ChatPanel is never handed the roster. Two sources name people —
+ * the authors of the loaded messages, and whoever has a read cursor — and the
+ * union of those, minus the viewer, is one in a DM and two or more the moment
+ * a third person has either spoken or read.
+ *
+ * Identity is the authenticated `userId` where there is one and the display
+ * name otherwise, which is `runIdentity`'s rule and is here for the same
+ * reason: `clientId` is per-connection and would count one person twice after
+ * a reconnect. Mixing the two keys can also count one person twice — a
+ * transport that omits `userId` on messages but supplies it on receipts — and
+ * that is the acceptable direction to be wrong in. Over-counting turns "Seen"
+ * into "Seen by 1", which is merely terse; under-counting would describe a
+ * group channel as a private exchange.
+ *
+ * System notices are excluded: the gateway posts them on nobody's behalf, and
+ * one "Bob started a call" in a DM would otherwise make it look like a group.
+ */
+function otherParticipantCount(
+  messages: readonly ChatMessage[],
+  receipts: readonly ChatReadReceipt[],
+  viewerId: string,
+): number {
+  const others = new Set<string>();
+  for (const message of messages) {
+    if (message.userId === viewerId || message.metadata?.system === true) continue;
+    const who = runIdentity(message);
+    if (who) others.add(who);
+  }
+  for (const receipt of receipts) {
+    if (receipt.userId !== viewerId) others.add(`id:${receipt.userId}`);
+  }
+  return others.size;
+}
+
 export function ChatPanel({
   messages,
   localMessages = [],
@@ -874,6 +976,8 @@ export function ChatPanel({
   acceptFiles,
   maxFileSize,
   onFileError,
+  readReceipts = [],
+  readReceiptsEnabled = true,
   emojis = DEFAULT_PICKER_EMOJIS,
 }: ChatPanelProps) {
   // Which own message is being edited in place, and which one is waiting on
@@ -910,6 +1014,119 @@ export function ChatPanel({
       if (!next.delete(rootId)) next.add(rootId);
       return next;
     });
+  }
+
+  // ── Read receipts ───────────────────────────────────────────────────
+  // ONE line, under ONE message: the newest thing the viewer sent. Teams draws
+  // it there and the restraint is the feature — a marker beside forty messages
+  // is forty repetitions of a single fact (how far the other people have read)
+  // and reads as decoration, while one line at the foot of your own last
+  // message answers the only question a sender actually has.
+  //
+  // THREADED MODE: "most recent" is by position in the timeline — the server's
+  // order, which is the truth for what it sent — and the line is then drawn
+  // wherever that message renders, which for a reply is inside its thread's
+  // rail. It deliberately does NOT move to whichever of the viewer's messages
+  // sits lowest on screen: threads sit at their ROOT's position, so the lowest
+  // one can be an hour older than the newest, and hanging the line off it
+  // would attach "Seen" to a message whose readers are not the ones counted.
+  //
+  // Without a `currentUserId` nothing renders at all: "which of these are
+  // mine" is unanswerable without it (see `isMine`), and a receipt line under
+  // a message that might not be yours is worse than no receipt line.
+  const receiptViewerId = readReceiptsEnabled && currentUserId ? currentUserId : undefined;
+  const receiptAnchor = (() => {
+    if (!receiptViewerId || readReceipts.length === 0) return undefined;
+    for (let i = timeline.length - 1; i >= 0; i -= 1) {
+      const entry = timeline[i];
+      // A local row was never sent, so nobody can have read it.
+      if (entry.kind !== 'message') continue;
+      const message = entry.message;
+      if (message.userId !== receiptViewerId || !message.id) continue;
+      // A deleted message has no words left for anyone to have seen; the line
+      // falls back to the newest of the viewer's messages that still says
+      // something, which is the one the receipt is now about.
+      if (message.deletedAt || message.metadata?.deleted === true) continue;
+      return { id: message.id, timestamp: message.timestamp };
+    }
+    return undefined;
+  })();
+  const receiptReaders =
+    receiptAnchor && receiptViewerId
+      ? readersSince(readReceipts, receiptViewerId, receiptAnchor.timestamp)
+      : [];
+  // Two people, so the count is not news — there is only one person it could
+  // be. See `otherParticipantCount` for how that is worked out without a
+  // roster.
+  const receiptsAreDuet =
+    receiptReaders.length === 1 &&
+    !!receiptViewerId &&
+    otherParticipantCount(messages, readReceipts, receiptViewerId) === 1;
+
+  /**
+   * The line itself, or null when there is nothing honest to say.
+   *
+   * NOBODY YET is silence, not "Seen by 0". The absence of the line already
+   * means nobody has read it; spelling that out turns every unanswered message
+   * into a small notice about being ignored.
+   *
+   * SCREEN READERS — the decision, since neither default is right. This is NOT
+   * a live region. It sits inside the message list, which is `role="log"` with
+   * `aria-live="off"` (see the scroller below), so the line is in reading order
+   * and reachable at the foot of the viewer's own message, and it is never
+   * pushed into anybody's ear. It changes every time somebody's cursor moves —
+   * in a busy channel that is several times a minute, each one interrupting
+   * whatever is being read to announce a number that changed by one. Announced
+   * on demand, never announced on arrival. The visually-hidden tail is what
+   * keeps "on demand" worth doing: the avatars carry the names for a sighted
+   * reader and would otherwise be a silent group of images, so the names are
+   * spelled out for a reader who arrives at the line.
+   */
+  function renderReadReceipts() {
+    if (receiptReaders.length === 0) return null;
+    const names = receiptReaders.map(receiptLabel);
+    // Three, the same cap the collapsed-thread control uses — enough to
+    // recognise the conversation, few enough not to become a second avatar
+    // rail. The count and the names carry the rest.
+    const faces = receiptReaders.slice(0, 3);
+    return (
+      <div
+        data-testid="chat-read-receipts"
+        // The names for a pointer, on the whole line rather than on the
+        // avatars, so it answers "who" wherever the hover lands.
+        title={names.join(', ')}
+        className={cn(
+          'mt-0.5 flex items-center gap-1 text-[11px]',
+          // Follows the message it belongs to: own messages are right-aligned
+          // by default and left-aligned in a channel, and a status line that
+          // stays on one side drifts away from its own message under the other.
+          // `pl-7` is MessageRow's avatar gutter (`w-5` + `gap-2`), so the
+          // left-aligned line starts under the message text rather than under
+          // the avatar.
+          alignOwnMessages ? 'justify-end pr-1' : 'justify-start pl-7',
+          // `text-white/*` on dark: the `text-text-*` tokens are tuned for the
+          // light surface and go muddy to invisible over call chrome.
+          dark ? 'text-white/50' : 'text-text-tertiary',
+        )}
+      >
+        {receiptReaders.length > 1 && (
+          <span className="flex items-center gap-0.5" aria-hidden="true">
+            {faces.map((receipt) => (
+              <Avatar key={receipt.userId} name={receiptLabel(receipt)} size={14} />
+            ))}
+          </span>
+        )}
+        <span data-testid="chat-read-receipts-label">
+          {receiptsAreDuet ? 'Seen' : `Seen by ${receiptReaders.length}`}
+        </span>
+        {/* The library's canonical clip rather than `sr-only`: a host that does
+            not run Tailwind over the library would paint an `sr-only` span as
+            ordinary text, printing the whole reader list on screen. */}
+        <span style={VISUALLY_HIDDEN_STYLE}>
+          {receiptsAreDuet ? ` by ${names[0]}` : `: ${names.join(', ')}`}
+        </span>
+      </div>
+    );
   }
 
   // ── Scroll ownership ────────────────────────────────────────────────
@@ -1559,6 +1776,13 @@ export function ChatPanel({
         />
       )}
     </div>
+    {/* Inside the list rather than pinned to the pane, so it scrolls away with
+        the message it describes — a receipt floating above the composer while
+        the message it refers to is three screens up says nothing. It sits
+        OUTSIDE the row div on purpose: that div is the hover target for the
+        action bar and carries the row's highlight ring, and a status line
+        inside it would tint and outline along with the message. */}
+    {!!receiptAnchor && messageId === receiptAnchor.id && renderReadReceipts()}
     </Fragment>
   );
   }
