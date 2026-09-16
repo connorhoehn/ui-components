@@ -47,3 +47,28 @@ export const Grouped: Story = {
     </div>
   ),
 };
+
+/**
+ * A host that already sits inside its own shell `<main id="main-content">`
+ * (Observability, Ingest, Identity, Distillation…) passes `contentAs="section"`
+ * with `contentLabel` so the content pane names itself instead of adding a
+ * second `<main>` landmark. `railLabel` gives the rail nav its own name too.
+ */
+export const NamedLandmarks: Story = {
+  args: {
+    title: 'Distillation',
+    railLabel: 'Distillation sections',
+    contentAs: 'section',
+    contentLabel: 'Distillation',
+    items: [
+      { path: '#observations', label: 'Observations' },
+      { path: '#artifacts', label: 'Artifacts', count: 8 },
+    ],
+    children: <div className="p-6 text-sm text-text-secondary">Main content</div>,
+  },
+  render: (args) => (
+    <div className="h-[360px]">
+      <SubNavLayout {...args} />
+    </div>
+  ),
+};

@@ -115,21 +115,26 @@ var f = {
 	sm: "h-1.5 w-1.5",
 	xs: "h-1 w-1"
 };
-function y({ tone: r = "neutral", palette: a = "surface", size: o = "sm", solid: s = !1, mono: c = !1, dot: l, uppercase: u = !1, icon: d, children: f, title: p, className: m, style: h, "data-testid": y, "aria-label": b }) {
-	let x = i(r), S = g[a] ?? g.surface, C = s ? S.solid[x] : S.soft[x], w = !!(l || d);
-	return /* @__PURE__ */ n("span", {
+function y({ tone: r = "neutral", palette: a = "surface", size: o = "sm", solid: s = !1, mono: c = !1, dot: l, uppercase: u = !1, icon: d, children: f, title: p, className: m, style: h, "data-testid": y, "aria-label": b, href: x, external: S = !1 }) {
+	let C = i(r), w = g[a] ?? g.surface, T = s ? w.solid[C] : w.soft[C], E = !!(l || d);
+	return /* @__PURE__ */ n(x ? "a" : "span", {
+		...x ? {
+			href: x,
+			target: S ? "_blank" : void 0,
+			rel: "noopener noreferrer"
+		} : {},
 		"data-testid": y,
 		"aria-label": b,
 		title: p,
-		className: e("inline-flex items-center rounded-sm font-semibold leading-[1.4] whitespace-nowrap", _[o], C, c && "font-mono", u && "uppercase tracking-wide", w && "gap-1", m),
+		className: e("inline-flex items-center rounded-sm font-semibold leading-[1.4] whitespace-nowrap", _[o], T, c && "font-mono", u && "uppercase tracking-wide", E && "gap-1", m),
 		style: h,
 		children: [
 			l && /* @__PURE__ */ t("span", {
 				"aria-hidden": !0,
-				className: e("relative inline-block rounded-full shrink-0", v[o], S.swatch[x]),
+				className: e("relative inline-block rounded-full shrink-0", v[o], w.swatch[C]),
 				children: l === "pulse" && /* @__PURE__ */ t("span", {
 					"aria-hidden": !0,
-					className: e("absolute inset-0 rounded-full animate-ping opacity-70", S.swatch[x])
+					className: e("absolute inset-0 rounded-full animate-ping opacity-70", w.swatch[C])
 				})
 			}),
 			d && /* @__PURE__ */ t("span", {

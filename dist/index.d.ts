@@ -2346,7 +2346,7 @@ export declare interface ChannelFilesPanelProps {
     'data-testid'?: string;
 }
 
-export declare function ChannelHeader({ name, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, size, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
+export declare function ChannelHeader({ name, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, size, as, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
 
 export declare interface ChannelHeaderProps {
     /** Display name of the channel or user */
@@ -2375,6 +2375,12 @@ export declare interface ChannelHeaderProps {
      * the full-width bar over a chat pane.
      */
     size?: 'md' | 'sm';
+    /**
+     * Element the bar renders as. Defaults to `'div'`. Pass `'header'` when a
+     * host uses this as the page's own site header, so it lands as a `banner`
+     * landmark instead of an anonymous `div`.
+     */
+    as?: 'div' | 'header';
     className?: string;
     'data-testid'?: string;
 }
@@ -3110,7 +3116,7 @@ export declare function ChevronIcon({ size, dir, ...rest }: GlyphProps & {
     dir?: 'up' | 'down' | 'left' | 'right';
 }): JSX.Element;
 
-export declare function Chip({ tone, palette, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
+export declare function Chip({ tone, palette, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, href, external, }: ChipProps): JSX.Element;
 
 /**
  * `tone` was already spoken for by the semantic scale, so the surface-family
@@ -3147,6 +3153,13 @@ export declare interface ChipProps {
     style?: CSSProperties;
     'data-testid'?: string;
     'aria-label'?: string;
+    /** When set, the chip renders as an `<a href>` instead of a `<span>`,
+     *  carrying the same classes. `rel="noopener noreferrer"` is always
+     *  applied — see `external` for `target="_blank"`. */
+    href?: string;
+    /** Only meaningful with `href`. Opens in a new tab (`target="_blank"`),
+     *  matching `Link`'s `external` prop. */
+    external?: boolean;
 }
 
 /** @see Tone — the library-wide semantic tone scale. */
@@ -7677,7 +7690,7 @@ export declare interface LogoutPageProps {
     clientName?: string;
 }
 
-export declare function LogStream({ lines, follow, showTimestamp, showLevel, showSource, title, headerSlot, emptyMessage, maxHeight, onClear, className, style, 'data-testid': testId, }: LogStreamProps): JSX.Element;
+export declare function LogStream({ lines, follow, showTimestamp, showLevel, showSource, title, headerSlot, emptyMessage, maxHeight, tone, onClear, className, style, 'data-testid': testId, }: LogStreamProps): JSX.Element;
 
 export declare interface LogStreamProps {
     lines: LogLine[];
@@ -7697,6 +7710,15 @@ export declare interface LogStreamProps {
     emptyMessage?: ReactNode;
     /** Optional max-height for the scroll region. */
     maxHeight?: string;
+    /**
+     * Colour family for the scroll region. `'code'` (default) is today's
+     * permanently-dark console — `--color-surface-subtle` with a `#0b1020`
+     * fallback for hosts that don't define it, `--color-text-primary` with a
+     * `#e5e7eb` fallback for the text. `'surface'` follows the host theme
+     * instead (`bg-surface-inset text-text-primary`), for a log panel embedded
+     * in an otherwise light-themed page rather than a terminal pane.
+     */
+    tone?: 'code' | 'surface';
     /** When provided, renders a "Clear" button in the header. */
     onClear?: () => void;
     className?: string;
@@ -12324,7 +12346,7 @@ export declare interface SubNavItem {
     groupScrollAfter?: number;
 }
 
-export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, children, }: SubNavLayoutProps): JSX.Element;
+export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, children, }: SubNavLayoutProps): JSX.Element;
 
 export declare interface SubNavLayoutProps {
     /** Section title shown at top of the rail. */
@@ -12369,6 +12391,22 @@ export declare interface SubNavLayoutProps {
      * active-state detection.
      */
     renderNavItem?: (item: SubNavItem, children: ReactNode, baseStyle: CSSProperties) => ReactNode;
+    /**
+     * `aria-label` for the primary rail's `<nav>`. Undefined (the default)
+     * renders today's markup with no label — set it when a page carries more
+     * than one nav landmark and a screen reader needs to tell them apart.
+     */
+    railLabel?: string;
+    /**
+     * Element for the content pane. Defaults to `'main'` — today's markup.
+     * A page that already sits inside its shell's own `<main id="main-content">`
+     * should pass `'section'` (with `contentLabel` set, so the region still has
+     * a name) to avoid a second `<main>` landmark.
+     */
+    contentAs?: 'main' | 'section' | 'div';
+    /** `aria-label` for the content pane. Only meaningful (and recommended)
+     *  when `contentAs` is `'section'`, so the named region reads as one. */
+    contentLabel?: string;
     /**
      * The main content area. When used with React Router, omit this and pass an
      * `<Outlet />` as children, or leave empty if the router renders children
@@ -12494,6 +12532,9 @@ export declare interface SyncStats {
     /** Sync duration in ms. */
     durationMs: number;
 }
+
+/** Short alias — `<T>` reads better inline in dense JSX than `<Text>`. */
+export declare const T: typeof Text_2;
 
 export declare interface TabItem {
     id: string;
@@ -12680,6 +12721,9 @@ export declare const TerminalLog: typeof LogStream;
 
 export declare type TerminalRendererStatus = keyof typeof TERMINAL_DECISIONS;
 
+declare function Text_2({ as, className, title, children, wrap, ...rest }: TextProps): JSX.Element;
+export { Text_2 as Text }
+
 export declare const Textarea: ForwardRefExoticComponent<TextareaProps & RefAttributes<HTMLTextAreaElement>>;
 
 export declare interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'rows'> {
@@ -12699,6 +12743,19 @@ export declare interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLT
 export declare function TextEditorRenderer(props: SectionRendererProps): JSX.Element;
 
 export declare const textFieldType: FieldTypeDefinition;
+
+export declare interface TextProps {
+    /** Element to render as. Default `'span'`. */
+    as?: 'span' | 'div' | 'p';
+    className?: string;
+    title?: string;
+    /** Forwarded to `Inline`'s own `wrap` (`flex-wrap` vs not). Default
+     *  `false` — a single line of text, matching a plain inline element. */
+    wrap?: boolean;
+    role?: string;
+    'aria-label'?: string;
+    children?: ReactNode;
+}
 
 export declare function TextReaderRenderer({ section, fragment }: SectionRendererProps): JSX.Element;
 
@@ -15246,19 +15303,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -15278,9 +15322,45 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -15314,42 +15394,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

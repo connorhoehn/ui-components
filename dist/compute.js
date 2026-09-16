@@ -1,5 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { t } from "./Chip-YhQI5B9P.js";
+import { t } from "./Chip-BENLwTlq.js";
 import { a as n, i as r, n as i, o as a } from "./FloatingPanel-CclkXzq4.js";
 import { t as o } from "./StatusDot-Bgx2zxgC.js";
 import { t as s } from "./InlinePopover-DFdI8hw1.js";
@@ -3705,18 +3705,13 @@ function Zt({ nodes: n, models: i = [], onOpenLab: a, onManage: o, className: l,
 		onClick: () => p((e) => !e),
 		"data-testid": u,
 		className: e("inline-flex items-center cursor-pointer rounded-md border border-border px-2 py-1", "bg-transparent hover:bg-surface-hover transition-colors duration-100", f && "bg-surface-hover", l),
-		children: /* @__PURE__ */ C(t, {
+		children: /* @__PURE__ */ S(t, {
 			size: "xs",
 			mono: !0,
 			tone: Gt[h],
 			dot: _ ? "pulse" : "static",
 			className: "bg-transparent px-0",
-			children: [
-				"⌂ ",
-				g,
-				" · ",
-				m
-			]
+			children: m === 0 ? `⌂ ${g}` : `⌂ ${g} · ${m}`
 		})
 	}), /* @__PURE__ */ S(s, {
 		trigger: d,

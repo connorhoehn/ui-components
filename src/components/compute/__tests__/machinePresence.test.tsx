@@ -38,6 +38,14 @@ describe('MachinePresenceMenu trigger', () => {
       screen.getByRole('button', { name: /demo-macbook, 2 active sessions, connected/ }),
     ).toBeInTheDocument();
   });
+
+  it('drops the session count from the chip text for an idle machine', () => {
+    const idle: MachineNode = { ...connected, sessions: [] };
+    render(<MachinePresenceMenu nodes={[idle]} />);
+    const trigger = screen.getByTestId('machine-presence-menu');
+    expect(trigger).toHaveTextContent('⌂ demo-macbook');
+    expect(trigger).not.toHaveTextContent('· 0');
+  });
 });
 
 describe('MachinePresenceMenu panel', () => {

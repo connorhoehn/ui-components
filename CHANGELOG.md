@@ -6,6 +6,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.273.0] — 2026-09-15
+
+### Added — `./shared`
+
+- **`Text` (alias `T`)** — a styled text primitive (`Inline` in `as="span"`
+  mode) so a page needing an occasional small caption or muted label has a
+  real composite to reach for instead of a bare `<span style={{...}}>`.
+  Several downstream consumers had already hand-rolled the identical
+  three-line shim around `Inline` for this exact reason. `as?: 'span' | 'div'
+  | 'p'` (default `'span'`), `className`, `title`, `wrap`, `role`,
+  `aria-label`.
+- **`SubNavLayout`**: `railLabel?: string` — sets `aria-label` on the primary
+  rail's `<nav>` (undefined by default, matching today's markup) for pages
+  that need to distinguish it from other nav landmarks.
+- **`SubNavLayout`**: `contentAs?: 'main' | 'section' | 'div'` (default
+  `'main'`, today's markup) and `contentLabel?: string`. A page that already
+  sits inside its shell's own `<main id="main-content">` was getting a
+  second, nested `<main>` from the content pane — a real if minor
+  screen-reader navigation defect on every nested-rail page (Observability,
+  Ingest, Identity, Distillation). Pass `contentAs="section"` with
+  `contentLabel` set so the region still has a name.
+- **`ChannelHeader`**: `as?: 'div' | 'header'` (default `'div'`) — lets a host
+  using this bar as its own page header render it as a `banner` landmark.
+- **`Chip`**: `href?: string` + `external?: boolean` — renders as an `<a
+  href>` with the same classes instead of a `<span>`, with
+  `rel="noopener noreferrer"` always applied and `target="_blank"` when
+  `external` is set (same shape as `Link`'s prop of the same name), for a
+  chip that is also a link rather than a static label.
+- **`LogStream`**: `tone?: 'code' | 'surface'` (default `'code'`, today's
+  permanently-dark console). `'surface'` follows the host theme instead
+  (`bg-surface-inset text-text-primary`), for a log panel embedded in an
+  otherwise light-themed page rather than a terminal pane.
+
+### Fixed — `./compute`
+
+- **`MachinePresenceMenu`'s trigger chip showed `· 0` for a connected-idle
+  machine.** A zero next to a static dot reads as broken rather than as "no
+  sessions" — the dot's tone and the trigger's `title` already say
+  "connected". The chip text now drops the count entirely when it is zero
+  (`⌂ demo-macbook`, not `⌂ demo-macbook · 0`).
+
 ## [2.120.3] — 2026-09-02
 
 ### Fixed — `./diagram`

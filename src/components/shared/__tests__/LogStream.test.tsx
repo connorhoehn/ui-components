@@ -107,6 +107,20 @@ describe('LogStream', () => {
   it('TerminalLog is an alias for LogStream', () => {
     expect(TerminalLog).toBe(LogStream);
   });
+
+  it('uses the dark console classes by default (tone="code")', () => {
+    render(<LogStream lines={sample} />);
+    const scroll = screen.getByTestId('log-stream-scroll');
+    expect(scroll).toHaveClass('bg-[var(--color-surface-subtle,#0b1020)]');
+    expect(scroll).not.toHaveClass('bg-surface-inset');
+  });
+
+  it('applies the surface classes when tone="surface"', () => {
+    render(<LogStream lines={sample} tone="surface" />);
+    const scroll = screen.getByTestId('log-stream-scroll');
+    expect(scroll).toHaveClass('bg-surface-inset', 'text-text-primary');
+    expect(scroll).not.toHaveClass('bg-[var(--color-surface-subtle,#0b1020)]');
+  });
 });
 
 // ---------------------------------------------------------------------------

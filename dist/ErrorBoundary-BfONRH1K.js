@@ -1,7 +1,7 @@
 import { n as e, r as t, t as n } from "./useDocumentTypes-BUXMPyPU.js";
 import { t as r } from "./cn-DhjIN-s0.js";
 import { n as i } from "./SegmentedControl-pVesnE3W.js";
-import { t as a } from "./Chip-YhQI5B9P.js";
+import { t as a } from "./Chip-BENLwTlq.js";
 import { t as o } from "./Modal-CyoyiNKN.js";
 import { t as s } from "./Input-DLknWXri.js";
 import { t as ee } from "./Textarea-Dz4doxTv.js";

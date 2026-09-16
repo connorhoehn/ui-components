@@ -98,6 +98,28 @@ describe('Chip', () => {
     expect(screen.getByTestId('leading-icon')).toBeInTheDocument();
   });
 
+  it('renders an anchor with the chip classes when href is set', () => {
+    render(<Chip href="https://example.com" data-testid="chip" tone="success">Docs</Chip>);
+    const chip = screen.getByTestId('chip');
+    expect(chip.tagName).toBe('A');
+    expect(chip).toHaveAttribute('href', 'https://example.com');
+    expect(chip).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(chip).not.toHaveAttribute('target');
+    expect(chip).toHaveClass('bg-success-bg', 'text-success-fg');
+  });
+
+  it('opens in a new tab when href + external are set', () => {
+    render(<Chip href="https://example.com" external data-testid="chip">Docs</Chip>);
+    const chip = screen.getByTestId('chip');
+    expect(chip).toHaveAttribute('target', '_blank');
+    expect(chip).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
+  it('renders a <span> when href is not set', () => {
+    render(<Chip data-testid="chip">Label</Chip>);
+    expect(screen.getByTestId('chip').tagName).toBe('SPAN');
+  });
+
   it('combines dot + icon + uppercase + tone consistently', () => {
     render(
       <Chip

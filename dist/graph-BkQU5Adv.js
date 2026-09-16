@@ -2,7 +2,7 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Button-BhS4-R6_.js";
 import { t as n } from "./Card-RQCeAPNU.js";
 import { t as r } from "./IconButton-C3DMtvSx.js";
-import { t as i } from "./Chip-YhQI5B9P.js";
+import { t as i } from "./Chip-BENLwTlq.js";
 import { t as a } from "./EmptyState-JzzL2z1E.js";
 import { t as o } from "./Spinner-CLcq5z8N.js";
 import { t as s } from "./SkeletonCard-CGe8XFPB.js";

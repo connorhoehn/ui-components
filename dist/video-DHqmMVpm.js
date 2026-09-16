@@ -3,7 +3,7 @@ import { t } from "./useEventCallback-Cwx9QVSi.js";
 import { n, r } from "./useAudioRecorder-BhPxnLmg.js";
 import { t as i } from "./Button-BhS4-R6_.js";
 import { t as a } from "./IconButton-C3DMtvSx.js";
-import { t as o } from "./Chip-YhQI5B9P.js";
+import { t as o } from "./Chip-BENLwTlq.js";
 import { t as s } from "./overlayStack-BFH9XXvN.js";
 import { t as c } from "./Modal-CyoyiNKN.js";
 import { n as l, t as u } from "./PermissionDeniedCard-BMjG5fxY.js";

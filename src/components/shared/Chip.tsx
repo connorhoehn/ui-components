@@ -66,6 +66,13 @@ export interface ChipProps {
   style?: CSSProperties;
   'data-testid'?: string;
   'aria-label'?: string;
+  /** When set, the chip renders as an `<a href>` instead of a `<span>`,
+   *  carrying the same classes. `rel="noopener noreferrer"` is always
+   *  applied — see `external` for `target="_blank"`. */
+  href?: string;
+  /** Only meaningful with `href`. Opens in a new tab (`target="_blank"`),
+   *  matching `Link`'s `external` prop. */
+  external?: boolean;
 }
 
 export default function Chip({
@@ -83,13 +90,20 @@ export default function Chip({
   style,
   'data-testid': testId,
   'aria-label': ariaLabel,
+  href,
+  external = false,
 }: ChipProps) {
   const key = toneKey(tone);
   const family = PALETTE[palette] ?? PALETTE.surface;
   const paletteClasses = solid ? family.solid[key] : family.soft[key];
   const hasAdornment = !!(dot || icon);
+  const Root = href ? 'a' : 'span';
+  const rootProps = href
+    ? { href, target: external ? '_blank' : undefined, rel: 'noopener noreferrer' }
+    : {};
   return (
-    <span
+    <Root
+      {...rootProps}
       data-testid={testId}
       aria-label={ariaLabel}
       title={title}
@@ -130,6 +144,6 @@ export default function Chip({
         </span>
       )}
       {children}
-    </span>
+    </Root>
   );
 }

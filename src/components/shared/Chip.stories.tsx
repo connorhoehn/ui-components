@@ -52,3 +52,10 @@ export const CodePalette: Story = {
     </div>
   ),
 };
+
+/** `href` renders the chip as an `<a>` with the same classes — a linked tag
+ *  rather than a static label. `external` adds `target="_blank"`, matching
+ *  `Link`'s prop of the same name; `rel="noopener noreferrer"` is always on. */
+export const AsLink: Story = {
+  args: { tone: 'info', href: 'https://example.com', children: 'View docs' },
+};

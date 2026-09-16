@@ -49,6 +49,12 @@ export interface ChannelHeaderProps {
    * the full-width bar over a chat pane.
    */
   size?: 'md' | 'sm';
+  /**
+   * Element the bar renders as. Defaults to `'div'`. Pass `'header'` when a
+   * host uses this as the page's own site header, so it lands as a `banner`
+   * landmark instead of an anonymous `div`.
+   */
+  as?: 'div' | 'header';
   className?: string;
   'data-testid'?: string;
 }
@@ -63,12 +69,14 @@ export function ChannelHeader({
   online,
   onMembersClick,
   size = 'md',
+  as = 'div',
   className,
   'data-testid': testId,
 }: ChannelHeaderProps) {
   const small = size === 'sm';
+  const Root = as;
   return (
-    <div
+    <Root
       data-testid={testId}
       data-size={size}
       className={cn(
@@ -161,7 +169,7 @@ export function ChannelHeader({
           {actions}
         </div>
       )}
-    </div>
+    </Root>
   );
 }
 

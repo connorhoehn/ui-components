@@ -127,4 +127,32 @@ describe('SubNavLayout — focus handoff on group collapse', () => {
     expect(bodyId).toBeTruthy();
     expect(document.getElementById(bodyId as string)).not.toBeNull();
   });
+
+  it('renders no aria-label on the primary nav by default', () => {
+    render(<SubNavLayout title="T" items={FLAT}>c</SubNavLayout>);
+    expect(screen.getByRole('navigation')).not.toHaveAttribute('aria-label');
+  });
+
+  it('applies railLabel as the primary nav aria-label', () => {
+    render(<SubNavLayout title="T" items={FLAT} railLabel="Ingest sections">c</SubNavLayout>);
+    expect(screen.getByRole('navigation', { name: 'Ingest sections' })).toBeInTheDocument();
+  });
+
+  it('renders the content pane as <main> by default and as <section> with contentLabel when contentAs is set', () => {
+    const { container, rerender } = render(
+      <SubNavLayout title="T" items={FLAT}>main content</SubNavLayout>,
+    );
+    expect(container.querySelector('main')).not.toBeNull();
+    expect(container.querySelector('section')).toBeNull();
+
+    rerender(
+      <SubNavLayout title="T" items={FLAT} contentAs="section" contentLabel="Distillation">
+        main content
+      </SubNavLayout>,
+    );
+    expect(container.querySelector('main')).toBeNull();
+    const section = container.querySelector('section');
+    expect(section).not.toBeNull();
+    expect(section).toHaveAttribute('aria-label', 'Distillation');
+  });
 });

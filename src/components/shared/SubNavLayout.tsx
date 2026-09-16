@@ -83,6 +83,22 @@ export interface SubNavLayoutProps {
    */
   renderNavItem?: (item: SubNavItem, children: ReactNode, baseStyle: CSSProperties) => ReactNode;
   /**
+   * `aria-label` for the primary rail's `<nav>`. Undefined (the default)
+   * renders today's markup with no label — set it when a page carries more
+   * than one nav landmark and a screen reader needs to tell them apart.
+   */
+  railLabel?: string;
+  /**
+   * Element for the content pane. Defaults to `'main'` — today's markup.
+   * A page that already sits inside its shell's own `<main id="main-content">`
+   * should pass `'section'` (with `contentLabel` set, so the region still has
+   * a name) to avoid a second `<main>` landmark.
+   */
+  contentAs?: 'main' | 'section' | 'div';
+  /** `aria-label` for the content pane. Only meaningful (and recommended)
+   *  when `contentAs` is `'section'`, so the named region reads as one. */
+  contentLabel?: string;
+  /**
    * The main content area. When used with React Router, omit this and pass an
    * `<Outlet />` as children, or leave empty if the router renders children
    * directly. Defaults to rendering children.
@@ -120,16 +136,18 @@ function RailNav({
   storageKey,
   title,
   renderNavItem,
+  railLabel,
 }: {
   items: SubNavItem[];
   storageKey: string;
   title: string;
   renderNavItem?: SubNavLayoutProps['renderNavItem'];
+  railLabel?: string;
 }) {
   const groups = useMemo(() => buildGroups(items), [items]);
   const isGrouped = groups.some((g) => g.name !== null);
   return (
-    <nav className="flex-1 overflow-y-auto py-1">
+    <nav aria-label={railLabel} className="flex-1 overflow-y-auto py-1">
       {isGrouped ? (
         groups.map((g) =>
           g.name === null ? (
@@ -163,8 +181,12 @@ export function SubNavLayout({
   secondaryStorageKey,
   secondaryRailWidth = 200,
   renderNavItem,
+  railLabel,
+  contentAs = 'main',
+  contentLabel,
   children,
 }: SubNavLayoutProps) {
+  const Content = contentAs;
   const hasSecondary = secondaryItems && secondaryItems.length > 0;
 
   return (
@@ -185,7 +207,7 @@ export function SubNavLayout({
             {railHeader}
           </div>
         )}
-        <RailNav items={items} storageKey={storageKey} title={title} renderNavItem={renderNavItem} />
+        <RailNav items={items} storageKey={storageKey} title={title} renderNavItem={renderNavItem} railLabel={railLabel} />
       </aside>
 
       {/* Secondary rail — width is prop-driven, keep inline */}
@@ -208,9 +230,9 @@ export function SubNavLayout({
         </aside>
       )}
 
-      <main className="flex-1 min-w-0 overflow-auto p-6">
+      <Content aria-label={contentLabel} className="flex-1 min-w-0 overflow-auto p-6">
         {children}
-      </main>
+      </Content>
     </div>
   );
 }

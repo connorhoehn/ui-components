@@ -51,6 +51,9 @@ export const SingleMachine: Story = {
  * Connected but idle: paired, heartbeating, nothing running. The chip stays
  * (the user asked "is my machine connected?") but the dot goes static and the
  * panel shows the placeholder rather than an empty list pretending to load.
+ * The chip text also drops the session count entirely (`⌂ demo-macbook`, not
+ * `⌂ demo-macbook · 0`) — a zero next to a static dot reads as broken, and
+ * the dot's tone plus the `title` already say "connected".
  */
 export const ConnectedIdle: Story = {
   args: {

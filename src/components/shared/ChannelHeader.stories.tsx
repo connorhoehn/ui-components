@@ -56,3 +56,13 @@ export const WithActions: Story = {
     ),
   },
 };
+
+/** `as="header"` — for a host using this bar as the page's own site header,
+ *  so it lands as a `banner` landmark rather than an anonymous `div`. */
+export const AsSiteHeader: Story = {
+  args: {
+    name: 'general',
+    memberCount: 24,
+    as: 'header',
+  },
+};

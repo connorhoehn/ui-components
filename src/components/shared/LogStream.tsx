@@ -44,6 +44,15 @@ export interface LogStreamProps {
   emptyMessage?: ReactNode;
   /** Optional max-height for the scroll region. */
   maxHeight?: string;
+  /**
+   * Colour family for the scroll region. `'code'` (default) is today's
+   * permanently-dark console — `--color-surface-subtle` with a `#0b1020`
+   * fallback for hosts that don't define it, `--color-text-primary` with a
+   * `#e5e7eb` fallback for the text. `'surface'` follows the host theme
+   * instead (`bg-surface-inset text-text-primary`), for a log panel embedded
+   * in an otherwise light-themed page rather than a terminal pane.
+   */
+  tone?: 'code' | 'surface';
   /** When provided, renders a "Clear" button in the header. */
   onClear?: () => void;
   className?: string;
@@ -75,6 +84,7 @@ export function LogStream({
   headerSlot,
   emptyMessage = 'No log lines yet.',
   maxHeight,
+  tone = 'code',
   onClear,
   className,
   style,
@@ -151,7 +161,9 @@ export function LogStream({
           className={cn(
             'flex-1 overflow-y-auto',
             'font-mono text-[12px] leading-[1.55]',
-            'bg-[var(--color-surface-subtle,#0b1020)] text-[var(--color-text-primary,#e5e7eb)]',
+            tone === 'surface'
+              ? 'bg-surface-inset text-text-primary'
+              : 'bg-[var(--color-surface-subtle,#0b1020)] text-[var(--color-text-primary,#e5e7eb)]',
             'py-2',
           )}
           style={{ maxHeight }}

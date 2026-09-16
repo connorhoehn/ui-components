@@ -191,7 +191,7 @@ export function MachinePresenceMenu({
           dot={working ? 'pulse' : 'static'}
           className="bg-transparent px-0"
         >
-          ⌂ {label} · {total}
+          {total === 0 ? `⌂ ${label}` : `⌂ ${label} · ${total}`}
         </Chip>
       </button>
       <InlinePopover

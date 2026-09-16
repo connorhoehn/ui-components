@@ -55,6 +55,18 @@ describe('ChannelHeader', () => {
     const img = screen.getByRole('img', { name: 'Alice' });
     expect(img).toHaveAttribute('src', 'https://example.com/avatar.png');
   });
+
+  it('renders a <div> by default', () => {
+    const { container } = render(<ChannelHeader name="general" data-testid="ch" />);
+    expect(screen.getByTestId('ch').tagName).toBe('DIV');
+    expect(container.querySelector('header')).toBeNull();
+  });
+
+  it('renders a <header> when as="header"', () => {
+    render(<ChannelHeader name="general" as="header" data-testid="ch" />);
+    expect(screen.getByTestId('ch').tagName).toBe('HEADER');
+    expect(screen.getByRole('banner')).toBeInTheDocument();
+  });
 });
 
 
