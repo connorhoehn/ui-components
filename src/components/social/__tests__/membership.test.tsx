@@ -168,3 +168,11 @@ describe('ConversationSurface members view', () => {
     expect(capabilityNamesFor(['chat', 'members', 'files'])).toEqual(['conversation.files']);
   });
 });
+
+describe('membershipRefFromMetadata names map', () => {
+  it('reads names keyed by user id, in userIds order', async () => {
+    const { membershipRefFromMetadata } = await import('../ChatPanel');
+    const ref = membershipRefFromMetadata({ kind: 'membership', event: 'added', actorId: 'eve', userIds: ['bob', 'carol'], names: { carol: 'Carol Johnson', bob: 'Bob Martinez' } });
+    expect(ref?.names).toEqual(['Bob Martinez', 'Carol Johnson']);
+  });
+});

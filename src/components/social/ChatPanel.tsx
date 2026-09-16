@@ -535,7 +535,17 @@ export function membershipRefFromMetadata(metadata: Record<string, unknown> | un
   if (!event) return null;
   const actorId = typeof metadata.actorId === 'string' ? metadata.actorId : '';
   const userIds = Array.isArray(metadata.userIds) ? metadata.userIds.filter((u): u is string => typeof u === 'string') : [];
-  const names = Array.isArray(metadata.names) ? metadata.names.filter((n): n is string => typeof n === 'string') : undefined;
+  // The gateway stamps names as a map keyed by user id; an array in the
+  // order of `userIds` is accepted too.
+  const rawNames = metadata.names;
+  const names = Array.isArray(rawNames)
+    ? rawNames.filter((n): n is string => typeof n === 'string')
+    : rawNames && typeof rawNames === 'object'
+      ? (Array.isArray(metadata.userIds) ? metadata.userIds : []).map((id) => {
+          const n = (rawNames as Record<string, unknown>)[String(id)];
+          return typeof n === 'string' && n ? n : String(id);
+        })
+      : undefined;
   const h = metadata.history as { mode?: unknown; days?: unknown } | undefined;
   const history: MembershipHistory | undefined =
     h && (h.mode === 'none' || h.mode === 'all' || h.mode === 'days')

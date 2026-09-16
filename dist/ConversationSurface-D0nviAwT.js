@@ -1518,17 +1518,20 @@ function qe(e) {
 	if (!e || e.kind !== "membership") return null;
 	let t = e.event === "removed" ? "removed" : e.event === "added" ? "added" : null;
 	if (!t) return null;
-	let n = typeof e.actorId == "string" ? e.actorId : "", r = Array.isArray(e.userIds) ? e.userIds.filter((e) => typeof e == "string") : [], i = Array.isArray(e.names) ? e.names.filter((e) => typeof e == "string") : void 0, a = e.history, o = a && (a.mode === "none" || a.mode === "all" || a.mode === "days") ? {
-		mode: a.mode,
-		...typeof a.days == "number" ? { days: a.days } : {}
+	let n = typeof e.actorId == "string" ? e.actorId : "", r = Array.isArray(e.userIds) ? e.userIds.filter((e) => typeof e == "string") : [], i = e.names, a = Array.isArray(i) ? i.filter((e) => typeof e == "string") : i && typeof i == "object" ? (Array.isArray(e.userIds) ? e.userIds : []).map((e) => {
+		let t = i[String(e)];
+		return typeof t == "string" && t ? t : String(e);
+	}) : void 0, o = e.history, s = o && (o.mode === "none" || o.mode === "all" || o.mode === "days") ? {
+		mode: o.mode,
+		...typeof o.days == "number" ? { days: o.days } : {}
 	} : void 0;
 	return {
 		event: t,
 		actorId: n,
 		...typeof e.actorName == "string" ? { actorName: e.actorName } : {},
 		userIds: r,
-		...i && i.length ? { names: i } : {},
-		...o ? { history: o } : {}
+		...a && a.length ? { names: a } : {},
+		...s ? { history: s } : {}
 	};
 }
 function Je(e) {
