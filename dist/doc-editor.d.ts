@@ -1646,7 +1646,7 @@ export declare const SUGGESTION_AUTHORING_MODES: {
 /** What the reader's typing currently does. */
 export declare type SuggestionAuthoringMode = 'editing' | 'suggesting' | 'viewing';
 
-export declare function SuggestionCard({ kind, author, when, deletedText, insertedText, active, onFocus, onAccept, onReject, className, 'data-testid': testId, }: SuggestionCardProps): JSX.Element;
+export declare function SuggestionCard({ kind, author, when, context, deletedText, insertedText, insertedBlocks, deletedBlocks, active, onFocus, onAccept, onReject, className, 'data-testid': testId, }: SuggestionCardProps): JSX.Element;
 
 /** What kind of change is being proposed. */
 export declare type SuggestionCardKind = 'insert' | 'delete' | 'replace' | 'modify';
@@ -1657,10 +1657,15 @@ export declare interface SuggestionCardProps {
     author: string;
     /** When it was proposed, epoch ms. */
     when?: number | null;
-    /** Text proposed for removal. */
+    /** Where in the document, e.g. a section title. */
+    context?: string;
+    /** Text proposed for removal — the whole run, for hosts without block detail. */
     deletedText?: string;
-    /** Text proposed for addition. */
+    /** Text proposed for addition — the whole run. */
     insertedText?: string;
+    /** The same, one entry per block. Preferred over `insertedText` when given. */
+    insertedBlocks?: readonly string[];
+    deletedBlocks?: readonly string[];
     /** True for the suggestion the reader is currently sitting on. */
     active?: boolean;
     /** Scroll/select the change in the document. */
@@ -1699,6 +1704,28 @@ export declare interface SuggestionModeControlProps {
     openCount?: number | null;
     /** Read-only documents, finalized documents, a reader without permission. */
     disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function SuggestionReviewList({ count, children, onAcceptAll, onRejectAll, error, headerExtra, emptyTitle, emptyBody, title, className, 'data-testid': testId, }: SuggestionReviewListProps): JSX.Element;
+
+export declare interface SuggestionReviewListProps {
+    /** How many are open — the count in the header. */
+    count: number;
+    /** The cards. */
+    children?: ReactNode;
+    /** Present, the header offers Accept all / Reject all. Absent for a reader who cannot resolve. */
+    onAcceptAll?: () => void;
+    onRejectAll?: () => void;
+    /** Something a resolution just refused, above the list. */
+    error?: string | null;
+    /** Something else the header should carry — a mode switch, say. */
+    headerExtra?: ReactNode;
+    /** Copy for the empty list. */
+    emptyTitle?: string;
+    emptyBody?: string;
+    title?: string;
     className?: string;
     'data-testid'?: string;
 }
@@ -2156,9 +2183,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -2166,12 +2196,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2205,9 +2242,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -2218,16 +2255,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

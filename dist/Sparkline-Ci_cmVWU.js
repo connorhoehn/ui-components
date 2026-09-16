@@ -1,5 +1,4 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import "react";
 import { Fragment as t, jsx as n, jsxs as r } from "react/jsx-runtime";
 //#region src/components/shared/eventGlyphs.ts
 var i = "var(--color-success)", a = "var(--color-danger)", o = "var(--color-warning)", s = "var(--color-info)", c = "var(--color-text-tertiary)", l = "var(--color-primary)", u = "var(--color-text-primary)", d = {
@@ -318,27 +317,4 @@ function g({ data: e, width: t = 80, height: r = 20, color: i = "var(--color-pri
 	});
 }
 //#endregion
-//#region src/components/shared/CardHeader.tsx
-function _({ title: t, subtitle: i, meta: a, action: o, inset: s = !1, className: c }) {
-	return /* @__PURE__ */ r("div", {
-		className: e("flex items-center justify-between gap-4", s && "px-3.5 pt-3 pb-2.5 border-b border-[var(--color-border)]", c),
-		children: [/* @__PURE__ */ r("div", {
-			className: "min-w-0",
-			children: [/* @__PURE__ */ r("div", {
-				className: "flex items-center gap-2 min-w-0",
-				children: [/* @__PURE__ */ n("h3", {
-					className: "text-sm font-semibold text-[var(--color-text-primary)] truncate",
-					children: t
-				}), a]
-			}), i && /* @__PURE__ */ n("p", {
-				className: "text-xs text-[var(--color-text-tertiary)] mt-0.5",
-				children: i
-			})]
-		}), o && /* @__PURE__ */ n("div", {
-			className: "flex-shrink-0",
-			children: o
-		})]
-	});
-}
-//#endregion
-export { p as a, d as i, g as n, f as o, h as r, _ as t };
+export { f as a, p as i, h as n, d as r, g as t };

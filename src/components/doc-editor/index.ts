@@ -153,3 +153,5 @@ export { SuggestionModeControl, SUGGESTION_AUTHORING_MODES } from './SuggestionM
 export type { SuggestionModeControlProps, SuggestionAuthoringMode } from './SuggestionModeControl';
 export { SuggestionCard } from './SuggestionCard';
 export type { SuggestionCardProps, SuggestionCardKind } from './SuggestionCard';
+export { SuggestionReviewList } from './SuggestionReviewList';
+export type { SuggestionReviewListProps } from './SuggestionReviewList';

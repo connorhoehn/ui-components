@@ -16,18 +16,19 @@ import "./ConfirmDialog-Cd8NZEXi.js";
 import { t as p } from "./EmptyState-JzzL2z1E.js";
 import "./PermissionDeniedCard-BMjG5fxY.js";
 import { t as m } from "./Spinner-CLcq5z8N.js";
-import { n as h, t as g } from "./CardHeader-gV2Grsqb.js";
-import { i as _, n as v, r as y, t as b } from "./focusTrap-CmWJlptm.js";
+import { t as h } from "./Sparkline-Ci_cmVWU.js";
+import { i as g, n as _, r as v, t as y } from "./focusTrap-CmWJlptm.js";
 import "./SkeletonCard-CGe8XFPB.js";
-import { c as x, i as S, s as C } from "./ChannelHeader-C0n2KYEb.js";
+import { c as b, i as x, s as S } from "./ChannelHeader-C0n2KYEb.js";
 import "./FileUploadDrop-BRRQBXdS.js";
 import "./DockedPanelContext-pH9A5z1h.js";
-import { t as w } from "./Input-DLknWXri.js";
-import { t as T } from "./Textarea-Dz4doxTv.js";
-import { n as E, t as D } from "./Avatar-BzicCOft.js";
+import { t as C } from "./Input-DLknWXri.js";
+import { t as w } from "./Textarea-Dz4doxTv.js";
+import { n as T, t as E } from "./Avatar-BzicCOft.js";
 import "./FloatingPanel-CclkXzq4.js";
 import "./StatusDot-Bgx2zxgC.js";
 import "./InlineAlert-Myf3oJZf.js";
+import { t as D } from "./CardHeader-CsPhVpCm.js";
 import "./Badge-NPe_5OA9.js";
 import "./PresenceAvatars-BkzMACtv.js";
 import { t as O } from "./InlinePopover-DFdI8hw1.js";
@@ -828,7 +829,7 @@ function We({ targetId: e = "main-content", children: t = "Skip to main content"
 	return /* @__PURE__ */ L("a", {
 		href: `#${e}`,
 		className: n,
-		style: i ? Ue : C,
+		style: i ? Ue : S,
 		onFocus: () => a(!0),
 		onBlur: () => a(!1),
 		onClick: () => {
@@ -860,7 +861,7 @@ function Ge(e, t) {
 }
 function Ke({ message: e, politeness: t = "polite", atomic: n = !0, throttleMs: r = 0, role: i = "status", "data-testid": a }) {
 	let o = Ge(e, r);
-	return /* @__PURE__ */ L(x, {
+	return /* @__PURE__ */ L(b, {
 		as: "div",
 		"data-testid": a,
 		children: /* @__PURE__ */ L("div", {
@@ -1035,7 +1036,7 @@ function W({ reason: t, title: n, label: r, tone: i = "neutral", meta: a, contex
 //#endregion
 //#region src/components/shared/TaskComposer.tsx
 function Ze({ title: t, description: r, titlePlaceholder: i = "Title", promptPlaceholder: a = "What should it do?", suggestions: o, suggestionsTitle: s = "Suggested next", suggestionsLoading: c = !1, suggestionsEmpty: l, onSubmit: u, onChooseSuggestion: d, submitLabel: f = "Queue", hint: p, busy: m = !1, className: h, "data-testid": g }) {
-	let [_, v] = F(""), [y, b] = F(""), [x, S] = F(void 0), C = M(), E = M();
+	let [_, v] = F(""), [y, b] = F(""), [x, S] = F(void 0), T = M(), E = M();
 	j(() => {
 		x && o && !o.some((e) => e.id === x) && S(void 0);
 	}, [x, o]);
@@ -1102,11 +1103,11 @@ function Ze({ title: t, description: r, titlePlaceholder: i = "Title", promptPla
 				children: [
 					/* @__PURE__ */ L("label", {
 						className: "sr-only",
-						htmlFor: C,
+						htmlFor: T,
 						children: i
 					}),
-					/* @__PURE__ */ L(w, {
-						id: C,
+					/* @__PURE__ */ L(C, {
+						id: T,
 						value: _,
 						onChange: (e) => v(e.target.value),
 						placeholder: i,
@@ -1117,7 +1118,7 @@ function Ze({ title: t, description: r, titlePlaceholder: i = "Title", promptPla
 						htmlFor: E,
 						children: a
 					}),
-					/* @__PURE__ */ L(T, {
+					/* @__PURE__ */ L(w, {
 						id: E,
 						value: y,
 						onChange: (e) => b(e.target.value),
@@ -1161,7 +1162,7 @@ function $e({ name: t, title: r, subtitle: i, imageUrl: a, matchedSkills: o, oth
 		children: [
 			/* @__PURE__ */ R("div", {
 				className: "flex items-center gap-2.5 min-w-0",
-				children: [/* @__PURE__ */ L(D, {
+				children: [/* @__PURE__ */ L(E, {
 					name: t,
 					size: 36,
 					...a ? { src: a } : {}
@@ -1309,7 +1310,7 @@ function tt({ question: t, context: r, origin: i = [], askedAt: a, status: o, an
 			}),
 			o === "pending" && l && /* @__PURE__ */ R("div", {
 				className: "flex flex-col gap-2",
-				children: [/* @__PURE__ */ L(T, {
+				children: [/* @__PURE__ */ L(w, {
 					value: _,
 					onChange: (e) => v(e.target.value),
 					placeholder: d,
@@ -1700,7 +1701,7 @@ function dt({ name: t, label: n, avatarSize: r = 20, avatarColor: a, presence: o
 		className: e("inline-flex items-center gap-1.5 rounded-full px-1.5 py-0.5 text-[12px] text-text-primary", s && "hover:bg-surface-hover cursor-pointer transition-colors", !s && "cursor-default", c),
 		style: l,
 		children: [
-			/* @__PURE__ */ L(D, {
+			/* @__PURE__ */ L(E, {
 				name: t,
 				size: r,
 				color: a
@@ -1749,7 +1750,7 @@ function pt({ open: t, onClose: n, title: r, subtitle: i, width: a = 460, childr
 				m() && n();
 				return;
 			}
-			m() && y(e, u.current);
+			m() && v(e, u.current);
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
 	}, [
@@ -1757,8 +1758,8 @@ function pt({ open: t, onClose: n, title: r, subtitle: i, width: a = 460, childr
 		n,
 		m
 	]), j(() => {
-		if (t) return f.current = typeof document < "u" ? document.activeElement : null, b(u.current), () => {
-			v(f.current), f.current = null;
+		if (t) return f.current = typeof document < "u" ? document.activeElement : null, y(u.current), () => {
+			_(f.current), f.current = null;
 		};
 	}, [t]), t ? B(/* @__PURE__ */ R("div", {
 		className: "fixed inset-0 z-[9000]",
@@ -1944,25 +1945,25 @@ var _t = {
 	error: "text-[var(--color-danger,#dc2626)]"
 };
 function X({ lines: t, follow: n = !0, showTimestamp: i = !0, showLevel: a = !0, showSource: o = !0, title: s = "Log stream", headerSlot: c, emptyMessage: l = "No log lines yet.", maxHeight: u, onClear: d, className: f, style: p, "data-testid": m = "log-stream" }) {
-	let h = P(null), [_, v] = F(!1);
+	let h = P(null), [g, _] = F(!1);
 	j(() => {
-		if (!n || _) return;
+		if (!n || g) return;
 		let e = h.current;
 		e && (e.scrollTop = e.scrollHeight);
 	}, [
 		t,
 		n,
-		_
+		g
 	]);
-	let y = () => {
+	let v = () => {
 		let e = h.current;
 		if (!e) return;
 		let t = e.scrollHeight - e.scrollTop - e.clientHeight < 24;
-		v(!t);
-	}, b = () => {
+		_(!t);
+	}, y = () => {
 		let e = h.current;
-		e && (e.scrollTop = e.scrollHeight, v(!1));
-	}, x = /* @__PURE__ */ R("div", {
+		e && (e.scrollTop = e.scrollHeight, _(!1));
+	}, b = /* @__PURE__ */ R("div", {
 		className: "flex items-center gap-2",
 		children: [/* @__PURE__ */ R("span", {
 			className: "text-[10px] text-[var(--color-text-tertiary)]",
@@ -1986,15 +1987,15 @@ function X({ lines: t, follow: n = !0, showTimestamp: i = !0, showLevel: a = !0,
 		style: p,
 		children: [s !== null && /* @__PURE__ */ L("div", {
 			className: "px-4 py-3 border-b border-[var(--color-border)]",
-			children: /* @__PURE__ */ L(g, {
+			children: /* @__PURE__ */ L(D, {
 				title: s,
-				meta: c ?? x
+				meta: c ?? b
 			})
 		}), /* @__PURE__ */ R("div", {
 			className: "relative flex-1 min-h-0 flex",
 			children: [/* @__PURE__ */ L("div", {
 				ref: h,
-				onScroll: y,
+				onScroll: v,
 				role: "log",
 				"aria-live": n ? "polite" : "off",
 				"data-testid": `${m}-scroll`,
@@ -2036,10 +2037,10 @@ function X({ lines: t, follow: n = !0, showTimestamp: i = !0, showLevel: a = !0,
 						]
 					}, t.id);
 				})
-			}), n && _ && /* @__PURE__ */ L("button", {
+			}), n && g && /* @__PURE__ */ L("button", {
 				type: "button",
 				"data-testid": `${m}-jump`,
-				onClick: b,
+				onClick: y,
 				className: e("absolute bottom-3 left-1/2 -translate-x-1/2", "px-3 py-1 text-[10px] font-semibold uppercase tracking-wide", "bg-primary text-white rounded-full border-none cursor-pointer", "shadow-[0_2px_8px_rgba(0,0,0,0.25)]"),
 				children: "Jump to live ↓"
 			})]
@@ -2276,7 +2277,7 @@ function Ot({ role: t, content: n, toolCalls: r, streaming: i = !1, agentName: a
 				children: n ? s ? s(n) : /* @__PURE__ */ L("span", {
 					className: "whitespace-pre-wrap",
 					children: n
-				}) : i ? /* @__PURE__ */ L(S, {}) : null
+				}) : i ? /* @__PURE__ */ L(x, {}) : null
 			})
 		]
 	});
@@ -2307,11 +2308,11 @@ function kt({ content: t, streaming: n = !1, defaultOpen: r = !1, className: i }
 					className: "text-[11px] font-semibold uppercase tracking-wide",
 					children: a
 				}),
-				n && !t && /* @__PURE__ */ L(S, { size: "sm" })
+				n && !t && /* @__PURE__ */ L(x, { size: "sm" })
 			]
 		}), /* @__PURE__ */ L("div", {
 			className: "px-3 py-2 text-xs text-[var(--color-text-secondary)] italic border-t border-[var(--color-border)] bg-surface whitespace-pre-wrap leading-relaxed",
-			children: t || /* @__PURE__ */ L(S, {})
+			children: t || /* @__PURE__ */ L(x, {})
 		})]
 	});
 }
@@ -2381,7 +2382,7 @@ function Mt({ user: t, items: n, className: r, "data-testid": i }) {
 			s.current && !s.current.contains(e.target) && c();
 		};
 		return document.addEventListener("mousedown", e), () => document.removeEventListener("mousedown", e);
-	}, [a, c]), _(a, c), /* @__PURE__ */ R("div", {
+	}, [a, c]), g(a, c), /* @__PURE__ */ R("div", {
 		ref: s,
 		"data-testid": i,
 		className: e("relative inline-block", r),
@@ -2397,7 +2398,7 @@ function Mt({ user: t, items: n, className: r, "data-testid": i }) {
 					src: t.avatarUrl,
 					alt: t.name,
 					className: "w-8 h-8 rounded-full object-cover"
-				}) : /* @__PURE__ */ L(D, {
+				}) : /* @__PURE__ */ L(E, {
 					name: t.name,
 					size: 32
 				}),
@@ -2716,7 +2717,7 @@ function Vt({ name: e, id: t, status: n, statusColors: r, contributorNames: i = 
 						gap: 8,
 						minWidth: 0
 					},
-					children: [i.length > 0 ? /* @__PURE__ */ L(E, {
+					children: [i.length > 0 ? /* @__PURE__ */ L(T, {
 						names: i,
 						maxVisible: 5,
 						size: 24
@@ -3475,7 +3476,7 @@ function jn({ post: t, labels: r, tones: i, onAnswer: a, busy: o, placeholder: s
 			/* @__PURE__ */ R("div", {
 				className: "flex min-w-0 items-center gap-2",
 				children: [
-					t.authorKind === "human" ? /* @__PURE__ */ L(D, {
+					t.authorKind === "human" ? /* @__PURE__ */ L(E, {
 						name: t.authorName,
 						size: 20
 					}) : /* @__PURE__ */ L("span", {
@@ -3526,7 +3527,7 @@ function jn({ post: t, labels: r, tones: i, onAnswer: a, busy: o, placeholder: s
 			}),
 			f && a && /* @__PURE__ */ R("div", {
 				className: "mt-2.5 ml-7 flex flex-col gap-2",
-				children: [/* @__PURE__ */ L(T, {
+				children: [/* @__PURE__ */ L(w, {
 					value: l,
 					onChange: (e) => d(e.target.value),
 					placeholder: s,
@@ -3622,7 +3623,7 @@ function In({ signoffs: t, required: n = 2, actions: r, emptyHint: i, className:
 				className: "flex items-center gap-1.5",
 				title: e.role ? `${e.name} · ${e.role}` : e.name,
 				children: [
-					/* @__PURE__ */ L(D, {
+					/* @__PURE__ */ L(E, {
 						name: e.name,
 						size: 18
 					}),
@@ -3753,7 +3754,7 @@ function zn({ person: t, children: n, actions: r, details: a, interactiveChild: 
 			children: [
 				/* @__PURE__ */ R("div", {
 					className: "flex items-start gap-3",
-					children: [/* @__PURE__ */ L(D, {
+					children: [/* @__PURE__ */ L(E, {
 						name: t.displayName,
 						src: t.avatarUrl,
 						color: t.color,

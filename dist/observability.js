@@ -5,9 +5,10 @@ import { n as r, r as i, t as a } from "./Chart-DUoOhhMu.js";
 import { t as o } from "./Chip-YhQI5B9P.js";
 import { t as s } from "./Modal-CyoyiNKN.js";
 import { t as c } from "./EmptyState-JzzL2z1E.js";
-import { n as l, r as u, t as d } from "./CardHeader-gV2Grsqb.js";
-import { t as f } from "./Input-DLknWXri.js";
-import { t as p } from "./StatusDot-Bgx2zxgC.js";
+import { n as l, t as u } from "./Sparkline-Ci_cmVWU.js";
+import { t as d } from "./Input-DLknWXri.js";
+import { t as f } from "./StatusDot-Bgx2zxgC.js";
+import { t as p } from "./CardHeader-CsPhVpCm.js";
 import { t as m } from "./Select-CqVokE2v.js";
 import { t as h } from "./Checkbox-DqN9RkXK.js";
 import { t as g } from "./activationKey-CjbL3LUv.js";
@@ -157,7 +158,7 @@ function L({ title: e, value: n, delta: r, sparklineData: i, onClick: a }) {
 				children: [/* @__PURE__ */ D("div", {
 					className: "text-[28px] font-bold text-text-primary leading-[1.1]",
 					children: ae(n)
-				}), i && i.length > 0 && /* @__PURE__ */ D(l, {
+				}), i && i.length > 0 && /* @__PURE__ */ D(u, {
 					data: i,
 					width: 80,
 					height: 20,
@@ -292,7 +293,7 @@ function ce({ node: e, selected: n, onClick: r, onKill: i }) {
 			}),
 			/* @__PURE__ */ D("div", {
 				className: "mt-auto",
-				children: /* @__PURE__ */ D(l, {
+				children: /* @__PURE__ */ D(u, {
 					data: e.cpuHistory,
 					width: 176,
 					height: 18,
@@ -604,7 +605,7 @@ function Se({ events: e, onViewAll: t }) {
 			children: "No recent events"
 		}) : /* @__PURE__ */ D("div", {
 			className: "flex flex-col gap-0.5",
-			children: e.slice(0, 20).map((e) => /* @__PURE__ */ D(u, {
+			children: e.slice(0, 20).map((e) => /* @__PURE__ */ D(l, {
 				timestamp: e.timestamp,
 				type: e.type,
 				summary: e.summary,
@@ -1261,7 +1262,7 @@ function Pe({ events: e, selectedId: n, onSelect: r, live: i = !1 }) {
 				s(!t);
 			},
 			className: "flex-1 overflow-y-auto py-1.5 font-[inherit]",
-			children: e.map((e) => /* @__PURE__ */ D(u, {
+			children: e.map((e) => /* @__PURE__ */ D(l, {
 				timestamp: e.timestamp,
 				type: e.type,
 				summary: e.summary,
@@ -1404,7 +1405,7 @@ var Ke = {
 	timeRange: "1h"
 };
 function qe() {
-	let [e, n] = T([]), [r, i] = T(null), [a, o] = T(!1), [s, c] = T(Ke), [l, u] = T(!1), d = S(), p = w(a);
+	let [e, n] = T([]), [r, i] = T(null), [a, o] = T(!1), [s, c] = T(Ke), [l, u] = T(!1), f = S(), p = w(a);
 	p.current = a;
 	let g = w(0), v = b((e) => {
 		if (p.current) return;
@@ -1527,10 +1528,10 @@ function qe() {
 					}), !l && /* @__PURE__ */ O(E, { children: [
 						/* @__PURE__ */ O("div", {
 							role: "group",
-							"aria-labelledby": `${d}-event-type`,
+							"aria-labelledby": `${f}-event-type`,
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ D("div", {
-								id: `${d}-event-type`,
+								id: `${f}-event-type`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Event type"
 							}), Le.map((e) => /* @__PURE__ */ O("label", {
@@ -1544,11 +1545,11 @@ function qe() {
 						/* @__PURE__ */ O("div", {
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ D("label", {
-								htmlFor: `${d}-runs`,
+								htmlFor: `${f}-runs`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Runs"
-							}), /* @__PURE__ */ D(f, {
-								id: `${d}-runs`,
+							}), /* @__PURE__ */ D(d, {
+								id: `${f}-runs`,
 								"data-testid": "events-filter-runs",
 								placeholder: "runId (comma-separated)",
 								value: s.runIds,
@@ -1562,11 +1563,11 @@ function qe() {
 						/* @__PURE__ */ O("div", {
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ D("label", {
-								htmlFor: `${d}-pipelines`,
+								htmlFor: `${f}-pipelines`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Pipelines"
-							}), /* @__PURE__ */ D(f, {
-								id: `${d}-pipelines`,
+							}), /* @__PURE__ */ D(d, {
+								id: `${f}-pipelines`,
 								"data-testid": "events-filter-pipelines",
 								placeholder: "pipelineId (comma-separated)",
 								value: s.pipelineIds,
@@ -1579,10 +1580,10 @@ function qe() {
 						}),
 						/* @__PURE__ */ O("div", {
 							role: "group",
-							"aria-labelledby": `${d}-nodes`,
+							"aria-labelledby": `${f}-nodes`,
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ D("div", {
-								id: `${d}-nodes`,
+								id: `${f}-nodes`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Nodes"
 							}), Be.map((e) => /* @__PURE__ */ O("label", {
@@ -1595,10 +1596,10 @@ function qe() {
 						}),
 						/* @__PURE__ */ O("div", {
 							role: "group",
-							"aria-labelledby": `${d}-severity`,
+							"aria-labelledby": `${f}-severity`,
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ D("div", {
-								id: `${d}-severity`,
+								id: `${f}-severity`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Severity"
 							}), Ve.map((e) => /* @__PURE__ */ O("label", {
@@ -1678,7 +1679,7 @@ var $e = [
 	{ id: "node-2" }
 ];
 function et(e) {
-	let { onInjectLatency: n = (e) => Q({ injectedLatencyMs: Math.max(0, e) }), onInjectPartition: r = (e) => Q({ paused: e.length > 0 }), onDropMessages: i = (e) => Q({ injectedFailureRate: Math.min(1, Math.max(0, e / 100)) }), onKillAll: a = () => Q({ paused: !0 }), onReset: o = () => Ze(), availableNodes: c = $e } = e, [l, u] = T("0"), [d, p] = T("0"), [m, g] = T([]), [_, v] = T(!1), y = S(), [b, w] = T(() => Xe());
+	let { onInjectLatency: n = (e) => Q({ injectedLatencyMs: Math.max(0, e) }), onInjectPartition: r = (e) => Q({ paused: e.length > 0 }), onDropMessages: i = (e) => Q({ injectedFailureRate: Math.min(1, Math.max(0, e / 100)) }), onKillAll: a = () => Q({ paused: !0 }), onReset: o = () => Ze(), availableNodes: c = $e } = e, [l, u] = T("0"), [f, p] = T("0"), [m, g] = T([]), [_, v] = T(!1), y = S(), [b, w] = T(() => Xe());
 	x(() => Qe((e) => w(e)), []);
 	let k = (e) => {
 		g((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
@@ -1686,7 +1687,7 @@ function et(e) {
 		let e = Number.parseInt(l, 10);
 		Number.isFinite(e) && n(e);
 	}, j = () => {
-		let e = Number.parseInt(d, 10);
+		let e = Number.parseInt(f, 10);
 		Number.isFinite(e) && i(e);
 	}, M = () => {
 		r(m);
@@ -1768,7 +1769,7 @@ function et(e) {
 					}),
 					/* @__PURE__ */ O("div", {
 						className: "flex gap-1.5",
-						children: [/* @__PURE__ */ D(f, {
+						children: [/* @__PURE__ */ D(d, {
 							"data-testid": "chaos-latency-input",
 							type: "number",
 							min: 0,
@@ -1827,12 +1828,12 @@ function et(e) {
 					}),
 					/* @__PURE__ */ O("div", {
 						className: "flex gap-1.5",
-						children: [/* @__PURE__ */ D(f, {
+						children: [/* @__PURE__ */ D(d, {
 							"data-testid": "chaos-drop-input",
 							type: "number",
 							min: 0,
 							max: 100,
-							value: d,
+							value: f,
 							onChange: (e) => p(e.target.value),
 							className: "flex-1 min-w-[60px]",
 							"aria-label": "Drop percent"
@@ -2098,7 +2099,7 @@ function at({ title: e, data: n, series: r, yLabel: i, sparkWidth: a = 180, spar
 					className: "text-[11px] text-text-secondary w-20 shrink-0 overflow-hidden text-ellipsis whitespace-nowrap",
 					title: e.label,
 					children: e.label
-				}), /* @__PURE__ */ D(l, {
+				}), /* @__PURE__ */ D(u, {
 					data: e.data,
 					width: a,
 					height: o,
@@ -2133,7 +2134,7 @@ function lt({ severity: e, title: n, description: r, timestamp: i, resolved: a =
 		children: [/* @__PURE__ */ O("div", {
 			className: "flex items-center gap-1.5",
 			children: [
-				/* @__PURE__ */ D(p, {
+				/* @__PURE__ */ D(f, {
 					size: "xs",
 					color: a ? "var(--color-text-tertiary)" : ot[e],
 					"aria-label": a ? "Resolved" : e
@@ -2172,26 +2173,26 @@ var ut = /* @__PURE__ */ D("div", {
 	className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8",
 	children: "Loading alerts…"
 });
-function ft({ items: e, title: r = "Alerts", headerSlot: i, loading: a = !1, empty: s, maxHeight: c, className: l, style: u, "data-testid": f = "alert-list" }) {
-	let p = e.filter((e) => !e.resolved).length, m = p > 0 ? /* @__PURE__ */ O(o, {
+function ft({ items: e, title: r = "Alerts", headerSlot: i, loading: a = !1, empty: s, maxHeight: c, className: l, style: u, "data-testid": d = "alert-list" }) {
+	let f = e.filter((e) => !e.resolved).length, m = f > 0 ? /* @__PURE__ */ O(o, {
 		tone: "danger",
 		size: "xs",
 		"data-testid": "alert-list-active-count",
-		children: [p, " active"]
+		children: [f, " active"]
 	}) : null;
 	return /* @__PURE__ */ O(n, {
-		"data-testid": f,
+		"data-testid": d,
 		className: t("flex flex-col", l),
 		style: u,
 		children: [/* @__PURE__ */ D("div", {
 			className: "px-4 py-3 border-b border-[var(--color-border)]",
-			children: /* @__PURE__ */ D(d, {
+			children: /* @__PURE__ */ D(p, {
 				title: r,
 				meta: i ?? m
 			})
 		}), /* @__PURE__ */ D("div", {
 			role: "list",
-			"data-testid": `${f}-rows`,
+			"data-testid": `${d}-rows`,
 			className: "flex-1 overflow-y-auto p-2 space-y-1.5",
 			style: { maxHeight: c },
 			children: a ? dt : e.length === 0 ? s ?? ut : e.map((e) => /* @__PURE__ */ D(lt, {
@@ -2226,7 +2227,7 @@ function ht({ status: e, label: n, reason: r, dense: i = !1, className: a, style
 		style: o,
 		children: [/* @__PURE__ */ O("div", {
 			className: "flex items-center gap-1.5",
-			children: [/* @__PURE__ */ D(p, {
+			children: [/* @__PURE__ */ D(f, {
 				size: "xs",
 				color: pt[e],
 				"aria-label": e
@@ -2253,7 +2254,7 @@ var gt = {
 	children: "No nodes reporting."
 });
 function vt({ items: e, columns: r = 3, dense: i = !1, title: a, headerSlot: o, empty: s, className: c, style: l, "data-testid": u = "health-grid" }) {
-	let f = e.length === 0 ? s ?? _t : /* @__PURE__ */ D("div", {
+	let d = e.length === 0 ? s ?? _t : /* @__PURE__ */ D("div", {
 		role: "list",
 		className: t("grid grid-cols-1", gt[r], i ? "gap-1.5" : "gap-2"),
 		children: e.map((e) => /* @__PURE__ */ D("div", {
@@ -2272,19 +2273,19 @@ function vt({ items: e, columns: r = 3, dense: i = !1, title: a, headerSlot: o, 
 		style: l,
 		children: [/* @__PURE__ */ D("div", {
 			className: "px-4 py-3 border-b border-[var(--color-border)]",
-			children: /* @__PURE__ */ D(d, {
+			children: /* @__PURE__ */ D(p, {
 				title: a,
 				meta: o
 			})
 		}), /* @__PURE__ */ D("div", {
 			className: t(i ? "p-2" : "p-3"),
-			children: f
+			children: d
 		})]
 	}) : /* @__PURE__ */ D("div", {
 		"data-testid": u,
 		className: t(i ? "p-2" : "p-3", c),
 		style: l,
-		children: f
+		children: d
 	});
 }
 //#endregion

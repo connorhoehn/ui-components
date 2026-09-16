@@ -31,13 +31,14 @@ describe('SuggestionCard', () => {
         insertedText="new words"
       />,
     );
-    expect(screen.getByTestId('suggestion-card-deleted').tagName).toBe('DEL');
-    expect(screen.getByTestId('suggestion-card-inserted').tagName).toBe('INS');
+    // One <del>/<ins> per block, inside the labelled containers.
+    expect(screen.getByTestId('suggestion-card-deleted').querySelector('del')).toHaveTextContent('old words');
+    expect(screen.getByTestId('suggestion-card-inserted').querySelector('ins')).toHaveTextContent('new words');
   });
 
   it('labels the kind of change', () => {
     render(<SuggestionCard kind="delete" author="Bo Chen" deletedText="gone" />);
-    expect(screen.getByTestId('suggestion-card-kind')).toHaveTextContent('Deletion');
+    expect(screen.getByTestId('suggestion-card-kind')).toHaveTextContent('Removed');
     expect(screen.getByTestId('suggestion-card')).toHaveAttribute('data-kind', 'delete');
   });
 
@@ -95,7 +96,7 @@ describe('SuggestionCard', () => {
   // rather than collapsing to an unlabelled row.
   it('renders a formatting change that has no text', () => {
     render(<SuggestionCard kind="modify" author="Bo Chen" />);
-    expect(screen.getByTestId('suggestion-card-kind')).toHaveTextContent('Formatting');
+    expect(screen.getByTestId('suggestion-card-kind')).toHaveTextContent('Formatted');
     expect(screen.queryByTestId('suggestion-card-body')).toBeNull();
   });
 });
