@@ -16,6 +16,7 @@ import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { DocumentChip } from './DocumentChip';
 import { CallActivityCard, type CallActivityParticipant } from './CallActivityCard';
+import { RecordingActivityCard, type RecordingActivityStatus } from './RecordingActivityCard';
 import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunResult, type AgentRunReviewDecision, type AgentRunStatus, type AgentRunSuggestion } from './AgentRunCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
@@ -140,6 +141,10 @@ export interface ChatPanelProps {
    * the card then renders as a record rather than a dead button.
    */
   onJoinCall?: (callId: string) => void;
+  /** Opens a recording posted in the thread. Omit and the card is a record, not a button. */
+  onOpenRecording?: (recordingId: string) => void;
+  /** Puts a link to the recording on the clipboard (the card's ⋯ menu). */
+  onCopyRecordingLink?: (recordingId: string) => void;
   /** Opens a document announced in the thread. */
   onOpenDocument?: (documentId: string) => void;
   /**
@@ -450,6 +455,41 @@ export function callRefFromMetadata(
   };
 }
 
+/**
+ * A recording card: `metadata.kind === 'recording'` with the recording's id.
+ * Posted by the recording pipeline once the media is ready (or while it is
+ * still composing, with `status: 'processing'`).
+ */
+export function recordingRefFromMetadata(
+  metadata: Record<string, unknown> | undefined,
+): {
+  recordingId: string;
+  callId?: string;
+  title?: string;
+  startedAt?: string;
+  durationMs?: number;
+  thumbnailUrl?: string;
+  participantCount?: number;
+  status: RecordingActivityStatus;
+  expiresAt?: string;
+} | null {
+  if (!metadata || metadata.kind !== 'recording') return null;
+  const recordingId = typeof metadata.recordingId === 'string' ? metadata.recordingId : '';
+  if (!recordingId) return null;
+  const status = metadata.status === 'processing' || metadata.status === 'failed' ? metadata.status : 'ready';
+  return {
+    recordingId,
+    callId: typeof metadata.callId === 'string' ? metadata.callId : undefined,
+    title: typeof metadata.title === 'string' ? metadata.title : undefined,
+    startedAt: typeof metadata.startedAt === 'string' ? metadata.startedAt : undefined,
+    durationMs: typeof metadata.durationMs === 'number' ? metadata.durationMs : undefined,
+    thumbnailUrl: typeof metadata.thumbnailUrl === 'string' ? metadata.thumbnailUrl : undefined,
+    participantCount: typeof metadata.participantCount === 'number' ? metadata.participantCount : undefined,
+    status,
+    expiresAt: typeof metadata.expiresAt === 'string' ? metadata.expiresAt : undefined,
+  };
+}
+
 type TimelineEntry =
   | { kind: 'message'; message: ChatMessage }
   | { kind: 'local'; local: LocalChatMessage };
@@ -506,6 +546,8 @@ export function ChatPanel({
   onDecideRun,
   onReviewRun,
   onJoinCall,
+  onOpenRecording,
+  onCopyRecordingLink,
   onOpenDocument,
   tone = 'light',
   showHeader,
@@ -953,6 +995,7 @@ export function ChatPanel({
               // record — which is why one card renders both states in place
               // rather than the transcript swapping rows underneath a reader.
               const callRef = callRefFromMetadata(message.metadata);
+              const recordingRef = recordingRefFromMetadata(message.metadata);
               const truncation = truncationFromMetadata(message.metadata);
               // `#Roadmap` in the text stays words; the chips under it are the
               // same documents as things you can open.
@@ -974,6 +1017,25 @@ export function ChatPanel({
                   onDecide={onDecideRun}
                   suggestion={agentRef.suggestionKey ? { key: agentRef.suggestionKey, ...(agentRef.documentId ? { documentId: agentRef.documentId } : {}) } : undefined}
                   onReview={onReviewRun}
+                />
+              ) : recordingRef ? (
+                <RecordingActivityCard
+                  recordingId={recordingRef.recordingId}
+                  title={recordingRef.title}
+                  recordedBy={
+                    (typeof message.metadata?.recordedBy === 'string'
+                      ? message.metadata.recordedBy
+                      : undefined)
+                    ?? message.displayName
+                  }
+                  startedAt={recordingRef.startedAt}
+                  durationMs={recordingRef.durationMs}
+                  thumbnailUrl={recordingRef.thumbnailUrl}
+                  participantCount={recordingRef.participantCount}
+                  status={recordingRef.status}
+                  expiresAt={recordingRef.expiresAt}
+                  onOpen={onOpenRecording}
+                  onCopyLink={onCopyRecordingLink}
                 />
               ) : callRef ? (
                 <CallActivityCard

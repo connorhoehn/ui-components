@@ -620,7 +620,7 @@ declare interface ChatMessage {
     metadata?: Record<string, unknown>;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -707,6 +707,10 @@ export declare interface ChatPanelProps {
      * the card then renders as a record rather than a dead button.
      */
     onJoinCall?: (callId: string) => void;
+    /** Opens a recording posted in the thread. Omit and the card is a record, not a button. */
+    onOpenRecording?: (recordingId: string) => void;
+    /** Puts a link to the recording on the clipboard (the card's ⋯ menu). */
+    onCopyRecordingLink?: (recordingId: string) => void;
     /** Opens a document announced in the thread. */
     onOpenDocument?: (documentId: string) => void;
     /**
@@ -1951,6 +1955,50 @@ export declare interface ReactionSummary {
     mine?: boolean;
 }
 
+export declare function RecordingActivityCard({ recordingId, title, recordedBy, startedAt, durationMs, thumbnailUrl, participantCount, status, expiresAt, onOpen, onCopyLink, onDownload, className, 'data-testid': testId, }: RecordingActivityCardProps): JSX.Element;
+
+export declare interface RecordingActivityCardProps {
+    recordingId: string;
+    /** "Recording" unless the host names it — "Design review recording", say. */
+    title?: string;
+    /** Who the recording is by — the person who started the call. */
+    recordedBy?: string;
+    /** ISO. When it was recorded; the meta line. */
+    startedAt?: string;
+    durationMs?: number;
+    thumbnailUrl?: string;
+    participantCount?: number;
+    /** 'processing' shows a notice instead of a play affordance; 'failed' says so. */
+    status?: RecordingActivityStatus;
+    /** ISO. When the recording will be removed — the notice under the card. */
+    expiresAt?: string;
+    /** Opens the recording. Absent, the card is a record, not a button. */
+    onOpen?: (recordingId: string) => void;
+    onCopyLink?: (recordingId: string) => void;
+    onDownload?: (recordingId: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type RecordingActivityStatus = 'ready' | 'processing' | 'failed';
+
+/**
+ * A recording card: `metadata.kind === 'recording'` with the recording's id.
+ * Posted by the recording pipeline once the media is ready (or while it is
+ * still composing, with `status: 'processing'`).
+ */
+export declare function recordingRefFromMetadata(metadata: Record<string, unknown> | undefined): {
+    recordingId: string;
+    callId?: string;
+    title?: string;
+    startedAt?: string;
+    durationMs?: number;
+    thumbnailUrl?: string;
+    participantCount?: number;
+    status: RecordingActivityStatus;
+    expiresAt?: string;
+} | null;
+
 declare interface RoomItem {
     roomId: string;
     channelId: string;
@@ -2182,6 +2230,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -2208,6 +2266,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -2221,9 +2289,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -2234,26 +2302,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

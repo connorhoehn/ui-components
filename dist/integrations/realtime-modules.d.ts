@@ -722,6 +722,10 @@ declare interface ChatPanelProps {
      * the card then renders as a record rather than a dead button.
      */
     onJoinCall?: (callId: string) => void;
+    /** Opens a recording posted in the thread. Omit and the card is a record, not a button. */
+    onOpenRecording?: (recordingId: string) => void;
+    /** Puts a link to the recording on the clipboard (the card's ⋯ menu). */
+    onCopyRecordingLink?: (recordingId: string) => void;
     /** Opens a document announced in the thread. */
     onOpenDocument?: (documentId: string) => void;
     /**

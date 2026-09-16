@@ -8,6 +8,7 @@ export {
   documentRefFromMetadata,
   documentRefsFromMetadata,
   callRefFromMetadata,
+  recordingRefFromMetadata,
   truncationFromMetadata,
 } from './ChatPanel';
 export type { ChatPanelProps, LocalChatMessage } from './ChatPanel';
@@ -132,6 +133,8 @@ export type { DocumentChipProps } from './DocumentChip';
 // it is a record, and it is one component so the transcript does not swap
 // rows underneath a reader as the call ends.
 export { CallActivityCard, formatCallDuration, describeParticipants } from './CallActivityCard';
+export { RecordingActivityCard } from './RecordingActivityCard';
+export type { RecordingActivityCardProps, RecordingActivityStatus } from './RecordingActivityCard';
 export type { CallActivityCardProps, CallActivityParticipant } from './CallActivityCard';
 
 // The persistent destinations above a conversation list — Activity, Mentions.

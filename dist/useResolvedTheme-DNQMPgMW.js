@@ -1,6 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { t } from "./DropdownMenu-CpcgHn0l.js";
-import { t as n } from "./PresenceAvatars-BkzMACtv.js";
+import { n as t, t as n } from "./DropdownMenu-CkpcNvfV.js";
 import { useEffect as r, useState as i } from "react";
 import { Fragment as a, jsx as o, jsxs as s } from "react/jsx-runtime";
 //#region src/components/diagram/DiagramPresenceBar.tsx
@@ -12,7 +11,7 @@ function l({ participants: r, size: i = 26, actions: l, followingUserId: u = nul
 		color: e.color,
 		online: !0,
 		detail: e.isSelf ? "you" : e.pointer ? "drawing" : "viewing"
-	})), m = /* @__PURE__ */ s(a, { children: [/* @__PURE__ */ o(n, {
+	})), m = /* @__PURE__ */ s(a, { children: [/* @__PURE__ */ o(t, {
 		users: p,
 		maxVisible: 6,
 		size: i
@@ -56,7 +55,7 @@ function l({ participants: r, size: i = 26, actions: l, followingUserId: u = nul
 		"data-testid": f,
 		"data-participant-count": r.length,
 		className: e("pointer-events-auto", d),
-		children: /* @__PURE__ */ o(t, {
+		children: /* @__PURE__ */ o(n, {
 			trigger: m,
 			triggerLabel: `People on this diagram (${r.length})`,
 			triggerTitle: "Who is here — message, call or follow them",

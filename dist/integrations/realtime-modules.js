@@ -1,16 +1,16 @@
 import { t as e } from "../cn-DhjIN-s0.js";
 import { t } from "../Button-BhS4-R6_.js";
 import { t as n } from "../IconButton-C3DMtvSx.js";
-import { t as r } from "../Modal-CyoyiNKN.js";
-import { t as i } from "../EmptyState-JzzL2z1E.js";
-import { t as a } from "../SkeletonCard-CGe8XFPB.js";
-import { n as o, t as s } from "../FileUploadDrop-BRRQBXdS.js";
-import { t as c } from "../Avatar-BzicCOft.js";
-import { n as l, r as u, t as d } from "../Badge-NPe_5OA9.js";
-import { t as f } from "../PresenceAvatars-BkzMACtv.js";
+import { n as r } from "../DropdownMenu-CkpcNvfV.js";
+import { t as i } from "../Modal-CyoyiNKN.js";
+import { t as a } from "../EmptyState-JzzL2z1E.js";
+import { t as o } from "../SkeletonCard-CGe8XFPB.js";
+import { n as s, t as c } from "../FileUploadDrop-BRRQBXdS.js";
+import { t as l } from "../Avatar-BzicCOft.js";
+import { n as u, r as d, t as f } from "../Badge-NPe_5OA9.js";
 import { t as p } from "../ActivityFeed-C9KAtqCl.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
-import { l as _, n as v, t as y, u as b } from "../ConversationSurface-BjtKI2Sw.js";
+import { l as _, n as v, t as y, u as b } from "../ConversationSurface-b0l1Och6.js";
 import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-d9JKcXlp.js";
 import { t as ee } from "../CanvasDocumentView-a3eqZ59c.js";
 import { Component as te, createContext as ne, useCallback as O, useContext as re, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";
@@ -237,14 +237,14 @@ var ye = class extends te {
 	render() {
 		let { error: e } = this.state;
 		if (e == null) return this.props.children;
-		let { fallback: t, title: n = "Something went wrong", description: r, retryLabel: a = "Retry" } = this.props;
+		let { fallback: t, title: n = "Something went wrong", description: r, retryLabel: i = "Retry" } = this.props;
 		return t ? t(e, this.reset) : /* @__PURE__ */ P("div", {
 			"data-testid": "network-error-boundary-fallback",
-			children: /* @__PURE__ */ P(i, {
+			children: /* @__PURE__ */ P(a, {
 				icon: "⚠️",
 				title: n,
 				description: r ?? e.message,
-				actionLabel: a,
+				actionLabel: i,
 				onAction: this.reset
 			})
 		});
@@ -252,15 +252,15 @@ var ye = class extends te {
 };
 //#endregion
 //#region src/integrations/realtime-modules/ReconnectingShim.tsx
-function be({ connectionState: t, children: n, onRetry: r, reconnectingLabel: o, disconnectedTitle: s = "Disconnected", disconnectedDescription: c = "The connection to the server was lost. Check your network and try again.", retryLabel: l = "Try again", connectingPlaceholder: u, disconnectedFallback: d, className: f }) {
+function be({ connectionState: t, children: n, onRetry: r, reconnectingLabel: i, disconnectedTitle: s = "Disconnected", disconnectedDescription: c = "The connection to the server was lost. Check your network and try again.", retryLabel: l = "Try again", connectingPlaceholder: u, disconnectedFallback: d, className: f }) {
 	return t === "connecting" ? /* @__PURE__ */ P("div", {
 		"data-testid": "reconnecting-shim-connecting",
 		className: f,
-		children: u ?? /* @__PURE__ */ P(a, { height: 120 })
+		children: u ?? /* @__PURE__ */ P(o, { height: 120 })
 	}) : t === "disconnected" ? /* @__PURE__ */ P("div", {
 		"data-testid": "reconnecting-shim-disconnected",
 		className: f,
-		children: d ?? /* @__PURE__ */ P(i, {
+		children: d ?? /* @__PURE__ */ P(a, {
 			icon: "📡",
 			title: s,
 			description: c,
@@ -275,7 +275,7 @@ function be({ connectionState: t, children: n, onRetry: r, reconnectingLabel: o,
 			children: n
 		}), /* @__PURE__ */ P(w, {
 			show: !0,
-			label: o
+			label: i
 		})]
 	}) : /* @__PURE__ */ P("div", {
 		"data-testid": "reconnecting-shim-connected",
@@ -480,15 +480,15 @@ function De({ reactions: e, ttlMs: t = 2500 }) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedFileUploadDrop.tsx
-function Oe({ fileUpload: e, accept: t, maxSize: n, multiple: r, disabled: i, label: a, className: o, uploadMetadata: c, onError: l }) {
+function Oe({ fileUpload: e, accept: t, maxSize: n, multiple: r, disabled: i, label: a, className: o, uploadMetadata: s, onError: l }) {
 	let u = Y(e.uploads);
 	function d(t) {
-		for (let n of t) e.upload(n, c ? { metadata: c } : void 0).catch((e) => {
+		for (let n of t) e.upload(n, s ? { metadata: s } : void 0).catch((e) => {
 			let t = e instanceof Error ? e.message : "Upload failed";
 			l?.(t);
 		});
 	}
-	return /* @__PURE__ */ F("div", { children: [/* @__PURE__ */ P(s, {
+	return /* @__PURE__ */ F("div", { children: [/* @__PURE__ */ P(c, {
 		accept: t,
 		maxSize: n,
 		multiple: r,
@@ -569,7 +569,7 @@ function je({ hangout: e, localClientId: t, videoElements: n, mode: r, spotlight
 //#region src/integrations/realtime-modules/WrappedNotificationCenter.tsx
 function Me({ notifications: e, onItemClick: t, ...n }) {
 	let r = ve(e.notifications);
-	return /* @__PURE__ */ P(l, {
+	return /* @__PURE__ */ P(u, {
 		items: r,
 		onItemClick: (n) => {
 			t ? t(n, e.notifications.find((e) => e.id === n.id)) : e.markAsRead(n.id);
@@ -582,7 +582,7 @@ function Me({ notifications: e, onItemClick: t, ...n }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedConnectionPill.tsx
 function Ne({ socket: e, ...t }) {
-	return /* @__PURE__ */ P(u, {
+	return /* @__PURE__ */ P(d, {
 		state: e.connectionState,
 		...t
 	});
@@ -594,47 +594,47 @@ function Pe({ capability: e, loading: t, fallback: n, children: r }) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/HangoutRoomRow.tsx
-function Fe({ slug: e, name: t, participantId: n, occupancy: r, subscribeRoomsIndex: i, onClick: a, onContextMenu: o, onOpenConversation: s, kebab: c, className: l, "data-testid": u = "room-row" }) {
-	let p = ie(i ? e : null, { subscribeRoomsIndex: i }), h = i ? p.occupancy ?? null : r ?? null, g = h?.count ?? 0, _ = h?.members ?? [], v = A(() => n ? _.some((e) => e.participantId === n) : !1, [_, n]), y = v, b = A(() => _.slice(0, 3).map((e) => ({
+function Fe({ slug: e, name: t, participantId: n, occupancy: i, subscribeRoomsIndex: a, onClick: o, onContextMenu: s, onOpenConversation: c, kebab: l, className: u, "data-testid": d = "room-row" }) {
+	let p = ie(a ? e : null, { subscribeRoomsIndex: a }), h = a ? p.occupancy ?? null : i ?? null, g = h?.count ?? 0, _ = h?.members ?? [], v = A(() => n ? _.some((e) => e.participantId === n) : !1, [_, n]), y = v, b = A(() => _.slice(0, 3).map((e) => ({
 		id: e.participantId,
 		name: e.displayName || e.userId,
 		online: !0
 	})), [_]), x = null;
-	g > 1 ? x = /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ P(f, {
+	g > 1 ? x = /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ P(r, {
 		users: b,
 		maxVisible: 3,
 		size: 18
-	}), /* @__PURE__ */ P(d, {
+	}), /* @__PURE__ */ P(f, {
 		variant: "count",
 		value: g,
 		color: "muted"
-	})] }) : g === 1 && v ? x = /* @__PURE__ */ P(d, {
+	})] }) : g === 1 && v ? x = /* @__PURE__ */ P(f, {
 		variant: "pulse",
 		color: "accent",
 		"aria-label": "Just you in this room",
-		"data-testid": `${u}-self-pulse`
-	}) : g === 1 && (x = /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ P(f, {
+		"data-testid": `${d}-self-pulse`
+	}) : g === 1 && (x = /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ P(r, {
 		users: b,
 		maxVisible: 1,
 		size: 18
-	}), /* @__PURE__ */ P(d, {
+	}), /* @__PURE__ */ P(f, {
 		variant: "count",
 		value: 1,
 		color: "muted"
 	})] }));
-	let S = s ? /* @__PURE__ */ P("button", {
+	let S = c ? /* @__PURE__ */ P("button", {
 		type: "button",
 		"aria-label": `Open the ${t} conversation`,
 		title: "Open conversation",
-		"data-testid": `${u}-open-conversation`,
+		"data-testid": `${d}-open-conversation`,
 		onClick: (e) => {
-			e.stopPropagation(), s();
+			e.stopPropagation(), c();
 		},
 		className: "grid h-5 w-5 place-items-center rounded bg-transparent text-[11px] text-text-tertiary opacity-0 transition-opacity hover:bg-surface-hover hover:text-text-primary focus:opacity-100 group-hover:opacity-100",
 		children: "💬"
 	}) : null;
 	return /* @__PURE__ */ P(m, {
-		"data-testid": u,
+		"data-testid": d,
 		icon: /* @__PURE__ */ P("span", {
 			"aria-hidden": "true",
 			className: "font-semibold text-text-tertiary",
@@ -643,11 +643,11 @@ function Fe({ slug: e, name: t, participantId: n, occupancy: r, subscribeRoomsIn
 		label: t,
 		trailing: x,
 		active: y,
-		onClick: a,
-		onContextMenu: o,
-		kebab: c ?? S,
+		onClick: o,
+		onContextMenu: s,
+		kebab: l ?? S,
 		"aria-label": `${t} room`,
-		className: l,
+		className: u,
 		dataAttrs: {
 			"data-room-slug": e,
 			"data-room-name": t,
@@ -666,7 +666,7 @@ function ze(e) {
 	let t = e.trim();
 	return t.length === 0 ? "Name is required." : t.length < Ie ? `Name must be at least ${Ie} characters.` : t.length > Le ? `Name must be at most ${Le} characters.` : null;
 }
-function Be({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility: s }) {
+function Be({ open: e, onClose: n, onCreate: r, onCreated: a, defaultVisibility: o }) {
 	let [c, l] = M(""), [u, d] = M(""), [f, p] = M(!1), [m, h] = M(!1), [g, _] = M(!1), [v, y] = M(null);
 	k(() => {
 		e && (l(""), d(""), p(!1), h(!1), _(!1), y(null));
@@ -676,10 +676,10 @@ function Be({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility:
 		if (e.preventDefault(), S) {
 			_(!0), y(null);
 			try {
-				let e = await i({
+				let e = await r({
 					name: c.trim(),
 					description: u.trim() || void 0,
-					visibility: s,
+					visibility: o,
 					settings: {
 						audioOnly: f,
 						recordingEnabled: m
@@ -691,7 +691,7 @@ function Be({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility:
 			}
 		}
 	}
-	return /* @__PURE__ */ P(r, {
+	return /* @__PURE__ */ P(i, {
 		open: e,
 		onClose: g ? () => {} : n,
 		title: "New room",
@@ -766,7 +766,7 @@ function Be({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility:
 								className: "text-[11px] text-text-tertiary",
 								children: "Skip video tracks — voice-only room."
 							})]
-						}), /* @__PURE__ */ P(o, {
+						}), /* @__PURE__ */ P(s, {
 							checked: f,
 							onChange: p,
 							disabled: g,
@@ -784,7 +784,7 @@ function Be({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility:
 								className: "text-[11px] text-text-tertiary",
 								children: "Allow server-side recording of sessions."
 							})]
-						}), /* @__PURE__ */ P(o, {
+						}), /* @__PURE__ */ P(s, {
 							checked: m,
 							onChange: h,
 							disabled: g,
@@ -821,7 +821,7 @@ function Be({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility:
 }
 //#endregion
 //#region src/integrations/realtime-modules/HangoutRoomsSection.tsx
-function Ve({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, onJoinRoom: s, onOpenConversation: c, onContextMenu: l, onBrowseAll: u, maxVisible: d = 10, title: f = "Rooms", storageKey: p, renderCreateDialog: g }) {
+function Ve({ rooms: e, occupancyFor: r, occupancyAdapter: i, participantId: o, onJoinRoom: s, onOpenConversation: c, onContextMenu: l, onBrowseAll: u, maxVisible: d = 10, title: f = "Rooms", storageKey: p, renderCreateDialog: g }) {
 	let [_, v] = M(!1), y = () => v(!0), b = () => v(!1), x = A(() => e.rooms.filter((e) => e.state === "active"), [e.rooms]), S = A(() => x.slice(0, d), [x, d]), C = x.length - S.length;
 	return /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ F(h, {
 		title: f,
@@ -865,7 +865,7 @@ function Ve({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, 
 					children: "Retry"
 				})]
 			}),
-			!e.isLoading && !e.error && x.length === 0 && /* @__PURE__ */ P(i, {
+			!e.isLoading && !e.error && x.length === 0 && /* @__PURE__ */ P(a, {
 				testId: "hangout-rooms-empty",
 				title: "No rooms yet",
 				description: "Create one to start an ongoing hangout.",
@@ -882,8 +882,8 @@ function Ve({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, 
 					slug: e.slug,
 					name: e.name,
 					participantId: o,
-					subscribeRoomsIndex: a,
-					occupancy: a ? null : r?.(e.slug) ?? null,
+					subscribeRoomsIndex: i,
+					occupancy: i ? null : r?.(e.slug) ?? null,
 					onClick: s ? () => s(e) : void 0,
 					onOpenConversation: c ? () => c(e) : void 0,
 					onContextMenu: l ? (t) => l(e, t) : void 0
@@ -927,7 +927,7 @@ function He({ stream: e, displayName: t }) {
 	}) : /* @__PURE__ */ P("div", {
 		className: "w-full h-full grid place-items-center bg-surface-emphasis",
 		"data-testid": "local-camera-avatar",
-		children: /* @__PURE__ */ P(c, {
+		children: /* @__PURE__ */ P(l, {
 			name: t,
 			size: 64
 		})
