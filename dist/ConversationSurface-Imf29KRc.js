@@ -2090,10 +2090,11 @@ function St({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 			className: e("mt-3 border-t pt-3", X ? "border-white/10" : "border-border-subtle")
 		}) : null, l = ln(t.root);
 		if (t.replies.length === 0 && !l) return c ? /* @__PURE__ */ R(j, { children: [c, o] }, `post:${lt(t.root) ?? n}`) : o;
-		let u = lt(t.root) ?? "", d = t.root.kind === "message" ? t.root.message : void 0, f = !!u && t.replies.length > ft, p = !f || Dt.has(u), h = p ? t.replies : t.replies.slice(0, pt), g = t.replies.length - h.length, _ = [...new Set(t.replies.slice(h.length).map(cn))].slice(0, 3);
+		let u = lt(t.root) ?? "", d = t.root.kind === "message" ? t.root.message : void 0, f = !!u && t.replies.length > ft, p = !f || Dt.has(u), h = p ? t.replies : t.replies.slice(0, pt), g = t.replies.length - h.length, _ = [...new Set(t.replies.slice(h.length).map(cn))].slice(0, 3), v = t.replies.length === 0;
 		return /* @__PURE__ */ R(j, { children: [c, /* @__PURE__ */ R("div", {
 			"data-testid": "chat-thread",
 			"data-thread-root": u || void 0,
+			className: "group/post",
 			children: [
 				o,
 				t.replies.length > 0 && /* @__PURE__ */ R("div", {
@@ -2124,7 +2125,7 @@ function St({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 						"data-testid": "chat-thread-reply",
 						"aria-label": `Reply to ${cn(t.root)}`,
 						onClick: () => m?.(l),
-						className: e("mt-0.5 rounded px-1 py-0.5 text-xs", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", X ? "text-white/50 hover:bg-white/10 hover:text-white/80 focus-visible:text-white/80" : "text-text-tertiary hover:bg-surface-hover hover:text-text-secondary focus-visible:text-text-secondary"),
+						className: e("mt-0.5 rounded px-1 py-0.5 text-xs", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", v && e("opacity-0 transition-opacity", "group-hover/post:opacity-100 group-has-[:focus-visible]/post:opacity-100", "[@media(hover:none)]:opacity-100"), X ? "text-white/50 hover:bg-white/10 hover:text-white/80 focus-visible:text-white/80" : "text-text-tertiary hover:bg-surface-hover hover:text-text-secondary focus-visible:text-text-secondary"),
 						children: "Reply"
 					})
 				})

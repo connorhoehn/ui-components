@@ -2140,10 +2140,38 @@ export function ChatPanel({
     // asking before deciding to open it.
     const hiddenAuthors = [...new Set(group.replies.slice(visible.length).map(entryAuthor))].slice(0, 3);
 
+    /**
+     * Whether this post's Reply waits to be hovered, or simply sits there.
+     *
+     * A post with no answers yet: hidden. A standing "Reply" under every
+     * ordinary message is noise — a channel of fifty messages was fifty
+     * pending-looking actions — and the same hover gesture already reveals
+     * react/reply/pin one row up, so there is nothing new for a reader to
+     * learn.
+     *
+     * A post that HAS answers: permanent. The two cases look identical in code
+     * and are different objects on screen. Here the control is not advertising
+     * a structure that might exist, it is labelling one the reader can already
+     * see — an indented rail of replies whose footer is "add to this". Hiding
+     * it would make continuing a visible conversation the one thing you cannot
+     * do without first discovering it by pointer, and it would leave the
+     * "N more replies" toggle sitting alone as a permanent footer with a
+     * second, invisible footer stacked under it.
+     */
+    const revealOnHover = group.replies.length === 0;
+
     return (
       <Fragment key={`post:${rootId || index}`}>
       {boundary}
-      <div data-testid="chat-thread" data-thread-root={rootId || undefined}>
+      <div
+        data-testid="chat-thread"
+        data-thread-root={rootId || undefined}
+        // A NAMED group, and it has to be named: the message rows inside carry
+        // a plain `group` for their hover action bar, and `group-hover:` matches
+        // any `.group` ancestor — an unnamed group here would pop every row's
+        // action bar the moment the pointer entered the post.
+        className="group/post"
+      >
         {rootNode}
         {group.replies.length > 0 && (
         <div
@@ -2230,6 +2258,35 @@ export function ChatPanel({
               className={cn(
                 'mt-0.5 rounded px-1 py-0.5 text-xs',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                // A post with no answers yet reveals its Reply the same way a
+                // row reveals its action bar, and for the same reason: a
+                // channel of ordinary messages should not carry a standing
+                // "Reply" under every one of them. Read the MessageActionBar
+                // block above for why `group-has-[:focus-visible]` and not
+                // `group-focus-within` — focus-within is true after a mouse
+                // click too, which leaves the control stuck on after you use
+                // it. Scoped to the POST, not to the row, because this control
+                // belongs to the whole post: reaching for it means the pointer
+                // is somewhere over the post, which is often the last reply
+                // rather than the root.
+                //
+                // `opacity-0` and not `hidden`/absolute positioning. It keeps
+                // the control in the tab order at all times (a `hidden` one is
+                // unreachable by keyboard, which is the whole failure the
+                // action bar's header warns about), and it keeps the row in
+                // flow — revealing it by changing the post's HEIGHT would
+                // shove every post below the pointer down by 20px on hover, in
+                // a list the reader is actively scrolling.
+                //
+                // A touch screen has no hover to reveal anything with, so
+                // there it simply stays visible. Same escape hatch
+                // ConversationList's row menu uses.
+                revealOnHover &&
+                  cn(
+                    'opacity-0 transition-opacity',
+                    'group-hover/post:opacity-100 group-has-[:focus-visible]/post:opacity-100',
+                    '[@media(hover:none)]:opacity-100',
+                  ),
                 // Quiet at rest, clearer under a pointer or a focus ring. It
                 // sits under EVERY post, so at the weight of the thread toggle
                 // a hundred of them would read as a hundred pending actions

@@ -297,21 +297,61 @@ describe('ChatPanel threading', () => {
     expect(screen.getByTestId('chat-thread-replies').querySelectorAll('[data-testid="chat-day-separator"]')).toHaveLength(0);
   });
 
-  it('gives a root with no replies yet a persistent Reply control', () => {
+  it('gives a root with no replies yet a Reply control of its own', () => {
     const onReply = vi.fn();
     render(<ChatPanel threaded messages={[root]} onSend={vi.fn()} onReply={onReply} />);
 
-    // The post you most need to be able to answer is the one nobody has
-    // answered yet — hover-only is exactly where that one gets missed.
     const foot = screen.getByTestId('chat-thread-reply');
     expect(foot.tagName).toBe('BUTTON');
     expect(foot.textContent).toBe('Reply');
     // Named by its target, so a screen-reader user moving control to control
     // does not hear "Reply" fifty times with nothing to tell them apart.
     expect(foot.getAttribute('aria-label')).toBe('Reply to Carol');
-    // A real tab stop, not an aria-only or pointer-only affordance.
-    expect(foot.getAttribute('tabindex')).toBeNull();
     expect(foot.hasAttribute('disabled')).toBe(false);
+  });
+
+  it('keeps that Reply out of sight until the post is hovered or focused', () => {
+    render(<ChatPanel threaded messages={[root]} onSend={vi.fn()} onReply={vi.fn()} />);
+    const foot = screen.getByTestId('chat-thread-reply');
+    const post = screen.getByTestId('chat-thread');
+
+    // Transparent at rest — a standing "Reply" under every ordinary message is
+    // noise, which is what a channel of fifty of them showed.
+    expect(foot.className).toContain('opacity-0');
+    // Revealed by the same gesture the message action bar uses, scoped to the
+    // POST so that hovering any row in it counts. The group has to be named:
+    // the rows inside carry a plain `group` for their own action bar.
+    expect(post.className).toContain('group/post');
+    expect(foot.className).toContain('group-hover/post:opacity-100');
+    // focus-visible, not focus-within — see MessageActionBar on why a mouse
+    // click must not leave it stuck on.
+    expect(foot.className).toContain('group-has-[:focus-visible]/post:opacity-100');
+    // A touch screen has no hover to reveal anything with.
+    expect(foot.className).toContain('[@media(hover:none)]:opacity-100');
+  });
+
+  it('keeps the hidden Reply reachable and usable from the keyboard', () => {
+    const onReply = vi.fn();
+    render(<ChatPanel threaded messages={[root]} onSend={vi.fn()} onReply={onReply} />);
+    const foot = screen.getByTestId('chat-thread-reply') as HTMLButtonElement;
+
+    // Hidden by opacity, never by `hidden` or `display:none`: it stays in the
+    // tab order, so a keyboard user tabs to it and the focus ring reveals it.
+    expect(foot.getAttribute('tabindex')).toBeNull();
+    expect(foot.hasAttribute('hidden')).toBe(false);
+    foot.focus();
+    expect(document.activeElement).toBe(foot);
+    fireEvent.click(foot);
+    expect(onReply.mock.calls[0][0].id).toBe('m1');
+  });
+
+  it('leaves the Reply permanent once a post has answers', () => {
+    render(<ChatPanel threaded messages={[root, reply]} onSend={vi.fn()} onReply={vi.fn()} />);
+    // Here it labels a structure the reader can already see — the rail of
+    // replies — rather than advertising one that might exist.
+    const foot = screen.getByTestId('chat-thread-reply');
+    expect(foot.className).not.toContain('opacity-0');
+    expect(foot.className).not.toContain('group-hover/post');
   });
 
   it('puts the Reply control at the foot of the thread, under the last reply', () => {
@@ -645,7 +685,11 @@ describe('ChatPanel post rhythm', () => {
     // A post is a thread starter, so three posts stay three posts — no run
     // collapsing here however close together they were sent.
     expect(heads()).toBe(3);
-    expect(screen.getAllByTestId('chat-thread-reply')).toHaveLength(3);
+    // One Reply per post, each waiting on that post's own hover rather than
+    // three of them standing open down the channel.
+    const feet = screen.getAllByTestId('chat-thread-reply');
+    expect(feet).toHaveLength(3);
+    for (const foot of feet) expect(foot.className).toContain('opacity-0');
     for (const id of ['p1', 'p2', 'p3']) {
       expect(rowOf(id).getAttribute('data-continues')).toBeNull();
       expect(rowOf(id).querySelector('[data-testid="message-row-time"]')).toBeTruthy();
