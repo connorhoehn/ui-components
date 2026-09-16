@@ -27,6 +27,7 @@ import type { ReactNode } from 'react';
 import { Avatar } from '../shared/Avatar';
 import EmptyState from '../shared/EmptyState';
 import { formatBytes, isImageAttachment, type ChatAttachment } from './ChatAttachment';
+import { DocumentIcon, PaperclipIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
 import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
@@ -150,7 +151,7 @@ export function PinnedMessagesPanel({
     <PanelShell empty={pins.length === 0} className={className} data-testid={testId}>
       {pins.length === 0 ? (
         <EmptyState
-          icon="📌"
+          icon={<PinIcon size={40} />}
           title="Nothing pinned yet"
           description="Pin a message to keep it at the top of this channel for everyone."
         />
@@ -228,7 +229,7 @@ export function ChannelFilesPanel({
     <PanelShell empty={files.length === 0} className={className} data-testid={testId}>
       {files.length === 0 ? (
         <EmptyState
-          icon="📎"
+          icon={<PaperclipIcon size={40} />}
           title="No files here yet"
           description="Drag a file into the conversation and it will show up in this list."
         />
@@ -250,9 +251,9 @@ export function ChannelFilesPanel({
                 ) : (
                   <span
                     aria-hidden
-                    className="grid h-8 w-8 place-items-center rounded bg-surface-inset text-sm"
+                    className="grid h-8 w-8 place-items-center rounded bg-surface-inset text-text-tertiary"
                   >
-                    📄
+                    <DocumentIcon />
                   </span>
                 )
               }
@@ -410,7 +411,7 @@ export function ChannelRecordingsPanel({
     <PanelShell empty={recordings.length === 0} className={className} data-testid={testId}>
       {recordings.length === 0 ? (
         <EmptyState
-          icon="🎥"
+          icon={<VideoCallIcon size={40} />}
           title="No recorded calls"
           description="Calls recorded in this conversation show up here."
         />
@@ -425,8 +426,8 @@ export function ChannelRecordingsPanel({
                 r.thumbnailUrl ? (
                   <img src={r.thumbnailUrl} alt="" className="h-8 w-12 rounded object-cover" />
                 ) : (
-                  <span aria-hidden className="grid h-8 w-12 place-items-center rounded bg-surface-inset text-sm">
-                    🎥
+                  <span aria-hidden className="grid h-8 w-12 place-items-center rounded bg-surface-inset text-text-tertiary">
+                    <VideoCallIcon />
                   </span>
                 )
               }
@@ -501,7 +502,7 @@ export function ChannelDocumentsPanel({
       {create}
       {documents.length === 0 ? (
         <EmptyState
-          icon="📄"
+          icon={<DocumentIcon size={40} />}
           title="No documents yet"
           description="Documents written in this conversation stay with it."
         />
@@ -512,8 +513,8 @@ export function ChannelDocumentsPanel({
               key={d.documentId}
               data-testid="channel-document"
               leading={
-                <span aria-hidden className="grid h-8 w-8 place-items-center rounded bg-surface-inset text-sm">
-                  {d.icon || '\u{1F4C4}'}
+                <span aria-hidden className="grid h-8 w-8 place-items-center rounded bg-surface-inset text-sm text-text-tertiary">
+                  {d.icon || <DocumentIcon />}
                 </span>
               }
               title={d.title || 'Untitled'}

@@ -101,4 +101,4 @@ export { AuditPage as IdentityAuditPage } from './components/identity';
 export { ErrorBoundary } from './components/misc/ErrorBoundary';
 
 // Explicit: both the shared barrel and the ui barrel star-export Icons, and TS refuses an ambiguous name.
-export { PopOutIcon, EditIcon, TrashIcon, PinIcon, BellMutedIcon, LockIcon, ActivityIcon, AtIcon } from './components/ui/Icons';
+export { PopOutIcon, EditIcon, TrashIcon, PinIcon, BellMutedIcon, LockIcon, ActivityIcon, AtIcon, EyeIcon, PhoneIcon, VideoCallIcon, MoonIcon, SunIcon, MenuIcon, TranscribeIcon, BranchIcon, ChartIcon, CodeIcon, PuzzleIcon, RepeatIcon, PaperclipIcon } from './components/ui/Icons';

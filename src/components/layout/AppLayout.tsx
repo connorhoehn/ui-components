@@ -33,6 +33,7 @@ import { useApiHealth } from '../../hooks/useApiHealth';
 import { useToast } from '../shared/ToastProvider';
 import { CollapsibleSidebar } from './CollapsibleSidebar';
 import { CollapsedIconStrip } from './CollapsedIconStrip';
+import { BranchIcon, ChartIcon, CodeIcon, DocumentIcon, ActivityIcon, MenuIcon, PuzzleIcon } from '../ui/Icons';
 import { ReactionsOverlay } from '../collaboration/ReactionsOverlay';
 import { ErrorDisplay } from '../misc/ErrorDisplay';
 import { ErrorPanel } from '../misc/ErrorPanel';
@@ -540,7 +541,9 @@ function AppLayoutInner({
 
   // Helper for menu button classes
   const menuBtnClass = (isActive: boolean) => cn(
-    'block w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] hover:bg-surface-panel',
+    'flex w-full items-center gap-2.5 text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] hover:bg-surface-panel',
+    // The leading glyph must keep its 16px box when the label wraps.
+    '[&>svg]:shrink-0',
     isActive ? 'bg-surface-hover text-text-primary font-semibold' : 'bg-transparent text-text-primary font-normal'
   );
 
@@ -611,7 +614,7 @@ function AppLayoutInner({
               aria-haspopup="menu"
               aria-expanded={showAppMenu}
             >
-              ☰
+              <MenuIcon size={18} />
             </button>
             {showAppMenu && (
               <div
@@ -625,13 +628,15 @@ function AppLayoutInner({
                   onClick={() => { navigate('/document-types'); setShowAppMenu(false); }}
                   className={menuBtnClass(activeView === 'doc-types')}
                 >
-                  📋 Document Types
+                  <DocumentIcon />
+                  Document Types
                 </button>
                 <button
                   onClick={() => { navigate('/field-types'); setShowAppMenu(false); }}
                   className={menuBtnClass(activeView === 'field-types')}
                 >
-                  🧩 Data Types
+                  <PuzzleIcon />
+                  Data Types
                 </button>
                 <div className="border-t border-surface-hover my-1" />
                 <div className="px-3 py-1.5 text-[11px] font-semibold text-text-tertiary uppercase tracking-wide">
@@ -641,13 +646,15 @@ function AppLayoutInner({
                   onClick={() => { navigate('/pipelines'); setShowAppMenu(false); }}
                   className={menuBtnClass(activeView === 'pipelines')}
                 >
-                  🔀 Pipelines
+                  <BranchIcon />
+                  Pipelines
                 </button>
                 <button
                   onClick={() => { navigate('/observability'); setShowAppMenu(false); }}
                   className={menuBtnClass(activeView === 'observability')}
                 >
-                  📡 Observability
+                  <ActivityIcon />
+                  Observability
                 </button>
                 <div className="border-t border-surface-hover my-1" />
                 <div className="px-3 py-1.5 text-[11px] font-semibold text-text-tertiary uppercase tracking-wide">
@@ -657,7 +664,8 @@ function AppLayoutInner({
                   onClick={() => { navigate('/dashboard'); setShowAppMenu(false); }}
                   className={menuBtnClass(activeView === 'dashboard')}
                 >
-                  📊 Live Activity
+                  <ChartIcon />
+                  Live Activity
                 </button>
                 <div className="border-t border-surface-hover my-1" />
                 <div className="px-3 py-1.5 text-[11px] font-semibold text-text-tertiary uppercase tracking-wide">
@@ -667,7 +675,8 @@ function AppLayoutInner({
                   onClick={() => { setShowDevTools(v => !v); setShowAppMenu(false); }}
                   className={menuBtnClass(showDevTools)}
                 >
-                  🔧 Dev Tools
+                  <CodeIcon />
+                  Dev Tools
                 </button>
               </div>
             )}

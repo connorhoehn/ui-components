@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.286.0] — 2026-09-16
+
+### Changed — `./social`, `./layout`, `./ui`
+
+- **Emoji standing in for icons are gone from the chrome.** A conversation
+  header's call buttons were a telephone receiver and a movie camera: full
+  colour cartoon stickers among thin monochrome glyphs, ignoring the theme
+  entirely — a dark emoji on dark chrome stays dark — and drawn differently on
+  every platform. The operator has objected to this twice. `ConversationSurface`
+  and `ChannelViews` take `PhoneIcon` / `VideoCallIcon`, and the app shell's
+  own controls take glyphs too.
+
+  **Reactions keep their emoji**, because there the emoji IS the content rather
+  than a picture of a control. That is the line: a 👍 you chose is data; a 📞
+  drawn on a button is a missing icon.
+
+### Added — `./ui`
+
+- `MoonIcon`, `SunIcon`, `MenuIcon`, `TranscribeIcon`, `BranchIcon`,
+  `ChartIcon`, `CodeIcon`, `PuzzleIcon`, `RepeatIcon`, `PaperclipIcon`,
+  `EyeIcon`, and `PhoneIcon` / `VideoCallIcon` now exported from the root
+  barrel. `TranscribeIcon` is deliberately not `MicIcon` — that name belongs
+  to the call CONTROL in `video/MediaIcons`, and two of them would trip the
+  export-ambiguity guard.
+
+---
+
 ## [2.285.0] — 2026-09-16
 
 ### Added — `./social`

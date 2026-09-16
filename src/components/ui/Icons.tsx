@@ -157,6 +157,16 @@ export function LockIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** An eye: watching, "N people are seeing this". */
+export function EyeIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M1.8 8s2.4-4 6.2-4 6.2 4 6.2 4-2.4 4-6.2 4S1.8 8 1.8 8z" />
+      <circle cx="8" cy="8" r="1.8" />
+    </svg>
+  );
+}
+
 /** A handset: start a voice call. */
 export function PhoneIcon({ size = 16, ...rest }: GlyphProps) {
   return (
@@ -191,6 +201,108 @@ export function AtIcon({ size = 16, ...rest }: GlyphProps) {
     <svg {...base(size, rest)}>
       <circle cx="8" cy="8.3" r="2.8" />
       <path d="M10.8 8.3v.9a1.9 1.9 0 0 0 3.7 0V8a6.5 6.5 0 1 0-2.8 5.4" />
+    </svg>
+  );
+}
+
+/** A crescent: the dark theme — "switch to (or currently in) dark mode". */
+export function MoonIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M14 8.53A6 6 0 1 1 7.47 2 4.67 4.67 0 0 0 14 8.53z" />
+    </svg>
+  );
+}
+
+/** A sun: the light theme — "switch to (or currently in) light mode". */
+export function SunIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="8" cy="8" r="3" />
+      <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06" />
+    </svg>
+  );
+}
+
+/** Three stacked bars: "open the menu", or "unfold the rail this collapsed into". */
+export function MenuIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" />
+    </svg>
+  );
+}
+
+/** A microphone on a stand: turn what is being said into text. Distinct from
+ *  video/MediaIcons' MicIcon, which is a call's mute CONTROL. */
+export function TranscribeIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="6" y="1.75" width="4" height="7.5" rx="2" />
+      <path d="M3.5 7.5a4.5 4.5 0 0 0 9 0" />
+      <path d="M8 12v2M5.5 14h5" />
+    </svg>
+  );
+}
+
+/** A trunk with a branch leaving it: a flow that splits — a pipeline, a branch. */
+export function BranchIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="4.5" cy="3.5" r="1.5" />
+      <circle cx="4.5" cy="12.5" r="1.5" />
+      <circle cx="11.5" cy="3.5" r="1.5" />
+      <path d="M4.5 5v6" />
+      <path d="M11.5 5v1.5a3 3 0 0 1-3 3H4.5" />
+    </svg>
+  );
+}
+
+/** Bars on a baseline: measurements, "how much of this over time". */
+export function ChartIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M2.5 13.5h11" />
+      <path d="M4.5 13.5V9M8 13.5V4M11.5 13.5V7" />
+    </svg>
+  );
+}
+
+/** Angle brackets around a slash: source, "the developer-facing thing". */
+export function CodeIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M5.5 5.5 2.5 8l3 2.5M10.5 5.5 13.5 8l-3 2.5M9.3 3.5 6.7 12.5" />
+    </svg>
+  );
+}
+
+/** A jigsaw piece: something that plugs in — a capability, an optional part. */
+export function PuzzleIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M3.2 3.2H6.3a1.7 1.7 0 0 0 3.4 0H12.8V6.3a1.7 1.7 0 0 1 0 3.4V12.8H3.2z" />
+    </svg>
+  );
+}
+
+/** Two arrows chasing each other: something that runs again — a loop, a re-run. */
+export function RepeatIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M3 7v-.5A3.5 3.5 0 0 1 6.5 3H12" />
+      <path d="M10 1.5 12 3.5 10 5.5" />
+      <path d="M13 9v.5a3.5 3.5 0 0 1-3.5 3.5H4" />
+      <path d="M6 10.5 4 12.5 6 14.5" />
+    </svg>
+  );
+}
+
+/** A paperclip: a file came along with this. */
+export function PaperclipIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M14.3 7.4 8.2 13.5a4 4 0 0 1-5.7-5.7l6.2-6.1a2.7 2.7 0 0 1 3.8 3.8l-6.2 6.1a1.3 1.3 0 0 1-1.9-1.9l5.7-5.6" />
     </svg>
   );
 }

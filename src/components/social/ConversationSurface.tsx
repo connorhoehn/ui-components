@@ -50,6 +50,7 @@ import {
 } from './ChannelViews';
 import type { ChatAttachment } from './ChatAttachment';
 import { cn } from '../../lib/cn';
+import { EyeIcon, PhoneIcon, VideoCallIcon } from '../ui/Icons';
 
 /** The views a conversation can offer. `chat` is the transcript itself. */
 export type ConversationFeature =
@@ -312,7 +313,7 @@ export function ConversationSurface({
                     variant={callInProgress ? 'primary' : 'ghost'}
                     onClick={() => onStartCall(false)}
                   >
-                    📞
+                    <PhoneIcon size={16} />
                   </IconButton>
                 ) : (
                 <>
@@ -325,7 +326,7 @@ export function ConversationSurface({
                     data-testid={`${testId}-audio-call`}
                     onClick={() => onStartCall(true)}
                   >
-                    📞
+                    <PhoneIcon size={16} />
                   </IconButton>
                   <IconButton
                     aria-label={callInProgress ? 'Join the call with video' : 'Start a video call'}
@@ -334,7 +335,7 @@ export function ConversationSurface({
                     variant={callInProgress ? 'primary' : 'ghost'}
                     onClick={() => onStartCall(false)}
                   >
-                    🎥
+                    <VideoCallIcon size={16} />
                   </IconButton>
                 </>
                 )
@@ -461,7 +462,7 @@ function WatchButton({
       aria-label={known ? `${text} — ${viewerCount} watching` : text}
       className="inline-flex h-8 items-center gap-1.5"
     >
-      <span aria-hidden>👁</span>
+      <EyeIcon size={14} />
       <span>{text}</span>
       {known && (
         <span

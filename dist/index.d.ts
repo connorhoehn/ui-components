@@ -1374,6 +1374,9 @@ export declare const borderRadius: {
     readonly full: string;
 };
 
+/** A trunk with a branch leaving it: a flow that splits — a pipeline, a branch. */
+export declare function BranchIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare interface BreadcrumbItem {
     label: string;
     href?: string;
@@ -2495,6 +2498,9 @@ export declare interface ChannelRecordingsPanelProps {
     'data-testid'?: string;
 }
 
+/** Bars on a baseline: measurements, "how much of this over time". */
+export declare function ChartIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare interface ChatAttachment {
     /** Correlation id shared with the sender's in-flight transfer. */
     id: string;
@@ -3417,6 +3423,9 @@ export declare interface CodeEditorProps {
     variables?: string[];
     'aria-label'?: string;
 }
+
+/** Angle brackets around a slash: source, "the developer-facing thing". */
+export declare function CodeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function CodeInput({ length, onComplete, error, disabled, autoFocus, }: CodeInputProps): JSX.Element;
 
@@ -5836,6 +5845,9 @@ export declare interface ExplorerLayoutProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** An eye: watching, "N people are seeing this". */
+export declare function EyeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 declare interface FieldTypeDefinition {
     /** Unique key — matches SectionType for built-ins; UUID for user-defined types */
@@ -8363,6 +8375,9 @@ declare interface MentionUser {
     memberCount?: number;
 }
 
+/** Three stacked bars: "open the menu", or "unfold the rail this collapsed into". */
+export declare function MenuIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** Later commands win by trigger (case-insensitive); the first occurrence keeps its position. */
 export declare function mergeChatCommands(...layers: ReadonlyArray<readonly ChatCommand[] | undefined>): ChatCommand[];
 
@@ -8742,6 +8757,9 @@ declare interface ModelOption {
     value: string;
     label?: string;
 }
+
+/** A crescent: the dark theme — "switch to (or currently in) dark mode". */
+export declare function MoonIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function MoreHorizontalIcon({ size, ...rest }: IconProps): JSX.Element;
 
@@ -9127,6 +9145,9 @@ export declare interface PageSectionProps {
     children: ReactNode;
     className?: string;
 }
+
+/** A paperclip: a file came along with this. */
+export declare function PaperclipIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** The command a sent draft addresses and its argument, or null when the draft is plain text. */
 export declare function parseChatCommand<C extends ComposerCommand = ChatCommand>(text: string, commands: readonly C[] | undefined): {
@@ -10443,6 +10464,9 @@ export declare function purgeDLQEntries(ids: string[], options?: {
     preview?: boolean;
 }): Promise<DLQPurgeResponse>;
 
+/** A jigsaw piece: something that plugs in — a capability, an optional part. */
+export declare function PuzzleIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function QrCodeDisplay({ value, size, label }: QrCodeDisplayProps): JSX.Element;
 
 export declare interface QrCodeDisplayProps {
@@ -11070,6 +11094,9 @@ export declare interface RemoteTileSlotProps {
     /** Avatar size when fallback renders. Default 96. */
     avatarSize?: number;
 }
+
+/** Two arrows chasing each other: something that runs again — a loop, a re-run. */
+export declare function RepeatIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare type ResizeFit = 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
 
@@ -12939,6 +12966,9 @@ export declare interface SummaryPanelProps {
     className?: string;
 }
 
+/** A sun: the light theme — "switch to (or currently in) light mode". */
+export declare function SunIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** Which colour family a primitive paints in. See the block comment above. */
 export declare type SurfaceTone = 'surface' | 'code';
 
@@ -13824,6 +13854,10 @@ export declare interface TraceTimeline {
     agentId: string;
     startedAt: string;
 }
+
+/** A microphone on a stand: turn what is being said into text. Distinct from
+ *  video/MediaIcons' MicIcon, which is a call's mute CONTROL. */
+export declare function TranscribeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, now: nowProp, className, }: TranscriptOverlayProps): JSX.Element | null;
 
@@ -15876,6 +15910,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -15895,45 +15942,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -15967,9 +15978,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -15980,6 +16004,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

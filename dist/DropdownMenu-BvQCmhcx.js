@@ -127,12 +127,22 @@ function w({ size: e = 16, ...t }) {
 	});
 }
 function T({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [/* @__PURE__ */ l("path", { d: "M1.8 8s2.4-4 6.2-4 6.2 4 6.2 4-2.4 4-6.2 4S1.8 8 1.8 8z" }), /* @__PURE__ */ l("circle", {
+			cx: "8",
+			cy: "8",
+			r: "1.8"
+		})]
+	});
+}
+function E({ size: e = 16, ...t }) {
 	return /* @__PURE__ */ l("svg", {
 		...d(e, t),
 		children: /* @__PURE__ */ l("path", { d: "M5.2 2.8 3.4 4.6c-.5.5-.6 1.3-.2 1.9a15 15 0 0 0 6.3 6.3c.6.4 1.4.3 1.9-.2l1.8-1.8-2.6-1.7-1.3 1a11 11 0 0 1-3.4-3.4l1-1.3z" })
 	});
 }
-function E({ size: e = 16, ...t }) {
+function D({ size: e = 16, ...t }) {
 	return /* @__PURE__ */ u("svg", {
 		...d(e, t),
 		children: [/* @__PURE__ */ l("rect", {
@@ -144,13 +154,13 @@ function E({ size: e = 16, ...t }) {
 		}), /* @__PURE__ */ l("path", { d: "M10.5 8.2 14 6.2v3.6l-3.5-2z" })]
 	});
 }
-function D({ size: e = 16, ...t }) {
+function O({ size: e = 16, ...t }) {
 	return /* @__PURE__ */ l("svg", {
 		...d(e, t),
 		children: /* @__PURE__ */ l("path", { d: "M8.5 2 4 9h3.2l-.7 5L12 7H8.8z" })
 	});
 }
-function O({ size: e = 16, ...t }) {
+function k({ size: e = 16, ...t }) {
 	return /* @__PURE__ */ u("svg", {
 		...d(e, t),
 		children: [/* @__PURE__ */ l("circle", {
@@ -160,9 +170,106 @@ function O({ size: e = 16, ...t }) {
 		}), /* @__PURE__ */ l("path", { d: "M10.8 8.3v.9a1.9 1.9 0 0 0 3.7 0V8a6.5 6.5 0 1 0-2.8 5.4" })]
 	});
 }
+function A({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ l("svg", {
+		...d(e, t),
+		children: /* @__PURE__ */ l("path", { d: "M14 8.53A6 6 0 1 1 7.47 2 4.67 4.67 0 0 0 14 8.53z" })
+	});
+}
+function j({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [/* @__PURE__ */ l("circle", {
+			cx: "8",
+			cy: "8",
+			r: "3"
+		}), /* @__PURE__ */ l("path", { d: "M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06" })]
+	});
+}
+function M({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ l("svg", {
+		...d(e, t),
+		children: /* @__PURE__ */ l("path", { d: "M2.5 4.5h11M2.5 8h11M2.5 11.5h11" })
+	});
+}
+function N({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [
+			/* @__PURE__ */ l("rect", {
+				x: "6",
+				y: "1.75",
+				width: "4",
+				height: "7.5",
+				rx: "2"
+			}),
+			/* @__PURE__ */ l("path", { d: "M3.5 7.5a4.5 4.5 0 0 0 9 0" }),
+			/* @__PURE__ */ l("path", { d: "M8 12v2M5.5 14h5" })
+		]
+	});
+}
+function P({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [
+			/* @__PURE__ */ l("circle", {
+				cx: "4.5",
+				cy: "3.5",
+				r: "1.5"
+			}),
+			/* @__PURE__ */ l("circle", {
+				cx: "4.5",
+				cy: "12.5",
+				r: "1.5"
+			}),
+			/* @__PURE__ */ l("circle", {
+				cx: "11.5",
+				cy: "3.5",
+				r: "1.5"
+			}),
+			/* @__PURE__ */ l("path", { d: "M4.5 5v6" }),
+			/* @__PURE__ */ l("path", { d: "M11.5 5v1.5a3 3 0 0 1-3 3H4.5" })
+		]
+	});
+}
+function F({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [/* @__PURE__ */ l("path", { d: "M2.5 13.5h11" }), /* @__PURE__ */ l("path", { d: "M4.5 13.5V9M8 13.5V4M11.5 13.5V7" })]
+	});
+}
+function I({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ l("svg", {
+		...d(e, t),
+		children: /* @__PURE__ */ l("path", { d: "M5.5 5.5 2.5 8l3 2.5M10.5 5.5 13.5 8l-3 2.5M9.3 3.5 6.7 12.5" })
+	});
+}
+function L({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ l("svg", {
+		...d(e, t),
+		children: /* @__PURE__ */ l("path", { d: "M3.2 3.2H6.3a1.7 1.7 0 0 0 3.4 0H12.8V6.3a1.7 1.7 0 0 1 0 3.4V12.8H3.2z" })
+	});
+}
+function R({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [
+			/* @__PURE__ */ l("path", { d: "M3 7v-.5A3.5 3.5 0 0 1 6.5 3H12" }),
+			/* @__PURE__ */ l("path", { d: "M10 1.5 12 3.5 10 5.5" }),
+			/* @__PURE__ */ l("path", { d: "M13 9v.5a3.5 3.5 0 0 1-3.5 3.5H4" }),
+			/* @__PURE__ */ l("path", { d: "M6 10.5 4 12.5 6 14.5" })
+		]
+	});
+}
+function z({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ l("svg", {
+		...d(e, t),
+		children: /* @__PURE__ */ l("path", { d: "M14.3 7.4 8.2 13.5a4 4 0 0 1-5.7-5.7l6.2-6.1a2.7 2.7 0 0 1 3.8 3.8l-6.2 6.1a1.3 1.3 0 0 1-1.9-1.9l5.7-5.6" })
+	});
+}
 //#endregion
 //#region src/components/shared/PresenceAvatars.tsx
-var k = {
+var B = {
 	editor: {
 		glyph: "✏",
 		label: "Editing"
@@ -176,13 +283,13 @@ var k = {
 		label: "Viewing"
 	}
 };
-function A(e) {
+function V(e) {
 	return e.idle === !0 ? "#f59e0b" : e.online === !1 ? "var(--color-text-tertiary)" : e.online === !0 ? "#22c55e" : null;
 }
-function j(e) {
+function H(e) {
 	if (e) return /^#[0-9a-fA-F]{6}$/.test(e) ? `${e}99` : (/^#[0-9a-fA-F]{8}$/.test(e), e);
 }
-function M({ user: t, isFollowing: n, onFollow: r, children: i }) {
+function U({ user: t, isFollowing: n, onFollow: r, children: i }) {
 	let [c, d] = s(!1), f = o(null), p = () => {
 		f.current &&= (clearTimeout(f.current), null), d(!0);
 	}, m = () => {
@@ -230,14 +337,14 @@ function M({ user: t, isFollowing: n, onFollow: r, children: i }) {
 		})]
 	});
 }
-function N({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserClick: s, onFollowUser: d, followingUserId: f = null, className: p }) {
+function W({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserClick: s, onFollowUser: d, followingUserId: f = null, className: p }) {
 	let m = r.slice(0, i), h = r.length - m.length, g = -(a * .3), _ = Math.max(1, Math.round(a * .07)), v = Math.max(10, Math.round(a * .42));
 	return /* @__PURE__ */ u("div", {
 		className: e("inline-flex items-center", p),
 		role: "list",
 		"aria-label": "Online users",
 		children: [m.map((e, r) => {
-			let i = A(e), o = e.idle === !0, p = o ? j(e.color) : e.color, m = o && !e.color ? .6 : void 0, h = e.mode ? k[e.mode] : null, y = [e.name];
+			let i = V(e), o = e.idle === !0, p = o ? H(e.color) : e.color, m = o && !e.color ? .6 : void 0, h = e.mode ? B[e.mode] : null, y = [e.name];
 			o ? y.push("Away") : h && y.push(h.label);
 			let b = y.join(" — "), x = {
 				"data-testid": "presence-avatar",
@@ -288,7 +395,7 @@ function N({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 					children: h.glyph
 				})
 			] }), C = { marginLeft: r > 0 ? g : 0 };
-			return ((t) => d ? /* @__PURE__ */ l(M, {
+			return ((t) => d ? /* @__PURE__ */ l(U, {
 				user: e,
 				isFollowing: f === e.id,
 				onFollow: d,
@@ -332,7 +439,7 @@ function N({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 }
 //#endregion
 //#region src/components/shared/DropdownMenu.tsx
-function P({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, triggerClassName: d, triggerTabIndex: f, triggerTestId: p, align: m = "start", sections: h, className: g, "data-testid": _ = "dropdown-menu" }) {
+function G({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, triggerClassName: d, triggerTabIndex: f, triggerTestId: p, align: m = "start", sections: h, className: g, "data-testid": _ = "dropdown-menu" }) {
 	let [v, y] = s(!1), b = o(null), x = o(null), S = i(() => y(!1), []), C = i((e) => {
 		if (![
 			"ArrowDown",
@@ -387,7 +494,7 @@ function P({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 						className: "px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
-					e.items.map((e, t) => /* @__PURE__ */ l(R, {
+					e.items.map((e, t) => /* @__PURE__ */ l(Y, {
 						item: e,
 						close: S,
 						testId: _
@@ -397,11 +504,11 @@ function P({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 		})
 	})] });
 }
-var F = "flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100";
-function I(e, t = !1) {
+var K = "flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100";
+function q(e, t = !1) {
 	return e.danger ? "text-danger-fg bg-transparent hover:bg-danger-bg" : e.active || t ? "font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]" : "font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]";
 }
-function L({ item: e }) {
+function J({ item: e }) {
 	return /* @__PURE__ */ u(c, { children: [
 		e.checked === void 0 ? e.icon ? /* @__PURE__ */ l("span", {
 			className: "flex w-4 shrink-0 items-center justify-center text-base leading-none text-[var(--color-text-secondary)]",
@@ -434,7 +541,7 @@ function L({ item: e }) {
 		})
 	] });
 }
-function R({ item: t, close: n, testId: i }) {
+function Y({ item: t, close: n, testId: i }) {
 	let [d, f] = s(!1), p = o(null), m = o(null), h = o(null), g = () => {
 		h.current &&= (clearTimeout(h.current), null);
 	}, _ = () => {
@@ -455,8 +562,8 @@ function R({ item: t, close: n, testId: i }) {
 			(e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") && (e.preventDefault(), f(!0), setTimeout(() => m.current?.querySelector("[role=\"menuitem\"],[role=\"menuitemcheckbox\"]")?.focus(), 0));
 		},
 		"data-testid": t["data-testid"],
-		className: e(F, I(t, d)),
-		children: /* @__PURE__ */ l(L, { item: t })
+		className: e(K, q(t, d)),
+		children: /* @__PURE__ */ l(J, { item: t })
 	}), /* @__PURE__ */ l(r, {
 		trigger: p,
 		open: d,
@@ -489,7 +596,7 @@ function R({ item: t, close: n, testId: i }) {
 						className: "px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
-					e.items.map((e, t) => /* @__PURE__ */ l(R, {
+					e.items.map((e, t) => /* @__PURE__ */ l(Y, {
 						item: e,
 						close: n,
 						testId: i
@@ -506,9 +613,9 @@ function R({ item: t, close: n, testId: i }) {
 			t.onSelect?.(), n();
 		},
 		"data-testid": t["data-testid"],
-		className: e(F, I(t)),
-		children: /* @__PURE__ */ l(L, { item: t })
+		className: e(K, q(t)),
+		children: /* @__PURE__ */ l(J, { item: t })
 	});
 }
 //#endregion
-export { h as _, C as a, p as c, _ as d, w as f, y as g, f as h, O as i, v as l, S as m, N as n, m as o, T as p, D as r, g as s, P as t, b as u, x as v, E as y };
+export { D as A, y as C, j as D, h as E, N as O, f as S, R as T, M as _, C as a, E as b, m as c, I as d, v as f, w as g, _ as h, k as i, x as k, g as l, T as m, W as n, P as o, b as p, O as r, F as s, G as t, p as u, A as v, L as w, S as x, z as y };

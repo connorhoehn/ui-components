@@ -195,6 +195,9 @@ export declare interface BoardColumnProps {
     'data-testid'?: string;
 }
 
+/** A trunk with a branch leaving it: a flow that splits — a pipeline, a branch. */
+export declare function BranchIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare interface BreadcrumbItem {
     label: string;
     href?: string;
@@ -396,6 +399,9 @@ export declare interface ChannelHeaderProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** Bars on a baseline: measurements, "how much of this over time". */
+export declare function ChartIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /**
  * Chat input with send button. Stateless — value/onChange controlled by parent.
@@ -666,6 +672,9 @@ export declare interface CodeEditorProps {
     variables?: string[];
     'aria-label'?: string;
 }
+
+/** Angle brackets around a slash: source, "the developer-facing thing". */
+export declare function CodeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function CollapsibleSection({ title, defaultOpen, badge, actions, children, className, storageKey, 'data-testid': testId, }: CollapsibleSectionProps): default_2.JSX.Element;
 
@@ -1374,6 +1383,9 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
+/** An eye: watching, "N people are seeing this". */
+export declare function EyeIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, }: FileUploadDropProps): JSX.Element;
 
 export declare interface FileUploadDropProps {
@@ -1963,6 +1975,9 @@ export declare interface MasterDetailProps<T> {
 
 export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
 
+/** Three stacked bars: "open the menu", or "unfold the rail this collapsed into". */
+export declare function MenuIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /**
  * A chat message bubble for user/assistant messages.
  *
@@ -2055,6 +2070,9 @@ export declare interface ModalProps {
      */
     rawChildren?: boolean;
 }
+
+/** A crescent: the dark theme — "switch to (or currently in) dark mode". */
+export declare function MoonIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function nameToColor(name: string): string;
 
@@ -2275,6 +2293,9 @@ export declare interface PageSectionProps {
     children: ReactNode;
     className?: string;
 }
+
+/** A paperclip: a file came along with this. */
+export declare function PaperclipIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Parse unified git diff output. Exported for tests and for hosts that need
  *  the file list without rendering. */
@@ -2549,6 +2570,9 @@ export declare interface ProjectCardProps {
     minHeight?: number;
 }
 
+/** A jigsaw piece: something that plugs in — a capability, an optional part. */
+export declare function PuzzleIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare interface QuickPrompt {
     label: string;
     hint?: string;
@@ -2612,6 +2636,9 @@ export declare interface RailSectionProps {
     children: ReactNode;
     className?: string;
 }
+
+/** Two arrows chasing each other: something that runs again — a loop, a re-run. */
+export declare function RepeatIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Top-left corner a panel of `width`×`height` occupies at `anchor`. */
 export declare function resolveAnchorPosition(anchor: FloatingPanelAnchor, width: number, height: number): {
@@ -3292,6 +3319,9 @@ export declare interface SuggestionCardProps {
     'data-testid'?: string;
 }
 
+/** A sun: the light theme — "switch to (or currently in) light mode". */
+export declare function SunIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** Which colour family a primitive paints in. See the block comment above. */
 export declare type SurfaceTone = 'surface' | 'code';
 
@@ -3796,6 +3826,10 @@ export declare interface TooltipProps {
     'data-testid'?: string;
 }
 
+/** A microphone on a stand: turn what is being said into text. Distinct from
+ *  video/MediaIcons' MicIcon, which is a call's mute CONTROL. */
+export declare function TranscribeIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** A bin: "remove this". */
 export declare function TrashIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -4066,6 +4100,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -4085,45 +4132,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -4157,9 +4168,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -4170,6 +4194,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
