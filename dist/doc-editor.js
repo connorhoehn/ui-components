@@ -1803,62 +1803,73 @@ function Ht({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionReviewList.tsx
-function Ut({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: l = null, headerExtra: d, emptyTitle: f = "No suggestions", emptyBody: p = "Proposed changes to this document show up here for review.", title: h = "Suggestions", className: g, "data-testid": _ = "suggestion-review-list" }) {
-	let v = e > 0 && (a || o);
-	return /* @__PURE__ */ Y(i, {
-		padding: "none",
-		className: n("overflow-hidden", g),
-		"data-testid": _,
+function Ut({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: l = null, headerExtra: d, emptyTitle: f = "No suggestions", emptyBody: p = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: g = "card", className: _, "data-testid": v = "suggestion-review-list" }) {
+	let y = e > 0 && (a || o), b = y || d ? /* @__PURE__ */ Y("span", {
+		className: "flex items-center gap-1.5",
 		children: [
-			/* @__PURE__ */ J(m, {
-				title: h,
-				meta: /* @__PURE__ */ J(c, {
-					tone: "neutral",
-					size: "xs",
-					mono: !0,
-					children: String(e)
-				}),
-				action: v || d ? /* @__PURE__ */ Y("span", {
-					className: "flex items-center gap-1.5",
-					children: [
-						d,
-						v && o && /* @__PURE__ */ J(r, {
-							variant: "ghost",
-							size: "sm",
-							onClick: o,
-							"data-testid": `${_}-reject-all`,
-							children: "Reject all"
-						}),
-						v && a && /* @__PURE__ */ J(r, {
-							variant: "secondary",
-							size: "sm",
-							onClick: a,
-							"data-testid": `${_}-accept-all`,
-							children: "Accept all"
-						})
-					]
-				}) : void 0
-			}),
-			l && /* @__PURE__ */ J("div", {
-				className: "px-3 pt-2",
-				children: /* @__PURE__ */ J(s, {
-					variant: "error",
-					layout: "stacked",
-					"data-testid": `${_}-error`,
-					children: l
-				})
-			}),
-			e === 0 ? /* @__PURE__ */ J(u, {
+			d,
+			y && o && /* @__PURE__ */ J(r, {
+				variant: "ghost",
 				size: "sm",
-				title: f,
-				body: p,
-				testId: `${_}-empty`
-			}) : /* @__PURE__ */ J("ul", {
-				className: "m-0 list-none p-0",
-				"data-testid": `${_}-list`,
-				children: t
+				onClick: o,
+				"data-testid": `${v}-reject-all`,
+				children: "Reject all"
+			}),
+			y && a && /* @__PURE__ */ J(r, {
+				variant: "secondary",
+				size: "sm",
+				onClick: a,
+				"data-testid": `${v}-accept-all`,
+				children: "Accept all"
 			})
 		]
+	}) : void 0, x = /* @__PURE__ */ Y(q, { children: [l && /* @__PURE__ */ J("div", {
+		className: n("pt-2", g === "card" && "px-3"),
+		children: /* @__PURE__ */ J(s, {
+			variant: "error",
+			layout: "stacked",
+			"data-testid": `${v}-error`,
+			children: l
+		})
+	}), e === 0 ? /* @__PURE__ */ J(u, {
+		size: "sm",
+		title: f,
+		body: p,
+		testId: `${v}-empty`
+	}) : /* @__PURE__ */ J("ul", {
+		className: "m-0 list-none p-0",
+		"data-testid": `${v}-list`,
+		children: t
+	})] });
+	return g === "pane" ? /* @__PURE__ */ Y("div", {
+		className: n("flex min-h-0 flex-1 flex-col", _),
+		"data-testid": v,
+		"data-variant": "pane",
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-1.5",
+			children: [/* @__PURE__ */ J("span", {
+				className: "text-xs text-tertiary",
+				"data-testid": `${v}-count`,
+				children: e === 0 ? "None open" : e === 1 ? "1 open" : `${e} open`
+			}), b]
+		}), /* @__PURE__ */ J("div", {
+			className: "min-h-0 flex-1 overflow-y-auto px-3",
+			children: x
+		})]
+	}) : /* @__PURE__ */ Y(i, {
+		padding: "none",
+		className: n("overflow-hidden", _),
+		"data-testid": v,
+		children: [/* @__PURE__ */ J(m, {
+			title: h,
+			meta: /* @__PURE__ */ J(c, {
+				tone: "neutral",
+				size: "xs",
+				mono: !0,
+				children: String(e)
+			}),
+			action: b
+		}), x]
 	});
 }
 //#endregion
