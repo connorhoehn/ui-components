@@ -27,6 +27,11 @@
 import { useState, type MouseEvent } from 'react';
 import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
+import { ChevronIcon } from '../ui/Icons';
+// Imported from the module rather than the barrel: `SparklesIcon` is also
+// re-exported through ./video, and the export-ambiguity guard trips on a
+// name reachable two ways.
+import { SparklesIcon } from '../video/MediaIcons';
 import type { ChatSidePanelRef } from './chatCommands';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
@@ -322,7 +327,11 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
       onClick={toggleFromBody}
     >
       <div className="flex min-w-0 items-center gap-1.5">
-        <span aria-hidden="true" className="shrink-0">🪄</span>
+        {/* The agent's mark. A drawn glyph, not 🪄: a colour emoji is the one
+            thing on this card that does not take the text colour, so it stays
+            bright on a muted row and reads as decoration rather than as the
+            row's subject. */}
+        <SparklesIcon size={14} className="shrink-0 text-text-tertiary" aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate text-text-primary" data-testid={`${testId}-instruction`}>
           <span className="font-mono text-text-tertiary">{command}</span> {instruction}
         </span>
@@ -335,7 +344,9 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
           onClick={() => setExpanded((v) => !v)}
           className="!h-5 !w-5 shrink-0 text-[10px] text-text-tertiary"
           data-testid={`${testId}-toggle`}
-          icon={<span aria-hidden="true" className={cn('inline-block transition-transform duration-150', expanded && 'rotate-90')}>▶</span>}
+          // U+25B6 renders as a colour emoji on macOS, which is how a
+          // disclosure triangle ended up brighter than the text it belongs to.
+          icon={<ChevronIcon size={12} dir="right" className={cn('transition-transform duration-150', expanded && 'rotate-90')} aria-hidden="true" />}
         />
       </div>
       {/* The status row is the one row that can run out of room: progress, what
