@@ -1762,12 +1762,19 @@ export declare interface KPIGridProps {
     columns?: KPIGridColumns;
     /**
      * Column count for the 768–1023px (`md`) band. Undefined (the default)
-     * emits no `md:` class, so that band keeps showing `columns` — today's
-     * behaviour, where the whole 640–1279px range renders identically. Set
-     * this lower than `columns` for a grid that lives inside a nested rail
-     * (a laptop-width `md` view there is far narrower than a full-width page
-     * at the same viewport size) so tiles stay readable instead of cramming
-     * `columns` of them into the rail's actual width.
+     * emits no `md:` class, so `columns` applies starting at the `sm`
+     * breakpoint (640px) exactly as it always has.
+     *
+     * Setting this steps the grid up in three stages instead: 1 column below
+     * `sm`, `mdColumns` starting at `md` (768px), then `columns` starting at
+     * `lg` (1024px) — no `sm:` class is emitted in this mode, since `sm` and
+     * `md` would otherwise both apply at 768px+ and Tailwind's declaration
+     * order (not specificity) makes the later one, `md`, win regardless of
+     * which is visually "bigger". Set `mdColumns` lower than `columns` for a
+     * grid that lives inside a nested rail (a laptop-width `md` view there is
+     * far narrower than a full-width page at the same viewport size) so tiles
+     * stay readable instead of cramming `columns` of them into the rail's
+     * actual width.
      */
     mdColumns?: KPIGridColumns;
     /** Tighter gap (8px vs 16px). Default false. */
@@ -4004,6 +4011,25 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -4017,18 +4043,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -4062,9 +4079,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -4082,12 +4102,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -4098,16 +4115,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

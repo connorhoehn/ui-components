@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.277.2] — 2026-09-16
+
+### Fixed — `./shared`
+
+- **`KPIGrid`'s `mdColumns` step (2.275.0) could never reach `columns` above
+  768px**: the component emitted `sm:grid-cols-{columns}` alongside
+  `md:grid-cols-{mdColumns}` whenever `mdColumns` was set, and Tailwind's
+  declaration order (not specificity) makes `md:` win over `sm:` at every
+  width ≥768px — so a grid asking for `columns={4} mdColumns={2}` was
+  visually capped at 2 columns from 768px all the way up, with the 4-column
+  step unreachable at any viewport width. Measured in a consumer at a 1430px
+  container: computed `gridTemplateColumns` came back as two columns instead
+  of four. Fixed by suppressing the `sm:` class when `mdColumns` is set and
+  emitting `md:grid-cols-{mdColumns}` then `lg:grid-cols-{columns}` instead,
+  so the grid steps 1 → `mdColumns` (768px) → `columns` (1024px) as the prop
+  doc always described. The no-`mdColumns` path (`sm:grid-cols-{columns}`
+  only) is byte-for-byte unchanged. Pinned class-string assertions added to
+  `KPIGrid.test.tsx` for both modes.
+
 ## [2.275.1] — 2026-09-16
 
 ### Fixed — `./shared`

@@ -19,12 +19,19 @@ export interface KPIGridProps {
   columns?: KPIGridColumns;
   /**
    * Column count for the 768–1023px (`md`) band. Undefined (the default)
-   * emits no `md:` class, so that band keeps showing `columns` — today's
-   * behaviour, where the whole 640–1279px range renders identically. Set
-   * this lower than `columns` for a grid that lives inside a nested rail
-   * (a laptop-width `md` view there is far narrower than a full-width page
-   * at the same viewport size) so tiles stay readable instead of cramming
-   * `columns` of them into the rail's actual width.
+   * emits no `md:` class, so `columns` applies starting at the `sm`
+   * breakpoint (640px) exactly as it always has.
+   *
+   * Setting this steps the grid up in three stages instead: 1 column below
+   * `sm`, `mdColumns` starting at `md` (768px), then `columns` starting at
+   * `lg` (1024px) — no `sm:` class is emitted in this mode, since `sm` and
+   * `md` would otherwise both apply at 768px+ and Tailwind's declaration
+   * order (not specificity) makes the later one, `md`, win regardless of
+   * which is visually "bigger". Set `mdColumns` lower than `columns` for a
+   * grid that lives inside a nested rail (a laptop-width `md` view there is
+   * far narrower than a full-width page at the same viewport size) so tiles
+   * stay readable instead of cramming `columns` of them into the rail's
+   * actual width.
    */
   mdColumns?: KPIGridColumns;
   /** Tighter gap (8px vs 16px). Default false. */
@@ -48,6 +55,13 @@ const MD_COLUMN_CLASS: Record<KPIGridColumns, string> = {
   4: 'md:grid-cols-4',
 };
 
+const LG_COLUMN_CLASS: Record<KPIGridColumns, string> = {
+  1: 'lg:grid-cols-1',
+  2: 'lg:grid-cols-2',
+  3: 'lg:grid-cols-3',
+  4: 'lg:grid-cols-4',
+};
+
 export function KPIGrid({
   children,
   columns = 4,
@@ -62,8 +76,9 @@ export function KPIGrid({
       data-testid={testId}
       className={cn(
         'grid grid-cols-1',
-        COLUMN_CLASS[columns],
+        mdColumns ? undefined : COLUMN_CLASS[columns],
         mdColumns && MD_COLUMN_CLASS[mdColumns],
+        mdColumns && LG_COLUMN_CLASS[columns],
         dense ? 'gap-2' : 'gap-4',
         className,
       )}
