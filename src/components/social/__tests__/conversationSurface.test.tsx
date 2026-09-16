@@ -19,7 +19,7 @@ const tabNames = () => screen.queryAllByRole('tab').map((t) => t.textContent);
 describe('which views exist is data', () => {
   it('offers every view by default', () => {
     render(<ConversationSurface name="Hank" />);
-    expect(tabNames()).toEqual(['Chat', 'Files', 'Documents', 'Pinned', 'Mentions', 'Calls']);
+    expect(tabNames()).toEqual(['Chat', 'Files', 'Documents', 'Pinned', 'Members', 'Mentions', 'Calls']);
   });
 
   // The chat-only embed. Not a greyed tab, not an upsell — absent.

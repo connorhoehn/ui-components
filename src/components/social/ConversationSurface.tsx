@@ -57,6 +57,7 @@ export type ConversationFeature =
   | 'files'
   | 'documents'
   | 'pins'
+  | 'members'
   | 'mentions'
   | 'calls';
 
@@ -65,6 +66,7 @@ export const ALL_CONVERSATION_FEATURES: readonly ConversationFeature[] = [
   'files',
   'documents',
   'pins',
+  'members',
   'mentions',
   'calls',
 ];
@@ -94,6 +96,14 @@ export interface ConversationSurfaceProps {
    * scrolls with nothing; the transcript keeps its own scroll below.
    */
   canvas?: ReactNode;
+
+  /**
+   * The Members view: the host's `MembersPanel`, wired to its membership
+   * API. Absent, the tab shows nothing — pass it whenever 'members' is on.
+   */
+  members?: ReactNode;
+  /** The Members tab's badge. */
+  memberCount?: number;
 
   files?: readonly ChannelFileItem[];
   /** Resolves a displayable image source; the download route is authenticated. */
@@ -193,6 +203,7 @@ const LABELS: Record<ConversationFeature, string> = {
   files: 'Files',
   documents: 'Documents',
   pins: 'Pinned',
+  members: 'Members',
   mentions: 'Mentions',
   calls: 'Calls',
 };
@@ -205,6 +216,8 @@ export function ConversationSurface({
   features = ALL_CONVERSATION_FEATURES,
   children,
   canvas,
+  members,
+  memberCount,
   files = [],
   thumbnailSrc,
   documents = [],
@@ -253,6 +266,7 @@ export function ConversationSurface({
         f === 'files' ? count(files.length)
         : f === 'documents' ? count(documents.length)
         : f === 'pins' ? count(pins.length)
+        : f === 'members' ? (memberCount != null ? count(memberCount) : undefined)
         : f === 'calls' ? count(recordings.length)
         : f === 'mentions' ? count(mentions.filter((m) => m.unread).length)
         : undefined,
@@ -363,6 +377,11 @@ export function ConversationSurface({
           onUnpin={onUnpin}
           onJump={onJumpToMessage ? jumpFromAnotherView : undefined}
         />
+      )}
+      {enabled.has('members') && view === 'members' && (
+        <div className="flex min-h-0 flex-1 flex-col" data-testid={`${testId}-members`}>
+          {members}
+        </div>
       )}
       {enabled.has('mentions') && view === 'mentions' && (
         <ChannelMentionsPanel

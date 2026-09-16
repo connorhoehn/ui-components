@@ -17,6 +17,7 @@ import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentAct
 import { DocumentChip } from './DocumentChip';
 import { CallActivityCard, type CallActivityParticipant } from './CallActivityCard';
 import { RecordingActivityCard, type RecordingParticipant, type RecordingStage } from './RecordingActivityCard';
+import { MembershipNotice, type MembershipRef, type MembershipHistory } from './MembershipNotice';
 import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunResult, type AgentRunReviewDecision, type AgentRunStatus, type AgentRunSuggestion } from './AgentRunCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
@@ -521,6 +522,32 @@ export function recordingRefFromMetadata(
     participantCount: typeof metadata.participantCount === 'number' ? metadata.participantCount : undefined,
     stage,
     expiresAt: typeof metadata.expiresAt === 'string' ? metadata.expiresAt : undefined,
+  };
+}
+
+/**
+ * A membership event: `metadata.kind === 'membership'`. Rendered as a system
+ * line — "Eve added Carol · history from the last 7 days" — not a bubble.
+ */
+export function membershipRefFromMetadata(metadata: Record<string, unknown> | undefined): MembershipRef | null {
+  if (!metadata || metadata.kind !== 'membership') return null;
+  const event = metadata.event === 'removed' ? 'removed' : metadata.event === 'added' ? 'added' : null;
+  if (!event) return null;
+  const actorId = typeof metadata.actorId === 'string' ? metadata.actorId : '';
+  const userIds = Array.isArray(metadata.userIds) ? metadata.userIds.filter((u): u is string => typeof u === 'string') : [];
+  const names = Array.isArray(metadata.names) ? metadata.names.filter((n): n is string => typeof n === 'string') : undefined;
+  const h = metadata.history as { mode?: unknown; days?: unknown } | undefined;
+  const history: MembershipHistory | undefined =
+    h && (h.mode === 'none' || h.mode === 'all' || h.mode === 'days')
+      ? { mode: h.mode, ...(typeof h.days === 'number' ? { days: h.days } : {}) }
+      : undefined;
+  return {
+    event,
+    actorId,
+    ...(typeof metadata.actorName === 'string' ? { actorName: metadata.actorName } : {}),
+    userIds,
+    ...(names && names.length ? { names } : {}),
+    ...(history ? { history } : {}),
   };
 }
 
@@ -1035,6 +1062,7 @@ export function ChatPanel({
               // rather than the transcript swapping rows underneath a reader.
               const callRef = callRefFromMetadata(message.metadata);
               const recordingRef = recordingRefFromMetadata(message.metadata);
+              const membershipRef = membershipRefFromMetadata(message.metadata);
               const truncation = truncationFromMetadata(message.metadata);
               // `#Roadmap` in the text stays words; the chips under it are the
               // same documents as things you can open.
@@ -1227,6 +1255,20 @@ export function ChatPanel({
                   )}
                 </>
               );
+
+              if (membershipRef) {
+                return (
+                  <Fragment key={message.id ?? index}>
+                    {daySeparator}
+                    <MembershipNotice
+                      membership={membershipRef}
+                      fallbackText={message.content}
+                      timestamp={message.timestamp}
+                      data-testid="membership-notice"
+                    />
+                  </Fragment>
+                );
+              }
 
               return (
                 <Fragment key={message.id ?? index}>

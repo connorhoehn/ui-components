@@ -10,7 +10,7 @@ import { t as l } from "../Avatar-BzicCOft.js";
 import { n as u, r as d, t as f } from "../Badge-NPe_5OA9.js";
 import { t as p } from "../ActivityFeed-C9KAtqCl.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
-import { l as _, n as v, t as y, u as b } from "../ConversationSurface-vpDXG6Kt.js";
+import { l as _, n as v, t as y, u as b } from "../ConversationSurface-DgDEzA1S.js";
 import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-d9JKcXlp.js";
 import { t as ee } from "../CanvasDocumentView-a3eqZ59c.js";
 import { Component as te, createContext as ne, useCallback as O, useContext as re, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";
@@ -1183,7 +1183,7 @@ var $ = {
 	calls: "conversation.calls"
 };
 function et(e = y, t = {}) {
-	return e.filter((e) => e !== "chat").map((e) => t[e] ?? $[e]);
+	return e.filter((e) => e !== "chat" && e !== "members").map((e) => t[e] ?? $[e]);
 }
 function tt(e) {
 	let { channel: t = null, hasDocuments: n = !0, from: r = y } = e;
@@ -1192,7 +1192,7 @@ function tt(e) {
 function nt({ declare: e = y, capabilities: t, capabilitiesError: n, capabilityNames: r = {}, children: i, ...a }) {
 	let o = A(() => {
 		let i = r;
-		return e.filter((e) => e === "chat" || !t || n ? !0 : t[i[e] ?? $[e]] === !0);
+		return e.filter((e) => e === "chat" || e === "members" || !t || n ? !0 : t[i[e] ?? $[e]] === !0);
 	}, [
 		e,
 		t,

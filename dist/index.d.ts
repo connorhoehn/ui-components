@@ -164,6 +164,30 @@ declare interface ActivityPanelProps {
     connectionState: ConnectionState_4;
 }
 
+export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, onAdd, onClose, 'data-testid': testId, }: AddToChatDialogProps): JSX.Element;
+
+export declare interface AddToChatDialogProps {
+    open: boolean;
+    /** "#design", "the chat with Carol" — the place they are being added to. */
+    conversationName: string;
+    /** Everyone who could be added — members already in are the host's to leave out. */
+    people: readonly AddToChatPerson[];
+    preselectedIds?: readonly string[];
+    busy?: boolean;
+    /** Resolves when the server has them; rejects with a reason to show. */
+    onAdd: (userIds: string[], history: MembershipHistory) => Promise<void> | void;
+    onClose: () => void;
+    'data-testid'?: string;
+}
+
+export declare interface AddToChatPerson {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+    /** A second line — a title, an email, "already in 3 of your chats". */
+    subtitle?: string;
+}
+
 export declare type AdjustLayer = {
     kind: 'brightness';
     value: number;
@@ -2644,6 +2668,15 @@ export declare interface ChatDropZoneProps {
 /** A speech bubble: a conversation, a comment. */
 export declare function ChatIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare interface ChatMember {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+    role: 'owner' | 'member';
+    /** ISO. */
+    addedAt?: string;
+}
+
 export declare interface ChatMessage {
     id?: string;
     clientId: string;
@@ -3787,7 +3820,7 @@ export declare interface ContextPatchMerge {
 }
 
 /** The views a conversation can offer. `chat` is the transcript itself. */
-export declare type ConversationFeature = 'chat' | 'files' | 'documents' | 'pins' | 'mentions' | 'calls';
+export declare type ConversationFeature = 'chat' | 'files' | 'documents' | 'pins' | 'members' | 'mentions' | 'calls';
 
 export declare interface ConversationItem {
     /** Chat channel id — handed back verbatim by `onSelect`. */
@@ -4015,7 +4048,7 @@ export declare interface ConversationStartReceipt {
     onAction?: () => void;
 }
 
-export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, canvas, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
+export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, canvas, members, memberCount, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
 
 export declare interface ConversationSurfaceProps {
     /** Channel name, or the people in a DM. */
@@ -4040,6 +4073,13 @@ export declare interface ConversationSurfaceProps {
      * scrolls with nothing; the transcript keeps its own scroll below.
      */
     canvas?: ReactNode;
+    /**
+     * The Members view: the host's `MembersPanel`, wired to its membership
+     * API. Absent, the tab shows nothing — pass it whenever 'members' is on.
+     */
+    members?: ReactNode;
+    /** The Members tab's badge. */
+    memberCount?: number;
     files?: readonly ChannelFileItem[];
     /** Resolves a displayable image source; the download route is authenticated. */
     thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
@@ -4410,6 +4450,11 @@ declare type DeleteOutcome = {
 
 /** One op as a sentence. Exported for the tests and for hosts that render a run outside the card. */
 export declare function describeAgentRunOp(op: AgentRunOp): string;
+
+/** The sentence the line shows; the fallback when the names are not on the wire. */
+export declare function describeMembership(ref: MembershipRef, fallbackText?: string): string;
+
+export declare function describeMembershipHistory(history: MembershipHistory | undefined): string;
 
 /**
  * Names, not ids, and never more than two before it starts counting.
@@ -6422,6 +6467,12 @@ export declare interface HangoutSpotlightProps {
     style?: CSSProperties;
 }
 
+export declare const HISTORY_DAYS_DEFAULT = 7;
+
+export declare const HISTORY_DAYS_MAX = 3650;
+
+export declare const HISTORY_DAYS_MIN = 1;
+
 /** A clock: history, "when". */
 export declare function HistoryIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -7845,6 +7896,54 @@ declare interface MemberItem {
     joinedAt: string;
     displayName?: string;
     status?: string;
+}
+
+export declare interface MembershipHistory {
+    mode: MembershipHistoryMode;
+    days?: number;
+}
+
+export declare type MembershipHistoryMode = 'none' | 'days' | 'all';
+
+export declare function MembershipNotice({ membership, fallbackText, timestamp, className, 'data-testid': testId, }: MembershipNoticeProps): JSX.Element;
+
+export declare interface MembershipNoticeProps {
+    membership: MembershipRef;
+    /** The message text — what the line says when the names are missing. */
+    fallbackText?: string;
+    timestamp?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface MembershipRef {
+    event: 'added' | 'removed';
+    actorId: string;
+    actorName?: string;
+    userIds: string[];
+    names?: string[];
+    history?: MembershipHistory;
+}
+
+/**
+ * A membership event: `metadata.kind === 'membership'`. Rendered as a system
+ * line — "Eve added Carol · history from the last 7 days" — not a bubble.
+ */
+export declare function membershipRefFromMetadata(metadata: Record<string, unknown> | undefined): MembershipRef | null;
+
+export declare function MembersPanel({ members, open, canManage, currentUserId, onAdd, onRemove, className, 'data-testid': testId, }: MembersPanelProps): JSX.Element;
+
+export declare interface MembersPanelProps {
+    members: readonly ChatMember[];
+    /** True when the channel gates nobody — everyone in the org can read it. */
+    open?: boolean;
+    /** The viewer may add and remove (an owner). */
+    canManage?: boolean;
+    currentUserId?: string;
+    onAdd?: () => void;
+    onRemove?: (userId: string) => void;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare type MemoryMode = 'read' | 'write';
@@ -15147,6 +15246,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -15166,12 +15278,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -15189,42 +15311,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -15251,6 +15340,16 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

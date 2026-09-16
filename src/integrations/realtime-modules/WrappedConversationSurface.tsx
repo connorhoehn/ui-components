@@ -43,10 +43,11 @@ import {
  * differently can remap without forking the component — the names below are a
  * default, not a protocol.
  */
-export const CONVERSATION_CAPABILITY_NAMES: Record<
-  Exclude<ConversationFeature, 'chat'>,
-  string
-> = {
+/** The views that need no capability: chat itself, and who is in it. */
+export type UngatedConversationFeature = 'chat' | 'members';
+export type GatedConversationFeature = Exclude<ConversationFeature, UngatedConversationFeature>;
+
+export const CONVERSATION_CAPABILITY_NAMES: Record<GatedConversationFeature, string> = {
   files: 'conversation.files',
   documents: 'conversation.documents',
   pins: 'conversation.pins',
@@ -83,7 +84,7 @@ export interface WrappedConversationSurfaceProps
    */
   capabilitiesError?: unknown;
   /** Remap capability names when the host's CRDs are named differently. */
-  capabilityNames?: Partial<Record<Exclude<ConversationFeature, 'chat'>, string>>;
+  capabilityNames?: Partial<Record<GatedConversationFeature, string>>;
   children?: ReactNode;
 }
 
@@ -94,10 +95,10 @@ export interface WrappedConversationSurfaceProps
  */
 export function capabilityNamesFor(
   declare: readonly ConversationFeature[] = ALL_CONVERSATION_FEATURES,
-  overrides: Partial<Record<Exclude<ConversationFeature, 'chat'>, string>> = {},
+  overrides: Partial<Record<GatedConversationFeature, string>> = {},
 ): string[] {
   return declare
-    .filter((f): f is Exclude<ConversationFeature, 'chat'> => f !== 'chat')
+    .filter((f): f is GatedConversationFeature => f !== 'chat' && f !== 'members')
     .map((f) => overrides[f] ?? CONVERSATION_CAPABILITY_NAMES[f]);
 }
 
@@ -151,7 +152,8 @@ export function WrappedConversationSurface({
     const names = capabilityNames;
     return declare.filter((f) => {
       // Never gated: see the header.
-      if (f === 'chat') return true;
+      // Membership is a fact about the conversation, not a provisioned feature.
+      if (f === 'chat' || f === 'members') return true;
       // Nothing to ask, or asking failed: the host's declaration stands on
       // its own. Both are "we do not know", and neither is "no".
       if (!capabilities || capabilitiesError) return true;

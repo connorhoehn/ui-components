@@ -9,6 +9,7 @@ export {
   documentRefsFromMetadata,
   callRefFromMetadata,
   recordingRefFromMetadata,
+  membershipRefFromMetadata,
   truncationFromMetadata,
 } from './ChatPanel';
 export type { ChatPanelProps, LocalChatMessage } from './ChatPanel';
@@ -204,3 +205,11 @@ export { ChatBubbleStack } from './ChatBubbleStack';
 export type { ChatBubble, ChatBubbleStackProps } from './ChatBubbleStack';
 export { ConversationStart } from './ConversationStart';
 export type { ConversationStartProps, ConversationStartDestination, ConversationStartReceipt } from './ConversationStart';
+
+// Membership — who is in a conversation, and the Teams-style way to change it.
+export { AddToChatDialog, HISTORY_DAYS_DEFAULT, HISTORY_DAYS_MIN, HISTORY_DAYS_MAX } from './AddToChatDialog';
+export type { AddToChatDialogProps, AddToChatPerson } from './AddToChatDialog';
+export { MembershipNotice, describeMembership, describeMembershipHistory } from './MembershipNotice';
+export type { MembershipNoticeProps, MembershipRef, MembershipHistory, MembershipHistoryMode } from './MembershipNotice';
+export { MembersPanel } from './MembersPanel';
+export type { MembersPanelProps, ChatMember } from './MembersPanel';

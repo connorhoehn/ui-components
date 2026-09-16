@@ -501,7 +501,7 @@ export declare interface CapabilityGateProps {
  * `useCapabilities`. Asking for names the host has not declared would make the
  * gateway's answer decide a question the host already answered.
  */
-export declare function capabilityNamesFor(declare?: readonly ConversationFeature[], overrides?: Partial<Record<Exclude<ConversationFeature, 'chat'>, string>>): string[];
+export declare function capabilityNamesFor(declare?: readonly ConversationFeature[], overrides?: Partial<Record<GatedConversationFeature, string>>): string[];
 
 declare interface ChannelDocumentItem {
     documentId: string;
@@ -933,15 +933,10 @@ declare type ConnectionPillTone = SurfaceTone;
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
-/**
- * Capability name per view. Exported so a host whose CRDs are named
- * differently can remap without forking the component — the names below are a
- * default, not a protocol.
- */
-export declare const CONVERSATION_CAPABILITY_NAMES: Record<Exclude<ConversationFeature, 'chat'>, string>;
+export declare const CONVERSATION_CAPABILITY_NAMES: Record<GatedConversationFeature, string>;
 
 /** The views a conversation can offer. `chat` is the transcript itself. */
-declare type ConversationFeature = 'chat' | 'files' | 'documents' | 'pins' | 'mentions' | 'calls';
+declare type ConversationFeature = 'chat' | 'files' | 'documents' | 'pins' | 'members' | 'mentions' | 'calls';
 
 /**
  * Which features a conversation is CAPABLE of, before anyone asks the gateway
@@ -996,6 +991,13 @@ declare interface ConversationSurfaceProps {
      * scrolls with nothing; the transcript keeps its own scroll below.
      */
     canvas?: ReactNode;
+    /**
+     * The Members view: the host's `MembersPanel`, wired to its membership
+     * API. Absent, the tab shows nothing — pass it whenever 'members' is on.
+     */
+    members?: ReactNode;
+    /** The Members tab's badge. */
+    memberCount?: number;
     files?: readonly ChannelFileItem[];
     /** Resolves a displayable image source; the download route is authenticated. */
     thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
@@ -1165,6 +1167,8 @@ export declare interface FileUploadSummary {
     /** Byte length, so a summary can render a size without re-reading the file. */
     size?: number;
 }
+
+declare type GatedConversationFeature = Exclude<ConversationFeature, UngatedConversationFeature>;
 
 /** A thread plus where it wants to sit, in pixels from the page top. */
 declare interface GutterItem {
@@ -2278,6 +2282,14 @@ export declare interface UIMessageReaction {
 }
 
 /**
+ * Capability name per view. Exported so a host whose CRDs are named
+ * differently can remap without forking the component — the names below are a
+ * default, not a protocol.
+ */
+/** The views that need no capability: chat itself, and who is in it. */
+declare type UngatedConversationFeature = 'chat' | 'members';
+
+/**
  * Read the effective capabilities.
  *
  * Outside a provider every capability is OFF rather than ON. An unwrapped
@@ -2487,7 +2499,7 @@ export declare interface WrappedConversationSurfaceProps extends Omit<Conversati
      */
     capabilitiesError?: unknown;
     /** Remap capability names when the host's CRDs are named differently. */
-    capabilityNames?: Partial<Record<Exclude<ConversationFeature, 'chat'>, string>>;
+    capabilityNames?: Partial<Record<GatedConversationFeature, string>>;
     children?: ReactNode;
 }
 

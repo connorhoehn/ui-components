@@ -7,7 +7,7 @@
 // composer would hide the fact that arrow keys and Enter are NOT handled by the
 // composer's own keymap while this is up.
 
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { Fragment, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { cn } from '../../lib/cn';
 import { Avatar } from '../shared/Avatar';
 
@@ -19,11 +19,19 @@ export interface MentionCandidate {
   color?: string;
   /** Shown under the name, e.g. a role or team. */
   hint?: string;
+  /**
+   * False when the composer knows the chat's members and this person is not
+   * one: the row lists under "Not in this chat" and picking it offers to add
+   * them rather than mentioning someone who could not read the message.
+   */
+  member?: boolean;
 }
 
 export interface MentionSuggestionsProps {
   items: MentionCandidate[];
   command: (item: { id: string; label: string }) => void;
+  /** Picked a non-member: no mention is inserted; the host opens its add flow. */
+  onPickNonMember?: (userId: string) => void;
 }
 
 export interface MentionSuggestionsHandle {
@@ -31,25 +39,33 @@ export interface MentionSuggestionsHandle {
 }
 
 export const MentionSuggestions = forwardRef<MentionSuggestionsHandle, MentionSuggestionsProps>(
-  function MentionSuggestions({ items, command }, ref) {
+  function MentionSuggestions({ items, command, onPickNonMember }, ref) {
     const [selected, setSelected] = useState(0);
+
+    // Members first, then the people who are not in this chat: the order the
+    // keyboard walks and the order the list shows.
+    const members = items.filter((i) => i.member !== false);
+    const outsiders = items.filter((i) => i.member === false);
+    const ordered = [...members, ...outsiders];
 
     // A narrowing query can leave the cursor past the end of the list.
     useEffect(() => setSelected(0), [items]);
 
     const choose = (index: number) => {
-      const item = items[index];
-      if (item) command({ id: item.id, label: item.label });
+      const item = ordered[index];
+      if (!item) return;
+      if (item.member === false) { onPickNonMember?.(item.id); return; }
+      command({ id: item.id, label: item.label });
     };
 
     useImperativeHandle(ref, () => ({
       onKeyDown: ({ event }) => {
         if (event.key === 'ArrowUp') {
-          setSelected((i) => (i + items.length - 1) % items.length);
+          setSelected((i) => (i + ordered.length - 1) % ordered.length);
           return true;
         }
         if (event.key === 'ArrowDown') {
-          setSelected((i) => (i + 1) % items.length);
+          setSelected((i) => (i + 1) % ordered.length);
           return true;
         }
         // Enter and Tab both commit, and BOTH must report handled — returning
@@ -72,33 +88,46 @@ export const MentionSuggestions = forwardRef<MentionSuggestionsHandle, MentionSu
         aria-label="People"
         className="max-h-56 w-64 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-lg"
       >
-        {items.map((item, i) => (
-          <button
-            key={item.id}
-            type="button"
-            role="option"
-            aria-selected={i === selected}
-            data-testid="mention-option"
-            // mousedown, not click: click fires after blur, and the editor
-            // losing focus first destroys the range the mention replaces.
-            onMouseDown={(e) => {
-              e.preventDefault();
-              choose(i);
-            }}
-            onMouseEnter={() => setSelected(i)}
-            className={cn(
-              'flex w-full items-center gap-2 px-2 py-1.5 text-left text-sm',
-              i === selected ? 'bg-surface-hover' : 'bg-transparent',
+        {ordered.map((item, i) => (
+          <Fragment key={item.id}>
+            {i === members.length && outsiders.length > 0 && (
+              <div
+                className="mt-1 border-t border-border px-2 pb-0.5 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-text-tertiary"
+                data-testid="mention-non-members-heading"
+              >
+                Not in this chat
+              </div>
             )}
-          >
-            <Avatar name={item.label} src={item.avatarUrl} color={item.color} size={24} />
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-text-primary">{item.label}</span>
-              {item.hint && (
-                <span className="block truncate text-xs text-text-tertiary">{item.hint}</span>
+            <button
+              type="button"
+              role="option"
+              aria-selected={i === selected}
+              data-testid={item.member === false ? 'mention-option-non-member' : 'mention-option'}
+              data-user-id={item.id}
+              // mousedown, not click: click fires after blur, and the editor
+              // losing focus first destroys the range the mention replaces.
+              onMouseDown={(e) => {
+                e.preventDefault();
+                choose(i);
+              }}
+              onMouseEnter={() => setSelected(i)}
+              className={cn(
+                'flex w-full items-center gap-2 px-2 py-1.5 text-left text-sm',
+                i === selected ? 'bg-surface-hover' : 'bg-transparent',
               )}
-            </span>
-          </button>
+            >
+              <Avatar name={item.label} src={item.avatarUrl} color={item.color} size={24} />
+              <span className="min-w-0 flex-1">
+                <span className={cn('block truncate', item.member === false ? 'text-text-secondary' : 'text-text-primary')}>{item.label}</span>
+                {item.hint && (
+                  <span className="block truncate text-xs text-text-tertiary">{item.hint}</span>
+                )}
+              </span>
+              {item.member === false && (
+                <span className="shrink-0 text-xs text-primary" data-testid="mention-add-hint">Add to chat</span>
+              )}
+            </button>
+          </Fragment>
         ))}
       </div>
     );

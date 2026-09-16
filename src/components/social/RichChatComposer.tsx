@@ -136,6 +136,16 @@ export interface RichChatComposerProps {
    */
   onSearchPeople?: (query: string) => MentionCandidate[] | Promise<MentionCandidate[]>;
   /**
+   * Who is in this conversation. Given, the @ menu lists anyone
+   * `onSearchPeople` returns who is NOT in it under "Not in this chat", and
+   * picking them calls `onMentionNonMember` instead of inserting a mention —
+   * a mention of someone who cannot read the message is a message to nobody.
+   * Read live, like `onSearchPeople`.
+   */
+  mentionMembers?: ReadonlySet<string>;
+  /** The host's add-to-chat flow, opened for the person picked under "Not in this chat". */
+  onMentionNonMember?: (userId: string) => void;
+  /**
    * Resolves the `#` menu — the documents a message can refer to. Omit to
    * disable document references entirely. Read live, like `onSearchPeople`:
    * a new function identity does not rebuild the editor.
@@ -318,6 +328,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   onSend,
   onCommand,
   onSearchPeople,
+  mentionMembers,
+  onMentionNonMember,
   onSearchDocuments,
   allowAttachments = false,
   allowEmoji = false,
@@ -361,6 +373,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // rebuilt the editor — and the words being typed vanished on a timer.
   const onSearchPeopleRef = useRef(onSearchPeople);
   onSearchPeopleRef.current = onSearchPeople;
+  const mentionMembersRef = useRef(mentionMembers);
+  mentionMembersRef.current = mentionMembers;
+  const onMentionNonMemberRef = useRef(onMentionNonMember);
+  onMentionNonMemberRef.current = onMentionNonMember;
   const hasSearchPeople = !!onSearchPeople;
   const onSearchDocumentsRef = useRef(onSearchDocuments);
   onSearchDocumentsRef.current = onSearchDocuments;
@@ -610,22 +626,37 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           HTMLAttributes: { class: 'mention' },
           suggestion: {
             char: '@',
-            items: ({ query }: { query: string }) => onSearchPeopleRef.current?.(query) ?? [],
+            items: async ({ query }: { query: string }) => {
+              const found = (await onSearchPeopleRef.current?.(query)) ?? [];
+              const members = mentionMembersRef.current;
+              if (!members) return found;
+              return found.map((c) => ({ ...c, member: members.has(c.id) }));
+            },
             render: () => {
               let renderer: ReactRenderer | null = null;
               const menu = mountSuggestionMenu();
+              const withGate = (props: SuggestionProps) => ({
+                ...props,
+                onPickNonMember: (userId: string) => {
+                  menu.detach();
+                  // Take the "@name" the person typed back out: the mention
+                  // did not happen, and a stray "@Bob" would be sent as text.
+                  props.editor.chain().focus().deleteRange(props.range).run();
+                  onMentionNonMemberRef.current?.(userId);
+                },
+              });
 
               return {
                 onStart: (props: SuggestionProps) => {
                   renderer = new ReactRenderer(MentionSuggestions, {
-                    props,
+                    props: withGate(props),
                     editor: props.editor,
                   });
                   menu.attach(renderer.element as HTMLElement);
                   menu.place(props.clientRect?.());
                 },
                 onUpdate: (props: SuggestionProps) => {
-                  renderer?.updateProps(props);
+                  renderer?.updateProps(withGate(props));
                   menu.place(props.clientRect?.());
                 },
                 // Returning the menu's answer is what stops Enter reaching the

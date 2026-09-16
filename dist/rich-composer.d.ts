@@ -191,6 +191,12 @@ export declare interface MentionCandidate {
     color?: string;
     /** Shown under the name, e.g. a role or team. */
     hint?: string;
+    /**
+     * False when the composer knows the chat's members and this person is not
+     * one: the row lists under "Not in this chat" and picking it offers to add
+     * them rather than mentioning someone who could not read the message.
+     */
+    member?: boolean;
 }
 
 export declare const MentionSuggestions: ForwardRefExoticComponent<MentionSuggestionsProps & RefAttributes<MentionSuggestionsHandle>>;
@@ -207,6 +213,8 @@ export declare interface MentionSuggestionsProps {
         id: string;
         label: string;
     }) => void;
+    /** Picked a non-member: no mention is inserted; the host opens its add flow. */
+    onPickNonMember?: (userId: string) => void;
 }
 
 export declare const RichChatComposer: ForwardRefExoticComponent<RichChatComposerProps & RefAttributes<RichChatComposerHandle>>;
@@ -232,6 +240,16 @@ export declare interface RichChatComposerProps {
      * rather than filter a preloaded array. Omit to disable mentions entirely.
      */
     onSearchPeople?: (query: string) => MentionCandidate[] | Promise<MentionCandidate[]>;
+    /**
+     * Who is in this conversation. Given, the @ menu lists anyone
+     * `onSearchPeople` returns who is NOT in it under "Not in this chat", and
+     * picking them calls `onMentionNonMember` instead of inserting a mention —
+     * a mention of someone who cannot read the message is a message to nobody.
+     * Read live, like `onSearchPeople`.
+     */
+    mentionMembers?: ReadonlySet<string>;
+    /** The host's add-to-chat flow, opened for the person picked under "Not in this chat". */
+    onMentionNonMember?: (userId: string) => void;
     /**
      * Resolves the `#` menu — the documents a message can refer to. Omit to
      * disable document references entirely. Read live, like `onSearchPeople`:
