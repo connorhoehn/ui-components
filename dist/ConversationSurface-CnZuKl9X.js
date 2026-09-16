@@ -1313,7 +1313,7 @@ function Qe({ quote: t, onJump: n, onDismiss: r, className: i, "data-testid": a 
 	})] });
 	return /* @__PURE__ */ B("div", {
 		"data-testid": a,
-		"data-message-id": t.messageId,
+		"data-quoted-message-id": t.messageId,
 		className: e("flex items-start gap-2 rounded border-l-2 border-primary bg-surface-inset px-2 py-1", i),
 		children: [n ? /* @__PURE__ */ z("button", {
 			type: "button",

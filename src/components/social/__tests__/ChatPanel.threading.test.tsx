@@ -27,9 +27,9 @@ function msg(
 
 /** The message ids in the order they appear in the DOM. */
 function renderedOrder(): string[] {
-  // Scoped to real rows: a QuoteBlock carries a `data-message-id` of its own
-  // (the message it quotes), and counting those would report the thread order
-  // wrong.
+  // Scoped to real rows. It no longer HAS to be — a quote carries
+  // `data-quoted-message-id` now, so it cannot answer to a row's selector —
+  // but asking for the rows is what this function means.
   return [...document.querySelectorAll('[data-testid="chat-message"]')].map(
     (el) => el.getAttribute('data-message-id') ?? '',
   );

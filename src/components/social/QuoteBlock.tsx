@@ -76,7 +76,14 @@ export function QuoteBlock({
   return (
     <div
       data-testid={testId}
-      data-message-id={quote.messageId}
+      // NOT `data-message-id`: that attribute says what a row IS, and every
+      // jump in the app selects on it. A quote is a reference to a message, not
+      // that message, and spelling it the same way made `[data-message-id="X"]`
+      // match both X and every quote OF X — whichever came first in the
+      // document won the scroll. Harmless while the original sits above its
+      // replies; wrong the moment the target has scrolled out of the loaded
+      // window, which is exactly when somebody presses a quote.
+      data-quoted-message-id={quote.messageId}
       className={cn(
         'flex items-start gap-2 rounded border-l-2 border-primary bg-surface-inset px-2 py-1',
         className,

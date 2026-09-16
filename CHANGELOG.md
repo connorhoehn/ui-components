@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.296.0] — 2026-09-16
+
+### Fixed — `./social`
+
+- **A quote no longer claims the id of the message it quotes.** `QuoteBlock`
+  rendered `data-message-id={quote.messageId}` on its own container, but that
+  attribute is how a ROW says which message it is, and it is what every jump in
+  the app selects on. So `[data-message-id="X"]` matched both X and every quote
+  OF X, and whichever came first in the document won the scroll. Harmless while
+  the original sits above its replies; wrong the moment the target has scrolled
+  out of the loaded window — which is precisely when somebody presses a quote.
+  The reference now spells itself `data-quoted-message-id`.
+
+  **Breaking only for a host that selected a quote by `data-message-id`**,
+  which was selecting on a collision. A host that scoped its jump to rows (by
+  pairing the attribute with `[data-testid="chat-message"]`, as this library's
+  own tests had to) can drop that workaround.
+
+---
+
 ## [2.295.0] — 2026-09-16
 
 ### Fixed — `./social`
