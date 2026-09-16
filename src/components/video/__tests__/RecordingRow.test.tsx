@@ -138,11 +138,13 @@ describe('RecordingRow', () => {
   });
 
   it('renders participant-count badge only when count > 0', () => {
+    // On the badge's own description, not on "4 👥": the emoji was an ICON
+    // beside the count and is a glyph now, so the count is the only text.
     const { rerender } = render(<RecordingRow {...baseProps} participantCount={4} />);
-    expect(screen.getByText('4 👥')).toBeInTheDocument();
+    expect(screen.getByTitle('4 people in this call')).toBeInTheDocument();
     rerender(<RecordingRow {...baseProps} participantCount={0} />);
-    expect(screen.queryByText('0 👥')).not.toBeInTheDocument();
+    expect(screen.queryByTitle(/in this call/)).not.toBeInTheDocument();
     rerender(<RecordingRow {...baseProps} />);
-    expect(screen.queryByText('0 👥')).not.toBeInTheDocument();
+    expect(screen.queryByTitle(/in this call/)).not.toBeInTheDocument();
   });
 });
