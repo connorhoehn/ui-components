@@ -10350,6 +10350,21 @@ export declare interface RecordingChipState {
     active: boolean;
 }
 
+export declare type RecordingExpiryChoice = '30d' | '90d' | '365d' | 'never' | 'custom';
+
+export declare function RecordingExpiryDialog({ open, expiresAt, onSave, onClose, title, 'data-testid': testId, }: RecordingExpiryDialogProps): JSX.Element;
+
+export declare interface RecordingExpiryDialogProps {
+    open: boolean;
+    /** ISO, or null when the recording does not expire. */
+    expiresAt: string | null | undefined;
+    /** Resolves when the server has the new value; rejects with a reason to show. */
+    onSave: (expiresAt: string | null) => Promise<void> | void;
+    onClose: () => void;
+    title?: string;
+    'data-testid'?: string;
+}
+
 export declare function RecordingList({ recordings, selectedId, onSelect, loading, emptyState, renderActions, className, }: RecordingListProps): JSX.Element;
 
 export declare interface RecordingListItem {
@@ -10469,6 +10484,9 @@ export declare function resolveAnchorPosition(anchor: FloatingPanelAnchor, width
     x: number;
     y: number;
 };
+
+/** What a choice means as an instant: end of that day in local time. */
+export declare function resolveExpiryChoice(choice: RecordingExpiryChoice, customDate: string, now?: number): string | null | undefined;
 
 export declare interface ResolveVerdictInput {
     verdict?: ChangeReviewVerdict | undefined;
@@ -15155,22 +15173,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -15181,16 +15186,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -15227,6 +15222,29 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

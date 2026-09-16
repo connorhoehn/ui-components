@@ -92,6 +92,8 @@ export { RecordingList } from './RecordingList';
 export type { RecordingListProps, RecordingListItem } from './RecordingList';
 
 export { RecordingRow } from './RecordingRow';
+export { RecordingExpiryDialog, resolveExpiryChoice } from './RecordingExpiryDialog';
+export type { RecordingExpiryDialogProps, RecordingExpiryChoice } from './RecordingExpiryDialog';
 export type { RecordingRowProps, RecordingStatus } from './RecordingRow';
 
 export { TranscriptPanel } from './TranscriptPanel';
