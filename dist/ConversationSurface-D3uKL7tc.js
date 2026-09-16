@@ -1615,7 +1615,7 @@ function Ve({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 								return /* @__PURE__ */ E(y, { children: [o, /* @__PURE__ */ E("div", {
 									"data-testid": "chat-message",
 									"data-message-id": C || void 0,
-									className: e("group relative rounded-md", C && C === N && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
+									className: e("group relative rounded-md transition-colors hover:bg-surface-hover", C && C === N && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
 									children: [/* @__PURE__ */ T(ee, {
 										author: c,
 										content: q,
@@ -1624,7 +1624,7 @@ function Ve({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 										tone: K,
 										mine: ce
 									}), C && (D || !le && (O || k)) && /* @__PURE__ */ T(Ce, {
-										className: e("absolute -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100", ce ? "right-14" : "left-14"),
+										className: e("absolute -top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100"),
 										onReact: D ? (e) => D(C, e) : void 0,
 										onReply: O && !le ? () => O(s) : void 0,
 										onTogglePin: k && !le ? () => k(s) : void 0,

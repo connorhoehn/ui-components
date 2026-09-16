@@ -1188,7 +1188,7 @@ export function ChatPanel({
                   // `group` drives the hover reveal; `focus-within` is what
                   // keeps the bar reachable without a pointer.
                   className={cn(
-                    'group relative rounded-md',
+                    'group relative rounded-md transition-colors hover:bg-surface-hover',
                     // `ring-inset`: an outset ring is drawn OUTSIDE the row's
                     // box, and the scroll container clips overflow — so the
                     // right edge of the highlight was cut off against the
@@ -1213,15 +1213,15 @@ export function ChatPanel({
                   />
                   {messageId && (onToggleReaction || (!isActivityNotice && (onReply || onTogglePin))) && (
                     <MessageActionBar
-                      // Positioned against the MESSAGE COLUMN's left edge, not
-                      // the row's right. Pinning it right put the controls for
-                      // "asdasdf" three hundred pixels away from the word they
-                      // act on, across empty space, with a different message's
-                      // bar directly above them — so the bar you were aiming
-                      // for was ambiguous at the moment you reached for it.
-                      // `left-14` clears the avatar gutter; `-top-3` lifts it
-                      // onto the row's top edge so it overlaps the gap rather
-                      // than the text.
+                      // Top-RIGHT of the row, the way Slack and Teams place
+                      // it, and the hovered row is tinted so the bar and the
+                      // message it acts on read as one thing however wide the
+                      // pane is. It used to sit at the message column's left
+                      // edge, lifted onto the row's top — which put it over
+                      // the author's name and the timestamp ("Caro…"), the
+                      // one line that says whose message you are about to
+                      // react to. `-top-3` lifts it into the gap above the
+                      // row, where there is no text on the right.
                       //
                       // `group-has-[:focus-visible]` rather than
                       // `group-focus-within`: focus-within is true after a
@@ -1231,12 +1231,7 @@ export function ChatPanel({
                       // no longer pointing at. focus-visible is keyboard-only,
                       // which is the case the reveal-on-focus exists for.
                       className={cn(
-                        'absolute -top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100',
-                        // Mirrors with the message. Own messages moved to the
-                        // right side, and a bar hard-coded to the left put the
-                        // controls for a message on one edge of the pane and
-                        // the message it acts on at the other.
-                        isMine ? 'right-14' : 'left-14',
+                        'absolute -top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100',
                       )}
                       onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
                       onReply={onReply && !isActivityNotice ? () => onReply(message) : undefined}
