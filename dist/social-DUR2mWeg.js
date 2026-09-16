@@ -3917,7 +3917,7 @@ function mn({ members: e, open: t = !1, canManage: n = !1, currentUserId: r, onA
 			}), i && /* @__PURE__ */ Y(c, {
 				variant: "secondary",
 				size: "sm",
-				onClick: i,
+				onClick: (e) => i(e.currentTarget),
 				"data-testid": `${u}-add`,
 				children: /* @__PURE__ */ X("span", {
 					className: "inline-flex items-center gap-1",
@@ -3930,7 +3930,7 @@ function mn({ members: e, open: t = !1, canManage: n = !1, currentUserId: r, onA
 			body: "Add people to make it members-only.",
 			...i ? {
 				actionLabel: "Add people",
-				onAction: i
+				onAction: () => i()
 			} : {},
 			testId: `${u}-empty`
 		}) : /* @__PURE__ */ Y("ul", {

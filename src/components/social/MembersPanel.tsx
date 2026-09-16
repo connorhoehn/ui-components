@@ -28,7 +28,11 @@ export interface MembersPanelProps {
   /** The viewer may add and remove (an owner). */
   canManage?: boolean;
   currentUserId?: string;
-  onAdd?: () => void;
+  /**
+   * "Add people". Receives the button that was pressed, so the host can open
+   * an anchored form beside it rather than a centred modal.
+   */
+  onAdd?: (trigger?: HTMLElement) => void;
   onRemove?: (userId: string) => void;
   className?: string;
   'data-testid'?: string;
@@ -59,7 +63,7 @@ export function MembersPanel({
           {open ? 'Open channel' : `${members.length} ${members.length === 1 ? 'member' : 'members'}`}
         </span>
         {onAdd && (
-          <Button variant="secondary" size="sm" onClick={onAdd} data-testid={`${testId}-add`}>
+          <Button variant="secondary" size="sm" onClick={(e) => onAdd(e.currentTarget)} data-testid={`${testId}-add`}>
             <span className="inline-flex items-center gap-1"><PlusIcon size={12} /> Add people</span>
           </Button>
         )}
@@ -69,7 +73,10 @@ export function MembersPanel({
           size="sm"
           title="Everyone can read this channel."
           body="Add people to make it members-only."
-          {...(onAdd ? { actionLabel: 'Add people', onAction: onAdd } : {})}
+          // The empty state's action reports no element, so a host that
+          // anchors gets undefined here and falls back to its centred form
+          // rather than pointing a popover at nothing.
+          {...(onAdd ? { actionLabel: 'Add people', onAction: () => onAdd() } : {})}
           testId={`${testId}-empty`}
         />
       ) : (
