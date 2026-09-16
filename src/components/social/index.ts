@@ -134,7 +134,9 @@ export type { DocumentChipProps } from './DocumentChip';
 // rows underneath a reader as the call ends.
 export { CallActivityCard, formatCallDuration, describeParticipants } from './CallActivityCard';
 export { RecordingActivityCard } from './RecordingActivityCard';
-export type { RecordingActivityCardProps, RecordingActivityStatus } from './RecordingActivityCard';
+export { describeRecordingParticipants } from './RecordingActivityCard';
+export type { RecordingActivityCardProps, RecordingStage, RecordingParticipant } from './RecordingActivityCard';
+export type { RecordingCardStatus } from './ChatPanel';
 export type { CallActivityCardProps, CallActivityParticipant } from './CallActivityCard';
 
 // The persistent destinations above a conversation list — Activity, Mentions.

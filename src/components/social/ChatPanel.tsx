@@ -16,7 +16,7 @@ import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { DocumentChip } from './DocumentChip';
 import { CallActivityCard, type CallActivityParticipant } from './CallActivityCard';
-import { RecordingActivityCard, type RecordingActivityStatus } from './RecordingActivityCard';
+import { RecordingActivityCard, type RecordingParticipant, type RecordingStage } from './RecordingActivityCard';
 import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunResult, type AgentRunReviewDecision, type AgentRunStatus, type AgentRunSuggestion } from './AgentRunCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
@@ -145,6 +145,17 @@ export interface ChatPanelProps {
   onOpenRecording?: (recordingId: string) => void;
   /** Puts a link to the recording on the clipboard (the card's ⋯ menu). */
   onCopyRecordingLink?: (recordingId: string) => void;
+  /** Mints a share link for the recording. */
+  onShareRecording?: (recordingId: string) => void;
+  onDownloadRecording?: (recordingId: string) => void;
+  onOpenRecordingTranscript?: (recordingId: string) => void;
+  /** "View or change" on a recording card's expiry line. */
+  onManageRecordingExpiry?: (recordingId: string) => void;
+  /**
+   * The recording's LIVE state — stage, thumbnail, expiry — overlaid on what
+   * the message stamped. Read from the recordings API by the host.
+   */
+  recordingStatus?: (recordingId: string) => RecordingCardStatus | undefined;
   /** Opens a document announced in the thread. */
   onOpenDocument?: (documentId: string) => void;
   /**
@@ -456,36 +467,59 @@ export function callRefFromMetadata(
 }
 
 /**
- * A recording card: `metadata.kind === 'recording'` with the recording's id.
- * Posted by the recording pipeline once the media is ready (or while it is
- * still composing, with `status: 'processing'`).
+ * What a recording card knows. The chat message stamps what was true when
+ * it was posted (`recordingRefFromMetadata`); the host's `recordingStatus`
+ * overlays what is true now — the stage, the thumbnail once composed, the
+ * expiry — the way `agentRunStatus` does for run cards.
  */
-export function recordingRefFromMetadata(
-  metadata: Record<string, unknown> | undefined,
-): {
-  recordingId: string;
-  callId?: string;
+export interface RecordingCardStatus {
+  stage?: RecordingStage;
   title?: string;
+  recordedBy?: string;
   startedAt?: string;
   durationMs?: number;
   thumbnailUrl?: string;
+  participants?: readonly RecordingParticipant[];
   participantCount?: number;
-  status: RecordingActivityStatus;
+  transcriptReady?: boolean;
+  summaryReady?: boolean;
   expiresAt?: string;
-} | null {
+}
+
+/**
+ * A recording card: `metadata.kind === 'recording'` with the recording's id.
+ * Posted by the recording pipeline the moment the recording is saved.
+ */
+export function recordingRefFromMetadata(
+  metadata: Record<string, unknown> | undefined,
+): (RecordingCardStatus & { recordingId: string; callId?: string; stage: RecordingStage }) | null {
   if (!metadata || metadata.kind !== 'recording') return null;
   const recordingId = typeof metadata.recordingId === 'string' ? metadata.recordingId : '';
   if (!recordingId) return null;
-  const status = metadata.status === 'processing' || metadata.status === 'failed' ? metadata.status : 'ready';
+  const stageRaw = metadata.stage ?? (metadata.status === 'processing' ? 'saving' : metadata.status);
+  const stage: RecordingStage =
+    stageRaw === 'saving' || stageRaw === 'transcribing' || stageRaw === 'summarizing' || stageRaw === 'failed' ? stageRaw : 'ready';
+  const raw = Array.isArray(metadata.participants) ? metadata.participants : [];
+  const participants: RecordingParticipant[] = raw
+    .map((entry) => {
+      const p = entry as Record<string, unknown>;
+      const id = typeof p?.userId === 'string' ? p.userId : typeof p?.id === 'string' ? p.id : '';
+      if (!id) return null;
+      const name = typeof p.displayName === 'string' && p.displayName ? p.displayName : typeof p.name === 'string' && p.name ? p.name : id;
+      return { id, name, ...(typeof p.avatarUrl === 'string' ? { avatarUrl: p.avatarUrl } : {}) };
+    })
+    .filter(Boolean) as RecordingParticipant[];
   return {
     recordingId,
     callId: typeof metadata.callId === 'string' ? metadata.callId : undefined,
     title: typeof metadata.title === 'string' ? metadata.title : undefined,
+    recordedBy: typeof metadata.recordedBy === 'string' ? metadata.recordedBy : undefined,
     startedAt: typeof metadata.startedAt === 'string' ? metadata.startedAt : undefined,
     durationMs: typeof metadata.durationMs === 'number' ? metadata.durationMs : undefined,
     thumbnailUrl: typeof metadata.thumbnailUrl === 'string' ? metadata.thumbnailUrl : undefined,
+    participants,
     participantCount: typeof metadata.participantCount === 'number' ? metadata.participantCount : undefined,
-    status,
+    stage,
     expiresAt: typeof metadata.expiresAt === 'string' ? metadata.expiresAt : undefined,
   };
 }
@@ -548,6 +582,11 @@ export function ChatPanel({
   onJoinCall,
   onOpenRecording,
   onCopyRecordingLink,
+  onShareRecording,
+  onDownloadRecording,
+  onOpenRecordingTranscript,
+  onManageRecordingExpiry,
+  recordingStatus,
   onOpenDocument,
   tone = 'light',
   showHeader,
@@ -1019,24 +1058,34 @@ export function ChatPanel({
                   onReview={onReviewRun}
                 />
               ) : recordingRef ? (
-                <RecordingActivityCard
-                  recordingId={recordingRef.recordingId}
-                  title={recordingRef.title}
-                  recordedBy={
-                    (typeof message.metadata?.recordedBy === 'string'
-                      ? message.metadata.recordedBy
-                      : undefined)
-                    ?? message.displayName
-                  }
-                  startedAt={recordingRef.startedAt}
-                  durationMs={recordingRef.durationMs}
-                  thumbnailUrl={recordingRef.thumbnailUrl}
-                  participantCount={recordingRef.participantCount}
-                  status={recordingRef.status}
-                  expiresAt={recordingRef.expiresAt}
-                  onOpen={onOpenRecording}
-                  onCopyLink={onCopyRecordingLink}
-                />
+                (() => {
+                  const live = recordingStatus?.(recordingRef.recordingId);
+                  const rec = { ...recordingRef, ...(live ?? {}) };
+                  return (
+                    <RecordingActivityCard
+                      recordingId={rec.recordingId}
+                      title={rec.title}
+                      recordedBy={rec.recordedBy ?? message.displayName}
+                      participants={rec.participants}
+                      participantCount={rec.participantCount}
+                      startedAt={rec.startedAt}
+                      durationMs={rec.durationMs}
+                      thumbnailUrl={rec.thumbnailUrl}
+                      stage={rec.stage ?? 'ready'}
+                      transcriptReady={rec.transcriptReady}
+                      summaryReady={rec.summaryReady}
+                      expiresAt={rec.expiresAt}
+                      pinned={!!message.id && !!pinnedMessageIds?.has(message.id)}
+                      onOpen={onOpenRecording}
+                      onCopyLink={onCopyRecordingLink}
+                      onShare={onShareRecording}
+                      onDownload={onDownloadRecording}
+                      onOpenTranscript={onOpenRecordingTranscript}
+                      onManageExpiry={onManageRecordingExpiry}
+                      onTogglePin={onTogglePin ? () => onTogglePin(message) : undefined}
+                    />
+                  );
+                })()
               ) : callRef ? (
                 <CallActivityCard
                   callId={callRef.callId}
@@ -1238,7 +1287,7 @@ export function ChatPanel({
                       onTogglePin={
                         onTogglePin && !isActivityNotice ? () => onTogglePin(message) : undefined
                       }
-                      pinned={isPinned}
+                      pinned={!!message.id && !!pinnedMessageIds?.has(message.id)}
                     />
                   )}
                 </div>

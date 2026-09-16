@@ -726,6 +726,17 @@ declare interface ChatPanelProps {
     onOpenRecording?: (recordingId: string) => void;
     /** Puts a link to the recording on the clipboard (the card's ⋯ menu). */
     onCopyRecordingLink?: (recordingId: string) => void;
+    /** Mints a share link for the recording. */
+    onShareRecording?: (recordingId: string) => void;
+    onDownloadRecording?: (recordingId: string) => void;
+    onOpenRecordingTranscript?: (recordingId: string) => void;
+    /** "View or change" on a recording card's expiry line. */
+    onManageRecordingExpiry?: (recordingId: string) => void;
+    /**
+     * The recording's LIVE state — stage, thumbnail, expiry — overlaid on what
+     * the message stamped. Read from the recordings API by the host.
+     */
+    recordingStatus?: (recordingId: string) => RecordingCardStatus | undefined;
     /** Opens a document announced in the thread. */
     onOpenDocument?: (documentId: string) => void;
     /**
@@ -1576,6 +1587,36 @@ export declare interface ReconnectingShimProps {
     disconnectedFallback?: ReactNode;
     className?: string;
 }
+
+/**
+ * What a recording card knows. The chat message stamps what was true when
+ * it was posted (`recordingRefFromMetadata`); the host's `recordingStatus`
+ * overlays what is true now — the stage, the thumbnail once composed, the
+ * expiry — the way `agentRunStatus` does for run cards.
+ */
+declare interface RecordingCardStatus {
+    stage?: RecordingStage;
+    title?: string;
+    recordedBy?: string;
+    startedAt?: string;
+    durationMs?: number;
+    thumbnailUrl?: string;
+    participants?: readonly RecordingParticipant[];
+    participantCount?: number;
+    transcriptReady?: boolean;
+    summaryReady?: boolean;
+    expiresAt?: string;
+}
+
+declare interface RecordingParticipant {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+    color?: string;
+}
+
+/** Where the recording is on its way to being watchable. */
+declare type RecordingStage = 'saving' | 'transcribing' | 'summarizing' | 'ready' | 'failed';
 
 export declare interface ResolvedCapabilities {
     /** declared ∩ provisioned — what may actually render. */

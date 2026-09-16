@@ -620,7 +620,7 @@ declare interface ChatMessage {
     metadata?: Record<string, unknown>;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, pinnedMessageIds, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -711,6 +711,17 @@ export declare interface ChatPanelProps {
     onOpenRecording?: (recordingId: string) => void;
     /** Puts a link to the recording on the clipboard (the card's ⋯ menu). */
     onCopyRecordingLink?: (recordingId: string) => void;
+    /** Mints a share link for the recording. */
+    onShareRecording?: (recordingId: string) => void;
+    onDownloadRecording?: (recordingId: string) => void;
+    onOpenRecordingTranscript?: (recordingId: string) => void;
+    /** "View or change" on a recording card's expiry line. */
+    onManageRecordingExpiry?: (recordingId: string) => void;
+    /**
+     * The recording's LIVE state — stage, thumbnail, expiry — overlaid on what
+     * the message stamped. Read from the recordings API by the host.
+     */
+    recordingStatus?: (recordingId: string) => RecordingCardStatus | undefined;
     /** Opens a document announced in the thread. */
     onOpenDocument?: (documentId: string) => void;
     /**
@@ -1405,6 +1416,9 @@ export declare function describeParticipants(participants: readonly CallActivity
 /** "You and Ada", "Ada, Sam and 3 others" — the tooltip people expect. */
 export declare function describeReactors(group: ReactionGroup): string;
 
+/** "Mia Zhao and 2 others" — the sentence beside the avatar row. */
+export declare function describeRecordingParticipants(participants: readonly RecordingParticipant[], total: number): string;
+
 export declare function DocumentActivityCard({ documentId, title, icon, createdBy, editors, onOpen, className, 'data-testid': testId, }: DocumentActivityCardProps): JSX.Element;
 
 export declare interface DocumentActivityCardProps {
@@ -1955,49 +1969,84 @@ export declare interface ReactionSummary {
     mine?: boolean;
 }
 
-export declare function RecordingActivityCard({ recordingId, title, recordedBy, startedAt, durationMs, thumbnailUrl, participantCount, status, expiresAt, onOpen, onCopyLink, onDownload, className, 'data-testid': testId, }: RecordingActivityCardProps): JSX.Element;
+export declare function RecordingActivityCard({ recordingId, title, recordedBy, participants, participantCount, startedAt, durationMs, thumbnailUrl, stage, transcriptReady, summaryReady, expiresAt, pinned, onOpen, onCopyLink, onShare, onTogglePin, onDownload, onOpenTranscript, onManageExpiry, onParticipantClick, className, 'data-testid': testId, }: RecordingActivityCardProps): JSX.Element;
 
 export declare interface RecordingActivityCardProps {
     recordingId: string;
-    /** "Recording" unless the host names it — "Design review recording", say. */
+    /** "Recording" unless the host names it — "Design review", say. */
     title?: string;
     /** Who the recording is by — the person who started the call. */
     recordedBy?: string;
-    /** ISO. When it was recorded; the meta line. */
+    /** Who was in the call. Real people: names and avatars, not counts. */
+    participants?: readonly RecordingParticipant[];
+    /** When the list is a sample: the true headcount. */
+    participantCount?: number;
+    /** ISO. When it was recorded. */
     startedAt?: string;
     durationMs?: number;
+    /** The recording's own thumbnail. Absent, the participants stand in as tiles. */
     thumbnailUrl?: string;
-    participantCount?: number;
-    /** 'processing' shows a notice instead of a play affordance; 'failed' says so. */
-    status?: RecordingActivityStatus;
-    /** ISO. When the recording will be removed — the notice under the card. */
+    stage?: RecordingStage;
+    transcriptReady?: boolean;
+    summaryReady?: boolean;
+    /** ISO. The "Set to expire" line. */
     expiresAt?: string;
-    /** Opens the recording. Absent, the card is a record, not a button. */
+    /** Pinned in the conversation. */
+    pinned?: boolean;
+    /** Opens the recording (its page or player). Absent, the card is a record, not a button. */
     onOpen?: (recordingId: string) => void;
     onCopyLink?: (recordingId: string) => void;
+    /** Mints a share link (who it works for is the host's business). */
+    onShare?: (recordingId: string) => void;
+    onTogglePin?: (recordingId: string) => void;
     onDownload?: (recordingId: string) => void;
+    onOpenTranscript?: (recordingId: string) => void;
+    /** "View or change" on the expiry line. */
+    onManageExpiry?: (recordingId: string) => void;
+    onParticipantClick?: (participantId: string) => void;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare type RecordingActivityStatus = 'ready' | 'processing' | 'failed';
-
 /**
- * A recording card: `metadata.kind === 'recording'` with the recording's id.
- * Posted by the recording pipeline once the media is ready (or while it is
- * still composing, with `status: 'processing'`).
+ * What a recording card knows. The chat message stamps what was true when
+ * it was posted (`recordingRefFromMetadata`); the host's `recordingStatus`
+ * overlays what is true now — the stage, the thumbnail once composed, the
+ * expiry — the way `agentRunStatus` does for run cards.
  */
-export declare function recordingRefFromMetadata(metadata: Record<string, unknown> | undefined): {
-    recordingId: string;
-    callId?: string;
+export declare interface RecordingCardStatus {
+    stage?: RecordingStage;
     title?: string;
+    recordedBy?: string;
     startedAt?: string;
     durationMs?: number;
     thumbnailUrl?: string;
+    participants?: readonly RecordingParticipant[];
     participantCount?: number;
-    status: RecordingActivityStatus;
+    transcriptReady?: boolean;
+    summaryReady?: boolean;
     expiresAt?: string;
-} | null;
+}
+
+export declare interface RecordingParticipant {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+    color?: string;
+}
+
+/**
+ * A recording card: `metadata.kind === 'recording'` with the recording's id.
+ * Posted by the recording pipeline the moment the recording is saved.
+ */
+export declare function recordingRefFromMetadata(metadata: Record<string, unknown> | undefined): (RecordingCardStatus & {
+    recordingId: string;
+    callId?: string;
+    stage: RecordingStage;
+}) | null;
+
+/** Where the recording is on its way to being watchable. */
+export declare type RecordingStage = 'saving' | 'transcribing' | 'summarizing' | 'ready' | 'failed';
 
 declare interface RoomItem {
     roomId: string;
@@ -2230,9 +2279,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -2240,9 +2289,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -2286,22 +2348,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

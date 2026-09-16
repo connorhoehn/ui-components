@@ -1,39 +1,75 @@
 // RecordingActivityCard — a call's recording, as a card in the thread.
 //
-// The way Teams does it: the recording is an artifact in the conversation,
-// beside the "call ended" line, with a thumbnail, its length, who it is by,
-// and a ⋯ menu — not a link in a sentence. Ended calls already get a
-// CallActivityCard; this is the recording that call produced, posted when
-// the media is ready to watch.
+// The Teams journey: the recording stops, a chiclet lands in the chat while
+// the media is still being saved, and it grows into the artifact — a real
+// thumbnail, its length, who was there, whether the transcript and summary
+// exist yet, when it expires, and a ⋯ menu for open / link / share / pin /
+// download. This is that chiclet, built from the library's own pieces:
+// Avatar tiles stand in for the thumbnail until there is one, PresenceAvatars
+// say who was in the call, StatusPill says where the pipeline is.
 
-import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
+import Avatar from '../shared/Avatar';
+import { PresenceAvatars } from '../shared/PresenceAvatars';
+import StatusPill, { type StatusPillState } from '../shared/StatusPill';
+import { DropdownMenu, type DropdownMenuItem, type DropdownMenuSection } from '../shared/DropdownMenu';
+import { Button } from '../ui/Button';
 import { formatCallDuration } from './CallActivityCard';
 import { cn } from '../../lib/cn';
 
-export type RecordingActivityStatus = 'ready' | 'processing' | 'failed';
+/** Where the recording is on its way to being watchable. */
+export type RecordingStage = 'saving' | 'transcribing' | 'summarizing' | 'ready' | 'failed';
+
+export interface RecordingParticipant {
+  id: string;
+  name: string;
+  avatarUrl?: string;
+  color?: string;
+}
 
 export interface RecordingActivityCardProps {
   recordingId: string;
-  /** "Recording" unless the host names it — "Design review recording", say. */
+  /** "Recording" unless the host names it — "Design review", say. */
   title?: string;
   /** Who the recording is by — the person who started the call. */
   recordedBy?: string;
-  /** ISO. When it was recorded; the meta line. */
+  /** Who was in the call. Real people: names and avatars, not counts. */
+  participants?: readonly RecordingParticipant[];
+  /** When the list is a sample: the true headcount. */
+  participantCount?: number;
+  /** ISO. When it was recorded. */
   startedAt?: string;
   durationMs?: number;
+  /** The recording's own thumbnail. Absent, the participants stand in as tiles. */
   thumbnailUrl?: string;
-  participantCount?: number;
-  /** 'processing' shows a notice instead of a play affordance; 'failed' says so. */
-  status?: RecordingActivityStatus;
-  /** ISO. When the recording will be removed — the notice under the card. */
+  stage?: RecordingStage;
+  transcriptReady?: boolean;
+  summaryReady?: boolean;
+  /** ISO. The "Set to expire" line. */
   expiresAt?: string;
-  /** Opens the recording. Absent, the card is a record, not a button. */
+  /** Pinned in the conversation. */
+  pinned?: boolean;
+  /** Opens the recording (its page or player). Absent, the card is a record, not a button. */
   onOpen?: (recordingId: string) => void;
   onCopyLink?: (recordingId: string) => void;
+  /** Mints a share link (who it works for is the host's business). */
+  onShare?: (recordingId: string) => void;
+  onTogglePin?: (recordingId: string) => void;
   onDownload?: (recordingId: string) => void;
+  onOpenTranscript?: (recordingId: string) => void;
+  /** "View or change" on the expiry line. */
+  onManageExpiry?: (recordingId: string) => void;
+  onParticipantClick?: (participantId: string) => void;
   className?: string;
   'data-testid'?: string;
 }
+
+const STAGE: Record<RecordingStage, { state: StatusPillState; label: string }> = {
+  saving: { state: 'pending', label: 'Saving recording' },
+  transcribing: { state: 'pending', label: 'Transcribing' },
+  summarizing: { state: 'pending', label: 'Summarizing' },
+  ready: { state: 'success', label: 'Ready to watch' },
+  failed: { state: 'error', label: 'Could not be processed' },
+};
 
 function formatWhen(iso: string | undefined): string {
   if (!iso) return '';
@@ -48,118 +84,152 @@ function formatDate(iso: string): string {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+/** "Mia Zhao and 2 others" — the sentence beside the avatar row. */
+export function describeRecordingParticipants(participants: readonly RecordingParticipant[], total: number): string {
+  if (total <= 0) return '';
+  const [first] = participants;
+  if (!first) return `${total} ${total === 1 ? 'person' : 'people'}`;
+  const rest = total - 1;
+  if (rest <= 0) return first.name;
+  return `${first.name} and ${rest} ${rest === 1 ? 'other' : 'others'}`;
+}
+
+/** The participants as a tile grid — what stands where the thumbnail will be. */
+function ParticipantTiles({ participants, total, testId }: { participants: readonly RecordingParticipant[]; total: number; testId: string }) {
+  const shown = participants.slice(0, total > 4 ? 3 : 4);
+  const more = total - shown.length;
+  const cols = shown.length + (more > 0 ? 1 : 0) <= 1 ? 'grid-cols-1' : 'grid-cols-2';
+  return (
+    <div className={cn('grid h-full w-full gap-0.5 bg-black p-0.5', cols)} data-testid={`${testId}-tiles`}>
+      {shown.map((p) => (
+        <div key={p.id} className="flex items-center justify-center bg-neutral-800" data-testid={`${testId}-tile`}>
+          <Avatar name={p.name} src={p.avatarUrl} color={p.color} size={shown.length <= 1 ? 48 : 32} />
+        </div>
+      ))}
+      {more > 0 && (
+        <div className="flex items-center justify-center bg-neutral-800 text-sm font-medium text-white/80" data-testid={`${testId}-tile-more`}>
+          +{more}
+        </div>
+      )}
+      {shown.length === 0 && more <= 0 && (
+        <div className="flex items-center justify-center text-white/30">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M8 5v14l11-7z" /></svg>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function RecordingActivityCard({
   recordingId,
   title = 'Recording',
   recordedBy,
+  participants = [],
+  participantCount,
   startedAt,
   durationMs,
   thumbnailUrl,
-  participantCount,
-  status = 'ready',
+  stage = 'ready',
+  transcriptReady = false,
+  summaryReady = false,
   expiresAt,
+  pinned = false,
   onOpen,
   onCopyLink,
+  onShare,
+  onTogglePin,
   onDownload,
+  onOpenTranscript,
+  onManageExpiry,
+  onParticipantClick,
   className,
   'data-testid': testId = 'recording-activity-card',
 }: RecordingActivityCardProps) {
-  const playable = status === 'ready' && !!onOpen;
-  const open = () => onOpen?.(recordingId);
-  const duration = durationMs != null ? formatCallDuration(durationMs) : '';
+  const total = participantCount ?? participants.length;
+  const playable = stage !== 'saving' && stage !== 'failed' && !!onOpen;
+  const open = () => { onOpen?.(recordingId); };
+  const duration = durationMs != null && durationMs > 0 ? formatCallDuration(durationMs) : '';
   const when = formatWhen(startedAt);
-  const meta = [
-    when,
-    participantCount != null && participantCount > 0
-      ? `${participantCount} ${participantCount === 1 ? 'person' : 'people'}`
-      : '',
-  ].filter(Boolean).join(' · ');
+  const people = describeRecordingParticipants(participants, total);
+  const { state, label } = STAGE[stage];
 
-  const menuItems = [
-    ...(onOpen && status === 'ready' ? [{ id: 'open', label: 'Open', onSelect: open }] : []),
-    ...(onCopyLink ? [{ id: 'copy-link', label: 'Copy link', onSelect: () => onCopyLink(recordingId) }] : []),
-    ...(onDownload && status === 'ready' ? [{ id: 'download', label: 'Download', onSelect: () => onDownload(recordingId) }] : []),
+  const items: DropdownMenuItem[] = [
+    ...(onOpen && playable ? [{ 'data-testid': `${testId}-menu-open`, label: 'Open', onSelect: open }] : []),
+    ...(onOpenTranscript && transcriptReady ? [{ 'data-testid': `${testId}-menu-transcript`, label: 'Transcript', onSelect: () => onOpenTranscript(recordingId) }] : []),
+    ...(onCopyLink ? [{ 'data-testid': `${testId}-menu-copy-link`, label: 'Copy link', onSelect: () => onCopyLink(recordingId) }] : []),
+    ...(onShare ? [{ 'data-testid': `${testId}-menu-share`, label: 'Share…', description: 'A link that works outside this conversation', onSelect: () => onShare(recordingId) }] : []),
+    ...(onTogglePin ? [{ 'data-testid': `${testId}-menu-pin`, label: pinned ? 'Unpin' : 'Pin', onSelect: () => onTogglePin(recordingId) }] : []),
+    ...(onDownload && playable ? [{ 'data-testid': `${testId}-menu-download`, label: 'Download', onSelect: () => onDownload(recordingId) }] : []),
   ];
-  const sections: DropdownMenuSection[] = menuItems.length ? [{ items: menuItems, 'data-testid': `${testId}-menu-items` }] : [];
-
-  const notice =
-    status === 'processing'
-      ? 'Still processing — it will be ready to watch shortly.'
-      : status === 'failed'
-        ? 'This recording could not be processed.'
-        : expiresAt
-          ? `This recording expires on ${formatDate(expiresAt)}.`
-          : null;
+  const sections: DropdownMenuSection[] = items.length ? [{ items, 'data-testid': `${testId}-menu-items` }] : [];
 
   return (
     <div
       data-testid={testId}
       data-recording-id={recordingId}
-      data-status={status}
-      className={cn(
-        'max-w-md overflow-hidden rounded-lg border border-border bg-surface text-sm shadow-sm',
-        className,
-      )}
+      data-stage={stage}
+      className={cn('max-w-lg overflow-hidden rounded-lg border border-border bg-surface text-sm shadow-sm', className)}
     >
       <div className="flex items-stretch">
-        {/* The picture: 16:9, black behind it, the length in the corner. A
-            button when it can play — the whole picture, not a tiny icon. */}
         <button
           type="button"
           onClick={playable ? open : undefined}
           disabled={!playable}
-          aria-label={playable ? `Play ${title.toLowerCase()}` : title}
+          aria-label={playable ? `Play ${title.toLowerCase()}` : `${title}: ${label.toLowerCase()}`}
           data-testid={`${testId}-thumb`}
-          className={cn(
-            'relative aspect-video w-44 shrink-0 overflow-hidden bg-black text-left',
-            playable ? 'cursor-pointer' : 'cursor-default',
-          )}
+          className={cn('relative aspect-video w-48 shrink-0 overflow-hidden bg-black text-left', playable ? 'cursor-pointer' : 'cursor-default')}
         >
           {thumbnailUrl ? (
-            <img src={thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
+            <img src={thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" data-testid={`${testId}-thumbnail`} />
           ) : (
-            <span className="absolute inset-0 flex items-center justify-center text-white/30">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </span>
+            <ParticipantTiles participants={participants} total={total} testId={testId} />
           )}
           {playable && (
-            <span className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors hover:bg-black/25">
+            <span className="absolute inset-0 flex items-center justify-center transition-colors hover:bg-black/25">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-black shadow">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M8 5v14l11-7z" /></svg>
               </span>
             </span>
           )}
           {duration && (
-            <span
-              className="absolute bottom-1.5 right-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-white"
-              data-testid={`${testId}-duration`}
-            >
+            <span className="absolute bottom-1.5 right-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-white" data-testid={`${testId}-duration`}>
               {duration}
             </span>
           )}
         </button>
 
         <div className="flex min-w-0 flex-1 items-start gap-2 px-3 py-2.5">
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-[15px] font-semibold text-text-primary" data-testid={`${testId}-title`}>
-              {title}
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <span className="truncate text-[15px] font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</span>
+              {pinned && <span className="text-xs text-text-tertiary" data-testid={`${testId}-pinned`} title="Pinned">📌</span>}
             </div>
             {recordedBy && (
-              <div className="truncate text-sm text-text-secondary" data-testid={`${testId}-by`}>
-                {recordedBy}
+              <div className="truncate text-sm text-text-secondary" data-testid={`${testId}-by`}>by {recordedBy}</div>
+            )}
+            {total > 0 && (
+              <div className="flex items-center gap-2" data-testid={`${testId}-people`}>
+                <PresenceAvatars
+                  users={participants.map((p) => ({ id: p.id, name: p.name, avatarUrl: p.avatarUrl, color: p.color }))}
+                  size={20}
+                  maxVisible={4}
+                  onUserClick={onParticipantClick}
+                />
+                <span className="truncate text-xs text-text-tertiary">{people}</span>
               </div>
             )}
-            {meta && <div className="mt-1 truncate text-xs text-text-tertiary">{meta}</div>}
+            <div className="flex flex-wrap items-center gap-1.5">
+              <StatusPill state={state} label={label} size="sm" data-testid={`${testId}-stage`} />
+              {stage === 'ready' && transcriptReady && <StatusPill state="neutral" label="Transcript" size="sm" data-testid={`${testId}-transcript`} />}
+              {stage === 'ready' && summaryReady && <StatusPill state="neutral" label="Summary" size="sm" data-testid={`${testId}-summary`} />}
+              {when && <span className="text-xs text-text-tertiary" data-testid={`${testId}-when`}>{when}</span>}
+            </div>
           </div>
           {sections.length > 0 && (
             <DropdownMenu
               trigger={<span className="tracking-wide">⋯</span>}
-              triggerLabel="Recording actions"
-              triggerTitle="More"
+              triggerLabel="More options"
+              triggerTitle="More options"
               triggerClassName="h-7 rounded-md px-2 text-text-secondary hover:bg-surface-hover"
               align="end"
               sections={sections}
@@ -168,17 +238,14 @@ export function RecordingActivityCard({
           )}
         </div>
       </div>
-      {notice && (
-        <div
-          className={cn(
-            'border-t px-3 py-2 text-xs',
-            status === 'failed'
-              ? 'border-danger-border bg-danger-bg text-danger-fg'
-              : 'border-warning-border bg-warning-bg text-warning-fg',
+      {expiresAt && stage !== 'failed' && (
+        <div className="flex items-center justify-between gap-2 border-t border-warning-border bg-warning-bg px-3 py-1.5 text-xs text-warning-fg" data-testid={`${testId}-expiry`}>
+          <span>Set to expire {formatDate(expiresAt)}</span>
+          {onManageExpiry && (
+            <Button variant="ghost" size="sm" onClick={() => onManageExpiry(recordingId)} data-testid={`${testId}-manage-expiry`}>
+              View or change
+            </Button>
           )}
-          data-testid={`${testId}-notice`}
-        >
-          {notice}
         </div>
       )}
     </div>
