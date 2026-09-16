@@ -1730,14 +1730,23 @@ var Bt = {
 	delete: "text-danger-fg",
 	replace: "text-caution-fg",
 	modify: "text-info-fg"
-}, $ = 6;
-function Ht(e) {
+}, $ = 6, Ht = /^(.*\S)\s*\(powered by\s+([^()]+)\)$/;
+function Ut(e) {
+	let t = Ht.exec(e);
+	if (!t) return { person: e };
+	let n = t[1].trim(), r = t[2].trim();
+	return n && r ? {
+		person: n,
+		model: r
+	} : { person: e };
+}
+function Wt(e) {
 	return new Date(e).toLocaleTimeString([], {
 		hour: "numeric",
 		minute: "2-digit"
 	});
 }
-function Ut({ lines: e, tone: t, testId: r }) {
+function Gt({ lines: e, tone: t, testId: r }) {
 	let i = e.slice(0, $), a = t === "insert" ? "ins" : "del";
 	return /* @__PURE__ */ Y("div", {
 		className: n("flex flex-col gap-1 border-l-2 pl-2.5", t === "insert" ? "border-success-fg" : "border-danger-fg"),
@@ -1755,8 +1764,8 @@ function Ut({ lines: e, tone: t, testId: r }) {
 		})]
 	});
 }
-function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: p, onReject: m, className: h, "data-testid": g = "suggestion-card" }) {
-	let _ = t.trim() === "" ? "Unknown author" : t, v = c && c.length > 0 ? c : s ? [s] : [], y = l && l.length > 0 ? l : o ? [o] : [], b = v.length > 0 || y.length > 0;
+function Kt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: p, onReject: m, className: h, "data-testid": g = "suggestion-card" }) {
+	let { person: _, model: v } = Ut(t.trim() === "" ? "Unknown author" : t.trim()), y = c && c.length > 0 ? c : s ? [s] : [], b = l && l.length > 0 ? l : o ? [o] : [], x = y.length > 0 || b.length > 0;
 	return /* @__PURE__ */ Y("div", {
 		"data-testid": g,
 		"data-kind": e,
@@ -1772,12 +1781,13 @@ function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 					}),
 					/* @__PURE__ */ J("span", {
 						className: "min-w-0 truncate text-[13px] font-medium text-text-primary",
+						title: _,
 						"data-testid": `${g}-author`,
 						children: _
 					}),
 					i !== null && /* @__PURE__ */ J("span", {
 						className: "shrink-0 text-xs tabular-nums text-text-tertiary",
-						children: Ht(i)
+						children: Wt(i)
 					}),
 					/* @__PURE__ */ J("span", {
 						className: n("ml-auto shrink-0 text-[11px] font-medium", Vt[e]),
@@ -1786,23 +1796,35 @@ function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 					})
 				]
 			}),
-			a && /* @__PURE__ */ Y("div", {
-				className: "text-xs text-text-tertiary",
-				"data-testid": `${g}-context`,
-				children: ["in ", a]
+			(v || a) && /* @__PURE__ */ Y("div", {
+				className: "flex flex-wrap items-center gap-x-1.5 text-xs text-text-tertiary",
+				children: [
+					v && /* @__PURE__ */ Y("span", {
+						"data-testid": `${g}-model`,
+						children: ["powered by ", v]
+					}),
+					v && a && /* @__PURE__ */ J("span", {
+						"aria-hidden": "true",
+						children: "·"
+					}),
+					a && /* @__PURE__ */ Y("span", {
+						"data-testid": `${g}-context`,
+						children: ["in ", a]
+					})
+				]
 			}),
-			b && /* @__PURE__ */ Y("button", {
+			x && /* @__PURE__ */ Y("button", {
 				type: "button",
 				onClick: d,
 				disabled: !d,
 				"data-testid": `${g}-body`,
 				className: n("flex w-full flex-col items-stretch gap-1 border-none bg-transparent p-0 text-left font-[inherit]", d && "cursor-pointer hover:opacity-80"),
-				children: [y.length > 0 && /* @__PURE__ */ J(Ut, {
-					lines: y,
+				children: [b.length > 0 && /* @__PURE__ */ J(Gt, {
+					lines: b,
 					tone: "delete",
 					testId: `${g}-deleted`
-				}), v.length > 0 && /* @__PURE__ */ J(Ut, {
-					lines: v,
+				}), y.length > 0 && /* @__PURE__ */ J(Gt, {
+					lines: y,
 					tone: "insert",
 					testId: `${g}-inserted`
 				})]
@@ -1839,7 +1861,7 @@ function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionReviewList.tsx
-function Gt({ count: e, children: t, onAcceptAll: a, onRejectAll: c, error: u = null, headerExtra: d, emptyTitle: f = "No suggestions", emptyBody: p = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: g = "card", className: _, "data-testid": v = "suggestion-review-list" }) {
+function qt({ count: e, children: t, onAcceptAll: a, onRejectAll: c, error: u = null, headerExtra: d, emptyTitle: f = "No suggestions", emptyBody: p = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: g = "card", className: _, "data-testid": v = "suggestion-review-list" }) {
 	let y = e > 0 && (a || c), b = y || d ? /* @__PURE__ */ Y("span", {
 		className: "flex items-center gap-1.5",
 		children: [
@@ -1909,4 +1931,4 @@ function Gt({ count: e, children: t, onAcceptAll: a, onRejectAll: c, error: u = 
 	});
 }
 //#endregion
-export { pt as AckMode, he as ActionItemsCard, yt as ActivityFeed, R as AttachmentsPanel, L as CANVAS_BODY_KEY, M as CANVAS_SCHEMA_VERSION, Ve as CanvasDocumentView, ee as CanvasLineSpacing, ft as ChunkViewer, kt as CommentGhostPopover, B as CommentThreadNode, be as DiffViewer, xe as DocumentEditorPage, Ie as DocumentFindBar, Oe as DocumentGutter, re as DocumentHeader, Qe as DocumentListPage, Pt as DocumentModePill, Re as DocumentOutline, Ft as DocumentOwnership, Fe as DocumentRuler, Rt as DocumentShareDialog, He as DocumentStatusBar, Be as DocumentToolbar, T as EditorToolbar, le as ExecutiveSummaryCard, Mt as FloatingDockBar, j as FollowModeBar, ve as HeaderBanner, Se as KeyDecisionsCard, te as LINE_SPACINGS, E as LINE_SPACING_LABELS, Te as MentionDropdown, oe as MyMentionsPanel, x as NewDocumentModal, Me as PX_PER_INCH, I as ParticipantAvatars, wt as ProposalCard, se as ReaderMode, de as ReviewMode, ot as ReviewProgress, ut as ReviewableItem, It as SHARE_ROLES, Q as SUGGESTION_AUTHORING_MODES, we as SectionBlock, ue as SectionComments, A as SectionList, ce as SectionSummariesCard, rt as StandaloneTiptap, Wt as SuggestionCard, zt as SuggestionModeControl, Gt as SuggestionReviewList, ye as TableOfContents, y as TaskItemRow, b as TaskList, O as TiptapEditor, _e as VersionHistoryPanel, z as VideoCallPanel, jt as VideoDockSlot, fe as VideoHistoryPanel, Tt as WorkItemRow, Ae as ZOOM_FIT, je as ZOOM_STEPS, N as canvasBody, F as canvasFragmentToMarkdown, $e as clientIdForUser, Ce as countAllComments, me as findDocumentTarget, ze as findMatches, ge as generateSummaryBullets, Ee as getInitials, P as isCanvasDocument, w as isLineSpacing, D as lineSpacingAttributes, Ne as nextMatchIndex, ne as parseLineSpacing, ke as readOutline, ae as readSchemaVersion, V as relativeTime, Z as replyLabel, k as scrollToDocumentTarget, Le as stackOffsets, ie as useDocumentActions, Pe as useDocumentOutline, et as useFollowCursor, De as useIsCanvasDocument, pe as useSidebarPanels };
+export { pt as AckMode, he as ActionItemsCard, yt as ActivityFeed, R as AttachmentsPanel, L as CANVAS_BODY_KEY, M as CANVAS_SCHEMA_VERSION, Ve as CanvasDocumentView, ee as CanvasLineSpacing, ft as ChunkViewer, kt as CommentGhostPopover, B as CommentThreadNode, be as DiffViewer, xe as DocumentEditorPage, Ie as DocumentFindBar, Oe as DocumentGutter, re as DocumentHeader, Qe as DocumentListPage, Pt as DocumentModePill, Re as DocumentOutline, Ft as DocumentOwnership, Fe as DocumentRuler, Rt as DocumentShareDialog, He as DocumentStatusBar, Be as DocumentToolbar, T as EditorToolbar, le as ExecutiveSummaryCard, Mt as FloatingDockBar, j as FollowModeBar, ve as HeaderBanner, Se as KeyDecisionsCard, te as LINE_SPACINGS, E as LINE_SPACING_LABELS, Te as MentionDropdown, oe as MyMentionsPanel, x as NewDocumentModal, Me as PX_PER_INCH, I as ParticipantAvatars, wt as ProposalCard, se as ReaderMode, de as ReviewMode, ot as ReviewProgress, ut as ReviewableItem, It as SHARE_ROLES, Q as SUGGESTION_AUTHORING_MODES, we as SectionBlock, ue as SectionComments, A as SectionList, ce as SectionSummariesCard, rt as StandaloneTiptap, Kt as SuggestionCard, zt as SuggestionModeControl, qt as SuggestionReviewList, ye as TableOfContents, y as TaskItemRow, b as TaskList, O as TiptapEditor, _e as VersionHistoryPanel, z as VideoCallPanel, jt as VideoDockSlot, fe as VideoHistoryPanel, Tt as WorkItemRow, Ae as ZOOM_FIT, je as ZOOM_STEPS, N as canvasBody, F as canvasFragmentToMarkdown, $e as clientIdForUser, Ce as countAllComments, me as findDocumentTarget, ze as findMatches, ge as generateSummaryBullets, Ee as getInitials, P as isCanvasDocument, w as isLineSpacing, D as lineSpacingAttributes, Ne as nextMatchIndex, ne as parseLineSpacing, ke as readOutline, ae as readSchemaVersion, V as relativeTime, Z as replyLabel, k as scrollToDocumentTarget, Le as stackOffsets, ie as useDocumentActions, Pe as useDocumentOutline, et as useFollowCursor, De as useIsCanvasDocument, pe as useSidebarPanels };

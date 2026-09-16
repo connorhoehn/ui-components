@@ -22,6 +22,53 @@ describe('SuggestionCard', () => {
     expect(screen.getByTestId('suggestion-card-author')).toHaveTextContent('Unknown author');
   });
 
+  // A suggestion an agent run produced belongs to the person who triggered it.
+  // "Haiku" names the engine, not anyone you can ask about the change, and in a
+  // document with several collaborators it is the least useful name on the card.
+  it('gives the author row to the person, not the model that drafted for them', () => {
+    render(
+      <SuggestionCard kind="insert" author="Eve (powered by Haiku)" insertedText="new words" />,
+    );
+    const person = screen.getByTestId('suggestion-card-author');
+    expect(person).toHaveTextContent('Eve');
+    // Not merely "contains Eve": the model must be nowhere in the row that the
+    // narrow gutter truncates, or it would compete for the person's space.
+    expect(person.textContent).toBe('Eve');
+    expect(screen.getByTestId('suggestion-card-model')).toHaveTextContent('powered by Haiku');
+  });
+
+  // The author row lives in a ~280px gutter beside a timestamp and a kind
+  // label. Truncation there is a certainty, so the only question is WHAT it
+  // eats — and the answer has to be the model, never the person.
+  it('truncates a long name without letting the model be what survives', () => {
+    render(
+      <SuggestionCard
+        kind="insert"
+        author="Evangelina Marchetti-Okonkwo (powered by Haiku)"
+        insertedText="new words"
+      />,
+    );
+    const person = screen.getByTestId('suggestion-card-author');
+    // The person is the one element the row clips, and it clips in CSS with the
+    // full name still in the DOM — so a screen reader reads all of it and the
+    // `title` gives a sighted reader the rest on hover.
+    expect(person.textContent).toBe('Evangelina Marchetti-Okonkwo');
+    expect(person).toHaveClass('truncate');
+    expect(person).toHaveAttribute('title', 'Evangelina Marchetti-Okonkwo');
+    // The model is out of the clipping row entirely, so no width can reduce
+    // this card to "…Haiku".
+    expect(screen.getByTestId('suggestion-card-model')).not.toContainElement(person);
+    expect(screen.getByTestId('suggestion-card-model')).toHaveTextContent('powered by Haiku');
+  });
+
+  // A person typing their own suggestion is the common case and must be
+  // untouched — no stray "powered by" line, no reinterpreted brackets.
+  it('leaves a plain name alone', () => {
+    render(<SuggestionCard kind="insert" author="Bo Chen" insertedText="new" />);
+    expect(screen.getByTestId('suggestion-card-author').textContent).toBe('Bo Chen');
+    expect(screen.queryByTestId('suggestion-card-model')).toBeNull();
+  });
+
   it('shows removed text struck and added text inserted', () => {
     render(
       <SuggestionCard

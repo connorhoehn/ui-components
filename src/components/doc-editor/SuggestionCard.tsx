@@ -4,7 +4,9 @@
 //
 //   WHO   — an unreviewed suggestion is visible to everyone the moment it
 //           exists, so the only thing separating "a proposal" from "an agreed
-//           edit" is the name on it. Attribution is not decoration here.
+//           edit" is the name on it. Attribution is not decoration here. A
+//           suggestion an agent drafted belongs to the PERSON who asked for it;
+//           the model is a second-tier fact and is laid out as one.
 //   WHAT  — the removed text struck through, the added text tinted, one line
 //           PER BLOCK. A suggestion is one author over ten minutes, so an agent
 //           that appends a rule, a table and a paragraph is one suggestion;
@@ -38,9 +40,39 @@ const KIND_TEXT: Record<SuggestionCardKind, string> = {
 /** Lines shown before the card folds the rest behind a count. */
 const MAX_LINES = 6;
 
+/**
+ * An author who is a person a model drafted for: "Eve (powered by Haiku)".
+ *
+ * A suggestion an agent run produced belongs to the PERSON who asked for it —
+ * they are who you talk to about the change — with the engine as the secondary
+ * fact. Both have to be on the card and only one of them can win the space.
+ *
+ * Read off the `author` string rather than taken as a second prop on purpose.
+ * Hosts pin this package by commit and upgrade on their own schedule, so a new
+ * required-at-the-call-site prop would mean every card said the wrong name until
+ * each host re-pinned. Parsing a string an existing host already passes makes
+ * the improvement arrive with the package. A plain name matches nothing and is
+ * rendered exactly as before.
+ */
+const POWERED_BY = /^(.*\S)\s*\(powered by\s+([^()]+)\)$/;
+
+function splitAuthor(author: string): { person: string; model?: string } {
+  const match = POWERED_BY.exec(author);
+  if (!match) return { person: author };
+  const person = match[1]!.trim();
+  const model = match[2]!.trim();
+  return person && model ? { person, model } : { person: author };
+}
+
 export interface SuggestionCardProps {
   kind: SuggestionCardKind;
-  /** Display name of whoever proposed it. Never blank — see below. */
+  /**
+   * Display name of whoever proposed it. Never blank — see below.
+   *
+   * `"Eve (powered by Haiku)"` is understood as a person and the model that
+   * drafted for them, and is laid out as two tiers: Eve owns the author row,
+   * the model sits under it. Anything else is one name and renders as one.
+   */
   author: string;
   /** When it was proposed, epoch ms. */
   when?: number | null;
@@ -122,7 +154,9 @@ export function SuggestionCard({
 }: SuggestionCardProps) {
   // An unattributed suggestion is a bug upstream (the marks make author
   // required), but rendering an empty span would hide it. Say so instead.
-  const who = author.trim() === '' ? 'Unknown author' : author;
+  const { person: who, model } = splitAuthor(
+    author.trim() === '' ? 'Unknown author' : author.trim(),
+  );
   const inserted = insertedBlocks && insertedBlocks.length > 0 ? insertedBlocks : (insertedText ? [insertedText] : []);
   const deleted = deletedBlocks && deletedBlocks.length > 0 ? deletedBlocks : (deletedText ? [deletedText] : []);
   const hasBody = inserted.length > 0 || deleted.length > 0;
@@ -139,7 +173,16 @@ export function SuggestionCard({
     >
       <div className="flex items-center gap-2">
         <Avatar name={who} size={20} />
-        <span className="min-w-0 truncate text-[13px] font-medium text-text-primary" data-testid={`${testId}-author`}>
+        {/* The person, and only the person, gets the row's flexible space.
+            This card lives in a 280px margin gutter where the row also carries
+            a timestamp and a kind label, leaving roughly 110px for a name — so
+            something has to give, and it must never be the name. `title` makes
+            a name too long even for that recoverable on hover. */}
+        <span
+          className="min-w-0 truncate text-[13px] font-medium text-text-primary"
+          title={who}
+          data-testid={`${testId}-author`}
+        >
           {who}
         </span>
         {when !== null && (
@@ -152,8 +195,18 @@ export function SuggestionCard({
           {KIND_LABEL[kind]}
         </span>
       </div>
-      {context && (
-        <div className="text-xs text-text-tertiary" data-testid={`${testId}-context`}>in {context}</div>
+      {/* The secondary facts, on their own line rather than crowded into the
+          author row. Putting "powered by Haiku" inline would make the author
+          row's budget the model's budget too, and whichever of the two lost
+          would lose by clipping mid-word. Down here the model is complete, in
+          the muted weight that says "not who to talk to", and the row above is
+          unchanged for the suggestions a person typed themselves. */}
+      {(model || context) && (
+        <div className="flex flex-wrap items-center gap-x-1.5 text-xs text-text-tertiary">
+          {model && <span data-testid={`${testId}-model`}>powered by {model}</span>}
+          {model && context && <span aria-hidden="true">·</span>}
+          {context && <span data-testid={`${testId}-context`}>in {context}</span>}
+        </div>
       )}
       {/* The proposal itself. `<del>`/`<ins>` rather than styled spans: the
           semantics are exactly what those elements mean, and a screen reader
