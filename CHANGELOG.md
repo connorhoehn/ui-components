@@ -6,6 +6,88 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.288.0] — 2026-09-16
+
+### Changed — `./doc-editor`
+
+- **A suggestion an agent drafted is attributed to the PERSON who asked for
+  it.** The card said "Haiku", which names the engine that ran rather than the
+  person to talk to about the change — in a document with several
+  collaborators, the least useful name available. It reads "Eve (powered by
+  Haiku)" now, laid out by rank: the person on the author row, the model muted
+  underneath. The person's name is the only thing that clips, and it clips in
+  CSS with the full string still in the DOM, so a reader gets all of it and a
+  hover gives it back. The model can never be what survives a narrow gutter.
+  No new prop — the card splits the author string hosts already pass, because
+  a prop would leave every host saying the wrong name until it re-pinned.
+
+---
+
+## [2.287.3] — 2026-09-16
+
+### Fixed — `./video`
+
+- A second `RecordingRow` test still asserted on the emoji removed in 2.287.2.
+
+---
+
+## [2.287.2] — 2026-09-16
+
+### Changed — `./video`
+
+- **A recording row's participant count no longer wears an emoji.** "4 👥" was
+  a count with a picture of an icon beside it, and `UsersIcon` was already in
+  the set. The badge gained a real title, so the count says what it counts.
+
+---
+
+## [2.287.1] — 2026-09-16
+
+### Changed — `./social`
+
+- **A post with no replies reveals its Reply on hover or focus** rather than
+  wearing one permanently — Teams shows the reply and reaction affordances
+  when you hover a message, and a Reply under every row is noise. Same gesture
+  the message action bar already uses, and focus reveals it too, since a
+  control that exists only under a pointer is unreachable by keyboard. A
+  thread that already HAS replies keeps its Reply: there it labels a structure
+  already on screen rather than advertising a hypothetical one.
+
+---
+
+## [2.287.0] — 2026-09-16
+
+### Added — `./social`
+
+- **`FeedRow`** — the row grammar four panels and a consuming page were each
+  drawing by hand. It was a private `DigestRow` inside `ChannelViews`, used by
+  Mentions / Files / Pinned / Documents, while the app's Activity feed mirrored
+  it in a page. Leading slot, title with an optional right-aligned timestamp,
+  meta line, optional trailing actions, the row as the jump. **Two lines,
+  structurally**: `title` and `meta` are strings rather than nodes, and both
+  truncate, so nothing a caller passes can produce a third. `leading` is always
+  a sibling of the jump — a link's accessible name replaces its contents, so a
+  badge nested inside it is silent, which is how `ChannelMentionsPanel`'s
+  unread dot had come to be labelled for nobody.
+- **`ChatPanel.unreadFrom`** — the "New" line across the transcript, where you
+  had read up to. The boundary is captured on mount rather than tracked: every
+  host advances the cursor a second after the panel opens, so reading the prop
+  live would delete the line while the reader was scrolling toward it. A
+  cursor that moves BACKWARDS is adopted, since only "Mark as unread" can do
+  that and moving the line is its whole purpose.
+
+---
+
+## [2.286.1] — 2026-09-16
+
+### Changed — `./social`
+
+- **The pin was an emoji too.** The message action bar's pin, the "Pinned"
+  badge and a recording card's pinned marker were all 📌, in files that had
+  `PinIcon` imported nearby.
+
+---
+
 ## [2.286.0] — 2026-09-16
 
 ### Changed — `./social`, `./layout`, `./ui`
