@@ -29,3 +29,19 @@ describe('SuggestionReviewList + SuggestionCard', () => {
     expect(screen.getByTestId('suggestion-review-list-empty')).toBeInTheDocument();
   });
 });
+
+describe('SuggestionReviewList pane variant', () => {
+  it('drops the card title and carries the count in a toolbar', () => {
+    render(
+      <SuggestionReviewList count={2} variant="pane" onAcceptAll={() => {}} onRejectAll={() => {}} data-testid="srl">
+        <li>a</li>
+        <li>b</li>
+      </SuggestionReviewList>,
+    );
+    expect(screen.queryByText('Suggestions')).toBeNull();
+    expect(screen.getByTestId('srl-count').textContent).toBe('2 open');
+    expect(screen.getByTestId('srl-accept-all')).toBeTruthy();
+    expect(screen.getByTestId('srl-reject-all')).toBeTruthy();
+    expect(screen.getByTestId('srl').getAttribute('data-variant')).toBe('pane');
+  });
+});

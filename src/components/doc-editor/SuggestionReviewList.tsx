@@ -30,6 +30,13 @@ export interface SuggestionReviewListProps {
   emptyTitle?: string;
   emptyBody?: string;
   title?: string;
+  /**
+   * `card` (default) is a bordered, titled card for a page margin. `pane` is
+   * the same list hosted inside a tab or side column that already names it:
+   * no card chrome, no title, a slim toolbar carrying the count and the
+   * whole-document resolutions, and its own gutter.
+   */
+  variant?: 'card' | 'pane';
   className?: string;
   'data-testid'?: string;
 }
@@ -44,35 +51,30 @@ export function SuggestionReviewList({
   emptyTitle = 'No suggestions',
   emptyBody = 'Proposed changes to this document show up here for review.',
   title = 'Suggestions',
+  variant = 'card',
   className,
   'data-testid': testId = 'suggestion-review-list',
 }: SuggestionReviewListProps) {
   const resolvable = count > 0 && (onAcceptAll || onRejectAll);
-  return (
-    <Card padding="none" className={cn('overflow-hidden', className)} data-testid={testId}>
-      <CardHeader
-        title={title}
-        meta={<Chip tone="neutral" size="xs" mono>{String(count)}</Chip>}
-        action={
-          (resolvable || headerExtra) ? (
-            <span className="flex items-center gap-1.5">
-              {headerExtra}
-              {resolvable && onRejectAll && (
-                <Button variant="ghost" size="sm" onClick={onRejectAll} data-testid={`${testId}-reject-all`}>
-                  Reject all
-                </Button>
-              )}
-              {resolvable && onAcceptAll && (
-                <Button variant="secondary" size="sm" onClick={onAcceptAll} data-testid={`${testId}-accept-all`}>
-                  Accept all
-                </Button>
-              )}
-            </span>
-          ) : undefined
-        }
-      />
+  const actions = (resolvable || headerExtra) ? (
+    <span className="flex items-center gap-1.5">
+      {headerExtra}
+      {resolvable && onRejectAll && (
+        <Button variant="ghost" size="sm" onClick={onRejectAll} data-testid={`${testId}-reject-all`}>
+          Reject all
+        </Button>
+      )}
+      {resolvable && onAcceptAll && (
+        <Button variant="secondary" size="sm" onClick={onAcceptAll} data-testid={`${testId}-accept-all`}>
+          Accept all
+        </Button>
+      )}
+    </span>
+  ) : undefined;
+  const body = (
+    <>
       {error && (
-        <div className="px-3 pt-2">
+        <div className={cn('pt-2', variant === 'card' && 'px-3')}>
           <Banner variant="error" layout="stacked" data-testid={`${testId}-error`}>{error}</Banner>
         </div>
       )}
@@ -83,6 +85,31 @@ export function SuggestionReviewList({
           {children}
         </ul>
       )}
+    </>
+  );
+
+  if (variant === 'pane') {
+    return (
+      <div className={cn('flex min-h-0 flex-1 flex-col', className)} data-testid={testId} data-variant="pane">
+        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-1.5">
+          <span className="text-xs text-tertiary" data-testid={`${testId}-count`}>
+            {count === 0 ? 'None open' : count === 1 ? '1 open' : `${count} open`}
+          </span>
+          {actions}
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-3">{body}</div>
+      </div>
+    );
+  }
+
+  return (
+    <Card padding="none" className={cn('overflow-hidden', className)} data-testid={testId}>
+      <CardHeader
+        title={title}
+        meta={<Chip tone="neutral" size="xs" mono>{String(count)}</Chip>}
+        action={actions}
+      />
+      {body}
     </Card>
   );
 }
