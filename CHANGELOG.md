@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.281.0] — 2026-09-16
+
+### Added — `./social`
+
+- **`ChatPanel.threaded`**: replies nest under the message they answer, one
+  level deep, the way a Teams channel works. Every message was a peer in one
+  flat river, and "reply" only drew a quote of the parent inline — so three
+  people answering three different things read as six unrelated lines.
+
+  A thread sits in the river at its ROOT's position, and a new reply does NOT
+  drag the whole thread to the bottom: an old conversation that gets a new
+  answer stays where it was. That is the point of threading, and it is the
+  thing a future reader will "fix" by sorting on the newest reply, so the
+  warning lives on the grouping function.
+
+  Replying to a reply reports the ROOT, so the next message joins the same
+  thread instead of starting a nested one. Past three replies the tail folds
+  behind an "N more replies" control carrying the hidden repliers' avatars.
+  The quote block is suppressed when it points at the thread's own root — that
+  row is directly above under the same rail — and kept when it points at a
+  sibling, where with one indent level it is the only thing saying which of
+  several answers is being answered.
+
+  Off by default: the other surfaces that use this component are not channels.
+
+---
+
 ## [2.280.0] — 2026-09-16
 
 ### Added — `./video`

@@ -36,6 +36,7 @@ import { ReactionPickerPopover, DEFAULT_PICKER_EMOJIS } from './ReactionPickerPo
 import { DaySeparator } from './DaySeparator';
 import { isNewDay } from './dayBoundary';
 import { TypingIndicator } from '../shared/TypingIndicator';
+import { Avatar } from '../shared/Avatar';
 import { VISUALLY_HIDDEN_STYLE } from '../shared/VisuallyHidden';
 
 // ---------------------------------------------------------------------------
@@ -177,6 +178,24 @@ export interface ChatPanelProps {
    * panel does not own a timer.
    */
   highlightedMessageId?: string | null;
+  /**
+   * Nest replies under the message they answer, Teams-style, instead of
+   * letting every message be a peer in one flat river.
+   *
+   * OPT-IN, and default false on purpose. Threading is a CHANNEL shape: a
+   * post with answers hanging off it. A DM, a support widget, a call-side
+   * chat and a log console are all rivers, and grouping in those surfaces
+   * would indent messages that nobody thinks of as replies. Every existing
+   * caller keeps the flat render untouched.
+   *
+   * What it does when on: a message whose `metadata.replyTo.messageId` names
+   * another message IN THE LOADED LIST renders beneath it, indented behind a
+   * rail. One level only — a reply to a reply joins the same thread rather
+   * than opening a second indent, which is the rule Teams settled on and the
+   * reason its channels stay readable. A message with no replies renders
+   * exactly as it does with this off.
+   */
+  threaded?: boolean;
   disabled?: boolean;
   onTyping?: (isTyping: boolean) => void;
   typingUsers?: string[];
@@ -603,6 +622,104 @@ function mergeTimeline(messages: readonly ChatMessage[], localMessages: readonly
   return entries;
 }
 
+/** The id a row can be replied TO. Locals carry one too, so an optimistic
+ *  reply lands in its thread instead of at the bottom of the river. */
+function entryId(entry: TimelineEntry): string | undefined {
+  const id = entry.kind === 'message' ? entry.message.id : entry.local.id;
+  return id || undefined;
+}
+
+/** The id this row answers, from the `replyTo` the composer stamped. */
+function entryReplyToId(entry: TimelineEntry): string | undefined {
+  const metadata = entry.kind === 'message' ? entry.message.metadata : entry.local.metadata;
+  const replyTo = (metadata as Record<string, unknown> | undefined)?.replyTo as
+    | { messageId?: unknown }
+    | undefined;
+  return typeof replyTo?.messageId === 'string' && replyTo.messageId ? replyTo.messageId : undefined;
+}
+
+/** A root post and the replies hanging off it, in the order they were sent. */
+interface ThreadGroup {
+  root: TimelineEntry;
+  replies: TimelineEntry[];
+}
+
+/**
+ * One level of nesting, and nothing else moves.
+ *
+ * ORDER — the part that looks like a bug and is not: a thread sits in the
+ * river at its ROOT's position, and a new reply does NOT drag the thread to
+ * the bottom. An answer to a question from this morning stays under that
+ * question, where the question is still on screen to give it meaning; it does
+ * not reappear at the live edge stripped of what it was answering. That IS
+ * threading — a river that reorders itself on every reply is the flat list
+ * with indentation, which buys nothing. Do not "fix" this by sorting groups
+ * on their newest reply. (The unread pill and the scroll-to-bottom affordance
+ * are how a reader learns an older thread moved; see the scroll-ownership
+ * block in the component.)
+ *
+ * DEPTH — a reply to a reply resolves to the same root, so the indent never
+ * goes past one step. Teams draws the line there and so does this.
+ *
+ * A reply whose parent is NOT in the loaded window stays a root of its own:
+ * there is nothing on screen to nest it under, and it keeps its quote block,
+ * which is the only remaining trace of what it answered.
+ */
+function groupThreads(entries: readonly TimelineEntry[]): ThreadGroup[] {
+  const present = new Set<string>();
+  for (const entry of entries) {
+    const id = entryId(entry);
+    if (id) present.add(id);
+  }
+
+  const parentOf = new Map<string, string>();
+  for (const entry of entries) {
+    const id = entryId(entry);
+    const parent = entryReplyToId(entry);
+    if (id && parent && parent !== id && present.has(parent)) parentOf.set(id, parent);
+  }
+
+  // `replyTo` is server data, so a cycle is possible in principle and would
+  // hang the render. The hop cap costs nothing and makes that impossible.
+  const rootOf = (id: string): string => {
+    let current = id;
+    for (let hops = 0; hops < 64; hops += 1) {
+      const parent = parentOf.get(current);
+      if (!parent) break;
+      current = parent;
+    }
+    return current;
+  };
+
+  // Roots first, in list order, THEN replies — so a reply that arrived out of
+  // order (before its parent) still finds a group to join.
+  const groups: ThreadGroup[] = [];
+  const byRootId = new Map<string, ThreadGroup>();
+  for (const entry of entries) {
+    const id = entryId(entry);
+    if (id && rootOf(id) !== id) continue;
+    const group: ThreadGroup = { root: entry, replies: [] };
+    groups.push(group);
+    if (id) byRootId.set(id, group);
+  }
+  for (const entry of entries) {
+    const id = entryId(entry);
+    if (!id) continue;
+    const root = rootOf(id);
+    if (root === id) continue;
+    byRootId.get(root)?.replies.push(entry);
+  }
+  return groups;
+}
+
+/** More replies than this and the tail collapses behind a control. Three is
+ *  the point where a thread stops reading as a short exchange and starts
+ *  pushing the next post off the screen. */
+const THREAD_COLLAPSE_AFTER = 3;
+/** How many stay visible while collapsed — enough to see the thread is alive
+ *  and who is in it, few enough that the channel keeps moving. */
+const THREAD_COLLAPSED_VISIBLE = 2;
+
 export function ChatPanel({
   messages,
   localMessages = [],
@@ -622,6 +739,7 @@ export function ChatPanel({
   pinnedMessageIds,
   onJumpToMessage,
   highlightedMessageId,
+  threaded = false,
   documentEditors,
   callParticipants,
   agentRunStatus,
@@ -677,6 +795,19 @@ export function ChatPanel({
   // in after the last row that is not newer than it. The list is not sorted
   // wholesale — the server's order is the truth for what it sent.
   const timeline = mergeTimeline(messages, localMessages);
+  // Only computed when threading is on, so the flat path pays nothing for it.
+  const threads = threaded ? groupThreads(timeline) : null;
+  // Which long threads the reader has opened, keyed by root message id. Local
+  // to the panel: expanding a thread is a reading gesture, not a fact about
+  // the conversation that a host should have to store.
+  const [expandedThreads, setExpandedThreads] = useState<ReadonlySet<string>>(() => new Set());
+  function toggleThread(rootId: string) {
+    setExpandedThreads((open) => {
+      const next = new Set(open);
+      if (!next.delete(rootId)) next.add(rootId);
+      return next;
+    });
+  }
 
   // ── Scroll ownership ────────────────────────────────────────────────
   // The old effect slammed scrollTop to scrollHeight on EVERY length
@@ -860,6 +991,520 @@ export function ChatPanel({
     }
   }
 
+  // One row of the transcript. Lifted out of the render loop so the threaded
+  // path can call it twice — once for a root, once per reply — without the
+  // body of a message row existing in two places and drifting apart.
+  function renderTimelineEntry(
+    entry: TimelineEntry,
+    index: number,
+    previousTimestamp: string | undefined,
+    /**
+     * Set only when this row is a REPLY rendered inside a thread. Carries the
+     * root the thread hangs off, which is what `onReply` must report so the
+     * next reply lands in THIS thread instead of starting a nested one.
+     */
+    thread?: { rootId: string; rootMessage?: ChatMessage },
+  ): ReactNode {
+  const entryTimestamp = entry.kind === 'message' ? entry.message.timestamp : entry.local.timestamp;
+  // A date heading opens each new local day — including the first
+  // row on screen, whose date is otherwise stated nowhere. Keyed
+  // off the PREVIOUS row rather than a running variable so a
+  // `Load earlier messages` prepend recomputes correctly: the
+  // boundary is a property of a pair, not of iteration order.
+  //
+  // Never inside a thread. The river's day headings mark the ROOTS, because
+  // that is the order the river is in; a reply posted two days after its root
+  // would otherwise drop a "Wednesday" inside a thread that the reader has
+  // been told sits on Monday, and the next root would then have to repeat
+  // Monday to undo it.
+  const daySeparator = !thread && isNewDay(entryTimestamp, previousTimestamp) ? (
+    <DaySeparator key={`day:${entryTimestamp}:${index}`} timestamp={entryTimestamp} tone={tone} />
+  ) : null;
+
+  if (entry.kind === 'local') {
+    const local = entry.local;
+    const localRef = agentRunRefFromMetadata(local.metadata);
+    return (
+      <Fragment key={`local:${local.id}`}>
+        {daySeparator}
+        <div data-testid="chat-local-message" data-local-message-id={local.id} className="rounded-md">
+          <MessageRow
+            author={local.displayName}
+            timestamp={local.timestamp}
+            tone={tone}
+            // A local message is the viewer's by definition.
+            mine
+            content={
+              <>
+                {localRef ? (
+                  <AgentRunCard
+                    runId={localRef.runId}
+                    instruction={localRef.instruction || local.content}
+                    command={localRef.command}
+                    agentName={localRef.agentName}
+                    requestedBy={local.displayName}
+                    status={agentRunStatus?.(localRef.runId)}
+                    onOpenDocument={onOpenDocument && localRef.documentId ? () => onOpenDocument(localRef.documentId) : undefined}
+                    documentTitle={localRef.documentTitle}
+                    onOpenRun={onOpenRun}
+                    result={localRef.result}
+                    onOpenResult={onOpenResult}
+                    onDecide={onDecideRun}
+                    suggestion={localRef.suggestionKey ? { key: localRef.suggestionKey, ...(localRef.documentId ? { documentId: localRef.documentId } : {}) } : undefined}
+                    onReview={onReviewRun}
+                  />
+                ) : (
+                  <MessageBody text={local.content} />
+                )}
+                <div
+                  data-testid="chat-local-message-note"
+                  className={cn('mt-1 text-[11px] italic', dark ? 'text-white/50' : 'text-text-tertiary')}
+                >
+                  {local.note ?? 'Only you can see this'}
+                </div>
+                {local.actions && local.actions.length > 0 && (
+                  <div className="mt-1.5 flex flex-wrap gap-1.5" data-testid="chat-local-message-actions">
+                    {local.actions.map((action) => (
+                      <Button
+                        key={action.id}
+                        type="button"
+                        size="sm"
+                        variant={action.primary ? 'primary' : 'ghost'}
+                        onClick={action.onSelect}
+                      >
+                        {action.label}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+              </>
+            }
+          />
+        </div>
+      </Fragment>
+    );
+  }
+
+  const { message } = entry;
+  const author = message.displayName ?? message.clientId.slice(0, 8);
+  const files = message.attachments ?? [];
+  // Attachments render INSIDE the row's content slot rather than as
+  // sibling rows, so a caption and its image stay one message —
+  // they share an author, a timestamp, and a position in the
+  // ordering, and splitting them lets the two drift apart.
+  // `metadata.html` is the composer's rich body. Rendering
+  // `content` alone threw away every link, bold run and mention the
+  // sender created — MessageBody restores them, from an allow-list,
+  // because a message body is attacker-controlled text.
+  const rich = message.metadata?.html;
+  const richHtml = typeof rich === 'string' ? rich : undefined;
+  const text = <MessageBody html={richHtml} text={message.content} />;
+
+  // A document event is not a message with a document mentioned in
+  // it — it IS the document, so the card replaces the text rather
+  // than sitting under it. The sentence the server wrote stays in
+  // the stored message for anywhere that renders plain text
+  // (notification previews, the conversation list) but the thread
+  // shows the thing itself.
+  const docRef = documentRefFromMetadata(message.metadata);
+  const agentRef = agentRunRefFromMetadata(message.metadata);
+
+  // Same rule for a call: the event IS the call, so the card
+  // replaces the text. Unlike a document, a call CHANGES while
+  // the thread is open — live it is an invitation, ended it is a
+  // record — which is why one card renders both states in place
+  // rather than the transcript swapping rows underneath a reader.
+  const callRef = callRefFromMetadata(message.metadata);
+  const recordingRef = recordingRefFromMetadata(message.metadata);
+  const membershipRef = membershipRefFromMetadata(message.metadata);
+  const truncation = truncationFromMetadata(message.metadata);
+  // `#Roadmap` in the text stays words; the chips under it are the
+  // same documents as things you can open.
+  const docRefs = documentRefsFromMetadata(message.metadata);
+
+  const body = agentRef ? (
+    <AgentRunCard
+      runId={agentRef.runId}
+      instruction={agentRef.instruction || message.content.replace(/^\/doc\s*/i, '')}
+      command={agentRef.command}
+      agentName={agentRef.agentName}
+      requestedBy={message.displayName}
+      status={agentRunStatus?.(agentRef.runId)}
+      onOpenDocument={onOpenDocument && agentRef.documentId ? () => onOpenDocument(agentRef.documentId) : undefined}
+      documentTitle={agentRef.documentTitle}
+      onOpenRun={onOpenRun}
+      result={agentRef.result}
+      onOpenResult={onOpenResult}
+      onDecide={onDecideRun}
+      suggestion={agentRef.suggestionKey ? { key: agentRef.suggestionKey, ...(agentRef.documentId ? { documentId: agentRef.documentId } : {}) } : undefined}
+      onReview={onReviewRun}
+    />
+  ) : recordingRef ? (
+    (() => {
+      const live = recordingStatus?.(recordingRef.recordingId);
+      const rec = { ...recordingRef, ...(live ?? {}) };
+      return (
+        <RecordingActivityCard
+          recordingId={rec.recordingId}
+          title={rec.title}
+          recordedBy={rec.recordedBy ?? message.displayName}
+          participants={rec.participants}
+          participantCount={rec.participantCount}
+          startedAt={rec.startedAt}
+          durationMs={rec.durationMs}
+          thumbnailUrl={rec.thumbnailUrl}
+          stage={rec.stage ?? 'ready'}
+          transcriptReady={rec.transcriptReady}
+          summaryReady={rec.summaryReady}
+          expiresAt={rec.expiresAt}
+          pinned={!!message.id && !!pinnedMessageIds?.has(message.id)}
+          onOpen={onOpenRecording}
+          onCopyLink={onCopyRecordingLink}
+          onShare={onShareRecording}
+          onDownload={onDownloadRecording}
+          onOpenTranscript={onOpenRecordingTranscript}
+          onManageExpiry={onManageRecordingExpiry}
+          onTogglePin={onTogglePin ? () => onTogglePin(message) : undefined}
+        />
+      );
+    })()
+  ) : callRef ? (
+    <CallActivityCard
+      callId={callRef.callId}
+      startedBy={
+        (typeof message.metadata?.displayName === 'string'
+          ? message.metadata.displayName
+          : undefined)
+        ?? message.displayName
+      }
+      participants={callParticipants?.(callRef.callId) ?? callRef.participants}
+      live={callRef.live}
+      durationMs={callRef.durationMs}
+      audioOnly={callRef.audioOnly}
+      recorded={callRef.recorded}
+      notRecordedReason={callRef.notRecordedReason}
+      lobbyName={callRef.lobbyName}
+      onJoin={onJoinCall}
+    />
+  ) : docRef ? (
+    <DocumentActivityCard
+      documentId={docRef.documentId}
+      title={docRef.title || message.content}
+      icon={docRef.icon}
+      // The document's author when the share carries one, and only
+      // then the message's sender.
+      //
+      // The card's label is "Created by", and this read the SENDER
+      // — so sharing someone else's document into a thread
+      // credited you with writing it. Verified: a document created
+      // by one person, shared by another, rendered under the
+      // sharer's name.
+      createdBy={
+        docRef.createdBy
+        ?? (typeof message.metadata?.displayName === 'string'
+          ? message.metadata.displayName
+          : undefined)
+        ?? message.displayName
+      }
+      editors={documentEditors?.(docRef.documentId) ?? []}
+      onOpen={onOpenDocument}
+    />
+  ) : files.length === 0 ? (
+      text
+    ) : (
+      <>
+        {(message.content || richHtml) && text}
+        {files.map((file) => (
+          <AttachmentBubble
+            key={file.id}
+            attachment={file}
+            src={attachmentSrc?.(file)}
+            onOpen={onOpenAttachment}
+          />
+        ))}
+      </>
+    );
+  const messageId = message.id ?? '';
+  const reactions = messageId && reactionsFor ? reactionsFor(messageId) : [];
+  const quoted = message.metadata?.replyTo as
+    | { messageId: string; author: string; text: string; timestamp?: string }
+    | undefined;
+  // Inside a thread, a quote of the ROOT is the same words twice — the root is
+  // the post directly above, under the same rail, and repeating it is exactly
+  // the noise threading was added to remove. A quote of a SIBLING reply stays:
+  // it is the only thing that says which of the four answers above this one is
+  // being answered, which the single indent level deliberately cannot show.
+  const quoteIsThreadRoot = !!thread && !!quoted && quoted.messageId === thread.rootId;
+  const showQuote = !!quoted && !quoteIsThreadRoot;
+  const isPinned = !!messageId && !!pinnedMessageIds?.has(messageId);
+  // Matched on the AUTHENTICATED user id, never on clientId: a
+  // clientId is per-connection and changes on every reconnect, so
+  // keying on it would make your own messages stop being yours
+  // halfway up the thread.
+  const isMine =
+    !!currentUserId && (message as { userId?: string }).userId === currentUserId;
+
+  // A notice is a RECORD, not somebody's words.
+  //
+  // Replying to one quotes "Bob started a call" back at the
+  // channel, which says nothing; pinning one pins an event that
+  // already has its own place in the transcript and its own
+  // live/ended states. Offering an action with no meaning is how a
+  // thread fills up with pins nobody chose.
+  //
+  // The test is `metadata.system`, which the gateway's
+  // `postSystemMessage` stamps on everything it posts on nobody's
+  // behalf — NOT the card `kind`. That distinction is load-bearing
+  // for documents, which arrive by two different routes and render
+  // as the SAME card:
+  //
+  //   • "Bob created Q3 Plan"  — posted by the server. A notice.
+  //   • "📄 Q3 Plan" + a link  — posted by a person through the
+  //     share picker. A message they chose to send, so replying to
+  //     it and pinning it mean exactly what they normally mean.
+  //
+  // Gating on `kind === 'document'` would have silenced both;
+  // gating on the call card alone would have left the auto-posted
+  // document notice replyable. Neither is right.
+  //
+  // Reactions stay. Reacting to "the call started" reads as a
+  // response to the EVENT, which is what it is.
+  const isActivityNotice = message.metadata?.system === true;
+  const isDeleted = !!message.deletedAt || message.metadata?.deleted === true;
+  const isCard = !!(agentRef || recordingRef || callRef || docRef || membershipRef);
+  // Own, plain, still there: the only messages a person may edit or delete.
+  const canEditDelete = isMine && !isDeleted && !isActivityNotice && !isCard && !!messageId;
+  const editing = canEditDelete && !!onEditMessage && editingId === messageId;
+
+  // The quote, the message, its reactions — one unit. Rendering
+  // them as siblings of the row would let a reaction drift away
+  // from the message it belongs to when the list reflows.
+  const withInteractions = (
+    <>
+      {showQuote && quoted && (
+        <QuoteBlock
+          quote={quoted}
+          onJump={onJumpToMessage}
+          className="mb-1"
+        />
+      )}
+      {isPinned && (
+        <span className="mb-0.5 block text-[11px] text-text-tertiary" data-testid="pinned-marker">
+          📌 Pinned
+        </span>
+      )}
+      {isDeleted ? (
+        <span className="italic text-text-tertiary" data-testid="message-deleted">This message was deleted.</span>
+      ) : editing ? (
+        <InlineMessageEditor
+          initialText={message.content}
+          onSave={async (text) => { await onEditMessage!(message, text); setEditingId(null); }}
+          onCancel={() => setEditingId(null)}
+        />
+      ) : body}
+      {!isDeleted && docRefs.length > 0 && (
+        <div className="mt-1 flex flex-wrap gap-1" data-testid="chat-message-docrefs">
+          {docRefs.map((d) => (
+            <DocumentChip key={d.id} documentId={d.id} label={d.label} icon={d.icon} onOpen={onOpenDocument} />
+          ))}
+        </div>
+      )}
+      {!isDeleted && truncation && (
+        <div
+          data-testid="message-truncated"
+          className="mt-1 text-[11px] text-warning-fg"
+        >
+          ⚠{' '}
+          {truncation.labels.length > 0
+            ? `Too large to send: ${truncation.labels.join(', ')}`
+            : 'Part of this message was too large to send'}
+        </div>
+      )}
+      {!isDeleted && reactions.length > 0 && currentUserId && onToggleReaction && (
+        <ReactionChips
+          reactions={reactions}
+          currentUserId={currentUserId}
+          onToggle={(emoji) => onToggleReaction(messageId, emoji)}
+        />
+      )}
+    </>
+  );
+
+  if (membershipRef) {
+    return (
+      <Fragment key={message.id ?? index}>
+        {daySeparator}
+        <MembershipNotice
+          membership={membershipRef}
+          fallbackText={message.content}
+          timestamp={message.timestamp}
+          data-testid="membership-notice"
+        />
+      </Fragment>
+    );
+  }
+
+  return (
+    <Fragment key={message.id ?? index}>
+    {daySeparator}
+    <div
+      data-testid="chat-message"
+      data-message-id={messageId || undefined}
+      // `group` drives the hover reveal; `focus-within` is what
+      // keeps the bar reachable without a pointer.
+      className={cn(
+        'group relative rounded-md transition-colors hover:bg-surface-hover',
+        // `ring-inset`: an outset ring is drawn OUTSIDE the row's
+        // box, and the scroll container clips overflow — so the
+        // right edge of the highlight was cut off against the
+        // pane boundary. Inset draws it within the row's own
+        // bounds, which nothing can clip.
+        messageId && messageId === highlightedMessageId &&
+          'bg-surface-inset ring-1 ring-inset ring-primary transition-colors',
+      )}
+    >
+      <MessageRow
+        author={author}
+        content={withInteractions}
+        timestamp={message.timestamp}
+        editedAt={isDeleted ? undefined : message.editedAt}
+        avatarUrl={message.avatarUrl}
+        tone={tone}
+        // Own messages flip side and take a tinted bubble. Matched
+        // on the AUTHENTICATED user id, never on clientId: a
+        // clientId is per-connection and changes on every
+        // reconnect, so keying on it would make your own messages
+        // stop being yours halfway up the thread.
+        mine={isMine}
+      />
+      {messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (!isActivityNotice && (onReply || onTogglePin))) && (
+        <MessageActionBar
+          // Top-RIGHT of the row, the way Slack and Teams place
+          // it, and the hovered row is tinted so the bar and the
+          // message it acts on read as one thing however wide the
+          // pane is. It used to sit at the message column's left
+          // edge, lifted onto the row's top — which put it over
+          // the author's name and the timestamp ("Caro…"), the
+          // one line that says whose message you are about to
+          // react to. `-top-3` lifts it into the gap above the
+          // row, where there is no text on the right.
+          //
+          // `group-has-[:focus-visible]` rather than
+          // `group-focus-within`: focus-within is true after a
+          // MOUSE click too, so clicking a reaction left that row's
+          // bar stuck open after the pointer moved away — two bars
+          // on screen at once, one of them for a message you were
+          // no longer pointing at. focus-visible is keyboard-only,
+          // which is the case the reveal-on-focus exists for.
+          className={cn(
+            'absolute -top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100',
+          )}
+          onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
+          // Replying to a REPLY hands back the thread's root, never the reply
+          // itself. The host stamps `replyTo` from what it gets, so handing it
+          // the child would stamp a grandchild — and since a grandchild folds
+          // back to the same root anyway, the only visible effect would be a
+          // quote block and a `replyTo` pointing at a row that is no longer
+          // structurally distinct. One thread, one target.
+          onReply={
+            onReply && !isActivityNotice
+              ? () => onReply(thread?.rootMessage ?? message)
+              : undefined
+          }
+          onTogglePin={
+            onTogglePin && !isActivityNotice ? () => onTogglePin(message) : undefined
+          }
+          pinned={!!message.id && !!pinnedMessageIds?.has(message.id)}
+          onEdit={canEditDelete && onEditMessage ? () => setEditingId(messageId) : undefined}
+          onDelete={canEditDelete && onDeleteMessage ? () => setDeletingId(messageId) : undefined}
+        />
+      )}
+    </div>
+    </Fragment>
+  );
+  }
+
+  /** The name to put on a reply in the "who is in this thread" strip. */
+  function entryAuthor(entry: TimelineEntry): string {
+    return entry.kind === 'message'
+      ? entry.message.displayName ?? entry.message.clientId.slice(0, 8)
+      : entry.local.displayName;
+  }
+
+  /**
+   * A root post with its replies beneath it, behind a rail.
+   *
+   * A thread with NO replies renders as the bare row, byte for byte what the
+   * flat path produces. Wrapping every message in thread chrome would make a
+   * channel of ordinary messages look like a channel of empty threads.
+   */
+  function renderThread(
+    group: ThreadGroup,
+    index: number,
+    previousTimestamp: string | undefined,
+  ): ReactNode {
+    const rootNode = renderTimelineEntry(group.root, index, previousTimestamp);
+    if (group.replies.length === 0) return rootNode;
+
+    const rootId = entryId(group.root) ?? '';
+    const rootMessage = group.root.kind === 'message' ? group.root.message : undefined;
+    // Without an id there is nothing stable to key the open/closed state on,
+    // so such a thread simply stays open rather than flickering shut when the
+    // list reflows.
+    const collapsible = !!rootId && group.replies.length > THREAD_COLLAPSE_AFTER;
+    const expanded = !collapsible || expandedThreads.has(rootId);
+    const visible = expanded ? group.replies : group.replies.slice(0, THREAD_COLLAPSED_VISIBLE);
+    const hidden = group.replies.length - visible.length;
+    // Who is still behind the control — the question the reader is actually
+    // asking before deciding to open it.
+    const hiddenAuthors = [...new Set(group.replies.slice(visible.length).map(entryAuthor))].slice(0, 3);
+
+    return (
+      <div key={`thread:${rootId || index}`} data-testid="chat-thread" data-thread-root={rootId || undefined}>
+        {rootNode}
+        <div
+          data-testid="chat-thread-replies"
+          // Indent plus a rail down the left. The rail is what makes the
+          // grouping survive a reply that is the viewer's OWN — those flip to
+          // the right side of the row, so indentation alone stops reading as
+          // "belongs to that" the moment your own answer is in the thread.
+          className={cn('ml-7 border-l pl-2', dark ? 'border-white/20' : 'border-border')}
+        >
+          {visible.map((reply, replyIndex) =>
+            renderTimelineEntry(reply, replyIndex, undefined, {
+              rootId,
+              ...(rootMessage ? { rootMessage } : {}),
+            }),
+          )}
+          {collapsible && (
+            <button
+              type="button"
+              data-testid="chat-thread-toggle"
+              aria-expanded={expanded}
+              onClick={() => toggleThread(rootId)}
+              className={cn(
+                'mt-0.5 flex items-center gap-1.5 rounded px-1 py-0.5 text-xs',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                dark ? 'text-white/70 hover:bg-white/10' : 'text-text-secondary hover:bg-surface-hover',
+              )}
+            >
+              {!expanded && hiddenAuthors.length > 0 && (
+                <span className="flex items-center gap-0.5">
+                  {hiddenAuthors.map((name) => (
+                    <Avatar key={name} name={name} size={16} />
+                  ))}
+                </span>
+              )}
+              {expanded
+                ? 'Show fewer replies'
+                : `${hidden} more ${hidden === 1 ? 'reply' : 'replies'}`}
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   const panel = (
     <div
       data-testid="chat-panel"
@@ -982,403 +1627,15 @@ export function ChatPanel({
               </div>
             )
           ) : (
-            timeline.map((entry, index) => {
-              const previousTimestamp = timelineTimestamp(timeline[index - 1]);
-              const entryTimestamp = entry.kind === 'message' ? entry.message.timestamp : entry.local.timestamp;
-              // A date heading opens each new local day — including the first
-              // row on screen, whose date is otherwise stated nowhere. Keyed
-              // off the PREVIOUS row rather than a running variable so a
-              // `Load earlier messages` prepend recomputes correctly: the
-              // boundary is a property of a pair, not of iteration order.
-              const daySeparator = isNewDay(entryTimestamp, previousTimestamp) ? (
-                <DaySeparator key={`day:${entryTimestamp}:${index}`} timestamp={entryTimestamp} tone={tone} />
-              ) : null;
-
-              if (entry.kind === 'local') {
-                const local = entry.local;
-                const localRef = agentRunRefFromMetadata(local.metadata);
-                return (
-                  <Fragment key={`local:${local.id}`}>
-                    {daySeparator}
-                    <div data-testid="chat-local-message" data-local-message-id={local.id} className="rounded-md">
-                      <MessageRow
-                        author={local.displayName}
-                        timestamp={local.timestamp}
-                        tone={tone}
-                        // A local message is the viewer's by definition.
-                        mine
-                        content={
-                          <>
-                            {localRef ? (
-                              <AgentRunCard
-                                runId={localRef.runId}
-                                instruction={localRef.instruction || local.content}
-                                command={localRef.command}
-                                agentName={localRef.agentName}
-                                requestedBy={local.displayName}
-                                status={agentRunStatus?.(localRef.runId)}
-                                onOpenDocument={onOpenDocument && localRef.documentId ? () => onOpenDocument(localRef.documentId) : undefined}
-                                documentTitle={localRef.documentTitle}
-                                onOpenRun={onOpenRun}
-                                result={localRef.result}
-                                onOpenResult={onOpenResult}
-                                onDecide={onDecideRun}
-                                suggestion={localRef.suggestionKey ? { key: localRef.suggestionKey, ...(localRef.documentId ? { documentId: localRef.documentId } : {}) } : undefined}
-                                onReview={onReviewRun}
-                              />
-                            ) : (
-                              <MessageBody text={local.content} />
-                            )}
-                            <div
-                              data-testid="chat-local-message-note"
-                              className={cn('mt-1 text-[11px] italic', dark ? 'text-white/50' : 'text-text-tertiary')}
-                            >
-                              {local.note ?? 'Only you can see this'}
-                            </div>
-                            {local.actions && local.actions.length > 0 && (
-                              <div className="mt-1.5 flex flex-wrap gap-1.5" data-testid="chat-local-message-actions">
-                                {local.actions.map((action) => (
-                                  <Button
-                                    key={action.id}
-                                    type="button"
-                                    size="sm"
-                                    variant={action.primary ? 'primary' : 'ghost'}
-                                    onClick={action.onSelect}
-                                  >
-                                    {action.label}
-                                  </Button>
-                                ))}
-                              </div>
-                            )}
-                          </>
-                        }
-                      />
-                    </div>
-                  </Fragment>
-                );
-              }
-
-              const { message } = entry;
-              const author = message.displayName ?? message.clientId.slice(0, 8);
-              const files = message.attachments ?? [];
-              // Attachments render INSIDE the row's content slot rather than as
-              // sibling rows, so a caption and its image stay one message —
-              // they share an author, a timestamp, and a position in the
-              // ordering, and splitting them lets the two drift apart.
-              // `metadata.html` is the composer's rich body. Rendering
-              // `content` alone threw away every link, bold run and mention the
-              // sender created — MessageBody restores them, from an allow-list,
-              // because a message body is attacker-controlled text.
-              const rich = message.metadata?.html;
-              const richHtml = typeof rich === 'string' ? rich : undefined;
-              const text = <MessageBody html={richHtml} text={message.content} />;
-
-              // A document event is not a message with a document mentioned in
-              // it — it IS the document, so the card replaces the text rather
-              // than sitting under it. The sentence the server wrote stays in
-              // the stored message for anywhere that renders plain text
-              // (notification previews, the conversation list) but the thread
-              // shows the thing itself.
-              const docRef = documentRefFromMetadata(message.metadata);
-              const agentRef = agentRunRefFromMetadata(message.metadata);
-
-              // Same rule for a call: the event IS the call, so the card
-              // replaces the text. Unlike a document, a call CHANGES while
-              // the thread is open — live it is an invitation, ended it is a
-              // record — which is why one card renders both states in place
-              // rather than the transcript swapping rows underneath a reader.
-              const callRef = callRefFromMetadata(message.metadata);
-              const recordingRef = recordingRefFromMetadata(message.metadata);
-              const membershipRef = membershipRefFromMetadata(message.metadata);
-              const truncation = truncationFromMetadata(message.metadata);
-              // `#Roadmap` in the text stays words; the chips under it are the
-              // same documents as things you can open.
-              const docRefs = documentRefsFromMetadata(message.metadata);
-
-              const body = agentRef ? (
-                <AgentRunCard
-                  runId={agentRef.runId}
-                  instruction={agentRef.instruction || message.content.replace(/^\/doc\s*/i, '')}
-                  command={agentRef.command}
-                  agentName={agentRef.agentName}
-                  requestedBy={message.displayName}
-                  status={agentRunStatus?.(agentRef.runId)}
-                  onOpenDocument={onOpenDocument && agentRef.documentId ? () => onOpenDocument(agentRef.documentId) : undefined}
-                  documentTitle={agentRef.documentTitle}
-                  onOpenRun={onOpenRun}
-                  result={agentRef.result}
-                  onOpenResult={onOpenResult}
-                  onDecide={onDecideRun}
-                  suggestion={agentRef.suggestionKey ? { key: agentRef.suggestionKey, ...(agentRef.documentId ? { documentId: agentRef.documentId } : {}) } : undefined}
-                  onReview={onReviewRun}
-                />
-              ) : recordingRef ? (
-                (() => {
-                  const live = recordingStatus?.(recordingRef.recordingId);
-                  const rec = { ...recordingRef, ...(live ?? {}) };
-                  return (
-                    <RecordingActivityCard
-                      recordingId={rec.recordingId}
-                      title={rec.title}
-                      recordedBy={rec.recordedBy ?? message.displayName}
-                      participants={rec.participants}
-                      participantCount={rec.participantCount}
-                      startedAt={rec.startedAt}
-                      durationMs={rec.durationMs}
-                      thumbnailUrl={rec.thumbnailUrl}
-                      stage={rec.stage ?? 'ready'}
-                      transcriptReady={rec.transcriptReady}
-                      summaryReady={rec.summaryReady}
-                      expiresAt={rec.expiresAt}
-                      pinned={!!message.id && !!pinnedMessageIds?.has(message.id)}
-                      onOpen={onOpenRecording}
-                      onCopyLink={onCopyRecordingLink}
-                      onShare={onShareRecording}
-                      onDownload={onDownloadRecording}
-                      onOpenTranscript={onOpenRecordingTranscript}
-                      onManageExpiry={onManageRecordingExpiry}
-                      onTogglePin={onTogglePin ? () => onTogglePin(message) : undefined}
-                    />
-                  );
-                })()
-              ) : callRef ? (
-                <CallActivityCard
-                  callId={callRef.callId}
-                  startedBy={
-                    (typeof message.metadata?.displayName === 'string'
-                      ? message.metadata.displayName
-                      : undefined)
-                    ?? message.displayName
-                  }
-                  participants={callParticipants?.(callRef.callId) ?? callRef.participants}
-                  live={callRef.live}
-                  durationMs={callRef.durationMs}
-                  audioOnly={callRef.audioOnly}
-                  recorded={callRef.recorded}
-                  notRecordedReason={callRef.notRecordedReason}
-                  lobbyName={callRef.lobbyName}
-                  onJoin={onJoinCall}
-                />
-              ) : docRef ? (
-                <DocumentActivityCard
-                  documentId={docRef.documentId}
-                  title={docRef.title || message.content}
-                  icon={docRef.icon}
-                  // The document's author when the share carries one, and only
-                  // then the message's sender.
-                  //
-                  // The card's label is "Created by", and this read the SENDER
-                  // — so sharing someone else's document into a thread
-                  // credited you with writing it. Verified: a document created
-                  // by one person, shared by another, rendered under the
-                  // sharer's name.
-                  createdBy={
-                    docRef.createdBy
-                    ?? (typeof message.metadata?.displayName === 'string'
-                      ? message.metadata.displayName
-                      : undefined)
-                    ?? message.displayName
-                  }
-                  editors={documentEditors?.(docRef.documentId) ?? []}
-                  onOpen={onOpenDocument}
-                />
-              ) : files.length === 0 ? (
-                  text
-                ) : (
-                  <>
-                    {(message.content || richHtml) && text}
-                    {files.map((file) => (
-                      <AttachmentBubble
-                        key={file.id}
-                        attachment={file}
-                        src={attachmentSrc?.(file)}
-                        onOpen={onOpenAttachment}
-                      />
-                    ))}
-                  </>
-                );
-              const messageId = message.id ?? '';
-              const reactions = messageId && reactionsFor ? reactionsFor(messageId) : [];
-              const quoted = message.metadata?.replyTo as
-                | { messageId: string; author: string; text: string; timestamp?: string }
-                | undefined;
-              const isPinned = !!messageId && !!pinnedMessageIds?.has(messageId);
-              // Matched on the AUTHENTICATED user id, never on clientId: a
-              // clientId is per-connection and changes on every reconnect, so
-              // keying on it would make your own messages stop being yours
-              // halfway up the thread.
-              const isMine =
-                !!currentUserId && (message as { userId?: string }).userId === currentUserId;
-
-              // A notice is a RECORD, not somebody's words.
-              //
-              // Replying to one quotes "Bob started a call" back at the
-              // channel, which says nothing; pinning one pins an event that
-              // already has its own place in the transcript and its own
-              // live/ended states. Offering an action with no meaning is how a
-              // thread fills up with pins nobody chose.
-              //
-              // The test is `metadata.system`, which the gateway's
-              // `postSystemMessage` stamps on everything it posts on nobody's
-              // behalf — NOT the card `kind`. That distinction is load-bearing
-              // for documents, which arrive by two different routes and render
-              // as the SAME card:
-              //
-              //   • "Bob created Q3 Plan"  — posted by the server. A notice.
-              //   • "📄 Q3 Plan" + a link  — posted by a person through the
-              //     share picker. A message they chose to send, so replying to
-              //     it and pinning it mean exactly what they normally mean.
-              //
-              // Gating on `kind === 'document'` would have silenced both;
-              // gating on the call card alone would have left the auto-posted
-              // document notice replyable. Neither is right.
-              //
-              // Reactions stay. Reacting to "the call started" reads as a
-              // response to the EVENT, which is what it is.
-              const isActivityNotice = message.metadata?.system === true;
-              const isDeleted = !!message.deletedAt || message.metadata?.deleted === true;
-              const isCard = !!(agentRef || recordingRef || callRef || docRef || membershipRef);
-              // Own, plain, still there: the only messages a person may edit or delete.
-              const canEditDelete = isMine && !isDeleted && !isActivityNotice && !isCard && !!messageId;
-              const editing = canEditDelete && !!onEditMessage && editingId === messageId;
-
-              // The quote, the message, its reactions — one unit. Rendering
-              // them as siblings of the row would let a reaction drift away
-              // from the message it belongs to when the list reflows.
-              const withInteractions = (
-                <>
-                  {quoted && (
-                    <QuoteBlock
-                      quote={quoted}
-                      onJump={onJumpToMessage}
-                      className="mb-1"
-                    />
-                  )}
-                  {isPinned && (
-                    <span className="mb-0.5 block text-[11px] text-text-tertiary" data-testid="pinned-marker">
-                      📌 Pinned
-                    </span>
-                  )}
-                  {isDeleted ? (
-                    <span className="italic text-text-tertiary" data-testid="message-deleted">This message was deleted.</span>
-                  ) : editing ? (
-                    <InlineMessageEditor
-                      initialText={message.content}
-                      onSave={async (text) => { await onEditMessage!(message, text); setEditingId(null); }}
-                      onCancel={() => setEditingId(null)}
-                    />
-                  ) : body}
-                  {!isDeleted && docRefs.length > 0 && (
-                    <div className="mt-1 flex flex-wrap gap-1" data-testid="chat-message-docrefs">
-                      {docRefs.map((d) => (
-                        <DocumentChip key={d.id} documentId={d.id} label={d.label} icon={d.icon} onOpen={onOpenDocument} />
-                      ))}
-                    </div>
-                  )}
-                  {!isDeleted && truncation && (
-                    <div
-                      data-testid="message-truncated"
-                      className="mt-1 text-[11px] text-warning-fg"
-                    >
-                      ⚠{' '}
-                      {truncation.labels.length > 0
-                        ? `Too large to send: ${truncation.labels.join(', ')}`
-                        : 'Part of this message was too large to send'}
-                    </div>
-                  )}
-                  {!isDeleted && reactions.length > 0 && currentUserId && onToggleReaction && (
-                    <ReactionChips
-                      reactions={reactions}
-                      currentUserId={currentUserId}
-                      onToggle={(emoji) => onToggleReaction(messageId, emoji)}
-                    />
-                  )}
-                </>
-              );
-
-              if (membershipRef) {
-                return (
-                  <Fragment key={message.id ?? index}>
-                    {daySeparator}
-                    <MembershipNotice
-                      membership={membershipRef}
-                      fallbackText={message.content}
-                      timestamp={message.timestamp}
-                      data-testid="membership-notice"
-                    />
-                  </Fragment>
-                );
-              }
-
-              return (
-                <Fragment key={message.id ?? index}>
-                {daySeparator}
-                <div
-                  data-testid="chat-message"
-                  data-message-id={messageId || undefined}
-                  // `group` drives the hover reveal; `focus-within` is what
-                  // keeps the bar reachable without a pointer.
-                  className={cn(
-                    'group relative rounded-md transition-colors hover:bg-surface-hover',
-                    // `ring-inset`: an outset ring is drawn OUTSIDE the row's
-                    // box, and the scroll container clips overflow — so the
-                    // right edge of the highlight was cut off against the
-                    // pane boundary. Inset draws it within the row's own
-                    // bounds, which nothing can clip.
-                    messageId && messageId === highlightedMessageId &&
-                      'bg-surface-inset ring-1 ring-inset ring-primary transition-colors',
-                  )}
-                >
-                  <MessageRow
-                    author={author}
-                    content={withInteractions}
-                    timestamp={message.timestamp}
-                    editedAt={isDeleted ? undefined : message.editedAt}
-                    avatarUrl={message.avatarUrl}
-                    tone={tone}
-                    // Own messages flip side and take a tinted bubble. Matched
-                    // on the AUTHENTICATED user id, never on clientId: a
-                    // clientId is per-connection and changes on every
-                    // reconnect, so keying on it would make your own messages
-                    // stop being yours halfway up the thread.
-                    mine={isMine}
-                  />
-                  {messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (!isActivityNotice && (onReply || onTogglePin))) && (
-                    <MessageActionBar
-                      // Top-RIGHT of the row, the way Slack and Teams place
-                      // it, and the hovered row is tinted so the bar and the
-                      // message it acts on read as one thing however wide the
-                      // pane is. It used to sit at the message column's left
-                      // edge, lifted onto the row's top — which put it over
-                      // the author's name and the timestamp ("Caro…"), the
-                      // one line that says whose message you are about to
-                      // react to. `-top-3` lifts it into the gap above the
-                      // row, where there is no text on the right.
-                      //
-                      // `group-has-[:focus-visible]` rather than
-                      // `group-focus-within`: focus-within is true after a
-                      // MOUSE click too, so clicking a reaction left that row's
-                      // bar stuck open after the pointer moved away — two bars
-                      // on screen at once, one of them for a message you were
-                      // no longer pointing at. focus-visible is keyboard-only,
-                      // which is the case the reveal-on-focus exists for.
-                      className={cn(
-                        'absolute -top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100',
-                      )}
-                      onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
-                      onReply={onReply && !isActivityNotice ? () => onReply(message) : undefined}
-                      onTogglePin={
-                        onTogglePin && !isActivityNotice ? () => onTogglePin(message) : undefined
-                      }
-                      pinned={!!message.id && !!pinnedMessageIds?.has(message.id)}
-                      onEdit={canEditDelete && onEditMessage ? () => setEditingId(messageId) : undefined}
-                      onDelete={canEditDelete && onDeleteMessage ? () => setDeletingId(messageId) : undefined}
-                    />
-                  )}
-                </div>
-                </Fragment>
-              );
-            })
+            threads ? (
+              threads.map((group, index) =>
+                renderThread(group, index, timelineTimestamp(threads[index - 1]?.root)),
+              )
+            ) : (
+              timeline.map((entry, index) =>
+                renderTimelineEntry(entry, index, timelineTimestamp(timeline[index - 1])),
+              )
+            )
           )}
 
           {onDeleteMessage && (

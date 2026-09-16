@@ -759,6 +759,24 @@ declare interface ChatPanelProps {
      * panel does not own a timer.
      */
     highlightedMessageId?: string | null;
+    /**
+     * Nest replies under the message they answer, Teams-style, instead of
+     * letting every message be a peer in one flat river.
+     *
+     * OPT-IN, and default false on purpose. Threading is a CHANNEL shape: a
+     * post with answers hanging off it. A DM, a support widget, a call-side
+     * chat and a log console are all rivers, and grouping in those surfaces
+     * would indent messages that nobody thinks of as replies. Every existing
+     * caller keeps the flat render untouched.
+     *
+     * What it does when on: a message whose `metadata.replyTo.messageId` names
+     * another message IN THE LOADED LIST renders beneath it, indented behind a
+     * rail. One level only — a reply to a reply joins the same thread rather
+     * than opening a second indent, which is the rule Teams settled on and the
+     * reason its channels stay readable. A message with no replies renders
+     * exactly as it does with this off.
+     */
+    threaded?: boolean;
     disabled?: boolean;
     onTyping?: (isTyping: boolean) => void;
     typingUsers?: string[];
