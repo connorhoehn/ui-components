@@ -49,7 +49,7 @@ import type { ReactNode } from 'react';
 
 import { cn } from '../../lib/cn';
 import { DockedPanelProvider } from '../shared/DockedPanelContext';
-import { CaptionsIcon, ChatBubbleIcon, UsersIcon } from './MediaIcons';
+import { CaptionsIcon, ChatBubbleIcon, SettingsGearIcon, UsersIcon } from './MediaIcons';
 import type { CallWidgetMode } from './callWidgetMode';
 
 /** How the dock rendered itself for the host widget's display mode. */
@@ -115,6 +115,8 @@ function defaultTabIcon(id: string): ReactNode {
       return <UsersIcon size={16} />;
     case 'captions':
       return <CaptionsIcon size={16} />;
+    case 'devices':
+      return <SettingsGearIcon size={16} />;
     default:
       return null;
   }

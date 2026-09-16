@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.279.1] — 2026-09-16
+
+### Fixed — `./video`
+
+- **A `devices` side-panel tab drew as the letters "DE".** `CallSidePanel`
+  falls back to the first two characters of a tab's label when it has no icon,
+  and the well-known set had no entry for devices — so the call's new device
+  picker sat in the control bar as text between five glyphs. It gets
+  `SettingsGearIcon` now, like the other well-known ids.
+
+---
+
 ## [2.279.0] — 2026-09-16
 
 ### Changed — `./video`

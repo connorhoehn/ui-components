@@ -1411,6 +1411,7 @@ function qe(e) {
 		case "chat": return /* @__PURE__ */ N(Pe, { size: 16 });
 		case "people": return /* @__PURE__ */ N(Fe, { size: 16 });
 		case "captions": return /* @__PURE__ */ N(Ie, { size: 16 });
+		case "devices": return /* @__PURE__ */ N(Ve, { size: 16 });
 		default: return null;
 	}
 }
