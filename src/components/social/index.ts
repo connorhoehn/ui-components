@@ -220,6 +220,10 @@ export type { MembersPanelProps, ChatMember } from './MembersPanel';
 // dialogs that hang off its ⋯ menus.
 export { forwardedFromMetadata } from './ChatPanel';
 export type { ForwardedFrom } from './ChatPanel';
+// Compose a forwarded body with THESE, not a private copy of the sentence:
+// the panel de-duplicates the origin by matching its own string, so a host
+// that rewords its copy silently gets the sentence twice.
+export { forwardOriginLabel, forwardAttributionLine, withoutForwardAttribution } from './ChatPanel';
 export { FeedRow } from './FeedRow';
 export type { FeedRowProps } from './FeedRow';
 export { RailSectionHeader } from './RailSectionHeader';

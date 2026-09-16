@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.291.0] — 2026-09-16
+
+### Added — `./social`
+
+- **`forwardOriginLabel`, `forwardAttributionLine` and `withoutForwardAttribution`
+  are exported.** 2.290.0 shipped the de-duplication but kept its helpers
+  private, so a host had no way to compose a forwarded body with the same
+  sentence the panel strips — and a host keeping its own copy of the wording
+  loses the de-duplication the moment either side is reworded. The exports make
+  the agreement between the two enforceable instead of coincidental.
+
+### Fixed — `./social`
+
+- **The de-duplication now fires on rich bodies too.** It previously declined
+  on any message carrying `metadata.html`, which excluded exactly the case it
+  was written for: a forward carries no html until someone edits it, and the
+  edit path re-encodes the whole body. The question is now asked of what is
+  actually rendered. On the rich path the line is taken off the parsed DOM, not
+  the markup string — the first text node must itself begin with the whole
+  line, so an attribution spelled across inline elements declines rather than
+  being half-eaten, and a body that would be left empty is left alone. Removal
+  only; `MessageBody`'s allow-list sanitizer still runs downstream. Both the
+  html and the plain-text fallback lose the line together, so a client that
+  renders the text does not show the sentence the marker is already showing.
+
+---
+
 ## [2.290.0] — 2026-09-16
 
 ### Changed — `./social`

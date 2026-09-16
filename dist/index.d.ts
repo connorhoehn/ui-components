@@ -6237,6 +6237,9 @@ export declare interface FormRowProps {
     'data-testid'?: string;
 }
 
+/** The exact first line of a forwarded message's body. See above. */
+export declare function forwardAttributionLine(from: ForwardedFrom): string;
+
 /**
  * Where a forwarded message came from, carried in `metadata.forwardedFrom`.
  *
@@ -6298,6 +6301,18 @@ export declare function forwardedFromMetadata(metadata: Record<string, unknown> 
 
 /** A hooked arrow: forwarded — this came from somewhere else. */
 export declare function ForwardIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/**
+ * "Forwarded from #design — Hank Anderson", from the metadata.
+ *
+ * The visible half of the marker, and — with a colon on the end, see
+ * `forwardAttributionLine` — a byte-for-byte reproduction of the line a host
+ * writes into the forwarded message's `content`. Exported so a host composes
+ * its bodies with THIS function instead of its own copy of the sentence: the
+ * two agreeing is what lets the panel recognise its own prefix, and a host
+ * that rewords its copy silently loses the de-duplication below.
+ */
+export declare function forwardOriginLabel(from: ForwardedFrom): string;
 
 /**
  * The unabbreviated date, for the separator's accessible name and for the
@@ -16025,6 +16040,47 @@ declare interface UseActivityBusReturn {
   RunStatus
   ] extends [PipelineRunSummary['status']] ? true : false>;
 
+  /**
+   * Say the origin ONCE.
+   *
+   * The attribution is deliberately written into `content` (see `ForwardedFrom`)
+   * so a client with no idea what `forwardedFrom` means still shows whose words
+   * these are. A client that DOES understand it then had the same sentence
+   * twice — once in the marker, once as the body's first line.
+   *
+   * The contract is one sentence: **the marker names the origin exactly when
+   * the RENDERED body does not.** So the question is asked of whatever is
+   * actually going to be shown — the plain text, or the rich body when there is
+   * one — and never of the mere existence of `metadata.html`. An earlier version
+   * declined on any rich body, which was wrong in the case rich bodies actually
+   * occur: a forward carries no html until somebody EDITS it, and the edit path
+   * sends html to match the new text, so the one message shape that could have
+   * used this never got it.
+   *
+   * Three ways it declines, all landing on the same safe result — body untouched,
+   * marker back to a bare "Forwarded" badge:
+   *
+   *   * NOT OURS. Somebody can type "Forwarded from the old thread — Bob:"
+   *     themselves, and a forwarded body can begin with anything. The test is
+   *     equality against the string generated from THIS message's metadata, not
+   *     a pattern that matches the shape of one.
+   *   * NOTHING LEFT. A pathological origin (a room and a name that together
+   *     exceed the wire's message cap) makes the attribution the entire body.
+   *     Stripping it would render an empty bubble, so it stays.
+   *   * NOT A CLEAN LINE. The rich body spells the attribution across several
+   *     elements, or runs it into the words without a break. See
+   *     `htmlWithoutLeadingLine`.
+   *
+   * Both halves are returned because the caller renders `html` OVER `body` and
+   * has to hand `MessageBody` a consistent pair — stripping one and not the
+   * other is how the sentence comes back on the next edit.
+   */
+  export declare function withoutForwardAttribution(content: string, from: ForwardedFrom | null, html?: string): {
+      body: string;
+      html?: string;
+      stripped: boolean;
+  };
+
   export declare function Wizard({ steps, activeKey, onStep, onFinish, finishLabel, className, 'data-testid': testId, }: WizardProps): JSX.Element;
 
   export declare interface WizardProps {
@@ -16100,6 +16156,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -16119,12 +16188,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -16168,9 +16234,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -16178,9 +16244,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -16194,16 +16260,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

@@ -232,7 +232,7 @@ describe('withoutForwardAttribution', () => {
   });
 
   it('takes the prefix off a body it generated', () => {
-    const out = withoutForwardAttribution(`${line}\nunmuted probe`, ORIGIN, false);
+    const out = withoutForwardAttribution(`${line}\nunmuted probe`, ORIGIN);
     expect(out).toEqual({ body: 'unmuted probe', stripped: true });
   });
 
@@ -246,7 +246,7 @@ describe('withoutForwardAttribution', () => {
       'I am forwarding this: Forwarded from #general — Carol Johnson:\nnot at the start',
       'Forwarded from #platform — Carol Johnson:\nanother origin entirely',
     ]) {
-      expect(withoutForwardAttribution(body, ORIGIN, false)).toEqual({ body, stripped: false });
+      expect(withoutForwardAttribution(body, ORIGIN)).toEqual({ body, stripped: false });
     }
   });
 
@@ -255,7 +255,7 @@ describe('withoutForwardAttribution', () => {
   it('only ever strips the line belonging to this message metadata', () => {
     const inner = `Forwarded from #general — Carol Johnson:\nunmuted probe`;
     const outerLine = forwardAttributionLine({ ...ORIGIN, channelLabel: '#watercooler', author: 'Ada Lovelace' });
-    const out = withoutForwardAttribution(`${outerLine}\n${inner}`, { ...ORIGIN, channelLabel: '#watercooler', author: 'Ada Lovelace' }, false);
+    const out = withoutForwardAttribution(`${outerLine}\n${inner}`, { ...ORIGIN, channelLabel: '#watercooler', author: 'Ada Lovelace' });
     expect(out.stripped).toBe(true);
     expect(out.body).toBe(inner);
   });
@@ -263,20 +263,48 @@ describe('withoutForwardAttribution', () => {
   // The pathological origin — a room and a name that together fill the wire's
   // message budget — makes the attribution the whole body.
   it('never renders a message down to nothing', () => {
-    expect(withoutForwardAttribution(line, ORIGIN, false).stripped).toBe(false);
-    expect(withoutForwardAttribution(`${line}\n   `, ORIGIN, false).stripped).toBe(false);
+    expect(withoutForwardAttribution(line, ORIGIN).stripped).toBe(false);
+    expect(withoutForwardAttribution(`${line}\n   `, ORIGIN).stripped).toBe(false);
   });
 
-  // `metadata.html` renders INSTEAD of the plain text, so trimming the text
-  // would change nothing visible — and re-finding the sentence inside
-  // attacker-controlled markup is a second, guessier parser.
-  it('does not touch a body that renders from html', () => {
-    const body = `${line}\nunmuted probe`;
-    expect(withoutForwardAttribution(body, ORIGIN, true)).toEqual({ body, stripped: false });
+  // The rendered body is what the rule is about, so a rich body is asked the
+  // same question — the shape the edit path produces is the line, a <br>, the
+  // words.
+  it('takes the line off a rich body too, and off its plain-text fallback', () => {
+    const out = withoutForwardAttribution(
+      `${line}\nunmuted probe`,
+      ORIGIN,
+      `<p>${line}<br>unmuted probe</p>`,
+    );
+    expect(out.stripped).toBe(true);
+    expect(out.html).toBe('<p>unmuted probe</p>');
+    expect(out.body).toBe('unmuted probe');
+  });
+
+  // Conservative on purpose: "starts with this sentence" is asked of the first
+  // text node, so an attribution spelled across elements declines rather than
+  // being half-eaten.
+  it('declines a rich body that spells the line across elements', () => {
+    const html = `<p>Forwarded from <strong>#general</strong> — Carol Johnson:<br>probe</p>`;
+    expect(withoutForwardAttribution(`${line}\nprobe`, ORIGIN, html).stripped).toBe(false);
+  });
+
+  it('declines when the line runs into the words with no break', () => {
+    const html = `<p>${line}and then words</p>`;
+    expect(withoutForwardAttribution(`${line}\nx`, ORIGIN, html).stripped).toBe(false);
+  });
+
+  it('never empties a rich body either', () => {
+    expect(withoutForwardAttribution(line, ORIGIN, `<p>${line}</p>`).stripped).toBe(false);
+  });
+
+  it('leaves a rich body that is not a forward completely alone', () => {
+    const html = '<p>hello</p>';
+    expect(withoutForwardAttribution('hello', null, html)).toEqual({ body: 'hello', html, stripped: false });
   });
 
   it('does nothing at all to a message that is not a forward', () => {
-    expect(withoutForwardAttribution('hello', null, false)).toEqual({ body: 'hello', stripped: false });
+    expect(withoutForwardAttribution('hello', null)).toEqual({ body: 'hello', stripped: false });
   });
 });
 
@@ -300,15 +328,31 @@ describe('an edited forward', () => {
     expect(screen.getByTestId('message-body')).toHaveTextContent('rewritten by Ada');
   });
 
-  // Nothing is stripped there, so the marker must not add a second copy of a
-  // sentence the body may still be carrying.
-  it('falls back to a bare badge when it did not take the sentence over', () => {
+  // The edit rewrote the attribution away, so the rendered body no longer
+  // carries it — and the marker must not add a second copy of a sentence
+  // nothing removed from anywhere.
+  it('falls back to a bare badge when the rendered body kept nothing to take over', () => {
     renderPanel([edited({
       content: `${line}\nrewritten by Ada`,
       metadata: { forwardedFrom: ORIGIN, html: '<p>rewritten by Ada</p>' },
     })]);
     expect(screen.getByTestId('forwarded-marker')).toHaveTextContent('Forwarded');
     expect(screen.getByTestId('forwarded-marker')).not.toHaveTextContent('#general');
+  });
+
+  // The common edit: the prefix kept, the words changed — and the edit path
+  // re-encodes the whole thing as html. This is the case the old rich-body
+  // decline could never serve.
+  it('says the origin once when the edit kept the prefix, rich body and all', () => {
+    renderPanel([edited({
+      content: `${line}\ncorrected: eve should NOT be notified`,
+      metadata: { forwardedFrom: ORIGIN, html: `<p>${line}<br>corrected: eve should NOT be notified</p>` },
+    })]);
+    expect(screen.getByTestId('forwarded-marker'))
+      .toHaveTextContent('Forwarded from #general — Carol Johnson');
+    const body = screen.getByTestId('message-body');
+    expect(body).toHaveTextContent('corrected: eve should NOT be notified');
+    expect(body).not.toHaveTextContent('Forwarded from');
   });
 
   // An edit that rewrote the prefix away leaves an ordinary message that
@@ -319,13 +363,60 @@ describe('an edited forward', () => {
     expect(screen.getByTestId('forwarded-marker')).toHaveTextContent('Forwarded');
   });
 
-  // The common edit: the prefix kept, the words changed. Still ours to strip.
-  it('still says the origin once when the edit kept the prefix', () => {
+  // Plain-text edit that kept the prefix. Still ours to strip.
+  it('still says the origin once when a plain edit kept the prefix', () => {
     renderPanel([edited({ content: `${line}\ncorrected: eve should NOT be notified` })]);
     expect(screen.getByTestId('forwarded-marker'))
       .toHaveTextContent('Forwarded from #general — Carol Johnson');
     const body = screen.getByTestId('message-body');
     expect(body).toHaveTextContent('corrected: eve should NOT be notified');
+    expect(body).not.toHaveTextContent('Forwarded from');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The real thing
+// ---------------------------------------------------------------------------
+
+// Not an invented fixture: this is the row the running gateway actually stored
+// when a message was forwarded from #general to #watercooler in the browser,
+// copied verbatim out of DynamoDB (`chat-messages`, 2026-09-16). It is here
+// because the bug this file grew for was never in the logic — the logic was
+// right and the build was stale — and the thing worth pinning is that the
+// panel says the origin once for the EXACT bytes the wire produces, em dash,
+// colon, newline and all.
+const REAL_FORWARD: ChatMessage = {
+  id: 'mu4lubuo-real',
+  clientId: 'c-eve',
+  userId: 'dev-eve',
+  displayName: 'Eve Thompson',
+  timestamp: '2026-09-16T12:04:00.000Z',
+  content: 'Forwarded from #general — Carol Johnson:\nunmuted probe: eve SHOULD be notified',
+  metadata: {
+    displayName: 'Eve Thompson',
+    forwardedFrom: {
+      messageId: 'mu41sf6eajyzy0untwr',
+      channel: 'general',
+      channelLabel: '#general',
+      author: 'Carol Johnson',
+      authorUserId: 'dev-carol',
+      timestamp: '2026-09-16T11:59:10.550Z',
+    },
+    forwardId: 'fwd-mu4lubuo-hjof14',
+  },
+} as ChatMessage;
+
+describe('a message the gateway actually stored', () => {
+  it('carries no html, so the rendered body IS the plain text', () => {
+    expect((REAL_FORWARD.metadata as Record<string, unknown>).html).toBeUndefined();
+  });
+
+  it('says the origin once', () => {
+    renderPanel([REAL_FORWARD]);
+    expect(screen.getByTestId('forwarded-marker'))
+      .toHaveTextContent('Forwarded from #general — Carol Johnson');
+    const body = screen.getByTestId('message-body');
+    expect(body).toHaveTextContent('unmuted probe: eve SHOULD be notified');
     expect(body).not.toHaveTextContent('Forwarded from');
   });
 });

@@ -630,6 +630,58 @@ export function forwardAttributionLine(from: ForwardedFrom): string {
 }
 
 /**
+ * Takes an exact leading line off a RICH body, or answers null.
+ *
+ * Operates on the parsed DOM rather than the markup string, because "starts
+ * with this sentence" is a question about the rendered text and the markup can
+ * spell the same text a dozen ways. Deliberately conservative: the document's
+ * FIRST text node must itself begin with the whole line, so an attribution
+ * split across inline elements (`Forwarded from <strong>#general</strong>…`)
+ * declines rather than being half-eaten.
+ *
+ * Removal only — nothing is added, no attribute is touched, and the result
+ * still goes through `MessageBody`'s allow-list sanitizer before it reaches
+ * the page. This is not the layer holding the XSS line.
+ */
+function htmlWithoutLeadingLine(html: string, line: string): string | null {
+  // Parsing, walking and NodeFilter are all DOM. A caller with no DOM gets a
+  // decline rather than a throw — this runs during render, and the honest
+  // failure of a cosmetic trim is "did not trim".
+  let doc: Document;
+  let first: Node | null;
+  try {
+    doc = new DOMParser().parseFromString(html, 'text/html');
+    first = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT).nextNode();
+  } catch {
+    return null;
+  }
+  const raw = first?.textContent ?? '';
+  if (!first || !raw.startsWith(line)) return null;
+
+  const rest = raw.slice(line.length);
+  if (rest.startsWith('\n')) {
+    // A literal newline survived into the text node.
+    first.textContent = rest.slice(1);
+  } else if (rest === '') {
+    // The usual shape: the composer (and this app's edit path) encode the
+    // newline as a <br>, so the line is a text node of its own.
+    first.textContent = '';
+    const next = first.nextSibling;
+    if (next && next.nodeType === Node.ELEMENT_NODE && (next as Element).tagName === 'BR') {
+      next.parentNode?.removeChild(next);
+    }
+  } else {
+    // "…Carol Johnson:and then words" — the line is a PREFIX of a longer run,
+    // not a line. Not ours.
+    return null;
+  }
+
+  // Never render a message down to nothing.
+  if (!(doc.body.textContent ?? '').trim()) return null;
+  return doc.body.innerHTML;
+}
+
+/**
  * Say the origin ONCE.
  *
  * The attribution is deliberately written into `content` (see `ForwardedFrom`)
@@ -637,13 +689,17 @@ export function forwardAttributionLine(from: ForwardedFrom): string {
  * these are. A client that DOES understand it then had the same sentence
  * twice — once in the marker, once as the body's first line.
  *
- * So: when the body begins with exactly the line this metadata would have
- * produced, the marker takes the origin over and the body renders without the
- * prefix. When it does not, nothing is touched and the marker falls back to a
- * bare "Forwarded" badge — the body is already saying where it came from, in
- * whatever words it has, and the panel must not say it a second time.
+ * The contract is one sentence: **the marker names the origin exactly when
+ * the RENDERED body does not.** So the question is asked of whatever is
+ * actually going to be shown — the plain text, or the rich body when there is
+ * one — and never of the mere existence of `metadata.html`. An earlier version
+ * declined on any rich body, which was wrong in the case rich bodies actually
+ * occur: a forward carries no html until somebody EDITS it, and the edit path
+ * sends html to match the new text, so the one message shape that could have
+ * used this never got it.
  *
- * Three ways it declines to strip, all of which land on the same safe result:
+ * Three ways it declines, all landing on the same safe result — body untouched,
+ * marker back to a bare "Forwarded" badge:
  *
  *   * NOT OURS. Somebody can type "Forwarded from the old thread — Bob:"
  *     themselves, and a forwarded body can begin with anything. The test is
@@ -652,24 +708,36 @@ export function forwardAttributionLine(from: ForwardedFrom): string {
  *   * NOTHING LEFT. A pathological origin (a room and a name that together
  *     exceed the wire's message cap) makes the attribution the entire body.
  *     Stripping it would render an empty bubble, so it stays.
- *   * A RICH BODY. `metadata.html` is rendered INSTEAD of the plain text, so
- *     trimming the text would change nothing visible — and reaching into the
- *     markup to find the sentence is a second, guessier parser over
- *     attacker-controlled HTML. This is the edited-forward case in practice:
- *     a fresh forward carries no html, and the edit path sends html to match
- *     the new text. An edit that rewrote the words has already made the body
- *     something other than the original anyway.
+ *   * NOT A CLEAN LINE. The rich body spells the attribution across several
+ *     elements, or runs it into the words without a break. See
+ *     `htmlWithoutLeadingLine`.
+ *
+ * Both halves are returned because the caller renders `html` OVER `body` and
+ * has to hand `MessageBody` a consistent pair — stripping one and not the
+ * other is how the sentence comes back on the next edit.
  */
 export function withoutForwardAttribution(
   content: string,
   from: ForwardedFrom | null,
-  hasRichBody: boolean,
-): { body: string; stripped: boolean } {
-  if (!from || hasRichBody) return { body: content, stripped: false };
-  const prefix = `${forwardAttributionLine(from)}\n`;
+  html?: string,
+): { body: string; html?: string; stripped: boolean } {
+  if (!from) return { body: content, html, stripped: false };
+  const line = forwardAttributionLine(from);
+
+  if (html) {
+    const trimmedHtml = htmlWithoutLeadingLine(html, line);
+    if (trimmedHtml === null) return { body: content, html, stripped: false };
+    // The plain text is the fallback for anything that cannot render the
+    // markup, so it loses the same line — otherwise a client picking the text
+    // path sees the sentence the marker is already showing.
+    const prefix = `${line}\n`;
+    const body = content.startsWith(prefix) ? content.slice(prefix.length) : content;
+    return { body, html: trimmedHtml, stripped: true };
+  }
+
+  const prefix = `${line}\n`;
   if (!content.startsWith(prefix)) return { body: content, stripped: false };
   const rest = content.slice(prefix.length);
-  // Never render a message down to nothing.
   if (!rest.trim()) return { body: content, stripped: false };
   return { body: rest, stripped: true };
 }
@@ -1830,8 +1898,8 @@ export function ChatPanel({
   // depends on it: a forwarded message's first line is the attribution, and
   // the marker renders it instead so it is not said twice.
   const forwarded = forwardedFromMetadata(message.metadata);
-  const forwardBody = withoutForwardAttribution(message.content, forwarded, !!richHtml);
-  const text = <MessageBody html={richHtml} text={forwardBody.body} />;
+  const forwardBody = withoutForwardAttribution(message.content, forwarded, richHtml);
+  const text = <MessageBody html={forwardBody.html} text={forwardBody.body} />;
 
   // A document event is not a message with a document mentioned in
   // it — it IS the document, so the card replaces the text rather

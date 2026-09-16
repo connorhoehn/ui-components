@@ -525,6 +525,8 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "formatChatTime",
     "formatDuration",
     "formatTypingBanner",
+    "forwardAttributionLine",
+    "forwardOriginLabel",
     "forwardedFromMetadata",
     "fullDateLabel",
     "fullTimestampLabel",
@@ -713,6 +715,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "useWebSocket",
     "useWebSocketContext",
     "useYjsDoc",
+    "withoutForwardAttribution",
     "zIndex",
   ],
   "./pipelines": [
@@ -1199,6 +1202,8 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "formatCallDuration",
     "formatChatTime",
     "formatDuration",
+    "forwardAttributionLine",
+    "forwardOriginLabel",
     "forwardedFromMetadata",
     "fullDateLabel",
     "fullTimestampLabel",
@@ -1225,6 +1230,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "useChatSidePanelRenderers",
     "useRegisterChatCommands",
     "useRunChatCommand",
+    "withoutForwardAttribution",
   ],
   "./graph": [
     "GraphPanelBody",
