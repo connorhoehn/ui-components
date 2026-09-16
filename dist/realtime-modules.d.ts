@@ -684,6 +684,46 @@ declare interface ChatPanelProps {
     onToggleReaction?: (messageId: string, emoji: string) => void;
     /** Starts a quote-reply. Presence of this enables the reply control. */
     onReply?: (message: ChatMessage) => void;
+    /**
+     * Send this message to ANOTHER conversation. Presence of this enables the
+     * Forward control; absent, nothing renders and every existing caller is
+     * untouched.
+     *
+     * ## What it is offered on, and why the gate is tighter than Reply's
+     *
+     * Reply is withheld from system NOTICES only (`metadata.system`) — replying
+     * to "Bob started a call" quotes an event back at the room. Forward is
+     * withheld from notices for the same reason AND from three more shapes,
+     * because a forward is not a quote: it relocates the message, and a message
+     * that only means something where it is does not survive the trip.
+     *
+     *   * A CARD — document, recording, call, agent run, membership — is a
+     *     handle on something scoped to the conversation it was posted in. Its
+     *     buttons resolve against services the destination may not reach: Open
+     *     on a document nobody there can read, Join on a call that is not that
+     *     room's, a runId whose panel lives in another channel's side pane. The
+     *     card would render and then do nothing, which is worse than not
+     *     offering it. Note this is WIDER than Reply's gate on purpose: a
+     *     document card a PERSON posted through the share picker is a message
+     *     they chose to send, so replying to it means what it normally means —
+     *     but forwarding it still moves a link that may not open at the far end.
+     *   * An ATTACHMENT rides a download URL scoped to the transfer in its
+     *     origin channel. Re-posting the descriptor hands the destination a file
+     *     row that 403s. Re-uploading the bytes into the new conversation is a
+     *     different feature and is not this one.
+     *   * A message with no words — attachments only, or deleted — has nothing
+     *     to carry.
+     *
+     * So: own, other people's, plain text, still there. The handler receives the
+     * message that was CLICKED, never the thread root — unlike `onReply`, which
+     * folds a reply back onto its root, forwarding is about these exact words.
+     *
+     * ## What the host should post
+     *
+     * The library does not send anything; the host owns the destination and the
+     * post. What it must not do is strip the attribution — see `ForwardedFrom`.
+     */
+    onForwardMessage?: (message: ChatMessage) => void;
     /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
     onTogglePin?: (message: ChatMessage) => void;
     /**

@@ -695,7 +695,7 @@ declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -740,6 +740,46 @@ export declare interface ChatPanelProps {
     onToggleReaction?: (messageId: string, emoji: string) => void;
     /** Starts a quote-reply. Presence of this enables the reply control. */
     onReply?: (message: ChatMessage) => void;
+    /**
+     * Send this message to ANOTHER conversation. Presence of this enables the
+     * Forward control; absent, nothing renders and every existing caller is
+     * untouched.
+     *
+     * ## What it is offered on, and why the gate is tighter than Reply's
+     *
+     * Reply is withheld from system NOTICES only (`metadata.system`) — replying
+     * to "Bob started a call" quotes an event back at the room. Forward is
+     * withheld from notices for the same reason AND from three more shapes,
+     * because a forward is not a quote: it relocates the message, and a message
+     * that only means something where it is does not survive the trip.
+     *
+     *   * A CARD — document, recording, call, agent run, membership — is a
+     *     handle on something scoped to the conversation it was posted in. Its
+     *     buttons resolve against services the destination may not reach: Open
+     *     on a document nobody there can read, Join on a call that is not that
+     *     room's, a runId whose panel lives in another channel's side pane. The
+     *     card would render and then do nothing, which is worse than not
+     *     offering it. Note this is WIDER than Reply's gate on purpose: a
+     *     document card a PERSON posted through the share picker is a message
+     *     they chose to send, so replying to it means what it normally means —
+     *     but forwarding it still moves a link that may not open at the far end.
+     *   * An ATTACHMENT rides a download URL scoped to the transfer in its
+     *     origin channel. Re-posting the descriptor hands the destination a file
+     *     row that 403s. Re-uploading the bytes into the new conversation is a
+     *     different feature and is not this one.
+     *   * A message with no words — attachments only, or deleted — has nothing
+     *     to carry.
+     *
+     * So: own, other people's, plain text, still there. The handler receives the
+     * message that was CLICKED, never the thread root — unlike `onReply`, which
+     * folds a reply back onto its root, forwarding is about these exact words.
+     *
+     * ## What the host should post
+     *
+     * The library does not send anything; the host owns the destination and the
+     * post. What it must not do is strip the attribution — see `ForwardedFrom`.
+     */
+    onForwardMessage?: (message: ChatMessage) => void;
     /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
     onTogglePin?: (message: ChatMessage) => void;
     /**
@@ -1896,6 +1936,65 @@ export declare function formatChatTime(isoString: string): string;
 export declare function formatDuration(ms?: number): string;
 
 /**
+ * Where a forwarded message came from, carried in `metadata.forwardedFrom`.
+ *
+ * ## Why this is not `replyTo`
+ *
+ * `replyTo` already carries `{ messageId, author, text, timestamp }` and the
+ * panel already renders it as a quote, so riding it was the obvious move and
+ * it is wrong in three ways, each of which shows up in the product:
+ *
+ *   * `replyTo` MEANS "this answers that". `groupThreads` reads it and nests
+ *     the message under its target whenever that target is in the loaded
+ *     window — so forwarding a message back into the channel it came from
+ *     would file the forward as a reply to the original, indented under it.
+ *   * The quote block offers a jump to `messageId`. A forwarded message's
+ *     original is in a DIFFERENT conversation, so the jump is guaranteed to
+ *     find nothing — a control that goes nowhere, which the `onJumpToMessage`
+ *     note above exists to avoid.
+ *   * A reply quotes an excerpt and adds new words beneath it. A forward has
+ *     no new words: the original text IS the body. Storing the same sentence
+ *     in both `content` and `replyTo.text` gives two copies that disagree the
+ *     moment anything edits one.
+ *
+ * ## No `text` field, on purpose
+ *
+ * The forwarded words live in the message's own `content`, once. This carries
+ * only the facts a plain string cannot: which conversation, which person, and
+ * when they said it.
+ *
+ * ## What a client that has never heard of this field shows
+ *
+ * The attribution is ALSO written into `content` by the host that posts the
+ * forward ("Forwarded from #design — Hank Anderson:" above the words). That
+ * is what makes an old client — or a notification preview, or the
+ * conversation-list preview, none of which read metadata — show a forward
+ * that still says whose words these are. Strip the attribution into metadata
+ * alone and a forward degrades into an unattributed quote, which is the exact
+ * thing forwarding exists to prevent. This field is therefore an ENRICHMENT
+ * of the text, never a replacement for it, and the panel renders it as a
+ * marker rather than by restating the sentence the body already carries.
+ */
+export declare interface ForwardedFrom {
+    /** The original's server id. Not linkable from here — see above — but it is
+     *  what lets a host dedupe, audit, or one day offer "open the original". */
+    messageId: string;
+    /** The channel key the original was said in. Plumbing; prefer the label. */
+    channel: string;
+    /** How that conversation calls itself — "design", "Carol Nguyen". */
+    channelLabel?: string;
+    /** The ORIGINAL author's display name, never the forwarder's. */
+    author: string;
+    /** The original author's stable user id, so an avatar or hovercard resolves. */
+    authorUserId?: string;
+    /** ISO: when the original was said, not when it was forwarded. */
+    timestamp?: string;
+}
+
+/** Reads `metadata.forwardedFrom`, tolerating anything that is not the shape. */
+export declare function forwardedFromMetadata(metadata: Record<string, unknown> | undefined): ForwardedFrom | null;
+
+/**
  * The unabbreviated date, for the separator's accessible name and for the
  * `title` on a row's HH:MM.
  *
@@ -2092,7 +2191,7 @@ export declare interface MembersPanelProps {
 /** Later commands win by trigger (case-insensitive); the first occurrence keeps its position. */
 export declare function mergeChatCommands(...layers: ReadonlyArray<readonly ChatCommand[] | undefined>): ChatCommand[];
 
-export declare function MessageActionBar({ quickReactions, onReact, onOpenReactionPicker, onReply, onTogglePin, pinned, onCopyLink, onEdit, onDelete, className, 'data-testid': testId, }: MessageActionBarProps): JSX.Element;
+export declare function MessageActionBar({ quickReactions, onReact, onOpenReactionPicker, onReply, onForward, onTogglePin, pinned, onCopyLink, onEdit, onDelete, className, 'data-testid': testId, }: MessageActionBarProps): JSX.Element;
 
 export declare interface MessageActionBarProps {
     /** Emoji offered inline. Keep it short; the picker covers the rest. */
@@ -2101,6 +2200,21 @@ export declare interface MessageActionBarProps {
     /** Opens the full emoji picker. Omit to show only the quick row. */
     onOpenReactionPicker?: () => void;
     onReply?: () => void;
+    /**
+     * Send this message to ANOTHER conversation.
+     *
+     * Sits next to Reply because the two are the same gesture pointed different
+     * ways — reply keeps the message where it is, forward moves a copy
+     * somewhere else — and putting it after Pin would bury it among the
+     * channel-admin controls, which is not what it is.
+     *
+     * Absent means this message cannot be forwarded, and nothing renders. That
+     * is a real state rather than a permission: a card or a system notice is
+     * not a thing you can relocate (see ChatPanel's `onForwardMessage`), so a
+     * disabled Forward would be a promise the product will not keep — the same
+     * rule `onTogglePin` follows above.
+     */
+    onForward?: () => void;
     /** Pin/unpin. Absent means this viewer may not pin here — the control is
      *  then not rendered at all, rather than rendered disabled: a greyed pin is
      *  a promise the product will not keep. */
@@ -2843,6 +2957,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2862,35 +2989,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2901,6 +3002,16 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -2934,9 +3045,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

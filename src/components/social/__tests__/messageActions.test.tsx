@@ -92,6 +92,29 @@ describe('MessageActionBar', () => {
     render(<MessageActionBar onReply={vi.fn()} />);
     expect(screen.queryByTestId('message-actions-pin')).toBeNull();
     expect(screen.queryByTestId('message-actions-delete')).toBeNull();
+    expect(screen.queryByTestId('message-actions-forward')).toBeNull();
+  });
+
+  it('forwards to another conversation when the host can take one', () => {
+    const onForward = vi.fn();
+    render(<MessageActionBar onForward={onForward} />);
+    fireEvent.click(screen.getByLabelText('Forward to another conversation'));
+    expect(onForward).toHaveBeenCalled();
+  });
+
+  // Reply and Forward are the same gesture pointed different ways — keep it
+  // here, or send a copy elsewhere — so they sit together, ahead of the
+  // channel-admin controls.
+  it('puts Forward next to Reply, before Pin', () => {
+    render(<MessageActionBar onReply={vi.fn()} onForward={vi.fn()} onTogglePin={vi.fn()} />);
+    const keys = Array.from(
+      screen.getByTestId('message-actions').querySelectorAll('button'),
+    ).map((b) => b.getAttribute('data-testid'));
+    expect(keys).toEqual([
+      'message-actions-reply',
+      'message-actions-forward',
+      'message-actions-pin',
+    ]);
   });
 });
 

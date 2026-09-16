@@ -104,6 +104,46 @@ export interface ChatPanelProps {
   onToggleReaction?: (messageId: string, emoji: string) => void;
   /** Starts a quote-reply. Presence of this enables the reply control. */
   onReply?: (message: ChatMessage) => void;
+  /**
+   * Send this message to ANOTHER conversation. Presence of this enables the
+   * Forward control; absent, nothing renders and every existing caller is
+   * untouched.
+   *
+   * ## What it is offered on, and why the gate is tighter than Reply's
+   *
+   * Reply is withheld from system NOTICES only (`metadata.system`) — replying
+   * to "Bob started a call" quotes an event back at the room. Forward is
+   * withheld from notices for the same reason AND from three more shapes,
+   * because a forward is not a quote: it relocates the message, and a message
+   * that only means something where it is does not survive the trip.
+   *
+   *   * A CARD — document, recording, call, agent run, membership — is a
+   *     handle on something scoped to the conversation it was posted in. Its
+   *     buttons resolve against services the destination may not reach: Open
+   *     on a document nobody there can read, Join on a call that is not that
+   *     room's, a runId whose panel lives in another channel's side pane. The
+   *     card would render and then do nothing, which is worse than not
+   *     offering it. Note this is WIDER than Reply's gate on purpose: a
+   *     document card a PERSON posted through the share picker is a message
+   *     they chose to send, so replying to it means what it normally means —
+   *     but forwarding it still moves a link that may not open at the far end.
+   *   * An ATTACHMENT rides a download URL scoped to the transfer in its
+   *     origin channel. Re-posting the descriptor hands the destination a file
+   *     row that 403s. Re-uploading the bytes into the new conversation is a
+   *     different feature and is not this one.
+   *   * A message with no words — attachments only, or deleted — has nothing
+   *     to carry.
+   *
+   * So: own, other people's, plain text, still there. The handler receives the
+   * message that was CLICKED, never the thread root — unlike `onReply`, which
+   * folds a reply back onto its root, forwarding is about these exact words.
+   *
+   * ## What the host should post
+   *
+   * The library does not send anything; the host owns the destination and the
+   * post. What it must not do is strip the attribution — see `ForwardedFrom`.
+   */
+  onForwardMessage?: (message: ChatMessage) => void;
   /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
   onTogglePin?: (message: ChatMessage) => void;
   /**
@@ -510,6 +550,82 @@ export function truncationFromMetadata(
   return {
     droppedKeys,
     labels: droppedKeys.map((k) => DROPPED_KEY_LABELS[k] ?? k),
+  };
+}
+
+/**
+ * Where a forwarded message came from, carried in `metadata.forwardedFrom`.
+ *
+ * ## Why this is not `replyTo`
+ *
+ * `replyTo` already carries `{ messageId, author, text, timestamp }` and the
+ * panel already renders it as a quote, so riding it was the obvious move and
+ * it is wrong in three ways, each of which shows up in the product:
+ *
+ *   * `replyTo` MEANS "this answers that". `groupThreads` reads it and nests
+ *     the message under its target whenever that target is in the loaded
+ *     window — so forwarding a message back into the channel it came from
+ *     would file the forward as a reply to the original, indented under it.
+ *   * The quote block offers a jump to `messageId`. A forwarded message's
+ *     original is in a DIFFERENT conversation, so the jump is guaranteed to
+ *     find nothing — a control that goes nowhere, which the `onJumpToMessage`
+ *     note above exists to avoid.
+ *   * A reply quotes an excerpt and adds new words beneath it. A forward has
+ *     no new words: the original text IS the body. Storing the same sentence
+ *     in both `content` and `replyTo.text` gives two copies that disagree the
+ *     moment anything edits one.
+ *
+ * ## No `text` field, on purpose
+ *
+ * The forwarded words live in the message's own `content`, once. This carries
+ * only the facts a plain string cannot: which conversation, which person, and
+ * when they said it.
+ *
+ * ## What a client that has never heard of this field shows
+ *
+ * The attribution is ALSO written into `content` by the host that posts the
+ * forward ("Forwarded from #design — Hank Anderson:" above the words). That
+ * is what makes an old client — or a notification preview, or the
+ * conversation-list preview, none of which read metadata — show a forward
+ * that still says whose words these are. Strip the attribution into metadata
+ * alone and a forward degrades into an unattributed quote, which is the exact
+ * thing forwarding exists to prevent. This field is therefore an ENRICHMENT
+ * of the text, never a replacement for it, and the panel renders it as a
+ * marker rather than by restating the sentence the body already carries.
+ */
+export interface ForwardedFrom {
+  /** The original's server id. Not linkable from here — see above — but it is
+   *  what lets a host dedupe, audit, or one day offer "open the original". */
+  messageId: string;
+  /** The channel key the original was said in. Plumbing; prefer the label. */
+  channel: string;
+  /** How that conversation calls itself — "design", "Carol Nguyen". */
+  channelLabel?: string;
+  /** The ORIGINAL author's display name, never the forwarder's. */
+  author: string;
+  /** The original author's stable user id, so an avatar or hovercard resolves. */
+  authorUserId?: string;
+  /** ISO: when the original was said, not when it was forwarded. */
+  timestamp?: string;
+}
+
+/** Reads `metadata.forwardedFrom`, tolerating anything that is not the shape. */
+export function forwardedFromMetadata(
+  metadata: Record<string, unknown> | undefined,
+): ForwardedFrom | null {
+  const raw = metadata?.forwardedFrom as Partial<ForwardedFrom> | undefined;
+  // `messageId` and `author` are the two facts the marker cannot be honest
+  // without; a partial write is treated as no write at all rather than
+  // rendered as "Forwarded from undefined".
+  if (!raw || typeof raw.messageId !== 'string' || !raw.messageId) return null;
+  if (typeof raw.author !== 'string' || !raw.author) return null;
+  return {
+    messageId: raw.messageId,
+    channel: typeof raw.channel === 'string' ? raw.channel : '',
+    ...(typeof raw.channelLabel === 'string' ? { channelLabel: raw.channelLabel } : {}),
+    author: raw.author,
+    ...(typeof raw.authorUserId === 'string' ? { authorUserId: raw.authorUserId } : {}),
+    ...(typeof raw.timestamp === 'string' ? { timestamp: raw.timestamp } : {}),
   };
 }
 
@@ -1057,6 +1173,7 @@ export function ChatPanel({
   reactionsFor,
   onToggleReaction,
   onReply,
+  onForwardMessage,
   onTogglePin,
   onEditMessage,
   onDeleteMessage,
@@ -1820,6 +1937,26 @@ export function ChatPanel({
   const isCard = !!(agentRef || recordingRef || callRef || docRef || membershipRef);
   // Own, plain, still there: the only messages a person may edit or delete.
   const canEditDelete = isMine && !isDeleted && !isActivityNotice && !isCard && !!messageId;
+  // Anyone's, but only WORDS. See the `onForwardMessage` prop for why the
+  // exclusion set is wider than Reply's: a card's buttons and an attachment's
+  // download URL are both scoped to the conversation they were posted in, so
+  // relocating either produces something that renders and then does nothing.
+  // `files` and the empty-content test together cover the attachment-only
+  // message, which has nothing to carry in the first place.
+  const canForward =
+    !!messageId
+    && !isDeleted
+    && !isActivityNotice
+    && !isCard
+    && files.length === 0
+    && !!message.content.trim();
+  // Already a forward — the marker, not the words. See `ForwardedFrom`: the
+  // attribution the reader needs is in `content`, written there by whoever
+  // posted the forward so it survives a client that never heard of this
+  // field. Repeating it here would print the same sentence twice; what the
+  // text cannot do is LOOK different from someone having typed it, which is
+  // all this adds.
+  const forwarded = forwardedFromMetadata(message.metadata);
   const editing = canEditDelete && !!onEditMessage && editingId === messageId;
 
   // The quote, the message, its reactions — one unit. Rendering
@@ -1833,6 +1970,23 @@ export function ChatPanel({
           onJump={onJumpToMessage}
           className="mb-1"
         />
+      )}
+      {forwarded && (
+        <span
+          className="mb-0.5 block text-[11px] text-text-tertiary"
+          data-testid="forwarded-marker"
+          // The one thing the body's own attribution line cannot say: WHEN the
+          // original was said. A forward carries its own timestamp on the row
+          // — the moment it was relocated — so without this the transcript
+          // dates somebody's words to whenever a third party moved them.
+          title={[
+            `Forwarded from ${forwarded.channelLabel || forwarded.channel || 'another conversation'}`,
+            forwarded.author,
+            forwarded.timestamp ? fullTimestampLabel(forwarded.timestamp) : '',
+          ].filter(Boolean).join(' · ')}
+        >
+          <span aria-hidden>↪</span> Forwarded
+        </span>
       )}
       {isPinned && (
         <span className="mb-0.5 block text-[11px] text-text-tertiary" data-testid="pinned-marker">
@@ -1948,7 +2102,7 @@ export function ChatPanel({
         // decides only where the row sits.
         mine={isMine && alignOwnMessages}
       />
-      {messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (!isActivityNotice && (onReply || onTogglePin))) && (
+      {messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (canForward && onForwardMessage) || (!isActivityNotice && (onReply || onTogglePin))) && (
         <MessageActionBar
           // Top-RIGHT of the row, the way Slack and Teams place
           // it, and the hovered row is tinted so the bar and the
@@ -1981,6 +2135,13 @@ export function ChatPanel({
             onReply && !isActivityNotice
               ? () => onReply(thread?.rootMessage ?? message)
               : undefined
+          }
+          // The message that was CLICKED, not `thread?.rootMessage`. Reply
+          // folds onto the root because a reply to a reply belongs in the same
+          // thread; a forward is about these exact words, and handing back the
+          // root would silently send the wrong message.
+          onForward={
+            onForwardMessage && canForward ? () => onForwardMessage(message) : undefined
           }
           onTogglePin={
             onTogglePin && !isActivityNotice ? () => onTogglePin(message) : undefined

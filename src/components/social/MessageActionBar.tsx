@@ -26,6 +26,21 @@ export interface MessageActionBarProps {
   /** Opens the full emoji picker. Omit to show only the quick row. */
   onOpenReactionPicker?: () => void;
   onReply?: () => void;
+  /**
+   * Send this message to ANOTHER conversation.
+   *
+   * Sits next to Reply because the two are the same gesture pointed different
+   * ways — reply keeps the message where it is, forward moves a copy
+   * somewhere else — and putting it after Pin would bury it among the
+   * channel-admin controls, which is not what it is.
+   *
+   * Absent means this message cannot be forwarded, and nothing renders. That
+   * is a real state rather than a permission: a card or a system notice is
+   * not a thing you can relocate (see ChatPanel's `onForwardMessage`), so a
+   * disabled Forward would be a promise the product will not keep — the same
+   * rule `onTogglePin` follows above.
+   */
+  onForward?: () => void;
   /** Pin/unpin. Absent means this viewer may not pin here — the control is
    *  then not rendered at all, rather than rendered disabled: a greyed pin is
    *  a promise the product will not keep. */
@@ -49,6 +64,7 @@ export function MessageActionBar({
   onReact,
   onOpenReactionPicker,
   onReply,
+  onForward,
   onTogglePin,
   pinned = false,
   onCopyLink,
@@ -91,6 +107,7 @@ export function MessageActionBar({
         )}
       {onOpenReactionPicker && btn('More reactions', onOpenReactionPicker, <span aria-hidden>😀</span>, 'more-reactions')}
       {onReply && btn('Reply', onReply, <span aria-hidden>↩</span>, 'reply')}
+      {onForward && btn('Forward to another conversation', onForward, <span aria-hidden>↪</span>, 'forward')}
       {onTogglePin && btn(pinned ? 'Unpin' : 'Pin to channel', onTogglePin, <PinIcon size={14} />, 'pin')}
       {onCopyLink && btn('Copy link to message', onCopyLink, <span aria-hidden>🔗</span>, 'copy-link')}
       {onEdit && btn('Edit message', onEdit, <EditIcon size={13} />, 'edit')}

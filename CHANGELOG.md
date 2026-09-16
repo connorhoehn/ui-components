@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.289.0] — 2026-09-16
+
+### Added — `./social`
+
+- **`ChatPanel.onForwardMessage`** — Forward, in the message's action menu.
+  Teams has it; this had no way to move a message to another conversation
+  except copying the words by hand and losing who said them. Absent, nothing
+  renders and existing callers are unchanged. It is withheld from the rows
+  that are records rather than somebody's words — a notice is not a thing you
+  can relocate — for the same reason Reply and Pin already are.
+
+---
+
 ## [2.288.0] — 2026-09-16
 
 ### Changed — `./doc-editor`

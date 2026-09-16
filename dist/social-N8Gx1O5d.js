@@ -17,7 +17,7 @@ import { t as F } from "./InlineAlert-Myf3oJZf.js";
 import { t as I } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as L } from "./Select-CqVokE2v.js";
 import { n as R, r as z, t as ee } from "./ChoiceList-CaZ4rZrS.js";
-import { K as B, N as te, P as ne, k as re, q as ie } from "./ConversationSurface-Imf29KRc.js";
+import { A as B, F as te, J as ne, P as re, q as ie } from "./ConversationSurface-CVUuAp8E.js";
 import { t as V } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as H, t as U } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as ae, t as oe } from "./composerCommands-DXer0id_.js";
@@ -607,7 +607,7 @@ function ye({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 	}), ee = (e) => R((t) => {
 		let n = new Set(t);
 		return n.has(e) ? n.delete(e) : n.add(e), n;
-	}), B = z.flatMap((e) => e.collapsed ? [] : e.shown), te = Y(null), [ne, re] = X(null), V = (ne && B.some((e) => e.channel === ne) ? ne : null) ?? (d && B.some((e) => e.channel === d) ? d : null) ?? B[0]?.channel ?? null, H = Y(null);
+	}), B = z.flatMap((e) => e.collapsed ? [] : e.shown), te = Y(null), [re, ie] = X(null), V = (re && B.some((e) => e.channel === re) ? re : null) ?? (d && B.some((e) => e.channel === d) ? d : null) ?? B[0]?.channel ?? null, H = Y(null);
 	K(() => {
 		let e = H.current;
 		if (!e) return;
@@ -617,7 +617,7 @@ function ye({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 	});
 	function U(e) {
 		let t = Math.max(0, Math.min(B.length - 1, e)), n = B[t];
-		!n || n.channel === V || (H.current = n.channel, re(n.channel));
+		!n || n.channel === V || (H.current = n.channel, ie(n.channel));
 	}
 	function ae(e) {
 		if (B.length === 0) return;
@@ -666,7 +666,7 @@ function ye({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 					"aria-label": e.collapsible ? void 0 : e.label,
 					"aria-labelledby": e.collapsible ? n : void 0,
 					children: e.shown.map((e) => {
-						let t = e.channel === d, n = e.channel === V, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", a = r === "group", c = e.peers[0], l = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), h = e.lastMessageAt ? ie(e.lastMessageAt) : "", g = e.unreadCount ?? 0, C = !!e.mentioned, w = !!e.live, T = !!e.muted, O = `${D}-row-menu-${e.channel}`, k = [];
+						let t = e.channel === d, n = e.channel === V, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", a = r === "group", c = e.peers[0], l = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), h = e.lastMessageAt ? ne(e.lastMessageAt) : "", g = e.unreadCount ?? 0, C = !!e.mentioned, w = !!e.live, T = !!e.muted, O = `${D}-row-menu-${e.channel}`, k = [];
 						return o && (k.push({
 							label: "Call",
 							icon: /* @__PURE__ */ Q(p, { size: 14 }),
@@ -696,7 +696,7 @@ function ye({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 							children: [/* @__PURE__ */ $("button", {
 								type: "button",
 								onClick: () => m(e.channel),
-								onFocus: () => re(e.channel),
+								onFocus: () => ie(e.channel),
 								"data-testid": "conversation-row",
 								"data-channel": e.channel,
 								"data-active": t ? "true" : "false",
@@ -1219,7 +1219,7 @@ function Oe({ author: e, avatarUrl: t, mine: n = !1, messages: r, className: i }
 		"data-author": e,
 		"data-row-count": r.length,
 		className: s("flex flex-col", i),
-		children: r.map((r, i) => /* @__PURE__ */ Q(B, {
+		children: r.map((r, i) => /* @__PURE__ */ Q(ie, {
 			author: e,
 			content: r.content,
 			timestamp: r.timestamp,
@@ -3036,7 +3036,7 @@ function yt(e) {
 	return e.kind === "link" ? e.label ?? "Open link" : e.kind === "panel" ? e.panel.title ? `Open ${e.panel.title}` : "Open result" : "Open beside the chat";
 }
 function bt({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenResult: i, className: a, "data-testid": o = "run-summary-panel" }) {
-	let { status: l } = e, u = e.pipelineName || e.pipelineId, d = te({
+	let { status: l } = e, u = e.pipelineName || e.pipelineId, d = re({
 		startedAt: e.startedAt,
 		completedAt: e.completedAt
 	}), f = e.ops ?? [], p = e.result && i && !(e.result.kind === "document" && e.document && r), m = e.document?.title || "Document", h = l === "failed" ? e.error || "The run failed" : void 0;
@@ -3105,7 +3105,7 @@ function bt({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenRe
 								}),
 								/* @__PURE__ */ Q("span", {
 									"aria-hidden": "true",
-									className: s("relative mt-[5px] inline-block h-[7px] w-[7px] shrink-0 rounded-full", re[t.status] ?? re.pending)
+									className: s("relative mt-[5px] inline-block h-[7px] w-[7px] shrink-0 rounded-full", B[t.status] ?? B.pending)
 								}),
 								/* @__PURE__ */ $("span", {
 									className: "flex min-w-0 flex-1 items-baseline justify-between gap-2",
@@ -3134,7 +3134,7 @@ function bt({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenRe
 								className: "truncate",
 								"data-op": e.op,
 								title: e.text,
-								children: ne(e)
+								children: te(e)
 							}, t))
 						}),
 						f.length > vt && /* @__PURE__ */ $("div", {
