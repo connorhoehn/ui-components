@@ -99,3 +99,6 @@ export { AuditPage as IdentityAuditPage } from './components/identity';
 // Additive export; no existing symbol changes. `misc/` deliberately stays
 // otherwise unexported — the rest of it is dev/debug surface, not API.
 export { ErrorBoundary } from './components/misc/ErrorBoundary';
+
+// Explicit: both the shared barrel and the ui barrel star-export Icons, and TS refuses an ambiguous name.
+export { PopOutIcon } from './components/ui/Icons';
