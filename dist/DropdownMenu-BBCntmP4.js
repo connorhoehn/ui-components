@@ -350,7 +350,7 @@ function A({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 						className: "my-1 border-t border-[var(--color-border)]"
 					}),
 					e.label && /* @__PURE__ */ l("div", {
-						className: "px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
+						className: "px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
 					e.items.map((e, t) => /* @__PURE__ */ l(P, {
@@ -452,7 +452,7 @@ function P({ item: t, close: n, testId: i }) {
 						className: "my-1 border-t border-[var(--color-border)]"
 					}),
 					e.label && /* @__PURE__ */ l("div", {
-						className: "px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
+						className: "px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
 					e.items.map((e, t) => /* @__PURE__ */ l(P, {

@@ -3,7 +3,7 @@ import { n as o } from "./ToastProvider-BKjV21G4.js";
 import { t as s } from "./cn-DhjIN-s0.js";
 import { t as c } from "./Button-BhS4-R6_.js";
 import { t as l } from "./IconButton-C3DMtvSx.js";
-import { a as u, d, f, o as p, r as m, t as h, u as g } from "./DropdownMenu-Za_BXL9n.js";
+import { a as u, d, f, o as p, r as m, t as h, u as g } from "./DropdownMenu-BBCntmP4.js";
 import { i as _, n as v, r as y, t as b } from "./SearchInput-B-r0inFw.js";
 import { t as x } from "./Banner-C3Wgh62A.js";
 import { t as S } from "./Chip-BENLwTlq.js";
@@ -18,7 +18,7 @@ import { t as j } from "./InlineAlert-Myf3oJZf.js";
 import { t as M } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as N } from "./Select-CqVokE2v.js";
 import { n as P, r as F, t as I } from "./ChoiceList-CaZ4rZrS.js";
-import { G as L, K as ee, M as R, N as te, O as ne } from "./ConversationSurface-mrLjwyxa.js";
+import { G as L, K as ee, M as R, N as te, O as ne } from "./ConversationSurface-CxuRk4JZ.js";
 import { t as re } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as ie, t as ae } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as oe, t as se } from "./composerCommands-DXer0id_.js";
@@ -2834,10 +2834,10 @@ function ut({ items: e, activeId: t, onSelect: n, className: r, "data-testid": i
 }
 //#endregion
 //#region src/components/social/ConversationRail.tsx
-function dt({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, onNewChat: i, grouped: a = !0, sectionOrder: o = "channels-first", maxVisible: c, emptyLabel: l, header: u, footer: d, onTogglePin: f, onToggleMute: p, onMarkUnread: m, className: h, "data-testid": g = "conversation-rail" }) {
+function dt({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, onNewChat: i, grouped: a = !0, sectionOrder: o = "channels-first", maxVisible: c, emptyLabel: l, header: u, beforeList: d, footer: f, onTogglePin: p, onToggleMute: m, onMarkUnread: h, className: g, "data-testid": _ = "conversation-rail" }) {
 	return /* @__PURE__ */ q("aside", {
-		"data-testid": g,
-		className: s("flex min-h-0 w-80 shrink-0 flex-col border-r border-border bg-surface", h),
+		"data-testid": _,
+		className: s("flex min-h-0 w-80 shrink-0 flex-col border-r border-border bg-surface", g),
 		children: [
 			u && /* @__PURE__ */ K("div", {
 				className: "shrink-0",
@@ -2851,7 +2851,11 @@ function dt({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, 
 					id: e
 				}),
 				className: "shrink-0 px-2 pt-2",
-				"data-testid": `${g}-shelf`
+				"data-testid": `${_}-shelf`
+			}),
+			d && /* @__PURE__ */ K("div", {
+				className: "shrink-0",
+				children: d
 			}),
 			/* @__PURE__ */ K(Y, {
 				items: t,
@@ -2865,15 +2869,15 @@ function dt({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, 
 				}),
 				onNewChat: i,
 				emptyLabel: l,
-				onTogglePin: f,
-				onToggleMute: p,
-				onMarkUnread: m,
+				onTogglePin: p,
+				onToggleMute: m,
+				onMarkUnread: h,
 				className: "min-h-0 flex-1 overflow-y-auto p-2",
-				"data-testid": `${g}-list`
+				"data-testid": `${_}-list`
 			}),
-			d && /* @__PURE__ */ K("div", {
+			f && /* @__PURE__ */ K("div", {
 				className: "shrink-0",
-				children: d
+				children: f
 			})
 		]
 	});

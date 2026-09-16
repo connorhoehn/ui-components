@@ -200,3 +200,25 @@ describe('ConversationList muted rows', () => {
     expect(badge.className).toContain('bg-primary');
   });
 });
+
+describe('ConversationRail beforeList', () => {
+  it('renders between the shelf and the list, and nothing when absent', async () => {
+    const { ConversationRail } = await import('../ConversationRail');
+    const items = [{ channel: 'general', name: 'general', peers: [] }] as never;
+    const { rerender } = render(
+      <ConversationRail
+        conversations={items}
+        shelf={[{ id: 'activity', label: 'Activity' }]}
+        onSelect={() => {}}
+        beforeList={<div data-testid="tree-slot">tree</div>}
+      />,
+    );
+    const slot = screen.getByTestId('tree-slot');
+    const shelf = screen.getByTestId('conversation-rail-shelf');
+    const list = screen.getByTestId('conversation-rail-list');
+    expect(shelf.compareDocumentPosition(slot) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(slot.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    rerender(<ConversationRail conversations={items} onSelect={() => {}} />);
+    expect(screen.queryByTestId('tree-slot')).toBeNull();
+  });
+});

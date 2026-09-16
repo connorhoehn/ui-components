@@ -66,6 +66,12 @@ export interface ConversationRailProps {
   /** Above the shelf: a workspace switcher, a search field, a title. */
   header?: ReactNode;
   /** Below the list: a "you" row, a status control. */
+  /**
+   * Between the shelf and the conversation list — where a team → channel
+   * tree goes, so it sits above the flat conversations rather than below
+   * them.
+   */
+  beforeList?: ReactNode;
   footer?: ReactNode;
   /**
    * Per-row actions, forwarded to the list: the ⋯ menu on each conversation.
@@ -89,6 +95,7 @@ export function ConversationRail({
   maxVisible,
   emptyLabel,
   header,
+  beforeList,
   footer,
   onTogglePin,
   onToggleMute,
@@ -115,6 +122,8 @@ export function ConversationRail({
           data-testid={`${testId}-shelf`}
         />
       )}
+
+      {beforeList && <div className="shrink-0">{beforeList}</div>}
 
       <ConversationList
         items={conversations}

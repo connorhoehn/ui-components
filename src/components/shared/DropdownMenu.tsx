@@ -180,7 +180,7 @@ export function DropdownMenu({
                 <div role="separator" className="my-1 border-t border-[var(--color-border)]" />
               )}
               {section.label && (
-                <div className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">
+                <div className="px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">
                   {section.label}
                 </div>
               )}
@@ -304,7 +304,7 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
             <div key={sIdx} role="group" aria-label={section.label} className={section.scroll ? 'uic-menu-group-scroll' : undefined} data-testid={section['data-testid']}>
               {sIdx > 0 && <div role="separator" className="my-1 border-t border-[var(--color-border)]" />}
               {section.label && (
-                <div className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">{section.label}</div>
+                <div className="px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">{section.label}</div>
               )}
               {section.items.map((sub, i) => (
                 <MenuRow key={i} item={sub} close={close} testId={testId} />
