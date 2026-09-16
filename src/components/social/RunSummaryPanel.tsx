@@ -22,6 +22,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { DocumentIcon } from '../ui/Icons';
 import Chip from '../shared/Chip';
 import { InlineAlert } from '../shared/InlineAlert';
 import SkeletonCard from '../shared/SkeletonCard';
@@ -205,7 +206,7 @@ export function RunSummaryPanel({ data, onOpenFull, onOpenChat, onOpenDocument, 
 
         {data.document && (
           <div className="flex items-start gap-2 rounded-md border border-border bg-surface-inset px-2 py-1.5" data-testid={`${testId}-document`}>
-            <span aria-hidden="true" className="shrink-0">📄</span>
+            <DocumentIcon size={14} className="mt-0.5 shrink-0 text-text-tertiary" aria-hidden="true" />
             <span className="min-w-0 flex-1">
               <span className="block truncate font-medium text-text-primary">{docTitle}</span>
               {data.document.snippet && <span className="line-clamp-2 block text-[11px] text-text-secondary">{data.document.snippet}</span>}

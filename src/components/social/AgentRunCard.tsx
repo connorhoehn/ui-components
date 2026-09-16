@@ -27,7 +27,7 @@
 import { useState, type MouseEvent } from 'react';
 import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
-import { ChevronIcon } from '../ui/Icons';
+import { ChevronIcon, DocumentIcon } from '../ui/Icons';
 // Imported from the module rather than the barrel: `SparklesIcon` is also
 // re-exported through ./video, and the export-ambiguity guard trips on a
 // name reachable two ways.
@@ -434,7 +434,7 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
         <div id={detailsId} className="mt-1 flex flex-col gap-2 border-t border-border pt-1.5" data-testid={`${testId}-details`}>
           {hasDocumentRow && (
             <div className="flex items-start gap-2" data-testid={`${testId}-details-document`}>
-              <span aria-hidden="true" className="shrink-0">📄</span>
+              <DocumentIcon size={14} className="mt-0.5 shrink-0 text-text-tertiary" aria-hidden="true" />
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium text-text-primary">{docTitle}</span>
                 {details?.document?.snippet && (

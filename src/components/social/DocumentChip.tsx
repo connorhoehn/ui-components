@@ -7,6 +7,7 @@
 // document arriving in the thread, which is what DocumentActivityCard says.
 
 import { cn } from '../../lib/cn';
+import { DocumentIcon } from '../ui/Icons';
 
 export interface DocumentChipProps {
   documentId: string;
@@ -34,7 +35,14 @@ export function DocumentChip({ documentId, label, icon, onOpen, className, 'data
         className,
       )}
     >
-      <span aria-hidden="true" className="shrink-0">{icon || '📄'}</span>
+      {/* A type's own icon is DATA — the identity somebody chose for that kind
+          of document — so it is rendered as given. The fallback is not data:
+          it means "no icon chosen", and a drawn glyph says that in the colour
+          of the text around it, the way a missing avatar falls back to
+          initials rather than to a random face. */}
+      {icon
+        ? <span aria-hidden="true" className="shrink-0">{icon}</span>
+        : <DocumentIcon size={12} className="shrink-0 text-text-tertiary" aria-hidden="true" />}
       <span className="min-w-0 truncate">{label}</span>
     </button>
   );

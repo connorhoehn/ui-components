@@ -22,6 +22,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '../../lib/cn';
+import { DocumentIcon } from '../ui/Icons';
 
 export interface StagedFile {
   /** Stable id for keying and removal — the File object itself is not a key. */
@@ -74,9 +75,9 @@ function Thumb({ file }: { file: File }) {
   return (
     <span
       aria-hidden
-      className="grid h-9 w-9 shrink-0 place-items-center rounded bg-surface-inset text-sm"
+      className="grid h-9 w-9 shrink-0 place-items-center rounded bg-surface-inset text-text-tertiary"
     >
-      📄
+      <DocumentIcon size={16} />
     </span>
   );
 }

@@ -30,7 +30,11 @@ describe('ChatPanel document references', () => {
     // The words stay words.
     expect(row).toHaveTextContent('see #Roadmap and #Budget');
     const chips = within(row).getAllByTestId('chat-message-docref');
-    expect(chips.map((c) => c.textContent)).toEqual(['📄Roadmap', '📄Budget']);
+    // The title is the chip's only text: with no icon of its own a document
+    // falls back to a DRAWN glyph, so asserting on a character here would be
+    // asserting on the platform's emoji font.
+    expect(chips.map((c) => c.textContent)).toEqual(['Roadmap', 'Budget']);
+    expect(chips.every((c) => c.querySelector('svg'))).toBe(true);
     fireEvent.click(chips[1]);
     expect(onOpenDocument).toHaveBeenCalledWith('d2');
     // It is a reference, not an arrival: no document card.

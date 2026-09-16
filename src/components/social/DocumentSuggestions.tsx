@@ -8,6 +8,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { cn } from '../../lib/cn';
+import { DocumentIcon } from '../ui/Icons';
 
 export interface DocumentCandidate {
   /** Stable identity — this is what travels in the message, not the label. */
@@ -91,7 +92,10 @@ export const DocumentSuggestions = forwardRef<DocumentSuggestionsHandle, Documen
               i === selected ? 'bg-surface-hover' : 'bg-transparent',
             )}
           >
-            <span aria-hidden="true" className="w-6 shrink-0 text-center text-base leading-none">{item.icon || '📄'}</span>
+            {/* The type's icon as given; a drawn glyph when there is none. */}
+            <span aria-hidden="true" className={cn('w-6 shrink-0 text-center leading-none', item.icon ? 'text-base' : 'text-text-tertiary')}>
+              {item.icon || <DocumentIcon size={14} className="inline-block" />}
+            </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-text-primary">{item.label}</span>
               {item.hint && (

@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.295.0] — 2026-09-16
+
+### Fixed — `./social`
+
+- **The document glyph is drawn, not borrowed.** 📄 was the last emoji left in
+  the chat surfaces' chrome: on the run card's document row, the run summary's,
+  the composer's generic file tile, and as the fallback wherever a document has
+  no icon of its own. Same two problems as the composer emoji before it — a
+  colour emoji ignores `currentColor`, so it stayed bright beside muted text and
+  did not dim with the row it belongs to; and its shape is the platform's, not
+  this design's.
+- A type's OWN icon is still rendered exactly as given. That is data — the
+  identity somebody chose for that kind of document — and the split is
+  deliberate: only the fallback, which means "no icon chosen", became a glyph,
+  the way a missing avatar falls back to initials rather than to a random face.
+
+---
+
 ## [2.294.0] — 2026-09-16
 
 ### Added — `./video`

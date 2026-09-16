@@ -24,6 +24,7 @@
 
 import { PresenceAvatars } from '../shared/PresenceAvatars';
 import { cn } from '../../lib/cn';
+import { DocumentIcon } from '../ui/Icons';
 
 export interface DocumentActivityEditor {
   userId: string;
@@ -71,11 +72,16 @@ export function DocumentActivityCard({
         className,
       )}
     >
+      {/* The type's icon as given; a drawn glyph when there is none. See the
+          same split in DocumentChip. */}
       <span
         aria-hidden
-        className="grid h-9 w-9 shrink-0 place-items-center rounded bg-surface text-base"
+        className={cn(
+          'grid h-9 w-9 shrink-0 place-items-center rounded bg-surface',
+          icon ? 'text-base' : 'text-text-tertiary',
+        )}
       >
-        {icon || '\u{1F4C4}'}
+        {icon || <DocumentIcon size={18} />}
       </span>
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
