@@ -137,7 +137,8 @@
     "build-storybook": "storybook build",
     "lint:node-controls": "node scripts/check-node-controls.mjs",
     "lint:hex-colors": "node scripts/check-hex-colors.mjs",
-    "lint:readme": "node scripts/check-readme-imports.mjs"
+    "lint:readme": "node scripts/check-readme-imports.mjs",
+    "snapshot:exports": "node scripts/update-export-snapshot.mjs"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
