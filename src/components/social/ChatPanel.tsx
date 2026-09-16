@@ -12,7 +12,7 @@ import { Input } from '../forms/Input';
 import { FileInput } from '../forms/FileInput';
 import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
-import { PinIcon } from '../ui/Icons';
+import { ForwardIcon, PinIcon } from '../ui/Icons';
 import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { DocumentChip } from './DocumentChip';
@@ -1985,7 +1985,7 @@ export function ChatPanel({
             forwarded.timestamp ? fullTimestampLabel(forwarded.timestamp) : '',
           ].filter(Boolean).join(' · ')}
         >
-          <span aria-hidden>↪</span> Forwarded
+          <ForwardIcon size={11} /> Forwarded
         </span>
       )}
       {isPinned && (

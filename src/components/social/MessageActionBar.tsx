@@ -17,7 +17,7 @@
 // caller's decision — different products have different vocabularies.
 
 import { cn } from '../../lib/cn';
-import { EditIcon, PinIcon, TrashIcon } from '../ui/Icons';
+import { EditIcon, ForwardIcon, PinIcon, TrashIcon } from '../ui/Icons';
 
 export interface MessageActionBarProps {
   /** Emoji offered inline. Keep it short; the picker covers the rest. */
@@ -107,7 +107,7 @@ export function MessageActionBar({
         )}
       {onOpenReactionPicker && btn('More reactions', onOpenReactionPicker, <span aria-hidden>😀</span>, 'more-reactions')}
       {onReply && btn('Reply', onReply, <span aria-hidden>↩</span>, 'reply')}
-      {onForward && btn('Forward to another conversation', onForward, <span aria-hidden>↪</span>, 'forward')}
+      {onForward && btn('Forward to another conversation', onForward, <ForwardIcon size={14} />, 'forward')}
       {onTogglePin && btn(pinned ? 'Unpin' : 'Pin to channel', onTogglePin, <PinIcon size={14} />, 'pin')}
       {onCopyLink && btn('Copy link to message', onCopyLink, <span aria-hidden>🔗</span>, 'copy-link')}
       {onEdit && btn('Edit message', onEdit, <EditIcon size={13} />, 'edit')}

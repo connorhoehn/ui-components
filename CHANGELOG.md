@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.289.1] — 2026-09-16
+
+### Fixed — `./social`, `./ui`
+
+- **Forward's arrow was rendering as an emoji.** U+21AA has an emoji
+  presentation and macOS picks it by default, so both the action-bar control
+  and the "Forwarded" marker wore a full-colour ↪️ in a grey box among thin
+  stroked glyphs. `ForwardIcon` joins the set. The lesson is worth keeping: a
+  character looking like plain text in an editor says nothing about how a
+  platform will draw it, which is why a glyph beats an arrow character here.
+
+---
+
 ## [2.289.0] — 2026-09-16
 
 ### Added — `./social`

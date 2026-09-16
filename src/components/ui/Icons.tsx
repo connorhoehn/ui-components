@@ -157,6 +157,16 @@ export function LockIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** A hooked arrow: forwarded — this came from somewhere else. */
+export function ForwardIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M3 4.5v3a3 3 0 0 0 3 3h6.5" />
+      <path d="M10 8.2l2.8 2.3L10 12.8" />
+    </svg>
+  );
+}
+
 /** An eye: watching, "N people are seeing this". */
 export function EyeIcon({ size = 16, ...rest }: GlyphProps) {
   return (
