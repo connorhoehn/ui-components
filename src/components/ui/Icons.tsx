@@ -157,6 +157,25 @@ export function LockIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** A handset: start a voice call. */
+export function PhoneIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M5.2 2.8 3.4 4.6c-.5.5-.6 1.3-.2 1.9a15 15 0 0 0 6.3 6.3c.6.4 1.4.3 1.9-.2l1.8-1.8-2.6-1.7-1.3 1a11 11 0 0 1-3.4-3.4l1-1.3z" />
+    </svg>
+  );
+}
+
+/** A camera body: start a video call. Distinct from video/MediaIcons' VideoIcon, which is a call CONTROL. */
+export function VideoCallIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="2" y="4.5" width="8.5" height="7" rx="1.5" />
+      <path d="M10.5 8.2 14 6.2v3.6l-3.5-2z" />
+    </svg>
+  );
+}
+
 /** A lightning bolt: activity, "things are happening". */
 export function ActivityIcon({ size = 16, ...rest }: GlyphProps) {
   return (

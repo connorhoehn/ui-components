@@ -129,10 +129,28 @@ function w({ size: e = 16, ...t }) {
 function T({ size: e = 16, ...t }) {
 	return /* @__PURE__ */ l("svg", {
 		...d(e, t),
-		children: /* @__PURE__ */ l("path", { d: "M8.5 2 4 9h3.2l-.7 5L12 7H8.8z" })
+		children: /* @__PURE__ */ l("path", { d: "M5.2 2.8 3.4 4.6c-.5.5-.6 1.3-.2 1.9a15 15 0 0 0 6.3 6.3c.6.4 1.4.3 1.9-.2l1.8-1.8-2.6-1.7-1.3 1a11 11 0 0 1-3.4-3.4l1-1.3z" })
 	});
 }
 function E({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [/* @__PURE__ */ l("rect", {
+			x: "2",
+			y: "4.5",
+			width: "8.5",
+			height: "7",
+			rx: "1.5"
+		}), /* @__PURE__ */ l("path", { d: "M10.5 8.2 14 6.2v3.6l-3.5-2z" })]
+	});
+}
+function D({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ l("svg", {
+		...d(e, t),
+		children: /* @__PURE__ */ l("path", { d: "M8.5 2 4 9h3.2l-.7 5L12 7H8.8z" })
+	});
+}
+function O({ size: e = 16, ...t }) {
 	return /* @__PURE__ */ u("svg", {
 		...d(e, t),
 		children: [/* @__PURE__ */ l("circle", {
@@ -144,7 +162,7 @@ function E({ size: e = 16, ...t }) {
 }
 //#endregion
 //#region src/components/shared/PresenceAvatars.tsx
-var D = {
+var k = {
 	editor: {
 		glyph: "✏",
 		label: "Editing"
@@ -158,13 +176,13 @@ var D = {
 		label: "Viewing"
 	}
 };
-function O(e) {
+function A(e) {
 	return e.idle === !0 ? "#f59e0b" : e.online === !1 ? "var(--color-text-tertiary)" : e.online === !0 ? "#22c55e" : null;
 }
-function k(e) {
+function j(e) {
 	if (e) return /^#[0-9a-fA-F]{6}$/.test(e) ? `${e}99` : (/^#[0-9a-fA-F]{8}$/.test(e), e);
 }
-function A({ user: t, isFollowing: n, onFollow: r, children: i }) {
+function M({ user: t, isFollowing: n, onFollow: r, children: i }) {
 	let [c, d] = s(!1), f = o(null), p = () => {
 		f.current &&= (clearTimeout(f.current), null), d(!0);
 	}, m = () => {
@@ -212,14 +230,14 @@ function A({ user: t, isFollowing: n, onFollow: r, children: i }) {
 		})]
 	});
 }
-function j({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserClick: s, onFollowUser: d, followingUserId: f = null, className: p }) {
+function N({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserClick: s, onFollowUser: d, followingUserId: f = null, className: p }) {
 	let m = r.slice(0, i), h = r.length - m.length, g = -(a * .3), _ = Math.max(1, Math.round(a * .07)), v = Math.max(10, Math.round(a * .42));
 	return /* @__PURE__ */ u("div", {
 		className: e("inline-flex items-center", p),
 		role: "list",
 		"aria-label": "Online users",
 		children: [m.map((e, r) => {
-			let i = O(e), o = e.idle === !0, p = o ? k(e.color) : e.color, m = o && !e.color ? .6 : void 0, h = e.mode ? D[e.mode] : null, y = [e.name];
+			let i = A(e), o = e.idle === !0, p = o ? j(e.color) : e.color, m = o && !e.color ? .6 : void 0, h = e.mode ? k[e.mode] : null, y = [e.name];
 			o ? y.push("Away") : h && y.push(h.label);
 			let b = y.join(" — "), x = {
 				"data-testid": "presence-avatar",
@@ -270,7 +288,7 @@ function j({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 					children: h.glyph
 				})
 			] }), C = { marginLeft: r > 0 ? g : 0 };
-			return ((t) => d ? /* @__PURE__ */ l(A, {
+			return ((t) => d ? /* @__PURE__ */ l(M, {
 				user: e,
 				isFollowing: f === e.id,
 				onFollow: d,
@@ -314,7 +332,7 @@ function j({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 }
 //#endregion
 //#region src/components/shared/DropdownMenu.tsx
-function M({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, triggerClassName: d, triggerTabIndex: f, triggerTestId: p, align: m = "start", sections: h, className: g, "data-testid": _ = "dropdown-menu" }) {
+function P({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, triggerClassName: d, triggerTabIndex: f, triggerTestId: p, align: m = "start", sections: h, className: g, "data-testid": _ = "dropdown-menu" }) {
 	let [v, y] = s(!1), b = o(null), x = o(null), S = i(() => y(!1), []), C = i((e) => {
 		if (![
 			"ArrowDown",
@@ -369,7 +387,7 @@ function M({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 						className: "px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
-					e.items.map((e, t) => /* @__PURE__ */ l(I, {
+					e.items.map((e, t) => /* @__PURE__ */ l(R, {
 						item: e,
 						close: S,
 						testId: _
@@ -379,11 +397,11 @@ function M({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 		})
 	})] });
 }
-var N = "flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100";
-function P(e, t = !1) {
+var F = "flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100";
+function I(e, t = !1) {
 	return e.danger ? "text-danger-fg bg-transparent hover:bg-danger-bg" : e.active || t ? "font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]" : "font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]";
 }
-function F({ item: e }) {
+function L({ item: e }) {
 	return /* @__PURE__ */ u(c, { children: [
 		e.checked === void 0 ? e.icon ? /* @__PURE__ */ l("span", {
 			className: "flex w-4 shrink-0 items-center justify-center text-base leading-none text-[var(--color-text-secondary)]",
@@ -416,7 +434,7 @@ function F({ item: e }) {
 		})
 	] });
 }
-function I({ item: t, close: n, testId: i }) {
+function R({ item: t, close: n, testId: i }) {
 	let [d, f] = s(!1), p = o(null), m = o(null), h = o(null), g = () => {
 		h.current &&= (clearTimeout(h.current), null);
 	}, _ = () => {
@@ -437,8 +455,8 @@ function I({ item: t, close: n, testId: i }) {
 			(e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") && (e.preventDefault(), f(!0), setTimeout(() => m.current?.querySelector("[role=\"menuitem\"],[role=\"menuitemcheckbox\"]")?.focus(), 0));
 		},
 		"data-testid": t["data-testid"],
-		className: e(N, P(t, d)),
-		children: /* @__PURE__ */ l(F, { item: t })
+		className: e(F, I(t, d)),
+		children: /* @__PURE__ */ l(L, { item: t })
 	}), /* @__PURE__ */ l(r, {
 		trigger: p,
 		open: d,
@@ -471,7 +489,7 @@ function I({ item: t, close: n, testId: i }) {
 						className: "px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
-					e.items.map((e, t) => /* @__PURE__ */ l(I, {
+					e.items.map((e, t) => /* @__PURE__ */ l(R, {
 						item: e,
 						close: n,
 						testId: i
@@ -488,9 +506,9 @@ function I({ item: t, close: n, testId: i }) {
 			t.onSelect?.(), n();
 		},
 		"data-testid": t["data-testid"],
-		className: e(N, P(t)),
-		children: /* @__PURE__ */ l(F, { item: t })
+		className: e(F, I(t)),
+		children: /* @__PURE__ */ l(L, { item: t })
 	});
 }
 //#endregion
-export { x as _, C as a, p as c, _ as d, w as f, h as g, y as h, E as i, v as l, f as m, j as n, m as o, S as p, T as r, g as s, M as t, b as u };
+export { h as _, C as a, p as c, _ as d, w as f, y as g, f as h, O as i, v as l, S as m, N as n, m as o, T as p, D as r, g as s, P as t, b as u, x as v, E as y };

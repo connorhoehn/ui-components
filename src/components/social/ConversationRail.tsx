@@ -31,6 +31,7 @@ import { ChevronIcon } from '../ui/Icons';
 import { IconButton } from '../ui/IconButton';
 import { ConversationList, type ConversationItem } from './ConversationList';
 import { ConversationShelf, type ConversationShelfItem } from './ConversationShelf';
+import type { RailSectionAction } from './RailSectionHeader';
 
 /**
  * What the rail currently points at. One value, because one pane.
@@ -62,6 +63,10 @@ export interface ConversationRailProps {
    * surface whose subject is people rather than rooms.
    */
   sectionOrder?: 'channels-first' | 'dms-first';
+  /** Trailing buttons on each section heading, keyed by section name. Forwarded to the list. */
+  sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
+  /** "Call" / "Video call" in each row's ⋯ menu. Forwarded to the list. */
+  onStartCall?: (channel: string, kind: 'audio' | 'video') => void;
   /** Forwarded to the list: rows per group before a "Show N more" row. */
   maxVisible?: number;
   emptyLabel?: string;
@@ -108,6 +113,8 @@ export function ConversationRail({
   onNewChat,
   grouped = true,
   sectionOrder = 'channels-first',
+  sectionActions,
+  onStartCall,
   maxVisible,
   emptyLabel,
   header,
@@ -229,6 +236,8 @@ export function ConversationRail({
           items={conversations}
           grouped={grouped}
           sectionOrder={sectionOrder}
+          sectionActions={sectionActions}
+          onStartCall={onStartCall}
           maxVisible={maxVisible}
           // A shelf selection means no conversation is open, so no row is
           // active — passing the last-opened channel here is how a rail ends up

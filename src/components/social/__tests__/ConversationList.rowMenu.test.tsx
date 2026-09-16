@@ -222,3 +222,19 @@ describe('ConversationRail beforeList', () => {
     expect(screen.queryByTestId('tree-slot')).toBeNull();
   });
 });
+
+describe('ConversationList call actions', () => {
+  it('offers Call and Video call only when the host can start one', () => {
+    const onStartCall = vi.fn();
+    render(<ConversationList items={items} activeChannel={null} onSelect={vi.fn()} onStartCall={onStartCall} />);
+    const menu = openMenu('general');
+    fireEvent.click(menu.getByTestId('conversation-row-menu-general-video-call'));
+    expect(onStartCall).toHaveBeenCalledWith('general', 'video');
+  });
+
+  it('has no call items without the handler', () => {
+    render(<ConversationList items={items} activeChannel={null} onSelect={vi.fn()} onTogglePin={onTogglePin} />);
+    const menu = openMenu('general');
+    expect(menu.queryByTestId('conversation-row-menu-general-call')).toBeNull();
+  });
+});

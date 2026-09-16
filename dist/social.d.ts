@@ -1164,7 +1164,7 @@ export declare interface ConversationItem {
     muted?: boolean;
 }
 
-export declare function ConversationList({ items, grouped, sectionOrder, sectionActions, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+export declare function ConversationList({ items, grouped, sectionOrder, sectionActions, onStartCall, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
 
 export declare interface ConversationListProps {
     items: ConversationItem[];
@@ -1204,6 +1204,13 @@ export declare interface ConversationListProps {
      * else is a button nobody finds.
      */
     sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
+    /**
+     * Start a call in a conversation from the rail — the row's ⋯ gains "Call"
+     * and "Video call". A conversation you can open is one you can call into,
+     * and making people open it first to find the call button is a step for
+     * nothing.
+     */
+    onStartCall?: (channel: string, kind: 'audio' | 'video') => void;
     /**
      * Sort rows most-recent-first within each group. Default TRUE.
      *
@@ -1250,7 +1257,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, onStartCall, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -1275,6 +1282,10 @@ export declare interface ConversationRailProps {
      * surface whose subject is people rather than rooms.
      */
     sectionOrder?: 'channels-first' | 'dms-first';
+    /** Trailing buttons on each section heading, keyed by section name. Forwarded to the list. */
+    sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
+    /** "Call" / "Video call" in each row's ⋯ menu. Forwarded to the list. */
+    onStartCall?: (channel: string, kind: 'audio' | 'video') => void;
     /** Forwarded to the list: rows per group before a "Show N more" row. */
     maxVisible?: number;
     emptyLabel?: string;
@@ -2596,25 +2607,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -2628,9 +2620,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -2664,9 +2665,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -2684,9 +2698,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -2694,12 +2708,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

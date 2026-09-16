@@ -17,7 +17,7 @@ import { cn } from '../../lib/cn';
 import { Avatar, AvatarGroup } from '../shared/Avatar';
 import { PresenceDot } from '../shared/PresenceDot';
 import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
-import { BellMutedIcon, PinIcon } from '../ui/Icons';
+import { BellMutedIcon, PhoneIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
 import { RailSectionHeader, type RailSectionAction } from './RailSectionHeader';
 import { formatChatTime } from './MessageRow';
 
@@ -172,6 +172,13 @@ export interface ConversationListProps {
    */
   sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
   /**
+   * Start a call in a conversation from the rail — the row's ⋯ gains "Call"
+   * and "Video call". A conversation you can open is one you can call into,
+   * and making people open it first to find the call button is a step for
+   * nothing.
+   */
+  onStartCall?: (channel: string, kind: 'audio' | 'video') => void;
+  /**
    * Sort rows most-recent-first within each group. Default TRUE.
    *
    * Off for a caller whose order already means something — a call's people
@@ -213,6 +220,7 @@ export function ConversationList({
   grouped = false,
   sectionOrder = 'channels-first',
   sectionActions,
+  onStartCall,
   sortByRecency = true,
   maxVisible,
   activeChannel,
@@ -441,6 +449,20 @@ export function ConversationList({
             const muted = !!item.muted;
             const menuTestId = `${idBase}-row-menu-${item.channel}`;
             const menuItems: DropdownMenuItem[] = [];
+            if (onStartCall) {
+              menuItems.push({
+                label: 'Call',
+                icon: <PhoneIcon size={14} />,
+                onSelect: () => onStartCall(item.channel, 'audio'),
+                'data-testid': `${menuTestId}-call`,
+              });
+              menuItems.push({
+                label: 'Video call',
+                icon: <VideoCallIcon size={14} />,
+                onSelect: () => onStartCall(item.channel, 'video'),
+                'data-testid': `${menuTestId}-video-call`,
+              });
+            }
             if (onTogglePin) {
               menuItems.push({
                 label: item.pinned ? 'Unpin' : 'Pin',
