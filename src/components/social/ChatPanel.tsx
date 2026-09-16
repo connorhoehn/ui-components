@@ -283,6 +283,28 @@ export interface ChatPanelProps {
    */
   readReceiptsEnabled?: boolean;
 
+  // ── Unread boundary ───────────────────────────────────────────────────
+  /**
+   * ISO timestamp: the boundary between what this person had read and what
+   * they had not.
+   *
+   * Draws ONE line across the transcript immediately above the first message
+   * at or after it — the line Teams and Slack both draw, and the only thing
+   * that answers "where does new begin" when you come back to a busy channel.
+   * The floating "N new messages ↓" pill answers a different question ("is
+   * there more, below the fold") and both stay.
+   *
+   * This is the viewer's OWN cursor — the same per-conversation value that
+   * powers "Mark as unread" in the rail — and is unrelated to `readReceipts`,
+   * which is where OTHER people have read to.
+   *
+   * The panel FREEZES it (see `unreadBoundaryRef` in the body). Hand it the
+   * cursor as it stood when this conversation was opened and keep passing it,
+   * or stop passing it once the server marks the channel read — either way
+   * the line stays where it was put for as long as the panel is mounted.
+   */
+  unreadFrom?: string;
+
   // ── Attachments ───────────────────────────────────────────────────────
   /**
    * Receives files the user dropped on the thread, pasted into the composer,
@@ -837,9 +859,15 @@ function continuesRun(previous: TimelineEntry | undefined, entry: TimelineEntry)
 
   // A day divider is drawn between them, so they are visibly separate blocks
   // whatever the clock says: 23:58 and 00:01 are three minutes and two days
-  // apart. This is the only separator drawn INSIDE the list — the unread
-  // indicator is a pill floating over the scroller and `Load earlier messages`
-  // sits above the whole transcript, so neither can land mid-run.
+  // apart.
+  //
+  // The unread divider breaks a run for the same reason and is handled at the
+  // call site instead of here (`renderTimelineEntry` clears `continues` when
+  // it draws one): where that line falls is a property of the whole list and
+  // of a frozen boundary, not of a pair of adjacent rows, so it cannot be
+  // recomputed from the two arguments this function has. The remaining
+  // affordances still cannot land mid-run — the "N new messages" pill floats
+  // over the scroller and `Load earlier messages` sits above the transcript.
   if (isNewDay(current.timestamp, before.timestamp)) return false;
 
   const then = Date.parse(before.timestamp);
@@ -849,6 +877,97 @@ function continuesRun(previous: TimelineEntry | undefined, entry: TimelineEntry)
   // list, but a row stamped EARLIER than the one above it has no run to
   // continue, and collapsing it would hide the only evidence of the skew.
   return now >= then && now - then <= RUN_WINDOW_MS;
+}
+
+/**
+ * Which row the unread line sits ABOVE, or -1 for "draw nothing".
+ *
+ * `timestamps` is the sequence the renderer actually walks — the flat timeline
+ * in river mode, the thread ROOTS in threaded mode — so the index this returns
+ * is directly comparable to the `index` each row is rendered with.
+ *
+ * Three cases collapse into one `-1`, and they are the cases where a line
+ * would be noise rather than information:
+ *
+ *  - the boundary is older than every loaded message, so the first unread row
+ *    is the first row and the line would sit on top of the transcript saying
+ *    "everything below is new" about a screen where nothing else is;
+ *  - the boundary is newer than every loaded message, so there is no unread
+ *    row to sit above and the line would be an empty divider;
+ *  - there is no boundary, or it does not parse.
+ *
+ * A row whose own timestamp does not parse is stepped over rather than
+ * treated as unread: a malformed row is a data problem, and letting it claim
+ * the boundary would move the line for a reason nothing on screen explains.
+ */
+function unreadDividerIndex(
+  timestamps: readonly (string | undefined)[],
+  boundary: string | undefined,
+): number {
+  if (!boundary) return -1;
+  const edge = Date.parse(boundary);
+  if (!Number.isFinite(edge)) return -1;
+  for (let i = 0; i < timestamps.length; i += 1) {
+    const stamp = timestamps[i];
+    const at = stamp === undefined ? NaN : Date.parse(stamp);
+    if (!Number.isFinite(at)) continue;
+    if (at >= edge) return i > 0 ? i : -1;
+  }
+  return -1;
+}
+
+/**
+ * "New" — where this reader had got to, drawn across the transcript.
+ *
+ * Built on DaySeparator's construction on purpose (a flex row, borders on the
+ * children rather than an <hr>, the label carried by an `aria-hidden` span) so
+ * the two lines share one vocabulary, and deliberately different from it in
+ * both COLOUR and GEOMETRY: the day divider is a grey pill centred between two
+ * hairlines, this is an accent rule with the word at its right end. The two
+ * mean different things and routinely land a couple of rows apart — coming
+ * back on Tuesday morning puts "Today" and "New" almost on top of each other —
+ * so a reader has to be able to tell them apart at a glance, not by reading
+ * them.
+ *
+ * SCREEN READERS: `role="separator"` with a name, which is a landmark, not an
+ * alert. It is reachable for somebody moving through the transcript — the
+ * thing a purely decorative `aria-hidden` rule would fail at, leaving the one
+ * structural fact about where they left off visible only to sighted readers —
+ * and it is announced ONLY when the reader arrives at it. Nothing here is a
+ * live region: the list is `role="log" aria-live="off"`, and a line that
+ * spoke up on its own would interrupt whatever was being read to announce a
+ * boundary that has not moved.
+ *
+ * `text-white` on dark rather than an accent token for the WORD: the label has
+ * no fill behind it, so it sits directly on call chrome where `--color-primary`
+ * has lightened for a page that chrome never became. The rule itself keeps the
+ * theme-invariant chrome accent. (Same trap the `text-text-*` notes elsewhere
+ * in this file describe.)
+ */
+function UnreadSeparator({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
+  const dark = tone === 'dark';
+  return (
+    <div
+      role="separator"
+      aria-label="New messages"
+      data-testid="chat-unread-separator"
+      className="flex items-center gap-2 py-1 select-none"
+    >
+      <span
+        aria-hidden="true"
+        className={cn('h-px grow', dark ? 'bg-call-chrome-accent' : 'bg-primary')}
+      />
+      <span
+        aria-hidden="true"
+        className={cn(
+          'shrink-0 text-[11px] font-semibold uppercase tracking-wide',
+          dark ? 'text-white' : 'text-primary',
+        )}
+      >
+        New
+      </span>
+    </div>
+  );
 }
 
 /** One person's read cursor. Named off the prop so it cannot drift from it. */
@@ -979,6 +1098,7 @@ export function ChatPanel({
   onFileError,
   readReceipts = [],
   readReceiptsEnabled = true,
+  unreadFrom,
   emojis = DEFAULT_PICKER_EMOJIS,
 }: ChatPanelProps) {
   // Which own message is being edited in place, and which one is waiting on
@@ -1016,6 +1136,81 @@ export function ChatPanel({
       return next;
     });
   }
+
+  // ── Unread boundary ─────────────────────────────────────────────────
+  /**
+   * The line does not move while you are reading it. That is the whole
+   * feature, and it is the part that is easy to get wrong.
+   *
+   * WHY A REF AND NOT THE PROP. `unreadFrom` is live: the host advances it the
+   * moment the channel is marked read, which in every app that has this
+   * feature is a second or two after the panel opens. Reading the prop
+   * straight through would therefore delete the line — or, with a host that
+   * advances it per message, walk it down the transcript — exactly while
+   * somebody is scrolling up to the thing it was pointing at. A landmark that
+   * relocates itself as you approach it is worse than no landmark.
+   *
+   * FROZEN ON MOUNT, which is the alternative to tracking the prop and is the
+   * one this panel can actually honour. The panel has no `channelId`, so it
+   * cannot see a conversation change — but it already holds a pile of
+   * per-conversation state that would be just as wrong if it leaked across one
+   * (`inputValue`, `expandedThreads`, `editingId`, `unreadBelow`), so every
+   * host is already obliged to give it a `key` per conversation. This rides on
+   * that same contract instead of inventing a second, weaker one.
+   *
+   * The first DEFINED value wins, not the first render's: a host that resolves
+   * the read cursor a tick after the messages still gets its line.
+   *
+   * ONE EXCEPTION, backwards only. A boundary that moves EARLIER cannot be the
+   * channel being marked read — that only ever moves forward — so it is an
+   * explicit "Mark as unread", the one gesture whose entire purpose is to put
+   * the line somewhere new. Forward moves and the prop going away are ignored
+   * for the life of the mount.
+   *
+   * Do not "simplify" this to `const boundary = unreadFrom`.
+   */
+  const unreadBoundaryRef = useRef<string | undefined>(undefined);
+  if (unreadFrom !== undefined) {
+    const held = unreadBoundaryRef.current;
+    if (held === undefined) {
+      unreadBoundaryRef.current = unreadFrom;
+    } else {
+      const incomingMs = Date.parse(unreadFrom);
+      const heldMs = Date.parse(held);
+      if (Number.isFinite(incomingMs) && Number.isFinite(heldMs) && incomingMs < heldMs) {
+        unreadBoundaryRef.current = unreadFrom;
+      }
+    }
+  }
+  const unreadBoundary = unreadBoundaryRef.current;
+  /**
+   * Which row the line sits above, in the sequence the renderer walks.
+   *
+   * Recomputed every render rather than latched alongside the boundary,
+   * because the INDEX is not the thing being held still — the message is. A
+   * `Load earlier messages` prepend pushes the same message down by fifty
+   * rows, and a latched index would leave the line fifty rows above where the
+   * reader left off.
+   *
+   * THREADED MODE anchors on roots only, never inside a rail — the same rule
+   * and the same reason as the day headings (see `renderTimelineEntry`): the
+   * river's order is root order, so a line drawn against a reply would claim a
+   * position the river does not have. The cost is that unread REPLIES under an
+   * already-read root do not move the line, which is the same compromise the
+   * day headings already make.
+   *
+   * Skipped entirely without a boundary, so a caller that passes no
+   * `unreadFrom` does not even allocate the array.
+   */
+  const unreadAnchorIndex =
+    unreadBoundary === undefined
+      ? -1
+      : unreadDividerIndex(
+          threads
+            ? threads.map((group) => timelineTimestamp(group.root))
+            : timeline.map((entry) => timelineTimestamp(entry)),
+          unreadBoundary,
+        );
 
   // ── Read receipts ───────────────────────────────────────────────────
   // ONE line, under ONE message: the newest thing the viewer sent. Teams draws
@@ -1335,11 +1530,27 @@ export function ChatPanel({
     thread?: { rootId: string; rootMessage?: ChatMessage },
   ): ReactNode {
   const entryTimestamp = entry.kind === 'message' ? entry.message.timestamp : entry.local.timestamp;
+  // The unread line, on the one row `unreadAnchorIndex` named. Rendered BELOW
+  // the day heading at every branch below: the date frames the block, and the
+  // "New" line then marks the first message inside it the reader has not seen.
+  //
+  // Never inside a thread's rail — `unreadAnchorIndex` is an index into the
+  // ROOTS when threading is on, so a reply's `index` means something else
+  // entirely and would match by coincidence.
+  const unreadSeparator =
+    !thread && index === unreadAnchorIndex ? <UnreadSeparator tone={tone} /> : null;
   // A run of messages from one person renders as one headed row plus bare
   // lines under it, the way Teams and Slack both do it. Five messages from
   // Carol were five avatars and five copies of "Carol" down the left margin;
   // the name and the time are only news on the row where they CHANGE.
-  const continues = continuesRun(previousInRun, entry);
+  //
+  // A row under the unread line always states who it is from, for the same
+  // reason a row under a day heading does: something visible was drawn in the
+  // gap, so a bare continuation line would read as belonging to the divider
+  // rather than to the message above it — and this is precisely the row the
+  // reader is being sent to, which is the worst possible one to leave
+  // unattributed.
+  const continues = !unreadSeparator && continuesRun(previousInRun, entry);
   // A date heading opens each new local day — including the first
   // row on screen, whose date is otherwise stated nowhere. Keyed
   // off the PREVIOUS row rather than a running variable so a
@@ -1361,6 +1572,7 @@ export function ChatPanel({
     return (
       <Fragment key={`local:${local.id}`}>
         {daySeparator}
+        {unreadSeparator}
         <div data-testid="chat-local-message" data-local-message-id={local.id} className="rounded-md">
           <MessageRow
             author={local.displayName}
@@ -1668,6 +1880,7 @@ export function ChatPanel({
     return (
       <Fragment key={message.id ?? index}>
         {daySeparator}
+        {unreadSeparator}
         <MembershipNotice
           membership={membershipRef}
           fallbackText={message.content}
@@ -1681,6 +1894,7 @@ export function ChatPanel({
   return (
     <Fragment key={message.id ?? index}>
     {daySeparator}
+    {unreadSeparator}
     <div
       data-testid="chat-message"
       data-message-id={messageId || undefined}
@@ -1878,7 +2092,10 @@ export function ChatPanel({
       // A day divider IS the boundary where it falls; drawing both stacks two
       // rules with three pixels between them. `isNewDay` is also true for the
       // first row, which is what keeps a rule off the top of the transcript.
-      index > 0 && !isNewDay(rootTimestamp, previousTimestamp) ? (
+      // The unread line is a divider on exactly the same footing and stands
+      // down the same way — an accent rule and a grey hairline a few pixels
+      // apart read as one botched border, not as two facts.
+      index > 0 && index !== unreadAnchorIndex && !isNewDay(rootTimestamp, previousTimestamp) ? (
         <div
           aria-hidden="true"
           data-testid="chat-post-boundary"

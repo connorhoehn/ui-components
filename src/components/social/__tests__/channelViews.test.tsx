@@ -67,6 +67,18 @@ describe('PinnedMessagesPanel', () => {
     expect(within(row).getByText(/pinned by Bob Martinez/)).toBeInTheDocument();
   });
 
+  // The time used to sit third in the meta run, behind "pinned by …", where it
+  // was the first thing a narrow panel truncated away. It is a column now.
+  it('stamps when it was pinned on the title line, not in the meta run', () => {
+    render(<PinnedMessagesPanel pins={[pin()]} />);
+    const row = screen.getByTestId('pinned-message');
+    expect(row.querySelector('time')).toHaveAttribute('datetime', '2026-09-05T08:00:00.000Z');
+    // Still says who wrote it and who pinned it — and nothing else.
+    expect(row.querySelector('[data-line="secondary"]')).toHaveTextContent(
+      /^Hank Anderson · pinned by Bob Martinez$/,
+    );
+  });
+
   it('jumps back to the original', () => {
     const onJump = vi.fn();
     render(<PinnedMessagesPanel pins={[pin()]} onJump={onJump} />);
@@ -138,6 +150,13 @@ describe('ChannelFilesPanel', () => {
     expect(screen.getByText(/180/)).toBeInTheDocument();
   });
 
+  it('stamps when the file arrived, leaving the meta run to who and how big', () => {
+    render(<ChannelFilesPanel files={[file()]} />);
+    const row = screen.getByTestId('channel-file');
+    expect(row.querySelector('time')).toHaveAttribute('datetime', '2026-09-05T08:00:00.000Z');
+    expect(row.querySelector('[data-line="secondary"]')).toHaveTextContent(/^Hank Anderson · 180/);
+  });
+
   it('jumps to the message the file arrived on', () => {
     const onJump = vi.fn();
     render(<ChannelFilesPanel files={[file()]} onJump={onJump} />);
@@ -171,10 +190,23 @@ describe('ChannelMentionsPanel', () => {
     expect(onJump).toHaveBeenCalledWith('chat:dm:dev-bob:dev-hank', 'm3');
   });
 
-  it('marks the ones that still need you', () => {
-    render(<ChannelMentionsPanel mentions={[mention({ unread: true })]} />);
+  it('marks the ones that still need you, where the mark can be heard', () => {
+    render(<ChannelMentionsPanel mentions={[mention({ unread: true })]} onJump={vi.fn()} />);
     expect(screen.getByTestId('mention')).toHaveAttribute('data-unread', 'true');
-    expect(screen.getByLabelText('Unread')).toBeInTheDocument();
+    const dot = screen.getByLabelText('Unread');
+    expect(dot).toBeInTheDocument();
+    // Outside the jump: a button's accessible name replaces its contents, so
+    // the dot used to be labelled "Unread" for nobody.
+    expect(screen.getByTestId('mention-jump')).not.toContainElement(dot);
+  });
+
+  it('stamps when you were named, rather than burying it after the channel', () => {
+    render(<ChannelMentionsPanel mentions={[mention()]} />);
+    const row = screen.getByTestId('mention');
+    expect(row.querySelector('time')).toHaveAttribute('datetime', '2026-09-05T08:00:00.000Z');
+    expect(row.querySelector('[data-line="secondary"]')).toHaveTextContent(
+      /^Hank Anderson · Hank Anderson$/,
+    );
   });
 
   it('is empty rather than blank when nobody has named you', () => {
@@ -293,6 +325,16 @@ describe('ChannelDocumentsPanel', () => {
   it('says when people are editing', () => {
     render(<ChannelDocumentsPanel documents={[doc({ activeEditors: 2 })]} />);
     expect(screen.getByText(/2 editing/)).toBeInTheDocument();
+  });
+
+  // Last edited is what people scan this list by, so it gets the column.
+  it('stamps the last edit and keeps "who and who is in it" on line two', () => {
+    render(<ChannelDocumentsPanel documents={[doc({ activeEditors: 2 })]} />);
+    const row = screen.getByTestId('channel-document');
+    expect(row.querySelector('time')).toHaveAttribute('datetime', '2026-09-05T08:00:00.000Z');
+    expect(row.querySelector('[data-line="secondary"]')).toHaveTextContent(
+      /^Hank Anderson · 2 editing$/,
+    );
   });
 
   it('does not claim 0 editing when nobody is', () => {

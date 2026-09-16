@@ -6,85 +6,27 @@
 // other part of the app you have to go find. These are the panels behind the
 // tabs on ChannelHeader.
 //
-// ## Why three panels share one row
+// ## Why every panel shares one row
 //
-// Files, pins and mentions are the same shape: something visual on the left,
-// a title, a line of "who and when", and a way back to the message it came
-// from. Writing that three times produces three subtly different rows and one
-// of them ends up without the jump affordance. The row is defined once here
-// and stays private — it is an implementation detail of these three panels,
-// not a fourth thing to learn.
+// Files, pins, mentions and documents are the same shape: something visual on
+// the left, a title, when it was, a line of "who and where", and a way back to
+// the message it came from. Writing that four times produces four subtly
+// different rows and one of them ends up without the jump affordance.
 //
-// ## Why every row jumps
-//
-// Each of these is a POINTER at a message. A pinned message you cannot get
-// back to is a screenshot; a file you cannot see in context is a download
-// folder. `onJump` is optional only because the original may genuinely be
-// out of reach (deleted, or outside the loaded window), and in that case the
-// row renders as a record rather than as a dead button.
+// That row used to live here as a private `DigestRow`. It is now `FeedRow` in
+// the library proper, because the app's Activity feed needed the same grammar,
+// could not import it, and grew a second copy by hand. `FeedRow` owns the
+// two-line contract, the jump, and the unread mark; read its doc comment
+// before changing what these panels hand it.
 
 import type { ReactNode } from 'react';
 import { Avatar } from '../shared/Avatar';
+import { FeedRow } from './FeedRow';
 import EmptyState from '../shared/EmptyState';
 import { formatBytes, isImageAttachment, type ChatAttachment } from './ChatAttachment';
 import { DocumentIcon, PaperclipIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
+import { fullTimestampLabel } from './dayBoundary';
 import { cn } from '../../lib/cn';
-
-// ---------------------------------------------------------------------------
-// Shared row
-// ---------------------------------------------------------------------------
-
-interface DigestRowProps {
-  /** Reflected onto the row so callers can select unread ones. */
-  'data-unread'?: boolean;
-  /** Left-hand visual: a thumbnail, an avatar, a glyph. */
-  leading: ReactNode;
-  title: ReactNode;
-  meta: string;
-  /** Trailing controls — unpin, download. Never the jump: the row is the jump. */
-  actions?: ReactNode;
-  onJump?: () => void;
-  jumpLabel?: string;
-  'data-testid'?: string;
-}
-
-function DigestRow({
-  leading, title, meta, actions, onJump, jumpLabel,
-  'data-testid': testId, 'data-unread': unread,
-}: DigestRowProps) {
-  const body = (
-    <>
-      <span className="shrink-0">{leading}</span>
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-left">
-        <span className="truncate text-[13px] font-medium text-text-primary">{title}</span>
-        <span className="truncate text-[11px] text-text-tertiary">{meta}</span>
-      </span>
-    </>
-  );
-
-  return (
-    <li
-      data-testid={testId}
-      data-unread={unread ? 'true' : undefined}
-      className="flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-surface-hover"
-    >
-      {onJump ? (
-        <button
-          type="button"
-          onClick={onJump}
-          aria-label={jumpLabel}
-          data-testid={testId ? `${testId}-jump` : undefined}
-          className="flex min-w-0 flex-1 items-center gap-3 bg-transparent p-0 text-left"
-        >
-          {body}
-        </button>
-      ) : (
-        <span className="flex min-w-0 flex-1 items-center gap-3">{body}</span>
-      )}
-      {actions && <span className="flex shrink-0 items-center gap-1">{actions}</span>}
-    </li>
-  );
-}
 
 function timeLabel(iso?: string): string {
   if (!iso) return '';
@@ -157,14 +99,21 @@ export function PinnedMessagesPanel({
         />
       ) : (
         pins.map((pin) => (
-          <DigestRow
+          <FeedRow
             key={pin.messageId}
             data-testid="pinned-message"
             leading={<Avatar name={pin.author} size={28} />}
             title={pin.preview}
-            meta={[pin.author, pin.pinnedBy && `pinned by ${pin.pinnedBy}`, timeLabel(pin.pinnedAt)]
+            // "who wrote it, who pinned it" — two different people, both
+            // load-bearing. When it was pinned is a different question and
+            // lives in the stamp, where it is not the first thing truncated
+            // away behind a run of middle-dots.
+            meta={[pin.author, pin.pinnedBy && `pinned by ${pin.pinnedBy}`]
               .filter(Boolean)
               .join(' · ')}
+            timestamp={timeLabel(pin.pinnedAt)}
+            timestampIso={pin.pinnedAt}
+            timestampTitle={pin.pinnedAt ? fullTimestampLabel(pin.pinnedAt) : undefined}
             onJump={onJump ? () => onJump(pin.messageId) : undefined}
             jumpLabel={`Go to the pinned message from ${pin.author}`}
             actions={
@@ -238,7 +187,7 @@ export function ChannelFilesPanel({
           const src = thumbnailSrc?.(file.attachment) ?? file.attachment.preview;
           const isImage = isImageAttachment(file.attachment);
           return (
-            <DigestRow
+            <FeedRow
               key={`${file.messageId}:${file.attachment.id}`}
               data-testid="channel-file"
               leading={
@@ -260,9 +209,12 @@ export function ChannelFilesPanel({
               // Filenames are user content and need not contain a space; the
               // row truncates rather than letting one widen the panel.
               title={file.attachment.name}
-              meta={[file.author, formatBytes(file.attachment.size), timeLabel(file.sentAt)]
+              meta={[file.author, formatBytes(file.attachment.size)]
                 .filter(Boolean)
                 .join(' · ')}
+              timestamp={timeLabel(file.sentAt)}
+              timestampIso={file.sentAt}
+              timestampTitle={file.sentAt ? fullTimestampLabel(file.sentAt) : undefined}
               onJump={onJump ? () => onJump(file.messageId) : undefined}
               jumpLabel={`Go to the message with ${file.attachment.name}`}
             />
@@ -322,26 +274,19 @@ export function ChannelMentionsPanel({
         />
       ) : (
         mentions.map((m) => (
-          <DigestRow
+          <FeedRow
             key={`${m.channel}:${m.messageId}`}
-            // Stable id, state as an attribute. Encoding "unread" in the
-            // testid means the row has no selector that survives being read,
-            // which is exactly when a test or an e2e script wants to find it.
             data-testid="mention"
-            data-unread={m.unread}
-            leading={
-              <span className="relative">
-                <Avatar name={m.author} size={28} />
-                {m.unread && (
-                  <span
-                    aria-label="Unread"
-                    className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-primary"
-                  />
-                )}
-              </span>
-            }
+            // The dot is FeedRow's now. It used to be drawn inside the jump
+            // button, where its "Unread" label was swallowed by the button's
+            // own accessible name and never reached a screen reader.
+            unread={m.unread}
+            leading={<Avatar name={m.author} size={28} />}
             title={m.excerpt}
-            meta={[m.author, m.channelLabel ?? m.channel, timeLabel(m.at)].filter(Boolean).join(' · ')}
+            meta={[m.author, m.channelLabel ?? m.channel].filter(Boolean).join(' · ')}
+            timestamp={timeLabel(m.at)}
+            timestampIso={m.at}
+            timestampTitle={m.at ? fullTimestampLabel(m.at) : undefined}
             onJump={onJump ? () => onJump(m.channel, m.messageId) : undefined}
             jumpLabel={`Go to the mention from ${m.author}`}
           />
@@ -419,7 +364,11 @@ export function ChannelRecordingsPanel({
         recordings.map((r) => {
           const notReady = r.playable === false;
           return (
-            <DigestRow
+            // The stamp slot stays empty here on purpose: a recording's title
+            // IS its time, and demoting "Sep 5 08:00" to the right rail would
+            // leave line one reading "12:04" — a duration with nothing to say
+            // what it is a duration of.
+            <FeedRow
               key={r.recordingId}
               data-testid="channel-recording"
               leading={
@@ -509,7 +458,7 @@ export function ChannelDocumentsPanel({
       ) : (
         <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
           {documents.map((d) => (
-            <DigestRow
+            <FeedRow
               key={d.documentId}
               data-testid="channel-document"
               leading={
@@ -520,12 +469,16 @@ export function ChannelDocumentsPanel({
               title={d.title || 'Untitled'}
               meta={[
                 d.createdBy,
-                timeLabel(d.updatedAt),
                 // Presence is the reason to open it NOW rather than later.
                 d.activeEditors ? `${d.activeEditors} editing` : '',
               ]
                 .filter(Boolean)
                 .join(' \u00b7 ')}
+              // Last edited is what people scan this list by, so it gets the
+              // column rather than third place in the meta line.
+              timestamp={timeLabel(d.updatedAt)}
+              timestampIso={d.updatedAt}
+              timestampTitle={d.updatedAt ? fullTimestampLabel(d.updatedAt) : undefined}
               onJump={onOpen ? () => onOpen(d.documentId) : undefined}
               jumpLabel={`Open ${d.title || 'this document'}`}
             />

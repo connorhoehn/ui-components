@@ -2787,7 +2787,7 @@ export declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts, readReceiptsEnabled, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -3011,6 +3011,26 @@ export declare interface ChatPanelProps {
      * tracked somewhere.
      */
     readReceiptsEnabled?: boolean;
+    /**
+     * ISO timestamp: the boundary between what this person had read and what
+     * they had not.
+     *
+     * Draws ONE line across the transcript immediately above the first message
+     * at or after it — the line Teams and Slack both draw, and the only thing
+     * that answers "where does new begin" when you come back to a busy channel.
+     * The floating "N new messages ↓" pill answers a different question ("is
+     * there more, below the fold") and both stay.
+     *
+     * This is the viewer's OWN cursor — the same per-conversation value that
+     * powers "Mark as unread" in the rail — and is unrelated to `readReceipts`,
+     * which is where OTHER people have read to.
+     *
+     * The panel FREEZES it (see `unreadBoundaryRef` in the body). Hand it the
+     * cursor as it stood when this conversation was opened and keep passing it,
+     * or stop passing it once the server marks the channel read — either way
+     * the line stays where it was put for as long as the panel is mounted.
+     */
+    unreadFrom?: string;
     /**
      * Receives files the user dropped on the thread, pasted into the composer,
      * or picked with the paperclip. When absent, every attachment affordance is
@@ -5848,6 +5868,59 @@ export declare interface ExplorerLayoutProps {
 
 /** An eye: watching, "N people are seeing this". */
 export declare function EyeIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare function FeedRow({ leading, title, timestamp, timestampIso, timestampTitle, meta, metaTone, actions, onJump, jumpLabel, unread, className, 'data-testid': testId, ...rest }: FeedRowProps): JSX.Element;
+
+export declare interface FeedRowProps extends Omit<HTMLAttributes<HTMLLIElement>, 'title' | 'children'> {
+    /**
+     * Left-hand visual: a thumbnail, an avatar, a glyph, a status disc. Rendered
+     * OUTSIDE the jump so anything it announces survives — see above. Give it an
+     * accessible name if it carries meaning, and `aria-hidden` if it does not.
+     */
+    leading: ReactNode;
+    /**
+     * Line one. `string`, not `ReactNode`, on purpose: it is also the line's
+     * `title` attribute, and a caller who could pass markup could pass a second
+     * line. Truncates.
+     */
+    title: string;
+    /**
+     * Right-aligned on the title line — already formatted, and short. A feed
+     * column is read by shape ("14:03", "Yesterday", "Tue"), so a phrase like
+     * "3 days ago" costs the reader arithmetic and cannot be scanned.
+     *
+     * Callers used to stuff this into `meta`, where it sat third in a run of
+     * middle-dots and was the first thing to be truncated away.
+     */
+    timestamp?: string;
+    /** ISO-8601 behind the stamp. Its presence is what makes the stamp a `<time>`. */
+    timestampIso?: string;
+    /** Hover text for the stamp — the full instant the abbreviation stands for. */
+    timestampTitle?: string;
+    /**
+     * Line two: who, and where. Required, because a row whose second line is
+     * sometimes absent is a list of two different heights. Truncates.
+     */
+    meta: string;
+    /**
+     * Colours line two when it carries a state rather than context — `danger`
+     * for a run's error text, which read as ordinary grey metadata beside
+     * "Hank Anderson · 180 KB". Omit for the quiet default.
+     */
+    metaTone?: Tone;
+    /** Trailing controls — unpin, download, Approve/Reject. Never the jump: the row is the jump. */
+    actions?: ReactNode;
+    onJump?: () => void;
+    /**
+     * The jump's accessible name. It replaces the row's text for a screen
+     * reader, so say where it goes: "Go to the pinned message from Hank".
+     */
+    jumpLabel?: string;
+    /** Draws a dot over `leading` and reflects `data-unread` for selection. */
+    unread?: boolean;
+    /** Also spelled onto the jump as `<testid>-jump`, so it can be clicked by name. */
+    'data-testid'?: string;
+}
 
 declare interface FieldTypeDefinition {
     /** Unique key — matches SectionType for built-ins; UUID for user-defined types */
@@ -15942,29 +16015,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -15998,12 +16051,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -16014,6 +16074,19 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

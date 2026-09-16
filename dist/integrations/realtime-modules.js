@@ -10,7 +10,7 @@ import { t as l } from "../Avatar-BzicCOft.js";
 import { n as u, r as d, t as f } from "../Badge-Fdgqmkuz.js";
 import { t as p } from "../ActivityFeed-C9KAtqCl.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
-import { l as _, n as v, t as y, u as b } from "../ConversationSurface-C0fkGxtL.js";
+import { d as _, n as v, t as y, u as b } from "../ConversationSurface-DgzWgOe-.js";
 import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-d9JKcXlp.js";
 import { t as ee } from "../CanvasDocumentView-BkP5mFI6.js";
 import { Component as te, createContext as ne, useCallback as O, useContext as re, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";
@@ -309,8 +309,8 @@ function Z(e, t) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedChatPanel.tsx
-function xe({ chat: e, presence: t, upload: n, reactions: r, pins: i, currentActor: a, currentUserId: o, displayName: s, avatarUrl: c, sendMetadata: l, publishTyping: u, attachmentSrc: d, onOpenAttachment: f, acceptFiles: p, maxFileSize: m, onFileError: h, disabled: g, typingUsers: _, tone: v, fill: y, showHeader: x, loadMoreHistory: S = !1, joinHistoryLimit: C = 20, historyPageSize: w = 50, onLoadMore: T, hasMore: E, loadingMore: D, composer: ee, emojis: te, onReply: ne, onJumpToMessage: re, highlightedMessageId: F, documentEditors: ie, callParticipants: ae, onJoinCall: oe, onOpenDocument: se, wrapWithNetworkShim: ce }) {
-	let le = A(() => fe(e.messages), [e.messages]), ue = _ ?? t?.roster.filter((e) => {
+function xe({ chat: e, presence: t, upload: n, reactions: r, pins: i, currentActor: a, currentUserId: o, displayName: s, avatarUrl: c, sendMetadata: l, publishTyping: u, attachmentSrc: d, onOpenAttachment: f, acceptFiles: p, maxFileSize: m, onFileError: h, disabled: g, typingUsers: v, tone: y, fill: b, showHeader: x, loadMoreHistory: S = !1, joinHistoryLimit: C = 20, historyPageSize: w = 50, onLoadMore: T, hasMore: E, loadingMore: D, composer: ee, emojis: te, onReply: ne, onJumpToMessage: re, highlightedMessageId: F, documentEditors: ie, callParticipants: ae, onJoinCall: oe, onOpenDocument: se, wrapWithNetworkShim: ce }) {
+	let le = A(() => fe(e.messages), [e.messages]), ue = v ?? t?.roster.filter((e) => {
 		if (e.metadata?.isTyping !== !0) return !1;
 		let t = e.metadata?.userId;
 		return o && typeof t == "string" ? t !== o : !a || e.clientId !== a;
@@ -356,13 +356,13 @@ function xe({ chat: e, presence: t, upload: n, reactions: r, pins: i, currentAct
 			text: e.content,
 			author: e.displayName ?? "Unknown"
 		}));
-	}, [i]), ge = /* @__PURE__ */ P(b, {
+	}, [i]), ge = /* @__PURE__ */ P(_, {
 		messages: le,
 		onSend: de,
 		disabled: g,
 		typingUsers: ue,
-		tone: v,
-		fill: y,
+		tone: y,
+		fill: b,
 		showHeader: x,
 		composer: ee,
 		emojis: te,
@@ -443,7 +443,7 @@ function Te({ presence: e, currentClientId: t, perConnection: n = !1, wrapWithNe
 		t,
 		n
 	]);
-	return /* @__PURE__ */ P(N, { children: Z(/* @__PURE__ */ P(_, {
+	return /* @__PURE__ */ P(N, { children: Z(/* @__PURE__ */ P(b, {
 		users: i,
 		currentClientId: t
 	}), r) });

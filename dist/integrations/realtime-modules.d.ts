@@ -864,6 +864,26 @@ declare interface ChatPanelProps {
      */
     readReceiptsEnabled?: boolean;
     /**
+     * ISO timestamp: the boundary between what this person had read and what
+     * they had not.
+     *
+     * Draws ONE line across the transcript immediately above the first message
+     * at or after it — the line Teams and Slack both draw, and the only thing
+     * that answers "where does new begin" when you come back to a busy channel.
+     * The floating "N new messages ↓" pill answers a different question ("is
+     * there more, below the fold") and both stay.
+     *
+     * This is the viewer's OWN cursor — the same per-conversation value that
+     * powers "Mark as unread" in the rail — and is unrelated to `readReceipts`,
+     * which is where OTHER people have read to.
+     *
+     * The panel FREEZES it (see `unreadBoundaryRef` in the body). Hand it the
+     * cursor as it stood when this conversation was opened and keep passing it,
+     * or stop passing it once the server marks the channel read — either way
+     * the line stays where it was put for as long as the panel is mounted.
+     */
+    unreadFrom?: string;
+    /**
      * Receives files the user dropped on the thread, pasted into the composer,
      * or picked with the paperclip. When absent, every attachment affordance is
      * suppressed — a panel wired to a transport with no upload service must not
