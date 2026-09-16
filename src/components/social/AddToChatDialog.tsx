@@ -36,6 +36,12 @@ export interface AddToChatDialogProps {
   busy?: boolean;
   /** Resolves when the server has them; rejects with a reason to show. */
   onAdd: (userIds: string[], history: MembershipHistory) => Promise<void> | void;
+  /**
+   * Offer the Teams history choice. Off for a place whose policy decides
+   * it — a room's members always get the room's past — and `onAdd` then
+   * receives `{ mode: 'all' }`.
+   */
+  historyChoice?: boolean;
   onClose: () => void;
   'data-testid'?: string;
 }
@@ -59,6 +65,7 @@ export function AddToChatDialog({
   onAdd,
   onClose,
   'data-testid': testId = 'add-to-chat-dialog',
+  historyChoice = true,
 }: AddToChatDialogProps) {
   const [query, setQuery] = useState('');
   const [picked, setPicked] = useState<string[]>([...preselectedIds]);
@@ -97,7 +104,7 @@ export function AddToChatDialog({
     setSaving(true);
     setError(null);
     try {
-      await onAdd(picked, mode === 'days' ? { mode, days } : { mode });
+      await onAdd(picked, !historyChoice ? { mode: 'all' } : mode === 'days' ? { mode, days } : { mode });
       onClose();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -196,39 +203,41 @@ export function AddToChatDialog({
           })}
         </ul>
 
-        <div className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">Chat history</div>
-        <ChoiceList data-testid={`${testId}-history`}>
-          {HISTORY_CHOICES.map((c) => (
-            <ChoiceRow
-              key={c.mode}
-              title={c.mode === 'days' && mode === 'days' ? `Include history from the past ${days || HISTORY_DAYS_DEFAULT} days` : c.title}
-              description={c.description}
-              selected={mode === c.mode}
-              onSelect={() => setMode(c.mode)}
-              disabled={inert}
-              data-testid={`${testId}-history-${c.mode}`}
-            />
-          ))}
-        </ChoiceList>
-        {/* Reserved height: the number field appears without moving the footer. */}
-        <div className="min-h-[3.75rem]">
-          {mode === 'days' && (
-            <FormField label="Number of days" {...(daysOk ? {} : { error: `Between ${HISTORY_DAYS_MIN} and ${HISTORY_DAYS_MAX}.` })}>
-              {(wiring) => (
-                <input
-                  {...wiring}
-                  type="number"
-                  min={HISTORY_DAYS_MIN}
-                  max={HISTORY_DAYS_MAX}
-                  value={Number.isFinite(days) ? days : ''}
-                  onChange={(e) => setDays(e.target.value === '' ? NaN : Number(e.target.value))}
-                  className="w-24 rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-text-primary"
-                  data-testid={`${testId}-days`}
-                />
-              )}
-            </FormField>
-          )}
-        </div>
+        {historyChoice && (<>
+          <div className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">Chat history</div>
+          <ChoiceList data-testid={`${testId}-history`}>
+            {HISTORY_CHOICES.map((c) => (
+              <ChoiceRow
+                key={c.mode}
+                title={c.mode === 'days' && mode === 'days' ? `Include history from the past ${days || HISTORY_DAYS_DEFAULT} days` : c.title}
+                description={c.description}
+                selected={mode === c.mode}
+                onSelect={() => setMode(c.mode)}
+                disabled={inert}
+                data-testid={`${testId}-history-${c.mode}`}
+              />
+            ))}
+          </ChoiceList>
+          {/* Reserved height: the number field appears without moving the footer. */}
+          <div className="min-h-[3.75rem]">
+            {mode === 'days' && (
+              <FormField label="Number of days" {...(daysOk ? {} : { error: `Between ${HISTORY_DAYS_MIN} and ${HISTORY_DAYS_MAX}.` })}>
+                {(wiring) => (
+                  <input
+                    {...wiring}
+                    type="number"
+                    min={HISTORY_DAYS_MIN}
+                    max={HISTORY_DAYS_MAX}
+                    value={Number.isFinite(days) ? days : ''}
+                    onChange={(e) => setDays(e.target.value === '' ? NaN : Number(e.target.value))}
+                    className="w-24 rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-text-primary"
+                    data-testid={`${testId}-days`}
+                  />
+                )}
+              </FormField>
+            )}
+          </div>
+        </>)}
         {error && <p className="m-0 text-xs text-danger-fg" role="alert" data-testid={`${testId}-error`}>{error}</p>}
       </div>
     </Modal>

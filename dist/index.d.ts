@@ -165,7 +165,7 @@ declare interface ActivityPanelProps {
     connectionState: ConnectionState_4;
 }
 
-export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, onAdd, onClose, 'data-testid': testId, }: AddToChatDialogProps): JSX.Element;
+export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, onAdd, onClose, 'data-testid': testId, historyChoice, }: AddToChatDialogProps): JSX.Element;
 
 export declare interface AddToChatDialogProps {
     open: boolean;
@@ -177,6 +177,12 @@ export declare interface AddToChatDialogProps {
     busy?: boolean;
     /** Resolves when the server has them; rejects with a reason to show. */
     onAdd: (userIds: string[], history: MembershipHistory) => Promise<void> | void;
+    /**
+     * Offer the Teams history choice. Off for a place whose policy decides
+     * it — a room's members always get the room's past — and `onAdd` then
+     * receives `{ mode: 'all' }`.
+     */
+    historyChoice?: boolean;
     onClose: () => void;
     'data-testid'?: string;
 }
@@ -15350,26 +15356,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -15396,6 +15382,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -15409,9 +15405,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

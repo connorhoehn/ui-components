@@ -176,3 +176,16 @@ describe('membershipRefFromMetadata names map', () => {
     expect(ref?.names).toEqual(['Bob Martinez', 'Carol Johnson']);
   });
 });
+
+describe('AddToChatDialog without the history choice', () => {
+  it('hides the history section and adds with all history', async () => {
+    const { render, screen, fireEvent, waitFor } = await import('@testing-library/react');
+    const { AddToChatDialog } = await import('../AddToChatDialog');
+    const { vi } = await import('vitest');
+    const onAdd = vi.fn().mockResolvedValue(undefined);
+    render(<AddToChatDialog open conversationName="#design" people={[{ id: 'bob', name: 'Bob' }]} preselectedIds={['bob']} historyChoice={false} onAdd={onAdd} onClose={() => {}} />);
+    expect(screen.queryByText('Chat history')).toBeNull();
+    fireEvent.click(screen.getByTestId('add-to-chat-dialog-add'));
+    await waitFor(() => expect(onAdd).toHaveBeenCalledWith(['bob'], { mode: 'all' }));
+  });
+});

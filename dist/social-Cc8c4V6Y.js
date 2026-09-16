@@ -3586,24 +3586,24 @@ var Yt = [
 		description: "Everything ever said here"
 	}
 ], Xt = 7, Zt = 1, Qt = 3650;
-function $t({ open: e, conversationName: t, people: n, preselectedIds: r = [], busy: i = !1, onAdd: a, onClose: o, "data-testid": l = "add-to-chat-dialog" }) {
-	let [d, f] = H(""), [p, m] = H([...r]), [g, y] = H("none"), [x, S] = H(7), [C, w] = H(!1), [E, D] = H(null);
+function $t({ open: e, conversationName: t, people: n, preselectedIds: r = [], busy: i = !1, onAdd: a, onClose: o, "data-testid": l = "add-to-chat-dialog", historyChoice: d = !0 }) {
+	let [f, p] = H(""), [m, g] = H([...r]), [y, x] = H("none"), [S, C] = H(7), [w, E] = H(!1), [D, O] = H(null);
 	z(() => {
-		e && (f(""), m([...r]), y("none"), S(7), w(!1), D(null));
+		e && (p(""), g([...r]), x("none"), C(7), E(!1), O(null));
 	}, [e, r.join("\n")]);
-	let O = B(() => new Map(n.map((e) => [e.id, e])), [n]), k = B(() => {
-		let e = d.trim().toLowerCase();
+	let k = B(() => new Map(n.map((e) => [e.id, e])), [n]), M = B(() => {
+		let e = f.trim().toLowerCase();
 		return n.filter((t) => !e || t.name.toLowerCase().includes(e) || (t.subtitle ?? "").toLowerCase().includes(e));
-	}, [n, d]), M = (e) => m((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]), N = Number.isInteger(x) && x >= 1 && x <= 3650, P = i || C, F = p.length > 0 && (g !== "days" || N) && !P, I = async () => {
-		if (F) {
-			w(!0), D(null);
+	}, [n, f]), N = (e) => g((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]), P = Number.isInteger(S) && S >= 1 && S <= 3650, F = i || w, I = m.length > 0 && (y !== "days" || P) && !F, ee = async () => {
+		if (I) {
+			E(!0), O(null);
 			try {
-				await a(p, g === "days" ? {
-					mode: g,
-					days: x
-				} : { mode: g }), o();
+				await a(m, d ? y === "days" ? {
+					mode: y,
+					days: S
+				} : { mode: y } : { mode: "all" }), o();
 			} catch (e) {
-				D(e instanceof Error ? e.message : String(e)), w(!1);
+				O(e instanceof Error ? e.message : String(e)), E(!1);
 			}
 		}
 	};
@@ -3616,34 +3616,34 @@ function $t({ open: e, conversationName: t, people: n, preselectedIds: r = [], b
 			variant: "secondary",
 			size: "sm",
 			onClick: o,
-			disabled: P,
+			disabled: F,
 			"data-testid": `${l}-cancel`,
 			children: "Cancel"
 		}), /* @__PURE__ */ W(c, {
 			variant: "primary",
 			size: "sm",
-			onClick: () => void I(),
-			disabled: !F,
+			onClick: () => void ee(),
+			disabled: !I,
 			"data-testid": `${l}-add`,
-			children: C ? "Adding…" : p.length > 1 ? `Add ${p.length} people` : "Add"
+			children: w ? "Adding…" : m.length > 1 ? `Add ${m.length} people` : "Add"
 		})] }),
 		children: /* @__PURE__ */ G("div", {
 			className: "flex min-h-[26rem] flex-col gap-3 text-sm",
 			"data-testid": l,
 			children: [
 				/* @__PURE__ */ W(h, {
-					value: d,
-					onChange: f,
+					value: f,
+					onChange: p,
 					placeholder: "Enter a name",
 					autoFocus: !0,
 					"aria-label": "Find people to add",
 					"data-testid": `${l}-search`
 				}),
-				p.length > 0 && /* @__PURE__ */ W("div", {
+				m.length > 0 && /* @__PURE__ */ W("div", {
 					className: "flex flex-wrap gap-1.5",
 					"data-testid": `${l}-picked`,
-					children: p.map((e) => {
-						let t = O.get(e);
+					children: m.map((e) => {
+						let t = k.get(e);
 						return /* @__PURE__ */ W(_, {
 							tone: "info",
 							size: "sm",
@@ -3661,8 +3661,8 @@ function $t({ open: e, conversationName: t, people: n, preselectedIds: r = [], b
 									/* @__PURE__ */ W("button", {
 										type: "button",
 										"aria-label": `Remove ${t?.name ?? e}`,
-										onClick: () => M(e),
-										disabled: P,
+										onClick: () => N(e),
+										disabled: F,
 										className: "ml-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full border-none bg-transparent text-current hover:bg-black/10",
 										"data-testid": `${l}-unpick-${e}`,
 										children: /* @__PURE__ */ W(u, { size: 10 })
@@ -3678,19 +3678,19 @@ function $t({ open: e, conversationName: t, people: n, preselectedIds: r = [], b
 					"aria-multiselectable": "true",
 					className: "m-0 max-h-48 list-none overflow-y-auto rounded-md border border-border p-0",
 					"data-testid": `${l}-people`,
-					children: [k.length === 0 && /* @__PURE__ */ W("li", {
+					children: [M.length === 0 && /* @__PURE__ */ W("li", {
 						className: "px-3 py-3 text-xs text-text-tertiary",
 						"data-testid": `${l}-nobody`,
 						children: n.length === 0 ? "Everyone is already here." : "Nobody by that name."
-					}), k.map((e) => {
-						let t = p.includes(e.id);
+					}), M.map((e) => {
+						let t = m.includes(e.id);
 						return /* @__PURE__ */ W("li", {
 							role: "option",
 							"aria-selected": t,
 							children: /* @__PURE__ */ G("button", {
 								type: "button",
-								onClick: () => M(e.id),
-								disabled: P,
+								onClick: () => N(e.id),
+								disabled: F,
 								className: s("flex w-full items-center gap-2 border-none bg-transparent px-3 py-2 text-left font-[inherit] hover:bg-surface-hover", t && "bg-surface-inset"),
 								"data-testid": `${l}-person-${e.id}`,
 								children: [
@@ -3719,43 +3719,45 @@ function $t({ open: e, conversationName: t, people: n, preselectedIds: r = [], b
 						}, e.id);
 					})]
 				}),
-				/* @__PURE__ */ W("div", {
-					className: "text-xs font-semibold uppercase tracking-wide text-text-tertiary",
-					children: "Chat history"
-				}),
-				/* @__PURE__ */ W(j, {
-					"data-testid": `${l}-history`,
-					children: Yt.map((e) => /* @__PURE__ */ W(A, {
-						title: e.mode === "days" && g === "days" ? `Include history from the past ${x || 7} days` : e.title,
-						description: e.description,
-						selected: g === e.mode,
-						onSelect: () => y(e.mode),
-						disabled: P,
-						"data-testid": `${l}-history-${e.mode}`
-					}, e.mode))
-				}),
-				/* @__PURE__ */ W("div", {
-					className: "min-h-[3.75rem]",
-					children: g === "days" && /* @__PURE__ */ W(b, {
-						label: "Number of days",
-						...N ? {} : { error: "Between 1 and 3650." },
-						children: (e) => /* @__PURE__ */ W("input", {
-							...e,
-							type: "number",
-							min: 1,
-							max: 3650,
-							value: Number.isFinite(x) ? x : "",
-							onChange: (e) => S(e.target.value === "" ? NaN : Number(e.target.value)),
-							className: "w-24 rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-text-primary",
-							"data-testid": `${l}-days`
+				d && /* @__PURE__ */ G(U, { children: [
+					/* @__PURE__ */ W("div", {
+						className: "text-xs font-semibold uppercase tracking-wide text-text-tertiary",
+						children: "Chat history"
+					}),
+					/* @__PURE__ */ W(j, {
+						"data-testid": `${l}-history`,
+						children: Yt.map((e) => /* @__PURE__ */ W(A, {
+							title: e.mode === "days" && y === "days" ? `Include history from the past ${S || 7} days` : e.title,
+							description: e.description,
+							selected: y === e.mode,
+							onSelect: () => x(e.mode),
+							disabled: F,
+							"data-testid": `${l}-history-${e.mode}`
+						}, e.mode))
+					}),
+					/* @__PURE__ */ W("div", {
+						className: "min-h-[3.75rem]",
+						children: y === "days" && /* @__PURE__ */ W(b, {
+							label: "Number of days",
+							...P ? {} : { error: "Between 1 and 3650." },
+							children: (e) => /* @__PURE__ */ W("input", {
+								...e,
+								type: "number",
+								min: 1,
+								max: 3650,
+								value: Number.isFinite(S) ? S : "",
+								onChange: (e) => C(e.target.value === "" ? NaN : Number(e.target.value)),
+								className: "w-24 rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-text-primary",
+								"data-testid": `${l}-days`
+							})
 						})
 					})
-				}),
-				E && /* @__PURE__ */ W("p", {
+				] }),
+				D && /* @__PURE__ */ W("p", {
 					className: "m-0 text-xs text-danger-fg",
 					role: "alert",
 					"data-testid": `${l}-error`,
-					children: E
+					children: D
 				})
 			]
 		})
