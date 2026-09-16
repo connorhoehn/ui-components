@@ -136,6 +136,8 @@ export { useDocumentOutline, readOutline } from './useDocumentOutline';
 export { DocumentStatusBar, ZOOM_STEPS, ZOOM_FIT } from './DocumentStatusBar';
 export type { DocumentStatusBarProps } from './DocumentStatusBar';
 
+export { DocumentModePill } from './DocumentModePill';
+export type { DocumentModePillProps, DocumentModePillMode } from './DocumentModePill';
 export { DocumentOwnership } from './DocumentOwnership';
 export type { DocumentOwnershipProps, DocumentPerson } from './DocumentOwnership';
 export { DocumentShareDialog, SHARE_ROLES } from './DocumentShareDialog';

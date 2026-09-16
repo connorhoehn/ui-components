@@ -1225,10 +1225,10 @@ var Et = "[data-comment-id]", Dt = 240;
 function Ot(e) {
 	return typeof CSS < "u" && typeof CSS.escape == "function" ? CSS.escape(e) : e.replace(/["\\]/g, "\\$&");
 }
-function kt(e) {
+function Z(e) {
 	return e <= 0 ? "No replies" : e === 1 ? "1 reply" : `${e} replies`;
 }
-function At({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: o, onResolve: s, ref: l, "data-testid": u = "comment-ghost" }) {
+function kt({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: o, onResolve: s, ref: l, "data-testid": u = "comment-ghost" }) {
 	let [d, f] = K(null), m = G(null), g = G(null), _ = G(null);
 	_.current = d;
 	let v = W(() => {
@@ -1346,7 +1346,7 @@ function At({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 					children: [/* @__PURE__ */ J("span", {
 						"data-testid": `${u}-replies`,
 						className: "text-[11px] text-text-tertiary",
-						children: kt(T.replyCount ?? 0)
+						children: Z(T.replyCount ?? 0)
 					}), /* @__PURE__ */ Y("span", {
 						className: "flex gap-1.5",
 						children: [o && /* @__PURE__ */ J(r, {
@@ -1370,7 +1370,7 @@ function At({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 }
 //#endregion
 //#region src/components/doc-editor/VideoDockSlot.tsx
-function jt() {
+function At() {
 	return /* @__PURE__ */ Y("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-4 w-4",
@@ -1388,7 +1388,7 @@ function jt() {
 		})]
 	});
 }
-function Mt({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: o = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, onDragOver: l, onDragLeave: u, onDrop: d, className: f, children: p, "data-testid": m = "video-dock-slot" }) {
+function jt({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: o = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, onDragOver: l, onDragLeave: u, onDrop: d, className: f, children: p, "data-testid": m = "video-dock-slot" }) {
 	let [h, g] = K(!1), _ = H((e) => {
 		e.preventDefault(), t && g(!0), l?.(e);
 	}, [t, l]), v = H((e) => {
@@ -1416,7 +1416,7 @@ function Mt({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 					size: "sm",
 					onClick: c,
 					"data-testid": `${m}-undock`,
-					icon: /* @__PURE__ */ J(jt, {}),
+					icon: /* @__PURE__ */ J(At, {}),
 					className: "text-white hover:bg-white/20"
 				})
 			})]
@@ -1437,7 +1437,7 @@ function Mt({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 }
 //#endregion
 //#region src/components/doc-editor/FloatingDockBar.tsx
-function Nt({ docked: e, ghost: t = !1, dockId: r, ghostLabel: i = "Drop the call here", label: a = "Call, along the bottom of the page", bottomOffset: o = 16, className: s, children: c, "data-testid": l = "floating-dock-bar" }) {
+function Mt({ docked: e, ghost: t = !1, dockId: r, ghostLabel: i = "Drop the call here", label: a = "Call, along the bottom of the page", bottomOffset: o = 16, className: s, children: c, "data-testid": l = "floating-dock-bar" }) {
 	return !e && t && r ? /* @__PURE__ */ J("div", {
 		className: n("pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4", s),
 		style: { bottom: o },
@@ -1463,8 +1463,44 @@ function Nt({ docked: e, ghost: t = !1, dockId: r, ghostLabel: i = "Drop the cal
 	}) : null;
 }
 //#endregion
+//#region src/components/doc-editor/DocumentModePill.tsx
+var Nt = {
+	editing: {
+		label: "Editing",
+		tone: "info"
+	},
+	suggesting: {
+		label: "Suggesting",
+		tone: "warning"
+	},
+	review: {
+		label: "Review",
+		tone: "accent"
+	},
+	read: {
+		label: "Read",
+		tone: "neutral"
+	}
+};
+function Pt({ mode: e, reason: t, className: r, "data-testid": i = "document-mode-pill" }) {
+	let { label: a, tone: o } = Nt[e];
+	return /* @__PURE__ */ J("span", {
+		className: n("inline-flex items-center", r),
+		title: t,
+		"aria-label": t ? `${a}. ${t}` : a,
+		"data-testid": i,
+		"data-mode": e,
+		children: /* @__PURE__ */ J(c, {
+			tone: o,
+			size: "sm",
+			className: "rounded-full px-2.5",
+			children: a
+		})
+	});
+}
+//#endregion
 //#region src/components/doc-editor/DocumentOwnership.tsx
-function Pt({ owner: e, collaborators: t = [], maxAvatars: r = 3, onShare: i, className: a, "data-testid": o = "document-ownership" }) {
+function Ft({ owner: e, collaborators: t = [], maxAvatars: r = 3, onShare: i, className: a, "data-testid": o = "document-ownership" }) {
 	if (!e) return null;
 	let s = t.slice(0, r), c = t.length - s.length;
 	return /* @__PURE__ */ Y("span", {
@@ -1516,18 +1552,18 @@ function Pt({ owner: e, collaborators: t = [], maxAvatars: r = 3, onShare: i, cl
 }
 //#endregion
 //#region src/components/doc-editor/DocumentShareDialog.tsx
-var Ft = [
+var It = [
 	"owner",
 	"editor",
 	"commenter",
 	"viewer"
-], Z = {
+], Lt = {
 	restricted: () => "Restricted — only people added here",
 	"org-view": (e) => `Anyone at ${e} can view`,
 	"org-edit": (e) => `Anyone at ${e} can edit`,
 	"link-view": () => "Anyone with the link can view"
 };
-function It({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: c, onInvite: u, onCopyLink: d, notice: f, "data-testid": m = "document-share-dialog" }) {
+function Rt({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: c, onInvite: u, onCopyLink: d, notice: f, "data-testid": m = "document-share-dialog" }) {
 	let [h, g] = K(""), _ = () => {
 		let e = h.trim();
 		!e || !u || (u(e), g(""));
@@ -1592,7 +1628,7 @@ function It({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 								"aria-label": `Access for ${e.displayName}`,
 								"data-testid": `${m}-role`,
 								className: "rounded border border-border bg-surface px-1 py-0.5 text-xs text-text-secondary",
-								children: Ft.filter((e) => e !== "owner").map((e) => /* @__PURE__ */ J("option", {
+								children: It.filter((e) => e !== "owner").map((e) => /* @__PURE__ */ J("option", {
 									value: e,
 									children: e
 								}, e))
@@ -1612,9 +1648,9 @@ function It({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						"aria-label": "General access",
 						"data-testid": `${m}-general-access`,
 						className: "rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary disabled:opacity-60",
-						children: Object.keys(Z).map((e) => /* @__PURE__ */ J("option", {
+						children: Object.keys(Lt).map((e) => /* @__PURE__ */ J("option", {
 							value: e,
-							children: Z[e](o)
+							children: Lt[e](o)
 						}, e))
 					})]
 				}),
@@ -1656,7 +1692,7 @@ var Q = [
 		hint: "Read the document without changing it."
 	}
 ];
-function Lt({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: a = !1, className: s, "data-testid": c = "suggestion-mode-control" }) {
+function zt({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: a = !1, className: s, "data-testid": c = "suggestion-mode-control" }) {
 	let l = Q.filter((e) => r || e.value !== "viewing").map((e) => ({
 		label: e.label,
 		value: e.value
@@ -1684,24 +1720,24 @@ function Lt({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionCard.tsx
-var Rt = {
+var Bt = {
 	insert: "Added",
 	delete: "Removed",
 	replace: "Replaced",
 	modify: "Formatted"
-}, zt = {
+}, Vt = {
 	insert: "text-success-fg",
 	delete: "text-danger-fg",
 	replace: "text-caution-fg",
 	modify: "text-info-fg"
 }, $ = 6;
-function Bt(e) {
+function Ht(e) {
 	return new Date(e).toLocaleTimeString([], {
 		hour: "numeric",
 		minute: "2-digit"
 	});
 }
-function Vt({ lines: e, tone: t, testId: r }) {
+function Ut({ lines: e, tone: t, testId: r }) {
 	let i = e.slice(0, $), a = t === "insert" ? "ins" : "del";
 	return /* @__PURE__ */ Y("div", {
 		className: n("flex flex-col gap-1 border-l-2 pl-2.5", t === "insert" ? "border-success-fg" : "border-danger-fg"),
@@ -1719,7 +1755,7 @@ function Vt({ lines: e, tone: t, testId: r }) {
 		})]
 	});
 }
-function Ht({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: f, onReject: m, className: h, "data-testid": g = "suggestion-card" }) {
+function Wt({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: f, onReject: m, className: h, "data-testid": g = "suggestion-card" }) {
 	let _ = t.trim() === "" ? "Unknown author" : t, v = c && c.length > 0 ? c : s ? [s] : [], y = l && l.length > 0 ? l : o ? [o] : [], b = v.length > 0 || y.length > 0;
 	return /* @__PURE__ */ Y("div", {
 		"data-testid": g,
@@ -1741,12 +1777,12 @@ function Ht({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 					}),
 					i !== null && /* @__PURE__ */ J("span", {
 						className: "shrink-0 text-xs tabular-nums text-text-tertiary",
-						children: Bt(i)
+						children: Ht(i)
 					}),
 					/* @__PURE__ */ J("span", {
-						className: n("ml-auto shrink-0 text-[11px] font-medium", zt[e]),
+						className: n("ml-auto shrink-0 text-[11px] font-medium", Vt[e]),
 						"data-testid": `${g}-kind`,
-						children: Rt[e]
+						children: Bt[e]
 					})
 				]
 			}),
@@ -1761,11 +1797,11 @@ function Ht({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 				disabled: !d,
 				"data-testid": `${g}-body`,
 				className: n("flex w-full flex-col items-stretch gap-1 border-none bg-transparent p-0 text-left font-[inherit]", d && "cursor-pointer hover:opacity-80"),
-				children: [y.length > 0 && /* @__PURE__ */ J(Vt, {
+				children: [y.length > 0 && /* @__PURE__ */ J(Ut, {
 					lines: y,
 					tone: "delete",
 					testId: `${g}-deleted`
-				}), v.length > 0 && /* @__PURE__ */ J(Vt, {
+				}), v.length > 0 && /* @__PURE__ */ J(Ut, {
 					lines: v,
 					tone: "insert",
 					testId: `${g}-inserted`
@@ -1803,7 +1839,7 @@ function Ht({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionReviewList.tsx
-function Ut({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: l = null, headerExtra: d, emptyTitle: f = "No suggestions", emptyBody: p = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: g = "card", className: _, "data-testid": v = "suggestion-review-list" }) {
+function Gt({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: l = null, headerExtra: d, emptyTitle: f = "No suggestions", emptyBody: p = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: g = "card", className: _, "data-testid": v = "suggestion-review-list" }) {
 	let y = e > 0 && (a || o), b = y || d ? /* @__PURE__ */ Y("span", {
 		className: "flex items-center gap-1.5",
 		children: [
@@ -1873,4 +1909,4 @@ function Ut({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: l = 
 	});
 }
 //#endregion
-export { pt as AckMode, he as ActionItemsCard, yt as ActivityFeed, R as AttachmentsPanel, L as CANVAS_BODY_KEY, M as CANVAS_SCHEMA_VERSION, Ve as CanvasDocumentView, ee as CanvasLineSpacing, ft as ChunkViewer, At as CommentGhostPopover, B as CommentThreadNode, be as DiffViewer, xe as DocumentEditorPage, Ie as DocumentFindBar, Oe as DocumentGutter, re as DocumentHeader, Qe as DocumentListPage, Re as DocumentOutline, Pt as DocumentOwnership, Fe as DocumentRuler, It as DocumentShareDialog, He as DocumentStatusBar, Be as DocumentToolbar, T as EditorToolbar, le as ExecutiveSummaryCard, Nt as FloatingDockBar, j as FollowModeBar, ve as HeaderBanner, Se as KeyDecisionsCard, te as LINE_SPACINGS, E as LINE_SPACING_LABELS, Te as MentionDropdown, oe as MyMentionsPanel, x as NewDocumentModal, Me as PX_PER_INCH, I as ParticipantAvatars, wt as ProposalCard, se as ReaderMode, de as ReviewMode, ot as ReviewProgress, ut as ReviewableItem, Ft as SHARE_ROLES, Q as SUGGESTION_AUTHORING_MODES, we as SectionBlock, ue as SectionComments, A as SectionList, ce as SectionSummariesCard, rt as StandaloneTiptap, Ht as SuggestionCard, Lt as SuggestionModeControl, Ut as SuggestionReviewList, ye as TableOfContents, y as TaskItemRow, b as TaskList, O as TiptapEditor, _e as VersionHistoryPanel, z as VideoCallPanel, Mt as VideoDockSlot, fe as VideoHistoryPanel, Tt as WorkItemRow, Ae as ZOOM_FIT, je as ZOOM_STEPS, N as canvasBody, F as canvasFragmentToMarkdown, $e as clientIdForUser, Ce as countAllComments, me as findDocumentTarget, ze as findMatches, ge as generateSummaryBullets, Ee as getInitials, P as isCanvasDocument, w as isLineSpacing, D as lineSpacingAttributes, Ne as nextMatchIndex, ne as parseLineSpacing, ke as readOutline, ae as readSchemaVersion, V as relativeTime, kt as replyLabel, k as scrollToDocumentTarget, Le as stackOffsets, ie as useDocumentActions, Pe as useDocumentOutline, et as useFollowCursor, De as useIsCanvasDocument, pe as useSidebarPanels };
+export { pt as AckMode, he as ActionItemsCard, yt as ActivityFeed, R as AttachmentsPanel, L as CANVAS_BODY_KEY, M as CANVAS_SCHEMA_VERSION, Ve as CanvasDocumentView, ee as CanvasLineSpacing, ft as ChunkViewer, kt as CommentGhostPopover, B as CommentThreadNode, be as DiffViewer, xe as DocumentEditorPage, Ie as DocumentFindBar, Oe as DocumentGutter, re as DocumentHeader, Qe as DocumentListPage, Pt as DocumentModePill, Re as DocumentOutline, Ft as DocumentOwnership, Fe as DocumentRuler, Rt as DocumentShareDialog, He as DocumentStatusBar, Be as DocumentToolbar, T as EditorToolbar, le as ExecutiveSummaryCard, Mt as FloatingDockBar, j as FollowModeBar, ve as HeaderBanner, Se as KeyDecisionsCard, te as LINE_SPACINGS, E as LINE_SPACING_LABELS, Te as MentionDropdown, oe as MyMentionsPanel, x as NewDocumentModal, Me as PX_PER_INCH, I as ParticipantAvatars, wt as ProposalCard, se as ReaderMode, de as ReviewMode, ot as ReviewProgress, ut as ReviewableItem, It as SHARE_ROLES, Q as SUGGESTION_AUTHORING_MODES, we as SectionBlock, ue as SectionComments, A as SectionList, ce as SectionSummariesCard, rt as StandaloneTiptap, Wt as SuggestionCard, zt as SuggestionModeControl, Gt as SuggestionReviewList, ye as TableOfContents, y as TaskItemRow, b as TaskList, O as TiptapEditor, _e as VersionHistoryPanel, z as VideoCallPanel, jt as VideoDockSlot, fe as VideoHistoryPanel, Tt as WorkItemRow, Ae as ZOOM_FIT, je as ZOOM_STEPS, N as canvasBody, F as canvasFragmentToMarkdown, $e as clientIdForUser, Ce as countAllComments, me as findDocumentTarget, ze as findMatches, ge as generateSummaryBullets, Ee as getInitials, P as isCanvasDocument, w as isLineSpacing, D as lineSpacingAttributes, Ne as nextMatchIndex, ne as parseLineSpacing, ke as readOutline, ae as readSchemaVersion, V as relativeTime, Z as replyLabel, k as scrollToDocumentTarget, Le as stackOffsets, ie as useDocumentActions, Pe as useDocumentOutline, et as useFollowCursor, De as useIsCanvasDocument, pe as useSidebarPanels };
