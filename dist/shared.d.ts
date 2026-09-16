@@ -1826,6 +1826,9 @@ export declare interface LineSeries {
 
 export declare function Link({ href, children, external, unstyled, target, rel, className, ...rest }: LinkProps): JSX.Element;
 
+/** Two chain links: a hyperlink — "point this at a URL", or "copy the URL". */
+export declare function LinkIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare interface LinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
     /** Required — a link with nowhere to go is a button. */
     href: string;
@@ -2597,6 +2600,9 @@ export declare interface QuickPromptGridProps {
     className?: string;
 }
 
+/** A pair of quotation marks: a quoted passage — a blockquote. */
+export declare function QuoteIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function RadioGroup<T extends string = string>({ name, value, onChange, options, disabled, orientation, 'data-testid': testId, }: RadioGroupProps<T>): JSX.Element;
 
 export declare interface RadioGroupProps<T extends string = string> {
@@ -2642,6 +2648,10 @@ export declare interface RailSectionProps {
 
 /** Two arrows chasing each other: something that runs again — a loop, a re-run. */
 export declare function RepeatIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** A hooked arrow pointing back: reply. ForwardIcon's mirror, because the two
+ *  are the same gesture pointed different ways. */
+export declare function ReplyIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Top-left corner a panel of `width`×`height` occupies at `anchor`. */
 export declare function resolveAnchorPosition(anchor: FloatingPanelAnchor, width: number, height: number): {
@@ -2928,6 +2938,10 @@ export declare interface SliderProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** A smiling face: pick an emoji. The button, not the emoji — a reaction a
+ *  person actually left stays the character they chose. */
+export declare function SmileyIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function Sparkline({ data, width, height, color, baseline, }: SparklineProps): JSX.Element;
 
@@ -4103,6 +4117,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -4122,12 +4149,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -4135,19 +4159,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -4158,6 +4175,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -4191,22 +4218,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

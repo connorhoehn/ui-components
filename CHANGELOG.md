@@ -6,6 +6,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.293.0] — 2026-09-16
+
+### Fixed — `./social`
+
+- **The composer toolbar and the message hover bar draw their controls now.**
+  🔗 ❝ 🙂 📎 in `RichChatComposer` and 😀 ↩ 🔗 in `MessageActionBar` were the
+  last emoji left sitting under and over every message on every chat surface,
+  and two separate things were wrong with them. A colour emoji does not take
+  `currentColor`: it stays bright on a muted toolbar, ignores the hover, active
+  and disabled states of the button around it, and does not invert for dark
+  mode — so it reads as a sticker stuck onto a control rather than as the
+  control. And the glyphs are font-dependent. ❝ and ↩ sit in the
+  U+2190–U+27BF range, which renders as a *text* glyph on one platform and a
+  *colour* one on another unless a U+FE0E variation selector forces it — the
+  same trap 2.289.1 hit with U+21AA on Forward and the disclosure triangle hit
+  with U+25B6. They are stroke icons on `currentColor` now, sized to the
+  buttons that already exist rather than to themselves: 16px in the composer's
+  `h-7` toolbar, 14px in the action bar so they weigh the same as the
+  `ForwardIcon` and `PinIcon` already beside them. Every `aria-label`, `title`
+  and `data-testid` is unchanged — the icons are `aria-hidden` and the button
+  is still what carries the name.
+- **The reactions themselves are untouched.** 👍 🎉 ❤️ on a message are the
+  character a person chose to send — content, not chrome — so only the button
+  that OPENS the picker became an icon. The quick row is still the emoji.
+
+### Added — `./shared`
+
+- **`LinkIcon`, `QuoteIcon`, `SmileyIcon` and `ReplyIcon`** in `ui/Icons`,
+  drawn to the set's existing convention (16px default, `0 0 16` viewBox,
+  1.5 stroke on `currentColor`). `ReplyIcon` is deliberately `ForwardIcon`
+  mirrored: `MessageActionBar`'s own note says reply and forward are the same
+  gesture pointed different ways, and two arrows that disagreed about their
+  weight would say the opposite. `PaperclipIcon` already existed and is reused
+  rather than redrawn.
+
+---
+
 ## [2.292.0] — 2026-09-16
 
 ### Fixed — `./social`

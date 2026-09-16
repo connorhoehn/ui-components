@@ -116,6 +116,35 @@ describe('MessageActionBar', () => {
       'message-actions-pin',
     ]);
   });
+
+  // A colour emoji ignores the button around it — it stays bright on a muted
+  // bar, does not follow hover or dark mode, and renders as a text glyph on
+  // one platform and a picture on another. Chrome is drawn; content is not.
+  it('draws its chrome as icons, and leaves the reactions as the characters people sent', () => {
+    render(
+      <MessageActionBar
+        quickReactions={['👍']}
+        onReact={vi.fn()}
+        onOpenReactionPicker={vi.fn()}
+        onReply={vi.fn()}
+        onCopyLink={vi.fn()}
+      />,
+    );
+    for (const key of ['more-reactions', 'reply', 'copy-link']) {
+      const button = screen.getByTestId(`message-actions-${key}`);
+      expect(button.querySelector('svg')).not.toBeNull();
+      expect(button.textContent).toBe('');
+    }
+    // The reaction itself is what a person chose to send, so it stays a char.
+    expect(screen.getByTestId('message-actions-react-👍').textContent).toBe('👍');
+  });
+
+  it('keeps naming the icon-only controls for a screen reader', () => {
+    render(<MessageActionBar onOpenReactionPicker={vi.fn()} onReply={vi.fn()} onCopyLink={vi.fn()} />);
+    expect(screen.getByLabelText('More reactions')).toBeInTheDocument();
+    expect(screen.getByLabelText('Reply')).toBeInTheDocument();
+    expect(screen.getByLabelText('Copy link to message')).toBeInTheDocument();
+  });
 });
 
 describe('excerpt', () => {

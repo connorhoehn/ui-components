@@ -316,3 +316,47 @@ export function PaperclipIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** Two chain links: a hyperlink — "point this at a URL", or "copy the URL". */
+export function LinkIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M6.8 11H5.5a3 3 0 0 1 0-6h1.3" />
+      <path d="M9.2 5h1.3a3 3 0 0 1 0 6H9.2" />
+      <path d="M6 8h4" />
+    </svg>
+  );
+}
+
+/** A pair of quotation marks: a quoted passage — a blockquote. */
+export function QuoteIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M6.5 4.5h-3v3h3v1.5a2 2 0 0 1-2 2" />
+      <path d="M13 4.5h-3v3h3v1.5a2 2 0 0 1-2 2" />
+    </svg>
+  );
+}
+
+/** A smiling face: pick an emoji. The button, not the emoji — a reaction a
+ *  person actually left stays the character they chose. */
+export function SmileyIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="8" cy="8" r="5.5" />
+      <path d="M6.2 6.6h.01M9.8 6.6h.01" />
+      <path d="M5.5 9.3c.6.9 1.5 1.4 2.5 1.4s1.9-.5 2.5-1.4" />
+    </svg>
+  );
+}
+
+/** A hooked arrow pointing back: reply. ForwardIcon's mirror, because the two
+ *  are the same gesture pointed different ways. */
+export function ReplyIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M13 4.5v3a3 3 0 0 1-3 3H3.5" />
+      <path d="M6 8.2 3.2 10.5 6 12.8" />
+    </svg>
+  );
+}

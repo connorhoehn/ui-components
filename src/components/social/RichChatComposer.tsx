@@ -85,6 +85,7 @@ import { DocumentSuggestions, type DocumentCandidate } from './DocumentSuggestio
 import { EmojiSuggestions } from './EmojiSuggestions';
 import { CommandSuggestions, type CommandSuggestionItem } from './CommandSuggestions';
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
+import { LinkIcon, PaperclipIcon, QuoteIcon, SmileyIcon } from '../ui/Icons';
 
 export type { MentionCandidate, DocumentCandidate };
 
@@ -973,12 +974,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               editor.isActive('link') ? 'Edit link' : 'Add link',
               editor.isActive('link'),
               () => openLinkDialog(),
-              <span aria-hidden>🔗</span>,
+              <LinkIcon size={16} />,
             ),
             <span key="sep1" aria-hidden className="mx-1 h-4 w-px bg-border" />,
             toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), <span>•</span>),
             toolbarButton('Numbered list', editor.isActive('orderedList'), () => editor.chain().focus().toggleOrderedList().run(), <span className="text-[11px]">1.</span>),
-            toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <span>❝</span>),
+            toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={16} />),
           ]}
 
           {(allowEmoji || attachmentsEnabled) && (
@@ -987,7 +988,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
           {allowEmoji && editor && (
             <span className="relative">
-              {toolbarButton('Emoji', emojiOpen, () => setEmojiOpen((v) => !v), <span>🙂</span>, emojiTrigger)}
+              {toolbarButton('Emoji', emojiOpen, () => setEmojiOpen((v) => !v), <SmileyIcon size={16} />, emojiTrigger)}
               <ReactionPickerPopover
                 open={emojiOpen}
                 triggerRef={emojiTrigger}
@@ -1004,7 +1005,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
           {attachmentsEnabled && (
             <>
-              {toolbarButton('Attach files', false, () => fileInput.current?.click(), <span>📎</span>)}
+              {toolbarButton('Attach files', false, () => fileInput.current?.click(), <PaperclipIcon size={16} />)}
               <FileInput
                 ref={fileInput}
                 multiple

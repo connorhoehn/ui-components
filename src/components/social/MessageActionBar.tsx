@@ -17,7 +17,7 @@
 // caller's decision — different products have different vocabularies.
 
 import { cn } from '../../lib/cn';
-import { EditIcon, ForwardIcon, PinIcon, TrashIcon } from '../ui/Icons';
+import { EditIcon, ForwardIcon, LinkIcon, PinIcon, ReplyIcon, SmileyIcon, TrashIcon } from '../ui/Icons';
 
 export interface MessageActionBarProps {
   /** Emoji offered inline. Keep it short; the picker covers the rest. */
@@ -105,11 +105,11 @@ export function MessageActionBar({
         quickReactions.map((e) =>
           btn(`React ${e}`, () => onReact(e), <span aria-hidden>{e}</span>, `react-${e}`),
         )}
-      {onOpenReactionPicker && btn('More reactions', onOpenReactionPicker, <span aria-hidden>😀</span>, 'more-reactions')}
-      {onReply && btn('Reply', onReply, <span aria-hidden>↩</span>, 'reply')}
+      {onOpenReactionPicker && btn('More reactions', onOpenReactionPicker, <SmileyIcon size={14} />, 'more-reactions')}
+      {onReply && btn('Reply', onReply, <ReplyIcon size={14} />, 'reply')}
       {onForward && btn('Forward to another conversation', onForward, <ForwardIcon size={14} />, 'forward')}
       {onTogglePin && btn(pinned ? 'Unpin' : 'Pin to channel', onTogglePin, <PinIcon size={14} />, 'pin')}
-      {onCopyLink && btn('Copy link to message', onCopyLink, <span aria-hidden>🔗</span>, 'copy-link')}
+      {onCopyLink && btn('Copy link to message', onCopyLink, <LinkIcon size={14} />, 'copy-link')}
       {onEdit && btn('Edit message', onEdit, <EditIcon size={13} />, 'edit')}
       {onDelete && btn('Delete message', onDelete, <TrashIcon size={13} />, 'delete')}
     </div>
