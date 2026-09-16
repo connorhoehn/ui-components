@@ -145,4 +145,33 @@ describe('Toolbar', () => {
     fireEvent.keyDown(screen.getByRole('toolbar'), { key: 'ArrowRight' });
     expect(screen.getByText('two')).toHaveFocus();
   });
+
+  it('honours wrap on the row itself, so the end slot can drop to its own line instead of overflowing', () => {
+    render(
+      <Toolbar wrap end={<button type="button">Refresh</button>} data-testid="tb">
+        <button type="button">Run</button>
+      </Toolbar>,
+    );
+    // The row that holds both the children slot and the end slot must allow
+    // wrapping, or `end` (flex-none) has nowhere to go but past the edge.
+    expect(screen.getByTestId('tb').className).toContain('flex-wrap');
+  });
+
+  it('drops the end slot left padding when wrapped (it may no longer share a line with children)', () => {
+    const { rerender } = render(
+      <Toolbar end={<button type="button">Refresh</button>}>
+        <button type="button">Run</button>
+      </Toolbar>,
+    );
+    const endWrapper = () => screen.getByRole('button', { name: 'Refresh' }).parentElement!;
+    expect(endWrapper().className).toContain('pl-2');
+
+    rerender(
+      <Toolbar wrap end={<button type="button">Refresh</button>}>
+        <button type="button">Run</button>
+      </Toolbar>,
+    );
+    expect(endWrapper().className).not.toContain('pl-2');
+    expect(endWrapper().className).toContain('flex-wrap');
+  });
 });

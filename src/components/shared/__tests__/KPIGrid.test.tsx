@@ -65,4 +65,24 @@ describe('KPIGrid', () => {
     );
     expect(screen.getByTestId('kpis')).toBeInTheDocument();
   });
+
+  it('emits no md: column class when mdColumns is unset (unchanged default)', () => {
+    render(
+      <KPIGrid columns={4}>
+        <div />
+      </KPIGrid>,
+    );
+    expect(screen.getByTestId('kpi-grid').className).not.toMatch(/md:grid-cols-/);
+  });
+
+  it('adds an md breakpoint step between sm and the full column count when mdColumns is set', () => {
+    render(
+      <KPIGrid columns={4} mdColumns={2}>
+        <div />
+      </KPIGrid>,
+    );
+    const cls = screen.getByTestId('kpi-grid').className;
+    expect(cls).toContain('sm:grid-cols-4');
+    expect(cls).toContain('md:grid-cols-2');
+  });
 });

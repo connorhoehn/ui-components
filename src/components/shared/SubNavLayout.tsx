@@ -80,6 +80,11 @@ export interface SubNavLayoutProps {
    *
    * If not provided, a plain `<a href={item.path}>` is rendered with no
    * active-state detection.
+   *
+   * `activeNavItemClassName`/`inactiveNavItemClassName` (exported alongside
+   * `activeNavItemStyle` below) are the className-based equivalent, for a
+   * `NavLink` `className={({isActive}) => ...}` integration that wants no
+   * inline `style` prop at all.
    */
   renderNavItem?: (item: SubNavItem, children: ReactNode, baseStyle: CSSProperties) => ReactNode;
   /**
@@ -413,5 +418,30 @@ export const activeNavItemStyle: CSSProperties = {
   background: 'var(--color-surface-hover)',
   color: 'var(--color-text-primary)',
 };
+
+/**
+ * className-based equivalents of `baseStyle` (the item's default look, passed
+ * as `renderNavItem`'s third argument) and `activeNavItemStyle` above — for a
+ * router integration that wants `NavLink`'s `className={({ isActive }) => ...}`
+ * form instead of its `style={({ isActive }) => ...}` form, so hooking up
+ * real active-link routing needs no inline `style` prop at all:
+ *
+ * ```tsx
+ * renderNavItem={(item, children) => (
+ *   <NavLink
+ *     to={item.path}
+ *     className={({ isActive }) =>
+ *       isActive ? activeNavItemClassName : inactiveNavItemClassName
+ *     }
+ *   >
+ *     {children}
+ *   </NavLink>
+ * )}
+ * ```
+ */
+export const inactiveNavItemClassName =
+  'block px-[14px] py-2 border-l-[3px] border-transparent text-text-secondary no-underline cursor-pointer';
+export const activeNavItemClassName =
+  'block px-[14px] py-2 border-l-[3px] border-primary bg-surface-hover text-text-primary no-underline cursor-pointer';
 
 export { cn };

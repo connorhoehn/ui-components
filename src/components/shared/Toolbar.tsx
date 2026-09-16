@@ -152,8 +152,12 @@ export function Toolbar({
       className={cn(
         'flex flex-none',
         // A wrapping row grows taller, so its groups align to the top of each
-        // line rather than centring the whole (now multi-line) block.
-        wrap ? 'items-start py-1.5' : 'items-center',
+        // line rather than centring the whole (now multi-line) block. `wrap`
+        // also has to apply to the ROW itself, not just the `children` slot —
+        // otherwise `end` stays a flex-none sibling on a nowrap row and, once
+        // it and `children` no longer both fit, overflows past the toolbar's
+        // right edge instead of dropping to a line of its own.
+        wrap ? 'flex-wrap items-start py-1.5' : 'items-center',
         SIZE[size],
         TONE[tone],
         bordered && 'border-b',
@@ -169,7 +173,19 @@ export function Toolbar({
       >
         {children}
       </div>
-      {end && <div className="flex flex-none items-center gap-2 pl-2">{end}</div>}
+      {end && (
+        <div
+          className={cn(
+            'flex flex-none items-center gap-2',
+            // The left padding assumes `end` is sharing a line with
+            // `children` — right when the row hasn't wrapped, wrong (a stray
+            // indent) once `end` has dropped to its own line.
+            wrap ? 'flex-wrap' : 'pl-2',
+          )}
+        >
+          {end}
+        </div>
+      )}
     </div>
   );
 }

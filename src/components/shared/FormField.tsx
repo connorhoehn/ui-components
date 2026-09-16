@@ -67,16 +67,34 @@ export default function FormField({
   const id = useId();
   const labelId = `${id}-label`;
   const describedById = (hint || error) ? `${id}-desc` : undefined;
+  // `labelId` is not a DOM attribute, but the documented pattern is to spread
+  // this whole bag onto a native control (`<Input {...p} .../>`) — so a plain
+  // enumerable field here reaches the DOM and React warns "does not
+  // recognize the `labelId` prop" on every page load. Defining it as
+  // non-enumerable keeps `wiring.labelId` (and the type below, which still
+  // lists it) working for a consumer that reads it directly for
+  // `aria-labelledby` — Switch and other non-`htmlFor` controls need exactly
+  // that — while `{...wiring}` (spread/`Object.assign`/`Object.keys` all
+  // honour enumerability) quietly drops it before it ever reaches a `<input>`.
   const wiring = {
     id,
-    labelId,
     'aria-describedby': describedById,
     'aria-invalid': error ? true : undefined,
     // The asterisk after the label is decorative (aria-hidden below), so
     // `required` needs its own programmatic exposure or the requirement is
     // invisible to screen readers.
     'aria-required': required || undefined,
+  } as {
+    id: string;
+    labelId: string;
+    'aria-describedby'?: string;
+    'aria-invalid'?: boolean;
+    'aria-required'?: boolean;
   };
+  Object.defineProperty(wiring, 'labelId', {
+    value: labelId,
+    enumerable: false,
+  });
 
   return (
     <div

@@ -15,15 +15,23 @@ export interface ToolCallStripProps {
 export interface ToolCallPillProps {
   name: string;
   done: boolean;
+  /**
+   * Tooltip text, rendered as the pill's `title` attribute — a place for the
+   * raw tool id when `name` is a friendlier display label ("searched
+   * knowledge base" vs. the tool's actual name) and the two need to differ.
+   * Undefined (the default) renders no `title`, same as today.
+   */
+  title?: string;
   className?: string;
 }
 
 /**
  * A single pill rendering one tool call's name + done/pending state.
  */
-export function ToolCallPill({ name, done, className }: ToolCallPillProps) {
+export function ToolCallPill({ name, done, title, className }: ToolCallPillProps) {
   return (
     <span
+      title={title}
       className={cn(
         'inline-flex items-center gap-1 text-[10.5px] font-mono px-2 py-0.5 rounded-full',
         done

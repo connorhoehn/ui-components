@@ -1,6 +1,11 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { SubNavLayout, type SubNavItem } from '../SubNavLayout';
+import {
+  SubNavLayout,
+  type SubNavItem,
+  activeNavItemClassName,
+  inactiveNavItemClassName,
+} from '../SubNavLayout';
 
 const FLAT: SubNavItem[] = [
   { path: 'summary', label: 'Summary' },
@@ -154,5 +159,31 @@ describe('SubNavLayout — focus handoff on group collapse', () => {
     const section = container.querySelector('section');
     expect(section).not.toBeNull();
     expect(section).toHaveAttribute('aria-label', 'Distillation');
+  });
+
+  it('exports className-based active-state equivalents of activeNavItemStyle for router integration', () => {
+    render(
+      <SubNavLayout
+        title="T"
+        items={[{ path: 'x', label: 'X' }]}
+        renderNavItem={(item, children) => (
+          <a
+            data-testid={`link-${item.path}`}
+            href={item.path}
+            className={item.path === 'x' ? activeNavItemClassName : inactiveNavItemClassName}
+          >
+            {children}
+          </a>
+        )}
+      >
+        c
+      </SubNavLayout>,
+    );
+    const link = screen.getByTestId('link-x');
+    expect(link.className).toBe(activeNavItemClassName);
+    expect(link).not.toHaveAttribute('style');
+    expect(activeNavItemClassName).not.toBe(inactiveNavItemClassName);
+    expect(inactiveNavItemClassName).toContain('border-transparent');
+    expect(activeNavItemClassName).toContain('border-primary');
   });
 });

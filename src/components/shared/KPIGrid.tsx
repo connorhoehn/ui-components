@@ -17,6 +17,16 @@ export interface KPIGridProps {
   children: ReactNode;
   /** Number of columns at >=640px. Default 4. Always collapses to 1 below. */
   columns?: KPIGridColumns;
+  /**
+   * Column count for the 768–1023px (`md`) band. Undefined (the default)
+   * emits no `md:` class, so that band keeps showing `columns` — today's
+   * behaviour, where the whole 640–1279px range renders identically. Set
+   * this lower than `columns` for a grid that lives inside a nested rail
+   * (a laptop-width `md` view there is far narrower than a full-width page
+   * at the same viewport size) so tiles stay readable instead of cramming
+   * `columns` of them into the rail's actual width.
+   */
+  mdColumns?: KPIGridColumns;
   /** Tighter gap (8px vs 16px). Default false. */
   dense?: boolean;
   className?: string;
@@ -31,9 +41,17 @@ const COLUMN_CLASS: Record<KPIGridColumns, string> = {
   4: 'sm:grid-cols-4',
 };
 
+const MD_COLUMN_CLASS: Record<KPIGridColumns, string> = {
+  1: 'md:grid-cols-1',
+  2: 'md:grid-cols-2',
+  3: 'md:grid-cols-3',
+  4: 'md:grid-cols-4',
+};
+
 export function KPIGrid({
   children,
   columns = 4,
+  mdColumns,
   dense = false,
   className,
   style,
@@ -45,6 +63,7 @@ export function KPIGrid({
       className={cn(
         'grid grid-cols-1',
         COLUMN_CLASS[columns],
+        mdColumns && MD_COLUMN_CLASS[mdColumns],
         dense ? 'gap-2' : 'gap-4',
         className,
       )}

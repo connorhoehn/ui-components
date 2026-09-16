@@ -7,7 +7,7 @@
 // Designed to replace hand-rolled `<table>` patterns across admin shells
 // (RunsTable, ActiveRunsTable, EntityTable, identity list pages, etc).
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { isValidElement, useMemo, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import {
   Table,
@@ -117,6 +117,56 @@ function defaultCellCompare(a: unknown, b: unknown): number {
   return String(a ?? '').localeCompare(String(b ?? ''));
 }
 
+/**
+ * Cheap ReactNode → text walker used only for the search fallback below. Not
+ * a general renderer: it never invokes components, just concatenates string/
+ * number leaves and recurses into `props.children`, which is enough to
+ * extract the visible text of the common "wrap a formatted value in a span"
+ * render function without pulling in `react-dom/server`.
+ */
+function nodeToFilterText(node: ReactNode): string {
+  if (node === null || node === undefined || typeof node === 'boolean') return '';
+  if (typeof node === 'string') return node;
+  if (typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(nodeToFilterText).join(' ');
+  if (isValidElement(node)) {
+    const children = (node.props as { children?: ReactNode } | null)?.children;
+    return children === undefined ? '' : nodeToFilterText(children);
+  }
+  return '';
+}
+
+// Column keys we've already warned about — module-scoped so the warning
+// fires once per column per page load, not once per keystroke.
+const warnedSearchColumns = new Set<string>();
+
+/**
+ * Text a row contributes to the global search for one column. Priority:
+ * `getFilterText` > a primitive `row[key]` > the rendered cell's text (when
+ * `render` is set) > `String(value ?? '')` with a one-time dev warning,
+ * because at that point the column has no way to be searched at all and a
+ * search box that silently matches nothing looks like a bug in the data, not
+ * the table.
+ */
+function filterTextForColumn<T>(col: DataTableColumn<T>, row: T, rowIndex: number): string {
+  if (col.getFilterText) return col.getFilterText(row);
+  const raw = (row as Record<string, unknown>)[col.key];
+  const isPrimitive =
+    raw !== null && raw !== undefined && typeof raw !== 'object' && typeof raw !== 'function';
+  if (isPrimitive) return String(raw);
+  if (col.render) return nodeToFilterText(col.render(row, rowIndex));
+  if (process.env.NODE_ENV !== 'production' && !warnedSearchColumns.has(col.key)) {
+    warnedSearchColumns.add(col.key);
+    console.warn(
+      `[DataTable] Column "${col.key}" is searchable but its value lives ` +
+        'in neither a primitive row value nor getFilterText, and it has no ' +
+        'render function to fall back on — it will never match a search ' +
+        'query. Add getFilterText, add render, or set filterable={false}.',
+    );
+  }
+  return String(raw ?? '');
+}
+
 function alignClass(a?: 'left' | 'right' | 'center'): string | undefined {
   if (a === 'right') return 'text-right';
   if (a === 'center') return 'text-center';
@@ -165,13 +215,10 @@ export function DataTable<T>({
   const filtered = useMemo(() => {
     if (!searchable || query.trim() === '') return data;
     const q = query.trim().toLowerCase();
-    return data.filter((row) =>
+    return data.filter((row, rowIndex) =>
       columns.some((col) => {
         if (col.filterable === false) return false;
-        const text = col.getFilterText
-          ? col.getFilterText(row)
-          : String((row as Record<string, unknown>)[col.key] ?? '');
-        return text.toLowerCase().includes(q);
+        return filterTextForColumn(col, row, rowIndex).toLowerCase().includes(q);
       }),
     );
   }, [data, columns, query, searchable]);
@@ -278,8 +325,30 @@ export function DataTable<T>({
                     // Striping the ODD rows keeps the first row on the plain
                     // surface, so the table starts flush with the page rather
                     // than opening on a band.
-                    className={striped && rowIndex % 2 === 1 ? 'bg-surface-inset' : undefined}
+                    className={cn(
+                      striped && rowIndex % 2 === 1 ? 'bg-surface-inset' : undefined,
+                      // Only a clickable row joins the tab order — a plain
+                      // display table has nothing to activate, and adding a
+                      // stop with no effect would be a worse keyboard
+                      // experience than no stop at all.
+                      onRowClick &&
+                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
+                    )}
+                    tabIndex={onRowClick ? 0 : undefined}
+                    // +2, not +1: row 1 of the ARIA table model is the header
+                    // row, so the first body row is row 2.
+                    aria-rowindex={onRowClick ? rowIndex + 2 : undefined}
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
+                    onKeyDown={
+                      onRowClick
+                        ? (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              onRowClick(row);
+                            }
+                          }
+                        : undefined
+                    }
                   >
                     {columns.map((col) => (
                       <TableTd

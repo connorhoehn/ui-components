@@ -5,12 +5,14 @@ import { jsx as n, jsxs as r } from "react/jsx-runtime";
 function i({ label: i, hint: a, error: o, required: s = !1, layout: c = "stacked", children: l, className: u, labelClassName: d, style: f, "data-testid": p }) {
 	let m = t(), h = `${m}-label`, g = a || o ? `${m}-desc` : void 0, _ = {
 		id: m,
-		labelId: h,
 		"aria-describedby": g,
 		"aria-invalid": o ? !0 : void 0,
 		"aria-required": s || void 0
 	};
-	return /* @__PURE__ */ r("div", {
+	return Object.defineProperty(_, "labelId", {
+		value: h,
+		enumerable: !1
+	}), /* @__PURE__ */ r("div", {
 		"data-testid": p,
 		className: e(c === "inline" ? "flex items-center gap-3" : "flex flex-col gap-1", u),
 		style: f,

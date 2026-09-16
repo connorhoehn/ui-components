@@ -317,6 +317,76 @@ describe('DataTable', () => {
     expect(striped.className).toContain('hover:bg-surface-panel');
   });
 
+  it('is not keyboard-reachable when onRowClick is absent', () => {
+    render(<DataTable data={rows} columns={columns} keyField={keyField} />);
+    const bodyRows = screen.getAllByRole('row').slice(1); // drop the header row
+    for (const tr of bodyRows) {
+      expect(tr).not.toHaveAttribute('tabindex');
+      expect(tr).not.toHaveAttribute('aria-rowindex');
+    }
+  });
+
+  it('makes rows keyboard-reachable and activates onRowClick on Enter/Space', () => {
+    const onRowClick = vi.fn();
+    render(
+      <DataTable data={rows} columns={columns} keyField={keyField} onRowClick={onRowClick} />,
+    );
+    const bodyRows = screen.getAllByRole('row').slice(1);
+    expect(bodyRows[0]).toHaveAttribute('tabindex', '0');
+    // Header occupies ARIA row 1, so the first body row is row 2.
+    expect(bodyRows[0]).toHaveAttribute('aria-rowindex', '2');
+
+    bodyRows[0]!.focus();
+    fireEvent.keyDown(bodyRows[0]!, { key: 'Enter' });
+    expect(onRowClick).toHaveBeenCalledWith(expect.objectContaining({ id: 'a' }));
+
+    fireEvent.keyDown(bodyRows[1]!, { key: ' ' });
+    expect(onRowClick).toHaveBeenCalledWith(expect.objectContaining({ id: 'b' }));
+  });
+
+  it('does not activate onRowClick for a key other than Enter/Space', () => {
+    const onRowClick = vi.fn();
+    render(
+      <DataTable data={rows} columns={columns} keyField={keyField} onRowClick={onRowClick} />,
+    );
+    fireEvent.keyDown(screen.getAllByRole('row')[1]!, { key: 'ArrowDown' });
+    expect(onRowClick).not.toHaveBeenCalled();
+  });
+
+  it('falls back to a column render function for search when the row has no primitive value at that key', () => {
+    interface NestedRow { id: string; owner: { name: string } }
+    const nested: NestedRow[] = [
+      { id: '1', owner: { name: 'Grace Hopper' } },
+      { id: '2', owner: { name: 'Ada Lovelace' } },
+    ];
+    const nestedCols: DataTableColumn<NestedRow>[] = [
+      { key: 'owner', header: 'Owner', render: (r) => <span>{r.owner.name}</span> },
+    ];
+    render(
+      <DataTable data={nested} columns={nestedCols} keyField={(r) => r.id} searchable />,
+    );
+    fireEvent.change(screen.getByTestId('datatable-search'), {
+      target: { value: 'hopper' },
+    });
+    expect(screen.getByText('Grace Hopper')).toBeInTheDocument();
+    expect(screen.queryByText('Ada Lovelace')).not.toBeInTheDocument();
+  });
+
+  it('warns once, in dev, for a searchable column with no primitive value, getFilterText, or render', () => {
+    interface OpaqueRow { id: string; blob: { x: number } }
+    const opaque: OpaqueRow[] = [{ id: '1', blob: { x: 1 } }];
+    const opaqueCols: DataTableColumn<OpaqueRow>[] = [{ key: 'blob', header: 'Blob' }];
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    render(
+      <DataTable data={opaque} columns={opaqueCols} keyField={(r) => r.id} searchable />,
+    );
+    fireEvent.change(screen.getByTestId('datatable-search'), { target: { value: 'x' } });
+    fireEvent.change(screen.getByTestId('datatable-search'), { target: { value: 'xy' } });
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0]![0]).toContain('blob');
+    warn.mockRestore();
+  });
+
   it('wraps the table in its own horizontal scroller so it cannot spill', () => {
     const { container } = render(
       <DataTable

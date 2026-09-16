@@ -83,6 +83,35 @@ describe('FormField', () => {
     expect(screen.getByTestId('ff')).toBeInTheDocument();
   });
 
+  it('does not leak labelId when the wiring bag is spread onto a DOM element', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    render(
+      <FormField label="Name">
+        {(p) => <input {...p} type="text" defaultValue="" />}
+      </FormField>,
+    );
+    const warnedAboutLabelId = spy.mock.calls.some((args) =>
+      args.some((a) => typeof a === 'string' && a.includes('labelId')),
+    );
+    expect(warnedAboutLabelId).toBe(false);
+    spy.mockRestore();
+  });
+
+  it('keeps labelId directly accessible while excluding it from spread/Object.keys', () => {
+    let captured: { labelId: string } | undefined;
+    render(
+      <FormField label="Name">
+        {(p) => {
+          captured = p;
+          return <button role="switch" aria-checked={false} aria-labelledby={p.labelId}>x</button>;
+        }}
+      </FormField>,
+    );
+    expect(captured?.labelId).toBeTruthy();
+    expect(Object.keys(captured!)).not.toContain('labelId');
+    expect({ ...captured }).not.toHaveProperty('labelId');
+  });
+
   it('does not render the description container when neither hint nor error is set', () => {
     render(
       <FormField label="x">

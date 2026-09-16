@@ -1713,7 +1713,7 @@ export declare type InputSize = 'sm' | 'md';
 
 export declare type InputType = 'text' | 'number' | 'url' | 'password' | 'email' | 'search' | 'date' | 'datetime-local' | 'time';
 
-export declare function KPIGrid({ children, columns, dense, className, style, 'data-testid': testId, }: KPIGridProps): JSX.Element;
+export declare function KPIGrid({ children, columns, mdColumns, dense, className, style, 'data-testid': testId, }: KPIGridProps): JSX.Element;
 
 export declare type KPIGridColumns = 1 | 2 | 3 | 4;
 
@@ -1722,6 +1722,16 @@ export declare interface KPIGridProps {
     children: ReactNode;
     /** Number of columns at >=640px. Default 4. Always collapses to 1 below. */
     columns?: KPIGridColumns;
+    /**
+     * Column count for the 768–1023px (`md`) band. Undefined (the default)
+     * emits no `md:` class, so that band keeps showing `columns` — today's
+     * behaviour, where the whole 640–1279px range renders identically. Set
+     * this lower than `columns` for a grid that lives inside a nested rail
+     * (a laptop-width `md` view there is far narrower than a full-width page
+     * at the same viewport size) so tiles stay readable instead of cramming
+     * `columns` of them into the rail's actual width.
+     */
+    mdColumns?: KPIGridColumns;
     /** Tighter gap (8px vs 16px). Default false. */
     dense?: boolean;
     className?: string;
@@ -3121,6 +3131,11 @@ export declare interface SubNavLayoutProps {
      *
      * If not provided, a plain `<a href={item.path}>` is rendered with no
      * active-state detection.
+     *
+     * `activeNavItemClassName`/`inactiveNavItemClassName` (exported alongside
+     * `activeNavItemStyle` below) are the className-based equivalent, for a
+     * `NavLink` `className={({isActive}) => ...}` integration that wants no
+     * inline `style` prop at all.
      */
     renderNavItem?: (item: SubNavItem, children: ReactNode, baseStyle: CSSProperties) => ReactNode;
     /**
@@ -3636,11 +3651,18 @@ export declare interface ToolCallItem {
 /**
  * A single pill rendering one tool call's name + done/pending state.
  */
-export declare function ToolCallPill({ name, done, className }: ToolCallPillProps): JSX.Element;
+export declare function ToolCallPill({ name, done, title, className }: ToolCallPillProps): JSX.Element;
 
 export declare interface ToolCallPillProps {
     name: string;
     done: boolean;
+    /**
+     * Tooltip text, rendered as the pill's `title` attribute — a place for the
+     * raw tool id when `name` is a friendlier display label ("searched
+     * knowledge base" vs. the tool's actual name) and the two need to differ.
+     * Undefined (the default) renders no `title`, same as today.
+     */
+    title?: string;
     className?: string;
 }
 
@@ -3938,19 +3960,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3970,19 +3979,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -4013,9 +4015,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -4042,6 +4054,16 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

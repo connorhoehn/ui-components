@@ -6,6 +6,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.275.0] — 2026-09-16
+
+### Added — `./shared`
+
+- **`DataTable` keyboard-reachable rows**: when `onRowClick` is set, each body
+  `<tr>` gets `tabIndex={0}`, a visible focus ring (`focus-visible:ring-2
+  ring-inset ring-primary`), `aria-rowindex` (header counts as ARIA row 1, so
+  the first body row is `2`), and Enter/Space now activates `onRowClick` the
+  same as a click. A table with no `onRowClick` is unchanged — no tab stop is
+  added for a row with nothing to activate. Consumer gap: "Keyboard-reachable
+  DataTable rows" in `docs/ui-components-queue.md`.
+- **`DataTable` search fallback for render-only columns**: when `searchable`
+  and a column has neither a primitive `row[key]` value nor `getFilterText`,
+  the search box now falls back to the column's rendered cell text (walked
+  cheaply via a small ReactNode → text helper, no `react-dom/server`) instead
+  of silently matching nothing. If the column also has no `render`, it falls
+  back to `String(value ?? '')` — today's behaviour — plus a one-time (per
+  column, dev-only) `console.warn` naming the column, since at that point the
+  column genuinely cannot be searched. Consumer gap: "DataTable search over
+  rows whose display values live in render functions."
+- **`SubNavLayout`**: exports `activeNavItemClassName` /
+  `inactiveNavItemClassName`, className-based equivalents of the existing
+  `activeNavItemStyle` export, documented beside it and in the `renderNavItem`
+  prop's doc comment. A `renderNavItem` router integration (e.g. React Router
+  `NavLink`) can now match the composite's default look via
+  `className={({isActive}) => isActive ? activeNavItemClassName :
+  inactiveNavItemClassName}` instead of hand-computing an inline `style`
+  object, which the component-discipline audit bans. Consumer gap: queue
+  row 32.
+- **`FormField`**: `labelId` no longer leaks into the DOM when a consumer
+  spreads the render-prop wiring bag onto a native control (the documented
+  `<Input {...p} .../>` pattern) — it is now a non-enumerable property on the
+  wiring object, so `{...p}`/`Object.keys(p)` omit it while `p.labelId` still
+  works for a control (e.g. `Switch`) that needs `aria-labelledby` instead of
+  `htmlFor`. Previously every page using that pattern logged "React does not
+  recognize the `labelId` prop" on load. Consumer gap: queue row 20.
+- **`Toolbar`**: the `end` slot now honours the existing `wrap` prop — the row
+  itself gains `flex-wrap` (previously only the `children` slot did), so at
+  narrow widths `end` drops to a line of its own instead of overflowing past
+  the toolbar's right edge with no way to reach it. `end`'s left padding
+  (assumes sharing a line with `children`) is dropped when wrapped. No change
+  when `wrap` is unset. Consumer gap: queue row 63.
+- **`KPIGrid`**: `mdColumns?: 1 | 2 | 3 | 4` adds an `md:grid-cols-N` step
+  between the `sm` breakpoint (`columns`) and whatever wider layout follows —
+  for a grid nested inside a rail, where a laptop-width `md` view is much
+  narrower than a full-width page at the same viewport size. Undefined (the
+  default) emits no `md:` class, so the 640–1279px band renders identically
+  to today. Consumer gap: queue row 64.
+- **`ToolCallPill`**: optional `title?: string`, rendered as the pill's
+  native `title` (tooltip) attribute — for a friendly display `name` ("searched
+  knowledge base") that still needs the raw tool id reachable on hover.
+  Undefined (the default) renders no `title`, same as today. Consumer gap:
+  queue row 65.
+
 ## [2.273.1] — 2026-09-16
 
 ### Changed — `./shared`

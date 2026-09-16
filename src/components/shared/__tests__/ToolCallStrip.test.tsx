@@ -16,6 +16,14 @@ describe('ToolCallPill', () => {
     rerender(<ToolCallPill name="t" done={false} />);
     expect(screen.getByText(/t/).className).toContain('info');
   });
+
+  it('renders title as the tooltip attribute when set, and none by default', () => {
+    const { rerender } = render(<ToolCallPill name="search" done />);
+    expect(screen.getByText(/search/)).not.toHaveAttribute('title');
+
+    rerender(<ToolCallPill name="search" done title="query_knowledge_base" />);
+    expect(screen.getByText(/search/)).toHaveAttribute('title', 'query_knowledge_base');
+  });
 });
 
 describe('ToolCallStrip', () => {
