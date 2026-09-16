@@ -8,6 +8,7 @@ import { HTMLAttributes } from 'react';
 import { InputHTMLAttributes } from 'react';
 import { JSX } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
+import { MouseEventHandler } from 'react';
 import { ReactElement } from 'react';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
@@ -3368,7 +3369,7 @@ export declare interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLT
 
 export declare interface TextProps {
     /** Element to render as. Default `'span'`. */
-    as?: 'span' | 'div' | 'p';
+    as?: 'span' | 'div' | 'p' | 'li';
     className?: string;
     title?: string;
     /** Forwarded to `Inline`'s own `wrap` (`flex-wrap` vs not). Default
@@ -3376,6 +3377,10 @@ export declare interface TextProps {
     wrap?: boolean;
     role?: string;
     'aria-label'?: string;
+    'aria-hidden'?: boolean | 'true' | 'false';
+    onClick?: MouseEventHandler<HTMLElement>;
+    'data-testid'?: string;
+    id?: string;
     children?: ReactNode;
 }
 
@@ -3927,6 +3932,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3946,25 +3964,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -4018,9 +4020,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

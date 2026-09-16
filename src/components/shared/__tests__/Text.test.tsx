@@ -14,6 +14,24 @@ describe('Text', () => {
     expect(screen.getByText('Paragraph').tagName).toBe('P');
   });
 
+  it('renders as an li when as="li"', () => {
+    render(<Text as="li">Item</Text>);
+    expect(screen.getByText('Item').tagName).toBe('LI');
+  });
+
+  it('forwards aria-hidden and onClick', () => {
+    const onClick = vi.fn();
+    render(
+      <Text aria-hidden="true" onClick={onClick} data-testid="clickable">
+        click me
+      </Text>,
+    );
+    const el = screen.getByTestId('clickable');
+    expect(el).toHaveAttribute('aria-hidden', 'true');
+    el.click();
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
   it('forwards title, role and aria-label', () => {
     render(
       <Text title="full text" role="note" aria-label="a note">

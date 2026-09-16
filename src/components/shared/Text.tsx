@@ -11,12 +11,12 @@
 // It is `Inline` in `as="span"` mode: same flex-row primitive, `gap="none"`
 // so it reads as plain text rather than a laid-out row.
 
-import type { ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 import { Inline } from '../ui/Stack';
 
 export interface TextProps {
   /** Element to render as. Default `'span'`. */
-  as?: 'span' | 'div' | 'p';
+  as?: 'span' | 'div' | 'p' | 'li';
   className?: string;
   title?: string;
   /** Forwarded to `Inline`'s own `wrap` (`flex-wrap` vs not). Default
@@ -24,6 +24,10 @@ export interface TextProps {
   wrap?: boolean;
   role?: string;
   'aria-label'?: string;
+  'aria-hidden'?: boolean | 'true' | 'false';
+  onClick?: MouseEventHandler<HTMLElement>;
+  'data-testid'?: string;
+  id?: string;
   children?: ReactNode;
 }
 

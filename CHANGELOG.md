@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.273.1] — 2026-09-16
+
+### Changed — `./shared`
+
+- **`Text` (alias `T`)**: widened `as` to `'span' | 'div' | 'p' | 'li'`
+  (list-item captions/labels can now use the primitive instead of a bare
+  `<li>`), and now accepts and forwards `aria-hidden` (`boolean | 'true' |
+  'false'`), `onClick`, `data-testid`, and `id`. Defaults unchanged.
+
 ## [2.273.0] — 2026-09-15
 
 ### Added — `./shared`
