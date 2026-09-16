@@ -12,6 +12,7 @@ import { Input } from '../forms/Input';
 import { FileInput } from '../forms/FileInput';
 import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
+import { PinIcon } from '../ui/Icons';
 import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { DocumentChip } from './DocumentChip';
@@ -1623,7 +1624,7 @@ export function ChatPanel({
       )}
       {isPinned && (
         <span className="mb-0.5 block text-[11px] text-text-tertiary" data-testid="pinned-marker">
-          📌 Pinned
+          <PinIcon size={11} /> Pinned
         </span>
       )}
       {isDeleted ? (

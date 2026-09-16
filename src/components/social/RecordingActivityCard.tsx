@@ -15,6 +15,7 @@ import { DropdownMenu, type DropdownMenuItem, type DropdownMenuSection } from '.
 import { Button } from '../ui/Button';
 import { formatCallDuration } from './CallActivityCard';
 import { cn } from '../../lib/cn';
+import { PinIcon } from '../ui/Icons';
 
 /** Where the recording is on its way to being watchable. */
 /** `gone`: the recording no longer exists — expired or removed — so the card is the record of a thing that was. */
@@ -205,7 +206,7 @@ export function RecordingActivityCard({
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <div className="flex items-center gap-2">
               <span className="truncate text-[15px] font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</span>
-              {pinned && <span className="text-xs text-text-tertiary" data-testid={`${testId}-pinned`} title="Pinned">📌</span>}
+              {pinned && <span className="text-xs text-text-tertiary" data-testid={`${testId}-pinned`} title="Pinned"><PinIcon size={12} /></span>}
             </div>
             {recordedBy && (
               <div className="truncate text-sm text-text-secondary" data-testid={`${testId}-by`}>by {recordedBy}</div>

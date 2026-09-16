@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   and `ChannelViews` take `PhoneIcon` / `VideoCallIcon`, and the app shell's
   own controls take glyphs too.
 
+  The message action bar's pin, the "Pinned" badge and a recording card's
+  pinned marker were the same bug one layer in — a 📌 where `PinIcon` had
+  existed all along.
+
   **Reactions keep their emoji**, because there the emoji IS the content rather
   than a picture of a control. That is the line: a 👍 you chose is data; a 📞
   drawn on a button is a missing icon.
