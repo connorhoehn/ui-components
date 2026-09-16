@@ -187,7 +187,12 @@ export { ActivityFeed } from './ActivityFeed';
 export type { ActivityFeedItem, ActivityFeedProps, ActivityKind } from './ActivityFeed';
 export { ProjectCard } from './ProjectCard';
 export type { ProjectCardProps, StatusColors } from './ProjectCard';
-export { SubNavLayout, activeNavItemStyle } from './SubNavLayout';
+export {
+  SubNavLayout,
+  activeNavItemStyle,
+  activeNavItemClassName,
+  inactiveNavItemClassName,
+} from './SubNavLayout';
 export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
 
 // ── Deep application layout (2026-08) ──

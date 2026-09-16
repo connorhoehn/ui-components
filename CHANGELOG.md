@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.275.1] — 2026-09-16
+
+### Fixed — `./shared`
+
+- **Packaging fix for 2.275.0**: `activeNavItemClassName` / `inactiveNavItemClassName`
+  (added to `SubNavLayout.tsx`, documented in the `renderNavItem` doc comment,
+  and covered by `SubNavLayout.test.tsx`) were never re-exported from
+  `src/components/shared/index.ts` — the barrel kept its old `{ SubNavLayout,
+  activeNavItemStyle }` line — so neither constant reached `dist/shared.cjs`,
+  `dist/shared.js`, or the root bundle. `SubNavLayout.test.tsx` passed anyway
+  because it imports the component file directly rather than the barrel, so
+  the gap shipped undetected. A consumer following the shipped doc comment
+  got an import error. Both constants are now re-exported from the barrel and
+  verified in `dist/shared.d.ts` / `dist/index.d.ts`. Added
+  `src/components/shared/__tests__/index.exports.test.ts`, an export-surface
+  test that imports the barrel itself (not the component file) and asserts
+  `SubNavLayout`, `activeNavItemStyle`, `activeNavItemClassName`, and
+  `inactiveNavItemClassName` are all defined, so this class of defect fails a
+  test instead of shipping. Audited the other five items in 2.275.0
+  (`DataTable` keyboard rows + search fallback, `FormField.labelId`,
+  `Toolbar`'s `wrap`, `KPIGrid.mdColumns`, `ToolCallPill.title`) against the
+  built package — all five reach the public entry correctly; only
+  `SubNavLayout`'s two constants were affected.
+
 ## [2.275.0] — 2026-09-16
 
 ### Added — `./shared`
