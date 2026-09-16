@@ -646,7 +646,7 @@ export declare interface DeviceSettingsPanelProps {
     'data-testid'?: string;
 }
 
-export declare function EmbeddedCallPanel({ title, subtitle, durationSeconds, live, recording, onPopOut, popOutLabel, children, controls, stage, className, 'data-testid': testId, }: EmbeddedCallPanelProps): JSX.Element;
+export declare function EmbeddedCallPanel({ title, subtitle, durationSeconds, live, recording, onPopOut, popOutLabel, children, controls, aside, stage, className, 'data-testid': testId, }: EmbeddedCallPanelProps): JSX.Element;
 
 export declare interface EmbeddedCallPanelProps {
     /** What this call is — a room name, "Alice & Bob", a channel. */
@@ -669,6 +669,14 @@ export declare interface EmbeddedCallPanelProps {
     children: ReactNode;
     /** MediaControlsBar or equivalent, rendered under the stage. */
     controls?: ReactNode;
+    /**
+     * A side panel beside the stage — the call's Chat / People / Devices.
+     * Omitted renders nothing (today's output, byte-for-byte). Typically
+     * <CallSidePanel> from ./CallSidePanel, fed the same `sidePanelTabs` /
+     * `activeSidePanelTab` the floating widget uses, so the docked shape
+     * reaches the same destinations instead of forcing a pop-out.
+     */
+    aside?: ReactNode;
     /** Stage aspect. `video` keeps 16:9; `audio` is a short strip for an audio-only call. */
     stage?: 'video' | 'audio';
     className?: string;
@@ -2298,6 +2306,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2317,32 +2338,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -2363,9 +2361,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -2392,16 +2410,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

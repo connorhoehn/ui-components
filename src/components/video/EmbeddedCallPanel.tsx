@@ -35,6 +35,14 @@ export interface EmbeddedCallPanelProps {
   children: ReactNode;
   /** MediaControlsBar or equivalent, rendered under the stage. */
   controls?: ReactNode;
+  /**
+   * A side panel beside the stage — the call's Chat / People / Devices.
+   * Omitted renders nothing (today's output, byte-for-byte). Typically
+   * <CallSidePanel> from ./CallSidePanel, fed the same `sidePanelTabs` /
+   * `activeSidePanelTab` the floating widget uses, so the docked shape
+   * reaches the same destinations instead of forcing a pop-out.
+   */
+  aside?: ReactNode;
   /** Stage aspect. `video` keeps 16:9; `audio` is a short strip for an audio-only call. */
   stage?: 'video' | 'audio';
   className?: string;
@@ -49,11 +57,18 @@ function clock(total: number): string {
 
 export function EmbeddedCallPanel({
   title, subtitle, durationSeconds, live = true, recording, onPopOut, popOutLabel = 'Pop the call out', children, controls,
-  stage = 'video', className, 'data-testid': testId = 'embedded-call-panel',
+  aside, stage = 'video', className, 'data-testid': testId = 'embedded-call-panel',
 }: EmbeddedCallPanelProps) {
   return (
     <section
-      className={cn('flex w-full min-w-0 flex-col overflow-hidden rounded-xl bg-video-stage text-white shadow-md', className)}
+      className={cn(
+        // '@container' only when there's an aside to respond to it — with
+        // no aside the output stays byte-for-byte what it was before this
+        // slot existed.
+        'flex w-full min-w-0 flex-col overflow-hidden rounded-xl bg-video-stage text-white shadow-md',
+        aside && '@container',
+        className,
+      )}
       aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call'}
       data-testid={testId}
       data-stage={stage}
@@ -83,9 +98,31 @@ export function EmbeddedCallPanel({
       </header>
       {/* The stage sizes from WIDTH, never from a stored pixel box: whatever
           column this sits in, the tiles fit it. */}
-      <div className={cn('relative w-full min-w-0 bg-black/40', stage === 'video' ? 'aspect-video' : 'min-h-[88px]')} data-testid={`${testId}-stage`}>
-        <div className="absolute inset-0">{children}</div>
-      </div>
+      {aside ? (
+        // With an aside, the stage and the dock become siblings in a row
+        // that only appears once there's a container wide enough to hold
+        // both without crushing the tiles — under that, they stack, aside
+        // last. `@container` on the root (above) makes '@lg:' respond to
+        // THIS panel's own box, not the viewport: the point of this
+        // component is that its column width is somebody else's decision.
+        <div className="flex min-h-0 min-w-0 flex-col @lg:flex-row">
+          <div className={cn('relative w-full min-w-0 bg-black/40 @lg:flex-1', stage === 'video' ? 'aspect-video' : 'min-h-[88px]')} data-testid={`${testId}-stage`}>
+            <div className="absolute inset-0">{children}</div>
+          </div>
+          {/* `max-h-80` + its own scroll caps a long chat when stacked
+              under the stage; `@lg:max-h-none` lets it stretch to match
+              the stage's height instead once the two sit side by side
+              (flex's default cross-axis stretch), still capped by its own
+              `overflow-y-auto` rather than growing the whole panel. */}
+          <div className="flex max-h-80 min-h-0 min-w-0 flex-col overflow-y-auto @lg:max-h-none @lg:shrink-0" data-testid={`${testId}-aside`}>
+            {aside}
+          </div>
+        </div>
+      ) : (
+        <div className={cn('relative w-full min-w-0 bg-black/40', stage === 'video' ? 'aspect-video' : 'min-h-[88px]')} data-testid={`${testId}-stage`}>
+          <div className="absolute inset-0">{children}</div>
+        </div>
+      )}
       {controls && (
         <div className="flex w-full min-w-0 items-center justify-center overflow-x-auto px-2 py-2" data-testid={`${testId}-controls`}>
           {controls}

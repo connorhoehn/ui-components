@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.280.0] — 2026-09-16
+
+### Added — `./video`
+
+- **`EmbeddedCallPanel.aside`**: a side panel beside the stage. A call has two
+  shapes in a host app — a floating widget and a block docked inside somebody
+  else's column — and only the first one could reach the call's Chat, People,
+  Effects and Devices. Docked inside a conversation, the call offered mic,
+  camera, share, react and leave, and nothing else; the destinations came back
+  only by popping the call out, which is the wrong way round for a call that
+  lives inside a chat. The slot takes the same `CallSidePanel` the widget
+  uses. It sits beside the stage on a wide container and stacks under it on a
+  narrow one — a container query, so it answers to the column it is docked in
+  rather than to the viewport — and scrolls inside itself rather than growing
+  the panel. Omitted, the rendered output is unchanged.
+
+---
+
 ## [2.279.1] — 2026-09-16
 
 ### Fixed — `./video`

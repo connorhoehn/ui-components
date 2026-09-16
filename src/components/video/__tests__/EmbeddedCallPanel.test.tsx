@@ -32,6 +32,28 @@ describe('EmbeddedCallPanel', () => {
     expect(screen.getByTestId('embedded-call-panel-stage').className).not.toContain('aspect-video');
     expect(screen.queryByTestId('embedded-call-panel-pop-out')).toBeNull();
   });
+
+  it('renders no aside wrapper when aside is omitted', () => {
+    render(
+      <EmbeddedCallPanel title="Standup">
+        <div data-testid="tiles" />
+      </EmbeddedCallPanel>,
+    );
+    expect(screen.queryByTestId('embedded-call-panel-aside')).toBeNull();
+    expect(screen.getByTestId('tiles')).toBeTruthy();
+  });
+
+  it('renders the aside beside the stage, and the stage is still there', () => {
+    render(
+      <EmbeddedCallPanel title="Standup" aside={<div data-testid="side-chat">chat</div>}>
+        <div data-testid="tiles" />
+      </EmbeddedCallPanel>,
+    );
+    expect(screen.getByTestId('embedded-call-panel-aside')).toBeTruthy();
+    expect(screen.getByTestId('side-chat')).toBeTruthy();
+    expect(screen.getByTestId('embedded-call-panel-stage')).toBeTruthy();
+    expect(screen.getByTestId('tiles')).toBeTruthy();
+  });
 });
 
 describe('AudioPlayer', () => {

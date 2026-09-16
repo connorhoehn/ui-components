@@ -4837,12 +4837,12 @@ function tr(e) {
 	let t = Math.max(0, Math.floor(e)), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60;
 	return n > 0 ? `${n}:${String(r).padStart(2, "0")}:${String(i).padStart(2, "0")}` : `${r}:${String(i).padStart(2, "0")}`;
 }
-function nr({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording: o, onPopOut: s, popOutLabel: c = "Pop the call out", children: l, controls: u, stage: d = "video", className: f, "data-testid": p = "embedded-call-panel" }) {
+function nr({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording: o, onPopOut: s, popOutLabel: c = "Pop the call out", children: l, controls: u, aside: d, stage: f = "video", className: p, "data-testid": m = "embedded-call-panel" }) {
 	return /* @__PURE__ */ P("section", {
-		className: e("flex w-full min-w-0 flex-col overflow-hidden rounded-xl bg-video-stage text-white shadow-md", f),
+		className: e("flex w-full min-w-0 flex-col overflow-hidden rounded-xl bg-video-stage text-white shadow-md", d && "@container", p),
 		"aria-label": typeof t == "string" ? `Call: ${t}` : "Call",
-		"data-testid": p,
-		"data-stage": d,
+		"data-testid": m,
+		"data-stage": f,
 		children: [
 			/* @__PURE__ */ P("header", {
 				className: "flex min-w-0 items-center gap-2 px-3 py-2",
@@ -4853,23 +4853,23 @@ function nr({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording
 					}),
 					/* @__PURE__ */ N("span", {
 						className: "min-w-0 flex-1 truncate text-sm font-semibold",
-						"data-testid": `${p}-title`,
+						"data-testid": `${m}-title`,
 						children: t
 					}),
 					o && /* @__PURE__ */ N(Pn, {
 						armed: o.armed,
 						active: o.active,
 						className: "shrink-0",
-						"data-testid": `${p}-recording`
+						"data-testid": `${m}-recording`
 					}),
 					n && /* @__PURE__ */ N("span", {
 						className: "shrink-0 text-xs text-white/60",
-						"data-testid": `${p}-subtitle`,
+						"data-testid": `${m}-subtitle`,
 						children: n
 					}),
 					r !== void 0 && /* @__PURE__ */ N("span", {
 						className: "shrink-0 font-mono text-xs tabular-nums text-white/80",
-						"data-testid": `${p}-duration`,
+						"data-testid": `${m}-duration`,
 						children: tr(r)
 					}),
 					s && /* @__PURE__ */ N(a, {
@@ -4880,13 +4880,27 @@ function nr({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording
 						icon: /* @__PURE__ */ N(Be, { size: 16 }),
 						onClick: s,
 						className: "shrink-0 text-white/80 hover:text-white",
-						"data-testid": `${p}-pop-out`
+						"data-testid": `${m}-pop-out`
 					})
 				]
 			}),
-			/* @__PURE__ */ N("div", {
-				className: e("relative w-full min-w-0 bg-black/40", d === "video" ? "aspect-video" : "min-h-[88px]"),
-				"data-testid": `${p}-stage`,
+			d ? /* @__PURE__ */ P("div", {
+				className: "flex min-h-0 min-w-0 flex-col @lg:flex-row",
+				children: [/* @__PURE__ */ N("div", {
+					className: e("relative w-full min-w-0 bg-black/40 @lg:flex-1", f === "video" ? "aspect-video" : "min-h-[88px]"),
+					"data-testid": `${m}-stage`,
+					children: /* @__PURE__ */ N("div", {
+						className: "absolute inset-0",
+						children: l
+					})
+				}), /* @__PURE__ */ N("div", {
+					className: "flex max-h-80 min-h-0 min-w-0 flex-col overflow-y-auto @lg:max-h-none @lg:shrink-0",
+					"data-testid": `${m}-aside`,
+					children: d
+				})]
+			}) : /* @__PURE__ */ N("div", {
+				className: e("relative w-full min-w-0 bg-black/40", f === "video" ? "aspect-video" : "min-h-[88px]"),
+				"data-testid": `${m}-stage`,
 				children: /* @__PURE__ */ N("div", {
 					className: "absolute inset-0",
 					children: l
@@ -4894,7 +4908,7 @@ function nr({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording
 			}),
 			u && /* @__PURE__ */ N("div", {
 				className: "flex w-full min-w-0 items-center justify-center overflow-x-auto px-2 py-2",
-				"data-testid": `${p}-controls`,
+				"data-testid": `${m}-controls`,
 				children: u
 			})
 		]
