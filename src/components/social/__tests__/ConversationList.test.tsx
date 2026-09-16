@@ -40,12 +40,38 @@ describe('ConversationList', () => {
     expect(onSelect).toHaveBeenCalledWith('dm:bob');
   });
 
-  it('shows name, truncated preview and absolute HH:MM time', () => {
-    render(<ConversationList items={items} onSelect={onSelect} />);
-    const alice = screen.getAllByTestId('conversation-row')[0];
-    expect(alice).toHaveTextContent('Alice Chen');
-    expect(alice).toHaveTextContent('See you at standup');
-    expect(screen.getByTestId('conversation-time')).toHaveTextContent('14:05');
+  it('shows name, truncated preview and the clock time when the row is from today', () => {
+    // The clock is pinned to the fixture's own day: a rail stamp is relative
+    // to when it is READ, so a real "today" has to be arranged.
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 7, 25, 18, 0, 0));
+    try {
+      render(<ConversationList items={items} onSelect={onSelect} />);
+      const alice = screen.getAllByTestId('conversation-row')[0];
+      expect(alice).toHaveTextContent('Alice Chen');
+      expect(alice).toHaveTextContent('See you at standup');
+      expect(screen.getByTestId('conversation-time')).toHaveTextContent('14:05');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('says which day an older row means instead of a bare hour', () => {
+    // A rail row has no day separator above it, so `14:05` on a conversation
+    // nobody has touched since August reads as this afternoon.
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 7, 26, 9, 0, 0));
+    try {
+      render(<ConversationList items={items} onSelect={onSelect} />);
+      const stamp = screen.getByTestId('conversation-time');
+      expect(stamp).toHaveTextContent('Yesterday');
+      // Machine-readable, and the exact moment is one hover away.
+      expect(stamp.tagName).toBe('TIME');
+      expect(stamp).toHaveAttribute('datetime', '2026-08-25T14:05:00');
+      expect(stamp.getAttribute('title')).toContain('2026');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('renders the unread badge only for rows with unreadCount > 0', () => {

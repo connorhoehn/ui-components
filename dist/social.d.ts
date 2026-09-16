@@ -1503,6 +1503,29 @@ export declare interface ConversationShelfProps {
     'data-testid'?: string;
 }
 
+/**
+ * How a conversation LIST row stamps itself.
+ *
+ * A transcript row can show a bare `21:52` because a day separator sits above
+ * it. An inbox row has no such context: the same `21:52` beside a channel
+ * nobody has touched since Sunday reads as tonight, and — when the hour is
+ * later than the current one — as the future. The stamp has to say which day
+ * it means, in the width of a rail.
+ *
+ * So: the time for today, the word for yesterday, a short weekday inside the
+ * week, and a numeric date beyond it. Same shape Teams and Slack use in their
+ * rails, and the same six-day window as `dayLabel` — "Mon" a week and a day
+ * ago is the wrong Monday. Pair it with `fullTimestampLabel` as the `title`
+ * so the exact moment is one hover away.
+ *
+ * The activity feed stamps its rows the same way and for the same reason, so
+ * this is the one copy of the rule rather than one per list.
+ *
+ * `now` is injectable for the same reason it is on `dayLabel`: the answer
+ * changes at midnight and a test cannot wait for it.
+ */
+export declare function conversationStamp(isoString: string, now?: Date): string;
+
 export declare function ConversationStart({ title, body, onStart, startLabel, startDescription, rooms, onAddToRoom, people, onShareWith, busy, receipt, searchAbove, 'data-testid': testId, }: ConversationStartProps): JSX.Element;
 
 export declare interface ConversationStartDestination {
@@ -3013,19 +3036,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3045,9 +3055,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3058,6 +3081,16 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3084,16 +3117,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

@@ -4,9 +4,12 @@
 // consumer maps its DM channels + presence roster into items and owns
 // selection/navigation via `onSelect`.
 //
-// Timestamps render as absolute HH:MM (via formatChatTime) rather than
-// Date.now()-dependent fuzzy labels, so tests can pin the output and a
-// row never rerenders just because time passed.
+// Timestamps are day-aware (via conversationStamp): the time for today, the
+// word for yesterday, a short weekday inside the week, a date beyond it. A
+// bare HH:MM is right in a transcript, where a day separator sits above the
+// row, and wrong here, where nothing does — `21:52` on a channel untouched
+// since Sunday reads as tonight. The label still changes only at midnight,
+// never continuously, so a row does not rerender because time passed.
 //
 // Both tones: 'light' (default) uses theme tokens; 'dark' swaps to
 // white/alpha classes so the list can sit on call chrome (e.g. inside a
@@ -19,7 +22,7 @@ import { PresenceDot } from '../shared/PresenceDot';
 import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
 import { BellMutedIcon, PhoneIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
 import { RailSectionHeader, type RailSectionAction } from './RailSectionHeader';
-import { formatChatTime } from './MessageRow';
+import { conversationStamp, fullTimestampLabel } from './dayBoundary';
 
 /**
  * Most-recent-first, with never-used conversations after every used one.
@@ -485,7 +488,10 @@ export function ConversationList({
             const names = isChannel
               ? (item.name ?? item.channel)
               : item.peers.map((p) => p.displayName).join(', ');
-            const time = item.lastMessageAt ? formatChatTime(item.lastMessageAt) : '';
+            // Day-aware, because a rail row has no day separator above it to
+            // lend the bare HH:MM a date. See `conversationStamp`.
+            const time = item.lastMessageAt ? conversationStamp(item.lastMessageAt) : '';
+            const timeTitle = item.lastMessageAt ? fullTimestampLabel(item.lastMessageAt) : '';
             const unread = item.unreadCount ?? 0;
             const mentioned = !!item.mentioned;
             const live = !!item.live;
@@ -635,12 +641,14 @@ export function ConversationList({
                         </span>
                       )}
                       {time && (
-                        <span
+                        <time
+                          dateTime={item.lastMessageAt}
+                          title={timeTitle}
                           className={cn('shrink-0 text-[11px] tabular-nums', dark ? 'text-white/50' : 'text-text-tertiary')}
                           data-testid="conversation-time"
                         >
                           {time}
-                        </span>
+                        </time>
                       )}
                     </span>
                     {item.lastMessagePreview && (

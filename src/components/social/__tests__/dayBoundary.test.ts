@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dayKeyOf, dayLabel, fullDateLabel, isNewDay } from '../dayBoundary';
+import { conversationStamp, dayKeyOf, dayLabel, fullDateLabel, isNewDay } from '../dayBoundary';
 
 // All fixtures are built from LOCAL components so the suite means the same
 // thing in every timezone the CI or a laptop happens to be in. A hard-coded
@@ -83,4 +83,68 @@ describe('fullDateLabel', () => {
         expect(dayLabel(iso, new Date(2026, 8, 8))).toBe('Today');
         expect(fullDateLabel(iso)).toMatch(/2026/);
     });
+});
+
+describe('conversationStamp — the stamp on an inbox row', () => {
+  // Midday, so "today" has hours on both sides of it.
+  const now = new Date(2026, 8, 16, 13, 0, 0); // Wed 16 Sep 2026
+
+  it('shows the clock time for something said today', () => {
+    expect(conversationStamp(new Date(2026, 8, 16, 9, 5).toISOString(), now)).toBe('09:05');
+  });
+
+  it('still shows the clock time for a stamp LATER today than now', () => {
+    // A row can legitimately carry a time in the next hour — a clock skewed by
+    // minutes between a sender and this reader. It is still today.
+    expect(conversationStamp(new Date(2026, 8, 16, 21, 52).toISOString(), now)).toBe('21:52');
+  });
+
+  it('says the word for yesterday rather than an hour', () => {
+    // The bug this function exists for: 21:52 yesterday read as tonight, and
+    // as a time in the future.
+    expect(conversationStamp(new Date(2026, 8, 15, 21, 52).toISOString(), now)).toBe('Yesterday');
+  });
+
+  it('names the weekday inside the week', () => {
+    expect(conversationStamp(new Date(2026, 8, 13, 21, 52).toISOString(), now)).toBe(
+      new Date(2026, 8, 13).toLocaleDateString(undefined, { weekday: 'short' }),
+    );
+  });
+
+  it('stops naming weekdays at six days, where the name stops being unambiguous', () => {
+    // Seven days back is the same weekday as today — "Wed" would be read as
+    // this morning.
+    const sevenBack = conversationStamp(new Date(2026, 8, 9, 21, 52).toISOString(), now);
+    expect(sevenBack).not.toBe('Wed');
+    expect(sevenBack).toContain('9');
+  });
+
+  it('gives a date beyond the week, and adds the year only when it differs', () => {
+    expect(conversationStamp(new Date(2026, 6, 4, 10, 0).toISOString(), now)).toBe(
+      new Date(2026, 6, 4).toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' }),
+    );
+    expect(conversationStamp(new Date(2025, 6, 4, 10, 0).toISOString(), now)).toBe(
+      new Date(2025, 6, 4).toLocaleDateString(undefined, { day: 'numeric', month: 'numeric', year: '2-digit' }),
+    );
+  });
+
+  it('sends a stamp from a future DAY to the date, not to a time', () => {
+    // A relative phrase about the future would be a claim about the reader's
+    // clock. Same reasoning as dayLabel.
+    expect(conversationStamp(new Date(2026, 8, 18, 21, 52).toISOString(), now)).toBe(
+      new Date(2026, 8, 18).toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' }),
+    );
+  });
+
+  it('crosses local midnight by the calendar, not by subtracting 24 hours', () => {
+    // 40 minutes apart, different days.
+    const justBefore = new Date(2026, 8, 15, 23, 40).toISOString();
+    const justAfter = new Date(2026, 8, 16, 0, 20).toISOString();
+    expect(conversationStamp(justBefore, now)).toBe('Yesterday');
+    expect(conversationStamp(justAfter, now)).toBe('00:20');
+  });
+
+  it('renders nothing for an unparseable stamp rather than "Invalid Date"', () => {
+    expect(conversationStamp('not a date', now)).toBe('');
+  });
 });

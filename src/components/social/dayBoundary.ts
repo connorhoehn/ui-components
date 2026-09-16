@@ -110,3 +110,46 @@ export function fullTimestampLabel(isoString: string): string {
         minute: '2-digit',
     });
 }
+
+/**
+ * How a conversation LIST row stamps itself.
+ *
+ * A transcript row can show a bare `21:52` because a day separator sits above
+ * it. An inbox row has no such context: the same `21:52` beside a channel
+ * nobody has touched since Sunday reads as tonight, and — when the hour is
+ * later than the current one — as the future. The stamp has to say which day
+ * it means, in the width of a rail.
+ *
+ * So: the time for today, the word for yesterday, a short weekday inside the
+ * week, and a numeric date beyond it. Same shape Teams and Slack use in their
+ * rails, and the same six-day window as `dayLabel` — "Mon" a week and a day
+ * ago is the wrong Monday. Pair it with `fullTimestampLabel` as the `title`
+ * so the exact moment is one hover away.
+ *
+ * The activity feed stamps its rows the same way and for the same reason, so
+ * this is the one copy of the rule rather than one per list.
+ *
+ * `now` is injectable for the same reason it is on `dayLabel`: the answer
+ * changes at midnight and a test cannot wait for it.
+ */
+export function conversationStamp(isoString: string, now: Date = new Date()): string {
+    const d = new Date(isoString);
+    if (Number.isNaN(d.getTime())) return '';
+    const startOfLocalDay = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+    const days = Math.round((startOfLocalDay(now) - startOfLocalDay(d)) / 86_400_000);
+    if (days === 0) {
+        const hh = d.getHours().toString().padStart(2, '0');
+        const mm = d.getMinutes().toString().padStart(2, '0');
+        return `${hh}:${mm}`;
+    }
+    if (days === 1) return 'Yesterday';
+    if (days > 1 && days < 7) return d.toLocaleDateString(undefined, { weekday: 'short' });
+    // Future stamps land here rather than reading as a time today — see the
+    // same reasoning on `dayLabel`.
+    const sameYear = d.getFullYear() === now.getFullYear();
+    return d.toLocaleDateString(undefined, {
+        day: 'numeric',
+        month: 'numeric',
+        ...(sameYear ? {} : { year: '2-digit' }),
+    });
+}

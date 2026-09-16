@@ -16,7 +16,7 @@ export type { ChatPanelProps, LocalChatMessage } from './ChatPanel';
 export { MessageRow, formatChatTime } from './MessageRow';
 export { DaySeparator } from './DaySeparator';
 export type { DaySeparatorProps } from './DaySeparator';
-export { dayKeyOf, dayLabel, isNewDay, fullDateLabel, fullTimestampLabel } from './dayBoundary';
+export { dayKeyOf, dayLabel, isNewDay, fullDateLabel, fullTimestampLabel, conversationStamp } from './dayBoundary';
 export type { MessageRowProps } from './MessageRow';
 export { MessageGroup } from './MessageGroup';
 export type { MessageGroupProps, MessageGroupItem } from './MessageGroup';

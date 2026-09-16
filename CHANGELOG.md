@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.292.0] — 2026-09-16
+
+### Fixed — `./social`
+
+- **A conversation row says which day it means.** `ConversationList` stamped
+  every row with a bare `HH:MM`, which is right in a transcript — a day
+  separator sits above it — and wrong in a rail, where nothing does. A channel
+  nobody had touched since Sunday read as `21:52` tonight, and when the hour
+  was later than the current one, as the future. Rows now carry the time for
+  today, the word for yesterday, a short weekday inside the week, and a date
+  beyond it. The stamp is a `<time>` with the ISO instant and the full local
+  date and time as its `title`, so the exact moment is one hover away and a
+  screen reader is not left with four digits. The label still changes only at
+  midnight, so a row does not rerender because time passed.
+
+### Added — `./social`
+
+- **`conversationStamp(iso, now?)`**, the rule above, exported from
+  `dayBoundary` beside `dayLabel`. It is the same rule an activity feed needs,
+  so hosts can stop keeping a copy of it.
+
+---
+
 ## [2.291.0] — 2026-09-16
 
 ### Added — `./social`
