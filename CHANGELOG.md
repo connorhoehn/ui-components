@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.282.0] — 2026-09-16
+
+### Changed — `./social`
+
+- **Consecutive messages from one person collapse into a run.** Every row
+  repeated the author's name and avatar, so five messages from one person was
+  five avatars and five names down the left — the single biggest reason a busy
+  channel read as dense noise here and as a conversation in Teams. The first
+  message in a run keeps its author and timestamp; the rest are bare lines
+  aligned under it. Five minutes ends a run, and so does a different author, a
+  day divider, an edited message (the "(edited)" marker lives on the meta line
+  a continued row drops), and anything that is a record rather than somebody's
+  words — a card, a notice, a membership line, a deleted row. Inside a thread
+  a reply continues another reply and never the root, because the root is the
+  post and the replies are answers to it. `MessageRow` has supported this all
+  along via `hideAuthor`; nothing ever passed it.
+
+### Added — `./social`
+
+- **A persistent Reply control at the foot of every thread** (`threaded` with
+  `onReply`). Starting a reply was hover-only: you had to find the ↩ in the
+  action bar that appears when the pointer is over a row. Hover-only means
+  most people never discover that a channel is threaded at all, and keep
+  posting top-level messages — the flat river threading exists to fix. It sits
+  under a root with no replies too, since that is the post a first reply has
+  to start from, and it reports the thread's ROOT like every other reply path.
+  Quiet at rest, clearer on hover and focus, and named per thread ("Reply to
+  Carol") so a screen-reader user moving by control does not meet fifty
+  identical "Reply" buttons.
+
+---
+
 ## [2.281.1] — 2026-09-16
 
 ### Added — `./social`

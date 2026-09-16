@@ -34,7 +34,7 @@ import {
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover, DEFAULT_PICKER_EMOJIS } from './ReactionPickerPopover';
 import { DaySeparator } from './DaySeparator';
-import { isNewDay } from './dayBoundary';
+import { isNewDay, fullTimestampLabel } from './dayBoundary';
 import { TypingIndicator } from '../shared/TypingIndicator';
 import { Avatar } from '../shared/Avatar';
 import { VISUALLY_HIDDEN_STYLE } from '../shared/VisuallyHidden';
@@ -733,6 +733,95 @@ const THREAD_COLLAPSE_AFTER = 3;
  *  and who is in it, few enough that the channel keeps moving. */
 const THREAD_COLLAPSED_VISIBLE = 2;
 
+/**
+ * How close two messages must be to read as one run of speech.
+ *
+ * Five minutes — the figure Slack and Teams both landed on. Long enough that
+ * somebody typing three sentences in a row stays one block, short enough that
+ * answering an hour later starts a new one, which is exactly the case where a
+ * repeated name and time is information rather than noise.
+ */
+const RUN_WINDOW_MS = 5 * 60 * 1000;
+
+/**
+ * Who a row is FROM, for the purpose of deciding whether the next row
+ * continues it.
+ *
+ * The authenticated `userId` when the message carries one, the display name
+ * otherwise. Never `clientId`: it is per-connection and changes on every
+ * reconnect, so a run keyed on it would split in the middle of somebody's
+ * three sentences for a reason nothing on screen can explain. (The same trap
+ * the `isMine` check below documents.)
+ */
+function runIdentity(message: ChatMessage): string | undefined {
+  const userId = (message as { userId?: string }).userId;
+  if (userId) return `id:${userId}`;
+  return message.displayName ? `name:${message.displayName}` : undefined;
+}
+
+/**
+ * Is this row somebody's words, rather than a record ABOUT the conversation?
+ *
+ * A notice, a card and a deleted row each break a run from both sides. None of
+ * them is a sentence a person typed, and a bare line under "Bob started a
+ * call" would read as part of that record — which is precisely the attribution
+ * a collapsed row asserts.
+ */
+function isSpeech(message: ChatMessage): boolean {
+  if (message.metadata?.system === true) return false;
+  if (message.deletedAt || message.metadata?.deleted === true) return false;
+  return !(
+    agentRunRefFromMetadata(message.metadata) ||
+    recordingRefFromMetadata(message.metadata) ||
+    callRefFromMetadata(message.metadata) ||
+    documentRefFromMetadata(message.metadata) ||
+    membershipRefFromMetadata(message.metadata)
+  );
+}
+
+/**
+ * Does `entry` render as a bare continuation of `previous`?
+ *
+ * Every condition here names a case where the repeated avatar and name is
+ * carrying information. Where none of them holds, that repetition is the noise
+ * that makes a busy channel unreadable — five messages from one person as five
+ * avatars and five names down the left.
+ */
+function continuesRun(previous: TimelineEntry | undefined, entry: TimelineEntry): boolean {
+  // Local (viewer-only) rows sit this out in both directions. Each already
+  // carries a "Only you can see this" note — and sometimes buttons — under its
+  // text, so it is a block rather than a line, and dropping its author would
+  // leave that note hanging under whatever is above it.
+  if (!previous || previous.kind !== 'message' || entry.kind !== 'message') return false;
+  const before = previous.message;
+  const current = entry.message;
+
+  const who = runIdentity(current);
+  if (!who || who !== runIdentity(before)) return false;
+  if (!isSpeech(before) || !isSpeech(current)) return false;
+
+  // "(edited)" lives on the meta line a continued row drops. Silently losing
+  // the one marker that says a message was changed after it was sent is a
+  // worse trade than one repeated author line, so an edited row keeps a head
+  // of its own.
+  if (current.editedAt) return false;
+
+  // A day divider is drawn between them, so they are visibly separate blocks
+  // whatever the clock says: 23:58 and 00:01 are three minutes and two days
+  // apart. This is the only separator drawn INSIDE the list — the unread
+  // indicator is a pill floating over the scroller and `Load earlier messages`
+  // sits above the whole transcript, so neither can land mid-run.
+  if (isNewDay(current.timestamp, before.timestamp)) return false;
+
+  const then = Date.parse(before.timestamp);
+  const now = Date.parse(current.timestamp);
+  if (!Number.isFinite(then) || !Number.isFinite(now)) return false;
+  // Out of order counts as broken too. The server's order is the truth for the
+  // list, but a row stamped EARLIER than the one above it has no run to
+  // continue, and collapsing it would hide the only evidence of the skew.
+  return now >= then && now - then <= RUN_WINDOW_MS;
+}
+
 export function ChatPanel({
   messages,
   localMessages = [],
@@ -1013,6 +1102,14 @@ export function ChatPanel({
     index: number,
     previousTimestamp: string | undefined,
     /**
+     * The row this one may CONTINUE — the row directly above it with nothing
+     * drawn in between. Usually the same row `previousTimestamp` came from,
+     * but not always: a thread's replies rail and its foot control both sit in
+     * the gap between one root and the next, so a root is handed `undefined`
+     * whenever the thread above it drew anything below its own root.
+     */
+    previousInRun: TimelineEntry | undefined,
+    /**
      * Set only when this row is a REPLY rendered inside a thread. Carries the
      * root the thread hangs off, which is what `onReply` must report so the
      * next reply lands in THIS thread instead of starting a nested one.
@@ -1020,6 +1117,11 @@ export function ChatPanel({
     thread?: { rootId: string; rootMessage?: ChatMessage },
   ): ReactNode {
   const entryTimestamp = entry.kind === 'message' ? entry.message.timestamp : entry.local.timestamp;
+  // A run of messages from one person renders as one headed row plus bare
+  // lines under it, the way Teams and Slack both do it. Five messages from
+  // Carol were five avatars and five copies of "Carol" down the left margin;
+  // the name and the time are only news on the row where they CHANGE.
+  const continues = continuesRun(previousInRun, entry);
   // A date heading opens each new local day — including the first
   // row on screen, whose date is otherwise stated nowhere. Keyed
   // off the PREVIOUS row rather than a running variable so a
@@ -1364,6 +1466,15 @@ export function ChatPanel({
     <div
       data-testid="chat-message"
       data-message-id={messageId || undefined}
+      data-continues={continues ? 'true' : undefined}
+      // A continued row drops the whole meta line, timestamp included, so the
+      // native tooltip is where its time went. That is the honest limit of
+      // what this component can do from here: MessageRow has no hover-gutter
+      // slot, and inventing one in the panel would put a second time element
+      // on the page that the row itself knows nothing about. The full local
+      // date and time is in the title, on the row, reachable by pointer — and
+      // the headed row a few lines above still states the clock time plainly.
+      title={continues ? fullTimestampLabel(message.timestamp) : undefined}
       // `group` drives the hover reveal; `focus-within` is what
       // keeps the bar reachable without a pointer.
       className={cn(
@@ -1380,9 +1491,21 @@ export function ChatPanel({
       <MessageRow
         author={author}
         content={withInteractions}
-        timestamp={message.timestamp}
+        // An EMPTY timestamp on a continued row, which is what collapses the
+        // meta line entirely: MessageRow keeps that line for the clock alone
+        // (`metaVisible = !hideAuthor || !!time`), so hiding the author but
+        // keeping the time would trade a name for a stray HH:MM and leave the
+        // row two lines tall — half the repetition and none of the density
+        // this is for. `formatChatTime('')` yields '', so nothing is rendered
+        // and no invalid `dateTime` reaches the DOM. A `hideMeta` prop on
+        // MessageRow would say this outright; that file is out of scope here.
+        timestamp={continues ? '' : message.timestamp}
         editedAt={isDeleted ? undefined : message.editedAt}
         avatarUrl={message.avatarUrl}
+        // The avatar slot keeps its width when hidden, so a continued line
+        // starts under the first row's text rather than under its avatar.
+        hideAvatar={continues}
+        hideAuthor={continues}
         tone={tone}
         // Own messages flip side and take a tinted bubble. Matched
         // on the AUTHENTICATED user id, never on clientId: a
@@ -1448,19 +1571,63 @@ export function ChatPanel({
   }
 
   /**
+   * The message a thread's foot control would reply to, or undefined when this
+   * thread has nothing repliable at its head.
+   *
+   * The same exclusions the hover bar applies, for the same reasons: a local
+   * row has not been accepted by the server yet and there is no ChatMessage to
+   * hand back, a deleted message has nothing left to answer, and an activity
+   * notice ("the call started") is an event rather than something a person
+   * said. A membership notice renders as a notice with no actions at all, so
+   * it does not grow one here either.
+   */
+  function threadReplyTarget(root: TimelineEntry): ChatMessage | undefined {
+    if (!onReply || root.kind !== 'message') return undefined;
+    const message = root.message;
+    if (!message.id) return undefined;
+    if (message.deletedAt || message.metadata?.deleted === true) return undefined;
+    if (message.metadata?.system === true) return undefined;
+    if (membershipRefFromMetadata(message.metadata)) return undefined;
+    return message;
+  }
+
+  /**
    * A root post with its replies beneath it, behind a rail.
    *
-   * A thread with NO replies renders as the bare row, byte for byte what the
-   * flat path produces. Wrapping every message in thread chrome would make a
-   * channel of ordinary messages look like a channel of empty threads.
+   * A thread with NO replies and no foot control renders as the bare row, byte
+   * for byte what the flat path produces. Wrapping every message in thread
+   * chrome would make a channel of ordinary messages look like a channel of
+   * empty threads.
    */
   function renderThread(
     group: ThreadGroup,
     index: number,
-    previousTimestamp: string | undefined,
+    previousGroup: ThreadGroup | undefined,
   ): ReactNode {
-    const rootNode = renderTimelineEntry(group.root, index, previousTimestamp);
-    if (group.replies.length === 0) return rootNode;
+    // Day headings key off ROOT order, which is the order the river is in —
+    // so the previous root supplies the boundary even when a rail of replies
+    // was drawn between the two.
+    const previousTimestamp = timelineTimestamp(previousGroup?.root);
+    // Grouping does NOT get the same latitude. A root may continue the root
+    // above it only when nothing was drawn in the gap: a replies rail or a
+    // foot Reply control is a visible interruption, and a bare line following
+    // one would read as belonging to whatever the interruption said rather
+    // than to the post above it. In a channel where every root carries the
+    // foot control, that means top-level posts never collapse and only
+    // replies within a thread do — the correct answer, not a limitation.
+    const previousRoot =
+      previousGroup && previousGroup.replies.length === 0 && !threadReplyTarget(previousGroup.root)
+        ? previousGroup.root
+        : undefined;
+    const rootNode = renderTimelineEntry(group.root, index, previousTimestamp, previousRoot);
+    // Hover-only reply was the whole discoverability problem: a reader who
+    // never happens to hover a row never learns the channel is threaded, and
+    // keeps answering with new top-level posts — the flat river threading was
+    // built to end. A control that is always on screen is what says "this is
+    // a thread you can answer", and it matters MOST on a root with no replies
+    // yet, since that is the post a first reply has to start from.
+    const replyTarget = threadReplyTarget(group.root);
+    if (group.replies.length === 0 && !replyTarget) return rootNode;
 
     const rootId = entryId(group.root) ?? '';
     const rootMessage = group.root.kind === 'message' ? group.root.message : undefined;
@@ -1478,6 +1645,7 @@ export function ChatPanel({
     return (
       <div key={`thread:${rootId || index}`} data-testid="chat-thread" data-thread-root={rootId || undefined}>
         {rootNode}
+        {group.replies.length > 0 && (
         <div
           data-testid="chat-thread-replies"
           // Indent plus a rail down the left. The rail is what makes the
@@ -1487,7 +1655,12 @@ export function ChatPanel({
           className={cn('ml-7 border-l pl-2', dark ? 'border-white/20' : 'border-border')}
         >
           {visible.map((reply, replyIndex) =>
-            renderTimelineEntry(reply, replyIndex, undefined, {
+            // A reply continues another REPLY, never the root. The root is the
+            // post and the replies are answers to it, so the first answer
+            // always states who is answering even when the same person wrote
+            // both — and it sits across an indent change, where a bare line
+            // would be unreadable anyway.
+            renderTimelineEntry(reply, replyIndex, undefined, visible[replyIndex - 1], {
               rootId,
               ...(rootMessage ? { rootMessage } : {}),
             }),
@@ -1517,6 +1690,57 @@ export function ChatPanel({
             </button>
           )}
         </div>
+        )}
+        {replyTarget && (
+          // Below the last reply AND below the "N more replies" control, so it
+          // reads as the end of the thread rather than as one more reply.
+          //
+          // `border-l border-transparent` rather than a bare `pl-*`: it puts
+          // this on the exact box model the rail above uses, so the word lines
+          // up with the replies' text to the pixel whether or not a rail is
+          // drawn — and it does so without a hand-measured offset that would
+          // silently drift the next time the rail's padding changes.
+          <div className="ml-7 border-l border-transparent pl-2">
+            <button
+              type="button"
+              data-testid="chat-thread-reply"
+              // "Reply" repeated down a channel is a useless list to a screen
+              // reader user moving control to control — every stop says the
+              // same word and none of them says which post. The root's author
+              // is already in hand here, so naming the target costs nothing.
+              // The visible word stays "Reply": the name a sighted reader
+              // needs is supplied by the thread the control sits under.
+              aria-label={`Reply to ${entryAuthor(group.root)}`}
+              // Reuses the hover bar's path exactly — the thread's ROOT, never
+              // the last reply. See the `onReply` note on MessageActionBar for
+              // why a reply to a reply still reports the root.
+              onClick={() => onReply?.(replyTarget)}
+              // No tabIndex: the list's own tab stop and the roving reveal on
+              // the hover bar both key off focus-visible, and a plain button
+              // in normal document order joins the sequence without touching
+              // either. Scroll anchoring is likewise untouched — it measures
+              // `rowCount` from the props, not from the DOM, so an extra
+              // element per thread never reads as arriving traffic.
+              className={cn(
+                'mt-0.5 rounded px-1 py-0.5 text-xs',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                // Quiet at rest, clearer under a pointer or a focus ring. It
+                // sits under EVERY post, so at the weight of the thread toggle
+                // a hundred of them would read as a hundred pending actions
+                // instead of as a standing invitation.
+                //
+                // `text-white/*` on dark: the `text-text-*` tokens are tuned
+                // for the light surface and go muddy to invisible over call
+                // chrome.
+                dark
+                  ? 'text-white/50 hover:bg-white/10 hover:text-white/80 focus-visible:text-white/80'
+                  : 'text-text-tertiary hover:bg-surface-hover hover:text-text-secondary focus-visible:text-text-secondary',
+              )}
+            >
+              Reply
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -1644,12 +1868,15 @@ export function ChatPanel({
             )
           ) : (
             threads ? (
-              threads.map((group, index) =>
-                renderThread(group, index, timelineTimestamp(threads[index - 1]?.root)),
-              )
+              threads.map((group, index) => renderThread(group, index, threads[index - 1]))
             ) : (
               timeline.map((entry, index) =>
-                renderTimelineEntry(entry, index, timelineTimestamp(timeline[index - 1])),
+                renderTimelineEntry(
+                  entry,
+                  index,
+                  timelineTimestamp(timeline[index - 1]),
+                  timeline[index - 1],
+                ),
               )
             )
           )}

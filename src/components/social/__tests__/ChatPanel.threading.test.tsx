@@ -297,12 +297,330 @@ describe('ChatPanel threading', () => {
     expect(screen.getByTestId('chat-thread-replies').querySelectorAll('[data-testid="chat-day-separator"]')).toHaveLength(0);
   });
 
+  it('gives a root with no replies yet a persistent Reply control', () => {
+    const onReply = vi.fn();
+    render(<ChatPanel threaded messages={[root]} onSend={vi.fn()} onReply={onReply} />);
+
+    // The post you most need to be able to answer is the one nobody has
+    // answered yet — hover-only is exactly where that one gets missed.
+    const foot = screen.getByTestId('chat-thread-reply');
+    expect(foot.tagName).toBe('BUTTON');
+    expect(foot.textContent).toBe('Reply');
+    // Named by its target, so a screen-reader user moving control to control
+    // does not hear "Reply" fifty times with nothing to tell them apart.
+    expect(foot.getAttribute('aria-label')).toBe('Reply to Carol');
+    // A real tab stop, not an aria-only or pointer-only affordance.
+    expect(foot.getAttribute('tabindex')).toBeNull();
+    expect(foot.hasAttribute('disabled')).toBe(false);
+  });
+
+  it('puts the Reply control at the foot of the thread, under the last reply', () => {
+    render(<ChatPanel threaded messages={[root, reply]} onSend={vi.fn()} onReply={vi.fn()} />);
+
+    const thread = screen.getByTestId('chat-thread');
+    const foot = screen.getByTestId('chat-thread-reply');
+    // Inside the thread, but not inside the replies rail — it is the end of
+    // the thread, not one more reply.
+    expect(thread.contains(foot)).toBe(true);
+    expect(screen.getByTestId('chat-thread-replies').contains(foot)).toBe(false);
+    // …and it really is last in document order, after the reply row.
+    expect(
+      rowOf('m3').compareDocumentPosition(foot) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('keeps the Reply control below the "N more replies" control', () => {
+    const replies = ['r1', 'r2', 'r3', 'r4', 'r5'].map((id, i) =>
+      msg(id, `reply ${i + 1}`, {
+        timestamp: `2026-09-16T10:0${i}:00.000Z`,
+        replyTo: { messageId: 'm1', author: 'Carol', text: 'Are we shipping Friday?' },
+      }),
+    );
+    render(<ChatPanel threaded messages={[root, ...replies]} onSend={vi.fn()} onReply={vi.fn()} />);
+
+    const toggle = screen.getByTestId('chat-thread-toggle');
+    const foot = screen.getByTestId('chat-thread-reply');
+    expect(
+      toggle.compareDocumentPosition(foot) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('reports the ROOT from the foot control, never the last reply', () => {
+    const onReply = vi.fn();
+    const second = msg('m4', 'And the migration?', {
+      displayName: 'Dan',
+      userId: 'dan',
+      replyTo: { messageId: 'm3', author: 'Eve', text: 'Yes, pending the audit' },
+    });
+    render(
+      <ChatPanel threaded messages={[root, reply, second]} onSend={vi.fn()} onReply={onReply} />,
+    );
+
+    fireEvent.click(screen.getByTestId('chat-thread-reply'));
+    expect(onReply).toHaveBeenCalledTimes(1);
+    // m4 is the newest row in the thread; the control still hands back m1, so
+    // the host stamps a replyTo that keeps the next answer in THIS thread.
+    expect(onReply.mock.calls[0][0].id).toBe('m1');
+  });
+
+  it('adds nothing when threading is off', () => {
+    render(<ChatPanel messages={[root, other, reply]} onSend={vi.fn()} onReply={vi.fn()} />);
+    expect(screen.queryByTestId('chat-thread-reply')).toBeNull();
+    expect(screen.queryByTestId('chat-thread')).toBeNull();
+    // The hover ↩ is untouched — that path is what existing callers rely on.
+    expect(rowOf('m1').querySelector('[aria-label="Reply"]')).toBeTruthy();
+  });
+
+  it('adds nothing when the host passes no onReply', () => {
+    render(<ChatPanel threaded messages={[root, other, reply]} onSend={vi.fn()} />);
+    expect(screen.queryByTestId('chat-thread-reply')).toBeNull();
+    // A root with no replies stays the bare row rather than growing empty
+    // thread chrome.
+    expect(screen.getAllByTestId('chat-thread')).toHaveLength(1);
+    expect(screen.getByTestId('chat-thread').getAttribute('data-thread-root')).toBe('m1');
+  });
+
+  it('draws the foot control for dark chrome', () => {
+    render(
+      <ChatPanel threaded tone="dark" messages={[root, reply]} onSend={vi.fn()} onReply={vi.fn()} />,
+    );
+    const foot = screen.getByTestId('chat-thread-reply');
+    // The text-text-* tokens are tuned for the light surface and go muddy over
+    // call chrome, so the dark tone carries its own ramp.
+    expect(foot.className).toContain('text-white/50');
+    expect(foot.className).not.toContain('text-text-tertiary');
+  });
+
   it('threads on the dark tone too', () => {
     render(<ChatPanel threaded tone="dark" messages={[root, reply]} onSend={vi.fn()} />);
     const rail = screen.getByTestId('chat-thread-replies');
     // A token rail would be invisible on dark chrome.
     expect(rail.className).toContain('border-white/20');
     expect(rail.className).not.toContain('border-border');
+  });
+});
+
+describe('ChatPanel author runs', () => {
+  /** Minutes past 09:00 on the fixed test morning, as an ISO string. */
+  function at(minutes: number): string {
+    return new Date(Date.UTC(2026, 8, 16, 9, minutes, 0)).toISOString();
+  }
+
+  /** Did this row render as a bare continuation of the one above it? */
+  function isBare(id: string): boolean {
+    const row = rowOf(id);
+    const bare =
+      !row.querySelector('[data-testid="message-row-author"]') &&
+      !row.querySelector('[data-testid="message-row-time"]');
+    // The attribute and the rendering must agree — one is the panel's decision
+    // and the other is what MessageRow did with it.
+    expect(row.getAttribute('data-continues')).toBe(bare ? 'true' : null);
+    return bare;
+  }
+
+  function run(...overrides: Array<Partial<ChatMessage> & { id: string; at: number }>) {
+    return overrides.map((o) => {
+      const { id, at: minutes, ...rest } = o;
+      return msg(id, `line ${id}`, { timestamp: at(minutes), ...rest });
+    });
+  }
+
+  it('collapses consecutive messages from one person into a single headed block', () => {
+    render(
+      <ChatPanel
+        messages={run({ id: 'a1', at: 0 }, { id: 'a2', at: 1 }, { id: 'a3', at: 2 })}
+        onSend={vi.fn()}
+      />,
+    );
+    // The first row states who and when; the other two are bare lines.
+    expect(isBare('a1')).toBe(false);
+    expect(isBare('a2')).toBe(true);
+    expect(isBare('a3')).toBe(true);
+    expect(screen.getAllByTestId('message-row-author')).toHaveLength(1);
+    // The text is all still there — this collapses the chrome, not the
+    // conversation.
+    expect(screen.getByText('line a3')).toBeInTheDocument();
+  });
+
+  it('keeps the full timestamp reachable on a continued row', () => {
+    render(<ChatPanel messages={run({ id: 'a1', at: 0 }, { id: 'a2', at: 1 })} onSend={vi.fn()} />);
+    // The meta line is gone, so the native tooltip is where the time went.
+    const title = rowOf('a2').getAttribute('title');
+    expect(title).toBeTruthy();
+    expect(title).toContain('2026');
+    // …and the headed row does not carry one, because it says the time out loud.
+    expect(rowOf('a1').getAttribute('title')).toBeNull();
+  });
+
+  it('breaks the run when the author changes', () => {
+    render(
+      <ChatPanel
+        messages={run(
+          { id: 'a1', at: 0 },
+          { id: 'b1', at: 1, userId: 'dan', displayName: 'Dan' },
+          { id: 'a2', at: 2 },
+        )}
+        onSend={vi.fn()}
+      />,
+    );
+    expect(isBare('b1')).toBe(false);
+    // Carol again, but no longer continuing anything — Dan spoke in between.
+    expect(isBare('a2')).toBe(false);
+  });
+
+  it('matches on the authenticated user id, not the per-connection clientId', () => {
+    const first = msg('a1', 'one', { timestamp: at(0), clientId: 'socket-1' });
+    // Same person, reconnected: a new clientId, the same userId. A run keyed on
+    // clientId would split here for a reason nothing on screen explains.
+    const second = msg('a2', 'two', { timestamp: at(1), clientId: 'socket-2' });
+    render(<ChatPanel messages={[first, second]} onSend={vi.fn()} />);
+    expect(isBare('a2')).toBe(true);
+  });
+
+  it('breaks the run on a gap longer than the window', () => {
+    render(
+      <ChatPanel
+        messages={run({ id: 'a1', at: 0 }, { id: 'a2', at: 4 }, { id: 'a3', at: 15 })}
+        onSend={vi.fn()}
+      />,
+    );
+    // Four minutes is inside the five-minute window; eleven is not.
+    expect(isBare('a2')).toBe(true);
+    expect(isBare('a3')).toBe(false);
+  });
+
+  it('breaks the run across an activity notice', () => {
+    const notice = msg('n1', 'Carol started a call', {
+      timestamp: at(1),
+      metadata: { system: true },
+    });
+    render(
+      <ChatPanel messages={[...run({ id: 'a1', at: 0 }), notice, ...run({ id: 'a2', at: 2 })]} onSend={vi.fn()} />,
+    );
+    // A record is not somebody's sentence, so it neither continues nor is
+    // continued: the message after it states its author again.
+    expect(isBare('n1')).toBe(false);
+    expect(isBare('a2')).toBe(false);
+  });
+
+  it('breaks the run across a card', () => {
+    const card = msg('d1', 'Carol shared Q3 Plan', {
+      timestamp: at(1),
+      metadata: { kind: 'document', documentId: 'doc-1', title: 'Q3 Plan' },
+    });
+    render(
+      <ChatPanel messages={[...run({ id: 'a1', at: 0 }), card, ...run({ id: 'a2', at: 2 })]} onSend={vi.fn()} />,
+    );
+    expect(isBare('a2')).toBe(false);
+  });
+
+  it('breaks the run across a deleted row', () => {
+    const gone = msg('x1', 'oops', { timestamp: at(1), metadata: { deleted: true } });
+    render(
+      <ChatPanel messages={[...run({ id: 'a1', at: 0 }), gone, ...run({ id: 'a2', at: 2 })]} onSend={vi.fn()} />,
+    );
+    expect(isBare('x1')).toBe(false);
+    expect(isBare('a2')).toBe(false);
+  });
+
+  it('breaks the run at a day divider even inside the time window', () => {
+    // Built in LOCAL time so the boundary is a real midnight wherever this
+    // runs; the same two instants are the same day in some zones and not in
+    // others, and the divider is what this asserts on.
+    const before = new Date(2026, 8, 16, 23, 58, 0).toISOString();
+    const after = new Date(2026, 8, 17, 0, 1, 0).toISOString();
+    render(
+      <ChatPanel
+        messages={[msg('a1', 'last night', { timestamp: before }), msg('a2', 'this morning', { timestamp: after })]}
+        onSend={vi.fn()}
+      />,
+    );
+    // Three minutes apart, so the clock alone would have collapsed them.
+    expect(screen.getAllByTestId('chat-day-separator')).toHaveLength(2);
+    expect(isBare('a2')).toBe(false);
+  });
+
+  it('keeps an edited row headed so its "(edited)" marker survives', () => {
+    const edited = msg('a2', 'fixed that', { timestamp: at(1), editedAt: at(2) });
+    render(<ChatPanel messages={[...run({ id: 'a1', at: 0 }), edited]} onSend={vi.fn()} />);
+    expect(isBare('a2')).toBe(false);
+    expect(screen.getByTestId('message-row-edited')).toBeInTheDocument();
+  });
+
+  it('never lets a thread root be continued by its first reply', () => {
+    const rootPost = msg('t1', 'Are we shipping Friday?', { timestamp: at(0) });
+    // Same author, one minute later — the only thing stopping a collapse here
+    // is the rule that a reply answers the root rather than continuing it.
+    const firstReply = msg('t2', 'bumping this', {
+      timestamp: at(1),
+      replyTo: { messageId: 't1', author: 'Carol', text: 'Are we shipping Friday?' },
+    });
+    const secondReply = msg('t3', 'still bumping', {
+      timestamp: at(2),
+      replyTo: { messageId: 't1', author: 'Carol', text: 'Are we shipping Friday?' },
+    });
+    render(<ChatPanel threaded messages={[rootPost, firstReply, secondReply]} onSend={vi.fn()} />);
+
+    expect(isBare('t2')).toBe(false);
+    // …but one reply does continue the reply above it.
+    expect(isBare('t3')).toBe(true);
+  });
+
+  it('does not collapse a root across a thread drawn above it', () => {
+    const rootPost = msg('t1', 'Are we shipping Friday?', { timestamp: at(0) });
+    const answer = msg('t2', 'Yes', {
+      timestamp: at(1),
+      displayName: 'Eve',
+      userId: 'eve',
+      replyTo: { messageId: 't1', author: 'Carol', text: 'Are we shipping Friday?' },
+    });
+    const nextPost = msg('t3', 'Also, standup moved', { timestamp: at(2) });
+    render(<ChatPanel threaded messages={[rootPost, answer, nextPost]} onSend={vi.fn()} />);
+    // Carol both times and one minute apart, but Eve's reply rail is drawn in
+    // the gap — a bare line under it would read as part of that thread.
+    expect(isBare('t3')).toBe(false);
+  });
+
+  it('keeps the hover bar, reactions and edit/delete working on a continued row', async () => {
+    const onToggleReaction = vi.fn();
+    const onEditMessage = vi.fn().mockResolvedValue(undefined);
+    const onDeleteMessage = vi.fn();
+    const mine = [
+      msg('a1', 'one', { timestamp: at(0), userId: 'eve', displayName: 'Eve' }),
+      msg('a2', 'two', { timestamp: at(1), userId: 'eve', displayName: 'Eve' }),
+    ];
+    render(
+      <ChatPanel
+        messages={mine}
+        currentUserId="eve"
+        onSend={vi.fn()}
+        reactionsFor={() => [{ emoji: '👍', userId: 'dan', displayName: 'Dan' }]}
+        onToggleReaction={onToggleReaction}
+        onEditMessage={onEditMessage}
+        onDeleteMessage={onDeleteMessage}
+      />,
+    );
+
+    const row = rowOf('a2');
+    expect(isBare('a2')).toBe(true);
+    // Still the viewer's own message: the bubble and the side it sits on are
+    // unaffected by dropping the author label.
+    expect(row.querySelector('[data-testid="message-row"]')?.getAttribute('data-mine')).toBe('true');
+    expect(row.querySelector('[data-testid="reaction-chips"]')).toBeTruthy();
+
+    fireEvent.click(row.querySelector('[data-testid^="message-actions-react-"]')!);
+    expect(onToggleReaction).toHaveBeenCalledWith('a2', '👍');
+
+    fireEvent.click(row.querySelector('[aria-label="Edit message"]')!);
+    const input = screen.getByTestId('message-editor-input') as HTMLTextAreaElement;
+    fireEvent.change(input, { target: { value: 'two, corrected' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+    await waitFor(() => expect(onEditMessage).toHaveBeenCalled());
+    expect(onEditMessage.mock.calls[0][0].id).toBe('a2');
+
+    fireEvent.click(rowOf('a2').querySelector('[aria-label="Delete message"]')!);
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+    expect(onDeleteMessage.mock.calls[0][0].id).toBe('a2');
   });
 });
 
