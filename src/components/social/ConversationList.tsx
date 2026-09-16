@@ -12,7 +12,7 @@
 // white/alpha classes so the list can sit on call chrome (e.g. inside a
 // CallSidePanel or the CallSettingsDialog Chat tab).
 
-import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { cn } from '../../lib/cn';
 import { Avatar, AvatarGroup } from '../shared/Avatar';
 import { PresenceDot } from '../shared/PresenceDot';
@@ -172,6 +172,24 @@ export interface ConversationListProps {
    */
   sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
   /**
+   * Which sections are folded away, keyed by the section's name the way
+   * `sectionActions` is — 'Pinned', 'Channels', 'Direct messages'.
+   *
+   * Controlled, and only live once `onToggleSection` is given: a collapsed
+   * section with no handler is one nothing can reopen. The host owns the state
+   * because this is a preference worth persisting — a rail that forgets which
+   * sections you folded is one you refold every morning.
+   *
+   * Not to be confused with the "Show N more" cap (`maxVisible`), which is
+   * this component's own state and a different idea: the cap trims a long
+   * section down to its top rows, this hides the section outright. Neither
+   * resets the other, so reopening a section brings back exactly the rows it
+   * had.
+   */
+  collapsedSections?: Readonly<Record<string, boolean>>;
+  /** Fires with the section's name and the state the host should switch to. */
+  onToggleSection?: (label: string, next: boolean) => void;
+  /**
    * Start a call in a conversation from the rail — the row's ⋯ gains "Call"
    * and "Video call". A conversation you can open is one you can call into,
    * and making people open it first to find the call button is a step for
@@ -220,6 +238,8 @@ export function ConversationList({
   grouped = false,
   sectionOrder = 'channels-first',
   sectionActions,
+  collapsedSections,
+  onToggleSection,
   onStartCall,
   sortByRecency = true,
   maxVisible,
@@ -238,6 +258,14 @@ export function ConversationList({
   // Derived testids need a base even when the caller passed none, or every
   // hook below reads `undefined-row-menu-general`.
   const idBase = testId ?? 'conversation';
+  // A collapsed section the host cannot hear about is one nothing reopens, so
+  // the handler — not the map — is what turns the headings into controls.
+  const sectionsCollapsible = onToggleSection !== undefined;
+  // Two rails on one page (a sidebar and a dialog) would otherwise mint the
+  // same "channels" id twice and cross-wire each other's aria-controls.
+  const uid = useId();
+  const sectionDomId = (label: string, part: 'content' | 'toggle') =>
+    `${uid}${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${part}`;
 
   // One SCROLL container holding one <ul> per group, rather than one <ul>
   // with headings interleaved as `aria-hidden` list items.
@@ -290,30 +318,45 @@ export function ConversationList({
   // which is what a list of destinations should do); what changes is that
   // only ONE of them is in the tab order at a time and Up/Down move between
   // them. Tab now enters the list once and leaves once.
-  // Top-k per group. Expansion is per section and lives here: the caller
+  // Top-k per group. Lifting the cap is per section and lives here: the caller
   // asked for a cap, not for a second piece of state to carry around.
-  const [expandedSections, setExpandedSections] = useState<ReadonlySet<string>>(() => new Set());
+  //
+  // Deliberately NOT the same set as `collapsedSections`. "Show the rest of
+  // this section" and "hide this section" are two different questions about
+  // one heading, and folding them together would mean reopening a section
+  // silently re-trimmed it — the rows you had expanded gone, with nothing on
+  // screen explaining why.
+  const [uncappedSections, setUncappedSections] = useState<ReadonlySet<string>>(() => new Set());
   const visibleSections = sections.map((section) => {
+    // Only a section with a heading can be folded — the heading is the
+    // control, and the ungrouped single run has none.
+    const collapsible = sectionsCollapsible && section.heading !== undefined;
+    const collapsed = collapsible && collapsedSections?.[section.label] === true;
     const capped = maxVisible !== undefined && maxVisible >= 0 && section.items.length > maxVisible;
-    if (!capped || expandedSections.has(section.label)) {
-      return { ...section, shown: section.items, hidden: 0, capped };
+    const base = { ...section, collapsible, collapsed, capped };
+    if (!capped || uncappedSections.has(section.label)) {
+      return { ...base, shown: section.items, hidden: 0 };
     }
     let shown = section.items.slice(0, maxVisible);
     const active = activeChannel ? section.items.find((i) => i.channel === activeChannel) : undefined;
     if (active && !shown.includes(active)) {
       shown = maxVisible === 0 ? [active] : [...shown.slice(0, -1), active];
     }
-    return { ...section, shown, hidden: section.items.length - shown.length, capped };
+    return { ...base, shown, hidden: section.items.length - shown.length };
   });
-  const toggleSection = (label: string) =>
-    setExpandedSections((prev) => {
+  const toggleCap = (label: string) =>
+    setUncappedSections((prev) => {
       const next = new Set(prev);
       if (next.has(label)) next.delete(label);
       else next.add(label);
       return next;
     });
 
-  const rows = visibleSections.flatMap((section) => section.shown);
+  // A collapsed section's rows leave the roving rotation with the same
+  // expression that stops them rendering. Arrow-reaching a row that is not on
+  // screen moves focus to nothing a sighted keyboard user can follow, and the
+  // cursor below is derived from exactly this array.
+  const rows = visibleSections.flatMap((section) => (section.collapsed ? [] : section.shown));
   const listRef = useRef<HTMLDivElement>(null);
   const [rovingChannel, setRovingChannel] = useState<string | null>(null);
   // The cursor starts on the OPEN conversation, so tabbing into the rail lands
@@ -416,19 +459,19 @@ export function ConversationList({
           onKeyDown={handleListKeyDown}
           className="m-0 flex min-h-0 flex-col overflow-y-auto p-0"
         >
-          {visibleSections.map((section) => (
-            <div key={section.label}>
-              {section.heading && (
-                <RailSectionHeader
-                  label={section.heading}
-                  dark={dark}
-                  actions={sectionActions?.[section.label] ?? []}
-                  data-testid="conversation-section"
-                />
-              )}
+          {visibleSections.map((section) => {
+            const contentId = sectionDomId(section.label, 'content');
+            const toggleId = sectionDomId(section.label, 'toggle');
+            const sectionContent = section.collapsed ? null : (
+              <>
               <ul
                 className="m-0 flex list-none flex-col gap-0.5 p-0"
-                aria-label={section.label}
+                // While the heading is a control it IS the section's name, and
+                // the list points at it rather than repeating the same word in
+                // an aria-label of its own — otherwise entering the section
+                // announces "Channels" twice.
+                aria-label={section.collapsible ? undefined : section.label}
+                aria-labelledby={section.collapsible ? toggleId : undefined}
               >
           {section.shown.map((item) => {
             const isActive = item.channel === activeChannel;
@@ -694,7 +737,7 @@ export function ConversationList({
               {section.capped && (
                 <button
                   type="button"
-                  onClick={() => toggleSection(section.label)}
+                  onClick={() => toggleCap(section.label)}
                   aria-expanded={section.hidden === 0}
                   data-testid="conversation-show-more"
                   className={cn(
@@ -708,8 +751,37 @@ export function ConversationList({
                   {section.hidden > 0 ? `Show ${section.hidden} more` : 'Show less'}
                 </button>
               )}
+              </>
+            );
+            return (
+            <div key={section.label}>
+              {section.heading && (
+                <RailSectionHeader
+                  label={section.heading}
+                  dark={dark}
+                  actions={sectionActions?.[section.label] ?? []}
+                  {...(section.collapsible
+                    ? {
+                        collapsed: section.collapsed,
+                        onToggleCollapse: (next: boolean) => onToggleSection?.(section.label, next),
+                        controls: contentId,
+                        toggleId,
+                        // The data is already in hand — every row carries its
+                        // own unread — so a folded section can say what is
+                        // waiting in it instead of going silent.
+                        collapsedCount: section.items.reduce((n, i) => n + (i.unreadCount ?? 0), 0),
+                      }
+                    : {})}
+                  data-testid="conversation-section"
+                />
+              )}
+              {/* The wrapper exists only to give `aria-controls` something
+                  that survives collapsing; a caller with no collapse props
+                  gets the same DOM it always had. */}
+              {section.collapsible ? <div id={contentId}>{sectionContent}</div> : sectionContent}
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

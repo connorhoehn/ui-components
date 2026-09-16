@@ -1194,7 +1194,7 @@ export declare interface ConversationItem {
     muted?: boolean;
 }
 
-export declare function ConversationList({ items, grouped, sectionOrder, sectionActions, onStartCall, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+export declare function ConversationList({ items, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
 
 export declare interface ConversationListProps {
     items: ConversationItem[];
@@ -1234,6 +1234,24 @@ export declare interface ConversationListProps {
      * else is a button nobody finds.
      */
     sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
+    /**
+     * Which sections are folded away, keyed by the section's name the way
+     * `sectionActions` is — 'Pinned', 'Channels', 'Direct messages'.
+     *
+     * Controlled, and only live once `onToggleSection` is given: a collapsed
+     * section with no handler is one nothing can reopen. The host owns the state
+     * because this is a preference worth persisting — a rail that forgets which
+     * sections you folded is one you refold every morning.
+     *
+     * Not to be confused with the "Show N more" cap (`maxVisible`), which is
+     * this component's own state and a different idea: the cap trims a long
+     * section down to its top rows, this hides the section outright. Neither
+     * resets the other, so reopening a section brings back exactly the rows it
+     * had.
+     */
+    collapsedSections?: Readonly<Record<string, boolean>>;
+    /** Fires with the section's name and the state the host should switch to. */
+    onToggleSection?: (label: string, next: boolean) => void;
     /**
      * Start a call in a conversation from the rail — the row's ⋯ gains "Call"
      * and "Video call". A conversation you can open is one you can call into,
@@ -1287,7 +1305,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, onStartCall, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -1314,6 +1332,16 @@ export declare interface ConversationRailProps {
     sectionOrder?: 'channels-first' | 'dms-first';
     /** Trailing buttons on each section heading, keyed by section name. Forwarded to the list. */
     sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
+    /**
+     * Which conversation sections are folded away, keyed by section name.
+     * Forwarded to the list.
+     *
+     * Nothing to do with `collapsed` below: that shrinks the WHOLE rail to an
+     * icon strip, this folds one section inside an otherwise normal rail.
+     */
+    collapsedSections?: Readonly<Record<string, boolean>>;
+    /** Fires with the section's name and the state to switch to. Forwarded to the list. */
+    onToggleSection?: (label: string, next: boolean) => void;
     /** "Call" / "Video call" in each row's ⋯ menu. Forwarded to the list. */
     onStartCall?: (channel: string, kind: 'audio' | 'video') => void;
     /** Forwarded to the list: rows per group before a "Show N more" row. */
@@ -2213,7 +2241,7 @@ export declare interface RailSectionAction {
     'data-testid'?: string;
 }
 
-export declare function RailSectionHeader({ label, actions, presentational, dark, className, 'data-testid': testId, }: RailSectionHeaderProps): JSX.Element;
+export declare function RailSectionHeader({ label, actions, presentational, collapsed, onToggleCollapse, controls, toggleId, collapsedCount, dark, className, 'data-testid': testId, }: RailSectionHeaderProps): JSX.Element;
 
 export declare interface RailSectionHeaderProps {
     label: string;
@@ -2223,8 +2251,41 @@ export declare interface RailSectionHeaderProps {
      * The heading names the list that follows, and that list already carries
      * the same name — announcing both is the label twice. Sections whose list
      * is NOT separately named should pass false.
+     *
+     * Ignored once the header is a disclosure: the label is then the control's
+     * own name, and a control that is `aria-hidden` cannot be reached or
+     * announced at all. See `toggleId` for how the name stays said once.
      */
     presentational?: boolean;
+    /**
+     * Given together with `onToggleCollapse`, the whole label becomes the
+     * disclosure control — a target the width of the heading, the way Teams and
+     * Slack fold their rail sections, rather than a 12px chevron people miss.
+     *
+     * Controlled on purpose. Collapsing a section is a preference, not a
+     * transient: the host owns the state so it can persist it and have the rail
+     * come back the way it was left.
+     */
+    collapsed?: boolean;
+    /** Fires with the state the host should switch to. */
+    onToggleCollapse?: (next: boolean) => void;
+    /** Id of the region this header folds away, for `aria-controls`. */
+    controls?: string;
+    /**
+     * Put on the disclosure button itself, so the region it controls can point
+     * an `aria-labelledby` back at it instead of repeating the same word in its
+     * own `aria-label`. That is what keeps the name said once now that
+     * `presentational` can no longer hide the heading.
+     */
+    toggleId?: string;
+    /**
+     * Unread hiding under a collapsed section — rendered only while collapsed.
+     *
+     * Collapsing is only safe to reach for if the rail still tells you when
+     * something arrived in what you folded away; without it, hiding a section is
+     * the same as muting it by accident.
+     */
+    collapsedCount?: number;
     /** Light-on-dark, for a rail sitting on call chrome. */
     dark?: boolean;
     className?: string;
@@ -2542,7 +2603,7 @@ export declare interface TeamChannelItem {
     pinned?: boolean;
 }
 
-export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onTogglePinTeam, onTogglePinChannel, onCreateTeam, heading, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
+export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onTogglePinTeam, onTogglePinChannel, onCreateTeam, heading, collapsed, onToggleCollapse, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
 
 export declare interface TeamChannelTreeProps {
     teams: readonly TeamTreeItem[];
@@ -2581,6 +2642,18 @@ export declare interface TeamChannelTreeProps {
     onCreateTeam?: (trigger: HTMLElement) => void;
     /** Hides the "Teams" heading for a host that draws its own. */
     heading?: string | false;
+    /**
+     * Folds the whole tree away behind its heading, the way the rail's other
+     * sections fold. Controlled together with `onToggleCollapse` — the host owns
+     * it so it can persist it, and the heading is inert without the handler.
+     *
+     * Distinct from a team's own expansion (`expanded` / `onToggleTeam`): that
+     * opens one team's channels, this hides the Teams section outright, and
+     * reopening it leaves every team exactly as expanded as it was.
+     */
+    collapsed?: boolean;
+    /** Fires with the state the host should switch to. */
+    onToggleCollapse?: (next: boolean) => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -2694,19 +2767,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -2720,6 +2783,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2753,9 +2826,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

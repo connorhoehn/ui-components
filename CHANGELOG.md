@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.284.0] — 2026-09-16
+
+### Added — `./social`
+
+- **Every rail section folds away.** Pinned, Channels, Direct messages and
+  Teams are one shared heading component, and none of them collapsed; Teams
+  and Slack fold all of them and remember it. `RailSectionHeader` takes
+  `collapsed` / `onToggleCollapse` / `controls`, `ConversationList` and
+  `ConversationRail` take `collapsedSections` / `onToggleSection` keyed by
+  section name, and `TeamChannelTree` folds its whole tree. Controlled, so the
+  host can persist it — a fold that springs back open on reload is a fold
+  nobody uses twice.
+
+  Three details worth knowing. **A collapsed section shows its unread count**,
+  which is what makes folding safe to use rather than a way to miss things.
+  **The `+` on a folded section opens it first, then acts** — creating a
+  channel into a hidden section otherwise leaves the new row out of sight and
+  the click reads as having done nothing. And **hidden rows leave the keyboard
+  rotation entirely**: the roving cursor is derived from the same expression
+  that decides what renders, so a folded section can never hold focus on
+  something invisible.
+
+  The pre-existing per-section "Show N more" cap was renamed from
+  `expandedSections` to `uncappedSections` internally — two different ideas
+  that both sounded like "expanded". Neither resets the other.
+
+---
+
 ## [2.283.0] — 2026-09-16
 
 ### Added — `./social`

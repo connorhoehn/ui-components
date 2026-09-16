@@ -10,7 +10,7 @@
 // badges that a team row does not. Two genuinely different row shapes, one
 // level deep, is simpler hand-built than bent out of a generic one.
 
-import { useState, useRef, type KeyboardEvent } from 'react';
+import { useId, useState, useRef, type KeyboardEvent } from 'react';
 import { cn } from '../../lib/cn';
 import { Avatar } from '../shared/Avatar';
 import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
@@ -76,6 +76,18 @@ export interface TeamChannelTreeProps {
   onCreateTeam?: (trigger: HTMLElement) => void;
   /** Hides the "Teams" heading for a host that draws its own. */
   heading?: string | false;
+  /**
+   * Folds the whole tree away behind its heading, the way the rail's other
+   * sections fold. Controlled together with `onToggleCollapse` — the host owns
+   * it so it can persist it, and the heading is inert without the handler.
+   *
+   * Distinct from a team's own expansion (`expanded` / `onToggleTeam`): that
+   * opens one team's channels, this hides the Teams section outright, and
+   * reopening it leaves every team exactly as expanded as it was.
+   */
+  collapsed?: boolean;
+  /** Fires with the state the host should switch to. */
+  onToggleCollapse?: (next: boolean) => void;
   className?: string;
   'data-testid'?: string;
 }
@@ -113,9 +125,20 @@ export function TeamChannelTree({
   onTogglePinChannel,
   onCreateTeam,
   heading = 'Teams',
+  collapsed = false,
+  onToggleCollapse,
   className,
   'data-testid': testId = 'team-channel-tree',
 }: TeamChannelTreeProps) {
+  // Only a heading that is actually drawn can be the control, and only a host
+  // that hears the toggle can put the tree back.
+  const headingCollapsible = heading !== false && onToggleCollapse !== undefined;
+  const isFolded = headingCollapsible && collapsed;
+  // Two trees on one page (a rail and a picker dialog) would otherwise mint
+  // the same ids and cross-wire each other's aria-controls.
+  const uid = useId();
+  const headingToggleId = `${uid}teams-toggle`;
+  const treeDomId = `${uid}teams`;
   const isControlled = onToggleTeam !== undefined;
   const [ownExpanded, setOwnExpanded] = useState<Set<string>>(
     () => new Set(teams.filter((t) => t.expanded).map((t) => t.teamId)),
@@ -150,9 +173,11 @@ export function TeamChannelTree({
   const orderedTeams = pinnedFirst(teams);
 
   // The flat, VISIBLE run of rows — what Up/Down/Home/End walk. Only a
-  // team's channels count when that team is expanded.
+  // team's channels count when that team is expanded, and a folded tree has
+  // no rows at all: leaving them in here would keep them in the roving
+  // tabindex and let Arrow keys walk focus through rows nobody can see.
   const visibleRows: Row[] = [];
-  for (const team of orderedTeams) {
+  for (const team of isFolded ? [] : orderedTeams) {
     visibleRows.push({ id: `team:${team.teamId}`, kind: 'team', teamId: team.teamId });
     if (isExpanded(team)) {
       for (const ch of pinnedFirst(team.channels)) {
@@ -241,6 +266,20 @@ export function TeamChannelTree({
           label={heading}
           presentational={false}
           className="pt-2"
+          {...(headingCollapsible
+            ? {
+                collapsed,
+                onToggleCollapse,
+                controls: treeDomId,
+                toggleId: headingToggleId,
+                // Every channel already carries its unread, so a folded tree
+                // can still say that something arrived in it.
+                collapsedCount: teams.reduce(
+                  (n, t) => n + t.channels.reduce((m, c) => m + (c.unreadCount ?? 0), 0),
+                  0,
+                ),
+              }
+            : {})}
           actions={
             onCreateTeam
               ? [{
@@ -256,13 +295,16 @@ export function TeamChannelTree({
       <div
         ref={rootRef}
         role="tree"
+        id={headingCollapsible ? treeDomId : undefined}
         aria-label={heading === false ? 'Teams' : undefined}
-        aria-labelledby={undefined}
+        // The heading is the tree's name once it is a control; pointing at it
+        // is what stops "Teams" being announced twice.
+        aria-labelledby={headingCollapsible ? headingToggleId : undefined}
         className="flex flex-col gap-0.5"
         data-testid={testId}
         onKeyDown={onKeyDown}
       >
-      {orderedTeams.map((team) => {
+      {!isFolded && orderedTeams.map((team) => {
         const expanded = isExpanded(team);
         const teamRowId = `team:${team.teamId}`;
         const isCursor = tabTargetId === teamRowId;

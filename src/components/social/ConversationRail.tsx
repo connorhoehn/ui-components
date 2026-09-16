@@ -65,6 +65,16 @@ export interface ConversationRailProps {
   sectionOrder?: 'channels-first' | 'dms-first';
   /** Trailing buttons on each section heading, keyed by section name. Forwarded to the list. */
   sectionActions?: Readonly<Record<string, readonly RailSectionAction[]>>;
+  /**
+   * Which conversation sections are folded away, keyed by section name.
+   * Forwarded to the list.
+   *
+   * Nothing to do with `collapsed` below: that shrinks the WHOLE rail to an
+   * icon strip, this folds one section inside an otherwise normal rail.
+   */
+  collapsedSections?: Readonly<Record<string, boolean>>;
+  /** Fires with the section's name and the state to switch to. Forwarded to the list. */
+  onToggleSection?: (label: string, next: boolean) => void;
   /** "Call" / "Video call" in each row's ⋯ menu. Forwarded to the list. */
   onStartCall?: (channel: string, kind: 'audio' | 'video') => void;
   /** Forwarded to the list: rows per group before a "Show N more" row. */
@@ -114,6 +124,8 @@ export function ConversationRail({
   grouped = true,
   sectionOrder = 'channels-first',
   sectionActions,
+  collapsedSections,
+  onToggleSection,
   onStartCall,
   maxVisible,
   emptyLabel,
@@ -237,6 +249,8 @@ export function ConversationRail({
           grouped={grouped}
           sectionOrder={sectionOrder}
           sectionActions={sectionActions}
+          collapsedSections={collapsedSections}
+          onToggleSection={onToggleSection}
           onStartCall={onStartCall}
           maxVisible={maxVisible}
           // A shelf selection means no conversation is open, so no row is

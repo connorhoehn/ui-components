@@ -183,3 +183,31 @@ describe('ConversationRail collapse', () => {
     expect(screen.getByTestId('conversation-rail-shelf')).toBeInTheDocument();
   });
 });
+
+describe('ConversationRail section collapse', () => {
+  it('forwards the section collapse pair to the list, the way it does sectionActions', () => {
+    const onToggleSection = vi.fn();
+    setup({ collapsedSections: { Channels: true }, onToggleSection });
+
+    // The folded section keeps its heading and loses its rows.
+    expect(screen.getByRole('button', { name: 'Channels' })).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getAllByTestId('conversation-row').map((r) => r.getAttribute('data-channel')))
+      .toEqual(['chat:dm:dev-dave']);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Direct messages' }));
+    expect(onToggleSection).toHaveBeenCalledWith('Direct messages', true);
+  });
+
+  it('is unrelated to collapsing the whole rail to an icon strip', () => {
+    // Two different `collapsed` ideas share the rail; only the opt-in one
+    // shrinks the aside.
+    setup({ collapsedSections: { Channels: true }, onToggleSection: vi.fn() });
+    expect(screen.getByTestId('conversation-rail').className).toContain('w-80');
+  });
+
+  it('changes nothing for a caller that passes neither', () => {
+    setup();
+    expect(screen.queryByRole('button', { name: 'Channels' })).toBeNull();
+    expect(screen.getAllByTestId('conversation-row')).toHaveLength(2);
+  });
+});

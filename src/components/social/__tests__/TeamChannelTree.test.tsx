@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TeamChannelTree, type TeamTreeItem } from '../TeamChannelTree';
@@ -304,5 +305,95 @@ describe('TeamChannelTree', () => {
       fireEvent.keyDown(document.activeElement as HTMLElement, { key: 'ArrowDown' });
       expect(document.activeElement?.getAttribute('data-row-id')).toBe('channel:general');
     });
+  });
+});
+
+describe('TeamChannelTree heading collapse', () => {
+  /** The host owns the state — a rail persists it and comes back folded. */
+  function Harness(props: Partial<React.ComponentProps<typeof TeamChannelTree>> = {}) {
+    const [collapsed, setCollapsed] = useState(false);
+    return (
+      <TeamChannelTree
+        teams={TEAMS}
+        onSelectChannel={vi.fn()}
+        collapsed={collapsed}
+        onToggleCollapse={setCollapsed}
+        {...props}
+      />
+    );
+  }
+
+  it('folds the whole tree away behind the "Teams" heading and back', () => {
+    render(<Harness />);
+    expect(screen.getAllByRole('treeitem').length).toBeGreaterThan(0);
+
+    const toggle = screen.getByRole('button', { name: 'Teams' });
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    fireEvent.click(toggle);
+
+    expect(screen.queryAllByRole('treeitem')).toHaveLength(0);
+    // The heading is the way back, so it has to survive the fold.
+    expect(screen.getByRole('button', { name: /^Teams/ })).toHaveAttribute('aria-expanded', 'false');
+
+    fireEvent.click(screen.getByRole('button', { name: /^Teams/ }));
+    expect(screen.getAllByRole('treeitem').length).toBeGreaterThan(0);
+  });
+
+  it('reports the state to switch to', () => {
+    const onToggleCollapse = vi.fn();
+    render(<TeamChannelTree teams={TEAMS} onSelectChannel={vi.fn()} onToggleCollapse={onToggleCollapse} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Teams' }));
+    expect(onToggleCollapse).toHaveBeenCalledWith(true);
+  });
+
+  it('empties the roving tabindex rather than leaving invisible rows Arrow-reachable', () => {
+    render(<Harness collapsed onToggleCollapse={vi.fn()} />);
+    const tree = screen.getByRole('tree');
+    expect(tree.querySelectorAll('[tabindex]')).toHaveLength(0);
+    // Nothing for Arrow/Home/End to walk to, and nothing to throw on either.
+    fireEvent.keyDown(tree, { key: 'ArrowDown' });
+    expect(screen.queryAllByRole('treeitem')).toHaveLength(0);
+  });
+
+  it('remembers which teams were expanded across a fold', () => {
+    render(<Harness />);
+    // t1 ships expanded; open t2 as well, then fold and unfold the section.
+    fireEvent.click(screen.getByTestId('team-channel-tree-team-t2'));
+    expect(screen.getByTestId('team-channel-tree-channel-campaigns')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /^Teams/ }));
+    fireEvent.click(screen.getByRole('button', { name: /^Teams/ }));
+    expect(screen.getByTestId('team-channel-tree-channel-campaigns')).toBeInTheDocument();
+    expect(screen.getByTestId('team-channel-tree-channel-general')).toBeInTheDocument();
+  });
+
+  it('says what is waiting in the folded tree', () => {
+    render(<Harness collapsed onToggleCollapse={vi.fn()} />);
+    // 3 + 2 + 5 across every team's channels.
+    expect(screen.getByTestId('team-channel-tree-heading-collapsed-count')).toHaveTextContent('10');
+    expect(screen.getByRole('button', { name: 'Teams 10 unread' })).toBeInTheDocument();
+  });
+
+  it('keeps the + on the heading creating rather than folding', () => {
+    const onToggleCollapse = vi.fn();
+    const onCreateTeam = vi.fn();
+    render(
+      <TeamChannelTree
+        teams={TEAMS}
+        onSelectChannel={vi.fn()}
+        onCreateTeam={onCreateTeam}
+        onToggleCollapse={onToggleCollapse}
+      />,
+    );
+    fireEvent.click(screen.getByTestId('team-channel-tree-create-team'));
+    expect(onCreateTeam).toHaveBeenCalledTimes(1);
+    expect(onToggleCollapse).not.toHaveBeenCalled();
+  });
+
+  it('changes nothing for a caller that passes no collapse props', () => {
+    render(<TeamChannelTree teams={TEAMS} onSelectChannel={vi.fn()} />);
+    expect(screen.queryByRole('button', { name: 'Teams' })).toBeNull();
+    expect(screen.getByTestId('team-channel-tree-heading')).toHaveTextContent('Teams');
+    expect(screen.getAllByRole('treeitem').length).toBeGreaterThan(0);
   });
 });
