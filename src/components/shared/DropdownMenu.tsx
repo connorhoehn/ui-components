@@ -258,7 +258,9 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
         aria-expanded={open}
         onMouseEnter={() => { hold(); setOpen(true); }}
         onMouseLeave={leave}
-        onClick={() => setOpen((v) => !v)}
+        // Open, never toggle: a pointer click arrives after the hover that
+        // already opened the flyout, and a toggle shut it again on the click.
+        onClick={() => setOpen(true)}
         onKeyDown={onKeyDown}
         data-testid={item['data-testid']}
         className={cn(ROW_CLASS, rowTone(item, open))}

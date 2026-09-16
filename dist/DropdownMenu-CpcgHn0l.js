@@ -182,7 +182,7 @@ function x({ item: n, close: l, testId: u }) {
 			g(), f(!0);
 		},
 		onMouseLeave: _,
-		onClick: () => f((e) => !e),
+		onClick: () => f(!0),
 		onKeyDown: (e) => {
 			(e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") && (e.preventDefault(), f(!0), setTimeout(() => m.current?.querySelector("[role=\"menuitem\"],[role=\"menuitemcheckbox\"]")?.focus(), 0));
 		},
