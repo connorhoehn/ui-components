@@ -1113,9 +1113,27 @@ export declare interface ConversationItem {
      * can find.
      */
     live?: boolean;
+    /**
+     * Kept at the top of the rail, above every other row and out of recency's
+     * reach — the two or three conversations a person returns to all day.
+     *
+     * Pinned rows form ONE group regardless of kind: a pin says "I want this
+     * where I can find it", and splitting the pins back into Channels and
+     * Direct messages puts them back where they were.
+     */
+    pinned?: boolean;
+    /**
+     * Muted: traffic here is not worth interrupting for.
+     *
+     * The row still counts its unread — muting is not hiding — but the badge
+     * loses its accent, so a glance down the rail separates "someone is talking"
+     * from "someone wants me". A MENTION keeps its full-strength marker even
+     * here, because being named is the one thing a mute is not meant to swallow.
+     */
+    muted?: boolean;
 }
 
-export declare function ConversationList({ items, grouped, sectionOrder, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+export declare function ConversationList({ items, grouped, sectionOrder, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
 
 export declare interface ConversationListProps {
     items: ConversationItem[];
@@ -1167,6 +1185,19 @@ export declare interface ConversationListProps {
      * everything, which is what every existing caller gets.
      */
     maxVisible?: number;
+    /**
+     * Per-row actions, the way Teams and Slack hang them off a conversation:
+     * a ⋯ button revealed on hover or focus, never a second permanent control
+     * competing with the row itself. Each is optional and its menu row appears
+     * only when the handler does — a rail that cannot mute should not offer to.
+     *
+     * `next` is the state being asked for, not the state now, so a host never
+     * has to re-derive the flip.
+     */
+    onTogglePin?: (channel: string, next: boolean) => void;
+    onToggleMute?: (channel: string, next: boolean) => void;
+    /** Absent from a row that is already unread — there is nothing to mark. */
+    onMarkUnread?: (channel: string) => void;
     tone?: 'light' | 'dark';
     className?: string;
     'data-testid'?: string;
@@ -1181,7 +1212,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, maxVisible, emptyLabel, header, footer, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, maxVisible, emptyLabel, header, footer, onTogglePin, onToggleMute, onMarkUnread, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -1213,6 +1244,13 @@ export declare interface ConversationRailProps {
     header?: ReactNode;
     /** Below the list: a "you" row, a status control. */
     footer?: ReactNode;
+    /**
+     * Per-row actions, forwarded to the list: the ⋯ menu on each conversation.
+     * Each item appears only when its handler does.
+     */
+    onTogglePin?: (channel: string, next: boolean) => void;
+    onToggleMute?: (channel: string, next: boolean) => void;
+    onMarkUnread?: (channel: string) => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -2420,6 +2458,26 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -2462,26 +2520,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

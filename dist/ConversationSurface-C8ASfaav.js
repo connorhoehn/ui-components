@@ -1,7 +1,7 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Button-BhS4-R6_.js";
 import { t as n } from "./IconButton-C3DMtvSx.js";
-import { f as r, n as i, s as a, t as o } from "./DropdownMenu-irr-BYQp.js";
+import { c as r, m as i, n as a, t as o } from "./DropdownMenu-Bjmwaxsw.js";
 import { t as s } from "./Chip-BENLwTlq.js";
 import { t as c } from "./ConfirmDialog-Cd8NZEXi.js";
 import { t as l } from "./EmptyState-JzzL2z1E.js";
@@ -246,7 +246,7 @@ function te({ html: t, text: n, className: r, "data-testid": i = "message-body" 
 }
 //#endregion
 //#region src/components/social/DocumentActivityCard.tsx
-function ne({ documentId: t, title: n, icon: r, createdBy: a, editors: o = [], onOpen: s, className: c, "data-testid": l = "document-activity-card" }) {
+function ne({ documentId: t, title: n, icon: r, createdBy: i, editors: o = [], onOpen: s, className: c, "data-testid": l = "document-activity-card" }) {
 	let u = o.length > 0;
 	return /* @__PURE__ */ j("div", {
 		"data-testid": l,
@@ -266,13 +266,13 @@ function ne({ documentId: t, title: n, icon: r, createdBy: a, editors: o = [], o
 					children: n || "Untitled"
 				}), /* @__PURE__ */ A("span", {
 					className: "truncate text-[11px] text-text-tertiary",
-					children: u ? `${re(o)} editing now` : a ? `Created by ${a}` : "Document"
+					children: u ? `${re(o)} editing now` : i ? `Created by ${i}` : "Document"
 				})]
 			}),
 			u && /* @__PURE__ */ A("span", {
 				className: "shrink-0",
 				"data-testid": `${l}-editors`,
-				children: /* @__PURE__ */ A(i, {
+				children: /* @__PURE__ */ A(a, {
 					users: o.map((e) => ({
 						id: e.userId,
 						name: e.displayName ?? "Someone",
@@ -342,13 +342,13 @@ function se(e, t) {
 	}
 	return n.startsWith("dm-not-opted-in") ? "Not recorded — both people must turn on 'Record my DM calls' in their profile." : "Not recorded.";
 }
-function ce({ callId: t, startedBy: n, participants: r = [], live: a = !1, durationMs: o, audioOnly: s, recorded: c, notRecordedReason: l, lobbyName: u, onJoin: d, className: f, "data-testid": p = "call-activity-card" }) {
-	let m = !a && typeof o == "number" ? ae(o) : "", h = s === void 0 ? "Call" : s ? "Audio call" : "Video call", g = a ? oe(r, !0) : [n ? `${n} started a call` : "Call ended", m].filter(Boolean).join(" · ");
+function ce({ callId: t, startedBy: n, participants: r = [], live: i = !1, durationMs: o, audioOnly: s, recorded: c, notRecordedReason: l, lobbyName: u, onJoin: d, className: f, "data-testid": p = "call-activity-card" }) {
+	let m = !i && typeof o == "number" ? ae(o) : "", h = s === void 0 ? "Call" : s ? "Audio call" : "Video call", g = i ? oe(r, !0) : [n ? `${n} started a call` : "Call ended", m].filter(Boolean).join(" · ");
 	return /* @__PURE__ */ j("div", {
 		"data-testid": p,
 		"data-call-id": t,
-		"data-live": a ? "true" : void 0,
-		className: e("flex items-center gap-3 rounded-lg border px-3 py-2", a ? "border-primary bg-primary-bg" : "border-border bg-surface-inset", f),
+		"data-live": i ? "true" : void 0,
+		className: e("flex items-center gap-3 rounded-lg border px-3 py-2", i ? "border-primary bg-primary-bg" : "border-border bg-surface-inset", f),
 		children: [
 			/* @__PURE__ */ A("span", {
 				"aria-hidden": !0,
@@ -360,13 +360,13 @@ function ce({ callId: t, startedBy: n, participants: r = [], live: a = !1, durat
 				children: [
 					/* @__PURE__ */ A("span", {
 						className: "truncate text-[13px] font-semibold text-text-primary",
-						children: a ? `${h} in progress` : h
+						children: i ? `${h} in progress` : h
 					}),
 					/* @__PURE__ */ A("span", {
 						className: "truncate text-[11px] text-text-tertiary",
 						children: g
 					}),
-					!a && c === !1 && /* @__PURE__ */ A("span", {
+					!i && c === !1 && /* @__PURE__ */ A("span", {
 						className: "truncate text-[11px] text-text-tertiary",
 						"data-testid": `${p}-not-recorded`,
 						children: se(l, u)
@@ -376,18 +376,18 @@ function ce({ callId: t, startedBy: n, participants: r = [], live: a = !1, durat
 			r.length > 0 && /* @__PURE__ */ A("span", {
 				className: "shrink-0",
 				"data-testid": `${p}-participants`,
-				children: /* @__PURE__ */ A(i, {
+				children: /* @__PURE__ */ A(a, {
 					users: r.map((e) => ({
 						id: e.userId,
 						name: e.displayName ?? "Someone",
 						avatarUrl: e.avatarUrl,
-						online: a
+						online: i
 					})),
 					maxVisible: 3,
 					size: 22
 				})
 			}),
-			a && d && /* @__PURE__ */ A("button", {
+			i && d && /* @__PURE__ */ A("button", {
 				type: "button",
 				"data-testid": `${p}-join`,
 				onClick: () => d(t),
@@ -485,7 +485,7 @@ function pe({ participants: t, total: n, testId: r }) {
 		]
 	});
 }
-function me({ recordingId: n, title: r = "Recording", recordedBy: a, participants: s = [], participantCount: c, startedAt: l, durationMs: u, thumbnailUrl: d, stage: f = "ready", transcriptReady: p = !1, summaryReady: m = !1, expiresAt: h, pinned: g = !1, onOpen: _, onCopyLink: y, onShare: b, onTogglePin: x, onDownload: S, onOpenTranscript: C, onManageExpiry: w, onParticipantClick: T, className: E, "data-testid": D = "recording-activity-card" }) {
+function me({ recordingId: n, title: r = "Recording", recordedBy: i, participants: s = [], participantCount: c, startedAt: l, durationMs: u, thumbnailUrl: d, stage: f = "ready", transcriptReady: p = !1, summaryReady: m = !1, expiresAt: h, pinned: g = !1, onOpen: _, onCopyLink: y, onShare: b, onTogglePin: x, onDownload: S, onOpenTranscript: C, onManageExpiry: w, onParticipantClick: T, className: E, "data-testid": D = "recording-activity-card" }) {
 	let O = c ?? s.length, k = f === "gone", M = f !== "saving" && f !== "failed" && !k && !!_, N = () => {
 		_?.(n);
 	}, P = u != null && u > 0 ? ae(u) : "", F = ue(l), ee = fe(s, O), { state: I, label: L } = le[f], R = [
@@ -588,15 +588,15 @@ function me({ recordingId: n, title: r = "Recording", recordedBy: a, participant
 								children: "📌"
 							})]
 						}),
-						a && /* @__PURE__ */ j("div", {
+						i && /* @__PURE__ */ j("div", {
 							className: "truncate text-sm text-text-secondary",
 							"data-testid": `${D}-by`,
-							children: ["by ", a]
+							children: ["by ", i]
 						}),
 						O > 0 && /* @__PURE__ */ j("div", {
 							className: "flex items-center gap-2",
 							"data-testid": `${D}-people`,
-							children: [/* @__PURE__ */ A(i, {
+							children: [/* @__PURE__ */ A(a, {
 								users: s.map((e) => ({
 									id: e.id,
 									name: e.name,
@@ -1159,7 +1159,7 @@ var Z = [
 	"🎉",
 	"❤️"
 ], Me = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
-function Ne({ quickReactions: t = Z, onReact: n, onOpenReactionPicker: i, onReply: o, onTogglePin: s, pinned: c = !1, onCopyLink: l, onEdit: u, onDelete: d, className: f, "data-testid": p = "message-actions" }) {
+function Ne({ quickReactions: t = Z, onReact: n, onOpenReactionPicker: a, onReply: o, onTogglePin: s, pinned: c = !1, onCopyLink: l, onEdit: u, onDelete: d, className: f, "data-testid": p = "message-actions" }) {
 	let m = (e, t, n, r) => /* @__PURE__ */ A("button", {
 		type: "button",
 		"aria-label": e,
@@ -1177,7 +1177,7 @@ function Ne({ quickReactions: t = Z, onReact: n, onOpenReactionPicker: i, onRepl
 				"aria-hidden": !0,
 				children: e
 			}), `react-${e}`)),
-			i && m("More reactions", i, /* @__PURE__ */ A("span", {
+			a && m("More reactions", a, /* @__PURE__ */ A("span", {
 				"aria-hidden": !0,
 				children: "😀"
 			}), "more-reactions"),
@@ -1193,8 +1193,8 @@ function Ne({ quickReactions: t = Z, onReact: n, onOpenReactionPicker: i, onRepl
 				"aria-hidden": !0,
 				children: "🔗"
 			}), "copy-link"),
-			u && m("Edit message", u, /* @__PURE__ */ A(a, { size: 13 }), "edit"),
-			d && m("Delete message", d, /* @__PURE__ */ A(r, { size: 13 }), "delete")
+			u && m("Edit message", u, /* @__PURE__ */ A(r, { size: 13 }), "edit"),
+			d && m("Delete message", d, /* @__PURE__ */ A(i, { size: 13 }), "delete")
 		]
 	});
 }

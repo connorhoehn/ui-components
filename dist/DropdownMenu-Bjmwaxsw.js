@@ -93,9 +93,30 @@ function x({ size: e = 16, ...t }) {
 		]
 	});
 }
+function S({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [
+			/* @__PURE__ */ l("path", { d: "M5.5 2h5" }),
+			/* @__PURE__ */ l("path", { d: "M6.5 2v3.5L5 8.5h6L9.5 5.5V2" }),
+			/* @__PURE__ */ l("path", { d: "M8 8.5V14" })
+		]
+	});
+}
+function C({ size: e = 16, ...t }) {
+	return /* @__PURE__ */ u("svg", {
+		...d(e, t),
+		children: [
+			/* @__PURE__ */ l("path", { d: "M4.6 11.5h6.8l-.8-1.4V7a2.7 2.7 0 0 0-4.2-2.2" }),
+			/* @__PURE__ */ l("path", { d: "M5.3 6.3V7v3.1l-.7 1.4" }),
+			/* @__PURE__ */ l("path", { d: "M6.9 13.2a1.2 1.2 0 0 0 2.2 0" }),
+			/* @__PURE__ */ l("path", { d: "M2.5 2.5 13.5 13.5" })
+		]
+	});
+}
 //#endregion
 //#region src/components/shared/PresenceAvatars.tsx
-var S = {
+var w = {
 	editor: {
 		glyph: "✏",
 		label: "Editing"
@@ -109,13 +130,13 @@ var S = {
 		label: "Viewing"
 	}
 };
-function C(e) {
+function T(e) {
 	return e.idle === !0 ? "#f59e0b" : e.online === !1 ? "var(--color-text-tertiary)" : e.online === !0 ? "#22c55e" : null;
 }
-function w(e) {
+function E(e) {
 	if (e) return /^#[0-9a-fA-F]{6}$/.test(e) ? `${e}99` : (/^#[0-9a-fA-F]{8}$/.test(e), e);
 }
-function T({ user: t, isFollowing: n, onFollow: r, children: i }) {
+function D({ user: t, isFollowing: n, onFollow: r, children: i }) {
 	let [c, d] = s(!1), f = o(null), p = () => {
 		f.current &&= (clearTimeout(f.current), null), d(!0);
 	}, m = () => {
@@ -163,14 +184,14 @@ function T({ user: t, isFollowing: n, onFollow: r, children: i }) {
 		})]
 	});
 }
-function E({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserClick: s, onFollowUser: d, followingUserId: f = null, className: p }) {
+function O({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserClick: s, onFollowUser: d, followingUserId: f = null, className: p }) {
 	let m = r.slice(0, i), h = r.length - m.length, g = -(a * .3), _ = Math.max(1, Math.round(a * .07)), v = Math.max(10, Math.round(a * .42));
 	return /* @__PURE__ */ u("div", {
 		className: e("inline-flex items-center", p),
 		role: "list",
 		"aria-label": "Online users",
 		children: [m.map((e, r) => {
-			let i = C(e), o = e.idle === !0, p = o ? w(e.color) : e.color, m = o && !e.color ? .6 : void 0, h = e.mode ? S[e.mode] : null, y = [e.name];
+			let i = T(e), o = e.idle === !0, p = o ? E(e.color) : e.color, m = o && !e.color ? .6 : void 0, h = e.mode ? w[e.mode] : null, y = [e.name];
 			o ? y.push("Away") : h && y.push(h.label);
 			let b = y.join(" — "), x = {
 				"data-testid": "presence-avatar",
@@ -178,7 +199,7 @@ function E({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 				"data-presence-user-id": e.id,
 				...o ? { "data-presence-idle": "true" } : {},
 				...e.mode ? { "data-presence-mode": e.mode } : {}
-			}, E = /* @__PURE__ */ u(c, { children: [
+			}, S = /* @__PURE__ */ u(c, { children: [
 				e.avatarUrl ? /* @__PURE__ */ l("img", {
 					src: e.avatarUrl,
 					alt: e.name,
@@ -220,8 +241,8 @@ function E({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 					"aria-label": h.label,
 					children: h.glyph
 				})
-			] }), D = { marginLeft: r > 0 ? g : 0 };
-			return ((t) => d ? /* @__PURE__ */ l(T, {
+			] }), C = { marginLeft: r > 0 ? g : 0 };
+			return ((t) => d ? /* @__PURE__ */ l(D, {
 				user: e,
 				isFollowing: f === e.id,
 				onFollow: d,
@@ -236,15 +257,15 @@ function E({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 				...d ? {} : { title: b },
 				"aria-label": b,
 				...x,
-				style: D,
-				children: E
+				style: C,
+				children: S
 			}, e.id) : /* @__PURE__ */ l("div", {
 				role: "listitem",
 				className: "relative shrink-0",
 				...d ? {} : { title: b },
 				...x,
-				style: D,
-				children: E
+				style: C,
+				children: S
 			}, e.id));
 		}), h > 0 && /* @__PURE__ */ u("button", {
 			type: "button",
@@ -265,15 +286,15 @@ function E({ users: r, maxVisible: i = 5, size: a = 28, onMoreClick: o, onUserCl
 }
 //#endregion
 //#region src/components/shared/DropdownMenu.tsx
-function D({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, triggerClassName: d, align: f = "start", sections: p, className: m, "data-testid": h = "dropdown-menu" }) {
-	let [g, _] = s(!1), v = o(null), y = o(null), b = i(() => _(!1), []), x = i((e) => {
+function k({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, triggerClassName: d, triggerTabIndex: f, triggerTestId: p, align: m = "start", sections: h, className: g, "data-testid": _ = "dropdown-menu" }) {
+	let [v, y] = s(!1), b = o(null), x = o(null), S = i(() => y(!1), []), C = i((e) => {
 		if (![
 			"ArrowDown",
 			"ArrowUp",
 			"Home",
 			"End"
 		].includes(e.key)) return;
-		let t = y.current;
+		let t = x.current;
 		if (!t) return;
 		let n = Array.from(t.querySelectorAll("[role=\"menuitem\"]"));
 		if (n.length === 0) return;
@@ -282,29 +303,31 @@ function D({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 		i = e.key === "Home" ? 0 : e.key === "End" ? n.length - 1 : e.key === "ArrowDown" ? r < 0 ? 0 : (r + 1) % n.length : r <= 0 ? n.length - 1 : r - 1, n[i].focus();
 	}, []);
 	return /* @__PURE__ */ u(c, { children: [/* @__PURE__ */ l("button", {
-		ref: v,
+		ref: b,
 		type: "button",
 		"aria-label": n,
 		"aria-haspopup": "menu",
-		"aria-expanded": g,
+		"aria-expanded": v,
 		title: a,
-		onClick: () => _((e) => !e),
-		className: e("inline-flex items-center justify-center gap-1.5 cursor-pointer", "rounded-md border border-[var(--color-border)] px-2 py-1", "text-base leading-none text-[var(--color-text-secondary)]", "bg-transparent hover:bg-[var(--color-surface-hover)] transition-colors duration-100", g && "bg-[var(--color-surface-hover)]", d),
+		tabIndex: f,
+		"data-testid": p,
+		onClick: () => y((e) => !e),
+		className: e("inline-flex items-center justify-center gap-1.5 cursor-pointer", "rounded-md border border-[var(--color-border)] px-2 py-1", "text-base leading-none text-[var(--color-text-secondary)]", "bg-transparent hover:bg-[var(--color-surface-hover)] transition-colors duration-100", v && "bg-[var(--color-surface-hover)]", d),
 		children: t
 	}), /* @__PURE__ */ l(r, {
-		trigger: v,
-		open: g,
-		onClose: b,
-		placement: f === "end" ? "bottom-end" : "bottom-start",
-		className: e("min-w-[180px] p-0 overflow-hidden rounded-lg", m),
-		"data-testid": h,
+		trigger: b,
+		open: v,
+		onClose: S,
+		placement: m === "end" ? "bottom-end" : "bottom-start",
+		className: e("min-w-[180px] p-0 overflow-hidden rounded-lg", g),
+		"data-testid": _,
 		children: /* @__PURE__ */ l("div", {
-			ref: y,
+			ref: x,
 			role: "menu",
 			"aria-label": n,
-			onKeyDown: x,
+			onKeyDown: C,
 			className: "py-1 uic-menu-scroll",
-			children: p.map((e, t) => /* @__PURE__ */ u("div", {
+			children: h.map((e, t) => /* @__PURE__ */ u("div", {
 				role: "group",
 				"aria-label": e.label,
 				className: e.scroll ? "uic-menu-group-scroll" : void 0,
@@ -318,21 +341,21 @@ function D({ trigger: t, triggerLabel: n = "Open menu", triggerTitle: a, trigger
 						className: "px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
-					e.items.map((e, t) => /* @__PURE__ */ l(j, {
+					e.items.map((e, t) => /* @__PURE__ */ l(N, {
 						item: e,
-						close: b,
-						testId: h
+						close: S,
+						testId: _
 					}, t))
 				]
 			}, t))
 		})
 	})] });
 }
-var O = "flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100";
-function k(e, t = !1) {
+var A = "flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100";
+function j(e, t = !1) {
 	return e.danger ? "text-danger-fg bg-transparent hover:bg-danger-bg" : e.active || t ? "font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]" : "font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]";
 }
-function A({ item: e }) {
+function M({ item: e }) {
 	return /* @__PURE__ */ u(c, { children: [
 		e.checked === void 0 ? e.icon ? /* @__PURE__ */ l("span", {
 			className: "flex w-4 shrink-0 items-center justify-center text-base leading-none text-[var(--color-text-secondary)]",
@@ -365,7 +388,7 @@ function A({ item: e }) {
 		})
 	] });
 }
-function j({ item: t, close: n, testId: i }) {
+function N({ item: t, close: n, testId: i }) {
 	let [d, f] = s(!1), p = o(null), m = o(null), h = o(null), g = () => {
 		h.current &&= (clearTimeout(h.current), null);
 	}, _ = () => {
@@ -386,8 +409,8 @@ function j({ item: t, close: n, testId: i }) {
 			(e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") && (e.preventDefault(), f(!0), setTimeout(() => m.current?.querySelector("[role=\"menuitem\"],[role=\"menuitemcheckbox\"]")?.focus(), 0));
 		},
 		"data-testid": t["data-testid"],
-		className: e(O, k(t, d)),
-		children: /* @__PURE__ */ l(A, { item: t })
+		className: e(A, j(t, d)),
+		children: /* @__PURE__ */ l(M, { item: t })
 	}), /* @__PURE__ */ l(r, {
 		trigger: p,
 		open: d,
@@ -420,7 +443,7 @@ function j({ item: t, close: n, testId: i }) {
 						className: "px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]",
 						children: e.label
 					}),
-					e.items.map((e, t) => /* @__PURE__ */ l(j, {
+					e.items.map((e, t) => /* @__PURE__ */ l(N, {
 						item: e,
 						close: n,
 						testId: i
@@ -437,9 +460,9 @@ function j({ item: t, close: n, testId: i }) {
 			t.onSelect?.(), n();
 		},
 		"data-testid": t["data-testid"],
-		className: e(O, k(t)),
-		children: /* @__PURE__ */ l(A, { item: t })
+		className: e(A, j(t)),
+		children: /* @__PURE__ */ l(M, { item: t })
 	});
 }
 //#endregion
-export { p as a, _ as c, h as d, x as f, g as i, f as l, E as n, v as o, m as r, b as s, D as t, y as u };
+export { g as a, b as c, f as d, y as f, m as i, _ as l, x as m, O as n, p as o, h as p, C as r, v as s, k as t, S as u };

@@ -66,6 +66,17 @@ export interface DropdownMenuProps {
   /** Optional className for the trigger button. */
   triggerClassName?: string;
   /**
+   * Tab order of the trigger. Default undefined (a normal tab stop).
+   *
+   * `-1` is for a menu that lives inside a ROVING-FOCUS list — one trigger per
+   * row, forty rows: leaving them all tabbable puts forty stops back in front
+   * of everything after the list, which is the cost the roving cursor exists
+   * to avoid. The host makes only the cursor row's trigger tabbable.
+   */
+  triggerTabIndex?: number;
+  /** Test hook for the trigger itself; `data-testid` addresses the panel. */
+  triggerTestId?: string;
+  /**
    * Panel alignment relative to the trigger. 'start' (default) anchors the
    * panel's left edge to the trigger's left edge; 'end' anchors the panel's
    * RIGHT edge to the trigger's right edge.
@@ -83,6 +94,8 @@ export function DropdownMenu({
   triggerLabel = 'Open menu',
   triggerTitle,
   triggerClassName,
+  triggerTabIndex,
+  triggerTestId,
   align = 'start',
   sections,
   className,
@@ -123,6 +136,8 @@ export function DropdownMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         title={triggerTitle}
+        tabIndex={triggerTabIndex}
+        data-testid={triggerTestId}
         onClick={() => setOpen((v) => !v)}
         className={cn(
           'inline-flex items-center justify-center gap-1.5 cursor-pointer',

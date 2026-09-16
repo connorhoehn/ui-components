@@ -16,6 +16,8 @@ import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent }
 import { cn } from '../../lib/cn';
 import { Avatar, AvatarGroup } from '../shared/Avatar';
 import { PresenceDot } from '../shared/PresenceDot';
+import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
+import { BellMutedIcon, PinIcon } from '../ui/Icons';
 import { formatChatTime } from './MessageRow';
 
 /**
@@ -110,6 +112,24 @@ export interface ConversationItem {
    * can find.
    */
   live?: boolean;
+  /**
+   * Kept at the top of the rail, above every other row and out of recency's
+   * reach — the two or three conversations a person returns to all day.
+   *
+   * Pinned rows form ONE group regardless of kind: a pin says "I want this
+   * where I can find it", and splitting the pins back into Channels and
+   * Direct messages puts them back where they were.
+   */
+  pinned?: boolean;
+  /**
+   * Muted: traffic here is not worth interrupting for.
+   *
+   * The row still counts its unread — muting is not hiding — but the badge
+   * loses its accent, so a glance down the rail separates "someone is talking"
+   * from "someone wants me". A MENTION keeps its full-strength marker even
+   * here, because being named is the one thing a mute is not meant to swallow.
+   */
+  muted?: boolean;
 }
 
 export interface ConversationListProps {
@@ -162,6 +182,19 @@ export interface ConversationListProps {
    * everything, which is what every existing caller gets.
    */
   maxVisible?: number;
+  /**
+   * Per-row actions, the way Teams and Slack hang them off a conversation:
+   * a ⋯ button revealed on hover or focus, never a second permanent control
+   * competing with the row itself. Each is optional and its menu row appears
+   * only when the handler does — a rail that cannot mute should not offer to.
+   *
+   * `next` is the state being asked for, not the state now, so a host never
+   * has to re-derive the flip.
+   */
+  onTogglePin?: (channel: string, next: boolean) => void;
+  onToggleMute?: (channel: string, next: boolean) => void;
+  /** Absent from a row that is already unread — there is nothing to mark. */
+  onMarkUnread?: (channel: string) => void;
   tone?: 'light' | 'dark';
   className?: string;
   'data-testid'?: string;
@@ -177,11 +210,17 @@ export function ConversationList({
   onSelect,
   onNewChat,
   emptyLabel = 'No conversations yet',
+  onTogglePin,
+  onToggleMute,
+  onMarkUnread,
   tone = 'light',
   className,
   'data-testid': testId,
 }: ConversationListProps) {
   const dark = tone === 'dark';
+  // Derived testids need a base even when the caller passed none, or every
+  // hook below reads `undefined-row-menu-general`.
+  const idBase = testId ?? 'conversation';
 
   // One SCROLL container holding one <ul> per group, rather than one <ul>
   // with headings interleaved as `aria-hidden` list items.
@@ -199,11 +238,20 @@ export function ConversationList({
   // scroll container, and DOM order across the lists is still one sequence.
   const ordered = sortByRecency ? [...items].sort(byRecency) : items;
   const sections: Array<{ heading?: string; label: string; items: ConversationItem[] }> = [];
+  // Pins come out first and stay together: a pinned channel and a pinned DM
+  // are both "the ones I keep", and sorting them back into their kinds is the
+  // thing a pin was pressed to undo. Recency still orders them among
+  // themselves. Everything else groups exactly as it did before.
+  const pinnedRows = ordered.filter((i) => i.pinned);
+  const unpinned = pinnedRows.length > 0 ? ordered.filter((i) => !i.pinned) : ordered;
+  if (pinnedRows.length > 0) {
+    sections.push({ heading: 'Pinned', label: 'Pinned', items: pinnedRows });
+  }
   if (grouped) {
     const isChannelRow = (i: ConversationItem) =>
       (i.kind ?? (i.peers.length > 1 ? 'group' : 'dm')) === 'channel';
-    const channels = ordered.filter(isChannelRow);
-    const directs = ordered.filter((i) => !isChannelRow(i));
+    const channels = unpinned.filter(isChannelRow);
+    const directs = unpinned.filter((i) => !isChannelRow(i));
     // A heading with nothing under it is a promise of content that is not
     // there, so each one appears only when its group does.
     const channelSection = { heading: 'Channels', label: 'Channels', items: channels };
@@ -212,8 +260,8 @@ export function ConversationList({
       ? [directSection, channelSection]
       : [channelSection, directSection];
     for (const section of inOrder) if (section.items.length > 0) sections.push(section);
-  } else {
-    sections.push({ label: 'Conversations', items: ordered });
+  } else if (unpinned.length > 0) {
+    sections.push({ label: 'Conversations', items: unpinned });
   }
 
   // ── Roving focus ───────────────────────────────────────────────────
@@ -387,8 +435,35 @@ export function ConversationList({
             const unread = item.unreadCount ?? 0;
             const mentioned = !!item.mentioned;
             const live = !!item.live;
+            const muted = !!item.muted;
+            const menuTestId = `${idBase}-row-menu-${item.channel}`;
+            const menuItems: DropdownMenuItem[] = [];
+            if (onTogglePin) {
+              menuItems.push({
+                label: item.pinned ? 'Unpin' : 'Pin',
+                icon: <PinIcon size={14} />,
+                onSelect: () => onTogglePin(item.channel, !item.pinned),
+                'data-testid': `${menuTestId}-pin`,
+              });
+            }
+            if (onToggleMute) {
+              menuItems.push({
+                label: muted ? 'Unmute' : 'Mute',
+                icon: <BellMutedIcon size={14} />,
+                onSelect: () => onToggleMute(item.channel, !muted),
+                'data-testid': `${menuTestId}-mute`,
+              });
+            }
+            // Nothing to mark on a row that already carries unread.
+            if (onMarkUnread && unread === 0) {
+              menuItems.push({
+                label: 'Mark as unread',
+                onSelect: () => onMarkUnread(item.channel),
+                'data-testid': `${menuTestId}-unread`,
+              });
+            }
             return (
-              <li key={item.channel}>
+              <li key={item.channel} className={cn('relative', menuItems.length > 0 && 'group')}>
                 <button
                   type="button"
                   onClick={() => onSelect(item.channel)}
@@ -405,6 +480,11 @@ export function ConversationList({
                   tabIndex={isCursor ? 0 : -1}
                   className={cn(
                     'flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left',
+                    // The ⋯ gets a lane of its own rather than sitting on top
+                    // of the badges: an unread count covered by a menu button
+                    // on hover is a number that disappears when you reach for
+                    // it. Reserved only where a menu exists at all.
+                    menuItems.length > 0 && 'pr-8',
                     // The rail is the page's primary navigation and had no
                     // focus style of its own — only the UA outline, which
                     // several surrounding surfaces suppress.
@@ -468,6 +548,24 @@ export function ConversationList({
                       >
                         {names}
                       </span>
+                      {item.pinned && (
+                        <span
+                          data-testid={`${idBase}-pinned`}
+                          title="Pinned"
+                          className={cn('shrink-0', dark ? 'text-white/50' : 'text-text-tertiary')}
+                        >
+                          <PinIcon size={12} />
+                        </span>
+                      )}
+                      {muted && (
+                        <span
+                          data-testid={`${idBase}-muted`}
+                          title="Muted"
+                          className={cn('shrink-0', dark ? 'text-white/50' : 'text-text-tertiary')}
+                        >
+                          <BellMutedIcon size={12} />
+                        </span>
+                      )}
                       {time && (
                         <span
                           className={cn('shrink-0 text-[11px] tabular-nums', dark ? 'text-white/50' : 'text-text-tertiary')}
@@ -517,12 +615,53 @@ export function ConversationList({
                   {unread > 0 && (
                     <span
                       data-testid="conversation-unread"
-                      className="grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold leading-none text-white"
+                      data-muted={muted ? 'true' : 'false'}
+                      className={cn(
+                        'grid h-5 min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-semibold leading-none',
+                        // Muted keeps the count and drops the accent: the
+                        // traffic is still worth knowing about, just not worth
+                        // pulling the eye across the rail for.
+                        muted
+                          ? (dark ? 'bg-white/15 text-white/70' : 'bg-surface-inset text-text-secondary')
+                          : 'bg-primary text-white',
+                      )}
                     >
                       {unread > 99 ? '99+' : unread}
                     </span>
                   )}
                 </button>
+                {menuItems.length > 0 && (
+                  <span
+                    className={cn(
+                      'absolute right-1 top-1/2 -translate-y-1/2 opacity-0 transition-opacity',
+                      'group-hover:opacity-100 group-focus-within:opacity-100',
+                      // While its own menu is open, and on a touch screen,
+                      // where there is no hover to reveal it with.
+                      'has-[[aria-expanded=true]]:opacity-100',
+                      '[@media(hover:none)]:opacity-100',
+                    )}
+                  >
+                    <DropdownMenu
+                      trigger={<span aria-hidden className="leading-none tracking-wide">⋯</span>}
+                      triggerLabel={`More options for ${names}`}
+                      triggerTitle="More options"
+                      // Only the row the roving cursor is on is tabbable, so
+                      // the list still costs one Tab to enter and one to
+                      // leave; Tab from that row reaches its menu.
+                      triggerTabIndex={isCursor ? 0 : -1}
+                      triggerTestId={menuTestId}
+                      triggerClassName={cn(
+                        'h-6 w-6 rounded-md border-0 p-0 text-[13px]',
+                        dark
+                          ? 'text-white/70 hover:bg-white/15'
+                          : 'text-text-secondary hover:bg-surface-hover',
+                      )}
+                      align="end"
+                      sections={[{ items: menuItems }]}
+                      data-testid={`${menuTestId}-panel`}
+                    />
+                  </span>
+                )}
               </li>
             );
           })}

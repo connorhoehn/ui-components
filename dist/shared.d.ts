@@ -165,6 +165,9 @@ export declare function BarChart({ data, height, xKey, yKey, color, yFormat, }: 
     yFormat?: (v: number) => string;
 }): JSX.Element;
 
+/** A bell with a slash through it: "notify me quietly". */
+export declare function BellMutedIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function BoardColumn({ label, count, children, emptyLabel, action, className, 'data-testid': testId, }: BoardColumnProps): JSX.Element;
 
 export declare interface BoardColumnProps {
@@ -1106,7 +1109,7 @@ export declare interface DrawerProps {
     'data-testid'?: string;
 }
 
-export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerTabIndex, triggerTestId, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
 export declare interface DropdownMenuItem {
     /** Visible item label. */
@@ -1144,6 +1147,17 @@ export declare interface DropdownMenuProps {
     triggerTitle?: string;
     /** Optional className for the trigger button. */
     triggerClassName?: string;
+    /**
+     * Tab order of the trigger. Default undefined (a normal tab stop).
+     *
+     * `-1` is for a menu that lives inside a ROVING-FOCUS list — one trigger per
+     * row, forty rows: leaving them all tabbable puts forty stops back in front
+     * of everything after the list, which is the cost the roving cursor exists
+     * to avoid. The host makes only the cursor row's trigger tabbable.
+     */
+    triggerTabIndex?: number;
+    /** Test hook for the trigger itself; `data-testid` addresses the panel. */
+    triggerTestId?: string;
     /**
      * Panel alignment relative to the trigger. 'start' (default) anchors the
      * panel's left edge to the trigger's left edge; 'end' anchors the panel's
@@ -2326,6 +2340,9 @@ export declare interface PersonHoverCardProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** A pushpin: "keep this at the top". */
+export declare function PinIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** A plus: "make a new one". */
 export declare function PlusIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -4026,6 +4043,26 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -4068,26 +4105,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

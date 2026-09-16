@@ -123,3 +123,26 @@ export function TrashIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A pushpin: "keep this at the top". */
+export function PinIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M5.5 2h5" />
+      <path d="M6.5 2v3.5L5 8.5h6L9.5 5.5V2" />
+      <path d="M8 8.5V14" />
+    </svg>
+  );
+}
+
+/** A bell with a slash through it: "notify me quietly". */
+export function BellMutedIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M4.6 11.5h6.8l-.8-1.4V7a2.7 2.7 0 0 0-4.2-2.2" />
+      <path d="M5.3 6.3V7v3.1l-.7 1.4" />
+      <path d="M6.9 13.2a1.2 1.2 0 0 0 2.2 0" />
+      <path d="M2.5 2.5 13.5 13.5" />
+    </svg>
+  );
+}

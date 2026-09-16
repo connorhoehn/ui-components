@@ -67,6 +67,13 @@ export interface ConversationRailProps {
   header?: ReactNode;
   /** Below the list: a "you" row, a status control. */
   footer?: ReactNode;
+  /**
+   * Per-row actions, forwarded to the list: the ⋯ menu on each conversation.
+   * Each item appears only when its handler does.
+   */
+  onTogglePin?: (channel: string, next: boolean) => void;
+  onToggleMute?: (channel: string, next: boolean) => void;
+  onMarkUnread?: (channel: string) => void;
   className?: string;
   'data-testid'?: string;
 }
@@ -83,6 +90,9 @@ export function ConversationRail({
   emptyLabel,
   header,
   footer,
+  onTogglePin,
+  onToggleMute,
+  onMarkUnread,
   className,
   'data-testid': testId = 'conversation-rail',
 }: ConversationRailProps) {
@@ -118,6 +128,9 @@ export function ConversationRail({
         onSelect={(channel) => onSelect({ kind: 'conversation', channel })}
         onNewChat={onNewChat}
         emptyLabel={emptyLabel}
+        onTogglePin={onTogglePin}
+        onToggleMute={onToggleMute}
+        onMarkUnread={onMarkUnread}
         className="min-h-0 flex-1 overflow-y-auto p-2"
         data-testid={`${testId}-list`}
       />
