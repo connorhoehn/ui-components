@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.308.0] — 2026-09-17
+
+### Added — `./social`
+
+- **`ChatPanel.onCopyLink`** — "Copy link to message". `MessageActionBar` has
+  offered the control since it was written and `ChatPanel` never passed the
+  prop, so no host could reach it, while the app has honoured
+  `?jump=<messageId>` links all along. Another pair of finished halves that had
+  never been connected.
+- **The host builds the link, not the panel.** A link needs a route and the
+  library has no router. Omit the prop and the control does not render, which is
+  the rule every other action on that bar follows — a Copy link that copies
+  nothing is worse than no Copy link.
+- Withheld on activity notices, which have no words of their own to link to —
+  the same reason they take no reactions and cannot be forwarded.
+
+---
+
 ## [2.307.0] — 2026-09-17
 
 ### Changed — `./shared`

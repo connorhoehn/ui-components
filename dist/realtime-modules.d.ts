@@ -738,6 +738,15 @@ declare interface ChatPanelProps {
      * Existing handlers that take the message alone keep working.
      */
     onForwardMessage?: (message: ChatMessage, trigger: HTMLElement) => void;
+    /**
+     * Put a link to this message on the clipboard.
+     *
+     * The HOST builds it, not the panel: a link needs a route, and the library
+     * has no router and no idea what a conversation's URL looks like. Omit and
+     * the control does not render — the same rule every other action here
+     * follows, since a Copy link that copies nothing is worse than none.
+     */
+    onCopyLink?: (message: ChatMessage) => void;
     /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
     onTogglePin?: (message: ChatMessage) => void;
     /**

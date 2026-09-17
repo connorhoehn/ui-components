@@ -153,6 +153,15 @@ export interface ChatPanelProps {
    * Existing handlers that take the message alone keep working.
    */
   onForwardMessage?: (message: ChatMessage, trigger: HTMLElement) => void;
+  /**
+   * Put a link to this message on the clipboard.
+   *
+   * The HOST builds it, not the panel: a link needs a route, and the library
+   * has no router and no idea what a conversation's URL looks like. Omit and
+   * the control does not render — the same rule every other action here
+   * follows, since a Copy link that copies nothing is worse than none.
+   */
+  onCopyLink?: (message: ChatMessage) => void;
   /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
   onTogglePin?: (message: ChatMessage) => void;
   /**
@@ -1316,6 +1325,7 @@ export function ChatPanel({
   onToggleReaction,
   onReply,
   onForwardMessage,
+  onCopyLink,
   onTogglePin,
   onEditMessage,
   onDeleteMessage,
@@ -2289,7 +2299,7 @@ export function ChatPanel({
         // decides only where the row sits.
         mine={isMine && alignOwnMessages}
       />
-      {messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (canForward && onForwardMessage) || (!isActivityNotice && (onReply || onTogglePin))) && (
+      {messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (canForward && onForwardMessage) || (!isActivityNotice && (onReply || onTogglePin || onCopyLink))) && (
         <MessageActionBar
           // Top-RIGHT of the row, the way Slack and Teams place
           // it, and the hovered row is tinted so the bar and the
@@ -2338,6 +2348,13 @@ export function ChatPanel({
           onForward={
             onForwardMessage && canForward
               ? (trigger) => onForwardMessage(message, trigger)
+              : undefined
+          }
+          // A notice has no words of its own to link to, the same reason it
+          // takes no reactions and cannot be forwarded.
+          onCopyLink={
+            onCopyLink && !isActivityNotice && messageId
+              ? () => onCopyLink(message)
               : undefined
           }
           onTogglePin={
