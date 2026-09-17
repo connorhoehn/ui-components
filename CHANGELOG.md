@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.302.0] — 2026-09-17
+
+### Added — `./social`
+
+- **"Sent" — the other half of the read-receipt pair.** A message nobody had
+  opened yet showed no status at all, so "delivered, unread" and "never left"
+  looked identical, which is precisely the window where a sender wants to know.
+  Teams draws both halves; this draws the first one under the same single
+  message the "Seen" line uses.
+- Still **never "Seen by 0"** — the reason the line used to say nothing. A count
+  of nobody turns every unanswered message into a small notice about being
+  ignored. "Sent" is a claim about delivery instead, and it is true by
+  construction: the line only ever anchors to a message the gateway handed
+  back, never to a local row still in flight.
+- **Only for hosts that wire receipts.** `readReceipts` being absent is now
+  distinguished from its being an empty array: a host that passes nothing gets
+  nothing. `readReceiptsEnabled` could not carry this, defaulting to `true` —
+  its absence looks like consent — and without the split, an in-call chat that
+  supplies `currentUserId` and no receipts would grow a status line it never
+  asked for.
+
+---
+
 ## [2.301.0] — 2026-09-17
 
 ### Fixed — `./shared`

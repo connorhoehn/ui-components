@@ -48,9 +48,13 @@ describe('ChatPanel read receipts', () => {
     expect(line()).toBeNull();
   });
 
-  // Nobody has read it yet. Silence — "Seen by 0" turns every unanswered
-  // message into a small notice about being ignored.
-  it('says nothing when no cursor has reached the message', () => {
+  // Nobody has read it yet, and the line still says something true: the
+  // message left. NEVER "Seen by 0" — a count of nobody turns every unanswered
+  // message into a small notice about being ignored, which is why this said
+  // nothing at all before. "Sent" is a fact about delivery rather than about
+  // being ignored, and it is the half of the pair that answers "did that
+  // send?", which is the question a sender has in exactly this window.
+  it('says the message was sent when no cursor has reached it yet', () => {
     render(
       <ChatPanel
         messages={[mine('m1')]}
@@ -59,6 +63,17 @@ describe('ChatPanel read receipts', () => {
         readReceipts={[]}
       />,
     );
+    expect(copy()).toBe('Sent');
+    expect(copy()).not.toContain('0');
+  });
+
+  // The distinction the whole thing rests on: a host that wires receipts
+  // passes an array, empty until a cursor moves. A host that has never heard
+  // of them passes nothing and gets nothing — the in-call chat supplies a
+  // `currentUserId` and no receipts, and must not grow a status line it never
+  // asked for.
+  it('stays silent for a host that does not wire receipts at all', () => {
+    render(<ChatPanel messages={[mine('m1')]} onSend={vi.fn()} currentUserId={VIEWER} />);
     expect(line()).toBeNull();
   });
 
@@ -119,7 +134,8 @@ describe('ChatPanel read receipts', () => {
   });
 
   // The cursor stopped before this message was sent, so this person has NOT
-  // seen it — that is the whole of what a cursor can tell us.
+  // seen it — that is the whole of what a cursor can tell us. The line falls
+  // back to "Sent" rather than crediting them with a read they have not made.
   it('ignores a reader whose cursor is older than the message', () => {
     render(
       <ChatPanel
@@ -131,7 +147,8 @@ describe('ChatPanel read receipts', () => {
         ]}
       />,
     );
-    expect(line()).toBeNull();
+    expect(copy()).toBe('Sent');
+    expect(line()!.textContent).not.toContain('Carol');
   });
 
   it('counts only the readers who are actually past the message', () => {

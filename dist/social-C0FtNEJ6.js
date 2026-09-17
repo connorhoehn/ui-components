@@ -18,7 +18,7 @@ import { t as I } from "./DropdownMenu--cgRPg4y.js";
 import { t as L } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as ee } from "./Select-CqVokE2v.js";
 import { n as R, r as z, t as B } from "./ChoiceList-CaZ4rZrS.js";
-import { L as te, N as V, Q as ne, R as re, X as H, nt as ie } from "./ConversationSurface-13i6414x.js";
+import { L as te, N as V, Q as ne, R as re, X as H, nt as ie } from "./ConversationSurface-dnIQKkyZ.js";
 import { t as U } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as W, t as ae } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as oe, t as se } from "./composerCommands-DXer0id_.js";

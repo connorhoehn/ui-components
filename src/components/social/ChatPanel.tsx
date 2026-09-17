@@ -1355,7 +1355,7 @@ export function ChatPanel({
   acceptFiles,
   maxFileSize,
   onFileError,
-  readReceipts = [],
+  readReceipts: readReceiptsProp,
   readReceiptsEnabled = true,
   unreadFrom,
   emojis = DEFAULT_PICKER_EMOJIS,
@@ -1489,9 +1489,22 @@ export function ChatPanel({
   // Without a `currentUserId` nothing renders at all: "which of these are
   // mine" is unanswerable without it (see `isMine`), and a receipt line under
   // a message that might not be yours is worse than no receipt line.
+  // Absent vs empty is the whole distinction "Sent" rests on. A host that
+  // wires receipts passes an array — empty until somebody's cursor moves — and
+  // a host that has never heard of them passes nothing. `readReceiptsEnabled`
+  // cannot carry this: it defaults to true, so its absence looks like consent.
+  // Without the split, the in-call chat (which passes `currentUserId` and no
+  // receipts) would grow a "Sent" line it never asked for.
+  const receiptsWired = readReceiptsProp !== undefined;
+  const readReceipts = readReceiptsProp ?? [];
   const receiptViewerId = readReceiptsEnabled && currentUserId ? currentUserId : undefined;
   const receiptAnchor = (() => {
-    if (!receiptViewerId || readReceipts.length === 0) return undefined;
+    // Not gated on a receipt having ARRIVED. The anchor is "the newest message
+    // of mine that anyone could have read", which is a fact about this
+    // transcript alone — and the line has something honest to say before the
+    // first cursor moves ("Sent"), which is exactly the window where a sender
+    // most wants to know the message left.
+    if (!receiptViewerId) return undefined;
     for (let i = timeline.length - 1; i >= 0; i -= 1) {
       const entry = timeline[i];
       // A local row was never sent, so nobody can have read it.
@@ -1538,7 +1551,28 @@ export function ChatPanel({
    * spelled out for a reader who arrives at the line.
    */
   function renderReadReceipts() {
-    if (receiptReaders.length === 0) return null;
+    if (!receiptAnchor) return null;
+    // Delivered, but nobody has opened it yet. Teams draws both halves of this
+    // pair and the first half is the one that answers "did that send?" — with
+    // nothing at all there, a message nobody has read looks the same as a
+    // message that never left. It is true by construction: `receiptAnchor`
+    // only ever names a message the gateway handed back, never a local row
+    // still in flight.
+    if (receiptReaders.length === 0) {
+      if (!receiptsWired) return null;
+      return (
+        <div
+          data-testid="chat-read-receipts"
+          className={cn(
+            'flex items-center gap-1 px-2 pb-1 text-[11px]',
+            alignOwnMessages ? 'justify-end pr-1' : 'justify-start pl-7',
+            dark ? 'text-white/50' : 'text-text-tertiary',
+          )}
+        >
+          <span data-testid="chat-read-receipts-label">Sent</span>
+        </div>
+      );
+    }
     const names = receiptReaders.map(receiptLabel);
     // Three, the same cap the collapsed-thread control uses — enough to
     // recognise the conversation, few enough not to become a second avatar
