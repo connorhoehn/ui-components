@@ -76,6 +76,7 @@ import Suggestion from '@tiptap/suggestion';
 import type { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion';
 import { cn } from '../../lib/cn';
 import { FileInput } from '../forms/FileInput';
+import { RovingToolbar } from '../shared/RovingToolbar';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover } from './ReactionPickerPopover';
 import { ComposerAttachments, type StagedFile } from './ComposerAttachments';
@@ -964,7 +965,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           onRemove={(id) => setStaged((prev) => prev.filter((s) => s.id !== id))}
         />
 
-        <div className="flex items-center gap-0.5 border-t border-border px-1.5 py-1">
+        <div className="flex items-center border-t border-border px-1.5 py-1">
+          {/* ONE tab stop for the whole bar, not one per control. Measured
+              before: 14 stops between entering this composer and leaving it,
+              11 of them Bold/Italic/Quote and friends — on every chat surface
+              in the product, the embedded ones included. Send stays outside
+              the group: it is the primary action, not a formatting control,
+              and people reach for it with Tab. */}
+          <RovingToolbar label="Message formatting" className="gap-0.5" data-testid={`${testId}-format-toolbar`}>
           {editor && [
             toolbarButton('Bold', editor.isActive('bold'), () => editor.chain().focus().toggleBold().run(), <b>B</b>),
             toolbarButton('Italic', editor.isActive('italic'), () => editor.chain().focus().toggleItalic().run(), <i>I</i>),
@@ -1016,6 +1024,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           )}
 
           {toolbarExtras}
+          </RovingToolbar>
 
           <button
             type="button"

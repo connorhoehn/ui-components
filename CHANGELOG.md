@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.314.0] — 2026-09-17
+
+### Added — `./shared`
+
+- **`RovingToolbar`** — a group of related controls that costs ONE tab stop.
+  A row of icon buttons is the easiest thing to build and one of the easiest
+  to make unusable: every button is focusable, so every button is a tab stop.
+  Implements the WAI-ARIA toolbar pattern — one stop, arrow keys within,
+  Home/End, wrapping, cross-axis keys left alone so the page still scrolls.
+
+  It reads its rendered buttons from the DOM rather than taking a list of
+  descriptors, because real toolbars have conditional children, wrapper spans
+  holding popovers, separators and self-disabling buttons; a descriptor API
+  would make every caller flatten all of that. Disabled controls are skipped,
+  and the tab stop survives controls disappearing. The index is derived from
+  `document.activeElement` on each keypress rather than held in state, so a
+  HELD arrow key cannot outrun a re-render.
+
+### Changed — `./social`
+
+- **The chat composer's format bar is one tab stop.** Measured on the product's
+  own `#general`: 14 stops between entering the composer and leaving it, 11 of
+  them Bold/Italic/Quote and friends — on every chat surface, the embedded
+  document and in-call ones included. Send stays OUTSIDE the group: it is the
+  primary action, not a formatting control, and people reach for it with Tab.
+
+- **`MessageActionBar` now uses `RovingToolbar`** instead of its own copy of
+  the same logic, shipped one version earlier. Behaviour is unchanged (its
+  tests, including the held-key and disappearing-control cases, pass against
+  both). Two implementations of a keyboard pattern is precisely how one of
+  them drifts out of reach.
+
 ## [2.313.0] — 2026-09-17
 
 ### Fixed — `./social`

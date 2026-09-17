@@ -28,8 +28,8 @@
 // with the full picker one click further on. Which ones are quick is a
 // caller's decision — different products have different vocabularies.
 
-import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
+import { RovingToolbar } from '../shared/RovingToolbar';
 import { EditIcon, ForwardIcon, LinkIcon, PinIcon, ReplyIcon, SmileyIcon, TrashIcon } from '../ui/Icons';
 
 export interface MessageActionBarProps {
@@ -136,70 +136,26 @@ export function MessageActionBar({
   // ref to compute the next one. Two keydowns in the same tick — holding the
   // arrow key down — would otherwise both read the pre-render state and move
   // to the same place, because `setActive` does not update the closure.
-  const [active, setActive] = useState(0);
-  const activeRef = useRef(0);
-  const setActiveBoth = (i: number) => { activeRef.current = i; setActive(i); };
-  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  // Controls are conditional, so the count changes: a message that loses its
-  // Pin must not leave the tab stop on an index that no longer exists — that
-  // would take the whole bar out of the tab order.
-  useEffect(() => {
-    if (active > actions.length - 1) setActiveBoth(0);
-  }, [active, actions.length]);
-  const activeIndex = active > actions.length - 1 ? 0 : active;
-
-  const move = (to: number) => {
-    const next = (to + actions.length) % actions.length;
-    setActiveBoth(next);
-    btnRefs.current[next]?.focus();
-  };
-
-  /** Where the arrows count FROM — the ref, so a repeat key does not restack. */
-  const currentIndex = () =>
-    activeRef.current > actions.length - 1 ? 0 : activeRef.current;
-
-  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    // Horizontal toolbar: left/right move, up/down are left alone so the page
-    // still scrolls. Home/End because a bar of eight is long enough to want them.
-    switch (event.key) {
-      case 'ArrowRight': event.preventDefault(); move(currentIndex() + 1); break;
-      case 'ArrowLeft': event.preventDefault(); move(currentIndex() - 1); break;
-      case 'Home': event.preventDefault(); move(0); break;
-      case 'End': event.preventDefault(); move(actions.length - 1); break;
-      default: break;
-    }
-  };
-
   if (actions.length === 0) return null;
 
   return (
-    <div
+    <RovingToolbar
+      label="Message actions"
       data-testid={testId}
-      role="toolbar"
-      aria-label="Message actions"
-      aria-orientation="horizontal"
-      onKeyDown={onKeyDown}
       // `group-hover` reveals it in a dense list; `focus-within` is what keeps
       // it reachable without a pointer. Both, or it serves only half the users.
       className={cn(
-        'flex items-center gap-0.5 rounded-lg border border-border bg-surface p-0.5 shadow-sm',
+        'gap-0.5 rounded-lg border border-border bg-surface p-0.5 shadow-sm',
         className,
       )}
     >
-      {actions.map((a, i) => (
+      {actions.map((a) => (
         <button
           key={a.key}
-          ref={(el) => { btnRefs.current[i] = el; }}
           type="button"
           aria-label={a.label}
           title={a.label}
           data-testid={`${testId}-${a.key}`}
-          // Exactly one control is in the tab order; the rest are reached with
-          // the arrow keys. Clicking one also makes it the stop, so Tab-ing
-          // back in returns you where you were rather than to the start.
-          tabIndex={i === activeIndex ? 0 : -1}
-          onFocus={() => setActiveBoth(i)}
           onClick={a.onClick}
           // The bar reveals itself on :focus-visible (see ChatPanel), but the
           // BUTTON inside it had no focus style of its own — so a keyboard user
@@ -210,7 +166,7 @@ export function MessageActionBar({
           {a.glyph}
         </button>
       ))}
-    </div>
+    </RovingToolbar>
   );
 }
 

@@ -126,6 +126,8 @@ export { default as CollapsibleSection } from './CollapsibleSection';
 export * from './CollapsibleSection';
 export { default as SearchInput } from './SearchInput';
 export * from './SearchInput';
+export { default as RovingToolbar } from './RovingToolbar';
+export * from './RovingToolbar';
 export { default as InlineAlert } from './InlineAlert';
 export * from './InlineAlert';
 export { default as CardHeader } from './CardHeader';
