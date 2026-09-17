@@ -36,6 +36,18 @@
 import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
+/**
+ * What kind of annotation a card holds.
+ *
+ * This component does not read it — stacking is the same arithmetic whatever
+ * the card contains. It exists because the CONTROL that hides this column has
+ * to name what it is hiding, and only the host knows: `content` is an opaque
+ * ReactNode, so counting cards is the most the library can do on its own, and
+ * counting is how a margin holding one proposed edit and no discussion came to
+ * announce itself as "Comments 1".
+ */
+export type GutterItemKind = 'comment' | 'suggestion';
+
 /** A thread plus where it wants to sit, in pixels from the page top. */
 export interface GutterItem {
   id: string;
@@ -45,6 +57,14 @@ export interface GutterItem {
   active?: boolean;
   /** Rendered inside the card — usually a CommentThread. */
   content: ReactNode;
+  /**
+   * Defaults to `'comment'` — every caller that predates this field was
+   * passing comment threads, so the unlabelled case keeps saying exactly what
+   * it says today rather than degrading a true noun into a hedge. The cost is
+   * that a NEW producer which forgets to label itself is counted as
+   * discussion; labelling every producer is therefore part of adding one.
+   */
+  kind?: GutterItemKind;
 }
 
 export interface DocumentGutterProps {

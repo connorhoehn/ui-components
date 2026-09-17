@@ -156,3 +156,24 @@ describe('DocumentGutter lead', () => {
     expect(lead.compareDocumentPosition(cards) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });
+
+describe('DocumentGutter item kinds', () => {
+  // `kind` exists for the toolbar's benefit, not this component's — a
+  // suggestion card and a thread card occupy the margin identically, and the
+  // day stacking starts to depend on which is which is the day two cards of
+  // different kinds anchored to the same line overlap.
+  it('stacks a suggestion exactly as it stacks a thread', () => {
+    const { container } = render(
+      <DocumentGutter items={[item('a', 0, { kind: 'suggestion' }), item('b', 10, { kind: 'comment' })]} />,
+    );
+    const mixed = Array.from(container.querySelectorAll('[data-testid^="document-gutter-item-"]'))
+      .map((el) => (el as HTMLElement).style.top);
+    cleanup();
+
+    const plain = render(<DocumentGutter items={[item('a', 0), item('b', 10)]} />);
+    expect(
+      Array.from(plain.container.querySelectorAll('[data-testid^="document-gutter-item-"]'))
+        .map((el) => (el as HTMLElement).style.top),
+    ).toEqual(mixed);
+  });
+});

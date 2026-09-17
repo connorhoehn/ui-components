@@ -44,10 +44,22 @@ export interface DocumentToolbarProps {
    * that fills the slot from displacing it.
    */
   commentCount?: number;
+  /**
+   * How many PROPOSED EDITS sit in the same margin, which is a different
+   * thing and has to be counted separately.
+   *
+   * The gutter holds both, and the toggle used to be handed the total under
+   * the name `commentCount` — so a document whose margin held one suggestion
+   * and no discussion at all read "Comments 1", and the reader went looking
+   * for a thread that did not exist. The count was never the wrong part; the
+   * noun was. Splitting the two inputs is what lets the control pick a noun
+   * that is true of what it is actually hiding.
+   */
+  suggestionCount?: number;
   /** Whether the gutter is currently showing. Drives `aria-pressed`. */
   gutterVisible?: boolean;
   /**
-   * Toggles the gutter. Its absence — or a zero count — means no control at
+   * Toggles the gutter. Its absence — or an empty margin — means no control at
    * all: a toggle for a gutter with nothing in it is a button that does
    * nothing visible, which reads as broken rather than as empty.
    */
@@ -982,6 +994,31 @@ function Divider() {
 }
 
 /**
+ * What to call a margin holding `comments` threads and `suggestions` edits.
+ *
+ * Exported for the tests, because the wording is the contract here — the
+ * button's paint is decoration and this is the part that can be wrong.
+ *
+ * The mixed case is the one that needed deciding, and "Markup" is Word's
+ * answer to exactly this question: its Review tab hides and shows a margin of
+ * comments AND tracked changes under Show Markup, with No Markup / All Markup
+ * as the states. Google Docs has no word for it because it never has the
+ * problem — suggestions there are a MODE, governed by the editing-mode picker
+ * rather than by a margin switch — so it offers no vocabulary to borrow.
+ * Rejected: "Margin" describes where the cards are rather than what they are,
+ * and nobody asks to hide a margin; "Notes" would name a third concept this
+ * product does not have, so a reader would reasonably go looking for it.
+ *
+ * Only the mixed case pays for that borrowed term. A margin of one kind says
+ * which kind, because a specific true noun always beats a general one.
+ */
+export function gutterNoun(comments: number, suggestions: number): string {
+  if (suggestions === 0) return 'Comments';
+  if (comments === 0) return 'Suggestions';
+  return 'Markup';
+}
+
+/**
  * The gutter switch.
  *
  * It carries the COUNT, and that is the whole design. Hiding the margin is a
@@ -991,11 +1028,20 @@ function Divider() {
  * control is never a bare eye icon — the number stays on screen whether the
  * threads are showing or not, and "hidden" is stated rather than implied by
  * the absence of a column the reader cannot know used to be there.
+ *
+ * The count is a total and stays one. Two numbers on a 7px-tall chip is a
+ * legend, not a button, and "how much is in the margin" is the question the
+ * control answers; which kinds those are is what the noun is for.
  */
 function GutterToggle({
-  count, visible, onToggle, testId,
-}: { count: number; visible: boolean; onToggle: () => void; testId: string }) {
-  const label = `${visible ? 'Hide' : 'Show'} comments (${count})`;
+  comments, suggestions, visible, onToggle, testId,
+}: { comments: number; suggestions: number; visible: boolean; onToggle: () => void; testId: string }) {
+  const noun = gutterNoun(comments, suggestions);
+  const count = comments + suggestions;
+  // Lower-cased from the same noun rather than written out a second time: the
+  // visible text and the accessible name are one sentence, and two sources for
+  // it is how they drift apart.
+  const label = `${visible ? 'Hide' : 'Show'} ${noun.toLowerCase()} (${count})`;
   return (
     <button
       type="button"
@@ -1013,11 +1059,11 @@ function GutterToggle({
         visible
           ? 'bg-primary text-white border-primary'
           // Off is TINTED, not greyed out. A disabled-looking control would
-          // say "no comments"; this says "comments, currently put away".
+          // say the margin is empty; this says it is full and put away.
           : 'bg-primary-bg text-primary-fg border-primary-border hover:bg-surface-hover',
       )}
     >
-      <span>Comments</span>
+      <span>{noun}</span>
       <span
         className={cn(
           'rounded-full px-1.5 leading-4 tabular-nums',
@@ -1037,6 +1083,7 @@ export default function DocumentToolbar({
   editor,
   actions,
   commentCount = 0,
+  suggestionCount = 0,
   gutterVisible = true,
   onToggleGutter,
   onInsertImage,
@@ -1097,6 +1144,11 @@ export default function DocumentToolbar({
 
   const linkAnchor = useRef<HTMLSpanElement>(null);
   const [linkOpen, setLinkOpen] = useState(false);
+
+  // Whether the margin has anything in it at all — the condition for offering
+  // the toggle. Both halves, because either alone would drop the control on a
+  // document annotated entirely the other way.
+  const gutterCount = commentCount + suggestionCount;
 
   const setBlock = useCallback((value: string) => {
     if (!editor || editor.isDestroyed) return;
@@ -1406,13 +1458,14 @@ export default function DocumentToolbar({
 
       </>)}
 
-      {(onToggleGutter && commentCount > 0) || actions ? (
+      {(onToggleGutter && gutterCount > 0) || actions ? (
         <span className="ml-auto flex items-center gap-1">
           {/* Left of the host's actions so presence avatars stay pinned to the
               far edge where every collaborative tool puts them. */}
-          {onToggleGutter && commentCount > 0 && (
+          {onToggleGutter && gutterCount > 0 && (
             <GutterToggle
-              count={commentCount}
+              comments={commentCount}
+              suggestions={suggestionCount}
               visible={gutterVisible}
               onToggle={onToggleGutter}
               testId={`${testId}-gutter-toggle`}

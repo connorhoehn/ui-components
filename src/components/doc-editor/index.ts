@@ -100,7 +100,7 @@ export { default as DocumentToolbar } from './DocumentToolbar';
 export type { DocumentToolbarProps } from './DocumentToolbar';
 
 export { default as DocumentGutter, stackOffsets } from './DocumentGutter';
-export type { DocumentGutterProps, GutterItem } from './DocumentGutter';
+export type { DocumentGutterProps, GutterItem, GutterItemKind } from './DocumentGutter';
 
 // The gutter's counterpart for when the gutter is NOT there: the in-prose
 // marks stay visible and open a card, so a hidden margin hides the threads

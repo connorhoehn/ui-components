@@ -22,7 +22,7 @@
 //                        duplicating content), and a refusal the user cannot
 //                        see reads as a dead button.
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import type { XmlFragment } from 'yjs';
 import type * as Y from 'yjs';
@@ -273,8 +273,13 @@ export interface CanvasDocumentViewProps {
    */
   toolbarActions?: ReactNode;
   /**
-   * Comment threads for the margin. Each carries the offset it wants and the
-   * gutter resolves collisions between them.
+   * Annotations for the margin — comment threads, proposed edits, or both.
+   * Each carries the offset it wants and the gutter resolves collisions
+   * between them.
+   *
+   * Label each one's `kind`. The card's content is an opaque node, so this
+   * view cannot tell a thread from a suggestion by looking, and the toolbar's
+   * toggle has to name what it is hiding.
    *
    * Omitted entirely when empty rather than rendered as a blank column, so a
    * document with no discussion keeps the full width for its text.
@@ -472,13 +477,27 @@ export default function CanvasDocumentView({
   //
   // ONE key, not one per document, for the same reason: the preference is
   // about eyesight and screen size, which do not change per document.
-  const commentCount = gutterItems?.length ?? 0;
+  // Tallied by kind rather than measured with `.length`, which is the bug this
+  // split exists to fix: the gutter holds comment threads AND proposed edits,
+  // the total was handed to the toolbar as its comment count, and a document
+  // whose margin held one agent suggestion and no discussion at all announced
+  // "Comments 1" over an empty comments table. Unlabelled items count as
+  // comments — see `GutterItem['kind']` for why that is the right default.
+  const gutterCounts = useMemo(() => {
+    let comments = 0;
+    let suggestions = 0;
+    for (const item of gutterItems ?? []) {
+      if (item.kind === 'suggestion') suggestions += 1;
+      else comments += 1;
+    }
+    return { comments, suggestions, total: comments + suggestions };
+  }, [gutterItems]);
   // Two conditions, not one: there has to be something to show, AND the gutter
   // has to be switched on. Splitting them is what lets the toolbar keep
   // reporting the count while the column itself is gone.
   // A docked call keeps the gutter open on its own. Without this the call
   // would vanish the moment a document had no comments, which is most of them.
-  const showGutter = (commentCount > 0 || !!gutterLead) && gutterVisible;
+  const showGutter = (gutterCounts.total > 0 || !!gutterLead) && gutterVisible;
 
   // Hoisted above the zoom block below, which has to charge fit width for the
   // rails before it can resolve a scale — and `zoom` is a dependency of nearly
@@ -850,7 +869,8 @@ export default function CanvasDocumentView({
                   // Passed even when the gutter is hidden — that is precisely
                   // when the count is the only remaining evidence that a
                   // discussion exists.
-                  commentCount={commentCount}
+                  commentCount={gutterCounts.comments}
+                  suggestionCount={gutterCounts.suggestions}
                   gutterVisible={gutterVisible}
                   {...(onToggleGutter ? { onToggleGutter } : {})}
                   {...(onInsertImage ? { onInsertImage } : {})}

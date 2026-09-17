@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, createEvent, cleanup, act } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import DocumentToolbar from '../DocumentToolbar';
+import DocumentToolbar, { gutterNoun } from '../DocumentToolbar';
 
 /**
  * A stand-in for the Tiptap editor.
@@ -415,7 +415,19 @@ describe('DocumentToolbar', () => {
   });
 });
 
-describe('DocumentToolbar — the comment-gutter toggle', () => {
+// The wording IS the contract — the button's paint can be wrong and nobody is
+// misled; the noun cannot.
+describe('gutterNoun', () => {
+  it.each([
+    [3, 0, 'Comments'],
+    [0, 3, 'Suggestions'],
+    [1, 1, 'Markup'],
+  ])('names a margin of %i threads and %i edits "%s"', (comments, suggestions, expected) => {
+    expect(gutterNoun(comments, suggestions)).toBe(expected);
+  });
+});
+
+describe('DocumentToolbar — the gutter toggle', () => {
   const TOGGLE = 'document-toolbar-gutter-toggle';
 
   it('shows the count so a hidden gutter still announces itself', () => {
@@ -454,7 +466,7 @@ describe('DocumentToolbar — the comment-gutter toggle', () => {
   });
 
   // Nothing to show or hide. A live button whose only effect is invisible
-  // reads as broken, not as "no comments".
+  // reads as broken, not as an empty margin.
   it('renders no toggle when there are zero comments', () => {
     const { editor } = makeEditor();
     render(<DocumentToolbar editor={editor} commentCount={0} onToggleGutter={() => {}} />);
@@ -464,6 +476,90 @@ describe('DocumentToolbar — the comment-gutter toggle', () => {
   it('renders no toggle when the host offers no handler', () => {
     const { editor } = makeEditor();
     render(<DocumentToolbar editor={editor} commentCount={4} />);
+    expect(screen.queryByTestId(TOGGLE)).toBeNull();
+  });
+
+  // The defect this split was cut for. An agent leaves one proposed edit in
+  // the margin, the comments table is empty, and the bar said "Comments 1" —
+  // so the reader went looking for a thread nobody had written.
+  it('says Suggestions when the margin holds only proposed edits', () => {
+    const { editor } = makeEditor();
+    render(
+      <DocumentToolbar
+        editor={editor}
+        commentCount={0}
+        suggestionCount={1}
+        onToggleGutter={() => {}}
+      />,
+    );
+    const btn = screen.getByTestId(TOGGLE);
+    expect(btn).toHaveTextContent('Suggestions');
+    expect(btn).not.toHaveTextContent('Comments');
+    expect(screen.getByRole('button', { name: 'Hide suggestions (1)' })).toBeInTheDocument();
+  });
+
+  it('still says Comments when the margin holds only threads', () => {
+    const { editor } = makeEditor();
+    render(
+      <DocumentToolbar
+        editor={editor}
+        commentCount={2}
+        suggestionCount={0}
+        onToggleGutter={() => {}}
+      />,
+    );
+    const btn = screen.getByTestId(TOGGLE);
+    expect(btn).toHaveTextContent('Comments');
+    expect(screen.getByRole('button', { name: 'Hide comments (2)' })).toBeInTheDocument();
+  });
+
+  // Neither noun is true of a mixed margin, so it takes the one Word uses for
+  // exactly this mixture — and keeps the total, because "how much is in there"
+  // is the question the control answers.
+  it('says Markup for a mixed margin and totals both kinds', () => {
+    const { editor } = makeEditor();
+    render(
+      <DocumentToolbar
+        editor={editor}
+        commentCount={2}
+        suggestionCount={1}
+        onToggleGutter={() => {}}
+      />,
+    );
+    const btn = screen.getByTestId(TOGGLE);
+    expect(btn).toHaveTextContent('Markup');
+    expect(btn).toHaveTextContent('3');
+    expect(screen.getByRole('button', { name: 'Hide markup (3)' })).toBeInTheDocument();
+  });
+
+  // The visible word and the accessible name are one sentence. They were
+  // written twice before this and only stayed in step by coincidence.
+  it('keeps the accessible name in step with the visible noun', () => {
+    const { editor } = makeEditor();
+    const { rerender } = render(
+      <DocumentToolbar editor={editor} suggestionCount={2} gutterVisible={false} onToggleGutter={() => {}} />,
+    );
+    expect(screen.getByTestId(TOGGLE)).toHaveTextContent('Suggestions');
+    expect(screen.getByRole('button', { name: 'Show suggestions (2)' })).toBeInTheDocument();
+
+    rerender(
+      <DocumentToolbar editor={editor} commentCount={1} suggestionCount={2} gutterVisible={false} onToggleGutter={() => {}} />,
+    );
+    expect(screen.getByTestId(TOGGLE)).toHaveTextContent('Markup');
+    expect(screen.getByRole('button', { name: 'Show markup (3)' })).toBeInTheDocument();
+  });
+
+  // A margin with only suggestions is not an empty margin. Gating the control
+  // on the comment count alone would have left an agent's edits unhideable.
+  it('offers the toggle for a margin of suggestions alone', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} commentCount={0} suggestionCount={2} onToggleGutter={() => {}} />);
+    expect(screen.getByTestId(TOGGLE)).toBeInTheDocument();
+  });
+
+  it('renders no toggle when both counts are zero', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} commentCount={0} suggestionCount={0} onToggleGutter={() => {}} />);
     expect(screen.queryByTestId(TOGGLE)).toBeNull();
   });
 

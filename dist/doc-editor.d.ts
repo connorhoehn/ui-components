@@ -152,8 +152,13 @@ export declare interface CanvasDocumentViewProps {
      */
     toolbarActions?: ReactNode;
     /**
-     * Comment threads for the margin. Each carries the offset it wants and the
-     * gutter resolves collisions between them.
+     * Annotations for the margin — comment threads, proposed edits, or both.
+     * Each carries the offset it wants and the gutter resolves collisions
+     * between them.
+     *
+     * Label each one's `kind`. The card's content is an opaque node, so this
+     * view cannot tell a thread from a suggestion by looking, and the toolbar's
+     * toggle has to name what it is hiding.
      *
      * Omitted entirely when empty rather than rendered as a blank column, so a
      * document with no discussion keeps the full width for its text.
@@ -861,7 +866,7 @@ export declare interface DocumentTarget {
     commentId?: string | null;
 }
 
-export declare function DocumentToolbar({ editor, actions, commentCount, gutterVisible, onToggleGutter, onInsertImage, density, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+export declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 export declare interface DocumentToolbarProps {
     editor: Editor | null;
@@ -877,10 +882,22 @@ export declare interface DocumentToolbarProps {
      * that fills the slot from displacing it.
      */
     commentCount?: number;
+    /**
+     * How many PROPOSED EDITS sit in the same margin, which is a different
+     * thing and has to be counted separately.
+     *
+     * The gutter holds both, and the toggle used to be handed the total under
+     * the name `commentCount` — so a document whose margin held one suggestion
+     * and no discussion at all read "Comments 1", and the reader went looking
+     * for a thread that did not exist. The count was never the wrong part; the
+     * noun was. Splitting the two inputs is what lets the control pick a noun
+     * that is true of what it is actually hiding.
+     */
+    suggestionCount?: number;
     /** Whether the gutter is currently showing. Drives `aria-pressed`. */
     gutterVisible?: boolean;
     /**
-     * Toggles the gutter. Its absence — or a zero count — means no control at
+     * Toggles the gutter. Its absence — or an empty margin — means no control at
      * all: a toggle for a gutter with nothing in it is a button that does
      * nothing visible, which reads as broken rather than as empty.
      */
@@ -1027,7 +1044,27 @@ export declare interface GutterItem {
     active?: boolean;
     /** Rendered inside the card — usually a CommentThread. */
     content: ReactNode;
+    /**
+     * Defaults to `'comment'` — every caller that predates this field was
+     * passing comment threads, so the unlabelled case keeps saying exactly what
+     * it says today rather than degrading a true noun into a hedge. The cost is
+     * that a NEW producer which forgets to label itself is counted as
+     * discussion; labelling every producer is therefore part of adding one.
+     */
+    kind?: GutterItemKind;
 }
+
+/**
+ * What kind of annotation a card holds.
+ *
+ * This component does not read it — stacking is the same arithmetic whatever
+ * the card contains. It exists because the CONTROL that hides this column has
+ * to name what it is hiding, and only the host knows: `content` is an opaque
+ * ReactNode, so counting cards is the most the library can do on its own, and
+ * counting is how a margin holding one proposed edit and no discussion came to
+ * announce itself as "Comments 1".
+ */
+export declare type GutterItemKind = 'comment' | 'suggestion';
 
 export declare function HeaderBanner({ meta, participantCount, }: {
     meta: DocumentMeta;
@@ -2218,9 +2255,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }
@@ -2241,9 +2294,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -2251,25 +2304,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

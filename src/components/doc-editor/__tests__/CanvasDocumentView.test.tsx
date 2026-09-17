@@ -42,21 +42,24 @@ vi.mock('../TiptapEditor', () => ({
 }));
 
 // Reflects the gutter props back as attributes. The toggle's own rendering
-// (count badge, aria-pressed, the zero-comment case) is DocumentToolbar's
-// contract and is tested there against the real component; what this file
-// owns is whether the page hands it the right numbers.
+// (count badge, aria-pressed, which noun it picks, the empty-margin case) is
+// DocumentToolbar's contract and is tested there against the real component;
+// what this file owns is whether the page hands it the right numbers — which
+// is where the "Comments 1" over an empty comments table came from.
 vi.mock('../DocumentToolbar', () => ({
   default: ({
-    actions, commentCount, gutterVisible, onToggleGutter,
+    actions, commentCount, suggestionCount, gutterVisible, onToggleGutter,
   }: {
     actions?: React.ReactNode;
     commentCount?: number;
+    suggestionCount?: number;
     gutterVisible?: boolean;
     onToggleGutter?: () => void;
   }) => (
     <div
       data-testid="toolbar-stub"
       data-comment-count={String(commentCount ?? 0)}
+      data-suggestion-count={String(suggestionCount ?? 0)}
       data-gutter-visible={String(gutterVisible)}
       data-has-toggle={String(Boolean(onToggleGutter))}
     >
@@ -305,6 +308,50 @@ describe('CanvasDocumentView — the comment gutter', () => {
     renderView({ gutterItems: [], onToggleGutter: () => {} });
     expect(screen.getByTestId('toolbar-stub')).toHaveAttribute('data-comment-count', '0');
     expect(screen.queryByTestId('canvas-document-gutter')).toBeNull();
+  });
+
+  // The defect: the margin held one agent suggestion, the comments table was
+  // empty, and the bar still counted it as a thread.
+  it('does not count a suggestion as a comment', () => {
+    renderView({
+      gutterItems: [{ id: 'suggestion:s1', top: 20, kind: 'suggestion' as const, content: <p>edit</p> }],
+      onToggleGutter: () => {},
+    });
+    const toolbar = screen.getByTestId('toolbar-stub');
+    expect(toolbar).toHaveAttribute('data-comment-count', '0');
+    expect(toolbar).toHaveAttribute('data-suggestion-count', '1');
+  });
+
+  it('tallies a mixed margin on both sides', () => {
+    renderView({
+      gutterItems: [
+        { id: 'c1', top: 20, kind: 'comment' as const, content: <p>thread</p> },
+        { id: 'c2', top: 60, kind: 'comment' as const, content: <p>thread</p> },
+        { id: 'suggestion:s1', top: 90, kind: 'suggestion' as const, content: <p>edit</p> },
+      ],
+      onToggleGutter: () => {},
+    });
+    const toolbar = screen.getByTestId('toolbar-stub');
+    expect(toolbar).toHaveAttribute('data-comment-count', '2');
+    expect(toolbar).toHaveAttribute('data-suggestion-count', '1');
+  });
+
+  // A host that predates `kind` was passing comment threads, and its toolbar
+  // has to keep saying so rather than hedging.
+  it('reads unlabelled items as comments', () => {
+    renderView({ gutterItems: ITEMS, onToggleGutter: () => {} });
+    const toolbar = screen.getByTestId('toolbar-stub');
+    expect(toolbar).toHaveAttribute('data-comment-count', '3');
+    expect(toolbar).toHaveAttribute('data-suggestion-count', '0');
+  });
+
+  // Suggestions alone are still a margin worth drawing. Gating the column on
+  // the comment count would have hidden an agent's entire output.
+  it('shows the gutter for a margin of suggestions alone', () => {
+    renderView({
+      gutterItems: [{ id: 'suggestion:s1', top: 20, kind: 'suggestion' as const, content: <p>edit</p> }],
+    });
+    expect(screen.getByTestId('canvas-document-gutter')).toBeInTheDocument();
   });
 
   // Controlled, not internal: the component never flips its own state, so a

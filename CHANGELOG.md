@@ -6,6 +6,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.297.0] — 2026-09-16
+
+### Fixed — `./doc-editor`
+
+- **The margin toggle no longer calls a suggestion a comment.** The canvas
+  gutter holds two things — comment threads and proposed edits — and
+  `CanvasDocumentView` measured it with `gutterItems.length`, handing the total
+  to `DocumentToolbar` under the name `commentCount`. So a document where an
+  agent had left one suggestion and nobody had left a thread put "Comments 1"
+  on the bar, with an accessible name of "Hide comments (1)", over an empty
+  comments table. The reader goes looking for a discussion that was never had.
+
+  The count was never the wrong half — "there are N things in the margin" is
+  the useful signal and it stays a single total. The noun was. `GutterItem`
+  now carries a `kind` (`'comment' | 'suggestion'`), the view tallies by it,
+  and the toggle names what it is actually hiding: **Comments** for threads
+  alone, **Suggestions** for proposed edits alone, and **Markup** for a margin
+  holding both. Markup is Word's word for exactly this mixture — its Review tab
+  hides and shows comments and tracked changes together under Show Markup —
+  and it is borrowed only for the mixed case, because a specific true noun
+  beats a general one. The accessible name is derived from the visible one
+  rather than written a second time, so the two cannot drift.
+
+- **`kind` is optional and defaults to `'comment'`**, so no caller breaks: every
+  host passing gutter items before this was passing threads, and hedging their
+  true label into a general one to accommodate a field they do not set would be
+  a worse outcome than the bug. A host that renders anything else in the margin
+  must label it.
+
+- `DocumentToolbar` takes a new `suggestionCount` beside `commentCount`, and
+  offers the toggle whenever EITHER is non-zero — gating on the comment count
+  alone left a margin of nothing but agent edits with no way to put it away.
+  `commentCount` keeps meaning what its name says.
+
+---
+
 ## [2.296.0] — 2026-09-16
 
 ### Fixed — `./social`
