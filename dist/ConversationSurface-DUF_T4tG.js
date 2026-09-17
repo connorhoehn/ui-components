@@ -1194,14 +1194,16 @@ function Xe({ quickReactions: t = Je, onReact: n, onOpenReactionPicker: o, onRep
 		children: e
 	}), () => n(e));
 	o && x("more-reactions", "More reactions", /* @__PURE__ */ H(r, { size: 14 }), (e) => o(e.currentTarget)), s && x("reply", "Reply", /* @__PURE__ */ H(i, { size: 14 }), s), l && x("forward", "Forward to another conversation", /* @__PURE__ */ H(f, { size: 14 }), (e) => l(e.currentTarget)), d && x("pin", p ? "Unpin" : "Pin to channel", /* @__PURE__ */ H(h, { size: 14 }), d), m && x("copy-link", "Copy link to message", /* @__PURE__ */ H(u, { size: 14 }), m), g && x("edit", "Edit message", /* @__PURE__ */ H(c, { size: 13 }), g), _ && x("delete", "Delete message", /* @__PURE__ */ H(a, { size: 13 }), _);
-	let [S, C] = B(0), w = z([]);
+	let [S, C] = B(0), w = z(0), T = (e) => {
+		w.current = e, C(e);
+	}, E = z([]);
 	L(() => {
-		S > b.length - 1 && C(0);
+		S > b.length - 1 && T(0);
 	}, [S, b.length]);
-	let T = S > b.length - 1 ? 0 : S, E = (e) => {
+	let D = S > b.length - 1 ? 0 : S, O = (e) => {
 		let t = (e + b.length) % b.length;
-		C(t), w.current[t]?.focus();
-	};
+		T(t), E.current[t]?.focus();
+	}, k = () => w.current > b.length - 1 ? 0 : w.current;
 	return b.length === 0 ? null : /* @__PURE__ */ H("div", {
 		"data-testid": y,
 		role: "toolbar",
@@ -1210,28 +1212,28 @@ function Xe({ quickReactions: t = Je, onReact: n, onOpenReactionPicker: o, onRep
 		onKeyDown: (e) => {
 			switch (e.key) {
 				case "ArrowRight":
-					e.preventDefault(), E(T + 1);
+					e.preventDefault(), O(k() + 1);
 					break;
 				case "ArrowLeft":
-					e.preventDefault(), E(T - 1);
+					e.preventDefault(), O(k() - 1);
 					break;
 				case "Home":
-					e.preventDefault(), E(0);
+					e.preventDefault(), O(0);
 					break;
-				case "End": e.preventDefault(), E(b.length - 1);
+				case "End": e.preventDefault(), O(b.length - 1);
 			}
 		},
 		className: e("flex items-center gap-0.5 rounded-lg border border-border bg-surface p-0.5 shadow-sm", v),
 		children: b.map((e, t) => /* @__PURE__ */ H("button", {
 			ref: (e) => {
-				w.current[t] = e;
+				E.current[t] = e;
 			},
 			type: "button",
 			"aria-label": e.label,
 			title: e.label,
 			"data-testid": `${y}-${e.key}`,
-			tabIndex: t === T ? 0 : -1,
-			onFocus: () => C(t),
+			tabIndex: t === D ? 0 : -1,
+			onFocus: () => T(t),
 			onClick: e.onClick,
 			className: `grid h-6 w-6 place-items-center rounded text-xs leading-none text-text-secondary hover:bg-surface-hover hover:text-text-primary ${Ye}`,
 			children: e.glyph

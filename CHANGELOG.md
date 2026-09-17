@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.313.0] — 2026-09-17
+
+### Fixed — `./social`
+
+- **`MessageActionBar`'s arrow keys advance once per press when the key is
+  held.** The roving index was read from state, so two keydowns in the same
+  tick — which is what key repeat is — both computed from the pre-render value
+  and landed on the same control: holding the arrow key moved one step and
+  stopped. Confirmed in a browser, not just in theory. The index is now kept
+  in a ref as well as state: state renders the `tabIndex`, the ref computes
+  the next one.
+
 ## [2.312.0] — 2026-09-17
 
 ### Changed — `./social`

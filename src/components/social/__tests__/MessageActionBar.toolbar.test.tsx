@@ -99,6 +99,19 @@ describe('MessageActionBar — one tab stop', () => {
     expect(buttons().filter((b) => b.getAttribute('tabindex') === '0')).toHaveLength(1);
   });
 
+  it('advances once per press when the key is held down', () => {
+    // Two keydowns in the same tick — key repeat. Reading the index from
+    // state meant both computed from the pre-render value and landed on the
+    // same control, so holding the arrow key went one step and stopped.
+    full();
+    const bar = screen.getByRole('toolbar');
+    buttons()[0]!.focus();
+    fireEvent.keyDown(bar, { key: 'ArrowRight' });
+    fireEvent.keyDown(bar, { key: 'ArrowRight' });
+    fireEvent.keyDown(bar, { key: 'ArrowRight' });
+    expect(buttons()[3]).toHaveFocus();
+  });
+
   it('still clicks through to the action it names', () => {
     const onReply = vi.fn();
     render(<MessageActionBar onReact={vi.fn()} onReply={onReply} />);
