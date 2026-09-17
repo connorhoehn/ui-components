@@ -33,11 +33,11 @@ function d(e, t, n) {
 	};
 }
 function f({ trigger: l, open: f, onClose: p, placement: m = "bottom-start", offset: h = 6, className: g, zIndex: _ = 9500, "data-testid": v = "inline-popover", "aria-label": y, "aria-labelledby": b, children: x }) {
-	let S = a(null), [C, w] = o(null), T = a(!1), E = a(null), D = t(f), O = n(() => {
+	let S = a(null), [C, w] = o(null), T = a(!1), E = a(null), D = a(null), O = t(f), k = n(() => {
 		let e = l.current;
 		if (!e) return;
 		let t = e.getBoundingClientRect();
-		T.current = !1, w(d(t, m, h));
+		T.current = !1, E.current = t, w(d(t, m, h));
 	}, [
 		l,
 		m,
@@ -48,16 +48,16 @@ function f({ trigger: l, open: f, onClose: p, placement: m = "bottom-start", off
 			w(null);
 			return;
 		}
-		O();
-	}, [f, O]), i(() => {
+		k();
+	}, [f, k]), i(() => {
 		if (!f || !C || T.current) return;
 		T.current = !0;
 		let e = S.current;
 		if (!e) return;
 		let t = e.getBoundingClientRect();
 		if (t.width === 0 && t.height === 0) return;
-		let n = window.innerHeight - 16, r = t.top, i = t.left, a = !1;
-		t.height > n ? (r = 8, a = !0) : t.bottom > window.innerHeight - 8 && (r = window.innerHeight - 8 - t.height, a = !0), r < 8 && (r = 8, a = !0), t.right > window.innerWidth - 8 && (i = Math.max(8, window.innerWidth - 8 - t.width), a = !0), i < 8 && (i = 8, a = !0), a && w({
+		let n = window.innerHeight - 16, r = t.top, i = t.left, a = !1, o = E.current;
+		!(!m.startsWith("bottom") || !o) && t.bottom > window.innerHeight - 8 && o.top - h - t.height >= 8 ? (r = o.top - h - t.height, a = !0) : t.height > n ? (r = 8, a = !0) : t.bottom > window.innerHeight - 8 && (r = window.innerHeight - 8 - t.height, a = !0), r < 8 && (r = 8, a = !0), t.right > window.innerWidth - 8 && (i = Math.max(8, window.innerWidth - 8 - t.width), a = !0), i < 8 && (i = 8, a = !0), a && w({
 			position: "fixed",
 			top: r,
 			left: i,
@@ -66,31 +66,31 @@ function f({ trigger: l, open: f, onClose: p, placement: m = "bottom-start", off
 		});
 	}, [f, C]), r(() => {
 		if (!f) return;
-		let e = () => O();
+		let e = () => k();
 		return window.addEventListener("scroll", e, !0), window.addEventListener("resize", e), () => {
 			window.removeEventListener("scroll", e, !0), window.removeEventListener("resize", e);
 		};
-	}, [f, O]), r(() => {
+	}, [f, k]), r(() => {
 		if (!f) return;
 		let e = typeof document < "u" ? document.activeElement : null;
-		return E.current = e, queueMicrotask(() => {
+		return D.current = e, queueMicrotask(() => {
 			let e = S.current;
 			if (!e) return;
 			let t = u(e);
 			t.length > 0 ? t[0].focus() : (e.setAttribute("tabindex", "-1"), e.focus());
 		}), () => {
-			let e = E.current;
-			e && typeof e.focus == "function" && document.contains(e) && e.focus(), E.current = null;
+			let e = D.current;
+			e && typeof e.focus == "function" && document.contains(e) && e.focus(), D.current = null;
 		};
 	}, [f]), r(() => {
 		if (!f) return;
 		let e = (e) => {
 			if (e.key === "Escape") {
-				if (!D()) return;
+				if (!O()) return;
 				e.stopPropagation(), p();
 				return;
 			}
-			if (e.key !== "Tab" || !D()) return;
+			if (e.key !== "Tab" || !O()) return;
 			let t = S.current;
 			if (!t) return;
 			let n = u(t);
@@ -109,7 +109,7 @@ function f({ trigger: l, open: f, onClose: p, placement: m = "bottom-start", off
 	}, [
 		f,
 		p,
-		D
+		O
 	]), r(() => {
 		if (!f) return;
 		let e = (e) => {

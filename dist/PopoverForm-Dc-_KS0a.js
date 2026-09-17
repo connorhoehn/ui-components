@@ -1,7 +1,7 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Button-BhS4-R6_.js";
 import { t as n } from "./StatusDot-Bgx2zxgC.js";
-import { t as r } from "./InlinePopover-D25AtkYZ.js";
+import { t as r } from "./InlinePopover-CG_Jwga7.js";
 import { useEffect as i, useRef as a } from "react";
 import { jsx as o, jsxs as s } from "react/jsx-runtime";
 //#region src/components/ui/Stack.tsx

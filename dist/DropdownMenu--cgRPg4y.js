@@ -2,7 +2,7 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { s as t } from "./Icons-dYlqbmVH.js";
 import { t as n } from "./Avatar-BzicCOft.js";
 import { t as r } from "./StatusDot-Bgx2zxgC.js";
-import { t as i } from "./InlinePopover-D25AtkYZ.js";
+import { t as i } from "./InlinePopover-CG_Jwga7.js";
 import { useCallback as a, useEffect as o, useRef as s, useState as c } from "react";
 import { Fragment as l, jsx as u, jsxs as d } from "react/jsx-runtime";
 //#region src/components/shared/PresenceAvatars.tsx

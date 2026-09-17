@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.301.0] — 2026-09-17
+
+### Fixed — `./shared`
+
+- **A popover with no room below it flips above its trigger instead of sliding
+  over it.** The correction pass only ever measured the PANEL, which is enough
+  to push it back on screen and not enough to decide it belongs on the other
+  side of the anchor — so a picker opened from a control at the foot of the
+  window (the chat composer's "Share a document") was slid up until it fitted
+  and landed on top of the composer that opened it. It now takes the other side
+  when there is room there, which is what every popover library does and what a
+  reader expects. Sliding remains the fallback for when neither side has room,
+  because overlapping the trigger beats hanging off the screen.
+
+  No API change: `placement` still names the PREFERRED side, and a panel that
+  fits below is untouched.
+
+---
+
 ## [2.300.0] — 2026-09-16
 
 ### Changed — `./social`

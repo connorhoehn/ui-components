@@ -10,7 +10,7 @@ import { n as C } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as w } from "./Input-DLknWXri.js";
 import { t as T } from "./Textarea-Dz4doxTv.js";
 import { t as E } from "./Avatar-BzicCOft.js";
-import { n as D, t as O } from "./DropdownMenu-BKB23jXJ.js";
+import { n as D, t as O } from "./DropdownMenu--cgRPg4y.js";
 import { t as k } from "./StatusPill-Db42eiME.js";
 import { i as A, n as te, r as j, t as M } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { p as ne } from "./MediaIcons-OLUYBJM0.js";

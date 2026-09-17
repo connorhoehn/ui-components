@@ -121,6 +121,10 @@ export function InlinePopover({
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<CSSProperties | null>(null);
   const clampedRef = useRef(false);
+  // The rect the current position was derived from. The correction pass below
+  // measures the PANEL, which is enough to slide it back on screen and not
+  // enough to decide it belongs on the other side of its trigger.
+  const anchorRectRef = useRef<DOMRect | null>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   // Escape/Tab belong to the top layer only. See lib/overlayStack.ts for why
   // the `e.stopPropagation()` below cannot achieve this on its own.
@@ -133,6 +137,7 @@ export function InlinePopover({
     if (!el) return;
     const rect = el.getBoundingClientRect();
     clampedRef.current = false;
+    anchorRectRef.current = rect;
     setPosition(computePosition(rect, placement, offset));
   }, [trigger, placement, offset]);
 
@@ -164,7 +169,22 @@ export function InlinePopover({
     let top = r.top;
     let left = r.left;
     let changed = false;
-    if (r.height > maxH) {
+    const anchor = anchorRectRef.current;
+    // FLIP before sliding. A panel opened from a control near the foot of the
+    // screen has no room below it, and sliding it up until it fits lands it ON
+    // TOP of the trigger — the composer's "Share a document" button opened a
+    // panel over the composer. Putting it on the other side of the anchor is
+    // what a reader expects and what every popover library does; sliding is
+    // the fallback for when neither side has room.
+    const flipped =
+      !placement.startsWith('bottom') || !anchor
+        ? false
+        : r.bottom > window.innerHeight - margin
+          && anchor.top - offset - r.height >= margin;
+    if (flipped) {
+      top = anchor!.top - offset - r.height;
+      changed = true;
+    } else if (r.height > maxH) {
       top = margin;
       changed = true;
     } else if (r.bottom > window.innerHeight - margin) {
