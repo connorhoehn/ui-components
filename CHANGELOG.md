@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.316.0] — 2026-09-17
+
+### Added — `./shared`
+
+- **`useRovingToolbar`** — the toolbar keyboard contract as a hook, for an
+  element that already exists and already has its own classes, data attributes
+  and layout. `RovingToolbar` is now a thin wrapper over it.
+
+### Fixed — `./doc-editor`
+
+- **`DocumentToolbar` behaves like the toolbar it says it is.** It has carried
+  `role="toolbar"` since it was written while having 22 tab stops inside it and
+  arrow keys that did nothing — a declared role is a promise about the
+  keyboard, and a reader told "toolbar" reaches for the arrows. It adopts the
+  hook, so the promise is kept without a wrapper element. The three native
+  `<select>`s keep their own tab stops and their own arrow keys, which is what
+  stepping a select's value means there.
+
+### Fixed — `./shared`
+
+- **A roving toolbar no longer swallows a nested widget's keys.** An open menu
+  usually renders inside the toolbar it belongs to and its items are buttons
+  too, so they were being collected as toolbar controls: Home/End moved
+  toolbar focus and closed the menu mid-keystroke. Controls inside a `menu`,
+  `listbox`, `dialog`, `menubar` or `grid` are no longer the toolbar's, and
+  the bar acts only when focus is on one of its own. Caught by
+  `DocumentToolbar`'s alignment menu the moment the hook was attached.
+
 ## [2.315.0] — 2026-09-17
 
 ### Added — `./shared`

@@ -27,6 +27,7 @@ import {
 import { useEditorState, type Editor } from '@tiptap/react';
 import { cn } from '../../lib/cn';
 import { Select } from '../forms/Select';
+import { useRovingToolbar } from '../shared/RovingToolbar';
 import LinkPopover from './LinkPopover';
 import { LINE_SPACINGS, LINE_SPACING_LABELS, type LineSpacing } from './canvasLineSpacing';
 
@@ -1170,8 +1171,17 @@ export default function DocumentToolbar({
   // Destroyed counts as absent: see `has`.
   if (!editor || editor.isDestroyed) return null;
 
+  const roving = useRovingToolbar();
+
   return (
     <div
+      // It has said `role="toolbar"` since it was written, and did not behave
+      // like one: 22 tab stops inside it and arrow keys that did nothing. A
+      // declared role is a promise about the keyboard — a reader is told
+      // "toolbar" and reaches for the arrows. The hook keeps that promise
+      // without a wrapper element, so the layout, density attribute and class
+      // names here are untouched. Native selects keep their own arrows.
+      {...roving}
       data-testid={testId}
       role="toolbar"
       aria-label="Document formatting"

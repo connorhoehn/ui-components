@@ -11689,7 +11689,7 @@ export declare interface RosterParticipant {
     handRaised?: boolean;
 }
 
-export declare function RovingToolbar({ label, children, orientation, className, 'data-testid': testId, }: RovingToolbarProps): JSX.Element;
+export declare function RovingToolbar({ label, children, orientation, className, 'data-testid': testId, }: RovingToolbarProps): default_2.JSX.Element;
 
 export declare interface RovingToolbarProps {
     /** Accessible name — a toolbar without one is an unlabelled group. */
@@ -15662,6 +15662,28 @@ declare interface UseActivityBusReturn {
      retry: () => void;
  }
 
+ /**
+  * The behaviour on its own, for an element that already exists.
+  *
+  * `DocumentToolbar` is the case this is for: it had `role="toolbar"` and its
+  * own classes, density attribute and layout long before it had the keyboard
+  * contract — it was PROMISING the pattern to screen readers (22 tab stops,
+  * arrow keys inert) rather than implementing it. Spreading this onto that div
+  * adds the behaviour without a wrapper element and without teaching the
+  * component about someone else's class names.
+  *
+  * Returns `ref`, `onKeyDown` and `onFocus` to spread. You still supply
+  * `role="toolbar"` and a name.
+  */
+ export declare function useRovingToolbar({ orientation }?: {
+     orientation?: 'horizontal' | 'vertical';
+ }): {
+     ref: default_2.RefObject<HTMLDivElement | null>;
+     'aria-orientation': "horizontal" | "vertical";
+     onFocus: (event: default_2.FocusEvent) => void;
+     onKeyDown: (event: default_2.KeyboardEvent) => void;
+ };
+
  export declare function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps): JSX.Element;
 
  export declare interface UserPickerProps {
@@ -16380,29 +16402,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -16416,6 +16428,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

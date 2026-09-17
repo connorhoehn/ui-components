@@ -108,4 +108,30 @@ describe('RovingToolbar', () => {
     expect(screen.getByLabelText('Send').tabIndex).toBe(0);
     expect(screen.getByLabelText('italic').tabIndex).toBe(-1);
   });
+
+  // An open menu usually renders INSIDE the toolbar it belongs to, and its
+  // items are buttons too. Treating them as toolbar controls made Home/End
+  // move toolbar focus and close the menu mid-keystroke — which is exactly
+  // what happened to DocumentToolbar's alignment menu.
+  it('leaves a nested menu to own its own keys', () => {
+    render(
+      <RovingToolbar label="Formatting">
+        <button type="button" aria-label="bold">B</button>
+        <button type="button" aria-label="align">A</button>
+        <div role="menu">
+          <button type="button" aria-label="left">L</button>
+          <button type="button" aria-label="justify">J</button>
+        </div>
+      </RovingToolbar>,
+    );
+    // Menu items are not toolbar controls: only the two real ones get a stop.
+    expect(screen.getByLabelText('left').tabIndex).toBe(0);   // untouched
+    expect(screen.getByLabelText('bold').tabIndex).toBe(0);
+    expect(screen.getByLabelText('align').tabIndex).toBe(-1);
+
+    // With focus inside the menu, the toolbar must not act.
+    screen.getByLabelText('justify').focus();
+    expect(fireEvent.keyDown(screen.getByRole('toolbar'), { key: 'Home' })).toBe(true);
+    expect(screen.getByLabelText('justify')).toHaveFocus();
+  });
 });
