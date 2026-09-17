@@ -52,6 +52,25 @@ export function ChatIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/**
+ * A magnifier: "search", or "nothing matched what you typed".
+ *
+ * The same geometry `SearchInput` draws inline in its own gutter, lifted out
+ * because the empty state that follows a fruitless search needs the mark too
+ * and had been reaching for the 🔍 emoji — which ignores `currentColor` and so
+ * stayed bright on muted chrome. Two copies of one circle-and-tail is a
+ * drift the type system cannot see, so the field should adopt this next time
+ * that file is opened.
+ */
+export function SearchIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="7" cy="7" r="4.5" />
+      <path d="M10.5 10.5 14 14" />
+    </svg>
+  );
+}
+
 /** A tray with an arrow out of it: "share", "post this somewhere". */
 export function ShareIcon({ size = 16, ...rest }: GlyphProps) {
   return (

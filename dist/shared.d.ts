@@ -2427,8 +2427,14 @@ export declare interface PopoverFormProps {
      * no way to learn that without the caller lifting the selection out of the
      * component that manages it. Cancel and the chrome stay; only the confirm is
      * the caller's. `submitLabel` is ignored when this is given.
+     *
+     * `false` means there is NO confirm to render: a destination picker's rows
+     * are themselves the commit, and a footer button beside them would be a
+     * second way to do the thing that has no state to act on. The footer keeps
+     * Cancel, which is the way out a popover still owes anyone who opened it by
+     * accident.
      */
-    submitSlot?: ReactNode;
+    submitSlot?: ReactNode | false;
     /** Overrides the submit button's testid, for hosts whose suites name it. */
     submitTestId?: string;
     submitDisabled?: boolean;
@@ -2744,6 +2750,18 @@ export declare interface ScoreBarGaugeProps {
     ariaLabel?: string;
     className?: string;
 }
+
+/**
+ * A magnifier: "search", or "nothing matched what you typed".
+ *
+ * The same geometry `SearchInput` draws inline in its own gutter, lifted out
+ * because the empty state that follows a fruitless search needs the mark too
+ * and had been reaching for the 🔍 emoji — which ignores `currentColor` and so
+ * stayed bright on muted chrome. Two copies of one circle-and-tail is a
+ * drift the type system cannot see, so the field should adopt this next time
+ * that file is opened.
+ */
+export declare function SearchIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, style, autoFocus, 'aria-label': ariaLabel, 'data-testid': testId, }: SearchInputProps): default_2.JSX.Element;
 
@@ -4206,16 +4224,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -4232,6 +4240,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

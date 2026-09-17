@@ -44,8 +44,14 @@ export interface PopoverFormProps {
    * no way to learn that without the caller lifting the selection out of the
    * component that manages it. Cancel and the chrome stay; only the confirm is
    * the caller's. `submitLabel` is ignored when this is given.
+   *
+   * `false` means there is NO confirm to render: a destination picker's rows
+   * are themselves the commit, and a footer button beside them would be a
+   * second way to do the thing that has no state to act on. The footer keeps
+   * Cancel, which is the way out a popover still owes anyone who opened it by
+   * accident.
    */
-  submitSlot?: ReactNode;
+  submitSlot?: ReactNode | false;
   /** Overrides the submit button's testid, for hosts whose suites name it. */
   submitTestId?: string;
   submitDisabled?: boolean;
@@ -121,7 +127,7 @@ export function PopoverForm({
         <Button type="button" variant="ghost" size="sm" onClick={onClose} disabled={busy} data-testid={`${testId}-cancel`}>
           Cancel
         </Button>
-        {submitSlot ?? (
+        {submitSlot === false ? null : submitSlot ?? (
           <Button type="submit" variant="primary" size="sm" disabled={submitDisabled || busy} data-testid={submitTestId ?? `${testId}-submit`}>
             {busy ? 'Working…' : submitLabel}
           </Button>

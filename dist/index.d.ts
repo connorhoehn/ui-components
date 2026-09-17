@@ -2884,8 +2884,17 @@ export declare interface ChatPanelProps {
      *
      * The library does not send anything; the host owns the destination and the
      * post. What it must not do is strip the attribution — see `ForwardedFrom`.
+     *
+     * ## Why the button comes with it
+     *
+     * The second argument is the Forward BUTTON that was pressed. Picking a
+     * destination is a small act started from one message's hover bar, and a
+     * picker that dims the page and lands in its centre puts the choice
+     * nowhere near the words it is about. Only the panel knows which row's
+     * button this was, so it hands it over and the host anchors to it.
+     * Existing handlers that take the message alone keep working.
      */
-    onForwardMessage?: (message: ChatMessage) => void;
+    onForwardMessage?: (message: ChatMessage, trigger: HTMLElement) => void;
     /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
     onTogglePin?: (message: ChatMessage) => void;
     /**
@@ -8633,8 +8642,14 @@ export declare interface MessageActionBarProps {
      * not a thing you can relocate (see ChatPanel's `onForwardMessage`), so a
      * disabled Forward would be a promise the product will not keep — the same
      * rule `onTogglePin` follows above.
+     *
+     * Hands back the BUTTON that was pressed, so the destination picker can
+     * open against it instead of in the middle of a dimmed page. Same hand-back
+     * `RailSectionHeader` does for the rail's + buttons, and the reason is the
+     * same: only the bar knows which of the transcript's many Forward buttons
+     * this click came from, and the host that owns the picker cannot ask.
      */
-    onForward?: () => void;
+    onForward?: (trigger: HTMLElement) => void;
     /** Pin/unpin. Absent means this viewer may not pin here — the control is
      *  then not rendered at all, rather than rendered disabled: a greyed pin is
      *  a promise the product will not keep. */
@@ -10465,8 +10480,14 @@ export declare interface PopoverFormProps {
      * no way to learn that without the caller lifting the selection out of the
      * component that manages it. Cancel and the chrome stay; only the confirm is
      * the caller's. `submitLabel` is ignored when this is given.
+     *
+     * `false` means there is NO confirm to render: a destination picker's rows
+     * are themselves the commit, and a footer button beside them would be a
+     * second way to do the thing that has no state to act on. The footer keeps
+     * Cancel, which is the way out a popover still owes anyone who opened it by
+     * accident.
      */
-    submitSlot?: ReactNode;
+    submitSlot?: ReactNode | false;
     /** Overrides the submit button's testid, for hosts whose suites name it. */
     submitTestId?: string;
     submitDisabled?: boolean;
@@ -11835,6 +11856,18 @@ export declare interface SearchAuditFilters extends AuditFilters {
  * that feels instant and autocomplete you have to read.
  */
 export declare function searchEmoji(query: string, list?: readonly EmojiShortcode[], limit?: number): EmojiShortcode[];
+
+/**
+ * A magnifier: "search", or "nothing matched what you typed".
+ *
+ * The same geometry `SearchInput` draws inline in its own gutter, lifted out
+ * because the empty state that follows a fruitless search needs the mark too
+ * and had been reaching for the 🔍 emoji — which ignores `currentColor` and so
+ * stayed bright on muted chrome. Two copies of one circle-and-tail is a
+ * drift the type system cannot see, so the field should adopt this next time
+ * that file is opened.
+ */
+export declare function SearchIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, style, autoFocus, 'aria-label': ariaLabel, 'data-testid': testId, }: SearchInputProps): default_2.JSX.Element;
 
@@ -16325,16 +16358,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -16351,6 +16374,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

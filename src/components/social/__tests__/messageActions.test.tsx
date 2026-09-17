@@ -102,6 +102,27 @@ describe('MessageActionBar', () => {
     expect(onForward).toHaveBeenCalled();
   });
 
+  // The destination picker opens AT this button. A transcript has one of them
+  // per message and the host that owns the picker cannot tell which was
+  // pressed, so the bar has to say.
+  it('hands back the button it was pressed on, so the picker can anchor there', () => {
+    const onForward = vi.fn();
+    render(<MessageActionBar onForward={onForward} />);
+    const button = screen.getByTestId('message-actions-forward');
+    fireEvent.click(button);
+    expect(onForward).toHaveBeenCalledWith(button);
+  });
+
+  // The event reaches the shared `btn` helper, not only Forward's own caller.
+  // Every other control ignores the argument and must keep behaving as though
+  // it were never there.
+  it('leaves the other controls taking no argument they care about', () => {
+    const onReply = vi.fn();
+    render(<MessageActionBar onReply={onReply} onForward={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('message-actions-reply'));
+    expect(onReply).toHaveBeenCalledTimes(1);
+  });
+
   // Reply and Forward are the same gesture pointed different ways — keep it
   // here, or send a copy elsewhere — so they sit together, ahead of the
   // channel-admin controls.

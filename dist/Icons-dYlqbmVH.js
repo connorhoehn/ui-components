@@ -32,20 +32,30 @@ function a({ size: t = 16, ...r }) {
 		children: /* @__PURE__ */ e("path", { d: "M13.5 10a1.5 1.5 0 0 1-1.5 1.5H5.5L2.5 14V3.5A1.5 1.5 0 0 1 4 2h8a1.5 1.5 0 0 1 1.5 1.5z" })
 	});
 }
-function o({ size: t = 16, ...r }) {
+function o({ size: r = 16, ...i }) {
+	return /* @__PURE__ */ t("svg", {
+		...n(r, i),
+		children: [/* @__PURE__ */ e("circle", {
+			cx: "7",
+			cy: "7",
+			r: "4.5"
+		}), /* @__PURE__ */ e("path", { d: "M10.5 10.5 14 14" })]
+	});
+}
+function s({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M3 8.5V13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8.5M10.5 4.5 8 2 5.5 4.5M8 2v8" })
 	});
 }
-function s({ size: t = 16, dir: r = "down", ...i }) {
+function c({ size: t = 16, dir: r = "down", ...i }) {
 	let a = r === "down" ? "M4 6l4 4 4-4" : r === "up" ? "M4 10l4-4 4 4" : r === "left" ? "M10 4 6 8l4 4" : "M6 4l4 4-4 4";
 	return /* @__PURE__ */ e("svg", {
 		...n(t, i),
 		children: /* @__PURE__ */ e("path", { d: a })
 	});
 }
-function c({ size: r = 16, ...i }) {
+function l({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("circle", {
@@ -55,13 +65,13 @@ function c({ size: r = 16, ...i }) {
 		}), /* @__PURE__ */ e("path", { d: "M8 5v3l2 1.5" })]
 	});
 }
-function l({ size: r = 16, ...i }) {
+function u({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M9.5 2H4.5A1.5 1.5 0 0 0 3 3.5v9A1.5 1.5 0 0 0 4.5 14h7a1.5 1.5 0 0 0 1.5-1.5V5.5z" }), /* @__PURE__ */ e("path", { d: "M9.5 2v3.5H13M6 9h4M6 11.5h4" })]
 	});
 }
-function u({ size: r = 16, ...i }) {
+function d({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -71,13 +81,13 @@ function u({ size: r = 16, ...i }) {
 		]
 	});
 }
-function d({ size: r = 16, ...i }) {
+function f({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M11.5 2.5 13.5 4.5 5.5 12.5H3.5V10.5z" }), /* @__PURE__ */ e("path", { d: "M10 4l2 2" })]
 	});
 }
-function f({ size: r = 16, ...i }) {
+function p({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -88,7 +98,7 @@ function f({ size: r = 16, ...i }) {
 		]
 	});
 }
-function p({ size: r = 16, ...i }) {
+function m({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -98,7 +108,7 @@ function p({ size: r = 16, ...i }) {
 		]
 	});
 }
-function m({ size: r = 16, ...i }) {
+function h({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -109,7 +119,7 @@ function m({ size: r = 16, ...i }) {
 		]
 	});
 }
-function h({ size: r = 16, ...i }) {
+function g({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("rect", {
@@ -121,13 +131,13 @@ function h({ size: r = 16, ...i }) {
 		}), /* @__PURE__ */ e("path", { d: "M5.5 7.5V5.5a2.5 2.5 0 0 1 5 0v2" })]
 	});
 }
-function g({ size: r = 16, ...i }) {
+function _({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M3 4.5v3a3 3 0 0 0 3 3h6.5" }), /* @__PURE__ */ e("path", { d: "M10 8.2l2.8 2.3L10 12.8" })]
 	});
 }
-function _({ size: r = 16, ...i }) {
+function v({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M1.8 8s2.4-4 6.2-4 6.2 4 6.2 4-2.4 4-6.2 4S1.8 8 1.8 8z" }), /* @__PURE__ */ e("circle", {
@@ -137,13 +147,13 @@ function _({ size: r = 16, ...i }) {
 		})]
 	});
 }
-function v({ size: t = 16, ...r }) {
+function y({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M5.2 2.8 3.4 4.6c-.5.5-.6 1.3-.2 1.9a15 15 0 0 0 6.3 6.3c.6.4 1.4.3 1.9-.2l1.8-1.8-2.6-1.7-1.3 1a11 11 0 0 1-3.4-3.4l1-1.3z" })
 	});
 }
-function y({ size: r = 16, ...i }) {
+function b({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("rect", {
@@ -155,13 +165,13 @@ function y({ size: r = 16, ...i }) {
 		}), /* @__PURE__ */ e("path", { d: "M10.5 8.2 14 6.2v3.6l-3.5-2z" })]
 	});
 }
-function b({ size: t = 16, ...r }) {
+function x({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M8.5 2 4 9h3.2l-.7 5L12 7H8.8z" })
 	});
 }
-function x({ size: r = 16, ...i }) {
+function S({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("circle", {
@@ -171,13 +181,13 @@ function x({ size: r = 16, ...i }) {
 		}), /* @__PURE__ */ e("path", { d: "M10.8 8.3v.9a1.9 1.9 0 0 0 3.7 0V8a6.5 6.5 0 1 0-2.8 5.4" })]
 	});
 }
-function S({ size: t = 16, ...r }) {
+function C({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M14 8.53A6 6 0 1 1 7.47 2 4.67 4.67 0 0 0 14 8.53z" })
 	});
 }
-function C({ size: r = 16, ...i }) {
+function w({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("circle", {
@@ -187,13 +197,13 @@ function C({ size: r = 16, ...i }) {
 		}), /* @__PURE__ */ e("path", { d: "M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06" })]
 	});
 }
-function w({ size: t = 16, ...r }) {
+function T({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M2.5 4.5h11M2.5 8h11M2.5 11.5h11" })
 	});
 }
-function T({ size: r = 16, ...i }) {
+function E({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -209,7 +219,7 @@ function T({ size: r = 16, ...i }) {
 		]
 	});
 }
-function E({ size: r = 16, ...i }) {
+function D({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -233,25 +243,25 @@ function E({ size: r = 16, ...i }) {
 		]
 	});
 }
-function D({ size: r = 16, ...i }) {
+function O({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M2.5 13.5h11" }), /* @__PURE__ */ e("path", { d: "M4.5 13.5V9M8 13.5V4M11.5 13.5V7" })]
 	});
 }
-function O({ size: t = 16, ...r }) {
+function k({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M5.5 5.5 2.5 8l3 2.5M10.5 5.5 13.5 8l-3 2.5M9.3 3.5 6.7 12.5" })
 	});
 }
-function k({ size: t = 16, ...r }) {
+function A({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M3.2 3.2H6.3a1.7 1.7 0 0 0 3.4 0H12.8V6.3a1.7 1.7 0 0 1 0 3.4V12.8H3.2z" })
 	});
 }
-function A({ size: r = 16, ...i }) {
+function j({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -262,13 +272,13 @@ function A({ size: r = 16, ...i }) {
 		]
 	});
 }
-function j({ size: t = 16, ...r }) {
+function M({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M14.3 7.4 8.2 13.5a4 4 0 0 1-5.7-5.7l6.2-6.1a2.7 2.7 0 0 1 3.8 3.8l-6.2 6.1a1.3 1.3 0 0 1-1.9-1.9l5.7-5.6" })
 	});
 }
-function M({ size: r = 16, ...i }) {
+function N({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -278,13 +288,13 @@ function M({ size: r = 16, ...i }) {
 		]
 	});
 }
-function N({ size: r = 16, ...i }) {
+function P({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M6.5 4.5h-3v3h3v1.5a2 2 0 0 1-2 2" }), /* @__PURE__ */ e("path", { d: "M13 4.5h-3v3h3v1.5a2 2 0 0 1-2 2" })]
 	});
 }
-function P({ size: r = 16, ...i }) {
+function F({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -298,11 +308,11 @@ function P({ size: r = 16, ...i }) {
 		]
 	});
 }
-function F({ size: r = 16, ...i }) {
+function I({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M13 4.5v3a3 3 0 0 1-3 3H3.5" }), /* @__PURE__ */ e("path", { d: "M6 8.2 3.2 10.5 6 12.8" })]
 	});
 }
 //#endregion
-export { C as A, u as C, F as D, A as E, f as M, y as N, o as O, r as S, N as T, w as _, D as a, v as b, i as c, d, _ as f, h as g, M as h, E as i, T as j, P as k, O as l, c as m, x as n, a as o, g as p, m as r, s, b as t, l as u, S as v, k as w, p as x, j as y };
+export { F as A, d as C, I as D, j as E, E as M, p as N, o as O, b as P, r as S, P as T, T as _, O as a, y as b, i as c, f as d, v as f, g, N as h, D as i, w as j, s as k, k as l, l as m, S as n, a as o, _ as p, h as r, c as s, x as t, u, C as v, A as w, m as x, M as y };

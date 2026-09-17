@@ -39,8 +39,14 @@ export interface MessageActionBarProps {
    * not a thing you can relocate (see ChatPanel's `onForwardMessage`), so a
    * disabled Forward would be a promise the product will not keep — the same
    * rule `onTogglePin` follows above.
+   *
+   * Hands back the BUTTON that was pressed, so the destination picker can
+   * open against it instead of in the middle of a dimmed page. Same hand-back
+   * `RailSectionHeader` does for the rail's + buttons, and the reason is the
+   * same: only the bar knows which of the transcript's many Forward buttons
+   * this click came from, and the host that owns the picker cannot ask.
    */
-  onForward?: () => void;
+  onForward?: (trigger: HTMLElement) => void;
   /** Pin/unpin. Absent means this viewer may not pin here — the control is
    *  then not rendered at all, rather than rendered disabled: a greyed pin is
    *  a promise the product will not keep. */
@@ -73,7 +79,19 @@ export function MessageActionBar({
   className,
   'data-testid': testId = 'message-actions',
 }: MessageActionBarProps) {
-  const btn = (label: string, onClick: () => void, glyph: React.ReactNode, key: string) => (
+  // The click event reaches the helper rather than only Forward's own button.
+  // Forward is the one control that needs the element it was pressed on (its
+  // picker anchors there), and the alternative — hand-rolling a second button
+  // beside this one — would duplicate the class string AND the focus-ring
+  // reasoning below, which is exactly the drift that leaves one of two copies
+  // unreachable by keyboard. Widening the parameter costs the other seven
+  // controls nothing: their handlers already ignore it.
+  const btn = (
+    label: string,
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void,
+    glyph: React.ReactNode,
+    key: string,
+  ) => (
     <button
       key={key}
       type="button"
@@ -107,7 +125,7 @@ export function MessageActionBar({
         )}
       {onOpenReactionPicker && btn('More reactions', onOpenReactionPicker, <SmileyIcon size={14} />, 'more-reactions')}
       {onReply && btn('Reply', onReply, <ReplyIcon size={14} />, 'reply')}
-      {onForward && btn('Forward to another conversation', onForward, <ForwardIcon size={14} />, 'forward')}
+      {onForward && btn('Forward to another conversation', (e) => onForward(e.currentTarget), <ForwardIcon size={14} />, 'forward')}
       {onTogglePin && btn(pinned ? 'Unpin' : 'Pin to channel', onTogglePin, <PinIcon size={14} />, 'pin')}
       {onCopyLink && btn('Copy link to message', onCopyLink, <LinkIcon size={14} />, 'copy-link')}
       {onEdit && btn('Edit message', onEdit, <EditIcon size={13} />, 'edit')}

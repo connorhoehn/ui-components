@@ -219,7 +219,7 @@ function b({ open: n, anchor: c, placement: l = "bottom-start", title: u, subtit
 					disabled: _,
 					"data-testid": `${w}-cancel`,
 					children: "Cancel"
-				}), m ?? /* @__PURE__ */ o(t, {
+				}), m === !1 ? null : m ?? /* @__PURE__ */ o(t, {
 					type: "submit",
 					variant: "primary",
 					size: "sm",

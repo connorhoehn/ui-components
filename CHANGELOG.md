@@ -6,6 +6,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.300.0] — 2026-09-16
+
+### Changed — `./social`
+
+- **`ChatPanel`'s `onForwardMessage` hands back the Forward button** as a
+  second argument, and `MessageActionBar`'s `onForward` does the same. Picking
+  a destination is a small act started from one message's hover bar, and the
+  picker that served it was a centred card over a dimmed page — nowhere near
+  the words it was about. Only the panel knows which of a transcript's many
+  Forward buttons was pressed, so it says, and the host anchors its popover
+  there. Additive for TypeScript: a handler that takes the message alone is
+  still assignable.
+- **`MessageActionBar`'s internal button helper takes the click event.** The
+  alternative was a second, hand-rolled button beside the shared one for
+  Forward's sake, which would have duplicated both the class string and the
+  focus-ring that keeps the bar reachable without a pointer — the shape that
+  leaves one of two copies keyboard-dead. The other seven controls ignore the
+  argument and are unchanged.
+
+### Changed — `./shared`
+
+- **`PopoverForm` accepts `submitSlot={false}`** for a body that IS the commit
+  — a destination picker's rows forward on click, so a confirm button beside
+  them would have no state to act on. The footer keeps Cancel, which is the
+  way out a popover still owes anyone who opened it by accident.
+
+### Added — `./shared`
+
+- **`SearchIcon`** — the magnifier `SearchInput` already drew inline in its own
+  gutter, lifted out so the empty state that follows a fruitless search can use
+  it too. That empty state had been reaching for the 🔍 emoji, which ignores
+  `currentColor` and so stayed bright on chrome that had gone muted, in a shape
+  set by the platform's font rather than this design's.
+
 ## [2.299.0] — 2026-09-16
 
 ### Added — `./social`

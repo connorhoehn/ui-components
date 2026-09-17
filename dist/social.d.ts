@@ -778,8 +778,17 @@ export declare interface ChatPanelProps {
      *
      * The library does not send anything; the host owns the destination and the
      * post. What it must not do is strip the attribution — see `ForwardedFrom`.
+     *
+     * ## Why the button comes with it
+     *
+     * The second argument is the Forward BUTTON that was pressed. Picking a
+     * destination is a small act started from one message's hover bar, and a
+     * picker that dims the page and lands in its centre puts the choice
+     * nowhere near the words it is about. Only the panel knows which row's
+     * button this was, so it hands it over and the host anchors to it.
+     * Existing handlers that take the message alone keep working.
      */
-    onForwardMessage?: (message: ChatMessage) => void;
+    onForwardMessage?: (message: ChatMessage, trigger: HTMLElement) => void;
     /** Pin/unpin. Absent means this viewer may not pin — the control is hidden. */
     onTogglePin?: (message: ChatMessage) => void;
     /**
@@ -2287,8 +2296,14 @@ export declare interface MessageActionBarProps {
      * not a thing you can relocate (see ChatPanel's `onForwardMessage`), so a
      * disabled Forward would be a promise the product will not keep — the same
      * rule `onTogglePin` follows above.
+     *
+     * Hands back the BUTTON that was pressed, so the destination picker can
+     * open against it instead of in the middle of a dimmed page. Same hand-back
+     * `RailSectionHeader` does for the rail's + buttons, and the reason is the
+     * same: only the bar knows which of the transcript's many Forward buttons
+     * this click came from, and the host that owns the picker cannot ask.
      */
-    onForward?: () => void;
+    onForward?: (trigger: HTMLElement) => void;
     /** Pin/unpin. Absent means this viewer may not pin here — the control is
      *  then not rendered at all, rather than rendered disabled: a greyed pin is
      *  a promise the product will not keep. */
@@ -3179,16 +3194,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -3205,6 +3210,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

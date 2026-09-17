@@ -1,7 +1,7 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Button-BhS4-R6_.js";
 import { t as n } from "./IconButton-C3DMtvSx.js";
-import { D as r, M as i, N as a, b as o, d as s, f as c, h as l, k as u, p as d, s as f, u as p, x as m, y as h } from "./Icons-BYrwLcxs.js";
+import { A as r, D as i, N as a, P as o, b as s, d as c, f as l, h as u, p as d, s as f, u as p, x as m, y as h } from "./Icons-dYlqbmVH.js";
 import { f as g, t as _ } from "./Chip-BENLwTlq.js";
 import { t as v } from "./ConfirmDialog-Cd8NZEXi.js";
 import { t as y } from "./EmptyState-JzzL2z1E.js";
@@ -10,7 +10,7 @@ import { n as C } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as w } from "./Input-DLknWXri.js";
 import { t as T } from "./Textarea-Dz4doxTv.js";
 import { t as E } from "./Avatar-BzicCOft.js";
-import { n as D, t as O } from "./DropdownMenu-C7d4EDjv.js";
+import { n as D, t as O } from "./DropdownMenu-BKB23jXJ.js";
 import { t as k } from "./StatusPill-Db42eiME.js";
 import { i as A, n as te, r as j, t as M } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { p as ne } from "./MediaIcons-OLUYBJM0.js";
@@ -1182,7 +1182,7 @@ var Ke = [
 	"🎉",
 	"❤️"
 ], qe = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
-function Je({ quickReactions: t = Ke, onReact: n, onOpenReactionPicker: a, onReply: o, onForward: c, onTogglePin: f, pinned: p = !1, onCopyLink: h, onEdit: g, onDelete: _, className: v, "data-testid": y = "message-actions" }) {
+function Je({ quickReactions: t = Ke, onReact: n, onOpenReactionPicker: o, onReply: s, onForward: l, onTogglePin: f, pinned: p = !1, onCopyLink: h, onEdit: g, onDelete: _, className: v, "data-testid": y = "message-actions" }) {
 	let b = (e, t, n, r) => /* @__PURE__ */ z("button", {
 		type: "button",
 		"aria-label": e,
@@ -1200,13 +1200,13 @@ function Je({ quickReactions: t = Ke, onReact: n, onOpenReactionPicker: a, onRep
 				"aria-hidden": !0,
 				children: e
 			}), `react-${e}`)),
-			a && b("More reactions", a, /* @__PURE__ */ z(u, { size: 14 }), "more-reactions"),
-			o && b("Reply", o, /* @__PURE__ */ z(r, { size: 14 }), "reply"),
-			c && b("Forward to another conversation", c, /* @__PURE__ */ z(d, { size: 14 }), "forward"),
+			o && b("More reactions", o, /* @__PURE__ */ z(r, { size: 14 }), "more-reactions"),
+			s && b("Reply", s, /* @__PURE__ */ z(i, { size: 14 }), "reply"),
+			l && b("Forward to another conversation", (e) => l(e.currentTarget), /* @__PURE__ */ z(d, { size: 14 }), "forward"),
 			f && b(p ? "Unpin" : "Pin to channel", f, /* @__PURE__ */ z(m, { size: 14 }), "pin"),
-			h && b("Copy link to message", h, /* @__PURE__ */ z(l, { size: 14 }), "copy-link"),
-			g && b("Edit message", g, /* @__PURE__ */ z(s, { size: 13 }), "edit"),
-			_ && b("Delete message", _, /* @__PURE__ */ z(i, { size: 13 }), "delete")
+			h && b("Copy link to message", h, /* @__PURE__ */ z(u, { size: 14 }), "copy-link"),
+			g && b("Edit message", g, /* @__PURE__ */ z(c, { size: 13 }), "edit"),
+			_ && b("Delete message", _, /* @__PURE__ */ z(a, { size: 13 }), "delete")
 		]
 	});
 }
@@ -2164,7 +2164,7 @@ function Pt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 					className: e("absolute -top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100"),
 					onReact: f ? (e) => f(K, e) : void 0,
 					onReply: p && !J ? () => p(o?.rootMessage ?? b) : void 0,
-					onForward: h && X ? () => h(b) : void 0,
+					onForward: h && X ? (e) => h(b, e) : void 0,
 					onTogglePin: g && !J ? () => g(b) : void 0,
 					pinned: !!b.id && !!ee?.has(b.id),
 					onEdit: Me && _ ? () => Z(K) : void 0,
@@ -2659,7 +2659,7 @@ function Jt({ recordings: e, onOpen: t, className: n, "data-testid": r = "channe
 		className: n,
 		"data-testid": r,
 		children: e.length === 0 ? /* @__PURE__ */ z(y, {
-			icon: /* @__PURE__ */ z(a, { size: 40 }),
+			icon: /* @__PURE__ */ z(o, { size: 40 }),
 			title: "No recorded calls",
 			description: "Calls recorded in this conversation show up here."
 		}) : e.map((e) => {
@@ -2673,7 +2673,7 @@ function Jt({ recordings: e, onOpen: t, className: n, "data-testid": r = "channe
 				}) : /* @__PURE__ */ z("span", {
 					"aria-hidden": !0,
 					className: "grid h-8 w-12 place-items-center rounded bg-surface-inset text-text-tertiary",
-					children: /* @__PURE__ */ z(a, {})
+					children: /* @__PURE__ */ z(o, {})
 				}),
 				title: [Vt(e.startedAt), Kt(e.durationMs)].filter(Boolean).join(" · ") || "Recording",
 				meta: n ? "Still being assembled" : qt(e),
@@ -2741,7 +2741,7 @@ var Xt = [
 	mentions: "Mentions",
 	calls: "Calls"
 };
-function Qt({ name: t, description: r, online: i, avatarUrl: s, features: c = Xt, children: l, canvas: u, members: d, memberCount: f, files: p = [], thumbnailSrc: m, documents: h = [], onOpenDocument: g, onCreateDocument: _, pins: v = [], onUnpin: y, mentions: b = [], onOpenMention: x, recordings: C = [], onOpenRecording: w, onJumpToMessage: T, onStartCall: E, callModeFixed: D = !1, onWatch: O, watchLabel: k, watchHint: A, watchViewerCount: te, callInProgress: j = !1, headerActions: M, view: ne, onViewChange: N, className: P, "data-testid": F = "conversation-surface" }) {
+function Qt({ name: t, description: r, online: i, avatarUrl: a, features: c = Xt, children: l, canvas: u, members: d, memberCount: f, files: p = [], thumbnailSrc: m, documents: h = [], onOpenDocument: g, onCreateDocument: _, pins: v = [], onUnpin: y, mentions: b = [], onOpenMention: x, recordings: C = [], onOpenRecording: w, onJumpToMessage: T, onStartCall: E, callModeFixed: D = !1, onWatch: O, watchLabel: k, watchHint: A, watchViewerCount: te, callInProgress: j = !1, headerActions: M, view: ne, onViewChange: N, className: P, "data-testid": F = "conversation-surface" }) {
 	let I = new Set(c), [L, V] = R("chat"), H = ne ?? L, U = I.has(H) ? H : c[0] ?? "chat", ie = (e) => {
 		ne === void 0 && V(e), N?.(e);
 	}, W = (e) => e || void 0, ae = c.filter((e) => Zt[e]).map((e) => ({
@@ -2759,7 +2759,7 @@ function Qt({ name: t, description: r, online: i, avatarUrl: s, features: c = Xt
 				name: t,
 				description: r,
 				online: i,
-				avatarUrl: s,
+				avatarUrl: a,
 				"data-testid": `${F}-header`,
 				tabs: ae.length > 1 ? /* @__PURE__ */ z(ee, {
 					variant: "underline",
@@ -2776,20 +2776,20 @@ function Qt({ name: t, description: r, online: i, avatarUrl: s, features: c = Xt
 						"data-testid": `${F}-call`,
 						variant: j ? "primary" : "ghost",
 						onClick: () => E(!1),
-						children: /* @__PURE__ */ z(o, { size: 16 })
+						children: /* @__PURE__ */ z(s, { size: 16 })
 					}) : /* @__PURE__ */ B(re, { children: [/* @__PURE__ */ z(n, {
 						"aria-label": j ? "Join the call with audio" : "Start an audio call",
 						title: j ? "Join with audio" : "Audio call",
 						"data-testid": `${F}-audio-call`,
 						onClick: () => E(!0),
-						children: /* @__PURE__ */ z(o, { size: 16 })
+						children: /* @__PURE__ */ z(s, { size: 16 })
 					}), /* @__PURE__ */ z(n, {
 						"aria-label": j ? "Join the call with video" : "Start a video call",
 						title: j ? "Join with video" : "Video call",
 						"data-testid": `${F}-video-call`,
 						variant: j ? "primary" : "ghost",
 						onClick: () => E(!1),
-						children: /* @__PURE__ */ z(a, { size: 16 })
+						children: /* @__PURE__ */ z(o, { size: 16 })
 					})] })),
 					O && /* @__PURE__ */ z($t, {
 						testId: `${F}-watch`,
@@ -2863,7 +2863,7 @@ function $t({ testId: e, label: n, hint: r, viewerCount: i, onClick: a }) {
 		"aria-label": s ? `${o} — ${i} watching` : o,
 		className: "inline-flex h-8 items-center gap-1.5",
 		children: [
-			/* @__PURE__ */ z(c, { size: 14 }),
+			/* @__PURE__ */ z(l, { size: 14 }),
 			/* @__PURE__ */ z("span", { children: o }),
 			s && /* @__PURE__ */ z("span", {
 				"data-testid": `${e}-count`,

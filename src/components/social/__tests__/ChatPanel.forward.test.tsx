@@ -69,6 +69,17 @@ describe('the Forward control', () => {
     expect(onForwardMessage.mock.calls[0][0]).toMatchObject({ id: 'm-42' });
   });
 
+  // The picker the host opens is a popover hung off this button, so the
+  // element has to survive the trip out of the panel. Nothing else knows
+  // which of a transcript's Forward buttons this click came from.
+  it('hands back the button it was clicked on, alongside the message', () => {
+    const onForwardMessage = vi.fn();
+    renderPanel([msg({ id: 'm-42' })], { onForwardMessage });
+    const button = screen.getByTestId('message-actions-forward');
+    fireEvent.click(button);
+    expect(onForwardMessage.mock.calls[0][1]).toBe(button);
+  });
+
   // Threading folds a REPLY onto its root, because a reply to a reply belongs
   // in the same thread. A forward is about the exact words that were clicked,
   // so the same fold here would quietly send a different message.

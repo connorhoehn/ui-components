@@ -1,5 +1,5 @@
 import { t as e } from "../cn-DhjIN-s0.js";
-import { T as t, h as n, k as r, u as i, y as a } from "../Icons-BYrwLcxs.js";
+import { A as t, T as n, h as r, u as i, y as a } from "../Icons-dYlqbmVH.js";
 import { t as o } from "../Avatar-BzicCOft.js";
 import { i as s, n as c, r as l } from "../ReactionPickerPopover-CcL-n6gt.js";
 import { a as u, n as d, o as f, r as p, t as m } from "../composerCommands-DXer0id_.js";
@@ -2684,7 +2684,7 @@ var Hi = g(function({ onSend: i, onCommand: o, onSearchPeople: u, mentionMembers
 								className: "font-mono text-[11px]",
 								children: "<>"
 							})),
-							B(z.isActive("link") ? "Edit link" : "Add link", z.isActive("link"), () => Fe(), /* @__PURE__ */ w(n, { size: 16 })),
+							B(z.isActive("link") ? "Edit link" : "Add link", z.isActive("link"), () => Fe(), /* @__PURE__ */ w(r, { size: 16 })),
 							/* @__PURE__ */ w("span", {
 								"aria-hidden": !0,
 								className: "mx-1 h-4 w-px bg-border"
@@ -2694,7 +2694,7 @@ var Hi = g(function({ onSend: i, onCommand: o, onSearchPeople: u, mentionMembers
 								className: "text-[11px]",
 								children: "1."
 							})),
-							B("Quote", z.isActive("blockquote"), () => z.chain().focus().toggleBlockquote().run(), /* @__PURE__ */ w(t, { size: 16 }))
+							B("Quote", z.isActive("blockquote"), () => z.chain().focus().toggleBlockquote().run(), /* @__PURE__ */ w(n, { size: 16 }))
 						],
 						(oe || A) && /* @__PURE__ */ w("span", {
 							"aria-hidden": !0,
@@ -2702,7 +2702,7 @@ var Hi = g(function({ onSend: i, onCommand: o, onSearchPeople: u, mentionMembers
 						}),
 						oe && z && /* @__PURE__ */ T("span", {
 							className: "relative",
-							children: [B("Emoji", ve, () => ye((e) => !e), /* @__PURE__ */ w(r, { size: 16 }), _e), /* @__PURE__ */ w(c, {
+							children: [B("Emoji", ve, () => ye((e) => !e), /* @__PURE__ */ w(t, { size: 16 }), _e), /* @__PURE__ */ w(c, {
 								open: ve,
 								triggerRef: _e,
 								onClose: () => ye(!1),

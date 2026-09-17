@@ -74,6 +74,19 @@ describe('PopoverForm', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+  // A destination picker's rows ARE the commit, so a confirm beside them
+  // would be a second button with no state to act on. Cancel stays: a popover
+  // opened by accident still owes a way out.
+  it('drops the confirm entirely on submitSlot={false}, keeping Cancel', () => {
+    render(
+      <PopoverForm open title="Forward to" submitSlot={false} onSubmit={vi.fn()} onClose={vi.fn()}>
+        <input />
+      </PopoverForm>,
+    );
+    expect(screen.queryByTestId('popover-form-submit')).toBeNull();
+    expect(screen.getByTestId('popover-form-cancel')).toBeInTheDocument();
+  });
+
   it('renders nothing when closed', () => {
     render(
       <PopoverForm open={false} title="t" submitLabel="Create" onSubmit={vi.fn()} onClose={vi.fn()}>
