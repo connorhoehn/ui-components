@@ -8,6 +8,7 @@
 import { render, screen, cleanup, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import NodePalette from '../NodePalette';
+import type { NodeType } from '../../../../types/pipeline';
 import { recordRecentType } from '../NodePalette';
 import {
   PipelineEditorServicesProvider,
@@ -16,10 +17,10 @@ import {
 
 const services: PipelineEditorServices = { getImageUrl: (id) => `/img/${id}` };
 
-function renderPalette(contextTypes?: readonly string[]) {
+function renderPalette(contextTypes?: readonly string[], disabledTypes?: NodeType[]) {
   return render(
     <PipelineEditorServicesProvider services={services}>
-      <NodePalette contextTypes={contextTypes} />
+      <NodePalette contextTypes={contextTypes} disabledTypes={disabledTypes} />
     </PipelineEditorServicesProvider>,
   );
 }
@@ -79,5 +80,26 @@ describe('NodePalette pinned section', () => {
     const pinned = pinnedSection();
     expect(pinned).toBeInTheDocument();
     expect(within(pinned as HTMLElement).getByText('Crop')).toBeInTheDocument();
+  });
+});
+
+describe('NodePalette relevance excludes what cannot be added', () => {
+  beforeEach(() => window.localStorage.clear());
+  afterEach(cleanup);
+
+  it('does not suggest a node that is already placed', () => {
+    // Every pipeline has exactly one trigger, so `trigger` is both the
+    // strongest relevance signal and never addable. Leading with it put a node
+    // marked "Placed" at the top of the section.
+    renderPalette(['trigger', 'llm'], ['trigger']);
+    const pinned = screen.queryByTestId('palette-recents');
+    expect(pinned).toBeInTheDocument();
+    expect(within(pinned as HTMLElement).queryByText('Trigger')).not.toBeInTheDocument();
+  });
+
+  it('still suggests the rest of the pipeline', () => {
+    renderPalette(['trigger', 'llm'], ['trigger']);
+    const pinned = screen.getByTestId('palette-recents');
+    expect(within(pinned).getByText('LLM')).toBeInTheDocument();
   });
 });

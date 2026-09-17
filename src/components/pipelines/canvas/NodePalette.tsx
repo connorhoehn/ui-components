@@ -346,11 +346,17 @@ export default function NodePalette({ disabledTypes = [], contextTypes }: NodePa
     // A kind with no executor is never "relevant": suggesting a step that
     // cannot run is worse than suggesting nothing, because it looks like
     // progress right up until the pipeline silently skips it.
-    const unavailable = catalog.filter((kind) => !isExecutable(kind as NodeType));
+    // Disabled types are excluded for the same reason as non-executable ones:
+    // a pipeline has exactly one trigger, so `trigger` is ALWAYS the strongest
+    // relevance signal and always unaddable. Leading the section with a node
+    // marked "Placed" is a suggestion that cannot be taken.
+    const unavailable = catalog.filter(
+      (kind) => !isExecutable(kind as NodeType) || disabledSet.has(kind as NodeType),
+    );
     return rankByRelevance(contextTypes, catalog, { unavailable })
       .map((r) => allItemsByType.get(r.kind as NodeType))
       .filter(Boolean) as PaletteItem[];
-  }, [contextTypes, allItemsByType, isExecutable]);
+  }, [contextTypes, allItemsByType, isExecutable, disabledSet]);
 
   // Recently-used items resolved to full PaletteItem
   const recentItems = useMemo<PaletteItem[]>(
