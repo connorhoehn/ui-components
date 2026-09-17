@@ -13553,7 +13553,7 @@ export declare interface TeamChannelItem {
     pinned?: boolean;
 }
 
-export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onTogglePinTeam, onTogglePinChannel, onCreateTeam, heading, collapsed, onToggleCollapse, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
+export declare function TeamChannelTree({ teams, activeChannel, onSelectChannel, onToggleTeam, onCreateChannel, onManageTeam, onLeaveTeam, onTogglePinTeam, onTogglePinChannel, onCreateTeam, heading, filter, collapsed, onToggleCollapse, className, 'data-testid': testId, }: TeamChannelTreeProps): JSX.Element;
 
 export declare interface TeamChannelTreeProps {
     teams: readonly TeamTreeItem[];
@@ -13592,6 +13592,23 @@ export declare interface TeamChannelTreeProps {
     onCreateTeam?: (trigger: HTMLElement) => void;
     /** Hides the "Teams" heading for a host that draws its own. */
     heading?: string | false;
+    /**
+     * The rail's "Find a chat" text, so a channel inside a team can be found by
+     * typing its name.
+     *
+     * The rail filtered its FLAT rows and left the tree alone, so a channel that
+     * lived in a team was unreachable by search — typing "standups" returned
+     * nothing while #Standups sat one fold away. Teams and Slack both find
+     * channels this way and it is how people expect to reach one they are not
+     * already looking at.
+     *
+     * While filtering, a matching team is shown OPEN regardless of how it was
+     * left — and without disturbing that: the reader's own expansion is
+     * untouched underneath and returns intact when the box is cleared. A team
+     * whose NAME matches keeps all its channels (you asked for the team); any
+     * other shows only the channels that match.
+     */
+    filter?: string;
     /**
      * Folds the whole tree away behind its heading, the way the rail's other
      * sections fold. Controlled together with `onToggleCollapse` — the host owns
@@ -16290,6 +16307,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -16309,12 +16339,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -16322,9 +16349,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -16368,32 +16395,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

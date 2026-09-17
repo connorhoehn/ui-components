@@ -77,6 +77,23 @@ export interface TeamChannelTreeProps {
   /** Hides the "Teams" heading for a host that draws its own. */
   heading?: string | false;
   /**
+   * The rail's "Find a chat" text, so a channel inside a team can be found by
+   * typing its name.
+   *
+   * The rail filtered its FLAT rows and left the tree alone, so a channel that
+   * lived in a team was unreachable by search — typing "standups" returned
+   * nothing while #Standups sat one fold away. Teams and Slack both find
+   * channels this way and it is how people expect to reach one they are not
+   * already looking at.
+   *
+   * While filtering, a matching team is shown OPEN regardless of how it was
+   * left — and without disturbing that: the reader's own expansion is
+   * untouched underneath and returns intact when the box is cleared. A team
+   * whose NAME matches keeps all its channels (you asked for the team); any
+   * other shows only the channels that match.
+   */
+  filter?: string;
+  /**
    * Folds the whole tree away behind its heading, the way the rail's other
    * sections fold. Controlled together with `onToggleCollapse` — the host owns
    * it so it can persist it, and the heading is inert without the handler.
@@ -125,6 +142,7 @@ export function TeamChannelTree({
   onTogglePinChannel,
   onCreateTeam,
   heading = 'Teams',
+  filter,
   collapsed = false,
   onToggleCollapse,
   className,
@@ -147,7 +165,11 @@ export function TeamChannelTree({
   const [focusedId, setFocusedId] = useState<string | null>(null);
 
   const isExpanded = (team: TeamTreeItem): boolean =>
-    isControlled ? !!team.expanded : ownExpanded.has(team.teamId);
+    // A team that survived the filter is open because it is an ANSWER, not
+    // because the reader opened it — so this short-circuits above the stored
+    // state rather than writing to it, and clearing the box restores exactly
+    // the tree that was there before.
+    filtering ? true : (isControlled ? !!team.expanded : ownExpanded.has(team.teamId));
 
   const setTeamExpanded = (teamId: string, next: boolean) => {
     onToggleTeam?.(teamId, next);
@@ -170,7 +192,22 @@ export function TeamChannelTree({
   // Pinned teams first, pinned channels first within their team — computed
   // once and reused by both the keyboard-navigation order below and the
   // render, so the rows Up/Down walk are always the rows on screen.
-  const orderedTeams = pinnedFirst(teams);
+  const query = filter?.trim().toLowerCase() ?? '';
+  const filtering = query.length > 0;
+  const shownTeams = !filtering
+    ? teams
+    : teams.reduce<TeamTreeItem[]>((out, team) => {
+      // A team whose own name matches is the answer to the query, so it keeps
+      // every channel; otherwise only the channels that match survive, and a
+      // team with none of either drops out entirely.
+      const teamMatches = team.name.toLowerCase().includes(query);
+      const channels = teamMatches
+        ? team.channels
+        : team.channels.filter((c) => c.name.toLowerCase().includes(query));
+      if (teamMatches || channels.length > 0) out.push({ ...team, channels });
+      return out;
+    }, []);
+  const orderedTeams = pinnedFirst(shownTeams);
 
   // The flat, VISIBLE run of rows — what Up/Down/Home/End walk. Only a
   // team's channels count when that team is expanded, and a folded tree has

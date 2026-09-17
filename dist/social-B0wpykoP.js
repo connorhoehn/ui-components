@@ -17,8 +17,8 @@ import { t as I } from "./InlineAlert-Myf3oJZf.js";
 import { t as ee } from "./DropdownMenu--cgRPg4y.js";
 import { t as te } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as L } from "./Select-CqVokE2v.js";
-import { n as ne, r as R, t as re } from "./ChoiceList-CaZ4rZrS.js";
-import { L as z, N as B, Q as ie, R as V, X as H, nt as ae } from "./ConversationSurface-B804ZlZF.js";
+import { n as R, r as z, t as B } from "./ChoiceList-CaZ4rZrS.js";
+import { L as V, N as H, Q as ne, R as re, X as ie, nt as ae } from "./ConversationSurface-B804ZlZF.js";
 import { t as U } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as oe, t as se } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as ce, t as le } from "./composerCommands-DXer0id_.js";
@@ -753,24 +753,24 @@ function Ce({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 			shown: o,
 			hidden: e.items.length - o.length
 		};
-	}), ne = (e) => te((t) => {
+	}), R = (e) => te((t) => {
 		let n = new Set(t);
 		return n.has(e) ? n.delete(e) : n.add(e), n;
-	}), R = L.flatMap((e) => e.collapsed ? [] : e.shown), re = Y(null), [z, B] = X(null), V = (z && R.some((e) => e.channel === z) ? z : null) ?? (d && R.some((e) => e.channel === d) ? d : null) ?? R[0]?.channel ?? null, H = Y(null);
+	}), z = L.flatMap((e) => e.collapsed ? [] : e.shown), B = Y(null), [V, H] = X(null), re = (V && z.some((e) => e.channel === V) ? V : null) ?? (d && z.some((e) => e.channel === d) ? d : null) ?? z[0]?.channel ?? null, ie = Y(null);
 	K(() => {
-		let e = H.current;
+		let e = ie.current;
 		if (!e) return;
-		H.current = null;
-		let t = re.current?.querySelector(`[data-testid="conversation-row"][data-channel="${CSS.escape(e)}"]`);
+		ie.current = null;
+		let t = B.current?.querySelector(`[data-testid="conversation-row"][data-channel="${CSS.escape(e)}"]`);
 		t?.focus(), t?.scrollIntoView({ block: "nearest" });
 	});
 	function U(e) {
-		let t = Math.max(0, Math.min(R.length - 1, e)), n = R[t];
-		!n || n.channel === V || (H.current = n.channel, B(n.channel));
+		let t = Math.max(0, Math.min(z.length - 1, e)), n = z[t];
+		!n || n.channel === re || (ie.current = n.channel, H(n.channel));
 	}
 	function oe(e) {
-		if (R.length === 0) return;
-		let t = R.findIndex((e) => e.channel === V), n = t < 0 ? 0 : t;
+		if (z.length === 0) return;
+		let t = z.findIndex((e) => e.channel === re), n = t < 0 ? 0 : t;
 		switch (e.key) {
 			case "ArrowDown":
 				U(n + 1);
@@ -782,7 +782,7 @@ function Ce({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 				U(0);
 				break;
 			case "End":
-				U(R.length - 1);
+				U(z.length - 1);
 				break;
 			default: return;
 		}
@@ -806,7 +806,7 @@ function Ce({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 			"data-testid": "conversation-empty",
 			children: g
 		}) : /* @__PURE__ */ Q("div", {
-			ref: re,
+			ref: B,
 			onKeyDown: oe,
 			className: "m-0 flex min-h-0 flex-col overflow-y-auto p-0",
 			children: L.map((e) => {
@@ -815,7 +815,7 @@ function Ce({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 					"aria-label": e.collapsible ? void 0 : e.label,
 					"aria-labelledby": e.collapsible ? n : void 0,
 					children: e.shown.map((e) => {
-						let t = e.channel === d, n = e.channel === V, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", a = r === "group", c = e.peers[0], l = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), m = e.lastMessageAt ? ie(e.lastMessageAt) : "", g = e.lastMessageAt ? ae(e.lastMessageAt) : "", x = e.unreadCount ?? 0, C = !!e.mentioned, w = !!e.live, D = !!e.muted, O = `${E}-row-menu-${e.channel}`, k = [];
+						let t = e.channel === d, n = e.channel === re, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", a = r === "group", c = e.peers[0], l = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), m = e.lastMessageAt ? ne(e.lastMessageAt) : "", g = e.lastMessageAt ? ae(e.lastMessageAt) : "", x = e.unreadCount ?? 0, C = !!e.mentioned, w = !!e.live, D = !!e.muted, O = `${E}-row-menu-${e.channel}`, k = [];
 						return o && (k.push({
 							label: "Call",
 							icon: /* @__PURE__ */ Q(f, { size: 14 }),
@@ -845,7 +845,7 @@ function Ce({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 							children: [/* @__PURE__ */ $("button", {
 								type: "button",
 								onClick: () => p(e.channel),
-								onFocus: () => B(e.channel),
+								onFocus: () => H(e.channel),
 								"data-testid": "conversation-row",
 								"data-channel": e.channel,
 								"data-active": t ? "true" : "false",
@@ -960,7 +960,7 @@ function Ce({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 					})
 				}), e.capped && /* @__PURE__ */ Q("button", {
 					type: "button",
-					onClick: () => ne(e.label),
+					onClick: () => R(e.label),
 					"aria-expanded": e.hidden === 0,
 					"data-testid": "conversation-show-more",
 					className: s("mt-0.5 flex w-full cursor-pointer items-center rounded-lg px-2 py-1 text-left text-[12px] font-medium", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset", T ? "text-white/60 hover:bg-white/10 hover:text-white" : "text-text-tertiary hover:bg-surface-hover hover:text-text-primary"),
@@ -1370,7 +1370,7 @@ function Me({ author: e, avatarUrl: t, mine: n = !1, messages: r, className: i }
 		"data-author": e,
 		"data-row-count": r.length,
 		className: s("flex flex-col", i),
-		children: r.map((r, i) => /* @__PURE__ */ Q(H, {
+		children: r.map((r, i) => /* @__PURE__ */ Q(ie, {
 			author: e,
 			content: r.content,
 			timestamp: r.timestamp,
@@ -3187,7 +3187,7 @@ function Ct(e) {
 	return e.kind === "link" ? e.label ?? "Open link" : e.kind === "panel" ? e.panel.title ? `Open ${e.panel.title}` : "Open result" : "Open beside the chat";
 }
 function wt({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenResult: i, className: a, "data-testid": o = "run-summary-panel" }) {
-	let { status: l } = e, u = e.pipelineName || e.pipelineId, d = z({
+	let { status: l } = e, u = e.pipelineName || e.pipelineId, d = V({
 		startedAt: e.startedAt,
 		completedAt: e.completedAt
 	}), f = e.ops ?? [], p = e.result && i && !(e.result.kind === "document" && e.document && r), m = e.document?.title || "Document", h = l === "failed" ? e.error || "The run failed" : void 0;
@@ -3256,7 +3256,7 @@ function wt({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenRe
 								}),
 								/* @__PURE__ */ Q("span", {
 									"aria-hidden": "true",
-									className: s("relative mt-[5px] inline-block h-[7px] w-[7px] shrink-0 rounded-full", B[t.status] ?? B.pending)
+									className: s("relative mt-[5px] inline-block h-[7px] w-[7px] shrink-0 rounded-full", H[t.status] ?? H.pending)
 								}),
 								/* @__PURE__ */ $("span", {
 									className: "flex min-w-0 flex-1 items-baseline justify-between gap-2",
@@ -3285,7 +3285,7 @@ function wt({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenRe
 								className: "truncate",
 								"data-op": e.op,
 								title: e.text,
-								children: V(e)
+								children: re(e)
 							}, t))
 						}),
 						f.length > St && /* @__PURE__ */ $("div", {
@@ -3803,7 +3803,7 @@ function cn({ items: e, onPick: t, disabled: n, searchAbove: r, kind: i, testId:
 				o.trim(),
 				"”."
 			]
-		}) : c.map((e) => /* @__PURE__ */ Q(ne, {
+		}) : c.map((e) => /* @__PURE__ */ Q(R, {
 			label: e.label,
 			icon: e.icon ?? (i === "person" ? /* @__PURE__ */ Q(P, {
 				name: e.label,
@@ -3849,10 +3849,10 @@ function ln({ title: e = "No conversation yet", body: t = "Whichever you choose,
 					})
 				})
 			}),
-			/* @__PURE__ */ $(re, {
+			/* @__PURE__ */ $(B, {
 				"data-testid": `${p}-choices`,
 				children: [
-					n && /* @__PURE__ */ Q(R, {
+					n && /* @__PURE__ */ Q(z, {
 						icon: /* @__PURE__ */ Q(rn, { d: an }),
 						title: r,
 						description: i,
@@ -3860,7 +3860,7 @@ function ln({ title: e = "No conversation yet", body: t = "Whichever you choose,
 						busy: u,
 						"data-testid": `${p}-start`
 					}),
-					o && /* @__PURE__ */ Q(R, {
+					o && /* @__PURE__ */ Q(z, {
 						icon: /* @__PURE__ */ Q(rn, { d: on }),
 						title: "Add to a room",
 						description: a.length === 0 ? "No rooms yet" : `${a.length} room${a.length === 1 ? "" : "s"} your team is in`,
@@ -3877,7 +3877,7 @@ function ln({ title: e = "No conversation yet", body: t = "Whichever you choose,
 							testId: `${p}-rooms`
 						})
 					}),
-					l && /* @__PURE__ */ Q(R, {
+					l && /* @__PURE__ */ Q(z, {
 						icon: /* @__PURE__ */ Q(rn, { d: sn }),
 						title: "Send to someone",
 						description: s.length === 0 ? "Nobody to send to yet" : "It lands in their chat",
@@ -4295,118 +4295,124 @@ function En(e) {
 function Dn(e) {
 	return [...e].sort((e, t) => Number(!!t.pinned) - Number(!!e.pinned));
 }
-function On({ teams: e, activeChannel: t = null, onSelectChannel: n, onToggleTeam: r, onCreateChannel: i, onManageTeam: a, onLeaveTeam: o, onTogglePinTeam: c, onTogglePinChannel: l, onCreateTeam: u, heading: f = "Teams", collapsed: p = !1, onToggleCollapse: h, className: _, "data-testid": v = "team-channel-tree" }) {
-	let y = f !== !1 && h !== void 0, x = y && p, S = q(), C = `${S}teams-toggle`, w = `${S}teams`, T = r !== void 0, [E, D] = X(() => new Set(e.filter((e) => e.expanded).map((e) => e.teamId))), O = Y(null), [k, A] = X(null), j = (e) => T ? !!e.expanded : E.has(e.teamId), M = (e, t) => {
-		r?.(e, t), !T && D((n) => {
+function On({ teams: e, activeChannel: t = null, onSelectChannel: n, onToggleTeam: r, onCreateChannel: i, onManageTeam: a, onLeaveTeam: o, onTogglePinTeam: c, onTogglePinChannel: l, onCreateTeam: u, heading: f = "Teams", filter: p, collapsed: h = !1, onToggleCollapse: _, className: v, "data-testid": y = "team-channel-tree" }) {
+	let x = f !== !1 && _ !== void 0, S = x && h, C = q(), w = `${C}teams-toggle`, T = `${C}teams`, E = r !== void 0, [D, O] = X(() => new Set(e.filter((e) => e.expanded).map((e) => e.teamId))), k = Y(null), [A, j] = X(null), M = (e) => te ? !0 : E ? !!e.expanded : D.has(e.teamId), N = (e, t) => {
+		r?.(e, t), !E && O((n) => {
 			if (n.has(e) === t) return n;
 			let r = new Set(n);
 			return t ? r.add(e) : r.delete(e), r;
 		});
-	}, N = (t) => {
+	}, F = (t) => {
 		let n = e.find((e) => e.teamId === t);
-		n && M(t, !j(n));
-	}, F = Dn(e), I = [];
-	for (let e of x ? [] : F) if (I.push({
+		n && N(t, !M(n));
+	}, I = p?.trim().toLowerCase() ?? "", te = I.length > 0, L = Dn(te ? e.reduce((e, t) => {
+		let n = t.name.toLowerCase().includes(I), r = n ? t.channels : t.channels.filter((e) => e.name.toLowerCase().includes(I));
+		return (n || r.length > 0) && e.push({
+			...t,
+			channels: r
+		}), e;
+	}, []) : e), R = [];
+	for (let e of S ? [] : L) if (R.push({
 		id: `team:${e.teamId}`,
 		kind: "team",
 		teamId: e.teamId
-	}), j(e)) for (let t of Dn(e.channels)) I.push({
+	}), M(e)) for (let t of Dn(e.channels)) R.push({
 		id: `channel:${t.channel}`,
 		kind: "channel",
 		teamId: e.teamId,
 		channel: t.channel
 	});
-	let te = k && I.some((e) => e.id === k) ? k : t && I.some((e) => e.kind === "channel" && e.channel === t) ? `channel:${t}` : I[0]?.id ?? null, L = (e) => {
-		e && (A(e), O.current?.querySelector(`[data-row-id="${En(e)}"]`)?.focus());
-	}, ne = (t) => {
+	let z = A && R.some((e) => e.id === A) ? A : t && R.some((e) => e.kind === "channel" && e.channel === t) ? `channel:${t}` : R[0]?.id ?? null, B = (e) => {
+		e && (j(e), k.current?.querySelector(`[data-row-id="${En(e)}"]`)?.focus());
+	}, V = (t) => {
 		let r = t.target.closest("[role=\"treeitem\"]")?.dataset.rowId;
 		if (!r) return;
-		let i = I.findIndex((e) => e.id === r);
+		let i = R.findIndex((e) => e.id === r);
 		if (i < 0) return;
-		let a = I[i], o = e.find((e) => e.teamId === a.teamId);
+		let a = R[i], o = e.find((e) => e.teamId === a.teamId);
 		if (o) switch (t.key) {
 			case "ArrowDown":
-				t.preventDefault(), L(I[Math.min(i + 1, I.length - 1)]?.id ?? null);
+				t.preventDefault(), B(R[Math.min(i + 1, R.length - 1)]?.id ?? null);
 				return;
 			case "ArrowUp":
-				t.preventDefault(), L(I[Math.max(i - 1, 0)]?.id ?? null);
+				t.preventDefault(), B(R[Math.max(i - 1, 0)]?.id ?? null);
 				return;
 			case "Home":
-				t.preventDefault(), L(I[0]?.id ?? null);
+				t.preventDefault(), B(R[0]?.id ?? null);
 				return;
 			case "End":
-				t.preventDefault(), L(I[I.length - 1]?.id ?? null);
+				t.preventDefault(), B(R[R.length - 1]?.id ?? null);
 				return;
 			case "ArrowRight":
 				if (t.preventDefault(), a.kind === "team") {
-					if (!j(o)) M(o.teamId, !0);
+					if (!M(o)) N(o.teamId, !0);
 					else {
-						let e = I[i + 1];
-						e && e.kind === "channel" && e.teamId === o.teamId && L(e.id);
+						let e = R[i + 1];
+						e && e.kind === "channel" && e.teamId === o.teamId && B(e.id);
 					}
 				}
 				return;
 			case "ArrowLeft":
-				t.preventDefault(), a.kind === "team" ? j(o) && M(o.teamId, !1) : (M(a.teamId, !1), L(`team:${a.teamId}`));
+				t.preventDefault(), a.kind === "team" ? M(o) && N(o.teamId, !1) : (N(a.teamId, !1), B(`team:${a.teamId}`));
 				return;
 			case "Enter":
 			case " ":
-				t.preventDefault(), a.kind === "team" ? N(a.teamId) : n(a.channel);
+				t.preventDefault(), a.kind === "team" ? F(a.teamId) : n(a.channel);
 				return;
 		}
 	};
 	return /* @__PURE__ */ $("div", {
-		className: s("flex flex-col", _),
+		className: s("flex flex-col", v),
 		children: [f !== !1 && /* @__PURE__ */ Q(xe, {
 			label: f,
 			presentational: !1,
 			className: "pt-2",
-			...y ? {
-				collapsed: p,
-				onToggleCollapse: h,
-				controls: w,
-				toggleId: C,
+			...x ? {
+				collapsed: h,
+				onToggleCollapse: _,
+				controls: T,
+				toggleId: w,
 				collapsedCount: e.reduce((e, t) => e + t.channels.reduce((e, t) => e + (t.unreadCount ?? 0), 0), 0)
 			} : {},
 			actions: u ? [{
 				label: "Create a team",
 				onClick: (e) => u(e),
-				"data-testid": `${v}-create-team`
+				"data-testid": `${y}-create-team`
 			}] : [],
-			"data-testid": `${v}-heading`
+			"data-testid": `${y}-heading`
 		}), /* @__PURE__ */ Q("div", {
-			ref: O,
+			ref: k,
 			role: "tree",
-			id: y ? w : void 0,
+			id: x ? T : void 0,
 			"aria-label": f === !1 ? "Teams" : void 0,
-			"aria-labelledby": y ? C : void 0,
+			"aria-labelledby": x ? w : void 0,
 			className: "flex flex-col gap-0.5",
-			"data-testid": v,
-			onKeyDown: ne,
-			children: !x && F.map((e) => {
-				let r = j(e), u = `team:${e.teamId}`, f = te === u, p = [];
+			"data-testid": y,
+			onKeyDown: V,
+			children: !S && L.map((e) => {
+				let r = M(e), u = `team:${e.teamId}`, f = z === u, p = [];
 				return a && p.push({
 					label: "Manage team",
 					onSelect: () => a(e.teamId),
-					"data-testid": `${v}-team-${e.teamId}-menu-manage`
+					"data-testid": `${y}-team-${e.teamId}-menu-manage`
 				}), c && p.push({
 					label: e.pinned ? "Unpin" : "Pin",
 					icon: /* @__PURE__ */ Q(b, { size: 14 }),
 					onSelect: () => c(e.teamId, !e.pinned),
-					"data-testid": `${v}-team-${e.teamId}-menu-pin`
+					"data-testid": `${y}-team-${e.teamId}-menu-pin`
 				}), o && p.push({
 					label: "Leave team",
 					onSelect: () => o(e.teamId),
-					"data-testid": `${v}-team-${e.teamId}-menu-leave`
+					"data-testid": `${y}-team-${e.teamId}-menu-leave`
 				}), /* @__PURE__ */ $("div", { children: [/* @__PURE__ */ $("div", {
 					role: "treeitem",
 					"aria-expanded": r,
 					"aria-level": 1,
 					tabIndex: f ? 0 : -1,
 					"data-row-id": u,
-					"data-testid": `${v}-team-${e.teamId}`,
-					onClick: () => N(e.teamId),
-					onFocus: () => A(u),
+					"data-testid": `${y}-team-${e.teamId}`,
+					onClick: () => F(e.teamId),
+					onFocus: () => j(u),
 					className: s("group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left", "hover:bg-surface-hover", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"),
 					children: [
 						/* @__PURE__ */ Q(g, {
@@ -4425,7 +4431,7 @@ function On({ teams: e, activeChannel: t = null, onSelectChannel: n, onToggleTea
 								className: "min-w-0 truncate text-[13px] font-semibold text-text-primary",
 								children: e.name
 							}), e.pinned && /* @__PURE__ */ Q("span", {
-								"data-testid": `${v}-team-${e.teamId}-pinned`,
+								"data-testid": `${y}-team-${e.teamId}-pinned`,
 								title: "Pinned",
 								className: "shrink-0 text-text-tertiary",
 								children: /* @__PURE__ */ Q(b, { size: 12 })
@@ -4439,7 +4445,7 @@ function On({ teams: e, activeChannel: t = null, onSelectChannel: n, onToggleTea
 							onClick: (t) => {
 								t.stopPropagation(), i(e.teamId, t.currentTarget);
 							},
-							"data-testid": `${v}-team-${e.teamId}-add-channel`,
+							"data-testid": `${y}-team-${e.teamId}-add-channel`,
 							className: s("grid h-6 w-6 shrink-0 cursor-pointer place-items-center rounded-md border-none bg-transparent p-0", "text-text-secondary hover:bg-surface-hover hover:text-text-primary", "opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100", "[@media(hover:none)]:opacity-100", "focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
 							children: /* @__PURE__ */ Q(d, { size: 14 })
 						}),
@@ -4455,26 +4461,26 @@ function On({ teams: e, activeChannel: t = null, onSelectChannel: n, onToggleTea
 								triggerLabel: `More options for ${e.name}`,
 								triggerTitle: "More options",
 								triggerTabIndex: f ? 0 : -1,
-								triggerTestId: `${v}-team-${e.teamId}-menu`,
+								triggerTestId: `${y}-team-${e.teamId}-menu`,
 								triggerClassName: "h-6 w-6 rounded-md border-0 p-0 text-[13px] text-text-secondary hover:bg-surface-hover",
 								align: "end",
 								sections: [{ items: p }],
-								"data-testid": `${v}-team-${e.teamId}-menu-panel`
+								"data-testid": `${y}-team-${e.teamId}-menu-panel`
 							})
 						})
 					]
 				}), r && Dn(e.channels).map((e) => {
-					let r = `channel:${e.channel}`, i = te === r, a = e.channel === t, o = e.unreadCount ?? 0, c = !!e.muted;
+					let r = `channel:${e.channel}`, i = z === r, a = e.channel === t, o = e.unreadCount ?? 0, c = !!e.muted;
 					return /* @__PURE__ */ $("div", {
 						role: "treeitem",
 						"aria-level": 2,
 						"aria-selected": a,
 						tabIndex: i ? 0 : -1,
 						"data-row-id": r,
-						"data-testid": `${v}-channel-${e.channel}`,
+						"data-testid": `${y}-channel-${e.channel}`,
 						"data-active": a ? "true" : "false",
 						onClick: () => n(e.channel),
-						onFocus: () => A(r),
+						onFocus: () => j(r),
 						className: s("group flex w-full cursor-pointer items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-left text-[13px]", "hover:bg-surface-hover", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset", a && "bg-surface-hover"),
 						children: [
 							/* @__PURE__ */ Q("span", {
@@ -4488,28 +4494,28 @@ function On({ teams: e, activeChannel: t = null, onSelectChannel: n, onToggleTea
 									className: s("min-w-0 truncate", o > 0 ? "font-semibold" : "font-medium", "text-text-primary"),
 									children: e.name
 								}), e.pinned && /* @__PURE__ */ Q("span", {
-									"data-testid": `${v}-channel-${e.channel}-pinned`,
+									"data-testid": `${y}-channel-${e.channel}-pinned`,
 									title: "Pinned",
 									className: "shrink-0 text-text-tertiary",
 									children: /* @__PURE__ */ Q(b, { size: 12 })
 								})]
 							}),
 							e.mentioned && /* @__PURE__ */ Q("span", {
-								"data-testid": `${v}-channel-${e.channel}-mention`,
+								"data-testid": `${y}-channel-${e.channel}-mention`,
 								"aria-label": "You were mentioned",
 								title: "You were mentioned",
 								className: "grid h-4 w-4 shrink-0 place-items-center rounded-full bg-danger text-[10px] font-bold leading-none text-white",
 								children: "@"
 							}),
 							e.live && /* @__PURE__ */ Q("span", {
-								"data-testid": `${v}-channel-${e.channel}-live`,
+								"data-testid": `${y}-channel-${e.channel}-live`,
 								"aria-label": "Call in progress",
 								title: "Call in progress",
 								className: "inline-flex shrink-0 items-center gap-1 rounded-full bg-danger px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-wide text-white",
 								children: "Live"
 							}),
 							o > 0 && /* @__PURE__ */ Q("span", {
-								"data-testid": `${v}-channel-${e.channel}-unread`,
+								"data-testid": `${y}-channel-${e.channel}-unread`,
 								"data-muted": c ? "true" : "false",
 								className: s("grid h-5 min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-semibold leading-none", c ? "bg-surface-inset text-text-secondary" : "bg-primary text-white"),
 								children: o > 99 ? "99+" : o
@@ -4522,7 +4528,7 @@ function On({ teams: e, activeChannel: t = null, onSelectChannel: n, onToggleTea
 								onClick: (t) => {
 									t.stopPropagation(), l(e.channel, !e.pinned);
 								},
-								"data-testid": `${v}-channel-${e.channel}-pin-toggle`,
+								"data-testid": `${y}-channel-${e.channel}-pin-toggle`,
 								className: s("grid h-6 w-6 shrink-0 cursor-pointer place-items-center rounded-md border-none bg-transparent p-0", "text-text-secondary hover:bg-surface-hover hover:text-text-primary", "opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100", "[@media(hover:none)]:opacity-100", "focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
 								children: /* @__PURE__ */ Q(b, { size: 12 })
 							})

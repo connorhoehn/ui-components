@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.304.0] — 2026-09-17
+
+### Added — `./social`
+
+- **`TeamChannelTree.filter`** — so a channel inside a team can be found by
+  typing its name. A rail that filtered only its flat rows left every team
+  channel unreachable by search: typing "standups" returned nothing while
+  #Standups sat one fold away, which is exactly the case search exists for —
+  reaching a conversation you are *not* already looking at.
+- A team whose own NAME matches keeps all its channels (you asked for the
+  team); any other shows only the channels that match, and a team with neither
+  drops out.
+- **The filter's expansion does not disturb the reader's.** A team is shown
+  open because it is an ANSWER, so this short-circuits above the stored
+  expansion rather than writing to it — clearing the box restores exactly the
+  tree that was there before.
+
+---
+
 ## [2.303.0] — 2026-09-17
 
 ### Added — `./hangout`

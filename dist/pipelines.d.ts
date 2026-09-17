@@ -1387,7 +1387,7 @@ declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | Cond
 
 export declare type NodeExecutionState = 'idle' | 'pending' | 'running' | 'awaiting' | 'completed' | 'failed' | 'skipped';
 
-export declare function NodePalette({ disabledTypes, contextTypes }: NodePaletteProps): JSX.Element;
+export declare function NodePalette({ disabledTypes, contextTypes, serverKinds, }: NodePaletteProps): JSX.Element;
 
 export declare interface NodePaletteProps {
     /** Types that already exist once and cannot be added again (e.g. Trigger). */
@@ -1400,6 +1400,16 @@ export declare interface NodePaletteProps {
      * else. Omit it and the recents behaviour is unchanged.
      */
     contextTypes?: readonly string[];
+    /**
+     * Step kinds the SERVER can execute that are not built-in node types —
+     * `transcript:store`, `media:classify`, and the other ~50 platform-api
+     * registers. The palette's own catalog is the library's types only, so
+     * without these it lists mostly things a document or transcript pipeline
+     * never uses while omitting everything it is actually built from.
+     *
+     * Grouped into one section per namespace, after the built-in categories.
+     */
+    serverKinds?: readonly string[];
 }
 
 export declare function NodeThumbStrip({ images, max, 'data-testid': testId, }: NodeThumbStripProps): JSX.Element | null;
@@ -3354,6 +3364,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3373,12 +3396,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3386,9 +3406,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3432,32 +3452,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
