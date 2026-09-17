@@ -312,6 +312,11 @@ export default function NodePalette({
       if (builtIn.has(kind)) continue;
       const ns = namespaceOf(kind);
       if (!ns) continue;
+      // A namespace that IS a built-in type gets no section of its own:
+      // `llm:judge` belongs beside LLM under AI, not in a lone "Llm" section
+      // sitting next to it. Its kinds are dropped here and picked up by the
+      // built-in category below.
+      if (builtIn.has(ns)) continue;
       const list = byNamespace.get(ns);
       if (list) list.push(kind);
       else byNamespace.set(ns, [kind]);
@@ -336,9 +341,45 @@ export default function NodePalette({
       });
   }, [serverKinds]);
 
+  /**
+   * Server kinds whose namespace is a built-in type (`llm:judge`), folded into
+   * that type's own category so they sit beside the thing they extend.
+   */
+  const foldedIntoBuiltIn = useMemo<Map<NodeCategory, PaletteItem[]>>(() => {
+    const out = new Map<NodeCategory, PaletteItem[]>();
+    if (!serverKinds) return out;
+    const builtIn = new Set(ITEM_DEFS.map((d) => d.type as string));
+    for (const kind of serverKinds) {
+      if (builtIn.has(kind)) continue;
+      const ns = namespaceOf(kind);
+      if (!ns || !builtIn.has(ns)) continue;
+      const cat = categoryFor(ns);
+      if (!cat) continue;
+      const item: PaletteItem = {
+        type: kind as NodeType,
+        icon: '⚙',
+        name: kind,
+        description: `Server step · extends ${ns}`,
+        category: cat,
+        nodeCategory: cat,
+      };
+      const list = out.get(cat);
+      if (list) list.push(item);
+      else out.set(cat, [item]);
+    }
+    return out;
+  }, [serverKinds]);
+
   const allCategories = useMemo<PaletteCategory[]>(
-    () => [...CATEGORIES, ...serverCategories],
-    [serverCategories],
+    () =>
+      [
+        ...CATEGORIES.map((cat) => {
+          const extra = foldedIntoBuiltIn.get(cat.key as NodeCategory);
+          return extra ? { ...cat, items: [...cat.items, ...extra] } : cat;
+        }),
+        ...serverCategories,
+      ],
+    [serverCategories, foldedIntoBuiltIn],
   );
 
   /** Filter-chip labels, including a chip per server namespace. */

@@ -18,6 +18,7 @@ import {
 const services: PipelineEditorServices = { getImageUrl: (id) => `/img/${id}` };
 
 const SERVER_KINDS = [
+  'llm:judge',
   'document:read',
   'document:plan',
   'document:apply',
@@ -92,5 +93,33 @@ describe('NodePalette server kinds', () => {
   it('is searchable like any other item', () => {
     renderPalette();
     expect(screen.getByText('media:classify')).toBeInTheDocument();
+  });
+});
+
+describe('NodePalette server kinds that extend a built-in type', () => {
+  beforeEach(() => window.localStorage.clear());
+  afterEach(cleanup);
+
+  it('does not give `llm:judge` a section of its own', () => {
+    // A lone "Llm" section sitting next to the AI category, containing one
+    // item, reads as a bug rather than a category.
+    renderPalette();
+    expect(screen.queryByTestId('palette-category-Llm')).not.toBeInTheDocument();
+  });
+
+  it('files it under the category of the type it extends', () => {
+    renderPalette();
+    const ai = screen.getByTestId('palette-category-AI');
+    expect(within(ai).getByText('llm:judge')).toBeInTheDocument();
+  });
+
+  it('says what it extends', () => {
+    renderPalette();
+    expect(screen.getByText('Server step · extends llm')).toBeInTheDocument();
+  });
+
+  it('still gives an unrelated namespace its own section', () => {
+    renderPalette();
+    expect(screen.getByTestId('palette-category-Document')).toBeInTheDocument();
   });
 });
