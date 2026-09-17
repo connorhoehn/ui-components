@@ -10,7 +10,7 @@ import { t as l } from "./EmptyState-JzzL2z1E.js";
 import { t as u } from "./Input-DLknWXri.js";
 import { t as d } from "./Textarea-Dz4doxTv.js";
 import { t as f } from "./Avatar-BzicCOft.js";
-import { t as p } from "./SegmentedControl-18MqeMsn.js";
+import { t as p } from "./SegmentedControl-DjCkIdvm.js";
 import { t as m } from "./CardHeader-CsPhVpCm.js";
 import { t as h } from "./InlinePopover-CG_Jwga7.js";
 import { t as g } from "./ChangeDiff-CzO8zCc-.js";

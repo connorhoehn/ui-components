@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.315.0] — 2026-09-17
+
+### Added — `./shared`
+
+- **`SegmentedControl` accepts `aria-labelledby`.** It already warned in its
+  own docs that `role="group"` with no name announces as a bare "group" — a
+  reader arriving at Public / Private is told two unrelated toggle buttons
+  rather than one setting with two values — but it offered only `aria-label`,
+  which means retyping wording that is already on screen and can drift from
+  it. Inside a form the name should come from the visible label: pass the
+  `labelId` a `FormField` hands its render prop, the same wiring `Switch`
+  already takes.
+
 ## [2.314.0] — 2026-09-17
 
 ### Added — `./shared`

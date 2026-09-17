@@ -22,6 +22,14 @@ export interface SegmentedControlProps {
    * a bare toolbar should pass it.
    */
   'aria-label'?: string;
+  /**
+   * The element that already says what the group is for — a `FormField`'s
+   * label, typically, via the `labelId` it hands its render prop. Prefer this
+   * over `aria-label` inside a form: it keeps ONE copy of the wording, so the
+   * visible label and the announced one cannot drift apart. Same wiring
+   * `Switch` takes.
+   */
+  'aria-labelledby'?: string;
   /** Every segment disabled — used while a form that owns it is saving. */
   disabled?: boolean;
   /** Stretch the group and share its width equally between the segments. */
@@ -47,6 +55,7 @@ export function SegmentedControl({
   onChange,
   size = 'md',
   'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
   disabled = false,
   fullWidth = false,
   className,
@@ -56,6 +65,7 @@ export function SegmentedControl({
     <div
       role="group"
       aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
       data-testid={testId}
       className={cn(
         fullWidth ? 'flex w-full items-center' : 'inline-flex items-center',

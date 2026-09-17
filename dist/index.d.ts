@@ -12062,7 +12062,7 @@ export declare interface SectionReview {
 /** Specialized section renderer type — extends beyond the base `type` for richer UIs. */
 export declare type SectionType = 'tasks' | 'rich-text' | 'decisions' | 'timeline' | 'checklist' | 'rating' | 'voting';
 
-export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, disabled, fullWidth, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
+export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, disabled, fullWidth, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
 
 export declare interface SegmentedControlProps {
     options: SegmentOption[];
@@ -12079,6 +12079,14 @@ export declare interface SegmentedControlProps {
      * a bare toolbar should pass it.
      */
     'aria-label'?: string;
+    /**
+     * The element that already says what the group is for — a `FormField`'s
+     * label, typically, via the `labelId` it hands its render prop. Prefer this
+     * over `aria-label` inside a form: it keeps ONE copy of the wording, so the
+     * visible label and the announced one cannot drift apart. Same wiring
+     * `Switch` takes.
+     */
+    'aria-labelledby'?: string;
     /** Every segment disabled — used while a form that owns it is saving. */
     disabled?: boolean;
     /** Stretch the group and share its width equally between the segments. */
@@ -16340,19 +16348,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -16372,12 +16367,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -16395,9 +16410,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -16434,16 +16452,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

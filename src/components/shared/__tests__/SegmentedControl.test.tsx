@@ -25,4 +25,23 @@ describe('SegmentedControl', () => {
     render(<SegmentedControl options={OPTIONS} value="list" onChange={() => {}} />);
     expect(screen.getByRole('group')).toBeInTheDocument();
   });
+
+  // `role="group"` with no name announces as a bare "group" — a reader
+  // arriving at Public / Private is told two unrelated toggle buttons rather
+  // than one setting with two values. Inside a form the name should come from
+  // the visible label, not a second copy of the wording that can drift.
+  it('takes its name from the label that already says what it is for', () => {
+    render(
+      <>
+        <span id="vis-label">Who can find you</span>
+        <SegmentedControl
+          aria-labelledby="vis-label"
+          value="public"
+          onChange={() => {}}
+          options={[{ value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }]}
+        />
+      </>,
+    );
+    expect(screen.getByRole('group')).toHaveAccessibleName('Who can find you');
+  });
 });
