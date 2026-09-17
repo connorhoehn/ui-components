@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.310.0] — 2026-09-17
+
+### Fixed — `./social`
+
+- **The chat composer is no longer a white slab in dark mode.** A host may
+  paint `.ProseMirror` as paper — a white sheet with fixed dark ink — so a
+  document's prose keeps its own surface when the app goes dark. That is right
+  for a document and wrong for a message box, and every `.ProseMirror` on the
+  page inherits it: the composer sat bright white at the foot of a dark
+  conversation while its own shell was correctly themed.
+- `.chat-composer .ProseMirror` is two classes to the host rule's one, so it
+  wins wherever it lands in the cascade. Transparent rather than a colour of its
+  own — the shell around it is already themed, and painting the inner box a
+  second time is how the two drift apart. The placeholder takes the theme too.
+
+---
+
 ## [2.309.0] — 2026-09-17
 
 ### Fixed — `./shared`

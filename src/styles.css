@@ -638,6 +638,22 @@
   overflow-y: auto;
   padding: 0.5rem 0.625rem;
   font-size: 0.875rem;
+  /* A composer is CHROME, not a page.
+     A host may paint `.ProseMirror` as paper — a white sheet with fixed dark
+     ink — so a document's prose keeps its own surface when the app goes dark.
+     That is right for a document and wrong here: every `.ProseMirror` on the
+     page inherits it, so the message box became a white slab at the foot of a
+     dark conversation. Two classes beat one, so this wins wherever it lands in
+     the cascade.
+     Transparent rather than a colour of its own: the shell around it is
+     already themed (`bg-surface`, `border-border`), and painting the inner box
+     a second time is how the two drift apart. */
+  background: transparent;
+  color: inherit;
+}
+/* Placeholder is ink too, and takes the theme with everything else here. */
+.chat-composer .ProseMirror .is-empty::before {
+  color: var(--color-text-tertiary);
 }
 .chat-composer .ProseMirror p { margin: 0 0 0.25em; }
 .chat-composer .ProseMirror p:last-child { margin-bottom: 0; }
