@@ -56,6 +56,10 @@ export function NewChatDialog({
       searchable
       grouped
       confirmLabel="Start chat"
+      // "Start chat 2 people" is not English. The list's default counted form
+      // is written for "Invite"/"Call", which take a bare object; this verb
+      // wants a preposition.
+      confirmCountLabel={(n) => `Start chat with ${n}`}
       confirmLoadingLabel="Starting…"
       data-testid={`${testId}-people`}
     >

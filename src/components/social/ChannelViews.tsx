@@ -24,7 +24,7 @@ import { Avatar } from '../shared/Avatar';
 import { FeedRow } from './FeedRow';
 import EmptyState from '../shared/EmptyState';
 import { formatBytes, isImageAttachment, type ChatAttachment } from './ChatAttachment';
-import { DocumentIcon, PaperclipIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
+import { AtIcon, DocumentIcon, PaperclipIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
 import { fullTimestampLabel } from './dayBoundary';
 import { cn } from '../../lib/cn';
 
@@ -290,7 +290,9 @@ export function ChannelMentionsPanel({
     <PanelShell empty={mentions.length === 0} className={className} data-testid={testId}>
       {mentions.length === 0 ? (
         <EmptyState
-          icon="@"
+          // A drawn glyph, not the character: at this size the text "@" is a
+          // different weight from every other empty state's mark.
+          icon={<AtIcon size={40} />}
           title="No mentions"
           description="When somebody @-mentions you, it lands here."
         />

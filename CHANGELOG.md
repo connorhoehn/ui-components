@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.303.0] — 2026-09-17
+
+### Added — `./hangout`
+
+- **`InviteCandidateList.confirmCountLabel`** — the counted form of the confirm
+  button, for a verb the default does not fit. `<verb> N people` is English for
+  "Invite" and "Call", which is why it was written that way, and stopped being
+  English the moment a host passed a verb wanting a preposition: the New chat
+  picker read **"Start chat 2 people"**. The grammar belongs to the caller's
+  verb and the caller is the only thing that knows it.
+
+### Fixed — `./social`
+
+- **The last two emoji in the chat surfaces' chrome are drawn glyphs.** The
+  side-panel registry's 🧩 and the Mentions empty state's `@` — the second not
+  an emoji but a text character standing in for an icon, and a different weight
+  from every other empty state's mark.
+
+---
+
 ## [2.302.0] — 2026-09-17
 
 ### Added — `./social`

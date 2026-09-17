@@ -9,6 +9,7 @@
 
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { PuzzleIcon } from '../ui/Icons';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import { Inline } from '../ui/Stack';
@@ -144,7 +145,7 @@ export function ChatSidePanel({ panel, onClose, onOpenFullPage, className, 'data
       ) : (
         <EmptyState
           size="sm"
-          icon="🧩"
+          icon={<PuzzleIcon size={28} />}
           title={`No view registered for ${panel.kind}`}
           body="Register a renderer for this kind with ChatSidePanelProvider."
           testId={`${testId}-empty`}

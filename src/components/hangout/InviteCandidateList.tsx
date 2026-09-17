@@ -123,6 +123,16 @@ export interface InviteCandidateListProps {
     confirmLabel?: string;
     /** Text while `loading`. Defaults to "Inviting…". */
     confirmLoadingLabel?: string;
+    /**
+     * The counted form of the confirm label, when `<verb> N people` is not
+     * English for this verb.
+     *
+     * The default reads "Invite 2 people" and "Call 2 people", which is why it
+     * was written that way — but it also produced "Start chat 2 people" the
+     * moment a host used a verb that wants a preposition. The grammar belongs
+     * to the caller's verb, and the caller is the only one that knows it.
+     */
+    confirmCountLabel?: (count: number) => string;
     /** Applied to the default stacked layout's root only. */
     className?: string;
     'data-testid'?: string;
@@ -141,6 +151,7 @@ export function InviteCandidateList({
     onPick,
     confirmLabel = 'Invite',
     confirmLoadingLabel = 'Inviting…',
+    confirmCountLabel,
     className,
     'data-testid': testId,
 }: InviteCandidateListProps) {
@@ -391,7 +402,9 @@ export function InviteCandidateList({
                 ? confirmLoadingLabel
                 : count === 0
                     ? confirmLabel
-                    : `${confirmLabel} ${count} ${count === 1 ? 'person' : 'people'}`}
+                    : confirmCountLabel
+                        ? confirmCountLabel(count)
+                        : `${confirmLabel} ${count} ${count === 1 ? 'person' : 'people'}`}
         </Button>
     );
 

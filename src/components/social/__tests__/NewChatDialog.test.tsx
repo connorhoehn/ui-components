@@ -38,6 +38,19 @@ describe('NewChatDialog', () => {
     expect(screen.getByTestId('new-chat-people-confirm')).toBeInTheDocument();
   });
 
+  it('counts the people picked in English', () => {
+    // The list's default counted form is written for "Invite"/"Call", which
+    // take a bare object. This verb wants a preposition, and without saying so
+    // the button read "Start chat 2 people".
+    render(<NewChatDialog open candidates={candidates} onStart={vi.fn()} onClose={vi.fn()} />);
+    const confirm = () => screen.getByTestId('new-chat-people-confirm').textContent;
+    expect(confirm()).toBe('Start chat');
+    fireEvent.click(screen.getByText('Alice Chen'));
+    expect(confirm()).toBe('Start chat with 1');
+    fireEvent.click(screen.getByText('Bob Martinez'));
+    expect(confirm()).toBe('Start chat with 2');
+  });
+
   it('shows a refusal in place and still offers a way out', () => {
     render(<NewChatDialog open candidates={candidates} error="Could not start that chat" onStart={vi.fn()} onClose={vi.fn()} />);
     expect(screen.getByTestId('new-chat-error')).toHaveTextContent('Could not start that chat');
