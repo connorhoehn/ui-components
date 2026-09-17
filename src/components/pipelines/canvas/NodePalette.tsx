@@ -30,7 +30,7 @@ import { cn } from '../../../lib/cn';
 import { Input } from '../../forms/Input';
 import { FilterChip } from '../../shared/FilterChip';
 import { categoryFor, type NodeCategory } from '../nodes/categories';
-import { rankByRelevance } from './paletteRelevance';
+import { rankByRelevance, namespaceOf } from './paletteRelevance';
 import type { NodeType } from '../../../types/pipeline';
 import { useIsNodeTypeExecutable } from '../services/PipelineEditorServicesContext';
 
@@ -49,6 +49,16 @@ export interface NodePaletteProps {
    * else. Omit it and the recents behaviour is unchanged.
    */
   contextTypes?: readonly string[];
+  /**
+   * Step kinds the SERVER can execute that are not built-in node types —
+   * `transcript:store`, `media:classify`, and the other ~50 platform-api
+   * registers. The palette's own catalog is the library's types only, so
+   * without these it lists mostly things a document or transcript pipeline
+   * never uses while omitting everything it is actually built from.
+   *
+   * Grouped into one section per namespace, after the built-in categories.
+   */
+  serverKinds?: readonly string[];
 }
 
 export interface PaletteItem {
@@ -63,8 +73,11 @@ export interface PaletteItem {
 }
 
 interface PaletteCategory {
-  /** Node-category key (NODE_CATEGORIES) this section maps to. */
-  key: NodeCategory;
+  /**
+   * Node-category key (NODE_CATEGORIES) for a built-in section, or a namespace
+   * (`transcript`, `document`) for a section of server-registered kinds.
+   */
+  key: NodeCategory | string;
   /** Human-readable category name (also the chip label). */
   name: string;
   items: PaletteItem[];
@@ -263,7 +276,11 @@ function Chevron({ expanded }: { expanded: boolean }) {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function NodePalette({ disabledTypes = [], contextTypes }: NodePaletteProps) {
+export default function NodePalette({
+  disabledTypes = [],
+  contextTypes,
+  serverKinds,
+}: NodePaletteProps) {
   const [query, setQuery] = useState('');
   const [activeCategories, setActiveCategories] = useState<Set<string>>(new Set());
   const [hoveredType, setHoveredType] = useState<NodeType | null>(null);
@@ -284,6 +301,48 @@ export default function NodePalette({ disabledTypes = [], contextTypes }: NodePa
   });
 
   const disabledSet = useMemo(() => new Set(disabledTypes), [disabledTypes]);
+
+  // One section per namespace of server-registered kinds. Built-in types are
+  // skipped — the six categories above already place those properly.
+  const serverCategories = useMemo<PaletteCategory[]>(() => {
+    if (!serverKinds || serverKinds.length === 0) return [];
+    const builtIn = new Set(ITEM_DEFS.map((d) => d.type as string));
+    const byNamespace = new Map<string, string[]>();
+    for (const kind of serverKinds) {
+      if (builtIn.has(kind)) continue;
+      const ns = namespaceOf(kind);
+      if (!ns) continue;
+      const list = byNamespace.get(ns);
+      if (list) list.push(kind);
+      else byNamespace.set(ns, [kind]);
+    }
+    return [...byNamespace.entries()]
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(([ns, kinds]) => {
+        const name = ns.charAt(0).toUpperCase() + ns.slice(1);
+        return {
+          key: ns,
+          name,
+          items: kinds.sort().map((kind) => ({
+            type: kind as NodeType,
+            icon: '⚙',
+            name: kind,
+            // The one thing the library can say truthfully about a kind whose
+            // behaviour lives on the server: where it came from.
+            description: `Server step · ${ns}`,
+            category: name,
+          })),
+        };
+      });
+  }, [serverKinds]);
+
+  const allCategories = useMemo<PaletteCategory[]>(
+    () => [...CATEGORIES, ...serverCategories],
+    [serverCategories],
+  );
+
+  /** Filter-chip labels, including a chip per server namespace. */
+  const categoryNames = useMemo(() => allCategories.map((c) => c.name), [allCategories]);
 
   // Listen for storage events so multi-tab usage stays consistent.
   useEffect(() => {
@@ -327,11 +386,11 @@ export default function NodePalette({ disabledTypes = [], contextTypes }: NodePa
   // Build all-items flat lookup (by type)
   const allItemsByType = useMemo<Map<NodeType, PaletteItem>>(() => {
     const m = new Map<NodeType, PaletteItem>();
-    for (const cat of CATEGORIES) {
+    for (const cat of allCategories) {
       for (const item of cat.items) m.set(item.type, item);
     }
     return m;
-  }, []);
+  }, [allCategories]);
 
   // Kinds this pipeline makes a case for. Empty when the pipeline says nothing
   // (a bare trigger, say), and then the recents list is still better than an
@@ -370,13 +429,13 @@ export default function NodePalette({ disabledTypes = [], contextTypes }: NodePa
 
   // Filtered categories
   const filteredCategories = useMemo<PaletteCategory[]>(() => {
-    return CATEGORIES.map((cat) => {
+    return allCategories.map((cat) => {
       const catFiltered = activeCategories.size > 0 && !activeCategories.has(cat.name)
         ? []
         : cat.items.filter((item) => matchesQuery(item, query));
       return { ...cat, items: catFiltered };
     }).filter((cat) => cat.items.length > 0);
-  }, [query, activeCategories]);
+  }, [query, activeCategories, allCategories]);
 
   // Flat visible ordered list (recents first, then categories) used to compute
   // 1-9 keyboard shortcut indices. Re-exported as a mutable ref so
@@ -606,7 +665,7 @@ export default function NodePalette({ disabledTypes = [], contextTypes }: NodePa
           className="flex flex-wrap gap-1 px-3 pb-2.5"
           data-testid="palette-category-chips"
         >
-          {CATEGORY_NAMES.map((name) => (
+          {categoryNames.map((name) => (
             <FilterChip
               key={name}
               size="xs"
@@ -676,7 +735,10 @@ export default function NodePalette({ disabledTypes = [], contextTypes }: NodePa
                   <span
                     aria-hidden
                     data-testid={`palette-section-accent-${cat.key}`}
-                    className={cn('w-1.5 h-1.5 rounded-full shrink-0', CAT_ACCENT[cat.key])}
+                    className={cn(
+                      'w-1.5 h-1.5 rounded-full shrink-0',
+                      CAT_ACCENT[cat.key as NodeCategory],
+                    )}
                   />
                   {cat.name}
                 </button>
