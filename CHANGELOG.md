@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.306.0] — 2026-09-17
+
+### Changed — `./social`
+
+- **A post with no replies no longer carries its own "Reply" underneath.**
+  It was revealed on hover — and so is the message action bar, by the same
+  gesture, with a Reply of its own. Hovering an ordinary message therefore
+  offered Reply twice: an arrow in the toolbar and a word below. The toolbar's
+  is the one that generalises (every message has it, threaded or not), so the
+  duplicate goes.
+- **A thread that HAS replies keeps its foot Reply, permanently.** There it is
+  a different act — "add to this thread", under the last reply — and it cannot
+  be reached from the root's hover bar.
+
+---
+
 ## [2.305.0] — 2026-09-17
 
 ### Fixed — `./social`

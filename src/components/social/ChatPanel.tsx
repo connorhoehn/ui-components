@@ -2464,13 +2464,16 @@ export function ChatPanel({
         />
       ) : null;
 
-    // Hover-only reply was the whole discoverability problem: a reader who
-    // never happens to hover a row never learns the channel is threaded, and
-    // keeps answering with new top-level posts — the flat river threading was
-    // built to end. A control that is always on screen is what says "this is
-    // a thread you can answer", and it matters MOST on a root with no replies
-    // yet, since that is the post a first reply has to start from.
-    const replyTarget = threadReplyTarget(group.root);
+    // The foot Reply belongs to a thread that HAS replies: it sits under the
+    // last one and means "add to this", which is a different act from
+    // answering the root and cannot be reached from the root's hover bar.
+    //
+    // On a post with no replies it was the same act as the hover bar's own
+    // Reply, revealed by the same gesture — so hovering an ordinary message
+    // offered Reply twice, once as an arrow in the toolbar and once as a word
+    // underneath. The toolbar is the one that generalises (every message has
+    // it, threaded or not), so that is the one that stays.
+    const replyTarget = group.replies.length > 0 ? threadReplyTarget(group.root) : null;
     if (group.replies.length === 0 && !replyTarget) {
       // Still a post, so it still gets the separation — a channel where only
       // the posts with replies are set apart would say that a post nobody
@@ -2516,7 +2519,6 @@ export function ChatPanel({
      * "N more replies" toggle sitting alone as a permanent footer with a
      * second, invisible footer stacked under it.
      */
-    const revealOnHover = group.replies.length === 0;
 
     return (
       <Fragment key={`post:${rootId || index}`}>
@@ -2616,39 +2618,14 @@ export function ChatPanel({
               className={cn(
                 'mt-0.5 rounded px-1 py-0.5 text-xs',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-                // A post with no answers yet reveals its Reply the same way a
-                // row reveals its action bar, and for the same reason: a
-                // channel of ordinary messages should not carry a standing
-                // "Reply" under every one of them. Read the MessageActionBar
-                // block above for why `group-has-[:focus-visible]` and not
-                // `group-focus-within` — focus-within is true after a mouse
-                // click too, which leaves the control stuck on after you use
-                // it. Scoped to the POST, not to the row, because this control
-                // belongs to the whole post: reaching for it means the pointer
-                // is somewhere over the post, which is often the last reply
-                // rather than the root.
-                //
-                // `opacity-0` and not `hidden`/absolute positioning. It keeps
-                // the control in the tab order at all times (a `hidden` one is
-                // unreachable by keyboard, which is the whole failure the
-                // action bar's header warns about), and it keeps the row in
-                // flow — revealing it by changing the post's HEIGHT would
-                // shove every post below the pointer down by 20px on hover, in
-                // a list the reader is actively scrolling.
-                //
-                // A touch screen has no hover to reveal anything with, so
-                // there it simply stays visible. Same escape hatch
-                // ConversationList's row menu uses.
-                revealOnHover &&
-                  cn(
-                    'opacity-0 transition-opacity',
-                    'group-hover/post:opacity-100 group-has-[:focus-visible]/post:opacity-100',
-                    '[@media(hover:none)]:opacity-100',
-                  ),
+                // Always on. This now renders only under a thread that HAS
+                // replies, where it is the way to add one more — so there is
+                // no longer an ordinary message carrying a standing "Reply"
+                // underneath it, which is what the reveal existed to prevent.
                 // Quiet at rest, clearer under a pointer or a focus ring. It
-                // sits under EVERY post, so at the weight of the thread toggle
-                // a hundred of them would read as a hundred pending actions
-                // instead of as a standing invitation.
+                // sits under every THREAD, so at the weight of the thread
+                // toggle a screenful would read as a screenful of pending
+                // actions instead of as a standing invitation.
                 //
                 // `text-white/*` on dark: the `text-text-*` tokens are tuned
                 // for the light surface and go muddy to invisible over call

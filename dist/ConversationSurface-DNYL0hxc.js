@@ -2198,9 +2198,9 @@ function It({ messages: n, localMessages: i = [], onSend: a, disabled: o = !1, o
 			"aria-hidden": "true",
 			"data-testid": "chat-post-boundary",
 			className: e("mt-3 border-t pt-3", Z ? "border-white/10" : "border-border-subtle")
-		}) : null, l = yn(t.root);
+		}) : null, l = t.replies.length > 0 ? yn(t.root) : null;
 		if (t.replies.length === 0 && !l) return c ? /* @__PURE__ */ V(P, { children: [c, o] }, `post:${St(t.root) ?? n}`) : o;
-		let u = St(t.root) ?? "", d = t.root.kind === "message" ? t.root.message : void 0, f = !!u && t.replies.length > Tt, p = !f || kt.has(u), h = p ? t.replies : t.replies.slice(0, Et), g = t.replies.length - h.length, _ = [...new Set(t.replies.slice(h.length).map(vn))].slice(0, 3), v = t.replies.length === 0;
+		let u = St(t.root) ?? "", d = t.root.kind === "message" ? t.root.message : void 0, f = !!u && t.replies.length > Tt, p = !f || kt.has(u), h = p ? t.replies : t.replies.slice(0, Et), g = t.replies.length - h.length, _ = [...new Set(t.replies.slice(h.length).map(vn))].slice(0, 3);
 		return /* @__PURE__ */ V(P, { children: [c, /* @__PURE__ */ V("div", {
 			"data-testid": "chat-thread",
 			"data-thread-root": u || void 0,
@@ -2235,7 +2235,7 @@ function It({ messages: n, localMessages: i = [], onSend: a, disabled: o = !1, o
 						"data-testid": "chat-thread-reply",
 						"aria-label": `Reply to ${vn(t.root)}`,
 						onClick: () => m?.(l),
-						className: e("mt-0.5 rounded px-1 py-0.5 text-xs", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", v && e("opacity-0 transition-opacity", "group-hover/post:opacity-100 group-has-[:focus-visible]/post:opacity-100", "[@media(hover:none)]:opacity-100"), Z ? "text-white/50 hover:bg-white/10 hover:text-white/80 focus-visible:text-white/80" : "text-text-tertiary hover:bg-surface-hover hover:text-text-secondary focus-visible:text-text-secondary"),
+						className: e("mt-0.5 rounded px-1 py-0.5 text-xs", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", Z ? "text-white/50 hover:bg-white/10 hover:text-white/80 focus-visible:text-white/80" : "text-text-tertiary hover:bg-surface-hover hover:text-text-secondary focus-visible:text-text-secondary"),
 						children: "Reply"
 					})
 				})

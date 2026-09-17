@@ -297,51 +297,22 @@ describe('ChatPanel threading', () => {
     expect(screen.getByTestId('chat-thread-replies').querySelectorAll('[data-testid="chat-day-separator"]')).toHaveLength(0);
   });
 
-  it('gives a root with no replies yet a Reply control of its own', () => {
-    const onReply = vi.fn();
-    render(<ChatPanel threaded messages={[root]} onSend={vi.fn()} onReply={onReply} />);
-
-    const foot = screen.getByTestId('chat-thread-reply');
-    expect(foot.tagName).toBe('BUTTON');
-    expect(foot.textContent).toBe('Reply');
-    // Named by its target, so a screen-reader user moving control to control
-    // does not hear "Reply" fifty times with nothing to tell them apart.
-    expect(foot.getAttribute('aria-label')).toBe('Reply to Carol');
-    expect(foot.hasAttribute('disabled')).toBe(false);
-  });
-
-  it('keeps that Reply out of sight until the post is hovered or focused', () => {
+  it('gives a post with no replies no foot Reply — the hover bar already has one', () => {
+    // It used to carry one, revealed on hover. So did the action bar, revealed
+    // by the same gesture: hovering an ordinary message offered Reply twice,
+    // once as an arrow in the toolbar and once as a word underneath. The
+    // toolbar's is the one that generalises — every message has it, threaded
+    // or not — so the duplicate goes.
     render(<ChatPanel threaded messages={[root]} onSend={vi.fn()} onReply={vi.fn()} />);
-    const foot = screen.getByTestId('chat-thread-reply');
-    const post = screen.getByTestId('chat-thread');
-
-    // Transparent at rest — a standing "Reply" under every ordinary message is
-    // noise, which is what a channel of fifty of them showed.
-    expect(foot.className).toContain('opacity-0');
-    // Revealed by the same gesture the message action bar uses, scoped to the
-    // POST so that hovering any row in it counts. The group has to be named:
-    // the rows inside carry a plain `group` for their own action bar.
-    expect(post.className).toContain('group/post');
-    expect(foot.className).toContain('group-hover/post:opacity-100');
-    // focus-visible, not focus-within — see MessageActionBar on why a mouse
-    // click must not leave it stuck on.
-    expect(foot.className).toContain('group-has-[:focus-visible]/post:opacity-100');
-    // A touch screen has no hover to reveal anything with.
-    expect(foot.className).toContain('[@media(hover:none)]:opacity-100');
+    expect(screen.queryByTestId('chat-thread-reply')).toBeNull();
+    // The one that remains is reachable, and reports the same target.
+    expect(screen.getByTestId('message-actions-reply')).toBeInTheDocument();
   });
 
-  it('keeps the hidden Reply reachable and usable from the keyboard', () => {
+  it('still answers the root from the hover bar', () => {
     const onReply = vi.fn();
     render(<ChatPanel threaded messages={[root]} onSend={vi.fn()} onReply={onReply} />);
-    const foot = screen.getByTestId('chat-thread-reply') as HTMLButtonElement;
-
-    // Hidden by opacity, never by `hidden` or `display:none`: it stays in the
-    // tab order, so a keyboard user tabs to it and the focus ring reveals it.
-    expect(foot.getAttribute('tabindex')).toBeNull();
-    expect(foot.hasAttribute('hidden')).toBe(false);
-    foot.focus();
-    expect(document.activeElement).toBe(foot);
-    fireEvent.click(foot);
+    fireEvent.click(screen.getByTestId('message-actions-reply'));
     expect(onReply.mock.calls[0][0].id).toBe('m1');
   });
 
@@ -680,16 +651,14 @@ describe('ChatPanel post rhythm', () => {
     return screen.getAllByTestId('message-row-author').length;
   }
 
-  it('keeps consecutive posts separate, each with its own head and its own reply', () => {
+  it('keeps consecutive posts separate, each with its own head', () => {
     render(<ChatPanel threaded messages={posts} onSend={vi.fn()} onReply={vi.fn()} />);
     // A post is a thread starter, so three posts stay three posts — no run
     // collapsing here however close together they were sent.
     expect(heads()).toBe(3);
-    // One Reply per post, each waiting on that post's own hover rather than
-    // three of them standing open down the channel.
-    const feet = screen.getAllByTestId('chat-thread-reply');
-    expect(feet).toHaveLength(3);
-    for (const foot of feet) expect(foot.className).toContain('opacity-0');
+    // And no standing "Reply" under any of them: unanswered posts are answered
+    // from the hover bar, which every message has.
+    expect(screen.queryByTestId('chat-thread-reply')).toBeNull();
     for (const id of ['p1', 'p2', 'p3']) {
       expect(rowOf(id).getAttribute('data-continues')).toBeNull();
       expect(rowOf(id).querySelector('[data-testid="message-row-time"]')).toBeTruthy();
@@ -711,7 +680,17 @@ describe('ChatPanel post rhythm', () => {
   });
 
   it('puts the reply control inside its own post, above the next boundary', () => {
-    render(<ChatPanel threaded messages={posts} onSend={vi.fn()} onReply={vi.fn()} />);
+    // Needs a thread that HAS replies, since that is the only shape carrying a
+    // foot Reply now — and it is exactly where the placement matters, because
+    // the control has to read as the end of its thread rather than as a stray
+    // button in the gap before the next post.
+    const answer = msg('a1', 'Friday works', {
+      timestamp: at(1),
+      displayName: 'Eve',
+      userId: 'eve',
+      replyTo: { messageId: 'p1', author: 'Carol', text: 'Are we shipping Friday?' },
+    });
+    render(<ChatPanel threaded messages={[posts[0], answer, posts[1]]} onSend={vi.fn()} onReply={vi.fn()} />);
     const replies = screen.getAllByTestId('chat-thread-reply');
     const rules = screen.getAllByTestId('chat-post-boundary');
     // The first post's Reply comes before the rule that opens the second post,
