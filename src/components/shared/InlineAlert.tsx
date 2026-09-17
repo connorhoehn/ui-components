@@ -27,6 +27,10 @@ export interface InlineAlertProps {
   children: React.ReactNode;
   onDismiss?: () => void;
   className?: string;
+  /** Test hook, forwarded to the alert element itself — same as Chip. An
+   *  alert is the thing a test most wants to assert on, and without this
+   *  the caller had to wrap it in a div and assert on the wrapper. */
+  'data-testid'?: string;
 }
 
 const TONE_CLASSES: Record<InlineAlertTone, string> = {
@@ -54,9 +58,17 @@ const PALETTE: Record<InlineAlertPalette, Record<InlineAlertTone, string>> = {
   code: CODE_TONE_CLASSES,
 };
 
-function InlineAlert({ tone, palette = 'surface', children, onDismiss, className }: InlineAlertProps) {
+function InlineAlert({
+  tone,
+  palette = 'surface',
+  children,
+  onDismiss,
+  className,
+  'data-testid': testId,
+}: InlineAlertProps) {
   return (
     <div
+      data-testid={testId}
       role={tone === 'error' || tone === 'warning' ? 'alert' : 'status'}
       aria-live={tone === 'error' || tone === 'warning' ? 'assertive' : 'polite'}
       className={cn(

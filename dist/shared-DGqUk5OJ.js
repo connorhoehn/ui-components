@@ -30,7 +30,7 @@ import { n as T, t as E } from "./Avatar-BzicCOft.js";
 import "./FloatingPanel-CclkXzq4.js";
 import "./StatusDot-Bgx2zxgC.js";
 import "./SegmentedControl-18MqeMsn.js";
-import "./InlineAlert-Myf3oJZf.js";
+import "./InlineAlert-CRnIKeAF.js";
 import { t as D } from "./CardHeader-CsPhVpCm.js";
 import "./Badge-Fdgqmkuz.js";
 import "./DropdownMenu--cgRPg4y.js";

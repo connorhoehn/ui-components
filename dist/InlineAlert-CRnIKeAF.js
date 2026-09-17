@@ -16,8 +16,9 @@ var r = {
 		warning: "bg-code-surface border-code-peach text-code-peach"
 	}
 };
-function a({ tone: a, palette: o = "surface", children: s, onDismiss: c, className: l }) {
+function a({ tone: a, palette: o = "surface", children: s, onDismiss: c, className: l, "data-testid": u }) {
 	return /* @__PURE__ */ n("div", {
+		"data-testid": u,
 		role: a === "error" || a === "warning" ? "alert" : "status",
 		"aria-live": a === "error" || a === "warning" ? "assertive" : "polite",
 		className: e("flex items-start gap-2 px-3 py-2 rounded-md border-l-[3px] text-sm", (i[o] ?? r)[a], l),

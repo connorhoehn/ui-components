@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.311.0] — 2026-09-17
+
+### Added — `./shared`
+
+- **`InlineAlert` forwards `data-testid` to the alert element itself.** An
+  alert is the element a test most wants to assert on — it carries both the
+  role and the message — and there was no way to address one. Callers had to
+  wrap it in a div and assert on the wrapper, which puts the testid on a
+  different element than the `role="alert"`. Declared the same way `Chip`
+  does it.
+
 ## [2.310.0] — 2026-09-17
 
 ### Fixed — `./social`

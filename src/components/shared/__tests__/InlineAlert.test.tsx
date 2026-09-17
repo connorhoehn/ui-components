@@ -25,4 +25,13 @@ describe('InlineAlert', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
     expect(onDismiss).toHaveBeenCalled();
   });
+
+  // The testid lands on the alert itself, not a wrapper, so a caller can
+  // assert the role and the message on one element.
+  it('forwards data-testid to the alert element', () => {
+    render(<InlineAlert tone="error" data-testid="save-error">Could not save</InlineAlert>);
+    const el = screen.getByTestId('save-error');
+    expect(el).toHaveAttribute('role', 'alert');
+    expect(el).toHaveTextContent('Could not save');
+  });
 });
