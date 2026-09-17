@@ -30,6 +30,7 @@ import { cn } from '../../../lib/cn';
 import { Input } from '../../forms/Input';
 import { FilterChip } from '../../shared/FilterChip';
 import { categoryFor, type NodeCategory } from '../nodes/categories';
+import { rankByRelevance } from './paletteRelevance';
 import type { NodeType } from '../../../types/pipeline';
 import { useIsNodeTypeExecutable } from '../services/PipelineEditorServicesContext';
 
@@ -40,6 +41,14 @@ import { useIsNodeTypeExecutable } from '../services/PipelineEditorServicesConte
 export interface NodePaletteProps {
   /** Types that already exist once and cannot be added again (e.g. Trigger). */
   disabledTypes?: NodeType[];
+  /**
+   * The kinds in the pipeline currently open. When given, the pinned top
+   * section becomes "Relevant here" — computed from THIS pipeline — instead of
+   * the global recently-used list, which is shared across every pipeline and so
+   * offered a document review pipeline the image nodes last touched somewhere
+   * else. Omit it and the recents behaviour is unchanged.
+   */
+  contextTypes?: readonly string[];
 }
 
 export interface PaletteItem {
@@ -254,7 +263,7 @@ function Chevron({ expanded }: { expanded: boolean }) {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
+export default function NodePalette({ disabledTypes = [], contextTypes }: NodePaletteProps) {
   const [query, setQuery] = useState('');
   const [activeCategories, setActiveCategories] = useState<Set<string>>(new Set());
   const [hoveredType, setHoveredType] = useState<NodeType | null>(null);
@@ -324,11 +333,34 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
     return m;
   }, []);
 
+  // Kinds this pipeline makes a case for. Empty when the pipeline says nothing
+  // (a bare trigger, say), and then the recents list is still better than an
+  // empty section.
+  // Declared above every memo that lists it: a dependency array is evaluated
+  // at render time, so a hook used by one must exist before it.
+  const isExecutable = useIsNodeTypeExecutable();
+
+  const relevantItems = useMemo<PaletteItem[]>(() => {
+    if (!contextTypes || contextTypes.length === 0) return [];
+    const catalog = [...allItemsByType.keys()] as string[];
+    // A kind with no executor is never "relevant": suggesting a step that
+    // cannot run is worse than suggesting nothing, because it looks like
+    // progress right up until the pipeline silently skips it.
+    const unavailable = catalog.filter((kind) => !isExecutable(kind as NodeType));
+    return rankByRelevance(contextTypes, catalog, { unavailable })
+      .map((r) => allItemsByType.get(r.kind as NodeType))
+      .filter(Boolean) as PaletteItem[];
+  }, [contextTypes, allItemsByType, isExecutable]);
+
   // Recently-used items resolved to full PaletteItem
   const recentItems = useMemo<PaletteItem[]>(
     () => recents.map((t) => allItemsByType.get(t)).filter(Boolean) as PaletteItem[],
     [recents, allItemsByType],
   );
+
+  // One pinned section, whichever has something to say.
+  const pinnedItems = relevantItems.length > 0 ? relevantItems : recentItems;
+  const pinnedLabel = relevantItems.length > 0 ? 'Relevant here' : 'Recently used';
 
   // Filtered categories
   const filteredCategories = useMemo<PaletteCategory[]>(() => {
@@ -348,7 +380,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
     const out: PaletteItem[] = [];
     // Recents are only shown when no search/filter is active
     if (!query && activeCategories.size === 0) {
-      for (const item of recentItems) {
+      for (const item of pinnedItems) {
         out.push(item);
         seen.add(item.type);
       }
@@ -362,7 +394,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
       }
     }
     return out;
-  }, [recentItems, filteredCategories, query, activeCategories]);
+  }, [pinnedItems, filteredCategories, query, activeCategories]);
 
   // Keep a stable ref so QuickInsertLayer can read it synchronously
   const visibleFlatRef = useRef(visibleFlat);
@@ -383,8 +415,6 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
     );
     e.dataTransfer.effectAllowed = 'move';
   };
-
-  const isExecutable = useIsNodeTypeExecutable();
 
   const renderItem = (item: PaletteItem, shortcutIdx: number | null) => {
     const isDisabled = disabledSet.has(item.type);
@@ -513,7 +543,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
     );
   };
 
-  const showRecents = recentItems.length > 0 && !query && activeCategories.size === 0;
+  const showPinned = pinnedItems.length > 0 && !query && activeCategories.size === 0;
   // Running shortcut counter across recents + categories
   let shortcutCounter = 0;
 
@@ -587,7 +617,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto py-1" data-testid="palette-scroll">
         {/* Recently used */}
-        {showRecents && (
+        {showPinned && (
           <div data-testid="palette-recents">
             <button
               type="button"
@@ -596,11 +626,11 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
               aria-expanded={!collapsed['__recents__']}
             >
               <Chevron expanded={!collapsed['__recents__']} />
-              Recently used
+              {pinnedLabel}
             </button>
             {!collapsed['__recents__'] && (
               <div>
-                {recentItems.map((item) => {
+                {pinnedItems.map((item) => {
                   const idx = shortcutCounter++;
                   return renderItem(item, idx);
                 })}
