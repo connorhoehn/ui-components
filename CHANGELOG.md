@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.312.0] — 2026-09-17
+
+### Changed — `./social`
+
+- **`MessageActionBar` is one tab stop, not eight.** Every control sat in the
+  sequential tab order, which made the bar reachable and the transcript
+  untraversable: measured on a seeded `#general`, 7 messages x 8 controls =
+  56 presses to reach the composer, and a hundred-message channel would be
+  eight hundred. It is a WAI-ARIA toolbar now — `role="toolbar"`, one control
+  in the tab order, arrow keys between them, Home/End to the ends, wrapping at
+  both edges. Up and down are left alone so the page still scrolls. Clicking
+  or focusing a control makes it the stop, so tabbing back in returns you
+  where you were. The tab stop survives controls disappearing (a message that
+  loses its Pin must not leave the index past the end, which would drop the
+  whole bar out of the tab order).
+
+  No API change: the props are identical and every control still clicks
+  through to the same handler.
+
 ## [2.311.0] — 2026-09-17
 
 ### Added — `./shared`
