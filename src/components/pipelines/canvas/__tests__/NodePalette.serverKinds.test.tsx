@@ -7,7 +7,7 @@
 // never use, while omitting everything they are made of, and relevance ranking
 // had nothing to rank.
 
-import { render, screen, cleanup, within } from '@testing-library/react';
+import { render, screen, cleanup, within, fireEvent } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import NodePalette from '../NodePalette';
 import {
@@ -39,9 +39,20 @@ describe('NodePalette server kinds', () => {
   beforeEach(() => window.localStorage.clear());
   afterEach(cleanup);
 
-  it('lists a server kind the library has never heard of', () => {
+  // These sections start SHUT. Expanded they put fifty-odd kinds on screen,
+  // most of them irrelevant to whatever pipeline is open — `captions:arm` on a
+  // document pipeline. The section header is the offer; opening it is the ask.
+  it('lists a server kind the library has never heard of, once its section is opened', () => {
     renderPalette();
+    expect(screen.queryByText('document:apply')).not.toBeInTheDocument();
+    fireEvent.click(within(screen.getByTestId('palette-category-Document')).getByRole('button'));
     expect(screen.getByText('document:apply')).toBeInTheDocument();
+  });
+
+  it('offers every namespace as a section without listing their contents', () => {
+    renderPalette();
+    expect(screen.getByTestId('palette-category-Transcript')).toBeInTheDocument();
+    expect(screen.queryByText('transcript:store')).not.toBeInTheDocument();
   });
 
   it('groups them into one section per namespace', () => {
@@ -54,6 +65,7 @@ describe('NodePalette server kinds', () => {
   it('keeps each namespace’s kinds in its own section', () => {
     renderPalette();
     const doc = screen.getByTestId('palette-category-Document');
+    fireEvent.click(within(doc).getByRole('button'));
     expect(within(doc).getByText('document:read')).toBeInTheDocument();
     expect(within(doc).queryByText('transcript:store')).not.toBeInTheDocument();
   });
@@ -90,9 +102,19 @@ describe('NodePalette server kinds', () => {
     expect(within(pinned).queryByText('transcript:store')).not.toBeInTheDocument();
   });
 
-  it('is searchable like any other item', () => {
+  // A hit hidden inside a shut section is the same as no hit at all, so a
+  // search opens whatever it matched.
+  it('is searchable like any other item, shut section notwithstanding', () => {
     renderPalette();
+    expect(screen.queryByText('media:classify')).not.toBeInTheDocument();
+    fireEvent.change(screen.getByPlaceholderText('Search nodes...'), { target: { value: 'classify' } });
     expect(screen.getByText('media:classify')).toBeInTheDocument();
+  });
+
+  // The same node offered in two places reads as two different things.
+  it('does not repeat a pinned item in the section below', () => {
+    renderPalette({ contextTypes: ['document:apply'] });
+    expect(screen.getAllByText('document:apply')).toHaveLength(1);
   });
 });
 

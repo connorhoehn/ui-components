@@ -81,6 +81,12 @@ interface PaletteCategory {
   /** Human-readable category name (also the chip label). */
   name: string;
   items: PaletteItem[];
+  /**
+   * A section of server-registered kinds rather than one of the six built-in
+   * categories. These are the long tail — eleven namespaces, fifty-odd kinds —
+   * and they start collapsed. See `defaultCollapsed`.
+   */
+  serverTail?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -214,13 +220,20 @@ export function recordRecentType(type: NodeType): void {
 
 const COLLAPSED_PREFIX = 'pipeline.palette.collapsed.';
 
-function readCollapsed(name: string): boolean {
-  if (typeof window === 'undefined') return false;
+/**
+ * Whether a section starts collapsed, honouring an explicit choice.
+ *
+ * `fallback` matters because the two kinds of section want opposite defaults
+ * and a stored `false` has to be distinguishable from nothing stored at all.
+ */
+function readCollapsed(name: string, fallback = false): boolean {
+  if (typeof window === 'undefined') return fallback;
   try {
     const raw = window.localStorage.getItem(COLLAPSED_PREFIX + name);
+    if (raw === null) return fallback;
     return raw === 'true';
   } catch {
-    return false;
+    return fallback;
   }
 }
 
@@ -328,6 +341,7 @@ export default function NodePalette({
         return {
           key: ns,
           name,
+          serverTail: true,
           items: kinds.sort().map((kind) => ({
             type: kind as NodeType,
             icon: '⚙',
@@ -416,9 +430,17 @@ export default function NodePalette({
     setActiveCategories(new Set());
   }, []);
 
-  const toggleCollapsed = useCallback((name: string) => {
+  /**
+   * Flip a section open or shut.
+   *
+   * Takes the section's CURRENT state rather than `prev[name]`, because a
+   * server-tail section the person has not ruled on is absent from `prev` and
+   * already collapsed: negating `undefined` gave `true`, so the first click on
+   * a shut section collapsed it again and it appeared not to open at all.
+   */
+  const toggleCollapsed = useCallback((name: string, current: boolean) => {
     setCollapsed((prev) => {
-      const next = { ...prev, [name]: !prev[name] };
+      const next = { ...prev, [name]: !current };
       writeCollapsed(name, next[name]);
       return next;
     });
@@ -470,17 +492,29 @@ export default function NodePalette({
 
   // Filtered categories
   const filteredCategories = useMemo<PaletteCategory[]>(() => {
+    // Anything already shown in the pinned section above is not shown again
+    // below. `document:apply` appeared twice on a document pipeline and
+    // `image:crop` twice on an image one — the same node offered in two places,
+    // which reads as two different things.
+    //
+    // Only while the pinned section is actually on screen: a search or a
+    // category filter hides it, and then the item must still be findable.
+    const pinnedVisible = !query && activeCategories.size === 0;
+    const pinned = new Set<NodeType>(pinnedVisible ? pinnedItems.map((i) => i.type) : []);
     return allCategories.map((cat) => {
       const catFiltered = activeCategories.size > 0 && !activeCategories.has(cat.name)
         ? []
-        : cat.items.filter((item) => matchesQuery(item, query));
+        : cat.items.filter((item) => !pinned.has(item.type) && matchesQuery(item, query));
       return { ...cat, items: catFiltered };
     }).filter((cat) => cat.items.length > 0);
-  }, [query, activeCategories, allCategories]);
+  }, [query, activeCategories, allCategories, pinnedItems]);
 
   // Flat visible ordered list (recents first, then categories) used to compute
   // 1-9 keyboard shortcut indices. Re-exported as a mutable ref so
   // QuickInsertLayer, which also reads PALETTE_ITEMS, stays consistent.
+  /** A search or category filter is narrowing the list. */
+  const searching = query.length > 0 || activeCategories.size > 0;
+
   const visibleFlat = useMemo<PaletteItem[]>(() => {
     const seen = new Set<NodeType>();
     const out: PaletteItem[] = [];
@@ -492,6 +526,11 @@ export default function NodePalette({
       }
     }
     for (const cat of filteredCategories) {
+      // A collapsed section is not on screen, so its items must not consume
+      // shortcut numbers. The render loop counts only what it draws; this list
+      // is what QuickInsertLayer reads, and the two have to agree or pressing
+      // "4" inserts something other than the node numbered 4.
+      if (!searching && (collapsed[cat.name] ?? !!cat.serverTail)) continue;
       for (const item of cat.items) {
         if (!seen.has(item.type)) {
           out.push(item);
@@ -500,7 +539,7 @@ export default function NodePalette({
       }
     }
     return out;
-  }, [pinnedItems, filteredCategories, query, activeCategories]);
+  }, [pinnedItems, filteredCategories, query, activeCategories, collapsed, searching]);
 
   // Keep a stable ref so QuickInsertLayer can read it synchronously
   const visibleFlatRef = useRef(visibleFlat);
@@ -727,7 +766,7 @@ export default function NodePalette({
           <div data-testid="palette-recents">
             <button
               type="button"
-              onClick={() => toggleCollapsed('__recents__')}
+              onClick={() => toggleCollapsed('__recents__', !!collapsed['__recents__'])}
               className="w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]"
               aria-expanded={!collapsed['__recents__']}
             >
@@ -763,12 +802,21 @@ export default function NodePalette({
           </div>
         ) : (
           filteredCategories.map((cat) => {
-            const isCollapsed = !!collapsed[cat.name];
+            // A section the person has not ruled on: the six built-in
+            // categories stay open, the eleven server namespaces start shut.
+            // Expanded, they put fifty-odd kinds on screen — `captions:arm`,
+            // `recording:await-compose` — most of which have nothing to do
+            // with the pipeline in front of you.
+            //
+            // A search or a filter overrides all of it: whatever matched has
+            // been asked for by name, and a hit hidden inside a shut section is
+            // the same as no hit at all.
+            const isCollapsed = searching ? false : (collapsed[cat.name] ?? !!cat.serverTail);
             return (
               <div key={cat.name} data-testid={`palette-category-${cat.name}`}>
                 <button
                   type="button"
-                  onClick={() => toggleCollapsed(cat.name)}
+                  onClick={() => toggleCollapsed(cat.name, isCollapsed)}
                   className="w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]"
                   aria-expanded={!isCollapsed}
                 >
