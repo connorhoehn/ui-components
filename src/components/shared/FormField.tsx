@@ -96,43 +96,67 @@ export default function FormField({
     enumerable: false,
   });
 
+  // `inline` is, in every place it is used, a switch with something to explain:
+  // the label says what the setting is and the hint says what turning it on
+  // costs. Laid out as one flex row that was label → control → hint, which put
+  // the sentence on the far side of the switch from the words it explains —
+  // "Record my DM calls  [switch]  Both people must turn this on" reads as
+  // three unrelated fragments. The label and its hint are one block now, and
+  // the control goes to the end of the row, which is where a settings toggle
+  // lives everywhere else.
+  const label_ = (
+    <label
+      id={labelId}
+      htmlFor={id}
+      className={cn(
+        'text-[12px] font-medium',
+        error ? 'text-danger-fg' : 'text-text-primary',
+        labelClassName,
+      )}
+    >
+      {label}
+      {required && (
+        <span aria-hidden="true" className="ml-0.5 text-danger-fg">*</span>
+      )}
+    </label>
+  );
+  const hint_ = (hint || error) ? (
+    <div
+      id={describedById}
+      className={cn('text-[11px]', error ? 'text-danger-fg' : 'text-neutral')}
+    >
+      {error ?? hint}
+    </div>
+  ) : null;
+
+  if (layout === 'inline') {
+    return (
+      <div
+        data-testid={testId}
+        className={cn('flex items-center justify-between gap-4', className)}
+        style={style}
+      >
+        {/* min-w-0 so a long hint wraps inside the block instead of pushing the
+            control off the end of the row. */}
+        <span className="flex min-w-0 flex-col gap-0.5">
+          {label_}
+          {hint_}
+        </span>
+        <span className="shrink-0">{children(wiring)}</span>
+      </div>
+    );
+  }
+
   return (
     <div
       data-testid={testId}
-      className={cn(
-        layout === 'inline' ? 'flex items-center gap-3' : 'flex flex-col gap-1',
-        className,
-      )}
+      className={cn('flex flex-col gap-1', className)}
       style={style}
     >
-      <label
-        id={labelId}
-        htmlFor={id}
-        className={cn(
-          'text-[12px] font-medium',
-          layout === 'inline' ? 'min-w-[140px]' : '',
-          error ? 'text-danger-fg' : 'text-text-primary',
-          labelClassName,
-        )}
-      >
-        {label}
-        {required && (
-          <span aria-hidden="true" className="ml-0.5 text-danger-fg">*</span>
-        )}
-      </label>
-      <div className={cn(layout === 'inline' ? 'flex-1' : '')}>
+      {label_}
+      <div>
         {children(wiring)}
-        {(hint || error) && (
-          <div
-            id={describedById}
-            className={cn(
-              'mt-1 text-[11px]',
-              error ? 'text-danger-fg' : 'text-neutral',
-            )}
-          >
-            {error ?? hint}
-          </div>
-        )}
+        {hint_ && <div className="mt-1">{hint_}</div>}
       </div>
     </div>
   );

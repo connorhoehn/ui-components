@@ -65,13 +65,24 @@ describe('FormField', () => {
     expect(screen.getByRole('switch')).toHaveAccessibleName('Enabled');
   });
 
-  it('renders inline layout with min-width label', () => {
+  it('puts an inline hint with its label, not on the far side of the control', () => {
+    // `inline` is a settings toggle row in every place it is used. It used to
+    // lay out label → control → hint, which left the sentence explaining the
+    // setting on the opposite side of the switch from the words it explains.
     render(
-      <FormField label="Mode" layout="inline">
-        {(p) => <input {...p} type="text" defaultValue="" />}
+      <FormField label="Record my DM calls" hint="Both people must turn this on." layout="inline">
+        {(p) => <input {...p} type="checkbox" />}
       </FormField>,
     );
-    expect(screen.getByText('Mode').className).toMatch(/min-w-\[140px\]/);
+    const label = screen.getByText('Record my DM calls');
+    const hint = screen.getByText('Both people must turn this on.');
+    const control = screen.getByRole('checkbox');
+    // The hint shares a parent with the label; the control is elsewhere.
+    expect(label.parentElement).toBe(hint.parentElement);
+    expect(control.parentElement).not.toBe(hint.parentElement);
+    // And the control is last, so it sits at the end of the row.
+    const row = label.closest('[class*="justify-between"]')!;
+    expect(row.lastElementChild!.contains(control)).toBe(true);
   });
 
   it('forwards data-testid to the wrapper', () => {

@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.307.0] — 2026-09-17
+
+### Changed — `./shared`
+
+- **`FormField layout="inline"` is a settings row, not a flex line.** It laid
+  out label → control → hint, which put the sentence explaining a setting on
+  the far side of the switch from the words it explains: "Record my DM calls
+  [switch] Both people must turn this on" reads as three unrelated fragments.
+  The label and its hint are now one block and the control goes to the end of
+  the row, which is where a settings toggle sits everywhere else. Every caller
+  of this layout is a switch with something to explain, so none needed to
+  change.
+- A long hint wraps inside its block instead of pushing the control off the end.
+
+---
+
 ## [2.306.0] — 2026-09-17
 
 ### Changed — `./social`
