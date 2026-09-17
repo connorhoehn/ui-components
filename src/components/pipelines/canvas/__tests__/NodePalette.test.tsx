@@ -46,6 +46,22 @@ function getScrollBody() {
   return screen.getByTestId('palette-scroll');
 }
 
+/**
+ * Open every section that starts shut.
+ *
+ * Domain sections — Image, and the server namespaces — are collapsed unless the
+ * pipeline is in that domain, so a test about WHERE an item sits has to open
+ * its section first. A test about what is on screen by default must not.
+ */
+function openAllSections() {
+  for (const section of Array.from(
+    getScrollBody().querySelectorAll('[data-testid^="palette-category-"]'),
+  )) {
+    const header = section.querySelector('button');
+    if (header && header.getAttribute('aria-expanded') === 'false') fireEvent.click(header);
+  }
+}
+
 function getAllVisibleNodeTypes(): string[] {
   return Array.from(
     getScrollBody().querySelectorAll('[data-node-type]'),
@@ -72,8 +88,10 @@ afterEach(() => {
 describe('search', () => {
   it('shows all items when query is empty', () => {
     renderPalette();
+    // Domain sections (Image) start shut with no pipeline context, so the
+    // default view is the domain-agnostic nodes only.
+    openAllSections();
     const types = getAllVisibleNodeTypes();
-    // All 27 items should be present
     expect(types.length).toBeGreaterThanOrEqual(27);
   });
 
@@ -122,8 +140,12 @@ describe('category chip filter', () => {
     const aiChip = within(chips).getByText('AI');
     fireEvent.click(aiChip);
     const types = getAllVisibleNodeTypes();
-    expect(types.some((t) => t.includes('vision'))).toBe(true);
     expect(types).toContain('llm');
+    expect(types).toContain('agent');
+    // The vision nodes moved to the Image chip — they are image work, not a
+    // general AI step, and grouping them there is what lets a non-image
+    // pipeline put them away.
+    expect(types.some((t) => t.includes('vision'))).toBe(false);
     expect(types).not.toContain('trigger');
     expect(types).not.toContain('condition');
   });
@@ -145,6 +167,7 @@ describe('category chip filter', () => {
     const sourcesChip = within(chips).getByText('Sources');
     fireEvent.click(sourcesChip);
     fireEvent.click(sourcesChip); // toggle off
+    openAllSections();
     const types = getAllVisibleNodeTypes();
     expect(types.length).toBeGreaterThanOrEqual(27);
   });
@@ -254,7 +277,8 @@ describe('clear filters', () => {
     expect(screen.queryByTestId('palette-empty')).toBeNull();
     // Search input cleared
     expect(getSearch().value).toBe('');
-    // All items back
+    // All items back (domain sections return to their shut default)
+    openAllSections();
     expect(getAllVisibleNodeTypes().length).toBeGreaterThanOrEqual(27);
   });
 
@@ -265,6 +289,7 @@ describe('clear filters', () => {
     typeSearch('zzznomatch');
     fireEvent.click(screen.getByTestId('palette-clear-filters'));
     // All items visible (chips reset)
+    openAllSections();
     expect(getAllVisibleNodeTypes().length).toBeGreaterThanOrEqual(27);
   });
 });
@@ -350,6 +375,7 @@ describe('drag handoff', () => {
 describe('category-grouped sections', () => {
   const expectInCategory = (nodeType: string, categoryName: string) => {
     renderPalette();
+    openAllSections();
     const section = screen.getByTestId(`palette-category-${categoryName}`);
     const types = Array.from(section.querySelectorAll('[data-node-type]')).map(
       (el) => el.getAttribute('data-node-type')!,
@@ -358,25 +384,32 @@ describe('category-grouped sections', () => {
   };
 
   it('trigger is in Sources', () => expectInCategory('trigger', 'Sources'));
-  it('image-source is in Sources', () => expectInCategory('image-source', 'Sources'));
+  it('image-source is in Image', () => expectInCategory('image-source', 'Image'));
   it('knowledge-base is in Sources', () => expectInCategory('knowledge-base', 'Sources'));
   it('transform is in Transform', () => expectInCategory('transform', 'Transform'));
   it('memory is in Transform', () => expectInCategory('memory', 'Transform'));
-  it('image:crop is in Transform', () => expectInCategory('image:crop', 'Transform'));
-  it('image:resize is in Transform', () => expectInCategory('image:resize', 'Transform'));
+  it('image:crop is in Image', () => expectInCategory('image:crop', 'Image'));
+  it('image:resize is in Image', () => expectInCategory('image:resize', 'Image'));
   it('llm is in AI', () => expectInCategory('llm', 'AI'));
   it('agent is in AI', () => expectInCategory('agent', 'AI'));
-  it('image:generate is in AI', () => expectInCategory('image:generate', 'AI'));
-  it('image:vision-analyze is in AI', () => expectInCategory('image:vision-analyze', 'AI'));
+  it('image:generate is in Image', () => expectInCategory('image:generate', 'Image'));
+  it('image:vision-analyze is in Image', () => expectInCategory('image:vision-analyze', 'Image'));
   it('condition is in Control', () => expectInCategory('condition', 'Control'));
   it('scatter is in Control', () => expectInCategory('scatter', 'Control'));
   it('guardrail is in Control', () => expectInCategory('guardrail', 'Control'));
   it('action is in Sinks', () => expectInCategory('action', 'Sinks'));
-  it('image:save is in Sinks', () => expectInCategory('image:save', 'Sinks'));
+  it('image:save is in Image', () => expectInCategory('image:save', 'Image'));
   it('approval is in Human', () => expectInCategory('approval', 'Human'));
 
-  it('every palette item sits in the section matching categoryFor(type)', () => {
+  // Domain-agnostic items still sit in the section their category names. An
+  // item that belongs to a domain — every `image:*` node — is grouped by domain
+  // instead, so that a pipeline which is not in that domain can put the whole
+  // family away in one go. Its ACCENT still comes from categoryFor, which is
+  // what keeps the palette honest about what the canvas will draw; that is
+  // asserted separately below.
+  it('every domain-agnostic item sits in the section matching categoryFor(type)', () => {
     renderPalette();
+    openAllSections();
     const LABELS: Record<string, string> = {
       source: 'Sources',
       transform: 'Transform',
@@ -389,6 +422,7 @@ describe('category-grouped sections', () => {
     expect(items.length).toBeGreaterThanOrEqual(27);
     for (const el of Array.from(items)) {
       const type = el.getAttribute('data-node-type')!;
+      if (type === 'image-source' || type.includes(':')) continue; // grouped by domain
       const cat = categoryFor(type);
       expect(cat, `no category for palette item "${type}"`).toBeDefined();
       const section = el.closest(`[data-testid="palette-category-${LABELS[cat!]}"]`);
@@ -396,12 +430,34 @@ describe('category-grouped sections', () => {
     }
   });
 
-  it('renders all six category section headers in order', () => {
+  it('puts every image node in the Image section', () => {
+    renderPalette();
+    openAllSections();
+    const image = screen.getByTestId('palette-category-Image');
+    const types = Array.from(image.querySelectorAll('[data-node-type]')).map(
+      (el) => el.getAttribute('data-node-type')!,
+    );
+    expect(types.length).toBeGreaterThanOrEqual(15);
+    expect(types.every((t) => t === 'image-source' || t.startsWith('image:'))).toBe(true);
+  });
+
+  it('keeps the image family out of the way on a pipeline that is not about images', () => {
+    renderPalette({ contextTypes: ['trigger', 'document:apply'] });
+    expect(getAllVisibleNodeTypes().some((t) => t.startsWith('image:'))).toBe(false);
+  });
+
+  it('opens the image family on a pipeline that is about images', () => {
+    renderPalette({ contextTypes: ['image-source', 'image:crop'] });
+    expect(getAllVisibleNodeTypes().some((t) => t.startsWith('image:'))).toBe(true);
+  });
+
+  it('renders the six category section headers first, in order', () => {
     renderPalette();
     const sections = Array.from(
       getScrollBody().querySelectorAll('[data-testid^="palette-category-"]'),
     ).map((el) => el.getAttribute('data-testid'));
-    expect(sections).toEqual([
+    // Domain sections follow the six; they are asserted separately.
+    expect(sections.slice(0, 6)).toEqual([
       'palette-category-Sources',
       'palette-category-Transform',
       'palette-category-AI',
@@ -419,8 +475,11 @@ describe('category-grouped sections', () => {
     }
   });
 
-  it('items carry a category-colored accent dot', () => {
+  // The point of the invariant: an item's colour matches what the canvas draws
+  // for it, whichever section the palette chose to put it in.
+  it('items carry a category-colored accent dot, Image section included', () => {
     renderPalette();
+    openAllSections();
     expect(screen.getByTestId('palette-accent-trigger').className).toContain('bg-cat-source');
     expect(screen.getByTestId('palette-accent-llm').className).toContain('bg-cat-ai');
     expect(screen.getByTestId('palette-accent-image:resize').className).toContain('bg-cat-transform');

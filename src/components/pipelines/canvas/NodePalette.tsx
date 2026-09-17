@@ -87,6 +87,12 @@ interface PaletteCategory {
    * and they start collapsed. See `defaultCollapsed`.
    */
   serverTail?: boolean;
+  /**
+   * The problem domain this section belongs to — `image`, `transcript`,
+   * `document`. A domain section is open only when the pipeline is actually in
+   * that domain; see `domainsInUse`.
+   */
+  domain?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -158,6 +164,36 @@ const CAT_ACCENT: Record<NodeCategory, string> = {
   sink:      'bg-cat-sink',
   human:     'bg-cat-human',
 };
+
+/** Node types that are canonical, not namespaced. Used to rule out `llm:`. */
+const BUILT_IN_TYPE_NAMES: ReadonlySet<string> = new Set(
+  ITEM_DEFS.map((d) => d.type as string),
+);
+
+/**
+ * The problem domain a node type belongs to, or null for one that belongs to
+ * all of them.
+ *
+ * An `llm`, a `condition` and a `transform` are useful in any pipeline. An
+ * `image:sharpen` is useful in an image pipeline and nowhere else — and there
+ * are eighteen image nodes, declared flat and scattered through AI, Transform
+ * and Sinks, so a document pipeline offered all eighteen among its options.
+ * Grouping them by domain is what lets the palette put them away.
+ *
+ * A namespace that IS a built-in type is not a domain: `llm:judge` is a kind of
+ * LLM step and belongs beside LLM under AI, not in a lone "Llm" section sitting
+ * next to it. Same rule the server-kind sections already apply.
+ *
+ * Derived from the type string rather than listed, so the next domain — data
+ * pipelines, catalog management — arrives already grouped.
+ */
+function domainOf(type: string): string | null {
+  if (type === 'image-source') return 'image';
+  const colon = type.indexOf(':');
+  if (colon <= 0) return null;
+  const ns = type.slice(0, colon);
+  return BUILT_IN_TYPE_NAMES.has(ns) ? null : ns;
+}
 
 const CATEGORIES: PaletteCategory[] = CATEGORY_SECTIONS.map(({ key, name }) => ({
   key,
@@ -384,16 +420,69 @@ export default function NodePalette({
     return out;
   }, [serverKinds]);
 
-  const allCategories = useMemo<PaletteCategory[]>(
-    () =>
-      [
-        ...CATEGORIES.map((cat) => {
-          const extra = foldedIntoBuiltIn.get(cat.key as NodeCategory);
-          return extra ? { ...cat, items: [...cat.items, ...extra] } : cat;
-        }),
-        ...serverCategories,
-      ],
-    [serverCategories, foldedIntoBuiltIn],
+  const allCategories = useMemo<PaletteCategory[]>(() => {
+    // Library items that belong to a domain are lifted out of the built-in
+    // categories into one section per domain. Eighteen image nodes spread
+    // across AI, Transform and Sinks is why a document pipeline offered
+    // Sharpen and Watermark: nothing had them grouped, so nothing could put
+    // them away together. Each item keeps its own accent, so an item's colour
+    // still matches what the canvas draws for it.
+    const domainItems = new Map<string, PaletteItem[]>();
+    const builtIns = CATEGORIES.map((cat) => {
+      const extra = foldedIntoBuiltIn.get(cat.key as NodeCategory);
+      const items = extra ? [...cat.items, ...extra] : cat.items;
+      const kept: PaletteItem[] = [];
+      for (const item of items) {
+        const domain = domainOf(item.type as string);
+        if (!domain) {
+          kept.push(item);
+          continue;
+        }
+        const list = domainItems.get(domain);
+        if (list) list.push(item);
+        else domainItems.set(domain, [item]);
+      }
+      return { ...cat, items: kept };
+    }).filter((cat) => cat.items.length > 0);
+
+    const domainCategories: PaletteCategory[] = [...domainItems.entries()]
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(([domain, items]) => ({
+        key: domain,
+        name: domain.charAt(0).toUpperCase() + domain.slice(1),
+        domain,
+        items,
+      }));
+
+    return [...builtIns, ...domainCategories, ...serverCategories];
+  }, [serverCategories, foldedIntoBuiltIn]);
+
+  /**
+   * The domains this pipeline actually works in, from the kinds on the canvas.
+   *
+   * A section for a domain the pipeline uses starts open — you are editing an
+   * image pipeline, the image nodes are the ones you want. Every other domain
+   * starts shut. With no pipeline context at all nothing is known, so the
+   * domains stay shut rather than all opening at once; they are one labelled
+   * click away, and a search opens whichever one it matched.
+   */
+  const domainsInUse = useMemo<Set<string>>(() => {
+    const out = new Set<string>();
+    for (const type of contextTypes ?? []) {
+      const domain = domainOf(type as string);
+      if (domain) out.add(domain);
+    }
+    return out;
+  }, [contextTypes]);
+
+  /** Whether a section starts shut for someone who has not ruled on it. */
+  const defaultCollapsed = useCallback(
+    (cat: PaletteCategory): boolean => {
+      const domain = cat.domain ?? (cat.serverTail ? (cat.key as string) : null);
+      if (!domain) return false; // a built-in category: applies to anything
+      return !domainsInUse.has(domain);
+    },
+    [domainsInUse],
   );
 
   /** Filter-chip labels, including a chip per server namespace. */
@@ -530,7 +619,7 @@ export default function NodePalette({
       // shortcut numbers. The render loop counts only what it draws; this list
       // is what QuickInsertLayer reads, and the two have to agree or pressing
       // "4" inserts something other than the node numbered 4.
-      if (!searching && (collapsed[cat.name] ?? !!cat.serverTail)) continue;
+      if (!searching && (collapsed[cat.name] ?? defaultCollapsed(cat))) continue;
       for (const item of cat.items) {
         if (!seen.has(item.type)) {
           out.push(item);
@@ -539,7 +628,7 @@ export default function NodePalette({
       }
     }
     return out;
-  }, [pinnedItems, filteredCategories, query, activeCategories, collapsed, searching]);
+  }, [pinnedItems, filteredCategories, query, activeCategories, collapsed, searching, defaultCollapsed]);
 
   // Keep a stable ref so QuickInsertLayer can read it synchronously
   const visibleFlatRef = useRef(visibleFlat);
@@ -811,7 +900,7 @@ export default function NodePalette({
             // A search or a filter overrides all of it: whatever matched has
             // been asked for by name, and a hit hidden inside a shut section is
             // the same as no hit at all.
-            const isCollapsed = searching ? false : (collapsed[cat.name] ?? !!cat.serverTail);
+            const isCollapsed = searching ? false : (collapsed[cat.name] ?? defaultCollapsed(cat));
             return (
               <div key={cat.name} data-testid={`palette-category-${cat.name}`}>
                 <button
