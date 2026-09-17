@@ -234,5 +234,7 @@ export { TeamChannelTree } from './TeamChannelTree';
 export type { TeamChannelTreeProps, TeamTreeItem, TeamChannelItem } from './TeamChannelTree';
 export { CreateChannelDialog } from './CreateChannelDialog';
 export type { CreateChannelDialogProps, CreateChannelDialogInput, ChannelPrivacy } from './CreateChannelDialog';
+export { NewChatDialog } from './NewChatDialog';
+export type { NewChatDialogProps } from './NewChatDialog';
 export { CreateTeamDialog } from './CreateTeamDialog';
 export type { CreateTeamDialogProps, CreateTeamDialogInput, TeamVisibility } from './CreateTeamDialog';

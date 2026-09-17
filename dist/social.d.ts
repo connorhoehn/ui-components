@@ -2102,6 +2102,42 @@ export declare interface InlineMessageEditorProps {
 
 declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
 
+/** A person who can be invited. Thin on purpose so callers can map a
+ *  presence roster straight in without dragging in PresenceUser. */
+declare interface InviteCandidate {
+    userId: string;
+    /** Pre-resolved display name — callers MUST pass a human name, never
+     *  a raw id/UUID (mirrors ResumeCallParticipant's contract). */
+    name: string;
+    avatarUrl?: string;
+    /** True when this person is already on the call. Rendered as a
+     *  non-selectable "In call" row so the list still reads as the full
+     *  roster rather than mysteriously omitting people. */
+    alreadyInCall?: boolean;
+    /** True when they have been rung but have not answered yet. */
+    pending?: boolean;
+    /** Non-selectable for a reason that is NOT "already on this call" —
+     *  e.g. an offline person a ring would never reach. Renders the same
+     *  dimmed, non-clickable row without claiming "In call". Pair it with
+     *  `statusLabel` so the row says WHY. */
+    disabled?: boolean;
+    /** Free-text right-hand annotation, e.g. "On a call" / "Offline".
+     *  Purely informational — it does NOT affect selectability, so a
+     *  caller can mark someone busy while still allowing a knock/join.
+     *  `alreadyInCall` and `pending` keep their own fixed labels and win
+     *  over this one. */
+    statusLabel?: string;
+    /** Presence: true → online dot, false → offline dot, undefined → no
+     *  dot. Also drives which section a row lands in under `grouped`. */
+    online?: boolean;
+    /** Shown on offline rows when present, e.g. "Last seen 2h ago".
+     *  Pre-formatted by the caller — this component never touches
+     *  Date.now(). */
+    lastSeenLabel?: string;
+    /** Avatar brand color override (falls back to the name hash). */
+    color?: string;
+}
+
 /** True when `command` is offered in `ctx`. */
 export declare function isChatCommandInScope(command: Pick<ChatCommand, 'scope'>, ctx: ChatCommandScopeContext): boolean;
 
@@ -2349,6 +2385,23 @@ export declare interface MessageRowProps {
     /** ISO: when the text was last changed. Renders "(edited)" after the time. */
     editedAt?: string;
     className?: string;
+}
+
+export declare function NewChatDialog({ open, candidates, anchor, placement, busy, error, onStart, onClose, 'data-testid': testId, }: NewChatDialogProps): JSX.Element | null;
+
+export declare interface NewChatDialogProps {
+    open: boolean;
+    /** Everyone who can be messaged. Already-selectable; presence drives grouping. */
+    candidates: InviteCandidate[];
+    /** The control that opened it. Without one the shell centres — the fallback, not the intent. */
+    anchor?: RefObject<HTMLElement | null> | null;
+    placement?: InlinePopoverPlacement;
+    busy?: boolean;
+    /** A refusal from the server, shown in place without moving the footer. */
+    error?: string | null;
+    onStart: (userIds: string[]) => void | Promise<void>;
+    onClose: () => void;
+    'data-testid'?: string;
 }
 
 export declare function NewConversationPanel({ people, onStartDm, onCreateChannel, onCancel, peopleError, busy, className, 'data-testid': testId, }: NewConversationPanelProps): JSX.Element;
@@ -3080,9 +3133,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3090,9 +3143,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3126,9 +3179,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3136,9 +3189,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

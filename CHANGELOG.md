@@ -6,6 +6,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.299.0] — 2026-09-16
+
+### Added — `./social`
+
+- **`NewChatDialog`** — "New chat" as a popover at the + that asked for it.
+  It was a centred modal over a dimmed page while "Create a channel", one
+  section away in the same rail, was already anchored and compact: two adjacent
+  acts that felt like they belonged to different applications. Starting a chat
+  is the smaller of the two and has no business dimming the room. The people
+  list is the same `InviteCandidateList` the call invite uses, through its
+  render-prop seam — rows in the popover body, its own confirm in the shell's
+  footer, so the count stays on the button.
+
+### Changed — `./shared`, `./hangout`
+
+- **`PopoverForm` takes a `submitSlot`** — a confirm control to render instead
+  of the shell's own button, for a form whose body already owns the decision. A
+  people picker knows how many are selected; the shell cannot learn that
+  without the caller lifting selection out of the component that manages it.
+- **`InviteCandidateList`'s confirm derives its testid** from the list's own
+  when the host supplies one, so a "New chat" popover stops emitting a control
+  named after calling. Unchanged (`invite-to-call-confirm`) when it does not.
+
+### Fixed — `./social`
+
+- **A pinned team or channel wears its pin next to its name.** The pin sat
+  after a `flex-1` label, so the label ate the free width and pushed the pin to
+  the far end of the row — and since the + and ⋯ out there stay hidden until
+  hover, at rest it read as a stray glyph floating in whitespace rather than a
+  mark on the name. Name and pin now travel together; mention dots and unread
+  counts stay at the row's end, where a count belongs.
+
+---
+
 ## [2.298.0] — 2026-09-16
 
 ### Fixed — `./social`

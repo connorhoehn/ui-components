@@ -34,7 +34,18 @@ export interface PopoverFormProps {
   subtitle?: string;
   /** A small mark to the left of the title: a team avatar, a glyph. */
   icon?: ReactNode;
-  submitLabel: string;
+  /** Ignored when `submitSlot` is given. */
+  submitLabel?: string;
+  /**
+   * A confirm control to render INSTEAD of the shell's own submit button.
+   *
+   * For the forms whose body already owns the decision — a people picker knows
+   * how many are selected and says so ("Start chat with 2"), and the shell has
+   * no way to learn that without the caller lifting the selection out of the
+   * component that manages it. Cancel and the chrome stay; only the confirm is
+   * the caller's. `submitLabel` is ignored when this is given.
+   */
+  submitSlot?: ReactNode;
   /** Overrides the submit button's testid, for hosts whose suites name it. */
   submitTestId?: string;
   submitDisabled?: boolean;
@@ -57,6 +68,7 @@ export function PopoverForm({
   subtitle,
   icon,
   submitLabel,
+  submitSlot,
   submitTestId,
   submitDisabled = false,
   busy = false,
@@ -109,9 +121,11 @@ export function PopoverForm({
         <Button type="button" variant="ghost" size="sm" onClick={onClose} disabled={busy} data-testid={`${testId}-cancel`}>
           Cancel
         </Button>
-        <Button type="submit" variant="primary" size="sm" disabled={submitDisabled || busy} data-testid={submitTestId ?? `${testId}-submit`}>
-          {busy ? 'Working…' : submitLabel}
-        </Button>
+        {submitSlot ?? (
+          <Button type="submit" variant="primary" size="sm" disabled={submitDisabled || busy} data-testid={submitTestId ?? `${testId}-submit`}>
+            {busy ? 'Working…' : submitLabel}
+          </Button>
+        )}
       </div>
     </form>
   );

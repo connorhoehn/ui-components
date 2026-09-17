@@ -381,7 +381,11 @@ export function InviteCandidateList({
             }}
             disabled={loading || count === 0}
             data-autofocus
-            data-testid="invite-to-call-confirm"
+            // Derived from the list's own testid where the host gave one, so a
+            // "New chat" popover does not emit a control named after calling.
+            // The bare fallback is the name every existing suite already
+            // reaches for.
+            data-testid={testId ? `${testId}-confirm` : 'invite-to-call-confirm'}
         >
             {loading
                 ? confirmLoadingLabel

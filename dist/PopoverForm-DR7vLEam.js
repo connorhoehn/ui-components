@@ -160,20 +160,20 @@ var y = {
 	md: "w-[320px]",
 	lg: "w-[380px]"
 };
-function b({ open: n, anchor: c, placement: l = "bottom-start", title: u, subtitle: d, icon: f, submitLabel: p, submitTestId: m, submitDisabled: h = !1, busy: g = !1, error: _ = null, onSubmit: v, onClose: b, width: x = "md", children: S, "data-testid": C = "popover-form" }) {
-	let w = a(null), T = a(null);
+function b({ open: n, anchor: c, placement: l = "bottom-start", title: u, subtitle: d, icon: f, submitLabel: p, submitSlot: m, submitTestId: h, submitDisabled: g = !1, busy: _ = !1, error: v = null, onSubmit: b, onClose: x, width: S = "md", children: C, "data-testid": w = "popover-form" }) {
+	let T = a(null), E = a(null);
 	if (i(() => {
 		if (!n) return;
 		let e = window.setTimeout(() => {
-			T.current?.querySelector("input, textarea, select")?.focus();
+			E.current?.querySelector("input, textarea, select")?.focus();
 		}, 0);
 		return () => window.clearTimeout(e);
 	}, [n]), !n) return null;
-	let E = /* @__PURE__ */ s("form", {
-		className: e("flex flex-col", y[x]),
-		"data-testid": C,
+	let D = /* @__PURE__ */ s("form", {
+		className: e("flex flex-col", y[S]),
+		"data-testid": w,
 		onSubmit: (e) => {
-			e.preventDefault(), !h && !g && v();
+			e.preventDefault(), !g && !_ && b();
 		},
 		children: [
 			/* @__PURE__ */ s("div", {
@@ -186,7 +186,7 @@ function b({ open: n, anchor: c, placement: l = "bottom-start", title: u, subtit
 					className: "flex min-w-0 flex-col",
 					children: [/* @__PURE__ */ o("span", {
 						className: "truncate text-[13px] font-semibold leading-tight text-text-primary",
-						"data-testid": `${C}-title`,
+						"data-testid": `${w}-title`,
 						children: u
 					}), d && /* @__PURE__ */ o("span", {
 						className: "truncate text-[11px] leading-tight text-text-tertiary",
@@ -195,18 +195,18 @@ function b({ open: n, anchor: c, placement: l = "bottom-start", title: u, subtit
 				})]
 			}),
 			/* @__PURE__ */ o("div", {
-				ref: T,
+				ref: E,
 				className: "flex flex-col gap-2.5 px-3 py-2.5",
-				children: S
+				children: C
 			}),
 			/* @__PURE__ */ o("div", {
-				className: e("min-h-[1.125rem] px-3", _ && "pb-1"),
+				className: e("min-h-[1.125rem] px-3", v && "pb-1"),
 				"aria-live": "polite",
-				children: _ && /* @__PURE__ */ o("span", {
+				children: v && /* @__PURE__ */ o("span", {
 					className: "text-[11px] leading-tight text-danger-fg",
 					role: "alert",
-					"data-testid": `${C}-error`,
-					children: _
+					"data-testid": `${w}-error`,
+					children: v
 				})
 			}),
 			/* @__PURE__ */ s("div", {
@@ -215,38 +215,38 @@ function b({ open: n, anchor: c, placement: l = "bottom-start", title: u, subtit
 					type: "button",
 					variant: "ghost",
 					size: "sm",
-					onClick: b,
-					disabled: g,
-					"data-testid": `${C}-cancel`,
+					onClick: x,
+					disabled: _,
+					"data-testid": `${w}-cancel`,
 					children: "Cancel"
-				}), /* @__PURE__ */ o(t, {
+				}), m ?? /* @__PURE__ */ o(t, {
 					type: "submit",
 					variant: "primary",
 					size: "sm",
-					disabled: h || g,
-					"data-testid": m ?? `${C}-submit`,
-					children: g ? "Working…" : p
+					disabled: g || _,
+					"data-testid": h ?? `${w}-submit`,
+					children: _ ? "Working…" : p
 				})]
 			})
 		]
 	});
 	return c ? /* @__PURE__ */ o(r, {
-		trigger: c ?? w,
+		trigger: c ?? T,
 		open: n,
-		onClose: b,
+		onClose: x,
 		placement: l,
 		offset: 6,
 		className: "p-0",
-		"data-testid": `${C}-popover`,
-		children: E
+		"data-testid": `${w}-popover`,
+		children: D
 	}) : /* @__PURE__ */ o("div", {
 		className: "fixed inset-0 z-50 flex items-start justify-center bg-black/20 pt-24",
-		onMouseDown: b,
-		"data-testid": `${C}-backdrop`,
+		onMouseDown: x,
+		"data-testid": `${w}-backdrop`,
 		children: /* @__PURE__ */ o("div", {
 			className: "rounded-lg border border-border bg-surface shadow-lg",
 			onMouseDown: (e) => e.stopPropagation(),
-			children: E
+			children: D
 		})
 	});
 }

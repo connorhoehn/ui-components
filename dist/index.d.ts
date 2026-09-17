@@ -9172,6 +9172,23 @@ export declare interface NetworkQualityBadgeProps {
     style?: CSSProperties;
 }
 
+export declare function NewChatDialog({ open, candidates, anchor, placement, busy, error, onStart, onClose, 'data-testid': testId, }: NewChatDialogProps): JSX.Element | null;
+
+export declare interface NewChatDialogProps {
+    open: boolean;
+    /** Everyone who can be messaged. Already-selectable; presence drives grouping. */
+    candidates: InviteCandidate[];
+    /** The control that opened it. Without one the shell centres — the fallback, not the intent. */
+    anchor?: RefObject<HTMLElement | null> | null;
+    placement?: InlinePopoverPlacement;
+    busy?: boolean;
+    /** A refusal from the server, shown in place without moving the footer. */
+    error?: string | null;
+    onStart: (userIds: string[]) => void | Promise<void>;
+    onClose: () => void;
+    'data-testid'?: string;
+}
+
 export declare function NewConversationPanel({ people, onStartDm, onCreateChannel, onCancel, peopleError, busy, className, 'data-testid': testId, }: NewConversationPanelProps): JSX.Element;
 
 export declare interface NewConversationPanelProps {
@@ -10425,7 +10442,7 @@ export declare function PopoverField({ label, hint, children, 'data-testid': tes
     'data-testid'?: string;
 }): JSX.Element;
 
-export declare function PopoverForm({ open, anchor, placement, title, subtitle, icon, submitLabel, submitTestId, submitDisabled, busy, error, onSubmit, onClose, width, children, 'data-testid': testId, }: PopoverFormProps): JSX.Element | null;
+export declare function PopoverForm({ open, anchor, placement, title, subtitle, icon, submitLabel, submitSlot, submitTestId, submitDisabled, busy, error, onSubmit, onClose, width, children, 'data-testid': testId, }: PopoverFormProps): JSX.Element | null;
 
 export declare interface PopoverFormProps {
     open: boolean;
@@ -10438,7 +10455,18 @@ export declare interface PopoverFormProps {
     subtitle?: string;
     /** A small mark to the left of the title: a team avatar, a glyph. */
     icon?: ReactNode;
-    submitLabel: string;
+    /** Ignored when `submitSlot` is given. */
+    submitLabel?: string;
+    /**
+     * A confirm control to render INSTEAD of the shell's own submit button.
+     *
+     * For the forms whose body already owns the decision — a people picker knows
+     * how many are selected and says so ("Start chat with 2"), and the shell has
+     * no way to learn that without the caller lifting the selection out of the
+     * component that manages it. Cancel and the chrome stay; only the confirm is
+     * the caller's. `submitLabel` is ignored when this is given.
+     */
+    submitSlot?: ReactNode;
     /** Overrides the submit button's testid, for hosts whose suites name it. */
     submitTestId?: string;
     submitDisabled?: boolean;
@@ -16251,9 +16279,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -16261,9 +16289,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -16297,9 +16325,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -16307,9 +16335,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

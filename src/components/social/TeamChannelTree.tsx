@@ -361,18 +361,25 @@ export function TeamChannelTree({
                 className="shrink-0 text-text-tertiary transition-transform"
               />
               <Avatar name={team.name} src={team.avatarUrl} size={22} />
-              <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-text-primary">
-                {team.name}
-              </span>
-              {team.pinned && (
-                <span
-                  data-testid={`${testId}-team-${team.teamId}-pinned`}
-                  title="Pinned"
-                  className="shrink-0 text-text-tertiary"
-                >
-                  <PinIcon size={12} />
+              {/* The pin travels WITH the name, inside the flexing group rather
+                  than after it. As a sibling of a `flex-1` label it was pushed
+                  to the far end of the row — and since the + and ⋯ out there
+                  are hidden until hover, at rest it read as a stray glyph
+                  floating in whitespace instead of a mark on "Design". */}
+              <span className="flex min-w-0 flex-1 items-center gap-1.5">
+                <span className="min-w-0 truncate text-[13px] font-semibold text-text-primary">
+                  {team.name}
                 </span>
-              )}
+                {team.pinned && (
+                  <span
+                    data-testid={`${testId}-team-${team.teamId}-pinned`}
+                    title="Pinned"
+                    className="shrink-0 text-text-tertiary"
+                  >
+                    <PinIcon size={12} />
+                  </span>
+                )}
+              </span>
               {onCreateChannel && (
                 <button
                   type="button"
@@ -455,24 +462,30 @@ export function TeamChannelTree({
                   >
                     {ch.private ? <LockIcon size={12} /> : '#'}
                   </span>
-                  <span
-                    className={cn(
-                      'min-w-0 flex-1 truncate',
-                      unread > 0 ? 'font-semibold' : 'font-medium',
-                      'text-text-primary',
-                    )}
-                  >
-                    {ch.name}
-                  </span>
-                  {ch.pinned && (
+                  {/* Same grouping as the team row above: the pin is a mark on
+                      the NAME and follows it. The mention dot and unread count
+                      below stay outside, at the row's end, because a count
+                      belongs to the row rather than to the word. */}
+                  <span className="flex min-w-0 flex-1 items-center gap-1.5">
                     <span
-                      data-testid={`${testId}-channel-${ch.channel}-pinned`}
-                      title="Pinned"
-                      className="shrink-0 text-text-tertiary"
+                      className={cn(
+                        'min-w-0 truncate',
+                        unread > 0 ? 'font-semibold' : 'font-medium',
+                        'text-text-primary',
+                      )}
                     >
-                      <PinIcon size={12} />
+                      {ch.name}
                     </span>
-                  )}
+                    {ch.pinned && (
+                      <span
+                        data-testid={`${testId}-channel-${ch.channel}-pinned`}
+                        title="Pinned"
+                        className="shrink-0 text-text-tertiary"
+                      >
+                        <PinIcon size={12} />
+                      </span>
+                    )}
+                  </span>
                   {ch.mentioned && (
                     <span
                       data-testid={`${testId}-channel-${ch.channel}-mention`}
