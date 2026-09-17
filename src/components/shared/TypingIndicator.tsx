@@ -15,8 +15,6 @@ export interface TypingIndicatorProps {
   names: string[];
   /** Render only the animated dots, with no banner text. Default: false. */
   compact?: boolean;
-  /** Dot color override (passes through to ThinkingDots). */
-  color?: string;
   /** Dot size (passes through to ThinkingDots). Default 'sm'. */
   size?: 'sm' | 'md';
   className?: string;
@@ -35,7 +33,6 @@ export function formatTypingBanner(names: string[]): string {
 export function TypingIndicator({
   names,
   compact = false,
-  color,
   size = 'sm',
   className,
   'data-testid': testId = 'typing-indicator',
@@ -52,7 +49,9 @@ export function TypingIndicator({
         className,
       )}
     >
-      <ThinkingDots size={size} color={color} />
+      {/* The dots take currentColor, which this span already sets — so they
+          match the words beside them without a second source of truth. */}
+      <ThinkingDots size={size} />
       {!compact && <span>{formatTypingBanner(names)}</span>}
     </span>
   );

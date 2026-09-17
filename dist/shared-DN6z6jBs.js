@@ -21,7 +21,7 @@ import "./FormField-CBOSCKs0.js";
 import { t as h } from "./Sparkline-Ci_cmVWU.js";
 import { i as g, n as _, r as v, t as y } from "./focusTrap-CmWJlptm.js";
 import "./SkeletonCard-CGe8XFPB.js";
-import { c as b, i as x, s as S } from "./ChannelHeader-BOsRE9TC.js";
+import { c as b, i as x, s as S } from "./ChannelHeader-CChu0Ral.js";
 import "./FileUploadDrop-BRRQBXdS.js";
 import "./DockedPanelContext-pH9A5z1h.js";
 import { t as C } from "./Input-DLknWXri.js";

@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.309.0] — 2026-09-17
+
+### Fixed — `./shared`
+
+- **`ThinkingDots` stops injecting a `<style>` block and inline styles.** It
+  built every dot with a `style` object and shipped its own `<style>` element
+  for the keyframes — so each indicator on screen put another copy of the same
+  rule in the DOM, and the CSS text turned up inside the element's own
+  `textContent`: a typing indicator read as *"@keyframes thinkDot { … } Bob
+  Martinez is typing…"*. The keyframes live in `styles.css` with every other
+  one, and the dots are Tailwind classes.
+- **The animation respects `prefers-reduced-motion`.** An indicator that never
+  stops is exactly the motion that setting is for; the dots stay at their
+  dimmed rest state so the meaning survives.
+
+### Removed — `./shared`
+
+- **`ThinkingDots.color` and `TypingIndicator.color`.** The prop took an
+  arbitrary CSS string and could only ever be applied as an inline style, which
+  is banned here. The dots take `currentColor` now — `TypingIndicator` already
+  set a text colour on the span around them, so they match the words beside
+  them without a second source of truth. Nothing passed either prop.
+
+---
+
 ## [2.308.0] — 2026-09-17
 
 ### Added — `./social`

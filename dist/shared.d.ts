@@ -3600,17 +3600,24 @@ export declare interface ThinkingBlockProps {
 }
 
 /**
- * Animated 3-dot typing/thinking indicator.
+ * Three dots breathing in sequence — "still going".
  *
- * Uses inline `<style>` for keyframes to avoid global CSS dependency.
+ * The dots take `currentColor`, so the caller sets them with a text colour the
+ * way every other glyph in this library works. There is no `color` prop: it
+ * existed, took an arbitrary CSS string, and could only ever be applied as an
+ * inline style — which is banned here, and which nothing was using.
+ *
+ * The keyframes live in `styles.css` with the rest of them. They were an inline
+ * `<style>` injected by the component, so every indicator on screen put another
+ * copy of the same rule in the DOM, and the CSS text turned up inside the
+ * element's own `textContent` — which is how this was found: a typing indicator
+ * read as "@keyframes thinkDot { … } Bob Martinez is typing…".
  */
-export declare function ThinkingDots({ size, color, className }: ThinkingDotsProps): JSX.Element;
+export declare function ThinkingDots({ size, className }: ThinkingDotsProps): JSX.Element;
 
 export declare interface ThinkingDotsProps {
-    /** sm: 4px dots, md: 6px dots (default md) */
+    /** sm: 4px dots, md: 6px dots (default md). */
     size?: 'sm' | 'md';
-    /** dot color, default var(--color-text-tertiary) */
-    color?: string;
     className?: string;
 }
 
@@ -3958,7 +3965,7 @@ export declare interface TrendSparklineProps {
     className?: string;
 }
 
-export declare function TypingIndicator({ names, compact, color, size, className, 'data-testid': testId, }: TypingIndicatorProps): JSX.Element | null;
+export declare function TypingIndicator({ names, compact, size, className, 'data-testid': testId, }: TypingIndicatorProps): JSX.Element | null;
 
 export declare interface TypingIndicatorProps {
     /**
@@ -3968,8 +3975,6 @@ export declare interface TypingIndicatorProps {
     names: string[];
     /** Render only the animated dots, with no banner text. Default: false. */
     compact?: boolean;
-    /** Dot color override (passes through to ThinkingDots). */
-    color?: string;
     /** Dot size (passes through to ThinkingDots). Default 'sm'. */
     size?: 'sm' | 'md';
     className?: string;
@@ -4178,6 +4183,26 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -4191,9 +4216,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -4227,29 +4252,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

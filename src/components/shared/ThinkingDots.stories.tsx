@@ -15,4 +15,5 @@ export const Default: Story = {};
 
 export const Small: Story = { args: { size: 'sm' } };
 
-export const Toned: Story = { args: { color: 'var(--color-primary)' } };
+// Colour comes from the text around it, the way every other glyph here works.
+export const Toned: Story = { args: { className: 'text-primary' } };
