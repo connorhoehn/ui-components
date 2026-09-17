@@ -66,16 +66,21 @@ describe('CreateChannelDialog', () => {
     expect(screen.getByTestId('create-channel-dialog-cancel')).toBeInTheDocument();
   });
 
-  it('privacy is one named group with exactly one segment pressed', () => {
+  it('privacy is one named radiogroup with exactly one value chosen', () => {
     render(<CreateChannelDialog open teamName="Design" onCreate={vi.fn()} onClose={vi.fn()} />);
-    const group = screen.getByRole('group', { name: 'Channel privacy' });
-    const segments = within(group).getAllByRole('button');
+    // One question with two answers, not two toggles that happen to sit
+    // together: a radiogroup, and `aria-checked` is a value rather than a
+    // button somebody has pushed in.
+    const group = screen.getByRole('radiogroup', { name: 'Channel privacy' });
+    const segments = within(group).getAllByRole('radio');
     expect(segments).toHaveLength(2);
-    expect(segments.filter((b) => b.getAttribute('aria-pressed') === 'true')).toHaveLength(1);
-    expect(screen.getByTestId('create-channel-dialog-privacy-standard').getAttribute('aria-pressed')).toBe('true');
+    expect(segments.filter((b) => b.getAttribute('aria-checked') === 'true')).toHaveLength(1);
+    expect(screen.getByTestId('create-channel-dialog-privacy-standard').getAttribute('aria-checked')).toBe('true');
+    // One tab stop, and it sits on the chosen answer.
+    expect(segments.filter((b) => (b as HTMLElement).tabIndex === 0)).toHaveLength(1);
     fireEvent.click(screen.getByTestId('create-channel-dialog-privacy-private'));
-    expect(screen.getByTestId('create-channel-dialog-privacy-private').getAttribute('aria-pressed')).toBe('true');
-    expect(screen.getByTestId('create-channel-dialog-privacy-standard').getAttribute('aria-pressed')).toBe('false');
+    expect(screen.getByTestId('create-channel-dialog-privacy-private').getAttribute('aria-checked')).toBe('true');
+    expect(screen.getByTestId('create-channel-dialog-privacy-standard').getAttribute('aria-checked')).toBe('false');
   });
 
   it('resets its fields each time it opens', () => {

@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.317.0] — 2026-09-17
+
+### Changed — `./shared`
+
+- **BREAKING (ARIA only): `SegmentedControl` is a `radiogroup`.** Every caller
+  uses it for ONE choice out of a few — Public/Private,
+  Editing/Suggesting/Viewing, Ring me/Do not disturb — but it announced as a
+  `group` of independent `aria-pressed` toggles: "Public, pressed", then
+  "Private, not pressed", with nothing saying they are one question, and a tab
+  stop for every option.
+
+  Now `role="radiogroup"` with `role="radio"` options and `aria-checked`, one
+  tab stop **on the chosen option** (so Tab lands on the current answer), and
+  arrow keys that move AND choose — which is what a segmented control looks
+  like it does. Up/Down work as well as Left/Right, Home/End jump to the ends,
+  and both edges wrap. Disabled ignores the arrows.
+
+  No prop changes. Tests that queried the segments with
+  `getByRole('button')` or asserted `aria-pressed` need
+  `getByRole('radio')` / `aria-checked`; the two in this repo are updated.
+
 ## [2.316.0] — 2026-09-17
 
 ### Added — `./shared`
