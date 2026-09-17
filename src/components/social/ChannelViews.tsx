@@ -67,8 +67,20 @@ export interface PinnedMessageItem {
   author: string;
   /** Short excerpt of it — the panel never re-reads the transcript. */
   preview: string;
-  /** ISO-8601. */
+  /** ISO-8601: when it was PINNED. The byline's business, not the stamp's. */
   pinnedAt?: string;
+  /**
+   * ISO-8601: when the message was SENT.
+   *
+   * What the stamp shows, because a pinned entry is a handle on a message and
+   * the reader's next move is to find it in the transcript — where it is
+   * stamped with this. Showing the pin time instead made one message read as
+   * two different messages depending on which panel you were in.
+   *
+   * Optional: pins written before the store denormalised it have none, and
+   * those fall back to `pinnedAt` rather than losing their stamp.
+   */
+  sentAt?: string;
   /** Display name of whoever pinned it. */
   pinnedBy?: string;
 }
@@ -98,22 +110,31 @@ export function PinnedMessagesPanel({
           description="Pin a message to keep it at the top of this channel for everyone."
         />
       ) : (
-        pins.map((pin) => (
+        pins.map((pin) => {
+          const stamp = pin.sentAt ?? pin.pinnedAt;
+          const stampTitle = stamp
+            ? (pin.sentAt && pin.pinnedAt && pin.pinnedAt !== pin.sentAt
+              ? `Sent ${fullTimestampLabel(pin.sentAt)} · pinned ${fullTimestampLabel(pin.pinnedAt)}`
+              : fullTimestampLabel(stamp))
+            : undefined;
+          return (
           <FeedRow
             key={pin.messageId}
             data-testid="pinned-message"
             leading={<Avatar name={pin.author} size={28} />}
             title={pin.preview}
             // "who wrote it, who pinned it" — two different people, both
-            // load-bearing. When it was pinned is a different question and
-            // lives in the stamp, where it is not the first thing truncated
-            // away behind a run of middle-dots.
+            // load-bearing.
             meta={[pin.author, pin.pinnedBy && `pinned by ${pin.pinnedBy}`]
               .filter(Boolean)
               .join(' · ')}
-            timestamp={timeLabel(pin.pinnedAt)}
-            timestampIso={pin.pinnedAt}
-            timestampTitle={pin.pinnedAt ? fullTimestampLabel(pin.pinnedAt) : undefined}
+            // The message's own time, falling back to the pin's for rows
+            // written before the store kept one. The hover carries both when
+            // they differ, so the pinning act is still reachable — it just no
+            // longer impersonates the message.
+            timestamp={timeLabel(stamp)}
+            timestampIso={stamp}
+            timestampTitle={stampTitle}
             onJump={onJump ? () => onJump(pin.messageId) : undefined}
             jumpLabel={`Go to the pinned message from ${pin.author}`}
             actions={
@@ -131,7 +152,8 @@ export function PinnedMessagesPanel({
               )
             }
           />
-        ))
+          );
+        })
       )}
     </PanelShell>
   );

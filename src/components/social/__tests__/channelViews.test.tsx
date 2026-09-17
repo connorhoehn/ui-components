@@ -352,3 +352,51 @@ describe('ChannelDocumentsPanel', () => {
     expect(screen.getByText('No documents yet')).toBeInTheDocument();
   });
 });
+
+describe('PinnedMessagesPanel — the stamp is the message\'s, not the pin\'s', () => {
+  // Built from local components so the assertion means the same thing in every
+  // timezone, and pinned an hour and a half after it was said — the shape that
+  // exposed the bug.
+  const sentAt = new Date(2026, 8, 16, 19, 27).toISOString();
+  const pinnedAt = new Date(2026, 8, 16, 20, 53).toISOString();
+  const pin = {
+    messageId: 'm-1',
+    author: 'Eve Thompson',
+    preview: 'the decision we keep forgetting',
+    sentAt,
+    pinnedAt,
+    pinnedBy: 'you',
+  };
+
+  it('shows when the message was sent, so it can be matched against the transcript', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 16, 21, 0, 0));
+    try {
+      render(<PinnedMessagesPanel pins={[pin]} />);
+      const stamp = screen.getByTestId('pinned-message').querySelector('time')!;
+      expect(stamp).toHaveAttribute('datetime', sentAt);
+      expect(stamp.textContent).toContain('19:27');
+      expect(stamp.textContent).not.toContain('20:53');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('keeps the pinning act reachable on the hover rather than throwing it away', () => {
+    render(<PinnedMessagesPanel pins={[pin]} />);
+    const title = screen.getByTestId('pinned-message').querySelector('time')!.getAttribute('title')!;
+    expect(title).toMatch(/^Sent /);
+    expect(title).toContain('pinned');
+  });
+
+  it('falls back to the pin time for a row written before the store kept one', () => {
+    // Every pin that existed before `sentAt` is in this state. Losing the stamp
+    // entirely would be worse than showing the only time there is.
+    const { sentAt: _drop, ...legacy } = pin;
+    render(<PinnedMessagesPanel pins={[legacy]} />);
+    const stamp = screen.getByTestId('pinned-message').querySelector('time')!;
+    expect(stamp).toHaveAttribute('datetime', pinnedAt);
+    // One time known, so the hover states it plainly rather than claiming both.
+    expect(stamp.getAttribute('title')).not.toMatch(/^Sent /);
+  });
+});

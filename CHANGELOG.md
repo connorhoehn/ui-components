@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.298.0] — 2026-09-16
+
+### Fixed — `./social`
+
+- **A pinned entry is stamped with when the message was SENT, not when it was
+  pinned.** `PinnedMessagesPanel` had only `pinnedAt` to show, so a message
+  sent at 19:27 and pinned at 20:53 read as 19:27 in the transcript and 20:53
+  in the Pinned panel — one message wearing two times, and the panel showing
+  the one a reader cannot match against anything. A pinned entry is a handle on
+  a message and the next move is to go find it, so the stamp is now `sentAt`,
+  which is what the transcript shows. Teams and Slack both do this, and put the
+  pinning act in the byline — where `pinned by …` already was.
+- The pinning time is not thrown away: when the two differ the hover reads
+  "Sent … · pinned …".
+
+### Added — `./social`
+
+- **`PinnedMessageItem.sentAt`**, optional. Pins written before the gateway
+  denormalised it have none and fall back to `pinnedAt` rather than losing
+  their stamp.
+
+---
+
 ## [2.297.0] — 2026-09-16
 
 ### Fixed — `./doc-editor`

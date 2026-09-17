@@ -2555,29 +2555,32 @@ function Ut({ pins: e, onJump: t, onUnpin: n, className: r, "data-testid": i = "
 			icon: /* @__PURE__ */ z(m, { size: 40 }),
 			title: "Nothing pinned yet",
 			description: "Pin a message to keep it at the top of this channel for everyone."
-		}) : e.map((e) => /* @__PURE__ */ z(Bt, {
-			"data-testid": "pinned-message",
-			leading: /* @__PURE__ */ z(E, {
-				name: e.author,
-				size: 28
-			}),
-			title: e.preview,
-			meta: [e.author, e.pinnedBy && `pinned by ${e.pinnedBy}`].filter(Boolean).join(" · "),
-			timestamp: Vt(e.pinnedAt),
-			timestampIso: e.pinnedAt,
-			timestampTitle: e.pinnedAt ? G(e.pinnedAt) : void 0,
-			onJump: t ? () => t(e.messageId) : void 0,
-			jumpLabel: `Go to the pinned message from ${e.author}`,
-			actions: n && /* @__PURE__ */ z("button", {
-				type: "button",
-				"aria-label": "Unpin",
-				title: "Unpin",
-				"data-testid": "pinned-message-unpin",
-				onClick: () => n(e.messageId),
-				className: "grid h-6 w-6 place-items-center rounded bg-transparent text-xs text-text-tertiary hover:bg-surface-hover hover:text-text-primary",
-				children: "✕"
-			})
-		}, e.messageId))
+		}) : e.map((e) => {
+			let r = e.sentAt ?? e.pinnedAt, i = r ? e.sentAt && e.pinnedAt && e.pinnedAt !== e.sentAt ? `Sent ${G(e.sentAt)} · pinned ${G(e.pinnedAt)}` : G(r) : void 0;
+			return /* @__PURE__ */ z(Bt, {
+				"data-testid": "pinned-message",
+				leading: /* @__PURE__ */ z(E, {
+					name: e.author,
+					size: 28
+				}),
+				title: e.preview,
+				meta: [e.author, e.pinnedBy && `pinned by ${e.pinnedBy}`].filter(Boolean).join(" · "),
+				timestamp: Vt(r),
+				timestampIso: r,
+				timestampTitle: i,
+				onJump: t ? () => t(e.messageId) : void 0,
+				jumpLabel: `Go to the pinned message from ${e.author}`,
+				actions: n && /* @__PURE__ */ z("button", {
+					type: "button",
+					"aria-label": "Unpin",
+					title: "Unpin",
+					"data-testid": "pinned-message-unpin",
+					onClick: () => n(e.messageId),
+					className: "grid h-6 w-6 place-items-center rounded bg-transparent text-xs text-text-tertiary hover:bg-surface-hover hover:text-text-primary",
+					children: "✕"
+				})
+			}, e.messageId);
+		})
 	});
 }
 function Wt({ files: e, thumbnailSrc: t, onJump: n, className: r, "data-testid": i = "channel-files-panel" }) {
