@@ -92,6 +92,36 @@ export function AttachmentBubble({ attachment, src, onOpen, className }: Attachm
   const image = isImageAttachment(attachment);
   const shown = src ?? attachment.preview;
 
+  /**
+   * The frame is a BUTTON only when pressing it does something.
+   *
+   * It used to be a button either way, with `onClick` merely undefined when
+   * no handler was given — so an attachment nobody can open still announced
+   * "Download report.pdf, button", still took a tab stop, and still did
+   * nothing when pressed. Every attachment in this product was in that state,
+   * because no host passes `onOpen`.
+   *
+   * Same rule the message action bar states for Forward and Pin: a control
+   * the product will not honour is not rendered disabled, it is not rendered.
+   * Here the frame still has to be drawn — it holds the picture — so it is
+   * drawn as plain content instead.
+   */
+  const frame = (
+    { label, className: frameClass, children }:
+    { label: string; className: string; children: React.ReactNode },
+  ) => (onOpen ? (
+    <button
+      type="button"
+      onClick={() => onOpen(attachment)}
+      aria-label={label}
+      className={cn(frameClass, 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary')}
+    >
+      {children}
+    </button>
+  ) : (
+    <div className={frameClass}>{children}</div>
+  ));
+
   if (image) {
     return (
       <div
@@ -99,17 +129,14 @@ export function AttachmentBubble({ attachment, src, onOpen, className }: Attachm
         data-attachment-kind="image"
         className={cn('mt-1 min-w-0 max-w-full', className)}
       >
-        <button
-          type="button"
-          onClick={onOpen ? () => onOpen(attachment) : undefined}
-          aria-label={`Open image ${attachment.name}`}
-          className={cn(
+        {frame({
+          label: `Open image ${attachment.name}`,
+          className: cn(
             'block max-w-full overflow-hidden rounded-lg border text-left',
             'border-[var(--color-border)] bg-[var(--color-surface-inset)]',
-            onOpen ? 'cursor-zoom-in' : 'cursor-default',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-          )}
-        >
+            onOpen && 'cursor-zoom-in',
+          ),
+          children: (<>
           {shown ? (
             <img
               src={shown}
@@ -141,8 +168,8 @@ export function AttachmentBubble({ attachment, src, onOpen, className }: Attachm
             <div className="flex h-24 w-40 items-center justify-center text-xs text-[var(--color-text-tertiary)]">
               Loading image…
             </div>
-          )}
-        </button>
+          )}</>),
+        })}
         <div className="mt-0.5 flex min-w-0 items-baseline gap-2">
           <span className="min-w-0 truncate text-xs text-[var(--color-text-tertiary)]">
             {attachment.name}
@@ -161,17 +188,16 @@ export function AttachmentBubble({ attachment, src, onOpen, className }: Attachm
       data-attachment-kind="file"
       className={cn('mt-1 min-w-0 max-w-full', className)}
     >
-      <button
-        type="button"
-        onClick={onOpen ? () => onOpen(attachment) : undefined}
-        aria-label={`Download ${attachment.name}`}
-        className={cn(
+      {frame({
+        label: `Download ${attachment.name}`,
+        className: cn(
           'flex w-full min-w-0 items-center gap-2 rounded-lg border px-2.5 py-2 text-left',
           'border-[var(--color-border)] bg-[var(--color-surface-inset)]',
-          'hover:bg-[var(--color-surface-hover)]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-        )}
-      >
+          // The hover highlight is an affordance; without a handler it is a
+          // lie, so it goes with the button.
+          onOpen && 'hover:bg-[var(--color-surface-hover)]',
+        ),
+        children: (<>
         <FileGlyph />
         <span className="flex min-w-0 flex-col">
           {/* break-all, not truncate: a recipient needs to be able to read the
@@ -184,7 +210,8 @@ export function AttachmentBubble({ attachment, src, onOpen, className }: Attachm
             {formatBytes(attachment.size)}
           </span>
         </span>
-      </button>
+        </>),
+      })}
     </div>
   );
 }

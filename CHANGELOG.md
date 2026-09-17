@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.318.0] — 2026-09-17
+
+### Fixed — `./social`
+
+- **An attachment nobody can open is no longer rendered as a control.**
+  `AttachmentBubble` drew a `<button>` either way, with `onClick` merely
+  undefined when no `onOpen` was given — so an attachment announced "Download
+  report.pdf, button", took a tab stop, and did nothing when pressed. The file
+  variant also kept its hover highlight, which is an affordance promising the
+  same thing.
+
+  Every attachment in the consuming product was in that state, because no host
+  passes `onOpen`. Same rule `MessageActionBar` states for Forward and Pin: a
+  control the product will not honour is not rendered disabled, it is not
+  rendered. The frame is still drawn — it holds the picture — as plain content
+  rather than a button, and the name and size still identify the file. Pass
+  `onOpen` and it becomes a real control again.
+
 ## [2.317.0] — 2026-09-17
 
 ### Changed — `./shared`

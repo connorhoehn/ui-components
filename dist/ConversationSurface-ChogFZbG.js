@@ -1340,17 +1340,24 @@ function tt(e) {
 	return typeof e.contentType == "string" && e.contentType.startsWith("image/");
 }
 function nt({ attachment: t, src: n, onOpen: r, className: i }) {
-	let a = tt(t), o = n ?? t.preview;
+	let a = tt(t), o = n ?? t.preview, s = ({ label: n, className: i, children: a }) => r ? /* @__PURE__ */ V("button", {
+		type: "button",
+		onClick: () => r(t),
+		"aria-label": n,
+		className: e(i, "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
+		children: a
+	}) : /* @__PURE__ */ V("div", {
+		className: i,
+		children: a
+	});
 	return a ? /* @__PURE__ */ H("div", {
 		"data-testid": "attachment-bubble",
 		"data-attachment-kind": "image",
 		className: e("mt-1 min-w-0 max-w-full", i),
-		children: [/* @__PURE__ */ V("button", {
-			type: "button",
-			onClick: r ? () => r(t) : void 0,
-			"aria-label": `Open image ${t.name}`,
-			className: e("block max-w-full overflow-hidden rounded-lg border text-left", "border-[var(--color-border)] bg-[var(--color-surface-inset)]", r ? "cursor-zoom-in" : "cursor-default", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
-			children: o ? /* @__PURE__ */ V("img", {
+		children: [s({
+			label: `Open image ${t.name}`,
+			className: e("block max-w-full overflow-hidden rounded-lg border text-left", "border-[var(--color-border)] bg-[var(--color-surface-inset)]", r && "cursor-zoom-in"),
+			children: /* @__PURE__ */ V(B, { children: o ? /* @__PURE__ */ V("img", {
 				src: o,
 				alt: t.name,
 				width: t.width,
@@ -1364,7 +1371,7 @@ function nt({ attachment: t, src: n, onOpen: r, className: i }) {
 			}) : /* @__PURE__ */ V("div", {
 				className: "flex h-24 w-40 items-center justify-center text-xs text-[var(--color-text-tertiary)]",
 				children: "Loading image…"
-			})
+			}) })
 		}), /* @__PURE__ */ H("div", {
 			className: "mt-0.5 flex min-w-0 items-baseline gap-2",
 			children: [/* @__PURE__ */ V("span", {
@@ -1379,12 +1386,10 @@ function nt({ attachment: t, src: n, onOpen: r, className: i }) {
 		"data-testid": "attachment-bubble",
 		"data-attachment-kind": "file",
 		className: e("mt-1 min-w-0 max-w-full", i),
-		children: /* @__PURE__ */ H("button", {
-			type: "button",
-			onClick: r ? () => r(t) : void 0,
-			"aria-label": `Download ${t.name}`,
-			className: e("flex w-full min-w-0 items-center gap-2 rounded-lg border px-2.5 py-2 text-left", "border-[var(--color-border)] bg-[var(--color-surface-inset)]", "hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
-			children: [/* @__PURE__ */ V(at, {}), /* @__PURE__ */ H("span", {
+		children: s({
+			label: `Download ${t.name}`,
+			className: e("flex w-full min-w-0 items-center gap-2 rounded-lg border px-2.5 py-2 text-left", "border-[var(--color-border)] bg-[var(--color-surface-inset)]", r && "hover:bg-[var(--color-surface-hover)]"),
+			children: /* @__PURE__ */ H(B, { children: [/* @__PURE__ */ V(at, {}), /* @__PURE__ */ H("span", {
 				className: "flex min-w-0 flex-col",
 				children: [/* @__PURE__ */ V("span", {
 					className: "min-w-0 break-all text-sm text-[var(--color-text-primary)]",
@@ -1393,7 +1398,7 @@ function nt({ attachment: t, src: n, onOpen: r, className: i }) {
 					className: "text-xs text-[var(--color-text-tertiary)]",
 					children: F(t.size)
 				})]
-			})]
+			})] })
 		})
 	});
 }
