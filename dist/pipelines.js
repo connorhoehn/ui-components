@@ -13,8 +13,8 @@ import { t as C } from "./Modal-CyoyiNKN.js";
 import { t as w } from "./ConfirmDialog-Cd8NZEXi.js";
 import { t as T } from "./EmptyState-JzzL2z1E.js";
 import { i as E, t as D } from "./focusTrap-CmWJlptm.js";
-import { t as O } from "./SkeletonCard-CGe8XFPB.js";
-import { n as ee, t as k } from "./FileUploadDrop-BRRQBXdS.js";
+import { t as ee } from "./SkeletonCard-CGe8XFPB.js";
+import { n as O, t as k } from "./FileUploadDrop-BRRQBXdS.js";
 import { t as A } from "./Input-DLknWXri.js";
 import { t as j } from "./Textarea-Dz4doxTv.js";
 import { t as te } from "./StatusPill-Db42eiME.js";
@@ -2495,7 +2495,7 @@ function $n({ id: e, sourceX: n, sourceY: i, targetX: a, targetY: o, sourcePosit
 	y === "image" ? (S = 2.5, v && (x = Zn)) : y === "control" && (S = 1.5, v && (C = "2 4"));
 	let w = f.volume, T = typeof w == "number" && w >= 2;
 	T && (S = Math.min(4, S + Math.log2(w)));
-	let E = d ? "var(--color-primary)" : x, D = d ? Math.max(2.5, S) : S, O = y === "image" && f.state === "active" && !p;
+	let E = d ? "var(--color-primary)" : x, D = d ? Math.max(2.5, S) : S, ee = y === "image" && f.state === "active" && !p;
 	return /* @__PURE__ */ W(H, { children: [
 		/* @__PURE__ */ U("path", {
 			d: m,
@@ -2521,7 +2521,7 @@ function $n({ id: e, sourceX: n, sourceY: i, targetX: a, targetY: o, sourcePosit
 				repeatCount: "indefinite"
 			}) : null
 		}),
-		O ? /* @__PURE__ */ U("circle", {
+		ee ? /* @__PURE__ */ U("circle", {
 			r: 3,
 			fill: E,
 			className: "pointer-events-none",
@@ -3320,7 +3320,7 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 		for (let r of n) {
 			if (e.has(r)) continue;
 			let n = ur(r);
-			if (!n) continue;
+			if (!n || e.has(n)) continue;
 			let i = t.get(n);
 			i ? i.push(r) : t.set(n, [r]);
 		}
@@ -3338,7 +3338,34 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 				}))
 			};
 		});
-	}, [n]), y = z(() => [...hr, ...v], [v]), b = z(() => y.map((e) => e.name), [y]);
+	}, [n]), y = z(() => {
+		let e = /* @__PURE__ */ new Map();
+		if (!n) return e;
+		let t = new Set(fr.map((e) => e.type));
+		for (let r of n) {
+			if (t.has(r)) continue;
+			let n = ur(r);
+			if (!n || !t.has(n)) continue;
+			let i = J(n);
+			if (!i) continue;
+			let a = {
+				type: r,
+				icon: "⚙",
+				name: r,
+				description: `Server step · extends ${n}`,
+				category: i,
+				nodeCategory: i
+			}, o = e.get(i);
+			o ? o.push(a) : e.set(i, [a]);
+		}
+		return e;
+	}, [n]), b = z(() => [...hr.map((e) => {
+		let t = y.get(e.key);
+		return t ? {
+			...e,
+			items: [...e.items, ...t]
+		} : e;
+	}), ...v], [v, y]), x = z(() => b.map((e) => e.name), [b]);
 	R(() => {
 		let e = (e) => {
 			e.key === _r && f(br());
@@ -3349,14 +3376,14 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 			window.localStorage.setItem(yr, String(p));
 		} catch {}
 	}, [p]);
-	let x = L((e) => {
+	let S = L((e) => {
 		s((t) => {
 			let n = new Set(t);
 			return n.has(e) ? n.delete(e) : n.add(e), n;
 		});
-	}, []), S = L(() => {
+	}, []), C = L(() => {
 		a(""), s(/* @__PURE__ */ new Set());
-	}, []), C = L((e) => {
+	}, []), w = L((e) => {
 		g((t) => {
 			let n = {
 				...t,
@@ -3364,20 +3391,20 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 			};
 			return Tr(e, n[e]), n;
 		});
-	}, []), w = z(() => {
+	}, []), T = z(() => {
 		let e = /* @__PURE__ */ new Map();
-		for (let t of y) for (let n of t.items) e.set(n.type, n);
+		for (let t of b) for (let n of t.items) e.set(n.type, n);
 		return e;
-	}, [y]), T = ze(), E = z(() => {
+	}, [b]), E = ze(), D = z(() => {
 		if (!t || t.length === 0) return [];
-		let e = [...w.keys()];
-		return dr(t, e, { unavailable: e.filter((e) => !T(e) || _.has(e)) }).map((e) => w.get(e.kind)).filter(Boolean);
+		let e = [...T.keys()];
+		return dr(t, e, { unavailable: e.filter((e) => !E(e) || _.has(e)) }).map((e) => T.get(e.kind)).filter(Boolean);
 	}, [
 		t,
-		w,
 		T,
+		E,
 		_
-	]), D = z(() => d.map((e) => w.get(e)).filter(Boolean), [d, w]), O = E.length > 0 ? E : D, ee = E.length > 0 ? "Relevant here" : "Recently used", k = z(() => y.map((e) => {
+	]), ee = z(() => d.map((e) => T.get(e)).filter(Boolean), [d, T]), O = D.length > 0 ? D : ee, k = D.length > 0 ? "Relevant here" : "Recently used", j = z(() => b.map((e) => {
 		let t = o.size > 0 && !o.has(e.name) ? [] : e.items.filter((e) => Er(e, i));
 		return {
 			...e,
@@ -3386,32 +3413,32 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 	}).filter((e) => e.items.length > 0), [
 		i,
 		o,
-		y
-	]), j = z(() => {
+		b
+	]), te = z(() => {
 		let e = /* @__PURE__ */ new Set(), t = [];
 		if (!i && o.size === 0) for (let n of O) t.push(n), e.add(n.type);
-		for (let n of k) for (let r of n.items) e.has(r.type) || (t.push(r), e.add(r.type));
+		for (let n of j) for (let r of n.items) e.has(r.type) || (t.push(r), e.add(r.type));
 		return t;
 	}, [
 		O,
-		k,
+		j,
 		i,
 		o
-	]), te = B(j);
+	]), M = B(te);
 	R(() => {
-		te.current = j;
-	}, [j]);
-	let M = k.length === 0 && (i !== "" || o.size > 0), N = (e) => (t) => {
+		M.current = te;
+	}, [te]);
+	let N = j.length === 0 && (i !== "" || o.size > 0), P = (e) => (t) => {
 		if (_.has(e.type)) {
 			t.preventDefault();
 			return;
 		}
 		t.dataTransfer.setData("application/reactflow", JSON.stringify({ nodeType: e.type })), t.dataTransfer.effectAllowed = "move";
-	}, P = (e, t) => {
-		let n = _.has(e.type), i = !T(e.type), a = c === e.type && !n, o = t !== null && t < 9 ? t + 1 : null;
+	}, ne = (e, t) => {
+		let n = _.has(e.type), i = !E(e.type), a = c === e.type && !n, o = t !== null && t < 9 ? t + 1 : null;
 		return p ? /* @__PURE__ */ W("div", {
 			draggable: !n,
-			onDragStart: N(e),
+			onDragStart: P(e),
 			onMouseEnter: () => u(e.type),
 			onMouseLeave: () => u(null),
 			className: r("h-8 box-border my-px mx-2 px-2 flex items-center gap-2 rounded font-[inherit]", n ? "cursor-not-allowed opacity-45" : "cursor-grab", a ? "bg-surface-hover" : "bg-transparent"),
@@ -3443,7 +3470,7 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 			]
 		}, e.type) : /* @__PURE__ */ W("div", {
 			draggable: !n,
-			onDragStart: N(e),
+			onDragStart: P(e),
 			onMouseEnter: () => u(e.type),
 			onMouseLeave: () => u(null),
 			className: r("h-11 box-border my-0.5 mx-2 py-1.5 px-2.5 flex items-center gap-2.5 rounded-md border border-transparent font-[inherit]", n ? "cursor-not-allowed opacity-45" : "cursor-grab", a ? "bg-surface-panel" : "bg-transparent"),
@@ -3491,7 +3518,7 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 				})
 			]
 		}, e.type);
-	}, ne = O.length > 0 && !i && o.size === 0, re = 0;
+	}, re = O.length > 0 && !i && o.size === 0, F = 0;
 	return /* @__PURE__ */ W("div", {
 		className: "w-[220px] shrink-0 h-full border-r border-border bg-surface flex flex-col",
 		"data-testid": "node-palette",
@@ -3592,10 +3619,10 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 				}), /* @__PURE__ */ U("div", {
 					className: "flex flex-wrap gap-1 px-3 pb-2.5",
 					"data-testid": "palette-category-chips",
-					children: b.map((e) => /* @__PURE__ */ U(l, {
+					children: x.map((e) => /* @__PURE__ */ U(l, {
 						size: "xs",
 						active: o.has(e),
-						onClick: () => x(e),
+						onClick: () => S(e),
 						"data-testid": `palette-chip-${e}`,
 						children: e
 					}, e))
@@ -3604,19 +3631,19 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 			/* @__PURE__ */ W("div", {
 				className: "flex-1 overflow-y-auto py-1",
 				"data-testid": "palette-scroll",
-				children: [ne && /* @__PURE__ */ W("div", {
+				children: [re && /* @__PURE__ */ W("div", {
 					"data-testid": "palette-recents",
 					children: [/* @__PURE__ */ W("button", {
 						type: "button",
-						onClick: () => C("__recents__"),
+						onClick: () => w("__recents__"),
 						className: "w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]",
 						"aria-expanded": !h.__recents__,
-						children: [/* @__PURE__ */ U(Dr, { expanded: !h.__recents__ }), ee]
+						children: [/* @__PURE__ */ U(Dr, { expanded: !h.__recents__ }), k]
 					}), !h.__recents__ && /* @__PURE__ */ U("div", { children: O.map((e) => {
-						let t = re++;
-						return P(e, t);
+						let t = F++;
+						return ne(e, t);
 					}) })]
-				}), M ? /* @__PURE__ */ W("div", {
+				}), N ? /* @__PURE__ */ W("div", {
 					className: "flex flex-col items-center gap-3 px-4 py-8 text-center",
 					"data-testid": "palette-empty",
 					children: [/* @__PURE__ */ U("span", {
@@ -3624,18 +3651,18 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 						children: "No nodes match"
 					}), /* @__PURE__ */ U("button", {
 						type: "button",
-						onClick: S,
+						onClick: C,
 						"data-testid": "palette-clear-filters",
 						className: "text-[11px] font-semibold text-info-fg hover:underline",
 						children: "Clear filters"
 					})]
-				}) : k.map((e) => {
+				}) : j.map((e) => {
 					let t = !!h[e.name];
 					return /* @__PURE__ */ W("div", {
 						"data-testid": `palette-category-${e.name}`,
 						children: [/* @__PURE__ */ W("button", {
 							type: "button",
-							onClick: () => C(e.name),
+							onClick: () => w(e.name),
 							className: "w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]",
 							"aria-expanded": !t,
 							children: [
@@ -3648,8 +3675,8 @@ function Or({ disabledTypes: e = [], contextTypes: t, serverKinds: n }) {
 								e.name
 							]
 						}), !t && /* @__PURE__ */ U("div", { children: e.items.map((e) => {
-							let t = re++;
-							return P(e, t);
+							let t = F++;
+							return ne(e, t);
 						}) })]
 					}, e.name);
 				})]
@@ -3905,7 +3932,7 @@ function Gr({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 		updateNodeData: _,
 		getDefinition: () => c
 	});
-	let [S, C, w] = wt([]), [T, E, D] = St([]), [O, ee] = V(!0), [k, A] = V(!0), j = B(null), te = B(null), [M, N] = V(null), [P, ne] = V(null), re = L((e, t) => {
+	let [S, C, w] = wt([]), [T, E, D] = St([]), [ee, O] = V(!0), [k, A] = V(!0), j = B(null), te = B(null), [M, N] = V(null), [P, ne] = V(null), re = L((e, t) => {
 		e.preventDefault(), ne({
 			nodeId: t.id,
 			x: e.clientX,
@@ -4077,7 +4104,7 @@ function Gr({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 		let e = (e) => {
 			if (!zr(e.target) && !(e.metaKey || e.ctrlKey || e.altKey)) {
 				if (e.key === "m" || e.key === "M") {
-					ee((e) => !e);
+					O((e) => !e);
 					return;
 				}
 				if (e.key === "c" || e.key === "C") {
@@ -4159,7 +4186,7 @@ function Gr({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 						showInteractive: !0,
 						className: "!bg-surface !border !border-border !rounded-md !shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
 					}) : null,
-					O ? /* @__PURE__ */ U(vt, {
+					ee ? /* @__PURE__ */ U(vt, {
 						position: "bottom-right",
 						pannable: !0,
 						zoomable: !0,
@@ -5541,7 +5568,7 @@ function Xi(e) {
 		t.runs,
 		x
 	]);
-	let C = x ? t.runs[x] : void 0, w = !!C && (C.status === "running" || C.status === "pending" || C.status === "awaiting_approval"), [T, E] = V(/* @__PURE__ */ new Set()), [D, O] = V(null), [ee, k] = V(null), [A, j] = V(null), [te, M] = V(0), [N, P] = V(!1), [ne, re] = V(null), ie = L((e, t) => {
+	let C = x ? t.runs[x] : void 0, w = !!C && (C.status === "running" || C.status === "pending" || C.status === "awaiting_approval"), [T, E] = V(/* @__PURE__ */ new Set()), [D, ee] = V(null), [O, k] = V(null), [A, j] = V(null), [te, M] = V(0), [N, P] = V(!1), [ne, re] = V(null), ie = L((e, t) => {
 		t === null ? (k(null), j(null)) : (k(t), j(e));
 	}, []), ae = L((e) => {
 		E((t) => {
@@ -5560,19 +5587,19 @@ function Xi(e) {
 		t,
 		e
 	]), se = L(() => {
-		D && (t.resolveBreakpoint(D.runId, D.stepId, "continue"), O(null));
+		D && (t.resolveBreakpoint(D.runId, D.stepId, "continue"), ee(null));
 	}, [D, t]), ce = L(() => {
-		D && (t.resolveBreakpoint(D.runId, D.stepId, "step_over"), O(null));
+		D && (t.resolveBreakpoint(D.runId, D.stepId, "step_over"), ee(null));
 	}, [D, t]), I = L(() => {
-		D && (t.resolveBreakpoint(D.runId, D.stepId, "resume_all"), O(null));
+		D && (t.resolveBreakpoint(D.runId, D.stepId, "resume_all"), ee(null));
 	}, [D, t]), le = L(async () => {
-		if (!(!D || !ee || A !== D.stepId) && Object.keys(ee).length !== 0) {
+		if (!(!D || !O || A !== D.stepId) && Object.keys(O).length !== 0) {
 			P(!0);
 			try {
 				await Qe(e, D.runId, D.stepId, {
 					mode: "merge",
-					values: ee
-				}), k(null), j(null), M((e) => e + 1), t.resolveBreakpoint(D.runId, D.stepId, "continue"), O(null);
+					values: O
+				}), k(null), j(null), M((e) => e + 1), t.resolveBreakpoint(D.runId, D.stepId, "continue"), ee(null);
 			} catch (e) {
 				if (e instanceof je) r(`Patch rejected: ${e.reason}`, {
 					type: "error",
@@ -5595,7 +5622,7 @@ function Xi(e) {
 		}
 	}, [
 		D,
-		ee,
+		O,
 		A,
 		e,
 		t,
@@ -5630,7 +5657,7 @@ function Xi(e) {
 		r
 	]), fe = L((e) => {
 		if ("eventType" in e || !l(e.runId)) return;
-		O({
+		ee({
 			runId: e.runId,
 			stepId: e.stepId
 		});
@@ -5642,7 +5669,7 @@ function Xi(e) {
 	}, [l, r]);
 	F("pipeline.step.breakpoint", fe);
 	let pe = L((e) => {
-		"eventType" in e || D && D.runId === e.runId && O(null);
+		"eventType" in e || D && D.runId === e.runId && ee(null);
 	}, [D]);
 	F("pipeline.run.completed", pe), F("pipeline.run.failed", pe), F("pipeline.run.cancelled", pe);
 	let me = L(() => {
@@ -5714,7 +5741,7 @@ function Xi(e) {
 		handleRevertPatch: ue,
 		applyingPatch: N,
 		revertingPatchId: ne,
-		dirtyPatch: ee,
+		dirtyPatch: O,
 		dirtyPatchStepId: A,
 		handleContextEditBufferChange: ie,
 		resetEditBufferKey: te,
@@ -5803,13 +5830,13 @@ var Qi = {
 	info: "bg-info-bg text-info-fg"
 };
 function $i({ pipelineId: e, definition: t, dirty: n, savingFlash: i, isRunActive: a, isTriggering: o, runDisabled: c, runTitle: l, currentRun: u, breakpoints: d, onRunClick: f, onDebugRunClick: p, onExport: m, onPublishClick: _, onDuplicate: v, onCopyMermaid: y, onViewVersions: b, onRevert: x, onToggleShowTags: S, showTags: C, onViewRunHistory: w, onClearRunHistory: T, onSimPanelOpen: E, onDelete: D }) {
-	let O = dt(), { rename: ee, setIcon: k, setSelectedNodeId: j } = de(), [te, M] = V(!1), [N, P] = V(""), ne = B(null);
+	let ee = dt(), { rename: O, setIcon: k, setSelectedNodeId: j } = de(), [te, M] = V(!1), [N, P] = V(""), ne = B(null);
 	R(() => {
 		te && (P(t.name ?? ""), setTimeout(() => ne.current?.focus(), 0));
 	}, [te, t.name]);
 	let re = () => {
 		let e = N.trim();
-		e && e !== t.name && ee(e), M(!1);
+		e && e !== t.name && O(e), M(!1);
 	}, F = z(() => t ? Zr(t) : null, [t]);
 	F?.errors.length;
 	let ie = t.status === "published", ae = n ? {
@@ -5867,7 +5894,7 @@ function $i({ pipelineId: e, definition: t, dirty: n, savingFlash: i, isRunActiv
 		className: r("h-11 shrink-0 flex items-center gap-2.5 px-3", "border-b border-border bg-surface", "sticky top-0 z-5"),
 		children: [
 			/* @__PURE__ */ U(g, {
-				onClick: () => O("/pipelines"),
+				onClick: () => ee("/pipelines"),
 				"aria-label": "Back to pipelines",
 				title: "Back to pipelines",
 				children: "←"
@@ -5956,7 +5983,7 @@ function $i({ pipelineId: e, definition: t, dirty: n, savingFlash: i, isRunActiv
 			/* @__PURE__ */ U("div", { className: "flex-1" }),
 			/* @__PURE__ */ U(h, {
 				variant: "secondary",
-				onClick: () => O("/pipelines/metrics"),
+				onClick: () => ee("/pipelines/metrics"),
 				title: "View pipeline metrics dashboard",
 				"data-testid": "metrics-button",
 				children: "Metrics"
@@ -6510,19 +6537,19 @@ function ma({ run: e, activeStepId: t, onStepSelect: n, editable: i = !1, onEdit
 	]), R(() => {
 		u(0);
 	}, [t]);
-	let O = !!(e && e.status === "paused_at_breakpoint" && t && (e.currentStepIds?.includes(t) || C?.stepExecution.status === "running" || C?.stepExecution.status === "awaiting" || C?.stepExecution.status === "pending")), ee = !!i && !!O;
+	let ee = !!(e && e.status === "paused_at_breakpoint" && t && (e.currentStepIds?.includes(t) || C?.stepExecution.status === "running" || C?.stepExecution.status === "awaiting" || C?.stepExecution.status === "pending")), O = !!i && !!ee;
 	R(() => {
-		ee ? h && h !== t && (m({}), g(null), v({})) : (d && f(!1), Object.keys(p).length > 0 && m({}), h && g(null), Object.keys(_).length > 0 && v({}));
-	}, [ee, t]), R(() => {
+		O ? h && h !== t && (m({}), g(null), v({})) : (d && f(!1), Object.keys(p).length > 0 && m({}), h && g(null), Object.keys(_).length > 0 && v({}));
+	}, [O, t]), R(() => {
 		o !== void 0 && (m({}), g(null), v({}), b({
 			key: "",
 			value: ""
 		}));
 	}, [o]), R(() => {
-		!ee || !t || a && (Object.keys(p).length === 0 ? a(t, null) : a(t, p));
+		!O || !t || a && (Object.keys(p).length === 0 ? a(t, null) : a(t, p));
 	}, [
 		p,
-		ee,
+		O,
 		t
 	]);
 	let k = L((e, n) => {
@@ -6656,7 +6683,7 @@ function ma({ run: e, activeStepId: t, onStepSelect: n, editable: i = !1, onEdit
 						children: [/* @__PURE__ */ W("div", {
 							className: "text-[10px] text-code-muted font-semibold uppercase",
 							children: ["Input context", C.stepId ? ` — step ${C.stepId.slice(0, 8)}` : ""]
-						}), ee && /* @__PURE__ */ W("div", {
+						}), O && /* @__PURE__ */ W("div", {
 							className: "flex gap-1.5 items-center",
 							children: [d && Object.keys(p).length > 0 && /* @__PURE__ */ U("button", {
 								type: "button",
@@ -6675,10 +6702,10 @@ function ma({ run: e, activeStepId: t, onStepSelect: n, editable: i = !1, onEdit
 								children: d ? "Editing" : "Edit"
 							})]
 						})]
-					}), Object.keys(C.inputContext).length === 0 && !(ee && d) ? /* @__PURE__ */ U("div", {
+					}), Object.keys(C.inputContext).length === 0 && !(O && d) ? /* @__PURE__ */ U("div", {
 						className: "text-code-muted text-xs italic",
 						children: "No input context (first step or no upstream output)"
-					}) : ee && d ? /* @__PURE__ */ U(ca, {
+					}) : O && d ? /* @__PURE__ */ U(ca, {
 						inputContext: C.inputContext,
 						buffer: p,
 						parseErrors: _,
@@ -7294,7 +7321,7 @@ function ja({ label: e, checked: t, onChange: n, help: r, disabled: i, "data-tes
 		className: "flex flex-col",
 		children: [/* @__PURE__ */ W("div", {
 			className: "flex items-center gap-2",
-			children: [/* @__PURE__ */ U(ee, {
+			children: [/* @__PURE__ */ U(O, {
 				size: "sm",
 				checked: t,
 				onChange: n,
@@ -9739,19 +9766,19 @@ function os({ imageUrl: e, imageWidth: t, imageHeight: n, boxes: i, onChange: a,
 			height: r - t
 		});
 	}
-	let O = null;
+	let ee = null;
 	if (l.kind === "move") {
 		let e = i.find((e) => e.id === l.id);
 		if (e) {
 			let r = ts(l.currentX - l.offsetX, 0, t - e.width), i = ts(l.currentY - l.offsetY, 0, n - e.height);
-			O = {
+			ee = {
 				...e,
 				x: r,
 				y: i
 			};
 		}
 	}
-	let ee = null;
+	let O = null;
 	if (l.kind === "resize") {
 		let { corner: e, origBox: r, currentX: i, currentY: a } = l, { x: o, y: s, width: c, height: u } = r;
 		if (e === "nw") {
@@ -9764,7 +9791,7 @@ function os({ imageUrl: e, imageWidth: t, imageHeight: n, boxes: i, onChange: a,
 			let e = ts(i, 0, o + c - 4);
 			c = o + c - e, u = ts(a - s, 4, n - s), o = e;
 		} else c = ts(i - o, 4, t - o), u = ts(a - s, 4, n - s);
-		ee = {
+		O = {
 			...r,
 			x: o,
 			y: s,
@@ -9854,8 +9881,8 @@ function os({ imageUrl: e, imageWidth: t, imageHeight: n, boxes: i, onChange: a,
 				onPointerUp: o ? void 0 : S,
 				children: [
 					i.map((e) => k.has(e.id) ? null : te(e, !1, !0, `box-${e.id}`)),
-					O && te(O, !0, !1, "ghost-move"),
-					ee && te(ee, !0, !0, "ghost-resize"),
+					ee && te(ee, !0, !1, "ghost-move"),
+					O && te(O, !0, !0, "ghost-resize"),
 					(() => {
 						if (!D) return null;
 						let e = is(D, t, n);
@@ -13721,8 +13748,8 @@ function Fc({ systemPrompt: e, userPrompt: t, outputSchema: n, model: i, onSave:
 		_(e);
 		let t = Nc[Number(e)];
 		t && (h(t.value ? JSON.stringify(t.value, null, 2) : ""), t.systemPrompt !== void 0 && l(t.systemPrompt));
-	}, []), O = v?.imageId ?? null, ee = O ? s.getImageUrl(O) : null, k = L(async () => {
-		if (!O) {
+	}, []), ee = v?.imageId ?? null, O = ee ? s.getImageUrl(ee) : null, k = L(async () => {
+		if (!ee) {
 			C("Upload or paste a sample image URL first.");
 			return;
 		}
@@ -13737,7 +13764,7 @@ function Fc({ systemPrompt: e, userPrompt: t, outputSchema: n, model: i, onSave:
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					imageId: O,
+					imageId: ee,
 					systemPrompt: c.trim() || void 0,
 					userPrompt: u.trim(),
 					outputSchema: e,
@@ -13753,7 +13780,7 @@ function Fc({ systemPrompt: e, userPrompt: t, outputSchema: n, model: i, onSave:
 				return;
 			}
 			let r = {
-				imageUrl: ee ?? "",
+				imageUrl: O ?? "",
 				caption: n.caption ?? "",
 				rawText: typeof n.extracted == "object" && n.extracted ? JSON.stringify(n.extracted, null, 2) : void 0,
 				model: {
@@ -13779,8 +13806,8 @@ function Fc({ systemPrompt: e, userPrompt: t, outputSchema: n, model: i, onSave:
 			x(!1);
 		}
 	}, [
-		O,
 		ee,
+		O,
 		u,
 		c,
 		f,
@@ -14965,7 +14992,7 @@ function ll({ pipelineId: e }) {
 	R(() => (w.current && !c && (x(!0), S.current && clearTimeout(S.current), S.current = setTimeout(() => x(!1), 450)), w.current = c, () => {
 		S.current &&= (clearTimeout(S.current), null);
 	}), [c]);
-	let T = z(() => s ? Zr(s) : null, [s]), E = (T?.errors.length ?? 0) > 0, D = z(() => ol(s), [s]), O = z(() => s ? s.nodes.some((e) => e.type === "trigger") : !1, [s]) ? ["trigger"] : [], [ee, k] = V(!0), [A, te] = V(() => {
+	let T = z(() => s ? Zr(s) : null, [s]), E = (T?.errors.length ?? 0) > 0, D = z(() => ol(s), [s]), ee = z(() => s ? s.nodes.some((e) => e.type === "trigger") : !1, [s]) ? ["trigger"] : [], [O, k] = V(!0), [A, te] = V(() => {
 		if (typeof window > "u") return !1;
 		try {
 			return window.localStorage.getItem("ws_pipelines_v1_show_tags") === "true";
@@ -15136,7 +15163,7 @@ function ll({ pipelineId: e }) {
 			/* @__PURE__ */ W("div", {
 				className: "flex-1 flex min-h-0 relative overflow-hidden",
 				children: [
-					/* @__PURE__ */ U(Or, { disabledTypes: O }),
+					/* @__PURE__ */ U(Or, { disabledTypes: ee }),
 					/* @__PURE__ */ U("div", {
 						className: "flex-1 min-w-0 min-h-[600px] relative flex flex-col",
 						children: /* @__PURE__ */ U(Kr, {
@@ -15178,7 +15205,7 @@ function ll({ pipelineId: e }) {
 			}),
 			/* @__PURE__ */ U(qi, {
 				runId: y.currentRunId,
-				visible: y.isRunActive && ee
+				visible: y.isRunActive && O
 			}),
 			/* @__PURE__ */ U(Ki, {
 				publishConfirmOpen: N,
@@ -17796,7 +17823,7 @@ function $l() {
 	}, S = (e) => {
 		let t = b ? new Set(y) : new Set(Kl);
 		t.has(e) ? t.delete(e) : t.add(e), x(t);
-	}, [w, E] = V(!1), [D, O] = V(!1), [ee, k] = V(null), [A, j] = V(!1), [te, M] = V(!1), [N, P] = V(!1), ne = L(async () => {
+	}, [w, E] = V(!1), [D, ee] = V(!1), [O, k] = V(null), [A, j] = V(!1), [te, M] = V(!1), [N, P] = V(!1), ne = L(async () => {
 		let e = await Ce(), t = [];
 		for (let n of e) {
 			let e = await nt(n.id);
@@ -17854,7 +17881,7 @@ function $l() {
 		De(e).then(() => ne()), t(`/pipelines/${e.id}`);
 	}, we = (e) => {
 		let n = e.build(i);
-		De(n), O(!1), t(`/pipelines/${n.id}`);
+		De(n), ee(!1), t(`/pipelines/${n.id}`);
 	}, Te = (e) => t(`/pipelines/${e}`), Ee = async (e) => {
 		if (e.status !== "published") {
 			a("Run requires published state", { type: "warning" });
@@ -17878,16 +17905,16 @@ function $l() {
 		}
 		Ji(`${Xl(e.name)}.pipeline.json`, t);
 	}, je = async () => {
-		if (ee) {
+		if (O) {
 			try {
-				await _e(ee);
+				await _e(O);
 			} catch {
 				k(null), ne(), a("Could not delete the pipeline — it is still on the server", { type: "error" });
 				return;
 			}
 			k(null), ne(), a("Pipeline deleted", { type: "success" });
 		}
-	}, Me = ee ? u.find((e) => e.id === ee) : null, Ne = () => {
+	}, Me = O ? u.find((e) => e.id === O) : null, Ne = () => {
 		let e = Array.from(ie);
 		e.length !== 0 && (e.forEach((e, t) => {
 			let n = window.setTimeout(() => {
@@ -17986,7 +18013,7 @@ function $l() {
 				F && (e.preventDefault(), ue());
 				return;
 			}
-			(e.key === "Delete" || e.key === "Backspace") && ie.size > 0 && !A && !ee && !w && !D && (e.preventDefault(), j(!0));
+			(e.key === "Delete" || e.key === "Backspace") && ie.size > 0 && !A && !O && !w && !D && (e.preventDefault(), j(!0));
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
 	}, [
@@ -17995,7 +18022,7 @@ function $l() {
 		te,
 		N,
 		A,
-		ee,
+		O,
 		w,
 		D,
 		he,
@@ -18023,7 +18050,7 @@ function $l() {
 						}),
 						/* @__PURE__ */ U("button", {
 							"data-testid": "templates-btn",
-							onClick: () => O(!0),
+							onClick: () => ee(!0),
 							className: r("px-4 py-[7px] text-[13px] font-semibold", "bg-surface text-text-secondary", "border border-border-field rounded-[7px]", "cursor-pointer font-inherit"),
 							children: "Templates"
 						}),
@@ -18122,7 +18149,7 @@ function $l() {
 							}),
 							/* @__PURE__ */ U("button", {
 								"data-testid": "empty-state-templates",
-								onClick: () => O(!0),
+								onClick: () => ee(!0),
 								className: "bg-transparent border-none p-1 px-2 text-[13px] text-primary cursor-pointer underline font-inherit",
 								children: "or browse templates"
 							})
@@ -18137,11 +18164,11 @@ function $l() {
 			}),
 			/* @__PURE__ */ U(Wl, {
 				open: D,
-				onClose: () => O(!1),
+				onClose: () => ee(!1),
 				onSelect: we
 			}),
 			/* @__PURE__ */ U(C, {
-				open: !!ee,
+				open: !!O,
 				onClose: () => k(null),
 				title: "Delete pipeline?",
 				maxWidth: 400,
@@ -18854,14 +18881,14 @@ function Au() {
 				y(e instanceof Error ? e.message : String(e)), g(!1);
 			}
 		}
-	}, [p, t]), { query: E, statuses: D, triggerKinds: O, range: ee } = z(() => vu(n), [n]), k = (e, t) => {
+	}, [p, t]), { query: E, statuses: D, triggerKinds: ee, range: O } = z(() => vu(n), [n]), k = (e, t) => {
 		let r = new URLSearchParams(n);
 		t ? r.set(e, t) : r.delete(e), i(r, { replace: !0 });
 	}, A = (e) => {
 		let t = new Set(D);
 		t.has(e) ? t.delete(e) : t.add(e), k("status", t.size === 0 ? null : Array.from(t).join(","));
 	}, j = (e) => {
-		let t = new Set(O);
+		let t = new Set(ee);
 		t.has(e) ? t.delete(e) : t.add(e), k("trigger", t.size === 0 ? null : Array.from(t).join(","));
 	}, te = (e) => {
 		k("range", e === "7d" ? null : e);
@@ -18876,14 +18903,14 @@ function Au() {
 	let P = z(() => gu(a, {
 		query: E,
 		statuses: D,
-		triggerKinds: O,
-		range: ee
+		triggerKinds: ee,
+		range: O
 	}), [
 		a,
 		E,
 		D,
-		O,
-		ee
+		ee,
+		O
 	]), re = z(() => {
 		let e = /* @__PURE__ */ new Map();
 		if (!s) return e;
@@ -19043,8 +19070,8 @@ function Au() {
 			/* @__PURE__ */ U(Cu, {
 				query: E,
 				statuses: D,
-				triggerKinds: O,
-				range: ee,
+				triggerKinds: ee,
+				range: O,
 				onQueryChange: M,
 				onStatusToggle: A,
 				onTriggerToggle: j,
@@ -20540,8 +20567,8 @@ function wd({ pipelineId: e, runId: t }) {
 		return e;
 	}, [o]), [b, x] = V(!1), C = B(null);
 	er(C, () => x(!1), b);
-	let [T, E] = V("steps"), [D, O] = V(null), ee = L((e) => {
-		O(e), E("steps");
+	let [T, E] = V("steps"), [D, ee] = V(null), O = L((e) => {
+		ee(e), E("steps");
 	}, []), [k, A] = V(null), [j, te] = V(null), [M, N] = V(!1), P = m?.status === "failed" ? m.error?.nodeId : void 0, re = L((e) => {
 		if (!m) return;
 		let t = Object.entries(m.steps).filter(([t, n]) => t !== e && n.status === "completed").map(([e]) => e);
@@ -20970,7 +20997,7 @@ function wd({ pipelineId: e, runId: t }) {
 							children: /* @__PURE__ */ U(Sd, {
 								pipelineId: e,
 								runId: t,
-								onStepClick: ee
+								onStepClick: O
 							})
 						})
 					]
@@ -23086,9 +23113,9 @@ function Mf() {
 				"data-testid": "approvals-loading",
 				className: "flex flex-col gap-3 max-w-[680px] mx-auto",
 				children: [
-					/* @__PURE__ */ U(O, { height: 140 }),
-					/* @__PURE__ */ U(O, { height: 140 }),
-					/* @__PURE__ */ U(O, { height: 140 })
+					/* @__PURE__ */ U(ee, { height: 140 }),
+					/* @__PURE__ */ U(ee, { height: 140 }),
+					/* @__PURE__ */ U(ee, { height: 140 })
 				]
 			}) : g === 0 && !r ? /* @__PURE__ */ U(T, {
 				icon: "✋",
@@ -24017,7 +24044,7 @@ function sp({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i =
 		m,
 		b,
 		h
-	]), [S, C, T] = wt(y), [E, D, O] = St(x);
+	]), [S, C, T] = wt(y), [E, D, ee] = St(x);
 	R(() => {
 		C((e) => {
 			let t = new Map(e.map((e) => [e.id, e.position]));
@@ -24032,7 +24059,7 @@ function sp({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i =
 	}, [y, C]), R(() => {
 		D(x);
 	}, [x, D]);
-	let ee = L((e, t) => {
+	let O = L((e, t) => {
 		v(t.id);
 	}, [v]), k = L(() => {
 		f > Yf ? l(!0) : s(!0);
@@ -24080,8 +24107,8 @@ function sp({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i =
 					nodes: S,
 					edges: E,
 					onNodesChange: T,
-					onEdgesChange: O,
-					onNodeClick: ee,
+					onEdgesChange: ee,
+					onNodeClick: O,
 					nodeTypes: np,
 					fitView: !0,
 					fitViewOptions: { padding: .2 },

@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.305.0] — 2026-09-17
+
+### Fixed — `./social`
+
+- **You can react with something other than the quick three.**
+  `MessageActionBar` has offered a "More reactions" control all along and
+  `ChatPanel` never wired it, so no host could reach it — three emoji were the
+  entire vocabulary a reader had, where Teams lets you answer with any of them.
+  The picker is `ReactionPickerPopover`, already built and until now reachable
+  only from the composer.
+- **Owned by the panel, not handed to the host.** Picking an emoji is the same
+  act as pressing one of the quick three: it ends in `onToggleReaction`, which
+  every host already supplies, so this needs no host change at all. One picker
+  for the whole transcript, anchored at whichever button was pressed, rather
+  than a 64-emoji grid mounted per row.
+- **The built-in composer's emoji button is a drawn glyph**, not 🙂 — missed by
+  the earlier sweep because it lives in `ChatPanel`'s own fallback composer
+  rather than in `RichChatComposer`.
+
+---
+
 ## [2.304.0] — 2026-09-17
 
 ### Added — `./social`

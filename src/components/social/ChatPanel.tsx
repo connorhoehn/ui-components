@@ -12,7 +12,7 @@ import { Input } from '../forms/Input';
 import { FileInput } from '../forms/FileInput';
 import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
-import { ForwardIcon, PinIcon } from '../ui/Icons';
+import { ForwardIcon, PinIcon, SmileyIcon } from '../ui/Icons';
 import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { DocumentChip } from './DocumentChip';
@@ -1363,6 +1363,14 @@ export function ChatPanel({
   // Which own message is being edited in place, and which one is waiting on
   // the delete confirm. One at a time each; Teams does the same.
   const [editingId, setEditingId] = useState<string | null>(null);
+  // Which message's "More reactions" is open, and the button it hangs off.
+  // MessageActionBar has offered this control all along and ChatPanel never
+  // wired it, so no host could reach it: three quick reactions were the whole
+  // vocabulary. The picker is owned HERE rather than handed to the host,
+  // because picking an emoji is the same act as pressing one of the quick
+  // three — it ends in `onToggleReaction`, which every host already supplies.
+  const [reactionPickerFor, setReactionPickerFor] = useState<string | null>(null);
+  const reactionPickerAnchor = useRef<HTMLElement | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const dark = tone === 'dark';
   // A surrounding dock already draws the header and hands down a definite
@@ -2304,6 +2312,14 @@ export function ChatPanel({
             'absolute -top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100',
           )}
           onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
+          onOpenReactionPicker={
+            onToggleReaction
+              ? (trigger) => {
+                reactionPickerAnchor.current = trigger;
+                setReactionPickerFor(messageId);
+              }
+              : undefined
+          }
           // Replying to a REPLY hands back the thread's root, never the reply
           // itself. The host stamps `replyTo` from what it gets, so handing it
           // the child would stamp a grandchild — and since a grandchild folds
@@ -2793,6 +2809,22 @@ export function ChatPanel({
             )
           )}
 
+          {/* One picker for the whole transcript, anchored at whichever "More
+              reactions" was pressed — rather than one mounted per message,
+              which would build a 64-emoji grid for every row on screen. */}
+          {onToggleReaction && (
+            <ReactionPickerPopover
+              open={reactionPickerFor !== null}
+              triggerRef={reactionPickerAnchor}
+              emojis={emojis}
+              onSelect={(emoji) => {
+                if (reactionPickerFor) onToggleReaction(reactionPickerFor, emoji);
+                setReactionPickerFor(null);
+              }}
+              onClose={() => setReactionPickerFor(null)}
+            />
+          )}
+
           {onDeleteMessage && (
             <ConfirmDialog
               open={deletingId !== null}
@@ -2923,7 +2955,7 @@ export function ChatPanel({
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           )}
         >
-          <span aria-hidden="true">🙂</span>
+          <SmileyIcon size={16} aria-hidden="true" />
         </button>
         <ReactionPickerPopover
           open={emojiOpen}

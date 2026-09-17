@@ -2280,8 +2280,11 @@ export declare interface MessageActionBarProps {
     /** Emoji offered inline. Keep it short; the picker covers the rest. */
     quickReactions?: readonly string[];
     onReact?: (emoji: string) => void;
-    /** Opens the full emoji picker. Omit to show only the quick row. */
-    onOpenReactionPicker?: () => void;
+    /**
+     * Opens the full emoji picker, at the button that asked for it. Omit to show
+     * only the quick row.
+     */
+    onOpenReactionPicker?: (trigger: HTMLElement) => void;
     onReply?: () => void;
     /**
      * Send this message to ANOTHER conversation.
@@ -3133,19 +3136,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3158,6 +3148,19 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }

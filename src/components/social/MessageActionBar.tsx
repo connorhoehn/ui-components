@@ -23,8 +23,11 @@ export interface MessageActionBarProps {
   /** Emoji offered inline. Keep it short; the picker covers the rest. */
   quickReactions?: readonly string[];
   onReact?: (emoji: string) => void;
-  /** Opens the full emoji picker. Omit to show only the quick row. */
-  onOpenReactionPicker?: () => void;
+  /**
+   * Opens the full emoji picker, at the button that asked for it. Omit to show
+   * only the quick row.
+   */
+  onOpenReactionPicker?: (trigger: HTMLElement) => void;
   onReply?: () => void;
   /**
    * Send this message to ANOTHER conversation.
@@ -123,7 +126,7 @@ export function MessageActionBar({
         quickReactions.map((e) =>
           btn(`React ${e}`, () => onReact(e), <span aria-hidden>{e}</span>, `react-${e}`),
         )}
-      {onOpenReactionPicker && btn('More reactions', onOpenReactionPicker, <SmileyIcon size={14} />, 'more-reactions')}
+      {onOpenReactionPicker && btn('More reactions', (e) => onOpenReactionPicker(e.currentTarget), <SmileyIcon size={14} />, 'more-reactions')}
       {onReply && btn('Reply', onReply, <ReplyIcon size={14} />, 'reply')}
       {onForward && btn('Forward to another conversation', (e) => onForward(e.currentTarget), <ForwardIcon size={14} />, 'forward')}
       {onTogglePin && btn(pinned ? 'Unpin' : 'Pin to channel', onTogglePin, <PinIcon size={14} />, 'pin')}
