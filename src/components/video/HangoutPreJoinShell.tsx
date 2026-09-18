@@ -372,7 +372,12 @@ export default function HangoutPreJoinShell({
 
           {/* Right: who's already here, then the commitment. Stacks under
               the stage below `lg`. */}
-          <section className="w-full lg:w-72 xl:w-80 lg:shrink-0 flex flex-col gap-3">
+          {/* `lg:self-stretch` + `justify-between` puts the commitment at the
+              BOTTOM of the column, level with the bottom of the stage. The
+              column is shorter than the 16:9 preview, so left to itself it
+              ended at Cancel with ~100px of nothing under it — the same dead
+              space as the old centred header, just rotated. */}
+          <section className="w-full lg:w-72 xl:w-80 lg:shrink-0 lg:self-stretch flex flex-col gap-3 lg:justify-between">
             {/* Where the centred header row used to be. Left-aligned and
                 beside the stage, it costs no vertical space of its own. */}
             <div className="min-w-0">
@@ -392,6 +397,7 @@ export default function HangoutPreJoinShell({
               </p>
             </div>
 
+            <div className="flex flex-col gap-3 min-h-0">
             {devicesPanelOpen ? (
               <div
                 data-testid="prejoin-devices-panel"
@@ -411,7 +417,16 @@ export default function HangoutPreJoinShell({
                 {devicesSlot}
               </div>
             ) : (
-              <div className="rounded-xl border border-border bg-surface p-3">
+              <div
+                className={cn(
+                  // No card when there is nobody to list: one line of grey
+                  // text inside a bordered box reads as an empty input field,
+                  // which is furniture pretending to be a control.
+                  (readyLoading || (participants && participants.length > 0))
+                    ? 'rounded-xl border border-border bg-surface p-3'
+                    : 'px-0.5',
+                )}
+              >
                 <RosterList participants={participants} loading={readyLoading} />
 
                 {readyState === 'pending' && !readyLoading && (
@@ -422,6 +437,8 @@ export default function HangoutPreJoinShell({
                 )}
               </div>
             )}
+
+            </div>
 
             {/* Always rendered after the panel, never inside it, so opening
                 Device settings can't push Join off the viewport. */}
