@@ -19,7 +19,7 @@ import { PipelineEditorServicesProvider } from '../../services/PipelineEditorSer
 // really does mount it; only the editor CONTEXT is the library's own. Crop is
 // wrapped here for that reason, and for that reason only.
 const withServices = (ui: React.ReactNode) => (
-  <PipelineEditorServicesProvider services={{ getImageUrl: async () => 'blob:x' }}>
+  <PipelineEditorServicesProvider services={{ getImageUrl: () => 'blob:x' }}>
     {ui}
   </PipelineEditorServicesProvider>
 );

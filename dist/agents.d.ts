@@ -682,19 +682,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -714,6 +701,45 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -724,12 +750,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -757,35 +780,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
