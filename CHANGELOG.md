@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.330.0] — 2026-09-18
+
+### Fixed — `./social`
+
+- **The composer toolbar measures itself without needing the rendering
+  pipeline.** The callback ref runs before layout, so the width it reads can
+  be 0, and the correction afterwards arrived only through ResizeObserver —
+  whose callbacks are delivered on the rendering pipeline. A tab that is not
+  rendering (backgrounded, or driven by automation) never receives them, and
+  the toolbar sat on its "unmeasured" reading forever, keeping every control
+  at any width. A layout effect now reads the post-layout width synchronously,
+  which needs no pipeline; the observer remains for later resizes.
+
+---
+
 ## [2.329.0] — 2026-09-18
 
 ### Fixed — `./social`

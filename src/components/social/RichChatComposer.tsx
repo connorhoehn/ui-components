@@ -58,6 +58,7 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -893,6 +894,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
    */
   const [toolbarWidth, setToolbarWidth] = useState<number | null>(null);
   const observer = useRef<ResizeObserver | null>(null);
+  const toolbarNode = useRef<HTMLDivElement | null>(null);
   /**
    * A CALLBACK ref, not `useRef` + a mount effect.
    *
@@ -908,6 +910,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const toolbarRow = useCallback((el: HTMLDivElement | null) => {
     observer.current?.disconnect();
     observer.current = null;
+    toolbarNode.current = el;
     if (!el || typeof ResizeObserver === 'undefined') return;
     // A zero width is "no layout", not "very narrow" — a detached subtree, a
     // display:none ancestor, or a test environment with no layout engine at
@@ -922,6 +925,26 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     measure(el.getBoundingClientRect().width);
   }, []);
   useEffect(() => () => observer.current?.disconnect(), []);
+  /**
+   * Re-measure after every commit, and do NOT rely on the observer for the
+   * first real number.
+   *
+   * The callback ref runs before layout, so the width it reads can be 0 — and
+   * the correction after layout arrives only through ResizeObserver, whose
+   * callbacks are delivered on the rendering pipeline. A tab that is not
+   * rendering (backgrounded, or driven by automation) never gets them, and
+   * the toolbar stays on its "unmeasured" reading forever. A layout effect
+   * reads the post-layout width synchronously and needs no pipeline at all.
+   *
+   * Settles in one extra render: setting the same width bails out of the
+   * update, so this does not loop.
+   */
+  useLayoutEffect(() => {
+    const el = toolbarNode.current;
+    if (!el) return;
+    const w = el.getBoundingClientRect().width;
+    if (w > 0 && w !== toolbarWidth) setToolbarWidth(w);
+  });
   // Thresholds measured against the real control widths (28px each, plus two
   // 9px dividers and a 50px Send). `null` means we have not measured yet —
   // render everything, because a first paint that hides controls and then
