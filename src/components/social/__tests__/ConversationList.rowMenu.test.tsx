@@ -238,3 +238,54 @@ describe('ConversationList call actions', () => {
     expect(menu.queryByTestId('conversation-row-menu-general-call')).toBeNull();
   });
 });
+
+describe('ConversationList row menu — Rename', () => {
+  const onRename = vi.fn();
+  beforeEach(() => onRename.mockClear());
+
+  it('is absent until a handler says renaming is possible here', () => {
+    // Another action so the ⋯ exists at all — a row with no actions has no
+    // menu, which is its own (correct) behaviour tested above.
+    render(<ConversationList items={items} onSelect={onSelect} onTogglePin={onTogglePin} />);
+    expect(openMenu('general').queryByTestId('conversation-row-menu-general-rename')).toBeNull();
+  });
+
+  it('hands back the channel to rename', () => {
+    render(<ConversationList items={items} onSelect={onSelect} onRename={onRename} />);
+    fireEvent.click(openMenu('general').getByTestId('conversation-row-menu-general-rename'));
+    expect(onRename).toHaveBeenCalledWith('general');
+  });
+
+  it('lets the host refuse it per row', () => {
+    // Renaming is a PERMISSION — only a room's owner may — and a menu row that
+    // cannot do what it says is worse than an absent one. A DM also has no
+    // name of its own: it is named by the people in it.
+    render(
+      <ConversationList
+        items={items}
+        onSelect={onSelect}
+        onTogglePin={onTogglePin}
+        onRename={onRename}
+        canRename={(item) => item.kind === 'channel'}
+      />,
+    );
+    expect(openMenu('general').getByTestId('conversation-row-menu-general-rename')).toBeInTheDocument();
+    expect(openMenu('dm:alice').queryByTestId('conversation-row-menu-dm:alice-rename')).toBeNull();
+  });
+
+  it('offers it alongside the other row actions, not instead of them', () => {
+    render(
+      <ConversationList
+        items={items}
+        onSelect={onSelect}
+        onTogglePin={onTogglePin}
+        onToggleMute={onToggleMute}
+        onRename={onRename}
+      />,
+    );
+    const menu = openMenu('general');
+    expect(menu.getByTestId('conversation-row-menu-general-pin')).toBeInTheDocument();
+    expect(menu.getByTestId('conversation-row-menu-general-mute')).toBeInTheDocument();
+    expect(menu.getByTestId('conversation-row-menu-general-rename')).toBeInTheDocument();
+  });
+});

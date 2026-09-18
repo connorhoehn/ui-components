@@ -97,6 +97,10 @@ export interface ConversationRailProps {
   onTogglePin?: (channel: string, next: boolean) => void;
   onToggleMute?: (channel: string, next: boolean) => void;
   onMarkUnread?: (channel: string) => void;
+  /** "Rename" in each row's ⋯ menu. Forwarded to the list; see its prop docs. */
+  onRename?: (channel: string) => void;
+  /** Which rows accept a rename. Forwarded to the list. */
+  canRename?: (item: ConversationItem) => boolean;
   /**
    * Opts into the Teams/Slack "shrink to an icon strip" toggle. Off by
    * default, so every existing caller keeps its always-expanded rail with no
@@ -135,6 +139,8 @@ export function ConversationRail({
   onTogglePin,
   onToggleMute,
   onMarkUnread,
+  onRename,
+  canRename,
   collapsible = false,
   collapsed = false,
   onToggleCollapse,
@@ -263,6 +269,8 @@ export function ConversationRail({
           onTogglePin={onTogglePin}
           onToggleMute={onToggleMute}
           onMarkUnread={onMarkUnread}
+          onRename={onRename}
+          canRename={canRename}
           className="min-h-0 flex-1 overflow-y-auto p-2"
           data-testid={`${testId}-list`}
         />

@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.325.0] — 2026-09-18
+
+### Added — `./social`
+
+- **`ConversationRail` / `ConversationList` take `onRename` and `canRename`.**
+  The Teams/Slack "Rename channel" row in each conversation's ⋯ menu. Offered
+  per row rather than per list because renaming is a permission — only a
+  room's owner may — and a menu row that cannot do what it says is worse than
+  an absent one. `canRename` lets the host answer per row; a DM will typically
+  answer false, since it has no name of its own and is named by the people in
+  it.
+
+---
+
 ## [2.324.0] — 2026-09-17
 
 ### Changed — `./social`

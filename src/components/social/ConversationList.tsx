@@ -20,7 +20,7 @@ import { cn } from '../../lib/cn';
 import { Avatar, AvatarGroup } from '../shared/Avatar';
 import { PresenceDot } from '../shared/PresenceDot';
 import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
-import { BellMutedIcon, PhoneIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
+import { BellMutedIcon, EditIcon, PhoneIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
 import { RailSectionHeader, type RailSectionAction } from './RailSectionHeader';
 import { conversationStamp, fullTimestampLabel } from './dayBoundary';
 
@@ -231,6 +231,21 @@ export interface ConversationListProps {
   onToggleMute?: (channel: string, next: boolean) => void;
   /** Absent from a row that is already unread — there is nothing to mark. */
   onMarkUnread?: (channel: string) => void;
+  /**
+   * Rename this conversation — the Teams/Slack "Rename channel" row.
+   *
+   * Offered per row rather than per list because renaming is a permission:
+   * the host knows which conversations this reader owns, and a row that
+   * cannot be renamed should not say it can. Pass a handler only for rows
+   * where it is allowed (see `canRename`).
+   */
+  onRename?: (channel: string) => void;
+  /**
+   * Which rows accept a rename. Defaults to "all of them" when `onRename` is
+   * given. A DM has no name of its own — it is named by the people in it — so
+   * a host will typically answer false for those.
+   */
+  canRename?: (item: ConversationItem) => boolean;
   tone?: 'light' | 'dark';
   className?: string;
   'data-testid'?: string;
@@ -253,6 +268,8 @@ export function ConversationList({
   onTogglePin,
   onToggleMute,
   onMarkUnread,
+  onRename,
+  canRename,
   tone = 'light',
   className,
   'data-testid': testId,
@@ -526,6 +543,14 @@ export function ConversationList({
                 icon: <BellMutedIcon size={14} />,
                 onSelect: () => onToggleMute(item.channel, !muted),
                 'data-testid': `${menuTestId}-mute`,
+              });
+            }
+            if (onRename && (canRename ? canRename(item) : true)) {
+              menuItems.push({
+                label: 'Rename',
+                icon: <EditIcon size={14} />,
+                onSelect: () => onRename(item.channel),
+                'data-testid': `${menuTestId}-rename`,
               });
             }
             // Nothing to mark on a row that already carries unread.
