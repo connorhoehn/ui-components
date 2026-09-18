@@ -289,3 +289,79 @@ describe('ConversationList row menu — Rename', () => {
     expect(menu.getByTestId('conversation-row-menu-general-rename')).toBeInTheDocument();
   });
 });
+
+describe('custom sections — a person filing their own rail', () => {
+  const onSetSection = vi.fn();
+  beforeEach(() => onSetSection.mockClear());
+
+  const filed: ConversationItem[] = [
+    { channel: 'general', kind: 'channel', name: 'general', peers: [], section: 'Work', lastMessageAt: '2026-09-17T10:00:00' },
+    { channel: 'random', kind: 'channel', name: 'random', peers: [], section: 'Away from keyboard', lastMessageAt: '2026-09-17T09:00:00' },
+    { channel: 'design', kind: 'channel', name: 'design', peers: [], section: 'Work', lastMessageAt: '2026-09-17T08:00:00' },
+    { channel: 'dm:alice', peers: [{ userId: 'u-alice', displayName: 'Alice Chen' }], lastMessageAt: '2026-09-17T07:00:00' },
+  ];
+
+  const headings = () => screen.queryAllByRole('presentation').map((h) => h.textContent);
+
+  it('gives each heading its own group, in name order', () => {
+    // Name order, not recency: a person's own headings are a filing system,
+    // and drawers that move around defeat the point of having made one.
+    render(<ConversationList items={filed} onSelect={onSelect} />);
+    const lists = screen.getAllByRole('list').map((l) => l.getAttribute('aria-label'));
+    expect(lists.indexOf('Away from keyboard')).toBeLessThan(lists.indexOf('Work'));
+  });
+
+  it('keeps both rows of a section together', () => {
+    render(<ConversationList items={filed} onSelect={onSelect} />);
+    const work = screen.getByRole('list', { name: 'Work' });
+    expect(within(work).getAllByTestId('conversation-row')).toHaveLength(2);
+  });
+
+  it('leaves unfiled rows in the default groups', () => {
+    render(<ConversationList items={filed} onSelect={onSelect} grouped />);
+    const dms = screen.getByRole('list', { name: 'Direct messages' });
+    expect(within(dms).getAllByTestId('conversation-row')).toHaveLength(1);
+    // …and the filed channels are NOT also listed under Channels.
+    expect(screen.queryByRole('list', { name: 'Channels' })).toBeNull();
+  });
+
+  it('lets a pin outrank a section', () => {
+    // "Keep this in reach" is a stronger statement than "file this under
+    // Work", and a pinned row pulled down into a section is a pin that
+    // stopped working.
+    render(
+      <ConversationList
+        items={filed.map((i) => (i.channel === 'general' ? { ...i, pinned: true } : i))}
+        onSelect={onSelect}
+      />,
+    );
+    const pinned = screen.getByRole('list', { name: 'Pinned' });
+    expect(within(pinned).getAllByTestId('conversation-row')).toHaveLength(1);
+    expect(within(screen.getByRole('list', { name: 'Work' })).getAllByTestId('conversation-row')).toHaveLength(1);
+  });
+
+  it('treats a blank section as no section', () => {
+    render(
+      <ConversationList
+        items={[{ channel: 'general', kind: 'channel', name: 'general', peers: [], section: '   ', lastMessageAt: '2026-09-17T10:00:00' }]}
+        onSelect={onSelect}
+        grouped
+      />,
+    );
+    expect(screen.getByRole('list', { name: 'Channels' })).toBeInTheDocument();
+  });
+
+  it('offers "Move to section…" on any row, and names the one it is in', () => {
+    // Filing needs nobody's permission — it is the reader's own arrangement of
+    // their own rail — so unlike Rename it is offered on a DM too.
+    render(<ConversationList items={filed} onSelect={onSelect} onSetSection={onSetSection} />);
+    expect(openMenu('general').getByTestId('conversation-row-menu-general-section')).toHaveTextContent('Move from Work');
+    expect(openMenu('dm:alice').getByTestId('conversation-row-menu-dm:alice-section')).toHaveTextContent('Move to section');
+  });
+
+  it('hands back the channel to file', () => {
+    render(<ConversationList items={filed} onSelect={onSelect} onSetSection={onSetSection} />);
+    fireEvent.click(openMenu('general').getByTestId('conversation-row-menu-general-section'));
+    expect(onSetSection).toHaveBeenCalledWith('general');
+  });
+});

@@ -173,6 +173,21 @@ export function PinIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/**
+ * A folder: "file this under something of your own".
+ *
+ * The tab is drawn short and offset left so it reads as a folder rather than
+ * as a rectangle with a bite out of it at 14px, which is the size the
+ * conversation row menu uses it at.
+ */
+export function FolderIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M2 4.5a1 1 0 0 1 1-1h3l1.5 2H13a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
+    </svg>
+  );
+}
+
 /** A bell with a slash through it: "notify me quietly". */
 export function BellMutedIcon({ size = 16, ...rest }: GlyphProps) {
   return (

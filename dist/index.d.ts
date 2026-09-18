@@ -4145,6 +4145,20 @@ export declare interface ConversationItem {
      */
     pinned?: boolean;
     /**
+     * A heading this person filed the row under — the Slack/Teams "custom
+     * section". Absent or blank means the default grouping.
+     *
+     * Sections sit ABOVE Channels and Direct messages and below Pinned: someone
+     * who has made a section has said, in the strongest terms the rail offers,
+     * where they want this thread. A pin still outranks it — "keep this in
+     * reach" is a stronger statement than "file this under Work", and a pinned
+     * row pulled down into a section is a pin that stopped working.
+     *
+     * Filing is per person and per conversation, so two people in one channel
+     * can file it differently and neither sees the other's arrangement.
+     */
+    section?: string | null;
+    /**
      * Muted: traffic here is not worth interrupting for.
      *
      * The row still counts its unread — muting is not hiding — but the badge
@@ -4155,7 +4169,7 @@ export declare interface ConversationItem {
     muted?: boolean;
 }
 
-export declare function ConversationList({ items, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
+export declare function ConversationList({ items, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, sortByRecency, maxVisible, activeChannel, onSelect, onNewChat, emptyLabel, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, onSetSection, tone, className, 'data-testid': testId, }: ConversationListProps): JSX.Element;
 
 export declare interface ConversationListProps {
     items: ConversationItem[];
@@ -4262,6 +4276,15 @@ export declare interface ConversationListProps {
      */
     onRename?: (channel: string) => void;
     /**
+     * "Move to section…" — file this row under one of the person's own
+     * headings. The host owns the picker; this only reports the intent.
+     *
+     * Offered on every row when given, unlike Rename: filing is the reader's
+     * own arrangement of their own rail, so it needs no permission from anyone
+     * and applies as well to a DM as to a channel.
+     */
+    onSetSection?: (channel: string) => void;
+    /**
      * Which rows accept a rename. Defaults to "all of them" when `onRename` is
      * given. A DM has no name of its own — it is named by the people in it — so
      * a host will typically answer false for those.
@@ -4281,7 +4304,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, onSetSection, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -4344,6 +4367,8 @@ export declare interface ConversationRailProps {
     onRename?: (channel: string) => void;
     /** Which rows accept a rename. Forwarded to the list. */
     canRename?: (item: ConversationItem) => boolean;
+    /** "Move to section…" in each row's ⋯ menu. Forwarded to the list. */
+    onSetSection?: (channel: string) => void;
     /**
      * Opts into the Teams/Slack "shrink to an icon strip" toggle. Off by
      * default, so every existing caller keeps its always-expanded rail with no
@@ -6203,6 +6228,15 @@ export declare interface FloatingPanelProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/**
+ * A folder: "file this under something of your own".
+ *
+ * The tab is drawn short and offset left so it reads as a folder rather than
+ * as a rectangle with a bite out of it at 14px, which is the size the
+ * conversation row menu uses it at.
+ */
+export declare function FolderIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function FollowBanner({ name, onStop, autoStopOnInteract, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
 
@@ -16430,6 +16464,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -16449,12 +16496,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -16465,6 +16509,16 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -16498,19 +16552,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -16524,16 +16568,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

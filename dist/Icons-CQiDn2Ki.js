@@ -135,7 +135,13 @@ function h({ size: r = 16, ...i }) {
 		]
 	});
 }
-function g({ size: r = 16, ...i }) {
+function g({ size: t = 16, ...r }) {
+	return /* @__PURE__ */ e("svg", {
+		...n(t, r),
+		children: /* @__PURE__ */ e("path", { d: "M2 4.5a1 1 0 0 1 1-1h3l1.5 2H13a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" })
+	});
+}
+function _({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -146,7 +152,7 @@ function g({ size: r = 16, ...i }) {
 		]
 	});
 }
-function _({ size: r = 16, ...i }) {
+function v({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("rect", {
@@ -158,13 +164,13 @@ function _({ size: r = 16, ...i }) {
 		}), /* @__PURE__ */ e("path", { d: "M5.5 7.5V5.5a2.5 2.5 0 0 1 5 0v2" })]
 	});
 }
-function v({ size: r = 16, ...i }) {
+function y({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M3 4.5v3a3 3 0 0 0 3 3h6.5" }), /* @__PURE__ */ e("path", { d: "M10 8.2l2.8 2.3L10 12.8" })]
 	});
 }
-function y({ size: r = 16, ...i }) {
+function b({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M1.8 8s2.4-4 6.2-4 6.2 4 6.2 4-2.4 4-6.2 4S1.8 8 1.8 8z" }), /* @__PURE__ */ e("circle", {
@@ -174,13 +180,13 @@ function y({ size: r = 16, ...i }) {
 		})]
 	});
 }
-function b({ size: t = 16, ...r }) {
+function x({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M5.2 2.8 3.4 4.6c-.5.5-.6 1.3-.2 1.9a15 15 0 0 0 6.3 6.3c.6.4 1.4.3 1.9-.2l1.8-1.8-2.6-1.7-1.3 1a11 11 0 0 1-3.4-3.4l1-1.3z" })
 	});
 }
-function x({ size: r = 16, ...i }) {
+function S({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("rect", {
@@ -192,13 +198,13 @@ function x({ size: r = 16, ...i }) {
 		}), /* @__PURE__ */ e("path", { d: "M10.5 8.2 14 6.2v3.6l-3.5-2z" })]
 	});
 }
-function S({ size: t = 16, ...r }) {
+function C({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M8.5 2 4 9h3.2l-.7 5L12 7H8.8z" })
 	});
 }
-function C({ size: r = 16, ...i }) {
+function w({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("circle", {
@@ -208,13 +214,13 @@ function C({ size: r = 16, ...i }) {
 		}), /* @__PURE__ */ e("path", { d: "M10.8 8.3v.9a1.9 1.9 0 0 0 3.7 0V8a6.5 6.5 0 1 0-2.8 5.4" })]
 	});
 }
-function w({ size: t = 16, ...r }) {
+function T({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M14 8.53A6 6 0 1 1 7.47 2 4.67 4.67 0 0 0 14 8.53z" })
 	});
 }
-function T({ size: r = 16, ...i }) {
+function E({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("circle", {
@@ -224,13 +230,13 @@ function T({ size: r = 16, ...i }) {
 		}), /* @__PURE__ */ e("path", { d: "M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06" })]
 	});
 }
-function E({ size: t = 16, ...r }) {
+function D({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M2.5 4.5h11M2.5 8h11M2.5 11.5h11" })
 	});
 }
-function D({ size: r = 16, ...i }) {
+function O({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -246,7 +252,7 @@ function D({ size: r = 16, ...i }) {
 		]
 	});
 }
-function O({ size: r = 16, ...i }) {
+function k({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -270,25 +276,25 @@ function O({ size: r = 16, ...i }) {
 		]
 	});
 }
-function k({ size: r = 16, ...i }) {
+function A({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M2.5 13.5h11" }), /* @__PURE__ */ e("path", { d: "M4.5 13.5V9M8 13.5V4M11.5 13.5V7" })]
 	});
 }
-function A({ size: t = 16, ...r }) {
+function j({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M5.5 5.5 2.5 8l3 2.5M10.5 5.5 13.5 8l-3 2.5M9.3 3.5 6.7 12.5" })
 	});
 }
-function j({ size: t = 16, ...r }) {
+function M({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M3.2 3.2H6.3a1.7 1.7 0 0 0 3.4 0H12.8V6.3a1.7 1.7 0 0 1 0 3.4V12.8H3.2z" })
 	});
 }
-function M({ size: r = 16, ...i }) {
+function N({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -299,13 +305,13 @@ function M({ size: r = 16, ...i }) {
 		]
 	});
 }
-function N({ size: t = 16, ...r }) {
+function P({ size: t = 16, ...r }) {
 	return /* @__PURE__ */ e("svg", {
 		...n(t, r),
 		children: /* @__PURE__ */ e("path", { d: "M14.3 7.4 8.2 13.5a4 4 0 0 1-5.7-5.7l6.2-6.1a2.7 2.7 0 0 1 3.8 3.8l-6.2 6.1a1.3 1.3 0 0 1-1.9-1.9l5.7-5.6" })
 	});
 }
-function P({ size: r = 16, ...i }) {
+function F({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -315,13 +321,13 @@ function P({ size: r = 16, ...i }) {
 		]
 	});
 }
-function F({ size: r = 16, ...i }) {
+function I({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M6.5 4.5h-3v3h3v1.5a2 2 0 0 1-2 2" }), /* @__PURE__ */ e("path", { d: "M13 4.5h-3v3h3v1.5a2 2 0 0 1-2 2" })]
 	});
 }
-function I({ size: r = 16, ...i }) {
+function L({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [
@@ -335,11 +341,11 @@ function I({ size: r = 16, ...i }) {
 		]
 	});
 }
-function L({ size: r = 16, ...i }) {
+function R({ size: r = 16, ...i }) {
 	return /* @__PURE__ */ t("svg", {
 		...n(r, i),
 		children: [/* @__PURE__ */ e("path", { d: "M13 4.5v3a3 3 0 0 1-3 3H3.5" }), /* @__PURE__ */ e("path", { d: "M6 8.2 3.2 10.5 6 12.8" })]
 	});
 }
 //#endregion
-export { I as A, f as C, L as D, M as E, d as F, D as M, m as N, o as O, x as P, r as S, F as T, E as _, k as a, b, i as c, p as d, y as f, _ as g, P as h, O as i, T as j, s as k, A as l, l as m, C as n, a as o, v as p, g as r, c as s, S as t, u, w as v, j as w, h as x, N as y };
+export { s as A, r as C, N as D, I as E, S as F, d as I, E as M, O as N, R as O, m as P, h as S, M as T, v as _, A as a, P as b, i as c, p as d, b as f, F as g, l as h, k as i, L as j, o as k, j as l, y as m, w as n, a as o, g as p, _ as r, c as s, C as t, u, D as v, f as w, x, T as y };

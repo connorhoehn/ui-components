@@ -1,5 +1,5 @@
 import { t as e } from "../cn-DhjIN-s0.js";
-import { A as t, T as n, h as r, u as i, y as a } from "../Icons-CJYhglDU.js";
+import { E as t, b as n, g as r, j as i, u as a } from "../Icons-CQiDn2Ki.js";
 import { t as o } from "../Avatar-BzicCOft.js";
 import { t as s } from "../RovingToolbar-CmQag9q6.js";
 import { i as c, n as l, r as u } from "../ReactionPickerPopover-CcL-n6gt.js";
@@ -2010,7 +2010,7 @@ function Ci({ file: e }) {
 	}) : /* @__PURE__ */ T("span", {
 		"aria-hidden": !0,
 		className: "grid h-9 w-9 shrink-0 place-items-center rounded bg-surface-inset text-text-tertiary",
-		children: /* @__PURE__ */ T(i, { size: 16 })
+		children: /* @__PURE__ */ T(a, { size: 16 })
 	});
 }
 function wi({ files: t, onRemove: n, disabled: r = !1, className: i, "data-testid": a = "composer-attachments" }) {
@@ -2111,7 +2111,7 @@ var Ti = _(function({ items: t, command: n, onPickNonMember: r }, i) {
 		})] }, t.id))
 	});
 }), Ei = _(function({ items: t, command: n }, r) {
-	let [a, o] = C(0);
+	let [i, o] = C(0);
 	y(() => o(0), [t]);
 	let s = (e) => {
 		let r = t[e];
@@ -2120,7 +2120,7 @@ var Ti = _(function({ items: t, command: n, onPickNonMember: r }, i) {
 			label: r.label
 		});
 	};
-	return b(r, () => ({ onKeyDown: ({ event: e }) => t.length === 0 ? !1 : e.key === "ArrowUp" ? (o((e) => (e + t.length - 1) % t.length), !0) : e.key === "ArrowDown" ? (o((e) => (e + 1) % t.length), !0) : e.key === "Enter" || e.key === "Tab" ? (s(a), !0) : !1 })), t.length === 0 ? null : /* @__PURE__ */ T("div", {
+	return b(r, () => ({ onKeyDown: ({ event: e }) => t.length === 0 ? !1 : e.key === "ArrowUp" ? (o((e) => (e + t.length - 1) % t.length), !0) : e.key === "ArrowDown" ? (o((e) => (e + 1) % t.length), !0) : e.key === "Enter" || e.key === "Tab" ? (s(i), !0) : !1 })), t.length === 0 ? null : /* @__PURE__ */ T("div", {
 		"data-testid": "document-suggestions",
 		role: "listbox",
 		"aria-label": "Documents",
@@ -2128,17 +2128,17 @@ var Ti = _(function({ items: t, command: n, onPickNonMember: r }, i) {
 		children: t.map((t, n) => /* @__PURE__ */ E("button", {
 			type: "button",
 			role: "option",
-			"aria-selected": n === a,
+			"aria-selected": n === i,
 			"data-testid": "document-option",
 			onMouseDown: (e) => {
 				e.preventDefault(), s(n);
 			},
 			onMouseEnter: () => o(n),
-			className: e("flex w-full items-center gap-2 px-2 py-1.5 text-left text-sm", n === a ? "bg-surface-hover" : "bg-transparent"),
+			className: e("flex w-full items-center gap-2 px-2 py-1.5 text-left text-sm", n === i ? "bg-surface-hover" : "bg-transparent"),
 			children: [/* @__PURE__ */ T("span", {
 				"aria-hidden": "true",
 				className: e("w-6 shrink-0 text-center leading-none", t.icon ? "text-base" : "text-text-tertiary"),
-				children: t.icon || /* @__PURE__ */ T(i, {
+				children: t.icon || /* @__PURE__ */ T(a, {
 					size: 14,
 					className: "inline-block"
 				})
@@ -2328,7 +2328,7 @@ function Hi(e, t, n = !1) {
 		}
 	};
 }
-var Ui = _(function({ onSend: i, onCommand: o, onSearchPeople: d, mentionMembers: g, onMentionNonMember: _, onSearchDocuments: ae, allowAttachments: oe = !1, allowEmoji: se = !1, onRequestLink: ce, placeholder: le = "Write a message…", commands: ue, disabled: de = !1, toolbarExtras: fe, className: pe, "data-testid": O = "rich-chat-composer" }, me) {
+var Ui = _(function({ onSend: a, onCommand: o, onSearchPeople: d, mentionMembers: g, onMentionNonMember: _, onSearchDocuments: ae, allowAttachments: oe = !1, allowEmoji: se = !1, onRequestLink: ce, placeholder: le = "Write a message…", commands: ue, disabled: de = !1, toolbarExtras: fe, className: pe, "data-testid": O = "rich-chat-composer" }, me) {
 	let he = S(() => {}), ge = S(() => {}), k = S(null), ve = S(null), [ye, be] = C(!1), [xe, Se] = C({
 		open: !1,
 		href: "",
@@ -2591,19 +2591,19 @@ var Ui = _(function({ onSend: i, onCommand: o, onSearchPeople: d, mentionMembers
 		if (!L || !Le) return;
 		let e = L.getText(), t = f(e, ke.current), n = N.current, r;
 		t && (r = { trigger: t.trigger }, n && n.trigger === t.trigger && h(e, t).includes(n.item.label) && (r.argument = n.item));
-		let a = Fi(L);
-		i({
+		let i = Fi(L);
+		a({
 			html: L.isEmpty ? "" : L.getHTML(),
 			text: e,
 			mentions: Pi(L),
 			files: Ce.map((e) => e.file),
-			...a.length > 0 ? { documents: a } : {},
+			...i.length > 0 ? { documents: i } : {},
 			...r ? { command: r } : {}
 		}), N.current = null, L.commands.clearContent(!0), we([]), Ee(!0);
 	}, [
 		L,
 		Le,
-		i,
+		a,
 		Ce
 	]);
 	he.current = R, ge.current = Re, b(me, () => ({
@@ -2699,7 +2699,7 @@ var Ui = _(function({ onSend: i, onCommand: o, onSearchPeople: d, mentionMembers
 									className: "text-[11px]",
 									children: "1."
 								})),
-								z("Quote", L.isActive("blockquote"), () => L.chain().focus().toggleBlockquote().run(), /* @__PURE__ */ T(n, { size: 16 }))
+								z("Quote", L.isActive("blockquote"), () => L.chain().focus().toggleBlockquote().run(), /* @__PURE__ */ T(t, { size: 16 }))
 							],
 							(se || De) && /* @__PURE__ */ T("span", {
 								"aria-hidden": !0,
@@ -2707,7 +2707,7 @@ var Ui = _(function({ onSend: i, onCommand: o, onSearchPeople: d, mentionMembers
 							}),
 							se && L && /* @__PURE__ */ E("span", {
 								className: "relative",
-								children: [z("Emoji", ye, () => be((e) => !e), /* @__PURE__ */ T(t, { size: 16 }), ve), /* @__PURE__ */ T(l, {
+								children: [z("Emoji", ye, () => be((e) => !e), /* @__PURE__ */ T(i, { size: 16 }), ve), /* @__PURE__ */ T(l, {
 									open: ye,
 									triggerRef: ve,
 									onClose: () => be(!1),
@@ -2716,7 +2716,7 @@ var Ui = _(function({ onSend: i, onCommand: o, onSearchPeople: d, mentionMembers
 									}
 								})]
 							}),
-							De && /* @__PURE__ */ E(w, { children: [z("Attach files", !1, () => k.current?.click(), /* @__PURE__ */ T(a, { size: 16 })), /* @__PURE__ */ T(c, {
+							De && /* @__PURE__ */ E(w, { children: [z("Attach files", !1, () => k.current?.click(), /* @__PURE__ */ T(n, { size: 16 })), /* @__PURE__ */ T(c, {
 								ref: k,
 								multiple: !0,
 								"data-testid": `${O}-file-input`,

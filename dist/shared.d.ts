@@ -1466,6 +1466,15 @@ export declare interface FloatingPanelProps {
     'data-testid'?: string;
 }
 
+/**
+ * A folder: "file this under something of your own".
+ *
+ * The tab is drawn short and offset left so it reads as a folder rather than
+ * as a rectangle with a bite out of it at 14px, which is the size the
+ * conversation row menu uses it at.
+ */
+export declare function FolderIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function FollowBanner({ name, onStop, autoStopOnInteract, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
 
 export declare interface FollowBannerProps {
@@ -4207,6 +4216,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -4226,12 +4248,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -4242,6 +4261,16 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -4275,19 +4304,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -4301,16 +4320,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

@@ -101,6 +101,8 @@ export interface ConversationRailProps {
   onRename?: (channel: string) => void;
   /** Which rows accept a rename. Forwarded to the list. */
   canRename?: (item: ConversationItem) => boolean;
+  /** "Move to section…" in each row's ⋯ menu. Forwarded to the list. */
+  onSetSection?: (channel: string) => void;
   /**
    * Opts into the Teams/Slack "shrink to an icon strip" toggle. Off by
    * default, so every existing caller keeps its always-expanded rail with no
@@ -141,6 +143,7 @@ export function ConversationRail({
   onMarkUnread,
   onRename,
   canRename,
+  onSetSection,
   collapsible = false,
   collapsed = false,
   onToggleCollapse,
@@ -271,6 +274,7 @@ export function ConversationRail({
           onMarkUnread={onMarkUnread}
           onRename={onRename}
           canRename={canRename}
+          onSetSection={onSetSection}
           className="min-h-0 flex-1 overflow-y-auto p-2"
           data-testid={`${testId}-list`}
         />

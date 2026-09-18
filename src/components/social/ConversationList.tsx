@@ -20,7 +20,7 @@ import { cn } from '../../lib/cn';
 import { Avatar, AvatarGroup } from '../shared/Avatar';
 import { PresenceDot } from '../shared/PresenceDot';
 import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
-import { BellMutedIcon, EditIcon, PhoneIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
+import { BellMutedIcon, EditIcon, FolderIcon, PhoneIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
 import { RailSectionHeader, type RailSectionAction } from './RailSectionHeader';
 import { conversationStamp, fullTimestampLabel } from './dayBoundary';
 
@@ -125,6 +125,20 @@ export interface ConversationItem {
    * Direct messages puts them back where they were.
    */
   pinned?: boolean;
+  /**
+   * A heading this person filed the row under — the Slack/Teams "custom
+   * section". Absent or blank means the default grouping.
+   *
+   * Sections sit ABOVE Channels and Direct messages and below Pinned: someone
+   * who has made a section has said, in the strongest terms the rail offers,
+   * where they want this thread. A pin still outranks it — "keep this in
+   * reach" is a stronger statement than "file this under Work", and a pinned
+   * row pulled down into a section is a pin that stopped working.
+   *
+   * Filing is per person and per conversation, so two people in one channel
+   * can file it differently and neither sees the other's arrangement.
+   */
+  section?: string | null;
   /**
    * Muted: traffic here is not worth interrupting for.
    *
@@ -241,6 +255,15 @@ export interface ConversationListProps {
    */
   onRename?: (channel: string) => void;
   /**
+   * "Move to section…" — file this row under one of the person's own
+   * headings. The host owns the picker; this only reports the intent.
+   *
+   * Offered on every row when given, unlike Rename: filing is the reader's
+   * own arrangement of their own rail, so it needs no permission from anyone
+   * and applies as well to a DM as to a channel.
+   */
+  onSetSection?: (channel: string) => void;
+  /**
    * Which rows accept a rename. Defaults to "all of them" when `onRename` is
    * given. A DM has no name of its own — it is named by the people in it — so
    * a host will typically answer false for those.
@@ -270,6 +293,7 @@ export function ConversationList({
   onMarkUnread,
   onRename,
   canRename,
+  onSetSection,
   tone = 'light',
   className,
   'data-testid': testId,
@@ -312,11 +336,30 @@ export function ConversationList({
   if (pinnedRows.length > 0) {
     sections.push({ heading: 'Pinned', label: 'Pinned', items: pinnedRows });
   }
+  // Custom sections, between the pins and the built-in groups. Ordered by
+  // NAME rather than by recency: a person's own headings are a filing system,
+  // and a filing system whose drawers move around defeats the point of having
+  // made it. Rows inside a section are still ordered by recency.
+  const sectionName = (i: ConversationItem) => (i.section ?? '').trim();
+  const filed = unpinned.filter((i) => sectionName(i) !== '');
+  const unfiled = filed.length > 0 ? unpinned.filter((i) => sectionName(i) === '') : unpinned;
+  if (filed.length > 0) {
+    const byName = new Map<string, ConversationItem[]>();
+    for (const item of filed) {
+      const name = sectionName(item);
+      const bucket = byName.get(name);
+      if (bucket) bucket.push(item);
+      else byName.set(name, [item]);
+    }
+    for (const name of [...byName.keys()].sort((a2, b2) => a2.localeCompare(b2))) {
+      sections.push({ heading: name, label: name, items: byName.get(name)! });
+    }
+  }
   if (grouped) {
     const isChannelRow = (i: ConversationItem) =>
       (i.kind ?? (i.peers.length > 1 ? 'group' : 'dm')) === 'channel';
-    const channels = unpinned.filter(isChannelRow);
-    const directs = unpinned.filter((i) => !isChannelRow(i));
+    const channels = unfiled.filter(isChannelRow);
+    const directs = unfiled.filter((i) => !isChannelRow(i));
     // A heading with nothing under it is a promise of content that is not
     // there, so each one appears only when its group does.
     const channelSection = { heading: 'Channels', label: 'Channels', items: channels };
@@ -325,8 +368,8 @@ export function ConversationList({
       ? [directSection, channelSection]
       : [channelSection, directSection];
     for (const section of inOrder) if (section.items.length > 0) sections.push(section);
-  } else if (unpinned.length > 0) {
-    sections.push({ label: 'Conversations', items: unpinned });
+  } else if (unfiled.length > 0) {
+    sections.push({ label: 'Conversations', items: unfiled });
   }
 
   // ── Roving focus ───────────────────────────────────────────────────
@@ -551,6 +594,14 @@ export function ConversationList({
                 icon: <EditIcon size={14} />,
                 onSelect: () => onRename(item.channel),
                 'data-testid': `${menuTestId}-rename`,
+              });
+            }
+            if (onSetSection) {
+              menuItems.push({
+                label: sectionName(item) ? `Move from ${sectionName(item)}\u2026` : 'Move to section\u2026',
+                icon: <FolderIcon size={14} />,
+                onSelect: () => onSetSection(item.channel),
+                'data-testid': `${menuTestId}-section`,
               });
             }
             // Nothing to mark on a row that already carries unread.

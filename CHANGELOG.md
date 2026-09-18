@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.326.0] — 2026-09-18
+
+### Added — `./social`, `./ui`
+
+- **Custom sections on the conversation rail.** `ConversationItem.section` is
+  a heading the reader filed the row under — the Slack/Teams idea of naming
+  your own groups. Sections render between Pinned and the built-in Channels /
+  Direct messages, ordered by NAME rather than recency: a filing system whose
+  drawers move around defeats the point of having made one. A pin still
+  outranks a section — "keep this in reach" is a stronger statement than "file
+  this under Work", and a pinned row pulled down into a section is a pin that
+  stopped working. A blank section counts as none.
+- **`onSetSection`** on `ConversationRail` / `ConversationList`: "Move to
+  section…" in the row menu, reading "Move from <name>…" for a row already
+  filed. Offered on every row when given, unlike Rename — filing is the
+  reader's own arrangement of their own rail and needs nobody's permission.
+- **`FolderIcon`**, for that menu row.
+
+---
+
 ## [2.325.0] — 2026-09-18
 
 ### Added — `./social`
