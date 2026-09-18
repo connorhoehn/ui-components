@@ -378,8 +378,10 @@ export default function HangoutPreJoinShell({
               ended at Cancel with ~100px of nothing under it — the same dead
               space as the old centred header, just rotated. */}
           <section className="w-full lg:w-72 xl:w-80 lg:shrink-0 lg:self-stretch flex flex-col gap-3 lg:justify-between">
-            {/* Where the centred header row used to be. Left-aligned and
-                beside the stage, it costs no vertical space of its own. */}
+            {/* One top group — heading AND roster — so `justify-between`
+                splits the column in two, not three. As three children it
+                spread them evenly and opened a gap under the heading. */}
+            <div className="flex flex-col gap-3 min-h-0">
             <div className="min-w-0">
               {eyebrow && (
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral">
@@ -397,7 +399,6 @@ export default function HangoutPreJoinShell({
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 min-h-0">
             {devicesPanelOpen ? (
               <div
                 data-testid="prejoin-devices-panel"

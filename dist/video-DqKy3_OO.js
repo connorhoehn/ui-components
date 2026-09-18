@@ -3692,8 +3692,9 @@ function Dn({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 					})]
 				}), /* @__PURE__ */ G("section", {
 					className: "w-full lg:w-72 xl:w-80 lg:shrink-0 lg:self-stretch flex flex-col gap-3 lg:justify-between",
-					children: [
-						/* @__PURE__ */ G("div", {
+					children: [/* @__PURE__ */ G("div", {
+						className: "flex flex-col gap-3 min-h-0",
+						children: [/* @__PURE__ */ G("div", {
 							className: "min-w-0",
 							children: [
 								n && /* @__PURE__ */ W("p", {
@@ -3711,65 +3712,60 @@ function Dn({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 									children: K
 								})
 							]
-						}),
-						/* @__PURE__ */ W("div", {
-							className: "flex flex-col gap-3 min-h-0",
-							children: J ? /* @__PURE__ */ G("div", {
-								"data-testid": "prejoin-devices-panel",
-								className: "rounded-xl border border-border bg-surface p-3",
-								children: [/* @__PURE__ */ G("div", {
-									className: "flex items-center justify-between gap-2 mb-2",
-									children: [/* @__PURE__ */ W("h2", {
-										className: "text-sm font-semibold",
-										children: "Device settings"
-									}), /* @__PURE__ */ W(i, {
-										variant: "ghost",
-										size: "sm",
-										onClick: () => Y(!1),
-										"data-testid": "prejoin-devices-close",
-										children: "Close"
-									})]
-								}), b]
-							}) : /* @__PURE__ */ G("div", {
-								className: e(v || h && h.length > 0 ? "rounded-xl border border-border bg-surface p-3" : "px-0.5"),
-								children: [/* @__PURE__ */ W(On, {
-									participants: h,
-									loading: v
-								}), g === "pending" && !v && /* @__PURE__ */ G("p", {
-									className: "mt-3 text-xs text-warning-fg flex items-center gap-2",
-									children: [/* @__PURE__ */ W("span", { className: "h-1.5 w-1.5 rounded-full bg-warning animate-pulse" }), "Other publishers are still connecting — you can join anyway."]
+						}), J ? /* @__PURE__ */ G("div", {
+							"data-testid": "prejoin-devices-panel",
+							className: "rounded-xl border border-border bg-surface p-3",
+							children: [/* @__PURE__ */ G("div", {
+								className: "flex items-center justify-between gap-2 mb-2",
+								children: [/* @__PURE__ */ W("h2", {
+									className: "text-sm font-semibold",
+									children: "Device settings"
+								}), /* @__PURE__ */ W(i, {
+									variant: "ghost",
+									size: "sm",
+									onClick: () => Y(!1),
+									"data-testid": "prejoin-devices-close",
+									children: "Close"
 								})]
+							}), b]
+						}) : /* @__PURE__ */ G("div", {
+							className: e(v || h && h.length > 0 ? "rounded-xl border border-border bg-surface p-3" : "px-0.5"),
+							children: [/* @__PURE__ */ W(On, {
+								participants: h,
+								loading: v
+							}), g === "pending" && !v && /* @__PURE__ */ G("p", {
+								className: "mt-3 text-xs text-warning-fg flex items-center gap-2",
+								children: [/* @__PURE__ */ W("span", { className: "h-1.5 w-1.5 rounded-full bg-warning animate-pulse" }), "Other publishers are still connecting — you can join anyway."]
+							})]
+						})]
+					}), /* @__PURE__ */ G("div", {
+						className: "flex flex-col gap-2",
+						children: [
+							/* @__PURE__ */ W(i, {
+								variant: "primary",
+								size: "lg",
+								fullWidth: !0,
+								onClick: () => T({
+									audio: c,
+									video: l
+								}),
+								disabled: z,
+								"data-testid": "prejoin-join-button",
+								children: B
+							}),
+							w && /* @__PURE__ */ W("div", {
+								"data-testid": "prejoin-secondary-actions",
+								children: w
+							}),
+							/* @__PURE__ */ W("button", {
+								type: "button",
+								onClick: O,
+								"data-testid": "prejoin-cancel",
+								className: "text-xs text-neutral hover:text-text-primary transition-colors text-center cursor-pointer",
+								children: "Cancel"
 							})
-						}),
-						/* @__PURE__ */ G("div", {
-							className: "flex flex-col gap-2",
-							children: [
-								/* @__PURE__ */ W(i, {
-									variant: "primary",
-									size: "lg",
-									fullWidth: !0,
-									onClick: () => T({
-										audio: c,
-										video: l
-									}),
-									disabled: z,
-									"data-testid": "prejoin-join-button",
-									children: B
-								}),
-								w && /* @__PURE__ */ W("div", {
-									"data-testid": "prejoin-secondary-actions",
-									children: w
-								}),
-								/* @__PURE__ */ W("button", {
-									type: "button",
-									onClick: O,
-									"data-testid": "prejoin-cancel",
-									className: "text-xs text-neutral hover:text-text-primary transition-colors text-center cursor-pointer",
-									children: "Cancel"
-								})
-							]
-						})
-					]
+						]
+					})]
 				})]
 			})
 		})
