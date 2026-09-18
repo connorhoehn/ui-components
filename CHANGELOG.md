@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.323.0] — 2026-09-17
+
+### Added — `./social`
+
+- **`ConversationSurface` forwards `onCreateWhiteboard`.** 2.322.0 gave
+  `ChannelDocumentsPanel` the handler but stopped there, and no page reaches
+  that panel directly — every one of them goes through the surface. So the
+  affordance existed and could not be wired to anything. The surface now
+  passes it down, and a test fails if that line is ever dropped again.
+
+---
+
 ## [2.322.0] — 2026-09-17
 
 ### Added — `./social`, `./ui`

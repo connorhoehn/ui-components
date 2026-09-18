@@ -117,6 +117,13 @@ export interface ConversationSurfaceProps {
   onOpenDocument?: (documentId: string) => void;
   /** Omit for a viewer who may not create documents here. */
   onCreateDocument?: () => void;
+  /**
+   * Start a whiteboard instead of a document. Same permission, different
+   * shape: a document opens beside the conversation, a whiteboard takes the
+   * whole window — you are not typing in chat while drawing with somebody.
+   * Omit to offer documents only.
+   */
+  onCreateWhiteboard?: () => void;
 
   pins?: readonly PinnedMessageItem[];
   onUnpin?: (messageId: string) => void;
@@ -224,6 +231,7 @@ export function ConversationSurface({
   documents = [],
   onOpenDocument,
   onCreateDocument,
+  onCreateWhiteboard,
   pins = [],
   onUnpin,
   mentions = [],
@@ -369,6 +377,7 @@ export function ConversationSurface({
           documents={documents}
           onOpen={onOpenDocument}
           onCreate={onCreateDocument}
+          onCreateWhiteboard={onCreateWhiteboard}
         />
       )}
       {enabled.has('pins') && view === 'pins' && (

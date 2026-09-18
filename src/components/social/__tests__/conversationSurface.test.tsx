@@ -275,3 +275,24 @@ describe('ConversationSurface — the rest of the header row', () => {
     }
   });
 });
+
+describe('starting a whiteboard from the Documents view', () => {
+  // The two are different enough to be different buttons: a document opens
+  // beside the conversation, a whiteboard takes the whole window. The surface
+  // is the only path a page has to either, so a handler it drops is a feature
+  // that simply cannot be reached.
+  it('passes the whiteboard handler through to the documents panel', () => {
+    const onCreateWhiteboard = vi.fn();
+    render(<ConversationSurface name="Hank" documents={[doc]} onCreateDocument={vi.fn()} onCreateWhiteboard={onCreateWhiteboard} />);
+    fireEvent.click(screen.getByRole('tab', { name: /Documents/ }));
+    fireEvent.click(screen.getByTestId('channel-documents-create-whiteboard'));
+    expect(onCreateWhiteboard).toHaveBeenCalledTimes(1);
+  });
+
+  it('offers documents alone when no whiteboard handler is given', () => {
+    render(<ConversationSurface name="Hank" documents={[doc]} onCreateDocument={vi.fn()} />);
+    fireEvent.click(screen.getByRole('tab', { name: /Documents/ }));
+    expect(screen.getByTestId('channel-documents-create')).toBeInTheDocument();
+    expect(screen.queryByTestId('channel-documents-create-whiteboard')).toBeNull();
+  });
+});
