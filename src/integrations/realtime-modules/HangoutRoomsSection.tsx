@@ -92,10 +92,30 @@ export function HangoutRoomsSection({
   const openCreate = () => setCreateOpen(true);
   const closeCreate = () => setCreateOpen(false);
 
-  const activeRooms = useMemo(
-    () => rooms.rooms.filter((r) => r.state === 'active'),
-    [rooms.rooms],
-  );
+  /**
+   * Active rooms, one row per slug.
+   *
+   * The slug is this list's identity — it is the React key and the thing the
+   * row navigates to — and the feed can carry the same one more than once. On
+   * a workspace with three rooms called "General" that meant three rows keyed
+   * `general`, fifteen duplicate-key warnings per page load, and React free to
+   * duplicate or omit rows on any update. Two rows that point at the same room
+   * are not information either way.
+   *
+   * First occurrence wins, so ordering is untouched for the common case where
+   * there are no duplicates.
+   */
+  const activeRooms = useMemo(() => {
+    const seen = new Set<string>();
+    const out: typeof rooms.rooms = [];
+    for (const room of rooms.rooms) {
+      if (room.state !== 'active') continue;
+      if (seen.has(room.slug)) continue;
+      seen.add(room.slug);
+      out.push(room);
+    }
+    return out;
+  }, [rooms.rooms]);
   const visible = useMemo(
     () => activeRooms.slice(0, maxVisible),
     [activeRooms, maxVisible],

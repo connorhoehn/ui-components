@@ -70,4 +70,30 @@ describe('HangoutRoomsSection — "Browse all" overflow row', () => {
     );
     expect(screen.queryByTestId('hangout-rooms-browse-all')).toBeNull();
   });
+
+  // The slug is this list's identity: the React key, and what the row
+  // navigates to. A workspace with three rooms called "General" produced three
+  // rows keyed `general`, fifteen duplicate-key warnings per page load, and
+  // React free to duplicate or omit rows on any update.
+  it('renders one row per slug when the feed repeats one', () => {
+    const rooms = [makeRoom('general'), makeRoom('general'), makeRoom('watercooler')];
+    render(<HangoutRoomsSection rooms={makeHook(rooms)} />);
+    expect(screen.getAllByTestId('room-row')).toHaveLength(2);
+  });
+
+  it('keeps the first occurrence, so ordering is untouched', () => {
+    const rooms = [
+      makeRoom('general', { name: 'First' }),
+      makeRoom('general', { name: 'Second' }),
+    ];
+    render(<HangoutRoomsSection rooms={makeHook(rooms)} />);
+    expect(screen.getByText('First')).toBeInTheDocument();
+    expect(screen.queryByText('Second')).toBeNull();
+  });
+
+  it('leaves a list with no duplicates exactly as it was', () => {
+    const rooms = [makeRoom('a'), makeRoom('b'), makeRoom('c')];
+    render(<HangoutRoomsSection rooms={makeHook(rooms)} />);
+    expect(screen.getAllByTestId('room-row')).toHaveLength(3);
+  });
 });

@@ -822,7 +822,11 @@ function Be({ open: e, onClose: n, onCreate: i, onCreated: a, defaultVisibility:
 //#endregion
 //#region src/integrations/realtime-modules/HangoutRoomsSection.tsx
 function Ve({ rooms: e, occupancyFor: r, occupancyAdapter: a, participantId: o, onJoinRoom: s, onOpenConversation: c, onContextMenu: l, onBrowseAll: u, maxVisible: d = 10, title: f = "Rooms", storageKey: p, renderCreateDialog: g }) {
-	let [_, v] = M(!1), y = () => v(!0), b = () => v(!1), x = A(() => e.rooms.filter((e) => e.state === "active"), [e.rooms]), S = A(() => x.slice(0, d), [x, d]), C = x.length - S.length;
+	let [_, v] = M(!1), y = () => v(!0), b = () => v(!1), x = A(() => {
+		let t = /* @__PURE__ */ new Set(), n = [];
+		for (let r of e.rooms) r.state === "active" && (t.has(r.slug) || (t.add(r.slug), n.push(r)));
+		return n;
+	}, [e.rooms]), S = A(() => x.slice(0, d), [x, d]), C = x.length - S.length;
 	return /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ F(h, {
 		title: f,
 		storageKey: p,
