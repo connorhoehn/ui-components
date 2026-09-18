@@ -907,8 +907,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // render everything, because a first paint that hides controls and then
   // shows them is worse than one frame of overflow.
   const roomFor = (needed: number) => toolbarWidth === null || toolbarWidth >= needed;
-  const showSecondaryMarks = roomFor(330);   // strikethrough, code
-  const showListControls = roomFor(280);     // bullets, numbers, quote
+  const showSecondaryMarks = roomFor(360);   // strikethrough, code
+  const showListControls = roomFor(300);     // bullets, numbers, quote
 
   const toolbarButton = (
     label: string,
@@ -932,7 +932,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         onClick();
       }}
       className={cn(
-        'grid h-7 w-7 place-items-center rounded text-sm leading-none',
+        // `shrink-0`: without it the flex row squeezes the buttons instead of
+        // dropping any — measured at 21px against a 28px box, which is under
+        // the size a finger or a hurried cursor can hit. The row sheds whole
+        // controls (see `roomFor`) rather than shaving every one of them.
+        'grid h-7 w-7 shrink-0 place-items-center rounded text-sm leading-none',
         active ? 'bg-surface-hover text-text-primary' : 'text-text-secondary hover:bg-surface-hover',
       )}
     >
@@ -1021,14 +1025,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               () => openLinkDialog(),
               <LinkIcon size={16} />,
             ),
-            showListControls && <span key="sep1" aria-hidden className="mx-1 h-4 w-px bg-border" />,
+            showListControls && <span key="sep1" aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />,
             showListControls && toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), <span>•</span>),
             showListControls && toolbarButton('Numbered list', editor.isActive('orderedList'), () => editor.chain().focus().toggleOrderedList().run(), <span className="text-[11px]">1.</span>),
             showListControls && toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={16} />),
           ]}
 
           {(allowEmoji || attachmentsEnabled) && (
-            <span aria-hidden className="mx-1 h-4 w-px bg-border" />
+            <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />
           )}
 
           {allowEmoji && editor && (

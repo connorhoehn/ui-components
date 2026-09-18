@@ -2631,7 +2631,7 @@ var Ui = _(function({ onSend: a, onCommand: o, onSearchPeople: d, mentionMembers
 		});
 		return t.observe(e), () => t.disconnect();
 	}, []);
-	let We = (e) => He === null || He >= e, Ge = We(330), Ke = We(280), z = (t, n, r, i, a) => /* @__PURE__ */ T("button", {
+	let We = (e) => He === null || He >= e, Ge = We(360), Ke = We(300), z = (t, n, r, i, a) => /* @__PURE__ */ T("button", {
 		ref: a,
 		type: "button",
 		"aria-label": t,
@@ -2641,7 +2641,7 @@ var Ui = _(function({ onSend: a, onCommand: o, onSearchPeople: d, mentionMembers
 		onMouseDown: (e) => {
 			e.preventDefault(), r();
 		},
-		className: e("grid h-7 w-7 place-items-center rounded text-sm leading-none", n ? "bg-surface-hover text-text-primary" : "text-text-secondary hover:bg-surface-hover"),
+		className: e("grid h-7 w-7 shrink-0 place-items-center rounded text-sm leading-none", n ? "bg-surface-hover text-text-primary" : "text-text-secondary hover:bg-surface-hover"),
 		children: i
 	}, t);
 	return /* @__PURE__ */ T(u, {
@@ -2702,7 +2702,7 @@ var Ui = _(function({ onSend: a, onCommand: o, onSearchPeople: d, mentionMembers
 								z(L.isActive("link") ? "Edit link" : "Add link", L.isActive("link"), () => Re(), /* @__PURE__ */ T(r, { size: 16 })),
 								Ke && /* @__PURE__ */ T("span", {
 									"aria-hidden": !0,
-									className: "mx-1 h-4 w-px bg-border"
+									className: "mx-1 h-4 w-px shrink-0 bg-border"
 								}, "sep1"),
 								Ke && z("Bulleted list", L.isActive("bulletList"), () => L.chain().focus().toggleBulletList().run(), /* @__PURE__ */ T("span", { children: "•" })),
 								Ke && z("Numbered list", L.isActive("orderedList"), () => L.chain().focus().toggleOrderedList().run(), /* @__PURE__ */ T("span", {
@@ -2713,7 +2713,7 @@ var Ui = _(function({ onSend: a, onCommand: o, onSearchPeople: d, mentionMembers
 							],
 							(se || De) && /* @__PURE__ */ T("span", {
 								"aria-hidden": !0,
-								className: "mx-1 h-4 w-px bg-border"
+								className: "mx-1 h-4 w-px shrink-0 bg-border"
 							}),
 							se && L && /* @__PURE__ */ E("span", {
 								className: "relative",

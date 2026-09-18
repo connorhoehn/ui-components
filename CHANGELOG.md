@@ -18,6 +18,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   outside its own border on top of the pane beside it. The group now shrinks
   and sheds its least-load-bearing controls in order (strikethrough and code
   first, then the list controls), and Send is `shrink-0` and always present.
+  The buttons are `shrink-0` too: without that the row squeezed every control
+  to 21px against a 28px box rather than dropping any, which is under the size
+  a hurried cursor can hit.
   Clipping was not an option for Send, and a scroll container was not an
   option for the group — the emoji popover opens from inside it.
 
