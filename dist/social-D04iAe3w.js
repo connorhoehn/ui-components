@@ -18,7 +18,7 @@ import { t as ee } from "./DropdownMenu-DyOsk5Fp.js";
 import { t as te } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as L } from "./Select-CqVokE2v.js";
 import { n as R, r as z, t as B } from "./ChoiceList-CaZ4rZrS.js";
-import { L as V, N as H, Q as ne, R as re, X as ie, nt as ae } from "./ConversationSurface-DBAcBOx5.js";
+import { L as V, N as H, Q as ne, R as re, X as ie, nt as ae } from "./ConversationSurface-Bc-k-xqE.js";
 import { t as U } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as oe, t as se } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as ce, t as le } from "./composerCommands-DXer0id_.js";
@@ -3673,33 +3673,35 @@ function $t(e) {
 	let t = e.replace(/[-_]+/g, " ").trim();
 	return t ? t[0].toUpperCase() + t.slice(1) : "Panel";
 }
-function en({ panel: e, onClose: t, onOpenFullPage: n, className: r, "data-testid": i = "chat-side-panel" }) {
-	let a = Zt(e.kind), [o, s] = X(null), c = J(() => ({
+function en({ panel: e, onClose: t, onOpenFullPage: n, subtitle: r, actions: i, className: a, "data-testid": o = "chat-side-panel" }) {
+	let s = Zt(e.kind), [c, l] = X(null), u = J(() => ({
 		close: t,
 		openFullPage: n ? () => n(e) : void 0,
-		setTitle: s
+		setTitle: l
 	}), [
 		t,
 		n,
 		e
-	]), l = o || e.title || $t(e.kind);
+	]), d = c || e.title || $t(e.kind);
 	return /* @__PURE__ */ Q(Qt, {
-		title: l,
+		title: d,
+		subtitle: r,
+		actions: i,
 		onClose: t,
-		onOpenFullPage: c.openFullPage,
-		className: r,
-		"data-testid": i,
-		children: a ? /* @__PURE__ */ Q("div", {
+		onOpenFullPage: u.openFullPage,
+		className: a,
+		"data-testid": o,
+		children: s ? /* @__PURE__ */ Q("div", {
 			className: "flex h-full min-h-0 flex-col",
 			"data-kind": e.kind,
 			"data-id": e.id,
-			children: a(e, c)
+			children: s(e, u)
 		}, `${e.kind}:${e.id}`) : /* @__PURE__ */ Q(k, {
 			size: "sm",
 			icon: /* @__PURE__ */ Q(y, { size: 28 }),
 			title: `No view registered for ${e.kind}`,
 			body: "Register a renderer for this kind with ChatSidePanelProvider.",
-			testId: `${i}-empty`
+			testId: `${o}-empty`
 		})
 	});
 }

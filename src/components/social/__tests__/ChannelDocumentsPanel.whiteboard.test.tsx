@@ -14,6 +14,23 @@ afterEach(cleanup);
 describe('ChannelDocumentsPanel — starting a whiteboard', () => {
   it('offers both surfaces when both are allowed', () => {
     render(<ChannelDocumentsPanel documents={[]} onCreate={vi.fn()} onCreateWhiteboard={vi.fn()} />);
+    // Short labels in the empty state: its description already says these stay
+    // with the conversation, so repeating it on both buttons is noise.
+    expect(screen.getByTestId('channel-documents-create')).toHaveTextContent('New document');
+    expect(screen.getByTestId('channel-documents-create-whiteboard')).toHaveTextContent('New whiteboard');
+  });
+
+  it('spells the destination out once the rows sit above a list', () => {
+    // There the row is one line among many and has to carry its own meaning:
+    // "New document" alone, above a list of documents, says nothing about
+    // where the new one goes.
+    render(
+      <ChannelDocumentsPanel
+        documents={[{ documentId: 'd1', title: 'RFC' }]}
+        onCreate={vi.fn()}
+        onCreateWhiteboard={vi.fn()}
+      />,
+    );
     expect(screen.getByTestId('channel-documents-create')).toHaveTextContent('New document in this conversation');
     expect(screen.getByTestId('channel-documents-create-whiteboard')).toHaveTextContent('New whiteboard in this conversation');
   });

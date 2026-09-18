@@ -400,3 +400,54 @@ describe('PinnedMessagesPanel — the stamp is the message\'s, not the pin\'s', 
     expect(stamp.getAttribute('title')).not.toMatch(/^Sent /);
   });
 });
+
+describe('ChannelDocumentsPanel — the empty tab is one answer, not two', () => {
+  // The rows used to render above the list in BOTH states, so an empty tab
+  // announced the blankness twice: two start links in the top-left, and an
+  // empty state explaining the same nothing from the middle of the pane, with
+  // a field of dead space between them.
+  const empty = (props = {}) => render(
+    <ChannelDocumentsPanel documents={[]} onCreate={vi.fn()} onCreateWhiteboard={vi.fn()} {...props} />,
+  );
+
+  it('puts both ways to start INSIDE the empty state', () => {
+    empty();
+    const state = screen.getByTestId('empty-state');
+    expect(within(state).getByTestId('channel-documents-create')).toBeInTheDocument();
+    expect(within(state).getByTestId('channel-documents-create-whiteboard')).toBeInTheDocument();
+  });
+
+  it('offers each start exactly once', () => {
+    empty();
+    expect(screen.getAllByTestId('channel-documents-create')).toHaveLength(1);
+    expect(screen.getAllByTestId('channel-documents-create-whiteboard')).toHaveLength(1);
+  });
+
+  it('still reaches the handler from the empty state', () => {
+    const onCreateWhiteboard = vi.fn();
+    empty({ onCreateWhiteboard });
+    fireEvent.click(screen.getByTestId('channel-documents-create-whiteboard'));
+    expect(onCreateWhiteboard).toHaveBeenCalledTimes(1);
+  });
+
+  it('says nothing about starting one when the viewer may not', () => {
+    render(<ChannelDocumentsPanel documents={[]} />);
+    expect(screen.queryByTestId('channel-documents-create')).toBeNull();
+    expect(screen.getByTestId('empty-state')).toBeInTheDocument();
+  });
+
+  // Once there IS a list the question is "which document", not "how do I
+  // begin" — so the rows go back above it and stay visible.
+  it('moves the rows above the list once there is one', () => {
+    render(
+      <ChannelDocumentsPanel
+        documents={[{ documentId: 'd1', title: 'RFC' }]}
+        onCreate={vi.fn()}
+        onCreateWhiteboard={vi.fn()}
+      />,
+    );
+    expect(screen.queryByTestId('empty-state')).toBeNull();
+    expect(screen.getByTestId('channel-documents-create')).toBeInTheDocument();
+    expect(screen.getByTestId('channel-documents-create-whiteboard')).toBeInTheDocument();
+  });
+});

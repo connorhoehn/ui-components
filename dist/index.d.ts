@@ -3180,7 +3180,7 @@ declare interface ChatRoomProps {
  * renderer for the kind the frame still opens — with an empty state that names
  * the kind, so a missing registration is a visible bug, not a blank split.
  */
-export declare function ChatSidePanel({ panel, onClose, onOpenFullPage, className, 'data-testid': testId }: ChatSidePanelProps): JSX.Element;
+export declare function ChatSidePanel({ panel, onClose, onOpenFullPage, subtitle, actions, className, 'data-testid': testId }: ChatSidePanelProps): JSX.Element;
 
 export declare interface ChatSidePanelApi {
     close: () => void;
@@ -3219,6 +3219,18 @@ export declare interface ChatSidePanelProps {
     onClose: () => void;
     /** Where the panel goes full-page, when it can. Receives the ref so one handler serves every kind. */
     onOpenFullPage?: (panel: ChatSidePanelRef) => void;
+    /**
+     * A second clause under the title — WHERE this panel came from.
+     *
+     * A panel beside a conversation gets its context free: the thread is right
+     * there. One that takes the whole pane does not, and a bare document title
+     * over a full-width canvas reads as a separate place the app navigated to
+     * rather than something open inside a channel. This is where the host says
+     * which conversation it belongs to.
+     */
+    subtitle?: string;
+    /** Extra header controls, placed before "Open full page" — a way back, typically. */
+    actions?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
@@ -16431,6 +16443,39 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -16470,39 +16515,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

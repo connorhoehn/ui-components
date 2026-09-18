@@ -468,45 +468,68 @@ export function ChannelDocumentsPanel({
   className,
   'data-testid': testId = 'channel-documents-panel',
 }: ChannelDocumentsPanelProps) {
+  // Two shapes for the same pair of actions, because an empty tab and a
+  // populated one are asking different questions.
+  //
+  //   - Empty: "there is nothing here" and "here is how to start" are ONE
+  //     answer, so they are one block. Rendered apart, the two start rows sat
+  //     in the top-left while the empty state explained the blankness from the
+  //     middle of the pane — two separate announcements about the same nothing,
+  //     with a field of dead space between them.
+  //   - Populated: the rows go back to being list affordances above the list,
+  //     because by then the question is "which document", not "how do I begin".
+  //
+  // Same testids either way: which layout is on screen is a presentation
+  // detail, and a caller wiring the button up should not have to know.
   const startRow = (
     key: string,
     onClick: () => void,
     icon: ReactNode,
     label: string,
+    centred = false,
   ) => (
     <button
       key={key}
       type="button"
       onClick={onClick}
       data-testid={`channel-documents-${key}`}
-      className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] font-medium text-primary hover:bg-surface-hover"
+      className={cn(
+        'flex items-center gap-2 rounded-md text-[13px] font-medium text-primary hover:bg-surface-hover',
+        centred
+          ? 'justify-center border border-border px-3 py-2'
+          : 'w-full px-2 py-1.5 text-left',
+      )}
     >
-      <span aria-hidden className="grid h-7 w-7 place-items-center rounded bg-surface-inset">
+      <span aria-hidden className={cn('grid place-items-center rounded', centred ? 'h-5 w-5' : 'h-7 w-7 bg-surface-inset')}>
         {icon}
       </span>
       {label}
     </button>
   );
 
-  const create = (onCreate || onCreateWhiteboard) && (
-    <div className="mb-1 flex flex-col">
-      {onCreate && startRow('create', onCreate, <span aria-hidden>+</span>, 'New document in this conversation')}
-      {onCreateWhiteboard &&
-        startRow('create-whiteboard', onCreateWhiteboard, <WhiteboardIcon size={15} />, 'New whiteboard in this conversation')}
-    </div>
-  );
+  const rows = (centred: boolean) => [
+    onCreate && startRow('create', onCreate, <span aria-hidden>+</span>, 'New document', centred),
+    onCreateWhiteboard
+      && startRow('create-whiteboard', onCreateWhiteboard, <WhiteboardIcon size={15} />, 'New whiteboard', centred),
+  ].filter(Boolean);
 
-  // The create affordance sits ABOVE the list in both states. Hiding it behind
-  // an empty state means it disappears the moment the list stops being empty —
-  // exactly when a second document becomes likely.
+  const canCreate = !!(onCreate || onCreateWhiteboard);
+
   return (
     <div className={cn('min-h-0 overflow-y-auto p-2', className)} data-testid={testId}>
-      {create}
+      {canCreate && documents.length > 0 && (
+        <div className="mb-1 flex flex-col">
+          {onCreate && startRow('create', onCreate, <span aria-hidden>+</span>, 'New document in this conversation')}
+          {onCreateWhiteboard
+            && startRow('create-whiteboard', onCreateWhiteboard, <WhiteboardIcon size={15} />, 'New whiteboard in this conversation')}
+        </div>
+      )}
       {documents.length === 0 ? (
         <EmptyState
           icon={<DocumentIcon size={40} />}
           title="No documents yet"
-          description="Documents written in this conversation stay with it."
+          description="Documents and whiteboards started here stay with this conversation."
+          action={canCreate ? <div className="flex flex-wrap justify-center gap-2">{rows(true)}</div> : undefined}
         />
       ) : (
         <ul className="m-0 flex list-none flex-col gap-0.5 p-0">

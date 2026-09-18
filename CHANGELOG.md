@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.324.0] — 2026-09-17
+
+### Changed — `./social`
+
+- **An empty Documents tab is ONE answer, not two.** The create rows sat
+  above the list in both states, so an empty tab announced the blankness
+  twice: two start links in the top-left, and an empty state explaining the
+  same nothing from the middle of the pane, with a field of dead space
+  between them. Empty now folds both ways to start into the empty state
+  itself; once there is a list, the rows go back above it — by then the
+  question is "which document", not "how do I begin". Same testids in both
+  layouts.
+
+### Added — `./social`
+
+- **`ChatSidePanel` takes `subtitle` and `actions`.** Both already existed on
+  `ChatSidePanelFrame` and stopped there. A panel beside a conversation gets
+  its context free — the thread is right there — but one that takes the whole
+  pane does not, and a bare document title over a full-width canvas reads as a
+  separate place the app navigated to rather than something open inside a
+  channel. `subtitle` is where the host says which conversation it belongs to;
+  `actions` is where the way back goes.
+
+---
+
 ## [2.323.0] — 2026-09-17
 
 ### Added — `./social`

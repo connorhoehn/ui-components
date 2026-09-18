@@ -2709,30 +2709,37 @@ function Zt({ recordings: e, onOpen: t, className: n, "data-testid": r = "channe
 	});
 }
 function Qt({ documents: t, onOpen: n, onCreate: r, onCreateWhiteboard: i, className: o, "data-testid": s = "channel-documents-panel" }) {
-	let c = (e, t, n, r) => /* @__PURE__ */ W("button", {
+	let c = (t, n, r, i, a = !1) => /* @__PURE__ */ W("button", {
 		type: "button",
-		onClick: t,
-		"data-testid": `channel-documents-${e}`,
-		className: "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] font-medium text-primary hover:bg-surface-hover",
+		onClick: n,
+		"data-testid": `channel-documents-${t}`,
+		className: e("flex items-center gap-2 rounded-md text-[13px] font-medium text-primary hover:bg-surface-hover", a ? "justify-center border border-border px-3 py-2" : "w-full px-2 py-1.5 text-left"),
 		children: [/* @__PURE__ */ U("span", {
 			"aria-hidden": !0,
-			className: "grid h-7 w-7 place-items-center rounded bg-surface-inset",
-			children: n
-		}), r]
-	}, e), l = (r || i) && /* @__PURE__ */ W("div", {
-		className: "mb-1 flex flex-col",
-		children: [r && c("create", r, /* @__PURE__ */ U("span", {
-			"aria-hidden": !0,
-			children: "+"
-		}), "New document in this conversation"), i && c("create-whiteboard", i, /* @__PURE__ */ U(a, { size: 15 }), "New whiteboard in this conversation")]
-	});
+			className: e("grid place-items-center rounded", a ? "h-5 w-5" : "h-7 w-7 bg-surface-inset"),
+			children: r
+		}), i]
+	}, t), l = (e) => [r && c("create", r, /* @__PURE__ */ U("span", {
+		"aria-hidden": !0,
+		children: "+"
+	}), "New document", e), i && c("create-whiteboard", i, /* @__PURE__ */ U(a, { size: 15 }), "New whiteboard", e)].filter(Boolean), u = !!(r || i);
 	return /* @__PURE__ */ W("div", {
 		className: e("min-h-0 overflow-y-auto p-2", o),
 		"data-testid": s,
-		children: [l, t.length === 0 ? /* @__PURE__ */ U(b, {
+		children: [u && t.length > 0 && /* @__PURE__ */ W("div", {
+			className: "mb-1 flex flex-col",
+			children: [r && c("create", r, /* @__PURE__ */ U("span", {
+				"aria-hidden": !0,
+				children: "+"
+			}), "New document in this conversation"), i && c("create-whiteboard", i, /* @__PURE__ */ U(a, { size: 15 }), "New whiteboard in this conversation")]
+		}), t.length === 0 ? /* @__PURE__ */ U(b, {
 			icon: /* @__PURE__ */ U(h, { size: 40 }),
 			title: "No documents yet",
-			description: "Documents written in this conversation stay with it."
+			description: "Documents and whiteboards started here stay with this conversation.",
+			action: u ? /* @__PURE__ */ U("div", {
+				className: "flex flex-wrap justify-center gap-2",
+				children: l(!0)
+			}) : void 0
 		}) : /* @__PURE__ */ U("ul", {
 			className: "m-0 flex list-none flex-col gap-0.5 p-0",
 			children: t.map((e) => /* @__PURE__ */ U(Wt, {

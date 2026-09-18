@@ -108,6 +108,18 @@ export interface ChatSidePanelProps {
   onClose: () => void;
   /** Where the panel goes full-page, when it can. Receives the ref so one handler serves every kind. */
   onOpenFullPage?: (panel: ChatSidePanelRef) => void;
+  /**
+   * A second clause under the title — WHERE this panel came from.
+   *
+   * A panel beside a conversation gets its context free: the thread is right
+   * there. One that takes the whole pane does not, and a bare document title
+   * over a full-width canvas reads as a separate place the app navigated to
+   * rather than something open inside a channel. This is where the host says
+   * which conversation it belongs to.
+   */
+  subtitle?: string;
+  /** Extra header controls, placed before "Open full page" — a way back, typically. */
+  actions?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
@@ -123,7 +135,7 @@ export function chatSidePanelKindLabel(kind: string): string {
  * renderer for the kind the frame still opens — with an empty state that names
  * the kind, so a missing registration is a visible bug, not a blank split.
  */
-export function ChatSidePanel({ panel, onClose, onOpenFullPage, className, 'data-testid': testId = 'chat-side-panel' }: ChatSidePanelProps) {
+export function ChatSidePanel({ panel, onClose, onOpenFullPage, subtitle, actions, className, 'data-testid': testId = 'chat-side-panel' }: ChatSidePanelProps) {
   const renderer = useChatSidePanelRenderer(panel.kind);
   const [liveTitle, setLiveTitle] = useState<string | null>(null);
   const api = useMemo<ChatSidePanelApi>(
@@ -136,7 +148,7 @@ export function ChatSidePanel({ panel, onClose, onOpenFullPage, className, 'data
   );
   const title = liveTitle || panel.title || chatSidePanelKindLabel(panel.kind);
   return (
-    <ChatSidePanelFrame title={title} onClose={onClose} onOpenFullPage={api.openFullPage} className={className} data-testid={testId}>
+    <ChatSidePanelFrame title={title} subtitle={subtitle} actions={actions} onClose={onClose} onOpenFullPage={api.openFullPage} className={className} data-testid={testId}>
       {renderer ? (
         // Keyed so a new id of the same kind remounts the body rather than reusing stale state.
         <div key={`${panel.kind}:${panel.id}`} className="flex h-full min-h-0 flex-col" data-kind={panel.kind} data-id={panel.id}>
