@@ -17,7 +17,7 @@
 // horizontal bars before any content, and each one is cheap to add and
 // expensive to live with.
 
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Avatar } from './Avatar';
 import { StatusDot } from './StatusDot';
 import { cn } from '../../lib/cn';
@@ -25,6 +25,18 @@ import { cn } from '../../lib/cn';
 export interface ChannelHeaderProps {
   /** Display name of the channel or user */
   name: string;
+  /**
+   * Rename the conversation from its own title: double-click it and the
+   * heading becomes an input in place. Enter commits, Escape abandons, and
+   * blurring commits too — the same bargain every rename-in-place makes.
+   *
+   * IN PLACE rather than in a dialog. The thing being renamed is right there
+   * and it is one field; a centred modal makes you look away from the title
+   * to type its new value and then look back to see whether it took. Omit
+   * for a viewer who may not rename this — the affordance should not exist
+   * where the action would be refused.
+   */
+  onRename?: (next: string) => void;
   /** Number of members in the channel */
   memberCount?: number;
   /** Short description shown below the name */
@@ -61,6 +73,7 @@ export interface ChannelHeaderProps {
 
 export function ChannelHeader({
   name,
+  onRename,
   memberCount,
   description,
   tabs,
@@ -75,6 +88,31 @@ export function ChannelHeader({
 }: ChannelHeaderProps) {
   const small = size === 'sm';
   const Root = as;
+
+  // ── Rename in place ──────────────────────────────────────────────────
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(name);
+  const input = useRef<HTMLInputElement>(null);
+  // A rename that lands from somewhere else (another tab, the row menu) while
+  // this is closed must not be overwritten by a stale draft when it opens.
+  useEffect(() => { if (!editing) setDraft(name); }, [name, editing]);
+  useEffect(() => {
+    if (!editing) return;
+    input.current?.focus();
+    // Selected, not just focused: double-clicking a title means "replace
+    // this", and making someone clear it by hand first is a chore.
+    input.current?.select();
+  }, [editing]);
+  const commit = () => {
+    const next = draft.trim();
+    setEditing(false);
+    // Unchanged or emptied is a no-op, not a rename to "". Nobody double-
+    // clicks a title, changes nothing, and means "save that".
+    if (!next || next === name) { setDraft(name); return; }
+    onRename?.(next);
+  };
+  const cancel = () => { setDraft(name); setEditing(false); };
+
   return (
     <Root
       data-testid={testId}
@@ -111,9 +149,46 @@ export function ChannelHeader({
 
         <div className="min-w-0 flex flex-col gap-0.5">
           <div className="flex items-center gap-2">
-            <h2 className={cn('font-semibold text-[var(--color-text-primary)] leading-tight truncate', small ? 'text-[13px]' : 'text-[15px]')}>
-              {name}
-            </h2>
+            {editing ? (
+              <input
+                ref={input}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value.slice(0, 100))}
+                maxLength={100}
+                aria-label="Conversation name"
+                data-testid={testId ? `${testId}-name-input` : 'channel-header-name-input'}
+                // Blur commits. The alternative — blur abandons — loses work
+                // for anyone who clicks away expecting a save, and this is one
+                // short field whose old value is one Escape away while typing
+                // and one more rename away afterwards.
+                onBlur={commit}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') { e.preventDefault(); commit(); }
+                  else if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+                  // The header sits inside surfaces with their own key
+                  // handling; a rename typing "e" should not trigger anything
+                  // listening further up.
+                  e.stopPropagation();
+                }}
+                className={cn(
+                  'min-w-0 rounded border border-primary bg-surface px-1 py-0 font-semibold text-[var(--color-text-primary)] leading-tight outline-none',
+                  small ? 'text-[13px]' : 'text-[15px]',
+                )}
+              />
+            ) : (
+              <h2
+                className={cn(
+                  'font-semibold text-[var(--color-text-primary)] leading-tight truncate',
+                  small ? 'text-[13px]' : 'text-[15px]',
+                  onRename && 'cursor-text',
+                )}
+                onDoubleClick={onRename ? () => setEditing(true) : undefined}
+                title={onRename ? 'Double-click to rename' : undefined}
+                data-testid={testId ? `${testId}-name` : undefined}
+              >
+                {name}
+              </h2>
+            )}
             {/* A button only when there is somewhere to go.
                 Without a handler this rendered a DISABLED button, which a
                 screen reader announces as "12 members, button, dimmed" — a

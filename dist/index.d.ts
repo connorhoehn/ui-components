@@ -2422,11 +2422,23 @@ export declare interface ChannelFilesPanelProps {
     'data-testid'?: string;
 }
 
-export declare function ChannelHeader({ name, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, size, as, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
+export declare function ChannelHeader({ name, onRename, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, size, as, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
 
 export declare interface ChannelHeaderProps {
     /** Display name of the channel or user */
     name: string;
+    /**
+     * Rename the conversation from its own title: double-click it and the
+     * heading becomes an input in place. Enter commits, Escape abandons, and
+     * blurring commits too — the same bargain every rename-in-place makes.
+     *
+     * IN PLACE rather than in a dialog. The thing being renamed is right there
+     * and it is one field; a centred modal makes you look away from the title
+     * to type its new value and then look back to see whether it took. Omit
+     * for a viewer who may not rename this — the affordance should not exist
+     * where the action would be refused.
+     */
+    onRename?: (next: string) => void;
     /** Number of members in the channel */
     memberCount?: number;
     /** Short description shown below the name */
@@ -4484,7 +4496,7 @@ export declare interface ConversationStartReceipt {
     onAction?: () => void;
 }
 
-export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, canvas, members, memberCount, files, thumbnailSrc, documents, onOpenDocument, onCreateDocument, onCreateWhiteboard, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
+export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, canvas, members, memberCount, files, thumbnailSrc, documents, onOpenDocument, onRename, onCreateDocument, onCreateWhiteboard, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
 
 export declare interface ConversationSurfaceProps {
     /** Channel name, or the people in a DM. */
@@ -4521,6 +4533,12 @@ export declare interface ConversationSurfaceProps {
     thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
     documents?: readonly ChannelDocumentItem[];
     onOpenDocument?: (documentId: string) => void;
+    /**
+     * Rename this conversation from its own title — double-click it and the
+     * heading becomes a field. Forwarded to ChannelHeader; see its prop docs.
+     * Omit for a viewer who may not.
+     */
+    onRename?: (next: string) => void;
     /** Omit for a viewer who may not create documents here. */
     onCreateDocument?: () => void;
     /**
@@ -16464,6 +16482,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -16483,12 +16514,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -16522,16 +16560,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -16545,16 +16573,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

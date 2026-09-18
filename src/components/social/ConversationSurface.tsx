@@ -115,6 +115,12 @@ export interface ConversationSurfaceProps {
 
   documents?: readonly ChannelDocumentItem[];
   onOpenDocument?: (documentId: string) => void;
+  /**
+   * Rename this conversation from its own title — double-click it and the
+   * heading becomes a field. Forwarded to ChannelHeader; see its prop docs.
+   * Omit for a viewer who may not.
+   */
+  onRename?: (next: string) => void;
   /** Omit for a viewer who may not create documents here. */
   onCreateDocument?: () => void;
   /**
@@ -230,6 +236,7 @@ export function ConversationSurface({
   thumbnailSrc,
   documents = [],
   onOpenDocument,
+  onRename,
   onCreateDocument,
   onCreateWhiteboard,
   pins = [],
@@ -290,6 +297,7 @@ export function ConversationSurface({
     <section className={cn('flex min-w-0 flex-col', className)} data-testid={testId}>
       <ChannelHeader
         name={name}
+        onRename={onRename}
         description={description}
         online={online}
         avatarUrl={avatarUrl}

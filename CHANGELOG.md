@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.327.0] — 2026-09-18
+
+### Fixed — `./social`
+
+- **The composer toolbar no longer pushes Send out of the composer.** The row
+  is flex with the format group left and Send pushed right by `ml-auto`; the
+  group had no `min-w-0`, so its automatic minimum size — eleven buttons —
+  stopped it shrinking and the overflow escaped. Measured in a 339px composer:
+  Send rendered at x 741–791 while the composer ended at 727, sitting 65px
+  outside its own border on top of the pane beside it. The group now shrinks
+  and sheds its least-load-bearing controls in order (strikethrough and code
+  first, then the list controls), and Send is `shrink-0` and always present.
+  Clipping was not an option for Send, and a scroll container was not an
+  option for the group — the emoji popover opens from inside it.
+
+### Added — `./shared`, `./social`
+
+- **`ChannelHeader` takes `onRename`:** double-click the title and the heading
+  becomes a field in place. Enter commits, Escape abandons, blur commits. In
+  place rather than in a dialog — the thing being renamed is right there and
+  it is one field, and a centred modal makes you look away from the title to
+  type its new value. `ConversationSurface` forwards it. Omit it for a viewer
+  who may not rename, so the affordance does not exist where the action would
+  be refused.
+
+---
+
 ## [2.326.0] — 2026-09-18
 
 ### Added — `./social`, `./ui`

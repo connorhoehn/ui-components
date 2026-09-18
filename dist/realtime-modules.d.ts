@@ -1159,6 +1159,12 @@ declare interface ConversationSurfaceProps {
     thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
     documents?: readonly ChannelDocumentItem[];
     onOpenDocument?: (documentId: string) => void;
+    /**
+     * Rename this conversation from its own title — double-click it and the
+     * heading becomes a field. Forwarded to ChannelHeader; see its prop docs.
+     * Omit for a viewer who may not.
+     */
+    onRename?: (next: string) => void;
     /** Omit for a viewer who may not create documents here. */
     onCreateDocument?: () => void;
     /**

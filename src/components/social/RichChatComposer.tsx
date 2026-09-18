@@ -876,6 +876,40 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     [attachmentsEnabled],
   );
 
+  /**
+   * How much room the toolbar row actually has.
+   *
+   * The row is `flex` with the format group on the left and Send pushed right
+   * by `ml-auto`. The group had no `min-w-0`, so its automatic minimum size —
+   * the width of eleven buttons — stopped it shrinking, and the overflow went
+   * somewhere: Send was rendered 65px PAST the composer's right edge, outside
+   * its own border, sitting over the document beside it. Measured in the
+   * browser at a 339px composer.
+   *
+   * Clipping is not an option for Send — it is the primary action — and a
+   * scroll container here would clip the emoji popover, which opens from
+   * inside the group. So the group sheds its least-load-bearing controls
+   * instead, in a fixed order, and Send is `shrink-0` and always there.
+   */
+  const toolbarRow = useRef<HTMLDivElement>(null);
+  const [toolbarWidth, setToolbarWidth] = useState<number | null>(null);
+  useEffect(() => {
+    const el = toolbarRow.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(([entry]) => {
+      setToolbarWidth(entry.contentRect.width);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  // Thresholds measured against the real control widths (28px each, plus two
+  // 9px dividers and a 50px Send). `null` means we have not measured yet —
+  // render everything, because a first paint that hides controls and then
+  // shows them is worse than one frame of overflow.
+  const roomFor = (needed: number) => toolbarWidth === null || toolbarWidth >= needed;
+  const showSecondaryMarks = roomFor(330);   // strikethrough, code
+  const showListControls = roomFor(280);     // bullets, numbers, quote
+
   const toolbarButton = (
     label: string,
     active: boolean,
@@ -965,29 +999,32 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           onRemove={(id) => setStaged((prev) => prev.filter((s) => s.id !== id))}
         />
 
-        <div className="flex items-center border-t border-border px-1.5 py-1">
+        <div ref={toolbarRow} className="flex items-center border-t border-border px-1.5 py-1">
           {/* ONE tab stop for the whole bar, not one per control. Measured
               before: 14 stops between entering this composer and leaving it,
               11 of them Bold/Italic/Quote and friends — on every chat surface
               in the product, the embedded ones included. Send stays outside
               the group: it is the primary action, not a formatting control,
               and people reach for it with Tab. */}
-          <RovingToolbar label="Message formatting" className="gap-0.5" data-testid={`${testId}-format-toolbar`}>
+          {/* `min-w-0` is the load-bearing half: without it a flex child will
+              not shrink below its content, which is how the buttons pushed
+              Send out of the composer entirely. */}
+          <RovingToolbar label="Message formatting" className="min-w-0 gap-0.5" data-testid={`${testId}-format-toolbar`}>
           {editor && [
             toolbarButton('Bold', editor.isActive('bold'), () => editor.chain().focus().toggleBold().run(), <b>B</b>),
             toolbarButton('Italic', editor.isActive('italic'), () => editor.chain().focus().toggleItalic().run(), <i>I</i>),
-            toolbarButton('Strikethrough', editor.isActive('strike'), () => editor.chain().focus().toggleStrike().run(), <s>S</s>),
-            toolbarButton('Code', editor.isActive('code'), () => editor.chain().focus().toggleCode().run(), <span className="font-mono text-[11px]">{'<>'}</span>),
+            showSecondaryMarks && toolbarButton('Strikethrough', editor.isActive('strike'), () => editor.chain().focus().toggleStrike().run(), <s>S</s>),
+            showSecondaryMarks && toolbarButton('Code', editor.isActive('code'), () => editor.chain().focus().toggleCode().run(), <span className="font-mono text-[11px]">{'<>'}</span>),
             toolbarButton(
               editor.isActive('link') ? 'Edit link' : 'Add link',
               editor.isActive('link'),
               () => openLinkDialog(),
               <LinkIcon size={16} />,
             ),
-            <span key="sep1" aria-hidden className="mx-1 h-4 w-px bg-border" />,
-            toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), <span>•</span>),
-            toolbarButton('Numbered list', editor.isActive('orderedList'), () => editor.chain().focus().toggleOrderedList().run(), <span className="text-[11px]">1.</span>),
-            toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={16} />),
+            showListControls && <span key="sep1" aria-hidden className="mx-1 h-4 w-px bg-border" />,
+            showListControls && toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), <span>•</span>),
+            showListControls && toolbarButton('Numbered list', editor.isActive('orderedList'), () => editor.chain().focus().toggleOrderedList().run(), <span className="text-[11px]">1.</span>),
+            showListControls && toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={16} />),
           ]}
 
           {(allowEmoji || attachmentsEnabled) && (
@@ -1031,7 +1068,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             onClick={send}
             disabled={!canSend}
             data-testid={`${testId}-send`}
-            className="ml-auto rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40"
+            className="ml-auto shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40"
           >
             Send
           </button>
