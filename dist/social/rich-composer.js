@@ -1,5 +1,5 @@
 import { t as e } from "../cn-DhjIN-s0.js";
-import { A as t, T as n, h as r, u as i, y as a } from "../Icons-dYlqbmVH.js";
+import { A as t, T as n, h as r, u as i, y as a } from "../Icons-CJYhglDU.js";
 import { t as o } from "../Avatar-BzicCOft.js";
 import { t as s } from "../RovingToolbar-CmQag9q6.js";
 import { i as c, n as l, r as u } from "../ReactionPickerPopover-CcL-n6gt.js";

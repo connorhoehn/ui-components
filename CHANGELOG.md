@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.322.0] — 2026-09-17
+
+### Added — `./social`, `./ui`
+
+- **A conversation can start a WHITEBOARD, not only a document.**
+  `ChannelDocumentsPanel` takes `onCreateWhiteboard` beside `onCreate`. The
+  product has had two authoring surfaces for a while — a page you write down,
+  and an infinite canvas you draw on with others in real time — and a
+  conversation's Documents tab could only ever start the first, so the canvas
+  was unreachable from the place people actually decide to sketch something.
+  Either affordance can be offered alone, both, or neither.
+- **`WhiteboardIcon`** — a board with a shape and a connector. Deliberately not
+  the document glyph with something added: the two sit next to each other and
+  have to be told apart at a glance.
+
+---
+
 ## [2.319.0] — 2026-09-17
 
 ### Changed — `./video`

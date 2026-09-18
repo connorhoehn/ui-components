@@ -110,6 +110,25 @@ export function DocumentIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/**
+ * A board with a shape and a connector on it: a whiteboard.
+ *
+ * Deliberately not the document glyph with something added. A whiteboard is a
+ * different authoring surface, not a document variant — the two sit next to
+ * each other in the conversation's Documents tab and have to be told apart at
+ * a glance.
+ */
+export function WhiteboardIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="2" y="3" width="12" height="9" rx="1.5" />
+      <rect x="4.25" y="5.5" width="3.5" height="2.75" rx="0.5" />
+      <circle cx="11" cy="9.25" r="1.5" />
+      <path d="M7.75 6.875H9.5" />
+    </svg>
+  );
+}
+
 /** A box with an arrow leaving its corner: "open this in its own view". */
 export function PopOutIcon({ size = 16, ...rest }: GlyphProps) {
   return (

@@ -24,7 +24,7 @@ import { Avatar } from '../shared/Avatar';
 import { FeedRow } from './FeedRow';
 import EmptyState from '../shared/EmptyState';
 import { formatBytes, isImageAttachment, type ChatAttachment } from './ChatAttachment';
-import { AtIcon, DocumentIcon, PaperclipIcon, PinIcon, VideoCallIcon } from '../ui/Icons';
+import { AtIcon, DocumentIcon, PaperclipIcon, PinIcon, VideoCallIcon, WhiteboardIcon } from '../ui/Icons';
 import { fullTimestampLabel } from './dayBoundary';
 import { cn } from '../../lib/cn';
 
@@ -444,6 +444,18 @@ export interface ChannelDocumentsPanelProps {
   onOpen?: (documentId: string) => void;
   /** Omit for a viewer who may not create documents here. */
   onCreate?: () => void;
+  /**
+   * Start a WHITEBOARD here, beside the document.
+   *
+   * The two are different authoring surfaces, not one with a setting: a
+   * document is a page you write down, a whiteboard is an infinite canvas you
+   * draw on with other people. The product had both and a conversation could
+   * only ever start the first, so the canvas was unreachable from the place
+   * people actually decide to sketch something.
+   *
+   * Omit for a viewer who may not create one.
+   */
+  onCreateWhiteboard?: () => void;
   className?: string;
   'data-testid'?: string;
 }
@@ -452,19 +464,36 @@ export function ChannelDocumentsPanel({
   documents,
   onOpen,
   onCreate,
+  onCreateWhiteboard,
   className,
   'data-testid': testId = 'channel-documents-panel',
 }: ChannelDocumentsPanelProps) {
-  const create = onCreate && (
+  const startRow = (
+    key: string,
+    onClick: () => void,
+    icon: ReactNode,
+    label: string,
+  ) => (
     <button
+      key={key}
       type="button"
-      onClick={onCreate}
-      data-testid="channel-documents-create"
-      className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] font-medium text-primary hover:bg-surface-hover"
+      onClick={onClick}
+      data-testid={`channel-documents-${key}`}
+      className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] font-medium text-primary hover:bg-surface-hover"
     >
-      <span aria-hidden className="grid h-7 w-7 place-items-center rounded bg-surface-inset">+</span>
-      New document in this conversation
+      <span aria-hidden className="grid h-7 w-7 place-items-center rounded bg-surface-inset">
+        {icon}
+      </span>
+      {label}
     </button>
+  );
+
+  const create = (onCreate || onCreateWhiteboard) && (
+    <div className="mb-1 flex flex-col">
+      {onCreate && startRow('create', onCreate, <span aria-hidden>+</span>, 'New document in this conversation')}
+      {onCreateWhiteboard &&
+        startRow('create-whiteboard', onCreateWhiteboard, <WhiteboardIcon size={15} />, 'New whiteboard in this conversation')}
+    </div>
   );
 
   // The create affordance sits ABOVE the list in both states. Hiding it behind
