@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.329.0] — 2026-09-18
+
+### Fixed — `./social`
+
+- **The composer toolbar's width measurement never ran.** 2.327.0 attached the
+  ResizeObserver in a mount effect with `[]` deps, and the toolbar row is not
+  in the DOM at that point — the composer renders it once Tiptap has an
+  editor. The ref read `null`, the effect returned, and nothing re-attached
+  it, so no control was ever dropped: measured live at a 234px row, eleven
+  controls with the last painting past the composer's own border. It is a
+  callback ref now, attaching whenever the node appears, and it measures
+  synchronously so a composer that mounts narrow is never painted wide first.
+  A zero width reads as "no layout yet" rather than "very narrow".
+
+---
+
+## [2.328.0] — 2026-09-18
+
+### Fixed — `./social`
+
+- **Toolbar buttons are `shrink-0`.** Without it the flex row squeezed every
+  control to 21px against a 28px box rather than dropping any — nothing
+  overflowed and nothing was hidden, the whole toolbar just became smaller
+  than a hurried cursor can hit. Thresholds recalibrated against the measured
+  widths.
+
+---
+
 ## [2.327.0] — 2026-09-18
 
 ### Fixed — `./social`
