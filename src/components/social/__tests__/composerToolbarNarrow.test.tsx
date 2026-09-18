@@ -39,9 +39,15 @@ afterEach(() => {
 const has = (label: string) => screen.queryByLabelText(label) !== null;
 
 describe('what the toolbar keeps when the column is narrow', () => {
-  it('shows everything before it has measured — one frame of overflow beats a flicker', () => {
+  it('shows everything where there is no layout to measure', () => {
+    // A zero width means "no layout" — a detached subtree, a display:none
+    // ancestor, or a test environment with no layout engine — not "very
+    // narrow". Reading it as narrow would empty the toolbar wherever it is
+    // measured before it is shown.
     render(<RichChatComposer onSend={vi.fn()} allowEmoji allowAttachments />);
     expect(has('Strikethrough')).toBe(true);
+    expect(has('Quote')).toBe(true);
+    emit!(0);
     expect(has('Quote')).toBe(true);
   });
 

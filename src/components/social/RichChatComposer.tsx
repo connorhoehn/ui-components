@@ -891,17 +891,37 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
    * inside the group. So the group sheds its least-load-bearing controls
    * instead, in a fixed order, and Send is `shrink-0` and always there.
    */
-  const toolbarRow = useRef<HTMLDivElement>(null);
   const [toolbarWidth, setToolbarWidth] = useState<number | null>(null);
-  useEffect(() => {
-    const el = toolbarRow.current;
+  const observer = useRef<ResizeObserver | null>(null);
+  /**
+   * A CALLBACK ref, not `useRef` + a mount effect.
+   *
+   * The first version used the effect, and it never fired: the effect runs
+   * once on mount with `[]`, and the toolbar row is not in the DOM yet at
+   * that point — the composer renders it after Tiptap has an editor. The ref
+   * read `null`, the effect returned, and nothing ever re-attached it. The
+   * result looked exactly like "the feature does not work": eleven controls
+   * at a 234px row, the last one painting 4px past the composer's own border.
+   *
+   * A callback ref attaches whenever the node appears, however late.
+   */
+  const toolbarRow = useCallback((el: HTMLDivElement | null) => {
+    observer.current?.disconnect();
+    observer.current = null;
     if (!el || typeof ResizeObserver === 'undefined') return;
-    const ro = new ResizeObserver(([entry]) => {
-      setToolbarWidth(entry.contentRect.width);
-    });
+    // A zero width is "no layout", not "very narrow" — a detached subtree, a
+    // display:none ancestor, or a test environment with no layout engine at
+    // all. Dropping every control on that reading would make the toolbar
+    // disappear wherever it is measured before it is shown.
+    const measure = (w: number) => setToolbarWidth(w > 0 ? w : null);
+    const ro = new ResizeObserver(([entry]) => measure(entry.contentRect.width));
     ro.observe(el);
-    return () => ro.disconnect();
+    observer.current = ro;
+    // The observer's first callback arrives asynchronously; measure now so a
+    // composer that mounts narrow is never painted wide even once.
+    measure(el.getBoundingClientRect().width);
   }, []);
+  useEffect(() => () => observer.current?.disconnect(), []);
   // Thresholds measured against the real control widths (28px each, plus two
   // 9px dividers and a 50px Send). `null` means we have not measured yet —
   // render everything, because a first paint that hides controls and then
