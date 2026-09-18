@@ -10,7 +10,7 @@
 
 import { useId, useMemo } from 'react';
 import type { ScatterNodeData } from '../../../../types/pipeline';
-import { usePipelineEditor } from '../../context/PipelineEditorContext';
+import { usePipelineEditorOptional } from '../../context/PipelineEditorContext';
 import { ScatterPathPicker } from './ScatterPathPicker';
 import { ConfigField, NodeConfigShell } from '../shared';
 import { Input } from '../../../forms/Input';
@@ -27,7 +27,9 @@ export interface ScatterConfigProps {
 // ---------------------------------------------------------------------------
 
 function useUpstreamKind(selectedNodeId: string | null): string | undefined {
-  const { definition } = usePipelineEditor();
+  // Optional: this pane renders inside a host editor that provides its own
+  // context, and losing the upstream hint beats losing the panel.
+  const { definition } = usePipelineEditorOptional() ?? { definition: null };
   return useMemo(() => {
     if (!selectedNodeId || !definition) return undefined;
     // Find an edge whose target is this scatter node.
@@ -47,7 +49,7 @@ function useUpstreamKind(selectedNodeId: string | null): string | undefined {
 
 export default function ScatterConfig({ data, onChange }: ScatterConfigProps) {
   const uid = useId();
-  const { selectedNodeId } = usePipelineEditor();
+  const { selectedNodeId } = usePipelineEditorOptional() ?? { selectedNodeId: null };
   const upstreamKind = useUpstreamKind(selectedNodeId);
 
   const rawConcurrency = data.maxConcurrency ?? '';

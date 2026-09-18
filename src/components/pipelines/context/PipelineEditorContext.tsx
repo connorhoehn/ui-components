@@ -846,6 +846,26 @@ export function PipelineEditorProvider({
 // Hook
 // ---------------------------------------------------------------------------
 
+/**
+ * The editor value when there is one, and null when there is not.
+ *
+ * A config pane shipped by this library can be rendered inside a HOST's editor,
+ * and the host has its own PipelineEditorContext — a different module and so a
+ * different React context object. Three panes (scatter, crop, adjust-layer)
+ * reached for the throwing hook to offer an upstream-schema hint, and in the
+ * app that meant every one of them threw on render and took the whole config
+ * panel to its error boundary. Selecting one of those nodes showed nothing at
+ * all, with the cause two repos away.
+ *
+ * A pane that cannot work out its upstream node should lose that hint, not the
+ * panel. This is the hook for anything optional; `usePipelineEditor` keeps
+ * throwing, because a component that genuinely cannot work without the editor
+ * should say so loudly.
+ */
+export function usePipelineEditorOptional(): PipelineEditorValue | null {
+  return useContext(PipelineEditorContext) ?? null;
+}
+
 export function usePipelineEditor(): PipelineEditorValue {
   const ctx = useContext(PipelineEditorContext);
   if (!ctx) {

@@ -5,7 +5,7 @@
 
 import { useMemo } from 'react';
 import type { ImageAdjustLayerNodeData, AdjustLayer } from '../../../../types/pipeline';
-import { usePipelineEditor } from '../../context/PipelineEditorContext';
+import { usePipelineEditorOptional } from '../../context/PipelineEditorContext';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
 import AdjustLayerSliderPanel from './AdjustLayerSliderPanel';
 import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
@@ -35,7 +35,9 @@ export interface AdjustLayerConfigProps {
  * a wrapper hook here.
  */
 function useUpstreamImageId(currentNodeId: string | null): string | undefined {
-  const { definition } = usePipelineEditor();
+  // Optional: this pane renders inside a host editor that provides its own
+  // context, and losing the upstream hint beats losing the panel.
+  const { definition } = usePipelineEditorOptional() ?? { definition: null };
 
   // Find the direct upstream node id.
   const upstreamNodeId = useMemo(() => {
@@ -110,6 +112,6 @@ function AdjustLayerConfigInner({
  * AdjustLayerConfigInner can call the upstream-image hook.
  */
 export default function AdjustLayerConfig(props: AdjustLayerConfigProps) {
-  const { selectedNodeId } = usePipelineEditor();
+  const { selectedNodeId } = usePipelineEditorOptional() ?? { selectedNodeId: null };
   return <AdjustLayerConfigInner {...props} currentNodeId={selectedNodeId} />;
 }

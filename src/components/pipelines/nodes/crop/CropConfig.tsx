@@ -13,7 +13,7 @@ import type {
   BBox,
   ImageCropNodeData,
 } from '../../../../types/pipeline';
-import { usePipelineEditor } from '../../context/PipelineEditorContext';
+import { usePipelineEditorOptional } from '../../context/PipelineEditorContext';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
 import { useImageUrl } from '../../services';
 import Banner from '../../../shared/Banner';
@@ -64,7 +64,9 @@ interface UpstreamImage {
 }
 
 function useUpstreamImage(currentNodeId: string | null): UpstreamImage | null {
-  const { definition } = usePipelineEditor();
+  // Optional: this pane renders inside a host editor that provides its own
+  // context, and losing the upstream hint beats losing the panel.
+  const { definition } = usePipelineEditorOptional() ?? { definition: null };
 
   const upstreamNodeId = useMemo(() => {
     if (!currentNodeId || !definition) return null;
@@ -262,6 +264,6 @@ function CropConfigInner({
 // ---------------------------------------------------------------------------
 
 export default function CropConfig(props: CropConfigProps) {
-  const { selectedNodeId } = usePipelineEditor();
+  const { selectedNodeId } = usePipelineEditorOptional() ?? { selectedNodeId: null };
   return <CropConfigInner {...props} currentNodeId={selectedNodeId} />;
 }
