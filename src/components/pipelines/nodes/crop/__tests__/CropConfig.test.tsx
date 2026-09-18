@@ -24,6 +24,7 @@ import {
 const mockUsePipelineEditor = vi.fn();
 vi.mock('../../../context/PipelineEditorContext', () => ({
   usePipelineEditor: () => mockUsePipelineEditor(),
+  usePipelineEditorOptional: () => mockUsePipelineEditor(),
   // useUpstreamContext reads the context object directly (so a panel stays
   // renderable with no provider), so the mock has to supply it too.
   PipelineEditorContext: createContext<unknown>(null),

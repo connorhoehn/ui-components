@@ -11,6 +11,8 @@ import { describe, it, expect, vi } from 'vitest';
 // schema; neither matters to the help text under test.
 vi.mock('../../context/PipelineEditorContext', () => ({
   usePipelineEditor: () => ({ definition: { nodes: [], edges: [] }, selectedNodeId: 's1' }),
+  // The pane takes the optional hook now, so the module mock must provide it.
+  usePipelineEditorOptional: () => ({ definition: { nodes: [], edges: [] }, selectedNodeId: 's1' }),
 }));
 import { render, screen } from '@testing-library/react';
 import ScatterConfig from '../scatter/ScatterConfig';
