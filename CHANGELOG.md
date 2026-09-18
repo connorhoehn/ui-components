@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.319.0] — 2026-09-17
+
+### Changed — `./video`
+
+- **`HangoutPreJoinShell` is tighter, and its controls no longer sit on the
+  subject's face.** Three things were costing the surface its space and its
+  point:
+
+  - The heading was a full-width **centred row above everything**, so a line of
+    text bought ~90px of vertical space and left both columns stranded in air.
+    It now sits at the top of the side column, left-aligned, costing no
+    vertical space of its own — the stage starts at the top of the surface.
+  - The control bar was pinned **bottom-centre on the preview**, which is
+    exactly where a face is when somebody frames themselves normally. It is a
+    vertical rail on the **right edge** now: still on the preview, because the
+    controls belong to it, but on the empty part of almost every webcam shot.
+  - Container and cards tightened — `max-w-6xl`→`5xl`, gaps `6`→`4`/`3`,
+    padding `py-6`→`py-4` and cards `p-4`→`p-3`, side column `80/96`→`72/80`.
+
+  No API change; every `data-testid` is unchanged.
+
+---
+
 ## [2.318.0] — 2026-09-17
 
 ### Fixed — `./social`

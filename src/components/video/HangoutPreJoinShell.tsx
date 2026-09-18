@@ -235,27 +235,13 @@ export default function HangoutPreJoinShell({
         className,
       )}
     >
-      <div className="mx-auto w-full max-w-6xl flex flex-col gap-6 px-4 py-6 sm:px-6">
-        {/* The single heading block. Nothing below it repeats the channel
-            name or the subtitle — that triplication was the whole bug. */}
-        <div className="text-center">
-          {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral">
-              {eyebrow}
-            </p>
-          )}
-          <h1
-            data-testid="prejoin-title"
-            className="mt-1 text-2xl font-semibold truncate"
-          >
-            {channelName}
-          </h1>
-          <p data-testid="prejoin-subtitle" className="mt-1 text-sm text-neutral">
-            {peopleLabel}
-          </p>
-        </div>
-
-        <div className="flex flex-col lg:flex-row lg:items-start gap-6">
+      {/* The heading used to be a full-width CENTRED row above everything,
+          which bought a line of text about 90px of vertical space and left
+          the two columns beneath it stranded in air. It lives at the top of
+          the side column now, left-aligned, so the stage starts at the top
+          of the surface and the text sits beside it rather than above it. */}
+      <div className="mx-auto w-full max-w-5xl flex flex-col gap-4 px-4 py-4 sm:px-5">
+        <div className="flex flex-col lg:flex-row lg:items-start gap-4">
           {/* Left: the self-view IS the screen, Teams/Zoom-style. */}
           <section className="w-full min-w-0 lg:flex-1 flex flex-col gap-4">
             <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-border bg-video-stage">
@@ -326,11 +312,16 @@ export default function HangoutPreJoinShell({
                 </div>
               )}
 
-              {/* The control bar rides ON the preview, as Teams and Zoom
-                  do — loose circles floating under the frame read as page
-                  furniture rather than camera controls. */}
-              <div className="absolute inset-x-0 bottom-0 flex justify-center p-3 sm:p-4">
-                <div className="flex items-center gap-2 rounded-full bg-black/55 p-2 backdrop-blur-sm">
+              {/* A vertical rail on the RIGHT EDGE, not a bar across the
+                  bottom centre. The controls stay on the preview — they
+                  belong to it, and detaching them reads as page furniture —
+                  but a centred bottom bar sits exactly where a face is when
+                  someone frames themselves normally, so it covered the one
+                  thing the preview exists to show. Faces are centre-frame;
+                  the right edge is the empty part of almost every webcam
+                  shot. */}
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 sm:right-3">
+                <div className="flex flex-col items-center gap-2 rounded-full bg-black/55 p-2 backdrop-blur-sm">
                   <CircularIconToggle
                     on={audioEnabled}
                     onClick={onToggleAudio}
@@ -355,7 +346,7 @@ export default function HangoutPreJoinShell({
                   />
                   {hasDevices && (
                     <>
-                      <span aria-hidden="true" className="h-6 w-px bg-white/20" />
+                      <span aria-hidden="true" className="h-px w-6 bg-white/20" />
                       <CircularIconToggle
                         on={devicesPanelOpen}
                         onClick={() => requestDevices(!devicesPanelOpen)}
@@ -381,13 +372,32 @@ export default function HangoutPreJoinShell({
 
           {/* Right: who's already here, then the commitment. Stacks under
               the stage below `lg`. */}
-          <section className="w-full lg:w-80 xl:w-96 lg:shrink-0 flex flex-col gap-4">
+          <section className="w-full lg:w-72 xl:w-80 lg:shrink-0 flex flex-col gap-3">
+            {/* Where the centred header row used to be. Left-aligned and
+                beside the stage, it costs no vertical space of its own. */}
+            <div className="min-w-0">
+              {eyebrow && (
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral">
+                  {eyebrow}
+                </p>
+              )}
+              <h1
+                data-testid="prejoin-title"
+                className="text-lg font-semibold leading-tight truncate"
+              >
+                {channelName}
+              </h1>
+              <p data-testid="prejoin-subtitle" className="mt-0.5 text-xs text-neutral">
+                {peopleLabel}
+              </p>
+            </div>
+
             {devicesPanelOpen ? (
               <div
                 data-testid="prejoin-devices-panel"
-                className="rounded-xl border border-border bg-surface p-4"
+                className="rounded-xl border border-border bg-surface p-3"
               >
-                <div className="flex items-center justify-between gap-2 mb-3">
+                <div className="flex items-center justify-between gap-2 mb-2">
                   <h2 className="text-sm font-semibold">Device settings</h2>
                   <Button
                     variant="ghost"
@@ -401,7 +411,7 @@ export default function HangoutPreJoinShell({
                 {devicesSlot}
               </div>
             ) : (
-              <div className="rounded-xl border border-border bg-surface p-4">
+              <div className="rounded-xl border border-border bg-surface p-3">
                 <RosterList participants={participants} loading={readyLoading} />
 
                 {readyState === 'pending' && !readyLoading && (

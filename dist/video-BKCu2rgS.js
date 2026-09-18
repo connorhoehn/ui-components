@@ -3587,28 +3587,10 @@ function Dn({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 	return /* @__PURE__ */ W("div", {
 		"data-testid": te,
 		className: e("flex flex-col h-full min-h-0 overflow-y-auto bg-surface-panel text-text-primary", N),
-		children: /* @__PURE__ */ G("div", {
-			className: "mx-auto w-full max-w-6xl flex flex-col gap-6 px-4 py-6 sm:px-6",
-			children: [/* @__PURE__ */ G("div", {
-				className: "text-center",
-				children: [
-					n && /* @__PURE__ */ W("p", {
-						className: "text-xs font-semibold uppercase tracking-[0.18em] text-neutral",
-						children: n
-					}),
-					/* @__PURE__ */ W("h1", {
-						"data-testid": "prejoin-title",
-						className: "mt-1 text-2xl font-semibold truncate",
-						children: t
-					}),
-					/* @__PURE__ */ W("p", {
-						"data-testid": "prejoin-subtitle",
-						className: "mt-1 text-sm text-neutral",
-						children: K
-					})
-				]
-			}), /* @__PURE__ */ G("div", {
-				className: "flex flex-col lg:flex-row lg:items-start gap-6",
+		children: /* @__PURE__ */ W("div", {
+			className: "mx-auto w-full max-w-5xl flex flex-col gap-4 px-4 py-4 sm:px-5",
+			children: /* @__PURE__ */ G("div", {
+				className: "flex flex-col lg:flex-row lg:items-start gap-4",
 				children: [/* @__PURE__ */ G("section", {
 					className: "w-full min-w-0 lg:flex-1 flex flex-col gap-4",
 					children: [/* @__PURE__ */ G("div", {
@@ -3661,9 +3643,9 @@ function Dn({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 								})
 							}),
 							/* @__PURE__ */ W("div", {
-								className: "absolute inset-x-0 bottom-0 flex justify-center p-3 sm:p-4",
+								className: "absolute right-2 top-1/2 -translate-y-1/2 sm:right-3",
 								children: /* @__PURE__ */ G("div", {
-									className: "flex items-center gap-2 rounded-full bg-black/55 p-2 backdrop-blur-sm",
+									className: "flex flex-col items-center gap-2 rounded-full bg-black/55 p-2 backdrop-blur-sm",
 									children: [
 										/* @__PURE__ */ W($, {
 											on: c,
@@ -3689,7 +3671,7 @@ function Dn({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 										}),
 										q && /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ W("span", {
 											"aria-hidden": "true",
-											className: "h-6 w-px bg-white/20"
+											className: "h-px w-6 bg-white/20"
 										}), /* @__PURE__ */ W($, {
 											on: J,
 											onClick: () => Y(!J),
@@ -3709,62 +3691,84 @@ function Dn({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 						children: y
 					})]
 				}), /* @__PURE__ */ G("section", {
-					className: "w-full lg:w-80 xl:w-96 lg:shrink-0 flex flex-col gap-4",
-					children: [J ? /* @__PURE__ */ G("div", {
-						"data-testid": "prejoin-devices-panel",
-						className: "rounded-xl border border-border bg-surface p-4",
-						children: [/* @__PURE__ */ G("div", {
-							className: "flex items-center justify-between gap-2 mb-3",
-							children: [/* @__PURE__ */ W("h2", {
-								className: "text-sm font-semibold",
-								children: "Device settings"
-							}), /* @__PURE__ */ W(i, {
-								variant: "ghost",
-								size: "sm",
-								onClick: () => Y(!1),
-								"data-testid": "prejoin-devices-close",
-								children: "Close"
-							})]
-						}), b]
-					}) : /* @__PURE__ */ G("div", {
-						className: "rounded-xl border border-border bg-surface p-4",
-						children: [/* @__PURE__ */ W(On, {
-							participants: h,
-							loading: v
-						}), g === "pending" && !v && /* @__PURE__ */ G("p", {
-							className: "mt-3 text-xs text-warning-fg flex items-center gap-2",
-							children: [/* @__PURE__ */ W("span", { className: "h-1.5 w-1.5 rounded-full bg-warning animate-pulse" }), "Other publishers are still connecting — you can join anyway."]
-						})]
-					}), /* @__PURE__ */ G("div", {
-						className: "flex flex-col gap-2",
-						children: [
-							/* @__PURE__ */ W(i, {
-								variant: "primary",
-								size: "lg",
-								fullWidth: !0,
-								onClick: () => T({
-									audio: c,
-									video: l
+					className: "w-full lg:w-72 xl:w-80 lg:shrink-0 flex flex-col gap-3",
+					children: [
+						/* @__PURE__ */ G("div", {
+							className: "min-w-0",
+							children: [
+								n && /* @__PURE__ */ W("p", {
+									className: "text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral",
+									children: n
 								}),
-								disabled: z,
-								"data-testid": "prejoin-join-button",
-								children: B
-							}),
-							w && /* @__PURE__ */ W("div", {
-								"data-testid": "prejoin-secondary-actions",
-								children: w
-							}),
-							/* @__PURE__ */ W("button", {
-								type: "button",
-								onClick: O,
-								"data-testid": "prejoin-cancel",
-								className: "text-xs text-neutral hover:text-text-primary transition-colors text-center cursor-pointer",
-								children: "Cancel"
-							})
-						]
-					})]
+								/* @__PURE__ */ W("h1", {
+									"data-testid": "prejoin-title",
+									className: "text-lg font-semibold leading-tight truncate",
+									children: t
+								}),
+								/* @__PURE__ */ W("p", {
+									"data-testid": "prejoin-subtitle",
+									className: "mt-0.5 text-xs text-neutral",
+									children: K
+								})
+							]
+						}),
+						J ? /* @__PURE__ */ G("div", {
+							"data-testid": "prejoin-devices-panel",
+							className: "rounded-xl border border-border bg-surface p-3",
+							children: [/* @__PURE__ */ G("div", {
+								className: "flex items-center justify-between gap-2 mb-2",
+								children: [/* @__PURE__ */ W("h2", {
+									className: "text-sm font-semibold",
+									children: "Device settings"
+								}), /* @__PURE__ */ W(i, {
+									variant: "ghost",
+									size: "sm",
+									onClick: () => Y(!1),
+									"data-testid": "prejoin-devices-close",
+									children: "Close"
+								})]
+							}), b]
+						}) : /* @__PURE__ */ G("div", {
+							className: "rounded-xl border border-border bg-surface p-3",
+							children: [/* @__PURE__ */ W(On, {
+								participants: h,
+								loading: v
+							}), g === "pending" && !v && /* @__PURE__ */ G("p", {
+								className: "mt-3 text-xs text-warning-fg flex items-center gap-2",
+								children: [/* @__PURE__ */ W("span", { className: "h-1.5 w-1.5 rounded-full bg-warning animate-pulse" }), "Other publishers are still connecting — you can join anyway."]
+							})]
+						}),
+						/* @__PURE__ */ G("div", {
+							className: "flex flex-col gap-2",
+							children: [
+								/* @__PURE__ */ W(i, {
+									variant: "primary",
+									size: "lg",
+									fullWidth: !0,
+									onClick: () => T({
+										audio: c,
+										video: l
+									}),
+									disabled: z,
+									"data-testid": "prejoin-join-button",
+									children: B
+								}),
+								w && /* @__PURE__ */ W("div", {
+									"data-testid": "prejoin-secondary-actions",
+									children: w
+								}),
+								/* @__PURE__ */ W("button", {
+									type: "button",
+									onClick: O,
+									"data-testid": "prejoin-cancel",
+									className: "text-xs text-neutral hover:text-text-primary transition-colors text-center cursor-pointer",
+									children: "Cancel"
+								})
+							]
+						})
+					]
 				})]
-			})]
+			})
 		})
 	});
 }
