@@ -82,7 +82,12 @@ export default function ScatterConfig({ data, onChange }: ScatterConfigProps) {
       {/* Item alias */}
       <ConfigField
         label="Item alias"
-        help="Optional, default 'item'. Key written to $.scatter.<alias> for each arm."
+        // The alias is written at the ROOT of the arm context, not under
+        // `scatter`. The executor builds each arm as
+        // `{ ...context, scatter: { item, index, total, parentStepId }, [alias]: item }`,
+        // so `$.scatter.<alias>` resolves to nothing and a downstream step
+        // reading it got undefined with no error anywhere.
+        help="Optional, default 'item'. The element is put at context.<alias> for each arm — context.item unless you change it. It is also always at context.scatter.item, alongside .index and .total."
         controlId={`${uid}-item-alias`}
         render={({ controlId, describedById }) => (
           <Input

@@ -9023,7 +9023,7 @@ function zo({ data: e, onChange: t }) {
 		}),
 		/* @__PURE__ */ U(X, {
 			label: "Item alias",
-			help: "Optional, default 'item'. Key written to $.scatter.<alias> for each arm.",
+			help: "Optional, default 'item'. The element is put at context.<alias> for each arm — context.item unless you change it. It is also always at context.scatter.item, alongside .index and .total.",
 			controlId: `${n}-item-alias`,
 			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(A, {
 				size: "sm",
