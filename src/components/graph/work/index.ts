@@ -1,3 +1,4 @@
+export { WorkStatus } from './WorkStatus';
 export type {
   WorkEdgeProps,
   WorkEntityListProps,
