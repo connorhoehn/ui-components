@@ -1,4 +1,5 @@
 export { WorkStatus } from './WorkStatus';
+export { WorkNode } from './WorkNode';
 export type {
   WorkEdgeProps,
   WorkEntityListProps,

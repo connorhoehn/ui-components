@@ -32,7 +32,7 @@ describe('WorkNode', () => {
   it('selects with click, Enter, and Space', () => {
     const onSelect = vi.fn();
     render(<WorkNode node={node()} onSelect={onSelect} />);
-    const root = screen.getByRole('button', { name: /Document: A document/ });
+    const root = screen.getByRole('group', { name: /Document: A document/ });
     fireEvent.keyDown(root, { key: 'Enter' });
     fireEvent.keyDown(root, { key: ' ' });
     fireEvent.click(root);

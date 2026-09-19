@@ -54,7 +54,7 @@ function safeTitle(node: WorkGraphNodeData): string {
   return node.locked ? 'Restricted work item' : node.title.trim() || `${KIND_LABEL[node.kind]} (untitled)`;
 }
 
-export function WorkNode({ node, selected = false, onSelect, onOpen }: WorkNodeProps) {
+export function WorkNode({ node, selected = false, sharingFresh = false, onSelect, onOpen }: WorkNodeProps) {
   const title = safeTitle(node);
   const capability = OPEN_CAPABILITY[node.kind];
   const canOpen = capability !== undefined && node.capabilities.includes(capability);
@@ -67,10 +67,10 @@ export function WorkNode({ node, selected = false, onSelect, onOpen }: WorkNodeP
 
   return (
     <article
-      role="button"
+      role="group"
       tabIndex={0}
       aria-label={`${KIND_LABEL[node.kind]}: ${title}`}
-      aria-pressed={selected}
+      aria-current={selected ? 'true' : undefined}
       data-testid={`work-node-${node.id}`}
       data-kind={node.kind}
       data-locked={node.locked ? 'true' : 'false'}
@@ -104,7 +104,7 @@ export function WorkNode({ node, selected = false, onSelect, onOpen }: WorkNodeP
         {selected && <span className="sr-only">Selected</span>}
       </div>
 
-      <WorkStatus status={node.status} sharingFresh={node.status === 'running'} />
+      <WorkStatus status={node.status} sharingFresh={sharingFresh} />
 
       {!node.locked && node.description && (
         <p className="break-words line-clamp-3 text-xs text-text-secondary">{node.description}</p>

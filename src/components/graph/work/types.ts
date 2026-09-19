@@ -123,6 +123,8 @@ export interface WorkStatusProps {
 export interface WorkNodeProps {
   node: WorkGraphNodeData;
   selected?: boolean;
+  /** Sharing heartbeat freshness; independent from the node's work status. */
+  sharingFresh?: boolean;
   onSelect?: (id: string) => void;
   onOpen?: (id: string) => void;
 }
