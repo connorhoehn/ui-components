@@ -1835,8 +1835,7 @@ function dt({ state: t, mode: n, participants: r, localParticipant: i, callerNam
 						className: "flex items-center gap-2",
 						children: [
 							re && /* @__PURE__ */ W("span", {
-								draggable: !0,
-								onMouseDown: (e) => e.stopPropagation(),
+								draggable: X || void 0,
 								className: "flex h-5 w-5 shrink-0 cursor-grab items-center justify-center rounded text-white/60 hover:bg-white/10 hover:text-white active:cursor-grabbing transition-colors",
 								title: "Drag the call into the page",
 								"data-testid": "call-dock-drag-handle",

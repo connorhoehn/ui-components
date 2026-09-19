@@ -1233,26 +1233,19 @@ export function CallWidget({
                 freeDragEnabled && 'cursor-grab active:cursor-grabbing',
               )}
               onMouseDown={handleMouseDown}
-              // Once docked the free-drag is off, so the whole header can be
-              // the HTML5 drag source (slot → slot). While floating it cannot:
-              // the free-drag's `preventDefault()` on mousedown is exactly what
-              // stops a native drag from starting on the same element, so the
-              // grip below carries that gesture instead.
+              // Floating, the grip and header share the mouse-drag path that
+              // reveals page docks. Once docked, keep native slot-to-slot drag.
               draggable={pageDocked || undefined}
               // Listens for the grip's dragstart too — it bubbles here.
               onDragStart={pageDockAvailable ? handleDockDragStart : undefined}
               data-call-dock-source={pageDockAvailable ? 'true' : undefined}
             >
               <div className="flex items-center gap-2">
-                {/* Mouse-only affordance, duplicated by the "Move to…" menu
-                    on the other side of the header — drag-and-drop alone
-                    would strand keyboard users on a primary control. */}
+                {/* Bubble mousedown to the header while floating: a native
+                    grip drag would never reveal the page's ghost targets. */}
                 {pageDockAvailable && (
                   <span
-                    draggable
-                    // Free-drag and the dock drag cannot share one gesture;
-                    // keep the mousedown off the header's drag handler.
-                    onMouseDown={(e) => e.stopPropagation()}
+                    draggable={pageDocked || undefined}
                     // No onDragStart of its own — the event bubbles to the
                     // header, which is the single place the payload is written.
                     className="flex h-5 w-5 shrink-0 cursor-grab items-center justify-center rounded text-white/60 hover:bg-white/10 hover:text-white active:cursor-grabbing transition-colors"

@@ -75,8 +75,10 @@ describe('CallWidget — page docking is opt-in', () => {
 });
 
 describe('CallWidget — dock drag source', () => {
-  it('stamps the call under the dock mime key on dragstart', () => {
-    renderWidget({ dockTargets: TARGETS });
+  it('stamps the call under the dock mime key when dragged out of a slot', () => {
+    renderWidget({ dockTargets: TARGETS, activeDockId: 'gutter-1' });
+
+    expect(screen.getByTestId('call-dock-drag-handle')).toHaveAttribute('draggable', 'true');
 
     const dataTransfer = dragStartWith(screen.getByTestId('call-dock-drag-handle'));
 
@@ -86,7 +88,7 @@ describe('CallWidget — dock drag source', () => {
     expect(key).toBe(CALL_DOCK_DRAG_TYPE);
     expect(JSON.parse(raw) as CallDockDragPayload).toEqual({
       callId: 'call-42',
-      fromDockId: null,
+      fromDockId: 'gutter-1',
     });
     expect(dataTransfer.effectAllowed).toBe('move');
   });

@@ -2,10 +2,10 @@ import { a as e, i as t, n, o as r, r as i, t as a } from "./registry-DbX3MVAA.j
 import { i as o, n as s, r as c, t as l } from "./documentType-rRZpKWbO.js";
 import { n as u, t as d } from "./fieldType-CGXsQUaC.js";
 import "./types.js";
-import { A as f, C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as x, c as ee, d as te, f as ne, g as S, h as C, i as re, k as ie, l as ae, m as oe, n as w, o as T, p as se, r as ce, s as le, t as ue, u as E, v as D, w as de, x as O, y as fe } from "./hooks-CecmOXrl.js";
+import { A as f, C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as x, c as ee, d as te, f as ne, g as S, h as C, i as re, k as ie, l as ae, m as oe, n as w, o as T, p as se, r as ce, s as le, t as ue, u as E, v as D, w as de, x as O, y as fe } from "./hooks-B2qGVEcT.js";
 import { n as pe, r as me, t as k } from "./IdentityContext-CQM1qwH6.js";
-import { a as A, c as j, d as he, f as ge, h as M, i as _e, l as ve, m as ye, n as be, o as xe, p as Se, r as N, s as P, t as Ce, u as F } from "./useVideoSessions-WO-vkKyy.js";
-import { n as we, t as Te } from "./useWebSocket-CGc0yRhM.js";
+import { a as A, c as j, d as he, f as ge, h as M, i as _e, l as ve, m as ye, n as be, o as xe, p as Se, r as N, s as P, t as Ce, u as F } from "./useVideoSessions-BpAlh2cm.js";
+import { n as we, t as Te } from "./useWebSocket-ycV-byRn.js";
 import { a as Ee, i as I, n as L, o as De, r as Oe, t as R } from "./useSocialProfile-5S1qyvsv.js";
 import { a as ke, c as Ae, i as je, l as Me, n as z, o as Ne, r as B, s as Pe, t as Fe, u as Ie } from "./useSyncConflicts-z_Fo2YIM.js";
 import { i as Le } from "./useDocumentTypes-BUXMPyPU.js";
@@ -71,7 +71,7 @@ import { i as Oc, n as kc, r as Ac, t as jc } from "./ReactionPickerPopover-CcL-
 import { _ as Mc, a as Nc, c as Pc, d as Fc, g as Ic, h as Lc, i as Rc, m as zc, n as Bc, o as Vc, p as Hc, r as Uc, s as Wc, t as Gc, u as Kc } from "./MediaIcons-OLUYBJM0.js";
 import { t as qc } from "./formatBytes-05ivRSJY.js";
 import { a as Jc, i as Yc, n as Xc, o as Zc, r as Qc, t as $c } from "./composerCommands-DXer0id_.js";
-import { $ as el, A as tl, B as nl, C as rl, D as il, E as al, F as ol, G as sl, H as cl, I as ll, J as ul, K as dl, L as fl, M as pl, N as ml, O as hl, P as gl, Q as _l, R as vl, S as yl, T as bl, U as xl, V as Sl, W as Cl, X as wl, Y as Tl, Z as El, _ as Dl, a as Ol, at as kl, b as Al, c as jl, d as Ml, et as Nl, f as Pl, g as Fl, h as Il, i as Ll, it as Rl, j as zl, k as Bl, l as Vl, m as Hl, n as Ul, nt as Wl, o as Gl, ot as Kl, p as ql, q as Jl, r as Yl, rt as Xl, s as Zl, st as Ql, t as $l, tt as eu, u as tu, v as nu, w as ru, x as iu, y as au, z as ou } from "./video-DqKy3_OO.js";
+import { $ as el, A as tl, B as nl, C as rl, D as il, E as al, F as ol, G as sl, H as cl, I as ll, J as ul, K as dl, L as fl, M as pl, N as ml, O as hl, P as gl, Q as _l, R as vl, S as yl, T as bl, U as xl, V as Sl, W as Cl, X as wl, Y as Tl, Z as El, _ as Dl, a as Ol, at as kl, b as Al, c as jl, d as Ml, et as Nl, f as Pl, g as Fl, h as Il, i as Ll, it as Rl, j as zl, k as Bl, l as Vl, m as Hl, n as Ul, nt as Wl, o as Gl, ot as Kl, p as ql, q as Jl, r as Yl, rt as Xl, s as Zl, st as Ql, t as $l, tt as eu, u as tu, v as nu, w as ru, x as iu, y as au, z as ou } from "./video-8x9_r5ih.js";
 import { C as su, E as cu, S as lu, T as uu, _ as du, a as fu, b as pu, c as mu, d as hu, f as gu, g as _u, h as vu, i as yu, l as bu, m as xu, n as Su, o as Cu, p as wu, r as Tu, s as Eu, t as Du, u as Ou, v as ku, w as Au, x as ju, y as Mu } from "./StreamStage-d9JKcXlp.js";
 import { A as Nu, C as Pu, D as Fu, E as Iu, O as Lu, S as Ru, T as zu, _ as Bu, a as Vu, b as Hu, c as Uu, d as Wu, f as Gu, g as Ku, h as qu, i as Ju, k as Yu, l as Xu, m as Zu, n as Qu, o as $u, p as ed, r as td, s as nd, t as rd, u as id, v as ad, w as od, x as sd, y as cd } from "./identity-C3ZvtMBh.js";
 import { n as ld, t as ud } from "./ChangeReviewCard-ChP3-2uX.js";
@@ -1167,7 +1167,7 @@ function Cf() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var wf = Nd(() => import("./DocumentEditorPage-Ca2MCK9F.js").then((e) => e.n));
+var wf = Nd(() => import("./DocumentEditorPage-Bnu9fYQA.js").then((e) => e.n));
 function Tf({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
