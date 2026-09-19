@@ -70,4 +70,38 @@ describe('ActivePeopleGrid', () => {
     render(<ActivePeopleGrid people={[]} emptyLabel="Everyone's offline." data-testid="rail-active" />);
     expect(screen.getByTestId('rail-active-empty')).toHaveTextContent("Everyone's offline.");
   });
+
+  it('keeps messaging and voluntary shared-work actions distinct', () => {
+    const onSelectPerson = vi.fn();
+    const onSelectSharedWork = vi.fn();
+    render(
+      <ActivePeopleGrid
+        people={[person({ userId: 'u3', displayName: 'Lin Chen', inCall: true, workSharing: { state: 'active', fresh: true } })]}
+        onSelectPerson={onSelectPerson}
+        onSelectSharedWork={onSelectSharedWork}
+        data-testid="rail-active"
+      />,
+    );
+    fireEvent.click(screen.getByTestId('rail-active-person-u3'));
+    fireEvent.click(screen.getByRole('button', { name: "View Lin Chen's shared work" }));
+    expect(onSelectPerson).toHaveBeenCalledWith('u3');
+    expect(onSelectSharedWork).toHaveBeenCalledWith('u3');
+    expect(screen.getByTestId('rail-active-person-u3-live')).toBeInTheDocument();
+    expect(screen.getByTestId('rail-active-person-u3-work-sharing-marker')).toHaveAttribute('data-sharing-fresh', 'true');
+    expect(screen.getByTestId('rail-active-person-u3')).not.toHaveAccessibleName(/shared work/i);
+  });
+
+  it('shows historical sharing without a fresh pulse', () => {
+    render(
+      <ActivePeopleGrid
+        people={[person({ userId: 'u4', workSharing: { state: 'historical', fresh: false } })]}
+        onSelectSharedWork={vi.fn()}
+        data-testid="rail-active"
+      />,
+    );
+    const marker = screen.getByTestId('rail-active-person-u4-work-sharing-marker');
+    expect(marker).toHaveAttribute('data-sharing-state', 'historical');
+    expect(marker).not.toHaveClass('animate-pulse');
+    expect(screen.getByRole('button', { name: /shared work history/ })).toHaveTextContent('History');
+  });
 });

@@ -1,5 +1,6 @@
 export { WorkStatus } from './WorkStatus';
 export { WorkNode } from './WorkNode';
+export { WorkEdge } from './WorkEdge';
 export { WorkEntityList } from './WorkEntityList';
 export { WorkInspector } from './WorkInspector';
 export type {

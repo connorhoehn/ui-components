@@ -36,6 +36,8 @@ export interface ActivePerson {
   /** In a live call right now: the bubble gets a ring and the tile a small live marker. */
   inCall?: boolean;
   status?: 'online' | 'busy' | 'away';
+  /** Voluntary work sharing is independent from presence and call state. */
+  workSharing?: { state: 'active' | 'historical'; fresh: boolean };
 }
 
 export interface ActivePeopleGridProps {
@@ -46,6 +48,8 @@ export interface ActivePeopleGridProps {
   onSelectPerson?: (userId: string) => void;
   /** Clicking the "+N" tile. Without it, the tile is inert text rather than a button. */
   onShowAll?: () => void;
+  /** Opens this person's server-filtered shared work graph. */
+  onSelectSharedWork?: (userId: string) => void;
   emptyLabel?: string;
   className?: string;
   'data-testid'?: string;
@@ -101,6 +105,19 @@ function TileBubble({ person, testId }: { person: ActivePerson; testId: string }
           <ActivityIcon size={9} />
         </span>
       )}
+      {person.workSharing && (
+        <span
+          aria-hidden="true"
+          data-testid={`${testId}-work-sharing-marker`}
+          data-sharing-state={person.workSharing.state}
+          data-sharing-fresh={person.workSharing.fresh ? 'true' : 'false'}
+          className={cn(
+            'absolute -bottom-1 -left-1 h-3 w-3 rounded-full border-2 border-[var(--color-surface)] bg-primary',
+            person.workSharing.state === 'historical' && 'bg-text-tertiary',
+            person.workSharing.state === 'active' && person.workSharing.fresh && 'animate-pulse motion-reduce:animate-none',
+          )}
+        />
+      )}
     </span>
   );
 }
@@ -110,6 +127,7 @@ export function ActivePeopleGrid({
   maxVisible = 8,
   onSelectPerson,
   onShowAll,
+  onSelectSharedWork,
   emptyLabel = 'Nobody is around right now.',
   className,
   'data-testid': testId = 'active-people-grid',
@@ -152,6 +170,41 @@ export function ActivePeopleGrid({
             </span>
           </span>
         );
+
+        if (person.workSharing && onSelectSharedWork) {
+          const personTile = onSelectPerson ? (
+            <button
+              type="button"
+              onClick={() => onSelectPerson(person.userId)}
+              title={label}
+              aria-label={label}
+              data-testid={tileTestId}
+              className={cn(TILE_CLASSES, INTERACTIVE_TILE_CLASSES)}
+            >
+              <TileBubble person={person} testId={tileTestId} />
+              {nameRow}
+            </button>
+          ) : (
+            <div title={label} aria-label={label} data-testid={tileTestId} className={TILE_CLASSES}>
+              <TileBubble person={person} testId={tileTestId} />
+              {nameRow}
+            </div>
+          );
+
+          return (
+            <div key={person.userId} role="listitem" className="relative min-w-0">
+              {personTile}
+              <button
+                type="button"
+                onClick={() => onSelectSharedWork(person.userId)}
+                aria-label={`View ${person.displayName}'s ${person.workSharing.state === 'historical' ? 'shared work history' : 'shared work'}`}
+                className="mt-1 w-full truncate rounded px-1 text-[10px] font-medium text-primary hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                {person.workSharing.state === 'historical' ? 'History' : 'Active now'}
+              </button>
+            </div>
+          );
+        }
 
         if (onSelectPerson) {
           return (
