@@ -90,8 +90,7 @@ describe('ConversationRail composition', () => {
     const order = Array.from(rail.children).map((el) => el.getAttribute('data-testid') ?? el.textContent);
     expect(order).toEqual([
       'Acme workspace',
-      'conversation-rail-shelf',
-      'conversation-rail-list',
+      'conversation-rail-scroll',
       'Signed in as Grace',
     ]);
   });
@@ -129,7 +128,7 @@ describe('ConversationRail collapse', () => {
 
     // The rail does not remember — the button's own label and aria-expanded
     // only change once the host feeds `collapsed` back in.
-    expect(screen.getByTestId('conversation-rail')).toHaveClass('w-80');
+    expect(screen.getByTestId('conversation-rail')).toHaveClass('w-[300px]');
   });
 
   it('names the button for the expand direction once collapsed', () => {
@@ -152,7 +151,7 @@ describe('ConversationRail collapse', () => {
       footer: <div>Signed in as Grace</div>,
     });
 
-    expect(screen.getByTestId('conversation-rail')).toHaveClass('w-14');
+    expect(screen.getByTestId('conversation-rail')).toHaveClass('w-9');
     expect(screen.queryByText('Acme workspace')).toBeNull();
     expect(screen.queryByText('Signed in as Grace')).toBeNull();
     expect(screen.queryByTestId('conversation-rail-list')).toBeNull();
@@ -178,7 +177,7 @@ describe('ConversationRail collapse', () => {
 
   it('is a no-op combination when collapsed is set without collapsible', () => {
     setup({ collapsed: true });
-    expect(screen.getByTestId('conversation-rail')).toHaveClass('w-80');
+    expect(screen.getByTestId('conversation-rail')).toHaveClass('w-[300px]');
     expect(screen.queryByTestId('conversation-rail-collapse')).toBeNull();
     expect(screen.getByTestId('conversation-rail-shelf')).toBeInTheDocument();
   });
@@ -202,7 +201,7 @@ describe('ConversationRail section collapse', () => {
     // Two different `collapsed` ideas share the rail; only the opt-in one
     // shrinks the aside.
     setup({ collapsedSections: { Channels: true }, onToggleSection: vi.fn() });
-    expect(screen.getByTestId('conversation-rail').className).toContain('w-80');
+    expect(screen.getByTestId('conversation-rail').className).toContain('w-[300px]');
   });
 
   it('changes nothing for a caller that passes neither', () => {
@@ -210,4 +209,18 @@ describe('ConversationRail section collapse', () => {
     expect(screen.queryByRole('button', { name: 'Channels' })).toBeNull();
     expect(screen.getAllByTestId('conversation-row')).toHaveLength(2);
   });
+});
+
+
+it('keeps search and header actions outside the shared scrolling body', () => {
+  const create = vi.fn();
+  setup({ title: 'Chat', actions: <button onClick={create}>Create chat</button>, header: <input aria-label="Find a chat" />, beforeList: <div>People online</div> });
+  const header = screen.getByTestId('conversation-rail-header');
+  expect(header).toContainElement(screen.getByRole('heading', { name: 'Chat' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Create chat' }));
+  expect(create).toHaveBeenCalledOnce();
+  const scroll = screen.getByTestId('conversation-rail-scroll');
+  expect(scroll).toContainElement(screen.getByText('People online'));
+  expect(scroll).toContainElement(screen.getByTestId('conversation-rail-list'));
+  expect(scroll).not.toContainElement(screen.getByRole('textbox', { name: 'Find a chat' }));
 });

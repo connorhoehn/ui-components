@@ -39,6 +39,8 @@ export interface ConversationShelfProps {
   items: readonly ConversationShelfItem[];
   activeId?: string | null;
   onSelect: (id: string) => void;
+  compact?: boolean;
+  iconOnly?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -47,6 +49,8 @@ export function ConversationShelf({
   items,
   activeId,
   onSelect,
+  compact = false,
+  iconOnly = false,
   className,
   'data-testid': testId = 'conversation-shelf',
 }: ConversationShelfProps) {
@@ -65,11 +69,15 @@ export function ConversationShelf({
             <button
               type="button"
               onClick={() => onSelect(item.id)}
+              aria-label={iconOnly ? item.label : undefined}
+              title={iconOnly ? item.label : undefined}
               data-testid={`${testId}-${item.id}`}
               data-active={active ? 'true' : 'false'}
               aria-current={active ? 'true' : undefined}
               className={cn(
-                'flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left',
+                'relative flex w-full cursor-pointer items-center gap-2 text-left',
+                compact ? 'min-h-8 border-l-2 px-2 py-1 border-transparent' : 'rounded-lg px-2 py-1.5',
+                compact && active && 'border-primary bg-surface-hover',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset',
                 'hover:bg-surface-hover',
                 active && 'bg-surface-hover',
@@ -77,7 +85,7 @@ export function ConversationShelf({
             >
               <span
                 aria-hidden
-                className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-inset"
+                className={compact ? "grid h-4 w-4 shrink-0 place-items-center" : "grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-inset"}
               >
                 {/* Fixed 16px inner box: every row's label starts at the same
                     x no matter what the icon draws, and the fallback below
@@ -87,19 +95,20 @@ export function ConversationShelf({
                   {item.icon ?? <span className="h-1.5 w-1.5 rounded-full bg-current" />}
                 </span>
               </span>
-              <span
+              {!iconOnly && <span
                 className={cn(
                   'min-w-0 flex-1 truncate text-[13px]',
-                  count > 0 ? 'font-semibold text-text-primary' : 'font-medium text-text-secondary',
+                  count > 0 || active ? 'font-semibold text-text-primary' : 'font-medium text-text-secondary',
                 )}
               >
                 {item.label}
-              </span>
+              </span>}
               {count > 0 && (
                 <span
                   data-testid={`${testId}-${item.id}-count`}
                   className={cn(
-                    'grid h-5 min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-semibold leading-none text-white',
+                    'grid h-5 min-w-5 shrink-0 place-items-center rounded px-1 text-[11px] font-semibold leading-none text-white',
+                    iconOnly && 'absolute right-0 top-0 scale-75',
                     item.urgent ? 'bg-danger' : 'bg-primary',
                   )}
                 >

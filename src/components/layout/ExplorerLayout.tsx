@@ -29,7 +29,7 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
-import { IconButton } from '../ui/IconButton';
+import { WorkspaceRail } from './WorkspaceRail';
 
 export interface ExplorerLayoutProps {
   /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -65,26 +65,12 @@ export interface ExplorerLayoutProps {
    * frame left them at the window's inset while the rail sat flush below.
    */
   railActions?: ReactNode;
+  railHeader?: ReactNode;
+  railFooter?: ReactNode;
   /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
   panePadding?: 'none' | 'md';
   className?: string;
   'data-testid'?: string;
-}
-
-const RAIL_WIDTH: Record<NonNullable<ExplorerLayoutProps['railWidth']>, string> = {
-  sm: 'w-[240px]',
-  md: 'w-[300px]',
-};
-
-/** A chevron pointing left (fold) or right (unfold). */
-function Glyph({ kind }: { kind: 'fold' | 'unfold' }) {
-  return (
-    <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-      {kind === 'fold'
-        ? <path d="M10 3 5 8l5 5" strokeLinecap="round" strokeLinejoin="round" />
-        : <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />}
-    </svg>
-  );
 }
 
 export function ExplorerLayout({
@@ -97,71 +83,19 @@ export function ExplorerLayout({
   railLabel = 'the list',
   railTitle,
   railActions,
+  railHeader,
+  railFooter,
   panePadding = 'md',
   className,
   'data-testid': testId = 'explorer-layout',
 }: ExplorerLayoutProps) {
   return (
     <div data-testid={testId} className={cn('flex h-full min-h-0', className)}>
-      {railCollapsed ? (
-        // The strip: one control, and the rail's width goes to the pane.
-        <nav
-          data-testid={`${testId}-rail`}
-          data-collapsed="true"
-          aria-label="Explorer"
-          className="flex h-full w-9 flex-shrink-0 flex-col items-center border-r border-border bg-surface-panel pt-1.5"
-        >
-          {onToggleRail && (
-            <IconButton
-              aria-label={`Show ${railLabel}`}
-              title={`Show ${railLabel}`}
-              size="sm"
-              variant="ghost"
-              icon={<Glyph kind="unfold" />}
-              onClick={onToggleRail}
-              data-testid={`${testId}-rail-unfold`}
-            />
-          )}
-        </nav>
-      ) : (
-        <nav
-          data-testid={`${testId}-rail`}
-          data-collapsed="false"
-          aria-label="Explorer"
-          className={cn(
-            'flex h-full flex-shrink-0 flex-col border-r border-border bg-surface-panel',
-            RAIL_WIDTH[railWidth],
-          )}
-        >
-          {(railTitle || railActions || onToggleRail) && (
-            // A row of the rail's own — the same height as every other header
-            // row, the title inset to the sections' text edge — so the fold
-            // control never sits over the first section's heading.
-            <div className="flex h-9 shrink-0 items-center gap-1 border-b border-border pl-3.5 pr-1.5" data-testid={`${testId}-rail-header`}>
-              {railTitle ? (
-                <h2 className="m-0 min-w-0 flex-1 truncate text-[12px] font-semibold text-text-primary" data-testid={`${testId}-rail-title`}>
-                  {railTitle}
-                </h2>
-              ) : (
-                <span className="flex-1" />
-              )}
-              {railActions}
-              {onToggleRail && (
-                <IconButton
-                  aria-label={`Hide ${railLabel}`}
-                  title={`Hide ${railLabel}`}
-                  size="sm"
-                  variant="ghost"
-                  icon={<Glyph kind="fold" />}
-                  onClick={onToggleRail}
-                  data-testid={`${testId}-rail-fold`}
-                />
-              )}
-            </div>
-          )}
-          <div className="min-h-0 flex-1 overflow-y-auto">{rail}</div>
-        </nav>
-      )}
+      <WorkspaceRail title={railTitle} label="Explorer" actions={railActions} header={railHeader} footer={railFooter}
+        width={railWidth} collapsed={railCollapsed} onToggle={onToggleRail}
+        toggleLabel={`${railCollapsed ? 'Show' : 'Hide'} ${railLabel}`} data-testid={`${testId}-rail`}>
+        {rail}
+      </WorkspaceRail>
       <div className="flex min-h-0 min-w-0 flex-1 flex-col 2xl:flex-row">
         <div
           data-testid={`${testId}-pane`}

@@ -4324,7 +4324,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, onSetSection, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, title, actions, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, onSetSection, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -4368,6 +4368,8 @@ export declare interface ConversationRailProps {
     emptyLabel?: string;
     /** Above the shelf: a workspace switcher, a search field, a title. */
     header?: ReactNode;
+    title?: string;
+    actions?: ReactNode;
     /** Below the list: a "you" row, a status control. */
     /**
      * Between the shelf and the conversation list — where a team → channel
@@ -4407,7 +4409,7 @@ export declare interface ConversationRailProps {
     'data-testid'?: string;
 }
 
-export declare function ConversationShelf({ items, activeId, onSelect, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
+export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
 
 export declare interface ConversationShelfItem {
     id: string;
@@ -4433,6 +4435,8 @@ export declare interface ConversationShelfProps {
     items: readonly ConversationShelfItem[];
     activeId?: string | null;
     onSelect: (id: string) => void;
+    compact?: boolean;
+    iconOnly?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -6020,7 +6024,7 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-export declare function ExplorerLayout({ rail, children, aside, railWidth, railCollapsed, onToggleRail, railLabel, railTitle, railActions, panePadding, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+export declare function ExplorerLayout({ rail, children, aside, railWidth, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
 
 export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -6056,6 +6060,8 @@ export declare interface ExplorerLayoutProps {
      * frame left them at the window's inset while the rail sat flush below.
      */
     railActions?: ReactNode;
+    railHeader?: ReactNode;
+    railFooter?: ReactNode;
     /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
     panePadding?: 'none' | 'md';
     className?: string;
@@ -16474,6 +16480,26 @@ declare interface UseActivityBusReturn {
       'data-testid'?: string;
   }
 
+  /** Shared document/chat rail: fixed header and footer, one scrollable body. */
+  export declare function WorkspaceRail({ title, label, actions, header, footer, children, width, collapsed, collapsedContent, onToggle, toggleLabel, toggleTestId, className, 'data-testid': testId, }: WorkspaceRailProps): JSX.Element;
+
+  export declare interface WorkspaceRailProps {
+      title?: string;
+      label?: string;
+      actions?: ReactNode;
+      header?: ReactNode;
+      footer?: ReactNode;
+      children: ReactNode;
+      width?: 'sm' | 'md';
+      collapsed?: boolean;
+      collapsedContent?: ReactNode;
+      onToggle?: () => void;
+      toggleLabel?: string;
+      toggleTestId?: string;
+      className?: string;
+      'data-testid'?: string;
+  }
+
   export declare const zIndex: {
       /** Sticky headers, fixed toolbars */
       readonly sticky: 20;
@@ -16486,19 +16512,6 @@ declare interface UseActivityBusReturn {
   };
 
   export { }
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
 
 
 declare module '@tiptap/core' {
@@ -16522,22 +16535,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -16548,26 +16551,6 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -16594,6 +16577,49 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
