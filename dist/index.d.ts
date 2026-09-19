@@ -3192,7 +3192,7 @@ declare interface ChatRoomProps {
  * renderer for the kind the frame still opens — with an empty state that names
  * the kind, so a missing registration is a visible bug, not a blank split.
  */
-export declare function ChatSidePanel({ panel, onClose, onOpenFullPage, subtitle, actions, className, 'data-testid': testId }: ChatSidePanelProps): JSX.Element;
+export declare function ChatSidePanel({ panel, onClose, onOpenFullPage, subtitle, actions, expanded, onToggleExpanded, className, 'data-testid': testId }: ChatSidePanelProps): JSX.Element;
 
 export declare interface ChatSidePanelApi {
     close: () => void;
@@ -3207,17 +3207,21 @@ export declare interface ChatSidePanelApi {
  * the title on the left and the way out on the right, and a body that fills
  * the rest and scrolls on its own.
  */
-export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
+export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
 
 export declare interface ChatSidePanelFrameProps {
     title: string;
     /** A second clause under the title — "12 results", "Edited by Grace". */
     subtitle?: string;
     onClose: () => void;
-    /** Renders "Open full page" when given. */
+    /** Offers navigation to the full-page destination. */
     onOpenFullPage?: () => void;
-    /** Extra header controls, placed before "Open full page". */
+    /** Additional controls beside the panel title. */
     actions?: ReactNode;
+    /** Whether this panel currently occupies the conversation area. */
+    expanded?: boolean;
+    /** When supplied, offers an expand/restore control beside the title. */
+    onToggleExpanded?: () => void;
     children: ReactNode;
     className?: string;
     'data-testid'?: string;
@@ -3241,8 +3245,12 @@ export declare interface ChatSidePanelProps {
      * which conversation it belongs to.
      */
     subtitle?: string;
-    /** Extra header controls, placed before "Open full page" — a way back, typically. */
+    /** Additional controls beside the panel title. */
     actions?: ReactNode;
+    /** Whether this panel currently occupies the conversation area. */
+    expanded?: boolean;
+    /** When supplied, offers an expand/restore control beside the title. */
+    onToggleExpanded?: () => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -16482,19 +16490,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -16507,6 +16502,19 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -16540,9 +16548,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -16553,6 +16561,16 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -16576,16 +16594,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
