@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import { useState } from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import { CallWidget } from '../CallWidget';
 import FloatingDockBar from '../../doc-editor/FloatingDockBar';
 
@@ -43,8 +43,8 @@ function renderWidget(onDockTo: (id: string | null) => void) {
 
 /** Grab the header, move over `to`, release. The whole gesture, as a user does it. */
 function dragBodyTo(widget: HTMLElement, overlap: { left: number; top: number }) {
+  stubRect(widget, { left: overlap.left - 300, top: overlap.top - 300, width: 240, height: 160 });
   fireEvent.mouseDown(screen.getByTestId('call-widget-title'), { clientX: 0, clientY: 0 });
-  stubRect(widget, { ...overlap, width: 240, height: 160 });
   fireEvent.mouseMove(document, { clientX: 300, clientY: 300 });
 }
 
@@ -69,15 +69,39 @@ describe('CallWidget — docking by dragging the widget body', () => {
     expect(screen.queryByTestId('floating-dock-bar-ghost')).toBeNull();
     const grip = screen.getByTestId('call-dock-drag-handle');
     expect(grip).not.toHaveAttribute('draggable', 'true');
+    stubRect(screen.getByTestId('call-widget'), { left: 10, top: 10, width: 320, height: 288 });
     fireEvent.mouseDown(grip, { clientX: 10, clientY: 10 });
     const ghost = screen.getByTestId('floating-dock-bar-ghost');
     const target = ghost.querySelector('[data-call-dock-target]')!;
     stubRect(target, { left: 100, top: 500, width: 768, height: 112 });
-    stubRect(screen.getByTestId('call-widget'), { left: 300, top: 350, width: 320, height: 288 });
     fireEvent.mouseMove(document, { clientX: 300, clientY: 350 });
     fireEvent.mouseUp(document);
     expect(onDockTo).toHaveBeenCalledWith('doc-dock');
     expect(screen.queryByTestId('floating-dock-bar-ghost')).toBeNull();
+  });
+
+  it('uses the latest movement when mouseup arrives before React paints', () => {
+    const onDockTo = vi.fn();
+    const widget = renderWidget(onDockTo);
+    stubRect(widget, { left: 700, top: 500, width: 240, height: 160 });
+    mountDock({ left: 300, top: 300, width: 240, height: 160 });
+    fireEvent.mouseDown(screen.getByTestId('call-dock-drag-handle'), { clientX: 710, clientY: 510 });
+    act(() => {
+      document.dispatchEvent(new MouseEvent('mousemove', { clientX: 310, clientY: 310, bubbles: true }));
+      document.dispatchEvent(new MouseEvent('mouseup', { clientX: 310, clientY: 310, bubbles: true }));
+    });
+    expect(onDockTo).toHaveBeenCalledWith('doc-dock');
+  });
+
+  it('does not snap back to the starting corner before the last movement paints', () => {
+    const widget = renderWidget(vi.fn());
+    stubRect(widget, { left: window.innerWidth - 256, top: window.innerHeight - 176, width: 240, height: 160 });
+    fireEvent.mouseDown(screen.getByTestId('call-dock-drag-handle'), { clientX: 800, clientY: 600 });
+    act(() => {
+      document.dispatchEvent(new MouseEvent('mousemove', { clientX: 400, clientY: 400, bubbles: true }));
+      document.dispatchEvent(new MouseEvent('mouseup', { clientX: 400, clientY: 400, bubbles: true }));
+    });
+    expect(widget.style.transform).toBe('translate(-400px, -200px)');
   });
 
   it('docks when released over a slot', () => {

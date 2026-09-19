@@ -1567,22 +1567,22 @@ function st({ state: t, mode: n, duration: r, isMuted: i, callerName: a, onToggl
 	});
 }
 function ct(e) {
-	let t = e.getBoundingClientRect(), n = null;
-	for (let e of document.querySelectorAll("[data-call-dock-target]")) {
-		let r = e.dataset.callDockTarget;
+	let t = null;
+	for (let n of document.querySelectorAll("[data-call-dock-target]")) {
+		let r = n.dataset.callDockTarget;
 		if (!r) continue;
-		let i = e.getBoundingClientRect(), a = Math.min(t.right, i.right) - Math.max(t.left, i.left), o = Math.min(t.bottom, i.bottom) - Math.max(t.top, i.top);
+		let i = n.getBoundingClientRect(), a = Math.min(e.right, i.right) - Math.max(e.left, i.left), o = Math.min(e.bottom, i.bottom) - Math.max(e.top, i.top);
 		if (a <= 0 || o <= 0) continue;
 		let s = a * o;
-		s < i.width * i.height * .25 || (!n || s > n.area) && (n = {
+		s < i.width * i.height * .25 || (!t || s > t.area) && (t = {
 			id: r,
-			el: e,
+			el: n,
 			area: s
 		});
 	}
-	return n ? {
-		id: n.id,
-		el: n.el
+	return t ? {
+		id: t.id,
+		el: t.el
 	} : null;
 }
 function lt(e, t, n) {
@@ -1601,17 +1601,17 @@ function lt(e, t, n) {
 	}), p = V({
 		x: 0,
 		y: 0
-	}), m = V(null), h = L((t) => {
-		e && (d.current = !0, o(!0), c(!1), f.current = {
+	}), m = V(null), h = V(null), g = V(null), _ = L((t) => {
+		e && (h.current = m.current?.getBoundingClientRect() ?? null, g.current = h.current, d.current = !0, o(!0), c(!1), f.current = {
 			x: t.clientX,
 			y: t.clientY
 		}, p.current = { ...r }, t.preventDefault());
-	}, [e, r]), g = L(() => {
+	}, [e, r]), v = L(() => {
 		c(!0), i({
 			x: 0,
 			y: 0
 		}), u();
-	}, [u]), _ = L((e) => {
+	}, [u]), y = L((e) => {
 		let t = m.current;
 		if (!t) return;
 		let n = t.offsetParent, a = window.innerWidth, o = window.innerHeight;
@@ -1637,15 +1637,13 @@ function lt(e, t, n) {
 			x: d - p,
 			y: f - h
 		}), u();
-	}, [r, u]), v = V(_);
-	v.current = _;
-	let y = V(g);
-	y.current = g;
-	let b = V(t);
-	b.current = t;
-	let x = V(n);
-	x.current = n;
-	let S = V(null);
+	}, [r, u]), b = V(v);
+	b.current = v;
+	let x = V(t);
+	x.current = t;
+	let S = V(n);
+	S.current = n;
+	let C = V(null);
 	return R(() => {
 		if (!e) return;
 		let t = (e) => {
@@ -1654,37 +1652,45 @@ function lt(e, t, n) {
 				x: p.current.x + (e.clientX - f.current.x),
 				y: p.current.y + (e.clientY - f.current.y)
 			});
-			let t = m.current, n = (t ? ct(t) : null)?.id ?? null;
-			n !== S.current && (S.current = n, b.current?.(n));
+			let t = h.current;
+			t && (g.current = new DOMRect(t.left + e.clientX - f.current.x, t.top + e.clientY - f.current.y, t.width, t.height));
+			let n = (g.current ? ct(g.current) : null)?.id ?? null;
+			n !== C.current && (C.current = n, x.current?.(n));
 		}, n = () => {
 			if (!d.current) return;
 			d.current = !1, o(!1);
 			let e = m.current;
 			if (!e) return;
-			let t = ct(e);
-			if (S.current !== null && (S.current = null, b.current?.(null)), t && x.current?.(t.id)) {
-				y.current();
+			let t = g.current ?? e.getBoundingClientRect(), n = ct(t);
+			if (C.current !== null && (C.current = null, x.current?.(null)), n && S.current?.(n.id)) {
+				b.current();
 				return;
 			}
-			let n = e.offsetParent, r = window.innerWidth, i = window.innerHeight;
-			if (n) {
-				let e = n.getBoundingClientRect();
-				r = e.width, i = e.height;
+			let r = e.offsetParent, a = window.innerWidth, s = window.innerHeight;
+			if (r) {
+				let e = r.getBoundingClientRect();
+				a = e.width, s = e.height;
 			}
-			let a = e.getBoundingClientRect(), s = n ? n.getBoundingClientRect() : {
+			let l = r ? r.getBoundingClientRect() : {
 				left: 0,
 				top: 0
-			}, c = a.left - s.left, l = a.top - s.top, u = r - (c + a.width), f = i - (l + a.height), p = c < 80, h = u < 80, g = l < 80, _ = f < 80;
-			g && p ? v.current("top-left") : g && h ? v.current("top-right") : _ && p ? v.current("bottom-left") : _ && h && v.current("bottom-right");
+			}, f = t.left - l.left, _ = t.top - l.top, v = a - (f + t.width), y = s - (_ + t.height), w = f < 80, T = v < 80, E = _ < 80;
+			if ((E || y < 80) && (w || T) && h.current) {
+				let e = h.current, n = e.left - l.left - p.current.x, r = e.top - l.top - p.current.y;
+				i({
+					x: (w ? 16 : a - t.width - 16) - n,
+					y: (E ? 16 : s - t.height - 16) - r
+				}), c(!0), u();
+			}
 		};
 		return document.addEventListener("mousemove", t), document.addEventListener("mouseup", n), () => {
 			document.removeEventListener("mousemove", t), document.removeEventListener("mouseup", n);
 		};
-	}, [e]), {
+	}, [e, u]), {
 		offset: r,
-		handleMouseDown: h,
-		resetOffset: g,
-		snapToCorner: _,
+		handleMouseDown: _,
+		resetOffset: v,
+		snapToCorner: y,
 		isDragging: a,
 		isAnimating: s,
 		hasMoved: r.x !== 0 || r.y !== 0,

@@ -707,8 +707,7 @@ type SnapCorner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
  * aiming at, and a cursor hit-test would refuse drops that visually landed
  * dead centre. Whatever the widget covers most is what the user meant.
  */
-function findDockUnder(widget: HTMLElement): { id: string; el: HTMLElement } | null {
-  const rect = widget.getBoundingClientRect();
+function findDockUnder(rect: DOMRect): { id: string; el: HTMLElement } | null {
   let best: { id: string; el: HTMLElement; area: number } | null = null;
 
   for (const el of document.querySelectorAll<HTMLElement>('[data-call-dock-target]')) {
@@ -760,10 +759,14 @@ function useDrag(
   const startPos = useRef({ x: 0, y: 0 });
   const startOffset = useRef({ x: 0, y: 0 });
   const widgetRef = useRef<HTMLDivElement>(null);
+  const dragStartRect = useRef<DOMRect | null>(null);
+  const latestDragRect = useRef<DOMRect | null>(null);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (!enabled) return;
+      dragStartRect.current = widgetRef.current?.getBoundingClientRect() ?? null;
+      latestDragRect.current = dragStartRect.current;
       dragging.current = true;
       setIsDragging(true);
       setIsAnimating(false);
@@ -830,8 +833,6 @@ function useDrag(
     [offset, endAnimationSoon],
   );
 
-  const snapToCornerRef = useRef(snapToCorner);
-  snapToCornerRef.current = snapToCorner;
   // The listeners below are bound once (deps: [enabled]); read the callbacks
   // through refs so a re-render does not leave the drag calling stale ones.
   const resetOffsetRef = useRef(resetOffset);
@@ -852,8 +853,18 @@ function useDrag(
         y: startOffset.current.y + (e.clientY - startPos.current.y),
       });
 
-      const el = widgetRef.current;
-      const over = el ? findDockUnder(el) : null;
+      // React may batch the final move and release before painting. Hit-test
+      // the intended position, never the previous frame's DOM rectangle.
+      const start = dragStartRect.current;
+      if (start) {
+        latestDragRect.current = new DOMRect(
+          start.left + e.clientX - startPos.current.x,
+          start.top + e.clientY - startPos.current.y,
+          start.width,
+          start.height,
+        );
+      }
+      const over = latestDragRect.current ? findDockUnder(latestDragRect.current) : null;
       const id = over?.id ?? null;
       if (id !== hoveredDockRef.current) {
         hoveredDockRef.current = id;
@@ -872,7 +883,8 @@ function useDrag(
       // Docking beats corner-snapping: the gutter slot sits near the page edge,
       // so a drop onto it is also "near a corner", and snapping first would
       // yank the widget away from the box the user just aimed at.
-      const over = findDockUnder(el);
+      const rect = latestDragRect.current ?? el.getBoundingClientRect();
+      const over = findDockUnder(rect);
       if (hoveredDockRef.current !== null) {
         hoveredDockRef.current = null;
         onDockOverRef.current?.(null);
@@ -896,7 +908,6 @@ function useDrag(
         areaH = cr.height;
       }
 
-      const rect = el.getBoundingClientRect();
       const containerRect = container ? container.getBoundingClientRect() : { left: 0, top: 0 };
       const relX = rect.left - containerRect.left;
       const relY = rect.top - containerRect.top;
@@ -908,10 +919,17 @@ function useDrag(
       const nearTop = relY < snapThreshold;
       const nearBottom = relBottom < snapThreshold;
 
-      if (nearTop && nearLeft) snapToCornerRef.current('top-left');
-      else if (nearTop && nearRight) snapToCornerRef.current('top-right');
-      else if (nearBottom && nearLeft) snapToCornerRef.current('bottom-left');
-      else if (nearBottom && nearRight) snapToCornerRef.current('bottom-right');
+      if ((nearTop || nearBottom) && (nearLeft || nearRight) && dragStartRect.current) {
+        const start = dragStartRect.current;
+        const baseX = start.left - containerRect.left - startOffset.current.x;
+        const baseY = start.top - containerRect.top - startOffset.current.y;
+        setOffset({
+          x: (nearLeft ? 16 : areaW - rect.width - 16) - baseX,
+          y: (nearTop ? 16 : areaH - rect.height - 16) - baseY,
+        });
+        setIsAnimating(true);
+        endAnimationSoon();
+      }
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -920,7 +938,7 @@ function useDrag(
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [enabled]);
+  }, [enabled, endAnimationSoon]);
 
   const hasMoved = offset.x !== 0 || offset.y !== 0;
 
