@@ -346,3 +346,20 @@ describe('starting a document from an installed type', () => {
     expect(screen.queryByTestId('new-doc-from-type-t1')).toBeNull();
   });
 });
+
+
+describe('DocumentTypesPage — shared workspace', () => {
+  it('keeps saved server templates editable without an empty-state wall or another sidebar', () => {
+    mocks.hookReturn.types = [makeType('agent-template', 'Agent brief')];
+    render(<DocumentTypesPage layout="workspace" processingAction={<button>Processing pipelines</button>} />);
+    expect(screen.getByRole('heading', { name: 'Templates' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Processing pipelines' })).toBeInTheDocument();
+    expect(screen.queryByTestId('idle-panel')).not.toBeInTheDocument();
+    expect(screen.getByText('Starter templates')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('edit-type-agent-template'));
+    expect(screen.getByTestId('wizard-name')).toHaveTextContent('Agent brief');
+    fireEvent.click(screen.getByTestId('wizard-cancel'));
+    fireEvent.click(screen.getByRole('button', { name: 'New template' }));
+    expect(screen.getByTestId('wizard-mode')).toHaveTextContent('create');
+  });
+});

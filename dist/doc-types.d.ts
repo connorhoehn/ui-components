@@ -1,4 +1,5 @@
 import { JSX } from 'react';
+import { ReactNode } from 'react';
 
 export declare const COOKBOOK_CATEGORIES: CookbookCategory[];
 
@@ -121,7 +122,7 @@ declare interface DocumentTypePageConfig {
     showTableOfContents: boolean;
 }
 
-export declare function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }?: DocumentTypesPageProps): JSX.Element;
+export declare function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument, layout, processingAction }?: DocumentTypesPageProps): JSX.Element;
 
 /**
  * The two things this page needs from its host. Both are OPTIONAL and both
@@ -134,6 +135,10 @@ export declare function DocumentTypesPage({ idToken, onExportSchema, onCreateDoc
  * the page's own banner rather than through a host toast bus.
  */
 export declare interface DocumentTypesPageProps {
+    /** Compact content layout for hosts that already provide workspace navigation. */
+    layout?: 'split' | 'workspace';
+    /** Link to the host's existing document-processing pipeline editor. */
+    processingAction?: ReactNode;
     /**
      * Bearer token attached to every `/api/document-types` call. The server is
      * the source of truth (remote-first); localStorage is only the hook's
@@ -295,6 +300,49 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -324,49 +372,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

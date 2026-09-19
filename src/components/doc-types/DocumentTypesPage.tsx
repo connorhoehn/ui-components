@@ -19,7 +19,10 @@
 // click away, as the escape hatch it always should have been. Types are
 // starting points, not schemas to get right up front.
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
+import { Button } from '../ui/Button';
+import { Stack } from '../ui/Stack';
+import PageHeader from '../shared/PageHeader';
 import { cn } from '../../lib/cn';
 import { DocumentTypeWizard } from './DocumentTypeWizard';
 import { useDocumentTypes } from '../../hooks/useDocumentTypes';
@@ -41,6 +44,10 @@ import type { DocumentTypeCookbook } from './cookbooks';
  * the page's own banner rather than through a host toast bus.
  */
 export interface DocumentTypesPageProps {
+  /** Compact content layout for hosts that already provide workspace navigation. */
+  layout?: 'split' | 'workspace';
+  /** Link to the host's existing document-processing pipeline editor. */
+  processingAction?: ReactNode;
   /**
    * Bearer token attached to every `/api/document-types` call. The server is
    * the source of truth (remote-first); localStorage is only the hook's
@@ -201,7 +208,7 @@ function TypeListItem({
 // Main page
 // ---------------------------------------------------------------------------
 
-export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }: DocumentTypesPageProps = {}) {
+export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument, layout = 'split', processingAction }: DocumentTypesPageProps = {}) {
   const { types, source, error, createType, updateType, deleteType } = useDocumentTypes({ idToken });
 
   const [mode, setMode] = useState<Mode>('idle');
@@ -342,18 +349,28 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
   // Render
   // ---------------------------------------------------------------------------
 
+  const workspace = layout === 'workspace';
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className={cn('flex h-full min-h-0 min-w-0', workspace ? 'flex-col overflow-y-auto' : 'overflow-hidden')}>
+      {workspace && (
+        <Stack gap="sm" className="shrink-0 px-5 pt-4 pb-3">
+          <PageHeader
+            title="Templates"
+            description="Documents have three formats: whiteboard (Excalidraw), canvas and formatted page. Templates define reusable content and fields; pipeline triggers choose which templates they process."
+            actions={processingAction}
+          />
+        </Stack>
+      )}
 
       {/* -- Left sidebar -- */}
-      <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-hidden bg-surface-inset">
+      <div className={cn('shrink-0 border-border flex flex-col bg-surface-inset', workspace ? 'border-b mx-5 rounded-lg' : 'w-[264px] border-r overflow-hidden')}>
         {/* Header. Stacked rather than a single row: the sidebar is 264px, and
             "Document Types" plus both buttons does not fit on one line at that
             width -- side by side, the title wrapped to two lines and "+ New"
             broke between the plus and the word. */}
-        <div className="py-3.5 px-4 border-b border-border flex flex-col gap-2.5">
+        <div className={cn('px-4 flex gap-2.5', workspace ? 'py-2 items-center justify-between' : 'py-3.5 border-b border-border flex-col')}>
           <span className="text-[13px] font-bold text-text-primary">
-            Document Types
+            {workspace ? 'Your templates' : 'Document Types'}
           </span>
           {/* Primary is the LIBRARY, not the wizard. These two swapped
               styling on 2026-09-07: "+ New" opened a three-step field editor
@@ -361,39 +378,42 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
               types hid behind a word ("Cookbooks") that says nothing about
               what it does. */}
           <div className="flex gap-1.5">
-            <button
+            <Button
+              size="sm"
               data-testid="cookbooks-btn"
               onClick={() => setCookbooksOpen(true)}
               title="Browse the ready-made document types"
               className="py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer whitespace-nowrap"
             >
-              Known types
-            </button>
-            <button
+              {workspace ? 'Browse starters' : 'Known types'}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
               data-testid="create-type-btn"
               onClick={handleCreateClick}
               title="Build a document type field by field"
               className="py-[5px] px-3 text-xs font-medium bg-transparent text-text-secondary border border-border rounded-md cursor-pointer whitespace-nowrap"
             >
-              From scratch
-            </button>
+              {workspace ? 'New template' : 'From scratch'}
+            </Button>
           </div>
         </div>
 
         {/* Type list */}
-        <div className="flex-1 overflow-y-auto p-2" data-testid="type-list">
+        <div className={cn(workspace ? 'grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-2 px-2 pb-2' : 'flex-1 overflow-y-auto p-2')} data-testid="type-list">
           {types.length === 0 ? (
-            <div className="py-8 px-4 flex flex-col items-center gap-2">
-              <div className="text-text-tertiary text-[13px]">No types yet.</div>
+            <div className={workspace ? "px-2 py-1 text-xs text-text-secondary" : "py-8 px-4 flex flex-col items-center gap-2"}>
+              <div className="text-text-tertiary text-[13px]">{workspace ? 'No saved templates yet. Choose a starter below or create your own.' : 'No types yet.'}</div>
               {/* Points at the gallery, not the wizard — picking a ready type
                   is the shorter road to a first type by a long way. */}
-              <button
+              {!workspace && <button
                 data-testid="empty-browse-types-btn"
                 onClick={() => setCookbooksOpen(true)}
                 className="bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2"
               >
                 Browse known types →
-              </button>
+              </button>}
             </div>
           ) : (
             types.map(type => (
@@ -437,12 +457,12 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
       </div>
 
       {/* -- Right panel -- */}
-      <div className="flex-1 overflow-y-auto py-7 px-9" data-testid="right-panel">
+      <div className={cn('min-w-0', workspace ? 'shrink-0 px-5 py-4' : 'flex-1 overflow-y-auto py-7 px-9')} data-testid="right-panel">
         {mode === 'idle' && (
           <div data-testid="known-types-panel" className="flex flex-col gap-4">
             {/* Compact: this used to be a 220px-tall centred card that WAS the
                 whole panel. It is now a caption on the gallery below it. */}
-            <EmptyState
+            {!workspace && <EmptyState
               testId="idle-panel"
               className="min-h-0 p-0 gap-1"
               icon="📋"
@@ -459,11 +479,11 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
                   Build a type from scratch
                 </button>
               }
-            />
+            />}
 
-            <div className="border-t border-border pt-4">
+            <div className={workspace ? '' : 'border-t border-border pt-4'}>
               <div className="text-[13px] font-bold text-text-primary mb-2">
-                Known types
+                {workspace ? 'Starter templates' : 'Known types'}
               </div>
               {/* Its own testid prefixes: the Cookbooks modal renders the same
                   picker, and two `cookbooks-grid` nodes on one screen is a
@@ -479,7 +499,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument }:
               <CookbookPicker
                 onPick={handleInstallKnownType}
                 busy={installing}
-                actionLabel="Add this type"
+                actionLabel={workspace ? "Add template" : "Add this type"}
                 idPrefix="type-starters"
                 cardPrefix="type-starter"
                 layout="fluid"
