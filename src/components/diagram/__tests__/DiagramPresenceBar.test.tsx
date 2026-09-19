@@ -32,6 +32,19 @@ describe('DiagramPresenceBar', () => {
     expect(onFollow).toHaveBeenCalledWith(expect.objectContaining({ userId: 'dev-ada' }));
   });
 
+  it('counts people across tabs and never offers actions for a sibling of self', () => {
+    const onMessage = vi.fn();
+    const sibling = { clientId: 'c-sibling', userId: 'dev-me', displayName: 'Me', color: '#000' } as never;
+    const adaSibling = { clientId: 'c-ada-2', userId: 'dev-ada', displayName: 'Ada', color: '#111' } as never;
+    render(<DiagramPresenceBar participants={[sibling, ada, me, adaSibling]} actions={{ onMessage }} />);
+    expect(screen.getByTestId('diagram-presence')).toHaveAttribute('data-participant-count', '2');
+    fireEvent.click(screen.getByRole('button', { name: 'People on this diagram (2)' }));
+    expect(screen.queryByText(/Me · /)).toBeNull();
+    expect(screen.getAllByRole('menuitem', { name: 'Message' })).toHaveLength(1);
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Message' }));
+    expect(onMessage).toHaveBeenCalledWith(expect.objectContaining({ userId: 'dev-ada', clientId: 'c-ada' }));
+  });
+
   it('alone on the diagram, stays a roster even with actions', () => {
     render(<DiagramPresenceBar participants={[me]} actions={{ onMessage: vi.fn() }} />);
     expect(screen.queryByRole('button', { name: /people on this diagram/i })).toBeNull();

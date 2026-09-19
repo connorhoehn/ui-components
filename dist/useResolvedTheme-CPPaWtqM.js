@@ -5,27 +5,32 @@ import { Fragment as a, jsx as o, jsxs as s } from "react/jsx-runtime";
 //#region src/components/diagram/DiagramPresenceBar.tsx
 var c = "pointer-events-auto flex items-center gap-2 rounded-full border border-border bg-surface-panel/95 px-2.5 py-1.5 shadow-sm backdrop-blur";
 function l({ participants: r, size: i = 26, actions: l, followingUserId: u = null, className: d, "data-testid": f = "diagram-presence" }) {
-	let p = r.map((e) => ({
+	let p = /* @__PURE__ */ new Map();
+	for (let e of r) {
+		let t = e.userId || e.clientId;
+		(!p.has(t) || e.isSelf) && p.set(t, e);
+	}
+	let m = [...p.values()], h = m.map((e) => ({
 		id: e.userId || e.clientId,
 		name: e.isSelf ? `${e.displayName} (you)` : e.displayName,
 		color: e.color,
 		online: !0,
 		detail: e.isSelf ? "you" : e.pointer ? "drawing" : "viewing"
-	})), m = /* @__PURE__ */ s(a, { children: [/* @__PURE__ */ o(t, {
-		users: p,
+	})), g = /* @__PURE__ */ s(a, { children: [/* @__PURE__ */ o(t, {
+		users: h,
 		maxVisible: 6,
 		size: i
 	}), /* @__PURE__ */ o("span", {
 		className: "pr-0.5 text-[11px] font-medium tabular-nums text-text-secondary",
-		children: r.length
-	})] }), h = r.filter((e) => !e.isSelf);
-	if (!(l && (l.onMessage || l.onCall || l.onFollow)) || h.length === 0) return /* @__PURE__ */ o("div", {
+		children: m.length
+	})] }), _ = m.filter((e) => !e.isSelf);
+	if (!(l && (l.onMessage || l.onCall || l.onFollow)) || _.length === 0) return /* @__PURE__ */ o("div", {
 		"data-testid": f,
-		"data-participant-count": r.length,
+		"data-participant-count": m.length,
 		className: e(c, d),
-		children: m
+		children: g
 	});
-	let g = h.map((e) => {
+	let v = _.map((e) => {
 		let t = {
 			userId: e.userId || e.clientId,
 			clientId: e.clientId,
@@ -53,15 +58,15 @@ function l({ participants: r, size: i = 26, actions: l, followingUserId: u = nul
 	});
 	return /* @__PURE__ */ o("div", {
 		"data-testid": f,
-		"data-participant-count": r.length,
+		"data-participant-count": m.length,
 		className: e("pointer-events-auto", d),
 		children: /* @__PURE__ */ o(n, {
-			trigger: m,
-			triggerLabel: `People on this diagram (${r.length})`,
+			trigger: g,
+			triggerLabel: `People on this diagram (${m.length})`,
 			triggerTitle: "Who is here — message, call or follow them",
 			triggerClassName: e(c, "text-inherit"),
 			align: "end",
-			sections: g,
+			sections: v,
 			"data-testid": `${f}-menu`
 		})
 	});

@@ -126,7 +126,7 @@ export default function ChatPage() {
         description="Three-dot typing/thinking animation. Use inside MessageBubble while content is streaming, or as a standalone presence indicator."
         code={`<ThinkingDots size="sm" />
 <ThinkingDots size="md" />
-<ThinkingDots color="#16a34a" />`}
+<ThinkingDots className="text-success" />`}
       >
         <div className="flex gap-7 items-center">
           <div className={COL}>
@@ -138,7 +138,7 @@ export default function ChatPage() {
             <span className={CAPTION}>md (default)</span>
           </div>
           <div className={COL}>
-            <ThinkingDots color="#16a34a" />
+            <ThinkingDots className="text-success" />
             <span className={CAPTION}>custom color</span>
           </div>
         </div>
@@ -419,7 +419,7 @@ Step 4: Rank and return top 3`}
           componentName="ThinkingDots"
           props={[
             { name: 'size', type: "'sm' | 'md'", default: "'md'", description: 'Dot size. sm = 4px, md = 6px.' },
-            { name: 'color', type: 'string', description: 'Dot color. Defaults to var(--color-text-tertiary).' },
+            { name: 'className', type: 'string', description: 'CSS classes, including a text color inherited by the dots.' },
           ]}
         />
 

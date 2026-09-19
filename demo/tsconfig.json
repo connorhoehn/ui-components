@@ -11,6 +11,12 @@
       "vitest/globals"
     ],
     "paths": {
+      "@connorhoehnslalom/ui-components/hooks": [
+        "../src/hooks/index.ts"
+      ],
+      "@connorhoehnslalom/ui-components/integrations/realtime-modules": [
+        "../src/integrations/realtime-modules/index.ts"
+      ],
       "@connorhoehnslalom/ui-components/*": [
         "../src/components/*/index.ts"
       ],

@@ -61,7 +61,17 @@ export function DiagramPresenceBar({
     className,
     'data-testid': testId = 'diagram-presence',
 }: DiagramPresenceBarProps) {
-    const users: PresenceUser[] = participants.map((p) => ({
+    // Awareness entries represent tabs; the roster and its actions represent
+    // people. Prefer this tab for our identity so sibling tabs cannot expose
+    // message/call/follow actions targeting ourselves. Keep collaborators intact
+    // upstream so each tab can still publish its own cursor.
+    const peopleById = new Map<string, DiagramCollaborator>();
+    for (const participant of participants) {
+        const id = participant.userId || participant.clientId;
+        if (!peopleById.has(id) || participant.isSelf) peopleById.set(id, participant);
+    }
+    const people = [...peopleById.values()];
+    const users: PresenceUser[] = people.map((p) => ({
         id: p.userId || p.clientId,
         name: p.isSelf ? `${p.displayName} (you)` : p.displayName,
         color: p.color,
@@ -77,21 +87,21 @@ export function DiagramPresenceBar({
         <>
             <PresenceAvatars users={users} maxVisible={6} size={size} />
             <span className="pr-0.5 text-[11px] font-medium tabular-nums text-text-secondary">
-                {participants.length}
+                {people.length}
             </span>
         </>
     );
 
     // The menu lists the OTHER people: there is nothing to message yourself
     // about, and following your own viewport is a no-op with a name.
-    const others = participants.filter((p) => !p.isSelf);
+    const others = people.filter((p) => !p.isSelf);
     const hasActions = !!actions && !!(actions.onMessage || actions.onCall || actions.onFollow);
 
     if (!hasActions || others.length === 0) {
         return (
             <div
                 data-testid={testId}
-                data-participant-count={participants.length}
+                data-participant-count={people.length}
                 className={cn(PILL_CLASS, className)}
             >
                 {face}
@@ -120,10 +130,10 @@ export function DiagramPresenceBar({
     });
 
     return (
-        <div data-testid={testId} data-participant-count={participants.length} className={cn('pointer-events-auto', className)}>
+        <div data-testid={testId} data-participant-count={people.length} className={cn('pointer-events-auto', className)}>
             <DropdownMenu
                 trigger={face}
-                triggerLabel={`People on this diagram (${participants.length})`}
+                triggerLabel={`People on this diagram (${people.length})`}
                 triggerTitle="Who is here — message, call or follow them"
                 triggerClassName={cn(PILL_CLASS, 'text-inherit')}
                 align="end"
