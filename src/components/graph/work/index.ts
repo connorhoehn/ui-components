@@ -4,6 +4,7 @@ export { WorkEdge } from './WorkEdge';
 export { WorkEntityList } from './WorkEntityList';
 export { WorkInspector } from './WorkInspector';
 export { WorkSharingControls } from './WorkSharingControls';
+export { WorkReferenceCard } from './WorkReferenceCard';
 export type {
   WorkEdgeProps,
   WorkEntityListProps,
