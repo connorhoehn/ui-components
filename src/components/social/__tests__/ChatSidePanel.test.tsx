@@ -40,6 +40,15 @@ describe('ChatSidePanelFrame', () => {
 });
 
 describe('ChatSidePanel', () => {
+  it('offers expand and restore through the panel frame', () => {
+    const toggle = vi.fn();
+    const props = { panel: { kind: 'document', id: 'board' }, onClose: vi.fn(), onToggleExpanded: toggle };
+    const { rerender } = render(<ChatSidePanel {...props} expanded={false} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand board' }));
+    expect(toggle).toHaveBeenCalledOnce();
+    rerender(<ChatSidePanel {...props} expanded />);
+    expect(screen.getByRole('button', { name: 'Show chat' })).toHaveAttribute('aria-pressed', 'true');
+  });
   const graph = (ref: ChatSidePanelRef) => <div data-testid="graph-view">graph for {ref.id} ({ref.params?.q})</div>;
 
   it('falls back to an empty state that names the kind when nothing is registered', () => {

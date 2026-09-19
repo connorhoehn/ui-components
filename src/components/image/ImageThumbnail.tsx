@@ -66,7 +66,8 @@ export function ImageThumbnail({
   className,
   'data-testid': testId,
 }: ImageThumbnailProps) {
-  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+  const [loadState, setLoadState] = useState<{ src: string; status: 'loading' | 'loaded' | 'error' }>({ src, status: 'loading' });
+  const status = !src ? 'error' : loadState.src === src ? loadState.status : 'loading';
 
   return (
     <div
@@ -94,18 +95,19 @@ export function ImageThumbnail({
         </div>
       )}
 
-      {/* The image itself — always rendered so load/error events fire */}
-      <img
+      {/* Empty URLs cannot emit a useful load result; show the fallback. */}
+      {src && <img
+        key={src}
         src={src}
         alt={alt}
         loading={loading}
-        onLoad={() => setStatus('loaded')}
-        onError={() => setStatus('error')}
+        onLoad={() => setLoadState({ src, status: 'loaded' })}
+        onError={() => setLoadState({ src, status: 'error' })}
         className={cn(
           'w-full h-full object-cover transition-opacity duration-200',
           status === 'loaded' ? 'opacity-100' : 'opacity-0',
         )}
-      />
+      />}
     </div>
   );
 }

@@ -245,7 +245,7 @@ function x({ name: r, onRename: a, memberCount: o, description: d, tabs: f, acti
 				})]
 			}),
 			f && /* @__PURE__ */ l("div", {
-				className: "flex min-w-fit flex-1 items-center @max-3xl:order-last @max-3xl:basis-full",
+				className: "flex min-w-0 max-w-full flex-1 items-center overflow-x-auto overscroll-x-contain whitespace-nowrap [&>*]:shrink-0 @max-3xl:order-last @max-3xl:basis-full",
 				children: f
 			}),
 			p && /* @__PURE__ */ l("div", {

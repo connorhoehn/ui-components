@@ -232,8 +232,9 @@ export function ChannelHeader({
           actions after them) wrap onto a second line under the name. */}
       {tabs && (
         // Narrow bar (a chat pane beside a document): the tabs take a full row
-        // of their own UNDER the name, and the actions stay up beside the name.
-        <div className="flex min-w-fit flex-1 items-center @max-3xl:order-last @max-3xl:basis-full">
+        // of their own UNDER the name. Scroll within that row when the split
+        // is narrower than the tabs; never force the pane beyond its width.
+        <div className="flex min-w-0 max-w-full flex-1 items-center overflow-x-auto overscroll-x-contain whitespace-nowrap [&>*]:shrink-0 @max-3xl:order-last @max-3xl:basis-full">
           {tabs}
         </div>
       )}

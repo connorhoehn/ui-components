@@ -9,8 +9,8 @@
 
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
-import { PuzzleIcon } from '../ui/Icons';
-import { Button } from '../ui/Button';
+import { PuzzleIcon, CloseIcon } from '../ui/Icons';
+import { Tooltip } from '../shared/Tooltip';
 import { IconButton } from '../ui/IconButton';
 import { Inline } from '../ui/Stack';
 import EmptyState from '../shared/EmptyState';
@@ -60,10 +60,14 @@ export interface ChatSidePanelFrameProps {
   /** A second clause under the title — "12 results", "Edited by Grace". */
   subtitle?: string;
   onClose: () => void;
-  /** Renders "Open full page" when given. */
+  /** Offers navigation to the full-page destination. */
   onOpenFullPage?: () => void;
-  /** Extra header controls, placed before "Open full page". */
+  /** Additional controls beside the panel title. */
   actions?: ReactNode;
+  /** Whether this panel currently occupies the conversation area. */
+  expanded?: boolean;
+  /** When supplied, offers an expand/restore control beside the title. */
+  onToggleExpanded?: () => void;
   children: ReactNode;
   className?: string;
   'data-testid'?: string;
@@ -75,7 +79,7 @@ export interface ChatSidePanelFrameProps {
  * the rest and scrolls on its own.
  */
 export function ChatSidePanelFrame({
-  title, subtitle, onClose, onOpenFullPage, actions, children, className, 'data-testid': testId = 'chat-side-panel',
+  title, subtitle, onClose, onOpenFullPage, actions, expanded = false, onToggleExpanded, children, className, 'data-testid': testId = 'chat-side-panel',
 }: ChatSidePanelFrameProps) {
   return (
     <section
@@ -84,17 +88,36 @@ export function ChatSidePanelFrame({
       className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)}
     >
       <header className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-1.5">
-        <span className="flex min-w-0 flex-col">
-          <span className="truncate text-[12px] font-semibold text-text-secondary" data-testid={`${testId}-title`}>{title}</span>
-          {subtitle && <span className="truncate text-[11px] text-text-tertiary" data-testid={`${testId}-subtitle`}>{subtitle}</span>}
-        </span>
-        <Inline gap="xs" align="center" wrap={false} className="shrink-0">
-          {actions}
-          {onOpenFullPage && (
-            <Button variant="ghost" size="sm" onClick={onOpenFullPage} data-testid={`${testId}-open-full`}>Open full page</Button>
-          )}
-          <IconButton size="sm" aria-label="Close panel" onClick={onClose} data-testid={`${testId}-close`}>✕</IconButton>
+        <Inline gap="sm" align="center" wrap={false} className="min-w-0">
+          <span className="flex min-w-0 flex-col">
+            <span className="truncate text-[12px] font-semibold text-text-secondary" data-testid={`${testId}-title`}>{title}</span>
+            {subtitle && <span className="truncate text-[11px] text-text-tertiary" data-testid={`${testId}-subtitle`}>{subtitle}</span>}
+          </span>
+          <Inline gap="xs" align="center" wrap={false} className="shrink-0">
+            {onToggleExpanded && (
+              <Tooltip content={expanded ? 'Show chat' : 'Expand board'} placement="bottom">
+                <IconButton size="md" aria-label={expanded ? 'Show chat' : 'Expand board'} aria-pressed={expanded} onClick={onToggleExpanded} data-testid={`${testId}-expand`}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    {expanded ? <><rect x="2" y="2.5" width="12" height="11" rx="1.5" /><path d="M6 2.5v11" /></> : <path d="M6 2H2v4M10 2h4v4M14 10v4h-4M6 14H2v-4" />}
+                  </svg>
+                </IconButton>
+              </Tooltip>
+            )}
+            {onOpenFullPage && (
+              <Tooltip content="Open full page" placement="bottom">
+                <IconButton size="md" aria-label="Open full page" onClick={onOpenFullPage} data-testid={`${testId}-open-full`}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 2h5v5M14 2 7 9M6 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-3" />
+                  </svg>
+                </IconButton>
+              </Tooltip>
+            )}
+            {actions}
+          </Inline>
         </Inline>
+        <Tooltip content="Close panel" placement="bottom">
+          <IconButton size="md" aria-label="Close panel" onClick={onClose} data-testid={`${testId}-close`} className="shrink-0"><CloseIcon /></IconButton>
+        </Tooltip>
       </header>
       <div className="min-h-0 flex-1 overflow-auto">{children}</div>
     </section>
@@ -118,8 +141,12 @@ export interface ChatSidePanelProps {
    * which conversation it belongs to.
    */
   subtitle?: string;
-  /** Extra header controls, placed before "Open full page" — a way back, typically. */
+  /** Additional controls beside the panel title. */
   actions?: ReactNode;
+  /** Whether this panel currently occupies the conversation area. */
+  expanded?: boolean;
+  /** When supplied, offers an expand/restore control beside the title. */
+  onToggleExpanded?: () => void;
   className?: string;
   'data-testid'?: string;
 }
@@ -135,7 +162,7 @@ export function chatSidePanelKindLabel(kind: string): string {
  * renderer for the kind the frame still opens — with an empty state that names
  * the kind, so a missing registration is a visible bug, not a blank split.
  */
-export function ChatSidePanel({ panel, onClose, onOpenFullPage, subtitle, actions, className, 'data-testid': testId = 'chat-side-panel' }: ChatSidePanelProps) {
+export function ChatSidePanel({ panel, onClose, onOpenFullPage, subtitle, actions, expanded, onToggleExpanded, className, 'data-testid': testId = 'chat-side-panel' }: ChatSidePanelProps) {
   const renderer = useChatSidePanelRenderer(panel.kind);
   const [liveTitle, setLiveTitle] = useState<string | null>(null);
   const api = useMemo<ChatSidePanelApi>(
@@ -148,7 +175,7 @@ export function ChatSidePanel({ panel, onClose, onOpenFullPage, subtitle, action
   );
   const title = liveTitle || panel.title || chatSidePanelKindLabel(panel.kind);
   return (
-    <ChatSidePanelFrame title={title} subtitle={subtitle} actions={actions} onClose={onClose} onOpenFullPage={api.openFullPage} className={className} data-testid={testId}>
+    <ChatSidePanelFrame title={title} subtitle={subtitle} actions={actions} expanded={expanded} onToggleExpanded={onToggleExpanded} onClose={onClose} onOpenFullPage={api.openFullPage} className={className} data-testid={testId}>
       {renderer ? (
         // Keyed so a new id of the same kind remounts the body rather than reusing stale state.
         <div key={`${panel.kind}:${panel.id}`} className="flex h-full min-h-0 flex-col" data-kind={panel.kind} data-id={panel.id}>

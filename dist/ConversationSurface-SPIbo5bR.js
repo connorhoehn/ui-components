@@ -5,7 +5,7 @@ import { F as r, I as i, O as a, P as o, S as s, b as c, d as l, f as u, g as d,
 import { f as v, t as ee } from "./Chip-BENLwTlq.js";
 import { t as y } from "./ConfirmDialog-Cd8NZEXi.js";
 import { t as b } from "./EmptyState-JzzL2z1E.js";
-import { n as x, o as S, s as C, t as w } from "./ChannelHeader-DbhGiE1t.js";
+import { n as x, o as S, s as C, t as w } from "./ChannelHeader-DjUVNMuY.js";
 import { n as T } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as E } from "./Input-DLknWXri.js";
 import { t as D } from "./Textarea-Dz4doxTv.js";

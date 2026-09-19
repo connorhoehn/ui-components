@@ -1074,7 +1074,7 @@ declare interface ChatRoomProps {
  * renderer for the kind the frame still opens — with an empty state that names
  * the kind, so a missing registration is a visible bug, not a blank split.
  */
-export declare function ChatSidePanel({ panel, onClose, onOpenFullPage, subtitle, actions, className, 'data-testid': testId }: ChatSidePanelProps): JSX.Element;
+export declare function ChatSidePanel({ panel, onClose, onOpenFullPage, subtitle, actions, expanded, onToggleExpanded, className, 'data-testid': testId }: ChatSidePanelProps): JSX.Element;
 
 export declare interface ChatSidePanelApi {
     close: () => void;
@@ -1089,17 +1089,21 @@ export declare interface ChatSidePanelApi {
  * the title on the left and the way out on the right, and a body that fills
  * the rest and scrolls on its own.
  */
-export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
+export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
 
 export declare interface ChatSidePanelFrameProps {
     title: string;
     /** A second clause under the title — "12 results", "Edited by Grace". */
     subtitle?: string;
     onClose: () => void;
-    /** Renders "Open full page" when given. */
+    /** Offers navigation to the full-page destination. */
     onOpenFullPage?: () => void;
-    /** Extra header controls, placed before "Open full page". */
+    /** Additional controls beside the panel title. */
     actions?: ReactNode;
+    /** Whether this panel currently occupies the conversation area. */
+    expanded?: boolean;
+    /** When supplied, offers an expand/restore control beside the title. */
+    onToggleExpanded?: () => void;
     children: ReactNode;
     className?: string;
     'data-testid'?: string;
@@ -1123,8 +1127,12 @@ export declare interface ChatSidePanelProps {
      * which conversation it belongs to.
      */
     subtitle?: string;
-    /** Extra header controls, placed before "Open full page" — a way back, typically. */
+    /** Additional controls beside the panel title. */
     actions?: ReactNode;
+    /** Whether this panel currently occupies the conversation area. */
+    expanded?: boolean;
+    /** When supplied, offers an expand/restore control beside the title. */
+    onToggleExpanded?: () => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -3258,32 +3266,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -3304,6 +3286,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -3314,12 +3309,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }

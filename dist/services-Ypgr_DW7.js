@@ -2174,27 +2174,36 @@ function ut() {
 	});
 }
 function dt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded: a = !1, fallback: o, loading: s = "lazy", className: c, "data-testid": l }) {
-	let [u, d] = g("loading");
+	let [u, d] = g({
+		src: e,
+		status: "loading"
+	}), f = e ? u.src === e ? u.status : "loading" : "error";
 	return /* @__PURE__ */ y("div", {
 		"data-testid": l,
 		className: i("relative overflow-hidden bg-surface-hover", ct[n], r !== "auto" && lt[r], a ? "rounded-full" : "rounded-md", c),
 		children: [
-			u === "loading" && /* @__PURE__ */ v("div", {
+			f === "loading" && /* @__PURE__ */ v("div", {
 				"aria-hidden": "true",
 				className: "absolute inset-0 animate-pulse bg-surface-emphasis"
 			}),
-			u === "error" && /* @__PURE__ */ v("div", {
+			f === "error" && /* @__PURE__ */ v("div", {
 				className: "absolute inset-0 flex items-center justify-center bg-surface-hover",
 				children: o ?? /* @__PURE__ */ v(ut, {})
 			}),
-			/* @__PURE__ */ v("img", {
+			e && /* @__PURE__ */ v("img", {
 				src: e,
 				alt: t,
 				loading: s,
-				onLoad: () => d("loaded"),
-				onError: () => d("error"),
-				className: i("w-full h-full object-cover transition-opacity duration-200", u === "loaded" ? "opacity-100" : "opacity-0")
-			})
+				onLoad: () => d({
+					src: e,
+					status: "loaded"
+				}),
+				onError: () => d({
+					src: e,
+					status: "error"
+				}),
+				className: i("w-full h-full object-cover transition-opacity duration-200", f === "loaded" ? "opacity-100" : "opacity-0")
+			}, e)
 		]
 	});
 }
