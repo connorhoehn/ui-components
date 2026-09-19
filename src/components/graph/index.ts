@@ -14,3 +14,4 @@ export type {
 export { layoutGraph, graphCenterNode, graphGroups } from './layout';
 export type { GraphLayoutSize, GraphPositions } from './layout';
 export type { GraphNode, GraphEdge, GraphLayout, GraphPoint } from './types';
+export * from './work';
