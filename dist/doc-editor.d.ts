@@ -16,6 +16,8 @@ import { useEditor } from '@tiptap/react';
 import { XmlFragment } from 'yjs';
 import * as Y from 'yjs';
 
+export declare function acceptsDocumentImage(file: File): boolean;
+
 export declare function AckMode({ sections, onAckItem, onRejectItem, participants, onSectionFocus, jumpToIndex, onJumpComplete, getSectionFragment, ydoc, provider, comments, onAddComment, onResolveThread, onUnresolveThread }: AckModeProps): JSX.Element;
 
 declare interface AckModeProps {
@@ -564,6 +566,19 @@ declare interface DocumentEditorPageProps {
     onUndockVideo?: () => void;
 }
 
+/** Structural injection keeps the UI package independent of the runtime package. */
+export declare type DocumentFileUploadHook = (channel: string, options: {
+    displayName: string;
+    previewMaxEdge: number;
+    onComplete: (completion: DocumentUploadCompletion) => void;
+}) => {
+    upload: (file: File) => Promise<{
+        status: string;
+        error?: string;
+        transferId?: string;
+    }>;
+};
+
 export declare function DocumentFindBar({ editor, onClose, canReplace, focusNonce, className, 'data-testid': testId, }: DocumentFindBarProps): JSX.Element;
 
 export declare interface DocumentFindBarProps {
@@ -651,6 +666,12 @@ export declare interface DocumentImageProviderProps {
     /** Only these URLs are passed to the authenticated loader. Defaults to gateway uploads. */
     requiresAuthentication?: (src: string) => boolean;
     children: ReactNode;
+}
+
+export declare interface DocumentImageUpload {
+    uploadImage: (file: File) => Promise<string>;
+    uploadFile: (file: File) => Promise<UploadedDocumentFile>;
+    accepts: (file: File) => boolean;
 }
 
 declare interface DocumentInfo {
@@ -920,6 +941,12 @@ export declare interface DocumentToolbarProps {
     'data-testid'?: string;
 }
 
+export declare interface DocumentUploadCompletion {
+    mine: boolean;
+    transferId: string;
+    downloadUrl?: string;
+}
+
 export declare function EditorToolbar({ editor }: EditorToolbarProps): JSX.Element | null;
 
 declare interface EditorToolbarProps {
@@ -1172,6 +1199,10 @@ export declare type LineSpacing = (typeof LINE_SPACINGS)[number];
  * the browser happened to compute into the CRDT.
  */
 export declare function lineSpacingAttributes(value: unknown): Record<string, string>;
+
+export declare const MAX_ATTACHMENT_BYTES: number;
+
+export declare const MAX_IMAGE_BYTES: number;
 
 export declare const MentionDropdown: default_2.ForwardRefExoticComponent<MentionDropdownProps & default_2.RefAttributes<MentionDropdownHandle>>;
 
@@ -1965,6 +1996,13 @@ declare interface TiptapEditorProps {
     onEditorReady?: (editor: ReturnType<typeof useEditor>) => void;
 }
 
+export declare interface UploadedDocumentFile {
+    url: string;
+    name: string;
+    size: number;
+    type: string;
+}
+
 export declare function useDocumentActions({ documentId, userId, ws, updateMeta, addSection, exportJSON, getSectionFragment, getCanvasFragment, isCanvas, comments, }: UseDocumentActionsArgs): {
     demoLoaded: boolean;
     handleLoadDemo: () => void;
@@ -2003,6 +2041,9 @@ declare interface UseDocumentActionsArgs {
     isCanvas?: boolean;
     comments: Record<string, CommentThread[]>;
 }
+
+/** Reference editor upload binding; waits for the server's stable asset URL, never a data URI. */
+export declare function useDocumentImageUpload(documentId: string | null | undefined, displayName: string, useFileUpload: DocumentFileUploadHook, timeoutMs?: number): DocumentImageUpload;
 
 export declare function useDocumentOutline(editor: OutlineEditorLike | null): UseDocumentOutlineResult;
 
@@ -2354,9 +2395,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -2390,26 +2440,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -2433,18 +2463,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
