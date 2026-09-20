@@ -231,6 +231,13 @@ export interface ChatPanelProps {
   /** Opens a document announced in the thread. */
   onOpenDocument?: (documentId: string) => void;
   /**
+   * Viewer-scoped attachments whose safe rendering belongs to the host.
+   * Called for each durable message inside its bubble. The raw metadata is
+   * never interpreted by the library; a host can resolve opaque references
+   * for the current reader and return unavailable placeholders after revoke.
+   */
+  renderMessageReferences?: (message: ChatMessage) => ReactNode;
+  /**
    * The message a jump just landed on. Highlighted so arriving somewhere in
    * the middle of a transcript says WHICH message you were sent to — without
    * it a jump scrolls and leaves you to guess. The caller clears it; the
@@ -1350,6 +1357,7 @@ export function ChatPanel({
   onManageRecordingExpiry,
   recordingStatus,
   onOpenDocument,
+  renderMessageReferences,
   tone = 'light',
   showHeader,
   fill,
@@ -2199,6 +2207,7 @@ export function ChatPanel({
           onCancel={() => setEditingId(null)}
         />
       ) : body}
+      {!isDeleted && renderMessageReferences?.(message)}
       {!isDeleted && docRefs.length > 0 && (
         <div className="mt-1 flex flex-wrap gap-1" data-testid="chat-message-docrefs">
           {docRefs.map((d) => (

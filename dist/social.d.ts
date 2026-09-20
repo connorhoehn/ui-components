@@ -4,7 +4,7 @@ import { JSX } from 'react';
 import { ReactNode } from 'react';
 import { RefObject } from 'react';
 
-export declare function ActivePeopleGrid({ people, maxVisible, onSelectPerson, onShowAll, emptyLabel, className, 'data-testid': testId, }: ActivePeopleGridProps): JSX.Element;
+export declare function ActivePeopleGrid({ people, maxVisible, onSelectPerson, onShowAll, onSelectSharedWork, emptyLabel, className, 'data-testid': testId, }: ActivePeopleGridProps): JSX.Element;
 
 export declare interface ActivePeopleGridProps {
     people: readonly ActivePerson[];
@@ -14,6 +14,8 @@ export declare interface ActivePeopleGridProps {
     onSelectPerson?: (userId: string) => void;
     /** Clicking the "+N" tile. Without it, the tile is inert text rather than a button. */
     onShowAll?: () => void;
+    /** Opens this person's server-filtered shared work graph. */
+    onSelectSharedWork?: (userId: string) => void;
     emptyLabel?: string;
     className?: string;
     'data-testid'?: string;
@@ -28,6 +30,11 @@ export declare interface ActivePerson {
     /** In a live call right now: the bubble gets a ring and the tile a small live marker. */
     inCall?: boolean;
     status?: 'online' | 'busy' | 'away';
+    /** Voluntary work sharing is independent from presence and call state. */
+    workSharing?: {
+        state: 'active' | 'historical';
+        fresh: boolean;
+    };
 }
 
 declare interface ActivityEvent {
@@ -707,7 +714,7 @@ declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -878,6 +885,13 @@ export declare interface ChatPanelProps {
     recordingStatus?: (recordingId: string) => RecordingCardStatus | undefined;
     /** Opens a document announced in the thread. */
     onOpenDocument?: (documentId: string) => void;
+    /**
+     * Viewer-scoped attachments whose safe rendering belongs to the host.
+     * Called for each durable message inside its bubble. The raw metadata is
+     * never interpreted by the library; a host can resolve opaque references
+     * for the current reader and return unavailable placeholders after revoke.
+     */
+    renderMessageReferences?: (message: ChatMessage) => ReactNode;
     /**
      * The message a jump just landed on. Highlighted so arriving somewhere in
      * the middle of a transcript says WHICH message you were sent to — without
@@ -3238,6 +3252,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3257,12 +3284,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3270,9 +3294,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3306,9 +3330,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3316,9 +3340,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3332,16 +3356,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

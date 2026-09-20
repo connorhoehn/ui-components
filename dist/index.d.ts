@@ -104,7 +104,7 @@ export declare const activeNavItemClassName = "block px-[14px] py-2 border-l-[3p
 
 export declare const activeNavItemStyle: CSSProperties;
 
-export declare function ActivePeopleGrid({ people, maxVisible, onSelectPerson, onShowAll, emptyLabel, className, 'data-testid': testId, }: ActivePeopleGridProps): JSX.Element;
+export declare function ActivePeopleGrid({ people, maxVisible, onSelectPerson, onShowAll, onSelectSharedWork, emptyLabel, className, 'data-testid': testId, }: ActivePeopleGridProps): JSX.Element;
 
 export declare interface ActivePeopleGridProps {
     people: readonly ActivePerson[];
@@ -114,6 +114,8 @@ export declare interface ActivePeopleGridProps {
     onSelectPerson?: (userId: string) => void;
     /** Clicking the "+N" tile. Without it, the tile is inert text rather than a button. */
     onShowAll?: () => void;
+    /** Opens this person's server-filtered shared work graph. */
+    onSelectSharedWork?: (userId: string) => void;
     emptyLabel?: string;
     className?: string;
     'data-testid'?: string;
@@ -128,6 +130,11 @@ export declare interface ActivePerson {
     /** In a live call right now: the bubble gets a ring and the tile a small live marker. */
     inCall?: boolean;
     status?: 'online' | 'busy' | 'away';
+    /** Voluntary work sharing is independent from presence and call state. */
+    workSharing?: {
+        state: 'active' | 'historical';
+        fresh: boolean;
+    };
 }
 
 declare interface ActiveSync {
@@ -2825,7 +2832,7 @@ export declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -2996,6 +3003,13 @@ export declare interface ChatPanelProps {
     recordingStatus?: (recordingId: string) => RecordingCardStatus | undefined;
     /** Opens a document announced in the thread. */
     onOpenDocument?: (documentId: string) => void;
+    /**
+     * Viewer-scoped attachments whose safe rendering belongs to the host.
+     * Called for each durable message inside its bubble. The raw metadata is
+     * never interpreted by the library; a host can resolve opaque references
+     * for the current reader and return unavailable placeholders after revoke.
+     */
+    renderMessageReferences?: (message: ChatMessage) => ReactNode;
     /**
      * The message a jump just landed on. Highlighted so arriving somewhere in
      * the middle of a transcript says WHICH message you were sent to — without
@@ -16464,6 +16478,27 @@ declare interface UseActivityBusReturn {
   /** @see SurfaceTone — which colour family the work area paints in. */
   export declare type WorkAreaTone = SurfaceTone;
 
+  /**
+   * Presentation-only selectable edge. All labels and disclosure decisions must
+   * already be viewer-safe when they reach this component.
+   */
+  export declare function WorkEdge({ edge, selected, reducedMotion, fromLabel, toLabel, onSelect, }: WorkEdgeProps): JSX.Element;
+
+  export declare interface WorkEdgeProps {
+      edge: WorkGraphEdgeData;
+      selected?: boolean;
+      reducedMotion?: boolean;
+      fromLabel: string;
+      toLabel: string;
+      onSelect?: (id: string) => void;
+  }
+
+  export declare function WorkEntityList({ nodes, edges, selection, onSelectionChange, heading }: WorkEntityListProps): JSX.Element;
+
+  export declare interface WorkEntityListProps extends WorkInspectorProps {
+      heading?: ReactNode;
+  }
+
   export declare interface WorkflowStep {
       step: number;
       label: string;
@@ -16478,6 +16513,168 @@ declare interface UseActivityBusReturn {
       size?: 'sm' | 'md';
       className?: string;
       'data-testid'?: string;
+  }
+
+  /**
+   * Controlled, presentation-only work graph. The host owns data fetching,
+   * authorization, selection, and viewport persistence.
+   */
+  export declare function WorkGraph({ nodes, edges, selection, viewport, sources, state, errorMessage, className, onSelectionChange, onViewportChange, onRetry, onOpen, onReference, onRequestCollaboration, }: WorkGraphProps): JSX.Element;
+
+  export declare type WorkGraphCapability = 'message' | 'view-document' | 'edit-document' | 'join-conversation' | 'join-meeting' | 'observe-terminal' | 'control-terminal' | 'view-transcript' | 'view-run' | 'dispatch-run';
+
+  /** Frozen import names for the component implementation wave. */
+  export declare type WorkGraphComponentName = 'WorkGraph' | 'WorkNode' | 'WorkEdge' | 'WorkStatus' | 'WorkInspector' | 'WorkEntityList' | 'WorkSharingControls' | 'WorkReferenceCard';
+
+  export declare type WorkGraphDisclosure = 'existence' | 'summary' | 'details';
+
+  export declare interface WorkGraphEdgeData {
+      id: string;
+      fromId: string;
+      toId: string;
+      relation: WorkGraphRelation;
+      label?: string;
+      status: WorkGraphStatus;
+      disclosure: WorkGraphDisclosure;
+      startedAt?: string;
+      updatedAt: string;
+      endedAt?: string;
+      capabilities: WorkGraphCapability[];
+  }
+
+  export declare interface WorkGraphNodeData {
+      id: string;
+      kind: WorkGraphNodeKind;
+      title: string;
+      description?: string;
+      status: WorkGraphStatus;
+      disclosure: WorkGraphDisclosure;
+      startedAt?: string;
+      updatedAt: string;
+      endedAt?: string;
+      capabilities: WorkGraphCapability[];
+      avatarUrl?: string;
+      locked?: boolean;
+  }
+
+  /** Presentation-only work graph contracts. Hosts pass viewer-sanitized data. */
+  export declare type WorkGraphNodeKind = 'project' | 'terminal' | 'agent' | 'run' | 'document' | 'change' | 'conversation' | 'meeting' | 'transcript' | 'task';
+
+  export declare interface WorkGraphProps {
+      nodes: WorkGraphNodeData[];
+      edges: WorkGraphEdgeData[];
+      selection: WorkGraphSelection;
+      viewport: WorkGraphViewport;
+      sources?: WorkGraphSourceState[];
+      state?: 'loading' | 'ready' | 'empty' | 'partial' | 'error';
+      errorMessage?: string;
+      className?: string;
+      onSelectionChange: (selection: WorkGraphSelection) => void;
+      onViewportChange: (viewport: WorkGraphViewport) => void;
+      onRetry?: () => void;
+      onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
+      onReference?: (selection: Exclude<WorkGraphSelection, null>) => void;
+      onRequestCollaboration?: (selection: Exclude<WorkGraphSelection, null>, capability: WorkGraphCapability) => void;
+  }
+
+  export declare type WorkGraphRelation = 'works-on' | 'runs-in' | 'operates-on' | 'produced' | 'edited' | 'attended' | 'discussed' | 'derived-from';
+
+  export declare type WorkGraphSelection = {
+      kind: 'node';
+      id: string;
+  } | {
+      kind: 'edge';
+      id: string;
+  } | null;
+
+  export declare interface WorkGraphSourceState {
+      source: 'cloud-compute' | 'local-compute' | 'document' | 'pipeline' | 'conversation' | 'meeting';
+      health: 'available' | 'delayed' | 'disconnected' | 'authorization-unavailable';
+      checkedAt: string;
+      message?: string;
+  }
+
+  export declare type WorkGraphStatus = 'idle' | 'running' | 'waiting' | 'completed' | 'error' | 'stopped' | 'stale';
+
+  export declare interface WorkGraphViewport {
+      x: number;
+      y: number;
+      zoom: number;
+  }
+
+  export declare function WorkInspector({ nodes, edges, selection, onSelectionChange, onOpen, onReference, onRequestCollaboration }: WorkInspectorProps): JSX.Element;
+
+  export declare interface WorkInspectorProps {
+      nodes: WorkGraphNodeData[];
+      edges: WorkGraphEdgeData[];
+      selection: WorkGraphSelection;
+      onSelectionChange: (selection: WorkGraphSelection) => void;
+      onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
+      onReference?: (selection: Exclude<WorkGraphSelection, null>) => void;
+      onRequestCollaboration?: (selection: Exclude<WorkGraphSelection, null>, capability: WorkGraphCapability) => void;
+  }
+
+  export declare function WorkNode({ node, selected, sharingFresh, onSelect, onOpen }: WorkNodeProps): JSX.Element;
+
+  export declare interface WorkNodeProps {
+      node: WorkGraphNodeData;
+      selected?: boolean;
+      /** Sharing heartbeat freshness; independent from the node's work status. */
+      sharingFresh?: boolean;
+      onSelect?: (id: string) => void;
+      onOpen?: (id: string) => void;
+  }
+
+  export declare function WorkReferenceCard({ target, state, node, edge, unavailableLabel, onSelect, onOpen }: WorkReferenceCardProps): JSX.Element;
+
+  export declare interface WorkReferenceCardProps {
+      target: WorkGraphSelection;
+      state: 'loading' | 'available' | 'unavailable';
+      node?: WorkGraphNodeData;
+      edge?: WorkGraphEdgeData;
+      unavailableLabel?: string;
+      onSelect?: (selection: Exclude<WorkGraphSelection, null>) => void;
+      onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
+  }
+
+  export declare type WorkSharingAudience = {
+      kind: 'people';
+      personIds: string[];
+  } | {
+      kind: 'conversation';
+      conversationIds: string[];
+  } | {
+      kind: 'organization';
+  };
+
+  export declare function WorkSharingControls({ state, value, availableNodes, availableEdges, saving, error, conflict, onChange, onStart, onPause, onResume, onStop, }: WorkSharingControlsProps): JSX.Element;
+
+  export declare interface WorkSharingControlsProps {
+      state: 'off' | 'active' | 'paused' | 'stopped' | 'expired';
+      value: WorkSharingFormValue;
+      availableNodes: WorkGraphNodeData[];
+      availableEdges: WorkGraphEdgeData[];
+      saving?: boolean;
+      error?: string;
+      conflict?: boolean;
+      onChange: (value: WorkSharingFormValue) => void;
+      onStart: () => void;
+      onPause: () => void;
+      onResume: () => void;
+      onStop: () => void;
+  }
+
+  export declare interface WorkSharingFormValue {
+      audience: WorkSharingAudience;
+      selectedNodeIds: string[];
+      selectedEdgeIds: string[];
+      disclosure: WorkGraphDisclosure;
+      expiresAt: string;
+      history?: {
+          dayFrom: string;
+          dayThrough: string;
+          expiresAt: string;
+      };
   }
 
   /** Shared document/chat rail: fixed header and footer, one scrollable body. */
@@ -16500,6 +16697,22 @@ declare interface UseActivityBusReturn {
       'data-testid'?: string;
   }
 
+  /**
+   * Compact, text-labelled status indicator for work graph nodes and edges.
+   *
+   * The animated marker is deliberately restricted to fresh, currently
+   * running work. The status word and glyph remain present so state is never
+   * conveyed by colour or motion alone.
+   */
+  export declare function WorkStatus({ status, sharingFresh, label, className, }: WorkStatusProps): JSX.Element;
+
+  export declare interface WorkStatusProps {
+      status: WorkGraphStatus;
+      sharingFresh?: boolean;
+      label?: string;
+      className?: string;
+  }
+
   export declare const zIndex: {
       /** Sticky headers, fixed toolbars */
       readonly sticky: 20;
@@ -16512,6 +16725,19 @@ declare interface UseActivityBusReturn {
   };
 
   export { }
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
 
 
 declare module '@tiptap/core' {
@@ -16535,12 +16761,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -16548,9 +16771,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -16584,9 +16807,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -16594,9 +16817,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -16610,16 +16833,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
