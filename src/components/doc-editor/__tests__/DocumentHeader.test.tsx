@@ -45,15 +45,11 @@ describe('DocumentHeader — title + status', () => {
     setup({ meta: meta({ status: 'archived' as unknown as DocumentMeta['status'] }) });
     expect(screen.getByText('archived')).toBeInTheDocument();
   });
-  it.each<[ViewMode, boolean]>([['editor', true], ['reader', false], ['ack', false]])(
-    'shows "Auto-saved" in %s mode → %s',
-    (mode, shouldShow) => {
-      setup({ mode });
-      const hit = screen.queryByText('Auto-saved');
-      if (shouldShow) expect(hit).toBeInTheDocument();
-      else expect(hit).toBeNull();
-    },
-  );
+  it.each<ViewMode>(['editor', 'reader', 'ack'])('never infers saved from %s mode', (mode) => {
+    setup({ mode });
+    expect(screen.queryByText('Auto-saved')).toBeNull();
+    expect(screen.queryByTestId('document-save-status')).toBeNull();
+  });
 });
 describe('DocumentHeader — last edited timestamp', () => {
   beforeEach(() => {

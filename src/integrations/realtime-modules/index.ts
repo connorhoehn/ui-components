@@ -181,3 +181,6 @@ export type {
 // cacheable, any audience size). See the file header for how to choose.
 export { WrappedStreamStage } from './WrappedStreamStage';
 export type { WrappedStreamStageProps, StreamMode } from './WrappedStreamStage';
+
+export { useDocumentImageUpload, acceptsDocumentImage, MAX_IMAGE_BYTES, MAX_ATTACHMENT_BYTES } from './useDocumentImageUpload';
+export type { DocumentImageUpload, DocumentFileUploadHook, DocumentUploadCompletion, UploadedDocumentFile } from './useDocumentImageUpload';

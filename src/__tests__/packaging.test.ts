@@ -260,8 +260,8 @@ describe('entry points and their transitive optional peers', () => {
       // nothing until a hangout actually starts.
       'video-ivs': { static: [], dynamic: ['amazon-ivs-web-broadcast'] },
       social: { static: ['cmdk'], dynamic: [] },
-      // The whole point of the graph subpath: SVG only, no layout library.
-      graph: { static: [], dynamic: [] },
+      // WorkGraph is the React Flow-backed graph composition.
+      graph: { static: ['@xyflow/react'], dynamic: [] },
       agents: { static: ['@xyflow/react'], dynamic: [] },
       // react-markdown + remark-gfm power MarkdownView (real `dependencies`,
       // same footing as cmdk — npm installs them for the consumer).
@@ -292,7 +292,7 @@ describe('entry points and their transitive optional peers', () => {
       index: {
         static: [
           ...TIPTAP,
-          'amazon-cognito-identity-js', 'cmdk', 'react-markdown', 'react-router', 'recharts', 'remark-gfm', 'yjs',
+          '@xyflow/react', 'amazon-cognito-identity-js', 'cmdk', 'react-markdown', 'react-router', 'recharts', 'remark-gfm', 'yjs',
         ].sort(),
         dynamic: ['amazon-ivs-web-broadcast'],
       },

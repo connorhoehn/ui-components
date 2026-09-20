@@ -57,12 +57,15 @@ export interface WrappedCanvasDocumentProps
    * starts from an empty page.
    */
   legacyModel?: unknown;
+  /** Resolve only after legacy section editors have unmounted. Reject to refuse conversion. */
+  beforeConvert?: () => void | Promise<void>;
 }
 
 export default function WrappedCanvasDocument({
   canvas,
   schema,
   legacyModel,
+  beforeConvert,
   ...viewProps
 }: WrappedCanvasDocumentProps) {
   const [unsupported, setUnsupported] = useState<readonly CanvasUnsupportedForm[]>([]);
@@ -73,12 +76,17 @@ export default function WrappedCanvasDocument({
     // prosemirror-model in the graph. A clear refusal beats a subtle break.
     if (!schema) return 'The editor is still loading — try again in a moment.';
 
+    try {
+      await beforeConvert?.();
+    } catch (error) {
+      return error instanceof Error ? error.message : 'Conversion was refused.';
+    }
     const result = canvas.materialize(schema, legacyModel ?? { frontMatter: {}, content: [] });
     // Set even on success: a conversion can succeed AND have dropped a form
     // into a code block, and that is exactly when the user needs telling.
     setUnsupported(result.unsupported ?? []);
     return result.ok ? null : (result.reason ?? 'Conversion was refused.');
-  }, [canvas, schema, legacyModel]);
+  }, [canvas, schema, legacyModel, beforeConvert]);
 
   return (
     <CanvasDocumentView

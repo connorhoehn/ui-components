@@ -3,7 +3,11 @@ export { default as DocumentListPage } from './DocumentListPage';
 export { default as NewDocumentModal } from './NewDocumentModal';
 export type { NewDocumentModalProps, DocumentShape } from './NewDocumentModal';
 export { default as DocumentHeader } from './DocumentHeader';
-export type { DocumentHeaderCallVariant } from './DocumentHeader';
+export type { DocumentHeaderCallVariant, DocumentHeaderProps, LifecycleErrorView } from './DocumentHeader';
+export type { WorkspaceDocumentHeaderProps } from './WorkspaceDocumentHeader';
+export { DocumentSaveStatus } from './DocumentSaveStatus';
+export type { DocumentSaveState } from './DocumentSaveStatus';
+export type { DocumentLifecycleStatus, LifecycleAction, LifecycleFailureKind, LegacyFinalClaim } from './documentLifecycleTypes';
 export { default as EditorToolbar } from './EditorToolbar';
 export { default as TiptapEditor } from './TiptapEditor';
 // Line spacing, in grid rows rather than in em — `TiptapEditor` registers it,
@@ -157,3 +161,6 @@ export { SuggestionCard } from './SuggestionCard';
 export type { SuggestionCardProps, SuggestionCardKind } from './SuggestionCard';
 export { SuggestionReviewList } from './SuggestionReviewList';
 export type { SuggestionReviewListProps } from './SuggestionReviewList';
+
+export { DocumentImageProvider, AuthenticatedDocumentImageView, createAuthenticatedDocumentImage } from './AuthenticatedDocumentImage';
+export type { DocumentImageProviderProps, DocumentImageLoader } from './AuthenticatedDocumentImage';
