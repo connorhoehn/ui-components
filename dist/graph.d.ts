@@ -215,7 +215,7 @@ export declare interface WorkEntityListProps extends WorkInspectorProps {
  * Controlled, presentation-only work graph. The host owns data fetching,
  * authorization, selection, and viewport persistence.
  */
-export declare function WorkGraph({ nodes, edges, selection, viewport, sources, state, errorMessage, className, onSelectionChange, onViewportChange, onRetry, onOpen, onReference, onRequestCollaboration, }: WorkGraphProps): JSX.Element;
+export declare function WorkGraph({ nodes, edges, selection, viewport, day, timezone, sources, state, errorMessage, className, onSelectionChange, onViewportChange, onRetry, onOpen, onReference, onRequestCollaboration, }: WorkGraphProps): JSX.Element;
 
 export declare type WorkGraphCapability = 'message' | 'view-document' | 'edit-document' | 'join-conversation' | 'join-meeting' | 'observe-terminal' | 'control-terminal' | 'view-transcript' | 'view-run' | 'dispatch-run';
 
@@ -261,6 +261,10 @@ export declare interface WorkGraphProps {
     edges: WorkGraphEdgeData[];
     selection: WorkGraphSelection;
     viewport: WorkGraphViewport;
+    /** Calendar day shown by the host, in YYYY-MM-DD form. */
+    day?: string;
+    /** IANA timezone used to place activity within that day. */
+    timezone?: string;
     sources?: WorkGraphSourceState[];
     state?: 'loading' | 'ready' | 'empty' | 'partial' | 'error';
     errorMessage?: string;
@@ -436,9 +440,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -482,9 +489,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -492,12 +499,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

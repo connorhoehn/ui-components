@@ -21,6 +21,7 @@ import { WorkEdge } from './WorkEdge';
 import { WorkEntityList } from './WorkEntityList';
 import { WorkInspector } from './WorkInspector';
 import { WorkNode } from './WorkNode';
+import { WorkActivityTimeline } from './WorkActivityTimeline';
 import type {
   WorkGraphEdgeData,
   WorkGraphNodeData,
@@ -199,9 +200,21 @@ function layoutNodes(nodes: LayoutEntity[], edges: WorkGraphEdgeData[]): Map<str
   }
 
   const positions = new Map<string, { x: number; y: number }>();
-  for (const [column, entries] of byLayer) {
-    entries.sort(compareLayoutEntities);
+  const predecessors = new Map(nodes.map((node) => [node.id, [] as string[]]));
+  for (const edge of edges) predecessors.get(edge.toId)?.push(edge.fromId);
+  const rows = new Map<string, number>();
+  for (const column of [...byLayer.keys()].sort((a, b) => a - b)) {
+    const entries = byLayer.get(column)!;
+    // Keep children near their visible parents so branches can be followed across columns.
+    entries.sort((a, b) => {
+      const center = (id: string) => {
+        const known = (predecessors.get(id) ?? []).map((parent) => rows.get(parent)).filter((row): row is number => row !== undefined);
+        return known.length ? known.reduce((sum, row) => sum + row, 0) / known.length : Number.POSITIVE_INFINITY;
+      };
+      return center(a.id) - center(b.id) || compareLayoutEntities(a, b);
+    });
     entries.forEach((node, row) => {
+      rows.set(node.id, row);
       positions.set(node.id, { x: 48 + column * COLUMN_GAP, y: 48 + row * ROW_GAP });
     });
   }
@@ -265,6 +278,8 @@ export function WorkGraph({
   edges,
   selection,
   viewport,
+  day,
+  timezone,
   sources = [],
   state = 'ready',
   errorMessage,
@@ -347,6 +362,17 @@ export function WorkGraph({
             </ul>
           ) : null}
         </div>
+      ) : null}
+
+      {day ? (
+        <WorkActivityTimeline
+          day={day}
+          timezone={timezone || 'UTC'}
+          nodes={nodes}
+          edges={renderableEdges}
+          selection={activeSelection}
+          onSelectionChange={onSelectionChange}
+        />
       ) : null}
 
       <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_20rem]" data-testid="work-graph-layout">

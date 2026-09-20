@@ -98,6 +98,10 @@ export interface WorkGraphProps {
   edges: WorkGraphEdgeData[];
   selection: WorkGraphSelection;
   viewport: WorkGraphViewport;
+  /** Calendar day shown by the host, in YYYY-MM-DD form. */
+  day?: string;
+  /** IANA timezone used to place activity within that day. */
+  timezone?: string;
   sources?: WorkGraphSourceState[];
   state?: 'loading' | 'ready' | 'empty' | 'partial' | 'error';
   errorMessage?: string;
