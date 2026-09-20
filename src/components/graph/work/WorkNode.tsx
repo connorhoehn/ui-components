@@ -15,7 +15,7 @@ const KIND_LABEL: Record<WorkGraphNodeData['kind'], string> = {
   run: 'Run',
   document: 'Document',
   change: 'Change',
-  conversation: 'Conversation',
+  conversation: 'Chat',
   meeting: 'Meeting',
   transcript: 'Transcript',
   task: 'Task',
@@ -35,7 +35,7 @@ const OPEN_CAPABILITY: Partial<Record<WorkGraphNodeData['kind'], WorkGraphCapabi
 const OPEN_LABEL: Partial<Record<WorkGraphNodeData['kind'], string>> = {
   terminal: 'Observe',
   document: 'View',
-  conversation: 'Join',
+  conversation: 'Open chat',
   meeting: 'Join',
   transcript: 'View',
   run: 'View',
@@ -104,15 +104,17 @@ export function WorkNode({ node, selected = false, sharingFresh = false, onSelec
         {selected && <span className="sr-only">Selected</span>}
       </div>
 
-      <WorkStatus status={node.status} sharingFresh={sharingFresh} />
+      {node.kind === 'conversation' && node.status === 'completed'
+        ? <span role="status" className="text-xs font-medium text-text-secondary">Recent activity</span>
+        : <WorkStatus status={node.status} sharingFresh={sharingFresh} />}
 
       {!node.locked && node.description && (
         <p className="break-words line-clamp-3 text-xs text-text-secondary">{node.description}</p>
       )}
 
       <dl className="grid min-w-0 gap-1 text-[11px] text-text-tertiary">
-        {started && <div><dt className="inline font-medium">Started: </dt><dd className="inline">{started}</dd></div>}
-        <div><dt className="inline font-medium">Updated: </dt><dd className="inline">{updated ?? 'Unknown'}</dd></div>
+        {started && <div><dt className="inline font-medium">{node.kind === 'conversation' ? 'First activity: ' : 'Started: '}</dt><dd className="inline">{started}</dd></div>}
+        <div><dt className="inline font-medium">{node.kind === 'conversation' ? 'Last activity: ' : 'Updated: '}</dt><dd className="inline">{updated ?? 'Unknown'}</dd></div>
         {ended && <div><dt className="inline font-medium">Ended: </dt><dd className="inline">{ended}</dd></div>}
       </dl>
 

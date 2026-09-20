@@ -703,7 +703,7 @@ var q = {
 	run: "Run",
 	document: "Document",
 	change: "Change",
-	conversation: "Conversation",
+	conversation: "Chat",
 	meeting: "Meeting",
 	transcript: "Transcript",
 	task: "Task"
@@ -717,7 +717,7 @@ var q = {
 }, de = {
 	terminal: "Observe",
 	document: "View",
-	conversation: "Join",
+	conversation: "Open chat",
 	meeting: "Join",
 	transcript: "View",
 	run: "View"
@@ -774,7 +774,11 @@ function Y({ node: e, selected: r = !1, sharingFresh: i = !1, onSelect: a, onOpe
 					})
 				]
 			}),
-			/* @__PURE__ */ b(K, {
+			e.kind === "conversation" && e.status === "completed" ? /* @__PURE__ */ b("span", {
+				role: "status",
+				className: "text-xs font-medium text-text-secondary",
+				children: "Recent activity"
+			}) : /* @__PURE__ */ b(K, {
 				status: e.status,
 				sharingFresh: i
 			}),
@@ -787,14 +791,14 @@ function Y({ node: e, selected: r = !1, sharingFresh: i = !1, onSelect: a, onOpe
 				children: [
 					p && /* @__PURE__ */ x("div", { children: [/* @__PURE__ */ b("dt", {
 						className: "inline font-medium",
-						children: "Started: "
+						children: e.kind === "conversation" ? "First activity: " : "Started: "
 					}), /* @__PURE__ */ b("dd", {
 						className: "inline",
 						children: p
 					})] }),
 					/* @__PURE__ */ x("div", { children: [/* @__PURE__ */ b("dt", {
 						className: "inline font-medium",
-						children: "Updated: "
+						children: e.kind === "conversation" ? "Last activity: " : "Updated: "
 					}), /* @__PURE__ */ b("dd", {
 						className: "inline",
 						children: f ?? "Unknown"
@@ -923,13 +927,9 @@ function _e({ nodes: e, edges: n, selection: r, onSelectionChange: i, heading: a
 						children: [/* @__PURE__ */ b("span", {
 							className: "block break-words font-medium text-text-primary",
 							children: X(e)
-						}), /* @__PURE__ */ x("span", {
+						}), /* @__PURE__ */ b("span", {
 							className: "text-xs text-text-tertiary",
-							children: [
-								e.kind,
-								" · ",
-								e.status
-							]
+							children: e.kind === "conversation" ? "Chat · Recent activity" : `${e.kind} · ${e.status}`
 						})]
 					}) }, e.id);
 				})

@@ -16,6 +16,12 @@ const node = (overrides: Partial<WorkGraphNodeData> = {}): WorkGraphNodeData => 
 });
 
 describe('WorkNode', () => {
+  it('presents a completed channel contribution as recent chat activity', () => {
+    render(<WorkNode node={node({ kind: 'conversation', title: '#general', status: 'completed', capabilities: ['join-conversation'] })} />);
+    expect(screen.getByRole('group', { name: 'Chat: #general' })).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('Recent activity');
+    expect(screen.getByText(/Last activity:/)).toBeInTheDocument();
+  });
   it('renders every frozen kind with a kind label and status', () => {
     const kinds: WorkGraphNodeData['kind'][] = [
       'project', 'terminal', 'agent', 'run', 'document', 'change',

@@ -31,7 +31,7 @@ export function WorkEntityList({ nodes, edges, selection, onSelectionChange, hea
             <ul className="space-y-1">
               {nodes.map((node) => {
                 const selected = isSelected(selection, 'node', node.id);
-                return <li key={node.id}><button type="button" aria-label={`Work item: ${nodeLabel(node)}`} aria-pressed={selected} onClick={() => onSelectionChange({ kind: 'node', id: node.id })} className={cn('w-full rounded-md border px-3 py-2 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50', selected ? 'border-primary bg-primary/5' : 'border-border hover:bg-surface-hover')}><span className="block break-words font-medium text-text-primary">{nodeLabel(node)}</span><span className="text-xs text-text-tertiary">{node.kind} · {node.status}</span></button></li>;
+                return <li key={node.id}><button type="button" aria-label={`Work item: ${nodeLabel(node)}`} aria-pressed={selected} onClick={() => onSelectionChange({ kind: 'node', id: node.id })} className={cn('w-full rounded-md border px-3 py-2 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50', selected ? 'border-primary bg-primary/5' : 'border-border hover:bg-surface-hover')}><span className="block break-words font-medium text-text-primary">{nodeLabel(node)}</span><span className="text-xs text-text-tertiary">{node.kind === 'conversation' ? 'Chat · Recent activity' : `${node.kind} · ${node.status}`}</span></button></li>;
               })}
             </ul>
           </div>
