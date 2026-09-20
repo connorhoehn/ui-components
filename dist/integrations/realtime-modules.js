@@ -7,10 +7,10 @@ import { t as a } from "../SkeletonCard-CGe8XFPB.js";
 import { n as o, t as s } from "../FileUploadDrop-BRRQBXdS.js";
 import { t as c } from "../Avatar-BzicCOft.js";
 import { n as l, r as u, t as d } from "../Badge-Fdgqmkuz.js";
-import { n as f } from "../DropdownMenu-DZJNUBx5.js";
+import { t as f } from "../PresenceAvatars-BkzMACtv.js";
 import { t as p } from "../ActivityFeed-C9KAtqCl.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
-import { d as _, n as v, t as y, u as b } from "../ConversationSurface-CNdGvcmf.js";
+import { d as _, n as v, t as y, u as b } from "../ConversationSurface-EqVv_tP_.js";
 import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-d9JKcXlp.js";
 import { t as ee } from "../CanvasDocumentView-CF-kDM37.js";
 import { Component as te, createContext as ne, useCallback as O, useContext as re, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";
@@ -1110,25 +1110,31 @@ function qe({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedCanvasDocument.tsx
-function Je({ canvas: e, schema: t, legacyModel: n, ...r }) {
-	let [i, a] = M([]), o = O(async () => {
+function Je({ canvas: e, schema: t, legacyModel: n, beforeConvert: r, ...i }) {
+	let [a, o] = M([]), s = O(async () => {
 		if (!t) return "The editor is still loading — try again in a moment.";
-		let r = e.materialize(t, n ?? {
+		try {
+			await r?.();
+		} catch (e) {
+			return e instanceof Error ? e.message : "Conversion was refused.";
+		}
+		let i = e.materialize(t, n ?? {
 			frontMatter: {},
 			content: []
 		});
-		return a(r.unsupported ?? []), r.ok ? null : r.reason ?? "Conversion was refused.";
+		return o(i.unsupported ?? []), i.ok ? null : i.reason ?? "Conversion was refused.";
 	}, [
 		e,
 		t,
-		n
+		n,
+		r
 	]);
 	return /* @__PURE__ */ P(ee, {
-		...r,
+		...i,
 		isCanvas: e.isCanvas,
 		body: e.body,
-		onConvert: o,
-		unsupported: i
+		onConvert: s,
+		unsupported: a
 	});
 }
 //#endregion
@@ -1266,4 +1272,78 @@ function at({ mode: e = "near-realtime", ...t }) {
 	return P(e === "realtime" ? rt : it, { ...t });
 }
 //#endregion
-export { Q as ALL_REALTIME_CAPABILITIES, $ as CONVERSATION_CAPABILITY_NAMES, Pe as CapabilityBoundary, $e as CapabilityGate, Ye as DEFAULT_REALTIME_CAPABILITIES, Fe as HangoutRoomRow, Ve as HangoutRoomsSection, ye as NetworkErrorBoundary, Be as NewHangoutRoomDialog, Ze as RealtimeCapabilityProvider, be as ReconnectingShim, Ee as WrappedActivityPanel, Je as WrappedCanvasDocument, xe as WrappedChatPanel, Ne as WrappedConnectionPill, nt as WrappedConversationSurface, Oe as WrappedFileUploadDrop, je as WrappedHangoutLayout, Ge as WrappedHangoutRoomsList, We as WrappedLVSHangoutLayout, qe as WrappedMediaEffectsPreviewPanel, Ke as WrappedMediaEffectsTray, Me as WrappedNotificationCenter, Te as WrappedPresencePanel, De as WrappedReactionsOverlay, at as WrappedStreamStage, K as adaptActivityEvent, q as adaptActivityEvents, L as adaptChatMessage, fe as adaptChatMessages, J as adaptFileUploadState, Y as adaptFileUploads, X as adaptHangoutParticipant, ge as adaptHangoutParticipants, V as adaptMessageReactions, _e as adaptNotification, ve as adaptNotifications, pe as adaptPresenceEntry, me as adaptPresenceRoster, B as adaptReaction, he as adaptReactions, Z as applyNetworkShim, et as capabilityNamesFor, tt as conversationFeaturesFor, Re as slugifyRoomName, Qe as useRealtimeCapabilities };
+//#region src/integrations/realtime-modules/useDocumentImageUpload.ts
+var ot = 10485760, st = 26214400;
+function ct(e) {
+	return e.type.startsWith("image/") && e.size > 0 && e.size <= 10485760;
+}
+function lt(e, t, n, r = 6e4) {
+	let i = j(/* @__PURE__ */ new Map()), a = j(/* @__PURE__ */ new Map()), o = j(0), s = j(0), { upload: c } = n(e ? `doc:${e}` : "doc:pending", {
+		displayName: t,
+		previewMaxEdge: 0,
+		onComplete: (e) => {
+			if (!e.mine) return;
+			let t = i.current.get(e.transferId);
+			t ? (i.current.delete(e.transferId), clearTimeout(t.timer), e.downloadUrl ? t.resolve(e.downloadUrl) : t.reject(/* @__PURE__ */ Error("Upload finished without a download URL"))) : o.current > 0 && (a.current.set(e.transferId, e), a.current.size > 64 && a.current.delete(a.current.keys().next().value));
+		}
+	});
+	k(() => () => {
+		s.current++;
+		for (let e of i.current.values()) clearTimeout(e.timer), e.reject(/* @__PURE__ */ Error("Document changed before the upload completed"));
+		i.current.clear(), a.current.clear();
+	}, [e]);
+	let l = O(async (t) => {
+		if (!e) throw Error("This document is not ready for uploads yet");
+		let n = s.current;
+		o.current++;
+		try {
+			let e = await c(t);
+			if (s.current !== n) throw Error("Document changed before the upload completed");
+			if (e.status === "failed") throw Error(e.error || `Could not upload ${t.name}`);
+			let o = e.transferId;
+			if (!o) throw Error("Upload returned no transfer id — the gateway never issued one");
+			let l = a.current.get(o);
+			if (a.current.delete(o), l) {
+				if (!l.downloadUrl) throw Error("Upload finished without a download URL");
+				return l.downloadUrl;
+			}
+			return await new Promise((e, n) => {
+				let a = setTimeout(() => {
+					i.current.delete(o), n(/* @__PURE__ */ Error(`Upload timed out: ${t.name}`));
+				}, r);
+				i.current.set(o, {
+					resolve: e,
+					reject: n,
+					timer: a
+				});
+			});
+		} finally {
+			o.current--, o.current === 0 && a.current.clear();
+		}
+	}, [
+		e,
+		c,
+		r
+	]);
+	return {
+		uploadImage: O(async (e) => {
+			if (!e.type.startsWith("image/")) throw Error(`${e.name} is not an image`);
+			if (e.size === 0) throw Error(`${e.name} is empty`);
+			if (e.size > 10485760) throw Error(`${e.name} is larger than ${ot / 1024 / 1024}MB`);
+			return l(e);
+		}, [l]),
+		uploadFile: O(async (e) => {
+			if (e.size === 0) throw Error(`${e.name} is empty`);
+			if (e.size > 26214400) throw Error(`${e.name} is larger than ${st / 1024 / 1024}MB`);
+			return {
+				url: await l(e),
+				name: e.name,
+				size: e.size,
+				type: e.type
+			};
+		}, [l]),
+		accepts: ct
+	};
+}
+//#endregion
+export { Q as ALL_REALTIME_CAPABILITIES, $ as CONVERSATION_CAPABILITY_NAMES, Pe as CapabilityBoundary, $e as CapabilityGate, Ye as DEFAULT_REALTIME_CAPABILITIES, Fe as HangoutRoomRow, Ve as HangoutRoomsSection, st as MAX_ATTACHMENT_BYTES, ot as MAX_IMAGE_BYTES, ye as NetworkErrorBoundary, Be as NewHangoutRoomDialog, Ze as RealtimeCapabilityProvider, be as ReconnectingShim, Ee as WrappedActivityPanel, Je as WrappedCanvasDocument, xe as WrappedChatPanel, Ne as WrappedConnectionPill, nt as WrappedConversationSurface, Oe as WrappedFileUploadDrop, je as WrappedHangoutLayout, Ge as WrappedHangoutRoomsList, We as WrappedLVSHangoutLayout, qe as WrappedMediaEffectsPreviewPanel, Ke as WrappedMediaEffectsTray, Me as WrappedNotificationCenter, Te as WrappedPresencePanel, De as WrappedReactionsOverlay, at as WrappedStreamStage, ct as acceptsDocumentImage, K as adaptActivityEvent, q as adaptActivityEvents, L as adaptChatMessage, fe as adaptChatMessages, J as adaptFileUploadState, Y as adaptFileUploads, X as adaptHangoutParticipant, ge as adaptHangoutParticipants, V as adaptMessageReactions, _e as adaptNotification, ve as adaptNotifications, pe as adaptPresenceEntry, me as adaptPresenceRoster, B as adaptReaction, he as adaptReactions, Z as applyNetworkShim, et as capabilityNamesFor, tt as conversationFeaturesFor, Re as slugifyRoomName, lt as useDocumentImageUpload, Qe as useRealtimeCapabilities };

@@ -11,6 +11,8 @@ import { useEditor } from '@tiptap/react';
 import { XmlFragment } from 'yjs';
 import * as Y from 'yjs';
 
+export declare function acceptsDocumentImage(file: File): boolean;
+
 declare interface ActivityFeedItem {
     id: string;
     /** Display name of the person who performed the action, e.g. "Alex Chen". */
@@ -1271,6 +1273,25 @@ declare interface DocumentActivityEditor {
     avatarUrl?: string;
 }
 
+/** Structural injection keeps the UI package independent of the runtime package. */
+export declare type DocumentFileUploadHook = (channel: string, options: {
+    displayName: string;
+    previewMaxEdge: number;
+    onComplete: (completion: DocumentUploadCompletion) => void;
+}) => {
+    upload: (file: File) => Promise<{
+        status: string;
+        error?: string;
+        transferId?: string;
+    }>;
+};
+
+export declare interface DocumentImageUpload {
+    uploadImage: (file: File) => Promise<string>;
+    uploadFile: (file: File) => Promise<UploadedDocumentFile>;
+    accepts: (file: File) => boolean;
+}
+
 declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 declare interface DocumentToolbarProps {
@@ -1328,6 +1349,12 @@ declare interface DocumentToolbarProps {
      */
     density?: 'full' | 'compact';
     'data-testid'?: string;
+}
+
+export declare interface DocumentUploadCompletion {
+    mine: boolean;
+    transferId: string;
+    downloadUrl?: string;
 }
 
 declare interface EphemeralReaction {
@@ -1513,6 +1540,10 @@ declare interface LocalChatMessage {
     /** Replaces the default "Only you can see this". */
     note?: string;
 }
+
+export declare const MAX_ATTACHMENT_BYTES: number;
+
+export declare const MAX_IMAGE_BYTES: number;
 
 declare interface MediaEffectsBackgroundOption {
     id: string;
@@ -2509,6 +2540,16 @@ export declare interface UIMessageReaction {
 /** The views that need no capability: chat itself, and who is in it. */
 declare type UngatedConversationFeature = 'chat' | 'members';
 
+export declare interface UploadedDocumentFile {
+    url: string;
+    name: string;
+    size: number;
+    type: string;
+}
+
+/** Reference editor upload binding; waits for the server's stable asset URL, never a data URI. */
+export declare function useDocumentImageUpload(documentId: string | null | undefined, displayName: string, useFileUpload: DocumentFileUploadHook, timeoutMs?: number): DocumentImageUpload;
+
 /**
  * Read the effective capabilities.
  *
@@ -2531,7 +2572,7 @@ export declare interface WrappedActivityPanelProps {
     className?: string;
 }
 
-export declare function WrappedCanvasDocument({ canvas, schema, legacyModel, ...viewProps }: WrappedCanvasDocumentProps): JSX.Element;
+export declare function WrappedCanvasDocument({ canvas, schema, legacyModel, beforeConvert, ...viewProps }: WrappedCanvasDocumentProps): JSX.Element;
 
 export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentViewProps, 'isCanvas' | 'body' | 'onConvert' | 'unsupported'> {
     /** Return value of useCanvasDocument(ydoc) from realtime-modules. */
@@ -2553,6 +2594,8 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
      * starts from an empty page.
      */
     legacyModel?: unknown;
+    /** Resolve only after legacy section editors have unmounted. Reject to refuse conversion. */
+    beforeConvert?: () => void | Promise<void>;
 }
 
 export declare function WrappedChatPanel({ chat, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, emojis, onReply, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;

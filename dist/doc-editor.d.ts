@@ -7,6 +7,8 @@ import { Editor } from '@tiptap/react';
 import { Extension } from '@tiptap/core';
 import { JSX } from 'react';
 import { MutableRefObject } from 'react';
+import { Node as Node_2 } from '@tiptap/core';
+import { NodeViewProps } from '@tiptap/react';
 import { ReactNode } from 'react';
 import { Ref } from 'react';
 import { RefObject } from 'react';
@@ -62,6 +64,9 @@ declare interface AttachmentsPanelProps {
     documentId: string;
     editable: boolean;
 }
+
+/** Shared node view extracted from the reference document editor. */
+export declare function AuthenticatedDocumentImageView({ node, selected }: NodeViewProps): JSX.Element;
 
 /** The Y root holding a canvas body. Mirrors realtime-modules' `CANVAS_BODY_KEY`. */
 export declare const CANVAS_BODY_KEY = "body";
@@ -524,6 +529,9 @@ declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecti
 
 export declare function countAllComments(threads: CommentThread[]): number;
 
+/** Inject the caller's image extension to preserve one TipTap module graph. */
+export declare function createAuthenticatedDocumentImage(image: Node_2): Node_2;
+
 export declare function DiffViewer({ oldSections, newSections, onClose }: DiffViewerProps): JSX.Element;
 
 declare interface DiffViewerProps {
@@ -607,7 +615,7 @@ export declare interface DocumentGutterProps {
     'data-testid'?: string;
 }
 
-export declare function DocumentHeader({ meta, mode, onModeChange, participants, onUpdateMeta, onExport, onToggleHistory, onToggleVideoCall, onToggleVideoHistory, isCallActive, callVariant, callLabel, onClearDocument, onJumpToUser, sections, onToggleMyItems, myItemCount, commentCount, onBack, onFollowUser, followingUserId, onFinalize, onUnlock, pastCallsCount, extraMenuItems, }: DocumentHeaderProps): JSX.Element;
+export declare function DocumentHeader(props: DocumentHeaderProps): JSX.Element;
 
 /**
  * How the call button presents itself.
@@ -624,52 +632,25 @@ export declare function DocumentHeader({ meta, mode, onModeChange, participants,
  */
 export declare type DocumentHeaderCallVariant = 'idle' | 'available' | 'active';
 
-declare interface DocumentHeaderProps {
-    /**
-     * Extra rows for the ⋯ menu — actions that are real but not frequent enough
-     * to earn a permanent button. The alternative is a toolbar that grows one
-     * control per feature until none of them are findable.
-     */
-    extraMenuItems?: ReadonlyArray<{
-        id: string;
-        label: string;
-        onSelect: () => void;
-    }>;
-    meta: DocumentMeta;
-    mode: ViewMode;
-    onModeChange: (mode: ViewMode) => void;
-    participants: Participant[];
-    onUpdateMeta: (patch: Partial<DocumentMeta>) => void;
-    onExport: (format: 'markdown' | 'pdf' | 'json') => void;
-    onToggleHistory: () => void;
-    onToggleVideoCall?: () => void;
-    onToggleVideoHistory?: () => void;
-    isCallActive?: boolean;
-    /**
-     * Overrides the call button's presentation. Omit and it is derived from
-     * `isCallActive`, so callers written before this prop existed are unchanged.
-     */
-    callVariant?: DocumentHeaderCallVariant;
-    /**
-     * Overrides the call button's text — the room name in "Join standup", say.
-     * Omit for the variant's default wording.
-     */
-    callLabel?: string;
-    onClearDocument: () => void;
-    onJumpToUser?: (participant: Participant) => void;
-    sections?: {
-        id: string;
-        title: string;
-    }[];
-    onToggleMyItems?: () => void;
-    myItemCount?: number;
-    commentCount?: number;
-    onBack?: () => void;
-    onFollowUser?: (participant: Participant) => void;
-    followingUserId?: string | null;
-    onFinalize?: () => void;
-    onUnlock?: () => void;
-    pastCallsCount?: number;
+/**
+ * The existing selectable-mode contract remains compatible. New document hosts
+ * omit onModeChange: mode is a server-derived fact, and the shared workspace
+ * composition owns lifecycle confirmation, ownership and contextual actions.
+ */
+export declare type DocumentHeaderProps = LegacyDocumentHeaderProps | (WorkspaceDocumentHeaderProps & {
+    onModeChange?: never;
+});
+
+/** Fetch bytes using the current viewer's identity; credentials never enter the document. */
+export declare type DocumentImageLoader = (src: string, signal: AbortSignal) => Promise<Blob>;
+
+export declare function DocumentImageProvider({ children, ...value }: DocumentImageProviderProps): JSX.Element;
+
+export declare interface DocumentImageProviderProps {
+    loadImage: DocumentImageLoader;
+    /** Only these URLs are passed to the authenticated loader. Defaults to gateway uploads. */
+    requiresAuthentication?: (src: string) => boolean;
+    children: ReactNode;
 }
 
 declare interface DocumentInfo {
@@ -684,6 +665,9 @@ declare interface DocumentInfo {
     description?: string;
     activeCallSessionId?: string;
 }
+
+/** Presentation vocabulary of the document lifecycle API, not an authorization table. */
+export declare type DocumentLifecycleStatus = 'draft' | 'in_review' | 'changes_requested' | 'approved' | 'finalized';
 
 export declare function DocumentListPage({ documents, presence, onOpenDocument, onCreateDocument, onDeleteDocument, onJumpToUser, hideHeader, }: DocumentListPageProps): JSX.Element;
 
@@ -791,6 +775,17 @@ export declare interface DocumentRulerProps {
     style?: CSSProperties;
     'data-testid'?: string;
 }
+
+/** Only a durable backend receipt may select `saved`. Connection/sync is insufficient. */
+export declare interface DocumentSaveState {
+    status: 'pending' | 'saved' | 'error' | 'offline';
+    detail?: string;
+    onRetry?: () => void;
+}
+
+export declare function DocumentSaveStatus({ state }: {
+    state?: DocumentSaveState;
+}): JSX.Element | null;
 
 /**
  * Which authoring surface a new document opens in.
@@ -1084,6 +1079,69 @@ export declare function isLineSpacing(value: unknown): value is LineSpacing;
 export declare function KeyDecisionsCard({ sections }: {
     sections: Section[];
 }): JSX.Element;
+
+declare interface LegacyDocumentHeaderProps {
+    /**
+     * Extra rows for the ⋯ menu — actions that are real but not frequent enough
+     * to earn a permanent button. The alternative is a toolbar that grows one
+     * control per feature until none of them are findable.
+     */
+    extraMenuItems?: ReadonlyArray<{
+        id: string;
+        label: string;
+        onSelect: () => void;
+    }>;
+    saveState?: DocumentSaveState;
+    meta: DocumentMeta;
+    mode: ViewMode;
+    onModeChange: (mode: ViewMode) => void;
+    participants: Participant[];
+    onUpdateMeta: (patch: Partial<DocumentMeta>) => void;
+    onExport: (format: 'markdown' | 'pdf' | 'json') => void;
+    onToggleHistory: () => void;
+    onToggleVideoCall?: () => void;
+    onToggleVideoHistory?: () => void;
+    isCallActive?: boolean;
+    /**
+     * Overrides the call button's presentation. Omit and it is derived from
+     * `isCallActive`, so callers written before this prop existed are unchanged.
+     */
+    callVariant?: DocumentHeaderCallVariant;
+    /**
+     * Overrides the call button's text — the room name in "Join standup", say.
+     * Omit for the variant's default wording.
+     */
+    callLabel?: string;
+    onClearDocument: () => void;
+    onJumpToUser?: (participant: Participant) => void;
+    sections?: {
+        id: string;
+        title: string;
+    }[];
+    onToggleMyItems?: () => void;
+    myItemCount?: number;
+    commentCount?: number;
+    onBack?: () => void;
+    onFollowUser?: (participant: Participant) => void;
+    followingUserId?: string | null;
+    onFinalize?: () => void;
+    onUnlock?: () => void;
+    pastCallsCount?: number;
+}
+
+export declare interface LegacyFinalClaim {
+    unreconciled: true;
+    serverStatus: DocumentLifecycleStatus;
+}
+
+export declare type LifecycleAction = 'submit_for_review' | 'withdraw' | 'approve' | 'request_changes' | 'revise' | 'reopen' | 'finalize';
+
+export declare interface LifecycleErrorView {
+    kind: LifecycleFailureKind;
+    message: string;
+}
+
+export declare type LifecycleFailureKind = 'forbidden' | 'invalid' | 'conflict' | 'network' | 'busy' | 'unknown';
 
 /** What each value is called in the menu — Google Docs' words, where it has them. */
 export declare const LINE_SPACING_LABELS: Record<LineSpacing, string>;
@@ -2192,6 +2250,76 @@ export declare interface WorkItemRowProps {
     'data-testid'?: string;
 }
 
+export declare interface WorkspaceDocumentHeaderProps {
+    /** Host-controlled durable persistence receipt; omitted means unknown. */
+    saveState?: DocumentSaveState;
+    /** Actions scoped to the current source, such as draft/review/publish. */
+    workflowActions?: ReactNode;
+    formatActions?: ReactNode;
+    className?: string;
+    titleEditable?: boolean;
+    onPrint?: () => void;
+    extraMenuItems?: ReadonlyArray<{
+        id: string;
+        label: string;
+        onSelect: () => void;
+    }>;
+    meta: DocumentMeta;
+    mode: ViewMode;
+    suggesting?: boolean;
+    modeReason?: string;
+    participants: Participant[];
+    onUpdateMeta?: (patch: Partial<DocumentMeta>) => void;
+    onExport?: (format: 'markdown' | 'pdf' | 'json') => void;
+    exportFormats?: readonly ('markdown' | 'pdf' | 'json')[];
+    onToggleHistory?: () => void;
+    onToggleVideoCall?: () => void;
+    onToggleVideoHistory?: () => void;
+    isCallActive?: boolean;
+    callVariant?: 'idle' | 'available' | 'active';
+    callLabel?: string;
+    onClearDocument?: () => void;
+    onJumpToUser?: (participant: Participant) => void;
+    sections?: {
+        id: string;
+        title: string;
+    }[];
+    onToggleMyItems?: () => void;
+    onToggleChat?: () => void;
+    chatRoomName?: string | null;
+    chatUnreadCount?: number;
+    formatActionsRef?: (el: HTMLDivElement | null) => void;
+    myItemCount?: number;
+    commentCount?: number;
+    onBack?: () => void;
+    onFollowUser?: (participant: Participant) => void;
+    followingUserId?: string | null;
+    onFinalize?: () => void;
+    onUnlock?: () => void;
+    pastCallsCount?: number;
+    lifecycleStatus?: DocumentLifecycleStatus;
+    owner?: DocumentPerson | null;
+    collaborators?: readonly DocumentPerson[];
+    onShare?: () => void;
+    lifecycleTerminal?: boolean;
+    lifecycleLegacyClaim?: LegacyFinalClaim | null;
+    lifecycleActions?: LifecycleAction[];
+    lifecycleLoading?: boolean;
+    lifecycleBusy?: boolean;
+    lifecycleError?: LifecycleErrorView | null;
+    onDismissLifecycleError?: () => void;
+    onLifecycleAction?: (action: LifecycleAction, reason?: string) => void;
+    onClaimOwnership?: () => void;
+    onShareToRoom?: () => void;
+    shareRoomName?: string | null;
+    sharingToRoom?: boolean;
+    shareStatus?: {
+        tone: 'success' | 'error';
+        text: string;
+    } | null;
+    onDismissShareStatus?: () => void;
+}
+
 /**
  * The select value that means "keep the sheet as wide as the space allows".
  *
@@ -2226,41 +2354,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -2294,16 +2390,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -2314,9 +2400,51 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
