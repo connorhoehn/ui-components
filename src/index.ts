@@ -36,6 +36,8 @@ export type { CheckboxProps } from './components/forms/Checkbox';
 export { ColorInput } from './components/forms/ColorInput';
 export type { ColorInputProps } from './components/forms/ColorInput';
 export { Slider } from './components/forms/Slider';
+export { RangeSlider } from './components/forms/RangeSlider';
+export type { RangeSliderProps } from './components/forms/RangeSlider';
 export type { SliderProps } from './components/forms/Slider';
 
 // ── Image primitives (Phase 5) ──

@@ -339,6 +339,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "RailLayout",
     "RailSection",
     "RailSectionHeader",
+    "RangeSlider",
     "ReactionChips",
     "ReactionOverlay",
     "ReactionPicker",

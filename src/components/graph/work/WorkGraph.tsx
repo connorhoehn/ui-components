@@ -22,6 +22,7 @@ import { WorkEntityList } from './WorkEntityList';
 import { WorkInspector } from './WorkInspector';
 import { WorkNode } from './WorkNode';
 import { WorkActivityTimeline } from './WorkActivityTimeline';
+import { WorkActivityGraph } from './WorkActivityGraph';
 import type {
   WorkGraphEdgeData,
   WorkGraphNodeData,
@@ -273,7 +274,7 @@ function WorkGraphPlaceholder({
  * Controlled, presentation-only work graph. The host owns data fetching,
  * authorization, selection, and viewport persistence.
  */
-export function WorkGraph({
+function LegacyWorkGraph({
   nodes,
   edges,
   selection,
@@ -420,6 +421,11 @@ export function WorkGraph({
       />
     </section>
   );
+}
+
+export function WorkGraph(props: WorkGraphProps) {
+  if (props.activity && props.nodes.length > 0 && props.state !== 'loading' && props.state !== 'error' && props.state !== 'empty') return <WorkActivityGraph {...props} activity={props.activity} />;
+  return <LegacyWorkGraph {...props} />;
 }
 
 export default WorkGraph;

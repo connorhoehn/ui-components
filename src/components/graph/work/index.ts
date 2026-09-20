@@ -7,6 +7,12 @@ export { WorkSharingControls } from './WorkSharingControls';
 export { WorkReferenceCard } from './WorkReferenceCard';
 export { WorkGraph } from './WorkGraph';
 export type {
+  WorkActivityEffort,
+  WorkActivityNodeDetail,
+  WorkActivityPresentation,
+  WorkActivityView,
+  WorkActivityWindow,
+  WorkArtifactRevision,
   WorkEdgeProps,
   WorkEntityListProps,
   WorkGraphCapability,
