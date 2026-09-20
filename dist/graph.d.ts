@@ -190,6 +190,82 @@ export declare function peopleToGraph(people: GraphPerson[], query: string | und
     edges: GraphEdge[];
 };
 
+/** Source-backed membership, already filtered for this viewer by the host. */
+export declare interface WorkActivityEffort {
+    id: string;
+    title: string;
+    nodeIds: string[];
+    edgeIds: string[];
+    /** Older context that may be folded. Never a count of inaccessible sources. */
+    contextNodeIds?: string[];
+}
+
+export declare interface WorkActivityNodeDetail {
+    emphasis?: 'earlier' | 'input' | 'current';
+    /** Fresh process evidence, independent from presence and lifecycle. */
+    fresh?: boolean;
+    tools?: string[];
+    attentionLabel?: string;
+    feedbackCount?: number;
+    artifact?: {
+        revisions: WorkArtifactRevision[];
+        pending?: {
+            id: string;
+            label: string;
+            status: 'generating' | 'failed';
+            message?: string;
+        };
+    };
+}
+
+export declare interface WorkActivityPresentation {
+    efforts: WorkActivityEffort[];
+    details?: Record<string, WorkActivityNodeDetail>;
+    /** Only fresh, running operations in a live query; never inferred from a neighbor. */
+    activeEdgeIds: string[];
+    /** Canonical edges retain identity even when their visual input arrow reverses. */
+    reversedEdgeIds?: string[];
+    mode: 'split' | 'full';
+    window: WorkActivityWindow;
+    bounds: {
+        start: number;
+        end: number;
+    };
+    /** v1 latest-state data must be described as recent work, not historical replay. */
+    temporalMode: 'recent' | 'as-of';
+    events?: Array<{
+        at: number;
+        count: number;
+    }>;
+    view: WorkActivityView;
+    onWindowChange: (window: WorkActivityWindow) => void;
+    onViewChange: (view: WorkActivityView) => void;
+    onFeedback?: (selection: Exclude<WorkGraphSelection, null>) => void;
+}
+
+export declare interface WorkActivityView {
+    focusedEffortId: string | null;
+    expandedSourceEfforts: string[];
+    overviewViewport?: WorkGraphViewport;
+    canvasInitialized?: boolean;
+}
+
+export declare interface WorkActivityWindow {
+    start: number;
+    end: number;
+    following: boolean;
+}
+
+export declare interface WorkArtifactRevision {
+    id: string;
+    label: string;
+    createdAt: string;
+    /** The host resolves protected preview content; the graph does not fetch URLs. */
+    preview?: ReactNode;
+    anchorId?: string;
+    anchorLabel?: string;
+}
+
 /**
  * Presentation-only selectable edge. All labels and disclosure decisions must
  * already be viewer-safe when they reach this component.
@@ -211,11 +287,7 @@ export declare interface WorkEntityListProps extends WorkInspectorProps {
     heading?: ReactNode;
 }
 
-/**
- * Controlled, presentation-only work graph. The host owns data fetching,
- * authorization, selection, and viewport persistence.
- */
-export declare function WorkGraph({ nodes, edges, selection, viewport, day, timezone, sources, state, errorMessage, className, onSelectionChange, onViewportChange, onRetry, onOpen, onReference, onRequestCollaboration, }: WorkGraphProps): JSX.Element;
+export declare function WorkGraph(props: WorkGraphProps): JSX.Element;
 
 export declare type WorkGraphCapability = 'message' | 'view-document' | 'edit-document' | 'join-conversation' | 'join-meeting' | 'observe-terminal' | 'control-terminal' | 'view-transcript' | 'view-run' | 'dispatch-run';
 
@@ -269,6 +341,8 @@ export declare interface WorkGraphProps {
     state?: 'loading' | 'ready' | 'empty' | 'partial' | 'error';
     errorMessage?: string;
     className?: string;
+    /** Authorized effort/revision presentation. Omit for the existing v1 view. */
+    activity?: WorkActivityPresentation;
     onSelectionChange: (selection: WorkGraphSelection) => void;
     onViewportChange: (viewport: WorkGraphViewport) => void;
     onRetry?: () => void;
@@ -282,6 +356,8 @@ export declare type WorkGraphRelation = 'works-on' | 'runs-in' | 'operates-on' |
 export declare type WorkGraphSelection = {
     kind: 'node';
     id: string;
+    revisionId?: string;
+    anchorId?: string;
 } | {
     kind: 'edge';
     id: string;
@@ -398,6 +474,25 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -411,18 +506,52 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -449,59 +578,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

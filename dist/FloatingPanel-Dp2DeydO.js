@@ -2,48 +2,8 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { useCallback as t, useEffect as n, useLayoutEffect as r, useRef as i, useState as a } from "react";
 import { Fragment as o, jsx as s, jsxs as c } from "react/jsx-runtime";
 import { createPortal as l } from "react-dom";
-//#region src/components/shared/TitledFrame.tsx
-var u = {
-	code: {
-		frame: "bg-terminal-bg",
-		idle: "border-code-border",
-		active: "border-code-blue",
-		title: "text-code-subtle",
-		titleActive: "text-code-blue"
-	},
-	surface: {
-		frame: "bg-surface",
-		idle: "border-border",
-		active: "border-primary",
-		title: "text-text-tertiary",
-		titleActive: "text-primary"
-	}
-};
-function d({ title: t, titleAction: n, active: r = !1, tone: i = "code", children: a, onActivate: l, className: d, bodyClassName: f, style: p, "data-testid": m }) {
-	let h = u[i];
-	return /* @__PURE__ */ c("div", {
-		"data-testid": m,
-		onMouseDown: l,
-		style: p,
-		className: e("relative flex flex-col min-h-0 rounded border transition-colors", h.frame, r ? h.active : h.idle, d),
-		children: [/* @__PURE__ */ c("div", {
-			className: "absolute -top-2 left-2 right-2 h-4 flex items-center gap-1 pointer-events-none",
-			children: [/* @__PURE__ */ s("span", {
-				className: e("px-1.5 text-[10px] font-mono leading-none truncate max-w-[60%]", h.frame, r ? h.titleActive : h.title),
-				children: t
-			}), n != null && /* @__PURE__ */ c(o, { children: [/* @__PURE__ */ s("span", { className: "flex-1" }), /* @__PURE__ */ s("span", {
-				className: e("px-1 h-full flex items-center pointer-events-auto", h.frame),
-				children: n
-			})] })]
-		}), /* @__PURE__ */ s("div", {
-			className: e("flex-1 min-h-0 pt-2", f),
-			children: a
-		})]
-	});
-}
-//#endregion
 //#region src/components/shared/DotMeter.tsx
-var f = {
+var u = {
 	code: {
 		label: "text-code-muted",
 		filled: "bg-code-blue",
@@ -61,11 +21,11 @@ var f = {
 		note: "text-text-tertiary"
 	}
 };
-function p({ label: t, value: n, segments: r = 10, showPercent: i = !0, note: a, warnAbove: o = .85, tone: l = "code", className: u, "data-testid": d }) {
-	let p = f[l], m = Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0, h = Math.round(m * 100), g = m >= 1 ? r : Math.min(r - 1, Math.round(m * r)), _ = m > o;
+function d({ label: t, value: n, segments: r = 10, showPercent: i = !0, note: a, warnAbove: o = .85, tone: l = "code", className: d, "data-testid": f }) {
+	let p = u[l], m = Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0, h = Math.round(m * 100), g = m >= 1 ? r : Math.min(r - 1, Math.round(m * r)), _ = m > o;
 	return /* @__PURE__ */ c("div", {
-		"data-testid": d,
-		className: e("flex items-center gap-2 text-[10px] font-mono leading-none", u),
+		"data-testid": f,
+		className: e("flex items-center gap-2 text-[10px] font-mono leading-none", d),
 		role: "meter",
 		"aria-valuenow": h,
 		"aria-valuemin": 0,
@@ -94,7 +54,7 @@ function p({ label: t, value: n, segments: r = 10, showPercent: i = !0, note: a,
 }
 //#endregion
 //#region src/components/shared/SectionLabel.tsx
-function m({ children: t, as: n = "span", className: r, "data-testid": i }) {
+function f({ children: t, as: n = "span", className: r, "data-testid": i }) {
 	return /* @__PURE__ */ s(n, {
 		"data-testid": i,
 		className: e("text-[10px] font-bold uppercase tracking-[0.06em] text-text-tertiary", r),
@@ -103,27 +63,27 @@ function m({ children: t, as: n = "span", className: r, "data-testid": i }) {
 }
 //#endregion
 //#region src/components/shared/FloatingPanel.tsx
-var h = [
+var p = [
 	"top-left",
 	"top-right",
 	"left-center",
 	"right-center",
 	"bottom-left",
 	"bottom-right"
-], g = 2, _ = 16, ee = 24, te = 180, ne = 12, v = 0;
-function re() {
+], m = 2, h = 16, g = 24, _ = 180, ee = 12, v = 0;
+function te() {
 	return v += 1, v;
 }
-function ie() {
+function ne() {
 	return v;
 }
 function y(e) {
-	return typeof e == "string" && h.includes(e);
+	return typeof e == "string" && p.includes(e);
 }
 function b(e) {
 	return typeof e == "number" && Number.isFinite(e);
 }
-function ae(e) {
+function re(e) {
 	if (typeof window > "u") return null;
 	try {
 		let t = window.localStorage.getItem(e);
@@ -146,7 +106,7 @@ function ae(e) {
 function x(e, t, n, r) {
 	try {
 		let i = {
-			v: g,
+			v: m,
 			anchor: t,
 			dx: Math.round(n),
 			dy: Math.round(r)
@@ -156,21 +116,21 @@ function x(e, t, n, r) {
 }
 function S(e, t, n) {
 	if (typeof window > "u") return {
-		x: _,
-		y: _
+		x: h,
+		y: h
 	};
-	let r = Math.max(_, window.innerWidth - t - _), i = Math.max(_, window.innerHeight - n - _), a = Math.max(_, Math.round((window.innerHeight - n) / 2));
+	let r = Math.max(h, window.innerWidth - t - h), i = Math.max(h, window.innerHeight - n - h), a = Math.max(h, Math.round((window.innerHeight - n) / 2));
 	switch (e) {
 		case "top-left": return {
-			x: _,
-			y: _
+			x: h,
+			y: h
 		};
 		case "top-right": return {
 			x: r,
-			y: _
+			y: h
 		};
 		case "left-center": return {
-			x: _,
+			x: h,
 			y: a
 		};
 		case "right-center": return {
@@ -178,7 +138,7 @@ function S(e, t, n) {
 			y: a
 		};
 		case "bottom-left": return {
-			x: _,
+			x: h,
 			y: i
 		};
 		default: return {
@@ -188,10 +148,10 @@ function S(e, t, n) {
 	}
 }
 function C(e, t, n, r) {
-	let i = Math.max(_, window.innerWidth - n - _), a = Math.max(_, window.innerHeight - r - _);
+	let i = Math.max(h, window.innerWidth - n - h), a = Math.max(h, window.innerHeight - r - h);
 	return {
-		x: Math.min(Math.max(e, _), i),
-		y: Math.min(Math.max(t, _), a)
+		x: Math.min(Math.max(e, h), i),
+		y: Math.min(Math.max(t, h), a)
 	};
 }
 function w(e, t, n, r, i, a) {
@@ -204,42 +164,42 @@ function w(e, t, n, r, i, a) {
 	}
 	return o;
 }
-function T({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "right-center", persistKey: g, snapEnabled: _ = !0, snapThreshold: v = ee, snapAnchors: y = h, onSnap: b, baseZIndex: T = 9999, widthClassName: E = "w-80", heightClassName: D = "h-[28rem]", tone: O = "dark", zIndexClassName: k = "z-[9999]", className: A, "data-testid": j = "floating-panel" }) {
-	let M = O === "dark", N = i(null), [P, F] = a(null), I = i(P);
+function T({ open: u, onClose: d, title: f, children: m, defaultPosition: h = "right-center", persistKey: v, snapEnabled: y = !0, snapThreshold: b = g, snapAnchors: T = p, onSnap: E, baseZIndex: D = 9999, widthClassName: O = "w-80", heightClassName: k = "h-[28rem]", tone: A = "dark", zIndexClassName: j = "z-[9999]", className: ie, "data-testid": ae = "floating-panel" }) {
+	let M = A === "dark", N = i(null), [P, F] = a(null), I = i(P);
 	I.current = P;
 	let [L, R] = a(!1), [z, B] = a(null), V = i(null);
 	V.current = z;
 	let [H, U] = a(!1), W = i(null), [G, oe] = a(null), K = i(null);
 	K.current = G;
-	let q = i(null), J = i(m);
-	J.current = m;
-	let Y = i(g);
-	Y.current = g;
+	let q = i(null), J = i(h);
+	J.current = h;
+	let Y = i(v);
+	Y.current = v;
 	let X = i({
-		snapEnabled: _,
-		snapThreshold: v,
-		snapAnchors: y,
-		onSnap: b
+		snapEnabled: y,
+		snapThreshold: b,
+		snapAnchors: T,
+		onSnap: E
 	});
 	X.current = {
-		snapEnabled: _,
-		snapThreshold: v,
-		snapAnchors: y,
-		onSnap: b
+		snapEnabled: y,
+		snapThreshold: b,
+		snapAnchors: T,
+		onSnap: E
 	};
 	let Z = t((e, t, n, r) => {
 		let i = Y.current;
 		if (!i) return;
-		let a = w(e, t, n, r, h) ?? "top-left", o = S(a, n, r);
+		let a = w(e, t, n, r, p) ?? "top-left", o = S(a, n, r);
 		x(i, a, e - o.x, t - o.y);
 	}, []), Q = t(() => {
-		(K.current === null || K.current !== ie()) && oe(re());
+		(K.current === null || K.current !== ne()) && oe(te());
 	}, []);
 	r(() => {
 		if (!u) return;
 		let e = N.current;
 		if (!e || typeof window > "u") return;
-		let { width: t, height: n } = e.getBoundingClientRect(), r = Y.current, i = r ? ae(r) : null;
+		let { width: t, height: n } = e.getBoundingClientRect(), r = Y.current, i = r ? re(r) : null;
 		if (i) {
 			if (i.kind === "anchor") {
 				let e = S(i.anchor, t, n);
@@ -291,7 +251,7 @@ function T({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 			let n = e?.width ?? 0, r = e?.height ?? 0;
 			if (t && e) {
 				let e = S(t, n, r);
-				F(e), U(!0), W.current && clearTimeout(W.current), W.current = setTimeout(() => U(!1), te);
+				F(e), U(!0), W.current && clearTimeout(W.current), W.current = setTimeout(() => U(!1), _);
 				let i = Y.current;
 				i && x(i, t, 0, 0), X.current.onSnap?.(t);
 				return;
@@ -316,7 +276,7 @@ function T({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 		let n = N.current, r = I.current;
 		if (!n || !r) return;
 		e.preventDefault();
-		let i = n.getBoundingClientRect(), a = e.shiftKey ? 1 : ne, o = C(r.x + t[0] * a, r.y + t[1] * a, i.width, i.height);
+		let i = n.getBoundingClientRect(), a = e.shiftKey ? 1 : ee, o = C(r.x + t[0] * a, r.y + t[1] * a, i.width, i.height);
 		F(o), Z(o.x, o.y, i.width, i.height);
 	}, [Z]);
 	if (!u) return null;
@@ -325,22 +285,22 @@ function T({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 		"aria-hidden": "true",
 		"data-testid": "floating-panel-snap-target",
 		"data-anchor": z,
-		className: e("fixed pointer-events-none rounded-2xl border-2 border-dashed", E, D, k, M ? "border-white/30 bg-white/5" : "border-border-focus bg-info-bg/40"),
+		className: e("fixed pointer-events-none rounded-2xl border-2 border-dashed", O, k, j, M ? "border-white/30 bg-white/5" : "border-border-focus bg-info-bg/40"),
 		style: {
 			left: $.x,
 			top: $.y,
-			zIndex: T - 1
+			zIndex: D - 1
 		}
 	}), /* @__PURE__ */ c("div", {
 		ref: N,
 		role: "dialog",
 		"aria-label": f,
-		"data-testid": j,
+		"data-testid": ae,
 		"data-snap-armed": z ?? void 0,
 		"data-snapping": H ? "true" : void 0,
 		onPointerDownCapture: Q,
 		onFocusCapture: Q,
-		className: e("fixed flex flex-col rounded-2xl border overflow-hidden backdrop-blur-sm", E, D, k, H && "transition-[left,top] duration-150 ease-out", M ? "bg-call-chrome border-call-chrome-border shadow-[0_8px_32px_rgba(0,0,0,0.4)]" : "bg-surface-panel border-border shadow-lg", A),
+		className: e("fixed flex flex-col rounded-2xl border overflow-hidden backdrop-blur-sm", O, k, j, H && "transition-[left,top] duration-150 ease-out", M ? "bg-call-chrome border-call-chrome-border shadow-[0_8px_32px_rgba(0,0,0,0.4)]" : "bg-surface-panel border-border shadow-lg", ie),
 		style: {
 			...P ? {
 				left: P.x,
@@ -350,7 +310,7 @@ function T({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 				top: -9999,
 				visibility: "hidden"
 			},
-			...G === null ? null : { zIndex: T + G }
+			...G === null ? null : { zIndex: D + G }
 		},
 		children: [/* @__PURE__ */ c("div", {
 			"data-testid": "floating-panel-header",
@@ -396,9 +356,9 @@ function T({ open: u, onClose: d, title: f, children: p, defaultPosition: m = "r
 		}), /* @__PURE__ */ s("div", {
 			"data-testid": "floating-panel-body",
 			className: "min-h-0 flex-1 overflow-hidden flex flex-col",
-			children: p
+			children: m
 		})]
 	})] }), document.body);
 }
 //#endregion
-export { p as a, m as i, T as n, d as o, S as r, h as t };
+export { d as a, f as i, T as n, S as r, p as t };

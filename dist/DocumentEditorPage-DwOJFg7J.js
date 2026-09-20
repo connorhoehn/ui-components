@@ -4360,9 +4360,9 @@ function Mn({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPrevie
 		a(), l(), o();
 	}, g = () => {
 		let e = window.prompt("Enter a name for this version:");
-		e && e.trim() && s(e.trim());
+		e && e.trim() && s?.(e.trim());
 	}, _ = (e, t) => {
-		e.stopPropagation(), d === t ? l() : c(t);
+		e.stopPropagation(), d === t ? l() : c?.(t);
 	}, v = (e) => e.type === "pre-restore" ? "Before restore" : e.type === "auto" ? "Auto-save" : "";
 	return /* @__PURE__ */ I(mt, {
 		width: 320,
@@ -4370,11 +4370,11 @@ function Mn({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPrevie
 			/* @__PURE__ */ F(ht, {
 				title: "Version History",
 				onClose: h,
-				actions: /* @__PURE__ */ F(Q, {
+				actions: s ? /* @__PURE__ */ F(Q, {
 					size: "sm",
 					onClick: g,
 					children: "Save Version"
-				})
+				}) : void 0
 			}),
 			/* @__PURE__ */ I(gt, {
 				padding: "0.5rem 0",
@@ -4416,7 +4416,7 @@ function Mn({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPrevie
 									children: new Date(e.timestamp).toLocaleString()
 								})
 							]
-						}), /* @__PURE__ */ F("button", {
+						}), c && /* @__PURE__ */ F("button", {
 							type: "button",
 							className: p("px-2 py-[3px] text-[11px] font-medium border rounded-[4px] cursor-pointer font-[inherit] whitespace-nowrap", d === e.timestamp ? "bg-info-bg border-info text-info-fg" : "bg-surface border-border text-text-secondary"),
 							onClick: (t) => _(t, e.timestamp),

@@ -5,7 +5,8 @@ import { F as r, I as i, O as a, P as o, S as s, b as c, d as l, f as u, g as d,
 import { f as v, t as ee } from "./Chip-BENLwTlq.js";
 import { t as y } from "./ConfirmDialog-Cd8NZEXi.js";
 import { t as b } from "./EmptyState-JzzL2z1E.js";
-import { n as x, o as S, s as C, t as w } from "./ChannelHeader-DjUVNMuY.js";
+import { a as x, n as S, t as C } from "./ChannelHeader-XgrEGN9f.js";
+import { n as w } from "./Tabs-Bc6QoOAC.js";
 import { n as T } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as E } from "./Input-DLknWXri.js";
 import { t as D } from "./Textarea-Dz4doxTv.js";
@@ -1827,7 +1828,7 @@ function Lt(e, t, n) {
 	for (let e of t) e.userId !== n && r.add(`id:${e.userId}`);
 	return r.size;
 }
-function Rt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, onTyping: o, typingUsers: c = [], emptyState: l, composer: u, currentUserId: d, reactionsFor: p, onToggleReaction: m, onReply: h, onForwardMessage: g, onCopyLink: _, onTogglePin: v, onEditMessage: ee, onDeleteMessage: b, pinnedMessageIds: S, onJumpToMessage: w, highlightedMessageId: D, threaded: k = !1, alignOwnMessages: A = !0, documentEditors: te, callParticipants: j, agentRunStatus: ne, onOpenRun: I, onOpenResult: z, onDecideRun: re, onReviewRun: G, onJoinCall: ie, onOpenRecording: K, onCopyRecordingLink: oe, onShareRecording: se, onDownloadRecording: ce, onOpenRecordingTranscript: le, onManageRecordingExpiry: de, recordingStatus: fe, onOpenDocument: pe, renderMessageReferences: me, tone: he = "light", showHeader: ge, fill: ye, onLoadMore: J, hasMore: xe, loadingMore: Se = !1, onSendFiles: we, transfers: Te = [], currentActor: Ee, onCancelTransfer: De, attachmentSrc: Oe, onOpenAttachment: Ae, acceptFiles: Y, maxFileSize: X, onFileError: Me, readReceipts: Ne, readReceiptsEnabled: Pe = !0, unreadFrom: Fe, emojis: Ie = F }) {
+function Rt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, onTyping: o, typingUsers: c = [], emptyState: l, composer: u, currentUserId: d, reactionsFor: p, onToggleReaction: m, onReply: h, onForwardMessage: g, onCopyLink: _, onTogglePin: v, onEditMessage: ee, onDeleteMessage: b, pinnedMessageIds: C, onJumpToMessage: w, highlightedMessageId: D, threaded: k = !1, alignOwnMessages: A = !0, documentEditors: te, callParticipants: j, agentRunStatus: ne, onOpenRun: I, onOpenResult: z, onDecideRun: re, onReviewRun: G, onJoinCall: ie, onOpenRecording: K, onCopyRecordingLink: oe, onShareRecording: se, onDownloadRecording: ce, onOpenRecordingTranscript: le, onManageRecordingExpiry: de, recordingStatus: fe, onOpenDocument: pe, renderMessageReferences: me, tone: he = "light", showHeader: ge, fill: ye, onLoadMore: J, hasMore: xe, loadingMore: Se = !1, onSendFiles: we, transfers: Te = [], currentActor: Ee, onCancelTransfer: De, attachmentSrc: Oe, onOpenAttachment: Ae, acceptFiles: Y, maxFileSize: X, onFileError: Me, readReceipts: Ne, readReceiptsEnabled: Pe = !0, unreadFrom: Fe, emojis: Ie = F }) {
 	let [Le, Z] = V(null), [Re, ze] = V(null), Be = B(null), [Ve, He] = V(null), Q = he === "dark", Ge = T(), Ke = ge ?? !(Ge?.hasHeader ?? !1), qe = ye ?? Ge?.fillsHeight ?? !1, [Ye, Xe] = V(""), $e = B(null), et = B(null), nt = !!J && xe !== !1, ot = B(null), ft = B(null), [ht, gt] = V(!1), Tt = !!we && !a, kt = Ct(n, r), At = k ? Et(kt) : null, [jt, Rt] = V(() => /* @__PURE__ */ new Set());
 	function Bt(e) {
 		Rt((t) => {
@@ -1884,7 +1885,7 @@ function Rt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 					children: Jt ? "Seen" : `Seen by ${qt.length}`
 				}),
 				/* @__PURE__ */ U("span", {
-					style: C,
+					style: x,
 					children: Jt ? ` by ${t[0]}` : `: ${t.join(", ")}`
 				})
 			]
@@ -2015,7 +2016,7 @@ function Rt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 				})
 			] }, `local:${r.id}`);
 		}
-		let { message: y } = n, x = y.displayName ?? y.clientId.slice(0, 8), C = y.attachments ?? [], T = y.metadata?.html, E = typeof T == "string" ? T : void 0, O = vt(y.metadata), k = _t(y.content, O, E), M = /* @__PURE__ */ U(_e, {
+		let { message: y } = n, x = y.displayName ?? y.clientId.slice(0, 8), S = y.attachments ?? [], T = y.metadata?.html, E = typeof T == "string" ? T : void 0, O = vt(y.metadata), k = _t(y.content, O, E), M = /* @__PURE__ */ U(_e, {
 			html: k.html,
 			text: k.body
 		}), N = ut(y.metadata), P = We(y.metadata), F = yt(y.metadata), R = bt(y.metadata), B = xt(y.metadata), V = pt(y.metadata), ge = dt(y.metadata), ye = P ? /* @__PURE__ */ U(Ue, {
@@ -2054,7 +2055,7 @@ function Rt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 				transcriptReady: t.transcriptReady,
 				summaryReady: t.summaryReady,
 				expiresAt: t.expiresAt,
-				pinned: !!y.id && !!S?.has(y.id),
+				pinned: !!y.id && !!C?.has(y.id),
 				onOpen: K,
 				onCopyLink: oe,
 				onShare: se,
@@ -2081,11 +2082,11 @@ function Rt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 			createdBy: N.createdBy ?? (typeof y.metadata?.displayName == "string" ? y.metadata.displayName : void 0) ?? y.displayName,
 			editors: te?.(N.documentId) ?? [],
 			onOpen: pe
-		}) : C.length === 0 ? M : /* @__PURE__ */ W(H, { children: [(y.content || E) && M, C.map((e) => /* @__PURE__ */ U(rt, {
+		}) : S.length === 0 ? M : /* @__PURE__ */ W(H, { children: [(y.content || E) && M, S.map((e) => /* @__PURE__ */ U(rt, {
 			attachment: e,
 			src: Oe?.(e),
 			onOpen: Ae
-		}, e.id))] }), J = y.id ?? "", xe = J && p ? p(J) : [], Se = y.metadata?.replyTo, we = !!o && !!Se && Se.messageId === o.rootId, Te = !!Se && !we, Ee = !!J && !!S?.has(J), De = !!d && y.userId === d, Y = y.metadata?.system === !0, X = !!y.deletedAt || y.metadata?.deleted === !0, Me = !!(P || R || F || N || B), Ne = De && !X && !Y && !Me && !!J, Pe = !!J && !X && !Y && !Me && C.length === 0 && !!y.content.trim(), Fe = Ne && !!ee && Le === J, Ie = /* @__PURE__ */ W(H, { children: [
+		}, e.id))] }), J = y.id ?? "", xe = J && p ? p(J) : [], Se = y.metadata?.replyTo, we = !!o && !!Se && Se.messageId === o.rootId, Te = !!Se && !we, Ee = !!J && !!C?.has(J), De = !!d && y.userId === d, Y = y.metadata?.system === !0, X = !!y.deletedAt || y.metadata?.deleted === !0, Me = !!(P || R || F || N || B), Ne = De && !X && !Y && !Me && !!J, Pe = !!J && !X && !Y && !Me && S.length === 0 && !!y.content.trim(), Fe = Ne && !!ee && Le === J, Ie = /* @__PURE__ */ W(H, { children: [
 			Te && Se && /* @__PURE__ */ U(tt, {
 				quote: Se,
 				onJump: w,
@@ -2184,7 +2185,7 @@ function Rt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 					onForward: g && Pe ? (e) => g(y, e) : void 0,
 					onCopyLink: _ && !Y && J ? () => _(y) : void 0,
 					onTogglePin: v && !Y ? () => v(y) : void 0,
-					pinned: !!y.id && !!S?.has(y.id),
+					pinned: !!y.id && !!C?.has(y.id),
 					onEdit: Ne && ee ? () => Z(J) : void 0,
 					onDelete: Ne && b ? () => He(J) : void 0
 				})]
@@ -2262,7 +2263,7 @@ function Rt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 				]
 			}),
 			/* @__PURE__ */ U("span", {
-				style: C,
+				style: x,
 				role: "status",
 				"aria-live": "polite",
 				"data-testid": "chat-panel-announcer",
@@ -2343,7 +2344,7 @@ function Rt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 					]
 				})]
 			}),
-			c.length > 0 && /* @__PURE__ */ U(x, {
+			c.length > 0 && /* @__PURE__ */ U(S, {
 				names: c,
 				className: e("mb-1 mt-1 shrink-0 italic", Q ? "text-white/50" : "text-text-secondary")
 			}),
@@ -2781,7 +2782,7 @@ var $t = [
 	mentions: "Mentions",
 	calls: "Calls"
 };
-function tn({ name: t, description: i, online: a, avatarUrl: o, features: s = $t, children: c, canvas: l, members: u, memberCount: d, files: f = [], thumbnailSrc: p, documents: m = [], onOpenDocument: h, onRename: g, onCreateDocument: v, onCreateWhiteboard: ee, pins: y = [], onUnpin: b, mentions: x = [], onOpenMention: C, recordings: T = [], onOpenRecording: E, onJumpToMessage: D, onStartCall: O, callModeFixed: k = !1, onWatch: A, watchLabel: te, watchHint: j, watchViewerCount: M, callInProgress: N = !1, headerActions: P, view: F, onViewChange: ne, className: I, "data-testid": L = "conversation-surface" }) {
+function tn({ name: t, description: i, online: a, avatarUrl: o, features: s = $t, children: c, canvas: l, members: u, memberCount: d, files: f = [], thumbnailSrc: p, documents: m = [], onOpenDocument: h, onRename: g, onCreateDocument: v, onCreateWhiteboard: ee, pins: y = [], onUnpin: b, mentions: x = [], onOpenMention: S, recordings: T = [], onOpenRecording: E, onJumpToMessage: D, onStartCall: O, callModeFixed: k = !1, onWatch: A, watchLabel: te, watchHint: j, watchViewerCount: M, callInProgress: N = !1, headerActions: P, view: F, onViewChange: ne, className: I, "data-testid": L = "conversation-surface" }) {
 	let R = new Set(s), [z, B] = V("chat"), re = F ?? z, G = R.has(re) ? re : s[0] ?? "chat", ie = (e) => {
 		F === void 0 && B(e), ne?.(e);
 	}, K = (e) => e || void 0, ae = s.filter((e) => en[e]).map((e) => ({
@@ -2795,14 +2796,14 @@ function tn({ name: t, description: i, online: a, avatarUrl: o, features: s = $t
 		className: e("flex min-w-0 flex-col", I),
 		"data-testid": L,
 		children: [
-			/* @__PURE__ */ U(w, {
+			/* @__PURE__ */ U(C, {
 				name: t,
 				onRename: g,
 				description: i,
 				online: a,
 				avatarUrl: o,
 				"data-testid": `${L}-header`,
-				tabs: ae.length > 1 ? /* @__PURE__ */ U(S, {
+				tabs: ae.length > 1 ? /* @__PURE__ */ U(w, {
 					variant: "underline",
 					size: "sm",
 					"aria-label": "Views of this conversation",
@@ -2869,8 +2870,8 @@ function tn({ name: t, description: i, online: a, avatarUrl: o, features: s = $t
 			R.has("mentions") && G === "mentions" && /* @__PURE__ */ U(Jt, {
 				className: "min-h-0 flex-1",
 				mentions: x,
-				onJump: C ? (e, t) => {
-					ie("chat"), C(e, t);
+				onJump: S ? (e, t) => {
+					ie("chat"), S(e, t);
 				} : void 0
 			}),
 			R.has("calls") && G === "calls" && /* @__PURE__ */ U(Zt, {
