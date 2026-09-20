@@ -229,7 +229,15 @@ export declare interface RichChatComposerHandle {
 }
 
 export declare interface RichChatComposerProps {
-    onSend: (message: ComposedMessage) => void;
+    /** Resolve after accepting the send. Reject or return false to retain the draft. */
+    onSend: (message: ComposedMessage) => void | boolean | Promise<void | boolean>;
+    /** Optional controlled draft; key the composer by conversation. */
+    draft?: RichChatDraft;
+    /**
+     * `previous` is the exact previous draft object. A host retaining drafts
+     * across unmounts should compare it before applying a delayed send clear.
+     */
+    onDraftChange?: (draft: RichChatDraft, previous: RichChatDraft | undefined) => void;
     /**
      * Called when a command argument is picked with `onPick` → `'execute'`. The
      * draft has already been cleared; nothing goes through `onSend`.
@@ -288,6 +296,13 @@ export declare interface RichChatComposerProps {
     toolbarExtras?: ReactNode;
     className?: string;
     'data-testid'?: string;
+}
+
+/** In-memory draft. Hosts must keep File objects out of persistent storage. */
+export declare interface RichChatDraft {
+    html: string;
+    files: File[];
+    command?: ComposedMessage['command'];
 }
 
 /**
