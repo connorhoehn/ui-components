@@ -167,3 +167,5 @@ export type { DocumentImageProviderProps, DocumentImageLoader } from './Authenti
 // Dependency injection keeps document uploads usable without optional media peers.
 export { useDocumentImageUpload, acceptsDocumentImage, MAX_IMAGE_BYTES, MAX_ATTACHMENT_BYTES } from '../../integrations/realtime-modules/useDocumentImageUpload';
 export type { DocumentImageUpload, DocumentFileUploadHook, DocumentUploadCompletion, UploadedDocumentFile } from '../../integrations/realtime-modules/useDocumentImageUpload';
+export { DocumentReviewPanel } from './DocumentReviewPanel';
+export type { DocumentReviewEntry, DocumentReviewPanelProps } from './DocumentReviewPanel';

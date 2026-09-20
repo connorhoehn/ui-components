@@ -934,6 +934,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "DocumentModePill",
     "DocumentOutline",
     "DocumentOwnership",
+    "DocumentReviewPanel",
     "DocumentRuler",
     "DocumentSaveStatus",
     "DocumentShareDialog",
