@@ -112,6 +112,13 @@ export interface ComposedMessage {
   command?: { trigger: string; argument?: ComposerArgumentItem };
 }
 
+/** In-memory draft. Hosts must keep File objects out of persistent storage. */
+export interface RichChatDraft {
+  html: string;
+  files: File[];
+  command?: ComposedMessage['command'];
+}
+
 /** One thing a command can act on — a document, a room, a person. */
 export type { ComposerArgumentItem, ComposerCommandArgument, ComposerCommand } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
@@ -127,7 +134,15 @@ export interface RichChatComposerHandle {
 }
 
 export interface RichChatComposerProps {
-  onSend: (message: ComposedMessage) => void;
+  /** Resolve after accepting the send. Reject or return false to retain the draft. */
+  onSend: (message: ComposedMessage) => void | boolean | Promise<void | boolean>;
+  /** Optional controlled draft; key the composer by conversation. */
+  draft?: RichChatDraft;
+  /**
+   * `previous` is the exact previous draft object. A host retaining drafts
+   * across unmounts should compare it before applying a delayed send clear.
+   */
+  onDraftChange?: (draft: RichChatDraft, previous: RichChatDraft | undefined) => void;
   /**
    * Called when a command argument is picked with `onPick` → `'execute'`. The
    * draft has already been cleared; nothing goes through `onSend`.
@@ -329,6 +344,8 @@ function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, send
 
 export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatComposerProps>(function RichChatComposer({
   onSend,
+  draft,
+  onDraftChange,
   onCommand,
   onSearchPeople,
   mentionMembers,
@@ -357,12 +374,23 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const [linkState, setLinkState] = useState<{ open: boolean; href: string; text: string }>(
     { open: false, href: '', text: '' },
   );
-  const [staged, setStaged] = useState<StagedFile[]>([]);
+  const draftRef = useRef(draft);
+  const changeRef = useRef(onDraftChange);
+  changeRef.current = onDraftChange;
+  const [staged, setStaged] = useState<StagedFile[]>(() => (draft?.files ?? []).map((file) => ({ id: `staged-${stagedSeq++}`, file })));
+  const stagedRef = useRef(staged);
+  const publishRef = useRef<(editor: Editor) => void>(() => {});
+  const sendingRef = useRef(false);
+  const mountedRef = useRef(true);
+  useEffect(() => { mountedRef.current = true; return () => { mountedRef.current = false; }; }, []);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState(false);
+  const blocked = disabled || sending;
   // Mirrors emptiness so the send button can disable. `editor.isEmpty` is not
   // reactive, so reading it during render leaves the button one keystroke stale.
   const [empty, setEmpty] = useState(true);
 
-  const attachmentsEnabled = allowAttachments && !disabled;
+  const attachmentsEnabled = allowAttachments && !blocked;
 
   // The placeholder as of this render, for the extension to read. See the
   // `useEditor` deps: the extension list must not change when the text does.
@@ -390,7 +418,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // the Suggestion plugin reads it inside ProseMirror's state transitions,
   // where a React state value would be one render stale. Cleared on send and
   // whenever the draft is cleared.
-  const argPickRef = useRef<{ trigger: string; item: ComposerArgumentItem } | null>(null);
+  const argPickRef = useRef<{ trigger: string; item: ComposerArgumentItem } | null>(draft?.command?.argument ? { trigger: draft.command.trigger, item: draft.command.argument } : null);
   const [activeCommand, setActiveCommand] = useState<ComposerCommand | null>(null);
   // Whether the active command's argument is still blank, for the status bar.
   const [argumentEmpty, setArgumentEmpty] = useState(true);
@@ -743,7 +771,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const editor = useEditor(
     {
       extensions,
-      editable: !disabled,
+      content: draft?.html ?? '',
+      editable: !blocked,
       onUpdate: ({ editor: e }) => {
         setEmpty(e.isEmpty);
         editorRef.current = e;
@@ -753,6 +782,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         setArgumentEmpty(!hit || composerCommandArgumentText(text, hit).trim() === '');
         // A pick belongs to the command it was made for.
         if (argPickRef.current && argPickRef.current.trigger !== hit?.trigger) argPickRef.current = null;
+        publishRef.current(e);
       },
       editorProps: {
         attributes: {
@@ -784,12 +814,53 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
   // `editable` on the editor we already have, rather than a new editor.
   useEffect(() => {
-    editor?.setEditable(!disabled);
-  }, [editor, disabled]);
+    editor?.setEditable(!blocked);
+  }, [editor, blocked]);
 
   // Files alone are a valid message: dragging in a screenshot and pressing send
   // without typing is the common case.
-  const canSend = !disabled && (!empty || staged.length > 0);
+  const canSend = !blocked && (!empty || staged.length > 0);
+
+  // Publish synchronously so a conversation switch in the same event never
+  // unmounts the editor before its latest text or file selection is retained.
+  const publish = (e: Editor) => {
+    const previous = draftRef.current;
+    const pick = argPickRef.current;
+    const hit = matchComposerCommand(e.getText(), commandsRef.current);
+    const next: RichChatDraft = {
+      html: e.isEmpty ? '' : e.getHTML(), files: stagedRef.current.map((item) => item.file),
+      ...(hit ? { command: { trigger: hit.trigger, ...(pick?.trigger === hit.trigger && composerCommandArgumentText(e.getText(), hit).includes(pick.item.label) ? { argument: pick.item } : {}) } } : {}),
+    };
+    if (previous && previous.html === next.html && previous.files.length === next.files.length
+      && previous.files.every((file, index) => file === next.files[index])
+      && previous.command?.trigger === next.command?.trigger && previous.command?.argument === next.command?.argument) return;
+    draftRef.current = next;
+    changeRef.current?.(next, previous);
+  };
+  publishRef.current = publish;
+  const replaceStaged = (next: StagedFile[]) => {
+    stagedRef.current = next;
+    setStaged(next);
+    if (editor && !editor.isDestroyed) publishRef.current(editor);
+  };
+  useEffect(() => {
+    if (!editor) return;
+    // An external change may be a restored conversation or a send completion
+    // from its previous composer. Do not rebuild the editor or move its caret
+    // in response to our own onDraftChange echo.
+    if (onDraftChange && draft !== draftRef.current) {
+      draftRef.current = draft;
+      editor.commands.setContent(draft?.html ?? '', { emitUpdate: false });
+      argPickRef.current = draft?.command?.argument ? { trigger: draft.command.trigger, item: draft.command.argument } : null;
+      const files = (draft?.files ?? []).map((file) => ({ id: `staged-${stagedSeq++}`, file }));
+      stagedRef.current = files; setStaged(files);
+    }
+    editorRef.current = editor;
+    setEmpty(editor.isEmpty);
+    const hit = matchComposerCommand(editor.getText(), commandsRef.current);
+    setActiveCommand(hit);
+    setArgumentEmpty(!hit || composerCommandArgumentText(editor.getText(), hit).trim() === '');
+  }, [editor, draft, onDraftChange]);
 
   /** Opens the dialog seeded from the selection, or from the link under it. */
   const openLinkDialog = useCallback(() => {
@@ -819,7 +890,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   );
 
   const send = useCallback(() => {
-    if (!editor || !canSend) return;
+    if (!editor || !canSend || sendingRef.current) return;
     const text = editor.getText();
     const cmd = matchComposerCommand(text, commandsRef.current);
     const pick = argPickRef.current;
@@ -833,18 +904,45 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       }
     }
     const documents = collectDocuments(editor);
-    onSend({
+    const message: ComposedMessage = {
       html: editor.isEmpty ? '' : editor.getHTML(),
       text,
       mentions: collectMentions(editor),
       files: staged.map((s) => s.file),
       ...(documents.length > 0 ? { documents } : {}),
       ...(command ? { command } : {}),
-    });
-    argPickRef.current = null;
-    editor.commands.clearContent(true);
-    setStaged([]);
-    setEmpty(true);
+    };
+    const sentDraft = draftRef.current;
+    const notify = changeRef.current;
+    const accepted = (result: void | boolean) => {
+      if (result === false) return;
+      if (!mountedRef.current || editor.isDestroyed) {
+        // The host compares `sentDraft` with its current conversation draft.
+        notify?.({ html: '', files: [] }, sentDraft);
+      } else if (draftRef.current === sentDraft) {
+        argPickRef.current = null;
+        stagedRef.current = []; setStaged([]);
+        editor.commands.clearContent(true);
+        // Clearing an already-empty editor (a files-only message) need not
+        // emit an editor update, but the removed attachments still do.
+        if (draftRef.current === sentDraft) publishRef.current(editor);
+        setEmpty(true);
+      }
+    };
+    sendingRef.current = true;
+    setSendError(false);
+    try {
+      const result = onSend(message);
+      if (result && typeof result === 'object' && 'then' in result) {
+        setSending(true);
+        void result.then(accepted, () => { if (mountedRef.current && !editor.isDestroyed) setSendError(true); }).finally(() => {
+          sendingRef.current = false;
+          if (mountedRef.current && !editor.isDestroyed) setSending(false);
+        });
+      } else { accepted(result); sendingRef.current = false; }
+    } catch {
+      sendingRef.current = false; setSendError(true);
+    }
   }, [editor, canSend, onSend, staged]);
 
   sendRef.current = send;
@@ -869,12 +967,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const stage = useCallback(
     (files: File[]) => {
       if (!attachmentsEnabled || files.length === 0) return;
-      setStaged((prev) => [
-        ...prev,
-        ...files.map((file) => ({ id: `staged-${stagedSeq++}`, file })),
-      ]);
+      replaceStaged([...stagedRef.current, ...files.map((file) => ({ id: `staged-${stagedSeq++}`, file }))]);
     },
-    [attachmentsEnabled],
+    [attachmentsEnabled, editor],
   );
 
   /**
@@ -967,7 +1062,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       aria-label={label}
       aria-pressed={active}
       title={label}
-      disabled={disabled}
+      disabled={blocked}
       // mousedown + preventDefault, not click: clicking would blur the editor
       // and collapse the selection first, so "bold" would apply to nothing.
       onMouseDown={(e) => {
@@ -1015,6 +1110,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             : 'border-border focus-within:border-primary focus-within:ring-primary',
         )}
       >
+        {sendError && <p role="alert" className="px-2 py-1 text-sm text-danger-fg">Unable to send. Your draft and attachments are saved. Try again.</p>}
         {activeCommand && (
           <div
             role="status"
@@ -1042,8 +1138,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
         <ComposerAttachments
           files={staged}
-          disabled={disabled}
-          onRemove={(id) => setStaged((prev) => prev.filter((s) => s.id !== id))}
+          disabled={blocked}
+          onRemove={(id) => replaceStaged(stagedRef.current.filter((s) => s.id !== id))}
         />
 
         <div ref={toolbarRow} className="flex items-center border-t border-border px-1.5 py-1">

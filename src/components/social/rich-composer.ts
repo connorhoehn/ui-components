@@ -25,6 +25,7 @@ export { RichChatComposer, matchComposerCommand, composerCommandArgumentText } f
 export type {
   RichChatComposerProps,
   RichChatComposerHandle,
+  RichChatDraft,
   ComposedMessage,
   ComposerCommand,
   ComposerCommandArgument,
