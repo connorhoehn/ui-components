@@ -770,6 +770,41 @@ export declare interface DocumentPerson {
     avatarUrl?: string;
 }
 
+export declare interface DocumentReviewEntry {
+    requestKey: string;
+    reviewerId: string;
+    reviewerName?: string;
+    requestedBy: string;
+    requestedByName?: string;
+    state: 'pending' | 'approved' | 'changes_requested' | 'withdrawn';
+    required: boolean;
+    note?: string;
+    comment?: string;
+    dueDate?: string;
+}
+
+export declare function DocumentReviewPanel({ requests, reviewers, currentUserId, loading, error, onRefresh, onRequest, onDecide, onWithdraw }: DocumentReviewPanelProps): JSX.Element;
+
+export declare interface DocumentReviewPanelProps {
+    requests: DocumentReviewEntry[];
+    /** Directory and permissions come from the host's authoritative service. */
+    reviewers?: Array<{
+        id: string;
+        displayName: string;
+    }>;
+    currentUserId: string;
+    loading?: boolean;
+    error?: string | null;
+    onRefresh: () => void;
+    onRequest?: (input: {
+        reviewerId: string;
+        note: string;
+        required: boolean;
+    }) => Promise<void>;
+    onDecide?: (requestKey: string, state: 'approved' | 'changes_requested', comment: string) => Promise<void>;
+    onWithdraw?: (requestKey: string) => Promise<void>;
+}
+
 export declare function DocumentRuler({ pageWidth, marginLeft, marginRight, zoom, className, style, 'data-testid': testId, }: DocumentRulerProps): JSX.Element;
 
 export declare interface DocumentRulerProps {
@@ -2382,6 +2417,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2394,19 +2442,6 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -2434,9 +2469,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }
@@ -2444,9 +2495,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2467,25 +2518,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

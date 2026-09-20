@@ -12,10 +12,10 @@ import { n as u, t as d } from "./Tabs-Bc6QoOAC.js";
 import { t as f } from "./Input-DLknWXri.js";
 import { t as p } from "./Avatar-BzicCOft.js";
 import { t as m } from "./TitledFrame-DUsxfZCI.js";
-import { n as h } from "./Tooltip-CNcSG30U.js";
+import { t as h } from "./InlineAlert-CRnIKeAF.js";
 import { t as g } from "./Select-CqVokE2v.js";
 import { t as _ } from "./Checkbox-DqN9RkXK.js";
-import { n as v } from "./ChatSidePanelRegistry-CQhaeb1a.js";
+import { n as v } from "./ChatSidePanelRegistry-DvIQqKed.js";
 /* empty css               */
 import { d as y, t as b } from "./BaseNode-e2p30Fsu.js";
 import { useCallback as x, useEffect as S, useId as C, useMemo as w, useRef as T, useState as E } from "react";
