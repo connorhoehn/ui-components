@@ -355,7 +355,8 @@ describe('DocumentTypesPage — shared workspace', () => {
     expect(screen.getByRole('heading', { name: 'Templates' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Processing pipelines' })).toBeInTheDocument();
     expect(screen.queryByTestId('idle-panel')).not.toBeInTheDocument();
-    expect(screen.getByText('Starter templates')).toBeInTheDocument();
+    expect(screen.getByText('Start from a template')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Browse starters' })).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId('edit-type-agent-template'));
     expect(screen.getByTestId('wizard-name')).toHaveTextContent('Agent brief');
     fireEvent.click(screen.getByTestId('wizard-cancel'));

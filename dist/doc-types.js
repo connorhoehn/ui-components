@@ -1074,7 +1074,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 				className: "shrink-0 px-5 pt-4 pb-3",
 				children: /* @__PURE__ */ E(p, {
 					title: "Templates",
-					description: "Documents have three formats: whiteboard (Excalidraw), canvas and formatted page. Templates define reusable content and fields; pipeline triggers choose which templates they process.",
+					description: "Create and manage reusable document templates. Pick a starter below or build your own.",
 					actions: i
 				})
 			}),
@@ -1088,13 +1088,13 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 							children: U ? "Your templates" : "Document Types"
 						}), /* @__PURE__ */ D("div", {
 							className: "flex gap-1.5",
-							children: [/* @__PURE__ */ E(s, {
+							children: [!U && /* @__PURE__ */ E(s, {
 								size: "sm",
 								"data-testid": "cookbooks-btn",
 								onClick: () => T(!0),
 								title: "Browse the ready-made document types",
 								className: "py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer whitespace-nowrap",
-								children: U ? "Browse starters" : "Known types"
+								children: "Known types"
 							}), /* @__PURE__ */ E(s, {
 								variant: "secondary",
 								size: "sm",
@@ -1113,7 +1113,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 							className: U ? "px-2 py-1 text-xs text-text-secondary" : "py-8 px-4 flex flex-col items-center gap-2",
 							children: [/* @__PURE__ */ E("div", {
 								className: "text-text-tertiary text-[13px]",
-								children: U ? "No saved templates yet. Choose a starter below or create your own." : "No types yet."
+								children: U ? "No saved templates yet. Add one from the starters below." : "No types yet."
 							}), !U && /* @__PURE__ */ E("button", {
 								"data-testid": "empty-browse-types-btn",
 								onClick: () => T(!0),
@@ -1168,23 +1168,30 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 						})
 					}), /* @__PURE__ */ D("div", {
 						className: U ? "" : "border-t border-border pt-4",
-						children: [/* @__PURE__ */ E("div", {
-							className: "text-[13px] font-bold text-text-primary mb-2",
-							children: U ? "Starter templates" : "Known types"
-						}), /* @__PURE__ */ E(Q, {
-							onPick: V,
-							busy: O,
-							actionLabel: U ? "Add template" : "Add this type",
-							idPrefix: "type-starters",
-							cardPrefix: "type-starter",
-							layout: "fluid",
-							gridHeightClassName: "max-h-none",
-							installedNames: l.map((e) => e.name),
-							onOpenInstalled: (e) => {
-								let t = l.find((t) => t.name.trim().toLowerCase() === e.name.trim().toLowerCase());
-								t && (b(t.id), v("edit"));
-							}
-						})]
+						children: [
+							/* @__PURE__ */ E("div", {
+								className: "text-[13px] font-bold text-text-primary mb-1",
+								children: U ? "Start from a template" : "Known types"
+							}),
+							U && /* @__PURE__ */ E("p", {
+								className: "text-[13px] text-text-secondary mt-0 mb-3",
+								children: "Choose a starter to add it to Your templates. You can edit it afterwards."
+							}),
+							/* @__PURE__ */ E(Q, {
+								onPick: V,
+								busy: O,
+								actionLabel: U ? "Add template" : "Add this type",
+								idPrefix: "type-starters",
+								cardPrefix: "type-starter",
+								layout: "fluid",
+								gridHeightClassName: "max-h-none",
+								installedNames: l.map((e) => e.name),
+								onOpenInstalled: (e) => {
+									let t = l.find((t) => t.name.trim().toLowerCase() === e.name.trim().toLowerCase());
+									t && (b(t.id), v("edit"));
+								}
+							})
+						]
 					})]
 				}), (_ === "create" || _ === "edit") && /* @__PURE__ */ E(X, {
 					initialType: M,

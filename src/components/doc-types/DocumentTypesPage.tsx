@@ -356,7 +356,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument, l
         <Stack gap="sm" className="shrink-0 px-5 pt-4 pb-3">
           <PageHeader
             title="Templates"
-            description="Documents have three formats: whiteboard (Excalidraw), canvas and formatted page. Templates define reusable content and fields; pipeline triggers choose which templates they process."
+            description="Create and manage reusable document templates. Pick a starter below or build your own."
             actions={processingAction}
           />
         </Stack>
@@ -372,21 +372,18 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument, l
           <span className="text-[13px] font-bold text-text-primary">
             {workspace ? 'Your templates' : 'Document Types'}
           </span>
-          {/* Primary is the LIBRARY, not the wizard. These two swapped
-              styling on 2026-09-07: "+ New" opened a three-step field editor
-              and was the loudest thing on the page, while the fourteen ready
-              types hid behind a word ("Cookbooks") that says nothing about
-              what it does. */}
+          {/* The workspace already shows the starter gallery below. The modal
+              entry remains useful in the standalone split layout. */}
           <div className="flex gap-1.5">
-            <Button
+            {!workspace && <Button
               size="sm"
               data-testid="cookbooks-btn"
               onClick={() => setCookbooksOpen(true)}
               title="Browse the ready-made document types"
               className="py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer whitespace-nowrap"
             >
-              {workspace ? 'Browse starters' : 'Known types'}
-            </Button>
+              Known types
+            </Button>}
             <Button
               variant="secondary"
               size="sm"
@@ -404,7 +401,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument, l
         <div className={cn(workspace ? 'grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-2 px-2 pb-2' : 'flex-1 overflow-y-auto p-2')} data-testid="type-list">
           {types.length === 0 ? (
             <div className={workspace ? "px-2 py-1 text-xs text-text-secondary" : "py-8 px-4 flex flex-col items-center gap-2"}>
-              <div className="text-text-tertiary text-[13px]">{workspace ? 'No saved templates yet. Choose a starter below or create your own.' : 'No types yet.'}</div>
+              <div className="text-text-tertiary text-[13px]">{workspace ? 'No saved templates yet. Add one from the starters below.' : 'No types yet.'}</div>
               {/* Points at the gallery, not the wizard — picking a ready type
                   is the shorter road to a first type by a long way. */}
               {!workspace && <button
@@ -482,9 +479,10 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument, l
             />}
 
             <div className={workspace ? '' : 'border-t border-border pt-4'}>
-              <div className="text-[13px] font-bold text-text-primary mb-2">
-                {workspace ? 'Starter templates' : 'Known types'}
+              <div className="text-[13px] font-bold text-text-primary mb-1">
+                {workspace ? 'Start from a template' : 'Known types'}
               </div>
+              {workspace && <p className="text-[13px] text-text-secondary mt-0 mb-3">Choose a starter to add it to Your templates. You can edit it afterwards.</p>}
               {/* Its own testid prefixes: the Cookbooks modal renders the same
                   picker, and two `cookbooks-grid` nodes on one screen is a
                   strict-mode selector collision in every spec that addresses
