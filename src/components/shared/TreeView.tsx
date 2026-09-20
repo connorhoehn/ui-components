@@ -65,6 +65,10 @@ export interface TreeViewProps {
   onToggle?: (id: string, expanded: boolean) => void;
   /** Enables HTML5 drag-and-drop reorder/reparent when provided. */
   onReorder?: (id: string, targetParentId: string | null, position: number) => void;
+  /** Host policy for synthetic rows or source-owned roots that cannot move. */
+  canDragNode?: (node: TreeNode) => boolean;
+  /** Host policy for valid parent/sibling destinations; false removes the drop affordance. */
+  canDropNode?: (dragged: TreeNode, target: TreeNode, position: TreeDropPosition) => boolean;
   /** Trailing slot per row — count chip, badge, menu button. */
   renderTrailing?: (node: TreeNode) => ReactNode;
   className?: string;
@@ -140,6 +144,8 @@ function TreeRow({
   onSelect,
   renderTrailing,
   dragEnabled,
+  canDragNode,
+  canDrop,
   dragRef,
   dropTarget,
   setDropTarget,
@@ -156,6 +162,8 @@ function TreeRow({
   onSelect: (id: string) => void;
   renderTrailing?: (node: TreeNode) => ReactNode;
   dragEnabled: boolean;
+  canDragNode?: (node: TreeNode) => boolean;
+  canDrop: (draggedId: string, targetId: string, position: TreeDropPosition) => boolean;
   dragRef: MutableRefObject<DragState | null>;
   dropTarget: { id: string; position: TreeDropPosition } | null;
   setDropTarget: (v: { id: string; position: TreeDropPosition } | null) => void;
@@ -168,13 +176,14 @@ function TreeRow({
   const hasChildren = entry.children.length > 0;
   const isSelected = entry.id === selectedId;
   const isDropTarget = dropTarget?.id === entry.id;
+  const draggable = dragEnabled && !entry.disabled && entry.status !== 'pending' && (canDragNode?.(entry) ?? true);
 
   return (
     <div>
       <div
-        draggable={dragEnabled && !entry.disabled && entry.status !== 'pending'}
+        draggable={draggable}
         onDragStart={(event) => {
-          if (entry.disabled) return;
+          if (!draggable) { event.preventDefault(); return; }
           event.dataTransfer.setData('text/plain', entry.id);
           event.dataTransfer.effectAllowed = 'move';
           dragRef.current = { id: entry.id };
@@ -182,9 +191,11 @@ function TreeRow({
         onDragOver={(event) => {
           const drag = dragRef.current;
           if (!drag || drag.id === entry.id) return;
+          const position = positionInRow(event);
+          if (!canDrop(drag.id, entry.id, position)) { setDropTarget(null); return; }
           event.preventDefault();
           event.dataTransfer.dropEffect = 'move';
-          setDropTarget({ id: entry.id, position: positionInRow(event) });
+          setDropTarget({ id: entry.id, position });
         }}
         onDragLeave={() => {
           if (dropTarget?.id === entry.id) setDropTarget(null);
@@ -198,7 +209,7 @@ function TreeRow({
           // Reset AFTER the callback: handleDrop below reads dragRef.current
           // to resolve the dragged node, so clearing it first would make
           // every drop silently no-op.
-          onDrop(entry.id, position);
+          if (canDrop(drag.id, entry.id, position)) onDrop(entry.id, position);
           dragRef.current = null;
         }}
         onDragEnd={() => {
@@ -223,7 +234,7 @@ function TreeRow({
           'group flex items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors',
           // A row you can pick up says so before you try. Only when the host
           // wired a drop target: a grab cursor over an immovable row is a lie.
-          dragEnabled && !entry.disabled ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
+          draggable ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
           isSelected
             ? 'border-primary bg-surface-hover font-semibold text-text-primary'
             : 'border-transparent text-text-secondary hover:bg-surface-hover',
@@ -275,6 +286,8 @@ function TreeRow({
             onSelect={onSelect}
             renderTrailing={renderTrailing}
             dragEnabled={dragEnabled}
+            canDragNode={canDragNode}
+            canDrop={canDrop}
             dragRef={dragRef}
             dropTarget={dropTarget}
             setDropTarget={setDropTarget}
@@ -309,6 +322,8 @@ export function TreeView({
   expanded: controlledExpanded,
   onToggle,
   onReorder,
+  canDragNode,
+  canDropNode,
   renderTrailing,
   className,
   'data-testid': testId = 'tree-view',
@@ -433,6 +448,7 @@ export function TreeView({
     if (!draggedId || !onReorder) return;
     const target = nodesById.get(targetId);
     if (!target) return;
+    if (!canDrop(draggedId, targetId, position)) return;
 
     // Dropping onto a descendant of the dragged node would orphan it.
     let cursor: TreeNode | undefined = target;
@@ -451,6 +467,19 @@ export function TreeView({
     if (targetIndex === -1) return;
     onReorder(draggedId, target.parentId, position === 'before' ? targetIndex : targetIndex + 1);
   };
+
+  function canDrop(draggedId: string, targetId: string, position: TreeDropPosition): boolean {
+    const dragged = nodesById.get(draggedId);
+    const target = nodesById.get(targetId);
+    if (!dragged || !target || draggedId === targetId || dragged.disabled || target.disabled || dragged.status === 'pending' || target.status === 'pending') return false;
+    if (canDragNode?.(dragged) === false || canDropNode?.(dragged, target, position) === false) return false;
+    let cursor: TreeNode | undefined = target;
+    while (cursor?.parentId) {
+      if (cursor.parentId === draggedId) return false;
+      cursor = nodesById.get(cursor.parentId);
+    }
+    return true;
+  }
 
   if (nodes.length === 0) return null;
 
@@ -473,6 +502,8 @@ export function TreeView({
           onSelect={onSelect}
           renderTrailing={renderTrailing}
           dragEnabled={Boolean(onReorder)}
+          canDragNode={canDragNode}
+          canDrop={canDrop}
           dragRef={dragRef}
           dropTarget={dropTarget}
           setDropTarget={setDropTarget}

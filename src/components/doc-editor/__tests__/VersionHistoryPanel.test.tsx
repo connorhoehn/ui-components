@@ -27,6 +27,14 @@ function panel(overrides: Partial<React.ComponentProps<typeof VersionHistoryPane
 }
 
 describe('VersionHistoryPanel — header + empty states', () => {
+  it('keeps binary preview available without offering unwired save or section comparison', () => {
+    const onPreview = vi.fn();
+    render(panel({ versions: [entry({ timestamp: 42 })], onPreview, onSaveVersion: undefined, onCompare: undefined }));
+    expect(screen.queryByRole('button', { name: 'Save Version' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Compare' })).toBeNull();
+    fireEvent.click(screen.getByText('5s ago'));
+    expect(onPreview).toHaveBeenCalledWith(42);
+  });
   it('shows the loading placeholder when loading', () => {
     render(panel({ loading: true }));
     expect(screen.getByText('Loading...')).toBeInTheDocument();

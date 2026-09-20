@@ -21,9 +21,9 @@ interface VersionHistoryPanelProps {
   onClearPreview: () => void;
   onClose: () => void;
   /** Save a named version. */
-  onSaveVersion: (name: string) => void;
+  onSaveVersion?: (name: string) => void;
   /** Trigger comparison for a version timestamp. */
-  onCompare: (timestamp: number) => void;
+  onCompare?: (timestamp: number) => void;
   /** Dismiss the diff view. */
   onClearCompare: () => void;
   /** Sections from the compared historical version (null when no compare active). */
@@ -86,7 +86,7 @@ export default function VersionHistoryPanel({
   const handleSaveVersion = () => {
     const name = window.prompt('Enter a name for this version:');
     if (name && name.trim()) {
-      onSaveVersion(name.trim());
+      onSaveVersion?.(name.trim());
     }
   };
 
@@ -95,7 +95,7 @@ export default function VersionHistoryPanel({
     if (compareTimestamp === timestamp) {
       onClearCompare();
     } else {
-      onCompare(timestamp);
+      onCompare?.(timestamp);
     }
   };
 
@@ -111,11 +111,11 @@ export default function VersionHistoryPanel({
       <PanelHeader
         title="Version History"
         onClose={handleClose}
-        actions={
+        actions={onSaveVersion ? (
           <Button size="sm" onClick={handleSaveVersion}>
             Save Version
           </Button>
-        }
+        ) : undefined}
       />
 
       {/* Version list */}
@@ -164,7 +164,7 @@ export default function VersionHistoryPanel({
                   {new Date(v.timestamp).toLocaleString()}
                 </span>
               </div>
-              <button
+              {onCompare && <button
                 type="button"
                 className={cn(
                   'px-2 py-[3px] text-[11px] font-medium border rounded-[4px] cursor-pointer font-[inherit] whitespace-nowrap',
@@ -175,7 +175,7 @@ export default function VersionHistoryPanel({
                 onClick={(e) => handleCompare(e, v.timestamp)}
               >
                 {compareTimestamp === v.timestamp ? 'Hide Diff' : 'Compare'}
-              </button>
+              </button>}
             </div>
           ))}
       </PanelBody>

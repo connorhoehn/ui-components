@@ -12,6 +12,23 @@ const NODES: TreeNode[] = [
 afterEach(cleanup);
 
 describe('TreeView', () => {
+  it('keeps synthetic rows selectable without making them drag sources', () => {
+    let selected = '';
+    render(<TreeView nodes={NODES} selectedId={null} onSelect={id => { selected = id; }} onReorder={() => {}}
+      canDragNode={node => node.id !== 'leaf'} />);
+    const row = screen.getByTestId('tree-view-row-leaf');
+    expect(row).toHaveAttribute('draggable', 'false');
+    fireEvent.click(row);
+    expect(selected).toBe('leaf');
+  });
+  it('rejects a host-disallowed drop even when a drop event bypasses dragover', () => {
+    let calls = 0;
+    render(<TreeView nodes={NODES} selectedId={null} onSelect={() => {}} onReorder={() => { calls++; }} canDropNode={() => false} />);
+    const dataTransfer = { setData: () => {}, dropEffect: '', effectAllowed: '' };
+    fireEvent.dragStart(screen.getByTestId('tree-view-row-leaf'), { dataTransfer });
+    fireEvent.drop(screen.getByTestId('tree-view-row-root'), { dataTransfer, clientY: 0 });
+    expect(calls).toBe(0);
+  });
   it('renders root rows and hides children until expanded', () => {
     render(<TreeView nodes={NODES} selectedId={null} onSelect={() => {}} />);
     expect(screen.getByText('Root')).toBeInTheDocument();
