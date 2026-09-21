@@ -656,6 +656,58 @@ export declare interface ChatDropZoneProps {
     className?: string;
 }
 
+/**
+ * The loop, shrunk to one line for the composer's chip row.
+ *
+ * "Back to chat" must not feel like abandoning the run, so the run has to stay
+ * visible and one click away once the column is a conversation again.
+ */
+export declare function ChatLabPill({ status, contextTokens, contextBudgetTokens, onOpen, className, 'data-testid': testId, }: ChatLabPillProps): JSX.Element;
+
+export declare interface ChatLabPillProps {
+    status: LabStatus;
+    contextTokens: number;
+    contextBudgetTokens: number;
+    onOpen: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function ChatLabShell({ title, status, model, contextBudgetTokens, contextTokens, iterations, planSource, steps, events, onInstruct, onStop, onBackToChat, onOpenRun, onOpenGraph, shell, notice, className, 'data-testid': testId, }: ChatLabShellProps): JSX.Element;
+
+export declare interface ChatLabShellProps {
+    /** The instruction the loop was started with, already truncated by the host. */
+    title: string;
+    status: LabStatus;
+    model: string;
+    contextBudgetTokens: number;
+    contextTokens: number;
+    iterations: number;
+    /** `'fallback'` means the planner did not answer and this is one step. Surfaced. */
+    planSource?: 'planner' | 'fallback';
+    steps: LabStep[];
+    events: LabEvent[];
+    /** The `›` prompt. Disabled while the loop is mid-turn — there is nothing to interrupt. */
+    onInstruct?: (text: string) => void | Promise<void>;
+    onStop?: () => void;
+    onBackToChat: () => void;
+    onOpenRun?: () => void;
+    onOpenGraph?: () => void;
+    /**
+     * The box behind the loop. Present = a Terminal tab exists. `shellUrl` is
+     * minted on demand by the host, so its absence is a button, not an error.
+     */
+    shell?: {
+        sessionId: string;
+        shellUrl?: string;
+        onRequestShell?: () => void;
+    };
+    /** Honest state, e.g. "Planner unavailable · single step" or "Mock runtime". */
+    notice?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface ChatMember {
     id: string;
     name: string;
@@ -2106,6 +2158,9 @@ export declare function formatChatTime(isoString: string): string;
 /** "12:04" / "1:02:11" — a duration people read, not a millisecond count. */
 export declare function formatDuration(ms?: number): string;
 
+/** `84.2k`, `1.3M` — a token count is scale, not an exact figure. */
+export declare function formatTokens(tokens: number): string;
+
 /** The exact first line of a forwarded message's body. See above. */
 export declare function forwardAttributionLine(from: ForwardedFrom): string;
 
@@ -2308,6 +2363,29 @@ export declare function isNewDay(current: string, previous?: string): boolean;
 
 /** A run that is still moving — the panel keeps re-reading it. */
 export declare function isRunPanelLive(status: RunPanelStatus): boolean;
+
+export declare interface LabEvent {
+    id: string;
+    at: string;
+    kind: 'command' | 'text' | 'tool' | 'result' | 'error' | 'status' | 'iteration';
+    text: string;
+    /** Long form — a tool's arguments and output. Collapsed behind a disclosure. */
+    detail?: string;
+    /** True when the runtime that produced this frame was a mock. Always shown. */
+    mock?: boolean;
+}
+
+/** Where a loop is. Mirrors the run status platform-api reports. */
+export declare type LabStatus = 'planning' | 'starting' | 'running' | 'waiting' | 'done' | 'failed' | 'stopped' | 'budget';
+
+export declare interface LabStep {
+    id: string;
+    title: string;
+    kind: string;
+    status: 'pending' | 'running' | 'done' | 'failed' | 'skipped';
+    iterations?: number;
+    contextTokens?: number;
+}
 
 export declare function LinkDialog({ open, initialText, initialHref, onSubmit, onRemove, onClose, 'data-testid': testId, }: LinkDialogProps): JSX.Element;
 
@@ -3317,6 +3395,39 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3343,42 +3454,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

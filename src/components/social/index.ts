@@ -162,6 +162,17 @@ export { matchComposerCommand, composerCommandArgumentText } from './composerCom
 export type { AgentRunResult } from './AgentRunCard';
 export { agentRunResultFromMetadata } from './AgentRunCard';
 
+// ChatLabShell — the chat column, borrowed by an agent loop started from a
+// `/agent …` command: status line, step rail, the loop's output, an optional
+// terminal into its box, and one prompt line. `ChatLabPill` keeps a running
+// loop reachable from the composer after "Back to chat".
+//
+// `ChatLabTerminal` is deliberately NOT re-exported: it is reached through
+// `React.lazy` from the shell precisely so the compute provider and pane
+// registry stay out of this entry, and naming it here would pull them back in.
+export { ChatLabShell, ChatLabPill, formatTokens } from './ChatLabShell';
+export type { LabStatus, LabStep, LabEvent, ChatLabShellProps, ChatLabPillProps } from './ChatLabShell';
+
 // RunSummaryPanel — a run, condensed and read-only, beside a chat. The side-panel
 // body for kind `run`: `renderers={{ run: createRunPanelRenderer({ load, onOpenFull }) }}`.
 export { RunSummaryPanel, RunPanelBody, createRunPanelRenderer, runPanelId, parseRunPanelId, isRunPanelLive } from './RunSummaryPanel';

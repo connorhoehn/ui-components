@@ -259,7 +259,13 @@ describe('entry points and their transitive optional peers', () => {
       // The whole point of this subpath: the SDK is lazy, so importing it costs
       // nothing until a hangout actually starts.
       'video-ivs': { static: [], dynamic: ['amazon-ivs-web-broadcast'] },
-      social: { static: ['cmdk'], dynamic: [] },
+      // xterm is DYNAMIC here, and it has to stay that way. `ChatLabShell`
+      // (the chat column borrowed by an agent loop) offers a Terminal tab into
+      // the loop's box, and that tab is `React.lazy`-imported precisely so
+      // importing `ChatPanel` does not require two optional peers on disk. If
+      // this ever moves to `static`, the lazy boundary in ChatLabShell.tsx has
+      // been lost and every chat consumer now needs xterm installed.
+      social: { static: ['cmdk'], dynamic: ['@xterm/addon-fit', '@xterm/xterm'] },
       // WorkGraph is the React Flow-backed graph composition.
       graph: { static: ['@xyflow/react'], dynamic: [] },
       agents: { static: ['@xyflow/react'], dynamic: [] },
@@ -294,7 +300,10 @@ describe('entry points and their transitive optional peers', () => {
           ...TIPTAP,
           '@xyflow/react', 'amazon-cognito-identity-js', 'cmdk', 'react-markdown', 'react-router', 'recharts', 'remark-gfm', 'yjs',
         ].sort(),
-        dynamic: ['amazon-ivs-web-broadcast'],
+        // Both dynamic entries are lazy tabs: the IVS SDK behind a hangout that
+        // has not started, xterm behind ChatLabShell's Terminal tab. See the
+        // `social` note above.
+        dynamic: ['@xterm/addon-fit', '@xterm/xterm', 'amazon-ivs-web-broadcast'],
       },
     };
 
