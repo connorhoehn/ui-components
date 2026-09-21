@@ -155,7 +155,7 @@ function Preview() {
   const [dark, setDark] = useState(false);
   const [selection, onSelectionChange] = useState<WorkGraphSelection>(null);
   const [viewport, onViewportChange] = useState<WorkGraphViewport>({ x: 0, y: 0, zoom: 1 });
-  const [view, onViewChange] = useState<WorkActivityPresentation['view']>({ focusedEffortId: null, expandedSourceEfforts: ['slides'] });
+  const [view, onViewChange] = useState<WorkActivityPresentation['view']>({ focusedEffortId: null, expandedSourceEfforts: [] });
   const [window, onWindowChange] = useState<WorkActivityPresentation['window']>({ start: at - 15 * 60_000, end: at, following: true });
   const [reference, setReference] = useState('');
 

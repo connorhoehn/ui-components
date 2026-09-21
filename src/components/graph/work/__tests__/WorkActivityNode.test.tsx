@@ -77,6 +77,14 @@ describe('Active Now node card', () => {
     expect(screen.getByText('v3 generating')).toBeInTheDocument();
   });
 
+  it('gives the preview a fixed box to scale into rather than cropping it', () => {
+    const { container } = render(<WorkActivityNode node={node('deck', 'document', 'Sprint review', 'running')} detail={{ fresh: true, lines: ['v2 available'], artifact: { revisions: [{ id: 'v2', label: 'v2', createdAt: at, preview: <svg viewBox="0 0 320 200" /> }] } }} selected={false} live onSelect={vi.fn()} />);
+    const box = container.querySelector('[aria-label="Sprint review v2 preview"]')!;
+    expect(box.className).toContain('aspect-[16/10]');
+    expect(box.className).toContain('[&_svg]:h-full');
+    expect(box.className).toContain('[&_img]:object-contain');
+  });
+
   it('leaks no detail for a restricted item', () => {
     show({ ...node('secret', 'run', 'Secret run', 'running'), locked: true, disclosure: 'existence' }, { lines: ['Presentation agent'], badge: 'Ready', excerpt: 'nope' });
     expect(screen.getByText('Restricted work item')).toBeInTheDocument();

@@ -3,6 +3,8 @@ import { Tabs, TabPanel } from '../../shared/Tabs';
 import { Select } from '../../forms/Select';
 import { Button } from '../../ui/Button';
 import { IconButton } from '../../ui/IconButton';
+import { PREVIEW_FIT } from './WorkActivityNode';
+import { cn } from '../../../lib/cn';
 import type { WorkActivityNodeDetail, WorkGraphNodeData, WorkGraphSelection } from './types';
 
 /** Which revision and page the selection names, falling back to the newest. */
@@ -56,7 +58,7 @@ export function WorkArtifactInspector({ node, artifact, selection, onSelectionCh
       {pending?.status === 'failed' && !quiet && <p role="status" className="text-xs text-danger-fg">{pending.label} could not be generated.{pending.message ? ` ${pending.message}` : ''}</p>}
       {revision ? (
         <TabPanel idPrefix={tabsId} id={revision.id} when={revision.id} className="space-y-2">
-          <div aria-label={`${revision.label} preview`} className="aspect-video overflow-hidden rounded border border-border bg-surface">
+          <div aria-label={`${revision.label} preview`} className={cn('aspect-video overflow-hidden rounded border border-border bg-surface', PREVIEW_FIT)}>
             {slide?.preview ?? revision.preview ?? <span className="flex h-full items-center justify-center text-sm text-text-secondary">Preview unavailable</span>}
           </div>
           {slides.length > 0 && slide && (

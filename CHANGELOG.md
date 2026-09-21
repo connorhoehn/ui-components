@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.337.0] — 2026-09-21
+
+### Fixed — `./graph` (Active Now)
+
+- **Context no longer folds itself at two efforts.** A per-effort height test
+  was folding sources behind a "+ 2 sources" chip whenever one effort was
+  taller than the pane, which is most of the time. Crowding (three efforts or
+  more) still folds up front; otherwise context stays open until the fitted
+  view would drop under 40%, where the cards stop being readable anyway. An
+  explicit fold or unfold in `view.expandedSourceEfforts` always wins.
+- **A relationship that continues in the next column enters from the side.**
+  Entering from the top after crossing a column drew the edge back up and over
+  the frame — visible on Transcript → Generate presentation in the folded state.
+- **Artifact previews scale instead of cropping.** The thumbnail was clipping
+  the host's slide (a cut eyebrow, a lost right edge). Both the card thumbnail
+  and the pane's slide preview now give the preview a fixed-aspect box to fit
+  into.
+- **Two inputs that read the same stay two inputs.** `WorkNodePane` keyed its
+  input chips by label, so a host with two "Release plan" rows had to
+  de-duplicate them to avoid a collision.
+
+### Changed
+
+- `WorkActivityPaneSections.inputs` accepts `WorkActivityReference` objects as
+  well as strings, so an input can carry the id that tells it apart.
+- Frame chrome matches the prototype: a lighter title dot and a subtler dashed
+  border.
+
 ## [2.336.0] — 2026-09-21
 
 ### Changed — `./graph` (Active Now)

@@ -141,14 +141,13 @@ export function layoutWorkEfforts(
       index === 0 || band(index) !== band(index - 1) ? 56 : tops[index - 1] + rowHeights[index - 1] + rowLane[index],
     ], []);
     const bandWidth = Math.max(0, ...chain.map((id) => size(id).width));
-    const rowX = (row: number) => chainX + band(row) * (bandWidth + 96);
+    const rowX = (row: number) => chainX + band(row) * (bandWidth + Math.max(96, columnGap));
     const placed: WorkEffortLayout['nodes'] = [];
     for (const id of chain) placed.push({ id: instanceId(effort.id, 'node', id), entityId: id, x: rowX(rowOf.get(id)!), y: rowY[rowOf.get(id)!], ...size(id) });
     for (const [id, row] of asidePlacement) placed.push({ id: instanceId(effort.id, 'node', id), entityId: id, x: padding, y: rowY[row], ...size(id) });
     const vertical = aside.length === 0;
     const byId = new Map(placed.map((node) => [node.entityId, node]));
     const labelSlots = new Map<string, number>();
-    const rowFor = (id: string) => rowOf.get(id) ?? asidePlacement.get(id) ?? 0;
     layouts.push({
       id: effort.id, title: effort.title, subtitle: effort.subtitle, x: 0, y: 0,
       width: Math.max(...placed.map((node) => node.x + node.width)) + padding,
@@ -164,21 +163,19 @@ export function layoutWorkEfforts(
         // feeds the step beside it, straight down when the chain continues.
         const across = from.x !== target.x;
         const sourceHandle = across ? 'out-right' : 'out-bottom';
-        const targetHandle = across && rowFor(edge.from) === rowFor(edge.to) ? 'in-left' : 'in-top';
+        // Anything that continues sideways enters from the side. Entering from
+        // the top after crossing a column draws a loop back over the frame.
+        const targetHandle = across ? 'in-left' : 'in-top';
         return {
           id: instanceId(effort.id, 'edge', edge.id), entityId: edge.id,
           source: instanceId(effort.id, 'node', edge.from), target: instanceId(effort.id, 'node', edge.to),
           sourceHandle, targetHandle,
           // Labels live in the lane between rows, never over a card.
-          labelX: across && targetHandle === 'in-left' ? (from.x + from.width + target.x) / 2 : target.x + target.width / 2 + 44,
+          labelX: across ? (from.x + from.width + target.x) / 2 : target.x + target.width / 2 + 44,
           labelY: target.y - 26 - slot * 24,
         };
       }),
     });
-  }
-  if (options.height && !options.focusedEffortId) {
-    const tooTall = layouts.filter((group) => group.height > options.height! && group.sourceCount > 0 && group.sourceCount < group.nodes.length && group.collapsedSourceCount === 0 && !expanded.has(group.id) && !options.foldedForHeight?.includes(group.id));
-    if (tooTall.length) return layoutWorkEfforts(nodes, edges, efforts, { ...options, foldedForHeight: [...(options.foldedForHeight ?? []), ...tooTall.map((group) => group.id)] });
   }
   // Parallel work reads as parallel: efforts sit side by side, newest first,
   // and the canvas scales down to hold them. Stacking is only worth it when it
@@ -205,6 +202,13 @@ export function layoutWorkEfforts(
   const side = pack(false);
   const wrapped = pack(true);
   const chosen = layouts.length <= 1 || wrapped.zoom <= side.zoom * 1.25 ? side : wrapped;
+  // Context stays open until keeping it open would make the whole view
+  // unreadable. Crowding (three efforts or more) folds it up front; height
+  // alone does not, because a fold the viewer did not ask for hides work.
+  if (options.height && !options.focusedEffortId && chosen.zoom < 0.4) {
+    const foldable = layouts.filter((group) => group.sourceCount > 0 && group.sourceCount < group.nodes.length && group.collapsedSourceCount === 0 && !expanded.has(group.id) && !options.foldedForHeight?.includes(group.id));
+    if (foldable.length) return layoutWorkEfforts(nodes, edges, efforts, { ...options, foldedForHeight: [...(options.foldedForHeight ?? []), ...foldable.map((group) => group.id)] });
+  }
   for (const [index, layout] of layouts.entries()) {
     layout.x = chosen.places[index].x;
     layout.y = chosen.places[index].y;

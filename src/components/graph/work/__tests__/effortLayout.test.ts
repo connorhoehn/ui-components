@@ -82,6 +82,29 @@ describe('source-backed effort layout', () => {
     expect(handles.b).toEqual(['out-bottom', 'in-top']);
   });
 
+  it('keeps context open at two efforts and folds it only when the view stops being readable', () => {
+    const roomy = layoutWorkEfforts(nodes, edges, efforts.slice(0, 2), { width: 1400, height: 900 });
+    expect(roomy.every((group) => group.collapsedSourceCount === 0)).toBe(true);
+    expect(roomy[0].nodes.map((item) => item.entityId)).toContain('source');
+    // Crowding still folds up front, whatever the space.
+    expect(layoutWorkEfforts(nodes, edges, efforts, { width: 1400, height: 900 })[0].collapsedSourceCount).toBe(1);
+    // So does a pane too small to read the cards in.
+    const cramped = layoutWorkEfforts(nodes, edges, efforts.slice(0, 2), { width: 300, height: 200, measurements: new Map([['deck', { width: 200, height: 900 }]]) });
+    expect(cramped[0].collapsedSourceCount).toBe(1);
+  });
+
+  it('never routes a relationship back over the frame to reach the next column', () => {
+    const [group] = layoutWorkEfforts(nodes, edges, [efforts[0]], { width: 900, expandedSourceEfforts: ['slides'] });
+    const at = (id: string) => group.nodes.find((item) => item.entityId === id)!;
+    for (const edge of group.edges) {
+      const from = at(group.nodes.find((n) => n.id === edge.source)!.entityId);
+      const to = at(group.nodes.find((n) => n.id === edge.target)!.entityId);
+      // Sideways means entering from the side; only a straight drop enters the top.
+      expect(edge.targetHandle).toBe(from.x === to.x ? 'in-top' : 'in-left');
+      if (edge.targetHandle === 'in-top') expect(to.y).toBeGreaterThan(from.y);
+    }
+  });
+
   it('keeps parallel efforts side by side and scales rather than stacking them', () => {
     const side = layoutWorkEfforts(nodes, [], [efforts[2], { id: 'deck', title: 'Deck', nodeIds: ['deck'], edgeIds: [] }], { width: 420, height: 400 });
     expect(side[0].y).toBe(side[1].y);

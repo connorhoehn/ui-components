@@ -38,10 +38,10 @@ function ResourceNode({ data, selected }: NodeProps<ActivityNode>) {
 function EffortFrame({ data }: NodeProps<FrameNode>) {
   return <TitledFrame tone="surface" title={
     <span className="inline-flex items-center gap-1.5 font-sans text-[11px] font-semibold text-text-secondary">
-      {data.live && <span aria-hidden="true" className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />}
+      {data.live && <span aria-hidden="true" className="inline-block h-1.5 w-1.5 rounded-full bg-primary/50" />}
       {data.title}
     </span>
-  } className="pointer-events-none h-full w-full rounded-xl border-dashed bg-surface/60" data-testid="work-effort" titleAction={
+  } className="pointer-events-none h-full w-full rounded-xl border-dashed border-border-subtle bg-surface/60" data-testid="work-effort" titleAction={
     <span className="pointer-events-auto flex items-center gap-1">
       {data.sources > 0 && <Button size="sm" variant="ghost" className="nodrag nopan" aria-label={`${data.expanded ? 'Hide' : 'Show'} ${data.sources} sources for ${data.title}`} onClick={data.onSources}>{data.expanded ? 'Sources' : `+ ${data.sources} sources`}</Button>}
       <Button size="sm" variant="ghost" className="nodrag nopan" aria-label={data.focused ? 'Show all activities' : `Focus on ${data.title}`} onClick={data.onFocus}>{data.focused ? 'All activities' : 'Focus'}</Button>

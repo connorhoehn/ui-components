@@ -65,7 +65,10 @@ The canvas measures the narrower width and re-fits once when the pane opens or c
   resolves protected preview content. Never pass an unsanitized source object.
   The card invents nothing: no badge without `badge`, no footer without `footer`,
   no participants without `participants`, and no thumbnail frame when the
-  revision carries no `preview`.
+  revision carries no `preview`. A preview that is there gets a fixed-aspect box
+  to scale into — an SVG with a viewBox letterboxes itself, an image gets
+  `object-contain` — because cropping a slide to fit is the one thing a
+  thumbnail must never do.
 - `activeEdgeIds`: explicit operation evidence. An edge also needs running status,
   no end time, and a following-live query to animate. Reduced motion is handled by
   the existing pipeline edge. A running neighbor does not activate its edges.
@@ -107,16 +110,20 @@ a frame can never swallow a click meant for a card.
 
 The inspector and accessible alternate list start closed. Canonical node and edge
 selection opens details. Escape/Close restores focus to the initiating control.
-Two compact efforts pack horizontally where space permits; crowded or tall views
-fold earlier context behind a source disclosure. Focus restores that effort's
+Two compact efforts pack horizontally where space permits. Context stays open
+until keeping it open would make the view unreadable: three efforts or more fold
+it up front, and so does a pane too small to fit the cards above 40%. Height
+alone never folds it — a fold the viewer did not ask for hides work. An explicit
+fold or unfold lives in `view.expandedSourceEfforts` and always wins. Focus restores that effort's
 sources and All activities restores the prior overview viewport.
 
 Inside an effort the layout is a grid that mirrors the work: every step of the chain is a
 ROW down the right column, and the context that step was given sits in the LEFT column
 beside it — "Planning sync | Transcript", "Project documents | Generate presentation",
 "— | Sprint review". An effort with no declared `contextNodeIds` is one column of rows.
-Relationships are orthogonal: across the columns when context feeds the step next to it,
-straight down when the chain continues, so an edge never loops around a card. Label lanes
+Relationships are orthogonal: anything continuing sideways enters the next card from its
+side, and only a straight drop enters from the top — entering from the top after crossing
+a column is what draws a loop back over the frame. Label lanes
 between rows are reserved for the operations the host actually labels.
 
 Parallel work reads as parallel: efforts sit side by side, newest first, and the canvas

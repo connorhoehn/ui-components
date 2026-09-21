@@ -114,6 +114,15 @@ describe('per-kind detail panes', () => {
     expect(onSelectionChange).toHaveBeenCalledWith({ kind: 'node', id: 'deck', revisionId: 'v2' });
   });
 
+  it('keeps two inputs apart when they read the same', () => {
+    const detail: WorkActivityNodeDetail = {
+      sections: { inputs: [{ id: 'a', title: 'Release plan', meta: 'rev 6' }, { id: 'b', title: 'Release plan', meta: 'rev 4' }, 'Planning sync transcript'] },
+    };
+    render(<WorkNodePane node={node('agent', 'run', 'Generate presentation')} detail={detail} selection={{ kind: 'node', id: 'agent' }} onSelectionChange={vi.fn()} onClose={() => {}} />);
+    expect(screen.getAllByText('Release plan')).toHaveLength(2);
+    expect(screen.getByText('Planning sync transcript')).toBeInTheDocument();
+  });
+
   it('shows a context pane for an input document and a work item', () => {
     const detail: WorkActivityNodeDetail = {
       subtitle: 'Shared with you',

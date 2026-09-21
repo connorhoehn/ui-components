@@ -169,8 +169,18 @@ export function WorkNodePane({
         {sections?.description && <p className="text-[13px] leading-snug text-text-secondary">{sections.description}</p>}
         {visible?.artifact && <WorkArtifactInspector node={node} artifact={visible.artifact} selection={selection} onSelectionChange={onSelectionChange} onOpen={onOpen} quiet={!!visible.banner} />}
         {visible?.transcript && <WorkTranscriptPanel transcript={visible.transcript} onSelect={onSelectionChange} />}
-        {!!sections?.inputs?.length && <Section label="Inputs"><div className="flex flex-wrap gap-1.5">{sections.inputs.map((item) => <Chip key={item} size="sm">{item}</Chip>)}</div></Section>}
-        {!!sections?.tools?.length && <Section label="Tools in this run"><div className="flex flex-wrap gap-1.5">{sections.tools.map((item) => <Chip key={item} size="sm" tone="info">{item}</Chip>)}</div></Section>}
+        {!!sections?.inputs?.length && (
+          <Section label="Inputs">
+            <div className="flex flex-wrap gap-1.5">
+              {sections.inputs.map((item, index) => typeof item === 'string'
+                // Two inputs may legitimately read the same; the position keeps
+                // them apart when the host has no id to give.
+                ? <Chip key={`${index}-${item}`} size="sm">{item}</Chip>
+                : <Chip key={item.id} size="sm" title={item.meta}>{item.title}</Chip>)}
+            </div>
+          </Section>
+        )}
+        {!!sections?.tools?.length && <Section label="Tools in this run"><div className="flex flex-wrap gap-1.5">{sections.tools.map((item, index) => <Chip key={`${index}-${item}`} size="sm" tone="info">{item}</Chip>)}</div></Section>}
         {!!sections?.sources?.length && <Section label="Sources used"><div className="space-y-1.5">{sections.sources.map((item) => <ReferenceRow key={item.id} item={item} onSelect={onSelectionChange} />)}</div></Section>}
         {sections?.workItem && <Section label="Work item"><ReferenceRow item={sections.workItem} onSelect={onSelectionChange} /></Section>}
         {!!visible?.actions?.length && (

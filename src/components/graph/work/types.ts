@@ -206,8 +206,12 @@ export interface WorkActivityAsk {
 }
 
 export interface WorkActivityPaneSections {
-  /** What the run was given — "Planning sync transcript", "Release plan · rev 6". */
-  inputs?: string[];
+  /**
+   * What the run was given — "Planning sync transcript", "Release plan · rev 6".
+   * Pass references rather than bare strings when two inputs can share a label:
+   * the id is what keeps them apart, and what lets the row open its source.
+   */
+  inputs?: Array<string | WorkActivityReference>;
   /** Tools the run is authorized to use in this attempt. */
   tools?: string[];
   sources?: WorkActivityReference[];

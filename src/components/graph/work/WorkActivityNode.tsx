@@ -25,6 +25,14 @@ const ACCENT: Record<WorkGraphNodeData['kind'], { bar: string; chip: string }> =
   change: { bar: 'bg-cat-transform', chip: 'bg-cat-transform/10 text-cat-transform' },
 };
 
+/**
+ * The host's preview is its own artwork at its own size. Give it the box and
+ * let it scale into it: an SVG with a viewBox letterboxes itself, an image gets
+ * object-contain, and plain markup simply fills. Cropping a slide to fit is the
+ * one thing a thumbnail must never do.
+ */
+export const PREVIEW_FIT = 'flex items-center justify-center [&>*]:h-full [&>*]:w-full [&_img]:h-full [&_img]:w-full [&_img]:object-contain [&_svg]:h-full [&_svg]:w-full';
+
 const DOT: Record<WorkGraphNodeData['status'], string> = {
   idle: 'bg-border-emphasis', running: 'bg-info', waiting: 'bg-caution',
   completed: 'bg-success', error: 'bg-danger', stopped: 'bg-border-emphasis', stale: 'bg-border-emphasis',
@@ -105,7 +113,7 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
           {visible?.excerpt && <p className={cn('text-[11px] italic', muted ? 'text-text-secondary' : 'text-text-primary')}>{`“${visible.excerpt}”`}</p>}
           {visible?.attentionLabel && <p className="font-medium text-text-primary">{visible.attentionLabel}</p>}
           {revision?.preview && (
-            <div className="overflow-hidden rounded border border-border bg-surface" aria-label={`${title} ${revision.label} preview`}>{revision.preview}</div>
+            <div className={cn('aspect-[16/10] w-full overflow-hidden rounded border border-border bg-surface', PREVIEW_FIT)} aria-label={`${title} ${revision.label} preview`}>{revision.preview}</div>
           )}
           {!!visible?.artifact?.revisions.length && (
             <div className="flex flex-wrap items-center gap-1 text-[10px]" aria-label={`${title} revisions`}>
