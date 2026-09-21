@@ -295,6 +295,12 @@ export interface WorkActivityPresentation {
   /** v1 latest-state data must be described as recent work, not historical replay. */
   temporalMode: 'recent' | 'as-of';
   events?: Array<{ at: number; count: number }>;
+  /**
+   * The wall clock, in UTC epoch milliseconds. The ruler stops here rather
+   * than at the day's end, so "Now" lands where now actually is. Omit and the
+   * strip follows the live window, or the browser clock when it is not.
+   */
+  now?: number;
   view: WorkActivityView;
   /**
    * Where the selected node's detail pane goes.

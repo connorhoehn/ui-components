@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.335.0] — 2026-09-21
+
+### Fixed — `./graph` (Active Now)
+
+- **The time ruler stops at the clock, not at the end of the day.** With real
+  day bounds (a New York day is 04:00Z to 04:00Z) the strip drew the whole
+  24 hours: "Now" sat on midnight, the marks were spaced for a day nobody had
+  worked yet, and the range label read against the wrong extent. When the
+  query is live — `temporalMode: 'recent'` or a following window — the ruler,
+  the event dots and the slider now run `bounds.start` to `min(bounds.end,
+  now)`, and "Now" carries the real time. A stale window is clamped into that
+  extent rather than rendering past its right edge.
+- **Hour marks print as a clock face.** A plain 24-hour `h:mm` in the host's
+  timezone — no day period, no padded hour — so "2:00, 8:00, 2:00" cannot
+  happen again. Spacing adapts to the extent: half-hourly up to 2 hours,
+  hourly to 6, two-hourly to 12, three-hourly beyond.
+
+### Added — `./graph`
+
+- **`activity.now`** — the wall clock in epoch milliseconds. Omit it and the
+  strip follows the live window, or the browser clock when it is not.
+
 ## [2.334.0] — 2026-09-21
 
 ### Changed — `./graph` (Active Now)

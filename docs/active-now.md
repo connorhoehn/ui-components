@@ -21,10 +21,19 @@ every one of those navigations. Leave `title` unset and the header is the host's
 ## Time strip
 
 One row: the range label ("9:30 – Now"), previous/next interval, a "Following now" toggle
-that returns to live, and a 15/30/60-minute or full-day preset. Under it an hour ruler
-computed from `bounds` in the host's timezone, the event dots from `events`, and the
-two-handle `RangeSlider`. The ruler prints clock marks without the day period; announced
-values keep it.
+that returns to live, and a 15/30/60-minute or full-day preset. Under it an hour ruler,
+the event dots from `events`, and the two-handle `RangeSlider`.
+
+A day's `bounds` run to midnight, but nobody has worked the rest of it yet. While the
+query is live — `temporalMode: 'recent'`, or a following window — the ruler, the dots and
+the slider all run `bounds.start` to `min(bounds.end, now)`, and the right-hand label
+carries the real time. Pass `activity.now` to control that clock; without it the strip
+follows the live window, or the browser clock when it is not. A window that sits outside
+the extent is clamped into it rather than drawn past the edge.
+
+Marks print as a clock face: a plain 24-hour `h:mm` in the `timezone` prop, no day period
+and no padded hour. Spacing adapts to the extent — half-hourly up to 2 hours, hourly to 6,
+two-hourly to 12, three-hourly beyond. Announced values keep the locale's full wording.
 
 ## Detail panes
 

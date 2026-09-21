@@ -139,6 +139,58 @@ describe('Active Now composition', () => {
     expect(screen.queryByTestId('activity-inspector')).not.toBeInTheDocument();
   });
 
+  it('stops the ruler at the real clock, not at the end of the day', () => {
+    const value = activity();
+    // A real America/New_York day: 00:00-24:00 local is 04:00Z to 04:00Z.
+    const dayStart = Date.parse('2026-09-21T04:00:00Z');
+    const rightNow = Date.parse('2026-09-21T20:28:00Z');
+    value.bounds = { start: dayStart, end: dayStart + 24 * 60 * 60_000 };
+    value.window = { start: rightNow - 15 * 60_000, end: rightNow, following: true };
+    value.now = rightNow;
+    value.events = [Date.parse('2026-09-21T12:00:00Z'), Date.parse('2026-09-21T23:00:00Z')].map((at) => ({ at, count: 2 }));
+    const { container } = render(<WorkTimeWindow activity={value} timezone="America/New_York" />);
+    // 16h28m of extent takes three-hour marks, printed as a plain clock face.
+    expect([...screen.getByTestId('work-time-ruler').querySelectorAll('span')].map((span) => span.textContent)).toEqual(['2:00', '5:00', '8:00', '11:00', 'Now 16:28']);
+    expect(container.querySelector('strong')).toHaveTextContent('16:13 – Now');
+    // The window and the slider stop at now; tomorrow is not scrubbable.
+    expect(screen.getByRole('slider', { name: 'Interval end' })).toHaveAttribute('max', String(rightNow));
+    expect(screen.getByRole('slider', { name: 'Interval end' })).toHaveValue(String(rightNow));
+    // An event past the extent is not plotted at all.
+    expect(screen.getAllByRole('button', { name: /events at/ })).toHaveLength(1);
+  });
+
+  it('labels a scrubbed window with both ends and keeps hour marks proportional', () => {
+    const value = activity();
+    const dayStart = Date.parse('2026-09-21T04:00:00Z');
+    const rightNow = Date.parse('2026-09-21T20:28:00Z');
+    value.bounds = { start: dayStart, end: dayStart + 24 * 60 * 60_000 };
+    value.window = { start: Date.parse('2026-09-21T17:12:00Z'), end: Date.parse('2026-09-21T17:27:00Z'), following: false };
+    value.now = rightNow;
+    const { container } = render(<WorkTimeWindow activity={value} timezone="America/New_York" />);
+    expect(container.querySelector('strong')).toHaveTextContent('13:12 – 13:27');
+    const marks = [...screen.getByTestId('work-time-ruler').querySelectorAll('span')];
+    // Proportional to the extent that ends at now, not to the whole day.
+    expect(marks.at(-2)).toHaveStyle({ left: `${(Date.parse('2026-09-21T15:00:00Z') - dayStart) / (rightNow - dayStart) * 100}%` });
+  });
+
+  it('spaces hour marks by the extent it has to cover', () => {
+    const value = activity();
+    const base = Date.parse('2026-09-21T12:00:00Z');
+    const render90 = (hours: number) => {
+      value.bounds = { start: base, end: base + hours * 60 * 60_000 };
+      value.window = { start: base, end: base + hours * 60 * 60_000, following: true };
+      value.now = base + hours * 60 * 60_000;
+      const view = render(<WorkTimeWindow activity={value} timezone="UTC" />);
+      const marks = [...view.getByTestId('work-time-ruler').querySelectorAll('span')].slice(0, -1).map((span) => span.textContent!);
+      view.unmount();
+      return marks;
+    };
+    expect(render90(2)).toEqual(['12:00', '12:30', '13:00', '13:30']);
+    expect(render90(6)).toEqual(['12:00', '13:00', '14:00', '15:00', '16:00']);
+    expect(render90(12)).toEqual(['12:00', '14:00', '16:00', '18:00', '20:00']);
+    expect(render90(20)).toEqual(['12:00', '15:00', '18:00', '21:00', '0:00', '3:00']);
+  });
+
   it('steps and scrubs actual bounds, including a 25-hour day, without claiming replay', () => {
     const value = activity();
     value.bounds = { start, end: start + 25 * 60 * 60_000 };

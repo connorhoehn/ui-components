@@ -190,6 +190,7 @@ function Preview() {
     window, onWindowChange, view, onViewChange,
     bounds: { start: at - 105 * 60_000, end: at },
     temporalMode: 'recent',
+    now: at,
     activeEdgeIds: failing ? ['work-session', 'release-input', 'preview-input', 'design-input'] : ['generation', 'work-session', 'release-input', 'preview-input', 'design-input'],
     failedEdgeIds: failing ? ['generation'] : [],
     edgeLabels: failing ? {} : { generation: 'generating' },
