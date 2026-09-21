@@ -241,6 +241,8 @@ export interface WorkActivityNodeDetail {
   badge?: string;
   /** A short verbatim quotation from the source, already viewer-authorized. */
   excerpt?: string;
+  /** Who was there. Shown as an avatar row; the host resolves the images. */
+  participants?: Array<{ id: string; label: string; avatarUrl?: string }>;
   /** Trailing line: what this is on the left, its sharing clause on the right. */
   footer?: { label: string; note?: string };
   /** Detail-pane subtitle — "Meeting transcript · Shared with you". */

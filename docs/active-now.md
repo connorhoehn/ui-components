@@ -63,6 +63,9 @@ The canvas measures the narrower width and re-fits once when the pane opens or c
 - `details`: optional emphasis, fresh-process evidence, tool annotations, human
   attention label, authorized feedback count, and artifact revisions. The host
   resolves protected preview content. Never pass an unsanitized source object.
+  The card invents nothing: no badge without `badge`, no footer without `footer`,
+  no participants without `participants`, and no thumbnail frame when the
+  revision carries no `preview`.
 - `activeEdgeIds`: explicit operation evidence. An edge also needs running status,
   no end time, and a following-live query to animate. Reduced motion is handled by
   the existing pipeline edge. A running neighbor does not activate its edges.
@@ -84,6 +87,21 @@ Pending artifact revisions are separate from available revisions. They cannot be
 selected or opened. If a selected revision disappears, the inspector shows it as
 unavailable instead of substituting another version. The host must remove revoked
 nodes, edges, revisions, previews, tools, counts, and attention data promptly.
+
+## The card
+
+One anatomy for every kind. A coloured bar down the left says what KIND of work
+this is — meeting, transcript, document, task, run, terminal — and never moves.
+Status owns the dot in the header and, when something is in flight or wrong, the
+border: blue for the current step, red for a failed run, green for an artifact
+with a revision ready to read. A run's tools hang below the card, because they
+belong to the attempt rather than to the thing itself.
+
+The whole card is one hit target — header, body and footer all select it — and it
+carries `role="button"`, `aria-pressed`, and stable `data-work-node` /
+`data-work-card` hooks for hosts and tests. Effort frames are scenery:
+`pointer-events: none` on the frame, `auto` on its own Sources/Focus controls, so
+a frame can never swallow a click meant for a card.
 
 ## Layout and inspection
 

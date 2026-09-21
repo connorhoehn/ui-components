@@ -90,7 +90,8 @@ const transcript = {
 
 const baseDetails: Record<string, WorkActivityNodeDetail> = {
   meeting: {
-    emphasis: 'earlier', lines: ['08:30–09:00 · 30 min', 'Connor, Frank +1', 'Recorded · transcript available'],
+    emphasis: 'earlier', lines: ['08:30–09:00 · 30 min', 'Recorded · transcript available'],
+    participants: [{ id: 'ch', label: 'Connor' }, { id: 'fd', label: 'Frank' }, { id: 'gw', label: 'Grace' }],
     subtitle: 'Meeting transcript · Shared with you',
     banner: { tone: 'success', title: 'Transcript ready', description: 'Planning sync · 08:30–09:00 · 2 speakers' },
     transcript,
@@ -136,12 +137,20 @@ const EFFORTS: Array<{ id: string; title: string; subtitle: string; nodeIds: str
   { id: 'design-assets', title: 'Design assets', subtitle: 'Design agent · Rendering', nodeIds: ['design-source', 'design-agent'], edgeIds: ['design-input'] },
 ];
 
+// A chain with no declared context is the shape the live host sends: one
+// column of five cards, beside a two-card effort.
+const CHAIN: Array<{ id: string; title: string; subtitle: string; nodeIds: string[]; edgeIds: string[]; contextNodeIds?: string[] }> = [
+  { id: 'slides', title: 'Sprint review', subtitle: 'v3 generating · v2 available', nodeIds: ['meeting', 'transcript', 'docs', 'agent', 'deck'], edgeIds: ['meeting-transcript', 'transcript-agent', 'docs-agent', 'generation'], contextNodeIds: [] },
+  { id: 'coverage', title: 'Coverage checks', subtitle: 'Gateway · Cloud project', nodeIds: ['workitem', 'terminal'], edgeIds: ['work-session'] },
+];
+
 const WIDTHS: Record<string, string> = { '530': 'w-[530px]', '600': 'w-[600px]', '700': 'w-[700px]', '895': 'w-[895px]' };
 
 function Preview() {
   const [count, setCount] = useState(2);
   const [failing, setFailing] = useState(false);
   const [width, setWidth] = useState('895');
+  const [chain, setChain] = useState(false);
   const [full, setFull] = useState(false);
   const [dark, setDark] = useState(false);
   const [selection, onSelectionChange] = useState<WorkGraphSelection>(null);
@@ -151,7 +160,7 @@ function Preview() {
   const [reference, setReference] = useState('');
 
   const deckLine = failing ? 'v3 failed · v2 available' : 'v3 generating · v2 available';
-  const efforts = EFFORTS.slice(0, count).map((effort) => effort.id === 'slides' ? { ...effort, subtitle: deckLine } : effort);
+  const efforts = (chain ? CHAIN : EFFORTS.slice(0, count)).map((effort) => effort.id === 'slides' ? { ...effort, subtitle: deckLine } : effort);
   const shown = new Set(efforts.flatMap((effort) => effort.nodeIds));
   const details: Record<string, WorkActivityNodeDetail> = {
     ...baseDetails,
@@ -205,7 +214,12 @@ function Preview() {
   };
   const graphNodes = nodes
     .filter((item) => shown.has(item.id))
-    .map((item) => failing && item.id === 'agent' ? { ...item, status: 'error' as const } : item);
+    .map((item) => {
+      if (!failing) return item;
+      if (item.id === 'agent') return { ...item, status: 'error' as const };
+      if (item.id === 'deck') return { ...item, status: 'completed' as const };
+      return item;
+    });
 
   return <main className={`${dark ? 'dark' : ''} flex h-screen flex-col bg-surface-panel font-sans text-text-primary`}>
     <header className="flex shrink-0 flex-wrap items-center gap-3 border-b border-border bg-surface p-3 text-sm">
@@ -213,6 +227,7 @@ function Preview() {
       <span className="text-text-secondary">Sample data · fixed clock · no messages sent</span>
       <Select size="sm" aria-label="Fixture run" className="w-auto" options={[{ value: 'complete', label: 'Run complete' }, { value: 'failing', label: 'Run failing' }]} value={failing ? 'failing' : 'complete'} onChange={(event) => setFailing(event.target.value === 'failing')} />
       <Select size="sm" aria-label="Fixture activities" className="w-auto" options={[2, 3, 5].map((value) => ({ value: String(value), label: `${value} activities` }))} value={String(count)} onChange={(event) => { setCount(Number(event.target.value)); onViewChange({ ...view, focusedEffortId: null }); }} />
+      <Select size="sm" aria-label="Fixture shape" className="w-auto" options={[{ value: 'context', label: 'Context columns' }, { value: 'chain', label: 'Single column chain' }]} value={chain ? 'chain' : 'context'} onChange={(event) => setChain(event.target.value === 'chain')} />
       <Select size="sm" aria-label="Fixture panel width" className="w-auto" options={Object.keys(WIDTHS).map((value) => ({ value, label: `${value}px pane` }))} value={width} onChange={(event) => setWidth(event.target.value)} />
       <Button size="sm" variant="secondary" onClick={() => setFull(!full)}>{full ? 'Split size' : 'Full size'}</Button>
       <Button size="sm" variant="secondary" onClick={() => setDark(!dark)}>Theme</Button>

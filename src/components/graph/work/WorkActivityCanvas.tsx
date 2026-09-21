@@ -20,15 +20,19 @@ type ActivityNode = Node<ActivityNodeData, 'activity'>;
 type FrameNode = Node<FrameData, 'effort'>;
 type ActivityEdge = Edge<ActivityEdgeData, 'activity'>;
 
+// Small grey dots, not the default near-black: an anchor is a seam, not a
+// control, and nothing here is draggable.
+const HANDLE = '!h-1.5 !w-1.5 !min-h-0 !min-w-0 !border-0 !bg-border-emphasis';
+
 // Four fixed anchors, so a relationship enters and leaves on the side the grid
 // puts it — an edge that picks its own side is what draws detour loops.
 function ResourceNode({ data, selected }: NodeProps<ActivityNode>) {
   return <>
-    <Handle type="target" id="in-left" position={Position.Left} isConnectable={false} />
-    <Handle type="target" id="in-top" position={Position.Top} isConnectable={false} />
+    <Handle type="target" id="in-left" position={Position.Left} isConnectable={false} className={HANDLE} />
+    <Handle type="target" id="in-top" position={Position.Top} isConnectable={false} className={HANDLE} />
     <WorkActivityNode node={data.entity} detail={data.detail} live={data.live} selected={!!selected} selectedRevisionId={data.revisionId} onSelect={data.onSelect} onFeedback={data.onFeedback} />
-    <Handle type="source" id="out-right" position={Position.Right} isConnectable={false} />
-    <Handle type="source" id="out-bottom" position={Position.Bottom} isConnectable={false} />
+    <Handle type="source" id="out-right" position={Position.Right} isConnectable={false} className={HANDLE} />
+    <Handle type="source" id="out-bottom" position={Position.Bottom} isConnectable={false} className={HANDLE} />
   </>;
 }
 function EffortFrame({ data }: NodeProps<FrameNode>) {
@@ -37,8 +41,8 @@ function EffortFrame({ data }: NodeProps<FrameNode>) {
       {data.live && <span aria-hidden="true" className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />}
       {data.title}
     </span>
-  } className="h-full w-full bg-surface/60" data-testid="work-effort" titleAction={
-    <span className="flex items-center gap-1">
+  } className="pointer-events-none h-full w-full rounded-xl border-dashed bg-surface/60" data-testid="work-effort" titleAction={
+    <span className="pointer-events-auto flex items-center gap-1">
       {data.sources > 0 && <Button size="sm" variant="ghost" className="nodrag nopan" aria-label={`${data.expanded ? 'Hide' : 'Show'} ${data.sources} sources for ${data.title}`} onClick={data.onSources}>{data.expanded ? 'Sources' : `+ ${data.sources} sources`}</Button>}
       <Button size="sm" variant="ghost" className="nodrag nopan" aria-label={data.focused ? 'Show all activities' : `Focus on ${data.title}`} onClick={data.onFocus}>{data.focused ? 'All activities' : 'Focus'}</Button>
     </span>

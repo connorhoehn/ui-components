@@ -6,6 +6,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.336.0] — 2026-09-21
+
+### Changed — `./graph` (Active Now)
+
+- **The node card is rebuilt to the approved anatomy.** It no longer borrows
+  the pipeline `BaseNode`, whose execution-state palette painted a finished
+  meeting green and gave every card the same chrome. Now: a coloured accent bar
+  down the left for the KIND of work (meeting rose, transcript/terminal blue,
+  document/task teal, run violet), a grey header band with a tinted kind icon,
+  the title and a status dot, body lines from `detail.lines`, `badge` as a pill,
+  `excerpt` in quotes, the artifact's own thumbnail and revision chips, and a
+  footer only when the host supplies one. Border colour is reserved for what is
+  happening — blue for the current step, red for a failed run, green for an
+  artifact with a revision ready to read.
+- **A run's tools hang below its card**, where they belong to the attempt rather
+  than to the thing itself.
+- **The card invents nothing it was not given.** No default `Ready` badge, no
+  `Updated …` footer on every node, and no "Preview unavailable" frame where the
+  host passed no preview.
+
+### Fixed — `./graph` (Active Now)
+
+- **Effort frames no longer swallow clicks, and their own buttons work again.**
+  React Flow marks nodes `pointer-events: none` when nothing is selectable, and
+  the frame never re-enabled them — so "Sources" and "Focus" were dead in a real
+  browser while passing every test that clicks them synthetically. The frame is
+  now explicitly inert with `pointer-events: auto` on its controls.
+- **The whole card is one hit target.** Header, body and footer all select;
+  activation moved onto the card element itself, which now carries
+  `role="button"`, `aria-pressed` and stable `data-work-node` /
+  `data-work-card` attributes so a host or a test can address a card without
+  depending on DOM order — React Flow reorders nodes when one is selected, which
+  is what made "click the 4th node" flaky.
+
+- **A chain with no context beside it wraps into a second column** when it is
+  taller than the canvas, instead of shrinking five cards to an unreadable
+  ribbon. The two-column grid already covered efforts that declare
+  `contextNodeIds`; this is the same rule for the ones that do not.
+
+### Added — `./graph`
+
+- **`WorkActivityNodeDetail.participants`** — `Array<{ id; label; avatarUrl? }>`,
+  rendered as an avatar row with an honest "+N" overflow.
+
+### Added — demo
+
+- A "Single column chain" shape in the Active Now fixture: five chained cards
+  with no declared context, beside a two-card effort — the shape a real host
+  sends, and the one the context grid does not cover.
+
 ## [2.335.0] — 2026-09-21
 
 ### Fixed — `./graph` (Active Now)

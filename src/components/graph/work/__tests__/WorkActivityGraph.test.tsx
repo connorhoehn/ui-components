@@ -139,6 +139,15 @@ describe('Active Now composition', () => {
     expect(screen.queryByTestId('activity-inspector')).not.toBeInTheDocument();
   });
 
+  it('keeps effort frames out of the way of the cards inside them', () => {
+    render(<WorkGraph {...props()} />);
+    const frame = screen.getAllByTestId('work-effort')[0];
+    // The frame is scenery: it must not swallow a click meant for a card, but
+    // its own controls have to stay reachable.
+    expect(frame.className).toContain('pointer-events-none');
+    expect(screen.getByRole('button', { name: 'Focus on Sprint review' }).closest('span')!.className).toContain('pointer-events-auto');
+  });
+
   it('stops the ruler at the real clock, not at the end of the day', () => {
     const value = activity();
     // A real America/New_York day: 00:00-24:00 local is 04:00Z to 04:00Z.

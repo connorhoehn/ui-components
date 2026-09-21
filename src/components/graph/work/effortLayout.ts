@@ -125,9 +125,25 @@ export function layoutWorkEfforts(
     // The lane above a row carries that row's relationship labels, one slot
     // each, so two edges into the same card never print on top of each other.
     const rowLane = [...Array(rowCount).keys()].map((row) => 32 + Math.max(1, ...rowsOf(row).map((id) => connections.filter((edge) => edge.to === id).length)) * 24);
-    const rowY = rowHeights.reduce<number[]>((tops, _height, index) => [...tops, index === 0 ? 56 : tops[index - 1] + rowHeights[index - 1] + rowLane[index]], []);
+    const stacked = rowHeights.reduce((total, height, index) => total + height + (index ? rowLane[index] : 0), 56 + padding);
+    // A chain with no context beside it is one column, and a long one runs off
+    // the bottom of any pane. Wrap it into a SECOND column — never a third,
+    // which turns a chain into a staircase nobody can follow.
+    const wrapRow = aside.length === 0 && options.height && stacked > options.height && rowCount > 2
+      ? rowHeights.reduce<{ row: number; run: number }>((best, height, index) => {
+        const run = best.run + height + (index ? rowLane[index] : 0);
+        return run < stacked / 2 ? { row: index + 1, run } : best;
+      }, { row: 0, run: 56 }).row || Math.ceil(rowCount / 2)
+      : rowCount;
+    const band = (row: number) => (row < wrapRow ? 0 : 1);
+    const rowY = rowHeights.reduce<number[]>((tops, _height, index) => [
+      ...tops,
+      index === 0 || band(index) !== band(index - 1) ? 56 : tops[index - 1] + rowHeights[index - 1] + rowLane[index],
+    ], []);
+    const bandWidth = Math.max(0, ...chain.map((id) => size(id).width));
+    const rowX = (row: number) => chainX + band(row) * (bandWidth + 96);
     const placed: WorkEffortLayout['nodes'] = [];
-    for (const id of chain) placed.push({ id: instanceId(effort.id, 'node', id), entityId: id, x: chainX, y: rowY[rowOf.get(id)!], ...size(id) });
+    for (const id of chain) placed.push({ id: instanceId(effort.id, 'node', id), entityId: id, x: rowX(rowOf.get(id)!), y: rowY[rowOf.get(id)!], ...size(id) });
     for (const [id, row] of asidePlacement) placed.push({ id: instanceId(effort.id, 'node', id), entityId: id, x: padding, y: rowY[row], ...size(id) });
     const vertical = aside.length === 0;
     const byId = new Map(placed.map((node) => [node.entityId, node]));
