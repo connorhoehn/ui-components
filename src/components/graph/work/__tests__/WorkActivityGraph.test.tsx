@@ -54,7 +54,10 @@ describe('Active Now composition', () => {
     expect(inspector.getByText('First deck')).toBeInTheDocument();
     expect(inspector.queryByText('Second deck')).not.toBeInTheDocument();
     expect(inspector.getByRole('status')).toHaveTextContent('v3 is generating');
-    expect(inspector.queryByRole('tab', { name: /v3/ })).not.toBeInTheDocument();
+    const pendingTab = inspector.getByRole('tab', { name: /v3/ });
+    expect(pendingTab).toBeDisabled();
+    fireEvent.click(pendingTab);
+    expect(inspector.getByText('First deck')).toBeInTheDocument();
     fireEvent.click(inspector.getByRole('button', { name: 'Reference in chat' }));
     expect(initial.onReference).toHaveBeenCalledWith({ kind: 'node', id: 'deck', revisionId: 'r1', anchorId: 'slide-2' });
     fireEvent.click(screen.getByRole('button', { name: '2 comments on Sprint slides' }));
@@ -97,8 +100,43 @@ describe('Active Now composition', () => {
     expect(initial.onSelectionChange).toHaveBeenCalledWith({ kind: 'node', id: 'deck', revisionId: 'r2' });
     rerender(<WorkGraph {...initial} nodes={initial.nodes.map((node) => ({ ...node, updatedAt: new Date(end + 5000).toISOString() }))} />);
     expect(initial.onViewportChange).not.toHaveBeenCalled();
-    fireEvent.change(screen.getByRole('combobox', { name: 'Focus activity' }), { target: { value: 'deck' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Focus on Sprint review' }));
     expect(initial.activity!.onViewChange).toHaveBeenCalledWith({ ...initial.activity!.view, focusedEffortId: 'deck', overviewViewport: initial.viewport });
+  });
+
+  it('exposes panel chrome, the graph footer and an earlier-work step to the host', () => {
+    const initial = props();
+    const onExpand = vi.fn(); const onPopOut = vi.fn(); const onClose = vi.fn(); const onEarlier = vi.fn();
+    render(<WorkGraph {...initial} activity={{ ...initial.activity!, title: 'Connor’s activity', subtitle: 'Working now · Sharing with you', onExpand, onPopOut, onClose, onEarlier }} />);
+    expect(screen.getByTestId('work-activity-header-subtitle')).toHaveTextContent('Working now · Sharing with you');
+    fireEvent.click(screen.getByRole('button', { name: 'Expand activity' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Open activity in its own page' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close activity' }));
+    expect(onExpand).toHaveBeenCalled(); expect(onPopOut).toHaveBeenCalled(); expect(onClose).toHaveBeenCalled();
+    expect(screen.getByTestId('work-activity-footer')).toHaveTextContent('2 parallel activities · Newest work first');
+    fireEvent.click(screen.getByRole('button', { name: '← Earlier work' }));
+    expect(onEarlier).toHaveBeenCalled();
+  });
+
+  it('labels only the operations the host named, and marks a failed one', () => {
+    const initial = props();
+    const { rerender } = render(<WorkGraph {...initial} activity={{ ...initial.activity!, edgeLabels: { output: 'generating' } }} />);
+    expect(screen.getByRole('button', { name: 'produced, active' })).toHaveTextContent('generating');
+    rerender(<WorkGraph {...initial} activity={{ ...initial.activity!, activeEdgeIds: [], failedEdgeIds: ['output'] }} />);
+    expect(screen.getByTestId('operation-edge')).toHaveAttribute('data-state', 'traversed-failure');
+    expect(screen.getByRole('button', { name: 'produced, failed' })).toHaveTextContent('failed');
+  });
+
+  it('opens the node pane as a column, and none at all when the host places it itself', () => {
+    const initial = props();
+    initial.selection = { kind: 'node', id: 'deck', revisionId: 'r2' };
+    initial.activity!.details!.deck!.banner = { tone: 'info', title: 'Generating v3', description: 'v2 is available' };
+    const { rerender } = render(<WorkGraph {...initial} />);
+    const pane = screen.getByTestId('activity-inspector');
+    expect(pane.className).not.toContain('absolute');
+    expect(within(pane).getByTestId('work-pane-banner')).toHaveTextContent('Generating v3');
+    rerender(<WorkGraph {...initial} activity={{ ...initial.activity!, detailsPlacement: 'none' }} />);
+    expect(screen.queryByTestId('activity-inspector')).not.toBeInTheDocument();
   });
 
   it('steps and scrubs actual bounds, including a 25-hour day, without claiming replay', () => {

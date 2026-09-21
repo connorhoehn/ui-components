@@ -16474,14 +16474,75 @@ declare interface UseActivityBusReturn {
       canAdvance?: boolean;
   }
 
+  /**
+   * Asking a transcript a question. The graph renders the exchange and nothing
+   * else: the host owns the model call, the grounding and the refusal.
+   */
+  export declare interface WorkActivityAsk {
+      enabled: boolean;
+      placeholder?: string;
+      /** Rendered when `enabled` is false. Never invent an answer in its place. */
+      unavailableLabel?: string;
+      /** Host-owned. Resolve with a grounded answer or reject to show the error. */
+      onAsk: (question: string) => Promise<WorkActivityAskAnswer> | WorkActivityAskAnswer;
+  }
+
+  export declare interface WorkActivityAskAnswer {
+      text: string;
+      citations?: WorkActivityAskCitation[];
+      /** Provenance footnote. Say where the answer came from; never imply more. */
+      note?: string;
+  }
+
+  export declare interface WorkActivityAskCitation {
+      id: string;
+      label: string;
+      selection?: Exclude<WorkGraphSelection, null>;
+  }
+
+  /** The one-line state a detail pane opens with. Host-authored, viewer-safe. */
+  export declare interface WorkActivityBanner {
+      tone: WorkActivityBannerTone;
+      title: string;
+      description?: string;
+  }
+
+  export declare type WorkActivityBannerTone = 'info' | 'success' | 'error';
+
   /** Source-backed membership, already filtered for this viewer by the host. */
   export declare interface WorkActivityEffort {
       id: string;
       title: string;
+      /** A second clause under the frame title — "v3 generating · v2 available". */
+      subtitle?: string;
       nodeIds: string[];
       edgeIds: string[];
       /** Older context that may be folded. Never a count of inaccessible sources. */
       contextNodeIds?: string[];
+  }
+
+  /**
+   * The one header row an activity panel gets: who and what on the left, the
+   * three ways out on the right. Hosts that already sit inside
+   * `ChatSidePanelFrame` get the same chrome from the frame and should not
+   * render this as well — it exists so a host outside that frame (a standalone
+   * route, a popped-out window) has no hand-rolled markup to write.
+   */
+  export declare function WorkActivityHeader({ title, subtitle, expanded, onExpand, onPopOut, onClose, actions, className, 'data-testid': testId, }: WorkActivityHeaderProps): JSX.Element;
+
+  export declare interface WorkActivityHeaderProps {
+      title: string;
+      /** A second clause under the title — "Working now · Sharing with you". */
+      subtitle?: string;
+      /** Whether the panel currently occupies the conversation area. */
+      expanded?: boolean;
+      onExpand?: () => void;
+      onPopOut?: () => void;
+      onClose?: () => void;
+      /** Extra controls between the title and the close button. */
+      actions?: ReactNode;
+      className?: string;
+      'data-testid'?: string;
   }
 
   export declare interface WorkActivityNodeDetail {
@@ -16491,6 +16552,38 @@ declare interface UseActivityBusReturn {
       tools?: string[];
       attentionLabel?: string;
       feedbackCount?: number;
+      /**
+       * Secondary lines under the node title — "Planning sync · 08:30–09:00",
+       * "2 speakers · 1 action item". Host-authored and already viewer-safe; when
+       * omitted the card falls back to the node's own status wording.
+       */
+      lines?: string[];
+      /** Short state word beside the first secondary line — "Ready", "Tests running". */
+      badge?: string;
+      /** A short verbatim quotation from the source, already viewer-authorized. */
+      excerpt?: string;
+      /** Trailing line: what this is on the left, its sharing clause on the right. */
+      footer?: {
+          label: string;
+          note?: string;
+      };
+      /** Detail-pane subtitle — "Meeting transcript · Shared with you". */
+      subtitle?: string;
+      /** The state line every detail pane opens with. */
+      banner?: WorkActivityBanner;
+      sections?: WorkActivityPaneSections;
+      /** Transcript rows and the host-owned Ask exchange. */
+      transcript?: {
+          segments: WorkActivityTranscriptSegment[];
+          ask?: WorkActivityAsk;
+      };
+      /**
+       * A closing caveat — what this pane does NOT show, and why. Use it to be
+       * honest about a capability the viewer does not hold.
+       */
+      note?: string;
+      /** Buttons under the body — "Inspect available v2", "Inspect run". */
+      actions?: WorkActivityPaneAction[];
       artifact?: {
           revisions: WorkArtifactRevision[];
           pending?: {
@@ -16499,7 +16592,28 @@ declare interface UseActivityBusReturn {
               status: 'generating' | 'failed';
               message?: string;
           };
+          /** Opens the revision (optionally at one page) at full size. Host-owned. */
+          onOpenPreview?: (revisionId: string, anchorId?: string) => void;
       };
+  }
+
+  export declare interface WorkActivityPaneAction {
+      id: string;
+      label: string;
+      /** Selecting this action moves the graph selection; the host owns navigation. */
+      selection?: Exclude<WorkGraphSelection, null>;
+      onSelect?: () => void;
+  }
+
+  export declare interface WorkActivityPaneSections {
+      /** What the run was given — "Planning sync transcript", "Release plan · rev 6". */
+      inputs?: string[];
+      /** Tools the run is authorized to use in this attempt. */
+      tools?: string[];
+      sources?: WorkActivityReference[];
+      workItem?: WorkActivityReference;
+      /** A prose paragraph under the banner. */
+      description?: string;
   }
 
   export declare interface WorkActivityPresentation {
@@ -16507,6 +16621,10 @@ declare interface UseActivityBusReturn {
       details?: Record<string, WorkActivityNodeDetail>;
       /** Only fresh, running operations in a live query; never inferred from a neighbor. */
       activeEdgeIds: string[];
+      /** Operations whose latest attempt failed. Drawn in the danger tone with a label. */
+      failedEdgeIds?: string[];
+      /** Pill wording per canonical edge id — "generating", "failed". Overrides `label`. */
+      edgeLabels?: Record<string, string>;
       /** Canonical edges retain identity even when their visual input arrow reverses. */
       reversedEdgeIds?: string[];
       mode: 'split' | 'full';
@@ -16522,9 +16640,53 @@ declare interface UseActivityBusReturn {
           count: number;
       }>;
       view: WorkActivityView;
+      /**
+       * Where the selected node's detail pane goes.
+       * `column` (the default) makes it a sibling column of the canvas — the host's
+       * fourth pane, laid out by this component so the activity header spans both.
+       * `overlay` lays it over the canvas, which is right only when the pane is too
+       * narrow to split. `auto` picks between them from the measured width.
+       * `none` renders no pane here: the host places `WorkNodePane` in its own grid.
+       */
+      detailsPlacement?: 'auto' | 'column' | 'overlay' | 'none';
+      /** Panel title. When supplied the renderer draws its own header row. */
+      title?: string;
+      /** A second clause under the title — "Working now · Sharing with you". */
+      subtitle?: string;
+      /** Whether the panel currently occupies the conversation area. */
+      expanded?: boolean;
+      /** Offers the expand/restore control. The host owns the layout change. */
+      onExpand?: () => void;
+      /** Offers the pop-out control. The host owns the standalone route. */
+      onPopOut?: () => void;
+      /** Offers the close control. The host owns dismissal. */
+      onClose?: () => void;
+      /**
+       * "← Earlier work". The host shifts the window earlier; without it the
+       * renderer steps the current window back by its own duration.
+       */
+      onEarlier?: () => void;
       onWindowChange: (window: WorkActivityWindow) => void;
       onViewChange: (view: WorkActivityView) => void;
       onFeedback?: (selection: Exclude<WorkGraphSelection, null>) => void;
+  }
+
+  /** A row that points at another authorized item — a source, a work item. */
+  export declare interface WorkActivityReference {
+      id: string;
+      title: string;
+      meta?: string;
+      /** Canonical target. Omitted when the viewer may see the row but not open it. */
+      selection?: Exclude<WorkGraphSelection, null>;
+  }
+
+  export declare interface WorkActivityTranscriptSegment {
+      id: string;
+      /** Already formatted in the host's timezone — the pane does no clock maths. */
+      at: string;
+      speaker: string;
+      text: string;
+      anchorId?: string;
   }
 
   export declare interface WorkActivityView {
@@ -16563,6 +16725,24 @@ declare interface UseActivityBusReturn {
   /** @see SurfaceTone — which colour family the work area paints in. */
   export declare type WorkAreaTone = SurfaceTone;
 
+  /**
+   * The artifact body of a detail pane: which revisions exist, what the selected
+   * one looks like, and which pages it has. A pending attempt is never a
+   * revision — it cannot be selected, opened or referenced.
+   */
+  export declare function WorkArtifactInspector({ node, artifact, selection, onSelectionChange, onOpen, onReference, quiet }: {
+      node: WorkGraphNodeData;
+      artifact: NonNullable<WorkActivityNodeDetail['artifact']>;
+      selection: Extract<WorkGraphSelection, {
+          kind: 'node';
+      }>;
+      onSelectionChange: (selection: WorkGraphSelection) => void;
+      onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
+      onReference?: (selection: Exclude<WorkGraphSelection, null>) => void;
+      /** Suppress the pending-attempt line when the pane's banner already says it. */
+      quiet?: boolean;
+  }): JSX.Element;
+
   export declare interface WorkArtifactRevision {
       id: string;
       label: string;
@@ -16571,6 +16751,17 @@ declare interface UseActivityBusReturn {
       preview?: ReactNode;
       anchorId?: string;
       anchorLabel?: string;
+      /** Navigable pages of this revision. Omit when the artifact has no pages. */
+      slides?: WorkArtifactSlide[];
+  }
+
+  export declare interface WorkArtifactSlide {
+      id: string;
+      /** 1-based position the host prints as "Slide 4 of 12". */
+      index: number;
+      title: string;
+      /** The host resolves protected preview content; the graph does not fetch URLs. */
+      preview?: ReactNode;
   }
 
   /**
@@ -16715,6 +16906,29 @@ declare interface UseActivityBusReturn {
 
   export declare function WorkNode({ node, selected, sharingFresh, onSelect, onOpen }: WorkNodeProps): JSX.Element;
 
+  /**
+   * The detail pane for one selected node: chrome, a state banner, whichever
+   * bodies the host supplied data for, and one way to carry the thing back into
+   * the conversation. Composition rather than a kind switch — a node that has an
+   * artifact AND sources gets both, and a node the viewer may only see the
+   * existence of gets chrome and an honest empty body.
+   */
+  export declare function WorkNodePane({ node, detail, selection, onSelectionChange, onClose, onOpen, onReference, className, 'data-testid': testId, }: WorkNodePaneProps): JSX.Element;
+
+  export declare interface WorkNodePaneProps {
+      node: WorkGraphNodeData;
+      detail?: WorkActivityNodeDetail;
+      selection: Extract<WorkGraphSelection, {
+          kind: 'node';
+      }>;
+      onSelectionChange: (selection: WorkGraphSelection) => void;
+      onClose: () => void;
+      onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
+      onReference?: (selection: Exclude<WorkGraphSelection, null>) => void;
+      className?: string;
+      'data-testid'?: string;
+  }
+
   export declare interface WorkNodeProps {
       node: WorkGraphNodeData;
       selected?: boolean;
@@ -16723,6 +16937,11 @@ declare interface UseActivityBusReturn {
       onSelect?: (id: string) => void;
       onOpen?: (id: string) => void;
   }
+
+  /** The state line a detail pane opens with. One dot, one claim, one qualifier. */
+  export declare function WorkPaneBanner({ banner }: {
+      banner: WorkActivityBanner;
+  }): JSX.Element;
 
   export declare function WorkReferenceCard({ target, state, node, edge, unavailableLabel, onSelect, onOpen }: WorkReferenceCardProps): JSX.Element;
 
@@ -16812,6 +17031,12 @@ declare interface UseActivityBusReturn {
       className?: string;
   }
 
+  /** Transcript rows and the host-owned Ask exchange. Never invents an answer. */
+  export declare function WorkTranscriptPanel({ transcript, onSelect }: {
+      transcript: NonNullable<WorkActivityNodeDetail['transcript']>;
+      onSelect?: (selection: Exclude<WorkGraphSelection, null>) => void;
+  }): JSX.Element;
+
   export declare const zIndex: {
       /** Sticky headers, fixed toolbars */
       readonly sticky: 20;
@@ -16860,6 +17085,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -16870,9 +17105,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -16906,32 +17151,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

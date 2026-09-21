@@ -6,6 +6,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.333.0] — 2026-09-21
+
+### Added — `./graph` (Active Now)
+
+- **The activity panel now draws its own chrome.** `activity.title`,
+  `subtitle`, `expanded`, `onExpand`, `onPopOut` and `onClose` render a
+  `WorkActivityHeader` row — the host still owns every navigation. Hosts that
+  already sit inside `ChatSidePanelFrame` leave `title` unset and get the
+  frame's header as before; `WorkActivityHeader` is exported for the ones that
+  do not.
+- **Per-kind detail panes.** Selecting a node opens `WorkNodePane`: chrome, a
+  `detail.banner` state line, and whichever bodies the host supplied data for —
+  artifact revisions with a slide navigator and "Sources used", a transcript
+  with an `Ask` tab, a run's inputs and tools, a terminal's work item, or a
+  plain context paragraph. One sticky "Reference in chat" button carries the
+  exact revision and page on screen. The Ask exchange is entirely a host
+  callback: the graph renders the question and whatever comes back, shows
+  `ask.unavailableLabel` when it is disabled, and never calls a model.
+- **`activity.detailsPlacement`** — `column` (the default via `auto`),
+  `overlay` (what `auto` picks under 820px, where a column would squeeze the
+  canvas under 480px), or `none` for a host that places `WorkNodePane` in its
+  own grid. The canvas measures the narrower width and re-fits once.
+- **Node cards carry the host's own wording.** `lines`, `badge`, `excerpt` and
+  `footer` on `WorkActivityNodeDetail`, plus a revision-tab row and a taller
+  thumbnail on artifact cards, and `subtitle` on `WorkActivityEffort` for the
+  line under a frame title.
+- **`failedEdgeIds` and `edgeLabels`.** A failed operation draws in the danger
+  tone with a "failed" pill; only an edge the host names gets a pill otherwise.
+- **Canvas controls and a footer.** Zoom and "Fit graph" bottom-left, the
+  emphasis legend bottom-right, and a footer counting parallel activities with
+  an "← Earlier work" step (`activity.onEarlier`, or a default window step).
+
+### Changed — `./graph` (Active Now)
+
+- **The time strip reads as a clock.** Range label, prev/next, a "Following
+  now" toggle, a 15/30/60/full-day preset, and an hour ruler computed from
+  `bounds` in the host's timezone. Ruler and range labels drop the day period;
+  announced values keep it.
+- **A finished step no longer shouts louder than a running one.** Only work in
+  flight and work that failed get a coloured card.
+- **A vertical chain taller than the canvas wraps into a second band of
+  columns** instead of running off the bottom — never a third band. The
+  automatic fit now goes down to 40% rather than stopping at 100%: the detail
+  pane, not the canvas, is where text is read.
+- The effort-focus `Select` above the canvas is gone; focus is the frame's own
+  "Focus" button and the footer's "← All activities".
+
 ## [2.330.0] — 2026-09-18
 
 ### Fixed — `./social`

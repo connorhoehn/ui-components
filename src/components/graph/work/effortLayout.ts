@@ -4,6 +4,7 @@ export interface WorkNodeBounds { width: number; height: number }
 export interface WorkEffortLayout {
   id: string;
   title: string;
+  subtitle?: string;
   x: number;
   y: number;
   width: number;
@@ -94,10 +95,31 @@ export function layoutWorkEfforts(
     const incomingCount = (id: string) => connections.filter((edge) => edge.to === id).length;
     let reservedBottom = 0;
     let main = vertical ? 56 : padding;
+    const laneAfter = (columnIndex: number) => {
+      const nextColumn = grouped.get(columns[columnIndex + 1]) ?? [];
+      return nextColumn.length ? Math.max(64, ...nextColumn.map((id) => incomingCount(id) * 40 + 16)) : 0;
+    };
+    // A vertical chain taller than the canvas wraps into a SECOND band of
+    // columns rather than shrinking the whole graph past legible type. Two
+    // bands, never more: a third turns a chain into a staircase nobody can
+    // follow. Level order is preserved — bands read down, then right.
+    const totalHeight = 56 + padding + columns.reduce((total, level, index) => total + Math.max(...grouped.get(level)!.map((id) => size(id).height)) + laneAfter(index), 0);
+    const wrapAt = vertical && options.height && totalHeight > options.height ? totalHeight / 2 : Infinity;
+    let bandStart = padding;
+    let bandWidth = 0;
+    let band = 0;
     for (const [columnIndex, level] of columns.entries()) {
-      let cross = vertical ? padding : 56;
+      const members = grouped.get(level)!.sort();
+      const levelHeight = Math.max(...members.map((id) => size(id).height));
+      if (vertical && band === 0 && main > 56 && main + levelHeight + padding > wrapAt) {
+        bandStart += bandWidth + 96;
+        bandWidth = 0;
+        main = 56;
+        band = 1;
+      }
+      let cross = vertical ? bandStart : 56;
       let extent = 0;
-      for (const id of grouped.get(level)!.sort()) {
+      for (const id of members) {
         const bounds = size(id);
         placed.push({ id: instanceId(effort.id, 'node', id), entityId: id, x: vertical ? cross : main, y: vertical ? main : cross, ...bounds });
         const crossExtent = vertical ? bounds.width : Math.max(bounds.height, incomingCount(id) * 40);
@@ -105,14 +127,13 @@ export function layoutWorkEfforts(
         cross += crossExtent + 28;
         extent = Math.max(extent, vertical ? bounds.height : bounds.width);
       }
-      const nextColumn = grouped.get(columns[columnIndex + 1]) ?? [];
-      const nextLaneHeight = Math.max(64, ...nextColumn.map((id) => incomingCount(id) * 40 + 16));
-      main += extent + (vertical ? nextLaneHeight : 144);
+      if (vertical) bandWidth = Math.max(bandWidth, cross - 28 - bandStart);
+      main += extent + (vertical ? Math.max(64, laneAfter(columnIndex)) : 144);
     }
     const byId = new Map(placed.map((node) => [node.entityId, node]));
     const labelSlots = new Map<string, number>();
     layouts.push({
-      id: effort.id, title: effort.title, x: 0, y: 0,
+      id: effort.id, title: effort.title, subtitle: effort.subtitle, x: 0, y: 0,
       width: Math.max(...placed.map((node) => node.x + node.width)) + padding,
       height: reservedBottom + padding,
       collapsedSourceCount: members.length - shown.length, sourceCount: sources.size,
