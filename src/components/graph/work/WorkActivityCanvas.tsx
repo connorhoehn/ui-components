@@ -12,19 +12,23 @@ import type { WorkActivityNodeDetail, WorkActivityPresentation, WorkGraphProps, 
 type ActivityProps = WorkGraphProps & { activity: WorkActivityPresentation };
 interface ActivityNodeData extends Record<string, unknown> {
   entity: WorkGraphProps['nodes'][number]; detail?: WorkActivityNodeDetail;
-  live: boolean; vertical: boolean; revisionId?: string; onSelect: WorkGraphProps['onSelectionChange']; onFeedback: WorkActivityPresentation['onFeedback'];
+  live: boolean; revisionId?: string; onSelect: WorkGraphProps['onSelectionChange']; onFeedback: WorkActivityPresentation['onFeedback'];
 }
 interface FrameData extends Record<string, unknown> { title: string; subtitle?: string; live: boolean; sources: number; expanded: boolean; focused: boolean; onFocus: () => void; onSources: () => void; cycle: boolean }
-interface ActivityEdgeData extends Record<string, unknown> { canonicalId: string; label: string; pill?: string; active: boolean; failed: boolean; vertical: boolean; onSelect: () => void; labelX: number; labelY: number }
+interface ActivityEdgeData extends Record<string, unknown> { canonicalId: string; label: string; pill?: string; active: boolean; failed: boolean; onSelect: () => void; labelX: number; labelY: number }
 type ActivityNode = Node<ActivityNodeData, 'activity'>;
 type FrameNode = Node<FrameData, 'effort'>;
 type ActivityEdge = Edge<ActivityEdgeData, 'activity'>;
 
+// Four fixed anchors, so a relationship enters and leaves on the side the grid
+// puts it — an edge that picks its own side is what draws detour loops.
 function ResourceNode({ data, selected }: NodeProps<ActivityNode>) {
   return <>
-    <Handle type="target" position={data.vertical ? Position.Top : Position.Left} isConnectable={false} />
+    <Handle type="target" id="in-left" position={Position.Left} isConnectable={false} />
+    <Handle type="target" id="in-top" position={Position.Top} isConnectable={false} />
     <WorkActivityNode node={data.entity} detail={data.detail} live={data.live} selected={!!selected} selectedRevisionId={data.revisionId} onSelect={data.onSelect} onFeedback={data.onFeedback} />
-    <Handle type="source" position={data.vertical ? Position.Bottom : Position.Right} isConnectable={false} />
+    <Handle type="source" id="out-right" position={Position.Right} isConnectable={false} />
+    <Handle type="source" id="out-bottom" position={Position.Bottom} isConnectable={false} />
   </>;
 }
 function EffortFrame({ data }: NodeProps<FrameNode>) {
@@ -54,9 +58,9 @@ function Relationship(props: EdgeProps<ActivityEdge>) {
       <button
         type="button"
         className={cn(
-          'nodrag nopan pointer-events-auto absolute flex items-center justify-center rounded-full text-[10px] leading-none focus-visible:outline-2 focus-visible:outline-primary',
+          'nodrag nopan pointer-events-auto absolute z-10 flex items-center justify-center rounded-full text-[10px] font-medium leading-none focus-visible:outline-2 focus-visible:outline-primary',
           data.pill
-            ? cn('h-5 max-w-28 border bg-surface px-2', data.failed ? 'border-danger-border text-danger-fg' : data.active ? 'border-info-border text-info-fg' : 'border-border text-text-secondary')
+            ? cn('h-5 max-w-28 border bg-surface px-2 shadow-sm', data.failed ? 'border-danger text-danger-fg' : data.active ? 'border-info text-info-fg' : 'border-border-emphasis text-text-secondary')
             : 'h-3 w-3 border border-transparent bg-transparent text-transparent focus-visible:border-border focus-visible:bg-surface',
         )}
         style={{ transform: `translate(-50%, -50%) translate(${data.labelX}px, ${data.labelY}px)` }}
@@ -92,14 +96,18 @@ export function WorkActivityCanvas(props: ActivityProps) {
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
-  const layouts = useMemo(() => layoutWorkEfforts(nodes, edges, activity.efforts, { width: size.width, height: size.height - 56, full: activity.mode === 'full', focusedEffortId: view.focusedEffortId, expandedSourceEfforts: view.expandedSourceEfforts, reversedEdgeIds: activity.reversedEdgeIds, measurements }), [nodes, edges, activity.efforts, activity.mode, activity.reversedEdgeIds, view.focusedEffortId, view.expandedSourceEfforts, size, measurements]);
+  // Joined, so a fresh object of the same labels does not re-run the layout.
+  const labelledKey = [...Object.keys(activity.edgeLabels ?? {}), ...(activity.failedEdgeIds ?? [])].sort().join('\u0000');
+  const layouts = useMemo(() => layoutWorkEfforts(nodes, edges, activity.efforts, { width: size.width, height: size.height, full: activity.mode === 'full', focusedEffortId: view.focusedEffortId, expandedSourceEfforts: view.expandedSourceEfforts, reversedEdgeIds: activity.reversedEdgeIds, labelledEdgeIds: labelledKey.split('\u0000').filter(Boolean), measurements }), [nodes, edges, activity.efforts, activity.mode, activity.reversedEdgeIds, labelledKey, view.focusedEffortId, view.expandedSourceEfforts, size, measurements]);
   const fit = useCallback((): WorkGraphViewport => {
-    const width = Math.max(1, ...layouts.map((group) => group.x + group.width));
-    const height = Math.max(1, ...layouts.map((group) => group.y + group.height));
-    // Show the whole shape by default — the detail pane, not the canvas, is
-    // where text is read. 40% is the floor; past it, pan and focus take over.
-    const zoom = Math.max(0.4, Math.min(1.2, (size.width - 48) / width, (size.height - 56) / height));
-    return { x: 16, y: 24, zoom };
+    const left = Math.min(0, ...layouts.map((group) => group.x));
+    const top = Math.min(0, ...layouts.map((group) => group.y));
+    const width = Math.max(1, ...layouts.map((group) => group.x + group.width)) - left;
+    const height = Math.max(1, ...layouts.map((group) => group.y + group.height)) - top;
+    // Fill the canvas: the work should span the pane with a margin, not sit in
+    // a corner of it. 40% is the floor; past it, pan and focus take over.
+    const zoom = Math.max(0.4, Math.min(1.2, (size.width - 48) / width, (size.height - 48) / height));
+    return { x: (size.width - width * zoom) / 2 - left * zoom, y: (size.height - height * zoom) / 2 - top * zoom, zoom };
   }, [layouts, size]);
   // A status border or a new text line can change measurements. Re-layout may
   // reserve that space, but only a navigation/topology intent may reset zoom.
@@ -128,7 +136,7 @@ export function WorkActivityCanvas(props: ActivityProps) {
     const expanded = view.expandedSourceEfforts.includes(group.id);
     flowNodes.push({ id: frameId, type: 'effort', position: { x: group.x, y: group.y }, style: { width: group.width, height: group.height }, selectable: false, focusable: false, data: { title: group.title, subtitle: group.subtitle, live: live && group.nodes.some((instance) => byId.get(instance.entityId)?.status === 'running'), sources: !view.focusedEffortId && (group.collapsedSourceCount > 0 || expanded) ? group.sourceCount : 0, expanded, focused: view.focusedEffortId === group.id, cycle: group.cyclicNodeIds.length > 0, onFocus: () => focus(group.id), onSources: () => onViewChange({ ...view, expandedSourceEfforts: expanded ? view.expandedSourceEfforts.filter((id) => id !== group.id) : [...view.expandedSourceEfforts, group.id] }) } });
     for (const instance of group.nodes) {
-      flowNodes.push({ id: instance.id, type: 'activity', parentId: frameId, extent: 'parent', position: { x: instance.x, y: instance.y }, selected: selection?.kind === 'node' && selection.id === instance.entityId, focusable: false, data: { entity: byId.get(instance.entityId)!, detail: activity.details?.[instance.entityId], revisionId: selection?.kind === 'node' && selection.id === instance.entityId ? selection.revisionId : undefined, live, vertical: group.vertical, onSelect: onSelectionChange, onFeedback: activity.onFeedback } });
+      flowNodes.push({ id: instance.id, type: 'activity', parentId: frameId, extent: 'parent', position: { x: instance.x, y: instance.y }, selected: selection?.kind === 'node' && selection.id === instance.entityId, focusable: false, data: { entity: byId.get(instance.entityId)!, detail: activity.details?.[instance.entityId], revisionId: selection?.kind === 'node' && selection.id === instance.entityId ? selection.revisionId : undefined, live, onSelect: onSelectionChange, onFeedback: activity.onFeedback } });
     }
     for (const instance of group.edges) {
       const edge = byEdge.get(instance.entityId)!;
@@ -141,7 +149,7 @@ export function WorkActivityCanvas(props: ActivityProps) {
       // says so. Everything else stays a plain line, and its selection
       // affordance stays keyboard-only.
       const pill = activity.edgeLabels?.[edge.id] ?? (failed ? 'failed' : undefined);
-      flowEdges.push({ id: instance.id, type: 'activity', source: instance.source, target: instance.target, selected: selection?.kind === 'edge' && selection.id === edge.id, focusable: false, markerEnd: { type: MarkerType.ArrowClosed, color: failed ? 'var(--color-danger)' : 'var(--color-border-emphasis)' }, data: { canonicalId: edge.id, label, pill, active, failed, vertical: group.vertical, labelX, labelY, onSelect: () => onSelectionChange({ kind: 'edge', id: edge.id }) } });
+      flowEdges.push({ id: instance.id, type: 'activity', source: instance.source, target: instance.target, sourceHandle: instance.sourceHandle, targetHandle: instance.targetHandle, selected: selection?.kind === 'edge' && selection.id === edge.id, focusable: false, markerEnd: { type: MarkerType.ArrowClosed, color: failed ? 'var(--color-danger)' : 'var(--color-border-emphasis)' }, data: { canonicalId: edge.id, label, pill, active, failed, labelX, labelY, onSelect: () => onSelectionChange({ kind: 'edge', id: edge.id }) } });
     }
   }
   const knownInstances = new Map(flowNodes.filter((node): node is ActivityNode => node.type === 'activity').map((node) => [node.id, node.data.entity.id]));

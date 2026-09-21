@@ -55,10 +55,10 @@ describe('source-backed effort layout', () => {
     expect(after).toEqual(before);
   });
 
-  it.each([650, 2600])('reserves complete label rectangles for fan-in and skipped levels at width %i', (width) => {
+  it.each([650, 2600])('reserves complete label lanes for fan-in and skipped levels at width %i', (width) => {
     const connections = [...edges, edge('skip', 'source', 'deck')];
-    const [group] = layoutWorkEfforts(nodes, connections, [{ ...efforts[0], edgeIds: ['a', 'b', 'skip'] }], { width, measurements: new Map([['deck', { width: 200, height: 210 }]]) });
-    const labels = group.edges.map((item) => ({ x: item.labelX - 56, y: item.labelY - 16, width: 112, height: 32 }));
+    const [group] = layoutWorkEfforts(nodes, connections, [{ ...efforts[0], edgeIds: ['a', 'b', 'skip'] }], { width, labelledEdgeIds: ['a', 'b', 'skip'], measurements: new Map([['deck', { width: 200, height: 210 }]]) });
+    const labels = group.edges.map((item) => ({ x: item.labelX - 56, y: item.labelY - 10, width: 112, height: 20 }));
     for (const label of labels) {
       expect(label.x).toBeGreaterThanOrEqual(0);
       expect(label.y).toBeGreaterThanOrEqual(0);
@@ -68,6 +68,26 @@ describe('source-backed effort layout', () => {
         expect(label.x + label.width <= other.x || other.x + other.width <= label.x || label.y + label.height <= other.y || other.y + other.height <= label.y).toBe(true);
       }
     }
+  });
+
+  it('lays context in the left column beside the step that used it, and the chain down the right', () => {
+    const [group] = layoutWorkEfforts(nodes, edges, [efforts[0]], { width: 900, expandedSourceEfforts: ['slides'] });
+    const at = (id: string) => group.nodes.find((item) => item.entityId === id)!;
+    expect(at('source').x).toBeLessThan(at('agent-a').x);
+    expect(at('source').y).toBe(at('agent-a').y);
+    expect(at('deck').x).toBe(at('agent-a').x);
+    expect(at('deck').y).toBeGreaterThan(at('agent-a').y);
+    const handles = Object.fromEntries(group.edges.map((item) => [item.entityId, [item.sourceHandle, item.targetHandle]]));
+    expect(handles.a).toEqual(['out-right', 'in-left']);
+    expect(handles.b).toEqual(['out-bottom', 'in-top']);
+  });
+
+  it('keeps parallel efforts side by side and scales rather than stacking them', () => {
+    const side = layoutWorkEfforts(nodes, [], [efforts[2], { id: 'deck', title: 'Deck', nodeIds: ['deck'], edgeIds: [] }], { width: 420, height: 400 });
+    expect(side[0].y).toBe(side[1].y);
+    expect(side[1].x).toBeGreaterThan(side[0].x + side[0].width);
+    const stacked = layoutWorkEfforts(nodes, [], [efforts[2], { id: 'deck', title: 'Deck', nodeIds: ['deck'], edgeIds: [] }], { width: 260, height: 900 });
+    expect(stacked[1].y).toBeGreaterThan(stacked[0].y);
   });
 
   it('places two compact efforts side by side when they fit', () => {

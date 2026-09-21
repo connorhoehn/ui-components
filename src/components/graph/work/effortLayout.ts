@@ -14,7 +14,7 @@ export interface WorkEffortLayout {
   vertical: boolean;
   cyclicNodeIds: string[];
   nodes: Array<{ id: string; entityId: string; x: number; y: number; width: number; height: number }>;
-  edges: Array<{ id: string; entityId: string; source: string; target: string; labelX: number; labelY: number }>;
+  edges: Array<{ id: string; entityId: string; source: string; target: string; sourceHandle: string; targetHandle: string; labelX: number; labelY: number }>;
 }
 
 export interface EffortLayoutOptions {
@@ -26,6 +26,8 @@ export interface EffortLayoutOptions {
   reversedEdgeIds?: readonly string[];
   /** Measured complete node bounds, keyed by canonical entity. */
   measurements?: ReadonlyMap<string, WorkNodeBounds>;
+  /** Canonical edges that will draw a pill, so their lane is reserved. */
+  labelledEdgeIds?: readonly string[];
   /** Internal second-pass compaction; expanded sources always take precedence. */
   foldedForHeight?: readonly string[];
 }
@@ -46,7 +48,7 @@ export function layoutWorkEfforts(
   const padding = options.full ? 28 : 20;
   const gap = options.full ? 64 : 36;
   const availableWidth = Math.max(240, options.width - 32);
-  const crowded = (efforts.length >= 3 || (efforts.length >= 2 && availableWidth < 1200)) && !options.focusedEffortId;
+  const crowded = efforts.length >= 3 && !options.focusedEffortId;
   const selected = options.focusedEffortId ? efforts.filter((effort) => effort.id === options.focusedEffortId) : efforts;
   const layouts: WorkEffortLayout[] = [];
   for (const effort of selected) {
@@ -87,62 +89,74 @@ export function layoutWorkEfforts(
       grouped.set(level, [...(grouped.get(level) ?? []), id]);
     }
     const size = (id: string) => options.measurements?.get(id) ?? { width: 200, height: 112 };
-    const columns = [...grouped.keys()].sort((a, b) => a - b);
-    const naturalWidth = columns.reduce((total, level) => total + Math.max(...grouped.get(level)!.map((id) => size(id).width)), padding * 2)
-      + Math.max(0, columns.length - 1) * 144;
-    const vertical = naturalWidth > (selected.length === 2 ? (availableWidth - gap) / 2 : availableWidth);
-    const placed: WorkEffortLayout['nodes'] = [];
-    const incomingCount = (id: string) => connections.filter((edge) => edge.to === id).length;
-    let reservedBottom = 0;
-    let main = vertical ? 56 : padding;
-    const laneAfter = (columnIndex: number) => {
-      const nextColumn = grouped.get(columns[columnIndex + 1]) ?? [];
-      return nextColumn.length ? Math.max(64, ...nextColumn.map((id) => incomingCount(id) * 40 + 16)) : 0;
+    // The prototype's grid, and the shape of the work itself: every step of the
+    // chain is a ROW, the context it was given sits in the LEFT column beside
+    // the step that used it, and the step itself sits in the RIGHT column. An
+    // effort with no declared context is one column of rows.
+    const contextIds = shown.filter((id) => sources.has(id));
+    const chainIds = shown.filter((id) => !sources.has(id));
+    const chain = (chainIds.length ? chainIds : shown).slice().sort((a, b) => (levels.get(a)! - levels.get(b)!) || (a < b ? -1 : 1));
+    const aside = chainIds.length ? contextIds : [];
+    const rowOf = new Map(chain.map((id, index) => [id, index]));
+    const successorRow = (id: string) => {
+      const rows = connections.filter((edge) => edge.from === id).map((edge) => rowOf.get(edge.to)).filter((row): row is number => row !== undefined);
+      return rows.length ? Math.min(...rows) : undefined;
     };
-    // A vertical chain taller than the canvas wraps into a SECOND band of
-    // columns rather than shrinking the whole graph past legible type. Two
-    // bands, never more: a third turns a chain into a staircase nobody can
-    // follow. Level order is preserved — bands read down, then right.
-    const totalHeight = 56 + padding + columns.reduce((total, level, index) => total + Math.max(...grouped.get(level)!.map((id) => size(id).height)) + laneAfter(index), 0);
-    const wrapAt = vertical && options.height && totalHeight > options.height ? totalHeight / 2 : Infinity;
-    let bandStart = padding;
-    let bandWidth = 0;
-    let band = 0;
-    for (const [columnIndex, level] of columns.entries()) {
-      const members = grouped.get(level)!.sort();
-      const levelHeight = Math.max(...members.map((id) => size(id).height));
-      if (vertical && band === 0 && main > 56 && main + levelHeight + padding > wrapAt) {
-        bandStart += bandWidth + 96;
-        bandWidth = 0;
-        main = 56;
-        band = 1;
+    // One context card per row, so a row never becomes a stack of its own.
+    const takenRows = new Set<number>();
+    const asidePlacement = new Map<string, number>();
+    let extraRow = chain.length;
+    for (const id of aside.slice().sort((a, b) => (levels.get(a)! - levels.get(b)!) || (a < b ? -1 : 1))) {
+      const wanted = successorRow(id);
+      let row = wanted;
+      if (row === undefined || takenRows.has(row)) {
+        const candidates = wanted === undefined ? [] : [...Array(chain.length).keys()].filter((index) => !takenRows.has(index));
+        row = candidates.length ? candidates.reduce((best, index) => Math.abs(index - wanted!) < Math.abs(best - wanted!) ? index : best) : extraRow++;
       }
-      let cross = vertical ? bandStart : 56;
-      let extent = 0;
-      for (const id of members) {
-        const bounds = size(id);
-        placed.push({ id: instanceId(effort.id, 'node', id), entityId: id, x: vertical ? cross : main, y: vertical ? main : cross, ...bounds });
-        const crossExtent = vertical ? bounds.width : Math.max(bounds.height, incomingCount(id) * 40);
-        reservedBottom = Math.max(reservedBottom, vertical ? main + bounds.height : cross + crossExtent);
-        cross += crossExtent + 28;
-        extent = Math.max(extent, vertical ? bounds.height : bounds.width);
-      }
-      if (vertical) bandWidth = Math.max(bandWidth, cross - 28 - bandStart);
-      main += extent + (vertical ? Math.max(64, laneAfter(columnIndex)) : 144);
+      takenRows.add(row);
+      asidePlacement.set(id, row);
     }
+    const rowCount = Math.max(chain.length, ...[...asidePlacement.values()].map((row) => row + 1), 1);
+    const columnGap = options.labelledEdgeIds?.some((id) => connections.some((edge) => edge.id === id && asidePlacement.has(edge.from))) ? 132 : 56;
+    const asideWidth = aside.length ? Math.max(...aside.map((id) => size(id).width)) : 0;
+    const chainX = padding + (asideWidth ? asideWidth + columnGap : 0);
+    const rowsOf = (row: number) => [...chain.filter((id) => rowOf.get(id) === row), ...[...asidePlacement].filter(([, value]) => value === row).map(([id]) => id)];
+    const rowHeights = [...Array(rowCount).keys()].map((row) => Math.max(0, ...rowsOf(row).map((id) => size(id).height)));
+    // The lane above a row carries that row's relationship labels, one slot
+    // each, so two edges into the same card never print on top of each other.
+    const rowLane = [...Array(rowCount).keys()].map((row) => 32 + Math.max(1, ...rowsOf(row).map((id) => connections.filter((edge) => edge.to === id).length)) * 24);
+    const rowY = rowHeights.reduce<number[]>((tops, _height, index) => [...tops, index === 0 ? 56 : tops[index - 1] + rowHeights[index - 1] + rowLane[index]], []);
+    const placed: WorkEffortLayout['nodes'] = [];
+    for (const id of chain) placed.push({ id: instanceId(effort.id, 'node', id), entityId: id, x: chainX, y: rowY[rowOf.get(id)!], ...size(id) });
+    for (const [id, row] of asidePlacement) placed.push({ id: instanceId(effort.id, 'node', id), entityId: id, x: padding, y: rowY[row], ...size(id) });
+    const vertical = aside.length === 0;
     const byId = new Map(placed.map((node) => [node.entityId, node]));
     const labelSlots = new Map<string, number>();
+    const rowFor = (id: string) => rowOf.get(id) ?? asidePlacement.get(id) ?? 0;
     layouts.push({
       id: effort.id, title: effort.title, subtitle: effort.subtitle, x: 0, y: 0,
       width: Math.max(...placed.map((node) => node.x + node.width)) + padding,
-      height: reservedBottom + padding,
+      height: Math.max(...placed.map((node) => node.y + node.height)) + padding,
       collapsedSourceCount: members.length - shown.length, sourceCount: sources.size,
       vertical, cyclicNodeIds, nodes: placed,
       edges: connections.map((edge) => {
-        const target = byId.get(edge.to)!;
         const slot = labelSlots.get(edge.to) ?? 0;
         labelSlots.set(edge.to, slot + 1);
-        return { id: instanceId(effort.id, 'edge', edge.id), entityId: edge.id, source: instanceId(effort.id, 'node', edge.from), target: instanceId(effort.id, 'node', edge.to), labelX: vertical ? target.x + target.width / 2 : target.x - 72, labelY: vertical ? target.y - (incomingCount(edge.to) - slot) * 40 - 8 + 16 : target.y + slot * 40 + 16 };
+        const from = byId.get(edge.from)!;
+        const target = byId.get(edge.to)!;
+        // Orthogonal and hugging the grid: across the columns when the context
+        // feeds the step beside it, straight down when the chain continues.
+        const across = from.x !== target.x;
+        const sourceHandle = across ? 'out-right' : 'out-bottom';
+        const targetHandle = across && rowFor(edge.from) === rowFor(edge.to) ? 'in-left' : 'in-top';
+        return {
+          id: instanceId(effort.id, 'edge', edge.id), entityId: edge.id,
+          source: instanceId(effort.id, 'node', edge.from), target: instanceId(effort.id, 'node', edge.to),
+          sourceHandle, targetHandle,
+          // Labels live in the lane between rows, never over a card.
+          labelX: across && targetHandle === 'in-left' ? (from.x + from.width + target.x) / 2 : target.x + target.width / 2 + 44,
+          labelY: target.y - 26 - slot * 24,
+        };
       }),
     });
   }
@@ -150,19 +164,34 @@ export function layoutWorkEfforts(
     const tooTall = layouts.filter((group) => group.height > options.height! && group.sourceCount > 0 && group.sourceCount < group.nodes.length && group.collapsedSourceCount === 0 && !expanded.has(group.id) && !options.foldedForHeight?.includes(group.id));
     if (tooTall.length) return layoutWorkEfforts(nodes, edges, efforts, { ...options, foldedForHeight: [...(options.foldedForHeight ?? []), ...tooTall.map((group) => group.id)] });
   }
-  // Greedy bounded packing of whole effort rectangles, never individual nodes.
+  // Parallel work reads as parallel: efforts sit side by side, newest first,
+  // and the canvas scales down to hold them. Stacking is only worth it when it
+  // buys a materially bigger view — wrapping trades width for height, so it
+  // cannot rescue a row that is merely too tall.
   // Keep source order stable so heartbeat/status changes cannot reorder work.
-  let x = 16, y = 24, rowHeight = 0;
-  for (const layout of layouts) {
-    if (x > 16 && x + layout.width > availableWidth) {
-      x = 16;
-      y += rowHeight + gap;
-      rowHeight = 0;
+  const pack = (wrap: boolean) => {
+    const places: Array<{ x: number; y: number }> = [];
+    let x = 16, y = 24, rowHeight = 0;
+    for (const layout of layouts) {
+      if (wrap && x > 16 && x + layout.width > availableWidth) {
+        x = 16;
+        y += rowHeight + gap;
+        rowHeight = 0;
+      }
+      places.push({ x, y });
+      x += layout.width + gap;
+      rowHeight = Math.max(rowHeight, layout.height);
     }
-    layout.x = x;
-    layout.y = y;
-    x += layout.width + gap;
-    rowHeight = Math.max(rowHeight, layout.height);
+    const width = Math.max(1, ...places.map((place, index) => place.x + layouts[index].width));
+    const height = Math.max(1, ...places.map((place, index) => place.y + layouts[index].height));
+    return { places, zoom: Math.min((options.width - 48) / width, ((options.height ?? height + 48) - 48) / height) };
+  };
+  const side = pack(false);
+  const wrapped = pack(true);
+  const chosen = layouts.length <= 1 || wrapped.zoom <= side.zoom * 1.25 ? side : wrapped;
+  for (const [index, layout] of layouts.entries()) {
+    layout.x = chosen.places[index].x;
+    layout.y = chosen.places[index].y;
   }
   return layouts;
 }

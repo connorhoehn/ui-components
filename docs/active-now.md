@@ -84,12 +84,22 @@ Two compact efforts pack horizontally where space permits; crowded or tall views
 fold earlier context behind a source disclosure. Focus restores that effort's
 sources and All activities restores the prior overview viewport.
 
-Node measurements reserve full card height and relationship-label lanes. Status
-updates do not trigger viewport fitting. A vertical chain taller than the canvas wraps
-into a SECOND band of columns — never a third, which turns a chain into a staircase.
-Automatic fit shows the whole shape down to a 40% floor: the detail pane, not the canvas,
-is where text is read, and past that floor pan and effort focus take over. Invalid cycles
-are reported; producers must validate causal DAGs before supplying the overview.
+Inside an effort the layout is a grid that mirrors the work: every step of the chain is a
+ROW down the right column, and the context that step was given sits in the LEFT column
+beside it — "Planning sync | Transcript", "Project documents | Generate presentation",
+"— | Sprint review". An effort with no declared `contextNodeIds` is one column of rows.
+Relationships are orthogonal: across the columns when context feeds the step next to it,
+straight down when the chain continues, so an edge never loops around a card. Label lanes
+between rows are reserved for the operations the host actually labels.
+
+Parallel work reads as parallel: efforts sit side by side, newest first, and the canvas
+scales down to hold them. They wrap onto a second line only when that buys a materially
+bigger view — wrapping trades width for height, so it can never rescue a row that is
+merely too tall. Node measurements reserve full card height. Status updates do not trigger
+viewport fitting; the fit runs once per structural change and centres the work in the
+canvas rather than parking it in a corner, down to a 40% floor — the detail pane, not the
+canvas, is where text is read. Invalid cycles are reported; producers must validate causal
+DAGs before supplying the overview.
 
 Canvas controls sit bottom-left (zoom in/out, "Fit graph") and the emphasis legend
 bottom-right. The footer under the canvas counts parallel activities and offers

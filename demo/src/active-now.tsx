@@ -136,7 +136,7 @@ const EFFORTS: Array<{ id: string; title: string; subtitle: string; nodeIds: str
   { id: 'design-assets', title: 'Design assets', subtitle: 'Design agent · Rendering', nodeIds: ['design-source', 'design-agent'], edgeIds: ['design-input'] },
 ];
 
-const WIDTHS: Record<string, string> = { '600': 'w-[600px]', '700': 'w-[700px]', '895': 'w-[895px]' };
+const WIDTHS: Record<string, string> = { '530': 'w-[530px]', '600': 'w-[600px]', '700': 'w-[700px]', '895': 'w-[895px]' };
 
 function Preview() {
   const [count, setCount] = useState(2);

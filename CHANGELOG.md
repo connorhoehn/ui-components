@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.334.0] — 2026-09-21
+
+### Changed — `./graph` (Active Now)
+
+- **Efforts sit side by side, newest first, and the canvas scales to hold
+  them.** Two parallel activities stayed parallel only until the pane got
+  narrow, and then stacked — which is the one thing that cannot help, since
+  wrapping trades width for height. They now wrap onto a second line only when
+  that buys a materially bigger view.
+- **Inside an effort the layout is the work's own grid:** every step of the
+  chain is a row down the right column, and the context that step was given
+  sits in the left column beside it. An effort with no declared
+  `contextNodeIds` stays one column of rows.
+- **Relationships are orthogonal and hug the grid.** Nodes now carry four
+  fixed anchors and the layout names the one each edge uses, so a
+  context-to-step edge goes across and a chain edge goes straight down. Edges
+  no longer detour around the card they are pointing at.
+- **Fit fills the canvas.** The view is centred with a margin instead of being
+  drawn small in the top-left corner; the "fit once per structural change"
+  rule is unchanged.
+- **The operation pill is legible over its own edge** — solid surface, a
+  coloured border and a shadow, above the path rather than under it.
+
+### Added — demo
+
+- A `530px pane` width in the Active Now fixture, next to 600/700/895.
+
 ## [2.333.0] — 2026-09-21
 
 ### Added — `./graph` (Active Now)
