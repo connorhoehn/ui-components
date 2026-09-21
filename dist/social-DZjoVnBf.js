@@ -22,7 +22,7 @@ import { n as z, r as B, t as V } from "./ChoiceList-CaZ4rZrS.js";
 import { L as te, N as H, Q as ne, R as re, X as ie, nt as ae } from "./ConversationSurface-A0GvK5p6.js";
 import { t as oe } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as se, t as U } from "./ReactionPickerPopover-CcL-n6gt.js";
-import { n as ce, t as le } from "./composerCommands-DXer0id_.js";
+import { n as ce, t as le } from "./composerCommands-BrHGQMGb.js";
 import "./ChatSidePanelRegistry-Dqnq0ezu.js";
 import { createContext as ue, useCallback as W, useContext as G, useEffect as K, useId as de, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";

@@ -1,10 +1,12 @@
-import { t as e } from "./Button-BhS4-R6_.js";
-import { t } from "./Modal-CyoyiNKN.js";
-import { t as n } from "./Input-DLknWXri.js";
-import { useEffect as r, useRef as i, useState as a } from "react";
-import { jsx as o, jsxs as s } from "react/jsx-runtime";
+import { t as e } from "./cn-DhjIN-s0.js";
+import { t } from "./Button-BhS4-R6_.js";
+import { c as n, u as r } from "./Icons-CuuLNfdk.js";
+import { t as i } from "./Modal-CyoyiNKN.js";
+import { t as a } from "./Input-DLknWXri.js";
+import { useEffect as o, useRef as s, useState as c } from "react";
+import { jsx as l, jsxs as u } from "react/jsx-runtime";
 //#region src/components/social/emojiShortcodes.ts
-var c = [
+var d = [
 	{
 		code: "+1",
 		emoji: "👍",
@@ -532,7 +534,7 @@ var c = [
 		keywords: ["present"]
 	}
 ];
-function l(e, t = c, n = 8) {
+function f(e, t = d, n = 8) {
 	let r = e.trim().toLowerCase();
 	if (!r) return t.slice(0, n);
 	let i = [], a = [], o = [];
@@ -545,40 +547,40 @@ function l(e, t = c, n = 8) {
 }
 //#endregion
 //#region src/components/social/LinkDialog.tsx
-function u(e) {
+function p(e) {
 	let t = e.trim();
 	return t ? /^[a-z][a-z0-9+.-]*:/i.test(t) || t.startsWith("/") || t.startsWith("#") ? t : `https://${t}` : "";
 }
-function d({ open: c, initialText: l = "", initialHref: d = "", onSubmit: f, onRemove: p, onClose: m, "data-testid": h = "link-dialog" }) {
-	let [g, _] = a(d), [v, y] = a(l), b = i(null);
-	r(() => {
-		if (!c) return;
-		_(d), y(l);
-		let e = setTimeout(() => b.current?.focus(), 0);
-		return () => clearTimeout(e);
+function m({ open: e, initialText: n = "", initialHref: r = "", onSubmit: d, onRemove: f, onClose: m, "data-testid": h = "link-dialog" }) {
+	let [g, _] = c(r), [v, y] = c(n), b = s(null);
+	o(() => {
+		if (!e) return;
+		_(r), y(n);
+		let t = setTimeout(() => b.current?.focus(), 0);
+		return () => clearTimeout(t);
 	}, [
-		c,
-		d,
-		l
+		e,
+		r,
+		n
 	]);
 	let x = () => {
-		let e = u(g);
-		e && f({
+		let e = p(g);
+		e && d({
 			href: e,
 			text: v.trim()
 		});
 	};
-	return /* @__PURE__ */ o(t, {
-		open: c,
+	return /* @__PURE__ */ l(i, {
+		open: e,
 		onClose: m,
-		title: d ? "Edit link" : "Add link",
+		title: r ? "Edit link" : "Add link",
 		"data-testid": h,
-		children: /* @__PURE__ */ s("div", {
+		children: /* @__PURE__ */ u("div", {
 			className: "flex flex-col gap-3 p-1",
 			children: [
-				/* @__PURE__ */ s("label", {
+				/* @__PURE__ */ u("label", {
 					className: "flex flex-col gap-1 text-xs text-text-secondary",
-					children: ["Address", /* @__PURE__ */ o(n, {
+					children: ["Address", /* @__PURE__ */ l(a, {
 						ref: b,
 						value: g,
 						placeholder: "https://example.com",
@@ -589,9 +591,9 @@ function d({ open: c, initialText: l = "", initialHref: d = "", onSubmit: f, onR
 						}
 					})]
 				}),
-				/* @__PURE__ */ s("label", {
+				/* @__PURE__ */ u("label", {
 					className: "flex flex-col gap-1 text-xs text-text-secondary",
-					children: ["Text to display", /* @__PURE__ */ o(n, {
+					children: ["Text to display", /* @__PURE__ */ l(a, {
 						value: v,
 						placeholder: "Leave blank to use the address",
 						"data-testid": `${h}-text`,
@@ -601,28 +603,28 @@ function d({ open: c, initialText: l = "", initialHref: d = "", onSubmit: f, onR
 						}
 					})]
 				}),
-				/* @__PURE__ */ s("div", {
+				/* @__PURE__ */ u("div", {
 					className: "mt-1 flex items-center gap-2",
 					children: [
-						/* @__PURE__ */ o(e, {
+						/* @__PURE__ */ l(t, {
 							variant: "primary",
 							size: "sm",
 							onClick: x,
 							disabled: !g.trim(),
 							"data-testid": `${h}-submit`,
-							children: d ? "Update" : "Add link"
+							children: r ? "Update" : "Add link"
 						}),
-						/* @__PURE__ */ o(e, {
+						/* @__PURE__ */ l(t, {
 							variant: "ghost",
 							size: "sm",
 							onClick: m,
 							children: "Cancel"
 						}),
-						p && d && /* @__PURE__ */ o(e, {
+						f && r && /* @__PURE__ */ l(t, {
 							variant: "danger",
 							size: "sm",
 							className: "ml-auto",
-							onClick: p,
+							onClick: f,
 							"data-testid": `${h}-remove`,
 							children: "Remove"
 						})
@@ -633,8 +635,46 @@ function d({ open: c, initialText: l = "", initialHref: d = "", onSubmit: f, onR
 	});
 }
 //#endregion
+//#region src/components/social/ComposerReferences.tsx
+var h = (e) => `Remove ${e.label}`;
+function g({ references: t, onRemove: i, removeLabel: a = h, className: o, "data-testid": s = "composer-references" }) {
+	return t.length === 0 ? null : /* @__PURE__ */ l("ul", {
+		"data-testid": s,
+		className: e("flex flex-wrap items-center gap-1 px-2 py-1.5", o),
+		children: t.map((e) => /* @__PURE__ */ u("li", {
+			"data-testid": `${s}-item`,
+			"data-reference-id": e.id,
+			title: e.title ?? e.label,
+			className: "inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border border-border bg-surface py-0.5 pl-2 pr-1 text-[11px] text-text-primary",
+			children: [
+				e.icon ? /* @__PURE__ */ l("span", {
+					"aria-hidden": "true",
+					className: "shrink-0",
+					children: e.icon
+				}) : /* @__PURE__ */ l(r, {
+					size: 12,
+					className: "shrink-0 text-text-tertiary",
+					"aria-hidden": "true"
+				}),
+				/* @__PURE__ */ l("span", {
+					className: "min-w-0 truncate",
+					children: e.label
+				}),
+				i && /* @__PURE__ */ l("button", {
+					type: "button",
+					"aria-label": a(e),
+					onClick: () => i(e.id),
+					"data-testid": `${s}-remove`,
+					className: "shrink-0 rounded-full p-0.5 text-text-tertiary hover:bg-surface-hover hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+					children: /* @__PURE__ */ l(n, { size: 10 })
+				})
+			]
+		}, e.id))
+	});
+}
+//#endregion
 //#region src/components/social/composerCommands.ts
-function f(e, t) {
+function _(e, t) {
 	if (!t || t.length === 0) return null;
 	let n = e.trimStart().toLowerCase();
 	return t.find((e) => {
@@ -642,8 +682,8 @@ function f(e, t) {
 		return n === t || n.startsWith(`${t} `) || n.startsWith(`${t}\n`);
 	}) ?? null;
 }
-function p(e, t) {
+function v(e, t) {
 	return e.trimStart().slice(t.trigger.length).replace(/^[ \n]/, "");
 }
 //#endregion
-export { c as a, u as i, f as n, l as o, d as r, p as t };
+export { p as a, m as i, _ as n, d as o, g as r, f as s, v as t };

@@ -127,6 +127,12 @@ export type { DocumentActivityCardProps, DocumentActivityEditor } from './Docume
 
 // DocumentChip — a `#Document` reference under a message, from the composer's
 // `#` menu. Tiptap-free, like the card above.
+// ComposerReferences — the full-width row of what a draft points at, above
+// the editor. Rendered by RichChatComposer from its `references` prop; also
+// exported for hosts that compose their own surface.
+export { ComposerReferences } from './ComposerReferences';
+export type { ComposerReference, ComposerReferencesProps } from './ComposerReferences';
+
 export { DocumentChip } from './DocumentChip';
 export type { DocumentChipProps } from './DocumentChip';
 

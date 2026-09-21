@@ -52,5 +52,7 @@ export type { CommandSuggestionsProps, CommandSuggestionsHandle, CommandSuggesti
 // chat panel may want the chips without the composer.
 export { ComposerAttachments } from './ComposerAttachments';
 export type { ComposerAttachmentsProps, StagedFile } from './ComposerAttachments';
+export { ComposerReferences } from './ComposerReferences';
+export type { ComposerReference, ComposerReferencesProps } from './ComposerReferences';
 export { EMOJI_SHORTCODES, searchEmoji } from './emojiShortcodes';
 export type { EmojiShortcode } from './emojiShortcodes';

@@ -134,6 +134,29 @@ export declare interface ComposerCommandArgument {
  */
 export declare function composerCommandArgumentText(draft: string, command: ComposerCommand): string;
 
+export declare interface ComposerReference {
+    /** Stable across re-renders; what `onRemove` is called with. */
+    id: string;
+    /** Already composed by the host — "Sprint review · v2 · Slide 4". */
+    label: string;
+    /** The referenced thing's own glyph, when it has one. */
+    icon?: string;
+    /** Hover text; the label itself when absent. */
+    title?: string;
+}
+
+export declare function ComposerReferences({ references, onRemove, removeLabel, className, 'data-testid': testId, }: ComposerReferencesProps): JSX.Element | null;
+
+export declare interface ComposerReferencesProps {
+    references: readonly ComposerReference[];
+    /** Omit to render the chips without a remove control. */
+    onRemove?: (id: string) => void;
+    /** Accessible name for a chip's remove button. */
+    removeLabel?: (reference: ComposerReference) => string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface DocumentCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
     id: string;
@@ -323,6 +346,21 @@ export declare interface RichChatComposerProps {
         visible: string;
         hidden: string;
     };
+    /**
+     * What this draft points at — a slide in a deck, a line in a transcript —
+     * as a full-width row of chips above the editor.
+     *
+     * These are display labels the HOST resolved from what this viewer may see;
+     * the composer neither resolves nor sends them. The reference itself belongs
+     * in the message metadata the host attaches on send.
+     *
+     * They were previously passed through `toolbarExtras`, which is a strip of
+     * icon-sized controls: a chip reading "Sprint review · v2 · Slide 4" either
+     * truncated there or pushed Send out of the composer.
+     */
+    references?: readonly ComposerReference[];
+    /** Makes each chip removable. Called with the reference's `id`. */
+    onRemoveReference?: (id: string) => void;
     /** Rendered between the formatting controls and the send button. */
     toolbarExtras?: ReactNode;
     className?: string;

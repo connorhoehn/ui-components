@@ -1271,6 +1271,29 @@ export declare interface ComposerCommandArgument {
  */
 export declare function composerCommandArgumentText(draft: string, command: ComposerCommand): string;
 
+export declare interface ComposerReference {
+    /** Stable across re-renders; what `onRemove` is called with. */
+    id: string;
+    /** Already composed by the host — "Sprint review · v2 · Slide 4". */
+    label: string;
+    /** The referenced thing's own glyph, when it has one. */
+    icon?: string;
+    /** Hover text; the label itself when absent. */
+    title?: string;
+}
+
+export declare function ComposerReferences({ references, onRemove, removeLabel, className, 'data-testid': testId, }: ComposerReferencesProps): JSX.Element | null;
+
+export declare interface ComposerReferencesProps {
+    references: readonly ComposerReference[];
+    /** Omit to render the chips without a remove control. */
+    onRemove?: (id: string) => void;
+    /** Accessible name for a chip's remove button. */
+    removeLabel?: (reference: ComposerReference) => string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 declare type ConnectionState = 'connected' | 'connecting' | 'disconnected';
 
 /** The views a conversation can offer. `chat` is the transcript itself. */
@@ -3252,25 +3275,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -3284,9 +3288,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -3330,9 +3343,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3346,16 +3379,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

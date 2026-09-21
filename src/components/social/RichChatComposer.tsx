@@ -81,6 +81,7 @@ import { RovingToolbar } from '../shared/RovingToolbar';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover } from './ReactionPickerPopover';
 import { ComposerAttachments, type StagedFile } from './ComposerAttachments';
+import { ComposerReferences, type ComposerReference } from './ComposerReferences';
 import { LinkDialog } from './LinkDialog';
 import { MentionSuggestions, type MentionCandidate } from './MentionSuggestions';
 import { DocumentSuggestions, type DocumentCandidate } from './DocumentSuggestions';
@@ -234,6 +235,21 @@ export interface RichChatComposerProps {
    * "Visible to everyone" / "Only you".
    */
   privacyLabels?: { visible: string; hidden: string };
+  /**
+   * What this draft points at — a slide in a deck, a line in a transcript —
+   * as a full-width row of chips above the editor.
+   *
+   * These are display labels the HOST resolved from what this viewer may see;
+   * the composer neither resolves nor sends them. The reference itself belongs
+   * in the message metadata the host attaches on send.
+   *
+   * They were previously passed through `toolbarExtras`, which is a strip of
+   * icon-sized controls: a chip reading "Sprint review · v2 · Slide 4" either
+   * truncated there or pushed Send out of the composer.
+   */
+  references?: readonly ComposerReference[];
+  /** Makes each chip removable. Called with the reference's `id`. */
+  onRemoveReference?: (id: string) => void;
   /** Rendered between the formatting controls and the send button. */
   toolbarExtras?: ReactNode;
   className?: string;
@@ -399,6 +415,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   onPrivacyChange,
   privacyLabels,
   disabled = false,
+  references,
+  onRemoveReference,
   toolbarExtras,
   className,
   'data-testid': testId = 'rich-chat-composer',
@@ -1229,6 +1247,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             <span>Only you can see this</span>
           </div>
         )}
+        {/* Above the words, because a reference is part of what is about to
+            be said rather than a control for saying it. */}
+        <ComposerReferences
+          references={references ?? []}
+          {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
+          removeLabel={(reference) => `Remove ${reference.label} from this draft`}
+          data-testid={`${testId}-references`}
+        />
         <EditorContent editor={editor} />
 
         <ComposerAttachments
