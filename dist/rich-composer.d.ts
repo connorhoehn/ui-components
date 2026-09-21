@@ -65,6 +65,12 @@ export declare interface ComposedMessage {
         trigger: string;
         argument?: ComposerArgumentItem;
     };
+    /**
+     * Who can see this message. Mirrors the `privacy` prop at send time, so a
+     * host with no opinion on the feature still gets `'visible'` rather than an
+     * absent field.
+     */
+    privacy: 'visible' | 'hidden';
 }
 
 export declare interface ComposerArgumentItem {
@@ -292,6 +298,31 @@ export declare interface RichChatComposerProps {
      * that this is an instruction to an agent, not a message to the room.
      */
     commands?: ComposerCommand[];
+    /**
+     * Controlled per-message visibility. Defaults to `'visible'`. Passing
+     * `onPrivacyChange` is what turns the feature on at all — see there.
+     */
+    privacy?: 'visible' | 'hidden';
+    /**
+     * Renders an eye / eye-off toggle in the toolbar, beside the attach and
+     * document controls, and is called when it is pressed with the OTHER
+     * state — the composer does not hold its own privacy state, so nothing
+     * changes on screen until the host applies it back through `privacy`.
+     *
+     * Omitting this prop is the whole opt-in: no toggle, no hint row, no
+     * `privacy` key on the published `RichChatDraft`. `ComposedMessage.privacy`
+     * still reports `'visible'` on send either way, so a host that adopts the
+     * field later does not have to touch every existing message.
+     */
+    onPrivacyChange?: (next: 'visible' | 'hidden') => void;
+    /**
+     * Tooltip/accessible-name text for each state. Defaults to
+     * "Visible to everyone" / "Only you".
+     */
+    privacyLabels?: {
+        visible: string;
+        hidden: string;
+    };
     /** Rendered between the formatting controls and the send button. */
     toolbarExtras?: ReactNode;
     className?: string;
@@ -303,6 +334,15 @@ export declare interface RichChatDraft {
     html: string;
     files: File[];
     command?: ComposedMessage['command'];
+    /**
+     * The `privacy` prop as of the last publish, present only while a host has
+     * wired `onPrivacyChange` — a host that never adopts the toggle never sees
+     * this key on its draft. Ride-along storage, like `command`: the composer
+     * does not read it back to set its own state, since `privacy` is already a
+     * controlled prop; a host restoring a conversation reads `draft.privacy`
+     * itself and passes it back in as `privacy`.
+     */
+    privacy?: 'visible' | 'hidden';
 }
 
 /**

@@ -1,6 +1,6 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./IconButton-C3DMtvSx.js";
-import { T as n, c as r } from "./Icons-CQiDn2Ki.js";
+import { E as n, c as r } from "./Icons-CuuLNfdk.js";
 import { t as i } from "./Stack-CkiMw5K0.js";
 import { t as a } from "./EmptyState-JzzL2z1E.js";
 import { t as o } from "./Tooltip-af4BrR7T.js";

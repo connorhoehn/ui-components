@@ -7,14 +7,14 @@ import { t as p } from "./cn-DhjIN-s0.js";
 import { t as m } from "./useEventCallback-Cwx9QVSi.js";
 import { t as h } from "./Button-BhS4-R6_.js";
 import { t as g } from "./IconButton-C3DMtvSx.js";
-import { A as _, c as v, o as y } from "./Icons-CQiDn2Ki.js";
+import { c as _, j as v, o as y } from "./Icons-CuuLNfdk.js";
 import { t as b } from "./Banner-C3Wgh62A.js";
 import { t as x } from "./Chip-BENLwTlq.js";
 import { t as S } from "./ConfirmDialog-Cd8NZEXi.js";
 import { t as C } from "./Input-DLknWXri.js";
 import { t as w } from "./Textarea-Dz4doxTv.js";
 import { t as T } from "./Avatar-BzicCOft.js";
-import { t as ee } from "./DropdownMenu--xElGnK6.js";
+import { t as ee } from "./DropdownMenu-Biyne_mT.js";
 import { t as te } from "./StatusPill-Db42eiME.js";
 import { t as E } from "./activationKey-CjbL3LUv.js";
 import { O as D } from "./renderers-9QJtVt3f.js";
@@ -1596,7 +1596,7 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 									"data-sharing": le ? "true" : "false",
 									disabled: le,
 									onClick: B,
-									icon: /* @__PURE__ */ F(_, { size: 13 })
+									icon: /* @__PURE__ */ F(v, { size: 13 })
 								}),
 								T && D === "available" && /* @__PURE__ */ F(h, {
 									variant: "primary",
@@ -1630,7 +1630,7 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 								size: "sm",
 								onClick: ue,
 								className: "border-none p-0 text-current",
-								icon: /* @__PURE__ */ F(v, { size: 12 })
+								icon: /* @__PURE__ */ F(_, { size: 12 })
 							})]
 						}),
 						ve && /* @__PURE__ */ I("div", {

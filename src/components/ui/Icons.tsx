@@ -230,6 +230,16 @@ export function EyeIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** `EyeIcon` with a slash through it: hidden — not visible to others. */
+export function EyeOffIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M2.3 4.6C3.6 6 5.6 7.2 8 7.2s4.4-1.2 5.7-2.6M2.3 11.4c.6-.66 1.28-1.24 2.02-1.72M13.7 11.4a11 11 0 0 1-2.02-1.72M6.3 12.6c.55.13 1.12.2 1.7.2s1.15-.07 1.7-.2" />
+      <path d="M2 2l12 12" />
+    </svg>
+  );
+}
+
 /** A handset: start a voice call. */
 export function PhoneIcon({ size = 16, ...rest }: GlyphProps) {
   return (

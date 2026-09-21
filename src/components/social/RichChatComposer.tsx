@@ -87,7 +87,7 @@ import { DocumentSuggestions, type DocumentCandidate } from './DocumentSuggestio
 import { EmojiSuggestions } from './EmojiSuggestions';
 import { CommandSuggestions, type CommandSuggestionItem } from './CommandSuggestions';
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
-import { LinkIcon, PaperclipIcon, QuoteIcon, SmileyIcon } from '../ui/Icons';
+import { EyeIcon, EyeOffIcon, LinkIcon, PaperclipIcon, QuoteIcon, SmileyIcon } from '../ui/Icons';
 
 export type { MentionCandidate, DocumentCandidate };
 
@@ -110,6 +110,12 @@ export interface ComposedMessage {
    * means the person changed their mind, and the host should read `text`.
    */
   command?: { trigger: string; argument?: ComposerArgumentItem };
+  /**
+   * Who can see this message. Mirrors the `privacy` prop at send time, so a
+   * host with no opinion on the feature still gets `'visible'` rather than an
+   * absent field.
+   */
+  privacy: 'visible' | 'hidden';
 }
 
 /** In-memory draft. Hosts must keep File objects out of persistent storage. */
@@ -117,6 +123,15 @@ export interface RichChatDraft {
   html: string;
   files: File[];
   command?: ComposedMessage['command'];
+  /**
+   * The `privacy` prop as of the last publish, present only while a host has
+   * wired `onPrivacyChange` — a host that never adopts the toggle never sees
+   * this key on its draft. Ride-along storage, like `command`: the composer
+   * does not read it back to set its own state, since `privacy` is already a
+   * controlled prop; a host restoring a conversation reads `draft.privacy`
+   * itself and passes it back in as `privacy`.
+   */
+  privacy?: 'visible' | 'hidden';
 }
 
 /** One thing a command can act on — a document, a room, a person. */
@@ -197,11 +212,35 @@ export interface RichChatComposerProps {
    * that this is an instruction to an agent, not a message to the room.
    */
   commands?: ComposerCommand[];
+  /**
+   * Controlled per-message visibility. Defaults to `'visible'`. Passing
+   * `onPrivacyChange` is what turns the feature on at all — see there.
+   */
+  privacy?: 'visible' | 'hidden';
+  /**
+   * Renders an eye / eye-off toggle in the toolbar, beside the attach and
+   * document controls, and is called when it is pressed with the OTHER
+   * state — the composer does not hold its own privacy state, so nothing
+   * changes on screen until the host applies it back through `privacy`.
+   *
+   * Omitting this prop is the whole opt-in: no toggle, no hint row, no
+   * `privacy` key on the published `RichChatDraft`. `ComposedMessage.privacy`
+   * still reports `'visible'` on send either way, so a host that adopts the
+   * field later does not have to touch every existing message.
+   */
+  onPrivacyChange?: (next: 'visible' | 'hidden') => void;
+  /**
+   * Tooltip/accessible-name text for each state. Defaults to
+   * "Visible to everyone" / "Only you".
+   */
+  privacyLabels?: { visible: string; hidden: string };
   /** Rendered between the formatting controls and the send button. */
   toolbarExtras?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
+
+const DEFAULT_PRIVACY_LABELS = { visible: 'Visible to everyone', hidden: 'Only you' } as const;
 
 /**
  * Mounts a suggestion menu and keeps it at the caret.
@@ -356,6 +395,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   onRequestLink,
   placeholder = 'Write a message…',
   commands,
+  privacy = 'visible',
+  onPrivacyChange,
+  privacyLabels,
   disabled = false,
   toolbarExtras,
   className,
@@ -830,10 +872,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     const next: RichChatDraft = {
       html: e.isEmpty ? '' : e.getHTML(), files: stagedRef.current.map((item) => item.file),
       ...(hit ? { command: { trigger: hit.trigger, ...(pick?.trigger === hit.trigger && composerCommandArgumentText(e.getText(), hit).includes(pick.item.label) ? { argument: pick.item } : {}) } } : {}),
+      // Only present while the host has wired the toggle — see the note on
+      // `RichChatDraft.privacy`.
+      ...(onPrivacyChange ? { privacy } : {}),
     };
     if (previous && previous.html === next.html && previous.files.length === next.files.length
       && previous.files.every((file, index) => file === next.files[index])
-      && previous.command?.trigger === next.command?.trigger && previous.command?.argument === next.command?.argument) return;
+      && previous.command?.trigger === next.command?.trigger && previous.command?.argument === next.command?.argument
+      && previous.privacy === next.privacy) return;
     draftRef.current = next;
     changeRef.current?.(next, previous);
   };
@@ -861,6 +907,19 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     setActiveCommand(hit);
     setArgumentEmpty(!hit || composerCommandArgumentText(editor.getText(), hit).trim() === '');
   }, [editor, draft, onDraftChange]);
+
+  // Stamps `privacy` onto the published draft as soon as the CONTROLLED prop
+  // changes — typically right after the host applies `onPrivacyChange` from a
+  // press of the toggle below. Without this, a press that lands with no
+  // accompanying keystroke would leave the persisted draft holding the old
+  // value until the next edit. `publish`'s own equality check makes this a
+  // true no-op when nothing actually changed, including for every host that
+  // never wires `onPrivacyChange` at all — see the bail-out above.
+  useEffect(() => {
+    if (!onPrivacyChange || !editor || editor.isDestroyed) return;
+    publishRef.current(editor);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [privacy, editor]);
 
   /** Opens the dialog seeded from the selection, or from the link under it. */
   const openLinkDialog = useCallback(() => {
@@ -908,6 +967,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       html: editor.isEmpty ? '' : editor.getHTML(),
       text,
       mentions: collectMentions(editor),
+      privacy,
       files: staged.map((s) => s.file),
       ...(documents.length > 0 ? { documents } : {}),
       ...(command ? { command } : {}),
@@ -943,7 +1003,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     } catch {
       sendingRef.current = false; setSendError(true);
     }
-  }, [editor, canSend, onSend, staged]);
+  }, [editor, canSend, onSend, staged, privacy]);
 
   sendRef.current = send;
   linkRef.current = openLinkDialog;
@@ -1054,20 +1114,36 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     onClick: () => void,
     glyph: ReactNode,
     ref?: Ref<HTMLButtonElement>,
+    testId?: string,
   ) => (
     <button
-      key={label}
+      // `testId ?? label`, not `label` alone: the privacy toggle's label TEXT
+      // changes with its own state ("Visible to everyone" ↔ "Only you"), and
+      // a key that changes is React's signal to unmount the old element and
+      // mount a new one — which would drop DOM focus out of the toolbar on
+      // every press for a keyboard user. Every other caller leaves `testId`
+      // unset, so this is `label` exactly as before for them.
+      key={testId ?? label}
       ref={ref}
       type="button"
       aria-label={label}
       aria-pressed={active}
       title={label}
       disabled={blocked}
+      data-testid={testId}
       // mousedown + preventDefault, not click: clicking would blur the editor
       // and collapse the selection first, so "bold" would apply to nothing.
       onMouseDown={(e) => {
         e.preventDefault();
         onClick();
+      }}
+      // Enter/Space activates a focused <button> as a native click with no
+      // preceding mousedown, so the handler above never runs for a keyboard
+      // press. A real pointer click already ran it — its OWN click event
+      // carries a nonzero `detail` (the click count), which is what tells the
+      // two apart here and keeps a mouse click from firing `onClick` twice.
+      onClick={(e) => {
+        if (e.detail === 0) onClick();
       }}
       className={cn(
         // `shrink-0`: without it the flex row squeezes the buttons instead of
@@ -1134,6 +1210,25 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             )}
           </div>
         )}
+        {onPrivacyChange && privacy === 'hidden' && (
+          // Same shape as the command bar above: `role="status"`, a tone
+          // background standing in for the top border, flush against
+          // `EditorContent`. Neutral rather than warning/info — this is a
+          // quiet reminder of a choice the sender made, not something wrong.
+          <div
+            role="status"
+            data-testid={`${testId}-privacy-hint`}
+            className={cn(
+              'flex items-center gap-1.5 bg-neutral-bg px-2 py-1 text-[11px] text-neutral-fg',
+              // Only actually the top edge when the command bar is not also
+              // showing above it.
+              !sendError && !activeCommand && 'rounded-t-lg',
+            )}
+          >
+            <EyeOffIcon size={13} />
+            <span>Only you can see this</span>
+          </div>
+        )}
         <EditorContent editor={editor} />
 
         <ComposerAttachments
@@ -1170,7 +1265,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             showListControls && toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={16} />),
           ]}
 
-          {(allowEmoji || attachmentsEnabled) && (
+          {(allowEmoji || attachmentsEnabled || !!onPrivacyChange) && (
             <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />
           )}
 
@@ -1202,6 +1297,19 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               />
             </>
           )}
+
+          {onPrivacyChange && (() => {
+            const labels = { ...DEFAULT_PRIVACY_LABELS, ...privacyLabels };
+            const hidden = privacy === 'hidden';
+            return toolbarButton(
+              hidden ? labels.hidden : labels.visible,
+              hidden,
+              () => onPrivacyChange(hidden ? 'visible' : 'hidden'),
+              hidden ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />,
+              undefined,
+              `${testId}-privacy-toggle`,
+            );
+          })()}
 
           {toolbarExtras}
           </RovingToolbar>

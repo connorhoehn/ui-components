@@ -3,7 +3,7 @@ import { t } from "./cn-DhjIN-s0.js";
 import { t as n } from "./Button-BhS4-R6_.js";
 import { t as r } from "./Card-RQCeAPNU.js";
 import { t as i } from "./IconButton-C3DMtvSx.js";
-import { c as a, o } from "./Icons-CQiDn2Ki.js";
+import { c as a, o } from "./Icons-CuuLNfdk.js";
 import { t as s } from "./Chip-BENLwTlq.js";
 import { t as c } from "./EmptyState-JzzL2z1E.js";
 import { t as l } from "./Spinner-CLcq5z8N.js";
@@ -16,7 +16,7 @@ import { t as g } from "./InlineAlert-CRnIKeAF.js";
 import { t as _ } from "./Select-CqVokE2v.js";
 import { t as v } from "./Checkbox-DqN9RkXK.js";
 import { t as y } from "./Tooltip-af4BrR7T.js";
-import { n as b } from "./ChatSidePanelRegistry-DvIQqKed.js";
+import { n as b } from "./ChatSidePanelRegistry-Dqnq0ezu.js";
 /* empty css               */
 import { t as x } from "./AnimatedEdge-OTHCEYJd.js";
 import { useCallback as S, useEffect as C, useId as w, useMemo as T, useRef as E, useState as D } from "react";
