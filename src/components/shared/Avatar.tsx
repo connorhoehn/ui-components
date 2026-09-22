@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
 const AVATAR_PALETTE = [
@@ -56,6 +56,25 @@ export interface AvatarProps {
   color?: string;
   /** Optional profile image URL. Falls back to initials if absent or load fails. */
   src?: string;
+  /**
+   * An arbitrary node in the circle instead of initials — an icon, usually.
+   *
+   * Exists because not every avatar-shaped thing is a person. A channel row
+   * wants a `#` in the same coloured circle at the same size with the same
+   * overlap rules, and without this the only way to get one was a hand-rolled
+   * `<span className="rounded-full …">` beside a real `Avatar`, which is two
+   * components to keep in step and one of them outside the design system.
+   *
+   * Wins over `src` only when there is no image to show; loses to a loaded
+   * image, because a photo is more specific than a glyph.
+   */
+  icon?: ReactNode;
+  /**
+   * A single character or emoji in the circle — `#` for a channel, `🔒` for a
+   * private one. The string form of `icon`, sized a little larger than initials
+   * because one character at initials size reads as a speck.
+   */
+  glyph?: string;
   className?: string;
   style?: CSSProperties;
   title?: string;
@@ -67,6 +86,8 @@ export function Avatar({
   initials: initialsProp,
   color,
   src,
+  icon,
+  glyph,
   className,
   style,
   title,
@@ -78,6 +99,9 @@ export function Avatar({
   // rerender with a fresh URL gets another chance at the image.
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const showImage = !!src && src !== failedSrc;
+  // A glyph is one character where initials are two, so it takes the larger of
+  // the two sizes; anything else in `icon` is sized by the caller.
+  const hasMark = !showImage && (icon !== undefined || !!glyph);
   return (
     <div
       title={title ?? name}
@@ -90,7 +114,7 @@ export function Avatar({
         height: size,
         background: bg,
         color: '#fff',
-        fontSize: size * 0.38,
+        fontSize: hasMark ? size * 0.5 : size * 0.38,
         ...style,
       }}
     >
@@ -103,6 +127,12 @@ export function Avatar({
           onError={() => setFailedSrc(src ?? null)}
           className="w-full h-full object-cover"
         />
+      ) : icon !== undefined ? (
+        <span className="inline-flex items-center justify-center leading-none" aria-hidden="true">
+          {icon}
+        </span>
+      ) : glyph ? (
+        <span className="leading-none" aria-hidden="true">{glyph}</span>
       ) : (
         initials
       )}

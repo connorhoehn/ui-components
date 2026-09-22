@@ -210,6 +210,9 @@ declare interface ActivityPanelProps {
     connectionState: ConnectionState_4;
 }
 
+/** Insert a fresh slide after `afterIndex` (-1 puts it first). */
+export declare function addSlide(spec: DeckSpec, afterIndex: number, layout?: SlideLayout): DeckSpec;
+
 export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, anchor, placement, onAdd, onClose, 'data-testid': testId, historyChoice, }: AddToChatDialogProps): JSX.Element;
 
 export declare interface AddToChatDialogProps {
@@ -1229,7 +1232,7 @@ export declare interface AutoplayGateProps extends StreamVideoProps {
     wrapperClassName?: string;
 }
 
-export declare function Avatar({ name, size, initials: initialsProp, color, src, className, style, title, }: AvatarProps): JSX.Element;
+export declare function Avatar({ name, size, initials: initialsProp, color, src, icon, glyph, className, style, title, }: AvatarProps): JSX.Element;
 
 export declare function AvatarGroup({ names, items, maxVisible, size, className, total, }: AvatarGroupProps): JSX.Element;
 
@@ -1273,6 +1276,25 @@ export declare interface AvatarProps {
     color?: string;
     /** Optional profile image URL. Falls back to initials if absent or load fails. */
     src?: string;
+    /**
+     * An arbitrary node in the circle instead of initials — an icon, usually.
+     *
+     * Exists because not every avatar-shaped thing is a person. A channel row
+     * wants a `#` in the same coloured circle at the same size with the same
+     * overlap rules, and without this the only way to get one was a hand-rolled
+     * `<span className="rounded-full …">` beside a real `Avatar`, which is two
+     * components to keep in step and one of them outside the design system.
+     *
+     * Wins over `src` only when there is no image to show; loses to a loaded
+     * image, because a photo is more specific than a glyph.
+     */
+    icon?: ReactNode;
+    /**
+     * A single character or emoji in the circle — `#` for a channel, `🔒` for a
+     * private one. The string form of `icon`, sized a little larger than initials
+     * because one character at initials size reads as a speck.
+     */
+    glyph?: string;
     className?: string;
     style?: CSSProperties;
     title?: string;
@@ -2106,6 +2128,9 @@ export declare interface CallWidgetProps {
 }
 
 export declare type CallWidgetState = 'idle' | 'ringing' | 'connecting' | 'active' | 'ended';
+
+/** True when nothing blocks a save. Kept separate so the host can ask too. */
+export declare function canSaveDeck(spec: DeckSpec): boolean;
 
 declare type CanvasTool = 'brush' | 'pen' | 'eraser' | 'select';
 
@@ -5092,6 +5117,61 @@ export declare const decisionsFieldType: FieldTypeDefinition;
 
 export declare function DecisionsReaderRenderer({ section, onNavigateToEditor }: SectionRendererProps): JSX.Element;
 
+export declare const DECK_THEMES: readonly DeckTheme[];
+
+export declare interface DeckChart {
+    kind: 'bar' | 'line';
+    labels: string[];
+    series: Array<{
+        name: string;
+        values: number[];
+    }>;
+}
+
+/**
+ * An image slide carries only its alt text. Nothing is fetched at render time,
+ * so the slide is a framed caption until a real asset pipeline puts bytes
+ * behind it.
+ */
+export declare interface DeckImage {
+    alt: string;
+}
+
+export declare interface DeckQuote {
+    text: string;
+    by: string;
+}
+
+export declare interface DeckSlide {
+    id: string;
+    layout: SlideLayout;
+    title: string;
+    eyebrow?: string;
+    bullets?: string[];
+    columns?: [string[], string[]];
+    chart?: DeckChart;
+    quote?: DeckQuote;
+    image?: DeckImage;
+    notes?: string;
+    sources: DeckSource[];
+}
+
+/** A citation: the document the claim came from, and (optionally) where in it. */
+export declare interface DeckSource {
+    documentId: string;
+    anchor?: string;
+    title: string;
+}
+
+export declare interface DeckSpec {
+    title: string;
+    subtitle?: string;
+    theme?: DeckTheme;
+    slides: DeckSlide[];
+}
+
+export declare type DeckTheme = 'product' | 'engineering' | 'plain';
+
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
 export declare const DEFAULT_PIPELINE_ICONS: string[];
@@ -5744,6 +5824,15 @@ export declare interface DropdownMenuSection {
     scroll?: boolean;
     'data-testid'?: string;
 }
+
+/**
+ * Copy a slide, sources included.
+ *
+ * The citations come along deliberately: a duplicate is nearly always the same
+ * claim said differently, and a copy that arrived uncited would be a copy that
+ * cannot be saved.
+ */
+export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 
 /** A pencil: "change this". */
 export declare function EditIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -8659,6 +8748,9 @@ export declare interface LogStreamProps {
 
 export declare function makeEmptyField(sectionType: string): DocumentTypeField;
 
+/** A blank slide of a layout, with the sub-object that layout needs. */
+export declare function makeSlide(id: string, layout?: SlideLayout): DeckSlide;
+
 export declare interface MappingRule {
     /** Glob or regex pattern matching source file paths. */
     pattern: string;
@@ -8715,6 +8807,8 @@ export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
  * mentions (or that mentions the query), else the person's first tag.
  */
 export declare function matchingTag(person: GraphPerson, query: string | undefined): string | undefined;
+
+export declare const MAX_DECK_SLIDES = 40;
 
 export declare interface McpToolNodeData {
     type: 'mcp-tool';
@@ -9350,6 +9444,9 @@ export declare function MoonIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function MoreHorizontalIcon({ size, ...rest }: IconProps): JSX.Element;
 
+/** Move the slide at `from` so it lands at `to`. Out-of-range moves are no-ops. */
+export declare function moveSlide(spec: DeckSpec, from: number, to: number): DeckSpec;
+
 export declare function MuteWhileTalkingToast({ show, label, }: MuteWhileTalkingToastProps): JSX.Element | null;
 
 export declare interface MuteWhileTalkingToastProps {
@@ -9559,6 +9656,26 @@ export declare interface NewConversationPerson {
     /** Secondary line — role, team, or handle. */
     hint?: string;
 }
+
+/**
+ * The next revision's label, given the ones that exist.
+ *
+ * Reads the numbers off `v<n>` labels rather than counting rows, because a
+ * revision list can be paged or filtered and "Save as v3" over four revisions
+ * is a promise the server would have to break.
+ */
+export declare function nextRevisionLabel(revisions: readonly {
+    label: string;
+}[]): string;
+
+/**
+ * A slide id that is unique within the deck and passes `SLIDE_ID_PATTERN`.
+ *
+ * Counts up from the deck's size rather than hashing or using a UUID: the ids
+ * end up in preview handles a person reads in a URL, and `s7` is a better
+ * thing to read than a 36-character guid.
+ */
+export declare function nextSlideId(spec: DeckSpec, prefix?: string): string;
 
 /** The logical drawing width; the SVG scales it to whatever width it is given. */
 export declare const NODE_GRAPH_VIEW_WIDTH = 480;
@@ -11048,6 +11165,69 @@ declare interface PresenceUser_3 {
     metadata: Record<string, unknown>;
 }
 
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+
+export declare interface PresentationEditorProps {
+    /** Controlled. The host owns the spec; this component never holds a copy. */
+    spec: DeckSpec;
+    onChange: (spec: DeckSpec) => void;
+    preview: PresentationPreview;
+    /** Called whenever the spec changes. DEBOUNCE THIS — it is a render per call. */
+    onRequestPreview: (spec: DeckSpec) => void;
+    /** Resolves when the revision exists; rejects with the message to show. */
+    onSaveRevision: (spec: DeckSpec) => Promise<unknown>;
+    revisions: readonly PresentationEditorRevision[];
+    activeRevisionId: string;
+    onSelectRevision: (revisionId: string) => void;
+    /** The deck's own inputs, offered in the source picker before anything is typed. */
+    sources: readonly PresentationSourceOption[];
+    /** The Documents explorer's search, so a citation names a real document. */
+    onSearchSources?: (query: string) => PresentationSourceOption[] | Promise<PresentationSourceOption[]>;
+    /** The `.pptx`, through the host's authorized route. No handler, no button. */
+    onDownload?: () => void;
+    /** Opens the same deck in the read-only presentation surface. */
+    onOpenPresentationView?: () => void;
+    readOnly?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface PresentationEditorRevision {
+    id: string;
+    /** `v3`, as the generator labelled it. */
+    label: string;
+    /** Already formatted by the host — this component does no clock maths. */
+    createdAt?: string;
+}
+
+/**
+ * What the host knows about the preview right now.
+ *
+ * Three states rather than an optional object: "not rendered yet" and "the
+ * render failed" are different things to say, and collapsing them produces a
+ * stage that looks the same whether the server is slow or broken.
+ */
+export declare type PresentationPreview = {
+    slides: readonly PresentationPreviewSlide[];
+} | 'loading' | {
+    error: string;
+};
+
+/** One rendered slide image, as `POST /api/deck/preview` returns it. */
+export declare interface PresentationPreviewSlide {
+    id: string;
+    /** SVG source, rendered by the same layout engine that writes the .pptx. */
+    svg: string;
+}
+
+/** One row the host's Documents search can return. */
+export declare interface PresentationSourceOption {
+    documentId: string;
+    title: string;
+    /** How the host would open it — a document page, or a recording transcript. */
+    kind?: 'document' | 'transcript';
+}
+
 declare interface ProfileItem {
     userId: string;
     displayName: string;
@@ -11784,8 +11964,14 @@ export declare interface RemoteTileSlotProps {
     avatarSize?: number;
 }
 
+/** Drop a slide. The last slide cannot be removed — a deck of none is not a deck. */
+export declare function removeSlide(spec: DeckSpec, id: string): DeckSpec;
+
 /** Two arrows chasing each other: something that runs again — a loop, a re-run. */
 export declare function RepeatIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** Replace one slide by id. Returns the same spec object when nothing matched. */
+export declare function replaceSlide(spec: DeckSpec, slide: DeckSlide): DeckSpec;
 
 /** A hooked arrow pointing back: reply. ForwardIcon's mirror, because the two
  *  are the same gesture pointed different ways. */
@@ -12791,6 +12977,13 @@ export declare interface SkipLinkProps {
     /** Called after the jump — use it to focus the target explicitly. */
     onSkip?: () => void;
 }
+
+/** What each layout is FOR, in the words a person picking one needs. */
+export declare const SLIDE_LAYOUT_LABELS: Record<SlideLayout, string>;
+
+export declare const SLIDE_LAYOUTS: readonly SlideLayout[];
+
+export declare type SlideLayout = 'title' | 'section' | 'bullets' | 'two-column' | 'chart' | 'quote' | 'image';
 
 export declare const Slider: ForwardRefExoticComponent<SliderProps & RefAttributes<HTMLInputElement>>;
 
@@ -14929,6 +15122,14 @@ export declare interface TypingIndicatorProps {
     'data-testid'?: string;
 }
 
+/**
+ * Slides that cite nothing, in deck order.
+ *
+ * The editor's only hard validation. Empty array means the spec can be saved;
+ * anything else is the list the warning names and the reason Save is off.
+ */
+export declare function uncitedSlideIds(spec: DeckSpec): string[];
+
 export declare interface UpdateClientInput {
     clientName?: string;
     redirectUris?: string[];
@@ -16730,6 +16931,17 @@ declare interface UseActivityBusReturn {
   ] extends [PipelineRunSummary['status']] ? true : false>;
 
   /**
+   * Move a slide's layout, keeping everything the new layout can still use.
+   *
+   * Content is NOT discarded on a layout change: a bullets slide turned into a
+   * chart keeps its bullets, so turning it back does not lose the words. The
+   * generator ignores the fields a layout does not read, and the alternative —
+   * deleting them — makes the layout picker a destructive control people learn
+   * to avoid.
+   */
+  export declare function withLayoutDefaults(slide: DeckSlide, layout: SlideLayout): DeckSlide;
+
+  /**
    * Say the origin ONCE.
    *
    * The attribution is deliberately written into `content` (see `ForwardedFrom`)
@@ -17585,19 +17797,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -17617,9 +17816,35 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -17653,9 +17878,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -17673,22 +17898,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

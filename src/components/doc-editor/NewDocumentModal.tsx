@@ -68,6 +68,7 @@ import {
 import Modal from '../shared/Modal';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
+import { Select } from '../forms/Select';
 import { Textarea } from '../forms/Textarea';
 import { SelectableCard } from '../ui/SelectableCard';
 import Chip from '../shared/Chip';
@@ -83,7 +84,46 @@ import Chip from '../shared/Chip';
  * gate the editor branches on. Doing that translation is the host's job, not
  * this modal's; the modal only reports which shape the person chose.
  */
-export type DocumentShape = 'page' | 'sections' | 'diagram';
+export type DocumentShape = 'page' | 'sections' | 'diagram' | 'presentation';
+
+/**
+ * Shapes that have no document type at all.
+ *
+ * A whiteboard has no sections and no fields; a presentation's structure is a
+ * `DeckSpec`, which the generator owns. Picking either moves off whatever type
+ * was selected, and picking a type moves off either of them — the one coupling
+ * in this dialog that is a real constraint rather than an implementation
+ * detail.
+ */
+const TYPELESS_SHAPES: ReadonlySet<DocumentShape> = new Set<DocumentShape>(['diagram', 'presentation']);
+
+/** A thing a presentation can be generated FROM. */
+export interface NewPresentationSource {
+  id: string;
+  title: string;
+  kind?: 'document' | 'transcript';
+  /** A date, a length — whatever tells two similar rows apart. */
+  subtitle?: string;
+}
+
+export type NewPresentationOrigin = 'blank' | 'transcript' | 'document';
+
+/**
+ * What "New document → Presentation" asks the host for.
+ *
+ * `from` and `sourceId` are the generator's half of the contract: the host
+ * posts them to `/api/deck/fixture`, which drafts a real `DeckSpec` from the
+ * named transcript or document. `title` and `description` come along because
+ * the host still has to create a document row, and asking for the title twice
+ * — once here, once in a second dialog — is the flow this modal replaced.
+ */
+export interface NewPresentationFixtureRequest {
+  from: NewPresentationOrigin;
+  /** The transcript or document it is derived from. Absent for `blank`. */
+  sourceId?: string;
+  title: string;
+  description?: string;
+}
 
 export interface NewDocumentModalProps {
   open: boolean;
@@ -101,6 +141,22 @@ export interface NewDocumentModalProps {
     documentTypeId?: string;
     shape: DocumentShape;
   }) => void;
+  /**
+   * Presentation only. Given this, "Create Document" hands over the deck's
+   * starting point instead of calling `onCreate` — the host creates the row
+   * AND asks the generator for a v1 in one step. Without it a presentation
+   * falls back to an ordinary `onCreate` with `shape: 'presentation'`, which
+   * makes an empty deck the person then fills by hand.
+   */
+  onCreateFromFixture?: (request: NewPresentationFixtureRequest) => void;
+  /**
+   * The Documents explorer's search, for "From a project document". The same
+   * search the deck editor's source picker uses, so what is offered here is
+   * what the generator can actually cite.
+   */
+  onSearchDocuments?: (query: string) => NewPresentationSource[] | Promise<NewPresentationSource[]>;
+  /** Transcripts available to this person, for "From a transcript". */
+  recordings?: readonly NewPresentationSource[];
 }
 
 /** The three blanks, with the words a person picking between them needs. */
@@ -136,6 +192,21 @@ const SHAPES: ReadonlyArray<{
       'A whiteboard. Shapes, arrows and text on an infinite canvas, drawn with others in real time — opens full width with the sidebar out of the way.',
     keywords: ['blank', 'whiteboard', 'canvas', 'draw', 'sketch'],
   },
+  {
+    id: 'presentation',
+    icon: '📊',
+    name: 'Presentation',
+    description:
+      'A slide deck, grounded in documents you already have. Edits as slides and downloads as a real .pptx — every slide cites its source.',
+    keywords: ['deck', 'slides', 'slide', 'ppt', 'pptx', 'powerpoint', 'keynote'],
+  },
+];
+
+/** Where a new deck's first draft comes from. */
+const PRESENTATION_ORIGINS: ReadonlyArray<{ value: NewPresentationOrigin; label: string }> = [
+  { value: 'blank', label: 'Blank — one empty slide' },
+  { value: 'transcript', label: 'From a transcript' },
+  { value: 'document', label: 'From a project document' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -210,7 +281,14 @@ export function ensureCookbookType(cookbook: DocumentTypeCookbook): DocumentType
 // Component
 // ---------------------------------------------------------------------------
 
-export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumentModalProps) {
+export default function NewDocumentModal({
+  open,
+  onClose,
+  onCreate,
+  onCreateFromFixture,
+  onSearchDocuments,
+  recordings,
+}: NewDocumentModalProps) {
   const [types, setTypes] = useState<DocumentType[]>([]);
   /**
    * True until we know what the SERVER has.
@@ -237,6 +315,11 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
   const [description, setDescription] = useState('');
   // Page preselected — see the file header.
   const [shape, setShape] = useState<DocumentShape>('page');
+  /** Presentation only: where the first draft comes from, and what from. */
+  const [deckFrom, setDeckFrom] = useState<NewPresentationOrigin>('blank');
+  const [deckSourceId, setDeckSourceId] = useState<string>('');
+  const [deckQuery, setDeckQuery] = useState('');
+  const [deckResults, setDeckResults] = useState<readonly NewPresentationSource[]>([]);
   const searchRef = useRef<HTMLInputElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   // Ids that tie each visible label to the control it names. Before these,
@@ -248,6 +331,8 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
   const cookbookGroupLabelId = `${uid}-cookbook-label`;
   const titleFieldId = `${uid}-title`;
   const descriptionFieldId = `${uid}-description`;
+  const deckFromFieldId = `${uid}-deck-from`;
+  const deckSourceFieldId = `${uid}-deck-source`;
 
   useEffect(() => {
     if (!open) return;
@@ -275,6 +360,10 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     setTitleTouched(false);
     setDescription('');
     setShape('page');
+    setDeckFrom('blank');
+    setDeckSourceId('');
+    setDeckQuery('');
+    setDeckResults([]);
 
     let cancelled = false;
     setProbing(true);
@@ -311,6 +400,33 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     () => documentTypeCookbooks.filter((c) => matchesCookbookQuery(c, query)),
     [query],
   );
+
+  /**
+   * The rows the deck's source picker offers.
+   *
+   * Transcripts are filtered in the browser from the `recordings` the host
+   * already handed over; documents go through the host's search, because the
+   * Documents explorer is server-side and a client-side filter over a page of
+   * it would silently hide everything past the first page.
+   */
+  useEffect(() => {
+    if (!open || shape !== 'presentation') return;
+    if (deckFrom === 'blank') { setDeckResults([]); return; }
+    const q = deckQuery.trim().toLowerCase();
+    if (deckFrom === 'transcript') {
+      const all = recordings ?? [];
+      setDeckResults(q ? all.filter((row) => row.title.toLowerCase().includes(q)) : all);
+      return;
+    }
+    if (!onSearchDocuments) { setDeckResults([]); return; }
+    let cancelled = false;
+    void Promise.resolve(onSearchDocuments(deckQuery.trim()))
+      .then((rows) => { if (!cancelled) setDeckResults(rows); })
+      // An empty list after a failed search would read as "you have no
+      // documents", which is a confident wrong answer. Leave what was there.
+      .catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [open, shape, deckFrom, deckQuery, recordings, onSearchDocuments]);
 
   if (!open) return null;
 
@@ -356,7 +472,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
    */
   const currentStarter: Starter = pickedCookbook
     ? { kind: 'cookbook', cookbook: pickedCookbook }
-    : selected && shape !== 'diagram'
+    : selected && !TYPELESS_SHAPES.has(shape)
       ? { kind: 'type', type: selected }
       : { kind: 'blank', shape };
 
@@ -368,7 +484,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
       // so there is nothing left to decide on the user's behalf. The single
       // exception is a whiteboard, which has no document type at all: a type
       // picked while Diagram is selected moves to Page, the default.
-      if (shape === 'diagram') setShape('page');
+      if (TYPELESS_SHAPES.has(shape)) setShape('page');
       if (!titleTouched) setTitle(s.cookbook.name);
       return;
     }
@@ -377,7 +493,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
       // Picking a SHAPE keeps your type — that is the whole point of the two
       // questions being separate. Diagram is the exception, for the reason
       // above.
-      if (s.shape === 'diagram') {
+      if (TYPELESS_SHAPES.has(s.shape)) {
         setCookbookId(null);
         if (!titleTouched) setTitle('');
       }
@@ -400,7 +516,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
   const shapeFor = (s: Starter): DocumentShape =>
     s.kind === 'blank'
       ? s.shape
-      : shape === 'diagram'
+      : TYPELESS_SHAPES.has(shape)
         ? 'page'
         : shape;
 
@@ -415,6 +531,30 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     const trimmed = rawTitle.trim();
     if (!trimmed) return;
     const desc = description.trim() || undefined;
+
+    // A presentation is neither typed nor hand-seeded: its v1 comes from the
+    // generator, so the host is handed the starting point rather than a
+    // document shell it would have to fill itself.
+    if (shapeIn === 'presentation') {
+      if (onCreateFromFixture) {
+        onCreateFromFixture({
+          from: deckFrom,
+          ...(deckFrom !== 'blank' && deckSourceId ? { sourceId: deckSourceId } : {}),
+          title: trimmed,
+          ...(desc ? { description: desc } : {}),
+        });
+      } else {
+        onCreate({
+          title: trimmed,
+          type: 'Presentation',
+          description: desc,
+          icon: '📊',
+          shape: 'presentation',
+        });
+      }
+      onClose();
+      return;
+    }
 
     if (starter.kind === 'cookbook') {
       const dt = ensureCookbookType(starter.cookbook);
@@ -459,7 +599,15 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
 
   // `selected` unconditionally would keep the button dead on exactly the
   // shapes that never needed a type.
-  const canSubmit = !!title.trim() && (!needsType || hasStarterType);
+  /**
+   * A deck derived from something has to name the something. Without this the
+   * Create button posts `{ from: 'transcript' }` with no id, and the generator
+   * has nothing to ground the slides in.
+   */
+  const deckSourceMissing =
+    shape === 'presentation' && deckFrom !== 'blank' && !deckSourceId;
+
+  const canSubmit = !!title.trim() && (!needsType || hasStarterType) && !deckSourceMissing;
 
   const handleSubmit = () => {
     if (!canSubmit) return;
@@ -565,7 +713,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
               <div
                 role="group"
                 aria-labelledby={blankGroupLabelId}
-                className={cn('grid grid-cols-3 gap-2')}
+                className={cn('grid grid-cols-2 gap-2 md:grid-cols-4')}
               >
                 {visibleBlanks.map((s) => (
                   <SelectableCard
@@ -601,6 +749,91 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
             </div>
           )}
 
+          {/* Where a deck's first draft comes from.
+
+              Only shown for a presentation, and shown INSIDE the gallery
+              rather than beside the title, because it is a second half of the
+              same question the shape cards ask: "what am I making, and out of
+              what?". A deck made from nothing is a deck someone has to fill by
+              hand, which is the work the generator exists to do. */}
+          {shape === 'presentation' && (
+            <div className={cn('mb-5')} data-testid="presentation-start-from">
+              <label
+                htmlFor={deckFromFieldId}
+                className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}
+              >
+                Start from
+              </label>
+              <Select
+                id={deckFromFieldId}
+                value={deckFrom}
+                options={PRESENTATION_ORIGINS.map((origin) => ({ value: origin.value, label: origin.label }))}
+                onChange={(e) => {
+                  setDeckFrom(e.target.value as NewPresentationOrigin);
+                  // The chosen source belongs to the origin it was chosen
+                  // under; keeping it across a switch would post a transcript
+                  // id as a document id.
+                  setDeckSourceId('');
+                  setDeckQuery('');
+                }}
+                data-testid="presentation-from"
+              />
+              <div className={cn('mt-1 text-[11px] text-text-tertiary')}>
+                {deckFrom === 'blank'
+                  ? 'One empty slide. You add the slides and their sources as you write.'
+                  : 'The generator drafts the slides from it, and every slide cites what it came from.'}
+              </div>
+
+              {deckFrom !== 'blank' && (
+                <div className={cn('mt-2 flex flex-col gap-1.5')}>
+                  <Input
+                    type="search"
+                    value={deckQuery}
+                    onChange={(e) => setDeckQuery(e.target.value)}
+                    aria-label={deckFrom === 'transcript' ? 'Search transcripts' : 'Search documents'}
+                    placeholder={deckFrom === 'transcript' ? 'Search transcripts…' : 'Search documents…'}
+                    data-testid="presentation-source-search"
+                  />
+                  {deckResults.length === 0 ? (
+                    <div
+                      data-testid="presentation-no-sources"
+                      className={cn('px-3.5 py-3 border border-dashed border-border-field rounded-lg text-[13px] text-text-tertiary')}
+                    >
+                      {deckFrom === 'transcript'
+                        ? 'No transcripts to draw on. A recording with a transcript can seed a deck.'
+                        : onSearchDocuments
+                          ? 'Nothing matches that. Sources come from the Documents explorer.'
+                          : 'Document search is not available here — start blank and add sources per slide.'}
+                    </div>
+                  ) : (
+                    <>
+                      <label
+                        htmlFor={deckSourceFieldId}
+                        className={cn('block text-[13px] font-semibold text-text-secondary')}
+                      >
+                        {deckFrom === 'transcript' ? 'Transcript' : 'Document'}{' '}
+                        <span className={cn('text-danger-fg')} aria-hidden="true">*</span>
+                      </label>
+                      <Select
+                        id={deckSourceFieldId}
+                        required
+                        aria-required="true"
+                        value={deckSourceId}
+                        placeholder="Choose one…"
+                        options={deckResults.map((row) => ({
+                          value: row.id,
+                          label: row.subtitle ? `${row.title} · ${row.subtitle}` : row.title,
+                        }))}
+                        onChange={(e) => setDeckSourceId(e.target.value)}
+                        data-testid="presentation-source"
+                      />
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* The fourteen. This is the front door: a person who has never seen
               the app can pick one and be writing something structured without
               defining a single field. */}
@@ -620,6 +853,8 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                 <div className={cn('text-[11px] text-text-tertiary')} data-testid="starter-shape-note">
                   {shape === 'diagram'
                     ? 'Picking one switches to Page — a whiteboard has no document type.'
+                    : shape === 'presentation'
+                      ? 'Picking one switches to Page — a deck’s structure is the slide spec, not a document type.'
                     : shape === 'sections'
                       ? 'Its fields become sections, one form each.'
                       : 'Its fields become blocks on the page — typed values, headings and checklists.'}
@@ -664,7 +899,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
               A document type defines the sections and structure a document
               starts with. A whiteboard has neither, so asking is offering a
               choice that does not apply to what is being made. */}
-          {shape !== 'diagram' && (visibleTypes.length > 0 || showNoTypesNote || (types.length === 0 && probing)) && (
+          {!TYPELESS_SHAPES.has(shape) && (visibleTypes.length > 0 || showNoTypesNote || (types.length === 0 && probing)) && (
             <div className={cn('mb-5')}>
               <div className={cn('mb-2 flex items-baseline gap-1.5')}>
                 <span

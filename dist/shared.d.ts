@@ -84,7 +84,7 @@ export declare function ArtifactTile({ name, type, url }: {
 /** An @ sign: mentions, "someone named you". */
 export declare function AtIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function Avatar({ name, size, initials: initialsProp, color, src, className, style, title, }: AvatarProps): JSX.Element;
+export declare function Avatar({ name, size, initials: initialsProp, color, src, icon, glyph, className, style, title, }: AvatarProps): JSX.Element;
 
 export declare function AvatarGroup({ names, items, maxVisible, size, className, total, }: AvatarGroupProps): JSX.Element;
 
@@ -128,6 +128,25 @@ export declare interface AvatarProps {
     color?: string;
     /** Optional profile image URL. Falls back to initials if absent or load fails. */
     src?: string;
+    /**
+     * An arbitrary node in the circle instead of initials — an icon, usually.
+     *
+     * Exists because not every avatar-shaped thing is a person. A channel row
+     * wants a `#` in the same coloured circle at the same size with the same
+     * overlap rules, and without this the only way to get one was a hand-rolled
+     * `<span className="rounded-full …">` beside a real `Avatar`, which is two
+     * components to keep in step and one of them outside the design system.
+     *
+     * Wins over `src` only when there is no image to show; loses to a loaded
+     * image, because a photo is more specific than a glyph.
+     */
+    icon?: ReactNode;
+    /**
+     * A single character or emoji in the circle — `#` for a channel, `🔒` for a
+     * private one. The string form of `icon`, sized a little larger than initials
+     * because one character at initials size reads as a speck.
+     */
+    glyph?: string;
     className?: string;
     style?: CSSProperties;
     title?: string;
@@ -4354,19 +4373,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -4386,9 +4392,35 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -4422,9 +4454,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -4442,22 +4474,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

@@ -104,3 +104,51 @@ export { ErrorBoundary } from './components/misc/ErrorBoundary';
 
 // Explicit: both the shared barrel and the ui barrel star-export Icons, and TS refuses an ambiguous name.
 export { PopOutIcon, EditIcon, FolderIcon, TrashIcon, PinIcon, BellMutedIcon, LockIcon, ActivityIcon, AtIcon, EyeIcon, ForwardIcon, PhoneIcon, VideoCallIcon, MoonIcon, SunIcon, MenuIcon, TranscribeIcon, BranchIcon, ChartIcon, CodeIcon, PuzzleIcon, RepeatIcon, PaperclipIcon, LinkIcon, QuoteIcon, SmileyIcon, ReplyIcon, WhiteboardIcon } from './components/ui/Icons';
+
+// ---------------------------------------------------------------------------
+// Presentation editing
+// ---------------------------------------------------------------------------
+
+// The `presentation` document type's editing surface, named explicitly rather
+// than by star-exporting the doc-editor barrel — that barrel carries the whole
+// document editor, and pulling it into the root entry would change what every
+// consumer of `@connorhoehnslalom/ui-components` downloads.
+//
+// The DeckSpec types come along because a host that renders this component has
+// to hold the spec, and importing the contract from a second path would be the
+// kind of split that lets the two drift.
+export { PresentationEditor } from './components/doc-editor/presentation/PresentationEditor';
+export type {
+  PresentationEditorProps,
+  PresentationEditorRevision,
+  PresentationPreview,
+  PresentationPreviewSlide,
+} from './components/doc-editor/presentation/PresentationEditor';
+export type { PresentationSourceOption } from './components/doc-editor/presentation/SlideSources';
+export {
+  MAX_SLIDES as MAX_DECK_SLIDES,
+  SLIDE_LAYOUTS,
+  SLIDE_LAYOUT_LABELS,
+  DECK_THEMES,
+  addSlide,
+  canSaveDeck,
+  duplicateSlide,
+  makeSlide,
+  moveSlide,
+  nextRevisionLabel,
+  nextSlideId,
+  removeSlide,
+  replaceSlide,
+  uncitedSlideIds,
+  withLayoutDefaults,
+} from './components/doc-editor/presentation/deckSpec';
+export type {
+  DeckChart,
+  DeckImage,
+  DeckQuote,
+  DeckSlide,
+  DeckSource,
+  DeckSpec,
+  DeckTheme,
+  SlideLayout,
+} from './components/doc-editor/presentation/deckSpec';

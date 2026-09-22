@@ -1,11 +1,12 @@
 import { t as e } from "../cn-DhjIN-s0.js";
 import { D as t, N as n, O as r, S as i, d as a, m as o, p as s, s as c, t as l, v as u } from "../DropdownMenu-DG43DgE_.js";
 import { n as d } from "../Tabs-Bc6QoOAC.js";
-import { t as f } from "../Avatar-BzicCOft.js";
+import { t as f } from "../Avatar--J6_yD4M.js";
 import { t as p } from "../RovingToolbar-CmQag9q6.js";
 import { n as m, t as h } from "../ParticlesBackground-FVwsOHUB.js";
 import { i as g, n as _, r as v } from "../ReactionPickerPopover-CcL-n6gt.js";
-import { i as y, n as b, o as x, r as S, s as C, t as w } from "../composerCommands-BvoP-BxY.js";
+import { a as y, n as b, o as x, r as S, t as C } from "../composerCommands-DXer0id_.js";
+import { t as w } from "../ComposerReferences-DOYqoE6C.js";
 import { Fragment as ee, forwardRef as te, useCallback as ne, useEffect as T, useImperativeHandle as E, useLayoutEffect as re, useMemo as ie, useRef as D, useState as O } from "react";
 import { Fragment as ae, jsx as k, jsxs as A } from "react/jsx-runtime";
 import { EditorContent as oe, ReactRenderer as se, useEditor as ce } from "@tiptap/react";
@@ -2340,13 +2341,13 @@ function ta(e, t, n = !1) {
 		}
 	};
 }
-var na = te(function({ onSend: a, draft: f, onDraftChange: x, onCommand: ee, onSearchPeople: te, mentionMembers: fe, onMentionNonMember: pe, onSearchDocuments: me, allowAttachments: he = !1, allowEmoji: ge = !1, onRequestLink: _e, placeholder: ve = "Write a message…", commands: ye, privacy: be = "visible", onPrivacyChange: xe, privacyLabels: Se, disabled: Ce = !1, references: we, onRemoveReference: Te, toolbarExtras: De, processes: Oe, mode: ke = "chat", onModeChange: Ae, modePlaceholders: je, hints: Me, onQuickOpen: Ne, sendOptions: Pe, onSendOption: Fe, onShellCommand: Ie, className: Le, "data-testid": j = "rich-chat-composer" }, Re) {
+var na = te(function({ onSend: a, draft: f, onDraftChange: y, onCommand: ee, onSearchPeople: te, mentionMembers: fe, onMentionNonMember: pe, onSearchDocuments: me, allowAttachments: he = !1, allowEmoji: ge = !1, onRequestLink: _e, placeholder: ve = "Write a message…", commands: ye, privacy: be = "visible", onPrivacyChange: xe, privacyLabels: Se, disabled: Ce = !1, references: we, onRemoveReference: Te, toolbarExtras: De, processes: Oe, mode: ke = "chat", onModeChange: Ae, modePlaceholders: je, hints: Me, onQuickOpen: Ne, sendOptions: Pe, onSendOption: Fe, onShellCommand: Ie, className: Le, "data-testid": j = "rich-chat-composer" }, Re) {
 	let ze = D(() => {}), Be = D(() => {}), Ve = D(null), He = D(null), [M, N] = O(!1), [P, Ue] = O({
 		open: !1,
 		href: "",
 		text: ""
-	}), F = D(f), I = D(x);
-	I.current = x;
+	}), F = D(f), I = D(y);
+	I.current = y;
 	let [We, Ge] = O(() => (f?.files ?? []).map((e) => ({
 		id: `staged-${Qi++}`,
 		file: e
@@ -2402,7 +2403,7 @@ var na = te(function({ onSend: a, draft: f, onDraftChange: x, onCommand: ee, onS
 						editor: this.editor,
 						char: ":",
 						allow: ({ state: e, range: t }) => e.doc.textBetween(t.from, t.to, "\0").length >= 3,
-						items: ({ query: e }) => C(e),
+						items: ({ query: e }) => x(e),
 						command: ({ editor: e, range: t, props: n }) => {
 							e.chain().focus().deleteRange(t).insertContent(n.emoji).run();
 						},
@@ -2586,7 +2587,7 @@ var na = te(function({ onSend: a, draft: f, onDraftChange: x, onCommand: ee, onS
 		onUpdate: ({ editor: e }) => {
 			tt(e.isEmpty), ht.current = e;
 			let t = e.getText(), n = b(t, V.current);
-			W((e) => e?.trigger === n?.trigger ? e : n), mt(!n || w(t, n).trim() === ""), H.current && H.current.trigger !== n?.trigger && (H.current = null), qe.current(e);
+			W((e) => e?.trigger === n?.trigger ? e : n), mt(!n || C(t, n).trim() === ""), H.current && H.current.trigger !== n?.trigger && (H.current = null), qe.current(e);
 		},
 		editorProps: { attributes: {
 			class: "chat-composer-input",
@@ -2639,7 +2640,7 @@ var na = te(function({ onSend: a, draft: f, onDraftChange: x, onCommand: ee, onS
 			files: Ke.current.map((e) => e.file),
 			...r ? { command: {
 				trigger: r.trigger,
-				...n?.trigger === r.trigger && w(e.getText(), r).includes(n.item.label) ? { argument: n.item } : {}
+				...n?.trigger === r.trigger && C(e.getText(), r).includes(n.item.label) ? { argument: n.item } : {}
 			} } : {},
 			...xe ? { privacy: be } : {}
 		};
@@ -2650,7 +2651,7 @@ var na = te(function({ onSend: a, draft: f, onDraftChange: x, onCommand: ee, onS
 	};
 	T(() => {
 		if (!G) return;
-		if (x && f !== F.current) {
+		if (y && f !== F.current) {
 			F.current = f, G.commands.setContent(f?.html ?? "", { emitUpdate: !1 }), H.current = f?.command?.argument ? {
 				trigger: f.command.trigger,
 				item: f.command.argument
@@ -2663,11 +2664,11 @@ var na = te(function({ onSend: a, draft: f, onDraftChange: x, onCommand: ee, onS
 		}
 		ht.current = G, tt(G.isEmpty);
 		let e = b(G.getText(), V.current);
-		W(e), mt(!e || w(G.getText(), e).trim() === "");
+		W(e), mt(!e || C(G.getText(), e).trim() === "");
 	}, [
 		G,
 		f,
-		x
+		y
 	]), T(() => {
 		!xe || !G || G.isDestroyed || qe.current(G);
 	}, [be, G]);
@@ -2690,7 +2691,7 @@ var na = te(function({ onSend: a, draft: f, onDraftChange: x, onCommand: ee, onS
 	}, [G]), J = ne(() => {
 		if (!G || !wt || B || Je.current) return;
 		let e = G.getText(), t = z === "agent" && e.trim() && !/^\s*\/agent\b/i.test(e) ? `/agent ${e.trim()}` : e, n = b(t, V.current), r = H.current, i;
-		n && (i = { trigger: n.trigger }, r && r.trigger === n.trigger && w(t, n).includes(r.item.label) && (i.argument = r.item));
+		n && (i = { trigger: n.trigger }, r && r.trigger === n.trigger && C(t, n).includes(r.item.label) && (i.argument = r.item));
 		let o = Ji(G), s = {
 			html: G.isEmpty ? "" : G.getHTML(),
 			text: t,
@@ -2829,7 +2830,7 @@ var na = te(function({ onSend: a, draft: f, onDraftChange: x, onCommand: ee, onS
 					className: e("flex items-center gap-1.5 bg-neutral-bg px-2 py-1 text-[11px] text-neutral-fg", !Qe && !U && "rounded-t-lg"),
 					children: [/* @__PURE__ */ k(o, { size: 13 }), /* @__PURE__ */ k("span", { children: "Only you can see this" })]
 				}),
-				/* @__PURE__ */ k(S, {
+				/* @__PURE__ */ k(w, {
 					references: we ?? [],
 					...Te ? { onRemove: Te } : {},
 					removeLabel: (e) => `Remove ${e.label} from this draft`,
@@ -3045,7 +3046,7 @@ var na = te(function({ onSend: a, draft: f, onDraftChange: x, onCommand: ee, onS
 						children: B ? "Run" : "Send"
 					})]
 				}),
-				/* @__PURE__ */ k(y, {
+				/* @__PURE__ */ k(S, {
 					open: P.open,
 					initialHref: P.href,
 					initialText: P.text,
@@ -3073,4 +3074,4 @@ var na = te(function({ onSend: a, draft: f, onDraftChange: x, onCommand: ee, onS
 	});
 });
 //#endregion
-export { Vi as CommandSuggestions, Pi as ComposerAttachments, S as ComposerReferences, Ii as DocumentSuggestions, x as EMOJI_SHORTCODES, Li as EmojiSuggestions, Fi as MentionSuggestions, na as RichChatComposer, w as composerCommandArgumentText, b as matchComposerCommand, C as searchEmoji };
+export { Vi as CommandSuggestions, Pi as ComposerAttachments, w as ComposerReferences, Ii as DocumentSuggestions, y as EMOJI_SHORTCODES, Li as EmojiSuggestions, Fi as MentionSuggestions, na as RichChatComposer, C as composerCommandArgumentText, b as matchComposerCommand, x as searchEmoji };

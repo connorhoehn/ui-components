@@ -173,3 +173,7 @@ export type { DocumentReviewEntry, DocumentReviewPanelProps } from './DocumentRe
 // The reading end of the presentation generator: a rendered deck, read-only.
 export { PresentationView } from './PresentationView';
 export type { PresentationViewProps, PresentationRevision, PresentationSlide } from './PresentationView';
+
+// The writing end of the same document type. See presentation/index.ts for
+// why the sortable rail is not named there.
+export * from './presentation';

@@ -6,6 +6,63 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.344.0] — 2026-09-21
+
+### Added — `PresentationEditor`: the writing end of the deck generator
+
+`PresentationView` (2.342.0) reads a generated deck. This edits one. The thing
+being edited is a `DeckSpec` — the same contract `renderPptx` validates and
+renders — so every control writes one field of it and nothing else.
+
+- **`PresentationEditor` (root export and `./doc-editor`).** Controlled `spec`
+  + `onChange`. Left, a slide rail of thumbnails with reorder / add / duplicate
+  / delete and a layout picker; centre, the generator's own SVG of the selected
+  slide over an inline form for the fields that layout reads (bullets as a list
+  editor, two columns, a chart's series as a `Table`, quote, notes); across the
+  top, revision tabs, `Save as v(n+1)`, `Download .pptx` and
+  `Open in presentation view`. `←`/`→` change slide, `⌘S` saves. `readOnly`
+  hands over to `PresentationView` rather than greying out a form.
+- **Every slide cites at least one source, and the editor says so.** That is
+  the generator's rule, not a preference — an uncited slide is rejected
+  server-side — so an uncited slide is marked in the rail, warned about in its
+  own form, and Save is disabled until it is fixed. Sources are picked through
+  the host's `onSearchSources`, which is the Documents explorer's own search,
+  so what a person picks is what the generator can cite.
+- **The preview is the generator's, not a second renderer.** The centre pane
+  shows what `renderSlideSvg` produced, reached through `onRequestPreview`
+  (the host debounces). While a re-render is in flight the previous image
+  stays up: typing a title fires a request per keystroke, and a stage that
+  blanks on each one is unusable.
+- **Drag comes from `@dnd-kit`, loaded lazily.** Those are OPTIONAL peers, and
+  `PresentationEditor` is a ROOT export — a static import would have made three
+  uninstalled packages a load-time failure for every consumer of the library,
+  not just one subpath. `SortableSlideList` is reached through `React.lazy`, so
+  `dist/index.js` carries no `@dnd-kit` import at all. Move-up / move-down
+  buttons are on every row regardless and are the reorder path for keyboards.
+- **`deckSpec.ts`** mirrors the platform's contract (types, caps,
+  `uncitedSlideIds`, and the pure spec edits `moveSlide` / `addSlide` /
+  `duplicateSlide` / `removeSlide` / `withLayoutDefaults`), all exported.
+
+### Added — `DocumentShape` gains `'presentation'`
+
+`NewDocumentModal` offers **Presentation** beside Page / Sections / Diagram,
+with a "Start from" select — Blank, From a transcript, From a project
+document — fed by the host's `recordings` and `onSearchDocuments`. Choosing a
+derived deck requires naming its source (Create stays disabled otherwise), and
+submitting calls the new `onCreateFromFixture({ from, sourceId?, title,
+description? })` so the host can create the row and ask the generator for a v1
+in one step. Without that prop a presentation falls back to an ordinary
+`onCreate`. A deck has no document type, like a whiteboard.
+
+### Added — `Avatar` takes a `glyph` or an `icon`
+
+Not every avatar-shaped thing is a person. A channel's `#` now renders through
+`Avatar` — same circle, same derived colour, same overlap rules — instead of a
+hand-rolled `<span className="rounded-full …">` beside the real ones. A loaded
+image still wins; a failed one falls back to the glyph rather than to initials.
+
+---
+
 ## [2.343.0] — 2026-09-21
 
 ### Added — WebGL backdrops: `ParticlesBackground`, `RippleGridBackground`, `ChatColumnBackdrop`

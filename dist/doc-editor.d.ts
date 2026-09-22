@@ -60,6 +60,9 @@ declare interface ActivityFeedProps {
     participants: Participant[];
 }
 
+/** Insert a fresh slide after `afterIndex` (-1 puts it first). */
+export declare function addSlide(spec: DeckSpec, afterIndex: number, layout?: SlideLayout): DeckSpec;
+
 export declare function AttachmentsPanel({ documentId, editable }: AttachmentsPanelProps): JSX.Element;
 
 declare interface AttachmentsPanelProps {
@@ -69,6 +72,9 @@ declare interface AttachmentsPanelProps {
 
 /** Shared node view extracted from the reference document editor. */
 export declare function AuthenticatedDocumentImageView({ node, selected }: NodeViewProps): JSX.Element;
+
+/** True when nothing blocks a save. Kept separate so the host can ask too. */
+export declare function canSaveDeck(spec: DeckSpec): boolean;
 
 /** The Y root holding a canvas body. Mirrors realtime-modules' `CANVAS_BODY_KEY`. */
 export declare const CANVAS_BODY_KEY = "body";
@@ -534,6 +540,61 @@ export declare function countAllComments(threads: CommentThread[]): number;
 /** Inject the caller's image extension to preserve one TipTap module graph. */
 export declare function createAuthenticatedDocumentImage(image: Node_2): Node_2;
 
+export declare const DECK_THEMES: readonly DeckTheme[];
+
+export declare interface DeckChart {
+    kind: 'bar' | 'line';
+    labels: string[];
+    series: Array<{
+        name: string;
+        values: number[];
+    }>;
+}
+
+/**
+ * An image slide carries only its alt text. Nothing is fetched at render time,
+ * so the slide is a framed caption until a real asset pipeline puts bytes
+ * behind it.
+ */
+export declare interface DeckImage {
+    alt: string;
+}
+
+export declare interface DeckQuote {
+    text: string;
+    by: string;
+}
+
+export declare interface DeckSlide {
+    id: string;
+    layout: SlideLayout;
+    title: string;
+    eyebrow?: string;
+    bullets?: string[];
+    columns?: [string[], string[]];
+    chart?: DeckChart;
+    quote?: DeckQuote;
+    image?: DeckImage;
+    notes?: string;
+    sources: DeckSource[];
+}
+
+/** A citation: the document the claim came from, and (optionally) where in it. */
+export declare interface DeckSource {
+    documentId: string;
+    anchor?: string;
+    title: string;
+}
+
+export declare interface DeckSpec {
+    title: string;
+    subtitle?: string;
+    theme?: DeckTheme;
+    slides: DeckSlide[];
+}
+
+export declare type DeckTheme = 'product' | 'engineering' | 'plain';
+
 export declare function DiffViewer({ oldSections, newSections, onClose }: DiffViewerProps): JSX.Element;
 
 declare interface DiffViewerProps {
@@ -850,7 +911,7 @@ export declare function DocumentSaveStatus({ state }: {
  * gate the editor branches on. Doing that translation is the host's job, not
  * this modal's; the modal only reports which shape the person chose.
  */
-export declare type DocumentShape = 'page' | 'sections' | 'diagram';
+export declare type DocumentShape = 'page' | 'sections' | 'diagram' | 'presentation';
 
 export declare function DocumentShareDialog({ open, onClose, documentTitle, people, generalAccess, orgName, onChangeGeneralAccess, onChangeRole, onInvite, onCopyLink, notice, 'data-testid': testId, }: DocumentShareDialogProps): JSX.Element;
 
@@ -981,6 +1042,15 @@ export declare interface DocumentUploadCompletion {
     transferId: string;
     downloadUrl?: string;
 }
+
+/**
+ * Copy a slide, sources included.
+ *
+ * The citations come along deliberately: a duplicate is nearly always the same
+ * claim said differently, and a copy that arrived uncited would be a copy that
+ * cannot be saved.
+ */
+export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 
 export declare function EditorToolbar({ editor }: EditorToolbarProps): JSX.Element | null;
 
@@ -1235,9 +1305,34 @@ export declare type LineSpacing = (typeof LINE_SPACINGS)[number];
  */
 export declare function lineSpacingAttributes(value: unknown): Record<string, string>;
 
+/** A blank slide of a layout, with the sub-object that layout needs. */
+export declare function makeSlide(id: string, layout?: SlideLayout): DeckSlide;
+
 export declare const MAX_ATTACHMENT_BYTES: number;
 
+export declare const MAX_BULLET_CHARS = 200;
+
+export declare const MAX_BULLETS_PER_SLIDE = 8;
+
+export declare const MAX_CHART_LABELS = 24;
+
+export declare const MAX_CHART_SERIES = 6;
+
+export declare const MAX_EYEBROW_CHARS = 60;
+
 export declare const MAX_IMAGE_BYTES: number;
+
+export declare const MAX_NOTES_CHARS = 2000;
+
+export declare const MAX_QUOTE_CHARS = 400;
+
+export declare const MAX_SLIDES = 40;
+
+export declare const MAX_SOURCES_PER_SLIDE = 10;
+
+export declare const MAX_SUBTITLE_CHARS = 200;
+
+export declare const MAX_TITLE_CHARS = 120;
 
 export declare const MentionDropdown: default_2.ForwardRefExoticComponent<MentionDropdownProps & default_2.RefAttributes<MentionDropdownHandle>>;
 
@@ -1278,6 +1373,9 @@ declare interface MentionUser {
     memberCount?: number;
 }
 
+/** Move the slide at `from` so it lands at `to`. Out-of-range moves are no-ops. */
+export declare function moveSlide(spec: DeckSpec, from: number, to: number): DeckSpec;
+
 declare type MyItem = MentionItem | TaskAssignment;
 
 export declare function MyMentionsPanel({ items, onNavigateToSection, onClose, }: MyMentionsPanelProps): JSX.Element;
@@ -1299,7 +1397,7 @@ declare interface MyMentionsPanelProps {
     onClose: () => void;
 }
 
-export declare function NewDocumentModal({ open, onClose, onCreate }: NewDocumentModalProps): JSX.Element | null;
+export declare function NewDocumentModal({ open, onClose, onCreate, onCreateFromFixture, onSearchDocuments, recordings, }: NewDocumentModalProps): JSX.Element | null;
 
 export declare interface NewDocumentModalProps {
     open: boolean;
@@ -1317,6 +1415,50 @@ export declare interface NewDocumentModalProps {
         documentTypeId?: string;
         shape: DocumentShape;
     }) => void;
+    /**
+     * Presentation only. Given this, "Create Document" hands over the deck's
+     * starting point instead of calling `onCreate` — the host creates the row
+     * AND asks the generator for a v1 in one step. Without it a presentation
+     * falls back to an ordinary `onCreate` with `shape: 'presentation'`, which
+     * makes an empty deck the person then fills by hand.
+     */
+    onCreateFromFixture?: (request: NewPresentationFixtureRequest) => void;
+    /**
+     * The Documents explorer's search, for "From a project document". The same
+     * search the deck editor's source picker uses, so what is offered here is
+     * what the generator can actually cite.
+     */
+    onSearchDocuments?: (query: string) => NewPresentationSource[] | Promise<NewPresentationSource[]>;
+    /** Transcripts available to this person, for "From a transcript". */
+    recordings?: readonly NewPresentationSource[];
+}
+
+/**
+ * What "New document → Presentation" asks the host for.
+ *
+ * `from` and `sourceId` are the generator's half of the contract: the host
+ * posts them to `/api/deck/fixture`, which drafts a real `DeckSpec` from the
+ * named transcript or document. `title` and `description` come along because
+ * the host still has to create a document row, and asking for the title twice
+ * — once here, once in a second dialog — is the flow this modal replaced.
+ */
+declare interface NewPresentationFixtureRequest {
+    from: NewPresentationOrigin;
+    /** The transcript or document it is derived from. Absent for `blank`. */
+    sourceId?: string;
+    title: string;
+    description?: string;
+}
+
+declare type NewPresentationOrigin = 'blank' | 'transcript' | 'document';
+
+/** A thing a presentation can be generated FROM. */
+declare interface NewPresentationSource {
+    id: string;
+    title: string;
+    kind?: 'document' | 'transcript';
+    /** A date, a length — whatever tells two similar rows apart. */
+    subtitle?: string;
 }
 
 /**
@@ -1327,6 +1469,26 @@ export declare interface NewDocumentModalProps {
  * from where you are, not from wherever the last search left off.
  */
 export declare function nextMatchIndex(matches: readonly FindMatch[], cursorPos: number, direction?: 1 | -1): number;
+
+/**
+ * The next revision's label, given the ones that exist.
+ *
+ * Reads the numbers off `v<n>` labels rather than counting rows, because a
+ * revision list can be paged or filtered and "Save as v3" over four revisions
+ * is a promise the server would have to break.
+ */
+export declare function nextRevisionLabel(revisions: readonly {
+    label: string;
+}[]): string;
+
+/**
+ * A slide id that is unique within the deck and passes `SLIDE_ID_PATTERN`.
+ *
+ * Counts up from the deck's size rather than hashing or using a UUID: the ids
+ * end up in preview handles a person reads in a URL, and `s7` is a better
+ * thing to read than a 36-character guid.
+ */
+export declare function nextSlideId(spec: DeckSpec, prefix?: string): string;
 
 /**
  * The slice of a Tiptap editor this needs.
@@ -1407,6 +1569,61 @@ declare interface PresenceInfo {
     idle?: boolean;
 }
 
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+
+export declare interface PresentationEditorProps {
+    /** Controlled. The host owns the spec; this component never holds a copy. */
+    spec: DeckSpec;
+    onChange: (spec: DeckSpec) => void;
+    preview: PresentationPreview;
+    /** Called whenever the spec changes. DEBOUNCE THIS — it is a render per call. */
+    onRequestPreview: (spec: DeckSpec) => void;
+    /** Resolves when the revision exists; rejects with the message to show. */
+    onSaveRevision: (spec: DeckSpec) => Promise<unknown>;
+    revisions: readonly PresentationEditorRevision[];
+    activeRevisionId: string;
+    onSelectRevision: (revisionId: string) => void;
+    /** The deck's own inputs, offered in the source picker before anything is typed. */
+    sources: readonly PresentationSourceOption[];
+    /** The Documents explorer's search, so a citation names a real document. */
+    onSearchSources?: (query: string) => PresentationSourceOption[] | Promise<PresentationSourceOption[]>;
+    /** The `.pptx`, through the host's authorized route. No handler, no button. */
+    onDownload?: () => void;
+    /** Opens the same deck in the read-only presentation surface. */
+    onOpenPresentationView?: () => void;
+    readOnly?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface PresentationEditorRevision {
+    id: string;
+    /** `v3`, as the generator labelled it. */
+    label: string;
+    /** Already formatted by the host — this component does no clock maths. */
+    createdAt?: string;
+}
+
+/**
+ * What the host knows about the preview right now.
+ *
+ * Three states rather than an optional object: "not rendered yet" and "the
+ * render failed" are different things to say, and collapsing them produces a
+ * stage that looks the same whether the server is slow or broken.
+ */
+export declare type PresentationPreview = {
+    slides: readonly PresentationPreviewSlide[];
+} | 'loading' | {
+    error: string;
+};
+
+/** One rendered slide image, as `POST /api/deck/preview` returns it. */
+export declare interface PresentationPreviewSlide {
+    id: string;
+    /** SVG source, rendered by the same layout engine that writes the .pptx. */
+    svg: string;
+}
+
 export declare interface PresentationRevision {
     id: string;
     /** `v3`, as the generator labelled it. */
@@ -1423,6 +1640,14 @@ export declare interface PresentationSlide {
     index: number;
     title: string;
     preview?: ReactNode;
+}
+
+/** One row the host's Documents search can return. */
+export declare interface PresentationSourceOption {
+    documentId: string;
+    title: string;
+    /** How the host would open it — a document page, or a recording transcript. */
+    kind?: 'document' | 'transcript';
 }
 
 export declare function PresentationView({ title, revisions, revisionId, onRevisionChange, slideIndex, onSlideChange, onDownload, downloadLabel, onOpenPreview, pending, notice, state, errorMessage, onRetry, className, 'data-testid': testId, }: PresentationViewProps): JSX.Element;
@@ -1595,6 +1820,12 @@ export declare function readOutline(editor: OutlineEditorLike | null): OutlineEn
 export declare function readSchemaVersion(ydoc: Doc | null | undefined): number;
 
 export declare function relativeTime(iso: string): string;
+
+/** Drop a slide. The last slide cannot be removed — a deck of none is not a deck. */
+export declare function removeSlide(spec: DeckSpec, id: string): DeckSpec;
+
+/** Replace one slide by id. Returns the same spec object when nothing matched. */
+export declare function replaceSlide(spec: DeckSpec, slide: DeckSlide): DeckSpec;
 
 /** "no replies" / "1 reply" / "4 replies" — the count is the thread's weight. */
 export declare function replyLabel(count: number): string;
@@ -1795,6 +2026,96 @@ export declare type ShareRole = 'owner' | 'editor' | 'commenter' | 'viewer';
 
 declare type SidebarPanel = 'history' | 'myItems' | 'videoHistory';
 
+/** Slide ids stay filename- and handle-safe: they end up in preview handles. */
+export declare const SLIDE_ID_PATTERN: RegExp;
+
+/** What each layout is FOR, in the words a person picking one needs. */
+export declare const SLIDE_LAYOUT_LABELS: Record<SlideLayout, string>;
+
+export declare const SLIDE_LAYOUTS: readonly SlideLayout[];
+
+export declare function SlideForm({ slide, onChange, sources, onSearchSources, readOnly, testIdPrefix, }: SlideFormProps): JSX.Element;
+
+export declare interface SlideFormProps {
+    slide: DeckSlide;
+    onChange: (slide: DeckSlide) => void;
+    sources: readonly PresentationSourceOption[];
+    onSearchSources?: (query: string) => PresentationSourceOption[] | Promise<PresentationSourceOption[]>;
+    readOnly?: boolean;
+    testIdPrefix: string;
+}
+
+export declare type SlideLayout = 'title' | 'section' | 'bullets' | 'two-column' | 'chart' | 'quote' | 'image';
+
+export declare function SlideList({ items, selectedId, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, testIdPrefix, }: SlideListProps): JSX.Element;
+
+export declare interface SlideListItem {
+    slide: DeckSlide;
+    /** The generator's SVG for this slide, when one has been rendered. */
+    thumbnailSvg?: string;
+    uncited: boolean;
+}
+
+export declare interface SlideListProps {
+    items: readonly SlideListItem[];
+    selectedId: string;
+    readOnly?: boolean;
+    onSelect: (id: string) => void;
+    onMove: (from: number, to: number) => void;
+    onDuplicate: (id: string) => void;
+    onDelete: (id: string) => void;
+    /** False at the deck's slide cap — duplicating would exceed it. */
+    canDuplicate: boolean;
+    testIdPrefix: string;
+}
+
+export declare function SlideRow({ slide, index, total, thumbnailSvg, selected, uncited, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, canDelete, dragHandle, rowRef, dragging, testIdPrefix, }: SlideRowProps): JSX.Element;
+
+export declare interface SlideRowProps {
+    slide: DeckSlide;
+    /** 0-based position in the deck; the row displays `index + 1`. */
+    index: number;
+    total: number;
+    /** The generator's SVG for this slide, when a preview has been rendered. */
+    thumbnailSvg?: string;
+    selected: boolean;
+    /** The slide cites nothing, so the deck cannot be saved while it is here. */
+    uncited: boolean;
+    readOnly?: boolean;
+    onSelect: (id: string) => void;
+    onMove: (from: number, to: number) => void;
+    onDuplicate: (id: string) => void;
+    onDelete: (id: string) => void;
+    /** False at the deck's slide cap. */
+    canDuplicate: boolean;
+    /** False on the last remaining slide. */
+    canDelete: boolean;
+    /** Supplied by the sortable list; absent in the plain fallback. */
+    dragHandle?: ReactNode;
+    /** The sortable list's node ref. */
+    rowRef?: Ref<HTMLLIElement>;
+    dragging?: boolean;
+    testIdPrefix: string;
+}
+
+export declare function SlideSources({ sources, onChange, options, onSearchSources, readOnly, testIdPrefix, }: SlideSourcesProps): JSX.Element;
+
+export declare interface SlideSourcesProps {
+    /** The citations already on the slide. */
+    sources: readonly DeckSource[];
+    onChange: (sources: DeckSource[]) => void;
+    /**
+     * What the deck already has to hand — the run's own inputs. Offered before
+     * anything is typed, because the slide's source is nearly always one of
+     * them.
+     */
+    options: readonly PresentationSourceOption[];
+    /** The Documents explorer's search. Absent, only `options` can be picked. */
+    onSearchSources?: (query: string) => PresentationSourceOption[] | Promise<PresentationSourceOption[]>;
+    readOnly?: boolean;
+    testIdPrefix: string;
+}
+
 /** Plain-object snapshot of a section for diffing (no Y.js references). */
 declare interface SnapshotSection {
     id: string;
@@ -1971,6 +2292,9 @@ export declare interface SuggestionReviewListProps {
     'data-testid'?: string;
 }
 
+/** `data:` URI for an `<img src>`, or `undefined` for an empty/absent source. */
+export declare function svgDataUri(svg: string | undefined): string | undefined;
+
 export declare function TableOfContents({ sections, focusedSectionId }: TableOfContentsProps): JSX.Element | null;
 
 declare interface TableOfContentsProps {
@@ -2085,6 +2409,14 @@ declare interface TiptapEditorProps {
      */
     onEditorReady?: (editor: ReturnType<typeof useEditor>) => void;
 }
+
+/**
+ * Slides that cite nothing, in deck order.
+ *
+ * The editor's only hard validation. Empty array means the spec can be saved;
+ * anything else is the list the warning names and the reason Save is off.
+ */
+export declare function uncitedSlideIds(spec: DeckSpec): string[];
 
 export declare interface UploadedDocumentFile {
     url: string;
@@ -2327,6 +2659,17 @@ declare interface VideoSessionParticipant {
 declare type ViewMode = 'editor' | 'ack' | 'reader';
 
 /**
+ * Move a slide's layout, keeping everything the new layout can still use.
+ *
+ * Content is NOT discarded on a layout change: a bullets slide turned into a
+ * chart keeps its bullets, so turning it back does not lose the words. The
+ * generator ignores the fields a layout does not read, and the alternative —
+ * deleting them — makes the layout picker a destructive control people learn
+ * to avoid.
+ */
+export declare function withLayoutDefaults(slide: DeckSlide, layout: SlideLayout): DeckSlide;
+
+/**
  * A ranked guess at where the remark belongs.
  *
  * Ordering only. `score` decides the order and is never rendered as a number —
@@ -2472,19 +2815,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2504,9 +2834,35 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -2540,9 +2896,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -2560,22 +2916,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

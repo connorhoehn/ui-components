@@ -85,3 +85,46 @@ describe('nameToColor', () => {
     expect(palette.has(nameToColor('bob'))).toBe(true);
   });
 });
+
+// A channel is avatar-shaped without being a person. Before `glyph`/`icon` the
+// only way to draw one at the same size, colour and overlap was a hand-rolled
+// span beside the real Avatars — two components to keep in step, one of them
+// outside the design system.
+describe('Avatar — glyph and icon', () => {
+  it('renders a glyph instead of initials, so a channel # goes through Avatar', () => {
+    render(<Avatar name="general" glyph="#" />);
+    expect(screen.getByText('#')).toBeInTheDocument();
+    expect(screen.queryByText('Ge')).not.toBeInTheDocument();
+  });
+
+  it('keeps the name as the accessible title and the colour source', () => {
+    render(<Avatar name="general" glyph="#" />);
+    const circle = screen.getByTitle('general');
+    expect(circle).toHaveStyle({ background: nameToColor('general') });
+  });
+
+  it('renders an arbitrary icon node', () => {
+    render(<Avatar name="releases" icon={<svg data-testid="lock-icon" />} />);
+    expect(screen.getByTestId('lock-icon')).toBeInTheDocument();
+    expect(screen.queryByText('Re')).not.toBeInTheDocument();
+  });
+
+  it('lets a loaded image win over the glyph — a photo is more specific', () => {
+    render(<Avatar name="Alice" glyph="#" src="https://example.com/a.png" />);
+    expect(screen.getByRole('img')).toHaveAttribute('src', 'https://example.com/a.png');
+    expect(screen.queryByText('#')).not.toBeInTheDocument();
+  });
+
+  it('falls back to the glyph when the image fails, not to initials', () => {
+    render(<Avatar name="general" glyph="#" src="https://example.com/missing.png" />);
+    fireEvent.error(screen.getByRole('img'));
+    expect(screen.getByText('#')).toBeInTheDocument();
+  });
+
+  it('sizes a single glyph larger than two initials would be', () => {
+    const { rerender } = render(<Avatar name="general" size={40} />);
+    expect(screen.getByTitle('general')).toHaveStyle({ fontSize: '15.2px' });
+    rerender(<Avatar name="general" size={40} glyph="#" />);
+    expect(screen.getByTitle('general')).toHaveStyle({ fontSize: '20px' });
+  });
+});
