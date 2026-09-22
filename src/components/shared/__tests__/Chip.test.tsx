@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import Chip from '../Chip';
 import type { ChipTone } from '../Chip';
 
@@ -163,5 +164,61 @@ describe('Chip', () => {
     expect(chip).toHaveClass('bg-danger-bg', 'text-danger-fg', 'uppercase', 'tracking-wide', 'gap-1');
     expect(chip.querySelector('.animate-ping')).toBeInTheDocument();
     expect(screen.getByTestId('ico')).toBeInTheDocument();
+  });
+});
+
+describe('Chip onRemove', () => {
+  it('renders no remove control by default', () => {
+    render(<Chip data-testid="chip">Alice</Chip>);
+    expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('renders an accessible remove control and calls back', () => {
+    const onRemove = vi.fn();
+    render(<Chip onRemove={onRemove} removeLabel="Remove Alice">Alice</Chip>);
+    const button = screen.getByRole('button', { name: 'Remove Alice' });
+    fireEvent.click(button);
+    expect(onRemove).toHaveBeenCalledTimes(1);
+  });
+
+  it('defaults the accessible name to "Remove"', () => {
+    render(<Chip onRemove={() => {}}>Alice</Chip>);
+    expect(screen.getByRole('button', { name: 'Remove' })).toBeInTheDocument();
+  });
+
+  it('exposes removeTestId on the control', () => {
+    render(<Chip onRemove={() => {}} removeTestId="rm-alice">Alice</Chip>);
+    expect(screen.getByTestId('rm-alice').tagName).toBe('BUTTON');
+  });
+
+  it('uses the borderless link button, not a boxed one', () => {
+    render(<Chip onRemove={() => {}} removeTestId="rm">Alice</Chip>);
+    const cls = screen.getByTestId('rm').className;
+    expect(cls).toContain('border-none');
+    expect(cls).toContain('bg-transparent');
+    expect(cls).toContain('p-0');
+  });
+
+  it('does not fire the surrounding row/link click', () => {
+    const onRemove = vi.fn();
+    const onRowClick = vi.fn();
+    render(
+      <div onClick={onRowClick}>
+        <Chip onRemove={onRemove} removeTestId="rm">Alice</Chip>
+      </div>,
+    );
+    fireEvent.click(screen.getByTestId('rm'));
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRowClick).not.toHaveBeenCalled();
+  });
+
+  it('adds the adornment gap so the glyph is not flush against the label', () => {
+    render(<Chip onRemove={() => {}} data-testid="chip">Alice</Chip>);
+    expect(screen.getByTestId('chip').className).toContain('gap-1');
+  });
+
+  it('accepts a custom glyph', () => {
+    render(<Chip onRemove={() => {}} removeIcon="✕" removeTestId="rm">Alice</Chip>);
+    expect(screen.getByTestId('rm')).toHaveTextContent('✕');
   });
 });

@@ -33,6 +33,19 @@ export type EmptyStateTone = SurfaceTone;
  */
 export type EmptyStateSize = 'md' | 'sm';
 
+/**
+ * `default` is the centred block (both sizes). `compact` is a single quiet
+ * line: no minimum height, no centring, no glyph pedestal — the "No items."
+ * that belongs INSIDE a section that already has a heading, where a block
+ * placeholder would push the rest of the card down the page.
+ *
+ * It is a separate axis from `size` on purpose: `size="sm"` is still a block
+ * (glyph over title over description), just a smaller one, and that is what
+ * kept sending callers back to a hand-written `<div className="italic
+ * text-text-tertiary">`. `compact` wins on layout when both are set.
+ */
+export type EmptyStateDensity = 'default' | 'compact';
+
 const TONE = {
   surface: {
     container: 'text-text-tertiary',
@@ -131,36 +144,57 @@ export interface EmptyStateProps {
   className?: string;
   /** Block scale. Default `md`. See `EmptyStateSize`. */
   size?: EmptyStateSize;
+  /** Layout density. Default `default`. See `EmptyStateDensity`. */
+  density?: EmptyStateDensity;
 }
 
 function EmptyState({
   icon, title, body, description, actionLabel, onAction, action, actions,
   testId = 'empty-state', actionTestId = 'empty-state-action',
-  tone = 'surface', className, size = 'md',
+  tone = 'surface', className, size = 'md', density = 'default',
 }: EmptyStateProps) {
   const resolvedDescription = description ?? body;
   const palette: Palette = TONE[tone] ?? TONE.surface;
   const small = size === 'sm';
+  const compact = density === 'compact';
   return (
     <div
       data-testid={testId}
       className={cn(
-        'flex flex-col items-center justify-center font-[inherit]',
-        small ? 'gap-1 px-4 py-6' : 'min-h-[220px] gap-2 p-8',
+        compact
+          ? 'flex flex-row flex-wrap items-center gap-1.5 py-1 text-[13px] font-[inherit]'
+          : cn(
+              'flex flex-col items-center justify-center font-[inherit]',
+              small ? 'gap-1 px-4 py-6' : 'min-h-[220px] gap-2 p-8',
+            ),
         palette.container,
         className,
       )}
     >
       {icon && (
-        typeof icon === 'string'
-          ? <div className={cn(small ? 'text-[28px] mb-1 leading-none' : 'text-[52px] mb-2')} aria-hidden="true">{icon}</div>
-          : <div className={small ? 'mb-1' : 'mb-2'}>{icon}</div>
+        compact
+          ? <span className="leading-none" aria-hidden="true">{icon}</span>
+          : typeof icon === 'string'
+            ? <div className={cn(small ? 'text-[28px] mb-1 leading-none' : 'text-[52px] mb-2')} aria-hidden="true">{icon}</div>
+            : <div className={small ? 'mb-1' : 'mb-2'}>{icon}</div>
       )}
-      <div className={cn(small ? 'text-[14px] font-semibold' : 'text-[17px] font-semibold', palette.title)}>{title}</div>
+      {/* Compact borrows the DESCRIPTION colour and a normal weight: at one
+          line the title is the whole message, and a bold slate heading in a
+          card that already has a heading reads as a second heading. It is a
+          <span> so the line keeps flowing beside the icon and description. */}
+      {compact ? (
+        <span className={cn('font-normal', palette.description)}>{title}</span>
+      ) : (
+        <div className={cn(small ? 'text-[14px] font-semibold' : 'text-[17px] font-semibold', palette.title)}>{title}</div>
+      )}
       {resolvedDescription && (
-        <div className={cn('text-[13px] text-center max-w-[340px] leading-normal', palette.description)}>
-          {resolvedDescription}
-        </div>
+        compact ? (
+          <span className={palette.description}>{resolvedDescription}</span>
+        ) : (
+          <div className={cn('text-[13px] text-center max-w-[340px] leading-normal', palette.description)}>
+            {resolvedDescription}
+          </div>
+        )
       )}
       {actions && actions.length > 0
         ? <GuidedActionList actions={actions} palette={palette} />

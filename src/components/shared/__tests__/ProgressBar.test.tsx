@@ -34,3 +34,60 @@ describe('ProgressBar', () => {
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuemax', '100');
   });
 });
+
+describe('ProgressBar completeTone and label slot', () => {
+  const fillOf = (container: HTMLElement) =>
+    container.querySelector('[role="progressbar"] > div') as HTMLElement;
+
+  it('leaves the fill colour alone below 100%', () => {
+    const { container } = render(
+      <ProgressBar value={3} max={8} color="var(--color-info)" completeTone="success" />,
+    );
+    expect(fillOf(container).style.background).toBe('var(--color-info)');
+  });
+
+  it('switches the fill to the complete tone at 100%', () => {
+    const { container } = render(
+      <ProgressBar value={8} max={8} color="var(--color-info)" completeTone="success" />,
+    );
+    expect(fillOf(container).style.background).toBe('var(--color-success)');
+  });
+
+  it('does nothing at 100% without completeTone', () => {
+    const { container } = render(<ProgressBar value={8} max={8} color="var(--color-info)" />);
+    expect(fillOf(container).style.background).toBe('var(--color-info)');
+  });
+
+  it('tints the value readout with the complete tone too', () => {
+    render(
+      <ProgressBar value={5} max={5} label="5 / 5 done" showRatio={false} completeTone="success" />,
+    );
+    expect(screen.getByText('100%').className).toContain('text-success-fg');
+  });
+
+  it('keeps the readout neutral before completion', () => {
+    render(
+      <ProgressBar value={2} max={5} label="2 / 5 done" showRatio={false} completeTone="success" />,
+    );
+    expect(screen.getByText('40%').className).toContain('text-[var(--color-text-tertiary)]');
+  });
+
+  it('renders "n / N done" beside the percentage as the built-in label', () => {
+    render(
+      <ProgressBar value={3} max={5} label="3 / 5 done" showRatio={false} completeTone="success" />,
+    );
+    expect(screen.getByText('3 / 5 done')).toBeInTheDocument();
+    expect(screen.getByText('60%')).toBeInTheDocument();
+  });
+
+  it('valueLabel replaces the computed readout', () => {
+    render(<ProgressBar value={3} max={5} label="Steps" valueLabel="2 left" />);
+    expect(screen.getByText('2 left')).toBeInTheDocument();
+    expect(screen.queryByText('3/5')).toBeNull();
+  });
+
+  it('labelClassName lands on the label row', () => {
+    render(<ProgressBar value={1} max={4} label="Steps" labelClassName="text-[11px]" />);
+    expect(screen.getByText('Steps').parentElement?.className).toContain('text-[11px]');
+  });
+});

@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { Button } from '../ui/Button';
 
 import {
   CODE_TONE_SOFT,
@@ -93,6 +94,25 @@ export interface ChipProps {
   /** Only meaningful with `href`. Opens in a new tab (`target="_blank"`),
    *  matching `Link`'s `external` prop. */
   external?: boolean;
+  /**
+   * Renders a dismiss control inside the chip. A removable chip is a token in
+   * a multi-select (approvers, tags, filters), and every host that needed one
+   * hand-rolled the same borderless `<button>` — `Button`'s boxed variants
+   * were too heavy for a 12px glyph in a pill and `IconButton`'s smallest size
+   * is a 24px square. This uses `Button variant="link"`, which is exactly the
+   * inline, unpadded, font-size-inheriting control that shape wants.
+   */
+  onRemove?: () => void;
+  /**
+   * Accessible name for the remove control. Defaults to `Remove`, which is
+   * fine for a lone chip and useless in a row of eight — pass
+   * `removeLabel={`Remove ${name}`}` whenever the chip is one of several.
+   */
+  removeLabel?: string;
+  /** `data-testid` on the remove control. */
+  removeTestId?: string;
+  /** Glyph inside the remove control. Defaults to a multiplication sign. */
+  removeIcon?: ReactNode;
 }
 
 export default function Chip({
@@ -113,6 +133,10 @@ export default function Chip({
   'aria-label': ariaLabel,
   href,
   external = false,
+  onRemove,
+  removeLabel = 'Remove',
+  removeTestId,
+  removeIcon = '×',
 }: ChipProps) {
   const key = toneKey(tone);
   const family = PALETTE[palette] ?? PALETTE.surface;
@@ -121,7 +145,7 @@ export default function Chip({
     : solid
       ? family.solid[key]
       : family.soft[key];
-  const hasAdornment = !!(dot || icon);
+  const hasAdornment = !!(dot || icon || onRemove);
   const Root = href ? 'a' : 'span';
   const rootProps = href
     ? { href, target: external ? '_blank' : undefined, rel: 'noopener noreferrer' }
@@ -169,6 +193,24 @@ export default function Chip({
         </span>
       )}
       {children}
+      {onRemove && (
+        <Button
+          variant="link"
+          tone={palette}
+          onClick={(e) => {
+            // A removable chip is often inside a clickable row or an <a>; the
+            // dismiss must not also navigate or select.
+            e.preventDefault();
+            e.stopPropagation();
+            onRemove();
+          }}
+          aria-label={removeLabel}
+          data-testid={removeTestId}
+          className="ml-0.5 text-xs leading-none text-inherit no-underline hover:underline"
+        >
+          {removeIcon}
+        </Button>
+      )}
     </Root>
   );
 }

@@ -56,3 +56,16 @@ export const SelectAllIndeterminate: Story = {
 export const Disabled: Story = {
   args: { checked: true, disabled: true, onChange: () => {}, 'aria-label': 'Locked' },
 };
+
+/** The round tone-coloured status toggle — still a real checkbox underneath. */
+export const Round: Story = {
+  args: { checked: true, onChange: () => {} },
+  render: () => (
+    <div className="flex items-center gap-3">
+      <Checkbox shape="round" tone="warning" checked={false} onChange={() => {}} aria-label="Pending" />
+      <Checkbox shape="round" tone="info" checked onChange={() => {}} aria-label="Acknowledged" />
+      <Checkbox shape="round" tone="success" checked onChange={() => {}} aria-label="Done" />
+      <Checkbox shape="round" tone="danger" checked={false} onChange={() => {}} aria-label="Rejected" />
+    </div>
+  ),
+};

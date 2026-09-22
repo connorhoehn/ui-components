@@ -14,6 +14,41 @@
 import { forwardRef, useEffect, useRef } from 'react';
 import type { ChangeEvent, MouseEvent } from 'react';
 import { cn } from '../../lib/cn';
+import {
+  TONE_BORDER,
+  TONE_SOLID_BG,
+  toneKey,
+  type Tone,
+  type ToneOrAlias,
+} from '../shared/tones';
+
+/**
+ * `square` is the native `accent-primary` box (default, unchanged). `round` is
+ * the tone-coloured ring that fills solid and shows a tick when checked —
+ * the "status toggle" shape a task list uses, where the colour carries the
+ * state (amber pending, blue acknowledged, green done) and the control is
+ * round so it reads as a status rather than a form field.
+ *
+ * This is still a real `<input type="checkbox">`: the native control is
+ * transparent and stretched over the painted ring, so focus, space-to-toggle,
+ * label association and form submission all behave exactly as they do for the
+ * square shape. Hosts that hand-rolled this shape used a `<button>` and lost
+ * every one of those.
+ */
+export type CheckboxShape = 'square' | 'round';
+
+// Unchecked, the ring is an outline; hovering tints its inside so the target
+// reads as something you can hit before you hit it. `peer-hover` rather than
+// `hover` because the pointer is over the transparent input, not the paint.
+const ROUND_HOVER_FILL: Record<Tone, string> = {
+  neutral: 'peer-hover:bg-neutral/20',
+  success: 'peer-hover:bg-success/20',
+  warning: 'peer-hover:bg-warning/20',
+  danger: 'peer-hover:bg-danger/20',
+  info: 'peer-hover:bg-info/20',
+  caution: 'peer-hover:bg-caution/20',
+  accent: 'peer-hover:bg-accent/20',
+};
 
 const NO_MODIFIERS: CheckboxModifiers = {
   shiftKey: false, metaKey: false, ctrlKey: false, altKey: false,
@@ -75,6 +110,21 @@ export interface CheckboxProps {
   onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
   /** Key pass-through, for shift-range selection handling. */
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  /**
+   * Control shape. See `CheckboxShape`. Default `square`.
+   *
+   * With `round`, `className` lands on the wrapper (the thing with a size and
+   * a position) rather than on the hidden input, since the input no longer has
+   * any paint of its own — which is also how the control is resized, e.g.
+   * `className="h-[22px] w-[22px]"`.
+   */
+  shape?: CheckboxShape;
+  /**
+   * Semantic tone for `shape="round"` — the ring's border and its checked
+   * fill. Ignored by `shape="square"`, which is the browser's own
+   * `accent-primary` box. Default `info`.
+   */
+  tone?: ToneOrAlias;
   className?: string;
   'data-testid'?: string;
 }
@@ -93,6 +143,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       'aria-describedby': ariaDescribedBy,
       onClick,
       onKeyDown,
+      shape = 'square',
+      tone = 'info',
       className,
       'data-testid': testId,
     },
@@ -107,6 +159,94 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     useEffect(() => {
       if (innerRef.current) innerRef.current.indeterminate = indeterminate;
     }, [indeterminate]);
+
+    const setRef = (el: HTMLInputElement | null) => {
+      innerRef.current = el;
+      if (typeof forwardedRef === 'function') forwardedRef(el);
+      else if (forwardedRef) forwardedRef.current = el;
+    };
+
+    const handleClick = (e: MouseEvent<HTMLInputElement>) => {
+      modifiersRef.current = {
+        shiftKey: e.shiftKey, metaKey: e.metaKey,
+        ctrlKey: e.ctrlKey, altKey: e.altKey,
+      };
+      onClick?.(e);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      modifiersRef.current = NO_MODIFIERS;
+      onKeyDown?.(e);
+    };
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
+      onChange(e.target.checked, modifiersRef.current);
+
+    const shared = {
+      type: 'checkbox' as const,
+      id,
+      name,
+      checked,
+      disabled,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
+      'aria-checked': (indeterminate ? 'mixed' : undefined) as 'mixed' | undefined,
+      onClick: handleClick,
+      onKeyDown: handleKeyDown,
+      onChange: handleChange,
+      'data-testid': testId,
+    };
+
+    if (shape === 'round') {
+      const key = toneKey(tone);
+      const filled = checked || indeterminate;
+      return (
+        // 18px, one size — and resizable without a prop: `className` lands
+        // here, the paint inside is `h-full w-full`, and the mark is a
+        // fraction of that, so `className="h-[22px] w-[22px]"` scales the
+        // whole control. A numeric `size` prop would have to be an inline
+        // style, which this library does not ship in new components.
+        <span
+          className={cn(
+            'relative inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center align-middle',
+            disabled && 'opacity-50',
+            className,
+          )}
+        >
+          <input
+            {...shared}
+            ref={setRef}
+            className="peer absolute inset-0 m-0 h-full w-full cursor-pointer rounded-full opacity-0 disabled:cursor-not-allowed"
+          />
+          <span
+            aria-hidden="true"
+            className={cn(
+              'pointer-events-none flex h-full w-full items-center justify-center rounded-full border-2 p-0 text-white transition-colors',
+              TONE_BORDER[key],
+              filled ? TONE_SOLID_BG[key] : cn('bg-transparent', !disabled && ROUND_HOVER_FILL[key]),
+              'peer-focus-visible:ring-2 peer-focus-visible:ring-info/40',
+            )}
+          >
+            {indeterminate ? (
+              <svg viewBox="0 0 10 2" className="w-1/2" aria-hidden="true">
+                <line x1="1" y1="1" x2="9" y2="1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            ) : checked ? (
+              <svg viewBox="0 0 10 10" fill="none" className="h-1/2 w-1/2" aria-hidden="true">
+                <polyline
+                  points="2,5 4,7.5 8,2.5"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            ) : null}
+          </span>
+        </span>
+      );
+    }
 
     return (
       <input

@@ -209,3 +209,29 @@ describe('Tabs variants', () => {
     },
   );
 });
+
+describe('Tabs container data-testid', () => {
+  it('renders nothing by default', () => {
+    render(<Tabs items={ITEMS} value="a" onValueChange={() => {}} />);
+    expect(screen.getByRole('tablist')).not.toHaveAttribute('data-testid');
+  });
+
+  it('puts data-testid on the tablist wrapper', () => {
+    render(<Tabs items={ITEMS} value="a" onValueChange={() => {}} data-testid="run-replay-tabs" />);
+    const bar = screen.getByTestId('run-replay-tabs');
+    expect(bar).toHaveAttribute('role', 'tablist');
+  });
+
+  it('composes with the per-item hook', () => {
+    render(
+      <Tabs
+        items={ITEMS}
+        value="a"
+        onValueChange={() => {}}
+        data-testid="bar"
+        getItemTestId={(item) => `tab-${item.id}`}
+      />,
+    );
+    expect(screen.getByTestId('bar')).toContainElement(screen.getByTestId('tab-b'));
+  });
+});

@@ -50,3 +50,31 @@ describe('SectionLabel', () => {
     expect(cls).toContain('uppercase');
   });
 });
+
+describe('SectionLabel case', () => {
+  it('defaults to the uppercase panel caption', () => {
+    render(<SectionLabel data-testid="sl">Variables</SectionLabel>);
+    expect(screen.getByTestId('sl').className).toContain('uppercase');
+  });
+
+  it('sentence case drops the uppercase and the wide tracking', () => {
+    render(<SectionLabel case="sentence" data-testid="sl">If timeout</SectionLabel>);
+    const cls = screen.getByTestId('sl').className;
+    expect(cls).not.toContain('uppercase');
+    expect(cls).toContain('normal-case');
+    expect(cls).toContain('tracking-normal');
+  });
+
+  it('sentence case matches a form label: 12px, medium, primary text', () => {
+    render(<SectionLabel case="sentence" data-testid="sl">If timeout</SectionLabel>);
+    const cls = screen.getByTestId('sl').className;
+    expect(cls).toContain('text-[12px]');
+    expect(cls).toContain('font-medium');
+    expect(cls).toContain('text-text-primary');
+  });
+
+  it('still composes with `as`', () => {
+    render(<SectionLabel case="sentence" as="div" data-testid="sl">X</SectionLabel>);
+    expect(screen.getByTestId('sl').tagName).toBe('DIV');
+  });
+});

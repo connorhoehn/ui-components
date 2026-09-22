@@ -60,6 +60,7 @@ import { SectionLabel } from '../../shared/SectionLabel';
 import Tabs from '../../shared/Tabs';
 import { Text } from '../../shared/Text';
 import { PresentationView, type PresentationRevision } from '../PresentationView';
+import { nextSlideIndex, slideNavigationIntent } from '../../../lib/slideNavigationKey';
 import SlideForm from './SlideForm';
 import SlideList from './SlideList';
 import type { SlideListItem } from './SlideList';
@@ -148,16 +149,6 @@ function Chevron({ back }: { back?: boolean }) {
 }
 
 /** True when the keystroke belongs to whatever the person is typing into. */
-function isTypingTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false;
-  const tag = target.tagName;
-  return (
-    tag === 'INPUT' ||
-    tag === 'TEXTAREA' ||
-    tag === 'SELECT' ||
-    target.isContentEditable
-  );
-}
 
 export function PresentationEditor({
   spec,
@@ -290,19 +281,18 @@ export function PresentationEditor({
         save();
         return;
       }
-      if (event.metaKey || event.ctrlKey || event.altKey) return;
-      if (isTypingTarget(event.target)) return;
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        step(-1);
-      } else if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        step(1);
-      }
+      // Same intent vocabulary as the reading surface (`PresentationView`),
+      // through the same helper, so ←/→/Home/End mean one thing in this
+      // component whichever end of it you are on.
+      const intent = slideNavigationIntent(event);
+      if (!intent) return;
+      event.preventDefault();
+      const target = nextSlideIndex(intent, selectedIndex + 1, slides.length);
+      if (target !== selectedIndex + 1) step(target - (selectedIndex + 1));
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [save, step]);
+  }, [save, step, selectedIndex, slides.length]);
 
   // -------------------------------------------------------------------------
   // Read-only: the reading surface, not a greyed-out form

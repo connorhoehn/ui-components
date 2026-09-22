@@ -1,5 +1,31 @@
 import type { WorkActivityEffort, WorkGraphEdgeData, WorkGraphNodeData } from './types';
 
+/**
+ * Floor for a USER zoom-out — wheel, pinch, keyboard, the −/+ buttons. Below
+ * this the cards stop being readable, so there is no point letting someone
+ * wander down there by hand.
+ */
+export const WORK_CANVAS_MIN_ZOOM = 0.4;
+
+/**
+ * Floor for FITTING. Deliberately far below the interactive floor, because a
+ * fit clamped to 0.4 is not a fit: at nine parallel efforts — today's real
+ * seeded scenario — the graph does not go in the viewport at 0.4, so the top
+ * row of cards sat permanently off-screen, "Fit graph" appeared to do nothing,
+ * and the only way to see the rest was to discover panning.
+ *
+ * Fitting and zooming are different intents. "Show me all of it" must be
+ * allowed to answer honestly, even when the honest answer is small.
+ */
+export const WORK_CANVAS_FIT_MIN_ZOOM = 0.1;
+
+/**
+ * Below this, a fitted graph is a map rather than something you can read — so
+ * the canvas points at the accessible list instead of leaving the reader to
+ * squint.
+ */
+export const WORK_CANVAS_READABLE_ZOOM = WORK_CANVAS_MIN_ZOOM;
+
 export interface WorkNodeBounds { width: number; height: number }
 export interface WorkEffortLayout {
   id: string;
@@ -205,7 +231,7 @@ export function layoutWorkEfforts(
   // Context stays open until keeping it open would make the whole view
   // unreadable. Crowding (three efforts or more) folds it up front; height
   // alone does not, because a fold the viewer did not ask for hides work.
-  if (options.height && !options.focusedEffortId && chosen.zoom < 0.4) {
+  if (options.height && !options.focusedEffortId && chosen.zoom < WORK_CANVAS_MIN_ZOOM) {
     const foldable = layouts.filter((group) => group.sourceCount > 0 && group.sourceCount < group.nodes.length && group.collapsedSourceCount === 0 && !expanded.has(group.id) && !options.foldedForHeight?.includes(group.id));
     if (foldable.length) return layoutWorkEfforts(nodes, edges, efforts, { ...options, foldedForHeight: [...(options.foldedForHeight ?? []), ...foldable.map((group) => group.id)] });
   }

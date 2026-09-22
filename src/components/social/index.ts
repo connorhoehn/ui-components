@@ -27,6 +27,7 @@ export { GroupPanel } from './GroupPanel';
 export { CommentThread } from './CommentThread';
 export { PresencePanel } from './PresencePanel';
 export { ActivityPanel } from './ActivityPanel';
+export type { ActivityPanelProps, FetchActivityFn, ActivityItem, ActivityResponse } from './ActivityPanel';
 
 export { ConversationList } from './ConversationList';
 export type {

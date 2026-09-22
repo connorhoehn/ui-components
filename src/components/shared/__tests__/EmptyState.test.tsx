@@ -163,3 +163,40 @@ describe('EmptyState', () => {
     expect(button.className).not.toMatch(/bg-primary/);
   });
 });
+
+describe('EmptyState density="compact"', () => {
+  it('leaves the default block untouched', () => {
+    render(<EmptyState title="No items found" />);
+    expect(screen.getByTestId('empty-state').className).toContain('min-h-[220px]');
+  });
+
+  it('reserves no block height', () => {
+    render(<EmptyState title="No items." density="compact" />);
+    const el = screen.getByTestId('empty-state');
+    expect(el.className).not.toContain('min-h-[220px]');
+    expect(el.className).not.toContain('flex-col');
+  });
+
+  it('lays the title and description out on one line', () => {
+    render(<EmptyState title="No items." description="Add one to begin." density="compact" />);
+    const el = screen.getByTestId('empty-state');
+    expect(el.className).toContain('flex-row');
+    expect(el).toHaveTextContent('No items.Add one to begin.');
+  });
+
+  it('renders the single line at caption size in the quiet colour', () => {
+    render(<EmptyState title="No items." density="compact" />);
+    expect(screen.getByTestId('empty-state').className).toContain('text-[13px]');
+    expect(screen.getByText('No items.').className).toContain('text-text-tertiary');
+  });
+
+  it('takes the caller class, which is how the italic line is reproduced', () => {
+    render(<EmptyState title="No items." density="compact" className="italic" />);
+    expect(screen.getByTestId('empty-state').className).toContain('italic');
+  });
+
+  it('still overrides size=sm, which is a smaller block rather than a line', () => {
+    render(<EmptyState title="No items." density="compact" size="sm" />);
+    expect(screen.getByTestId('empty-state').className).not.toContain('flex-col');
+  });
+});

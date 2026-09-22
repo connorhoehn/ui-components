@@ -164,3 +164,18 @@ export type {
   DeckTheme,
   SlideLayout,
 } from './components/doc-editor/presentation/deckSpec';
+
+// ---------------------------------------------------------------------------
+// REST origin overrides
+// ---------------------------------------------------------------------------
+
+// `import.meta.env.VITE_*` is replaced when a bundle is BUILT, and the bundle
+// that ships is this library's — so the env names the document-type adapter
+// falls back to are baked in as `''` for every consumer, and its requests went
+// same-origin to a path that is not there, silently. A host calls this once at
+// start-up with its own origin. Same gap, same shape, as `ActivityPanel`'s
+// `baseUrl` prop and `useTypedDocuments`' `baseUrl` option.
+export {
+  setDocumentTypeApiBaseUrl,
+  getDocumentTypeApiBaseUrl,
+} from './lib/documentTypeApiAdapter';

@@ -1,1 +1,0 @@
-const e=require("./cn-CFAiuoYh.cjs");let t=require("react/jsx-runtime");function n({children:n,as:r=`span`,className:i,"data-testid":a}){return(0,t.jsx)(r,{"data-testid":a,className:e.t(`text-[10px] font-bold uppercase tracking-[0.06em] text-text-tertiary`,i),children:n})}Object.defineProperty(exports,"t",{enumerable:!0,get:function(){return n}});

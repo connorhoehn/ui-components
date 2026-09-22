@@ -77,3 +77,18 @@ export const Translucent: Story = {
 export const AsLink: Story = {
   args: { tone: 'info', href: 'https://example.com', children: 'View docs' },
 };
+
+/** A removable token — approvers, tags, filters. */
+export const Removable: Story = {
+  args: { children: 'Alice Smith' },
+  render: () => (
+    <div className="flex items-center gap-2">
+      <Chip tone="info" onRemove={() => {}} removeLabel="Remove Alice Smith">
+        👤 Alice Smith
+      </Chip>
+      <Chip tone="warning" onRemove={() => {}} removeLabel="Remove Reviewers">
+        🎖 Reviewers
+      </Chip>
+    </div>
+  ),
+};

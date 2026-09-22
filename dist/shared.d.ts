@@ -84,7 +84,7 @@ export declare function ArtifactTile({ name, type, url }: {
 /** An @ sign: mentions, "someone named you". */
 export declare function AtIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function Avatar({ name, size, initials: initialsProp, color, src, icon, glyph, className, style, title, }: AvatarProps): JSX.Element;
+export declare function Avatar({ name, size, initials: initialsProp, color, src, icon, glyph, foreground, tone, autoContrast, className, style, title, showTitle, }: AvatarProps): JSX.Element;
 
 export declare function AvatarGroup({ names, items, maxVisible, size, className, total, }: AvatarGroupProps): JSX.Element;
 
@@ -147,9 +147,40 @@ export declare interface AvatarProps {
      * because one character at initials size reads as a speck.
      */
     glyph?: string;
+    /**
+     * Explicit text colour for the initials/glyph. Overrides everything else.
+     *
+     * The default is white, which is right for the saturated palette above and
+     * wrong for a pale fill — a task row's assignee badge is dark indigo on a
+     * light indigo tint, and white on that fails contrast, which is exactly why
+     * such badges were being hand-rolled as bare `<span>`s beside real Avatars.
+     */
+    foreground?: string;
+    /**
+     * Paint the circle in a semantic tone's soft surface (`-bg` background,
+     * `-fg` text) instead of a derived or caller-supplied colour. Wins over
+     * `color` / `foreground` / `autoContrast`, because a tone already declares
+     * both halves of the pair.
+     */
+    tone?: ToneOrAlias;
+    /**
+     * Pick the foreground from the resolved background's luminance rather than
+     * always using white. Opt-in, not the default: flipping existing avatars to
+     * dark text on the lighter half of the palette would change every presence
+     * row in every consumer at once.
+     */
+    autoContrast?: boolean;
     className?: string;
     style?: CSSProperties;
-    title?: string;
+    /**
+     * Tooltip text. Defaults to `name`. Pass `null` (or `showTitle={false}`) to
+     * render no `title` at all — a wrapping button or link with its own `title`
+     * otherwise gets two tooltips fighting, and `title=""` is not the same thing
+     * as no attribute.
+     */
+    title?: string | null;
+    /** `false` suppresses the `title` attribute entirely. See `title`. */
+    showTitle?: boolean;
 }
 
 export declare function Badge({ variant, value, color, 'aria-label': ariaLabel, className, 'data-testid': testId, }: BadgeProps): JSX.Element;
@@ -595,16 +626,46 @@ export declare interface CheckboxProps {
     onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
     /** Key pass-through, for shift-range selection handling. */
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+    /**
+     * Control shape. See `CheckboxShape`. Default `square`.
+     *
+     * With `round`, `className` lands on the wrapper (the thing with a size and
+     * a position) rather than on the hidden input, since the input no longer has
+     * any paint of its own — which is also how the control is resized, e.g.
+     * `className="h-[22px] w-[22px]"`.
+     */
+    shape?: CheckboxShape;
+    /**
+     * Semantic tone for `shape="round"` — the ring's border and its checked
+     * fill. Ignored by `shape="square"`, which is the browser's own
+     * `accent-primary` box. Default `info`.
+     */
+    tone?: ToneOrAlias;
     className?: string;
     'data-testid'?: string;
 }
+
+/**
+ * `square` is the native `accent-primary` box (default, unchanged). `round` is
+ * the tone-coloured ring that fills solid and shows a tick when checked —
+ * the "status toggle" shape a task list uses, where the colour carries the
+ * state (amber pending, blue acknowledged, green done) and the control is
+ * round so it reads as a status rather than a form field.
+ *
+ * This is still a real `<input type="checkbox">`: the native control is
+ * transparent and stretched over the painted ring, so focus, space-to-toggle,
+ * label association and form submission all behave exactly as they do for the
+ * square shape. Hosts that hand-rolled this shape used a `<button>` and lost
+ * every one of those.
+ */
+declare type CheckboxShape = 'square' | 'round';
 
 /** A chevron. `dir` is where it points. */
 export declare function ChevronIcon({ size, dir, ...rest }: GlyphProps & {
     dir?: 'up' | 'down' | 'left' | 'right';
 }): JSX.Element;
 
-export declare function Chip({ tone, palette, size, solid, translucent, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, href, external, }: ChipProps): JSX.Element;
+export declare function Chip({ tone, palette, size, solid, translucent, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, href, external, onRemove, removeLabel, removeTestId, removeIcon, }: ChipProps): JSX.Element;
 
 /**
  * `tone` was already spoken for by the semantic scale, so the surface-family
@@ -656,6 +717,25 @@ export declare interface ChipProps {
     /** Only meaningful with `href`. Opens in a new tab (`target="_blank"`),
      *  matching `Link`'s `external` prop. */
     external?: boolean;
+    /**
+     * Renders a dismiss control inside the chip. A removable chip is a token in
+     * a multi-select (approvers, tags, filters), and every host that needed one
+     * hand-rolled the same borderless `<button>` — `Button`'s boxed variants
+     * were too heavy for a 12px glyph in a pill and `IconButton`'s smallest size
+     * is a 24px square. This uses `Button variant="link"`, which is exactly the
+     * inline, unpadded, font-size-inheriting control that shape wants.
+     */
+    onRemove?: () => void;
+    /**
+     * Accessible name for the remove control. Defaults to `Remove`, which is
+     * fine for a lone chip and useless in a row of eight — pass
+     * `removeLabel={`Remove ${name}`}` whenever the chip is one of several.
+     */
+    removeLabel?: string;
+    /** `data-testid` on the remove control. */
+    removeTestId?: string;
+    /** Glyph inside the remove control. Defaults to a multiplication sign. */
+    removeIcon?: ReactNode;
 }
 
 /** @see Tone — the library-wide semantic tone scale. */
@@ -1207,17 +1287,40 @@ export declare interface DotMeterProps {
 
 export declare type DotMeterTone = 'code' | 'surface';
 
-export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, 'aria-label': ariaLabel, 'data-testid': testId, }: DrawerProps): default_2.ReactPortal | null;
+export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, docked, actions, className, bodyClassName, 'aria-label': ariaLabel, 'data-testid': testId, }: DrawerProps): default_2.JSX.Element | null;
 
 export declare interface DrawerProps {
     open: boolean;
     onClose: () => void;
     title?: string;
     subtitle?: string;
-    /** Panel width in pixels. Defaults to 460. */
+    /**
+     * Panel width in pixels. Defaults to 460 floating; docked it defaults to
+     * filling its parent, because the column a docked panel sits in is normally
+     * already sized by the layout.
+     */
     width?: number;
     children: default_2.ReactNode;
     footer?: default_2.ReactNode;
+    /**
+     * Render inline in the layout instead of as an overlay: no portal, no
+     * backdrop, no focus trap, no Escape handler. `open={false}` still renders
+     * nothing, so the same flag drives both forms.
+     *
+     * A docked panel is not a dialog — it does not take focus and does not trap
+     * it — so it is a `<complementary>` region rather than `role="dialog"`,
+     * named by its title (or `aria-label`) the same way.
+     */
+    docked?: boolean;
+    /**
+     * Controls beside the close button in the header — a filter toggle, an
+     * "open in full page" link. Rendered in both forms.
+     */
+    actions?: default_2.ReactNode;
+    /** Classes on the panel element itself. */
+    className?: string;
+    /** Classes on the scrolling body. Overrides its default padding via tw-merge. */
+    bodyClassName?: string;
     /**
      * Accessible name for the dialog when there is no visible `title` to point
      * at. When `title` IS set the heading labels the dialog via
@@ -1305,7 +1408,7 @@ export declare interface DropdownMenuSection {
 /** A pencil: "change this". */
 export declare function EditIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size, }: EmptyStateProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size, density, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateAction {
     /** Visible label on the action button or link. */
@@ -1333,6 +1436,19 @@ export declare interface EmptyStateAction {
      */
     code?: string;
 }
+
+/**
+ * `default` is the centred block (both sizes). `compact` is a single quiet
+ * line: no minimum height, no centring, no glyph pedestal — the "No items."
+ * that belongs INSIDE a section that already has a heading, where a block
+ * placeholder would push the rest of the card down the page.
+ *
+ * It is a separate axis from `size` on purpose: `size="sm"` is still a block
+ * (glyph over title over description), just a smaller one, and that is what
+ * kept sending callers back to a hand-written `<div className="italic
+ * text-text-tertiary">`. `compact` wins on layout when both are set.
+ */
+export declare type EmptyStateDensity = 'default' | 'compact';
 
 export declare interface EmptyStateProps {
     icon?: ReactNode;
@@ -1374,6 +1490,8 @@ export declare interface EmptyStateProps {
     className?: string;
     /** Block scale. Default `md`. See `EmptyStateSize`. */
     size?: EmptyStateSize;
+    /** Layout density. Default `default`. See `EmptyStateDensity`. */
+    density?: EmptyStateDensity;
 }
 
 /**
@@ -1492,7 +1610,7 @@ export declare function EyeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** `EyeIcon` with a slash through it: hidden — not visible to others. */
 export declare function EyeOffIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, }: FileUploadDropProps): JSX.Element;
+export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, inputTestId, inputProps, }: FileUploadDropProps): JSX.Element;
 
 export declare interface FileUploadDropProps {
     /** Comma-separated MIME types or extensions, e.g. "image/*,.pdf" */
@@ -1507,6 +1625,24 @@ export declare interface FileUploadDropProps {
     label?: string;
     className?: string;
     'data-testid'?: string;
+    /**
+     * `data-testid` on the hidden `<input type="file">`.
+     *
+     * The zone's own testid lands on the wrapper, and the input is
+     * `aria-hidden` with `tabIndex={-1}`, so a test had no way to reach the
+     * element it must fire a `change` at — there is no cross-browser way to
+     * drive a real file picker. That is a real adoption blocker, not a
+     * nicety: a host whose spec selects the input by testid could not move
+     * off its hand-rolled drop zone at all.
+     */
+    inputTestId?: string;
+    /**
+     * Extra attributes for the hidden input — `name`, `capture`, `form`, a
+     * `webkitdirectory`. `type`, `accept`, `multiple`, `disabled`, `ref` and
+     * `onChange` are owned here and cannot be overridden: they are the
+     * component's contract, not decoration.
+     */
+    inputProps?: Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'accept' | 'multiple' | 'disabled' | 'onChange' | 'ref' | 'className'>;
 }
 
 export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, 'data-testid': dataTestId, }: FilterChipProps): JSX.Element;
@@ -2751,7 +2887,7 @@ export declare type PresenceState = 'online' | 'away' | 'busy' | 'offline' | 'un
  */
 export declare type PresenceUser = PresenceAvatarUser;
 
-export declare function ProgressBar({ value, max, color, size, label, showRatio, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ProgressBarProps): JSX.Element;
+export declare function ProgressBar({ value, max, color, size, completeTone, label, valueLabel, showRatio, labelClassName, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ProgressBarProps): JSX.Element;
 
 export declare interface ProgressBarProps {
     value: number;
@@ -2760,9 +2896,27 @@ export declare interface ProgressBarProps {
     /** Fill color. Defaults to var(--color-primary). */
     color?: string;
     size?: ProgressBarSize;
+    /**
+     * Tone the fill (and the value readout) switches to once the bar is full.
+     *
+     * A completion bar that turns green at 100% is a different signal from one
+     * that just reaches the right-hand edge, and reproducing it meant computing
+     * the colour outside and passing `color`, then hand-writing a second
+     * coloured `<span>` for the percentage — which is how the checklist reader
+     * ended up with its own label row instead of using this one. Default
+     * undefined: the bar keeps `color` at every value.
+     */
+    completeTone?: ToneOrAlias;
     label?: ReactNode;
+    /**
+     * Right-hand readout, replacing the computed ratio/percentage. Use it for a
+     * caption the arithmetic here can't produce (a remaining count, an ETA).
+     */
+    valueLabel?: ReactNode;
     /** When true (default), shows "{value}/{max}". Otherwise shows percentage. */
     showRatio?: boolean;
+    /** Extra classes on the label row, for a caller matching a nearby caption size. */
+    labelClassName?: string;
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;
@@ -2899,6 +3053,13 @@ export declare interface RailSectionProps {
     children: ReactNode;
     className?: string;
 }
+
+/**
+ * The text colour that reads on `background`, or `null` when the background
+ * can't be parsed. The 0.6 cut is where white-on-fill stops clearing 4.5:1
+ * for the palette's own colours; above it, dark text wins.
+ */
+export declare function readableAvatarForeground(background: string): string | null;
 
 /** Two arrows chasing each other: something that runs again — a loop, a re-run. */
 export declare function RepeatIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -3109,10 +3270,20 @@ export declare interface SearchInputProps {
 /** @see SurfaceTone — which colour family the field paints in. */
 export declare type SearchInputTone = SurfaceTone;
 
-export declare function SectionLabel({ children, as: As, className, 'data-testid': testId, }: SectionLabelProps): JSX.Element;
+export declare function SectionLabel({ children, as: As, case: textCase, className, 'data-testid': testId, }: SectionLabelProps): JSX.Element;
+
+/**
+ * `upper` — the 10px bold uppercase panel caption (default, unchanged).
+ * `sentence` — a 12px medium sentence-case caption at normal tracking, sized
+ * and weighted to match `FormField`'s own label so it sits level with the
+ * other labels in a config form.
+ */
+declare type SectionLabelCase = 'upper' | 'sentence';
 
 export declare interface SectionLabelProps {
     children: ReactNode;
+    /** Letter case and weight. See `SectionLabelCase`. Default `upper`. */
+    case?: SectionLabelCase;
     /**
      * The element to render. Defaults to `span` so it can sit inline beside a
      * count or a chip; pass `"div"` when the caption owns its own line.
@@ -3195,21 +3366,85 @@ export declare interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelec
     /** Shown as a disabled placeholder option when no value is selected. */
     placeholder?: string;
     size?: SelectSize;
+    /** Shape. See `SelectVariant`. Default `default`. */
+    variant?: SelectVariant;
+    /**
+     * Semantic tone for `variant="pill"` — the capsule paints in that tone's
+     * soft surface (`-bg` / `-fg` / `-border`). Ignored by `variant="default"`,
+     * whose chrome is the neutral field border. Default `neutral`.
+     */
+    tone?: ToneOrAlias;
     /** When true, applies a danger-colored border. */
     invalid?: boolean;
+    /**
+     * Classes for the `variant="pill"` wrapper `<span>` (the positioning context
+     * for the chevron). `className` still lands on the `<select>` itself, so a
+     * caller can restyle the capsule without losing the layout hook.
+     */
+    wrapperClassName?: string;
     'data-testid'?: string;
 }
 
 export declare type SelectSize = 'sm' | 'md';
 
+/**
+ * `default` is the boxed field. `pill` is the compact, tone-coloured capsule
+ * that status and priority pickers want — a chip you can change.
+ *
+ * It exists because that shape kept getting hand-rolled: a task row's
+ * priority/status pickers are visually chips, and the only way to get one was
+ * a bare `<select>` with `appearance-none rounded-full` plus a background-image
+ * data-URI arrow and a hand-written `border-*-border bg-*-bg text-*-fg` triple
+ * per state. Native `<select>` semantics (keyboard, mobile pickers, form
+ * submission) are worth keeping, so this is the real element restyled, not a
+ * button-and-menu impostor.
+ */
+declare type SelectVariant = 'default' | 'pill';
+
 /** A tray with an arrow out of it: "share", "post this somewhere". */
 export declare function ShareIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps): JSX.Element;
+export declare function ShortcutsHelp({ open, onClose, sections }: ShortcutsHelpProps): JSX.Element;
 
 export declare interface ShortcutsHelpProps {
     open: boolean;
     onClose: () => void;
+    /**
+     * The bindings to document. Defaults to this library's own rows.
+     *
+     * It has to be a prop because the built-in list is a list of THIS
+     * library's shortcuts, and a host's keys are not those keys. A consumer
+     * whose bindings differed had no way to say so, so it kept a whole second
+     * copy of this overlay rather than tell its users the wrong thing about
+     * their own keyboard — which is the worse of the two failures, and the
+     * reason the default is left exactly as it was.
+     */
+    sections?: ShortcutsHelpSection[];
+}
+
+/** One row: a key combination and what it does. */
+export declare interface ShortcutsHelpRow {
+    /**
+     * The combination. A string is rendered as a single key cap exactly as
+     * written (`'⌘/Ctrl + S'`); an array renders one cap per element
+     * (`['⌘', 'S']`), which is what a host that stores its bindings
+     * structurally already has in hand.
+     */
+    keys: string | string[];
+    /** What the shortcut does. `label` is an accepted alias. */
+    action?: string;
+    /** Alias for `action`. */
+    label?: string;
+    /** Documented but not wired: rendered dimmed, struck through, tagged. */
+    planned?: boolean;
+}
+
+export declare interface ShortcutsHelpSection {
+    title: string;
+    /** The rows. `shortcuts` is an accepted alias. */
+    rows?: ShortcutsHelpRow[];
+    /** Alias for `rows`. */
+    shortcuts?: ShortcutsHelpRow[];
 }
 
 export declare interface SignoffEntry {
@@ -3774,7 +4009,7 @@ export declare interface TabPanelProps {
     children?: ReactNode;
 }
 
-export declare function Tabs({ items, value, onValueChange, variant, size, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, }: TabsProps): JSX.Element;
+export declare function Tabs({ items, value, onValueChange, variant, size, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, }: TabsProps): JSX.Element;
 
 export declare interface TabsProps {
     items: TabItem[];
@@ -3798,6 +4033,14 @@ export declare interface TabsProps {
     stretch?: boolean;
     /** Extra classes merged onto every tab trigger `<button>`. */
     itemClassName?: string;
+    /**
+     * `data-testid` on the tablist container. The per-item hook (`getItemTestId`,
+     * 2.350.0) covered the triggers but left the bar itself unaddressable, so a
+     * spec that scopes its queries to the tab bar — or just asserts the bar
+     * exists before any tab does — still had to hand-roll the whole `role=
+     * "tablist"` element to hang one attribute on it.
+     */
+    'data-testid'?: string;
 }
 
 export declare type TabsVariant = 'underline' | 'pill' | 'segmented';
@@ -4546,16 +4789,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -4592,19 +4825,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -4618,6 +4841,26 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

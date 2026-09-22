@@ -66,3 +66,40 @@ export const Disabled: Story = {
     onChange: () => {},
   },
 };
+
+/** The compact tone-coloured capsule a status or priority picker wants. */
+export const Pill: Story = {
+  args: {
+    variant: 'pill',
+    size: 'sm',
+    tone: 'warning',
+    value: 'medium',
+    options: [
+      { value: 'low', label: 'low' },
+      { value: 'medium', label: 'medium' },
+      { value: 'high', label: 'high' },
+    ],
+    onChange: () => {},
+  },
+};
+
+/** One pill per tone — the shape a task row repeats down its right edge. */
+export const PillTones: Story = {
+  args: { options: providerOptions, value: 'bedrock', onChange: () => {} },
+  render: () => (
+    <div className="flex items-center gap-2">
+      {(['neutral', 'info', 'success', 'warning', 'danger'] as const).map((tone) => (
+        <Select
+          key={tone}
+          variant="pill"
+          size="sm"
+          tone={tone}
+          aria-label={tone}
+          value={tone}
+          options={[{ value: tone, label: tone }]}
+          onChange={() => {}}
+        />
+      ))}
+    </div>
+  ),
+};

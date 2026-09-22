@@ -148,3 +148,32 @@ describe('RecordingRow', () => {
     expect(screen.queryByTitle(/in this call/)).not.toBeInTheDocument();
   });
 });
+
+// The host's recordings list carries id/startIso/endIso/durationSec/label/
+// thumbnailUrl/participantCount/status and nothing else — no participants
+// array, no tags, no reactions. Renders of that exact shape are what the
+// page actually does, so they are what is pinned here.
+describe('RecordingRow with the minimal host item shape', () => {
+  it('renders a row from exactly the fields the host sends', () => {
+    render(
+      <RecordingRow
+        id="rec-9"
+        startIso="2026-09-21T18:04:00Z"
+        durationSec={912}
+        label="Hank & Alice"
+        thumbnailUrl="blob:thumb"
+        participantCount={2}
+        status="ready"
+      />,
+    );
+    expect(screen.getByTestId('recording-row')).toHaveAttribute('data-recording-id', 'rec-9');
+    expect(screen.getByText('Hank & Alice')).toBeInTheDocument();
+    expect(screen.getByText('15m 12s')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+  });
+
+  it('renders with every optional field absent', () => {
+    render(<RecordingRow id="rec-10" startIso="2026-09-21T18:04:00Z" durationSec={0} />);
+    expect(screen.getByTestId('recording-row')).toBeInTheDocument();
+  });
+});

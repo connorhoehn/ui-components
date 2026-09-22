@@ -17,9 +17,54 @@
 import { cn } from '../../lib/cn';
 import Modal from './Modal';
 
+/** One row: a key combination and what it does. */
+export interface ShortcutsHelpRow {
+  /**
+   * The combination. A string is rendered as a single key cap exactly as
+   * written (`'⌘/Ctrl + S'`); an array renders one cap per element
+   * (`['⌘', 'S']`), which is what a host that stores its bindings
+   * structurally already has in hand.
+   */
+  keys: string | string[];
+  /** What the shortcut does. `label` is an accepted alias. */
+  action?: string;
+  /** Alias for `action`. */
+  label?: string;
+  /** Documented but not wired: rendered dimmed, struck through, tagged. */
+  planned?: boolean;
+}
+
+export interface ShortcutsHelpSection {
+  title: string;
+  /** The rows. `shortcuts` is an accepted alias. */
+  rows?: ShortcutsHelpRow[];
+  /** Alias for `rows`. */
+  shortcuts?: ShortcutsHelpRow[];
+}
+
 export interface ShortcutsHelpProps {
   open: boolean;
   onClose: () => void;
+  /**
+   * The bindings to document. Defaults to this library's own rows.
+   *
+   * It has to be a prop because the built-in list is a list of THIS
+   * library's shortcuts, and a host's keys are not those keys. A consumer
+   * whose bindings differed had no way to say so, so it kept a whole second
+   * copy of this overlay rather than tell its users the wrong thing about
+   * their own keyboard — which is the worse of the two failures, and the
+   * reason the default is left exactly as it was.
+   */
+  sections?: ShortcutsHelpSection[];
+}
+
+/** `rows`/`shortcuts` and `action`/`label` are the same field under two names. */
+function sectionRows(section: ShortcutsHelpSection): ShortcutsHelpRow[] {
+  return section.rows ?? section.shortcuts ?? [];
+}
+
+function rowLabel(row: ShortcutsHelpRow): string {
+  return row.action ?? row.label ?? '';
 }
 
 interface Shortcut {
@@ -109,7 +154,7 @@ const SECTIONS: Section[] = [
   },
 ];
 
-export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
+export default function ShortcutsHelp({ open, onClose, sections = SECTIONS }: ShortcutsHelpProps) {
   return (
     <Modal
       open={open}
@@ -123,7 +168,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
         Keyboard shortcuts
       </div>
       <div className="overflow-y-auto pr-1">
-        {SECTIONS.map((section, sectionIdx) => (
+        {sections.map((section, sectionIdx) => (
           <div key={section.title}>
             <div
               className={cn(
@@ -136,7 +181,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
               {section.title}
             </div>
             <div>
-              {section.rows.map((row, rowIdx) => (
+              {sectionRows(section).map((row, rowIdx) => (
                 <div
                   key={`${section.title}-${rowIdx}`}
                   className={cn(
@@ -145,18 +190,36 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
                   )}
                   data-planned={row.planned ? 'true' : undefined}
                 >
-                  <span
-                    className={cn(
-                      'font-mono text-[12px] border rounded px-1.5 py-px whitespace-nowrap shrink-0',
-                      row.planned
-                        ? 'text-text-tertiary bg-surface border-border-subtle line-through'
-                        : 'text-text-primary bg-surface-hover border-border',
-                    )}
-                  >
-                    {row.keys}
-                  </span>
+                  {Array.isArray(row.keys) ? (
+                    <span className="flex shrink-0 items-baseline gap-1">
+                      {row.keys.map((key, keyIdx) => (
+                        <span
+                          key={`${key}-${keyIdx}`}
+                          className={cn(
+                            'font-mono text-[12px] border rounded px-1.5 py-px whitespace-nowrap shrink-0',
+                            row.planned
+                              ? 'text-text-tertiary bg-surface border-border-subtle line-through'
+                              : 'text-text-primary bg-surface-hover border-border',
+                          )}
+                        >
+                          {key}
+                        </span>
+                      ))}
+                    </span>
+                  ) : (
+                    <span
+                      className={cn(
+                        'font-mono text-[12px] border rounded px-1.5 py-px whitespace-nowrap shrink-0',
+                        row.planned
+                          ? 'text-text-tertiary bg-surface border-border-subtle line-through'
+                          : 'text-text-primary bg-surface-hover border-border',
+                      )}
+                    >
+                      {row.keys}
+                    </span>
+                  )}
                   <span className="text-neutral text-right flex-1">
-                    {row.action}
+                    {rowLabel(row)}
                     {row.planned && (
                       <span className="ml-1.5 text-[10px] uppercase tracking-wide text-text-tertiary">
                         planned

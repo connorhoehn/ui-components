@@ -115,3 +115,17 @@ export const WithTestIds: Story = {
     },
   },
 };
+
+/** The container hook, alongside the per-item one. */
+export const WithContainerTestId: Story = {
+  args: {
+    items: [
+      { id: 'steps', label: 'Steps' },
+      { id: 'log', label: 'Executor Log' },
+    ],
+    value: 'steps',
+    onValueChange: () => {},
+    'data-testid': 'run-replay-tabs',
+    getItemTestId: (item: { id: string }) => `run-replay-tab-${item.id}`,
+  },
+};

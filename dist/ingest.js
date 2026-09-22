@@ -1,17 +1,16 @@
 import { n as e } from "./IdentityContext-CQM1qwH6.js";
 import { a as t, c as n, i as r, l as i, n as a, o, r as s, s as c, t as l, u } from "./useSyncConflicts-z_Fo2YIM.js";
-import { i as d } from "./useDocumentTypes-BUXMPyPU.js";
+import { i as d } from "./useDocumentTypes-DwWC-vAB.js";
 import { t as f } from "./cn-DhjIN-s0.js";
-import { t as p } from "./Button-C9t9UBDd.js";
-import { t as m } from "./Chip-B0FPId77.js";
-import { t as h } from "./overlayStack-BFH9XXvN.js";
-import { t as g } from "./EmptyState-JzzL2z1E.js";
-import { n as _, r as v, t as y } from "./focusTrap-CmWJlptm.js";
+import { _ as p, t as m } from "./overlayStack-BDlo8PJg.js";
+import { t as h } from "./Chip-DYqbAD3L.js";
+import { t as g } from "./EmptyState-DQYx5Oyy.js";
+import { n as _, r as v, t as y } from "./focusTrap-w9Uk7DPx.js";
 import { t as b } from "./SkeletonCard-CGe8XFPB.js";
 import { t as x } from "./Input-DLknWXri.js";
-import { t as S } from "./Select-CqVokE2v.js";
+import { t as S } from "./Select-CD8ixtYi.js";
 import { t as C } from "./activationKey-CjbL3LUv.js";
-import { n as w, t as T } from "./ChangeReviewCard-DDrgUscU.js";
+import { n as w, t as T } from "./ChangeReviewCard-D9md3-5S.js";
 import { useCallback as E, useEffect as D, useId as O, useMemo as k, useRef as A, useState as j } from "react";
 import { Fragment as M, jsx as N, jsxs as P } from "react/jsx-runtime";
 import { useNavigate as F, useParams as ee } from "react-router";
@@ -29,7 +28,7 @@ function U(e) {
 }
 var W = 50;
 function te() {
-	let e = F(), { sources: n, loading: r, error: i, refresh: a } = t(), { items: o, loading: s, error: l, refresh: u } = c(), d = r || s, p = i || l, h = k(() => {
+	let e = F(), { sources: n, loading: r, error: i, refresh: a } = t(), { items: o, loading: s, error: l, refresh: u } = c(), d = r || s, p = i || l, m = k(() => {
 		let e = n.filter((e) => e.status === "active").length, t = n.filter((e) => e.status === "paused").length, r = n.filter((e) => e.status === "error").length, i = o.filter((e) => e.status !== "done" && e.status !== "failed").length, a = o.filter((e) => e.status === "done" && H(e.updatedAt)).length, s = o.filter((e) => e.status === "failed").length;
 		return {
 			total: n.length,
@@ -56,15 +55,15 @@ function te() {
 				message: `Last-hour failure rate is ${(r * 100).toFixed(0)}% (${n} of ${t.length} items failed).`
 			});
 		}
-		return h.queued > W && e.push({
+		return m.queued > W && e.push({
 			id: "queue-depth",
 			level: "warning",
-			message: `Queue depth is ${h.queued} items — sources may be ingesting faster than the engine can drain.`
+			message: `Queue depth is ${m.queued} items — sources may be ingesting faster than the engine can drain.`
 		}), e;
 	}, [
 		n,
 		o,
-		h.queued
+		m.queued
 	]);
 	return d && n.length === 0 && o.length === 0 ? /* @__PURE__ */ P("div", {
 		"data-testid": "ingest-dashboard",
@@ -146,16 +145,16 @@ function te() {
 							}),
 							/* @__PURE__ */ N("span", {
 								className: "text-[28px] font-bold text-text-primary leading-none",
-								children: h.total
+								children: m.total
 							}),
 							/* @__PURE__ */ P("span", {
 								className: "text-xs text-text-tertiary",
 								children: [
-									h.active,
+									m.active,
 									" active, ",
-									h.paused,
+									m.paused,
 									" paused",
-									h.errored > 0 ? `, ${h.errored} error` : ""
+									m.errored > 0 ? `, ${m.errored} error` : ""
 								]
 							})
 						]
@@ -168,8 +167,8 @@ function te() {
 								children: "In Queue"
 							}),
 							/* @__PURE__ */ N("span", {
-								className: f("text-[28px] font-bold leading-none", h.queued > 0 ? "text-[var(--color-state-awaiting)]" : "text-text-primary"),
-								children: h.queued
+								className: f("text-[28px] font-bold leading-none", m.queued > 0 ? "text-[var(--color-state-awaiting)]" : "text-text-primary"),
+								children: m.queued
 							}),
 							/* @__PURE__ */ N("span", {
 								className: "text-xs text-text-tertiary",
@@ -185,8 +184,8 @@ function te() {
 								children: "Completed (24h)"
 							}),
 							/* @__PURE__ */ N("span", {
-								className: f("text-[28px] font-bold leading-none", h.recentDone > 0 ? "text-[var(--color-state-completed)]" : "text-text-primary"),
-								children: h.recentDone
+								className: f("text-[28px] font-bold leading-none", m.recentDone > 0 ? "text-[var(--color-state-completed)]" : "text-text-primary"),
+								children: m.recentDone
 							}),
 							/* @__PURE__ */ N("span", {
 								className: "text-xs text-text-tertiary",
@@ -202,8 +201,8 @@ function te() {
 								children: "Errors"
 							}),
 							/* @__PURE__ */ N("span", {
-								className: f("text-[28px] font-bold leading-none", h.failed > 0 ? "text-[var(--color-state-failed)]" : "text-text-primary"),
-								children: h.failed
+								className: f("text-[28px] font-bold leading-none", m.failed > 0 ? "text-[var(--color-state-failed)]" : "text-text-primary"),
+								children: m.failed
 							}),
 							/* @__PURE__ */ N("span", {
 								className: "text-xs text-text-tertiary",
@@ -230,7 +229,7 @@ function te() {
 							title: e.sourcePath,
 							children: e.sourcePath
 						}),
-						/* @__PURE__ */ N(m, {
+						/* @__PURE__ */ N(h, {
 							tone: "success",
 							size: "xs",
 							children: "done"
@@ -285,7 +284,7 @@ function ie() {
 			let n = new Set(t);
 			return n.delete(e), n;
 		}), t && a();
-	}, [s, a]), h = E(async (e) => {
+	}, [s, a]), m = E(async (e) => {
 		confirm(`Delete source "${e.name}"? This cannot be undone.`) && await o(e.sourceId);
 	}, [o]);
 	return r && n.length === 0 ? /* @__PURE__ */ P("div", {
@@ -404,7 +403,7 @@ function ie() {
 							}),
 							/* @__PURE__ */ N("td", {
 								className: "p-2",
-								children: /* @__PURE__ */ N(m, {
+								children: /* @__PURE__ */ N(h, {
 									tone: ne(t.type),
 									size: "xs",
 									children: K(t.type)
@@ -412,7 +411,7 @@ function ie() {
 							}),
 							/* @__PURE__ */ N("td", {
 								className: "p-2",
-								children: /* @__PURE__ */ N(m, {
+								children: /* @__PURE__ */ N(h, {
 									tone: G(t.status),
 									size: "sm",
 									children: t.status
@@ -446,7 +445,7 @@ function ie() {
 										children: u.has(t.sourceId) ? "Syncing..." : "Sync Now"
 									}), /* @__PURE__ */ N("button", {
 										className: "px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
-										onClick: () => void h(t),
+										onClick: () => void m(t),
 										"data-testid": `delete-${t.sourceId}`,
 										children: "Delete"
 									})]
@@ -1060,12 +1059,12 @@ function he(e) {
 	}) : [];
 }
 function ge() {
-	let { id: t } = ee(), n = F(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = j(null), [l, u] = j(!0), [p, h] = j(null), [g, _] = j(!1), v = O(), [y, C] = j(!1), [w, T] = j(!1), [k, A] = j({}), [I, L] = j([]), [R, z] = j(""), [B, V] = j(""), [H, U] = j({}), [W, te] = j(!1), G = E(() => {
+	let { id: t } = ee(), n = F(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = j(null), [l, u] = j(!0), [p, m] = j(null), [g, _] = j(!1), v = O(), [y, C] = j(!1), [w, T] = j(!1), [k, A] = j({}), [I, L] = j([]), [R, z] = j(""), [B, V] = j(""), [H, U] = j({}), [W, te] = j(!1), G = E(() => {
 		let e = { "Content-Type": "application/json" };
 		return r && (e.Authorization = `Bearer ${r}`), e;
 	}, [r]), K = E(async (e) => {
 		if (t) {
-			u(!0), h(null);
+			u(!0), m(null);
 			try {
 				let n = await fetch(`${Z}/api/ingest/sources/${t}`, {
 					headers: G(),
@@ -1081,7 +1080,7 @@ function ge() {
 				c(i);
 			} catch (t) {
 				if (e?.aborted) return;
-				h(t instanceof Error ? t.message : String(t));
+				m(t instanceof Error ? t.message : String(t));
 			} finally {
 				e?.aborted || u(!1);
 			}
@@ -1114,7 +1113,7 @@ function ge() {
 				let r = await n.json();
 				c(r), _(!1);
 			} catch (e) {
-				h(e instanceof Error ? e.message : String(e));
+				m(e instanceof Error ? e.message : String(e));
 			} finally {
 				T(!1);
 			}
@@ -1147,7 +1146,7 @@ function ge() {
 				if (!e.ok) throw Error(`HTTP ${e.status}`);
 				await K();
 			} catch (e) {
-				h(e instanceof Error ? e.message : String(e));
+				m(e instanceof Error ? e.message : String(e));
 			} finally {
 				C(!1);
 			}
@@ -1169,7 +1168,7 @@ function ge() {
 			let r = await n.json();
 			c(r);
 		} catch (e) {
-			h(e instanceof Error ? e.message : String(e));
+			m(e instanceof Error ? e.message : String(e));
 		}
 	}, [
 		o,
@@ -1237,12 +1236,12 @@ function ge() {
 							className: "m-0 text-[22px] font-bold text-text-primary",
 							children: o.name
 						}),
-						/* @__PURE__ */ N(m, {
+						/* @__PURE__ */ N(h, {
 							tone: fe(o.type),
 							size: "sm",
 							children: de(o.type)
 						}),
-						/* @__PURE__ */ N(m, {
+						/* @__PURE__ */ N(h, {
 							tone: ue(o.status),
 							size: "sm",
 							children: o.status
@@ -1273,7 +1272,7 @@ function ge() {
 					className: "text-[13px] font-medium",
 					children: p
 				}), /* @__PURE__ */ N("button", {
-					onClick: () => h(null),
+					onClick: () => m(null),
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Dismiss"
 				})]
@@ -1586,7 +1585,7 @@ function ge() {
 							children: "Status"
 						}), /* @__PURE__ */ P("span", {
 							className: "flex items-center gap-2.5",
-							children: [/* @__PURE__ */ N(m, {
+							children: [/* @__PURE__ */ N(h, {
 								tone: ue(o.status),
 								size: "sm",
 								children: o.status
@@ -1648,7 +1647,7 @@ function $(e) {
 	return t < 6e4 ? "just now" : t < 36e5 ? `${Math.floor(t / 6e4)}m ago` : t < 864e5 ? `${Math.floor(t / 36e5)}h ago` : `${Math.floor(t / 864e5)}d ago`;
 }
 function Se({ item: t, sourceName: n, onClose: r, onRetry: i, onSkip: a }) {
-	let { idToken: s } = e(), [c, l] = j(null), [u, d] = j(null), { events: p } = o(), g = A(null), b = A(null), x = h(t !== null);
+	let { idToken: s } = e(), [c, l] = j(null), [u, d] = j(null), { events: p } = o(), g = A(null), b = A(null), x = m(t !== null);
 	D(() => {
 		if (!t) return;
 		let e = (e) => {
@@ -1751,7 +1750,7 @@ function Se({ item: t, sourceName: n, onClose: r, onRetry: i, onSkip: a }) {
 								/* @__PURE__ */ P("div", {
 									className: "flex gap-2 items-center mt-1",
 									children: [
-										/* @__PURE__ */ N(m, {
+										/* @__PURE__ */ N(h, {
 											tone: ve(t.status),
 											size: "sm",
 											children: t.status
@@ -1838,7 +1837,7 @@ function Se({ item: t, sourceName: n, onClose: r, onRetry: i, onSkip: a }) {
 								children: "Mapping decision"
 							}), t.mappingMethod ? /* @__PURE__ */ P(M, { children: [/* @__PURE__ */ P("div", {
 								className: "flex items-center gap-2",
-								children: [/* @__PURE__ */ N(m, {
+								children: [/* @__PURE__ */ N(h, {
 									tone: ye(t.mappingMethod),
 									size: "sm",
 									children: t.mappingMethod
@@ -2006,14 +2005,14 @@ function Ee(e, t = 50) {
 	return e.length <= t ? e : "..." + e.slice(e.length - t + 3);
 }
 function De() {
-	let [e, n] = j(null), [r, i] = j(null), [a, o] = j(null), { sources: s } = t(), { items: l, loading: u, error: d, refresh: f, retryItem: p, skipItem: h, actionError: _, clearActionError: v } = c({
+	let [e, n] = j(null), [r, i] = j(null), [a, o] = j(null), { sources: s } = t(), { items: l, loading: u, error: d, refresh: f, retryItem: p, skipItem: m, actionError: _, clearActionError: v } = c({
 		sourceId: e,
 		status: r
 	}), y = a ? l.find((e) => e.itemId === a.itemId) ?? a : null, x = k(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of s) e.set(t.sourceId, t.name);
 		return e;
-	}, [s]), w = E(async (e) => p(e), [p]), T = E(async (e) => h(e), [h]);
+	}, [s]), w = E(async (e) => p(e), [p]), T = E(async (e) => m(e), [m]);
 	return u && l.length === 0 ? /* @__PURE__ */ P("div", {
 		"data-testid": "ingest-items-page",
 		className: "p-6 flex flex-col gap-3",
@@ -2171,7 +2170,7 @@ function De() {
 							}),
 							/* @__PURE__ */ N("td", {
 								className: "p-2",
-								children: /* @__PURE__ */ N(m, {
+								children: /* @__PURE__ */ N(h, {
 									tone: we(e.status),
 									size: "sm",
 									children: e.status
@@ -2183,7 +2182,7 @@ function De() {
 							}),
 							/* @__PURE__ */ N("td", {
 								className: "p-2",
-								children: e.mappingMethod ? /* @__PURE__ */ N(m, {
+								children: e.mappingMethod ? /* @__PURE__ */ N(h, {
 									tone: Te(e.mappingMethod),
 									size: "xs",
 									children: e.mappingMethod
@@ -2501,20 +2500,20 @@ function Fe(e) {
 	return e.path && e.path.length > 0 ? e.path : e.field.split(".").slice(0, -1).map(Pe);
 }
 function Ie() {
-	let { conflicts: e, loading: n, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: u } = l(), { sources: d } = t(), [f, h] = j({}), [_, v] = j({}), [y, S] = j(null), C = k(() => {
+	let { conflicts: e, loading: n, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: u } = l(), { sources: d } = t(), [f, m] = j({}), [_, v] = j({}), [y, S] = j(null), C = k(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of d) e.set(t.sourceId, t.name);
 		return e;
 	}, [d]), E = k(() => e.filter((e) => e.status === "pending"), [e]);
 	D(() => {
 		let e = new Set(E.map((e) => e.conflictId));
-		h((t) => {
+		m((t) => {
 			let n = {};
 			for (let [r, i] of Object.entries(t)) e.has(r.split("::")[0] ?? "") && (n[r] = i);
 			return n;
 		});
 	}, [E]);
-	let O = (e, t) => f[`${e}::${t}`] ?? "source", A = (e, t, n) => h((r) => ({
+	let O = (e, t) => f[`${e}::${t}`] ?? "source", A = (e, t, n) => m((r) => ({
 		...r,
 		[`${e}::${t}`]: n
 	})), F = async (e) => {
@@ -2609,7 +2608,7 @@ function Ie() {
 				] }),
 				notices: /* @__PURE__ */ P("div", {
 					className: "flex flex-wrap items-center gap-1.5",
-					children: [/* @__PURE__ */ N(m, {
+					children: [/* @__PURE__ */ N(h, {
 						tone: "warning",
 						size: "xs",
 						uppercase: !0,
@@ -2671,7 +2670,7 @@ function Ie() {
 						}],
 						beforeLabel: "This copy",
 						afterLabel: "Incoming",
-						badges: /* @__PURE__ */ N(m, {
+						badges: /* @__PURE__ */ N(h, {
 							tone: n === "source" ? "success" : n === "merged" ? "info" : "neutral",
 							size: "xs",
 							"data-testid": `conflict-choice-${t.field}`,

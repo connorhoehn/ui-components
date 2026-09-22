@@ -5,8 +5,29 @@
 
 import { forwardRef, type SelectHTMLAttributes } from 'react';
 import { cn } from '../../lib/cn';
+import {
+  TONE_BG,
+  TONE_BORDER,
+  TONE_TEXT,
+  toneKey,
+  type ToneOrAlias,
+} from '../shared/tones';
 
 export type SelectSize = 'sm' | 'md';
+
+/**
+ * `default` is the boxed field. `pill` is the compact, tone-coloured capsule
+ * that status and priority pickers want — a chip you can change.
+ *
+ * It exists because that shape kept getting hand-rolled: a task row's
+ * priority/status pickers are visually chips, and the only way to get one was
+ * a bare `<select>` with `appearance-none rounded-full` plus a background-image
+ * data-URI arrow and a hand-written `border-*-border bg-*-bg text-*-fg` triple
+ * per state. Native `<select>` semantics (keyboard, mobile pickers, form
+ * submission) are worth keeping, so this is the real element restyled, not a
+ * button-and-menu impostor.
+ */
+export type SelectVariant = 'default' | 'pill';
 
 export interface SelectOption {
   value: string;
@@ -26,8 +47,22 @@ export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement
   /** Shown as a disabled placeholder option when no value is selected. */
   placeholder?: string;
   size?: SelectSize;
+  /** Shape. See `SelectVariant`. Default `default`. */
+  variant?: SelectVariant;
+  /**
+   * Semantic tone for `variant="pill"` — the capsule paints in that tone's
+   * soft surface (`-bg` / `-fg` / `-border`). Ignored by `variant="default"`,
+   * whose chrome is the neutral field border. Default `neutral`.
+   */
+  tone?: ToneOrAlias;
   /** When true, applies a danger-colored border. */
   invalid?: boolean;
+  /**
+   * Classes for the `variant="pill"` wrapper `<span>` (the positioning context
+   * for the chevron). `className` still lands on the `<select>` itself, so a
+   * caller can restyle the capsule without losing the layout hook.
+   */
+  wrapperClassName?: string;
   'data-testid'?: string;
 }
 
@@ -36,15 +71,31 @@ const sizeClasses: Record<SelectSize, string> = {
   md: 'h-9 px-2.5 text-[13px]',
 };
 
+// Right padding leaves room for the chevron, which is absolutely positioned
+// over the select rather than painted as a background-image data-URI (an
+// inline style, and unthemeable — the URI would have to bake in a colour).
+const pillSizeClasses: Record<SelectSize, string> = {
+  sm: 'h-6 pl-2 pr-4 text-[11px]',
+  md: 'h-7 pl-2.5 pr-5 text-[12px]',
+};
+
+const pillChevronClasses: Record<SelectSize, string> = {
+  sm: 'right-1.5',
+  md: 'right-2',
+};
+
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
   {
     options,
     groups,
     placeholder,
     size = 'md',
+    variant = 'default',
+    tone = 'neutral',
     invalid = false,
     disabled = false,
     className,
+    wrapperClassName,
     'data-testid': testId,
     'aria-invalid': ariaInvalidProp,
     value,
@@ -55,32 +106,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   // Same gap as Input: `invalid` painted a red border but never reached the
   // accessibility tree. An explicit caller-supplied value still wins.
   const ariaInvalid = ariaInvalidProp ?? (invalid || undefined);
-  return (
-    <select
-      ref={ref}
-      disabled={disabled}
-      data-testid={testId}
-      aria-invalid={ariaInvalid}
-      value={value}
-      className={cn(
-        'w-full appearance-none rounded-md border bg-surface-panel font-inherit text-text-primary',
-        'outline-none transition-colors duration-150 cursor-pointer',
-        // Custom chevron via background-image is banned (inline style). Instead
-        // rely on the native OS chevron — appearance: none removes it but is
-        // only needed to remove the native outline; here we let native appearance
-        // show through via a Tailwind `select` reset that keeps the arrow.
-        // We use `appearance-auto` to restore the native arrow on modern browsers.
-        'appearance-auto',
-        'focus:bg-surface focus:border-info focus:ring-1 focus:ring-info/40',
-        'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover',
-        invalid
-          ? 'border-danger focus:border-danger focus:ring-danger/40'
-          : 'border-border-emphasis',
-        sizeClasses[size],
-        className,
-      )}
-      {...rest}
-    >
+
+  const optionNodes = (
+    <>
       {placeholder && (
         <option value="" disabled>
           {placeholder}
@@ -100,7 +128,88 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
           ))}
         </optgroup>
       ))}
+    </>
+  );
+
+  const pill = variant === 'pill';
+  const key = toneKey(tone);
+
+  // ONE `<select>` for both variants: the element is the same control either
+  // way, and rendering it twice would be two places to forget a prop.
+  const select = (
+    <select
+      ref={ref}
+      disabled={disabled}
+      data-testid={testId}
+      aria-invalid={ariaInvalid}
+      value={value}
+      className={cn(
+        'font-inherit outline-none transition-colors duration-150 cursor-pointer',
+        pill
+          ? cn(
+              'w-auto appearance-none rounded-full border font-semibold capitalize leading-[1.4]',
+              'focus:ring-1 focus:ring-info/40 disabled:cursor-not-allowed',
+              invalid
+                ? 'border-danger text-danger-fg bg-danger-bg focus:ring-danger/40'
+                : cn(TONE_BORDER[key], TONE_BG[key], TONE_TEXT[key]),
+              pillSizeClasses[size],
+            )
+          : cn(
+              'w-full appearance-none rounded-md border bg-surface-panel text-text-primary',
+              // Custom chevron via background-image is banned (inline style).
+              // Instead rely on the native OS chevron — appearance: none removes
+              // it but is only needed to remove the native outline; here we let
+              // native appearance show through via a Tailwind `select` reset
+              // that keeps the arrow. We use `appearance-auto` to restore the
+              // native arrow on modern browsers.
+              'appearance-auto',
+              'focus:bg-surface focus:border-info focus:ring-1 focus:ring-info/40',
+              'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover',
+              invalid
+                ? 'border-danger focus:border-danger focus:ring-danger/40'
+                : 'border-border-emphasis',
+              sizeClasses[size],
+            ),
+        className,
+      )}
+      {...rest}
+    >
+      {optionNodes}
     </select>
+  );
+
+  // The default variant is the bare element, with no wrapper of any kind —
+  // callers position it directly and a surprise <span> would break them.
+  if (!pill) return select;
+
+  return (
+    <span
+      className={cn(
+        'relative inline-flex items-center align-middle',
+        disabled && 'opacity-50',
+        wrapperClassName,
+      )}
+    >
+      {select}
+      {/* Decorative: the select underneath owns the semantics. The chevron is
+          drawn here rather than painted as a background-image data-URI, which
+          would be an inline style AND would bake in a colour the tone system
+          could not reach. */}
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        width="8"
+        height="5"
+        viewBox="0 0 8 5"
+        className={cn(
+          'pointer-events-none absolute top-1/2 -translate-y-1/2',
+          pillChevronClasses[size],
+          invalid ? 'text-danger-fg' : TONE_TEXT[key],
+        )}
+      >
+        <path d="M0 0l4 5 4-5z" fill="currentColor" />
+      </svg>
+    </span>
   );
 });
 

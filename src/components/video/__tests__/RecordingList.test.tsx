@@ -136,3 +136,27 @@ describe('RecordingList', () => {
     expect(title.textContent).not.toBe('30m 0s');
   });
 });
+
+describe('RecordingList with the minimal host item shape', () => {
+  it('renders a list of exactly the fields the host sends', () => {
+    render(
+      <RecordingList
+        recordings={[
+          {
+            id: 'rec-1',
+            startIso: '2026-09-21T18:04:00Z',
+            endIso: '2026-09-21T18:19:12Z',
+            durationSec: 912,
+            label: 'Hank & Alice',
+            thumbnailUrl: 'blob:thumb',
+            participantCount: 2,
+            status: 'ready',
+          },
+        ]}
+        onSelect={() => {}}
+      />,
+    );
+    expect(screen.getAllByTestId('recording-row')).toHaveLength(1);
+    expect(screen.getByText('Hank & Alice')).toBeInTheDocument();
+  });
+});

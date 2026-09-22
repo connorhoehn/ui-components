@@ -13,13 +13,13 @@ import { cn } from '../../lib/cn';
 // Types
 // ---------------------------------------------------------------------------
 
-interface ActivityItem {
+export interface ActivityItem {
   eventType: string;
   timestamp: string;
   detail: Record<string, unknown>;
 }
 
-interface ActivityResponse {
+export interface ActivityResponse {
   items: ActivityItem[];
   nextKey: string | null;
 }
@@ -38,6 +38,14 @@ interface GatewayMessage {
 // Constants
 // ---------------------------------------------------------------------------
 
+// `import.meta.env.VITE_*` is STATICALLY REPLACED at build time — and the
+// build that matters is THIS library's, not the consumer's. So whatever the
+// host sets in its own .env never reaches here: the published bundle carries
+// the literal the library was built with, which is `''`, which made the guard
+// below take the "nothing to hydrate from" branch for every consumer and
+// silently render an empty feed forever. That is why `baseUrl` (and
+// `fetchActivity`, for a host whose activity lives behind its own client)
+// exist, and why they take precedence over this.
 function getBaseUrl(): string {
   return (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 }
@@ -126,11 +134,15 @@ function useActivityFeed({
   sendMessage,
   onMessage,
   connectionState,
+  baseUrl: baseUrlProp,
+  fetchActivity,
 }: {
   idToken: string | null;
   sendMessage: (msg: Record<string, unknown>) => void;
   onMessage: OnMessageFn;
   connectionState: ConnectionState;
+  baseUrl?: string;
+  fetchActivity?: FetchActivityFn;
 }): {
   items: ActivityItem[];
   loading: boolean;
@@ -153,8 +165,28 @@ function useActivityFeed({
 
   // 1. Hydrate from REST on mount
   useEffect(() => {
-    const baseUrl = getBaseUrl();
-    if (!idToken || !baseUrl) {
+    if (fetchActivity) {
+      let dropped = false;
+      setLoading(true); // eslint-disable-line react-hooks/set-state-in-effect
+      setError(null); // eslint-disable-line react-hooks/set-state-in-effect
+      Promise.resolve(fetchActivity({ idToken, limit: 20 }))
+        .then((data) => {
+          if (dropped) return;
+          setItems(data?.items ?? []);
+          setError(null);
+        })
+        .catch((err) => {
+          if (dropped) return;
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error('[activity] fetch failed:', err);
+          setError(msg);
+          toast("Couldn't load activity feed", { type: 'error' });
+        })
+        .finally(() => { if (!dropped) setLoading(false); });
+      return () => { dropped = true; };
+    }
+    const resolvedBase = baseUrlProp ?? getBaseUrl();
+    if (!idToken || !resolvedBase) {
       // Nothing to hydrate from — resolve to the empty state instead of
       // leaving the spinner up forever. `loading` starts true so a real
       // fetch shows the spinner immediately; without this branch an
@@ -168,7 +200,7 @@ function useActivityFeed({
     // to show a loading indicator immediately on mount/token change.
     setLoading(true); // eslint-disable-line react-hooks/set-state-in-effect
     setError(null); // eslint-disable-line react-hooks/set-state-in-effect
-    fetch(`${baseUrl}/api/activity?limit=20`, {
+    fetch(`${resolvedBase}/api/activity?limit=20`, {
       headers: { Authorization: `Bearer ${idToken}` },
     })
       .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
@@ -187,7 +219,7 @@ function useActivityFeed({
       })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [idToken, reloadKey, toast]);
+  }, [idToken, reloadKey, toast, baseUrlProp, fetchActivity]);
 
   // 2. Subscribe to WebSocket channel when connected
   useEffect(() => {
@@ -231,15 +263,43 @@ function useActivityFeed({
 // ActivityPanel (exported)
 // ---------------------------------------------------------------------------
 
-interface ActivityPanelProps {
+export interface ActivityPanelProps {
   idToken: string | null;
   sendMessage: (msg: Record<string, unknown>) => void;
   onMessage: OnMessageFn;
   connectionState: ConnectionState;
+  /**
+   * Origin for `GET /api/activity`. Wins over the build-time
+   * `VITE_SOCIAL_API_URL`, which a consumer cannot influence — see the note
+   * on `getBaseUrl` above. Pass the same origin the host's other REST calls
+   * use; `''` is a same-origin request.
+   */
+  baseUrl?: string;
+  /**
+   * Full replacement for the REST hydration, for a host that already owns an
+   * authorized client (signed requests, a proxy, a mock in tests). Wins over
+   * `baseUrl`. The live WebSocket half is untouched either way.
+   */
+  fetchActivity?: FetchActivityFn;
 }
 
-export function ActivityPanel({ idToken, sendMessage, onMessage, connectionState }: ActivityPanelProps) {
-  const { items, loading, isLive, error, retry } = useActivityFeed({ idToken, sendMessage, onMessage, connectionState });
+/** Hydration seam — see `ActivityPanelProps.fetchActivity`. */
+export type FetchActivityFn = (args: {
+  idToken: string | null;
+  limit: number;
+}) => Promise<ActivityResponse>;
+
+export function ActivityPanel({
+  idToken,
+  sendMessage,
+  onMessage,
+  connectionState,
+  baseUrl,
+  fetchActivity,
+}: ActivityPanelProps) {
+  const { items, loading, isLive, error, retry } = useActivityFeed({
+    idToken, sendMessage, onMessage, connectionState, baseUrl, fetchActivity,
+  });
 
   return (
     <div className="bg-surface border border-border rounded-lg p-5">

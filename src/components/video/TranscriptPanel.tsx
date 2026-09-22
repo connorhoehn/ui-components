@@ -15,8 +15,16 @@ import { onActivationKey } from '../../lib/activationKey';
 export interface TranscriptSegment {
   startMs: number;
   endMs: number;
-  speakerId: string;
-  speakerLabel: string;
+  /**
+   * Diarization id. OPTIONAL, because a transcript produced without
+   * diarization has no speakers to identify — and a required-in-the-type,
+   * absent-in-the-payload field is how this panel threw
+   * `Cannot read properties of undefined (reading 'length')` out of its
+   * colour hash and took the whole recordings page down with it.
+   */
+  speakerId?: string;
+  /** Display name for the speaker. Optional for the same reason. */
+  speakerLabel?: string;
   text: string;
   avgLogprob?: number;
   noSpeechProb?: number;
@@ -64,13 +72,35 @@ function formatTimestamp(ms: number): string {
 // Deterministic color picker — same speakerId → same hue across renders.
 // 36-color rotation through the perceptual color wheel. Saturation + lightness
 // fixed so dark/light themes both render legibly.
-function speakerHue(speakerId: string): number {
+function speakerHue(seed: string): number {
   let hash = 0;
-  for (let i = 0; i < speakerId.length; i++) {
-    hash = (hash * 31 + speakerId.charCodeAt(i)) | 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) | 0;
   }
   return Math.abs(hash) % 360;
 }
+
+/**
+ * Colour for one segment's speaker name — the id first (stable across
+ * renames), then the label, and `null` when there is no identity at all, which
+ * the caller renders with the neutral text token rather than a derived hue.
+ *
+ * The fallbacks are the fix for a real crash: this read `speakerId.length`
+ * unconditionally, a field the type marked required and an un-diarized
+ * transcript does not send, and the resulting
+ * `Cannot read properties of undefined (reading 'length')` took down the whole
+ * recordings page. A neutral colour is also the honest answer when there is no
+ * speaker identity — a hue picked from nothing claims a distinction the
+ * transcript does not make.
+ */
+function speakerColor(segment: Pick<TranscriptSegment, 'speakerId' | 'speakerLabel'>): string | null {
+  const seed = segment.speakerId || segment.speakerLabel;
+  if (!seed) return null;
+  return `hsl(${speakerHue(seed)}, 65%, 60%)`;
+}
+
+/** What to call a speaker the payload did not name. */
+const UNKNOWN_SPEAKER = 'Speaker';
 
 export function TranscriptPanel({
   status,
@@ -172,11 +202,11 @@ export function TranscriptPanel({
       <div ref={scrollerRef} className="flex-1 overflow-y-auto max-h-[60vh] p-4 space-y-2">
         {segments.map((seg, i) => {
           const isActive = i === activeIndex;
-          const hue = speakerHue(seg.speakerId);
+          const color = speakerColor(seg);
           const seekable = !!onSeek;
           return (
             <div
-              key={`${seg.startMs}-${seg.speakerId}-${i}`}
+              key={`${seg.startMs}-${seg.speakerId ?? ''}-${i}`}
               data-seg-index={i}
               className={cn(
                 'rounded-md px-3 py-2 transition-colors',
@@ -189,14 +219,14 @@ export function TranscriptPanel({
               onKeyDown={seekable ? onActivationKey(() => onSeek!(seg.startMs)) : undefined}
               role={seekable ? 'button' : undefined}
               tabIndex={seekable ? 0 : undefined}
-              aria-label={seekable ? `Seek to ${formatTimestamp(seg.startMs)} — ${seg.speakerLabel}` : undefined}
+              aria-label={seekable ? `Seek to ${formatTimestamp(seg.startMs)} — ${seg.speakerLabel ?? UNKNOWN_SPEAKER}` : undefined}
             >
               <div className="flex items-baseline gap-2 mb-1">
                 <span
-                  className="text-xs font-semibold"
-                  style={{ color: `hsl(${hue}, 65%, 60%)` }}
+                  className={cn('text-xs font-semibold', !color && 'text-text-secondary')}
+                  {...(color ? { style: { color } } : {})}
                 >
-                  {seg.speakerLabel}
+                  {seg.speakerLabel ?? UNKNOWN_SPEAKER}
                 </span>
                 <span className="text-xs font-mono text-text-tertiary">
                   {formatTimestamp(seg.startMs)}

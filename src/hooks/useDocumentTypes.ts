@@ -26,6 +26,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import type { DocumentType } from '../types/documentType';
 import {
   fetchDocumentTypesFromServer,
+  setDocumentTypeApiBaseUrl,
   syncDocumentTypeCreate,
   syncDocumentTypeUpdate,
   syncDocumentTypeDelete,
@@ -168,6 +169,13 @@ export type DeleteOutcome =
 export interface UseDocumentTypesOptions {
   /** Cognito ID token. Attached to every server call when present. */
   idToken?: string | null;
+  /**
+   * Origin for `/api/document-types`. Applied through
+   * `setDocumentTypeApiBaseUrl`, and it has to be given here (or set at boot)
+   * because the build-time `VITE_*` names this module falls back to are baked
+   * into the LIBRARY's bundle and are always empty for a consumer.
+   */
+  baseUrl?: string;
 }
 
 export interface UseDocumentTypesReturn {
@@ -187,7 +195,10 @@ export interface UseDocumentTypesReturn {
 }
 
 export function useDocumentTypes(options: UseDocumentTypesOptions = {}): UseDocumentTypesReturn {
-  const { idToken } = options;
+  const { idToken, baseUrl } = options;
+  // Applied during render, not in an effect: the mount-time fetch below runs
+  // in an effect that would otherwise fire FIRST and go to the wrong origin.
+  if (baseUrl !== undefined) setDocumentTypeApiBaseUrl(baseUrl);
   const idTokenRef = useRef(idToken);
   idTokenRef.current = idToken;
 

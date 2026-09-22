@@ -49,3 +49,16 @@ export const GroupSmall: StoryObj = {
     />
   ),
 };
+
+/** A pale fill needs dark text: `foreground`, or `autoContrast` to derive it. */
+export const ReadableOnLightFills: Story = {
+  args: { name: 'Alice Smith' },
+  render: () => (
+    <div className="flex items-center gap-3">
+      <Avatar name="Alice Smith" color="#e0e7ff" title="Always white (default)" />
+      <Avatar name="Alice Smith" color="#e0e7ff" foreground="#4338ca" title="Explicit foreground" />
+      <Avatar name="Alice Smith" color="#e0e7ff" autoContrast title="autoContrast" />
+      <Avatar name="Alice Smith" tone="info" title="tone=info" />
+    </div>
+  ),
+};

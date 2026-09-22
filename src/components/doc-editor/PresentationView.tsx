@@ -26,8 +26,9 @@
 // for. The `‹ Slide 4 of 12 ›` control stays because it is how you read
 // *through* a deck once you have found your place.
 
-import { useId, type ReactNode } from 'react';
+import { useId, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { nextSlideIndex, slideNavigationIntent } from '../../lib/slideNavigationKey';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import EmptyState from '../shared/EmptyState';
@@ -156,8 +157,30 @@ export function PresentationView({
   // the first slide.
   const current = slides[Math.min(Math.max(slideIndex, 1), slides.length) - 1]!;
 
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    const intent = slideNavigationIntent(event);
+    if (!intent) return;
+    // preventDefault even when the deck cannot move: ArrowRight at the last
+    // slide should not fall through and scroll the page instead.
+    event.preventDefault();
+    const target = nextSlideIndex(intent, current.index, slides.length);
+    if (target !== current.index) onSlideChange(target);
+  };
+
   return (
-    <div className={cn('flex min-h-0 flex-col gap-3 p-4', className)} data-testid={testId}>
+    <div
+      className={cn(
+        'flex min-h-0 flex-col gap-3 p-4',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
+        className,
+      )}
+      data-testid={testId}
+      role="group"
+      tabIndex={0}
+      aria-roledescription="Slide deck"
+      aria-label={`${title} — slide ${current.index} of ${slides.length}. Use the left and right arrow keys to change slide.`}
+      onKeyDown={handleKeyDown}
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Text as="div" className="text-base font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</Text>
         <div className="flex items-center gap-2">

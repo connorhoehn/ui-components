@@ -3,7 +3,7 @@
 // Validates file type and size before handing off to onFiles.
 // Uses Banner for inline error display.
 
-import { useCallback, useRef, useState, type DragEvent, type ChangeEvent } from 'react';
+import { useCallback, useRef, useState, type DragEvent, type ChangeEvent, type InputHTMLAttributes } from 'react';
 import Banner from './Banner';
 import { cn } from '../../lib/cn';
 
@@ -20,6 +20,27 @@ export interface FileUploadDropProps {
   label?: string;
   className?: string;
   'data-testid'?: string;
+  /**
+   * `data-testid` on the hidden `<input type="file">`.
+   *
+   * The zone's own testid lands on the wrapper, and the input is
+   * `aria-hidden` with `tabIndex={-1}`, so a test had no way to reach the
+   * element it must fire a `change` at — there is no cross-browser way to
+   * drive a real file picker. That is a real adoption blocker, not a
+   * nicety: a host whose spec selects the input by testid could not move
+   * off its hand-rolled drop zone at all.
+   */
+  inputTestId?: string;
+  /**
+   * Extra attributes for the hidden input — `name`, `capture`, `form`, a
+   * `webkitdirectory`. `type`, `accept`, `multiple`, `disabled`, `ref` and
+   * `onChange` are owned here and cannot be overridden: they are the
+   * component's contract, not decoration.
+   */
+  inputProps?: Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    'type' | 'accept' | 'multiple' | 'disabled' | 'onChange' | 'ref' | 'className'
+  >;
 }
 
 function formatBytes(bytes: number): string {
@@ -51,6 +72,8 @@ export function FileUploadDrop({
   label,
   className,
   'data-testid': testId,
+  inputTestId,
+  inputProps,
 }: FileUploadDropProps) {
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -176,13 +199,15 @@ export function FileUploadDrop({
       )}
 
       <input
+        aria-hidden="true"
+        tabIndex={-1}
+        {...inputProps}
         ref={inputRef}
         type="file"
         accept={accept}
         multiple={multiple}
         disabled={disabled}
-        aria-hidden="true"
-        tabIndex={-1}
+        data-testid={inputTestId}
         className="hidden"
         onChange={handleChange}
       />

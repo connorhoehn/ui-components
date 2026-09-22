@@ -26,3 +26,14 @@ export const Percentage: Story = {
 export const Small: Story = {
   args: { value: 80, size: 'sm', 'aria-label': 'p' },
 };
+
+/** Turns green only once every item is done. */
+export const CompletesInAnotherTone: Story = {
+  args: { value: 3, max: 5 },
+  render: () => (
+    <div className="flex w-80 flex-col gap-4">
+      <ProgressBar value={3} max={5} label="3 / 5 done" showRatio={false} completeTone="success" />
+      <ProgressBar value={5} max={5} label="5 / 5 done" showRatio={false} completeTone="success" />
+    </div>
+  ),
+};

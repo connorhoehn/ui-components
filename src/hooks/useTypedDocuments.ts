@@ -107,6 +107,13 @@ export interface TypedDocument {
 export interface UseTypedDocumentsOptions {
   idToken: string | null;
   typeId: string | null;
+  /**
+   * Origin for `/api/typed-documents`. Wins over the build-time
+   * `VITE_SOCIAL_API_URL` below — which is inlined into the LIBRARY's bundle,
+   * not the consumer's, so it is always `''` downstream and every request
+   * went same-origin to a path that is not there.
+   */
+  baseUrl?: string;
 }
 
 export interface UseTypedDocumentsReturn {
@@ -121,7 +128,8 @@ function getBaseUrl(): string {
   return (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 }
 
-export function useTypedDocuments({ idToken, typeId }: UseTypedDocumentsOptions): UseTypedDocumentsReturn {
+export function useTypedDocuments({ idToken, typeId, baseUrl }: UseTypedDocumentsOptions): UseTypedDocumentsReturn {
+  const resolvedBase = baseUrl ?? getBaseUrl();
   const [documents, setDocuments] = useState<TypedDocument[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -135,7 +143,7 @@ export function useTypedDocuments({ idToken, typeId }: UseTypedDocumentsOptions)
     let cancelled = false;
     setLoading(true);
     setError(null);
-    fetch(`${getBaseUrl()}/api/typed-documents?typeId=${encodeURIComponent(typeId)}`, {
+    fetch(`${resolvedBase}/api/typed-documents?typeId=${encodeURIComponent(typeId)}`, {
       headers: { Authorization: `Bearer ${idToken}` },
     })
       .then(async (res) => {
@@ -154,12 +162,12 @@ export function useTypedDocuments({ idToken, typeId }: UseTypedDocumentsOptions)
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [idToken, typeId, reloadKey]);
+  }, [idToken, typeId, reloadKey, resolvedBase]);
 
   const createDocument = useCallback(
     async (values: Record<string, TypedDocumentValue>): Promise<TypedDocument> => {
       if (!idToken || !typeId) throw new Error('not ready: missing idToken or typeId');
-      const res = await fetch(`${getBaseUrl()}/api/typed-documents`, {
+      const res = await fetch(`${resolvedBase}/api/typed-documents`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -175,7 +183,7 @@ export function useTypedDocuments({ idToken, typeId }: UseTypedDocumentsOptions)
       setDocuments((prev) => [created, ...prev]);
       return created;
     },
-    [idToken, typeId],
+    [idToken, typeId, resolvedBase],
   );
 
   const refresh = useCallback((): void => {

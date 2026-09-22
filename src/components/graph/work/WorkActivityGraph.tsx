@@ -54,7 +54,7 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
     <div ref={body} className="relative flex min-h-0 min-w-0 flex-1">
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <WorkTimeWindow activity={activity} timezone={props.timezone} />
-        <WorkActivityCanvas {...props} />
+        <WorkActivityCanvas {...props} onViewAsList={() => setList(true)} />
         <div className="flex h-9 shrink-0 items-center justify-between gap-2 border-t border-border px-4 text-[10px] text-text-tertiary" data-testid="work-activity-footer">
           {activity.view.focusedEffortId
             ? <Button size="sm" variant="ghost" onClick={() => activity.onViewChange({ ...activity.view, focusedEffortId: null })}>← All activities</Button>

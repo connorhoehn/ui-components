@@ -35,3 +35,20 @@ export const Interactive: Story = {
     );
   },
 };
+
+/** The same chrome, docked in the layout: no portal, no backdrop. */
+export const Docked: Story = {
+  args: { open: true, onClose: () => {}, children: null },
+  render: () => (
+    <div className="flex h-64 items-stretch border border-border">
+      <div className="flex-1 p-4 text-sm text-text-secondary">
+        Page content. The panel is a column beside it, not over it — this text
+        reflows rather than being covered.
+      </div>
+      <Drawer open docked width={320} onClose={() => {}} title="My Mentions">
+        <p className="text-sm text-text-secondary">Docked body.</p>
+      </Drawer>
+    </div>
+  ),
+};
+

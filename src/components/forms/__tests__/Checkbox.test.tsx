@@ -53,3 +53,80 @@ describe('Checkbox', () => {
     expect(box()).toBeDisabled();
   });
 });
+
+describe('Checkbox shape="round"', () => {
+  it('leaves the square default a bare input', () => {
+    const { container } = render(<Checkbox checked={false} onChange={vi.fn()} aria-label="Row" />);
+    expect(container.firstElementChild?.tagName).toBe('INPUT');
+    expect(box().className).toContain('accent-primary');
+  });
+
+  it('is still a real checkbox, so space and form semantics survive', () => {
+    const onChange = vi.fn();
+    render(<Checkbox shape="round" checked={false} onChange={onChange} aria-label="Status" />);
+    const input = screen.getByRole('checkbox', { name: 'Status' }) as HTMLInputElement;
+    expect(input.tagName).toBe('INPUT');
+    expect(input.type).toBe('checkbox');
+    fireEvent.click(input);
+    expect(onChange).toHaveBeenCalledWith(true, expect.anything());
+  });
+
+  it('paints the ring in the requested tone', () => {
+    const { container } = render(
+      <Checkbox shape="round" tone="warning" checked={false} onChange={vi.fn()} aria-label="S" />,
+    );
+    const paint = container.querySelector('span[aria-hidden="true"]') as HTMLElement;
+    expect(paint.className).toContain('border-warning');
+    expect(paint.className).toContain('bg-transparent');
+  });
+
+  it('fills solid when checked', () => {
+    const { container } = render(
+      <Checkbox shape="round" tone="success" checked onChange={vi.fn()} aria-label="S" />,
+    );
+    const paint = container.querySelector('span[aria-hidden="true"]') as HTMLElement;
+    expect(paint.className).toContain('bg-success');
+    expect(paint.querySelector('polyline')).not.toBeNull();
+  });
+
+  it('tints on hover while unchecked so the target is findable', () => {
+    const { container } = render(
+      <Checkbox shape="round" tone="info" checked={false} onChange={vi.fn()} aria-label="S" />,
+    );
+    const paint = container.querySelector('span[aria-hidden="true"]') as HTMLElement;
+    expect(paint.className).toContain('peer-hover:bg-info/20');
+  });
+
+  it('defaults to the info tone', () => {
+    const { container } = render(
+      <Checkbox shape="round" checked onChange={vi.fn()} aria-label="S" />,
+    );
+    expect((container.querySelector('span[aria-hidden="true"]') as HTMLElement).className)
+      .toContain('bg-info');
+  });
+
+  it('shows a dash and reports mixed when indeterminate', () => {
+    const { container } = render(
+      <Checkbox shape="round" checked={false} indeterminate onChange={vi.fn()} aria-label="S" />,
+    );
+    expect(screen.getByRole('checkbox')).toHaveAttribute('aria-checked', 'mixed');
+    expect(container.querySelector('line')).not.toBeNull();
+  });
+
+  it('is 18px by default and resizes through className, not an inline style', () => {
+    const { container, rerender } = render(
+      <Checkbox shape="round" checked onChange={vi.fn()} aria-label="S" />,
+    );
+    expect(container.firstElementChild?.className).toContain('h-[18px]');
+    expect(container.firstElementChild).not.toHaveAttribute('style');
+    rerender(
+      <Checkbox shape="round" checked onChange={vi.fn()} aria-label="S" className="h-[22px] w-[22px]" />,
+    );
+    expect(container.firstElementChild?.className).toContain('h-[22px]');
+  });
+
+  it('keeps data-testid on the input', () => {
+    render(<Checkbox shape="round" data-testid="toggle" checked onChange={vi.fn()} aria-label="S" />);
+    expect(screen.getByTestId('toggle').tagName).toBe('INPUT');
+  });
+});

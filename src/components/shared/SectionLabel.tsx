@@ -15,6 +15,15 @@
 // needs different weight in one place, that is a design decision worth making
 // once, here, for everyone.
 //
+// TWO CASES, also deliberately — and not a loophole in the above. `upper` is
+// the panel caption; `sentence` is the caption that labels a GROUP OF FORM
+// CONTROLS ("If timeout" over a pair of radios), where an uppercase wide-
+// tracked label is a visual outlier beside the sentence-case labels
+// `FormField` renders for every other control on the same panel. That is one
+// decision made once here rather than the same plain `<div className="text-
+// [12px] font-medium">` written out at each approval/trigger/retry config.
+// Each case is still exactly one size and one weight.
+//
 // Not `ToolbarLabel` generalised: that one is not uppercase and carries
 // toolbar-specific layout (`flex-none whitespace-nowrap`). Two different jobs
 // that happen to both be small and grey.
@@ -22,8 +31,23 @@
 import type { ReactNode, ElementType } from 'react';
 import { cn } from '../../lib/cn';
 
+/**
+ * `upper` — the 10px bold uppercase panel caption (default, unchanged).
+ * `sentence` — a 12px medium sentence-case caption at normal tracking, sized
+ * and weighted to match `FormField`'s own label so it sits level with the
+ * other labels in a config form.
+ */
+export type SectionLabelCase = 'upper' | 'sentence';
+
+const CASE_CLASSES: Record<SectionLabelCase, string> = {
+  upper: 'text-[10px] font-bold uppercase tracking-[0.06em] text-text-tertiary',
+  sentence: 'text-[12px] font-medium normal-case tracking-normal text-text-primary',
+};
+
 export interface SectionLabelProps {
   children: ReactNode;
+  /** Letter case and weight. See `SectionLabelCase`. Default `upper`. */
+  case?: SectionLabelCase;
   /**
    * The element to render. Defaults to `span` so it can sit inline beside a
    * count or a chip; pass `"div"` when the caption owns its own line.
@@ -36,6 +60,7 @@ export interface SectionLabelProps {
 export function SectionLabel({
   children,
   as: As = 'span',
+  case: textCase = 'upper',
   className,
   'data-testid': testId,
 }: SectionLabelProps) {
@@ -43,7 +68,7 @@ export function SectionLabel({
     <As
       data-testid={testId}
       className={cn(
-        'text-[10px] font-bold uppercase tracking-[0.06em] text-text-tertiary',
+        CASE_CLASSES[textCase] ?? CASE_CLASSES.upper,
         className,
       )}
     >

@@ -4,15 +4,31 @@ import AnimatedEdge from '../../pipelines/canvas/edges/AnimatedEdge';
 import { ACTIVITY_RIPPLE_GRID, RippleGridBackground } from '../../shared/RippleGridBackground';
 import { TitledFrame } from '../../shared/TitledFrame';
 import { Button } from '../../ui/Button';
+import InlineAlert from '../../shared/InlineAlert';
 import { IconButton } from '../../ui/IconButton';
 import { cn } from '../../../lib/cn';
-import { layoutWorkEfforts, type WorkNodeBounds } from './effortLayout';
+import {
+  layoutWorkEfforts,
+  WORK_CANVAS_FIT_MIN_ZOOM,
+  WORK_CANVAS_MIN_ZOOM,
+  WORK_CANVAS_READABLE_ZOOM,
+  type WorkNodeBounds,
+} from './effortLayout';
 import { WorkActivityNode } from './WorkActivityNode';
 import type { WorkActivityNodeDetail, WorkActivityPresentation, WorkGraphProps, WorkGraphViewport } from './types';
 
 export type { WorkActivityCanvasBackground } from './types';
 
-type ActivityProps = WorkGraphProps & { activity: WorkActivityPresentation };
+type ActivityProps = WorkGraphProps & {
+  activity: WorkActivityPresentation;
+  /**
+   * Open the accessible list. The canvas offers it when a fitted graph lands
+   * below the readable zoom — at that size the cards are a map, and the list
+   * is the only way to actually read the work. Absent, the hint still says
+   * what happened but has nothing to point at.
+   */
+  onViewAsList?: () => void;
+};
 interface ActivityNodeData extends Record<string, unknown> {
   entity: WorkGraphProps['nodes'][number]; detail?: WorkActivityNodeDetail;
   live: boolean; revisionId?: string; onSelect: WorkGraphProps['onSelectionChange']; onFeedback: WorkActivityPresentation['onFeedback'];
@@ -86,7 +102,7 @@ const edgeTypes = { activity: Relationship };
 
 /** One canvas; effort frames and visual instances never change canonical IDs. */
 export function WorkActivityCanvas(props: ActivityProps) {
-  const { activity, nodes, edges, selection, viewport, onViewportChange, onSelectionChange, background = 'ripple-grid' } = props;
+  const { activity, nodes, edges, selection, viewport, onViewportChange, onSelectionChange, background = 'ripple-grid', onViewAsList } = props;
   const host = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 640, height: 480 });
   const [measurements, setMeasurements] = useState<Map<string, WorkNodeBounds>>(new Map());
@@ -112,8 +128,11 @@ export function WorkActivityCanvas(props: ActivityProps) {
     const width = Math.max(1, ...layouts.map((group) => group.x + group.width)) - left;
     const height = Math.max(1, ...layouts.map((group) => group.y + group.height)) - top;
     // Fill the canvas: the work should span the pane with a margin, not sit in
-    // a corner of it. 40% is the floor; past it, pan and focus take over.
-    const zoom = Math.max(0.4, Math.min(1.2, (size.width - 48) / width, (size.height - 48) / height));
+    // a corner of it. The floor here is the FIT floor, not the interactive
+    // one — a fit clamped to 0.4 leaves the top row of a nine-effort day
+    // permanently outside the viewport while the button that promises to fix
+    // that appears to do nothing.
+    const zoom = Math.max(WORK_CANVAS_FIT_MIN_ZOOM, Math.min(1.2, (size.width - 48) / width, (size.height - 48) / height));
     return { x: (size.width - width * zoom) / 2 - left * zoom, y: (size.height - height * zoom) / 2 - top * zoom, zoom };
   }, [layouts, size]);
   // A status border or a new text line can change measurements. Re-layout may
@@ -160,14 +179,19 @@ export function WorkActivityCanvas(props: ActivityProps) {
     }
   }
   const knownInstances = new Map(flowNodes.filter((node): node is ActivityNode => node.type === 'activity').map((node) => [node.id, node.data.entity.id]));
-  const zoomBy = (factor: number) => onViewportChange({ ...viewport, zoom: Math.max(0.4, Math.min(2.5, viewport.zoom * factor)) });
+  // A fit may legitimately have put us below the interactive floor. Zooming
+  // OUT from there must not silently zoom in, so the floor for a manual zoom
+  // is the interactive one or wherever the fit left us, whichever is lower.
+  const zoomFloor = Math.min(WORK_CANVAS_MIN_ZOOM, viewport.zoom);
+  const zoomBy = (factor: number) => onViewportChange({ ...viewport, zoom: Math.max(zoomFloor, Math.min(2.5, viewport.zoom * factor)) });
+  const belowReadable = viewport.zoom < WORK_CANVAS_READABLE_ZOOM;
   const ripple = background === 'ripple-grid';
   return <div ref={host} className="relative isolate min-h-80 min-w-0 flex-1 overflow-hidden" data-testid="work-activity-canvas" data-background={background}>
     {/* Behind React Flow, not inside it: the pane and every node above are
         transparent over this, and the canvas takes no pointer events, so
         dragging, selecting and the edge hit-boxes are untouched. */}
     {ripple && <RippleGridBackground {...ACTIVITY_RIPPLE_GRID} className="absolute inset-0 -z-10" data-testid="work-activity-ripple" />}
-    <ReactFlow<ActivityNode | FrameNode, ActivityEdge> nodes={flowNodes} edges={flowEdges} nodeTypes={nodeTypes} edgeTypes={edgeTypes} viewport={viewport} onViewportChange={onViewportChange} onPaneClick={() => onSelectionChange(null)} onEdgeClick={(_event, edge) => edge.data?.onSelect()} minZoom={0.4} maxZoom={2.5} nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} deleteKeyCode={null} proOptions={{ hideAttribution: true }} onNodesChange={(changes) => {
+    <ReactFlow<ActivityNode | FrameNode, ActivityEdge> nodes={flowNodes} edges={flowEdges} nodeTypes={nodeTypes} edgeTypes={edgeTypes} viewport={viewport} onViewportChange={onViewportChange} onPaneClick={() => onSelectionChange(null)} onEdgeClick={(_event, edge) => edge.data?.onSelect()} minZoom={zoomFloor} maxZoom={2.5} nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} deleteKeyCode={null} proOptions={{ hideAttribution: true }} onNodesChange={(changes) => {
       const dimensions = changes.filter((change) => change.type === 'dimensions');
       if (!dimensions.length) return;
       setMeasurements((previous) => {
@@ -185,6 +209,23 @@ export function WorkActivityCanvas(props: ActivityProps) {
     }}>
       {!ripple && <Background gap={20} size={1} color="var(--color-border)" />}
     </ReactFlow>
+    {belowReadable && (
+      <InlineAlert
+        tone="info"
+        className="absolute left-3 top-3 z-10 max-w-[min(26rem,calc(100%-1.5rem))] text-[11px]"
+        data-testid="work-activity-zoom-hint"
+      >
+        <span>
+          The whole graph is in view, but too small to read.
+          {onViewAsList && ' '}
+        </span>
+        {onViewAsList && (
+          <Button size="sm" variant="link" onClick={onViewAsList} data-testid="work-activity-zoom-hint-list">
+            View as accessible list
+          </Button>
+        )}
+      </InlineAlert>
+    )}
     <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-md border border-border bg-surface p-1" data-testid="work-activity-controls">
       <IconButton size="sm" aria-label="Zoom in" onClick={() => zoomBy(1.2)}>+</IconButton>
       <IconButton size="sm" aria-label="Zoom out" onClick={() => zoomBy(1 / 1.2)}>−</IconButton>

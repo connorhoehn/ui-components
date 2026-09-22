@@ -103,3 +103,12 @@ export const CodeTone: Story = {
     ],
   },
 };
+
+/** One quiet line inside a section that already has a heading. */
+export const Compact: Story = {
+  args: {
+    title: 'No items.',
+    density: 'compact',
+    className: 'italic',
+  },
+};

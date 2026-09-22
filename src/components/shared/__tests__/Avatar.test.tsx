@@ -128,3 +128,49 @@ describe('Avatar — glyph and icon', () => {
     expect(screen.getByTitle('general')).toHaveStyle({ fontSize: '20px' });
   });
 });
+
+describe('Avatar foreground and title opt-out', () => {
+  it('still renders white initials by default', () => {
+    render(<Avatar name="Alice Smith" color="#4f7cff" />);
+    expect(screen.getByTitle('Alice Smith')).toHaveStyle({ color: '#fff' });
+  });
+
+  it('honours an explicit foreground', () => {
+    render(<Avatar name="Alice Smith" color="#e0e7ff" foreground="#4338ca" />);
+    expect(screen.getByTitle('Alice Smith')).toHaveStyle({ color: '#4338ca' });
+  });
+
+  it('picks a dark foreground on a light fill with autoContrast', () => {
+    render(<Avatar name="Alice Smith" color="#e0e7ff" autoContrast />);
+    expect(screen.getByTitle('Alice Smith')).toHaveStyle({ color: 'var(--color-text-primary)' });
+  });
+
+  it('keeps white on a dark fill with autoContrast', () => {
+    render(<Avatar name="Alice Smith" color="#1e293b" autoContrast />);
+    expect(screen.getByTitle('Alice Smith')).toHaveStyle({ color: '#fff' });
+  });
+
+  it('falls back to white when the colour cannot be read', () => {
+    render(<Avatar name="Alice Smith" color="var(--color-primary)" autoContrast />);
+    expect(screen.getByTitle('Alice Smith')).toHaveStyle({ color: '#fff' });
+  });
+
+  it('paints a tone as classes, leaving the inline colours unset', () => {
+    render(<Avatar name="Alice Smith" tone="info" data-testid="a" />);
+    const el = screen.getByTitle('Alice Smith');
+    expect(el.className).toContain('bg-info-bg');
+    expect(el.className).toContain('text-info-fg');
+    expect(el.style.background).toBe('');
+    expect(el.style.color).toBe('');
+  });
+
+  it('renders no title attribute at all for title={null}', () => {
+    const { container } = render(<Avatar name="Alice Smith" title={null} />);
+    expect(container.firstElementChild).not.toHaveAttribute('title');
+  });
+
+  it('renders no title attribute for showTitle={false}', () => {
+    const { container } = render(<Avatar name="Alice Smith" showTitle={false} />);
+    expect(container.firstElementChild).not.toHaveAttribute('title');
+  });
+});

@@ -117,3 +117,84 @@ describe('PresentationView', () => {
     expect(onRetry).toHaveBeenCalled();
   });
 });
+
+// The brief promised ←/→ paging and the surface never listened, so a reader
+// pressing ArrowRight on "Slide 1 of 8" saw nothing happen at all.
+describe('PresentationView keyboard paging', () => {
+  it('is focusable and named, so a keyboard can reach the deck at all', () => {
+    view();
+    const deck = screen.getByTestId('presentation-view');
+    expect(deck).toHaveAttribute('tabindex', '0');
+    expect(deck).toHaveAttribute('aria-label', expect.stringContaining('Sprint review'));
+  });
+
+  it('pages forward on ArrowRight', () => {
+    const onSlideChange = vi.fn();
+    view({ slideIndex: 1, onSlideChange });
+    fireEvent.keyDown(screen.getByTestId('presentation-view'), { key: 'ArrowRight' });
+    expect(onSlideChange).toHaveBeenCalledWith(2);
+  });
+
+  it('pages back on ArrowLeft', () => {
+    const onSlideChange = vi.fn();
+    view({ slideIndex: 2, onSlideChange });
+    fireEvent.keyDown(screen.getByTestId('presentation-view'), { key: 'ArrowLeft' });
+    expect(onSlideChange).toHaveBeenCalledWith(1);
+  });
+
+  it('jumps to the ends on Home and End', () => {
+    const onSlideChange = vi.fn();
+    view({ slideIndex: 2, onSlideChange });
+    const deck = screen.getByTestId('presentation-view');
+    fireEvent.keyDown(deck, { key: 'End' });
+    expect(onSlideChange).toHaveBeenLastCalledWith(3);
+    fireEvent.keyDown(deck, { key: 'Home' });
+    expect(onSlideChange).toHaveBeenLastCalledWith(1);
+  });
+
+  it('stays put at both ends rather than asking for a slide that is not there', () => {
+    const onSlideChange = vi.fn();
+    const { rerender } = view({ slideIndex: 1, onSlideChange });
+    fireEvent.keyDown(screen.getByTestId('presentation-view'), { key: 'ArrowLeft' });
+    expect(onSlideChange).not.toHaveBeenCalled();
+    rerender(
+      <PresentationView
+        title="Sprint review"
+        revisions={[revision()]}
+        revisionId="rev-2"
+        slideIndex={3}
+        onRevisionChange={() => undefined}
+        onSlideChange={onSlideChange}
+      />,
+    );
+    fireEvent.keyDown(screen.getByTestId('presentation-view'), { key: 'ArrowRight' });
+    expect(onSlideChange).not.toHaveBeenCalled();
+  });
+
+  it('leaves modified presses to the browser — ⌘← is Back, not page back', () => {
+    const onSlideChange = vi.fn();
+    view({ slideIndex: 2, onSlideChange });
+    const deck = screen.getByTestId('presentation-view');
+    fireEvent.keyDown(deck, { key: 'ArrowLeft', metaKey: true });
+    fireEvent.keyDown(deck, { key: 'ArrowRight', altKey: true });
+    expect(onSlideChange).not.toHaveBeenCalled();
+  });
+
+  it('ignores keys that belong to a text field inside the surface', () => {
+    const onSlideChange = vi.fn();
+    view({
+      slideIndex: 1,
+      onSlideChange,
+      notice: <input aria-label="Notes" defaultValue="hello" />,
+    });
+    fireEvent.keyDown(screen.getByLabelText('Notes'), { key: 'ArrowRight' });
+    expect(onSlideChange).not.toHaveBeenCalled();
+  });
+
+  it('leaves unrelated keys alone', () => {
+    const onSlideChange = vi.fn();
+    view({ slideIndex: 1, onSlideChange });
+    fireEvent.keyDown(screen.getByTestId('presentation-view'), { key: 'a' });
+    expect(onSlideChange).not.toHaveBeenCalled();
+  });
+});

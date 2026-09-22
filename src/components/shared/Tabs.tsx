@@ -43,6 +43,14 @@ export interface TabsProps {
   stretch?: boolean;
   /** Extra classes merged onto every tab trigger `<button>`. */
   itemClassName?: string;
+  /**
+   * `data-testid` on the tablist container. The per-item hook (`getItemTestId`,
+   * 2.350.0) covered the triggers but left the bar itself unaddressable, so a
+   * spec that scopes its queries to the tab bar — or just asserts the bar
+   * exists before any tab does — still had to hand-roll the whole `role=
+   * "tablist"` element to hang one attribute on it.
+   */
+  'data-testid'?: string;
 }
 
 const SIZE: Record<'sm' | 'md', string> = {
@@ -102,6 +110,7 @@ export function Tabs({
   getItemTestId,
   stretch = false,
   itemClassName,
+  'data-testid': testId,
 }: TabsProps) {
   const autoPrefix = useId();
   const idPrefix = idPrefixProp ?? autoPrefix;
@@ -156,6 +165,7 @@ export function Tabs({
     <div
       role="tablist"
       aria-label={ariaLabel}
+      data-testid={testId}
       className={cn(variantContainerClasses(variant), className)}
       style={style}
     >

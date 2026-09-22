@@ -1,5 +1,6 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { TONE_SOFT, toneKey, type ToneOrAlias } from './tones';
 
 const AVATAR_PALETTE = [
   '#4f7cff',
@@ -26,6 +27,53 @@ export function nameToColor(name: string): string {
   }
   const index = Math.abs(hash) % AVATAR_PALETTE.length;
   return AVATAR_PALETTE[index];
+}
+
+/**
+ * Relative luminance of a CSS colour, 0 (black) to 1 (white), or `null` when
+ * the string isn't a form we can read (a `var(--x)`, an `hsl()`, a named
+ * colour). Callers treat `null` as "don't guess".
+ *
+ * Only hex and `rgb()/rgba()` are parsed on purpose: those are the two forms
+ * an avatar colour actually arrives in (a palette constant, or a per-user
+ * colour from a presence payload), and a half-hearted colour parser that
+ * silently mis-reads the rest is worse than one that admits defeat.
+ */
+function luminanceOf(color: string): number | null {
+  const value = color.trim();
+  let r: number, g: number, b: number;
+  const hex = /^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.exec(value);
+  if (hex) {
+    const digits = hex[1];
+    const short = digits.length <= 4;
+    const part = (i: number) =>
+      short
+        ? parseInt(digits[i] + digits[i], 16)
+        : parseInt(digits.slice(i * 2, i * 2 + 2), 16);
+    [r, g, b] = [part(0), part(1), part(2)];
+  } else {
+    const rgb = /^rgba?\(\s*([0-9.]+)[\s,]+([0-9.]+)[\s,]+([0-9.]+)/i.exec(value);
+    if (!rgb) return null;
+    [r, g, b] = [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])];
+  }
+  if (![r, g, b].every((n) => Number.isFinite(n))) return null;
+  // sRGB relative luminance (WCAG 2.x).
+  const channel = (n: number) => {
+    const c = n / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}
+
+/**
+ * The text colour that reads on `background`, or `null` when the background
+ * can't be parsed. The 0.6 cut is where white-on-fill stops clearing 4.5:1
+ * for the palette's own colours; above it, dark text wins.
+ */
+export function readableAvatarForeground(background: string): string | null {
+  const lum = luminanceOf(background);
+  if (lum === null) return null;
+  return lum > 0.6 ? 'var(--color-text-primary)' : '#fff';
 }
 
 export function nameToInitials(name: string): string {
@@ -75,9 +123,40 @@ export interface AvatarProps {
    * because one character at initials size reads as a speck.
    */
   glyph?: string;
+  /**
+   * Explicit text colour for the initials/glyph. Overrides everything else.
+   *
+   * The default is white, which is right for the saturated palette above and
+   * wrong for a pale fill — a task row's assignee badge is dark indigo on a
+   * light indigo tint, and white on that fails contrast, which is exactly why
+   * such badges were being hand-rolled as bare `<span>`s beside real Avatars.
+   */
+  foreground?: string;
+  /**
+   * Paint the circle in a semantic tone's soft surface (`-bg` background,
+   * `-fg` text) instead of a derived or caller-supplied colour. Wins over
+   * `color` / `foreground` / `autoContrast`, because a tone already declares
+   * both halves of the pair.
+   */
+  tone?: ToneOrAlias;
+  /**
+   * Pick the foreground from the resolved background's luminance rather than
+   * always using white. Opt-in, not the default: flipping existing avatars to
+   * dark text on the lighter half of the palette would change every presence
+   * row in every consumer at once.
+   */
+  autoContrast?: boolean;
   className?: string;
   style?: CSSProperties;
-  title?: string;
+  /**
+   * Tooltip text. Defaults to `name`. Pass `null` (or `showTitle={false}`) to
+   * render no `title` at all — a wrapping button or link with its own `title`
+   * otherwise gets two tooltips fighting, and `title=""` is not the same thing
+   * as no attribute.
+   */
+  title?: string | null;
+  /** `false` suppresses the `title` attribute entirely. See `title`. */
+  showTitle?: boolean;
 }
 
 export function Avatar({
@@ -88,11 +167,19 @@ export function Avatar({
   src,
   icon,
   glyph,
+  foreground,
+  tone,
+  autoContrast = false,
   className,
   style,
   title,
+  showTitle = true,
 }: AvatarProps) {
   const bg = color || nameToColor(name);
+  const toneClasses = tone ? TONE_SOFT[toneKey(tone)] : undefined;
+  const fg =
+    foreground ?? (autoContrast ? readableAvatarForeground(bg) ?? '#fff' : '#fff');
+  const resolvedTitle = !showTitle || title === null ? undefined : title ?? name;
   const initials = initialsProp ?? nameToInitials(name);
   // A broken image URL (404, expired signed URL, offline) used to render as
   // the browser's broken-image glyph forever. Track WHICH src failed so a
@@ -104,16 +191,19 @@ export function Avatar({
   const hasMark = !showImage && (icon !== undefined || !!glyph);
   return (
     <div
-      title={title ?? name}
+      title={resolvedTitle}
       className={cn(
         'inline-flex items-center justify-center rounded-full flex-shrink-0 font-semibold select-none overflow-hidden',
+        toneClasses,
         className,
       )}
       style={{
         width: size,
         height: size,
-        background: bg,
-        color: '#fff',
+        // A tone owns both halves of the pair and paints them as classes, so
+        // leaving these undefined is what lets the class win.
+        background: toneClasses ? undefined : bg,
+        color: toneClasses ? undefined : fg,
         fontSize: hasMark ? size * 0.5 : size * 0.38,
         ...style,
       }}

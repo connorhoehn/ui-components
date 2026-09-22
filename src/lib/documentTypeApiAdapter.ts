@@ -210,7 +210,31 @@ export function hydrateServerDocumentType(item: ApiDocumentTypeItem): DocumentTy
 // VITE_PLATFORM_API_URL, and hardcoding either one is precisely the kind of
 // single-string mismatch that motivated a forked copy of this file. Accept
 // both, library name first.
+//
+// Neither env name reaches a CONSUMER, though. `import.meta.env.VITE_*` is
+// statically replaced when the bundle is built, and the bundle that ships is
+// this library's — so a published build carries whatever the library's own
+// build environment had, which is nothing, and every consumer silently gets
+// `''`. `setDocumentTypeApiBaseUrl` is the way out: a host calls it once at
+// boot with its own origin and it wins over both env names.
+let baseUrlOverride: string | null = null;
+
+/**
+ * Point every document-type request at `url`. Call once during app start-up,
+ * before the first `useDocumentTypes`. Pass `null` to fall back to the
+ * build-time env names again (that is also how a test suite resets it).
+ */
+export function setDocumentTypeApiBaseUrl(url: string | null): void {
+  baseUrlOverride = url;
+}
+
+/** The origin requests currently go to — the override, else the env. */
+export function getDocumentTypeApiBaseUrl(): string {
+  return getBaseUrl();
+}
+
 function getBaseUrl(): string {
+  if (baseUrlOverride !== null) return baseUrlOverride;
   const env = (import.meta.env ?? {}) as Record<string, string | undefined>;
   return env.VITE_SOCIAL_API_URL ?? env.VITE_PLATFORM_API_URL ?? '';
 }

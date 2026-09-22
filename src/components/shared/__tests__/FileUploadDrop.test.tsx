@@ -100,3 +100,62 @@ describe('FileUploadDrop', () => {
     expect(onFiles).not.toHaveBeenCalled();
   });
 });
+
+// The input is aria-hidden with tabIndex -1 and no testid of its own, and
+// there is no cross-browser way to drive a real file picker — so a spec that
+// must fire a `change` at it had nothing to select. That blocked adoption
+// outright for a host whose existing spec did exactly that.
+describe('FileUploadDrop inputTestId', () => {
+  it('puts the testid on the hidden file input', () => {
+    render(<FileUploadDrop onFiles={() => {}} inputTestId="file-upload-input" />);
+    const input = screen.getByTestId('file-upload-input') as HTMLInputElement;
+    expect(input.tagName).toBe('INPUT');
+    expect(input.type).toBe('file');
+  });
+
+  it('leaves the input unlabelled by default', () => {
+    const { container } = render(<FileUploadDrop onFiles={() => {}} />);
+    expect(container.querySelector('input[type="file"]')).not.toHaveAttribute('data-testid');
+  });
+
+  it('is addressable and drivable: a change on it reports the files', () => {
+    const onFiles = vi.fn();
+    render(<FileUploadDrop onFiles={onFiles} inputTestId="file-upload-input" />);
+    const input = screen.getByTestId('file-upload-input') as HTMLInputElement;
+    const file = new File(['hello'], 'notes.txt', { type: 'text/plain' });
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(onFiles).toHaveBeenCalledWith([file]);
+  });
+
+  it('keeps the zone testid separate from the input one', () => {
+    render(
+      <FileUploadDrop onFiles={() => {}} data-testid="zone" inputTestId="file-upload-input" />,
+    );
+    expect(screen.getByTestId('zone')).not.toBe(screen.getByTestId('file-upload-input'));
+  });
+
+  it('forwards accept and multiple to the input', () => {
+    render(
+      <FileUploadDrop onFiles={() => {}} accept="image/*,.pdf" multiple inputTestId="i" />,
+    );
+    const input = screen.getByTestId('i') as HTMLInputElement;
+    expect(input).toHaveAttribute('accept', 'image/*,.pdf');
+    expect(input.multiple).toBe(true);
+  });
+
+  it('passes extra attributes through but never the ones it owns', () => {
+    render(
+      <FileUploadDrop
+        onFiles={() => {}}
+        accept="image/*"
+        inputTestId="i"
+        inputProps={{ name: 'attachment', 'aria-hidden': undefined }}
+      />,
+    );
+    const input = screen.getByTestId('i') as HTMLInputElement;
+    expect(input).toHaveAttribute('name', 'attachment');
+    expect(input).toHaveAttribute('accept', 'image/*');
+    expect(input.type).toBe('file');
+  });
+});
+

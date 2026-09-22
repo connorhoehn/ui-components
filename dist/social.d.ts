@@ -48,13 +48,37 @@ declare interface ActivityEvent {
     source: 'local' | 'remote';
 }
 
-export declare function ActivityPanel({ idToken, sendMessage, onMessage, connectionState }: ActivityPanelProps): JSX.Element;
+export declare interface ActivityItem {
+    eventType: string;
+    timestamp: string;
+    detail: Record<string, unknown>;
+}
 
-declare interface ActivityPanelProps {
+export declare function ActivityPanel({ idToken, sendMessage, onMessage, connectionState, baseUrl, fetchActivity, }: ActivityPanelProps): JSX.Element;
+
+export declare interface ActivityPanelProps {
     idToken: string | null;
     sendMessage: (msg: Record<string, unknown>) => void;
     onMessage: OnMessageFn_6;
     connectionState: ConnectionState;
+    /**
+     * Origin for `GET /api/activity`. Wins over the build-time
+     * `VITE_SOCIAL_API_URL`, which a consumer cannot influence — see the note
+     * on `getBaseUrl` above. Pass the same origin the host's other REST calls
+     * use; `''` is a same-origin request.
+     */
+    baseUrl?: string;
+    /**
+     * Full replacement for the REST hydration, for a host that already owns an
+     * authorized client (signed requests, a proxy, a mock in tests). Wins over
+     * `baseUrl`. The live WebSocket half is untouched either way.
+     */
+    fetchActivity?: FetchActivityFn;
+}
+
+export declare interface ActivityResponse {
+    items: ActivityItem[];
+    nextKey: string | null;
 }
 
 export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, anchor, placement, onAdd, onClose, 'data-testid': testId, historyChoice, }: AddToChatDialogProps): JSX.Element;
@@ -2174,6 +2198,12 @@ export declare interface FeedRowProps extends Omit<HTMLAttributes<HTMLLIElement>
     'data-testid'?: string;
 }
 
+/** Hydration seam — see `ActivityPanelProps.fetchActivity`. */
+export declare type FetchActivityFn = (args: {
+    idToken: string | null;
+    limit: number;
+}) => Promise<ActivityResponse>;
+
 export declare function formatBytes(bytes: number): string;
 
 /** "12m 4s" — the shape a transcript wants, not "00:12:04". */
@@ -3412,16 +3442,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -3458,19 +3478,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3484,6 +3494,26 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

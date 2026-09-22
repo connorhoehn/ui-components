@@ -1535,6 +1535,13 @@ declare interface UseActivityBusReturn {
  declare interface UseDocumentTypesOptions {
      /** Cognito ID token. Attached to every server call when present. */
      idToken?: string | null;
+     /**
+      * Origin for `/api/document-types`. Applied through
+      * `setDocumentTypeApiBaseUrl`, and it has to be given here (or set at boot)
+      * because the build-time `VITE_*` names this module falls back to are baked
+      * into the LIBRARY's bundle and are always empty for a consumer.
+      */
+     baseUrl?: string;
  }
 
  declare interface UseDocumentTypesReturn {
@@ -2123,11 +2130,18 @@ declare interface UseActivityBusReturn {
      clearActionError: () => void;
  }
 
- export declare function useTypedDocuments({ idToken, typeId }: UseTypedDocumentsOptions): UseTypedDocumentsReturn;
+ export declare function useTypedDocuments({ idToken, typeId, baseUrl }: UseTypedDocumentsOptions): UseTypedDocumentsReturn;
 
  declare interface UseTypedDocumentsOptions {
      idToken: string | null;
      typeId: string | null;
+     /**
+      * Origin for `/api/typed-documents`. Wins over the build-time
+      * `VITE_SOCIAL_API_URL` below — which is inlined into the LIBRARY's bundle,
+      * not the consumer's, so it is always `''` downstream and every request
+      * went same-origin to a path that is not there.
+      */
+     baseUrl?: string;
  }
 
  declare interface UseTypedDocumentsReturn {
@@ -2384,16 +2398,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -2430,19 +2434,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -2456,6 +2450,26 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
