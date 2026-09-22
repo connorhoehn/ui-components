@@ -125,6 +125,20 @@ export interface WorkGraphProps {
   activity?: WorkActivityPresentation;
   /** Activity-canvas backdrop. Defaults to `'ripple-grid'`. */
   background?: WorkActivityCanvasBackground;
+  /**
+   * How many activity graphs the canvas may draw at once. Defaults to
+   * `WORK_ACTIVITY_DEFAULT_MAX_EFFORTS` (2); `WORK_ACTIVITY_ALL_EFFORTS` (0) or
+   * a non-finite value means no cap. The newest efforts win, the effort holding
+   * the current selection is never dropped, and the ones that are dropped are
+   * still counted in the header and footer.
+   */
+  maxEfforts?: number;
+  /**
+   * Makes the cap the host's to own. Without it the panel keeps the value in
+   * its own state and `maxEfforts` is only the starting point, so a host gets
+   * the control working by passing nothing at all.
+   */
+  onMaxEffortsChange?: (maxEfforts: number) => void;
   onSelectionChange: (selection: WorkGraphSelection) => void;
   onViewportChange: (viewport: WorkGraphViewport) => void;
   onRetry?: () => void;
@@ -517,6 +531,24 @@ export interface WorkActivityHeaderProps {
    * host knows what the body it is about to render actually contains.
    */
   viewNote?: ReactNode;
+  /**
+   * Total parallel efforts the panel has, INCLUDING the ones the cap is
+   * hiding. It is the denominator of "Show 2 of 9 activities", so it must be
+   * the real count or the sentence lies about what is being withheld.
+   */
+  effortCount?: number;
+  /**
+   * How many of them the canvas is drawing. `WORK_ACTIVITY_ALL_EFFORTS` (0),
+   * or any value at or above `effortCount`, reads as "All N activities".
+   */
+  maxEfforts?: number;
+  /**
+   * The opt-in for the "Show N activities" control, exactly as `onViewChange`
+   * is the opt-in for the body switch: without it the header renders no such
+   * control, because a picker nothing listens to is a lie. Fires with the
+   * chosen number, or `WORK_ACTIVITY_ALL_EFFORTS` (0) for "All".
+   */
+  onMaxEffortsChange?: (maxEfforts: number) => void;
   className?: string;
   'data-testid'?: string;
 }

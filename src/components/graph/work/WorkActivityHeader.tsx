@@ -1,14 +1,22 @@
 import { cn } from '../../../lib/cn';
+import { Select } from '../../forms/Select';
 import { Tabs } from '../../shared/Tabs';
 import { Tooltip } from '../../shared/Tooltip';
 import { IconButton } from '../../ui/IconButton';
 import { CloseIcon } from '../../ui/Icons';
+import { WORK_ACTIVITY_ALL_EFFORTS } from './effortLayout';
 import type { WorkActivityHeaderProps, WorkActivityPanelView } from './types';
 
 const VIEW_TABS = [
   { id: 'activity', label: 'Activity' },
   { id: 'lab', label: 'Computer Lab' },
 ] as const;
+
+/** The caps worth offering. Anything at or above the total reads as "All". */
+const EFFORT_CAPS = [1, 2, 3, 5] as const;
+
+/** DOM value for "All"; the callback still fires with the numeric sentinel. */
+const ALL_VALUE = 'all';
 
 /**
  * The one header row an activity panel gets: who and what on the left, the
@@ -28,8 +36,21 @@ const VIEW_TABS = [
 export function WorkActivityHeader({
   title, subtitle, expanded = false, onExpand, onPopOut, onClose, actions,
   view = 'activity', onViewChange, viewNote,
+  effortCount = 0, maxEfforts, onMaxEffortsChange,
   className, 'data-testid': testId = 'work-activity-header',
 }: WorkActivityHeaderProps) {
+  // One activity needs no filter, and a host that is not listening gets no
+  // control — the same opt-in rule the body switch follows.
+  const offerCap = !!onMaxEffortsChange && effortCount > 1;
+  const cap = maxEfforts ?? WORK_ACTIVITY_ALL_EFFORTS;
+  const capped = Number.isFinite(cap) && cap > 0 && cap < effortCount;
+  const capOptions = [
+    ...[...new Set<number>([...EFFORT_CAPS, ...(capped ? [cap] : [])])]
+      .filter((count) => count < effortCount)
+      .sort((left, right) => left - right)
+      .map((count) => ({ value: String(count), label: `Show ${count} of ${effortCount} activities` })),
+    { value: ALL_VALUE, label: `All ${effortCount} activities` },
+  ];
   const bar = (
     <header data-testid={testId} className={cn('flex shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-3 py-1.5', className)}>
       <span className="flex min-w-0 flex-col">
@@ -64,7 +85,7 @@ export function WorkActivityHeader({
       </span>
     </header>
   );
-  if (!onViewChange) return bar;
+  if (!onViewChange && !offerCap) return bar;
   return (
     <div className="flex shrink-0 flex-col">
       {bar}
@@ -72,15 +93,29 @@ export function WorkActivityHeader({
         data-testid={`${testId}-views`}
         className="flex shrink-0 items-center gap-2.5 border-b border-border bg-surface px-3 py-1.5"
       >
-        <Tabs
-          items={VIEW_TABS as unknown as Array<{ id: string; label: string }>}
-          value={view}
-          onValueChange={(id) => onViewChange(id as WorkActivityPanelView)}
-          variant="segmented"
-          size="sm"
-          aria-label="Side panel content"
-          idPrefix={`${testId}-view`}
-        />
+        {onViewChange && (
+          <Tabs
+            items={VIEW_TABS as unknown as Array<{ id: string; label: string }>}
+            value={view}
+            onValueChange={(id) => onViewChange(id as WorkActivityPanelView)}
+            variant="segmented"
+            size="sm"
+            aria-label="Side panel content"
+            idPrefix={`${testId}-view`}
+          />
+        )}
+        {offerCap && (
+          <Select
+            size="sm"
+            variant="pill"
+            className="max-w-52 truncate normal-case"
+            aria-label="Activities shown"
+            data-testid={`${testId}-max-efforts`}
+            options={capOptions}
+            value={capped ? String(cap) : ALL_VALUE}
+            onChange={(event) => onMaxEffortsChange(event.target.value === ALL_VALUE ? WORK_ACTIVITY_ALL_EFFORTS : Number(event.target.value))}
+          />
+        )}
         {viewNote && (
           <span className="min-w-0 truncate text-[11px] text-text-tertiary" data-testid={`${testId}-view-note`}>
             {viewNote}

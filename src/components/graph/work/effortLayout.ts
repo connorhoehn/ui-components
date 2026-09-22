@@ -26,6 +26,28 @@ export const WORK_CANVAS_FIT_MIN_ZOOM = 0.1;
  */
 export const WORK_CANVAS_READABLE_ZOOM = WORK_CANVAS_MIN_ZOOM;
 
+/**
+ * How many parallel efforts the activity canvas draws at once by default.
+ *
+ * Two, because the canvas fits everything it is given into one pane: a real
+ * nine-effort day fits at roughly 0.12 zoom, which is a map of the work rather
+ * than something anyone can read. Two lanes stay legible, and the rest are one
+ * menu choice away.
+ */
+export const WORK_ACTIVITY_DEFAULT_MAX_EFFORTS = 2;
+
+/**
+ * The "no cap" value for `maxEfforts` — draw every effort, however small that
+ * makes them.
+ *
+ * ZERO is the sentinel, and it is the ONLY one: `undefined` means "the caller
+ * did not choose", which takes the default of two, and a non-finite value
+ * (`Infinity`) is accepted as a synonym for this because it means the same
+ * thing and a host computing a cap arithmetically can land on it honestly.
+ * "Show none of the work" is not a state this component has, so zero was free.
+ */
+export const WORK_ACTIVITY_ALL_EFFORTS = 0;
+
 export interface WorkNodeBounds { width: number; height: number }
 export interface WorkEffortLayout {
   id: string;
@@ -59,6 +81,60 @@ export interface EffortLayoutOptions {
 }
 
 const instanceId = (effort: string, kind: 'node' | 'edge', id: string) => JSON.stringify([effort, kind, id]);
+
+/** Epoch millis, or 0 when the host sent nothing parseable. Never NaN. */
+function at(value: string | undefined): number {
+  if (!value) return 0;
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+export interface LimitEffortsOptions {
+  /**
+   * How many efforts may be drawn. Defaults to
+   * `WORK_ACTIVITY_DEFAULT_MAX_EFFORTS` (2). `WORK_ACTIVITY_ALL_EFFORTS` (0),
+   * a negative number, or a non-finite one means no cap at all.
+   */
+  max?: number;
+  /**
+   * An effort that must survive the cap whatever its age — the one the current
+   * focus or selection is inside. Hiding the work someone is looking at is the
+   * one thing a display filter must never do, so this effort takes the place of
+   * the oldest effort that would otherwise have been shown.
+   */
+  keepEffortId?: string | null;
+}
+
+/**
+ * The newest `max` efforts, in the order the host gave them.
+ *
+ * Recency is the latest `updatedAt`/`startedAt` across an effort's own nodes,
+ * which is the same "newest work first" rule the panel footer already claims;
+ * hosts that already sort newest-first therefore get exactly their own first N.
+ * The RESULT keeps source order rather than recency order, because the canvas
+ * treats effort order as stable — a heartbeat must not make two lanes swap
+ * places.
+ */
+export function limitWorkEfforts(
+  efforts: readonly WorkActivityEffort[],
+  nodes: readonly WorkGraphNodeData[],
+  options: LimitEffortsOptions = {},
+): WorkActivityEffort[] {
+  const max = options.max ?? WORK_ACTIVITY_DEFAULT_MAX_EFFORTS;
+  if (!Number.isFinite(max) || max <= 0 || efforts.length <= max) return [...efforts];
+  const updated = new Map(nodes.map((node) => [node.id, Math.max(at(node.updatedAt), at(node.startedAt))]));
+  const ranked = efforts
+    .map((effort, index) => ({ index, recency: Math.max(0, ...effort.nodeIds.map((id) => updated.get(id) ?? 0)) }))
+    .sort((left, right) => right.recency - left.recency || left.index - right.index);
+  const shown = ranked.slice(0, max);
+  const keep = new Set(shown.map((entry) => entry.index));
+  const required = options.keepEffortId ? efforts.findIndex((effort) => effort.id === options.keepEffortId) : -1;
+  if (required >= 0 && !keep.has(required)) {
+    keep.delete(shown[shown.length - 1].index);
+    keep.add(required);
+  }
+  return efforts.filter((_, index) => keep.has(index));
+}
 
 /** No inferred edges or connected-component grouping: membership is explicit. */
 export function layoutWorkEfforts(

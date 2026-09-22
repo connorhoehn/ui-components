@@ -9,6 +9,8 @@ import { IconButton } from '../../ui/IconButton';
 import { cn } from '../../../lib/cn';
 import {
   layoutWorkEfforts,
+  limitWorkEfforts,
+  WORK_ACTIVITY_DEFAULT_MAX_EFFORTS,
   WORK_CANVAS_FIT_MIN_ZOOM,
   WORK_CANVAS_MIN_ZOOM,
   WORK_CANVAS_READABLE_ZOOM,
@@ -28,6 +30,17 @@ type ActivityProps = WorkGraphProps & {
    * what happened but has nothing to point at.
    */
   onViewAsList?: () => void;
+  /**
+   * How many effort graphs to draw at once. Defaults to
+   * `WORK_ACTIVITY_DEFAULT_MAX_EFFORTS` (2) — the canvas fits everything it is
+   * given into one pane, so nine lanes fit at a zoom nobody can read.
+   *
+   * `WORK_ACTIVITY_ALL_EFFORTS` (0) or a non-finite value lifts the cap. The
+   * NEWEST efforts are kept, the effort holding the current selection is never
+   * dropped, and nothing here changes what the host counts: the efforts it
+   * passed are still the efforts it has.
+   */
+  maxEfforts?: number;
 };
 interface ActivityNodeData extends Record<string, unknown> {
   entity: WorkGraphProps['nodes'][number]; detail?: WorkActivityNodeDetail;
@@ -102,7 +115,7 @@ const edgeTypes = { activity: Relationship };
 
 /** One canvas; effort frames and visual instances never change canonical IDs. */
 export function WorkActivityCanvas(props: ActivityProps) {
-  const { activity, nodes, edges, selection, viewport, onViewportChange, onSelectionChange, background = 'ripple-grid', onViewAsList } = props;
+  const { activity, nodes, edges, selection, viewport, onViewportChange, onSelectionChange, background = 'ripple-grid', onViewAsList, maxEfforts = WORK_ACTIVITY_DEFAULT_MAX_EFFORTS } = props;
   const host = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 640, height: 480 });
   const [measurements, setMeasurements] = useState<Map<string, WorkNodeBounds>>(new Map());
@@ -121,7 +134,12 @@ export function WorkActivityCanvas(props: ActivityProps) {
   }, []);
   // Joined, so a fresh object of the same labels does not re-run the layout.
   const labelledKey = [...Object.keys(activity.edgeLabels ?? {}), ...(activity.failedEdgeIds ?? [])].sort().join('\u0000');
-  const layouts = useMemo(() => layoutWorkEfforts(nodes, edges, activity.efforts, { width: size.width, height: size.height, full: activity.mode === 'full', focusedEffortId: view.focusedEffortId, expandedSourceEfforts: view.expandedSourceEfforts, reversedEdgeIds: activity.reversedEdgeIds, labelledEdgeIds: labelledKey.split('\u0000').filter(Boolean), measurements }), [nodes, edges, activity.efforts, activity.mode, activity.reversedEdgeIds, labelledKey, view.focusedEffortId, view.expandedSourceEfforts, size, measurements]);
+  // The effort the viewer is actually in survives the cap: a focused effort by
+  // definition, and otherwise whichever one holds the selected node.
+  const selectedNodeId = selection?.kind === 'node' ? selection.id : undefined;
+  const keepEffortId = view.focusedEffortId ?? (selectedNodeId ? activity.efforts.find((effort) => effort.nodeIds.includes(selectedNodeId))?.id ?? null : null);
+  const efforts = useMemo(() => limitWorkEfforts(activity.efforts, nodes, { max: maxEfforts, keepEffortId }), [activity.efforts, nodes, maxEfforts, keepEffortId]);
+  const layouts = useMemo(() => layoutWorkEfforts(nodes, edges, efforts, { width: size.width, height: size.height, full: activity.mode === 'full', focusedEffortId: view.focusedEffortId, expandedSourceEfforts: view.expandedSourceEfforts, reversedEdgeIds: activity.reversedEdgeIds, labelledEdgeIds: labelledKey.split('\u0000').filter(Boolean), measurements }), [nodes, edges, efforts, activity.mode, activity.reversedEdgeIds, labelledKey, view.focusedEffortId, view.expandedSourceEfforts, size, measurements]);
   const fit = useCallback((): WorkGraphViewport => {
     const left = Math.min(0, ...layouts.map((group) => group.x));
     const top = Math.min(0, ...layouts.map((group) => group.y));

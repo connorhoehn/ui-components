@@ -3,6 +3,7 @@ import { cn } from '../../../lib/cn';
 import { ChatSidePanelFrame } from '../../social/ChatSidePanelRegistry';
 import { Button } from '../../ui/Button';
 import { WorkActivityCanvas } from './WorkActivityCanvas';
+import { limitWorkEfforts, WORK_ACTIVITY_DEFAULT_MAX_EFFORTS } from './effortLayout';
 import { WorkActivityHeader } from './WorkActivityHeader';
 import { WorkEntityList } from './WorkEntityList';
 import { WorkInspector } from './WorkInspector';
@@ -15,12 +16,22 @@ const SPLIT_MINIMUM = 820;
 
 /** The host owns transport, authorization and state continuity. No chat or executor here. */
 export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivityPresentation }) {
-  const { nodes, edges, selection, activity, onSelectionChange } = props;
+  const { nodes, edges, selection, activity, onSelectionChange, onMaxEffortsChange } = props;
   const root = useRef<HTMLElement>(null);
   const body = useRef<HTMLDivElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
   const [list, setList] = useState(false);
   const [wide, setWide] = useState(true);
+  // Controlled only when the host is listening; otherwise `maxEfforts` is the
+  // starting point and the panel owns the value, so the control works for a
+  // host that passes neither.
+  const [ownCap, setOwnCap] = useState(props.maxEfforts ?? WORK_ACTIVITY_DEFAULT_MAX_EFFORTS);
+  const maxEfforts = onMaxEffortsChange ? props.maxEfforts ?? WORK_ACTIVITY_DEFAULT_MAX_EFFORTS : ownCap;
+  const changeMaxEfforts = (next: number) => {
+    if (!onMaxEffortsChange) { setOwnCap(next); return; }
+    onMaxEffortsChange(next);
+  };
+  const shownEffortCount = limitWorkEfforts(activity.efforts, nodes, { max: maxEfforts }).length;
   const node = selection?.kind === 'node' ? nodes.find((item) => item.id === selection.id) : undefined;
   const edge = selection?.kind === 'edge' ? edges.find((item) => item.id === selection.id && nodes.some((n) => n.id === item.fromId) && nodes.some((n) => n.id === item.toId)) : undefined;
   const validSelection = !!(node || edge);
@@ -49,16 +60,16 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
   // once, rather than being covered by something it cannot lay out around.
   const paneClass = overlay ? 'absolute inset-y-0 right-0 z-10 w-[min(340px,85%)] shadow-lg' : 'w-[340px] max-w-[45%] shrink-0';
   return <section ref={root} aria-label="Shared work graph" className={cn('flex h-full min-h-0 min-w-0 flex-col bg-surface', props.className)} onKeyDown={(event) => { if (event.key === 'Escape' && selection) { event.stopPropagation(); close(); } }}>
-    {activity.title && <WorkActivityHeader title={activity.title} subtitle={activity.subtitle} expanded={activity.expanded ?? activity.mode === 'full'} onExpand={activity.onExpand} onPopOut={activity.onPopOut} onClose={activity.onClose} />}
+    {activity.title && <WorkActivityHeader title={activity.title} subtitle={activity.subtitle} expanded={activity.expanded ?? activity.mode === 'full'} onExpand={activity.onExpand} onPopOut={activity.onPopOut} onClose={activity.onClose} effortCount={activity.efforts.length} maxEfforts={maxEfforts} onMaxEffortsChange={changeMaxEfforts} />}
     {props.state === 'partial' && <p role="status" className="border-b border-warning-border bg-warning-bg px-3 py-1 text-xs text-warning-fg">Some work sources are delayed or unavailable.</p>}
     <div ref={body} className="relative flex min-h-0 min-w-0 flex-1">
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <WorkTimeWindow activity={activity} timezone={props.timezone} />
-        <WorkActivityCanvas {...props} onViewAsList={() => setList(true)} />
+        <WorkActivityCanvas {...props} maxEfforts={maxEfforts} onViewAsList={() => setList(true)} />
         <div className="flex h-9 shrink-0 items-center justify-between gap-2 border-t border-border px-4 text-[10px] text-text-tertiary" data-testid="work-activity-footer">
           {activity.view.focusedEffortId
             ? <Button size="sm" variant="ghost" onClick={() => activity.onViewChange({ ...activity.view, focusedEffortId: null })}>← All activities</Button>
-            : <span>{activity.efforts.length} parallel activities · Newest work first</span>}
+            : <span>{shownEffortCount < activity.efforts.length ? `Showing ${shownEffortCount} of ${activity.efforts.length} parallel activities` : `${activity.efforts.length} parallel activities`} · Newest work first</span>}
           <Button size="sm" variant="ghost" disabled={range.start <= bounds.start} onClick={earlier}>← Earlier work</Button>
         </div>
       </div>

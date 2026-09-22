@@ -8834,6 +8834,34 @@ export declare type LegacyCallWidgetMode = 'mini' | 'docked' | 'fullscreen';
 /** Default light theme — derived from the original hardcoded tokens. */
 export declare const lightTheme: ThemeTokens;
 
+export declare interface LimitEffortsOptions {
+    /**
+     * How many efforts may be drawn. Defaults to
+     * `WORK_ACTIVITY_DEFAULT_MAX_EFFORTS` (2). `WORK_ACTIVITY_ALL_EFFORTS` (0),
+     * a negative number, or a non-finite one means no cap at all.
+     */
+    max?: number;
+    /**
+     * An effort that must survive the cap whatever its age — the one the current
+     * focus or selection is inside. Hiding the work someone is looking at is the
+     * one thing a display filter must never do, so this effort takes the place of
+     * the oldest effort that would otherwise have been shown.
+     */
+    keepEffortId?: string | null;
+}
+
+/**
+ * The newest `max` efforts, in the order the host gave them.
+ *
+ * Recency is the latest `updatedAt`/`startedAt` across an effort's own nodes,
+ * which is the same "newest work first" rule the panel footer already claims;
+ * hosts that already sort newest-first therefore get exactly their own first N.
+ * The RESULT keeps source order rather than recency order, because the canvas
+ * treats effort order as stable — a heartbeat must not make two lanes swap
+ * places.
+ */
+export declare function limitWorkEfforts(efforts: readonly WorkActivityEffort[], nodes: readonly WorkGraphNodeData[], options?: LimitEffortsOptions): WorkActivityEffort[];
+
 export declare function LineChart({ series, height, yFormat, xFormat, }: {
     series: LineSeries[];
     height?: number;
@@ -17687,6 +17715,28 @@ declare interface UseActivityBusReturn {
   }
 
   /**
+   * The "no cap" value for `maxEfforts` — draw every effort, however small that
+   * makes them.
+   *
+   * ZERO is the sentinel, and it is the ONLY one: `undefined` means "the caller
+   * did not choose", which takes the default of two, and a non-finite value
+   * (`Infinity`) is accepted as a synonym for this because it means the same
+   * thing and a host computing a cap arithmetically can land on it honestly.
+   * "Show none of the work" is not a state this component has, so zero was free.
+   */
+  export declare const WORK_ACTIVITY_ALL_EFFORTS = 0;
+
+  /**
+   * How many parallel efforts the activity canvas draws at once by default.
+   *
+   * Two, because the canvas fits everything it is given into one pane: a real
+   * nine-effort day fits at roughly 0.12 zoom, which is a map of the work rather
+   * than something anyone can read. Two lanes stay legible, and the rest are one
+   * menu choice away.
+   */
+  export declare const WORK_ACTIVITY_DEFAULT_MAX_EFFORTS = 2;
+
+  /**
    * Asking a transcript a question. The graph renders the exchange and nothing
    * else: the host owns the model call, the grounding and the refusal.
    */
@@ -17763,7 +17813,7 @@ declare interface UseActivityBusReturn {
    * the panel is; mixing the two put a body switch next to the close button.
    * Without `onViewChange` nothing about this header changes.
    */
-  export declare function WorkActivityHeader({ title, subtitle, expanded, onExpand, onPopOut, onClose, actions, view, onViewChange, viewNote, className, 'data-testid': testId, }: WorkActivityHeaderProps): JSX.Element;
+  export declare function WorkActivityHeader({ title, subtitle, expanded, onExpand, onPopOut, onClose, actions, view, onViewChange, viewNote, effortCount, maxEfforts, onMaxEffortsChange, className, 'data-testid': testId, }: WorkActivityHeaderProps): JSX.Element;
 
   export declare interface WorkActivityHeaderProps {
       title: string;
@@ -17789,6 +17839,24 @@ declare interface UseActivityBusReturn {
        * host knows what the body it is about to render actually contains.
        */
       viewNote?: ReactNode;
+      /**
+       * Total parallel efforts the panel has, INCLUDING the ones the cap is
+       * hiding. It is the denominator of "Show 2 of 9 activities", so it must be
+       * the real count or the sentence lies about what is being withheld.
+       */
+      effortCount?: number;
+      /**
+       * How many of them the canvas is drawing. `WORK_ACTIVITY_ALL_EFFORTS` (0),
+       * or any value at or above `effortCount`, reads as "All N activities".
+       */
+      maxEfforts?: number;
+      /**
+       * The opt-in for the "Show N activities" control, exactly as `onViewChange`
+       * is the opt-in for the body switch: without it the header renders no such
+       * control, because a picker nothing listens to is a lie. Fires with the
+       * chosen number, or `WORK_ACTIVITY_ALL_EFFORTS` (0) for "All".
+       */
+      onMaxEffortsChange?: (maxEfforts: number) => void;
       className?: string;
       'data-testid'?: string;
   }
@@ -18285,6 +18353,20 @@ declare interface UseActivityBusReturn {
       activity?: WorkActivityPresentation;
       /** Activity-canvas backdrop. Defaults to `'ripple-grid'`. */
       background?: WorkActivityCanvasBackground;
+      /**
+       * How many activity graphs the canvas may draw at once. Defaults to
+       * `WORK_ACTIVITY_DEFAULT_MAX_EFFORTS` (2); `WORK_ACTIVITY_ALL_EFFORTS` (0) or
+       * a non-finite value means no cap. The newest efforts win, the effort holding
+       * the current selection is never dropped, and the ones that are dropped are
+       * still counted in the header and footer.
+       */
+      maxEfforts?: number;
+      /**
+       * Makes the cap the host's to own. Without it the panel keeps the value in
+       * its own state and `maxEfforts` is only the starting point, so a host gets
+       * the control working by passing nothing at all.
+       */
+      onMaxEffortsChange?: (maxEfforts: number) => void;
       onSelectionChange: (selection: WorkGraphSelection) => void;
       onViewportChange: (viewport: WorkGraphViewport) => void;
       onRetry?: () => void;
@@ -18481,19 +18563,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -18506,6 +18575,19 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -18526,6 +18608,19 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -18559,12 +18654,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -18575,16 +18667,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

@@ -12,6 +12,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { WorkActivityCanvas } from '../WorkActivityCanvas';
 import {
+  WORK_ACTIVITY_ALL_EFFORTS,
   WORK_CANVAS_FIT_MIN_ZOOM,
   WORK_CANVAS_MIN_ZOOM,
 } from '../effortLayout';
@@ -77,6 +78,9 @@ function makeProps(effortCount: number, viewport: WorkGraphViewport, onViewportC
     onSelectionChange: vi.fn(),
     onViewportChange,
     background: 'plain',
+    // These cases are about FITTING every effort the host has. The default cap
+    // of two would leave nothing to fit, so they opt out of it explicitly.
+    maxEfforts: WORK_ACTIVITY_ALL_EFFORTS,
     activity: {
       efforts,
       activeEdgeIds: [],
