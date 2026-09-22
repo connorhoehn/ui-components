@@ -267,7 +267,15 @@ describe('entry points and their transitive optional peers', () => {
       // been lost and every chat consumer now needs xterm installed.
       social: { static: ['cmdk'], dynamic: ['@xterm/addon-fit', '@xterm/xterm'] },
       // WorkGraph is the React Flow-backed graph composition.
-      graph: { static: ['@xyflow/react'], dynamic: [] },
+      //
+      // xterm is DYNAMIC here for the same reason it is on `social`, and must
+      // stay that way. `WorkComputePane` — the detail pane for a node that is a
+      // cloud compute session — offers a Shell tab into the session's box, and
+      // reaches `ChatLabTerminal` through `React.lazy` precisely so importing
+      // `WorkGraph` does not require two optional peers on disk. If this ever
+      // moves to `static`, that lazy boundary has been lost and every Active
+      // Now consumer now needs xterm installed to import the graph at all.
+      graph: { static: ['@xyflow/react'], dynamic: ['@xterm/addon-fit', '@xterm/xterm'] },
       agents: { static: ['@xyflow/react'], dynamic: [] },
       // react-markdown + remark-gfm power MarkdownView (real `dependencies`,
       // same footing as cmdk — npm installs them for the consumer).

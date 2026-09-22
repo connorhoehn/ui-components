@@ -136,3 +136,4 @@ src/components/shared/TreeView.tsx         # paddingLeft: depth * 14 + 8 — nes
 # unreachable. Converting these is a silent a11y regression, not a cleanup.
 src/components/shared/VisuallyHidden.tsx   # VISUALLY_HIDDEN_STYLE clip rect must survive a host with no CSS pipeline
 src/components/shared/SkipLink.tsx         # hidden/visible focus swap, same reason (imports VISUALLY_HIDDEN_STYLE)
+src/components/shared/RisingParticles.tsx # generated star fields: a 1300-point box-shadow and a per-layer duration reach CSS as custom properties; nothing else on the element is a style

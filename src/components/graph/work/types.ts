@@ -263,12 +263,149 @@ export interface WorkActivityNodeDetail {
   note?: string;
   /** Buttons under the body — "Inspect available v2", "Inspect run". */
   actions?: WorkActivityPaneAction[];
+  /**
+   * The compute session this node IS — an agent loop in a cloud box.
+   *
+   * Present, the pane's body becomes the session: gauges, live tail, shell and
+   * plan, in place of the per-kind bodies above. The chrome, the banner and the
+   * "Reference in chat" footer are unchanged, and every other field on this
+   * detail still renders around it, so a run node that also has sources keeps
+   * them.
+   */
+  compute?: WorkComputeDetail;
   artifact?: {
     revisions: WorkArtifactRevision[];
     pending?: { id: string; label: string; status: 'generating' | 'failed'; message?: string };
     /** Opens the revision (optionally at one page) at full size. Host-owned. */
     onOpenPreview?: (revisionId: string, anchorId?: string) => void;
   };
+}
+
+/**
+ * Where a compute session is.
+ *
+ * Deliberately a structural TWIN of `LabStatus` in `social/ChatLabShell`
+ * rather than an import of it: the same host value must satisfy both, but the
+ * graph entry taking a type dependency on the chat entry would drag the chat
+ * module graph into `dist/graph.d.ts` for a union of eight strings. Identical
+ * unions are mutually assignable, so a host passes one value to both with no
+ * cast; keep the two lists in step.
+ */
+export type WorkComputeStatus =
+  | 'planning'
+  | 'starting'
+  | 'running'
+  | 'waiting'
+  | 'done'
+  | 'failed'
+  | 'stopped'
+  | 'budget';
+
+/** One planned step of the loop. Twin of `LabStep`, plus a duration. */
+export interface WorkComputeStep {
+  id: string;
+  title: string;
+  kind: string;
+  status: 'pending' | 'running' | 'done' | 'failed' | 'skipped';
+  iterations?: number;
+  contextTokens?: number;
+  /** Wall clock this step has taken, or took. Rendered as "2m 14s". */
+  elapsedMs?: number;
+}
+
+/** One frame off the session tail. Twin of `LabEvent`. */
+export interface WorkComputeEvent {
+  id: string;
+  at: string;
+  kind: 'command' | 'text' | 'tool' | 'result' | 'error' | 'status' | 'iteration';
+  text: string;
+  /** Long form — a tool's arguments and output. Collapsed behind a disclosure. */
+  detail?: string;
+  /** True when the runtime that produced this frame was a mock. Always shown. */
+  mock?: boolean;
+}
+
+/** A file the session produced, already authorized for this viewer. */
+export interface WorkComputeArtifact {
+  id: string;
+  name: string;
+  sizeBytes?: number;
+  /** Already formatted by the host — the pane does no clock maths. */
+  updatedAt?: string;
+  /** Host-owned download through its own authorized route. */
+  onDownload?: () => void;
+}
+
+/**
+ * One line of the terminal digest.
+ *
+ * The glyph is a KIND, not a character, so the pane owns the alphabet: a host
+ * that sent `▶` directly would be drawing the terminal rather than describing
+ * what is in it, and could not be restyled.
+ */
+export interface WorkComputeTerminalLine {
+  glyph: 'prompt' | 'step' | 'done' | 'pending' | 'text';
+  text: string;
+}
+
+/**
+ * The compute session behind a work-graph node — an agent loop in a cloud box.
+ *
+ * Every field is host-resolved from `GET /api/agent-loops/:runId`. Nothing here
+ * is fetched, polled or inferred by the pane: it renders the gauges, the tail
+ * and the plan it is given, and says so honestly when a field is absent.
+ */
+export interface WorkComputeDetail {
+  /** The box's operator-facing name — `auth-migration-3`. */
+  label: string;
+  runtime: 'agentcore-microvm' | 'local';
+  /** The initiative this box is charged to. Shown in the breadcrumb. */
+  project?: string;
+  status: WorkComputeStatus;
+  owner: { id: string; name: string; avatarUrl?: string };
+  /** True when the viewer is not the owner — "Shared with you" vs "Yours". */
+  shared: boolean;
+  task: {
+    title: string;
+    description?: string;
+    /** Already formatted in the host's timezone — "09:15". */
+    startedAt?: string;
+    elapsedMs?: number;
+    /** What the work runs as — `devbox:task`. */
+    environment: string;
+  };
+  metrics: {
+    model: string;
+    costUsd?: number;
+    contextTokens: number;
+    contextBudgetTokens?: number;
+  };
+  /** The last few tail lines, for the pre-shell digest. */
+  terminalPreview: { lines: WorkComputeTerminalLine[]; running: boolean };
+  /** The plan, as the planner produced it. */
+  progress: WorkComputeStep[];
+  artifacts: WorkComputeArtifact[];
+  workItem?: { key: string; status: string; title: string; tags: string[]; onOpen?: () => void };
+  events: WorkComputeEvent[];
+  /**
+   * The box behind the loop. Present = a Shell tab exists. `shellUrl` is minted
+   * on demand by the host, so its absence is a button, not an error.
+   */
+  shell?: { sessionId: string; shellUrl?: string };
+  /** Milliseconds until the reaper stops this box, when the host knows. */
+  stopsInMs?: number;
+  /** Denominator for the expiry meter. Defaults to the compute surface's hour. */
+  idleWindowMs?: number;
+  /** Honest state — "Mock runtime", "Planner unavailable · single step". */
+  notice?: string;
+  /** Primary action. Mints the shell URL; the pane switches to the Shell tab. */
+  onOpenShell?: () => void;
+  /** Pops the live tail out of the pane. */
+  onOpenInNew?: () => void;
+  /** Hands the whole session to the Computer Lab surface. */
+  onOpenLab?: () => void;
+  /** Rows of the `…` overflow menu beside the primary action. */
+  moreActions?: WorkActivityPaneAction[];
 }
 
 export interface WorkActivityWindow {
@@ -350,9 +487,25 @@ export interface WorkActivityHeaderProps {
   onClose?: () => void;
   /** Extra controls between the title and the close button. */
   actions?: ReactNode;
+  /**
+   * Which body the panel is showing: the activity graph, or the person's
+   * Computer Lab. The switch itself only appears when `onViewChange` is wired
+   * — a host with one body renders exactly the header it rendered before.
+   */
+  view?: WorkActivityPanelView;
+  onViewChange?: (view: WorkActivityPanelView) => void;
+  /**
+   * The quiet clause beside the switch — "Shared work · newest first",
+   * "2 working · 4 dispatched from this chat". Host-authored, because only the
+   * host knows what the body it is about to render actually contains.
+   */
+  viewNote?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
+
+/** The two bodies an activity panel can hold. */
+export type WorkActivityPanelView = 'activity' | 'lab';
 
 export interface WorkStatusProps {
   status: WorkGraphStatus;

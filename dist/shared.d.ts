@@ -1800,6 +1800,12 @@ export declare type InputSize = 'sm' | 'md';
 
 export declare type InputType = 'text' | 'number' | 'url' | 'password' | 'email' | 'search' | 'date' | 'datetime-local' | 'time';
 
+declare const INTENSITY_SCALE: {
+    readonly low: 0.35;
+    readonly medium: 1;
+    readonly high: 1.75;
+};
+
 export declare function KPIGrid({ children, columns, mdColumns, dense, className, style, 'data-testid': testId, }: KPIGridProps): JSX.Element;
 
 export declare type KPIGridColumns = 1 | 2 | 3 | 4;
@@ -1965,8 +1971,12 @@ export declare interface LogStreamProps {
      * `#e5e7eb` fallback for the text. `'surface'` follows the host theme
      * instead (`bg-surface-inset text-text-primary`), for a log panel embedded
      * in an otherwise light-themed page rather than a terminal pane.
+     * `'transparent'` keeps the light-on-dark text but paints no background at
+     * all, for a log sitting over a surface that owns its own — the working-state
+     * backdrop in `RisingParticles`, whose star field an opaque scroll region
+     * would hide completely.
      */
-    tone?: 'code' | 'surface';
+    tone?: 'code' | 'surface' | 'transparent';
     /** When provided, renders a "Clear" button in the header. */
     onClear?: () => void;
     className?: string;
@@ -2746,6 +2756,38 @@ export declare interface ReviewThreadProps {
     /** Shown when the thread has no posts yet. */
     emptyLabel?: string;
     className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * Renders `children` over a rising star field while `active`, and over nothing
+ * at all when not.
+ *
+ * The backdrop is `pointer-events: none` and sits BEHIND the children in an
+ * isolated stacking context, so nothing above it changes position, size or
+ * hit-testing when the state flips — a working surface and an idle one have
+ * identical layout, which is what makes the transition a crossfade rather than
+ * a reflow.
+ */
+export declare function RisingParticles({ active, intensity, seed, className, children, 'data-testid': testId, }: RisingParticlesProps): JSX.Element;
+
+export declare type RisingParticlesIntensity = keyof typeof INTENSITY_SCALE;
+
+export declare interface RisingParticlesProps {
+    /** True while the thing behind this surface is working. */
+    active: boolean;
+    /**
+     * How dense the sky is. `low` for a small pane where a full field reads as
+     * noise; `high` for a surface that IS the working state.
+     */
+    intensity?: RisingParticlesIntensity;
+    /**
+     * The sky. The same seed is always the same sky, so a pane keeps its own
+     * stars across re-renders and two panes side by side do not look cloned.
+     */
+    seed?: number;
+    className?: string;
+    children?: ReactNode;
     'data-testid'?: string;
 }
 
@@ -4235,19 +4277,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -4267,9 +4296,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -4290,19 +4332,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -4336,9 +4368,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

@@ -30,6 +30,10 @@ export type {
   ComposerCommand,
   ComposerCommandArgument,
   ComposerArgumentItem,
+  ComposerMode,
+  ComposerProcess,
+  ComposerHint,
+  ComposerSendOption,
   MentionCandidate,
   DocumentCandidate,
 } from './RichChatComposer';

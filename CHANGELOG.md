@@ -6,6 +6,82 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.341.0] — 2026-09-21
+
+### Added — `./graph` (Active Now): the compute-session detail pane
+
+- **`WorkComputePane`, reached through `WorkActivityNodeDetail.compute`.** A
+  work-graph node whose provenance is an agent loop is a machine, not a
+  document: it has a model, a context budget it is spending, money it has
+  spent, an environment it runs as, a plan it is working through, a live tail,
+  files it has written and a real PTY. `WorkNodePane` hands the body to this
+  pane whenever the host attaches `compute`; everything around it — the header,
+  the close button, the "Reference in chat" footer, the sources and work-item
+  sections — is unchanged, and absent `compute` no existing pane renders one
+  byte differently.
+  - Session card (the banner slot, derived when the host authors none), owner
+    row with a status pill, `>_ Open shell` and an overflow menu, the REAL
+    `PaneStatusLine` gauges over a mapped `Computer`, and a four-cell metric
+    grid (Model · Cost · Context · Environment) for the two numbers a status
+    line cannot label.
+  - Tabs `Activity | Shell | Workspace`: the live tail as a `LogStream` with
+    mock frames flagged, the lazy `ShellTerminal` (through `ChatLabTerminal`)
+    once a URL is minted with the terminal digest until then, and the plan,
+    the artifacts and the work item.
+  - Nothing is invented: a run that reported no cost shows `—`, a session with
+    no box has no Shell tab at all, and an empty plan says so.
+- **New types:** `WorkComputeDetail`, `WorkComputeStatus`, `WorkComputeStep`,
+  `WorkComputeEvent`, `WorkComputeArtifact`, `WorkComputeTerminalLine`,
+  `WorkActivityPanelView`.
+- **`WorkActivityHeader` gains a body switch** — `view`, `onViewChange`,
+  `viewNote` render a segmented `Activity | Computer Lab` on a second row with
+  the host's own clause beside it. Without `onViewChange` the header is
+  unchanged.
+
+### Added — `./shared`: `RisingParticles`
+
+- **The backdrop a surface wears while it is working.** Four parallax layers of
+  a star field rising over a dark radial gradient, because an agent shell that
+  is thinking and one that has stopped are otherwise the same dark rectangle,
+  and a corner spinner is too small to answer that from across a desk.
+  - Fields are GENERATED from `seed` by a deterministic PRNG rather than shipped
+    as a wall of coordinates: the same seed is the same sky every time, two
+    panes are different skies, and the bundle carries an algorithm.
+  - `intensity` scales the point counts; `prefers-reduced-motion` keeps the sky
+    and stops the movement; the backdrop is `pointer-events: none`, sits behind
+    the children in an isolated stacking context, and crossfades over 250ms, so
+    nothing above it moves when the state flips.
+- **Applied** to `ChatLabShell` (stream body + prompt while the loop is
+  mid-turn), `WorkComputePane` (terminal digest, Activity and Shell tabs) and
+  the compute surface's `TailPane` / `ShellTerminal` chrome while the box's
+  registry status is `running`.
+- **`LogStream` gains `tone: 'transparent'`** — light-on-dark text with no
+  background, so a log over the working backdrop does not hide it.
+
+### Added — `./social/rich-composer`: composer modes
+
+- **`RichChatComposer` becomes the one box for talking, delegating and
+  running**, all additive and all controlled:
+  - `processes` — a one-line status strip above the editor naming what is
+    already running.
+  - `mode` / `onModeChange` — a segmented `Chat | Agent | Terminal` switch.
+    Wiring `onModeChange` is the whole opt-in.
+  - `modePlaceholders` — per-mode placeholder; the defaults say what Enter will
+    do, which is the thing that changes.
+  - `hints` / `onQuickOpen` — the `/` · `>_` · `⌘K` row under the editor.
+  - `sendOptions` / `onSendOption` — a split Send whose primary press still
+    does exactly what it did.
+  - `onShellCommand` — terminal mode turns the editor into a single-line
+    monospace prompt with ↑/↓ history. The rich editor stays MOUNTED, so the
+    half-written message survives the round trip.
+  - Agent mode composes `/agent <text>` through the host's existing command
+    path, and the message carries `mode`.
+- **The default render is unchanged**: with none of these props there is no
+  process line, no switch, no hints row and no split Send, and the message
+  carries no `mode` key. Pinned by a test.
+
+---
+
 ## [2.337.0] — 2026-09-21
 
 ### Fixed — `./graph` (Active Now)

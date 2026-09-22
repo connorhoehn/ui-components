@@ -51,8 +51,12 @@ export interface LogStreamProps {
    * `#e5e7eb` fallback for the text. `'surface'` follows the host theme
    * instead (`bg-surface-inset text-text-primary`), for a log panel embedded
    * in an otherwise light-themed page rather than a terminal pane.
+   * `'transparent'` keeps the light-on-dark text but paints no background at
+   * all, for a log sitting over a surface that owns its own — the working-state
+   * backdrop in `RisingParticles`, whose star field an opaque scroll region
+   * would hide completely.
    */
-  tone?: 'code' | 'surface';
+  tone?: 'code' | 'surface' | 'transparent';
   /** When provided, renders a "Clear" button in the header. */
   onClear?: () => void;
   className?: string;
@@ -163,7 +167,9 @@ export function LogStream({
             'font-mono text-[12px] leading-[1.55]',
             tone === 'surface'
               ? 'bg-surface-inset text-text-primary'
-              : 'bg-[var(--color-surface-subtle,#0b1020)] text-[var(--color-text-primary,#e5e7eb)]',
+              : tone === 'transparent'
+                ? 'bg-transparent text-[var(--color-text-primary,#e5e7eb)]'
+                : 'bg-[var(--color-surface-subtle,#0b1020)] text-[var(--color-text-primary,#e5e7eb)]',
             'py-2',
           )}
           style={{ maxHeight }}

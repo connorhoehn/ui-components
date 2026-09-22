@@ -77,7 +77,9 @@ import Suggestion from '@tiptap/suggestion';
 import type { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion';
 import { cn } from '../../lib/cn';
 import { FileInput } from '../forms/FileInput';
+import { DropdownMenu } from '../shared/DropdownMenu';
 import { RovingToolbar } from '../shared/RovingToolbar';
+import { Tabs } from '../shared/Tabs';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover } from './ReactionPickerPopover';
 import { ComposerAttachments, type StagedFile } from './ComposerAttachments';
@@ -88,7 +90,7 @@ import { DocumentSuggestions, type DocumentCandidate } from './DocumentSuggestio
 import { EmojiSuggestions } from './EmojiSuggestions';
 import { CommandSuggestions, type CommandSuggestionItem } from './CommandSuggestions';
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
-import { EyeIcon, EyeOffIcon, LinkIcon, PaperclipIcon, QuoteIcon, SmileyIcon } from '../ui/Icons';
+import { ChatIcon, EyeIcon, EyeOffIcon, LinkIcon, PaperclipIcon, PuzzleIcon, QuoteIcon, SmileyIcon } from '../ui/Icons';
 
 export type { MentionCandidate, DocumentCandidate };
 
@@ -117,6 +119,45 @@ export interface ComposedMessage {
    * absent field.
    */
   privacy: 'visible' | 'hidden';
+  /**
+   * Which mode composed this. Present only while a host has wired
+   * `onModeChange` — like `RichChatDraft.privacy`, a host that never adopts
+   * the feature never sees the key. `'agent'` also rewrites `text` to
+   * `/agent <what was typed>`, so the host's existing `/agent` command path
+   * handles it with no second code path.
+   */
+  mode?: ComposerMode;
+}
+
+/** What the composer is for, right now. */
+export type ComposerMode = 'chat' | 'agent' | 'terminal';
+
+/**
+ * Something already running that this composer's owner started.
+ *
+ * A one-line status strip above the editor, because the question "is the thing
+ * I asked for still going?" is asked WHILE typing the next thing — a person who
+ * has to leave the composer to answer it has already lost the sentence.
+ */
+export interface ComposerProcess {
+  id: string;
+  label: string;
+  tone: 'running' | 'idle' | 'failed' | 'done';
+}
+
+/** One key and what it does, for the row under the editor. */
+export interface ComposerHint {
+  /** The key itself, rendered monospace — `/`, `>_`, `⌘K`. */
+  key: string;
+  label: string;
+  /** Wired, the hint is a button rather than a label. */
+  onSelect?: () => void;
+}
+
+/** An alternative way to send, offered from the Send button's own menu. */
+export interface ComposerSendOption {
+  id: string;
+  label: string;
 }
 
 /** In-memory draft. Hosts must keep File objects out of persistent storage. */
@@ -252,11 +293,74 @@ export interface RichChatComposerProps {
   onRemoveReference?: (id: string) => void;
   /** Rendered between the formatting controls and the send button. */
   toolbarExtras?: ReactNode;
+  /**
+   * Long-running work this composer's owner started — a generating deck, a
+   * terminal test run. Rendered as one status line above the editor, hidden
+   * when the array is empty. Display only: the host owns what each one is and
+   * what opening it does.
+   */
+  processes?: readonly ComposerProcess[];
+  /**
+   * Controlled mode. Defaults to `'chat'`. Passing `onModeChange` is what
+   * turns the feature on at all — see there.
+   */
+  mode?: ComposerMode;
+  /**
+   * Renders the `Chat | Agent | Terminal` switch above the editor and is
+   * called with the mode pressed. The composer holds no mode state of its own,
+   * so nothing changes until the host applies it back through `mode`.
+   *
+   * Omitting this prop is the whole opt-in: no switch, no hints row, no `mode`
+   * key on the published message. Every existing host renders exactly the
+   * composer it rendered before.
+   */
+  onModeChange?: (mode: ComposerMode) => void;
+  /**
+   * Placeholder per mode. `chat` falls back to `placeholder`; the other two
+   * have defaults that say what Enter will do, which is the thing that changes.
+   */
+  modePlaceholders?: Partial<Record<ComposerMode, string>>;
+  /**
+   * The keys worth knowing, under the editor. Defaults to `/` for commands,
+   * `>_` for shell and `⌘K` to quickly open whenever the mode switch or
+   * `onQuickOpen` is wired; absent all three, no row is rendered at all.
+   */
+  hints?: readonly ComposerHint[];
+  /** Backs the default `⌘K` hint. Without it that hint is a label, not a button. */
+  onQuickOpen?: () => void;
+  /**
+   * Other ways to send, offered from a caret beside Send — "Send as agent
+   * task", "Run in shell". Send itself keeps doing what it always did.
+   */
+  sendOptions?: readonly ComposerSendOption[];
+  /** Called with the chosen option's id. The composer does not clear the draft. */
+  onSendOption?: (id: string) => void;
+  /**
+   * Where a line typed in terminal mode goes. Without it the prompt still
+   * renders and still keeps its history, but Enter does nothing — which is
+   * the honest state for a deployment with no shell behind the composer.
+   */
+  onShellCommand?: (command: string) => void;
   className?: string;
   'data-testid'?: string;
 }
 
 const DEFAULT_PRIVACY_LABELS = { visible: 'Visible to everyone', hidden: 'Only you' } as const;
+
+const MODE_PLACEHOLDERS: Record<ComposerMode, string> = {
+  chat: 'Write a message…',
+  agent: 'Tell the agent what to do… (budget and model in the status line)',
+  terminal: '$ command in the cloud shell',
+};
+
+const PROCESS_DOT: Record<ComposerProcess['tone'], string> = {
+  // `motion-reduce:animate-none`: a row of pulsing dots above a text box is
+  // the kind of ambient motion a vestibular-disorder setting exists to stop.
+  running: 'bg-info animate-pulse motion-reduce:animate-none',
+  idle: 'bg-border-emphasis',
+  failed: 'bg-danger',
+  done: 'bg-success',
+};
 
 /**
  * Mounts a suggestion menu and keeps it at the caret.
@@ -418,6 +522,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   references,
   onRemoveReference,
   toolbarExtras,
+  processes,
+  mode = 'chat',
+  onModeChange,
+  modePlaceholders,
+  hints,
+  onQuickOpen,
+  sendOptions,
+  onSendOption,
+  onShellCommand,
   className,
   'data-testid': testId = 'rich-chat-composer',
 }, ref) {
@@ -454,8 +567,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
   // The placeholder as of this render, for the extension to read. See the
   // `useEditor` deps: the extension list must not change when the text does.
-  const placeholderRef = useRef(placeholder);
-  placeholderRef.current = placeholder;
+  // Modes are OFF until the host wires the switch. Read through one flag so
+  // every branch below asks the same question and none of them can drift.
+  const modesEnabled = !!onModeChange;
+  const activeMode: ComposerMode = modesEnabled ? mode : 'chat';
+  const terminalMode = activeMode === 'terminal';
+  const effectivePlaceholder =
+    modePlaceholders?.[activeMode] ?? (activeMode === 'chat' ? placeholder : MODE_PLACEHOLDERS[activeMode]);
+  const placeholderRef = useRef(effectivePlaceholder);
+  placeholderRef.current = effectivePlaceholder;
   // Same idea: the editor is built once, the commands are read live.
   const commandsRef = useRef(commands);
   commandsRef.current = commands;
@@ -877,9 +997,73 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     editor?.setEditable(!blocked);
   }, [editor, blocked]);
 
+  // The Placeholder extension reads `placeholderRef` while it builds
+  // decorations, and switching mode is not an editor transaction — so without
+  // an empty dispatch the segmented control moves and the grey text underneath
+  // keeps saying "Write a message…". Empty transaction: no content change, no
+  // history entry, just a redecorate.
+  useEffect(() => {
+    if (!modesEnabled || !editor || editor.isDestroyed) return;
+    editor.view.dispatch(editor.state.tr);
+  }, [editor, activeMode, modesEnabled]);
+
+  /**
+   * The terminal prompt's own line, and the lines before it.
+   *
+   * Separate from the rich draft on purpose: switching to Terminal and back
+   * must not consume the half-written message, and a shell line is not a
+   * document — it has no marks, no mentions and no attachments, so it does not
+   * belong in the ProseMirror state at all. History is in-memory and per-mount,
+   * like a real shell's, and is never published to `onDraftChange`.
+   */
+  const [shellDraft, setShellDraft] = useState('');
+  const [shellHistory, setShellHistory] = useState<readonly string[]>([]);
+  /** -1 is "composing a new line"; 0 is the most recent command. */
+  const [historyIndex, setHistoryIndex] = useState(-1);
+
+  const submitShell = useCallback(() => {
+    const command = shellDraft.trim();
+    if (!command || blocked || !onShellCommand) return;
+    setShellHistory((prev) => (prev[prev.length - 1] === command ? prev : [...prev, command]));
+    setShellDraft('');
+    setHistoryIndex(-1);
+    onShellCommand(command);
+  }, [shellDraft, blocked, onShellCommand]);
+
+  const recallHistory = useCallback(
+    (delta: number) => {
+      if (!shellHistory.length) return;
+      const next = Math.min(shellHistory.length - 1, Math.max(-1, historyIndex + delta));
+      setHistoryIndex(next);
+      setShellDraft(next < 0 ? '' : shellHistory[shellHistory.length - 1 - next] ?? '');
+    },
+    [shellHistory, historyIndex],
+  );
+
+  /**
+   * The hint row.
+   *
+   * Defaults exist, but they only appear once the host has adopted modes or
+   * wired quick-open: a composer with no shell and no palette behind it must
+   * not advertise `>_` and `⌘K`, and a hint for a key that does nothing is
+   * worse than no hint at all.
+   */
+  const resolvedHints = useMemo<readonly ComposerHint[]>(() => {
+    if (hints) return hints;
+    if (!onModeChange && !onQuickOpen) return [];
+    return [
+      { key: '/', label: 'for commands' },
+      { key: '>_', label: 'for shell', ...(onModeChange ? { onSelect: () => onModeChange('terminal') } : {}) },
+      { key: '⌘K', label: 'to quickly open', ...(onQuickOpen ? { onSelect: onQuickOpen } : {}) },
+    ];
+  }, [hints, onModeChange, onQuickOpen]);
+
   // Files alone are a valid message: dragging in a screenshot and pressing send
-  // without typing is the common case.
-  const canSend = !blocked && (!empty || staged.length > 0);
+  // without typing is the common case. In terminal mode there is no message —
+  // there is a command line, and it is the only thing Send can act on.
+  const canSend = terminalMode
+    ? !blocked && !!onShellCommand && shellDraft.trim().length > 0
+    : !blocked && (!empty || staged.length > 0);
 
   // Publish synchronously so a conversation switch in the same event never
   // unmounts the editor before its latest text or file selection is retained.
@@ -967,8 +1151,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   );
 
   const send = useCallback(() => {
-    if (!editor || !canSend || sendingRef.current) return;
-    const text = editor.getText();
+    if (!editor || !canSend || terminalMode || sendingRef.current) return;
+    const typed = editor.getText();
+    // Agent mode routes through the host's EXISTING `/agent` command rather
+    // than a second dispatch path — same parser, same server contract, same
+    // command bar above the editor. Already-prefixed text is left alone so
+    // typing the command out by hand does not produce `/agent /agent …`.
+    const text = activeMode === 'agent' && typed.trim() && !/^\s*\/agent\b/i.test(typed)
+      ? `/agent ${typed.trim()}`
+      : typed;
     const cmd = matchComposerCommand(text, commandsRef.current);
     const pick = argPickRef.current;
     let command: ComposedMessage['command'];
@@ -989,6 +1180,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       files: staged.map((s) => s.file),
       ...(documents.length > 0 ? { documents } : {}),
       ...(command ? { command } : {}),
+      // Only present while the host has wired the switch — see the note on
+      // `ComposedMessage.mode`.
+      ...(modesEnabled ? { mode: activeMode } : {}),
     };
     const sentDraft = draftRef.current;
     const notify = changeRef.current;
@@ -1021,7 +1215,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     } catch {
       sendingRef.current = false; setSendError(true);
     }
-  }, [editor, canSend, onSend, staged, privacy]);
+  }, [editor, canSend, onSend, staged, privacy, terminalMode, activeMode, modesEnabled]);
 
   sendRef.current = send;
   linkRef.current = openLinkDialog;
@@ -1255,7 +1449,95 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           removeLabel={(reference) => `Remove ${reference.label} from this draft`}
           data-testid={`${testId}-references`}
         />
-        <EditorContent editor={editor} />
+
+        {/* What is already running, above what you are about to say. One row,
+            no controls: this is a reminder, not a dashboard. */}
+        {!!processes?.length && (
+          <div
+            role="status"
+            data-testid={`${testId}-processes`}
+            className="flex flex-wrap items-center gap-x-2 gap-y-1 px-2 pt-1 text-[11px] text-text-secondary"
+          >
+            {processes.map((process, index) => (
+              <span key={process.id} className="flex min-w-0 items-center gap-1.5">
+                {index > 0 && <span aria-hidden="true" className="text-text-tertiary">·</span>}
+                <span aria-hidden="true" className={cn('inline-block h-1.5 w-1.5 shrink-0 rounded-full', PROCESS_DOT[process.tone])} />
+                <span className="min-w-0 truncate">{process.label}</span>
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* The mode switch. Its own row rather than a control in the toolbar:
+            it changes what Enter DOES, which is not a formatting choice. */}
+        {modesEnabled && (
+          <div className="flex items-center gap-2 px-2 pt-1.5" data-testid={`${testId}-modes`}>
+            <Tabs
+              items={[
+                { id: 'chat', label: 'Chat', icon: <ChatIcon size={13} /> },
+                { id: 'agent', label: 'Agent', icon: <PuzzleIcon size={13} /> },
+                { id: 'terminal', label: 'Terminal', icon: <span aria-hidden="true" className="font-mono text-[11px]">{'>_'}</span> },
+              ]}
+              value={activeMode}
+              onValueChange={(id) => onModeChange?.(id as ComposerMode)}
+              variant="segmented"
+              size="sm"
+              aria-label="Composer mode"
+              idPrefix={`${testId}-mode`}
+            />
+          </div>
+        )}
+
+        {/* The editor stays MOUNTED in terminal mode, hidden rather than torn
+            down: unmounting it would destroy the half-written message someone
+            switched away from, which is the bug the `useEditor` deps note above
+            exists to stop recurring. */}
+        <div {...(terminalMode ? { hidden: true } : {})}>
+          <EditorContent editor={editor} />
+        </div>
+
+        {terminalMode && (
+          <div className="flex items-center gap-2 px-2 py-2" data-testid={`${testId}-shell`}>
+            <span aria-hidden="true" className="shrink-0 font-mono text-xs text-text-tertiary">$</span>
+            <input
+              type="text"
+              value={shellDraft}
+              disabled={blocked}
+              placeholder={effectivePlaceholder}
+              aria-label={effectivePlaceholder}
+              data-testid={`${testId}-shell-input`}
+              onChange={(event) => { setShellDraft(event.target.value); setHistoryIndex(-1); }}
+              onKeyDown={(event) => {
+                // A shell's keymap, because this looks like a shell: Enter
+                // runs, ↑/↓ walk what was run before. Both are prevented so
+                // the caret does not also jump to the end of the line.
+                if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); submitShell(); return; }
+                if (event.key === 'ArrowUp') { event.preventDefault(); recallHistory(1); return; }
+                if (event.key === 'ArrowDown') { event.preventDefault(); recallHistory(-1); }
+              }}
+              className="min-w-0 flex-1 border-none bg-transparent font-mono text-xs text-text-primary outline-none placeholder:text-text-tertiary disabled:cursor-not-allowed disabled:text-text-tertiary"
+            />
+          </div>
+        )}
+
+        {!!resolvedHints.length && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pb-1 text-[11px] text-text-tertiary" data-testid={`${testId}-hints`}>
+            {resolvedHints.map((hint) => {
+              const key = <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary">{hint.key}</kbd>;
+              if (!hint.onSelect) return <span key={hint.key} className="flex items-center gap-1">{key}{hint.label}</span>;
+              return (
+                <button
+                  key={hint.key}
+                  type="button"
+                  onClick={hint.onSelect}
+                  className="flex cursor-pointer items-center gap-1 border-none bg-transparent p-0 text-[11px] text-text-tertiary hover:text-text-primary"
+                >
+                  {key}{hint.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         <ComposerAttachments
           files={staged}
@@ -1340,15 +1622,41 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           {toolbarExtras}
           </RovingToolbar>
 
-          <button
-            type="button"
-            onClick={send}
-            disabled={!canSend}
-            data-testid={`${testId}-send`}
-            className="ml-auto shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40"
-          >
-            Send
-          </button>
+          {sendOptions?.length && onSendOption ? (
+            // A split button, not a second control: the primary press must
+            // stay in the same place and do the same thing it always did, and
+            // the alternatives have to be somewhere other than in front of it.
+            <span className="ml-auto flex shrink-0 items-stretch">
+              <button
+                type="button"
+                onClick={terminalMode ? submitShell : send}
+                disabled={!canSend}
+                data-testid={`${testId}-send`}
+                className="shrink-0 rounded-l-md rounded-r-none bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40"
+              >
+                {terminalMode ? 'Run' : 'Send'}
+              </button>
+              <DropdownMenu
+                trigger={<span aria-hidden="true" className="text-xs leading-none">▾</span>}
+                triggerLabel="Other ways to send"
+                align="end"
+                triggerTestId={`${testId}-send-options`}
+                data-testid={`${testId}-send-menu`}
+                triggerClassName="rounded-l-none rounded-r-md border-0 border-l border-white/40 bg-primary px-1.5 py-1 text-white hover:bg-primary"
+                sections={[{ items: sendOptions.map((option) => ({ label: option.label, onSelect: () => onSendOption(option.id) })) }]}
+              />
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={terminalMode ? submitShell : send}
+              disabled={!canSend}
+              data-testid={`${testId}-send`}
+              className="ml-auto shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40"
+            >
+              {terminalMode ? 'Run' : 'Send'}
+            </button>
+          )}
         </div>
         <LinkDialog
           open={linkState.open}

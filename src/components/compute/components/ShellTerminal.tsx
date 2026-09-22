@@ -30,8 +30,9 @@ import { FitAddon } from '@xterm/addon-fit';
 // Excalidraw's stylesheet uses.
 import '@xterm/xterm/css/xterm.css';
 import { cn } from '../../../lib/cn';
+import RisingParticles from '../../shared/RisingParticles';
 import { useCompute } from '../context/ComputeContext';
-import { SHELL_STATUS } from '../lib/status';
+import { SHELL_STATUS, statusOf } from '../lib/status';
 import {
   DETACH_BYTE,
   HEARTBEAT_MS,
@@ -46,6 +47,16 @@ import {
   type ShellStatusFrame,
 } from '../lib/shellProtocol';
 import type { ShellStatus } from '../types';
+
+/** A stable sky per shell: the strip must not re-shuffle its stars on every frame. */
+function seedOf(value: string): number {
+  let hash = 2166136261;
+  for (let i = 0; i < value.length; i += 1) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
 
 type Phase = 'idle' | 'connecting' | 'live' | 'detached' | 'closed' | 'error';
 
@@ -170,7 +181,7 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
   },
   ref,
 ) {
-  const { client } = useCompute();
+  const { client, computers } = useCompute();
 
   const hostRef = useRef<HTMLDivElement>(null);
 
@@ -467,6 +478,10 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
   );
 
   const live = phase === 'live';
+  // The box this shell is attached to, as the registry has it. Absent (a lab
+  // provider that lists no fleet), nothing is claimed — no backdrop.
+  const working = statusOf(computers.find((c) => c.sessionId === sessionId)) === 'running'
+    && !!computers.find((c) => c.sessionId === sessionId);
   const meta = SHELL_STATUS[live ? 'ready' : phase === 'error' ? 'error' : phase === 'detached' || phase === 'closed' ? 'detached' : 'connecting'];
 
   return (
@@ -481,7 +496,17 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
       )}
     >
       {chrome && (
-        <div className="flex items-center gap-2 px-3 py-2 border-b border-code-border shrink-0">
+        // The chrome strip carries the working state, not the canvas: xterm
+        // paints an opaque ground of its own, so a backdrop behind it would be
+        // invisible. Keyed on the REGISTRY status, so a box a cron bot is
+        // driving still reads as working in a shell nobody is typing into.
+        <RisingParticles
+          active={working}
+          intensity="low"
+          seed={seedOf(sessionId)}
+          className="flex items-center gap-2 px-3 py-2 border-b border-code-border shrink-0"
+          data-testid="shell-terminal-particles"
+        >
           <span className="text-[11px] font-semibold text-code-text">{label ?? 'terminal'}</span>
           <span
             className={cn(
@@ -529,7 +554,7 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
               {phase === 'connecting' ? 'connecting' : phase === 'detached' || phase === 'closed' ? 'reattach' : 'connect'}
             </button>
           )}
-        </div>
+        </RisingParticles>
       )}
 
       {/* With the header hidden the container still needs the connection

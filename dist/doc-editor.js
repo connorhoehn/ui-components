@@ -24,7 +24,7 @@ import { A as w, k as T } from "./renderers-9QJtVt3f.js";
 import { i as E, n as D, t as ee } from "./InboxSection-DV2_-Z5D.js";
 import { o as te, t as ne } from "./VerdictChip-h9KAEWjC.js";
 import { a as O, c as k, i as A, n as re, o as j, r as M, s as N, t as P } from "./TiptapEditor-Kdj65m6g.js";
-import { A as F, B as ie, C as I, D as L, E as R, F as z, H as B, I as V, L as ae, M as H, N as oe, O as se, P as ce, R as le, S as ue, T as de, V as fe, _ as pe, a as me, b as he, c as ge, d as _e, f as ve, g as ye, h as be, i as xe, j as Se, k as Ce, l as we, m as Te, o as Ee, p as De, r as Oe, s as ke, t as Ae, u as je, v as Me, w as Ne, x as Pe, y as Fe, z as Ie } from "./DocumentEditorPage-BQ9FZF0a.js";
+import { A as F, B as ie, C as I, D as L, E as R, F as z, H as B, I as V, L as ae, M as H, N as oe, O as se, P as ce, R as le, S as ue, T as de, V as fe, _ as pe, a as me, b as he, c as ge, d as _e, f as ve, g as ye, h as be, i as xe, j as Se, k as Ce, l as we, m as Te, o as Ee, p as De, r as Oe, s as ke, t as Ae, u as je, v as Me, w as Ne, x as Pe, y as Fe, z as Ie } from "./DocumentEditorPage-fTPf9pmF.js";
 import { _ as Le, a as Re, c as ze, d as Be, f as Ve, g as He, h as Ue, i as We, l as Ge, m as Ke, n as qe, o as Je, p as Ye, r as Xe, s as Ze, t as Qe, u as $e, v as et, y as tt } from "./useDocumentImageUpload-Bc5eOs-m.js";
 import { createContext as nt, useCallback as U, useContext as rt, useEffect as W, useImperativeHandle as it, useMemo as G, useRef as K, useState as q } from "react";
 import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";

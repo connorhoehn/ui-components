@@ -141,6 +141,8 @@ export { default as ConnectionPill } from './ConnectionPill';
 export * from './ConnectionPill';
 export { default as LogStream, TerminalLog } from './LogStream';
 export type { LogStreamProps, LogLine, LogLevel } from './LogStream';
+export { default as RisingParticles } from './RisingParticles';
+export type { RisingParticlesProps, RisingParticlesIntensity } from './RisingParticles';
 export { default as ThumbnailCard } from './ThumbnailCard';
 export type { ThumbnailCardProps } from './ThumbnailCard';
 export { default as CatalogGrid } from './CatalogGrid';

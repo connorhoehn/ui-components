@@ -39,6 +39,7 @@ import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
 import DotMeter from '../shared/DotMeter';
 import LogStream, { type LogLine } from '../shared/LogStream';
+import RisingParticles from '../shared/RisingParticles';
 import { Tabs } from '../shared/Tabs';
 import { Button } from '../ui/Button';
 // Both imported from their modules rather than the `./compute` barrel: the
@@ -177,6 +178,22 @@ const EVENT_TEXT: Record<LabEvent['kind'], string> = {
   status: 'text-code-subtle',
   iteration: 'text-code-yellow',
 };
+
+/**
+ * A stable number from a stable string.
+ *
+ * The backdrop's sky must not re-shuffle on every streamed event, so the seed
+ * has to come from something that does not change for the life of the loop —
+ * the box's session id, or failing that the instruction it was started with.
+ */
+function seedOf(value: string): number {
+  let hash = 2166136261;
+  for (let i = 0; i < value.length; i += 1) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
 
 /** `2026-09-21T10:48:21.024Z` is not a thing anyone reads in a log gutter. */
 function clockOf(at: string): string {
@@ -448,6 +465,21 @@ export function ChatLabShell({
         />
       </div>
 
+      {/* The working state, said by the surface itself.
+          A shell that is thinking and a shell that has stopped look identical
+          — same dark rectangle, same last line — and a corner spinner is too
+          small to answer the question from across a desk. While the loop is
+          mid-turn the ground under the output rises. It carries no information
+          beyond "this is working", which is all the backdrop of a log console
+          should carry. The seed is derived from the box so two loops open side
+          by side do not wear the same sky. */}
+      <RisingParticles
+        active={busy}
+        intensity="medium"
+        seed={seedOf(shell?.sessionId ?? title)}
+        className="flex min-h-0 flex-1 flex-col"
+        data-testid={`${testId}-particles`}
+      >
       <div className="flex min-h-0 flex-1 flex-col">
         {activeTab === 'stream' ? (
           <LogStream
@@ -455,6 +487,9 @@ export function ChatLabShell({
             title={null}
             showLevel={false}
             emptyMessage="No output yet."
+            // Transparent while the backdrop is up: the scroll region's own
+            // opaque ground would hide every star behind it.
+            tone={busy ? 'transparent' : 'code'}
             className="min-h-0 flex-1 rounded-none border-none"
             data-testid={`${testId}-stream`}
           />
@@ -499,7 +534,10 @@ export function ChatLabShell({
           a chat composer: what you type here goes to the agent mid-loop. */}
       <div
         data-testid={`${testId}-prompt-row`}
-        className="flex shrink-0 items-center gap-2 border-t border-code-border bg-code-panel px-3 py-2"
+        className={cn(
+          'flex shrink-0 items-center gap-2 border-t border-code-border px-3 py-2',
+          busy ? 'bg-transparent' : 'bg-code-panel',
+        )}
       >
         <span aria-hidden="true" className="shrink-0 text-code-green">›</span>
         <input
@@ -528,6 +566,7 @@ export function ChatLabShell({
           Send
         </Button>
       </div>
+      </RisingParticles>
     </div>
   );
 }

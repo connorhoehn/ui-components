@@ -13,10 +13,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { cn } from '../../../lib/cn';
 import Chip from '../../shared/Chip';
+import RisingParticles from '../../shared/RisingParticles';
 import { useCompute } from '../context/ComputeContext';
 import { useComputeTail } from '../hooks/useComputeTail';
 import type { TaskStep } from '../hooks/useComputeTask';
 import type { PaneKindContext } from '../lib/paneKinds';
+import { statusOf } from '../lib/status';
 import type { Computer } from '../types';
 
 // `job` and `job_end` render as their own banners below, never through this
@@ -48,6 +50,16 @@ const STEP_GLYPH: Record<TaskStep['kind'], string> = {
 // than) `useComputeTail`'s own `maxSteps` — the hook decides what is still
 // worth holding in memory, this decides what is worth paying layout for.
 const DOM_STEP_CAP = 200;
+
+/** A stable sky per box: the same pane must not re-shuffle its stars on every frame. */
+function seedOf(value: string): number {
+  let hash = 2166136261;
+  for (let i = 0; i < value.length; i += 1) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
 
 export interface TailPaneProps {
   computer: Computer;
@@ -110,8 +122,19 @@ export function TailPane({ computer, registerPane, className }: TailPaneProps) {
   const trimmed = Math.max(0, tail.steps.length - DOM_STEP_CAP);
   const visibleSteps = trimmed > 0 ? tail.steps.slice(-DOM_STEP_CAP) : tail.steps;
 
+  // The box is working, so the pane says so with its own ground. Keyed on the
+  // registry status rather than the tail's `running`, because a box a cron bot
+  // is driving is still working when this browser's stream has a gap in it.
+  const working = statusOf(computer) === 'running';
+
   return (
-    <div className={cn('flex flex-col h-full min-h-0 bg-code-bg', className)}>
+    <RisingParticles
+      active={working}
+      intensity="low"
+      seed={seedOf(computer.id)}
+      className={cn('flex flex-col h-full min-h-0 bg-code-bg', className)}
+      data-testid="tail-pane-particles"
+    >
       <div className="shrink-0 flex items-center gap-2 px-2 py-1 border-b border-code-border">
         <Chip size="xs" mono tone={tail.connected ? 'success' : 'neutral'} dot="static">
           {tail.connected ? 'tailing' : 'not connected'}
@@ -286,6 +309,6 @@ export function TailPane({ computer, registerPane, className }: TailPaneProps) {
           </button>
         ) : null}
       </div>
-    </div>
+    </RisingParticles>
   );
 }

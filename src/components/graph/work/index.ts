@@ -9,7 +9,9 @@ export { WorkGraph } from './WorkGraph';
 export { WorkActivityHeader } from './WorkActivityHeader';
 export { WorkNodePane, WorkPaneBanner, WorkTranscriptPanel } from './WorkNodePane';
 export { WorkArtifactInspector } from './WorkArtifactInspector';
+export { WorkComputePane } from './WorkComputePane';
 export type { WorkNodePaneProps } from './WorkNodePane';
+export type { WorkComputePaneProps } from './WorkComputePane';
 export type {
   WorkActivityAsk,
   WorkActivityAskAnswer,
@@ -18,6 +20,7 @@ export type {
   WorkActivityBannerTone,
   WorkActivityEffort,
   WorkActivityPaneAction,
+  WorkActivityPanelView,
   WorkActivityPaneSections,
   WorkActivityReference,
   WorkActivityTranscriptSegment,
@@ -28,6 +31,12 @@ export type {
   WorkActivityWindow,
   WorkArtifactRevision,
   WorkArtifactSlide,
+  WorkComputeArtifact,
+  WorkComputeDetail,
+  WorkComputeEvent,
+  WorkComputeStatus,
+  WorkComputeStep,
+  WorkComputeTerminalLine,
   WorkEdgeProps,
   WorkEntityListProps,
   WorkGraphCapability,

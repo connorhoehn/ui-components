@@ -71,6 +71,14 @@ export declare interface ComposedMessage {
      * absent field.
      */
     privacy: 'visible' | 'hidden';
+    /**
+     * Which mode composed this. Present only while a host has wired
+     * `onModeChange` — like `RichChatDraft.privacy`, a host that never adopts
+     * the feature never sees the key. `'agent'` also rewrites `text` to
+     * `/agent <what was typed>`, so the host's existing `/agent` command path
+     * handles it with no second code path.
+     */
+    mode?: ComposerMode;
 }
 
 export declare interface ComposerArgumentItem {
@@ -134,6 +142,31 @@ export declare interface ComposerCommandArgument {
  */
 export declare function composerCommandArgumentText(draft: string, command: ComposerCommand): string;
 
+/** One key and what it does, for the row under the editor. */
+export declare interface ComposerHint {
+    /** The key itself, rendered monospace — `/`, `>_`, `⌘K`. */
+    key: string;
+    label: string;
+    /** Wired, the hint is a button rather than a label. */
+    onSelect?: () => void;
+}
+
+/** What the composer is for, right now. */
+export declare type ComposerMode = 'chat' | 'agent' | 'terminal';
+
+/**
+ * Something already running that this composer's owner started.
+ *
+ * A one-line status strip above the editor, because the question "is the thing
+ * I asked for still going?" is asked WHILE typing the next thing — a person who
+ * has to leave the composer to answer it has already lost the sentence.
+ */
+export declare interface ComposerProcess {
+    id: string;
+    label: string;
+    tone: 'running' | 'idle' | 'failed' | 'done';
+}
+
 export declare interface ComposerReference {
     /** Stable across re-renders; what `onRemove` is called with. */
     id: string;
@@ -155,6 +188,12 @@ export declare interface ComposerReferencesProps {
     removeLabel?: (reference: ComposerReference) => string;
     className?: string;
     'data-testid'?: string;
+}
+
+/** An alternative way to send, offered from the Send button's own menu. */
+export declare interface ComposerSendOption {
+    id: string;
+    label: string;
 }
 
 export declare interface DocumentCandidate {
@@ -363,6 +402,54 @@ export declare interface RichChatComposerProps {
     onRemoveReference?: (id: string) => void;
     /** Rendered between the formatting controls and the send button. */
     toolbarExtras?: ReactNode;
+    /**
+     * Long-running work this composer's owner started — a generating deck, a
+     * terminal test run. Rendered as one status line above the editor, hidden
+     * when the array is empty. Display only: the host owns what each one is and
+     * what opening it does.
+     */
+    processes?: readonly ComposerProcess[];
+    /**
+     * Controlled mode. Defaults to `'chat'`. Passing `onModeChange` is what
+     * turns the feature on at all — see there.
+     */
+    mode?: ComposerMode;
+    /**
+     * Renders the `Chat | Agent | Terminal` switch above the editor and is
+     * called with the mode pressed. The composer holds no mode state of its own,
+     * so nothing changes until the host applies it back through `mode`.
+     *
+     * Omitting this prop is the whole opt-in: no switch, no hints row, no `mode`
+     * key on the published message. Every existing host renders exactly the
+     * composer it rendered before.
+     */
+    onModeChange?: (mode: ComposerMode) => void;
+    /**
+     * Placeholder per mode. `chat` falls back to `placeholder`; the other two
+     * have defaults that say what Enter will do, which is the thing that changes.
+     */
+    modePlaceholders?: Partial<Record<ComposerMode, string>>;
+    /**
+     * The keys worth knowing, under the editor. Defaults to `/` for commands,
+     * `>_` for shell and `⌘K` to quickly open whenever the mode switch or
+     * `onQuickOpen` is wired; absent all three, no row is rendered at all.
+     */
+    hints?: readonly ComposerHint[];
+    /** Backs the default `⌘K` hint. Without it that hint is a label, not a button. */
+    onQuickOpen?: () => void;
+    /**
+     * Other ways to send, offered from a caret beside Send — "Send as agent
+     * task", "Run in shell". Send itself keeps doing what it always did.
+     */
+    sendOptions?: readonly ComposerSendOption[];
+    /** Called with the chosen option's id. The composer does not clear the draft. */
+    onSendOption?: (id: string) => void;
+    /**
+     * Where a line typed in terminal mode goes. Without it the prompt still
+     * renders and still keeps its history, but Enter does nothing — which is
+     * the honest state for a deployment with no shell behind the composer.
+     */
+    onShellCommand?: (command: string) => void;
     className?: string;
     'data-testid'?: string;
 }

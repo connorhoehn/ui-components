@@ -7,6 +7,7 @@ import { Button } from '../../ui/Button';
 import { IconButton } from '../../ui/IconButton';
 import { CloseIcon } from '../../ui/Icons';
 import { WorkArtifactInspector, resolveArtifactSelection } from './WorkArtifactInspector';
+import { WorkComputePane } from './WorkComputePane';
 import type {
   WorkActivityAsk, WorkActivityAskAnswer, WorkActivityBanner, WorkActivityNodeDetail,
   WorkActivityReference, WorkGraphNodeData, WorkGraphSelection,
@@ -154,7 +155,12 @@ export function WorkNodePane({
   const referenceTarget: Exclude<WorkGraphSelection, null> = resolved?.revision
     ? { ...selection, revisionId: resolved.revision.id, anchorId: resolved.slide?.id ?? selection.anchorId ?? resolved.revision.anchorId }
     : { ...selection };
-  const empty = !visible?.banner && !visible?.artifact && !visible?.transcript && !sections && !visible?.note && !visible?.actions?.length;
+  // A compute session owns the banner slot: its own card says the state in the
+  // words this kind of node has ("Flaky test triage · auth-migration-3 ·
+  // AgentCore microVM · started 09:15"), and a second banner above it would
+  // say the same thing twice.
+  const compute = visible?.compute;
+  const empty = !compute && !visible?.banner && !visible?.artifact && !visible?.transcript && !sections && !visible?.note && !visible?.actions?.length;
   return (
     <section aria-label={title} data-testid={testId} className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)}>
       <header className="flex shrink-0 items-start justify-between gap-2 border-b border-border px-3 py-2">
@@ -165,7 +171,8 @@ export function WorkNodePane({
         <IconButton size="md" aria-label="Close details" onClick={onClose} data-testid={`${testId}-close`} className="shrink-0"><CloseIcon /></IconButton>
       </header>
       <div className="min-h-0 flex-1 space-y-4 overflow-auto p-3">
-        {visible?.banner && <WorkPaneBanner banner={visible.banner} />}
+        {!compute && visible?.banner && <WorkPaneBanner banner={visible.banner} />}
+        {compute && <WorkComputePane compute={compute} {...(visible?.banner ? { banner: visible.banner } : {})} />}
         {sections?.description && <p className="text-[13px] leading-snug text-text-secondary">{sections.description}</p>}
         {visible?.artifact && <WorkArtifactInspector node={node} artifact={visible.artifact} selection={selection} onSelectionChange={onSelectionChange} onOpen={onOpen} quiet={!!visible.banner} />}
         {visible?.transcript && <WorkTranscriptPanel transcript={visible.transcript} onSelect={onSelectionChange} />}

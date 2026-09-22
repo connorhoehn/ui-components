@@ -1820,3 +1820,70 @@
   max-height: min(32vh, 14rem);
   overflow-y: auto;
 }
+
+/* ===========================================================================
+   Rising particles — the backdrop an agent surface wears while it is working
+
+   Four parallax layers of a generated star field drifting upward over a dark
+   radial gradient. The COORDINATES cannot live here: they are produced from
+   the component's `seed` prop at render, so each layer arrives as three custom
+   properties on the element (`--uic-particle-shadow`, `--uic-particle-size`,
+   `--uic-particle-duration`) and everything else about it is a class. See the
+   note at the top of `shared/RisingParticles.tsx`.
+
+   The `::after` copy sits exactly one field-height below its layer, so when
+   the layer has travelled a full 2560px the copy is where the original was and
+   the loop is seamless — this is why the keyframe distance and the `top` offset
+   must stay equal.
+   =========================================================================== */
+
+.uic-rising-particles {
+  background: radial-gradient(ellipse at bottom, rgb(17, 29, 43) 0%, rgb(9, 10, 15) 100%);
+}
+
+.uic-rising-particle,
+.uic-rising-particle::after {
+  position: absolute;
+  width: var(--uic-particle-size, 1px);
+  height: var(--uic-particle-size, 1px);
+  border-radius: 50%;
+  /* The element itself is invisible; the field is entirely box-shadow. */
+  background: transparent;
+  box-shadow: var(--uic-particle-shadow);
+}
+
+.uic-rising-particle {
+  animation: uic-particle-rise var(--uic-particle-duration, 60s) linear infinite;
+}
+
+.uic-rising-particle::after {
+  content: '';
+  top: 2560px;
+}
+
+.uic-rising-particles-in {
+  animation: uic-particles-fade 250ms ease-out;
+}
+
+@keyframes uic-particle-rise {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-2560px); }
+}
+
+@keyframes uic-particles-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* A field that never stops rising is exactly the kind of ambient motion this
+   setting exists to stop. The stars stay — the sky still says "working" — they
+   simply hold still. The component also withholds the duration variable, so
+   this rule is the second of two locks rather than the only one. */
+@media (prefers-reduced-motion: reduce) {
+  .uic-rising-particle {
+    animation: none;
+  }
+  .uic-rising-particles-in {
+    animation: none;
+  }
+}

@@ -1,8 +1,14 @@
 import { cn } from '../../../lib/cn';
+import { Tabs } from '../../shared/Tabs';
 import { Tooltip } from '../../shared/Tooltip';
 import { IconButton } from '../../ui/IconButton';
 import { CloseIcon } from '../../ui/Icons';
-import type { WorkActivityHeaderProps } from './types';
+import type { WorkActivityHeaderProps, WorkActivityPanelView } from './types';
+
+const VIEW_TABS = [
+  { id: 'activity', label: 'Activity' },
+  { id: 'lab', label: 'Computer Lab' },
+] as const;
 
 /**
  * The one header row an activity panel gets: who and what on the left, the
@@ -10,11 +16,21 @@ import type { WorkActivityHeaderProps } from './types';
  * `ChatSidePanelFrame` get the same chrome from the frame and should not
  * render this as well — it exists so a host outside that frame (a standalone
  * route, a popped-out window) has no hand-rolled markup to write.
+ *
+ * A host that can show a second body — the person's Computer Lab beside their
+ * activity graph — wires `onViewChange` and gets a segmented switch on its own
+ * row beneath the title, with a quiet clause saying what the body holds. The
+ * row is a SECOND row rather than another control in the title row because it
+ * chooses what the panel is, while everything on the title row chooses where
+ * the panel is; mixing the two put a body switch next to the close button.
+ * Without `onViewChange` nothing about this header changes.
  */
 export function WorkActivityHeader({
-  title, subtitle, expanded = false, onExpand, onPopOut, onClose, actions, className, 'data-testid': testId = 'work-activity-header',
+  title, subtitle, expanded = false, onExpand, onPopOut, onClose, actions,
+  view = 'activity', onViewChange, viewNote,
+  className, 'data-testid': testId = 'work-activity-header',
 }: WorkActivityHeaderProps) {
-  return (
+  const bar = (
     <header data-testid={testId} className={cn('flex shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-3 py-1.5', className)}>
       <span className="flex min-w-0 flex-col">
         <span className="truncate text-[12px] font-semibold text-text-secondary" data-testid={`${testId}-title`}>{title}</span>
@@ -47,6 +63,31 @@ export function WorkActivityHeader({
         )}
       </span>
     </header>
+  );
+  if (!onViewChange) return bar;
+  return (
+    <div className="flex shrink-0 flex-col">
+      {bar}
+      <div
+        data-testid={`${testId}-views`}
+        className="flex shrink-0 items-center gap-2.5 border-b border-border bg-surface px-3 py-1.5"
+      >
+        <Tabs
+          items={VIEW_TABS as unknown as Array<{ id: string; label: string }>}
+          value={view}
+          onValueChange={(id) => onViewChange(id as WorkActivityPanelView)}
+          variant="segmented"
+          size="sm"
+          aria-label="Side panel content"
+          idPrefix={`${testId}-view`}
+        />
+        {viewNote && (
+          <span className="min-w-0 truncate text-[11px] text-text-tertiary" data-testid={`${testId}-view-note`}>
+            {viewNote}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
 
