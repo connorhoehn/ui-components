@@ -23,7 +23,10 @@ vi.mock('../../../hooks/useIngestSources', () => ({ useIngestSources: () => useI
 vi.mock('../../../hooks/useIngestProgress', () => ({
   useIngestProgress: () => ({ events: [], activeSyncs: new Map(), clearEvents: vi.fn() }),
 }));
-vi.mock('../../../contexts/IdentityContext', () => ({ useIdentityContext: () => ({ idToken: 'tok' }) }));
+vi.mock('../../../contexts/IdentityContext', () => ({
+  useIdentityContext: () => ({ idToken: 'tok' }),
+  useOptionalIdentityContext: () => ({ idToken: 'tok' }),
+}));
 
 import IngestItemsPage from '../IngestItemsPage';
 

@@ -10,7 +10,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useState } from 'react';
 import type { MappingRule } from '../../../types/ingest';
 
-vi.mock('../../../contexts/IdentityContext', () => ({ useIdentityContext: () => ({ idToken: 'tok' }) }));
+vi.mock('../../../contexts/IdentityContext', () => ({
+  useIdentityContext: () => ({ idToken: 'tok' }),
+  useOptionalIdentityContext: () => ({ idToken: 'tok' }),
+}));
 
 import MappingRuleEditor from '../MappingRuleEditor';
 

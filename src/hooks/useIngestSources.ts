@@ -5,10 +5,16 @@
 // pattern as other hooks in the project (e.g. useApiHealth).
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useIdentityContext } from '../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../contexts/IdentityContext';
+import { getApiBaseUrl } from '../lib/apiBaseUrl';
 import type { IngestSource } from '../types/ingest';
 
-const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
+export interface UseIngestSourcesOptions {
+  /** Wins over this library's `useIdentityContext().idToken`. */
+  idToken?: string | null;
+  /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
+}
 
 export interface UseIngestSourcesReturn {
   sources: IngestSource[];
@@ -34,8 +40,10 @@ export interface UseIngestSourcesReturn {
   clearActionError: () => void;
 }
 
-export function useIngestSources(): UseIngestSourcesReturn {
-  const { idToken } = useIdentityContext();
+export function useIngestSources(options: UseIngestSourcesOptions = {}): UseIngestSourcesReturn {
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = options.idToken !== undefined ? options.idToken : (identityCtx?.idToken ?? null);
+  const BASE_URL = options.baseUrl ?? getApiBaseUrl();
   const [sources, setSources] = useState<IngestSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -93,7 +101,7 @@ export function useIngestSources(): UseIngestSourcesReturn {
         setLoading(false);
       }
     }
-  }, [headers]);
+  }, [headers, BASE_URL]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -122,7 +130,7 @@ export function useIngestSources(): UseIngestSourcesReturn {
       setActionError(err instanceof Error ? err.message : String(err));
       return null;
     }
-  }, [headers]);
+  }, [headers, BASE_URL]);
 
   const deleteSource = useCallback(async (sourceId: string): Promise<boolean> => {
     try {
@@ -137,7 +145,7 @@ export function useIngestSources(): UseIngestSourcesReturn {
       setActionError(err instanceof Error ? err.message : String(err));
       return false;
     }
-  }, [headers]);
+  }, [headers, BASE_URL]);
 
   const triggerSync = useCallback(async (sourceId: string): Promise<boolean> => {
     try {
@@ -151,7 +159,7 @@ export function useIngestSources(): UseIngestSourcesReturn {
       setActionError(err instanceof Error ? err.message : String(err));
       return false;
     }
-  }, [headers]);
+  }, [headers, BASE_URL]);
 
   return {
     sources, loading, error, refresh, createSource, deleteSource, triggerSync,

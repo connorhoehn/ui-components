@@ -9,7 +9,8 @@
 // when supplied; replays surface via `isReplay`.
 
 import { useCallback, useState } from 'react';
-import { useIdentityContext } from '../../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../../contexts/IdentityContext';
+import { getApiBaseUrl } from '../../../lib/apiBaseUrl';
 import { loadPipeline } from '../persistence/pipelineStorage';
 
 // ---------------------------------------------------------------------------
@@ -21,6 +22,13 @@ export interface TriggerRunResponse {
   pipelineId: string;
   triggeredBy: { userId: string; triggerType: string };
   at: string;
+}
+
+export interface UseTriggerRunOptions {
+  /** Wins over this library's `useIdentityContext().idToken`. */
+  idToken?: string | null;
+  /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
 }
 
 export interface TriggerRunOptions {
@@ -54,13 +62,14 @@ export interface UseTriggerRunReturn {
 // Hook
 // ---------------------------------------------------------------------------
 
-export function useTriggerRun(): UseTriggerRunReturn {
-  const { idToken } = useIdentityContext();
+export function useTriggerRun(options: UseTriggerRunOptions = {}): UseTriggerRunReturn {
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = options.idToken !== undefined ? options.idToken : (identityCtx?.idToken ?? null);
   const [isTriggering, setIsTriggering] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
   const [isReplay, setIsReplay] = useState(false);
 
-  const baseUrl = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
+  const baseUrl = options.baseUrl ?? getApiBaseUrl();
 
   const triggerRun = useCallback(
     async (

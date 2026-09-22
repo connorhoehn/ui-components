@@ -10,11 +10,10 @@ import { focusInitialElement, restoreFocus, trapTabKey } from '../../lib/focusTr
 import { useOverlayLayer } from '../../lib/overlayStack';
 import type { ChipTone } from '../shared/Chip';
 import { cn } from '../../lib/cn';
-import { useIdentityContext } from '../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
+import { getApiBaseUrl } from '../../lib/apiBaseUrl';
 import { useIngestProgress } from '../../hooks/useIngestProgress';
 import type { IngestItem, IngestItemStatus, IngestMappingMethod } from '../../types/ingest';
-
-const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 
 export interface IngestItemDrawerProps {
   item: IngestItem | null;
@@ -22,6 +21,15 @@ export interface IngestItemDrawerProps {
   onClose: () => void;
   onRetry: (itemId: string) => Promise<boolean | void>;
   onSkip: (itemId: string) => Promise<boolean | void>;
+  /**
+   * Bearer token for the drawer's own "Re-map" request. Wins over this
+   * library's `useIdentityContext().idToken`. Defaults to the context's
+   * `idToken` (or `null` when no `<IdentityProvider>` is mounted) via the
+   * non-throwing `useOptionalIdentityContext`.
+   */
+  idToken?: string | null;
+  /** Origin for the "Re-map" request. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
 }
 
 // Canonical pipeline order — used to render the timeline.
@@ -87,8 +95,18 @@ function relativeTime(iso: string): string {
 // Component
 // ---------------------------------------------------------------------------
 
-export default function IngestItemDrawer({ item, sourceName, onClose, onRetry, onSkip }: IngestItemDrawerProps) {
-  const { idToken } = useIdentityContext();
+export default function IngestItemDrawer({
+  item,
+  sourceName,
+  onClose,
+  onRetry,
+  onSkip,
+  idToken: idTokenProp,
+  baseUrl,
+}: IngestItemDrawerProps) {
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = idTokenProp !== undefined ? idTokenProp : (identityCtx?.idToken ?? null);
+  const resolvedBaseUrl = baseUrl ?? getApiBaseUrl();
   const [busy, setBusy] = useState<'retry' | 'skip' | 'remap' | null>(null);
   const [remapError, setRemapError] = useState<string | null>(null);
   const { events: progressEvents } = useIngestProgress();
@@ -179,7 +197,7 @@ export default function IngestItemDrawer({ item, sourceName, onClose, onRetry, o
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (idToken) headers['Authorization'] = `Bearer ${idToken}`;
-      const res = await fetch(`${BASE_URL}/api/ingest/items/${item.itemId}/remap`, {
+      const res = await fetch(`${resolvedBaseUrl}/api/ingest/items/${item.itemId}/remap`, {
         method: 'POST',
         headers,
       });

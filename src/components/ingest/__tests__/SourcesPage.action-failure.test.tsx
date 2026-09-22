@@ -16,6 +16,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('../../../contexts/IdentityContext', () => ({
   useIdentityContext: () => ({ idToken: 'tok' }),
+  useOptionalIdentityContext: () => ({ idToken: 'tok' }),
 }));
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),

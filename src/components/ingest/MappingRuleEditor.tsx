@@ -4,13 +4,12 @@
 // with inline editing, reordering, add/delete, and a preview button.
 
 import { useCallback, useState } from 'react';
-import { useIdentityContext } from '../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
+import { getApiBaseUrl } from '../../lib/apiBaseUrl';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
 import { Select } from '../forms/Select';
 import type { MappingRule } from '../../types/ingest';
-
-const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -30,6 +29,15 @@ export interface MappingRuleEditorProps {
    * preview box stays: it is a read-only dry run and is useful here.
    */
   readOnly?: boolean;
+  /**
+   * Bearer token for the "Preview" request. Wins over this library's
+   * `useIdentityContext().idToken`. Defaults to the context's `idToken`
+   * (or `null` when no `<IdentityProvider>` is mounted) via the
+   * non-throwing `useOptionalIdentityContext`.
+   */
+  idToken?: string | null;
+  /** Origin for the "Preview" request. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
 }
 
 const FIELD_OPTIONS = ['extension', 'path', 'mimeType', 'tag', 'name'] as const;
@@ -39,8 +47,16 @@ const OP_OPTIONS = ['eq', 'contains', 'regex', 'startsWith'] as const;
 // Component
 // ---------------------------------------------------------------------------
 
-export default function MappingRuleEditor({ rules, onChange, readOnly = false }: MappingRuleEditorProps) {
-  const { idToken } = useIdentityContext();
+export default function MappingRuleEditor({
+  rules,
+  onChange,
+  readOnly = false,
+  idToken: idTokenProp,
+  baseUrl,
+}: MappingRuleEditorProps) {
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = idTokenProp !== undefined ? idTokenProp : (identityCtx?.idToken ?? null);
+  const resolvedBaseUrl = baseUrl ?? getApiBaseUrl();
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [previewPath, setPreviewPath] = useState('');
   const [previewResult, setPreviewResult] = useState<string | null>(null);
@@ -153,7 +169,7 @@ export default function MappingRuleEditor({ rules, onChange, readOnly = false }:
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (idToken) headers['Authorization'] = `Bearer ${idToken}`;
-      const res = await fetch(`${BASE_URL}/api/ingest/mapping/preview`, {
+      const res = await fetch(`${resolvedBaseUrl}/api/ingest/mapping/preview`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ path: previewPath, rules }),
@@ -166,7 +182,7 @@ export default function MappingRuleEditor({ rules, onChange, readOnly = false }:
     } finally {
       setPreviewLoading(false);
     }
-  }, [previewPath, rules, idToken]);
+  }, [previewPath, rules, idToken, resolvedBaseUrl]);
 
   // Parse pattern into field/op/value for display (pattern format: "field:op:value")
   const parsePattern = (pattern: string) => {

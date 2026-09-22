@@ -14,6 +14,13 @@ vi.mock('../../contexts/IdentityContext', () => ({
     userEmail: 'alice@test.com',
     onSignOut: vi.fn(),
   }),
+  useOptionalIdentityContext: () => ({
+    idToken: 'tok-1',
+    userId: 'u1',
+    displayName: 'Alice',
+    userEmail: 'alice@test.com',
+    onSignOut: vi.fn(),
+  }),
 }));
 
 // ---------------------------------------------------------------------------

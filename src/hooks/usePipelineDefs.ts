@@ -7,15 +7,21 @@
 // the ingest pages.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useIdentityContext } from '../contexts/IdentityContext';
-
-const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
+import { useOptionalIdentityContext } from '../contexts/IdentityContext';
+import { getApiBaseUrl } from '../lib/apiBaseUrl';
 
 export interface PipelineDefSummary {
   id: string;
   name: string;
   status?: string;
   icon?: string;
+}
+
+export interface UsePipelineDefsOptions {
+  /** Wins over this library's `useIdentityContext().idToken`. */
+  idToken?: string | null;
+  /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
 }
 
 export interface UsePipelineDefsReturn {
@@ -25,8 +31,10 @@ export interface UsePipelineDefsReturn {
   refresh: () => Promise<void>;
 }
 
-export function usePipelineDefs(): UsePipelineDefsReturn {
-  const { idToken } = useIdentityContext();
+export function usePipelineDefs(options: UsePipelineDefsOptions = {}): UsePipelineDefsReturn {
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = options.idToken !== undefined ? options.idToken : (identityCtx?.idToken ?? null);
+  const BASE_URL = options.baseUrl ?? getApiBaseUrl();
   const [pipelines, setPipelines] = useState<PipelineDefSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +70,7 @@ export function usePipelineDefs(): UsePipelineDefsReturn {
         setLoading(false);
       }
     }
-  }, [idToken]);
+  }, [idToken, BASE_URL]);
 
   useEffect(() => {
     cancelledRef.current = false;

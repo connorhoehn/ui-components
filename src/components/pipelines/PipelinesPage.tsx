@@ -39,7 +39,7 @@ import type {
 import EmptyState from '../shared/EmptyState';
 import Modal from '../shared/Modal';
 import { useToast } from '../shared/ToastProvider';
-import { useIdentityContext } from '../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
 import { downloadJSON } from './utils/fileUtils';
 
 import type { TriggerFilter, SortKey } from './PipelinesFilterBar';
@@ -217,11 +217,26 @@ function NewPipelineModal({
 // Page
 // ---------------------------------------------------------------------------
 
-export default function PipelinesPage() {
+export interface PipelinesPageProps {
+  /**
+   * Author id for pipelines created from this page (demo pipeline, template
+   * picks). Wins over this library's `useIdentityContext().userId`.
+   * Defaults to the context's `userId` (or `''` when no `<IdentityProvider>`
+   * is mounted) via the non-throwing `useOptionalIdentityContext`.
+   */
+  userId?: string;
+  /** Bearer token for the trigger-run request. Wins over this library's `useIdentityContext().idToken`. */
+  idToken?: string | null;
+  /** Origin for the trigger-run request. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
+}
+
+export default function PipelinesPage({ userId: userIdProp, idToken, baseUrl }: PipelinesPageProps = {}) {
   const navigate = useNavigate();
-  const { userId } = useIdentityContext();
+  const identityCtx = useOptionalIdentityContext();
+  const userId = userIdProp !== undefined ? userIdProp : (identityCtx?.userId ?? '');
   const { toast } = useToast();
-  const { triggerRun, isTriggering } = useTriggerRun();
+  const { triggerRun, isTriggering } = useTriggerRun({ idToken, baseUrl });
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [rows, setRows] = useState<PipelineRow[]>([]);
@@ -856,6 +871,7 @@ export default function PipelinesPage() {
         open={templatesModalOpen}
         onClose={() => setTemplatesModalOpen(false)}
         onSelect={handleSelectTemplate}
+        userId={userId}
       />
 
       {/* Single delete confirmation modal */}

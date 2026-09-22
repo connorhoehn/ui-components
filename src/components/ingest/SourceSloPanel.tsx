@@ -53,11 +53,15 @@ function lastNonNull(points: SloPoint[]): number | null {
 
 interface Props {
   sourceId: string;
+  /** Wins over this library's `useIdentityContext().idToken`. */
+  idToken?: string | null;
+  /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
 }
 
-export default function SourceSloPanel({ sourceId }: Props) {
+export default function SourceSloPanel({ sourceId, idToken, baseUrl }: Props) {
   const [window, setWindow] = useState<SloWindow>('1h');
-  const { metrics, error } = useSourceSloMetrics(sourceId, window);
+  const { metrics, error } = useSourceSloMetrics(sourceId, window, { idToken, baseUrl });
 
   return (
     <div data-testid="source-slo-panel" className="px-4 py-3 bg-surface border border-border rounded-[10px] mb-4">

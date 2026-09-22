@@ -1812,6 +1812,10 @@ declare interface UseActivityBusReturn {
  declare interface UseIngestItemsOptions {
      sourceId?: string | null;
      status?: IngestItemStatus | null;
+     /** Wins over this library's `useIdentityContext().idToken`. */
+     idToken?: string | null;
+     /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+     baseUrl?: string;
  }
 
  declare interface UseIngestItemsReturn {
@@ -1847,7 +1851,14 @@ declare interface UseActivityBusReturn {
      clearEvents: () => void;
  }
 
- export declare function useIngestSources(): UseIngestSourcesReturn;
+ export declare function useIngestSources(options?: UseIngestSourcesOptions): UseIngestSourcesReturn;
+
+ declare interface UseIngestSourcesOptions {
+     /** Wins over this library's `useIdentityContext().idToken`. */
+     idToken?: string | null;
+     /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+     baseUrl?: string;
+ }
 
  declare interface UseIngestSourcesReturn {
      sources: IngestSource[];
@@ -1906,7 +1917,14 @@ declare interface UseActivityBusReturn {
      error: string | null;
  }
 
- export declare function useMappingReviewQueue(): UseMappingReviewQueueResult;
+ export declare function useMappingReviewQueue(options?: UseMappingReviewQueueOptions): UseMappingReviewQueueResult;
+
+ declare interface UseMappingReviewQueueOptions {
+     /** Wins over this library's `useIdentityContext().idToken`. */
+     idToken?: string | null;
+     /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+     baseUrl?: string;
+ }
 
  declare interface UseMappingReviewQueueResult {
      items: IngestItem[];
@@ -1935,7 +1953,14 @@ declare interface UseActivityBusReturn {
      userId: string;
  }
 
- export declare function usePipelineDefs(): UsePipelineDefsReturn;
+ export declare function usePipelineDefs(options?: UsePipelineDefsOptions): UsePipelineDefsReturn;
+
+ declare interface UsePipelineDefsOptions {
+     /** Wins over this library's `useIdentityContext().idToken`. */
+     idToken?: string | null;
+     /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+     baseUrl?: string;
+ }
 
  declare interface UsePipelineDefsReturn {
      pipelines: PipelineDefSummary[];
@@ -2094,7 +2119,14 @@ declare interface UseActivityBusReturn {
      viewProfile: (userId: string) => Promise<ProfileItem | null>;
  }
 
- export declare function useSourceSloMetrics(sourceId: string | undefined, window?: SloWindow): UseSourceSloMetricsResult;
+ export declare function useSourceSloMetrics(sourceId: string | undefined, window?: SloWindow, options?: UseSourceSloMetricsOptions): UseSourceSloMetricsResult;
+
+ declare interface UseSourceSloMetricsOptions {
+     /** Wins over this library's `useIdentityContext().idToken`. */
+     idToken?: string | null;
+     /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+     baseUrl?: string;
+ }
 
  declare interface UseSourceSloMetricsResult {
      metrics: SourceSloMetrics | null;
@@ -2424,6 +2456,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -2434,12 +2479,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2460,16 +2502,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

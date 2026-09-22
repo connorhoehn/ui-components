@@ -9,10 +9,10 @@
 // reshapes the backend's `ingestId` / `filePath` / `mappedTypeId` fields.
 
 import { useCallback, useEffect, useState } from 'react';
-import { useIdentityContext } from '../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../contexts/IdentityContext';
+import { getApiBaseUrl } from '../lib/apiBaseUrl';
 import type { IngestItem, IngestItemStatus, IngestMappingMethod } from '../types/ingest';
 
-const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 const POLL_INTERVAL_MS = 15_000;
 
 interface BackendIngestItem {
@@ -52,6 +52,13 @@ function normalize(b: BackendIngestItem): IngestItem {
   };
 }
 
+export interface UseMappingReviewQueueOptions {
+  /** Wins over this library's `useIdentityContext().idToken`. */
+  idToken?: string | null;
+  /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
+}
+
 export interface UseMappingReviewQueueResult {
   items: IngestItem[];
   threshold: number;
@@ -62,8 +69,10 @@ export interface UseMappingReviewQueueResult {
   skip: (itemId: string) => Promise<void>;
 }
 
-export function useMappingReviewQueue(): UseMappingReviewQueueResult {
-  const { idToken } = useIdentityContext();
+export function useMappingReviewQueue(options: UseMappingReviewQueueOptions = {}): UseMappingReviewQueueResult {
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = options.idToken !== undefined ? options.idToken : (identityCtx?.idToken ?? null);
+  const BASE_URL = options.baseUrl ?? getApiBaseUrl();
   const [items, setItems] = useState<IngestItem[]>([]);
   const [threshold, setThreshold] = useState(0.7);
   const [loading, setLoading] = useState(true);
@@ -89,7 +98,7 @@ export function useMappingReviewQueue(): UseMappingReviewQueueResult {
     } finally {
       setLoading(false);
     }
-  }, [headers]);
+  }, [headers, BASE_URL]);
 
   useEffect(() => {
     void refresh();
@@ -109,7 +118,7 @@ export function useMappingReviewQueue(): UseMappingReviewQueueResult {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       await refresh();
     },
-    [headers, refresh],
+    [headers, refresh, BASE_URL],
   );
 
   const skip = useCallback(
@@ -121,7 +130,7 @@ export function useMappingReviewQueue(): UseMappingReviewQueueResult {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       await refresh();
     },
-    [headers, refresh],
+    [headers, refresh, BASE_URL],
   );
 
   return { items, threshold, loading, error, refresh, remap, skip };

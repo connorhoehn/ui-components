@@ -1,6 +1,6 @@
 import { n as e, t } from "./registry-DbX3MVAA.js";
 import { i as n, n as r, r as i } from "./documentType-rRZpKWbO.js";
-import { i as a } from "./useDocumentTypes-DwWC-vAB.js";
+import { i as a } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as o } from "./cn-DhjIN-s0.js";
 import { _ as s } from "./overlayStack-BDlo8PJg.js";
 import { n as c } from "./Stack-CkiMw5K0.js";

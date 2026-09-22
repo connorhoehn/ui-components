@@ -1,4 +1,4 @@
-import { n as e, r as t, t as n } from "./useDocumentTypes-DwWC-vAB.js";
+import { n as e, r as t, t as n } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as r } from "./cn-DhjIN-s0.js";
 import { _ as i } from "./overlayStack-BDlo8PJg.js";
 import { a, i as o, n as s, o as c, r as l, t as u } from "./Table-CypeBEj0.js";
@@ -1693,7 +1693,7 @@ function We({ items: e, selectedId: t, readOnly: n = !1, onSelect: r, onMove: i,
 }
 //#endregion
 //#region src/components/doc-editor/presentation/PresentationEditor.tsx
-var Ge = M(() => import("./SortableSlideList-ZrIo0xi_.js"));
+var Ge = M(() => import("./SortableSlideList-CFpfgchV.js"));
 function Ke({ back: e }) {
 	return /* @__PURE__ */ F("svg", {
 		viewBox: "0 0 16 16",

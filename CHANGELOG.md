@@ -6,6 +6,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.357.0] — 2026-09-22
+
+### Fixed — components that only worked with this library's providers/env now work with props alone
+
+2.356.0 fixed this for `UserPicker`. This release does the same for the rest
+of the surfaces a consumer-audit found still (a) calling
+`useIdentityContext()`/`usePresenceContext()` unconditionally — throwing at
+mount for a host that runs its own identity/presence providers instead of
+this library's — and/or (b) reading `import.meta.env.VITE_*` inlined at THIS
+library's own build time, which is always `''` in a published build no
+matter what a consumer's `.env` sets.
+
+- **Switched to the non-throwing `useOptionalIdentityContext`/
+  `useOptionalPresenceContext`**, with explicit override props/options that
+  win when given: `useDocumentEditorState`/`DocumentEditorPage` (`idToken`),
+  `AppLayout` (`identity`, `presenceUsers`), `MappingReviewPage`,
+  `IngestDashboard`, `IngestItemDrawer`, `SourceDetailPage`,
+  `MappingRuleEditor` (`idToken`/`baseUrl`), `TemplatesModal`/`PipelinesPage`
+  (`userId`, plus `idToken`/`baseUrl` for the trigger-run request),
+  `PipelineMetrics`, `useTriggerRun`, `usePipelineMetrics`
+  (`idToken`/`baseUrl`). A host that mounts neither provider and passes no
+  props now renders with safe fallbacks (`''`/`null`/`[]`/a no-op
+  `onSignOut`) instead of crashing at mount; a host that mounts the
+  providers and passes nothing keeps byte-identical behavior.
+- **Same fix for the transitive hooks these pages actually depend on** —
+  `useIngestSources`, `useIngestItems`, `useMappingReviewQueue`,
+  `usePipelineDefs`, `useSourceSloMetrics` (and `SourceSloPanel`, which owns
+  it) — all of which also called `useIdentityContext()` unconditionally and
+  would otherwise have kept the pages above from actually rendering
+  provider-free despite the page-level fix.
+- **`setApiBaseUrl`/`getApiBaseUrl`** (new root exports, `./lib/apiBaseUrl`):
+  generalises the document-type adapter's 2.352.0
+  `setDocumentTypeApiBaseUrl`/`getDocumentTypeApiBaseUrl` (kept as aliases)
+  into one shared runtime resolver used by every surface above. Resolution
+  order: an explicit `baseUrl` prop/option → the module override (`setApiBaseUrl`)
+  → a runtime `globalThis.__UI_COMPONENTS_ENV__` escape hatch (for a host
+  that injects env at runtime rather than at this library's build time) →
+  this library's own build-time `VITE_SOCIAL_API_URL`/`VITE_PLATFORM_API_URL`
+  last, effectively always `''` in a published build.
+- **Left deliberately unfixed** (out of this pass — none throw without a
+  provider, or they're a different pattern): the identity-admin/ingest-audit/
+  sync-conflicts/DLQ hooks still calling `useIdentityContext()` unconditionally
+  (`useIdentityResource`, `useIdentityDiagnostics`, `useIdentityMfaAdmin`,
+  `useIdentityAdmin`, `useSyncConflicts`, `useIdentityAudit`, `useIngestAudit`,
+  `useIdentityPools`, `useDocTypeProposals`, `useIngestDLQ`); and the wider set
+  of baked-in `VITE_*` reads outside this pass's surfaces (`useRooms`,
+  `useApiHealth`, `useAuth`, `useGroups`, `useLikes`, `useComments`,
+  `useFriends`, `usePosts`, `useSocialProfile`, `useTypedDocuments`,
+  `config/gateway.ts`, `utils/socialApi.ts`, `PipelineRunsContext`,
+  `EventStreamContext`, `pipelineStorageRemote`, `usePipelineModuleDashboard`,
+  `TriggerConfig`, `EventsPage`, `identityApi`, `pipelineBreakpointPatch`).
+- Export snapshot regenerated: `+setApiBaseUrl`, `+getApiBaseUrl`.
+
 ## [2.344.0] — 2026-09-21
 
 ### Added — `PresentationEditor`: the writing end of the deck generator

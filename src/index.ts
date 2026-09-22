@@ -170,12 +170,18 @@ export type {
 // ---------------------------------------------------------------------------
 
 // `import.meta.env.VITE_*` is replaced when a bundle is BUILT, and the bundle
-// that ships is this library's — so the env names the document-type adapter
-// falls back to are baked in as `''` for every consumer, and its requests went
-// same-origin to a path that is not there, silently. A host calls this once at
-// start-up with its own origin. Same gap, same shape, as `ActivityPanel`'s
-// `baseUrl` prop and `useTypedDocuments`' `baseUrl` option.
+// that ships is this library's — so the env names every REST-backed surface
+// falls back to are baked in as `''` for every consumer, and requests went
+// same-origin to a path that is not there, silently. A host calls
+// `setApiBaseUrl` once at start-up with its own origin and it wins over both
+// the build-time env and a small runtime-env escape hatch — see
+// `./lib/apiBaseUrl`'s own doc comment for the full resolution order. Same
+// gap, same shape, as `ActivityPanel`'s `baseUrl` prop and
+// `useTypedDocuments`' `baseUrl` option.
 export {
+  setApiBaseUrl,
+  getApiBaseUrl,
+  /** @deprecated Aliases of `setApiBaseUrl`/`getApiBaseUrl` — see `./lib/apiBaseUrl`. */
   setDocumentTypeApiBaseUrl,
   getDocumentTypeApiBaseUrl,
-} from './lib/documentTypeApiAdapter';
+} from './lib/apiBaseUrl';

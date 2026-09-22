@@ -12,16 +12,16 @@ import Chip from '../shared/Chip';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
 import { cn } from '../../lib/cn';
-import { useIdentityContext } from '../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
+import { getApiBaseUrl } from '../../lib/apiBaseUrl';
 import type { IngestItem } from '../../types/ingest';
 
-const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
-
 /**
- * Dev-only button that posts to /api/ingest/dev/seed-fake-content.
+ * Dev-only button that posts to /api/ingest/dev/seed-fake-content. `idToken`
+ * and `baseUrl` are passed down from `IngestDashboard` (already resolved
+ * against its own props/context) rather than reading either itself.
  */
-function DevSeedButton() {
-  const { idToken } = useIdentityContext();
+function DevSeedButton({ idToken, baseUrl }: { idToken: string | null; baseUrl: string }) {
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
@@ -31,7 +31,7 @@ function DevSeedButton() {
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (idToken) headers['Authorization'] = `Bearer ${idToken}`;
-      const res = await fetch(`${BASE_URL}/api/ingest/dev/seed-fake-content`, {
+      const res = await fetch(`${baseUrl}/api/ingest/dev/seed-fake-content`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ count }),
@@ -93,10 +93,26 @@ const DASHBOARD_QUEUE_DEPTH_ALERT = 50;
 // Component
 // ---------------------------------------------------------------------------
 
-export default function IngestDashboard() {
+export interface IngestDashboardProps {
+  /**
+   * Bearer token for the dashboard's own requests (dev seed button) and
+   * for `useIngestSources`/`useIngestItems`. Wins over this library's
+   * `useIdentityContext().idToken`. Defaults to the context's `idToken`
+   * (or `null` when no `<IdentityProvider>` is mounted) via the
+   * non-throwing `useOptionalIdentityContext`.
+   */
+  idToken?: string | null;
+  /** Origin for every ingest request. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
+}
+
+export default function IngestDashboard({ idToken: idTokenProp, baseUrl }: IngestDashboardProps = {}) {
   const navigate = useNavigate();
-  const { sources, loading: sourcesLoading, error: sourcesError, refresh: refreshSources } = useIngestSources();
-  const { items, loading: itemsLoading, error: itemsError, refresh: refreshItems } = useIngestItems();
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = idTokenProp !== undefined ? idTokenProp : (identityCtx?.idToken ?? null);
+  const resolvedBaseUrl = baseUrl ?? getApiBaseUrl();
+  const { sources, loading: sourcesLoading, error: sourcesError, refresh: refreshSources } = useIngestSources({ idToken, baseUrl });
+  const { items, loading: itemsLoading, error: itemsError, refresh: refreshItems } = useIngestItems({ idToken, baseUrl });
 
   const loading = sourcesLoading || itemsLoading;
   const error = sourcesError || itemsError;
@@ -179,7 +195,7 @@ export default function IngestDashboard() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="m-0 text-[22px] font-bold text-text-primary">Ingest</h2>
         <div className="flex gap-2.5 items-center">
-          {import.meta.env.DEV ? <DevSeedButton /> : null}
+          {import.meta.env.DEV ? <DevSeedButton idToken={idToken} baseUrl={resolvedBaseUrl} /> : null}
           <button
             className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]"
             onClick={() => navigate('/ingest/sources')}

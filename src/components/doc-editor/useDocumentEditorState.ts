@@ -12,7 +12,7 @@ import { useCollaborativeDoc } from '../../hooks/useCollaborativeDoc';
 import { useDocumentComments } from '../../hooks/useDocumentComments';
 import { useDocumentReviews } from '../../hooks/useDocumentReviews';
 import { useDocumentItems } from '../../hooks/useDocumentItems';
-import { useIdentityContext } from '../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
 import { useVersionHistory } from '../../hooks/useVersionHistory';
 import { loadTypes } from '../../hooks/useDocumentTypes';
 import { useMyMentionsAndTasks } from '../../hooks/useMyMentionsAndTasks';
@@ -65,6 +65,15 @@ export interface UseDocumentEditorStateOptions {
   onDockVideo?: () => void;
   onUndockVideo?: () => void;
   onBack?: () => void;
+  /**
+   * Bearer token for every REST call this hook makes (comments, reviews,
+   * items, video sessions). Wins over this library's
+   * `useIdentityContext().idToken`. Defaults to the context's `idToken` (or
+   * `null` when no `<IdentityProvider>` is mounted) via the non-throwing
+   * `useOptionalIdentityContext`, so a host running its own identity
+   * provider can pass its token here instead of mounting this library's.
+   */
+  idToken?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -84,6 +93,7 @@ export function useDocumentEditorState({
   onDockVideo,
   onUndockVideo,
   onBack,
+  idToken: idTokenProp,
 }: UseDocumentEditorStateOptions) {
   const [mode, setMode] = useState<ViewMode>(getInitialMode);
   const {
@@ -155,7 +165,8 @@ export function useDocumentEditorState({
   const [commentSidebarOpen, setCommentSidebarOpen] = useState(false);
   const [commentSectionId, setCommentSectionId] = useState<string | null>(null);
 
-  const { idToken } = useIdentityContext();
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = idTokenProp !== undefined ? idTokenProp : (identityCtx?.idToken ?? null);
   const videoSessions = useVideoSessions(documentId, idToken);
 
   const {

@@ -20,7 +20,10 @@ const navigateMock = vi.fn<(to: string) => void>();
 vi.mock('../../../hooks/useIngestSources', () => ({ useIngestSources: () => useIngestSourcesMock() }));
 vi.mock('../../../hooks/useIngestItems', () => ({ useIngestItems: () => useIngestItemsMock() }));
 vi.mock('react-router', () => ({ useNavigate: () => navigateMock }));
-vi.mock('../../../contexts/IdentityContext', () => ({ useIdentityContext: () => ({ idToken: 'tok' }) }));
+vi.mock('../../../contexts/IdentityContext', () => ({
+  useIdentityContext: () => ({ idToken: 'tok' }),
+  useOptionalIdentityContext: () => ({ idToken: 'tok' }),
+}));
 
 import IngestDashboard from '../IngestDashboard';
 

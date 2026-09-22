@@ -208,35 +208,19 @@ export function hydrateServerDocumentType(item: ApiDocumentTypeItem): DocumentTy
 // Host apps disagree on what they call this origin: the library's own
 // surfaces read VITE_SOCIAL_API_URL, the realtime-examples app renamed it
 // VITE_PLATFORM_API_URL, and hardcoding either one is precisely the kind of
-// single-string mismatch that motivated a forked copy of this file. Accept
-// both, library name first.
+// single-string mismatch that motivated a forked copy of this file. The
+// shared resolver in `./apiBaseUrl` accepts both, library name first, plus a
+// runtime-env escape hatch — see its own doc comment for the full chain.
 //
-// Neither env name reaches a CONSUMER, though. `import.meta.env.VITE_*` is
-// statically replaced when the bundle is built, and the bundle that ships is
-// this library's — so a published build carries whatever the library's own
-// build environment had, which is nothing, and every consumer silently gets
-// `''`. `setDocumentTypeApiBaseUrl` is the way out: a host calls it once at
-// boot with its own origin and it wins over both env names.
-let baseUrlOverride: string | null = null;
-
-/**
- * Point every document-type request at `url`. Call once during app start-up,
- * before the first `useDocumentTypes`. Pass `null` to fall back to the
- * build-time env names again (that is also how a test suite resets it).
- */
-export function setDocumentTypeApiBaseUrl(url: string | null): void {
-  baseUrlOverride = url;
-}
-
-/** The origin requests currently go to — the override, else the env. */
-export function getDocumentTypeApiBaseUrl(): string {
-  return getBaseUrl();
-}
+// `setDocumentTypeApiBaseUrl`/`getDocumentTypeApiBaseUrl` are re-exported
+// here (as aliases of the generalised `setApiBaseUrl`/`getApiBaseUrl`, added
+// 2.357.0) purely for import-path back-compat — `useDocumentTypes.ts` and
+// `index.ts` both import these two names from THIS module.
+export { setApiBaseUrl as setDocumentTypeApiBaseUrl, getApiBaseUrl as getDocumentTypeApiBaseUrl } from './apiBaseUrl';
+import { getApiBaseUrl } from './apiBaseUrl';
 
 function getBaseUrl(): string {
-  if (baseUrlOverride !== null) return baseUrlOverride;
-  const env = (import.meta.env ?? {}) as Record<string, string | undefined>;
-  return env.VITE_SOCIAL_API_URL ?? env.VITE_PLATFORM_API_URL ?? '';
+  return getApiBaseUrl();
 }
 
 function authHeaders(idToken?: string | null): Record<string, string> {

@@ -4,10 +4,9 @@
 // sourceId and status. Provides retry and skip actions for individual items.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useIdentityContext } from '../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../contexts/IdentityContext';
+import { getApiBaseUrl } from '../lib/apiBaseUrl';
 import type { IngestItem, IngestItemStatus, IngestMappingMethod } from '../types/ingest';
-
-const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 
 // Backend wire shape (from social-api/src/ingest/types.ts). The backend uses
 // `ingestId` / `filePath` / `mappedTypeId`; the frontend type uses
@@ -53,6 +52,10 @@ function normalizeItem(raw: BackendIngestItem): IngestItem {
 export interface UseIngestItemsOptions {
   sourceId?: string | null;
   status?: IngestItemStatus | null;
+  /** Wins over this library's `useIdentityContext().idToken`. */
+  idToken?: string | null;
+  /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
 }
 
 export interface UseIngestItemsReturn {
@@ -82,7 +85,9 @@ export interface UseIngestItemsReturn {
 
 export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestItemsReturn {
   const { sourceId, status } = options;
-  const { idToken } = useIdentityContext();
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = options.idToken !== undefined ? options.idToken : (identityCtx?.idToken ?? null);
+  const BASE_URL = options.baseUrl ?? getApiBaseUrl();
   const [items, setItems] = useState<IngestItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -139,7 +144,7 @@ export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestIt
         setLoading(false);
       }
     }
-  }, [headers, sourceId, status]);
+  }, [headers, sourceId, status, BASE_URL]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -169,7 +174,7 @@ export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestIt
       setActionError(err instanceof Error ? err.message : String(err));
       return false;
     }
-  }, [headers]);
+  }, [headers, BASE_URL]);
 
   const skipItem = useCallback(async (itemId: string): Promise<boolean> => {
     try {
@@ -185,7 +190,7 @@ export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestIt
       setActionError(err instanceof Error ? err.message : String(err));
       return false;
     }
-  }, [headers]);
+  }, [headers, BASE_URL]);
 
   return {
     items, loading, error, refresh, retryItem, skipItem,

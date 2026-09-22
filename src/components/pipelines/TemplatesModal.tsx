@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Modal from '../shared/Modal';
 import { cn } from '../../lib/cn';
 import { savePipeline } from './persistence/pipelineStorage';
-import { useIdentityContext } from '../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
 import { pipelineTemplates, type PipelineTemplate } from './templates';
 import { scaffoldPrerequisites } from './templates/scaffoldPrerequisites';
 import { Input } from '../forms/Input';
@@ -20,6 +20,14 @@ interface TemplatesModalProps {
   /** Legacy API: invoked with the raw template; caller is responsible for
    * persistence + navigation. Kept for backwards-compat. */
   onSelect?: (template: PipelineTemplate) => void;
+  /**
+   * Author id baked into templates built from this modal. Wins over this
+   * library's `useIdentityContext().userId`. Defaults to the context's
+   * `userId` (or `''`, which the template builders below turn into
+   * `'anonymous'`, when no `<IdentityProvider>` is mounted) via the
+   * non-throwing `useOptionalIdentityContext`.
+   */
+  userId?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -131,9 +139,10 @@ function TemplateCard({ template, meta, onPick }: TemplateCardProps) {
 // ---------------------------------------------------------------------------
 
 export default function TemplatesModal({
-  open, onClose, onCreated, onSelect,
+  open, onClose, onCreated, onSelect, userId: userIdProp,
 }: TemplatesModalProps) {
-  const { userId } = useIdentityContext();
+  const identityCtx = useOptionalIdentityContext();
+  const userId = userIdProp !== undefined ? userIdProp : (identityCtx?.userId ?? '');
   const [search, setSearch] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
 

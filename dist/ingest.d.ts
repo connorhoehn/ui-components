@@ -8,7 +8,20 @@ export declare function DocTypeProposalsPage(): JSX.Element;
 
 export declare function IngestAuditPage(): JSX.Element;
 
-export declare function IngestDashboard(): JSX.Element;
+export declare function IngestDashboard({ idToken: idTokenProp, baseUrl }?: IngestDashboardProps): JSX.Element;
+
+declare interface IngestDashboardProps {
+    /**
+     * Bearer token for the dashboard's own requests (dev seed button) and
+     * for `useIngestSources`/`useIngestItems`. Wins over this library's
+     * `useIdentityContext().idToken`. Defaults to the context's `idToken`
+     * (or `null` when no `<IdentityProvider>` is mounted) via the
+     * non-throwing `useOptionalIdentityContext`.
+     */
+    idToken?: string | null;
+    /** Origin for every ingest request. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+    baseUrl?: string;
+}
 
 declare interface IngestItem {
     itemId: string;
@@ -28,7 +41,7 @@ declare interface IngestItem {
     updatedAt: string;
 }
 
-export declare function IngestItemDrawer({ item, sourceName, onClose, onRetry, onSkip }: IngestItemDrawerProps): JSX.Element | null;
+export declare function IngestItemDrawer({ item, sourceName, onClose, onRetry, onSkip, idToken: idTokenProp, baseUrl, }: IngestItemDrawerProps): JSX.Element | null;
 
 declare interface IngestItemDrawerProps {
     item: IngestItem | null;
@@ -36,6 +49,15 @@ declare interface IngestItemDrawerProps {
     onClose: () => void;
     onRetry: (itemId: string) => Promise<boolean | void>;
     onSkip: (itemId: string) => Promise<boolean | void>;
+    /**
+     * Bearer token for the drawer's own "Re-map" request. Wins over this
+     * library's `useIdentityContext().idToken`. Defaults to the context's
+     * `idToken` (or `null` when no `<IdentityProvider>` is mounted) via the
+     * non-throwing `useOptionalIdentityContext`.
+     */
+    idToken?: string | null;
+    /** Origin for the "Re-map" request. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+    baseUrl?: string;
 }
 
 export declare function IngestItemsPage(): JSX.Element;
@@ -44,7 +66,22 @@ declare type IngestItemStatus = 'queued' | 'mapping' | 'materializing' | 'trigge
 
 declare type IngestMappingMethod = 'rule' | 'llm-match' | 'llm-generate';
 
-export declare function MappingReviewPage(): JSX.Element;
+export declare function MappingReviewPage({ idToken: idTokenProp, baseUrl }?: MappingReviewPageProps): JSX.Element;
+
+declare interface MappingReviewPageProps {
+    /**
+     * Bearer token for the review-queue and document-types requests. Wins
+     * over this library's `useIdentityContext().idToken`. Defaults to the
+     * context's `idToken` (or `null` when no `<IdentityProvider>` is mounted)
+     * via the non-throwing `useOptionalIdentityContext`.
+     */
+    idToken?: string | null;
+    /**
+     * Origin for `/api/ingest/mapping/review` and `/api/document-types`. Wins
+     * over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`.
+     */
+    baseUrl?: string;
+}
 
 declare interface MappingRule {
     /** Glob or regex pattern matching source file paths. */
@@ -57,7 +94,7 @@ declare interface MappingRule {
     priority: number;
 }
 
-export declare function MappingRuleEditor({ rules, onChange, readOnly }: MappingRuleEditorProps): JSX.Element;
+export declare function MappingRuleEditor({ rules, onChange, readOnly, idToken: idTokenProp, baseUrl, }: MappingRuleEditorProps): JSX.Element;
 
 declare interface MappingRuleEditorProps {
     rules: MappingRule[];
@@ -73,15 +110,40 @@ declare interface MappingRuleEditorProps {
      * preview box stays: it is a read-only dry run and is useful here.
      */
     readOnly?: boolean;
+    /**
+     * Bearer token for the "Preview" request. Wins over this library's
+     * `useIdentityContext().idToken`. Defaults to the context's `idToken`
+     * (or `null` when no `<IdentityProvider>` is mounted) via the
+     * non-throwing `useOptionalIdentityContext`.
+     */
+    idToken?: string | null;
+    /** Origin for the "Preview" request. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+    baseUrl?: string;
 }
 
 declare interface Props {
     sourceId: string;
+    /** Wins over this library's `useIdentityContext().idToken`. */
+    idToken?: string | null;
+    /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+    baseUrl?: string;
 }
 
-export declare function SourceDetailPage(): JSX.Element | null;
+export declare function SourceDetailPage({ idToken: idTokenProp, baseUrl }?: SourceDetailPageProps): JSX.Element | null;
 
-export declare function SourceSloPanel({ sourceId }: Props): JSX.Element;
+declare interface SourceDetailPageProps {
+    /**
+     * Bearer token for every request this page makes. Wins over this
+     * library's `useIdentityContext().idToken`. Defaults to the context's
+     * `idToken` (or `null` when no `<IdentityProvider>` is mounted) via the
+     * non-throwing `useOptionalIdentityContext`.
+     */
+    idToken?: string | null;
+    /** Origin for every ingest/pipeline-def/document-type request. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+    baseUrl?: string;
+}
+
+export declare function SourceSloPanel({ sourceId, idToken, baseUrl }: Props): JSX.Element;
 
 export declare function SourcesPage(): JSX.Element;
 
@@ -150,6 +212,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -160,12 +235,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -186,16 +258,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

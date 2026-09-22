@@ -21,10 +21,9 @@
 // surfaces `source` on the returned value so consumers can branch on it.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useIdentityContext } from '../../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../../contexts/IdentityContext';
+import { getApiBaseUrl } from '../../../lib/apiBaseUrl';
 
-const SOCIAL_API_URL =
-  import.meta.env.VITE_SOCIAL_API_URL || '';
 const POLL_INTERVAL_MS = 10_000;
 
 // Exponential backoff curve used after a failed fetch, so a downed API
@@ -162,12 +161,18 @@ export interface UsePipelineMetricsOptions {
    * applies on top of whatever cadence is set.
    */
   pollIntervalMs?: number | null;
+  /** Wins over this library's `useIdentityContext().idToken`. */
+  idToken?: string | null;
+  /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
 }
 
 export function usePipelineMetrics(
   options: UsePipelineMetricsOptions = {},
 ): UsePipelineMetricsResult {
-  const { idToken } = useIdentityContext();
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = options.idToken !== undefined ? options.idToken : (identityCtx?.idToken ?? null);
+  const SOCIAL_API_URL = options.baseUrl ?? getApiBaseUrl();
   const { pollIntervalMs = POLL_INTERVAL_MS } = options;
   const pollingEnabled =
     typeof pollIntervalMs === 'number' && pollIntervalMs > 0;
@@ -254,7 +259,7 @@ export function usePipelineMetrics(
         setLoading(false);
       }
     }
-  }, [idToken]);
+  }, [idToken, SOCIAL_API_URL]);
 
   useEffect(() => {
     mountedRef.current = true;

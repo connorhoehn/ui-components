@@ -6,7 +6,8 @@
 import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { useIdentityContext } from '../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
+import { getApiBaseUrl } from '../../lib/apiBaseUrl';
 import Chip from '../shared/Chip';
 import type { ChipTone } from '../shared/Chip';
 import SkeletonCard from '../shared/SkeletonCard';
@@ -28,8 +29,6 @@ const SCHEDULE_PRESETS: Array<{ label: string; cron: string }> = [
   { label: 'Daily 2am',      cron: '0 2 * * *' },
   { label: 'Weekly Mon 6am', cron: '0 6 * * 1' },
 ];
-
-const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -101,12 +100,26 @@ function normalizeRules(raw: unknown[]): MappingRule[] {
 // Component
 // ---------------------------------------------------------------------------
 
-export default function SourceDetailPage() {
+export interface SourceDetailPageProps {
+  /**
+   * Bearer token for every request this page makes. Wins over this
+   * library's `useIdentityContext().idToken`. Defaults to the context's
+   * `idToken` (or `null` when no `<IdentityProvider>` is mounted) via the
+   * non-throwing `useOptionalIdentityContext`.
+   */
+  idToken?: string | null;
+  /** Origin for every ingest/pipeline-def/document-type request. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
+}
+
+export default function SourceDetailPage({ idToken: idTokenProp, baseUrl }: SourceDetailPageProps = {}) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { idToken } = useIdentityContext();
-  const { pipelines: pipelineDefs } = usePipelineDefs();
-  const { types: docTypes } = useDocumentTypes({ idToken });
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = idTokenProp !== undefined ? idTokenProp : (identityCtx?.idToken ?? null);
+  const BASE_URL = baseUrl ?? getApiBaseUrl();
+  const { pipelines: pipelineDefs } = usePipelineDefs({ idToken, baseUrl });
+  const { types: docTypes } = useDocumentTypes({ idToken, baseUrl });
 
   const [source, setSource] = useState<IngestSource | null>(null);
   const [loading, setLoading] = useState(true);
@@ -150,7 +163,7 @@ export default function SourceDetailPage() {
     } finally {
       if (!signal?.aborted) setLoading(false);
     }
-  }, [id, headers]);
+  }, [id, headers, BASE_URL]);
 
   useEffect(() => {
     // Abort on teardown. fetchSource's identity changes with `id` and
@@ -202,7 +215,7 @@ export default function SourceDetailPage() {
     } finally {
       setSaving(false);
     }
-  }, [source, id, editConfig, editRules, editSchedule, editPipelineId, editPipelineByDocType, headers]);
+  }, [source, id, editConfig, editRules, editSchedule, editPipelineId, editPipelineByDocType, headers, BASE_URL]);
 
   const isDirty = editing && source !== null && (
     JSON.stringify(editConfig) !== JSON.stringify(source.config) ||
@@ -237,7 +250,7 @@ export default function SourceDetailPage() {
     } finally {
       setSyncing(false);
     }
-  }, [id, headers, fetchSource]);
+  }, [id, headers, fetchSource, BASE_URL]);
 
   const handleTogglePause = useCallback(async () => {
     if (!source || !id) return;
@@ -254,7 +267,7 @@ export default function SourceDetailPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }
-  }, [source, id, headers]);
+  }, [source, id, headers, BASE_URL]);
 
   // Loading state
   if (loading && !source) {
@@ -401,18 +414,20 @@ export default function SourceDetailPage() {
       </div>
 
       {/* Per-source SLO panel */}
-      {source ? <SourceSloPanel sourceId={source.sourceId} /> : null}
+      {source ? <SourceSloPanel sourceId={source.sourceId} idToken={idToken} baseUrl={baseUrl} /> : null}
 
       {/* Mapping Rules section */}
       <div className="bg-surface border border-border rounded-[10px] p-4">
         <div className="text-sm font-semibold text-text-primary mb-3">Mapping Rules</div>
         {editing ? (
-          <MappingRuleEditor rules={editRules} onChange={setEditRules} />
+          <MappingRuleEditor rules={editRules} onChange={setEditRules} idToken={idToken} baseUrl={baseUrl} />
         ) : (
           <MappingRuleEditor
             rules={source.mappingRules}
             onChange={() => { /* unreachable: readOnly hides every mutating control */ }}
             readOnly
+            idToken={idToken}
+            baseUrl={baseUrl}
           />
         )}
       </div>

@@ -17,6 +17,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('../../../contexts/IdentityContext', () => ({
   useIdentityContext: () => ({ idToken: 'tok' }),
+  useOptionalIdentityContext: () => ({ idToken: 'tok' }),
 }));
 vi.mock('../../../hooks/useIngestProgress', () => ({
   useIngestProgress: () => ({ events: [], activeSyncs: new Map(), clearEvents: vi.fn() }),

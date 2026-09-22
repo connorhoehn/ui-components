@@ -8,7 +8,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
-import { useIdentityContext } from '../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
+import { getApiBaseUrl } from '../../lib/apiBaseUrl';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -211,15 +212,28 @@ function RunsBarChart({ started, completed, failed, active }: {
 
 const POLL_INTERVAL = 10_000;
 
-export default function PipelineMetrics() {
+export interface PipelineMetricsProps {
+  /**
+   * Bearer token for `/api/pipelines/metrics`. Wins over this library's
+   * `useIdentityContext().idToken`. Defaults to the context's `idToken`
+   * (or `null` when no `<IdentityProvider>` is mounted) via the
+   * non-throwing `useOptionalIdentityContext`.
+   */
+  idToken?: string | null;
+  /** Origin for `/api/pipelines/metrics`. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
+}
+
+export default function PipelineMetrics({ idToken: idTokenProp, baseUrl: baseUrlProp }: PipelineMetricsProps = {}) {
   const navigate = useNavigate();
-  const { idToken } = useIdentityContext();
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = idTokenProp !== undefined ? idTokenProp : (identityCtx?.idToken ?? null);
   const [metrics, setMetrics] = useState<BridgeMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const baseUrl = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
+  const baseUrl = baseUrlProp ?? getApiBaseUrl();
 
   const fetchMetrics = useCallback(async () => {
     if (!idToken) {

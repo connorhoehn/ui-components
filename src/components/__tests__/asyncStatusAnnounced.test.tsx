@@ -21,6 +21,7 @@ import DeadLetterQueuePage from '../ingest/DeadLetterQueuePage';
 
 vi.mock('../../contexts/IdentityContext', () => ({
   useIdentityContext: () => ({ idToken: 'test-token' }),
+  useOptionalIdentityContext: () => ({ idToken: 'test-token' }),
 }));
 
 beforeEach(() => {

@@ -24,8 +24,10 @@ import { useRooms } from '../../hooks/useRooms';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useEventCallback } from '../../hooks/useEventCallback';
 import { useWebSocketContext } from '../../contexts/WebSocketContext';
-import { useIdentityContext } from '../../contexts/IdentityContext';
-import { usePresenceContext } from '../../contexts/PresenceContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
+import type { IdentityContextValue } from '../../contexts/IdentityContext';
+import { useOptionalPresenceContext } from '../../contexts/PresenceContext';
+import type { PresenceUser } from '../../hooks/usePresence';
 
 import { ConnectionStatus } from './ConnectionStatus';
 import { ApiDegradedBanner } from './ApiDegradedBanner';
@@ -177,6 +179,22 @@ export interface AppLayoutProps {
    * can assert on the collapsed chrome.
    */
   defaultSidebarOpen?: boolean;
+
+  /**
+   * Full identity value. Wins over this library's `useIdentityContext()`,
+   * so a host running its own identity provider never needs to mount this
+   * library's `<IdentityProvider>` just for `AppLayout`. Defaults to the
+   * context's value (or field-by-field fallbacks — `''`/`null`/a no-op
+   * `onSignOut` — when no `<IdentityProvider>` is mounted and this prop is
+   * also omitted) via the non-throwing `useOptionalIdentityContext`.
+   */
+  identity?: IdentityContextValue;
+  /**
+   * Presence-sourced users. Wins over this library's `usePresenceContext()`,
+   * for the same reason as `identity` above. Defaults to the context's
+   * `presenceUsers` (or `[]` when no `<PresenceProvider>` is mounted).
+   */
+  presenceUsers?: PresenceUser[];
 }
 
 
@@ -218,11 +236,26 @@ function AppLayoutInner({
   activityEvents,
   activityPublish,
   defaultSidebarOpen = true,
+  identity: identityProp,
+  presenceUsers: presenceUsersProp,
 }: AppLayoutProps) {
   // Pull shared state from contexts
   const { connectionState, sendMessage, onMessage, ws, clientId, sessionToken } = useWebSocketContext();
-  const { userId, displayName, userEmail, idToken, onSignOut } = useIdentityContext();
-  const { presenceUsers, currentClientId } = usePresenceContext();
+  // `identityProp`/presence context are non-throwing (`useOptional*`) so a
+  // host mounting neither this library's `<IdentityProvider>` nor its
+  // `<PresenceProvider>` still renders — with safe fallbacks below — rather
+  // than crashing at mount. See the `identity`/`presenceUsers` prop docs on
+  // `AppLayoutProps`.
+  const identityCtx = useOptionalIdentityContext();
+  const identity = identityProp ?? identityCtx;
+  const userId = identity?.userId ?? '';
+  const displayName = identity?.displayName ?? '';
+  const userEmail = identity?.userEmail ?? null;
+  const idToken = identity?.idToken ?? null;
+  const onSignOut = identity?.onSignOut ?? (() => {});
+  const presenceCtx = useOptionalPresenceContext();
+  const presenceUsers = presenceUsersProp ?? presenceCtx?.presenceUsers ?? [];
+  const currentClientId = presenceCtx?.currentClientId ?? null;
   const navigate = useNavigate();
   const location = useLocation();
   const apiHealth = useApiHealth();

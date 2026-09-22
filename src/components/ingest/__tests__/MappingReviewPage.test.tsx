@@ -16,6 +16,7 @@ vi.mock('../../../hooks/useDocumentTypes', () => ({
 
 vi.mock('../../../contexts/IdentityContext', () => ({
   useIdentityContext: () => ({ idToken: 'tok' }),
+  useOptionalIdentityContext: () => ({ idToken: 'tok' }),
 }));
 
 import MappingReviewPage from '../MappingReviewPage';

@@ -2246,7 +2246,21 @@ declare interface PipelineRunTrigger {
     payload: Record<string, unknown>;
 }
 
-export declare function PipelinesPage(): JSX.Element;
+export declare function PipelinesPage({ userId: userIdProp, idToken, baseUrl }?: PipelinesPageProps): JSX.Element;
+
+declare interface PipelinesPageProps {
+    /**
+     * Author id for pipelines created from this page (demo pipeline, template
+     * picks). Wins over this library's `useIdentityContext().userId`.
+     * Defaults to the context's `userId` (or `''` when no `<IdentityProvider>`
+     * is mounted) via the non-throwing `useOptionalIdentityContext`.
+     */
+    userId?: string;
+    /** Bearer token for the trigger-run request. Wins over this library's `useIdentityContext().idToken`. */
+    idToken?: string | null;
+    /** Origin for the trigger-run request. Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+    baseUrl?: string;
+}
 
 export declare function PipelineStatsPage(): JSX.Element;
 
@@ -3459,6 +3473,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -3469,12 +3496,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3495,16 +3519,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

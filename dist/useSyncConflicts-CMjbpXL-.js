@@ -1,47 +1,48 @@
-import { n as e } from "./IdentityContext-CQM1qwH6.js";
-import { n as t } from "./WebSocketContext-DUvjGLFq.js";
-import { useCallback as n, useEffect as r, useRef as i, useState as a } from "react";
+import { n as e, r as t } from "./IdentityContext-CQM1qwH6.js";
+import { t as n } from "./apiBaseUrl-DLrXlmVj.js";
+import { n as r } from "./WebSocketContext-DUvjGLFq.js";
+import { useCallback as i, useEffect as a, useRef as o, useState as s } from "react";
 //#region src/hooks/useDocTypeProposals.ts
-var o = "", s = 3e4;
-function c() {
-	let { idToken: t, userEmail: i } = e(), [c, l] = a([]), [u, d] = a(!0), [f, p] = a(null), m = n(() => {
+var c = "", l = 3e4;
+function u() {
+	let { idToken: t, userEmail: n } = e(), [r, o] = s([]), [u, d] = s(!0), [f, p] = s(null), m = i(() => {
 		let e = { "Content-Type": "application/json" };
 		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), h = n(async () => {
+	}, [t]), h = i(async () => {
 		d(!0), p(null);
 		try {
-			let e = await fetch(`${o}/api/ingest/mapping/proposals`, { headers: m() });
+			let e = await fetch(`${c}/api/ingest/mapping/proposals`, { headers: m() });
 			if (!e.ok) throw Error(`HTTP ${e.status}`);
 			let t = await e.json();
-			l(t.proposals);
+			o(t.proposals);
 		} catch (e) {
 			p(e instanceof Error ? e.message : String(e));
 		} finally {
 			d(!1);
 		}
 	}, [m]);
-	r(() => {
+	a(() => {
 		h();
 		let e = window.setInterval(() => {
 			document.hidden || h();
-		}, s);
+		}, l);
 		return () => window.clearInterval(e);
 	}, [h]);
-	let g = n(async (e, t) => {
-		let n = await fetch(`${o}/api/ingest/mapping/proposals/${encodeURIComponent(e)}/${t}`, {
+	let g = i(async (e, t) => {
+		let r = await fetch(`${c}/api/ingest/mapping/proposals/${encodeURIComponent(e)}/${t}`, {
 			method: "POST",
 			headers: m(),
-			body: JSON.stringify({ reviewedBy: i ?? "operator" })
+			body: JSON.stringify({ reviewedBy: n ?? "operator" })
 		});
-		if (!n.ok) throw Error(`HTTP ${n.status}`);
+		if (!r.ok) throw Error(`HTTP ${r.status}`);
 		await h();
 	}, [
 		m,
 		h,
-		i
+		n
 	]);
 	return {
-		proposals: c,
+		proposals: r,
 		loading: u,
 		error: f,
 		refresh: h,
@@ -51,26 +52,26 @@ function c() {
 }
 //#endregion
 //#region src/hooks/useIngestAudit.ts
-var l = "", u = 3e4;
-function d(t = {}) {
-	let { idToken: i } = e(), [o, s] = a([]), [c, d] = a(!0), [f, p] = a(null), m = n(async () => {
-		d(!0), p(null);
+var d = "", f = 3e4;
+function p(t = {}) {
+	let { idToken: n } = e(), [r, o] = s([]), [c, l] = s(!0), [u, p] = s(null), m = i(async () => {
+		l(!0), p(null);
 		try {
 			let e = { "Content-Type": "application/json" };
-			i && (e.Authorization = `Bearer ${i}`);
-			let n = new URLSearchParams();
-			t.since && n.set("since", t.since), t.until && n.set("until", t.until), t.actor && n.set("actor", t.actor), t.eventType && n.set("eventType", t.eventType), t.targetId && n.set("targetId", t.targetId), t.limit && n.set("limit", String(t.limit));
-			let r = n.toString(), a = `${l}/api/ingest/audit${r ? `?${r}` : ""}`, o = await fetch(a, { headers: e });
-			if (!o.ok) throw Error(`HTTP ${o.status}`);
-			let c = await o.json();
-			s(c.entries);
+			n && (e.Authorization = `Bearer ${n}`);
+			let r = new URLSearchParams();
+			t.since && r.set("since", t.since), t.until && r.set("until", t.until), t.actor && r.set("actor", t.actor), t.eventType && r.set("eventType", t.eventType), t.targetId && r.set("targetId", t.targetId), t.limit && r.set("limit", String(t.limit));
+			let i = r.toString(), a = `${d}/api/ingest/audit${i ? `?${i}` : ""}`, s = await fetch(a, { headers: e });
+			if (!s.ok) throw Error(`HTTP ${s.status}`);
+			let c = await s.json();
+			o(c.entries);
 		} catch (e) {
 			p(e instanceof Error ? e.message : String(e));
 		} finally {
-			d(!1);
+			l(!1);
 		}
 	}, [
-		i,
+		n,
 		t.since,
 		t.until,
 		t.actor,
@@ -78,78 +79,77 @@ function d(t = {}) {
 		t.targetId,
 		t.limit
 	]);
-	return r(() => {
+	return a(() => {
 		m();
 		let e = window.setInterval(() => {
 			document.hidden || m();
-		}, u);
+		}, f);
 		return () => window.clearInterval(e);
 	}, [m]), {
-		entries: o,
+		entries: r,
 		loading: c,
-		error: f,
+		error: u,
 		refresh: m
 	};
 }
 //#endregion
 //#region src/hooks/useIngestDLQ.ts
-var f = "", p = 3e4;
-function m() {
-	let { idToken: t } = e(), [i, o] = a([]), [s, c] = a(!0), [l, u] = a(null), d = n(() => {
+var m = "", h = 3e4;
+function g() {
+	let { idToken: t } = e(), [n, r] = s([]), [o, c] = s(!0), [l, u] = s(null), d = i(() => {
 		let e = { "Content-Type": "application/json" };
 		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), m = n(async () => {
+	}, [t]), f = i(async () => {
 		c(!0), u(null);
 		try {
-			let e = await fetch(`${f}/api/ingest/dlq`, { headers: d() });
+			let e = await fetch(`${m}/api/ingest/dlq`, { headers: d() });
 			if (!e.ok) {
 				if (e.status === 503) {
-					u("Ingest DLQ is not initialized yet. Start a sync to populate it."), o([]);
+					u("Ingest DLQ is not initialized yet. Start a sync to populate it."), r([]);
 					return;
 				}
 				throw Error(`HTTP ${e.status}`);
 			}
 			let t = await e.json();
-			o(t.items);
+			r(t.items);
 		} catch (e) {
 			u(e instanceof Error ? e.message : String(e));
 		} finally {
 			c(!1);
 		}
 	}, [d]);
-	return r(() => {
-		m();
+	return a(() => {
+		f();
 		let e = window.setInterval(() => {
-			document.hidden || m();
-		}, p);
+			document.hidden || f();
+		}, h);
 		return () => window.clearInterval(e);
-	}, [m]), {
-		entries: i,
-		loading: s,
+	}, [f]), {
+		entries: n,
+		loading: o,
 		error: l,
-		refresh: m,
-		replay: n(async (e) => {
-			let t = await fetch(`${f}/api/ingest/dlq/${encodeURIComponent(e)}/replay`, {
+		refresh: f,
+		replay: i(async (e) => {
+			let t = await fetch(`${m}/api/ingest/dlq/${encodeURIComponent(e)}/replay`, {
 				method: "POST",
 				headers: d()
 			});
 			if (!t.ok) throw Error(`HTTP ${t.status}`);
-			await m();
-		}, [d, m]),
-		drop: n(async (e) => {
-			let t = await fetch(`${f}/api/ingest/dlq/${encodeURIComponent(e)}`, {
+			await f();
+		}, [d, f]),
+		drop: i(async (e) => {
+			let t = await fetch(`${m}/api/ingest/dlq/${encodeURIComponent(e)}`, {
 				method: "DELETE",
 				headers: d()
 			});
 			if (!t.ok) throw Error(`HTTP ${t.status}`);
-			await m();
-		}, [d, m])
+			await f();
+		}, [d, f])
 	};
 }
 //#endregion
 //#region src/hooks/useIngestItems.ts
-var h = "";
-function g(e) {
+function _(e) {
 	return {
 		itemId: e.itemId ?? e.ingestId ?? "",
 		sourceId: e.sourceId,
@@ -166,80 +166,81 @@ function g(e) {
 		updatedAt: e.updatedAt
 	};
 }
-function _(t = {}) {
-	let { sourceId: o, status: s } = t, { idToken: c } = e(), [l, u] = a([]), [d, f] = a(!0), [p, m] = a(null), [_, v] = a(null), y = i(!0), b = i(0), x = n(() => {
+function v(e = {}) {
+	let { sourceId: r, status: c } = e, l = t(), u = e.idToken === void 0 ? l?.idToken ?? null : e.idToken, d = e.baseUrl ?? n(), [f, p] = s([]), [m, h] = s(!0), [g, v] = s(null), [y, b] = s(null), x = o(!0), S = o(0), C = i(() => {
 		let e = { "Content-Type": "application/json" };
-		return c && (e.Authorization = `Bearer ${c}`), e;
-	}, [c]), S = n(async () => {
-		let e = ++b.current, t = () => y.current && e === b.current;
-		f(!0), m(null);
+		return u && (e.Authorization = `Bearer ${u}`), e;
+	}, [u]), w = i(async () => {
+		let e = ++S.current, t = () => x.current && e === S.current;
+		h(!0), v(null);
 		try {
 			let e = new URLSearchParams();
-			o && e.set("sourceId", o), s && e.set("status", s);
-			let n = e.toString(), r = `${h}/api/ingest/items${n ? `?${n}` : ""}`, i = await fetch(r, { headers: x() });
-			if (!i.ok) throw Error(`HTTP ${i.status}`);
-			let a = await i.json();
-			t() && u((a.items ?? []).map(g));
+			r && e.set("sourceId", r), c && e.set("status", c);
+			let n = e.toString(), i = `${d}/api/ingest/items${n ? `?${n}` : ""}`, a = await fetch(i, { headers: C() });
+			if (!a.ok) throw Error(`HTTP ${a.status}`);
+			let o = await a.json();
+			t() && p((o.items ?? []).map(_));
 		} catch (e) {
-			t() && m(e instanceof Error ? e.message : String(e));
+			t() && v(e instanceof Error ? e.message : String(e));
 		} finally {
-			t() && f(!1);
+			t() && h(!1);
 		}
 	}, [
-		x,
-		o,
-		s
+		C,
+		r,
+		c,
+		d
 	]);
-	r(() => (y.current = !0, S(), () => {
-		y.current = !1, b.current += 1;
-	}), [S]);
-	let C = n(() => v(null), []);
+	a(() => (x.current = !0, w(), () => {
+		x.current = !1, S.current += 1;
+	}), [w]);
+	let T = i(() => b(null), []);
 	return {
-		items: l,
-		loading: d,
-		error: p,
-		refresh: S,
-		retryItem: n(async (e) => {
+		items: f,
+		loading: m,
+		error: g,
+		refresh: w,
+		retryItem: i(async (e) => {
 			try {
-				let t = await fetch(`${h}/api/ingest/items/${e}/retry`, {
+				let t = await fetch(`${d}/api/ingest/items/${e}/retry`, {
 					method: "POST",
-					headers: x()
+					headers: C()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
-				return u((t) => t.map((t) => t.itemId === e ? {
+				return p((t) => t.map((t) => t.itemId === e ? {
 					...t,
 					status: "queued",
 					error: null
 				} : t)), !0;
 			} catch (e) {
-				return v(e instanceof Error ? e.message : String(e)), !1;
+				return b(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [x]),
-		skipItem: n(async (e) => {
+		}, [C, d]),
+		skipItem: i(async (e) => {
 			try {
-				let t = await fetch(`${h}/api/ingest/items/${e}/skip`, {
+				let t = await fetch(`${d}/api/ingest/items/${e}/skip`, {
 					method: "POST",
-					headers: x()
+					headers: C()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
-				return u((t) => t.filter((t) => t.itemId !== e)), !0;
+				return p((t) => t.filter((t) => t.itemId !== e)), !0;
 			} catch (e) {
-				return v(e instanceof Error ? e.message : String(e)), !1;
+				return b(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [x]),
-		actionError: _,
-		clearActionError: C
+		}, [C, d]),
+		actionError: y,
+		clearActionError: T
 	};
 }
 //#endregion
 //#region src/hooks/useIngestProgress.ts
-var v = "ingest:progress";
-function y() {
-	let { sendMessage: e, onMessage: o, connectionState: s } = t(), [c, l] = a([]), [u, d] = a(() => /* @__PURE__ */ new Map()), f = i(e);
-	return r(() => {
+var y = "ingest:progress";
+function b() {
+	let { sendMessage: e, onMessage: t, connectionState: n } = r(), [c, l] = s([]), [u, d] = s(() => /* @__PURE__ */ new Map()), f = o(e);
+	return a(() => {
 		f.current = e;
-	}, [e]), r(() => o((e) => {
-		let t = e.type ?? "", n = e.channel === v, r = t.startsWith("sync.") || t.startsWith("item.");
+	}, [e]), a(() => t((e) => {
+		let t = e.type ?? "", n = e.channel === y, r = t.startsWith("sync.") || t.startsWith("item.");
 		if (!n && !r) return;
 		let { type: i, ...a } = e, o = {
 			...a,
@@ -296,100 +297,99 @@ function y() {
 				filesFetched: t.filesFetched + 1
 			}), n;
 		});
-	}), [o]), r(() => {
-		if (s === "connected") return f.current({
+	}), [t]), a(() => {
+		if (n === "connected") return f.current({
 			service: "ingest",
 			action: "subscribe",
-			channelId: v
+			channelId: y
 		}), () => {
 			f.current({
 				service: "ingest",
 				action: "unsubscribe",
-				channelId: v
+				channelId: y
 			});
 		};
-	}, [s]), {
+	}, [n]), {
 		events: c,
 		activeSyncs: u,
-		clearEvents: n(() => {
+		clearEvents: i(() => {
 			l([]);
 		}, [])
 	};
 }
 //#endregion
 //#region src/hooks/useIngestSources.ts
-var b = "";
-function x() {
-	let { idToken: t } = e(), [o, s] = a([]), [c, l] = a(!0), [u, d] = a(null), [f, p] = a(null), m = i(!0), h = i(0), g = n(() => {
+function x(e = {}) {
+	let r = t(), c = e.idToken === void 0 ? r?.idToken ?? null : e.idToken, l = e.baseUrl ?? n(), [u, d] = s([]), [f, p] = s(!0), [m, h] = s(null), [g, _] = s(null), v = o(!0), y = o(0), b = i(() => {
 		let e = { "Content-Type": "application/json" };
-		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), _ = n(() => p(null), []), v = n(async () => {
-		let e = ++h.current, t = () => m.current && e === h.current;
-		l(!0), d(null);
+		return c && (e.Authorization = `Bearer ${c}`), e;
+	}, [c]), x = i(() => _(null), []), S = i(async () => {
+		let e = ++y.current, t = () => v.current && e === y.current;
+		p(!0), h(null);
 		try {
-			let e = await fetch(`${b}/api/ingest/sources`, { headers: g() });
+			let e = await fetch(`${l}/api/ingest/sources`, { headers: b() });
 			if (!e.ok) throw Error(`HTTP ${e.status}`);
 			let n = await e.json();
-			t() && s(n.sources ?? []);
+			t() && d(n.sources ?? []);
 		} catch (e) {
-			t() && d(e instanceof Error ? e.message : String(e));
+			t() && h(e instanceof Error ? e.message : String(e));
 		} finally {
-			t() && l(!1);
+			t() && p(!1);
 		}
-	}, [g]);
-	return r(() => (m.current = !0, v(), () => {
-		m.current = !1, h.current += 1;
-	}), [v]), {
-		sources: o,
-		loading: c,
-		error: u,
-		refresh: v,
-		createSource: n(async (e) => {
+	}, [b, l]);
+	return a(() => (v.current = !0, S(), () => {
+		v.current = !1, y.current += 1;
+	}), [S]), {
+		sources: u,
+		loading: f,
+		error: m,
+		refresh: S,
+		createSource: i(async (e) => {
 			try {
-				let t = await fetch(`${b}/api/ingest/sources`, {
+				let t = await fetch(`${l}/api/ingest/sources`, {
 					method: "POST",
-					headers: g(),
+					headers: b(),
 					body: JSON.stringify(e)
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				let n = await t.json();
-				return s((e) => [...e, n]), n;
+				return d((e) => [...e, n]), n;
 			} catch (e) {
-				return p(e instanceof Error ? e.message : String(e)), null;
+				return _(e instanceof Error ? e.message : String(e)), null;
 			}
-		}, [g]),
-		deleteSource: n(async (e) => {
+		}, [b, l]),
+		deleteSource: i(async (e) => {
 			try {
-				let t = await fetch(`${b}/api/ingest/sources/${e}`, {
+				let t = await fetch(`${l}/api/ingest/sources/${e}`, {
 					method: "DELETE",
-					headers: g()
+					headers: b()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
-				return s((t) => t.filter((t) => t.sourceId !== e)), !0;
+				return d((t) => t.filter((t) => t.sourceId !== e)), !0;
 			} catch (e) {
-				return p(e instanceof Error ? e.message : String(e)), !1;
+				return _(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [g]),
-		triggerSync: n(async (e) => {
+		}, [b, l]),
+		triggerSync: i(async (e) => {
 			try {
-				let t = await fetch(`${b}/api/ingest/sources/${e}/sync`, {
+				let t = await fetch(`${l}/api/ingest/sources/${e}/sync`, {
 					method: "POST",
-					headers: g()
+					headers: b()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				return !0;
 			} catch (e) {
-				return p(e instanceof Error ? e.message : String(e)), !1;
+				return _(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [g]),
-		actionError: f,
-		clearActionError: _
+		}, [b, l]),
+		actionError: g,
+		clearActionError: x
 	};
 }
 //#endregion
 //#region src/hooks/useMappingReviewQueue.ts
-var S = "", C = 15e3;
-function w(e) {
+var S = 15e3;
+function C(e) {
 	return {
 		itemId: e.itemId ?? e.ingestId ?? "",
 		sourceId: e.sourceId,
@@ -406,132 +406,140 @@ function w(e) {
 		updatedAt: e.updatedAt
 	};
 }
-function T() {
-	let { idToken: t } = e(), [i, o] = a([]), [s, c] = a(.7), [l, u] = a(!0), [d, f] = a(null), p = n(() => {
+function w(e = {}) {
+	let r = t(), o = e.idToken === void 0 ? r?.idToken ?? null : e.idToken, c = e.baseUrl ?? n(), [l, u] = s([]), [d, f] = s(.7), [p, m] = s(!0), [h, g] = s(null), _ = i(() => {
 		let e = { "Content-Type": "application/json" };
-		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), m = n(async () => {
-		u(!0), f(null);
+		return o && (e.Authorization = `Bearer ${o}`), e;
+	}, [o]), v = i(async () => {
+		m(!0), g(null);
 		try {
-			let e = await fetch(`${S}/api/ingest/mapping/review`, { headers: p() });
+			let e = await fetch(`${c}/api/ingest/mapping/review`, { headers: _() });
 			if (!e.ok) throw Error(`HTTP ${e.status}`);
 			let t = await e.json();
-			o(t.items.map(w)), c(t.threshold);
+			u(t.items.map(C)), f(t.threshold);
 		} catch (e) {
-			f(e instanceof Error ? e.message : String(e));
+			g(e instanceof Error ? e.message : String(e));
 		} finally {
-			u(!1);
+			m(!1);
 		}
-	}, [p]);
-	return r(() => {
-		m();
+	}, [_, c]);
+	return a(() => {
+		v();
 		let e = window.setInterval(() => {
-			document.hidden || m();
-		}, C);
+			document.hidden || v();
+		}, S);
 		return () => window.clearInterval(e);
-	}, [m]), {
-		items: i,
-		threshold: s,
-		loading: l,
-		error: d,
-		refresh: m,
-		remap: n(async (e, t) => {
-			let n = await fetch(`${S}/api/ingest/items/${e}/remap`, {
+	}, [v]), {
+		items: l,
+		threshold: d,
+		loading: p,
+		error: h,
+		refresh: v,
+		remap: i(async (e, t) => {
+			let n = await fetch(`${c}/api/ingest/items/${e}/remap`, {
 				method: "POST",
-				headers: p(),
+				headers: _(),
 				body: JSON.stringify({ typeId: t })
 			});
 			if (!n.ok) throw Error(`HTTP ${n.status}`);
-			await m();
-		}, [p, m]),
-		skip: n(async (e) => {
-			let t = await fetch(`${S}/api/ingest/items/${e}/skip`, {
+			await v();
+		}, [
+			_,
+			v,
+			c
+		]),
+		skip: i(async (e) => {
+			let t = await fetch(`${c}/api/ingest/items/${e}/skip`, {
 				method: "POST",
-				headers: p()
+				headers: _()
 			});
 			if (!t.ok) throw Error(`HTTP ${t.status}`);
-			await m();
-		}, [p, m])
+			await v();
+		}, [
+			_,
+			v,
+			c
+		])
 	};
 }
 //#endregion
 //#region src/hooks/usePipelineDefs.ts
-var E = "";
-function D() {
-	let { idToken: t } = e(), [o, s] = a([]), [c, l] = a(!0), [u, d] = a(null), f = i(!1), p = n(async () => {
-		l(!0), d(null);
+function T(e = {}) {
+	let r = t(), c = e.idToken === void 0 ? r?.idToken ?? null : e.idToken, l = e.baseUrl ?? n(), [u, d] = s([]), [f, p] = s(!0), [m, h] = s(null), g = o(!1), _ = i(async () => {
+		p(!0), h(null);
 		try {
 			let e = {};
-			t && (e.Authorization = `Bearer ${t}`);
-			let n = await fetch(`${E}/api/pipelines/defs`, {
+			c && (e.Authorization = `Bearer ${c}`);
+			let t = await fetch(`${l}/api/pipelines/defs`, {
 				headers: e,
 				credentials: "include"
 			});
-			if (!n.ok) throw Error(`HTTP ${n.status}`);
-			let r = await n.json();
-			f.current || s((r.pipelines ?? []).map((e) => ({
+			if (!t.ok) throw Error(`HTTP ${t.status}`);
+			let n = await t.json();
+			g.current || d((n.pipelines ?? []).map((e) => ({
 				id: e.id,
 				name: e.name,
 				status: e.status,
 				icon: e.icon
 			})));
 		} catch (e) {
-			f.current || (d(e instanceof Error ? e.message : String(e)), s([]));
+			g.current || (h(e instanceof Error ? e.message : String(e)), d([]));
 		} finally {
-			f.current || l(!1);
+			g.current || p(!1);
 		}
-	}, [t]);
-	return r(() => (f.current = !1, p(), () => {
-		f.current = !0;
-	}), [p]), {
-		pipelines: o,
-		loading: c,
-		error: u,
-		refresh: p
+	}, [c, l]);
+	return a(() => (g.current = !1, _(), () => {
+		g.current = !0;
+	}), [_]), {
+		pipelines: u,
+		loading: f,
+		error: m,
+		refresh: _
 	};
 }
 //#endregion
 //#region src/hooks/useSourceSloMetrics.ts
-var O = "", k = 3e4;
-function A(t, i = "1h") {
-	let { idToken: o } = e(), [s, c] = a(null), [l, u] = a(!0), [d, f] = a(null), p = n(async () => {
-		if (t) {
-			u(!0), f(null);
+var E = 3e4;
+function D(e, r = "1h", o = {}) {
+	let c = t(), l = o.idToken === void 0 ? c?.idToken ?? null : o.idToken, u = o.baseUrl ?? n(), [d, f] = s(null), [p, m] = s(!0), [h, g] = s(null), _ = i(async () => {
+		if (e) {
+			m(!0), g(null);
 			try {
-				let e = { "Content-Type": "application/json" };
-				o && (e.Authorization = `Bearer ${o}`);
-				let n = await fetch(`${O}/api/ingest/sources/${encodeURIComponent(t)}/metrics?window=${i}`, { headers: e });
+				let t = { "Content-Type": "application/json" };
+				l && (t.Authorization = `Bearer ${l}`);
+				let n = await fetch(`${u}/api/ingest/sources/${encodeURIComponent(e)}/metrics?window=${r}`, { headers: t });
 				if (!n.ok) throw Error(`HTTP ${n.status}`);
-				let r = await n.json();
-				c(r);
+				let i = await n.json();
+				f(i);
 			} catch (e) {
-				f(e instanceof Error ? e.message : String(e));
+				g(e instanceof Error ? e.message : String(e));
 			} finally {
-				u(!1);
+				m(!1);
 			}
 		}
 	}, [
-		t,
-		i,
-		o
+		e,
+		r,
+		l,
+		u
 	]);
-	return r(() => {
-		p();
+	return a(() => {
+		_();
 		let e = globalThis.setInterval(() => {
-			document.hidden || p();
-		}, k);
+			document.hidden || _();
+		}, E);
 		return () => globalThis.clearInterval(e);
-	}, [p]), {
-		metrics: s,
-		loading: l,
-		error: d,
-		refresh: p
+	}, [_]), {
+		metrics: d,
+		loading: p,
+		error: h,
+		refresh: _
 	};
 }
 //#endregion
 //#region src/hooks/useSyncConflicts.ts
-var j = "";
-function M() {
+var O = "";
+function k() {
 	let e = Date.now(), t = (t) => (/* @__PURE__ */ new Date(e - t * 6e4)).toISOString();
 	return [{
 		conflictId: "cfl-001",
@@ -579,70 +587,70 @@ function M() {
 		detectedAt: t(15)
 	}];
 }
-function N() {
-	let { idToken: t } = e(), [o, s] = a([]), [c, l] = a(!0), [u, d] = a(null), [f, p] = a(null), [m, h] = a(!1), g = i(!0), _ = i(0), v = n(() => {
+function A() {
+	let { idToken: t } = e(), [n, r] = s([]), [c, l] = s(!0), [u, d] = s(null), [f, p] = s(null), [m, h] = s(!1), g = o(!0), _ = o(0), v = i(() => {
 		let e = { "Content-Type": "application/json" };
 		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), y = n(async () => {
+	}, [t]), y = i(async () => {
 		let e = ++_.current, t = () => g.current && e === _.current;
 		l(!0), d(null);
 		try {
-			let e = await fetch(`${j}/api/sync/conflicts`, { headers: v() });
+			let e = await fetch(`${O}/api/sync/conflicts`, { headers: v() });
 			if (e.status === 404) {
-				t() && (s(M()), h(!0));
+				t() && (r(k()), h(!0));
 				return;
 			}
 			if (!e.ok) throw Error(`HTTP ${e.status}`);
 			let n = await e.json();
-			t() && (s(n.conflicts ?? []), h(!1));
+			t() && (r(n.conflicts ?? []), h(!1));
 		} catch (e) {
-			t() && (s(M()), h(!0), d(e instanceof Error ? e.message : String(e)));
+			t() && (r(k()), h(!0), d(e instanceof Error ? e.message : String(e)));
 		} finally {
 			t() && l(!1);
 		}
 	}, [v]);
-	r(() => (g.current = !0, y(), () => {
+	a(() => (g.current = !0, y(), () => {
 		g.current = !1, _.current += 1;
 	}), [y]);
-	let b = n(() => p(null), []);
+	let b = i(() => p(null), []);
 	return {
-		conflicts: o,
+		conflicts: n,
 		loading: c,
 		error: u,
 		usingMock: m,
 		refresh: y,
-		resolveConflict: n(async (e, t) => {
-			if (p(null), m) return s((t) => t.map((t) => t.conflictId === e ? {
+		resolveConflict: i(async (e, t) => {
+			if (p(null), m) return r((t) => t.map((t) => t.conflictId === e ? {
 				...t,
 				status: "resolved",
 				resolvedAt: (/* @__PURE__ */ new Date()).toISOString()
 			} : t)), !0;
 			try {
-				let n = await fetch(`${j}/api/sync/conflicts/${e}/resolve`, {
+				let n = await fetch(`${O}/api/sync/conflicts/${e}/resolve`, {
 					method: "POST",
 					headers: v(),
 					body: JSON.stringify(t)
 				});
 				if (!n.ok) throw Error(`HTTP ${n.status}`);
-				let r = await n.json();
-				return r.conflict && s((t) => t.map((t) => t.conflictId === e ? r.conflict : t)), !0;
+				let i = await n.json();
+				return i.conflict && r((t) => t.map((t) => t.conflictId === e ? i.conflict : t)), !0;
 			} catch (e) {
 				return p(e instanceof Error ? e.message : String(e)), !1;
 			}
 		}, [v, m]),
-		discardConflict: n(async (e) => {
-			if (p(null), m) return s((t) => t.map((t) => t.conflictId === e ? {
+		discardConflict: i(async (e) => {
+			if (p(null), m) return r((t) => t.map((t) => t.conflictId === e ? {
 				...t,
 				status: "discarded",
 				resolvedAt: (/* @__PURE__ */ new Date()).toISOString()
 			} : t)), !0;
 			try {
-				let t = await fetch(`${j}/api/sync/conflicts/${e}/discard`, {
+				let t = await fetch(`${O}/api/sync/conflicts/${e}/discard`, {
 					method: "POST",
 					headers: v()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
-				return s((t) => t.map((t) => t.conflictId === e ? {
+				return r((t) => t.map((t) => t.conflictId === e ? {
 					...t,
 					status: "discarded",
 					resolvedAt: (/* @__PURE__ */ new Date()).toISOString()
@@ -656,4 +664,4 @@ function N() {
 	};
 }
 //#endregion
-export { x as a, m as c, T as i, d as l, A as n, y as o, D as r, _ as s, N as t, c as u };
+export { x as a, g as c, w as i, p as l, D as n, b as o, T as r, v as s, A as t, u };

@@ -4,9 +4,9 @@
 // SLO panel data feed (AGENTIC_ETL_VISION §F).
 
 import { useCallback, useEffect, useState } from 'react';
-import { useIdentityContext } from '../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../contexts/IdentityContext';
+import { getApiBaseUrl } from '../lib/apiBaseUrl';
 
-const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 const POLL_INTERVAL_MS = 30_000;
 
 export type SloWindow = '15m' | '1h' | '6h' | '24h';
@@ -25,6 +25,13 @@ export interface SourceSloMetrics {
   queueDepth: SloPoint[];
 }
 
+export interface UseSourceSloMetricsOptions {
+  /** Wins over this library's `useIdentityContext().idToken`. */
+  idToken?: string | null;
+  /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+  baseUrl?: string;
+}
+
 export interface UseSourceSloMetricsResult {
   metrics: SourceSloMetrics | null;
   loading: boolean;
@@ -32,8 +39,14 @@ export interface UseSourceSloMetricsResult {
   refresh: () => Promise<void>;
 }
 
-export function useSourceSloMetrics(sourceId: string | undefined, window: SloWindow = '1h'): UseSourceSloMetricsResult {
-  const { idToken } = useIdentityContext();
+export function useSourceSloMetrics(
+  sourceId: string | undefined,
+  window: SloWindow = '1h',
+  options: UseSourceSloMetricsOptions = {},
+): UseSourceSloMetricsResult {
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = options.idToken !== undefined ? options.idToken : (identityCtx?.idToken ?? null);
+  const BASE_URL = options.baseUrl ?? getApiBaseUrl();
   const [metrics, setMetrics] = useState<SourceSloMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +70,7 @@ export function useSourceSloMetrics(sourceId: string | undefined, window: SloWin
     } finally {
       setLoading(false);
     }
-  }, [sourceId, window, idToken]);
+  }, [sourceId, window, idToken, BASE_URL]);
 
   useEffect(() => {
     void refresh();

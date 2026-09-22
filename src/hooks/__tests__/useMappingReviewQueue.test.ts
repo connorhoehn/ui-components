@@ -13,6 +13,13 @@ vi.mock('../../contexts/IdentityContext', () => ({
     userEmail: 'alice@test.com',
     onSignOut: vi.fn(),
   }),
+  useOptionalIdentityContext: () => ({
+    idToken: 'tok-1',
+    userId: 'u1',
+    displayName: 'Alice',
+    userEmail: 'alice@test.com',
+    onSignOut: vi.fn(),
+  }),
 }));
 
 // ---------------------------------------------------------------------------
@@ -184,5 +191,30 @@ describe('skip', () => {
     await act(async () => {
       await expect(result.current.skip('i1')).rejects.toThrow(/503/);
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// idToken / baseUrl options — win over context and env (2.357.0)
+// ---------------------------------------------------------------------------
+
+describe('idToken / baseUrl options', () => {
+  it('baseUrl option wins over the build-time env', async () => {
+    const fetchMock = stubFetch({ items: [], threshold: 0.7 });
+    vi.stubGlobal('fetch', fetchMock);
+    renderHook(() => useMappingReviewQueue({ baseUrl: 'https://consumer.example' }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    expect(fetchMock.mock.calls[0][0]).toBe('https://consumer.example/api/ingest/mapping/review');
+  });
+
+  it('idToken option wins over the mocked context token', async () => {
+    const fetchMock = stubFetch({ items: [], threshold: 0.7 });
+    vi.stubGlobal('fetch', fetchMock);
+    renderHook(() => useMappingReviewQueue({ idToken: 'override-tok' }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    const headers = fetchMock.mock.calls[0][1] as RequestInit;
+    expect((headers.headers as Record<string, string>).Authorization).toBe('Bearer override-tok');
   });
 });

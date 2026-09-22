@@ -42,6 +42,7 @@ vi.mock('../persistence/pipelineStorageRemote', () => ({
 }));
 vi.mock('../../../contexts/IdentityContext', () => ({
   useIdentityContext: () => ({ userId: 'tester', displayName: 'Tester' }),
+  useOptionalIdentityContext: () => ({ userId: 'tester', displayName: 'Tester' }),
 }));
 vi.mock('../hooks/useTriggerRun', () => ({ useTriggerRun: () => vi.fn() }));
 

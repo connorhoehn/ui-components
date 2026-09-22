@@ -885,6 +885,21 @@ declare interface AppLayoutProps {
      * can assert on the collapsed chrome.
      */
     defaultSidebarOpen?: boolean;
+    /**
+     * Full identity value. Wins over this library's `useIdentityContext()`,
+     * so a host running its own identity provider never needs to mount this
+     * library's `<IdentityProvider>` just for `AppLayout`. Defaults to the
+     * context's value (or field-by-field fallbacks — `''`/`null`/a no-op
+     * `onSignOut` — when no `<IdentityProvider>` is mounted and this prop is
+     * also omitted) via the non-throwing `useOptionalIdentityContext`.
+     */
+    identity?: IdentityContextValue;
+    /**
+     * Presence-sourced users. Wins over this library's `usePresenceContext()`,
+     * for the same reason as `identity` above. Defaults to the context's
+     * `presenceUsers` (or `[]` when no `<PresenceProvider>` is mounted).
+     */
+    presenceUsers?: PresenceUser_2[];
 }
 
 export declare function ApplicationFormPage({ application, isEdit, pools, onSubmit, onCancel, error, }: ApplicationFormPageProps): JSX.Element;
@@ -7162,10 +7177,13 @@ export declare type GeometricOpRotate = {
     trimAfter?: boolean;
 };
 
+/** The origin requests currently resolve to — see the resolution order above. */
+export declare function getApiBaseUrl(): string;
+
 export declare function getApprovalApiBase(): string;
 
-/** The origin requests currently go to — the override, else the env. */
-export declare function getDocumentTypeApiBaseUrl(): string;
+/** @deprecated Alias for `getApiBaseUrl` — see `setDocumentTypeApiBaseUrl`. */
+export declare const getDocumentTypeApiBaseUrl: typeof getApiBaseUrl;
 
 /**
  * Maps an event type prefix to a category for filter UIs.
@@ -13220,17 +13238,27 @@ export declare interface SessionMessage extends GatewayMessage {
 }
 
 /**
+ * Point every request that uses this resolver at `url`. Call once during
+ * app start-up, before the first request. Pass `null` to fall back to the
+ * runtime-env / build-time-env chain again (also how a test suite resets
+ * it).
+ */
+export declare function setApiBaseUrl(url: string | null): void;
+
+/**
  * Point the approvals sync at a host's own API. Pass `null` to fall back to
  * the environment. Call once at startup, before any decision is finalized.
  */
 export declare function setApprovalApiBase(base: ApprovalApiBase | null): void;
 
 /**
- * Point every document-type request at `url`. Call once during app start-up,
- * before the first `useDocumentTypes`. Pass `null` to fall back to the
- * build-time env names again (that is also how a test suite resets it).
+ * @deprecated Alias for `setApiBaseUrl`, kept for existing callers. The
+ * document-type adapter was the first surface to get an override setter
+ * (2.352.0); every other surface reading `VITE_SOCIAL_API_URL` shares the
+ * same resolver as of 2.357.0, so the name no longer implies anything
+ * document-type-specific. New code should call `setApiBaseUrl`.
  */
-export declare function setDocumentTypeApiBaseUrl(url: string | null): void;
+export declare const setDocumentTypeApiBaseUrl: typeof setApiBaseUrl;
 
 export declare function SettingsLayout({ title, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
 
@@ -16444,6 +16472,10 @@ declare interface UseActivityBusReturn {
  declare interface UseIngestItemsOptions {
      sourceId?: string | null;
      status?: IngestItemStatus | null;
+     /** Wins over this library's `useIdentityContext().idToken`. */
+     idToken?: string | null;
+     /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+     baseUrl?: string;
  }
 
  declare interface UseIngestItemsReturn {
@@ -16479,7 +16511,14 @@ declare interface UseActivityBusReturn {
      clearEvents: () => void;
  }
 
- export declare function useIngestSources(): UseIngestSourcesReturn;
+ export declare function useIngestSources(options?: UseIngestSourcesOptions): UseIngestSourcesReturn;
+
+ declare interface UseIngestSourcesOptions {
+     /** Wins over this library's `useIdentityContext().idToken`. */
+     idToken?: string | null;
+     /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+     baseUrl?: string;
+ }
 
  declare interface UseIngestSourcesReturn {
      sources: IngestSource[];
@@ -16538,7 +16577,14 @@ declare interface UseActivityBusReturn {
      error: string | null;
  }
 
- export declare function useMappingReviewQueue(): UseMappingReviewQueueResult;
+ export declare function useMappingReviewQueue(options?: UseMappingReviewQueueOptions): UseMappingReviewQueueResult;
+
+ declare interface UseMappingReviewQueueOptions {
+     /** Wins over this library's `useIdentityContext().idToken`. */
+     idToken?: string | null;
+     /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+     baseUrl?: string;
+ }
 
  declare interface UseMappingReviewQueueResult {
      items: IngestItem[];
@@ -16609,7 +16655,14 @@ declare interface UseActivityBusReturn {
   */
  export declare function useOptionalPresenceContext(): PresenceContextValue | null;
 
- export declare function usePipelineDefs(): UsePipelineDefsReturn;
+ export declare function usePipelineDefs(options?: UsePipelineDefsOptions): UsePipelineDefsReturn;
+
+ declare interface UsePipelineDefsOptions {
+     /** Wins over this library's `useIdentityContext().idToken`. */
+     idToken?: string | null;
+     /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+     baseUrl?: string;
+ }
 
  declare interface UsePipelineDefsReturn {
      pipelines: PipelineDefSummary[];
@@ -16961,7 +17014,14 @@ declare interface UseActivityBusReturn {
      viewProfile: (userId: string) => Promise<ProfileItem | null>;
  }
 
- export declare function useSourceSloMetrics(sourceId: string | undefined, window?: SloWindow): UseSourceSloMetricsResult;
+ export declare function useSourceSloMetrics(sourceId: string | undefined, window?: SloWindow, options?: UseSourceSloMetricsOptions): UseSourceSloMetricsResult;
+
+ declare interface UseSourceSloMetricsOptions {
+     /** Wins over this library's `useIdentityContext().idToken`. */
+     idToken?: string | null;
+     /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+     baseUrl?: string;
+ }
 
  declare interface UseSourceSloMetricsResult {
      metrics: SourceSloMetrics | null;
@@ -18458,6 +18518,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -18468,12 +18541,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -18494,16 +18564,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

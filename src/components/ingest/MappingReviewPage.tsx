@@ -7,16 +7,32 @@ import { useState } from 'react';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
 import { cn } from '../../lib/cn';
-import { useIdentityContext } from '../../contexts/IdentityContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
 import { useMappingReviewQueue } from '../../hooks/useMappingReviewQueue';
 import { useDocumentTypes } from '../../hooks/useDocumentTypes';
 import { Select } from '../forms/Select';
 import type { IngestItem } from '../../types/ingest';
 
-export default function MappingReviewPage() {
-  const { idToken } = useIdentityContext();
-  const { items, threshold, loading, error, remap, skip } = useMappingReviewQueue();
-  const { types: docTypes } = useDocumentTypes({ idToken });
+export interface MappingReviewPageProps {
+  /**
+   * Bearer token for the review-queue and document-types requests. Wins
+   * over this library's `useIdentityContext().idToken`. Defaults to the
+   * context's `idToken` (or `null` when no `<IdentityProvider>` is mounted)
+   * via the non-throwing `useOptionalIdentityContext`.
+   */
+  idToken?: string | null;
+  /**
+   * Origin for `/api/ingest/mapping/review` and `/api/document-types`. Wins
+   * over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`.
+   */
+  baseUrl?: string;
+}
+
+export default function MappingReviewPage({ idToken: idTokenProp, baseUrl }: MappingReviewPageProps = {}) {
+  const identityCtx = useOptionalIdentityContext();
+  const idToken = idTokenProp !== undefined ? idTokenProp : (identityCtx?.idToken ?? null);
+  const { items, threshold, loading, error, remap, skip } = useMappingReviewQueue({ idToken, baseUrl });
+  const { types: docTypes } = useDocumentTypes({ idToken, baseUrl });
   // Per-row chosen typeId for the Re-map action (when not accepting suggestion).
   const [remapById, setRemapById] = useState<Record<string, string>>({});
   // `remap` / `skip` REJECT on a non-2xx response. Every call site was

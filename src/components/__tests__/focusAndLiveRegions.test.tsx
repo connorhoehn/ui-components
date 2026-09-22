@@ -28,6 +28,7 @@ import type { IngestItem } from '../../types/ingest';
 
 vi.mock('../../contexts/IdentityContext', () => ({
   useIdentityContext: () => ({ idToken: 'test-token' }),
+  useOptionalIdentityContext: () => ({ idToken: 'test-token' }),
 }));
 vi.mock('../../hooks/useIngestProgress', () => ({
   useIngestProgress: () => ({ events: [] }),

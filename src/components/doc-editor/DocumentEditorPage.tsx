@@ -36,6 +36,12 @@ export interface DocumentEditorPageProps {
   onDockVideo?: () => void;
   /** Undock the video panel from the left sidebar */
   onUndockVideo?: () => void;
+  /**
+   * Bearer token for the editor's REST calls. Wins over this library's
+   * `useIdentityContext().idToken` — see `useDocumentEditorState`'s
+   * `idToken` prop, which this passes straight through.
+   */
+  idToken?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -55,6 +61,7 @@ export default function DocumentEditorPage({
   isVideoDocked,
   onDockVideo,
   onUndockVideo,
+  idToken,
 }: DocumentEditorPageProps) {
   const state = useDocumentEditorState({
     documentId,
@@ -67,6 +74,7 @@ export default function DocumentEditorPage({
     activityPublish,
     isVideoDocked,
     onDockVideo,
+    idToken,
     onUndockVideo,
     onBack,
   });

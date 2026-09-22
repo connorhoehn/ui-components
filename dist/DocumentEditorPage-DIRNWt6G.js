@@ -1,8 +1,8 @@
 import { t as e } from "./rolldown-runtime-Dy4uBu1J.js";
 import { r as t } from "./registry-DbX3MVAA.js";
-import { n } from "./IdentityContext-CQM1qwH6.js";
+import { r as n } from "./IdentityContext-CQM1qwH6.js";
 import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-WO-vkKyy.js";
-import { t as f } from "./useDocumentTypes-DwWC-vAB.js";
+import { t as f } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as p } from "./cn-DhjIN-s0.js";
 import { t as m } from "./useEventCallback-Cwx9QVSi.js";
 import { _ as h } from "./overlayStack-BDlo8PJg.js";
@@ -17,30 +17,30 @@ import { t as E } from "./Avatar-Bq_1SEQ2.js";
 import { t as ee } from "./StatusPill-Db42eiME.js";
 import { t as D } from "./activationKey-CjbL3LUv.js";
 import { O } from "./renderers-5O9bh08s.js";
-import { I as k } from "./PresentationEditor-Bvb89u4z.js";
+import { I as k } from "./PresentationEditor-CcTIkRf3.js";
 import { t as A } from "./TiptapEditor-Kdj65m6g.js";
 import { t as te } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as ne } from "./useActiveSpeaker-Dc9r75EE.js";
 import { forwardRef as re, useCallback as j, useEffect as M, useImperativeHandle as ie, useMemo as ae, useRef as N, useState as P } from "react";
 import { Fragment as F, jsx as I, jsxs as L } from "react/jsx-runtime";
-import R, { createPortal as oe } from "react-dom";
+import R, { createPortal as z } from "react-dom";
 //#region src/utils/markdownParser.ts
-function se() {
+function oe() {
 	return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
-var ce = /^- \[([ xX])\]\s+(.+)$/;
-function z(e, t) {
+var se = /^- \[([ xX])\]\s+(.+)$/;
+function ce(e, t) {
 	let n = e.toLowerCase();
-	return ce.test(t) || /- \[[ xX]\]/.test(t) ? "tasks" : n.includes("decision") ? "decisions" : n.includes("summary") ? "summary" : "notes";
+	return se.test(t) || /- \[[ xX]\]/.test(t) ? "tasks" : n.includes("decision") ? "decisions" : n.includes("summary") ? "summary" : "notes";
 }
 function B(e) {
 	let t = e.split("\n"), n = [], r = [];
 	for (let e of t) {
-		let t = e.match(ce);
+		let t = e.match(se);
 		if (t) {
 			let e = t[1].toLowerCase() === "x";
 			n.push({
-				id: se(),
+				id: oe(),
 				text: t[2].trim(),
 				status: e ? "done" : "pending",
 				assignee: "",
@@ -65,7 +65,7 @@ function V(e) {
 		if (e.length > 0) {
 			let { items: r, remaining: i } = B(e);
 			n.push({
-				id: se(),
+				id: oe(),
 				type: "summary",
 				title: t.title ?? "Untitled",
 				contentMarkdown: i,
@@ -78,9 +78,9 @@ function V(e) {
 		};
 	}
 	for (let e = 1; e < a.length; e++) {
-		let t = a[e], r = t.indexOf("\n"), i = r === -1 ? t.trim() : t.slice(0, r).trim(), o = r === -1 ? "" : t.slice(r + 1).trim(), { items: s, remaining: c } = B(o), l = z(i, o);
+		let t = a[e], r = t.indexOf("\n"), i = r === -1 ? t.trim() : t.slice(0, r).trim(), o = r === -1 ? "" : t.slice(r + 1).trim(), { items: s, remaining: c } = B(o), l = ce(i, o);
 		n.push({
-			id: se(),
+			id: oe(),
 			type: l,
 			title: i,
 			contentMarkdown: c,
@@ -94,26 +94,26 @@ function V(e) {
 }
 //#endregion
 //#region src/components/doc-editor/canvas/documentShape.ts
-var le = 2, H = "body";
-function ue(e) {
+var H = 2, U = "body";
+function le(e) {
 	if (!e) return 0;
 	let t = e.getMap("meta").get("schemaVersion");
 	return typeof t == "number" ? t : 0;
 }
-function U(e) {
-	return ue(e) >= 2;
+function ue(e) {
+	return le(e) >= 2;
 }
 function de(e) {
-	return !e || !U(e) ? null : e.getXmlFragment(H);
+	return !e || !ue(e) ? null : e.getXmlFragment(U);
 }
 function fe(e) {
-	let [t, n] = P(() => ue(e));
+	let [t, n] = P(() => le(e));
 	return M(() => {
 		if (!e) {
 			n(0);
 			return;
 		}
-		let t = e.getMap("meta"), r = () => n(ue(e));
+		let t = e.getMap("meta"), r = () => n(le(e));
 		return r(), t.observe(r), () => t.unobserve(r);
 	}, [e]), t >= 2;
 }
@@ -124,19 +124,19 @@ function pe(e) {
 	return typeof t == "number" ? t : 0;
 }
 function me(e, t) {
-	return t?.ydoc ? U(t.ydoc) : t?.bodyMarkdown != null || typeof e.body == "string" || pe(e) >= 2;
+	return t?.ydoc ? ue(t.ydoc) : t?.bodyMarkdown != null || typeof e.body == "string" || pe(e) >= 2;
 }
 var he = /<\/?(paragraph|heading|blockquote|codeblock|bulletlist|orderedlist|listitem|tasklist|taskitem|horizontalrule|hardbreak|macro|doc)[^>]*>/gi;
-function W(e) {
+function ge(e) {
 	let t = e?.toString();
 	return t ? t.replace(he, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim() : "";
 }
-function G(e) {
+function _e(e) {
 	let t = e?.toString()?.trim();
 	if (!t) return "";
-	if (typeof DOMParser > "u") return W(e);
+	if (typeof DOMParser > "u") return ge(e);
 	let n = new DOMParser().parseFromString(`<doc>${t}</doc>`, "text/xml");
-	if (n.querySelector("parsererror")) return W(e);
+	if (n.querySelector("parsererror")) return ge(e);
 	let r = (e) => (e.textContent ?? "").replace(/\s+/g, " ").trim(), i = (e) => e.nodeName.toLowerCase(), a = (e, t) => {
 		let n = i(e), o = "  ".repeat(t);
 		switch (n) {
@@ -170,64 +170,64 @@ function G(e) {
 	for (let e of Array.from(n.documentElement.children)) o.push(...a(e, 0), "");
 	return o.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
-function ge(e, t) {
+function W(e, t) {
 	if (t?.bodyMarkdown != null) return t.bodyMarkdown;
 	if (t?.ydoc) {
 		let e = de(t.ydoc);
-		if (e) return G(e);
+		if (e) return _e(e);
 	}
 	return typeof e.body == "string" ? e.body : "";
 }
-function K(e) {
+function G(e) {
 	return `- [${e.status === "done" || e.status === "acked" ? "x" : " "}] ${e.text}`;
 }
-function _e(e, t = 0) {
+function K(e, t = 0) {
 	let n = "  ".repeat(t), r = [];
 	r.push(`${n}> **${e.displayName}**: ${e.text}`);
-	for (let n of e.replies ?? []) r.push(_e(n, t + 1));
+	for (let n of e.replies ?? []) r.push(K(n, t + 1));
 	return r.join("\n");
 }
-function ve(e) {
+function q(e) {
 	let t = [`## ${e.title}`, ""], n = e.contentMarkdown ?? e.contentText;
 	n && t.push(n, "");
 	let r = Array.isArray(e.items) ? e.items : [];
 	if (r.length > 0) {
-		for (let e of r) t.push(K(e));
+		for (let e of r) t.push(G(e));
 		t.push("");
 	}
 	let i = e.comments;
 	if (i && i.length > 0) {
 		t.push(`### Comments (${i.length})`, "");
-		for (let e of i) t.push(_e(e));
+		for (let e of i) t.push(K(e));
 		t.push("");
 	}
 	return t.join("\n");
 }
-function ye(e, t) {
+function ve(e, t) {
 	let n = e, r = [`# ${n.meta?.title ?? "Document"}`, ""];
 	if (me(n, t)) {
-		let e = ge(n, t);
+		let e = W(n, t);
 		e && r.push(e, "");
 		let i = n.comments ?? [];
 		if (i.length > 0) {
 			r.push(`## Comments (${i.length})`, "");
-			for (let e of i) r.push(_e(e));
+			for (let e of i) r.push(K(e));
 			r.push("");
 		}
 		return r.join("\n").trimEnd() + "\n";
 	}
-	for (let e of n.sections ?? []) r.push(ve(e));
+	for (let e of n.sections ?? []) r.push(q(e));
 	return r.join("\n").trimEnd() + "\n";
 }
 //#endregion
 //#region src/utils/demoDocument.ts
-var be = "# Q2 Sprint Planning - Meeting Summary\n\n## Executive Summary\n\nThis document captures the key outcomes from our Q2 sprint planning session held on April 10, 2026. The team discussed priorities for the upcoming quarter, including the new collaborative editing feature, infrastructure improvements, and customer-facing bug fixes.\n\nKey themes:\n- **Real-time collaboration** is the top priority for Q2\n- Infrastructure debt needs to be addressed before scaling\n- Customer satisfaction scores are trending upward\n\n## Action Items\n\n- [ ] Set up Tiptap editor with Y.js CRDT integration\n- [ ] Deploy shared Redis ECS service for multi-instance sync\n- [ ] Fix the 48 audit issues identified in the post-fix review\n- [ ] Create Playwright tests for 3-browser collaborative editing\n- [ ] Design the document export pipeline (PDF, DOCX, Google Docs)\n- [x] Complete the WebSocket gateway infrastructure audit\n- [x] Remove ElastiCache dependency from CDK stack\n\n## Decisions\n\n- [ ] Adopt Tiptap v3 as the standard rich text editor\n- [ ] Use Y.js with custom GatewayProvider (not Hocuspocus)\n- [ ] Store CRDT snapshots in DynamoDB with 7-day TTL\n- [ ] Support 3 viewing modes: Editor, Review, Reader\n\n## Technical Notes\n\nThe collaborative document editor will be built on top of the existing WebSocket gateway infrastructure. The `crdt-service.js` backend has been upgraded to maintain a proper `Y.Doc` per channel with awareness protocol support.\n\n### Architecture Highlights\n\n1. **Frontend**: Tiptap v3 + Y.js with custom `GatewayProvider`\n2. **Backend**: Existing crdt-service.js (treats Y.js updates as opaque binary)\n3. **Persistence**: EventBridge -> Lambda -> DynamoDB (gzip compressed, 7-day TTL)\n4. **Sync**: Redis pub/sub for multi-instance, WebSocket for client delivery\n\n### Performance Targets\n\n- Edit latency: < 50ms (local) / < 200ms (remote)\n- Concurrent editors: 10+ per document\n- Document size: up to 100KB of rich text\n- Snapshot frequency: every 50 operations or 5 minutes\n";
+var ye = "# Q2 Sprint Planning - Meeting Summary\n\n## Executive Summary\n\nThis document captures the key outcomes from our Q2 sprint planning session held on April 10, 2026. The team discussed priorities for the upcoming quarter, including the new collaborative editing feature, infrastructure improvements, and customer-facing bug fixes.\n\nKey themes:\n- **Real-time collaboration** is the top priority for Q2\n- Infrastructure debt needs to be addressed before scaling\n- Customer satisfaction scores are trending upward\n\n## Action Items\n\n- [ ] Set up Tiptap editor with Y.js CRDT integration\n- [ ] Deploy shared Redis ECS service for multi-instance sync\n- [ ] Fix the 48 audit issues identified in the post-fix review\n- [ ] Create Playwright tests for 3-browser collaborative editing\n- [ ] Design the document export pipeline (PDF, DOCX, Google Docs)\n- [x] Complete the WebSocket gateway infrastructure audit\n- [x] Remove ElastiCache dependency from CDK stack\n\n## Decisions\n\n- [ ] Adopt Tiptap v3 as the standard rich text editor\n- [ ] Use Y.js with custom GatewayProvider (not Hocuspocus)\n- [ ] Store CRDT snapshots in DynamoDB with 7-day TTL\n- [ ] Support 3 viewing modes: Editor, Review, Reader\n\n## Technical Notes\n\nThe collaborative document editor will be built on top of the existing WebSocket gateway infrastructure. The `crdt-service.js` backend has been upgraded to maintain a proper `Y.Doc` per channel with awareness protocol support.\n\n### Architecture Highlights\n\n1. **Frontend**: Tiptap v3 + Y.js with custom `GatewayProvider`\n2. **Backend**: Existing crdt-service.js (treats Y.js updates as opaque binary)\n3. **Persistence**: EventBridge -> Lambda -> DynamoDB (gzip compressed, 7-day TTL)\n4. **Sync**: Redis pub/sub for multi-instance, WebSocket for client delivery\n\n### Performance Targets\n\n- Edit latency: < 50ms (local) / < 200ms (remote)\n- Concurrent editors: 10+ per document\n- Document size: up to 100KB of rich text\n- Snapshot frequency: every 50 operations or 5 minutes\n";
 //#endregion
 //#region src/components/doc-editor/useDocumentActions.ts
-function xe(e) {
+function be(e) {
 	return e.toString().replace(/<\/?(paragraph|heading|blockquote|codeBlock|bulletList|orderedList|listItem|taskList|taskItem|horizontalRule|hardBreak|doc)[^>]*>/g, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim();
 }
-function q(e) {
+function J(e) {
 	let t = e?.toString()?.trim();
 	if (!t || typeof DOMParser > "u") return "";
 	let n = new DOMParser().parseFromString(`<doc>${t}</doc>`, "text/xml");
@@ -265,14 +265,14 @@ function q(e) {
 	for (let e of Array.from(o.children)) s.push(...a(e, 0), "");
 	return s.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
-function J(e) {
+function xe(e) {
 	return e.split("\n").map((e) => e.startsWith("### ") ? `<h3>${e.slice(4)}</h3>` : e.startsWith("## ") ? `<h2>${e.slice(3)}</h2>` : e.startsWith("# ") ? `<h1>${e.slice(2)}</h1>` : e.startsWith("> ") ? `<blockquote>${e.slice(2)}</blockquote>` : e.startsWith("- [x] ") ? `<li>&#9745; ${e.slice(6)}</li>` : e.startsWith("- [ ] ") ? `<li>&#9744; ${e.slice(6)}</li>` : e.startsWith("- ") ? `<li>${e.slice(2)}</li>` : e.trim() === "" ? "<br/>" : `<p>${e}</p>`).join("\n").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>").replace(/`([^`]+)`/g, "<code>$1</code>");
 }
 function Se(e, t) {
 	let n = URL.createObjectURL(e), r = document.createElement("a");
 	r.href = n, r.download = t, r.click(), URL.revokeObjectURL(n);
 }
-function Ce(e, t, n, r) {
+function Y(e, t, n, r) {
 	let i = t || "document";
 	if (e === "json") {
 		Se(new Blob([JSON.stringify(r, null, 2)], { type: "application/json" }), `${i}.json`);
@@ -299,16 +299,16 @@ function Ce(e, t, n, r) {
         @media print { body { margin: 0; } }
       </style>
     </head>
-    <body>${J(n)}</body>
+    <body>${xe(n)}</body>
     </html>
   `), a.document.close(), a.print());
 }
-function we({ documentId: e, userId: t, ws: n, updateMeta: r, addSection: i, exportJSON: a, getSectionFragment: o, getCanvasFragment: s, isCanvas: c = !1, comments: l }) {
+function Ce({ documentId: e, userId: t, ws: n, updateMeta: r, addSection: i, exportJSON: a, getSectionFragment: o, getCanvasFragment: s, isCanvas: c = !1, comments: l }) {
 	let [u, d] = P(!1);
 	return {
 		demoLoaded: u,
 		handleLoadDemo: j(() => {
-			let n = V(be);
+			let n = V(ye);
 			r({
 				id: e,
 				title: n.meta.title || "Untitled",
@@ -344,19 +344,19 @@ function we({ documentId: e, userId: t, ws: n, updateMeta: r, addSection: i, exp
 			let t = a();
 			if (t) {
 				if (c) {
-					let n = q(s?.() ?? null);
+					let n = J(s?.() ?? null);
 					t.sections = [], t.body = n;
 					let r = Object.values(l).flat();
-					r.length > 0 && (t.comments = r), Ce(e, t.meta.title, n ? `# ${t.meta.title || "Document"}\n\n${n}\n` : `# ${t.meta.title || "Document"}\n`, t);
+					r.length > 0 && (t.comments = r), Y(e, t.meta.title, n ? `# ${t.meta.title || "Document"}\n\n${n}\n` : `# ${t.meta.title || "Document"}\n`, t);
 					return;
 				}
 				for (let e of t.sections) {
 					let t = o(e.id);
-					t && (e.contentText = xe(t));
+					t && (e.contentText = be(t));
 					let n = l[e.id];
 					n && n.length > 0 && (e.comments = n);
 				}
-				Ce(e, t.meta.title, ye(t), t);
+				Y(e, t.meta.title, ve(t), t);
 			}
 		}, [
 			a,
@@ -369,7 +369,7 @@ function we({ documentId: e, userId: t, ws: n, updateMeta: r, addSection: i, exp
 }
 //#endregion
 //#region src/components/doc-editor/useSidebarPanels.ts
-function Te(e = {}) {
+function we(e = {}) {
 	let [t, n] = P(e.initialPanel ?? null), r = j((e) => {
 		n((t) => t === e ? null : e);
 	}, []), i = j((e) => {
@@ -391,7 +391,7 @@ function Te(e = {}) {
 }
 //#endregion
 //#region src/components/doc-editor/canvas/scrollToDocumentTarget.ts
-var Ee = 2e3, Y = "0 0 0 3px #3b82f640";
+var Te = 2e3, Ee = "0 0 0 3px #3b82f640";
 function De(e) {
 	return e.replace(/\\/g, "\\\\").replace(/"/g, "\\\"");
 }
@@ -412,9 +412,9 @@ function Oe(e, t = document) {
 	return n ? (n.scrollIntoView?.({
 		behavior: "smooth",
 		block: "center"
-	}), n.style.transition = "box-shadow 0.3s ease", n.style.boxShadow = Y, setTimeout(() => {
+	}), n.style.transition = "box-shadow 0.3s ease", n.style.boxShadow = Ee, setTimeout(() => {
 		n.style.boxShadow = "";
-	}, Ee), !0) : !1;
+	}, Te), !0) : !1;
 }
 //#endregion
 //#region src/hooks/templateSections.ts
@@ -444,57 +444,57 @@ function je() {
 function Me(e) {
 	return e.toString().replace(/<\/?(paragraph|heading|blockquote|codeBlock|bulletList|orderedList|listItem|taskList|taskItem|horizontalRule|hardBreak|doc)[^>]*>/g, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim();
 }
-function Ne({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, color: m = "var(--color-info)", onMessage: h, activityPublish: g, isVideoDocked: _, onDockVideo: v, onUndockVideo: y, onBack: b }) {
-	let [x, S] = P(je), { showHistory: C, showMyItems: w, showVideoHistory: T, toggleHistory: E, toggleMyItems: ee, toggleVideoHistory: D, closePanel: O } = Te(), [k, A] = P(_ ?? !1), [te, ne] = P(typeof window < "u" ? window.innerWidth : 1400);
+function Ne({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, color: m = "var(--color-info)", onMessage: h, activityPublish: g, isVideoDocked: _, onDockVideo: v, onUndockVideo: y, onBack: b, idToken: x }) {
+	let [S, C] = P(je), { showHistory: w, showMyItems: T, showVideoHistory: E, toggleHistory: ee, toggleMyItems: D, toggleVideoHistory: O, closePanel: k } = we(), [A, te] = P(_ ?? !1), [ne, re] = P(typeof window < "u" ? window.innerWidth : 1400);
 	M(() => {
-		let e = () => ne(window.innerWidth);
+		let e = () => re(window.innerWidth);
 		return window.addEventListener("resize", e), () => window.removeEventListener("resize", e);
 	}, []);
-	let re = te >= 1200, ie = te >= 900, [F, I] = P(!1), L = N(null), R = N(null), [oe, se] = P(0), [, ce] = P(0), z = N(null), B = j(() => {
-		if (z.current === null) {
-			let e = L.current ?? R.current;
-			e && (z.current = e.getBoundingClientRect().top + window.scrollY);
+	let ie = ne >= 1200, F = ne >= 900, [I, L] = P(!1), R = N(null), z = N(null), [oe, se] = P(0), [, ce] = P(0), B = N(null), V = j(() => {
+		if (B.current === null) {
+			let e = R.current ?? z.current;
+			e && (B.current = e.getBoundingClientRect().top + window.scrollY);
 		}
-		let e = z.current ?? 250, t = window.scrollY > e - 146;
-		I(t), L.current && se(L.current.getBoundingClientRect().left), R.current && ce(R.current.getBoundingClientRect().left);
+		let e = B.current ?? 250, t = window.scrollY > e - 146;
+		L(t), R.current && se(R.current.getBoundingClientRect().left), z.current && ce(z.current.getBoundingClientRect().left);
 	}, []);
 	M(() => {
 		let e = () => {
-			z.current = null, B();
+			B.current = null, V();
 		};
-		return window.addEventListener("scroll", B, { passive: !0 }), window.addEventListener("resize", e, { passive: !0 }), () => {
-			window.removeEventListener("scroll", B), window.removeEventListener("resize", e);
+		return window.addEventListener("scroll", V, { passive: !0 }), window.addEventListener("resize", e, { passive: !0 }), () => {
+			window.removeEventListener("scroll", V), window.removeEventListener("resize", e);
 		};
-	}, [B]), M(() => {
+	}, [V]), M(() => {
 		let e = setTimeout(() => {
-			z.current = null, B();
+			B.current = null, V();
 		}, 50);
 		return () => clearTimeout(e);
-	}, [k, B]);
-	let [V, le] = P(null), [ue, U] = P(!1), [de, pe] = P(null), { idToken: me } = n(), he = d(e, me), { meta: W, sections: G, synced: ge, updateMeta: K, addSection: _e, updateSection: ve, addItem: ye, updateItem: be, removeItem: xe, getSectionFragment: q, ydoc: J, provider: Se, exportJSON: Ce, participants: Ee, awareness: Y } = o({
+	}, [A, V]);
+	let [H, le] = P(null), [ue, de] = P(!1), [pe, me] = P(null), he = n(), ge = x === void 0 ? he?.idToken ?? null : x, _e = d(e, ge), { meta: W, sections: G, synced: K, updateMeta: q, addSection: ve, updateSection: ye, addItem: be, updateItem: J, removeItem: xe, getSectionFragment: Se, ydoc: Y, provider: Te, exportJSON: Ee, participants: De, awareness: X } = o({
 		documentId: e,
-		mode: x,
+		mode: S,
 		ws: r,
 		userId: s,
 		displayName: p,
 		color: m,
 		onMessage: h
-	}), { comments: De, addComment: X, resolveThread: Me, unresolveThread: Ne } = i({
+	}), { comments: Me, addComment: Ne, resolveThread: Z, unresolveThread: Pe } = i({
 		documentId: e,
-		idToken: me,
+		idToken: ge,
 		sendMessage: r.sendMessage,
 		onMessage: h,
 		connectionState: r.connectionState
-	}), { sectionReviews: Z, reviewSection: Pe } = c({
+	}), { sectionReviews: Fe, reviewSection: Ie } = c({
 		documentId: e,
-		idToken: me,
+		idToken: ge,
 		sendMessage: r.sendMessage,
 		onMessage: h,
 		connectionState: r.connectionState
-	}), Fe = ae(() => G.map((e) => e.id), [G]), { items: Ie, addItem: Le, updateItem: Re, removeItem: ze, itemErrors: Be } = u({
+	}), Le = ae(() => G.map((e) => e.id), [G]), { items: Re, addItem: ze, updateItem: Be, removeItem: Ve, itemErrors: He } = u({
 		documentId: e,
-		sectionIds: Fe,
-		idToken: me,
+		sectionIds: Le,
+		idToken: ge,
 		sendMessage: r.sendMessage,
 		onMessage: h,
 		connectionState: r.connectionState
@@ -516,20 +516,20 @@ function Ne({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, 
 		r.connectionState,
 		r.sendMessage
 	]);
-	let Ve = fe(J), { demoLoaded: He, handleLoadDemo: Ue, handleClearDocument: We, handleExport: Ge } = we({
+	let Ue = fe(Y), { demoLoaded: We, handleLoadDemo: Ge, handleClearDocument: Ke, handleExport: qe } = Ce({
 		documentId: e,
 		userId: s,
 		ws: r,
-		updateMeta: K,
-		addSection: _e,
-		exportJSON: Ce,
-		getSectionFragment: q,
-		getCanvasFragment: () => J ? J.getXmlFragment(H) : null,
-		isCanvas: Ve,
-		comments: De
-	}), [Ke, qe] = P(null), Je = j((e) => {
+		updateMeta: q,
+		addSection: ve,
+		exportJSON: Ee,
+		getSectionFragment: Se,
+		getCanvasFragment: () => Y ? Y.getXmlFragment(U) : null,
+		isCanvas: Ue,
+		comments: Me
+	}), [Je, Ye] = P(null), Xe = j((e) => {
 		let t = e.lastSeen && Date.now() - e.lastSeen < 3e4, n = e.mode === "reviewer" ? "ack" : e.mode === "reader" ? "reader" : "editor";
-		if (x !== n && (S(n), typeof window < "u")) {
+		if (S !== n && (C(n), typeof window < "u")) {
 			let e = new URL(window.location.href);
 			e.searchParams.set("mode", n), window.history.replaceState({}, "", e.toString());
 		}
@@ -542,30 +542,30 @@ function Ne({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, 
 				n.style.boxShadow = "";
 			}, 2e3)));
 		}, 150);
-	}, [x, G]), Ye = j((e) => {
+	}, [S, G]), Ze = j((e) => {
 		let t = e.userId || e.clientId;
 		le((e) => e === t ? null : t);
-	}, []), Xe = N(null);
+	}, []), Qe = N(null);
 	M(() => {
-		if (!V) {
-			Xe.current = null;
+		if (!H) {
+			Qe.current = null;
 			return;
 		}
-		let e = Ee.find((e) => (e.userId || e.clientId) === V);
+		let e = De.find((e) => (e.userId || e.clientId) === H);
 		if (!e || !e.currentSectionId) {
 			if (e && G.length > 0) {
 				let e = document.getElementById(`section-${G[0].id}`);
-				e && !Xe.current && (e.scrollIntoView({
+				e && !Qe.current && (e.scrollIntoView({
 					behavior: "smooth",
 					block: "start"
-				}), Xe.current = "__initial__");
+				}), Qe.current = "__initial__");
 			}
 			return;
 		}
-		if (e.currentSectionId === Xe.current) return;
-		Xe.current = e.currentSectionId;
+		if (e.currentSectionId === Qe.current) return;
+		Qe.current = e.currentSectionId;
 		let t = e.mode === "reviewer" ? "ack" : e.mode === "reader" ? "reader" : "editor";
-		if (x !== t && (S(t), typeof window < "u")) {
+		if (S !== t && (C(t), typeof window < "u")) {
 			let e = new URL(window.location.href);
 			e.searchParams.set("mode", t), window.history.replaceState({}, "", e.toString());
 		}
@@ -582,62 +582,62 @@ function Ne({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, 
 			clearTimeout(n), r && clearTimeout(r);
 		};
 	}, [
-		V,
-		Ee,
-		x,
+		H,
+		De,
+		S,
 		G
 	]);
-	let Ze = j(() => {
+	let $e = j(() => {
 		le(null);
-	}, []), Qe = j((t, n) => {
+	}, []), et = j((t, n) => {
 		let r = {
 			id: crypto.randomUUID(),
 			...n
 		};
-		ye(t, r), Le(t, r).catch(() => {}), g("doc.add_item", {
+		be(t, r), ze(t, r).catch(() => {}), g("doc.add_item", {
 			sectionTitle: G.find((e) => e.id === t)?.title,
 			documentId: e,
 			documentTitle: W?.title
 		});
 	}, [
-		ye,
-		Le,
+		be,
+		ze,
 		G,
 		g,
 		e,
 		W?.title
-	]), $e = j((e, t, n) => {
-		be(e, t, n), Re(e, t, n).catch(() => {});
-	}, [be, Re]), et = j((e, t) => {
-		xe(e, t), ze(e, t).catch(() => {});
-	}, [xe, ze]);
+	]), tt = j((e, t, n) => {
+		J(e, t, n), Be(e, t, n).catch(() => {});
+	}, [J, Be]), nt = j((e, t) => {
+		xe(e, t), Ve(e, t).catch(() => {});
+	}, [xe, Ve]);
 	M(() => {
-		if (Ve || G.length === 0 || Ke) return;
+		if (Ue || G.length === 0 || Je) return;
 		let e = setTimeout(() => {
 			let e = G[0].id;
-			qe(e), Y.updateSection(e);
+			Ye(e), X.updateSection(e);
 		}, 500);
 		return () => clearTimeout(e);
 	}, [
-		Ve,
+		Ue,
 		G,
-		Ke,
-		Y
+		Je,
+		X
 	]);
-	let tt = j((e) => {
-		qe(e), Y.updateSection(e);
-	}, [Y]), nt = N(null), [rt, it] = P(0), at = j((e) => {
-		pe(e), U(!0), requestAnimationFrame(() => {
-			let t = document.getElementById(`section-${e}`), n = nt.current;
+	let rt = j((e) => {
+		Ye(e), X.updateSection(e);
+	}, [X]), it = N(null), [at, ot] = P(0), st = j((e) => {
+		me(e), de(!0), requestAnimationFrame(() => {
+			let t = document.getElementById(`section-${e}`), n = it.current;
 			if (t && n) {
 				let e = t.getBoundingClientRect(), r = n.getBoundingClientRect();
-				it(e.top - r.top);
+				ot(e.top - r.top);
 			}
 		});
-	}, []), ot = j(() => {
-		U(!1);
-	}, []), st = j((t, n, r) => {
-		X(t, n, r), g("doc.comment", {
+	}, []), ct = j(() => {
+		de(!1);
+	}, []), lt = j((t, n, r) => {
+		Ne(t, n, r), g("doc.comment", {
 			sectionId: t,
 			text: n.slice(0, 50),
 			documentId: e,
@@ -657,26 +657,26 @@ function Ne({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, 
 			});
 		}
 	}, [
-		X,
+		Ne,
 		g,
 		G,
 		p,
 		e,
 		W?.title
-	]), ct = j((t, n) => {
-		Me(t, n), g("doc.resolve_thread", {
+	]), ut = j((t, n) => {
+		Z(t, n), g("doc.resolve_thread", {
 			sectionId: t,
 			commentId: n,
 			documentId: e,
 			documentTitle: W?.title
 		});
 	}, [
-		Me,
+		Z,
 		g,
 		e,
 		W?.title
-	]), lt = j((t, n) => {
-		Ne(t, n), g("doc.unresolve_thread", {
+	]), dt = j((t, n) => {
+		Pe(t, n), g("doc.unresolve_thread", {
 			sectionId: t,
 			commentId: n,
 			reopenedBy: p,
@@ -684,50 +684,50 @@ function Ne({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, 
 			documentTitle: W?.title
 		});
 	}, [
-		Ne,
+		Pe,
 		g,
 		p,
 		e,
 		W?.title
-	]), ut = a({
+	]), ft = a({
 		sections: G,
-		comments: De,
+		comments: Me,
 		displayName: p,
 		userId: s
-	}), dt = j((e, t) => {
+	}), pt = j((e, t) => {
 		setTimeout(() => {
 			Oe({
 				sectionId: e,
 				commentId: t
 			});
 		}, 150);
-	}, []), ft = ee, pt = E, mt = D, ht = j(() => {
-		A((e) => !e), O();
-	}, [O]);
+	}, []), mt = D, ht = ee, gt = O, _t = j(() => {
+		te((e) => !e), k();
+	}, [k]);
 	M(() => {
 		let e = (e) => {
-			(e.metaKey || e.ctrlKey) && e.key === "m" && (e.preventDefault(), ft());
+			(e.metaKey || e.ctrlKey) && e.key === "m" && (e.preventDefault(), mt());
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
-	}, [ft]);
-	let gt = `doc:${e}`, _t = l({
-		channel: gt,
+	}, [mt]);
+	let vt = `doc:${e}`, Q = l({
+		channel: vt,
 		sendMessage: r.sendMessage,
 		onMessage: h
 	});
 	M(() => {
-		C ? _t.fetchVersions() : _t.clearPreview();
-	}, [C]), M(() => {
-		if (!ge || !t || !J) return;
-		let n = J.getMap("meta");
-		if (n.get("templateApplied") || J.getArray("sections").length > 0) return;
+		w ? Q.fetchVersions() : Q.clearPreview();
+	}, [w]), M(() => {
+		if (!K || !t || !Y) return;
+		let n = Y.getMap("meta");
+		if (n.get("templateApplied") || Y.getArray("sections").length > 0) return;
 		let r = f().find((e) => e.name === t);
 		if (!r) return;
-		J.transact(() => {
+		Y.transact(() => {
 			n.set("templateApplied", !0);
 		});
 		let i = (e) => e === "tasks" ? "tasks" : e === "decisions" ? "decisions" : "notes";
-		K({
+		q({
 			id: e,
 			title: W?.title || r.name,
 			sourceType: "notes",
@@ -739,7 +739,7 @@ function Ne({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, 
 			status: "draft",
 			documentType: r.name
 		});
-		for (let t of r.fields) _e({
+		for (let t of r.fields) ve({
 			id: ke(e, t.name),
 			type: i(t.sectionType),
 			sectionType: t.sectionType,
@@ -749,22 +749,22 @@ function Ne({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, 
 			items: []
 		});
 	}, [
-		ge,
+		K,
 		t,
-		J
+		Y
 	]), M(() => {
-		!ge || !J || Ae(J);
+		!K || !Y || Ae(Y);
 	}, [
-		ge,
-		J,
+		K,
+		Y,
 		G
 	]);
-	let vt = (e) => {
-		if (S(e), typeof window < "u") {
+	let yt = (e) => {
+		if (C(e), typeof window < "u") {
 			let t = new URL(window.location.href);
 			t.searchParams.set("mode", e), window.history.replaceState({}, "", t.toString());
 		}
-	}, Q = W ?? {
+	}, bt = W ?? {
 		id: e,
 		title: "",
 		sourceType: "notes",
@@ -775,103 +775,103 @@ function Ne({ documentId: e, documentType: t, ws: r, userId: s, displayName: p, 
 		status: "draft"
 	};
 	return {
-		mode: x,
-		handleModeChange: vt,
+		mode: S,
+		handleModeChange: yt,
 		meta: W,
-		headerMeta: Q,
-		isFinalized: Q.status === "final",
+		headerMeta: bt,
+		isFinalized: bt.status === "final",
 		handleFinalize: j(() => {
-			window.confirm("Finalize this document? It will become read-only.") && (K({ status: "final" }), g("doc.finalize", {
+			window.confirm("Finalize this document? It will become read-only.") && (q({ status: "final" }), g("doc.finalize", {
 				documentId: e,
 				documentTitle: W?.title
 			}));
 		}, [
-			K,
+			q,
 			g,
 			e,
 			W?.title
 		]),
 		handleUnlock: j(() => {
-			K({ status: "draft" }), g("doc.unlock", {
+			q({ status: "draft" }), g("doc.unlock", {
 				documentId: e,
 				documentTitle: W?.title
 			});
 		}, [
-			K,
+			q,
 			g,
 			e,
 			W?.title
 		]),
-		updateMeta: K,
+		updateMeta: q,
 		sections: G,
-		updateSection: ve,
-		getSectionFragment: q,
-		isCanvas: Ve,
-		itemErrors: Be,
-		ydoc: J,
-		provider: Se,
-		synced: ge,
-		demoLoaded: He,
-		handleLoadDemo: Ue,
-		handleClearDocument: We,
-		handleExport: Ge,
-		participants: Ee,
-		awareness: Y,
-		focusedSectionId: Ke,
-		handleSectionFocus: tt,
-		handleJumpToUser: Je,
-		followingUserId: V,
-		handleFollowUser: Ye,
-		handleStopFollow: Ze,
-		comments: De,
+		updateSection: ye,
+		getSectionFragment: Se,
+		isCanvas: Ue,
+		itemErrors: He,
+		ydoc: Y,
+		provider: Te,
+		synced: K,
+		demoLoaded: We,
+		handleLoadDemo: Ge,
+		handleClearDocument: Ke,
+		handleExport: qe,
+		participants: De,
+		awareness: X,
+		focusedSectionId: Je,
+		handleSectionFocus: rt,
+		handleJumpToUser: Xe,
+		followingUserId: H,
+		handleFollowUser: Ze,
+		handleStopFollow: $e,
+		comments: Me,
 		commentSidebarOpen: ue,
-		commentSectionId: de,
-		commentSidebarTop: rt,
-		sectionListRef: nt,
-		handleOpenComments: at,
-		handleCloseComments: ot,
-		handleAddComment: st,
-		handleResolveThread: ct,
-		handleUnresolveThread: lt,
-		restItems: Ie,
-		handleAddItem: Qe,
-		handleUpdateItem: $e,
-		handleRemoveItem: et,
-		sectionReviews: Z,
-		restReviewSection: Pe,
-		showHistory: C,
-		showMyItems: w,
-		showVideoHistory: T,
-		handleToggleHistory: pt,
-		handleToggleMyItems: ft,
-		handleToggleVideoHistory: mt,
-		closePanel: O,
-		showVideoCall: k,
-		setShowVideoCall: A,
-		handleToggleVideoCall: ht,
-		videoSessions: he,
+		commentSectionId: pe,
+		commentSidebarTop: at,
+		sectionListRef: it,
+		handleOpenComments: st,
+		handleCloseComments: ct,
+		handleAddComment: lt,
+		handleResolveThread: ut,
+		handleUnresolveThread: dt,
+		restItems: Re,
+		handleAddItem: et,
+		handleUpdateItem: tt,
+		handleRemoveItem: nt,
+		sectionReviews: Fe,
+		restReviewSection: Ie,
+		showHistory: w,
+		showMyItems: T,
+		showVideoHistory: E,
+		handleToggleHistory: ht,
+		handleToggleMyItems: mt,
+		handleToggleVideoHistory: gt,
+		closePanel: k,
+		showVideoCall: A,
+		setShowVideoCall: te,
+		handleToggleVideoCall: _t,
+		videoSessions: _e,
 		isVideoDocked: _,
 		onDockVideo: v,
 		onUndockVideo: y,
-		showTOC: re,
-		showInlineVideo: ie,
-		sidebarFixed: F,
-		videoSpacerRef: L,
-		tocSpacerRef: R,
+		showTOC: ie,
+		showInlineVideo: F,
+		sidebarFixed: I,
+		videoSpacerRef: R,
+		tocSpacerRef: z,
 		videoLeft: oe,
 		FIXED_TOP: 146,
-		myItems: ut,
-		handleNavigateToSection: dt,
-		versionHistory: _t,
+		myItems: ft,
+		handleNavigateToSection: pt,
+		versionHistory: Q,
 		handleBack: j(() => {
-			k && !_ && v?.(), b?.();
+			A && !_ && v?.(), b?.();
 		}, [
-			k,
+			A,
 			_,
 			v,
 			b
 		]),
-		idToken: me,
+		idToken: ge,
 		activityPublish: g,
 		displayName: p,
 		color: m,
@@ -1399,9 +1399,9 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 	"markdown",
 	"pdf",
 	"json"
-], meta: s, mode: c, suggesting: l = !1, modeReason: u, participants: d, onUpdateMeta: f, onExport: m, extraMenuItems: w, onToggleHistory: T, onToggleVideoCall: E, onToggleVideoHistory: D, callVariant: O, callLabel: k, onClearDocument: A, onJumpToUser: te, sections: ne, onToggleMyItems: re, onToggleChat: j, chatRoomName: M, chatUnreadCount: ie, formatActionsRef: ae, myItemCount: N, commentCount: R, onBack: oe, onFollowUser: se, followingUserId: ce, pastCallsCount: z, onShareToRoom: B, shareRoomName: V, sharingToRoom: le, shareStatus: H, onDismissShareStatus: ue, lifecycleStatus: U, owner: de, collaborators: fe, onShare: pe, lifecycleTerminal: me, lifecycleLegacyClaim: he, lifecycleActions: W, lifecycleLoading: G, lifecycleBusy: ge, lifecycleError: K, onDismissLifecycleError: _e, onLifecycleAction: ve, onClaimOwnership: ye }) {
-	let [be, xe] = P(!1), [q, J] = P(null), [Se, Ce] = P(""), [we, Te] = P(""), [Ee, Y] = P(!1), De = W ?? [], X = q != null && ot.includes(q), Oe = q != null && at.includes(q), ke = !Oe || we.trim().toUpperCase() === it, Ae = ut(K), je = () => {
-		J(null), Ce(""), Te("");
+], meta: s, mode: c, suggesting: l = !1, modeReason: u, participants: d, onUpdateMeta: f, onExport: m, extraMenuItems: w, onToggleHistory: T, onToggleVideoCall: E, onToggleVideoHistory: D, callVariant: O, callLabel: k, onClearDocument: A, onJumpToUser: te, sections: ne, onToggleMyItems: re, onToggleChat: j, chatRoomName: M, chatUnreadCount: ie, formatActionsRef: ae, myItemCount: N, commentCount: R, onBack: z, onFollowUser: oe, followingUserId: se, pastCallsCount: ce, onShareToRoom: B, shareRoomName: V, sharingToRoom: H, shareStatus: U, onDismissShareStatus: le, lifecycleStatus: ue, owner: de, collaborators: fe, onShare: pe, lifecycleTerminal: me, lifecycleLegacyClaim: he, lifecycleActions: ge, lifecycleLoading: _e, lifecycleBusy: W, lifecycleError: G, onDismissLifecycleError: K, onLifecycleAction: q, onClaimOwnership: ve }) {
+	let [ye, be] = P(!1), [J, xe] = P(null), [Se, Y] = P(""), [Ce, we] = P(""), [Te, Ee] = P(!1), De = ge ?? [], X = J != null && ot.includes(J), Oe = J != null && at.includes(J), ke = !Oe || Ce.trim().toUpperCase() === it, Ae = ut(G), je = () => {
+		xe(null), Y(""), we("");
 	}, Me = s.title.trim() || "Untitled document", Ne = w ?? [], Z = Ne.filter((e) => e.id.startsWith("share-")), Pe = Ne.filter((e) => e.id.startsWith("insert-")), Fe = Ne.filter((e) => e.id.startsWith("toggle-")), Ie = Ne.filter((e) => !e.id.startsWith("share-") && !e.id.startsWith("insert-") && !e.id.startsWith("toggle-")), Le = (e) => ({
 		label: e.label,
 		onSelect: e.onSelect,
@@ -1417,9 +1417,9 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 				onSelect: T,
 				"data-testid": "document-header-history"
 			}] : [],
-			...D && (z ?? 0) > 0 ? [{
+			...D && (ce ?? 0) > 0 ? [{
 				label: "Past calls",
-				trailing: String(z),
+				trailing: String(ce),
 				onSelect: D
 			}] : [],
 			...Ie.map(Le),
@@ -1466,7 +1466,7 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 		...A ? [{ items: [{
 			label: "Clear document",
 			danger: !0,
-			onSelect: () => xe(!0),
+			onSelect: () => be(!0),
 			"data-testid": "clear-document-btn"
 		}] }] : []
 	];
@@ -1479,10 +1479,10 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 				children: [/* @__PURE__ */ L("div", {
 					className: "flex flex-1 min-w-0 items-center gap-[10px]",
 					children: [
-						oe && /* @__PURE__ */ I(h, {
+						z && /* @__PURE__ */ I(h, {
 							variant: "ghost",
 							size: "sm",
-							onClick: oe,
+							onClick: z,
 							className: "border-none px-0 py-0.5 text-[13px] font-normal text-primary",
 							children: "← Documents"
 						}),
@@ -1496,10 +1496,10 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 								(i ?? c === "editor") && f && f({ title: e.target.value });
 							}
 						}),
-						U && /* @__PURE__ */ I(ee, {
+						ue && /* @__PURE__ */ I(ee, {
 							"data-testid": "lifecycle-status",
-							state: st[U],
-							label: ct(U)
+							state: st[ue],
+							label: ct(ue)
 						}),
 						(de !== void 0 || fe !== void 0 || pe) && /* @__PURE__ */ I(Xe, {
 							owner: de ?? null,
@@ -1534,8 +1534,8 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 					participants: d,
 					sections: ne,
 					onJumpToUser: te,
-					onFollowUser: se,
-					followingUserId: ce
+					onFollowUser: oe,
+					followingUserId: se
 				})]
 			}),
 			/* @__PURE__ */ L("div", {
@@ -1586,14 +1586,14 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 									children: ["#", M ?? V]
 								}) : null,
 								B && /* @__PURE__ */ I(g, {
-									"aria-label": le ? "Sharing…" : `Share to #${V ?? "room"}`,
+									"aria-label": H ? "Sharing…" : `Share to #${V ?? "room"}`,
 									title: V ? `Post a link to this page in #${V}` : "Post a link to this page in the room",
 									variant: "ghost",
 									size: "sm",
 									className: "border-0",
 									"data-testid": "share-to-room-btn",
-									"data-sharing": le ? "true" : "false",
-									disabled: le,
+									"data-sharing": H ? "true" : "false",
+									disabled: H,
 									onClick: B,
 									icon: /* @__PURE__ */ I(_, { size: 13 })
 								}),
@@ -1618,25 +1618,25 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 								})
 							]
 						}),
-						H && /* @__PURE__ */ L("span", {
+						U && /* @__PURE__ */ L("span", {
 							role: "status",
 							"data-testid": "share-to-room-status",
-							"data-tone": H.tone,
-							className: `inline-flex items-center gap-1 text-[12px] ${H.tone === "error" ? "text-danger-fg" : "text-success-fg"}`,
-							children: [H.text, H.tone === "error" && ue && /* @__PURE__ */ I(g, {
+							"data-tone": U.tone,
+							className: `inline-flex items-center gap-1 text-[12px] ${U.tone === "error" ? "text-danger-fg" : "text-success-fg"}`,
+							children: [U.text, U.tone === "error" && le && /* @__PURE__ */ I(g, {
 								"aria-label": "Dismiss share error",
 								variant: "ghost",
 								size: "sm",
-								onClick: ue,
+								onClick: le,
 								className: "border-none p-0 text-current",
 								icon: /* @__PURE__ */ I(v, { size: 12 })
 							})]
 						}),
-						ve && /* @__PURE__ */ L("div", {
+						q && /* @__PURE__ */ L("div", {
 							"data-testid": "lifecycle-actions",
 							className: "flex items-center gap-1.5",
 							children: [
-								G && De.length === 0 && /* @__PURE__ */ I("span", {
+								_e && De.length === 0 && /* @__PURE__ */ I("span", {
 									"data-testid": "lifecycle-loading",
 									className: "text-xs text-[var(--color-text-tertiary)]",
 									children: "Checking review status…"
@@ -1646,18 +1646,18 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 									size: "sm",
 									variant: e === "finalize" ? "danger" : "secondary",
 									"data-testid": `lifecycle-action-${e}`,
-									disabled: ge,
+									disabled: W,
 									onClick: () => {
-										Ce(""), Te(""), J(e);
+										Y(""), we(""), xe(e);
 									},
 									children: nt[e]
 								}, e)),
-								ye && /* @__PURE__ */ I(h, {
+								ve && /* @__PURE__ */ I(h, {
 									type: "button",
 									size: "sm",
 									variant: "secondary",
 									"data-testid": "claim-ownership-btn",
-									onClick: () => Y(!0),
+									onClick: () => Ee(!0),
 									children: "Take ownership"
 								})
 							]
@@ -1677,22 +1677,22 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 					]
 				})]
 			}),
-			K && /* @__PURE__ */ I(x, {
-				variant: K.kind === "conflict" ? "warning" : "error",
-				..._e ? { onDismiss: _e } : {},
+			G && /* @__PURE__ */ I(x, {
+				variant: G.kind === "conflict" ? "warning" : "error",
+				...K ? { onDismiss: K } : {},
 				children: /* @__PURE__ */ L("span", {
 					"data-testid": "lifecycle-error",
-					"data-kind": K.kind,
+					"data-kind": G.kind,
 					children: [
-						/* @__PURE__ */ I("strong", { children: lt[K.kind] }),
+						/* @__PURE__ */ I("strong", { children: lt[G.kind] }),
 						" ",
 						/* @__PURE__ */ I("span", {
 							"data-testid": "lifecycle-error-detail",
-							children: K.message
+							children: G.message
 						}),
 						Ae && /* @__PURE__ */ L(F, { children: [" ", /* @__PURE__ */ L("span", {
 							"data-testid": "lifecycle-ownerless-note",
-							children: ["Nobody owns this document yet. Ownership is never taken on your behalf —", ye ? " use “Take ownership” above if it should be yours." : " its owner has to claim it deliberately."]
+							children: ["Nobody owns this document yet. Ownership is never taken on your behalf —", ve ? " use “Take ownership” above if it should be yours." : " its owner has to claim it deliberately."]
 						})] })
 					]
 				})
@@ -1709,16 +1709,16 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 				]
 			}),
 			/* @__PURE__ */ L(C, {
-				open: q != null,
+				open: J != null,
 				tone: Oe ? "destructive" : X ? "caution" : "info",
-				title: q ? `${nt[q]} — “${Me}”?` : "",
-				body: q ? rt[q] : "",
-				confirmLabel: q ? nt[q] : "Confirm",
+				title: J ? `${nt[J]} — “${Me}”?` : "",
+				body: J ? rt[J] : "",
+				confirmLabel: J ? nt[J] : "Confirm",
 				cancelLabel: Oe ? "Keep it open" : "Cancel",
 				confirmDisabled: X && Se.trim().length === 0 || !ke,
 				onConfirm: () => {
-					let e = q, t = Se.trim();
-					je(), e && ve?.(e, t || void 0);
+					let e = J, t = Se.trim();
+					je(), e && q?.(e, t || void 0);
 				},
 				onCancel: je,
 				children: [
@@ -1735,9 +1735,9 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 						}), /* @__PURE__ */ I("input", {
 							id: "lifecycle-finalize-confirm",
 							"data-testid": "lifecycle-finalize-confirm-input",
-							value: we,
+							value: Ce,
 							autoComplete: "off",
-							onChange: (e) => Te(e.target.value),
+							onChange: (e) => we(e.target.value),
 							placeholder: it,
 							className: "w-full rounded-md border border-[var(--color-border-field)] bg-[var(--color-surface)] p-2 font-mono text-sm text-[var(--color-text-primary)]"
 						})]
@@ -1752,35 +1752,35 @@ function dt({ saveState: e, workflowActions: t, formatActions: n, className: r, 
 						"data-testid": "lifecycle-reason-input",
 						value: Se,
 						rows: 3,
-						onChange: (e) => Ce(e.target.value),
+						onChange: (e) => Y(e.target.value),
 						placeholder: X ? "What needs to change, and why?" : Oe ? "Recorded against this document permanently" : "Anything the others should know",
 						className: "w-full rounded-md border border-[var(--color-border-field)] bg-[var(--color-surface)] p-2 text-[13px] text-[var(--color-text-primary)]"
 					})
 				]
 			}),
 			/* @__PURE__ */ I(C, {
-				open: Ee,
+				open: Te,
 				tone: "caution",
 				title: `Take ownership of “${Me}”?`,
 				body: "You become the owner of this document. Owner-only actions — submitting it for review, reopening it after approval — become yours, and nobody else can claim it afterwards. The claim is recorded against your name.",
 				confirmLabel: "Take ownership",
 				cancelLabel: "Leave it unowned",
 				onConfirm: () => {
-					Y(!1), ye?.();
+					Ee(!1), ve?.();
 				},
-				onCancel: () => Y(!1)
+				onCancel: () => Ee(!1)
 			}),
 			/* @__PURE__ */ I(C, {
-				open: be,
+				open: ye,
 				tone: "destructive",
 				title: `Clear “${Me}”?`,
 				body: "Every section and everything written in it is removed — for everyone in the document, not just on your screen. There is no undo; the only way back is restoring an earlier version from History.",
 				confirmLabel: "Clear document",
 				cancelLabel: "Keep content",
 				onConfirm: () => {
-					xe(!1), A?.();
+					be(!1), A?.();
 				},
-				onCancel: () => xe(!1)
+				onCancel: () => be(!1)
 			})
 		]
 	});
@@ -1826,7 +1826,7 @@ function pt({ followingUserId: e, participants: t, onStopFollow: n }) {
 }
 //#endregion
 //#region src/components/ui/Panel.tsx
-var mt = ({ children: e, variant: t = "light", width: n = 320, style: r }) => typeof document > "u" ? null : oe(/* @__PURE__ */ I("div", {
+var mt = ({ children: e, variant: t = "light", width: n = 320, style: r }) => typeof document > "u" ? null : z(/* @__PURE__ */ I("div", {
 	className: p("fixed right-0 top-0 h-full z-[60] flex flex-col shadow-[-4px_0_12px_rgba(0,0,0,0.08)]", t === "dark" ? "bg-call-chrome" : "bg-surface"),
 	style: {
 		width: n,
@@ -4004,7 +4004,7 @@ function Cn({ sections: e, participants: t, meta: n, commentCounts: r, sectionCo
 }
 //#endregion
 //#region src/components/doc-editor/EditorModeSwitch.tsx
-function wn({ mode: e, isEmpty: t, isCanvas: n = !1, isFinalized: r, sections: i, documentId: a, displayName: o, color: s, userId: c, ydoc: l, provider: u, getSectionFragment: d, updateSection: f, participants: m, focusedSectionId: h, onSectionFocus: g, comments: _, onAddComment: v, onResolveThread: y, onUnresolveThread: b, onUpdateCursorInfo: x, onOpenComments: S, onAddItem: C, onUpdateItem: w, onRemoveItem: T, restItems: E, itemErrors: ee, commentSidebarOpen: D, commentSectionId: O, commentSidebarTop: k, sectionListRef: A, onCloseComments: te, showVideoCall: ne, isVideoDocked: re, showInlineVideo: j, sidebarFixed: M, videoSpacerRef: ie, videoLeft: ae, FIXED_TOP: N, showTOC: P, sectionReviews: R, reviewSection: oe, headerMeta: se, onLoadDemo: ce, activityPublish: z }) {
+function wn({ mode: e, isEmpty: t, isCanvas: n = !1, isFinalized: r, sections: i, documentId: a, displayName: o, color: s, userId: c, ydoc: l, provider: u, getSectionFragment: d, updateSection: f, participants: m, focusedSectionId: h, onSectionFocus: g, comments: _, onAddComment: v, onResolveThread: y, onUnresolveThread: b, onUpdateCursorInfo: x, onOpenComments: S, onAddItem: C, onUpdateItem: w, onRemoveItem: T, restItems: E, itemErrors: ee, commentSidebarOpen: D, commentSectionId: O, commentSidebarTop: k, sectionListRef: A, onCloseComments: te, showVideoCall: ne, isVideoDocked: re, showInlineVideo: j, sidebarFixed: M, videoSpacerRef: ie, videoLeft: ae, FIXED_TOP: N, showTOC: P, sectionReviews: R, reviewSection: z, headerMeta: oe, onLoadDemo: se, activityPublish: ce }) {
 	let B = Object.keys(ee ?? {}).map((e) => i.find((t) => t.id === e)?.title || e);
 	return /* @__PURE__ */ L(F, { children: [
 		B.length > 0 && /* @__PURE__ */ L("div", {
@@ -4041,7 +4041,7 @@ function wn({ mode: e, isEmpty: t, isCanvas: n = !1, isFinalized: r, sections: i
 					children: "No document content yet."
 				}),
 				/* @__PURE__ */ I("button", {
-					onClick: ce,
+					onClick: se,
 					className: p("px-6 py-2.5 text-[15px] font-semibold border-none rounded-lg", "bg-primary text-white cursor-pointer font-[inherit]"),
 					children: "Load Demo Document"
 				}),
@@ -4141,13 +4141,13 @@ function wn({ mode: e, isEmpty: t, isCanvas: n = !1, isFinalized: r, sections: i
 			provider: u,
 			sectionReviews: R,
 			reviewSection: (e, t, n) => {
-				oe(e, t, n);
+				z(e, t, n);
 				let r = i.find((t) => t.id === e);
-				z(`doc.review_${t}`, {
+				ce(`doc.review_${t}`, {
 					sectionTitle: r?.title,
 					status: t,
 					documentId: a,
-					documentTitle: se?.title
+					documentTitle: oe?.title
 				});
 			},
 			comments: _,
@@ -4159,7 +4159,7 @@ function wn({ mode: e, isEmpty: t, isCanvas: n = !1, isFinalized: r, sections: i
 		!n && !t && e === "reader" && l && /* @__PURE__ */ I(Cn, {
 			sections: i,
 			participants: m,
-			meta: se,
+			meta: oe,
 			commentCounts: Object.fromEntries(Object.entries(_).map(([e, t]) => [e, Ht(t)])),
 			sectionContentTexts: Object.fromEntries(i.map((e) => {
 				let t = d(e.id);
@@ -4823,8 +4823,8 @@ function Un({ showHistory: e, showMyItems: t, showVideoHistory: n, closePanel: r
 //#endregion
 //#region src/components/doc-editor/DocumentEditorPage.tsx
 var Wn = /* @__PURE__ */ e({ default: () => Gn });
-function Gn({ documentId: e, documentType: t, ws: n, userId: r, displayName: i, color: a = "var(--color-info)", onMessage: o, activityPublish: s, onBack: c, isVideoDocked: l, onDockVideo: u, onUndockVideo: d }) {
-	let f = Ne({
+function Gn({ documentId: e, documentType: t, ws: n, userId: r, displayName: i, color: a = "var(--color-info)", onMessage: o, activityPublish: s, onBack: c, isVideoDocked: l, onDockVideo: u, onUndockVideo: d, idToken: f }) {
+	let p = Ne({
 		documentId: e,
 		documentType: t,
 		ws: n,
@@ -4835,22 +4835,23 @@ function Gn({ documentId: e, documentType: t, ws: n, userId: r, displayName: i, 
 		activityPublish: s,
 		isVideoDocked: l,
 		onDockVideo: u,
+		idToken: f,
 		onUndockVideo: d,
 		onBack: c
-	}), p = !f.isCanvas && f.sections.length === 0 && !f.demoLoaded, [m] = P(() => {
+	}), m = !p.isCanvas && p.sections.length === 0 && !p.demoLoaded, [h] = P(() => {
 		if (typeof document > "u") return null;
 		let e = document.createElement("div");
 		return e.style.width = "100%", e;
 	});
 	M(() => {
-		if (!m) return;
-		if (!f.showVideoCall) {
-			m.parentNode?.removeChild(m);
+		if (!h) return;
+		if (!p.showVideoCall) {
+			h.parentNode?.removeChild(h);
 			return;
 		}
-		let e = f.isVideoDocked ? "sidebar-video-slot" : "inline-video-slot", t = () => {
+		let e = p.isVideoDocked ? "sidebar-video-slot" : "inline-video-slot", t = () => {
 			let t = document.getElementById(e);
-			return t && t !== m.parentNode ? (t.appendChild(m), !0) : t === m.parentNode;
+			return t && t !== h.parentNode ? (t.appendChild(h), !0) : t === h.parentNode;
 		};
 		if (t()) return;
 		let n = setInterval(() => {
@@ -4860,140 +4861,140 @@ function Gn({ documentId: e, documentType: t, ws: n, userId: r, displayName: i, 
 			clearInterval(n), clearTimeout(r);
 		};
 	}, [
-		m,
-		f.showVideoCall,
-		f.isVideoDocked,
-		f.mode
+		h,
+		p.showVideoCall,
+		p.isVideoDocked,
+		p.mode
 	]), M(() => () => {
-		m?.parentNode?.removeChild(m);
-	}, [m]);
-	let h = f.showVideoCall && m ? oe(/* @__PURE__ */ I(Ct, {
+		h?.parentNode?.removeChild(h);
+	}, [h]);
+	let g = p.showVideoCall && h ? z(/* @__PURE__ */ I(Ct, {
 		documentId: e,
 		userId: r,
-		idToken: f.idToken,
-		meta: f.meta,
-		updateMeta: f.updateMeta,
+		idToken: p.idToken,
+		meta: p.meta,
+		updateMeta: p.updateMeta,
 		sendMessage: n.sendMessage,
-		isDocked: f.isVideoDocked,
+		isDocked: p.isVideoDocked,
 		onClose: () => {
-			f.setShowVideoCall(!1), f.isVideoDocked && d?.();
+			p.setShowVideoCall(!1), p.isVideoDocked && d?.();
 		},
-		onDockToSidebar: f.isVideoDocked ? void 0 : (() => {
+		onDockToSidebar: p.isVideoDocked ? void 0 : (() => {
 			u?.();
 		}),
-		onUndock: f.isVideoDocked ? (() => {
+		onUndock: p.isVideoDocked ? (() => {
 			d?.();
 		}) : void 0,
 		onCallEnd: () => {
-			f.setShowVideoCall(!1), d?.();
+			p.setShowVideoCall(!1), d?.();
 		}
-	}), m) : null;
+	}), h) : null;
 	return /* @__PURE__ */ L("div", {
 		"data-testid": "document-editor-page",
 		className: "flex flex-col h-full",
 		children: [
-			h,
+			g,
 			/* @__PURE__ */ I(ft, {
-				meta: f.headerMeta,
-				mode: f.mode,
-				onModeChange: f.handleModeChange,
-				participants: f.participants,
-				onUpdateMeta: f.updateMeta,
-				onExport: f.handleExport,
-				onToggleHistory: f.handleToggleHistory,
-				onToggleVideoCall: f.handleToggleVideoCall,
-				onToggleVideoHistory: f.handleToggleVideoHistory,
-				isCallActive: !!f.meta?.activeCallSessionId,
-				onClearDocument: f.handleClearDocument,
-				onJumpToUser: f.handleJumpToUser,
-				sections: f.isCanvas ? [] : f.sections.map((e) => ({
+				meta: p.headerMeta,
+				mode: p.mode,
+				onModeChange: p.handleModeChange,
+				participants: p.participants,
+				onUpdateMeta: p.updateMeta,
+				onExport: p.handleExport,
+				onToggleHistory: p.handleToggleHistory,
+				onToggleVideoCall: p.handleToggleVideoCall,
+				onToggleVideoHistory: p.handleToggleVideoHistory,
+				isCallActive: !!p.meta?.activeCallSessionId,
+				onClearDocument: p.handleClearDocument,
+				onJumpToUser: p.handleJumpToUser,
+				sections: p.isCanvas ? [] : p.sections.map((e) => ({
 					id: e.id,
 					title: e.title
 				})),
-				onToggleMyItems: f.handleToggleMyItems,
-				myItemCount: f.myItems.length,
-				commentCount: Object.values(f.comments).reduce((e, t) => e + t.length, 0),
-				onBack: f.handleBack,
-				onFollowUser: f.handleFollowUser,
-				followingUserId: f.followingUserId,
-				onFinalize: f.handleFinalize,
-				onUnlock: f.handleUnlock,
-				pastCallsCount: f.videoSessions.sessions.length
+				onToggleMyItems: p.handleToggleMyItems,
+				myItemCount: p.myItems.length,
+				commentCount: Object.values(p.comments).reduce((e, t) => e + t.length, 0),
+				onBack: p.handleBack,
+				onFollowUser: p.handleFollowUser,
+				followingUserId: p.followingUserId,
+				onFinalize: p.handleFinalize,
+				onUnlock: p.handleUnlock,
+				pastCallsCount: p.videoSessions.sessions.length
 			}),
 			/* @__PURE__ */ I(pt, {
-				followingUserId: f.followingUserId,
-				participants: f.participants,
-				onStopFollow: f.handleStopFollow
+				followingUserId: p.followingUserId,
+				participants: p.participants,
+				onStopFollow: p.handleStopFollow
 			}),
 			/* @__PURE__ */ I("div", {
 				className: "flex-1 overflow-auto p-4",
 				children: /* @__PURE__ */ I(wn, {
-					mode: f.mode,
-					isEmpty: p,
-					isCanvas: f.isCanvas,
-					isFinalized: f.isFinalized,
-					sections: f.sections,
+					mode: p.mode,
+					isEmpty: m,
+					isCanvas: p.isCanvas,
+					isFinalized: p.isFinalized,
+					sections: p.sections,
 					documentId: e,
 					displayName: i,
 					color: a,
 					userId: r,
-					ydoc: f.ydoc,
-					provider: f.provider,
-					getSectionFragment: f.getSectionFragment,
-					updateSection: f.updateSection,
-					participants: f.participants,
-					focusedSectionId: f.focusedSectionId,
-					onSectionFocus: f.handleSectionFocus,
-					comments: f.comments,
-					onAddComment: f.handleAddComment,
-					onResolveThread: f.handleResolveThread,
-					onUnresolveThread: f.handleUnresolveThread,
-					onUpdateCursorInfo: f.awareness.updateCursorInfo,
-					onOpenComments: f.handleOpenComments,
-					onAddItem: f.handleAddItem,
-					onUpdateItem: f.handleUpdateItem,
-					onRemoveItem: f.handleRemoveItem,
-					restItems: f.restItems,
-					itemErrors: f.itemErrors,
-					commentSidebarOpen: f.commentSidebarOpen,
-					commentSectionId: f.commentSectionId,
-					commentSidebarTop: f.commentSidebarTop,
-					sectionListRef: f.sectionListRef,
-					onCloseComments: f.handleCloseComments,
-					showVideoCall: f.showVideoCall,
-					isVideoDocked: f.isVideoDocked,
-					showInlineVideo: f.showInlineVideo,
-					sidebarFixed: f.sidebarFixed,
-					videoSpacerRef: f.videoSpacerRef,
-					videoLeft: f.videoLeft,
-					FIXED_TOP: f.FIXED_TOP,
-					showTOC: f.showTOC,
-					sectionReviews: f.sectionReviews,
-					reviewSection: f.restReviewSection,
-					headerMeta: f.headerMeta,
-					onLoadDemo: f.handleLoadDemo,
+					ydoc: p.ydoc,
+					provider: p.provider,
+					getSectionFragment: p.getSectionFragment,
+					updateSection: p.updateSection,
+					participants: p.participants,
+					focusedSectionId: p.focusedSectionId,
+					onSectionFocus: p.handleSectionFocus,
+					comments: p.comments,
+					onAddComment: p.handleAddComment,
+					onResolveThread: p.handleResolveThread,
+					onUnresolveThread: p.handleUnresolveThread,
+					onUpdateCursorInfo: p.awareness.updateCursorInfo,
+					onOpenComments: p.handleOpenComments,
+					onAddItem: p.handleAddItem,
+					onUpdateItem: p.handleUpdateItem,
+					onRemoveItem: p.handleRemoveItem,
+					restItems: p.restItems,
+					itemErrors: p.itemErrors,
+					commentSidebarOpen: p.commentSidebarOpen,
+					commentSectionId: p.commentSectionId,
+					commentSidebarTop: p.commentSidebarTop,
+					sectionListRef: p.sectionListRef,
+					onCloseComments: p.handleCloseComments,
+					showVideoCall: p.showVideoCall,
+					isVideoDocked: p.isVideoDocked,
+					showInlineVideo: p.showInlineVideo,
+					sidebarFixed: p.sidebarFixed,
+					videoSpacerRef: p.videoSpacerRef,
+					videoLeft: p.videoLeft,
+					FIXED_TOP: p.FIXED_TOP,
+					showTOC: p.showTOC,
+					sectionReviews: p.sectionReviews,
+					reviewSection: p.restReviewSection,
+					headerMeta: p.headerMeta,
+					onLoadDemo: p.handleLoadDemo,
 					activityPublish: s
 				})
 			}),
 			/* @__PURE__ */ I(Un, {
-				showHistory: f.showHistory,
-				showMyItems: f.showMyItems,
-				showVideoHistory: f.showVideoHistory,
-				closePanel: f.closePanel,
-				versionHistory: f.versionHistory,
-				ydoc: f.ydoc,
-				myItems: f.myItems,
-				onNavigateToSection: f.handleNavigateToSection,
-				videoSessions: f.videoSessions,
-				showTOC: f.showTOC,
-				isCanvas: f.isCanvas,
-				commentSidebarOpen: f.commentSidebarOpen,
-				sections: f.sections,
-				focusedSectionId: f.focusedSectionId,
-				mode: f.mode
+				showHistory: p.showHistory,
+				showMyItems: p.showMyItems,
+				showVideoHistory: p.showVideoHistory,
+				closePanel: p.closePanel,
+				versionHistory: p.versionHistory,
+				ydoc: p.ydoc,
+				myItems: p.myItems,
+				onNavigateToSection: p.handleNavigateToSection,
+				videoSessions: p.videoSessions,
+				showTOC: p.showTOC,
+				isCanvas: p.isCanvas,
+				commentSidebarOpen: p.commentSidebarOpen,
+				sections: p.sections,
+				focusedSectionId: p.focusedSectionId,
+				mode: p.mode
 			})
 		]
 	});
 }
 //#endregion
-export { He as A, U as B, At as C, ft as D, pt as E, q as F, fe as H, we as I, H as L, X as M, Oe as N, Xe as O, Te as P, le as R, Lt as S, Ct as T, ue as V, Kt as _, Ln as a, Vt as b, Cn as c, mn as d, an as f, qt as g, Zt as h, Bn as i, Be as j, Ye as k, pn as l, nn as m, Wn as n, Mn as o, rn as p, Hn as r, An as s, Gn as t, fn as u, Ht as v, kt as w, zt as x, Bt as y, de as z };
+export { He as A, ue as B, At as C, ft as D, pt as E, J as F, fe as H, Ce as I, U as L, X as M, Oe as N, Xe as O, we as P, H as R, Lt as S, Ct as T, le as V, Kt as _, Ln as a, Vt as b, Cn as c, mn as d, an as f, qt as g, Zt as h, Bn as i, Be as j, Ye as k, pn as l, nn as m, Wn as n, Mn as o, rn as p, Hn as r, An as s, Gn as t, fn as u, Ht as v, kt as w, zt as x, Bt as y, de as z };
