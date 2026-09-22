@@ -93,6 +93,21 @@ export interface WorkGraphSourceState {
   message?: string;
 }
 
+/**
+ * What the activity canvas paints UNDER the graph.
+ *
+ * `ripple-grid` is the default and the intended look: a pale grey lattice on
+ * the near-white surface, rippling slowly outward from the centre and bending
+ * toward the pointer. It REPLACES React Flow's dot background rather than
+ * layering over it — two grids at once is noise, and the dots were only ever
+ * standing in for a surface texture.
+ *
+ * `plain` is the escape hatch: no canvas, no WebGL context, React Flow's own
+ * dots. For a host embedding several graphs on one page, or a test that would
+ * rather not stub a GL context.
+ */
+export type WorkActivityCanvasBackground = 'ripple-grid' | 'plain';
+
 export interface WorkGraphProps {
   nodes: WorkGraphNodeData[];
   edges: WorkGraphEdgeData[];
@@ -108,6 +123,8 @@ export interface WorkGraphProps {
   className?: string;
   /** Authorized effort/revision presentation. Omit for the existing v1 view. */
   activity?: WorkActivityPresentation;
+  /** Activity-canvas backdrop. Defaults to `'ripple-grid'`. */
+  background?: WorkActivityCanvasBackground;
   onSelectionChange: (selection: WorkGraphSelection) => void;
   onViewportChange: (viewport: WorkGraphViewport) => void;
   onRetry?: () => void;

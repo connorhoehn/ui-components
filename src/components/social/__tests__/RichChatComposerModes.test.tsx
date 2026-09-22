@@ -220,3 +220,45 @@ describe('the split send', () => {
     expect(onSend).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('the composer goes to the console in Agent and Terminal mode', () => {
+  it('is untouched in chat mode and mounts no backdrop', () => {
+    render(<ModedComposer />);
+    const composer = screen.getByTestId('composer');
+    expect(composer).toHaveAttribute('data-mode', 'chat');
+    expect(composer).not.toHaveAttribute('data-console');
+    expect(composer).not.toHaveAttribute('data-theme');
+    expect(composer.className).not.toContain('uic-chat-console');
+    expect(screen.queryByTestId('composer-console-backdrop')).toBeNull();
+  });
+
+  it('flips to the dark console surface when the mode switch moves, and back', () => {
+    render(<ModedComposer />);
+    const composer = screen.getByTestId('composer');
+
+    fireEvent.click(within(screen.getByTestId('composer-modes')).getByRole('tab', { name: 'Agent' }));
+    expect(composer).toHaveAttribute('data-console', 'true');
+    // The two hooks that carry the whole look: the per-subtree theme switch
+    // from styles.css, and the class that makes the panels transparent so the
+    // star field reads through them.
+    expect(composer).toHaveAttribute('data-theme', 'dark');
+    expect(composer.className).toContain('uic-chat-console');
+    expect(screen.getByTestId('composer-console-backdrop')).toBeInTheDocument();
+
+    fireEvent.click(within(screen.getByTestId('composer-modes')).getByRole('tab', { name: 'Terminal' }));
+    expect(composer).toHaveAttribute('data-console', 'true');
+    expect(composer).toHaveAttribute('data-mode', 'terminal');
+
+    fireEvent.click(within(screen.getByTestId('composer-modes')).getByRole('tab', { name: 'Chat' }));
+    expect(composer).not.toHaveAttribute('data-console');
+    expect(composer).not.toHaveAttribute('data-theme');
+  });
+
+  it('never clips the box: the backdrop is clipped, the composer is not', () => {
+    render(<ModedComposer initial="agent" />);
+    // `overflow-hidden` on the composer itself would cut off the send
+    // split-menu and every suggestion popover, all of which are its children.
+    expect(screen.getByTestId('composer').className).not.toContain('overflow-hidden');
+    expect(screen.getByTestId('composer-console').className).toContain('overflow-hidden');
+  });
+});

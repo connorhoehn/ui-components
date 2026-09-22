@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Background, EdgeLabelRenderer, Handle, MarkerType, Position, ReactFlow, type Edge, type EdgeProps, type Node, type NodeProps } from '@xyflow/react';
 import AnimatedEdge from '../../pipelines/canvas/edges/AnimatedEdge';
+import { ACTIVITY_RIPPLE_GRID, RippleGridBackground } from '../../shared/RippleGridBackground';
 import { TitledFrame } from '../../shared/TitledFrame';
 import { Button } from '../../ui/Button';
 import { IconButton } from '../../ui/IconButton';
@@ -8,6 +9,8 @@ import { cn } from '../../../lib/cn';
 import { layoutWorkEfforts, type WorkNodeBounds } from './effortLayout';
 import { WorkActivityNode } from './WorkActivityNode';
 import type { WorkActivityNodeDetail, WorkActivityPresentation, WorkGraphProps, WorkGraphViewport } from './types';
+
+export type { WorkActivityCanvasBackground } from './types';
 
 type ActivityProps = WorkGraphProps & { activity: WorkActivityPresentation };
 interface ActivityNodeData extends Record<string, unknown> {
@@ -83,7 +86,7 @@ const edgeTypes = { activity: Relationship };
 
 /** One canvas; effort frames and visual instances never change canonical IDs. */
 export function WorkActivityCanvas(props: ActivityProps) {
-  const { activity, nodes, edges, selection, viewport, onViewportChange, onSelectionChange } = props;
+  const { activity, nodes, edges, selection, viewport, onViewportChange, onSelectionChange, background = 'ripple-grid' } = props;
   const host = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 640, height: 480 });
   const [measurements, setMeasurements] = useState<Map<string, WorkNodeBounds>>(new Map());
@@ -158,7 +161,12 @@ export function WorkActivityCanvas(props: ActivityProps) {
   }
   const knownInstances = new Map(flowNodes.filter((node): node is ActivityNode => node.type === 'activity').map((node) => [node.id, node.data.entity.id]));
   const zoomBy = (factor: number) => onViewportChange({ ...viewport, zoom: Math.max(0.4, Math.min(2.5, viewport.zoom * factor)) });
-  return <div ref={host} className="relative min-h-80 min-w-0 flex-1 overflow-hidden" data-testid="work-activity-canvas">
+  const ripple = background === 'ripple-grid';
+  return <div ref={host} className="relative isolate min-h-80 min-w-0 flex-1 overflow-hidden" data-testid="work-activity-canvas" data-background={background}>
+    {/* Behind React Flow, not inside it: the pane and every node above are
+        transparent over this, and the canvas takes no pointer events, so
+        dragging, selecting and the edge hit-boxes are untouched. */}
+    {ripple && <RippleGridBackground {...ACTIVITY_RIPPLE_GRID} className="absolute inset-0 -z-10" data-testid="work-activity-ripple" />}
     <ReactFlow<ActivityNode | FrameNode, ActivityEdge> nodes={flowNodes} edges={flowEdges} nodeTypes={nodeTypes} edgeTypes={edgeTypes} viewport={viewport} onViewportChange={onViewportChange} onPaneClick={() => onSelectionChange(null)} onEdgeClick={(_event, edge) => edge.data?.onSelect()} minZoom={0.4} maxZoom={2.5} nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} deleteKeyCode={null} proOptions={{ hideAttribution: true }} onNodesChange={(changes) => {
       const dimensions = changes.filter((change) => change.type === 'dimensions');
       if (!dimensions.length) return;
@@ -175,7 +183,7 @@ export function WorkActivityCanvas(props: ActivityProps) {
         return changed ? next : previous;
       });
     }}>
-      <Background gap={20} size={1} color="var(--color-border)" />
+      {!ripple && <Background gap={20} size={1} color="var(--color-border)" />}
     </ReactFlow>
     <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-md border border-border bg-surface p-1" data-testid="work-activity-controls">
       <IconButton size="sm" aria-label="Zoom in" onClick={() => zoomBy(1.2)}>+</IconButton>

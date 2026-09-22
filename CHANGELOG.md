@@ -6,6 +6,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.343.0] — 2026-09-21
+
+### Added — WebGL backdrops: `ParticlesBackground`, `RippleGridBackground`, `ChatColumnBackdrop`
+
+Knock-offs of ReactBits' `Particles` and `RippleGrid` backgrounds, ported off
+`ogl` onto raw WebGL — **no new dependency**. The shaders are theirs, verbatim
+but for a precision qualifier; everything around them is this library's.
+
+- **`ParticlesBackground` (root export).** A drifting point cloud on the
+  near-black radial gradient: positions sampled uniformly in a sphere, a
+  per-particle sine drift, soft-edged discs (or hard, via `alphaParticles`), a
+  slow whole-cloud rotation and an optional lean toward the pointer. Same props
+  and defaults as ReactBits', plus `active` (a 250ms crossfade in and out, no
+  layout change) and `seed`/`fallbackIntensity` for the fallback.
+- **`RippleGridBackground` (root export)** and the `ACTIVITY_RIPPLE_GRID`
+  preset. A full-screen quad whose lattice ripples outward from the centre,
+  bends toward the smoothed pointer, glows, and vignettes off at the edges.
+  `lightMode` inverts it to coloured lines on a light ground.
+- **`ChatColumnBackdrop` (root export).** Wrap the message list + composer:
+  `mode` of `agent`/`terminal` crossfades the WHOLE column onto the star field
+  and flips its chrome to the night palette, and `working` makes the field
+  denser, quicker and pointer-aware. The dark half is two class hooks — the
+  documented `data-theme="dark"` subtree switch plus a new `.uic-chat-console`
+  block that re-points the surface tokens to transparent/alpha-over-dark so the
+  field reads through the panels — rather than a second set of classes on every
+  composite in the column.
+- **`useWebGLCanvas` (root export)**, with `createWebGLContext`,
+  `compileProgram` and `createArrayBuffer`. One hook owning the part every
+  shader background gets wrong: WebGL2→WebGL1→`experimental-webgl` creation,
+  drawing-buffer sizing from the measured box × DPR through a ResizeObserver, a
+  rAF loop that STOPS when `active` goes false / an IntersectionObserver says
+  the element left the viewport / `document.hidden`, `webglcontextlost` +
+  `webglcontextrestored`, and `prefers-reduced-motion` → exactly one static
+  frame.
+
+### Changed
+
+- **`WorkActivityCanvas` gains `background?: 'ripple-grid' | 'plain'`,
+  defaulting to `'ripple-grid'`** (on `WorkGraphProps`, so it flows through
+  `WorkGraph`). The ripple grid REPLACES React Flow's dot `Background` rather
+  than layering over it, and sits behind the nodes with no pointer events.
+- **`ChatLabShell` and `WorkComputePane` now wear `ParticlesBackground` while
+  working.** The CSS `RisingParticles` is unchanged and still exported — it is
+  now the reduced-motion / no-WebGL fallback `ParticlesBackground` falls through
+  to on its own, so no host has to wire it. Test ids under those surfaces move
+  from `…-particles-layer` to `…-particles-fallback-layer` where the CSS field
+  is what actually paints.
+- **`RichChatComposer` in `agent`/`terminal` mode sits on the console
+  surface** — the particle backdrop, `data-theme="dark"`, `.uic-chat-console`,
+  and an indigo ring on the mode segment. `chat` mode renders byte-identical to
+  before, and a host that never wires `onModeChange` sees no change at all.
+
+### Fixed
+
+- **Export snapshot drift**: `PresentationView` shipped in 2.342.0 without
+  landing in `export-surface.snapshot.ts`. Regenerated.
+
+---
+
 ## [2.341.0] — 2026-09-21
 
 ### Added — `./graph` (Active Now): the compute-session detail pane

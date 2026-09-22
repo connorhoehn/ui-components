@@ -536,6 +536,30 @@ export declare type ChatChannelKind = 'room' | 'dm';
 /** Room or DM for a channel, from the host's word first and the gateway's prefix second. */
 export declare function chatChannelKindOf(ctx: Pick<ChatCommandScopeContext, 'channel' | 'channelKind'>): ChatChannelKind;
 
+/**
+ * Wraps the message list + composer so the column as a whole changes state with
+ * the mode. Layout is identical in both states — only colour and the backdrop
+ * change — so nothing reflows across the transition.
+ */
+export declare function ChatColumnBackdrop({ mode, working, className, children, 'data-testid': testId, }: ChatColumnBackdropProps): JSX.Element;
+
+export declare interface ChatColumnBackdropProps {
+    /**
+     * The composer's mode. `chat` is the ordinary light column; `agent` and
+     * `terminal` are the console.
+     */
+    mode?: ComposerMode;
+    /**
+     * True while a loop is mid-turn. Denser, faster, and the cloud leans toward
+     * the pointer — the same "this is working" signal the lab shell uses, said by
+     * the whole column instead of one pane.
+     */
+    working?: boolean;
+    className?: string;
+    children?: ReactNode;
+    'data-testid'?: string;
+}
+
 export declare interface ChatCommand extends ComposerCommand {
     /** What sending the command does. Errors propagate to the host, which toasts. */
     run: (ctx: ChatCommandContext) => Promise<ChatCommandOutcome>;
@@ -1322,6 +1346,9 @@ export declare interface ComposerCommandArgument {
  * separator is kept, so callers replacing the argument know its exact extent.
  */
 export declare function composerCommandArgumentText(draft: string, command: ComposerCommand): string;
+
+/** What the composer is for, right now. */
+declare type ComposerMode = 'chat' | 'agent' | 'terminal';
 
 export declare interface ComposerReference {
     /** Stable across re-renders; what `onRemove` is called with. */
@@ -3353,25 +3380,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -3385,32 +3393,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -3457,6 +3451,39 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

@@ -7,6 +7,7 @@ import "./useSocialProfile-5S1qyvsv.js";
 import "./useSyncConflicts-z_Fo2YIM.js";
 import "./useDocumentTypes-BUXMPyPU.js";
 import "./usePrefersReducedMotion-Cllucr7i.js";
+import "./useWebGLCanvas-CjaNVKO9.js";
 import { n as a } from "./ToastProvider-B0D0SLKU.js";
 import "./useEventCallback-Cwx9QVSi.js";
 import "./useAudioRecorder-BhPxnLmg.js";

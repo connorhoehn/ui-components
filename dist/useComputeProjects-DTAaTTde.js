@@ -1,6 +1,6 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Chip-BENLwTlq.js";
-import { n } from "./RisingParticles-DvxMtXJ2.js";
+import { t as n } from "./DotMeter-BDVkadI8.js";
 import { useCallback as r, useEffect as i, useMemo as a, useRef as o, useState as s } from "react";
 import { Fragment as c, jsx as l, jsxs as u } from "react/jsx-runtime";
 //#region src/components/compute/lib/status.ts

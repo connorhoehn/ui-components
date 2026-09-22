@@ -190,7 +190,8 @@ describe('the compute-session detail pane', () => {
   it('puts the working backdrop under the tail while the session is mid-turn, and takes it away when it stops', () => {
     const { rerender } = render(<Harness entity={node()} detail={{ compute: compute({ status: 'running' }) }} />);
     expect(screen.getByTestId('work-compute-pane-tail-backdrop')).toBeInTheDocument();
-    expect(screen.getAllByTestId('work-compute-pane-tail-layer')).toHaveLength(4);
+    // jsdom has no WebGL, so the GL backdrop falls through to the CSS field.
+    expect(screen.getAllByTestId('work-compute-pane-tail-fallback-layer')).toHaveLength(4);
 
     rerender(<Harness entity={node()} detail={{ compute: compute({ status: 'done' }) }} />);
     expect(screen.getByTestId('work-compute-pane-tail-backdrop').className).toContain('opacity-0');

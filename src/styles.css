@@ -1837,8 +1837,17 @@
    must stay equal.
    =========================================================================== */
 
-.uic-rising-particles {
+.uic-rising-particles,
+/* The WebGL star field (`ParticlesBackground`) draws on a TRANSPARENT canvas,
+   so the ground under it is this same gradient — one rule, so the CSS fallback
+   and the GL version are the same night sky and swapping between them changes
+   only the stars. */
+.uic-particles-ground {
   background: radial-gradient(ellipse at bottom, rgb(17, 29, 43) 0%, rgb(9, 10, 15) 100%);
+}
+
+.uic-particles-in {
+  animation: uic-particles-fade 250ms ease-out;
 }
 
 .uic-rising-particle,
@@ -1883,7 +1892,50 @@
   .uic-rising-particle {
     animation: none;
   }
-  .uic-rising-particles-in {
+  .uic-rising-particles-in,
+  .uic-particles-in {
     animation: none;
   }
+}
+
+/* ===========================================================================
+   Console mode — the chat column while the composer is in Agent or Terminal.
+   ===========================================================================
+   Worn together with `data-theme="dark"` on the same element (see
+   `ChatColumnBackdrop`). The theme switch does the ink; this does the GLASS.
+
+   Every panel in the column has to stop being opaque or the star field behind
+   it is invisible and the whole effect is a dark rectangle with a strip of
+   sky at the edges. So the surface roles become transparent or alpha-over-dark
+   while the border and hover roles become white alphas, which composite over
+   whatever the backdrop is doing at that point on the screen.
+
+   Scoped to a class rather than pushed into the dark theme because this is a
+   MODE, not a preference: the same app in dark mode, in chat mode, still wants
+   opaque panels. Declared after `[data-theme="dark"]` so it wins at equal
+   specificity — that ordering is load-bearing, do not move it above.
+   =========================================================================== */
+.uic-chat-console {
+  --color-surface: transparent;
+  --color-surface-panel: transparent;
+  --color-surface-inset: rgba(17, 29, 43, 0.55);
+  --color-surface-hover: rgba(205, 214, 244, 0.1);
+  --color-surface-emphasis: rgba(205, 214, 244, 0.14);
+  --color-workspace: transparent;
+
+  --color-border: rgba(205, 214, 244, 0.16);
+  --color-border-subtle: rgba(205, 214, 244, 0.08);
+  --color-border-emphasis: rgba(205, 214, 244, 0.28);
+  --color-border-field: rgba(205, 214, 244, 0.24);
+
+  /* Catppuccin ink, matching the terminal and log surfaces this column is now
+     a sibling of — the console should look like the shell it talks to. */
+  --color-text-primary: #cdd6f4;
+  --color-text-secondary: #a6adc8;
+  --color-text-tertiary: #9399b2;
+  --color-text-disabled: #6c7086;
+
+  --color-neutral-bg: rgba(205, 214, 244, 0.12);
+  --color-neutral-fg: #cdd6f4;
+  --color-neutral-border: rgba(205, 214, 244, 0.2);
 }

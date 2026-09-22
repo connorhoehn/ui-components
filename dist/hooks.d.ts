@@ -224,6 +224,12 @@ declare interface CommentThread extends CommentData {
     replies: CommentThread[];
 }
 
+/**
+ * Compile + link, returning null on any failure. Shaders are detached and
+ * deleted immediately after linking — the program holds what it needs.
+ */
+export declare function compileProgram(gl: WebGLContextLike, vertex: string, fragment: string): WebGLProgram | null;
+
 declare interface ConflictField {
     /** Field key (path within the typed document — e.g. "title", "body.text"). */
     field: string;
@@ -273,6 +279,9 @@ declare type ConflictSide = 'source' | 'platform' | 'merged';
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
+/** A static-draw Float32 array buffer, the only buffer shape these backdrops use. */
+export declare function createArrayBuffer(gl: WebGLContextLike, data: Float32Array): WebGLBuffer | null;
+
 declare interface CreateClientInput {
     clientName: string;
     poolId: string;
@@ -318,6 +327,13 @@ declare interface CreateUserInput {
     nickname?: string;
     customAttributes?: Record<string, unknown>;
 }
+
+/**
+ * WebGL2, then WebGL1, then the prefixed spelling old Safari and some Android
+ * webviews still answer to. Wrapped because a browser with WebGL disabled by
+ * policy THROWS from `getContext` rather than returning null.
+ */
+export declare function createWebGLContext(canvas: HTMLCanvasElement, attributes?: WebGLContextAttributes): WebGLContextLike | null;
 
 declare type CursorMode = 'freeform' | 'table' | 'text' | 'canvas';
 
@@ -2206,6 +2222,29 @@ declare interface UseActivityBusReturn {
       fetchSessions: () => Promise<void>;
   };
 
+  export declare function useWebGLCanvas<S>(options: UseWebGLCanvasOptions<S>): WebGLCanvas;
+
+  export declare interface UseWebGLCanvasOptions<S> {
+      /** False parks the loop without tearing the context down. Default true. */
+      active?: boolean;
+      /** Overrides `devicePixelRatio`. Capped at 2 either way — past it the fill cost buys nothing. */
+      pixelRatio?: number;
+      attributes?: WebGLContextAttributes;
+      /**
+       * A value the caller changes when the PARKED frame would look different — a
+       * cheap signature of whatever props feed the uniforms. While the loop is
+       * running this is ignored (the next tick repaints anyway); while it is parked
+       * (inactive, off-screen, or reduced motion) a change repaints exactly one
+       * frame. Without it a reduced-motion surface would ignore its own props after
+       * the first paint.
+       */
+      version?: string | number;
+      /** Build buffers, programs, uniform locations. Returning null means "cannot run" → fallback. */
+      setup: (gl: WebGLContextLike) => S | null;
+      draw: (state: S, frame: WebGLFrame) => void;
+      dispose?: (state: S, gl: WebGLContextLike) => void;
+  }
+
   export declare function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn;
 
   declare interface UseWebSocketOptions {
@@ -2281,26 +2320,34 @@ declare interface UseActivityBusReturn {
 
   declare type ViewMode = 'editor' | 'ack' | 'reader';
 
+  export declare interface WebGLCanvas {
+      /** Put this on the element whose measured box drives the drawing buffer. */
+      hostRef: RefObject<HTMLDivElement | null>;
+      canvasRef: RefObject<HTMLCanvasElement | null>;
+      status: WebGLCanvasStatus;
+      reducedMotion: boolean;
+      /** Repaint one frame while the loop is parked — for a prop change under reduced motion. */
+      redraw: () => void;
+  }
+
+  export declare type WebGLCanvasStatus = 'pending' | 'ready' | 'unsupported';
+
+  export declare type WebGLContextLike = WebGLRenderingContext | WebGL2RenderingContext;
+
+  /** What `draw` is handed. Sizes are DRAWING-BUFFER pixels, times are milliseconds. */
+  export declare interface WebGLFrame {
+      gl: WebGLContextLike;
+      width: number;
+      height: number;
+      /** Milliseconds of RUNNING time. Frozen at 0 under reduced motion. */
+      time: number;
+      /** Milliseconds since the previous frame, clamped. 0 on a static frame. */
+      delta: number;
+      /** Frame counter, from 0. */
+      frame: number;
+  }
+
   export { }
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
 
 
 declare module '@tiptap/core' {
@@ -2318,32 +2365,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -2390,6 +2423,39 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

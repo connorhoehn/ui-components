@@ -225,6 +225,21 @@ export declare interface WorkActivityBanner {
 
 export declare type WorkActivityBannerTone = 'info' | 'success' | 'error';
 
+/**
+ * What the activity canvas paints UNDER the graph.
+ *
+ * `ripple-grid` is the default and the intended look: a pale grey lattice on
+ * the near-white surface, rippling slowly outward from the centre and bending
+ * toward the pointer. It REPLACES React Flow's dot background rather than
+ * layering over it — two grids at once is noise, and the dots were only ever
+ * standing in for a surface texture.
+ *
+ * `plain` is the escape hatch: no canvas, no WebGL context, React Flow's own
+ * dots. For a host embedding several graphs on one page, or a test that would
+ * rather not stub a GL context.
+ */
+export declare type WorkActivityCanvasBackground = 'ripple-grid' | 'plain';
+
 /** Source-backed membership, already filtered for this viewer by the host. */
 export declare interface WorkActivityEffort {
     id: string;
@@ -733,6 +748,8 @@ export declare interface WorkGraphProps {
     className?: string;
     /** Authorized effort/revision presentation. Omit for the existing v1 view. */
     activity?: WorkActivityPresentation;
+    /** Activity-canvas backdrop. Defaults to `'ripple-grid'`. */
+    background?: WorkActivityCanvasBackground;
     onSelectionChange: (selection: WorkGraphSelection) => void;
     onViewportChange: (viewport: WorkGraphViewport) => void;
     onRetry?: () => void;
@@ -898,25 +915,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -930,32 +928,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -1002,6 +986,39 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

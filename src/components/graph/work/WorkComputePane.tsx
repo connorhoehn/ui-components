@@ -32,7 +32,7 @@ import Avatar from '../../shared/Avatar';
 import Chip from '../../shared/Chip';
 import { DropdownMenu } from '../../shared/DropdownMenu';
 import LogStream, { type LogLine } from '../../shared/LogStream';
-import RisingParticles from '../../shared/RisingParticles';
+import { AGENT_PARTICLE_COLORS, ParticlesBackground } from '../../shared/ParticlesBackground';
 import { StatusPill, type StatusPillState } from '../../shared/StatusPill';
 import { Tabs, TabPanel } from '../../shared/Tabs';
 import { Button } from '../../ui/Button';
@@ -226,7 +226,7 @@ function TerminalPreview({
         <span className="min-w-0 truncate text-code-text">{label}</span>
         <span className="ml-auto shrink-0 text-code-blue">{environment}</span>
       </div>
-      <RisingParticles active={running} intensity="low" seed={seed} className="space-y-0.5 px-2 py-1.5" data-testid={`${testId}-particles`}>
+      <ParticlesBackground active={running} particleCount={90} speed={0.1} alphaParticles particleColors={AGENT_PARTICLE_COLORS} fallbackIntensity="low" seed={seed} className="space-y-0.5 px-2 py-1.5" data-testid={`${testId}-particles`}>
         {lines.map((line, index) => {
           const glyph = LINE_GLYPH[line.glyph] ?? LINE_GLYPH.text;
           return (
@@ -244,7 +244,7 @@ function TerminalPreview({
             <span className="inline-block animate-pulse motion-reduce:animate-none">▌</span>
           </p>
         )}
-      </RisingParticles>
+      </ParticlesBackground>
     </div>
   );
 }
@@ -439,9 +439,15 @@ export function WorkComputePane({
         {/* While the session is mid-turn the ground under the output rises —
             the surface itself says "working", which reads from across a desk
             in a way a corner spinner never has. */}
-        <RisingParticles
+        <ParticlesBackground
           active={meta.busy}
-          intensity="medium"
+          particleCount={200}
+          speed={0.14}
+          alphaParticles
+          moveParticlesOnHover
+          particleHoverFactor={0.6}
+          particleColors={AGENT_PARTICLE_COLORS}
+          fallbackIntensity="medium"
           seed={seed}
           className="overflow-hidden rounded-md border border-code-border bg-code-bg"
           data-testid={`${testId}-tail`}
@@ -476,12 +482,12 @@ export function WorkComputePane({
             className="rounded-none border-none"
             data-testid={`${testId}-stream`}
           />
-        </RisingParticles>
+        </ParticlesBackground>
       </TabPanel>
 
       {compute.shell && (
         <TabPanel idPrefix={`${testId}-tab`} id="shell" when={activeTab}>
-          <RisingParticles active={meta.busy} intensity="low" seed={seed} className="space-y-2 rounded-md" data-testid={`${testId}-shell-particles`}>
+          <ParticlesBackground active={meta.busy} particleCount={90} speed={0.1} alphaParticles particleColors={AGENT_PARTICLE_COLORS} fallbackIntensity="low" seed={seed} className="space-y-2 rounded-md" data-testid={`${testId}-shell-particles`}>
           {compute.shell.shellUrl ? (
             <Suspense fallback={<p className="rounded-md border border-code-border bg-code-bg px-2 py-6 text-center font-mono text-[11px] text-code-muted">Loading terminal…</p>}>
               <LabTerminal
@@ -512,7 +518,7 @@ export function WorkComputePane({
               </Button>
             </>
           )}
-          </RisingParticles>
+          </ParticlesBackground>
         </TabPanel>
       )}
 

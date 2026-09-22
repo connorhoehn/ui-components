@@ -173,6 +173,11 @@ export { agentRunResultFromMetadata } from './AgentRunCard';
 export { ChatLabShell, ChatLabPill, formatTokens } from './ChatLabShell';
 export type { LabStatus, LabStep, LabEvent, ChatLabShellProps, ChatLabPillProps } from './ChatLabShell';
 
+// ChatColumnBackdrop — the whole chat column turned into a console while the
+// composer is in Agent or Terminal mode. Wrap the message list + composer.
+export { ChatColumnBackdrop } from './ChatColumnBackdrop';
+export type { ChatColumnBackdropProps } from './ChatColumnBackdrop';
+
 // RunSummaryPanel — a run, condensed and read-only, beside a chat. The side-panel
 // body for kind `run`: `renderers={{ run: createRunPanelRenderer({ load, onOpenFull }) }}`.
 export { RunSummaryPanel, RunPanelBody, createRunPanelRenderer, runPanelId, parseRunPanelId, isRunPanelLive } from './RunSummaryPanel';

@@ -145,7 +145,9 @@ describe('ChatLabShell', () => {
   it('rises a star field under the output while the loop is mid-turn', () => {
     const { rerender, props } = renderShell({ status: 'running' });
     expect(screen.getByTestId('chat-lab-shell-particles-backdrop')).toBeInTheDocument();
-    expect(screen.getAllByTestId('chat-lab-shell-particles-layer')).toHaveLength(4);
+    // jsdom has no WebGL, so what actually paints here is the CSS fallback the
+    // GL backdrop falls through to — four parallax layers, same as it ever was.
+    expect(screen.getAllByTestId('chat-lab-shell-particles-fallback-layer')).toHaveLength(4);
 
     rerender(<ChatLabShell {...props} status="done" />);
     // Held for the crossfade, but already on its way out.

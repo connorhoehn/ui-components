@@ -78,6 +78,7 @@ import type { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion
 import { cn } from '../../lib/cn';
 import { FileInput } from '../forms/FileInput';
 import { DropdownMenu } from '../shared/DropdownMenu';
+import { AGENT_PARTICLE_COLORS, ParticlesBackground } from '../shared/ParticlesBackground';
 import { RovingToolbar } from '../shared/RovingToolbar';
 import { Tabs } from '../shared/Tabs';
 import { ChatDropZone } from './ChatDropZone';
@@ -572,6 +573,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const modesEnabled = !!onModeChange;
   const activeMode: ComposerMode = modesEnabled ? mode : 'chat';
   const terminalMode = activeMode === 'terminal';
+  // Agent AND Terminal are "the console": both send somewhere that is not the
+  // conversation, and both wear the dark surface that says so.
+  const consoleMode = modesEnabled && activeMode !== 'chat';
   const effectivePlaceholder =
     modePlaceholders?.[activeMode] ?? (activeMode === 'chat' ? placeholder : MODE_PLACEHOLDERS[activeMode]);
   const placeholderRef = useRef(effectivePlaceholder);
@@ -1391,13 +1395,37 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         // a text box showing that it has the caret after a click is correct,
         // not noise.
         data-command={activeCommand?.trigger}
+        data-mode={modesEnabled ? activeMode : undefined}
+        data-console={consoleMode ? 'true' : undefined}
+        // Agent and Terminal put the composer on the star field and flip the
+        // chrome to the night palette — see `ChatColumnBackdrop` for why this
+        // is two class hooks rather than a second set of classes on every row
+        // inside. `isolate` so the backdrop's negative z stays local, and NO
+        // `overflow-hidden` here: the send split-menu and the suggestion
+        // popovers are children of this box and clipping them is a regression.
+        {...(consoleMode ? { 'data-theme': 'dark' } : {})}
         className={cn(
-          'chat-composer rounded-lg border bg-surface focus-within:ring-2',
+          'chat-composer relative isolate rounded-lg border bg-surface transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none',
+          consoleMode && 'uic-chat-console',
           activeCommand
             ? (activeCommand.disabled ? 'border-warning focus-within:border-warning focus-within:ring-warning' : 'border-info focus-within:border-info focus-within:ring-info')
             : 'border-border focus-within:border-primary focus-within:ring-primary',
         )}
       >
+        {/* The console surface itself. Rounded and clipped on its own element
+            so the corners match the border above without clipping anything
+            that has to escape the box. */}
+        <ParticlesBackground
+          active={consoleMode}
+          particleCount={120}
+          speed={0.09}
+          alphaParticles
+          particleColors={AGENT_PARTICLE_COLORS}
+          particleBaseSize={90}
+          fallbackIntensity="low"
+          className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-lg"
+          data-testid={`${testId}-console`}
+        />
         {sendError && <p role="alert" className="px-2 py-1 text-sm text-danger-fg">Unable to send. Your draft and attachments are saved. Try again.</p>}
         {activeCommand && (
           <div
@@ -1472,6 +1500,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             it changes what Enter DOES, which is not a formatting choice. */}
         {modesEnabled && (
           <div className="flex items-center gap-2 px-2 pt-1.5" data-testid={`${testId}-modes`}>
+            {/* Lit while it is not on Chat: the control that changed what Enter
+                does should be the one thing on the surface that glows. */}
+            <div className={cn('rounded-md transition-shadow duration-300 motion-reduce:transition-none', consoleMode && 'ring-1 ring-primary/60')}>
             <Tabs
               items={[
                 { id: 'chat', label: 'Chat', icon: <ChatIcon size={13} /> },
@@ -1485,6 +1516,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               aria-label="Composer mode"
               idPrefix={`${testId}-mode`}
             />
+            </div>
           </div>
         )}
 

@@ -51,6 +51,8 @@ export { useMyMentionsAndTasks } from './useMyMentionsAndTasks';
 export { usePipelineDefs } from './usePipelineDefs';
 export { usePosts } from './usePosts';
 export { usePrefersReducedMotion } from './usePrefersReducedMotion';
+export { useWebGLCanvas, createWebGLContext, compileProgram, createArrayBuffer } from './useWebGLCanvas';
+export type { UseWebGLCanvasOptions, WebGLCanvas, WebGLCanvasStatus, WebGLContextLike, WebGLFrame } from './useWebGLCanvas';
 export { usePresence } from './usePresence';
 export { useReactions } from './useReactions';
 export { useRooms } from './useRooms';

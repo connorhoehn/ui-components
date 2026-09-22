@@ -25,6 +25,13 @@ export declare const activeNavItemClassName = "block px-[14px] py-2 border-l-[3p
 
 export declare const activeNavItemStyle: CSSProperties;
 
+/**
+ * The preset the work-activity canvas wears: grey lines on the near-white
+ * surface the nodes already sit on, rippling slowly, never competing with them.
+ * Exported so a host can match it on a surface of its own.
+ */
+export declare const ACTIVITY_RIPPLE_GRID: RippleGridBackgroundProps;
+
 export declare function ActivityFeed({ items, visibleCount, rotateMs, staggerMs, kindColors, className, }: ActivityFeedProps): JSX.Element;
 
 export declare interface ActivityFeedItem {
@@ -60,6 +67,13 @@ export declare interface ActivityFeedProps {
 export declare function ActivityIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
+
+/**
+ * The agent surfaces' sky: white through the two indigos `--color-primary`
+ * wears at night. One constant, used by the lab shell, the compute pane and the
+ * chat console, so a loop looks like itself wherever it is showing.
+ */
+export declare const AGENT_PARTICLE_COLORS: readonly ["#ffffff", "#c7d2fe", "#a5b4fc"];
 
 export declare function ArtifactTile({ name, type, url }: {
     name: string;
@@ -2345,6 +2359,44 @@ export declare function PaperclipIcon({ size, ...rest }: GlyphProps): JSX.Elemen
  *  the file list without rendering. */
 export declare function parseUnifiedDiff(diff: string): DiffFile[];
 
+/**
+ * Renders `children` over a drifting point cloud while `active`.
+ *
+ * The canvas is `pointer-events: none` and sits behind the children in an
+ * isolated stacking context; nothing above it moves, resizes or changes
+ * hit-testing when the state flips.
+ */
+export declare function ParticlesBackground({ active, particleCount, particleSpread, speed, particleColors, moveParticlesOnHover, particleHoverFactor, alphaParticles, particleBaseSize, sizeRandomness, cameraDistance, disableRotation, pixelRatio, seed, fallbackIntensity, className, children, 'data-testid': testId, }: ParticlesBackgroundProps): JSX.Element;
+
+export declare interface ParticlesBackgroundProps {
+    /**
+     * True while the thing behind this surface is working. False renders
+     * `children` on the normal surface with no backdrop at all — a 250ms
+     * crossfade, no layout change, so a surface that starts working and one that
+     * stops are the same box.
+     */
+    active?: boolean;
+    particleCount?: number;
+    particleSpread?: number;
+    speed?: number;
+    particleColors?: readonly string[];
+    moveParticlesOnHover?: boolean;
+    particleHoverFactor?: number;
+    /** Soft-edged points with gradient alpha instead of hard discs. */
+    alphaParticles?: boolean;
+    particleBaseSize?: number;
+    sizeRandomness?: number;
+    cameraDistance?: number;
+    disableRotation?: boolean;
+    pixelRatio?: number;
+    /** Seed for the CSS fallback's star field, so a fallback pane keeps its own sky. */
+    seed?: number;
+    fallbackIntensity?: RisingParticlesIntensity;
+    className?: string;
+    children?: ReactNode;
+    'data-testid'?: string;
+}
+
 export declare function PermissionDeniedCard({ kind, state, message, onRetry, retryLabel, icon, className, 'data-testid': testId, }: PermissionDeniedCardProps): JSX.Element;
 
 export declare interface PermissionDeniedCardProps {
@@ -2755,6 +2807,31 @@ export declare interface ReviewThreadProps {
     kindTones?: Record<string, ToneOrAlias>;
     /** Shown when the thread has no posts yet. */
     emptyLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function RippleGridBackground({ active, enableRainbow, gridColor, rippleIntensity, gridSize, gridThickness, fadeDistance, vignetteStrength, glowIntensity, opacity, gridRotation, mouseInteraction, mouseInteractionRadius, lightMode, pixelRatio, className, 'data-testid': testId, }: RippleGridBackgroundProps): JSX.Element;
+
+export declare interface RippleGridBackgroundProps {
+    /** False parks the loop on a static frame without tearing the context down. */
+    active?: boolean;
+    enableRainbow?: boolean;
+    gridColor?: string;
+    rippleIntensity?: number;
+    gridSize?: number;
+    gridThickness?: number;
+    fadeDistance?: number;
+    vignetteStrength?: number;
+    glowIntensity?: number;
+    opacity?: number;
+    /** Degrees. */
+    gridRotation?: number;
+    mouseInteraction?: boolean;
+    mouseInteractionRadius?: number;
+    /** Grid lines in `gridColor` on a light ground, rather than glowing on dark. */
+    lightMode?: boolean;
+    pixelRatio?: number;
     className?: string;
     'data-testid'?: string;
 }
@@ -4277,25 +4354,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -4309,32 +4367,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -4381,6 +4425,39 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

@@ -1,7 +1,7 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Chip-BENLwTlq.js";
-import { t as n } from "./RisingParticles-DvxMtXJ2.js";
-import { f as r, i, r as a, u as o } from "./useComputeProjects-D0FbawEs.js";
+import { t as n } from "./RisingParticles-DqlZf8HC.js";
+import { f as r, i, r as a, u as o } from "./useComputeProjects-DTAaTTde.js";
 import { createContext as s, forwardRef as c, useCallback as l, useContext as u, useEffect as d, useImperativeHandle as f, useLayoutEffect as p, useMemo as m, useRef as h, useState as g } from "react";
 import { Fragment as _, jsx as v, jsxs as y } from "react/jsx-runtime";
 import { Terminal as b } from "@xterm/xterm";

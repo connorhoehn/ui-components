@@ -51,6 +51,7 @@ export type {
   WorkGraphSourceState,
   WorkGraphStatus,
   WorkGraphViewport,
+  WorkActivityCanvasBackground,
   WorkInspectorProps,
   WorkNodeProps,
   WorkReferenceCardProps,

@@ -147,6 +147,13 @@ declare interface ActiveSync {
     startedAt: string;
 }
 
+/**
+ * The preset the work-activity canvas wears: grey lines on the near-white
+ * surface the nodes already sit on, rippling slowly, never competing with them.
+ * Exported so a host can match it on a surface of its own.
+ */
+export declare const ACTIVITY_RIPPLE_GRID: RippleGridBackgroundProps;
+
 declare interface ActivityEvent {
     id: string;
     eventType: string;
@@ -269,6 +276,13 @@ export declare interface AdminDashboardPageProps {
     onNavigate: (path: string) => void;
     loading?: boolean;
 }
+
+/**
+ * The agent surfaces' sky: white through the two indigos `--color-primary`
+ * wears at night. One constant, used by the lab shell, the compute pane and the
+ * chat console, so a loop looks like itself wherever it is showing.
+ */
+export declare const AGENT_PARTICLE_COLORS: readonly ["#ffffff", "#c7d2fe", "#a5b4fc"];
 
 /** The dot class for a step status — shared with RunSummaryPanel so the two timelines read the same. */
 export declare const AGENT_RUN_STEP_DOT: Record<AgentRunStepStatus, string>;
@@ -2608,6 +2622,30 @@ export declare type ChatChannelKind = 'room' | 'dm';
 /** Room or DM for a channel, from the host's word first and the gateway's prefix second. */
 export declare function chatChannelKindOf(ctx: Pick<ChatCommandScopeContext, 'channel' | 'channelKind'>): ChatChannelKind;
 
+/**
+ * Wraps the message list + composer so the column as a whole changes state with
+ * the mode. Layout is identical in both states — only colour and the backdrop
+ * change — so nothing reflows across the transition.
+ */
+export declare function ChatColumnBackdrop({ mode, working, className, children, 'data-testid': testId, }: ChatColumnBackdropProps): JSX.Element;
+
+export declare interface ChatColumnBackdropProps {
+    /**
+     * The composer's mode. `chat` is the ordinary light column; `agent` and
+     * `terminal` are the console.
+     */
+    mode?: ComposerMode;
+    /**
+     * True while a loop is mid-turn. Denser, faster, and the cloud leans toward
+     * the pointer — the same "this is working" signal the lab shell uses, said by
+     * the whole column instead of one pane.
+     */
+    working?: boolean;
+    className?: string;
+    children?: ReactNode;
+    'data-testid'?: string;
+}
+
 export declare interface ChatCommand extends ComposerCommand {
     /** What sending the command does. Errors propagate to the host, which toasts. */
     run: (ctx: ChatCommandContext) => Promise<ChatCommandOutcome>;
@@ -3874,6 +3912,12 @@ declare interface CommentThreadProps {
     onMessage: OnMessageFn;
 }
 
+/**
+ * Compile + link, returning null on any failure. Shaders are detached and
+ * deleted immediately after linking — the program holds what it needs.
+ */
+export declare function compileProgram(gl: WebGLContextLike, vertex: string, fragment: string): WebGLProgram | null;
+
 export declare interface ComposerArgumentItem {
     /** Stable identity — this is what travels to the host, not the label. */
     id: string;
@@ -3924,6 +3968,9 @@ export declare interface ComposerCommandArgument {
  * separator is kept, so callers replacing the argument know its exact extent.
  */
 export declare function composerCommandArgumentText(draft: string, command: ComposerCommand): string;
+
+/** What the composer is for, right now. */
+declare type ComposerMode = 'chat' | 'agent' | 'terminal';
 
 export declare interface ComposerReference {
     /** Stable across re-renders; what `onRemove` is called with. */
@@ -4723,6 +4770,9 @@ export declare interface ConversationSurfaceProps {
     'data-testid'?: string;
 }
 
+/** A static-draw Float32 array buffer, the only buffer shape these backdrops use. */
+export declare function createArrayBuffer(gl: WebGLContextLike, data: Float32Array): WebGLBuffer | null;
+
 export declare function CreateChannelDialog({ open, teamName, busy, anchor, placement, onCreate, onClose, 'data-testid': testId, }: CreateChannelDialogProps): JSX.Element;
 
 export declare interface CreateChannelDialogInput {
@@ -4852,6 +4902,13 @@ export declare interface CreateUserInput {
     nickname?: string;
     customAttributes?: Record<string, unknown>;
 }
+
+/**
+ * WebGL2, then WebGL1, then the prefixed spelling old Safari and some Android
+ * webviews still answer to. Wrapped because a browser with WebGL disabled by
+ * policy THROWS from `getContext` rather than returning null.
+ */
+export declare function createWebGLContext(canvas: HTMLCanvasElement, attributes?: WebGLContextAttributes): WebGLContextLike | null;
 
 /**
  * Returns a `var(--ui-...)` reference for use in inline styles or CSS-in-JS.
@@ -9762,6 +9819,44 @@ export declare interface ParticipantTileProps {
     style?: CSSProperties;
 }
 
+/**
+ * Renders `children` over a drifting point cloud while `active`.
+ *
+ * The canvas is `pointer-events: none` and sits behind the children in an
+ * isolated stacking context; nothing above it moves, resizes or changes
+ * hit-testing when the state flips.
+ */
+export declare function ParticlesBackground({ active, particleCount, particleSpread, speed, particleColors, moveParticlesOnHover, particleHoverFactor, alphaParticles, particleBaseSize, sizeRandomness, cameraDistance, disableRotation, pixelRatio, seed, fallbackIntensity, className, children, 'data-testid': testId, }: ParticlesBackgroundProps): JSX.Element;
+
+export declare interface ParticlesBackgroundProps {
+    /**
+     * True while the thing behind this surface is working. False renders
+     * `children` on the normal surface with no backdrop at all — a 250ms
+     * crossfade, no layout change, so a surface that starts working and one that
+     * stops are the same box.
+     */
+    active?: boolean;
+    particleCount?: number;
+    particleSpread?: number;
+    speed?: number;
+    particleColors?: readonly string[];
+    moveParticlesOnHover?: boolean;
+    particleHoverFactor?: number;
+    /** Soft-edged points with gradient alpha instead of hard discs. */
+    alphaParticles?: boolean;
+    particleBaseSize?: number;
+    sizeRandomness?: number;
+    cameraDistance?: number;
+    disableRotation?: boolean;
+    pixelRatio?: number;
+    /** Seed for the CSS fallback's star field, so a fallback pane keeps its own sky. */
+    seed?: number;
+    fallbackIntensity?: RisingParticlesIntensity;
+    className?: string;
+    children?: ReactNode;
+    'data-testid'?: string;
+}
+
 export declare interface PasswordPolicy {
     minLength: number;
     requireUppercase: boolean;
@@ -11883,6 +11978,31 @@ export declare function RichTextEditorRenderer({ section, fragment, ydoc, provid
 export declare const richTextFieldType: FieldTypeDefinition;
 
 export declare function RichTextReaderRenderer({ section, fragment, ydoc, provider, onNavigateToEditor, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
+
+export declare function RippleGridBackground({ active, enableRainbow, gridColor, rippleIntensity, gridSize, gridThickness, fadeDistance, vignetteStrength, glowIntensity, opacity, gridRotation, mouseInteraction, mouseInteractionRadius, lightMode, pixelRatio, className, 'data-testid': testId, }: RippleGridBackgroundProps): JSX.Element;
+
+export declare interface RippleGridBackgroundProps {
+    /** False parks the loop on a static frame without tearing the context down. */
+    active?: boolean;
+    enableRainbow?: boolean;
+    gridColor?: string;
+    rippleIntensity?: number;
+    gridSize?: number;
+    gridThickness?: number;
+    fadeDistance?: number;
+    vignetteStrength?: number;
+    glowIntensity?: number;
+    opacity?: number;
+    /** Degrees. */
+    gridRotation?: number;
+    mouseInteraction?: boolean;
+    mouseInteractionRadius?: number;
+    /** Grid lines in `gridColor` on a light ground, rather than glowing on dark. */
+    lightMode?: boolean;
+    pixelRatio?: number;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /**
  * Renders `children` over a rising star field while `active`, and over nothing
@@ -16214,6 +16334,29 @@ declare interface UseActivityBusReturn {
       fetchSessions: () => Promise<void>;
   };
 
+  export declare function useWebGLCanvas<S>(options: UseWebGLCanvasOptions<S>): WebGLCanvas;
+
+  export declare interface UseWebGLCanvasOptions<S> {
+      /** False parks the loop without tearing the context down. Default true. */
+      active?: boolean;
+      /** Overrides `devicePixelRatio`. Capped at 2 either way — past it the fill cost buys nothing. */
+      pixelRatio?: number;
+      attributes?: WebGLContextAttributes;
+      /**
+       * A value the caller changes when the PARKED frame would look different — a
+       * cheap signature of whatever props feed the uniforms. While the loop is
+       * running this is ignored (the next tick repaints anyway); while it is parked
+       * (inactive, off-screen, or reduced motion) a change repaints exactly one
+       * frame. Without it a reduced-motion surface would ignore its own props after
+       * the first paint.
+       */
+      version?: string | number;
+      /** Build buffers, programs, uniform locations. Returning null means "cannot run" → fallback. */
+      setup: (gl: WebGLContextLike) => S | null;
+      draw: (state: S, frame: WebGLFrame) => void;
+      dispose?: (state: S, gl: WebGLContextLike) => void;
+  }
+
   export declare function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn;
 
   export declare function useWebSocketContext(): WebSocketContextValue;
@@ -16520,6 +16663,33 @@ declare interface UseActivityBusReturn {
 
   export declare type WatermarkGravity = 'northwest' | 'north' | 'northeast' | 'west' | 'center' | 'east' | 'southwest' | 'south' | 'southeast';
 
+  export declare interface WebGLCanvas {
+      /** Put this on the element whose measured box drives the drawing buffer. */
+      hostRef: RefObject<HTMLDivElement | null>;
+      canvasRef: RefObject<HTMLCanvasElement | null>;
+      status: WebGLCanvasStatus;
+      reducedMotion: boolean;
+      /** Repaint one frame while the loop is parked — for a prop change under reduced motion. */
+      redraw: () => void;
+  }
+
+  export declare type WebGLCanvasStatus = 'pending' | 'ready' | 'unsupported';
+
+  export declare type WebGLContextLike = WebGLRenderingContext | WebGL2RenderingContext;
+
+  /** What `draw` is handed. Sizes are DRAWING-BUFFER pixels, times are milliseconds. */
+  export declare interface WebGLFrame {
+      gl: WebGLContextLike;
+      width: number;
+      height: number;
+      /** Milliseconds of RUNNING time. Frozen at 0 under reduced motion. */
+      time: number;
+      /** Milliseconds since the previous frame, clamped. 0 on a static frame. */
+      delta: number;
+      /** Frame counter, from 0. */
+      frame: number;
+  }
+
   /** Host declaration of inbound webhook delivery. See `webhookRelay`. */
   declare interface WebhookRelayStatus {
       /** True ONLY when a delivery to the webhook path actually triggers a run. */
@@ -16654,6 +16824,21 @@ declare interface UseActivityBusReturn {
   }
 
   export declare type WorkActivityBannerTone = 'info' | 'success' | 'error';
+
+  /**
+   * What the activity canvas paints UNDER the graph.
+   *
+   * `ripple-grid` is the default and the intended look: a pale grey lattice on
+   * the near-white surface, rippling slowly outward from the centre and bending
+   * toward the pointer. It REPLACES React Flow's dot background rather than
+   * layering over it — two grids at once is noise, and the dots were only ever
+   * standing in for a surface texture.
+   *
+   * `plain` is the escape hatch: no canvas, no WebGL context, React Flow's own
+   * dots. For a host embedding several graphs on one page, or a test that would
+   * rather not stub a GL context.
+   */
+  export declare type WorkActivityCanvasBackground = 'ripple-grid' | 'plain';
 
   /** Source-backed membership, already filtered for this viewer by the host. */
   export declare interface WorkActivityEffort {
@@ -17202,6 +17387,8 @@ declare interface UseActivityBusReturn {
       className?: string;
       /** Authorized effort/revision presentation. Omit for the existing v1 view. */
       activity?: WorkActivityPresentation;
+      /** Activity-canvas backdrop. Defaults to `'ripple-grid'`. */
+      background?: WorkActivityCanvasBackground;
       onSelectionChange: (selection: WorkGraphSelection) => void;
       onViewportChange: (viewport: WorkGraphViewport) => void;
       onRetry?: () => void;
@@ -17398,25 +17585,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -17430,32 +17598,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -17502,6 +17656,39 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

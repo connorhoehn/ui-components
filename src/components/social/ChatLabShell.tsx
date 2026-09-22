@@ -39,7 +39,7 @@ import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
 import DotMeter from '../shared/DotMeter';
 import LogStream, { type LogLine } from '../shared/LogStream';
-import RisingParticles from '../shared/RisingParticles';
+import { AGENT_PARTICLE_COLORS, ParticlesBackground } from '../shared/ParticlesBackground';
 import { Tabs } from '../shared/Tabs';
 import { Button } from '../ui/Button';
 // Both imported from their modules rather than the `./compute` barrel: the
@@ -473,9 +473,15 @@ export function ChatLabShell({
           beyond "this is working", which is all the backdrop of a log console
           should carry. The seed is derived from the box so two loops open side
           by side do not wear the same sky. */}
-      <RisingParticles
+      <ParticlesBackground
         active={busy}
-        intensity="medium"
+        particleCount={220}
+        speed={0.14}
+        alphaParticles
+        moveParticlesOnHover
+        particleHoverFactor={0.6}
+        particleColors={AGENT_PARTICLE_COLORS}
+        fallbackIntensity="medium"
         seed={seedOf(shell?.sessionId ?? title)}
         className="flex min-h-0 flex-1 flex-col"
         data-testid={`${testId}-particles`}
@@ -566,7 +572,7 @@ export function ChatLabShell({
           Send
         </Button>
       </div>
-      </RisingParticles>
+      </ParticlesBackground>
     </div>
   );
 }

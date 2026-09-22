@@ -46,6 +46,18 @@ if (typeof globalThis.ResizeObserver === 'undefined') {
   (globalThis as unknown as { ResizeObserver: typeof ResizeObserverMock }).ResizeObserver =
     ResizeObserverMock;
 }
+// jsdom has no canvas rendering at all, and its `getContext` announces that by
+// writing "Not implemented: HTMLCanvasElement's getContext()" to the virtual
+// console for EVERY call — several hundred lines of it once the WebGL
+// backdrops are on screen, drowning the actual test output. The components
+// already handle a null context (they render their CSS fallback), so returning
+// null quietly is the same answer without the shouting. A test that wants a
+// real context installs its own stub over this — see
+// `src/components/shared/__tests__/webglStub.ts`.
+if (typeof HTMLCanvasElement !== 'undefined') {
+  HTMLCanvasElement.prototype.getContext = (() => null) as unknown as typeof HTMLCanvasElement.prototype.getContext;
+}
+
 if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = function scrollIntoView() {};
 }

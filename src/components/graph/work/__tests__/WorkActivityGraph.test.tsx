@@ -213,3 +213,17 @@ describe('Active Now composition', () => {
     expect(value.onWindowChange).toHaveBeenLastCalledWith({ start: start + 60_000, end: value.bounds.end, following: false });
   });
 });
+
+describe('activity canvas background', () => {
+  it('wears the ripple grid by default, in place of React Flow\'s dots', () => {
+    render(<WorkGraph {...props()} />);
+    expect(screen.getByTestId('work-activity-canvas')).toHaveAttribute('data-background', 'ripple-grid');
+    expect(screen.getByTestId('work-activity-ripple')).toBeInTheDocument();
+  });
+
+  it('drops to a plain canvas — and creates no GL context — on request', () => {
+    render(<WorkGraph {...props()} background="plain" />);
+    expect(screen.getByTestId('work-activity-canvas')).toHaveAttribute('data-background', 'plain');
+    expect(screen.queryByTestId('work-activity-ripple')).not.toBeInTheDocument();
+  });
+});
