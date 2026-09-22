@@ -5,8 +5,6 @@ export { default as PipelineEditorPage } from './PipelineEditorPage';
 export { default as PipelinesPage } from './PipelinesPage';
 export { default as PipelineRunsPage } from './PipelineRunsPage';
 export { default as PipelineRunReplayPage } from './PipelineRunReplayPage';
-export { default as PipelineRunComparePage } from './PipelineRunComparePage';
-export { default as PipelineRunDiff } from './PipelineRunDiff';
 export { default as AllRunsPage } from './AllRunsPage';
 export { default as PipelineStatsPage } from './PipelineStatsPage';
 export { default as PendingApprovalsPage } from './PendingApprovalsPage';

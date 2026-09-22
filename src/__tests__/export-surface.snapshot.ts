@@ -842,8 +842,6 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "PipelineEditorProvider",
     "PipelineEditorServicesProvider",
     "PipelineNodeRuntimeProvider",
-    "PipelineRunComparePage",
-    "PipelineRunDiff",
     "PipelineRunReplayPage",
     "PipelineRunsPage",
     "PipelineRunsProvider",

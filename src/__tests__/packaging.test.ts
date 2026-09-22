@@ -284,7 +284,14 @@ describe('entry points and their transitive optional peers', () => {
       ingest: { static: ['react-router', 'recharts'], dynamic: [] },
       hooks: { static: ['amazon-cognito-identity-js', 'react-router', 'yjs'], dynamic: [] },
       pipelines: { static: ['@xyflow/react', 'react-router', 'recharts'], dynamic: [] },
-      'doc-editor': { static: [...TIPTAP, 'yjs'].sort(), dynamic: ['amazon-ivs-web-broadcast'] },
+      // `@dnd-kit/core` and `@dnd-kit/sortable` are DYNAMIC here: `SlideList.tsx`
+      // reaches `SortableSlideList.tsx` through `React.lazy` precisely so that
+      // importing the presentation editor does not require `@dnd-kit` on disk
+      // for a consumer who never drags a slide. See SlideList.tsx's own note.
+      'doc-editor': {
+        static: [...TIPTAP, 'yjs'].sort(),
+        dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', 'amazon-ivs-web-broadcast'],
+      },
       // The root barrel re-exports nearly everything, so it needs nearly
       // everything. That is expected — subpaths are how a consumer opts out.
       // The tiptap peers are STATIC here, and that is a real cost: importing
@@ -308,10 +315,10 @@ describe('entry points and their transitive optional peers', () => {
           ...TIPTAP,
           '@xyflow/react', 'amazon-cognito-identity-js', 'cmdk', 'react-markdown', 'react-router', 'recharts', 'remark-gfm', 'yjs',
         ].sort(),
-        // Both dynamic entries are lazy tabs: the IVS SDK behind a hangout that
-        // has not started, xterm behind ChatLabShell's Terminal tab. See the
-        // `social` note above.
-        dynamic: ['@xterm/addon-fit', '@xterm/xterm', 'amazon-ivs-web-broadcast'],
+        // The IVS SDK and xterm entries are lazy tabs: see the `social` note
+        // above. `@dnd-kit/core` and `@dnd-kit/sortable` are lazy the same
+        // way, via `SlideList.tsx` — see the `doc-editor` note above.
+        dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', '@xterm/addon-fit', '@xterm/xterm', 'amazon-ivs-web-broadcast'],
       },
     };
 
