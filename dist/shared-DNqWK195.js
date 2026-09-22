@@ -1,6 +1,6 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import "./ToastProvider-B0D0SLKU.js";
-import "./DetailSection-B69jVywz.js";
+import "./DetailSection-3MgUuLmH.js";
 import { _ as t, c as n, g as r, h as i, l as a, p as o, t as s, u as c } from "./overlayStack-BDlo8PJg.js";
 import { t as l } from "./Card-RQCeAPNU.js";
 import "./Table-CypeBEj0.js";

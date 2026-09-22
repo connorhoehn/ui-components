@@ -2,18 +2,33 @@
 //
 // Multi-select user picker. Candidate users come from two sources that are
 // merged in the dropdown:
-//   1. `usePresenceContext` — everyone currently visible in the app (instant,
-//      local, no network). Used as an immediate-result fallback.
+//   1. Presence — everyone currently visible in the app (instant, local, no
+//      network). Used as an immediate-result fallback.
 //   2. `GET /api/profiles?q=<search>` — server-side search across all users
 //      (debounced 250ms). Catches users who aren't currently online.
 // Manual free-text entry is also supported: typing a value that doesn't match
 // any candidate and pressing Enter accepts the raw string as a userId.
+//
+// By default, presence comes from this library's `usePresenceContext()` and
+// the search token from `useIdentityContext()` — both non-throwing here (see
+// `useOptionalPresenceContext`/`useOptionalIdentityContext`), so a host that
+// mounts neither provider still renders, just with no candidates until it
+// passes `presenceUsers`/`idToken` explicitly. `presenceUsers`, `idToken`,
+// `searchUsers`, and `baseUrl` all take precedence over the contexts/env when
+// given, so a host with its own presence + identity providers (and possibly
+// its own profile-search backend) never needs to mount this library's
+// providers at all — see each prop's doc comment below.
+//
+// `VITE_SOCIAL_API_URL` is STATICALLY REPLACED at build time — and the build
+// that matters is THIS library's, not the consumer's (same story as
+// `ActivityPanel`'s `getBaseUrl`). `baseUrl` exists to let a host override it.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { cn } from '../../lib/cn';
-import { usePresenceContext } from '../../contexts/PresenceContext';
-import { useIdentityContext } from '../../contexts/IdentityContext';
+import { useOptionalPresenceContext } from '../../contexts/PresenceContext';
+import { useOptionalIdentityContext } from '../../contexts/IdentityContext';
+import type { PresenceUser } from '../../hooks/usePresence';
 
 const SOCIAL_API_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 
@@ -22,6 +37,38 @@ export interface UserPickerProps {
   onChange: (userIds: string[]) => void;
   placeholder?: string;
   maxSelect?: number;
+  /**
+   * Presence-sourced candidates. Wins over this library's
+   * `usePresenceContext()`, so a host running its own presence provider can
+   * hand its list in directly instead of mounting this library's
+   * `<PresenceProvider>` just for `UserPicker`. Defaults to the context's
+   * `presenceUsers` (or `[]` when no provider is mounted).
+   */
+  presenceUsers?: PresenceUser[];
+  /**
+   * Bearer token for the default `GET /api/profiles` search request. Wins
+   * over `useIdentityContext().idToken`. Pass `null` explicitly to disable
+   * the default search request while still showing presence candidates.
+   * Ignored when `searchUsers` is given. Defaults to the context's `idToken`
+   * (or `null` when no provider is mounted).
+   */
+  idToken?: string | null;
+  /**
+   * Full replacement for the default profile-search request, for a host that
+   * already owns an authorized client (signed requests, a proxy, a mock in
+   * tests) or whose search endpoint isn't `GET {baseUrl}/api/profiles?q=`.
+   * Wins over `baseUrl` and does not require `idToken`. Called (debounced
+   * 250ms) with the trimmed query and an `AbortSignal` tied to the request's
+   * lifetime — abort on unmount/requery the way the default `fetch` does.
+   */
+  searchUsers?: (query: string, signal: AbortSignal) => Promise<ProfileSummary[]>;
+  /**
+   * Origin for the default `GET /api/profiles` request. Wins over the
+   * build-time `VITE_SOCIAL_API_URL`, which is baked into THIS library's own
+   * build and cannot be influenced by a consumer's `.env` — see the note on
+   * `VITE_SOCIAL_API_URL` above. Ignored when `searchUsers` is given.
+   */
+  baseUrl?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -33,7 +80,7 @@ interface Candidate {
   displayName: string;
 }
 
-interface ProfileSummary {
+export interface ProfileSummary {
   userId: string;
   displayName: string;
   email?: string;
@@ -50,9 +97,20 @@ function extractDisplayName(metadata: Record<string, unknown>, fallbackId: strin
 // Component
 // ---------------------------------------------------------------------------
 
-function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps) {
-  const { presenceUsers } = usePresenceContext();
-  const { idToken } = useIdentityContext();
+function UserPicker({
+  value,
+  onChange,
+  placeholder,
+  maxSelect,
+  presenceUsers: presenceUsersProp,
+  idToken: idTokenProp,
+  searchUsers,
+  baseUrl,
+}: UserPickerProps) {
+  const presenceCtx = useOptionalPresenceContext();
+  const identityCtx = useOptionalIdentityContext();
+  const presenceUsers = presenceUsersProp ?? presenceCtx?.presenceUsers ?? [];
+  const idToken = idTokenProp !== undefined ? idTokenProp : (identityCtx?.idToken ?? null);
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -80,19 +138,34 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
     return list;
   }, [presenceUsers, value]);
 
-  // Debounced server-side profile search (250ms). Only runs when we have a
-  // non-empty query and an auth token. Presence results still show instantly
+  // Debounced server-side profile search (250ms). `searchUsers` (when given)
+  // runs regardless of `idToken` — a host that provides its own search seam
+  // owns its own auth. The default `fetch` still requires a non-null
+  // `idToken` the way it always has. Presence results still show instantly
   // below while the network round-trip is in flight.
   useEffect(() => {
     const trimmed = query.trim();
-    if (!trimmed || !idToken) {
+    if (!trimmed) {
+      setRemoteProfiles([]);
+      return;
+    }
+    if (!searchUsers && !idToken) {
       setRemoteProfiles([]);
       return;
     }
 
     const controller = new AbortController();
     const timer = setTimeout(() => {
-      const url = `${SOCIAL_API_URL}/api/profiles?q=${encodeURIComponent(trimmed)}&limit=20`;
+      if (searchUsers) {
+        Promise.resolve(searchUsers(trimmed, controller.signal))
+          .then(profiles => setRemoteProfiles(Array.isArray(profiles) ? profiles : []))
+          .catch(() => {
+            // Network or abort — silently fall back to presence-only candidates.
+          });
+        return;
+      }
+      const resolvedBase = baseUrl ?? SOCIAL_API_URL;
+      const url = `${resolvedBase}/api/profiles?q=${encodeURIComponent(trimmed)}&limit=20`;
       fetch(url, {
         headers: { Authorization: `Bearer ${idToken}` },
         signal: controller.signal,
@@ -110,7 +183,7 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
       clearTimeout(timer);
       controller.abort();
     };
-  }, [query, idToken]);
+  }, [query, idToken, searchUsers, baseUrl]);
 
   // Merge presence + remote candidates. Presence entries win on dedup because
   // they carry live metadata; remote entries fill in offline users.

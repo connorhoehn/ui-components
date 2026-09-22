@@ -11616,6 +11616,13 @@ declare interface ProfileItem {
     updatedAt: string;
 }
 
+export declare interface ProfileSummary {
+    userId: string;
+    displayName: string;
+    email?: string;
+    avatarUrl?: string;
+}
+
 export declare function ProgressBar({ value, max, color, size, completeTone, label, valueLabel, showRatio, labelClassName, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ProgressBarProps): JSX.Element;
 
 export declare interface ProgressBarProps {
@@ -16587,6 +16594,21 @@ declare interface UseActivityBusReturn {
   */
  export declare function useOptionalIdentityContext(): IdentityContextValue | null;
 
+ /**
+  * Non-throwing variant: returns `null` when there is no `<PresenceProvider>`
+  * above.
+  *
+  * `usePresenceContext` is the right hook for a component that genuinely
+  * cannot work without presence. It is the wrong hook for a component that
+  * would merely *like* presence data when a host doesn't mount this
+  * library's provider — calling it there turns an optional enhancement into
+  * a hard mount-time dependency. `UserPicker` is exactly that case: it wants
+  * live presence when this library's provider is in the tree, and must still
+  * work (via its `presenceUsers` prop) for a host running its own presence
+  * provider instead.
+  */
+ export declare function useOptionalPresenceContext(): PresenceContextValue | null;
+
  export declare function usePipelineDefs(): UsePipelineDefsReturn;
 
  declare interface UsePipelineDefsReturn {
@@ -16842,13 +16864,45 @@ declare interface UseActivityBusReturn {
      onKeyDown: (event: default_2.KeyboardEvent) => void;
  };
 
- export declare function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps): JSX.Element;
+ export declare function UserPicker({ value, onChange, placeholder, maxSelect, presenceUsers: presenceUsersProp, idToken: idTokenProp, searchUsers, baseUrl, }: UserPickerProps): JSX.Element;
 
  export declare interface UserPickerProps {
      value: string[];
      onChange: (userIds: string[]) => void;
      placeholder?: string;
      maxSelect?: number;
+     /**
+      * Presence-sourced candidates. Wins over this library's
+      * `usePresenceContext()`, so a host running its own presence provider can
+      * hand its list in directly instead of mounting this library's
+      * `<PresenceProvider>` just for `UserPicker`. Defaults to the context's
+      * `presenceUsers` (or `[]` when no provider is mounted).
+      */
+     presenceUsers?: PresenceUser_2[];
+     /**
+      * Bearer token for the default `GET /api/profiles` search request. Wins
+      * over `useIdentityContext().idToken`. Pass `null` explicitly to disable
+      * the default search request while still showing presence candidates.
+      * Ignored when `searchUsers` is given. Defaults to the context's `idToken`
+      * (or `null` when no provider is mounted).
+      */
+     idToken?: string | null;
+     /**
+      * Full replacement for the default profile-search request, for a host that
+      * already owns an authorized client (signed requests, a proxy, a mock in
+      * tests) or whose search endpoint isn't `GET {baseUrl}/api/profiles?q=`.
+      * Wins over `baseUrl` and does not require `idToken`. Called (debounced
+      * 250ms) with the trimmed query and an `AbortSignal` tied to the request's
+      * lifetime — abort on unmount/requery the way the default `fetch` does.
+      */
+     searchUsers?: (query: string, signal: AbortSignal) => Promise<ProfileSummary[]>;
+     /**
+      * Origin for the default `GET /api/profiles` request. Wins over the
+      * build-time `VITE_SOCIAL_API_URL`, which is baked into THIS library's own
+      * build and cannot be influenced by a consumer's `.env` — see the note on
+      * `VITE_SOCIAL_API_URL` above. Ignored when `searchUsers` is given.
+      */
+     baseUrl?: string;
  }
 
  /** Add-a-person. Lives here rather than inside CallControls' private
@@ -18378,9 +18432,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }
@@ -18411,25 +18481,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -18447,9 +18501,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

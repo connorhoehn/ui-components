@@ -749,6 +749,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "useMuteWhileTalking",
     "useMyMentionsAndTasks",
     "useOptionalIdentityContext",
+    "useOptionalPresenceContext",
     "usePipelineDefs",
     "usePipelineEditorServices",
     "usePosts",

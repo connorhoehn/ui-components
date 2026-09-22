@@ -1,18 +1,40 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import UserPicker from '../UserPicker';
+import { PresenceProvider } from '../../../contexts/PresenceContext';
+import { IdentityProvider } from '../../../contexts/IdentityContext';
 
-vi.mock('../../../contexts/PresenceContext', () => ({
-  usePresenceContext: () => ({
-    presenceUsers: [
-      { clientId: 'alice-id', metadata: { displayName: 'Alice' } },
-      { clientId: 'bob-id', metadata: { displayName: 'Bob' } },
-    ],
-  }),
-}));
+vi.mock('../../../contexts/PresenceContext', async () => {
+  const actual = await vi.importActual<typeof import('../../../contexts/PresenceContext')>(
+    '../../../contexts/PresenceContext',
+  );
+  return {
+    ...actual,
+    useOptionalPresenceContext: () => ({
+      presenceUsers: [
+        { clientId: 'alice-id', metadata: { displayName: 'Alice' } },
+        { clientId: 'bob-id', metadata: { displayName: 'Bob' } },
+      ],
+      currentClientId: null,
+      setTyping: () => {},
+    }),
+  };
+});
 
-vi.mock('../../../contexts/IdentityContext', () => ({
-  useIdentityContext: () => ({ idToken: null }),
-}));
+vi.mock('../../../contexts/IdentityContext', async () => {
+  const actual = await vi.importActual<typeof import('../../../contexts/IdentityContext')>(
+    '../../../contexts/IdentityContext',
+  );
+  return {
+    ...actual,
+    useOptionalIdentityContext: () => ({
+      idToken: null,
+      userId: 'ctx-user',
+      displayName: 'Ctx User',
+      userEmail: null,
+      onSignOut: () => {},
+    }),
+  };
+});
 
 function setup(props: Partial<Parameters<typeof UserPicker>[0]> = {}) {
   const onChange = vi.fn();
@@ -96,7 +118,7 @@ describe('UserPicker identity resolution', () => {
   it('dedupes two presence entries sharing the same metadata.userId into one candidate', async () => {
     vi.resetModules();
     vi.doMock('../../../contexts/PresenceContext', () => ({
-      usePresenceContext: () => ({
+      useOptionalPresenceContext: () => ({
         presenceUsers: [
           { clientId: 'tab-1-uuid', metadata: { userId: 'alice-sub', displayName: 'Alice' } },
           { clientId: 'tab-2-uuid', metadata: { userId: 'alice-sub', displayName: 'Alice' } },
@@ -104,7 +126,7 @@ describe('UserPicker identity resolution', () => {
       }),
     }));
     vi.doMock('../../../contexts/IdentityContext', () => ({
-      useIdentityContext: () => ({ idToken: null }),
+      useOptionalIdentityContext: () => ({ idToken: null }),
     }));
     const { default: FreshUserPicker } = await import('../UserPicker');
     const onChange = vi.fn();
@@ -118,14 +140,14 @@ describe('UserPicker identity resolution', () => {
   it('falls back to clientId when a presence entry has no metadata.userId', async () => {
     vi.resetModules();
     vi.doMock('../../../contexts/PresenceContext', () => ({
-      usePresenceContext: () => ({
+      useOptionalPresenceContext: () => ({
         presenceUsers: [
           { clientId: 'anon-client-id', metadata: { displayName: 'Guest' } },
         ],
       }),
     }));
     vi.doMock('../../../contexts/IdentityContext', () => ({
-      useIdentityContext: () => ({ idToken: null }),
+      useOptionalIdentityContext: () => ({ idToken: null }),
     }));
     const { default: FreshUserPicker } = await import('../UserPicker');
     const onChange = vi.fn();
@@ -138,14 +160,14 @@ describe('UserPicker identity resolution', () => {
   it('round-trips the identity id through selection and chip rendering', async () => {
     vi.resetModules();
     vi.doMock('../../../contexts/PresenceContext', () => ({
-      usePresenceContext: () => ({
+      useOptionalPresenceContext: () => ({
         presenceUsers: [
           { clientId: 'tab-1-uuid', metadata: { userId: 'alice-sub', displayName: 'Alice' } },
         ],
       }),
     }));
     vi.doMock('../../../contexts/IdentityContext', () => ({
-      useIdentityContext: () => ({ idToken: null }),
+      useOptionalIdentityContext: () => ({ idToken: null }),
     }));
     const { default: FreshUserPicker } = await import('../UserPicker');
     render(<FreshUserPicker value={['alice-sub']} onChange={vi.fn()} />);

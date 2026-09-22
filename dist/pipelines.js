@@ -4,7 +4,7 @@ import { t } from "./usePrefersReducedMotion-Cllucr7i.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { n as r } from "./ToastProvider-B0D0SLKU.js";
 import { t as i } from "./useEventCallback-Cwx9QVSi.js";
-import { a, c as o, d as s, f as c, i as l, l as u, o as d, r as f, s as p, t as m } from "./DetailSection-B69jVywz.js";
+import { a, c as o, d as s, f as c, i as l, l as u, o as d, r as f, s as p, t as m } from "./DetailSection-3MgUuLmH.js";
 import { _ as h, a as g, n as _ } from "./overlayStack-BDlo8PJg.js";
 import { t as v } from "./IconButton-C3DMtvSx.js";
 import { t as y } from "./Banner-C3Wgh62A.js";
