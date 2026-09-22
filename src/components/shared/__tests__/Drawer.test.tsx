@@ -116,5 +116,22 @@ describe('Drawer', () => {
     const container = screen.getByTestId('drawer');
     expect(container.children).toHaveLength(1);
     expect(container.firstElementChild).toBe(screen.getByRole('dialog'));
+    // ...and the wrapper must not swallow clicks meant for the page behind
+    // it: with no backdrop there is nothing there that should be catching
+    // them, so the layer is transparent to the pointer and only the panel
+    // takes events back.
+    expect(container.className).toContain('pointer-events-none');
+    expect(screen.getByRole('dialog').className).toContain('pointer-events-auto');
+  });
+
+  it('keeps the wrapper clickable when the backdrop IS drawn', () => {
+    render(
+      <Drawer open onClose={() => {}} title="T" data-testid="drawer">
+        b
+      </Drawer>,
+    );
+    const container = screen.getByTestId('drawer');
+    expect(container.className).not.toContain('pointer-events-none');
+    expect(screen.getByRole('dialog').className).not.toContain('pointer-events-auto');
   });
 });

@@ -1757,7 +1757,7 @@ function lt({ open: t, onClose: n, title: r, subtitle: i, width: a, children: o,
 			j
 		]
 	}) : te(/* @__PURE__ */ V("div", {
-		className: "fixed inset-0 z-[9000]",
+		className: e("fixed inset-0 z-[9000]", !x && "pointer-events-none"),
 		"data-testid": m,
 		children: [x && /* @__PURE__ */ B("div", {
 			className: "absolute inset-0 bg-black/30 backdrop-blur-[1px]",
@@ -1769,7 +1769,7 @@ function lt({ open: t, onClose: n, title: r, subtitle: i, width: a, children: o,
 			"aria-modal": T ? "true" : void 0,
 			"aria-labelledby": r ? w : void 0,
 			"aria-label": r ? void 0 : p,
-			className: e("absolute right-0 top-0 h-full bg-surface shadow-xl flex flex-col", "transition-transform duration-200", t ? "translate-x-0" : "translate-x-full", d),
+			className: e("absolute right-0 top-0 h-full bg-surface shadow-xl flex flex-col", "transition-transform duration-200", !x && "pointer-events-auto", t ? "translate-x-0" : "translate-x-full", d),
 			style: { width: D },
 			children: [
 				O && k,

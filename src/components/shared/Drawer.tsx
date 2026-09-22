@@ -90,8 +90,10 @@ export interface DrawerProps {
   /**
    * Render the dimmed backdrop behind the floating panel, and close on a
    * click through it. `false` renders the panel with nothing behind it —
-   * what a local `Panel.tsx` did before Drawer replaced it. Ignored when
-   * `docked` (never has one). Default `true`.
+   * what a local `Panel.tsx` did before Drawer replaced it — and, because
+   * there is then no backdrop that should be catching clicks, makes the
+   * full-viewport wrapper `pointer-events-none` so the page behind the panel
+   * stays usable. Ignored when `docked` (never has one). Default `true`.
    */
   backdrop?: boolean;
 }
@@ -237,7 +239,16 @@ function Drawer({
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[9000]" data-testid={testId}>
+    // The wrapper spans the viewport so the backdrop can dim all of it. With
+    // no backdrop there is nothing to dim, and a full-screen transparent
+    // layer would still swallow every click — the app behind a non-modal
+    // side panel would go dead, which a local `Panel.tsx` (a fixed strip only
+    // as wide as itself) never did. So drop pointer events on the wrapper and
+    // put them back on the panel, the same pattern ToastProvider uses.
+    <div
+      className={cn('fixed inset-0 z-[9000]', !backdrop && 'pointer-events-none')}
+      data-testid={testId}
+    >
       {/* Backdrop */}
       {backdrop && (
         <div
@@ -256,6 +267,7 @@ function Drawer({
         className={cn(
           'absolute right-0 top-0 h-full bg-surface shadow-xl flex flex-col',
           'transition-transform duration-200',
+          !backdrop && 'pointer-events-auto',
           open ? 'translate-x-0' : 'translate-x-full',
           className,
         )}
