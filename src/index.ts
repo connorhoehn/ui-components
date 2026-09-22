@@ -105,6 +105,18 @@ export { ErrorBoundary } from './components/misc/ErrorBoundary';
 // Explicit: both the shared barrel and the ui barrel star-export Icons, and TS refuses an ambiguous name.
 export { PopOutIcon, EditIcon, FolderIcon, TrashIcon, PinIcon, BellMutedIcon, LockIcon, ActivityIcon, AtIcon, EyeIcon, ForwardIcon, PhoneIcon, VideoCallIcon, MoonIcon, SunIcon, MenuIcon, TranscribeIcon, BranchIcon, ChartIcon, CodeIcon, PuzzleIcon, RepeatIcon, PaperclipIcon, LinkIcon, QuoteIcon, SmileyIcon, ReplyIcon, WhiteboardIcon } from './components/ui/Icons';
 
+// A sidebar-filling counterpart to `Panel`'s outer chrome — fills its
+// parent in normal flow (no portal, no fixed width, no floating chrome).
+// Pair with the existing `PanelHeader` / `PanelBody`. See InlinePanel.tsx
+// for why this is a separate component rather than a `Panel` variant.
+export { InlinePanel } from './components/ui/InlinePanel';
+export type { InlinePanelProps } from './components/ui/InlinePanel';
+
+// A native `<details>/<summary>` collapsible with a real controlled /
+// uncontrolled `open` contract and an optional semantic `tone`.
+export { Disclosure } from './components/ui/Disclosure';
+export type { DisclosureProps } from './components/ui/Disclosure';
+
 // ---------------------------------------------------------------------------
 // Presentation editing
 // ---------------------------------------------------------------------------

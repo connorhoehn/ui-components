@@ -5338,6 +5338,35 @@ export declare interface DiffViewerProps {
     'data-testid'?: string;
 }
 
+export declare function Disclosure({ summary, children, open, defaultOpen, onToggle, tone, className, summaryClassName, bodyClassName, 'data-testid': testId, }: DisclosureProps): JSX.Element;
+
+export declare interface DisclosureProps {
+    /** Always-visible trigger row. Any node — not just text. */
+    summary: ReactNode;
+    /** Shown when open. */
+    children: ReactNode;
+    /**
+     * Controlled open state. Omit to let the component own it (see
+     * `defaultOpen`); pass it and update it from `onToggle` to control it, the
+     * same contract as a controlled `<input>`.
+     */
+    open?: boolean;
+    /** Uncontrolled initial state. Default false. Ignored once `open` is passed. */
+    defaultOpen?: boolean;
+    /** Fires after every toggle, either direction, with the new open state. */
+    onToggle?: (open: boolean) => void;
+    /**
+     * Semantic tint for the summary row (and its left rule) — an admonition
+     * inside a longer document, a warning the reader can collapse once read.
+     * Default: no tint, matches surrounding chrome.
+     */
+    tone?: ToneOrAlias;
+    className?: string;
+    summaryClassName?: string;
+    bodyClassName?: string;
+    'data-testid'?: string;
+}
+
 export declare function Divider({ label, spacing, className, 'data-testid': testId }: DividerProps): JSX.Element;
 
 export declare interface DividerProps {
@@ -8037,6 +8066,16 @@ export declare interface InlineMessageEditorProps {
     /** Resolves once the server has the new text; rejects with a reason to show. */
     onSave: (text: string) => Promise<void> | void;
     onCancel: () => void;
+    'data-testid'?: string;
+}
+
+export declare function InlinePanel({ children, variant, className, 'data-testid': testId, }: InlinePanelProps): JSX.Element;
+
+export declare interface InlinePanelProps {
+    children: ReactNode;
+    /** Chrome colour — same meaning as `Panel`'s `variant`. Default 'light'. */
+    variant?: 'light' | 'dark';
+    className?: string;
     'data-testid'?: string;
 }
 
@@ -17839,6 +17878,49 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -17858,49 +17940,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
