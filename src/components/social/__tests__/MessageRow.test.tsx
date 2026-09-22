@@ -90,6 +90,53 @@ describe('MessageRow — tone', () => {
     expect(screen.getByTestId('message-row-author').className).toContain('text-text-secondary');
     expect(screen.getByTestId('message-row-time').className).toContain('text-text-tertiary');
   });
+
+  describe('contentLayout', () => {
+    // A stand-in for a card body that sizes itself to its CONTAINER rather
+    // than its content — same shape as AgentRunCard's `@container` query.
+    // In jsdom there is no layout engine to measure against, so what's
+    // asserted is the class that gives the card room, not a pixel width.
+    function CardStub() {
+      return <div data-testid="card-stub" style={{ containerType: 'inline-size' }}>card</div>;
+    }
+
+    it('a plain-text own message keeps the shrink-to-fit bubble classes (default "inline")', () => {
+      render(<MessageRow {...baseProps} mine />);
+      const content = screen.getByTestId('message-row-content');
+      expect(content.className).toContain('max-w-[85%]');
+      expect(content.className).toContain('rounded-lg');
+      expect(content.className).toContain('bg-primary-bg');
+      expect(content.className).not.toContain('w-full');
+    });
+
+    it('an own message with a card body (contentLayout="block") measures the card at its max width', () => {
+      render(
+        <MessageRow
+          {...baseProps}
+          mine
+          contentLayout="block"
+          content={<CardStub />}
+        />,
+      );
+      const content = screen.getByTestId('message-row-content');
+      // Full-width-up-to-a-cap, not the shrink-to-fit bubble: the card gets
+      // real horizontal room instead of the 0px a @container query resolves
+      // an unconstrained shrink-to-fit ancestor to.
+      expect(content.className).toContain('w-full');
+      expect(content.className).toContain('max-w-[36rem]');
+      expect(content.className).not.toContain('max-w-[85%]');
+      expect(content.className).not.toContain('bg-primary-bg');
+      expect(content.className).not.toContain('rounded-lg');
+      expect(screen.getByTestId('card-stub')).toBeInTheDocument();
+    });
+
+    it('contentLayout="block" on a non-mine row changes nothing (no shrink-to-fit bubble to begin with)', () => {
+      render(<MessageRow {...baseProps} contentLayout="block" content={<CardStub />} />);
+      const content = screen.getByTestId('message-row-content');
+      expect(content.className).not.toContain('w-full');
+      expect(content.className).not.toContain('max-w-[36rem]');
+    });
+  });
 });
 
 describe('formatChatTime', () => {

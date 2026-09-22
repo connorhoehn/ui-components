@@ -1899,6 +1899,11 @@ export function ChatPanel({
             tone={tone}
             // A local message is the viewer's by definition.
             mine
+            // An AgentRunCard sizes itself to its container (`@container`,
+            // intrinsic inline size 0) — the default shrink-to-fit bubble
+            // gives it 0px and its contents wrap letter-by-letter. See
+            // MessageRow's `contentLayout` doc comment.
+            contentLayout={localRef ? 'block' : 'inline'}
             content={
               <>
                 {localRef ? (
@@ -2142,6 +2147,15 @@ export function ChatPanel({
   const isActivityNotice = message.metadata?.system === true;
   const isDeleted = !!message.deletedAt || message.metadata?.deleted === true;
   const isCard = !!(agentRef || recordingRef || callRef || docRef || membershipRef);
+  // Same "does the body replace the bubble with a card" question as `isCard`,
+  // but for MessageRow's `contentLayout` — which also needs to know about a
+  // plain attachment (no ref/card component, but still not shrink-to-fit
+  // text) and does NOT care about `membershipRef` (that branch returns via
+  // `<MembershipNotice>` before ever reaching a `<MessageRow>`). Kept
+  // separate from `isCard` rather than folded into it: `isCard` also gates
+  // edit/delete/forward eligibility, and an attachment IS forwardable
+  // (`canForward` already excludes it on its own `files.length === 0` check).
+  const hasCardBody = !!(agentRef || recordingRef || callRef || docRef || files.length > 0);
   // Own, plain, still there: the only messages a person may edit or delete.
   const canEditDelete = isMine && !isDeleted && !isActivityNotice && !isCard && !!messageId;
   // Anyone's, but only WORDS. See the `onForwardMessage` prop for why the
@@ -2307,6 +2321,10 @@ export function ChatPanel({
         // Ownership still decides Edit/Delete (`canEditDelete` above); this
         // decides only where the row sits.
         mine={isMine && alignOwnMessages}
+        // See `hasCardBody`'s comment above and MessageRow's `contentLayout`
+        // doc comment: a card/attachment body sizes itself to its container
+        // and collapses inside the default shrink-to-fit bubble.
+        contentLayout={hasCardBody ? 'block' : 'inline'}
       />
       {messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (canForward && onForwardMessage) || (!isActivityNotice && (onReply || onTogglePin || onCopyLink))) && (
         <MessageActionBar

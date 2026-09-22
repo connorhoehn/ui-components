@@ -2644,7 +2644,7 @@ export declare interface MessageReaction {
     displayName?: string;
 }
 
-export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, tone, editedAt, className, }: MessageRowProps): JSX.Element;
+export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, tone, editedAt, contentLayout, className, }: MessageRowProps): JSX.Element;
 
 export declare interface MessageRowProps {
     /** Display name shown next to the message; required even for anonymous rows (use a fallback). */
@@ -2684,6 +2684,27 @@ export declare interface MessageRowProps {
     tone?: 'light' | 'dark';
     /** ISO: when the text was last changed. Renders "(edited)" after the time. */
     editedAt?: string;
+    /**
+     * How the content span is laid out. Defaults to `'inline'` — the
+     * shrink-to-fit tinted bubble (`max-w-[85%]`, padded, right-aligned text)
+     * this component has always used, sized for plain chat text.
+     *
+     * `'block'` is for a card body (an `AgentRunCard`, a document/deck
+     * preview, an attachment) instead of text. Those cards size themselves to
+     * their CONTAINER (`AgentRunCard` uses a `@container` query, so its
+     * intrinsic inline size is 0) — inside the `'inline'` bubble, which has no
+     * width of its own beyond its shrink-to-fit content, that container
+     * collapses to a few px and the card's contents wrap letter-by-letter in
+     * a sliver on the right. `'block'` renders the span as a full-width block
+     * up to a cap (`w-full max-w-[36rem]`) with no tint/padding, so the card
+     * gets real horizontal room to size against — still right-aligned via the
+     * column's `items-end`, not via `text-align`.
+     *
+     * Only changes anything on a `mine` row — a non-`mine` row never had the
+     * shrink-to-fit bubble to begin with, so this prop is a no-op there
+     * regardless of its value.
+     */
+    contentLayout?: 'inline' | 'block';
     className?: string;
 }
 
@@ -3450,6 +3471,26 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3489,9 +3530,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3502,26 +3543,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

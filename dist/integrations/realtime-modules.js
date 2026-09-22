@@ -10,7 +10,7 @@ import { n as l, r as u, t as d } from "../Badge-3KulAxWc.js";
 import { t as f } from "../PresenceAvatars-BRfp1eRt.js";
 import { t as p } from "../ActivityFeed-g_AJhmPi.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
-import { d as _, n as v, t as y, u as b } from "../ConversationSurface-DxSJvOqT.js";
+import { d as _, n as v, t as y, u as b } from "../ConversationSurface-GrIrbu25.js";
 import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-BEy6KD2Q.js";
 import { a as ee, i as te, n as ne, r as re, t as ie } from "../useDocumentImageUpload-BCm9zpfQ.js";
 import { Component as ae, createContext as oe, useCallback as O, useContext as se, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";

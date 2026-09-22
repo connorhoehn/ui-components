@@ -45,6 +45,27 @@ export interface MessageRowProps {
   tone?: 'light' | 'dark';
   /** ISO: when the text was last changed. Renders "(edited)" after the time. */
   editedAt?: string;
+  /**
+   * How the content span is laid out. Defaults to `'inline'` — the
+   * shrink-to-fit tinted bubble (`max-w-[85%]`, padded, right-aligned text)
+   * this component has always used, sized for plain chat text.
+   *
+   * `'block'` is for a card body (an `AgentRunCard`, a document/deck
+   * preview, an attachment) instead of text. Those cards size themselves to
+   * their CONTAINER (`AgentRunCard` uses a `@container` query, so its
+   * intrinsic inline size is 0) — inside the `'inline'` bubble, which has no
+   * width of its own beyond its shrink-to-fit content, that container
+   * collapses to a few px and the card's contents wrap letter-by-letter in
+   * a sliver on the right. `'block'` renders the span as a full-width block
+   * up to a cap (`w-full max-w-[36rem]`) with no tint/padding, so the card
+   * gets real horizontal room to size against — still right-aligned via the
+   * column's `items-end`, not via `text-align`.
+   *
+   * Only changes anything on a `mine` row — a non-`mine` row never had the
+   * shrink-to-fit bubble to begin with, so this prop is a no-op there
+   * regardless of its value.
+   */
+  contentLayout?: 'inline' | 'block';
   className?: string;
 }
 
@@ -72,6 +93,7 @@ export function MessageRow({
   footer,
   tone = 'light',
   editedAt,
+  contentLayout = 'inline',
   className,
 }: MessageRowProps) {
   const dark = tone === 'dark';
@@ -148,8 +170,14 @@ export function MessageRow({
             // easier — the contrast is the signal, so only one side carries it.
             // max-w so a long message still reads as a bubble rather than as a
             // full-width band with a tint.
-            mine && 'max-w-[85%] rounded-lg rounded-tr-sm px-3 py-1.5 text-right',
-            mine && (dark ? 'bg-white/15' : 'bg-primary-bg'),
+            mine && contentLayout === 'inline' && 'max-w-[85%] rounded-lg rounded-tr-sm px-3 py-1.5 text-right',
+            mine && contentLayout === 'inline' && (dark ? 'bg-white/15' : 'bg-primary-bg'),
+            // A card body (AgentRunCard, document/deck preview, attachment)
+            // sizes itself to ITS CONTAINER rather than its content, so the
+            // shrink-to-fit inline bubble above gives it 0px to work with.
+            // Full-width-up-to-a-cap gives the card real room; `items-end` on
+            // the column above still pulls it to the right once the cap binds.
+            mine && contentLayout === 'block' && 'w-full max-w-[36rem]',
           )}
         >
           {content}

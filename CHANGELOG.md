@@ -8,6 +8,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [2.357.0] — 2026-09-22
 
+### Fixed — `MessageRow`/`ChatPanel`: a card body collapsed to ~18px inside an own message
+
+An own (`mine`) message renders its content in a shrink-to-fit tinted bubble
+(`max-w-[85%]`, no intrinsic width of its own). That's fine for text, but
+`ChatPanel` also renders CARDS in that same slot — `AgentRunCard` (which uses
+a `@container` query, so its intrinsic inline size is 0 with nothing else
+constraining it) and the document/deck preview cards — and inside a
+shrink-to-fit bubble those collapse to ~40px, with the card itself down to
+~18px: its chips wrapped letter-by-letter ("t h e") in a sliver on the right.
+Reported from the host app: a `/doc` suggestion card and a failed `/deck`
+card, both rendered on the viewer's own message.
+
+- **`MessageRow` gains `contentLayout?: 'inline' | 'block'`** (default
+  `'inline'`, byte-identical to before). `'block'` drops the shrink-to-fit
+  bubble's `max-w-[85%]`/padding/tint in favor of a full-width-up-to-a-cap
+  span (`w-full max-w-[36rem]`), still right-aligned on a `mine` row via the
+  column's `items-end` rather than `text-align`. No-op on a non-`mine` row,
+  which never had the shrink-to-fit bubble to begin with.
+- **`ChatPanel` passes `'block'` on every branch whose body is a card**: the
+  local (`/doc`) message's `AgentRunCard`, and the timeline message's
+  `agentRef`/`recordingRef`/`callRef`/`docRef` cards and plain attachments
+  (`files.length > 0`) — a new `hasCardBody` alongside the existing `isCard`
+  (which also gates edit/delete/forward and deliberately has a different
+  shape: it excludes attachments and includes `membershipRef`, whose branch
+  never reaches a `<MessageRow>`).
+
 ### Fixed — components that only worked with this library's providers/env now work with props alone
 
 2.356.0 fixed this for `UserPicker`. This release does the same for the rest
