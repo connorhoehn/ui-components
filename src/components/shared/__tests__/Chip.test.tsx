@@ -32,6 +32,32 @@ describe('Chip', () => {
     expect(chip).toHaveClass('bg-success', 'text-white');
   });
 
+  it('applies translucent variant styling (surface palette)', () => {
+    render(<Chip tone="warning" translucent data-testid="chip">Stale</Chip>);
+    const chip = screen.getByTestId('chip');
+    expect(chip).toHaveClass('bg-warning/15', 'text-warning-fg');
+  });
+
+  it('applies translucent variant styling on the code palette', () => {
+    render(<Chip palette="code" tone="danger" translucent data-testid="chip">exit 1</Chip>);
+    const chip = screen.getByTestId('chip');
+    expect(chip).toHaveClass('bg-code-red/15', 'text-code-red');
+  });
+
+  it('translucent takes precedence over solid when both are set', () => {
+    render(<Chip tone="success" translucent solid data-testid="chip">Live</Chip>);
+    const chip = screen.getByTestId('chip');
+    expect(chip).toHaveClass('bg-success/15', 'text-success-fg');
+    expect(chip).not.toHaveClass('bg-success', 'text-white');
+  });
+
+  it('defaults translucent to false — unaffected chips keep the soft recipe', () => {
+    render(<Chip tone="info" data-testid="chip">Info</Chip>);
+    const chip = screen.getByTestId('chip');
+    expect(chip).toHaveClass('bg-info-bg', 'text-info-fg');
+    expect(chip.className).not.toContain('/15');
+  });
+
   it('renders with sm size (default)', () => {
     render(<Chip data-testid="chip">SM</Chip>);
     const chip = screen.getByTestId('chip');

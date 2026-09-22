@@ -37,6 +37,26 @@ describe('Button', () => {
     render(<Button fullWidth>Wide</Button>);
     expect(screen.getByRole('button').className).toContain('w-full');
   });
+
+  it('defaults to the primary variant classes unchanged', () => {
+    render(<Button>Save</Button>);
+    expect(screen.getByRole('button').className).toContain('bg-primary');
+  });
+
+  it('applies the success variant using the success tokens', () => {
+    render(<Button variant="success">Approve</Button>);
+    const btn = screen.getByRole('button');
+    expect(btn.className).toContain('text-success-fg');
+    expect(btn.className).toContain('border-success-border');
+    expect(btn.className).toContain('hover:bg-success-bg');
+  });
+
+  it('applies the success variant in the code tone family', () => {
+    render(<Button variant="success" tone="code">Approve</Button>);
+    const btn = screen.getByRole('button');
+    expect(btn.className).toContain('text-code-green');
+    expect(btn.className).toContain('border-code-green/40');
+  });
 });
 
 // ---------------------------------------------------------------------------

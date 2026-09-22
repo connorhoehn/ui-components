@@ -45,6 +45,25 @@ describe('CollapsibleSection', () => {
     );
     expect(screen.getByTestId('badge')).toBeInTheDocument();
   });
+
+  it('defaults to the default density — unchanged header padding/text size', () => {
+    render(<CollapsibleSection title="T" data-testid="header">b</CollapsibleSection>);
+    const header = screen.getByTestId('header');
+    expect(header.className).toContain('px-4');
+    expect(header.className).toContain('py-3');
+    expect(header.querySelector('span')?.className).toContain('text-sm');
+  });
+
+  it('tightens header padding, text size and chevron under density="compact"', () => {
+    render(
+      <CollapsibleSection title="T" density="compact" data-testid="header">b</CollapsibleSection>,
+    );
+    const header = screen.getByTestId('header');
+    expect(header.className).toContain('px-2.5');
+    expect(header.className).toContain('py-1.5');
+    expect(header.querySelector('span')?.className).toContain('text-xs');
+    expect(header.querySelector('svg')?.getAttribute('class')).toContain('w-3');
+  });
 });
 
 // REGRESSION: closing the section unmounts its body. With focus on a control

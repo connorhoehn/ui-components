@@ -2,7 +2,7 @@ import { n as e, t } from "./registry-DbX3MVAA.js";
 import { i as n, n as r, r as i } from "./documentType-rRZpKWbO.js";
 import { i as a } from "./useDocumentTypes-BUXMPyPU.js";
 import { t as o } from "./cn-DhjIN-s0.js";
-import { t as s } from "./Button-BhS4-R6_.js";
+import { t as s } from "./Button-i2ZnAx-Z.js";
 import { n as c } from "./Stack-CkiMw5K0.js";
 import { t as l } from "./Modal-CyoyiNKN.js";
 import { t as u } from "./EmptyState-JzzL2z1E.js";

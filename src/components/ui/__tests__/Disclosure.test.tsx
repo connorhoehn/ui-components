@@ -142,6 +142,26 @@ describe('Disclosure', () => {
     expect(screen.getByText('Body content')).toBeInTheDocument();
   });
 
+  it('defaults to the default density — unchanged padding/text size', () => {
+    render(<Disclosure summary="S">Body</Disclosure>);
+    expect(screen.getByTestId('disclosure').className).toContain('text-sm');
+    expect(screen.getByTestId('disclosure-summary').className).toContain('px-3');
+    expect(screen.getByTestId('disclosure-summary').className).toContain('py-2');
+    expect(screen.getByTestId('disclosure-body').className).toContain('px-3');
+  });
+
+  it('tightens padding and text size under density="compact"', () => {
+    render(
+      <Disclosure summary="S" density="compact">
+        Body
+      </Disclosure>,
+    );
+    expect(screen.getByTestId('disclosure').className).toContain('text-xs');
+    expect(screen.getByTestId('disclosure-summary').className).toContain('px-2');
+    expect(screen.getByTestId('disclosure-summary').className).toContain('py-1');
+    expect(screen.getByTestId('disclosure-body').className).toContain('px-2');
+  });
+
   it('merges custom data-testid, className, summaryClassName, bodyClassName', () => {
     render(
       <Disclosure

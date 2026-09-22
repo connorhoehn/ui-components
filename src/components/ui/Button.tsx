@@ -6,7 +6,7 @@ import { type ButtonHTMLAttributes, type ReactNode, type Ref } from 'react';
 import { cn } from '../../lib/cn';
 import type { SurfaceTone } from '../shared/tones';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid' | 'success';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 /** @see SurfaceTone — which colour family the button paints in. */
 export type ButtonTone = SurfaceTone;
@@ -25,12 +25,22 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
    * did.
    */
   ref?: Ref<HTMLButtonElement>;
+  /**
+   * `'success'` paints with the success tokens — a confirm/apply action next
+   * to a `danger` one (`danger` already lives here as a variant, not a
+   * `tone` value, for the same reason: `tone` is spoken for below).
+   */
   variant?: ButtonVariant;
   size?: ButtonSize;
   /**
    * Colour family. `surface` (default) follows the host theme; `code` paints
    * in the permanently-dark terminal palette. Every bare `<button>` in a
    * terminal or log surface is there because this prop did not exist.
+   *
+   * Semantic colour (success/danger/…) is a `variant` value, not a `tone`
+   * value — `tone` already names the surface-vs-code family axis, and
+   * reusing it for semantics would make `tone="success"` and `tone="code"`
+   * look like the same kind of choice when they answer different questions.
    */
   tone?: ButtonTone;
   fullWidth?: boolean;
@@ -47,6 +57,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   ghost: 'bg-transparent text-text-primary border border-border hover:bg-surface-hover',
   danger: 'bg-transparent text-danger-fg border border-danger-border hover:bg-danger-bg',
   'danger-solid': 'bg-danger text-white border-none hover:bg-danger/90',
+  success: 'bg-transparent text-success-fg border border-success-border hover:bg-success-bg',
 };
 
 // The code family's accents are pastels, so solid fills take `code-bg` text
@@ -57,6 +68,7 @@ const codeVariantClasses: Record<ButtonVariant, string> = {
   ghost: 'bg-transparent text-code-text border border-code-border hover:bg-code-surface',
   danger: 'bg-transparent text-code-red border border-code-red/40 hover:bg-code-surface',
   'danger-solid': 'bg-code-red text-code-bg border-none hover:bg-code-red/90',
+  success: 'bg-transparent text-code-green border border-code-green/40 hover:bg-code-surface',
 };
 
 const TONE: Record<ButtonTone, Record<ButtonVariant, string>> = {

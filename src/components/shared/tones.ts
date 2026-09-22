@@ -68,6 +68,24 @@ export const TONE_SOLID_BG: Record<Tone, string> = {
   accent: 'bg-accent',
 };
 
+/**
+ * Translucent tinted fill: the tone's solid colour at 15% opacity behind its
+ * own `-fg` text, rather than the soft surface's dedicated `-bg` token. A
+ * debug badge sitting on an already-tinted or code-dark backdrop (a log
+ * line, a canvas node chrome) wants to read as "this tone, dimmed" rather
+ * than carry its own opaque card — `TONE_SOFT`'s `-bg` tokens are opaque and
+ * fight that backdrop instead of sitting on it.
+ */
+export const TONE_TRANSLUCENT: Record<Tone, string> = {
+  neutral: 'bg-neutral/15 text-neutral-fg',
+  success: 'bg-success/15 text-success-fg',
+  warning: 'bg-warning/15 text-warning-fg',
+  danger: 'bg-danger/15 text-danger-fg',
+  info: 'bg-info/15 text-info-fg',
+  caution: 'bg-caution/15 text-caution-fg',
+  accent: 'bg-accent/15 text-accent-fg',
+};
+
 /** Border for a soft surface. */
 export const TONE_BORDER: Record<Tone, string> = {
   neutral: 'border-neutral-border',
@@ -160,6 +178,23 @@ export const CODE_TONE_SOLID: Record<Tone, string> = {
   info: 'bg-code-blue text-code-bg',
   caution: 'bg-code-yellow text-code-bg',
   accent: 'bg-code-mauve text-code-bg',
+};
+
+/**
+ * `TONE_TRANSLUCENT` in the code family — the pipeline debugger's badges
+ * (idle/running/exit-code pills sitting directly on `--color-code-bg`, no
+ * card of their own). Same recipe as the surface family: the accent colour
+ * at 15% opacity behind text in that same colour, rather than
+ * `CODE_TONE_SOFT`'s opaque `bg-code-surface`.
+ */
+export const CODE_TONE_TRANSLUCENT: Record<Tone, string> = {
+  neutral: 'bg-code-subtle/15 text-code-subtle',
+  success: 'bg-code-green/15 text-code-green',
+  warning: 'bg-code-peach/15 text-code-peach',
+  danger: 'bg-code-red/15 text-code-red',
+  info: 'bg-code-blue/15 text-code-blue',
+  caution: 'bg-code-yellow/15 text-code-yellow',
+  accent: 'bg-code-mauve/15 text-code-mauve',
 };
 
 /** `TONE_SOLID_BG` in the code family — swatches, dots, legend keys. */

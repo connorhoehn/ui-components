@@ -9,7 +9,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'ghost', 'danger', 'danger-solid'],
+      options: ['primary', 'secondary', 'ghost', 'danger', 'danger-solid', 'success'],
     },
     size: {
       control: 'select',
@@ -41,6 +41,13 @@ export const DangerSolid: Story = {
   args: { variant: 'danger-solid', children: 'Delete permanently' },
 };
 
+/** Semantic colour is a `variant`, not a `tone` — `tone` already names the
+ *  surface-vs-code family axis (see `CodeTone` below). Soft fill, same
+ *  shape as `danger`. */
+export const Success: Story = {
+  args: { variant: 'success', children: 'Approve' },
+};
+
 export const Small: Story = {
   args: { variant: 'primary', size: 'sm', children: 'Small' },
 };
@@ -70,6 +77,7 @@ export const CodeTone: Story = {
       <Button tone="code" variant="ghost" size="sm">+ new pane</Button>
       <Button tone="code" variant="danger" size="sm">kill</Button>
       <Button tone="code" variant="danger-solid" size="sm">destroy</Button>
+      <Button tone="code" variant="success" size="sm">approve</Button>
     </div>
   ),
 };

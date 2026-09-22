@@ -27,3 +27,15 @@ export const OpenWithBadge: Story = {
     children: <div className="p-4 text-sm text-text-secondary">Error list…</div>,
   },
 };
+
+/** `density="compact"` tightens the header's padding, drops it to
+ *  `text-xs`, and shrinks the chevron — for a section nested inside an
+ *  already-dense panel (a debugger side rail, a node inspector). */
+export const Compact: Story = {
+  args: {
+    title: 'Raw payload',
+    density: 'compact',
+    defaultOpen: true,
+    children: <div className="p-2 text-xs text-text-secondary">{'{"status":"ok"}'}</div>,
+  },
+};

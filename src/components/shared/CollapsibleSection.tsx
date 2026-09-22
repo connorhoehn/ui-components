@@ -30,6 +30,13 @@ export interface CollapsibleSectionProps {
   className?: string;
   /** If provided, the open state is persisted to localStorage under this key. */
   storageKey?: string;
+  /**
+   * `'compact'` tightens the header's padding, drops it to `text-xs`, and
+   * shrinks the chevron — for a section nested inside an already-dense
+   * panel where the default's `text-sm` / `px-4 py-3` header reads
+   * oversized next to its neighbours. Default: unchanged.
+   */
+  density?: 'default' | 'compact';
   /** Lands on the header button — the thing tests and contrast probes read. */
   'data-testid'?: string;
 }
@@ -56,11 +63,13 @@ function CollapsibleSection({
   children,
   className,
   storageKey,
+  density = 'default',
   'data-testid': testId,
 }: CollapsibleSectionProps) {
   const [open, setOpen] = useState<boolean>(() =>
     readStoredOpen(storageKey, defaultOpen),
   );
+  const compact = density === 'compact';
 
   const bodyId = useId();
   const headerRef = useRef<HTMLButtonElement>(null);
@@ -103,19 +112,28 @@ function CollapsibleSection({
         type="button"
         ref={headerRef}
         data-testid={testId}
-        className="flex-1 min-w-0 flex items-center justify-between px-4 py-3 bg-transparent hover:bg-[var(--color-surface-hover)] transition-colors text-left"
+        className={cn(
+          'flex-1 min-w-0 flex items-center justify-between bg-transparent hover:bg-[var(--color-surface-hover)] transition-colors text-left',
+          compact ? 'px-2.5 py-1.5' : 'px-4 py-3',
+        )}
         onClick={toggle}
         aria-expanded={open}
         aria-controls={bodyId}
       >
-        <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+        <span
+          className={cn(
+            'font-semibold text-[var(--color-text-primary)]',
+            compact ? 'text-xs' : 'text-sm',
+          )}
+        >
           {title}
         </span>
         <div className="flex items-center gap-2">
           {badge}
           <svg
             className={cn(
-              'w-4 h-4 text-[var(--color-text-tertiary)] transition-transform',
+              'text-[var(--color-text-tertiary)] transition-transform',
+              compact ? 'w-3 h-3' : 'w-4 h-4',
               open && 'rotate-180',
             )}
             viewBox="0 0 16 16"

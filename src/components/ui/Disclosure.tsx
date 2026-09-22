@@ -34,6 +34,13 @@ export interface DisclosureProps {
    * Default: no tint, matches surrounding chrome.
    */
   tone?: ToneOrAlias;
+  /**
+   * `'compact'` tightens padding, drops to `text-xs`, and shrinks the
+   * chevron — a disclosure nested inside an already-dense panel (a
+   * debugger side rail, a node inspector) where the default's `text-sm` /
+   * `px-3 py-2` reads oversized next to its neighbours. Default: unchanged.
+   */
+  density?: 'default' | 'compact';
   className?: string;
   summaryClassName?: string;
   bodyClassName?: string;
@@ -47,6 +54,7 @@ export function Disclosure({
   defaultOpen = false,
   onToggle,
   tone,
+  density = 'default',
   className,
   summaryClassName,
   bodyClassName,
@@ -77,6 +85,7 @@ export function Disclosure({
   };
 
   const key = tone !== undefined ? toneKey(tone) : undefined;
+  const compact = density === 'compact';
 
   return (
     <details
@@ -85,7 +94,8 @@ export function Disclosure({
       onToggle={handleToggle}
       data-testid={testId}
       className={cn(
-        'group rounded-md border overflow-hidden text-sm',
+        'group rounded-md border overflow-hidden',
+        compact ? 'text-xs' : 'text-sm',
         key ? TONE_BORDER[key] : 'border-border',
         className,
       )}
@@ -93,13 +103,14 @@ export function Disclosure({
       <summary
         data-testid={`${testId}-summary`}
         className={cn(
-          'flex items-center gap-2 px-3 py-2 cursor-pointer select-none list-none marker:hidden [&::-webkit-details-marker]:hidden',
+          'flex items-center gap-2 cursor-pointer select-none list-none marker:hidden [&::-webkit-details-marker]:hidden',
+          compact ? 'px-2 py-1' : 'px-3 py-2',
           key ? TONE_SOFT[key] : 'bg-surface text-text-primary hover:bg-surface-hover',
           summaryClassName,
         )}
       >
         <ChevronIcon
-          size={14}
+          size={compact ? 11 : 14}
           dir="right"
           className="shrink-0 transition-transform duration-150 group-open:rotate-90"
         />
@@ -107,7 +118,12 @@ export function Disclosure({
       </summary>
       <div
         data-testid={`${testId}-body`}
-        className={cn('border-t px-3 py-2', key ? TONE_BORDER[key] : 'border-border', bodyClassName)}
+        className={cn(
+          'border-t',
+          compact ? 'px-2 py-1' : 'px-3 py-2',
+          key ? TONE_BORDER[key] : 'border-border',
+          bodyClassName,
+        )}
       >
         {children}
       </div>

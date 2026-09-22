@@ -5,9 +5,11 @@ import {
   CODE_TONE_SOFT,
   CODE_TONE_SOLID,
   CODE_TONE_SOLID_BG,
+  CODE_TONE_TRANSLUCENT,
   TONE_SOFT,
   TONE_SOLID,
   TONE_SOLID_BG,
+  TONE_TRANSLUCENT,
   toneKey,
   type SurfaceTone,
   type ToneOrAlias,
@@ -25,8 +27,18 @@ export type ChipTone = ToneOrAlias;
 export type ChipPalette = SurfaceTone;
 
 const PALETTE = {
-  surface: { soft: TONE_SOFT, solid: TONE_SOLID, swatch: TONE_SOLID_BG },
-  code: { soft: CODE_TONE_SOFT, solid: CODE_TONE_SOLID, swatch: CODE_TONE_SOLID_BG },
+  surface: {
+    soft: TONE_SOFT,
+    solid: TONE_SOLID,
+    translucent: TONE_TRANSLUCENT,
+    swatch: TONE_SOLID_BG,
+  },
+  code: {
+    soft: CODE_TONE_SOFT,
+    solid: CODE_TONE_SOLID,
+    translucent: CODE_TONE_TRANSLUCENT,
+    swatch: CODE_TONE_SOLID_BG,
+  },
 } as const;
 
 const SIZE_CLASSES: Record<'sm' | 'xs', string> = {
@@ -50,6 +62,14 @@ export interface ChipProps {
   size?: 'sm' | 'xs';
   /** Solid fill (dark bg + white text) instead of soft tint. */
   solid?: boolean;
+  /**
+   * Translucent fill — the tone colour at 15% opacity behind text in that
+   * same colour, rather than the soft variant's opaque `-bg` token. Matches
+   * the pipeline debugger's status badges, which sit directly on
+   * `code-bg`/other tinted chrome and don't want their own opaque card.
+   * Takes precedence over `solid` if both are set.
+   */
+  translucent?: boolean;
   /** Monospace font — for count badges. */
   mono?: boolean;
   /** Indicator dot. 'static' = filled circle, 'pulse' = filled circle
@@ -80,6 +100,7 @@ export default function Chip({
   palette = 'surface',
   size = 'sm',
   solid = false,
+  translucent = false,
   mono = false,
   dot,
   uppercase = false,
@@ -95,7 +116,11 @@ export default function Chip({
 }: ChipProps) {
   const key = toneKey(tone);
   const family = PALETTE[palette] ?? PALETTE.surface;
-  const paletteClasses = solid ? family.solid[key] : family.soft[key];
+  const paletteClasses = translucent
+    ? family.translucent[key]
+    : solid
+      ? family.solid[key]
+      : family.soft[key];
   const hasAdornment = !!(dot || icon);
   const Root = href ? 'a' : 'span';
   const rootProps = href

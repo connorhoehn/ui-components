@@ -12,6 +12,10 @@ const meta = {
       control: 'select',
       options: [undefined, 'neutral', 'success', 'warning', 'danger', 'info', 'caution', 'accent'],
     },
+    density: {
+      control: 'select',
+      options: ['default', 'compact'],
+    },
   },
 } satisfies Meta<typeof Disclosure>;
 
@@ -22,6 +26,16 @@ export const Default: Story = {
   args: {
     summary: 'What happens if I delete this?',
     children: 'The run and every attached artifact are removed permanently. This cannot be undone.',
+  },
+};
+
+/** `density="compact"` tightens padding, drops to `text-xs`, and shrinks
+ *  the chevron — for a disclosure nested inside an already-dense panel. */
+export const Compact: Story = {
+  args: {
+    summary: 'Raw payload',
+    density: 'compact',
+    children: '{"status":"ok","latencyMs":42}',
   },
 };
 

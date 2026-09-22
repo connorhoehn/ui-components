@@ -281,12 +281,22 @@ export declare interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButto
      * did.
      */
     ref?: Ref<HTMLButtonElement>;
+    /**
+     * `'success'` paints with the success tokens — a confirm/apply action next
+     * to a `danger` one (`danger` already lives here as a variant, not a
+     * `tone` value, for the same reason: `tone` is spoken for below).
+     */
     variant?: ButtonVariant;
     size?: ButtonSize;
     /**
      * Colour family. `surface` (default) follows the host theme; `code` paints
      * in the permanently-dark terminal palette. Every bare `<button>` in a
      * terminal or log surface is there because this prop did not exist.
+     *
+     * Semantic colour (success/danger/…) is a `variant` value, not a `tone`
+     * value — `tone` already names the surface-vs-code family axis, and
+     * reusing it for semantics would make `tone="success"` and `tone="code"`
+     * look like the same kind of choice when they answer different questions.
      */
     tone?: ButtonTone;
     fullWidth?: boolean;
@@ -298,7 +308,7 @@ export declare type ButtonSize = 'sm' | 'md' | 'lg';
 /** @see SurfaceTone — which colour family the button paints in. */
 export declare type ButtonTone = SurfaceTone;
 
-export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
+export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid' | 'success';
 
 export declare function CapabilityDeniedFallback({ capabilityName, title, description, actionLabel, onAction, actions, icon, testId, }: CapabilityDeniedFallbackProps): JSX.Element;
 
@@ -561,7 +571,7 @@ export declare function ChevronIcon({ size, dir, ...rest }: GlyphProps & {
     dir?: 'up' | 'down' | 'left' | 'right';
 }): JSX.Element;
 
-export declare function Chip({ tone, palette, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, href, external, }: ChipProps): JSX.Element;
+export declare function Chip({ tone, palette, size, solid, translucent, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, href, external, }: ChipProps): JSX.Element;
 
 /**
  * `tone` was already spoken for by the semantic scale, so the surface-family
@@ -582,6 +592,14 @@ export declare interface ChipProps {
     size?: 'sm' | 'xs';
     /** Solid fill (dark bg + white text) instead of soft tint. */
     solid?: boolean;
+    /**
+     * Translucent fill — the tone colour at 15% opacity behind text in that
+     * same colour, rather than the soft variant's opaque `-bg` token. Matches
+     * the pipeline debugger's status badges, which sit directly on
+     * `code-bg`/other tinted chrome and don't want their own opaque card.
+     * Takes precedence over `solid` if both are set.
+     */
+    translucent?: boolean;
     /** Monospace font — for count badges. */
     mono?: boolean;
     /** Indicator dot. 'static' = filled circle, 'pulse' = filled circle
@@ -721,7 +739,7 @@ export declare interface CodeEditorProps {
 /** Angle brackets around a slash: source, "the developer-facing thing". */
 export declare function CodeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function CollapsibleSection({ title, defaultOpen, badge, actions, children, className, storageKey, 'data-testid': testId, }: CollapsibleSectionProps): default_2.JSX.Element;
+export declare function CollapsibleSection({ title, defaultOpen, badge, actions, children, className, storageKey, density, 'data-testid': testId, }: CollapsibleSectionProps): default_2.JSX.Element;
 
 export declare interface CollapsibleSectionProps {
     /**
@@ -746,6 +764,13 @@ export declare interface CollapsibleSectionProps {
     className?: string;
     /** If provided, the open state is persisted to localStorage under this key. */
     storageKey?: string;
+    /**
+     * `'compact'` tightens the header's padding, drops it to `text-xs`, and
+     * shrinks the chevron — for a section nested inside an already-dense
+     * panel where the default's `text-sm` / `px-4 py-3` header reads
+     * oversized next to its neighbours. Default: unchanged.
+     */
+    density?: 'default' | 'compact';
     /** Lands on the header button — the thing tests and contrast probes read. */
     'data-testid'?: string;
 }
@@ -1751,6 +1776,45 @@ export declare interface InlineAlertProps {
 }
 
 export declare type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
+
+export declare function InlineMenu({ open, onClose, placement, trigger, role, className, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, children, }: InlineMenuProps): JSX.Element | null;
+
+export declare type InlineMenuPlacement = 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
+
+export declare interface InlineMenuProps {
+    /** Whether the panel is currently open. Controlled by the caller. */
+    open: boolean;
+    /** Fires when the panel should dismiss (outside click / Esc). */
+    onClose: () => void;
+    /**
+     * Placement relative to the nearest `position: relative` ancestor —
+     * normally a wrapper around the trigger this panel is anchored to.
+     * Defaults to 'bottom-start'.
+     */
+    placement?: InlineMenuPlacement;
+    /**
+     * Ref to the trigger element, so a pointerdown on it doesn't count as an
+     * "outside" click. Optional — omit it if the caller handles its own
+     * open/close toggling some other way.
+     */
+    trigger?: RefObject<HTMLElement | null>;
+    /**
+     * ARIA role for the panel. Default `'group'` — a plain labelled
+     * container, appropriate when the panel isn't a focus-trapping dialog
+     * (this component doesn't trap focus) and may or may not hold menu items.
+     * Pass `'menu'` when every child is a `menuitem`.
+     */
+    role?: string;
+    /** Optional className for the panel. */
+    className?: string;
+    /** Optional testid for the panel. Default 'inline-menu'. */
+    'data-testid'?: string;
+    /** Accessible name for the panel. */
+    'aria-label'?: string;
+    /** Id of an element inside the panel that names it. */
+    'aria-labelledby'?: string;
+    children: ReactNode;
+}
 
 export declare function InlinePlaceholder({ children, action, size, align, tone, className, 'data-testid': testId, }: InlinePlaceholderProps): JSX.Element;
 
@@ -4373,6 +4437,25 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -4386,18 +4469,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -4444,29 +4531,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

@@ -53,6 +53,24 @@ export const CodePalette: Story = {
   ),
 };
 
+/** `translucent` renders the tone colour at 15% opacity behind text in that
+ *  same colour, instead of the soft variant's opaque `-bg` token — for a
+ *  badge that sits directly on already-tinted chrome (a code pane, a
+ *  canvas node) rather than carrying its own opaque card. Matches the
+ *  pipeline debugger's status pills. */
+export const Translucent: Story = {
+  name: 'Translucent (debug badges)',
+  args: { palette: 'code', tone: 'warning', translucent: true, children: 'stale' },
+  render: () => (
+    <div className="flex flex-wrap items-center gap-2 bg-code-bg p-4 rounded">
+      <Chip palette="code" tone="neutral" translucent>idle</Chip>
+      <Chip palette="code" tone="success" translucent dot="pulse">running</Chip>
+      <Chip palette="code" tone="warning" translucent>stale</Chip>
+      <Chip palette="code" tone="danger" translucent>exit 1</Chip>
+    </div>
+  ),
+};
+
 /** `href` renders the chip as an `<a>` with the same classes — a linked tag
  *  rather than a static label. `external` adds `target="_blank"`, matching
  *  `Link`'s prop of the same name; `rel="noopener noreferrer"` is always on. */

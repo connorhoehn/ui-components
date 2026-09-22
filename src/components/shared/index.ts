@@ -242,6 +242,8 @@ export { PopoverForm, PopoverField } from './PopoverForm';
 export type { PopoverFormProps, PopoverFormWidth } from './PopoverForm';
 export { InlinePopover } from './InlinePopover';
 export type { InlinePopoverProps, InlinePopoverPlacement } from './InlinePopover';
+export { InlineMenu } from './InlineMenu';
+export type { InlineMenuProps, InlineMenuPlacement } from './InlineMenu';
 export { FloatingPanel, FLOATING_PANEL_ANCHORS, resolveAnchorPosition } from './FloatingPanel';
 export type { FloatingPanelProps, FloatingPanelAnchor } from './FloatingPanel';
 export { DropdownMenu } from './DropdownMenu';
