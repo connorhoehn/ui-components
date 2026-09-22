@@ -91,3 +91,65 @@ describe('UserPicker', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 });
+
+describe('UserPicker identity resolution', () => {
+  it('dedupes two presence entries sharing the same metadata.userId into one candidate', async () => {
+    vi.resetModules();
+    vi.doMock('../../../contexts/PresenceContext', () => ({
+      usePresenceContext: () => ({
+        presenceUsers: [
+          { clientId: 'tab-1-uuid', metadata: { userId: 'alice-sub', displayName: 'Alice' } },
+          { clientId: 'tab-2-uuid', metadata: { userId: 'alice-sub', displayName: 'Alice' } },
+        ],
+      }),
+    }));
+    vi.doMock('../../../contexts/IdentityContext', () => ({
+      useIdentityContext: () => ({ idToken: null }),
+    }));
+    const { default: FreshUserPicker } = await import('../UserPicker');
+    const onChange = vi.fn();
+    render(<FreshUserPicker value={[]} onChange={onChange} />);
+    fireEvent.focus(screen.getByRole('textbox'));
+    expect(screen.getAllByText('Alice')).toHaveLength(1);
+    fireEvent.click(screen.getByText('Alice'));
+    expect(onChange).toHaveBeenCalledWith(['alice-sub']);
+  });
+
+  it('falls back to clientId when a presence entry has no metadata.userId', async () => {
+    vi.resetModules();
+    vi.doMock('../../../contexts/PresenceContext', () => ({
+      usePresenceContext: () => ({
+        presenceUsers: [
+          { clientId: 'anon-client-id', metadata: { displayName: 'Guest' } },
+        ],
+      }),
+    }));
+    vi.doMock('../../../contexts/IdentityContext', () => ({
+      useIdentityContext: () => ({ idToken: null }),
+    }));
+    const { default: FreshUserPicker } = await import('../UserPicker');
+    const onChange = vi.fn();
+    render(<FreshUserPicker value={[]} onChange={onChange} />);
+    fireEvent.focus(screen.getByRole('textbox'));
+    fireEvent.click(screen.getByText('Guest'));
+    expect(onChange).toHaveBeenCalledWith(['anon-client-id']);
+  });
+
+  it('round-trips the identity id through selection and chip rendering', async () => {
+    vi.resetModules();
+    vi.doMock('../../../contexts/PresenceContext', () => ({
+      usePresenceContext: () => ({
+        presenceUsers: [
+          { clientId: 'tab-1-uuid', metadata: { userId: 'alice-sub', displayName: 'Alice' } },
+        ],
+      }),
+    }));
+    vi.doMock('../../../contexts/IdentityContext', () => ({
+      useIdentityContext: () => ({ idToken: null }),
+    }));
+    const { default: FreshUserPicker } = await import('../UserPicker');
+    render(<FreshUserPicker value={['alice-sub']} onChange={vi.fn()} />);
+    expect(screen.getByText('Alice')).toBeInTheDocument();
+    expect(screen.getByLabelText('Remove Alice')).toBeInTheDocument();
+  });
+});

@@ -473,10 +473,13 @@ function H(e, t) {
 function U({ value: n, onChange: r, placeholder: i, maxSelect: a }) {
 	let { presenceUsers: o } = y(), { idToken: s } = e(), [l, p] = f(""), [g, _] = f(!1), [v, b] = f(0), [x, S] = f([]), C = d(null), w = d(null), T = u(() => {
 		let e = new Set(n), t = [];
-		for (let n of o) e.has(n.clientId) || (e.add(n.clientId), t.push({
-			userId: n.clientId,
-			displayName: H(n.metadata, n.clientId)
-		}));
+		for (let n of o) {
+			let r = n.metadata.userId ?? n.clientId;
+			e.has(r) || (e.add(r), t.push({
+				userId: r,
+				displayName: H(n.metadata, r)
+			}));
+		}
 		return t;
 	}, [o, n]);
 	c(() => {
@@ -527,7 +530,7 @@ function U({ value: n, onChange: r, placeholder: i, maxSelect: a }) {
 			t ? k(t.userId) : l.trim() && k(l.trim());
 		} else e.key === "Escape" ? _(!1) : e.key === "Backspace" && !l && n.length > 0 && A(n[n.length - 1]);
 	}, M = (e) => {
-		let t = o.find((t) => t.clientId === e);
+		let t = o.find((t) => (t.metadata.userId ?? t.clientId) === e);
 		if (t) return H(t.metadata, e);
 		let n = x.find((t) => t.userId === e);
 		return n && n.displayName ? n.displayName : e;

@@ -66,11 +66,15 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
     const seen = new Set<string>(value);
     const list: Candidate[] = [];
     for (const u of presenceUsers) {
-      if (seen.has(u.clientId)) continue;
-      seen.add(u.clientId);
+      // The candidate id MUST be the stable Cognito sub, not the per-WS
+      // clientId — a picked clientId is a UUID that stops resolving the
+      // moment that tab reloads, and the same human showed up once per tab.
+      const userId = (u.metadata.userId as string | undefined) ?? u.clientId;
+      if (seen.has(userId)) continue;
+      seen.add(userId);
       list.push({
-        userId: u.clientId,
-        displayName: extractDisplayName(u.metadata, u.clientId),
+        userId,
+        displayName: extractDisplayName(u.metadata, userId),
       });
     }
     return list;
@@ -183,7 +187,9 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
   // first (live metadata) then the last-seen remote search results, and
   // finally falls back to the raw userId.
   const chipLabel = (userId: string): string => {
-    const match = presenceUsers.find(u => u.clientId === userId);
+    const match = presenceUsers.find(
+      u => ((u.metadata.userId as string | undefined) ?? u.clientId) === userId,
+    );
     if (match) return extractDisplayName(match.metadata, userId);
     const remote = remoteProfiles.find(p => p.userId === userId);
     if (remote && remote.displayName) return remote.displayName;
