@@ -2177,10 +2177,10 @@ function dt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded
 	let [u, d] = g({
 		src: e,
 		status: "loading"
-	}), f = e ? u.src === e ? u.status : "loading" : "error";
+	}), f = e ? u.src === e ? u.status : "loading" : "error", p = a ? r === "square" ? "rounded-full" : "rounded-lg" : "rounded-md";
 	return /* @__PURE__ */ y("div", {
 		"data-testid": l,
-		className: i("relative overflow-hidden bg-surface-hover", ct[n], r !== "auto" && lt[r], a ? "rounded-full" : "rounded-md", c),
+		className: i("relative overflow-hidden bg-surface-hover", ct[n], r !== "auto" && lt[r], p, c),
 		children: [
 			f === "loading" && /* @__PURE__ */ v("div", {
 				"aria-hidden": "true",

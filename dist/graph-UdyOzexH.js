@@ -1867,7 +1867,7 @@ function lt({ node: e, detail: n, selected: r, selectedRevisionId: a, live: s, o
 								children: u.attentionLabel
 							}),
 							d?.preview && /* @__PURE__ */ H("div", {
-								className: t("aspect-[16/10] w-full overflow-hidden rounded border border-border bg-surface", "flex items-center justify-center [&>*]:h-full [&>*]:w-full [&_img]:h-full [&_img]:w-full [&_img]:object-contain [&_svg]:h-full [&_svg]:w-full"),
+								className: t("aspect-video w-full overflow-hidden rounded-lg border border-border bg-surface", "flex items-center justify-center [&>*]:h-full [&>*]:w-full [&_img]:h-full [&_img]:w-full [&_img]:object-contain [&_svg]:h-full [&_svg]:w-full"),
 								"aria-label": `${p} ${d.label} preview`,
 								children: d.preview
 							}),
@@ -2494,7 +2494,7 @@ function bt({ node: e, artifact: r, selection: a, onSelectionChange: o, onOpen: 
 				children: [
 					/* @__PURE__ */ H("div", {
 						"aria-label": `${d.label} preview`,
-						className: t("aspect-video overflow-hidden rounded border border-border bg-surface", st),
+						className: t("aspect-video overflow-hidden rounded-lg border border-border bg-surface", st),
 						children: h?.preview ?? d.preview ?? /* @__PURE__ */ H("span", {
 							className: "flex h-full items-center justify-center text-sm text-text-secondary",
 							children: "Preview unavailable"

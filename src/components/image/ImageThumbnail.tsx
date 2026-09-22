@@ -69,6 +69,14 @@ export function ImageThumbnail({
   const [loadState, setLoadState] = useState<{ src: string; status: 'loading' | 'loaded' | 'error' }>({ src, status: 'loading' });
   const status = !src ? 'error' : loadState.src === src ? loadState.status : 'loading';
 
+  // `rounded` means "the circular avatar look" — and a circle only reads as a
+  // circle on a square box. Forcing rounded-full onto a video-aspect (or
+  // auto-aspect) frame draws a 50%-radius ellipse that clips most of a wide
+  // image into a blob, not the rounded RECTANGLE the caller meant. Only a
+  // square thumbnail is eligible for the full circle; every other aspect
+  // ratio gets rounded corners instead.
+  const roundedClass = rounded ? (aspectRatio === 'square' ? 'rounded-full' : 'rounded-lg') : 'rounded-md';
+
   return (
     <div
       data-testid={testId}
@@ -76,7 +84,7 @@ export function ImageThumbnail({
         'relative overflow-hidden bg-surface-hover',
         sizeClasses[size],
         aspectRatio !== 'auto' && aspectClasses[aspectRatio],
-        rounded ? 'rounded-full' : 'rounded-md',
+        roundedClass,
         className,
       )}
     >

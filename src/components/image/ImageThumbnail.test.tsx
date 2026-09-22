@@ -22,4 +22,23 @@ describe('ImageThumbnail preview states', () => {
     fireEvent.load(img);
     expect(img).toHaveClass('opacity-100');
   });
+
+  // Regression: `rounded` on a video-aspect thumbnail (e.g. a deck slide
+  // screenshot) used to draw `rounded-full`, an ellipse on a 16:9 box that
+  // clips a wide image into a blob. A circle only reads as a circle on a
+  // square box, so `rounded` gets rounded corners instead on any other
+  // aspect ratio — never a circle.
+  it('never renders rounded-full on a non-square aspect ratio', () => {
+    render(<ImageThumbnail src="/deck.svg" alt="Slide" aspectRatio="video" rounded data-testid="video-thumb" />);
+    const box = screen.getByTestId('video-thumb');
+    expect(box.className).not.toContain('rounded-full');
+    expect(box.className).toContain('aspect-video');
+    expect(box.className).toContain('rounded-lg');
+  });
+
+  it('still renders a circle for a rounded square avatar', () => {
+    render(<ImageThumbnail src="/avatar.jpg" alt="Avatar" aspectRatio="square" rounded data-testid="avatar-thumb" />);
+    const box = screen.getByTestId('avatar-thumb');
+    expect(box.className).toContain('rounded-full');
+  });
 });

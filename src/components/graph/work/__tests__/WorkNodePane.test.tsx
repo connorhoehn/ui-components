@@ -57,6 +57,19 @@ describe('per-kind detail panes', () => {
     expect(onReference).toHaveBeenCalledWith({ kind: 'node', id: 'deck', revisionId: 'v2', anchorId: 'v2-slide-1' });
   });
 
+  // Regression: the pane's slide preview (a 1280×720 SVG served as an object
+  // URL by the host) was once clipped into a black ellipse because its box
+  // carried `rounded-full`. It is a 16:9 rounded RECTANGLE with a neutral
+  // border, never a circle.
+  it('frames the artifact preview as a 16:9 rectangle, never a circle', () => {
+    render(<Harness entity={node('deck', 'document', 'Sprint review')} detail={artifactDetail(false)} />);
+    const box = screen.getByLabelText('v2 preview');
+    expect(box.className).not.toContain('rounded-full');
+    expect(box.className).toContain('aspect-video');
+    expect(box.className).toContain('rounded-lg');
+    expect(box.className).toContain('border-border');
+  });
+
   it('offers no pending tab and routes to the run when the attempt failed', () => {
     const onSelectionChange = vi.fn();
     render(<WorkNodePane node={node('deck', 'document', 'Sprint review')} detail={artifactDetail(true)} selection={{ kind: 'node', id: 'deck' }} onSelectionChange={onSelectionChange} onClose={() => {}} />);

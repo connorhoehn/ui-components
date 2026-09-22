@@ -113,7 +113,7 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
           {visible?.excerpt && <p className={cn('text-[11px] italic', muted ? 'text-text-secondary' : 'text-text-primary')}>{`“${visible.excerpt}”`}</p>}
           {visible?.attentionLabel && <p className="font-medium text-text-primary">{visible.attentionLabel}</p>}
           {revision?.preview && (
-            <div className={cn('aspect-[16/10] w-full overflow-hidden rounded border border-border bg-surface', PREVIEW_FIT)} aria-label={`${title} ${revision.label} preview`}>{revision.preview}</div>
+            <div className={cn('aspect-video w-full overflow-hidden rounded-lg border border-border bg-surface', PREVIEW_FIT)} aria-label={`${title} ${revision.label} preview`}>{revision.preview}</div>
           )}
           {!!visible?.artifact?.revisions.length && (
             <div className="flex flex-wrap items-center gap-1 text-[10px]" aria-label={`${title} revisions`}>

@@ -80,9 +80,22 @@ describe('Active Now node card', () => {
   it('gives the preview a fixed box to scale into rather than cropping it', () => {
     const { container } = render(<WorkActivityNode node={node('deck', 'document', 'Sprint review', 'running')} detail={{ fresh: true, lines: ['v2 available'], artifact: { revisions: [{ id: 'v2', label: 'v2', createdAt: at, preview: <svg viewBox="0 0 320 200" /> }] } }} selected={false} live onSelect={vi.fn()} />);
     const box = container.querySelector('[aria-label="Sprint review v2 preview"]')!;
-    expect(box.className).toContain('aspect-[16/10]');
+    expect(box.className).toContain('aspect-video');
     expect(box.className).toContain('[&_svg]:h-full');
     expect(box.className).toContain('[&_img]:object-contain');
+  });
+
+  // Regression: the host's slide screenshot (a 1280×720 SVG) was once clipped
+  // into a black ellipse because the thumbnail box carried `rounded-full`.
+  // The deck thumbnail is a 16:9 rounded RECTANGLE with a neutral border,
+  // never a circle.
+  it('never clips the deck thumbnail into a circle', () => {
+    const { container } = render(<WorkActivityNode node={node('deck', 'document', 'Sprint review', 'running')} detail={{ fresh: true, lines: ['v2 available'], artifact: { revisions: [{ id: 'v2', label: 'v2', createdAt: at, preview: <svg viewBox="0 0 1280 720" /> }] } }} selected={false} live onSelect={vi.fn()} />);
+    const box = container.querySelector('[aria-label="Sprint review v2 preview"]')!;
+    expect(box.className).not.toContain('rounded-full');
+    expect(box.className).toContain('aspect-video');
+    expect(box.className).toContain('rounded-lg');
+    expect(box.className).toContain('border-border');
   });
 
   it('leaks no detail for a restricted item', () => {
