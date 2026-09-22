@@ -21,7 +21,9 @@ vi.mock('recharts', () => {
         data-series={kind}
         data-key={String(props.dataKey ?? '')}
         data-color={String(props.stroke ?? props.fill ?? '')}
-      />
+      >
+        {props.children as React.ReactNode}
+      </div>
     );
   const Axis = (kind: string) =>
     (props: Record<string, unknown>) => {
@@ -52,6 +54,12 @@ vi.mock('recharts', () => {
     Line: Series('line'),
     Area: Series('area'),
     Bar: Series('bar'),
+    Cell: (props: Record<string, unknown>) => (
+      <div data-cell data-fill={String(props.fill ?? '')} />
+    ),
+    LabelList: (props: Record<string, unknown>) => (
+      <div data-testid="label-list" data-key={String(props.dataKey ?? '')} />
+    ),
   };
 });
 
@@ -191,6 +199,89 @@ describe('Chart', () => {
       expect(bar).toHaveAttribute('data-color', '#abcdef');
       const tooltip = container.querySelector('[data-testid="tooltip"]');
       expect(tooltip).toHaveAttribute('data-fmt', '99%');
+    });
+
+    describe('variant="compact"', () => {
+      it('renders no grid, axes or legend', () => {
+        const { container } = render(
+          <BarChart
+            data={[{ name: 'In', value: 10, tone: 'success' as const }]}
+            xKey="name"
+            yKey="value"
+            variant="compact"
+          />,
+        );
+        expect(container.querySelector('[data-testid="grid"]')).not.toBeInTheDocument();
+        expect(container.querySelector('[data-axis="x"]')).not.toBeInTheDocument();
+        expect(container.querySelector('[data-axis="y"]')).not.toBeInTheDocument();
+        expect(container.querySelector('[data-testid="legend"]')).not.toBeInTheDocument();
+      });
+
+      it('paints each bar from its own tone via the shared Tone scale', () => {
+        const { container } = render(
+          <BarChart
+            data={[
+              { name: 'Completed', value: 4, tone: 'success' as const },
+              { name: 'Failed', value: 1, tone: 'danger' as const },
+            ]}
+            xKey="name"
+            yKey="value"
+            variant="compact"
+          />,
+        );
+        const cells = container.querySelectorAll('[data-cell]');
+        expect(cells).toHaveLength(2);
+        expect(cells[0]).toHaveAttribute('data-fill', 'var(--color-success)');
+        expect(cells[1]).toHaveAttribute('data-fill', 'var(--color-danger)');
+      });
+
+      it('falls back to color/primary for a row with no tone', () => {
+        const { container } = render(
+          <BarChart
+            data={[{ name: 'a', value: 1 }, { name: 'b', value: 2, tone: 'info' as const }]}
+            xKey="name"
+            yKey="value"
+            variant="compact"
+            color="#abcdef"
+          />,
+        );
+        const cells = container.querySelectorAll('[data-cell]');
+        expect(cells[0]).toHaveAttribute('data-fill', '#abcdef');
+        expect(cells[1]).toHaveAttribute('data-fill', 'var(--color-info)');
+      });
+
+      it('defaults to color/primary with no color prop and no tone', () => {
+        const { container } = render(
+          <BarChart data={[{ name: 'a', value: 1 }]} xKey="name" yKey="value" variant="compact" />,
+        );
+        expect(container.querySelector('[data-cell]')).toHaveAttribute(
+          'data-fill',
+          'var(--color-primary)',
+        );
+      });
+
+      it('renders no value labels by default', () => {
+        const { container } = render(
+          <BarChart data={[{ name: 'a', value: 1 }]} xKey="name" yKey="value" variant="compact" />,
+        );
+        expect(container.querySelector('[data-testid="label-list"]')).not.toBeInTheDocument();
+      });
+
+      it('renders value labels when showValues is set', () => {
+        const { container } = render(
+          <BarChart
+            data={[{ name: 'a', value: 1 }]}
+            xKey="name"
+            yKey="value"
+            variant="compact"
+            showValues
+          />,
+        );
+        expect(container.querySelector('[data-testid="label-list"]')).toHaveAttribute(
+          'data-key',
+          'value',
+        );
+      });
     });
   });
 });

@@ -6,10 +6,19 @@ export type FormFieldLayout = 'stacked' | 'inline';
 
 export interface FormFieldProps {
   label: string;
-  /** Helper text shown under the control. */
-  hint?: string;
+  /**
+   * Helper text shown under the control. A plain string still works; also
+   * accepts a `ReactNode` for a hint that needs a link or inline emphasis
+   * (e.g. "See the docs" as an actual `<a>`) rather than plain text.
+   */
+  hint?: ReactNode;
   /** Error message; when present, replaces the hint and adds a danger border. */
   error?: string;
+  /**
+   * `data-testid` on the hint/error element. Omit to leave it untestable by
+   * id, same as before this prop existed.
+   */
+  hintTestId?: string;
   /** Renders an asterisk after the label. Does NOT enforce validation. */
   required?: boolean;
   layout?: FormFieldLayout;
@@ -62,6 +71,7 @@ export default function FormField({
   className,
   labelClassName,
   style,
+  hintTestId,
   'data-testid': testId,
 }: FormFieldProps) {
   const id = useId();
@@ -123,6 +133,7 @@ export default function FormField({
   const hint_ = (hint || error) ? (
     <div
       id={describedById}
+      data-testid={hintTestId}
       className={cn('text-[11px]', error ? 'text-danger-fg' : 'text-neutral')}
     >
       {error ?? hint}

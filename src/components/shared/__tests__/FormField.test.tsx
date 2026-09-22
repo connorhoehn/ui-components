@@ -132,4 +132,43 @@ describe('FormField', () => {
     const input = screen.getByLabelText('x');
     expect(input).not.toHaveAttribute('aria-describedby');
   });
+
+  it('accepts a ReactNode hint, not just a string', () => {
+    render(
+      <FormField
+        label="Email"
+        hint={<span>See the <a href="/docs">docs</a></span>}
+      >
+        {(p) => <input {...p} type="email" defaultValue="" />}
+      </FormField>,
+    );
+    expect(screen.getByRole('link', { name: 'docs' })).toBeInTheDocument();
+  });
+
+  it('renders hintTestId as data-testid on the hint element', () => {
+    render(
+      <FormField label="Email" hint="we never share this" hintTestId="email-hint">
+        {(p) => <input {...p} type="email" defaultValue="" />}
+      </FormField>,
+    );
+    expect(screen.getByTestId('email-hint')).toHaveTextContent('we never share this');
+  });
+
+  it('renders hintTestId as data-testid on the error element too', () => {
+    render(
+      <FormField label="Email" hint="we never share this" error="required" hintTestId="email-hint">
+        {(p) => <input {...p} type="email" defaultValue="" />}
+      </FormField>,
+    );
+    expect(screen.getByTestId('email-hint')).toHaveTextContent('required');
+  });
+
+  it('omits data-testid on the hint element when hintTestId is not passed', () => {
+    render(
+      <FormField label="Email" hint="we never share this">
+        {(p) => <input {...p} type="email" defaultValue="" />}
+      </FormField>,
+    );
+    expect(screen.getByText('we never share this')).not.toHaveAttribute('data-testid');
+  });
 });

@@ -1363,14 +1363,37 @@ export declare interface BannerProps {
 
 export declare type BannerVariant = 'error' | 'warning' | 'info' | 'success';
 
-export declare function BarChart({ data, height, xKey, yKey, color, yFormat, }: {
-    data: Array<Record<string, unknown>>;
+export declare function BarChart({ data, height, xKey, yKey, color, yFormat, variant, showValues, }: {
+    data: BarChartDatum[];
+    /** Defaults to 180 for `'default'`, 80 for `'compact'`. */
     height?: number;
     xKey: string;
     yKey: string;
+    /** Fallback fill for a bar with no per-row `tone` (compact) or the single
+     *  series fill (default). Default: `var(--color-primary)`. */
     color?: string;
     yFormat?: (v: number) => string;
+    /**
+     * `'compact'` drops the grid, axes and legend and paints each bar from its
+     * own `tone` (see `BarChartDatum`) — a metrics tile's small multi-category
+     * bar (token in/out, run status counts), not a full chart card. Default:
+     * unchanged — grid + axes + legend, single `color` fill.
+     */
+    variant?: 'default' | 'compact';
+    /** `'compact'` only: print each bar's value above it (through `yFormat`
+     *  when given). Default: off. */
+    showValues?: boolean;
 }): JSX.Element;
+
+export declare interface BarChartDatum extends Record<string, unknown> {
+    /**
+     * `variant="compact"` only: paints this bar with the tone's solid fill
+     * from the shared Tone scale (`../shared/tones`), overriding `color` for
+     * this one bar. A row with no `tone` falls back to `color` / primary, same
+     * as the default variant.
+     */
+    tone?: Tone;
+}
 
 export declare interface BBox {
     x: number;
@@ -1474,6 +1497,16 @@ export declare interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButto
      * `'success'` paints with the success tokens — a confirm/apply action next
      * to a `danger` one (`danger` already lives here as a variant, not a
      * `tone` value, for the same reason: `tone` is spoken for below).
+     *
+     * `'info'` paints solid with the info tokens — same shape as
+     * `danger-solid`, not `success`'s soft/bordered fill — for a primary-ish
+     * action that isn't the page's main call to action (e.g. a secondary
+     * "Learn more" next to a solid `primary` "Continue").
+     *
+     * `'link'` drops the border, background and fixed padding entirely and
+     * renders as inline text that underlines on hover, inheriting the
+     * surrounding font size — for a Cancel/Change action sitting next to
+     * prose or another control, not a boxed button.
      */
     variant?: ButtonVariant;
     size?: ButtonSize;
@@ -1497,7 +1530,7 @@ export declare type ButtonSize = 'sm' | 'md' | 'lg';
 /** @see SurfaceTone — which colour family the button paints in. */
 export declare type ButtonTone = SurfaceTone;
 
-export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid' | 'success';
+export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid' | 'success' | 'info' | 'link';
 
 /** Card width with the dock closed. */
 export declare const CALL_CARD_WIDTH = "w-[380px]";
@@ -5363,7 +5396,7 @@ export declare interface DiffViewerProps {
     'data-testid'?: string;
 }
 
-export declare function Disclosure({ summary, children, open, defaultOpen, onToggle, tone, density, className, summaryClassName, bodyClassName, 'data-testid': testId, }: DisclosureProps): JSX.Element;
+export declare function Disclosure({ summary, children, open, defaultOpen, onToggle, tone, density, variant, className, summaryClassName, bodyClassName, 'data-testid': testId, }: DisclosureProps): JSX.Element;
 
 export declare interface DisclosureProps {
     /** Always-visible trigger row. Any node — not just text. */
@@ -5393,6 +5426,14 @@ export declare interface DisclosureProps {
      * `px-3 py-2` reads oversized next to its neighbours. Default: unchanged.
      */
     density?: 'default' | 'compact';
+    /**
+     * `'plain'` drops the outer border and the summary row's background tint
+     * (including `tone`'s) entirely — just the summary row and body, for a
+     * borderless toggle inside a list where every row already has its own
+     * separator and a bordered/tinted card would double up. Composable with
+     * `density="compact"`. Default: unchanged (bordered card, tinted summary).
+     */
+    variant?: 'default' | 'plain';
     className?: string;
     summaryClassName?: string;
     bodyClassName?: string;
@@ -6648,16 +6689,25 @@ export declare function formatTypingBanner(names: string[]): string;
  * for the error state. Use the render-prop API so we don't have to wrap
  * every kind of input the library ships.
  */
-export declare function FormField({ label, hint, error, required, layout, children, className, labelClassName, style, 'data-testid': testId, }: FormFieldProps): JSX.Element;
+export declare function FormField({ label, hint, error, required, layout, children, className, labelClassName, style, hintTestId, 'data-testid': testId, }: FormFieldProps): JSX.Element;
 
 export declare type FormFieldLayout = 'stacked' | 'inline';
 
 export declare interface FormFieldProps {
     label: string;
-    /** Helper text shown under the control. */
-    hint?: string;
+    /**
+     * Helper text shown under the control. A plain string still works; also
+     * accepts a `ReactNode` for a hint that needs a link or inline emphasis
+     * (e.g. "See the docs" as an actual `<a>`) rather than plain text.
+     */
+    hint?: ReactNode;
     /** Error message; when present, replaces the hint and adds a danger border. */
     error?: string;
+    /**
+     * `data-testid` on the hint/error element. Omit to leave it untestable by
+     * id, same as before this prop existed.
+     */
+    hintTestId?: string;
     /** Renders an asterisk after the label. Does NOT enforce validation. */
     required?: boolean;
     layout?: FormFieldLayout;
@@ -8140,7 +8190,7 @@ export declare interface InlineMessageEditorProps {
     'data-testid'?: string;
 }
 
-export declare function InlinePanel({ children, variant, className, 'data-testid': testId, }: InlinePanelProps): JSX.Element;
+export declare function InlinePanel({ children, variant, className, 'data-testid': testId, ref, }: InlinePanelProps): JSX.Element;
 
 export declare interface InlinePanelProps {
     children: ReactNode;
@@ -8148,6 +8198,14 @@ export declare interface InlinePanelProps {
     variant?: 'light' | 'dark';
     className?: string;
     'data-testid'?: string;
+    /**
+     * The underlying `<div>`. A plain prop, not `forwardRef` — see the note on
+     * `StackProps.ref` (and `Card`'s, `Button`'s): React 19, our only
+     * supported peer, passes `ref` through as an ordinary prop. A host that
+     * needs to measure or scroll this panel (a resize observer, "scroll to
+     * bottom" on a sidebar chat pane) had no way to reach the node without it.
+     */
+    ref?: Ref<HTMLDivElement>;
 }
 
 /**
@@ -11411,6 +11469,28 @@ declare interface ProposedField {
     required: boolean;
 }
 
+export declare function Prose({ children, size, tone, className, 'data-testid': testId, }: ProseProps): JSX.Element;
+
+export declare interface ProseProps {
+    children: ReactNode;
+    /**
+     * `'sm'` for a dense side panel (a docs tab, inline help next to a form);
+     * `'md'` for a standalone reading surface. Default `'md'`.
+     */
+    size?: ProseSize;
+    /**
+     * Tints headings and links with a semantic tone instead of the neutral
+     * text tokens — a "what's new" callout, a deprecation notice. Body text
+     * stays `text-text-primary` either way. Default: untinted (headings
+     * `text-text-primary`, links `text-primary`).
+     */
+    tone?: ToneOrAlias;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type ProseSize = 'sm' | 'md';
+
 declare interface PublicProfile {
     userId: string;
     displayName: string;
@@ -14195,7 +14275,7 @@ export declare interface TabPanelProps {
     children?: ReactNode;
 }
 
-export declare function Tabs({ items, value, onValueChange, variant, size, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, }: TabsProps): JSX.Element;
+export declare function Tabs({ items, value, onValueChange, variant, size, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, }: TabsProps): JSX.Element;
 
 export declare interface TabsProps {
     items: TabItem[];
@@ -14210,6 +14290,15 @@ export declare interface TabsProps {
     idPrefix?: string;
     /** Derives a data-testid per item when the item itself has no `testId`. */
     getItemTestId?: (item: TabItem) => string;
+    /**
+     * Every tab grows to fill equal width of the tablist (`flex-1`) instead of
+     * sizing to its own label — a tab bar that spans a fixed-width container
+     * (a modal header, a narrow side panel) where uneven tab widths leave a
+     * ragged edge. Default: unchanged, each tab sized to its content.
+     */
+    stretch?: boolean;
+    /** Extra classes merged onto every tab trigger `<button>`. */
+    itemClassName?: string;
 }
 
 export declare type TabsVariant = 'underline' | 'pill' | 'segmented';
@@ -17943,32 +18032,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -18002,6 +18078,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -18012,9 +18098,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

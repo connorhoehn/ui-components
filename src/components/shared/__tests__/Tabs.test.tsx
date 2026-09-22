@@ -145,6 +145,29 @@ describe('Tabs', () => {
     expect(screen.getByTestId('explicit')).toBeInTheDocument();
     expect(screen.queryByTestId('derived-a')).toBeNull();
   });
+
+  it('does not grow tabs to fill width by default', () => {
+    render(<Tabs items={ITEMS} value="a" onValueChange={() => {}} />);
+    for (const tab of screen.getAllByRole('tab')) {
+      expect(tab.className).not.toMatch(/\bflex-1\b/);
+    }
+  });
+
+  it('grows every tab to equal width under stretch', () => {
+    render(<Tabs items={ITEMS} value="a" onValueChange={() => {}} stretch />);
+    for (const tab of screen.getAllByRole('tab')) {
+      expect(tab.className).toContain('flex-1');
+    }
+  });
+
+  it('merges itemClassName onto every tab trigger', () => {
+    render(
+      <Tabs items={ITEMS} value="a" onValueChange={() => {}} itemClassName="custom-tab" />,
+    );
+    for (const tab of screen.getAllByRole('tab')) {
+      expect(tab.className).toContain('custom-tab');
+    }
+  });
 });
 
 describe('TabPanel', () => {

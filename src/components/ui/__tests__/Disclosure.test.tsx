@@ -162,6 +162,52 @@ describe('Disclosure', () => {
     expect(screen.getByTestId('disclosure-body').className).toContain('px-2');
   });
 
+  it('defaults to the default variant — border, background tint kept', () => {
+    render(<Disclosure summary="S">Body</Disclosure>);
+    expect(screen.getByTestId('disclosure').className).toContain('border-border');
+    expect(screen.getByTestId('disclosure').className).toContain('rounded-md');
+    expect(screen.getByTestId('disclosure-summary').className).toContain('bg-surface');
+    expect(screen.getByTestId('disclosure-body').className).toContain('border-t');
+  });
+
+  it('drops the border and summary tint under variant="plain"', () => {
+    render(
+      <Disclosure summary="S" variant="plain">
+        Body
+      </Disclosure>,
+    );
+    const root = screen.getByTestId('disclosure');
+    const summary = screen.getByTestId('disclosure-summary');
+    const body = screen.getByTestId('disclosure-body');
+    expect(root.className).not.toContain('border-border');
+    expect(root.className).not.toContain('rounded-md');
+    expect(summary.className.split(' ')).not.toContain('bg-surface');
+    expect(body.className).not.toContain('border-t');
+  });
+
+  it('ignores tone tinting under variant="plain"', () => {
+    render(
+      <Disclosure summary="S" variant="plain" tone="danger">
+        Body
+      </Disclosure>,
+    );
+    const summary = screen.getByTestId('disclosure-summary');
+    const body = screen.getByTestId('disclosure-body');
+    expect(summary.className).not.toContain('bg-danger-bg');
+    expect(body.className).not.toContain('border-danger-border');
+  });
+
+  it('composes variant="plain" with density="compact"', () => {
+    render(
+      <Disclosure summary="S" variant="plain" density="compact">
+        Body
+      </Disclosure>,
+    );
+    expect(screen.getByTestId('disclosure').className).toContain('text-xs');
+    expect(screen.getByTestId('disclosure-summary').className).toContain('px-2');
+    expect(screen.getByTestId('disclosure-summary').className.split(' ')).not.toContain('bg-surface');
+  });
+
   it('merges custom data-testid, className, summaryClassName, bodyClassName', () => {
     render(
       <Disclosure

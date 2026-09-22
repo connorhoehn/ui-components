@@ -6,7 +6,15 @@ import { type ButtonHTMLAttributes, type ReactNode, type Ref } from 'react';
 import { cn } from '../../lib/cn';
 import type { SurfaceTone } from '../shared/tones';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid' | 'success';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'ghost'
+  | 'danger'
+  | 'danger-solid'
+  | 'success'
+  | 'info'
+  | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 /** @see SurfaceTone — which colour family the button paints in. */
 export type ButtonTone = SurfaceTone;
@@ -29,6 +37,16 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
    * `'success'` paints with the success tokens — a confirm/apply action next
    * to a `danger` one (`danger` already lives here as a variant, not a
    * `tone` value, for the same reason: `tone` is spoken for below).
+   *
+   * `'info'` paints solid with the info tokens — same shape as
+   * `danger-solid`, not `success`'s soft/bordered fill — for a primary-ish
+   * action that isn't the page's main call to action (e.g. a secondary
+   * "Learn more" next to a solid `primary` "Continue").
+   *
+   * `'link'` drops the border, background and fixed padding entirely and
+   * renders as inline text that underlines on hover, inheriting the
+   * surrounding font size — for a Cancel/Change action sitting next to
+   * prose or another control, not a boxed button.
    */
   variant?: ButtonVariant;
   size?: ButtonSize;
@@ -58,6 +76,8 @@ const variantClasses: Record<ButtonVariant, string> = {
   danger: 'bg-transparent text-danger-fg border border-danger-border hover:bg-danger-bg',
   'danger-solid': 'bg-danger text-white border-none hover:bg-danger/90',
   success: 'bg-transparent text-success-fg border border-success-border hover:bg-success-bg',
+  info: 'bg-info text-white border-none hover:bg-info/90',
+  link: 'bg-transparent text-primary border-none p-0 no-underline hover:underline',
 };
 
 // The code family's accents are pastels, so solid fills take `code-bg` text
@@ -69,6 +89,8 @@ const codeVariantClasses: Record<ButtonVariant, string> = {
   danger: 'bg-transparent text-code-red border border-code-red/40 hover:bg-code-surface',
   'danger-solid': 'bg-code-red text-code-bg border-none hover:bg-code-red/90',
   success: 'bg-transparent text-code-green border border-code-green/40 hover:bg-code-surface',
+  info: 'bg-code-blue text-code-bg border-none hover:bg-code-blue/90',
+  link: 'bg-transparent text-code-blue border-none p-0 no-underline hover:underline',
 };
 
 const TONE: Record<ButtonTone, Record<ButtonVariant, string>> = {
@@ -94,17 +116,23 @@ export function Button({
   ref,
   ...rest
 }: ButtonProps) {
+  // `link` is inline text, not a boxed control: it skips the shared padding
+  // + font-weight base (and `sizeClasses`'s fixed padding/text-size) so it
+  // sits in prose at the inherited font size, underlining only on hover.
+  const isLink = variant === 'link';
   return (
     <button
       ref={ref}
       type={type}
       disabled={disabled}
       className={cn(
-        // A caption never breaks mid-word: a narrow flex parent turned
-        // "Remove" into "Rem / ove" (measured, in a 430px document pane).
-        'whitespace-nowrap font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
+        isLink
+          ? 'font-[inherit] transition-colors duration-150 ease-in-out'
+          : // A caption never breaks mid-word: a narrow flex parent turned
+            // "Remove" into "Rem / ove" (measured, in a 430px document pane).
+            'whitespace-nowrap font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
         (TONE[tone] ?? variantClasses)[variant],
-        sizeClasses[size],
+        !isLink && sizeClasses[size],
         disabled && 'opacity-50 cursor-not-allowed',
         !disabled && 'cursor-pointer',
         fullWidth && 'w-full',

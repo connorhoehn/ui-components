@@ -16,6 +16,10 @@ const meta = {
       control: 'select',
       options: ['default', 'compact'],
     },
+    variant: {
+      control: 'select',
+      options: ['default', 'plain'],
+    },
   },
 } satisfies Meta<typeof Disclosure>;
 
@@ -37,6 +41,23 @@ export const Compact: Story = {
     density: 'compact',
     children: '{"status":"ok","latencyMs":42}',
   },
+};
+
+/** `variant="plain"` drops the outer border and the summary tint — just the
+ *  summary row and body, for a borderless toggle inside a list where the
+ *  row already has its own separator. Composable with `density="compact"`. */
+export const Plain: Story = {
+  args: { summary: null, children: null },
+  render: () => (
+    <div className="flex flex-col divide-y divide-border w-96 border border-border rounded-md">
+      <Disclosure variant="plain" summary="Item one" density="compact">
+        Row content, no card chrome of its own.
+      </Disclosure>
+      <Disclosure variant="plain" summary="Item two" density="compact">
+        Second row.
+      </Disclosure>
+    </div>
+  ),
 };
 
 export const OpenByDefault: Story = {

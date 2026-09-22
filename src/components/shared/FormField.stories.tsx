@@ -31,6 +31,21 @@ export const WithHint: Story = {
   },
 };
 
+/** `hint` accepts a `ReactNode`, not just a string — useful for a hint that
+ *  needs an actual link rather than plain text. */
+export const WithRichHint: Story = {
+  args: {
+    label: 'API key',
+    hint: (
+      <span>
+        See <a href="/docs/api-keys" className="underline">the docs</a> for scopes.
+      </span>
+    ),
+    hintTestId: 'api-key-hint',
+    children: (wiring) => <input {...wiring} className={inputClass} placeholder="sk-…" />,
+  },
+};
+
 export const WithError: Story = {
   args: {
     label: 'Email',

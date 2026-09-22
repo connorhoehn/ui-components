@@ -18,7 +18,10 @@ import {
   Line,
   Area,
   Bar,
+  Cell,
+  LabelList,
 } from 'recharts';
+import { toneVar, type Tone } from './tones';
 // ---------------------------------------------------------------------------
 // Public types
 // ---------------------------------------------------------------------------
@@ -34,6 +37,15 @@ export interface LineSeries {
 // ---------------------------------------------------------------------------
 
 const DEFAULT_HEIGHT = 180;
+
+// A metrics tile's mini bar — TokenBarChart / RunsBarChart's `h-20` — not a
+// full chart card's height.
+const COMPACT_DEFAULT_HEIGHT = 80;
+
+const COMPACT_LABEL_STYLE: CSSProperties = {
+  fontSize: 10,
+  fill: 'var(--color-text-secondary)',
+};
 
 const MULTI_SERIES_PALETTE: string[] = [
   'var(--color-primary)',
@@ -260,23 +272,89 @@ export function StackedAreaChart({
 // <BarChart />
 // ---------------------------------------------------------------------------
 
+export interface BarChartDatum extends Record<string, unknown> {
+  /**
+   * `variant="compact"` only: paints this bar with the tone's solid fill
+   * from the shared Tone scale (`../shared/tones`), overriding `color` for
+   * this one bar. A row with no `tone` falls back to `color` / primary, same
+   * as the default variant.
+   */
+  tone?: Tone;
+}
+
 export function BarChart({
   data,
-  height = DEFAULT_HEIGHT,
+  height,
   xKey,
   yKey,
   color,
   yFormat,
+  variant = 'default',
+  showValues = false,
 }: {
-  data: Array<Record<string, unknown>>;
+  data: BarChartDatum[];
+  /** Defaults to 180 for `'default'`, 80 for `'compact'`. */
   height?: number;
   xKey: string;
   yKey: string;
+  /** Fallback fill for a bar with no per-row `tone` (compact) or the single
+   *  series fill (default). Default: `var(--color-primary)`. */
   color?: string;
   yFormat?: (v: number) => string;
+  /**
+   * `'compact'` drops the grid, axes and legend and paints each bar from its
+   * own `tone` (see `BarChartDatum`) — a metrics tile's small multi-category
+   * bar (token in/out, run status counts), not a full chart card. Default:
+   * unchanged — grid + axes + legend, single `color` fill.
+   */
+  variant?: 'default' | 'compact';
+  /** `'compact'` only: print each bar's value above it (through `yFormat`
+   *  when given). Default: off. */
+  showValues?: boolean;
 }): JSX.Element {
+  if (variant === 'compact') {
+    return (
+      <ResponsiveContainer width="100%" height={height ?? COMPACT_DEFAULT_HEIGHT}>
+        <RBarChart data={data} margin={{ top: showValues ? 14 : 4, right: 4, bottom: 4, left: 4 }}>
+          <Tooltip
+            contentStyle={TOOLTIP_CONTENT_STYLE}
+            labelStyle={TOOLTIP_LABEL_STYLE}
+            itemStyle={TOOLTIP_ITEM_STYLE}
+            labelFormatter={((_label: unknown, payload: Array<{ payload?: Record<string, unknown> }>) =>
+              String(payload?.[0]?.payload?.[xKey] ?? '')
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ) as any}
+            formatter={((value: unknown) => {
+              const num = typeof value === 'number' ? value : Number(value);
+              return yFormat && Number.isFinite(num) ? yFormat(num) : String(value);
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            }) as any}
+          />
+          <Bar
+            dataKey={yKey}
+            name={yKey}
+            radius={[4, 4, 0, 0]}
+            isAnimationActive={false}
+          >
+            {data.map((entry, idx) => (
+              <Cell key={idx} fill={entry.tone ? toneVar(entry.tone) : (color ?? 'var(--color-primary)')} />
+            ))}
+            {showValues && (
+              <LabelList
+                dataKey={yKey}
+                position="top"
+                style={COMPACT_LABEL_STYLE}
+                formatter={(yFormat ?? String) as (v: unknown) => string}
+              />
+            )}
+          </Bar>
+        </RBarChart>
+      </ResponsiveContainer>
+    );
+  }
+
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={height ?? DEFAULT_HEIGHT}>
       <RBarChart data={data} margin={{ top: 8, right: 12, bottom: 4, left: 4 }}>
         <CartesianGrid
           stroke={GRID_STROKE}

@@ -57,6 +57,17 @@ export const Small: Story = {
   args: { items: ITEMS, value: 'runs', onValueChange: () => {}, variant: 'underline', size: 'sm' },
 };
 
+/** `stretch` grows every tab to equal width (`flex-1`) instead of sizing to
+ *  its own label — for a tab bar spanning a fixed-width container. */
+export const Stretch: Story = {
+  render: (args) => (
+    <div className="w-96">
+      <Wrapper {...args} />
+    </div>
+  ),
+  args: { items: ITEMS, value: 'runs', onValueChange: () => {}, variant: 'segmented', stretch: true },
+};
+
 export const WithBadgeAndDisabled: Story = {
   args: {
     items: ITEMS,

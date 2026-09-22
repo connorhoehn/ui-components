@@ -100,6 +100,8 @@ export { default as Spinner } from './Spinner';
 export * from './Spinner';
 export { default as ProgressBar } from './ProgressBar';
 export * from './ProgressBar';
+export { default as Prose } from './Prose';
+export * from './Prose';
 export { default as TitledFrame } from './TitledFrame';
 export type { TitledFrameProps, TitledFrameTone } from './TitledFrame';
 export { default as DotMeter } from './DotMeter';

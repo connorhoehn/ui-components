@@ -14,7 +14,7 @@
 // from `./Panel` — neither is portal- or width-bound, so both drop in here
 // unchanged.
 
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
 import { cn } from '../../lib/cn';
 
 export interface InlinePanelProps {
@@ -23,6 +23,14 @@ export interface InlinePanelProps {
   variant?: 'light' | 'dark';
   className?: string;
   'data-testid'?: string;
+  /**
+   * The underlying `<div>`. A plain prop, not `forwardRef` — see the note on
+   * `StackProps.ref` (and `Card`'s, `Button`'s): React 19, our only
+   * supported peer, passes `ref` through as an ordinary prop. A host that
+   * needs to measure or scroll this panel (a resize observer, "scroll to
+   * bottom" on a sidebar chat pane) had no way to reach the node without it.
+   */
+  ref?: Ref<HTMLDivElement>;
 }
 
 export function InlinePanel({
@@ -30,9 +38,11 @@ export function InlinePanel({
   variant = 'light',
   className,
   'data-testid': testId = 'inline-panel',
+  ref,
 }: InlinePanelProps) {
   return (
     <div
+      ref={ref}
       data-testid={testId}
       className={cn(
         'flex h-full w-full min-w-0 min-h-0 flex-col overflow-hidden border-l',

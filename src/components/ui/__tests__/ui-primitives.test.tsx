@@ -57,6 +57,38 @@ describe('Button', () => {
     expect(btn.className).toContain('text-code-green');
     expect(btn.className).toContain('border-code-green/40');
   });
+
+  it('applies the info variant as a solid info fill', () => {
+    render(<Button variant="info">Learn more</Button>);
+    const btn = screen.getByRole('button');
+    expect(btn.className).toContain('bg-info');
+    expect(btn.className).toContain('text-white');
+    expect(btn.className).toContain('hover:bg-info/90');
+  });
+
+  it('applies the info variant in the code tone family', () => {
+    render(<Button variant="info" tone="code">Learn more</Button>);
+    const btn = screen.getByRole('button');
+    expect(btn.className).toContain('bg-code-blue');
+    expect(btn.className).toContain('text-code-bg');
+  });
+
+  it('renders the link variant with no border, no background and no fixed padding', () => {
+    render(<Button variant="link">Cancel</Button>);
+    const btn = screen.getByRole('button');
+    expect(btn.className).toContain('bg-transparent');
+    expect(btn.className).toContain('border-none');
+    expect(btn.className).toContain('p-0');
+    expect(btn.className).toContain('hover:underline');
+    // sizeClasses' fixed padding/text-size never applies to `link`.
+    expect(btn.className).not.toMatch(/\bpx-4\b/);
+    expect(btn.className).not.toMatch(/\btext-sm\b/);
+  });
+
+  it('does not change the base classes of non-link variants', () => {
+    render(<Button>Save</Button>);
+    expect(screen.getByRole('button').className).toContain('whitespace-nowrap');
+  });
 });
 
 // ---------------------------------------------------------------------------

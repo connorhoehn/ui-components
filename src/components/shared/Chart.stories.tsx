@@ -39,3 +39,39 @@ export const Bar: Story = {
     />
   ),
 };
+
+/** `variant="compact"` — no grid, axes or legend, one `tone` per bar from
+ *  the shared Tone scale. For a metrics tile's small multi-category bar,
+ *  not a full chart card. */
+export const BarCompact: Story = {
+  args: { series: SERIES },
+  render: () => (
+    <div className="flex gap-6">
+      <div className="w-40">
+        <BarChart
+          data={[
+            { name: 'In', value: 1240, tone: 'accent' },
+            { name: 'Out', value: 980, tone: 'success' },
+          ]}
+          xKey="name"
+          yKey="value"
+          variant="compact"
+        />
+      </div>
+      <div className="w-40">
+        <BarChart
+          data={[
+            { name: 'Started', value: 24, tone: 'accent' },
+            { name: 'Completed', value: 20, tone: 'success' },
+            { name: 'Failed', value: 2, tone: 'danger' },
+            { name: 'Active', value: 2, tone: 'info' },
+          ]}
+          xKey="name"
+          yKey="value"
+          variant="compact"
+          showValues
+        />
+      </div>
+    </div>
+  ),
+};

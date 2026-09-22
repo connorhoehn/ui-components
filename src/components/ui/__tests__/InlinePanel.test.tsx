@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 import { render, screen } from '@testing-library/react';
 import { InlinePanel } from '../InlinePanel';
 
@@ -50,5 +51,18 @@ describe('InlinePanel', () => {
     );
     const el = screen.getByTestId('chat-sidebar');
     expect(el.className).toContain('w-80');
+  });
+
+  it('gives the caller its underlying node via ref', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(<InlinePanel ref={ref}>content</InlinePanel>);
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+    expect(ref.current).toBe(screen.getByTestId('inline-panel'));
+  });
+
+  it('does not leak a `ref` attribute onto the DOM', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(<InlinePanel ref={ref}>content</InlinePanel>);
+    expect(screen.getByTestId('inline-panel').hasAttribute('ref')).toBe(false);
   });
 });

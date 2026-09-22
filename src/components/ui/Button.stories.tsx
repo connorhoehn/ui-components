@@ -9,7 +9,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'ghost', 'danger', 'danger-solid', 'success'],
+      options: ['primary', 'secondary', 'ghost', 'danger', 'danger-solid', 'success', 'info', 'link'],
     },
     size: {
       control: 'select',
@@ -48,6 +48,19 @@ export const Success: Story = {
   args: { variant: 'success', children: 'Approve' },
 };
 
+/** Solid fill with the info tokens — same shape as `danger-solid`, for a
+ *  secondary call-to-action that isn't `danger` or `success`. */
+export const Info: Story = {
+  args: { variant: 'info', children: 'Learn more' },
+};
+
+/** Inline text: no border, no background, no fixed padding, inherits the
+ *  surrounding font size, underlines on hover. For a Cancel/Change action
+ *  next to another control rather than a boxed button. */
+export const Link: Story = {
+  args: { variant: 'link', children: 'Cancel' },
+};
+
 export const Small: Story = {
   args: { variant: 'primary', size: 'sm', children: 'Small' },
 };
@@ -78,6 +91,8 @@ export const CodeTone: Story = {
       <Button tone="code" variant="danger" size="sm">kill</Button>
       <Button tone="code" variant="danger-solid" size="sm">destroy</Button>
       <Button tone="code" variant="success" size="sm">approve</Button>
+      <Button tone="code" variant="info" size="sm">details</Button>
+      <Button tone="code" variant="link" size="sm">cancel</Button>
     </div>
   ),
 };

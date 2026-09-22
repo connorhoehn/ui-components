@@ -41,6 +41,14 @@ export interface DisclosureProps {
    * `px-3 py-2` reads oversized next to its neighbours. Default: unchanged.
    */
   density?: 'default' | 'compact';
+  /**
+   * `'plain'` drops the outer border and the summary row's background tint
+   * (including `tone`'s) entirely — just the summary row and body, for a
+   * borderless toggle inside a list where every row already has its own
+   * separator and a bordered/tinted card would double up. Composable with
+   * `density="compact"`. Default: unchanged (bordered card, tinted summary).
+   */
+  variant?: 'default' | 'plain';
   className?: string;
   summaryClassName?: string;
   bodyClassName?: string;
@@ -55,6 +63,7 @@ export function Disclosure({
   onToggle,
   tone,
   density = 'default',
+  variant = 'default',
   className,
   summaryClassName,
   bodyClassName,
@@ -86,6 +95,7 @@ export function Disclosure({
 
   const key = tone !== undefined ? toneKey(tone) : undefined;
   const compact = density === 'compact';
+  const plain = variant === 'plain';
 
   return (
     <details
@@ -94,9 +104,10 @@ export function Disclosure({
       onToggle={handleToggle}
       data-testid={testId}
       className={cn(
-        'group rounded-md border overflow-hidden',
+        'group',
+        !plain && 'rounded-md border overflow-hidden',
         compact ? 'text-xs' : 'text-sm',
-        key ? TONE_BORDER[key] : 'border-border',
+        !plain && (key ? TONE_BORDER[key] : 'border-border'),
         className,
       )}
     >
@@ -105,7 +116,9 @@ export function Disclosure({
         className={cn(
           'flex items-center gap-2 cursor-pointer select-none list-none marker:hidden [&::-webkit-details-marker]:hidden',
           compact ? 'px-2 py-1' : 'px-3 py-2',
-          key ? TONE_SOFT[key] : 'bg-surface text-text-primary hover:bg-surface-hover',
+          plain
+            ? 'text-text-primary hover:bg-surface-hover'
+            : (key ? TONE_SOFT[key] : 'bg-surface text-text-primary hover:bg-surface-hover'),
           summaryClassName,
         )}
       >
@@ -119,9 +132,9 @@ export function Disclosure({
       <div
         data-testid={`${testId}-body`}
         className={cn(
-          'border-t',
+          !plain && 'border-t',
           compact ? 'px-2 py-1' : 'px-3 py-2',
-          key ? TONE_BORDER[key] : 'border-border',
+          !plain && (key ? TONE_BORDER[key] : 'border-border'),
           bodyClassName,
         )}
       >

@@ -34,6 +34,15 @@ export interface TabsProps {
   idPrefix?: string;
   /** Derives a data-testid per item when the item itself has no `testId`. */
   getItemTestId?: (item: TabItem) => string;
+  /**
+   * Every tab grows to fill equal width of the tablist (`flex-1`) instead of
+   * sizing to its own label — a tab bar that spans a fixed-width container
+   * (a modal header, a narrow side panel) where uneven tab widths leave a
+   * ragged edge. Default: unchanged, each tab sized to its content.
+   */
+  stretch?: boolean;
+  /** Extra classes merged onto every tab trigger `<button>`. */
+  itemClassName?: string;
 }
 
 const SIZE: Record<'sm' | 'md', string> = {
@@ -91,6 +100,8 @@ export function Tabs({
   'aria-label': ariaLabel,
   idPrefix: idPrefixProp,
   getItemTestId,
+  stretch = false,
+  itemClassName,
 }: TabsProps) {
   const autoPrefix = useId();
   const idPrefix = idPrefixProp ?? autoPrefix;
@@ -170,8 +181,10 @@ export function Tabs({
             onKeyDown={(e) => handleKeyDown(e, item.id)}
             className={cn(
               'inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer',
+              stretch && 'flex-1 justify-center',
               SIZE[size],
               variantItemClasses(variant, active, !!item.disabled),
+              itemClassName,
             )}
           >
             {item.icon}
