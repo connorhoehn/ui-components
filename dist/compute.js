@@ -4,8 +4,9 @@ import { t as n } from "./TitledFrame-DUsxfZCI.js";
 import { n as r } from "./RisingParticles-DvxMtXJ2.js";
 import { t as i } from "./StatusDot-Bgx2zxgC.js";
 import { t as a } from "./InlinePopover-CG_Jwga7.js";
-import { i as o, n as s } from "./FloatingPanel-CM4WClJA.js";
-import { t as c } from "./InlinePlaceholder-51dbPRGn.js";
+import { t as o } from "./SectionLabel-hq1ieKla.js";
+import { t as s } from "./InlinePlaceholder-51dbPRGn.js";
+import { n as c } from "./FloatingPanel-6GL9dXGL.js";
 import { a as l, c as u, d, f, i as p, l as m, n as h, o as g, r as _, s as v, t as y, u as b } from "./useComputeProjects-D0FbawEs.js";
 import { A as x, B as S, C, D as w, E as ee, F as T, G as te, H as E, I as D, J as O, K as ne, L as k, M as A, N as j, O as M, P as re, R as ie, S as ae, T as N, U as oe, V as se, W as ce, Y as P, _ as le, a as ue, b as de, c as fe, d as pe, f as F, g as me, h as he, i as ge, j as I, k as _e, l as ve, m as ye, n as be, o as xe, p as Se, q as L, r as R, s as Ce, t as we, u as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "./ComputeContext-Dye0HdxD.js";
 import { Fragment as je, useCallback as z, useEffect as B, useMemo as V, useRef as H, useState as U, useSyncExternalStore as Me } from "react";
@@ -1920,7 +1921,7 @@ function Et({ session: e, models: n }) {
 		]
 	});
 }
-function Dt({ nodes: n, models: r = [], onOpenLab: i, onManage: s, className: l, "data-testid": u = "machine-presence-menu" }) {
+function Dt({ nodes: n, models: r = [], onOpenLab: i, onManage: c, className: l, "data-testid": u = "machine-presence-menu" }) {
 	let d = H(null), [f, p] = U(!1);
 	if (n.length === 0) return null;
 	let m = Tt(n), h = n.some((e) => e.status === "connected") ? "connected" : n.some((e) => e.status === "stale") ? "stale" : "offline", g = n.length === 1 ? n[0].label : `${n.length} machines`, _ = h === "connected" && m > 0;
@@ -1977,11 +1978,11 @@ function Dt({ nodes: n, models: r = [], onOpenLab: i, onManage: s, className: l,
 						session: e,
 						models: r
 					}, e.id))
-				}) : /* @__PURE__ */ W(c, {
+				}) : /* @__PURE__ */ W(s, {
 					"data-testid": "machine-no-sessions",
 					children: e.status === "offline" ? "machine offline" : "no active sessions"
 				})]
-			}, e.id)), (i || s) && /* @__PURE__ */ G("div", {
+			}, e.id)), (i || c) && /* @__PURE__ */ G("div", {
 				className: "flex items-center gap-2 border-t border-border pt-2",
 				children: [
 					i && /* @__PURE__ */ W("button", {
@@ -1993,10 +1994,10 @@ function Dt({ nodes: n, models: r = [], onOpenLab: i, onManage: s, className: l,
 						children: "Open Computer Lab"
 					}),
 					/* @__PURE__ */ W("span", { className: "flex-1" }),
-					s && /* @__PURE__ */ W("button", {
+					c && /* @__PURE__ */ W("button", {
 						type: "button",
 						onClick: () => {
-							p(!1), s();
+							p(!1), c();
 						},
 						className: "text-[11px] text-text-secondary hover:underline cursor-pointer bg-transparent border-0 p-0",
 						children: "Manage machines"
@@ -2085,7 +2086,7 @@ function Mt({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 	if (B(() => {
 		!t || a.length === 0 || re(a);
 	}, [t, a]), r.mode === "hidden" || r.shells.length === 0) return null;
-	let o = S(r.mode), c = /* @__PURE__ */ G("div", {
+	let o = S(r.mode), s = /* @__PURE__ */ G("div", {
 		style: ot,
 		className: "flex flex-col h-full min-h-0",
 		children: [/* @__PURE__ */ G("div", {
@@ -2162,7 +2163,7 @@ function Mt({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 			})
 		})]
 	});
-	if (r.mode === "floating") return /* @__PURE__ */ W(s, {
+	if (r.mode === "floating") return /* @__PURE__ */ W(c, {
 		open: !0,
 		onClose: () => k(!1),
 		title: "Terminals",
@@ -2173,7 +2174,7 @@ function Mt({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 		tone: "dark",
 		className: n,
 		"data-testid": "compute-dock-floating",
-		children: c
+		children: s
 	});
 	let l = r.mode === "stack" ? "fixed top-0 right-0 bottom-0 w-[26rem] max-w-[92vw] border-l" : "fixed left-0 right-0 bottom-0 border-t";
 	return /* @__PURE__ */ W("div", {
@@ -2183,7 +2184,7 @@ function Mt({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 			...ot,
 			height: r.geometry.dockHeight
 		},
-		children: c
+		children: s
 	});
 }
 //#endregion

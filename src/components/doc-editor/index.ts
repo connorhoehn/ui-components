@@ -169,3 +169,7 @@ export { useDocumentImageUpload, acceptsDocumentImage, MAX_IMAGE_BYTES, MAX_ATTA
 export type { DocumentImageUpload, DocumentFileUploadHook, DocumentUploadCompletion, UploadedDocumentFile } from '../../integrations/realtime-modules/useDocumentImageUpload';
 export { DocumentReviewPanel } from './DocumentReviewPanel';
 export type { DocumentReviewEntry, DocumentReviewPanelProps } from './DocumentReviewPanel';
+
+// The reading end of the presentation generator: a rendered deck, read-only.
+export { PresentationView } from './PresentationView';
+export type { PresentationViewProps, PresentationRevision, PresentationSlide } from './PresentationView';

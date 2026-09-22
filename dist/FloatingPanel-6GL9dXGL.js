@@ -2,48 +2,39 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { useCallback as t, useEffect as n, useLayoutEffect as r, useRef as i, useState as a } from "react";
 import { Fragment as o, jsx as s, jsxs as c } from "react/jsx-runtime";
 import { createPortal as l } from "react-dom";
-//#region src/components/shared/SectionLabel.tsx
-function u({ children: t, as: n = "span", className: r, "data-testid": i }) {
-	return /* @__PURE__ */ s(n, {
-		"data-testid": i,
-		className: e("text-[10px] font-bold uppercase tracking-[0.06em] text-text-tertiary", r),
-		children: t
-	});
-}
-//#endregion
 //#region src/components/shared/FloatingPanel.tsx
-var d = [
+var u = [
 	"top-left",
 	"top-right",
 	"left-center",
 	"right-center",
 	"bottom-left",
 	"bottom-right"
-], f = 2, p = 16, ee = 24, te = 180, ne = 12, m = 0;
-function h() {
-	return m += 1, m;
+], d = 2, f = 16, ee = 24, te = 180, ne = 12, p = 0;
+function m() {
+	return p += 1, p;
 }
-function g() {
-	return m;
+function re() {
+	return p;
 }
-function _(e) {
-	return typeof e == "string" && d.includes(e);
+function h(e) {
+	return typeof e == "string" && u.includes(e);
 }
-function v(e) {
+function g(e) {
 	return typeof e == "number" && Number.isFinite(e);
 }
-function re(e) {
+function ie(e) {
 	if (typeof window > "u") return null;
 	try {
 		let t = window.localStorage.getItem(e);
 		if (!t) return null;
 		let n = JSON.parse(t);
-		return !n || typeof n != "object" ? null : n.v === 2 ? !_(n.anchor) || !v(n.dx) || !v(n.dy) ? null : {
+		return !n || typeof n != "object" ? null : n.v === 2 ? !h(n.anchor) || !g(n.dx) || !g(n.dy) ? null : {
 			kind: "anchor",
 			anchor: n.anchor,
 			dx: n.dx,
 			dy: n.dy
-		} : n.v === 1 && v(n.x) && v(n.y) ? {
+		} : n.v === 1 && g(n.x) && g(n.y) ? {
 			kind: "raw",
 			x: n.x,
 			y: n.y
@@ -52,10 +43,10 @@ function re(e) {
 		return null;
 	}
 }
-function y(e, t, n, r) {
+function _(e, t, n, r) {
 	try {
 		let i = {
-			v: f,
+			v: d,
 			anchor: t,
 			dx: Math.round(n),
 			dy: Math.round(r)
@@ -63,23 +54,23 @@ function y(e, t, n, r) {
 		window.localStorage.setItem(e, JSON.stringify(i));
 	} catch {}
 }
-function b(e, t, n) {
+function v(e, t, n) {
 	if (typeof window > "u") return {
-		x: p,
-		y: p
+		x: f,
+		y: f
 	};
-	let r = Math.max(p, window.innerWidth - t - p), i = Math.max(p, window.innerHeight - n - p), a = Math.max(p, Math.round((window.innerHeight - n) / 2));
+	let r = Math.max(f, window.innerWidth - t - f), i = Math.max(f, window.innerHeight - n - f), a = Math.max(f, Math.round((window.innerHeight - n) / 2));
 	switch (e) {
 		case "top-left": return {
-			x: p,
-			y: p
+			x: f,
+			y: f
 		};
 		case "top-right": return {
 			x: r,
-			y: p
+			y: f
 		};
 		case "left-center": return {
-			x: p,
+			x: f,
 			y: a
 		};
 		case "right-center": return {
@@ -87,7 +78,7 @@ function b(e, t, n) {
 			y: a
 		};
 		case "bottom-left": return {
-			x: p,
+			x: f,
 			y: i
 		};
 		default: return {
@@ -96,76 +87,76 @@ function b(e, t, n) {
 		};
 	}
 }
-function x(e, t, n, r) {
-	let i = Math.max(p, window.innerWidth - n - p), a = Math.max(p, window.innerHeight - r - p);
+function y(e, t, n, r) {
+	let i = Math.max(f, window.innerWidth - n - f), a = Math.max(f, window.innerHeight - r - f);
 	return {
-		x: Math.min(Math.max(e, p), i),
-		y: Math.min(Math.max(t, p), a)
+		x: Math.min(Math.max(e, f), i),
+		y: Math.min(Math.max(t, f), a)
 	};
 }
-function S(e, t, n, r, i, a) {
+function b(e, t, n, r, i, a) {
 	let o = null, s = Infinity;
 	for (let c of i) {
-		let i = b(c, n, r), l = i.x - e, u = i.y - t;
+		let i = v(c, n, r), l = i.x - e, u = i.y - t;
 		if (a !== void 0 && (Math.abs(l) > a || Math.abs(u) > a)) continue;
 		let d = l * l + u * u;
 		d < s && (s = d, o = c);
 	}
 	return o;
 }
-function C({ open: u, onClose: f, title: p, children: m, defaultPosition: _ = "right-center", persistKey: v, snapEnabled: C = !0, snapThreshold: w = ee, snapAnchors: T = d, onSnap: E, baseZIndex: D = 9999, widthClassName: O = "w-80", heightClassName: k = "h-[28rem]", tone: ie = "dark", zIndexClassName: A = "z-[9999]", className: ae, "data-testid": j = "floating-panel" }) {
-	let M = ie === "dark", N = i(null), [P, F] = a(null), I = i(P);
+function x({ open: d, onClose: f, title: p, children: h, defaultPosition: g = "right-center", persistKey: x, snapEnabled: S = !0, snapThreshold: C = ee, snapAnchors: w = u, onSnap: T, baseZIndex: E = 9999, widthClassName: D = "w-80", heightClassName: O = "h-[28rem]", tone: ae = "dark", zIndexClassName: k = "z-[9999]", className: A, "data-testid": j = "floating-panel" }) {
+	let M = ae === "dark", N = i(null), [P, F] = a(null), I = i(P);
 	I.current = P;
 	let [L, R] = a(!1), [z, B] = a(null), V = i(null);
 	V.current = z;
 	let [H, U] = a(!1), W = i(null), [G, oe] = a(null), K = i(null);
 	K.current = G;
-	let q = i(null), J = i(_);
-	J.current = _;
-	let Y = i(v);
-	Y.current = v;
+	let q = i(null), J = i(g);
+	J.current = g;
+	let Y = i(x);
+	Y.current = x;
 	let X = i({
-		snapEnabled: C,
-		snapThreshold: w,
-		snapAnchors: T,
-		onSnap: E
+		snapEnabled: S,
+		snapThreshold: C,
+		snapAnchors: w,
+		onSnap: T
 	});
 	X.current = {
-		snapEnabled: C,
-		snapThreshold: w,
-		snapAnchors: T,
-		onSnap: E
+		snapEnabled: S,
+		snapThreshold: C,
+		snapAnchors: w,
+		onSnap: T
 	};
 	let Z = t((e, t, n, r) => {
 		let i = Y.current;
 		if (!i) return;
-		let a = S(e, t, n, r, d) ?? "top-left", o = b(a, n, r);
-		y(i, a, e - o.x, t - o.y);
+		let a = b(e, t, n, r, u) ?? "top-left", o = v(a, n, r);
+		_(i, a, e - o.x, t - o.y);
 	}, []), Q = t(() => {
-		(K.current === null || K.current !== g()) && oe(h());
+		(K.current === null || K.current !== re()) && oe(m());
 	}, []);
 	r(() => {
-		if (!u) return;
+		if (!d) return;
 		let e = N.current;
 		if (!e || typeof window > "u") return;
-		let { width: t, height: n } = e.getBoundingClientRect(), r = Y.current, i = r ? re(r) : null;
+		let { width: t, height: n } = e.getBoundingClientRect(), r = Y.current, i = r ? ie(r) : null;
 		if (i) {
 			if (i.kind === "anchor") {
-				let e = b(i.anchor, t, n);
-				F(x(e.x + i.dx, e.y + i.dy, t, n));
+				let e = v(i.anchor, t, n);
+				F(y(e.x + i.dx, e.y + i.dy, t, n));
 				return;
 			}
-			let e = x(i.x, i.y, t, n);
+			let e = y(i.x, i.y, t, n);
 			F(e), Z(e.x, e.y, t, n);
 			return;
 		}
 		let a = J.current;
 		if (typeof a == "object") {
-			F(x(a.x, a.y, t, n));
+			F(y(a.x, a.y, t, n));
 			return;
 		}
-		F(b(a, t, n));
-	}, [u, Z]);
+		F(v(a, t, n));
+	}, [d, Z]);
 	let se = t((e) => {
 		if (e.pointerType === "mouse" && e.button !== 0) return;
 		let t = N.current;
@@ -188,10 +179,10 @@ function C({ open: u, onClose: f, title: p, children: m, defaultPosition: _ = "r
 		let e = (e) => {
 			let t = q.current;
 			if (!t) return;
-			let n = x(t.baseX + (e.clientX - t.pointerX), t.baseY + (e.clientY - t.pointerY), t.width, t.height);
+			let n = y(t.baseX + (e.clientX - t.pointerX), t.baseY + (e.clientY - t.pointerY), t.width, t.height);
 			F(n);
 			let { snapEnabled: r, snapThreshold: i, snapAnchors: a } = X.current;
-			B(r ? S(n.x, n.y, t.width, t.height, a, i) : null);
+			B(r ? b(n.x, n.y, t.width, t.height, a, i) : null);
 		}, t = () => {
 			let e = q.current;
 			q.current = null, R(!1);
@@ -199,10 +190,10 @@ function C({ open: u, onClose: f, title: p, children: m, defaultPosition: _ = "r
 			B(null);
 			let n = e?.width ?? 0, r = e?.height ?? 0;
 			if (t && e) {
-				let e = b(t, n, r);
+				let e = v(t, n, r);
 				F(e), U(!0), W.current && clearTimeout(W.current), W.current = setTimeout(() => U(!1), te);
 				let i = Y.current;
-				i && y(i, t, 0, 0), X.current.onSnap?.(t);
+				i && _(i, t, 0, 0), X.current.onSnap?.(t);
 				return;
 			}
 			let i = I.current;
@@ -225,20 +216,20 @@ function C({ open: u, onClose: f, title: p, children: m, defaultPosition: _ = "r
 		let n = N.current, r = I.current;
 		if (!n || !r) return;
 		e.preventDefault();
-		let i = n.getBoundingClientRect(), a = e.shiftKey ? 1 : ne, o = x(r.x + t[0] * a, r.y + t[1] * a, i.width, i.height);
+		let i = n.getBoundingClientRect(), a = e.shiftKey ? 1 : ne, o = y(r.x + t[0] * a, r.y + t[1] * a, i.width, i.height);
 		F(o), Z(o.x, o.y, i.width, i.height);
 	}, [Z]);
-	if (!u) return null;
-	let $ = z ? b(z, N.current?.offsetWidth ?? 0, N.current?.offsetHeight ?? 0) : null;
+	if (!d) return null;
+	let $ = z ? v(z, N.current?.offsetWidth ?? 0, N.current?.offsetHeight ?? 0) : null;
 	return l(/* @__PURE__ */ c(o, { children: [z && $ && /* @__PURE__ */ s("div", {
 		"aria-hidden": "true",
 		"data-testid": "floating-panel-snap-target",
 		"data-anchor": z,
-		className: e("fixed pointer-events-none rounded-2xl border-2 border-dashed", O, k, A, M ? "border-white/30 bg-white/5" : "border-border-focus bg-info-bg/40"),
+		className: e("fixed pointer-events-none rounded-2xl border-2 border-dashed", D, O, k, M ? "border-white/30 bg-white/5" : "border-border-focus bg-info-bg/40"),
 		style: {
 			left: $.x,
 			top: $.y,
-			zIndex: D - 1
+			zIndex: E - 1
 		}
 	}), /* @__PURE__ */ c("div", {
 		ref: N,
@@ -249,7 +240,7 @@ function C({ open: u, onClose: f, title: p, children: m, defaultPosition: _ = "r
 		"data-snapping": H ? "true" : void 0,
 		onPointerDownCapture: Q,
 		onFocusCapture: Q,
-		className: e("fixed flex flex-col rounded-2xl border overflow-hidden backdrop-blur-sm", O, k, A, H && "transition-[left,top] duration-150 ease-out", M ? "bg-call-chrome border-call-chrome-border shadow-[0_8px_32px_rgba(0,0,0,0.4)]" : "bg-surface-panel border-border shadow-lg", ae),
+		className: e("fixed flex flex-col rounded-2xl border overflow-hidden backdrop-blur-sm", D, O, k, H && "transition-[left,top] duration-150 ease-out", M ? "bg-call-chrome border-call-chrome-border shadow-[0_8px_32px_rgba(0,0,0,0.4)]" : "bg-surface-panel border-border shadow-lg", A),
 		style: {
 			...P ? {
 				left: P.x,
@@ -259,7 +250,7 @@ function C({ open: u, onClose: f, title: p, children: m, defaultPosition: _ = "r
 				top: -9999,
 				visibility: "hidden"
 			},
-			...G === null ? null : { zIndex: D + G }
+			...G === null ? null : { zIndex: E + G }
 		},
 		children: [/* @__PURE__ */ c("div", {
 			"data-testid": "floating-panel-header",
@@ -305,9 +296,9 @@ function C({ open: u, onClose: f, title: p, children: m, defaultPosition: _ = "r
 		}), /* @__PURE__ */ s("div", {
 			"data-testid": "floating-panel-body",
 			className: "min-h-0 flex-1 overflow-hidden flex flex-col",
-			children: m
+			children: h
 		})]
 	})] }), document.body);
 }
 //#endregion
-export { u as i, C as n, b as r, d as t };
+export { x as n, v as r, u as t };

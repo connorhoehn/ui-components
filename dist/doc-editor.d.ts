@@ -1407,6 +1407,61 @@ declare interface PresenceInfo {
     idle?: boolean;
 }
 
+export declare interface PresentationRevision {
+    id: string;
+    /** `v3`, as the generator labelled it. */
+    label: string;
+    /** Already formatted by the host — this component does no clock maths. */
+    createdAt?: string;
+    slides: PresentationSlide[];
+}
+
+/** One page of a revision. `preview` is host-resolved; absent means absent. */
+export declare interface PresentationSlide {
+    id: string;
+    /** 1-based, as the deck numbers itself. */
+    index: number;
+    title: string;
+    preview?: ReactNode;
+}
+
+export declare function PresentationView({ title, revisions, revisionId, onRevisionChange, slideIndex, onSlideChange, onDownload, downloadLabel, onOpenPreview, pending, notice, state, errorMessage, onRetry, className, 'data-testid': testId, }: PresentationViewProps): JSX.Element;
+
+export declare interface PresentationViewProps {
+    title: string;
+    revisions: readonly PresentationRevision[];
+    /** Which revision is shown. Controlled; the host owns the choice. */
+    revisionId: string;
+    onRevisionChange: (revisionId: string) => void;
+    /** 1-based page number within the revision. Controlled. */
+    slideIndex: number;
+    onSlideChange: (slideIndex: number) => void;
+    /**
+     * The `.pptx` itself, through the host's own authorized route. Absent, no
+     * button is drawn — an offer that 403s is worse than no offer.
+     */
+    onDownload?: () => void;
+    downloadLabel?: string;
+    /** Opens the current slide at full size, in whatever viewer the host has. */
+    onOpenPreview?: (slideId: string) => void;
+    /**
+     * A generation still in flight, or the one that failed. Shown beside the
+     * revision switch so "v3 generating" is visible while v2 is being read.
+     */
+    pending?: {
+        label: string;
+        status: 'generating' | 'failed';
+        message?: string;
+    };
+    /** Honest state about what this view cannot show. */
+    notice?: ReactNode;
+    state?: 'loading' | 'ready' | 'empty' | 'error';
+    errorMessage?: string;
+    onRetry?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** What the host reports back after trying to apply. */
 export declare interface ProposalApplyOutcome {
     ok: boolean;
@@ -2449,9 +2504,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -2459,12 +2517,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2501,16 +2566,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
