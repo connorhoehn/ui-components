@@ -50,4 +50,71 @@ describe('Drawer', () => {
     render(<Drawer open onClose={() => {}} title="T" width={320}>b</Drawer>);
     expect(screen.getByRole('dialog').style.width).toBe('320px');
   });
+
+  it('renders no header when the body brings its own — even floating', () => {
+    // Same rule as the docked form: a body with its own header (a
+    // ChannelHeader, say) should not get a second, competing close control.
+    render(
+      <Drawer open onClose={() => {}} aria-label="Chat">
+        <div>own header + body</div>
+      </Drawer>,
+    );
+    expect(screen.queryByRole('button', { name: 'Close' })).toBeNull();
+    expect(screen.getByRole('dialog', { name: 'Chat' })).toBeInTheDocument();
+  });
+
+  it('honors closeLabel for the close button and its aria-label', () => {
+    render(
+      <Drawer open onClose={() => {}} title="T" closeLabel="Close panel">
+        b
+      </Drawer>,
+    );
+    expect(screen.getByRole('button', { name: 'Close panel' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Close' })).toBeNull();
+  });
+
+  it('modal={false} drops role/aria-modal and Escape no longer closes it', () => {
+    const onClose = vi.fn();
+    render(
+      <Drawer open onClose={onClose} title="T" modal={false}>
+        b
+      </Drawer>,
+    );
+    expect(screen.queryByRole('dialog')).toBeNull();
+    const panel = screen.getByRole('complementary', { name: 'T' });
+    expect(panel).not.toHaveAttribute('aria-modal');
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(onClose).not.toHaveBeenCalled();
+    // Backdrop click still closes — `modal` only governs dialog semantics.
+    fireEvent.click(panel.previousElementSibling as Element);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('trapFocus={false} does not move focus into the panel on open', () => {
+    const outside = document.createElement('button');
+    outside.textContent = 'outside trigger';
+    document.body.appendChild(outside);
+    outside.focus();
+    render(
+      <Drawer open onClose={() => {}} title="T" trapFocus={false}>
+        <button>first action</button>
+      </Drawer>,
+    );
+    expect(document.activeElement).toBe(outside);
+    document.body.removeChild(outside);
+  });
+
+  it('backdrop={false} renders no backdrop and disables click-to-close', () => {
+    const onClose = vi.fn();
+    render(
+      <Drawer open onClose={onClose} title="T" backdrop={false} data-testid="drawer">
+        b
+      </Drawer>,
+    );
+    expect(document.querySelector('.bg-black\\/30')).toBeNull();
+    // The panel is now the fixed container's only child.
+    const container = screen.getByTestId('drawer');
+    expect(container.children).toHaveLength(1);
+    expect(container.firstElementChild).toBe(screen.getByRole('dialog'));
+  });
 });

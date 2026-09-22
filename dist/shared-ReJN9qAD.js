@@ -8,13 +8,14 @@ import "./DataTable-3jKrGxjU.js";
 import "./IconButton-C3DMtvSx.js";
 import "./DropdownMenu-BXhLlQ0B.js";
 import "./Stack-CkiMw5K0.js";
-import "./Text-DIl-Ssia.js";
+import "./Text-D5E7T_4D.js";
 import "./Banner-C3Wgh62A.js";
 import "./Chart-BbfaF2-B.js";
 import { t as u } from "./Chip-DYqbAD3L.js";
 import { t as d } from "./Modal-D2qxMX2_.js";
 import "./ConfirmDialog-DFxz7N7P.js";
 import { t as f } from "./EmptyState-DQYx5Oyy.js";
+import "./SearchInput-DXbGHmns.js";
 import "./PermissionDeniedCard-C-qNHHKT.js";
 import "./Spinner-CLcq5z8N.js";
 import "./FormField-E8Z0ppOp.js";
@@ -32,7 +33,6 @@ import "./TitledFrame-DUsxfZCI.js";
 import "./DotMeter-BDVkadI8.js";
 import "./StatusDot-Bgx2zxgC.js";
 import { r as T } from "./PopoverForm-DDaumd9y.js";
-import "./SearchInput-Y-j1He57.js";
 import "./RovingToolbar-CmQag9q6.js";
 import "./InlineAlert-CRnIKeAF.js";
 import "./CardHeader-CsPhVpCm.js";
@@ -1674,34 +1674,40 @@ function ct({ label: t, id: n, href: r, mono: i = !1, className: a, labelClassNa
 }
 //#endregion
 //#region src/components/shared/Drawer.tsx
-function lt({ open: t, onClose: n, title: r, subtitle: i, width: a, children: o, footer: c, docked: l = !1, actions: u, className: d, bodyClassName: f, "aria-label": p, "data-testid": m }) {
-	let v = L(null), y = L(null), b = F(), x = s(t && !l), S = a ?? (l ? void 0 : 460);
+function lt({ open: t, onClose: n, title: r, subtitle: i, width: a, children: o, footer: c, docked: l = !1, actions: u, className: d, bodyClassName: f, "aria-label": p, "data-testid": m, closeLabel: v = "Close", modal: y = !0, trapFocus: b = !0, backdrop: x = !0 }) {
+	let S = L(null), C = L(null), w = F(), T = y && !l, E = s(t && !l), D = a ?? (l ? void 0 : 460);
 	if (P(() => {
 		if (!t || l) return;
 		let e = (e) => {
 			if (e.key === "Escape") {
-				x() && n();
+				T && E() && n();
 				return;
 			}
-			x() && g(e, v.current);
+			b && E() && g(e, S.current);
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
 	}, [
 		t,
 		n,
-		x,
-		l
+		E,
+		l,
+		T,
+		b
 	]), P(() => {
-		if (!(!t || l)) return y.current = typeof document < "u" ? document.activeElement : null, _(v.current), () => {
-			h(y.current), y.current = null;
+		if (!(!t || l || !b)) return C.current = typeof document < "u" ? document.activeElement : null, _(S.current), () => {
+			h(C.current), C.current = null;
 		};
-	}, [t, l]), !t) return null;
-	let C = /* @__PURE__ */ V("div", {
+	}, [
+		t,
+		l,
+		b
+	]), !t) return null;
+	let O = !!(r || i || u), k = /* @__PURE__ */ V("div", {
 		className: "flex items-start justify-between p-5 border-b border-[var(--color-border)] flex-shrink-0",
 		children: [/* @__PURE__ */ V("div", {
 			className: "min-w-0",
 			children: [r && /* @__PURE__ */ B("h2", {
-				id: b,
+				id: w,
 				className: "text-base font-semibold text-[var(--color-text-primary)]",
 				children: r
 			}), i && /* @__PURE__ */ B("p", {
@@ -1714,7 +1720,7 @@ function lt({ open: t, onClose: n, title: r, subtitle: i, width: a, children: o,
 				type: "button",
 				onClick: n,
 				className: "flex-shrink-0 p-1 rounded hover:bg-[var(--color-surface-hover)] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors",
-				"aria-label": "Close",
+				"aria-label": v,
 				children: /* @__PURE__ */ B("svg", {
 					width: "16",
 					height: "16",
@@ -1729,50 +1735,46 @@ function lt({ open: t, onClose: n, title: r, subtitle: i, width: a, children: o,
 				})
 			})]
 		})]
-	}), w = /* @__PURE__ */ B("div", {
+	}), A = /* @__PURE__ */ B("div", {
 		className: e("flex-1 overflow-y-auto p-5", f),
 		children: o
-	}), T = c ? /* @__PURE__ */ B("div", {
+	}), j = c ? /* @__PURE__ */ B("div", {
 		className: "flex-shrink-0 border-t border-[var(--color-border)] p-4 bg-[var(--color-surface-inset,#f8fafc)]",
 		children: c
 	}) : null;
-	if (l) {
-		let t = !!(r || i || u);
-		return /* @__PURE__ */ V("aside", {
-			ref: v,
-			role: "complementary",
-			"aria-labelledby": r ? b : void 0,
-			"aria-label": r ? void 0 : p,
-			"data-testid": m,
-			"data-docked": "true",
-			className: e("relative flex h-full min-h-0 flex-shrink-0 flex-col overflow-hidden", "bg-surface border-l border-[var(--color-border)]", S === void 0 && "w-full", d),
-			...S === void 0 ? {} : { style: { width: S } },
-			children: [
-				t && C,
-				w,
-				T
-			]
-		});
-	}
-	return te(/* @__PURE__ */ V("div", {
+	return l ? /* @__PURE__ */ V("aside", {
+		ref: S,
+		role: "complementary",
+		"aria-labelledby": r ? w : void 0,
+		"aria-label": r ? void 0 : p,
+		"data-testid": m,
+		"data-docked": "true",
+		className: e("relative flex h-full min-h-0 flex-shrink-0 flex-col overflow-hidden", "bg-surface border-l border-[var(--color-border)]", D === void 0 && "w-full", d),
+		...D === void 0 ? {} : { style: { width: D } },
+		children: [
+			O && k,
+			A,
+			j
+		]
+	}) : te(/* @__PURE__ */ V("div", {
 		className: "fixed inset-0 z-[9000]",
 		"data-testid": m,
-		children: [/* @__PURE__ */ B("div", {
+		children: [x && /* @__PURE__ */ B("div", {
 			className: "absolute inset-0 bg-black/30 backdrop-blur-[1px]",
 			onClick: n,
 			"aria-hidden": "true"
 		}), /* @__PURE__ */ V("aside", {
-			ref: v,
-			role: "dialog",
-			"aria-modal": "true",
-			"aria-labelledby": r ? b : void 0,
+			ref: S,
+			role: T ? "dialog" : "complementary",
+			"aria-modal": T ? "true" : void 0,
+			"aria-labelledby": r ? w : void 0,
 			"aria-label": r ? void 0 : p,
 			className: e("absolute right-0 top-0 h-full bg-surface shadow-xl flex flex-col", "transition-transform duration-200", t ? "translate-x-0" : "translate-x-full", d),
-			style: { width: S },
+			style: { width: D },
 			children: [
-				C,
-				w,
-				T
+				O && k,
+				A,
+				j
 			]
 		})]
 	}), document.body);

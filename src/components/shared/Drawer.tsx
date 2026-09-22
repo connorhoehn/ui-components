@@ -64,6 +64,36 @@ export interface DrawerProps {
    */
   'aria-label'?: string;
   'data-testid'?: string;
+  /**
+   * Accessible name for the built-in close button. Defaults to `"Close"`.
+   * Set this when a host's own tests (or design system) key on a specific
+   * label — e.g. `aria-label="Close panel"` — instead of forking the whole
+   * component the way a local `Panel.tsx` had to.
+   */
+  closeLabel?: string;
+  /**
+   * Dialog semantics for the floating form: `role="dialog"`, `aria-modal`,
+   * and Escape closes it (when this is the top overlay layer). `false`
+   * drops all three — the panel renders `role="complementary"`, the same
+   * non-modal role a docked Drawer uses, and Escape no longer closes it.
+   * Ignored when `docked` (already non-modal). Default `true`.
+   */
+  modal?: boolean;
+  /**
+   * Tab-trap the panel and move focus into it on open, restoring it on
+   * close. `false` leaves focus wherever the host's own handling put it —
+   * for a floating panel driven by direct DOM dispatch rather than real
+   * keyboard navigation. Ignored when `docked` (never traps). Default
+   * `true`.
+   */
+  trapFocus?: boolean;
+  /**
+   * Render the dimmed backdrop behind the floating panel, and close on a
+   * click through it. `false` renders the panel with nothing behind it —
+   * what a local `Panel.tsx` did before Drawer replaced it. Ignored when
+   * `docked` (never has one). Default `true`.
+   */
+  backdrop?: boolean;
 }
 
 function Drawer({
@@ -80,37 +110,44 @@ function Drawer({
   bodyClassName,
   'aria-label': ariaLabel,
   'data-testid': testId,
+  closeLabel = 'Close',
+  modal = true,
+  trapFocus = true,
+  backdrop = true,
 }: DrawerProps) {
   const panelRef = useRef<HTMLElement | null>(null);
   // Element focused before the drawer opened, restored on close so keyboard
   // users resume from the trigger instead of the top of the document.
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const headingId = useId();
+  // A docked panel is never modal; a floating one can opt out via `modal`.
+  const isModal = modal && !docked;
   // Only the top layer consumes Escape — a dialog or palette opened over the
   // drawer must not take the drawer down with it.
   const isTopLayer = useOverlayLayer(open && !docked);
   const resolvedWidth = width ?? (docked ? undefined : 460);
 
-  // Escape-to-close plus the Tab/Shift+Tab focus trap. Without the trap, Tab
-  // from the last control walks into the page BEHIND the drawer, which is the
-  // classic "dialog leaks focus" failure.
+  // Escape-to-close (modal only) plus the Tab/Shift+Tab focus trap (when
+  // `trapFocus`). Without the trap, Tab from the last control walks into the
+  // page BEHIND the drawer, which is the classic "dialog leaks focus" failure.
   useEffect(() => {
     if (!open || docked) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (isTopLayer()) onClose();
+        if (isModal && isTopLayer()) onClose();
         return;
       }
+      if (!trapFocus) return;
       if (!isTopLayer()) return;
       trapTabKey(e, panelRef.current);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose, isTopLayer, docked]);
+  }, [open, onClose, isTopLayer, docked, isModal, trapFocus]);
 
   // Move focus into the panel when it opens; restore it on close.
   useEffect(() => {
-    if (!open || docked) return;
+    if (!open || docked || !trapFocus) return;
     previouslyFocusedRef.current =
       (typeof document !== 'undefined' ? document.activeElement : null) as HTMLElement | null;
     focusInitialElement(panelRef.current);
@@ -118,9 +155,17 @@ function Drawer({
       restoreFocus(previouslyFocusedRef.current);
       previouslyFocusedRef.current = null;
     };
-  }, [open, docked]);
+  }, [open, docked, trapFocus]);
 
   if (!open) return null;
+
+  // A panel with nothing to put in a header is a bare shell — a column or
+  // overlay whose contents bring their own chrome (a ChannelHeader, say).
+  // Drawing a lone close button above them would be a second, competing
+  // header, which is exactly what the hand-rolled version got wrong. Applies
+  // to both forms: a floating body that opens with its own header should not
+  // get a second close control either.
+  const hasHeader = !!(title || subtitle || actions);
 
   // Header, body and footer are built once and rendered by both forms, so the
   // docked panel cannot drift away from the floating one.
@@ -144,7 +189,7 @@ function Drawer({
           type="button"
           onClick={onClose}
           className="flex-shrink-0 p-1 rounded hover:bg-[var(--color-surface-hover)] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
-          aria-label="Close"
+          aria-label={closeLabel}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path
@@ -168,11 +213,6 @@ function Drawer({
   ) : null;
 
   if (docked) {
-    // A docked panel with nothing to put in a header is a width shell — a
-    // column whose contents bring their own chrome (a ChannelHeader, say).
-    // Drawing a lone close button above them would be a second, competing
-    // header, which is exactly what the hand-rolled version got wrong.
-    const hasHeader = !!(title || subtitle || actions);
     return (
       <aside
         ref={panelRef}
@@ -199,16 +239,18 @@ function Drawer({
   return createPortal(
     <div className="fixed inset-0 z-[9000]" data-testid={testId}>
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-[1px]"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      {backdrop && (
+        <div
+          className="absolute inset-0 bg-black/30 backdrop-blur-[1px]"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
       {/* Panel */}
       <aside
         ref={panelRef}
-        role="dialog"
-        aria-modal="true"
+        role={isModal ? 'dialog' : 'complementary'}
+        aria-modal={isModal ? 'true' : undefined}
         aria-labelledby={title ? headingId : undefined}
         aria-label={title ? undefined : ariaLabel}
         className={cn(
@@ -219,7 +261,7 @@ function Drawer({
         )}
         style={{ width: resolvedWidth }}
       >
-        {header}
+        {hasHeader && header}
         {body}
         {footerRow}
       </aside>

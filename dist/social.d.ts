@@ -54,7 +54,7 @@ export declare interface ActivityItem {
     detail: Record<string, unknown>;
 }
 
-export declare function ActivityPanel({ idToken, sendMessage, onMessage, connectionState, baseUrl, fetchActivity, }: ActivityPanelProps): JSX.Element;
+export declare function ActivityPanel({ idToken, sendMessage, onMessage, connectionState, baseUrl, fetchActivity, onError, }: ActivityPanelProps): JSX.Element;
 
 export declare interface ActivityPanelProps {
     idToken: string | null;
@@ -74,6 +74,14 @@ export declare interface ActivityPanelProps {
      * `baseUrl`. The live WebSocket half is untouched either way.
      */
     fetchActivity?: FetchActivityFn;
+    /**
+     * Called with the normalized `Error` whenever a hydrate (REST or
+     * `fetchActivity`) fails — in addition to, not instead of, the panel's own
+     * inline `ErrorState` and toast. A host with its own error-reporting
+     * (Sentry, a status bar) hooks in here instead of re-deriving failure from
+     * the panel's render output.
+     */
+    onError?: (err: Error) => void;
 }
 
 export declare interface ActivityResponse {
@@ -3410,19 +3418,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3442,9 +3437,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3478,9 +3496,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3494,16 +3512,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

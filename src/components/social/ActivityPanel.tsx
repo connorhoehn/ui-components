@@ -8,6 +8,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '../shared/ToastProvider';
 import { cn } from '../../lib/cn';
+import { Card } from '../ui/Card';
+import { Button } from '../ui/Button';
+import { Inline, Stack } from '../ui/Stack';
+import LoadingState from '../shared/LoadingState';
+import ErrorState from '../shared/ErrorState';
+import EmptyState from '../shared/EmptyState';
+import { StatusDot } from '../shared/StatusDot';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -136,6 +143,7 @@ function useActivityFeed({
   connectionState,
   baseUrl: baseUrlProp,
   fetchActivity,
+  onError,
 }: {
   idToken: string | null;
   sendMessage: (msg: Record<string, unknown>) => void;
@@ -143,6 +151,7 @@ function useActivityFeed({
   connectionState: ConnectionState;
   baseUrl?: string;
   fetchActivity?: FetchActivityFn;
+  onError?: (err: Error) => void;
 }): {
   items: ActivityItem[];
   loading: boolean;
@@ -158,6 +167,8 @@ function useActivityFeed({
   const sendMessageRef = useRef(sendMessage);
   useEffect(() => { sendMessageRef.current = sendMessage; }, [sendMessage]);
   const { toast } = useToast();
+  const onErrorRef = useRef(onError);
+  useEffect(() => { onErrorRef.current = onError; }, [onError]);
 
   const userId = extractUserId(idToken);
 
@@ -177,10 +188,11 @@ function useActivityFeed({
         })
         .catch((err) => {
           if (dropped) return;
-          const msg = err instanceof Error ? err.message : String(err);
+          const normalized = err instanceof Error ? err : new Error(String(err));
           console.error('[activity] fetch failed:', err);
-          setError(msg);
+          setError(normalized.message);
           toast("Couldn't load activity feed", { type: 'error' });
+          onErrorRef.current?.(normalized);
         })
         .finally(() => { if (!dropped) setLoading(false); });
       return () => { dropped = true; };
@@ -212,10 +224,11 @@ function useActivityFeed({
       })
       .catch(err => {
         if (cancelled) return;
-        const msg = err instanceof Error ? err.message : String(err);
+        const normalized = err instanceof Error ? err : new Error(String(err));
         console.error('[activity] fetch failed:', err);
-        setError(msg);
+        setError(normalized.message);
         toast("Couldn't load activity feed", { type: 'error' });
+        onErrorRef.current?.(normalized);
       })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
@@ -281,6 +294,14 @@ export interface ActivityPanelProps {
    * `baseUrl`. The live WebSocket half is untouched either way.
    */
   fetchActivity?: FetchActivityFn;
+  /**
+   * Called with the normalized `Error` whenever a hydrate (REST or
+   * `fetchActivity`) fails — in addition to, not instead of, the panel's own
+   * inline `ErrorState` and toast. A host with its own error-reporting
+   * (Sentry, a status bar) hooks in here instead of re-deriving failure from
+   * the panel's render output.
+   */
+  onError?: (err: Error) => void;
 }
 
 /** Hydration seam — see `ActivityPanelProps.fetchActivity`. */
@@ -296,55 +317,41 @@ export function ActivityPanel({
   connectionState,
   baseUrl,
   fetchActivity,
+  onError,
 }: ActivityPanelProps) {
   const { items, loading, isLive, error, retry } = useActivityFeed({
-    idToken, sendMessage, onMessage, connectionState, baseUrl, fetchActivity,
+    idToken, sendMessage, onMessage, connectionState, baseUrl, fetchActivity, onError,
   });
 
   return (
-    <div className="bg-surface border border-border rounded-lg p-5">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3">
-        Activity
-        {isLive && (
-          <span
-            className="inline-block w-2 h-2 rounded-full bg-success ml-2 align-middle"
-            title="Live"
-          />
-        )}
-      </h2>
+    <Card padding="md">
+      <Inline gap="sm" align="center" className="mb-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-text-secondary m-0">
+          Activity
+        </h2>
+        {isLive && <StatusDot color="var(--color-success)" size="xs" title="Live" aria-label="Live" />}
+      </Inline>
       {loading ? (
-        <div className="flex items-center gap-2 p-4 justify-center text-text-secondary">
-          <span className="inline-block w-4 h-4 border-2 border-border border-t-primary rounded-full animate-spin" />
-          Loading...
-        </div>
+        <LoadingState label="Loading..." />
       ) : error && items.length === 0 ? (
-        <div
-          role="alert"
-          className="py-6 px-4 text-center text-danger-fg text-sm flex flex-col items-center gap-2"
-        >
-          <span>Couldn't load activity</span>
-          <span className="text-text-secondary text-xs">{error}</span>
-          <button
-            type="button"
-            onClick={retry}
-            className="mt-1 px-3 py-1 text-xs font-medium text-info-fg bg-info-bg border border-info-border rounded cursor-pointer"
-          >
-            Retry
-          </button>
-        </div>
+        <ErrorState
+          title="Couldn't load activity"
+          body={error}
+          action={<Button variant="secondary" size="sm" onClick={retry}>Retry</Button>}
+        />
       ) : items.length === 0 ? (
-        <div className="py-10 text-center text-text-tertiary text-sm">
-          No activity yet
-        </div>
+        <EmptyState title="No activity yet" />
       ) : (
-        <div>
+        <Stack gap="none">
           {items.map((item, idx) => {
             const { icon, text } = formatActivity(item);
             return (
-              <div
+              <Inline
                 key={idx}
+                gap="sm"
+                align="center"
                 className={cn(
-                  'flex flex-row items-center gap-2 py-2',
+                  'py-2',
                   idx < items.length - 1 && 'border-b border-surface-hover',
                 )}
               >
@@ -353,11 +360,11 @@ export function ActivityPanel({
                 <span className="text-xs text-text-tertiary shrink-0">
                   {relativeTime(item.timestamp)}
                 </span>
-              </div>
+              </Inline>
             );
           })}
-        </div>
+        </Stack>
       )}
-    </div>
+    </Card>
   );
 }

@@ -114,6 +114,30 @@ describe('ActivityPanel hydrate', () => {
     await waitFor(() => expect(failing).toHaveBeenCalledTimes(beforeRetry + 1));
   });
 
+  it('calls onError with the normalized Error, alongside the inline ErrorState and toast', async () => {
+    const failing = vi.fn().mockResolvedValue({ ok: false, status: 503 });
+    vi.stubGlobal('fetch', failing);
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const onError = vi.fn();
+    render(
+      <ToastProvider>
+        <ActivityPanel
+          idToken={TOKEN}
+          sendMessage={vi.fn()}
+          onMessage={() => () => undefined}
+          connectionState="connected"
+          onError={onError}
+        />
+      </ToastProvider>,
+    );
+    await act(async () => { await Promise.resolve(); });
+    expect(screen.getByText('HTTP 503')).toBeInTheDocument();
+    expect(onError).toHaveBeenCalled();
+    const err = onError.mock.calls[0][0];
+    expect(err).toBeInstanceOf(Error);
+    expect(err.message).toBe('HTTP 503');
+  });
+
   it('resolves to the empty state when no API base URL is configured', async () => {
     // Regression: `loading` starts true, and the hydrate effect used to
     // early-return without clearing it — so an unconfigured deployment

@@ -99,6 +99,20 @@ describe('ActivityPanel baseUrl', () => {
     expect(screen.getByText(/Liked/)).toBeInTheDocument();
   });
 
+  it('onError fires when fetchActivity rejects', async () => {
+    const fetchMock = okFetch();
+    vi.stubGlobal('fetch', fetchMock);
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const onError = vi.fn();
+    const fetchActivity = vi.fn().mockRejectedValue(new Error('boom'));
+
+    await renderPanel({ fetchActivity, onError });
+
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);
+    expect(onError.mock.calls[0][0].message).toBe('boom');
+  });
+
   it('fetchActivity wins over baseUrl', async () => {
     const fetchMock = okFetch();
     vi.stubGlobal('fetch', fetchMock);

@@ -207,7 +207,7 @@ export declare interface ActivityItem {
 
 export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
 
-export declare function ActivityPanel({ idToken, sendMessage, onMessage, connectionState, baseUrl, fetchActivity, }: ActivityPanelProps): JSX.Element;
+export declare function ActivityPanel({ idToken, sendMessage, onMessage, connectionState, baseUrl, fetchActivity, onError, }: ActivityPanelProps): JSX.Element;
 
 export declare interface ActivityPanelProps {
     idToken: string | null;
@@ -227,6 +227,14 @@ export declare interface ActivityPanelProps {
      * `baseUrl`. The live WebSocket half is untouched either way.
      */
     fetchActivity?: FetchActivityFn;
+    /**
+     * Called with the normalized `Error` whenever a hydrate (REST or
+     * `fetchActivity`) fails — in addition to, not instead of, the panel's own
+     * inline `ErrorState` and toast. A host with its own error-reporting
+     * (Sentry, a status bar) hooks in here instead of re-deriving failure from
+     * the panel's render output.
+     */
+    onError?: (err: Error) => void;
 }
 
 export declare interface ActivityResponse {
@@ -5936,7 +5944,7 @@ export declare interface DotMeterProps {
 
 export declare type DotMeterTone = 'code' | 'surface';
 
-export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, docked, actions, className, bodyClassName, 'aria-label': ariaLabel, 'data-testid': testId, }: DrawerProps): default_2.JSX.Element | null;
+export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, docked, actions, className, bodyClassName, 'aria-label': ariaLabel, 'data-testid': testId, closeLabel, modal, trapFocus, backdrop, }: DrawerProps): default_2.JSX.Element | null;
 
 export declare interface DrawerProps {
     open: boolean;
@@ -5977,6 +5985,36 @@ export declare interface DrawerProps {
      */
     'aria-label'?: string;
     'data-testid'?: string;
+    /**
+     * Accessible name for the built-in close button. Defaults to `"Close"`.
+     * Set this when a host's own tests (or design system) key on a specific
+     * label — e.g. `aria-label="Close panel"` — instead of forking the whole
+     * component the way a local `Panel.tsx` had to.
+     */
+    closeLabel?: string;
+    /**
+     * Dialog semantics for the floating form: `role="dialog"`, `aria-modal`,
+     * and Escape closes it (when this is the top overlay layer). `false`
+     * drops all three — the panel renders `role="complementary"`, the same
+     * non-modal role a docked Drawer uses, and Escape no longer closes it.
+     * Ignored when `docked` (already non-modal). Default `true`.
+     */
+    modal?: boolean;
+    /**
+     * Tab-trap the panel and move focus into it on open, restoring it on
+     * close. `false` leaves focus wherever the host's own handling put it —
+     * for a floating panel driven by direct DOM dispatch rather than real
+     * keyboard navigation. Ignored when `docked` (never traps). Default
+     * `true`.
+     */
+    trapFocus?: boolean;
+    /**
+     * Render the dimmed backdrop behind the floating panel, and close on a
+     * click through it. `false` renders the panel with nothing behind it —
+     * what a local `Panel.tsx` did before Drawer replaced it. Ignored when
+     * `docked` (never has one). Default `true`.
+     */
+    backdrop?: boolean;
 }
 
 export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerTabIndex, triggerTestId, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
@@ -18306,19 +18344,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -18338,9 +18363,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -18374,9 +18422,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -18390,16 +18438,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

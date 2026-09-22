@@ -83,6 +83,15 @@ describe('Drawer docked', () => {
     expect(screen.getByRole('complementary', { name: 'Chat' })).toBeInTheDocument();
   });
 
+  it('honors closeLabel docked too, so both forms stay in sync', () => {
+    render(
+      <Drawer open docked onClose={() => {}} title="Panel" closeLabel="Close panel">
+        body
+      </Drawer>,
+    );
+    expect(screen.getByRole('button', { name: 'Close panel' })).toBeInTheDocument();
+  });
+
   it('renders a footer when given one', () => {
     render(
       <Drawer open docked onClose={() => {}} title="Panel" footer={<span>3 items</span>}>
