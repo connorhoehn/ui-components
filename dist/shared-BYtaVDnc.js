@@ -39,7 +39,7 @@ import "./InlineAlert-CRnIKeAF.js";
 import "./CardHeader-CsPhVpCm.js";
 import "./PageHeader-BXnDYvJd.js";
 import "./Badge-Fdgqmkuz.js";
-import "./Tooltip-CCo-wyXU.js";
+import "./Tooltip-BY3zlDbC.js";
 import "./RisingParticles-DqlZf8HC.js";
 import "./ParticlesBackground-FVwsOHUB.js";
 import "./RippleGridBackground-DKswGKCC.js";

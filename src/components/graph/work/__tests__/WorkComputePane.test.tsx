@@ -130,6 +130,18 @@ describe('the compute-session detail pane', () => {
     expect(within(tail).getByText('lines 1–80')).toBeInTheDocument();
   });
 
+  // Regression: LogStream's own Card wrapper used to paint `bg-surface`
+  // regardless of the `tone` passed to it, so the Activity tab's "transparent
+  // while working" tone still left an opaque light slab over the star field —
+  // the Card sat behind the (correctly transparent) scroll region.
+  it('keeps the stream container free of bg-surface while the session is working, and restores it once idle', () => {
+    const { rerender } = render(<Harness entity={node()} detail={{ compute: compute({ status: 'running' }) }} />);
+    expect(screen.getByTestId('work-compute-pane-stream')).not.toHaveClass('bg-surface');
+
+    rerender(<Harness entity={node()} detail={{ compute: compute({ status: 'done' }) }} />);
+    expect(screen.getByTestId('work-compute-pane-stream')).toHaveClass('bg-surface');
+  });
+
   it('opens the shell tab on the primary action and offers the digest until a URL is minted', () => {
     const data = compute();
     render(<Harness entity={node()} detail={{ compute: data }} />);

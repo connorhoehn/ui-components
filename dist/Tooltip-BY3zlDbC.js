@@ -55,7 +55,7 @@ function h({ lines: r, follow: a = !0, showTimestamp: o = !0, showLevel: l = !0,
 	});
 	return /* @__PURE__ */ d(t, {
 		"data-testid": C,
-		className: e("flex flex-col", x),
+		className: e("flex flex-col", y === "transparent" && "border-transparent bg-transparent", x),
 		style: S,
 		children: [h !== null && /* @__PURE__ */ u("div", {
 			className: "px-4 py-3 border-b border-[var(--color-border)]",

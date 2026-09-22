@@ -3,7 +3,7 @@ import { t } from "./IconButton-C3DMtvSx.js";
 import { D as n, l as r } from "./DropdownMenu-DG43DgE_.js";
 import { t as i } from "./Stack-CkiMw5K0.js";
 import { t as a } from "./EmptyState-JzzL2z1E.js";
-import { t as o } from "./Tooltip-CCo-wyXU.js";
+import { t as o } from "./Tooltip-BY3zlDbC.js";
 import { createContext as s, useContext as c, useMemo as l, useState as u } from "react";
 import { Fragment as d, jsx as f, jsxs as p } from "react/jsx-runtime";
 //#region src/components/social/ChatSidePanelRegistry.tsx

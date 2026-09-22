@@ -13,7 +13,7 @@ import { t as m } from "./Input-DLknWXri.js";
 import { t as h } from "./Avatar--J6_yD4M.js";
 import { t as g } from "./TitledFrame-DUsxfZCI.js";
 import { t as _ } from "./InlineAlert-CRnIKeAF.js";
-import { n as v, t as y } from "./Tooltip-CCo-wyXU.js";
+import { n as v, t as y } from "./Tooltip-BY3zlDbC.js";
 import { n as b, t as x } from "./ParticlesBackground-FVwsOHUB.js";
 import { n as S, t as C } from "./RippleGridBackground-DKswGKCC.js";
 import { t as w } from "./StatusPill-Db42eiME.js";
@@ -21,7 +21,7 @@ import { t as T } from "./Select-CqVokE2v.js";
 import { t as E } from "./Checkbox-DqN9RkXK.js";
 import { t as D } from "./formatBytes-05ivRSJY.js";
 import { c as O, n as k, s as A } from "./useComputeProjects-DTAaTTde.js";
-import { n as j } from "./ChatSidePanelRegistry-qWvuehX-.js";
+import { n as j } from "./ChatSidePanelRegistry-BHkVRfkU.js";
 /* empty css               */
 import { t as M } from "./AnimatedEdge-OTHCEYJd.js";
 import { Suspense as N, lazy as P, useCallback as F, useEffect as I, useId as L, useMemo as R, useRef as z, useState as B } from "react";

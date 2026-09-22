@@ -147,7 +147,18 @@ export function LogStream({
   return (
     <Card
       data-testid={testId}
-      className={cn('flex flex-col', className)}
+      className={cn(
+        'flex flex-col',
+        // Card's own base classes paint `bg-surface` unconditionally, which
+        // would sit *behind* the scroll region below and show straight
+        // through it once that region goes `bg-transparent` — the whole
+        // point of `tone="transparent"` is a log floating over a surface
+        // that owns its own background (a working-state particle field),
+        // so the Card wrapping it has to go transparent too, not just the
+        // strip inside it.
+        tone === 'transparent' && 'border-transparent bg-transparent',
+        className,
+      )}
       style={style}
     >
       {title !== null && (

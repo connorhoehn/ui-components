@@ -121,6 +121,18 @@ describe('LogStream', () => {
     expect(scroll).toHaveClass('bg-surface-inset', 'text-text-primary');
     expect(scroll).not.toHaveClass('bg-[var(--color-surface-subtle,#0b1020)]');
   });
+
+  it('paints the outer Card with bg-surface by default (tone="code")', () => {
+    render(<LogStream lines={sample} />);
+    expect(screen.getByTestId('log-stream')).toHaveClass('bg-surface');
+  });
+
+  it('strips bg-surface off the outer Card when tone="transparent" — the Card sits behind the scroll region and would otherwise show through it as an opaque slab', () => {
+    render(<LogStream lines={sample} tone="transparent" />);
+    const card = screen.getByTestId('log-stream');
+    expect(card).not.toHaveClass('bg-surface');
+    expect(card).toHaveClass('bg-transparent');
+  });
 });
 
 // ---------------------------------------------------------------------------

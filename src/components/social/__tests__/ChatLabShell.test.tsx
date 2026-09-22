@@ -153,6 +153,24 @@ describe('ChatLabShell', () => {
     // Held for the crossfade, but already on its way out.
     expect(screen.getByTestId('chat-lab-shell-particles-backdrop').className).toContain('opacity-0');
   });
+
+  // Regression: the stream's own Card wrapper used to paint `bg-surface`
+  // regardless of LogStream's `tone`, so the "transparent while working" prop
+  // still left an opaque light slab over the star field — the Card sat behind
+  // the (correctly transparent) scroll region and showed straight through it.
+  it('keeps the stream container free of bg-surface while the loop is working, and restores it once idle', () => {
+    for (const status of ['planning', 'starting', 'running'] as const) {
+      const { unmount } = renderShell({ status });
+      expect(screen.getByTestId('chat-lab-shell-stream')).not.toHaveClass('bg-surface');
+      unmount();
+    }
+
+    for (const status of ['done', 'failed', 'stopped', 'waiting', 'budget'] as const) {
+      const { unmount } = renderShell({ status });
+      expect(screen.getByTestId('chat-lab-shell-stream')).toHaveClass('bg-surface');
+      unmount();
+    }
+  });
 });
 
 describe('ChatLabPill', () => {

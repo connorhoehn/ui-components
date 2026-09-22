@@ -17,7 +17,7 @@ import { t as N } from "./DotMeter-BDVkadI8.js";
 import { n as P, r as F, t as I } from "./PopoverForm-Oa4JpKOc.js";
 import { n as L, t as R } from "./SearchInput-Y-j1He57.js";
 import { t as z } from "./InlineAlert-CRnIKeAF.js";
-import { n as B } from "./Tooltip-CCo-wyXU.js";
+import { n as B } from "./Tooltip-BY3zlDbC.js";
 import { n as V, t as H } from "./ParticlesBackground-FVwsOHUB.js";
 import { t as U } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as ee } from "./Select-CqVokE2v.js";
@@ -28,7 +28,7 @@ import { n as ue, t as de } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as fe, t as pe } from "./composerCommands-DXer0id_.js";
 import "./ComposerReferences-DOYqoE6C.js";
 import { c as me, n as he } from "./useComputeProjects-DTAaTTde.js";
-import "./ChatSidePanelRegistry-qWvuehX-.js";
+import "./ChatSidePanelRegistry-BHkVRfkU.js";
 import { Suspense as ge, createContext as _e, lazy as ve, useCallback as G, useContext as ye, useEffect as K, useId as be, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 //#region src/components/hangout/InviteCandidateList.tsx
