@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, type ReactNode } from 'react';
 import type { NodeType, PipelineEdge, StepExecution } from '../../../types/pipeline';
 import { StepThread } from './StepThread';
 
@@ -10,6 +10,17 @@ export interface StepTreeProps {
   onResumeFromStep?: (stepId: string) => void;
   /** Forwarded to every step: click-through for the artifacts a step produced. */
   onArtifactClick?: (imageId: string) => void;
+  /**
+   * Extra content for a step, rendered in its row under the summary and
+   * outside the disclosure — the thing that step PRODUCED (a deck, a meeting,
+   * an agenda). Called for every step; return `null` for the ones with
+   * nothing to show.
+   *
+   * Hosts were rendering those cards in a section above the tree, which put
+   * the output of step 4 above step 1 and left the row that made it showing
+   * only a duration.
+   */
+  renderStepDetail?: (step: StepExecution, stepId: string) => ReactNode;
 }
 
 export interface StepTreeNode {
@@ -46,7 +57,7 @@ function stepStartMs(step: StepExecution): number {
   return Number.POSITIVE_INFINITY;
 }
 
-export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep, onArtifactClick }: StepTreeProps) {
+export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail }: StepTreeProps) {
   const tree = useMemo(() => {
     const sorted = Object.entries(steps).sort(([, a], [, b]) => {
       const aT = stepStartMs(a);
@@ -186,6 +197,7 @@ export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeF
             nodeConfig={resolveNode(node.stepId)?.data}
             onRetryFromStep={onRetryFromStep}
             onResumeFromStep={onResumeFromStep}
+            renderStepDetail={renderStepDetail}
           />
           {node.children.length > 0 && (
             <div className="ml-9 pl-5 border-l-2 border-dashed border-border mb-1">

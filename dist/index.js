@@ -76,7 +76,7 @@ import { A as xa, B as Sa, C as Ca, D as wa, E as Ta, F as Ea, G as Da, H as Oa,
 import { $ as yo, A as bo, B as xo, C as So, D as Co, E as wo, F as To, G as Eo, H as Do, I as Oo, J as ko, K as Ao, L as jo, M as Mo, N as No, O as Po, P as Fo, Q as Io, R as Lo, S as Ro, T as zo, U as Bo, V as Vo, W as Ho, X as Uo, Y as Wo, Z as Go, _ as Ko, a as qo, at as Jo, b as Yo, c as Xo, d as Zo, et as Qo, f as $o, g as es, h as ts, i as ns, it as rs, j as is, k as as, l as os, m as ss, n as cs, nt as ls, o as us, p as ds, q as fs, r as ps, rt as ms, s as hs, t as gs, tt as _s, u as vs, v as ys, w as bs, x as xs, y as Ss, z as Cs } from "./ConversationSurface-DxSJvOqT.js";
 import { t as U } from "./activationKey-CjbL3LUv.js";
 import { B as ws, C as Ts, D as Es, E as Ds, F as Os, I as ks, L as As, M as js, N as Ms, O as Ns, P as Ps, R as Fs, S as Is, T as Ls, V as Rs, _ as zs, a as Bs, b as Vs, c as Hs, d as Us, f as Ws, g as Gs, h as Ks, i as qs, j as Js, l as Ys, m as Xs, n as Zs, o as Qs, p as $s, r as ec, s as tc, t as nc, u as rc, v as ic, w as ac, x as oc, y as sc, z as cc } from "./renderers-5O9bh08s.js";
-import { A as lc, C as uc, D as dc, E as fc, F as pc, I as mc, L as hc, M as gc, O as _c, P as vc, S as yc, T as bc, b as xc, h as Sc, j as Cc, k as wc, s as Tc, t as Ec, w as Dc, x as Oc } from "./PresentationEditor-Dolnerjb.js";
+import { A as lc, C as uc, D as dc, E as fc, F as pc, I as mc, L as hc, M as gc, O as _c, P as vc, S as yc, T as bc, b as xc, h as Sc, j as Cc, k as wc, s as Tc, t as Ec, w as Dc, x as Oc } from "./PresentationEditor-BiSDmZeA.js";
 import { n as kc, r as Ac, t as jc } from "./EventStreamContext-CLzG8O5_.js";
 import { J as Mc, S as Nc, X as Pc, Z as Fc, _ as Ic, b as Lc, c as Rc, d as zc, f as Bc, g as Vc, h as Hc, j as Uc, k as Wc, m as Gc, n as Kc, nt as qc, p as Jc, q as Yc, rt as Xc, t as Zc, u as Qc, v as $c, w as el, y as tl, z as nl } from "./services-CwJ5tpy0.js";
 import { n as rl, t as il } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1183,7 +1183,7 @@ function Cp() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var wp = Pf(() => import("./DocumentEditorPage-BR-88ZGb.js").then((e) => e.n));
+var wp = Pf(() => import("./DocumentEditorPage-yAqQGUyC.js").then((e) => e.n));
 function Tp({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

@@ -198,3 +198,44 @@ describe('PresentationView keyboard paging', () => {
     expect(onSlideChange).not.toHaveBeenCalled();
   });
 });
+
+// In a wide, short pane the frame used to stretch to the full width while the
+// slide inside stayed its natural size — 1,100px of grey around a ~600px deck
+// on the host's pipeline run card.
+describe('PresentationView slide frame', () => {
+  it('caps the frame to 16:9 of the available height', () => {
+    view();
+    const stage = screen.getByTestId('presentation-view-stage');
+    expect(stage.className).toContain('aspect-[16/9]');
+    // Height binds, width follows — the opposite of stretching to the pane.
+    expect(stage.className).toContain('h-full');
+    expect(stage.className).toContain('w-auto');
+  });
+
+  it('never outgrows a narrow pane, so that case is unchanged', () => {
+    view();
+    expect(screen.getByTestId('presentation-view-stage').className).toContain('max-w-full');
+  });
+
+  it('centres the frame once it stops growing', () => {
+    view();
+    const row = screen.getByTestId('presentation-view-stage').parentElement!;
+    expect(row.className).toContain('justify-center');
+  });
+
+  it('takes an explicit maxSlideWidth', () => {
+    view({ maxSlideWidth: 720 });
+    expect(screen.getByTestId('presentation-view-stage')).toHaveStyle({ maxWidth: '720px' });
+  });
+
+  it('sets no max-width of its own without the prop', () => {
+    view();
+    expect(screen.getByTestId('presentation-view-stage').style.maxWidth).toBe('');
+  });
+
+  it('still shows the slide and its position', () => {
+    view({ slideIndex: 2, maxSlideWidth: 720 });
+    expect(screen.getByAltText('Slide 2')).toBeInTheDocument();
+    expect(screen.getByTestId('presentation-view-position')).toHaveTextContent('Slide 2 of 3');
+  });
+});

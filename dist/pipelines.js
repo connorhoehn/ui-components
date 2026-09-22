@@ -19569,45 +19569,45 @@ function Qu(e, t) {
 		...n && t ? { imageUrl: t(n) } : {}
 	};
 }
-function $u({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryFromStep: o, onResumeFromStep: s, onArtifactClick: c }) {
-	let [l, u] = V(!1), [d, f] = V("Copy JSON"), p = Ke(), m = L(() => {
+function $u({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryFromStep: o, onResumeFromStep: s, onArtifactClick: c, renderStepDetail: l }) {
+	let [u, d] = V(!1), f = l?.(t, e), [p, m] = V("Copy JSON"), h = Ke(), g = L(() => {
 		let e = t.output;
 		e && navigator.clipboard.writeText(JSON.stringify(e, null, 2)).then(() => {
-			f("Copied!"), setTimeout(() => f("Copy JSON"), 1e3);
+			m("Copied!"), setTimeout(() => m("Copy JSON"), 1e3);
 		});
-	}, [t.output]), h = t.output, g = h?.response, _ = t.llm, v = t.input, y = Xu[t.status] ?? "var(--color-text-tertiary)";
+	}, [t.output]), _ = t.output, v = _?.response, y = t.llm, b = t.input, x = Xu[t.status] ?? "var(--color-text-tertiary)";
 	return /* @__PURE__ */ W("div", {
 		className: "relative pl-9 mb-1",
 		children: [
 			/* @__PURE__ */ U("div", {
 				className: "absolute left-[10px] top-[14px] w-3 h-3 rounded-full border-2 border-white z-[1] shadow-[0_0_0_1px_var(--color-border)]",
-				style: { background: y }
+				style: { background: x }
 			}),
 			/* @__PURE__ */ W("div", {
-				onClick: () => u(!l),
-				"aria-expanded": l,
+				onClick: () => d(!u),
+				"aria-expanded": u,
 				role: "button",
 				tabIndex: 0,
 				onKeyDown: (e) => {
-					(e.key === "Enter" || e.key === " ") && (e.preventDefault(), u(!l));
+					(e.key === "Enter" || e.key === " ") && (e.preventDefault(), d(!u));
 				},
 				"data-testid": `step-row-${e}`,
 				"data-node-type": i,
-				className: n("flex items-center gap-2.5 px-3.5 py-2.5 cursor-pointer transition-colors duration-100", l ? "bg-surface-inset rounded-t-lg" : "bg-surface rounded-lg"),
+				className: n("flex items-center gap-2.5 px-3.5 py-2.5 cursor-pointer transition-colors duration-100", u ? "bg-surface-inset rounded-t-lg" : "bg-surface rounded-lg"),
 				style: {
-					border: `1px solid ${l ? y + "40" : "var(--color-border)"}`,
-					...l ? { borderRadius: "8px 8px 0 0" } : {}
+					border: `1px solid ${u ? x + "40" : "var(--color-border)"}`,
+					...u ? { borderRadius: "8px 8px 0 0" } : {}
 				},
 				children: [
 					/* @__PURE__ */ U("span", {
 						"aria-hidden": "true",
-						className: n("text-[10px] text-text-tertiary shrink-0 transition-transform duration-150", l && "rotate-90"),
+						className: n("text-[10px] text-text-tertiary shrink-0 transition-transform duration-150", u && "rotate-90"),
 						children: "▶"
 					}),
 					/* @__PURE__ */ U("span", {
 						"aria-label": `Status: ${t.status}`,
 						className: "text-[10px] font-bold text-white px-1.5 py-0.5 rounded-[3px] uppercase shrink-0",
-						style: { background: y },
+						style: { background: x },
 						children: t.status
 					}),
 					/* @__PURE__ */ W("span", {
@@ -19633,19 +19633,24 @@ function $u({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 						className: "text-[10px] font-semibold font-mono px-1.5 py-px rounded-[3px] bg-warning-bg text-warning-fg shrink-0",
 						children: ["×", t.attempts?.length]
 					}),
-					_ && /* @__PURE__ */ W("span", {
+					y && /* @__PURE__ */ W("span", {
 						className: "text-[10px] text-text-tertiary font-mono",
-						children: [_.tokensIn + _.tokensOut, " tok"]
+						children: [y.tokensIn + y.tokensOut, " tok"]
 					}),
-					h?.tokensIn != null && !_ && /* @__PURE__ */ W("span", {
+					_?.tokensIn != null && !y && /* @__PURE__ */ W("span", {
 						className: "text-[10px] text-text-tertiary font-mono",
-						children: [Zu(h.tokensIn) + Zu(h.tokensOut), " tok"]
+						children: [Zu(_.tokensIn) + Zu(_.tokensOut), " tok"]
 					})
 				]
 			}),
-			l && /* @__PURE__ */ W("div", {
+			f != null && f !== !1 && /* @__PURE__ */ U("div", {
+				className: "mt-1",
+				"data-testid": `step-detail-${e}`,
+				children: f
+			}),
+			u && /* @__PURE__ */ W("div", {
 				className: "border-t-0 rounded-b-lg bg-surface overflow-hidden",
-				style: { border: `1px solid ${y}40` },
+				style: { border: `1px solid ${x}40` },
 				children: [
 					/* @__PURE__ */ U(Au, {
 						title: "Execution Timeline",
@@ -19697,7 +19702,7 @@ function $u({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 										})
 									]
 								}),
-								_?.streamOpened && /* @__PURE__ */ W("tr", {
+								y?.streamOpened && /* @__PURE__ */ W("tr", {
 									className: "border-b border-border",
 									children: [
 										/* @__PURE__ */ U("td", {
@@ -19717,7 +19722,7 @@ function $u({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 										})
 									]
 								}),
-								_?.firstTokenLatencyMs != null && /* @__PURE__ */ W("tr", {
+								y?.firstTokenLatencyMs != null && /* @__PURE__ */ W("tr", {
 									className: "border-b border-border",
 									children: [
 										/* @__PURE__ */ U("td", {
@@ -19731,7 +19736,7 @@ function $u({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 											className: "px-2 py-[5px] text-[11px] text-text-secondary align-top",
 											children: [
 												"+",
-												_.firstTokenLatencyMs,
+												y.firstTokenLatencyMs,
 												"ms"
 											]
 										}),
@@ -19801,26 +19806,26 @@ function $u({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 							children: "No configuration"
 						})
 					}),
-					v && Object.keys(v).length > 0 && /* @__PURE__ */ U(Au, {
+					b && Object.keys(b).length > 0 && /* @__PURE__ */ U(Au, {
 						title: "Runtime Input",
 						children: /* @__PURE__ */ U("pre", {
 							className: "m-0 px-3 py-2 bg-surface-inset border border-border rounded-md text-[11px] font-mono text-text-secondary whitespace-pre-wrap break-words max-h-[300px] overflow-auto",
-							children: JSON.stringify(v, null, 2)
+							children: JSON.stringify(b, null, 2)
 						})
 					}),
-					_?.prompt && /* @__PURE__ */ U(Au, {
+					y?.prompt && /* @__PURE__ */ U(Au, {
 						title: "Resolved Prompt",
 						children: /* @__PURE__ */ U("div", {
 							className: "px-3.5 py-2.5 bg-surface-inset border border-border rounded-md text-[13px] text-text-primary whitespace-pre-wrap break-words leading-[1.6] max-h-[400px] overflow-auto",
-							children: _.prompt
+							children: y.prompt
 						})
 					}),
-					p && t.images && t.images.length > 0 && /* @__PURE__ */ U(Au, {
+					h && t.images && t.images.length > 0 && /* @__PURE__ */ U(Au, {
 						title: `Produced images (${t.images.length})`,
 						children: /* @__PURE__ */ U("div", {
 							className: "flex flex-wrap gap-2",
 							children: t.images.map((e) => {
-								let t = e.bbox ? `[${e.bbox.x},${e.bbox.y} ${e.bbox.width}×${e.bbox.height}]` : `${e.width}×${e.height}`, n = p(e.imageId), r = /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("img", {
+								let t = e.bbox ? `[${e.bbox.x},${e.bbox.y} ${e.bbox.width}×${e.bbox.height}]` : `${e.width}×${e.height}`, n = h(e.imageId), r = /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("img", {
 									src: n,
 									alt: `Produced image ${e.imageId}`,
 									loading: "lazy",
@@ -19850,15 +19855,15 @@ function $u({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 							})
 						})
 					}),
-					g || _?.response ? /* @__PURE__ */ U(Au, {
+					v || y?.response ? /* @__PURE__ */ U(Au, {
 						title: "Response",
 						children: /* @__PURE__ */ U("div", {
 							className: "px-3.5 py-2.5 bg-surface-inset border border-border rounded-md text-[13px] text-text-primary whitespace-pre-wrap break-words leading-[1.6] max-h-[400px] overflow-auto",
-							children: g ?? _?.response
+							children: v ?? y?.response
 						})
-					}) : zu(h) ? /* @__PURE__ */ U(qu, {
+					}) : zu(_) ? /* @__PURE__ */ U(qu, {
 						stepId: e,
-						output: h,
+						output: _,
 						startedAt: t.startedAt,
 						completedAt: t.completedAt
 					}) : t.status === "running" && (t.agentLive || i === "agent") ? /* @__PURE__ */ U(qu, {
@@ -19866,32 +19871,32 @@ function $u({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 						output: Hu(t.agentLive?.toolCalls ?? []),
 						startedAt: t.startedAt,
 						live: !0
-					}) : h && Ru(h) === "vision" ? /* @__PURE__ */ W(Au, {
+					}) : _ && Ru(_) === "vision" ? /* @__PURE__ */ W(Au, {
 						title: "Vision result",
 						children: [/* @__PURE__ */ W("button", {
 							type: "button",
-							onClick: m,
+							onClick: g,
 							className: "mb-1.5 px-2 py-[3px] text-[11px] font-medium border border-border-field rounded bg-transparent cursor-pointer font-[inherit] text-text-secondary",
-							children: ["📋 ", d]
-						}), /* @__PURE__ */ U(Oc, { result: Qu(h, p) })]
+							children: ["📋 ", p]
+						}), /* @__PURE__ */ U(Oc, { result: Qu(_, h) })]
 					}) : /* @__PURE__ */ U(Au, {
 						title: "Output",
-						children: h && Object.keys(h).length > 0 ? /* @__PURE__ */ U("pre", {
+						children: _ && Object.keys(_).length > 0 ? /* @__PURE__ */ U("pre", {
 							className: "m-0 px-3 py-2 bg-surface-inset border border-border rounded-md text-[11px] font-mono text-text-secondary whitespace-pre-wrap break-words max-h-[300px] overflow-auto",
-							children: JSON.stringify(h, null, 2)
+							children: JSON.stringify(_, null, 2)
 						}) : /* @__PURE__ */ U("span", {
 							className: "text-xs text-text-tertiary italic",
 							children: "No output data"
 						})
 					}),
-					(_ || h?.tokensIn != null) && /* @__PURE__ */ U(Au, {
+					(y || _?.tokensIn != null) && /* @__PURE__ */ U(Au, {
 						title: "Token Usage",
 						children: /* @__PURE__ */ W("div", {
 							className: "flex gap-5 flex-wrap text-xs text-text-secondary",
 							children: [
-								/* @__PURE__ */ W("span", { children: ["Tokens in: ", /* @__PURE__ */ U("strong", { children: String(_?.tokensIn ?? h?.tokensIn ?? "—") })] }),
-								/* @__PURE__ */ W("span", { children: ["Tokens out: ", /* @__PURE__ */ U("strong", { children: String(_?.tokensOut ?? h?.tokensOut ?? "—") })] }),
-								_?.firstTokenLatencyMs != null && /* @__PURE__ */ W("span", { children: ["First token: ", /* @__PURE__ */ W("strong", { children: [_.firstTokenLatencyMs, "ms"] })] })
+								/* @__PURE__ */ W("span", { children: ["Tokens in: ", /* @__PURE__ */ U("strong", { children: String(y?.tokensIn ?? _?.tokensIn ?? "—") })] }),
+								/* @__PURE__ */ W("span", { children: ["Tokens out: ", /* @__PURE__ */ U("strong", { children: String(y?.tokensOut ?? _?.tokensOut ?? "—") })] }),
+								y?.firstTokenLatencyMs != null && /* @__PURE__ */ W("span", { children: ["First token: ", /* @__PURE__ */ W("strong", { children: [y.firstTokenLatencyMs, "ms"] })] })
 							]
 						})
 					}),
@@ -19941,8 +19946,8 @@ function ed(e) {
 	}
 	return Infinity;
 }
-function td({ steps: e, nodeDataMap: t, edges: n, onRetryFromStep: r, onResumeFromStep: i, onArtifactClick: a }) {
-	let o = z(() => {
+function td({ steps: e, nodeDataMap: t, edges: n, onRetryFromStep: r, onResumeFromStep: i, onArtifactClick: a, renderStepDetail: o }) {
+	let s = z(() => {
 		let r = Object.entries(e).sort(([, e], [, t]) => {
 			let n = ed(e), r = ed(t);
 			return n === r ? 0 : n < r ? -1 : 1;
@@ -20020,40 +20025,41 @@ function td({ steps: e, nodeDataMap: t, edges: n, onRetryFromStep: r, onResumeFr
 		e,
 		t,
 		n
-	]), s = (e) => {
+	]), c = (e) => {
 		if (t[e]) return t[e];
 		let n = e.lastIndexOf(":");
 		if (n > 0 && /^\d+$/.test(e.slice(n + 1))) return t[e.slice(0, n)];
 	};
-	function c(e, t) {
+	function l(e, t) {
 		let n = t;
 		return e.map((e) => {
-			let t = n++, o = /* @__PURE__ */ new Map();
+			let t = n++, s = /* @__PURE__ */ new Map();
 			for (let t of e.children) {
 				let e = t.branch ?? "default";
-				o.has(e) || o.set(e, []), o.get(e).push(t);
+				s.has(e) || s.set(e, []), s.get(e).push(t);
 			}
 			return /* @__PURE__ */ W(ot.Fragment, { children: [/* @__PURE__ */ U($u, {
 				onArtifactClick: a,
 				stepId: e.stepId,
 				step: e.step,
 				index: t,
-				nodeType: s(e.stepId)?.type ?? "unknown",
-				nodeConfig: s(e.stepId)?.data,
+				nodeType: c(e.stepId)?.type ?? "unknown",
+				nodeConfig: c(e.stepId)?.data,
 				onRetryFromStep: r,
-				onResumeFromStep: i
+				onResumeFromStep: i,
+				renderStepDetail: o
 			}), e.children.length > 0 && /* @__PURE__ */ U("div", {
 				className: "ml-9 pl-5 border-l-2 border-dashed border-border mb-1",
-				children: Array.from(o.entries()).map(([e, t], r) => /* @__PURE__ */ W("div", { children: [/* @__PURE__ */ U("div", {
+				children: Array.from(s.entries()).map(([e, t], r) => /* @__PURE__ */ W("div", { children: [/* @__PURE__ */ U("div", {
 					className: `text-[10px] font-semibold text-text-tertiary uppercase pt-1 pb-0.5 ${r === 0 ? "mt-1" : "mt-2"}`,
 					children: e.replace("-", " ")
-				}), c(t, n)] }, e))
+				}), l(t, n)] }, e))
 			})] }, e.stepId);
 		});
 	}
 	return /* @__PURE__ */ W("div", {
 		className: "relative",
-		children: [/* @__PURE__ */ U("div", { className: "absolute left-[15px] top-6 bottom-6 w-0.5 bg-border rounded-sm" }), c(o, 0)]
+		children: [/* @__PURE__ */ U("div", { className: "absolute left-[15px] top-6 bottom-6 w-0.5 bg-border rounded-sm" }), l(s, 0)]
 	});
 }
 //#endregion
@@ -23018,4 +23024,4 @@ function Df(e, t) {
 	};
 }
 //#endregion
-export { qt as ActionNode, ms as AdjustBwConfig, Dn as AdjustBwNode, Ms as AdjustLayerConfig, kn as AdjustLayerNode, ln as AgUiOutputNode, tn as AgentNode, $d as AggregateSummaryCard, Cd as AllRunsPage, it as AnimatedEdge, en as ApprovalNode, q as BaseNode, vc as CaptionPanel, Gt as ConditionNode, X as ConfigField, _a as ConfigSection, qa as ContextVariablePicker, Kd as CriteriaPanel, fs as CropConfig, En as CropNode, Ps as DimensionsConfig, An as DimensionsNode, ic as EditPromptConfig, Jn as EditPromptNode, Dc as EditRecommendationsPanel, ae as EventStreamProvider, bd as ExecutorLog, Yt as ForkNode, Ko as FormatConvertConfig, Sn as FormatConvertNode, $s as GenerateConfig, Un as GenerateNode, an as GraphQueryNode, sn as GuardrailNode, yf as ImageLineageGraph, oc as ImageSourceConfig, dn as ImageSourceNode, bc as ImageWithBBoxOverlay, Qt as JoinNode, Yd as JudgmentApiProvider, Zd as JudgmentResultViewer, ef as JudgmentTrendChart, rn as KnowledgeBaseNode, Vt as LLMNode, nn as McpToolNode, on as MemoryNode, Pt as NODE_CATEGORIES, Rc as NODE_TYPES_WITHOUT_CONFIG, va as NodeConfigShell, Er as NodePalette, mn as NodeThumbStrip, Cc as ObjectsPanel, mr as PALETTE_ITEMS, Ft as PORT_CLS, Ud as PendingApprovalsPage, Sc as PeoplePanel, Wr as PipelineCanvas, ye as PipelineEditorContext, ol as PipelineEditorPage, xe as PipelineEditorProvider, Ye as PipelineEditorServicesProvider, le as PipelineNodeRuntimeProvider, xd as PipelineRunReplayPage, Ou as PipelineRunsPage, Ce as PipelineRunsProvider, Ld as PipelineStatsPage, Zl as PipelinesPage, cn as PolicyNode, Lo as ResizeConfig, vn as ResizeNode, ya as SamplePills, cc as SaveConfig, hn as SaveNode, Fo as ScatterConfig, _n as ScatterNode, Jt as ServerStepNode, qo as SharpenConfig, Cn as SharpenNode, Oa as SourceImagePathField, Fu as StepAttempts, Au as StepSection, $u as StepThread, td as StepTree, wc as TagsPanel, ka as ToggleField, Ho as TransformGeoConfig, bn as TransformGeoNode, Ut as TransformNode, Rt as TriggerNode, Is as UpscaleConfig, jn as UpscaleNode, nc as VariationConfig, Gn as VariationNode, Gd as VerdictPanel, Gs as VisionClassifyConfig, Ln as VisionClassifyNode, Vs as VisionConfig, Ks as VisionDescribeConfig, Rn as VisionDescribeNode, Js as VisionExtractTextConfig, Bn as VisionExtractTextNode, In as VisionNode, Oc as VisionResultViewer, Ju as VisionRunCard, Us as VisionTagConfig, zn as VisionTagNode, Yo as WatermarkConfig, wn as WatermarkNode, Sa as availableContextPaths, Ta as availableImageRefs, J as categoryFor, Tf as clearImageLineageCache, ba as contextContributions, xc as imageOverlayPropsFrom, Yn as nodeTypes, Y as portCls, br as recordRecentType, Ca as unresolvedTemplatePaths, xa as upstreamNodeIds, P as useEventStream, F as useEventStreamContext, Df as useImageLineage, Ve as useImageUrl, Ke as useImageUrlOptional, ze as useIsNodeTypeExecutable, af as useJudgmentAggregates, Xd as useJudgmentApi, rf as useJudgmentResults, I as useLatestStepForNode, de as usePipelineEditor, Ne as usePipelineEditorServices, be as usePipelineNodeRuntime, $e as usePipelineRuns, we as useRetryFromStep, Ea as useUpstreamContext, Da as useUpstreamImageRefs, Yu as useVisionResults, Be as useWebhookRelay };
+export { qt as ActionNode, ms as AdjustBwConfig, Dn as AdjustBwNode, Ms as AdjustLayerConfig, kn as AdjustLayerNode, ln as AgUiOutputNode, tn as AgentNode, $d as AggregateSummaryCard, Cd as AllRunsPage, it as AnimatedEdge, en as ApprovalNode, q as BaseNode, vc as CaptionPanel, Gt as ConditionNode, X as ConfigField, _a as ConfigSection, qa as ContextVariablePicker, Kd as CriteriaPanel, fs as CropConfig, En as CropNode, Ps as DimensionsConfig, An as DimensionsNode, ic as EditPromptConfig, Jn as EditPromptNode, Dc as EditRecommendationsPanel, ae as EventStreamProvider, bd as ExecutorLog, Yt as ForkNode, Ko as FormatConvertConfig, Sn as FormatConvertNode, $s as GenerateConfig, Un as GenerateNode, an as GraphQueryNode, sn as GuardrailNode, yf as ImageLineageGraph, oc as ImageSourceConfig, dn as ImageSourceNode, bc as ImageWithBBoxOverlay, Qt as JoinNode, Yd as JudgmentApiProvider, Zd as JudgmentResultViewer, ef as JudgmentTrendChart, rn as KnowledgeBaseNode, Vt as LLMNode, nn as McpToolNode, on as MemoryNode, Pt as NODE_CATEGORIES, Rc as NODE_TYPES_WITHOUT_CONFIG, va as NodeConfigShell, Er as NodePalette, mn as NodeThumbStrip, Cc as ObjectsPanel, mr as PALETTE_ITEMS, Ft as PORT_CLS, Ud as PendingApprovalsPage, Sc as PeoplePanel, Wr as PipelineCanvas, ye as PipelineEditorContext, ol as PipelineEditorPage, xe as PipelineEditorProvider, Ye as PipelineEditorServicesProvider, le as PipelineNodeRuntimeProvider, xd as PipelineRunReplayPage, Ou as PipelineRunsPage, Ce as PipelineRunsProvider, Ld as PipelineStatsPage, Zl as PipelinesPage, cn as PolicyNode, Lo as ResizeConfig, vn as ResizeNode, ya as SamplePills, cc as SaveConfig, hn as SaveNode, Fo as ScatterConfig, _n as ScatterNode, Jt as ServerStepNode, qo as SharpenConfig, Cn as SharpenNode, Oa as SourceImagePathField, Fu as StepAttempts, Au as StepSection, $u as StepThread, td as StepTree, wc as TagsPanel, ka as ToggleField, Ho as TransformGeoConfig, bn as TransformGeoNode, Ut as TransformNode, Rt as TriggerNode, Is as UpscaleConfig, jn as UpscaleNode, nc as VariationConfig, Gn as VariationNode, Gd as VerdictPanel, Gs as VisionClassifyConfig, Ln as VisionClassifyNode, Vs as VisionConfig, Ks as VisionDescribeConfig, Rn as VisionDescribeNode, Js as VisionExtractTextConfig, Bn as VisionExtractTextNode, In as VisionNode, Oc as VisionResultViewer, Ju as VisionRunCard, Us as VisionTagConfig, zn as VisionTagNode, Yo as WatermarkConfig, wn as WatermarkNode, Sa as availableContextPaths, Ta as availableImageRefs, J as categoryFor, Tf as clearImageLineageCache, ba as contextContributions, xc as imageOverlayPropsFrom, Yn as nodeTypes, Y as portCls, br as recordRecentType, Ca as unresolvedTemplatePaths, xa as upstreamNodeIds, P as useEventStream, F as useEventStreamContext, Df as useImageLineage, Ve as useImageUrl, Ke as useImageUrlOptional, ze as useIsNodeTypeExecutable, af as useJudgmentAggregates, Xd as useJudgmentApi, rf as useJudgmentResults, I as useLatestStepForNode, de as usePipelineEditor, Ne as usePipelineEditorServices, be as usePipelineNodeRuntime, $e as usePipelineRuns, we as useRetryFromStep, ue as useRetryFromStepIfWired, Ea as useUpstreamContext, Da as useUpstreamImageRefs, Yu as useVisionResults, Be as useWebhookRelay };

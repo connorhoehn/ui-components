@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, type ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
 import type { StepExecution } from '../../../types/pipeline';
 import { StepSection } from './StepSection';
@@ -27,6 +27,17 @@ export interface StepThreadProps {
    * is just a picture of your data.
    */
   onArtifactClick?: (imageId: string) => void;
+  /**
+   * Extra content for this step, rendered in the row directly under its
+   * summary — and outside the disclosure, so it is visible without expanding.
+   *
+   * For the thing a step PRODUCED: a deck, a meeting, an agenda. Hosts were
+   * rendering those in a separate section above the tree, which put the
+   * output of step 4 above step 1 and left the row that made it showing only
+   * a duration. Returning `null` renders nothing, so a host can supply a
+   * card for the one step that has one.
+   */
+  renderStepDetail?: (step: StepExecution, stepId: string) => ReactNode;
 }
 
 const STATUS_COLOR: Record<string, string> = {
@@ -65,8 +76,9 @@ function visionResultFrom(
   } as VisionResult;
 }
 
-export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep, onArtifactClick }: StepThreadProps) {
+export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail }: StepThreadProps) {
   const [expanded, setExpanded] = useState(false);
+  const detail = renderStepDetail?.(step, stepId);
   const [copyLabel, setCopyLabel] = useState<'Copy JSON' | 'Copied!'>('Copy JSON');
   // Optional on purpose: a run-detail page is read-only and does not mount the
   // editor's services provider. No host resolver means the produced-images
@@ -171,6 +183,12 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
           </span>
         )}
       </div>
+
+      {detail != null && detail !== false && (
+        <div className="mt-1" data-testid={`step-detail-${stepId}`}>
+          {detail}
+        </div>
+      )}
 
       {expanded && (
         <div

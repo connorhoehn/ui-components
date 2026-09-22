@@ -919,6 +919,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "usePipelineNodeRuntime",
     "usePipelineRuns",
     "useRetryFromStep",
+    "useRetryFromStepIfWired",
     "useUpstreamContext",
     "useUpstreamImageRefs",
     "useVisionResults",

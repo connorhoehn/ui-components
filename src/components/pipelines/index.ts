@@ -43,6 +43,11 @@ export {
   PipelineRunsProvider,
   usePipelineRuns,
   useRetryFromStep,
+  // The one a component rendered OUTSIDE a run provider must use: it returns
+  // `undefined` instead of a no-op, so the caller can hide the control rather
+  // than render a dead button. It was internal, so hosts reached for
+  // `useRetryFromStep` and shipped exactly that dead button.
+  useRetryFromStepIfWired,
   useLatestStepForNode,
 } from './context/PipelineRunsContext';
 export type { PipelineRunsProviderProps } from './context/PipelineRunsContext';

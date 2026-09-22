@@ -84,6 +84,19 @@ export interface PresentationViewProps {
   state?: 'loading' | 'ready' | 'empty' | 'error';
   errorMessage?: string;
   onRetry?: () => void;
+  /**
+   * Widest the slide frame may grow, in pixels. Centred once it stops
+   * growing.
+   *
+   * A slide is 16:9 and a pane is whatever the host made it. In a wide,
+   * short container the frame stretched to the full width while the slide
+   * inside it stayed its natural size, so the deck read as a small picture
+   * marooned in a huge grey rectangle — measured at 1,100px of frame around a
+   * ~600px slide on a pipeline run card. The default already caps the frame
+   * at 16:9 of the available height, which is the right cap when the height
+   * is known; pass this when it is not, or to hold the deck narrower still.
+   */
+  maxSlideWidth?: number;
   className?: string;
   'data-testid'?: string;
 }
@@ -111,6 +124,7 @@ export function PresentationView({
   state = 'ready',
   errorMessage,
   onRetry,
+  maxSlideWidth,
   className,
   'data-testid': testId = 'presentation-view',
 }: PresentationViewProps) {
@@ -211,8 +225,21 @@ export function PresentationView({
 
       <div className="flex min-h-0 flex-1 flex-col gap-3 md:flex-row">
         <div className="flex min-w-0 flex-1 flex-col gap-2">
+          {/* The centring row exists so the frame can stop growing without
+              drifting to the left edge of the pane. */}
+          <div className="flex min-h-0 flex-1 justify-center">
           <div
-            className="flex min-h-[12rem] items-center justify-center overflow-hidden rounded-lg border border-border bg-surface-hover/40"
+            className={cn(
+              // `aspect-[16/9]` with an auto width and a full height makes the
+              // HEIGHT the binding constraint in a wide pane — the frame is
+              // exactly as wide as a 16:9 slide of that height, rather than
+              // stretching to the pane and letterboxing the deck inside it.
+              // `max-w-full` keeps the narrow case unchanged: there the width
+              // still binds first, exactly as before.
+              'flex h-full min-h-[12rem] w-auto max-w-full flex-1 items-center justify-center',
+              'aspect-[16/9] overflow-hidden rounded-lg border border-border bg-surface-hover/40',
+            )}
+            style={maxSlideWidth === undefined ? undefined : { maxWidth: maxSlideWidth }}
             data-testid={`${testId}-stage`}
           >
             {current.preview ?? (
@@ -220,6 +247,7 @@ export function PresentationView({
                 This slide’s preview could not be read.
               </Text>
             )}
+          </div>
           </div>
           <div className="flex items-center justify-center gap-2">
             <IconButton

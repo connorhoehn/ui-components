@@ -2624,7 +2624,7 @@ export declare interface StepSectionProps {
 
 declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
 
-export declare function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep, onArtifactClick }: StepThreadProps): default_2.JSX.Element;
+export declare function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail }: StepThreadProps): default_2.JSX.Element;
 
 export declare interface StepThreadProps {
     stepId: string;
@@ -2642,9 +2642,20 @@ export declare interface StepThreadProps {
      * is just a picture of your data.
      */
     onArtifactClick?: (imageId: string) => void;
+    /**
+     * Extra content for this step, rendered in the row directly under its
+     * summary — and outside the disclosure, so it is visible without expanding.
+     *
+     * For the thing a step PRODUCED: a deck, a meeting, an agenda. Hosts were
+     * rendering those in a separate section above the tree, which put the
+     * output of step 4 above step 1 and left the row that made it showing only
+     * a duration. Returning `null` renders nothing, so a host can supply a
+     * card for the one step that has one.
+     */
+    renderStepDetail?: (step: StepExecution, stepId: string) => ReactNode;
 }
 
-export declare function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep, onArtifactClick }: StepTreeProps): default_2.JSX.Element;
+export declare function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail }: StepTreeProps): default_2.JSX.Element;
 
 export declare interface StepTreeProps {
     steps: Record<string, StepExecution>;
@@ -2657,6 +2668,17 @@ export declare interface StepTreeProps {
     onResumeFromStep?: (stepId: string) => void;
     /** Forwarded to every step: click-through for the artifacts a step produced. */
     onArtifactClick?: (imageId: string) => void;
+    /**
+     * Extra content for a step, rendered in its row under the summary and
+     * outside the disclosure — the thing that step PRODUCED (a deck, a meeting,
+     * an agenda). Called for every step; return `null` for the ones with
+     * nothing to show.
+     *
+     * Hosts were rendering those cards in a section above the tree, which put
+     * the output of step 4 above step 1 and left the row that made it showing
+     * only a duration.
+     */
+    renderStepDetail?: (step: StepExecution, stepId: string) => ReactNode;
 }
 
 /**
@@ -2989,6 +3011,25 @@ export declare function usePipelineRuns(): PipelineRunsValue;
  * `retryFromStep` falls through to the bundled handler / no-op as before.
  */
 export declare function useRetryFromStep(): (nodeId: string) => Promise<void>;
+
+/**
+ * Like `useRetryFromStep`, but returns `undefined` when nothing can actually
+ * perform a retry — no `PipelineRunsProvider` and no host seam that supplies
+ * `retryFromStep`.
+ *
+ * This is what the node components use. `useRetryFromStep` below always hands
+ * back a callable, and its no-op fallback silently defeated BaseNode's
+ * `typeof onRetry === 'function'` guard: a node in the failed state rendered
+ * its Retry pill, the click resolved into the void, and the node stayed
+ * failed with no run started and no error shown. That is reachable in normal
+ * use — `state` also comes from `data._state`, so replay/host-driven canvases
+ * hit it without any provider at all, as does a `PipelineNodeRuntimeProvider`
+ * mounted without `retryFromStep`.
+ *
+ * Deliberately NOT re-exported from `src/components/pipelines/index.ts`: the
+ * frozen public surface keeps `useRetryFromStep` with its existing signature.
+ */
+export declare function useRetryFromStepIfWired(): ((nodeId: string) => Promise<void>) | undefined;
 
 /**
  * Context paths available at `nodeId`, recomputed when the graph changes.

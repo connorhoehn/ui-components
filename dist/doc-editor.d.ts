@@ -1651,7 +1651,7 @@ export declare interface PresentationSourceOption {
     kind?: 'document' | 'transcript';
 }
 
-export declare function PresentationView({ title, revisions, revisionId, onRevisionChange, slideIndex, onSlideChange, onDownload, downloadLabel, onOpenPreview, pending, notice, state, errorMessage, onRetry, className, 'data-testid': testId, }: PresentationViewProps): JSX.Element;
+export declare function PresentationView({ title, revisions, revisionId, onRevisionChange, slideIndex, onSlideChange, onDownload, downloadLabel, onOpenPreview, pending, notice, state, errorMessage, onRetry, maxSlideWidth, className, 'data-testid': testId, }: PresentationViewProps): JSX.Element;
 
 export declare interface PresentationViewProps {
     title: string;
@@ -1684,6 +1684,19 @@ export declare interface PresentationViewProps {
     state?: 'loading' | 'ready' | 'empty' | 'error';
     errorMessage?: string;
     onRetry?: () => void;
+    /**
+     * Widest the slide frame may grow, in pixels. Centred once it stops
+     * growing.
+     *
+     * A slide is 16:9 and a pane is whatever the host made it. In a wide,
+     * short container the frame stretched to the full width while the slide
+     * inside it stayed its natural size, so the deck read as a small picture
+     * marooned in a huge grey rectangle — measured at 1,100px of frame around a
+     * ~600px slide on a pipeline run card. The default already caps the frame
+     * at 16:9 of the available height, which is the right cap when the height
+     * is known; pass this when it is not, or to hold the deck narrower still.
+     */
+    maxSlideWidth?: number;
     className?: string;
     'data-testid'?: string;
 }
