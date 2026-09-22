@@ -8,7 +8,7 @@ import { t as c } from "./Chip-B0FPId77.js";
 import { t as l } from "./EmptyState-JzzL2z1E.js";
 import { t as u } from "./Spinner-CLcq5z8N.js";
 import { t as d } from "./SkeletonCard-CGe8XFPB.js";
-import { n as f, t as p } from "./Tabs-Bc6QoOAC.js";
+import { n as f, t as p } from "./Tabs-D97JGZEx.js";
 import { t as m } from "./Input-DLknWXri.js";
 import { t as h } from "./Avatar--J6_yD4M.js";
 import { t as g } from "./TitledFrame-DUsxfZCI.js";

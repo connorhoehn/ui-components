@@ -1,6 +1,6 @@
 import { t as e } from "../cn-DhjIN-s0.js";
 import { D as t, N as n, O as r, S as i, d as a, m as o, p as s, s as c, t as l, v as u } from "../DropdownMenu-DG43DgE_.js";
-import { n as d } from "../Tabs-Bc6QoOAC.js";
+import { n as d } from "../Tabs-D97JGZEx.js";
 import { t as f } from "../Avatar--J6_yD4M.js";
 import { t as p } from "../RovingToolbar-CmQag9q6.js";
 import { n as m, t as h } from "../ParticlesBackground-FVwsOHUB.js";

@@ -6,7 +6,7 @@ import { f as v, t as y } from "./Chip-B0FPId77.js";
 import { t as b } from "./ConfirmDialog-Cd8NZEXi.js";
 import { t as x } from "./EmptyState-JzzL2z1E.js";
 import { a as S, n as C, t as te } from "./ChannelHeader-CgXsQ1pj.js";
-import { n as w } from "./Tabs-Bc6QoOAC.js";
+import { n as w } from "./Tabs-D97JGZEx.js";
 import { n as T } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as E } from "./Input-DLknWXri.js";
 import { t as D } from "./Textarea-Dz4doxTv.js";

@@ -101,6 +101,50 @@ describe('Tabs', () => {
     expect(tabs[0].getAttribute('tabindex')).toBe('-1');
     expect(tabs[1].getAttribute('tabindex')).toBe('0');
   });
+
+  it('omits data-testid when neither item.testId nor getItemTestId is provided', () => {
+    render(<Tabs items={ITEMS} value="a" onValueChange={() => {}} />);
+    for (const tab of screen.getAllByRole('tab')) {
+      expect(tab.hasAttribute('data-testid')).toBe(false);
+    }
+  });
+
+  it('renders item.testId as data-testid on that tab', () => {
+    const items: TabItem[] = [
+      { id: 'a', label: 'Alpha', testId: 'tab-alpha' },
+      { id: 'b', label: 'Beta' },
+    ];
+    render(<Tabs items={items} value="a" onValueChange={() => {}} />);
+    expect(screen.getByTestId('tab-alpha')).toBe(screen.getByRole('tab', { name: 'Alpha' }));
+    expect(screen.getByRole('tab', { name: 'Beta' }).hasAttribute('data-testid')).toBe(false);
+  });
+
+  it('uses getItemTestId to derive a data-testid when item.testId is absent', () => {
+    render(
+      <Tabs
+        items={ITEMS}
+        value="a"
+        onValueChange={() => {}}
+        getItemTestId={(item) => `derived-${item.id}`}
+      />,
+    );
+    expect(screen.getByTestId('derived-a')).toBe(screen.getByRole('tab', { name: 'Alpha' }));
+    expect(screen.getByTestId('derived-b')).toBe(screen.getByRole('tab', { name: /Beta/ }));
+  });
+
+  it('prefers item.testId over getItemTestId when both are provided', () => {
+    const items: TabItem[] = [{ id: 'a', label: 'Alpha', testId: 'explicit' }];
+    render(
+      <Tabs
+        items={items}
+        value="a"
+        onValueChange={() => {}}
+        getItemTestId={(item) => `derived-${item.id}`}
+      />,
+    );
+    expect(screen.getByTestId('explicit')).toBeInTheDocument();
+    expect(screen.queryByTestId('derived-a')).toBeNull();
+  });
 });
 
 describe('TabPanel', () => {
@@ -120,6 +164,16 @@ describe('TabPanel', () => {
     const panel = screen.getByRole('tabpanel');
     expect(panel.getAttribute('id')).toBe('t-panel-x');
     expect(panel.getAttribute('aria-labelledby')).toBe('t-tab-x');
+  });
+
+  it('sets data-testid matching the panel id pattern when idPrefix is provided', () => {
+    render(<TabPanel id="x" when="x" idPrefix="t">content</TabPanel>);
+    expect(screen.getByTestId('t-panel-x')).toBe(screen.getByRole('tabpanel'));
+  });
+
+  it('omits data-testid when idPrefix is not provided', () => {
+    render(<TabPanel id="x" when="x">content</TabPanel>);
+    expect(screen.getByRole('tabpanel').hasAttribute('data-testid')).toBe(false);
   });
 });
 

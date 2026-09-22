@@ -1,6 +1,6 @@
 import { i as e, n as t, r as n, t as r } from "./ToastProvider-B0D0SLKU.js";
 import { a as i, c as a, d as o, f as s, i as c, l, n as u, o as d, r as f, s as p, t as m, u as h } from "./DetailSection-C7euLB6T.js";
-import { $ as g, A as _, B as v, C as y, D as b, E as x, F as S, G as C, H as w, I as T, J as E, K as D, L as O, M as k, N as A, O as j, P as M, Q as N, R as P, S as F, T as I, U as L, V as R, W as z, X as B, Y as V, Z as H, _ as U, a as W, at as G, b as K, c as q, ct as J, d as Y, dt as X, et as Z, f as Q, ft as $, g as ee, gt as te, h as ne, ht as re, i as ie, it as ae, j as oe, k as se, l as ce, lt as le, m as ue, mt as de, n as fe, nt as pe, o as me, ot as he, p as ge, pt as _e, q as ve, r as ye, rt as be, s as xe, st as Se, t as Ce, tt as we, u as Te, ut as Ee, v as De, w as Oe, x as ke, y as Ae, z as je } from "./shared-BT32BPDn.js";
+import { $ as g, A as _, B as v, C as y, D as b, E as x, F as S, G as C, H as w, I as T, J as E, K as D, L as O, M as k, N as A, O as j, P as M, Q as N, R as P, S as F, T as I, U as L, V as R, W as z, X as B, Y as V, Z as H, _ as U, a as W, at as G, b as K, c as q, ct as J, d as Y, dt as X, et as Z, f as Q, ft as $, g as ee, gt as te, h as ne, ht as re, i as ie, it as ae, j as oe, k as se, l as ce, lt as le, m as ue, mt as de, n as fe, nt as pe, o as me, ot as he, p as ge, pt as _e, q as ve, r as ye, rt as be, s as xe, st as Se, t as Ce, tt as we, u as Te, ut as Ee, v as De, w as Oe, x as ke, y as Ae, z as je } from "./shared-BkK-mfgj.js";
 import { t as Me } from "./Button-i2ZnAx-Z.js";
 import { t as Ne } from "./Card-RQCeAPNU.js";
 import { a as Pe, i as Fe, n as Ie, o as Le, r as Re, t as ze } from "./Table-CypeBEj0.js";
@@ -22,7 +22,7 @@ import { a as sn, i as cn, n as ln, r as un, t as dn } from "./Sparkline-Ci_cmVW
 import { t as fn } from "./SkeletonCard-CGe8XFPB.js";
 import { a as pn, i as mn, n as hn, o as gn, r as _n, t as vn } from "./ChannelHeader-CgXsQ1pj.js";
 import { n as yn, t as bn } from "./FileUploadDrop-BRRQBXdS.js";
-import { n as xn, t as Sn } from "./Tabs-Bc6QoOAC.js";
+import { n as xn, t as Sn } from "./Tabs-D97JGZEx.js";
 import { n as Cn, t as wn } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as Tn } from "./Input-DLknWXri.js";
 import { t as En } from "./Textarea-Dz4doxTv.js";

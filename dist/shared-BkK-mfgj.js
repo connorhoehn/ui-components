@@ -24,7 +24,7 @@ import { i as p, n as m, r as h, t as g } from "./focusTrap-CmWJlptm.js";
 import "./SkeletonCard-CGe8XFPB.js";
 import { a as _, i as v, o as y } from "./ChannelHeader-CgXsQ1pj.js";
 import "./FileUploadDrop-BRRQBXdS.js";
-import "./Tabs-Bc6QoOAC.js";
+import "./Tabs-D97JGZEx.js";
 import "./DockedPanelContext-pH9A5z1h.js";
 import { t as b } from "./Input-DLknWXri.js";
 import { t as x } from "./Textarea-Dz4doxTv.js";

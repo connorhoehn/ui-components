@@ -8,7 +8,7 @@ import { t as g } from "./Chip-B0FPId77.js";
 import { t as _ } from "./Modal-CyoyiNKN.js";
 import { t as v } from "./EmptyState-JzzL2z1E.js";
 import { t as y } from "./FormField-CBOSCKs0.js";
-import { n as b } from "./Tabs-Bc6QoOAC.js";
+import { n as b } from "./Tabs-D97JGZEx.js";
 import { t as x } from "./Input-DLknWXri.js";
 import { t as S } from "./Textarea-Dz4doxTv.js";
 import { t as ee } from "./DotMeter-BDVkadI8.js";
@@ -1655,7 +1655,7 @@ function Ve({ items: e, selectedId: t, readOnly: n = !1, onSelect: r, onMove: i,
 }
 //#endregion
 //#region src/components/doc-editor/presentation/PresentationEditor.tsx
-var He = k(() => import("./SortableSlideList-BpiWn-TV.js"));
+var He = k(() => import("./SortableSlideList-CfR4v54k.js"));
 function Ue({ back: e }) {
 	return /* @__PURE__ */ N("svg", {
 		viewBox: "0 0 16 16",

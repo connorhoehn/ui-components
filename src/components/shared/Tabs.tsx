@@ -17,6 +17,8 @@ export interface TabItem {
   icon?: ReactNode;
   badge?: ReactNode;
   disabled?: boolean;
+  /** data-testid rendered on this tab's trigger button. Overrides Tabs' `getItemTestId` for this item. */
+  testId?: string;
 }
 
 export interface TabsProps {
@@ -30,6 +32,8 @@ export interface TabsProps {
   'aria-label'?: string;
   /** Shared id used to wire <TabPanel> regions to their <tab> triggers. Auto-generated if omitted. */
   idPrefix?: string;
+  /** Derives a data-testid per item when the item itself has no `testId`. */
+  getItemTestId?: (item: TabItem) => string;
 }
 
 const SIZE: Record<'sm' | 'md', string> = {
@@ -86,6 +90,7 @@ export function Tabs({
   style,
   'aria-label': ariaLabel,
   idPrefix: idPrefixProp,
+  getItemTestId,
 }: TabsProps) {
   const autoPrefix = useId();
   const idPrefix = idPrefixProp ?? autoPrefix;
@@ -156,6 +161,7 @@ export function Tabs({
             role="tab"
             id={`${idPrefix}-tab-${item.id}`}
             aria-controls={`${idPrefix}-panel-${item.id}`}
+            data-testid={item.testId ?? getItemTestId?.(item)}
             aria-selected={active}
             aria-disabled={item.disabled || undefined}
             tabIndex={active ? 0 : -1}
@@ -207,6 +213,7 @@ export function TabPanel({ id, when, idPrefix, className, style, children }: Tab
     <div
       role="tabpanel"
       id={idPrefix ? `${idPrefix}-panel-${id}` : undefined}
+      data-testid={idPrefix ? `${idPrefix}-panel-${id}` : undefined}
       aria-labelledby={idPrefix ? `${idPrefix}-tab-${id}` : undefined}
       tabIndex={0}
       className={className}

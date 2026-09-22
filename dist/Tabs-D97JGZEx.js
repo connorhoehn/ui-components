@@ -16,26 +16,26 @@ function c(e) {
 function l(t, n, r) {
 	return t === "underline" ? e("-mb-px border-b-2 rounded-none", n ? "border-[var(--color-primary)] text-[var(--color-text-primary)]" : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]", r && "opacity-50 cursor-not-allowed hover:text-[var(--color-text-secondary)]") : t === "pill" ? e("rounded-full", n ? "bg-[var(--color-primary)] text-white" : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)]", r && "opacity-50 cursor-not-allowed hover:bg-transparent") : e("rounded-md", n ? "bg-surface shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]", r && "opacity-50 cursor-not-allowed hover:bg-transparent");
 }
-function u({ items: u, value: d, onValueChange: f, variant: p = "underline", size: m = "md", className: h, style: g, "aria-label": _, idPrefix: v }) {
-	let y = n(), b = v ?? y, x = i(/* @__PURE__ */ new Map()), S = r(() => u.filter((e) => !e.disabled).map((e) => e.id), [u]), C = t((e) => {
-		x.current.get(e)?.focus();
-	}, []), w = t((e, t) => {
-		if (S.length === 0) return;
-		let n = S.indexOf(t), r = null;
+function u({ items: u, value: d, onValueChange: f, variant: p = "underline", size: m = "md", className: h, style: g, "aria-label": _, idPrefix: v, getItemTestId: y }) {
+	let b = n(), x = v ?? b, S = i(/* @__PURE__ */ new Map()), C = r(() => u.filter((e) => !e.disabled).map((e) => e.id), [u]), w = t((e) => {
+		S.current.get(e)?.focus();
+	}, []), T = t((e, t) => {
+		if (C.length === 0) return;
+		let n = C.indexOf(t), r = null;
 		switch (e.key) {
 			case "ArrowRight":
 			case "ArrowDown":
-				r = n === -1 ? 0 : (n + 1) % S.length;
+				r = n === -1 ? 0 : (n + 1) % C.length;
 				break;
 			case "ArrowLeft":
 			case "ArrowUp":
-				r = n === -1 ? S.length - 1 : (n - 1 + S.length) % S.length;
+				r = n === -1 ? C.length - 1 : (n - 1 + C.length) % C.length;
 				break;
 			case "Home":
 				r = 0;
 				break;
 			case "End":
-				r = S.length - 1;
+				r = C.length - 1;
 				break;
 			case "Enter":
 			case " ":
@@ -45,13 +45,13 @@ function u({ items: u, value: d, onValueChange: f, variant: p = "underline", siz
 		}
 		if (r !== null) {
 			e.preventDefault();
-			let t = S[r];
-			f(t), C(t);
+			let t = C[r];
+			f(t), w(t);
 		}
 	}, [
-		S,
+		C,
 		f,
-		C
+		w
 	]);
 	return /* @__PURE__ */ a("div", {
 		role: "tablist",
@@ -62,18 +62,19 @@ function u({ items: u, value: d, onValueChange: f, variant: p = "underline", siz
 			let n = t.id === d;
 			return /* @__PURE__ */ o("button", {
 				ref: (e) => {
-					e ? x.current.set(t.id, e) : x.current.delete(t.id);
+					e ? S.current.set(t.id, e) : S.current.delete(t.id);
 				},
 				type: "button",
 				role: "tab",
-				id: `${b}-tab-${t.id}`,
-				"aria-controls": `${b}-panel-${t.id}`,
+				id: `${x}-tab-${t.id}`,
+				"aria-controls": `${x}-panel-${t.id}`,
+				"data-testid": t.testId ?? y?.(t),
 				"aria-selected": n,
 				"aria-disabled": t.disabled || void 0,
 				tabIndex: n ? 0 : -1,
 				disabled: t.disabled,
 				onClick: () => !t.disabled && f(t.id),
-				onKeyDown: (e) => w(e, t.id),
+				onKeyDown: (e) => T(e, t.id),
 				className: e("inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer", s[m], l(p, n, !!t.disabled)),
 				children: [
 					t.icon,
@@ -91,6 +92,7 @@ function d({ id: e, when: t, idPrefix: n, className: r, style: i, children: o })
 	return e === t ? /* @__PURE__ */ a("div", {
 		role: "tabpanel",
 		id: n ? `${n}-panel-${e}` : void 0,
+		"data-testid": n ? `${n}-panel-${e}` : void 0,
 		"aria-labelledby": n ? `${n}-tab-${e}` : void 0,
 		tabIndex: 0,
 		className: r,

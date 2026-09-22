@@ -65,3 +65,42 @@ export const WithBadgeAndDisabled: Story = {
     variant: 'underline',
   },
 };
+
+const TESTID_ITEMS: TabItem[] = [
+  { id: 'runs', label: 'Runs', testId: 'tabs-runs' },
+  { id: 'config', label: 'Config', testId: 'tabs-config' },
+  { id: 'history', label: 'History', badge: 12 },
+];
+
+function TestIdWrapper() {
+  const [val, setVal] = useState('runs');
+  return (
+    <div>
+      <Tabs
+        items={TESTID_ITEMS}
+        value={val}
+        onValueChange={setVal}
+        idPrefix="ex"
+        getItemTestId={(item) => `tabs-fallback-${item.id}`}
+      />
+      <div className="mt-3 text-sm">
+        <TabPanel id="runs" when={val} idPrefix="ex">Runs content</TabPanel>
+        <TabPanel id="config" when={val} idPrefix="ex">Config content</TabPanel>
+        <TabPanel id="history" when={val} idPrefix="ex">History content (12 items)</TabPanel>
+      </div>
+    </div>
+  );
+}
+
+export const WithTestIds: Story = {
+  render: () => <TestIdWrapper />,
+  args: { items: TESTID_ITEMS, value: 'runs', onValueChange: () => {} },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Explicit `testId` on the first two items wins; `history` has none so `getItemTestId` supplies `tabs-fallback-history`. Panels get `data-testid="ex-panel-<id>"` automatically from `idPrefix`.',
+      },
+    },
+  },
+};
