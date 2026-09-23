@@ -74,6 +74,6 @@ describe('WorkspaceDocumentHeader variant="actions"', () => {
 
   it('prints the lifecycle pill the header used to', () => {
     render(<DocumentLifecyclePill status="in_review" />);
-    expect(screen.getByTestId('lifecycle-status').textContent).toMatch(/in review/);
+    expect(screen.getByTestId('lifecycle-status').textContent).toMatch(/In review/);
   });
 });

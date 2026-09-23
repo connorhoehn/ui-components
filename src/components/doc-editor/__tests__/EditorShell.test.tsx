@@ -118,6 +118,22 @@ describe('EditorShell', () => {
     expect(row.className).toContain('flex-wrap');
   });
 
+  it('sizes the title to its words so the status pill sits beside it, with or without a path', () => {
+    const { rerender } = render(<EditorShell title="Release plan" statusPill={<span data-testid="pill">Draft</span>}><p /></EditorShell>);
+    for (const withPath of [false, true]) {
+      const title = screen.getByTestId('editor-shell-title');
+      expect(title.className).toContain('flex-initial');
+      expect(title.className).not.toMatch(/(^|\s)flex-1(\s|$)/);
+      expect(title.className).not.toContain('basis-0');
+      expect(title.className).toContain('truncate');
+      expect(title.nextElementSibling).toBe(screen.getByTestId('pill'));
+      if (!withPath) rerender(<EditorShell title="Release plan" path={[{ label: 'Plans' }]} statusPill={<span data-testid="pill">Draft</span>}><p /></EditorShell>);
+    }
+    rerender(<EditorShell title="Release plan" onTitleChange={() => {}} statusPill={<span data-testid="pill">Draft</span>}><p /></EditorShell>);
+    expect(screen.getByTestId('editor-shell-title').className).toContain('flex-initial');
+    expect(screen.getByTestId('editor-shell-title').className).not.toContain('basis-0');
+  });
+
   it('frames explorer | editor | workbench when both outer slots are given', () => {
     render(
       <EditorShell title="x" explorer={<nav aria-label="Explorer" />} workbench={<aside aria-label="Workbench" />}>

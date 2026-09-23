@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.385.4] — 2026-09-23
+
+### Changed
+
+- **Lifecycle status in sentence case** — `DocumentLifecyclePill` and the header's status pill
+  read "Draft", "In review", "Changes requested", "Approved", "Finalized" (were lower case); the
+  legacy-claim banner and `DocumentReviewPanel`'s review-state chip ("Pending", "Changes
+  requested") follow suit. Matches the Documents mockups.
+- **`RichChatComposer` menu mode hides the command the chip names** — with `modeControl="menu"`
+  and a picked argument ("/workflow ⟡ presentation-deck"), the command line is hidden in the
+  input by a ProseMirror decoration (`data-command-prefix="inline"` for a prefix on the
+  instruction's line, `"block"` for a host-written command paragraph) so only the chip and the
+  instruction show. The draft is not rewritten: `draft.html`, `onDraftChange` and the sent `text`
+  still carry `/workflow <id>`, so hosts that parse the command are unaffected. The caret is kept
+  after the hidden text, and Backspace there removes the whole command (and the chip). Other mode
+  controls, and a command with no picked argument, show the typed text as before.
+- **`EditorShell` title sizes to its words** — the title (and the editable title) no longer
+  `flex-1 basis-0` when there is no `path`, so the status pill sits right beside it instead of at
+  the row's far end; a long title still truncates.
+
+---
+
 ## [2.385.3] — 2026-09-23
 
 ### Added

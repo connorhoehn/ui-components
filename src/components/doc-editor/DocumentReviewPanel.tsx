@@ -52,7 +52,8 @@ function ReviewRow({ request, onDecide, onWithdraw }: {
     finally { writing.current = false; setBusy(false); }
   }
   const reviewer = request.reviewerName || request.reviewerId;
-  const stateLabel = request.state.replace(/_/g, ' ');
+  const stateWords = request.state.replace(/_/g, ' ');
+  const stateLabel = stateWords.charAt(0).toUpperCase() + stateWords.slice(1);
   return <InboxSectionRow aria-label={`Review by ${reviewer}`} aria-busy={busy}>
     <Stack gap="sm">
       <Inline gap="sm" wrap>

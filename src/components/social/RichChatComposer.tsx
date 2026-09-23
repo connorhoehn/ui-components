@@ -84,7 +84,9 @@ import {
 } from 'react';
 import { useEditor, EditorContent, ReactRenderer } from '@tiptap/react';
 import { Extension, type Editor } from '@tiptap/core';
-import { PluginKey } from '@tiptap/pm/state';
+import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
+import type { Node as PMNode } from '@tiptap/pm/model';
+import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Mention from '@tiptap/extension-mention';
@@ -686,6 +688,46 @@ const docrefSuggestionKey = new PluginKey('docrefSuggestion');
 
 let stagedSeq = 0;
 
+/**
+ * Where the command line the menu-mode chip already names sits in the doc —
+ * "/workflow migration-plan " — so it can be hidden from view while staying
+ * in the draft (the host still reads it from `value`/`onDraftChange` and the
+ * sent `text`). Null unless a picked argument's label is intact right after
+ * the trigger in the first block.
+ *
+ * `block`: the first paragraph is the command and nothing else, and more
+ * follows (the shape a host's "Workflow ▾" picker writes) — the whole
+ * paragraph hides so no blank line is left. `inline`: the command leads a
+ * paragraph that carries the instruction too — only the prefix hides.
+ * `caret` is the first visible position; the caret is never left before it.
+ */
+function hiddenCommandPrefix(
+  doc: PMNode,
+  commands: readonly ComposerCommand[] | undefined,
+  pick: { trigger: string; item: ComposerArgumentItem } | null,
+): { kind: 'inline' | 'block'; from: number; to: number; caret: number } | null {
+  if (!pick) return null;
+  const first = doc.firstChild;
+  if (!first || !first.isTextblock) return null;
+  // One character per inline leaf, so text offsets are doc offsets.
+  const text = first.textBetween(0, first.content.size, undefined, '\ufffc');
+  const cmd = matchComposerCommand(text, commands);
+  if (!cmd || cmd.trigger !== pick.trigger) return null;
+  const argStart = text.length - text.trimStart().length + cmd.trigger.length + 1;
+  const rest = text.slice(argStart);
+  const spaces = rest.length - rest.replace(/^ +/, '').length;
+  if (!rest.slice(spaces).startsWith(pick.item.label)) return null;
+  let end = argStart + spaces + pick.item.label.length;
+  if (text[end] === ' ') end += 1;
+  const next = doc.childCount > 1 ? doc.child(1) : null;
+  if (text.slice(end).trim() === '' && next?.isTextblock) {
+    return { kind: 'block', from: 0, to: first.nodeSize, caret: first.nodeSize + 1 };
+  }
+  return { kind: 'inline', from: 1, to: 1 + end, caret: 1 + end };
+}
+
+const commandPrefixKey = new PluginKey('commandPrefixHidden');
+
 /** The picked argument, if it still belongs to the active command and its label is intact in the draft. */
 function pickedArgumentFor(
   pick: { trigger: string; item: ComposerArgumentItem } | null,
@@ -923,6 +965,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const hasSearchDocuments = !!onSearchDocuments;
   const onCommandRef = useRef(onCommand);
   onCommandRef.current = onCommand;
+  // Whether the docked card (modeControl="menu") is naming the command as a
+  // chip, in which case the command line it names is hidden in the input.
+  // Assigned once `menuModeRow` is known, below; read by a ProseMirror plugin.
+  const hideCommandPrefixRef = useRef(false);
   // The argument picked from the menu in this draft, if any. A ref, not state:
   // the Suggestion plugin reads it inside ProseMirror's state transitions,
   // where a React state value would be one render stale. Cleared on send and
@@ -1128,6 +1174,53 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 e.chain().focus().deleteRange(range).insertContent(`${picked.label} `).run();
               },
               render: () => commandMenuRenderer('Arguments', true),
+            }),
+          ];
+        },
+      }),
+      // Menu mode shows "/workflow ⟡ migration-plan" as a chip above the
+      // input, so the same words are not repeated as text in it: the command
+      // line is hidden by a decoration, never removed — the draft, the
+      // `onDraftChange` html and the sent text all still carry it, so a host
+      // that parses the command keeps working. The caret is kept after it,
+      // and Backspace there removes the whole command (and so the chip).
+      // Since 2.385.4.
+      Extension.create({
+        name: 'commandPrefixHidden',
+        addProseMirrorPlugins() {
+          const find = (doc: PMNode) => (hideCommandPrefixRef.current
+            ? hiddenCommandPrefix(doc, commandsRef.current, argPickRef.current)
+            : null);
+          return [
+            new Plugin({
+              key: commandPrefixKey,
+              appendTransaction: (trs, _old, state) => {
+                if (!trs.some((tr) => tr.docChanged || tr.selectionSet || tr.getMeta(commandPrefixKey))) return null;
+                const range = find(state.doc);
+                const sel = state.selection;
+                if (!range || !sel.empty || sel.from >= range.caret) return null;
+                return state.tr.setSelection(TextSelection.create(state.doc, range.caret));
+              },
+              props: {
+                decorations: (state) => {
+                  const range = find(state.doc);
+                  if (!range) return DecorationSet.empty;
+                  const attrs = { class: 'hidden', 'data-command-prefix': range.kind };
+                  return DecorationSet.create(state.doc, [
+                    range.kind === 'block'
+                      ? Decoration.node(range.from, range.to, attrs)
+                      : Decoration.inline(range.from, range.to, attrs),
+                  ]);
+                },
+                handleKeyDown: (view, event) => {
+                  if (event.key !== 'Backspace') return false;
+                  const range = find(view.state.doc);
+                  const sel = view.state.selection;
+                  if (!range || !sel.empty || sel.from !== range.caret) return false;
+                  view.dispatch(view.state.tr.delete(range.from, range.to));
+                  return true;
+                },
+              },
             }),
           ];
         },
@@ -1456,8 +1549,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     // in response to our own onDraftChange echo.
     if (onDraftChange && draft !== draftRef.current) {
       draftRef.current = draft;
-      editor.commands.setContent(draft?.html ?? '', { emitUpdate: false });
+      // The pick first: the hidden-command plugin reads it while the new
+      // content is applied.
       argPickRef.current = draft?.command?.argument ? { trigger: draft.command.trigger, item: draft.command.argument } : null;
+      editor.commands.setContent(draft?.html ?? '', { emitUpdate: false });
       const files = (draft?.files ?? []).map((file) => ({ id: `staged-${stagedSeq++}`, file }));
       stagedRef.current = files; setStaged(files);
     }
@@ -1699,6 +1794,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // row's END (a document chip on the right, the way an editor's dock reads);
   // otherwise references ride the compact row only at compact density.
   const menuModeRow = compactModeRow && modeControl === 'menu' && !narrow;
+  hideCommandPrefixRef.current = menuModeRow;
+  // The plugin reads the ref on the next transaction; switching into or out
+  // of the docked card sends an empty one so the command line hides or shows
+  // (and the caret moves past it) straight away.
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return;
+    editor.view.dispatch(editor.state.tr.setMeta(commandPrefixKey, true));
+  }, [editor, menuModeRow]);
   const referencesInModeRow = compactModeRow && (compact || menuModeRow);
   // Compact folds the hints row into `?` at every width.
   // The docked card (`menu`) keeps its hints in the `?` menu: the row of

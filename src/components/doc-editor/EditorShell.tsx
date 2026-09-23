@@ -203,7 +203,10 @@ export function EditorShell({
               577 px viewport) puts the byline BESIDE the title instead of under
               it: one row, ~26 px back for the canvas below (a slide stage). */}
           <div className="flex min-w-0 flex-1 flex-col gap-1 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3">
-            {/* Wraps rather than squeezing: with a crowded row the title used to
+            {/* The title sizes to its words (truncating when long), so the
+                status pill sits right beside it — with or without a folder
+                path after it — rather than at the row's far end (2.385.4).
+                Wraps rather than squeezing: with a crowded row the title used to
                 take all the shrink (min-w-0) and collapse to a sliver while
                 the pills beside it could not shrink at all. */}
             <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 [@media(max-height:640px)]:flex-1">
@@ -214,11 +217,11 @@ export function EditorShell({
                   onCommit={onTitleChange}
                   label={titleLabel}
                   required
-                  className={cn('min-w-[10rem] max-w-full text-lg', path && path.length > 0 ? 'flex-initial' : 'flex-1 basis-0')}
+                  className="min-w-[10rem] max-w-full flex-initial text-lg"
                   data-testid={`${testId}-title`}
                 />
               ) : (
-                <h1 className={cn('m-0 max-w-full truncate text-lg font-semibold text-text-primary', path && path.length > 0 ? 'min-w-0 flex-initial' : 'min-w-[10rem] flex-1 basis-0')} data-testid={`${testId}-title`}>{title}</h1>
+                <h1 className="m-0 min-w-0 max-w-full flex-initial truncate text-lg font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
               )}
               {onStarredChange && (
                 <IconButton

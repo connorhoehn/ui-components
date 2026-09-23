@@ -184,8 +184,10 @@ const lifecycleStatusTone: Record<
   finalized: 'neutral',
 };
 
+/** Sentence case — "Draft", "In review", "Changes requested" — as the pill prints it. */
 function lifecycleStatusLabel(status: DocumentLifecycleStatus): string {
-  return status.replace(/_/g, ' ');
+  const words = status.replace(/_/g, ' ');
+  return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
 const lifecycleRefusalLead: Record<LifecycleFailureKind, string> = {
@@ -977,7 +979,7 @@ export function WorkspaceDocumentHeaderNotices({
   );
 }
 
-/** The lifecycle status as the header prints it — "draft", "in review" — for a host's own title row. */
+/** The lifecycle status as the header prints it — "Draft", "In review" — for a host's own title row. */
 export function DocumentLifecyclePill({ status }: { status: DocumentLifecycleStatus }) {
   return (
     <StatusPill

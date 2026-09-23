@@ -2,8 +2,8 @@
 // its own line under the mode row — "/workflow ⟡ migration-plan" — and the
 // picked argument replaces the command's label while it is intact in the
 // draft (2.385.0). Other mode controls keep the tinted strip.
-import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RichChatComposer } from '../RichChatComposer';
 import type { ComposerCommand } from '../composerCommands';
 
@@ -53,5 +53,70 @@ describe('command chip in the docked card', () => {
   it('other mode controls keep the strip', () => {
     render(<RichChatComposer {...base} modeControl="tabs" draft={{ html: '<p>/workflow </p>', files: [] }} />);
     expect(screen.getByTestId('composer-command')).not.toHaveAttribute('data-command-chip');
+  });
+
+  it('hides the command line the chip names, keeping it in the draft (2.385.4)', () => {
+    const onDraftChange = vi.fn();
+    const html = '<p>/workflow migration-plan Remove the bridge</p>';
+    render(
+      <RichChatComposer
+        {...base}
+        onDraftChange={onDraftChange}
+        draft={{ html, files: [], command: { trigger: '/workflow', argument: { id: 'migration-plan', label: 'migration-plan', icon: '⟡' } } }}
+      />,
+    );
+    const input = screen.getByTestId('composer-input');
+    const hidden = input.querySelector('[data-command-prefix]')!;
+    expect(hidden).not.toBeNull();
+    expect(hidden.getAttribute('data-command-prefix')).toBe('inline');
+    expect(hidden).toHaveClass('hidden');
+    expect(hidden.textContent).toBe('/workflow migration-plan ');
+    // The words stay in the editor, and nothing was rewritten for the host.
+    expect(input.textContent).toBe('/workflow migration-plan Remove the bridge');
+    expect(onDraftChange).not.toHaveBeenCalled();
+  });
+
+  it('Backspace right after the hidden command removes the whole command, chip and all', () => {
+    const onDraftChange = vi.fn();
+    render(
+      <RichChatComposer
+        {...base}
+        onDraftChange={onDraftChange}
+        draft={{ html: '<p>/workflow migration-plan </p>', files: [], command: { trigger: '/workflow', argument: { id: 'migration-plan', label: 'migration-plan' } } }}
+      />,
+    );
+    fireEvent.keyDown(screen.getByTestId('composer-input'), { key: 'Backspace' });
+    expect(screen.queryByTestId('composer-command')).toBeNull();
+    const last = onDraftChange.mock.calls.at(-1)![0];
+    expect(last.html).toBe('');
+    expect(last.command).toBeUndefined();
+  });
+
+  it('a host-written command paragraph hides whole, leaving the instruction lines', () => {
+    render(
+      <RichChatComposer
+        {...base}
+        draft={{ html: '<p>/workflow migration-plan</p><p>Create a short deck.</p>', files: [], command: { trigger: '/workflow', argument: { id: 'migration-plan', label: 'migration-plan' } } }}
+      />,
+    );
+    const input = screen.getByTestId('composer-input');
+    const first = input.querySelector('p')!;
+    expect(first.getAttribute('data-command-prefix')).toBe('block');
+    expect(first).toHaveClass('hidden');
+    expect(input.querySelectorAll('p')[1]!.textContent).toBe('Create a short deck.');
+  });
+
+  it('shows the typed command until an argument is picked, and outside menu mode', () => {
+    const { unmount } = render(<RichChatComposer {...base} draft={{ html: '<p>/workflow </p>', files: [] }} />);
+    expect(screen.getByTestId('composer-input').querySelector('[data-command-prefix]')).toBeNull();
+    unmount();
+    render(
+      <RichChatComposer
+        {...base}
+        modeControl="tabs"
+        draft={{ html: '<p>/workflow migration-plan Go</p>', files: [], command: { trigger: '/workflow', argument: { id: 'migration-plan', label: 'migration-plan' } } }}
+      />,
+    );
+    expect(screen.getByTestId('composer-input').querySelector('[data-command-prefix]')).toBeNull();
   });
 });

@@ -89,14 +89,14 @@ afterEach(() => cleanup());
 describe('the header renders the server status and no other', () => {
   it('shows the lifecycle status', () => {
     renderHeader({ status: 'in_review' });
-    expect(screen.getByTestId('lifecycle-status')).toHaveTextContent('in review');
+    expect(screen.getByTestId('lifecycle-status')).toHaveTextContent('In review');
   });
 
   it('does NOT render the Y.Doc status, even when the two disagree', () => {
     // The exact case the old two-badge layout existed to expose. There is now
     // nothing to expose: the CRDT value is not consulted.
     renderHeader({ m: meta({ status: 'final' }), status: 'draft' });
-    expect(screen.getByTestId('lifecycle-status')).toHaveTextContent('draft');
+    expect(screen.getByTestId('lifecycle-status')).toHaveTextContent('Draft');
     expect(screen.queryByText('final')).toBeNull();
   });
 
