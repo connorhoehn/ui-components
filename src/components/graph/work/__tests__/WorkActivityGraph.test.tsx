@@ -96,7 +96,7 @@ describe('Active Now composition', () => {
   it('preserves the viewport on heartbeats, supports keyboard node selection, and restores overview after focus', () => {
     const initial = props();
     const { rerender } = render(<WorkGraph {...initial} />);
-    fireEvent.keyDown(screen.getByRole('button', { name: 'Sprint slides, running' }), { key: 'Enter' });
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Sprint slides, v3 generating' }), { key: 'Enter' });
     expect(initial.onSelectionChange).toHaveBeenCalledWith({ kind: 'node', id: 'deck', revisionId: 'r2' });
     rerender(<WorkGraph {...initial} nodes={initial.nodes.map((node) => ({ ...node, updatedAt: new Date(end + 5000).toISOString() }))} />);
     expect(initial.onViewportChange).not.toHaveBeenCalled();

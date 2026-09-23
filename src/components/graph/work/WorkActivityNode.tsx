@@ -56,12 +56,20 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
   const muted = visible?.emphasis === 'earlier' || visible?.emphasis === 'input';
   // A finished artifact with something to read is green; work in flight is
   // blue; a failed run is red. Everything else keeps the plain border.
-  const ready = !!visible?.artifact?.revisions.length && node.status !== 'running';
+  // ONE state, read by the card and by its accessible name alike: a revision
+  // being generated (or one that failed) outranks the run's own status — a
+  // card that shows "v5 generating" must not announce "completed".
+  const generating = pending?.status === 'generating';
+  const ready = !!visible?.artifact?.revisions.length && node.status !== 'running' && !generating;
   const accent = ACCENT[node.kind];
   const failed = node.status === 'error';
   const current = visible?.emphasis === 'current' || (!muted && node.status === 'running' && isFresh);
   const statusLine = node.status === 'running' && live && !isFresh ? 'Running · updates delayed' : node.status;
   const lines = visible?.lines?.length ? visible.lines : [statusLine];
+  const cardState = pending?.status === 'generating' ? `${pending.label} generating`
+    : pending?.status === 'failed' ? `${pending.label} generation failed`
+      : node.status === 'running' && !isFresh ? 'running, updates delayed'
+        : node.status;
   const target = { kind: 'node' as const, id: node.id, ...(revision ? { revisionId: revision.id } : {}) };
   const select = () => onSelect(target);
   return (
@@ -74,7 +82,7 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
       <article
         role="button"
         tabIndex={0}
-        aria-label={`${title}, ${node.status}${node.status === 'running' && !isFresh ? ', updates delayed' : ''}`}
+        aria-label={`${title}, ${cardState}`}
         aria-pressed={selected}
         data-work-card={node.id}
         onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(); } }}

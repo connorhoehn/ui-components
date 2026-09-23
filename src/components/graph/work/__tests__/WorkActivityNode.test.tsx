@@ -77,6 +77,25 @@ describe('Active Now node card', () => {
     expect(screen.getByText('v3 generating')).toBeInTheDocument();
   });
 
+  // Regression: the Sprint review card read "v5 generating" while its
+  // accessible name said "completed" — one state feeds both now.
+  it('names the card from the state it shows: a generating revision beats a completed run', () => {
+    show(node('deck', 'document', 'Sprint review', 'completed'), {
+      artifact: { revisions: [{ id: 'v4', label: 'v4', createdAt: at }], pending: { id: 'v5', label: 'v5', status: 'generating' } },
+    });
+    const card = screen.getByRole('button', { name: 'Sprint review, v5 generating' });
+    expect(within(card).getByText('v5 generating')).toBeInTheDocument();
+    expect(card.className).not.toContain('border-success');
+  });
+
+  it('names a failed pending revision, and a plain run by its status', () => {
+    show(node('deck', 'document', 'Sprint review', 'completed'), {
+      artifact: { revisions: [{ id: 'v4', label: 'v4', createdAt: at }], pending: { id: 'v5', label: 'v5', status: 'failed' } },
+    });
+    expect(screen.getByRole('button', { name: 'Sprint review, v5 generation failed' })).toBeInTheDocument();
+    expect(screen.getByText('v5 generation failed')).toBeInTheDocument();
+  });
+
   it('gives the preview a fixed box to scale into rather than cropping it', () => {
     const { container } = render(<WorkActivityNode node={node('deck', 'document', 'Sprint review', 'running')} detail={{ fresh: true, lines: ['v2 available'], artifact: { revisions: [{ id: 'v2', label: 'v2', createdAt: at, preview: <svg viewBox="0 0 320 200" /> }] } }} selected={false} live onSelect={vi.fn()} />);
     const box = container.querySelector('[aria-label="Sprint review v2 preview"]')!;

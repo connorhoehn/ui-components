@@ -621,8 +621,9 @@ export declare interface RichChatComposerProps {
     /**
      * One row while idle: with the input EMPTY and the caret elsewhere (and no
      * status, process, attachment, command or notice to show), the composer is
-     * a compact mode pill, the input and Send on a single line. The toolbar,
-     * status line, mode row and references come back the moment the input takes
+     * a compact mode pill, any references, the input and Send on a single line.
+     * References stay visible in that row — they are part of the draft. The
+     * toolbar, status line and mode row come back the moment the input takes
      * focus or holds content. For a dock pinned under a canvas that needs the
      * height (a slide stage); the dock stays pinned and grows upward. Default off.
      */

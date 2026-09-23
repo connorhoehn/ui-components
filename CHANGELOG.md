@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.373.2] — 2026-09-23
+
+### Fixed
+
+- **`RichChatComposer collapseWhenIdle`** — references (a "Reference in chat"
+  chip, the deck's slide reference) were hidden until the input was focused.
+  They are part of the draft: the idle row now shows them beside the mode pill,
+  one line, truncated, removable. An attachment, words in the box or a pending
+  command still keep the full composer.
+- **`WorkActivityNode`** — the card's accessible name came from the run status
+  ("completed") while the card showed "v5 generating". One state feeds both: a
+  generating (or failed) pending revision outranks the run's status, and a card
+  with a revision in flight no longer takes the green "ready" border.
+- **`StepThread`** — a step whose node is not in the loaded definition is
+  titled by its step id instead of "unknown".
+
+---
+
 ## [2.373.1] — 2026-09-23
 
 ### Changed — `EditorShell` byline beside the title in a short window

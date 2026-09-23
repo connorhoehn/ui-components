@@ -77,6 +77,13 @@ function visionResultFrom(
 }
 
 export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep, onArtifactClick, renderStepDetail }: StepThreadProps) {
+  // A step whose node is not in the definition (a deleted node, a definition
+  // that never loaded, a run recorded elsewhere) has no type to show. Its own
+  // id is the only true name it has — "unknown" says nothing, three times over.
+  const label = typeof nodeConfig?.label === 'string' && nodeConfig.label.trim() ? nodeConfig.label : undefined;
+  const knownType = !!nodeType && nodeType !== 'unknown';
+  const stepTitle = label ?? (knownType ? nodeType : stepId);
+  const stepSubtitle = label ? (knownType ? nodeType : undefined) : knownType ? stepId.slice(0, 8) : undefined;
   const [expanded, setExpanded] = useState(false);
   const detail = renderStepDetail?.(step, stepId);
   const [copyLabel, setCopyLabel] = useState<'Copy JSON' | 'Copied!'>('Copy JSON');
@@ -146,11 +153,13 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
           {step.status}
         </span>
         <span className="text-[13px] font-semibold text-text-primary">
-          {index + 1}. {typeof nodeConfig?.label === 'string' && nodeConfig.label.trim() ? nodeConfig.label : nodeType}
+          {index + 1}. {stepTitle}
         </span>
-        <span className="text-[11px] font-mono text-text-tertiary" title={`${nodeType} · ${stepId}`}>
-          {typeof nodeConfig?.label === 'string' && nodeConfig.label.trim() ? nodeType : stepId.slice(0, 8)}
-        </span>
+        {stepSubtitle && (
+          <span className="text-[11px] font-mono text-text-tertiary" title={knownType ? `${nodeType} · ${stepId}` : stepId}>
+            {stepSubtitle}
+          </span>
+        )}
         {step.durationMs != null && (
           <span className="text-[11px] text-text-tertiary ml-auto">
             {step.durationMs < 1000 ? `${step.durationMs}ms` : `${(step.durationMs / 1000).toFixed(1)}s`}

@@ -1800,38 +1800,38 @@ var ft = {
 	stale: "bg-border-emphasis"
 };
 function gt({ node: e, detail: n, selected: r, selectedRevisionId: a, live: s, onSelect: c, onFeedback: l }) {
-	let u = e.locked || e.disclosure === "existence" ? void 0 : n, d = a ? u?.artifact?.revisions.find((e) => e.id === a) : u?.artifact?.revisions.at(-1), f = u?.artifact?.pending, p = e.locked ? "Restricted work item" : e.title, m = s && u?.fresh === !0, g = u?.emphasis === "earlier" || u?.emphasis === "input", _ = !!u?.artifact?.revisions.length && e.status !== "running", v = pt[e.kind], y = e.status === "error", b = u?.emphasis === "current" || !g && e.status === "running" && m, x = e.status === "running" && s && !m ? "Running · updates delayed" : e.status, S = u?.lines?.length ? u.lines : [x], C = {
+	let u = e.locked || e.disclosure === "existence" ? void 0 : n, d = a ? u?.artifact?.revisions.find((e) => e.id === a) : u?.artifact?.revisions.at(-1), f = u?.artifact?.pending, p = e.locked ? "Restricted work item" : e.title, m = s && u?.fresh === !0, g = u?.emphasis === "earlier" || u?.emphasis === "input", _ = f?.status === "generating", v = !!u?.artifact?.revisions.length && e.status !== "running" && !_, y = pt[e.kind], b = e.status === "error", x = u?.emphasis === "current" || !g && e.status === "running" && m, S = e.status === "running" && s && !m ? "Running · updates delayed" : e.status, C = u?.lines?.length ? u.lines : [S], w = f?.status === "generating" ? `${f.label} generating` : f?.status === "failed" ? `${f.label} generation failed` : e.status === "running" && !m ? "running, updates delayed" : e.status, T = {
 		kind: "node",
 		id: e.id,
 		...d ? { revisionId: d.id } : {}
-	}, w = () => c(C);
+	}, E = () => c(T);
 	return /* @__PURE__ */ U("div", {
 		className: "pointer-events-auto relative w-[200px]",
 		"data-emphasis": u?.emphasis ?? "current",
 		"data-work-node": e.id,
-		onClick: w,
+		onClick: E,
 		children: [
 			/* @__PURE__ */ U("article", {
 				role: "button",
 				tabIndex: 0,
-				"aria-label": `${p}, ${e.status}${e.status === "running" && !m ? ", updates delayed" : ""}`,
+				"aria-label": `${p}, ${w}`,
 				"aria-pressed": r,
 				"data-work-card": e.id,
 				onKeyDown: (e) => {
-					(e.key === "Enter" || e.key === " ") && (e.preventDefault(), w());
+					(e.key === "Enter" || e.key === " ") && (e.preventDefault(), E());
 				},
-				className: t("relative overflow-hidden rounded-lg border bg-surface text-left shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary", y ? "border-danger" : b ? "border-info" : _ ? "border-success" : "border-border", y || b || _ ? "border-2" : "", _ && "bg-success-bg/40", g && "opacity-80", r && "ring-2 ring-primary/30"),
+				className: t("relative overflow-hidden rounded-lg border bg-surface text-left shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary", b ? "border-danger" : x ? "border-info" : v ? "border-success" : "border-border", b || x || v ? "border-2" : "", v && "bg-success-bg/40", g && "opacity-80", r && "ring-2 ring-primary/30"),
 				children: [
 					/* @__PURE__ */ H("span", {
 						"aria-hidden": "true",
-						className: t("absolute inset-y-0 left-0 w-[3px]", y ? "bg-danger" : _ ? "bg-success" : b ? "bg-info" : v.bar)
+						className: t("absolute inset-y-0 left-0 w-[3px]", b ? "bg-danger" : v ? "bg-success" : x ? "bg-info" : y.bar)
 					}),
 					/* @__PURE__ */ U("header", {
 						className: "flex items-center gap-2 border-b border-border bg-surface-panel py-1.5 pl-3.5 pr-2.5",
 						children: [
 							/* @__PURE__ */ H("span", {
 								"aria-hidden": "true",
-								className: t("flex h-5 w-5 shrink-0 items-center justify-center rounded text-[11px] leading-none", v.chip),
+								className: t("flex h-5 w-5 shrink-0 items-center justify-center rounded text-[11px] leading-none", y.chip),
 								children: ft[e.kind]
 							}),
 							/* @__PURE__ */ H("span", {
@@ -1847,7 +1847,7 @@ function gt({ node: e, detail: n, selected: r, selectedRevisionId: a, live: s, o
 					/* @__PURE__ */ U("div", {
 						className: t("space-y-1.5 py-2 pl-3.5 pr-2.5 text-[11px] leading-snug", g ? "text-text-tertiary" : "text-text-secondary"),
 						children: [
-							S.map((n, r) => /* @__PURE__ */ U("div", {
+							C.map((n, r) => /* @__PURE__ */ U("div", {
 								className: "flex items-start justify-between gap-1.5",
 								children: [/* @__PURE__ */ H("span", {
 									className: "min-w-0",
@@ -1926,7 +1926,7 @@ function gt({ node: e, detail: n, selected: r, selectedRevisionId: a, live: s, o
 				className: "nodrag nopan absolute -right-2 -top-3 h-7 w-7 rounded-full border border-border bg-surface shadow-sm",
 				"aria-label": `${u.feedbackCount} comments on ${p}`,
 				onClick: (e) => {
-					e.stopPropagation(), l(C);
+					e.stopPropagation(), l(T);
 				},
 				children: [/* @__PURE__ */ H(o, { size: 14 }), /* @__PURE__ */ H("span", {
 					className: "absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[10px] text-white",

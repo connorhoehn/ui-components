@@ -21,11 +21,10 @@ const modes = {
 const input = () => document.querySelector('[data-testid=composer] .ProseMirror') as HTMLElement;
 
 describe('collapseWhenIdle', () => {
-  it('idle: pill, input and Send only — no toolbar, mode row, references or submit lead', () => {
+  it('idle: pill, input and Send only — no toolbar, mode row or submit lead', () => {
     render(
       <RichChatComposer
         {...modes}
-        references={[{ id: 'slide-3', label: 'Slide 3' }]}
         modeRowEnd={<span data-testid="scope">scope</span>}
         submitLead={<span data-testid="lead">Deck actions</span>}
         suggestions={['Tighten the bullets']}
@@ -42,6 +41,62 @@ describe('collapseWhenIdle', () => {
     expect(screen.queryByTestId('lead')).toBeNull();
     expect(screen.queryByTestId('composer-references')).toBeNull();
     expect(screen.queryByTestId('composer-hints-toggle')).toBeNull();
+  });
+
+  // Regression (2.373.0): a "Reference in chat" chip was invisible until the
+  // box was focused. A reference is part of the draft — it shows while idle.
+  it('references stay visible in the idle row, removable, beside the pill', async () => {
+    const onRemoveReference = vi.fn();
+    render(
+      <RichChatComposer
+        {...modes}
+        references={[{ id: 'work-1', label: 'Sprint review' }]}
+        onRemoveReference={onRemoveReference}
+      />,
+    );
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'true');
+    const refs = screen.getByTestId('composer-references');
+    expect(refs).toHaveTextContent('Sprint review');
+    // In the one row (the body), not a row of its own above it.
+    expect(screen.getByTestId('composer-body')).toContainElement(refs);
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Sprint review from this draft' }));
+    expect(onRemoveReference).toHaveBeenCalledWith('work-1');
+    // One copy when expanded, too.
+    await act(async () => { input().focus(); fireEvent.focusIn(input()); });
+    expect(screen.getAllByTestId('composer-references')).toHaveLength(1);
+  });
+
+  it('references show in the idle row without modes (a DM composer)', () => {
+    render(
+      <RichChatComposer
+        onSend={() => {}}
+        data-testid="composer"
+        layout="wide"
+        collapseWhenIdle
+        references={[{ id: 'work-1', label: 'Sprint review' }]}
+      />,
+    );
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'true');
+    expect(screen.getByTestId('composer-references')).toHaveTextContent('Sprint review');
+  });
+
+  it('a staged attachment keeps the full composer and shows the file', () => {
+    const file = new File(['x'], 'notes.txt', { type: 'text/plain' });
+    render(<RichChatComposer {...modes} draft={{ html: '', files: [file] }} onDraftChange={() => {}} />);
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'false');
+    expect(screen.getByText('notes.txt')).toBeInTheDocument();
+  });
+
+  it('a pending command keeps the full composer', () => {
+    render(
+      <RichChatComposer
+        {...modes}
+        commands={[{ trigger: '/deck', label: 'Deck', hint: 'make a deck' }]}
+        onCommand={() => {}}
+        draft={{ html: '<p>/deck </p>', files: [] }}
+      />,
+    );
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'false');
   });
 
   it('expands when the input takes focus and collapses again when focus leaves an empty box', async () => {

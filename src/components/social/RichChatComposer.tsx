@@ -490,8 +490,9 @@ export interface RichChatComposerProps {
   /**
    * One row while idle: with the input EMPTY and the caret elsewhere (and no
    * status, process, attachment, command or notice to show), the composer is
-   * a compact mode pill, the input and Send on a single line. The toolbar,
-   * status line, mode row and references come back the moment the input takes
+   * a compact mode pill, any references, the input and Send on a single line.
+   * References stay visible in that row — they are part of the draft. The
+   * toolbar, status line and mode row come back the moment the input takes
    * focus or holds content. For a dock pinned under a canvas that needs the
    * height (a slide stage); the dock stays pinned and grows upward. Default off.
    */
@@ -2062,6 +2063,19 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             <span aria-hidden="true" className="flex w-4 justify-center">{MODE_ICON[activeMode]}</span>
             {MODE_NAMES[activeMode]}
           </button>
+        )}
+        {collapsed && !!references?.length && (
+          // What the draft is ABOUT is part of the draft, idle or not: a
+          // reference added from elsewhere ("Reference in chat") must be
+          // visible before anyone focuses the box. In the idle row, beside the
+          // pill — one line, truncated, the row's height unchanged.
+          <ComposerReferences
+            references={references}
+            {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
+            removeLabel={(reference) => `Remove ${reference.label} from this draft`}
+            className="mb-1.5 ml-1.5 min-w-0 max-w-[45%] shrink flex-nowrap self-end overflow-hidden p-0"
+            data-testid={`${testId}-references`}
+          />
         )}
         <div
           ref={inputBoxRef}
