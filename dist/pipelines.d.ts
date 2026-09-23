@@ -2423,7 +2423,7 @@ export declare interface PipelinesListEntry {
     tags?: string[];
 }
 
-export declare function PipelinesListView({ entries, loading, error, onRetry, query, onQueryChange, searchPlaceholder, groupBy, onGroupByChange, filters, activeFilterCount, onClearFilters, title, count, headerMenu, onTemplates, onStartBlank, headerActions, currentId, onOpen, onRun, onViewRun, rowMenu, rowTrailing, storageKey, emptyState, footer, now, className, 'data-testid': testId, }: PipelinesListViewProps): JSX.Element;
+export declare function PipelinesListView({ entries, loading, error, onRetry, query, onQueryChange, searchPlaceholder, groupBy, onGroupByChange, filters, activeFilterCount, onClearFilters, title, count, headerMenu, onTemplates, onStartBlank, headerActions, currentId, onOpen, onRun, onViewRun, rowMenu, rowTrailing, storageKey, emptyState, footer, now, frame, className, 'data-testid': testId, }: PipelinesListViewProps): JSX.Element;
 
 export declare interface PipelinesListViewProps {
     entries: PipelinesListEntry[];
@@ -2478,6 +2478,12 @@ export declare interface PipelinesListViewProps {
     footer?: ReactNode;
     /** A fixed clock for the pills' "· 29m ago" — tests and stories. Default `Date.now()`. */
     now?: number;
+    /**
+     * `card` draws the mockup's frame — a border and radius around the toolbar
+     * and the groups together, the toolbar ruled off from the list. The header
+     * and the docked composer stay outside it. Default `none`: the current look.
+     */
+    frame?: 'card' | 'none';
     className?: string;
     'data-testid'?: string;
 }
@@ -3788,9 +3794,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3801,6 +3807,29 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3834,32 +3863,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

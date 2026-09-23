@@ -183,6 +183,26 @@ describe('PipelinesListView', () => {
     expect(screen.getByTestId('pipelines-list-filter-count')).toHaveTextContent('2');
     fireEvent.click(screen.getByTestId('pipelines-list-filter-trigger'));
     expect(screen.getByText('chips')).toBeInTheDocument();
+    // The panel is portalled out of the toolbar row (`overflow: auto`, which
+    // clipped the in-place panel to the row's height) to document.body.
+    const panel = screen.getByRole('dialog', { name: 'Filters' });
+    expect(panel.parentElement).toBe(document.body);
+    expect(screen.getByTestId('pipelines-list-toolbar')).not.toContainElement(panel);
+  });
+
+  it('draws the card frame around the toolbar and the groups only with frame="card"', () => {
+    const { rerender } = render(<PipelinesListView {...baseProps} />);
+    expect(screen.getByTestId('pipelines-list')).toHaveAttribute('data-frame', 'none');
+    expect(screen.getByTestId('pipelines-list-frame').className).not.toMatch(/border/);
+    rerender(<PipelinesListView {...baseProps} frame="card" footer={<p>dock</p>} />);
+    const frame = screen.getByTestId('pipelines-list-frame');
+    expect(frame).toHaveAttribute('data-frame', 'card');
+    expect(frame.className).toMatch(/rounded-xl/);
+    expect(frame.className).toMatch(/border-border/);
+    expect(frame).toContainElement(screen.getByTestId('pipelines-list-toolbar'));
+    expect(frame).toContainElement(screen.getByTestId('pipelines-list-body'));
+    expect(frame).not.toContainElement(screen.getByTestId('pipelines-list-count'));
+    expect(frame).not.toContainElement(screen.getByTestId('pipelines-list-footer'));
   });
 
   it('renders the footer slot as a pinned, column-wide dock', () => {

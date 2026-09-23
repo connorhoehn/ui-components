@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, act } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FilterPopover } from '../FilterPopover';
 
@@ -49,6 +49,38 @@ describe('FilterPopover', () => {
     expect(clear).toBeEnabled();
     fireEvent.click(clear);
     expect(onClear).toHaveBeenCalledTimes(1);
+  });
+
+  it('portals the panel to document.body (out of any clipping toolbar row), traps focus in it and closes on an outside click', async () => {
+    render(
+      <div style={{ overflow: 'auto', height: 39 }} data-testid="row">
+        <FilterPopover>
+          <button type="button">Draft</button>
+          <button type="button">Published</button>
+        </FilterPopover>
+      </div>,
+    );
+    const trigger = screen.getByTestId('filter-popover-trigger');
+    trigger.focus();
+    fireEvent.click(trigger);
+    // Focus capture is deferred a microtask past the mount.
+    await act(async () => {});
+    const panel = screen.getByRole('dialog', { name: 'Filters' });
+    expect(panel.parentElement).toBe(document.body);
+    expect(screen.getByTestId('row')).not.toContainElement(panel);
+    expect(screen.getByTestId('filter-popover-root')).not.toContainElement(panel);
+    expect(panel.style.position).toBe('fixed');
+    // Focus moved into the panel, and Tab cycles inside it.
+    expect(panel).toContainElement(document.activeElement as HTMLElement);
+    expect(document.activeElement).toHaveTextContent('Draft');
+    fireEvent.keyDown(panel, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toHaveTextContent('Published');
+    // Outside pointerdown dismisses; the trigger's own pointerdown does not.
+    fireEvent.mouseDown(trigger);
+    expect(screen.getByRole('dialog', { name: 'Filters' })).toBeInTheDocument();
+    fireEvent.mouseDown(document.body);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(trigger);
   });
 
   it('is controllable through open / onOpenChange', () => {

@@ -8,13 +8,23 @@
 //
 // The body is the caller's — normally a few `FilterChip` groups under
 // `SectionLabel`s — so the popover knows nothing about what a filter is. It
-// owns the button, the badge, the panel (an `InlineMenu`: outside-click and
-// Escape dismiss, top-layer aware) and an optional "Clear" row.
+// owns the button, the badge, the panel and an optional "Clear" row.
+//
+// The panel is an `InlinePopover`: portalled to `document.body`, positioned
+// from the trigger's rect, flipped above the button when there is no room
+// below and slid back on screen at the viewport edges, focus-trapped, and
+// dismissed by outside click, Escape or tab-out — the same machinery as
+// `DropdownMenu`'s ⋯ menu. It used to be an `InlineMenu` (`position:
+// absolute` in place), and the one toolbar that matters — `PipelinesListView`'s,
+// a `Toolbar` row with `overflow: auto` — clipped it to the row's 39px: the
+// layout said "visible", the screenshot showed nothing, and a hit-test at its
+// centre landed on a list row.
 
 import { useId, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button, type ButtonSize } from '../ui/Button';
-import { InlineMenu, type InlineMenuPlacement } from './InlineMenu';
+import { InlinePopover, type InlinePopoverPlacement } from './InlinePopover';
+import type { InlineMenuPlacement } from './InlineMenu';
 import Chip from './Chip';
 
 export interface FilterPopoverProps {
@@ -31,6 +41,13 @@ export interface FilterPopoverProps {
   /** Controlled open state. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /**
+   * Which edge of the button the panel hangs from. The panel is
+   * collision-aware — a `bottom-*` placement flips above the button on its
+   * own when there is no room below — so the `top-*` values (kept for
+   * callers written against the in-place panel) resolve to their `bottom-*`
+   * counterpart and let the flip decide.
+   */
   placement?: InlineMenuPlacement;
   size?: ButtonSize;
   /** Accessible name of the panel. Default "Filters". */
@@ -39,6 +56,13 @@ export interface FilterPopoverProps {
   panelClassName?: string;
   'data-testid'?: string;
 }
+
+const PLACEMENT: Record<InlineMenuPlacement, InlinePopoverPlacement> = {
+  'bottom-start': 'bottom-start',
+  'bottom-end': 'bottom-end',
+  'top-start': 'bottom-start',
+  'top-end': 'bottom-end',
+};
 
 function FunnelIcon() {
   return (
@@ -74,7 +98,7 @@ export function FilterPopover({
   const active = activeCount > 0;
 
   return (
-    <span className={cn('relative inline-flex shrink-0', className)} data-testid={`${testId}-root`}>
+    <span className={cn('inline-flex shrink-0', className)} data-testid={`${testId}-root`}>
       <Button
         ref={triggerRef}
         type="button"
@@ -96,12 +120,11 @@ export function FilterPopover({
           </Chip>
         )}
       </Button>
-      <InlineMenu
+      <InlinePopover
         open={open}
         onClose={() => setOpen(false)}
         trigger={triggerRef}
-        placement={placement}
-        role="dialog"
+        placement={PLACEMENT[placement]}
         aria-label={panelLabel}
         data-testid={testId}
         className={cn('min-w-[280px] max-w-[420px] p-3', panelClassName)}
@@ -125,7 +148,7 @@ export function FilterPopover({
             </div>
           )}
         </div>
-      </InlineMenu>
+      </InlinePopover>
     </span>
   );
 }

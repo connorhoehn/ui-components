@@ -103,6 +103,12 @@ export interface PipelinesListViewProps {
   footer?: ReactNode;
   /** A fixed clock for the pills' "· 29m ago" — tests and stories. Default `Date.now()`. */
   now?: number;
+  /**
+   * `card` draws the mockup's frame — a border and radius around the toolbar
+   * and the groups together, the toolbar ruled off from the list. The header
+   * and the docked composer stay outside it. Default `none`: the current look.
+   */
+  frame?: 'card' | 'none';
   className?: string;
   'data-testid'?: string;
 }
@@ -230,6 +236,7 @@ export function PipelinesListView({
   emptyState,
   footer,
   now,
+  frame = 'none',
   className,
   'data-testid': testId = 'pipelines-list',
 }: PipelinesListViewProps) {
@@ -301,7 +308,7 @@ export function PipelinesListView({
   }
 
   return (
-    <div data-testid={testId} className={cn('flex h-full min-h-0 flex-col gap-4', className)}>
+    <div data-testid={testId} data-frame={frame} className={cn('flex h-full min-h-0 flex-col gap-4', className)}>
       <PageHeader
         title={title}
         size="lg"
@@ -339,9 +346,19 @@ export function PipelinesListView({
         }
       />
 
+      <div
+        data-testid={`${testId}-frame`}
+        data-frame={frame}
+        className={cn(
+          'flex min-h-0 flex-1 flex-col gap-4',
+          frame === 'card' && 'gap-0 overflow-hidden rounded-xl border border-border bg-surface',
+        )}
+      >
       <Toolbar
         aria-label="Pipeline list tools"
         data-testid={`${testId}-toolbar`}
+        bordered={frame === 'card'}
+        className={cn(frame === 'card' && 'py-1.5')}
         end={
           <Select
             size="sm"
@@ -390,6 +407,7 @@ export function PipelinesListView({
 
       <div className="min-h-0 flex-1 overflow-y-auto" data-testid={`${testId}-body`}>
         {body}
+      </div>
       </div>
 
       {footer && (

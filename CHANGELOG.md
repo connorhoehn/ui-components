@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.384.0] — 2026-09-23
+
+### Fixed
+
+- **`FilterPopover` paints.** The panel was an `InlineMenu` — `position: absolute` in place — and
+  `PipelinesListView`'s toolbar is a `Toolbar` row whose `children` slot is `overflow-x: auto`, so the
+  open panel was clipped to the row's 39px: layout said visible, the screenshot showed nothing, and a
+  hit-test at its centre landed on a list row. It is now an `InlinePopover`, the same machinery as
+  `DropdownMenu`'s ⋯ menu: portalled to `document.body`, positioned from the button's rect, flipped
+  above the button when there is no room below and slid back on screen at the viewport edges,
+  focus-trapped (Tab cycles, focus returns to the button on close), `role="dialog"` with the
+  `panelLabel` name, dismissed by outside click, Escape or tab-out. The API is unchanged; the
+  `top-*` placements resolve to their `bottom-*` counterpart and let the flip decide. Test ids and
+  the controlled `open` / `onOpenChange` behave as before.
+
+### Added
+
+- **`PipelinesListView` `frame?: 'card' | 'none'`.** `card` draws the mockup's frame — one border
+  and radius around the toolbar and the groups, the toolbar ruled off from the list — with the header
+  and the docked composer outside it. Default `none`, the current look. `data-frame` on the root and
+  the `-frame` test id on the wrapper. Story `Pipelines/List/PipelinesListView › Framed`.
+
 ## [2.383.2] — 2026-09-23
 
 ### Fixed

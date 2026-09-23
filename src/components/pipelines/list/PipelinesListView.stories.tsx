@@ -124,7 +124,7 @@ function Dock() {
   );
 }
 
-function Page({ entries = ENTRIES, loading = false, error = null as string | null, withFooter = true, current = 'document-agent-edit' }) {
+function Page({ entries = ENTRIES, loading = false, error = null as string | null, withFooter = true, current = 'document-agent-edit', frame = 'none' as 'card' | 'none' }) {
   const [query, setQuery] = useState('');
   const [groupBy, setGroupBy] = useState<PipelinesGroupBy>('worktype');
   const [status, setStatus] = useState<Set<string>>(new Set());
@@ -164,6 +164,7 @@ function Page({ entries = ENTRIES, loading = false, error = null as string | nul
         onViewRun={() => {}}
         rowMenu={rowMenu}
         now={NOW}
+        frame={frame}
         footer={withFooter ? <Dock /> : undefined}
       />
     </div>
@@ -191,6 +192,9 @@ const baseArgs = {
 
 /** The mockup: twelve pipelines in three groups, the docked agent composer below. */
 export const Directory: Story = { args: baseArgs, render: () => <Page /> };
+
+/** The mockup's card: toolbar and groups inside one border + radius; header and composer outside it. */
+export const Framed: Story = { args: { ...baseArgs, frame: 'card' }, render: () => <Page frame="card" /> };
 
 /** Without a composer: the list takes the whole column. */
 export const NoFooter: Story = { args: baseArgs, render: () => <Page withFooter={false} current={null as unknown as string} /> };
