@@ -15,7 +15,7 @@
 // All four are optional and additive — consumers that don't pass them
 // see the original behaviour unchanged.
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { Avatar } from './Avatar';
 import { StatusDot } from './StatusDot';
 import { cn } from '../../lib/cn';
@@ -112,6 +112,31 @@ function dimColor(color: string | undefined): string | undefined {
 }
 
 /**
+ * The box a card must stay inside: the viewport, narrowed by every ancestor
+ * that clips (overflow other than visible) — a byline at the left edge of a
+ * pane is clipped by the PANE, not the window.
+ */
+export function clippingBounds(el: HTMLElement): { left: number; right: number; top: number; bottom: number } {
+  const view = el.ownerDocument.defaultView;
+  const bounds = { left: 0, top: 0, right: view?.innerWidth ?? Infinity, bottom: view?.innerHeight ?? Infinity };
+  for (let node = el.parentElement; node && node !== el.ownerDocument.body; node = node.parentElement) {
+    const style = view?.getComputedStyle(node);
+    if (!style) break;
+    const clips = (value: string) => value !== '' && value !== 'visible';
+    const clipsX = clips(style.overflowX || style.overflow);
+    const clipsY = clips(style.overflowY || style.overflow);
+    if (!clipsX && !clipsY) continue;
+    const r = node.getBoundingClientRect();
+    if (clipsX) { bounds.left = Math.max(bounds.left, r.left); bounds.right = Math.min(bounds.right, r.right); }
+    if (clipsY) { bounds.top = Math.max(bounds.top, r.top); bounds.bottom = Math.min(bounds.bottom, r.bottom); }
+  }
+  return bounds;
+}
+
+/** Keeps a card this far inside its clipping box. */
+const CARD_EDGE = 8;
+
+/**
  * The hover/focus card behind an avatar when follow mode is on.
  *
  * A separate component because it owns hover state with a leave grace: the
@@ -125,6 +150,26 @@ function AvatarWithCard({ user, isFollowing, onFollow, children }: {
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  // Collision-aware placement: centred under the avatar, then SHIFTED to stay
+  // inside whatever clips it, and flipped above when there is no room below.
+  // Measured once per opening, from the unshifted position.
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const [place, setPlace] = useState<{ shift: number; above: boolean }>({ shift: 0, above: false });
+  useLayoutEffect(() => {
+    if (!open) { setPlace({ shift: 0, above: false }); return; }
+    const card = cardRef.current;
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    if (r.width === 0 && r.height === 0) return; // no layout (tests, hidden tab)
+    const b = clippingBounds(card);
+    let shift = 0;
+    if (r.left < b.left + CARD_EDGE) shift = b.left + CARD_EDGE - r.left;
+    else if (r.right > b.right - CARD_EDGE) shift = b.right - CARD_EDGE - r.right;
+    const anchor = card.parentElement?.getBoundingClientRect();
+    const roomAbove = anchor ? anchor.top - b.top : 0;
+    const above = r.bottom > b.bottom - CARD_EDGE && roomAbove > r.height + CARD_EDGE;
+    setPlace({ shift: Math.round(shift), above });
+  }, [open]);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const show = () => {
     if (hideTimer.current) { clearTimeout(hideTimer.current); hideTimer.current = null; }
@@ -145,11 +190,18 @@ function AvatarWithCard({ user, isFollowing, onFollow, children }: {
       {children}
       {open && (
         <div
+          ref={cardRef}
           role="tooltip"
           data-testid="presence-card"
+          data-placement={place.above ? 'top' : 'bottom'}
           onMouseEnter={show}
           onMouseLeave={hide}
-          className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 z-50 min-w-[140px] rounded-md border border-border bg-surface shadow-lg px-2.5 py-2 text-left"
+          // Only a custom property: the measured shift, read by the class below.
+          style={{ '--presence-card-shift': `${place.shift}px` } as CSSProperties}
+          className={cn(
+            'absolute left-1/2 z-50 min-w-[140px] translate-x-[calc(-50%+var(--presence-card-shift,0px))] rounded-md border border-border bg-surface px-2.5 py-2 text-left shadow-lg',
+            place.above ? 'bottom-full mb-1.5' : 'top-full mt-1.5',
+          )}
         >
           <div className="text-[12px] font-semibold text-text-primary whitespace-nowrap">{user.name}</div>
           {user.detail && (

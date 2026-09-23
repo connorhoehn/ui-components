@@ -12,7 +12,7 @@ import { t as T } from "./Input-DLknWXri.js";
 import { t as E } from "./Textarea-Dz4doxTv.js";
 import { t as D } from "./Avatar-Bq_1SEQ2.js";
 import { t as O } from "./RovingToolbar-CmQag9q6.js";
-import { t as re } from "./PresenceAvatars-BRfp1eRt.js";
+import { t as re } from "./PresenceAvatars-CubTOqbV.js";
 import { t as k } from "./StatusPill-Db42eiME.js";
 import { i as A, n as j, r as M, t as N } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { p as ie } from "./MediaIcons-OLUYBJM0.js";

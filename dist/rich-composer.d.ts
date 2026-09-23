@@ -226,6 +226,25 @@ export declare type ComposerSize = 'wide' | 'medium' | 'narrow';
 /** `null` — not measured yet — is wide: a first paint that hides controls and then shows them is worse than one frame of overflow. */
 export declare function composerSizeFor(width: number | null): ComposerSize;
 
+/**
+ * One line of news about the last thing this composer did — "Revised slide 2",
+ * "v15 is the agent's edit" — with at most one action (Undo). It sits in the
+ * composer's own status row, so a host has no banner stacked above the dock.
+ */
+export declare interface ComposerStatus {
+    text: string;
+    tone?: 'info' | 'success' | 'warning' | 'danger';
+    /** The one thing to do about it. A button at the end of the line. */
+    action?: {
+        label: string;
+        onSelect: () => void;
+        'data-testid'?: string;
+    };
+    /** Wired, the line has a × that calls it. */
+    onDismiss?: () => void;
+    'data-testid'?: string;
+}
+
 export declare interface DocumentCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
     id: string;
@@ -580,6 +599,25 @@ export declare interface RichChatComposerProps {
      * picks `wide` / `medium` / `narrow` — see `COMPOSER_BREAKPOINTS`.
      */
     layout?: 'auto' | ComposerSize;
+    /**
+     * `compact` spends the fewest rows on chrome, for a dock pinned under a
+     * canvas that needs the height (a slide stage): references share the mode
+     * row, the hints row folds into the `?` menu at every width, and the
+     * padding tightens. Default `comfortable`.
+     */
+    density?: 'comfortable' | 'compact';
+    /** One status line above the input (see `ComposerStatus`). Replaces a host banner. */
+    status?: ComposerStatus | null;
+    /**
+     * One-tap instructions. Wide, they show as a chip row only while the input
+     * is EMPTY and FOCUSED — a prompt for a blank box, gone once you type or
+     * look away. Medium and narrow, they live in the `?` menu. Picking one calls
+     * `onSuggestion`; the composer does not send anything itself.
+     */
+    suggestions?: readonly string[];
+    onSuggestion?: (suggestion: string) => void;
+    /** At the end of the compact mode row — a scope switch, a count. */
+    modeRowEnd?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }

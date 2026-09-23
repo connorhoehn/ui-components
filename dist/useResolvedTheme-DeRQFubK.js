@@ -1,6 +1,6 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./DropdownMenu-DKjyJHNc.js";
-import { t as n } from "./PresenceAvatars-BRfp1eRt.js";
+import { t as n } from "./PresenceAvatars-CubTOqbV.js";
 import { useEffect as r, useState as i } from "react";
 import { Fragment as a, jsx as o, jsxs as s } from "react/jsx-runtime";
 //#region src/components/diagram/DiagramPresenceBar.tsx

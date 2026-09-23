@@ -32,6 +32,7 @@ export type {
   ComposerArgumentItem,
   ComposerMode,
   ComposerProcess,
+  ComposerStatus,
   ComposerHint,
   ComposerSize,
   ComposerRadius,

@@ -302,4 +302,36 @@ describe('footer and renderFrame', () => {
     expect(within(screen.getByTestId('frame-surface')).queryByTestId('presentation-editor-dock')).toBeNull();
     await act(async () => undefined);
   });
+
+  it('framed: the slide nav rides the deck line, and the stage is fitted to the column (a size container)', () => {
+    render(<Harness renderFrame={(parts) => <div data-testid="frame-surface">{parts.surface}</div>} />);
+    const deckLine = screen.getByTestId('presentation-editor-deck-line');
+    expect(within(deckLine).getByTestId('presentation-editor-slide-nav')).toBeInTheDocument();
+    expect(within(deckLine).getByTestId('presentation-editor-position')).toHaveTextContent('Slide 1 of 3');
+    expect(screen.getByTestId('presentation-editor-main').className).toContain('md:[container-type:size]');
+    expect(screen.getByTestId('presentation-editor-stage-frame').className).toContain('100cqh');
+  });
+
+  it('unframed: the slide nav stays under the stage', () => {
+    render(<Harness />);
+    expect(within(screen.getByTestId('presentation-editor-main')).getByTestId('presentation-editor-slide-nav')).toBeInTheDocument();
+  });
+});
+
+describe('revision controls', () => {
+  it('up to five revisions are segmented tabs; more are one picker, newest first', () => {
+    const onSelectRevision = vi.fn();
+    const revisions = Array.from({ length: 8 }, (_, i) => ({ id: `rev-${i + 1}`, label: `v${i + 1}` }));
+    render(<Harness revisions={revisions} activeRevisionId="rev-8" onSelectRevision={onSelectRevision} />);
+    const select = screen.getByTestId('presentation-editor-revision-select') as HTMLSelectElement;
+    expect(select.value).toBe('rev-8');
+    expect(select.options[0]!.textContent).toBe('v8 · latest');
+    fireEvent.change(select, { target: { value: 'rev-3' } });
+    expect(onSelectRevision).toHaveBeenCalledWith('rev-3');
+  });
+
+  it('five or fewer stay tabs', () => {
+    render(<Harness />);
+    expect(screen.queryByTestId('presentation-editor-revision-select')).toBeNull();
+  });
 });

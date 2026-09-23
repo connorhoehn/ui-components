@@ -102,7 +102,11 @@ export function FloatingComposerDock({
       data-placement={placement}
       className={cn(
         placement === 'pinned'
-          ? 'relative shrink-0 bg-workspace px-4 pb-3 pt-2'
+          ? // Capped: however much the dock carries (a notice, a strip, a
+            // tall draft), it never takes more than its share of the surface —
+            // the canvas above it keeps the rest. What is above the composer
+            // scrolls inside the cap; the composer itself never shrinks.
+            'relative flex max-h-[var(--dock-max-height,50%)] shrink-0 flex-col bg-workspace px-4 pb-2 pt-1.5'
           : // `pointer-events-none` on the fade, `auto` on the dock itself: the
             // gradient must not swallow clicks on the page line it is fading.
             'pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8',
@@ -111,12 +115,12 @@ export function FloatingComposerDock({
     >
       {/* A keep-out for popovers: a menu opened above the dock (a filmstrip
           row's ⋯) flips up rather than covering the composer. */}
-      <div data-uic-keepout="bottom" className={cn('pointer-events-auto mx-auto flex w-full flex-col', WIDTH[maxWidth])}>
-        {above && <div className="mb-2" data-testid={`${testId}-above`}>{above}</div>}
-        {strip && <div data-testid={`${testId}-strip`}>{strip}</div>}
+      <div data-uic-keepout="bottom" className={cn('pointer-events-auto mx-auto flex min-h-0 w-full flex-col', WIDTH[maxWidth])}>
+        {above && <div className="mb-2 min-h-0 shrink overflow-y-auto" data-testid={`${testId}-above`}>{above}</div>}
+        {strip && <div className="shrink-0" data-testid={`${testId}-strip`}>{strip}</div>}
         {/* With a strip on top the two read as one box: the composer's top
             corners square off to meet the strip's bottom edge. */}
-        <div className={cn('rounded-[var(--composer-radius,12px)] shadow-lg', strip && 'rounded-t-none [&_.chat-composer]:rounded-t-none')} data-testid={`${testId}-composer`}>{composer}</div>
+        <div className={cn('shrink-0 rounded-[var(--composer-radius,12px)] shadow-lg', strip && 'rounded-t-none [&_.chat-composer]:rounded-t-none')} data-testid={`${testId}-composer`}>{composer}</div>
       </div>
     </div>
   );

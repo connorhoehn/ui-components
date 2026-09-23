@@ -44,7 +44,7 @@ import "./ParticlesBackground-DdcUDMy0.js";
 import "./backdropTone-CS87_g8W.js";
 import "./RippleGridBackground-DKswGKCC.js";
 import "./FollowUpChips-BD9scwlC.js";
-import "./PresenceAvatars-BRfp1eRt.js";
+import "./PresenceAvatars-CubTOqbV.js";
 import { t as k } from "./InlinePopover-sx7SpM1v.js";
 import { t as A } from "./ActivityFeed-g_AJhmPi.js";
 import "./SectionLabel-bcrhNYOr.js";

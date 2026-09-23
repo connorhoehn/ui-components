@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.372.0] — 2026-09-23
+
+### Changed — a deck editor keeps its stage at 720 px tall
+
+- `RichChatComposer` `density="compact"`: references share the mode row, the hints row folds into
+  `?` at every width, fewer rows of chrome. `status` is one line above the input (text, tone, one
+  action such as Undo, dismiss) so a host needs no banner over its dock. `suggestions` +
+  `onSuggestion`: a chip row only while the input is empty and focused (wide), or a section of the
+  `?` menu (medium/narrow). `modeRowEnd` puts a control (a scope switch) at the end of the compact
+  mode row. New type `ComposerStatus`.
+- `FloatingComposerDock` pinned: capped at `var(--dock-max-height, 50%)` of its surface; what is
+  above the composer scrolls inside the cap and the composer never shrinks; tighter padding.
+- `PresentationEditor`: from `md` up the main column is a size container and the stage is as wide as
+  the column allows but no taller than it (`100cqh`, 24rem floor); the filmstrip and the notes
+  scroll in their own columns instead of squeezing the stage. Framed (EditorShell), the
+  previous / position / next row rides the deck line. More than five revisions render as one
+  `Select` (newest first, "· latest") instead of a row of segmented tabs.
+
+### Fixed — presence hover card clipped at a pane edge
+
+- `PresenceAvatars`' follow card is collision-aware: centred under the avatar, then shifted to
+  stay 8 px inside the nearest clipping ancestor (or the viewport), and flipped above when there is
+  no room below. `clippingBounds(el)` is exported from the module for reuse.
+
 ## [2.371.1] — 2026-09-23
 
 ### Fixed — composer placeholder follows its prop

@@ -77,6 +77,7 @@ import { Disclosure } from '../../ui/Disclosure';
 import { IconButton } from '../../ui/IconButton';
 import { InlineEditableText } from '../../forms/InlineEditableText';
 import { Input } from '../../forms/Input';
+import { Select } from '../../forms/Select';
 import DotMeter from '../../shared/DotMeter';
 import EmptyState from '../../shared/EmptyState';
 import ErrorState from '../../shared/ErrorState';
@@ -692,9 +693,22 @@ export function PresentationEditor({
 
   const revisionItems = revisions.map((revision) => ({ id: revision.id, label: revision.label }));
 
+  const REVISION_TABS_MAX = 5;
   const revisionControls = (
     <div className="flex flex-wrap items-center gap-2" data-testid={`${testId}-revision-controls`}>
-      {revisionItems.length > 0 && (
+      {revisionItems.length > REVISION_TABS_MAX ? (
+        // Past a handful, one segmented tab per revision is a row of v1…v15
+        // that crowds the title into a column; a picker holds any number.
+        <Select
+          size="sm"
+          aria-label="Revision"
+          value={activeRevisionId}
+          onChange={(event) => onSelectRevision?.(event.target.value)}
+          options={[...revisionItems].reverse().map((item, index) => ({ value: item.id, label: index === 0 ? `${item.label} · latest` : item.label }))}
+          wrapperClassName="w-auto"
+          data-testid={`${testId}-revision-select`}
+        />
+      ) : revisionItems.length > 0 && (
         <Tabs
           items={revisionItems}
           value={activeRevisionId}
@@ -941,8 +955,45 @@ export function PresentationEditor({
     </>
   );
 
+  // Previous / position / next. Framed (inside EditorShell), it rides the deck
+  // line so the stage gets that row's height; unframed, it sits under the stage.
+  const slideNav = (
+    <div className={cn('flex items-center justify-center gap-2', renderFrame && 'ml-auto shrink-0')} data-testid={`${testId}-slide-nav`}>
+      <IconButton
+        aria-label="Previous slide"
+        variant="ghost"
+        size="sm"
+        icon={<Chevron back />}
+        disabled={selectedIndex <= 0}
+        onClick={() => step(-1)}
+        data-testid={`${testId}-previous`}
+      />
+      <Text className="text-[13px] text-text-secondary" data-testid={`${testId}-position`}>
+        {`Slide ${slides.length === 0 ? 0 : selectedIndex + 1} of ${slides.length}`}
+      </Text>
+      <IconButton
+        aria-label="Next slide"
+        variant="ghost"
+        size="sm"
+        icon={<Chevron />}
+        disabled={selectedIndex >= slides.length - 1}
+        onClick={() => step(1)}
+        data-testid={`${testId}-next`}
+      />
+      <DotMeter
+        value={slides.length / MAX_SLIDES}
+        segments={10}
+        showPercent={false}
+        tone="surface"
+        note={`${slides.length} / ${MAX_SLIDES}`}
+        className="ml-2"
+        data-testid={`${testId}-slide-meter`}
+      />
+    </div>
+  );
+
   const body = (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row" data-testid={`${testId}-body`}>
       <Filmstrip
         items={items}
         selectedId={selected?.id ?? ''}
@@ -954,11 +1005,17 @@ export function PresentationEditor({
         canAdd={slides.length < MAX_SLIDES}
         generatingSlideIds={generating}
         {...(slideViewers ? { slideViewers } : {})}
-        className="md:w-44 md:shrink-0"
+        className="md:min-h-0 md:w-44 md:shrink-0 md:overflow-y-auto"
         testIdPrefix={`${testId}-slide`}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col gap-3" data-testid={`${testId}-main`}>
+      {/* From md up the column is a size container: the stage is as wide as
+          the column allows AND no taller than the column (100cqh), so a short
+          window keeps a whole 16:9 slide in view. Notes and the rest scroll
+          under it inside this column, never squeezing it. The floor (24rem)
+          keeps the slide legible in a very short box; the column scrolls then. */}
+      <div className="flex min-w-0 flex-1 flex-col gap-3 md:min-h-0 md:overflow-y-auto md:[container-type:size]" data-testid={`${testId}-main`}>
+        <div className="mx-auto w-full shrink-0 md:max-w-[max(24rem,calc(100cqh*16/9))]" data-testid={`${testId}-stage-frame`}>
         <SlideStage
           generating={selectedGenerating}
           label={selected ? `Slide ${selectedIndex + 1} of ${slides.length}: ${selected.title || 'Untitled slide'}` : 'No slide'}
@@ -966,39 +1023,9 @@ export function PresentationEditor({
         >
           {stageContent}
         </SlideStage>
-
-        <div className="flex items-center justify-center gap-2">
-          <IconButton
-            aria-label="Previous slide"
-            variant="ghost"
-            size="sm"
-            icon={<Chevron back />}
-            disabled={selectedIndex <= 0}
-            onClick={() => step(-1)}
-            data-testid={`${testId}-previous`}
-          />
-          <Text className="text-[13px] text-text-secondary" data-testid={`${testId}-position`}>
-            {`Slide ${slides.length === 0 ? 0 : selectedIndex + 1} of ${slides.length}`}
-          </Text>
-          <IconButton
-            aria-label="Next slide"
-            variant="ghost"
-            size="sm"
-            icon={<Chevron />}
-            disabled={selectedIndex >= slides.length - 1}
-            onClick={() => step(1)}
-            data-testid={`${testId}-next`}
-          />
-          <DotMeter
-            value={slides.length / MAX_SLIDES}
-            segments={10}
-            showPercent={false}
-            tone="surface"
-            note={`${slides.length} / ${MAX_SLIDES}`}
-            className="ml-2"
-            data-testid={`${testId}-slide-meter`}
-          />
         </div>
+
+        {!renderFrame && slideNav}
 
         {selected && (
           <div className="mx-auto flex w-full max-w-4xl flex-col gap-3">
@@ -1026,12 +1053,16 @@ export function PresentationEditor({
   if (renderFrame) {
     const surface = (
       <div
-        className={cn('flex min-h-0 flex-col gap-3 p-4', className)}
+        // `md:h-full`: the surface is exactly the scroller's height, so the
+        // body below the deck line has a definite height to fit the stage to.
+        // The min-height is the point past which the scroller scrolls instead.
+        className={cn('flex min-h-0 flex-col gap-2 px-4 pb-3 pt-2 md:h-full md:min-h-[20rem]', className)}
         data-testid={testId}
         onKeyDown={editorKeyGuard}
       >
-        <div className="flex flex-wrap items-center gap-2" data-testid={`${testId}-deck-line`}>
+        <div className="flex shrink-0 flex-wrap items-center gap-2" data-testid={`${testId}-deck-line`}>
           {deckFields}
+          {slideNav}
         </div>
         {alerts}
         {body}

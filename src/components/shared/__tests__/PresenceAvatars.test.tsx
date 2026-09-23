@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PresenceAvatars } from '../PresenceAvatars';
 import type { PresenceUser } from '../PresenceAvatars';
@@ -229,5 +230,41 @@ describe('PresenceAvatars', () => {
       <PresenceAvatars users={[{ id: 'u1', name: 'Alice', mode: 'editor', idle: true }]} />,
     );
     expect(screen.getByTestId('presence-avatar').getAttribute('title')).toBe('Alice — Away');
+  });
+});
+
+describe('PresenceAvatars — hover card placement', () => {
+  const rect = (left: number, top: number, width: number, height: number) =>
+    ({ left, top, width, height, right: left + width, bottom: top + height, x: left, y: top, toJSON: () => ({}) }) as DOMRect;
+
+  it('shifts the card right to stay inside a clipping pane at its left edge', () => {
+    const proto = HTMLElement.prototype;
+    const original = proto.getBoundingClientRect;
+    proto.getBoundingClientRect = function (this: HTMLElement) {
+      if (this.dataset.testid === 'presence-card') return rect(-40, 40, 160, 60); // centred under an avatar at x≈40
+      if (this.dataset.testid === 'clip-pane') return rect(10, 0, 600, 400);
+      return rect(20, 10, 22, 22);
+    };
+    const realStyle = window.getComputedStyle.bind(window);
+    const spy = vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element) => {
+      const style = realStyle(el);
+      if ((el as HTMLElement).dataset?.testid !== 'clip-pane') return style;
+      return { ...style, overflow: 'hidden', overflowX: 'hidden', overflowY: 'hidden' } as CSSStyleDeclaration;
+    });
+    try {
+      render(
+        <div data-testid="clip-pane">
+          <PresenceAvatars users={makeUsers(1)} onFollowUser={() => {}} />
+        </div>,
+      );
+      fireEvent.mouseEnter(document.querySelector('span.relative.inline-flex')!);
+      const card = screen.getByTestId('presence-card');
+      // pane left 10 + edge 8 − card left (−40) = 58
+      expect(card.style.getPropertyValue('--presence-card-shift')).toBe('58px');
+      expect(card).toHaveAttribute('data-placement', 'bottom');
+    } finally {
+      spy.mockRestore();
+      proto.getBoundingClientRect = original;
+    }
   });
 });
