@@ -25,6 +25,24 @@ export const ZOOM_STEPS = [0.5, 0.75, 0.9, 1, 1.25, 1.5, 2] as const;
  */
 export const ZOOM_FIT = 'fit';
 
+/**
+ * The page's zoom, handed to whatever surface offers it when the status bar is
+ * off — the toolbar's ⋯ overflow on the documents page. The page still OWNS
+ * the value (remembered per reader, fit width resolved against the rails); a
+ * control only reads it and asks for a change.
+ */
+export interface DocumentZoomControl {
+  /** The scale in force, fit width included — 1 is 100%. */
+  zoom: number;
+  /** True while the sheet tracks the workspace width rather than a fixed scale. */
+  fitActive: boolean;
+  /** The presets worth offering — `ZOOM_STEPS`. */
+  steps: readonly number[];
+  onZoomChange: (zoom: number) => void;
+  /** Absent when the host cannot fit — then offer no Fit option. */
+  onFitWidth?: () => void;
+}
+
 export interface DocumentStatusBarProps {
   /** Document length. Null when unknown — renders nothing rather than "0 words". */
   wordCount?: number | null;

@@ -30,7 +30,7 @@ import { cn } from '../../lib/cn';
 import TiptapEditor from './TiptapEditor';
 import { DocumentRuler } from './DocumentRuler';
 import { DocumentOutline } from './DocumentOutline';
-import { DocumentStatusBar, ZOOM_FIT } from './DocumentStatusBar';
+import { DocumentStatusBar, ZOOM_FIT, ZOOM_STEPS, type DocumentZoomControl } from './DocumentStatusBar';
 import { useDocumentOutline, useDocumentWordCount } from './useDocumentOutline';
 import DocumentToolbar from './DocumentToolbar';
 import DocumentGutter, { type GutterItem } from './DocumentGutter';
@@ -336,8 +336,26 @@ export interface CanvasDocumentViewProps {
   showRuler?: boolean;
   /** Forwarded to the toolbar: `compact` for a document shown inside something else. */
   toolbarDensity?: 'full' | 'compact';
-  /** The word-count / zoom bar along the bottom. Off for an embedded pane. */
+  /**
+   * The word-count / zoom bar along the bottom. Off for an embedded pane, and
+   * off on a page whose zoom lives in the toolbar's ⋯ overflow instead — with
+   * the bar off and `zoomMode` `remembered`, the toolbar gets `zoomControl`.
+   * Read the length through `onDocumentStats` then.
+   */
   showStatusBar?: boolean;
+  /**
+   * Horizontal page margin. `normal` is 1in on a letter sheet; `narrow` is
+   * 0.75in — the documents workspace, where a typical line of the seeded
+   * plan fits the measure instead of wrapping its last two words. The ruler
+   * follows the same figure, so it keeps measuring what the page does.
+   */
+  pageMargin?: 'normal' | 'narrow';
+  /**
+   * The document's length as the status bar would report it, for a host that
+   * shows it elsewhere (an info panel). Called when a figure changes; `null`
+   * while unknown. `pageCount` is null on an unpaginated page.
+   */
+  onDocumentStats?: (stats: { wordCount: number | null; pageCount: number | null }) => void;
   /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
   zoomMode?: 'remembered' | 'fit';
   /**
@@ -467,6 +485,8 @@ export default function CanvasDocumentView({
   toolbarDensity = 'full',
   showStatusBar = true,
   zoomMode = 'remembered',
+  pageMargin = 'normal',
+  onDocumentStats,
   fitHeight = 'viewport',
   showOutline = false,
   paginate = true,
@@ -731,6 +751,27 @@ export default function CanvasDocumentView({
   const outline = useDocumentOutline(editor as Parameters<typeof useDocumentOutline>[0]);
   const wordCount = useDocumentWordCount(editor as Parameters<typeof useDocumentWordCount>[0]);
 
+  // One inch or three quarters, in DOCUMENT pixels — the ruler scales it.
+  const marginPx = pageMargin === 'narrow' ? 72 : 96;
+
+  // Zoom for the toolbar's overflow when there is no status bar to hold it.
+  // `fit` mode has no choice to offer, so nothing is passed there.
+  const zoomControl = useMemo<DocumentZoomControl | null>(
+    () =>
+      showStatusBar || zoomMode === 'fit'
+        ? null
+        : { zoom, fitActive, steps: ZOOM_STEPS, onZoomChange: setZoom, onFitWidth: setFitWidth },
+    [showStatusBar, zoomMode, zoom, fitActive, setZoom, setFitWidth],
+  );
+
+  // A ref, so a host passing an inline arrow does not re-fire this every render.
+  const onDocumentStatsRef = useRef(onDocumentStats);
+  onDocumentStatsRef.current = onDocumentStats;
+  const statsPageCount = paginate ? pageCount : null;
+  useEffect(() => {
+    onDocumentStatsRef.current?.({ wordCount, pageCount: statsPageCount });
+  }, [wordCount, statsPageCount]);
+
   // How much of that is SELECTED.
   //
   // The document total alone answers the wrong question most of the time.
@@ -887,6 +928,7 @@ export default function CanvasDocumentView({
                   gutterVisible={gutterVisible}
                   {...(onToggleGutter ? { onToggleGutter } : {})}
                   {...(onInsertImage ? { onInsertImage } : {})}
+                  {...(zoomControl ? { zoomControl } : {})}
                 />
               </div>
             </div>
@@ -974,8 +1016,8 @@ export default function CanvasDocumentView({
               // 150% page grew eleven inch labels and put "1" two thirds of an
               // inch from the margin.
               {...(paperWidth ? { pageWidth: paperWidth / zoom } : {})}
-              marginLeft={96}
-              marginRight={96}
+              marginLeft={marginPx}
+              marginRight={marginPx}
               zoom={zoom}
               // The sheet's own slot in the row: auto margins to centre it in
               // whatever the rails leave, a fixed width so it is the same box
@@ -1124,7 +1166,11 @@ export default function CanvasDocumentView({
             <div
               ref={bodyRef}
               data-testid={`${testId}-body`}
-              className="doc-page__body px-[11.76cqi] py-8 sm:py-10 lg:py-12"
+              className={cn(
+                'doc-page__body py-8 sm:py-10 lg:py-12',
+                // 11.76cqi is 96px on an 816px sheet; 8.82cqi is 72px.
+                pageMargin === 'narrow' ? 'px-[8.82cqi]' : 'px-[11.76cqi]',
+              )}
             >
             <TiptapEditor
               fragment={body}

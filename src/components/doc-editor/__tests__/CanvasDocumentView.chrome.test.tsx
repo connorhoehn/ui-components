@@ -6,7 +6,7 @@
 // so its assertions can only be about the page's own state machine.
 
 import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useEffect } from 'react';
 import * as Y from 'yjs';
 import CanvasDocumentView, {
@@ -84,7 +84,11 @@ vi.mock('../TiptapEditor', () => ({
 // only that it OCCUPIES the chrome row, so the find bar's relationship to it
 // is assertable.
 vi.mock('../DocumentToolbar', () => ({
-  default: () => <div data-testid="toolbar-stub">toolbar</div>,
+  default: (props: Record<string, unknown>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (globalThis as any).__canvasToolbarProps = props;
+    return <div data-testid="toolbar-stub">toolbar</div>;
+  },
 }));
 
 function renderView(overrides: Partial<React.ComponentProps<typeof CanvasDocumentView>> = {}) {
@@ -381,5 +385,38 @@ describe('CanvasDocumentView — fitHeight', () => {
     expect(root.className).toContain('h-full');
     expect(ws.className).toContain('flex-1');
     expect(ws.style.height).toBe('');
+  });
+});
+
+describe('CanvasDocumentView — no status bar: zoom goes to the toolbar, length to the host', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const toolbarProps = () => (globalThis as any).__canvasToolbarProps as Record<string, any>;
+
+  it('hands the toolbar a zoom control that drives the sheet', () => {
+    renderView({ showStatusBar: false });
+    expect(screen.queryByTestId('canvas-document-status-bar')).toBeNull();
+    const control = toolbarProps().zoomControl;
+    expect(control).toMatchObject({ zoom: 1, fitActive: false });
+    expect(control.steps).toContain(1.5);
+    act(() => control.onZoomChange(1.5));
+    expect(toolbarProps().zoomControl.zoom).toBe(1.5);
+    expect(screen.getByTestId('canvas-document-paper').style.zoom).toBe('1.5');
+  });
+
+  it('passes no zoom control while the status bar carries it', () => {
+    renderView();
+    expect(toolbarProps().zoomControl).toBeUndefined();
+  });
+
+  it('reports the length through onDocumentStats', () => {
+    const stats = vi.fn();
+    renderView({ showStatusBar: false, onDocumentStats: stats });
+    expect(stats).toHaveBeenLastCalledWith({ wordCount: 14, pageCount: 1 });
+  });
+
+  it('narrow margins move the ruler to three quarters of an inch', () => {
+    renderView({ pageMargin: 'narrow' });
+    expect((screen.getAllByTestId('document-ruler-margin-marker')[0] as HTMLElement).style.left).toBe('72px');
+    expect(screen.getByTestId('canvas-document-body').className).toContain('px-[8.82cqi]');
   });
 });

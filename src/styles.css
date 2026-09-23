@@ -869,7 +869,7 @@
 .doc-page .ProseMirror h3 {
   font-weight: 700;
 }
-.doc-page .ProseMirror h1 { font-size: 36px; line-height: 44px; margin: 24px 0 4px; letter-spacing: -0.01em; }
+.doc-page .ProseMirror h1 { font-size: 40px; line-height: 48px; margin: 24px 0 0; letter-spacing: -0.01em; }
 .doc-page .ProseMirror h2 { font-size: 22px; line-height: 28px; margin: 20px 0 8px; }
 .doc-page .ProseMirror h3 { font-size: 18px; line-height: 24px; margin: 16px 0 4px; font-weight: 600; }
 /* The title of a document should not be shoved down the page. */
@@ -928,8 +928,16 @@
 
 /* Task lists lose their bullet — the checkbox IS the marker. */
 .doc-page .ProseMirror ul[data-type='taskList'] { list-style: none; padding-left: 0; }
-.doc-page .ProseMirror ul[data-type='taskList'] li { display: flex; gap: 0.6em; }
+.doc-page .ProseMirror ul[data-type='taskList'] li { display: flex; gap: 12px; }
 .doc-page .ProseMirror ul[data-type='taskList'] li > label { margin-top: 0; display: flex; align-items: center; height: 24px; }
+/* A 16px box, not the platform's 13px: the checkbox is the item's marker and
+   the only thing on the row you click, so it is sized like a control. */
+.doc-page .ProseMirror ul[data-type='taskList'] li > label input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--color-primary);
+}
 /* A task item wraps its text in a <div>, so the `li > p` rule above does not
    reach it and each item carried a paragraph's 8px — 36px a row, not 28. */
 .doc-page .ProseMirror ul[data-type='taskList'] li > div > p { margin: 0; }
@@ -979,6 +987,11 @@
 .doc-page .ProseMirror th,
 .doc-page .ProseMirror td {
   border: 1px solid var(--color-paper-border);
+  /* A compact grid: 14px on a 20px line plus 6px of padding each way is a
+     32px row, so a status table reads as a table rather than as three more
+     paragraphs set in boxes. */
+  font-size: 14px;
+  line-height: 20px;
   padding: 6px 12px;
   vertical-align: top;
   /* Cells are the one place a long unbroken token must not be allowed to set

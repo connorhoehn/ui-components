@@ -111,7 +111,7 @@ export declare const CANVAS_SCHEMA_VERSION = 2;
  */
 export declare function canvasBody(ydoc: Doc | null | undefined): XmlFragment | null;
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, fitHeight, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, pageMargin, onDocumentStats, fitHeight, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -248,8 +248,29 @@ export declare interface CanvasDocumentViewProps {
     showRuler?: boolean;
     /** Forwarded to the toolbar: `compact` for a document shown inside something else. */
     toolbarDensity?: 'full' | 'compact';
-    /** The word-count / zoom bar along the bottom. Off for an embedded pane. */
+    /**
+     * The word-count / zoom bar along the bottom. Off for an embedded pane, and
+     * off on a page whose zoom lives in the toolbar's ⋯ overflow instead — with
+     * the bar off and `zoomMode` `remembered`, the toolbar gets `zoomControl`.
+     * Read the length through `onDocumentStats` then.
+     */
     showStatusBar?: boolean;
+    /**
+     * Horizontal page margin. `normal` is 1in on a letter sheet; `narrow` is
+     * 0.75in — the documents workspace, where a typical line of the seeded
+     * plan fits the measure instead of wrapping its last two words. The ruler
+     * follows the same figure, so it keeps measuring what the page does.
+     */
+    pageMargin?: 'normal' | 'narrow';
+    /**
+     * The document's length as the status bar would report it, for a host that
+     * shows it elsewhere (an info panel). Called when a figure changes; `null`
+     * while unknown. `pageCount` is null on an unpaginated page.
+     */
+    onDocumentStats?: (stats: {
+        wordCount: number | null;
+        pageCount: number | null;
+    }) => void;
     /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
     zoomMode?: 'remembered' | 'fit';
     /**
@@ -1139,6 +1160,13 @@ export declare interface DocumentToolbarProps {
      * processor; what does not fit goes behind ⋯, the way Docs and Word do it.
      */
     size?: DocumentToolbarSize | 'auto';
+    /**
+     * The page's zoom, passed when the page has no status bar to carry it
+     * (`CanvasDocumentView showStatusBar={false}`). The ⋯ overflow offers it as
+     * a Zoom group — 100%, the other `steps`, and Fit width when `onFitWidth`
+     * is present. Absent, no zoom item renders.
+     */
+    zoomControl?: DocumentZoomControl;
     'data-testid'?: string;
 }
 
@@ -1152,6 +1180,24 @@ export declare interface DocumentUploadCompletion {
     mine: boolean;
     transferId: string;
     downloadUrl?: string;
+}
+
+/**
+ * The page's zoom, handed to whatever surface offers it when the status bar is
+ * off — the toolbar's ⋯ overflow on the documents page. The page still OWNS
+ * the value (remembered per reader, fit width resolved against the rails); a
+ * control only reads it and asks for a change.
+ */
+export declare interface DocumentZoomControl {
+    /** The scale in force, fit width included — 1 is 100%. */
+    zoom: number;
+    /** True while the sheet tracks the workspace width rather than a fixed scale. */
+    fitActive: boolean;
+    /** The presets worth offering — `ZOOM_STEPS`. */
+    steps: readonly number[];
+    onZoomChange: (zoom: number) => void;
+    /** Absent when the host cannot fit — then offer no Fit option. */
+    onFitWidth?: () => void;
 }
 
 /**
@@ -3512,16 +3558,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3548,9 +3584,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3571,19 +3630,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

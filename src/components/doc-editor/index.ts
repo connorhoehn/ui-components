@@ -140,7 +140,7 @@ export type { DocumentOutlineProps, OutlineEntry } from './DocumentOutline';
 export { useDocumentOutline, readOutline } from './useDocumentOutline';
 
 export { DocumentStatusBar, ZOOM_STEPS, ZOOM_FIT } from './DocumentStatusBar';
-export type { DocumentStatusBarProps } from './DocumentStatusBar';
+export type { DocumentStatusBarProps, DocumentZoomControl } from './DocumentStatusBar';
 
 export { DocumentModePill, DOCUMENT_MODE_LABELS } from './DocumentModePill';
 export type { DocumentModePillProps, DocumentModePillMode } from './DocumentModePill';

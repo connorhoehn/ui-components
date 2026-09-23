@@ -31,6 +31,7 @@ import { useRovingToolbar } from '../shared/RovingToolbar';
 import LinkPopover from './LinkPopover';
 import { LINE_SPACINGS, LINE_SPACING_LABELS, type LineSpacing } from './canvasLineSpacing';
 import { useMeasuredWidth } from './useMeasuredWidth';
+import type { DocumentZoomControl } from './DocumentStatusBar';
 
 export interface DocumentToolbarProps {
   editor: Editor | null;
@@ -98,6 +99,13 @@ export interface DocumentToolbarProps {
    * processor; what does not fit goes behind ⋯, the way Docs and Word do it.
    */
   size?: DocumentToolbarSize | 'auto';
+  /**
+   * The page's zoom, passed when the page has no status bar to carry it
+   * (`CanvasDocumentView showStatusBar={false}`). The ⋯ overflow offers it as
+   * a Zoom group — 100%, the other `steps`, and Fit width when `onFitWidth`
+   * is present. Absent, no zoom item renders.
+   */
+  zoomControl?: DocumentZoomControl;
   'data-testid'?: string;
 }
 
