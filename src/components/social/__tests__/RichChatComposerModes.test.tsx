@@ -262,3 +262,15 @@ describe('the composer goes to the console in Agent and Terminal mode', () => {
     expect(screen.getByTestId('composer-console').className).toContain('overflow-hidden');
   });
 });
+
+describe('placeholder text changes without a mode change', () => {
+  it('redecorates the empty editor with the new text', async () => {
+    const { rerender, container } = render(<RichChatComposer onSend={() => true} placeholder="Tell the agent what to change on slide 1…" />);
+    await act(async () => { await Promise.resolve(); });
+    const text = () => container.querySelector('[data-placeholder]')?.getAttribute('data-placeholder');
+    expect(text()).toBe('Tell the agent what to change on slide 1…');
+    rerender(<RichChatComposer onSend={() => true} placeholder="Tell the agent what to change on slide 3…" />);
+    await act(async () => { await Promise.resolve(); });
+    expect(text()).toBe('Tell the agent what to change on slide 3…');
+  });
+});

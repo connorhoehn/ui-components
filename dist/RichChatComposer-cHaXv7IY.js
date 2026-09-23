@@ -2641,11 +2641,12 @@ var ma = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 	E(() => {
 		J?.setEditable(!R);
 	}, [J, R]), E(() => {
-		!z || !J || J.isDestroyed || J.view.dispatch(J.state.tr);
+		!J || J.isDestroyed || J.view.dispatch(J.state.tr);
 	}, [
 		J,
 		B,
-		z
+		z,
+		xt
 	]), E(() => {
 		wt.current && (wt.current = !1, B === "terminal" ? Ct.current?.focus() : J && !J.isDestroyed && J.commands.focus("end"));
 	}, [B, J]);

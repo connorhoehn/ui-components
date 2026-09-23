@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.371.1] — 2026-09-23
+
+### Fixed — composer placeholder follows its prop
+
+- `RichChatComposer` redecorated its placeholder only on a mode change, so a host that
+  changed the text (the deck dock's "Tell the agent what to change on slide 3…" as the stage
+  moves) kept showing the first one. It now redecorates when the text changes too.
+
 ## [2.371.0] — 2026-09-23
 
 ### Added — who is on which slide

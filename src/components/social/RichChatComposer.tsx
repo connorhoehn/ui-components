@@ -1239,11 +1239,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // decorations, and switching mode is not an editor transaction — so without
   // an empty dispatch the segmented control moves and the grey text underneath
   // keeps saying "Write a message…". Empty transaction: no content change, no
-  // history entry, just a redecorate.
+  // history entry, just a redecorate. The same goes for a host changing the
+  // placeholder text itself (a deck dock's "…on slide 3" as the stage moves).
   useEffect(() => {
-    if (!modesEnabled || !editor || editor.isDestroyed) return;
+    if (!editor || editor.isDestroyed) return;
     editor.view.dispatch(editor.state.tr);
-  }, [editor, activeMode, modesEnabled]);
+  }, [editor, activeMode, modesEnabled, effectivePlaceholder]);
 
   // After a shortcut or trigger switched modes, the caret goes where the new
   // mode types: the shell line for Terminal, the editor otherwise. Only then —
