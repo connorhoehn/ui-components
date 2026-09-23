@@ -633,8 +633,23 @@ export interface WorkReferenceCardProps {
   onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
 }
 
+/** One activity's items in the accessible list, in the canvas's order. */
+export interface WorkEntityListGroup {
+  id: string;
+  title: string;
+  subtitle?: string;
+  nodeIds: string[];
+}
+
 export interface WorkEntityListProps extends WorkInspectorProps {
   heading?: ReactNode;
+  /**
+   * When given, the list shows only these groups' items, under their titles,
+   * in this order — the activities the canvas is showing. Omitted: every node.
+   */
+  groups?: WorkEntityListGroup[];
+  /** Rendered under the items, e.g. "Show all N activities". */
+  footer?: ReactNode;
 }
 
 /** Frozen import names for the component implementation wave. */

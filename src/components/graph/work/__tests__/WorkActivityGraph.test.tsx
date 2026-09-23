@@ -165,6 +165,40 @@ describe('Active Now composition', () => {
     expect(screen.queryByTestId('work-activity-list-region')).not.toBeInTheDocument();
   });
 
+  it('lists only the activities the canvas shows, marks and scrolls to the selection, and can show all', () => {
+    const scroll = vi.fn();
+    const original = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = scroll;
+    try {
+      const initial = props();
+      initial.nodes = [...initial.nodes, { id: 'old', kind: 'terminal', title: 'Old lint run', status: 'completed', disclosure: 'summary', capabilities: [], updatedAt: new Date(start).toISOString() }];
+      initial.activity = { ...initial.activity!, efforts: [...initial.activity!.efforts, { id: 'lint', title: 'Lint', nodeIds: ['old'], edgeIds: [] }] };
+      const { rerender } = render(<WorkGraph {...initial} />);
+      fireEvent.click(screen.getByTestId('work-activity-list-toggle'));
+      const list = () => within(screen.getByTestId('work-activity-list-below'));
+      // Default cap 2: the older third activity is not listed, like the canvas.
+      expect(list().getAllByTestId('work-entity-list-group').map((group) => group.getAttribute('aria-label'))).toEqual(['Sprint review', 'Coverage']);
+      expect(list().queryByRole('button', { name: 'Work item: Old lint run' })).not.toBeInTheDocument();
+      expect(list().getByTestId('work-activity-list-more')).toHaveTextContent('Showing 2 of 3 activities');
+      // Selecting an item outside the cap keeps its activity, marks it, scrolls to it.
+      rerender(<WorkGraph {...initial} selection={{ kind: 'node', id: 'old' }} />);
+      const selected = list().getByRole('button', { name: 'Work item: Old lint run' });
+      expect(selected).toHaveAttribute('aria-current', 'true');
+      expect(selected.className).toContain('ring-primary');
+      expect(list().getAllByRole('button', { name: /^Work item/ }).filter((button) => button.hasAttribute('aria-current'))).toHaveLength(1);
+      expect(scroll).toHaveBeenCalledWith({ block: 'nearest' });
+      expect(list().getAllByTestId('work-entity-list-group')).toHaveLength(2);
+      // "Show all" is the header's "All N activities": both move together.
+      rerender(<WorkGraph {...initial} />);
+      fireEvent.click(list().getByRole('button', { name: 'Show all 3 activities' }));
+      expect(list().getAllByTestId('work-entity-list-group')).toHaveLength(3);
+      expect(list().queryByTestId('work-activity-list-more')).not.toBeInTheDocument();
+      expect(screen.getAllByTestId('work-effort')).toHaveLength(3);
+    } finally {
+      Element.prototype.scrollIntoView = original;
+    }
+  });
+
   it('keeps an opened list below the canvas in its own scrolling row', () => {
     render(<WorkGraph {...props()} />);
     fireEvent.click(screen.getByTestId('work-activity-list-toggle'));

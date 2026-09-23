@@ -3,13 +3,13 @@ import { cn } from '../../../lib/cn';
 import { ChatSidePanelFrame } from '../../social/ChatSidePanelRegistry';
 import { Button } from '../../ui/Button';
 import { WorkActivityCanvas } from './WorkActivityCanvas';
-import { limitWorkEfforts, WORK_ACTIVITY_DEFAULT_MAX_EFFORTS, WORK_CANVAS_READABLE_ZOOM } from './effortLayout';
+import { limitWorkEfforts, WORK_ACTIVITY_ALL_EFFORTS, WORK_ACTIVITY_DEFAULT_MAX_EFFORTS, WORK_CANVAS_READABLE_ZOOM } from './effortLayout';
 import { WorkActivityHeader } from './WorkActivityHeader';
 import { WorkEntityList } from './WorkEntityList';
 import { WorkInspector } from './WorkInspector';
 import { WorkNodePane } from './WorkNodePane';
 import { WorkTimeWindow } from './WorkTimeWindow';
-import type { WorkActivityPresentation, WorkGraphProps } from './types';
+import type { WorkActivityPresentation, WorkEntityListGroup, WorkGraphProps } from './types';
 
 /** Below this the canvas would drop under ~480px, so the pane lies over it. */
 const SPLIT_MINIMUM = 820;
@@ -41,7 +41,25 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
     if (!onMaxEffortsChange) { setOwnCap(next); return; }
     onMaxEffortsChange(next);
   };
-  const shownEffortCount = limitWorkEfforts(activity.efforts, nodes, { max: maxEfforts }).length;
+  // The list shows what the canvas shows: the same cap, the same kept effort
+  // (focused, or holding the selection), the same order — not every item of
+  // every activity.
+  const selectedNodeId = selection?.kind === 'node' ? selection.id : null;
+  const focusedEffortId = activity.view.focusedEffortId ?? null;
+  const keepEffortId = focusedEffortId ?? (selectedNodeId ? activity.efforts.find((effort) => effort.nodeIds.includes(selectedNodeId))?.id ?? null : null);
+  const shownEfforts = limitWorkEfforts(activity.efforts, nodes, { max: maxEfforts, keepEffortId });
+  const shownEffortCount = shownEfforts.length;
+  const listEfforts = focusedEffortId ? shownEfforts.filter((effort) => effort.id === focusedEffortId) : shownEfforts;
+  const listGroups: WorkEntityListGroup[] | undefined = activity.efforts.length === 0 ? undefined : listEfforts.map((effort) => ({ id: effort.id, title: effort.title, subtitle: effort.subtitle, nodeIds: [...new Set([...effort.nodeIds, ...(effort.contextNodeIds ?? [])])] }));
+  if (listGroups && selectedNodeId && nodes.some((item) => item.id === selectedNodeId) && !listGroups.some((group) => group.nodeIds.includes(selectedNodeId))) listGroups.unshift({ id: '__selected', title: 'Selected', nodeIds: [selectedNodeId] });
+  const listEdgeIds = listGroups ? new Set(listEfforts.flatMap((effort) => effort.edgeIds)) : null;
+  if (listEdgeIds && selection?.kind === 'edge') listEdgeIds.add(selection.id);
+  const listEdges = listEdgeIds ? edges.filter((item) => listEdgeIds.has(item.id)) : edges;
+  const hiddenEfforts = focusedEffortId ? 0 : activity.efforts.length - shownEffortCount;
+  const listFooter = hiddenEfforts > 0
+    ? <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2 text-xs text-text-tertiary" data-testid="work-activity-list-more"><span>Showing {shownEffortCount} of {activity.efforts.length} activities · Newest work first</span><Button size="sm" variant="secondary" onClick={() => changeMaxEfforts(WORK_ACTIVITY_ALL_EFFORTS)}>Show all {activity.efforts.length} activities</Button></div>
+    : undefined;
+  const entityList = <WorkEntityList {...props} edges={listEdges} groups={listGroups} footer={listFooter} />;
   const node = selection?.kind === 'node' ? nodes.find((item) => item.id === selection.id) : undefined;
   const edge = selection?.kind === 'edge' ? edges.find((item) => item.id === selection.id && nodes.some((n) => n.id === item.fromId) && nodes.some((n) => n.id === item.toId)) : undefined;
   const validSelection = !!(node || edge);
@@ -105,7 +123,7 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
           <div className={cn('flex min-h-0 flex-1 flex-col', listInRegion && 'invisible')} aria-hidden={listInRegion || undefined} inert={listInRegion || undefined}>
             <WorkActivityCanvas {...props} maxEfforts={maxEfforts} onViewAsList={() => setList(true)} />
           </div>
-          {listInRegion && <div className="absolute inset-0 overflow-auto bg-surface p-3" data-testid="work-activity-list-region"><WorkEntityList {...props} /></div>}
+          {listInRegion && <div className="absolute inset-0 overflow-auto bg-surface p-3" data-testid="work-activity-list-region">{entityList}</div>}
         </div>
         <div className="flex h-9 shrink-0 items-center justify-between gap-2 border-t border-border px-4 text-[10px] text-text-tertiary" data-testid="work-activity-footer">
           {activity.view.focusedEffortId
@@ -119,6 +137,6 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
         : <ChatSidePanelFrame title={edge?.label || 'Relationship'} onClose={close} className={paneClass} data-testid="activity-inspector"><WorkInspector {...props} /></ChatSidePanelFrame>)}
     </div>
     <div className="shrink-0 border-t border-border px-2 py-1"><Button size="sm" variant="ghost" aria-expanded={listShown} onClick={toggleList} data-testid="work-activity-list-toggle">{autoList ? 'Show the graph' : listShown ? 'Hide accessible list' : 'View as accessible list'}</Button></div>
-    {listBelow && <div className="max-h-60 min-h-0 shrink-0 overflow-auto border-t border-border p-3" data-testid="work-activity-list-below"><WorkEntityList {...props} /></div>}
+    {listBelow && <div className="max-h-60 min-h-0 shrink-0 overflow-auto border-t border-border p-3" data-testid="work-activity-list-below">{entityList}</div>}
   </section>;
 }

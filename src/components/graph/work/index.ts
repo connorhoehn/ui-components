@@ -41,6 +41,7 @@ export type {
   WorkComputeTerminalLine,
   WorkEdgeProps,
   WorkEntityListProps,
+  WorkEntityListGroup,
   WorkGraphCapability,
   WorkGraphComponentName,
   WorkGraphDisclosure,
