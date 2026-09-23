@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.384.2] — 2026-09-23
+
+### Added
+
+- **`CommentIcon`.** A speech bubble with two lines of text: comments ON something, beside
+  `ChatIcon`'s plain bubble for a conversation. The documents rail folds the workbench's Comments
+  entry next to the Conversation panel, so the two needed different glyphs; `QuoteIcon` was tried
+  and reads as "55" at 14px.
+
 ## [2.384.1] — 2026-09-23
 
 ### Fixed

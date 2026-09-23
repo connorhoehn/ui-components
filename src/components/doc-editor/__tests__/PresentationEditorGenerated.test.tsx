@@ -52,6 +52,7 @@ function Harness({ initial, preview = withSources, ...rest }: Partial<Presentati
       onSaveRevision={async () => undefined}
       revisions={[{ id: 'rev-1', label: 'v1' }]}
       activeRevisionId="rev-1"
+      onSelectRevision={() => undefined}
       sources={[{ documentId: 'doc-1', title: 'Release plan' }]}
       {...rest}
     />

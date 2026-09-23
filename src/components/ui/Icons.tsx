@@ -53,6 +53,22 @@ export function ChatIcon({ size = 16, ...rest }: GlyphProps) {
 }
 
 /**
+ * A speech bubble with two lines of text: comments ON something — a thread
+ * anchored to a page or a slide — as opposed to `ChatIcon`'s conversation.
+ * The two sit side by side on the documents rail (the workbench's Comments
+ * entry beside the Conversation panel), so they must not be the same glyph;
+ * `QuoteIcon` was tried there and read as "55" at 14px. Since 2.384.2.
+ */
+export function CommentIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M2.5 3.5A1.5 1.5 0 0 1 4 2h8a1.5 1.5 0 0 1 1.5 1.5v5A1.5 1.5 0 0 1 12 10H7l-3 3v-3H4a1.5 1.5 0 0 1-1.5-1.5z" />
+      <path d="M5.5 5.5h5M5.5 7.5h3" />
+    </svg>
+  );
+}
+
+/**
  * A magnifier: "search", or "nothing matched what you typed".
  *
  * The same geometry `SearchInput` draws inline in its own gutter, lifted out
