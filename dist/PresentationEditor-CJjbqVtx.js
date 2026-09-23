@@ -1021,7 +1021,7 @@ function Oe({ composer: e, strip: t, above: n, maxWidth: i = "3xl", label: a = "
 		"aria-label": a,
 		"data-testid": s,
 		"data-placement": l,
-		className: r(l === "pinned" ? "relative flex max-h-[var(--dock-max-height,50%)] shrink-0 flex-col bg-workspace px-4 pb-2 pt-1.5" : "pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8", o),
+		className: r(l === "pinned" ? "relative flex max-h-full min-h-0 shrink flex-col bg-workspace px-4 pb-2 pt-1.5" : "pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8", o),
 		children: /* @__PURE__ */ G("div", {
 			"data-uic-keepout": "bottom",
 			className: r("pointer-events-auto mx-auto flex min-h-0 w-full flex-col", Te[i]),
@@ -1383,7 +1383,7 @@ function nt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var rt = F(() => import("./SortableSlideList-DS53i_Vy.js"));
+var rt = F(() => import("./SortableSlideList-BAIDo6kl.js"));
 function it(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -2678,7 +2678,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 					value: e.id,
 					label: t === 0 ? `${e.label} · latest` : e.label
 				})),
-				wrapperClassName: "w-auto",
+				className: "w-auto",
 				"data-testid": `${N}-revision-select`
 			}) : at.length > 0 && /* @__PURE__ */ W(O, {
 				items: at,
@@ -2705,7 +2705,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				children: "Download .pptx"
 			})
 		]
-	}), st = F ? /* @__PURE__ */ G("div", {
+	}), st = F || A ? /* @__PURE__ */ G("div", {
 		className: "flex min-w-0 flex-1 flex-wrap items-center gap-1.5",
 		children: [/* @__PURE__ */ W(q, {
 			value: e.title,
@@ -2942,7 +2942,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 			"data-testid": `${N}-main`,
 			children: [
 				/* @__PURE__ */ W("div", {
-					className: "mx-auto w-full shrink-0 md:max-w-[max(24rem,calc(100cqh*16/9))]",
+					className: "mx-auto w-full shrink-0 md:max-w-[max(20rem,calc(100cqh*16/9))]",
 					"data-testid": `${N}-stage-frame`,
 					children: /* @__PURE__ */ W(gt, {
 						generating: Pe,
@@ -2970,7 +2970,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 	};
 	if (A) {
 		let e = /* @__PURE__ */ G("div", {
-			className: r("flex min-h-0 flex-col gap-2 px-4 pb-3 pt-2 md:h-full md:min-h-[20rem]", M),
+			className: r("flex min-h-0 flex-col gap-2 px-4 pb-3 pt-2 md:h-full md:min-h-[14rem]", M),
 			"data-testid": N,
 			onKeyDown: Tt,
 			children: [
@@ -3011,9 +3011,13 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				"data-testid": `${N}-scroller`,
 				children: [ft, St]
 			}),
-			/* @__PURE__ */ W(Ee.Provider, {
-				value: "pinned",
-				children: yt
+			/* @__PURE__ */ W("div", {
+				className: "flex max-h-[var(--dock-max-height,50%)] min-h-0 shrink-0 flex-col",
+				"data-testid": `${N}-dock-row`,
+				children: /* @__PURE__ */ W(Ee.Provider, {
+					value: "pinned",
+					children: yt
+				})
 			})
 		]
 	});

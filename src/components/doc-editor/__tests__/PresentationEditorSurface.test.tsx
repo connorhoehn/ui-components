@@ -255,7 +255,9 @@ describe('footer and renderFrame', () => {
     const root = screen.getByTestId('presentation-editor');
     const dock = screen.getByTestId('presentation-editor-dock');
     const scroller = screen.getByTestId('presentation-editor-scroller');
-    expect(root.lastElementChild).toBe(dock);
+    // The last row is the capped dock row; the dock is its only child.
+    expect(root.lastElementChild).toBe(screen.getByTestId('presentation-editor-dock-row'));
+    expect(root.lastElementChild!.firstElementChild).toBe(dock);
     expect(scroller.contains(dock)).toBe(false);
     // Scope toggle and the composer are inside the dock; sources and notes scroll above it.
     expect(await within(dock).findByTestId('presentation-editor-agent-scope')).toBeInTheDocument();

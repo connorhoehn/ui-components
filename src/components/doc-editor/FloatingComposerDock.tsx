@@ -102,11 +102,13 @@ export function FloatingComposerDock({
       data-placement={placement}
       className={cn(
         placement === 'pinned'
-          ? // Capped: however much the dock carries (a notice, a strip, a
-            // tall draft), it never takes more than its share of the surface —
-            // the canvas above it keeps the rest. What is above the composer
-            // scrolls inside the cap; the composer itself never shrinks.
-            'relative flex max-h-[var(--dock-max-height,50%)] shrink-0 flex-col bg-workspace px-4 pb-2 pt-1.5'
+          ? // Capped by the row that pins it (`EditorShell`'s dock row, the
+            // unframed PresentationEditor's): that row is at most
+            // `var(--dock-max-height, 50%)` of the surface, so however much the
+            // dock carries (a notice, a strip, a tall draft) the canvas keeps
+            // the rest. The dock fills the row; what is above the composer
+            // scrolls inside it; the composer itself never shrinks.
+            'relative flex max-h-full min-h-0 shrink flex-col bg-workspace px-4 pb-2 pt-1.5'
           : // `pointer-events-none` on the fade, `auto` on the dock itself: the
             // gradient must not swallow clicks on the page line it is fading.
             'pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8',

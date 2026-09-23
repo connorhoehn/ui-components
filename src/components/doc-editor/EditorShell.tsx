@@ -161,7 +161,10 @@ export function EditorShell({
     <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
       <header className="flex flex-col gap-1 border-b border-border px-4 pt-2.5" data-testid={`${testId}-header`}>
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <Breadcrumbs items={breadcrumbs} maxItems={4} className="text-xs" data-testid={`${testId}-crumbs`} />
+          // A short window (a 1280×720 laptop leaves ~577 px) gives the crumbs'
+          // row to the canvas: the title stays, and the explorer beside the
+          // pane already shows where the file lives.
+          <Breadcrumbs items={breadcrumbs} maxItems={4} className="text-xs [@media(max-height:640px)]:hidden" data-testid={`${testId}-crumbs`} />
         )}
         <div className="flex min-w-0 items-start gap-3">
           <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -258,7 +261,10 @@ export function EditorShell({
           {children}
         </div>
         {footer != null && (
-          <div className="relative z-20 shrink-0" data-testid={`${testId}-dock`}>
+          // The cap lives here, on the surface's own row, so the percentage
+          // resolves against the surface; the dock inside fills it and lets
+          // what sits above its composer scroll.
+          <div className="relative z-20 flex max-h-[var(--dock-max-height,50%)] min-h-0 shrink-0 flex-col" data-testid={`${testId}-dock`}>
             <ComposerDockPlacementContext.Provider value="pinned">{footer}</ComposerDockPlacementContext.Provider>
           </div>
         )}

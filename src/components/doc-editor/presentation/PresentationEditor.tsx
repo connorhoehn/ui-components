@@ -705,7 +705,7 @@ export function PresentationEditor({
           value={activeRevisionId}
           onChange={(event) => onSelectRevision?.(event.target.value)}
           options={[...revisionItems].reverse().map((item, index) => ({ value: item.id, label: index === 0 ? `${item.label} · latest` : item.label }))}
-          wrapperClassName="w-auto"
+          className="w-auto"
           data-testid={`${testId}-revision-select`}
         />
       ) : revisionItems.length > 0 && (
@@ -736,7 +736,9 @@ export function PresentationEditor({
     </div>
   );
 
-  const deckFields = agentMode ? (
+  // Framed (inside EditorShell) the fields are inline too: labelled boxes cost
+  // the stage a row it needs at 720 px tall.
+  const deckFields = agentMode || renderFrame ? (
     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
       <InlineEditableText
         value={spec.title}
@@ -1012,10 +1014,10 @@ export function PresentationEditor({
       {/* From md up the column is a size container: the stage is as wide as
           the column allows AND no taller than the column (100cqh), so a short
           window keeps a whole 16:9 slide in view. Notes and the rest scroll
-          under it inside this column, never squeezing it. The floor (24rem)
+          under it inside this column, never squeezing it. The floor (20rem)
           keeps the slide legible in a very short box; the column scrolls then. */}
       <div className="flex min-w-0 flex-1 flex-col gap-3 md:min-h-0 md:overflow-y-auto md:[container-type:size]" data-testid={`${testId}-main`}>
-        <div className="mx-auto w-full shrink-0 md:max-w-[max(24rem,calc(100cqh*16/9))]" data-testid={`${testId}-stage-frame`}>
+        <div className="mx-auto w-full shrink-0 md:max-w-[max(20rem,calc(100cqh*16/9))]" data-testid={`${testId}-stage-frame`}>
         <SlideStage
           generating={selectedGenerating}
           label={selected ? `Slide ${selectedIndex + 1} of ${slides.length}: ${selected.title || 'Untitled slide'}` : 'No slide'}
@@ -1056,7 +1058,7 @@ export function PresentationEditor({
         // `md:h-full`: the surface is exactly the scroller's height, so the
         // body below the deck line has a definite height to fit the stage to.
         // The min-height is the point past which the scroller scrolls instead.
-        className={cn('flex min-h-0 flex-col gap-2 px-4 pb-3 pt-2 md:h-full md:min-h-[20rem]', className)}
+        className={cn('flex min-h-0 flex-col gap-2 px-4 pb-3 pt-2 md:h-full md:min-h-[14rem]', className)}
         data-testid={testId}
         onKeyDown={editorKeyGuard}
       >
@@ -1101,7 +1103,9 @@ export function PresentationEditor({
 
       {/* The footer is this column's last row, in normal flow — the same
           placement EditorShell gives it — so nothing scrolls under or over it. */}
-      <ComposerDockPlacementContext.Provider value="pinned">{footerContent}</ComposerDockPlacementContext.Provider>
+      <div className="flex max-h-[var(--dock-max-height,50%)] min-h-0 shrink-0 flex-col" data-testid={`${testId}-dock-row`}>
+        <ComposerDockPlacementContext.Provider value="pinned">{footerContent}</ComposerDockPlacementContext.Provider>
+      </div>
     </div>
   );
 }

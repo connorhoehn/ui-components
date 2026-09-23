@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.372.1] — 2026-09-23
+
+### Fixed — measured live at 1280×720: the stage is 300 px
+
+- The pinned dock's height cap lives on the row that pins it (`EditorShell`'s dock row, the
+  unframed `PresentationEditor`'s new `-dock-row`), so the percentage resolves against the surface;
+  the dock fills that row (`max-h-full`). 2.372.0 capped the dock at half of its own auto-height
+  row and the composer overflowed it.
+- Framed `PresentationEditor` uses the inline deck title / subtitle fields (one 27 px line instead
+  of two labelled inputs, 58 px). The revision `Select` is content-width. Stage floor 20rem; the
+  framed surface's floor is 14rem.
+- `EditorShell` hides the breadcrumbs on a window under 640 px tall (the title stays; the explorer
+  shows where the file lives).
+
+Measured (Playwright, audit deck, workbench collapsed): viewport 1280×720 — stage 534×300, dock
+150, composer pinned at the bottom; viewport 1280×577 (a 1280×720 window) — stage ≈338×190, whole
+slide in view (was 6–58 px of a clipped stage).
+
 ## [2.372.0] — 2026-09-23
 
 ### Changed — a deck editor keeps its stage at 720 px tall
