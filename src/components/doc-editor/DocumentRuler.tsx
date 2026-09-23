@@ -144,9 +144,12 @@ export function DocumentRuler({
         data-testid={`${testId}-track`}
       >
         {/* The text column reads as the page; the margins are the darker
-            surround. Same figure/ground as the paper below it, so the eye
-            lines the two up without having to measure. */}
-        <div className="absolute inset-0 rounded-sm bg-surface-inset" />
+            surround. Same figure/ground as the paper below it — `bg-paper`
+            on `bg-workspace`, the desk the sheet floats on — so the eye
+            lines the two up without having to measure, in both themes:
+            `surface-inset` was a 5/255 tint off white paper and, once paper
+            went dark (2.383.0), 3/255 off the dark sheet. */}
+        <div className="absolute inset-0 rounded-sm bg-workspace" />
         <div
           data-testid={`${testId}-text-area`}
           className="absolute inset-y-0 bg-paper"

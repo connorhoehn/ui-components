@@ -333,6 +333,22 @@ export interface RichChatComposerProps {
   /** Rendered between the formatting controls and the send button. */
   toolbarExtras?: ReactNode;
   /**
+   * Which formatting controls the strip shows at wide width.
+   *
+   * - `full` (default): B, I, S, code, link, bulleted, numbered, quote — the
+   *   chat column's strip, unchanged.
+   * - `compact`: B, I, link, bulleted list, attach (when attachments are on),
+   *   no separators — the editor's docked card. Strikethrough, code, numbered
+   *   list and quote move into the `?` menu under "Formatting" (the same menu
+   *   the card already keeps its keyboard hints in), not a second `⋯` button
+   *   beside the first: an editor already has a full toolbar above the page
+   *   and the card's strip is the four things a prompt actually uses.
+   *
+   * Sizes are unchanged in both: every control is the same 28px box.
+   * Below wide the strip folds exactly as before, whichever preset is set.
+   */
+  toolbar?: ComposerToolbarPreset;
+  /**
    * Long-running work this composer's owner started — a generating deck, a
    * terminal test run. Rendered as one status line above the editor, hidden
    * when the array is empty. Display only: the host owns what each one is and
@@ -510,6 +526,8 @@ export interface RichChatComposerProps {
 
 /** How much room the composer has, from its own width. */
 export type ComposerSize = 'wide' | 'medium' | 'narrow';
+/** See `RichChatComposerProps.toolbar`. */
+export type ComposerToolbarPreset = 'full' | 'compact';
 export type ComposerRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
 
 /**
@@ -747,6 +765,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   references,
   onRemoveReference,
   toolbarExtras,
+  toolbar = 'full',
   processes,
   mode = 'chat',
   onModeChange,
@@ -1688,8 +1707,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const [formatOpen, setFormatOpen] = useState(false);
   const singleRow = (narrow && !formatOpen) || collapsed;
   // Strikethrough, code, lists and quote: inline when wide, in the `⋯` menu otherwise.
-  const showSecondaryMarks = wide;
-  const showListControls = wide;
+  // The compact preset keeps only the bulleted list of those inline at wide
+  // width and files the other four under `?` → Formatting (`formatInHints`).
+  const compactToolbar = toolbar === 'compact';
+  const showSecondaryMarks = wide && !compactToolbar;
+  const showListControls = wide && !compactToolbar;
+  const showBulletedList = wide;
+  const formatInHints = wide && compactToolbar;
   // The console sky. `none` keeps the ordinary surface in Agent/Terminal: the
   // mode still changes what Enter does, it just stops repainting the box.
   const tone = useResolvedBackdropTone(rootNode, backdropTone, consoleMode);
@@ -2265,7 +2289,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               <LinkIcon size={16} />,
             ),
             showListControls && <span key="sep1" aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />,
-            showListControls && toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), <span>•</span>),
+            showBulletedList && toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), <span>•</span>),
             showListControls && toolbarButton('Numbered list', editor.isActive('orderedList'), () => editor.chain().focus().toggleOrderedList().run(), <span className="text-[11px]">1.</span>),
             showListControls && toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={16} />),
             // Below wide, the same five live in one overflow menu instead of
@@ -2294,7 +2318,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             ),
           ]}
 
-          {(allowEmoji || attachmentsEnabled || !!onPrivacyChange) && (
+          {(allowEmoji || attachmentsEnabled || !!onPrivacyChange) && !compactToolbar && (
             <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />
           )}
 
@@ -2351,7 +2375,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             <span className="ml-1 shrink-0 select-none border-l border-border pl-2 text-xs text-text-tertiary" data-testid={`${testId}-commands-hint`}>/ commands</span>
           )}
 
-          {!collapsed && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu) ? (
+          {!collapsed && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (
             <DropdownMenu
               trigger={<span aria-hidden="true" className="text-xs font-semibold leading-none">?</span>}
               triggerLabel="Keyboard hints"
@@ -2361,12 +2385,23 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               align="end"
               triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-tertiary hover:bg-surface-hover hover:text-text-primary border-0 p-0"
               sections={[
+                // The compact strip's four folded controls, first: they act
+                // on the draft, the hints below only describe keys.
+                ...(formatInHints && editor ? [{
+                  label: 'Formatting',
+                  items: [
+                    { label: 'Strikethrough', checked: editor.isActive('strike'), onSelect: () => editor.chain().focus().toggleStrike().run() },
+                    { label: 'Code', checked: editor.isActive('code'), onSelect: () => editor.chain().focus().toggleCode().run() },
+                    { label: 'Numbered list', checked: editor.isActive('orderedList'), onSelect: () => editor.chain().focus().toggleOrderedList().run() },
+                    { label: 'Quote', checked: editor.isActive('blockquote'), onSelect: () => editor.chain().focus().toggleBlockquote().run() },
+                  ],
+                }] : []),
                 ...(suggestionsInMenu ? [{
                   label: 'Suggestions',
                   items: suggestions!.map((suggestion) => ({ label: suggestion, onSelect: () => onSuggestion?.(suggestion) })),
                 }] : []),
                 ...(!hintsInRow && resolvedHints.length ? [{
-                  ...(suggestionsInMenu ? { label: 'Keys' } : {}),
+                  ...((suggestionsInMenu || formatInHints) ? { label: 'Keys' } : {}),
                   items: resolvedHints.map((hint) => ({
                     label: hint.label,
                     trailing: <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary">{hint.key}</kbd>,

@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.383.0] — 2026-09-23
+
+### Added
+
+- **`RichChatComposer toolbar="compact"`.** The editor's docked card strip is B, I, link, bulleted
+  list, attach (when attachments are on) and the muted `/ commands` — no separators, the mockup's
+  set; strikethrough, code, numbered list and quote move under `?` → Formatting, the menu the card
+  already keeps its keyboard hints in, not a second `⋯` beside the first. The default `full` strip
+  (the chat column's) is unchanged, every control stays the 28px box, and below wide both presets
+  fold exactly as before. `ComposerToolbarPreset` is exported.
+
+### Changed
+
+- **Paper follows the theme.** `--color-paper-*` now flips in `[data-theme="dark"]`: the sheet is
+  `#1e293b` with `#f1f5f9` ink (muted `#cbd5e1`, subtle `#94a3b8`, border `#334155`, hover
+  `#293548`) — the whole family together, ink paired with surface as before. `CanvasDocumentView`'s
+  sheet, `DocumentRuler`'s text column, a host's `.ProseMirror` paint, blockquotes, rules and code
+  blocks all take the tokens, so they follow with no per-site change. `@media print` puts the light
+  family back under both roots, so a dark-mode "Print to PDF" is still ink on white. `DocumentRuler`'s
+  margins are `bg-workspace` (the desk), not `surface-inset`, which was 5/255 off white paper and
+  3/255 off the dark sheet. This reverses the 2.35x-era "the doc body will always be white" call on
+  the strength of the 2026-09-23 page-editor mockups; `darkTokens.test.ts` now pins the flip and
+  the print reset. Stories: `Doc-Editor/CanvasDocumentView` → PaperLight / PaperDark,
+  `Social/RichChatComposer` → CompactStrip.
+
 ## [2.382.0] — 2026-09-23
 
 ### Changed

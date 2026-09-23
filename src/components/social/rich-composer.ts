@@ -35,6 +35,7 @@ export type {
   ComposerStatus,
   ComposerHint,
   ComposerSize,
+  ComposerToolbarPreset,
   ComposerRadius,
   ComposerSendOption,
   MentionCandidate,

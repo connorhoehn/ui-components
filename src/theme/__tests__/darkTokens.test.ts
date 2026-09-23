@@ -71,23 +71,18 @@ describe('dark token block — source contract (src/styles.css)', () => {
   });
 
   it('covers EVERY @theme color token except the theme-invariant families', () => {
-    // Four families are theme-invariant ON PURPOSE and must stay out of
+    // Three families are theme-invariant ON PURPOSE and must stay out of
     // the dark block: --color-code-* (Catppuccin Mocha), --color-video-*
-    // (near-black stage), --color-call-chrome-* (the call card, which
-    // is dark in both themes the way Meet/Zoom/Teams render it) and
-    // --color-paper-* (the document prose surface, which is WHITE in both
-    // themes the way Docs, Word and Confluence render it). See the comment
-    // beside each family in styles.css.
+    // (near-black stage) and --color-call-chrome-* (the call card, which
+    // is dark in both themes the way Meet/Zoom/Teams render it). See the
+    // comment beside each family in styles.css.
     //
-    // Paper is the mirror image of call chrome, and it carries its own ink
-    // for the same reason chrome does: a fixed surface under a FLIPPING ink
-    // token is invisible in one of the two themes. That is why the family
-    // is six tokens and not one.
+    // --color-paper-* used to be the fourth (white in both themes); since
+    // 2.383.0 it flips with the theme and is covered by the paper test below.
     const invariant = (name: string) =>
       name.startsWith('--color-code-') ||
       name.startsWith('--color-video-') ||
-      name.startsWith('--color-call-chrome') ||
-      name.startsWith('--color-paper');
+      name.startsWith('--color-call-chrome');
     const light = [...tokenNames(themeBody)].filter((n) => !invariant(n));
     const dark = tokenNames(darkBody);
     const missing = light.filter((n) => !dark.has(n));
@@ -111,35 +106,43 @@ describe('dark token block — source contract (src/styles.css)', () => {
     }
   });
 
-  it('leaves the paper family OUT of the dark block, and pairs it with its own ink', () => {
-    // Operator's call: "the doc body will always be white. the whole page
-    // doesn't have to be night mode." Docs, Word and Confluence all render an
-    // authored page as white paper regardless of app chrome, and this is the
-    // token family that makes that a decision rather than an accident.
-    //
-    // The regression this guards is the SECOND half, and it is the one this
-    // codebase has now shipped three times in three permutations: a fixed
-    // surface paired with a token that flips. If someone "completes" the dark
-    // palette by adding --color-paper here, the body goes dark and the
-    // hardcoded ink on it disappears; if someone paints paper with
-    // --color-text-primary instead of --color-paper-ink, the ink goes near
-    // white in dark mode and the prose disappears on a page that stayed
-    // white. Both directions are invisible text on a rendered page, which is
-    // also the failure that makes every screenshot probe vacuously pass.
+  it('flips the paper family WITH its ink in the dark block, and prints it white', () => {
+    // Up to 2.381.0 paper was white in both themes on the operator's call;
+    // the 2026-09-23 page-editor mockups reversed it: dark theme, dark sheet,
+    // light ink. The regression this guards is the one this codebase has
+    // shipped three times in three permutations: a surface and an ink on
+    // DIFFERENT schedules. So the rule is the whole family or none of it —
+    // a dark block that re-tones the sheet but forgets an ink leaves
+    // slate-on-slate prose, which still "renders" and passes a screenshot
+    // probe; and paper is never painted with --color-text-*, which the
+    // console skies and the print block re-tone on their own schedules.
+    const family = ['--color-paper', '--color-paper-ink', '--color-paper-ink-muted', '--color-paper-ink-subtle', '--color-paper-border', '--color-paper-hover'];
     expect(tokenValue(themeBody, '--color-paper')).toBe('#ffffff');
     expect(tokenValue(themeBody, '--color-paper-ink')).toBe('#0f172a');
-    for (const name of tokenNames(darkBody)) {
-      expect(name.startsWith('--color-paper')).toBe(false);
+    expect(tokenValue(darkBody, '--color-paper')).toBe('#1e293b');
+    expect(tokenValue(darkBody, '--color-paper-ink')).toBe('#f1f5f9');
+    for (const name of family) {
+      expect(tokenValue(themeBody, name), name).toBeTruthy();
+      expect(tokenValue(darkBody, name), name).toBeTruthy();
     }
+    // Nothing in the family beyond the six: a seventh paper token added to
+    // one block and not the other is the drift this test exists to catch.
+    for (const body of [themeBody, darkBody]) {
+      const paper = [...tokenNames(body)].filter((n) => n.startsWith('--color-paper')).sort();
+      expect(paper).toEqual([...family].sort());
+    }
+    // The dark sheet must stay lighter than the dark desk it floats on, and
+    // the sheet's ink must be the LIGHT palette's ink ramp, not a themed one.
+    expect(tokenValue(darkBody, '--color-workspace')).toBe('#0a1120');
+    expect(tokenValue(darkBody, '--color-paper-ink')).not.toBe(tokenValue(darkBody, '--color-paper'));
 
-    // Every paper surface token must have an ink partner defined in the same
-    // block. A surface without ink is exactly how the three shipped bugs
-    // started.
-    for (const surface of ['--color-paper', '--color-paper-hover']) {
-      expect(tokenValue(themeBody, surface)).toBeTruthy();
-    }
-    for (const ink of ['--color-paper-ink', '--color-paper-ink-muted', '--color-paper-ink-subtle']) {
-      expect(tokenValue(themeBody, ink)).toBeTruthy();
+    // Print restores the light family under both roots, so a dark-mode
+    // "Print to PDF" is still ink on white paper.
+    // The LAST `@media print {` — the phrase also appears in comments above it.
+    const printBody = blockBody(srcCss.slice(srcCss.lastIndexOf('@media print {')), '@media print {');
+    const printRoot = blockBody(printBody, '[data-theme="dark"]');
+    for (const name of family) {
+      expect(tokenValue(printRoot, name), name).toBe(tokenValue(themeBody, name));
     }
   });
 

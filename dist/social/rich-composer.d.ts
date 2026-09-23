@@ -247,6 +247,9 @@ export declare interface ComposerStatus {
     'data-testid'?: string;
 }
 
+/** See `RichChatComposerProps.toolbar`. */
+export declare type ComposerToolbarPreset = 'full' | 'compact';
+
 export declare interface DocumentCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
     id: string;
@@ -462,6 +465,22 @@ export declare interface RichChatComposerProps {
     onRemoveReference?: (id: string) => void;
     /** Rendered between the formatting controls and the send button. */
     toolbarExtras?: ReactNode;
+    /**
+     * Which formatting controls the strip shows at wide width.
+     *
+     * - `full` (default): B, I, S, code, link, bulleted, numbered, quote — the
+     *   chat column's strip, unchanged.
+     * - `compact`: B, I, link, bulleted list, attach (when attachments are on),
+     *   no separators — the editor's docked card. Strikethrough, code, numbered
+     *   list and quote move into the `?` menu under "Formatting" (the same menu
+     *   the card already keeps its keyboard hints in), not a second `⋯` button
+     *   beside the first: an editor already has a full toolbar above the page
+     *   and the card's strip is the four things a prompt actually uses.
+     *
+     * Sizes are unchanged in both: every control is the same 28px box.
+     * Below wide the strip folds exactly as before, whichever preset is set.
+     */
+    toolbar?: ComposerToolbarPreset;
     /**
      * Long-running work this composer's owner started — a generating deck, a
      * terminal test run. Rendered as one status line above the editor, hidden

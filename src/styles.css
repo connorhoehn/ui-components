@@ -203,29 +203,32 @@
 
   /* Paper — the authored prose surface of a document, and ONLY that.
      ┌──────────────────────────────────────────────────────────────────┐
-     │ THEME-INVARIANT BY DESIGN, the mirror image of call chrome.      │
-     │ Deliberately NOT overridden in the [data-theme="dark"] block —   │
-     │ a document body is white in BOTH themes, the way Docs, Word and  │
-     │ Confluence all render it. Operator's call: "the doc body will    │
-     │ always be white. the whole page doesn't have to be night mode."  │
+     │ FOLLOWS THE THEME (2.383.0). Light: a white sheet with slate ink.│
+     │ Dark: the mockup's dark-grey paper (--color-surface's tone) with │
+     │ light ink, so the page reads as a sheet on the night desk rather │
+     │ than a white slab in the middle of a dark app. Print stays white │
+     │ — the `@media print` block at the foot resets the family, so a   │
+     │ dark-mode "Print to PDF" is still ink on paper.                   │
+     │                                                                   │
+     │ Up to 2.381.0 this family was theme-invariant on the operator's  │
+     │ call ("the doc body will always be white"); the 2026-09-23 page  │
+     │ editor mockups reversed that, and the tokens are the ONE place   │
+     │ the flip happens: the canvas sheet, the ruler's text column, the │
+     │ host's `.ProseMirror` paint, blockquote rules and code blocks    │
+     │ all take these and nothing else.                                  │
      │                                                                   │
      │ THE INK SHIPS WITH THE SURFACE, and that is the whole point.     │
-     │ A fixed white background carrying THEMED text is the same bug in │
-     │ a third permutation: --color-text-primary flips to #f1f5f9 in    │
-     │ dark and vanishes on the fixed white. We have now shipped the    │
-     │ other two permutations — a white panel under flipping ink (the   │
-     │ app menu, 1.10:1) and a flipping surface under hardcoded white   │
-     │ ink (the call widget). So paper carries its OWN invariant ink,   │
-     │ and --color-text-* must NEVER be used on it.                     │
-     │                                                                   │
-     │ Values are the light palette's, so adopting these tokens is a    │
-     │ no-op in light mode and a fix in dark.                            │
+     │ Paper carries its OWN ink and flips it TOGETHER with the sheet:  │
+     │ the whole family, or none of it. We have shipped a white panel   │
+     │ under flipping ink (the app menu, 1.10:1) and a flipping surface │
+     │ under hardcoded white ink (the call widget); a sheet that flips  │
+     │ while its ink does not would be the third. --color-text-* must   │
+     │ still NEVER be used on paper — it flips on a different schedule  │
+     │ (the console skies re-tone it, print does not).                   │
      │                                                                   │
      │ SCOPE: the prose surface only. The chrome AROUND the document —  │
      │ header strip, toolbar, action-item rows, outline panel, floating │
-     │ comment buttons — stays THEMED and goes dark. This does not      │
-     │ generalise to any other white surface: the documents list, the   │
-     │ previews page and the rest are correctly dark and must stay so.  │
+     │ comment buttons — is themed on its own tokens as before.         │
      └──────────────────────────────────────────────────────────────────┘ */
   --color-paper: #ffffff;
   --color-paper-ink: #0f172a;
@@ -278,9 +281,10 @@
  * Values mirror the darkTheme preset in src/theme/presets.ts (single source
  * of truth direction: this block follows presets.ts). Deliberate omissions:
  * --color-code-* (Catppuccin Mocha, already a dark family),
- * --color-video-* (near-black stage surfaces), --color-call-chrome-*
- * (the always-dark call card) and --color-paper-* (the always-white document
- * body, ink included) — see their comments above — are theme-invariant.
+ * --color-video-* (near-black stage surfaces) and --color-call-chrome-*
+ * (the always-dark call card) — see their comments above — are
+ * theme-invariant. --color-paper-* is NOT: it flips here, ink and all, and
+ * is put back to white by the print block (2.383.0).
  */
 [data-theme="dark"] {
   /* Terminal ramp, night side — the Catppuccin values the terminal always
@@ -305,11 +309,21 @@
 
   --color-surface: #1e293b;
   --color-surface-inset: #1b2536;
-  /* Paper is invariant white in BOTH themes, so the desk must stay clearly
-     darker than the sheet — the same relationship as light mode, not its
-     mirror. Deeper than --color-surface-panel (#0f172a) so the chrome above
-     the workspace still separates from it. */
+  /* The desk stays clearly darker than the sheet — the same relationship as
+     light mode, not its mirror. Deeper than --color-surface-panel (#0f172a)
+     so the chrome above the workspace still separates from it, and deeper
+     than the dark paper (#1e293b) by the same 20 L* the light pair has. */
   --color-workspace: #0a1120;
+  /* Dark paper (2.383.0): the sheet takes --color-surface's tone and its ink
+     the light palette's text ramp — the whole family together, see the
+     paper block in @theme. Ink 13.4:1, muted 9.1:1, subtle 5.4:1 on the
+     sheet; the hover wash is the sheet lifted one step. */
+  --color-paper: #1e293b;
+  --color-paper-ink: #f1f5f9;
+  --color-paper-ink-muted: #cbd5e1;
+  --color-paper-ink-subtle: #94a3b8;
+  --color-paper-border: #334155;
+  --color-paper-hover: #293548;
   --color-surface-panel: #0f172a;
   --color-surface-hover: #293548;
 
@@ -991,13 +1005,15 @@
 
    ## Fixed amber, not a theme token
 
-   These paint ON PAPER, which is theme-invariant (see the --color-paper block
-   near the top of this file). A --color-text-* or --color-primary value here
-   flips under [data-theme="dark"] and lands near-white on a permanently white
-   sheet — the same bug the paper tokens exist to prevent, in one more
-   permutation. So the accent is a literal amber, chosen the way every
-   word processor picks it, and the INK is never touched: colour is inherited
-   from the page so commented text stays as readable as the text around it.
+   These paint ON PAPER, whose ink is the paper family's and not the app's
+   (see the --color-paper block near the top of this file). A --color-text-*
+   or --color-primary value here follows the app's schedule, not the sheet's
+   (the print block puts paper back to white while the app stays dark) — the
+   same bug the paper tokens exist to prevent, in one more permutation. So
+   the accent is a literal amber, chosen the way every word processor picks
+   it, TRANSLUCENT so it reads on the light sheet and the dark one alike, and
+   the INK is never touched: colour is inherited from the page so commented
+   text stays as readable as the text around it.
 
    Translucent on purpose: overlapping comments render as NESTED spans, so a
    busy passage darkens on its own without any extra machinery.
@@ -1579,6 +1595,19 @@
   @page {
     size: Letter;
     margin: 1in;
+  }
+
+  /* Paper is white on paper. The dark theme re-tones the family on screen
+     (see the paper block in @theme); a printer, and "Print to PDF", get the
+     light values back whatever `data-theme` the app is wearing. */
+  :root,
+  [data-theme="dark"] {
+    --color-paper: #ffffff;
+    --color-paper-ink: #0f172a;
+    --color-paper-ink-muted: #475569;
+    --color-paper-ink-subtle: #94a3b8;
+    --color-paper-border: #e2e8f0;
+    --color-paper-hover: #f1f5f9;
   }
 
   /* Scoped to `.doc-printing`, which the app sets on <html> for exactly as long

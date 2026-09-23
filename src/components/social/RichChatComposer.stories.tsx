@@ -201,3 +201,18 @@ export const RadiusOnASquareHost: Story = {
 export const AutoGrowCap: Story = {
   render: () => <Harness maxInputHeight={120} placeholder="Paste a few paragraphs — it stops growing at 120px" />,
 };
+
+/**
+ * The editor's docked card (2.383.0): `toolbar="compact"` — B, I, link,
+ * bulleted list, attach, then the muted `/ commands`; strikethrough, code,
+ * numbered list and quote under `?` → Formatting. The chat column keeps the
+ * default `full` strip above it for comparison.
+ */
+export const CompactStrip: Story = {
+  render: () => (
+    <div className="grid gap-4">
+      <Harness modeControl="menu" mode="agent" modeShortcuts onModeChange={() => {}} allowAttachments commands={[{ trigger: '/summarise', label: 'Summarise', description: 'Summarise the page' }]} submitLabel="Run agent →" />
+      <Harness modeControl="menu" mode="agent" modeShortcuts onModeChange={() => {}} allowAttachments toolbar="compact" commands={[{ trigger: '/summarise', label: 'Summarise', description: 'Summarise the page' }]} submitLabel="Run agent →" />
+    </div>
+  ),
+};

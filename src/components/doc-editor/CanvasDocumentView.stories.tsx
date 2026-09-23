@@ -482,3 +482,37 @@ export const Unpaginated: Story = {
   ...Paginated,
   args: { ...Paginated.args, paginate: false },
 };
+
+/**
+ * Paper follows the theme (2.383.0). Light: the white sheet with slate ink;
+ * dark: the dark-grey sheet with light ink, the ruler's text column the same
+ * tone and its margins the desk's. The two stories are the same document under
+ * `data-theme="light"` and `data-theme="dark"`, so a token that flips alone
+ * shows up as unreadable prose in one of them.
+ */
+function ThemedCanvas({ theme }: { theme: 'light' | 'dark' }) {
+  const { ydoc, provider, body } = useFixture();
+  const onEditorReady = useSeed(SAMPLE_HTML, body);
+  return (
+    <div data-theme={theme} className="rounded-lg bg-surface-panel p-4">
+      <CanvasDocumentView
+        {...BASE}
+        isCanvas
+        body={body}
+        ydoc={ydoc}
+        provider={provider}
+        onEditorReady={onEditorReady as never}
+      />
+    </div>
+  );
+}
+
+export const PaperLight: Story = {
+  args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
+  render: () => <ThemedCanvas theme="light" />,
+};
+
+export const PaperDark: Story = {
+  args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
+  render: () => <ThemedCanvas theme="dark" />,
+};
