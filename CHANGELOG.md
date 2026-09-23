@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.386.3] — 2026-09-23
+
+### Changed (the Folders mockup, pass 2)
+- **SearchInput `size="md"`** — a 36px field, 15px text, 18px glass.
+- **Chip `size="md"`** — `leading-4`, so a count pill no longer grows a 32px tree row to 36px.
+- **WorkspaceRail** — the prominent heading's count is the `md` pill.
+- **ContextColumn** — the folded strip is 48px wide with 32px buttons, 20px glyphs, and a full-width rule under the expand chevron.
+
 ## [2.386.1] — 2026-09-23
 
 ### Added (the Folders mockup's explorer and rails)

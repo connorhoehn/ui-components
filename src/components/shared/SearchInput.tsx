@@ -28,6 +28,11 @@ export interface SearchInputProps {
   tone?: SearchInputTone;
   /** Class for the wrapper. Sizing and positioning; not the field's colours. */
   className?: string;
+  /**
+   * `sm` (default) is the 13px field. `md` (2.386.3) is the Documents
+   * explorer's: a 36px field, 15px text and an 18px glass.
+   */
+  size?: 'sm' | 'md';
   /** Class for the `<input>` itself — the one `className` cannot reach. */
   inputClassName?: string;
   style?: React.CSSProperties;
@@ -70,6 +75,7 @@ function SearchInput({
   tone = 'surface',
   className,
   inputClassName,
+  size = 'sm',
   style,
   autoFocus,
   'aria-label': ariaLabel,
@@ -83,7 +89,7 @@ function SearchInput({
     >
       {/* Search icon — absolutely positioned inside the input gutter. */}
       <svg
-        className={cn('absolute left-3 w-3.5 h-3.5 pointer-events-none', palette.icon)}
+        className={cn('absolute pointer-events-none', size === 'md' ? 'left-3 h-[18px] w-[18px]' : 'left-3 w-3.5 h-3.5', palette.icon)}
         viewBox="0 0 16 16"
         fill="none"
         aria-hidden="true"
@@ -116,7 +122,8 @@ function SearchInput({
         aria-label={ariaLabel ?? placeholder ?? 'Search'}
         data-testid={testId}
         className={cn(
-          'w-full pl-8 pr-7 py-1.5 text-sm rounded-md border focus:outline-none focus:ring-2 transition-colors',
+          'w-full pr-7 rounded-md border focus:outline-none focus:ring-2 transition-colors',
+          size === 'md' ? 'h-9 pl-10 text-[15px]' : 'pl-8 py-1.5 text-sm',
           palette.field,
           inputClassName,
         )}

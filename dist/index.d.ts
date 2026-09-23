@@ -13932,7 +13932,7 @@ export declare function searchEmoji(query: string, list?: readonly EmojiShortcod
  */
 export declare function SearchIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, style, autoFocus, 'aria-label': ariaLabel, 'data-testid': testId, }: SearchInputProps): default_2.JSX.Element;
+export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, size, style, autoFocus, 'aria-label': ariaLabel, 'data-testid': testId, }: SearchInputProps): default_2.JSX.Element;
 
 export declare interface SearchInputProps {
     value: string;
@@ -13951,6 +13951,11 @@ export declare interface SearchInputProps {
     tone?: SearchInputTone;
     /** Class for the wrapper. Sizing and positioning; not the field's colours. */
     className?: string;
+    /**
+     * `sm` (default) is the 13px field. `md` (2.386.3) is the Documents
+     * explorer's: a 36px field, 15px text and an 18px glass.
+     */
+    size?: 'sm' | 'md';
     /** Class for the `<input>` itself — the one `className` cannot reach. */
     inputClassName?: string;
     style?: default_2.CSSProperties;
@@ -19928,32 +19933,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -19987,9 +19989,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -19997,9 +19999,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

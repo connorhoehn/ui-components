@@ -17,8 +17,8 @@ import { t as z } from "./cn-DhjIN-s0.js";
 import { i as Qe, n as $e, r as et, t as tt } from "./ToastProvider-B0D0SLKU.js";
 import { t as nt } from "./useEventCallback-Cwx9QVSi.js";
 import { n as rt, r as it, t as at } from "./useAudioRecorder-BhPxnLmg.js";
-import { _ as ot, a as st, b as ct, c as lt, d as ut, f as dt, g as ft, h as pt, i as mt, l as ht, m as gt, n as _t, o as vt, p as yt, r as bt, s as xt, t as St, u as Ct, v as wt, x as Tt, y as Et } from "./FilterPopover-B3mYzda4.js";
-import { $ as Dt, A as Ot, B as kt, C as At, D as jt, E as Mt, F as Nt, G as Pt, H as Ft, I as It, J as Lt, K as Rt, L as zt, M as Bt, N as Vt, O as Ht, P as Ut, Q as Wt, R as Gt, S as Kt, T as qt, U as Jt, V as Yt, W as Xt, X as Zt, Y as Qt, Z as $t, _ as en, a as tn, at as nn, b as rn, c as an, ct as on, d as sn, dt as cn, et as ln, f as un, ft as dn, g as fn, h as pn, ht as mn, i as hn, it as gn, j as _n, k as vn, l as yn, lt as bn, m as xn, mt as Sn, n as Cn, nt as wn, o as Tn, ot as En, p as Dn, pt as On, q as kn, r as An, rt as jn, s as Mn, st as Nn, t as Pn, tt as Fn, u as In, ut as Ln, v as Rn, w as zn, x as Bn, y as Vn, z as Hn } from "./shared-DBH5ecct.js";
+import { _ as ot, a as st, b as ct, c as lt, d as ut, f as dt, g as ft, h as pt, i as mt, l as ht, m as gt, n as _t, o as vt, p as yt, r as bt, s as xt, t as St, u as Ct, v as wt, x as Tt, y as Et } from "./FilterPopover-DVRJrqri.js";
+import { $ as Dt, A as Ot, B as kt, C as At, D as jt, E as Mt, F as Nt, G as Pt, H as Ft, I as It, J as Lt, K as Rt, L as zt, M as Bt, N as Vt, O as Ht, P as Ut, Q as Wt, R as Gt, S as Kt, T as qt, U as Jt, V as Yt, W as Xt, X as Zt, Y as Qt, Z as $t, _ as en, a as tn, at as nn, b as rn, c as an, ct as on, d as sn, dt as cn, et as ln, f as un, ft as dn, g as fn, h as pn, ht as mn, i as hn, it as gn, j as _n, k as vn, l as yn, lt as bn, m as xn, mt as Sn, n as Cn, nt as wn, o as Tn, ot as En, p as Dn, pt as On, q as kn, r as An, rt as jn, s as Mn, st as Nn, t as Pn, tt as Fn, u as In, ut as Ln, v as Rn, w as zn, x as Bn, y as Vn, z as Hn } from "./shared-BoA3T9Fe.js";
 import { _ as B, a as Un, c as Wn, d as Gn, f as Kn, g as qn, h as Jn, i as Yn, l as Xn, n as Zn, p as Qn, r as $n, s as er, u as tr } from "./overlayStack-CHdlnODN.js";
 import { t as nr } from "./Card-RQCeAPNU.js";
 import { a as rr, i as ir, n as ar, o as or, r as sr, t as cr } from "./Table-CypeBEj0.js";
@@ -29,14 +29,14 @@ import { n as ri, t as ii } from "./Stack-CkiMw5K0.js";
 import { a as ai, i as oi, n as si, r as ci, t as li } from "./Text-DpIU0dw3.js";
 import { t as ui } from "./Banner-6sJQ2hAL.js";
 import { n as di, r as fi, t as pi } from "./Chart-DRtuaJHd.js";
-import { t as mi } from "./Chip-B1WLq1gt.js";
+import { t as mi } from "./Chip-zdVBwV9j.js";
 import { t as hi } from "./Modal-DMFNRUDx.js";
 import { t as gi } from "./ConfirmDialog-CSS_SMC6.js";
 import { t as _i } from "./EmptyState-DFWbBBcY.js";
 import { n as vi, t as yi } from "./SegmentedControl-X19S_gNQ.js";
 import { n as bi, t as xi } from "./PermissionDeniedCard-qt4lOUBd.js";
 import { t as Si } from "./Spinner-CLcq5z8N.js";
-import { n as Ci, t as wi } from "./SearchInput-BzLo-Ril.js";
+import { n as Ci, t as wi } from "./SearchInput-TPCQujCD.js";
 import { t as Ti } from "./FormField-E8Z0ppOp.js";
 import { a as Ei, i as Di, n as Oi, r as ki, t as Ai } from "./Sparkline-Ci_cmVWU.js";
 import { t as ji } from "./SkeletonCard-CGe8XFPB.js";
@@ -77,11 +77,11 @@ import { t as Ba } from "./Checkbox-Dftwml_V.js";
 import { n as Va, t as Ha } from "./FileKindMark-CjLXNjct.js";
 import { n as Ua, r as Wa, t as Ga } from "./ChoiceList-CaZ4rZrS.js";
 import { n as Ka, r as qa, t as Ja } from "./ReactionsOverlay-Ob1ecsgg.js";
-import { A as Ya, B as Xa, C as Za, D as Qa, E as $a, F as eo, G as to, H as no, I as ro, J as io, K as ao, L as oo, M as so, N as co, O as lo, P as uo, R as fo, S as po, T as mo, U as ho, V as go, W as _o, X as vo, Y as yo, Z as bo, _ as xo, a as So, b as Co, c as wo, d as To, f as Eo, g as Do, h as Oo, i as ko, j as Ao, k as jo, l as Mo, m as No, n as Po, o as Fo, p as Io, q as Lo, r as Ro, s as zo, t as Bo, u as Vo, v as Ho, w as Uo, x as Wo, y as Go, z as Ko } from "./social-B1vgGp_N.js";
-import { $ as qo, A as Jo, B as Yo, C as Xo, D as Zo, E as Qo, F as $o, G as es, H as ts, I as ns, J as rs, K as is, L as as, M as os, N as ss, O as cs, P as ls, Q as us, R as ds, S as fs, T as ps, U as ms, V as hs, W as gs, X as _s, Y as vs, Z as ys, _ as bs, a as xs, at as Ss, b as Cs, c as ws, d as Ts, et as Es, f as Ds, g as Os, h as ks, i as As, it as js, j as Ms, k as Ns, l as Ps, m as Fs, n as Is, nt as Ls, o as Rs, p as zs, q as Bs, r as Vs, rt as Hs, s as Us, t as Ws, tt as Gs, u as Ks, v as qs, w as Js, x as Ys, y as Xs, z as Zs } from "./ConversationSurface-B47wqZAQ.js";
+import { A as Ya, B as Xa, C as Za, D as Qa, E as $a, F as eo, G as to, H as no, I as ro, J as io, K as ao, L as oo, M as so, N as co, O as lo, P as uo, R as fo, S as po, T as mo, U as ho, V as go, W as _o, X as vo, Y as yo, Z as bo, _ as xo, a as So, b as Co, c as wo, d as To, f as Eo, g as Do, h as Oo, i as ko, j as Ao, k as jo, l as Mo, m as No, n as Po, o as Fo, p as Io, q as Lo, r as Ro, s as zo, t as Bo, u as Vo, v as Ho, w as Uo, x as Wo, y as Go, z as Ko } from "./social-CWKdHfWT.js";
+import { $ as qo, A as Jo, B as Yo, C as Xo, D as Zo, E as Qo, F as $o, G as es, H as ts, I as ns, J as rs, K as is, L as as, M as os, N as ss, O as cs, P as ls, Q as us, R as ds, S as fs, T as ps, U as ms, V as hs, W as gs, X as _s, Y as vs, Z as ys, _ as bs, a as xs, at as Ss, b as Cs, c as ws, d as Ts, et as Es, f as Ds, g as Os, h as ks, i as As, it as js, j as Ms, k as Ns, l as Ps, m as Fs, n as Is, nt as Ls, o as Rs, p as zs, q as Bs, r as Vs, rt as Hs, s as Us, t as Ws, tt as Gs, u as Ks, v as qs, w as Js, x as Ys, y as Xs, z as Zs } from "./ConversationSurface-D8T5V2vp.js";
 import { t as Qs } from "./activationKey-CjbL3LUv.js";
 import { B as $s, C as ec, D as tc, E as nc, F as rc, I as ic, L as ac, M as oc, N as sc, O as cc, P as lc, R as uc, S as dc, T as fc, V as pc, _ as mc, a as hc, b as gc, c as _c, d as vc, f as yc, g as bc, h as xc, i as Sc, j as Cc, l as wc, m as Tc, n as Ec, o as Dc, p as Oc, r as kc, s as Ac, t as jc, u as Mc, v as Nc, w as Pc, x as Fc, y as Ic, z as Lc } from "./renderers-suizM8nE.js";
-import { A as Rc, D as zc, E as Bc, F as Vc, G as Hc, H as Uc, I as Wc, K as Gc, L as Kc, M as qc, N as Jc, O as Yc, P as Xc, T as Zc, U as Qc, W as $c, b as el, f as tl, j as nl, k as rl, q as il, t as al } from "./PresentationEditor-67WltrHH.js";
+import { A as Rc, D as zc, E as Bc, F as Vc, G as Hc, H as Uc, I as Wc, K as Gc, L as Kc, M as qc, N as Jc, O as Yc, P as Xc, T as Zc, U as Qc, W as $c, b as el, f as tl, j as nl, k as rl, q as il, t as al } from "./PresentationEditor-BaaX58WL.js";
 import { n as ol, r as sl, t as cl } from "./EventStreamContext-CLzG8O5_.js";
 import { B as ll, F as ul, H as dl, R as fl, Y as pl, _ as ml, bt as hl, c as gl, d as _l, dt as vl, f as yl, ft as bl, g as xl, h as Sl, ht as Cl, m as wl, mt as Tl, n as El, p as Dl, q as Ol, rt as kl, t as Al, u as jl, v as Ml, xt as Nl, y as Pl } from "./services-EHYvvCQi.js";
 import { n as Fl, t as Il } from "./ObservabilityContext-DpoDrm3T.js";
@@ -90,14 +90,14 @@ import { _ as Vl, a as Hl, c as Ul, d as Wl, g as Gl, h as Kl, i as ql, m as Jl,
 import { t as nu } from "./formatBytes-05ivRSJY.js";
 import { a as ru, i as iu, n as au, o as ou, r as su, t as cu } from "./composerCommands-CPHsHCqp.js";
 import { t as lu } from "./ComposerReferences-q9qjqqi5.js";
-import { n as uu } from "./useComputeProjects-Dj1HxHM6.js";
+import { n as uu } from "./useComputeProjects-BZyUWJy3.js";
 import { a as du, i as fu, n as pu, o as mu, r as hu, t as gu } from "./ChatSidePanelRegistry-Di3o0K8v.js";
-import { $ as _u, A as vu, B as yu, C as bu, D as xu, E as Su, F as Cu, G as wu, H as Tu, I as Eu, J as Du, K as Ou, L as ku, M as Au, N as ju, O as Mu, P as Nu, Q as Pu, R as Fu, S as Iu, T as Lu, U as Ru, V as zu, W as Bu, X as Vu, Y as Hu, Z as Uu, _ as Wu, a as Gu, at as Ku, b as qu, c as Ju, d as Yu, et as Xu, f as Zu, g as Qu, h as $u, i as ed, it as td, j as nd, k as rd, l as id, m as ad, n as od, nt as sd, o as cd, ot as ld, p as ud, q as dd, r as fd, rt as pd, s as md, st as hd, t as gd, tt as _d, u as vd, v as yd, w as bd, x as xd, y as Sd, z as Cd } from "./video-CR56213m.js";
+import { $ as _u, A as vu, B as yu, C as bu, D as xu, E as Su, F as Cu, G as wu, H as Tu, I as Eu, J as Du, K as Ou, L as ku, M as Au, N as ju, O as Mu, P as Nu, Q as Pu, R as Fu, S as Iu, T as Lu, U as Ru, V as zu, W as Bu, X as Vu, Y as Hu, Z as Uu, _ as Wu, a as Gu, at as Ku, b as qu, c as Ju, d as Yu, et as Xu, f as Zu, g as Qu, h as $u, i as ed, it as td, j as nd, k as rd, l as id, m as ad, n as od, nt as sd, o as cd, ot as ld, p as ud, q as dd, r as fd, rt as pd, s as md, st as hd, t as gd, tt as _d, u as vd, v as yd, w as bd, x as xd, y as Sd, z as Cd } from "./video-Ccf2F6PM.js";
 import { C as wd, E as Td, S as Ed, T as Dd, _ as Od, a as kd, b as Ad, c as jd, d as Md, f as Nd, g as Pd, h as Fd, i as Id, l as Ld, m as Rd, n as zd, o as Bd, p as Vd, r as Hd, s as Ud, t as Wd, u as Gd, v as Kd, w as qd, x as Jd, y as Yd } from "./StreamStage-D3t-eP-k.js";
-import { A as Xd, C as Zd, D as Qd, E as $d, O as ef, S as tf, T as nf, _ as rf, a as af, b as of, c as sf, d as cf, f as lf, g as uf, h as df, i as ff, k as pf, l as mf, m as hf, n as gf, o as _f, p as vf, r as yf, s as bf, t as xf, u as Sf, v as Cf, w as wf, x as Tf, y as Ef } from "./identity-CO-qvs2F.js";
-import { n as Df, t as Of } from "./ChangeReviewCard-DikeAYt9.js";
-import { a as kf, i as Af, n as jf, o as Mf, r as Nf, t as Pf } from "./VerdictChip-BFcf7mfR.js";
-import { A as Ff, C as If, D as Lf, E as Rf, M as zf, O as Bf, S as Vf, T as Hf, _ as Uf, a as Wf, b as Gf, c as Kf, d as qf, f as Jf, g as Yf, h as Xf, i as Zf, j as Qf, k as $f, l as ep, m as tp, n as np, o as rp, p as ip, r as ap, s as op, t as sp, u as cp, v as lp, w as up, x as dp, y as fp } from "./graph-DuwuOGUg.js";
+import { A as Xd, C as Zd, D as Qd, E as $d, O as ef, S as tf, T as nf, _ as rf, a as af, b as of, c as sf, d as cf, f as lf, g as uf, h as df, i as ff, k as pf, l as mf, m as hf, n as gf, o as _f, p as vf, r as yf, s as bf, t as xf, u as Sf, v as Cf, w as wf, x as Tf, y as Ef } from "./identity-BOLjXTvO.js";
+import { n as Df, t as Of } from "./ChangeReviewCard-BBzLUDwx.js";
+import { a as kf, i as Af, n as jf, o as Mf, r as Nf, t as Pf } from "./VerdictChip-ClwrKr68.js";
+import { A as Ff, C as If, D as Lf, E as Rf, M as zf, O as Bf, S as Vf, T as Hf, _ as Uf, a as Wf, b as Gf, c as Kf, d as qf, f as Jf, g as Yf, h as Xf, i as Zf, j as Qf, k as $f, l as ep, m as tp, n as np, o as rp, p as ip, r as ap, s as op, t as sp, u as cp, v as lp, w as up, x as dp, y as fp } from "./graph-BA89F5gJ.js";
 import { Suspense as pp, createContext as mp, forwardRef as hp, lazy as gp, useCallback as W, useContext as _p, useEffect as G, useId as K, useLayoutEffect as vp, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import { Outlet as yp, useLocation as bp, useNavigate as xp } from "react-router";
@@ -1215,7 +1215,7 @@ function am() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var om = gp(() => import("./DocumentEditorPage-d-G0iets.js").then((e) => e.n));
+var om = gp(() => import("./DocumentEditorPage-aeA0CrBJ.js").then((e) => e.n));
 function sm({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
@@ -2490,14 +2490,14 @@ function Mm({ primary: e, secondary: t, defaultRatio: n = .55, ratio: r, onRatio
 //#endregion
 //#region src/components/layout/ContextColumn.tsx
 var Nm = {
-	collapsed: "w-10",
+	collapsed: "w-12",
 	open: "w-80",
 	wide: "w-[32rem]"
 };
 function Pm({ dir: e }) {
 	return /* @__PURE__ */ Z("svg", {
 		viewBox: "0 0 16 16",
-		className: "h-3.5 w-3.5",
+		className: "h-[18px] w-[18px]",
 		fill: "none",
 		stroke: "currentColor",
 		strokeWidth: "1.5",
@@ -2550,19 +2550,19 @@ function Lm({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i,
 		"aria-label": a,
 		"data-testid": s,
 		"data-state": "collapsed",
-		className: z("flex h-full shrink-0 flex-col items-center gap-1 border-l border-border bg-surface-panel py-1.5", Nm.collapsed, o),
+		className: z("flex h-full shrink-0 flex-col items-center gap-2.5 border-l border-border bg-surface-panel py-1", Nm.collapsed, o),
 		children: [
 			/* @__PURE__ */ Z(V, {
 				"aria-label": `Open ${a.toLowerCase()}`,
 				title: `Open ${a.toLowerCase()}`,
-				size: "sm",
+				size: "md",
 				variant: "ghost",
 				icon: /* @__PURE__ */ Z(Pm, { dir: "left" }),
 				onClick: () => t("open"),
 				"data-testid": `${s}-expand`
 			}),
 			/* @__PURE__ */ Z("div", {
-				className: "my-1 h-px w-5 bg-border",
+				className: "h-px w-full shrink-0 bg-border",
 				"aria-hidden": "true"
 			}),
 			n.flatMap((e) => e.entries ? e.entries.map((n) => /* @__PURE__ */ Q("div", {
@@ -2570,7 +2570,8 @@ function Lm({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i,
 				children: [/* @__PURE__ */ Z(V, {
 					"aria-label": n.badge ? `${n.label} (${n.badge} pending)` : n.label,
 					title: n.label,
-					size: "sm",
+					size: "md",
+					className: "[&_svg]:h-5 [&_svg]:w-5",
 					variant: "ghost",
 					icon: n.icon,
 					onClick: () => {
@@ -2589,7 +2590,8 @@ function Lm({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i,
 				children: [/* @__PURE__ */ Z(V, {
 					"aria-label": e.badge ? `${e.label} (${e.badge} unread)` : e.label,
 					title: e.label,
-					size: "sm",
+					size: "md",
+					className: "[&_svg]:h-5 [&_svg]:w-5",
 					variant: "ghost",
 					icon: e.icon,
 					onClick: () => {

@@ -51,7 +51,7 @@ export function WorkspaceRail({
             <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
               <span className="min-w-0 truncate">{title}</span>
               {typeof count === 'number' && (
-                <Chip size={heading === 'prominent' ? 'sm' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
+                <Chip size={heading === 'prominent' ? 'md' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
               )}
             </h2>
           ) : <span className="flex-1" />)}

@@ -75,14 +75,15 @@ export interface ContextColumnProps {
 }
 
 const WIDTH: Record<ContextColumnState, string> = {
-  collapsed: 'w-10',
+  // 48px (2.386.3): the Folders mockup's strip — 32px buttons, 20px glyphs.
+  collapsed: 'w-12',
   open: 'w-80',
   wide: 'w-[32rem]',
 };
 
 function Chevron({ dir }: { dir: 'left' | 'right' }) {
   return (
-    <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <svg viewBox="0 0 16 16" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
       {dir === 'left'
         ? <path d="M10 3 5 8l5 5" strokeLinecap="round" strokeLinejoin="round" />
         : <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />}
@@ -124,25 +125,26 @@ export function ContextColumn({
         aria-label={label}
         data-testid={testId}
         data-state="collapsed"
-        className={cn('flex h-full shrink-0 flex-col items-center gap-1 border-l border-border bg-surface-panel py-1.5', WIDTH.collapsed, className)}
+        className={cn('flex h-full shrink-0 flex-col items-center gap-2.5 border-l border-border bg-surface-panel py-1', WIDTH.collapsed, className)}
       >
         <IconButton
           aria-label={`Open ${label.toLowerCase()}`}
           title={`Open ${label.toLowerCase()}`}
-          size="sm"
+          size="md"
           variant="ghost"
           icon={<Chevron dir="left" />}
           onClick={() => onStateChange('open')}
           data-testid={`${testId}-expand`}
         />
-        <div className="my-1 h-px w-5 bg-border" aria-hidden="true" />
+        <div className="h-px w-full shrink-0 bg-border" aria-hidden="true" />
         {panels.flatMap((p) => (p.entries
           ? p.entries.map((e) => (
               <div key={`${p.id}:${e.id}`} className="relative">
                 <IconButton
                   aria-label={e.badge ? `${e.label} (${e.badge} pending)` : e.label}
                   title={e.label}
-                  size="sm"
+                  size="md"
+                  className="[&_svg]:h-5 [&_svg]:w-5"
                   variant="ghost"
                   icon={e.icon}
                   onClick={() => { onActivate(p.id, e.id); onStateChange('open'); }}
@@ -160,7 +162,8 @@ export function ContextColumn({
                 <IconButton
                   aria-label={p.badge ? `${p.label} (${p.badge} unread)` : p.label}
                   title={p.label}
-                  size="sm"
+                  size="md"
+                  className="[&_svg]:h-5 [&_svg]:w-5"
                   variant="ghost"
                   icon={p.icon}
                   onClick={() => { onActivate(p.id); onStateChange('open'); }}

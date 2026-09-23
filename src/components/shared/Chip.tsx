@@ -44,7 +44,7 @@ const PALETTE = {
 
 const SIZE_CLASSES: Record<'md' | 'sm' | 'xs', string> = {
   // A count pill beside a 15px tree row (the Folders explorer, 2.386.0).
-  md: 'min-w-6 justify-center px-1.5 py-0.5 text-[12px] font-semibold tabular-nums',
+  md: 'min-w-6 justify-center px-1.5 py-0.5 text-[12px] font-semibold leading-4 tabular-nums',
   sm: 'px-2 py-0.5 text-[11px]',
   xs: 'px-1.5 py-px text-[10px]',
 };
