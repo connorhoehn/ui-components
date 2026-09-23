@@ -174,6 +174,12 @@ export function WorkNodePane({
   // AgentCore microVM · started 09:15"), and a second banner above it would
   // say the same thing twice.
   const compute = visible?.compute;
+  // A banner whose description only repeats the pane's title or subtitle
+  // ("v4 ready" over "audit-e2e-1790150600", under that same title) keeps its
+  // title and drops the echo.
+  const banner = visible?.banner?.description && alreadySaid(visible.banner.description, [title, visible.subtitle])
+    ? { tone: visible.banner.tone, title: visible.banner.title }
+    : visible?.banner;
   // The card's own body — the lines and the verbatim excerpt the host already
   // authorized — belongs in the pane too: a composer edit's instruction, its
   // scope and "v6 → v7" were on the card and nowhere in the pane that is
@@ -183,7 +189,7 @@ export function WorkNodePane({
   const ownInspector = !!compute || !!visible?.artifact || !!visible?.transcript;
   // Nor is a line the description, the subtitle or the excerpt already says —
   // WORK-144's "Gateway · Coverage checks" was both its description and a line.
-  const said = [visible?.banner?.title, visible?.banner?.description, sections?.description, visible?.subtitle, visible?.excerpt];
+  const said = [banner?.title, banner?.description, sections?.description, visible?.subtitle, visible?.excerpt];
   const bodyLines = ownInspector
     ? []
     : (visible?.lines ?? []).filter((line, index, all) => all.indexOf(line) === index && !alreadySaid(line, said));
@@ -199,8 +205,8 @@ export function WorkNodePane({
         <IconButton size="md" aria-label="Close details" onClick={onClose} data-testid={`${testId}-close`} className="shrink-0"><CloseIcon /></IconButton>
       </header>
       <div className="min-h-0 flex-1 space-y-4 overflow-auto p-3">
-        {!compute && visible?.banner && <WorkPaneBanner banner={visible.banner} />}
-        {compute && <WorkComputePane compute={compute} {...(visible?.banner ? { banner: visible.banner } : {})} />}
+        {!compute && banner && <WorkPaneBanner banner={banner} />}
+        {compute && <WorkComputePane compute={compute} {...(banner ? { banner } : {})} />}
         {excerpt && <p className="text-[13px] italic leading-snug text-text-primary" data-testid={`${testId}-excerpt`}>{`“${excerpt}”`}</p>}
         {bodyLines.length > 0 && (
           <ul className="space-y-0.5 text-[13px] leading-snug text-text-secondary" data-testid={`${testId}-lines`}>

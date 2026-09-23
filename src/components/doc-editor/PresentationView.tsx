@@ -62,6 +62,11 @@ export interface PresentationRevision {
 
 export interface PresentationViewProps {
   title: string;
+  /**
+   * A line under the title — e.g. the deck's own heading where it differs from
+   * the document's name ("Titled “Audit E2E”"). A subtitle, never a second name.
+   */
+  subtitle?: string;
   revisions: readonly PresentationRevision[];
   /** Which revision is shown. Controlled; the host owns the choice. */
   revisionId: string;
@@ -121,6 +126,7 @@ function Chevron({ back }: { back?: boolean }) {
 
 export function PresentationView({
   title,
+  subtitle,
   revisions,
   revisionId,
   onRevisionChange,
@@ -168,7 +174,10 @@ export function PresentationView({
   if (state === 'empty' || !revision || slides.length === 0) {
     return (
       <div className={cn('flex min-h-0 flex-col gap-3 p-4', className)} data-testid={testId}>
-        <Text as="div" className="text-base font-semibold text-text-primary">{title}</Text>
+        <div className="flex min-w-0 flex-col">
+          <Text as="div" className="text-base font-semibold text-text-primary">{title}</Text>
+          {subtitle && <Text as="div" className="truncate text-xs text-text-tertiary" data-testid={`${testId}-subtitle`}>{subtitle}</Text>}
+        </div>
         <EmptyState
           title="No slides yet"
           description={
@@ -215,7 +224,10 @@ export function PresentationView({
       onKeyDown={handleKeyDown}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <Text as="div" className="text-base font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</Text>
+        <div className="flex min-w-0 flex-col">
+          <Text as="div" className="text-base font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</Text>
+          {subtitle && <Text as="div" className="truncate text-xs text-text-tertiary" data-testid={`${testId}-subtitle`}>{subtitle}</Text>}
+        </div>
         <div className="flex items-center gap-2">
           {revisions.length > REVISION_SEGMENTS_MAX ? (
             // Past a handful a row of v1…v15 crowds the title; one picker

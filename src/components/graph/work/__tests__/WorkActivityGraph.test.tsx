@@ -139,6 +139,37 @@ describe('Active Now composition', () => {
     expect(screen.queryByTestId('activity-inspector')).not.toBeInTheDocument();
   });
 
+  it('shows the accessible list in the canvas region when a pane is open and the graph is too small to read', () => {
+    const initial = props();
+    initial.selection = { kind: 'node', id: 'deck', revisionId: 'r2' };
+    initial.viewport = { x: 0, y: 0, zoom: 0.2 };
+    const { rerender } = render(<WorkGraph {...initial} />);
+    const region = screen.getByTestId('work-activity-list-region');
+    expect(within(region).getAllByRole('button').length).toBeGreaterThan(0);
+    expect(screen.getByTestId('work-activity-region')).toHaveAttribute('data-list', 'region');
+    // The canvas stays mounted (same fit) but out of reach under the list.
+    expect(screen.getByTestId('work-activity-canvas').parentElement).toHaveAttribute('aria-hidden', 'true');
+    // Footer and toggle are rows of their own, never under the list.
+    expect(region.contains(screen.getByTestId('work-activity-footer'))).toBe(false);
+    expect(screen.queryByTestId('work-activity-list-below')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('work-activity-list-toggle'));
+    expect(screen.queryByTestId('work-activity-list-region')).not.toBeInTheDocument();
+    expect(screen.getByTestId('work-activity-list-toggle')).toHaveTextContent('View as accessible list');
+    // Readable zoom, or no pane: the canvas keeps the region.
+    rerender(<WorkGraph {...initial} selection={null} />);
+    expect(screen.queryByTestId('work-activity-list-region')).not.toBeInTheDocument();
+    rerender(<WorkGraph {...initial} selection={{ kind: 'node', id: 'run' }} viewport={{ x: 0, y: 0, zoom: 1 }} />);
+    expect(screen.queryByTestId('work-activity-list-region')).not.toBeInTheDocument();
+  });
+
+  it('keeps an opened list below the canvas in its own scrolling row', () => {
+    render(<WorkGraph {...props()} />);
+    fireEvent.click(screen.getByTestId('work-activity-list-toggle'));
+    const below = screen.getByTestId('work-activity-list-below');
+    expect(below.className).toContain('overflow-auto');
+    expect(screen.getByTestId('work-activity-list-toggle')).toHaveTextContent('Hide accessible list');
+  });
+
   it('keeps effort frames out of the way of the cards inside them', () => {
     render(<WorkGraph {...props()} />);
     const frame = screen.getAllByTestId('work-effort')[0];

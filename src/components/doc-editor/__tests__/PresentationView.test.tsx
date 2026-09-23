@@ -44,6 +44,15 @@ describe('PresentationView', () => {
     expect(document.activeElement).not.toBe(screen.getByTestId('presentation-view'));
   });
 
+  it('shows a subtitle under the title, and none when not given', () => {
+    const { unmount } = view({ subtitle: 'Titled “Audit E2E”' });
+    expect(screen.getByTestId('presentation-view-subtitle')).toHaveTextContent('Titled “Audit E2E”');
+    expect(screen.getByTestId('presentation-view-title')).toHaveTextContent('Sprint review');
+    unmount();
+    view();
+    expect(screen.queryByTestId('presentation-view-subtitle')).not.toBeInTheDocument();
+  });
+
   it('shows the slide it was asked for, numbered as the deck numbers itself', () => {
     view({ slideIndex: 2 });
     expect(screen.getByTestId('presentation-view-position')).toHaveTextContent('Slide 2 of 3');

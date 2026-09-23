@@ -39,6 +39,13 @@ function Harness({ detail, entity, onReference, initial }: {
 }
 
 describe('a run pane says what the card says, and more', () => {
+  it('drops a banner description that only repeats the pane title', () => {
+    render(<WorkNodePane node={node('deck', 'document', 'audit-e2e-1790150600')} detail={{ subtitle: 'Presentation · Yours', banner: { tone: 'success', title: 'v4 ready', description: 'audit-e2e-1790150600' } }} selection={{ kind: 'node', id: 'deck' }} onSelectionChange={vi.fn()} onClose={vi.fn()} />);
+    const banner = screen.getByTestId('work-pane-banner');
+    expect(banner).toHaveTextContent('v4 ready');
+    expect(banner).not.toHaveTextContent('audit-e2e-1790150600');
+  });
+
   it('shows the instruction verbatim and the card lines, without repeating the banner', () => {
     const run = node('edit', 'run', 'Edit Sprint review · Shorter title', { status: 'completed', capabilities: ['view-run'] });
     render(<Harness entity={run} detail={{

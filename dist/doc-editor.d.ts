@@ -1963,10 +1963,15 @@ export declare interface PresentationSourceOption {
     kind?: 'document' | 'transcript';
 }
 
-export declare function PresentationView({ title, revisions, revisionId, onRevisionChange, slideIndex, onSlideChange, onDownload, downloadLabel, onOpenPreview, pending, notice, state, errorMessage, onRetry, maxSlideWidth, autoFocus, className, 'data-testid': testId, }: PresentationViewProps): JSX.Element;
+export declare function PresentationView({ title, subtitle, revisions, revisionId, onRevisionChange, slideIndex, onSlideChange, onDownload, downloadLabel, onOpenPreview, pending, notice, state, errorMessage, onRetry, maxSlideWidth, autoFocus, className, 'data-testid': testId, }: PresentationViewProps): JSX.Element;
 
 export declare interface PresentationViewProps {
     title: string;
+    /**
+     * A line under the title — e.g. the deck's own heading where it differs from
+     * the document's name ("Titled “Audit E2E”"). A subtitle, never a second name.
+     */
+    subtitle?: string;
     revisions: readonly PresentationRevision[];
     /** Which revision is shown. Controlled; the host owns the choice. */
     revisionId: string;
@@ -3351,9 +3356,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3371,19 +3379,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3417,12 +3415,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

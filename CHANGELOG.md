@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.374.0] — 2026-09-23
+
+### Added
+
+- `PresentationView` `subtitle` — a line under the title (the deck's own heading where it differs from the document name).
+
+### Fixed
+
+- `WorkActivityGraph`: the accessible list no longer draws over the canvas footer and zoom controls in a short panel. With a node's pane open and the fitted graph below the readable zoom, the canvas region shows the list (canvas stays mounted underneath; "Show the graph" returns it). In a panel under 720 px the toggled list takes the canvas region instead of a 240 px row below it.
+- `WorkNodePane`: a banner description that only repeats the pane title or subtitle is dropped ("v4 ready" no longer echoes the deck name).
+
 ## [2.373.6] — 2026-09-23
 
 ### Fixed
