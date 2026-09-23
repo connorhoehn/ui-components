@@ -984,6 +984,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "ChunkViewer",
     "CommentGhostPopover",
     "CommentThreadNode",
+    "ComposerDockPlacementContext",
     "DECK_THEMES",
     "DEFAULT_EDITOR_SHELL_TABS",
     "DOCK_HEIGHT_VAR",

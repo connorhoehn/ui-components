@@ -170,7 +170,12 @@ export function FilmstripThumb({
         </button>
 
         <span className="flex min-w-0 items-center gap-1.5">
-          <Text as="span" className="min-w-0 flex-1 truncate text-[11px] text-text-secondary">{title}</Text>
+          {/* A thumb with no render already shows its title on the card. */}
+          {thumbnail ? (
+            <Text as="span" className="min-w-0 flex-1 truncate text-[11px] text-text-secondary">{title}</Text>
+          ) : (
+            <span className="min-w-0 flex-1" aria-hidden="true" />
+          )}
           {changed && !generating && (
             <Text as="span" className="shrink-0 text-[10px] font-semibold text-success-fg" data-testid={`${testIdPrefix}-changed-${slide.id}`}>
               Edited by agent
@@ -333,8 +338,7 @@ export function Filmstrip({
             className="min-w-0 flex-1 border border-dashed border-border text-text-secondary"
             data-testid={`${testIdPrefix}-add`}
           >
-            <PlusIcon size={12} />
-            Add slide
+            <span className="inline-flex items-center gap-1"><PlusIcon size={12} />Add slide</span>
           </Button>
         </div>
       )}

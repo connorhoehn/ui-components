@@ -86,7 +86,7 @@ import LoadingState from '../../shared/LoadingState';
 import Tabs from '../../shared/Tabs';
 import { Text } from '../../shared/Text';
 import { PresentationView, type PresentationRevision } from '../PresentationView';
-import { FloatingComposerDock } from '../FloatingComposerDock';
+import { ComposerDockPlacementContext, FloatingComposerDock } from '../FloatingComposerDock';
 import { isTextEntryTarget, nextSlideIndex, slideNavigationIntent } from '../../../lib/slideNavigationKey';
 import { Filmstrip } from './Filmstrip';
 import SlideForm from './SlideForm';
@@ -242,7 +242,10 @@ export interface PresentationEditorProps {
    */
   generatingSlideIds?: readonly string[];
   /**
-   * The foot of the editor — the host's composer dock. Replaces the built-in
+   * The foot of the editor — the host's composer dock, normally a
+   * `FloatingComposerDock`. It is pinned as the editor column's last row
+   * (normal flow, `ComposerDockPlacementContext` = `pinned`) while only the
+   * content above it scrolls. Replaces the built-in
    * agent box (`onInstruct`) when given. A function receives the slide on the
    * stage and a way to mark the slides an edit changed.
    */
@@ -749,8 +752,6 @@ export function PresentationEditor({
     ? () => onOpenPresentationView(selected ? { slideId: selected.id, slideIndex: selectedIndex + 1 } : undefined)
     : undefined;
 
-  const framed = !!renderFrame;
-
   const toolbar = (
     <SlidesToolbar
       slide={selected}
@@ -852,27 +853,29 @@ export function PresentationEditor({
   const customFooter = typeof footer === 'function' ? footer(footerContext) : footer;
   const hasCustomFooter = customFooter != null && customFooter !== false;
 
-  // What sits at the foot of the editing column. A host footer replaces the
-  // built-in agent box; without one, the agent box (when `onInstruct` is set).
+  // What is pinned at the foot of the editing column. A host footer replaces
+  // the built-in agent box; without one, the agent box (when `onInstruct` is
+  // set), docked. Either way it is the column's last row in normal flow (the
+  // frame's footer slot, or this editor's own root, both with the dock's
+  // `pinned` placement): only the content above it scrolls.
   const footerContent: ReactNode = hasCustomFooter
     ? customFooter
     : agentComposer
-      ? framed
-        ? (
-            <FloatingComposerDock
-              maxWidth="4xl"
-              label="Deck agent"
-              above={agentResult}
-              composer={agentComposer}
-              data-testid={`${testId}-dock`}
-            />
-          )
-        : (
-            <>
-              {agentComposer}
-              {agentResult}
-            </>
-          )
+      ? (
+          <FloatingComposerDock
+            maxWidth="4xl"
+            label="Deck agent"
+            // One opaque card: the agent's answer, the scope and chips, the
+            // input. Nothing from the page shows through or sits on top of it.
+            composer={(
+              <div className="flex flex-col gap-1.5 rounded-lg border border-border bg-surface p-2" data-testid={`${testId}-dock-card`}>
+                {agentResult}
+                {agentComposer}
+              </div>
+            )}
+            data-testid={`${testId}-dock`}
+          />
+        )
       : null;
 
   const slideExtras = selected && (
@@ -982,7 +985,6 @@ export function PresentationEditor({
               onChange={(notes) => editSlide({ ...selected, notes })}
               data-testid={`${testId}-slide-notes`}
             />
-            {!framed && footerContent}
             {slideExtras}
           </div>
         )}
@@ -1016,24 +1018,37 @@ export function PresentationEditor({
     return <>{renderFrame({ toolbar, actions: revisionControls, surface, footer: footerContent })}</>;
   }
 
+  // Unframed: the editor is its own frame. Deck line and toolbar stay at the
+  // top, the footer is pinned at the bottom, and only what is between them
+  // scrolls — so the composer is always on screen, whatever the deck's length.
   return (
     <div
-      className={cn('flex min-h-0 flex-col gap-3 p-4', className)}
+      className={cn('relative flex h-full min-h-0 flex-col', className)}
       data-testid={testId}
       onKeyDown={editorKeyGuard}
     >
-      <div
-        className={cn('flex flex-wrap justify-between gap-2', agentMode ? 'items-center' : 'items-end')}
-        {...(agentMode ? { 'data-testid': `${testId}-deck-line` } : {})}
-      >
-        {deckFields}
-        {revisionControls}
+      <div className="flex shrink-0 flex-col gap-3 px-4 pt-4">
+        <div
+          className={cn('flex flex-wrap justify-between gap-2', agentMode ? 'items-center' : 'items-end')}
+          {...(agentMode ? { 'data-testid': `${testId}-deck-line` } : {})}
+        >
+          {deckFields}
+          {revisionControls}
+        </div>
+        <div className="rounded-lg border border-border bg-surface px-2 py-1.5">{toolbar}</div>
       </div>
 
-      <div className="rounded-lg border border-border bg-surface px-2 py-1.5">{toolbar}</div>
+      <div
+        className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pt-3 pb-4"
+        data-testid={`${testId}-scroller`}
+      >
+        {alerts}
+        {body}
+      </div>
 
-      {alerts}
-      {body}
+      {/* The footer is this column's last row, in normal flow — the same
+          placement EditorShell gives it — so nothing scrolls under or over it. */}
+      <ComposerDockPlacementContext.Provider value="pinned">{footerContent}</ComposerDockPlacementContext.Provider>
     </div>
   );
 }

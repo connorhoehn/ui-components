@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.368.0] — 2026-09-22
+
+### Changed — presentation editor: the composer is always on screen (editor handoff WS3)
+
+- `PresentationEditor` without `renderFrame` is now its own viewport-height
+  frame: deck line and `SlidesToolbar` on top, one scrolling region
+  (filmstrip, stage, speaker notes, sources, slide details), and the footer
+  as the column's last row in normal flow (`ComposerDockPlacementContext`
+  `pinned`, as `EditorShell` places it since 2.365.0). Nothing scrolls under,
+  over or below the composer. With `renderFrame` the footer goes to the
+  frame's footer slot as before.
+- The built-in agent box is one opaque card inside the dock: the agent's
+  answer (wrapping), the This slide / Whole deck scope with the suggestion
+  chips, then the input — nothing from the page shows through it.
+- `SlidesToolbar`: New slide and Present no longer wrap their label under the
+  icon in a narrow toolbar.
+- `Filmstrip`: a thumbnail with no render shows its title once (on the card),
+  not twice.
 ## [2.367.1] — 2026-09-22
 
 ### Fixed

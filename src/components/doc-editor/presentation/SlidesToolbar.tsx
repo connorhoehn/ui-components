@@ -136,10 +136,10 @@ export function SlidesToolbar({
         size="sm"
         disabled={locked || !canAddSlide}
         onClick={() => onAddSlide()}
+        className="shrink-0 whitespace-nowrap"
         data-testid={`${testIdPrefix}-new-slide`}
       >
-        <PlusIcon size={12} />
-        New slide
+        <span className="inline-flex items-center gap-1"><PlusIcon size={12} />New slide</span>
       </Button>
 
       {!locked && slide && (
@@ -262,9 +262,8 @@ export function SlidesToolbar({
       {end}
 
       {onPresent && (
-        <Button variant="secondary" size="sm" onClick={onPresent} data-testid={`${testIdPrefix}-present`}>
-          <PlayGlyph />
-          Present
+        <Button variant="secondary" size="sm" onClick={onPresent} className="shrink-0 whitespace-nowrap" data-testid={`${testIdPrefix}-present`}>
+          <span className="inline-flex items-center gap-1.5"><PlayGlyph />Present</span>
         </Button>
       )}
     </div>

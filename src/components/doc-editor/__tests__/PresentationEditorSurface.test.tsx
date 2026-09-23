@@ -230,6 +230,20 @@ describe('SlidesToolbar in the editor', () => {
 });
 
 describe('footer and renderFrame', () => {
+  it('pins the agent box at the foot of the editor: last child, outside the scrolling region', async () => {
+    render(<Harness onInstruct={vi.fn(async () => ({ summary: 'ok' }))} />);
+    const root = screen.getByTestId('presentation-editor');
+    const dock = screen.getByTestId('presentation-editor-dock');
+    const scroller = screen.getByTestId('presentation-editor-scroller');
+    expect(root.lastElementChild).toBe(dock);
+    expect(scroller.contains(dock)).toBe(false);
+    // Scope toggle and the composer are inside the dock; sources and notes scroll above it.
+    expect(await within(dock).findByTestId('presentation-editor-agent-scope')).toBeInTheDocument();
+    expect(within(scroller).getByTestId('presentation-editor-slide-sources')).toBeInTheDocument();
+    expect(within(scroller).getByTestId('presentation-editor-slide-notes')).toBeInTheDocument();
+    expect(dock).toHaveAttribute('data-placement', 'pinned');
+  });
+
   it('a host footer replaces the built-in agent box and is told the selected slide', () => {
     const footer = vi.fn(({ selectedSlide }: { selectedSlide?: { id: string } }) => (
       <div data-testid="host-footer">{selectedSlide?.id}</div>
