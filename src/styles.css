@@ -725,6 +725,23 @@
 }
 .ProseMirror ul { list-style: disc outside; }
 .ProseMirror ol { list-style: decimal outside; }
+/* List markers set from the toolbar's list menus (`canvasListStyle.ts`,
+   2.386.3). A single style applies to its own list; the two multilevel
+   presets change the marker per nesting level. */
+.ProseMirror ul[data-list-style='disc'] { list-style-type: disc; }
+.ProseMirror ul[data-list-style='circle'] { list-style-type: circle; }
+.ProseMirror ul[data-list-style='square'] { list-style-type: square; }
+.ProseMirror ol[data-list-style='decimal'] { list-style-type: decimal; }
+.ProseMirror ol[data-list-style='lower-alpha'] { list-style-type: lower-alpha; }
+.ProseMirror ol[data-list-style='upper-alpha'] { list-style-type: upper-alpha; }
+.ProseMirror ol[data-list-style='lower-roman'] { list-style-type: lower-roman; }
+.ProseMirror ol[data-list-style='upper-roman'] { list-style-type: upper-roman; }
+.ProseMirror ul[data-list-style='tiered-bullets'] { list-style-type: disc; }
+.ProseMirror ul[data-list-style='tiered-bullets'] ul { list-style-type: circle; }
+.ProseMirror ul[data-list-style='tiered-bullets'] ul ul { list-style-type: square; }
+.ProseMirror ol[data-list-style='outline'] { list-style-type: decimal; }
+.ProseMirror ol[data-list-style='outline'] ol { list-style-type: lower-alpha; }
+.ProseMirror ol[data-list-style='outline'] ol ol { list-style-type: lower-roman; }
 .ProseMirror li { margin: 0.15em 0; }
 .ProseMirror li > p { margin: 0; }
 

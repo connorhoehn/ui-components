@@ -1066,3 +1066,84 @@ describe('auto size fits what the row can hold', () => {
     } finally { restore(); }
   });
 });
+
+describe('DocumentToolbar extras="overflow" — the word-processor row (2.386.3)', () => {
+  const EXTRAS = ['setTextAlign', 'unsetAllMarks', 'clearNodes', 'setColor', 'unsetColor', 'setBackgroundColor', 'unsetBackgroundColor', 'toggleHighlight', 'setListStyle'];
+
+  it('keeps align, rule and clear formatting behind ⋯, and link + image right after the marks', () => {
+    const { editor } = makeEditor({}, EXTRAS);
+    render(<DocumentToolbar editor={editor} extras="overflow" size="wide" onInsertImage={() => {}} />);
+    for (const id of ['align', 'hr', 'clear-formatting']) expect(screen.queryByTestId(`document-toolbar-${id}`)).toBeNull();
+    const code = screen.getByTestId('document-toolbar-code');
+    const link = screen.getByTestId('document-toolbar-link');
+    const bullets = screen.getByTestId('document-toolbar-bulletList');
+    expect(code.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(link.compareDocumentPosition(bullets) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // One highlight control on the row (the paint menu); the toggle is in ⋯.
+    expect(screen.getByTestId('document-toolbar-highlight-color')).toBeInTheDocument();
+    expect(screen.queryByTestId('document-toolbar-highlight')).toBeNull();
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-more'));
+    const panel = screen.getByTestId('document-toolbar-more-panel');
+    for (const id of ['align', 'hr', 'clear-formatting', 'highlight']) {
+      expect(panel).toContainElement(screen.getByTestId(`document-toolbar-${id}`));
+    }
+  });
+
+  it('gives bullet and numbered lists a caret with a real style menu', () => {
+    const { editor, calls } = makeEditor({}, EXTRAS);
+    render(<DocumentToolbar editor={editor} extras="overflow" size="wide" />);
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-orderedList-styles'));
+    const menu = screen.getByTestId('document-toolbar-orderedList-styles-menu');
+    for (const st of ['decimal', 'lower-alpha', 'upper-alpha', 'lower-roman', 'upper-roman']) {
+      expect(menu).toContainElement(screen.getByTestId(`document-toolbar-orderedList-style-${st}`));
+    }
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-orderedList-style-lower-alpha'));
+    expect(calls).toContain('setListStyle:["lower-alpha"]');
+    expect(screen.queryByTestId('document-toolbar-orderedList-styles-menu')).toBeNull();
+
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-bulletList-styles'));
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-bulletList-style-square'));
+    expect(calls).toContain('setListStyle:["square"]');
+
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-list-style'));
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-list-style-style-outline'));
+    expect(calls).toContain('setListStyle:["outline"]');
+  });
+
+  it('draws no caret when the editor cannot set a list style', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} extras="overflow" size="wide" />);
+    expect(screen.getByTestId('document-toolbar-bulletList')).toBeInTheDocument();
+    expect(screen.queryByTestId('document-toolbar-bulletList-styles')).toBeNull();
+    expect(screen.queryByTestId('document-toolbar-list-style')).toBeNull();
+  });
+
+  it('offers the page zoom in ⋯ when handed a zoomControl', () => {
+    const { editor } = makeEditor();
+    const onZoomChange = vi.fn();
+    const onFitWidth = vi.fn();
+    render(
+      <DocumentToolbar
+        editor={editor}
+        extras="overflow"
+        size="wide"
+        zoomControl={{ zoom: 1, fitActive: false, steps: [0.75, 1, 1.5], onZoomChange, onFitWidth }}
+      />,
+    );
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-more'));
+    const zoom = screen.getByTestId('document-toolbar-zoom') as HTMLSelectElement;
+    expect(zoom.value).toBe('1');
+    expect([...zoom.options].map((o) => o.textContent)).toEqual(['Fit width', '75%', '100%', '150%']);
+    fireEvent.change(zoom, { target: { value: '1.5' } });
+    expect(onZoomChange).toHaveBeenCalledWith(1.5);
+    fireEvent.change(zoom, { target: { value: 'fit' } });
+    expect(onFitWidth).toHaveBeenCalled();
+  });
+
+  it('renders no zoom row without a zoomControl', () => {
+    const { editor } = makeEditor({}, ['setTextAlign']);
+    render(<DocumentToolbar editor={editor} extras="overflow" size="wide" />);
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-more'));
+    expect(screen.queryByTestId('document-toolbar-zoom')).toBeNull();
+  });
+});

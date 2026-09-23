@@ -391,6 +391,13 @@ declare interface CanvasDocumentViewProps {
     /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
     zoomMode?: 'remembered' | 'fit';
     /**
+     * `card` (since 2.386.3) draws the toolbar as one white rounded card on the
+     * workspace grey, as the word-processor row (`DocumentToolbar
+     * extras="overflow"`): alignment, indent, rule, table, clear formatting and
+     * zoom behind its ⋯. `bar` (default) is the full-width strip.
+     */
+    toolbarStyle?: 'bar' | 'card';
+    /**
      * How tall the grey workspace is. `viewport` (default) measures the view's
      * own distance from the top of the window and takes the rest of it, which
      * is what a host with an unbounded page needs. `parent` fills the box the
@@ -1324,7 +1331,7 @@ export declare interface DocumentImageUpload {
     accepts: (file: File) => boolean;
 }
 
-declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, size: sizeProp, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, size: sizeProp, extras, zoomControl, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 declare interface DocumentToolbarProps {
     editor: Editor | null;
@@ -1399,6 +1406,15 @@ declare interface DocumentToolbarProps {
      * is present. Absent, no zoom item renders.
      */
     zoomControl?: DocumentZoomControl;
+    /**
+     * Where the occasional controls live (since 2.386.3). `inline` (default) is
+     * the classic bar: alignment, spacing, indent, rule, table and clear
+     * formatting sit on the row until the width folds them. `overflow` is the
+     * word-processor row a page editor draws — undo · styles · marks · link and
+     * image · lists (with style menus) · colour · highlight · ⋯ — and those
+     * occasional controls always live behind ⋯.
+     */
+    extras?: 'inline' | 'overflow';
     'data-testid'?: string;
 }
 

@@ -359,6 +359,13 @@ export interface CanvasDocumentViewProps {
   /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
   zoomMode?: 'remembered' | 'fit';
   /**
+   * `card` (since 2.386.3) draws the toolbar as one white rounded card on the
+   * workspace grey, as the word-processor row (`DocumentToolbar
+   * extras="overflow"`): alignment, indent, rule, table, clear formatting and
+   * zoom behind its ⋯. `bar` (default) is the full-width strip.
+   */
+  toolbarStyle?: 'bar' | 'card';
+  /**
    * How tall the grey workspace is. `viewport` (default) measures the view's
    * own distance from the top of the window and takes the rest of it, which
    * is what a host with an unbounded page needs. `parent` fills the box the
@@ -485,6 +492,7 @@ export default function CanvasDocumentView({
   toolbarDensity = 'full',
   showStatusBar = true,
   zoomMode = 'remembered',
+  toolbarStyle = 'bar',
   pageMargin = 'normal',
   onDocumentStats,
   fitHeight = 'viewport',
@@ -899,7 +907,9 @@ export default function CanvasDocumentView({
           {editable && editor && (
             <div data-testid={`${testId}-toolbar`} className="sticky top-0 z-20">
             <div
-              className="border-b border-border bg-surface-panel"
+              className={toolbarStyle === 'card'
+                ? 'bg-workspace px-3 pb-1 pt-2'
+                : 'border-b border-border bg-surface-panel'}
             >
               {/* Full workspace width, NOT the sheet's 816px.
 
@@ -915,9 +925,10 @@ export default function CanvasDocumentView({
                   Word processors put the toolbar across the whole chrome for
                   this reason — the sheet is centred beneath it, the controls are
                   not. */}
-              <div className="w-full px-3">
+              <div className={toolbarStyle === 'card' ? 'w-full rounded-lg border border-border bg-surface shadow-sm' : 'w-full px-3'} data-toolbar-style={toolbarStyle}>
                 <DocumentToolbar
                   density={toolbarDensity}
+                  {...(toolbarStyle === 'card' ? { extras: 'overflow' as const } : {})}
                   editor={editor}
                   actions={toolbarActions}
                   // Passed even when the gutter is hidden — that is precisely

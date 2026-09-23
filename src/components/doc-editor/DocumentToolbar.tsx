@@ -31,7 +31,14 @@ import { useRovingToolbar } from '../shared/RovingToolbar';
 import LinkPopover from './LinkPopover';
 import { LINE_SPACINGS, LINE_SPACING_LABELS, type LineSpacing } from './canvasLineSpacing';
 import { useMeasuredWidth } from './useMeasuredWidth';
+import {
+  BULLET_STYLES, NUMBER_STYLES, MULTILEVEL_STYLES, LIST_STYLE_LABELS, parseListStyle, type ListStyle,
+} from './canvasListStyle';
 import type { DocumentZoomControl } from './DocumentStatusBar';
+import {
+  BulletListIcon, ChecklistIcon, ChevronIcon, CodeIcon, HighlighterIcon, ImageIcon, LinkIcon, ListStyleIcon,
+  MoreIcon, NumberedListIcon, RedoIcon, UndoIcon,
+} from '../ui/Icons';
 
 export interface DocumentToolbarProps {
   editor: Editor | null;
@@ -106,6 +113,15 @@ export interface DocumentToolbarProps {
    * is present. Absent, no zoom item renders.
    */
   zoomControl?: DocumentZoomControl;
+  /**
+   * Where the occasional controls live (since 2.386.3). `inline` (default) is
+   * the classic bar: alignment, spacing, indent, rule, table and clear
+   * formatting sit on the row until the width folds them. `overflow` is the
+   * word-processor row a page editor draws — undo · styles · marks · link and
+   * image · lists (with style menus) · colour · highlight · ⋯ — and those
+   * occasional controls always live behind ⋯.
+   */
+  extras?: 'inline' | 'overflow';
   'data-testid'?: string;
 }
 
@@ -143,6 +159,16 @@ export function documentToolbarSize(width: number | null): DocumentToolbarSize {
 const SizeContext = createContext<DocumentToolbarSize>('wide');
 
 /**
+ * A full bar draws 36px controls with 18px glyphs (2.386.3) — the size a page
+ * editor's toolbar reads at. The compact bar in a chat pane keeps 28px.
+ */
+const RoomyContext = createContext(false);
+const BTN_ROOMY = 'h-9 min-w-9 px-2 rounded-md text-[15px]';
+const BTN_COMPACT = 'h-7 min-w-7 px-1.5 rounded text-xs';
+/** Glyph size for a drawn icon in the bar. */
+const useGlyph = () => (useContext(RoomyContext) ? 18 : 14);
+
+/**
  * The bar's current layout, for whatever a host renders into `actions`.
  *
  * The slot sits inside the bar, so the host's controls are on the same row
@@ -173,6 +199,10 @@ const EVERY_GROUP: readonly ToolbarGroup[] = ['selects', 'marksExtra', 'listsExt
  * table — and the style selects last, since they are what a writer reads.
  */
 const TUCK_ORDER: readonly ToolbarGroup[] = ['clear', 'shape', 'insert', 'indent', 'colour', 'image', 'listsExtra', 'marksExtra', 'selects'];
+/** `extras="overflow"`: these live behind ⋯ at every width. */
+const ALWAYS_OVERFLOW: ReadonlySet<ToolbarGroup> = new Set(['indent', 'shape', 'insert', 'clear']);
+/** `extras="overflow"`: what folds as the row narrows, first to go first. */
+const OVERFLOW_TUCK_ORDER: readonly ToolbarGroup[] = ['image', 'colour', 'listsExtra', 'marksExtra', 'selects'];
 const INLINE_GROUPS: Record<DocumentToolbarSize, ReadonlySet<ToolbarGroup>> = {
   wide: new Set(EVERY_GROUP),
   medium: new Set(['selects']),
@@ -268,20 +298,26 @@ function has(editor: Editor, command: string): boolean {
   }
 }
 
+/** A drawn icon at the bar's glyph size. */
+function Glyph({ icon: Icon }: { icon: (p: { size?: number }) => ReactNode }) {
+  const size = useGlyph();
+  return <Icon size={size} />;
+}
+
 // Underline and Link need no extra dependency — StarterKit v3 already bundles
 // both.
 const MARKS: MarkButton[] = [
-  { key: 'bold', label: 'B', hint: 'Bold  **text**', run: (e) => { e.chain().focus().toggleBold().run(); }, active: (e) => e.isActive('bold') },
-  { key: 'italic', label: 'I', hint: 'Italic  *text*', run: (e) => { e.chain().focus().toggleItalic().run(); }, active: (e) => e.isActive('italic') },
-  { key: 'underline', label: 'U', hint: 'Underline', run: (e) => { e.chain().focus().toggleUnderline().run(); }, active: (e) => e.isActive('underline') },
-  { key: 'strike', label: 'S', hint: 'Strikethrough  ~~text~~', run: (e) => { e.chain().focus().toggleStrike().run(); }, active: (e) => e.isActive('strike') },
-  { key: 'code', label: '</>', hint: 'Inline code  `text`', run: (e) => { e.chain().focus().toggleCode().run(); }, active: (e) => e.isActive('code') },
+  { key: 'bold', label: <span className="font-bold">B</span>, hint: 'Bold  **text**', run: (e) => { e.chain().focus().toggleBold().run(); }, active: (e) => e.isActive('bold') },
+  { key: 'italic', label: <span className="font-serif italic">I</span>, hint: 'Italic  *text*', run: (e) => { e.chain().focus().toggleItalic().run(); }, active: (e) => e.isActive('italic') },
+  { key: 'underline', label: <span className="underline underline-offset-2">U</span>, hint: 'Underline', run: (e) => { e.chain().focus().toggleUnderline().run(); }, active: (e) => e.isActive('underline') },
+  { key: 'strike', label: <span className="line-through">S</span>, hint: 'Strikethrough  ~~text~~', run: (e) => { e.chain().focus().toggleStrike().run(); }, active: (e) => e.isActive('strike') },
+  { key: 'code', label: <Glyph icon={CodeIcon} />, hint: 'Inline code  `text`', run: (e) => { e.chain().focus().toggleCode().run(); }, active: (e) => e.isActive('code') },
 ];
 
 const LISTS: MarkButton[] = [
-  { key: 'bulletList', label: '•', hint: 'Bulleted list  - item', run: (e) => { e.chain().focus().toggleBulletList().run(); }, active: (e) => e.isActive('bulletList') },
-  { key: 'orderedList', label: '1.', hint: 'Numbered list  1. item', run: (e) => { e.chain().focus().toggleOrderedList().run(); }, active: (e) => e.isActive('orderedList') },
-  { key: 'taskList', label: '☑', hint: 'Task list  - [ ] item', run: (e) => { e.chain().focus().toggleTaskList().run(); }, active: (e) => e.isActive('taskList') },
+  { key: 'bulletList', label: <Glyph icon={BulletListIcon} />, hint: 'Bulleted list  - item', run: (e) => { e.chain().focus().toggleBulletList().run(); }, active: (e) => e.isActive('bulletList') },
+  { key: 'orderedList', label: <Glyph icon={NumberedListIcon} />, hint: 'Numbered list  1. item', run: (e) => { e.chain().focus().toggleOrderedList().run(); }, active: (e) => e.isActive('orderedList') },
+  { key: 'taskList', label: <Glyph icon={ChecklistIcon} />, hint: 'Task list  - [ ] item', run: (e) => { e.chain().focus().toggleTaskList().run(); }, active: (e) => e.isActive('taskList') },
 ];
 
 /**
@@ -331,6 +367,7 @@ const MENU_ITEM_RING = 'focus-visible:outline-none focus-visible:ring-2 focus-vi
 function ToolButton({
   btn, editor, testId, active,
 }: { btn: MarkButton; editor: Editor; testId: string; active: boolean }) {
+  const roomy = useContext(RoomyContext);
   return (
     <button
       type="button"
@@ -346,7 +383,8 @@ function ToolButton({
       aria-pressed={active}
       {...activate(() => btn.run(editor))}
       className={cn(
-        'min-w-7 h-7 px-1.5 rounded text-xs font-semibold cursor-pointer border-none',
+        'inline-flex items-center justify-center font-semibold cursor-pointer border-none',
+        roomy ? BTN_ROOMY : BTN_COMPACT,
         active ? 'bg-primary text-on-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
       )}
     >
@@ -669,11 +707,12 @@ function ColorMenu({
   swatches: { value: string; label: string }[];
   setCmd: string;
   unsetCmd: string;
-  glyph: string;
+  glyph: ReactNode;
   title: string;
   testId: string;
 }) {
   const { open, close, wrapRef, triggerProps, menuProps, itemProps } = useToolMenu();
+  const roomy = useContext(RoomyContext);
 
   const apply = (value: string | null) => {
     const chain = editor.chain().focus() as never as Record<string, (v?: string) => { run: () => void }>;
@@ -693,20 +732,24 @@ function ColorMenu({
         aria-label={title}
         {...triggerProps}
         className={cn(
-          'inline-flex h-7 flex-col items-center justify-center gap-px px-1.5 rounded text-xs cursor-pointer border-none leading-none',
+          'inline-flex items-center justify-center gap-1 cursor-pointer border-none leading-none',
+          roomy ? 'h-9 rounded-md px-1.5 text-[16px] font-semibold' : 'h-7 rounded px-1.5 text-xs',
           open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
         )}
       >
-        <span aria-hidden>{glyph}</span>
-        {/* The bar under the glyph is the colour currently in force — the same
-            way every word processor shows it, and the only way the button can
-            answer "what will this do" before you open it. */}
-        <span
-          aria-hidden
-          data-testid={`${testId}-current`}
-          className="h-[3px] w-3.5 rounded-sm border border-border"
-          style={{ background: current || 'transparent' }}
-        />
+        <span className="inline-flex flex-col items-center justify-center gap-px">
+          <span aria-hidden>{glyph}</span>
+          {/* The bar under the glyph is the colour currently in force — the same
+              way every word processor shows it, and the only way the button can
+              answer "what will this do" before you open it. */}
+          <span
+            aria-hidden
+            data-testid={`${testId}-current`}
+            className={cn('rounded-sm border border-border', roomy ? 'h-1 w-[18px]' : 'h-[3px] w-3.5')}
+            style={{ background: current || (roomy && setCmd === 'setColor' ? 'var(--color-text-primary)' : 'transparent') }}
+          />
+        </span>
+        {roomy && setCmd === 'setColor' && <ChevronIcon size={12} aria-hidden="true" />}
       </button>
 
       {open && (
@@ -873,6 +916,113 @@ function TableMenu({
           )}
         </span>
       )}
+    </span>
+  );
+}
+
+/**
+ * A list's marker menu (2.386.3): a caret beside the bullet or numbered
+ * button, or — with no `btn` — a menu-only button for the multilevel presets.
+ * Each choice makes the caret's block a list of that kind if it is not one,
+ * and sets its marker (`canvasListStyle.ts`). Rendered only when the editor
+ * has `setListStyle`, so a caret never opens a menu that cannot act.
+ */
+function ListStyleMenu({
+  editor, btn, active, styles, current, label, icon, testId,
+}: {
+  editor: Editor;
+  /** The list's own toggle, drawn left of the caret. Absent for the menu-only button. */
+  btn?: MarkButton;
+  active: boolean;
+  styles: readonly ListStyle[];
+  current: ListStyle | null;
+  label: string;
+  /** The menu-only button's glyph. */
+  icon?: ReactNode;
+  testId: string;
+}) {
+  const { open, close, wrapRef, triggerProps, menuProps, itemProps } = useToolMenu();
+  const roomy = useContext(RoomyContext);
+  const apply = (style: ListStyle) => {
+    (editor.chain().focus() as never as Record<string, (v: string) => { run: () => void }>)['setListStyle']!(style).run();
+    close();
+  };
+  return (
+    <span ref={wrapRef} className="relative inline-flex items-center">
+      {btn && <ToolButton btn={btn} editor={editor} active={active} testId={testId} />}
+      <button
+        type="button"
+        data-testid={btn ? `${testId}-styles` : testId}
+        title={label}
+        aria-label={label}
+        {...triggerProps}
+        className={cn(
+          'inline-flex items-center justify-center gap-0.5 cursor-pointer border-none',
+          roomy ? 'h-9 rounded-md' : 'h-7 rounded',
+          btn ? 'w-4 px-0' : roomy ? 'px-2' : 'px-1.5',
+          open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
+          !btn && !open && active && 'text-text-primary',
+        )}
+      >
+        {icon}
+        <ChevronIcon size={btn ? 10 : 12} aria-hidden="true" />
+      </button>
+      {open && (
+        <span
+          {...menuProps}
+          data-testid={`${btn ? `${testId}-styles` : testId}-menu`}
+          aria-label={label}
+          className="absolute left-0 top-full z-20 mt-1 flex min-w-[180px] flex-col rounded-md border border-border bg-surface-panel p-1 shadow-lg"
+        >
+          {styles.map((style) => (
+            <button
+              key={style}
+              type="button"
+              role="menuitemradio"
+              aria-checked={style === current}
+              {...itemProps(style)}
+              data-testid={`${testId}-style-${style}`}
+              {...activate(() => apply(style))}
+              className={cn(
+                'whitespace-pre rounded px-2 py-1.5 text-left text-[13px] cursor-pointer border-none',
+                MENU_ITEM_RING,
+                style === current ? 'bg-surface-hover font-semibold text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
+              )}
+            >
+              {LIST_STYLE_LABELS[style]}
+            </button>
+          ))}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/** Zoom, as a row inside ⋯ — for a page that has no bottom status bar (2.386.3). */
+function ZoomRow({ control, testId }: { control: DocumentZoomControl; testId: string }) {
+  const { zoom, fitActive, steps, onZoomChange, onFitWidth: onFit } = control;
+  const FIT = 'fit';
+  const options = [
+    ...(onFit ? [{ value: FIT, label: 'Fit width' }] : []),
+    ...steps.map((z) => ({ value: String(z), label: `${Math.round(z * 100)}%` })),
+    // A remembered zoom off the presets still shows its own value.
+    ...(!fitActive && !steps.includes(zoom) ? [{ value: String(zoom), label: `${Math.round(zoom * 100)}%` }] : []),
+  ];
+  return (
+    <span className="flex w-full items-center justify-between gap-3 px-1.5 py-1 text-[13px] text-text-secondary" data-testid={`${testId}-zoom-row`}>
+      <span>Zoom</span>
+      <Select
+        size="sm"
+        aria-label="Zoom"
+        data-testid={`${testId}-zoom`}
+        value={fitActive && onFit ? FIT : String(zoom)}
+        options={options}
+        onChange={(e) => {
+          if (e.target.value === FIT) onFit?.();
+          else onZoomChange(Number(e.target.value));
+        }}
+        className="w-[110px]"
+      />
     </span>
   );
 }
@@ -1083,7 +1233,7 @@ function Divider() {
     <span
       aria-hidden
       data-divider="true"
-      className="mx-1.5 h-5 w-px shrink-0 self-center bg-border-emphasis"
+      className={cn('w-px shrink-0 self-center bg-border-emphasis', useContext(RoomyContext) ? 'mx-2 h-6' : 'mx-1.5 h-5')}
     />
   );
 }
@@ -1241,6 +1391,8 @@ export default function DocumentToolbar({
   onInsertImage,
   density = 'full',
   size: sizeProp = 'auto',
+  extras = 'inline',
+  zoomControl,
   'data-testid': testId = 'document-toolbar',
 }: DocumentToolbarProps) {
   // Subscribes to the editor so the controls track the CURSOR, not just the
@@ -1281,7 +1433,9 @@ export default function DocumentToolbar({
       const style = e.getAttributes('textStyle') as {
         fontFamily?: string; fontSize?: string; color?: string; backgroundColor?: string;
       };
+      const listNode = e.isActive('bulletList') ? 'bulletList' : e.isActive('orderedList') ? 'orderedList' : null;
       return {
+        listStyle: listNode ? parseListStyle((e.getAttributes(listNode) as { listStyle?: unknown }).listStyle) : null,
         block: currentBlock(e),
         flags,
         fontFamily: style.fontFamily ?? '',
@@ -1339,6 +1493,10 @@ export default function DocumentToolbar({
   // restore it -> actions grow -> tuck it again).
   const size: DocumentToolbarSize = sizeProp === 'auto' ? documentToolbarSize(width) : sizeProp;
   const fitting = sizeProp === 'auto' && density === 'full';
+  // `extras="overflow"`: the occasional groups never sit on the row, so the
+  // fit only ever folds the rest, least-used first.
+  const overflowLayout = extras === 'overflow' && density === 'full';
+  const tuckOrder = overflowLayout ? OVERFLOW_TUCK_ORDER : TUCK_ORDER;
   // How many of TUCK_ORDER are off the bar, and what the row NEEDED at each
   // count (its content width with the spacer at zero), so a group comes back
   // only once the row has room for it — measured, never estimated.
@@ -1359,7 +1517,7 @@ export default function DocumentToolbar({
     if (!(avail > 0)) return;
     const need = root.scrollWidth - spacer.getBoundingClientRect().width;
     needAt.current[tuckCount] = need;
-    if (need > avail + 1 && tuckCount < TUCK_ORDER.length) { setTuckCount(tuckCount + 1); return; }
+    if (need > avail + 1 && tuckCount < tuckOrder.length) { setTuckCount(tuckCount + 1); return; }
     if (tuckCount > 0) {
       const above = needAt.current[tuckCount - 1];
       if (above == null || above <= avail + 1) setTuckCount(tuckCount - 1);
@@ -1377,8 +1535,10 @@ export default function DocumentToolbar({
   const inline: ReadonlySet<ToolbarGroup> = !full
     ? new Set(['marksExtra', 'listsExtra'])
     : fitting
-      ? new Set(EVERY_GROUP.filter((g) => !TUCK_ORDER.slice(0, tuckCount).includes(g)))
-      : INLINE_GROUPS[size];
+      ? new Set(EVERY_GROUP.filter((g) => !tuckOrder.slice(0, tuckCount).includes(g) && !(overflowLayout && ALWAYS_OVERFLOW.has(g))))
+      : overflowLayout
+        ? new Set([...INLINE_GROUPS[size]].filter((g) => !ALWAYS_OVERFLOW.has(g)))
+        : INLINE_GROUPS[size];
   const on = (g: ToolbarGroup) => inline.has(g);
   const tucked = (g: ToolbarGroup) => full && !inline.has(g);
 
@@ -1394,13 +1554,13 @@ export default function DocumentToolbar({
   const selectControls = (stacked: boolean) => (
     <>
       <Select
-        size="sm"
+        size={full ? 'md' : 'sm'}
         data-testid={`${testId}-block`}
         aria-label="Text style"
         value={state?.block ?? 'paragraph'}
         options={BLOCK_OPTIONS}
         onChange={(e) => setBlock(e.target.value)}
-        className={stacked ? 'w-full' : 'w-[140px]'}
+        className={stacked ? 'w-full' : full ? 'w-[140px] text-sm' : 'w-[140px]'}
       />
 
       {/* Typeface and size, where a word processor puts them: between the
@@ -1410,9 +1570,9 @@ export default function DocumentToolbar({
           worse than an absent one. */}
       {has(editor, 'setFontFamily') && (
         <>
-          {!stacked && <Divider />}
+          {!stacked && !overflowLayout && <Divider />}
           <Select
-            size="sm"
+            size={full ? 'md' : 'sm'}
             data-testid={`${testId}-font-family`}
             aria-label="Font"
             value={state?.fontFamily ?? ''}
@@ -1425,13 +1585,13 @@ export default function DocumentToolbar({
               if (e.target.value) chain['setFontFamily']!(e.target.value).run();
               else chain['unsetFontFamily']!().run();
             }}
-            className={stacked ? 'w-full' : 'w-[130px]'}
+            className={stacked ? 'w-full' : overflowLayout ? 'ml-2 w-[128px] text-sm' : 'w-[130px]'}
           />
         </>
       )}
       {has(editor, 'setFontSize') && (
         <Select
-          size="sm"
+          size={full ? 'md' : 'sm'}
           data-testid={`${testId}-font-size`}
           aria-label="Font size"
           value={state?.fontSize ?? ''}
@@ -1441,7 +1601,7 @@ export default function DocumentToolbar({
             if (e.target.value) chain['setFontSize']!(e.target.value).run();
             else chain['unsetFontSize']!().run();
           }}
-          className={stacked ? 'w-full' : 'w-[72px]'}
+          className={stacked ? 'w-full' : overflowLayout ? 'ml-2 w-[76px] text-sm' : 'w-[72px]'}
         />
       )}
     </>
@@ -1505,6 +1665,8 @@ export default function DocumentToolbar({
           testId={`${testId}-color`}
         />
       )}
+      {/* The word-processor row reads "A ▾ │ highlight": two groups. */}
+      {overflowLayout && has(editor, 'setColor') && (has(editor, 'setBackgroundColor') || has(editor, 'toggleHighlight')) && <Divider />}
       {has(editor, 'setBackgroundColor') && (
         <ColorMenu
           editor={editor}
@@ -1512,15 +1674,15 @@ export default function DocumentToolbar({
           swatches={HIGHLIGHTS}
           setCmd="setBackgroundColor"
           unsetCmd="unsetBackgroundColor"
-          glyph={'✎'}
+          glyph={full ? <HighlighterIcon size={18} /> : '✎'}
           title="Highlight colour"
           testId={`${testId}-highlight-color`}
         />
       )}
-      {has(editor, 'toggleHighlight') && (
+      {has(editor, 'toggleHighlight') && !(overflowLayout && has(editor, 'setBackgroundColor')) && (
         <ToolButton
           btn={{
-            key: 'highlight', label: '🖍', hint: 'Highlight',
+            key: 'highlight', label: <Glyph icon={HighlighterIcon} />, hint: 'Highlight',
             run: (e) => { (e.chain().focus() as never as Record<string, () => { run: () => void }>)['toggleHighlight']!().run(); },
             active: (e) => e.isActive('highlight'),
           }}
@@ -1584,7 +1746,7 @@ export default function DocumentToolbar({
   const imageControl = onInsertImage && has(editor, 'setImage') ? (
     <ToolButton
       btn={{
-        key: 'image', label: '🖼', hint: 'Insert image',
+        key: 'image', label: <Glyph icon={ImageIcon} />, hint: 'Insert image',
         run: () => { onInsertImage(); },
         active: () => false,
       }}
@@ -1616,21 +1778,118 @@ export default function DocumentToolbar({
     />
   ) : null;
 
+  const linkControl = (
+    <span ref={linkAnchor} className="inline-flex">
+    <ToolButton
+      btn={{
+        key: 'link', label: <Glyph icon={LinkIcon} />, hint: 'Link  [text](url)',
+        // Opening a panel, not prompting. Toggling OFF is immediate
+        // because it needs no input; adding or editing needs a URL, and a
+        // native prompt for that was a browser-chrome modal that blocked
+        // the page and could not be themed or validated.
+        run: (e) => {
+          if (e.isActive('link')) { e.chain().focus().unsetLink().run(); return; }
+          setLinkOpen(true);
+        },
+        active: (e) => e.isActive('link'),
+      }}
+      editor={editor}
+      active={state?.flags['link'] ?? false}
+      testId={`${testId}-link`}
+    />
+  </span>
+  );
+
+  /* The lists on the word-processor row: bullet ▾ and numbered ▾ carry their
+     marker menus, then the multilevel presets ▾ and the checklist. Without
+     `setListStyle` they are the plain toggles. */
+  const styled = has(editor, 'setListStyle');
+  const listFlag = (key: string) => state?.flags[key] ?? false;
+  const listControls = (
+    <>
+      {listsCore.map((b) => (styled ? (
+        <ListStyleMenu
+          key={b.key}
+          editor={editor}
+          btn={b}
+          active={listFlag(b.key)}
+          styles={b.key === 'bulletList' ? BULLET_STYLES : NUMBER_STYLES}
+          current={state?.listStyle ?? null}
+          label={b.key === 'bulletList' ? 'Bullet style' : 'Numbering style'}
+          testId={`${testId}-${b.key}`}
+        />
+      ) : mark(b)))}
+      {on('listsExtra') && styled && (
+        <ListStyleMenu
+          editor={editor}
+          active={listFlag('bulletList') || listFlag('orderedList')}
+          styles={MULTILEVEL_STYLES}
+          current={state?.listStyle ?? null}
+          label="List style"
+          icon={<Glyph icon={ListStyleIcon} />}
+          testId={`${testId}-list-style`}
+        />
+      )}
+      {on('listsExtra') && listsExtra.map(mark)}
+    </>
+  );
+
   // What ⋯ holds at this width, in bar order, dividers between the groups
   // that are present. Empty means no ⋯ at all.
   const overflowGroups: ReactNode[] = [];
   if (tucked('marksExtra')) overflowGroups.push(<span key="marksExtra" className="inline-flex gap-0.5">{marksExtra.map(mark)}</span>);
-  if (tucked('listsExtra')) overflowGroups.push(<span key="listsExtra" className="inline-flex gap-0.5">{listsExtra.map(mark)}</span>);
+  if (tucked('listsExtra')) {
+    overflowGroups.push(
+      <span key="listsExtra" className="inline-flex gap-0.5">
+        {overflowLayout && styled && (
+          <ListStyleMenu
+            editor={editor}
+            active={listFlag('bulletList') || listFlag('orderedList')}
+            styles={MULTILEVEL_STYLES}
+            current={state?.listStyle ?? null}
+            label="List style"
+            icon={<Glyph icon={ListStyleIcon} />}
+            testId={`${testId}-list-style`}
+          />
+        )}
+        {listsExtra.map(mark)}
+      </span>,
+    );
+  }
   if (tucked('indent') && indentControls) overflowGroups.push(<span key="indent" className="inline-flex gap-0.5">{indentControls}</span>);
   if (tucked('colour') && colourControls) overflowGroups.push(<span key="colour" className="inline-flex gap-0.5">{colourControls}</span>);
   if (tucked('shape') && shapeControls) overflowGroups.push(<span key="shape" className="inline-flex gap-0.5">{shapeControls}</span>);
   if (tucked('insert')) overflowGroups.push(<span key="insert" className="inline-flex gap-0.5">{insertControls}</span>);
   if (tucked('image') && imageControl) overflowGroups.push(<span key="image" className="inline-flex gap-0.5">{imageControl}</span>);
+  // The word-processor row keeps one highlight control on the bar (the
+  // paint menu); the plain toggle, when both are registered, is in here.
+  if (overflowLayout && has(editor, 'setBackgroundColor') && has(editor, 'toggleHighlight')) {
+    overflowGroups.push(
+      <span key="highlight" className="inline-flex gap-0.5">
+        <ToolButton
+          btn={{
+            key: 'highlight', label: <Glyph icon={HighlighterIcon} />, hint: 'Highlight',
+            run: (e) => { (e.chain().focus() as never as Record<string, () => { run: () => void }>)['toggleHighlight']!().run(); },
+            active: (e) => e.isActive('highlight'),
+          }}
+          editor={editor}
+          active={state?.flags['highlight'] ?? false}
+          testId={`${testId}-highlight`}
+        />
+      </span>,
+    );
+  }
   if (tucked('clear') && clearControl) overflowGroups.push(<span key="clear" className="inline-flex gap-0.5">{clearControl}</span>);
+
+  // Zoom, for a page with no status bar: its own full-width row, last.
+  if (zoomControl) {
+    overflowGroups.push(<ZoomRow key="zoom" control={zoomControl} testId={testId} />);
+  }
 
   const blockLabel = BLOCK_OPTIONS.find((o) => o.value === (state?.block ?? 'paragraph'))?.label ?? 'Normal text';
 
   return (
+    <RoomyContext.Provider value={full}>
     <div
       // It has said `role="toolbar"` since it was written, and did not behave
       // like one: 22 tab stops inside it and arrow keys that did nothing. A
@@ -1648,7 +1907,7 @@ export default function DocumentToolbar({
       // decide what fits; the row never folds. Nothing in the row shrinks
       // (`[&>*]:shrink-0`): a squeezed select would hide an overflow the fit
       // measurement needs to see, and the spacer below is the only give.
-      className="flex min-w-0 flex-nowrap items-center gap-0.5 px-2 py-1.5 [&>*]:shrink-0"
+      className={cn('flex min-w-0 flex-nowrap items-center [&>*]:shrink-0', overflowLayout ? 'gap-1 px-3 py-2' : 'gap-0.5 px-2 py-1.5')}
     >
       {/* Undo/redo live leftmost, as in every writing tool. With Collaboration
           bound these are the Y.js UndoManager's, not ProseMirror's history —
@@ -1656,7 +1915,7 @@ export default function DocumentToolbar({
           YOUR edit, not whatever a collaborator typed most recently. */}
       <ToolButton
         btn={{
-          key: 'undo', label: '↶', hint: 'Undo',
+          key: 'undo', label: <Glyph icon={UndoIcon} />, hint: 'Undo',
           run: (e) => { e.chain().focus().undo().run(); }, active: () => false,
         }}
         editor={editor}
@@ -1665,7 +1924,7 @@ export default function DocumentToolbar({
       />
       <ToolButton
         btn={{
-          key: 'redo', label: '↷', hint: 'Redo',
+          key: 'redo', label: <Glyph icon={RedoIcon} />, hint: 'Redo',
           run: (e) => { e.chain().focus().redo().run(); }, active: () => false,
         }}
         editor={editor}
@@ -1688,7 +1947,7 @@ export default function DocumentToolbar({
             title={`Text style: ${blockLabel}`}
             aria-label="Text style"
             {...stylePanel.triggerProps}
-            className={cn(PANEL_TRIGGER, 'px-2', PANEL_TRIGGER_STATE(stylePanel.open))}
+            className={cn(PANEL_TRIGGER, full ? 'h-9 px-2.5 text-sm' : 'px-2', PANEL_TRIGGER_STATE(stylePanel.open))}
           >
             Style
             <span aria-hidden className="text-[8px] leading-none">▾</span>
@@ -1706,51 +1965,53 @@ export default function DocumentToolbar({
         </span>
       </>)}
 
-      <Divider />
-      {marksCore.map(mark)}
-      {on('marksExtra') && marksExtra.map(mark)}
-
-      <Divider />
-      {listsCore.map(mark)}
-      {on('listsExtra') && listsExtra.map(mark)}
-      {on('indent') && indentControls}
-
-      {on('colour') && colourControls && (<>
+      {overflowLayout ? (<>
+        {/* The word-processor row (extras="overflow"): marks │ link, image │
+            lists with their style menus, checklist │ A ▾ │ highlight │ ⋯. */}
         <Divider />
-        {colourControls}
-      </>)}
+        {marksCore.map(mark)}
+        {on('marksExtra') && marksExtra.map(mark)}
 
-      {on('shape') && shapeControls && (<>
         <Divider />
-        {shapeControls}
-      </>)}
+        {linkControl}
+        {on('image') && imageControl}
 
-      <Divider />
-      <span ref={linkAnchor} className="inline-flex">
-        <ToolButton
-          btn={{
-            key: 'link', label: '🔗', hint: 'Link  [text](url)',
-            // Opening a panel, not prompting. Toggling OFF is immediate
-            // because it needs no input; adding or editing needs a URL, and a
-            // native prompt for that was a browser-chrome modal that blocked
-            // the page and could not be themed or validated.
-            run: (e) => {
-              if (e.isActive('link')) { e.chain().focus().unsetLink().run(); return; }
-              setLinkOpen(true);
-            },
-            active: (e) => e.isActive('link'),
-          }}
-          editor={editor}
-          active={state?.flags['link'] ?? false}
-          testId={`${testId}-link`}
-        />
-      </span>
-      {on('image') && imageControl}
-      {on('insert') && insertControls}
-
-      {on('clear') && clearControl && (<>
         <Divider />
-        {clearControl}
+        {listControls}
+
+        {on('colour') && colourControls && (<>
+          <Divider />
+          {colourControls}
+        </>)}
+      </>) : (<>
+        <Divider />
+        {marksCore.map(mark)}
+        {on('marksExtra') && marksExtra.map(mark)}
+
+        <Divider />
+        {listsCore.map(mark)}
+        {on('listsExtra') && listsExtra.map(mark)}
+        {on('indent') && indentControls}
+
+        {on('colour') && colourControls && (<>
+          <Divider />
+          {colourControls}
+        </>)}
+
+        {on('shape') && shapeControls && (<>
+          <Divider />
+          {shapeControls}
+        </>)}
+
+        <Divider />
+        {linkControl}
+        {on('image') && imageControl}
+        {on('insert') && insertControls}
+
+        {on('clear') && clearControl && (<>
+          <Divider />
+          {clearControl}
+        </>)}
       </>)}
 
       {overflowGroups.length > 0 && (<>
@@ -1762,9 +2023,9 @@ export default function DocumentToolbar({
             title="More formatting"
             aria-label="More formatting"
             {...more.triggerProps}
-            className={cn(PANEL_TRIGGER, 'min-w-7 justify-center', PANEL_TRIGGER_STATE(more.open))}
+            className={cn(PANEL_TRIGGER, full ? 'h-9 min-w-9 rounded-md justify-center' : 'min-w-7 justify-center', PANEL_TRIGGER_STATE(more.open))}
           >
-            ⋯
+            {full ? <MoreIcon size={18} /> : '⋯'}
           </button>
           {more.open && (
             <span
@@ -1775,7 +2036,12 @@ export default function DocumentToolbar({
               // into rows when the group is long, but stays a compact card.
               className={cn(PANEL, 'right-0 flex max-w-[22rem] flex-wrap items-center gap-0.5 p-1')}
             >
-              {overflowGroups.map((g, i) => (i === 0 ? g : [<Divider key={`d${i}`} />, g]))}
+              {overflowGroups.map((g, i) => (i === 0 ? g : [
+                (g as { key?: string | null }).key === 'zoom'
+                  ? <span key={`d${i}`} aria-hidden className="my-1 h-px w-full bg-border" />
+                  : <Divider key={`d${i}`} />,
+                g,
+              ]))}
             </span>
           )}
         </span>
@@ -1815,5 +2081,6 @@ export default function DocumentToolbar({
         data-testid={`${testId}-link-popover`}
       />
     </div>
+    </RoomyContext.Provider>
   );
 }

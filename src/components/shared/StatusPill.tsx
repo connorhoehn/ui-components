@@ -36,8 +36,12 @@ export type StatusPillTone = StatusPillState | 'danger';
 
 export type StatusPillSize = 'sm' | 'md';
 
-/** `pill` (default) is the bordered, tinted chip. `text` is dot + coloured label, no box. */
-export type StatusPillVariant = 'pill' | 'text';
+/**
+ * `pill` (default) is the bordered, tinted chip. `text` is dot + coloured label, no box.
+ * `tag` (since 2.386.3) is a soft rounded-rectangle label with no dot and no
+ * border — a document's "Draft" beside its title.
+ */
+export type StatusPillVariant = 'pill' | 'text' | 'tag';
 
 export interface StatusPillProps {
   /** The pill's tone. Either `state` or `tone`; `tone` wins when both are given. */
@@ -118,6 +122,11 @@ const TEXT_SIZE_CLASSES: Record<StatusPillSize, string> = {
   md: 'text-[12px] gap-1.5',
 };
 
+const TAG_SIZE_CLASSES: Record<StatusPillSize, string> = {
+  sm: 'px-1.5 py-0.5 text-[11px] gap-1',
+  md: 'px-2 py-[5px] text-[13px] gap-1.5',
+};
+
 const DOT_SIZE_CLASSES: Record<StatusPillSize, string> = {
   sm: 'w-1.5 h-1.5',
   md: 'w-2 h-2',
@@ -151,12 +160,14 @@ export function StatusPill({
       data-variant={variant}
       className={cn(
         'inline-flex items-center font-medium leading-none select-none',
-        variant === 'pill' ? cn('rounded-full border', tokens.pill, SIZE_CLASSES[size]) : TEXT_SIZE_CLASSES[size],
-        tokens.text,
+        variant === 'pill' ? cn('rounded-full border', tokens.pill, SIZE_CLASSES[size])
+          : variant === 'tag' ? cn('rounded-md border-0', tokens.pill, TAG_SIZE_CLASSES[size])
+          : TEXT_SIZE_CLASSES[size],
+        variant === 'tag' && state === 'neutral' ? 'text-text-primary' : tokens.text,
         className,
       )}
     >
-      {icon ? (
+      {variant === 'tag' ? null : icon ? (
         <span aria-hidden="true" className="shrink-0">{icon}</span>
       ) : (
         // Dot indicator — pending gets a relative container with an animate-ping halo.

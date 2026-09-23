@@ -6,7 +6,8 @@ import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import type { SurfaceTone } from '../shared/tones';
 
-export type IconButtonVariant = 'ghost' | 'primary' | 'danger';
+/** `outline` (since 2.386.3): a bordered square on the surface — an editor head's (i) and ⋯. */
+export type IconButtonVariant = 'ghost' | 'primary' | 'danger' | 'outline';
 /** @see SurfaceTone — which colour family the button paints in. */
 export type IconButtonTone = SurfaceTone;
 
@@ -28,6 +29,7 @@ const variantClasses: Record<IconButtonVariant, string> = {
   ghost: 'bg-transparent text-text-primary hover:bg-surface-hover',
   primary: 'bg-info text-white hover:bg-info',
   danger: 'bg-danger text-white hover:bg-danger',
+  outline: 'bg-surface text-text-secondary border border-solid border-border hover:bg-surface-hover hover:text-text-primary',
 };
 
 // Pastel accents take dark text; see the note in Button.tsx.
@@ -35,6 +37,7 @@ const codeVariantClasses: Record<IconButtonVariant, string> = {
   ghost: 'bg-transparent text-code-subtle hover:bg-code-surface hover:text-code-text',
   primary: 'bg-code-blue text-code-bg hover:bg-code-blue',
   danger: 'bg-code-red text-code-bg hover:bg-code-red',
+  outline: 'bg-transparent text-code-subtle border border-solid border-code-border hover:bg-code-surface hover:text-code-text',
 };
 
 const TONE: Record<IconButtonTone, Record<IconButtonVariant, string>> = {

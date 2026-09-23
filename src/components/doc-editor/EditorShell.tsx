@@ -183,7 +183,7 @@ export function EditorShell({
 
   const pane = (
     <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
-      <header className="flex flex-col gap-1 border-b border-border px-4 pt-2.5" data-testid={`${testId}-header`}>
+      <header className="flex flex-col gap-1 border-b border-border px-5 pt-3" data-testid={`${testId}-header`}>
         {breadcrumbs && breadcrumbs.length > 0 && !crumbsTrailing && (
           // A short window (a 1280×720 laptop leaves ~577 px) gives the crumbs'
           // row to the canvas: the title stays, and the explorer beside the
@@ -198,11 +198,16 @@ export function EditorShell({
             <span className="flex shrink-0 items-center gap-2" data-testid={`${testId}-crumbs-trailing`}>{crumbsTrailing}</span>
           </div>
         )}
-        <div className="flex min-w-0 items-start gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          {/* The kind mark stands BESIDE the title and its save line, a 40px
+              outline glyph with no tinted box (2.386.3) — so the title, the
+              pill and "Saved 3 hours ago" share one left edge, and the mark
+              can never sit alone on a row above a wrapped title. */}
+          {kind && <FileKindMark kind={kind} size="2xl" variant="outline" className="[@media(max-height:640px)]:h-8 [@media(max-height:640px)]:w-8" data-testid={`${testId}-kind`} />}
           {/* A short window (under 640 px tall — a 1280×720 laptop window has a
               577 px viewport) puts the byline BESIDE the title instead of under
               it: one row, ~26 px back for the canvas below (a slide stage). */}
-          <div className="flex min-w-0 flex-1 flex-col gap-1 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3">
             {/* The title sizes to its words (truncating when long), so the
                 status pill sits right beside it — with or without a folder
                 path after it — rather than at the row's far end (2.385.4).
@@ -218,7 +223,6 @@ export function EditorShell({
                   and the title truncates inside it; only the pill and folder
                   path wrap to the next row when there is no room. */}
               <span className="flex min-w-0 max-w-full flex-initial flex-nowrap items-center gap-x-2" data-testid={`${testId}-title-group`}>
-              {kind && <FileKindMark kind={kind} size="xl" data-testid={`${testId}-kind`} />}
               {onTitleChange ? (
                 <InlineEditableText
                   value={title}
@@ -230,11 +234,11 @@ export function EditorShell({
                   // "Release plan" open to 160px and left a gap before the
                   // Draft pill. The button sizes to its words; the input, while
                   // editing, to its value.
-                  className="min-w-0 max-w-full flex-initial text-lg"
+                  className="-ml-1 min-w-0 max-w-full flex-initial text-xl font-bold leading-7"
                   data-testid={`${testId}-title`}
                 />
               ) : (
-                <h1 className="m-0 min-w-0 max-w-full flex-initial truncate text-lg font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
+                <h1 className="m-0 min-w-0 max-w-full flex-initial truncate text-xl font-bold leading-7 text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
               )}
               {onStarredChange && (
                 <IconButton
@@ -252,8 +256,8 @@ export function EditorShell({
               </span>
               {statusPill}
               {path && path.length > 0 && (
-                <span className="flex min-w-0 flex-1 items-center border-l border-border pl-2.5" data-testid={`${testId}-path`}>
-                  <Breadcrumbs items={path} maxItems={4} lastIsCurrent={false} className="min-w-0 text-xs text-text-tertiary" data-testid={`${testId}-path-crumbs`} />
+                <span className="flex min-w-0 flex-1 items-center border-l border-border pl-3" data-testid={`${testId}-path`}>
+                  <Breadcrumbs items={path} maxItems={4} lastIsCurrent={false} className="min-w-0 text-[13px] text-text-tertiary" data-testid={`${testId}-path-crumbs`} />
                 </span>
               )}
             </div>
@@ -261,7 +265,7 @@ export function EditorShell({
               <p className="m-0 min-w-0 truncate text-[15px] leading-5 text-text-secondary [@media(max-height:640px)]:hidden" data-testid={`${testId}-subtitle`}>{subtitle}</p>
             )}
             {hasByline && (
-              <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-text-tertiary [@media(max-height:640px)]:max-w-[50%] [@media(max-height:640px)]:flex-nowrap" data-testid={`${testId}-byline`}>
+              <div className="flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-text-tertiary [@media(max-height:640px)]:max-w-[50%] [@media(max-height:640px)]:flex-nowrap" data-testid={`${testId}-byline`}>
                 {participants && participants.length > 0 && (
                   <PresenceAvatars
                     users={participants}
@@ -272,11 +276,11 @@ export function EditorShell({
                   />
                 )}
                 {meta != null && <span className="min-w-0 truncate">{meta}</span>}
-                <DocumentSaveStatus state={saveState} />
+                <DocumentSaveStatus state={saveState} className="text-[13px]" />
               </div>
             )}
           </div>
-          {headActions && <div className="flex shrink-0 items-center gap-1.5" data-testid={`${testId}-actions`}>{headActions}</div>}
+          {headActions && <div className="flex shrink-0 items-center gap-3" data-testid={`${testId}-actions`}>{headActions}</div>}
         </div>
         {metaBar != null && (
           <div className="flex min-w-0 items-center py-2" data-testid={`${testId}-meta-bar`}>{metaBar}</div>
@@ -293,10 +297,11 @@ export function EditorShell({
             value={currentTab!}
             onValueChange={(id) => onTabChange?.(id)}
             variant="underline"
-            size="sm"
+            size="md"
+            itemClassName="px-3.5 pb-2.5 pt-1.5 text-[15px]"
             aria-label={`${title} sections`}
             idPrefix={idPrefix}
-            className="-mb-px mt-1 border-b-0"
+            className="-mb-px -ml-3 mt-2 border-b-0"
           />
         ) : (
           <span className="h-2" aria-hidden="true" />

@@ -118,13 +118,20 @@ describe('EditorShell', () => {
     expect(row.className).toContain('flex-wrap');
   });
 
-  it('keeps the kind mark and the title on one row, the title truncating inside a capped group', () => {
-    render(<EditorShell title="Decommission legacy StatsD bridge" kind="page" onTitleChange={() => {}} statusPill={<span data-testid="pill">Draft</span>} path={[{ label: 'Observability' }]}><p /></EditorShell>);
+  it('stands the kind mark beside the title column (outline, 40px), the title truncating inside a capped group', () => {
+    render(<EditorShell title="Decommission legacy StatsD bridge" kind="page" onTitleChange={() => {}} statusPill={<span data-testid="pill">Draft</span>} path={[{ label: 'Observability' }]} saveState={{ status: 'saved', detail: 'Saved 3 hours ago' }}><p /></EditorShell>);
     const group = screen.getByTestId('editor-shell-title-group');
     expect(group.className).toContain('flex-nowrap');
     expect(group.className).toContain('min-w-0');
     expect(group.className).toContain('max-w-full');
-    expect(group).toContainElement(screen.getByTestId('editor-shell-kind'));
+    // 2.386.3: the mark is outside the title column, so the title and the
+    // save line share one left edge and the mark spans both rows.
+    const mark = screen.getByTestId('editor-shell-kind');
+    expect(group).not.toContainElement(mark);
+    expect(mark.getAttribute('data-variant')).toBe('outline');
+    expect(mark.className).toContain('h-10');
+    expect(mark.nextElementSibling).toContainElement(group);
+    expect(mark.nextElementSibling).toContainElement(screen.getByTestId('document-save-status'));
     expect(group).toContainElement(screen.getByTestId('editor-shell-title'));
     expect(group).not.toContainElement(screen.getByTestId('pill'));
     expect(group.nextElementSibling).toBe(screen.getByTestId('pill'));

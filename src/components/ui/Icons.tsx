@@ -515,3 +515,102 @@ export function SparkleIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A curved arrow back: "undo". Since 2.386.3. */
+export function UndoIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M5.5 4 3 6.5 5.5 9" />
+      <path d="M3 6.5h6.5a3.5 3.5 0 0 1 0 7H7" />
+    </svg>
+  );
+}
+
+/** A curved arrow forward: "redo". Since 2.386.3. */
+export function RedoIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M10.5 4 13 6.5 10.5 9" />
+      <path d="M13 6.5H6.5a3.5 3.5 0 0 0 0 7H9" />
+    </svg>
+  );
+}
+
+/** A framed picture with a sun and a hill: "image". Since 2.386.3. */
+export function ImageIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="2" y="3" width="12" height="10" rx="1.5" />
+      <circle cx="6" cy="6.5" r="1.1" />
+      <path d="M14 10.5 10.8 7.8 5 13" />
+    </svg>
+  );
+}
+
+/** Three dotted lines: "bulleted list". Since 2.386.3. */
+export function BulletListIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M6 4h8M6 8h8M6 12h8" />
+      <circle cx="2.8" cy="4" r=".6" fill="currentColor" />
+      <circle cx="2.8" cy="8" r=".6" fill="currentColor" />
+      <circle cx="2.8" cy="12" r=".6" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** Three numbered lines: "numbered list". Since 2.386.3. */
+export function NumberedListIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M6.5 4h7.5M6.5 8h7.5M6.5 12h7.5" />
+      <path d="M2.2 2.8 3.2 2.3v3.2" strokeWidth={1.1} />
+      <path d="M2.2 7.2c.3-.5 1.8-.6 1.8.3 0 .7-1.8 1.3-1.8 2h1.9" strokeWidth={1.1} />
+      <path d="M2.2 11h1.7l-.9 1c.7 0 1 .3 1 .8 0 .8-1.3.9-1.8.4" strokeWidth={1.1} />
+    </svg>
+  );
+}
+
+/** Nested lines: "list style" / multilevel list. Since 2.386.3. */
+export function ListStyleIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M5 3.5h9M7.5 8H14M10 12.5h4" />
+      <circle cx="2.5" cy="3.5" r=".6" fill="currentColor" />
+      <circle cx="5" cy="8" r=".6" fill="currentColor" />
+      <circle cx="7.5" cy="12.5" r=".6" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** A ticked box: "checklist". Since 2.386.3. */
+export function ChecklistIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="2.5" y="2.5" width="11" height="11" rx="2" />
+      <path d="m5.3 8.2 1.9 1.9 3.6-4" />
+    </svg>
+  );
+}
+
+/** A marker tip over a stroke: "highlight". Since 2.386.3. */
+export function HighlighterIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="m9.5 2.5 3 3-5 5H4.5v-3z" />
+      <path d="M4.5 10.5 3 12h3" />
+      <path d="M2 14.5h12" strokeWidth={2} />
+    </svg>
+  );
+}
+
+/** Three dots in a row: "more". Since 2.386.3. */
+export function MoreIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, { ...rest, fill: 'currentColor', stroke: 'none' })}>
+      <circle cx="3.5" cy="8" r="1.2" />
+      <circle cx="8" cy="8" r="1.2" />
+      <circle cx="12.5" cy="8" r="1.2" />
+    </svg>
+  );
+}

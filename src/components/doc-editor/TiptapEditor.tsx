@@ -29,6 +29,7 @@ import { ySyncPluginKey, absolutePositionToRelativePosition, relativePositionToA
 // extension, don't patch the host's console.
 import EditorToolbar from './EditorToolbar';
 import { CanvasLineSpacing } from './canvasLineSpacing';
+import { CanvasListStyle } from './canvasListStyle';
 import { cn } from '../../lib/cn';
 
 /** Minimal provider shape needed by awareness. */
@@ -281,6 +282,9 @@ export default function TiptapEditor({
     // editors that share this component — the `1.65em` fallback in
     // `canvasLineSpacing.ts` covers a page with no grid on it.
     CanvasLineSpacing,
+    // List markers (bullet / numbering / multilevel), for the same reason:
+    // the values are defined by this package's `styles.css`. Since 2.386.3.
+    CanvasListStyle,
     Collaboration.configure({ document: ydoc, fragment }),
     // Appended last so a caller's extension can override a built-in's keymap
     // without being able to remove Collaboration.

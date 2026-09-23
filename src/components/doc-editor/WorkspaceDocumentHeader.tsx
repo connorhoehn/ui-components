@@ -9,7 +9,7 @@ import { DocumentModePill, DOCUMENT_MODE_LABELS, type DocumentModePillMode } fro
 import { DocumentOwnership, type DocumentPerson } from './DocumentOwnership';
 import type { ViewMode, DocumentMeta, Participant } from '../../types/document';
 import type { DocumentLifecycleStatus, LegacyFinalClaim, LifecycleAction, LifecycleFailureKind } from './documentLifecycleTypes';
-import { ChatIcon, CloseIcon, ShareIcon } from '../ui/Icons';
+import { ChatIcon, CloseIcon, MoreIcon, ShareIcon } from '../ui/Icons';
 import { IconButton } from '../ui/IconButton';
 import { cn } from '../../lib/cn';
 import { DocumentSaveStatus, type DocumentSaveState } from './DocumentSaveStatus';
@@ -644,11 +644,15 @@ export default function WorkspaceDocumentHeader({
             </div>
           )}
 
+          {/* The menu layout is an editor head's row (Share · (i) · ⋯): a
+              40 px bordered square beside the other two (2.386.3). */}
           {menuSections.some(section => section.items.length > 0) && <DropdownMenu
-            trigger={<span className="tracking-wide">⋯</span>}
+            trigger={menuLayout ? <MoreIcon size={18} /> : <span className="tracking-wide">⋯</span>}
             triggerLabel="More actions"
             triggerTitle="More actions"
-            triggerClassName="h-8 rounded-md border border-border bg-surface px-2.5 text-[13px] text-text-primary hover:bg-surface-hover"
+            triggerClassName={menuLayout
+              ? 'h-10 w-10 p-0 rounded-md border border-border bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary'
+              : 'h-8 rounded-md border border-border bg-surface px-2.5 text-[13px] text-text-primary hover:bg-surface-hover'}
             align="end"
             data-testid="document-header-menu"
             sections={menuSections}
@@ -980,9 +984,11 @@ export function WorkspaceDocumentHeaderNotices({
 }
 
 /** The lifecycle status as the header prints it — "Draft", "In review" — for a host's own title row. */
-export function DocumentLifecyclePill({ status }: { status: DocumentLifecycleStatus }) {
+/** `variant="tag"` (since 2.386.3): the soft label an editor head puts beside the title. */
+export function DocumentLifecyclePill({ status, variant = 'pill' }: { status: DocumentLifecycleStatus; variant?: 'pill' | 'tag' }) {
   return (
     <StatusPill
+      variant={variant}
       data-testid="lifecycle-status"
       state={lifecycleStatusTone[status]}
       label={lifecycleStatusLabel(status)}

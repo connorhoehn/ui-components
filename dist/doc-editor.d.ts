@@ -93,6 +93,10 @@ declare interface BreadcrumbItem {
     onClick?: (e: React.MouseEvent) => void;
 }
 
+export declare const BULLET_STYLES: readonly ["disc", "circle", "square"];
+
+export declare type BulletStyle = (typeof BULLET_STYLES)[number];
+
 /** True when nothing blocks a save. Kept separate so the host can ask too. */
 export declare function canSaveDeck(spec: DeckSpec): boolean;
 
@@ -111,7 +115,7 @@ export declare const CANVAS_SCHEMA_VERSION = 2;
  */
 export declare function canvasBody(ydoc: Doc | null | undefined): XmlFragment | null;
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, pageMargin, onDocumentStats, fitHeight, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, toolbarStyle, pageMargin, onDocumentStats, fitHeight, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -274,6 +278,13 @@ export declare interface CanvasDocumentViewProps {
     /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
     zoomMode?: 'remembered' | 'fit';
     /**
+     * `card` (since 2.386.3) draws the toolbar as one white rounded card on the
+     * workspace grey, as the word-processor row (`DocumentToolbar
+     * extras="overflow"`): alignment, indent, rule, table, clear formatting and
+     * zoom behind its ⋯. `bar` (default) is the full-width strip.
+     */
+    toolbarStyle?: 'bar' | 'card';
+    /**
      * How tall the grey workspace is. `viewport` (default) measures the view's
      * own distance from the top of the window and takes the rest of it, which
      * is what a host with an unbounded page needs. `parent` fills the box the
@@ -409,6 +420,8 @@ export declare interface CanvasLineSpacingOptions {
      */
     types: string[];
 }
+
+export declare const CanvasListStyle: Extension<any, any>;
 
 /**
  * A form the ProseMirror schema could not express, surfaced rather than
@@ -858,8 +871,10 @@ declare interface DocumentInfo {
 }
 
 /** The lifecycle status as the header prints it — "Draft", "In review" — for a host's own title row. */
-export declare function DocumentLifecyclePill({ status }: {
+/** `variant="tag"` (since 2.386.3): the soft label an editor head puts beside the title. */
+export declare function DocumentLifecyclePill({ status, variant }: {
     status: DocumentLifecycleStatus;
+    variant?: 'pill' | 'tag';
 }): JSX.Element;
 
 /** Presentation vocabulary of the document lifecycle API, not an authorization table. */
@@ -1014,8 +1029,10 @@ export declare interface DocumentSaveState {
     onRetry?: () => void;
 }
 
-export declare function DocumentSaveStatus({ state }: {
+/** `className` (since 2.386.3) sizes the line for its host — an editor head reads it at 13px. */
+export declare function DocumentSaveStatus({ state, className }: {
     state?: DocumentSaveState;
+    className?: string;
 }): JSX.Element | null;
 
 /**
@@ -1092,7 +1109,7 @@ export declare interface DocumentTarget {
     commentId?: string | null;
 }
 
-export declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, size: sizeProp, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+export declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, size: sizeProp, extras, zoomControl, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 export declare interface DocumentToolbarProps {
     editor: Editor | null;
@@ -1167,6 +1184,15 @@ export declare interface DocumentToolbarProps {
      * is present. Absent, no zoom item renders.
      */
     zoomControl?: DocumentZoomControl;
+    /**
+     * Where the occasional controls live (since 2.386.3). `inline` (default) is
+     * the classic bar: alignment, spacing, indent, rule, table and clear
+     * formatting sit on the row until the width folds them. `overflow` is the
+     * word-processor row a page editor draws — undo · styles · marks · link and
+     * image · lists (with style menus) · colour · highlight · ⋯ — and those
+     * occasional controls always live behind ⋯.
+     */
+    extras?: 'inline' | 'overflow';
     'data-testid'?: string;
 }
 
@@ -1623,6 +1649,14 @@ export declare type LineSpacing = (typeof LINE_SPACINGS)[number];
  */
 export declare function lineSpacingAttributes(value: unknown): Record<string, string>;
 
+/** Menu words for each value. */
+export declare const LIST_STYLE_LABELS: Record<ListStyle, string>;
+
+export declare type ListStyle = BulletStyle | NumberStyle | MultilevelStyle;
+
+/** Which list node a style belongs to. */
+export declare function listTypeFor(style: ListStyle): 'bulletList' | 'orderedList';
+
 /** A blank slide of a layout, with the sub-object that layout needs. */
 export declare function makeSlide(id: string, layout?: SlideLayout): DeckSlide;
 
@@ -1693,6 +1727,11 @@ declare interface MentionUser {
 
 /** Move the slide at `from` so it lands at `to`. Out-of-range moves are no-ops. */
 export declare function moveSlide(spec: DeckSpec, from: number, to: number): DeckSpec;
+
+/** Multilevel presets: the marker changes at each nesting level. */
+export declare const MULTILEVEL_STYLES: readonly ["tiered-bullets", "outline"];
+
+export declare type MultilevelStyle = (typeof MULTILEVEL_STYLES)[number];
 
 declare type MyItem = MentionItem | TaskAssignment;
 
@@ -1808,6 +1847,10 @@ export declare function nextRevisionLabel(revisions: readonly {
  */
 export declare function nextSlideId(spec: DeckSpec, prefix?: string): string;
 
+export declare const NUMBER_STYLES: readonly ["decimal", "lower-alpha", "upper-alpha", "lower-roman", "upper-roman"];
+
+export declare type NumberStyle = (typeof NUMBER_STYLES)[number];
+
 /**
  * The slice of a Tiptap editor this needs.
  *
@@ -1854,6 +1897,8 @@ declare interface OutlineNodeLike {
  * command can produce and every future reader has to defend against.
  */
 export declare function parseLineSpacing(value: unknown): LineSpacing | null;
+
+export declare function parseListStyle(value: unknown): ListStyle | null;
 
 declare interface Participant {
     clientId: string;
@@ -3526,25 +3571,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -3558,9 +3584,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -3568,22 +3597,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -3617,6 +3642,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -3627,9 +3662,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

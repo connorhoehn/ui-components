@@ -24,6 +24,17 @@ export {
   lineSpacingAttributes,
 } from './canvasLineSpacing';
 export type { LineSpacing, CanvasLineSpacingOptions } from './canvasLineSpacing';
+// List markers — registered by `TiptapEditor`; the toolbar's list menus set them. Since 2.386.3.
+export {
+  CanvasListStyle,
+  BULLET_STYLES,
+  NUMBER_STYLES,
+  MULTILEVEL_STYLES,
+  LIST_STYLE_LABELS,
+  parseListStyle,
+  listTypeFor,
+} from './canvasListStyle';
+export type { ListStyle, BulletStyle, NumberStyle, MultilevelStyle } from './canvasListStyle';
 export { default as useFollowCursor, clientIdForUser } from './useFollowCursor';
 export type { UseFollowCursorOptions } from './useFollowCursor';
 export { default as StandaloneTiptap } from './StandaloneTiptap';
