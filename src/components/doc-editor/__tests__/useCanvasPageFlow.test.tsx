@@ -11,7 +11,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createRef } from 'react';
-import { DOC_CONTENT_TOP, DOC_LINE, DOC_PAGE_HEIGHT } from '../canvas/pageFlow';
+import { DOC_CONTENT_TOP, DOC_GRID, DOC_LINE, DOC_PAGE_HEIGHT } from '../canvas/pageFlow';
 import { useCanvasPageFlow } from '../canvas/useCanvasPageFlow';
 
 const PAPER_TOP = 40; // an arbitrary viewport offset, so nothing can assume zero
@@ -140,7 +140,8 @@ describe('useCanvasPageFlow', () => {
     act(() => { result.current.remeasure(); });
     // The paragraph's top, measured from the content origin, is a whole number
     // of grid rows again — which is what stops the seams below it drifting.
-    expect((built.topOf(1) - DOC_CONTENT_TOP) % DOC_LINE).toBeCloseTo(0, 6);
+    const off = (built.topOf(1) - DOC_CONTENT_TOP) % DOC_GRID;
+    expect(Math.min(off, DOC_GRID - off)).toBeCloseTo(0, 6);
   });
 
   it('measures in the sheet’s own pixels under zoom', () => {

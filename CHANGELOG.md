@@ -6,6 +6,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.385.7] — 2026-09-23
+
+Closes the library-side gaps between the live Documents page editor and the
+Release plan mockup (1672x941).
+
+### Changed
+- **Page typography** (`.doc-page .ProseMirror`, both paginated and not): body
+  16px/24px with 8px between paragraphs; H1 36px/44px bold, 4px below; H2
+  22px/28px bold, 20px above / 8px below; H3 18px/24px; list items 4px apart;
+  table cells `6px 12px`, tables and images 12px out. The paragraph directly
+  under the document's opening title (`> h1:first-child + p`) is its byline:
+  17px in `--color-paper-ink-muted`. The sheet's vertical padding is 48px
+  (paginated; `py-8 sm:py-10 lg:py-12` unpaginated), was 105.6px / 96px.
+- **Pagination grid**: `--doc-line` is 24px (was 26.4px), and heights/margins
+  snap to a new 4px `--doc-grid` (`DOC_GRID`, `flowCanvasPages({ grid })`)
+  instead of a whole line. `DOC_CONTENT_TOP` (= every page's margin) is 48px.
+  Since pages got margins every block is pushed whole, so the 26.4px row was
+  only costing space; the flow still scores 0 bisected seams and 0 margin
+  invasions in the seams simulation.
+- **`DocumentToolbar` `size="auto"` fits by measurement**: every group stays
+  on the bar while the row has room, and only what does not fit goes behind
+  ⋯ (clear, align/spacing, rule/table, indent, colour, image, task list,
+  strike/code, then the style selects). `data-size` and
+  `useDocumentToolbarSize()` still report the breakpoint. The image button is
+  its own group, next to the link.
+- **`EditorShell` title row**: the file-kind mark is 32px (`FileKindMark`
+  gains `size="xl"`), and the editable title no longer holds `min-w-[10rem]`,
+  so the status pill sits right after a short title.
+
+### Added
+- `RichChatComposer` `toolbar="editor"`: B, I, code, link, bulleted list,
+  quote, attach, a divider, then `toolbarExtras`; strikethrough and numbered
+  list under `?` → Formatting.
+- `RichChatComposer` `moreActions` / `moreActionsLabel`: a ⋯ menu before
+  `submitLead` and Send for actions on the attached thing (page actions).
+- `InlineEditableText` `fitContent`: the editing input sizes to its value.
+
 ## [2.385.6] — 2026-09-23
 
 ### Added

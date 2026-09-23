@@ -87,26 +87,41 @@
 // geometry a browser would have produced and scores the result.
 
 /**
- * The body line advance: 16px x 1.65, from `.doc-page .ProseMirror`.
+ * The body line advance: 16px x 1.5, from `.doc-page .ProseMirror`
+ * (`--doc-line`). 26.4px (x 1.65) until 2.385.6.
  *
- * The grid row. Every block height and margin in the paginated stylesheet is a
- * whole multiple of it, and this module's job is to keep it that way across
- * blocks whose heights are not.
+ * Used where the flow reasons in LINES — keep a heading with the first line
+ * below it, count orphan and widow lines. It is no longer the snap unit; that
+ * is `DOC_GRID`.
  */
-export const DOC_LINE = 26.4;
+export const DOC_LINE = 24;
 
-/** One US-Letter page at 96dpi. Exactly 40 grid rows, which is why any of this closes. */
+/**
+ * The grid row (`--doc-grid`): every block height and margin in the page
+ * stylesheet is a whole multiple of it, and the flow re-snaps to it under a
+ * block whose height is intrinsic (an image, a table).
+ *
+ * Until 2.385.6 the row WAS the body line, which forced every margin to a
+ * whole 26.4px — a full line between paragraphs, two above a heading. That
+ * made sense for a hairline seam text flowed through; with page margins every
+ * block is pushed whole, so the grid only has to keep the rhythm consistent,
+ * and 4px does that at the mockup's spacing (8px between paragraphs, 20px
+ * above a section heading).
+ */
+export const DOC_GRID = 4;
+
+/** One US-Letter page at 96dpi. 44 body lines, 264 grid rows. */
 export const DOC_PAGE_HEIGHT = 1056;
 
 /**
- * The sheet's vertical padding, 4 grid rows.
+ * The sheet's vertical padding, 2 body lines (48px, half an inch).
  *
  * Load-bearing twice over: it is the offset from the top of the paper to the
  * first line's box, so it is what converts a seam's PAPER coordinate into the
  * CONTENT coordinate the measurements are in; and because it is a whole number
  * of rows, every seam lands on a row boundary rather than a fraction of one.
  */
-export const DOC_CONTENT_TOP = DOC_LINE * 4;
+export const DOC_CONTENT_TOP = DOC_LINE * 2;
 
 /**
  * The painted gap between two sheets, `--doc-page-gap`. Must match the value in
@@ -168,7 +183,10 @@ export interface CanvasBlock {
 export interface CanvasFlowOptions {
   pageHeight?: number;
   contentTop?: number;
+  /** The body line advance, for "one line of the next block" and line counts. */
   line?: number;
+  /** The snap row. Defaults to `DOC_GRID`; pass `line` to reproduce the pre-2.385.6 grid. */
+  grid?: number;
   /**
    * White space reserved at the top and bottom of EVERY page, in document
    * pixels. Defaults to `contentTop` — the one-inch margin the first page has
@@ -249,6 +267,7 @@ export function flowCanvasPages(
   const pageHeight = options.pageHeight ?? DOC_PAGE_HEIGHT;
   const contentTop = options.contentTop ?? DOC_CONTENT_TOP;
   const line = options.line ?? DOC_LINE;
+  const grid = options.grid ?? DOC_GRID;
   const margin = Math.max(0, options.pageMargin ?? contentTop);
   const keep = options.keepLines ?? 2;
   // Both clearances exist to keep a block a hair clear of a HAIRLINE boundary.
@@ -260,7 +279,7 @@ export function flowCanvasPages(
   const clearance = Math.max(0, (options.seamClearance ?? DOC_PAGE_GAP / 2 + 1) - margin);
 
   const pushes = new Array<number>(blocks.length).fill(0);
-  if (!(pageHeight > 0) || !(line > 0) || blocks.length === 0) {
+  if (!(pageHeight > 0) || !(line > 0) || !(grid > 0) || blocks.length === 0) {
     return { pushes, pageCount: 1, contentHeight: 0 };
   }
 
@@ -305,7 +324,7 @@ export function flowCanvasPages(
     };
 
     // 1) Back onto the grid, if this block keeps one.
-    if (b.onGrid) move(gridSnap(top, line));
+    if (b.onGrid) move(gridSnap(top, grid));
 
     // 2) The seam. `reach` is how far down the page this block needs to be
     //    unbroken for: its own box, extended through the first line of the
@@ -337,7 +356,7 @@ export function flowCanvasPages(
         // by the same cut.
         if (reach <= usable + EPS) {
           move(bandHi + clearance - top);
-          if (b.onGrid) move(gridSnap(top, line));
+          if (b.onGrid) move(gridSnap(top, grid));
         }
       } else {
         // Orphans and widows, counted in whole lines. `height / line` is exact
@@ -351,7 +370,7 @@ export function flowCanvasPages(
         if (before > 0 && before < keep && b.height <= usable + EPS) {
           // Too few lines before the break to be worth leaving there.
           move(bandHi + clearance - top);
-          if (b.onGrid) move(gridSnap(top, line));
+          if (b.onGrid) move(gridSnap(top, grid));
         } else if (after > 0 && after < keep && before - (keep - after) >= keep) {
           // Enough lines above to afford sending another one over.
           move((keep - after) * line);

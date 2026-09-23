@@ -1124,7 +1124,7 @@ export default function CanvasDocumentView({
             <div
               ref={bodyRef}
               data-testid={`${testId}-body`}
-              className="doc-page__body px-[11.76cqi] py-10 sm:py-16 lg:py-[96px]"
+              className="doc-page__body px-[11.76cqi] py-8 sm:py-10 lg:py-12"
             >
             <TiptapEditor
               fragment={body}

@@ -37,11 +37,11 @@ export type FileKind =
 
 export type FileKindMarkVariant = 'tinted' | 'plain';
 
-export type FileKindMarkSize = 'sm' | 'md' | 'lg';
+export type FileKindMarkSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface FileKindMarkProps {
   kind: FileKind;
-  /** `sm` 18px (tree rows), `md` 22px (default, headers), `lg` 28px. */
+  /** `sm` 18px (tree rows), `md` 22px (default), `lg` 28px, `xl` 32px (an editor's title row). */
   size?: FileKindMarkSize;
   /** Accessible name. Omit when the file's name is already beside the mark. */
   label?: string;
@@ -92,9 +92,10 @@ const BOX: Record<FileKindMarkSize, string> = {
   sm: 'h-[18px] w-[18px] rounded',
   md: 'h-[22px] w-[22px] rounded-[5px]',
   lg: 'h-7 w-7 rounded-md',
+  xl: 'h-8 w-8 rounded-lg',
 };
 
-const GLYPH: Record<FileKindMarkSize, number> = { sm: 12, md: 14, lg: 16 };
+const GLYPH: Record<FileKindMarkSize, number> = { sm: 12, md: 14, lg: 16, xl: 20 };
 
 type GlyphProps = { size: number } & Omit<SVGProps<SVGSVGElement>, 'children'>;
 

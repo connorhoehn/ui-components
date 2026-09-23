@@ -253,7 +253,7 @@ export declare interface ComposerStatus {
 }
 
 /** See `RichChatComposerProps.toolbar`. */
-export declare type ComposerToolbarPreset = 'full' | 'compact';
+export declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor';
 
 export declare interface DocumentCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
@@ -280,6 +280,46 @@ export declare interface DocumentSuggestionsProps {
         id: string;
         label: string;
     }) => void;
+}
+
+declare interface DropdownMenuItem {
+    /** Visible item label. */
+    label: string;
+    /** Optional leading icon / glyph. */
+    icon?: ReactNode;
+    /** Highlight this item as the currently-active selection. */
+    active?: boolean;
+    /** Style this item as destructive. */
+    danger?: boolean;
+    /** Fires on click / Enter; the menu closes afterwards. Not needed on a row with a `submenu`. */
+    onSelect?: () => void;
+    /** Right-aligned hint after the label — a shortcut (`⌘P`), a count. */
+    trailing?: ReactNode;
+    /** A second, quieter line under the label. */
+    description?: string;
+    /** A setting that is on: a check leads the row (menuitemcheckbox). */
+    checked?: boolean;
+    /**
+     * A flyout of further choices, opened from this row — "Share to ›",
+     * "Download as ›". Opens on hover, click or ArrowRight; the row itself
+     * runs no `onSelect`.
+     */
+    submenu?: DropdownMenuSection[];
+    /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
+    'data-testid'?: string;
+}
+
+declare interface DropdownMenuSection {
+    /** Optional uppercase section heading. */
+    label?: string;
+    items: DropdownMenuItem[];
+    /**
+     * The group scrolls in place (`uic-menu-group-scroll`) so the sections
+     * after it stay put. For a generated list — one row per room — that would
+     * otherwise push the fixed actions below the fold.
+     */
+    scroll?: boolean;
+    'data-testid'?: string;
 }
 
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
@@ -482,10 +522,25 @@ export declare interface RichChatComposerProps {
      *   beside the first: an editor already has a full toolbar above the page
      *   and the card's strip is the four things a prompt actually uses.
      *
-     * Sizes are unchanged in both: every control is the same 28px box.
+     * - `editor` (2.385.6): the document page's docked card as the mockup draws
+     *   it — B, I, code, link, bulleted list, quote, attach, then a divider
+     *   before `toolbarExtras` (the host's `Workflow ▾`). Strikethrough and
+     *   numbered list go under `?` → Formatting, as in `compact`.
+     *
+     * Sizes are unchanged in all three: every control is the same 28px box.
      * Below wide the strip folds exactly as before, whichever preset is set.
      */
     toolbar?: ComposerToolbarPreset;
+    /**
+     * A `⋯` menu at the right of the toolbar row, before `submitLead` and Send —
+     * for actions on the THING the composer is attached to ("Draft a
+     * presentation from this page") rather than on the message. Lets a host
+     * keep those off the strip instead of spending a labelled `submitLead` on
+     * them. Absent or empty, nothing renders.
+     */
+    moreActions?: readonly DropdownMenuSection[];
+    /** The `⋯` trigger's accessible name and title. Default "More actions". */
+    moreActionsLabel?: string;
     /**
      * Long-running work this composer's owner started — a generating deck, a
      * terminal test run. Rendered as one status line above the editor, hidden

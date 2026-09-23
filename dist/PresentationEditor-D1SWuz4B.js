@@ -21,7 +21,7 @@ import { t as P } from "./PresenceAvatars-Dmtv09Kg.js";
 import { t as F } from "./SectionLabel-bcrhNYOr.js";
 import { t as I } from "./StatusPill-C_pBuvaK.js";
 import { t as ee } from "./Select-D2EQq7Wi.js";
-import { G as L, U as te } from "./renderers-BuYl2Mh0.js";
+import { G as L, U as te } from "./renderers-suizM8nE.js";
 import { t as ne } from "./ComposerReferences-CJO7SZgW.js";
 import { i as re, t as ie } from "./FloatingComposerDock-DMUQCjea.js";
 import { t as ae } from "./useMeasuredWidth-BPrwD0q5.js";
@@ -741,45 +741,45 @@ var ve = {
 	title: "text-[14px] font-semibold text-text-primary",
 	muted: "text-[12px] text-text-secondary"
 };
-function ye({ value: e, onCommit: t, label: n, placeholder: i, maxLength: a, required: o = !1, disabled: s = !1, size: c = "sm", tone: l = "title", className: u, "data-testid": d = "inline-editable-text" }) {
-	let [f, p] = W(!1), [m, h] = W(e), g = U(null);
+function ye({ value: e, onCommit: t, label: n, placeholder: i, maxLength: a, required: o = !1, disabled: s = !1, size: c = "sm", tone: l = "title", fitContent: u = !1, className: d, "data-testid": f = "inline-editable-text" }) {
+	let [p, m] = W(!1), [h, g] = W(e), _ = U(null);
 	B(() => {
-		f || h(e);
-	}, [e, f]), B(() => {
-		f && g.current?.select();
-	}, [f]);
-	let _ = () => {
-		p(!1);
-		let n = m.trim();
+		p || g(e);
+	}, [e, p]), B(() => {
+		p && _.current?.select();
+	}, [p]);
+	let v = () => {
+		m(!1);
+		let n = h.trim();
 		if (o && !n) {
-			h(e);
+			g(e);
 			return;
 		}
 		n !== e && t(n);
 	};
-	return f ? /* @__PURE__ */ K(k, {
-		ref: g,
+	return p ? /* @__PURE__ */ K(k, {
+		ref: _,
 		size: c,
-		value: m,
+		value: h,
 		"aria-label": n,
 		placeholder: i,
 		maxLength: a,
 		autoFocus: !0,
-		onChange: (e) => h(e.target.value),
-		onBlur: _,
+		onChange: (e) => g(e.target.value),
+		onBlur: v,
 		onKeyDown: (t) => {
-			t.key === "Enter" && (t.preventDefault(), _()), t.key === "Escape" && (t.preventDefault(), h(e), p(!1));
+			t.key === "Enter" && (t.preventDefault(), v()), t.key === "Escape" && (t.preventDefault(), g(e), m(!1));
 		},
-		className: r("min-w-0", u),
-		"data-testid": `${d}-input`
+		className: r("min-w-0", u && "w-auto min-w-[8ch] [field-sizing:content]", d),
+		"data-testid": `${f}-input`
 	}) : /* @__PURE__ */ K("button", {
 		type: "button",
 		disabled: s,
-		onClick: () => p(!0),
+		onClick: () => m(!0),
 		"aria-label": `${n}: ${e || i || "empty"}. Click to edit.`,
 		title: "Click to edit",
-		"data-testid": d,
-		className: r("min-w-0 truncate rounded border border-transparent bg-transparent px-1 py-0.5 text-left font-[inherit]", "hover:border-border hover:bg-surface-hover focus-visible:border-primary focus-visible:outline-none disabled:cursor-default disabled:hover:border-transparent disabled:hover:bg-transparent", ve[l], !e && "italic text-text-tertiary", u),
+		"data-testid": f,
+		className: r("min-w-0 truncate rounded border border-transparent bg-transparent px-1 py-0.5 text-left font-[inherit]", "hover:border-border hover:bg-surface-hover focus-visible:border-primary focus-visible:outline-none disabled:cursor-default disabled:hover:border-transparent disabled:hover:bg-transparent", ve[l], !e && "italic text-text-tertiary", d),
 		children: e || i
 	});
 }
@@ -1363,7 +1363,7 @@ function $e(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var et = R(() => import("./SortableSlideList-vNglCm1V.js"));
+var et = R(() => import("./SortableSlideList-BGSHmwqu.js"));
 function tt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -2541,7 +2541,7 @@ function kt({ testIdPrefix: e }) {
 		children: "The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below."
 	});
 }
-var At = R(() => import("./PresentationAgentComposer-QUhN-3kf.js").catch(() => ({ default: kt })));
+var At = R(() => import("./PresentationAgentComposer-XjC8Tb5l.js").catch(() => ({ default: kt })));
 function jt({ back: e }) {
 	return /* @__PURE__ */ K("svg", {
 		viewBox: "0 0 16 16",

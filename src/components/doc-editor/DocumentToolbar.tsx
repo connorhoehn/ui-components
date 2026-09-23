@@ -151,8 +151,20 @@ export function useDocumentToolbarSize(): DocumentToolbarSize {
  * panel is on; everything else off means it sits in the ⋯ group. Undo/redo,
  * bold/italic/underline, bullet/numbered and link never leave the bar.
  */
-type ToolbarGroup = 'selects' | 'marksExtra' | 'listsExtra' | 'indent' | 'colour' | 'shape' | 'insert' | 'clear';
-const EVERY_GROUP: readonly ToolbarGroup[] = ['selects', 'marksExtra', 'listsExtra', 'indent', 'colour', 'shape', 'insert', 'clear'];
+type ToolbarGroup = 'selects' | 'marksExtra' | 'listsExtra' | 'indent' | 'colour' | 'shape' | 'insert' | 'image' | 'clear';
+const EVERY_GROUP: readonly ToolbarGroup[] = ['selects', 'marksExtra', 'listsExtra', 'indent', 'colour', 'shape', 'insert', 'image', 'clear'];
+
+/**
+ * `size="auto"`: the order groups leave the bar in when it runs out of room,
+ * first to go first. The bar MEASURES what it needs rather than guessing from
+ * a breakpoint (2.385.6): at a 1672px window the page editor's bar is ~1230px
+ * wide, just under the 1240 `wide` breakpoint, and it used to fold strike,
+ * code, the task list, colour, highlight and the image behind ⋯ with 400px of
+ * the row standing empty. Now each group stays until it genuinely does not
+ * fit. The least-used go first — clear formatting, alignment/spacing, rule and
+ * table — and the style selects last, since they are what a writer reads.
+ */
+const TUCK_ORDER: readonly ToolbarGroup[] = ['clear', 'shape', 'insert', 'indent', 'colour', 'image', 'listsExtra', 'marksExtra', 'selects'];
 const INLINE_GROUPS: Record<DocumentToolbarSize, ReadonlySet<ToolbarGroup>> = {
   wide: new Set(EVERY_GROUP),
   medium: new Set(['selects']),
@@ -1305,10 +1317,46 @@ export default function DocumentToolbar({
   const { ref: rovingRef, ...rovingProps } = roving;
   // The bar measures its OWN box (`useMeasuredWidth` says why an observer and
   // not a container query); the roving hook's ref rides along.
-  const { ref: rootRef, width } = useMeasuredWidth<HTMLDivElement>(rovingRef as MutableRefObject<HTMLDivElement | null>);
+  const rootEl = useRef<HTMLDivElement | null>(null);
+  const { ref: rootRef, width } = useMeasuredWidth<HTMLDivElement>(useCallback((el: HTMLDivElement | null) => {
+    rootEl.current = el;
+    (rovingRef as MutableRefObject<HTMLDivElement | null>).current = el;
+  }, [rovingRef]));
   const more = usePanel();
   const stylePanel = usePanel();
+  // `size` is still the breakpoint answer — it is what `data-size` reports and
+  // what the host's `actions` read through `useDocumentToolbarSize()`. Only
+  // WHICH GROUPS SHOW is measured in auto mode; keeping the two apart is what
+  // stops a feedback loop (tuck a group -> host's actions shrink -> room to
+  // restore it -> actions grow -> tuck it again).
   const size: DocumentToolbarSize = sizeProp === 'auto' ? documentToolbarSize(width) : sizeProp;
+  const fitting = sizeProp === 'auto' && density === 'full';
+  // How many of TUCK_ORDER are off the bar, and what the row NEEDED at each
+  // count (its content width with the spacer at zero), so a group comes back
+  // only once the row has room for it — measured, never estimated.
+  const [tuckCount, setTuckCount] = useState(0);
+  const needAt = useRef<number[]>([]);
+  const spacerRef = useRef<HTMLSpanElement | null>(null);
+  // Every render, before paint: a tuck or restore re-renders synchronously
+  // inside the same frame, so the bar never shows a clipped or half-empty row.
+  // It converges — each level's need is recorded as it is visited, and a
+  // group is restored only when the level above it is known to fit.
+  useLayoutEffect(() => {
+    if (!fitting) return;
+    const root = rootEl.current;
+    const spacer = spacerRef.current;
+    if (!root || !spacer) return;
+    const avail = root.clientWidth;
+    // jsdom, or not laid out yet: everything stays on the bar.
+    if (!(avail > 0)) return;
+    const need = root.scrollWidth - spacer.getBoundingClientRect().width;
+    needAt.current[tuckCount] = need;
+    if (need > avail + 1 && tuckCount < TUCK_ORDER.length) { setTuckCount(tuckCount + 1); return; }
+    if (tuckCount > 0) {
+      const above = needAt.current[tuckCount - 1];
+      if (above == null || above <= avail + 1) setTuckCount(tuckCount - 1);
+    }
+  });
 
   // Rendering nothing while the editor boots keeps every handler below able to
   // assume a live editor, instead of guarding each one.
@@ -1318,7 +1366,11 @@ export default function DocumentToolbar({
   const full = density === 'full';
   // Compact keeps every mark and list and nothing else — as it always did —
   // and never grows a ⋯; the width rules are for the full bar.
-  const inline: ReadonlySet<ToolbarGroup> = full ? INLINE_GROUPS[size] : new Set(['marksExtra', 'listsExtra']);
+  const inline: ReadonlySet<ToolbarGroup> = !full
+    ? new Set(['marksExtra', 'listsExtra'])
+    : fitting
+      ? new Set(EVERY_GROUP.filter((g) => !TUCK_ORDER.slice(0, tuckCount).includes(g)))
+      : INLINE_GROUPS[size];
   const on = (g: ToolbarGroup) => inline.has(g);
   const tucked = (g: ToolbarGroup) => full && !inline.has(g);
 
@@ -1516,20 +1568,23 @@ export default function DocumentToolbar({
           testId={`${testId}-table`}
         />
       )}
-      {onInsertImage && has(editor, 'setImage') && (
-        <ToolButton
-          btn={{
-            key: 'image', label: '🖼', hint: 'Insert image',
-            run: () => { onInsertImage(); },
-            active: () => false,
-          }}
-          editor={editor}
-          active={false}
-          testId={`${testId}-image`}
-        />
-      )}
     </>
   );
+
+  /* The picture, its own group so it can stay on the bar beside the link —
+     where the mockup has it — after the rule and table have folded. */
+  const imageControl = onInsertImage && has(editor, 'setImage') ? (
+    <ToolButton
+      btn={{
+        key: 'image', label: '🖼', hint: 'Insert image',
+        run: () => { onInsertImage(); },
+        active: () => false,
+      }}
+      editor={editor}
+      active={false}
+      testId={`${testId}-image`}
+    />
+  ) : null;
 
   /* Clear formatting sits LAST, alone behind its own boundary, which is
      where Word and Google Docs both put it. It used to be wedged between
@@ -1562,6 +1617,7 @@ export default function DocumentToolbar({
   if (tucked('colour') && colourControls) overflowGroups.push(<span key="colour" className="inline-flex gap-0.5">{colourControls}</span>);
   if (tucked('shape') && shapeControls) overflowGroups.push(<span key="shape" className="inline-flex gap-0.5">{shapeControls}</span>);
   if (tucked('insert')) overflowGroups.push(<span key="insert" className="inline-flex gap-0.5">{insertControls}</span>);
+  if (tucked('image') && imageControl) overflowGroups.push(<span key="image" className="inline-flex gap-0.5">{imageControl}</span>);
   if (tucked('clear') && clearControl) overflowGroups.push(<span key="clear" className="inline-flex gap-0.5">{clearControl}</span>);
 
   const blockLabel = BLOCK_OPTIONS.find((o) => o.value === (state?.block ?? 'paragraph'))?.label ?? 'Normal text';
@@ -1581,8 +1637,10 @@ export default function DocumentToolbar({
       data-density={density}
       data-size={size}
       // `flex-nowrap` and `min-w-0`: one row, always. The width rules above
-      // decide what fits; the row never folds.
-      className="flex min-w-0 flex-nowrap items-center gap-0.5 px-2 py-1.5"
+      // decide what fits; the row never folds. Nothing in the row shrinks
+      // (`[&>*]:shrink-0`): a squeezed select would hide an overflow the fit
+      // measurement needs to see, and the spacer below is the only give.
+      className="flex min-w-0 flex-nowrap items-center gap-0.5 px-2 py-1.5 [&>*]:shrink-0"
     >
       {/* Undo/redo live leftmost, as in every writing tool. With Collaboration
           bound these are the Y.js UndoManager's, not ProseMirror's history —
@@ -1679,6 +1737,7 @@ export default function DocumentToolbar({
           testId={`${testId}-link`}
         />
       </span>
+      {on('image') && imageControl}
       {on('insert') && insertControls}
 
       {on('clear') && clearControl && (<>
@@ -1714,8 +1773,13 @@ export default function DocumentToolbar({
         </span>
       </>)}
 
+      {/* The row's free space, and the thing auto mode measures: its width is
+          what is left after every control, so the bar knows how much room a
+          folded group would need to come back. Replaces the actions' `ml-auto`. */}
+      <span ref={spacerRef} aria-hidden data-testid={`${testId}-spacer`} className="min-w-0 flex-1" />
+
       {(onToggleGutter && gutterCount > 0) || actions ? (
-        <span className="ml-auto flex shrink-0 items-center gap-1">
+        <span className="flex shrink-0 items-center gap-1">
           {/* Left of the host's actions so presence avatars stay pinned to the
               far edge where every collaborative tool puts them. */}
           {onToggleGutter && gutterCount > 0 && (

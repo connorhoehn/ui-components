@@ -87,52 +87,51 @@ function build(kind: Kind, r: () => number): SimBlock {
       const n = pick(1, 9);
       return {
         top: 0, height: n * DOC_LINE, splittable: true, onGrid: true,
-        marginTop: 0, marginBottom: DOC_LINE, ink: lines(n, 16),
+        marginTop: 0, marginBottom: 8, ink: lines(n, 16),
       };
     }
     case 'quote': {
       const n = pick(2, 5);
       return {
         top: 0, height: n * DOC_LINE, splittable: true, onGrid: true,
-        marginTop: 0, marginBottom: DOC_LINE, ink: lines(n, 16),
+        marginTop: 0, marginBottom: 8, ink: lines(n, 16),
       };
     }
     case 'ul': {
       const n = pick(2, 6);
       return {
         top: 0, height: n * DOC_LINE, splittable: true, onGrid: true,
-        marginTop: 0, marginBottom: DOC_LINE, ink: lines(n, 16),
+        marginTop: 0, marginBottom: 8, ink: lines(n, 16),
       };
     }
     case 'h1':
-      // Two grid rows, because 32px type cannot wrap on 26.4px leading.
+      // 36px type in a 44px line box, 24px above and 4px below (2.385.6).
       return {
-        top: 0, height: DOC_LINE * 2, splittable: false, onGrid: true, keepWithNext: true,
-        marginTop: DOC_LINE * 2, marginBottom: DOC_LINE, ink: [inkBand(32, DOC_LINE * 2)],
+        top: 0, height: 44, splittable: false, onGrid: true, keepWithNext: true,
+        marginTop: 24, marginBottom: 4, ink: [inkBand(36, 44)],
       };
     case 'h2':
-      // 24px ink in a 26.4px box OVERFLOWS it by 1.33px each side — this is
-      // the irreducible 4.6% the styles.css header names.
+      // 22px type in a 28px box, 20px above and 8px below.
       return {
-        top: 0, height: DOC_LINE, splittable: false, onGrid: true, keepWithNext: true,
-        marginTop: DOC_LINE * 2, marginBottom: DOC_LINE, ink: [inkBand(24, DOC_LINE)],
+        top: 0, height: 28, splittable: false, onGrid: true, keepWithNext: true,
+        marginTop: 20, marginBottom: 8, ink: [inkBand(22, 28)],
       };
     case 'h3':
       return {
         top: 0, height: DOC_LINE, splittable: false, onGrid: true, keepWithNext: true,
-        marginTop: DOC_LINE * 2, marginBottom: DOC_LINE, ink: [inkBand(19.2, DOC_LINE)],
+        marginTop: 16, marginBottom: 4, ink: [inkBand(18, DOC_LINE)],
       };
     case 'pre': {
       const n = pick(2, 12);
       return {
-        top: 0, height: (n + 2) * DOC_LINE, splittable: false, onGrid: true,
-        marginTop: 0, marginBottom: DOC_LINE, ink: lines(n, 14.4, DOC_LINE),
+        top: 0, height: n * DOC_LINE + 24, splittable: false, onGrid: true,
+        marginTop: 0, marginBottom: 8, ink: lines(n, 14, 12),
       };
     }
     case 'hr':
       return {
-        top: 0, height: DOC_LINE, splittable: false, onGrid: true,
-        marginTop: 0, marginBottom: DOC_LINE, ink: [[DOC_LINE / 2 - 0.5, DOC_LINE / 2 + 0.5]],
+        top: 0, height: 16, splittable: false, onGrid: true,
+        marginTop: 0, marginBottom: 4, ink: [[7.5, 8.5]],
       };
     case 'img': {
       // The intrinsic height that has no relationship to the grid, and the
@@ -140,17 +139,17 @@ function build(kind: Kind, r: () => number): SimBlock {
       const h = pick(90, 430);
       return {
         top: 0, height: h, splittable: false, onGrid: false,
-        marginTop: 14.4, marginBottom: 14.4, ink: [[0, h]],
+        marginTop: 12, marginBottom: 12, ink: [[0, h]],
       };
     }
     case 'table': {
-      // Cell padding 0.4em top and bottom around a 26.4px line, plus collapsed
+      // Cell padding 6px top and bottom around a 24px line, plus collapsed
       // 1px borders.
       const rows = pick(2, 8);
-      const h = rows * (DOC_LINE + 12.8 + 1) + 1;
+      const h = rows * (DOC_LINE + 12 + 1) + 1;
       return {
         top: 0, height: h, splittable: false, onGrid: false,
-        marginTop: 14.4, marginBottom: 14.4, ink: [[0, h]],
+        marginTop: 12, marginBottom: 12, ink: [[0, h]],
       };
     }
   }
@@ -214,7 +213,7 @@ const HAIRLINE = 6;
  * not of the pagination, and Google Docs does the same thing. Anything deeper
  * than this into a margin is a real invasion.
  */
-const INK_OVERSHOOT = Math.max(0, -inkBand(24, DOC_LINE)[0]);
+const INK_OVERSHOOT = Math.max(0, -inkBand(22, 28)[0], -inkBand(36, 44)[0]);
 
 /**
  * Page boundaries in content coordinates, and whether each one lands on ink.
@@ -261,18 +260,15 @@ function run(table: Array<[Kind, number]>, withFlow: boolean, seed: number, reac
 }
 
 describe('page seams, simulated against the paginated stylesheet metrics', () => {
-  it('reproduces the residual the baseline grid alone leaves on prose', () => {
-    // ~4.6%: h2/h3 ink overflows its single-row line box by 1.33px each side,
-    // and h1 puts an interior row boundary through the middle of its glyphs.
-    // No stylesheet can fix this, which is why the flow moves the heading.
+  it('relies on the flow, not the stylesheet, even for prose', () => {
+    // Until 2.385.6 the stylesheet alone kept a hairline seam out of prose
+    // (~4.6% bisected, all headings) because every margin was a whole 26.4px
+    // line. The 4px grid gives that up on purpose — it is what buys 8px
+    // between paragraphs — so without the flow a seam lands on text most of
+    // the time. The next two tests are therefore the ones that matter.
     const before = report('prose, grid only', run(PROSE, false, 7, HAIRLINE / 2));
     expect(before.seams).toBeGreaterThan(500);
-    // Wider than the 4.6% in the styles.css header, and deliberately so: that
-    // figure came from a corpus whose heading density this generator does not
-    // claim to reproduce, and headings ARE the residual. What both agree on is
-    // the shape — a few per cent, entirely attributable to headings.
-    expect(before.rate).toBeGreaterThan(0.02);
-    expect(before.rate).toBeLessThan(0.15);
+    expect(before.rate).toBeGreaterThan(0.35);
   });
 
   it('reproduces the collapse the baseline grid alone suffers on pictures', () => {
@@ -307,10 +303,10 @@ describe('page seams, simulated against the paginated stylesheet metrics', () =>
     }
   });
 
-  it('costs about a third more sheets, and no more', () => {
-    // Margins are 211.2px of every 1056, and a paragraph that can no longer
-    // flow through a boundary leaves a ragged page bottom on top of that.
-    // Measured: 1.30x. The guard is not that it is cheap — it is not — but
+  it('costs a few more sheets, and no more', () => {
+    // Margins are 96px of every 1056 (211.2px until 2.385.6), and a paragraph
+    // that can no longer flow through a boundary leaves a ragged page bottom
+    // on top of that. Measured: ~1.15x (it was 1.30x with inch margins). The guard is not that it is cheap — it is not — but
     // that the two known costs account for all of it. Anything approaching
     // 1.5x would mean pushes are fighting each other or a block class is
     // being moved that should not be.
@@ -326,8 +322,8 @@ describe('page seams, simulated against the paginated stylesheet metrics', () =>
       flowed += flowCanvasPages(blocks).pageCount;
     }
     expect(flowed).toBeGreaterThanOrEqual(plain);
-    expect(flowed / plain).toBeGreaterThan(1.2);
-    expect(flowed / plain).toBeLessThan(1.42);
+    expect(flowed / plain).toBeGreaterThan(1.05);
+    expect(flowed / plain).toBeLessThan(1.3);
     // And the bill belongs to the margins, not to the seam avoidance that was
     // already there: without them the flow is still nearly free.
     expect(hairline / plain).toBeLessThan(1.13);

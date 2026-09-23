@@ -287,3 +287,24 @@ describe('the print sheet undoes the screen pagination', () => {
     expect(css.slice(begin, end)).toMatch(/@page\s*\{[^}]*margin:\s*1in/);
   });
 });
+
+// The document rhythm (2.385.6): px on a 4px grid, and the title's byline.
+describe('the page typography', () => {
+  const css = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('mutes the paragraph directly under the opening title, in the paper ink', () => {
+    const rule = css.match(/\.doc-page \.ProseMirror > h1:first-child \+ p\s*\{([^}]*)\}/);
+    expect(rule).not.toBeNull();
+    expect(rule![1]).toMatch(/color:\s*var\(--color-paper-ink-muted\)/);
+  });
+
+  it('sizes every heading and block margin in whole grid rows', () => {
+    const rules = [...css.matchAll(/\.doc-page \.ProseMirror (?:h[123]|p|ul|li \+ li)\s*\{([^}]*)\}/g)].map((m) => m[1]!);
+    expect(rules.length).toBeGreaterThan(4);
+    for (const body of rules) {
+      for (const m of body.matchAll(/(?:margin(?:-top)?|line-height):\s*([^;]+);/g)) {
+        for (const px of m[1]!.matchAll(/([0-9.]+)px/g)) expect(Number(px[1]) % 4).toBe(0);
+      }
+    }
+  });
+});

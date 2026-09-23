@@ -22,15 +22,15 @@ import { t as C } from "./Badge-C23_Y4Yj.js";
 import { t as w } from "./ChangeDiff-CzO8zCc-.js";
 import { t as T } from "./Select-D2EQq7Wi.js";
 import { t as E } from "./Checkbox-Dftwml_V.js";
-import { n as ee } from "./FileKindMark-BoJnNKKL.js";
+import { n as ee } from "./FileKindMark-BMr7rVP7.js";
 import { t as te } from "./activationKey-CjbL3LUv.js";
-import { A as D, k as O } from "./renderers-BuYl2Mh0.js";
-import { A as k, B as A, C as j, D as M, E as N, F as P, H as F, I, L, M as R, N as z, O as B, P as V, R as H, S as ne, T as U, U as re, V as ie, W as ae, _ as oe, a as se, b as ce, c as le, d as ue, f as de, g as fe, h as pe, i as me, j as he, k as ge, l as _e, m as ve, n as ye, o as be, p as xe, q as Se, r as Ce, s as we, t as Te, u as Ee, v as De, w as Oe, x as ke, y as Ae, z as je } from "./PresentationEditor-rCeF1urA.js";
+import { A as D, k as O } from "./renderers-suizM8nE.js";
+import { A as k, B as A, C as j, D as M, E as N, F as P, H as F, I, L, M as R, N as z, O as B, P as V, R as H, S as ne, T as U, U as re, V as ie, W as ae, _ as oe, a as se, b as ce, c as le, d as ue, f as de, g as fe, h as pe, i as me, j as he, k as ge, l as _e, m as ve, n as ye, o as be, p as xe, q as Se, r as Ce, s as we, t as Te, u as Ee, v as De, w as Oe, x as ke, y as Ae, z as je } from "./PresentationEditor-D1SWuz4B.js";
 import { o as Me, t as Ne } from "./VerdictChip-Bp8XP18h.js";
-import { a as Pe, c as Fe, i as Ie, n as Le, o as Re, r as ze, s as Be, t as W } from "./TiptapEditor-Kdj65m6g.js";
+import { a as Pe, c as Fe, i as Ie, n as Le, o as Re, r as ze, s as Be, t as W } from "./TiptapEditor-sggcq4Jp.js";
 import { i as Ve, n as He, r as Ue, t as We } from "./FloatingComposerDock-DMUQCjea.js";
-import { A as Ge, B as Ke, C as qe, D as Je, E as Ye, F as Xe, G as Ze, H as Qe, I as $e, L as et, M as tt, N as nt, O as rt, P as it, R as at, S as ot, T as st, U as ct, V as lt, W as ut, _ as dt, a as ft, b as pt, c as mt, d as ht, f as gt, g as _t, h as vt, i as yt, j as bt, k as xt, l as St, m as Ct, o as wt, p as Tt, r as Et, s as Dt, t as Ot, u as kt, v as At, w as jt, x as Mt, y as Nt, z as Pt } from "./DocumentEditorPage-BMee9Jrs.js";
-import { S as Ft, _ as It, a as Lt, b as Rt, c as zt, d as Bt, f as Vt, g as Ht, h as Ut, i as Wt, l as Gt, m as Kt, n as qt, o as Jt, p as Yt, r as Xt, s as Zt, t as Qt, u as $t, v as en, x as tn, y as nn } from "./useDocumentImageUpload-Cbo2NfDA.js";
+import { A as Ge, B as Ke, C as qe, D as Je, E as Ye, F as Xe, G as Ze, H as Qe, I as $e, L as et, M as tt, N as nt, O as rt, P as it, R as at, S as ot, T as st, U as ct, V as lt, W as ut, _ as dt, a as ft, b as pt, c as mt, d as ht, f as gt, g as _t, h as vt, i as yt, j as bt, k as xt, l as St, m as Ct, o as wt, p as Tt, r as Et, s as Dt, t as Ot, u as kt, v as At, w as jt, x as Mt, y as Nt, z as Pt } from "./DocumentEditorPage-kt_kHXye.js";
+import { S as Ft, _ as It, a as Lt, b as Rt, c as zt, d as Bt, f as Vt, g as Ht, h as Ut, i as Wt, l as Gt, m as Kt, n as qt, o as Jt, p as Yt, r as Xt, s as Zt, t as Qt, u as $t, v as en, x as tn, y as nn } from "./useDocumentImageUpload-B9cAlvQo.js";
 import { createContext as rn, useCallback as G, useContext as an, useEffect as K, useId as on, useImperativeHandle as sn, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import * as cn from "yjs";
@@ -2169,6 +2169,7 @@ function Cr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 									children: [
 										o && /* @__PURE__ */ Z(ee, {
 											kind: o,
+											size: "xl",
 											"data-testid": `${I}-kind`
 										}),
 										r ? /* @__PURE__ */ Z(F, {
@@ -2176,7 +2177,8 @@ function Cr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 											onCommit: r,
 											label: i,
 											required: !0,
-											className: "min-w-[10rem] max-w-full flex-initial text-lg",
+											fitContent: !0,
+											className: "min-w-0 max-w-full flex-initial text-lg",
 											"data-testid": `${I}-title`
 										}) : /* @__PURE__ */ Z("h1", {
 											className: "m-0 min-w-0 max-w-full flex-initial truncate text-lg font-semibold text-text-primary",

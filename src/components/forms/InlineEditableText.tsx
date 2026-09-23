@@ -30,6 +30,13 @@ export interface InlineEditableTextProps {
   size?: InputSize;
   /** `'title'` reads as a heading; `'muted'` as secondary text. */
   tone?: 'title' | 'muted';
+  /**
+   * While editing, size the input to its value (`field-sizing: content`)
+   * instead of the Input's full width, so whatever sits after it on the row
+   * — a status pill — stays beside the words rather than being pushed to the
+   * row's end. The display state already sizes to its text.
+   */
+  fitContent?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -49,6 +56,7 @@ export function InlineEditableText({
   disabled = false,
   size = 'sm',
   tone = 'title',
+  fitContent = false,
   className,
   'data-testid': testId = 'inline-editable-text',
 }: InlineEditableTextProps) {
@@ -87,7 +95,7 @@ export function InlineEditableText({
           if (event.key === 'Enter') { event.preventDefault(); commit(); }
           if (event.key === 'Escape') { event.preventDefault(); setDraft(value); setEditing(false); }
         }}
-        className={cn('min-w-0', className)}
+        className={cn('min-w-0', fitContent && 'w-auto min-w-[8ch] [field-sizing:content]', className)}
         data-testid={`${testId}-input`}
       />
     );

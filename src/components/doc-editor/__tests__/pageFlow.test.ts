@@ -6,11 +6,15 @@
 // moving a percentage.
 //
 // Coordinates throughout are CONTENT coordinates: 0 is the first line's box,
-// and the first seam is therefore at 1056 - 105.6 = 950.4.
+// and the first seam is therefore at 1056 - 48 = 1008.
+//
+// 2.385.6 split the body line (`DOC_LINE`, 24px) from the snap row
+// (`DOC_GRID`, 4px); every "on the grid" assertion below is against the grid.
 
 import { describe, expect, it } from 'vitest';
 import {
   DOC_CONTENT_TOP,
+  DOC_GRID,
   DOC_LINE,
   DOC_PAGE_HEIGHT,
   canvasPageAt,
@@ -32,13 +36,13 @@ const heading = (top: number): CanvasBlock =>
 /**
  * Distance to the nearest grid row, either way.
  *
- * `top % DOC_LINE` is not that: a value a hair BELOW a whole row answers
- * ~26.4 rather than ~0, so a float that is on the grid to within 2e-14 reads as
+ * `top % DOC_GRID` is not that: a value a hair BELOW a whole row answers
+ * ~4 rather than ~0, so a float that is on the grid to within 2e-14 reads as
  * a full row off it.
  */
 const offGrid = (top: number): number => {
-  const off = ((top % DOC_LINE) + DOC_LINE) % DOC_LINE;
-  return Math.min(off, DOC_LINE - off);
+  const off = ((top % DOC_GRID) + DOC_GRID) % DOC_GRID;
+  return Math.min(off, DOC_GRID - off);
 };
 
 describe('flowCanvasPages', () => {
@@ -62,17 +66,17 @@ describe('flowCanvasPages', () => {
   });
 
   it('puts the grid back under a picture rather than carrying it off', () => {
-    // 217px is not a multiple of 26.4, so everything below the image used to
-    // sit at a 13.6px offset for the rest of the document — the defect that
+    // 217px is not a multiple of the 4px grid, so everything below the image
+    // would sit at a 1px offset for the rest of the document — the defect that
     // took seam bisection from 8% to 73%. Both blocks are well clear of the
     // first boundary, so the re-snap is the ONLY thing being measured here.
     const img = picture(0, 217);
-    const para = text(217 + 14.4, 10);
+    const para = text(217 + 12, 10);
     const flow = flowCanvasPages([img, para]);
     const top = para.top + flow.pushes[0]! + flow.pushes[1]!;
-    expect(top % DOC_LINE).toBeCloseTo(0, 6);
+    expect(offGrid(top)).toBeCloseTo(0, 6);
     // At most one row of extra leading was spent doing it.
-    expect(flow.pushes[1]).toBeLessThan(DOC_LINE);
+    expect(flow.pushes[1]).toBeLessThan(DOC_GRID);
   });
 
   it('leaves a picture too tall for any page where it is', () => {
@@ -118,10 +122,10 @@ describe('flowCanvasPages', () => {
   });
 
   it('lets a paragraph too tall for one page flow through the margin', () => {
-    // 40 rows is a whole sheet and the text area is 32, so no push helps: the
+    // 45 lines is more than a whole sheet (44), so no push helps: the
     // boundary is going to cut it wherever it starts. Opening a blank page
     // first and then cutting it in the same place is strictly worse.
-    const p = text(SEAM - 12 * DOC_LINE, 40);
+    const p = text(SEAM - 12 * DOC_LINE, 45);
     expect(flowCanvasPages([p]).pushes).toEqual([0]);
   });
 
@@ -160,7 +164,7 @@ describe('flowCanvasPages', () => {
   });
 
   it('counts the sheets the adjusted document fills', () => {
-    // Content exactly one page tall, minus the two 105.6px margins.
+    // Content exactly one page tall, minus the two 48px margins.
     expect(flowCanvasPages([text(0, 1)]).pageCount).toBe(1);
     const full = flowCanvasPages([text(0, (DOC_PAGE_HEIGHT - 2 * DOC_CONTENT_TOP) / DOC_LINE)]);
     expect(full.pageCount).toBe(1);
@@ -290,11 +294,14 @@ describe('line spacing', () => {
   // eight-row grid correction.
   const NO_SEAMS = { pageHeight: 1e6 };
 
-  it('charges at most one row of make-up space per paragraph', () => {
-    const { pushes } = flowCanvasPages(runOfParagraphs(MIXED, SPACING.oneAndAHalf), NO_SEAMS);
-    for (const p of pushes) expect(p).toBeLessThanOrEqual(DOC_LINE + 0.01);
-    // And it really is half a row it is correcting — 13.2px, not float noise.
-    expect(pushes.some((p) => Math.abs(p - DOC_LINE / 2) < 0.01)).toBe(true);
+  it('charges at most one grid row of make-up space per paragraph', () => {
+    // 1.5 x 24px is 36px, a whole number of 4px rows, so on the 2.385.6 grid
+    // 1.5 spacing needs no make-up at all. 1.15 (27.6px) does, and is the
+    // case that shows the snap is bounded.
+    expect(flowCanvasPages(runOfParagraphs(MIXED, SPACING.oneAndAHalf), NO_SEAMS).pushes.every((p) => p === 0)).toBe(true);
+    const { pushes } = flowCanvasPages(runOfParagraphs(MIXED, DOC_LINE * 1.15), NO_SEAMS);
+    for (const p of pushes) expect(p).toBeLessThanOrEqual(DOC_GRID + 0.01);
+    expect(pushes.some((p) => p > 0.01)).toBe(true);
   });
 
   it('leaves double spacing on the grid with nothing to correct', () => {
@@ -311,10 +318,10 @@ describe('line spacing', () => {
     // 55 wrapped lines of prose. The numbers are asserted rather than merely
     // ordered because "line spacing made the document five times longer" is a
     // real failure mode and an ordering check would not catch it: a page holds
-    // 32 rows of text once every page has its inch of margin, so 1.5x the
-    // leading is ~1.5x the pages and not more.
-    expect(single).toBe(3);
-    expect(oneAndAHalf).toBe(4);
-    expect(double).toBe(5);
+    // 40 lines of text once every page has its half-inch of margin, so 1.5x
+    // the leading is ~1.5x the pages and not more.
+    expect(single).toBe(2);
+    expect(oneAndAHalf).toBe(3);
+    expect(double).toBe(4);
   });
 });

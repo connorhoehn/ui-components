@@ -210,14 +210,21 @@ export function EditorShell({
                 take all the shrink (min-w-0) and collapse to a sliver while
                 the pills beside it could not shrink at all. */}
             <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 [@media(max-height:640px)]:flex-1">
-              {kind && <FileKindMark kind={kind} data-testid={`${testId}-kind`} />}
+              {/* 32px, the size the title row is drawn at (2.385.6): at the
+                  22px default the mark read as a bullet beside an 18px title. */}
+              {kind && <FileKindMark kind={kind} size="xl" data-testid={`${testId}-kind`} />}
               {onTitleChange ? (
                 <InlineEditableText
                   value={title}
                   onCommit={onTitleChange}
                   label={titleLabel}
                   required
-                  className="min-w-[10rem] max-w-full flex-initial text-lg"
+                  fitContent
+                  // No `min-w-[10rem]` (2.385.6): it held a short title like
+                  // "Release plan" open to 160px and left a gap before the
+                  // Draft pill. The button sizes to its words; the input, while
+                  // editing, to its value.
+                  className="min-w-0 max-w-full flex-initial text-lg"
                   data-testid={`${testId}-title`}
                 />
               ) : (

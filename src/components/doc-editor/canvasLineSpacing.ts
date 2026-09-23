@@ -127,7 +127,7 @@ export function parseLineSpacing(value: unknown): LineSpacing | null {
 /**
  * The rendered attributes for a spacing, or nothing when it is the default.
  *
- * `--doc-line` is defined on `.doc-page--paginated`; the `1.65em` fallback is
+ * `--doc-line` is defined on `.doc-page--paginated`; the `1.5em` fallback is
  * the same leading expressed against the element's own font size, so an
  * unpaginated page (or a section editor, which shares this schema) gets a
  * proportional result rather than an unresolved `calc`.
@@ -142,7 +142,7 @@ export function lineSpacingAttributes(value: unknown): Record<string, string> {
   if (!spacing || spacing === '1') return {};
   return {
     'data-line-spacing': spacing,
-    style: `line-height: calc(var(--doc-line, 1.65em) * ${spacing})`,
+    style: `line-height: calc(var(--doc-line, 1.5em) * ${spacing})`,
   };
 }
 

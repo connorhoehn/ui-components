@@ -140,7 +140,7 @@ function E(e) {
 	let t = T(e);
 	return !t || t === "1" ? {} : {
 		"data-line-spacing": t,
-		style: `line-height: calc(var(--doc-line, 1.65em) * ${t})`
+		style: `line-height: calc(var(--doc-line, 1.5em) * ${t})`
 	};
 }
 var D = y.create({

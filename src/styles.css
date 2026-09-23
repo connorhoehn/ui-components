@@ -784,7 +784,9 @@
 
 .doc-page .ProseMirror {
   font-size: 16px;
-  line-height: 1.65;
+  /* 24px — the body line advance, and `--doc-line` on a paginated page.
+     1.65 (26.4px) until 2.385.6; see "Document rhythm" below for why it moved. */
+  line-height: 1.5;
   min-height: 0;
   /* A document wraps like prose. `pre-wrap` from the widget rules would
      preserve every run of spaces the user's paste happened to carry. */
@@ -821,7 +823,7 @@
    Space BELOW each block, space ABOVE each heading: the heading's larger top
    margin is what groups it with the text it introduces rather than with the
    paragraph it follows. */
-.doc-page .ProseMirror p { margin: 0 0 0.9em; }
+.doc-page .ProseMirror p { margin: 0 0 8px; }
 
 /* ── A macro node view is a WIDGET, not prose ──────────────────────────────
  *
@@ -846,38 +848,69 @@
   margin: 0;
 }
 
+/* ── Document rhythm (2.385.6) ────────────────────────────────────────────
+ *
+ * Every size, line box and margin below is a whole number of 4px — the
+ * `--doc-grid` a paginated page snaps to (see the pagination block at the end
+ * of this file). Pixels, not ems, for that reason: `0.9em` of 16px is 14.4px,
+ * which no grid holds.
+ *
+ * The figures are the document mockup's (Release plan, 1672x941): until
+ * 2.385.6 the paginated sheet spaced everything in whole 26.4px rows — two
+ * rows above every heading, a full row between paragraphs, and a 105.6px top
+ * margin — so a one-screen document (title, byline, two short sections, a
+ * three-item checklist, a small table, a sources line) ran off the bottom of a
+ * 941px window at "Release checklist". Now the title sits near the top of the
+ * sheet, sections are separated by 20px rather than 53px, and the whole page
+ * is on screen above the docked composer.
+ * ======================================================================== */
 .doc-page .ProseMirror h1,
 .doc-page .ProseMirror h2,
 .doc-page .ProseMirror h3 {
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 700;
 }
-.doc-page .ProseMirror h1 { font-size: 2rem;   margin: 1.6em 0 0.45em; }
-.doc-page .ProseMirror h2 { font-size: 1.5rem; margin: 1.5em 0 0.4em; }
-.doc-page .ProseMirror h3 { font-size: 1.2rem; margin: 1.4em 0 0.35em; }
+.doc-page .ProseMirror h1 { font-size: 36px; line-height: 44px; margin: 24px 0 4px; letter-spacing: -0.01em; }
+.doc-page .ProseMirror h2 { font-size: 22px; line-height: 28px; margin: 20px 0 8px; }
+.doc-page .ProseMirror h3 { font-size: 18px; line-height: 24px; margin: 16px 0 4px; font-weight: 600; }
 /* The title of a document should not be shoved down the page. */
 .doc-page .ProseMirror > h1:first-child,
 .doc-page .ProseMirror > h2:first-child,
 .doc-page .ProseMirror > h3:first-child { margin-top: 0; }
 
+/* The byline: the paragraph directly under the document's TITLE — "Product &
+   Engineering · September 23" — reads as the title's subtitle, muted and a
+   step smaller, not as the first line of the body. Scoped to the h1 that
+   OPENS the document (`> h1:first-child + p`), not to every `h1 + p`: a later
+   h1 used as a section heading is followed by body text, and muting that
+   would grey out a real paragraph. Colour is the paper's own muted ink, so it
+   follows the sheet in dark mode exactly as the body ink does. */
+.doc-page .ProseMirror > h1:first-child + p {
+  font-size: 17px;
+  color: var(--color-paper-ink-muted);
+  margin: 0 0 8px;
+}
+
 .doc-page .ProseMirror ul,
-.doc-page .ProseMirror ol { margin: 0 0 0.9em; padding-left: 1.6em; }
-.doc-page .ProseMirror li { margin: 0.25em 0; }
+.doc-page .ProseMirror ol { margin: 0 0 8px; padding-left: 1.6em; }
+/* 4px BETWEEN items and none outside them, so a list's own top edge is the
+   block above's margin and nothing more. */
+.doc-page .ProseMirror li { margin: 0; }
+.doc-page .ProseMirror li + li { margin-top: 4px; }
 /* A paragraph inside a list item is layout, not a block break. */
 .doc-page .ProseMirror li > p { margin: 0; }
 
 .doc-page .ProseMirror blockquote {
-  margin: 0 0 0.9em;
+  margin: 0 0 8px;
   border-left: 3px solid var(--color-paper-border);
   padding-left: 1em;
   color: var(--color-paper-ink-muted);
 }
 
 .doc-page .ProseMirror pre {
-  margin: 0 0 0.9em;
+  margin: 0 0 8px;
   background: var(--color-paper-hover);
   border-radius: var(--radius-md);
-  padding: 0.75em 1em;
+  padding: 12px 16px;
   font-size: 0.875em;
   overflow-x: auto;
 }
@@ -890,13 +923,16 @@
 .doc-page .ProseMirror hr {
   border: none;
   border-top: 1px solid var(--color-paper-border);
-  margin: 2em 0;
+  margin: 16px 0;
 }
 
 /* Task lists lose their bullet — the checkbox IS the marker. */
 .doc-page .ProseMirror ul[data-type='taskList'] { list-style: none; padding-left: 0; }
 .doc-page .ProseMirror ul[data-type='taskList'] li { display: flex; gap: 0.6em; }
-.doc-page .ProseMirror ul[data-type='taskList'] li > label { margin-top: 0.15em; }
+.doc-page .ProseMirror ul[data-type='taskList'] li > label { margin-top: 0; display: flex; align-items: center; height: 24px; }
+/* A task item wraps its text in a <div>, so the `li > p` rule above does not
+   reach it and each item carried a paragraph's 8px — 36px a row, not 28. */
+.doc-page .ProseMirror ul[data-type='taskList'] li > div > p { margin: 0; }
 
 .doc-page .ProseMirror .is-empty::before { color: var(--color-paper-ink-subtle); }
 
@@ -931,7 +967,7 @@
    may scroll; a document may not.
    --------------------------------------------------------------------------- */
 .doc-page .ProseMirror .tableWrapper {
-  margin: 0.9em 0;
+  margin: 12px 0;
   overflow-x: auto;
 }
 .doc-page .ProseMirror table {
@@ -943,7 +979,7 @@
 .doc-page .ProseMirror th,
 .doc-page .ProseMirror td {
   border: 1px solid var(--color-paper-border);
-  padding: 0.4em 0.6em;
+  padding: 6px 12px;
   vertical-align: top;
   /* Cells are the one place a long unbroken token must not be allowed to set
      the width — see table-layout above. */
@@ -984,7 +1020,7 @@
   display: block;
   max-width: 100%;
   height: auto;
-  margin: 0.9em auto;
+  margin: 12px auto;
   border-radius: var(--radius-sm);
 }
 .doc-page .ProseMirror img.ProseMirror-selectednode {
@@ -1268,6 +1304,27 @@
    ON unless a host passes `paginate={false}`, in which case a canvas is
    byte-for-byte what it was before this block existed.
 
+   ## 2.385.6: the grid is 4px, and the body line is 24px
+
+   Most of what follows argues from a 26.4px ROW that every block height and
+   margin was a whole multiple of. That argument was written for a HAIRLINE
+   seam that text flowed straight through, where the only clear space was the
+   leading between two lines. Since every page got margins (`pageFlow.ts`,
+   "## Why every page has margins"), nothing flows through a boundary at all:
+   each block is pushed WHOLE out of the margin band. The row stopped doing
+   the job it was sized for and kept doing the damage — a full 26.4px between
+   paragraphs, 52.8px above every heading, a 105.6px top margin — so a short
+   document ran off the screen by its second section.
+
+   So the two jobs are split. `--doc-line` is the body line advance again, and
+   nothing more (16px x 1.5 = 24px; 1056 / 24 = 44 lines). `--doc-grid` (4px)
+   is what heights and margins must be whole multiples of, and what the flow
+   re-snaps to under an image or a table (`DOC_GRID`). Every figure in the
+   document-rhythm block is a multiple of it, which is why that block is now
+   in px. The page margin is `--doc-content-top`, 48px (two lines), and
+   `DOC_CONTENT_TOP` must agree. The history below stays because it is WHY
+   pushes and margins exist; read its numbers as the 2.385.5 ones.
+
    HALF the feature. This stylesheet puts the document on a baseline grid and
    paints a seam thin enough to fall between two lines; `canvas/pageFlow.ts`
    measures every top-level block and MOVES the ones a seam would still cut.
@@ -1387,16 +1444,18 @@
    =========================================================================== */
 
 .doc-page--paginated {
-  /* 16px x 1.65, the body line advance from `.doc-page .ProseMirror`. If that
-     font-size or line-height ever changes this must change with it, or the
-     grid silently detaches from the text sitting on it. */
-  --doc-line: 26.4px;
-  /* 11in at 96dpi — the same sheet `min-h-[1056px]` already claims. Exactly
-     40 grid rows, which is the whole reason the arithmetic closes. */
+  /* The body line advance: 16px x 1.5, from `.doc-page .ProseMirror`. If that
+     font-size or line-height ever changes this must change with it. */
+  --doc-line: 24px;
+  /* What every block height and margin is a whole multiple of, and what the
+     flow re-snaps to — `DOC_GRID` in canvas/pageFlow.ts. */
+  --doc-grid: 4px;
+  /* 11in at 96dpi — the same sheet `min-h-[1056px]` already claims. 44 body
+     lines, 264 grid rows. */
   --doc-page-height: 1056px;
   /* The desk between two sheets. Safe at this width only because the flow
-     reserves a one-inch margin on both sides of every boundary — see the
-     header. Must match `DOC_PAGE_GAP` in canvas/pageFlow.ts. */
+     reserves a margin on both sides of every boundary — see the header. Must
+     match `DOC_PAGE_GAP` in canvas/pageFlow.ts. */
   --doc-page-gap: 24px;
 
   /* Containing block for the seam overlay. The `@container` on the sheet
@@ -1426,20 +1485,11 @@
   pointer-events: none;
   /* `--color-workspace`, not a literal: the gap is NOT paper, so unlike the
      sheet it is allowed to follow the theme — dark desk between white pages is
-     what a dark-mode word processor shows too, and it is why this does not
-     violate the paper-is-always-white invariant.
-
-     The last stop is the page height, so `repeating-linear-gradient` tiles on
-     the right period without a `background-size`.
+     what a dark-mode word processor shows too.
 
      Stops are FRACTIONS of the gap so the band keeps its proportions at any
-     value of `--doc-page-gap`, and the fractions are chosen so the desk wins:
-     the shadow fades out over the first and last eighth, leaving three
-     quarters of the band as clear workspace. At the 6px this used to be, the
-     shadows were nearly the whole band and it read as a rule with a highlight
-     — correct for a hairline, wrong for a gap between two sheets. At 24px the
-     page edges get 3px of shadow each and 18px of desk shows between them,
-     which is what a stack of pages looks like. */
+     value of `--doc-page-gap`: 3px of shadow at each sheet's edge and 18px of
+     desk between them. */
   background-image: repeating-linear-gradient(
     to bottom,
     rgba(15, 23, 42, 0.22) 0,
@@ -1453,76 +1503,37 @@
   );
 }
 
-/* Vertical page margin, snapped to 4 grid rows (105.6px) from the 96px an
-   unpaginated page uses. Those 9.6px are what buy an exact 36 rows between the
-   first baseline and the first seam; without them the grid is offset by
-   96/26.4 = 3.64 rows and every seam lands mid-line again.
+/* Vertical page margin: two body lines, 48px — half an inch. It was four
+   26.4px rows (105.6px), which put a title an inch and a bit down the sheet.
+   It is also every page's top and bottom margin (`pageMargin` defaults to
+   `DOC_CONTENT_TOP` in pageFlow.ts), so it must stay a whole number of
+   `--doc-grid` and must equal `DOC_CONTENT_TOP`.
 
-   Two classes beat the `lg:py-[96px]` utility on specificity, so this holds at
+   Two classes beat the `lg:py-12` utility on specificity, so this holds at
    every breakpoint without `!important`. */
 .doc-page--paginated .doc-page__body {
-  padding-block: calc(var(--doc-line) * 4);
+  padding-block: calc(var(--doc-line) * 2);
 }
 
-/* --- the baseline grid ---------------------------------------------------
-   Everything from here down exists to make one assertion true: the top of
-   every line box sits at `origin + n * --doc-line`. */
-
+/* Absolute, not the unitless 1.5 of the base rule: a length is inherited as a
+   LENGTH, so a code block at 0.875em still advances 24px a line and stays on
+   the grid. Headings keep the px line boxes the base block gives them. */
 .doc-page--paginated .ProseMirror {
-  /* Absolute, not the unitless 1.65 of the base rule — see the header. */
   line-height: var(--doc-line);
 }
 
-/* 26.4px between paragraphs where an unpaginated page uses 14.4px. This is a
-   visible change and there is no way around it: a paragraph gap may only be a
-   whole row or nothing. Turning pagination on makes the page airier, and that
-   is part of what the host is opting into. */
-.doc-page--paginated .ProseMirror p { margin: 0 0 var(--doc-line); }
-
-/* Headings. Single-row line boxes for h2/h3 so no row boundary passes through
-   their glyphs; two rows for h1 only because 32px type cannot wrap on 26.4px
-   leading. Margins of two rows above and one below keep the base block's
-   intent — space before a heading roughly double the space after. */
-.doc-page--paginated .ProseMirror h1 {
-  line-height: calc(var(--doc-line) * 2);
-  margin: calc(var(--doc-line) * 2) 0 var(--doc-line);
-}
-.doc-page--paginated .ProseMirror h2,
-.doc-page--paginated .ProseMirror h3 {
-  line-height: var(--doc-line);
-  margin: calc(var(--doc-line) * 2) 0 var(--doc-line);
-}
-.doc-page--paginated .ProseMirror > h1:first-child,
-.doc-page--paginated .ProseMirror > h2:first-child,
-.doc-page--paginated .ProseMirror > h3:first-child { margin-top: 0; }
-
-/* Lists drop the 0.25em inter-item margin outright rather than rounding it up:
-   26.4px between bullets reads as separate paragraphs, and 0 is the honest
-   alternative once the grid forbids 4px. */
-.doc-page--paginated .ProseMirror ul,
-.doc-page--paginated .ProseMirror ol { margin: 0 0 var(--doc-line); }
-.doc-page--paginated .ProseMirror li { margin: 0; }
-.doc-page--paginated .ProseMirror ul[data-type='taskList'] li > label { margin-top: 0; }
-
-.doc-page--paginated .ProseMirror blockquote { margin: 0 0 var(--doc-line); }
-
-/* A FULL row of padding top and bottom, not half a row. Half keeps the block's
-   outer height on the grid while putting every line inside it on a half-row
-   offset — the single worst thing that can happen here, and measured at 93.1%
-   bisection. See the header. */
-.doc-page--paginated .ProseMirror pre {
-  margin: 0 0 var(--doc-line);
-  padding: var(--doc-line) 1em;
-}
+/* The rest of the rhythm — paragraphs, headings, lists, quotes, code — is the
+   base `.doc-page .ProseMirror` block, unchanged: every figure there is a
+   whole number of `--doc-grid`. Until 2.385.6 this section overrode each of
+   them to a whole 26.4px row. */
 
 /* An `hr` is the one block whose height is neither a line box nor zero: a 1px
-   border put the rest of the document 1px off the grid and left it there.
-   Rebuilt as a full grid row with the rule painted down its middle by a
-   background, so it contributes exactly two rows and the grid survives it. */
+   border would put the rest of the document 1px off the grid. Rebuilt as a
+   16px box (four grid rows) with the rule painted down its middle. */
 .doc-page--paginated .ProseMirror hr {
   border: none;
-  height: var(--doc-line);
-  margin: 0 0 var(--doc-line);
+  height: calc(var(--doc-grid) * 4);
+  margin: 0 0 var(--doc-grid);
   background-image: linear-gradient(
     to bottom,
     transparent calc(50% - 0.5px),

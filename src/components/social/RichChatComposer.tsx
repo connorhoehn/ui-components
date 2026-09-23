@@ -95,7 +95,7 @@ import Suggestion from '@tiptap/suggestion';
 import type { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion';
 import { cn } from '../../lib/cn';
 import { FileInput } from '../forms/FileInput';
-import { DropdownMenu } from '../shared/DropdownMenu';
+import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
 import { AGENT_PARTICLE_COLORS, ParticlesBackground } from '../shared/ParticlesBackground';
 import {
   GRAPHITE_PARTICLE_COLORS,
@@ -346,10 +346,25 @@ export interface RichChatComposerProps {
    *   beside the first: an editor already has a full toolbar above the page
    *   and the card's strip is the four things a prompt actually uses.
    *
-   * Sizes are unchanged in both: every control is the same 28px box.
+   * - `editor` (2.385.6): the document page's docked card as the mockup draws
+   *   it — B, I, code, link, bulleted list, quote, attach, then a divider
+   *   before `toolbarExtras` (the host's `Workflow ▾`). Strikethrough and
+   *   numbered list go under `?` → Formatting, as in `compact`.
+   *
+   * Sizes are unchanged in all three: every control is the same 28px box.
    * Below wide the strip folds exactly as before, whichever preset is set.
    */
   toolbar?: ComposerToolbarPreset;
+  /**
+   * A `⋯` menu at the right of the toolbar row, before `submitLead` and Send —
+   * for actions on the THING the composer is attached to ("Draft a
+   * presentation from this page") rather than on the message. Lets a host
+   * keep those off the strip instead of spending a labelled `submitLead` on
+   * them. Absent or empty, nothing renders.
+   */
+  moreActions?: readonly DropdownMenuSection[];
+  /** The `⋯` trigger's accessible name and title. Default "More actions". */
+  moreActionsLabel?: string;
   /**
    * Long-running work this composer's owner started — a generating deck, a
    * terminal test run. Rendered as one status line above the editor, hidden
@@ -529,7 +544,7 @@ export interface RichChatComposerProps {
 /** How much room the composer has, from its own width. */
 export type ComposerSize = 'wide' | 'medium' | 'narrow';
 /** See `RichChatComposerProps.toolbar`. */
-export type ComposerToolbarPreset = 'full' | 'compact';
+export type ComposerToolbarPreset = 'full' | 'compact' | 'editor';
 export type ComposerRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
 
 /**
@@ -818,6 +833,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   onRemoveReference,
   toolbarExtras,
   toolbar = 'full',
+  moreActions,
+  moreActionsLabel = 'More actions',
   processes,
   mode = 'chat',
   onModeChange,
@@ -1828,11 +1845,18 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Strikethrough, code, lists and quote: inline when wide, in the `⋯` menu otherwise.
   // The compact preset keeps only the bulleted list of those inline at wide
   // width and files the other four under `?` → Formatting (`formatInHints`).
+  // `editor` sits between the two: code and quote stay on the strip,
+  // strikethrough and numbered list fold under `?` with `compact`'s.
   const compactToolbar = toolbar === 'compact';
-  const showSecondaryMarks = wide && !compactToolbar;
-  const showListControls = wide && !compactToolbar;
+  const editorToolbar = toolbar === 'editor';
+  const fullToolbar = !compactToolbar && !editorToolbar;
+  const showSecondaryMarks = wide && fullToolbar;
+  const showCode = wide && !compactToolbar;
+  const showListControls = wide && fullToolbar;
+  const showQuote = wide && !compactToolbar;
   const showBulletedList = wide;
-  const formatInHints = wide && compactToolbar;
+  const formatInHints = wide && !fullToolbar;
+  const showMoreActions = !!moreActions?.length;
   // The console sky. `none` keeps the ordinary surface in Agent/Terminal: the
   // mode still changes what Enter does, it just stops repainting the box.
   const tone = useResolvedBackdropTone(rootNode, backdropTone, consoleMode);
@@ -2435,7 +2459,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             toolbarButton('Bold', editor.isActive('bold'), () => editor.chain().focus().toggleBold().run(), <b>B</b>),
             toolbarButton('Italic', editor.isActive('italic'), () => editor.chain().focus().toggleItalic().run(), <i>I</i>),
             showSecondaryMarks && toolbarButton('Strikethrough', editor.isActive('strike'), () => editor.chain().focus().toggleStrike().run(), <s>S</s>),
-            showSecondaryMarks && toolbarButton('Code', editor.isActive('code'), () => editor.chain().focus().toggleCode().run(), <span className="font-mono text-[11px]">{'<>'}</span>),
+            showCode && toolbarButton('Code', editor.isActive('code'), () => editor.chain().focus().toggleCode().run(), <span className="font-mono text-[11px]">{'<>'}</span>),
             toolbarButton(
               editor.isActive('link') ? 'Edit link' : 'Add link',
               editor.isActive('link'),
@@ -2445,7 +2469,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             showListControls && <span key="sep1" aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />,
             showBulletedList && toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), <span>•</span>),
             showListControls && toolbarButton('Numbered list', editor.isActive('orderedList'), () => editor.chain().focus().toggleOrderedList().run(), <span className="text-[11px]">1.</span>),
-            showListControls && toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={16} />),
+            showQuote && toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={16} />),
             // Below wide, the same five live in one overflow menu instead of
             // being dropped: shedding them outright is how a narrow composer
             // quietly lost lists.
@@ -2472,7 +2496,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             ),
           ]}
 
-          {(allowEmoji || attachmentsEnabled || !!onPrivacyChange) && !compactToolbar && (
+          {(allowEmoji || attachmentsEnabled || !!onPrivacyChange) && fullToolbar && (
             <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />
           )}
 
@@ -2518,6 +2542,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             );
           })()}
 
+          {editorToolbar && toolbarExtras != null && (
+            <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" data-testid={`${testId}-extras-divider`} />
+          )}
           {toolbarExtras}
           </RovingToolbar>
           )}
@@ -2545,9 +2572,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                   label: 'Formatting',
                   items: [
                     { label: 'Strikethrough', checked: editor.isActive('strike'), onSelect: () => editor.chain().focus().toggleStrike().run() },
-                    { label: 'Code', checked: editor.isActive('code'), onSelect: () => editor.chain().focus().toggleCode().run() },
+                    ...(compactToolbar ? [{ label: 'Code', checked: editor.isActive('code'), onSelect: () => editor.chain().focus().toggleCode().run() }] : []),
                     { label: 'Numbered list', checked: editor.isActive('orderedList'), onSelect: () => editor.chain().focus().toggleOrderedList().run() },
-                    { label: 'Quote', checked: editor.isActive('blockquote'), onSelect: () => editor.chain().focus().toggleBlockquote().run() },
+                    ...(compactToolbar ? [{ label: 'Quote', checked: editor.isActive('blockquote'), onSelect: () => editor.chain().focus().toggleBlockquote().run() }] : []),
                   ],
                 }] : []),
                 ...(suggestionsInMenu ? [{
@@ -2566,8 +2593,22 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             />
           ) : null}
 
+          {showMoreActions && !collapsed && (
+            <span className="ml-auto flex shrink-0 items-center pr-1" data-testid={`${testId}-more-actions`}>
+              <DropdownMenu
+                trigger={<span aria-hidden="true" className="text-sm leading-none">⋯</span>}
+                triggerLabel={moreActionsLabel}
+                triggerTitle={moreActionsLabel}
+                triggerTestId={`${testId}-more-actions-trigger`}
+                data-testid={`${testId}-more-actions-menu`}
+                align="end"
+                triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-secondary hover:bg-surface-hover border-0 p-0"
+                sections={[...moreActions!]}
+              />
+            </span>
+          )}
           {submitLead != null && !collapsed && (
-            <span className={cn('ml-auto flex shrink-0 items-center pr-1.5 text-text-secondary', menuModeRow ? 'text-sm' : 'text-xs')} data-testid={`${testId}-submit-lead`}>
+            <span className={cn(!(showMoreActions && !collapsed) && 'ml-auto', 'flex shrink-0 items-center pr-1.5 text-text-secondary', menuModeRow ? 'text-sm' : 'text-xs')} data-testid={`${testId}-submit-lead`}>
               {submitLead}
             </span>
           )}
@@ -2575,7 +2616,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             // A split button, not a second control: the primary press must
             // stay in the same place and do the same thing it always did, and
             // the alternatives have to be somewhere other than in front of it.
-            <span className={cn((submitLead == null || collapsed) && 'ml-auto', 'flex shrink-0 items-stretch')}>
+            <span className={cn((submitLead == null || collapsed) && !(showMoreActions && !collapsed) && 'ml-auto', 'flex shrink-0 items-stretch')}>
               <button
                 type="button"
                 onClick={terminalMode ? submitShell : send}
@@ -2602,7 +2643,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               disabled={!canSend}
               data-testid={`${testId}-send`}
               className={cn(
-                (submitLead == null || collapsed) && 'ml-auto',
+                (submitLead == null || collapsed) && !(showMoreActions && !collapsed) && 'ml-auto',
                 'shrink-0 rounded bg-primary font-semibold text-on-primary disabled:opacity-40',
                 // The docked card's button is the editor's size, with the arrow
                 // the mockup gives it; a chat column's stays small.

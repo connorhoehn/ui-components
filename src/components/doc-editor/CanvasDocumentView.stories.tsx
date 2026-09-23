@@ -516,3 +516,42 @@ export const PaperDark: Story = {
   args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
   render: () => <ThemedCanvas theme="dark" />,
 };
+
+const RELEASE_PLAN_HTML = `
+<h1>Release plan — Q4 launch</h1>
+<p>Product &amp; Engineering · September 23</p>
+<h2>Outcome</h2>
+<p>Launch the updated gateway with reliable metrics, clear ownership, and a tested rollback path.</p>
+<h2>Release checklist</h2>
+<ul data-type="taskList">
+  <li data-type="taskItem" data-checked="false"><label><input type="checkbox"><span></span></label><div><p>Validate the migration in staging</p></div></li>
+  <li data-type="taskItem" data-checked="false"><label><input type="checkbox"><span></span></label><div><p>Confirm launch owners and support coverage</p></div></li>
+  <li data-type="taskItem" data-checked="false"><label><input type="checkbox"><span></span></label><div><p>Publish the rollback procedure</p></div></li>
+</ul>
+<h2>Risks &amp; owners</h2>
+<ul><li><p>Migration regressions — Connor — staged rollout</p></li><li><p>Missing telemetry — Frank — compare dashboard coverage</p></li></ul>
+<p>Sources: <a href="#">Planning sync transcript</a> · <a href="#">Auth architecture</a></p>
+`;
+
+/**
+ * The document mockup's page (2.385.6 typography): the title near the top of
+ * the sheet, the byline muted under it, 20px between sections, a compact
+ * checklist. At a 941px-tall window everything down to "Sources:" fits.
+ */
+export const ReleasePlan: Story = {
+  args: { isCanvas: true, body: null, ydoc: null as never, provider: null, paginate: true, ...BASE },
+  render: (args) => {
+    const { ydoc, provider, body } = useFixture();
+    const onEditorReady = useSeed(RELEASE_PLAN_HTML, body);
+    return (
+      <CanvasDocumentView
+        {...args}
+        isCanvas
+        body={body}
+        ydoc={ydoc}
+        provider={provider}
+        onEditorReady={onEditorReady as never}
+      />
+    );
+  },
+};

@@ -1012,3 +1012,57 @@ describe('DocumentToolbar — one row at every width', () => {
     expect(screen.queryByTestId('document-toolbar-block')).toBeNull();
   });
 });
+
+// ---------------------------------------------------------------------------
+// size="auto" fits by MEASUREMENT (2.385.6), not by breakpoint.
+//
+// jsdom has no layout, so the geometry is stubbed: the bar is `avail` px
+// wide and every control inside it costs 30px. The bar should keep every
+// group that fits and fold only what does not.
+// ---------------------------------------------------------------------------
+describe('auto size fits what the row can hold', () => {
+  const stub = (avail: number) => {
+    const cw = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.getAttribute('role') === 'toolbar' ? avail : 0;
+    });
+    const sw = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      if (this.getAttribute('role') !== 'toolbar') return 0;
+      const need = this.querySelectorAll('button, select').length * 30;
+      return Math.max(avail, need);
+    });
+    return () => { cw.mockRestore(); sw.mockRestore(); };
+  };
+
+  it('keeps everything on the bar when it all fits', () => {
+    const restore = stub(5000);
+    try {
+      const { editor } = makeEditor({}, EVERYTHING);
+      render(<DocumentToolbar editor={editor} onInsertImage={() => {}} />);
+      expect(screen.queryByTestId('document-toolbar-more')).toBeNull();
+      for (const id of ['strike', 'code', 'taskList', 'color', 'highlight', 'image', 'align', 'table', 'clear-formatting']) {
+        expect(screen.getByTestId(`document-toolbar-${id}`)).toBeInTheDocument();
+      }
+    } finally { restore(); }
+  });
+
+  it('folds the least-used groups first and keeps the rest', () => {
+    // Enough for everything but clear formatting, alignment/spacing and the
+    // rule/table — the mockup's 1672px bar.
+    const { editor } = makeEditor({}, EVERYTHING);
+    const probe = render(<DocumentToolbar editor={editor} onInsertImage={() => {}} />);
+    const all = probe.container.querySelectorAll('button, select').length;
+    cleanup();
+    // Five controls fold and one ⋯ appears, so the row needs four fewer.
+    const restore = stub((all - 4) * 30);
+    try {
+      render(<DocumentToolbar editor={editor} onInsertImage={() => {}} />);
+      expect(screen.getByTestId('document-toolbar-more')).toBeInTheDocument();
+      for (const id of ['block', 'font-family', 'strike', 'code', 'taskList', 'color', 'highlight', 'image', 'link']) {
+        expect(screen.getByTestId(`document-toolbar-${id}`)).toBeInTheDocument();
+      }
+      for (const id of ['clear-formatting', 'align', 'line-spacing']) {
+        expect(screen.queryByTestId(`document-toolbar-${id}`)).toBeNull();
+      }
+    } finally { restore(); }
+  });
+});

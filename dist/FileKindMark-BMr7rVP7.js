@@ -31,11 +31,13 @@ var d = {
 }, p = "bg-transparent text-text-secondary", m = {
 	sm: "h-[18px] w-[18px] rounded",
 	md: "h-[22px] w-[22px] rounded-[5px]",
-	lg: "h-7 w-7 rounded-md"
+	lg: "h-7 w-7 rounded-md",
+	xl: "h-8 w-8 rounded-lg"
 }, h = {
 	sm: 12,
 	md: 14,
-	lg: 16
+	lg: 16,
+	xl: 20
 };
 function g(e) {
 	return {
