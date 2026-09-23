@@ -21,8 +21,8 @@
 // equivalent in the tooltip.
 
 import {
-  useCallback, useEffect, useId, useLayoutEffect, useRef, useState,
-  type KeyboardEvent as ReactKeyboardEvent, type ReactNode, type RefObject,
+  createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useRef, useState,
+  type KeyboardEvent as ReactKeyboardEvent, type MutableRefObject, type ReactNode, type RefObject,
 } from 'react';
 import { useEditorState, type Editor } from '@tiptap/react';
 import { cn } from '../../lib/cn';
@@ -85,8 +85,81 @@ export interface DocumentToolbarProps {
    * (the full page has them), they are just not what a reading pane is for.
    */
   density?: 'full' | 'compact';
+  /**
+   * How much of the bar fits on ONE row. `auto` (the default) measures the
+   * bar's own box and picks `wide` / `medium` / `narrow` — see
+   * `DOCUMENT_TOOLBAR_BREAKPOINTS`. A fixed value is for tests and stories.
+   *
+   * The bar never wraps. It used to (`flex-wrap`), and at a 1280px window the
+   * page editor's toolbar took THREE rows — B and I on the first, the rest on
+   * the second, and the host's Comment button alone on a third — leaving
+   * about 200px of paper. A toolbar is one line of controls in every word
+   * processor; what does not fit goes behind ⋯, the way Docs and Word do it.
+   */
+  size?: DocumentToolbarSize | 'auto';
   'data-testid'?: string;
 }
+
+/** One-row layouts, widest first. */
+export type DocumentToolbarSize = 'wide' | 'medium' | 'narrow';
+
+/**
+ * Content-box widths (px) of the bar itself, not the window: the same toolbar
+ * sits in a full-width page, beside a workbench, and inside a chat pane.
+ *
+ * - wide (≥ 1240): everything inline — this is the old bar.
+ * - medium (≥ 840): the style selects, bold/italic/underline, bullet and
+ *   numbered lists and link stay; strike, inline code, the task list, the
+ *   colour palettes, alignment, spacing, inserts and clear-formatting move
+ *   behind ⋯. The host's actions read `useDocumentToolbarSize()` and shrink
+ *   too (the page's Comment button becomes an icon beside the presence
+ *   avatars).
+ * - narrow: the three style selects fold into one `Style ▾` panel.
+ *
+ * Measured, not guessed (every extension registered, the page's avatars and
+ * Comment in `actions`): the wide bar's natural width is ~1200px, medium's
+ * ~820px, narrow's ~520px. The page editor's bar is 892px wide at a 1640px
+ * window and 532px at 1280px.
+ */
+export const DOCUMENT_TOOLBAR_BREAKPOINTS = { narrow: 840, wide: 1240 } as const;
+
+/** `null` — not measured yet — is wide: a first paint that hides controls and then shows them is worse than one frame of overflow. */
+export function documentToolbarSize(width: number | null): DocumentToolbarSize {
+  if (width == null) return 'wide';
+  if (width < DOCUMENT_TOOLBAR_BREAKPOINTS.narrow) return 'narrow';
+  if (width < DOCUMENT_TOOLBAR_BREAKPOINTS.wide) return 'medium';
+  return 'wide';
+}
+
+const SizeContext = createContext<DocumentToolbarSize>('wide');
+
+/**
+ * The bar's current layout, for whatever a host renders into `actions`.
+ *
+ * The slot sits inside the bar, so the host's controls are on the same row
+ * and subject to the same width — a labelled "Comment" button that stays
+ * labelled at `medium` is the control that pushed the bar onto a third row.
+ * Outside a `DocumentToolbar` this reads `wide`.
+ */
+export function useDocumentToolbarSize(): DocumentToolbarSize {
+  return useContext(SizeContext);
+}
+
+/**
+ * The groups a width can take off the bar. `selects` off means the `Style ▾`
+ * panel is on; everything else off means it sits in the ⋯ group. Undo/redo,
+ * bold/italic/underline, bullet/numbered and link never leave the bar.
+ */
+type ToolbarGroup = 'selects' | 'marksExtra' | 'listsExtra' | 'indent' | 'colour' | 'shape' | 'insert' | 'clear';
+const EVERY_GROUP: readonly ToolbarGroup[] = ['selects', 'marksExtra', 'listsExtra', 'indent', 'colour', 'shape', 'insert', 'clear'];
+const INLINE_GROUPS: Record<DocumentToolbarSize, ReadonlySet<ToolbarGroup>> = {
+  wide: new Set(EVERY_GROUP),
+  medium: new Set(['selects']),
+  narrow: new Set([]),
+};
+/** The marks and lists that leave the bar first. */
+const EXTRA_MARKS: ReadonlySet<string> = new Set(['strike', 'code']);
+const EXTRA_LISTS: ReadonlySet<string> = new Set(['taskList']);
 
 /**
  * Typefaces a document can set, and their real stacks.
@@ -253,7 +326,7 @@ function ToolButton({
       {...activate(() => btn.run(editor))}
       className={cn(
         'min-w-7 h-7 px-1.5 rounded text-xs font-semibold cursor-pointer border-none',
-        active ? 'bg-primary text-white' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
+        active ? 'bg-primary text-on-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover',
       )}
     >
       {btn.label}
@@ -833,7 +906,7 @@ function AlignMenu({
                 'inline-flex h-7 w-7 items-center justify-center rounded cursor-pointer border-none',
                 MENU_ITEM_RING,
                 align === current
-                  ? 'bg-primary text-white'
+                  ? 'bg-primary text-on-primary'
                   : 'bg-transparent text-text-secondary hover:bg-surface-hover',
               )}
             >
@@ -907,7 +980,7 @@ function LineSpacingMenu({
                 'cursor-pointer rounded border-none px-2 py-1 text-left text-xs',
                 MENU_ITEM_RING,
                 spacing === current
-                  ? 'bg-primary text-white'
+                  ? 'bg-primary text-on-primary'
                   : 'bg-transparent text-text-secondary hover:bg-surface-hover',
               )}
             >
@@ -1058,7 +1131,7 @@ function GutterToggle({
         // Chrome, not paper: the toolbar is themed, so both states use surface
         // and primary tokens and go dark with the rest of the app.
         visible
-          ? 'bg-primary text-white border-primary'
+          ? 'bg-primary text-on-primary border-primary'
           // Off is TINTED, not greyed out. A disabled-looking control would
           // say the margin is empty; this says it is full and put away.
           : 'bg-primary-bg text-primary-fg border-primary-border hover:bg-surface-hover',
@@ -1068,7 +1141,7 @@ function GutterToggle({
       <span
         className={cn(
           'rounded-full px-1.5 leading-4 tabular-nums',
-          visible ? 'bg-white/25 text-white' : 'bg-primary text-white',
+          visible ? 'bg-on-primary/25 text-on-primary' : 'bg-primary text-on-primary',
         )}
       >
         {count}
@@ -1080,6 +1153,63 @@ function GutterToggle({
   );
 }
 
+/**
+ * A disclosure panel for the bar's grouped controls — the ⋯ group and the
+ * narrow `Style ▾` panel.
+ *
+ * Not `useToolMenu`: that is a `role="menu"` of `menuitem`s with a roving
+ * cursor, and what these panels hold are ordinary toolbar buttons, nested
+ * menus and native selects that keep their own keyboard. So the panel is a
+ * `role="group"` behind an `aria-expanded` trigger, and shares only the
+ * closing rules: a click elsewhere, Escape from anywhere (focus may still be
+ * in the editor after a mouse open), focus leaving. The trigger acts on
+ * mousedown with the default prevented, like every control here, so the
+ * selection a command will act on survives the click.
+ */
+function usePanel() {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLSpanElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const id = useId();
+  const shut = useCallback((focusTrigger: boolean) => {
+    setOpen(false);
+    if (focusTrigger) triggerRef.current?.focus();
+  }, []);
+  useEffect(() => {
+    if (!open) return;
+    const inside = (n: Node | null) => !!(n && wrapRef.current?.contains(n));
+    const onDown = (ev: MouseEvent) => { if (!inside(ev.target as Node)) shut(false); };
+    const onKey = (ev: KeyboardEvent) => { if (ev.key === 'Escape') shut(inside(document.activeElement)); };
+    const onFocusIn = (ev: FocusEvent) => { if (!inside(ev.target as Node)) shut(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('focusin', onFocusIn);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('focusin', onFocusIn);
+    };
+  }, [open, shut]);
+  return {
+    open,
+    close: () => shut(false),
+    wrapRef,
+    triggerProps: {
+      ref: triggerRef,
+      'aria-expanded': open,
+      ...(open ? { 'aria-controls': id } : {}),
+      onMouseDown: (ev: { preventDefault: () => void }) => { ev.preventDefault(); setOpen((v) => !v); },
+      onClick: (ev: { detail: number }) => { if (ev.detail === 0) setOpen((v) => !v); },
+    },
+    panelProps: { id, role: 'group' as const },
+  };
+}
+
+/** The trigger every panel shares: the ⋯ and `Style ▾` buttons. */
+const PANEL_TRIGGER = 'inline-flex h-7 items-center gap-1 rounded px-1.5 text-xs font-semibold cursor-pointer border-none';
+const PANEL_TRIGGER_STATE = (open: boolean) => (open ? 'bg-surface-hover text-text-primary' : 'bg-transparent text-text-secondary hover:bg-surface-hover');
+const PANEL = 'absolute top-full z-20 mt-1 rounded-md border border-border bg-surface-panel shadow-lg';
+
 export default function DocumentToolbar({
   editor,
   actions,
@@ -1089,6 +1219,7 @@ export default function DocumentToolbar({
   onToggleGutter,
   onInsertImage,
   density = 'full',
+  size: sizeProp = 'auto',
   'data-testid': testId = 'document-toolbar',
 }: DocumentToolbarProps) {
   // Subscribes to the editor so the controls track the CURSOR, not just the
@@ -1166,53 +1297,59 @@ export default function DocumentToolbar({
     }
   }, [editor]);
 
+  // Every hook above the boot guard, in one order on every render. The roving
+  // hook used to sit BELOW `return null`, which React tolerates only while
+  // `editor` never flips after mount.
+  const roving = useRovingToolbar();
+  const { ref: rovingRef, ...rovingProps } = roving;
+  /**
+   * The bar measures its OWN box: a ResizeObserver rather than a CSS
+   * container query, for the reason the composer gives — `container-type`
+   * applies layout containment, and the link popover is `position: fixed`
+   * inside this box. A callback ref, so a bar that mounts after the editor
+   * boots is observed from its first paint.
+   */
+  const [width, setWidth] = useState<number | null>(null);
+  const observer = useRef<ResizeObserver | null>(null);
+  const rootRef = useCallback((el: HTMLDivElement | null) => {
+    (rovingRef as MutableRefObject<HTMLDivElement | null>).current = el;
+    observer.current?.disconnect();
+    observer.current = null;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width;
+      if (w != null) setWidth(w);
+    });
+    ro.observe(el);
+    observer.current = ro;
+  }, [rovingRef]);
+  const more = usePanel();
+  const stylePanel = usePanel();
+  const size: DocumentToolbarSize = sizeProp === 'auto' ? documentToolbarSize(width) : sizeProp;
+
   // Rendering nothing while the editor boots keeps every handler below able to
   // assume a live editor, instead of guarding each one.
   // Destroyed counts as absent: see `has`.
   if (!editor || editor.isDestroyed) return null;
 
-  const roving = useRovingToolbar();
+  const full = density === 'full';
+  // Compact keeps every mark and list and nothing else — as it always did —
+  // and never grows a ⋯; the width rules are for the full bar.
+  const inline: ReadonlySet<ToolbarGroup> = full ? INLINE_GROUPS[size] : new Set(['marksExtra', 'listsExtra']);
+  const on = (g: ToolbarGroup) => inline.has(g);
+  const tucked = (g: ToolbarGroup) => full && !inline.has(g);
 
-  return (
-    <div
-      // It has said `role="toolbar"` since it was written, and did not behave
-      // like one: 22 tab stops inside it and arrow keys that did nothing. A
-      // declared role is a promise about the keyboard — a reader is told
-      // "toolbar" and reaches for the arrows. The hook keeps that promise
-      // without a wrapper element, so the layout, density attribute and class
-      // names here are untouched. Native selects keep their own arrows.
-      {...roving}
-      data-testid={testId}
-      role="toolbar"
-      aria-label="Document formatting"
-      data-density={density}
-      className="flex flex-wrap items-center gap-0.5 px-2 py-1.5"
-    >
-      {/* Undo/redo live leftmost, as in every writing tool. With Collaboration
-          bound these are the Y.js UndoManager's, not ProseMirror's history —
-          which is the correct behaviour on a shared document: undo takes back
-          YOUR edit, not whatever a collaborator typed most recently. */}
-      <ToolButton
-        btn={{
-          key: 'undo', label: '↶', hint: 'Undo',
-          run: (e) => { e.chain().focus().undo().run(); }, active: () => false,
-        }}
-        editor={editor}
-        active={false}
-        testId={`${testId}-undo`}
-      />
-      <ToolButton
-        btn={{
-          key: 'redo', label: '↷', hint: 'Redo',
-          run: (e) => { e.chain().focus().redo().run(); }, active: () => false,
-        }}
-        editor={editor}
-        active={false}
-        testId={`${testId}-redo`}
-      />
-      {density === 'full' && (<>
-      <Divider />
+  const mark = (b: MarkButton) => (
+    <ToolButton key={b.key} btn={b} editor={editor} active={state?.flags[b.key] ?? false} testId={`${testId}-${b.key}`} />
+  );
+  const marksCore = MARKS.filter((b) => !EXTRA_MARKS.has(b.key));
+  const marksExtra = MARKS.filter((b) => EXTRA_MARKS.has(b.key));
+  const listsCore = LISTS.filter((b) => !EXTRA_LISTS.has(b.key));
+  const listsExtra = LISTS.filter((b) => EXTRA_LISTS.has(b.key));
 
+  /** The three style selects, side by side on the bar or stacked in the `Style ▾` panel. */
+  const selectControls = (stacked: boolean) => (
+    <>
       <Select
         size="sm"
         data-testid={`${testId}-block`}
@@ -1220,7 +1357,7 @@ export default function DocumentToolbar({
         value={state?.block ?? 'paragraph'}
         options={BLOCK_OPTIONS}
         onChange={(e) => setBlock(e.target.value)}
-        className="w-[140px]"
+        className={stacked ? 'w-full' : 'w-[140px]'}
       />
 
       {/* Typeface and size, where a word processor puts them: between the
@@ -1230,7 +1367,7 @@ export default function DocumentToolbar({
           worse than an absent one. */}
       {has(editor, 'setFontFamily') && (
         <>
-          <Divider />
+          {!stacked && <Divider />}
           <Select
             size="sm"
             data-testid={`${testId}-font-family`}
@@ -1245,7 +1382,7 @@ export default function DocumentToolbar({
               if (e.target.value) chain['setFontFamily']!(e.target.value).run();
               else chain['unsetFontFamily']!().run();
             }}
-            className="w-[130px]"
+            className={stacked ? 'w-full' : 'w-[130px]'}
           />
         </>
       )}
@@ -1261,70 +1398,58 @@ export default function DocumentToolbar({
             if (e.target.value) chain['setFontSize']!(e.target.value).run();
             else chain['unsetFontSize']!().run();
           }}
-          className="w-[72px]"
+          className={stacked ? 'w-full' : 'w-[72px]'}
         />
       )}
-      </>)}
+    </>
+  );
 
-      <Divider />
-      {MARKS.map((b) => (
-        <ToolButton key={b.key} btn={b} editor={editor} active={state?.flags[b.key] ?? false} testId={`${testId}-${b.key}`} />
-      ))}
+  /* Indent and outdent, and ONLY inside a list.
+     A word processor offers these for paragraphs too, but this schema has
+     no paragraph indent — offering them everywhere would give two buttons
+     that quietly do nothing everywhere except a list, which is worse than
+     not offering them. They appear where they work, the way the table
+     edits do. */
+  const indentControls = has(editor, 'sinkListItem') && (state?.flags['inListItem'] ?? false) ? (
+    <>
+      <ToolButton
+        btn={{
+          key: 'outdent', label: '⇤', hint: 'Outdent  Shift-Tab',
+          run: (e) => {
+            const item = state?.flags['inTaskItem'] ? 'taskItem' : 'listItem';
+            (e.chain().focus() as never as Record<string, (n: string) => { run: () => void }>)['liftListItem']!(item).run();
+          },
+          active: () => false,
+        }}
+        editor={editor}
+        active={false}
+        testId={`${testId}-outdent`}
+      />
+      <ToolButton
+        btn={{
+          key: 'indent', label: '⇥', hint: 'Indent  Tab',
+          run: (e) => {
+            const item = state?.flags['inTaskItem'] ? 'taskItem' : 'listItem';
+            (e.chain().focus() as never as Record<string, (n: string) => { run: () => void }>)['sinkListItem']!(item).run();
+          },
+          active: () => false,
+        }}
+        editor={editor}
+        active={false}
+        testId={`${testId}-indent`}
+      />
+    </>
+  ) : null;
 
-      <Divider />
-      {LISTS.map((b) => (
-        <ToolButton key={b.key} btn={b} editor={editor} active={state?.flags[b.key] ?? false} testId={`${testId}-${b.key}`} />
-      ))}
-
-      {density === 'full' && (<>
-      {/* Indent and outdent, and ONLY inside a list.
-          A word processor offers these for paragraphs too, but this schema has
-          no paragraph indent — offering them everywhere would give two buttons
-          that quietly do nothing everywhere except a list, which is worse than
-          not offering them. They appear where they work, the way the table
-          edits do. */}
-      {has(editor, 'sinkListItem') && (state?.flags['inListItem'] ?? false) && (
-        <>
-          <ToolButton
-            btn={{
-              key: 'outdent', label: '⇤', hint: 'Outdent  Shift-Tab',
-              run: (e) => {
-                const item = state?.flags['inTaskItem'] ? 'taskItem' : 'listItem';
-                (e.chain().focus() as never as Record<string, (n: string) => { run: () => void }>)['liftListItem']!(item).run();
-              },
-              active: () => false,
-            }}
-            editor={editor}
-            active={false}
-            testId={`${testId}-outdent`}
-          />
-          <ToolButton
-            btn={{
-              key: 'indent', label: '⇥', hint: 'Indent  Tab',
-              run: (e) => {
-                const item = state?.flags['inTaskItem'] ? 'taskItem' : 'listItem';
-                (e.chain().focus() as never as Record<string, (n: string) => { run: () => void }>)['sinkListItem']!(item).run();
-              },
-              active: () => false,
-            }}
-            editor={editor}
-            active={false}
-            testId={`${testId}-indent`}
-          />
-        </>
-      )}
-
-      {/* One COLOUR group: ink, highlight paint, and the highlight toggle.
-          The toggle used to carry its own divider and stand alone, which put a
-          boundary between two controls that do the same job to the same text
-          and none between the lists and the palettes. The condition is the
-          union of the three so the boundary appears with whichever of them the
-          host's extension set actually registers, and never leaves a dangling
-          line in front of nothing. */}
-      {(has(editor, 'setColor') ||
-        has(editor, 'setBackgroundColor') ||
-        has(editor, 'toggleHighlight')) && <Divider />}
-
+  /* One COLOUR group: ink, highlight paint, and the highlight toggle.
+     The toggle used to carry its own divider and stand alone, which put a
+     boundary between two controls that do the same job to the same text
+     and none between the lists and the palettes. The condition is the
+     union of the three so the boundary appears with whichever of them the
+     host's extension set actually registers, and never leaves a dangling
+     line in front of nothing. */
+  const colourControls = (has(editor, 'setColor') || has(editor, 'setBackgroundColor') || has(editor, 'toggleHighlight')) ? (
+    <>
       {has(editor, 'setColor') && (
         <ColorMenu
           editor={editor}
@@ -1344,28 +1469,30 @@ export default function DocumentToolbar({
           swatches={HIGHLIGHTS}
           setCmd="setBackgroundColor"
           unsetCmd="unsetBackgroundColor"
-          glyph={'\u270E'}
+          glyph={'✎'}
           title="Highlight colour"
           testId={`${testId}-highlight-color`}
         />
       )}
-
       {has(editor, 'toggleHighlight') && (
-        <>
-          <ToolButton
-            btn={{
-              key: 'highlight', label: '🖍', hint: 'Highlight',
-              run: (e) => { (e.chain().focus() as never as Record<string, () => { run: () => void }>)['toggleHighlight']!().run(); },
-              active: (e) => e.isActive('highlight'),
-            }}
-            editor={editor}
-            active={state?.flags['highlight'] ?? false}
-            testId={`${testId}-highlight`}
-          />
-        </>
+        <ToolButton
+          btn={{
+            key: 'highlight', label: '🖍', hint: 'Highlight',
+            run: (e) => { (e.chain().focus() as never as Record<string, () => { run: () => void }>)['toggleHighlight']!().run(); },
+            active: (e) => e.isActive('highlight'),
+          }}
+          editor={editor}
+          active={state?.flags['highlight'] ?? false}
+          testId={`${testId}-highlight`}
+        />
       )}
+    </>
+  ) : null;
 
-      {(has(editor, 'setTextAlign') || has(editor, 'setLineSpacing')) && <Divider />}
+  /* Alignment and line spacing sit together: both change the SHAPE of a
+     paragraph, and neither changes the letters. */
+  const shapeControls = (has(editor, 'setTextAlign') || has(editor, 'setLineSpacing')) ? (
+    <>
       {has(editor, 'setTextAlign') && (
         <AlignMenu
           editor={editor}
@@ -1373,10 +1500,6 @@ export default function DocumentToolbar({
           testId={`${testId}-align`}
         />
       )}
-      {/* Line spacing sits with alignment rather than with the character
-          marks: both change the SHAPE of a paragraph, and neither changes the
-          letters. It is the last main-bar control Google Docs had and this one
-          did not. */}
       {has(editor, 'setLineSpacing') && (
         <LineSpacingMenu
           editor={editor}
@@ -1384,33 +1507,15 @@ export default function DocumentToolbar({
           testId={`${testId}-line-spacing`}
         />
       )}
+    </>
+  ) : null;
 
-      {/* INSERT: link, rule, table, image — the things that put something new
-          on the page, as opposed to everything left of here, which restyles
-          what is already there. */}
-      </>)}
-
-      <Divider />
-      <span ref={linkAnchor} className="inline-flex">
-        <ToolButton
-          btn={{
-            key: 'link', label: '🔗', hint: 'Link  [text](url)',
-            // Opening a panel, not prompting. Toggling OFF is immediate
-            // because it needs no input; adding or editing needs a URL, and a
-            // native prompt for that was a browser-chrome modal that blocked
-            // the page and could not be themed or validated.
-            run: (e) => {
-              if (e.isActive('link')) { e.chain().focus().unsetLink().run(); return; }
-              setLinkOpen(true);
-            },
-            active: (e) => e.isActive('link'),
-          }}
-          editor={editor}
-          active={state?.flags['link'] ?? false}
-          testId={`${testId}-link`}
-        />
-      </span>
-      {density === 'full' && (<>
+  /* INSERT: rule, table, image — the things that put something new on the
+     page, as opposed to everything left of here, which restyles what is
+     already there. The link stays on the bar at every width: it is the one
+     insert a writer reaches for mid-sentence. */
+  const insertControls = (
+    <>
       <ToolButton
         btn={{
           key: 'hr', label: '—', hint: 'Divider  ---',
@@ -1440,36 +1545,194 @@ export default function DocumentToolbar({
           testId={`${testId}-image`}
         />
       )}
+    </>
+  );
 
-      {/* Clear formatting sits LAST, alone behind its own boundary, which is
-          where Word and Google Docs both put it. It used to be wedged between
-          the link and the horizontal rule, in the middle of the insert group —
-          a destructive command inside a run of additive ones, one slip away
-          from stripping a paragraph you meant to add a table to. */}
-      {has(editor, 'unsetAllMarks') && (
-        <>
-          <Divider />
-          <ToolButton
-            btn={{
-              key: 'clear-formatting', label: '⌫', hint: 'Clear formatting',
-              // Marks AND block type, which is what "clear formatting" means in
-              // every word processor: a bolded heading becomes normal text, not
-              // an unbolded heading. `clearNodes` unwraps a list too — also
-              // correct, and also what people expect.
-              run: (e) => { e.chain().focus().unsetAllMarks().clearNodes().run(); },
-              active: () => false,
-            }}
-            editor={editor}
-            active={false}
-            testId={`${testId}-clear-formatting`}
-          />
-        </>
-      )}
+  /* Clear formatting sits LAST, alone behind its own boundary, which is
+     where Word and Google Docs both put it. It used to be wedged between
+     the link and the horizontal rule, in the middle of the insert group —
+     a destructive command inside a run of additive ones, one slip away
+     from stripping a paragraph you meant to add a table to. */
+  const clearControl = has(editor, 'unsetAllMarks') ? (
+    <ToolButton
+      btn={{
+        key: 'clear-formatting', label: '⌫', hint: 'Clear formatting',
+        // Marks AND block type, which is what "clear formatting" means in
+        // every word processor: a bolded heading becomes normal text, not
+        // an unbolded heading. `clearNodes` unwraps a list too — also
+        // correct, and also what people expect.
+        run: (e) => { e.chain().focus().unsetAllMarks().clearNodes().run(); },
+        active: () => false,
+      }}
+      editor={editor}
+      active={false}
+      testId={`${testId}-clear-formatting`}
+    />
+  ) : null;
 
+  // What ⋯ holds at this width, in bar order, dividers between the groups
+  // that are present. Empty means no ⋯ at all.
+  const overflowGroups: ReactNode[] = [];
+  if (tucked('marksExtra')) overflowGroups.push(<span key="marksExtra" className="inline-flex gap-0.5">{marksExtra.map(mark)}</span>);
+  if (tucked('listsExtra')) overflowGroups.push(<span key="listsExtra" className="inline-flex gap-0.5">{listsExtra.map(mark)}</span>);
+  if (tucked('indent') && indentControls) overflowGroups.push(<span key="indent" className="inline-flex gap-0.5">{indentControls}</span>);
+  if (tucked('colour') && colourControls) overflowGroups.push(<span key="colour" className="inline-flex gap-0.5">{colourControls}</span>);
+  if (tucked('shape') && shapeControls) overflowGroups.push(<span key="shape" className="inline-flex gap-0.5">{shapeControls}</span>);
+  if (tucked('insert')) overflowGroups.push(<span key="insert" className="inline-flex gap-0.5">{insertControls}</span>);
+  if (tucked('clear') && clearControl) overflowGroups.push(<span key="clear" className="inline-flex gap-0.5">{clearControl}</span>);
+
+  const blockLabel = BLOCK_OPTIONS.find((o) => o.value === (state?.block ?? 'paragraph'))?.label ?? 'Normal text';
+
+  return (
+    <div
+      // It has said `role="toolbar"` since it was written, and did not behave
+      // like one: 22 tab stops inside it and arrow keys that did nothing. A
+      // declared role is a promise about the keyboard — a reader is told
+      // "toolbar" and reaches for the arrows. The hook keeps that promise
+      // without a wrapper element. Native selects keep their own arrows.
+      {...rovingProps}
+      ref={rootRef}
+      data-testid={testId}
+      role="toolbar"
+      aria-label="Document formatting"
+      data-density={density}
+      data-size={size}
+      // `flex-nowrap` and `min-w-0`: one row, always. The width rules above
+      // decide what fits; the row never folds.
+      className="flex min-w-0 flex-nowrap items-center gap-0.5 px-2 py-1.5"
+    >
+      {/* Undo/redo live leftmost, as in every writing tool. With Collaboration
+          bound these are the Y.js UndoManager's, not ProseMirror's history —
+          which is the correct behaviour on a shared document: undo takes back
+          YOUR edit, not whatever a collaborator typed most recently. */}
+      <ToolButton
+        btn={{
+          key: 'undo', label: '↶', hint: 'Undo',
+          run: (e) => { e.chain().focus().undo().run(); }, active: () => false,
+        }}
+        editor={editor}
+        active={false}
+        testId={`${testId}-undo`}
+      />
+      <ToolButton
+        btn={{
+          key: 'redo', label: '↷', hint: 'Redo',
+          run: (e) => { e.chain().focus().redo().run(); }, active: () => false,
+        }}
+        editor={editor}
+        active={false}
+        testId={`${testId}-redo`}
+      />
+
+      {full && on('selects') && (<>
+        <Divider />
+        {selectControls(false)}
+      </>)}
+      {full && !on('selects') && (<>
+        <Divider />
+        {/* Narrow: one `Style ▾` in place of three selects. The panel holds
+            the same three controls, stacked, under the same test ids. */}
+        <span ref={stylePanel.wrapRef} className="relative inline-flex">
+          <button
+            type="button"
+            data-testid={`${testId}-style`}
+            title={`Text style: ${blockLabel}`}
+            aria-label="Text style"
+            {...stylePanel.triggerProps}
+            className={cn(PANEL_TRIGGER, 'px-2', PANEL_TRIGGER_STATE(stylePanel.open))}
+          >
+            Style
+            <span aria-hidden className="text-[8px] leading-none">▾</span>
+          </button>
+          {stylePanel.open && (
+            <span
+              {...stylePanel.panelProps}
+              aria-label="Text style"
+              data-testid={`${testId}-style-panel`}
+              className={cn(PANEL, 'left-0 flex w-56 flex-col gap-1.5 p-2')}
+            >
+              {selectControls(true)}
+            </span>
+          )}
+        </span>
+      </>)}
+
+      <Divider />
+      {marksCore.map(mark)}
+      {on('marksExtra') && marksExtra.map(mark)}
+
+      <Divider />
+      {listsCore.map(mark)}
+      {on('listsExtra') && listsExtra.map(mark)}
+      {on('indent') && indentControls}
+
+      {on('colour') && colourControls && (<>
+        <Divider />
+        {colourControls}
+      </>)}
+
+      {on('shape') && shapeControls && (<>
+        <Divider />
+        {shapeControls}
+      </>)}
+
+      <Divider />
+      <span ref={linkAnchor} className="inline-flex">
+        <ToolButton
+          btn={{
+            key: 'link', label: '🔗', hint: 'Link  [text](url)',
+            // Opening a panel, not prompting. Toggling OFF is immediate
+            // because it needs no input; adding or editing needs a URL, and a
+            // native prompt for that was a browser-chrome modal that blocked
+            // the page and could not be themed or validated.
+            run: (e) => {
+              if (e.isActive('link')) { e.chain().focus().unsetLink().run(); return; }
+              setLinkOpen(true);
+            },
+            active: (e) => e.isActive('link'),
+          }}
+          editor={editor}
+          active={state?.flags['link'] ?? false}
+          testId={`${testId}-link`}
+        />
+      </span>
+      {on('insert') && insertControls}
+
+      {on('clear') && clearControl && (<>
+        <Divider />
+        {clearControl}
+      </>)}
+
+      {overflowGroups.length > 0 && (<>
+        <Divider />
+        <span ref={more.wrapRef} className="relative inline-flex">
+          <button
+            type="button"
+            data-testid={`${testId}-more`}
+            title="More formatting"
+            aria-label="More formatting"
+            {...more.triggerProps}
+            className={cn(PANEL_TRIGGER, 'min-w-7 justify-center', PANEL_TRIGGER_STATE(more.open))}
+          >
+            ⋯
+          </button>
+          {more.open && (
+            <span
+              {...more.panelProps}
+              aria-label="More formatting"
+              data-testid={`${testId}-more-panel`}
+              // Right-aligned under ⋯, which sits at the bar's right; wraps
+              // into rows when the group is long, but stays a compact card.
+              className={cn(PANEL, 'right-0 flex max-w-[22rem] flex-wrap items-center gap-0.5 p-1')}
+            >
+              {overflowGroups.map((g, i) => (i === 0 ? g : [<Divider key={`d${i}`} />, g]))}
+            </span>
+          )}
+        </span>
       </>)}
 
       {(onToggleGutter && gutterCount > 0) || actions ? (
-        <span className="ml-auto flex items-center gap-1">
+        <span className="ml-auto flex shrink-0 items-center gap-1">
           {/* Left of the host's actions so presence avatars stay pinned to the
               far edge where every collaborative tool puts them. */}
           {onToggleGutter && gutterCount > 0 && (
@@ -1481,7 +1744,7 @@ export default function DocumentToolbar({
               testId={`${testId}-gutter-toggle`}
             />
           )}
-          {actions}
+          <SizeContext.Provider value={size}>{actions}</SizeContext.Provider>
         </span>
       ) : null}
 

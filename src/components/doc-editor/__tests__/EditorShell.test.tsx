@@ -181,6 +181,15 @@ describe('FloatingComposerDock', () => {
   // 2.376.0: pinned in a shell the dock is the column's own chrome, not a
   // card dropped onto it — a 768px pill centred in a 1300px column, on a
   // shadow, with grey under it, read as an embedded frame.
+  it('the toolbar row and the dock share the gutter token, so their edges coincide', () => {
+    // The deck page measured the slide toolbar 4px outside the composer:
+    // `px-3` on this row against `--dock-inset` (1rem) on the dock. One
+    // token for both, and the host can move them together.
+    render(<EditorShell title="x" toolbar={<button type="button">Tool</button>} footer={<FloatingComposerDock composer={<textarea aria-label="Message" />} />}><p /></EditorShell>);
+    expect(screen.getByTestId('editor-shell-toolbar').className).toContain('px-[var(--dock-inset,1rem)]');
+    expect(screen.getByTestId('floating-composer-dock').className).toContain('px-[var(--dock-inset,1rem)]');
+  });
+
   it('pinned, it spans the column inside the toolbar gutter as a flat card', () => {
     render(<EditorShell title="x" footer={<FloatingComposerDock maxWidth="xl" composer={<textarea aria-label="Message" />} />}><p /></EditorShell>);
     const dock = screen.getByTestId('floating-composer-dock');

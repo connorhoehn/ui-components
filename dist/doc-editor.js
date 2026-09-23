@@ -1,43 +1,43 @@
 import { n as e, t } from "./useWebSocket-C9oAM0NL.js";
 import { t as n } from "./cn-DhjIN-s0.js";
-import { _ as r } from "./overlayStack-BDlo8PJg.js";
+import { _ as r } from "./overlayStack-CHdlnODN.js";
 import { t as i } from "./Card-RQCeAPNU.js";
 import { t as a } from "./IconButton-C3DMtvSx.js";
 import { n as o, t as s } from "./Stack-CkiMw5K0.js";
-import { i as c, r as l } from "./Text-B0U4t3IQ.js";
+import { i as c, r as l } from "./Text-nbwye3hS.js";
 import { t as u } from "./Banner-6sJQ2hAL.js";
-import { t as d } from "./Chip-DYqbAD3L.js";
-import { t as f } from "./Modal-D2qxMX2_.js";
-import { t as p } from "./EmptyState-DQYx5Oyy.js";
+import { t as d } from "./Chip-B_HZn3xl.js";
+import { t as f } from "./Modal-DMFNRUDx.js";
+import { t as p } from "./EmptyState-DFWbBBcY.js";
 import { t as m } from "./SegmentedControl-X19S_gNQ.js";
 import { n as h } from "./Tabs-BGZyr2nH.js";
 import { t as g } from "./Input-DLknWXri.js";
 import { t as _ } from "./Textarea-Dz4doxTv.js";
-import { t as v } from "./Avatar-Bq_1SEQ2.js";
+import { t as v } from "./Avatar-DeJWic2B.js";
 import { t as y } from "./InlineAlert-CRnIKeAF.js";
 import { t as b } from "./CardHeader-CsPhVpCm.js";
-import { t as x } from "./PresenceAvatars-CubTOqbV.js";
-import { t as S } from "./InlinePopover-sx7SpM1v.js";
-import { t as C } from "./Badge-CrD0vvt4.js";
+import { t as x } from "./PresenceAvatars-Dmtv09Kg.js";
+import { t as S } from "./InlinePopover-DtYo8_ZC.js";
+import { t as C } from "./Badge-C23_Y4Yj.js";
 import { t as w } from "./ChangeDiff-CzO8zCc-.js";
-import { t as T } from "./Select-CD8ixtYi.js";
-import { t as E } from "./Checkbox-Db43XgBJ.js";
-import { n as D } from "./FileKindMark-BY0l5eoK.js";
+import { t as T } from "./Select-D5mMMegw.js";
+import { t as E } from "./Checkbox-Dftwml_V.js";
+import { n as D } from "./FileKindMark-Ovzug-VD.js";
 import { t as O } from "./activationKey-CjbL3LUv.js";
-import { A as k, k as A } from "./renderers-5O9bh08s.js";
-import { A as j, B as ee, C as M, D as N, E as P, F, G as I, H as L, I as R, L as z, M as te, N as B, O as V, P as H, R as ne, S as U, T as re, V as ie, _ as ae, a as oe, b as se, c as ce, d as le, f as ue, g as de, h as fe, i as pe, j as me, k as he, l as ge, m as _e, n as ve, o as ye, p as be, r as xe, s as Se, t as Ce, u as we, v as Te, w as Ee, x as De, y as Oe, z as ke } from "./PresentationEditor-DCi0FwKo.js";
-import { o as Ae, t as je } from "./VerdictChip-CtR3yfCy.js";
+import { A as k, k as A } from "./renderers-BX3ZB5kO.js";
+import { A as j, B as ee, C as M, D as N, E as P, F, G as I, H as L, I as R, L as z, M as te, N as B, O as V, P as H, R as ne, S as U, T as re, V as ie, _ as ae, a as oe, b as se, c as ce, d as le, f as ue, g as de, h as fe, i as pe, j as me, k as he, l as ge, m as _e, n as ve, o as ye, p as be, r as xe, s as Se, t as Ce, u as we, v as Te, w as Ee, x as De, y as Oe, z as ke } from "./PresentationEditor-SWVtuiCN.js";
+import { o as Ae, t as je } from "./VerdictChip-Bp8XP18h.js";
 import { a as Me, c as Ne, i as Pe, n as Fe, o as Ie, r as Le, s as Re, t as W } from "./TiptapEditor-Kdj65m6g.js";
 import { i as ze, n as Be, r as Ve, t as He } from "./FloatingComposerDock-DMUQCjea.js";
-import { A as Ue, B as We, C as Ge, D as Ke, E as qe, F as Je, H as Ye, I as Xe, L as Ze, M as Qe, N as $e, O as et, P as tt, R as nt, S as rt, T as it, U as at, V as ot, W as st, _ as ct, a as lt, b as ut, c as dt, d as ft, f as pt, g as mt, h as ht, i as gt, j as _t, k as vt, l as yt, m as bt, o as xt, p as St, r as Ct, s as wt, t as Tt, u as Et, v as Dt, w as Ot, x as kt, y as At, z as jt } from "./DocumentEditorPage-DlgxOQa9.js";
-import { _ as Mt, a as Nt, c as Pt, d as Ft, f as It, g as Lt, h as Rt, i as zt, l as Bt, m as Vt, n as Ht, o as Ut, p as Wt, r as Gt, s as Kt, t as qt, u as Jt, v as Yt, y as Xt } from "./useDocumentImageUpload-Beluh0s1.js";
-import { createContext as Zt, useCallback as G, useContext as Qt, useEffect as K, useId as $t, useImperativeHandle as en, useMemo as q, useRef as J, useState as Y } from "react";
+import { A as Ue, B as We, C as Ge, D as Ke, E as qe, F as Je, H as Ye, I as Xe, L as Ze, M as Qe, N as $e, O as et, P as tt, R as nt, S as rt, T as it, U as at, V as ot, W as st, _ as ct, a as lt, b as ut, c as dt, d as ft, f as pt, g as mt, h as ht, i as gt, j as _t, k as vt, l as yt, m as bt, o as xt, p as St, r as Ct, s as wt, t as Tt, u as Et, v as Dt, w as Ot, x as kt, y as At, z as jt } from "./DocumentEditorPage-CjcAqj6I.js";
+import { S as Mt, _ as Nt, a as Pt, b as Ft, c as It, d as Lt, f as Rt, g as zt, h as Bt, i as Vt, l as Ht, m as Ut, n as Wt, o as Gt, p as Kt, r as qt, s as Jt, t as Yt, u as Xt, v as Zt, x as Qt, y as $t } from "./useDocumentImageUpload-DYBLg7f8.js";
+import { createContext as en, useCallback as G, useContext as tn, useEffect as K, useId as nn, useImperativeHandle as rn, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
-import * as tn from "yjs";
-import { NodeViewWrapper as nn, ReactNodeViewRenderer as rn } from "@tiptap/react";
-import { relativePositionToAbsolutePosition as an, ySyncPluginKey as on } from "@tiptap/y-tiptap";
+import * as an from "yjs";
+import { NodeViewWrapper as on, ReactNodeViewRenderer as sn } from "@tiptap/react";
+import { relativePositionToAbsolutePosition as cn, ySyncPluginKey as ln } from "@tiptap/y-tiptap";
 //#region src/components/doc-editor/DocumentListPage.tsx
-function sn(e) {
+function un(e) {
 	let t = Date.now(), n = new Date(e).getTime();
 	if (isNaN(n)) return "";
 	let r = t - n;
@@ -51,7 +51,7 @@ function sn(e) {
 	let s = Math.floor(o / 24);
 	return s < 30 ? `${s}d ago` : `${Math.floor(s / 30)}mo ago`;
 }
-var cn = {
+var dn = {
 	draft: {
 		bg: "var(--color-warning-bg)",
 		color: "var(--color-warning-fg)"
@@ -69,8 +69,8 @@ var cn = {
 		color: "var(--color-text-secondary)"
 	}
 };
-function ln({ status: e }) {
-	let t = cn[e] ?? cn.draft;
+function fn({ status: e }) {
+	let t = dn[e] ?? dn.draft;
 	return /* @__PURE__ */ Z("span", {
 		className: n("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-full capitalize leading-[18px]"),
 		style: {
@@ -80,7 +80,7 @@ function ln({ status: e }) {
 		children: e
 	});
 }
-var un = {
+var pn = {
 	editor: {
 		icon: "✏",
 		label: "Editing"
@@ -94,12 +94,12 @@ var un = {
 		label: "Viewing"
 	}
 };
-function dn({ users: e, onClickUser: t }) {
+function mn({ users: e, onClickUser: t }) {
 	let r = e.slice(0, 5), i = e.length - 5;
 	return /* @__PURE__ */ Q("div", {
 		className: n("flex items-center gap-0.5"),
 		children: [r.map((e, r) => {
-			let i = un[e.mode ?? "editor"] ?? un.editor, a = e.idle === !0, o = a ? "var(--color-warning)" : "var(--color-success)";
+			let i = pn[e.mode ?? "editor"] ?? pn.editor, a = e.idle === !0, o = a ? "var(--color-warning)" : "var(--color-success)";
 			return /* @__PURE__ */ Q("button", {
 				type: "button",
 				title: `${e.displayName} — ${a ? "Away" : i.label}`,
@@ -134,7 +134,7 @@ function dn({ users: e, onClickUser: t }) {
 		})]
 	});
 }
-function fn({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i, onDeleteDocument: a, onJumpToUser: o, hideHeader: s }) {
+function hn({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i, onDeleteDocument: a, onJumpToUser: o, hideHeader: s }) {
 	let [c, l] = Y(!1), [u, d] = Y(null), [f, p] = Y(null), [m, h] = Y(1), g = Math.max(1, Math.ceil(e.length / 10)), _ = Math.min(m, g), v = q(() => {
 		let t = (_ - 1) * 10;
 		return e.slice(t, t + 10);
@@ -196,7 +196,7 @@ function fn({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 												className: n("text-[15px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"),
 												children: e.title
 											}),
-											/* @__PURE__ */ Z(ln, { status: e.status }),
+											/* @__PURE__ */ Z(fn, { status: e.status }),
 											e.type && /* @__PURE__ */ Z("span", {
 												className: n("inline-block px-2 py-px text-[11px] font-semibold rounded-full bg-surface-hover text-text-secondary whitespace-nowrap shrink-0"),
 												children: e.type
@@ -213,13 +213,13 @@ function fn({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 									}),
 									/* @__PURE__ */ Q("div", {
 										className: n("text-xs text-text-tertiary"),
-										children: ["Updated ", sn(e.updatedAt)]
+										children: ["Updated ", un(e.updatedAt)]
 									})
 								]
 							}),
 							i.length > 0 && /* @__PURE__ */ Z("div", {
 								className: n("shrink-0"),
-								children: /* @__PURE__ */ Z(dn, {
+								children: /* @__PURE__ */ Z(mn, {
 									users: i,
 									onClickUser: (t) => o(e.id, t)
 								})
@@ -277,14 +277,14 @@ function fn({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 }
 //#endregion
 //#region src/components/doc-editor/useFollowCursor.ts
-function pn(e, t) {
+function gn(e, t) {
 	for (let [n, r] of e.getStates()) {
 		let e = r?.user;
 		if (e && t(e)) return n;
 	}
 	return null;
 }
-function mn({ editor: e, provider: t, followClientId: n, onLost: r }) {
+function _n({ editor: e, provider: t, followClientId: n, onLost: r }) {
 	K(() => {
 		let i = t?.awareness;
 		if (!e || !i || n == null) return;
@@ -296,9 +296,9 @@ function mn({ editor: e, provider: t, followClientId: n, onLost: r }) {
 			}
 			let a = t.cursor;
 			if (a) try {
-				let t = on.getState(e.view.state);
+				let t = ln.getState(e.view.state);
 				if (!t?.type || !t?.binding?.mapping) return;
-				let n = an(t.doc, t.type, tn.createRelativePositionFromJSON(a.head), t.binding.mapping);
+				let n = cn(t.doc, t.type, an.createRelativePositionFromJSON(a.head), t.binding.mapping);
 				if (n == null) return;
 				let r = Math.max(0, Math.min(n, e.state.doc.content.size)), i = e.view.domAtPos(r);
 				(i.node instanceof Element ? i.node : i.node.parentElement)?.scrollIntoView({
@@ -317,14 +317,14 @@ function mn({ editor: e, provider: t, followClientId: n, onLost: r }) {
 }
 //#endregion
 //#region src/components/doc-editor/StandaloneTiptap.tsx
-var hn = "prosemirror";
-function gn(e) {
+var vn = "prosemirror";
+function yn(e) {
 	return e.ydoc !== void 0;
 }
-function _n(e) {
-	return gn(e) ? /* @__PURE__ */ Z(vn, { ...e }) : /* @__PURE__ */ Z(yn, { ...e });
+function bn(e) {
+	return yn(e) ? /* @__PURE__ */ Z(xn, { ...e }) : /* @__PURE__ */ Z(Sn, { ...e });
 }
-function vn({ ydoc: e, provider: t, fragment: r, user: i, fragmentName: a = hn, editable: o, placeholder: s, className: c, onFragmentReady: l }) {
+function xn({ ydoc: e, provider: t, fragment: r, user: i, fragmentName: a = vn, editable: o, placeholder: s, className: c, onFragmentReady: l }) {
 	let u = q(() => r ?? e.getXmlFragment(a), [
 		r,
 		e,
@@ -342,7 +342,7 @@ function vn({ ydoc: e, provider: t, fragment: r, user: i, fragmentName: a = hn, 
 		})
 	});
 }
-function yn({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragmentName: c = hn, editable: l, placeholder: u, className: d, onFragmentReady: f, loadingSlot: p, requireSync: m }) {
+function Sn({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragmentName: c = vn, editable: l, placeholder: u, className: d, onFragmentReady: f, loadingSlot: p, requireSync: m }) {
 	let h = o ?? `doc:${i}`, g = J(/* @__PURE__ */ new Set()), _ = G((e) => (g.current.add(e), () => {
 		g.current.delete(e);
 	}), []), v = G((e) => {
@@ -380,7 +380,7 @@ function yn({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragme
 }
 //#endregion
 //#region src/components/doc-editor/ReviewProgress.tsx
-function bn({ current: e, total: t }) {
+function Cn({ current: e, total: t }) {
 	let r = t > 0 ? Math.round(e / t * 100) : 0;
 	return /* @__PURE__ */ Q("div", {
 		className: n("mb-4"),
@@ -403,7 +403,7 @@ function bn({ current: e, total: t }) {
 }
 //#endregion
 //#region src/components/doc-editor/ReviewableItem.tsx
-var xn = {
+var wn = {
 	pending: {
 		bg: "var(--color-warning-bg)",
 		text: "var(--color-warning-fg)"
@@ -420,16 +420,16 @@ var xn = {
 		bg: "var(--color-danger-bg)",
 		text: "var(--color-danger-fg)"
 	}
-}, Sn = {
+}, Tn = {
 	low: "var(--color-neutral)",
 	medium: "var(--color-warning)",
 	high: "var(--color-danger)"
-}, Cn = {
+}, En = {
 	bg: "var(--color-surface-hover)",
 	text: "var(--color-text-secondary)"
 };
-function wn({ item: e, onAck: t, onReject: r }) {
-	let [i, a] = Y(!1), [o, s] = Y(""), [c, l] = Y("none"), u = J(e.status), d = xn[e.status] ?? Cn, f = Sn[e.priority] ?? "var(--color-neutral)", [p, m] = Y(!1), h = J(null);
+function Dn({ item: e, onAck: t, onReject: r }) {
+	let [i, a] = Y(!1), [o, s] = Y(""), [c, l] = Y("none"), u = J(e.status), d = wn[e.status] ?? En, f = Tn[e.priority] ?? "var(--color-neutral)", [p, m] = Y(!1), h = J(null);
 	K(() => () => {
 		h.current && clearTimeout(h.current);
 	}, []), K(() => {
@@ -582,7 +582,7 @@ function wn({ item: e, onAck: t, onReject: r }) {
 }
 //#endregion
 //#region src/components/doc-editor/ChunkViewer.tsx
-var Tn = {
+var On = {
 	summary: {
 		bg: "var(--color-info-bg)",
 		text: "var(--color-info-fg)"
@@ -604,8 +604,8 @@ var Tn = {
 		text: "var(--color-primary-fg)"
 	}
 };
-function En({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, provider: o, comments: s, onAddComment: c, onResolveThread: l, onUnresolveThread: u, participants: d }) {
-	let f = Tn[e.type] ?? Tn.custom, p = e.items.filter((e) => e.status !== "pending").length;
+function kn({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, provider: o, comments: s, onAddComment: c, onResolveThread: l, onUnresolveThread: u, participants: d }) {
+	let f = On[e.type] ?? On.custom, p = e.items.filter((e) => e.status !== "pending").length;
 	return /* @__PURE__ */ Q("div", {
 		className: n("bg-surface border border-border rounded-lg p-5 mb-4"),
 		children: [
@@ -643,7 +643,7 @@ function En({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, p
 					" section has no content. Switch to Editor mode to add content."
 				]
 			}),
-			e.items.length > 0 && /* @__PURE__ */ Q("div", { children: [e.items.map((e) => /* @__PURE__ */ Z(wn, {
+			e.items.length > 0 && /* @__PURE__ */ Q("div", { children: [e.items.map((e) => /* @__PURE__ */ Z(Dn, {
 				item: e,
 				onAck: (n) => t(e.id, n),
 				onReject: (t) => r(e.id, t)
@@ -669,7 +669,7 @@ function En({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, p
 //#endregion
 //#region src/components/doc-editor/AckMode.tsx
 var $ = 4;
-function Dn({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSectionFocus: a, jumpToIndex: o, onJumpComplete: s, getSectionFragment: c, ydoc: l, provider: u, comments: d, onAddComment: f, onResolveThread: p, onUnresolveThread: m }) {
+function An({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSectionFocus: a, jumpToIndex: o, onJumpComplete: s, getSectionFragment: c, ydoc: l, provider: u, comments: d, onAddComment: f, onResolveThread: p, onUnresolveThread: m }) {
 	let [h, g] = Y(0), _ = Math.max(1, Math.ceil(e.length / $)), v = h * $, y = e.slice(v, v + $);
 	if (K(() => {
 		o != null && o >= 0 && o < e.length && (g(Math.floor(o / $)), s?.());
@@ -685,7 +685,7 @@ function Dn({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 	});
 	let b = () => g((e) => Math.max(0, e - 1)), x = () => g((e) => Math.min(_ - 1, e + 1)), S = v + y.length;
 	return /* @__PURE__ */ Q("div", { children: [
-		/* @__PURE__ */ Z(bn, {
+		/* @__PURE__ */ Z(Cn, {
 			current: S,
 			total: e.length
 		}),
@@ -704,7 +704,7 @@ function Dn({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 						style: { background: e.color },
 						children: e.displayName.split(" ").map((e) => e[0]).join("").toUpperCase().slice(0, 2)
 					}, e.clientId))]
-				}), /* @__PURE__ */ Z(En, {
+				}), /* @__PURE__ */ Z(kn, {
 					section: e,
 					onAckItem: (n, r) => t(e.id, n, r),
 					onRejectItem: (t, n) => r(e.id, t, n),
@@ -754,10 +754,10 @@ function Dn({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 }
 //#endregion
 //#region src/components/doc-editor/ActivityFeed.tsx
-function On(e) {
+function jn(e) {
 	return e === "doc.ack" ? "✅" : e === "doc.reject" ? "❌" : e === "doc.add_item" || e === "doc.add_section" ? "➕" : e === "doc.edit_section" ? "✏️" : e === "doc.remove_item" ? "➖" : e === "doc.comment" ? "💬" : e.endsWith(".join") ? "🟢" : e.endsWith(".leave") ? "🔴" : e.startsWith("social.") ? "💬" : e === "pipeline.run.started" ? "▶" : e === "pipeline.run.completed" ? "✓" : e === "pipeline.run.failed" ? "✕" : e === "pipeline.approval.requested" ? "✋" : "•";
 }
-function kn(e, t) {
+function Mn(e, t) {
 	let n = t.documentTitle ? ` in ${t.documentTitle}` : "";
 	switch (e) {
 		case "doc.ack": return `acknowledged "${t.itemText || "item"}"${n}`;
@@ -777,10 +777,10 @@ function kn(e, t) {
 		default: return t.description ? String(t.description) : e;
 	}
 }
-function An(e) {
+function Nn(e) {
 	return e.split(" ").map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function jn(e) {
+function Pn(e) {
 	try {
 		return new Date(e).toLocaleTimeString([], {
 			hour: "2-digit",
@@ -791,7 +791,7 @@ function jn(e) {
 		return "";
 	}
 }
-function Mn(e) {
+function Fn(e) {
 	switch (e) {
 		case "editor": return "editing";
 		case "reviewer": return "reviewing";
@@ -799,7 +799,7 @@ function Mn(e) {
 		default: return "online";
 	}
 }
-function Nn({ events: e, participants: t }) {
+function In({ events: e, participants: t }) {
 	let [r, i] = Y(!1);
 	return /* @__PURE__ */ Q("div", {
 		className: n("bg-surface-panel border border-border rounded-lg overflow-hidden"),
@@ -826,7 +826,7 @@ function Nn({ events: e, participants: t }) {
 					}),
 					e.displayName,
 					" (",
-					Mn(e.mode),
+					Fn(e.mode),
 					")"
 				]
 			}, e.clientId))]
@@ -841,7 +841,7 @@ function Nn({ events: e, participants: t }) {
 					/* @__PURE__ */ Z("div", {
 						className: n("w-[22px] h-[22px] rounded-full text-white flex items-center justify-center text-[9px] font-bold shrink-0 mt-px"),
 						style: { background: e.color || "var(--color-text-tertiary)" },
-						children: An(e.displayName || "Unknown")
+						children: Nn(e.displayName || "Unknown")
 					}),
 					/* @__PURE__ */ Q("div", { children: [
 						/* @__PURE__ */ Z("span", {
@@ -852,15 +852,15 @@ function Nn({ events: e, participants: t }) {
 						/* @__PURE__ */ Q("span", {
 							className: n("text-neutral"),
 							children: [
-								On(e.eventType),
+								jn(e.eventType),
 								" ",
-								kn(e.eventType, e.detail)
+								Mn(e.eventType, e.detail)
 							]
 						})
 					] }),
 					/* @__PURE__ */ Z("span", {
 						className: n("text-[10px] text-text-tertiary whitespace-nowrap ml-auto pl-2 shrink-0"),
-						children: jn(e.timestamp)
+						children: Pn(e.timestamp)
 					})
 				]
 			}, e.id))
@@ -869,16 +869,16 @@ function Nn({ events: e, participants: t }) {
 }
 //#endregion
 //#region src/components/doc-editor/ProposalCard.tsx
-var Pn = {
+var Ln = {
 	high: "High confidence",
 	medium: "Needs your confirmation",
 	low: "Unplaced"
-}, Fn = {
+}, Rn = {
 	high: "success",
 	medium: "warning",
 	low: "neutral"
 };
-function In({ label: e, children: t }) {
+function zn({ label: e, children: t }) {
 	return /* @__PURE__ */ Q("div", {
 		className: "flex gap-2 text-xs",
 		children: [/* @__PURE__ */ Z("span", {
@@ -890,11 +890,11 @@ function In({ label: e, children: t }) {
 		})]
 	});
 }
-var Ln = {
+var Bn = {
 	field: "Field change",
 	prose: "Body text"
 };
-function Rn({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: s, targetReason: c, before: l, after: u, edits: f, rationale: p, draftError: m, author: h, category: _, path: y, locationHint: b, verdict: x, verdictStatus: S = "idle", verdictError: C, revision: T, onRereview: E, onAccept: D, onReject: O, onRedraft: k, onReattach: A, onConfirmAttachment: j, className: ee, "data-testid": M = "proposal-card" }) {
+function Vn({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: s, targetReason: c, before: l, after: u, edits: f, rationale: p, draftError: m, author: h, category: _, path: y, locationHint: b, verdict: x, verdictStatus: S = "idle", verdictError: C, revision: T, onRereview: E, onAccept: D, onReject: O, onRedraft: k, onReattach: A, onConfirmAttachment: j, className: ee, "data-testid": M = "proposal-card" }) {
 	let [N, P] = Y(!1), [F, I] = Y(null), [L, R] = Y(!1), [z, te] = Y(""), B = i === "applied", V = i === "rejected", H = B || V;
 	async function ne() {
 		P(!0), I(null);
@@ -926,7 +926,7 @@ function Rn({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					/* @__PURE__ */ Z("span", {
 						className: "text-sm font-semibold leading-tight text-text-primary",
 						"data-testid": `${M}-category`,
-						children: _ ?? Ln[t]
+						children: _ ?? Bn[t]
 					}),
 					h && /* @__PURE__ */ Q("span", {
 						className: "flex min-w-0 items-center gap-1.5",
@@ -949,9 +949,9 @@ function Rn({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 						children: "AI proposal"
 					}),
 					/* @__PURE__ */ Z(d, {
-						tone: Fn[a],
+						tone: Rn[a],
 						size: "sm",
-						children: Pn[a]
+						children: Ln[a]
 					}),
 					o === "healed" && /* @__PURE__ */ Z(d, {
 						tone: "caution",
@@ -992,10 +992,10 @@ function Rn({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 			}),
 			/* @__PURE__ */ Q("div", {
 				className: "flex flex-col gap-1",
-				children: [c && /* @__PURE__ */ Z(In, {
+				children: [c && /* @__PURE__ */ Z(zn, {
 					label: "Why",
 					children: c
-				}), p && /* @__PURE__ */ Z(In, {
+				}), p && /* @__PURE__ */ Z(zn, {
 					label: "Rationale",
 					children: p
 				})]
@@ -1131,7 +1131,7 @@ function Rn({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 }
 //#endregion
 //#region src/components/doc-editor/WorkItemRow.tsx
-function zn({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason: s, contextSplit: c, drafting: l = !1, draftError: u, candidates: f, sections: p, onPropose: m, onAttach: h, onDismiss: g, className: _, "data-testid": v = `work-item-${e}` }) {
+function Hn({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason: s, contextSplit: c, drafting: l = !1, draftError: u, candidates: f, sections: p, onPropose: m, onAttach: h, onDismiss: g, className: _, "data-testid": v = `work-item-${e}` }) {
 	let y = [...f ?? []].sort((e, t) => t.score - e.score), b = new Set(y.map((e) => e.sectionId)), x = p.filter((e) => !b.has(e.id));
 	return /* @__PURE__ */ Z(i, {
 		padding: "sm",
@@ -1231,14 +1231,14 @@ function zn({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason:
 }
 //#endregion
 //#region src/components/doc-editor/CommentGhostPopover.tsx
-var Bn = "[data-comment-id]", Vn = 240;
-function Hn(e) {
+var Un = "[data-comment-id]", Wn = 240;
+function Gn(e) {
 	return typeof CSS < "u" && typeof CSS.escape == "function" ? CSS.escape(e) : e.replace(/["\\]/g, "\\$&");
 }
-function Un(e) {
+function Kn(e) {
 	return e <= 0 ? "No replies" : e === 1 ? "1 reply" : `${e} replies`;
 }
-function Wn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: o, onResolve: s, ref: c, "data-testid": l = "comment-ghost" }) {
+function qn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: o, onResolve: s, ref: c, "data-testid": l = "comment-ghost" }) {
 	let [u, f] = Y(null), p = J(null), m = J(null), h = J(null);
 	h.current = u;
 	let g = q(() => {
@@ -1253,13 +1253,13 @@ function Wn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		y(), f(null);
 	}, [y]), x = G((e, n, r) => {
 		if (y(), !_.current.has(e)) return;
-		let i = n ?? t?.current?.querySelector(`[data-comment-id="${Hn(e)}"]`) ?? null;
+		let i = n ?? t?.current?.querySelector(`[data-comment-id="${Gn(e)}"]`) ?? null;
 		i instanceof HTMLElement && (p.current = i, f({
 			id: e,
 			via: r
 		}));
 	}, [y, t]);
-	en(c, () => ({
+	rn(c, () => ({
 		openComment: (e, t) => x(e, t, "click"),
 		close: b
 	}), [x, b]);
@@ -1269,7 +1269,7 @@ function Wn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 	}, [w, a]), K(() => y, [y]), K(() => {
 		let e = t?.current;
 		if (!e) return;
-		let r = (e) => e instanceof Element ? e.closest(Bn) : null, a = (e) => {
+		let r = (e) => e instanceof Element ? e.closest(Un) : null, a = (e) => {
 			let t = r(e.target), n = t?.getAttribute("data-comment-id");
 			if (!(!t || !n)) {
 				if (h.current?.id === n) {
@@ -1285,7 +1285,7 @@ function Wn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		}, s = (e) => {
 			i && r(e.target) && (y(), m.current = setTimeout(() => {
 				h.current?.via === "hover" && b();
-			}, Vn));
+			}, Wn));
 		};
 		return e.addEventListener("click", a), e.addEventListener("mouseover", o), e.addEventListener("mouseout", s), () => {
 			e.removeEventListener("click", a), e.removeEventListener("mouseover", o), e.removeEventListener("mouseout", s);
@@ -1317,7 +1317,7 @@ function Wn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 			onMouseLeave: () => {
 				y(), m.current = setTimeout(() => {
 					h.current?.via === "hover" && b();
-				}, Vn);
+				}, Wn);
 			},
 			children: [
 				/* @__PURE__ */ Q("div", {
@@ -1356,7 +1356,7 @@ function Wn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 					children: [/* @__PURE__ */ Z("span", {
 						"data-testid": `${l}-replies`,
 						className: "text-[11px] text-text-tertiary",
-						children: Un(T.replyCount ?? 0)
+						children: Kn(T.replyCount ?? 0)
 					}), /* @__PURE__ */ Q("span", {
 						className: "flex gap-1.5",
 						children: [o && /* @__PURE__ */ Z(r, {
@@ -1380,7 +1380,7 @@ function Wn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 }
 //#endregion
 //#region src/components/doc-editor/VideoDockSlot.tsx
-function Gn() {
+function Jn() {
 	return /* @__PURE__ */ Q("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-4 w-4",
@@ -1398,7 +1398,7 @@ function Gn() {
 		})]
 	});
 }
-function Kn({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: o = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, onDragOver: l, onDragLeave: u, onDrop: d, className: f, children: p, "data-testid": m = "video-dock-slot" }) {
+function Yn({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: o = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, onDragOver: l, onDragLeave: u, onDrop: d, className: f, children: p, "data-testid": m = "video-dock-slot" }) {
 	let [h, g] = Y(!1), _ = G((e) => {
 		e.preventDefault(), t && g(!0), l?.(e);
 	}, [t, l]), v = G((e) => {
@@ -1426,7 +1426,7 @@ function Kn({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 					size: "sm",
 					onClick: c,
 					"data-testid": `${m}-undock`,
-					icon: /* @__PURE__ */ Z(Gn, {}),
+					icon: /* @__PURE__ */ Z(Jn, {}),
 					className: "text-white hover:bg-white/20"
 				})
 			})]
@@ -1447,7 +1447,7 @@ function Kn({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 }
 //#endregion
 //#region src/components/doc-editor/FloatingDockBar.tsx
-function qn({ docked: e, ghost: t = !1, dockId: r, ghostLabel: i = "Drop the call here", label: a = "Call, along the bottom of the page", bottomOffset: o = 16, className: s, children: c, "data-testid": l = "floating-dock-bar" }) {
+function Xn({ docked: e, ghost: t = !1, dockId: r, ghostLabel: i = "Drop the call here", label: a = "Call, along the bottom of the page", bottomOffset: o = 16, className: s, children: c, "data-testid": l = "floating-dock-bar" }) {
 	return !e && t && r ? /* @__PURE__ */ Z("div", {
 		className: n("pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4", s),
 		style: { bottom: o },
@@ -1474,18 +1474,18 @@ function qn({ docked: e, ghost: t = !1, dockId: r, ghostLabel: i = "Drop the cal
 }
 //#endregion
 //#region src/components/doc-editor/DocumentShareDialog.tsx
-var Jn = [
+var Zn = [
 	"owner",
 	"editor",
 	"commenter",
 	"viewer"
-], Yn = {
+], Qn = {
 	restricted: () => "Restricted — only people added here",
 	"org-view": (e) => `Anyone at ${e} can view`,
 	"org-edit": (e) => `Anyone at ${e} can edit`,
 	"link-view": () => "Anyone with the link can view"
 };
-function Xn({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: c, onInvite: l, onCopyLink: u, notice: d, "data-testid": p = "document-share-dialog" }) {
+function $n({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: c, onInvite: l, onCopyLink: u, notice: d, "data-testid": p = "document-share-dialog" }) {
 	let [m, h] = Y(""), g = () => {
 		let e = m.trim();
 		!e || !l || (l(e), h(""));
@@ -1550,7 +1550,7 @@ function Xn({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 								"aria-label": `Access for ${e.displayName}`,
 								"data-testid": `${p}-role`,
 								className: "rounded border border-border bg-surface px-1 py-0.5 text-xs text-text-secondary",
-								children: Jn.filter((e) => e !== "owner").map((e) => /* @__PURE__ */ Z("option", {
+								children: Zn.filter((e) => e !== "owner").map((e) => /* @__PURE__ */ Z("option", {
 									value: e,
 									children: e
 								}, e))
@@ -1570,9 +1570,9 @@ function Xn({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						"aria-label": "General access",
 						"data-testid": `${p}-general-access`,
 						className: "rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary disabled:opacity-60",
-						children: Object.keys(Yn).map((e) => /* @__PURE__ */ Z("option", {
+						children: Object.keys(Qn).map((e) => /* @__PURE__ */ Z("option", {
 							value: e,
-							children: Yn[e](o)
+							children: Qn[e](o)
 						}, e))
 					})]
 				}),
@@ -1597,7 +1597,7 @@ function Xn({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionModeControl.tsx
-var Zn = [
+var er = [
 	{
 		value: "editing",
 		label: "Editing",
@@ -1614,11 +1614,11 @@ var Zn = [
 		hint: "Read the document without changing it."
 	}
 ];
-function Qn({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: a = !1, className: o, "data-testid": s = "suggestion-mode-control" }) {
-	let c = Zn.filter((e) => r || e.value !== "viewing").map((e) => ({
+function tr({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: a = !1, className: o, "data-testid": s = "suggestion-mode-control" }) {
+	let c = er.filter((e) => r || e.value !== "viewing").map((e) => ({
 		label: e.label,
 		value: e.value
-	})), l = Zn.find((t) => t.value === e);
+	})), l = er.find((t) => t.value === e);
 	return /* @__PURE__ */ Q("div", {
 		"data-testid": s,
 		"data-mode": e,
@@ -1642,19 +1642,19 @@ function Qn({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionCard.tsx
-var $n = {
+var nr = {
 	insert: "Added",
 	delete: "Removed",
 	replace: "Replaced",
 	modify: "Formatted"
-}, er = {
+}, rr = {
 	insert: "text-success-fg",
 	delete: "text-danger-fg",
 	replace: "text-caution-fg",
 	modify: "text-info-fg"
-}, tr = 6, nr = /^(.*\S)\s*\(powered by\s+([^()]+)\)$/;
-function rr(e) {
-	let t = nr.exec(e);
+}, ir = 6, ar = /^(.*\S)\s*\(powered by\s+([^()]+)\)$/;
+function or(e) {
+	let t = ar.exec(e);
 	if (!t) return { person: e };
 	let n = t[1].trim(), r = t[2].trim();
 	return n && r ? {
@@ -1662,32 +1662,32 @@ function rr(e) {
 		model: r
 	} : { person: e };
 }
-function ir(e) {
+function sr(e) {
 	return new Date(e).toLocaleTimeString([], {
 		hour: "numeric",
 		minute: "2-digit"
 	});
 }
-function ar({ lines: e, tone: t, testId: r }) {
-	let i = e.slice(0, tr), a = t === "insert" ? "ins" : "del";
+function cr({ lines: e, tone: t, testId: r }) {
+	let i = e.slice(0, ir), a = t === "insert" ? "ins" : "del";
 	return /* @__PURE__ */ Q("div", {
 		className: n("flex flex-col gap-1 border-l-2 pl-2.5", t === "insert" ? "border-success-fg" : "border-danger-fg"),
 		"data-testid": r,
 		children: [i.map((e, r) => /* @__PURE__ */ Z(a, {
 			className: n("block whitespace-pre-line text-[13px] leading-relaxed no-underline", t === "insert" ? "text-text-primary" : "text-text-secondary line-through"),
 			children: e
-		}, r)), e.length > tr && /* @__PURE__ */ Q("span", {
+		}, r)), e.length > ir && /* @__PURE__ */ Q("span", {
 			className: "text-xs text-text-tertiary",
 			children: [
 				"and ",
-				e.length - tr,
+				e.length - ir,
 				" more"
 			]
 		})]
 	});
 }
-function or({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: f, onReject: p, className: m, "data-testid": h = "suggestion-card" }) {
-	let { person: g, model: _ } = rr(t.trim() === "" ? "Unknown author" : t.trim()), y = c && c.length > 0 ? c : s ? [s] : [], b = l && l.length > 0 ? l : o ? [o] : [], x = y.length > 0 || b.length > 0;
+function lr({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: f, onReject: p, className: m, "data-testid": h = "suggestion-card" }) {
+	let { person: g, model: _ } = or(t.trim() === "" ? "Unknown author" : t.trim()), y = c && c.length > 0 ? c : s ? [s] : [], b = l && l.length > 0 ? l : o ? [o] : [], x = y.length > 0 || b.length > 0;
 	return /* @__PURE__ */ Q("div", {
 		"data-testid": h,
 		"data-kind": e,
@@ -1709,12 +1709,12 @@ function or({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 					}),
 					i !== null && /* @__PURE__ */ Z("span", {
 						className: "shrink-0 text-xs tabular-nums text-text-tertiary",
-						children: ir(i)
+						children: sr(i)
 					}),
 					/* @__PURE__ */ Z("span", {
-						className: n("ml-auto shrink-0 text-[11px] font-medium", er[e]),
+						className: n("ml-auto shrink-0 text-[11px] font-medium", rr[e]),
 						"data-testid": `${h}-kind`,
-						children: $n[e]
+						children: nr[e]
 					})
 				]
 			}),
@@ -1741,11 +1741,11 @@ function or({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 				disabled: !d,
 				"data-testid": `${h}-body`,
 				className: n("flex w-full flex-col items-stretch gap-1 border-none bg-transparent p-0 text-left font-[inherit]", d && "cursor-pointer hover:opacity-80"),
-				children: [b.length > 0 && /* @__PURE__ */ Z(ar, {
+				children: [b.length > 0 && /* @__PURE__ */ Z(cr, {
 					lines: b,
 					tone: "delete",
 					testId: `${h}-deleted`
-				}), y.length > 0 && /* @__PURE__ */ Z(ar, {
+				}), y.length > 0 && /* @__PURE__ */ Z(cr, {
 					lines: y,
 					tone: "insert",
 					testId: `${h}-inserted`
@@ -1783,7 +1783,7 @@ function or({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionReviewList.tsx
-function sr({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = null, headerExtra: c, emptyTitle: l = "No suggestions", emptyBody: f = "Proposed changes to this document show up here for review.", title: m = "Suggestions", variant: h = "card", className: g, "data-testid": _ = "suggestion-review-list" }) {
+function ur({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = null, headerExtra: c, emptyTitle: l = "No suggestions", emptyBody: f = "Proposed changes to this document show up here for review.", title: m = "Suggestions", variant: h = "card", className: g, "data-testid": _ = "suggestion-review-list" }) {
 	let v = e > 0 && (a || o), y = v || c ? /* @__PURE__ */ Q("span", {
 		className: "flex items-center gap-1.5",
 		children: [
@@ -1854,15 +1854,15 @@ function sr({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = 
 }
 //#endregion
 //#region src/components/doc-editor/AuthenticatedDocumentImage.tsx
-var cr = (e) => e.startsWith("/api/uploads/"), lr = Zt(null);
-function ur({ children: e, ...t }) {
-	return /* @__PURE__ */ Z(lr.Provider, {
+var dr = (e) => e.startsWith("/api/uploads/"), fr = en(null);
+function pr({ children: e, ...t }) {
+	return /* @__PURE__ */ Z(fr.Provider, {
 		value: t,
 		children: e
 	});
 }
-function dr({ node: e, selected: t }) {
-	let n = e.attrs.src ?? "", r = e.attrs.alt ?? "", i = e.attrs.title ?? "", a = Qt(lr), o = a?.loadImage, s = a?.requiresAuthentication ?? cr, [c, l] = Y(null), u = s(n), d = c?.src === n && c.loader === o ? c : null, f = u ? d?.url : n, p = u && !!d?.failed;
+function mr({ node: e, selected: t }) {
+	let n = e.attrs.src ?? "", r = e.attrs.alt ?? "", i = e.attrs.title ?? "", a = tn(fr), o = a?.loadImage, s = a?.requiresAuthentication ?? dr, [c, l] = Y(null), u = s(n), d = c?.src === n && c.loader === o ? c : null, f = u ? d?.url : n, p = u && !!d?.failed;
 	return K(() => {
 		if (!n || !u) return;
 		let e = new AbortController(), t = null;
@@ -1892,7 +1892,7 @@ function dr({ node: e, selected: t }) {
 		n,
 		u,
 		o
-	]), /* @__PURE__ */ Z(nn, {
+	]), /* @__PURE__ */ Z(on, {
 		as: "div",
 		"data-testid": "canvas-document-image",
 		"data-image-state": p ? "failed" : f ? "ready" : "loading",
@@ -1909,17 +1909,17 @@ function dr({ node: e, selected: t }) {
 		})
 	});
 }
-function fr(e) {
+function hr(e) {
 	return e.configure({
 		inline: !1,
 		allowBase64: !1
 	}).extend({ addNodeView() {
-		return rn(dr);
+		return sn(mr);
 	} });
 }
 //#endregion
 //#region src/components/doc-editor/DocumentReviewPanel.tsx
-function pr({ request: e, onDecide: t, onWithdraw: n }) {
+function gr({ request: e, onDecide: t, onWithdraw: n }) {
 	let [i, a] = Y(""), [c, u] = Y(!1), [f, p] = Y(null), m = J(!1);
 	async function h(e) {
 		if (!m.current) {
@@ -2005,7 +2005,7 @@ function pr({ request: e, onDecide: t, onWithdraw: n }) {
 		})
 	});
 }
-function mr({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: c, onRequest: l, onDecide: u, onWithdraw: d }) {
+function _r({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: c, onRequest: l, onDecide: u, onWithdraw: d }) {
 	let [f, p] = Y(""), [m, h] = Y(""), [g, v] = Y(!0), [b, x] = Y(!1), [S, C] = Y(null), w = J(!1);
 	async function D() {
 		if (!(!l || !t.some((e) => e.id === f) || w.current)) {
@@ -2086,7 +2086,7 @@ function mr({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					children: "Refresh reviews"
 				}),
 				empty: { title: i ? "Loading reviews…" : a ? "Reviews unavailable" : "No reviews requested" },
-				children: e.map((e) => /* @__PURE__ */ Z(pr, {
+				children: e.map((e) => /* @__PURE__ */ Z(gr, {
 					request: e,
 					onDecide: e.reviewerId === n ? u : void 0,
 					onWithdraw: d
@@ -2097,7 +2097,7 @@ function mr({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 }
 //#endregion
 //#region src/components/doc-editor/EditorShell.tsx
-var hr = [
+var vr = [
 	{
 		id: "editor",
 		label: "Editor"
@@ -2115,7 +2115,7 @@ var hr = [
 		label: "History"
 	}
 ];
-function gr({ filled: e }) {
+function yr({ filled: e }) {
 	return /* @__PURE__ */ Z("svg", {
 		width: 16,
 		height: 16,
@@ -2128,8 +2128,8 @@ function gr({ filled: e }) {
 		children: /* @__PURE__ */ Z("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function _r({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: s = !1, onStarredChange: l, statusPill: u, participants: d, onParticipantClick: f, onFollowParticipant: p, followingParticipantId: m, meta: g, saveState: _, headActions: v, tabs: y, activeTab: b, onTabChange: S, toolbar: w, children: T, footer: E, surface: O = "workspace", explorer: k, workbench: A, label: j = "Editor", className: M, "data-testid": N = "editor-shell" }) {
-	let P = `${N}-${$t().replace(/:/g, "")}`, F = !!y && y.length > 0, I = F ? y.some((e) => e.id === b) ? b : y[0].id : void 0, L = d && d.length > 0 || g != null || !!_, R = /* @__PURE__ */ Q("section", {
+function br({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: s = !1, onStarredChange: l, statusPill: u, participants: d, onParticipantClick: f, onFollowParticipant: p, followingParticipantId: m, meta: g, saveState: _, headActions: v, tabs: y, activeTab: b, onTabChange: S, toolbar: w, children: T, footer: E, surface: O = "workspace", explorer: k, workbench: A, label: j = "Editor", className: M, "data-testid": N = "editor-shell" }) {
+	let P = `${N}-${nn().replace(/:/g, "")}`, F = !!y && y.length > 0, I = F ? y.some((e) => e.id === b) ? b : y[0].id : void 0, L = d && d.length > 0 || g != null || !!_, R = /* @__PURE__ */ Q("section", {
 		"aria-label": j,
 		"data-testid": N,
 		"data-surface": O,
@@ -2176,7 +2176,7 @@ function _r({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 										onClick: () => l(!s),
 										className: s ? "text-primary" : "text-text-tertiary",
 										"data-testid": `${N}-star`,
-										children: /* @__PURE__ */ Z(gr, { filled: s })
+										children: /* @__PURE__ */ Z(yr, { filled: s })
 									}),
 									u
 								]
@@ -2234,7 +2234,7 @@ function _r({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 				]
 			}),
 			w && /* @__PURE__ */ Z("div", {
-				className: "flex min-w-0 items-center gap-1 border-b border-border px-3 py-1.5",
+				className: "flex min-w-0 items-center gap-1 border-b border-border px-[var(--dock-inset,1rem)] py-1.5",
 				"data-testid": `${N}-toolbar`,
 				children: w
 			}),
@@ -2282,4 +2282,4 @@ function _r({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 	});
 }
 //#endregion
-export { Dn as AckMode, yt as ActionItemsCard, Nn as ActivityFeed, rt as AttachmentsPanel, dr as AuthenticatedDocumentImageView, jt as CANVAS_BODY_KEY, We as CANVAS_SCHEMA_VERSION, Nt as CanvasDocumentView, Fe as CanvasLineSpacing, En as ChunkViewer, Wn as CommentGhostPopover, ct as CommentThreadNode, He as ComposerDockPlacementContext, we as DECK_THEMES, hr as DEFAULT_EDITOR_SHELL_TABS, Be as DOCK_HEIGHT_VAR, Ve as DOCK_INSET_VAR, wt as DiffViewer, Tt as DocumentEditorPage, Ut as DocumentFindBar, Bt as DocumentGutter, Ke as DocumentHeader, ur as DocumentImageProvider, et as DocumentLifecyclePill, fn as DocumentListPage, _t as DocumentModePill, Mt as DocumentOutline, Ue as DocumentOwnership, mr as DocumentReviewPanel, Yt as DocumentRuler, Qe as DocumentSaveStatus, Xn as DocumentShareDialog, Vt as DocumentStatusBar, Ft as DocumentToolbar, _r as EditorShell, Ne as EditorToolbar, pt as ExecutiveSummaryCard, ce as Filmstrip, ge as FilmstripThumb, ze as FloatingComposerDock, qn as FloatingDockBar, qe as FollowModeBar, St as HeaderBanner, Et as KeyDecisionsCard, Le as LINE_SPACINGS, Pe as LINE_SPACING_LABELS, qt as MAX_ATTACHMENT_BYTES, le as MAX_BULLETS_PER_SLIDE, ue as MAX_BULLET_CHARS, be as MAX_CHART_LABELS, _e as MAX_CHART_SERIES, fe as MAX_EYEBROW_CHARS, Ht as MAX_IMAGE_BYTES, de as MAX_NOTES_CHARS, ae as MAX_QUOTE_CHARS, Te as MAX_SLIDES, Oe as MAX_SOURCES_PER_SLIDE, se as MAX_SUBTITLE_CHARS, De as MAX_TITLE_CHARS, kt as MentionDropdown, lt as MyMentionsPanel, I as NewDocumentModal, Xt as PX_PER_INCH, $e as ParticipantAvatars, Ce as PresentationEditor, ke as PresentationView, Rn as ProposalCard, dt as ReaderMode, ht as ReviewMode, bn as ReviewProgress, wn as ReviewableItem, Jn as SHARE_ROLES, U as SLIDE_ID_PATTERN, xe as SLIDE_INSERTS, M as SLIDE_LAYOUTS, Ee as SLIDE_LAYOUT_LABELS, Zn as SUGGESTION_AUTHORING_MODES, Ot as SectionBlock, mt as SectionComments, Ge as SectionList, ft as SectionSummariesCard, ye as SlideForm, R as SlideList, z as SlideRow, Se as SlideSources, oe as SlideStage, pe as SlidesToolbar, ve as SpeakerNotes, _n as StandaloneTiptap, or as SuggestionCard, Qn as SuggestionModeControl, sr as SuggestionReviewList, Ct as TableOfContents, k as TaskItemRow, A as TaskList, W as TiptapEditor, xt as VersionHistoryPanel, it as VideoCallPanel, Kn as VideoDockSlot, gt as VideoHistoryPanel, zn as WorkItemRow, vt as WorkspaceDocumentHeaderNotices, Rt as ZOOM_FIT, Lt as ZOOM_STEPS, Gt as acceptsDocumentImage, re as addSlide, P as canSaveDeck, ot as canvasBody, Ze as canvasFragmentToMarkdown, pn as clientIdForUser, Dt as countAllComments, fr as createAuthenticatedDocumentImage, N as duplicateSlide, tt as findDocumentTarget, Kt as findMatches, bt as generateSummaryBullets, At as getInitials, Ye as isCanvasDocument, Me as isLineSpacing, Ie as lineSpacingAttributes, V as makeSlide, he as moveSlide, Pt as nextMatchIndex, j as nextRevisionLabel, me as nextSlideId, Re as parseLineSpacing, It as readOutline, at as readSchemaVersion, ut as relativeTime, te as removeSlide, B as replaceSlide, Un as replyLabel, Je as scrollToDocumentTarget, Jt as stackOffsets, ne as svgDataUri, H as uncitedSlideIds, nt as useDocumentActions, zt as useDocumentImageUpload, Wt as useDocumentOutline, mn as useFollowCursor, st as useIsCanvasDocument, Xe as useSidebarPanels, F as withLayoutDefaults };
+export { An as AckMode, yt as ActionItemsCard, In as ActivityFeed, rt as AttachmentsPanel, mr as AuthenticatedDocumentImageView, jt as CANVAS_BODY_KEY, We as CANVAS_SCHEMA_VERSION, Pt as CanvasDocumentView, Fe as CanvasLineSpacing, kn as ChunkViewer, qn as CommentGhostPopover, ct as CommentThreadNode, He as ComposerDockPlacementContext, we as DECK_THEMES, vr as DEFAULT_EDITOR_SHELL_TABS, Be as DOCK_HEIGHT_VAR, Ve as DOCK_INSET_VAR, Lt as DOCUMENT_TOOLBAR_BREAKPOINTS, wt as DiffViewer, Tt as DocumentEditorPage, Gt as DocumentFindBar, Ht as DocumentGutter, Ke as DocumentHeader, pr as DocumentImageProvider, et as DocumentLifecyclePill, hn as DocumentListPage, _t as DocumentModePill, Ft as DocumentOutline, Ue as DocumentOwnership, _r as DocumentReviewPanel, Qt as DocumentRuler, Qe as DocumentSaveStatus, $n as DocumentShareDialog, Nt as DocumentStatusBar, Rt as DocumentToolbar, br as EditorShell, Ne as EditorToolbar, pt as ExecutiveSummaryCard, ce as Filmstrip, ge as FilmstripThumb, ze as FloatingComposerDock, Xn as FloatingDockBar, qe as FollowModeBar, St as HeaderBanner, Et as KeyDecisionsCard, Le as LINE_SPACINGS, Pe as LINE_SPACING_LABELS, Yt as MAX_ATTACHMENT_BYTES, le as MAX_BULLETS_PER_SLIDE, ue as MAX_BULLET_CHARS, be as MAX_CHART_LABELS, _e as MAX_CHART_SERIES, fe as MAX_EYEBROW_CHARS, Wt as MAX_IMAGE_BYTES, de as MAX_NOTES_CHARS, ae as MAX_QUOTE_CHARS, Te as MAX_SLIDES, Oe as MAX_SOURCES_PER_SLIDE, se as MAX_SUBTITLE_CHARS, De as MAX_TITLE_CHARS, kt as MentionDropdown, lt as MyMentionsPanel, I as NewDocumentModal, Mt as PX_PER_INCH, $e as ParticipantAvatars, Ce as PresentationEditor, ke as PresentationView, Vn as ProposalCard, dt as ReaderMode, ht as ReviewMode, Cn as ReviewProgress, Dn as ReviewableItem, Zn as SHARE_ROLES, U as SLIDE_ID_PATTERN, xe as SLIDE_INSERTS, M as SLIDE_LAYOUTS, Ee as SLIDE_LAYOUT_LABELS, er as SUGGESTION_AUTHORING_MODES, Ot as SectionBlock, mt as SectionComments, Ge as SectionList, ft as SectionSummariesCard, ye as SlideForm, R as SlideList, z as SlideRow, Se as SlideSources, oe as SlideStage, pe as SlidesToolbar, ve as SpeakerNotes, bn as StandaloneTiptap, lr as SuggestionCard, tr as SuggestionModeControl, ur as SuggestionReviewList, Ct as TableOfContents, k as TaskItemRow, A as TaskList, W as TiptapEditor, xt as VersionHistoryPanel, it as VideoCallPanel, Yn as VideoDockSlot, gt as VideoHistoryPanel, Hn as WorkItemRow, vt as WorkspaceDocumentHeaderNotices, Zt as ZOOM_FIT, $t as ZOOM_STEPS, qt as acceptsDocumentImage, re as addSlide, P as canSaveDeck, ot as canvasBody, Ze as canvasFragmentToMarkdown, gn as clientIdForUser, Dt as countAllComments, hr as createAuthenticatedDocumentImage, Kt as documentToolbarSize, N as duplicateSlide, tt as findDocumentTarget, Jt as findMatches, bt as generateSummaryBullets, At as getInitials, Ye as isCanvasDocument, Me as isLineSpacing, Ie as lineSpacingAttributes, V as makeSlide, he as moveSlide, It as nextMatchIndex, j as nextRevisionLabel, me as nextSlideId, Re as parseLineSpacing, Bt as readOutline, at as readSchemaVersion, ut as relativeTime, te as removeSlide, B as replaceSlide, Kn as replyLabel, Je as scrollToDocumentTarget, Xt as stackOffsets, ne as svgDataUri, H as uncitedSlideIds, nt as useDocumentActions, Vt as useDocumentImageUpload, zt as useDocumentOutline, Ut as useDocumentToolbarSize, _n as useFollowCursor, st as useIsCanvasDocument, Xe as useSidebarPanels, F as withLayoutDefaults };

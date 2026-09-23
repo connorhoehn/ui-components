@@ -73,7 +73,7 @@ function CreateRoomForm({ onCreate, onDiscard, loading }: CreateRoomFormProps) {
           disabled={!name.trim() || loading}
           className={cn(
             'flex-1 h-7 border-none rounded-[5px] text-xs font-semibold font-[inherit]',
-            !name.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-white cursor-pointer',
+            !name.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-on-primary cursor-pointer',
           )}
         >
           {loading ? 'Creating…' : 'Create'}
@@ -169,7 +169,7 @@ function DMRoomButton({ onCreateDM, loading, friends, friendsError }: DMRoomButt
           disabled={!peerId.trim() || loading || friends.length === 0}
           className={cn(
             'flex-1 h-7 border-none rounded-[5px] text-xs font-semibold font-[inherit]',
-            !peerId.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-white cursor-pointer',
+            !peerId.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-on-primary cursor-pointer',
           )}
         >
           Open DM
@@ -355,7 +355,7 @@ export function RoomList({ idToken, rooms, createRoom, createDM, loading, error,
       <h2 className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3">Rooms</h2>
       <button
         onClick={() => setShowCreateForm(prev => !prev)}
-        className="w-full h-9 mb-2 bg-primary text-white border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]"
+        className="w-full h-9 mb-2 bg-primary text-on-primary border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]"
       >
         Create Room
       </button>

@@ -33,13 +33,13 @@ describe('ThemeProvider writes the real design tokens', () => {
     render(<ThemeProvider><span /></ThemeProvider>);
     // The light preset must mirror src/styles.css @theme, or simply mounting
     // the provider would silently rebrand the app. These are the values there.
-    expect(readVar('--color-primary')).toBe('#646cff');
+    expect(readVar('--color-primary')).toBe('#5a61ff');
     expect(readVar('--color-success')).toBe('#16a34a');
     expect(readVar('--color-warning')).toBe('#d97706');
     expect(readVar('--color-info')).toBe('#2563eb');
     expect(readVar('--color-text-primary')).toBe('#0f172a');
     expect(readVar('--color-text-secondary')).toBe('#475569');
-    expect(lightTheme.primary).toBe('#646cff');
+    expect(lightTheme.primary).toBe('#5a61ff');
   });
 
   it('rebrands a tone through the four-role scale', () => {

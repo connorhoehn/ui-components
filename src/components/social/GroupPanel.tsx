@@ -88,7 +88,7 @@ function CompactCreateGroupForm({ onCreate, onDiscard, loading }: {
       <div className="flex gap-1.5">
         <button type="submit" disabled={!name.trim() || loading} className={cn(
           'flex-1 h-7 border-none rounded-[5px] text-xs font-semibold font-[inherit]',
-          !name.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-white cursor-pointer',
+          !name.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-on-primary cursor-pointer',
         )}>
           {loading ? 'Creating…' : 'Create'}
         </button>
@@ -185,7 +185,7 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
           />
           <button type="submit" disabled={!inviteId.trim()} className={cn(
             'h-6 px-2 border-none rounded text-[11px] font-[inherit]',
-            !inviteId.trim() ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-white cursor-pointer',
+            !inviteId.trim() ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-on-primary cursor-pointer',
           )}>
             Invite
           </button>
@@ -232,7 +232,7 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
           />
           <button type="submit" disabled={!roomName.trim() || loading} className={cn(
             'h-6 px-2 border-none rounded text-[11px] font-[inherit]',
-            !roomName.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-white cursor-pointer',
+            !roomName.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-on-primary cursor-pointer',
           )}>
             Create
           </button>
@@ -330,7 +330,7 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
       <div className="flex gap-2">
         <button type="submit" disabled={!name.trim() || loading} className={cn(
           'flex-1 h-9 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
-          !name.trim() || loading ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-white border-none cursor-pointer',
+          !name.trim() || loading ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-on-primary border-none cursor-pointer',
         )}>
           {loading ? 'Creating…' : 'Create Group'}
         </button>
@@ -416,7 +416,7 @@ function InviteForm({ groupId, onInvite }: { groupId: string; onInvite: (groupId
         <Input className="flex-1" value={userId} onChange={e => setUserId(e.target.value)} placeholder="User ID to invite" />
         <button type="submit" disabled={!userId.trim()} className={cn(
           'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
-          !userId.trim() ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-white border-none cursor-pointer',
+          !userId.trim() ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-on-primary border-none cursor-pointer',
         )}>Invite</button>
       </form>
       {error && (
@@ -484,7 +484,7 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
               <Input className="flex-1" value={roomName} onChange={e => setRoomName(e.target.value.slice(0, 50))} placeholder="Room name" maxLength={50} required />
               <button type="submit" disabled={!roomName.trim() || loading} className={cn(
                 'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
-                !roomName.trim() || loading ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-white border-none cursor-pointer',
+                !roomName.trim() || loading ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-on-primary border-none cursor-pointer',
               )}>
                 {loading ? 'Creating…' : 'Create Room'}
               </button>
@@ -495,7 +495,7 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
             )}
           </form>
         ) : (
-          <button onClick={() => setShowCreateForm(true)} className="w-full h-9 mb-2 bg-primary text-white border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]">Create Room</button>
+          <button onClick={() => setShowCreateForm(true)} className="w-full h-9 mb-2 bg-primary text-on-primary border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]">Create Room</button>
         )
       )}
       {groupRooms.length === 0 ? (
@@ -695,7 +695,7 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
 
       <button
         onClick={() => setShowCreateForm(prev => !prev)}
-        className={cn('w-full h-9 bg-primary text-white border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]', showCreateForm && 'mb-2')}
+        className={cn('w-full h-9 bg-primary text-on-primary border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]', showCreateForm && 'mb-2')}
       >
         {showCreateForm ? 'Cancel' : 'Create Group'}
       </button>

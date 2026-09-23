@@ -151,7 +151,7 @@ function CookbookCard({
           onClick={() => onPick(cookbook)}
           disabled={busy}
           className={cn(
-            'mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-white border-none rounded-md',
+            'mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-on-primary border-none rounded-md',
             busy ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer',
           )}
         >
@@ -224,7 +224,7 @@ export function CookbookPicker({
           className={cn(
             'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer',
             activeCategory === 'All'
-              ? 'bg-primary text-white'
+              ? 'bg-primary text-on-primary'
               : 'bg-surface-hover text-text-secondary',
           )}
         >
@@ -240,7 +240,7 @@ export function CookbookPicker({
             className={cn(
               'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer',
               activeCategory === cat
-                ? 'bg-primary text-white'
+                ? 'bg-primary text-on-primary'
                 : 'bg-surface-hover text-text-secondary',
             )}
           >

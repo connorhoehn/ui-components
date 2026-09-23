@@ -91,7 +91,7 @@ function ReplyForm({ onSubmit, placeholder = 'Write a reply…', loading }: Repl
           'h-7 px-2.5 rounded-md text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
           !content.trim() || loading
             ? 'bg-surface-hover text-text-tertiary border border-border cursor-default'
-            : 'bg-primary text-white border-none cursor-pointer',
+            : 'bg-primary text-on-primary border-none cursor-pointer',
         )}
       >
         Comment

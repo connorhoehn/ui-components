@@ -549,7 +549,7 @@ export function TeamChannelTree({
                       data-muted={muted ? 'true' : 'false'}
                       className={cn(
                         'grid h-5 min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-semibold leading-none',
-                        muted ? 'bg-surface-inset text-text-secondary' : 'bg-primary text-white',
+                        muted ? 'bg-surface-inset text-text-secondary' : 'bg-primary text-on-primary',
                       )}
                     >
                       {unread > 99 ? '99+' : unread}

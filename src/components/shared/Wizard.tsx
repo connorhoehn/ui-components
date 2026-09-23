@@ -111,7 +111,7 @@ export function Wizard({
             onClick={goNext}
             disabled={!canAdvance}
             data-testid={`${testId}-next`}
-            className="rounded-md bg-primary px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-md bg-primary px-3.5 py-1.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLast ? finishLabel : 'Next'}
           </button>

@@ -51,8 +51,8 @@ const TONE = {
     container: 'text-text-tertiary',
     title: 'text-neutral',
     description: 'text-text-tertiary',
-    cta: 'bg-primary text-white',
-    actionPrimary: 'bg-primary text-white border border-transparent hover:bg-primary/90',
+    cta: 'bg-primary text-on-primary',
+    actionPrimary: 'bg-primary text-on-primary border border-transparent hover:bg-primary/90',
     actionSecondary:
       'bg-transparent text-text-primary border border-border-emphasis hover:bg-surface-panel',
     code: 'bg-surface-inverse text-text-inverse',

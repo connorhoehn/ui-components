@@ -366,7 +366,7 @@ function FieldChoice({
           className={cn(
             'cursor-pointer rounded-full border px-2.5 py-0.5 font-[inherit] text-[11px] font-medium',
             side === opt.value
-              ? 'border-primary bg-primary text-white'
+              ? 'border-primary bg-primary text-on-primary'
               : 'border-border bg-surface text-text-secondary hover:border-border-emphasis',
             !opt.enabled && 'cursor-not-allowed opacity-40',
           )}

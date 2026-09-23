@@ -197,7 +197,7 @@ export default function IngestDashboard({ idToken: idTokenProp, baseUrl }: Inges
         <div className="flex gap-2.5 items-center">
           {import.meta.env.DEV ? <DevSeedButton idToken={idToken} baseUrl={resolvedBaseUrl} /> : null}
           <button
-            className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]"
+            className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]"
             onClick={() => navigate('/ingest/sources')}
             data-testid="add-source-btn"
           >

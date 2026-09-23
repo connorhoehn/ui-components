@@ -1303,7 +1303,7 @@ export declare interface DocumentImageUpload {
     accepts: (file: File) => boolean;
 }
 
-declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, size: sizeProp, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 declare interface DocumentToolbarProps {
     editor: Editor | null;
@@ -1359,8 +1359,23 @@ declare interface DocumentToolbarProps {
      * (the full page has them), they are just not what a reading pane is for.
      */
     density?: 'full' | 'compact';
+    /**
+     * How much of the bar fits on ONE row. `auto` (the default) measures the
+     * bar's own box and picks `wide` / `medium` / `narrow` — see
+     * `DOCUMENT_TOOLBAR_BREAKPOINTS`. A fixed value is for tests and stories.
+     *
+     * The bar never wraps. It used to (`flex-wrap`), and at a 1280px window the
+     * page editor's toolbar took THREE rows — B and I on the first, the rest on
+     * the second, and the host's Comment button alone on a third — leaving
+     * about 200px of paper. A toolbar is one line of controls in every word
+     * processor; what does not fit goes behind ⋯, the way Docs and Word do it.
+     */
+    size?: DocumentToolbarSize | 'auto';
     'data-testid'?: string;
 }
+
+/** One-row layouts, widest first. */
+declare type DocumentToolbarSize = 'wide' | 'medium' | 'narrow';
 
 export declare interface DocumentUploadCompletion {
     mine: boolean;

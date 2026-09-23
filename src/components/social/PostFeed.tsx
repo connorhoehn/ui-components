@@ -101,7 +101,7 @@ function CreatePostForm({ onCreate, loading }: CreatePostFormProps) {
             'h-9 px-4 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
             !content.trim() || loading
               ? 'bg-surface-hover text-text-tertiary border border-border cursor-default'
-              : 'bg-primary text-white border-none cursor-pointer',
+              : 'bg-primary text-on-primary border-none cursor-pointer',
           )}
         >
           {loading ? 'Posting…' : 'Post'}
@@ -275,7 +275,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
                 'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
                 !editContent.trim()
                   ? 'bg-surface-hover text-text-tertiary border border-border cursor-default'
-                  : 'bg-primary text-white border-none cursor-pointer',
+                  : 'bg-primary text-on-primary border-none cursor-pointer',
               )}
             >
               Save

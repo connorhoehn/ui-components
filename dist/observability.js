@@ -2,16 +2,16 @@ import { t as e } from "./apiBaseUrl-DLrXlmVj.js";
 import { r as t } from "./IdentityContext-CQM1qwH6.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Card-RQCeAPNU.js";
-import { n as i, r as a, t as o } from "./Chart-BbfaF2-B.js";
-import { t as s } from "./Chip-DYqbAD3L.js";
-import { t as c } from "./Modal-D2qxMX2_.js";
-import { t as l } from "./EmptyState-DQYx5Oyy.js";
+import { n as i, r as a, t as o } from "./Chart-DRtuaJHd.js";
+import { t as s } from "./Chip-B_HZn3xl.js";
+import { t as c } from "./Modal-DMFNRUDx.js";
+import { t as l } from "./EmptyState-DFWbBBcY.js";
 import { n as u, t as d } from "./Sparkline-Ci_cmVWU.js";
 import { t as f } from "./Input-DLknWXri.js";
 import { t as p } from "./StatusDot-Bgx2zxgC.js";
 import { t as m } from "./CardHeader-CsPhVpCm.js";
-import { t as h } from "./Select-CD8ixtYi.js";
-import { t as g } from "./Checkbox-Db43XgBJ.js";
+import { t as h } from "./Select-D5mMMegw.js";
+import { t as g } from "./Checkbox-Dftwml_V.js";
 import { t as _ } from "./activationKey-CjbL3LUv.js";
 import { n as v } from "./EventStreamContext-CLzG8O5_.js";
 import { n as y, r as b } from "./ObservabilityContext-DpoDrm3T.js";
@@ -870,7 +870,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 			u && /* @__PURE__ */ O("button", {
 				"data-testid": "metrics-export-csv",
 				onClick: u,
-				className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0",
+				className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 				children: "Export CSV"
 			}),
 			/* @__PURE__ */ k("div", {
@@ -1277,7 +1277,7 @@ function Fe({ events: e, selectedId: t, onSelect: r, live: i = !1 }) {
 				let e = a.current;
 				e && (e.scrollTop = e.scrollHeight, s(!1));
 			},
-			className: n("absolute bottom-3 left-1/2 -translate-x-1/2", "px-3.5 py-1.5 text-xs font-semibold", "bg-primary text-white", "border-none rounded-full cursor-pointer", "shadow-[0_2px_8px_rgba(0,0,0,0.15)] font-[inherit]"),
+			className: n("absolute bottom-3 left-1/2 -translate-x-1/2", "px-3.5 py-1.5 text-xs font-semibold", "bg-primary text-on-primary", "border-none rounded-full cursor-pointer", "shadow-[0_2px_8px_rgba(0,0,0,0.15)] font-[inherit]"),
 			children: "Jump to live ↓"
 		})]
 	});
@@ -1756,7 +1756,7 @@ function et(e) {
 					/* @__PURE__ */ O("button", {
 						"data-testid": "chaos-pause-toggle",
 						onClick: P,
-						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0",
+						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 						children: b.paused ? "Resume" : "Pause"
 					})
 				]
@@ -1786,7 +1786,7 @@ function et(e) {
 					/* @__PURE__ */ O("button", {
 						"data-testid": "chaos-latency-apply",
 						onClick: A,
-						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0",
+						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 						children: "Apply"
 					})
 				]
@@ -1814,7 +1814,7 @@ function et(e) {
 					/* @__PURE__ */ O("button", {
 						"data-testid": "chaos-partition-inject",
 						onClick: M,
-						className: n("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md font-[inherit] shrink-0", m.length === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"),
+						className: n("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md font-[inherit] shrink-0", m.length === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"),
 						disabled: m.length === 0,
 						children: "Inject"
 					})
@@ -1846,7 +1846,7 @@ function et(e) {
 					/* @__PURE__ */ O("button", {
 						"data-testid": "chaos-drop-apply",
 						onClick: j,
-						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0",
+						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 						children: "Apply"
 					})
 				]
@@ -2043,7 +2043,7 @@ function it({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r })
 							}),
 							t && /* @__PURE__ */ O("button", {
 								onClick: () => t(c.id),
-								className: "self-start px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0",
+								className: "self-start px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 								children: "Add latency"
 							}),
 							n && /* @__PURE__ */ O("button", {

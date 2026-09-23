@@ -109,7 +109,7 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
           <div key={n} className="flex items-center">
             <div className={cn(
               'w-[26px] h-[26px] rounded-full shrink-0 flex items-center justify-center text-xs font-bold border-2',
-              done && 'bg-primary text-white border-transparent',
+              done && 'bg-primary text-on-primary border-transparent',
               active && 'bg-accent-bg text-accent-fg border-primary',
               !done && !active && 'bg-surface-hover text-text-tertiary border-transparent',
             )}>
@@ -513,7 +513,7 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
               onClick={handleNext}
               disabled={!canNext}
               className={cn(
-                'py-[7px] px-4 text-[13px] font-semibold rounded-[7px] font-inherit border-none bg-primary text-white',
+                'py-[7px] px-4 text-[13px] font-semibold rounded-[7px] font-inherit border-none bg-primary text-on-primary',
                 canNext ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-50',
               )}
             >
@@ -524,7 +524,7 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
               data-testid="save-button"
               type="button"
               onClick={handleSave}
-              className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit border-none bg-primary text-white"
+              className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit border-none bg-primary text-on-primary"
             >
               {initial ? 'Save Changes' : 'Create Data Type'}
             </button>
@@ -598,7 +598,7 @@ function IdlePanel({ onCreateNew }: { onCreateNew: () => void }) {
         data-testid="new-data-type-empty-btn"
         type="button"
         onClick={onCreateNew}
-        className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit border-none bg-primary text-white"
+        className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit border-none bg-primary text-on-primary"
       >
         + New Data Type
       </button>
@@ -657,7 +657,7 @@ export default function FieldTypesPage() {
             data-testid="new-data-type-button"
             type="button"
             onClick={() => { setMode('create'); setEditingId(null); }}
-            className="py-[5px] px-3 text-xs font-semibold rounded-[7px] cursor-pointer font-inherit border-none bg-primary text-white"
+            className="py-[5px] px-3 text-xs font-semibold rounded-[7px] cursor-pointer font-inherit border-none bg-primary text-on-primary"
           >
             + New
           </button>

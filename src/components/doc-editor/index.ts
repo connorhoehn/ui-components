@@ -102,8 +102,8 @@ export type {
   CanvasUnsupportedForm,
 } from './CanvasDocumentView';
 
-export { default as DocumentToolbar } from './DocumentToolbar';
-export type { DocumentToolbarProps } from './DocumentToolbar';
+export { default as DocumentToolbar, useDocumentToolbarSize, documentToolbarSize, DOCUMENT_TOOLBAR_BREAKPOINTS } from './DocumentToolbar';
+export type { DocumentToolbarProps, DocumentToolbarSize } from './DocumentToolbar';
 
 export { default as DocumentGutter, stackOffsets } from './DocumentGutter';
 export type { DocumentGutterProps, GutterItem, GutterItemKind } from './DocumentGutter';

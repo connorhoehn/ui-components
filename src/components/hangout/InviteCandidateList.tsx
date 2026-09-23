@@ -286,7 +286,7 @@ export function InviteCandidateList({
                             className={cn(
                                 'grid h-4 w-4 place-items-center rounded border text-[10px]',
                                 isSelected
-                                    ? 'border-transparent bg-primary text-white'
+                                    ? 'border-transparent bg-primary text-on-primary'
                                     : cn('text-transparent', dark ? 'border-white/30' : 'border-border'),
                             )}
                         >

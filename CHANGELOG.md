@@ -6,6 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.382.0] — 2026-09-23
+
+### Changed
+
+- **doc-editor: `DocumentToolbar` keeps ONE row at every width.** It measures its own box and takes controls
+  off the bar in a fixed order instead of wrapping: `wide` (≥ 1240px of bar) is the old bar; `medium` keeps
+  the style selects, B/I/U, bullet/numbered and link and moves strike, inline code, the task list, the colour
+  palettes, alignment, spacing, inserts and clear-formatting behind a `⋯` group; `narrow` folds the three
+  selects into one `Style ▾` panel. New `size` prop (`auto` | `wide` | `medium` | `narrow`), `data-size` on
+  the bar, and `useDocumentToolbarSize()` for whatever a host renders into `actions` — the page's Comment
+  button becomes an icon beside the presence avatars below `wide`. `documentToolbarSize()` and
+  `DOCUMENT_TOOLBAR_BREAKPOINTS` are exported. Measured: at a 1280px window the page editor's toolbar took
+  three rows and left ~200px of paper. Tests and a `DocEditor/DocumentToolbar` story.
+- **doc-editor: `EditorShell`'s toolbar row sits in the dock's gutter.** `px-[var(--dock-inset,1rem)]`
+  instead of `px-3`, so a toolbar's first control and the pinned composer's edge fall on the same line — the
+  deck page measured a 4px offset between the slide tools and the agent composer.
+- **tokens: primary fills are readable in both themes.** Light `--color-primary` is `#5a61ff` (was `#646cff`:
+  white on it measured 4.09:1, under WCAG AA's 4.5:1; the new value is 4.58:1, the nearest same-hue step).
+  New `--color-on-primary` — white in light, the light text ink in dark, because the dark primary `#8b91ff`
+  is a pastel that white cannot be read on (2.8:1) while dark ink can (6.5:1). `Button variant="primary"`
+  and every `bg-primary` fill in the doc editor, composer, social, ingest, doc-types, shared and observability
+  components paint `text-on-primary`; nothing paints `text-white` on `bg-primary` there. A contrast test pins
+  the pair in both themes. `lightTheme.primary` follows.
+- **shared: `UserChip` takes `labelClassName`** — classes on the name label alone, so a narrow table column
+  can keep the avatar (`labelClassName="hidden @2xl:inline"`) while the name stays the chip's tooltip.
+
 ## [2.381.0] — 2026-09-23
 
 ### Added

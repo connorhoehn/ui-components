@@ -153,7 +153,7 @@ function MetricTimeSeriesPanel({
           <button
             data-testid="metrics-export-csv"
             onClick={onExportCsv}
-            className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
+            className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
           >
             Export CSV
           </button>

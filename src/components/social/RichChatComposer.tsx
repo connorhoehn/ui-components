@@ -2392,7 +2392,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 onClick={terminalMode ? submitShell : send}
                 disabled={!canSend}
                 data-testid={`${testId}-send`}
-                className="shrink-0 rounded-l-md rounded-r-none bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40"
+                className="shrink-0 rounded-l-md rounded-r-none bg-primary px-2.5 py-1 text-xs font-semibold text-on-primary disabled:opacity-40"
               >
                 {sendLabel}
               </button>
@@ -2402,7 +2402,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 align="end"
                 triggerTestId={`${testId}-send-options`}
                 data-testid={`${testId}-send-menu`}
-                triggerClassName="rounded-l-none rounded-r-md border-0 border-l border-white/40 bg-primary px-1.5 py-1 text-white hover:bg-primary"
+                triggerClassName="rounded-l-none rounded-r-md border-0 border-l border-on-primary/40 bg-primary px-1.5 py-1 text-on-primary hover:bg-primary"
                 sections={[{ items: sendOptions.map((option) => ({ label: option.label, onSelect: () => onSendOption(option.id) })) }]}
               />
             </span>
@@ -2414,7 +2414,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               data-testid={`${testId}-send`}
               className={cn(
                 (submitLead == null || collapsed) && 'ml-auto',
-                'shrink-0 rounded bg-primary font-semibold text-white disabled:opacity-40',
+                'shrink-0 rounded bg-primary font-semibold text-on-primary disabled:opacity-40',
                 // The docked card's button is the editor's size, with the arrow
                 // the mockup gives it; a chat column's stays small.
                 menuModeRow ? 'rounded-md px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs',

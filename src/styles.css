@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #646cff;
+  /* #5a61ff, not #646cff: white text on the old value measured 4.09:1 —
+   * under WCAG AA's 4.5:1 for the 14px/600 label on every primary button.
+   * #5a61ff is the nearest same-hue step that clears it (4.58:1 with white,
+   * 5.15:1 on hover). See theme/__tests__/primaryContrast.test.ts. */
+  --color-primary: #5a61ff;
   --color-primary-hover: #4f55ff;
+  /* The ink a primary FILL carries. White here; in the dark block it is the
+   * light theme's text ink, because the dark primary is a pastel (#8b91ff)
+   * that white text cannot be read on (2.8:1) while dark ink can (6.5:1).
+   * Paint `text-on-primary` on anything `bg-primary`, never `text-white`. */
+  --color-on-primary: #ffffff;
 
   --color-text-primary: #0f172a;
   --color-text-secondary: #475569;
@@ -287,6 +296,7 @@
 
   --color-primary: #8b91ff;
   --color-primary-hover: #a5aaff;
+  --color-on-primary: #0f172a;
 
   --color-text-primary: #f1f5f9;
   --color-text-secondary: #cbd5e1;
@@ -1047,7 +1057,7 @@
   border-bottom: none;
 }
 .react-flow__controls-interactive.active {
-  color: var(--color-primary, #646cff);
+  color: var(--color-primary, #5a61ff);
 }
 
 @keyframes node-error-pulse {

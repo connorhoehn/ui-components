@@ -1,20 +1,20 @@
 import { n as e, t } from "./useWebSocket-C9oAM0NL.js";
 import { t as n } from "./cn-DhjIN-s0.js";
-import { _ as r } from "./overlayStack-BDlo8PJg.js";
-import { t as i } from "./Chip-DYqbAD3L.js";
+import { _ as r } from "./overlayStack-CHdlnODN.js";
+import { t as i } from "./Chip-B_HZn3xl.js";
 import { t as a } from "./Input-DLknWXri.js";
 import { t as o } from "./Textarea-Dz4doxTv.js";
-import { t as s } from "./Select-CD8ixtYi.js";
-import { t as c } from "./Checkbox-Db43XgBJ.js";
+import { t as s } from "./Select-D5mMMegw.js";
+import { t as c } from "./Checkbox-Dftwml_V.js";
 import { t as l } from "./formatBytes-05ivRSJY.js";
-import { n as u, t as d } from "./useResolvedTheme-DeRQFubK.js";
+import { n as u, t as d } from "./useResolvedTheme-DPbe_fFL.js";
 import { Suspense as f, createElement as p, lazy as m, useCallback as h, useEffect as g, useMemo as ee, useRef as _, useState as v } from "react";
 import { Fragment as y, jsx as b, jsxs as x } from "react/jsx-runtime";
 import { Extension as S } from "@tiptap/core";
 import { NodeSelection as te, Plugin as ne, PluginKey as re, TextSelection as ie } from "@tiptap/pm/state";
 import { createRoot as ae } from "react-dom/client";
 //#region src/components/diagram/CollaborativeExcalidraw.tsx
-var oe = m(() => import("./ExcalidrawCanvas-BDFfv5W1.js"));
+var oe = m(() => import("./ExcalidrawCanvas-CE8E8_DF.js"));
 function se({ label: e }) {
 	return /* @__PURE__ */ b("div", {
 		"data-testid": "diagram-loading",

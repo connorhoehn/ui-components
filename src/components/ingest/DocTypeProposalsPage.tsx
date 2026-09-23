@@ -132,7 +132,7 @@ function ProposalRow({ proposal, onPromote, onReject }: ProposalRowProps) {
       <div className="flex gap-2">
         <button
           data-testid={`proposal-promote-${proposal.proposalId}`}
-          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
           onClick={onPromote}
         >
           Promote

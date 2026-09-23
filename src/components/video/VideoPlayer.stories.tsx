@@ -74,7 +74,7 @@ export const PhaseSwitcher: Story = {
               onClick={() => setPhase(p)}
               className={
                 p === phase
-                  ? 'px-2.5 py-1 rounded text-xs font-medium bg-primary text-white'
+                  ? 'px-2.5 py-1 rounded text-xs font-medium bg-primary text-on-primary'
                   : 'px-2.5 py-1 rounded text-xs font-medium bg-surface-panel border border-border text-text-secondary'
               }
             >

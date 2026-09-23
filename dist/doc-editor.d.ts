@@ -662,6 +662,29 @@ export declare const DOCK_HEIGHT_VAR = "--dock-height";
  */
 export declare const DOCK_INSET_VAR = "--dock-inset";
 
+/**
+ * Content-box widths (px) of the bar itself, not the window: the same toolbar
+ * sits in a full-width page, beside a workbench, and inside a chat pane.
+ *
+ * - wide (≥ 1240): everything inline — this is the old bar.
+ * - medium (≥ 840): the style selects, bold/italic/underline, bullet and
+ *   numbered lists and link stay; strike, inline code, the task list, the
+ *   colour palettes, alignment, spacing, inserts and clear-formatting move
+ *   behind ⋯. The host's actions read `useDocumentToolbarSize()` and shrink
+ *   too (the page's Comment button becomes an icon beside the presence
+ *   avatars).
+ * - narrow: the three style selects fold into one `Style ▾` panel.
+ *
+ * Measured, not guessed (every extension registered, the page's avatars and
+ * Comment in `actions`): the wide bar's natural width is ~1200px, medium's
+ * ~820px, narrow's ~520px. The page editor's bar is 892px wide at a 1640px
+ * window and 532px at 1280px.
+ */
+export declare const DOCUMENT_TOOLBAR_BREAKPOINTS: {
+    readonly narrow: 840;
+    readonly wide: 1240;
+};
+
 export declare function DocumentEditorPage({ documentId, documentType, ws, userId, displayName, color, onMessage, activityPublish, onBack, isVideoDocked, onDockVideo, onUndockVideo, idToken, }: DocumentEditorPageProps): JSX.Element;
 
 declare interface DocumentEditorPageProps {
@@ -1045,7 +1068,7 @@ export declare interface DocumentTarget {
     commentId?: string | null;
 }
 
-export declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
+export declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, size: sizeProp, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
 
 export declare interface DocumentToolbarProps {
     editor: Editor | null;
@@ -1101,8 +1124,26 @@ export declare interface DocumentToolbarProps {
      * (the full page has them), they are just not what a reading pane is for.
      */
     density?: 'full' | 'compact';
+    /**
+     * How much of the bar fits on ONE row. `auto` (the default) measures the
+     * bar's own box and picks `wide` / `medium` / `narrow` — see
+     * `DOCUMENT_TOOLBAR_BREAKPOINTS`. A fixed value is for tests and stories.
+     *
+     * The bar never wraps. It used to (`flex-wrap`), and at a 1280px window the
+     * page editor's toolbar took THREE rows — B and I on the first, the rest on
+     * the second, and the host's Comment button alone on a third — leaving
+     * about 200px of paper. A toolbar is one line of controls in every word
+     * processor; what does not fit goes behind ⋯, the way Docs and Word do it.
+     */
+    size?: DocumentToolbarSize | 'auto';
     'data-testid'?: string;
 }
+
+/** One-row layouts, widest first. */
+export declare type DocumentToolbarSize = 'wide' | 'medium' | 'narrow';
+
+/** `null` — not measured yet — is wide: a first paint that hides controls and then shows them is worse than one frame of overflow. */
+export declare function documentToolbarSize(width: number | null): DocumentToolbarSize;
 
 export declare interface DocumentUploadCompletion {
     mine: boolean;
@@ -2969,6 +3010,16 @@ declare interface UseDocumentOutlineResult {
     goTo: (id: string) => void;
 }
 
+/**
+ * The bar's current layout, for whatever a host renders into `actions`.
+ *
+ * The slot sits inside the bar, so the host's controls are on the same row
+ * and subject to the same width — a labelled "Comment" button that stays
+ * labelled at `medium` is the control that pushed the bar onto a third row.
+ * Outside a `DocumentToolbar` this reads `wide`.
+ */
+export declare function useDocumentToolbarSize(): DocumentToolbarSize;
+
 export declare function useFollowCursor({ editor, provider, followClientId, onLost }: UseFollowCursorOptions): void;
 
 export declare interface UseFollowCursorOptions {
@@ -3377,6 +3428,49 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3396,49 +3490,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

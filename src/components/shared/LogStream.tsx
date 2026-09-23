@@ -250,7 +250,7 @@ export function LogStream({
             className={cn(
               'absolute bottom-3 left-1/2 -translate-x-1/2',
               'px-3 py-1 text-[10px] font-semibold uppercase tracking-wide',
-              'bg-primary text-white rounded-full border-none cursor-pointer',
+              'bg-primary text-on-primary rounded-full border-none cursor-pointer',
               'shadow-[0_2px_8px_rgba(0,0,0,0.25)]',
             )}
           >

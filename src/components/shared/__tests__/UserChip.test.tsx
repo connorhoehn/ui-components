@@ -38,4 +38,14 @@ describe('UserChip', () => {
     render(<UserChip name="Alice" data-testid="mention-alice" />);
     expect(screen.getByTestId('mention-alice')).toBeInTheDocument();
   });
+
+  it('takes classes on the name label alone, so a narrow column can keep the avatar', () => {
+    render(<UserChip name="Alice" labelClassName="hidden @2xl:inline" />);
+    const chip = screen.getByTestId('user-chip');
+    // The name is still the chip's title — an avatar alone must still say who.
+    expect(chip).toHaveAttribute('title', 'Alice');
+    const label = screen.getByText('Alice');
+    expect(label).toHaveClass('hidden', '@2xl:inline');
+    expect(chip).not.toHaveClass('hidden');
+  });
 });

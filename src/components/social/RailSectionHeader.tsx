@@ -147,7 +147,7 @@ export function RailSectionHeader({
                 data-testid={`${testId}-collapsed-count`}
                 className={cn(
                   'grid h-4 min-w-4 shrink-0 place-items-center rounded-full px-1 text-[10px] font-semibold leading-none',
-                  dark ? 'bg-white/15 text-white' : 'bg-primary text-white',
+                  dark ? 'bg-white/15 text-white' : 'bg-primary text-on-primary',
                 )}
               >
                 {collapsedCount > 99 ? '99+' : collapsedCount}

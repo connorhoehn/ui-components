@@ -2895,7 +2895,7 @@ export function ChatPanel({
             className={cn(
               'absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs shadow-md',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-              dark ? 'bg-white/20 text-white' : 'bg-primary text-white',
+              dark ? 'bg-white/20 text-white' : 'bg-primary text-on-primary',
             )}
           >
             {unreadBelow} new message{unreadBelow === 1 ? '' : 's'} ↓

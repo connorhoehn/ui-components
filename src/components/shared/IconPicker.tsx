@@ -176,7 +176,7 @@ export default function IconPicker({
               type="button"
               onClick={handleCustomCommit}
               disabled={customDraft.trim().length === 0}
-              className="px-2.5 py-1 text-xs font-semibold bg-primary text-white border-none rounded-md font-[inherit] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+              className="px-2.5 py-1 text-xs font-semibold bg-primary text-on-primary border-none rounded-md font-[inherit] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
             >
               Set
             </button>

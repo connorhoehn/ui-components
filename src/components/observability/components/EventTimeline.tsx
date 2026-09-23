@@ -104,7 +104,7 @@ function EventTimeline({ events, selectedId, onSelect, live = false }: EventTime
           className={cn(
             'absolute bottom-3 left-1/2 -translate-x-1/2',
             'px-3.5 py-1.5 text-xs font-semibold',
-            'bg-primary text-white',
+            'bg-primary text-on-primary',
             'border-none rounded-full cursor-pointer',
             'shadow-[0_2px_8px_rgba(0,0,0,0.15)] font-[inherit]'
           )}

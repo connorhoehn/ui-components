@@ -84,7 +84,7 @@ function DefaultCompactRow({ index, selected }: { index: number; selected: boole
     <span
       className={cn(
         'flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold',
-        selected ? 'bg-primary text-white' : 'bg-surface-inset text-text-tertiary',
+        selected ? 'bg-primary text-on-primary' : 'bg-surface-inset text-text-tertiary',
       )}
     >
       {index + 1}

@@ -49,7 +49,7 @@ describe('ThemeProvider', () => {
     );
 
     const root = document.documentElement;
-    expect(root.style.getPropertyValue('--ui-primary')).toBe('#646cff');
+    expect(root.style.getPropertyValue('--ui-primary')).toBe('#5a61ff');
     expect(root.style.getPropertyValue('--ui-text-primary')).toBe('#0f172a');
   });
 
@@ -69,7 +69,7 @@ describe('ThemeProvider', () => {
     );
 
     const root = document.documentElement;
-    expect(root.style.getPropertyValue('--ui-primary')).toBe('#646cff');
+    expect(root.style.getPropertyValue('--ui-primary')).toBe('#5a61ff');
 
     unmount();
 
@@ -100,7 +100,7 @@ describe('useTheme', () => {
 
     const { result } = renderHook(() => useTheme(), { wrapper: themeWrapper });
 
-    expect(result.current.primary).toBe('#646cff');
+    expect(result.current.primary).toBe('#5a61ff');
     expect(result.current.textPrimary).toBe('#0f172a');
     expect(result.current.background).toBe('#f8fafc');
   });

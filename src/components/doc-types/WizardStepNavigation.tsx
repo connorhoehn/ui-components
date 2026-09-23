@@ -22,7 +22,7 @@ export function StepIndicator({ step, total }: { step: number; total: number }) 
           <div key={n} className="flex items-center">
             <div className={cn(
               'w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-bold',
-              done && 'bg-primary text-white border-2 border-transparent',
+              done && 'bg-primary text-on-primary border-2 border-transparent',
               active && 'bg-accent-bg text-accent-fg border-2 border-primary',
               !done && !active && 'bg-surface-hover text-text-tertiary border-2 border-transparent',
             )}>
@@ -118,7 +118,7 @@ export function WizardStepNavigation({
           onClick={onNext}
           disabled={!canAdvance}
           className={cn(
-            'px-4 py-[7px] text-[13px] font-semibold rounded-[7px] font-inherit border-none bg-primary text-white',
+            'px-4 py-[7px] text-[13px] font-semibold rounded-[7px] font-inherit border-none bg-primary text-on-primary',
             canAdvance ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-50',
           )}
         >

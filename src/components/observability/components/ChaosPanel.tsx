@@ -143,7 +143,7 @@ function ChaosPanel(props: ChaosPanelProps) {
         <button
           data-testid="chaos-pause-toggle"
           onClick={togglePause}
-          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
         >
           {chaos.paused ? 'Resume' : 'Pause'}
         </button>
@@ -169,7 +169,7 @@ function ChaosPanel(props: ChaosPanelProps) {
         <button
           data-testid="chaos-latency-apply"
           onClick={applyLatency}
-          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
         >
           Apply
         </button>
@@ -200,7 +200,7 @@ function ChaosPanel(props: ChaosPanelProps) {
           data-testid="chaos-partition-inject"
           onClick={injectPartition}
           className={cn(
-            'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md font-[inherit] shrink-0',
+            'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md font-[inherit] shrink-0',
             selectedNodes.length === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
           )}
           disabled={selectedNodes.length === 0}
@@ -230,7 +230,7 @@ function ChaosPanel(props: ChaosPanelProps) {
         <button
           data-testid="chaos-drop-apply"
           onClick={applyDrop}
-          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0"
         >
           Apply
         </button>

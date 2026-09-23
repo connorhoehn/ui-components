@@ -2,16 +2,16 @@ import { n as e, t } from "./registry-DbX3MVAA.js";
 import { i as n, n as r, r as i } from "./documentType-rRZpKWbO.js";
 import { i as a } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as o } from "./cn-DhjIN-s0.js";
-import { _ as s } from "./overlayStack-BDlo8PJg.js";
+import { _ as s } from "./overlayStack-CHdlnODN.js";
 import { n as c } from "./Stack-CkiMw5K0.js";
-import { t as l } from "./Modal-D2qxMX2_.js";
-import { t as u } from "./EmptyState-DQYx5Oyy.js";
+import { t as l } from "./Modal-DMFNRUDx.js";
+import { t as u } from "./EmptyState-DFWbBBcY.js";
 import { t as d } from "./Input-DLknWXri.js";
 import { t as f } from "./Textarea-Dz4doxTv.js";
 import { t as p } from "./PageHeader-DOSl8dnN.js";
-import { t as m } from "./Select-CD8ixtYi.js";
-import { t as h } from "./Checkbox-Db43XgBJ.js";
-import { G as g, H as _, U as v, W as y } from "./renderers-5O9bh08s.js";
+import { t as m } from "./Select-D5mMMegw.js";
+import { t as h } from "./Checkbox-Dftwml_V.js";
+import { G as g, H as _, U as v, W as y } from "./renderers-BX3ZB5kO.js";
 import { useEffect as b, useId as x, useMemo as S, useRef as C, useState as w } from "react";
 import { Fragment as T, jsx as E, jsxs as D } from "react/jsx-runtime";
 import { DndContext as O, KeyboardSensor as k, PointerSensor as A, closestCorners as j, useSensor as M, useSensors as N } from "@dnd-kit/core";
@@ -32,7 +32,7 @@ function V({ step: e, total: t }) {
 				className: "flex items-center",
 				children: [
 					/* @__PURE__ */ E("div", {
-						className: o("w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-bold", s && "bg-primary text-white border-2 border-transparent", a && "bg-accent-bg text-accent-fg border-2 border-primary", !s && !a && "bg-surface-hover text-text-tertiary border-2 border-transparent"),
+						className: o("w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-bold", s && "bg-primary text-on-primary border-2 border-transparent", a && "bg-accent-bg text-accent-fg border-2 border-primary", !s && !a && "bg-surface-hover text-text-tertiary border-2 border-transparent"),
 						children: s ? "✓" : i
 					}),
 					/* @__PURE__ */ E("span", {
@@ -83,7 +83,7 @@ function H({ step: e, totalSteps: t, canAdvance: n, isEditing: r, onCancel: i, o
 				"data-testid": "wizard-next",
 				onClick: s,
 				disabled: !n,
-				className: o("px-4 py-[7px] text-[13px] font-semibold rounded-[7px] font-inherit border-none bg-primary text-white", n ? "cursor-pointer opacity-100" : "cursor-not-allowed opacity-50"),
+				className: o("px-4 py-[7px] text-[13px] font-semibold rounded-[7px] font-inherit border-none bg-primary text-on-primary", n ? "cursor-pointer opacity-100" : "cursor-not-allowed opacity-50"),
 				children: e === t ? r ? "Save Changes" : "Create Type" : "Next →"
 			})]
 		})]
@@ -789,7 +789,7 @@ function ee({ cookbook: e, onPick: t, actionLabel: n, busy: r, cardPrefix: i, la
 				"data-testid": `${i}-use-${e.id}`,
 				onClick: () => t(e),
 				disabled: r,
-				className: o("mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-white border-none rounded-md", r ? "opacity-60 cursor-not-allowed" : "cursor-pointer"),
+				className: o("mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-on-primary border-none rounded-md", r ? "opacity-60 cursor-not-allowed" : "cursor-pointer"),
 				children: n
 			})
 		]
@@ -813,14 +813,14 @@ function Q({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearc
 				"data-testid": `${a}-cat-all`,
 				"aria-pressed": h === "All",
 				onClick: () => g("All"),
-				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer", h === "All" ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
+				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer", h === "All" ? "bg-primary text-on-primary" : "bg-surface-hover text-text-secondary"),
 				children: "All"
 			}), _.map((e) => /* @__PURE__ */ E("button", {
 				type: "button",
 				"data-testid": `${a}-cat-${Z(e)}`,
 				"aria-pressed": h === e,
 				onClick: () => g(e),
-				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer", h === e ? "bg-primary text-white" : "bg-surface-hover text-text-secondary"),
+				className: o("py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer", h === e ? "bg-primary text-on-primary" : "bg-surface-hover text-text-secondary"),
 				children: e
 			}, e))]
 		}),
@@ -1093,7 +1093,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 								"data-testid": "cookbooks-btn",
 								onClick: () => T(!0),
 								title: "Browse the ready-made document types",
-								className: "py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer whitespace-nowrap",
+								className: "py-[5px] px-3 text-xs font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer whitespace-nowrap",
 								children: "Known types"
 							}), /* @__PURE__ */ E(s, {
 								variant: "secondary",

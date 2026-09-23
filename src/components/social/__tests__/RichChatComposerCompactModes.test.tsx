@@ -273,7 +273,7 @@ describe('per-mode hints, submit label and submit lead', () => {
     expect(screen.queryByTestId('composer-submit-lead')).toBeNull();
     expect(screen.getByTestId('composer-send')).toHaveAttribute(
       'class',
-      'ml-auto shrink-0 rounded bg-primary font-semibold text-white disabled:opacity-40 px-2.5 py-1 text-xs',
+      'ml-auto shrink-0 rounded bg-primary font-semibold text-on-primary disabled:opacity-40 px-2.5 py-1 text-xs',
     );
   });
 });

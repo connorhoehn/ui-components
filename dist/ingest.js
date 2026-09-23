@@ -3,15 +3,15 @@ import { r as t } from "./IdentityContext-CQM1qwH6.js";
 import { a as n, c as r, i, l as a, n as o, o as s, r as c, s as l, t as u, u as d } from "./useSyncConflicts-BspqjVsW.js";
 import { i as f } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as p } from "./cn-DhjIN-s0.js";
-import { _ as m, t as h } from "./overlayStack-BDlo8PJg.js";
-import { t as g } from "./Chip-DYqbAD3L.js";
-import { t as _ } from "./EmptyState-DQYx5Oyy.js";
-import { n as v, r as y, t as b } from "./focusTrap-w9Uk7DPx.js";
+import { _ as m, t as h } from "./overlayStack-CHdlnODN.js";
+import { t as g } from "./Chip-B_HZn3xl.js";
+import { t as _ } from "./EmptyState-DFWbBBcY.js";
+import { n as v, r as y, t as b } from "./focusTrap-C5l9cvTe.js";
 import { t as x } from "./SkeletonCard-CGe8XFPB.js";
 import { t as S } from "./Input-DLknWXri.js";
-import { t as C } from "./Select-CD8ixtYi.js";
+import { t as C } from "./Select-D5mMMegw.js";
 import { t as w } from "./activationKey-CjbL3LUv.js";
-import { n as T, t as E } from "./ChangeReviewCard-D9md3-5S.js";
+import { n as T, t as E } from "./ChangeReviewCard-BZJZB5FY.js";
 import { useCallback as D, useEffect as O, useId as k, useMemo as A, useRef as j, useState as M } from "react";
 import { Fragment as N, jsx as P, jsxs as F } from "react/jsx-runtime";
 import { useNavigate as I, useParams as L } from "react-router";
@@ -108,7 +108,7 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 				}), /* @__PURE__ */ F("div", {
 					className: "flex gap-2.5 items-center",
 					children: [null, /* @__PURE__ */ P("button", {
-						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]",
+						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]",
 						onClick: () => a("/ingest/sources"),
 						"data-testid": "add-source-btn",
 						children: "Add Source"
@@ -328,7 +328,7 @@ function J() {
 						t.length === 1 ? "" : "s"
 					]
 				})] }), /* @__PURE__ */ P("button", {
-					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]",
+					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]",
 					onClick: () => e("/ingest/sources"),
 					"data-testid": "add-source-btn",
 					children: "Add Source"
@@ -1280,7 +1280,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 						onClick: oe,
 						children: "Cancel"
 					}), /* @__PURE__ */ P("button", {
-						className: p("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]", R && "opacity-50 cursor-not-allowed"),
+						className: p("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]", R && "opacity-50 cursor-not-allowed"),
 						onClick: () => void X(),
 						disabled: R,
 						children: R ? "Saving..." : "Save Changes"
@@ -1985,7 +1985,7 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 							children: m === "remap" ? "Re-mapping…" : "Re-map"
 						}),
 						/* @__PURE__ */ P("button", {
-							className: p("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] rounded-md cursor-pointer", m || !k ? "bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed" : "bg-primary border-none text-white"),
+							className: p("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] rounded-md cursor-pointer", m || !k ? "bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed" : "bg-primary border-none text-on-primary"),
 							onClick: () => void R(),
 							disabled: !!m || !k,
 							"data-testid": "item-retry-btn",
@@ -2112,7 +2112,7 @@ function Te() {
 						}))]
 					}),
 					/* @__PURE__ */ P("button", {
-						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]",
+						className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]",
 						onClick: () => void f(),
 						"data-testid": "refresh-btn",
 						children: "Refresh"
@@ -2748,7 +2748,7 @@ function Fe({ field: e, side: t, onPick: n }) {
 			"aria-pressed": t === r.value,
 			disabled: !r.enabled,
 			onClick: () => r.enabled && n(r.value),
-			className: p("cursor-pointer rounded-full border px-2.5 py-0.5 font-[inherit] text-[11px] font-medium", t === r.value ? "border-primary bg-primary text-white" : "border-border bg-surface text-text-secondary hover:border-border-emphasis", !r.enabled && "cursor-not-allowed opacity-40"),
+			className: p("cursor-pointer rounded-full border px-2.5 py-0.5 font-[inherit] text-[11px] font-medium", t === r.value ? "border-primary bg-primary text-on-primary" : "border-border bg-surface text-text-secondary hover:border-border-emphasis", !r.enabled && "cursor-not-allowed opacity-40"),
 			"data-testid": `field-pick-${e.field}-${r.value}`,
 			children: r.label
 		}, r.value)), r && t === "merged" && /* @__PURE__ */ F("span", {
@@ -2855,7 +2855,7 @@ function Re({ entry: e, onReplay: t, onDrop: n }) {
 				className: "flex gap-2",
 				children: [/* @__PURE__ */ P("button", {
 					"data-testid": `dlq-replay-${e.id}`,
-					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0",
+					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 					onClick: t,
 					children: "Replay"
 				}), /* @__PURE__ */ P("button", {
@@ -2973,7 +2973,7 @@ function Be({ proposal: e, onPromote: t, onReject: n }) {
 				className: "flex gap-2",
 				children: [/* @__PURE__ */ P("button", {
 					"data-testid": `proposal-promote-${e.proposalId}`,
-					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0",
+					className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 					onClick: t,
 					children: "Promote"
 				}), /* @__PURE__ */ P("button", {
@@ -3103,7 +3103,7 @@ function He({ item: e, docTypes: t, remapTypeId: n, onPickRemapType: r, onAccept
 				children: [
 					/* @__PURE__ */ P("button", {
 						"data-testid": `review-accept-${e.itemId}`,
-						className: p("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]", !e.documentTypeId && "opacity-50 cursor-not-allowed"),
+						className: p("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]", !e.documentTypeId && "opacity-50 cursor-not-allowed"),
 						onClick: i,
 						disabled: !e.documentTypeId,
 						title: e.documentTypeId ? "Commit the suggested type" : "No suggestion to accept",
@@ -3125,7 +3125,7 @@ function He({ item: e, docTypes: t, remapTypeId: n, onPickRemapType: r, onAccept
 					}),
 					/* @__PURE__ */ P("button", {
 						"data-testid": `review-remap-${e.itemId}`,
-						className: p("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]", !n && "opacity-50 cursor-not-allowed"),
+						className: p("px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]", !n && "opacity-50 cursor-not-allowed"),
 						onClick: a,
 						disabled: !n,
 						children: "Re-map"

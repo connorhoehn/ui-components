@@ -105,7 +105,7 @@ function MessageBubble({ post, isOwn, showSender }: MessageBubbleProps) {
           className={cn(
             'px-3.5 py-2 text-sm leading-relaxed break-words transition-opacity duration-200',
             isOwn
-              ? 'bg-primary text-white rounded-[18px_18px_4px_18px]'
+              ? 'bg-primary text-on-primary rounded-[18px_18px_4px_18px]'
               : 'bg-surface-hover text-text-primary rounded-[4px_18px_18px_18px]',
             post._fadeIn ? 'opacity-0' : 'opacity-100',
           )}
@@ -256,7 +256,7 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
             'w-[34px] h-[34px] rounded-full shrink-0 border-none flex items-center justify-center text-base',
             !message.trim() || sending
               ? 'bg-surface-hover text-text-tertiary cursor-default'
-              : 'bg-primary text-white cursor-pointer',
+              : 'bg-primary text-on-primary cursor-pointer',
           )}
         >
           ↑

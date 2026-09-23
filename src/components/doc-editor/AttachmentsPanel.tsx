@@ -119,7 +119,7 @@ function AddFileForm({ onAdd, onCancel }: { onAdd: (name: string, url: string) =
         type="button"
         disabled={!valid}
         onClick={() => { if (valid) onAdd(name, url); }}
-        className={cn('px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0')}
+        className={cn('px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0')}
       >
         Attach
       </button>
@@ -146,7 +146,7 @@ function AddDocumentForm({ onAdd, onCancel }: { onAdd: (title: string) => void; 
         type="button"
         disabled={!valid}
         onClick={() => { if (valid) onAdd(title); }}
-        className={cn('px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0')}
+        className={cn('px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0')}
       >
         Link
       </button>

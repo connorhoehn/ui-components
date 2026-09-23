@@ -13,7 +13,7 @@ import type { ThemeTokens } from './ThemeProvider';
 /** Default light theme — derived from the original hardcoded tokens. */
 export const lightTheme: ThemeTokens = {
   // Colors
-  primary: '#646cff',
+  primary: '#5a61ff',
   primaryDark: '#4f55ff',
   primaryLight: '#93c5fd',
   danger: '#dc2626',

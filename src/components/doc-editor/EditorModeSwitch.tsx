@@ -219,7 +219,7 @@ export default function EditorModeSwitch({
             onClick={onLoadDemo}
             className={cn(
               'px-6 py-2.5 text-[15px] font-semibold border-none rounded-lg',
-              'bg-primary text-white cursor-pointer font-[inherit]'
+              'bg-primary text-on-primary cursor-pointer font-[inherit]'
             )}
           >
             Load Demo Document

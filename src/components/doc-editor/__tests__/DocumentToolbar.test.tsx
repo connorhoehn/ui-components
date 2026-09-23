@@ -855,3 +855,160 @@ describe('DocumentToolbar — the gutter toggle', () => {
 });
 
 
+
+// ── one row at every width ──────────────────────────────────────────────────
+//
+// The bar used to `flex-wrap`. At a 1280px window the page editor's toolbar
+// took THREE rows and left ~200px of paper. Now it measures its own box and
+// takes controls off the bar in a fixed order; nothing ever folds.
+
+import { useDocumentToolbarSize, documentToolbarSize, DOCUMENT_TOOLBAR_BREAKPOINTS } from '../DocumentToolbar';
+
+/** Every optional extension the page registers, so every group is present. */
+const EVERYTHING = [
+  'setFontFamily', 'unsetFontFamily', 'setFontSize', 'unsetFontSize',
+  'setColor', 'unsetColor', 'setBackgroundColor', 'unsetBackgroundColor', 'toggleHighlight',
+  'setTextAlign', 'setLineSpacing', 'insertTable', 'unsetAllMarks', 'setImage', 'sinkListItem',
+];
+
+function SizeProbe() {
+  return <span data-testid="size-probe">{useDocumentToolbarSize()}</span>;
+}
+
+describe('DocumentToolbar — one row at every width', () => {
+  it('maps a measured width to a layout, and an unmeasured bar is wide', () => {
+    expect(documentToolbarSize(null)).toBe('wide');
+    expect(documentToolbarSize(DOCUMENT_TOOLBAR_BREAKPOINTS.wide)).toBe('wide');
+    expect(documentToolbarSize(DOCUMENT_TOOLBAR_BREAKPOINTS.wide - 1)).toBe('medium');
+    expect(documentToolbarSize(DOCUMENT_TOOLBAR_BREAKPOINTS.narrow)).toBe('medium');
+    expect(documentToolbarSize(DOCUMENT_TOOLBAR_BREAKPOINTS.narrow - 1)).toBe('narrow');
+  });
+
+  it('never wraps, and says which layout it is in', () => {
+    const { editor } = makeEditor({}, EVERYTHING);
+    render(<DocumentToolbar editor={editor} onInsertImage={() => {}} />);
+    const bar = screen.getByRole('toolbar');
+    expect(bar.className).toContain('flex-nowrap');
+    expect(bar.className).not.toContain('flex-wrap');
+    // jsdom never fires the ResizeObserver, so an auto bar stays wide.
+    expect(bar).toHaveAttribute('data-size', 'wide');
+  });
+
+  it('wide keeps everything on the bar and grows no ⋯', () => {
+    const { editor } = makeEditor({}, EVERYTHING);
+    render(<DocumentToolbar editor={editor} onInsertImage={() => {}} size="wide" />);
+    for (const id of ['block', 'font-family', 'font-size', 'strike', 'code', 'taskList', 'color', 'highlight-color', 'highlight', 'align', 'line-spacing', 'hr', 'table', 'image', 'clear-formatting']) {
+      expect(screen.getByTestId(`document-toolbar-${id}`)).toBeInTheDocument();
+    }
+    expect(screen.queryByTestId('document-toolbar-more')).toBeNull();
+    expect(screen.queryByTestId('document-toolbar-style')).toBeNull();
+  });
+
+  it('medium keeps the selects, B/I/U, bullet/numbered and link; the rest waits behind ⋯', () => {
+    const { editor, calls } = makeEditor({}, EVERYTHING);
+    render(<DocumentToolbar editor={editor} onInsertImage={() => {}} size="medium" />);
+    expect(screen.getByRole('toolbar')).toHaveAttribute('data-size', 'medium');
+    for (const id of ['block', 'font-family', 'font-size', 'bold', 'italic', 'underline', 'bulletList', 'orderedList', 'link']) {
+      expect(screen.getByTestId(`document-toolbar-${id}`)).toBeInTheDocument();
+    }
+    // Off the bar until asked for.
+    for (const id of ['strike', 'code', 'taskList', 'color', 'align', 'line-spacing', 'hr', 'table', 'image', 'clear-formatting']) {
+      expect(screen.queryByTestId(`document-toolbar-${id}`)).toBeNull();
+    }
+    const more = screen.getByTestId('document-toolbar-more');
+    expect(more).toHaveAttribute('aria-label', 'More formatting');
+    expect(more).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('document-toolbar-more-panel')).toBeNull();
+
+    // On mousedown with the default prevented, like every control here, so
+    // the selection the command will act on survives the click.
+    const ev = createEvent.mouseDown(more);
+    fireEvent(more, ev);
+    expect(ev.defaultPrevented).toBe(true);
+    const panel = screen.getByTestId('document-toolbar-more-panel');
+    expect(panel).toHaveAttribute('role', 'group');
+    expect(more).toHaveAttribute('aria-expanded', 'true');
+    expect(more).toHaveAttribute('aria-controls', panel.id);
+    for (const id of ['strike', 'code', 'taskList', 'color', 'highlight-color', 'highlight', 'align', 'line-spacing', 'hr', 'table', 'image', 'clear-formatting']) {
+      expect(panel.contains(screen.getByTestId(`document-toolbar-${id}`))).toBe(true);
+    }
+
+    // The controls in the group are the same controls: they run the same
+    // commands, and the group stays open for another.
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-strike'));
+    expect(calls).toContain('toggleStrike');
+    expect(screen.getByTestId('document-toolbar-more-panel')).toBeInTheDocument();
+
+    // A nested menu inside the group still opens.
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-align'));
+    expect(screen.getByTestId('document-toolbar-align-menu')).toBeInTheDocument();
+  });
+
+  it('closes the ⋯ group on Escape and on a click elsewhere', () => {
+    const { editor } = makeEditor({}, EVERYTHING);
+    render(<DocumentToolbar editor={editor} size="medium" />);
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-more'));
+    expect(screen.getByTestId('document-toolbar-more-panel')).toBeInTheDocument();
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByTestId('document-toolbar-more-panel')).toBeNull();
+
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-more'));
+    expect(screen.getByTestId('document-toolbar-more-panel')).toBeInTheDocument();
+    fireEvent.mouseDown(document.body);
+    expect(screen.queryByTestId('document-toolbar-more-panel')).toBeNull();
+  });
+
+  it('narrow folds the three selects into one Style ▾ panel', () => {
+    const { editor, calls } = makeEditor({ 'heading:{"level":1}': true }, EVERYTHING);
+    render(<DocumentToolbar editor={editor} size="narrow" />);
+    expect(screen.getByRole('toolbar')).toHaveAttribute('data-size', 'narrow');
+    expect(screen.queryByTestId('document-toolbar-block')).toBeNull();
+    expect(screen.queryByTestId('document-toolbar-font-family')).toBeNull();
+
+    const style = screen.getByTestId('document-toolbar-style');
+    expect(style).toHaveAttribute('aria-label', 'Text style');
+    // The current block rides along in the tooltip, since the select that
+    // showed it is folded away.
+    expect(style).toHaveAttribute('title', 'Text style: Heading 1');
+
+    fireEvent.mouseDown(style);
+    const panel = screen.getByTestId('document-toolbar-style-panel');
+    expect(panel.contains(screen.getByTestId('document-toolbar-block'))).toBe(true);
+    expect(panel.contains(screen.getByTestId('document-toolbar-font-family'))).toBe(true);
+    expect(panel.contains(screen.getByTestId('document-toolbar-font-size'))).toBe(true);
+    expect(screen.getByTestId('document-toolbar-block')).toHaveValue('heading1');
+
+    fireEvent.change(screen.getByTestId('document-toolbar-block'), { target: { value: 'heading2' } });
+    expect(calls).toContain('setNode:heading:{"level":2}');
+
+    // B, I, U, the two lists and link stay on the bar; the rest is behind ⋯.
+    for (const id of ['undo', 'redo', 'bold', 'italic', 'underline', 'bulletList', 'orderedList', 'link', 'more']) {
+      expect(screen.getByTestId(`document-toolbar-${id}`)).toBeInTheDocument();
+    }
+    expect(screen.queryByTestId('document-toolbar-strike')).toBeNull();
+  });
+
+  it('tells whatever the host renders into `actions` which layout it is in', () => {
+    const { editor } = makeEditor();
+    const { rerender } = render(<DocumentToolbar editor={editor} size="medium" actions={<SizeProbe />} />);
+    expect(screen.getByTestId('size-probe')).toHaveTextContent('medium');
+    rerender(<DocumentToolbar editor={editor} size="narrow" actions={<SizeProbe />} />);
+    expect(screen.getByTestId('size-probe')).toHaveTextContent('narrow');
+  });
+
+  it('reads wide outside any toolbar', () => {
+    render(<SizeProbe />);
+    expect(screen.getByTestId('size-probe')).toHaveTextContent('wide');
+  });
+
+  it('compact density keeps its fixed set at every size and never grows a ⋯', () => {
+    const { editor } = makeEditor({}, EVERYTHING);
+    render(<DocumentToolbar editor={editor} density="compact" size="narrow" />);
+    for (const id of ['bold', 'strike', 'code', 'bulletList', 'taskList', 'link']) {
+      expect(screen.getByTestId(`document-toolbar-${id}`)).toBeInTheDocument();
+    }
+    expect(screen.queryByTestId('document-toolbar-more')).toBeNull();
+    expect(screen.queryByTestId('document-toolbar-style')).toBeNull();
+    expect(screen.queryByTestId('document-toolbar-block')).toBeNull();
+  });
+});

@@ -775,7 +775,7 @@ export function ConversationList({
                         // pulling the eye across the rail for.
                         muted
                           ? (dark ? 'bg-white/15 text-white/70' : 'bg-surface-inset text-text-secondary')
-                          : 'bg-primary text-white',
+                          : 'bg-primary text-on-primary',
                       )}
                     >
                       {unread > 99 ? '99+' : unread}

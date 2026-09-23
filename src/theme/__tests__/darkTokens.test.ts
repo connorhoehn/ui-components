@@ -146,7 +146,7 @@ describe('dark token block — source contract (src/styles.css)', () => {
   it('does not touch the light values in @theme', () => {
     expect(tokenValue(themeBody, '--color-surface')).toBe('#ffffff');
     expect(tokenValue(themeBody, '--color-text-primary')).toBe('#0f172a');
-    expect(tokenValue(themeBody, '--color-primary')).toBe('#646cff');
+    expect(tokenValue(themeBody, '--color-primary')).toBe('#5a61ff');
   });
 });
 

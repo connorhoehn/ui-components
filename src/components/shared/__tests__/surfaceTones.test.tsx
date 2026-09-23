@@ -51,7 +51,7 @@ describe('Chip palette', () => {
 describe('Button tone', () => {
   it('keeps the app tokens by default', () => {
     render(<Button>Save</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-primary', 'text-white');
+    expect(screen.getByRole('button')).toHaveClass('bg-primary', 'text-on-primary');
   });
 
   it('paints every variant in the code family', () => {

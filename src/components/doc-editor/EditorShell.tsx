@@ -243,8 +243,13 @@ export function EditorShell({
         )}
       </header>
 
+      {/* Sideways the toolbar row sits in the same gutter as the dock below
+          (`--dock-inset`, 1rem unless the host says otherwise), so a bar's
+          first control and the composer's left edge fall on the same line. It
+          was `px-3` — 4px inside the dock — and the deck page measured exactly
+          that offset between the slide tools and the agent composer. */}
       {toolbar && (
-        <div className="flex min-w-0 items-center gap-1 border-b border-border px-3 py-1.5" data-testid={`${testId}-toolbar`}>
+        <div className="flex min-w-0 items-center gap-1 border-b border-border px-[var(--dock-inset,1rem)] py-1.5" data-testid={`${testId}-toolbar`}>
           {toolbar}
         </div>
       )}

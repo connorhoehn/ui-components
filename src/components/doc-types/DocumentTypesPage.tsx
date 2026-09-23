@@ -380,7 +380,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument, l
               data-testid="cookbooks-btn"
               onClick={() => setCookbooksOpen(true)}
               title="Browse the ready-made document types"
-              className="py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer whitespace-nowrap"
+              className="py-[5px] px-3 text-xs font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer whitespace-nowrap"
             >
               Known types
             </Button>}

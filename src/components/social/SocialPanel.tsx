@@ -117,7 +117,7 @@ function FollowButton({ targetUser, followState, compact = false, onFollowChange
   if (followState === 'not-following') {
     return (
       <button
-        className={cn('rounded-lg text-sm cursor-pointer min-w-[88px] px-4 border-none font-[system-ui,-apple-system,sans-serif] bg-primary text-white font-semibold', compact ? 'h-7' : 'h-9')}
+        className={cn('rounded-lg text-sm cursor-pointer min-w-[88px] px-4 border-none font-[system-ui,-apple-system,sans-serif] bg-primary text-on-primary font-semibold', compact ? 'h-7' : 'h-9')}
         onClick={handleFollow}
         aria-label={`Follow ${targetUser.displayName}`}
       >
@@ -283,7 +283,7 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
                 onClick={() => setVisibility(v)}
                 className={cn(
                   'px-4 py-1 rounded-full text-sm cursor-pointer border border-border font-[system-ui,-apple-system,sans-serif]',
-                  visibility === v ? 'bg-primary text-white' : 'bg-surface text-text-primary',
+                  visibility === v ? 'bg-primary text-on-primary' : 'bg-surface text-text-primary',
                 )}
               >
                 {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -295,7 +295,7 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
           <button
             onClick={() => { void handleSave(); }}
             disabled={saving}
-            className={cn('flex-1 h-9 bg-primary text-white border-none rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]', saving ? 'cursor-default' : 'cursor-pointer')}
+            className={cn('flex-1 h-9 bg-primary text-on-primary border-none rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]', saving ? 'cursor-default' : 'cursor-pointer')}
           >
             {saving ? 'Saving…' : 'Save Changes'}
           </button>

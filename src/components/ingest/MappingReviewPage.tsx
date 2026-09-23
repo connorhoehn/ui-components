@@ -168,7 +168,7 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
         <button
           data-testid={`review-accept-${item.itemId}`}
           className={cn(
-            'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]',
+            'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]',
             !item.documentTypeId && 'opacity-50 cursor-not-allowed',
           )}
           onClick={onAccept}
@@ -193,7 +193,7 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
         <button
           data-testid={`review-remap-${item.itemId}`}
           className={cn(
-            'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]',
+            'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit]',
             !remapTypeId && 'opacity-50 cursor-not-allowed',
           )}
           onClick={onRemap}

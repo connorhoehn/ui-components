@@ -238,7 +238,7 @@ export function CallActivityCard({
           type="button"
           data-testid={`${testId}-join`}
           onClick={() => onJoin(callId)}
-          className="shrink-0 rounded bg-primary px-2.5 py-1 text-[11px] font-semibold text-white hover:opacity-90"
+          className="shrink-0 rounded bg-primary px-2.5 py-1 text-[11px] font-semibold text-on-primary hover:opacity-90"
         >
           Join
         </button>

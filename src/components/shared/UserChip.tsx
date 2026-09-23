@@ -24,6 +24,12 @@ export interface UserChipProps {
   className?: string;
   style?: CSSProperties;
   title?: string;
+  /**
+   * Classes on the name label alone — a host collapses the chip to its
+   * avatar in a narrow column with `labelClassName="hidden @2xl:inline"`,
+   * and the `title` (the name) still tells you who it is.
+   */
+  labelClassName?: string;
   'data-testid'?: string;
 }
 
@@ -37,6 +43,7 @@ export function UserChip({
   className,
   style,
   title,
+  labelClassName,
   'data-testid': testId = 'user-chip',
 }: UserChipProps) {
   const Tag = onClick ? 'button' : 'span';
@@ -55,7 +62,7 @@ export function UserChip({
       style={style}
     >
       <Avatar name={name} size={avatarSize} color={avatarColor} />
-      <span className="font-medium leading-none">{label ?? name}</span>
+      <span className={cn('font-medium leading-none', labelClassName)}>{label ?? name}</span>
       {presence && <PresenceDot state={presence} size="xs" />}
     </Tag>
   );

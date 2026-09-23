@@ -70,7 +70,7 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
 // re-tones. (Until v2.61.0 `primary` was hardcoded blue-600 — visibly a
 // different colour from the brand --color-primary.)
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-primary text-white border-none hover:bg-primary-hover',
+  primary: 'bg-primary text-on-primary border-none hover:bg-primary-hover',
   secondary: 'bg-surface-inset text-text-primary border border-border hover:bg-surface-hover',
   ghost: 'bg-transparent text-text-primary border border-border hover:bg-surface-hover',
   danger: 'bg-transparent text-danger-fg border border-danger-border hover:bg-danger-bg',

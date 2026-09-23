@@ -431,7 +431,7 @@ export default function IngestItemDrawer({
               'px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] rounded-md cursor-pointer',
               busy || !failed
                 ? 'bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed'
-                : 'bg-primary border-none text-white',
+                : 'bg-primary border-none text-on-primary',
             )}
             onClick={() => void handleRetry()}
             disabled={!!busy || !failed}

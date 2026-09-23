@@ -17315,7 +17315,7 @@ declare interface UseActivityBusReturn {
      setTyping: (isTyping: boolean) => void;
  }
 
- export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, 'data-testid': testId, }: UserChipProps): JSX.Element;
+ export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, labelClassName, 'data-testid': testId, }: UserChipProps): JSX.Element;
 
  export declare interface UserChipProps {
      name: string;
@@ -17332,6 +17332,12 @@ declare interface UseActivityBusReturn {
      className?: string;
      style?: CSSProperties;
      title?: string;
+     /**
+      * Classes on the name label alone — a host collapses the chip to its
+      * avatar in a narrow column with `labelClassName="hidden @2xl:inline"`,
+      * and the `title` (the name) still tells you who it is.
+      */
+     labelClassName?: string;
      'data-testid'?: string;
  }
 
@@ -19211,6 +19217,49 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -19230,49 +19279,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
