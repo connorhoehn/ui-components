@@ -49,6 +49,43 @@
 // `openGroups` + `onToggleGroup` to control it; pass `storageKey` to remember
 // collapses in `localStorage` between visits (a read that throws — private
 // window, blocked storage — is treated as "nothing stored").
+//
+// ## `leading` and `meta` (a work list's checkbox and "5 pts · Layla Hassan")
+//
+// `leading` sits in the caret column, as a SIBLING before the row's button —
+// a checkbox nested in a button is invalid HTML and would open the row on
+// every tick. It is its own tab stop (it is a control, not a row), and keys
+// pressed in it are its own: the list's arrows ignore it.
+//
+// `meta` is a second line INSIDE the button, above `subline` when both are
+// given. It is therefore non-interactive by contract — avatars, points, a
+// chip, a coloured label. Anything a reader clicks goes in `leading`,
+// `trailing` or `hoverActions`, which are outside the button.
+//
+// ## Reorder (`onReorder`)
+//
+// With `onReorder`, each row that `canReorder` allows draws a grip handle at
+// its end, and the list reports `(rowId, toGroupId, index)` where `index` is
+// the row's FINAL position in the target group. The list never reorders
+// itself: the host applies the move and passes new rows back.
+//
+// - Alt+ArrowUp / Alt+ArrowDown on a focused row — one place up / down within
+//   its group (nothing at either end).
+// - Alt+ArrowLeft / Alt+ArrowRight — to the END of the previous / next group
+//   in `groups` order (appending is the one position that always exists; a
+//   closed target group is opened so focus can follow).
+// - Focus follows the row once the host re-renders it in place, and the move
+//   is announced politely ("Moved X to position 2 of 4 in In progress").
+// - Pointer drag uses `@dnd-kit`, which is an OPTIONAL peer while this file is
+//   in the ROOT entry — so it is reached only through a dynamic
+//   `import('./GroupedListSortable')` (a separate chunk; see
+//   `SortableSlideList` for the history). Not `React.lazy`: a lazy component
+//   whose import fails throws to the nearest error boundary, while this
+//   import's failure (peer not installed) just leaves the list keyboard-only
+//   with an inert handle. Until the chunk arrives the list renders the same
+//   rows and handles, unwrapped. Nothing is translated under the pointer (no
+//   inline transforms): the dragged row dims and the drop target shows an
+//   insertion edge.
 
 import {
   useCallback,
@@ -63,6 +100,7 @@ import {
 import { cn } from '../../lib/cn';
 import { DropdownMenu, type DropdownMenuSection } from './DropdownMenu';
 import Chip from './Chip';
+import { GripIcon } from '../ui/Icons';
 
 export interface GroupedListGroup {
   id: string;
@@ -99,6 +137,16 @@ export interface GroupedListRow {
   disabled?: boolean;
   /** Optional accessible name override — default is the title. */
   ariaLabel?: string;
+  /**
+   * A control in the caret column — normally a `Checkbox`. Rendered OUTSIDE the
+   * row's button, so pressing it never opens the row.
+   */
+  leading?: ReactNode;
+  /**
+   * A second line inside the row's button, above `subline` — avatar, points,
+   * owner. Non-interactive by contract (it is inside a button).
+   */
+  meta?: ReactNode;
 }
 
 export interface GroupedListProps {
@@ -124,9 +172,64 @@ export interface GroupedListProps {
   currentId?: string | null;
   /** Hide a group whose row list is empty instead of showing its empty label. Default `false`. */
   hideEmptyGroups?: boolean;
+  /**
+   * Turns on reorder: a drag handle per row plus Alt+arrow keys. `index` is the
+   * row's final position within `toGroupId`. The host applies the move.
+   */
+  onReorder?: (rowId: string, toGroupId: string, index: number) => void;
+  /** Which rows can move. Default: every row that is not `disabled`. */
+  canReorder?: (row: GroupedListRow) => boolean;
+  /** Accessible name of a row's drag handle. Default `Reorder <title>`. */
+  reorderLabel?: (row: GroupedListRow) => string;
   className?: string;
   'data-testid'?: string;
 }
+
+// ---------------------------------------------------------------------------
+// Reorder helpers
+// ---------------------------------------------------------------------------
+
+/** The droppable id of a group header (drop there = end of that group). */
+export const GROUPED_LIST_GROUP_DROP_PREFIX = '__grouped-list-group__:';
+
+/**
+ * Where a drop of `activeId` onto `overId` lands: `overId` is a row id (take
+ * its place in its group) or a group droppable id (the end of that group).
+ * `null` when nothing would move. Pure; exported for tests.
+ */
+export function resolveGroupedListDrop(
+  rows: GroupedListRow[],
+  activeId: string,
+  overId: string,
+): { toGroupId: string; index: number } | null {
+  const active = rows.find((r) => r.id === activeId);
+  if (!active || activeId === overId) return null;
+  if (overId.startsWith(GROUPED_LIST_GROUP_DROP_PREFIX)) {
+    const toGroupId = overId.slice(GROUPED_LIST_GROUP_DROP_PREFIX.length);
+    const inTarget = rows.filter((r) => r.groupId === toGroupId && r.id !== activeId).length;
+    const from = rows.filter((r) => r.groupId === toGroupId).findIndex((r) => r.id === activeId);
+    if (toGroupId === active.groupId && from === inTarget) return null;
+    return { toGroupId, index: inTarget };
+  }
+  const over = rows.find((r) => r.id === overId);
+  if (!over) return null;
+  const index = rows.filter((r) => r.groupId === over.groupId).findIndex((r) => r.id === overId);
+  return { toGroupId: over.groupId, index };
+}
+
+type SortableModule = typeof import('./GroupedListSortable');
+let sortableLoad: Promise<SortableModule | null> | null = null;
+/** One dynamic import per page; a missing optional peer resolves to `null`. */
+function loadSortable(): Promise<SortableModule | null> {
+  sortableLoad ??= import('./GroupedListSortable').catch(() => null);
+  return sortableLoad;
+}
+
+const HANDLE_CLASS = cn(
+  'flex h-7 w-5 shrink-0 cursor-grab select-none touch-none items-center justify-center rounded border-0 bg-transparent p-0',
+  'text-text-tertiary hover:text-text-secondary',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+);
 
 // ---------------------------------------------------------------------------
 // Storage
@@ -202,6 +305,9 @@ export function GroupedList({
   storageKey,
   currentId = null,
   hideEmptyGroups = false,
+  onReorder,
+  canReorder,
+  reorderLabel,
   className,
   'data-testid': testId = 'grouped-list',
 }: GroupedListProps) {
@@ -265,6 +371,71 @@ export function GroupedList({
   const [focused, setFocused] = useState<FocusKey | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
+  // ---- Reorder -----------------------------------------------------------
+  const reorderable = useCallback(
+    (row: GroupedListRow) => !!onReorder && (canReorder ? canReorder(row) : !row.disabled),
+    [onReorder, canReorder],
+  );
+  const [announcement, setAnnouncement] = useState('');
+  /** A keyboard move waiting for the host to re-render the row in its new place. */
+  const pendingFocus = useRef<{ id: string; groupId: string; index: number } | null>(null);
+  const [sortable, setSortable] = useState<SortableModule | null>(null);
+  const [overGroup, setOverGroup] = useState<string | null>(null);
+  const headerRefs = useRef(new Map<string, HTMLElement | null>());
+  const wantsDnd = !!onReorder;
+
+  useEffect(() => {
+    if (!wantsDnd || sortable) return;
+    let live = true;
+    void loadSortable().then((mod) => {
+      if (live && mod) setSortable(mod);
+    });
+    return () => {
+      live = false;
+    };
+  }, [wantsDnd, sortable]);
+
+  /** Reports a move, announces it, and asks focus to follow the row. */
+  const commitMove = useCallback(
+    (row: GroupedListRow, toGroupId: string, index: number) => {
+      if (!onReorder) return;
+      const target = groups.find((g) => g.id === toGroupId);
+      const others = (rowsByGroup.get(toGroupId) ?? []).filter((r) => r.id !== row.id).length;
+      onReorder(row.id, toGroupId, index);
+      setAnnouncement(`Moved ${row.title} to position ${index + 1} of ${others + 1} in ${target?.title ?? toGroupId}`);
+    },
+    [onReorder, groups, rowsByGroup],
+  );
+
+  const moveByKey = useCallback(
+    (row: GroupedListRow, key: string) => {
+      const siblings = rowsByGroup.get(row.groupId) ?? [];
+      const at = siblings.findIndex((r) => r.id === row.id);
+      let move: { toGroupId: string; index: number } | null = null;
+      if (key === 'ArrowUp' && at > 0) move = { toGroupId: row.groupId, index: at - 1 };
+      else if (key === 'ArrowDown' && at >= 0 && at < siblings.length - 1) move = { toGroupId: row.groupId, index: at + 1 };
+      else if (key === 'ArrowLeft' || key === 'ArrowRight') {
+        const g = groups.findIndex((gr) => gr.id === row.groupId);
+        const target = groups[key === 'ArrowLeft' ? g - 1 : g + 1];
+        if (g >= 0 && target) move = { toGroupId: target.id, index: rowsByGroup.get(target.id)?.length ?? 0 };
+      }
+      if (!move) return;
+      commitMove(row, move.toGroupId, move.index);
+      pendingFocus.current = { id: row.id, groupId: move.toGroupId, index: move.index };
+      if (!isOpen(move.toGroupId)) setOpen(move.toGroupId, true);
+    },
+    [rowsByGroup, groups, commitMove, isOpen, setOpen],
+  );
+
+  const onDrop = useCallback(
+    (activeId: string, overId: string) => {
+      const row = rows.find((r) => r.id === activeId);
+      const drop = row && reorderable(row) ? resolveGroupedListDrop(rows, activeId, overId) : null;
+      if (row && drop) commitMove(row, drop.toGroupId, drop.index);
+    },
+    [rows, reorderable, commitMove],
+  );
+
   // Which element carries tabIndex=0 when nothing has been focused yet: the
   // current row, else the first header.
   const tabTarget = useMemo<FocusKey | null>(() => {
@@ -289,6 +460,19 @@ export function GroupedList({
     if (focused && !focusOrder.includes(focused)) setFocused(null);
   }, [focused, focusOrder]);
 
+  // Focus follows a keyboard-moved row once it sits where it was sent (moving
+  // a focused node between lists drops its focus). Checked every render; the
+  // next keypress in the list abandons it, so a rejected move never steals focus later.
+  useEffect(() => {
+    const pending = pendingFocus.current;
+    if (!pending) return;
+    const inPlace = (rowsByGroup.get(pending.groupId) ?? []).findIndex((r) => r.id === pending.id) === pending.index;
+    if (!inPlace || !focusOrder.includes(`r:${pending.id}`)) return;
+    pendingFocus.current = null;
+    const el = rootRef.current?.querySelector<HTMLElement>(`[data-focus-key="${cssEscape(`r:${pending.id}`)}"]`);
+    if (el && el !== document.activeElement) focusKey(`r:${pending.id}`);
+  });
+
   const onKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDivElement>) => {
       const target = event.target as HTMLElement;
@@ -300,6 +484,15 @@ export function GroupedList({
       if (index < 0) return;
       const isGroup = key.startsWith('g:');
       const id = key.slice(2);
+      pendingFocus.current = null;
+
+      if (event.altKey && onReorder && event.key.startsWith('Arrow')) {
+        if (isGroup) return;
+        event.preventDefault();
+        const row = rows.find((r) => r.id === id);
+        if (row && reorderable(row)) moveByKey(row, event.key);
+        return;
+      }
 
       if ((event.key === 'F10' && event.shiftKey) || event.key === 'ContextMenu') {
         if (!isGroup) {
@@ -354,11 +547,16 @@ export function GroupedList({
           break;
       }
     },
-    [focusOrder, focusKey, isOpen, setOpen, rows, rowsByGroup],
+    [focusOrder, focusKey, isOpen, setOpen, rows, rowsByGroup, onReorder, reorderable, moveByKey],
   );
 
-  return (
+  const list = (
     <div ref={rootRef} data-testid={testId} className={cn('flex flex-col', className)} onKeyDown={onKeyDown}>
+      {onReorder && (
+        <div role="status" aria-live="polite" className="sr-only" data-testid={`${testId}-reorder-status`}>
+          {announcement}
+        </div>
+      )}
       {visibleGroups.map((group) => {
         const open = isOpen(group.id);
         const groupRows = rowsByGroup.get(group.id) ?? [];
@@ -374,7 +572,13 @@ export function GroupedList({
             data-open={open}
             className="flex flex-col"
           >
-            <h3 className="m-0">
+            <h3
+              className={cn('m-0 rounded-md', overGroup === group.id && 'bg-primary/8')}
+              data-drop-over={overGroup === group.id || undefined}
+              ref={(el) => {
+                headerRefs.current.set(group.id, el);
+              }}
+            >
               <button
                 type="button"
                 id={headerId}
@@ -431,13 +635,35 @@ export function GroupedList({
                     onOpenRow={onOpenRow}
                     menuSections={rowMenu?.(row)}
                     menuLabel={rowMenuLabel?.(row) ?? `Actions for ${row.title}`}
+                    reorder={
+                      reorderable(row)
+                        ? { label: reorderLabel?.(row) ?? `Reorder ${row.title}`, sortable }
+                        : undefined
+                    }
                   />
                 ))}
             </ul>
+            {/* After the header, so its ref is attached when this registers it. */}
+            {sortable && (
+              <sortable.GroupDropTarget
+                id={`${GROUPED_LIST_GROUP_DROP_PREFIX}${group.id}`}
+                getNode={() => headerRefs.current.get(group.id) ?? null}
+                onOverChange={(over) =>
+                  setOverGroup((prev) => (over ? group.id : prev === group.id ? null : prev))
+                }
+              />
+            )}
           </section>
         );
       })}
     </div>
+  );
+
+  if (!sortable) return list;
+  return (
+    <sortable.GroupedListDndRoot ids={focusOrder.filter((k) => k.startsWith('r:')).map((k) => k.slice(2))} onDrop={onDrop}>
+      {list}
+    </sortable.GroupedListDndRoot>
   );
 }
 
@@ -454,15 +680,32 @@ interface RowProps {
   onOpenRow?: (row: GroupedListRow) => void;
   menuSections: DropdownMenuSection[] | null | undefined;
   menuLabel: string;
+  /** Present when this row can move: the handle's name, and dnd once loaded. */
+  reorder?: { label: string; sortable: SortableModule | null };
 }
 
-function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSections, menuLabel }: RowProps) {
+function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSections, menuLabel, reorder }: RowProps) {
   const hasMenu = !!menuSections && menuSections.some((s) => s.items.length > 0);
   const hasHoverLine = row.hoverSubline !== undefined && row.hoverSubline !== null;
+  const hasMeta = row.meta !== undefined && row.meta !== null;
+  const hasLeading = row.leading !== undefined && row.leading !== null;
   const rKey: FocusKey = `r:${row.id}`;
+  const [drag, setDrag] = useState({ dragging: false, over: false });
+  const onDragState = useCallback((next: { dragging: boolean; over: boolean }) => {
+    setDrag((prev) => (prev.dragging === next.dragging && prev.over === next.over ? prev : next));
+  }, []);
+
+  const handleProps = {
+    'aria-label': reorder?.label,
+    title: 'Drag to reorder, or Alt+arrow keys on the row',
+    'data-testid': `${testId}-row-handle-${row.id}`,
+    className: HANDLE_CLASS,
+  };
 
   return (
     <li
+      data-dragging={drag.dragging || undefined}
+      data-drop-over={(drag.over && !drag.dragging) || undefined}
       data-testid={`${testId}-row-${row.id}`}
       data-row-id={row.id}
       data-current={current || undefined}
@@ -483,8 +726,15 @@ function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSectio
         'transition-colors duration-100',
         current ? 'bg-primary/8 hover:bg-primary/12' : 'hover:bg-surface-hover',
         row.disabled && 'opacity-60',
+        drag.dragging && 'opacity-50',
+        drag.over && !drag.dragging && 'shadow-[inset_0_2px_0_0_var(--color-primary)]',
       )}
     >
+      {hasLeading && (
+        <span className="flex w-5 shrink-0 items-center justify-center" data-testid={`${testId}-row-leading-${row.id}`}>
+          {row.leading}
+        </span>
+      )}
       <button
         type="button"
         data-testid={`${testId}-row-open-${row.id}`}
@@ -503,7 +753,7 @@ function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSectio
         )}
       >
         {/* Caret column of the header, kept so a row's mark lines up under the folder mark. */}
-        <span className="w-5 shrink-0" aria-hidden="true" />
+        {!hasLeading && <span className="w-5 shrink-0" aria-hidden="true" />}
         {row.icon && (
           <span className="flex shrink-0 items-center" data-testid={`${testId}-row-icon-${row.id}`}>
             {row.icon}
@@ -516,6 +766,14 @@ function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSectio
             </span>
             {row.pill && <span className="flex shrink-0 items-center">{row.pill}</span>}
           </span>
+          {hasMeta && (
+            <span
+              data-testid={`${testId}-row-meta-${row.id}`}
+              className="flex min-w-0 items-center gap-1.5 truncate text-[12px] leading-4 text-text-secondary"
+            >
+              {row.meta}
+            </span>
+          )}
           {(row.subline !== undefined || hasHoverLine) && (
             <span className="min-w-0 text-[12px] leading-4 text-text-secondary">
               {row.subline !== undefined && (
@@ -581,6 +839,16 @@ function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSectio
           />
         </span>
       )}
+      {reorder &&
+        (reorder.sortable ? (
+          <reorder.sortable.SortableHandle id={row.id} onStateChange={onDragState} {...handleProps}>
+            <GripIcon size={14} />
+          </reorder.sortable.SortableHandle>
+        ) : (
+          <button type="button" tabIndex={-1} {...handleProps}>
+            <GripIcon size={14} />
+          </button>
+        ))}
     </li>
   );
 }

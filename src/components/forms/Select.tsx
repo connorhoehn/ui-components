@@ -27,7 +27,12 @@ export type SelectSize = 'sm' | 'md';
  * submission) are worth keeping, so this is the real element restyled, not a
  * button-and-menu impostor.
  */
-export type SelectVariant = 'default' | 'pill';
+/**
+ * `ghost` (2.385.0) is the value side of a label/value row — no box, the
+ * value right-aligned with the native chevron after it, a hover tint to say it
+ * can be changed ("Model   Haiku ▾" in a run panel).
+ */
+export type SelectVariant = 'default' | 'pill' | 'ghost';
 
 export interface SelectOption {
   value: string;
@@ -132,6 +137,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   );
 
   const pill = variant === 'pill';
+  const ghost = variant === 'ghost';
   const key = toneKey(tone);
 
   // ONE `<select>` for both variants: the element is the same control either
@@ -153,6 +159,14 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
                 ? 'border-danger text-danger-fg bg-danger-bg focus:ring-danger/40'
                 : cn(TONE_BORDER[key], TONE_BG[key], TONE_TEXT[key]),
               pillSizeClasses[size],
+            )
+          : ghost
+          ? cn(
+              'w-auto max-w-full appearance-auto rounded-md border border-transparent bg-transparent text-right font-medium text-text-primary [text-align-last:right]',
+              'hover:bg-surface-hover focus:border-info focus:ring-1 focus:ring-info/40',
+              'disabled:opacity-50 disabled:cursor-not-allowed',
+              invalid && 'border-danger',
+              sizeClasses[size],
             )
           : cn(
               'w-full appearance-none rounded-md border bg-surface-panel text-text-primary',

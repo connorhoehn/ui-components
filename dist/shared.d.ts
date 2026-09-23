@@ -101,6 +101,9 @@ export declare const AGENT_TASK_STATUS_LABELS: Record<AgentTaskStatus, string>;
 /** Where an agent task is. Shared by `TaskStrip` and `AgentTaskCard`. */
 export declare type AgentTaskStatus = 'queued' | 'running' | 'paused' | 'awaiting' | 'done' | 'failed' | 'stopped';
 
+/** An arrow pointing right: "go on" — a link action, "Prepare run →". Since 2.385.0. */
+export declare function ArrowRightIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function ArtifactTile({ name, type, url }: {
     name: string;
     type?: string;
@@ -328,7 +331,7 @@ export declare interface BreadcrumbItem {
 
 export declare type BreadcrumbOverflow = 'ellipsis' | 'menu';
 
-export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
+export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, lastIsCurrent, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
 
 export declare interface BreadcrumbsProps {
     items: BreadcrumbItem[];
@@ -350,6 +353,13 @@ export declare interface BreadcrumbsProps {
      * every route can set `minItems={3}` and let shallow pages keep the row.
      */
     minItems?: number;
+    /**
+     * `true` (default): the last crumb is the page you are on — primary ink,
+     * `aria-current="page"`, not a link. `false`: every crumb is a place to go,
+     * for a PATH that ends at the folder a file lives in, not at the file.
+     * Since 2.385.0.
+     */
+    lastIsCurrent?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -956,10 +966,18 @@ export declare interface CommandPaletteController {
     query: string;
 }
 
-export declare function CommandPaletteHint({ className }?: CommandPaletteHintProps): JSX.Element;
+export declare function CommandPaletteHint({ className, label, size }?: CommandPaletteHintProps): JSX.Element;
 
 export declare interface CommandPaletteHintProps {
     className?: string;
+    /** The word after the shortcut. Default "Search". Since 2.385.0. */
+    label?: string;
+    /**
+     * `sm` (default) is the quiet 24px chip; `md` is a 36px top-bar button that
+     * sits level with the bar's other controls (the Documents redesign's
+     * "⌘K Search"). Since 2.385.0.
+     */
+    size?: 'sm' | 'md';
 }
 
 export declare interface CommandPaletteProps {
@@ -1792,6 +1810,9 @@ export declare interface FilterChipProps {
     'data-testid'?: string;
 }
 
+/** A funnel: "filter this list". Since 2.385.0. */
+export declare function FilterIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function FilterPopover({ children, label, activeCount, onClear, clearLabel, open: controlledOpen, onOpenChange, placement, size, panelLabel, className, panelClassName, 'data-testid': testId, }: FilterPopoverProps): JSX.Element;
 
 export declare interface FilterPopoverProps {
@@ -2006,7 +2027,10 @@ export declare interface GlyphProps extends Omit<SVGProps<SVGSVGElement>, 'child
 /** Star colours for the graphite sky: zinc greys, so no blue cast sits on a white page. */
 export declare const GRAPHITE_PARTICLE_COLORS: readonly ["#f4f4f5", "#d4d4d8", "#a1a1aa"];
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+/** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
+export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -2044,6 +2068,15 @@ export declare interface GroupedListProps {
     currentId?: string | null;
     /** Hide a group whose row list is empty instead of showing its empty label. Default `false`. */
     hideEmptyGroups?: boolean;
+    /**
+     * Turns on reorder: a drag handle per row plus Alt+arrow keys. `index` is the
+     * row's final position within `toGroupId`. The host applies the move.
+     */
+    onReorder?: (rowId: string, toGroupId: string, index: number) => void;
+    /** Which rows can move. Default: every row that is not `disabled`. */
+    canReorder?: (row: GroupedListRow) => boolean;
+    /** Accessible name of a row's drag handle. Default `Reorder <title>`. */
+    reorderLabel?: (row: GroupedListRow) => string;
     className?: string;
     'data-testid'?: string;
 }
@@ -2070,6 +2103,16 @@ export declare interface GroupedListRow {
     disabled?: boolean;
     /** Optional accessible name override — default is the title. */
     ariaLabel?: string;
+    /**
+     * A control in the caret column — normally a `Checkbox`. Rendered OUTSIDE the
+     * row's button, so pressing it never opens the row.
+     */
+    leading?: ReactNode;
+    /**
+     * A second line inside the row's button, above `subline` — avatar, points,
+     * owner. Non-interactive by contract (it is inside a button).
+     */
+    meta?: ReactNode;
 }
 
 /** A clock: history, "when". */
@@ -2146,6 +2189,9 @@ export declare interface ImageLightboxProps {
  * ```
  */
 export declare const inactiveNavItemClassName = "block px-[14px] py-2 border-l-[3px] border-transparent text-text-secondary no-underline cursor-pointer";
+
+/** A circled "i": "more about this" — an estimate's confidence, a footnote. Since 2.385.0. */
+export declare function InfoIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /**
  * Horizontal flex row with a scale gap. Wraps by default — an un-wrapping row
@@ -2904,6 +2950,9 @@ export declare interface ParticlesBackgroundProps {
     children?: ReactNode;
     'data-testid'?: string;
 }
+
+/** Two people: "shared with me", a group. Since 2.385.0. */
+export declare function PeopleIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function PermissionDeniedCard({ kind, state, message, onRetry, retryLabel, icon, className, 'data-testid': testId, }: PermissionDeniedCardProps): JSX.Element;
 
@@ -3689,7 +3738,12 @@ export declare type SelectSize = 'sm' | 'md';
  * submission) are worth keeping, so this is the real element restyled, not a
  * button-and-menu impostor.
  */
-declare type SelectVariant = 'default' | 'pill';
+/**
+ * `ghost` (2.385.0) is the value side of a label/value row — no box, the
+ * value right-aligned with the native chevron after it, a hover tint to say it
+ * can be changed ("Model   Haiku ▾" in a run panel).
+ */
+declare type SelectVariant = 'default' | 'pill' | 'ghost';
 
 /** A tray with an arrow out of it: "share", "post this somewhere". */
 export declare function ShareIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -5166,19 +5220,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -5198,32 +5239,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -5270,6 +5301,29 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

@@ -48,6 +48,26 @@ export declare interface A2ASession {
     status: 'active' | 'completed' | 'failed';
 }
 
+export declare function AccessNotice({ tone, title, body, action, className, 'data-testid': testId, }: AccessNoticeProps): JSX.Element;
+
+export declare interface AccessNoticeAction {
+    label: string;
+    onClick?: () => void;
+    /** Renders a real link instead of a button. */
+    href?: string;
+}
+
+export declare interface AccessNoticeProps {
+    tone?: AccessNoticeTone;
+    title: string;
+    body?: ReactNode;
+    action?: AccessNoticeAction | null;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type AccessNoticeTone = 'warning' | 'info' | 'danger';
+
 export declare interface ActionNodeData {
     type: 'action';
     actionType: ActionType;
@@ -1109,6 +1129,9 @@ export declare interface AppShellProps {
     subheaderTestId?: string;
 }
 
+/** An arrow pointing right: "go on" — a link action, "Prepare run →". Since 2.385.0. */
+export declare function ArrowRightIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function ArtifactTile({ name, type, url }: {
     name: string;
     type?: string;
@@ -1586,7 +1609,7 @@ export declare interface BreadcrumbItem {
 
 export declare type BreadcrumbOverflow = 'ellipsis' | 'menu';
 
-export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
+export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, lastIsCurrent, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
 
 export declare interface BreadcrumbsProps {
     items: BreadcrumbItem[];
@@ -1608,6 +1631,13 @@ export declare interface BreadcrumbsProps {
      * every route can set `minItems={3}` and let shallow pages keep the row.
      */
     minItems?: number;
+    /**
+     * `true` (default): the last crumb is the page you are on — primary ink,
+     * `aria-current="page"`, not a link. `false`: every crumb is a place to go,
+     * for a PATH that ends at the folder a file lives in, not at the file.
+     * Since 2.385.0.
+     */
+    lastIsCurrent?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -3717,7 +3747,32 @@ export declare function ChecklistEditorRenderer({ section, fragment, ydoc, provi
 
 export declare const checklistFieldType: FieldTypeDefinition;
 
+export declare interface ChecklistItem {
+    id: string;
+    text: string;
+    done: boolean;
+    pending?: boolean;
+}
+
 export declare function ChecklistReaderRenderer({ section, fragment, ydoc, provider, onUpdateItem, onNavigateToEditor, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
+
+export declare function ChecklistSection({ title, items, onToggle, onAdd, onEdit, onRemove, onMove, readOnlyReason, emptyLabel, addPlaceholder, first, className, 'data-testid': testId, }: ChecklistSectionProps): JSX.Element;
+
+export declare interface ChecklistSectionProps {
+    title?: string;
+    items: ChecklistItem[];
+    onToggle?: (id: string, done: boolean) => void;
+    onAdd?: (text: string) => void;
+    onEdit?: (id: string, text: string) => void;
+    onRemove?: (id: string) => void;
+    onMove?: (id: string, toIndex: number) => void;
+    readOnlyReason?: string;
+    emptyLabel?: string;
+    addPlaceholder?: string;
+    first?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /** A chevron. `dir` is where it points. */
 export declare function ChevronIcon({ size, dir, ...rest }: GlyphProps & {
@@ -4098,10 +4153,18 @@ export declare interface CommandPaletteController {
     query: string;
 }
 
-export declare function CommandPaletteHint({ className }?: CommandPaletteHintProps): JSX.Element;
+export declare function CommandPaletteHint({ className, label, size }?: CommandPaletteHintProps): JSX.Element;
 
 export declare interface CommandPaletteHintProps {
     className?: string;
+    /** The word after the shortcut. Default "Search". Since 2.385.0. */
+    label?: string;
+    /**
+     * `sm` (default) is the quiet 24px chip; `md` is a 36px top-bar button that
+     * sits level with the bar's other controls (the Documents redesign's
+     * "⌘K Search"). Since 2.385.0.
+     */
+    size?: 'sm' | 'md';
 }
 
 export declare interface CommandPaletteProps {
@@ -4173,6 +4236,36 @@ declare interface CommentItem {
     _fadeIn?: boolean;
 }
 
+export declare function CommentList({ title, comments, total, onViewAll, now, emptyLabel, max, first, className, 'data-testid': testId, }: CommentListProps): JSX.Element;
+
+export declare interface CommentListItem {
+    id: string;
+    author: {
+        id: string;
+        name: string;
+        avatarUrl?: string;
+    };
+    role?: string | null;
+    createdAt: string | number | Date;
+    text: string;
+}
+
+export declare interface CommentListProps {
+    title?: string;
+    comments: CommentListItem[];
+    /** Total in the full discussion, when larger than what is passed. */
+    total?: number;
+    onViewAll?: () => void;
+    /** Clock for relative times (ms since epoch). Default Date.now(). */
+    now?: number;
+    emptyLabel?: string;
+    /** Show at most this many comments. */
+    max?: number;
+    first?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** A comment with nested replies, assembled client-side. */
 export declare interface CommentThread extends CommentData {
     replies: CommentThread[];
@@ -4222,6 +4315,11 @@ export declare interface ComposerCommand {
     disabled?: boolean;
     /** The long form, shown as a tooltip on the bar: what will happen, step by step. */
     description?: string;
+    /**
+     * A glyph before the trigger in the docked card's command chip
+     * (`modeControl="menu"`) — a branch mark for `/workflow`. Since 2.385.0.
+     */
+    icon?: ReactNode;
     /** What the command acts on, offered as a second menu once the trigger is typed. */
     argument?: ComposerCommandArgument;
 }
@@ -4302,6 +4400,12 @@ export declare interface ConditionNodeData {
     /** UI label shown on the node. */
     label?: string;
 }
+
+/** "No prior runs" for n = 0, else "Low confidence · Based on 2 runs". */
+export declare function confidenceNote(sampleSize: number): string;
+
+/** Sample size → confidence: 0 none, 1–2 low, 3–5 medium, more than 5 high. */
+export declare function confidenceOf(sampleSize: number): RunEstimateConfidenceLevel;
 
 export declare function ConfirmDialog({ open, onConfirm, onCancel, title, body, confirmLabel, cancelLabel, confirmDisabled, tone, children, }: ConfirmDialogProps): JSX.Element;
 
@@ -5465,6 +5569,8 @@ export declare interface DeckSpec {
 
 export declare type DeckTheme = 'product' | 'engineering' | 'plain';
 
+export declare const DEFAULT_LINK_RELATIONS: LinkRelationOption[];
+
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
 export declare const DEFAULT_PIPELINE_ICONS: string[];
@@ -6514,6 +6620,15 @@ export declare interface ErrorStateProps {
     actionTestId?: string;
 }
 
+export declare function EstimateRow({ label, estimate, className, 'data-testid': testId }: EstimateRowProps): JSX.Element;
+
+export declare interface EstimateRowProps {
+    label: string;
+    estimate: RunEstimate;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface EventGlyph {
     icon: string;
     color: string;
@@ -6677,7 +6792,7 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-export declare function ExplorerLayout({ rail, children, aside, railWidth, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+export declare function ExplorerLayout({ rail, children, aside, railWidth, header, railCount, railHeading, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
 
 export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -6686,8 +6801,23 @@ export declare interface ExplorerLayoutProps {
     children: ReactNode;
     /** Optional right-hand context bar. Stacks below the pane under `2xl`, sits beside it at `2xl` and up. */
     aside?: ReactNode;
-    /** Rail width. `md` is the 300px agentcore measured against; `sm` is 240px for a shallower tree. */
-    railWidth?: 'sm' | 'md';
+    /**
+     * Rail width. `md` is the 300px agentcore measured against; `sm` is 240px for
+     * a shallower tree; `lg` is 368px for a two-line work list with its toolbar
+     * (the Documents Work column, measured against the redesign's 370px).
+     */
+    railWidth?: 'sm' | 'md' | 'lg';
+    /**
+     * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
+     * tabs) that names what the rail, the pane and the aside are all looking at.
+     * It does not scroll; the columns below it keep their independent scrolling.
+     * Since 2.385.0.
+     */
+    header?: ReactNode;
+    /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
+    railCount?: number;
+    /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
+    railHeading?: 'compact' | 'prominent';
     /**
      * The rail folded to a strip with one control that brings it back. For a
      * surface that wants the width — a diagram, a wide table — the list of
@@ -6920,6 +7050,9 @@ export declare interface FilterChipProps {
     'data-testid'?: string;
 }
 
+/** A funnel: "filter this list". Since 2.385.0. */
+export declare function FilterIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function FilterPopover({ children, label, activeCount, onClear, clearLabel, open: controlledOpen, onOpenChange, placement, size, panelLabel, className, panelClassName, 'data-testid': testId, }: FilterPopoverProps): JSX.Element;
 
 export declare interface FilterPopoverProps {
@@ -7081,8 +7214,21 @@ export declare function formatCallDuration(ms: number): string;
 /** Formats an ISO timestamp string to HH:MM local time. */
 export declare function formatChatTime(isoString: string): string;
 
+export declare function formatCompactAge(value: string | number | Date | null | undefined, now?: number): string | undefined;
+
 /** "12:04" / "1:02:11" — a duration people read, not a millisecond count. */
 export declare function formatDuration(ms?: number): string;
+
+/**
+ * The display text for an estimate. Ranges read "$0.03 – $0.30" or
+ * "1 – 6 min"; equal ends collapse to one value. A range whose numbers are
+ * not finite or are negative is not an estimate — it reads "Unavailable"
+ * rather than printing NaN.
+ */
+export declare function formatEstimate(estimate: RunEstimate): string;
+
+/** "$1.46", "<$0.01", "$1,204". Exported for tests and hosts that echo it. */
+export declare function formatSpend(usd: number): string;
 
 /** `84.2k`, `1.3M` — a token count is scale, not an exact figure. */
 export declare function formatTokens(tokens: number): string;
@@ -7633,7 +7779,10 @@ export declare interface GraphQueryNodeData {
 
 export declare function gridCols(count: number): number;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+/** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
+export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -7671,6 +7820,15 @@ export declare interface GroupedListProps {
     currentId?: string | null;
     /** Hide a group whose row list is empty instead of showing its empty label. Default `false`. */
     hideEmptyGroups?: boolean;
+    /**
+     * Turns on reorder: a drag handle per row plus Alt+arrow keys. `index` is the
+     * row's final position within `toGroupId`. The host applies the move.
+     */
+    onReorder?: (rowId: string, toGroupId: string, index: number) => void;
+    /** Which rows can move. Default: every row that is not `disabled`. */
+    canReorder?: (row: GroupedListRow) => boolean;
+    /** Accessible name of a row's drag handle. Default `Reorder <title>`. */
+    reorderLabel?: (row: GroupedListRow) => string;
     className?: string;
     'data-testid'?: string;
 }
@@ -7697,6 +7855,16 @@ export declare interface GroupedListRow {
     disabled?: boolean;
     /** Optional accessible name override — default is the title. */
     ariaLabel?: string;
+    /**
+     * A control in the caret column — normally a `Checkbox`. Rendered OUTSIDE the
+     * row's button, so pressing it never opens the row.
+     */
+    leading?: ReactNode;
+    /**
+     * A second line inside the row's button, above `subline` — avatar, points,
+     * owner. Non-interactive by contract (it is inside a button).
+     */
+    meta?: ReactNode;
 }
 
 export declare function GroupFormPage({ group, isEdit, members, availableUsers, onSubmit, onAddMember, onRemoveMember, onCancel, error, }: GroupFormPageProps): JSX.Element;
@@ -8508,6 +8676,9 @@ export declare interface InboxSectionRowProps extends HTMLAttributes<HTMLLIEleme
     'data-testid'?: string;
 }
 
+/** A circled "i": "more about this" — an estimate's confidence, a footnote. Since 2.385.0. */
+export declare function InfoIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 declare interface IngestAuditEntry {
     auditId: string;
     createdAt: string;
@@ -9163,6 +9334,12 @@ export declare interface LineSeries {
 
 export declare function Link({ href, children, external, unstyled, target, rel, className, ...rest }: LinkProps): JSX.Element;
 
+export declare interface LinkableDocument {
+    id: string;
+    title: string;
+    kind?: FileKind;
+}
+
 export declare function LinkBlockEditorRenderer({ section, editable, onUpdateSection, }: SectionRendererProps): JSX.Element;
 
 export declare const linkBlockFieldType: FieldTypeDefinition;
@@ -9189,6 +9366,35 @@ export declare interface LinkDialogValue {
     text: string;
 }
 
+export declare interface LinkedItem {
+    id: string;
+    title: string;
+    kind?: FileKind;
+    /** e.g. 'Depends on' | 'Decided by'. */
+    relation?: string;
+    status?: {
+        label: string;
+        tone: StatusPillTone;
+    } | null;
+    onOpen?: () => void;
+    href?: string;
+    onRemove?: () => void;
+}
+
+export declare function LinkedItemsSection({ title, items, onSearchDocuments, onAdd, relations, emptyLabel, first, className, 'data-testid': testId, }: LinkedItemsSectionProps): JSX.Element;
+
+export declare interface LinkedItemsSectionProps {
+    title?: string;
+    items: LinkedItem[];
+    onSearchDocuments?: (q: string) => Promise<LinkableDocument[]> | LinkableDocument[];
+    onAdd?: (doc: LinkableDocument, relation: string) => void;
+    relations?: LinkRelationOption[];
+    emptyLabel?: string;
+    first?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** Two chain links: a hyperlink — "point this at a URL", or "copy the URL". */
 export declare function LinkIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -9206,6 +9412,11 @@ export declare interface LinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorE
      * wraps something already styled (a card, an avatar, a whole row).
      */
     unstyled?: boolean;
+}
+
+export declare interface LinkRelationOption {
+    value: string;
+    label: string;
 }
 
 declare type LinkRenderer = (item: {
@@ -10599,6 +10810,21 @@ declare type OnMessageFn_8 = (handler: (msg: GatewayMessage) => void) => () => v
 
 declare type OnMessageFn_9 = (handler: (msg: GatewayMessage) => void) => () => void;
 
+export declare function OutcomeSection({ title, value, onChange, placeholder, readOnlyReason, pending, first, className, 'data-testid': testId, }: OutcomeSectionProps): JSX.Element;
+
+export declare interface OutcomeSectionProps {
+    title?: string;
+    value: string | null;
+    onChange?: (v: string) => void;
+    placeholder?: string;
+    readOnlyReason?: string;
+    pending?: boolean;
+    /** Suppress DetailSection's leading rule. */
+    first?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function PageHeader({ title, description, actions, back, badge, size, className, }: PageHeaderProps): default_2.JSX.Element;
 
 export declare interface PageHeaderBack {
@@ -10834,6 +11060,9 @@ export declare interface PeopleGraphProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** Two people: "shared with me", a group. Since 2.385.0. */
+export declare function PeopleIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** The nodes and edges PeopleGraph draws; exported so a host can test or reuse the mapping. */
 export declare function peopleToGraph(people: GraphPerson[], query: string | undefined): {
@@ -13298,6 +13527,97 @@ export declare interface RovingToolbarProps {
     'data-testid'?: string;
 }
 
+/**
+ * Header state labels. PLAN §1.6 names the draft states; the mockup's
+ * "Not started" is not used because it is ambiguous between "no draft yet"
+ * and "saved but not dispatched" — those are `no-draft` and `saved` here.
+ */
+export declare const RUN_DRAFT_STATUS_LABELS: Record<RunDraftStatus, string>;
+
+export declare interface RunDraftBudget {
+    /** The enforced token budget; `null` = none set. */
+    tokens: number | null;
+    onChange: (tokens: number | null) => void;
+    /** Price used for the derived "≈ $x" line. Omit or `null` when unknown — the line is then not shown. */
+    usdPerMillionTokens?: number | null;
+    /** Names the price basis: "Haiku" → "at Haiku prices". */
+    priceLabel?: string;
+    disabledReason?: string;
+}
+
+export declare function RunDraftPanel({ status, collapsed: collapsedProp, defaultCollapsed, onCollapsedChange, target, fields, cost, duration, confidence, budget, advanced, advancedLabel, access, onSave, saveDisabledReason, saving, onDispatch, dispatchDisabledReason, error, live, footnote, className, 'data-testid': testId, }: RunDraftPanelProps): JSX.Element;
+
+export declare interface RunDraftPanelProps {
+    status: RunDraftStatus;
+    /** Controlled collapse. Omit to let the panel own it. */
+    collapsed?: boolean;
+    defaultCollapsed?: boolean;
+    onCollapsedChange?: (collapsed: boolean) => void;
+    /** The chosen workflow. `null` shows "No workflow chosen"; `undefined` shows nothing. */
+    target?: RunDraftTarget | null;
+    fields?: RunDraftSelectField[];
+    cost?: RunEstimate;
+    duration?: RunEstimate;
+    confidence?: RunEstimateConfidence | null;
+    budget?: RunDraftBudget | null;
+    advanced?: ReactNode;
+    advancedLabel?: string;
+    access?: AccessNoticeProps | null;
+    onSave?: () => void;
+    saveDisabledReason?: string;
+    saving?: boolean;
+    onDispatch?: () => void;
+    dispatchDisabledReason?: string;
+    /** Shown verbatim, e.g. the dispatch route's 403 message. */
+    error?: string | null;
+    /** After dispatch: the live run (an `AgentTaskCard`). Replaces the form body. */
+    live?: ReactNode;
+    /** Defaults to "Nothing runs until you authorize it."; pass `null` to hide. */
+    footnote?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface RunDraftSelectField {
+    id: string;
+    label: string;
+    value: string;
+    options: SelectOption[];
+    onChange: (value: string) => void;
+    /** Disables the select and says why (e.g. "This pipeline sets its own model"). */
+    disabledReason?: string;
+    placeholder?: string;
+}
+
+export declare type RunDraftStatus = 'no-draft' | 'unsaved' | 'saved' | 'dispatching' | 'running' | 'completed' | 'failed' | 'stopped';
+
+export declare interface RunDraftTarget {
+    mark?: ReactNode;
+    title: string;
+    subtitle?: string;
+}
+
+export declare type RunEstimate = {
+    kind: 'range';
+    low: number;
+    high: number;
+    unit: RunEstimateUnit;
+} | {
+    kind: 'none';
+    reason: string;
+} | {
+    kind: 'loading';
+};
+
+export declare interface RunEstimateConfidence {
+    /** How many completed runs the estimate is based on. */
+    sampleSize: number;
+}
+
+export declare type RunEstimateConfidenceLevel = 'none' | 'low' | 'medium' | 'high';
+
+export declare type RunEstimateUnit = 'usd' | 'ms';
+
 export declare function RunPanelBody({ panel, api, options }: RunPanelBodyProps): ReactNode;
 
 declare interface RunPanelBodyProps {
@@ -13433,6 +13753,63 @@ export declare interface ScatterNodeData {
      * against saturating Anthropic rate limits or the Sharp thread pool.
      */
     maxConcurrency?: number;
+}
+
+export declare function ScopeHeader({ breadcrumbs, title, status, progress, spentUsd, stats, people, link, menu, menuLabel, tabs, activeTab, onTabChange, className, 'data-testid': testId, }: ScopeHeaderProps): JSX.Element;
+
+export declare interface ScopeHeaderPeopleGroup {
+    /** "Owner". Rendered small and uppercase before the avatars. */
+    label: string;
+    people: PresenceAvatarUser[];
+}
+
+export declare interface ScopeHeaderProgress {
+    done: number;
+    total: number;
+    /** The noun after the numbers. Default "points". */
+    unit?: string;
+    /** The verb. Default "delivered". */
+    verb?: string;
+}
+
+export declare interface ScopeHeaderProps {
+    breadcrumbs?: BreadcrumbItem[];
+    title: string;
+    /** The scope's own status — "In progress". */
+    status?: {
+        label: string;
+        tone?: StatusPillTone;
+    } | null;
+    /** "18 / 52 points delivered". Not drawn when `total` is not above zero. */
+    progress?: ScopeHeaderProgress | null;
+    /** "$1.46 spent". Not drawn when absent or not a finite number. */
+    spentUsd?: number | null;
+    /** Further stats, already worded by the host. Falsy entries are skipped. */
+    stats?: Array<ReactNode | null | undefined | false>;
+    /** Labelled avatar groups — `[{ label: 'Owner', people }]`. Empty groups are dropped. */
+    people?: ScopeHeaderPeopleGroup[];
+    /** One link after the people ("the repository"). */
+    link?: {
+        label: string;
+        href: string;
+        icon?: ReactNode;
+    } | null;
+    /** The ⋯ menu. Omitted or empty — no button. */
+    menu?: DropdownMenuSection[] | null;
+    menuLabel?: string;
+    tabs?: ScopeHeaderTab[];
+    activeTab?: string;
+    onTabChange?: (id: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ScopeHeaderTab {
+    id: string;
+    label: string;
+    /** Shown muted after the label. Absent or `undefined` shows none; `0` shows "0". */
+    count?: number;
+    disabled?: boolean;
 }
 
 /**
@@ -13775,7 +14152,12 @@ export declare type SelectSize = 'sm' | 'md';
  * submission) are worth keeping, so this is the real element restyled, not a
  * button-and-menu impostor.
  */
-declare type SelectVariant = 'default' | 'pill';
+/**
+ * `ghost` (2.385.0) is the value side of a label/value row — no box, the
+ * value right-aligned with the native chevron after it, a hover tint to say it
+ * can be changed ("Model   Haiku ▾" in a run panel).
+ */
+declare type SelectVariant = 'default' | 'pill' | 'ghost';
 
 declare type SendMessage = (msg: Record<string, unknown>) => void;
 
@@ -16000,6 +16382,14 @@ export declare interface TopNavProps {
     className?: string;
     style?: CSSProperties;
     'aria-label'?: string;
+}
+
+/** Items → `GroupedListRow`s: leading checkbox or signal dot, and the meta line. Exported for tests. */
+export declare function toWorkListRows(items: WorkListItem[], { onToggleDone, testId }?: ToWorkListRowsOptions): GroupedListRow[];
+
+export declare interface ToWorkListRowsOptions {
+    onToggleDone?: (item: WorkListItem, done: boolean) => void;
+    testId?: string;
 }
 
 export declare interface TraceSpan {
@@ -19073,6 +19463,152 @@ declare interface UseActivityBusReturn {
       onRequestCollaboration?: (selection: Exclude<WorkGraphSelection, null>, capability: WorkGraphCapability) => void;
   }
 
+  export declare function WorkItemMetaBar({ status, points, owner, priority, className, 'data-testid': testId, }: WorkItemMetaBarProps): JSX.Element | null;
+
+  export declare interface WorkItemMetaBarProps {
+      status?: {
+          value: string | null;
+          options: WorkMetaOption[];
+          onChange?: (v: string) => void;
+          readOnlyReason?: string;
+          pending?: boolean;
+      };
+      points?: {
+          value: number | null;
+          onChange?: (v: number | null) => void;
+          readOnlyReason?: string;
+          pending?: boolean;
+          max?: number;
+      };
+      owner?: {
+          value: WorkPerson | null;
+          onSearchPeople?: (q: string) => Promise<WorkPerson[]> | WorkPerson[];
+          onChange?: (p: WorkPerson | null) => void;
+          readOnlyReason?: string;
+          pending?: boolean;
+      };
+      priority?: {
+          value: string | null;
+          options: WorkMetaOption[];
+          onChange?: (v: string) => void;
+          readOnlyReason?: string;
+          pending?: boolean;
+      };
+      'data-testid'?: string;
+      className?: string;
+  }
+
+  export declare interface WorkListChip {
+      label: string;
+      tone?: ChipTone;
+  }
+
+  export declare interface WorkListGroup {
+      id: string;
+      title: string;
+      /** What this group says when open and empty. Default "Nothing here". */
+      emptyLabel?: string;
+      defaultOpen?: boolean;
+  }
+
+  export declare interface WorkListItem {
+      id: string;
+      groupId: string;
+      title: string;
+      done?: boolean;
+      /** A done toggle is in flight: the checkbox is disabled and busy. */
+      donePending?: boolean;
+      /** Story points. `null` / absent → no points part. */
+      points?: number | null;
+      /** `null` / absent → "Unassigned". */
+      owner?: WorkListPerson | null;
+      /** Type chips, e.g. `{ label: 'Bug', tone: 'danger' }`. */
+      chips?: WorkListChip[];
+      signal?: WorkListSignal | null;
+      disabled?: boolean;
+  }
+
+  export declare interface WorkListPerson {
+      id: string;
+      name: string;
+      avatarUrl?: string;
+  }
+
+  /**
+   * Replaces the checkbox with a dot, and adds its label to the meta line:
+   * `running` a filled primary dot ("Agent running"), `review` a hollow ring
+   * ("Awaiting review"), `blocked` a danger dot. With `onClick` the dot is a
+   * button (e.g. open the live run).
+   */
+  export declare interface WorkListSignal {
+      state: 'running' | 'review' | 'blocked';
+      label: string;
+      onClick?: () => void;
+  }
+
+  /** Search on its own row; sort and the filter button on the next. */
+  export declare function WorkListToolbar({ query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters, activeFilterCount, onClearFilters, className, 'data-testid': testId, }: WorkListToolbarProps): JSX.Element;
+
+  export declare interface WorkListToolbarProps {
+      query: string;
+      onQueryChange: (query: string) => void;
+      /** Default "Search work…". */
+      searchPlaceholder?: string;
+      sort?: string;
+      sortOptions?: SelectOption[];
+      onSortChange?: (value: string) => void;
+      /** Accessible name of the sort select. Default "Sort work". */
+      sortLabel?: string;
+      /** Filter controls; omit for no filter button. */
+      filters?: ReactNode;
+      activeFilterCount?: number;
+      onClearFilters?: () => void;
+      className?: string;
+      'data-testid'?: string;
+  }
+
+  export declare function WorkListView({ title, count, onCreate, createLabel, onCollapse, collapseLabel, chrome, query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters, activeFilterCount, onClearFilters, groups, items, currentId, onOpenItem, onToggleDone, onReorder, loading, error, onRetry, emptyLabel, storageKey, className, 'data-testid': testId, }: WorkListViewProps): JSX.Element;
+
+  export declare interface WorkListViewProps extends Omit<WorkListToolbarProps, 'className' | 'data-testid'> {
+      /** Default "Work". */
+      title?: string;
+      /** The header count. Defaults to `items.length`. */
+      count?: number;
+      /** Shows a + button in the title row. */
+      onCreate?: () => void;
+      /** Default "New work item". */
+      createLabel?: string;
+      /** Shows a ‹ button in the title row. */
+      onCollapse?: () => void;
+      /** Default "Collapse work list". */
+      collapseLabel?: string;
+      /** `embedded` omits the title row (the host shows it in a rail header). Default `full`. */
+      chrome?: 'full' | 'embedded';
+      groups: WorkListGroup[];
+      items: WorkListItem[];
+      currentId?: string | null;
+      onOpenItem?: (item: WorkListItem) => void;
+      /** Omit for read-only rows (no checkbox). */
+      onToggleDone?: (item: WorkListItem, done: boolean) => void;
+      /** `index` is the item's final position within `toGroupId`. Omit for no reorder. */
+      onReorder?: (itemId: string, toGroupId: string, index: number) => void;
+      loading?: boolean;
+      error?: string | null;
+      onRetry?: () => void;
+      /** No items at all. Default "No work yet". */
+      emptyLabel?: string;
+      /** Persists collapsed groups (GroupedList `storageKey`). */
+      storageKey?: string;
+      className?: string;
+      'data-testid'?: string;
+  }
+
+  export declare interface WorkMetaOption {
+      value: string;
+      label: string;
+      tone?: ChipTone;
+  }
+
   export declare function WorkNode({ node, selected, sharingFresh, onSelect, onOpen }: WorkNodeProps): JSX.Element;
 
   /**
@@ -19119,6 +19655,13 @@ declare interface UseActivityBusReturn {
       banner: WorkActivityBanner;
   }): JSX.Element;
 
+  /** A person as the meta bar and its picker see one. */
+  export declare interface WorkPerson {
+      id: string;
+      name: string;
+      avatarUrl?: string;
+  }
+
   export declare function WorkReferenceCard({ target, state, node, edge, unavailableLabel, onSelect, onOpen }: WorkReferenceCardProps): JSX.Element;
 
   export declare interface WorkReferenceCardProps {
@@ -19129,6 +19672,27 @@ declare interface UseActivityBusReturn {
       unavailableLabel?: string;
       onSelect?: (selection: Exclude<WorkGraphSelection, null>) => void;
       onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
+  }
+
+  export declare function WorkSearchPicker<T>({ trigger, open, onClose, label, placeholder, search, itemKey, renderItem, onPick, header, footer, 'data-testid': testId, }: WorkSearchPickerProps<T>): JSX.Element;
+
+  export declare interface WorkSearchPickerProps<T> {
+      trigger: RefObject<HTMLElement | null>;
+      open: boolean;
+      onClose: () => void;
+      /** Accessible name for the dialog and the search box. */
+      label: string;
+      placeholder?: string;
+      /** Called on open (with '') and on every query change. */
+      search?: (q: string) => Promise<T[]> | T[];
+      itemKey: (item: T) => string;
+      renderItem: (item: T) => ReactNode;
+      onPick: (item: T) => void;
+      /** Above the search box (e.g. a relation select). */
+      header?: ReactNode;
+      /** Below the results (e.g. "Unassign"). */
+      footer?: ReactNode;
+      'data-testid'?: string;
   }
 
   export declare type WorkSharingAudience = {
@@ -19172,7 +19736,7 @@ declare interface UseActivityBusReturn {
   }
 
   /** Shared document/chat rail: fixed header and footer, one scrollable body. */
-  export declare function WorkspaceRail({ title, label, actions, header, footer, children, width, collapsed, collapsedContent, onToggle, toggleLabel, toggleTestId, className, 'data-testid': testId, }: WorkspaceRailProps): JSX.Element;
+  export declare function WorkspaceRail({ title, label, actions, header, footer, children, width, count, heading, collapsed, collapsedContent, onToggle, toggleLabel, toggleTestId, className, 'data-testid': testId, }: WorkspaceRailProps): JSX.Element;
 
   export declare interface WorkspaceRailProps {
       title?: string;
@@ -19181,7 +19745,19 @@ declare interface UseActivityBusReturn {
       header?: ReactNode;
       footer?: ReactNode;
       children: ReactNode;
-      width?: 'sm' | 'md';
+      /** `sm` 240px, `md` 300px, `lg` 368px (a two-line work list with a toolbar). */
+      width?: 'sm' | 'md' | 'lg';
+      /**
+       * A count beside the title ("Work 11"). Omit for none; zero shows "0" —
+       * an empty list is a fact, not a missing number.
+       */
+      count?: number;
+      /**
+       * `compact` (default) is the 36px, 12px-title strip a tree rail wears;
+       * `prominent` is the column heading a work list wears — an 18px title and
+       * count on a 56px row, no rule under it.
+       */
+      heading?: 'compact' | 'prominent';
       collapsed?: boolean;
       collapsedContent?: ReactNode;
       onToggle?: () => void;
@@ -19229,19 +19805,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -19261,32 +19824,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -19333,6 +19886,29 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

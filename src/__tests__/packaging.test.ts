@@ -279,11 +279,15 @@ describe('entry points and their transitive optional peers', () => {
       agents: { static: ['@xyflow/react'], dynamic: [] },
       // react-markdown + remark-gfm power MarkdownView (real `dependencies`,
       // same footing as cmdk — npm installs them for the consumer).
-      shared: { static: ['cmdk', 'react-markdown', 'recharts', 'remark-gfm'], dynamic: [] },
+      // `@dnd-kit/*` are DYNAMIC in `shared` and `pipelines` (2.385.0): `GroupedList`
+      // reaches its drag chunk (`GroupedListSortable.tsx`) through a dynamic
+      // `import()`, so a list without `onReorder`, or a consumer without the
+      // optional peer, never loads it; the list stays keyboard-reorderable.
+      shared: { static: ['cmdk', 'react-markdown', 'recharts', 'remark-gfm'], dynamic: ['@dnd-kit/core', '@dnd-kit/sortable'] },
       observability: { static: ['react-router', 'recharts'], dynamic: [] },
       ingest: { static: ['react-router', 'recharts'], dynamic: [] },
       hooks: { static: ['amazon-cognito-identity-js', 'react-router', 'yjs'], dynamic: [] },
-      pipelines: { static: ['@xyflow/react', 'react-router', 'recharts'], dynamic: [] },
+      pipelines: { static: ['@xyflow/react', 'react-router', 'recharts'], dynamic: ['@dnd-kit/core', '@dnd-kit/sortable'] },
       // `@dnd-kit/core` and `@dnd-kit/sortable` are DYNAMIC here: `SlideList.tsx`
       // reaches `SortableSlideList.tsx` through `React.lazy` precisely so that
       // importing the presentation editor does not require `@dnd-kit` on disk

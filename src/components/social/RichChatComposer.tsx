@@ -686,6 +686,16 @@ const docrefSuggestionKey = new PluginKey('docrefSuggestion');
 
 let stagedSeq = 0;
 
+/** The picked argument, if it still belongs to the active command and its label is intact in the draft. */
+function pickedArgumentFor(
+  pick: { trigger: string; item: ComposerArgumentItem } | null,
+  hit: ComposerCommand | null | undefined,
+  text: string,
+): ComposerArgumentItem | null {
+  if (!pick || !hit || pick.trigger !== hit.trigger) return null;
+  return composerCommandArgumentText(text, hit).includes(pick.item.label) ? pick.item : null;
+}
+
 // Each Suggestion plugin needs its own key. Two plugins sharing the default
 // `SuggestionPluginKey` make ProseMirror throw at construction ("Adding
 // different instances of a keyed plugin"), which the emoji plugin only avoids
@@ -921,6 +931,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const [activeCommand, setActiveCommand] = useState<ComposerCommand | null>(null);
   // Whether the active command's argument is still blank, for the status bar.
   const [argumentEmpty, setArgumentEmpty] = useState(true);
+  // The argument picked from the second menu while its label is still intact
+  // in the draft — what the menu-mode card names in its command chip
+  // ("/workflow ⟡ migration-plan"). Null once the label is edited away.
+  const [pickedArgument, setPickedArgument] = useState<ComposerArgumentItem | null>(null);
   // The bar follows the DRAFT, not the render: re-derive whenever the host's
   // commands change (a document opened beside the chat), never clear on time.
   useEffect(() => {
@@ -1284,6 +1298,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         setArgumentEmpty(!hit || composerCommandArgumentText(text, hit).trim() === '');
         // A pick belongs to the command it was made for.
         if (argPickRef.current && argPickRef.current.trigger !== hit?.trigger) argPickRef.current = null;
+        setPickedArgument(pickedArgumentFor(argPickRef.current, hit, text));
         publishRef.current(e);
       },
       editorProps: {
@@ -1451,6 +1466,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     const hit = matchComposerCommand(editor.getText(), commandsRef.current);
     setActiveCommand(hit);
     setArgumentEmpty(!hit || composerCommandArgumentText(editor.getText(), hit).trim() === '');
+    setPickedArgument(pickedArgumentFor(argPickRef.current, hit, editor.getText()));
   }, [editor, draft, onDraftChange]);
 
   // Stamps `privacy` onto the published draft as soon as the CONTROLLED prop
@@ -1901,7 +1917,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           data-testid={`${testId}-console`}
         />
         {sendError && <p role="alert" className="px-2 py-1 text-sm text-danger-fg">Unable to send. Your draft and attachments are saved. Try again.</p>}
-        {activeCommand && (
+        {activeCommand && !menuModeRow && (
           <div
             role="status"
             title={activeCommand.description ?? activeCommand.hint ?? activeCommand.label}
@@ -2093,6 +2109,41 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               />
             )}
             {modeRowEnd != null && <span className={cn('flex shrink-0 items-center', menuModeRow && references?.length ? 'ml-2' : 'ml-auto')} data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>}
+          </div>
+        )}
+        {activeCommand && menuModeRow && !collapsed && (
+          // The docked card (modeControl="menu") names the command as a chip
+          // on its own line — "/workflow ⟡ migration-plan" — the way the
+          // context chip names what the draft is about, rather than a tinted
+          // strip across the card's top edge. Same `role="status"` and test
+          // id as the strip; the picked argument (its icon and label) replaces
+          // the command's own label once there is one. Since 2.385.0.
+          <div className="flex min-w-0 px-2 pt-2">
+            <div
+              role="status"
+              title={activeCommand.description ?? activeCommand.hint ?? activeCommand.label}
+              data-testid={`${testId}-command`}
+              data-command-chip="true"
+              className={cn(
+                'inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-md px-2 py-0.5 text-[12px]',
+                activeCommand.disabled ? 'bg-warning-bg text-warning-fg' : 'bg-info-bg text-info-fg',
+              )}
+            >
+              {activeCommand.icon && <span className="flex shrink-0 items-center" aria-hidden="true">{activeCommand.icon}</span>}
+              <span className="font-mono">{activeCommand.trigger}</span>
+              {pickedArgument ? (
+                <span className="flex min-w-0 items-center gap-1 font-medium" data-testid={`${testId}-command-argument`}>
+                  {pickedArgument.icon && <span className="flex shrink-0 items-center" aria-hidden="true">{pickedArgument.icon}</span>}
+                  <span className="min-w-0 truncate">{pickedArgument.label}</span>
+                </span>
+              ) : argumentEmpty && activeCommand.argument?.placeholder ? (
+                <span data-testid={`${testId}-command-placeholder`} className="min-w-0 truncate italic opacity-80">
+                  {activeCommand.argument.placeholder}
+                </span>
+              ) : (
+                <span className="min-w-0 truncate font-medium">{activeCommand.label}</span>
+              )}
+            </div>
           </div>
         )}
         {modesEnabled && !fixedMode && !compactModeRow && !collapsed && (

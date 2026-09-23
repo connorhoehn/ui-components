@@ -38,8 +38,23 @@ export interface ExplorerLayoutProps {
   children: ReactNode;
   /** Optional right-hand context bar. Stacks below the pane under `2xl`, sits beside it at `2xl` and up. */
   aside?: ReactNode;
-  /** Rail width. `md` is the 300px agentcore measured against; `sm` is 240px for a shallower tree. */
-  railWidth?: 'sm' | 'md';
+  /**
+   * Rail width. `md` is the 300px agentcore measured against; `sm` is 240px for
+   * a shallower tree; `lg` is 368px for a two-line work list with its toolbar
+   * (the Documents Work column, measured against the redesign's 370px).
+   */
+  railWidth?: 'sm' | 'md' | 'lg';
+  /**
+   * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
+   * tabs) that names what the rail, the pane and the aside are all looking at.
+   * It does not scroll; the columns below it keep their independent scrolling.
+   * Since 2.385.0.
+   */
+  header?: ReactNode;
+  /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
+  railCount?: number;
+  /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
+  railHeading?: 'compact' | 'prominent';
   /**
    * The rail folded to a strip with one control that brings it back. For a
    * surface that wants the width — a diagram, a wide table — the list of
@@ -86,6 +101,9 @@ export function ExplorerLayout({
   children,
   aside,
   railWidth = 'md',
+  header,
+  railCount,
+  railHeading = 'compact',
   railCollapsed = false,
   onToggleRail,
   railLabel = 'the list',
@@ -98,10 +116,10 @@ export function ExplorerLayout({
   className,
   'data-testid': testId = 'explorer-layout',
 }: ExplorerLayoutProps) {
-  return (
-    <div data-testid={testId} className={cn('flex h-full min-h-0', className)}>
+  const frame = (
+    <div data-testid={testId} className={cn('flex h-full min-h-0', header ? 'min-w-0 flex-1' : className)}>
       <WorkspaceRail title={railTitle} label="Explorer" actions={railActions} header={railHeader} footer={railFooter}
-        width={railWidth} collapsed={railCollapsed} onToggle={onToggleRail}
+        width={railWidth} {...(typeof railCount === 'number' ? { count: railCount } : {})} heading={railHeading} collapsed={railCollapsed} onToggle={onToggleRail}
         toggleLabel={`${railCollapsed ? 'Show' : 'Hide'} ${railLabel}`} data-testid={`${testId}-rail`}>
         {rail}
       </WorkspaceRail>
@@ -130,6 +148,18 @@ export function ExplorerLayout({
           </aside>
         ) : null}
       </div>
+    </div>
+  );
+
+  if (!header) return frame;
+  // The header spans every column; the frame below it takes what is left and
+  // keeps its own height chain (`min-h-0` so its columns, not the page, scroll).
+  return (
+    <div data-testid={`${testId}-with-header`} className={cn('flex h-full min-h-0 flex-col', className)}>
+      <div data-testid={`${testId}-header`} className="shrink-0 border-b border-border bg-surface-panel">
+        {header}
+      </div>
+      <div className="flex min-h-0 flex-1">{frame}</div>
     </div>
   );
 }

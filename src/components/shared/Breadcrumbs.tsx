@@ -53,6 +53,13 @@ export interface BreadcrumbsProps {
    * every route can set `minItems={3}` and let shallow pages keep the row.
    */
   minItems?: number;
+  /**
+   * `true` (default): the last crumb is the page you are on — primary ink,
+   * `aria-current="page"`, not a link. `false`: every crumb is a place to go,
+   * for a PATH that ends at the folder a file lives in, not at the file.
+   * Since 2.385.0.
+   */
+  lastIsCurrent?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -178,6 +185,7 @@ export function Breadcrumbs({
   maxItems,
   overflow = 'ellipsis',
   minItems,
+  lastIsCurrent = true,
   className,
   'data-testid': testId,
 }: BreadcrumbsProps) {
@@ -210,7 +218,7 @@ export function Breadcrumbs({
                   </span>
                 )
               ) : (
-                <BreadcrumbLink item={item} isLast={isLast} />
+                <BreadcrumbLink item={item} isLast={isLast && lastIsCurrent} />
               )}
               {!isLast && (
                 <span

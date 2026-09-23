@@ -439,3 +439,59 @@ export function ReplyIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A circled "i": "more about this" — an estimate's confidence, a footnote. Since 2.385.0. */
+export function InfoIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="8" cy="8" r="6" />
+      <path d="M8 7.2v3.6" />
+      <path d="M8 5.1v.1" />
+    </svg>
+  );
+}
+
+/** An arrow pointing right: "go on" — a link action, "Prepare run →". Since 2.385.0. */
+export function ArrowRightIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M3 8h10" />
+      <path d="M9 4l4 4-4 4" />
+    </svg>
+  );
+}
+
+/** Two people: "shared with me", a group. Since 2.385.0. */
+export function PeopleIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="6" cy="5.5" r="2.2" />
+      <path d="M2 13c.4-2.2 2-3.5 4-3.5s3.6 1.3 4 3.5" />
+      <path d="M10.3 3.6a2.2 2.2 0 0 1 0 4" />
+      <path d="M11.3 9.7c1.4.4 2.4 1.6 2.7 3.3" />
+    </svg>
+  );
+}
+
+/** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
+export function GripIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, { ...rest, fill: 'currentColor', stroke: 'none' })}>
+      <circle cx="6" cy="4" r="1.1" />
+      <circle cx="10" cy="4" r="1.1" />
+      <circle cx="6" cy="8" r="1.1" />
+      <circle cx="10" cy="8" r="1.1" />
+      <circle cx="6" cy="12" r="1.1" />
+      <circle cx="10" cy="12" r="1.1" />
+    </svg>
+  );
+}
+
+/** A funnel: "filter this list". Since 2.385.0. */
+export function FilterIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M2.5 3.5h11l-4.2 5v4l-2.6 1.2V8.5z" />
+    </svg>
+  );
+}

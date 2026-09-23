@@ -71,6 +71,26 @@ export interface EditorShellProps {
   onStarredChange?: (starred: boolean) => void;
   /** After the title — normally a `StatusPill` ("Draft", "v4"). */
   statusPill?: ReactNode;
+  /**
+   * Where the file lives, INLINE after the status pill on the title row
+   * ("Release plan  Draft | Sprint planning / Release assets"), each segment
+   * clickable. The alternative to `breadcrumbs` above the title for a header
+   * that wants one row. With it, the title takes only the width it needs.
+   * Since 2.385.0.
+   */
+  path?: BreadcrumbItem[];
+  /**
+   * Beside the crumb trail on its row — a type `Chip` and the document id in
+   * mono ("› OpenTelemetry everywhere / Story wi-obs-e1-s4"). Since 2.385.0.
+   */
+  crumbsTrailing?: ReactNode;
+  /** A line under the title — the document's description. Since 2.385.0. */
+  subtitle?: ReactNode;
+  /**
+   * A row between the title block and the tabs — a `WorkItemMetaBar`
+   * (status · points · owner · priority). Since 2.385.0.
+   */
+  metaBar?: ReactNode;
   /** Who is here. Rendered with `PresenceAvatars`. */
   participants?: PresenceUser[];
   /** Jump to where a participant is (their cursor, their slide). Since 2.367.0. */
@@ -132,6 +152,10 @@ export function EditorShell({
   starred = false,
   onStarredChange,
   statusPill,
+  path,
+  crumbsTrailing,
+  subtitle,
+  metaBar,
   participants,
   onParticipantClick,
   onFollowParticipant,
@@ -160,11 +184,19 @@ export function EditorShell({
   const pane = (
     <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
       <header className="flex flex-col gap-1 border-b border-border px-4 pt-2.5" data-testid={`${testId}-header`}>
-        {breadcrumbs && breadcrumbs.length > 0 && (
+        {breadcrumbs && breadcrumbs.length > 0 && !crumbsTrailing && (
           // A short window (a 1280×720 laptop leaves ~577 px) gives the crumbs'
           // row to the canvas: the title stays, and the explorer beside the
           // pane already shows where the file lives.
           <Breadcrumbs items={breadcrumbs} maxItems={4} className="text-xs [@media(max-height:640px)]:hidden" data-testid={`${testId}-crumbs`} />
+        )}
+        {crumbsTrailing && (
+          <div className="flex min-w-0 items-center gap-2 text-xs [@media(max-height:640px)]:hidden" data-testid={`${testId}-crumbs-row`}>
+            {breadcrumbs && breadcrumbs.length > 0 && (
+              <Breadcrumbs items={breadcrumbs} maxItems={4} className="min-w-0 text-xs" data-testid={`${testId}-crumbs`} />
+            )}
+            <span className="flex shrink-0 items-center gap-2" data-testid={`${testId}-crumbs-trailing`}>{crumbsTrailing}</span>
+          </div>
         )}
         <div className="flex min-w-0 items-start gap-3">
           {/* A short window (under 640 px tall — a 1280×720 laptop window has a
@@ -182,11 +214,11 @@ export function EditorShell({
                   onCommit={onTitleChange}
                   label={titleLabel}
                   required
-                  className="min-w-[10rem] max-w-full flex-1 basis-0 text-lg"
+                  className={cn('min-w-[10rem] max-w-full text-lg', path && path.length > 0 ? 'flex-initial' : 'flex-1 basis-0')}
                   data-testid={`${testId}-title`}
                 />
               ) : (
-                <h1 className="m-0 min-w-[10rem] max-w-full flex-1 basis-0 truncate text-lg font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
+                <h1 className={cn('m-0 max-w-full truncate text-lg font-semibold text-text-primary', path && path.length > 0 ? 'min-w-0 flex-initial' : 'min-w-[10rem] flex-1 basis-0')} data-testid={`${testId}-title`}>{title}</h1>
               )}
               {onStarredChange && (
                 <IconButton
@@ -202,7 +234,15 @@ export function EditorShell({
                 </IconButton>
               )}
               {statusPill}
+              {path && path.length > 0 && (
+                <span className="flex min-w-0 flex-1 items-center border-l border-border pl-2.5" data-testid={`${testId}-path`}>
+                  <Breadcrumbs items={path} maxItems={4} lastIsCurrent={false} className="min-w-0 text-xs text-text-tertiary" data-testid={`${testId}-path-crumbs`} />
+                </span>
+              )}
             </div>
+            {subtitle != null && (
+              <p className="m-0 min-w-0 truncate text-[15px] leading-5 text-text-secondary [@media(max-height:640px)]:hidden" data-testid={`${testId}-subtitle`}>{subtitle}</p>
+            )}
             {hasByline && (
               <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-text-tertiary [@media(max-height:640px)]:max-w-[50%] [@media(max-height:640px)]:flex-nowrap" data-testid={`${testId}-byline`}>
                 {participants && participants.length > 0 && (
@@ -221,6 +261,9 @@ export function EditorShell({
           </div>
           {headActions && <div className="flex shrink-0 items-center gap-1.5" data-testid={`${testId}-actions`}>{headActions}</div>}
         </div>
+        {metaBar != null && (
+          <div className="flex min-w-0 items-center py-2" data-testid={`${testId}-meta-bar`}>{metaBar}</div>
+        )}
         {hasTabs ? (
           <Tabs
             items={tabs!.map((t) => ({

@@ -79,6 +79,14 @@ export interface CommandPaletteProps {
 
 export interface CommandPaletteHintProps {
   className?: string;
+  /** The word after the shortcut. Default "Search". Since 2.385.0. */
+  label?: string;
+  /**
+   * `sm` (default) is the quiet 24px chip; `md` is a 36px top-bar button that
+   * sits level with the bar's other controls (the Documents redesign's
+   * "⌘K Search"). Since 2.385.0.
+   */
+  size?: 'sm' | 'md';
 }
 
 export interface CommandPaletteController {
@@ -502,7 +510,7 @@ export function CommandPalette({
 
 // ── <CommandPaletteHint /> — affordance button ──────────────────────────
 
-export function CommandPaletteHint({ className }: CommandPaletteHintProps = {}) {
+export function CommandPaletteHint({ className, label = 'Search', size = 'sm' }: CommandPaletteHintProps = {}) {
   const { toggle } = useInternal();
   return (
     <button
@@ -510,16 +518,19 @@ export function CommandPaletteHint({ className }: CommandPaletteHintProps = {}) 
       onClick={toggle}
       data-testid="command-palette-hint"
       className={cn(
-        'inline-flex items-center gap-1.5 px-2 py-1 rounded-md',
-        'text-xs text-text-secondary bg-surface-hover',
-        'border border-border hover:bg-surface-panel',
+        'inline-flex items-center rounded-md border border-border',
+        size === 'md'
+          ? 'h-9 gap-2 bg-surface px-3 text-[13px] font-medium text-text-primary shadow-sm hover:bg-surface-hover'
+          : 'gap-1.5 px-2 py-1 text-xs text-text-secondary bg-surface-hover hover:bg-surface-panel',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
         'cursor-pointer transition-colors',
         className,
       )}
       aria-label="Open command palette"
+      aria-keyshortcuts="Meta+K Control+K"
     >
-      <kbd className="font-mono text-[11px]">⌘K</kbd>
-      <span>Search</span>
+      <kbd className={cn('font-mono', size === 'md' ? 'text-[12px] text-text-secondary' : 'text-[11px]')}>⌘K</kbd>
+      <span>{label}</span>
     </button>
   );
 }

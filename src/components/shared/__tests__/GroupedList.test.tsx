@@ -1,6 +1,15 @@
-import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { useState } from 'react';
+import { act, render, screen, fireEvent, cleanup, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { GroupedList, type GroupedListGroup, type GroupedListRow } from '../GroupedList';
+import {
+  GroupedList,
+  GROUPED_LIST_GROUP_DROP_PREFIX,
+  resolveGroupedListDrop,
+  type GroupedListGroup,
+  type GroupedListRow,
+} from '../GroupedList';
 
 const GROUPS: GroupedListGroup[] = [
   { id: 'docs', title: 'Documents', count: 2 },
@@ -192,5 +201,187 @@ describe('GroupedList', () => {
   it('says "Nothing here" for an open group with no rows', () => {
     render(<GroupedList groups={[{ id: 'e', title: 'Empty', count: 0 }]} rows={[]} />);
     expect(screen.getByTestId('grouped-list-group-empty-e')).toHaveTextContent('Nothing here');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// leading / meta / reorder (additive slots)
+// ---------------------------------------------------------------------------
+
+const WORK_GROUPS: GroupedListGroup[] = [
+  { id: 'next', title: 'Next up' },
+  { id: 'doing', title: 'In progress' },
+  { id: 'done', title: 'Done', defaultOpen: false },
+];
+const WORK_ROWS: GroupedListRow[] = [
+  { id: 'w1', groupId: 'next', title: 'One' },
+  { id: 'w2', groupId: 'next', title: 'Two' },
+  { id: 'w3', groupId: 'next', title: 'Three' },
+  { id: 'w4', groupId: 'doing', title: 'Four' },
+  { id: 'w5', groupId: 'done', title: 'Five' },
+];
+
+function applyMove(rows: GroupedListRow[], id: string, toGroupId: string, index: number) {
+  const moving = rows.find((r) => r.id === id)!;
+  const rest = rows.filter((r) => r.id !== id);
+  const target = rest.filter((r) => r.groupId === toGroupId);
+  const before = target[index - 1];
+  const moved = { ...moving, groupId: toGroupId };
+  if (!before) {
+    const first = target[0];
+    const at = first ? rest.indexOf(first) : rest.length;
+    return [...rest.slice(0, at), moved, ...rest.slice(at)];
+  }
+  const at = rest.indexOf(before) + 1;
+  return [...rest.slice(0, at), moved, ...rest.slice(at)];
+}
+
+describe('GroupedList — leading and meta', () => {
+  it('renders leading outside the row button; pressing it does not open the row', () => {
+    const onOpenRow = vi.fn();
+    const onTick = vi.fn();
+    const rows: GroupedListRow[] = [
+      { ...WORK_ROWS[0], leading: <input type="checkbox" aria-label="Mark One done" onChange={onTick} /> },
+    ];
+    render(<GroupedList groups={WORK_GROUPS} rows={rows} onOpenRow={onOpenRow} />);
+    const box = screen.getByLabelText('Mark One done');
+    expect(screen.getByTestId('grouped-list-row-open-w1')).not.toContainElement(box);
+    expect(screen.getByTestId('grouped-list-row-leading-w1')).toContainElement(box);
+    fireEvent.click(box);
+    fireEvent.keyDown(box, { key: 'ArrowDown' });
+    expect(onTick).toHaveBeenCalledTimes(1);
+    expect(onOpenRow).not.toHaveBeenCalled();
+  });
+
+  it('renders meta as a line in the row button, before the subline', () => {
+    const rows: GroupedListRow[] = [{ ...WORK_ROWS[0], meta: '5 pts · Layla Hassan', subline: 'Later line' }];
+    render(<GroupedList groups={WORK_GROUPS} rows={rows} />);
+    const meta = screen.getByTestId('grouped-list-row-meta-w1');
+    expect(meta).toHaveTextContent('5 pts · Layla Hassan');
+    expect(screen.getByTestId('grouped-list-row-open-w1')).toContainElement(meta);
+    const sub = screen.getByTestId('grouped-list-row-subline-w1');
+    expect(meta.compareDocumentPosition(sub) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('draws no handle and no live region without onReorder', () => {
+    render(<GroupedList groups={WORK_GROUPS} rows={WORK_ROWS} />);
+    expect(screen.queryByTestId('grouped-list-row-handle-w1')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('grouped-list-reorder-status')).not.toBeInTheDocument();
+  });
+});
+
+describe('GroupedList — reorder', () => {
+  it('Alt+ArrowUp/Down move within the group, with the final index', () => {
+    const onReorder = vi.fn();
+    render(<GroupedList groups={WORK_GROUPS} rows={WORK_ROWS} onReorder={onReorder} />);
+    const two = screen.getByTestId('grouped-list-row-open-w2');
+    fireEvent.keyDown(two, { key: 'ArrowUp', altKey: true });
+    expect(onReorder).toHaveBeenLastCalledWith('w2', 'next', 0);
+    fireEvent.keyDown(two, { key: 'ArrowDown', altKey: true });
+    expect(onReorder).toHaveBeenLastCalledWith('w2', 'next', 2);
+    // Nothing above the first row / below the last.
+    onReorder.mockClear();
+    fireEvent.keyDown(screen.getByTestId('grouped-list-row-open-w1'), { key: 'ArrowUp', altKey: true });
+    fireEvent.keyDown(screen.getByTestId('grouped-list-row-open-w3'), { key: 'ArrowDown', altKey: true });
+    expect(onReorder).not.toHaveBeenCalled();
+  });
+
+  it('Alt+ArrowLeft/Right append to the previous / next group and announce it', () => {
+    const onReorder = vi.fn();
+    render(<GroupedList groups={WORK_GROUPS} rows={WORK_ROWS} onReorder={onReorder} />);
+    fireEvent.keyDown(screen.getByTestId('grouped-list-row-open-w2'), { key: 'ArrowRight', altKey: true });
+    expect(onReorder).toHaveBeenLastCalledWith('w2', 'doing', 1);
+    expect(screen.getByTestId('grouped-list-reorder-status')).toHaveTextContent('Moved Two to position 2 of 2 in In progress');
+    fireEvent.keyDown(screen.getByTestId('grouped-list-row-open-w4'), { key: 'ArrowLeft', altKey: true });
+    expect(onReorder).toHaveBeenLastCalledWith('w4', 'next', 3);
+    onReorder.mockClear();
+    fireEvent.keyDown(screen.getByTestId('grouped-list-row-open-w1'), { key: 'ArrowLeft', altKey: true });
+    expect(onReorder).not.toHaveBeenCalled();
+  });
+
+  it('opens a closed target group and focus follows the moved row', async () => {
+    function Host() {
+      const [rows, setRows] = useState(WORK_ROWS);
+      return (
+        <GroupedList
+          groups={WORK_GROUPS}
+          rows={rows}
+          onReorder={(id, to, index) => setRows((prev) => applyMove(prev, id, to, index))}
+        />
+      );
+    }
+    render(<Host />);
+    const four = screen.getByTestId('grouped-list-row-open-w4');
+    four.focus();
+    fireEvent.keyDown(four, { key: 'ArrowRight', altKey: true });
+    expect(screen.getByTestId('grouped-list-group-toggle-done')).toHaveAttribute('aria-expanded', 'true');
+    await waitFor(() => expect(screen.getByTestId('grouped-list-row-open-w4')).toHaveFocus());
+    const doneRows = within(screen.getByTestId('grouped-list-group-done')).getAllByRole('listitem');
+    expect(doneRows.map((li) => li.dataset.rowId)).toEqual(['w5', 'w4']);
+  });
+
+  it('plain arrows still walk rows when onReorder is set, and Alt+arrows fire nothing without it', () => {
+    const onReorder = vi.fn();
+    const { unmount } = render(<GroupedList groups={WORK_GROUPS} rows={WORK_ROWS} onReorder={onReorder} />);
+    const one = screen.getByTestId('grouped-list-row-open-w1');
+    one.focus();
+    fireEvent.keyDown(one, { key: 'ArrowDown' });
+    expect(screen.getByTestId('grouped-list-row-open-w2')).toHaveFocus();
+    expect(onReorder).not.toHaveBeenCalled();
+    unmount();
+    render(<GroupedList groups={WORK_GROUPS} rows={WORK_ROWS} />);
+    const again = screen.getByTestId('grouped-list-row-open-w1');
+    again.focus();
+    fireEvent.keyDown(again, { key: 'ArrowDown', altKey: true });
+    expect(screen.getByTestId('grouped-list-row-open-w2')).toHaveFocus();
+  });
+
+  it('gives each reorderable row a named, non-tabbable handle; canReorder and disabled rows opt out', async () => {
+    const onReorder = vi.fn();
+    const rows = WORK_ROWS.map((r) => (r.id === 'w3' ? { ...r, disabled: true } : r));
+    render(
+      <GroupedList
+        groups={WORK_GROUPS}
+        rows={rows}
+        onReorder={onReorder}
+        canReorder={(r) => !r.disabled && r.id !== 'w2'}
+        reorderLabel={(r) => `Move ${r.title}`}
+      />,
+    );
+    const handle = screen.getByTestId('grouped-list-row-handle-w1');
+    expect(handle).toHaveAccessibleName('Move One');
+    expect(handle).toHaveAttribute('tabindex', '-1');
+    expect(screen.queryByTestId('grouped-list-row-handle-w2')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('grouped-list-row-handle-w3')).not.toBeInTheDocument();
+    fireEvent.keyDown(screen.getByTestId('grouped-list-row-open-w2'), { key: 'ArrowUp', altKey: true });
+    expect(onReorder).not.toHaveBeenCalled();
+    // The dnd chunk loads and the handle keeps its name.
+    await act(async () => {
+      await import('../GroupedListSortable');
+    });
+    await waitFor(() => expect(document.querySelector('[id^="DndDescribedBy"]')).not.toBeNull());
+    expect(screen.getByTestId('grouped-list-row-handle-w1')).toHaveAccessibleName('Move One');
+    expect(screen.getByTestId('grouped-list-row-handle-w1')).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('default handle label is "Reorder <title>"', () => {
+    render(<GroupedList groups={WORK_GROUPS} rows={WORK_ROWS} onReorder={vi.fn()} />);
+    expect(screen.getByTestId('grouped-list-row-handle-w1')).toHaveAccessibleName('Reorder One');
+  });
+
+  it('resolves drops onto a row or a group header', () => {
+    expect(resolveGroupedListDrop(WORK_ROWS, 'w1', 'w3')).toEqual({ toGroupId: 'next', index: 2 });
+    expect(resolveGroupedListDrop(WORK_ROWS, 'w1', 'w4')).toEqual({ toGroupId: 'doing', index: 0 });
+    expect(resolveGroupedListDrop(WORK_ROWS, 'w1', `${GROUPED_LIST_GROUP_DROP_PREFIX}done`)).toEqual({ toGroupId: 'done', index: 1 });
+    expect(resolveGroupedListDrop(WORK_ROWS, 'w1', `${GROUPED_LIST_GROUP_DROP_PREFIX}next`)).toEqual({ toGroupId: 'next', index: 2 });
+    expect(resolveGroupedListDrop(WORK_ROWS, 'w3', `${GROUPED_LIST_GROUP_DROP_PREFIX}next`)).toBeNull();
+    expect(resolveGroupedListDrop(WORK_ROWS, 'w1', 'w1')).toBeNull();
+  });
+
+  it('reaches @dnd-kit only through a dynamic import (optional peer, root entry)', () => {
+    const src = readFileSync(resolve(__dirname, '../GroupedList.tsx'), 'utf8');
+    expect(src).not.toMatch(/from\s+['"]@dnd-kit/);
+    expect(src).not.toMatch(/^import\s+[^;]*GroupedListSortable/m);
+    expect(src).toMatch(/import\('\.\/GroupedListSortable'\)/);
   });
 });

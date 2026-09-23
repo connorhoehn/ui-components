@@ -4,6 +4,8 @@ import { GroupedList, type GroupedListGroup, type GroupedListRow } from './Group
 import { FileKindMark } from './FileKindMark';
 import { StatusPill } from './StatusPill';
 import { Button } from '../ui/Button';
+import { Checkbox } from '../forms/Checkbox';
+import { Avatar } from './Avatar';
 
 const GROUPS: GroupedListGroup[] = [
   { id: 'documents', title: 'Documents & presentations', count: 3, icon: <FileKindMark kind="folder" variant="plain" /> },
@@ -122,4 +124,70 @@ export const Plain: Story = {
       />
     </div>
   ),
+};
+
+// ---------------------------------------------------------------------------
+// leading + meta + reorder — the Work column's row shape
+// ---------------------------------------------------------------------------
+
+const WORK_GROUPS: GroupedListGroup[] = [
+  { id: 'next', title: 'Next up' },
+  { id: 'progress', title: 'In progress' },
+  { id: 'done', title: 'Done', defaultOpen: false, emptyLabel: 'Nothing done yet' },
+];
+
+const WORK_SEED = [
+  { id: 's4', groupId: 'next', title: 'Decommission legacy StatsD bridge', pts: 5, owner: 'Layla Hassan' },
+  { id: 's5', groupId: 'next', title: 'Set SLO alert thresholds', pts: 5, owner: 'Eli Garcia' },
+  { id: 's6', groupId: 'next', title: 'Configure retention policies', pts: 3, owner: 'Layla Hassan' },
+  { id: 's2', groupId: 'progress', title: 'Span-metrics connector', pts: 8, owner: 'Layla Hassan' },
+];
+
+/**
+ * A checkbox in `leading` (ticking it never opens the row), a `meta` line, and
+ * `onReorder`: drag the grip handle, or focus a row and press Alt+↑/↓ (within the
+ * group) or Alt+←/→ (to the end of the neighbouring group).
+ */
+export const LeadingMetaReorder: Story = {
+  args: { groups: WORK_GROUPS, rows: [] },
+  render: () => {
+    const [items, setItems] = useState(WORK_SEED.map((w) => ({ ...w, done: false })));
+    const rows: GroupedListRow[] = items.map((w) => ({
+      id: w.id,
+      groupId: w.groupId,
+      title: w.title,
+      leading: (
+        <Checkbox
+          checked={w.done}
+          aria-label={`Mark ${w.title} done`}
+          onChange={(done) => setItems((prev) => prev.map((p) => (p.id === w.id ? { ...p, done } : p)))}
+        />
+      ),
+      meta: (
+        <>
+          <Avatar name={w.owner} size={16} title={null} />
+          <span className="truncate">{`${w.pts} pts · ${w.owner}`}</span>
+        </>
+      ),
+    }));
+    return (
+      <div className="w-[368px]">
+        <GroupedList
+          groups={WORK_GROUPS}
+          rows={rows}
+          currentId="s4"
+          onOpenRow={() => {}}
+          onReorder={(id, toGroupId, index) =>
+            setItems((prev) => {
+              const moving = { ...prev.find((p) => p.id === id)!, groupId: toGroupId };
+              const rest = prev.filter((p) => p.id !== id);
+              const target = rest.filter((p) => p.groupId === toGroupId);
+              const at = index < target.length ? rest.indexOf(target[index]) : target.length ? rest.indexOf(target[target.length - 1]) + 1 : rest.length;
+              return [...rest.slice(0, at), moving, ...rest.slice(at)];
+            })
+          }
+        />
+      </div>
+    );
+  },
 };

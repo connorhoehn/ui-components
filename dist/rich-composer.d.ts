@@ -134,6 +134,11 @@ export declare interface ComposerCommand {
     disabled?: boolean;
     /** The long form, shown as a tooltip on the bar: what will happen, step by step. */
     description?: string;
+    /**
+     * A glyph before the trigger in the docked card's command chip
+     * (`modeControl="menu"`) — a branch mark for `/workflow`. Since 2.385.0.
+     */
+    icon?: ReactNode;
     /** What the command acts on, offered as a second menu once the trigger is typed. */
     argument?: ComposerCommandArgument;
 }

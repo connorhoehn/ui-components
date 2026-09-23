@@ -1160,7 +1160,7 @@ export declare interface DocumentUploadCompletion {
  */
 export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 
-export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, surface, explorer, workbench, label, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
+export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, surface, explorer, workbench, label, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
 
 export declare interface EditorShellProps {
     /** The trail above the title — "Sprint planning / Sprint review". */
@@ -1177,6 +1177,26 @@ export declare interface EditorShellProps {
     onStarredChange?: (starred: boolean) => void;
     /** After the title — normally a `StatusPill` ("Draft", "v4"). */
     statusPill?: ReactNode;
+    /**
+     * Where the file lives, INLINE after the status pill on the title row
+     * ("Release plan  Draft | Sprint planning / Release assets"), each segment
+     * clickable. The alternative to `breadcrumbs` above the title for a header
+     * that wants one row. With it, the title takes only the width it needs.
+     * Since 2.385.0.
+     */
+    path?: BreadcrumbItem[];
+    /**
+     * Beside the crumb trail on its row — a type `Chip` and the document id in
+     * mono ("› OpenTelemetry everywhere / Story wi-obs-e1-s4"). Since 2.385.0.
+     */
+    crumbsTrailing?: ReactNode;
+    /** A line under the title — the document's description. Since 2.385.0. */
+    subtitle?: ReactNode;
+    /**
+     * A row between the title block and the tabs — a `WorkItemMetaBar`
+     * (status · points · owner · priority). Since 2.385.0.
+     */
+    metaBar?: ReactNode;
     /** Who is here. Rendered with `PresenceAvatars`. */
     participants?: PresenceUser[];
     /** Jump to where a participant is (their cursor, their slide). Since 2.367.0. */
@@ -3448,19 +3468,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3480,32 +3487,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3552,6 +3549,29 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

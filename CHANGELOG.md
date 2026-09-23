@@ -6,6 +6,74 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.385.0] — 2026-09-23
+
+### Added
+
+The library half of the Documents four-pane redesign (realtime-examples
+`docs/design/documents-detail/PLAN.md`, WS-A), plus the folders view's pieces. New components
+live in `src/components/work/` and are exported from the root. Stories: `Work/*`, including two
+composed screens (`Work/Documents detail view`, `Work/Documents folders view`) built only from
+these parts.
+
+- **`WorkListView`** (+ `WorkListToolbar`, `toWorkListRows`). The Work column: "Work 11", +,
+  collapse, search, sort `Select`, `FilterPopover`, and `GroupedList` groups by status. A row has a
+  checkbox (never nested in the row button), the owner avatar and "5 pts · Layla Hassan", toned
+  chips ("Bug"), and a status dot in place of the checkbox for a running agent (a named button when
+  it has `onClick`) or an item awaiting review. Loading, error with Retry, empty, and no-match
+  states. Reordering is off while a query filters the list. `chrome="embedded"` drops the title row
+  for a host that titles the rail itself.
+- **`GroupedList`**: `row.leading`, `row.meta`, and `onReorder(rowId, toGroupId, index)` with
+  `canReorder` / `reorderLabel`. Alt+↑/↓ moves a row within its group; Alt+←/→ moves it to the end
+  of the previous or next group. Each move is announced politely. Pointer drag goes through
+  `@dnd-kit`, reached only by a dynamic import of `GroupedListSortable`, so the root entry never
+  requires the optional peer. Without the peer, the list is keyboard-only rather than broken. Output
+  without these props is unchanged.
+- **`ScopeHeader`**: a breadcrumb, the title with a `StatusPill`, "18 / 52 points delivered · $1.46
+  spent", labelled `PresenceAvatars` groups, an optional link, a ⋯ menu, and tabs with counts.
+  Nothing is drawn without data: progress needs a total above zero, and spend is a typed number.
+- **`WorkItemMetaBar`** (+ `WorkSearchPicker`): status, points, owner (a people picker over
+  `onSearchPeople`) and priority. Each field has a `readOnlyReason` and a `pending` state, and the
+  honest empty values are "No status", "— pts", "Unassigned" and "No priority".
+- **`OutcomeSection`**, **`ChecklistSection`**, **`LinkedItemsSection`** and **`CommentList`**, each
+  on `DetailSection`. They cover editing the text in place; the checklist's toggle, add, edit,
+  remove, move and per-item pending; links with a kind mark, a status pill and an "Add link" picker;
+  and read-only notes showing the name, the role (only when there is one), the relative time and
+  "View all".
+- **`RunDraftPanel`** (+ `EstimateRow`, `AccessNotice`). The panel has a header with the state and
+  a collapse control, the workflow target, `Select` rows, and cost and duration estimates. It also
+  holds the enforced token budget with a derived "≈ $x at <model> prices" line, an "Advanced"
+  `Disclosure`, the access notice, and Save and Dispatch with visible disabled reasons, a verbatim
+  error, the "Nothing runs until you authorize it." footnote, and a `live` slot for the
+  `AgentTaskCard` after dispatch.
+  - There is no free-text money. Estimates arrive typed: `{kind:'range', low, high, unit:'usd'|'ms'}
+    | {kind:'none', reason} | {kind:'loading'}`.
+  - A range with a sample size of 0 is replaced by "No prior runs".
+  - Confidence reads from the sample size.
+- **`formatCompactAge`**: "now", "6m", "6h", "1d", "3w", then a short date, for the explorer's
+  right-hand age on file rows. It returns `undefined` for a missing or unparseable time.
+- **Slots on existing composites**, all additive:
+  - `ExplorerLayout.header` spans the rail, the pane and the aside.
+  - `ExplorerLayout` / `WorkspaceRail` gain `railWidth`/`width` `'lg'` (368px),
+    `railCount`/`count`, and `railHeading`/`heading` `'prominent'`, an 18px title with a count.
+  - `EditorShell` gains `subtitle`, `metaBar` (between the title and the tabs), `crumbsTrailing` (a
+    type chip and an id beside the crumbs) and `path` (the folder path inline after the status
+    pill, every segment a link).
+  - `Breadcrumbs.lastIsCurrent`.
+  - `Select variant="ghost"`: a right-aligned value with no box, for label/value rows.
+  - `CommandPaletteHint` `label` and `size="md"`: the top bar's "⌘K Search" trigger. No separate
+    `SearchTrigger` was added, because this already opened the palette and owned the hotkey.
+  - `ComposerCommand.icon`.
+- **Icons**: `InfoIcon`, `ArrowRightIcon`, `PeopleIcon`, `GripIcon`, `FilterIcon`.
+
+### Changed
+
+- **`RichChatComposer` with `modeControl="menu"`** now names an active command as a chip on its own
+  line under the mode row, "/workflow ⟡ migration-plan", instead of the tinted strip across the
+  card's top. The picked argument's icon and label replace the command's own label while the label
+  is intact in the draft. The chip keeps the same `role="status"` and test id. Other mode controls
+  keep the strip.
+
 ## [2.384.4] — 2026-09-23
 
 ### Fixed

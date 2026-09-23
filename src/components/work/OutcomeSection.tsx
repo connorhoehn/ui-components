@@ -1,0 +1,111 @@
+// OutcomeSection — the "what does done look like" paragraph of a work item,
+// editable in place.
+//
+// Reading is the common case, so the text renders as plain prose; editing
+// swaps it for a Textarea (blur or ⌘/Ctrl+Enter saves, Escape cancels). An
+// empty outcome says so ("No outcome yet") instead of inventing a sentence,
+// and offers "Add outcome" only when the caller can actually save one.
+
+import { useEffect, useId, useRef, useState } from 'react';
+import { DetailSection } from '../shared/DetailSection';
+import { Textarea } from '../forms/Textarea';
+import { Button } from '../ui/Button';
+import { Spinner } from '../shared/Spinner';
+import VisuallyHidden from '../shared/VisuallyHidden';
+
+export interface OutcomeSectionProps {
+  title?: string;
+  value: string | null;
+  onChange?: (v: string) => void;
+  placeholder?: string;
+  readOnlyReason?: string;
+  pending?: boolean;
+  /** Suppress DetailSection's leading rule. */
+  first?: boolean;
+  className?: string;
+  'data-testid'?: string;
+}
+
+export function OutcomeSection({
+  title = 'Outcome', value, onChange, placeholder = 'What is true when this is done?',
+  readOnlyReason, pending = false, first, className, 'data-testid': testId = 'outcome-section',
+}: OutcomeSectionProps) {
+  const editable = !!onChange && !readOnlyReason;
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState('');
+  const done = useRef(false);
+  const ref = useRef<HTMLTextAreaElement | null>(null);
+  const reasonId = useId();
+  const text = value?.trim() ? value : null;
+
+  useEffect(() => { if (editing) ref.current?.focus(); }, [editing]);
+
+  const start = () => { setDraft(value ?? ''); done.current = false; setEditing(true); };
+  const finish = (commit: boolean) => {
+    if (done.current) return;
+    done.current = true;
+    setEditing(false);
+    const next = draft.trim();
+    if (commit && next !== (value ?? '').trim()) onChange?.(next);
+  };
+
+  const actions = editable && !editing && text ? (
+    <Button variant="link" size="sm" className="text-[13px] font-medium" onClick={start} disabled={pending} aria-label={`Edit ${title.toLowerCase()}`}>
+      Edit
+    </Button>
+  ) : undefined;
+
+  const hint = pending ? (
+    <span className="inline-flex items-center gap-1"><Spinner size="sm" decorative /> Saving…</span>
+  ) : editing ? '⌘Enter to save · Esc to cancel' : undefined;
+
+  return (
+    <DetailSection title={title} hint={hint} actions={actions} first={first} className={className} data-testid={testId}>
+      <div aria-busy={pending || undefined} title={readOnlyReason}>
+        {editing ? (
+          <Textarea
+            ref={ref}
+            aria-label={title}
+            value={draft}
+            placeholder={placeholder}
+            autoResize
+            minRows={2}
+            onChange={(e) => setDraft(e.target.value)}
+            onBlur={() => finish(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); finish(true); }
+              else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); finish(false); }
+            }}
+          />
+        ) : text ? (
+          editable ? (
+            <button
+              type="button"
+              onClick={start}
+              disabled={pending}
+              className="m-0 w-full cursor-text whitespace-pre-wrap rounded-md border-none bg-transparent p-0 text-left font-[inherit] text-[13px] leading-relaxed text-text-primary hover:bg-surface-hover disabled:cursor-default"
+            >
+              {text}
+            </button>
+          ) : (
+            <p className="m-0 whitespace-pre-wrap text-[13px] leading-relaxed text-text-primary" aria-describedby={readOnlyReason ? reasonId : undefined}>
+              {text}
+            </p>
+          )
+        ) : (
+          <div className="flex items-center gap-2">
+            <p className="m-0 text-[13px] text-text-tertiary" aria-describedby={readOnlyReason ? reasonId : undefined}>
+              No outcome yet
+            </p>
+            {editable && (
+              <Button variant="link" size="sm" onClick={start} disabled={pending}>Add outcome</Button>
+            )}
+          </div>
+        )}
+        {readOnlyReason && <VisuallyHidden id={reasonId}>{readOnlyReason}</VisuallyHidden>}
+      </div>
+    </DetailSection>
+  );
+}
+
+export default OutcomeSection;
