@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.379.1] — 2026-09-23
+
+### Added
+
+- **pipelines: `ErrorCategory` gains `Refused`; `PipelineRunError.retryability`.** A step that looked at the
+  request and said no (the platform's `constraint-not-met`, `forbidden`, `revision-conflict`, `invalid-request`)
+  is classified `Refused`, retryability `terminal` — a decision about inputs the run already has, so retrying or
+  resuming decides the same way. `RunsTable` shortens it to "Refused"; `ErrorOverlay` and `errorCategoryTone`
+  paint it caution, not danger: nothing broke. The host's run page hides retry and resume for it.
+
 ## [2.379.0] — 2026-09-23
 
 ### Fixed
@@ -28,25 +38,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   new `ACTIVITY_RIPPLE_GRID_DARK` under `dark`: the additive branch, dim grey lines on a transparent
   ground, same cells, ripple and edge fade. The canvas reports which with `data-backdrop-ink`.
 
-## [2.377.0] — 2026-09-23
-
-### Fixed
-
-- **`RippleGridBackground` fills its section instead of pooling in the middle.** The canvas
-  always covered its box (absolute `inset-0`, ResizeObserver, DPR-scaled), but the shader's fade
-  and vignette were measured ReactBits-style on the SHORT axis — radius 1 was the corners of a
-  square and an oval two-thirds of the way across a 3:2 panel, so the Active Now activity grid
-  read as a grey blob centred in a white box. Both are now measured against the section itself
-  (0 at the centre, 1 at the corners, any aspect), and a new `edgeFade` prop (0..1, default 1 =
-  the full ReactBits fade) says how much of that fade to apply. `ACTIVITY_RIPPLE_GRID` sets
-  `edgeFade: 0.35`: the grid reaches every side, dimming about a third toward the corners.
-  Tests cover the section-relative shader, the uniform and its clamp, the canvas backing store
-  at `devicePixelRatio`, and re-measuring through a ResizeObserver while the loop is parked;
-  `drawnParticles` (area-bounded particle count) is now tested too. Story
-  `Backgrounds/ActivityGridFillsItsSection` shows wide, tall and the old oval side by side.
-
-## [2.377.0] — 2026-09-23
-
 ### Changed
 
 - **The docked composer is a card, not a row.** `FloatingComposerDock` pinned keeps the column's
@@ -68,6 +59,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   lifted to `#c4c6cb` / `#9ea0a7` (were 4.2:1 and 2.8:1 under the inset glass);
   `consoleContrast.test.ts` holds every console text token at ≥ 4.5:1 (disabled ≥ 3:1) against both
   ends of each sky, bare and under the inset glass.
+
+## [2.377.0] — 2026-09-23
+
+### Fixed
+
+- **`RippleGridBackground` fills its section instead of pooling in the middle.** The canvas
+  always covered its box (absolute `inset-0`, ResizeObserver, DPR-scaled), but the shader's fade
+  and vignette were measured ReactBits-style on the SHORT axis — radius 1 was the corners of a
+  square and an oval two-thirds of the way across a 3:2 panel, so the Active Now activity grid
+  read as a grey blob centred in a white box. Both are now measured against the section itself
+  (0 at the centre, 1 at the corners, any aspect), and a new `edgeFade` prop (0..1, default 1 =
+  the full ReactBits fade) says how much of that fade to apply. `ACTIVITY_RIPPLE_GRID` sets
+  `edgeFade: 0.35`: the grid reaches every side, dimming about a third toward the corners.
+  Tests cover the section-relative shader, the uniform and its clamp, the canvas backing store
+  at `devicePixelRatio`, and re-measuring through a ResizeObserver while the loop is parked;
+  `drawnParticles` (area-bounded particle count) is now tested too. Story
+  `Backgrounds/ActivityGridFillsItsSection` shows wide, tall and the old oval side by side.
 
 ## [2.376.0] — 2026-09-23
 
