@@ -16,6 +16,15 @@
 // {before, after, into} based on pointer position within it. Good enough for
 // sibling reorder and re-parenting; a fancier indicator can be layered on by
 // the consumer via `renderTrailing` if ever needed.
+//
+// Row metadata and the row menu (2.362.0). `hoverMeta` is a quiet label — a
+// version, a size — that stays out of the way until the row is hovered or
+// focused, so a list of forty files does not read as forty version numbers.
+// `rowMenu` puts a ⋯ `DropdownMenu` (role="menu", arrow keys, Escape) at the
+// end of each row it returns sections for; the keyboard reaches it with
+// Shift+F10 or the context-menu key on the focused row, the pointer with the
+// ⋯ or a right-click. Both are opt-in: a tree that passes neither renders
+// exactly the rows it rendered before.
 
 import {
   useEffect,
@@ -24,10 +33,12 @@ import {
   useState,
   type DragEvent,
   type KeyboardEvent,
+  type MouseEvent,
   type MutableRefObject,
   type ReactNode,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { DropdownMenu, type DropdownMenuSection } from './DropdownMenu';
 
 export interface TreeNode {
   id: string;
@@ -36,6 +47,14 @@ export interface TreeNode {
   isDir?: boolean;
   badge?: ReactNode;
   meta?: string;
+  /**
+   * Like `meta`, but hidden until the row is hovered or has focus — a
+   * version ("v4"), a size. Still in the accessible name, so a screen-reader
+   * user hears it without hovering.
+   */
+  hoverMeta?: string;
+  /** Leading glyph after the caret slot — normally a `FileKindMark`. */
+  icon?: ReactNode;
   disabled?: boolean;
   /**
    * What is happening to this row right now, for a move the host has sent and
@@ -71,6 +90,14 @@ export interface TreeViewProps {
   canDropNode?: (dragged: TreeNode, target: TreeNode, position: TreeDropPosition) => boolean;
   /** Trailing slot per row — count chip, badge, menu button. */
   renderTrailing?: (node: TreeNode) => ReactNode;
+  /**
+   * The row's ⋯ menu — Version, Rename, Move, View details. Return `null` or
+   * an empty array for a row that has none. Opens from the ⋯ button, a
+   * right-click, or Shift+F10 / the context-menu key on the focused row.
+   */
+  rowMenu?: (node: TreeNode) => DropdownMenuSection[] | null | undefined;
+  /** Accessible name of each row's menu button. Default `Actions for <title>`. */
+  rowMenuLabel?: (node: TreeNode) => string;
   className?: string;
   'data-testid'?: string;
 }
@@ -143,6 +170,8 @@ function TreeRow({
   selectedId,
   onSelect,
   renderTrailing,
+  rowMenu,
+  rowMenuLabel,
   dragEnabled,
   canDragNode,
   canDrop,
@@ -161,6 +190,8 @@ function TreeRow({
   selectedId: string | null;
   onSelect: (id: string) => void;
   renderTrailing?: (node: TreeNode) => ReactNode;
+  rowMenu?: (node: TreeNode) => DropdownMenuSection[] | null | undefined;
+  rowMenuLabel?: (node: TreeNode) => string;
   dragEnabled: boolean;
   canDragNode?: (node: TreeNode) => boolean;
   canDrop: (draggedId: string, targetId: string, position: TreeDropPosition) => boolean;
@@ -177,6 +208,8 @@ function TreeRow({
   const isSelected = entry.id === selectedId;
   const isDropTarget = dropTarget?.id === entry.id;
   const draggable = dragEnabled && !entry.disabled && entry.status !== 'pending' && (canDragNode?.(entry) ?? true);
+  const menuSections = rowMenu?.(entry);
+  const hasMenu = !!menuSections && menuSections.some((section) => section.items.length > 0);
 
   return (
     <div>
@@ -217,6 +250,15 @@ function TreeRow({
           setDropTarget(null);
         }}
         onClick={() => !entry.disabled && onSelect(entry.id)}
+        {...(hasMenu
+          ? {
+              // A right-click opens the same menu as the ⋯, not the browser's.
+              onContextMenu: (event: MouseEvent<HTMLDivElement>) => {
+                event.preventDefault();
+                openRowMenu(event.currentTarget);
+              },
+            }
+          : {})}
         role="treeitem"
         aria-selected={isSelected}
         aria-disabled={entry.disabled}
@@ -267,12 +309,49 @@ function TreeRow({
           // 20px leading slot: leaf titles line up with directory titles.
           <span className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
         )}
+        {entry.icon && <span className="flex flex-shrink-0 items-center" data-testid={`${testId}-icon-${entry.id}`}>{entry.icon}</span>}
         <span className="min-w-0 flex-1 truncate" title={entry.title}>
           {entry.title}
         </span>
         {entry.meta && <span className="flex-shrink-0 text-xs text-text-tertiary">{entry.meta}</span>}
+        {entry.hoverMeta && (
+          <span
+            data-testid={`${testId}-hover-meta-${entry.id}`}
+            className="flex-shrink-0 text-xs text-text-tertiary opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
+          >
+            {entry.hoverMeta}
+          </span>
+        )}
         {entry.badge}
         {renderTrailing?.(entry)}
+        {hasMenu && (
+          // A click on ⋯ (or on an item in its panel — the popover is
+          // portalled, but React events still bubble through this span) is
+          // not a click on the row. Keys are NOT stopped here: the popover's
+          // Escape listens on `window`, and a React stopPropagation stops the
+          // native event too. The tree's own handler skips them instead.
+          <span
+            data-tree-row-menu=""
+            className="flex flex-shrink-0 items-center"
+            onClick={(event) => event.stopPropagation()}
+            onContextMenu={(event) => event.stopPropagation()}
+          >
+            <DropdownMenu
+              trigger={<span aria-hidden="true" className="text-sm leading-none">⋯</span>}
+              triggerLabel={rowMenuLabel?.(entry) ?? `Actions for ${entry.title}`}
+              triggerTabIndex={focusedId === entry.id ? 0 : -1}
+              triggerTestId={`${testId}-menu-${entry.id}`}
+              align="end"
+              sections={menuSections!}
+              data-testid={`${testId}-menu-panel-${entry.id}`}
+              triggerClassName={cn(
+                'h-5 w-6 border-transparent px-0 py-0 opacity-0 transition-opacity motion-reduce:transition-none',
+                'group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 aria-expanded:opacity-100',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+              )}
+            />
+          </span>
+        )}
       </div>
       {isExpanded &&
         entry.children.map((child) => (
@@ -285,6 +364,8 @@ function TreeRow({
             selectedId={selectedId}
             onSelect={onSelect}
             renderTrailing={renderTrailing}
+            rowMenu={rowMenu}
+            rowMenuLabel={rowMenuLabel}
             dragEnabled={dragEnabled}
             canDragNode={canDragNode}
             canDrop={canDrop}
@@ -299,6 +380,19 @@ function TreeRow({
         ))}
     </div>
   );
+}
+
+/**
+ * Opens a row's ⋯ menu as if its button were pressed. The menu owns its open
+ * state (and moves focus into itself, and back to the row on close), so the
+ * keyboard and right-click paths drive the same button rather than keeping a
+ * second copy of that state. Returns whether the row had a menu.
+ */
+function openRowMenu(row: HTMLElement): boolean {
+  const trigger = row.querySelector<HTMLButtonElement>('[data-tree-row-menu] button[aria-haspopup="menu"]');
+  if (!trigger) return false;
+  if (trigger.getAttribute('aria-expanded') !== 'true') trigger.click();
+  return true;
 }
 
 /** The rows a reader can see, top to bottom — what the arrow keys walk. */
@@ -325,6 +419,8 @@ export function TreeView({
   canDragNode,
   canDropNode,
   renderTrailing,
+  rowMenu,
+  rowMenuLabel,
   className,
   'data-testid': testId = 'tree-view',
 }: TreeViewProps) {
@@ -396,8 +492,16 @@ export function TreeView({
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const row = (event.target as HTMLElement).closest<HTMLElement>('[role="treeitem"]');
+    const target = event.target as HTMLElement;
+    const row = target.closest<HTMLElement>('[role="treeitem"]');
     if (!row) return;
+    // The ⋯ button's own Enter/Space/arrows belong to the menu, not the tree.
+    if (target.closest('[data-tree-row-menu]')) return;
+    // Shift+F10 and the context-menu key: the keyboard's right-click.
+    if ((event.key === 'F10' && event.shiftKey) || event.key === 'ContextMenu') {
+      if (openRowMenu(row)) event.preventDefault();
+      return;
+    }
     const prefix = `${testId}-row-`;
     const id = (row.getAttribute('data-testid') ?? '').slice(prefix.length);
     if (!id || !nodesById.has(id)) return;
@@ -501,6 +605,8 @@ export function TreeView({
           selectedId={selectedId}
           onSelect={onSelect}
           renderTrailing={renderTrailing}
+          rowMenu={rowMenu}
+          rowMenuLabel={rowMenuLabel}
           dragEnabled={Boolean(onReorder)}
           canDragNode={canDragNode}
           canDrop={canDrop}

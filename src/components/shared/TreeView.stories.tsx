@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TreeView, type TreeNode } from './TreeView';
 import Chip from './Chip';
+import { FileKindMark } from './FileKindMark';
 
 const NODES: TreeNode[] = [
   { id: 'enterprise', title: 'Enterprise Context', parentId: null, isDir: true },
@@ -60,6 +61,53 @@ export const WithReorder: Story = {
             setNodes((prev) => prev.map((n) => (n.id === id ? { ...n, parentId: targetParentId } : n)));
           }}
         />
+      </div>
+    );
+  },
+};
+
+const FILES: TreeNode[] = [
+  { id: 'sprint', title: 'Sprint planning', parentId: null, isDir: true, icon: <FileKindMark kind="folder" size="sm" /> },
+  { id: 'recording', title: 'Planning sync recording', parentId: 'sprint', hoverMeta: 'v1', icon: <FileKindMark kind="recording" size="sm" /> },
+  { id: 'transcript', title: 'Planning sync transcript', parentId: 'sprint', hoverMeta: 'v1', icon: <FileKindMark kind="transcript" size="sm" /> },
+  { id: 'release', title: 'Release plan', parentId: 'sprint', hoverMeta: 'v2', icon: <FileKindMark kind="page" size="sm" /> },
+  { id: 'deck', title: 'Sprint review', parentId: 'sprint', hoverMeta: 'v4', icon: <FileKindMark kind="presentation" size="sm" /> },
+  { id: 'arch', title: 'Auth architecture', parentId: 'sprint', hoverMeta: 'v1', icon: <FileKindMark kind="diagram" size="sm" /> },
+];
+
+/**
+ * The Documents explorer: file-kind marks, the version revealed on hover or
+ * focus, and a ⋯ menu per file (Version, Rename, Move, View details). Focus a
+ * row and press Shift+F10 — or right-click it — to open the same menu.
+ */
+export const HoverMetaAndRowMenu: Story = {
+  args: baseArgs,
+  render: () => {
+    const [selected, setSelected] = useState<string | null>('deck');
+    const [last, setLast] = useState('');
+    return (
+      <div className="flex w-80 flex-col gap-2">
+        <div className="rounded-lg border border-border bg-surface p-1">
+          <TreeView
+            nodes={FILES}
+            selectedId={selected}
+            onSelect={setSelected}
+            defaultExpanded={['sprint']}
+            rowMenu={(node) =>
+              node.isDir
+                ? null
+                : [{
+                    items: [
+                      { label: node.hoverMeta ?? 'v1', description: 'Open version history', onSelect: () => setLast(`Version · ${node.title}`) },
+                      { label: 'Rename', onSelect: () => setLast(`Rename · ${node.title}`) },
+                      { label: 'Move', onSelect: () => setLast(`Move · ${node.title}`) },
+                      { label: 'View details', onSelect: () => setLast(`Details · ${node.title}`) },
+                    ],
+                  }]
+            }
+          />
+        </div>
+        <p className="m-0 text-xs text-text-tertiary" role="status">{last || 'Pick an action from a row menu.'}</p>
       </div>
     );
   },

@@ -50,6 +50,19 @@
 // like `:` and `@`, so arrow keys, Enter/Tab and Escape behave identically in
 // all four menus. A `/` anywhere else is a slash — "and/or" opens nothing.
 //
+// ## Compact modes, shortcuts and prefix triggers (2.362.0)
+//
+// The Documents editor floats this composer over a page, where three large
+// `Chat | Agent | Terminal` tabs cost a row the page needs. `modeControl=
+// "compact"` swaps them for the mode's name, three small numbered buttons and
+// the shortcut for the current one (`⌥2`). `modeShortcuts` binds Option-1/2/3
+// — on the composer's own root, never `window`, so the digits typed anywhere
+// else on the page stay digits. `modeTriggers` turns a draft that is exactly
+// `>` into Terminal and one that is exactly `/run ` into Agent, consuming the
+// prefix. All three are off unless asked for, and `disabledModes` lets a host
+// refuse a mode (Terminal with no run attached) with a reason instead of a
+// mode that silently does nothing.
+//
 // Disabled commands are NOT listed. The status bar already explains a disabled
 // command (in warning colours, with its hint) to anyone who types it out, and a
 // menu that offers rows which cannot be picked teaches people to distrust it.
@@ -63,6 +76,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -81,6 +95,7 @@ import { DropdownMenu } from '../shared/DropdownMenu';
 import { AGENT_PARTICLE_COLORS, ParticlesBackground } from '../shared/ParticlesBackground';
 import { RovingToolbar } from '../shared/RovingToolbar';
 import { Tabs } from '../shared/Tabs';
+import { IconButton } from '../ui/IconButton';
 import { ChatDropZone } from './ChatDropZone';
 import { ReactionPickerPopover } from './ReactionPickerPopover';
 import { ComposerAttachments, type StagedFile } from './ComposerAttachments';
@@ -353,11 +368,80 @@ export interface RichChatComposerProps {
    * the honest state for a deployment with no shell behind the composer.
    */
   onShellCommand?: (command: string) => void;
+  /**
+   * How the mode switch is drawn. `'tabs'` (default) is the segmented
+   * `Chat | Agent | Terminal` row every existing host has. `'compact'` is the
+   * mode's name, three small numbered buttons (`1 2 3`) and the current
+   * mode's `⌥n` — one short row, for a composer floating over a page.
+   */
+  modeControl?: 'tabs' | 'compact';
+  /**
+   * Option-1 / Option-2 / Option-3 (Alt on other platforms) switch to Chat /
+   * Agent / Terminal while focus is anywhere inside the composer. Bound on
+   * the composer root, not the window: with focus outside it, nothing
+   * happens. Needs `onModeChange`. Default false.
+   */
+  modeShortcuts?: boolean;
+  /**
+   * Typing a prefix as the whole draft switches mode and consumes it: `>`
+   * (alone) → Terminal, `/run ` (with its space) → Agent. `true` uses those
+   * defaults; an object overrides either prefix. Needs `onModeChange`.
+   * Default off.
+   */
+  modeTriggers?: boolean | { terminalPrefix?: string; agentPrefix?: string };
+  /**
+   * Modes the host cannot serve right now — Terminal when no run is
+   * attached. Their buttons are disabled, and a shortcut or trigger aimed at
+   * one leaves the mode (and the typed prefix) alone and shows the reason
+   * from `modeUnavailableReasons` instead.
+   */
+  disabledModes?: readonly ComposerMode[];
+  /** Why each disabled mode is unavailable — "Start an agent task first". */
+  modeUnavailableReasons?: Partial<Record<ComposerMode, string>>;
+  /** Per-mode hint rows. Wins over `hints` for the modes it names. */
+  modeHints?: Partial<Record<ComposerMode, readonly ComposerHint[]>>;
+  /**
+   * Beside Send, before it — a model or skill picker ("Presentation skill ⌄").
+   * Absent, the toolbar row is exactly as before.
+   */
+  submitLead?: ReactNode;
+  /**
+   * Send's label, per mode or for all of them. Defaults: "Send", and "Run"
+   * in Terminal.
+   */
+  submitLabel?: string | Partial<Record<ComposerMode, string>>;
   className?: string;
   'data-testid'?: string;
 }
 
 const DEFAULT_PRIVACY_LABELS = { visible: 'Visible to everyone', hidden: 'Only you' } as const;
+
+/** The order Option-1/2/3 and the compact `1 2 3` buttons follow. */
+export const COMPOSER_MODE_ORDER: readonly ComposerMode[] = ['chat', 'agent', 'terminal'];
+
+const MODE_NAMES: Record<ComposerMode, string> = { chat: 'Chat', agent: 'Agent', terminal: 'Terminal' };
+
+const MODE_ICON: Record<ComposerMode, ReactNode> = {
+  chat: <ChatIcon size={13} />,
+  agent: <PuzzleIcon size={13} />,
+  terminal: <span className="font-mono text-[11px]">{'>_'}</span>,
+};
+
+const DEFAULT_TERMINAL_PREFIX = '>';
+const DEFAULT_AGENT_PREFIX = '/run';
+
+/**
+ * Whether a whole draft is a mode trigger. A prefix followed by a space
+ * always counts (`/run `, `> `); a single-symbol prefix also counts alone,
+ * because `> ` never reaches here — the editor's blockquote input rule eats
+ * `> ` and leaves an empty quote. A word prefix does NOT count alone:
+ * `/run` must be allowed to become `/running`.
+ */
+export function matchesModeTrigger(text: string, prefix: string): boolean {
+  if (!prefix) return false;
+  if (text === `${prefix} ` || text === `${prefix}\u00a0`) return true;
+  return text === prefix && prefix.length === 1 && !/[\p{L}\p{N}]/u.test(prefix);
+}
 
 const MODE_PLACEHOLDERS: Record<ComposerMode, string> = {
   chat: 'Write a message…',
@@ -544,6 +628,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   sendOptions,
   onSendOption,
   onShellCommand,
+  modeControl = 'tabs',
+  modeShortcuts = false,
+  modeTriggers,
+  disabledModes,
+  modeUnavailableReasons,
+  modeHints,
+  submitLead,
+  submitLabel,
   className,
   'data-testid': testId = 'rich-chat-composer',
 }, ref) {
@@ -590,6 +682,58 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const consoleMode = modesEnabled && activeMode !== 'chat';
   const effectivePlaceholder =
     modePlaceholders?.[activeMode] ?? (activeMode === 'chat' ? placeholder : MODE_PLACEHOLDERS[activeMode]);
+  // Shortcuts and triggers switch modes on the host's behalf, so they exist
+  // only where the host can be told (`onModeChange`) and the mode can move.
+  const switchable = !!onModeChange && !fixedMode;
+  const shellInputRef = useRef<HTMLInputElement | null>(null);
+  /** Set by a shortcut or trigger: the next render moves focus to the new mode's input. */
+  const focusAfterSwitchRef = useRef(false);
+  /** Why the last shortcut/trigger was refused. Cleared by the next edit or switch. */
+  const [modeNotice, setModeNotice] = useState<string | null>(null);
+  const isModeDisabled = (m: ComposerMode) => !!disabledModes?.includes(m);
+  const requestMode = (next: ComposerMode): boolean => {
+    if (!switchable) return false;
+    if (isModeDisabled(next)) {
+      setModeNotice(modeUnavailableReasons?.[next] ?? `${MODE_NAMES[next]} is not available here`);
+      return false;
+    }
+    setModeNotice(null);
+    if (next !== activeMode) {
+      focusAfterSwitchRef.current = true;
+      onModeChange?.(next);
+    }
+    return true;
+  };
+  const triggerPrefixes = modeTriggers && switchable
+    ? {
+        terminal: (typeof modeTriggers === 'object' ? modeTriggers.terminalPrefix : undefined) ?? DEFAULT_TERMINAL_PREFIX,
+        agent: (typeof modeTriggers === 'object' ? modeTriggers.agentPrefix : undefined) ?? DEFAULT_AGENT_PREFIX,
+      }
+    : null;
+  /**
+   * Read from the editor's `onUpdate`, which is built once — so it goes
+   * through a ref, like `publishRef`, and sees this render's mode and props.
+   * Returns true when the draft was a trigger and has been consumed.
+   */
+  const triggerRef = useRef<(e: Editor) => boolean>(() => false);
+  triggerRef.current = (e: Editor) => {
+    if (!triggerPrefixes) {
+      if (modeNotice) setModeNotice(null);
+      return false;
+    }
+    const text = e.getText();
+    let target: ComposerMode | null = null;
+    if (activeMode !== 'terminal' && matchesModeTrigger(text, triggerPrefixes.terminal)) target = 'terminal';
+    else if (activeMode !== 'agent' && matchesModeTrigger(text, triggerPrefixes.agent)) target = 'agent';
+    if (!target) {
+      if (modeNotice) setModeNotice(null);
+      return false;
+    }
+    // Refused: the prefix stays as typed text, and the notice says why.
+    if (!requestMode(target)) return false;
+    e.commands.clearContent(true);
+    return true;
+  };
   const placeholderRef = useRef(effectivePlaceholder);
   placeholderRef.current = effectivePlaceholder;
   // Same idea: the editor is built once, the commands are read live.
@@ -970,6 +1114,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       content: draft?.html ?? '',
       editable: !blocked,
       onUpdate: ({ editor: e }) => {
+        // A mode trigger clears the draft, which re-enters here with an empty
+        // editor; that nested update does the publishing.
+        if (triggerRef.current(e)) return;
         setEmpty(e.isEmpty);
         editorRef.current = e;
         const text = e.getText();
@@ -1023,6 +1170,16 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     editor.view.dispatch(editor.state.tr);
   }, [editor, activeMode, modesEnabled]);
 
+  // After a shortcut or trigger switched modes, the caret goes where the new
+  // mode types: the shell line for Terminal, the editor otherwise. Only then —
+  // a host changing `mode` for its own reasons must not steal focus.
+  useEffect(() => {
+    if (!focusAfterSwitchRef.current) return;
+    focusAfterSwitchRef.current = false;
+    if (activeMode === 'terminal') shellInputRef.current?.focus();
+    else if (editor && !editor.isDestroyed) editor.commands.focus('end');
+  }, [activeMode, editor]);
+
   /**
    * The terminal prompt's own line, and the lines before it.
    *
@@ -1065,6 +1222,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
    * worse than no hint at all.
    */
   const resolvedHints = useMemo<readonly ComposerHint[]>(() => {
+    const perMode = modeHints?.[activeMode];
+    if (perMode) return perMode;
     if (hints) return hints;
     if (!onModeChange && !onQuickOpen) return [];
     return [
@@ -1072,11 +1231,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       { key: '>_', label: 'for shell', ...(onModeChange ? { onSelect: () => onModeChange('terminal') } : {}) },
       { key: '⌘K', label: 'to quickly open', ...(onQuickOpen ? { onSelect: onQuickOpen } : {}) },
     ];
-  }, [hints, onModeChange, onQuickOpen]);
+  }, [hints, onModeChange, onQuickOpen, modeHints, activeMode]);
 
   // Files alone are a valid message: dragging in a screenshot and pressing send
   // without typing is the common case. In terminal mode there is no message —
   // there is a command line, and it is the only thing Send can act on.
+  const sendLabel = (typeof submitLabel === 'string' ? submitLabel : submitLabel?.[activeMode])
+    ?? (terminalMode ? 'Run' : 'Send');
+
   const canSend = terminalMode
     ? !blocked && !!onShellCommand && shellDraft.trim().length > 0
     : !blocked && (!empty || staged.length > 0);
@@ -1421,6 +1583,22 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         // `overflow-hidden` here: the send split-menu and the suggestion
         // popovers are children of this box and clipping them is a regression.
         {...(consoleMode ? { 'data-theme': 'dark' } : {})}
+        {...(modeShortcuts && switchable
+          ? {
+              // Capture phase: Option-digit must be taken before the editor
+              // inserts the character it types (¡ ™ £ on a Mac layout).
+              // `code`, not `key`, for the same reason — `key` is that
+              // character, not the digit.
+              onKeyDownCapture: (event: ReactKeyboardEvent<HTMLDivElement>) => {
+                if (!event.altKey || event.ctrlKey || event.metaKey) return;
+                const index = ['Digit1', 'Digit2', 'Digit3'].indexOf(event.code);
+                if (index < 0) return;
+                event.preventDefault();
+                event.stopPropagation();
+                requestMode(COMPOSER_MODE_ORDER[index]!);
+              },
+            }
+          : {})}
         className={cn(
           'chat-composer relative isolate rounded-lg border bg-surface transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none',
           consoleMode && 'uic-chat-console',
@@ -1515,7 +1693,46 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
         {/* The mode switch. Its own row rather than a control in the toolbar:
             it changes what Enter DOES, which is not a formatting choice. */}
-        {modesEnabled && !fixedMode && (
+        {modesEnabled && !fixedMode && modeControl === 'compact' && (
+          <div className="flex items-center gap-1.5 px-2 pt-1 text-xs" data-testid={`${testId}-modes`} data-mode-control="compact">
+            <span className="flex items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
+              <span aria-hidden="true" className="flex w-4 justify-center text-text-secondary">{MODE_ICON[activeMode]}</span>
+              {MODE_NAMES[activeMode]}
+            </span>
+            <span role="group" aria-label="Composer mode" className="flex items-center gap-0.5">
+              {COMPOSER_MODE_ORDER.map((m, i) => {
+                const unavailable = isModeDisabled(m);
+                const reason = unavailable ? modeUnavailableReasons?.[m] : undefined;
+                return (
+                  <IconButton
+                    key={m}
+                    size="sm"
+                    aria-label={MODE_NAMES[m]}
+                    aria-pressed={m === activeMode}
+                    aria-keyshortcuts={modeShortcuts ? `Alt+${i + 1}` : undefined}
+                    title={`${MODE_NAMES[m]}${modeShortcuts ? ` (⌥${i + 1})` : ''}${reason ? ` — ${reason}` : ''}`}
+                    disabled={unavailable || blocked}
+                    onClick={() => requestMode(m)}
+                    data-testid={`${testId}-mode-${m}`}
+                    className={cn(
+                      'h-5 w-5 text-[11px] font-semibold tabular-nums',
+                      m === activeMode ? 'bg-info-bg text-info-fg hover:bg-info-bg' : 'text-text-tertiary',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                    )}
+                  >
+                    {i + 1}
+                  </IconButton>
+                );
+              })}
+            </span>
+            {modeShortcuts && (
+              <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary" data-testid={`${testId}-mode-kbd`}>
+                ⌥{COMPOSER_MODE_ORDER.indexOf(activeMode) + 1}
+              </kbd>
+            )}
+          </div>
+        )}
+        {modesEnabled && !fixedMode && modeControl !== 'compact' && (
           <div className="flex items-center gap-2 px-2 pt-1.5" data-testid={`${testId}-modes`}>
             {/* Lit while it is not on Chat: the control that changed what Enter
                 does should be the one thing on the surface that glows. */}
@@ -1537,6 +1754,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           </div>
         )}
 
+        {modeNotice && (
+          <p role="status" className="m-0 px-2 pt-1 text-[11px] text-warning-fg" data-testid={`${testId}-mode-notice`}>
+            {modeNotice}
+          </p>
+        )}
+
         {/* The editor stays MOUNTED in terminal mode, hidden rather than torn
             down: unmounting it would destroy the half-written message someone
             switched away from, which is the bug the `useEditor` deps note above
@@ -1549,6 +1772,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           <div className="flex items-center gap-2 px-2 py-2" data-testid={`${testId}-shell`}>
             <span aria-hidden="true" className="shrink-0 font-mono text-xs text-text-tertiary">$</span>
             <input
+              ref={shellInputRef}
               type="text"
               value={shellDraft}
               disabled={blocked}
@@ -1671,11 +1895,16 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           {toolbarExtras}
           </RovingToolbar>
 
+          {submitLead != null && (
+            <span className="ml-auto flex shrink-0 items-center pr-1.5 text-xs text-text-secondary" data-testid={`${testId}-submit-lead`}>
+              {submitLead}
+            </span>
+          )}
           {sendOptions?.length && onSendOption ? (
             // A split button, not a second control: the primary press must
             // stay in the same place and do the same thing it always did, and
             // the alternatives have to be somewhere other than in front of it.
-            <span className="ml-auto flex shrink-0 items-stretch">
+            <span className={cn(submitLead == null && 'ml-auto', 'flex shrink-0 items-stretch')}>
               <button
                 type="button"
                 onClick={terminalMode ? submitShell : send}
@@ -1683,7 +1912,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 data-testid={`${testId}-send`}
                 className="shrink-0 rounded-l-md rounded-r-none bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40"
               >
-                {terminalMode ? 'Run' : 'Send'}
+                {sendLabel}
               </button>
               <DropdownMenu
                 trigger={<span aria-hidden="true" className="text-xs leading-none">▾</span>}
@@ -1701,9 +1930,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               onClick={terminalMode ? submitShell : send}
               disabled={!canSend}
               data-testid={`${testId}-send`}
-              className="ml-auto shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40"
+              className={submitLead == null
+                ? 'ml-auto shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40'
+                : 'shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40'}
             >
-              {terminalMode ? 'Run' : 'Send'}
+              {sendLabel}
             </button>
           )}
         </div>

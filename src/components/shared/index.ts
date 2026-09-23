@@ -382,6 +382,12 @@ export { MasterDetail } from './MasterDetail';
 export type { MasterDetailProps } from './MasterDetail';
 export { TreeView } from './TreeView';
 export type { TreeViewProps, TreeNode, TreeDropPosition } from './TreeView';
+// Documents workspace foundation (2.362.0): the file-kind glyph and the agent
+// task strip that sits above a floating composer.
+export { FileKindMark, FILE_KIND_LABELS } from './FileKindMark';
+export type { FileKindMarkProps, FileKind, FileKindMarkSize } from './FileKindMark';
+export { TaskStrip, AGENT_TASK_STATUS_LABELS, AGENT_TASK_STATUS_DOT, taskPercent } from './TaskStrip';
+export type { TaskStripProps, AgentTaskStatus } from './TaskStrip';
 export { WorkflowStepper } from './WorkflowStepper';
 export type { WorkflowStepperProps, WorkflowStep } from './WorkflowStepper';
 export { Wizard } from './Wizard';

@@ -75,6 +75,15 @@ export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'sta
  */
 export declare const AGENT_PARTICLE_COLORS: readonly ["#ffffff", "#c7d2fe", "#a5b4fc"];
 
+/** Dot colour per status. `running` pulses unless the reader asked for less motion. */
+export declare const AGENT_TASK_STATUS_DOT: Record<AgentTaskStatus, string>;
+
+/** The words for each status, as the strip and the card print them. */
+export declare const AGENT_TASK_STATUS_LABELS: Record<AgentTaskStatus, string>;
+
+/** Where an agent task is. Shared by `TaskStrip` and `AgentTaskCard`. */
+export declare type AgentTaskStatus = 'queued' | 'running' | 'paused' | 'awaiting' | 'done' | 'failed' | 'stopped';
+
 export declare function ArtifactTile({ name, type, url }: {
     name: string;
     type?: string;
@@ -1641,6 +1650,25 @@ export declare function EyeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** `EyeIcon` with a slash through it: hidden — not visible to others. */
 export declare function EyeOffIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** What each kind is called, for a caller building a "Page · Sprint planning" line. */
+export declare const FILE_KIND_LABELS: Record<FileKind, string>;
+
+export declare type FileKind = 'page' | 'presentation' | 'recording' | 'transcript' | 'diagram' | 'folder';
+
+export declare function FileKindMark({ kind, size, label, className, 'data-testid': testId }: FileKindMarkProps): JSX.Element;
+
+export declare interface FileKindMarkProps {
+    kind: FileKind;
+    /** `sm` 18px (tree rows), `md` 22px (default, headers), `lg` 28px. */
+    size?: FileKindMarkSize;
+    /** Accessible name. Omit when the file's name is already beside the mark. */
+    label?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type FileKindMarkSize = 'sm' | 'md' | 'lg';
 
 export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, inputTestId, inputProps, }: FileUploadDropProps): JSX.Element;
 
@@ -4142,6 +4170,35 @@ export declare interface TaskComposerProps {
     'data-testid'?: string;
 }
 
+/** A percentage the strip is willing to print: finite, clamped, rounded. */
+export declare function taskPercent(percent: number | undefined): number | null;
+
+export declare function TaskStrip({ label, status, phase, percent, icon, onPause, onResume, onStop, onOpen, onDismiss, className, 'data-testid': testId, }: TaskStripProps): JSX.Element;
+
+export declare interface TaskStripProps {
+    /** What the task is — "Creating release-readiness deck". */
+    label: string;
+    status: AgentTaskStatus;
+    /** What it is doing now — "Editing slide 4". Replaces the status word when given. */
+    phase?: string;
+    /**
+     * A REAL completion percentage from the run, 0–100. Omit when the source
+     * does not report one; the strip then shows no bar rather than a guess.
+     */
+    percent?: number;
+    /** Leading glyph. Defaults to a status dot. */
+    icon?: ReactNode;
+    onPause?: () => void;
+    onResume?: () => void;
+    onStop?: () => void;
+    /** "Open run" — jump to the run's full view. */
+    onOpen?: () => void;
+    /** Hide the strip. The task keeps running. */
+    onDismiss?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function TechnicalDetails({ text, label, hideLabel, defaultOpen, className, testId, }: TechnicalDetailsProps): JSX.Element | null;
 
 export declare interface TechnicalDetailsProps {
@@ -4510,6 +4567,14 @@ export declare interface TreeNode {
     isDir?: boolean;
     badge?: ReactNode;
     meta?: string;
+    /**
+     * Like `meta`, but hidden until the row is hovered or has focus — a
+     * version ("v4"), a size. Still in the accessible name, so a screen-reader
+     * user hears it without hovering.
+     */
+    hoverMeta?: string;
+    /** Leading glyph after the caret slot — normally a `FileKindMark`. */
+    icon?: ReactNode;
     disabled?: boolean;
     /**
      * What is happening to this row right now, for a move the host has sent and
@@ -4520,7 +4585,7 @@ export declare interface TreeNode {
     status?: 'pending' | 'moved';
 }
 
-export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, expanded: controlledExpanded, onToggle, onReorder, canDragNode, canDropNode, renderTrailing, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
+export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, expanded: controlledExpanded, onToggle, onReorder, canDragNode, canDropNode, renderTrailing, rowMenu, rowMenuLabel, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
 
 export declare interface TreeViewProps {
     nodes: TreeNode[];
@@ -4545,6 +4610,14 @@ export declare interface TreeViewProps {
     canDropNode?: (dragged: TreeNode, target: TreeNode, position: TreeDropPosition) => boolean;
     /** Trailing slot per row — count chip, badge, menu button. */
     renderTrailing?: (node: TreeNode) => ReactNode;
+    /**
+     * The row's ⋯ menu — Version, Rename, Move, View details. Return `null` or
+     * an empty array for a row that has none. Opens from the ⋯ button, a
+     * right-click, or Shift+F10 / the context-menu key on the focused row.
+     */
+    rowMenu?: (node: TreeNode) => DropdownMenuSection[] | null | undefined;
+    /** Accessible name of each row's menu button. Default `Actions for <title>`. */
+    rowMenuLabel?: (node: TreeNode) => string;
     className?: string;
     'data-testid'?: string;
 }
@@ -4866,29 +4939,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -4925,6 +4978,26 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

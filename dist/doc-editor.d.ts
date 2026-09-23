@@ -73,6 +73,12 @@ declare interface AttachmentsPanelProps {
 /** Shared node view extracted from the reference document editor. */
 export declare function AuthenticatedDocumentImageView({ node, selected }: NodeViewProps): JSX.Element;
 
+declare interface BreadcrumbItem {
+    label: string;
+    href?: string;
+    onClick?: (e: React.MouseEvent) => void;
+}
+
 /** True when nothing blocks a save. Kept separate so the host can ask too. */
 export declare function canSaveDeck(spec: DeckSpec): boolean;
 
@@ -595,6 +601,9 @@ export declare interface DeckSpec {
 
 export declare type DeckTheme = 'product' | 'engineering' | 'plain';
 
+/** The handoff's four tabs, for a host that has all of them. */
+export declare const DEFAULT_EDITOR_SHELL_TABS: readonly EditorShellTab[];
+
 export declare function DiffViewer({ oldSections, newSections, onClose }: DiffViewerProps): JSX.Element;
 
 declare interface DiffViewerProps {
@@ -605,6 +614,9 @@ declare interface DiffViewerProps {
     /** Called when the user dismisses the diff view. */
     onClose: () => void;
 }
+
+/** The custom property the dock writes on its parent. */
+export declare const DOCK_HEIGHT_VAR = "--dock-height";
 
 export declare function DocumentEditorPage({ documentId, documentType, ws, userId, displayName, color, onMessage, activityPublish, onBack, isVideoDocked, onDockVideo, onUndockVideo, idToken, }: DocumentEditorPageProps): JSX.Element;
 
@@ -1058,6 +1070,64 @@ export declare interface DocumentUploadCompletion {
  */
 export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 
+export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, participants, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, surface, explorer, workbench, label, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
+
+export declare interface EditorShellProps {
+    /** The trail above the title — "Sprint planning / Sprint review". */
+    breadcrumbs?: BreadcrumbItem[];
+    title: string;
+    /** Makes the title editable in place. Omit for a read-only title. */
+    onTitleChange?: (title: string) => void;
+    /** Accessible name of the title editor. Default "File name". */
+    titleLabel?: string;
+    /** Draws a `FileKindMark` before the title. */
+    kind?: FileKind;
+    /** Renders a star toggle when `onStarredChange` is passed. */
+    starred?: boolean;
+    onStarredChange?: (starred: boolean) => void;
+    /** After the title — normally a `StatusPill` ("Draft", "v4"). */
+    statusPill?: ReactNode;
+    /** Who is here. Rendered with `PresenceAvatars`. */
+    participants?: PresenceUser[];
+    /** Beside the collaborators — "Owned by Connor Hoehn". */
+    meta?: ReactNode;
+    saveState?: DocumentSaveState;
+    /** Right of the title row — Share, the ⋯ menu, "Open presentation". */
+    headActions?: ReactNode;
+    /** Omit for no tab row. `DEFAULT_EDITOR_SHELL_TABS` is the handoff's set. */
+    tabs?: readonly EditorShellTab[];
+    activeTab?: string;
+    onTabChange?: (id: string) => void;
+    /** Under the tabs — `DocumentToolbar`, a slides toolbar. */
+    toolbar?: ReactNode;
+    /** The editing surface. */
+    children: ReactNode;
+    /** Floats over the bottom of the surface — normally a `FloatingComposerDock`. */
+    footer?: ReactNode;
+    /**
+     * `workspace` (default) paints the surface the neutral grey a page or a
+     * slide floats on; `plain` leaves it the panel colour, for a list or a
+     * history tab.
+     */
+    surface?: 'workspace' | 'plain';
+    /** Optional left column — the project explorer. */
+    explorer?: ReactNode;
+    /** Optional right column — normally a `Workbench`. */
+    workbench?: ReactNode;
+    /** Accessible name of the editor pane. Default "Editor". */
+    label?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface EditorShellTab {
+    id: string;
+    label: string;
+    /** A count on the tab — open comments. Zero or absent shows none. */
+    count?: number;
+    disabled?: boolean;
+}
+
 export declare function EditorToolbar({ editor }: EditorToolbarProps): JSX.Element | null;
 
 declare interface EditorToolbarProps {
@@ -1071,6 +1141,8 @@ export declare function ExecutiveSummaryCard({ bullets, contentText, fragment, y
     ydoc?: Y.Doc | null;
     provider?: CollaborationProvider | null;
 }): JSX.Element;
+
+declare type FileKind = 'page' | 'presentation' | 'recording' | 'transcript' | 'diagram' | 'folder';
 
 /**
  * The element a target points at, on whichever shape this document is.
@@ -1105,6 +1177,25 @@ export declare interface FindMatch {
 export declare function findMatches(doc: TextWalkable | null | undefined, query: string, opts?: {
     caseSensitive?: boolean;
 }): FindMatch[];
+
+export declare function FloatingComposerDock({ composer, strip, above, maxWidth, label, className, 'data-testid': testId, }: FloatingComposerDockProps): JSX.Element;
+
+export declare interface FloatingComposerDockProps {
+    /** The composer — normally a `RichChatComposer` with `modeControl="compact"`. */
+    composer: ReactNode;
+    /** Above the composer — normally a `TaskStrip`. */
+    strip?: ReactNode;
+    /** Above the strip — a notice, a conversation preview. */
+    above?: ReactNode;
+    /** Widest the dock grows. Default `3xl` (768px), the prototype's measure. */
+    maxWidth?: FloatingComposerDockWidth;
+    /** Accessible name of the region. Default "Composer". */
+    label?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type FloatingComposerDockWidth = 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 
 export declare function FloatingDockBar({ docked, ghost, dockId, ghostLabel, label, bottomOffset, className, children, 'data-testid': testId, }: FloatingDockBarProps): JSX.Element | null;
 
@@ -1573,6 +1664,35 @@ declare interface PresenceInfo {
     color: string;
     mode?: string;
     idle?: boolean;
+}
+
+declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
+
+declare interface PresenceUser {
+    /** Unique identifier for the user. Passed back to `onUserClick`. */
+    id: string;
+    name: string;
+    /** Optional avatar image URL. Wins over `color` when present. */
+    avatarUrl?: string;
+    /** Online flag. Drives the status dot when `idle` is not set:
+     *  `undefined`/`true` → green; `false` → gray. */
+    online?: boolean;
+    /** Override the auto-computed avatar background. Useful when the
+     *  user identity needs to match a CRDT cursor color elsewhere. */
+    color?: string;
+    /** Present but away. Dims the avatar (alpha-blends `color` when
+     *  provided, otherwise drops opacity) and flips the status dot to
+     *  amber. Wins over `online` for the dot color. */
+    idle?: boolean;
+    /** Optional editing mode — renders a small mode badge on the
+     *  upper-right of the avatar (pencil / check / eye). */
+    mode?: PresenceMode;
+    /** One status line for the hover card — "editing", "away · 3m". Free text
+     *  because the library does not know the host's vocabulary. */
+    detail?: string;
+    /** Where in the surface the user is — a section title, a pane name.
+     *  Rendered under the detail line on the hover card. */
+    location?: string;
 }
 
 /** True when the keystroke belongs to whatever the person is typing into. */
@@ -2912,29 +3032,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2971,6 +3071,26 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

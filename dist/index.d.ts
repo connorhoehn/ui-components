@@ -322,6 +322,12 @@ export declare const AGENT_PARTICLE_COLORS: readonly ["#ffffff", "#c7d2fe", "#a5
 /** The dot class for a step status — shared with RunSummaryPanel so the two timelines read the same. */
 export declare const AGENT_RUN_STEP_DOT: Record<AgentRunStepStatus, string>;
 
+/** Dot colour per status. `running` pulses unless the reader asked for less motion. */
+export declare const AGENT_TASK_STATUS_DOT: Record<AgentTaskStatus, string>;
+
+/** The words for each status, as the strip and the card print them. */
+export declare const AGENT_TASK_STATUS_LABELS: Record<AgentTaskStatus, string>;
+
 export declare interface AgentDefinition {
     id: string;
     name: string;
@@ -575,6 +581,31 @@ export declare interface AgentStepOutput {
 }
 
 export declare type AgentStopReason = 'complete' | 'max_turns' | 'timeout' | 'error' | 'cancelled';
+
+export declare function AgentTaskCard({ title, status, statusLabel, description, phase, percent, startedLabel, actions, className, 'data-testid': testId, }: AgentTaskCardProps): JSX.Element;
+
+export declare interface AgentTaskCardProps {
+    /** "Build risk outlook slide". */
+    title: string;
+    status: AgentTaskStatus;
+    /** Overrides the status pill's word ("Editing slide 4" stays in `phase`). */
+    statusLabel?: string;
+    /** The request, or what the agent is working from. */
+    description?: ReactNode;
+    /** What it is doing now — "Editing slide 4". */
+    phase?: string;
+    /** A REAL percentage, 0–100. Omit when the run reports none: no bar is drawn. */
+    percent?: number;
+    /** "Started 2m ago" — the host formats it, since it owns the clock. */
+    startedLabel?: string;
+    /** Buttons under the card body — Open run, Pause, Stop. */
+    actions?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** Where an agent task is. Shared by `TaskStrip` and `AgentTaskCard`. */
+export declare type AgentTaskStatus = 'queued' | 'running' | 'paused' | 'awaiting' | 'done' | 'failed' | 'stopped';
 
 /** One tool invocation inside an agent loop, as persisted on the step output. */
 export declare interface AgentToolCall {
@@ -6684,6 +6715,9 @@ declare interface FieldTypeDefinition {
     rendererType?: string;
 }
 
+/** What each kind is called, for a caller building a "Page · Sprint planning" line. */
+export declare const FILE_KIND_LABELS: Record<FileKind, string>;
+
 export declare const FileInput: ForwardRefExoticComponent<FileInputProps & RefAttributes<HTMLInputElement>>;
 
 export declare interface FileInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange' | 'value' | 'defaultValue'> {
@@ -6695,6 +6729,22 @@ export declare interface FileInputProps extends Omit<InputHTMLAttributes<HTMLInp
     onFiles: (files: File[]) => void;
     'data-testid'?: string;
 }
+
+export declare type FileKind = 'page' | 'presentation' | 'recording' | 'transcript' | 'diagram' | 'folder';
+
+export declare function FileKindMark({ kind, size, label, className, 'data-testid': testId }: FileKindMarkProps): JSX.Element;
+
+export declare interface FileKindMarkProps {
+    kind: FileKind;
+    /** `sm` 18px (tree rows), `md` 22px (default, headers), `lg` 28px. */
+    size?: FileKindMarkSize;
+    /** Accessible name. Omit when the file's name is already beside the mark. */
+    label?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type FileKindMarkSize = 'sm' | 'md' | 'lg';
 
 export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, inputTestId, inputProps, }: FileUploadDropProps): JSX.Element;
 
@@ -9906,6 +9956,30 @@ declare interface ModelOption {
 
 /** A crescent: the dark theme — "switch to (or currently in) dark mode". */
 export declare function MoonIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare function MoreContextDisclosure({ items, label, defaultOpen, open, onToggle, children, className, 'data-testid': testId, }: MoreContextDisclosureProps): JSX.Element;
+
+export declare interface MoreContextDisclosureProps {
+    items: readonly MoreContextItem[];
+    /** Summary text. Default "More context". */
+    label?: string;
+    defaultOpen?: boolean;
+    open?: boolean;
+    onToggle?: (open: boolean) => void;
+    /** Extra content under the rows. */
+    children?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface MoreContextItem {
+    id: string;
+    label: string;
+    icon?: ReactNode;
+    /** Shown after the label — "Sources · 2". */
+    count?: number;
+    onSelect?: () => void;
+}
 
 export declare function MoreHorizontalIcon({ size, ...rest }: IconProps): JSX.Element;
 
@@ -14845,11 +14919,40 @@ export declare interface TaskItem {
     category?: string;
 }
 
+/** A percentage the strip is willing to print: finite, clamped, rounded. */
+export declare function taskPercent(percent: number | undefined): number | null;
+
 export declare function TasksEditorRenderer({ section, editable, onAddItem, onUpdateItem, onRemoveItem, }: SectionRendererProps): JSX.Element;
 
 export declare const tasksFieldType: FieldTypeDefinition;
 
 export declare function TasksReaderRenderer({ section, onUpdateItem, onNavigateToEditor }: SectionRendererProps): JSX.Element;
+
+export declare function TaskStrip({ label, status, phase, percent, icon, onPause, onResume, onStop, onOpen, onDismiss, className, 'data-testid': testId, }: TaskStripProps): JSX.Element;
+
+export declare interface TaskStripProps {
+    /** What the task is — "Creating release-readiness deck". */
+    label: string;
+    status: AgentTaskStatus;
+    /** What it is doing now — "Editing slide 4". Replaces the status word when given. */
+    phase?: string;
+    /**
+     * A REAL completion percentage from the run, 0–100. Omit when the source
+     * does not report one; the strip then shows no bar rather than a guess.
+     */
+    percent?: number;
+    /** Leading glyph. Defaults to a status dot. */
+    icon?: ReactNode;
+    onPause?: () => void;
+    onResume?: () => void;
+    onStop?: () => void;
+    /** "Open run" — jump to the run's full view. */
+    onOpen?: () => void;
+    /** Hide the strip. The task keeps running. */
+    onDismiss?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface TeamChannelItem {
     channel: string;
@@ -15648,6 +15751,14 @@ export declare interface TreeNode {
     isDir?: boolean;
     badge?: ReactNode;
     meta?: string;
+    /**
+     * Like `meta`, but hidden until the row is hovered or has focus — a
+     * version ("v4"), a size. Still in the accessible name, so a screen-reader
+     * user hears it without hovering.
+     */
+    hoverMeta?: string;
+    /** Leading glyph after the caret slot — normally a `FileKindMark`. */
+    icon?: ReactNode;
     disabled?: boolean;
     /**
      * What is happening to this row right now, for a move the host has sent and
@@ -15658,7 +15769,7 @@ export declare interface TreeNode {
     status?: 'pending' | 'moved';
 }
 
-export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, expanded: controlledExpanded, onToggle, onReorder, canDragNode, canDropNode, renderTrailing, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
+export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, expanded: controlledExpanded, onToggle, onReorder, canDragNode, canDropNode, renderTrailing, rowMenu, rowMenuLabel, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
 
 export declare interface TreeViewProps {
     nodes: TreeNode[];
@@ -15683,6 +15794,14 @@ export declare interface TreeViewProps {
     canDropNode?: (dragged: TreeNode, target: TreeNode, position: TreeDropPosition) => boolean;
     /** Trailing slot per row — count chip, badge, menu button. */
     renderTrailing?: (node: TreeNode) => ReactNode;
+    /**
+     * The row's ⋯ menu — Version, Rename, Move, View details. Return `null` or
+     * an empty array for a row that has none. Opens from the ⋯ button, a
+     * right-click, or Shift+F10 / the context-menu key on the focused row.
+     */
+    rowMenu?: (node: TreeNode) => DropdownMenuSection[] | null | undefined;
+    /** Accessible name of each row's menu button. Default `Actions for <title>`. */
+    rowMenuLabel?: (node: TreeNode) => string;
     className?: string;
     'data-testid'?: string;
 }
@@ -18185,6 +18304,45 @@ declare interface UseActivityBusReturn {
       preview?: ReactNode;
   }
 
+  export declare function Workbench({ title, subtitle, kind, onClose, task, taskLabel, tabs, activeTab, defaultTab, onTabChange, moreContext, footer, label, className, 'data-testid': testId, }: WorkbenchProps): JSX.Element;
+
+  export declare interface WorkbenchProps {
+      /** The selected file or slide — "Sprint review". */
+      title: ReactNode;
+      /** A second line — "Presentation · Slide 4 of 5". */
+      subtitle?: ReactNode;
+      /** Draws a `FileKindMark` before the title. */
+      kind?: FileKind;
+      /** Renders a close button. Omit for a workbench that cannot be closed. */
+      onClose?: () => void;
+      /** The current agent task — normally an `AgentTaskCard`. Omit when there is none. */
+      task?: ReactNode;
+      /** Heading over `task`. Default "Current task". */
+      taskLabel?: string;
+      tabs: readonly WorkbenchTab[];
+      /** Controlled active tab. */
+      activeTab?: string;
+      /** Uncontrolled initial tab. Defaults to the first. */
+      defaultTab?: string;
+      onTabChange?: (id: string) => void;
+      /** Below the active panel — normally a `MoreContextDisclosure`. */
+      moreContext?: ReactNode;
+      /** Pinned to the bottom — "Open run", "More". */
+      footer?: ReactNode;
+      /** Accessible name of the column. Default "Workbench". */
+      label?: string;
+      className?: string;
+      'data-testid'?: string;
+  }
+
+  export declare interface WorkbenchTab {
+      id: string;
+      label: string;
+      /** A count on the tab — open comments. Zero or absent shows none. */
+      count?: number;
+      content: ReactNode;
+  }
+
   /** A file the session produced, already authorized for this viewer. */
   export declare interface WorkComputeArtifact {
       id: string;
@@ -18671,29 +18829,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -18730,6 +18868,26 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

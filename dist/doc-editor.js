@@ -4,35 +4,38 @@ import { _ as r } from "./overlayStack-BDlo8PJg.js";
 import { t as i } from "./Card-RQCeAPNU.js";
 import { t as a } from "./IconButton-C3DMtvSx.js";
 import { n as o, t as s } from "./Stack-CkiMw5K0.js";
-import { r as c } from "./Text-D5E7T_4D.js";
-import { t as l } from "./Banner-C3Wgh62A.js";
-import { t as u } from "./Chip-DYqbAD3L.js";
-import { t as d } from "./Modal-D2qxMX2_.js";
-import { t as f } from "./EmptyState-DQYx5Oyy.js";
-import { n as p } from "./SearchInput-DXbGHmns.js";
-import { t as m } from "./Input-DLknWXri.js";
-import { t as h } from "./Textarea-Dz4doxTv.js";
-import { t as g } from "./Avatar-Bq_1SEQ2.js";
-import { t as _ } from "./InlineAlert-CRnIKeAF.js";
-import { t as v } from "./CardHeader-CsPhVpCm.js";
-import { t as y } from "./InlinePopover-2oYczSG0.js";
-import { t as b } from "./ChangeDiff-CzO8zCc-.js";
-import { t as x } from "./Select-CD8ixtYi.js";
-import { t as S } from "./Checkbox-Db43XgBJ.js";
-import { t as C } from "./activationKey-CjbL3LUv.js";
-import { A as w, k as T } from "./renderers-5O9bh08s.js";
-import { A as E, C as D, D as ee, E as O, I as k, L as A, M as te, N as j, O as M, S as N, T as P, _ as F, a as ne, b as I, c as L, d as re, f as R, g as z, h as B, i as ie, j as V, k as ae, l as oe, m as se, n as ce, o as le, p as ue, r as de, s as fe, t as pe, u as me, v as he, w as ge, x as _e, y as ve, z as ye } from "./PresentationEditor-X97_Klcq.js";
-import { o as be, t as xe } from "./VerdictChip-CtR3yfCy.js";
-import { a as Se, c as Ce, i as we, n as Te, o as Ee, r as De, s as Oe, t as H } from "./TiptapEditor-Kdj65m6g.js";
-import { A as ke, B as Ae, C as je, D as Me, E as Ne, F as Pe, H as Fe, I as Ie, L as Le, M as Re, N as ze, O as Be, P as Ve, R as He, S as Ue, T as We, V as Ge, _ as Ke, a as qe, b as Je, c as Ye, d as Xe, f as Ze, g as Qe, h as $e, i as et, j as tt, k as nt, l as rt, m as it, o as at, p as ot, r as st, s as ct, t as lt, u as ut, v as dt, w as ft, x as pt, y as mt, z as ht } from "./DocumentEditorPage-CfVPrsoj.js";
-import { _ as gt, a as _t, c as vt, d as yt, f as bt, g as xt, h as St, i as Ct, l as wt, m as Tt, n as Et, o as Dt, p as Ot, r as kt, s as At, t as jt, u as Mt, v as Nt, y as Pt } from "./useDocumentImageUpload-BCm9zpfQ.js";
-import { createContext as Ft, useCallback as U, useContext as It, useEffect as W, useImperativeHandle as Lt, useMemo as G, useRef as K, useState as q } from "react";
-import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";
-import * as Rt from "yjs";
-import { NodeViewWrapper as zt, ReactNodeViewRenderer as Bt } from "@tiptap/react";
-import { relativePositionToAbsolutePosition as Vt, ySyncPluginKey as Ht } from "@tiptap/y-tiptap";
+import { a as c, i as l, o as u } from "./Text-Bu-inXL-.js";
+import { t as d } from "./Banner-C3Wgh62A.js";
+import { t as f } from "./Chip-DYqbAD3L.js";
+import { t as p } from "./Modal-D2qxMX2_.js";
+import { t as m } from "./EmptyState-DQYx5Oyy.js";
+import { n as h } from "./SearchInput-DXbGHmns.js";
+import { n as g } from "./Tabs-BGZyr2nH.js";
+import { t as _ } from "./Input-DLknWXri.js";
+import { t as v } from "./Textarea-Dz4doxTv.js";
+import { t as y } from "./Avatar-Bq_1SEQ2.js";
+import { t as b } from "./InlineAlert-CRnIKeAF.js";
+import { t as x } from "./CardHeader-CsPhVpCm.js";
+import { t as S } from "./PresenceAvatars-BRfp1eRt.js";
+import { t as C } from "./InlinePopover-2oYczSG0.js";
+import { t as w } from "./Badge-CrD0vvt4.js";
+import { t as T } from "./ChangeDiff-CzO8zCc-.js";
+import { t as E } from "./Select-CD8ixtYi.js";
+import { t as D } from "./Checkbox-Db43XgBJ.js";
+import { t as O } from "./activationKey-CjbL3LUv.js";
+import { A as k, k as A } from "./renderers-5O9bh08s.js";
+import { A as j, C as M, D as N, E as P, F, I, M as L, N as ee, O as R, P as z, S as te, T as B, _ as V, a as H, b as ne, c as U, d as re, f as ie, g as ae, h as oe, i as se, j as ce, k as le, l as ue, m as de, n as fe, o as pe, p as me, r as he, s as ge, t as _e, u as ve, v as ye, w as be, x as xe, y as Se, z as Ce } from "./PresentationEditor-Dt2sa35w.js";
+import { o as we, t as Te } from "./VerdictChip-CtR3yfCy.js";
+import { a as Ee, c as De, i as Oe, n as ke, o as Ae, r as je, s as Me, t as W } from "./TiptapEditor-Kdj65m6g.js";
+import { A as Ne, B as Pe, C as Fe, D as Ie, E as Le, F as Re, H as ze, I as Be, L as Ve, M as He, N as Ue, O as We, P as Ge, R as Ke, S as qe, T as Je, V as Ye, _ as Xe, a as Ze, b as Qe, c as $e, d as et, f as tt, g as nt, h as rt, i as it, j as at, k as ot, l as st, m as ct, o as lt, p as ut, r as dt, s as ft, t as pt, u as mt, v as ht, w as gt, x as _t, y as vt, z as yt } from "./DocumentEditorPage-CYoFP1ns.js";
+import { _ as bt, a as xt, c as St, d as Ct, f as wt, g as Tt, h as Et, i as Dt, l as Ot, m as kt, n as At, o as jt, p as Mt, r as Nt, s as Pt, t as Ft, u as It, v as Lt, y as Rt } from "./useDocumentImageUpload-BCm9zpfQ.js";
+import { createContext as zt, useCallback as G, useContext as Bt, useEffect as K, useId as Vt, useImperativeHandle as Ht, useLayoutEffect as Ut, useMemo as q, useRef as J, useState as Y } from "react";
+import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
+import * as Wt from "yjs";
+import { NodeViewWrapper as Gt, ReactNodeViewRenderer as Kt } from "@tiptap/react";
+import { relativePositionToAbsolutePosition as qt, ySyncPluginKey as Jt } from "@tiptap/y-tiptap";
 //#region src/components/doc-editor/DocumentListPage.tsx
-function Ut(e) {
+function Yt(e) {
 	let t = Date.now(), n = new Date(e).getTime();
 	if (isNaN(n)) return "";
 	let r = t - n;
@@ -46,7 +49,7 @@ function Ut(e) {
 	let s = Math.floor(o / 24);
 	return s < 30 ? `${s}d ago` : `${Math.floor(s / 30)}mo ago`;
 }
-var Wt = {
+var Xt = {
 	draft: {
 		bg: "var(--color-warning-bg)",
 		color: "var(--color-warning-fg)"
@@ -64,9 +67,9 @@ var Wt = {
 		color: "var(--color-text-secondary)"
 	}
 };
-function Gt({ status: e }) {
-	let t = Wt[e] ?? Wt.draft;
-	return /* @__PURE__ */ Y("span", {
+function Zt({ status: e }) {
+	let t = Xt[e] ?? Xt.draft;
+	return /* @__PURE__ */ Z("span", {
 		className: n("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-full capitalize leading-[18px]"),
 		style: {
 			background: t.bg,
@@ -75,7 +78,7 @@ function Gt({ status: e }) {
 		children: e
 	});
 }
-var Kt = {
+var Qt = {
 	editor: {
 		icon: "✏",
 		label: "Editing"
@@ -89,13 +92,13 @@ var Kt = {
 		label: "Viewing"
 	}
 };
-function qt({ users: e, onClickUser: t }) {
+function $t({ users: e, onClickUser: t }) {
 	let r = e.slice(0, 5), i = e.length - 5;
-	return /* @__PURE__ */ X("div", {
+	return /* @__PURE__ */ Q("div", {
 		className: n("flex items-center gap-0.5"),
 		children: [r.map((e, r) => {
-			let i = Kt[e.mode ?? "editor"] ?? Kt.editor, a = e.idle === !0, o = a ? "var(--color-warning)" : "var(--color-success)";
-			return /* @__PURE__ */ X("button", {
+			let i = Qt[e.mode ?? "editor"] ?? Qt.editor, a = e.idle === !0, o = a ? "var(--color-warning)" : "var(--color-success)";
+			return /* @__PURE__ */ Q("button", {
 				type: "button",
 				title: `${e.displayName} — ${a ? "Away" : i.label}`,
 				"aria-label": `${e.displayName} — ${a ? "Away" : i.label}`,
@@ -108,67 +111,67 @@ function qt({ users: e, onClickUser: t }) {
 					zIndex: 5 - r
 				},
 				children: [
-					/* @__PURE__ */ Y("div", {
+					/* @__PURE__ */ Z("div", {
 						className: n("w-8 h-8 rounded-full text-white text-[11px] font-bold flex items-center justify-center border-2 border-white"),
 						style: { background: a ? `${e.color}99` : e.color },
 						children: e.displayName.split(" ").map((e) => e[0]).join("").slice(0, 2).toUpperCase()
 					}),
-					/* @__PURE__ */ Y("div", {
+					/* @__PURE__ */ Z("div", {
 						className: n("absolute -bottom-px -right-px w-2.5 h-2.5 rounded-full border-2 border-white"),
 						style: { background: o }
 					}),
-					/* @__PURE__ */ Y("div", {
+					/* @__PURE__ */ Z("div", {
 						className: n("absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-surface border border-border flex items-center justify-center text-[8px] leading-none"),
 						children: i.icon
 					})
 				]
 			}, e.userId);
-		}), i > 0 && /* @__PURE__ */ X("div", {
+		}), i > 0 && /* @__PURE__ */ Q("div", {
 			className: n("w-8 h-8 rounded-full bg-neutral text-white text-[10px] font-bold flex items-center justify-center border-2 border-white -ml-1.5"),
 			children: ["+", i]
 		})]
 	});
 }
-function Jt({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i, onDeleteDocument: a, onJumpToUser: o, hideHeader: s }) {
-	let [c, l] = q(!1), [u, d] = q(null), [f, p] = q(null), [m, h] = q(1), g = Math.max(1, Math.ceil(e.length / 10)), _ = Math.min(m, g), v = G(() => {
+function en({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i, onDeleteDocument: a, onJumpToUser: o, hideHeader: s }) {
+	let [c, l] = Y(!1), [u, d] = Y(null), [f, p] = Y(null), [m, h] = Y(1), g = Math.max(1, Math.ceil(e.length / 10)), _ = Math.min(m, g), v = q(() => {
 		let t = (_ - 1) * 10;
 		return e.slice(t, t + 10);
-	}, [e, _]), y = U((e, t, n) => {
+	}, [e, _]), y = G((e, t, n) => {
 		e.stopPropagation(), window.confirm(`Delete "${n}"? This cannot be undone.`) && a(t);
 	}, [a]);
-	return /* @__PURE__ */ X("div", {
+	return /* @__PURE__ */ Q("div", {
 		className: n("px-4"),
 		children: [
-			!s && /* @__PURE__ */ X("div", {
+			!s && /* @__PURE__ */ Q("div", {
 				className: n("flex items-center justify-between mb-5"),
-				children: [/* @__PURE__ */ Y("h1", {
+				children: [/* @__PURE__ */ Z("h1", {
 					className: n("m-0 text-[22px] font-bold text-text-primary"),
 					children: "Documents"
-				}), /* @__PURE__ */ X("button", {
+				}), /* @__PURE__ */ Q("button", {
 					"data-testid": "new-document-btn",
 					onClick: () => l(!0),
 					className: n("flex items-center gap-1.5 px-4 py-2 text-sm font-semibold border-none rounded-lg bg-info text-white cursor-pointer font-[inherit]"),
-					children: [/* @__PURE__ */ Y("span", {
+					children: [/* @__PURE__ */ Z("span", {
 						className: n("text-base leading-none"),
 						children: "+"
 					}), "New Document"]
 				})]
 			}),
-			e.length === 0 ? /* @__PURE__ */ Y("div", {
+			e.length === 0 ? /* @__PURE__ */ Z("div", {
 				"data-testid": "documents-empty",
 				className: n("text-center px-4 py-12 text-text-tertiary text-[15px]"),
 				children: "No documents yet. Create your first document to get started."
-			}) : /* @__PURE__ */ Y("div", {
+			}) : /* @__PURE__ */ Z("div", {
 				className: n("flex flex-col gap-3"),
 				children: v.map((e) => {
 					let i = t[e.id] ?? [], a = u === e.id, s = a || f === e.id;
-					return /* @__PURE__ */ X("div", {
+					return /* @__PURE__ */ Q("div", {
 						"data-testid": `document-card-${e.id}`,
 						role: "button",
 						tabIndex: 0,
 						"aria-label": `Open ${e.title}`,
 						onClick: () => r(e.id),
-						onKeyDown: C(() => r(e.id)),
+						onKeyDown: O(() => r(e.id)),
 						onMouseEnter: () => d(e.id),
 						onMouseLeave: () => d(null),
 						onFocus: () => p(e.id),
@@ -177,49 +180,49 @@ function Jt({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 						},
 						className: n("flex items-center gap-4 px-4 py-3.5 bg-surface border border-border rounded-lg cursor-pointer relative transition-shadow duration-150", a ? "shadow-[0_4px_12px_rgba(0,0,0,0.08)]" : ""),
 						children: [
-							/* @__PURE__ */ Y("span", {
+							/* @__PURE__ */ Z("span", {
 								className: n("text-2xl shrink-0"),
 								children: e.icon
 							}),
-							/* @__PURE__ */ X("div", {
+							/* @__PURE__ */ Q("div", {
 								className: n("flex-1 min-w-0"),
 								children: [
-									/* @__PURE__ */ X("div", {
+									/* @__PURE__ */ Q("div", {
 										className: n("flex items-center gap-2 mb-0.5"),
 										children: [
-											/* @__PURE__ */ Y("span", {
+											/* @__PURE__ */ Z("span", {
 												className: n("text-[15px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"),
 												children: e.title
 											}),
-											/* @__PURE__ */ Y(Gt, { status: e.status }),
-											e.type && /* @__PURE__ */ Y("span", {
+											/* @__PURE__ */ Z(Zt, { status: e.status }),
+											e.type && /* @__PURE__ */ Z("span", {
 												className: n("inline-block px-2 py-px text-[11px] font-semibold rounded-full bg-surface-hover text-text-secondary whitespace-nowrap shrink-0"),
 												children: e.type
 											}),
-											e.activeCallSessionId && /* @__PURE__ */ X("span", {
+											e.activeCallSessionId && /* @__PURE__ */ Q("span", {
 												className: n("inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-success-bg text-success-fg leading-[18px]"),
-												children: [/* @__PURE__ */ Y("span", { className: n("w-1.5 h-1.5 rounded-full bg-success animate-pulse") }), "Live Call"]
+												children: [/* @__PURE__ */ Z("span", { className: n("w-1.5 h-1.5 rounded-full bg-success animate-pulse") }), "Live Call"]
 											})
 										]
 									}),
-									e.description && /* @__PURE__ */ Y("div", {
+									e.description && /* @__PURE__ */ Z("div", {
 										className: n("text-[13px] text-neutral overflow-hidden text-ellipsis whitespace-nowrap mb-0.5"),
 										children: e.description
 									}),
-									/* @__PURE__ */ X("div", {
+									/* @__PURE__ */ Q("div", {
 										className: n("text-xs text-text-tertiary"),
-										children: ["Updated ", Ut(e.updatedAt)]
+										children: ["Updated ", Yt(e.updatedAt)]
 									})
 								]
 							}),
-							i.length > 0 && /* @__PURE__ */ Y("div", {
+							i.length > 0 && /* @__PURE__ */ Z("div", {
 								className: n("shrink-0"),
-								children: /* @__PURE__ */ Y(qt, {
+								children: /* @__PURE__ */ Z($t, {
 									users: i,
 									onClickUser: (t) => o(e.id, t)
 								})
 							}),
-							s && /* @__PURE__ */ Y("button", {
+							s && /* @__PURE__ */ Z("button", {
 								type: "button",
 								onClick: (t) => y(t, e.id, e.title),
 								onKeyDown: (e) => e.stopPropagation(),
@@ -232,18 +235,18 @@ function Jt({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 					}, e.id);
 				})
 			}),
-			e.length > 10 && /* @__PURE__ */ X("div", {
+			e.length > 10 && /* @__PURE__ */ Q("div", {
 				"data-testid": "pagination-controls",
 				className: n("flex items-center justify-center gap-3 mt-4 pt-3 border-t border-border"),
 				children: [
-					/* @__PURE__ */ Y("button", {
+					/* @__PURE__ */ Z("button", {
 						"data-testid": "pagination-prev",
 						disabled: _ <= 1,
 						onClick: () => h((e) => Math.max(1, e - 1)),
 						className: n("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md", _ <= 1 ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-surface text-text-secondary cursor-pointer"),
 						children: "Previous"
 					}),
-					/* @__PURE__ */ X("span", {
+					/* @__PURE__ */ Q("span", {
 						"data-testid": "pagination-info",
 						className: n("text-[13px] text-text-secondary font-medium"),
 						children: [
@@ -253,7 +256,7 @@ function Jt({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 							g
 						]
 					}),
-					/* @__PURE__ */ Y("button", {
+					/* @__PURE__ */ Z("button", {
 						"data-testid": "pagination-next",
 						disabled: _ >= g,
 						onClick: () => h((e) => Math.min(g, e + 1)),
@@ -262,7 +265,7 @@ function Jt({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 					})
 				]
 			}),
-			/* @__PURE__ */ Y(ye, {
+			/* @__PURE__ */ Z(Ce, {
 				open: c,
 				onClose: () => l(!1),
 				onCreate: i
@@ -272,15 +275,15 @@ function Jt({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 }
 //#endregion
 //#region src/components/doc-editor/useFollowCursor.ts
-function Yt(e, t) {
+function tn(e, t) {
 	for (let [n, r] of e.getStates()) {
 		let e = r?.user;
 		if (e && t(e)) return n;
 	}
 	return null;
 }
-function Xt({ editor: e, provider: t, followClientId: n, onLost: r }) {
-	W(() => {
+function nn({ editor: e, provider: t, followClientId: n, onLost: r }) {
+	K(() => {
 		let i = t?.awareness;
 		if (!e || !i || n == null) return;
 		let a = () => {
@@ -291,9 +294,9 @@ function Xt({ editor: e, provider: t, followClientId: n, onLost: r }) {
 			}
 			let a = t.cursor;
 			if (a) try {
-				let t = Ht.getState(e.view.state);
+				let t = Jt.getState(e.view.state);
 				if (!t?.type || !t?.binding?.mapping) return;
-				let n = Vt(t.doc, t.type, Rt.createRelativePositionFromJSON(a.head), t.binding.mapping);
+				let n = qt(t.doc, t.type, Wt.createRelativePositionFromJSON(a.head), t.binding.mapping);
 				if (n == null) return;
 				let r = Math.max(0, Math.min(n, e.state.doc.content.size)), i = e.view.domAtPos(r);
 				(i.node instanceof Element ? i.node : i.node.parentElement)?.scrollIntoView({
@@ -312,22 +315,22 @@ function Xt({ editor: e, provider: t, followClientId: n, onLost: r }) {
 }
 //#endregion
 //#region src/components/doc-editor/StandaloneTiptap.tsx
-var Zt = "prosemirror";
-function Qt(e) {
+var rn = "prosemirror";
+function an(e) {
 	return e.ydoc !== void 0;
 }
-function $t(e) {
-	return Qt(e) ? /* @__PURE__ */ Y(en, { ...e }) : /* @__PURE__ */ Y(tn, { ...e });
+function on(e) {
+	return an(e) ? /* @__PURE__ */ Z(sn, { ...e }) : /* @__PURE__ */ Z(cn, { ...e });
 }
-function en({ ydoc: e, provider: t, fragment: r, user: i, fragmentName: a = Zt, editable: o, placeholder: s, className: c, onFragmentReady: l }) {
-	let u = G(() => r ?? e.getXmlFragment(a), [
+function sn({ ydoc: e, provider: t, fragment: r, user: i, fragmentName: a = rn, editable: o, placeholder: s, className: c, onFragmentReady: l }) {
+	let u = q(() => r ?? e.getXmlFragment(a), [
 		r,
 		e,
 		a
-	]), d = K(!1);
-	return d.current || (d.current = !0, l?.(u, e)), /* @__PURE__ */ Y("div", {
+	]), d = J(!1);
+	return d.current || (d.current = !0, l?.(u, e)), /* @__PURE__ */ Z("div", {
 		className: n(c),
-		children: /* @__PURE__ */ Y(H, {
+		children: /* @__PURE__ */ Z(W, {
 			fragment: u,
 			ydoc: e,
 			provider: t,
@@ -337,12 +340,12 @@ function en({ ydoc: e, provider: t, fragment: r, user: i, fragmentName: a = Zt, 
 		})
 	});
 }
-function tn({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragmentName: c = Zt, editable: l, placeholder: u, className: d, onFragmentReady: f, loadingSlot: p, requireSync: m }) {
-	let h = o ?? `doc:${i}`, g = K(/* @__PURE__ */ new Set()), _ = U((e) => (g.current.add(e), () => {
+function cn({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragmentName: c = rn, editable: l, placeholder: u, className: d, onFragmentReady: f, loadingSlot: p, requireSync: m }) {
+	let h = o ?? `doc:${i}`, g = J(/* @__PURE__ */ new Set()), _ = G((e) => (g.current.add(e), () => {
 		g.current.delete(e);
-	}), []), v = U((e) => {
+	}), []), v = G((e) => {
 		g.current.forEach((t) => t(e));
-	}, []), y = G(() => ({
+	}, []), y = q(() => ({
 		wsUrl: r,
 		cognitoToken: a,
 		defaultChannel: h
@@ -357,10 +360,10 @@ function tn({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragme
 		documentId: i,
 		ws: b,
 		onMessage: _
-	}), w = G(() => x ? x.getXmlFragment(c) : null, [x, c]), T = !!x && !!w && (m !== !0 || C), E = K(!1);
-	return !E.current && T && w && x && (E.current = !0, f?.(w, x)), T ? /* @__PURE__ */ Y("div", {
+	}), w = q(() => x ? x.getXmlFragment(c) : null, [x, c]), T = !!x && !!w && (m !== !0 || C), E = J(!1);
+	return !E.current && T && w && x && (E.current = !0, f?.(w, x)), T ? /* @__PURE__ */ Z("div", {
 		className: n(d),
-		children: /* @__PURE__ */ Y(H, {
+		children: /* @__PURE__ */ Z(W, {
 			fragment: w,
 			ydoc: x,
 			provider: S,
@@ -368,28 +371,28 @@ function tn({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragme
 			editable: l,
 			placeholder: u
 		})
-	}) : /* @__PURE__ */ Y("div", {
+	}) : /* @__PURE__ */ Z("div", {
 		className: n(d),
 		children: p ?? null
 	});
 }
 //#endregion
 //#region src/components/doc-editor/ReviewProgress.tsx
-function nn({ current: e, total: t }) {
+function ln({ current: e, total: t }) {
 	let r = t > 0 ? Math.round(e / t * 100) : 0;
-	return /* @__PURE__ */ X("div", {
+	return /* @__PURE__ */ Q("div", {
 		className: n("mb-4"),
-		children: [/* @__PURE__ */ X("div", {
+		children: [/* @__PURE__ */ Q("div", {
 			className: n("text-[13px] text-text-secondary mb-1 flex justify-between"),
-			children: [/* @__PURE__ */ X("span", { children: [
+			children: [/* @__PURE__ */ Q("span", { children: [
 				e,
 				" of ",
 				t,
 				" sections reviewed"
-			] }), /* @__PURE__ */ X("span", { children: [r, "%"] })]
-		}), /* @__PURE__ */ Y("div", {
+			] }), /* @__PURE__ */ Q("span", { children: [r, "%"] })]
+		}), /* @__PURE__ */ Z("div", {
 			className: n("h-2 bg-surface-emphasis rounded overflow-hidden"),
-			children: /* @__PURE__ */ Y("div", {
+			children: /* @__PURE__ */ Z("div", {
 				className: n("h-full bg-info rounded transition-[width] duration-300 ease-in-out"),
 				style: { width: `${r}%` }
 			})
@@ -398,7 +401,7 @@ function nn({ current: e, total: t }) {
 }
 //#endregion
 //#region src/components/doc-editor/ReviewableItem.tsx
-var rn = {
+var un = {
 	pending: {
 		bg: "var(--color-warning-bg)",
 		text: "var(--color-warning-fg)"
@@ -415,47 +418,47 @@ var rn = {
 		bg: "var(--color-danger-bg)",
 		text: "var(--color-danger-fg)"
 	}
-}, an = {
+}, dn = {
 	low: "var(--color-neutral)",
 	medium: "var(--color-warning)",
 	high: "var(--color-danger)"
-}, on = {
+}, fn = {
 	bg: "var(--color-surface-hover)",
 	text: "var(--color-text-secondary)"
 };
-function sn({ item: e, onAck: t, onReject: r }) {
-	let [i, a] = q(!1), [o, s] = q(""), [c, l] = q("none"), u = K(e.status), d = rn[e.status] ?? on, f = an[e.priority] ?? "var(--color-neutral)", [p, m] = q(!1), g = K(null);
-	W(() => () => {
-		g.current && clearTimeout(g.current);
-	}, []), W(() => {
+function pn({ item: e, onAck: t, onReject: r }) {
+	let [i, a] = Y(!1), [o, s] = Y(""), [c, l] = Y("none"), u = J(e.status), d = un[e.status] ?? fn, f = dn[e.priority] ?? "var(--color-neutral)", [p, m] = Y(!1), h = J(null);
+	K(() => () => {
+		h.current && clearTimeout(h.current);
+	}, []), K(() => {
 		u.current === "pending" && e.status === "acked" ? l("ack") : u.current === "pending" && e.status === "rejected" && l("reject"), u.current = e.status;
 	}, [e.status]);
-	let _ = () => {
-		p || (m(!0), l("ack"), g.current = setTimeout(() => {
-			g.current = null, t(o || void 0), s(""), a(!1), m(!1);
+	let g = () => {
+		p || (m(!0), l("ack"), h.current = setTimeout(() => {
+			h.current = null, t(o || void 0), s(""), a(!1), m(!1);
 		}, 150));
-	}, v = () => {
+	}, _ = () => {
 		if (!p) {
 			if (!o.trim()) {
 				a(!0);
 				return;
 			}
-			m(!0), l("reject"), g.current = setTimeout(() => {
-				g.current = null, r(o), s(""), a(!1), m(!1);
+			m(!0), l("reject"), h.current = setTimeout(() => {
+				h.current = null, r(o), s(""), a(!1), m(!1);
 			}, 150);
 		}
 	};
-	return /* @__PURE__ */ X("div", {
+	return /* @__PURE__ */ Q("div", {
 		className: n("bg-surface border border-border rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out", c === "ack" ? "animate-[ackPulse_0.6s_ease-out] border-success bg-success-bg" : c === "reject" ? "animate-[rejectPulse_0.6s_ease-out] border-danger bg-danger-bg" : ""),
 		children: [
-			/* @__PURE__ */ X("div", {
+			/* @__PURE__ */ Q("div", {
 				className: n("flex items-center mb-1.5"),
 				children: [
-					/* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ Z("span", {
 						className: n("text-sm font-medium flex-1 text-text-primary"),
 						children: e.text
 					}),
-					/* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ Z("span", {
 						className: n("inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full ml-2"),
 						style: {
 							background: d.bg,
@@ -463,7 +466,7 @@ function sn({ item: e, onAck: t, onReject: r }) {
 						},
 						children: e.status
 					}),
-					/* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ Z("span", {
 						className: n("inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full ml-2 bg-transparent"),
 						style: {
 							color: f,
@@ -473,94 +476,94 @@ function sn({ item: e, onAck: t, onReject: r }) {
 					})
 				]
 			}),
-			e.status === "acked" && /* @__PURE__ */ X("div", {
+			e.status === "acked" && /* @__PURE__ */ Q("div", {
 				className: n("flex items-center gap-1.5 text-xs text-text-secondary mb-1"),
-				children: [/* @__PURE__ */ Y("span", {
+				children: [/* @__PURE__ */ Z("span", {
 					className: n("w-5 h-5 rounded-full bg-success text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0"),
 					children: "✓"
-				}), /* @__PURE__ */ X("span", { children: [
+				}), /* @__PURE__ */ Q("span", { children: [
 					"Approved by ",
-					/* @__PURE__ */ Y("strong", {
+					/* @__PURE__ */ Z("strong", {
 						className: n("text-text-primary"),
 						children: e.ackedBy?.slice(0, 8) ?? "user"
 					}),
-					e.ackedAt && /* @__PURE__ */ X(J, { children: [" · ", new Date(e.ackedAt).toLocaleTimeString([], {
+					e.ackedAt && /* @__PURE__ */ Q(X, { children: [" · ", new Date(e.ackedAt).toLocaleTimeString([], {
 						hour: "2-digit",
 						minute: "2-digit"
 					})] }),
-					e.notes && /* @__PURE__ */ X(J, { children: [" — ", e.notes] })
+					e.notes && /* @__PURE__ */ Q(X, { children: [" — ", e.notes] })
 				] })]
 			}),
-			e.status === "rejected" && /* @__PURE__ */ X("div", {
+			e.status === "rejected" && /* @__PURE__ */ Q("div", {
 				className: n("flex items-center gap-1.5 text-xs text-danger-fg mb-1"),
-				children: [/* @__PURE__ */ Y("span", {
+				children: [/* @__PURE__ */ Z("span", {
 					className: n("w-5 h-5 rounded-full bg-danger text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0"),
 					children: "✕"
-				}), /* @__PURE__ */ X("span", { children: [
+				}), /* @__PURE__ */ Q("span", { children: [
 					"Rejected by ",
-					/* @__PURE__ */ Y("strong", { children: e.ackedBy?.slice(0, 8) ?? "user" }),
-					e.ackedAt && /* @__PURE__ */ X(J, { children: [" · ", new Date(e.ackedAt).toLocaleTimeString([], {
+					/* @__PURE__ */ Z("strong", { children: e.ackedBy?.slice(0, 8) ?? "user" }),
+					e.ackedAt && /* @__PURE__ */ Q(X, { children: [" · ", new Date(e.ackedAt).toLocaleTimeString([], {
 						hour: "2-digit",
 						minute: "2-digit"
 					})] }),
-					e.notes && /* @__PURE__ */ X(J, { children: [" — ", e.notes] })
+					e.notes && /* @__PURE__ */ Q(X, { children: [" — ", e.notes] })
 				] })]
 			}),
-			e.status === "pending" && /* @__PURE__ */ X("div", { children: [/* @__PURE__ */ X("div", {
+			e.status === "pending" && /* @__PURE__ */ Q("div", { children: [/* @__PURE__ */ Q("div", {
 				className: n("flex gap-2 mt-1.5"),
 				children: [
-					/* @__PURE__ */ Y("button", {
+					/* @__PURE__ */ Z("button", {
 						type: "button",
 						className: n("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-success text-white", p && "opacity-60 cursor-not-allowed"),
-						onClick: _,
+						onClick: g,
 						disabled: p,
 						children: "Acknowledge"
 					}),
-					/* @__PURE__ */ Y("button", {
+					/* @__PURE__ */ Z("button", {
 						type: "button",
 						className: n("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-danger text-white", p && "opacity-60 cursor-not-allowed"),
-						onClick: v,
+						onClick: _,
 						disabled: p,
 						children: "Reject"
 					}),
-					!i && /* @__PURE__ */ Y("button", {
+					!i && /* @__PURE__ */ Z("button", {
 						type: "button",
 						className: n("px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field"),
 						onClick: () => a(!0),
 						children: "Add note"
 					})
 				]
-			}), i && /* @__PURE__ */ X("div", {
+			}), i && /* @__PURE__ */ Q("div", {
 				className: n("mt-2"),
-				children: [/* @__PURE__ */ Y(h, {
+				children: [/* @__PURE__ */ Z(v, {
 					value: o,
 					onChange: (e) => s(e.target.value),
 					onKeyDown: (e) => {
-						e.key === "Enter" && !e.shiftKey && (e.preventDefault(), o.trim() && _()), e.key === "Escape" && (a(!1), s(""));
+						e.key === "Enter" && !e.shiftKey && (e.preventDefault(), o.trim() && g()), e.key === "Escape" && (a(!1), s(""));
 					},
 					placeholder: "Add notes or rejection reason... (Enter to submit, Esc to cancel)",
 					autoFocus: !0,
 					className: n("min-h-[60px] resize-y")
-				}), /* @__PURE__ */ X("div", {
+				}), /* @__PURE__ */ Q("div", {
 					className: n("flex gap-1.5 mt-1.5"),
 					children: [
-						/* @__PURE__ */ Y("button", {
+						/* @__PURE__ */ Z("button", {
 							type: "button",
 							className: n("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-success text-white"),
-							onClick: _,
+							onClick: g,
 							disabled: p,
 							tabIndex: 0,
 							children: "Submit & Acknowledge"
 						}),
-						/* @__PURE__ */ Y("button", {
+						/* @__PURE__ */ Z("button", {
 							type: "button",
 							className: n("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-danger text-white"),
-							onClick: v,
+							onClick: _,
 							disabled: p,
 							tabIndex: 0,
 							children: "Submit & Reject"
 						}),
-						/* @__PURE__ */ Y("button", {
+						/* @__PURE__ */ Z("button", {
 							type: "button",
 							className: n("px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field"),
 							onClick: () => {
@@ -577,7 +580,7 @@ function sn({ item: e, onAck: t, onReject: r }) {
 }
 //#endregion
 //#region src/components/doc-editor/ChunkViewer.tsx
-var cn = {
+var mn = {
 	summary: {
 		bg: "var(--color-info-bg)",
 		text: "var(--color-info-fg)"
@@ -599,16 +602,16 @@ var cn = {
 		text: "var(--color-primary-fg)"
 	}
 };
-function ln({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, provider: o, comments: s, onAddComment: c, onResolveThread: l, onUnresolveThread: u, participants: d }) {
-	let f = cn[e.type] ?? cn.custom, p = e.items.filter((e) => e.status !== "pending").length;
-	return /* @__PURE__ */ X("div", {
+function hn({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, provider: o, comments: s, onAddComment: c, onResolveThread: l, onUnresolveThread: u, participants: d }) {
+	let f = mn[e.type] ?? mn.custom, p = e.items.filter((e) => e.status !== "pending").length;
+	return /* @__PURE__ */ Q("div", {
 		className: n("bg-surface border border-border rounded-lg p-5 mb-4"),
 		children: [
-			/* @__PURE__ */ Y("h2", {
+			/* @__PURE__ */ Z("h2", {
 				className: n("text-xl font-bold m-0 mb-1 text-text-primary"),
 				children: e.title
 			}),
-			/* @__PURE__ */ Y("span", {
+			/* @__PURE__ */ Z("span", {
 				className: n("inline-block text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-3"),
 				style: {
 					background: f.bg,
@@ -616,9 +619,9 @@ function ln({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, p
 				},
 				children: e.type
 			}),
-			i && /* @__PURE__ */ Y("div", {
+			i && /* @__PURE__ */ Z("div", {
 				className: n(e.items.length > 0 ? "mb-4" : ""),
-				children: /* @__PURE__ */ Y(H, {
+				children: /* @__PURE__ */ Z(W, {
 					fragment: i,
 					ydoc: a,
 					provider: o,
@@ -630,7 +633,7 @@ function ln({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, p
 					sectionId: e.id
 				})
 			}),
-			!i && e.items.length === 0 && /* @__PURE__ */ X("div", {
+			!i && e.items.length === 0 && /* @__PURE__ */ Q("div", {
 				className: n("py-6 text-text-tertiary text-sm text-center"),
 				children: [
 					"This ",
@@ -638,11 +641,11 @@ function ln({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, p
 					" section has no content. Switch to Editor mode to add content."
 				]
 			}),
-			e.items.length > 0 && /* @__PURE__ */ X("div", { children: [e.items.map((e) => /* @__PURE__ */ Y(sn, {
+			e.items.length > 0 && /* @__PURE__ */ Q("div", { children: [e.items.map((e) => /* @__PURE__ */ Z(pn, {
 				item: e,
 				onAck: (n) => t(e.id, n),
 				onReject: (t) => r(e.id, t)
-			}, e.id)), /* @__PURE__ */ X("div", {
+			}, e.id)), /* @__PURE__ */ Q("div", {
 				className: n("text-xs text-text-secondary mt-3 pt-2 border-t border-border-subtle"),
 				children: [
 					p,
@@ -651,7 +654,7 @@ function ln({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, p
 					" items reviewed"
 				]
 			})] }),
-			c && /* @__PURE__ */ Y(Qe, {
+			c && /* @__PURE__ */ Z(nt, {
 				comments: s ?? [],
 				onAddComment: c,
 				participants: d,
@@ -663,43 +666,43 @@ function ln({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, p
 }
 //#endregion
 //#region src/components/doc-editor/AckMode.tsx
-var Z = 4;
-function un({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSectionFocus: a, jumpToIndex: o, onJumpComplete: s, getSectionFragment: c, ydoc: l, provider: u, comments: d, onAddComment: f, onResolveThread: p, onUnresolveThread: m }) {
-	let [h, g] = q(0), _ = Math.max(1, Math.ceil(e.length / Z)), v = h * Z, y = e.slice(v, v + Z);
-	if (W(() => {
-		o != null && o >= 0 && o < e.length && (g(Math.floor(o / Z)), s?.());
+var $ = 4;
+function gn({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSectionFocus: a, jumpToIndex: o, onJumpComplete: s, getSectionFragment: c, ydoc: l, provider: u, comments: d, onAddComment: f, onResolveThread: p, onUnresolveThread: m }) {
+	let [h, g] = Y(0), _ = Math.max(1, Math.ceil(e.length / $)), v = h * $, y = e.slice(v, v + $);
+	if (K(() => {
+		o != null && o >= 0 && o < e.length && (g(Math.floor(o / $)), s?.());
 	}, [
 		o,
 		e.length,
 		s
-	]), W(() => {
+	]), K(() => {
 		y.length > 0 && a && a(y[0].id);
-	}, [v, a]), e.length === 0) return /* @__PURE__ */ Y("div", {
+	}, [v, a]), e.length === 0) return /* @__PURE__ */ Z("div", {
 		className: n("text-center p-12 text-text-secondary text-[15px]"),
 		children: "No sections to review."
 	});
 	let b = () => g((e) => Math.max(0, e - 1)), x = () => g((e) => Math.min(_ - 1, e + 1)), S = v + y.length;
-	return /* @__PURE__ */ X("div", { children: [
-		/* @__PURE__ */ Y(nn, {
+	return /* @__PURE__ */ Q("div", { children: [
+		/* @__PURE__ */ Z(ln, {
 			current: S,
 			total: e.length
 		}),
-		/* @__PURE__ */ Y("div", {
+		/* @__PURE__ */ Z("div", {
 			className: n("flex flex-col gap-4"),
 			children: y.map((e) => {
 				let a = i?.filter((t) => t.currentSectionId === e.id) ?? [];
-				return /* @__PURE__ */ X("div", { children: [a.length > 0 && /* @__PURE__ */ X("div", {
+				return /* @__PURE__ */ Q("div", { children: [a.length > 0 && /* @__PURE__ */ Q("div", {
 					className: n("flex gap-1 mb-1.5 items-center"),
-					children: [/* @__PURE__ */ Y("span", {
+					children: [/* @__PURE__ */ Z("span", {
 						className: n("text-xs text-text-secondary mr-1"),
 						children: "Viewing:"
-					}), a.map((e) => /* @__PURE__ */ Y("div", {
+					}), a.map((e) => /* @__PURE__ */ Z("div", {
 						title: `${e.displayName} (${e.mode})`,
 						className: n("w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-semibold"),
 						style: { background: e.color },
 						children: e.displayName.split(" ").map((e) => e[0]).join("").toUpperCase().slice(0, 2)
 					}, e.clientId))]
-				}), /* @__PURE__ */ Y(ln, {
+				}), /* @__PURE__ */ Z(hn, {
 					section: e,
 					onAckItem: (n, r) => t(e.id, n, r),
 					onRejectItem: (t, n) => r(e.id, t, n),
@@ -714,17 +717,17 @@ function un({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 				})] }, e.id);
 			})
 		}),
-		/* @__PURE__ */ X("div", {
+		/* @__PURE__ */ Q("div", {
 			className: n("flex justify-between items-center mt-4 py-3"),
 			children: [
-				/* @__PURE__ */ Y("button", {
+				/* @__PURE__ */ Z("button", {
 					type: "button",
 					className: n("px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]", h === 0 ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-surface text-text-primary cursor-pointer"),
 					onClick: b,
 					disabled: h === 0,
 					children: "Previous"
 				}),
-				/* @__PURE__ */ X("span", {
+				/* @__PURE__ */ Q("span", {
 					className: n("text-[13px] text-text-secondary"),
 					children: [
 						"Page ",
@@ -736,7 +739,7 @@ function un({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 						" sections)"
 					]
 				}),
-				/* @__PURE__ */ Y("button", {
+				/* @__PURE__ */ Z("button", {
 					type: "button",
 					className: n("px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]", h === _ - 1 ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-surface text-text-primary cursor-pointer"),
 					onClick: x,
@@ -749,10 +752,10 @@ function un({ sections: e, onAckItem: t, onRejectItem: r, participants: i, onSec
 }
 //#endregion
 //#region src/components/doc-editor/ActivityFeed.tsx
-function dn(e) {
+function _n(e) {
 	return e === "doc.ack" ? "✅" : e === "doc.reject" ? "❌" : e === "doc.add_item" || e === "doc.add_section" ? "➕" : e === "doc.edit_section" ? "✏️" : e === "doc.remove_item" ? "➖" : e === "doc.comment" ? "💬" : e.endsWith(".join") ? "🟢" : e.endsWith(".leave") ? "🔴" : e.startsWith("social.") ? "💬" : e === "pipeline.run.started" ? "▶" : e === "pipeline.run.completed" ? "✓" : e === "pipeline.run.failed" ? "✕" : e === "pipeline.approval.requested" ? "✋" : "•";
 }
-function fn(e, t) {
+function vn(e, t) {
 	let n = t.documentTitle ? ` in ${t.documentTitle}` : "";
 	switch (e) {
 		case "doc.ack": return `acknowledged "${t.itemText || "item"}"${n}`;
@@ -772,10 +775,10 @@ function fn(e, t) {
 		default: return t.description ? String(t.description) : e;
 	}
 }
-function pn(e) {
+function yn(e) {
 	return e.split(" ").map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function mn(e) {
+function bn(e) {
 	try {
 		return new Date(e).toLocaleTimeString([], {
 			hour: "2-digit",
@@ -786,7 +789,7 @@ function mn(e) {
 		return "";
 	}
 }
-function hn(e) {
+function xn(e) {
 	switch (e) {
 		case "editor": return "editing";
 		case "reviewer": return "reviewing";
@@ -794,68 +797,68 @@ function hn(e) {
 		default: return "online";
 	}
 }
-function gn({ events: e, participants: t }) {
-	let [r, i] = q(!1);
-	return /* @__PURE__ */ X("div", {
+function Sn({ events: e, participants: t }) {
+	let [r, i] = Y(!1);
+	return /* @__PURE__ */ Q("div", {
 		className: n("bg-surface-panel border border-border rounded-lg overflow-hidden"),
-		children: [/* @__PURE__ */ X("button", {
+		children: [/* @__PURE__ */ Q("button", {
 			type: "button",
 			"aria-expanded": !r,
 			className: n("w-full text-left font-[inherit] flex items-center justify-between px-3 py-2 bg-surface-hover border-b border-border text-[13px] font-semibold text-text-primary cursor-pointer select-none"),
 			onClick: () => i((e) => !e),
-			children: [/* @__PURE__ */ X("span", { children: ["Activity ", e.length > 0 && `(${e.length})`] }), /* @__PURE__ */ Y("span", {
+			children: [/* @__PURE__ */ Q("span", { children: ["Activity ", e.length > 0 && `(${e.length})`] }), /* @__PURE__ */ Z("span", {
 				className: n("text-[11px] font-normal text-text-tertiary"),
 				children: r ? "▶" : "▼"
 			})]
-		}), !r && /* @__PURE__ */ X(J, { children: [t.length > 0 && /* @__PURE__ */ X("div", {
+		}), !r && /* @__PURE__ */ Q(X, { children: [t.length > 0 && /* @__PURE__ */ Q("div", {
 			className: n("flex items-center gap-1.5 px-3 py-1.5 border-b border-border text-[11px] text-neutral flex-wrap"),
-			children: [/* @__PURE__ */ Y("span", {
+			children: [/* @__PURE__ */ Z("span", {
 				className: n("font-semibold"),
 				children: "Active:"
-			}), t.map((e) => /* @__PURE__ */ X("span", {
+			}), t.map((e) => /* @__PURE__ */ Q("span", {
 				className: n("inline-flex items-center gap-1 bg-surface border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-text-primary"),
 				children: [
-					/* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ Z("span", {
 						className: n("w-2 h-2 rounded-full shrink-0"),
 						style: { background: e.color }
 					}),
 					e.displayName,
 					" (",
-					hn(e.mode),
+					xn(e.mode),
 					")"
 				]
 			}, e.clientId))]
-		}), /* @__PURE__ */ Y("div", {
+		}), /* @__PURE__ */ Z("div", {
 			className: n("max-h-[260px] overflow-y-auto py-1"),
-			children: e.length === 0 ? /* @__PURE__ */ Y("div", {
+			children: e.length === 0 ? /* @__PURE__ */ Z("div", {
 				className: n("px-3 py-4 text-center text-text-tertiary text-xs"),
 				children: "No activity yet. Actions like acknowledging tasks will appear here."
-			}) : e.map((e) => /* @__PURE__ */ X("div", {
+			}) : e.map((e) => /* @__PURE__ */ Q("div", {
 				className: n("flex items-start gap-2 px-3 py-1.5 text-xs leading-normal border-b border-border-subtle"),
 				children: [
-					/* @__PURE__ */ Y("div", {
+					/* @__PURE__ */ Z("div", {
 						className: n("w-[22px] h-[22px] rounded-full text-white flex items-center justify-center text-[9px] font-bold shrink-0 mt-px"),
 						style: { background: e.color || "var(--color-text-tertiary)" },
-						children: pn(e.displayName || "Unknown")
+						children: yn(e.displayName || "Unknown")
 					}),
-					/* @__PURE__ */ X("div", { children: [
-						/* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ Q("div", { children: [
+						/* @__PURE__ */ Z("span", {
 							className: n("font-semibold text-text-primary"),
 							children: e.displayName || "Unknown"
 						}),
 						" ",
-						/* @__PURE__ */ X("span", {
+						/* @__PURE__ */ Q("span", {
 							className: n("text-neutral"),
 							children: [
-								dn(e.eventType),
+								_n(e.eventType),
 								" ",
-								fn(e.eventType, e.detail)
+								vn(e.eventType, e.detail)
 							]
 						})
 					] }),
-					/* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ Z("span", {
 						className: n("text-[10px] text-text-tertiary whitespace-nowrap ml-auto pl-2 shrink-0"),
-						children: mn(e.timestamp)
+						children: bn(e.timestamp)
 					})
 				]
 			}, e.id))
@@ -864,115 +867,115 @@ function gn({ events: e, participants: t }) {
 }
 //#endregion
 //#region src/components/doc-editor/ProposalCard.tsx
-var _n = {
+var Cn = {
 	high: "High confidence",
 	medium: "Needs your confirmation",
 	low: "Unplaced"
-}, vn = {
+}, wn = {
 	high: "success",
 	medium: "warning",
 	low: "neutral"
 };
-function yn({ label: e, children: t }) {
-	return /* @__PURE__ */ X("div", {
+function Tn({ label: e, children: t }) {
+	return /* @__PURE__ */ Q("div", {
 		className: "flex gap-2 text-xs",
-		children: [/* @__PURE__ */ Y("span", {
+		children: [/* @__PURE__ */ Z("span", {
 			className: "shrink-0 w-16 text-text-tertiary",
 			children: e
-		}), /* @__PURE__ */ Y("span", {
+		}), /* @__PURE__ */ Z("span", {
 			className: "min-w-0 flex-1 text-text-secondary break-words",
 			children: t
 		})]
 	});
 }
-var bn = {
+var En = {
 	field: "Field change",
 	prose: "Body text"
 };
-function xn({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: s, targetReason: c, before: l, after: d, edits: f, rationale: p, draftError: h, author: _, category: v, path: y, locationHint: x, verdict: S, verdictStatus: C = "idle", verdictError: w, revision: T, onRereview: E, onAccept: D, onReject: ee, onRedraft: O, onReattach: k, onConfirmAttachment: A, className: te, "data-testid": j = "proposal-card" }) {
-	let [M, N] = q(!1), [P, F] = q(null), [ne, I] = q(!1), [L, re] = q(""), R = i === "applied", z = i === "rejected", B = R || z;
-	async function ie() {
-		N(!0), F(null);
+function Dn({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: s, targetReason: c, before: l, after: u, edits: d, rationale: p, draftError: m, author: h, category: g, path: v, locationHint: b, verdict: x, verdictStatus: S = "idle", verdictError: C, revision: w, onRereview: E, onAccept: D, onReject: O, onRedraft: k, onReattach: A, onConfirmAttachment: j, className: M, "data-testid": N = "proposal-card" }) {
+	let [P, F] = Y(!1), [I, L] = Y(null), [ee, R] = Y(!1), [z, te] = Y(""), B = i === "applied", V = i === "rejected", H = B || V;
+	async function ne() {
+		F(!0), L(null);
 		try {
 			let e = await D();
-			F(e);
+			L(e);
 		} catch (e) {
-			F({
+			L({
 				ok: !1,
 				message: e instanceof Error ? e.message : String(e)
 			});
 		} finally {
-			N(!1);
+			F(!1);
 		}
 	}
-	let V = t === "prose" ? f ?? [] : [{
+	let U = t === "prose" ? d ?? [] : [{
 		before: l ?? "",
-		after: d ?? ""
+		after: u ?? ""
 	}];
-	return /* @__PURE__ */ X("div", {
-		"data-testid": j,
+	return /* @__PURE__ */ Q("div", {
+		"data-testid": N,
 		"data-status": i,
 		"data-confidence": a,
-		className: n("flex flex-col gap-3 rounded-lg border bg-surface p-3", R ? "border-success-border" : "border-border", z && "opacity-60", te),
+		className: n("flex flex-col gap-3 rounded-lg border bg-surface p-3", B ? "border-success-border" : "border-border", V && "opacity-60", M),
 		children: [
-			/* @__PURE__ */ X("div", {
+			/* @__PURE__ */ Q("div", {
 				className: "flex flex-wrap items-center gap-2",
 				children: [
-					/* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ Z("span", {
 						className: "text-sm font-semibold leading-tight text-text-primary",
-						"data-testid": `${j}-category`,
-						children: v ?? bn[t]
+						"data-testid": `${N}-category`,
+						children: g ?? En[t]
 					}),
-					_ && /* @__PURE__ */ X("span", {
+					h && /* @__PURE__ */ Q("span", {
 						className: "flex min-w-0 items-center gap-1.5",
-						"data-testid": `${j}-requester`,
-						children: [/* @__PURE__ */ Y(g, {
-							name: _.name,
+						"data-testid": `${N}-requester`,
+						children: [/* @__PURE__ */ Z(y, {
+							name: h.name,
 							size: 18,
-							..._.avatarUrl ? { src: _.avatarUrl } : {}
-						}), /* @__PURE__ */ Y("span", {
+							...h.avatarUrl ? { src: h.avatarUrl } : {}
+						}), /* @__PURE__ */ Z("span", {
 							className: "truncate text-xs text-text-secondary",
-							children: _.name
+							children: h.name
 						})]
 					}),
-					/* @__PURE__ */ Y("span", { className: "flex-1" }),
-					/* @__PURE__ */ Y(u, {
+					/* @__PURE__ */ Z("span", { className: "flex-1" }),
+					/* @__PURE__ */ Z(f, {
 						tone: "info",
 						size: "sm",
 						uppercase: !0,
-						"data-testid": `${j}-author`,
+						"data-testid": `${N}-author`,
 						children: "AI proposal"
 					}),
-					/* @__PURE__ */ Y(u, {
-						tone: vn[a],
+					/* @__PURE__ */ Z(f, {
+						tone: wn[a],
 						size: "sm",
-						children: _n[a]
+						children: Cn[a]
 					}),
-					o === "healed" && /* @__PURE__ */ Y(u, {
+					o === "healed" && /* @__PURE__ */ Z(f, {
 						tone: "caution",
 						size: "sm",
-						"data-testid": `${j}-healed`,
+						"data-testid": `${N}-healed`,
 						children: "Re-found by quote — check this"
 					}),
-					o === "author_only" && /* @__PURE__ */ Y(u, {
+					o === "author_only" && /* @__PURE__ */ Z(f, {
 						tone: "neutral",
 						size: "sm",
 						children: "Only you can see this"
 					}),
-					R && /* @__PURE__ */ Y(u, {
+					B && /* @__PURE__ */ Z(f, {
 						tone: "success",
 						size: "sm",
-						"data-testid": `${j}-applied`,
+						"data-testid": `${N}-applied`,
 						children: "Applied"
 					}),
-					z && /* @__PURE__ */ Y(u, {
+					V && /* @__PURE__ */ Z(f, {
 						tone: "neutral",
 						size: "sm",
 						children: "Rejected"
 					})
 				]
 			}),
-			/* @__PURE__ */ X("blockquote", {
+			/* @__PURE__ */ Q("blockquote", {
 				className: "border-l-2 border-border pl-2 text-sm italic text-text-primary",
 				children: [
 					"“",
@@ -980,142 +983,142 @@ function xn({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					"”"
 				]
 			}),
-			/* @__PURE__ */ Y(be, {
-				path: y ?? (s ? [s] : []),
-				...x ? { hint: x } : {},
-				"data-testid": `${j}-location`
+			/* @__PURE__ */ Z(we, {
+				path: v ?? (s ? [s] : []),
+				...b ? { hint: b } : {},
+				"data-testid": `${N}-location`
 			}),
-			/* @__PURE__ */ X("div", {
+			/* @__PURE__ */ Q("div", {
 				className: "flex flex-col gap-1",
-				children: [c && /* @__PURE__ */ Y(yn, {
+				children: [c && /* @__PURE__ */ Z(Tn, {
 					label: "Why",
 					children: c
-				}), p && /* @__PURE__ */ Y(yn, {
+				}), p && /* @__PURE__ */ Z(Tn, {
 					label: "Rationale",
 					children: p
 				})]
 			}),
-			i === "drafting" && /* @__PURE__ */ Y("div", {
+			i === "drafting" && /* @__PURE__ */ Z("div", {
 				className: "text-xs text-text-tertiary",
-				"data-testid": `${j}-drafting`,
+				"data-testid": `${N}-drafting`,
 				children: "Drafting a proposal…"
 			}),
-			h && /* @__PURE__ */ Y("div", {
+			m && /* @__PURE__ */ Z("div", {
 				className: "rounded border border-warning-border bg-warning-bg px-2 py-1.5 text-xs text-warning-fg",
-				"data-testid": `${j}-draft-error`,
-				children: h
+				"data-testid": `${N}-draft-error`,
+				children: m
 			}),
-			i !== "drafting" && !h && V.length > 0 && /* @__PURE__ */ Y(b, {
-				pairs: V,
-				"data-testid": `${j}-diff`
+			i !== "drafting" && !m && U.length > 0 && /* @__PURE__ */ Z(T, {
+				pairs: U,
+				"data-testid": `${N}-diff`
 			}),
-			i !== "drafting" && /* @__PURE__ */ Y(xe, {
-				verdict: S,
-				status: C,
-				error: w,
-				revision: T,
-				"data-testid": `${j}-verdict`
+			i !== "drafting" && /* @__PURE__ */ Z(Te, {
+				verdict: x,
+				status: S,
+				error: C,
+				revision: w,
+				"data-testid": `${N}-verdict`
 			}),
-			P && !P.ok && /* @__PURE__ */ X("div", {
+			I && !I.ok && /* @__PURE__ */ Q("div", {
 				className: "flex flex-col gap-1 rounded border border-danger-border bg-danger-bg px-2 py-1.5 text-xs text-danger-fg",
-				"data-testid": `${j}-apply-error`,
+				"data-testid": `${N}-apply-error`,
 				children: [
-					/* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ Z("span", {
 						className: "font-semibold",
 						children: "This was not applied."
 					}),
-					/* @__PURE__ */ Y("span", { children: P.message ?? "The document refused the change." }),
-					P.stale && /* @__PURE__ */ X("span", { children: [
+					/* @__PURE__ */ Z("span", { children: I.message ?? "The document refused the change." }),
+					I.stale && /* @__PURE__ */ Q("span", { children: [
 						"Drafted against ",
-						JSON.stringify(P.stale.expected ?? ""),
+						JSON.stringify(I.stale.expected ?? ""),
 						"; the document now reads ",
-						JSON.stringify(P.stale.actual ?? ""),
+						JSON.stringify(I.stale.actual ?? ""),
 						"."
 					] })
 				]
 			}),
-			!B && /* @__PURE__ */ X("div", {
+			!H && /* @__PURE__ */ Q("div", {
 				className: "flex flex-wrap items-center gap-2",
 				children: [
-					/* @__PURE__ */ Y(r, {
+					/* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "primary",
-						disabled: M || i === "drafting" || !!h,
-						onClick: ie,
-						"data-testid": `${j}-accept`,
-						children: M ? "Applying…" : t === "field" ? "Apply change" : "Add as suggestion"
+						disabled: P || i === "drafting" || !!m,
+						onClick: ne,
+						"data-testid": `${N}-accept`,
+						children: P ? "Applying…" : t === "field" ? "Apply change" : "Add as suggestion"
 					}),
-					/* @__PURE__ */ Y(r, {
+					/* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "ghost",
-						disabled: M,
-						onClick: () => I((e) => !e),
-						"data-testid": `${j}-reject`,
+						disabled: P,
+						onClick: () => R((e) => !e),
+						"data-testid": `${N}-reject`,
 						children: "Reject"
 					}),
-					O && /* @__PURE__ */ Y(r, {
+					k && /* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "ghost",
-						disabled: M,
-						onClick: O,
-						"data-testid": `${j}-redraft`,
+						disabled: P,
+						onClick: k,
+						"data-testid": `${N}-redraft`,
 						children: "Re-draft"
 					}),
-					E && /* @__PURE__ */ Y(r, {
+					E && /* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "ghost",
-						disabled: M,
+						disabled: P,
 						onClick: E,
-						"data-testid": `${j}-rereview`,
+						"data-testid": `${N}-rereview`,
 						children: "Re-run review"
 					}),
-					k && /* @__PURE__ */ Y(r, {
+					A && /* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "ghost",
-						disabled: M,
-						onClick: k,
-						"data-testid": `${j}-reattach`,
+						disabled: P,
+						onClick: A,
+						"data-testid": `${N}-reattach`,
 						children: "Move…"
 					}),
-					A && o === "author_only" && /* @__PURE__ */ Y(r, {
+					j && o === "author_only" && /* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "secondary",
-						disabled: M,
-						onClick: A,
-						"data-testid": `${j}-confirm`,
+						disabled: P,
+						onClick: j,
+						"data-testid": `${N}-confirm`,
 						children: "Right place"
 					})
 				]
 			}),
-			ne && !B && /* @__PURE__ */ X("div", {
+			ee && !H && /* @__PURE__ */ Q("div", {
 				className: "flex flex-col gap-1.5",
 				children: [
-					/* @__PURE__ */ Y("label", {
+					/* @__PURE__ */ Z("label", {
 						className: "text-[11px] text-text-tertiary",
-						htmlFor: `${j}-reason`,
+						htmlFor: `${N}-reason`,
 						children: "Why? (optional — helps the next draft)"
 					}),
-					/* @__PURE__ */ Y(m, {
-						id: `${j}-reason`,
+					/* @__PURE__ */ Z(_, {
+						id: `${N}-reason`,
 						size: "sm",
-						value: L,
-						onChange: (e) => re(e.target.value),
-						"data-testid": `${j}-reason`
+						value: z,
+						onChange: (e) => te(e.target.value),
+						"data-testid": `${N}-reason`
 					}),
-					/* @__PURE__ */ X("div", {
+					/* @__PURE__ */ Q("div", {
 						className: "flex gap-2",
-						children: [/* @__PURE__ */ Y(r, {
+						children: [/* @__PURE__ */ Z(r, {
 							size: "sm",
 							variant: "danger",
 							onClick: () => {
-								ee(L), I(!1);
+								O(z), R(!1);
 							},
-							"data-testid": `${j}-reject-confirm`,
+							"data-testid": `${N}-reject-confirm`,
 							children: "Reject proposal"
-						}), /* @__PURE__ */ Y(r, {
+						}), /* @__PURE__ */ Z(r, {
 							size: "sm",
 							variant: "ghost",
-							onClick: () => I(!1),
+							onClick: () => R(!1),
 							children: "Cancel"
 						})]
 					})
@@ -1126,31 +1129,31 @@ function xn({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 }
 //#endregion
 //#region src/components/doc-editor/WorkItemRow.tsx
-function Sn({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason: s, contextSplit: c, drafting: l = !1, draftError: d, candidates: f, sections: p, onPropose: m, onAttach: h, onDismiss: g, className: _, "data-testid": v = `work-item-${e}` }) {
-	let y = [...f ?? []].sort((e, t) => t.score - e.score), b = new Set(y.map((e) => e.sectionId)), S = p.filter((e) => !b.has(e.id));
-	return /* @__PURE__ */ Y(i, {
+function On({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason: s, contextSplit: c, drafting: l = !1, draftError: u, candidates: d, sections: p, onPropose: m, onAttach: h, onDismiss: g, className: _, "data-testid": v = `work-item-${e}` }) {
+	let y = [...d ?? []].sort((e, t) => t.score - e.score), b = new Set(y.map((e) => e.sectionId)), x = p.filter((e) => !b.has(e.id));
+	return /* @__PURE__ */ Z(i, {
 		padding: "sm",
 		className: _,
 		"data-testid": v,
 		"data-item-id": e,
-		children: /* @__PURE__ */ X("div", {
+		children: /* @__PURE__ */ Q("div", {
 			className: "flex flex-col gap-2",
 			children: [
-				/* @__PURE__ */ X("div", {
+				/* @__PURE__ */ Q("div", {
 					className: "flex flex-wrap items-center gap-1.5",
-					children: [/* @__PURE__ */ Y(u, {
+					children: [/* @__PURE__ */ Z(f, {
 						tone: a ? "neutral" : "success",
 						size: "sm",
 						uppercase: !0,
 						children: a ? "Unplaced" : o ?? "Placed"
-					}), c && /* @__PURE__ */ Y(u, {
+					}), c && /* @__PURE__ */ Z(f, {
 						tone: "caution",
 						size: "sm",
 						"data-testid": `${v}-split`,
 						children: "The screen moved while you spoke"
 					})]
 				}),
-				/* @__PURE__ */ X("blockquote", {
+				/* @__PURE__ */ Q("blockquote", {
 					className: "border-l-2 border-border pl-2 text-sm italic text-text-primary",
 					children: [
 						"“",
@@ -1158,25 +1161,25 @@ function Sn({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason:
 						"”"
 					]
 				}),
-				s && /* @__PURE__ */ Y("p", {
+				s && /* @__PURE__ */ Z("p", {
 					className: "text-xs text-text-tertiary",
 					children: s
 				}),
-				d && /* @__PURE__ */ Y("div", {
+				u && /* @__PURE__ */ Z("div", {
 					className: n("rounded border border-warning-border bg-warning-bg", "px-2 py-1.5 text-xs text-warning-fg"),
 					"data-testid": `${v}-draft-error`,
-					children: d
+					children: u
 				}),
-				/* @__PURE__ */ X("div", {
+				/* @__PURE__ */ Q("div", {
 					className: "flex flex-wrap items-center gap-2",
-					children: [/* @__PURE__ */ Y(r, {
+					children: [/* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "primary",
 						disabled: l,
 						onClick: m,
 						"data-testid": `${v}-propose`,
 						children: l ? "Drafting…" : "Draft a change"
-					}), /* @__PURE__ */ Y(r, {
+					}), /* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "ghost",
 						onClick: g,
@@ -1184,12 +1187,12 @@ function Sn({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason:
 						children: "Not useful"
 					})]
 				}),
-				a && y.length > 0 && /* @__PURE__ */ X("div", {
+				a && y.length > 0 && /* @__PURE__ */ Q("div", {
 					className: "flex flex-col gap-1",
-					children: [/* @__PURE__ */ Y("span", {
+					children: [/* @__PURE__ */ Z("span", {
 						className: "text-[11px] uppercase tracking-wide text-text-tertiary",
 						children: "Best guesses"
-					}), y.map((e) => /* @__PURE__ */ X(r, {
+					}), y.map((e) => /* @__PURE__ */ Q(r, {
 						size: "sm",
 						variant: "secondary",
 						onClick: () => h(e.sectionId),
@@ -1201,16 +1204,16 @@ function Sn({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason:
 						]
 					}, e.sectionId))]
 				}),
-				a && S.length > 0 && /* @__PURE__ */ X("label", {
+				a && x.length > 0 && /* @__PURE__ */ Q("label", {
 					className: "flex flex-col gap-1",
-					children: [/* @__PURE__ */ Y("span", {
+					children: [/* @__PURE__ */ Z("span", {
 						className: "text-[11px] uppercase tracking-wide text-text-tertiary",
 						children: "Or file it under"
-					}), /* @__PURE__ */ Y(x, {
+					}), /* @__PURE__ */ Z(E, {
 						size: "sm",
 						value: "",
 						placeholder: "Choose a section…",
-						options: S.map((e) => ({
+						options: x.map((e) => ({
 							value: e.id,
 							label: e.title || e.id
 						})),
@@ -1226,61 +1229,61 @@ function Sn({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: o, reason:
 }
 //#endregion
 //#region src/components/doc-editor/CommentGhostPopover.tsx
-var Cn = "[data-comment-id]", wn = 240;
-function Tn(e) {
+var kn = "[data-comment-id]", An = 240;
+function jn(e) {
 	return typeof CSS < "u" && typeof CSS.escape == "function" ? CSS.escape(e) : e.replace(/["\\]/g, "\\$&");
 }
-function En(e) {
+function Mn(e) {
 	return e <= 0 ? "No replies" : e === 1 ? "1 reply" : `${e} replies`;
 }
-function Dn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: o, onResolve: s, ref: c, "data-testid": l = "comment-ghost" }) {
-	let [d, f] = q(null), p = K(null), m = K(null), h = K(null);
-	h.current = d;
-	let _ = G(() => {
+function Nn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: i = !0, onOpenChange: a, onOpenThread: o, onResolve: s, ref: c, "data-testid": l = "comment-ghost" }) {
+	let [u, d] = Y(null), p = J(null), m = J(null), h = J(null);
+	h.current = u;
+	let g = q(() => {
 		let t = /* @__PURE__ */ new Map();
 		for (let n of e) t.set(n.id, n);
 		return t;
-	}, [e]), v = K(_);
-	v.current = _;
-	let b = U(() => {
+	}, [e]), _ = J(g);
+	_.current = g;
+	let v = G(() => {
 		m.current !== null && (clearTimeout(m.current), m.current = null);
-	}, []), x = U(() => {
-		b(), f(null);
-	}, [b]), S = U((e, n, r) => {
-		if (b(), !v.current.has(e)) return;
-		let i = n ?? t?.current?.querySelector(`[data-comment-id="${Tn(e)}"]`) ?? null;
-		i instanceof HTMLElement && (p.current = i, f({
+	}, []), b = G(() => {
+		v(), d(null);
+	}, [v]), x = G((e, n, r) => {
+		if (v(), !_.current.has(e)) return;
+		let i = n ?? t?.current?.querySelector(`[data-comment-id="${jn(e)}"]`) ?? null;
+		i instanceof HTMLElement && (p.current = i, d({
 			id: e,
 			via: r
 		}));
-	}, [b, t]);
-	Lt(c, () => ({
-		openComment: (e, t) => S(e, t, "click"),
-		close: x
-	}), [S, x]);
-	let C = K(null), w = d?.id ?? null;
-	W(() => {
-		C.current !== w && (C.current = w, a?.(w));
-	}, [w, a]), W(() => b, [b]), W(() => {
+	}, [v, t]);
+	Ht(c, () => ({
+		openComment: (e, t) => x(e, t, "click"),
+		close: b
+	}), [x, b]);
+	let S = J(null), w = u?.id ?? null;
+	K(() => {
+		S.current !== w && (S.current = w, a?.(w));
+	}, [w, a]), K(() => v, [v]), K(() => {
 		let e = t?.current;
 		if (!e) return;
-		let r = (e) => e instanceof Element ? e.closest(Cn) : null, a = (e) => {
+		let r = (e) => e instanceof Element ? e.closest(kn) : null, a = (e) => {
 			let t = r(e.target), n = t?.getAttribute("data-comment-id");
 			if (!(!t || !n)) {
 				if (h.current?.id === n) {
-					x();
+					b();
 					return;
 				}
-				S(n, t, "click");
+				x(n, t, "click");
 			}
 		}, o = (e) => {
 			if (!i) return;
 			let t = r(e.target), a = t?.getAttribute("data-comment-id");
-			!t || !a || (b(), h.current?.id !== a && (m.current = setTimeout(() => S(a, t, "hover"), n)));
+			!t || !a || (v(), h.current?.id !== a && (m.current = setTimeout(() => x(a, t, "hover"), n)));
 		}, s = (e) => {
-			i && r(e.target) && (b(), m.current = setTimeout(() => {
-				h.current?.via === "hover" && x();
-			}, wn));
+			i && r(e.target) && (v(), m.current = setTimeout(() => {
+				h.current?.via === "hover" && b();
+			}, An));
 		};
 		return e.addEventListener("click", a), e.addEventListener("mouseover", o), e.addEventListener("mouseout", s), () => {
 			e.removeEventListener("click", a), e.removeEventListener("mouseover", o), e.removeEventListener("mouseout", s);
@@ -1289,78 +1292,78 @@ function Dn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		t,
 		i,
 		n,
-		S,
 		x,
-		b
+		b,
+		v
 	]);
-	let T = w ? _.get(w) ?? null : null, E = (e) => () => {
-		T && (e?.(T.id), x());
+	let T = w ? g.get(w) ?? null : null, E = (e) => () => {
+		T && (e?.(T.id), b());
 	};
-	return /* @__PURE__ */ Y(y, {
+	return /* @__PURE__ */ Z(C, {
 		trigger: p,
 		open: !!T,
-		onClose: x,
+		onClose: b,
 		placement: "bottom-start",
 		className: "w-72 p-0",
 		"aria-label": T ? `Comment by ${T.author}` : void 0,
 		"data-testid": l,
-		children: T && /* @__PURE__ */ X("div", {
+		children: T && /* @__PURE__ */ Q("div", {
 			"data-testid": `${l}-card`,
 			"data-comment-id": T.id,
 			className: "flex flex-col gap-2 p-3",
-			onMouseEnter: b,
+			onMouseEnter: v,
 			onMouseLeave: () => {
-				b(), m.current = setTimeout(() => {
-					h.current?.via === "hover" && x();
-				}, wn);
+				v(), m.current = setTimeout(() => {
+					h.current?.via === "hover" && b();
+				}, An);
 			},
 			children: [
-				/* @__PURE__ */ X("div", {
+				/* @__PURE__ */ Q("div", {
 					className: "flex items-center gap-2",
 					children: [
-						/* @__PURE__ */ Y(g, {
+						/* @__PURE__ */ Z(y, {
 							name: T.author,
 							size: 20,
 							color: T.color
 						}),
-						/* @__PURE__ */ Y("span", {
+						/* @__PURE__ */ Z("span", {
 							className: "truncate text-[13px] font-semibold text-text-primary",
 							children: T.author
 						}),
-						T.timestamp && /* @__PURE__ */ Y("span", {
+						T.timestamp && /* @__PURE__ */ Z("span", {
 							className: "text-[11px] text-text-tertiary",
-							children: Je(T.timestamp)
+							children: Qe(T.timestamp)
 						}),
-						T.resolved && /* @__PURE__ */ Y(u, {
+						T.resolved && /* @__PURE__ */ Z(f, {
 							tone: "success",
 							size: "xs",
 							children: "Resolved"
 						})
 					]
 				}),
-				T.quote && /* @__PURE__ */ Y("div", {
+				T.quote && /* @__PURE__ */ Z("div", {
 					className: "border-l-2 border-border pl-2 text-[11px] italic text-text-tertiary line-clamp-2",
 					children: T.quote
 				}),
-				/* @__PURE__ */ Y("div", {
+				/* @__PURE__ */ Z("div", {
 					className: "whitespace-pre-wrap text-[13px] leading-snug text-text-primary line-clamp-4",
 					children: T.text
 				}),
-				/* @__PURE__ */ X("div", {
+				/* @__PURE__ */ Q("div", {
 					className: "flex items-center justify-between gap-2",
-					children: [/* @__PURE__ */ Y("span", {
+					children: [/* @__PURE__ */ Z("span", {
 						"data-testid": `${l}-replies`,
 						className: "text-[11px] text-text-tertiary",
-						children: En(T.replyCount ?? 0)
-					}), /* @__PURE__ */ X("span", {
+						children: Mn(T.replyCount ?? 0)
+					}), /* @__PURE__ */ Q("span", {
 						className: "flex gap-1.5",
-						children: [o && /* @__PURE__ */ Y(r, {
+						children: [o && /* @__PURE__ */ Z(r, {
 							size: "sm",
 							variant: "ghost",
 							onClick: E(o),
 							"data-testid": `${l}-open`,
 							children: "Open thread"
-						}), s && !T.resolved && /* @__PURE__ */ Y(r, {
+						}), s && !T.resolved && /* @__PURE__ */ Z(r, {
 							size: "sm",
 							variant: "ghost",
 							onClick: E(s),
@@ -1375,34 +1378,34 @@ function Dn({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 }
 //#endregion
 //#region src/components/doc-editor/VideoDockSlot.tsx
-function On() {
-	return /* @__PURE__ */ X("svg", {
+function Pn() {
+	return /* @__PURE__ */ Q("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-4 w-4",
 		fill: "none",
 		stroke: "currentColor",
 		strokeWidth: "1.5",
 		"aria-hidden": "true",
-		children: [/* @__PURE__ */ Y("path", {
+		children: [/* @__PURE__ */ Z("path", {
 			d: "M6.5 2.75H3A1.25 1.25 0 0 0 1.75 4v8A1.25 1.25 0 0 0 3 13.25h8A1.25 1.25 0 0 0 12.25 12V8.5",
 			strokeLinecap: "round"
-		}), /* @__PURE__ */ Y("path", {
+		}), /* @__PURE__ */ Z("path", {
 			d: "M9.5 1.75h4.75V6.5M14 2 7.75 8.25",
 			strokeLinecap: "round",
 			strokeLinejoin: "round"
 		})]
 	});
 }
-function kn({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: o = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, onDragOver: l, onDragLeave: u, onDrop: d, className: f, children: p, "data-testid": m = "video-dock-slot" }) {
-	let [h, g] = q(!1), _ = U((e) => {
+function Fn({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: o = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, onDragOver: l, onDragLeave: u, onDrop: d, className: f, children: p, "data-testid": m = "video-dock-slot" }) {
+	let [h, g] = Y(!1), _ = G((e) => {
 		e.preventDefault(), t && g(!0), l?.(e);
-	}, [t, l]), v = U((e) => {
+	}, [t, l]), v = G((e) => {
 		let t = e.relatedTarget;
 		t instanceof Node && e.currentTarget.contains(t) || (g(!1), u?.(e));
-	}, [u]), y = U((e) => {
+	}, [u]), y = G((e) => {
 		e.preventDefault(), g(!1), t && d?.(e);
 	}, [t, d]);
-	return !e && !t ? null : /* @__PURE__ */ Y("div", {
+	return !e && !t ? null : /* @__PURE__ */ Z("div", {
 		"data-testid": m,
 		"data-docked": String(e),
 		"data-drag-over": String(h),
@@ -1411,29 +1414,29 @@ function kn({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 		onDragLeave: v,
 		onDrop: y,
 		className: n("w-full overflow-hidden rounded-lg border transition-colors duration-150", "bg-surface", h ? "border-primary" : "border-border", "data-[pointer-over=true]:border-primary", f),
-		children: e ? /* @__PURE__ */ X("div", {
+		children: e ? /* @__PURE__ */ Q("div", {
 			"data-testid": `${m}-content`,
 			className: "relative w-full",
-			children: [p, c && /* @__PURE__ */ Y("div", {
+			children: [p, c && /* @__PURE__ */ Z("div", {
 				className: "absolute right-1 top-1 z-10 rounded bg-black/45 backdrop-blur-sm",
-				children: /* @__PURE__ */ Y(a, {
+				children: /* @__PURE__ */ Z(a, {
 					"aria-label": s,
 					size: "sm",
 					onClick: c,
 					"data-testid": `${m}-undock`,
-					icon: /* @__PURE__ */ Y(On, {}),
+					icon: /* @__PURE__ */ Z(Pn, {}),
 					className: "text-white hover:bg-white/20"
 				})
 			})]
-		}) : /* @__PURE__ */ X("div", {
+		}) : /* @__PURE__ */ Q("div", {
 			role: "region",
 			"aria-label": i,
 			"data-testid": `${m}-dropzone`,
 			className: n("flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", h ? "border-primary bg-surface-hover" : "border-border"),
-			children: [/* @__PURE__ */ Y("span", {
+			children: [/* @__PURE__ */ Z("span", {
 				className: "text-xs font-medium text-text-secondary",
 				children: i
-			}), /* @__PURE__ */ Y("span", {
+			}), /* @__PURE__ */ Z("span", {
 				className: "text-xs text-text-tertiary",
 				children: o
 			})]
@@ -1442,25 +1445,25 @@ function kn({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 }
 //#endregion
 //#region src/components/doc-editor/FloatingDockBar.tsx
-function An({ docked: e, ghost: t = !1, dockId: r, ghostLabel: i = "Drop the call here", label: a = "Call, along the bottom of the page", bottomOffset: o = 16, className: s, children: c, "data-testid": l = "floating-dock-bar" }) {
-	return !e && t && r ? /* @__PURE__ */ Y("div", {
+function In({ docked: e, ghost: t = !1, dockId: r, ghostLabel: i = "Drop the call here", label: a = "Call, along the bottom of the page", bottomOffset: o = 16, className: s, children: c, "data-testid": l = "floating-dock-bar" }) {
+	return !e && t && r ? /* @__PURE__ */ Z("div", {
 		className: n("pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4", s),
 		style: { bottom: o },
 		"data-testid": `${l}-ghost`,
-		children: /* @__PURE__ */ Y("div", {
+		children: /* @__PURE__ */ Z("div", {
 			className: n("pointer-events-auto flex h-28 w-full max-w-3xl items-center justify-center rounded-2xl border-2 border-dashed", "border-primary/40 bg-primary/5 text-sm font-medium text-text-secondary backdrop-blur-[2px] transition-colors duration-150", "data-[pointer-over=true]:border-primary data-[pointer-over=true]:bg-primary/15 data-[pointer-over=true]:text-text-primary"),
 			"data-call-dock-target": r,
 			role: "region",
 			"aria-label": i,
 			children: i
 		})
-	}) : e ? /* @__PURE__ */ Y("div", {
+	}) : e ? /* @__PURE__ */ Z("div", {
 		className: n("pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4", s),
 		style: { bottom: o },
 		role: "region",
 		"aria-label": a,
 		"data-testid": l,
-		children: /* @__PURE__ */ Y("div", {
+		children: /* @__PURE__ */ Z("div", {
 			className: "pointer-events-auto flex max-w-full justify-center",
 			"data-testid": `${l}-body`,
 			children: c
@@ -1469,83 +1472,83 @@ function An({ docked: e, ghost: t = !1, dockId: r, ghostLabel: i = "Drop the cal
 }
 //#endregion
 //#region src/components/doc-editor/DocumentShareDialog.tsx
-var jn = [
+var Ln = [
 	"owner",
 	"editor",
 	"commenter",
 	"viewer"
-], Mn = {
+], Rn = {
 	restricted: () => "Restricted — only people added here",
 	"org-view": (e) => `Anyone at ${e} can view`,
 	"org-edit": (e) => `Anyone at ${e} can edit`,
 	"link-view": () => "Anyone with the link can view"
 };
-function Nn({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: c, onInvite: l, onCopyLink: u, notice: f, "data-testid": p = "document-share-dialog" }) {
-	let [m, h] = q(""), _ = () => {
+function zn({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: c, onInvite: l, onCopyLink: u, notice: d, "data-testid": f = "document-share-dialog" }) {
+	let [m, h] = Y(""), g = () => {
 		let e = m.trim();
 		!e || !l || (l(e), h(""));
 	};
-	return /* @__PURE__ */ Y(d, {
+	return /* @__PURE__ */ Z(p, {
 		open: e,
 		onClose: t,
 		title: n ? `Share “${n}”` : "Share",
 		maxWidth: 460,
-		children: /* @__PURE__ */ X("div", {
+		children: /* @__PURE__ */ Q("div", {
 			className: "flex flex-col gap-4",
-			"data-testid": p,
+			"data-testid": f,
 			children: [
-				l && /* @__PURE__ */ X("div", {
+				l && /* @__PURE__ */ Q("div", {
 					className: "flex gap-2",
-					children: [/* @__PURE__ */ Y("input", {
+					children: [/* @__PURE__ */ Z("input", {
 						value: m,
 						onChange: (e) => h(e.target.value),
 						onKeyDown: (e) => {
-							e.key === "Enter" && _();
+							e.key === "Enter" && g();
 						},
 						placeholder: "Add people by name or email",
 						"aria-label": "Add people",
-						"data-testid": `${p}-invite-input`,
+						"data-testid": `${f}-invite-input`,
 						className: "min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary"
-					}), /* @__PURE__ */ Y(r, {
+					}), /* @__PURE__ */ Z(r, {
 						size: "sm",
-						onClick: _,
+						onClick: g,
 						disabled: !m.trim(),
-						"data-testid": `${p}-invite`,
+						"data-testid": `${f}-invite`,
 						children: "Invite"
 					})]
 				}),
-				f && /* @__PURE__ */ Y("p", {
+				d && /* @__PURE__ */ Z("p", {
 					className: "m-0 rounded border border-border-emphasis bg-surface-inset px-2.5 py-1.5 text-xs leading-snug text-text-secondary",
-					"data-testid": `${p}-notice`,
-					children: f
+					"data-testid": `${f}-notice`,
+					children: d
 				}),
-				/* @__PURE__ */ Y("div", {
+				/* @__PURE__ */ Z("div", {
 					className: "flex flex-col gap-1",
-					"data-testid": `${p}-people`,
-					children: i.map((e) => /* @__PURE__ */ X("div", {
+					"data-testid": `${f}-people`,
+					children: i.map((e) => /* @__PURE__ */ Q("div", {
 						className: "flex items-center gap-2",
-						"data-testid": `${p}-person`,
+						"data-testid": `${f}-person`,
 						children: [
-							/* @__PURE__ */ Y(g, {
+							/* @__PURE__ */ Z(y, {
 								name: e.displayName,
 								size: 26,
 								...e.avatarUrl ? { src: e.avatarUrl } : {}
 							}),
-							/* @__PURE__ */ Y("span", {
+							/* @__PURE__ */ Z("span", {
 								className: "min-w-0 flex-1 truncate text-sm text-text-primary",
 								children: e.displayName
 							}),
-							e.role === "owner" || !c ? /* @__PURE__ */ Y("span", {
+							e.role === "owner" || !c ? /* @__PURE__ */ Z("span", {
 								className: "text-xs text-text-tertiary",
-								"data-testid": `${p}-role-static`,
+								"data-testid": `${f}-role-static`,
 								children: e.role === "owner" ? "Owner" : e.role
-							}) : /* @__PURE__ */ Y("select", {
+							}) : /* @__PURE__ */ Z("select", {
 								value: e.role,
 								onChange: (t) => c(e.userId, t.target.value),
 								"aria-label": `Access for ${e.displayName}`,
-								"data-testid": `${p}-role`,
+								"data-testid": `${f}-role`,
 								className: "rounded border border-border bg-surface px-1 py-0.5 text-xs text-text-secondary",
-								children: jn.filter((e) => e !== "owner").map((e) => /* @__PURE__ */ Y("option", {
+								children: Ln.filter((e) => e !== "owner").map((e) => /* @__PURE__ */ Z("option", {
 									value: e,
 									children: e
 								}, e))
@@ -1553,36 +1556,36 @@ function Nn({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						]
 					}, e.userId))
 				}),
-				/* @__PURE__ */ X("div", {
+				/* @__PURE__ */ Q("div", {
 					className: "flex flex-col gap-1.5 border-t border-border pt-3",
-					children: [/* @__PURE__ */ Y("span", {
+					children: [/* @__PURE__ */ Z("span", {
 						className: "text-xs font-medium text-text-secondary",
 						children: "General access"
-					}), /* @__PURE__ */ Y("select", {
+					}), /* @__PURE__ */ Z("select", {
 						value: a,
 						onChange: (e) => s?.(e.target.value),
 						disabled: !s,
 						"aria-label": "General access",
-						"data-testid": `${p}-general-access`,
+						"data-testid": `${f}-general-access`,
 						className: "rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary disabled:opacity-60",
-						children: Object.keys(Mn).map((e) => /* @__PURE__ */ Y("option", {
+						children: Object.keys(Rn).map((e) => /* @__PURE__ */ Z("option", {
 							value: e,
-							children: Mn[e](o)
+							children: Rn[e](o)
 						}, e))
 					})]
 				}),
-				/* @__PURE__ */ X("div", {
+				/* @__PURE__ */ Q("div", {
 					className: "flex items-center justify-between",
-					children: [u ? /* @__PURE__ */ Y(r, {
+					children: [u ? /* @__PURE__ */ Z(r, {
 						variant: "secondary",
 						size: "sm",
 						onClick: u,
-						"data-testid": `${p}-copy-link`,
+						"data-testid": `${f}-copy-link`,
 						children: "Copy link"
-					}) : /* @__PURE__ */ Y("span", {}), /* @__PURE__ */ Y(r, {
+					}) : /* @__PURE__ */ Z("span", {}), /* @__PURE__ */ Z(r, {
 						size: "sm",
 						onClick: t,
-						"data-testid": `${p}-done`,
+						"data-testid": `${f}-done`,
 						children: "Done"
 					})]
 				})
@@ -1592,7 +1595,7 @@ function Nn({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionModeControl.tsx
-var Q = [
+var Bn = [
 	{
 		value: "editing",
 		label: "Editing",
@@ -1609,17 +1612,17 @@ var Q = [
 		hint: "Read the document without changing it."
 	}
 ];
-function Pn({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: a = !1, className: o, "data-testid": s = "suggestion-mode-control" }) {
-	let c = Q.filter((e) => r || e.value !== "viewing").map((e) => ({
+function Vn({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: a = !1, className: o, "data-testid": s = "suggestion-mode-control" }) {
+	let c = Bn.filter((e) => r || e.value !== "viewing").map((e) => ({
 		label: e.label,
 		value: e.value
-	})), l = Q.find((t) => t.value === e);
-	return /* @__PURE__ */ X("div", {
+	})), l = Bn.find((t) => t.value === e);
+	return /* @__PURE__ */ Q("div", {
 		"data-testid": s,
 		"data-mode": e,
 		title: l?.hint,
 		className: n("inline-flex items-center gap-2", a && "pointer-events-none opacity-50", o),
-		children: [/* @__PURE__ */ Y(p, {
+		children: [/* @__PURE__ */ Z(h, {
 			options: c,
 			value: e,
 			size: "sm",
@@ -1628,7 +1631,7 @@ function Pn({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 				let r = n;
 				r !== e && t(r);
 			}
-		}), i !== null && i > 0 && /* @__PURE__ */ Y("span", {
+		}), i !== null && i > 0 && /* @__PURE__ */ Z("span", {
 			"data-testid": `${s}-count`,
 			className: "rounded-full bg-surface-inset px-2 py-0.5 text-xs tabular-nums text-text-secondary",
 			children: i === 1 ? "1 suggestion" : `${i} suggestions`
@@ -1637,19 +1640,19 @@ function Pn({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionCard.tsx
-var Fn = {
+var Hn = {
 	insert: "Added",
 	delete: "Removed",
 	replace: "Replaced",
 	modify: "Formatted"
-}, In = {
+}, Un = {
 	insert: "text-success-fg",
 	delete: "text-danger-fg",
 	replace: "text-caution-fg",
 	modify: "text-info-fg"
-}, $ = 6, Ln = /^(.*\S)\s*\(powered by\s+([^()]+)\)$/;
-function Rn(e) {
-	let t = Ln.exec(e);
+}, Wn = 6, Gn = /^(.*\S)\s*\(powered by\s+([^()]+)\)$/;
+function Kn(e) {
+	let t = Gn.exec(e);
 	if (!t) return { person: e };
 	let n = t[1].trim(), r = t[2].trim();
 	return n && r ? {
@@ -1657,99 +1660,99 @@ function Rn(e) {
 		model: r
 	} : { person: e };
 }
-function zn(e) {
+function qn(e) {
 	return new Date(e).toLocaleTimeString([], {
 		hour: "numeric",
 		minute: "2-digit"
 	});
 }
-function Bn({ lines: e, tone: t, testId: r }) {
-	let i = e.slice(0, $), a = t === "insert" ? "ins" : "del";
-	return /* @__PURE__ */ X("div", {
+function Jn({ lines: e, tone: t, testId: r }) {
+	let i = e.slice(0, Wn), a = t === "insert" ? "ins" : "del";
+	return /* @__PURE__ */ Q("div", {
 		className: n("flex flex-col gap-1 border-l-2 pl-2.5", t === "insert" ? "border-success-fg" : "border-danger-fg"),
 		"data-testid": r,
-		children: [i.map((e, r) => /* @__PURE__ */ Y(a, {
+		children: [i.map((e, r) => /* @__PURE__ */ Z(a, {
 			className: n("block whitespace-pre-line text-[13px] leading-relaxed no-underline", t === "insert" ? "text-text-primary" : "text-text-secondary line-through"),
 			children: e
-		}, r)), e.length > $ && /* @__PURE__ */ X("span", {
+		}, r)), e.length > Wn && /* @__PURE__ */ Q("span", {
 			className: "text-xs text-text-tertiary",
 			children: [
 				"and ",
-				e.length - $,
+				e.length - Wn,
 				" more"
 			]
 		})]
 	});
 }
-function Vn({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: f, onReject: p, className: m, "data-testid": h = "suggestion-card" }) {
-	let { person: _, model: v } = Rn(t.trim() === "" ? "Unknown author" : t.trim()), y = c && c.length > 0 ? c : s ? [s] : [], b = l && l.length > 0 ? l : o ? [o] : [], x = y.length > 0 || b.length > 0;
-	return /* @__PURE__ */ X("div", {
+function Yn({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: f, onReject: p, className: m, "data-testid": h = "suggestion-card" }) {
+	let { person: g, model: _ } = Kn(t.trim() === "" ? "Unknown author" : t.trim()), v = c && c.length > 0 ? c : s ? [s] : [], b = l && l.length > 0 ? l : o ? [o] : [], x = v.length > 0 || b.length > 0;
+	return /* @__PURE__ */ Q("div", {
 		"data-testid": h,
 		"data-kind": e,
 		"data-active": u ? "true" : "false",
 		className: n("flex flex-col gap-2.5 border-b border-border px-4 py-3 text-sm last:border-b-0", u && "bg-surface-inset", m),
 		children: [
-			/* @__PURE__ */ X("div", {
+			/* @__PURE__ */ Q("div", {
 				className: "flex items-center gap-2",
 				children: [
-					/* @__PURE__ */ Y(g, {
-						name: _,
+					/* @__PURE__ */ Z(y, {
+						name: g,
 						size: 20
 					}),
-					/* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ Z("span", {
 						className: "min-w-0 truncate text-[13px] font-medium text-text-primary",
-						title: _,
+						title: g,
 						"data-testid": `${h}-author`,
-						children: _
+						children: g
 					}),
-					i !== null && /* @__PURE__ */ Y("span", {
+					i !== null && /* @__PURE__ */ Z("span", {
 						className: "shrink-0 text-xs tabular-nums text-text-tertiary",
-						children: zn(i)
+						children: qn(i)
 					}),
-					/* @__PURE__ */ Y("span", {
-						className: n("ml-auto shrink-0 text-[11px] font-medium", In[e]),
+					/* @__PURE__ */ Z("span", {
+						className: n("ml-auto shrink-0 text-[11px] font-medium", Un[e]),
 						"data-testid": `${h}-kind`,
-						children: Fn[e]
+						children: Hn[e]
 					})
 				]
 			}),
-			(v || a) && /* @__PURE__ */ X("div", {
+			(_ || a) && /* @__PURE__ */ Q("div", {
 				className: "flex flex-wrap items-center gap-x-1.5 text-xs text-text-tertiary",
 				children: [
-					v && /* @__PURE__ */ X("span", {
+					_ && /* @__PURE__ */ Q("span", {
 						"data-testid": `${h}-model`,
-						children: ["powered by ", v]
+						children: ["powered by ", _]
 					}),
-					v && a && /* @__PURE__ */ Y("span", {
+					_ && a && /* @__PURE__ */ Z("span", {
 						"aria-hidden": "true",
 						children: "·"
 					}),
-					a && /* @__PURE__ */ X("span", {
+					a && /* @__PURE__ */ Q("span", {
 						"data-testid": `${h}-context`,
 						children: ["in ", a]
 					})
 				]
 			}),
-			x && /* @__PURE__ */ X("button", {
+			x && /* @__PURE__ */ Q("button", {
 				type: "button",
 				onClick: d,
 				disabled: !d,
 				"data-testid": `${h}-body`,
 				className: n("flex w-full flex-col items-stretch gap-1 border-none bg-transparent p-0 text-left font-[inherit]", d && "cursor-pointer hover:opacity-80"),
-				children: [b.length > 0 && /* @__PURE__ */ Y(Bn, {
+				children: [b.length > 0 && /* @__PURE__ */ Z(Jn, {
 					lines: b,
 					tone: "delete",
 					testId: `${h}-deleted`
-				}), y.length > 0 && /* @__PURE__ */ Y(Bn, {
-					lines: y,
+				}), v.length > 0 && /* @__PURE__ */ Z(Jn, {
+					lines: v,
 					tone: "insert",
 					testId: `${h}-inserted`
 				})]
 			}),
-			(d || f || p) && /* @__PURE__ */ X("div", {
+			(d || f || p) && /* @__PURE__ */ Q("div", {
 				className: "flex items-center justify-end gap-1.5",
 				children: [
-					d && /* @__PURE__ */ Y(r, {
+					d && /* @__PURE__ */ Z(r, {
 						variant: "ghost",
 						size: "sm",
 						onClick: d,
@@ -1757,14 +1760,14 @@ function Vn({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 						className: "mr-auto",
 						children: "Show"
 					}),
-					p && /* @__PURE__ */ Y(r, {
+					p && /* @__PURE__ */ Z(r, {
 						variant: "ghost",
 						size: "sm",
 						onClick: p,
 						"data-testid": `${h}-reject`,
 						children: "Reject"
 					}),
-					f && /* @__PURE__ */ Y(r, {
+					f && /* @__PURE__ */ Z(r, {
 						variant: "primary",
 						size: "sm",
 						onClick: f,
@@ -1778,19 +1781,19 @@ function Vn({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionReviewList.tsx
-function Hn({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = null, headerExtra: c, emptyTitle: d = "No suggestions", emptyBody: p = "Proposed changes to this document show up here for review.", title: m = "Suggestions", variant: h = "card", className: g, "data-testid": _ = "suggestion-review-list" }) {
-	let y = e > 0 && (a || o), b = y || c ? /* @__PURE__ */ X("span", {
+function Xn({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = null, headerExtra: c, emptyTitle: l = "No suggestions", emptyBody: u = "Proposed changes to this document show up here for review.", title: p = "Suggestions", variant: h = "card", className: g, "data-testid": _ = "suggestion-review-list" }) {
+	let v = e > 0 && (a || o), y = v || c ? /* @__PURE__ */ Q("span", {
 		className: "flex items-center gap-1.5",
 		children: [
 			c,
-			y && o && /* @__PURE__ */ Y(r, {
+			v && o && /* @__PURE__ */ Z(r, {
 				variant: "ghost",
 				size: "sm",
 				onClick: o,
 				"data-testid": `${_}-reject-all`,
 				children: "Reject all"
 			}),
-			y && a && /* @__PURE__ */ Y(r, {
+			v && a && /* @__PURE__ */ Z(r, {
 				variant: "secondary",
 				size: "sm",
 				onClick: a,
@@ -1798,67 +1801,67 @@ function Hn({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = 
 				children: "Accept all"
 			})
 		]
-	}) : void 0, x = /* @__PURE__ */ X(J, { children: [s && /* @__PURE__ */ Y("div", {
+	}) : void 0, b = /* @__PURE__ */ Q(X, { children: [s && /* @__PURE__ */ Z("div", {
 		className: n("pt-2", h === "card" && "px-3"),
-		children: /* @__PURE__ */ Y(l, {
+		children: /* @__PURE__ */ Z(d, {
 			variant: "error",
 			layout: "stacked",
 			"data-testid": `${_}-error`,
 			children: s
 		})
-	}), e === 0 ? /* @__PURE__ */ Y(f, {
+	}), e === 0 ? /* @__PURE__ */ Z(m, {
 		size: "sm",
-		title: d,
-		body: p,
+		title: l,
+		body: u,
 		testId: `${_}-empty`
-	}) : /* @__PURE__ */ Y("ul", {
+	}) : /* @__PURE__ */ Z("ul", {
 		className: "m-0 list-none p-0",
 		"data-testid": `${_}-list`,
 		children: t
 	})] });
-	return h === "pane" ? /* @__PURE__ */ X("div", {
+	return h === "pane" ? /* @__PURE__ */ Q("div", {
 		className: n("flex min-h-0 flex-1 flex-col", g),
 		"data-testid": _,
 		"data-variant": "pane",
-		children: [/* @__PURE__ */ X("div", {
+		children: [/* @__PURE__ */ Q("div", {
 			className: "flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-1.5",
-			children: [/* @__PURE__ */ Y("span", {
+			children: [/* @__PURE__ */ Z("span", {
 				className: "text-xs text-tertiary",
 				"data-testid": `${_}-count`,
 				children: e === 0 ? "None open" : e === 1 ? "1 open" : `${e} open`
-			}), b]
-		}), /* @__PURE__ */ Y("div", {
+			}), y]
+		}), /* @__PURE__ */ Z("div", {
 			className: "min-h-0 flex-1 overflow-y-auto px-3",
-			children: x
+			children: b
 		})]
-	}) : /* @__PURE__ */ X(i, {
+	}) : /* @__PURE__ */ Q(i, {
 		padding: "none",
 		className: n("overflow-hidden", g),
 		"data-testid": _,
-		children: [/* @__PURE__ */ Y(v, {
-			title: m,
-			meta: /* @__PURE__ */ Y(u, {
+		children: [/* @__PURE__ */ Z(x, {
+			title: p,
+			meta: /* @__PURE__ */ Z(f, {
 				tone: "neutral",
 				size: "xs",
 				mono: !0,
 				children: String(e)
 			}),
-			action: b
-		}), x]
+			action: y
+		}), b]
 	});
 }
 //#endregion
 //#region src/components/doc-editor/AuthenticatedDocumentImage.tsx
-var Un = (e) => e.startsWith("/api/uploads/"), Wn = Ft(null);
-function Gn({ children: e, ...t }) {
-	return /* @__PURE__ */ Y(Wn.Provider, {
+var Zn = (e) => e.startsWith("/api/uploads/"), Qn = zt(null);
+function $n({ children: e, ...t }) {
+	return /* @__PURE__ */ Z(Qn.Provider, {
 		value: t,
 		children: e
 	});
 }
-function Kn({ node: e, selected: t }) {
-	let n = e.attrs.src ?? "", r = e.attrs.alt ?? "", i = e.attrs.title ?? "", a = It(Wn), o = a?.loadImage, s = a?.requiresAuthentication ?? Un, [c, l] = q(null), u = s(n), d = c?.src === n && c.loader === o ? c : null, f = u ? d?.url : n, p = u && !!d?.failed;
-	return W(() => {
+function er({ node: e, selected: t }) {
+	let n = e.attrs.src ?? "", r = e.attrs.alt ?? "", i = e.attrs.title ?? "", a = Bt(Qn), o = a?.loadImage, s = a?.requiresAuthentication ?? Zn, [c, l] = Y(null), u = s(n), d = c?.src === n && c.loader === o ? c : null, f = u ? d?.url : n, p = u && !!d?.failed;
+	return K(() => {
 		if (!n || !u) return;
 		let e = new AbortController(), t = null;
 		return l(null), (async () => {
@@ -1887,193 +1890,193 @@ function Kn({ node: e, selected: t }) {
 		n,
 		u,
 		o
-	]), /* @__PURE__ */ Y(zt, {
+	]), /* @__PURE__ */ Z(Gt, {
 		as: "div",
 		"data-testid": "canvas-document-image",
 		"data-image-state": p ? "failed" : f ? "ready" : "loading",
-		children: f && !p ? /* @__PURE__ */ Y("img", {
+		children: f && !p ? /* @__PURE__ */ Z("img", {
 			src: f,
 			alt: r,
 			...i ? { title: i } : {},
 			className: t ? "ProseMirror-selectednode" : void 0,
 			draggable: !1
-		}) : /* @__PURE__ */ Y("span", {
+		}) : /* @__PURE__ */ Z("span", {
 			className: p ? "text-sm italic text-danger-fg" : "text-sm italic text-text-tertiary",
 			"data-testid": "canvas-document-image-fallback",
 			children: p ? `Could not load ${r || "image"}` : "Loading image…"
 		})
 	});
 }
-function qn(e) {
+function tr(e) {
 	return e.configure({
 		inline: !1,
 		allowBase64: !1
 	}).extend({ addNodeView() {
-		return Bt(Kn);
+		return Kt(er);
 	} });
 }
 //#endregion
 //#region src/components/doc-editor/DocumentReviewPanel.tsx
-function Jn({ request: e, onDecide: t, onWithdraw: n }) {
-	let [i, a] = q(""), [l, d] = q(!1), [f, p] = q(null), m = K(!1);
-	async function g(e) {
+function nr({ request: e, onDecide: t, onWithdraw: n }) {
+	let [i, a] = Y(""), [l, u] = Y(!1), [d, p] = Y(null), m = J(!1);
+	async function h(e) {
 		if (!m.current) {
-			m.current = !0, d(!0), p(null);
+			m.current = !0, u(!0), p(null);
 			try {
 				await e(), a("");
 			} catch (e) {
 				p(e instanceof Error ? e.message : "The review could not be updated.");
 			} finally {
-				m.current = !1, d(!1);
+				m.current = !1, u(!1);
 			}
 		}
 	}
-	let v = e.reviewerName || e.reviewerId, y = e.state.replace(/_/g, " ");
-	return /* @__PURE__ */ Y(A, {
-		"aria-label": `Review by ${v}`,
+	let g = e.reviewerName || e.reviewerId, _ = e.state.replace(/_/g, " ");
+	return /* @__PURE__ */ Z(I, {
+		"aria-label": `Review by ${g}`,
 		"aria-busy": l,
-		children: /* @__PURE__ */ X(o, {
+		children: /* @__PURE__ */ Q(o, {
 			gap: "sm",
 			children: [
-				/* @__PURE__ */ X(s, {
+				/* @__PURE__ */ Q(s, {
 					gap: "sm",
 					wrap: !0,
 					children: [
-						/* @__PURE__ */ Y("strong", { children: v }),
-						/* @__PURE__ */ Y(u, {
+						/* @__PURE__ */ Z("strong", { children: g }),
+						/* @__PURE__ */ Z(f, {
 							size: "xs",
 							tone: e.state === "approved" ? "success" : e.state === "changes_requested" ? "warning" : "neutral",
-							children: y
+							children: _
 						}),
-						e.required && /* @__PURE__ */ Y(u, {
+						e.required && /* @__PURE__ */ Z(f, {
 							size: "xs",
 							tone: "warning",
 							children: "Required"
 						})
 					]
 				}),
-				/* @__PURE__ */ Y(c, { items: [`Requested by ${e.requestedByName || e.requestedBy}`, e.dueDate ? `Due ${e.dueDate}` : null] }),
-				e.note && /* @__PURE__ */ Y("p", {
+				/* @__PURE__ */ Z(c, { items: [`Requested by ${e.requestedByName || e.requestedBy}`, e.dueDate ? `Due ${e.dueDate}` : null] }),
+				e.note && /* @__PURE__ */ Z("p", {
 					className: "m-0 text-sm text-text-primary whitespace-pre-wrap",
 					children: e.note
 				}),
-				e.comment && /* @__PURE__ */ Y("p", {
+				e.comment && /* @__PURE__ */ Z("p", {
 					className: "m-0 text-sm text-text-secondary whitespace-pre-wrap",
 					children: e.comment
 				}),
-				f && /* @__PURE__ */ Y(_, {
+				d && /* @__PURE__ */ Z(b, {
 					tone: "error",
-					children: f
+					children: d
 				}),
-				t && e.state === "pending" && /* @__PURE__ */ X(J, { children: [/* @__PURE__ */ Y(h, {
+				t && e.state === "pending" && /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Z(v, {
 					value: i,
 					onChange: (e) => a(e.target.value),
 					rows: 2,
 					disabled: l,
-					"aria-label": `Review comment for ${v}`,
+					"aria-label": `Review comment for ${g}`,
 					placeholder: "Add a comment (optional)"
-				}), /* @__PURE__ */ X(s, {
+				}), /* @__PURE__ */ Q(s, {
 					gap: "sm",
 					wrap: !0,
-					children: [/* @__PURE__ */ Y(r, {
+					children: [/* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "secondary",
 						disabled: l,
-						onClick: () => void g(() => t(e.requestKey, "changes_requested", i)),
+						onClick: () => void h(() => t(e.requestKey, "changes_requested", i)),
 						children: "Request changes"
-					}), /* @__PURE__ */ Y(r, {
+					}), /* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "primary",
 						disabled: l,
-						onClick: () => void g(() => t(e.requestKey, "approved", i)),
+						onClick: () => void h(() => t(e.requestKey, "approved", i)),
 						children: "Approve review"
 					})]
 				})] }),
-				n && e.state === "pending" && /* @__PURE__ */ Y(r, {
+				n && e.state === "pending" && /* @__PURE__ */ Z(r, {
 					size: "sm",
 					variant: "ghost",
 					disabled: l,
-					onClick: () => void g(() => n(e.requestKey)),
+					onClick: () => void h(() => n(e.requestKey)),
 					children: "Withdraw review"
 				})
 			]
 		})
 	});
 }
-function Yn({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: c, onRequest: l, onDecide: u, onWithdraw: d }) {
-	let [f, p] = q(""), [m, g] = q(""), [v, y] = q(!0), [b, C] = q(!1), [w, T] = q(null), E = K(!1);
-	async function D() {
-		if (!(!l || !t.some((e) => e.id === f) || E.current)) {
-			E.current = !0, C(!0), T(null);
+function rr({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: c, onRequest: l, onDecide: u, onWithdraw: d }) {
+	let [f, p] = Y(""), [m, h] = Y(""), [g, _] = Y(!0), [y, x] = Y(!1), [S, C] = Y(null), w = J(!1);
+	async function T() {
+		if (!(!l || !t.some((e) => e.id === f) || w.current)) {
+			w.current = !0, x(!0), C(null);
 			try {
 				await l({
 					reviewerId: f,
 					note: m.trim(),
-					required: v
-				}), g(""), p("");
+					required: g
+				}), h(""), p("");
 			} catch (e) {
-				T(e instanceof Error ? e.message : "The review could not be requested.");
+				C(e instanceof Error ? e.message : "The review could not be requested.");
 			} finally {
-				E.current = !1, C(!1);
+				w.current = !1, x(!1);
 			}
 		}
 	}
-	return /* @__PURE__ */ X(o, {
+	return /* @__PURE__ */ Q(o, {
 		gap: "md",
 		children: [
-			a && /* @__PURE__ */ Y(_, {
+			a && /* @__PURE__ */ Z(b, {
 				tone: "error",
 				children: a
 			}),
-			l && /* @__PURE__ */ X(o, {
+			l && /* @__PURE__ */ Q(o, {
 				gap: "sm",
 				children: [
-					/* @__PURE__ */ Y(x, {
+					/* @__PURE__ */ Z(E, {
 						"aria-label": "Reviewer",
 						placeholder: "Choose a reviewer",
 						value: f,
-						disabled: b || i,
+						disabled: y || i,
 						options: t.map((e) => ({
 							value: e.id,
 							label: e.displayName
 						})),
 						onChange: (e) => p(e.target.value)
 					}),
-					/* @__PURE__ */ Y(h, {
+					/* @__PURE__ */ Z(v, {
 						"aria-label": "Review request note",
 						placeholder: "What should they review?",
 						rows: 2,
 						value: m,
-						disabled: b,
-						onChange: (e) => g(e.target.value)
+						disabled: y,
+						onChange: (e) => h(e.target.value)
 					}),
-					/* @__PURE__ */ X(s, {
+					/* @__PURE__ */ Q(s, {
 						as: "label",
 						gap: "sm",
 						align: "center",
-						children: [/* @__PURE__ */ Y(S, {
-							checked: v,
-							onChange: y,
-							disabled: b
+						children: [/* @__PURE__ */ Z(D, {
+							checked: g,
+							onChange: _,
+							disabled: y
 						}), "Required review"]
 					}),
-					w && /* @__PURE__ */ Y(_, {
+					S && /* @__PURE__ */ Z(b, {
 						tone: "error",
-						children: w
+						children: S
 					}),
-					/* @__PURE__ */ Y(r, {
+					/* @__PURE__ */ Z(r, {
 						size: "sm",
-						disabled: b || i || !t.some((e) => e.id === f),
-						onClick: () => void D(),
-						children: b ? "Requesting…" : "Request review"
+						disabled: y || i || !t.some((e) => e.id === f),
+						onClick: () => void T(),
+						children: y ? "Requesting…" : "Request review"
 					})
 				]
 			}),
-			/* @__PURE__ */ Y(k, {
+			/* @__PURE__ */ Z(F, {
 				title: "Document reviews",
 				count: e.length,
 				hint: i ? "Loading…" : void 0,
-				action: /* @__PURE__ */ Y(r, {
+				action: /* @__PURE__ */ Z(r, {
 					size: "sm",
 					variant: "ghost",
 					disabled: i,
@@ -2081,7 +2084,7 @@ function Yn({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					children: "Refresh reviews"
 				}),
 				empty: { title: i ? "Loading reviews…" : a ? "Reviews unavailable" : "No reviews requested" },
-				children: e.map((e) => /* @__PURE__ */ Y(Jn, {
+				children: e.map((e) => /* @__PURE__ */ Z(nr, {
 					request: e,
 					onDecide: e.reviewerId === n ? u : void 0,
 					onWithdraw: d
@@ -2091,4 +2094,228 @@ function Yn({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 	});
 }
 //#endregion
-export { un as AckMode, rt as ActionItemsCard, gn as ActivityFeed, Ue as AttachmentsPanel, Kn as AuthenticatedDocumentImageView, Le as CANVAS_BODY_KEY, He as CANVAS_SCHEMA_VERSION, _t as CanvasDocumentView, Te as CanvasLineSpacing, ln as ChunkViewer, Dn as CommentGhostPopover, Ke as CommentThreadNode, fe as DECK_THEMES, ct as DiffViewer, lt as DocumentEditorPage, Dt as DocumentFindBar, wt as DocumentGutter, Me as DocumentHeader, Gn as DocumentImageProvider, Jt as DocumentListPage, nt as DocumentModePill, gt as DocumentOutline, Be as DocumentOwnership, Yn as DocumentReviewPanel, Nt as DocumentRuler, ke as DocumentSaveStatus, Nn as DocumentShareDialog, Tt as DocumentStatusBar, yt as DocumentToolbar, Ce as EditorToolbar, Ze as ExecutiveSummaryCard, An as FloatingDockBar, Ne as FollowModeBar, ot as HeaderBanner, ut as KeyDecisionsCard, De as LINE_SPACINGS, we as LINE_SPACING_LABELS, jt as MAX_ATTACHMENT_BYTES, L as MAX_BULLETS_PER_SLIDE, oe as MAX_BULLET_CHARS, me as MAX_CHART_LABELS, re as MAX_CHART_SERIES, R as MAX_EYEBROW_CHARS, Et as MAX_IMAGE_BYTES, ue as MAX_NOTES_CHARS, se as MAX_QUOTE_CHARS, B as MAX_SLIDES, z as MAX_SOURCES_PER_SLIDE, F as MAX_SUBTITLE_CHARS, he as MAX_TITLE_CHARS, pt as MentionDropdown, qe as MyMentionsPanel, ye as NewDocumentModal, Pt as PX_PER_INCH, tt as ParticipantAvatars, pe as PresentationEditor, j as PresentationView, xn as ProposalCard, Ye as ReaderMode, $e as ReviewMode, nn as ReviewProgress, sn as ReviewableItem, jn as SHARE_ROLES, ve as SLIDE_ID_PATTERN, I as SLIDE_LAYOUTS, _e as SLIDE_LAYOUT_LABELS, Q as SUGGESTION_AUTHORING_MODES, ft as SectionBlock, Qe as SectionComments, je as SectionList, Xe as SectionSummariesCard, ne as SlideForm, ce as SlideList, de as SlideRow, le as SlideSources, $t as StandaloneTiptap, Vn as SuggestionCard, Pn as SuggestionModeControl, Hn as SuggestionReviewList, st as TableOfContents, w as TaskItemRow, T as TaskList, H as TiptapEditor, at as VersionHistoryPanel, We as VideoCallPanel, kn as VideoDockSlot, et as VideoHistoryPanel, Sn as WorkItemRow, St as ZOOM_FIT, xt as ZOOM_STEPS, kt as acceptsDocumentImage, N as addSlide, D as canSaveDeck, ht as canvasBody, Pe as canvasFragmentToMarkdown, Yt as clientIdForUser, dt as countAllComments, qn as createAuthenticatedDocumentImage, ge as duplicateSlide, Re as findDocumentTarget, At as findMatches, it as generateSummaryBullets, mt as getInitials, Ae as isCanvasDocument, Se as isLineSpacing, Ee as lineSpacingAttributes, P as makeSlide, O as moveSlide, vt as nextMatchIndex, ee as nextRevisionLabel, M as nextSlideId, Oe as parseLineSpacing, bt as readOutline, Ge as readSchemaVersion, Je as relativeTime, ae as removeSlide, E as replaceSlide, En as replyLabel, ze as scrollToDocumentTarget, Mt as stackOffsets, ie as svgDataUri, V as uncitedSlideIds, Ie as useDocumentActions, Ct as useDocumentImageUpload, Ot as useDocumentOutline, Xt as useFollowCursor, Fe as useIsCanvasDocument, Ve as useSidebarPanels, te as withLayoutDefaults };
+//#region src/components/doc-editor/EditorShell.tsx
+var ir = [
+	{
+		id: "editor",
+		label: "Editor"
+	},
+	{
+		id: "comments",
+		label: "Comments"
+	},
+	{
+		id: "versions",
+		label: "Versions"
+	},
+	{
+		id: "history",
+		label: "History"
+	}
+];
+function ar({ filled: e }) {
+	return /* @__PURE__ */ Z("svg", {
+		width: 16,
+		height: 16,
+		viewBox: "0 0 16 16",
+		fill: e ? "currentColor" : "none",
+		stroke: "currentColor",
+		strokeWidth: 1.4,
+		strokeLinejoin: "round",
+		"aria-hidden": "true",
+		children: /* @__PURE__ */ Z("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
+	});
+}
+function or({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: s = !1, onStarredChange: c, statusPill: d, participants: f, meta: p, saveState: m, headActions: h, tabs: _, activeTab: v, onTabChange: y, toolbar: b, children: x, footer: C, surface: T = "workspace", explorer: E, workbench: D, label: O = "Editor", className: k, "data-testid": A = "editor-shell" }) {
+	let j = `${A}-${Vt().replace(/:/g, "")}`, M = !!_ && _.length > 0, N = M ? _.some((e) => e.id === v) ? v : _[0].id : void 0, P = f && f.length > 0 || p != null || !!m, F = /* @__PURE__ */ Q("section", {
+		"aria-label": O,
+		"data-testid": A,
+		"data-surface": T,
+		className: "flex min-h-0 min-w-0 flex-1 flex-col bg-surface",
+		children: [
+			/* @__PURE__ */ Q("header", {
+				className: "flex flex-col gap-1 border-b border-border px-4 pt-2.5",
+				"data-testid": `${A}-header`,
+				children: [
+					e && e.length > 0 && /* @__PURE__ */ Z(u, {
+						items: e,
+						maxItems: 4,
+						className: "text-xs",
+						"data-testid": `${A}-crumbs`
+					}),
+					/* @__PURE__ */ Q("div", {
+						className: "flex min-w-0 items-start gap-3",
+						children: [/* @__PURE__ */ Q("div", {
+							className: "flex min-w-0 flex-1 flex-col gap-1",
+							children: [/* @__PURE__ */ Q("div", {
+								className: "flex min-w-0 items-center gap-2",
+								children: [
+									o && /* @__PURE__ */ Z(l, {
+										kind: o,
+										"data-testid": `${A}-kind`
+									}),
+									r ? /* @__PURE__ */ Z(z, {
+										value: t,
+										onCommit: r,
+										label: i,
+										required: !0,
+										className: "min-w-0 text-lg",
+										"data-testid": `${A}-title`
+									}) : /* @__PURE__ */ Z("h1", {
+										className: "m-0 min-w-0 truncate text-lg font-semibold text-text-primary",
+										"data-testid": `${A}-title`,
+										children: t
+									}),
+									c && /* @__PURE__ */ Z(a, {
+										size: "sm",
+										"aria-label": s ? "Remove star" : "Star this file",
+										"aria-pressed": s,
+										title: s ? "Starred" : "Star",
+										onClick: () => c(!s),
+										className: s ? "text-primary" : "text-text-tertiary",
+										"data-testid": `${A}-star`,
+										children: /* @__PURE__ */ Z(ar, { filled: s })
+									}),
+									d
+								]
+							}), P && /* @__PURE__ */ Q("div", {
+								className: "flex min-w-0 flex-wrap items-center gap-2 text-xs text-text-tertiary",
+								"data-testid": `${A}-byline`,
+								children: [
+									f && f.length > 0 && /* @__PURE__ */ Z(S, {
+										users: f,
+										size: 22,
+										maxVisible: 4
+									}),
+									p != null && /* @__PURE__ */ Z("span", {
+										className: "min-w-0 truncate",
+										children: p
+									}),
+									/* @__PURE__ */ Z(Ne, { state: m })
+								]
+							})]
+						}), h && /* @__PURE__ */ Z("div", {
+							className: "flex shrink-0 items-center gap-1.5",
+							"data-testid": `${A}-actions`,
+							children: h
+						})]
+					}),
+					M ? /* @__PURE__ */ Z(g, {
+						items: _.map((e) => ({
+							id: e.id,
+							label: e.label,
+							...e.disabled ? { disabled: !0 } : {},
+							...e.count ? { badge: /* @__PURE__ */ Z(w, {
+								variant: "count",
+								value: e.count,
+								color: "muted",
+								"aria-label": `${e.count} in ${e.label}`
+							}) } : {},
+							testId: `${A}-tab-${e.id}`
+						})),
+						value: N,
+						onValueChange: (e) => y?.(e),
+						variant: "underline",
+						size: "sm",
+						"aria-label": `${t} sections`,
+						idPrefix: j,
+						className: "-mb-px mt-1 border-b-0"
+					}) : /* @__PURE__ */ Z("span", {
+						className: "h-2",
+						"aria-hidden": "true"
+					})
+				]
+			}),
+			b && /* @__PURE__ */ Z("div", {
+				className: "flex min-w-0 items-center gap-1 border-b border-border px-3 py-1.5",
+				"data-testid": `${A}-toolbar`,
+				children: b
+			}),
+			/* @__PURE__ */ Q("div", {
+				className: n("relative flex min-h-0 flex-1 flex-col", T === "workspace" ? "bg-workspace" : "bg-surface"),
+				"data-testid": `${A}-surface`,
+				children: [/* @__PURE__ */ Z("div", {
+					...M ? {
+						role: "tabpanel",
+						id: `${j}-panel-${N}`,
+						"aria-labelledby": `${j}-tab-${N}`
+					} : {},
+					className: n("min-h-0 flex-1 overflow-auto", C != null && "pb-[var(--dock-height,0px)]"),
+					"data-testid": `${A}-scroller`,
+					children: x
+				}), C]
+			})
+		]
+	});
+	return !E && !D ? /* @__PURE__ */ Z("div", {
+		className: n("flex h-full min-h-0 flex-col", k),
+		children: F
+	}) : /* @__PURE__ */ Q("div", {
+		className: n("flex h-full min-h-0 flex-col lg:flex-row", k),
+		"data-testid": `${A}-frame`,
+		children: [E && /* @__PURE__ */ Z("div", {
+			className: "flex max-h-72 min-h-0 shrink-0 flex-col overflow-y-auto border-b border-border bg-surface lg:max-h-none lg:w-64 lg:border-b-0 lg:border-r",
+			"data-testid": `${A}-explorer`,
+			children: E
+		}), /* @__PURE__ */ Q("div", {
+			className: "flex min-h-0 min-w-0 flex-1 flex-col xl:flex-row",
+			children: [F, D && /* @__PURE__ */ Z("div", {
+				className: "flex min-h-0 shrink-0 flex-col border-t border-border xl:w-80 xl:border-l xl:border-t-0",
+				"data-testid": `${A}-workbench`,
+				children: D
+			})]
+		})]
+	});
+}
+//#endregion
+//#region src/components/doc-editor/FloatingComposerDock.tsx
+var sr = {
+	md: "max-w-md",
+	lg: "max-w-lg",
+	xl: "max-w-xl",
+	"2xl": "max-w-2xl",
+	"3xl": "max-w-3xl",
+	"4xl": "max-w-4xl"
+}, cr = "--dock-height";
+function lr({ composer: e, strip: t, above: r, maxWidth: i = "3xl", label: a = "Composer", className: o, "data-testid": s = "floating-composer-dock" }) {
+	let c = J(null);
+	return Ut(() => {
+		let e = c.current, t = e?.parentElement;
+		if (!e || !t) return;
+		let n = (e) => t.style.setProperty(cr, `${Math.ceil(e)}px`);
+		n(e.getBoundingClientRect().height);
+		let r = null;
+		return typeof ResizeObserver < "u" && (r = new ResizeObserver(([e]) => {
+			e && n(e.target.getBoundingClientRect().height);
+		}), r.observe(e)), () => {
+			r?.disconnect(), t.style.removeProperty(cr);
+		};
+	}, []), /* @__PURE__ */ Z("div", {
+		ref: c,
+		role: "region",
+		"aria-label": a,
+		"data-testid": s,
+		className: n("pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8", o),
+		children: /* @__PURE__ */ Q("div", {
+			className: n("pointer-events-auto mx-auto flex w-full flex-col", sr[i]),
+			children: [
+				r && /* @__PURE__ */ Z("div", {
+					className: "mb-2",
+					"data-testid": `${s}-above`,
+					children: r
+				}),
+				t && /* @__PURE__ */ Z("div", {
+					"data-testid": `${s}-strip`,
+					children: t
+				}),
+				/* @__PURE__ */ Z("div", {
+					className: n("rounded-lg shadow-lg", t && "rounded-t-none [&_.chat-composer]:rounded-t-none"),
+					"data-testid": `${s}-composer`,
+					children: e
+				})
+			]
+		})
+	});
+}
+//#endregion
+export { gn as AckMode, st as ActionItemsCard, Sn as ActivityFeed, qe as AttachmentsPanel, er as AuthenticatedDocumentImageView, Ve as CANVAS_BODY_KEY, Ke as CANVAS_SCHEMA_VERSION, xt as CanvasDocumentView, ke as CanvasLineSpacing, hn as ChunkViewer, Nn as CommentGhostPopover, Xe as CommentThreadNode, ge as DECK_THEMES, ir as DEFAULT_EDITOR_SHELL_TABS, cr as DOCK_HEIGHT_VAR, ft as DiffViewer, pt as DocumentEditorPage, jt as DocumentFindBar, Ot as DocumentGutter, Ie as DocumentHeader, $n as DocumentImageProvider, en as DocumentListPage, ot as DocumentModePill, bt as DocumentOutline, We as DocumentOwnership, rr as DocumentReviewPanel, Lt as DocumentRuler, Ne as DocumentSaveStatus, zn as DocumentShareDialog, kt as DocumentStatusBar, Ct as DocumentToolbar, or as EditorShell, De as EditorToolbar, tt as ExecutiveSummaryCard, lr as FloatingComposerDock, In as FloatingDockBar, Le as FollowModeBar, ut as HeaderBanner, mt as KeyDecisionsCard, je as LINE_SPACINGS, Oe as LINE_SPACING_LABELS, Ft as MAX_ATTACHMENT_BYTES, U as MAX_BULLETS_PER_SLIDE, ue as MAX_BULLET_CHARS, ve as MAX_CHART_LABELS, re as MAX_CHART_SERIES, ie as MAX_EYEBROW_CHARS, At as MAX_IMAGE_BYTES, me as MAX_NOTES_CHARS, de as MAX_QUOTE_CHARS, oe as MAX_SLIDES, ae as MAX_SOURCES_PER_SLIDE, V as MAX_SUBTITLE_CHARS, ye as MAX_TITLE_CHARS, _t as MentionDropdown, Ze as MyMentionsPanel, Ce as NewDocumentModal, Rt as PX_PER_INCH, at as ParticipantAvatars, _e as PresentationEditor, ee as PresentationView, Dn as ProposalCard, $e as ReaderMode, rt as ReviewMode, ln as ReviewProgress, pn as ReviewableItem, Ln as SHARE_ROLES, Se as SLIDE_ID_PATTERN, ne as SLIDE_LAYOUTS, xe as SLIDE_LAYOUT_LABELS, Bn as SUGGESTION_AUTHORING_MODES, gt as SectionBlock, nt as SectionComments, Fe as SectionList, et as SectionSummariesCard, H as SlideForm, fe as SlideList, he as SlideRow, pe as SlideSources, on as StandaloneTiptap, Yn as SuggestionCard, Vn as SuggestionModeControl, Xn as SuggestionReviewList, dt as TableOfContents, k as TaskItemRow, A as TaskList, W as TiptapEditor, lt as VersionHistoryPanel, Je as VideoCallPanel, Fn as VideoDockSlot, it as VideoHistoryPanel, On as WorkItemRow, Et as ZOOM_FIT, Tt as ZOOM_STEPS, Nt as acceptsDocumentImage, te as addSlide, M as canSaveDeck, yt as canvasBody, Re as canvasFragmentToMarkdown, tn as clientIdForUser, ht as countAllComments, tr as createAuthenticatedDocumentImage, be as duplicateSlide, He as findDocumentTarget, Pt as findMatches, ct as generateSummaryBullets, vt as getInitials, Pe as isCanvasDocument, Ee as isLineSpacing, Ae as lineSpacingAttributes, B as makeSlide, P as moveSlide, St as nextMatchIndex, N as nextRevisionLabel, R as nextSlideId, Me as parseLineSpacing, wt as readOutline, Ye as readSchemaVersion, Qe as relativeTime, le as removeSlide, j as replaceSlide, Mn as replyLabel, Ue as scrollToDocumentTarget, It as stackOffsets, se as svgDataUri, ce as uncitedSlideIds, Be as useDocumentActions, Dt as useDocumentImageUpload, Mt as useDocumentOutline, nn as useFollowCursor, ze as useIsCanvasDocument, Ge as useSidebarPanels, L as withLayoutDefaults };

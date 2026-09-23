@@ -81,6 +81,9 @@ export declare interface ComposedMessage {
     mode?: ComposerMode;
 }
 
+/** The order Option-1/2/3 and the compact `1 2 3` buttons follow. */
+export declare const COMPOSER_MODE_ORDER: readonly ComposerMode[];
+
 export declare interface ComposerArgumentItem {
     /** Stable identity — this is what travels to the host, not the label. */
     id: string;
@@ -250,6 +253,15 @@ export declare interface EmojiSuggestionsProps {
 
 /** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
 export declare function matchComposerCommand(draft: string, commands: readonly ComposerCommand[] | undefined): ComposerCommand | null;
+
+/**
+ * Whether a whole draft is a mode trigger. A prefix followed by a space
+ * always counts (`/run `, `> `); a single-symbol prefix also counts alone,
+ * because `> ` never reaches here — the editor's blockquote input rule eats
+ * `> ` and leaves an empty quote. A word prefix does NOT count alone:
+ * `/run` must be allowed to become `/running`.
+ */
+export declare function matchesModeTrigger(text: string, prefix: string): boolean;
 
 export declare interface MentionCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
@@ -461,6 +473,51 @@ export declare interface RichChatComposerProps {
      * the honest state for a deployment with no shell behind the composer.
      */
     onShellCommand?: (command: string) => void;
+    /**
+     * How the mode switch is drawn. `'tabs'` (default) is the segmented
+     * `Chat | Agent | Terminal` row every existing host has. `'compact'` is the
+     * mode's name, three small numbered buttons (`1 2 3`) and the current
+     * mode's `⌥n` — one short row, for a composer floating over a page.
+     */
+    modeControl?: 'tabs' | 'compact';
+    /**
+     * Option-1 / Option-2 / Option-3 (Alt on other platforms) switch to Chat /
+     * Agent / Terminal while focus is anywhere inside the composer. Bound on
+     * the composer root, not the window: with focus outside it, nothing
+     * happens. Needs `onModeChange`. Default false.
+     */
+    modeShortcuts?: boolean;
+    /**
+     * Typing a prefix as the whole draft switches mode and consumes it: `>`
+     * (alone) → Terminal, `/run ` (with its space) → Agent. `true` uses those
+     * defaults; an object overrides either prefix. Needs `onModeChange`.
+     * Default off.
+     */
+    modeTriggers?: boolean | {
+        terminalPrefix?: string;
+        agentPrefix?: string;
+    };
+    /**
+     * Modes the host cannot serve right now — Terminal when no run is
+     * attached. Their buttons are disabled, and a shortcut or trigger aimed at
+     * one leaves the mode (and the typed prefix) alone and shows the reason
+     * from `modeUnavailableReasons` instead.
+     */
+    disabledModes?: readonly ComposerMode[];
+    /** Why each disabled mode is unavailable — "Start an agent task first". */
+    modeUnavailableReasons?: Partial<Record<ComposerMode, string>>;
+    /** Per-mode hint rows. Wins over `hints` for the modes it names. */
+    modeHints?: Partial<Record<ComposerMode, readonly ComposerHint[]>>;
+    /**
+     * Beside Send, before it — a model or skill picker ("Presentation skill ⌄").
+     * Absent, the toolbar row is exactly as before.
+     */
+    submitLead?: ReactNode;
+    /**
+     * Send's label, per mode or for all of them. Defaults: "Send", and "Run"
+     * in Terminal.
+     */
+    submitLabel?: string | Partial<Record<ComposerMode, string>>;
     className?: string;
     'data-testid'?: string;
 }

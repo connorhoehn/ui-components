@@ -6,9 +6,10 @@ import { t as i } from "../EmptyState-DQYx5Oyy.js";
 import { t as a } from "../SkeletonCard-CGe8XFPB.js";
 import { n as o, t as s } from "../FileUploadDrop-DZswnZqa.js";
 import { t as c } from "../Avatar-Bq_1SEQ2.js";
-import { n as l, r as u, t as d } from "../Badge-3KulAxWc.js";
-import { t as f } from "../PresenceAvatars-BRfp1eRt.js";
-import { t as p } from "../ActivityFeed-g_AJhmPi.js";
+import { n as l, t as u } from "../NotificationCenter-BUy2Qc-r.js";
+import { t as d } from "../PresenceAvatars-BRfp1eRt.js";
+import { t as f } from "../ActivityFeed-g_AJhmPi.js";
+import { t as p } from "../Badge-CrD0vvt4.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
 import { d as _, n as v, t as y, u as b } from "../ConversationSurface-GrIrbu25.js";
 import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-BEy6KD2Q.js";
@@ -452,7 +453,7 @@ function Ae({ presence: e, currentClientId: t, perConnection: n = !1, wrapWithNe
 //#region src/integrations/realtime-modules/WrappedActivityPanel.tsx
 function je({ activity: e, visibleCount: t, rotateMs: n, staggerMs: r, kindColors: i, className: a }) {
 	let o = A(() => Y(e.events), [e.events]);
-	return /* @__PURE__ */ P(p, {
+	return /* @__PURE__ */ P(f, {
 		items: o,
 		visibleCount: t,
 		rotateMs: n,
@@ -569,7 +570,7 @@ function Ie({ hangout: e, localClientId: t, videoElements: n, mode: r, spotlight
 //#region src/integrations/realtime-modules/WrappedNotificationCenter.tsx
 function Le({ notifications: e, onItemClick: t, ...n }) {
 	let r = Ce(e.notifications);
-	return /* @__PURE__ */ P(l, {
+	return /* @__PURE__ */ P(u, {
 		items: r,
 		onItemClick: (n) => {
 			t ? t(n, e.notifications.find((e) => e.id === n.id)) : e.markAsRead(n.id);
@@ -582,7 +583,7 @@ function Le({ notifications: e, onItemClick: t, ...n }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedConnectionPill.tsx
 function Re({ socket: e, ...t }) {
-	return /* @__PURE__ */ P(u, {
+	return /* @__PURE__ */ P(l, {
 		state: e.connectionState,
 		...t
 	});
@@ -595,29 +596,29 @@ function ze({ capability: e, loading: t, fallback: n, children: r }) {
 //#endregion
 //#region src/integrations/realtime-modules/HangoutRoomRow.tsx
 function Be({ slug: e, name: t, participantId: n, occupancy: r, subscribeRoomsIndex: i, onClick: a, onContextMenu: o, onOpenConversation: s, kebab: c, className: l, "data-testid": u = "room-row" }) {
-	let p = ce(i ? e : null, { subscribeRoomsIndex: i }), h = i ? p.occupancy ?? null : r ?? null, g = h?.count ?? 0, _ = h?.members ?? [], v = A(() => n ? _.some((e) => e.participantId === n) : !1, [_, n]), y = v, b = A(() => _.slice(0, 3).map((e) => ({
+	let f = ce(i ? e : null, { subscribeRoomsIndex: i }), h = i ? f.occupancy ?? null : r ?? null, g = h?.count ?? 0, _ = h?.members ?? [], v = A(() => n ? _.some((e) => e.participantId === n) : !1, [_, n]), y = v, b = A(() => _.slice(0, 3).map((e) => ({
 		id: e.participantId,
 		name: e.displayName || e.userId,
 		online: !0
 	})), [_]), x = null;
-	g > 1 ? x = /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ P(f, {
+	g > 1 ? x = /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ P(d, {
 		users: b,
 		maxVisible: 3,
 		size: 18
-	}), /* @__PURE__ */ P(d, {
+	}), /* @__PURE__ */ P(p, {
 		variant: "count",
 		value: g,
 		color: "muted"
-	})] }) : g === 1 && v ? x = /* @__PURE__ */ P(d, {
+	})] }) : g === 1 && v ? x = /* @__PURE__ */ P(p, {
 		variant: "pulse",
 		color: "accent",
 		"aria-label": "Just you in this room",
 		"data-testid": `${u}-self-pulse`
-	}) : g === 1 && (x = /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ P(f, {
+	}) : g === 1 && (x = /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ P(d, {
 		users: b,
 		maxVisible: 1,
 		size: 18
-	}), /* @__PURE__ */ P(d, {
+	}), /* @__PURE__ */ P(p, {
 		variant: "count",
 		value: 1,
 		color: "muted"

@@ -31,5 +31,13 @@ export type { ContextColumnProps, ContextColumnPanel, ContextColumnState } from 
 export { DockedAside, FloatingCard, PinnedSlot } from './DockedAside';
 export type { DockedAsideProps, FloatingCardProps, PinnedSlotProps } from './DockedAside';
 
+// Documents workspace foundation (2.362.0): the static right-hand workbench.
+export { Workbench } from './Workbench';
+export type { WorkbenchProps, WorkbenchTab } from './Workbench';
+export { AgentTaskCard } from './AgentTaskCard';
+export type { AgentTaskCardProps } from './AgentTaskCard';
+export { MoreContextDisclosure } from './MoreContextDisclosure';
+export type { MoreContextDisclosureProps, MoreContextItem } from './MoreContextDisclosure';
+
 export { WorkspaceRail } from './WorkspaceRail';
 export type { WorkspaceRailProps } from './WorkspaceRail';

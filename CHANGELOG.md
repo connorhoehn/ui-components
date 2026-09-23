@@ -6,6 +6,64 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.362.0] — 2026-09-22
+
+### Added — Documents workspace foundation (editor handoff WS0)
+
+The primitives the Documents editor handoff needs, so the page editor and the
+presentation editor can share one shell, one workbench and one floating
+composer. All additive; every existing prop keeps its behaviour.
+
+- **`EditorShell`** (`./doc-editor`): crumbs, title row (optional in-place
+  title edit, star toggle, status pill, `PresenceAvatars`, meta, save state,
+  head actions), an Editor / Comments / Versions / History tab row
+  (`DEFAULT_EDITOR_SHELL_TABS`, host-controlled), a toolbar slot, the surface
+  as the active tabpanel on the grey workspace, and a `footer` slot the dock
+  floats in. Optional `explorer` and `workbench` columns give the whole
+  explorer | editor | workbench frame from one component.
+- **`FloatingComposerDock`** (`./doc-editor`): the composer (and a task strip
+  above it) floating over the bottom of the surface behind a fade. It writes
+  its height to `--dock-height` on its parent (`DOCK_HEIGHT_VAR`) so the
+  surface can scroll its last line clear of it.
+- **`Workbench`**, **`AgentTaskCard`**, **`MoreContextDisclosure`** (root /
+  layout): the static right column — kind mark, title, close, "Current task",
+  underline tabs (Comments / Activity / Details, controlled or not), a "More
+  context" disclosure and pinned footer actions.
+- **`TaskStrip`** (`./shared`): the 30px line above the composer — label ·
+  phase, Pause / Resume / Stop / Open run / Hide rendered only for the handlers
+  passed. **Phase only**: a bar and a percentage appear only when the host
+  passes a real `percent`; nothing is invented. `AgentTaskStatus` is shared
+  with `AgentTaskCard`.
+- **`FileKindMark`** (`./shared`): page / presentation / recording /
+  transcript / diagram / folder glyph on tone tokens; decorative unless given
+  a `label`.
+- **`TreeView`**: `TreeNode.hoverMeta` (a version or size shown only on hover
+  or focus, still in the accessible name), `TreeNode.icon`, and `rowMenu` — a
+  ⋯ `DropdownMenu` (`role="menu"`) per row, opened by the button, a
+  right-click, or Shift+F10 / the context-menu key on the focused row. Only the
+  focused row's ⋯ is in the tab order. `rowMenuLabel` names the button.
+- **`RichChatComposer`**:
+  - `modeControl="compact"` — the mode's name, `1 2 3` toggle buttons
+    (`aria-pressed`, `aria-keyshortcuts`) and the current `⌥n`, instead of
+    three large tabs. Default `'tabs'` is unchanged.
+  - `modeShortcuts` — Option-1/2/3 switch Chat / Agent / Terminal, bound on
+    the composer root (focus outside the composer: nothing happens) and read
+    from `event.code` so the Mac Option characters are never typed.
+  - `modeTriggers` — a draft that is exactly `>` switches to Terminal, exactly
+    `/run ` to Agent; the prefix is consumed. Prefixes are configurable;
+    `matchesModeTrigger` is exported.
+  - `disabledModes` + `modeUnavailableReasons` — a mode the host cannot serve
+    (Terminal with no run attached) is disabled, and a shortcut or trigger
+    aimed at it shows the reason and leaves the typed text alone.
+  - `modeHints` (per-mode hint rows), `submitLabel` (per mode or one for all)
+    and `submitLead` (a model/skill picker slot before Send).
+  - Keyboard switches move focus to the new mode's input.
+
+Stories: `Layout/Workbench`, `DocEditor/EditorShell` (page and framed
+presentation variants), `Shared/TaskStrip`, `Shared/FileKindMark`,
+`Shared/TreeView › HoverMetaAndRowMenu`, `Social/RichChatComposer ›
+CompactModes`.
+
 ## [2.361.1] — 2026-09-22
 
 ### Fixed

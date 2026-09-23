@@ -1,6 +1,6 @@
 import { n as e } from "./SearchInput-DXbGHmns.js";
 import { t } from "./FollowUpChips-BD9scwlC.js";
-import { t as n } from "./RichChatComposer-BLRC3vnD.js";
+import { n } from "./RichChatComposer-X4X4rBf4.js";
 import { jsx as r, jsxs as i } from "react/jsx-runtime";
 //#region src/components/doc-editor/presentation/PresentationAgentComposer.tsx
 var a = {

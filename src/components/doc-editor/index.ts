@@ -170,6 +170,13 @@ export type { DocumentImageUpload, DocumentFileUploadHook, DocumentUploadComplet
 export { DocumentReviewPanel } from './DocumentReviewPanel';
 export type { DocumentReviewEntry, DocumentReviewPanelProps } from './DocumentReviewPanel';
 
+// The Documents workspace chrome (2.362.0): one shell for every file kind,
+// and the composer dock that floats over its surface.
+export { EditorShell, DEFAULT_EDITOR_SHELL_TABS } from './EditorShell';
+export type { EditorShellProps, EditorShellTab } from './EditorShell';
+export { FloatingComposerDock, DOCK_HEIGHT_VAR } from './FloatingComposerDock';
+export type { FloatingComposerDockProps, FloatingComposerDockWidth } from './FloatingComposerDock';
+
 // The reading end of the presentation generator: a rendered deck, read-only.
 export { PresentationView } from './PresentationView';
 export type { PresentationViewProps, PresentationRevision, PresentationSlide } from './PresentationView';

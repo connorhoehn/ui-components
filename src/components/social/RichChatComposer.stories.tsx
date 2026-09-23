@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { RichChatComposer, type ComposedMessage } from './RichChatComposer';
+import { Checkbox } from '../forms/Checkbox';
 
 // Type "@" to open the people menu — arrow keys move, Enter or Tab commits.
 // Enter alone sends the message; Shift+Enter is a newline.
@@ -97,4 +98,43 @@ export const Attachments: Story = {
 /** No directory wired: typing "@" is just an @ character. */
 export const WithoutMentions: Story = {
   render: () => <Harness onSearchPeople={undefined} />,
+};
+
+/**
+ * The Documents editor's composer: a compact mode row (label, `1 2 3`,
+ * `⌥n`) instead of three large tabs. Option-1/2/3 switch while focus is in
+ * the composer; typing `>` alone switches to Terminal and `/run ` to Agent.
+ * Terminal is refused here with a reason, as it is when no run is attached.
+ */
+export const CompactModes: Story = {
+  render: () => {
+    const [mode, setMode] = useState<'chat' | 'agent' | 'terminal'>('chat');
+    const [terminalReady, setTerminalReady] = useState(false);
+    return (
+      <div className="grid gap-3">
+        <RichChatComposer
+          onSend={() => {}}
+          onShellCommand={() => {}}
+          mode={mode}
+          onModeChange={setMode}
+          modeControl="compact"
+          modeShortcuts
+          modeTriggers
+          disabledModes={terminalReady ? [] : ['terminal']}
+          modeUnavailableReasons={{ terminal: 'Start an agent task first' }}
+          modeHints={{
+            chat: [{ key: '/', label: 'for commands' }, { key: '>_', label: 'for shell' }, { key: '⌘K', label: 'quickly open' }],
+            agent: [{ key: '/run', label: 'start work' }, { key: '@', label: 'add context' }, { key: '⌘K', label: 'choose a skill' }],
+            terminal: [{ key: '⌘↵', label: 'run command' }, { key: '@', label: 'attach project' }, { key: '/', label: 'insert task' }],
+          }}
+          submitLabel={{ agent: 'Start', terminal: 'Run' }}
+          submitLead={<span className="text-xs text-text-secondary">Presentation skill</span>}
+        />
+        <label className="flex items-center gap-2 text-xs text-text-secondary">
+          <Checkbox checked={terminalReady} onChange={(checked) => setTerminalReady(checked)} />
+          An instructable run is attached (enables Terminal)
+        </label>
+      </div>
+    );
+  },
 };
