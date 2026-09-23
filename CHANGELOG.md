@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.373.4] — 2026-09-23
+
+### Fixed
+
+- `RichChatComposer` (`collapseWhenIdle`): opening a menu from the composer (the deck dock's "Deck actions", the `?` menu) collapsed it at once — the menu renders in a portal and focuses its first item, which is outside the composer in the DOM, so the blur handler decided "focus left", collapsed, and unmounted the menu it had just opened. The "left" decision now waits one task and is cancelled by a focus React delivers from the composer's own tree (portals included). Consumers asserting a synchronous collapse on blur need one tick.
+
 ## [2.373.3] — 2026-09-23
 
 ### Fixed

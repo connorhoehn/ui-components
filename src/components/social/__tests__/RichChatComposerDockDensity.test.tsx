@@ -43,7 +43,7 @@ describe('suggestions', () => {
     expect(row.compareDocumentPosition(input) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     fireEvent.click(within(row).getByText('Tighten the bullets'));
     expect(onSuggestion).toHaveBeenCalledWith('Tighten the bullets');
-    await act(async () => { fireEvent.focusOut(input, { relatedTarget: document.body }); });
+    await act(async () => { fireEvent.focusOut(input, { relatedTarget: document.body }); await new Promise((r) => setTimeout(r, 0)); }); // the "left" decision waits one task (portal menus)
     expect(screen.queryByTestId('composer-suggestions')).toBeNull();
   });
 

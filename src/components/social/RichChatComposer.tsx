@@ -1586,6 +1586,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // composer. Not plain focus-within: a press on the idle row's mode pill or
   // Send must not re-lay the row out under the pointer mid-click.
   const [engaged, setEngaged] = useState(false);
+  /** A pending "focus left" decision — see `onBlurCapture`. */
+  const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (blurTimer.current !== null) clearTimeout(blurTimer.current); }, []);
   const inputBoxRef = useRef<HTMLDivElement | null>(null);
   /**
    * The composer measures its OWN box — the size classes key off the space it
@@ -1637,7 +1640,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     // event, so `onBlurCapture` never ran and the composer kept believing it
     // held focus: suggestion chips stayed up on the idle dock (live
     // 2026-09-23, 69 px instead of 42). Re-check after every commit.
-    if (focusWithin && typeof document !== 'undefined' && !el.contains(document.activeElement)) {
+    // (Focus on <body> specifically: focus in a portal menu the composer
+    // opened is outside `el` in the DOM and still ours.)
+    if (focusWithin && blurTimer.current === null && typeof document !== 'undefined'
+      && (!document.activeElement || document.activeElement === document.body)) {
       setFocusWithin(false);
       setEngaged(false);
     }
@@ -1774,15 +1780,26 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         data-density={density}
         data-collapsed={collapseWhenIdle ? (collapsed ? 'true' : 'false') : undefined}
         onFocusCapture={(event: ReactFocusEvent<HTMLDivElement>) => {
+          if (blurTimer.current !== null) { clearTimeout(blurTimer.current); blurTimer.current = null; }
           setFocusWithin(true);
           if (collapseWhenIdle && inputBoxRef.current?.contains(event.target as Node)) setEngaged(true);
         }}
         onBlurCapture={(event: ReactFocusEvent<HTMLDivElement>) => {
           const next = event.relatedTarget as Node | null;
-          if (!next || !event.currentTarget.contains(next)) {
+          if (next && event.currentTarget.contains(next)) return;
+          // Not decided yet: focus may be moving into a menu this composer
+          // opened (Deck actions, the `?` menu). Those render in a PORTAL —
+          // outside this box in the DOM, inside it in React — so DOM
+          // containment says "left" while React delivers the portal's focus
+          // to onFocusCapture above, which cancels this. Deciding at once
+          // collapsed the composer and unmounted the menu it had just opened
+          // (live 2026-09-23: Deck actions → nothing).
+          if (blurTimer.current !== null) clearTimeout(blurTimer.current);
+          blurTimer.current = setTimeout(() => {
+            blurTimer.current = null;
             setFocusWithin(false);
             setEngaged(false);
-          }
+          }, 0);
         }}
         // Only CSS custom properties — the radius and the input's growth cap
         // are values the host chose, and the stylesheet reads them from here.

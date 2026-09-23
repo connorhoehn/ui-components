@@ -2,6 +2,7 @@
 // mode pill, input, Send — so a canvas above a pinned dock keeps the height.
 // Focus in the input, words in it, or a status brings the full composer back.
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RichChatComposer } from '../RichChatComposer';
@@ -108,7 +109,7 @@ describe('collapseWhenIdle', () => {
     expect(screen.getByTestId('composer-modes')).toBeInTheDocument();
     expect(screen.getByTestId('lead')).toBeInTheDocument();
     expect(screen.queryByTestId('composer-mode-pill')).toBeNull();
-    await act(async () => { fireEvent.focusOut(input(), { relatedTarget: document.body }); });
+    await act(async () => { fireEvent.focusOut(input(), { relatedTarget: document.body }); await new Promise((r) => setTimeout(r, 0)); }); // the "left" decision waits one task (portal menus)
     expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'true');
   });
 
@@ -190,5 +191,35 @@ describe('collapseWhenIdle after the status line is dismissed', () => {
     render(<RichChatComposer {...modes} suggestions={['Tighten the bullets']} onSuggestion={() => {}} />);
     await act(async () => { input().focus(); fireEvent.focusIn(input()); });
     expect(screen.getByTestId('composer-suggestions')).toBeInTheDocument();
+  });
+});
+
+// Live 2026-09-23: Deck actions (a DropdownMenu in the submit lead) opens in a
+// portal and focuses its first item — outside the composer in the DOM. The
+// composer read that as focus leaving, collapsed, and unmounted the menu.
+describe('collapseWhenIdle with a menu the composer opened', () => {
+  function PortalMenu() {
+    const [open, setOpen] = React.useState(false);
+    const itemRef = React.useRef<HTMLButtonElement | null>(null);
+    React.useEffect(() => { if (open) itemRef.current?.focus(); }, [open]);
+    return (
+      <>
+        <button type="button" data-testid="lead-trigger" onClick={() => setOpen(true)}>Deck actions</button>
+        {open && ReactDOM.createPortal(<button type="button" ref={itemRef} data-testid="menu-item">Revise one part</button>, document.body)}
+      </>
+    );
+  }
+
+  it('stays expanded while focus is in its portal menu, collapses when focus really leaves', async () => {
+    render(<RichChatComposer {...modes} submitLead={<PortalMenu />} />);
+    await act(async () => { input().focus(); fireEvent.focusIn(input()); });
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'false');
+    const trigger = screen.getByTestId('lead-trigger');
+    await act(async () => { trigger.focus(); fireEvent.click(trigger); await new Promise((r) => setTimeout(r, 0)); });
+    expect(document.activeElement).toBe(screen.getByTestId('menu-item'));
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'false');
+    expect(screen.getByTestId('menu-item')).toBeInTheDocument();
+    await act(async () => { (document.activeElement as HTMLElement).blur(); await new Promise((r) => setTimeout(r, 0)); });
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'true');
   });
 });

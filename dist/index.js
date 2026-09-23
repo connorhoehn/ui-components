@@ -80,7 +80,7 @@ import { A as za, B as Ba, C as Va, D as Ha, E as Ua, F as Wa, G as Ga, H as Ka,
 import { $ as Lo, A as Ro, B as zo, C as Bo, D as Vo, E as Ho, F as Uo, G as Wo, H as Go, I as Ko, J as qo, K as Jo, L as Yo, M as Xo, N as Zo, O as Qo, P as $o, Q as es, R as ts, S as ns, T as rs, U as is, V as as, W as os, X as ss, Y as cs, Z as ls, _ as us, a as ds, at as fs, b as ps, c as ms, d as hs, et as gs, f as _s, g as vs, h as ys, i as bs, it as xs, j as Ss, k as Cs, l as ws, m as Ts, n as Es, nt as Ds, o as Os, p as ks, q as As, r as js, rt as Ms, s as Ns, t as Ps, tt as Fs, u as Is, v as Ls, w as Rs, x as zs, y as Bs, z as Vs } from "./ConversationSurface-DODNzgCI.js";
 import { t as Hs } from "./activationKey-CjbL3LUv.js";
 import { B as Us, C as Ws, D as Gs, E as Ks, F as qs, I as Js, L as Ys, M as Xs, N as Zs, O as Qs, P as $s, R as ec, S as tc, T as nc, V as rc, _ as ic, a as ac, b as oc, c as sc, d as cc, f as lc, g as uc, h as dc, i as fc, j as pc, l as mc, m as hc, n as gc, o as _c, p as vc, r as yc, s as bc, t as xc, u as Sc, v as Cc, w as wc, x as Tc, y as Ec, z as Dc } from "./renderers-5O9bh08s.js";
-import { A as Oc, C as kc, D as Ac, E as jc, F as Mc, G as Nc, J as Pc, K as Fc, M as Ic, N as Lc, O as Rc, P as zc, T as Bc, U as Vc, W as Hc, j as Uc, k as Wc, q as Gc, t as Kc, u as qc, v as Jc, w as Yc } from "./PresentationEditor-D_9HKZv6.js";
+import { A as Oc, C as kc, D as Ac, E as jc, F as Mc, G as Nc, J as Pc, K as Fc, M as Ic, N as Lc, O as Rc, P as zc, T as Bc, U as Vc, W as Hc, j as Uc, k as Wc, q as Gc, t as Kc, u as qc, v as Jc, w as Yc } from "./PresentationEditor-DIX7UABc.js";
 import { n as Xc, r as Zc, t as Qc } from "./EventStreamContext-CLzG8O5_.js";
 import { J as $c, S as el, X as tl, Z as nl, _ as rl, b as il, c as al, d as ol, f as sl, g as cl, h as ll, j as ul, k as dl, m as fl, n as pl, nt as ml, p as hl, q as gl, rt as _l, t as vl, u as yl, v as bl, w as xl, y as Sl, z as Cl } from "./services-BrNDot--.js";
 import { n as wl, t as Tl } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1187,7 +1187,7 @@ function qp() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Jp = ip(() => import("./DocumentEditorPage-biTbnU1q.js").then((e) => e.n));
+var Jp = ip(() => import("./DocumentEditorPage-DDyp28AS.js").then((e) => e.n));
 function Yp({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
