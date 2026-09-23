@@ -25,7 +25,7 @@ import { a as ne, n as re, o as ie, s as W, t as ae } from "./backdropTone-BF54k
 import { t as oe } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as se } from "./Select-D5mMMegw.js";
 import { n as ce, r as G, t as le } from "./ChoiceList-CaZ4rZrS.js";
-import { L as ue, N as de, Q as fe, R as pe, X as me, nt as he } from "./ConversationSurface-5coFuZIp.js";
+import { L as ue, N as de, Q as fe, R as pe, X as me, nt as he } from "./ConversationSurface-DtEVbQ-F.js";
 import { t as ge } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as _e, t as ve } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as ye, t as be } from "./composerCommands-CPHsHCqp.js";

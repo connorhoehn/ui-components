@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.384.3] — 2026-09-23
+
+### Fixed
+
+- **`ChatPanel`: a viewport-filling chat column no longer scrolls the page.** The read receipts'
+  visually-hidden reader list is `position: absolute`, and the transcript scroller
+  (`chat-panel-messages`) was not positioned, so the span's containing block was the wrapper
+  outside the scroller: it escaped the scroller's clip and sat at its unscrolled static position,
+  8 px below a 1640×960 viewport and 280 px below a 1280×720 one. The scroller is now `relative`,
+  the containing block for everything absolutely positioned in the transcript.
+
 ## [2.384.2] — 2026-09-23
 
 ### Added

@@ -2761,7 +2761,14 @@ export function ChatPanel({
           aria-label="Message history"
           tabIndex={0}
           className={cn(
-            'scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col',
+            // `relative`: the scroller is the containing block for anything
+            // absolutely positioned inside the transcript. Without it the
+            // read receipts' visually-hidden reader list (position:absolute)
+            // resolved against the wrapper OUTSIDE the scroller, escaped its
+            // clip, and sat at its unscrolled static position — 8 px below a
+            // 960 px viewport, 280 px below a 720 px one — so every page that
+            // fills the viewport with a chat column scrolled (NFR #127).
+            'relative scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset rounded',
             // A long thread runs off the top edge with a hard cut. The mask
             // softens the oldest visible messages so the list reads as

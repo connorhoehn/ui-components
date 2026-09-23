@@ -290,4 +290,27 @@ describe('ChatPanel read receipts', () => {
     // Inside the thread's rail, where the reply itself sits.
     expect(all[0].closest('[data-testid="chat-thread-replies"]')).not.toBeNull();
   });
+  // NFR #127: the reader list is visually hidden with position:absolute. Its
+  // containing block must be the scroller itself, or it escapes the
+  // scroller's clip and its unscrolled position grows the page — an 8 px
+  // page scroll at 1640x960, 280 px at 1280x720, on every viewport-filling
+  // chat column. jsdom has no layout, so pin the structural half: the
+  // nearest positioned ancestor of the hidden span IS the scroller.
+  it('keeps the hidden reader list inside the scroller as its containing block', () => {
+    render(
+      <ChatPanel
+        messages={[mine('m1')]}
+        onSend={vi.fn()}
+        currentUserId={VIEWER}
+        readReceipts={[{ userId: 'carol', displayName: 'Carol', readAt: '2026-09-16T09:03:00.000Z' }]}
+      />,
+    );
+    const hidden = [...line()!.querySelectorAll('span')].find((s) => s.style.position === 'absolute')!;
+    expect(hidden).toBeTruthy();
+    const scroller = screen.getByTestId('chat-panel-messages');
+    let p = hidden.parentElement;
+    while (p && p !== scroller && !p.classList.contains('relative')) p = p.parentElement;
+    expect(p).toBe(scroller);
+    expect(scroller.className).toMatch(/\brelative\b/);
+  });
 });

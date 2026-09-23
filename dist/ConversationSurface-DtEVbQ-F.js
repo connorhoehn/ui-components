@@ -2280,7 +2280,7 @@ function Rt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 					"aria-live": "off",
 					"aria-label": "Message history",
 					tabIndex: 0,
-					className: e("scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset rounded", Qt && "fade-top", qe ? "min-h-0 flex-1" : "max-h-[200px]"),
+					className: e("relative scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset rounded", Qt && "fade-top", qe ? "min-h-0 flex-1" : "max-h-[200px]"),
 					children: /* @__PURE__ */ W("div", {
 						className: "mt-auto pb-4",
 						children: [
