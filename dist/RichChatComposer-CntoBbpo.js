@@ -2959,7 +2959,7 @@ var wa = le(function({ onSend: d, draft: v, onDraftChange: ce, onCommand: le, on
 				].indexOf(e.code);
 				t < 0 || (e.preventDefault(), e.stopPropagation(), Gt(ta[t]));
 			} } : {},
-			className: e("uic-composer chat-composer relative isolate w-full min-w-0 max-w-full rounded-[var(--composer-radius,12px)] border bg-surface shadow-[var(--composer-shadow,var(--uic-composer-shadow))] transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none", ur && "uic-chat-console", dr && "bg-surface-inset", G ? G.disabled ? "border-warning focus-within:border-warning focus-within:ring-warning" : "border-info focus-within:border-info focus-within:ring-info" : "border-border focus-within:border-primary focus-within:ring-primary", Z && "rounded-lg focus-within:ring-0", Z && !G?.disabled && (G ? "border-primary/40 focus-within:border-primary/50" : "focus-within:border-primary/50")),
+			className: e("uic-composer chat-composer relative isolate w-full min-w-0 max-w-full rounded-[var(--composer-radius,12px)] border bg-surface shadow-[var(--composer-shadow,var(--uic-composer-shadow))] transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none", ur && "uic-chat-console", dr && "bg-surface-inset", G ? G.disabled ? "border-warning focus-within:border-warning focus-within:ring-warning" : "border-info focus-within:border-info focus-within:ring-info" : "border-border focus-within:border-primary focus-within:ring-primary", Z && "rounded-lg focus-within:ring-0", Z && !G?.disabled && (G ? "border-primary/25 focus-within:border-primary/35" : "focus-within:border-primary/35")),
 			children: [
 				/* @__PURE__ */ O(w, {
 					active: fr,

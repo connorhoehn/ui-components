@@ -2056,7 +2056,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           // The editor dock's card keeps a 1px edge that tints toward the
           // primary while it is in use, rather than a 2px ring (the mockup).
           docked && 'rounded-lg focus-within:ring-0',
-          docked && !activeCommand?.disabled && (activeCommand ? 'border-primary/40 focus-within:border-primary/50' : 'focus-within:border-primary/50'),
+          docked && !activeCommand?.disabled && (activeCommand ? 'border-primary/25 focus-within:border-primary/35' : 'focus-within:border-primary/35'),
         )}
       >
         {/* The console surface itself. Rounded and clipped on its own element
