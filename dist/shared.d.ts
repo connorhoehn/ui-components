@@ -728,7 +728,7 @@ export declare interface ChipProps {
      * debugger or terminal pane.
      */
     palette?: ChipPalette;
-    size?: 'sm' | 'xs';
+    size?: 'md' | 'sm' | 'xs';
     /** Solid fill (dark bg + white text) instead of soft tint. */
     solid?: boolean;
     /**
@@ -1750,6 +1750,11 @@ export declare interface FileKindMarkProps {
      * `tinted` (default) is the glyph in a coloured box, one colour per kind.
      * `plain` is the glyph alone, secondary ink, same box size — for a list row
      * whose title is the thing to read.
+     * `glyph` (2.386.0) is the file-tree mark: no box, a glyph that fills it
+     * (18px at `sm`), neutral ink for pages and folders, and the two kinds a
+     * reader scans for drawn in colour — a deck as a three-colour bar chart, a
+     * diagram as two linked nodes in the brand colour. A selected tree row
+     * turns the neutral ink to its own text colour (`currentColor`).
      */
     variant?: FileKindMarkVariant;
     className?: string;
@@ -1758,7 +1763,7 @@ export declare interface FileKindMarkProps {
 
 export declare type FileKindMarkSize = 'sm' | 'md' | 'lg' | 'xl';
 
-export declare type FileKindMarkVariant = 'tinted' | 'plain';
+export declare type FileKindMarkVariant = 'tinted' | 'plain' | 'glyph';
 
 export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, inputTestId, inputProps, }: FileUploadDropProps): JSX.Element;
 
@@ -4894,7 +4899,7 @@ export declare interface TreeNode {
     status?: 'pending' | 'moved';
 }
 
-export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, expanded: controlledExpanded, onToggle, onReorder, canDragNode, canDropNode, renderTrailing, rowMenu, rowMenuLabel, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
+export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, expanded: controlledExpanded, onToggle, onReorder, canDragNode, canDropNode, renderTrailing, rowMenu, rowMenuLabel, size, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
 
 export declare interface TreeViewProps {
     nodes: TreeNode[];
@@ -4927,9 +4932,19 @@ export declare interface TreeViewProps {
     rowMenu?: (node: TreeNode) => DropdownMenuSection[] | null | undefined;
     /** Accessible name of each row's menu button. Default `Actions for <title>`. */
     rowMenuLabel?: (node: TreeNode) => string;
+    /**
+     * Row scale. `sm` (default) is the 14px / 14px-indent rail. `md` (2.386.0)
+     * is the Folders explorer's: 15px titles on 32px rows, an 18px indent step,
+     * a selected row in the brand tint with brand ink (its icon follows through
+     * `currentColor`), and the ⋯ laid OVER the row's meta on hover instead of
+     * holding an empty 24px slot that pushed every time off the right edge.
+     */
+    size?: TreeViewSize;
     className?: string;
     'data-testid'?: string;
 }
+
+export declare type TreeViewSize = 'sm' | 'md';
 
 /**
  * Generic 0..N-point sparkline. Pure SVG, no canvas / chart library.
@@ -5233,6 +5248,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -5252,38 +5280,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -5304,9 +5303,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -5334,9 +5333,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }

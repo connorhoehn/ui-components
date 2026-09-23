@@ -12,7 +12,8 @@ export interface WorkspaceRailProps {
   footer?: ReactNode;
   children: ReactNode;
   /** `sm` 240px, `md` 300px, `lg` 368px (a two-line work list with a toolbar). */
-  width?: 'sm' | 'md' | 'lg';
+  /** sm 240, md 300, ml 320 (the Folders explorer, 2.386.0), lg 368. */
+  width?: 'sm' | 'md' | 'ml' | 'lg';
   /**
    * A count beside the title ("Work 11"). Omit for none; zero shows "0" —
    * an empty list is a fact, not a missing number.
@@ -43,7 +44,7 @@ export function WorkspaceRail({
   const toggleName = toggleLabel ?? `${collapsed ? 'Show' : 'Hide'} ${label ?? title ?? 'the list'}`;
   return (
     <nav aria-label={label ?? title ?? 'Workspace'} data-testid={testId} data-collapsed={collapsed}
-      className={cn('flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel', collapsed ? 'w-9' : width === 'sm' ? 'w-[240px]' : width === 'lg' ? 'w-[368px]' : 'w-[300px]', className)}>
+      className={cn('flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel', collapsed ? 'w-9' : width === 'sm' ? 'w-[240px]' : width === 'lg' ? 'w-[368px]' : width === 'ml' ? 'w-[320px]' : 'w-[300px]', className)}>
       {(title || actions || onToggle) && (
         <div className={cn('flex shrink-0 items-center gap-1', heading === 'prominent' ? 'h-14' : 'h-9 border-b border-border', collapsed ? 'justify-center' : heading === 'prominent' ? 'pl-5 pr-3' : 'pl-3.5 pr-1.5')} data-testid={`${testId}-header`}>
           {!collapsed && (title ? (

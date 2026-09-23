@@ -43,7 +43,7 @@ export interface ExplorerLayoutProps {
    * a shallower tree; `lg` is 368px for a two-line work list with its toolbar
    * (the Documents Work column, measured against the redesign's 370px).
    */
-  railWidth?: 'sm' | 'md' | 'lg';
+  railWidth?: 'sm' | 'md' | 'ml' | 'lg';
   /**
    * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
    * tabs) that names what the rail, the pane and the aside are all looking at.

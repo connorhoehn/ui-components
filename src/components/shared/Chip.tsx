@@ -42,12 +42,15 @@ const PALETTE = {
   },
 } as const;
 
-const SIZE_CLASSES: Record<'sm' | 'xs', string> = {
+const SIZE_CLASSES: Record<'md' | 'sm' | 'xs', string> = {
+  // A count pill beside a 15px tree row (the Folders explorer, 2.386.0).
+  md: 'min-w-6 justify-center px-1.5 py-0.5 text-[12px] font-semibold tabular-nums',
   sm: 'px-2 py-0.5 text-[11px]',
   xs: 'px-1.5 py-px text-[10px]',
 };
 
-const DOT_SIZE: Record<'sm' | 'xs', string> = {
+const DOT_SIZE: Record<'md' | 'sm' | 'xs', string> = {
+  md: 'h-1.5 w-1.5',
   sm: 'h-1.5 w-1.5',
   xs: 'h-1 w-1',
 };
@@ -60,7 +63,7 @@ export interface ChipProps {
    * debugger or terminal pane.
    */
   palette?: ChipPalette;
-  size?: 'sm' | 'xs';
+  size?: 'md' | 'sm' | 'xs';
   /** Solid fill (dark bg + white text) instead of soft tint. */
   solid?: boolean;
   /**

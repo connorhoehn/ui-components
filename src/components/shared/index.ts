@@ -383,7 +383,7 @@ export type { PersonHoverCardProps, PersonCardData } from './PersonHoverCard';
 export { MasterDetail } from './MasterDetail';
 export type { MasterDetailProps } from './MasterDetail';
 export { TreeView } from './TreeView';
-export type { TreeViewProps, TreeNode, TreeDropPosition } from './TreeView';
+export type { TreeViewProps, TreeNode, TreeDropPosition, TreeViewSize } from './TreeView';
 // Documents workspace foundation (2.362.0): the file-kind glyph and the agent
 // task strip that sits above a floating composer.
 export { FileKindMark, FILE_KIND_LABELS } from './FileKindMark';

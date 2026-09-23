@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.386.1] — 2026-09-23
+
+### Added (the Folders mockup's explorer and rails)
+- **TreeView `size="md"`** — 15px titles on 32px rows, an 18px indent step, a
+  selected row in the brand tint with brand ink, and the row ⋯ laid over the
+  meta on hover instead of reserving an empty slot.
+- **FileKindMark `variant="glyph"`** — the tree mark: no box, an 18px glyph in
+  neutral ink; a deck as three coloured bars, a diagram as two linked nodes.
+- **Chip `size="md"`** — the 12px count pill beside a 15px tree row.
+- **ConversationShelf `size="md"`** — 15px labels, 18px icons, 36px rows.
+- **WorkspaceRail / ExplorerLayout width `ml`** — 320px.
+- **CollapsedIconStrip** — `active` (tinted square + 3px brand bar),
+  `headerHeight` (the menu button in the header row), section handlers optional.
+- **AppShell `sidebarFullHeight`** — the sidebar runs the window height and the
+  header row starts beside it.
+
+### Changed
+- **ContextColumn** — a panel with `entries: []` puts nothing on the folded strip.
+
 ## [2.385.9] — 2026-09-23
 
 ### Fixed

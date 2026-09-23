@@ -61,6 +61,13 @@ export interface AppShellProps {
   sidebarLabel?: string;
   sidebarTestId?: string;
   subheaderTestId?: string;
+  /**
+   * The sidebar runs the full window height and the header row starts beside
+   * it (2.386.0) — the collapsed icon strip's layout, where the strip's first
+   * button sits in the header row. Default false: the header spans the window
+   * and the sidebar hangs below the chrome.
+   */
+  sidebarFullHeight?: boolean;
 }
 
 function LoadingOverlay({ children }: { children?: ReactNode }) {
@@ -103,6 +110,7 @@ export function AppShell({
   sidebarLabel = 'App sidebar',
   sidebarTestId = 'app-sidebar',
   subheaderTestId = 'app-subheader',
+  sidebarFullHeight = false,
 }: AppShellProps) {
   // The one derivation. The sidebar's top and the body's minimum height both
   // read `--app-shell-chrome-h`; nothing below hard-codes a pixel of chrome.
@@ -120,7 +128,7 @@ export function AppShell({
       {/* Chrome — sticky, full-width: the header row, the section band, the
           degraded banner. One block, so the two nav rows read as one piece of
           chrome sitting on the page. */}
-      <div className="sticky top-0 z-50">
+      <div className="sticky top-0 z-50" {...(sidebar && sidebarFullHeight ? { style: { marginLeft: sidebarWidth }, 'data-beside-sidebar': 'true' } : {})}>
         <div
           className="flex items-center gap-4 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-6"
           style={{ height: headerHeight }}
@@ -155,10 +163,14 @@ export function AppShell({
             aria-label={sidebarLabel}
             data-testid={sidebarTestId}
             className={cn(
-              'fixed left-0 bottom-0 z-40 box-border flex shrink-0 flex-col overflow-y-auto overflow-x-hidden border-r border-[var(--color-border)] bg-[var(--color-surface)] transition-[width,padding] duration-200',
+              'fixed left-0 bottom-0 box-border flex shrink-0 flex-col overflow-y-auto overflow-x-hidden border-r border-[var(--color-border)] bg-[var(--color-surface)] transition-[width,padding] duration-200',
+              // Full height, it sits beside the chrome rather than under it,
+              // so it rises above the sticky header's z-50.
+              sidebarFullHeight ? 'z-[51]' : 'z-40',
               sidebarClassName,
             )}
-            style={{ width: sidebarWidth, top: 'var(--app-shell-chrome-h)' }}
+            style={{ width: sidebarWidth, top: sidebarFullHeight ? 0 : 'var(--app-shell-chrome-h)' }}
+            data-full-height={sidebarFullHeight ? 'true' : undefined}
           >
             {sidebar}
           </nav>

@@ -49,7 +49,10 @@ export interface ContextColumnPanel {
    * The panel's own parts, for the collapsed strip: one icon per entry in
    * place of the panel's icon. Pressing one opens the column to this panel
    * and reports the entry (`onActivate(panel.id, entry.id)`). The open tab
-   * row is unchanged — the panel's content owns its own tabs.
+   * row is unchanged — the panel's content owns its own tabs. An EMPTY array
+   * (2.386.0) puts nothing on the strip for this panel — its parts all live
+   * elsewhere right now (a page's comments on its own tab) and the host opens
+   * it another way; omit `entries` for the panel's one icon.
    */
   entries?: readonly ContextColumnEntry[];
   /** What the panel shows while it is the active one. */
@@ -133,7 +136,7 @@ export function ContextColumn({
           data-testid={`${testId}-expand`}
         />
         <div className="my-1 h-px w-5 bg-border" aria-hidden="true" />
-        {panels.flatMap((p) => (p.entries?.length
+        {panels.flatMap((p) => (p.entries
           ? p.entries.map((e) => (
               <div key={`${p.id}:${e.id}`} className="relative">
                 <IconButton

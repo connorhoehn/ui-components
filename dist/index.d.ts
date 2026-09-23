@@ -1072,7 +1072,7 @@ export declare interface Approver {
  * AppShell wraps its children in a ToastProvider by default.
  * Pass `toastRegion={null}` to opt out (e.g. parent already has one).
  */
-export declare function AppShell({ sidebar, header, subheader, children, toastRegion, loading, apiDegraded, commandPalette, className, sidebarWidth, headerHeight, subheaderHeight, subheaderInset, contentPadding, sidebarClassName, sidebarLabel, sidebarTestId, subheaderTestId, }: AppShellProps): JSX.Element;
+export declare function AppShell({ sidebar, header, subheader, children, toastRegion, loading, apiDegraded, commandPalette, className, sidebarWidth, headerHeight, subheaderHeight, subheaderInset, contentPadding, sidebarClassName, sidebarLabel, sidebarTestId, subheaderTestId, sidebarFullHeight, }: AppShellProps): JSX.Element;
 
 export declare interface AppShellProps {
     /** Slot: full-height left sidebar (CollapsibleSidebar etc.) */
@@ -1127,6 +1127,13 @@ export declare interface AppShellProps {
     sidebarLabel?: string;
     sidebarTestId?: string;
     subheaderTestId?: string;
+    /**
+     * The sidebar runs the full window height and the header row starts beside
+     * it (2.386.0) — the collapsed icon strip's layout, where the strip's first
+     * button sits in the header row. Default false: the header spans the window
+     * and the sidebar hangs below the chrome.
+     */
+    sidebarFullHeight?: boolean;
 }
 
 /** An arrow pointing right: "go on" — a link action, "Prepare run →". Since 2.385.0. */
@@ -3797,7 +3804,7 @@ export declare interface ChipProps {
      * debugger or terminal pane.
      */
     palette?: ChipPalette;
-    size?: 'sm' | 'xs';
+    size?: 'md' | 'sm' | 'xs';
     /** Solid fill (dark bg + white text) instead of soft tint. */
     solid?: boolean;
     /**
@@ -4011,15 +4018,28 @@ declare interface CollaborationProvider {
     awareness: Awareness;
 }
 
-export declare function CollapsedIconStrip({ connectionState, onExpand, onDocuments, onPipelines, onObservability, }: CollapsedIconStripProps): JSX.Element;
+export declare function CollapsedIconStrip({ connectionState, onExpand, onDocuments, onPipelines, onObservability, active, headerHeight, className, 'data-testid': testId, }: CollapsedIconStripProps): JSX.Element;
 
-declare interface CollapsedIconStripProps {
+export declare interface CollapsedIconStripProps {
     connectionState: ConnectionState_3;
     onExpand: () => void;
-    onDocuments: () => void;
-    onPipelines: () => void;
-    onObservability: () => void;
+    onDocuments?: () => void;
+    onPipelines?: () => void;
+    onObservability?: () => void;
+    /** The section the window is in. */
+    active?: CollapsedIconStripSection | null;
+    /**
+     * The app header's height, when the strip starts at the top of the window
+     * beside it (AppShell `sidebarFullHeight`): the expand button is centred in
+     * that row, and the sections start below it. Omit when the strip hangs
+     * below the header.
+     */
+    headerHeight?: number;
+    className?: string;
+    'data-testid'?: string;
 }
+
+export declare type CollapsedIconStripSection = 'documents' | 'pipelines' | 'observability';
 
 export declare function CollapsibleSection({ title, defaultOpen, badge, actions, children, className, storageKey, density, 'data-testid': testId, }: CollapsibleSectionProps): default_2.JSX.Element;
 
@@ -4623,7 +4643,10 @@ export declare interface ContextColumnPanel {
      * The panel's own parts, for the collapsed strip: one icon per entry in
      * place of the panel's icon. Pressing one opens the column to this panel
      * and reports the entry (`onActivate(panel.id, entry.id)`). The open tab
-     * row is unchanged — the panel's content owns its own tabs.
+     * row is unchanged — the panel's content owns its own tabs. An EMPTY array
+     * (2.386.0) puts nothing on the strip for this panel — its parts all live
+     * elsewhere right now (a page's comments on its own tab) and the host opens
+     * it another way; omit `entries` for the panel's one icon.
      */
     entries?: readonly ContextColumnEntry[];
     /** What the panel shows while it is the active one. */
@@ -4974,7 +4997,7 @@ export declare interface ConversationRailProps {
     'data-testid'?: string;
 }
 
-export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
+export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, size, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
 
 export declare interface ConversationShelfItem {
     id: string;
@@ -5002,6 +5025,12 @@ export declare interface ConversationShelfProps {
     onSelect: (id: string) => void;
     compact?: boolean;
     iconOnly?: boolean;
+    /**
+     * `sm` (default) is the 13px shelf. `md` (2.386.0) is the Documents
+     * explorer's quick views: 15px labels and 18px icons on 36px rows, the
+     * scale of the Folders tree under them.
+     */
+    size?: 'sm' | 'md';
     className?: string;
     'data-testid'?: string;
 }
@@ -6813,7 +6842,7 @@ export declare interface ExplorerLayoutProps {
      * a shallower tree; `lg` is 368px for a two-line work list with its toolbar
      * (the Documents Work column, measured against the redesign's 370px).
      */
-    railWidth?: 'sm' | 'md' | 'lg';
+    railWidth?: 'sm' | 'md' | 'ml' | 'lg';
     /**
      * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
      * tabs) that names what the rail, the pane and the aside are all looking at.
@@ -6977,6 +7006,11 @@ export declare interface FileKindMarkProps {
      * `tinted` (default) is the glyph in a coloured box, one colour per kind.
      * `plain` is the glyph alone, secondary ink, same box size — for a list row
      * whose title is the thing to read.
+     * `glyph` (2.386.0) is the file-tree mark: no box, a glyph that fills it
+     * (18px at `sm`), neutral ink for pages and folders, and the two kinds a
+     * reader scans for drawn in colour — a deck as a three-colour bar chart, a
+     * diagram as two linked nodes in the brand colour. A selected tree row
+     * turns the neutral ink to its own text colour (`currentColor`).
      */
     variant?: FileKindMarkVariant;
     className?: string;
@@ -6985,7 +7019,7 @@ export declare interface FileKindMarkProps {
 
 export declare type FileKindMarkSize = 'sm' | 'md' | 'lg' | 'xl';
 
-export declare type FileKindMarkVariant = 'tinted' | 'plain';
+export declare type FileKindMarkVariant = 'tinted' | 'plain' | 'glyph';
 
 export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, inputTestId, inputProps, }: FileUploadDropProps): JSX.Element;
 
@@ -16572,7 +16606,7 @@ export declare interface TreeNode {
     status?: 'pending' | 'moved';
 }
 
-export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, expanded: controlledExpanded, onToggle, onReorder, canDragNode, canDropNode, renderTrailing, rowMenu, rowMenuLabel, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
+export declare function TreeView({ nodes, selectedId, onSelect, defaultExpanded, expanded: controlledExpanded, onToggle, onReorder, canDragNode, canDropNode, renderTrailing, rowMenu, rowMenuLabel, size, className, 'data-testid': testId, }: TreeViewProps): JSX.Element | null;
 
 export declare interface TreeViewProps {
     nodes: TreeNode[];
@@ -16605,9 +16639,19 @@ export declare interface TreeViewProps {
     rowMenu?: (node: TreeNode) => DropdownMenuSection[] | null | undefined;
     /** Accessible name of each row's menu button. Default `Actions for <title>`. */
     rowMenuLabel?: (node: TreeNode) => string;
+    /**
+     * Row scale. `sm` (default) is the 14px / 14px-indent rail. `md` (2.386.0)
+     * is the Folders explorer's: 15px titles on 32px rows, an 18px indent step,
+     * a selected row in the brand tint with brand ink (its icon follows through
+     * `currentColor`), and the ⋯ laid OVER the row's meta on hover instead of
+     * holding an empty 24px slot that pushed every time off the right edge.
+     */
+    size?: TreeViewSize;
     className?: string;
     'data-testid'?: string;
 }
+
+export declare type TreeViewSize = 'sm' | 'md';
 
 /**
  * Generic 0..N-point sparkline. Pure SVG, no canvas / chart library.
@@ -19792,7 +19836,8 @@ declare interface UseActivityBusReturn {
       footer?: ReactNode;
       children: ReactNode;
       /** `sm` 240px, `md` 300px, `lg` 368px (a two-line work list with a toolbar). */
-      width?: 'sm' | 'md' | 'lg';
+      /** sm 240, md 300, ml 320 (the Folders explorer, 2.386.0), lg 368. */
+      width?: 'sm' | 'md' | 'ml' | 'lg';
       /**
        * A count beside the title ("Work 11"). Omit for none; zero shows "0" —
        * an empty list is a fact, not a missing number.
@@ -19851,6 +19896,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -19870,38 +19928,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -19922,9 +19951,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -19952,9 +19981,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }

@@ -98,9 +98,19 @@ export interface TreeViewProps {
   rowMenu?: (node: TreeNode) => DropdownMenuSection[] | null | undefined;
   /** Accessible name of each row's menu button. Default `Actions for <title>`. */
   rowMenuLabel?: (node: TreeNode) => string;
+  /**
+   * Row scale. `sm` (default) is the 14px / 14px-indent rail. `md` (2.386.0)
+   * is the Folders explorer's: 15px titles on 32px rows, an 18px indent step,
+   * a selected row in the brand tint with brand ink (its icon follows through
+   * `currentColor`), and the ⋯ laid OVER the row's meta on hover instead of
+   * holding an empty 24px slot that pushed every time off the right edge.
+   */
+  size?: TreeViewSize;
   className?: string;
   'data-testid'?: string;
 }
+
+export type TreeViewSize = 'sm' | 'md';
 
 interface Entry extends TreeNode {
   children: Entry[];
@@ -182,7 +192,9 @@ function TreeRow({
   testId,
   focusedId,
   setFocusedId,
+  size,
 }: {
+  size: TreeViewSize;
   entry: Entry;
   depth: number;
   expanded: Set<string>;
@@ -210,6 +222,7 @@ function TreeRow({
   const draggable = dragEnabled && !entry.disabled && entry.status !== 'pending' && (canDragNode?.(entry) ?? true);
   const menuSections = rowMenu?.(entry);
   const hasMenu = !!menuSections && menuSections.some((section) => section.items.length > 0);
+  const md = size === 'md';
 
   return (
     <div>
@@ -276,13 +289,14 @@ function TreeRow({
           // `relative`: the sr-only hover meta is absolutely positioned; without
           // a positioned row it escapes the rail's scroll box and stretches the
           // document (a long tree scrolled the whole window — 2.367.1).
-          'group relative flex items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors',
+          'group relative flex items-center border-l-2 transition-colors',
+          md ? 'min-h-8 gap-1.5 py-1 pr-2.5 text-[15px] leading-6' : 'gap-1 py-1.5 pr-2 text-sm',
           // A row you can pick up says so before you try. Only when the host
           // wired a drop target: a grab cursor over an immovable row is a lie.
           draggable ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
           isSelected
-            ? 'border-primary bg-surface-hover font-semibold text-text-primary'
-            : 'border-transparent text-text-secondary hover:bg-surface-hover',
+            ? (md ? 'border-primary bg-primary-bg font-medium text-primary-fg' : 'border-primary bg-surface-hover font-semibold text-text-primary')
+            : (md ? 'border-transparent text-text-primary hover:bg-surface-hover' : 'border-transparent text-text-secondary hover:bg-surface-hover'),
           entry.disabled && 'cursor-not-allowed opacity-50',
           // A move in flight: still on screen where it will land, but
           // visibly not there yet, and not a drop target or a drag source.
@@ -294,7 +308,7 @@ function TreeRow({
           isDropTarget && dropTarget?.position === 'before' && 'shadow-[inset_0_2px_0_0_var(--color-primary)]',
           isDropTarget && dropTarget?.position === 'after' && 'shadow-[inset_0_-2px_0_0_var(--color-primary)]',
         )}
-        style={{ paddingLeft: depth * 14 + 8 }}
+        style={{ paddingLeft: depth * (md ? 18 : 14) + 8 }}
       >
         {hasChildren ? (
           <button
@@ -312,11 +326,11 @@ function TreeRow({
           // 20px leading slot: leaf titles line up with directory titles.
           <span className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
         )}
-        {entry.icon && <span className="flex flex-shrink-0 items-center" data-testid={`${testId}-icon-${entry.id}`}>{entry.icon}</span>}
+        {entry.icon && <span className={cn('flex flex-shrink-0 items-center', md && (isSelected ? 'text-primary-fg' : 'text-text-secondary'))} data-testid={`${testId}-icon-${entry.id}`}>{entry.icon}</span>}
         <span className="min-w-0 flex-1 truncate" title={entry.title}>
           {entry.title}
         </span>
-        {entry.meta && <span className="flex-shrink-0 text-xs text-text-tertiary">{entry.meta}</span>}
+        {entry.meta && <span className={cn('flex-shrink-0 text-text-tertiary', md ? 'text-[13px] tabular-nums' : 'text-xs')}>{entry.meta}</span>}
         {entry.hoverMeta && (
           <span
             data-testid={`${testId}-hover-meta-${entry.id}`}
@@ -337,7 +351,12 @@ function TreeRow({
           // native event too. The tree's own handler skips them instead.
           <span
             data-tree-row-menu=""
-            className="flex flex-shrink-0 items-center"
+            className={cn(
+              'flex flex-shrink-0 items-center',
+              // md: over the meta, not beside it — the slot is empty until
+              // hover, and a reserved one moved every time 24px off the edge.
+              md && 'pointer-events-none absolute inset-y-0 right-1.5 opacity-0 group-hover:pointer-events-auto group-hover:opacity-100 group-focus:pointer-events-auto group-focus:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 has-[[aria-expanded=true]]:pointer-events-auto has-[[aria-expanded=true]]:opacity-100',
+            )}
             onClick={(event) => event.stopPropagation()}
             onContextMenu={(event) => event.stopPropagation()}
           >
@@ -353,6 +372,7 @@ function TreeRow({
                 'h-5 w-6 border-transparent px-0 py-0 opacity-0 transition-opacity motion-reduce:transition-none',
                 'group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 aria-expanded:opacity-100',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                md && 'h-6 w-7 bg-surface-hover',
               )}
             />
           </span>
@@ -369,6 +389,7 @@ function TreeRow({
             selectedId={selectedId}
             onSelect={onSelect}
             renderTrailing={renderTrailing}
+            size={size}
             rowMenu={rowMenu}
             rowMenuLabel={rowMenuLabel}
             dragEnabled={dragEnabled}
@@ -426,6 +447,7 @@ export function TreeView({
   renderTrailing,
   rowMenu,
   rowMenuLabel,
+  size = 'sm',
   className,
   'data-testid': testId = 'tree-view',
 }: TreeViewProps) {
@@ -610,6 +632,7 @@ export function TreeView({
           selectedId={selectedId}
           onSelect={onSelect}
           renderTrailing={renderTrailing}
+          size={size}
           rowMenu={rowMenu}
           rowMenuLabel={rowMenuLabel}
           dragEnabled={Boolean(onReorder)}

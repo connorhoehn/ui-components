@@ -35,7 +35,7 @@ export type FileKind =
   | 'media'
   | 'workflow';
 
-export type FileKindMarkVariant = 'tinted' | 'plain';
+export type FileKindMarkVariant = 'tinted' | 'plain' | 'glyph';
 
 export type FileKindMarkSize = 'sm' | 'md' | 'lg' | 'xl';
 
@@ -49,6 +49,11 @@ export interface FileKindMarkProps {
    * `tinted` (default) is the glyph in a coloured box, one colour per kind.
    * `plain` is the glyph alone, secondary ink, same box size — for a list row
    * whose title is the thing to read.
+   * `glyph` (2.386.0) is the file-tree mark: no box, a glyph that fills it
+   * (18px at `sm`), neutral ink for pages and folders, and the two kinds a
+   * reader scans for drawn in colour — a deck as a three-colour bar chart, a
+   * diagram as two linked nodes in the brand colour. A selected tree row
+   * turns the neutral ink to its own text colour (`currentColor`).
    */
   variant?: FileKindMarkVariant;
   className?: string;
@@ -154,9 +159,38 @@ function SlidesGlyph({ size }: { size: number } & Omit<SVGProps<SVGSVGElement>, 
   );
 }
 
+/** A deck, as the Folders tree draws it: three coloured bars on a baseline. */
+function DeckBarsGlyph({ size }: GlyphProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" data-glyph="deck-bars">
+      <rect x="2.5" y="8" width="3" height="5.5" rx="0.5" className="fill-success" />
+      <rect x="6.5" y="5" width="3" height="8.5" rx="0.5" className="fill-danger" />
+      <rect x="10.5" y="2.5" width="3" height="11" rx="0.5" className="fill-primary" />
+      <path d="M1.5 14.25h13" stroke="currentColor" strokeWidth={1} strokeLinecap="round" opacity={0.35} />
+    </svg>
+  );
+}
+
+/** A diagram, as the Folders tree draws it: two nodes and a connector. */
+function DiagramNodesGlyph({ size }: GlyphProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" aria-hidden="true" data-glyph="diagram-nodes" className="text-primary">
+      <circle cx="4.25" cy="4.25" r="2" />
+      <circle cx="11.75" cy="11.75" r="2" />
+      <path d="M12.5 3.5 3.5 12.5M6.5 9.5l-.01.01M9.5 6.5l-.01.01" />
+    </svg>
+  );
+}
+
+const GLYPH_BOX: Record<FileKindMarkSize, string> = { sm: 'h-5 w-5', md: 'h-6 w-6', lg: 'h-7 w-7', xl: 'h-8 w-8' };
+const GLYPH_ONLY: Record<FileKindMarkSize, number> = { sm: 18, md: 20, lg: 24, xl: 28 };
+
 export function FileKindMark({ kind, size = 'md', variant = 'tinted', label, className, 'data-testid': testId = 'file-kind-mark' }: FileKindMarkProps) {
-  const px = GLYPH[size];
-  const glyph = {
+  const px = variant === 'glyph' ? GLYPH_ONLY[size] : GLYPH[size];
+  const special = variant === 'glyph'
+    ? (kind === 'presentation' ? <DeckBarsGlyph size={px} /> : kind === 'diagram' ? <DiagramNodesGlyph size={px} /> : null)
+    : null;
+  const glyph = special ?? {
     page: <DocumentIcon size={px} />,
     presentation: <SlidesGlyph size={px} />,
     recording: <VideoCallIcon size={px} />,
@@ -176,7 +210,7 @@ export function FileKindMark({ kind, size = 'md', variant = 'tinted', label, cla
       data-kind={kind}
       data-variant={variant}
       {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true })}
-      className={cn('inline-grid shrink-0 place-items-center', BOX[size], variant === 'plain' ? PLAIN : TONE[kind], className)}
+      className={cn('inline-grid shrink-0 place-items-center', variant === 'glyph' ? GLYPH_BOX[size] : BOX[size], variant === 'glyph' ? 'bg-transparent' : variant === 'plain' ? PLAIN : TONE[kind], className)}
     >
       {glyph}
     </span>
