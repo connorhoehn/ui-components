@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.369.1] — 2026-09-22
+
+### Fixed
+- **A popover never covers a pinned composer dock.** `FloatingComposerDock` marks its visible column
+  `data-uic-keepout="bottom"`; `InlinePopover` treats the top of any keep-out surface below its anchor
+  as the bottom of the screen, so a filmstrip row's ⋯ menu near the foot of the deck editor flips up
+  (or slides up) instead of opening over the composer. Menus opened from inside the dock are unaffected.
+  New export `popoverFloor`, `POPOVER_KEEPOUT_ATTR`.
+- **Submenu rows run their action under a real pointer.** A submenu is portalled on its own, so the
+  parent popover's outside-click handler saw its mousedown as "outside", closed, and unmounted the
+  submenu before the click landed — "Revise one part → Bullet 2" did nothing in the browser (jsdom
+  tests passed because `fireEvent.click` sends no mousedown). Popovers now carry their open order and
+  ignore a mousedown inside one opened later.
+
 ## [2.369.0] — 2026-09-22
 
 ### Added — `RichChatComposer` adapts to the box it is dropped into

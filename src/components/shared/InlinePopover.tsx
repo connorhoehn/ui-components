@@ -105,6 +105,33 @@ function computePosition(
   };
 }
 
+/**
+ * The attribute a pinned surface — a composer dock at the foot of an editor —
+ * puts on itself so popovers never cover it. A popover anchored ABOVE such a
+ * surface treats its top edge as the bottom of the screen: it flips up, or
+ * slides up, rather than opening over it. A popover opened from INSIDE it
+ * (its own menus) is unaffected.
+ */
+export const POPOVER_KEEPOUT_ATTR = 'data-uic-keepout';
+
+/** The lowest y a popover anchored at `anchor` may reach: the viewport, or a keep-out surface below the anchor. */
+export function popoverFloor(anchor: DOMRect | null, viewportHeight: number, doc: Document = document): number {
+  let floor = viewportHeight;
+  if (!anchor) return floor;
+  doc.querySelectorAll<HTMLElement>(`[${POPOVER_KEEPOUT_ATTR}="bottom"]`).forEach((el) => {
+    const r = el.getBoundingClientRect();
+    if (r.height === 0 && r.width === 0) return;
+    if (r.top >= anchor.bottom && r.top < floor) floor = r.top;
+  });
+  return floor;
+}
+
+// Open order of popover panels. A submenu is portalled on its own, so to its
+// parent it looks like "outside": a mousedown on a submenu row closed the
+// parent, which unmounted the submenu before the click landed, and the row's
+// action never ran. A panel opened LATER is treated as inside.
+let popoverSeq = 0;
+
 export function InlinePopover({
   trigger,
   open,
@@ -129,6 +156,9 @@ export function InlinePopover({
   // Escape/Tab belong to the top layer only. See lib/overlayStack.ts for why
   // the `e.stopPropagation()` below cannot achieve this on its own.
   const isTopLayer = useOverlayLayer(open);
+  const seqRef = useRef(0);
+  if (open && seqRef.current === 0) seqRef.current = ++popoverSeq;
+  if (!open && seqRef.current !== 0) seqRef.current = 0;
 
   // Recompute anchored position whenever the popover opens, or when
   // the viewport scrolls / resizes while it's open.
@@ -165,7 +195,9 @@ export function InlinePopover({
     const r = panel.getBoundingClientRect();
     if (r.width === 0 && r.height === 0) return;
     const margin = 8;
-    const maxH = window.innerHeight - margin * 2;
+    const anchorRect = anchorRectRef.current;
+    const floor = popoverFloor(anchorRect, window.innerHeight);
+    const maxH = floor - margin * 2;
     let top = r.top;
     let left = r.left;
     let changed = false;
@@ -179,7 +211,7 @@ export function InlinePopover({
     const flipped =
       !placement.startsWith('bottom') || !anchor
         ? false
-        : r.bottom > window.innerHeight - margin
+        : r.bottom > floor - margin
           && anchor.top - offset - r.height >= margin;
     if (flipped) {
       top = anchor!.top - offset - r.height;
@@ -187,8 +219,8 @@ export function InlinePopover({
     } else if (r.height > maxH) {
       top = margin;
       changed = true;
-    } else if (r.bottom > window.innerHeight - margin) {
-      top = window.innerHeight - margin - r.height;
+    } else if (r.bottom > floor - margin) {
+      top = floor - margin - r.height;
       changed = true;
     }
     if (top < margin) {
@@ -295,6 +327,8 @@ export function InlinePopover({
       if (!target) return;
       if (panelRef.current?.contains(target)) return;
       if (trigger.current?.contains(target)) return;
+      const other = (target as Element).closest?.('[data-uic-popover-seq]');
+      if (other && Number(other.getAttribute('data-uic-popover-seq')) > seqRef.current) return;
       onClose();
     };
     document.addEventListener('mousedown', onDown);
@@ -312,6 +346,7 @@ export function InlinePopover({
       aria-labelledby={ariaLabelledBy}
       data-testid={testId}
       data-placement={placement}
+      data-uic-popover-seq={seqRef.current || undefined}
       className={cn(
         // `bg-surface`, NOT `bg-white`. This panel is PORTALLED to
         // document.body and its text is `text-text-primary`, which flips to

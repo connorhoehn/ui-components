@@ -2840,6 +2840,15 @@ export declare function PlusIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** A box with an arrow leaving its corner: "open this in its own view". */
 export declare function PopOutIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/**
+ * The attribute a pinned surface — a composer dock at the foot of an editor —
+ * puts on itself so popovers never cover it. A popover anchored ABOVE such a
+ * surface treats its top edge as the bottom of the screen: it flips up, or
+ * slides up, rather than opening over it. A popover opened from INSIDE it
+ * (its own menus) is unaffected.
+ */
+export declare const POPOVER_KEEPOUT_ATTR = "data-uic-keepout";
+
 /** A field in a PopoverForm: a small label over its control, tightly. */
 export declare function PopoverField({ label, hint, children, 'data-testid': testId, }: {
     label: string;
@@ -2847,6 +2856,9 @@ export declare function PopoverField({ label, hint, children, 'data-testid': tes
     children: ReactNode;
     'data-testid'?: string;
 }): JSX.Element;
+
+/** The lowest y a popover anchored at `anchor` may reach: the viewport, or a keep-out surface below the anchor. */
+export declare function popoverFloor(anchor: DOMRect | null, viewportHeight: number, doc?: Document): number;
 
 export declare function PopoverForm({ open, anchor, placement, title, subtitle, icon, submitLabel, submitSlot, submitTestId, submitDisabled, busy, error, onSubmit, onClose, width, children, 'data-testid': testId, }: PopoverFormProps): JSX.Element | null;
 
@@ -4999,25 +5011,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -5025,9 +5021,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -5048,9 +5044,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }

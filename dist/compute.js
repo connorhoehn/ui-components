@@ -3,7 +3,7 @@ import { t } from "./Chip-DYqbAD3L.js";
 import { t as n } from "./TitledFrame-DUsxfZCI.js";
 import { t as r } from "./DotMeter-BDVkadI8.js";
 import { t as i } from "./StatusDot-Bgx2zxgC.js";
-import { t as a } from "./InlinePopover-2oYczSG0.js";
+import { t as a } from "./InlinePopover-sx7SpM1v.js";
 import { t as o } from "./SectionLabel-bcrhNYOr.js";
 import { t as s } from "./InlinePlaceholder-51dbPRGn.js";
 import { n as c } from "./FloatingPanel-6GL9dXGL.js";

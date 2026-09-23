@@ -109,7 +109,9 @@ export function FloatingComposerDock({
         className,
       )}
     >
-      <div className={cn('pointer-events-auto mx-auto flex w-full flex-col', WIDTH[maxWidth])}>
+      {/* A keep-out for popovers: a menu opened above the dock (a filmstrip
+          row's ⋯) flips up rather than covering the composer. */}
+      <div data-uic-keepout="bottom" className={cn('pointer-events-auto mx-auto flex w-full flex-col', WIDTH[maxWidth])}>
         {above && <div className="mb-2" data-testid={`${testId}-above`}>{above}</div>}
         {strip && <div data-testid={`${testId}-strip`}>{strip}</div>}
         {/* With a strip on top the two read as one box: the composer's top
