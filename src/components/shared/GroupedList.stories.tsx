@@ -1,0 +1,125 @@
+import { useState } from 'react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { GroupedList, type GroupedListGroup, type GroupedListRow } from './GroupedList';
+import { FileKindMark } from './FileKindMark';
+import { StatusPill } from './StatusPill';
+import { Button } from '../ui/Button';
+
+const GROUPS: GroupedListGroup[] = [
+  { id: 'documents', title: 'Documents & presentations', count: 3, icon: <FileKindMark kind="folder" variant="plain" /> },
+  { id: 'agents', title: 'Agents & experiments', count: 2, icon: <FileKindMark kind="folder" variant="plain" /> },
+  { id: 'empty', title: 'Other', count: 0, icon: <FileKindMark kind="folder" variant="plain" />, defaultOpen: false },
+];
+
+const open = <Button variant="secondary" size="sm">Open</Button>;
+
+const ROWS: GroupedListRow[] = [
+  {
+    id: 'doc-edit',
+    groupId: 'documents',
+    icon: <FileKindMark kind="page" variant="plain" />,
+    title: 'Document agent edit',
+    pill: <StatusPill variant="text" state="success" label="Published" />,
+    subline: 'Edit a document from an instruction',
+    hoverSubline: '/doc → Read → Plan → Approval → Suggestions',
+    hoverActions: open,
+  },
+  {
+    id: 'deck-edit',
+    groupId: 'documents',
+    icon: <FileKindMark kind="presentation" variant="plain" />,
+    title: 'Presentation edit',
+    pill: <StatusPill variant="text" state="warning" label="1 of 5 failed" meta="29m ago" />,
+    subline: 'Edit a presentation from a request',
+    hoverSubline: '/deck → Read → Plan → Approval → Apply',
+    hoverActions: open,
+  },
+  {
+    id: 'diagram',
+    groupId: 'documents',
+    icon: <FileKindMark kind="diagram" variant="plain" />,
+    title: 'Diagram from a description',
+    pill: <StatusPill variant="text" state="neutral" label="Draft" />,
+    subline: 'Turn a description into a diagram',
+    hoverActions: open,
+  },
+  {
+    id: 'agent-loop',
+    groupId: 'agents',
+    icon: <FileKindMark kind="agent" variant="plain" />,
+    title: 'Agent loop',
+    pill: <StatusPill variant="text" state="danger" label="Failed" meta="10h ago" />,
+    subline: 'Run an agent on a work item',
+    trailing: <Button variant="link" size="sm">View run</Button>,
+    hoverActions: open,
+  },
+  {
+    id: 'scratch',
+    groupId: 'agents',
+    icon: <FileKindMark kind="experiment" variant="plain" />,
+    title: 'ZZ scratch live output test',
+    pill: <StatusPill variant="text" state="neutral" label="Draft" />,
+    subline: 'Test live output',
+    hoverActions: open,
+  },
+];
+
+const MENU = (row: GroupedListRow) => [
+  { items: [{ label: 'Open' }, { label: 'Run' }, { label: 'Duplicate' }] },
+  { items: [{ label: `Archive ${row.title}`, danger: true }] },
+];
+
+const meta = {
+  title: 'Shared/GroupedList',
+  component: GroupedList,
+  tags: ['autodocs'],
+  parameters: { layout: 'padded' },
+} satisfies Meta<typeof GroupedList>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+/** Three groups, one collapsed; the second row is `current`. */
+export const Directory: Story = {
+  args: { groups: GROUPS, rows: ROWS },
+  render: () => (
+    <div className="w-[960px]">
+      <GroupedList groups={GROUPS} rows={ROWS} currentId="doc-edit" rowMenu={MENU} onOpenRow={() => {}} />
+    </div>
+  ),
+};
+
+/** Controlled expansion: the host owns which groups are open. */
+export const Controlled: Story = {
+  args: { groups: GROUPS, rows: ROWS },
+  render: () => {
+    const [openGroups, setOpenGroups] = useState<string[]>(['agents']);
+    return (
+      <div className="w-[960px]">
+        <p className="m-0 mb-2 text-xs text-text-tertiary">Open: {openGroups.join(', ') || 'none'}</p>
+        <GroupedList
+          groups={GROUPS}
+          rows={ROWS}
+          openGroups={openGroups}
+          onToggleGroup={(id, isOpen) =>
+            setOpenGroups((prev) => (isOpen ? [...prev, id] : prev.filter((g) => g !== id)))
+          }
+          rowMenu={MENU}
+        />
+      </div>
+    );
+  },
+};
+
+/** No menu, no hover actions, no pills — the bare two-line rows. */
+export const Plain: Story = {
+  args: { groups: GROUPS, rows: ROWS },
+  render: () => (
+    <div className="w-[640px]">
+      <GroupedList
+        groups={GROUPS.slice(0, 2)}
+        rows={ROWS.map(({ pill: _pill, hoverActions: _a, trailing: _t, ...row }) => row)}
+      />
+    </div>
+  ),
+};

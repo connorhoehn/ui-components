@@ -76,3 +76,27 @@ export const AllStatesSm: StoryObj = {
     </div>
   ),
 };
+
+/** `meta` after the label, in the tertiary ink: the verdict stays the loud part. */
+export const WithMeta: StoryObj = {
+  render: () => (
+    <div className="flex flex-wrap gap-3">
+      <StatusPill state="warning" label="1 of 5 failed" meta="29m ago" />
+      <StatusPill state="danger" label="Failed" meta="10h ago" />
+      <StatusPill state="success" label="Published" meta="v3" />
+    </div>
+  ),
+};
+
+/** `variant="text"`: dot and coloured label, no box — a list row's pill. */
+export const TextVariant: StoryObj = {
+  render: () => (
+    <div className="flex flex-col gap-2">
+      <StatusPill variant="text" state="success" label="Published" />
+      <StatusPill variant="text" state="warning" label="1 of 5 failed" meta="29m ago" />
+      <StatusPill variant="text" state="danger" label="Failed" meta="10h ago" />
+      <StatusPill variant="text" state="neutral" label="Draft" />
+      <StatusPill variant="text" state="info" label="Running" meta="just now" />
+    </div>
+  ),
+};

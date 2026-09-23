@@ -212,6 +212,9 @@ declare interface AgUiOutputNodeData {
     customEventName?: string;
 }
 
+/** The id of the one group `groupBy: 'none'` produces. */
+export declare const ALL_GROUP_ID = "all";
+
 export declare function AllRunsPage(): JSX.Element;
 
 export declare function AnimatedEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, markerEnd, selected, }: EdgeProps): JSX.Element;
@@ -515,6 +518,46 @@ declare type DimensionsFlowNode = Node_2<DimensionsData, 'image:dimensions'>;
 
 export declare function DimensionsNode(props: NodeProps<DimensionsFlowNode>): JSX.Element;
 
+declare interface DropdownMenuItem {
+    /** Visible item label. */
+    label: string;
+    /** Optional leading icon / glyph. */
+    icon?: ReactNode;
+    /** Highlight this item as the currently-active selection. */
+    active?: boolean;
+    /** Style this item as destructive. */
+    danger?: boolean;
+    /** Fires on click / Enter; the menu closes afterwards. Not needed on a row with a `submenu`. */
+    onSelect?: () => void;
+    /** Right-aligned hint after the label — a shortcut (`⌘P`), a count. */
+    trailing?: ReactNode;
+    /** A second, quieter line under the label. */
+    description?: string;
+    /** A setting that is on: a check leads the row (menuitemcheckbox). */
+    checked?: boolean;
+    /**
+     * A flyout of further choices, opened from this row — "Share to ›",
+     * "Download as ›". Opens on hover, click or ArrowRight; the row itself
+     * runs no `onSelect`.
+     */
+    submenu?: DropdownMenuSection[];
+    /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
+    'data-testid'?: string;
+}
+
+declare interface DropdownMenuSection {
+    /** Optional uppercase section heading. */
+    label?: string;
+    items: DropdownMenuItem[];
+    /**
+     * The group scrolls in place (`uic-menu-group-scroll`) so the sections
+     * after it stay put. For a generated list — one row per room — that would
+     * otherwise push the fixed actions below the fold.
+     */
+    scroll?: boolean;
+    'data-testid'?: string;
+}
+
 export declare type EdgePayload = 'image' | 'text' | 'data' | 'control';
 
 export declare type EdgeState = 'default' | 'active' | 'traversed-success' | 'traversed-failure';
@@ -549,6 +592,10 @@ export declare interface EditRecommendationsPanelProps {
     onApplyEdit?: (edit: string) => void;
     className?: string;
 }
+
+export declare function entryKind(entry: Pick<PipelinesListEntry, 'kind'>): PipelineKind;
+
+export declare function entryWorkType(entry: Pick<PipelinesListEntry, 'kind' | 'workType'>): WorkType;
 
 declare type ErrorCategory = 'NetworkError' | 'TimeoutError' | 'ValidationError' | 'LLMError' | 'RegistryConflict'
 /** A step looked at the request and said no (constraint not met, forbidden, revision conflict, invalid request): terminal, never retried. */
@@ -668,6 +715,8 @@ export declare interface FetchAggregatesResult {
     nextCursor?: string;
 }
 
+declare type FileKind = 'page' | 'presentation' | 'recording' | 'transcript' | 'diagram' | 'folder' | 'agent' | 'experiment' | 'call' | 'conversation' | 'media' | 'workflow';
+
 declare type ForkData = ForkNodeData & {
     _state?: NodeExecutionState;
     _hasBreakpoint?: boolean;
@@ -757,6 +806,63 @@ declare interface GraphQueryNodeData {
     timeoutMs?: number;
     retryPolicy?: RetryPolicy;
 }
+
+export declare const GROUP_BY_LABEL: Record<PipelinesGroupBy, string>;
+
+export declare const GROUP_BY_ORDER: PipelinesGroupBy[];
+
+export declare interface GroupedEntries {
+    groups: Array<{
+        id: string;
+        title: string;
+        count: number;
+    }>;
+    /** Group id per entry id. */
+    groupOf: Map<string, string>;
+}
+
+declare interface GroupedListGroup {
+    id: string;
+    title: string;
+    /** Shown as a count chip after the title. Omit for no chip. */
+    count?: number;
+    /** Leading mark after the caret — normally a `FileKindMark kind="folder"`. */
+    icon?: ReactNode;
+    /** Open on first render. Default `true`. Ignored when `openGroups` is controlled. */
+    defaultOpen?: boolean;
+    /** What an open group with no rows says. Default "Nothing here". */
+    emptyLabel?: string;
+}
+
+declare interface GroupedListRow {
+    id: string;
+    groupId: string;
+    /** Leading kind mark — normally a `FileKindMark`. */
+    icon?: ReactNode;
+    title: string;
+    /** Beside the title on the first line — normally a `StatusPill`. */
+    pill?: ReactNode;
+    /** The second line at rest. */
+    subline?: ReactNode;
+    /** The second line while hovered, focused or `current`. Falls back to `subline`. */
+    hoverSubline?: ReactNode;
+    /** Trailing content that is always visible — a "View run" link. */
+    trailing?: ReactNode;
+    /** Trailing content revealed on hover / focus / `current` — an "Open" button. */
+    hoverActions?: ReactNode;
+    /** The row the reader is "at": last opened, just created. Tinted; wears its hover line. */
+    current?: boolean;
+    /** Muted and inert; the menu still opens so a reader can see why. */
+    disabled?: boolean;
+    /** Optional accessible name override — default is the title. */
+    ariaLabel?: string;
+}
+
+/**
+ * Buckets entries by the chosen axis, in the vocabulary's order, dropping
+ * groups with nothing in them. `none` yields the single `all` group.
+ */
+export declare function groupEntries(entries: PipelinesListEntry[], groupBy: PipelinesGroupBy): GroupedEntries;
 
 declare type GuardrailAction = 'block' | 'mask' | 'warn';
 
@@ -1263,6 +1369,14 @@ declare type KBData = KnowledgeBaseNodeData & {
 
 declare type KBFlowNode = Node_2<KBData, 'knowledge-base'>;
 
+export declare const KIND_LABEL: Record<PipelineKind, string>;
+
+export declare const KIND_MARK: Record<PipelineKind, FileKind>;
+
+export declare const KIND_ORDER: PipelineKind[];
+
+export declare const KIND_WORK_TYPE: Record<PipelineKind, WorkType>;
+
 export declare function KnowledgeBaseNode({ id, data, selected }: NodeProps<KBFlowNode>): JSX.Element;
 
 declare interface KnowledgeBaseNodeData {
@@ -1316,6 +1430,9 @@ declare interface LLMResponseInfo {
      */
     streamOpening?: boolean;
 }
+
+/** Case-insensitive match on name, description, route and tags. */
+export declare function matchesQuery(entry: PipelinesListEntry, query: string): boolean;
 
 declare type McpToolData = McpToolNodeData & {
     _state?: NodeExecutionState;
@@ -1544,6 +1661,13 @@ export declare interface PeoplePanelProps {
     className?: string;
 }
 
+/** What `statusPillFor` returns — spread it straight into a `StatusPill`. */
+export declare interface PillSpec {
+    tone: StatusPillTone;
+    label: string;
+    meta?: string;
+}
+
 export declare function PipelineCanvas({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdgeStates, replayNodeClasses, breakpoints, onToggleBreakpoint, pausedAtNodeId }?: PipelineCanvasProps): JSX.Element;
 
 export declare interface PipelineCanvasProps {
@@ -1587,6 +1711,8 @@ declare interface PipelineDefinition {
     updatedAt: string;
     createdBy: string;
 }
+
+export declare type PipelineDefinitionStatus = 'draft' | 'published' | 'archived';
 
 declare interface PipelineEdge {
     id: string;
@@ -2066,6 +2192,8 @@ export declare interface PipelineJudgeStartedPayload {
     at?: number | string;
 }
 
+export declare type PipelineKind = 'document' | 'presentation' | 'diagram' | 'agent' | 'experiment' | 'recording' | 'call' | 'conversation' | 'media' | 'workflow';
+
 declare interface PipelineNode {
     id: string;
     type: NodeType;
@@ -2154,7 +2282,31 @@ declare interface PipelineRunError {
     retryability?: ErrorRetryability;
 }
 
+/** A run's terminal or in-flight state, as the platform's run list names them. */
+export declare type PipelineRunItemStatus = 'running' | 'awaiting_approval' | 'completed' | 'failed' | 'cancelled' | 'interrupted' | 'rejected' | 'stuck';
+
 export declare function PipelineRunReplayPage(): default_2.JSX.Element;
+
+/** The last-run read model: one row per pipeline, kept fresh by run events. */
+export declare interface PipelineRunRollup {
+    pipelineId: string;
+    lastRunId: string;
+    /** `startedAt` of the newest run. Empty string on the "no runs yet" sentinel. */
+    lastRunAt: string;
+    lastRunStatus: PipelineRunItemStatus;
+    /** Newest first, at most five. */
+    recent: Array<{
+        runId: string;
+        status: PipelineRunItemStatus;
+        startedAt: string;
+        completedAt?: string;
+    }>;
+    /** `recent` rows that failed, were interrupted or stuck. */
+    failedOfRecent: number;
+    /** `recent` rows still running or awaiting approval. */
+    runningCount: number;
+    updatedAt: string;
+}
 
 export declare function PipelineRunsPage(): JSX.Element;
 
@@ -2252,6 +2404,84 @@ declare interface PipelineRunTrigger {
     payload: Record<string, unknown>;
 }
 
+export declare type PipelinesGroupBy = 'worktype' | 'status' | 'kind' | 'none';
+
+/** One pipeline as the directory lists it. */
+export declare interface PipelinesListEntry {
+    id: string;
+    name: string;
+    description?: string;
+    /** Short step labels in order: `['/doc', 'Read', 'Plan', 'Approval', 'Suggestions']`. */
+    route?: string[];
+    kind?: PipelineKind;
+    workType?: WorkType;
+    status: PipelineDefinitionStatus;
+    /** A system pipeline the reader cannot edit. */
+    readOnly?: boolean;
+    rollup?: PipelineRunRollup | null;
+    updatedAt?: string;
+    tags?: string[];
+}
+
+export declare function PipelinesListView({ entries, loading, error, onRetry, query, onQueryChange, searchPlaceholder, groupBy, onGroupByChange, filters, activeFilterCount, onClearFilters, title, count, headerMenu, onTemplates, onStartBlank, headerActions, currentId, onOpen, onRun, onViewRun, rowMenu, rowTrailing, storageKey, emptyState, footer, now, className, 'data-testid': testId, }: PipelinesListViewProps): JSX.Element;
+
+export declare interface PipelinesListViewProps {
+    entries: PipelinesListEntry[];
+    /** The list is being fetched for the first time. */
+    loading?: boolean;
+    /** The fetch failed; shown as a banner above whatever is cached. */
+    error?: string | null;
+    onRetry?: () => void;
+    /** Free-text search, applied by the view (`matchesQuery`). */
+    query: string;
+    onQueryChange: (query: string) => void;
+    /** Search placeholder. Default "Search pipelines…". */
+    searchPlaceholder?: string;
+    groupBy: PipelinesGroupBy;
+    onGroupByChange: (groupBy: PipelinesGroupBy) => void;
+    /** The filter controls inside the Filter popover — `FilterChip` groups. */
+    filters?: ReactNode;
+    /** How many filters are narrowing the list; drives the badge on the button. */
+    activeFilterCount?: number;
+    onClearFilters?: () => void;
+    /** Page title. Default "Pipelines". */
+    title?: string;
+    /** The count chip beside the title. Default: the number of entries shown. */
+    count?: number;
+    /** The header's ⋯ menu — Metrics, Dead letters, All runs, Import JSON. */
+    headerMenu?: DropdownMenuSection[];
+    onTemplates?: () => void;
+    onStartBlank?: () => void;
+    /** Extra header actions, after the built-in ones. */
+    headerActions?: ReactNode;
+    /** The row the reader is "at" — last opened, just created. Tinted. */
+    currentId?: string | null;
+    onOpen: (entry: PipelinesListEntry) => void;
+    /** Shows a run button in the row's hover actions on published pipelines. */
+    onRun?: (entry: PipelinesListEntry) => void;
+    /** Shows "View run" on a row whose last run failed (or partly failed). */
+    onViewRun?: (entry: PipelinesListEntry, runId: string) => void;
+    /** The row's ⋯ menu. */
+    rowMenu?: (entry: PipelinesListEntry) => DropdownMenuSection[] | null | undefined;
+    /** Extra always-visible trailing content per row. */
+    rowTrailing?: (entry: PipelinesListEntry) => ReactNode;
+    /** Remember collapsed groups under this `localStorage` key. */
+    storageKey?: string;
+    /** What an empty catalog says. */
+    emptyState?: {
+        title?: string;
+        body?: string;
+        actionLabel?: string;
+        onAction?: () => void;
+    };
+    /** The docked composer. */
+    footer?: ReactNode;
+    /** A fixed clock for the pills' "· 29m ago" — tests and stories. Default `Date.now()`. */
+    now?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function PipelinesPage({ userId: userIdProp, idToken, baseUrl }?: PipelinesPageProps): JSX.Element;
 
 declare interface PipelinesPageProps {
@@ -2329,6 +2559,9 @@ export declare type PortPayload = 'image' | 'text' | 'data' | 'control' | 'error
  */
 export declare function recordRecentType(type: NodeType): void;
 
+/** "just now", "29m ago", "10h ago", "3d ago", else a short date. */
+export declare function relativeAgo(iso: string | undefined, now?: number): string | undefined;
+
 export declare function ResizeConfig({ data, onChange, nodeId }: ResizeConfigProps): JSX.Element;
 
 declare interface ResizeConfigProps {
@@ -2363,6 +2596,9 @@ declare interface RetryPolicy {
     backoffMs: number;
     backoffMultiplier: number;
 }
+
+/** The route as one line: "/doc → Read → Plan → Approval → Suggestions". */
+export declare function routeLine(route: string[] | undefined): string | undefined;
 
 /**
  * The status vocabulary every UI comparison site keys off. Canonical — it
@@ -2518,6 +2754,31 @@ export declare interface SourceImagePathFieldProps {
     help?: string;
     placeholder?: string;
 }
+
+export declare const STATUS_LABEL: Record<PipelineDefinitionStatus, string>;
+
+export declare const STATUS_ORDER: PipelineDefinitionStatus[];
+
+/**
+ * What the row's pill says, from the rollup first and the definition status
+ * otherwise:
+ * - last run failed → danger "Failed · 10h ago"
+ * - some of the recent runs failed → warning "1 of 5 failed · 29m ago"
+ * - a run is live → info "Running" / "Awaiting approval"
+ * - else the definition status: "Published" (success), "Draft" (neutral),
+ *   "Archived" (neutral).
+ */
+export declare function statusPillFor(entry: PipelinesListEntry, now?: number): PillSpec;
+
+declare type StatusPillState = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'pending';
+
+/**
+ * What `state` accepts: a `StatusPillState`, or `danger` — the same tokens as
+ * `error`, in the library's tone spelling (success / warning / danger /
+ * neutral). Kept out of `StatusPillState` so a `Record<StatusPillState, …>`
+ * elsewhere does not have to grow a duplicate key.
+ */
+declare type StatusPillTone = StatusPillState | 'danger';
 
 /**
  * One execution attempt of a step. Hub task #1280.
@@ -2721,6 +2982,26 @@ export declare interface ToggleFieldProps {
     help?: string;
     disabled?: boolean;
     'data-testid'?: string;
+}
+
+/**
+ * The rows and groups `PipelinesListView` draws for these entries. The second
+ * line is the description at rest and the route on hover / when current; a
+ * pipeline with no description shows its route all the time.
+ */
+export declare function toGroupedRows(entries: PipelinesListEntry[], groupBy: PipelinesGroupBy, options?: ToGroupedRowsOptions): {
+    groups: GroupedListGroup[];
+    rows: GroupedListRow[];
+};
+
+export declare interface ToGroupedRowsOptions {
+    currentId?: string | null;
+    now?: number;
+    onOpen?: (entry: PipelinesListEntry) => void;
+    onRun?: (entry: PipelinesListEntry) => void;
+    onViewRun?: (entry: PipelinesListEntry, runId: string) => void;
+    rowTrailing?: (entry: PipelinesListEntry) => ReactNode;
+    testId?: string;
 }
 
 declare interface TokenUsageByModel {
@@ -3416,6 +3697,12 @@ declare type WildcardEvent = {
     payload: unknown;
 };
 
+export declare const WORK_TYPE_LABEL: Record<WorkType, string>;
+
+export declare const WORK_TYPE_ORDER: WorkType[];
+
+export declare type WorkType = 'documents' | 'agents' | 'conversations' | 'other';
+
 export { }
 
 
@@ -3453,6 +3740,46 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3479,52 +3806,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

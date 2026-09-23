@@ -29,3 +29,19 @@ export const AllKinds: Story = {
     </ul>
   ),
 };
+
+/** The pipelines directory's kinds (2.380.0), tinted and plain side by side. */
+export const PipelineKinds: Story = {
+  args: { kind: 'agent' },
+  render: () => (
+    <ul className="m-0 grid list-none grid-cols-2 gap-3 p-0">
+      {(['agent', 'experiment', 'call', 'conversation', 'media', 'workflow'] as FileKind[]).map((kind) => (
+        <li key={kind} className="flex items-center gap-2 text-sm text-text-primary">
+          <FileKindMark kind={kind} />
+          <FileKindMark kind={kind} variant="plain" />
+          {FILE_KIND_LABELS[kind]}
+        </li>
+      ))}
+    </ul>
+  ),
+};

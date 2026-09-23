@@ -266,7 +266,7 @@ export { Link } from './Link';
 export type { LinkProps } from './Link';
 
 export { StatusPill } from './StatusPill';
-export type { StatusPillProps, StatusPillState, StatusPillSize } from './StatusPill';
+export type { StatusPillProps, StatusPillState, StatusPillSize, StatusPillVariant, StatusPillTone } from './StatusPill';
 
 // NodeCard sits beside StatusPill because it is built out of it — the file is
 // `pipelines/nodes/NodeCard.tsx` for historical reasons, but it imports only
@@ -387,7 +387,13 @@ export type { TreeViewProps, TreeNode, TreeDropPosition } from './TreeView';
 // Documents workspace foundation (2.362.0): the file-kind glyph and the agent
 // task strip that sits above a floating composer.
 export { FileKindMark, FILE_KIND_LABELS } from './FileKindMark';
-export type { FileKindMarkProps, FileKind, FileKindMarkSize } from './FileKindMark';
+export type { FileKindMarkProps, FileKind, FileKindMarkSize, FileKindMarkVariant } from './FileKindMark';
+// Pipelines directory foundation (2.380.0): a two-level grouped directory of
+// two-line rows, and the toolbar's one-button filter panel.
+export { GroupedList } from './GroupedList';
+export type { GroupedListProps, GroupedListGroup, GroupedListRow } from './GroupedList';
+export { FilterPopover } from './FilterPopover';
+export type { FilterPopoverProps } from './FilterPopover';
 export { TaskStrip, AGENT_TASK_STATUS_LABELS, AGENT_TASK_STATUS_DOT, taskPercent } from './TaskStrip';
 export type { TaskStripProps, AgentTaskStatus } from './TaskStrip';
 export { WorkflowStepper } from './WorkflowStepper';

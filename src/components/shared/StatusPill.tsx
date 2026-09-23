@@ -7,6 +7,13 @@
 // pending state carries a pulse animation via animate-ping on the dot so the
 // pill itself never needs a custom @keyframes block. Color tokens map to
 // Tailwind semantic classes only — no hex.
+//
+// 2.380.0: `meta` — a quieter clause after the label, "· 29m ago", in the
+// tertiary ink so the verdict stays the loud part; `variant="text"` — the dot
+// and the coloured label with no box at all, for a list row where a bordered
+// pill beside every title reads as twelve buttons; and `danger` as a spelling
+// of `error`, so a caller that thinks in the library's tone names
+// (success / warning / danger / neutral) does not have to translate.
 
 import { type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
@@ -19,14 +26,39 @@ export type StatusPillState =
   | 'neutral'
   | 'pending';
 
+/**
+ * What `state` accepts: a `StatusPillState`, or `danger` — the same tokens as
+ * `error`, in the library's tone spelling (success / warning / danger /
+ * neutral). Kept out of `StatusPillState` so a `Record<StatusPillState, …>`
+ * elsewhere does not have to grow a duplicate key.
+ */
+export type StatusPillTone = StatusPillState | 'danger';
+
 export type StatusPillSize = 'sm' | 'md';
 
+/** `pill` (default) is the bordered, tinted chip. `text` is dot + coloured label, no box. */
+export type StatusPillVariant = 'pill' | 'text';
+
 export interface StatusPillProps {
-  state: StatusPillState;
+  /** The pill's tone. Either `state` or `tone`; `tone` wins when both are given. */
+  state?: StatusPillTone;
+  /**
+   * The same thing as `state`, under the name the catalog helpers use —
+   * `statusPillFor(summary)` returns `{ tone, label, meta }`, and
+   * `<StatusPill variant="text" {...statusPillFor(summary)} />` just works.
+   */
+  tone?: StatusPillTone;
   label: string;
   /** Optional icon placed to the left of the label. */
   icon?: ReactNode;
+  /**
+   * A quieter clause after the label — "29m ago", "3 of 5". Rendered as
+   * "· <meta>" in the tertiary ink and normal weight; the label keeps the
+   * colour and the weight.
+   */
+  meta?: string;
   size?: StatusPillSize;
+  variant?: StatusPillVariant;
   className?: string;
   'data-testid'?: string;
 }
@@ -37,13 +69,18 @@ interface PillTokens {
   text: string;
 }
 
-const STATE_TOKENS: Record<StatusPillState, PillTokens> = {
+const STATE_TOKENS: Record<StatusPillTone, PillTokens> = {
   success: {
     pill: 'bg-success-bg border-success-border',
     dot:  'bg-success',
     text: 'text-success-fg',
   },
   error: {
+    pill: 'bg-danger-bg border-danger-border',
+    dot:  'bg-danger',
+    text: 'text-danger-fg',
+  },
+  danger: {
     pill: 'bg-danger-bg border-danger-border',
     dot:  'bg-danger',
     text: 'text-danger-fg',
@@ -75,16 +112,25 @@ const SIZE_CLASSES: Record<StatusPillSize, string> = {
   md: 'px-2.5 py-1 text-[12px] gap-1.5',
 };
 
+/** The text variant keeps the type size and gap, drops the padding with the box. */
+const TEXT_SIZE_CLASSES: Record<StatusPillSize, string> = {
+  sm: 'text-[10px] gap-1',
+  md: 'text-[12px] gap-1.5',
+};
+
 const DOT_SIZE_CLASSES: Record<StatusPillSize, string> = {
   sm: 'w-1.5 h-1.5',
   md: 'w-2 h-2',
 };
 
 export function StatusPill({
-  state,
+  state: stateProp,
+  tone,
   label,
   icon,
+  meta,
   size = 'md',
+  variant = 'pill',
   className,
   'data-testid': testId,
 }: StatusPillProps) {
@@ -93,6 +139,7 @@ export function StatusPill({
   // the whole table this pill sits in, not just the one cell. Degrade the
   // STYLING, never the value: `data-state` and the label keep the real state,
   // so an unrecognised status is still legible and still reportable.
+  const state = tone ?? stateProp ?? 'neutral';
   const tokens = STATE_TOKENS[state] ?? STATE_TOKENS.neutral ?? Object.values(STATE_TOKENS)[0];
   const isPending = state === 'pending';
 
@@ -101,11 +148,11 @@ export function StatusPill({
       role="status"
       data-testid={testId}
       data-state={state}
+      data-variant={variant}
       className={cn(
-        'inline-flex items-center rounded-full border font-medium leading-none select-none',
-        tokens.pill,
+        'inline-flex items-center font-medium leading-none select-none',
+        variant === 'pill' ? cn('rounded-full border', tokens.pill, SIZE_CLASSES[size]) : TEXT_SIZE_CLASSES[size],
         tokens.text,
-        SIZE_CLASSES[size],
         className,
       )}
     >
@@ -130,6 +177,12 @@ export function StatusPill({
         </span>
       )}
       {label}
+      {meta && (
+        <span data-testid={testId ? `${testId}-meta` : undefined} className="font-normal text-text-tertiary">
+          <span aria-hidden="true">· </span>
+          {meta}
+        </span>
+      )}
     </span>
   );
 }

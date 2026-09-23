@@ -6800,9 +6800,9 @@ export declare interface FileInputProps extends Omit<InputHTMLAttributes<HTMLInp
     'data-testid'?: string;
 }
 
-export declare type FileKind = 'page' | 'presentation' | 'recording' | 'transcript' | 'diagram' | 'folder';
+export declare type FileKind = 'page' | 'presentation' | 'recording' | 'transcript' | 'diagram' | 'folder' | 'agent' | 'experiment' | 'call' | 'conversation' | 'media' | 'workflow';
 
-export declare function FileKindMark({ kind, size, label, className, 'data-testid': testId }: FileKindMarkProps): JSX.Element;
+export declare function FileKindMark({ kind, size, variant, label, className, 'data-testid': testId }: FileKindMarkProps): JSX.Element;
 
 export declare interface FileKindMarkProps {
     kind: FileKind;
@@ -6810,11 +6810,19 @@ export declare interface FileKindMarkProps {
     size?: FileKindMarkSize;
     /** Accessible name. Omit when the file's name is already beside the mark. */
     label?: string;
+    /**
+     * `tinted` (default) is the glyph in a coloured box, one colour per kind.
+     * `plain` is the glyph alone, secondary ink, same box size — for a list row
+     * whose title is the thing to read.
+     */
+    variant?: FileKindMarkVariant;
     className?: string;
     'data-testid'?: string;
 }
 
 export declare type FileKindMarkSize = 'sm' | 'md' | 'lg';
+
+export declare type FileKindMarkVariant = 'tinted' | 'plain';
 
 export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, inputTestId, inputProps, }: FileUploadDropProps): JSX.Element;
 
@@ -6883,6 +6891,31 @@ export declare interface FilterChipProps {
     className?: string;
     disabled?: boolean;
     /** Forwarded to the underlying <button> for test selectors. */
+    'data-testid'?: string;
+}
+
+export declare function FilterPopover({ children, label, activeCount, onClear, clearLabel, open: controlledOpen, onOpenChange, placement, size, panelLabel, className, panelClassName, 'data-testid': testId, }: FilterPopoverProps): JSX.Element;
+
+export declare interface FilterPopoverProps {
+    /** The filter controls. */
+    children: ReactNode;
+    /** Button text. Default "Filter". */
+    label?: string;
+    /** How many filters are narrowing the list; `> 0` shows the badge. */
+    activeCount?: number;
+    /** Renders a "Clear filters" row at the foot of the panel. */
+    onClear?: () => void;
+    /** Default "Clear filters". */
+    clearLabel?: string;
+    /** Controlled open state. */
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    placement?: InlineMenuPlacement;
+    size?: ButtonSize;
+    /** Accessible name of the panel. Default "Filters". */
+    panelLabel?: string;
+    className?: string;
+    panelClassName?: string;
     'data-testid'?: string;
 }
 
@@ -7566,6 +7599,72 @@ export declare interface GraphQueryNodeData {
 }
 
 export declare function gridCols(count: number): number;
+
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+
+export declare interface GroupedListGroup {
+    id: string;
+    title: string;
+    /** Shown as a count chip after the title. Omit for no chip. */
+    count?: number;
+    /** Leading mark after the caret — normally a `FileKindMark kind="folder"`. */
+    icon?: ReactNode;
+    /** Open on first render. Default `true`. Ignored when `openGroups` is controlled. */
+    defaultOpen?: boolean;
+    /** What an open group with no rows says. Default "Nothing here". */
+    emptyLabel?: string;
+}
+
+export declare interface GroupedListProps {
+    groups: GroupedListGroup[];
+    rows: GroupedListRow[];
+    /** A row was activated — click, Enter or Space on its primary button. */
+    onOpenRow?: (row: GroupedListRow) => void;
+    /**
+     * The row's ⋯ menu. Return `null` or an empty array for a row without one.
+     * Opens from the ⋯ button, a right-click, or Shift+F10 / the context-menu
+     * key on the focused row.
+     */
+    rowMenu?: (row: GroupedListRow) => DropdownMenuSection[] | null | undefined;
+    /** Accessible name of a row's menu button. Default `Actions for <title>`. */
+    rowMenuLabel?: (row: GroupedListRow) => string;
+    /** Controlled open groups. With this, `defaultOpen` and `storageKey` are ignored. */
+    openGroups?: string[];
+    /** Fires on every caret click / ArrowLeft / ArrowRight toggle, controlled or not. */
+    onToggleGroup?: (groupId: string, open: boolean) => void;
+    /** Persist collapsed group ids under this `localStorage` key. */
+    storageKey?: string;
+    /** Marks a row `current` by id — an alternative to setting it on the row. */
+    currentId?: string | null;
+    /** Hide a group whose row list is empty instead of showing its empty label. Default `false`. */
+    hideEmptyGroups?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface GroupedListRow {
+    id: string;
+    groupId: string;
+    /** Leading kind mark — normally a `FileKindMark`. */
+    icon?: ReactNode;
+    title: string;
+    /** Beside the title on the first line — normally a `StatusPill`. */
+    pill?: ReactNode;
+    /** The second line at rest. */
+    subline?: ReactNode;
+    /** The second line while hovered, focused or `current`. Falls back to `subline`. */
+    hoverSubline?: ReactNode;
+    /** Trailing content that is always visible — a "View run" link. */
+    trailing?: ReactNode;
+    /** Trailing content revealed on hover / focus / `current` — an "Open" button. */
+    hoverActions?: ReactNode;
+    /** The row the reader is "at": last opened, just created. Tinted; wears its hover line. */
+    current?: boolean;
+    /** Muted and inert; the menu still opens so a reader can see why. */
+    disabled?: boolean;
+    /** Optional accessible name override — default is the title. */
+    ariaLabel?: string;
+}
 
 export declare function GroupFormPage({ group, isEdit, members, availableUsers, onSubmit, onAddMember, onRemoveMember, onCancel, error, }: GroupFormPageProps): JSX.Element;
 
@@ -10467,7 +10566,7 @@ declare type OnMessageFn_8 = (handler: (msg: GatewayMessage) => void) => () => v
 
 declare type OnMessageFn_9 = (handler: (msg: GatewayMessage) => void) => () => void;
 
-export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): default_2.JSX.Element;
+export declare function PageHeader({ title, description, actions, back, badge, size, className, }: PageHeaderProps): default_2.JSX.Element;
 
 export declare interface PageHeaderBack {
     label: string;
@@ -10484,6 +10583,12 @@ export declare interface PageHeaderProps {
     back?: PageHeaderBack;
     /** Badge or status pill rendered to the right of the title. */
     badge?: default_2.ReactNode;
+    /**
+     * Title size. `md` (default) is the 20px heading every page has had;
+     * `lg` is a 28px directory title — a page that IS the list, not a page
+     * about one thing.
+     */
+    size?: 'md' | 'lg';
     className?: string;
 }
 
@@ -14335,14 +14440,28 @@ export declare interface StatusDotProps {
 
 export declare type StatusDotSize = 'xs' | 'sm' | 'md';
 
-export declare function StatusPill({ state, label, icon, size, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
+export declare function StatusPill({ state: stateProp, tone, label, icon, meta, size, variant, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
 
 export declare interface StatusPillProps {
-    state: StatusPillState;
+    /** The pill's tone. Either `state` or `tone`; `tone` wins when both are given. */
+    state?: StatusPillTone;
+    /**
+     * The same thing as `state`, under the name the catalog helpers use —
+     * `statusPillFor(summary)` returns `{ tone, label, meta }`, and
+     * `<StatusPill variant="text" {...statusPillFor(summary)} />` just works.
+     */
+    tone?: StatusPillTone;
     label: string;
     /** Optional icon placed to the left of the label. */
     icon?: ReactNode;
+    /**
+     * A quieter clause after the label — "29m ago", "3 of 5". Rendered as
+     * "· <meta>" in the tertiary ink and normal weight; the label keeps the
+     * colour and the weight.
+     */
+    meta?: string;
     size?: StatusPillSize;
+    variant?: StatusPillVariant;
     className?: string;
     'data-testid'?: string;
 }
@@ -14350,6 +14469,17 @@ export declare interface StatusPillProps {
 export declare type StatusPillSize = 'sm' | 'md';
 
 export declare type StatusPillState = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'pending';
+
+/**
+ * What `state` accepts: a `StatusPillState`, or `danger` — the same tokens as
+ * `error`, in the library's tone spelling (success / warning / danger /
+ * neutral). Kept out of `StatusPillState` so a `Record<StatusPillState, …>`
+ * elsewhere does not have to grow a duplicate key.
+ */
+export declare type StatusPillTone = StatusPillState | 'danger';
+
+/** `pill` (default) is the bordered, tinted chip. `text` is dot + coloured label, no box. */
+export declare type StatusPillVariant = 'pill' | 'text';
 
 export declare function StatusStrip({ phase, bitrateBps, viewerCount, duration, className, style }: StatusStripProps): JSX.Element;
 
@@ -19064,6 +19194,46 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -19090,52 +19260,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

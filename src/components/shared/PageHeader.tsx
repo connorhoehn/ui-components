@@ -22,6 +22,12 @@ export interface PageHeaderProps {
   back?: PageHeaderBack;
   /** Badge or status pill rendered to the right of the title. */
   badge?: React.ReactNode;
+  /**
+   * Title size. `md` (default) is the 20px heading every page has had;
+   * `lg` is a 28px directory title — a page that IS the list, not a page
+   * about one thing.
+   */
+  size?: 'md' | 'lg';
   className?: string;
 }
 
@@ -31,6 +37,7 @@ function PageHeader({
   actions,
   back,
   badge,
+  size = 'md',
   className,
 }: PageHeaderProps) {
   return (
@@ -61,7 +68,12 @@ function PageHeader({
       )}
       <div className="flex items-center justify-between gap-4">
         <div className="min-w-0 flex items-center gap-2.5">
-          <h1 className="text-xl font-semibold text-[var(--color-text-primary)] leading-tight">
+          <h1
+            className={cn(
+              'font-semibold text-[var(--color-text-primary)] leading-tight',
+              size === 'lg' ? 'text-[28px] font-bold tracking-[-0.01em]' : 'text-xl',
+            )}
+          >
             {title}
           </h1>
           {badge}

@@ -6,6 +6,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.380.0] — 2026-09-23
+
+### Added
+
+- **`GroupedList` (`shared`) — a directory of two-line rows under collapsible group headers.** The
+  pipelines page groups its work by what it produces ("Documents & presentations · 5"); `TreeView` is a
+  one-line, drag-to-reorder tree of things that contain each other, and the wrong shape for that. Each
+  group is a `<section>` with a `<button aria-expanded>` header (caret, folder mark, title, count `Chip`);
+  each row is an `<li>` whose primary `<button>` opens it — a leading kind mark, title + pill on line one,
+  a `subline` on line two that swaps to `hoverSubline` on hover / focus / `current` (the description at
+  rest, the route when you look), an always-visible `trailing` slot, a `hoverActions` slot, and a ⋯
+  `DropdownMenu` from `rowMenu(row)` (the `TreeView` pattern: ⋯, right-click, Shift+F10). One roving tab
+  stop across headers and visible rows; arrows / Home / End walk them, ArrowLeft collapses (and lands on
+  the header), ArrowRight opens or steps in. `current` tints the row and wears its hover line. Open
+  state is uncontrolled (`defaultOpen`), controlled (`openGroups` + `onToggleGroup`) or remembered
+  (`storageKey`).
+- **`FilterPopover` (`shared`).** A "Filter" `Button` with a funnel, a count badge when `activeCount > 0`,
+  opening an `InlineMenu` (`role="dialog"`) around the caller's `FilterChip` groups, with an optional
+  "Clear filters" row. One toolbar line however many filter groups there are.
+- **`FileKindMark` kinds `agent` · `experiment` · `call` · `conversation` · `media` · `workflow`**
+  (sparkle, flask, phone, chat bubble, image, branch) and `variant="plain"` — the glyph alone in the
+  secondary ink, no tinted box, for a dense list.
+- **`StatusPill` `meta`, `variant="text"`, `state="danger"`.** `meta` is the quieter clause after the
+  label ("Failed · 10h ago"), tertiary ink, normal weight. `text` is dot + coloured label with no box.
+  `danger` spells `error` in the tone vocabulary (`StatusPillTone`); `StatusPillState` is unchanged, so
+  a `Record<StatusPillState, …>` elsewhere does not grow a key. `tone` is accepted as the name of
+  `state`, so realtime-modules 0.88.0's `statusPillFor(summary)` → `{ tone, label, meta? }` spreads
+  straight in: `<StatusPill variant="text" {...statusPillFor(summary)} />`.
+- **`PageHeader` `size="lg"`** — a 28px directory title for a page that is the list.
+- **`PipelinesListView` (`./pipelines`) — the pipelines page body, presentational.** `PageHeader` (`lg`) with
+  the count chip and ⋯ / Templates / Start from blank, a `Toolbar` with `SearchInput`, `FilterPopover`
+  and the "Group: Work type ▾" `Select`, the `GroupedList` of rows, loading / empty / no-match /
+  error states, and a `footer` slot that pins a `FloatingComposerDock` column-wide (the
+  `ComposerDockPlacementContext` = `pinned` card of 2.377.0, `--dock-inset` zeroed). Rows are built by the
+  exported `toGroupedRows(entries, groupBy, options)`; the pill by `statusPillFor(entry, now)` → `{ tone, label, meta? }` (failed →
+  danger "Failed · 10h ago", partial → warning "1 of 5 failed · 29m ago", live → info, else the
+  definition status). The vocabulary the platform and the host spell the same way ships beside it:
+  `WorkType`, `PipelineKind`, `KIND_MARK`, `KIND_WORK_TYPE`, `WORK_TYPE_LABEL/ORDER`,
+  `PipelineRunRollup`, `PipelinesListEntry`, `PipelinesGroupBy`, `groupEntries`, `matchesQuery`,
+  `relativeAgo`, `routeLine`.
+
 ## [2.379.1] — 2026-09-23
 
 ### Added

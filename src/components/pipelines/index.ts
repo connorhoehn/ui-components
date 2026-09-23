@@ -250,3 +250,40 @@ export { NODE_TYPES_WITHOUT_CONFIG } from './canvas/ConfigPanel';
 export type { UpstreamContext } from './context/useUpstreamContext';
 export { ContextVariablePicker } from './context/ContextVariablePicker';
 export type { ContextVariablePickerProps } from './context/ContextVariablePicker';
+
+// The pipelines directory (2.380.0): the page body as a presentational
+// composite, plus the vocabulary (work types, kinds, the last-run rollup) the
+// platform, realtime-modules and the host all spell the same way.
+export { PipelinesListView, toGroupedRows } from './list/PipelinesListView';
+export type { PipelinesListViewProps, ToGroupedRowsOptions } from './list/PipelinesListView';
+export {
+  ALL_GROUP_ID,
+  GROUP_BY_LABEL,
+  GROUP_BY_ORDER,
+  KIND_LABEL,
+  KIND_MARK,
+  KIND_ORDER,
+  KIND_WORK_TYPE,
+  STATUS_LABEL,
+  STATUS_ORDER,
+  WORK_TYPE_LABEL,
+  WORK_TYPE_ORDER,
+  entryKind,
+  entryWorkType,
+  groupEntries,
+  matchesQuery,
+  relativeAgo,
+  routeLine,
+  statusPillFor,
+} from './list/catalog';
+export type {
+  GroupedEntries,
+  PillSpec,
+  PipelineDefinitionStatus,
+  PipelineKind,
+  PipelineRunItemStatus,
+  PipelineRunRollup,
+  PipelinesGroupBy,
+  PipelinesListEntry,
+  WorkType,
+} from './list/catalog';
