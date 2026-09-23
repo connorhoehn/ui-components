@@ -59,6 +59,9 @@ type PendingApprovalsArrayLike = PendingApproval[] & { length: number };
 // Internal helpers
 // ---------------------------------------------------------------------------
 
+/** The one URL this hook fetches. Named so the error log can say so. */
+const APPROVALS_URL = '/api/pipelines/approvals';
+
 /**
  * Compose the per-step key used in our internal map. `(runId, stepId)` is
  * the natural unique identifier — the same step can re-enter pending state
@@ -192,18 +195,22 @@ export function usePendingApprovalsState(): PendingApprovalsState {
     setIsLoading(true);
     setError(null);
     liveKeysRef.current = new Set();
+    // The status the endpoint answered with, when it answered at all — a
+    // transport failure never gets one. Read by the console line below.
+    let answeredStatus: number | null = null;
 
     const tryDashboard = async (): Promise<DashboardPendingApprovalsResponse | null> => {
       // Authoritative source: /api/pipelines/approvals (proxies the bridge's
       // getPendingApprovals). The observability dashboard endpoint exposes a
       // count under `pipelines.awaitingApproval` but not the list itself.
       try {
-        const res = await fetch('/api/pipelines/approvals', {
+        const res = await fetch(APPROVALS_URL, {
           credentials: 'same-origin',
         });
+        answeredStatus = res.status;
         if (res.status === 404) return null;
         if (!res.ok) {
-          throw new Error(`Dashboard fetch failed: ${res.status}`);
+          throw new Error(`Approvals fetch failed: ${res.status}`);
         }
         const body = (await res.json()) as { approvals?: DashboardPendingApprovalsResponse['pendingApprovals'] };
         return { pendingApprovals: body.approvals ?? [] };
@@ -263,12 +270,14 @@ export function usePendingApprovalsState(): PendingApprovalsState {
         setIsLoading(false);
       } catch (err) {
         if (cancelled) return;
-        // Keep the technical detail (status code + endpoint) in the console for
-        // debugging — the user-facing banner shows a sanitized message instead
-        // (see PendingApprovalsPage `approvals-error` banner).
+        // Keep the technical detail (the URL actually fetched + the status it
+        // answered with) in the console for debugging — the user-facing banner
+        // shows a sanitized message instead (see PendingApprovalsPage
+        // `approvals-error` banner). This line used to name the observability
+        // dashboard URL, which this hook has never fetched.
         // eslint-disable-next-line no-console
         console.error(
-          '[usePendingApprovals] /api/observability/dashboard?include=pendingApprovals failed:',
+          `usePendingApprovals: ${APPROVALS_URL} answered ${answeredStatus ?? 'nothing (request failed)'}`,
           err,
         );
         setError((err as Error).message ?? 'Failed to load pending approvals');

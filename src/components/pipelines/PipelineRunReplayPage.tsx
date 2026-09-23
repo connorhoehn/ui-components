@@ -42,7 +42,8 @@ import { formatUsd } from './cost/llmPricing';
 import type { NodeType, PipelineRun } from '../../types/pipeline';
 import { formatDate } from './utils/formatTime';
 import { downloadJSON } from './utils/fileUtils';
-import { statusChipVariant } from './utils/statusColors';
+import { statusChipVariant, errorCategoryTone } from './utils/statusColors';
+import { refusalNotRetryableReason, runRefusal } from './utils/runRefusal';
 import { StepTree } from './steps/StepTree';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
@@ -166,6 +167,12 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
   const [retryError, setRetryError] = useState<string | null>(null);
   const [retryInFlight, setRetryInFlight] = useState(false);
   const failedNodeId = run?.status === 'failed' ? run.error?.nodeId : undefined;
+  // A refusal (constraint-not-met, forbidden, revision-conflict,
+  // invalid-request; category `Refused` or retryability `terminal`) is a
+  // decision about the inputs this run already had. Retrying re-checks the
+  // same recorded proposal and refuses again, so the page offers no retry
+  // and no resume — absent, not disabled — and names the refusal instead.
+  const refusal = runRefusal(run);
 
   const openRetryModal = useCallback((nodeId: string) => {
     if (!run) return;
@@ -388,7 +395,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
 
         {run.status === 'failed' && run.error?.errorCategory ? (
           <Chip
-            tone="danger"
+            tone={errorCategoryTone(run.error.errorCategory)}
             title={run.error.message || 'Error details unavailable'}
           >
             {run.error.errorCategory}
@@ -398,8 +405,13 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
         <div className="flex-1" />
 
         {/* Hub#1288: Retry-from-failed-step. Only shown for failed runs that
-            have a known failing nodeId. */}
-        {failedNodeId && (
+            have a known failing nodeId — and never for a refused run. */}
+        {refusal && (
+          <Chip tone="neutral" title={refusalNotRetryableReason(refusal)} data-testid="refused-not-retryable">
+            Not retryable
+          </Chip>
+        )}
+        {failedNodeId && !refusal && (
           <Button
             onClick={() => openRetryModal(failedNodeId)}
             disabled={retryInFlight}
@@ -574,14 +586,24 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           )}
 
           {run.error && (
-            <Banner title="Run failed:" className="mb-4">
+            <Banner
+              title={refusal ? `Refused (${refusal.code}):` : 'Run failed:'}
+              layout={refusal ? 'stacked' : 'inline'}
+              className="mb-4"
+              data-testid={refusal ? 'refused-banner' : 'run-failed-banner'}
+            >
               {run.error.message}
               {run.error.nodeId && run.error.nodeId !== 'unknown' && (
                 <span className="ml-2 text-[11px] text-danger-fg">
                   at node {run.error.nodeId.slice(0, 8)}
                 </span>
               )}
-              {run.status === 'failed' && run.error.nodeId && run.error.nodeId !== 'unknown' && (
+              {refusal && (
+                <span className="mt-2 block text-xs text-text-secondary" data-testid="refused-reason">
+                  {refusalNotRetryableReason(refusal)}
+                </span>
+              )}
+              {run.status === 'failed' && !refusal && run.error.nodeId && run.error.nodeId !== 'unknown' && (
                 <div className="mt-2">
                   <Button
                     onClick={() => handleResumeFromHere(run.error!.nodeId)}
@@ -638,8 +660,8 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
               steps={run.steps}
               nodeDataMap={nodeDataMap}
               edges={definition?.edges}
-              onRetryFromStep={openRetryModal}
-              onResumeFromStep={run.status === 'failed' ? handleResumeFromHere : undefined}
+              onRetryFromStep={refusal ? undefined : openRetryModal}
+              onResumeFromStep={run.status === 'failed' && !refusal ? handleResumeFromHere : undefined}
             />
           ) : (
             <div className="flex flex-col min-h-[400px] h-[60vh]">

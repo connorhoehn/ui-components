@@ -24,6 +24,17 @@ export { StepTree } from './steps/StepTree';
 export type { StepTreeProps } from './steps/StepTree';
 export { StepThread } from './steps/StepThread';
 export type { StepThreadProps } from './steps/StepThread';
+// A refused run/step (category `Refused`, retryability `terminal`, or a
+// refusal code in the message) is terminal: the run page and <StepThread>
+// offer no retry/resume for it. Hosts gate their own affordances the same way.
+export {
+  REFUSAL_CODES,
+  refusalCodeOf,
+  refusalNotRetryableReason,
+  runRefusal,
+  stepRefusal,
+} from './utils/runRefusal';
+export type { RefusalCode, RunRefusal } from './utils/runRefusal';
 export { StepAttempts } from './steps/StepAttempts';
 export type { StepAttemptsProps } from './steps/StepAttempts';
 export { StepSection } from './steps/StepSection';

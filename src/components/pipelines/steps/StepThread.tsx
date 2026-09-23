@@ -5,6 +5,7 @@ import { StepSection } from './StepSection';
 import { StepAttempts } from './StepAttempts';
 import { codeBlockClass, proseBlockClass, thClass, tdClass, eventChipClass } from './stepStyles';
 import { classifyStepOutput } from '../utils/classifyStepOutput';
+import { refusalNotRetryableReason, stepRefusal } from '../utils/runRefusal';
 import { AgentTraceSection } from './AgentTraceSection';
 import { isAgentStepOutput, liveAgentOutputFromCalls } from './agentTrace';
 import { VisionResultViewer } from '../vision';
@@ -106,6 +107,13 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
   const llmData = step.llm;
   const input = step.input as Record<string, unknown> | undefined;
   const statusColor = STATUS_COLOR[step.status] ?? 'var(--color-text-tertiary)';
+  // A step that REFUSED (category `Refused` on its latest attempt, or a
+  // refusal code in its message) decided on the inputs it already had;
+  // retrying or resuming from it refuses the same way. So its row offers
+  // neither — absent, not disabled — and its error section names the refusal.
+  const refusal = stepRefusal(step);
+  const canRetry = !refusal && !!onRetryFromStep;
+  const canResume = !refusal && !!onResumeFromStep;
 
   return (
     <div className="relative pl-9 mb-1">
@@ -429,16 +437,29 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
           )}
 
           {step.error && (
-            <StepSection title="Error">
-              <div className="px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg font-mono whitespace-pre-wrap">
+            <StepSection title={refusal ? `Refused (${refusal.code}):` : 'Error'}>
+              <div
+                className={cn(
+                  'px-3 py-2 rounded-md text-xs font-mono whitespace-pre-wrap border',
+                  refusal
+                    ? 'bg-caution-bg border-caution-border text-caution-fg'
+                    : 'bg-danger-bg border-danger-border text-danger-fg',
+                )}
+                data-testid={refusal ? `step-refused-${stepId}` : undefined}
+              >
                 {step.error}
               </div>
+              {refusal && (
+                <div className="mt-2 text-xs text-text-secondary" data-testid={`step-refused-reason-${stepId}`}>
+                  {refusalNotRetryableReason(refusal)}
+                </div>
+              )}
             </StepSection>
           )}
 
-          {(onRetryFromStep || onResumeFromStep) && (
+          {(canRetry || canResume) && (
             <div className="px-4 py-2.5 border-t border-border flex justify-end gap-2">
-              {onResumeFromStep && (
+              {canResume && onResumeFromStep && (
                 <button
                   type="button"
                   data-testid={`resume-from-step-${stepId}`}
@@ -449,7 +470,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
                   ↻ Resume from here
                 </button>
               )}
-              {onRetryFromStep && (
+              {canRetry && onRetryFromStep && (
                 <button
                   type="button"
                   data-testid={`retry-from-step-${stepId}`}

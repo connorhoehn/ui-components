@@ -1820,10 +1820,11 @@ function qe(e) {
 }
 //#endregion
 //#region src/components/pipelines/hooks/usePendingApprovals.ts
+var Je = "/api/pipelines/approvals";
 function Q(e, t) {
 	return `${e}::${t}`;
 }
-function Je(e, t) {
+function Ye(e, t) {
 	let n = U(e);
 	if (!n) return { requiredCount: 1 };
 	let r = n.nodes.find((e) => e.id === t);
@@ -1834,7 +1835,7 @@ function Je(e, t) {
 		requiredCount: Math.max(1, i.requiredCount ?? 1)
 	};
 }
-function Ye() {
+function Xe() {
 	let e = c(), t = Ue(), [n, r] = _(() => {
 		let e = {};
 		for (let n in t.runs) {
@@ -1842,7 +1843,7 @@ function Ye() {
 			if (r.status === "awaiting_approval") for (let t in r.steps) {
 				let i = r.steps[t];
 				if (i.status !== "awaiting") continue;
-				let a = Je(r.pipelineId, t), o = U(r.pipelineId)?.nodes.find((e) => e.id === t), s = o && o.data.type === "approval" ? o.data.approvers : [];
+				let a = Ye(r.pipelineId, t), o = U(r.pipelineId)?.nodes.find((e) => e.id === t), s = o && o.data.type === "approval" ? o.data.approvers : [];
 				e[Q(n, t)] = {
 					runId: n,
 					pipelineId: r.pipelineId,
@@ -1864,11 +1865,11 @@ function Ye() {
 	return p(() => {
 		let e = !1;
 		a(!0), s(null), v.current = /* @__PURE__ */ new Set();
-		let t = async () => {
+		let t = null, n = async () => {
 			try {
-				let e = await fetch("/api/pipelines/approvals", { credentials: "same-origin" });
-				if (e.status === 404) return null;
-				if (!e.ok) throw Error(`Dashboard fetch failed: ${e.status}`);
+				let e = await fetch(Je, { credentials: "same-origin" });
+				if (t = e.status, e.status === 404) return null;
+				if (!e.ok) throw Error(`Approvals fetch failed: ${e.status}`);
 				return { pendingApprovals: (await e.json()).approvals ?? [] };
 			} catch (e) {
 				if (e instanceof SyntaxError) return null;
@@ -1877,21 +1878,21 @@ function Ye() {
 		};
 		return (async () => {
 			try {
-				let n = await t();
+				let t = await n();
 				if (e) return;
-				if (n?.pendingApprovals) {
+				if (t?.pendingApprovals) {
 					let e = {};
-					for (let t of n.pendingApprovals) {
-						let n = Je(t.pipelineId, t.stepId);
-						e[Q(t.runId, t.stepId)] = {
-							runId: t.runId,
-							pipelineId: t.pipelineId,
-							stepId: t.stepId,
-							approvers: t.approvers ?? [],
-							requestedAt: t.requestedAt,
-							message: t.message ?? n.message,
-							requiredCount: t.requiredCount ?? n.requiredCount,
-							recordedCount: t.recordedCount ?? 0
+					for (let n of t.pendingApprovals) {
+						let t = Ye(n.pipelineId, n.stepId);
+						e[Q(n.runId, n.stepId)] = {
+							runId: n.runId,
+							pipelineId: n.pipelineId,
+							stepId: n.stepId,
+							approvers: n.approvers ?? [],
+							requestedAt: n.requestedAt,
+							message: n.message ?? t.message,
+							requiredCount: n.requiredCount ?? t.requiredCount,
+							recordedCount: n.recordedCount ?? 0
 						};
 					}
 					r((t) => {
@@ -1901,9 +1902,9 @@ function Ye() {
 					});
 				}
 				a(!1);
-			} catch (t) {
+			} catch (n) {
 				if (e) return;
-				console.error("[usePendingApprovals] /api/observability/dashboard?include=pendingApprovals failed:", t), s(t.message ?? "Failed to load pending approvals"), a(!1);
+				console.error(`usePendingApprovals: ${Je} answered ${t ?? "nothing (request failed)"}`, n), s(n.message ?? "Failed to load pending approvals"), a(!1);
 			}
 		})(), () => {
 			e = !0;
@@ -1914,7 +1915,7 @@ function Ye() {
 			let t = e;
 			m.current.set(t.runId, t.pipelineId);
 		})), t.push(e.subscribe("pipeline.approval.requested", (e) => {
-			let t = e, n = m.current.get(t.runId) ?? f.current[t.runId]?.pipelineId ?? "", i = Je(n, t.stepId);
+			let t = e, n = m.current.get(t.runId) ?? f.current[t.runId]?.pipelineId ?? "", i = Ye(n, t.stepId);
 			v.current.add(Q(t.runId, t.stepId)), r((e) => {
 				let r = Q(t.runId, t.stepId);
 				return e[r] ? e : {
@@ -1967,31 +1968,31 @@ function Ye() {
 		}, [])
 	};
 }
-function Xe() {
-	let { approvals: e } = Ye();
+function Ze() {
+	let { approvals: e } = Xe();
 	return e;
 }
 //#endregion
 //#region src/api/pipelineBreakpointPatch.ts
-var Ze = class extends Error {
+var Qe = class extends Error {
 	reason;
 	result;
 	constructor(e, t) {
 		super(e), this.name = "PatchValidationRejectedError", this.reason = e, this.result = t;
 	}
-}, Qe = class extends Error {
+}, $e = class extends Error {
 	status;
 	body;
 	constructor(e, t, n) {
 		super(t), this.name = "PatchHttpError", this.status = e, this.body = n;
 	}
 };
-function $e(e, t, n, r) {
+function et(e, t, n, r) {
 	let i = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(t)}/breakpoint/${encodeURIComponent(n)}/patch`;
 	return r ? `${i}/${encodeURIComponent(r)}` : `${i}`;
 }
-async function et(e, t, n, r, i) {
-	let a = await fetch($e(e, t, n), {
+async function tt(e, t, n, r, i) {
+	let a = await fetch(et(e, t, n), {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		credentials: "include",
@@ -2003,7 +2004,7 @@ async function et(e, t, n, r, i) {
 	if (a.status === 200) return await a.json();
 	if (a.status === 422) {
 		let e = await a.json().catch(() => ({})), t = "patch rejected by validator";
-		throw e.result && e.result.validation && e.result.validation.ok === !1 && typeof e.result.validation.reason == "string" ? t = e.result.validation.reason : typeof e.error == "string" && (t = e.error), new Ze(t, e.result);
+		throw e.result && e.result.validation && e.result.validation.ok === !1 && typeof e.result.validation.reason == "string" ? t = e.result.validation.reason : typeof e.error == "string" && (t = e.error), new Qe(t, e.result);
 	}
 	let o = await a.text().catch(() => ""), s;
 	try {
@@ -2011,10 +2012,10 @@ async function et(e, t, n, r, i) {
 	} catch {
 		s = o;
 	}
-	throw new Qe(a.status, `applyPatch HTTP ${a.status}: ${o}`, s);
+	throw new $e(a.status, `applyPatch HTTP ${a.status}: ${o}`, s);
 }
-async function tt(e, t, n, r) {
-	let i = await fetch($e(e, t, n, r), {
+async function nt(e, t, n, r) {
+	let i = await fetch(et(e, t, n, r), {
 		method: "DELETE",
 		credentials: "include"
 	});
@@ -2025,11 +2026,11 @@ async function tt(e, t, n, r) {
 	} catch {
 		o = a;
 	}
-	throw new Qe(i.status, `revertPatch HTTP ${i.status}: ${a}`, o);
+	throw new $e(i.status, `revertPatch HTTP ${i.status}: ${a}`, o);
 }
 //#endregion
 //#region src/api/pipelineResume.ts
-async function nt(e, t, n, r) {
+async function rt(e, t, n, r) {
 	let i = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(t)}/resume?fromNodeId=${encodeURIComponent(n)}`, a = await fetch(i, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -2044,7 +2045,7 @@ async function nt(e, t, n, r) {
 }
 //#endregion
 //#region src/api/pipelineAudit.ts
-function rt(e) {
+function it(e) {
 	let t = [];
 	for (let [n, r] of Object.entries(e)) if (r != null) {
 		if (Array.isArray(r)) {
@@ -2054,8 +2055,8 @@ function rt(e) {
 	}
 	return t.length > 0 ? `?${t.join("&")}` : "";
 }
-async function it(e, t, n = {}) {
-	let r = rt({
+async function at(e, t, n = {}) {
+	let r = it({
 		since: n.since,
 		until: n.until,
 		actions: n.actions,
@@ -2071,9 +2072,9 @@ async function it(e, t, n = {}) {
 	}
 	return a.json();
 }
-async function at(e) {
+async function ot(e) {
 	if (!e.actor && !e.pipelineId) throw Error("searchAudit requires at least one of `actor` or `pipelineId`");
-	let t = `/api/pipelines/audit/search${rt({
+	let t = `/api/pipelines/audit/search${it({
 		actor: e.actor,
 		pipelineId: e.pipelineId,
 		actions: e.actions,
@@ -2093,10 +2094,10 @@ async function at(e) {
 }
 //#endregion
 //#region src/components/forms/JsonPathInput.tsx
-var ot = {
+var st = {
 	sm: "px-1.5 py-0.5 text-[11px]",
 	md: "px-2 py-0.5 text-[12px]"
-}, st = u(function({ value: e, onChange: t, samples: n, placeholder: r = "$.path.to.value", invalid: i = !1, errorMessage: s, disabled: c = !1, size: l = "md", enforcePrefix: u = !1, "data-testid": d }, f) {
+}, ct = u(function({ value: e, onChange: t, samples: n, placeholder: r = "$.path.to.value", invalid: i = !1, errorMessage: s, disabled: c = !1, size: l = "md", enforcePrefix: u = !1, "data-testid": d }, f) {
 	let p = m(), h = u && e.length > 0 && !e.startsWith("$.") ? "JSONPath must start with \"$.\"" : void 0, g = i || h != null, _ = s ?? h;
 	return /* @__PURE__ */ b("div", {
 		className: "flex flex-col gap-1 w-full",
@@ -2121,7 +2122,7 @@ var ot = {
 					type: "button",
 					disabled: c,
 					onClick: () => t(e.value),
-					className: a("rounded border border-border bg-surface-hover font-mono text-text-secondary", "transition-colors duration-100", "hover:bg-info-bg hover:border-info-border hover:text-info-fg", "focus:outline-none focus:ring-2 focus:ring-info/40", "disabled:opacity-50 disabled:cursor-not-allowed", ot[l]),
+					className: a("rounded border border-border bg-surface-hover font-mono text-text-secondary", "transition-colors duration-100", "hover:bg-info-bg hover:border-info-border hover:text-info-fg", "focus:outline-none focus:ring-2 focus:ring-info/40", "disabled:opacity-50 disabled:cursor-not-allowed", st[l]),
 					children: e.label
 				}, e.value))
 			}),
@@ -2133,16 +2134,16 @@ var ot = {
 			})
 		]
 	});
-}), ct = {
+}), lt = {
 	sm: "w-16",
 	md: "w-32",
 	lg: "w-48"
-}, lt = {
+}, ut = {
 	square: "aspect-square",
 	video: "aspect-video",
 	auto: ""
 };
-function ut() {
+function dt() {
 	return /* @__PURE__ */ b("svg", {
 		xmlns: "http://www.w3.org/2000/svg",
 		viewBox: "0 0 24 24",
@@ -2171,14 +2172,14 @@ function ut() {
 		]
 	});
 }
-function dt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded: i = !1, fallback: o, loading: s = "lazy", className: c, "data-testid": l }) {
+function ft({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded: i = !1, fallback: o, loading: s = "lazy", className: c, "data-testid": l }) {
 	let [u, d] = _({
 		src: e,
 		status: "loading"
 	}), f = e ? u.src === e ? u.status : "loading" : "error", p = i ? r === "square" ? "rounded-full" : "rounded-lg" : "rounded-md";
 	return /* @__PURE__ */ b("div", {
 		"data-testid": l,
-		className: a("relative overflow-hidden bg-surface-hover", ct[n], r !== "auto" && lt[r], p, c),
+		className: a("relative overflow-hidden bg-surface-hover", lt[n], r !== "auto" && ut[r], p, c),
 		children: [
 			f === "loading" && /* @__PURE__ */ y("div", {
 				"aria-hidden": "true",
@@ -2186,7 +2187,7 @@ function dt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded
 			}),
 			f === "error" && /* @__PURE__ */ y("div", {
 				className: "absolute inset-0 flex items-center justify-center bg-surface-hover",
-				children: o ?? /* @__PURE__ */ y(ut, {})
+				children: o ?? /* @__PURE__ */ y(dt, {})
 			}),
 			e && /* @__PURE__ */ y("img", {
 				src: e,
@@ -2207,10 +2208,10 @@ function dt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded
 }
 //#endregion
 //#region src/components/image/GenerativeImagePreview.tsx
-function ft(e) {
+function pt(e) {
 	return e < 60 ? `${e}s` : `${Math.floor(e / 60)}m ${e % 60}s`;
 }
-function pt({ startedAt: e }) {
+function mt({ startedAt: e }) {
 	let [t, n] = _(() => Math.max(0, Math.floor((Date.now() - e) / 1e3)));
 	return p(() => {
 		let t = () => n(Math.max(0, Math.floor((Date.now() - e) / 1e3)));
@@ -2220,10 +2221,10 @@ function pt({ startedAt: e }) {
 	}, [e]), /* @__PURE__ */ y("span", {
 		"data-testid": "generative-image-preview-elapsed",
 		className: "absolute bottom-1 right-1 rounded bg-black/60 px-1.5 py-0.5 font-mono text-[10px] leading-none text-white/90",
-		children: ft(t)
+		children: pt(t)
 	});
 }
-function mt({ status: e, src: t, alt: n = "", startedAt: r, className: o }) {
+function ht({ status: e, src: t, alt: n = "", startedAt: r, className: o }) {
 	let s = i(), c = g(e), [l, u] = _(!1);
 	return c.current !== e && (c.current = e, e === "done" && !s && u(!0)), p(() => {
 		if (!l) return;
@@ -2248,7 +2249,7 @@ function mt({ status: e, src: t, alt: n = "", startedAt: r, className: o }) {
 				className: a("absolute inset-0 flex items-center justify-center", "text-[11px] font-medium tracking-wide text-neutral select-none"),
 				children: "✦ synthesizing"
 			}),
-			r !== void 0 && /* @__PURE__ */ y(pt, { startedAt: r })
+			r !== void 0 && /* @__PURE__ */ y(mt, { startedAt: r })
 		] }) : t ? /* @__PURE__ */ y("img", {
 			src: t,
 			alt: n,
@@ -2263,26 +2264,26 @@ function mt({ status: e, src: t, alt: n = "", startedAt: r, className: o }) {
 //#endregion
 //#region src/components/pipelines/services/PipelineEditorServicesContext.tsx
 var $ = l(null);
-function ht({ services: e, children: t }) {
+function gt({ services: e, children: t }) {
 	return /* @__PURE__ */ y($.Provider, {
 		value: e,
 		children: t
 	});
 }
-function gt() {
+function _t() {
 	let e = f($);
 	if (!e) throw Error("useImageUrl must be called inside <PipelineEditorServicesProvider>. The host editor (e.g. wsg PipelineEditorPage) is responsible for mounting it with its own getImageUrl implementation.");
 	return e.getImageUrl;
 }
-function _t() {
+function vt() {
 	return f($)?.getImageUrl ?? null;
 }
-function vt() {
+function yt() {
 	let e = f($);
 	if (!e) throw Error("usePipelineEditorServices must be called inside <PipelineEditorServicesProvider>.");
 	return e;
 }
-function yt(e) {
+function bt(e) {
 	let t = f($)?.nodeVocabulary?.[e];
 	return h(() => ({
 		label: (e, n) => t?.labels?.[e] ?? n,
@@ -2290,22 +2291,22 @@ function yt(e) {
 		placeholder: (e, n) => t?.placeholders?.[e] ?? n
 	}), [t]);
 }
-function bt(e, t) {
+function xt(e, t) {
 	let n = f($)?.modelOptions?.[e];
 	return h(() => n ?? t, [n, t]);
 }
-function xt() {
+function St() {
 	let e = f($)?.modelOptions;
 	return h(() => (t, n) => e?.[t] ?? n, [e]);
 }
-function St() {
+function Ct() {
 	let e = f($)?.webhookRelay;
 	return h(() => ({
 		enabled: e?.enabled ?? !1,
 		publicUrlBase: e?.publicUrlBase
 	}), [e?.enabled, e?.publicUrlBase]);
 }
-function Ct() {
+function wt() {
 	let e = f($)?.executableNodeTypes;
 	return h(() => {
 		if (!e) return () => !0;
@@ -2314,4 +2315,4 @@ function Ct() {
 	}, [e]);
 }
 //#endregion
-export { A as $, je as A, me as B, qe as C, Pe as D, Ge as E, we as F, ie as G, he as H, Ce as I, U as J, ae as K, ve as L, Te as M, X as N, Fe as O, Se as P, M as Q, ge as R, Ve as S, Ke as T, re as U, _e as V, K as W, P as X, W as Y, N as Z, Ze as _, bt as a, Xe as b, vt as c, dt as d, j as et, st as f, Qe as g, nt as h, Ct as i, Oe as j, Me as k, St as l, at as m, gt as n, x as nt, xt as o, it as p, H as q, _t as r, S as rt, yt as s, ht as t, k as tt, mt as u, et as v, Ue as w, Ye as x, tt as y, pe as z };
+export { A as $, je as A, me as B, qe as C, Pe as D, Ge as E, we as F, ie as G, he as H, Ce as I, U as J, ae as K, ve as L, Te as M, X as N, Fe as O, Se as P, M as Q, ge as R, Ve as S, Ke as T, re as U, _e as V, K as W, P as X, W as Y, N as Z, Qe as _, xt as a, Ze as b, yt as c, ft as d, j as et, ct as f, $e as g, rt as h, wt as i, Oe as j, Me as k, Ct as l, ot as m, _t as n, x as nt, St as o, at as p, H as q, vt as r, S as rt, bt as s, gt as t, k as tt, ht as u, tt as v, Ue as w, Xe as x, nt as y, pe as z };

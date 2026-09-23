@@ -2559,6 +2559,29 @@ export declare type PortPayload = 'image' | 'text' | 'data' | 'control' | 'error
  */
 export declare function recordRecentType(type: NodeType): void;
 
+/**
+ * A run (or step) that was REFUSED — a step looked at the request and said
+ * no — as opposed to one that broke. The platform spells a refusal
+ * `<step> <code>: <reason>` (`deck-revise constraint-not-met: Title has 2
+ * words; it must have exactly 0. …`) and classifies it `Refused`,
+ * retryability `terminal` (platform `error-classification.ts`).
+ *
+ * A refusal is a decision about inputs the run already holds: the recorded
+ * proposal, the requester, the base revision. Retrying or resuming re-runs
+ * the same step over the same inputs and decides the same way, so the run
+ * page offers neither; the person changes the ask and starts a new run. An
+ * outage (model unavailable, timeout, network) stays retryable.
+ */
+export declare const REFUSAL_CODES: readonly ["constraint-not-met", "forbidden", "revision-conflict", "invalid-request"];
+
+export declare type RefusalCode = (typeof REFUSAL_CODES)[number];
+
+/** The refusal code in a failure message, or null: `403 Forbidden` mid-sentence is not one. */
+export declare function refusalCodeOf(message: string | null | undefined): RefusalCode | null;
+
+/** Why the run page offers no retry or resume for a refused run. */
+export declare function refusalNotRetryableReason(refusal: RunRefusal): string;
+
 /** "just now", "29m ago", "10h ago", "3d ago", else a short date. */
 export declare function relativeAgo(iso: string | undefined, now?: number): string | undefined;
 
@@ -2599,6 +2622,23 @@ declare interface RetryPolicy {
 
 /** The route as one line: "/doc → Read → Plan → Approval → Suggestions". */
 export declare function routeLine(route: string[] | undefined): string | undefined;
+
+export declare interface RunRefusal {
+    /** The code the step refused with; `refused` when the platform said Refused without a code we know. */
+    code: RefusalCode | 'refused';
+    /** The refusal, verbatim, as the step wrote it. */
+    message: string;
+    /** The step that refused, when known. */
+    nodeId?: string;
+}
+
+/**
+ * The refusal a failed run ended with, or null when it failed some other
+ * way (or did not fail). Reads the platform's category first, then its
+ * retryability, then the message — a row written before the category
+ * existed still reads right.
+ */
+export declare function runRefusal(run: Pick<PipelineRun, 'status' | 'error'> | null | undefined): RunRefusal | null;
 
 /**
  * The status vocabulary every UI comparison site keys off. Canonical — it
@@ -2895,6 +2935,14 @@ declare interface StepExecution {
      */
     patches?: PatchEntry[];
 }
+
+/**
+ * The refusal a failed STEP ended with, or null. A step carries its
+ * category per attempt (`attempts[].errorCategory`), so the latest attempt
+ * decides; the step's own `error` string is read for a refusal code the
+ * same way a run's message is.
+ */
+export declare function stepRefusal(step: Pick<StepExecution, 'nodeId' | 'status' | 'error' | 'attempts'> | null | undefined): RunRefusal | null;
 
 export declare function StepSection({ title, children }: StepSectionProps): default_2.JSX.Element;
 
@@ -3740,16 +3788,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3776,9 +3814,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3806,12 +3857,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

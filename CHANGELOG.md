@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.383.1] — 2026-09-23
+
+### Changed
+
+- **pipelines: a refused run or step offers no Retry/Resume.** A failure the platform classifies `Refused`
+  (`errorCategory`), or marks `retryability: 'terminal'`, or spells `<step> <code>: <reason>` with one of
+  `constraint-not-met` / `forbidden` / `revision-conflict` / `invalid-request` (a row written before the
+  category existed), is a decision about inputs the run already holds — retrying or resuming re-runs the same
+  step over the same recorded proposal and refuses the same way. So `PipelineRunReplayPage` renders NONE of
+  "↻ Retry from failure" (header), "↻ Resume from here" (failure banner) or the per-step buttons for it —
+  absent, not disabled — and `StepThread` drops both of its buttons even when the host passes both callbacks.
+  The banner is titled `Refused (<code>):` with the message verbatim (`data-testid="refused-banner"`,
+  `refused-reason`), the header carries a `Not retryable` chip (`refused-not-retryable`) whose title says why,
+  the category chip takes `errorCategoryTone` instead of always danger, and the step's error section becomes
+  `Refused (<code>):` on a caution surface (`step-refused-<stepId>`, `step-refused-reason-<stepId>`). Re-run
+  (a new run from the original trigger) stays. `403 Forbidden` mid-sentence is an outage, not a refusal, and
+  keeps every button. New `utils/runRefusal.ts` — `REFUSAL_CODES`, `refusalCodeOf`, `runRefusal`,
+  `stepRefusal`, `refusalNotRetryableReason`, types `RefusalCode` / `RunRefusal` — is exported from
+  `@connorhoehn/ui-components/pipelines` so a host gates its own affordances the same way. Tests:
+  `runRefusal.test.ts`, `StepThread.refused.test.tsx`, `PipelineRunReplayPage.refused.test.tsx`.
+
+### Fixed
+
+- **pipelines: `usePendingApprovals`' console line names the URL it fetched.** On a failed load it logged
+  `/api/observability/dashboard?include=pendingApprovals failed:` — a URL the hook has never fetched — and
+  sent whoever read the console to the wrong endpoint. It now reads `usePendingApprovals: /api/pipelines/approvals
+  answered 500` (the status the endpoint actually answered with) or `… answered nothing (request failed)` when
+  the request failed at the transport. The user-facing banner is unchanged. Test:
+  `usePendingApprovals.log.test.tsx`.
+
 ## [2.383.0] — 2026-09-23
 
 ### Added
