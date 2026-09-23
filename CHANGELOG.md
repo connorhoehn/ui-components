@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.368.1] — 2026-09-22
+
+### Fixed — `ViewportFillRegion` re-measures when something above it appears late
+
+The region measured its height on mount and on window resize only. A banner
+that mounts after a fetch (the API-degraded banner) pushed the region down
+without resizing the window, so the region overflowed the window by the
+banner's height, the page scrolled, and the composer pinned at the bottom of
+the documents editor sat below the fold. It now also re-measures when its
+parent or the body resizes (ResizeObserver). Editor handoff WS2 follow-up.
+
+---
+
 ## [2.368.0] — 2026-09-22
 
 ### Changed — presentation editor: the composer is always on screen (editor handoff WS3)

@@ -58,4 +58,34 @@ describe('ViewportFillRegion', () => {
       Element.prototype.getBoundingClientRect = proto;
     }
   });
+
+  it('re-measures when something above it pushes it down without a window resize (a late banner)', () => {
+    Object.defineProperty(window, 'innerHeight', { value: 800, configurable: true });
+    const callbacks: Array<() => void> = [];
+    const observed: Element[] = [];
+    const RO = globalThis.ResizeObserver;
+    globalThis.ResizeObserver = class {
+      constructor(cb: () => void) { callbacks.push(cb); }
+      observe(target: Element) { observed.push(target); }
+      unobserve() {}
+      disconnect() {}
+    } as unknown as typeof ResizeObserver;
+    let top = 100;
+    const proto = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = function () {
+      return { top, bottom: 0, left: 0, right: 0, width: 0, height: 0, x: 0, y: 0, toJSON() {} } as DOMRect;
+    };
+    try {
+      render(<div data-testid="parent"><ViewportFillRegion data-testid="region"><div>thread</div></ViewportFillRegion></div>);
+      expect(screen.getByTestId('region').style.height).toBe('700px');
+      expect(observed).toContain(screen.getByTestId('parent'));
+
+      top = 142; // a 42px banner mounted above
+      act(() => { callbacks.forEach((cb) => cb()); });
+      expect(screen.getByTestId('region').style.height).toBe('658px');
+    } finally {
+      Element.prototype.getBoundingClientRect = proto;
+      globalThis.ResizeObserver = RO;
+    }
+  });
 });

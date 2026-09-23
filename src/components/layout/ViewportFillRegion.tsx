@@ -72,9 +72,23 @@ export function ViewportFillRegion({
     // Chrome above the region (banners, tab bars) can settle a frame late.
     const raf = window.requestAnimationFrame(measure);
     window.addEventListener('resize', measure);
+    // …or arrive much later: a health banner that mounts after a fetch pushes
+    // the region down without resizing the window, and a height measured
+    // before it overflows the window by the banner's height — the page then
+    // scrolls, and whatever sits at the region's bottom (a composer) is below
+    // the fold. The region's parent grows when anything above it does, so
+    // watching the parent (and the body, for chrome outside it) catches that.
+    // Re-measuring is idempotent, so the observer settles after one pass.
+    const el = ref.current;
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => measure());
+    if (observer) {
+      if (el?.parentElement) observer.observe(el.parentElement);
+      observer.observe(document.body);
+    }
     return () => {
       window.cancelAnimationFrame(raf);
       window.removeEventListener('resize', measure);
+      observer?.disconnect();
     };
   }, [measure]);
 
