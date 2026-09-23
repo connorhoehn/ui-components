@@ -1067,7 +1067,7 @@ describe('auto size fits what the row can hold', () => {
   });
 });
 
-describe('DocumentToolbar extras="overflow" — the word-processor row (2.386.3)', () => {
+describe('DocumentToolbar extras="overflow" — the word-processor row (2.386.5)', () => {
   const EXTRAS = ['setTextAlign', 'unsetAllMarks', 'clearNodes', 'setColor', 'unsetColor', 'setBackgroundColor', 'unsetBackgroundColor', 'toggleHighlight', 'setListStyle'];
 
   it('keeps align, rule and clear formatting behind ⋯, and link + image right after the marks', () => {

@@ -1649,7 +1649,7 @@ export declare interface BreadcrumbsProps {
     'data-testid'?: string;
 }
 
-/** Three dotted lines: "bulleted list". Since 2.386.3. */
+/** Three dotted lines: "bulleted list". Since 2.386.5. */
 export declare function BulletListIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function Button({ variant, size, tone, disabled, fullWidth, children, type, className, ref, ...rest }: ButtonProps): JSX.Element;
@@ -3757,7 +3757,7 @@ export declare function ChecklistEditorRenderer({ section, fragment, ydoc, provi
 
 export declare const checklistFieldType: FieldTypeDefinition;
 
-/** A ticked box: "checklist". Since 2.386.3. */
+/** A ticked box: "checklist". Since 2.386.5. */
 export declare function ChecklistIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare interface ChecklistItem {
@@ -7025,7 +7025,7 @@ export declare interface FileKindMarkProps {
 
 export declare type FileKindMarkSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
-/** `outline` (since 2.386.3): the glyph alone, in the kind's colour, no box fill — an editor's title mark. */
+/** `outline` (since 2.386.5): the glyph alone, in the kind's colour, no box fill — an editor's title mark. */
 export declare type FileKindMarkVariant = 'tinted' | 'plain' | 'glyph' | 'outline';
 
 export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, inputTestId, inputProps, }: FileUploadDropProps): JSX.Element;
@@ -8214,7 +8214,7 @@ export declare interface HangoutSpotlightProps {
     style?: CSSProperties;
 }
 
-/** A marker tip over a stroke: "highlight". Since 2.386.3. */
+/** A marker tip over a stroke: "highlight". Since 2.386.5. */
 export declare function HighlighterIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare const HISTORY_DAYS_DEFAULT = 7;
@@ -8309,7 +8309,7 @@ export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLB
 /** @see SurfaceTone — which colour family the button paints in. */
 export declare type IconButtonTone = SurfaceTone;
 
-/** `outline` (since 2.386.3): a bordered square on the surface — an editor head's (i) and ⋯. */
+/** `outline` (since 2.386.5): a bordered square on the surface — an editor head's (i) and ⋯. */
 export declare type IconButtonVariant = 'ghost' | 'primary' | 'danger' | 'outline';
 
 export declare function IconPicker({ value, onChange, curated, }: IconPickerProps): JSX.Element;
@@ -8500,7 +8500,7 @@ export declare interface ImageGenerateNodeData {
     numImages?: number;
 }
 
-/** A framed picture with a sun and a hill: "image". Since 2.386.3. */
+/** A framed picture with a sun and a hill: "image". Since 2.386.5. */
 export declare function ImageIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageLightboxProps): ReactPortal | null;
@@ -9534,7 +9534,7 @@ export declare interface ListRunsResponse {
     nextCursor?: string;
 }
 
-/** Nested lines: "list style" / multilevel list. Since 2.386.3. */
+/** Nested lines: "list style" / multilevel list. Since 2.386.5. */
 export declare function ListStyleIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function LiveRegion({ message, politeness, atomic, throttleMs, role, 'data-testid': testId, }: LiveRegionProps): JSX.Element;
@@ -10481,7 +10481,7 @@ export declare interface MoreContextItem {
 
 export declare function MoreHorizontalIcon({ size, ...rest }: IconProps): JSX.Element;
 
-/** Three dots in a row: "more". Since 2.386.3. */
+/** Three dots in a row: "more". Since 2.386.5. */
 export declare function MoreIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Move the slide at `from` so it lands at `to`. Out-of-range moves are no-ops. */
@@ -10809,7 +10809,7 @@ export declare interface NotificationItem {
 
 export declare function NumberEditorRenderer(props: SectionRendererProps): JSX.Element;
 
-/** Three numbered lines: "numbered list". Since 2.386.3. */
+/** Three numbered lines: "numbered list". Since 2.386.5. */
 export declare function NumberedListIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare const numberFieldType: FieldTypeDefinition;
@@ -13208,7 +13208,7 @@ export declare type RecordingStage = 'saving' | 'transcribing' | 'summarizing' |
 
 export declare type RecordingStatus = 'ready' | 'processing' | 'failed';
 
-/** A curved arrow forward: "redo". Since 2.386.3. */
+/** A curved arrow forward: "redo". Since 2.386.5. */
 export declare function RedoIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /**
@@ -15001,7 +15001,7 @@ export declare type StatusPillTone = StatusPillState | 'danger';
 
 /**
  * `pill` (default) is the bordered, tinted chip. `text` is dot + coloured label, no box.
- * `tag` (since 2.386.3) is a soft rounded-rectangle label with no dot and no
+ * `tag` (since 2.386.5) is a soft rounded-rectangle label with no dot and no
  * border — a document's "Draft" beside its title.
  */
 export declare type StatusPillVariant = 'pill' | 'text' | 'tag';
@@ -16809,7 +16809,7 @@ export declare interface TypingIndicatorProps {
  */
 export declare function uncitedSlideIds(spec: DeckSpec): string[];
 
-/** A curved arrow back: "undo". Since 2.386.3. */
+/** A curved arrow back: "undo". Since 2.386.5. */
 export declare function UndoIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare interface UpdateClientInput {
@@ -19979,29 +19979,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -20048,9 +20038,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

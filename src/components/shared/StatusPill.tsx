@@ -38,7 +38,7 @@ export type StatusPillSize = 'sm' | 'md';
 
 /**
  * `pill` (default) is the bordered, tinted chip. `text` is dot + coloured label, no box.
- * `tag` (since 2.386.3) is a soft rounded-rectangle label with no dot and no
+ * `tag` (since 2.386.5) is a soft rounded-rectangle label with no dot and no
  * border — a document's "Draft" beside its title.
  */
 export type StatusPillVariant = 'pill' | 'text' | 'tag';

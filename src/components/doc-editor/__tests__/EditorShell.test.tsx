@@ -124,7 +124,7 @@ describe('EditorShell', () => {
     expect(group.className).toContain('flex-nowrap');
     expect(group.className).toContain('min-w-0');
     expect(group.className).toContain('max-w-full');
-    // 2.386.3: the mark is outside the title column, so the title and the
+    // 2.386.5: the mark is outside the title column, so the title and the
     // save line share one left edge and the mark spans both rows.
     const mark = screen.getByTestId('editor-shell-kind');
     expect(group).not.toContainElement(mark);

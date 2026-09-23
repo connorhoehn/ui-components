@@ -359,7 +359,7 @@ export interface CanvasDocumentViewProps {
   /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
   zoomMode?: 'remembered' | 'fit';
   /**
-   * `card` (since 2.386.3) draws the toolbar as one white rounded card on the
+   * `card` (since 2.386.5) draws the toolbar as one white rounded card on the
    * workspace grey, as the word-processor row (`DocumentToolbar
    * extras="overflow"`): alignment, indent, rule, table, clear formatting and
    * zoom behind its ⋯. `bar` (default) is the full-width strip.
@@ -908,7 +908,7 @@ export default function CanvasDocumentView({
             <div data-testid={`${testId}-toolbar`} className="sticky top-0 z-20">
             <div
               className={toolbarStyle === 'card'
-                ? 'bg-workspace px-3 pb-1 pt-2'
+                ? 'bg-workspace px-3 pb-2 pt-2'
                 : 'border-b border-border bg-surface-panel'}
             >
               {/* Full workspace width, NOT the sheet's 816px.

@@ -35,7 +35,7 @@ export type FileKind =
   | 'media'
   | 'workflow';
 
-/** `outline` (since 2.386.3): the glyph alone, in the kind's colour, no box fill — an editor's title mark. */
+/** `outline` (since 2.386.5): the glyph alone, in the kind's colour, no box fill — an editor's title mark. */
 export type FileKindMarkVariant = 'tinted' | 'plain' | 'glyph' | 'outline';
 
 export type FileKindMarkSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';

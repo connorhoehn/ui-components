@@ -645,7 +645,7 @@ export default function WorkspaceDocumentHeader({
           )}
 
           {/* The menu layout is an editor head's row (Share · (i) · ⋯): a
-              40 px bordered square beside the other two (2.386.3). */}
+              40 px bordered square beside the other two (2.386.5). */}
           {menuSections.some(section => section.items.length > 0) && <DropdownMenu
             trigger={menuLayout ? <MoreIcon size={18} /> : <span className="tracking-wide">⋯</span>}
             triggerLabel="More actions"
@@ -984,7 +984,7 @@ export function WorkspaceDocumentHeaderNotices({
 }
 
 /** The lifecycle status as the header prints it — "Draft", "In review" — for a host's own title row. */
-/** `variant="tag"` (since 2.386.3): the soft label an editor head puts beside the title. */
+/** `variant="tag"` (since 2.386.5): the soft label an editor head puts beside the title. */
 export function DocumentLifecyclePill({ status, variant = 'pill' }: { status: DocumentLifecycleStatus; variant?: 'pill' | 'tag' }) {
   return (
     <StatusPill

@@ -283,7 +283,7 @@ export default function TiptapEditor({
     // `canvasLineSpacing.ts` covers a page with no grid on it.
     CanvasLineSpacing,
     // List markers (bullet / numbering / multilevel), for the same reason:
-    // the values are defined by this package's `styles.css`. Since 2.386.3.
+    // the values are defined by this package's `styles.css`. Since 2.386.5.
     CanvasListStyle,
     Collaboration.configure({ document: ydoc, fragment }),
     // Appended last so a caller's extension can override a built-in's keymap

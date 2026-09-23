@@ -183,7 +183,7 @@ export function EditorShell({
 
   const pane = (
     <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
-      <header className="flex flex-col gap-1 border-b border-border px-5 pt-3" data-testid={`${testId}-header`}>
+      <header className="flex flex-col gap-1 border-b border-border px-5 pt-3.5" data-testid={`${testId}-header`}>
         {breadcrumbs && breadcrumbs.length > 0 && !crumbsTrailing && (
           // A short window (a 1280×720 laptop leaves ~577 px) gives the crumbs'
           // row to the canvas: the title stays, and the explorer beside the
@@ -200,14 +200,14 @@ export function EditorShell({
         )}
         <div className="flex min-w-0 items-center gap-3">
           {/* The kind mark stands BESIDE the title and its save line, a 40px
-              outline glyph with no tinted box (2.386.3) — so the title, the
+              outline glyph with no tinted box (2.386.5) — so the title, the
               pill and "Saved 3 hours ago" share one left edge, and the mark
               can never sit alone on a row above a wrapped title. */}
           {kind && <FileKindMark kind={kind} size="2xl" variant="outline" className="[@media(max-height:640px)]:h-8 [@media(max-height:640px)]:w-8" data-testid={`${testId}-kind`} />}
           {/* A short window (under 640 px tall — a 1280×720 laptop window has a
               577 px viewport) puts the byline BESIDE the title instead of under
               it: one row, ~26 px back for the canvas below (a slide stage). */}
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-0 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3">
             {/* The title sizes to its words (truncating when long), so the
                 status pill sits right beside it — with or without a folder
                 path after it — rather than at the row's far end (2.385.4).
@@ -234,11 +234,11 @@ export function EditorShell({
                   // "Release plan" open to 160px and left a gap before the
                   // Draft pill. The button sizes to its words; the input, while
                   // editing, to its value.
-                  className="-ml-1 min-w-0 max-w-full flex-initial text-xl font-bold leading-7"
+                  className="min-w-0 max-w-full flex-initial py-0 text-xl font-bold leading-6"
                   data-testid={`${testId}-title`}
                 />
               ) : (
-                <h1 className="m-0 min-w-0 max-w-full flex-initial truncate text-xl font-bold leading-7 text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
+                <h1 className="m-0 min-w-0 max-w-full flex-initial truncate text-xl font-bold leading-6 text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
               )}
               {onStarredChange && (
                 <IconButton
@@ -298,10 +298,10 @@ export function EditorShell({
             onValueChange={(id) => onTabChange?.(id)}
             variant="underline"
             size="md"
-            itemClassName="px-3.5 pb-2.5 pt-1.5 text-[15px]"
+            itemClassName="px-3.5 pb-2 pt-1 text-[15px] leading-5"
             aria-label={`${title} sections`}
             idPrefix={idPrefix}
-            className="-mb-px -ml-3 mt-2 border-b-0"
+            className="-mb-px -ml-3 mt-1.5 border-b-0"
           />
         ) : (
           <span className="h-2" aria-hidden="true" />

@@ -24,7 +24,7 @@ export {
   lineSpacingAttributes,
 } from './canvasLineSpacing';
 export type { LineSpacing, CanvasLineSpacingOptions } from './canvasLineSpacing';
-// List markers — registered by `TiptapEditor`; the toolbar's list menus set them. Since 2.386.3.
+// List markers — registered by `TiptapEditor`; the toolbar's list menus set them. Since 2.386.5.
 export {
   CanvasListStyle,
   BULLET_STYLES,

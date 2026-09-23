@@ -114,7 +114,7 @@ export interface DocumentToolbarProps {
    */
   zoomControl?: DocumentZoomControl;
   /**
-   * Where the occasional controls live (since 2.386.3). `inline` (default) is
+   * Where the occasional controls live (since 2.386.5). `inline` (default) is
    * the classic bar: alignment, spacing, indent, rule, table and clear
    * formatting sit on the row until the width folds them. `overflow` is the
    * word-processor row a page editor draws — undo · styles · marks · link and
@@ -159,11 +159,11 @@ export function documentToolbarSize(width: number | null): DocumentToolbarSize {
 const SizeContext = createContext<DocumentToolbarSize>('wide');
 
 /**
- * A full bar draws 36px controls with 18px glyphs (2.386.3) — the size a page
+ * A full bar draws 36px controls with 18px glyphs (2.386.5) — the size a page
  * editor's toolbar reads at. The compact bar in a chat pane keeps 28px.
  */
 const RoomyContext = createContext(false);
-const BTN_ROOMY = 'h-9 min-w-9 px-2 rounded-md text-[15px]';
+const BTN_ROOMY = 'h-9 min-w-8 px-1.5 rounded-md text-[15px]';
 const BTN_COMPACT = 'h-7 min-w-7 px-1.5 rounded text-xs';
 /** Glyph size for a drawn icon in the bar. */
 const useGlyph = () => (useContext(RoomyContext) ? 18 : 14);
@@ -921,7 +921,7 @@ function TableMenu({
 }
 
 /**
- * A list's marker menu (2.386.3): a caret beside the bullet or numbered
+ * A list's marker menu (2.386.5): a caret beside the bullet or numbered
  * button, or — with no `btn` — a menu-only button for the multilevel presets.
  * Each choice makes the caret's block a list of that kind if it is not one,
  * and sets its marker (`canvasListStyle.ts`). Rendered only when the editor
@@ -998,7 +998,7 @@ function ListStyleMenu({
   );
 }
 
-/** Zoom, as a row inside ⋯ — for a page that has no bottom status bar (2.386.3). */
+/** Zoom, as a row inside ⋯ — for a page that has no bottom status bar (2.386.5). */
 function ZoomRow({ control, testId }: { control: DocumentZoomControl; testId: string }) {
   const { zoom, fitActive, steps, onZoomChange, onFitWidth: onFit } = control;
   const FIT = 'fit';
@@ -1907,7 +1907,7 @@ export default function DocumentToolbar({
       // decide what fits; the row never folds. Nothing in the row shrinks
       // (`[&>*]:shrink-0`): a squeezed select would hide an overflow the fit
       // measurement needs to see, and the spacer below is the only give.
-      className={cn('flex min-w-0 flex-nowrap items-center [&>*]:shrink-0', overflowLayout ? 'gap-1 px-3 py-2' : 'gap-0.5 px-2 py-1.5')}
+      className={cn('flex min-w-0 flex-nowrap items-center gap-0.5 [&>*]:shrink-0', overflowLayout ? 'px-3 py-2' : 'px-2 py-1.5')}
     >
       {/* Undo/redo live leftmost, as in every writing tool. With Collaboration
           bound these are the Y.js UndoManager's, not ProseMirror's history —

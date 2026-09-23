@@ -278,7 +278,7 @@ export declare interface CanvasDocumentViewProps {
     /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
     zoomMode?: 'remembered' | 'fit';
     /**
-     * `card` (since 2.386.3) draws the toolbar as one white rounded card on the
+     * `card` (since 2.386.5) draws the toolbar as one white rounded card on the
      * workspace grey, as the word-processor row (`DocumentToolbar
      * extras="overflow"`): alignment, indent, rule, table, clear formatting and
      * zoom behind its ⋯. `bar` (default) is the full-width strip.
@@ -871,7 +871,7 @@ declare interface DocumentInfo {
 }
 
 /** The lifecycle status as the header prints it — "Draft", "In review" — for a host's own title row. */
-/** `variant="tag"` (since 2.386.3): the soft label an editor head puts beside the title. */
+/** `variant="tag"` (since 2.386.5): the soft label an editor head puts beside the title. */
 export declare function DocumentLifecyclePill({ status, variant }: {
     status: DocumentLifecycleStatus;
     variant?: 'pill' | 'tag';
@@ -1029,7 +1029,7 @@ export declare interface DocumentSaveState {
     onRetry?: () => void;
 }
 
-/** `className` (since 2.386.3) sizes the line for its host — an editor head reads it at 13px. */
+/** `className` (since 2.386.5) sizes the line for its host — an editor head reads it at 13px. */
 export declare function DocumentSaveStatus({ state, className }: {
     state?: DocumentSaveState;
     className?: string;
@@ -1185,7 +1185,7 @@ export declare interface DocumentToolbarProps {
      */
     zoomControl?: DocumentZoomControl;
     /**
-     * Where the occasional controls live (since 2.386.3). `inline` (default) is
+     * Where the occasional controls live (since 2.386.5). `inline` (default) is
      * the classic bar: alignment, spacing, indent, rule, table and clear
      * formatting sit on the row until the width folds them. `overflow` is the
      * word-processor row a page editor draws — undo · styles · marks · link and
@@ -3616,29 +3616,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3685,9 +3675,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

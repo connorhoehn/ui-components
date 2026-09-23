@@ -6,7 +6,7 @@ import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import type { SurfaceTone } from '../shared/tones';
 
-/** `outline` (since 2.386.3): a bordered square on the surface — an editor head's (i) and ⋯. */
+/** `outline` (since 2.386.5): a bordered square on the surface — an editor head's (i) and ⋯. */
 export type IconButtonVariant = 'ghost' | 'primary' | 'danger' | 'outline';
 /** @see SurfaceTone — which colour family the button paints in. */
 export type IconButtonTone = SurfaceTone;

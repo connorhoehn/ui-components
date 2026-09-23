@@ -391,7 +391,7 @@ declare interface CanvasDocumentViewProps {
     /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
     zoomMode?: 'remembered' | 'fit';
     /**
-     * `card` (since 2.386.3) draws the toolbar as one white rounded card on the
+     * `card` (since 2.386.5) draws the toolbar as one white rounded card on the
      * workspace grey, as the word-processor row (`DocumentToolbar
      * extras="overflow"`): alignment, indent, rule, table, clear formatting and
      * zoom behind its ⋯. `bar` (default) is the full-width strip.
@@ -1407,7 +1407,7 @@ declare interface DocumentToolbarProps {
      */
     zoomControl?: DocumentZoomControl;
     /**
-     * Where the occasional controls live (since 2.386.3). `inline` (default) is
+     * Where the occasional controls live (since 2.386.5). `inline` (default) is
      * the classic bar: alignment, spacing, indent, rule, table and clear
      * formatting sit on the row until the width folds them. `overflow` is the
      * word-processor row a page editor draws — undo · styles · marks · link and

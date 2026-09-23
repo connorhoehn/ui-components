@@ -726,7 +726,7 @@
 .ProseMirror ul { list-style: disc outside; }
 .ProseMirror ol { list-style: decimal outside; }
 /* List markers set from the toolbar's list menus (`canvasListStyle.ts`,
-   2.386.3). A single style applies to its own list; the two multilevel
+   2.386.5). A single style applies to its own list; the two multilevel
    presets change the marker per nesting level. */
 .ProseMirror ul[data-list-style='disc'] { list-style-type: disc; }
 .ProseMirror ul[data-list-style='circle'] { list-style-type: circle; }

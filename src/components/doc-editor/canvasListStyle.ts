@@ -1,6 +1,6 @@
 // canvasListStyle — the marker a list draws: disc / circle / square bullets,
 // 1. / a. / A. / i. / I. numbering, and two multilevel presets that change
-// the marker per nesting level. Since 2.386.3.
+// the marker per nesting level. Since 2.386.5.
 //
 // An attribute on the LIST node (`bulletList`, `orderedList`), rendered as
 // `data-list-style`; `styles.css` maps each value to `list-style-type`, the

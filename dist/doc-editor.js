@@ -30,7 +30,7 @@ import { o as Me, t as Ne } from "./VerdictChip-ClwrKr68.js";
 import { a as Pe, c as Fe, d as Ie, f as Le, h as Re, i as ze, l as Be, m as Ve, n as He, o as Ue, p as We, r as Ge, s as Ke, t as W, u as qe } from "./TiptapEditor-CajZRkz8.js";
 import { i as Je, n as Ye, r as Xe, t as Ze } from "./FloatingComposerDock-DMUQCjea.js";
 import { A as Qe, B as $e, C as et, D as tt, E as nt, F as rt, G as it, H as at, I as ot, L as st, M as ct, N as lt, O as ut, P as dt, R as ft, S as pt, T as mt, U as ht, V as gt, W as _t, _ as vt, a as yt, b as bt, c as xt, d as St, f as Ct, g as wt, h as Tt, i as Et, j as Dt, k as Ot, l as kt, m as At, o as jt, p as Mt, r as Nt, s as Pt, t as Ft, u as It, v as Lt, w as Rt, x as zt, y as Bt, z as Vt } from "./DocumentEditorPage-BNsG2GM9.js";
-import { S as Ht, _ as Ut, a as Wt, b as Gt, c as Kt, d as qt, f as Jt, g as Yt, h as Xt, i as Zt, l as Qt, m as $t, n as en, o as tn, p as nn, r as rn, s as an, t as on, u as sn, v as cn, x as ln, y as un } from "./useDocumentImageUpload-CGifC0Fw.js";
+import { S as Ht, _ as Ut, a as Wt, b as Gt, c as Kt, d as qt, f as Jt, g as Yt, h as Xt, i as Zt, l as Qt, m as $t, n as en, o as tn, p as nn, r as rn, s as an, t as on, u as sn, v as cn, x as ln, y as un } from "./useDocumentImageUpload-BBypKe_i.js";
 import { createContext as dn, useCallback as G, useContext as fn, useEffect as K, useId as pn, useImperativeHandle as mn, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import * as hn from "yjs";
@@ -2136,7 +2136,7 @@ function Ar({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		className: "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface",
 		children: [
 			/* @__PURE__ */ Q("header", {
-				className: "flex flex-col gap-1 border-b border-border px-5 pt-3",
+				className: "flex flex-col gap-1 border-b border-border px-5 pt-3.5",
 				"data-testid": `${I}-header`,
 				children: [
 					e && e.length > 0 && !f && /* @__PURE__ */ Z(c, {
@@ -2170,7 +2170,7 @@ function Ar({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 								"data-testid": `${I}-kind`
 							}),
 							/* @__PURE__ */ Q("div", {
-								className: "flex min-w-0 flex-1 flex-col gap-0.5 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3",
+								className: "flex min-w-0 flex-1 flex-col gap-0 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3",
 								children: [
 									/* @__PURE__ */ Q("div", {
 										className: "flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 [@media(max-height:640px)]:flex-1",
@@ -2184,10 +2184,10 @@ function Ar({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													label: i,
 													required: !0,
 													fitContent: !0,
-													className: "-ml-1 min-w-0 max-w-full flex-initial text-xl font-bold leading-7",
+													className: "min-w-0 max-w-full flex-initial py-0 text-xl font-bold leading-6",
 													"data-testid": `${I}-title`
 												}) : /* @__PURE__ */ Z("h1", {
-													className: "m-0 min-w-0 max-w-full flex-initial truncate text-xl font-bold leading-7 text-text-primary",
+													className: "m-0 min-w-0 max-w-full flex-initial truncate text-xl font-bold leading-6 text-text-primary",
 													"data-testid": `${I}-title`,
 													children: t
 												}), l && /* @__PURE__ */ Z(a, {
@@ -2275,10 +2275,10 @@ function Ar({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						onValueChange: (e) => te?.(e),
 						variant: "underline",
 						size: "md",
-						itemClassName: "px-3.5 pb-2.5 pt-1.5 text-[15px]",
+						itemClassName: "px-3.5 pb-2 pt-1 text-[15px] leading-5",
 						"aria-label": `${t} sections`,
 						idPrefix: L,
-						className: "-mb-px -ml-3 mt-2 border-b-0"
+						className: "-mb-px -ml-3 mt-1.5 border-b-0"
 					}) : /* @__PURE__ */ Z("span", {
 						className: "h-2",
 						"aria-hidden": "true"

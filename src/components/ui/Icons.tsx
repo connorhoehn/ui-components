@@ -516,7 +516,7 @@ export function SparkleIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
-/** A curved arrow back: "undo". Since 2.386.3. */
+/** A curved arrow back: "undo". Since 2.386.5. */
 export function UndoIcon({ size = 16, ...rest }: GlyphProps) {
   return (
     <svg {...base(size, rest)}>
@@ -526,7 +526,7 @@ export function UndoIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
-/** A curved arrow forward: "redo". Since 2.386.3. */
+/** A curved arrow forward: "redo". Since 2.386.5. */
 export function RedoIcon({ size = 16, ...rest }: GlyphProps) {
   return (
     <svg {...base(size, rest)}>
@@ -536,7 +536,7 @@ export function RedoIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
-/** A framed picture with a sun and a hill: "image". Since 2.386.3. */
+/** A framed picture with a sun and a hill: "image". Since 2.386.5. */
 export function ImageIcon({ size = 16, ...rest }: GlyphProps) {
   return (
     <svg {...base(size, rest)}>
@@ -547,7 +547,7 @@ export function ImageIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
-/** Three dotted lines: "bulleted list". Since 2.386.3. */
+/** Three dotted lines: "bulleted list". Since 2.386.5. */
 export function BulletListIcon({ size = 16, ...rest }: GlyphProps) {
   return (
     <svg {...base(size, rest)}>
@@ -559,7 +559,7 @@ export function BulletListIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
-/** Three numbered lines: "numbered list". Since 2.386.3. */
+/** Three numbered lines: "numbered list". Since 2.386.5. */
 export function NumberedListIcon({ size = 16, ...rest }: GlyphProps) {
   return (
     <svg {...base(size, rest)}>
@@ -571,7 +571,7 @@ export function NumberedListIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
-/** Nested lines: "list style" / multilevel list. Since 2.386.3. */
+/** Nested lines: "list style" / multilevel list. Since 2.386.5. */
 export function ListStyleIcon({ size = 16, ...rest }: GlyphProps) {
   return (
     <svg {...base(size, rest)}>
@@ -583,7 +583,7 @@ export function ListStyleIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
-/** A ticked box: "checklist". Since 2.386.3. */
+/** A ticked box: "checklist". Since 2.386.5. */
 export function ChecklistIcon({ size = 16, ...rest }: GlyphProps) {
   return (
     <svg {...base(size, rest)}>
@@ -593,7 +593,7 @@ export function ChecklistIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
-/** A marker tip over a stroke: "highlight". Since 2.386.3. */
+/** A marker tip over a stroke: "highlight". Since 2.386.5. */
 export function HighlighterIcon({ size = 16, ...rest }: GlyphProps) {
   return (
     <svg {...base(size, rest)}>
@@ -604,7 +604,7 @@ export function HighlighterIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
-/** Three dots in a row: "more". Since 2.386.3. */
+/** Three dots in a row: "more". Since 2.386.5. */
 export function MoreIcon({ size = 16, ...rest }: GlyphProps) {
   return (
     <svg {...base(size, { ...rest, fill: 'currentColor', stroke: 'none' })}>

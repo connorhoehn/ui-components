@@ -12,7 +12,7 @@ const LABELS: Record<DocumentSaveState['status'], string> = {
   pending: 'Saving…', saved: 'Saved', error: 'Changes not saved', offline: 'Offline — changes not saved',
 };
 
-/** `className` (since 2.386.3) sizes the line for its host — an editor head reads it at 13px. */
+/** `className` (since 2.386.5) sizes the line for its host — an editor head reads it at 13px. */
 export function DocumentSaveStatus({ state, className }: { state?: DocumentSaveState; className?: string }) {
   if (!state) return null;
   return (
