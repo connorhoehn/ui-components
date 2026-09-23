@@ -662,6 +662,17 @@ export declare interface DiagramUser {
     color: string;
 }
 
+export declare const DOCUMENT_LINK_CLICK_KEY: PluginKey<any>;
+
+export declare const DocumentLinkClick: Extension<DocumentLinkClickOptions, any>;
+
+export declare interface DocumentLinkClickOptions {
+    /** The in-app path to open for this href, or null for "not ours — leave it to the Link mark". */
+    resolve: (href: string) => string | null;
+    /** Go there. Called with what `resolve` returned. */
+    onOpen: (path: string) => void;
+}
+
 /**
  * Gives one item an `id`, if it has none — the edit that makes it addressable.
  *
@@ -1692,6 +1703,9 @@ export declare type ResolvedTheme = 'light' | 'dark';
  */
 export declare function retractHitlEdit(source: string): TextRangeEdit | null;
 
+/** The default `resolve`: same-origin `/documents/<id>…` links, as a path with query and hash. */
+export declare function sameOriginDocumentPath(href: string, origin?: string): string | null;
+
 declare interface Scalar {
     value: string;
     /** Offset of the first character of the value, in the macro's text. */
@@ -1925,9 +1939,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -1961,9 +1975,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -1977,26 +2011,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

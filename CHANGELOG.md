@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.385.3] — 2026-09-23
+
+### Added
+
+- **`DocumentLinkClick`** (`./diagram`, beside the other page-body extensions) — a plain click on
+  a link to another document in the app opens it through the host's router (`onOpen(path)`)
+  instead of the Link mark's `window.open(href, '_blank')`. The host says which hrefs are its own
+  (`resolve`, default: same-origin `/documents/<id>…` via `sameOriginDocumentPath`); every other
+  link, and any modified or middle click, keeps the Link mark's behaviour. A `handleClick` prop at
+  priority 1001, above Link's 1000. For the Documents folders mockup's "Sources: Release plan ·
+  Auth architecture" line (realtime-examples R5).
+
+---
+
 ## [2.385.2] — 2026-09-23
 
 ### Added

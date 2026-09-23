@@ -160,6 +160,9 @@ export type { TypedField, FieldDraft, FieldType } from './fieldText';
 // `linkHref`: a `url:` scalar arrives from files and agents and becomes an
 // `href`, so every scheme but http/https/mailto renders as text.
 export { LinksMacro, linksRenderer } from './LinksMacro';
+// A click on a reference to another document opens it in the app (2.385.3).
+export { DocumentLinkClick, DOCUMENT_LINK_CLICK_KEY, sameOriginDocumentPath } from './DocumentLinkClick';
+export type { DocumentLinkClickOptions } from './DocumentLinkClick';
 export { LinksBlock } from './LinksBlock';
 export type { LinksBlockProps } from './LinksBlock';
 export {
