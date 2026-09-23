@@ -3674,7 +3674,7 @@ function nn({ node: e, detail: r, selection: a, onSelectionChange: o, onClose: c
 		_?.description,
 		h?.subtitle,
 		h?.excerpt
-	], D = T ? [] : (h?.lines ?? []).filter((e, t, n) => n.indexOf(e) === t && !en(e, E)), O = T ? void 0 : h?.excerpt, k = !b && !S && !h?.artifact && !h?.transcript && !_ && !h?.note && !h?.actions?.length && !O && D.length === 0;
+	], D = T ? [] : (h?.lines ?? []).filter((e, t, n) => n.indexOf(e) === t && !en(e, E)), O = T ? void 0 : h?.excerpt, k = h?.actions ?? [], A = !!l && !!v?.revision && (e.capabilities.includes("view-document") || e.capabilities.includes("edit-document")), j = !b && !S && !h?.artifact && !h?.transcript && !_ && !h?.note && !h?.actions?.length && !O && D.length === 0;
 	return /* @__PURE__ */ W("section", {
 		"aria-label": g,
 		"data-testid": p,
@@ -3730,7 +3730,6 @@ function nn({ node: e, detail: r, selection: a, onSelectionChange: o, onClose: c
 						artifact: h.artifact,
 						selection: a,
 						onSelectionChange: o,
-						onOpen: l,
 						quiet: !!h.banner
 					}),
 					h?.transcript && /* @__PURE__ */ U(Zt, {
@@ -3774,36 +3773,41 @@ function nn({ node: e, detail: r, selection: a, onSelectionChange: o, onClose: c
 							onSelect: o
 						})
 					}),
-					!!h?.actions?.length && /* @__PURE__ */ U("div", {
-						className: "flex flex-wrap gap-2",
-						children: h.actions.map((e) => /* @__PURE__ */ U(n, {
-							size: "sm",
-							variant: "secondary",
-							onClick: () => {
-								e.onSelect?.(), e.selection && o(e.selection);
-							},
-							children: e.label
-						}, e.id))
-					}),
 					h?.note && /* @__PURE__ */ U("p", {
 						className: "text-xs leading-snug text-text-tertiary",
 						children: h.note
 					}),
-					k && /* @__PURE__ */ U("p", {
+					j && /* @__PURE__ */ U("p", {
 						className: "text-sm text-text-secondary",
 						children: m ? "Only the existence of this work is shared with you." : "No further detail is shared with you."
 					})
 				]
 			}),
-			u && !m && /* @__PURE__ */ U("div", {
-				className: "shrink-0 border-t border-border p-2",
-				children: /* @__PURE__ */ U(n, {
+			(A || k.length > 0 || u && !m) && /* @__PURE__ */ W("div", {
+				className: "shrink-0 space-y-2 border-t border-border p-2",
+				"data-testid": `${p}-footer`,
+				children: [(A || k.length > 0) && /* @__PURE__ */ W("div", {
+					className: "flex flex-wrap gap-2",
+					children: [A && /* @__PURE__ */ U(n, {
+						size: "sm",
+						variant: "primary",
+						onClick: () => l(y),
+						children: "Open presentation"
+					}), k.map((e) => /* @__PURE__ */ U(n, {
+						size: "sm",
+						variant: "secondary",
+						onClick: () => {
+							e.onSelect?.(), e.selection && o(e.selection);
+						},
+						children: e.label
+					}, e.id))]
+				}), u && !m && /* @__PURE__ */ U(n, {
 					size: "sm",
 					variant: "secondary",
 					fullWidth: !0,
 					onClick: () => u(y),
 					children: "Reference in chat"
-				})
+				})]
 			})
 		]
 	});

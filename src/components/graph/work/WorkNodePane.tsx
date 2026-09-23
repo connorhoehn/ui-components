@@ -225,6 +225,9 @@ export function WorkNodePane({
     ? []
     : (visible?.lines ?? []).filter((line, index, all) => all.indexOf(line) === index && !alreadySaid(line, said));
   const excerpt = ownInspector ? undefined : visible?.excerpt;
+  const actions = visible?.actions ?? [];
+  const canOpenArtifact = !!onOpen && !!resolved?.revision
+    && (node.capabilities.includes('view-document') || node.capabilities.includes('edit-document'));
   const empty = !compute && !banner && !visible?.artifact && !visible?.transcript && !sections && !visible?.note && !visible?.actions?.length && !excerpt && bodyLines.length === 0;
   return (
     <section aria-label={title} data-testid={testId} className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)}>
@@ -245,7 +248,7 @@ export function WorkNodePane({
           </ul>
         )}
         {sections?.description && <p className="text-[13px] leading-snug text-text-secondary">{sections.description}</p>}
-        {visible?.artifact && <WorkArtifactInspector node={node} artifact={visible.artifact} selection={selection} onSelectionChange={onSelectionChange} onOpen={onOpen} quiet={!!visible.banner} />}
+        {visible?.artifact && <WorkArtifactInspector node={node} artifact={visible.artifact} selection={selection} onSelectionChange={onSelectionChange} quiet={!!visible.banner} />}
         {visible?.transcript && <WorkTranscriptPanel transcript={visible.transcript} onSelect={onSelectionChange} />}
         {!!sections?.inputs?.length && (
           <Section label="Inputs">
@@ -261,17 +264,22 @@ export function WorkNodePane({
         {!!sections?.tools?.length && <Section label="Tools in this run"><div className="flex flex-wrap gap-1.5">{sections.tools.map((item, index) => <PaneChip key={`${index}-${item}`} tone="info">{item}</PaneChip>)}</div></Section>}
         {!!sections?.sources?.length && <Section label="Sources used"><div className="space-y-1.5">{sections.sources.map((item) => <ReferenceRow key={item.id} item={item} onSelect={onSelectionChange} />)}</div></Section>}
         {sections?.workItem && <Section label="Work item"><ReferenceRow item={sections.workItem} onSelect={onSelectionChange} /></Section>}
-        {!!visible?.actions?.length && (
-          <div className="flex flex-wrap gap-2">
-            {visible.actions.map((action) => <Button key={action.id} size="sm" variant="secondary" onClick={() => { action.onSelect?.(); if (action.selection) onSelectionChange(action.selection); }}>{action.label}</Button>)}
-          </div>
-        )}
         {visible?.note && <p className="text-xs leading-snug text-text-tertiary">{visible.note}</p>}
         {empty && <p className="text-sm text-text-secondary">{restricted ? 'Only the existence of this work is shared with you.' : 'No further detail is shared with you.'}</p>}
       </div>
-      {onReference && !restricted && (
-        <div className="shrink-0 border-t border-border p-2">
-          <Button size="sm" variant="secondary" fullWidth onClick={() => onReference(referenceTarget)}>Reference in chat</Button>
+      {(canOpenArtifact || actions.length > 0 || (onReference && !restricted)) && (
+        // The pane's ways OUT live in the footer, never at the end of the
+        // scrolling body: at 1280×720 the deck's preview, slide picker and
+        // sources pushed "Open presentation" under the fold, where nobody
+        // scrolls to find the one thing the pane is for.
+        <div className="shrink-0 space-y-2 border-t border-border p-2" data-testid={`${testId}-footer`}>
+          {(canOpenArtifact || actions.length > 0) && (
+            <div className="flex flex-wrap gap-2">
+              {canOpenArtifact && <Button size="sm" variant="primary" onClick={() => onOpen!(referenceTarget)}>Open presentation</Button>}
+              {actions.map((action) => <Button key={action.id} size="sm" variant="secondary" onClick={() => { action.onSelect?.(); if (action.selection) onSelectionChange(action.selection); }}>{action.label}</Button>)}
+            </div>
+          )}
+          {onReference && !restricted && <Button size="sm" variant="secondary" fullWidth onClick={() => onReference(referenceTarget)}>Reference in chat</Button>}
         </div>
       )}
     </section>

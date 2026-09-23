@@ -258,3 +258,21 @@ describe('WorkNodePane says what its card says', () => {
     expect(screen.getByTestId('activity-inspector-subtitle')).toHaveTextContent(/Running$/);
   });
 });
+
+describe('the pane keeps its ways out in the footer', () => {
+  it('puts Open presentation and the detail actions beside Reference in chat, outside the scrolling body', () => {
+    const onOpen = vi.fn();
+    const detail = { ...artifactDetail(true) };
+    render(<WorkNodePane node={node('deck', 'document', 'Sprint review')} detail={detail} selection={{ kind: 'node', id: 'deck' }} onSelectionChange={vi.fn()} onClose={vi.fn()} onOpen={onOpen} onReference={vi.fn()} />);
+    const footer = screen.getByTestId('activity-inspector-footer');
+    expect(within(footer).getAllByRole('button').map((button) => button.textContent)).toEqual(['Open presentation', 'Inspect run', 'Reference in chat']);
+    expect(screen.getAllByRole('button', { name: 'Open presentation' })).toHaveLength(1);
+    fireEvent.click(within(footer).getByRole('button', { name: 'Open presentation' }));
+    expect(onOpen).toHaveBeenCalledWith({ kind: 'node', id: 'deck', revisionId: 'v2', anchorId: 'v2-slide-4' });
+  });
+
+  it('offers no Open presentation to a viewer without document access', () => {
+    render(<WorkNodePane node={node('deck', 'document', 'Sprint review', { capabilities: [] })} detail={artifactDetail(false)} selection={{ kind: 'node', id: 'deck' }} onSelectionChange={vi.fn()} onClose={vi.fn()} onOpen={vi.fn()} />);
+    expect(screen.queryByRole('button', { name: 'Open presentation' })).not.toBeInTheDocument();
+  });
+});

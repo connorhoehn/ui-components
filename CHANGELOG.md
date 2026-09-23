@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.385.9] — 2026-09-23
+
+### Fixed
+- **WorkNodePane** — the pane's ways out ("Open presentation" and the host's
+  detail actions such as "Open presentation at v1" / "Open run") live in the
+  pane's fixed footer beside "Reference in chat", not at the end of the
+  scrolling body. At 1280x720 the deck's preview, slide picker and sources
+  pushed "Open presentation" under the footer. "Open presentation" is now the
+  footer's primary button; the footer carries `<testid>-footer`.
+
 ## [2.385.8] — 2026-09-23
 
 ### Fixed
