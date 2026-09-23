@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.385.6] — 2026-09-23
+
+### Added
+- `CodeBlock` `theme="console"` — the theme-invariant `--color-code-*` surface
+  (bg `code-bg`, text `code-text`, syntax colours from the code family) for a
+  block inside a permanently-dark console. `theme="dark"` paints the inverse
+  surface, which flips to #f8fafc in dark mode and read as a light slab inside
+  the pipeline editor's Live output drawer. Contrast test pins every console
+  colour at >= 4.5:1 on `code-bg`.
+
 ## [2.385.5] — 2026-09-23
 
 ### Added

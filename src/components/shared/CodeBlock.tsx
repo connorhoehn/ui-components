@@ -2,7 +2,14 @@ import { useState, useCallback, useMemo, type CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
 
 export type CodeBlockLanguage = 'tsx' | 'ts' | 'jsx' | 'js' | 'json' | 'bash' | 'sh' | 'text';
-export type CodeBlockTheme = 'dark' | 'light';
+/**
+ * `light` / `dark` follow the app theme (`dark` is the INVERSE surface, so it
+ * flips to a light box in dark mode). `console` is the theme-invariant code
+ * family (`--color-code-*`): use it for a block sitting inside a log console,
+ * terminal or other permanently-dark panel, where an inverse box would read
+ * as a light slab on the dark panel in dark mode.
+ */
+export type CodeBlockTheme = 'dark' | 'light' | 'console';
 
 export interface CodeBlockProps {
   code: string;
@@ -86,13 +93,19 @@ const DARK: Palette = {
   property: '#7dd3fc', builtin: '#c4b5fd', variable: '#fbbf24',
 };
 
+const CONSOLE: Palette = {
+  comment: 'var(--color-code-comment)', string: 'var(--color-code-green)', keyword: 'var(--color-code-mauve)',
+  number: 'var(--color-code-peach)', property: 'var(--color-code-blue)', builtin: 'var(--color-code-mauve)',
+  variable: 'var(--color-code-yellow)',
+};
+
 const LIGHT: Palette = {
   comment: 'var(--color-neutral)', string: '#15803d', keyword: 'var(--color-info-fg)', number: '#a16207',
   property: '#0369a1', builtin: 'var(--color-cat-ai)', variable: '#a16207',
 };
 
 function highlight(code: string, language: CodeBlockLanguage, theme: CodeBlockTheme): string {
-  const palette = theme === 'dark' ? DARK : LIGHT;
+  const palette = theme === 'light' ? LIGHT : theme === 'console' ? CONSOLE : DARK;
   const escaped = escapeHtml(code);
   switch (language) {
     case 'json':
@@ -135,6 +148,7 @@ export function CodeBlock({
   }, [code]);
 
   const isDark = theme === 'dark';
+  const isConsole = theme === 'console';
   const lines = useMemo(() => code.split('\n'), [code]);
 
   // `highlight` builds three fresh RegExps with 20-30 alternations each and
@@ -151,9 +165,11 @@ export function CodeBlock({
       data-theme={theme}
       className={cn(
         'relative rounded-lg border font-mono text-[13px] leading-relaxed overflow-hidden',
-        isDark
-          ? 'bg-surface-inverse text-text-inverse border-border-emphasis'
-          : 'bg-surface-panel text-text-primary border-border',
+        isConsole
+          ? 'bg-code-bg text-code-text border-code-border'
+          : isDark
+            ? 'bg-surface-inverse text-text-inverse border-border-emphasis'
+            : 'bg-surface-panel text-text-primary border-border',
         className,
       )}
       style={style}
@@ -166,9 +182,11 @@ export function CodeBlock({
           aria-label={copied ? 'Copied' : 'Copy code'}
           className={cn(
             'absolute top-2 right-2 text-[11px] px-2 py-1 rounded border transition-opacity',
-            isDark
-              ? 'bg-surface-inverse text-text-inverse border-border-emphasis hover:bg-neutral'
-              : 'bg-surface text-text-primary border-border-emphasis hover:bg-surface-hover',
+            isConsole
+              ? 'bg-code-panel text-code-text border-code-border hover:bg-code-raised'
+              : isDark
+                ? 'bg-surface-inverse text-text-inverse border-border-emphasis hover:bg-neutral'
+                : 'bg-surface text-text-primary border-border-emphasis hover:bg-surface-hover',
           )}
           data-copied={copied ? 'true' : 'false'}
         >
@@ -181,7 +199,7 @@ export function CodeBlock({
             <div
               className={cn(
                 'select-none pr-3 text-right',
-                isDark ? 'text-neutral' : 'text-text-tertiary',
+                isConsole ? 'text-code-comment' : isDark ? 'text-neutral' : 'text-text-tertiary',
               )}
               aria-hidden="true"
             >
