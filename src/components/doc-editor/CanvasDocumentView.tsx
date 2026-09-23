@@ -998,7 +998,11 @@ export default function CanvasDocumentView({
             <div
               data-testid={`${testId}-ruler-row`}
               className={cn(
-                'flex px-2 sm:px-6 pt-3',
+                // Under the card toolbar its own 8px of workspace is the gap
+                // (2.386.11): the extra 12px pushed the sheet 15px below the
+                // Folders mockup's.
+                'flex px-2 sm:px-6',
+                editable && editor && toolbarStyle === 'card' ? 'pt-0' : 'pt-3',
                 (showGutter || showOutline) && 'gap-3 sm:gap-6',
               )}
             >

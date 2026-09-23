@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.386.11] — 2026-09-23
+
+### Fixed
+- **CanvasDocumentView** — under the card toolbar the ruler row drops its own 12px top padding; the
+  card's 8px of workspace is the gap, so the sheet starts where the Folders mockup's does.
+
 ## [2.386.10] — 2026-09-23
 
 ### Added
